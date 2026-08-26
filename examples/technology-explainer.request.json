@@ -1,0 +1,24 @@
+{
+  "topic": "Ba điểm cần biết trước khi áp dụng AI vào quy trình nội bộ",
+  "project": "ai-workflow-explainer",
+  "niche": "technology",
+  "video": {
+    "duration_seconds": 30,
+    "aspect": "9:16",
+    "language": "vi",
+    "template": "vertical-short-v1"
+  },
+  "content": {
+    "objective": "education",
+    "audience": "đội ngũ vận hành doanh nghiệp",
+    "tone": "rõ ràng, thực tế, không cường điệu",
+    "cta": "Lưu lại checklist để đánh giá quy trình của bạn"
+  },
+  "media": {
+    "source": "local",
+    "project_asset_folder": "ai-workflow-explainer",
+    "minimum_clips": 5,
+    "allow_stock": false,
+    "allow_ai_generation": false
+  }
+}
