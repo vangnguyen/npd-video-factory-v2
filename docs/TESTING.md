@@ -1,4 +1,4 @@
-# Testing — V2-03
+# Testing — V2-04
 
 ## Local checks
 
@@ -44,6 +44,16 @@ The E2E creates five copyright-safe fixtures and one deterministic job, then ver
 - eight normalized trend signals, four deterministic clusters and preserved `null` metrics;
 - lifecycle/opportunity components, six distinct ideas and a ranked proposed queue;
 - draft-project selection, Studio response/CSP and queue recovery after API restart.
+- multi-part upload, exact part/file checksums and a valid signature/MIME path;
+- FFprobe metadata and source-asset provenance;
+- original Vietnamese transcript evidence with word timestamps;
+- four deterministic scenes, three non-destructive silence decisions and Top 3 highlights;
+- no enabled silence decision overlaps a spoken word;
+- Auto Edit recovery after API restart and fail-closed missing live transcription provider.
+
+The API/unit suite separately covers signature/MIME rejection, missing or corrupt upload parts,
+same-project checksum duplicate reuse and Top 5 output. The repository also resolves a
+unique-fingerprint race to the already-created analysis instead of leaking a database conflict.
 
 The script removes only its disposable Compose volumes on exit. Normal CI performs no paid
 call. The manual paid-provider smoke still requires explicit dispatch, protected-environment

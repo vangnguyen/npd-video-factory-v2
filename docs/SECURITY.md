@@ -1,4 +1,4 @@
-# Security and safety — V2-03
+# Security and safety — V2-04
 
 ## Defaults
 
@@ -11,6 +11,8 @@
   rejects it in production.
 - Trend references are metadata-only; no crawler, protection bypass, creator-media download or
   transcript-copy path exists.
+- Auto Edit fixtures are synthetic and rejected at production startup. Live transcription stays
+  `not_configured` until an owner-approved credential/adapter exists.
 
 ## Data and artifact controls
 
@@ -20,10 +22,13 @@
 - Idempotency keys are hashed before PostgreSQL persistence.
 - Provider registry stores only a config reference; credentials are not returned by APIs.
 - Runtime data, media, E2E artifacts and `.env` are git-ignored.
+- Uploads use bounded part/file sizes, safe server-side names, SHA-256, magic-byte/MIME agreement,
+  FFprobe validation and project-scoped object keys. Client extensions are never trusted.
+- Source objects are immutable. Silence/highlight output is a reversible decision record only.
 
 ## Known security gate
 
-V2-03 does not yet implement API authentication, RBAC or workspace membership. Localhost
+V2-04 does not yet implement API authentication, RBAC or workspace membership. Localhost
 binding is the only access boundary in this increment. Public routing and production
 deployment are prohibited until those controls, rate limits and audit actor identity are
 implemented and accepted.
@@ -31,7 +36,7 @@ implemented and accepted.
 ## Credential contract
 
 Only variable names/config references appear in source: `DATABASE_URL`, `OBJECT_STORAGE_*`,
-optional `OPENAI_API_KEY` and future trend-provider contract names. Real values must come from an
+optional `OPENAI_API_KEY`, `TRANSCRIPTION_PROVIDER` and future provider contract names. Real values must come from an
 external secret manager. They must never be
 stored in project snapshots, jobs, assets, provider metadata, costs, logs or Git.
 

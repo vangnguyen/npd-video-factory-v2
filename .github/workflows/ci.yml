@@ -54,7 +54,7 @@ jobs:
       - run: npm run bundle:check
 
   studio:
-    name: Trend Radar Studio tests
+    name: Studio tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -87,6 +87,7 @@ jobs:
           grep -qx 'PUBLISH_ENABLED=false' .env.example
           grep -qx 'HUMAN_APPROVAL_REQUIRED=true' .env.example
           grep -qx 'TREND_FIXTURE_ENABLED=true' .env.example
+          grep -qx 'AUTO_EDIT_FIXTURE_ENABLED=true' .env.example
       - name: Verify V2-owned durable services and VND-only ledger
         run: |
           grep -q '^  postgres:' docker-compose.yml
@@ -103,6 +104,14 @@ jobs:
           grep -Fq '"execution": False' apps/api/app/trend_service.py
           grep -Fq 'status = "not_configured"' apps/api/app/trend_providers.py
           ! git grep -I -n -E 'yt-dlp|youtube-dl|selenium|scrapy' -- apps services scripts
+      - name: Verify V2-04 non-destructive Auto Edit boundary
+        run: |
+          grep -Fq 'source_media_mutated: Literal[False] = False' apps/api/app/auto_edit_models.py
+          grep -Fq 'publish_requested: Literal[False] = False' apps/api/app/auto_edit_models.py
+          grep -Fq '"paid_external_call": False' apps/api/app/auto_edit_service.py
+          grep -Fq 'original_evidence": True' apps/api/app/auto_edit_providers.py
+          grep -q '0003_v2_04' apps/api/migrations/versions/0003_v2_04_auto_edit_analysis.py
+          grep -q 'ffmpeg' apps/api/Dockerfile
       - name: Secret pattern scan
         run: |
           if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
@@ -125,7 +134,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v2-03-trend-idea-intelligence-e2e
+          name: v2-04-auto-edit-analysis-e2e
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 7

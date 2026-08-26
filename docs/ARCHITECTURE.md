@@ -1,4 +1,4 @@
-# Architecture — V2-03
+# Architecture — V2-04
 
 ## Bounded context
 
@@ -13,6 +13,7 @@ Local Trend Radar Studio
 FastAPI API -------------------------- PostgreSQL
    |   workspace/project/version        canonical jobs/audit/idempotency
    |   provider/cost/asset metadata      trend/evidence/cluster/idea/queue
+   |   upload/transcript/scene/silence/highlight
    |
    +----> V2 Redis transient queue ----> Worker ----> Remotion ----> FFmpeg QC
                                             |
@@ -24,7 +25,7 @@ FastAPI API -------------------------- PostgreSQL
 
 | Component | Owns | Durability |
 |---|---|---|
-| PostgreSQL | workspace, project, version, canonical job, events, idempotency, assets, providers, usage and cost | canonical |
+| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload and Auto Edit analysis state | canonical |
 | Redis | pending and processing delivery queues | transient/recoverable |
 | S3/MinIO | source, generated, metadata and render objects | canonical binary store |
 | job volume | resumable local worker scratch/cache | replaceable |
@@ -46,6 +47,12 @@ Pure deterministic services cluster signals, assign lifecycle and calculate cont
 profiles. Idea drafts and ranked queue runs are durable planning objects. Selecting an idea creates
 only an immutable draft project snapshot.
 
+Upload parts live only in bounded staging scratch. Completion assembles the bytes once, validates
+SHA-256 and magic bytes, records FFprobe metadata and places immutable source bytes in object
+storage. PostgreSQL holds the upload receipt. Auto Edit downloads a scratch copy for analysis,
+persists normalized transcript/scene/silence/highlight evidence and removes only that scratch copy.
+It never changes or replaces the source object.
+
 ## Durable job rules
 
 - PostgreSQL is the source of truth; Redis never stores canonical job JSON.
@@ -58,6 +65,6 @@ only an immutable draft project snapshot.
 
 ## Safety state
 
-V2-03 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
+V2-04 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
 `HUMAN_APPROVAL_REQUIRED=false`. Successful jobs stop at `awaiting_review`. API auth/RBAC is
 not yet implemented, so this increment is local/CI only and must not be exposed publicly.
