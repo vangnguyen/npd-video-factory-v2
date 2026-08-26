@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NPD Video Factory V2 Trend Radar — research and draft workspace" />
+    <title>NPD Studio · Trend Radar</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#top" aria-label="NPD Studio home">
+          <span class="brand-mark">N</span>
+          <span><strong>NPD Studio</strong><small>Video Factory V2</small></span>
+        </a>
+        <nav aria-label="Studio navigation">
+          <a href="#overview"><span>◫</span>Overview</a>
+          <a class="active" href="#radar"><span>⌁</span>Trend Radar</a>
+          <a href="#ideas"><span>✦</span>Idea Engine</a>
+          <a href="#queue"><span>≋</span>Opportunity Queue</a>
+          <a href="#projects"><span>□</span>Projects</a>
+        </nav>
+        <div class="boundary-card">
+          <span class="status-dot"></span>
+          <strong>Research mode</strong>
+          <p>Không publish, không paid provider, không sao chép media nguồn.</p>
+        </div>
+      </aside>
+
+      <main id="top">
+        <header class="topbar">
+          <button id="menu-button" class="icon-button menu-button" aria-label="Mở menu">☰</button>
+          <div>
+            <p class="eyebrow">Intelligence workspace</p>
+            <h1>Trend Radar</h1>
+          </div>
+          <div class="topbar-actions">
+            <span class="pill safe">Draft only</span>
+            <span id="provider-status" class="pill muted">Đang kiểm tra nguồn…</span>
+            <button id="refresh-button" class="primary-button">Nạp tín hiệu demo</button>
+          </div>
+        </header>
+
+        <section id="overview" class="hero-panel">
+          <div>
+            <p class="eyebrow">Decision layer · V2-03</p>
+            <h2>Tìm cơ hội nội dung trước khi chủ đề bão hòa.</h2>
+            <p>Gom tín hiệu hợp lệ, chấm điểm giải thích được và biến thành brief độc lập — không sao chép video creator.</p>
+          </div>
+          <div class="metric-strip" aria-label="Trend summary">
+            <div><span id="metric-clusters">0</span><small>cụm xu hướng</small></div>
+            <div><span id="metric-signals">0</span><small>tín hiệu</small></div>
+            <div><span id="metric-platforms">0</span><small>nền tảng</small></div>
+            <div><span id="metric-queue">0</span><small>cơ hội ưu tiên</small></div>
+          </div>
+        </section>
+
+        <section id="radar" class="workspace-section">
+          <div class="section-heading">
+            <div><p class="eyebrow">Explore</p><h2>Radar xu hướng</h2></div>
+            <label class="search-box"><span>⌕</span><input id="search-input" type="search" placeholder="Tìm chủ đề, từ khóa…" /></label>
+          </div>
+
+          <div id="view-tabs" class="view-tabs" role="tablist" aria-label="Trend views"></div>
+
+          <div class="filter-panel">
+            <label>Nền tảng<select id="platform-filter"><option value="">Tất cả</option></select></label>
+            <label>Thị trường<select id="country-filter"><option value="VN">Việt Nam</option></select></label>
+            <label>Ngôn ngữ<select id="language-filter"><option value="vi">Tiếng Việt</option></select></label>
+            <label>Ngách<select id="niche-filter"><option value="real_estate">Bất động sản</option></select></label>
+            <label>Kênh<select id="channel-filter"><option value="short-video">Short video</option><option value="youtube">YouTube</option></select></label>
+            <label>Thời gian<select id="time-filter"><option value="">Tất cả</option><option value="7">7 ngày</option><option value="30">30 ngày</option></select></label>
+            <label>Định dạng<select id="format-filter"><option value="">Tất cả</option></select></label>
+            <label>Mục tiêu<select id="objective-filter"><option value="lead_generation">Tạo lead</option><option value="awareness">Nhận diện</option><option value="education">Giáo dục</option></select></label>
+          </div>
+
+          <div class="result-meta"><span id="result-count">0 cơ hội</span><span>Điểm là ước tính cho lập kế hoạch</span></div>
+          <div id="trend-grid" class="trend-grid" aria-live="polite"></div>
+        </section>
+
+        <section id="ideas" class="workspace-section split-section">
+          <div>
+            <div class="section-heading compact">
+              <div><p class="eyebrow">Selected trend</p><h2>Hồ sơ & bằng chứng</h2></div>
+            </div>
+            <div id="trend-detail" class="detail-panel empty-panel">
+              <p>Chọn một thẻ xu hướng để xem lifecycle, thành phần điểm và nguồn tham khảo.</p>
+            </div>
+          </div>
+          <div>
+            <div class="section-heading compact">
+              <div><p class="eyebrow">Idea Engine</p><h2>Góc nội dung đề xuất</h2></div>
+              <button id="generate-button" class="secondary-button" disabled>Tạo 3 ý tưởng</button>
+            </div>
+            <div id="idea-list" class="idea-list empty-panel"><p>Ý tưởng sẽ xuất hiện sau khi bạn chọn xu hướng.</p></div>
+          </div>
+        </section>
+
+        <section id="queue" class="workspace-section">
+          <div class="section-heading">
+            <div><p class="eyebrow">Prioritization</p><h2>Content Opportunity Queue</h2></div>
+            <button id="queue-button" class="secondary-button">Làm mới xếp hạng</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Hạng</th><th>Ý tưởng</th><th>Xu hướng</th><th>Kênh</th><th>Điểm</th><th>Trạng thái</th></tr></thead>
+              <tbody id="queue-body"><tr><td colspan="6" class="table-empty">Chưa có cơ hội được xếp hạng.</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer>
+          <span>NPD Video Factory V2 · Trend & Idea Intelligence</span>
+          <span>VND only · Human approval required · Publishing disabled</span>
+        </footer>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

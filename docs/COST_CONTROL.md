@@ -1,4 +1,4 @@
-# Cost control — V2-02
+# Cost control — V2-03
 
 VND is the only accepted cost currency in Pydantic contracts, ORM defaults and the database
 check constraint. USD is not a supported runtime currency.
@@ -11,6 +11,11 @@ explicitly unpriced rather than being recorded as zero.
 Normal development and CI use deterministic content, local fixtures, eSpeak and Remotion;
 all three records are `0 VND`. OpenAI TTS is disabled by default and produces an unpriced
 record unless an owner-approved pricing source is configured in a later increment.
+
+The V2-03 trend fixture and deterministic Idea Engine also cost `0 VND` and make no network call.
+All live trend providers are `not_configured`; enabling one later requires an explicit VND pricing
+contract, budget/approval policy and idempotent usage record. Unknown provider cost must remain
+unpriced, never converted from or displayed as USD.
 
 The real-provider smoke still requires manual dispatch text `APPROVED`, protected-environment
 approval and a configured secret. Publishing, GPU generation and scale tests remain disabled

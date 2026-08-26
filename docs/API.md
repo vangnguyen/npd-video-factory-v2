@@ -1,4 +1,4 @@
-# API — V2-02
+# API — V2-03
 
 Base path: `/api/v1`. Request models forbid unknown fields. This local/CI increment has no
 authentication layer and must not be exposed to an untrusted network.
@@ -43,3 +43,19 @@ The accepted terminal success state is `awaiting_review`; there is no publish AP
 
 Currency is always `VND`. An unpriced paid operation is explicit; it is never silently
 treated as zero. Provider secrets are represented by config references, not API values.
+
+## Trend and idea intelligence
+
+- `GET /api/v1/trend-sources`
+- `POST|GET /api/v1/workspaces/{workspace_id}/trend-signals[/collect]`
+- `POST|GET /api/v1/workspaces/{workspace_id}/trend-clusters[/refresh]`
+- `GET /api/v1/trend-clusters/{cluster_id}`
+- `POST /api/v1/trend-clusters/{cluster_id}/ideas/generate`
+- `GET /api/v1/workspaces/{workspace_id}/ideas`
+- `POST|GET /api/v1/workspaces/{workspace_id}/content-opportunities[/refresh]`
+- `POST /api/v1/ideas/{idea_id}/projects`
+
+Collection accepts a provider key plus optional query/country/locale/language/limit. Cluster and
+idea requests carry channel, niche, objective and configurable weights. Response scores always
+declare `estimated=true`. Live providers return `PROVIDER_NOT_CONFIGURED` until authorized
+credentials/adapters exist. Creating a project from an idea is idempotent and draft-only.

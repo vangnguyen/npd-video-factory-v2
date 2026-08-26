@@ -1,4 +1,4 @@
-# Operations — V2-02
+# Operations — V2-03
 
 ## Read-only health checks
 
@@ -6,8 +6,9 @@
 2. `GET /readyz` proves PostgreSQL, Redis, object storage and scratch availability.
 3. Capabilities report publishing false, approval true, PostgreSQL canonical state,
    transient Redis queue, configured object store and VND currency.
-4. `docker compose ps` shows only the seven V2 services.
-5. Job events progress and object/cost counts remain consistent; logs contain no secrets.
+4. `GET http://localhost:3000/` returns Studio with a restrictive CSP.
+5. `docker compose ps` shows only the eight V2 services.
+6. Job events, trend/idea/queue rows and object/cost counts remain consistent; logs contain no secrets.
 
 ## Failure handling
 
@@ -18,6 +19,10 @@
 - TTS/renderer/QC failure: use the stable error code and audit trail; retain evidence.
 - Worker restart: claimed IDs are requeued and valid existing artifacts are reused.
 - Unpriced provider operation: keep it explicit and block broader paid execution.
+- Trend provider unavailable: retain its `not_configured`/degraded state; never replace live data
+  with fixtures or zeros.
+- Missing trend metric: persist `null`; do not infer a provider observation that was not returned.
+- Source rights uncertainty: keep only the reference/evidence and block any media-copy workflow.
 
 ## Backup and restore contract
 
@@ -26,5 +31,5 @@ dump time, bucket inventory/version marker and checksums. Restore into an isolat
 verify foreign keys and sampled artifacts, then reconcile queued non-terminal jobs. Redis AOF
 is useful operational evidence but is not the authoritative backup.
 
-Never restore into AgentHub state or overwrite any existing NPD service. V2-02 performs no
+Never restore into AgentHub state or overwrite any existing NPD service. V2-03 performs no
 production backup, rollback or deployment; those remain owner-gated work.

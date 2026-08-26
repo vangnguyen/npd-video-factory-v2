@@ -53,6 +53,24 @@ jobs:
       - run: npm run typecheck
       - run: npm run bundle:check
 
+  studio:
+    name: Trend Radar Studio tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/studio-web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/studio-web/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: node --check app.js
+      - run: node --check trend-utils.mjs
+
   safety:
     name: Safety and compose contract
     runs-on: ubuntu-latest
@@ -68,14 +86,23 @@ jobs:
         run: |
           grep -qx 'PUBLISH_ENABLED=false' .env.example
           grep -qx 'HUMAN_APPROVAL_REQUIRED=true' .env.example
+          grep -qx 'TREND_FIXTURE_ENABLED=true' .env.example
       - name: Verify V2-owned durable services and VND-only ledger
         run: |
           grep -q '^  postgres:' docker-compose.yml
           grep -q '^  redis:' docker-compose.yml
           grep -q '^  minio:' docker-compose.yml
           grep -q '^  migrate:' docker-compose.yml
+          grep -q '^  studio-web:' docker-compose.yml
           grep -Fq 'currency: Literal["VND"]' apps/api/app/platform_models.py
           grep -Fq "currency = 'VND'" apps/api/migrations/versions/0001_v2_02_create_durable_project_platform.py
+      - name: Verify V2-03 research-only trend boundary
+        run: |
+          grep -Fq 'creator_media_downloaded": False' apps/api/app/trend_repository.py
+          grep -Fq '"copied_creator_media": False' apps/api/app/trend_repository.py
+          grep -Fq '"execution": False' apps/api/app/trend_service.py
+          grep -Fq 'status = "not_configured"' apps/api/app/trend_providers.py
+          ! git grep -I -n -E 'yt-dlp|youtube-dl|selenium|scrapy' -- apps services scripts
       - name: Secret pattern scan
         run: |
           if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
@@ -98,7 +125,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v2-02-durable-platform-e2e
+          name: v2-03-trend-idea-intelligence-e2e
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 7

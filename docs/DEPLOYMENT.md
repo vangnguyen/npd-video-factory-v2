@@ -1,6 +1,6 @@
-# Deployment — V2-02
+# Deployment — V2-03
 
-V2-02 is a development/CI platform increment and is not approved for production deployment.
+V2-03 is a development/CI platform increment and is not approved for production deployment.
 
 ## Dev/CI
 
@@ -9,10 +9,12 @@ cp .env.example .env
 docker compose up -d --build
 curl --fail http://localhost:8000/readyz
 curl --fail http://localhost:8000/api/v1/capabilities
+curl --fail http://localhost:3000/
 ```
 
-Services are `postgres`, `redis`, `minio`, one-shot `migrate`, `api`, `worker` and
-`renderer`. No AgentHub, n8n, Caddy, CRM or shared Redis service is created. Stop with
+Services are `postgres`, `redis`, `minio`, one-shot `migrate`, `api`, `studio-web`, `worker` and
+`renderer`. API, Studio and renderer bind only to `127.0.0.1` by default. No AgentHub, n8n,
+Caddy, CRM or shared Redis service is created. Stop with
 `docker compose down`; add `-v` only for an explicitly disposable development stack.
 
 Local/CI MinIO uses a pinned official image tag. Production must provide a separately owned
@@ -31,4 +33,6 @@ Before any production proposal, a separate owner-approved PR/task must add and v
 7. Vietnamese human voice acceptance for any production TTS;
 8. explicit owner gate for every paid provider or publishing capability.
 
-This branch changes no existing NPD production service and must not be deployed as-is.
+V2-03 additionally requires `TREND_FIXTURE_ENABLED=false` for production and authorized provider
+adapters before live trend collection. This branch changes no existing NPD production service and
+must not be deployed as-is.

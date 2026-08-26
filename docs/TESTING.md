@@ -1,4 +1,4 @@
-# Testing — V2-02
+# Testing — V2-03
 
 ## Local checks
 
@@ -14,6 +14,13 @@ npm ci
 npm test
 npm run typecheck
 npm run bundle:check
+```
+
+```bash
+cd apps/studio-web
+npm ci
+npm test
+node --check app.js
 ```
 
 Independent Docker acceptance:
@@ -34,6 +41,9 @@ The E2E creates five copyright-safe fixtures and one deterministic job, then ver
 - API restart recovery from PostgreSQL;
 - deletion of local `final.mp4` followed by checksum-valid recovery from MinIO;
 - 1080x1920 H.264, audio, duration, luminance/black ratio and subtitle timing.
+- eight normalized trend signals, four deterministic clusters and preserved `null` metrics;
+- lifecycle/opportunity components, six distinct ideas and a ranked proposed queue;
+- draft-project selection, Studio response/CSP and queue recovery after API restart.
 
 The script removes only its disposable Compose volumes on exit. Normal CI performs no paid
 call. The manual paid-provider smoke still requires explicit dispatch, protected-environment
@@ -42,5 +52,5 @@ approval and a secret; it is not human Vietnamese voice acceptance.
 ## CI gates
 
 `Video Factory V2 CI` runs Python plus Alembic upgrade/downgrade/replay, renderer tests and
-bundle, safety/secret/Compose checks, and the durable Docker E2E. A stacked PR must be
+bundle, Studio tests, safety/secret/Compose checks, and the durable Docker E2E. A stacked PR must be
 retargeted to the latest approved base and rerun all gates before merge consideration.

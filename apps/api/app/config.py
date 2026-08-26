@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     default_workspace_slug: str = "npd-local"
     default_workspace_name: str = "NPD Local Workspace"
     default_workspace_owner_ref: str = "local-owner"
+    trend_fixture_enabled: bool = True
+    trend_fixture_path: Path = Path(__file__).resolve().parent / "fixtures" / "trend-signals.json"
     tts_provider: str = "espeak"
     openai_api_key: str = ""
     public_base_url: str = "http://localhost:8000"
@@ -38,9 +40,11 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
         if self.publish_enabled:
-            raise ValueError("publishing is not implemented in V2-02 and must remain disabled")
+            raise ValueError("publishing is not implemented in V2-03 and must remain disabled")
         if not self.human_approval_required:
-            raise ValueError("human approval must remain required in V2-02")
+            raise ValueError("human approval must remain required in V2-03")
+        if self.app_env == "production" and self.trend_fixture_enabled:
+            raise ValueError("deterministic trend fixtures must be disabled in production")
         if self.object_storage_provider not in {"local", "s3"}:
             raise ValueError("OBJECT_STORAGE_PROVIDER must be local or s3")
         if self.object_storage_provider == "s3" and (
