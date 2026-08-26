@@ -1,11 +1,17 @@
-# Cost control — V2-01
+# Cost control — V2-02
 
-Normal development and CI use deterministic content, local copyright-safe assets, eSpeak and
-local Remotion rendering. No paid API is called automatically.
+VND is the only accepted cost currency in Pydantic contracts, ORM defaults and the database
+check constraint. USD is not a supported runtime currency.
 
-The one real-provider smoke workflow requires all three conditions: manual dispatch text
-`APPROVED`, approval of the protected `manual-paid-provider` environment and a configured
-secret. It makes one bounded TTS request and keeps the audio in a temporary directory.
+Each provider operation has a deterministic operation key. Replaying the same operation
+returns the existing provider-usage and cost records instead of double-counting. Estimated
+and actual cost are non-negative; an operation whose provider price is unknown remains
+explicitly unpriced rather than being recorded as zero.
 
-V2-02 will add provider/cost records and budget caps before broader provider use. Publishing,
-GPU generation and scale tests remain disabled until their own owner-approved cost gates.
+Normal development and CI use deterministic content, local fixtures, eSpeak and Remotion;
+all three records are `0 VND`. OpenAI TTS is disabled by default and produces an unpriced
+record unless an owner-approved pricing source is configured in a later increment.
+
+The real-provider smoke still requires manual dispatch text `APPROVED`, protected-environment
+approval and a configured secret. Publishing, GPU generation and scale tests remain disabled
+until their own owner-approved budget and execution gates exist.

@@ -18,3 +18,4 @@ e2e-artifacts/
 production-pilot-artifacts/
 coverage/
 .pytest_cache/
+apps/api/migration-*.db

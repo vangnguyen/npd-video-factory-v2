@@ -1,6 +1,21 @@
 name: npd-video-factory-v2
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${VIDEO_POSTGRES_USER:-video_factory}
+      POSTGRES_PASSWORD: ${VIDEO_POSTGRES_PASSWORD:-development-only}
+      POSTGRES_DB: ${VIDEO_POSTGRES_DB:-video_factory}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${VIDEO_POSTGRES_USER:-video_factory} -d ${VIDEO_POSTGRES_DB:-video_factory}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
   redis:
     image: redis:7-alpine
     restart: unless-stopped
@@ -13,20 +28,57 @@ services:
       timeout: 3s
       retries: 10
 
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    restart: unless-stopped
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${OBJECT_STORAGE_ACCESS_KEY:-video-factory-dev}
+      MINIO_ROOT_PASSWORD: ${OBJECT_STORAGE_SECRET_KEY:-video-factory-dev-only-change-me}
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live >/dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build:
+      context: ./apps/api
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${VIDEO_POSTGRES_USER:-video_factory}:${VIDEO_POSTGRES_PASSWORD:-development-only}@postgres:5432/${VIDEO_POSTGRES_DB:-video_factory}
+    command: ["alembic", "-c", "alembic.ini", "upgrade", "head"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   api:
     build:
       context: ./apps/api
     env_file: .env
     environment:
+      DATABASE_URL: postgresql+asyncpg://${VIDEO_POSTGRES_USER:-video_factory}:${VIDEO_POSTGRES_PASSWORD:-development-only}@postgres:5432/${VIDEO_POSTGRES_DB:-video_factory}
       REDIS_URL: redis://redis:6379/0
       RENDERER_URL: http://renderer:3001
+      OBJECT_STORAGE_PROVIDER: s3
+      OBJECT_STORAGE_ENDPOINT_URL: http://minio:9000
+      OBJECT_STORAGE_ACCESS_KEY: ${OBJECT_STORAGE_ACCESS_KEY:-video-factory-dev}
+      OBJECT_STORAGE_SECRET_KEY: ${OBJECT_STORAGE_SECRET_KEY:-video-factory-dev-only-change-me}
+      OBJECT_STORAGE_AUTO_CREATE_BUCKET: "true"
     ports:
       - "${VIDEO_API_BIND:-127.0.0.1}:${VIDEO_API_PORT:-8000}:8000"
     volumes:
       - ./storage:/workspace/storage
       - ./packages/contracts:/workspace/packages/contracts:ro
     depends_on:
+      migrate:
+        condition: service_completed_successfully
       redis:
+        condition: service_healthy
+      minio:
         condition: service_healthy
 
   worker:
@@ -35,14 +87,24 @@ services:
       dockerfile: services/worker/Dockerfile
     env_file: .env
     environment:
+      DATABASE_URL: postgresql+asyncpg://${VIDEO_POSTGRES_USER:-video_factory}:${VIDEO_POSTGRES_PASSWORD:-development-only}@postgres:5432/${VIDEO_POSTGRES_DB:-video_factory}
       REDIS_URL: redis://redis:6379/0
       RENDERER_URL: http://renderer:3001
       VIDEO_MANIFEST_SCHEMA_PATH: /workspace/packages/contracts/video-manifest.schema.json
+      OBJECT_STORAGE_PROVIDER: s3
+      OBJECT_STORAGE_ENDPOINT_URL: http://minio:9000
+      OBJECT_STORAGE_ACCESS_KEY: ${OBJECT_STORAGE_ACCESS_KEY:-video-factory-dev}
+      OBJECT_STORAGE_SECRET_KEY: ${OBJECT_STORAGE_SECRET_KEY:-video-factory-dev-only-change-me}
+      OBJECT_STORAGE_AUTO_CREATE_BUCKET: "true"
     volumes:
       - ./storage:/workspace/storage
       - ./packages/contracts:/workspace/packages/contracts:ro
     depends_on:
+      migrate:
+        condition: service_completed_successfully
       redis:
+        condition: service_healthy
+      minio:
         condition: service_healthy
       renderer:
         condition: service_started
@@ -59,4 +121,6 @@ services:
     shm_size: "2gb"
 
 volumes:
+  postgres-data:
   redis-data:
+  minio-data:

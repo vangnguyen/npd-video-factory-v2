@@ -1,6 +1,7 @@
 # NPD Video Factory V2 worker
 
-The Sprint 1 worker claims Redis jobs and runs the resumable vertical-slice pipeline:
+The V2-02 worker claims IDs from the transient V2 Redis queue, reads canonical jobs from
+PostgreSQL and runs the resumable vertical-slice pipeline:
 
 `niche profile -> content -> storyboard -> Vietnamese TTS -> subtitles -> local assets -> manifest -> Remotion -> QC -> awaiting_review`
 
@@ -9,7 +10,7 @@ The Sprint 1 worker claims Redis jobs and runs the resumable vertical-slice pipe
 - claimed jobs move to `npd:video-jobs:processing`;
 - inflight jobs are recovered to the queue when the single Sprint 1 worker restarts;
 - validated artifacts under `storage/jobs/{job_id}` are reused after restart;
-- progress never moves backward because state changes go through the shared API `RedisJobStore`;
+- progress never moves backward because state changes go through the PostgreSQL job repository;
 - renderer network/502/503/504 failures receive one bounded retry;
 - stage failures are persisted with stable error codes.
 

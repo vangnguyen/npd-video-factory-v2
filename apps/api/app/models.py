@@ -49,6 +49,9 @@ class MediaConfig(StrictModel):
 
 
 class VideoJobCreate(StrictModel):
+    workspace_id: str | None = Field(default=None, pattern=r"^wsp_[A-Za-z0-9_-]{4,60}$")
+    project_id: str | None = Field(default=None, pattern=r"^prj_[A-Za-z0-9_-]{4,60}$")
+    project_version_id: str | None = Field(default=None, pattern=r"^pver_[A-Za-z0-9_-]{4,60}$")
     topic: str = Field(min_length=3, max_length=500)
     project: str = Field(pattern=r"^[a-z0-9][a-z0-9-]{1,80}$")
     niche: NicheName = NicheName.CUSTOM
@@ -102,6 +105,7 @@ STAGE_ORDER: dict[JobStage, int] = {
 class Artifact(StrictModel):
     kind: Literal[
         "request",
+        "source_asset",
         "script",
         "storyboard",
         "audio",
@@ -114,6 +118,12 @@ class Artifact(StrictModel):
     ]
     name: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
     url: str
+    asset_id: str | None = None
+    object_key: str | None = None
+    checksum_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    size_bytes: int | None = Field(default=None, ge=0)
+    storage_provider: str | None = None
+    content_type: str | None = None
 
 
 class JobError(StrictModel):
@@ -126,6 +136,9 @@ class JobError(StrictModel):
 
 class JobRecord(StrictModel):
     job_id: str
+    workspace_id: str | None = None
+    project_id: str | None = None
+    project_version_id: str | None = None
     status: JobStatus
     stage: JobStage
     progress: int = Field(ge=0, le=100)
@@ -136,10 +149,21 @@ class JobRecord(StrictModel):
     updated_at: datetime
 
     @classmethod
-    def new(cls, *, job_id: str, request: VideoJobCreate) -> "JobRecord":
+    def new(
+        cls,
+        *,
+        job_id: str,
+        request: VideoJobCreate,
+        workspace_id: str | None = None,
+        project_id: str | None = None,
+        project_version_id: str | None = None,
+    ) -> "JobRecord":
         now = datetime.now(timezone.utc)
         return cls(
             job_id=job_id,
+            workspace_id=workspace_id,
+            project_id=project_id,
+            project_version_id=project_version_id,
             status=JobStatus.QUEUED,
             stage=JobStage.QUEUED,
             progress=0,
@@ -151,6 +175,9 @@ class JobRecord(StrictModel):
 
 class JobCreateResponse(StrictModel):
     job_id: str
+    workspace_id: str | None = None
+    project_id: str | None = None
+    project_version_id: str | None = None
     status: JobStatus
     stage: JobStage
     progress: int

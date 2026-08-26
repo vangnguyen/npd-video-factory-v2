@@ -6,7 +6,11 @@ import os
 
 from redis.asyncio import Redis
 
-from app.state import QUEUE_KEY, RedisJobStore
+from app.config import settings
+from app.db import create_engine, create_session_factory, verify_database
+from app.object_storage import create_object_storage
+from app.repositories import PlatformRepository, PostgresJobStore
+from app.state import QUEUE_KEY
 
 from .pipeline import WorkerConfig, run_job
 
@@ -31,7 +35,18 @@ async def recover_inflight(redis: Redis) -> int:
 async def main() -> None:
     redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
     redis = Redis.from_url(redis_url, decode_responses=True)
-    store = RedisJobStore(redis)
+    engine = create_engine(settings.database_url)
+    session_factory = create_session_factory(engine)
+    await verify_database(session_factory)
+    object_storage = create_object_storage(settings)
+    await object_storage.ensure_ready()
+    platform = PlatformRepository(session_factory)
+    store = PostgresJobStore(
+        session_factory,
+        redis,
+        platform=platform,
+        object_storage=object_storage,
+    )
     config = WorkerConfig.from_env()
     await recover_inflight(redis)
     logger.info("worker_booted queue=%s processing=%s", QUEUE_KEY, PROCESSING_KEY)
@@ -47,6 +62,7 @@ async def main() -> None:
                 await redis.lrem(PROCESSING_KEY, 1, job_id)
     finally:
         await redis.aclose()
+        await engine.dispose()
 
 
 if __name__ == "__main__":

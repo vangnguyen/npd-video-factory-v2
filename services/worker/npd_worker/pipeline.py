@@ -11,6 +11,7 @@ import sys
 import wave
 from array import array
 from dataclasses import dataclass
+from decimal import Decimal
 from pathlib import Path
 from typing import Any, TypeVar
 
@@ -30,7 +31,8 @@ from app.providers import (
     TTSNotConfiguredError,
     UnconfiguredVietnameseTTSProvider,
 )
-from app.state import RedisJobStore
+from app.object_storage import artifact_object_key
+from app.state import JobStore
 
 
 logger = logging.getLogger("npd-video-worker.pipeline")
@@ -756,7 +758,7 @@ def get_tts_provider(config: WorkerConfig):
 
 
 async def advance(
-    store: RedisJobStore,
+    store: JobStore,
     job_id: str,
     *,
     stage: JobStage,
@@ -778,19 +780,67 @@ async def advance(
 
 
 async def register_artifact(
-    store: RedisJobStore,
+    store: JobStore,
     job_id: str,
     *,
     kind: str,
     path: Path,
 ) -> None:
+    metadata: dict[str, Any] = {}
+    object_storage = getattr(store, "object_storage", None)
+    record = await store.get(job_id)
+    if object_storage is not None and record and record.workspace_id and record.project_id:
+        stored = await object_storage.put_file(
+            object_key=artifact_object_key(
+                workspace_id=record.workspace_id,
+                project_id=record.project_id,
+                job_id=job_id,
+                filename=path.name,
+            ),
+            path=path,
+        )
+        metadata = {
+            "object_key": stored.object_key,
+            "checksum_sha256": stored.checksum_sha256,
+            "size_bytes": stored.size_bytes,
+            "storage_provider": stored.storage_provider,
+            "content_type": stored.content_type,
+        }
     await store.add_artifact(
         job_id,
         artifact=Artifact(
             kind=kind,
             name=path.name,
             url=artifact_url(job_id, path.name),
+            **metadata,
         ),
+    )
+
+
+async def record_provider_cost(
+    store: JobStore,
+    job_id: str,
+    *,
+    provider_key: str,
+    capability: str,
+    operation: str,
+    paid: bool = False,
+) -> None:
+    platform = getattr(store, "platform", None)
+    record = await store.get(job_id)
+    if platform is None or record is None or not record.workspace_id:
+        return
+    zero = None if paid else Decimal("0")
+    await platform.record_provider_operation(
+        workspace_id=record.workspace_id,
+        project_id=record.project_id,
+        job_id=job_id,
+        provider_key=provider_key,
+        capability=capability,
+        operation=operation,
+        estimated_cost=zero,
+        actual_cost=zero,
+        metadata={"pipeline": "vertical-short-v1", "paid": paid},
     )
 
 
@@ -850,7 +900,7 @@ async def call_renderer(
 
 
 async def run_job(
-    store: RedisJobStore,
+    store: JobStore,
     job_id: str,
     *,
     config: WorkerConfig,
@@ -916,6 +966,13 @@ async def run_job(
                 )
             write_json(storyboard_path, storyboard)
         await register_artifact(store, job_id, kind="storyboard", path=storyboard_path)
+        await record_provider_cost(
+            store,
+            job_id,
+            provider_key="deterministic-content",
+            capability="content",
+            operation="content.script-and-storyboard",
+        )
 
         voice_path = job_dir / "narration.wav"
         timing_path = job_dir / "narration-timing.json"
@@ -948,6 +1005,14 @@ async def run_job(
                 ) from exc
         await register_artifact(store, job_id, kind="audio", path=voice_path)
         await register_artifact(store, job_id, kind="metadata", path=timing_path)
+        await record_provider_cost(
+            store,
+            job_id,
+            provider_key="openai-tts" if config.tts_provider == "openai" else "espeak",
+            capability="tts",
+            operation="tts.scene-aligned-narration",
+            paid=config.tts_provider == "openai",
+        )
 
         current_stage = JobStage.GENERATING_SUBTITLES
         await advance(store, job_id, stage=current_stage, progress=40)
@@ -970,6 +1035,9 @@ async def run_job(
         assets_path = job_dir / "resolved-assets.json"
         write_json(assets_path, [item.model_dump(mode="json") for item in resolved_assets])
         await register_artifact(store, job_id, kind="assets", path=assets_path)
+        unique_source_assets = {item.asset.path for item in resolved_assets}
+        for source_path in sorted(unique_source_assets):
+            await register_artifact(store, job_id, kind="source_asset", path=source_path)
 
         current_stage = JobStage.BUILDING_MANIFEST
         await advance(store, job_id, stage=current_stage, progress=60)
@@ -1072,6 +1140,13 @@ async def run_job(
         write_json(qc_path, qc)
         await register_artifact(store, job_id, kind="video", path=final_path)
         await register_artifact(store, job_id, kind="qc", path=qc_path)
+        await record_provider_cost(
+            store,
+            job_id,
+            provider_key="remotion",
+            capability="rendering",
+            operation="render.vertical-short-v1",
+        )
         completed = await store.update_stage(
             job_id,
             status=JobStatus.AWAITING_REVIEW,

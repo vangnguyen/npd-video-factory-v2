@@ -1,36 +1,37 @@
 # NPD Video Factory V2
 
-NPD Video Factory V2 is an independent media execution platform. V2-01 extracts the
-working deterministic video path from `vangnguyen/npd-ai-video-factory`, preserves the
-useful Sprint 1 and production-TTS work, and removes every AgentHub runtime dependency.
+NPD Video Factory V2 is an independent media execution platform. V2-02 keeps the
+deterministic V2-01 video path and adds a durable project platform: PostgreSQL metadata,
+V2-owned Redis queueing, S3-compatible object storage, asset/version provenance, provider
+registry, audit history and a VND-only cost ledger.
 
-## V2-01 status
+## V2-02 status
 
-Implemented:
+Implemented and locally acceptance-tested:
 
-- FastAPI video-job API with idempotent enqueueing;
-- V2-owned Redis queue/state and restart recovery;
-- deterministic multi-niche content profiles with a generic vertical template;
-- backward-compatible real-estate template adapter;
-- local media preflight and deterministic asset resolution;
-- scene-aligned Vietnamese TTS, measured subtitle timing and resumability;
-- Remotion rendering plus FFmpeg/FFprobe black-frame, audio and metadata QC;
-- terminal `awaiting_review` state with no publishing implementation;
-- isolated Docker Compose, unit/contract tests and deterministic Docker E2E.
+- workspace, project and immutable project-version records;
+- canonical PostgreSQL job state, idempotency receipts and transition audit;
+- V2-owned Redis used only for transient queue delivery;
+- MinIO for local/CI and an S3-compatible production provider contract;
+- source/generated/render/metadata asset records with checksum, object key and provenance;
+- provider registry plus idempotent usage and VND cost records;
+- restart recovery and object-store artifact recovery;
+- the V2-01 9:16 deterministic render, scene-aligned Vietnamese narration and FFmpeg QC;
+- terminal `awaiting_review` state with no publishing implementation.
 
-Not implemented in V2-01: PostgreSQL project storage, object storage, Studio UI,
-Trend Radar, publishing providers, analytics or learning loops. Those are delivered by
-later PRs in the master specification.
+Not implemented in V2-02: Studio UI, API authentication/RBAC, Trend Radar, publishing,
+analytics/learning loops, GPU generation or a production rollout. Those remain later,
+separately gated increments.
 
 ## Safety boundary
 
 - No AgentHub package, database, Redis namespace or process dependency.
-- No production route, service or deployment is changed by this PR.
+- No production route, service or deployment is changed by this branch.
 - `PUBLISH_ENABLED=false` and `HUMAN_APPROVAL_REQUIRED=true` are enforced at startup.
-- External TTS smoke is manual, owner-gated and never runs on normal CI.
+- Normal CI uses deterministic providers and makes no paid call.
 - No secrets or production media are included.
 
-## Local deterministic run
+## Local deterministic acceptance
 
 Requirements: Docker Engine with Compose and Python 3.12+.
 
@@ -39,18 +40,21 @@ cp .env.example .env
 bash scripts/e2e-smoke.sh
 ```
 
-The E2E creates copyright-safe fixtures, boots the independent stack, renders one MP4,
-verifies narration/subtitle timing and inspects decoded video/audio. Artifacts are written
-under `e2e-artifacts/` and are git-ignored.
+The E2E creates copyright-safe fixtures, migrates PostgreSQL, renders one MP4, verifies
+project/asset/audit/cost records, restarts the API, restores the final artifact from MinIO
+and validates decoded video/audio quality. Its temporary stack and volumes are removed on
+exit.
 
 Useful endpoints after `docker compose up -d --build`:
 
-- `GET http://localhost:8000/healthz`
 - `GET http://localhost:8000/readyz`
 - `GET http://localhost:8000/api/v1/capabilities`
 - `POST http://localhost:8000/api/v1/video-jobs`
 - `GET http://localhost:8000/api/v1/video-jobs/{job_id}`
+- `GET http://localhost:8000/api/v1/workspaces`
+- `GET http://localhost:8000/api/v1/providers`
 
-See [Architecture](docs/ARCHITECTURE.md), [Migration audit](docs/MIGRATION_AUDIT.md),
-[API](docs/API.md), [Testing](docs/TESTING.md), [Security](docs/SECURITY.md) and the
+See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
+[Deployment](docs/DEPLOYMENT.md), [Testing](docs/TESTING.md),
+[Security](docs/SECURITY.md), [V2-02 acceptance](docs/V2_02_ACCEPTANCE.md) and the
 [V2 master specification](docs/CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md).
