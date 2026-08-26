@@ -1,7 +1,7 @@
 # V2-02 durable project platform acceptance
 
-Date: 2026-08-26  
-Scope: branch `feat/v2-02-durable-project-platform`, stacked on V2-01  
+Date: 2026-08-26
+Scope: branch `feat/v2-02-durable-project-platform`, retargeted to `main` after the V2-01 merge
 Production deployment: **not performed**
 
 ## Delivered

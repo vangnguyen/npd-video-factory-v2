@@ -1,7 +1,7 @@
 """create durable project platform
 
 Revision ID: 0001_v2_02
-Revises: 
+Revises: None
 Create Date: 2026-08-26 20:01:35.405060
 """
 from typing import Sequence, Union
