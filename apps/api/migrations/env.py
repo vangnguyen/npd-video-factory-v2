@@ -9,6 +9,7 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.db import Base, normalize_database_url
+from app import trend_db  # noqa: F401
 
 
 config = context.config

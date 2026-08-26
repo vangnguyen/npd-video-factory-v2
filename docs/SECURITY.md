@@ -1,4 +1,4 @@
-# Security and safety — V2-02
+# Security and safety — V2-03
 
 ## Defaults
 
@@ -7,6 +7,10 @@
 - API/renderer bind to localhost; PostgreSQL, Redis and MinIO are internal-only.
 - Normal CI uses deterministic providers and no paid network call.
 - No AgentHub, CRM, Ads, messaging or CMS credentials belong in this repository.
+- Live trend providers are `not_configured`; the enabled dev/CI fixture is synthetic and startup
+  rejects it in production.
+- Trend references are metadata-only; no crawler, protection bypass, creator-media download or
+  transcript-copy path exists.
 
 ## Data and artifact controls
 
@@ -19,15 +23,16 @@
 
 ## Known security gate
 
-V2-02 does not yet implement API authentication, RBAC or workspace membership. Localhost
+V2-03 does not yet implement API authentication, RBAC or workspace membership. Localhost
 binding is the only access boundary in this increment. Public routing and production
 deployment are prohibited until those controls, rate limits and audit actor identity are
 implemented and accepted.
 
 ## Credential contract
 
-Only variable names appear in source: `DATABASE_URL`, `OBJECT_STORAGE_*` and optional
-`OPENAI_API_KEY`. Real values must come from an external secret manager. They must never be
+Only variable names/config references appear in source: `DATABASE_URL`, `OBJECT_STORAGE_*`,
+optional `OPENAI_API_KEY` and future trend-provider contract names. Real values must come from an
+external secret manager. They must never be
 stored in project snapshots, jobs, assets, provider metadata, costs, logs or Git.
 
 AgentHub and V2 must not share database, Redis, packages or process memory. Future bridge

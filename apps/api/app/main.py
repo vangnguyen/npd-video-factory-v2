@@ -21,6 +21,10 @@ from .object_storage import create_object_storage, sha256_file
 from .platform_models import WorkspaceCreate
 from .platform_routes import router as platform_router
 from .repositories import PlatformRepository, PostgresJobStore
+from .trend_providers import create_trend_provider_registry
+from .trend_repository import TrendRepository
+from .trend_routes import router as trend_router
+from .trend_service import TrendIntelligenceService
 
 
 def new_job_id() -> str:
@@ -37,6 +41,11 @@ async def lifespan(app: FastAPI):
     redis = Redis.from_url(settings.redis_url, decode_responses=False)
     object_storage = create_object_storage(settings)
     platform = PlatformRepository(session_factory)
+    trend_repository = TrendRepository(session_factory)
+    trend_providers = create_trend_provider_registry(
+        settings.trend_fixture_path,
+        fixture_enabled=settings.trend_fixture_enabled,
+    )
     await verify_database(session_factory)
     await object_storage.ensure_ready()
     await platform.ensure_workspace(
@@ -48,11 +57,19 @@ async def lifespan(app: FastAPI):
         )
     )
     await platform.seed_providers(_provider_definitions())
+    await trend_repository.seed_sources(trend_providers.definitions())
     app.state.database_engine = engine
     app.state.database_session_factory = session_factory
     app.state.redis = redis
     app.state.object_storage = object_storage
     app.state.platform_repository = platform
+    app.state.trend_repository = trend_repository
+    app.state.trend_provider_registry = trend_providers
+    app.state.trend_intelligence_service = TrendIntelligenceService(
+        trend_repository,
+        trend_providers,
+        platform,
+    )
     app.state.job_store = PostgresJobStore(
         session_factory,
         redis,
@@ -66,8 +83,9 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.3.0", lifespan=lifespan)
+app = FastAPI(title="NPD Video Factory V2 API", version="0.4.0", lifespan=lifespan)
 app.include_router(platform_router)
+app.include_router(trend_router)
 
 
 def store_from(request: Request) -> PostgresJobStore:
@@ -138,6 +156,49 @@ def _provider_definitions() -> list[dict[str, object]]:
             "config_ref": "env:OBJECT_STORAGE_*" if settings.object_storage_provider == "s3" else None,
             "metadata": {"production_supported": settings.object_storage_provider == "s3"},
         },
+        {
+            "provider_key": "fixture-trends",
+            "display_name": "Deterministic Trend Fixtures",
+            "capability": "trend_source",
+            "adapter": "app.trend_providers.FixtureTrendSourceProvider",
+            "routing_mode": "primary" if settings.trend_fixture_enabled else "disabled",
+            "status": "healthy" if settings.trend_fixture_enabled else "not_configured",
+            "enabled": settings.trend_fixture_enabled,
+            "supports_dry_run": True,
+            "config_ref": "bundled:app/fixtures/trend-signals.json",
+            "metadata": {
+                "paid": False,
+                "ci_safe": True,
+                "fixture": True,
+                "authorized_access": settings.trend_fixture_enabled,
+                "creator_media_downloaded": False,
+            },
+        },
+        *[
+            {
+                "provider_key": provider_key,
+                "display_name": display_name,
+                "capability": "trend_source",
+                "adapter": "app.trend_providers.ContractOnlyTrendSourceProvider",
+                "routing_mode": "disabled",
+                "status": "not_configured",
+                "enabled": False,
+                "supports_dry_run": True,
+                "config_ref": config_ref,
+                "metadata": {
+                    "contract_only": True,
+                    "authorized_access": False,
+                    "creator_media_downloaded": False,
+                },
+            }
+            for provider_key, display_name, config_ref in (
+                ("youtube-data-api", "YouTube Data API", "env:YOUTUBE_DATA_API_*"),
+                ("tiktok-authorized-api", "TikTok Authorized Research API", "env:TIKTOK_RESEARCH_API_*"),
+                ("google-trends-authorized", "Google Trends Authorized Provider", "env:GOOGLE_TRENDS_PROVIDER_*"),
+                ("meta-content-library", "Meta Content Library API", "env:META_CONTENT_LIBRARY_*"),
+                ("public-rss", "Public RSS/News Feeds", "file:TREND_RSS_ALLOWLIST_FILE"),
+            )
+        ],
     ]
 
 
@@ -183,6 +244,13 @@ async def capabilities() -> dict[str, object]:
         "object_storage": settings.object_storage_provider,
         "durable_job_state": True,
         "cost_currency": "VND",
+        "trend_radar": True,
+        "idea_intelligence": True,
+        "content_opportunity_queue": True,
+        "trend_provider_mode": "deterministic_fixture" if settings.trend_fixture_enabled else "not_configured",
+        "live_trend_providers_configured": False,
+        "creator_media_download": False,
+        "idea_to_project_state": "draft_only",
     }
 
 

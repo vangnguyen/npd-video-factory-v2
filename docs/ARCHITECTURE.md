@@ -1,4 +1,4 @@
-# Architecture — V2-02
+# Architecture — V2-03
 
 ## Bounded context
 
@@ -7,12 +7,12 @@ V2 imports no AgentHub package and reads no AgentHub database or Redis namespace
 integration must use versioned REST/events or signed webhooks, never shared runtime state.
 
 ```text
-Client / future Studio
+Local Trend Radar Studio
         |
         v
 FastAPI API -------------------------- PostgreSQL
    |   workspace/project/version        canonical jobs/audit/idempotency
-   |   provider/cost/asset metadata
+   |   provider/cost/asset metadata      trend/evidence/cluster/idea/queue
    |
    +----> V2 Redis transient queue ----> Worker ----> Remotion ----> FFmpeg QC
                                             |
@@ -29,6 +29,7 @@ FastAPI API -------------------------- PostgreSQL
 | S3/MinIO | source, generated, metadata and render objects | canonical binary store |
 | job volume | resumable local worker scratch/cache | replaceable |
 | renderer | strict manifest-to-MP4 execution | stateless apart from job scratch |
+| Studio Nginx | responsive Trend Radar assets and same-origin API proxy | stateless |
 
 The Compose project remains `npd-video-factory-v2`. PostgreSQL, Redis and MinIO are V2-owned
 and are not published to the host. API and renderer bind to `127.0.0.1` by default.
@@ -39,6 +40,11 @@ A workspace owns projects. A project owns ordered immutable version snapshots. E
 bound to one workspace/project/version. Every persisted asset records class, type, filename,
 object key, content type, byte size, SHA-256, storage provider, source job and provenance.
 Provider operations use an idempotent operation key and create exactly one VND cost record.
+
+Trend providers normalize only authorized metadata into immutable snapshots/signals and evidence.
+Pure deterministic services cluster signals, assign lifecycle and calculate context-specific score
+profiles. Idea drafts and ranked queue runs are durable planning objects. Selecting an idea creates
+only an immutable draft project snapshot.
 
 ## Durable job rules
 
@@ -52,6 +58,6 @@ Provider operations use an idempotent operation key and create exactly one VND c
 
 ## Safety state
 
-V2-02 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
+V2-03 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
 `HUMAN_APPROVAL_REQUIRED=false`. Successful jobs stop at `awaiting_review`. API auth/RBAC is
 not yet implemented, so this increment is local/CI only and must not be exposed publicly.

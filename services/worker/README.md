@@ -1,6 +1,6 @@
 # NPD Video Factory V2 worker
 
-The V2-02 worker claims IDs from the transient V2 Redis queue, reads canonical jobs from
+The V2-03 worker retains the V2-02 execution contract: it claims IDs from the transient V2 Redis queue, reads canonical jobs from
 PostgreSQL and runs the resumable vertical-slice pipeline:
 
 `niche profile -> content -> storyboard -> Vietnamese TTS -> subtitles -> local assets -> manifest -> Remotion -> QC -> awaiting_review`

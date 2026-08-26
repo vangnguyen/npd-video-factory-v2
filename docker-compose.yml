@@ -81,6 +81,21 @@ services:
       minio:
         condition: service_healthy
 
+  studio-web:
+    build:
+      context: ./apps/studio-web
+    restart: unless-stopped
+    ports:
+      - "${VIDEO_STUDIO_BIND:-127.0.0.1}:${VIDEO_STUDIO_PORT:-3000}:8080"
+    depends_on:
+      api:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/ >/dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
   worker:
     build:
       context: .

@@ -71,6 +71,11 @@ if ! curl --fail --silent http://localhost:3001/healthz >/dev/null; then
   exit 1
 fi
 
+if ! curl --fail --silent http://localhost:3000/ >/dev/null; then
+  echo "Studio health check failed" >&2
+  exit 1
+fi
+
 expected_duration="$("$PYTHON_BIN" -c 'import json; print(json.load(open("examples/vinhomes-green-paradise.request.json", encoding="utf-8"))["video"]["duration_seconds"])')"
 echo "[e2e] creating ${expected_duration}-second video job"
 create_response="$(
@@ -210,6 +215,76 @@ assert event_types.count("job.artifact_recorded") == len(job["artifacts"]), even
 print("[e2e] durable project metadata, VND ledger and audit verified")
 PY
 
+echo "[e2e] collecting deterministic trend evidence and building draft opportunities"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/workspaces/$workspace_id/trend-signals/collect" \
+  -H 'Content-Type: application/json' \
+  --data '{"provider_key":"fixture-trends","country":"VN","language":"vi"}' \
+  > e2e-artifacts/trend-collection.json
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/workspaces/$workspace_id/trend-clusters/refresh" \
+  -H 'Content-Type: application/json' \
+  --data '{"channel":"short-video","niche":"real_estate","business_objective":"lead_generation","as_of":"2026-08-26T08:00:00Z"}' \
+  > e2e-artifacts/trend-clusters.json
+cluster_id="$("$PYTHON_BIN" -c 'import json; d=json.load(open("e2e-artifacts/trend-clusters.json", encoding="utf-8")); print(d[0]["cluster_id"])' | tr -d '\r')"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/trend-clusters/$cluster_id/ideas/generate" \
+  -H 'Content-Type: application/json' \
+  --data '{"channel":"short-video","niche":"real_estate","business_objective":"lead_generation","audience":"Khach hang quan tam bat dong san","cta":"Dang ky nhan tu van","count":6}' \
+  > e2e-artifacts/trend-ideas.json
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/workspaces/$workspace_id/content-opportunities/refresh" \
+  -H 'Content-Type: application/json' \
+  --data '{"channel":"short-video","niche":"real_estate","business_objective":"lead_generation","audience":"Khach hang quan tam bat dong san","cta":"Dang ky nhan tu van","top_n":6,"ideas_per_cluster":3}' \
+  > e2e-artifacts/content-opportunity-queue.json
+idea_id="$("$PYTHON_BIN" -c 'import json; d=json.load(open("e2e-artifacts/trend-ideas.json", encoding="utf-8")); print(d[0]["idea_id"])' | tr -d '\r')"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/ideas/$idea_id/projects" \
+  -H 'Content-Type: application/json' \
+  --data '{}' \
+  > e2e-artifacts/idea-project.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/workspaces/$workspace_id/content-opportunities" \
+  > e2e-artifacts/content-opportunity-queue-before-restart.json
+curl --fail --silent --show-error http://localhost:3000/ > e2e-artifacts/studio-index.html
+curl --fail --silent --show-error -D e2e-artifacts/studio-headers.txt -o /dev/null http://localhost:3000/
+
+"$PYTHON_BIN" - <<'PY'
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+collection = json.loads((root / "trend-collection.json").read_text(encoding="utf-8"))
+clusters = json.loads((root / "trend-clusters.json").read_text(encoding="utf-8"))
+ideas = json.loads((root / "trend-ideas.json").read_text(encoding="utf-8"))
+queue = json.loads((root / "content-opportunity-queue.json").read_text(encoding="utf-8"))
+idea_project = json.loads((root / "idea-project.json").read_text(encoding="utf-8"))
+studio = (root / "studio-index.html").read_text(encoding="utf-8")
+headers = (root / "studio-headers.txt").read_text(encoding="utf-8").casefold()
+
+assert collection["snapshot"]["signal_count"] == 8, collection
+assert collection["snapshot"]["new_signal_count"] == 8, collection
+assert len(collection["signals"]) == 8, collection
+search_signal = next(item for item in collection["signals"] if item["source"] == "google_trends")
+assert search_signal["views"] is None and search_signal["likes"] is None, search_signal
+assert all(item["provenance"]["creator_media_downloaded"] is False for item in collection["signals"])
+assert len(clusters) == 4, clusters
+assert any(item["lifecycle"] == "breakout" for item in clusters), clusters
+assert all(item["score"]["estimated"] is True for item in clusters), clusters
+assert len(ideas) == 6 and len({item["variant_key"] for item in ideas}) == 6, ideas
+assert all(item["status"] == "draft" for item in ideas), ideas
+assert all(item["provenance"]["copied_creator_media"] is False for item in ideas), ideas
+assert len(queue) == 6 and [item["rank"] for item in queue] == list(range(1, 7)), queue
+assert [item["score"] for item in queue] == sorted((item["score"] for item in queue), reverse=True), queue
+assert all(item["state"] == "proposed" and item["provenance"]["execution"] is False for item in queue)
+assert idea_project["status"] == "selected", idea_project
+assert idea_project["project_id"].startswith("prj_"), idea_project
+assert idea_project["project_version_id"].startswith("pver_"), idea_project
+assert "Trend Radar" in studio and "Idea Engine" in studio and "Content Opportunity Queue" in studio
+assert "content-security-policy:" in headers, headers
+print("[e2e] V2-03 trend, idea, queue and Studio contracts verified")
+PY
+
 echo "[e2e] restarting API to verify PostgreSQL recovery"
 "$docker_bin" compose restart api >/dev/null
 ready=0
@@ -225,6 +300,7 @@ if [[ "$ready" != "1" ]]; then
   exit 1
 fi
 curl --fail --silent --show-error "http://localhost:8000/api/v1/video-jobs/$job_id" > e2e-artifacts/job-status-after-restart.json
+curl --fail --silent --show-error "http://localhost:8000/api/v1/workspaces/$workspace_id/content-opportunities" > e2e-artifacts/content-opportunity-queue-after-restart.json
 "$PYTHON_BIN" - <<'PY'
 import json
 from pathlib import Path
@@ -232,8 +308,13 @@ from pathlib import Path
 root = Path("e2e-artifacts")
 before = json.loads((root / "job-status.json").read_text(encoding="utf-8"))
 after = json.loads((root / "job-status-after-restart.json").read_text(encoding="utf-8"))
+queue_before = json.loads(
+    (root / "content-opportunity-queue-before-restart.json").read_text(encoding="utf-8")
+)
+queue_after = json.loads((root / "content-opportunity-queue-after-restart.json").read_text(encoding="utf-8"))
 assert after == before, (before, after)
-print("[e2e] PostgreSQL job recovery verified")
+assert queue_after == queue_before, (queue_before, queue_after)
+print("[e2e] PostgreSQL job and content queue recovery verified")
 PY
 
 "$docker_bin" compose exec -T api python -c '
@@ -307,4 +388,4 @@ for cue, scene in zip(timing["cues"], manifest["scenes"], strict=True):
 print("[e2e] QC verified", json.dumps(qc, ensure_ascii=False))
 PY
 
-echo "[e2e] V2-02 durable project platform passed"
+echo "[e2e] V2-03 Trend Radar and Idea Intelligence passed"
