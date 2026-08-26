@@ -1,0 +1,88 @@
+name: Video Factory V2 CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: video-factory-v2-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python unit and contract tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e "apps/api[dev]" -e "services/worker[dev]"
+      - run: python -m compileall -q apps/api/app services/worker/npd_worker
+      - run: python -m pytest apps/api/tests services/worker/tests -q
+
+  renderer:
+    name: Renderer tests and bundle
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: renderer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: renderer/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run bundle:check
+
+  safety:
+    name: Safety and compose contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cp .env.example .env
+      - run: docker compose config --quiet
+      - name: Verify independent runtime boundary
+        run: |
+          test ! -d services/agent_hub
+          ! grep -R -n -E 'services/agent_hub|from .*agent_hub|import .*agent_hub|AGENT_REDIS|AGENT_STORE' docker-compose.yml .env.example apps services renderer packages
+      - name: Verify fail-closed defaults
+        run: |
+          grep -qx 'PUBLISH_ENABLED=false' .env.example
+          grep -qx 'HUMAN_APPROVAL_REQUIRED=true' .env.example
+      - name: Secret pattern scan
+        run: |
+          if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
+            echo 'Potential secret material detected.' >&2
+            exit 1
+          fi
+      - run: git diff --check
+
+  docker-e2e:
+    name: Docker deterministic E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: bash scripts/e2e-smoke.sh
+      - name: Upload acceptance artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2-01-deterministic-e2e
+          path: e2e-artifacts/
+          if-no-files-found: warn
+          retention-days: 7

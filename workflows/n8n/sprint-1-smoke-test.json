@@ -1,0 +1,138 @@
+{
+  "id": "019ffe50-ec05-7b13-b722-08bbb5e8482b",
+  "name": "NPD Video Factory V2 - Sprint 1 Smoke Test",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "89f77cb5-1fe5-4d8f-8f57-c3dcce6ef34d",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-620, 120]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "base-url", "name": "apiBaseUrl", "value": "http://api:8000/api/v1", "type": "string" },
+            { "id": "request", "name": "request", "value": "={\"topic\":\"Trước khi chọn Vinhomes Green Paradise, hãy kiểm tra 3 điều này\",\"project\":\"vinhomes-green-paradise\",\"niche\":\"real_estate\",\"video\":{\"duration_seconds\":30,\"aspect\":\"9:16\",\"language\":\"vi\",\"template\":\"real-estate-short-v1\"},\"content\":{\"objective\":\"lead_generation\",\"audience\":\"khách hàng quan tâm bất động sản Cần Giờ\",\"tone\":\"nhanh gọn, thực tế, tin cậy, không phóng đại\",\"cta\":\"Nhắn Ngọc Phương Đông để đặt lịch xem mô hình dự án\"},\"media\":{\"source\":\"local\",\"project_asset_folder\":\"vinhomes-green-paradise\",\"minimum_clips\":5,\"allow_stock\":false,\"allow_ai_generation\":false}}", "type": "object" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b13b0961-c8bb-4ad7-9457-d6e2ef8af0ae",
+      "name": "Configure Smoke Test",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-400, 120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.apiBaseUrl }}/video-jobs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Idempotency-Key", "value": "={{ 'npd-smoke-' + $now.toMillis() }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.request }}",
+        "options": {}
+      },
+      "id": "aa30f641-3a6e-4918-8757-7da10a91e187",
+      "name": "Create Video Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-160, 120],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            { "id": "create-error", "leftValue": "={{ !!$json.error || !$json.job_id }}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "03d5986d-2e8c-4dda-8363-70bb4d078dd6",
+      "name": "Create Request Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [60, 120]
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "65fd6f70-5df9-441c-a816-eb77c2cd2e65",
+      "name": "Wait Before Poll",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [300, 200],
+      "webhookId": "cf817936-90c2-4b19-9bd2-d50f27ddbc36"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configure Smoke Test').item.json.apiBaseUrl }}/video-jobs/{{ $('Create Video Job').item.json.job_id }}",
+        "options": {}
+      },
+      "id": "c9c1896c-0469-4403-9f74-4d94805163e8",
+      "name": "Get Job Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [540, 200],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            { "id": "terminal", "leftValue": "={{ ['awaiting_review', 'failed'].includes($json.status) || !!$json.error || $runIndex >= 59 }}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b630e953-fc1d-4bd6-a060-6294d4cb092a",
+      "name": "Terminal Status?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [780, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const job = $json;\nconst timedOut = !['awaiting_review', 'failed'].includes(job.status) && !job.error;\nconst artifacts = Array.isArray(job.artifacts) ? job.artifacts : [];\nconst video = artifacts.find((item) => item.name === 'final.mp4');\nreturn [{ json: {\n  ok: job.status === 'awaiting_review',\n  job_id: job.job_id || null,\n  status: timedOut ? 'timeout' : (job.status || 'failed'),\n  stage: job.stage || null,\n  progress: job.progress ?? null,\n  artifact_url: video?.url || null,\n  error: job.error || (timedOut ? { code: 'SMOKE_TEST_TIMEOUT', message: 'Bounded polling exhausted after 60 attempts / 600 seconds.' } : { code: 'SMOKE_TEST_REQUEST_FAILED', message: 'API request failed.' })\n} }];"
+      },
+      "id": "88ace129-e66d-40e9-861d-a1c1bcdf8f87",
+      "name": "Return Smoke Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1020, 80]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Configure Smoke Test", "type": "main", "index": 0 }]] },
+    "Configure Smoke Test": { "main": [[{ "node": "Create Video Job", "type": "main", "index": 0 }]] },
+    "Create Video Job": { "main": [[{ "node": "Create Request Failed?", "type": "main", "index": 0 }]] },
+    "Create Request Failed?": { "main": [[{ "node": "Return Smoke Result", "type": "main", "index": 0 }], [{ "node": "Wait Before Poll", "type": "main", "index": 0 }]] },
+    "Wait Before Poll": { "main": [[{ "node": "Get Job Status", "type": "main", "index": 0 }]] },
+    "Get Job Status": { "main": [[{ "node": "Terminal Status?", "type": "main", "index": 0 }]] },
+    "Terminal Status?": { "main": [[{ "node": "Return Smoke Result", "type": "main", "index": 0 }], [{ "node": "Wait Before Poll", "type": "main", "index": 0 }]] }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

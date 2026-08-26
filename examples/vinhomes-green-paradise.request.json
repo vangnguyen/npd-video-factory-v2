@@ -1,0 +1,24 @@
+{
+  "topic": "Trước khi chọn Vinhomes Green Paradise, hãy kiểm tra 3 điều này",
+  "project": "vinhomes-green-paradise",
+  "niche": "real_estate",
+  "video": {
+    "duration_seconds": 30,
+    "aspect": "9:16",
+    "language": "vi",
+    "template": "real-estate-short-v1"
+  },
+  "content": {
+    "objective": "lead_generation",
+    "audience": "khách hàng quan tâm bất động sản Cần Giờ",
+    "tone": "nhanh gọn, thực tế, tin cậy, không phóng đại",
+    "cta": "Nhắn Ngọc Phương Đông để đặt lịch xem mô hình dự án"
+  },
+  "media": {
+    "source": "local",
+    "project_asset_folder": "vinhomes-green-paradise",
+    "minimum_clips": 5,
+    "allow_stock": false,
+    "allow_ai_generation": false
+  }
+}
