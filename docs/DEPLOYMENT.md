@@ -1,6 +1,6 @@
-# Deployment — V2-01
+# Deployment — V2-02
 
-V2-01 is a development/CI extraction and is not approved for production deployment.
+V2-02 is a development/CI platform increment and is not approved for production deployment.
 
 ## Dev/CI
 
@@ -11,15 +11,24 @@ curl --fail http://localhost:8000/readyz
 curl --fail http://localhost:8000/api/v1/capabilities
 ```
 
-Expected services: `redis`, `api`, `worker`, `renderer`. No AgentHub, n8n, Caddy, CRM or
-shared Redis service is created. Stop with `docker compose down`; add `-v` only when the
-explicit intent is to remove this V2 development Redis volume.
+Services are `postgres`, `redis`, `minio`, one-shot `migrate`, `api`, `worker` and
+`renderer`. No AgentHub, n8n, Caddy, CRM or shared Redis service is created. Stop with
+`docker compose down`; add `-v` only for an explicitly disposable development stack.
+
+Local/CI MinIO uses a pinned official image tag. Production must provide a separately owned
+S3-compatible endpoint and credentials through a secret manager, not `.env` in Git.
 
 ## Production gate
 
-Production requires a separate owner-approved PR/task, backup/rollback plan, unique host
-ports, unique storage paths, V2-owned PostgreSQL/object storage/Redis, isolated network and
-guarded reverse-proxy change. Extraction does not modify any existing NPD production service.
+Before any production proposal, a separate owner-approved PR/task must add and verify:
 
-CPU services must remain able to start without future GPU/ComfyUI services. GPU provisioning,
-real TTS, human Vietnamese voice acceptance and publishing are separate manual gates.
+1. authentication, RBAC and tenant/workspace authorization;
+2. managed or backed-up PostgreSQL and S3-compatible storage;
+3. unique network, host ports and object bucket with retention/lifecycle policy;
+4. backup/restore drill for PostgreSQL plus object-store consistency;
+5. guarded deployment, rollback image, TLS route and public smoke;
+6. resource limits, monitoring and incident runbook;
+7. Vietnamese human voice acceptance for any production TTS;
+8. explicit owner gate for every paid provider or publishing capability.
+
+This branch changes no existing NPD production service and must not be deployed as-is.

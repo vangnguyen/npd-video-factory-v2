@@ -84,6 +84,14 @@ printf '%s\n' "$create_response" > e2e-artifacts/create-response.json
 job_id="$(printf '%s' "$create_response" | "$PYTHON_BIN" -c 'import json,sys; print(json.load(sys.stdin)["job_id"])' | tr -d '\r')"
 echo "[e2e] job_id=$job_id"
 
+printf '%s' "$create_response" | "$PYTHON_BIN" -c '
+import json, sys
+d = json.load(sys.stdin)
+assert d["workspace_id"].startswith("wsp_"), d
+assert d["project_id"].startswith("prj_"), d
+assert d["project_version_id"].startswith("pver_"), d
+'
+
 terminal=0
 for attempt in $(seq 1 120); do
   status_json="$(curl --fail --silent --show-error "http://localhost:8000/api/v1/video-jobs/$job_id")"
@@ -123,6 +131,136 @@ cp "$job_dir/video-manifest.json" e2e-artifacts/video-manifest.json
 cp "$job_dir/narration.wav" e2e-artifacts/narration.wav
 cp "$job_dir/narration-timing.json" e2e-artifacts/narration-timing.json
 cp "$job_dir/subtitles.srt" e2e-artifacts/subtitles.srt
+
+workspace_id="$(printf '%s' "$status_json" | "$PYTHON_BIN" -c 'import json,sys; print(json.load(sys.stdin)["workspace_id"])' | tr -d '\r')"
+project_id="$(printf '%s' "$status_json" | "$PYTHON_BIN" -c 'import json,sys; print(json.load(sys.stdin)["project_id"])' | tr -d '\r')"
+project_version_id="$(printf '%s' "$status_json" | "$PYTHON_BIN" -c 'import json,sys; print(json.load(sys.stdin)["project_version_id"])' | tr -d '\r')"
+
+curl --fail --silent --show-error "http://localhost:8000/api/v1/workspaces/$workspace_id" > e2e-artifacts/workspace.json
+curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$project_id" > e2e-artifacts/project.json
+curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$project_id/versions" > e2e-artifacts/project-versions.json
+curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$project_id/assets" > e2e-artifacts/project-assets.json
+curl --fail --silent --show-error "http://localhost:8000/api/v1/providers" > e2e-artifacts/providers.json
+curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$project_id/costs" > e2e-artifacts/cost-records.json
+curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$project_id/cost-summary" > e2e-artifacts/cost-summary.json
+curl --fail --silent --show-error "http://localhost:8000/api/v1/video-jobs/$job_id/events" > e2e-artifacts/job-events.json
+
+replay_response="$(
+  curl --fail --silent --show-error \
+    -X POST http://localhost:8000/api/v1/video-jobs \
+    -H 'Content-Type: application/json' \
+    -H 'Idempotency-Key: github-actions-sprint-1-e2e' \
+    --data-binary @examples/vinhomes-green-paradise.request.json
+)"
+printf '%s\n' "$replay_response" > e2e-artifacts/idempotency-replay.json
+
+"$PYTHON_BIN" - <<'PY'
+import json
+from decimal import Decimal
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+create = json.loads((root / "create-response.json").read_text(encoding="utf-8"))
+job = json.loads((root / "job-status.json").read_text(encoding="utf-8"))
+workspace = json.loads((root / "workspace.json").read_text(encoding="utf-8"))
+project = json.loads((root / "project.json").read_text(encoding="utf-8"))
+versions = json.loads((root / "project-versions.json").read_text(encoding="utf-8"))
+assets = json.loads((root / "project-assets.json").read_text(encoding="utf-8"))
+providers = json.loads((root / "providers.json").read_text(encoding="utf-8"))
+costs = json.loads((root / "cost-records.json").read_text(encoding="utf-8"))
+summary = json.loads((root / "cost-summary.json").read_text(encoding="utf-8"))
+events = json.loads((root / "job-events.json").read_text(encoding="utf-8"))
+replay = json.loads((root / "idempotency-replay.json").read_text(encoding="utf-8"))
+
+assert replay["job_id"] == create["job_id"], (replay, create)
+assert workspace["workspace_id"] == job["workspace_id"]
+assert project["project_id"] == job["project_id"]
+assert project["current_version_id"] == job["project_version_id"]
+assert versions and versions[0]["project_version_id"] == job["project_version_id"]
+assert all(
+    artifact.get("asset_id")
+    and artifact.get("object_key")
+    and artifact.get("checksum_sha256")
+    and artifact.get("storage_provider") == "s3"
+    for artifact in job["artifacts"]
+), job["artifacts"]
+assert len(assets) == len(job["artifacts"]), (len(assets), len(job["artifacts"]))
+assert {asset["asset_id"] for asset in assets} == {item["asset_id"] for item in job["artifacts"]}
+provider_keys = {(item["provider_key"], item["capability"]) for item in providers}
+assert {
+    ("deterministic-content", "content"),
+    ("espeak", "tts"),
+    ("openai-tts", "tts"),
+    ("remotion", "rendering"),
+    ("s3", "object_storage"),
+}.issubset(provider_keys), provider_keys
+assert len(costs) == 3, costs
+assert all(item["currency"] == "VND" for item in costs), costs
+assert summary["project_id"] == job["project_id"], summary
+assert summary["currency"] == "VND", summary
+assert Decimal(str(summary["estimated_cost"])) == 0, summary
+assert Decimal(str(summary["actual_cost"])) == 0, summary
+assert summary["unpriced_operations"] == 0, summary
+assert summary["needs_approval"] is False, summary
+assert summary["records"] == 3, summary
+event_types = [item["event_type"] for item in events]
+assert event_types[0] == "job.created", event_types
+assert "job.transitioned" in event_types, event_types
+assert event_types.count("job.artifact_recorded") == len(job["artifacts"]), event_types
+print("[e2e] durable project metadata, VND ledger and audit verified")
+PY
+
+echo "[e2e] restarting API to verify PostgreSQL recovery"
+"$docker_bin" compose restart api >/dev/null
+ready=0
+for _ in $(seq 1 45); do
+  if curl --fail --silent http://localhost:8000/readyz >/dev/null; then
+    ready=1
+    break
+  fi
+  sleep 2
+done
+if [[ "$ready" != "1" ]]; then
+  echo "API did not recover after restart" >&2
+  exit 1
+fi
+curl --fail --silent --show-error "http://localhost:8000/api/v1/video-jobs/$job_id" > e2e-artifacts/job-status-after-restart.json
+"$PYTHON_BIN" - <<'PY'
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+before = json.loads((root / "job-status.json").read_text(encoding="utf-8"))
+after = json.loads((root / "job-status-after-restart.json").read_text(encoding="utf-8"))
+assert after == before, (before, after)
+print("[e2e] PostgreSQL job recovery verified")
+PY
+
+"$docker_bin" compose exec -T api python -c '
+from pathlib import Path
+import sys
+
+root = Path("/workspace/storage/jobs").resolve()
+target = Path(sys.argv[1]).resolve()
+assert target.name == "final.mp4" and target.parent.parent == root, target
+target.unlink()
+' "/workspace/storage/jobs/$job_id/final.mp4"
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/video-jobs/$job_id/artifacts/final.mp4" \
+  --output e2e-artifacts/recovered-final.mp4
+"$PYTHON_BIN" - <<'PY'
+import hashlib
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+job = json.loads((root / "job-status.json").read_text(encoding="utf-8"))
+video = next(item for item in job["artifacts"] if item["name"] == "final.mp4")
+recovered = root / "recovered-final.mp4"
+assert hashlib.sha256(recovered.read_bytes()).hexdigest() == video["checksum_sha256"], video
+assert hashlib.sha256((root / "final.mp4").read_bytes()).hexdigest() == video["checksum_sha256"], video
+print("[e2e] MinIO artifact recovery verified")
+PY
 
 "$docker_bin" compose exec -T worker ffmpeg -hide_banner -loglevel error -y \
   -i "/workspace/storage/jobs/$job_id/final.mp4" \
@@ -169,4 +307,4 @@ for cue, scene in zip(timing["cues"], manifest["scenes"], strict=True):
 print("[e2e] QC verified", json.dumps(qc, ensure_ascii=False))
 PY
 
-echo "[e2e] Sprint 1 vertical slice passed"
+echo "[e2e] V2-02 durable project platform passed"

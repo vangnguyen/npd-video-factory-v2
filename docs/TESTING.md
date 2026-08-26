@@ -1,16 +1,12 @@
-# Testing — V2-01
+# Testing — V2-02
 
 ## Local checks
-
-Python 3.12+:
 
 ```bash
 python -m pip install -e "apps/api[dev]" -e "services/worker[dev]"
 python -m compileall -q apps/api/app services/worker/npd_worker
 python -m pytest apps/api/tests services/worker/tests -q
 ```
-
-Renderer (Node 22):
 
 ```bash
 cd renderer
@@ -20,35 +16,31 @@ npm run typecheck
 npm run bundle:check
 ```
 
-Independent Docker flow:
+Independent Docker acceptance:
 
 ```bash
 bash scripts/e2e-smoke.sh
 ```
 
-## E2E acceptance
+## Durable acceptance
 
-The script creates five visible, copyright-safe PNG fixtures and one deterministic job. It
-must reach `awaiting_review` and produce at least:
+The E2E creates five copyright-safe fixtures and one deterministic job, then verifies:
 
-- `script.json`, `storyboard.json`;
-- `narration.wav`, `narration-timing.json`, `subtitles.srt`;
-- `video-manifest.json`, `final.mp4`, `qc.json`;
-- contact sheet and Compose logs in the CI artifact bundle.
+- Alembic migration and healthy PostgreSQL, Redis and MinIO;
+- workspace/project/version binding and idempotent job replay;
+- monotonic job transitions and complete audit events;
+- source/generated/render/metadata assets with SHA-256 and S3 object keys;
+- provider registry and exactly one VND record per provider operation;
+- API restart recovery from PostgreSQL;
+- deletion of local `final.mp4` followed by checksum-valid recovery from MinIO;
+- 1080x1920 H.264, audio, duration, luminance/black ratio and subtitle timing.
 
-Assertions cover 1080x1920 H.264, audio presence, duration tolerance, minimum size, decoded
-luminance/black ratio, decoded audio level and exact scene-aligned subtitle cues.
+The script removes only its disposable Compose volumes on exit. Normal CI performs no paid
+call. The manual paid-provider smoke still requires explicit dispatch, protected-environment
+approval and a secret; it is not human Vietnamese voice acceptance.
 
 ## CI gates
 
-`Video Factory V2 CI` runs four independent gates:
-
-1. Python unit/contract tests and compile;
-2. renderer tests, typecheck and Remotion bundle;
-3. Compose/safety/secret contract;
-4. Docker deterministic E2E.
-
-Normal CI performs no paid network call. `Manual paid-provider smoke` only runs when the
-dispatcher types `APPROVED`, the protected environment is authorized and its secret exists.
-That smoke is not human voice acceptance; a Vietnamese listener must approve production
-voice quality separately.
+`Video Factory V2 CI` runs Python plus Alembic upgrade/downgrade/replay, renderer tests and
+bundle, safety/secret/Compose checks, and the durable Docker E2E. A stacked PR must be
+retargeted to the latest approved base and rerun all gates before merge consideration.

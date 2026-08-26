@@ -1,71 +1,57 @@
-# Architecture — V2-01
+# Architecture — V2-02
 
 ## Bounded context
 
 Video Factory V2 is the media execution plane. AgentHub remains a separate control plane.
-V2 imports no AgentHub packages and reads no AgentHub database or Redis namespace. A future
-integration may use versioned REST, signed webhooks and versioned event contracts only.
+V2 imports no AgentHub package and reads no AgentHub database or Redis namespace. A future
+integration must use versioned REST/events or signed webhooks, never shared runtime state.
 
 ```text
 Client / future Studio
         |
         v
-FastAPI video-job API ---- V2-owned Redis queue/state
-        |                         |
-        |                         v
-        +-------------------- Video worker
-                                  | content profile
-                                  | local asset resolver
-                                  | TTS + subtitle timing
-                                  | manifest validation
-                                  v
-                            Remotion renderer
-                                  |
-                                  v
-                         FFmpeg/FFprobe QC
-                                  |
-                                  v
-                         awaiting_review artifact
+FastAPI API -------------------------- PostgreSQL
+   |   workspace/project/version        canonical jobs/audit/idempotency
+   |   provider/cost/asset metadata
+   |
+   +----> V2 Redis transient queue ----> Worker ----> Remotion ----> FFmpeg QC
+                                            |
+                                            +-------> S3-compatible object storage
+                                                       (MinIO in local/CI)
 ```
 
-## Runtime services
+## Ownership and persistence
 
-| Service | Responsibility | Persistence |
+| Component | Owns | Durability |
 |---|---|---|
-| `api` | Validate/enqueue jobs; expose state and safe artifacts | Redis + job artifact volume |
-| `worker` | Deterministic pipeline and recovery | Redis + job artifact volume |
-| `renderer` | Strict manifest validation and MP4 render | job artifact volume |
-| `redis` | V2-only job queue/state | dedicated Compose volume with AOF |
+| PostgreSQL | workspace, project, version, canonical job, events, idempotency, assets, providers, usage and cost | canonical |
+| Redis | pending and processing delivery queues | transient/recoverable |
+| S3/MinIO | source, generated, metadata and render objects | canonical binary store |
+| job volume | resumable local worker scratch/cache | replaceable |
+| renderer | strict manifest-to-MP4 execution | stateless apart from job scratch |
 
-The Compose project is `npd-video-factory-v2`; Redis is not published to the host. API and
-renderer bind to `127.0.0.1` by default.
+The Compose project remains `npd-video-factory-v2`. PostgreSQL, Redis and MinIO are V2-owned
+and are not published to the host. API and renderer bind to `127.0.0.1` by default.
 
-## Multi-niche boundary
+## Domain and provenance
 
-`VideoJobCreate.niche` selects a `NicheProfile`. The deterministic provider consumes that
-profile; the job engine, state machine, assets, renderer and QC do not inspect business
-niche. `vertical-short-v1` is the generic core template. `real-estate-short-v1` remains a
-backward-compatible adapter that uses the same renderer component.
+A workspace owns projects. A project owns ordered immutable version snapshots. Every job is
+bound to one workspace/project/version. Every persisted asset records class, type, filename,
+object key, content type, byte size, SHA-256, storage provider, source job and provenance.
+Provider operations use an idempotent operation key and create exactly one VND cost record.
 
-V2-01 supports one vertical output contract (`9:16`, 1080x1920, Vietnamese) to preserve
-verified parity. More channel, brand, language and video templates belong in the durable
-provider/profile registry in V2-02, not ad-hoc conditionals in the engine.
+## Durable job rules
 
-## State and recovery
-
-The API persists strict job records and idempotency keys in the V2 Redis instance. The
-worker atomically claims jobs into a processing list and requeues in-flight IDs on restart.
-Artifacts are written per safe `vid_*` directory; valid existing artifacts are reused.
-There is no migration of old Redis keys.
+- PostgreSQL is the source of truth; Redis never stores canonical job JSON.
+- Progress and stage transitions are monotonic and row-locked.
+- Creation, transitions, artifact registration and failure are audit events.
+- Idempotency keys are stored only as SHA-256 hashes with expiry.
+- A worker restart requeues claimed jobs; an API restart reads the same job from PostgreSQL.
+- Missing local artifacts may be restored from object storage and must pass the recorded
+  SHA-256 before being served.
 
 ## Safety state
 
-V2-01 has no publish provider or publish endpoint. Startup rejects
-`PUBLISH_ENABLED=true` and rejects `HUMAN_APPROVAL_REQUIRED=false`. Successful jobs stop at
-`awaiting_review`. External provider smoke is a separately dispatched, owner-gated workflow.
-
-## Next architecture increment
-
-V2-02 introduces PostgreSQL project/workspace records, object storage, asset versioning,
-durable provider/cost records and explicit dev/CI/production CPU deployment profiles while
-preserving the V2-01 API and manifest compatibility contract.
+V2-02 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
+`HUMAN_APPROVAL_REQUIRED=false`. Successful jobs stop at `awaiting_review`. API auth/RBAC is
+not yet implemented, so this increment is local/CI only and must not be exposed publicly.
