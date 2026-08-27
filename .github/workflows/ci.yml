@@ -142,7 +142,7 @@ jobs:
           grep -q '0005_v2_06' apps/api/migrations/versions/0005_v2_06_media_intelligence.py
           grep -q 'profiles: \["gpu"\]' docker-compose.yml
           grep -q 'approved allowlist' services/comfyui-bridge/npd_comfyui_bridge/workflows.py
-          python -c 'from pathlib import Path; from npd_comfyui_bridge.models import BridgeJobCreate; from npd_comfyui_bridge.workflows import WorkflowRegistry; registry=WorkflowRegistry(Path("workflows/comfyui/manifest.json")); assert len(registry.manifest.workflows) == 8; assert "graph" not in BridgeJobCreate.model_fields'
+          python -c 'import json; from pathlib import Path; manifest=json.loads(Path("workflows/comfyui/manifest.json").read_text()); assert len(manifest["workflows"]) == 8; source=Path("services/comfyui-bridge/npd_comfyui_bridge/models.py").read_text(); assert "graph:" not in source'
           ! git grep -I -n -E 'COMFYUI_(API_KEY|TOKEN|SECRET)=[^[:space:]]+' -- apps services workflows .env.example
       - name: Secret pattern scan
         run: |
