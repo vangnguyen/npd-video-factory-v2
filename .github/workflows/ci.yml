@@ -88,6 +88,8 @@ jobs:
           grep -qx 'HUMAN_APPROVAL_REQUIRED=true' .env.example
           grep -qx 'TREND_FIXTURE_ENABLED=true' .env.example
           grep -qx 'AUTO_EDIT_FIXTURE_ENABLED=true' .env.example
+          grep -qx 'VISION_FIXTURE_ENABLED=true' .env.example
+          grep -qx 'VISION_PROVIDER=fixture' .env.example
       - name: Verify V2-owned durable services and VND-only ledger
         run: |
           grep -q '^  postgres:' docker-compose.yml
@@ -112,6 +114,17 @@ jobs:
           grep -Fq 'original_evidence": True' apps/api/app/auto_edit_providers.py
           grep -q '0003_v2_04' apps/api/migrations/versions/0003_v2_04_auto_edit_analysis.py
           grep -q 'ffmpeg' apps/api/Dockerfile
+      - name: Verify V2-05 structured Vision and non-destructive reframe boundary
+        run: |
+          grep -Fq 'source_media_mutated: Literal[False] = False' apps/api/app/vision_models.py
+          grep -Fq 'publish_requested: Literal[False] = False' apps/api/app/vision_models.py
+          grep -Fq 'paid_external_call: Literal[False] = False' apps/api/app/vision_models.py
+          grep -Fq 'class ContractOnlyVisionProvider' apps/api/app/vision_providers.py
+          grep -Fq 'real_provider_tested": False' apps/api/app/vision_providers.py
+          grep -Fq 'estimated_cost=Decimal("0")' apps/api/app/vision_service.py
+          grep -Fq 'external or paid Vision execution is disabled in V2-05' apps/api/app/vision_service.py
+          grep -q '0004_v2_05' apps/api/migrations/versions/0004_v2_05_vision_smart_reframe.py
+          ! git grep -I -n -E 'VISION_(API_KEY|TOKEN|SECRET)=[^[:space:]]+' -- .
       - name: Secret pattern scan
         run: |
           if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
@@ -134,7 +147,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v2-04-auto-edit-analysis-e2e
+          name: v2-05-vision-smart-reframe-e2e
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 7

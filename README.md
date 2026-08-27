@@ -1,10 +1,10 @@
 # NPD Video Factory V2
 
-NPD Video Factory V2 is an independent media execution platform. V2-04 keeps the durable
-video and Trend/Idea platform, then adds a non-destructive Auto Edit Analysis backbone for
-uploaded footage.
+NPD Video Factory V2 is an independent media execution platform. V2-05 keeps the durable
+video, Trend/Idea and Auto Edit platform, then adds structured Vision evidence and
+non-destructive Smart Reframe plans for uploaded footage.
 
-## V2-04 status
+## V2-05 status
 
 Implemented and locally acceptance-tested:
 
@@ -29,10 +29,19 @@ Implemented and locally acceptance-tested:
 - combined scene evidence, non-destructive silence decisions that never cut through words,
   and explainable Top 3/Top 5 highlight recommendations;
 - PostgreSQL recovery for upload, transcript, scene, silence and highlight state.
+- a provider-neutral Vision contract with a deterministic local/CI fixture and an explicit
+  `not_configured` live-provider adapter;
+- structured frame, OCR, object, composition and quality evidence with provider/model/confidence;
+- scene insights, subject tracks, best-frame ranking and thumbnail candidates;
+- smooth crop keyframes for `9:16`, `16:9`, `1:1` and `4:5`, subtitle-safe configuration,
+  manual overrides and low-confidence center-crop fallback;
+- PostgreSQL recovery for Vision evidence and reframe plans, with an idempotent zero-VND fixture
+  provider operation.
 
-Not implemented in V2-04: transcript editing UI, smart reframe/Vision AI, editable timeline,
-API authentication/RBAC, live transcription credentials, publishing, analytics/learning loops,
-GPU generation or a production rollout. Those remain later, separately gated increments.
+Not implemented in V2-05: real Vision credentials/accuracy acceptance, reframe rendering,
+transcript/crop editing UI, editable timeline, API authentication/RBAC, publishing,
+analytics/learning loops, GPU generation or a production rollout. Those remain later,
+separately gated increments.
 
 ## Safety boundary
 
@@ -41,6 +50,8 @@ GPU generation or a production rollout. Those remain later, separately gated inc
 - `PUBLISH_ENABLED=false` and `HUMAN_APPROVAL_REQUIRED=true` are enforced at startup.
 - Normal CI uses deterministic providers and makes no paid call.
 - Auto Edit outputs decisions only; uploaded source bytes are immutable.
+- Vision fixture output is explicitly mock evidence; live Vision remains `not_configured`.
+- Smart Reframe stores decision keyframes only and never changes source media.
 - Trend references are metadata-only; creator media is never downloaded or copied.
 - No secrets or production media are included.
 
@@ -55,9 +66,9 @@ bash scripts/e2e-smoke.sh
 
 The E2E creates copyright-safe media and trend fixtures, migrates PostgreSQL, renders one MP4,
 verifies Trend -> Ideas -> Queue -> Draft Project, uploads the MP4 through the resumable API,
-persists transcript/scene/silence/highlight evidence, restarts the API, restores the final
-artifact from MinIO and validates decoded video/audio quality. Its temporary stack and volumes
-are removed on exit.
+persists transcript/scene/silence/highlight and Vision/reframe evidence, restarts the API,
+restores the final artifact from MinIO and validates decoded video/audio quality. Its temporary
+stack and volumes are removed on exit.
 
 Useful endpoints after `docker compose up -d --build`:
 
@@ -71,6 +82,7 @@ Useful endpoints after `docker compose up -d --build`:
 - `GET http://localhost:8000/api/v1/workspaces/{workspace_id}/trend-clusters`
 - `POST http://localhost:8000/api/v1/uploads/init`
 - `POST http://localhost:8000/api/v1/projects/{project_id}/analyze`
+- `POST http://localhost:8000/api/v1/projects/{project_id}/analyses/{analysis_id}/vision`
 - `GET http://localhost:3000` (local Trend Radar Studio)
 
 See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
@@ -78,5 +90,6 @@ See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
 [Security](docs/SECURITY.md), [Trend Radar](docs/TREND_RADAR.md),
 [Idea Intelligence](docs/IDEA_INTELLIGENCE.md),
 [Auto Edit Analysis](docs/AUTO_EDIT_ANALYSIS.md),
-[V2-04 acceptance](docs/V2_04_ACCEPTANCE.md), [V2-03 acceptance](docs/V2_03_ACCEPTANCE.md) and the
+[Vision and Smart Reframe](docs/VISION_SMART_REFRAME.md),
+[V2-05 acceptance](docs/V2_05_ACCEPTANCE.md), [V2-04 acceptance](docs/V2_04_ACCEPTANCE.md) and the
 [V2 master specification](docs/CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md).

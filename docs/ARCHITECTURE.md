@@ -1,4 +1,4 @@
-# Architecture — V2-04
+# Architecture — V2-05
 
 ## Bounded context
 
@@ -14,6 +14,7 @@ FastAPI API -------------------------- PostgreSQL
    |   workspace/project/version        canonical jobs/audit/idempotency
    |   provider/cost/asset metadata      trend/evidence/cluster/idea/queue
    |   upload/transcript/scene/silence/highlight
+   |   vision-frame/OCR/quality/track/reframe evidence
    |
    +----> V2 Redis transient queue ----> Worker ----> Remotion ----> FFmpeg QC
                                             |
@@ -25,7 +26,7 @@ FastAPI API -------------------------- PostgreSQL
 
 | Component | Owns | Durability |
 |---|---|---|
-| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload and Auto Edit analysis state | canonical |
+| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload, Auto Edit and Vision/reframe state | canonical |
 | Redis | pending and processing delivery queues | transient/recoverable |
 | S3/MinIO | source, generated, metadata and render objects | canonical binary store |
 | job volume | resumable local worker scratch/cache | replaceable |
@@ -53,6 +54,13 @@ storage. PostgreSQL holds the upload receipt. Auto Edit downloads a scratch copy
 persists normalized transcript/scene/silence/highlight evidence and removes only that scratch copy.
 It never changes or replaces the source object.
 
+V2-05 starts only from a succeeded Auto Edit analysis and the same immutable source asset. A
+provider emits structured frame evidence. Pure deterministic services normalize frames, combine
+them with existing scenes, build subject tracks, rank candidate frames and generate smoothed crop
+keyframes for four ratios. The service persists these decisions under a source/provider/config
+fingerprint, records the provider operation in VND, and deletes its bounded scratch copy. A manual
+override creates a new fingerprint; historical analyses are not overwritten.
+
 ## Durable job rules
 
 - PostgreSQL is the source of truth; Redis never stores canonical job JSON.
@@ -65,6 +73,8 @@ It never changes or replaces the source object.
 
 ## Safety state
 
-V2-04 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
+V2-05 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
 `HUMAN_APPROVAL_REQUIRED=false`. Successful jobs stop at `awaiting_review`. API auth/RBAC is
-not yet implemented, so this increment is local/CI only and must not be exposed publicly.
+not yet implemented, so this increment is local/CI only and must not be exposed publicly. The
+Vision fixture is rejected in production, and its mock provenance must not be interpreted as real
+pixel-model accuracy evidence.

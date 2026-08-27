@@ -1,4 +1,4 @@
-# Cost control — V2-04
+# Cost control — V2-05
 
 VND is the only accepted cost currency in Pydantic contracts, ORM defaults and the database
 check constraint. USD is not a supported runtime currency.
@@ -17,9 +17,10 @@ All live trend providers are `not_configured`; enabling one later requires an ex
 contract, budget/approval policy and idempotent usage record. Unknown provider cost must remain
 unpriced, never converted from or displayed as USD.
 
-V2-04 deterministic transcription and media-signal providers each record an idempotent `0 VND`
-operation. The contract-only live transcription provider fails with `PROVIDER_NOT_CONFIGURED`;
-it cannot silently incur cost. Any later live provider requires a VND price contract and owner gate.
+V2-05 deterministic transcription, media-signal and Vision providers each record an idempotent
+`0 VND` operation. Contract-only live transcription and Vision providers fail with
+`PROVIDER_NOT_CONFIGURED`; they cannot silently incur cost. Any later live provider requires a VND
+price contract and owner gate.
 
 The real-provider smoke still requires manual dispatch text `APPROVED`, protected-environment
 approval and a configured secret. Publishing, GPU generation and scale tests remain disabled

@@ -1,6 +1,6 @@
-# Deployment — V2-04
+# Deployment — V2-05
 
-V2-04 is a development/CI platform increment and is not approved for production deployment.
+V2-05 is a development/CI platform increment and is not approved for production deployment.
 
 ## Dev/CI
 
@@ -32,9 +32,12 @@ Before any production proposal, a separate owner-approved PR/task must add and v
 6. resource limits, monitoring and incident runbook;
 7. Vietnamese human voice acceptance for any production TTS;
 8. explicit owner gate for every paid provider or publishing capability.
-9. upload malware scanning/quarantine, API rate limits and workspace authorization.
+9. upload malware scanning/quarantine, API rate limits and workspace authorization;
+10. owner-approved live Vision adapter, credential isolation, paid-call budget and real-media
+    OCR/tracking/reframe accuracy acceptance.
 
-V2-04 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
+V2-05 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
+`VISION_FIXTURE_ENABLED=false`, `VISION_PROVIDER=contract`,
 `TRANSCRIPTION_PROVIDER=contract` (until a live adapter is approved) and
 `AUTO_EDIT_SIGNAL_PROVIDER=ffmpeg` for production. This branch changes no existing NPD production
 service and must not be deployed as-is.

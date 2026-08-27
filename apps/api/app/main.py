@@ -35,6 +35,10 @@ from .trend_providers import create_trend_provider_registry
 from .trend_repository import TrendRepository
 from .trend_routes import router as trend_router
 from .trend_service import TrendIntelligenceService
+from .vision_providers import ContractOnlyVisionProvider, DeterministicVisionProvider
+from .vision_repository import VisionRepository
+from .vision_routes import router as vision_router
+from .vision_service import VisionAnalysisService
 
 
 def new_job_id() -> str:
@@ -48,6 +52,7 @@ async def lifespan(app: FastAPI):
     settings.asset_storage_root.mkdir(parents=True, exist_ok=True)
     settings.upload_staging_root.mkdir(parents=True, exist_ok=True)
     settings.analysis_staging_root.mkdir(parents=True, exist_ok=True)
+    settings.vision_staging_root.mkdir(parents=True, exist_ok=True)
     engine = create_engine(settings.database_url)
     session_factory = create_session_factory(engine)
     redis = Redis.from_url(settings.redis_url, decode_responses=False)
@@ -55,6 +60,7 @@ async def lifespan(app: FastAPI):
     platform = PlatformRepository(session_factory)
     trend_repository = TrendRepository(session_factory)
     auto_edit_repository = AutoEditRepository(session_factory)
+    vision_repository = VisionRepository(session_factory)
     trend_providers = create_trend_provider_registry(
         settings.trend_fixture_path,
         fixture_enabled=settings.trend_fixture_enabled,
@@ -78,6 +84,7 @@ async def lifespan(app: FastAPI):
     app.state.platform_repository = platform
     app.state.trend_repository = trend_repository
     app.state.auto_edit_repository = auto_edit_repository
+    app.state.vision_repository = vision_repository
     app.state.trend_provider_registry = trend_providers
     app.state.trend_intelligence_service = TrendIntelligenceService(
         trend_repository,
@@ -119,6 +126,19 @@ async def lifespan(app: FastAPI):
         signal_provider=signal_provider,
         staging_root=settings.analysis_staging_root,
     )
+    vision_provider = (
+        DeterministicVisionProvider()
+        if settings.vision_provider == "fixture"
+        else ContractOnlyVisionProvider()
+    )
+    app.state.vision_analysis_service = VisionAnalysisService(
+        repository=vision_repository,
+        auto_edit_repository=auto_edit_repository,
+        platform=platform,
+        object_storage=object_storage,
+        provider=vision_provider,
+        staging_root=settings.vision_staging_root,
+    )
     try:
         yield
     finally:
@@ -126,10 +146,11 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.5.0", lifespan=lifespan)
+app = FastAPI(title="NPD Video Factory V2 API", version="0.6.0", lifespan=lifespan)
 app.include_router(platform_router)
 app.include_router(trend_router)
 app.include_router(auto_edit_router)
+app.include_router(vision_router)
 
 
 def store_from(request: Request) -> PostgresJobStore:
@@ -249,6 +270,35 @@ def _provider_definitions() -> list[dict[str, object]]:
             "metadata": {"paid": False, "production_supported": True, "fixture": False},
         },
         {
+            "provider_key": "fixture-vision",
+            "display_name": "Deterministic Structured Vision Fixture",
+            "capability": "vision",
+            "adapter": "app.vision_providers.DeterministicVisionProvider",
+            "routing_mode": "primary" if settings.vision_provider == "fixture" else "disabled",
+            "status": "healthy" if settings.vision_provider == "fixture" else "not_configured",
+            "enabled": settings.vision_provider == "fixture",
+            "supports_dry_run": True,
+            "config_ref": "built-in:structured-vision-fixture",
+            "metadata": {
+                "paid": False,
+                "ci_safe": True,
+                "fixture": True,
+                "real_provider_tested": False,
+            },
+        },
+        {
+            "provider_key": "vision-not-configured",
+            "display_name": "Live Vision Provider Contract",
+            "capability": "vision",
+            "adapter": "app.vision_providers.ContractOnlyVisionProvider",
+            "routing_mode": "disabled",
+            "status": "not_configured",
+            "enabled": False,
+            "supports_dry_run": True,
+            "config_ref": "env:VISION_PROVIDER_*",
+            "metadata": {"contract_only": True, "paid": None, "real_provider_tested": False},
+        },
+        {
             "provider_key": "fixture-trends",
             "display_name": "Deterministic Trend Fixtures",
             "capability": "trend_source",
@@ -349,6 +399,14 @@ async def capabilities() -> dict[str, object]:
         "source_media_mutation": False,
         "transcription_provider": settings.transcription_provider,
         "media_signal_provider": settings.auto_edit_signal_provider,
+        "vision_analysis": True,
+        "vision_provider": settings.vision_provider,
+        "live_vision_provider_configured": False,
+        "ocr": True,
+        "subject_tracking": True,
+        "smart_reframe": True,
+        "smart_reframe_aspect_ratios": ["9:16", "16:9", "1:1", "4:5"],
+        "smart_reframe_preview_only": True,
     }
 
 

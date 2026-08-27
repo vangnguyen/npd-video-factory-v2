@@ -1,4 +1,4 @@
-# API — V2-04
+# API — V2-05
 
 Base path: `/api/v1`. Request models forbid unknown fields. This local/CI increment has no
 authentication layer and must not be exposed to an untrusted network.
@@ -77,3 +77,19 @@ Completion checks declared size/checksum, file signature and declared MIME/kind 
 The source asset records rights/provenance and immutable checksum. Analysis responses contain
 the original transcript evidence, scenes, user-toggleable silence decisions and ranked highlights.
 They always report `source_media_mutated=false` and `publish_requested=false`.
+
+## Vision AI and Smart Reframe
+
+- `POST /api/v1/projects/{project_id}/analyses/{analysis_id}/vision`: create or replay a
+  structured Vision analysis for a succeeded V2-04 analysis.
+- `GET /api/v1/projects/{project_id}/vision-analyses`
+- `GET /api/v1/projects/{project_id}/vision-analyses/{vision_analysis_id}`
+
+The request selects one or more of `9:16`, `16:9`, `1:1` and `4:5`, sampling/tracking/smoothing
+thresholds and optional crop-keyframe overrides. The response contains typed frame/OCR/object,
+composition, quality, scene, subject-track, best-frame and reframe-plan evidence. It always reports
+`source_media_mutated=false`, `publish_requested=false` and `paid_external_call=false`.
+
+Normal development and CI use `fixture-vision`; its provenance states that it is mock tested and
+not real-provider tested. The contract-only live adapter returns `PROVIDER_NOT_CONFIGURED` until an
+owner-approved provider and credentials exist.
