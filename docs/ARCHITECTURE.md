@@ -1,10 +1,10 @@
-# Architecture — V2-10
+# Architecture — V2-11
 
 ## Bounded context
 
-Video Factory V2 is the media execution plane. AgentHub remains a separate control plane.
-V2 imports no AgentHub package and reads no AgentHub database or Redis namespace. A future
-integration must use versioned REST/events or signed webhooks, never shared runtime state.
+Video Factory V2 is the media execution plane. Agent Hub remains a separate control plane.
+V2 imports no Agent Hub package and reads no Agent Hub database or Redis namespace. V2-11
+integrates only through versioned REST/events and signed webhooks, never shared runtime state.
 
 ```text
 Local Trend Radar Studio
@@ -18,6 +18,7 @@ FastAPI API -------------------------- PostgreSQL
    |   media plans/items/rights/provenance/resolution jobs
    |   timeline/current version/history/preview jobs
    |   production package/subtitle/audio/approval/render/audit versions
+   |   Agent Hub bridge requests/events/webhook delivery state
    |
    +----> V2 Redis transient queues ---> Worker ----> Remotion ----> full FFmpeg QC
    |                                      |
@@ -28,14 +29,17 @@ FastAPI API -------------------------- PostgreSQL
                                             |
                                             +-------> S3-compatible object storage
                                                        (MinIO in local/CI)
+
+Agent Hub -- signed REST --> /api/v1/bridge -- draft-only command
+Agent Hub <-- signed webhook outbox/worker ---- V2-owned retry state
 ```
 
 ## Ownership and persistence
 
 | Component | Owns | Durability |
 |---|---|---|
-| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload, Auto Edit, Vision/reframe, Media Intelligence, timeline versions, preview state, production packages, subtitle/audio versions, approvals and render state | canonical |
-| Redis | pending and processing job/media/preview/production-render delivery IDs | transient/recoverable |
+| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload, Auto Edit, Vision/reframe, Media Intelligence, timeline versions, preview state, production packages, subtitle/audio versions, approvals, render, bridge request/event/delivery state | canonical |
+| Redis | pending and processing job/media/preview/production-render/analytics/webhook delivery IDs plus bounded auth nonces | transient/recoverable |
 | S3/MinIO | source, generated, metadata, final-render and proxy-preview objects | canonical binary store |
 | job volume | resumable local worker scratch/cache | replaceable |
 | renderer | strict manifest-to-MP4 execution | stateless apart from job scratch |
@@ -110,6 +114,12 @@ winner assessment and writes recommendation-only learning insights. Historical s
 append-only and incomplete work is recoverable after worker restart. Official providers remain
 contract-only and no analytics record contains a credential value.
 
+V2-11 adds an optional Agent Hub bridge without changing ownership. A dedicated HMAC service
+identity may request one draft-only project. The canonical request and secret-free event are
+committed to PostgreSQL before the webhook delivery ID enters the V2 Redis queue. The worker signs
+with an active key, retains historical verify-only keys, and records retry/receipt evidence.
+Agent Hub availability never participates in V2 readiness or media job execution.
+
 ## Durable job rules
 
 - PostgreSQL is the source of truth; Redis never stores canonical job JSON.
@@ -122,7 +132,7 @@ contract-only and no analytics record contains a credential value.
 
 ## Safety state
 
-V2-10 retains the V2-09 dry-run-only publishing endpoint. Startup requires all live publishing gates to remain
+V2-11 retains the V2-09 dry-run-only publishing endpoint. Startup requires all live publishing gates to remain
 coherent, requires an external secret-store contract and rejects every live gate in CI/test.
 Official adapters remain contract-only and cannot execute even if configuration is accidentally
 changed. `HUMAN_APPROVAL_REQUIRED=false` is rejected. API auth/RBAC is not yet implemented, so this

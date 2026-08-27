@@ -1,12 +1,13 @@
 # NPD Video Factory V2
 
-NPD Video Factory V2 is an independent media execution platform. V2-10 keeps the durable
+NPD Video Factory V2 is an independent media execution platform. V2-11 keeps the durable
 video, Trend/Idea, Auto Edit, Vision and Media Intelligence platform, editable timeline,
 human approval, production-profile rendering and full media QC, then adds fail-closed publishing
 validation, durable dry-run receipts, normalized analytics snapshots and recommendation-only
-learning feedback.
+learning feedback, then adds a versioned, signed Agent Hub bridge and a guarded production
+operations bundle without creating any shared runtime state.
 
-## V2-10 status
+## V2-11 status
 
 Implemented and locally acceptance-tested:
 
@@ -82,16 +83,30 @@ Implemented and locally acceptance-tested:
 - immutable video-feature capture and recommendation-only feedback linked to Trend/Idea evidence;
 - a responsive Analytics & Learning panel that labels mock data, preserves missing metrics and
   exposes no real-provider or autonomous-execution control.
+- a dedicated HMAC service identity for Agent Hub with body/path binding, timestamp validation,
+  Redis nonce replay protection and constant-time comparison;
+- a versioned `agent-hub-bridge.v1` API/event contract whose only inbound write creates a
+  draft project and explicitly cannot start execution or publishing;
+- PostgreSQL-backed bridge requests, secret-free events and signed webhook deliveries with
+  idempotency, retry/backoff and worker restart recovery;
+- active webhook signing plus historical verify-only keys for safe HMAC rotation;
+- security response headers, fail-closed webhook URL allowlisting and production configuration
+  validation;
+- isolated production Compose override plus guarded preflight, backup, restore, deploy, smoke and
+  soak helpers that do not define or modify Agent Hub, n8n or Caddy.
 
-Not implemented in V2-10: real Vision/stock/generation credentials or accuracy acceptance,
-production ComfyUI/GPU execution, a human-accepted production Vietnamese voice/provider,
-API authentication/RBAC, live publishing credentials/adapters, official analytics data collection,
-automatic recommendation application or a production rollout. Those remain later, separately
-gated increments.
+Not implemented in V2-11: interactive Studio user SSO/session enforcement, real Agent Hub HTTP
+acceptance, real Vision/stock/generation credentials or accuracy acceptance, production
+ComfyUI/GPU execution, a human-accepted production Vietnamese voice/provider, live publishing
+credentials/adapters, official analytics data collection, automatic recommendation application
+or a production rollout. Those remain later, separately gated increments.
 
 ## Safety boundary
 
 - No AgentHub package, database, Redis namespace or process dependency.
+- Agent Hub requests use a dedicated service identity; signed events are persisted before delivery
+  and an Agent Hub outage cannot stop the Video Factory pipeline.
+- Bridge inputs reject secret-like fields and create draft state only; HTTP delivery remains off.
 - No production route, service or deployment is changed by this branch.
 - `PUBLISH_ENABLED=false`, `PUBLISH_EXTERNAL_EXECUTION_ENABLED=false`,
   `PUBLISH_OWNER_GATE_ENABLED=false` and `HUMAN_APPROVAL_REQUIRED=true` are enforced at startup.
@@ -173,6 +188,8 @@ Useful endpoints after `docker compose up -d --build`:
 - `GET http://localhost:8000/api/v1/projects/{project_id}/analytics`
 - `GET http://localhost:8000/api/v1/projects/{project_id}/analytics/history`
 - `GET http://localhost:8000/api/v1/analytics-providers`
+- `GET http://localhost:8000/api/v1/bridge/contract` (signed service request)
+- `POST http://localhost:8000/api/v1/bridge/project-requests` (signed, draft only)
 - `GET http://localhost:3000` (local Trend Radar)
 - `GET http://localhost:3000/studio.html` (local Auto Edit Studio)
 
@@ -186,7 +203,8 @@ See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
 [Auto Edit Studio](docs/AUTO_EDIT_STUDIO.md),
 [Audio, Subtitle, Render and QC](docs/AUDIO_SUBTITLE_RENDER_QC.md),
 [Publishing](docs/PUBLISHING.md), [Analytics and Learning](docs/ANALYTICS_LEARNING.md),
-[V2-10 acceptance](docs/V2_10_ACCEPTANCE.md), [V2-09 acceptance](docs/V2_09_ACCEPTANCE.md),
+[Agent Hub bridge](docs/AGENT_HUB_BRIDGE.md), [production hardening](docs/PRODUCTION_HARDENING.md),
+[V2-11 acceptance](docs/V2_11_ACCEPTANCE.md), [V2-10 acceptance](docs/V2_10_ACCEPTANCE.md), [V2-09 acceptance](docs/V2_09_ACCEPTANCE.md),
 [V2-08 acceptance](docs/V2_08_ACCEPTANCE.md), [V2-07 acceptance](docs/V2_07_ACCEPTANCE.md),
 [V2-06 acceptance](docs/V2_06_ACCEPTANCE.md) and the
 [V2 master specification](docs/CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md).

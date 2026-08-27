@@ -17,6 +17,7 @@ from app import timeline_db  # noqa: F401
 from app import production_db  # noqa: F401
 from app import publishing_db  # noqa: F401
 from app import analytics_db  # noqa: F401
+from app import bridge_db  # noqa: F401
 
 
 config = context.config

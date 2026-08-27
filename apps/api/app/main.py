@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -8,6 +9,10 @@ from fastapi import FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from redis.asyncio import Redis
 
+from .bridge_auth import ServiceAuthVerifier, SigningKeyring
+from .bridge_repository import BridgeRepository
+from .bridge_routes import router as bridge_router
+from .bridge_service import AgentHubBridgeService
 from .analytics_providers import AnalyticsProviderRegistry
 from .analytics_repository import AnalyticsRepository
 from .analytics_routes import router as analytics_router
@@ -104,7 +109,7 @@ async def lifespan(app: FastAPI):
     )
     await verify_database(session_factory)
     await object_storage.ensure_ready()
-    await platform.ensure_workspace(
+    default_workspace = await platform.ensure_workspace(
         WorkspaceCreate(
             slug=settings.default_workspace_slug,
             name=settings.default_workspace_name,
@@ -127,6 +132,7 @@ async def lifespan(app: FastAPI):
     app.state.production_repository = production_repository
     app.state.publishing_repository = publishing_repository
     app.state.analytics_repository = analytics_repository
+    app.state.default_workspace_id = default_workspace.workspace_id
     app.state.trend_provider_registry = trend_providers
     app.state.trend_intelligence_service = TrendIntelligenceService(
         trend_repository,
@@ -249,6 +255,29 @@ async def lifespan(app: FastAPI):
         queue=redis,
         settings=settings,
     )
+    app.state.bridge_auth_verifier = None
+    app.state.agent_hub_bridge_service = None
+    if settings.agent_hub_bridge_enabled:
+        app.state.bridge_auth_verifier = ServiceAuthVerifier.from_file(
+            settings.agent_hub_service_keys_file,
+            redis,
+            max_clock_skew_seconds=settings.service_auth_max_clock_skew_seconds,
+            replay_ttl_seconds=settings.service_auth_replay_ttl_seconds,
+        )
+        app.state.agent_hub_bridge_service = AgentHubBridgeService(
+            repository=BridgeRepository(session_factory),
+            platform_repository=platform,
+            publishing_repository=publishing_repository,
+            analytics_repository=analytics_repository,
+            queue=redis,
+            default_workspace_id=default_workspace.workspace_id,
+            webhook_destination_ref=settings.agent_hub_webhook_destination_ref,
+            webhook_provider_mode=settings.agent_hub_webhook_mode,
+            webhook_max_attempts=settings.agent_hub_webhook_max_attempts,
+            production_deployed=settings.app_env.lower() == "production",
+        )
+        if settings.agent_hub_webhook_mode != "disabled":
+            SigningKeyring.from_file(settings.agent_hub_webhook_signing_keys_file)
     app.state.production_render_download_root = settings.production_render_download_root
     try:
         yield
@@ -257,7 +286,7 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.11.0", lifespan=lifespan)
+app = FastAPI(title="NPD Video Factory V2 API", version="0.12.0", lifespan=lifespan)
 app.include_router(platform_router)
 app.include_router(trend_router)
 app.include_router(auto_edit_router)
@@ -267,6 +296,24 @@ app.include_router(timeline_router)
 app.include_router(production_router)
 app.include_router(publishing_router)
 app.include_router(analytics_router)
+app.include_router(bridge_router)
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    supplied_request_id = request.headers.get("X-Request-ID", "")
+    request_id = (
+        supplied_request_id
+        if re.fullmatch(r"[A-Za-z0-9._:-]{1,128}", supplied_request_id)
+        else uuid.uuid4().hex
+    )
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = request_id
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Cache-Control"] = "no-store" if request.url.path.startswith("/api/") else response.headers.get("Cache-Control", "no-cache")
+    return response
 
 
 def store_from(request: Request) -> PostgresJobStore:
@@ -752,6 +799,14 @@ async def capabilities() -> dict[str, object]:
         "winner_detection": "explainable_recommendation_only",
         "learning_feedback_auto_applied": False,
         "agent_hub_runtime_dependency": False,
+        "agent_hub_bridge_implemented": True,
+        "agent_hub_bridge_enabled": settings.agent_hub_bridge_enabled,
+        "agent_hub_bridge_contract": "agent-hub-bridge.v1",
+        "agent_hub_webhook_mode": settings.agent_hub_webhook_mode,
+        "agent_hub_webhook_external_delivery_enabled": settings.agent_hub_webhook_external_delivery_enabled,
+        "service_auth": "hmac-sha256-anti-replay",
+        "shared_agent_hub_database": False,
+        "shared_agent_hub_redis": False,
         "metadata_database": "postgresql",
         "queue": "redis-transient",
         "object_storage": settings.object_storage_provider,

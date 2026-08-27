@@ -80,6 +80,58 @@ def test_v2_10_rejects_live_analytics_and_raw_credential_values() -> None:
         Settings(_env_file=None, youtube_analytics_credential_ref="plain-text-token")
 
 
+def test_v2_11_webhook_delivery_gates_and_allowlist_fail_closed() -> None:
+    with pytest.raises(ValidationError, match="requires AGENT_HUB_BRIDGE_ENABLED"):
+        Settings(_env_file=None, agent_hub_webhook_mode="fixture")
+    with pytest.raises(ValidationError, match="explicit external delivery gate"):
+        Settings(_env_file=None, agent_hub_bridge_enabled=True, agent_hub_webhook_mode="http")
+    with pytest.raises(ValidationError, match="HTTPS and an allowlisted host"):
+        Settings(
+            _env_file=None,
+            agent_hub_bridge_enabled=True,
+            agent_hub_webhook_mode="http",
+            agent_hub_webhook_external_delivery_enabled=True,
+            agent_hub_webhook_url="https://untrusted.example/events",
+        )
+    with pytest.raises(ValidationError, match="exact versioned event path"):
+        Settings(
+            _env_file=None,
+            agent_hub_bridge_enabled=True,
+            agent_hub_webhook_mode="http",
+            agent_hub_webhook_external_delivery_enabled=True,
+            agent_hub_webhook_url=(
+                "https://mkt.ngocphuongdong.com/agent-hub/events/v1?token=forbidden"
+            ),
+        )
+    with pytest.raises(ValidationError, match="prohibit external Agent Hub webhooks"):
+        Settings(
+            _env_file=None,
+            app_env="ci",
+            agent_hub_bridge_enabled=True,
+            agent_hub_webhook_mode="http",
+            agent_hub_webhook_external_delivery_enabled=True,
+            agent_hub_webhook_url="https://mkt.ngocphuongdong.com/agent-hub/events/v1",
+        )
+    with pytest.raises(ValidationError, match="fixture Agent Hub webhooks are prohibited"):
+        Settings(
+            _env_file=None,
+            app_env="production",
+            trend_fixture_enabled=False,
+            auto_edit_fixture_enabled=False,
+            vision_fixture_enabled=False,
+            media_fixture_enabled=False,
+            analytics_fixture_enabled=False,
+            transcription_provider="contract",
+            auto_edit_signal_provider="ffmpeg",
+            vision_provider="contract",
+            object_storage_provider="s3",
+            object_storage_access_key="test-access-key",
+            object_storage_secret_key="test-secret-key",
+            agent_hub_bridge_enabled=True,
+            agent_hub_webhook_mode="fixture",
+        )
+
+
 def test_v2_04_rejects_auto_edit_fixture_in_production() -> None:
     with pytest.raises(ValidationError, match="auto-edit fixtures must be disabled"):
         Settings(
@@ -149,6 +201,12 @@ def test_v2_06_paid_and_comfyui_execution_require_explicit_parent_gates() -> Non
 async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     result = await capabilities()
     assert result["agent_hub_runtime_dependency"] is False
+    assert result["agent_hub_bridge_implemented"] is True
+    assert result["agent_hub_bridge_enabled"] is False
+    assert result["agent_hub_bridge_contract"] == "agent-hub-bridge.v1"
+    assert result["agent_hub_webhook_external_delivery_enabled"] is False
+    assert result["shared_agent_hub_database"] is False
+    assert result["shared_agent_hub_redis"] is False
     assert result["publishing_implemented"] is True
     assert result["publishing_mode"] == "dry_run_only"
     assert result["publish_enabled"] is False

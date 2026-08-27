@@ -1,4 +1,4 @@
-# Testing — V2-10
+# Testing — V2-11
 
 ## Local checks
 
@@ -85,6 +85,11 @@ The E2E creates five copyright-safe fixtures and one deterministic job, then ver
 - 16 nullable normalized metric points, including `null`/unsupported VND revenue semantics;
 - explainable winner/normal state, feature metadata and Trend/Idea-linked learning evidence;
 - provider truth, no external calls/actions and API-restart recovery of analytics report/history.
+- signed Agent Hub service requests, exact body/path binding, expiry, replay and unknown-key rejection;
+- draft-only bridge idempotency and conflict semantics with no pipeline/publish side effect;
+- active/historical HMAC key rotation and secret-free webhook receipts;
+- durable webhook retry, due activation, API/worker restart recovery and deterministic delivery;
+- production Compose isolation plus deployment-helper syntax and fail-closed settings.
 
 The API/unit suite separately covers signature/MIME rejection, missing or corrupt upload parts,
 same-project checksum duplicate reuse and Top 5 output. The repository also resolves a
@@ -102,6 +107,8 @@ rejection. Studio tests cover publishing gate and receipt presentation.
 The V2-10 suite separately covers winner/normal/underperforming/insufficient states, null-vs-zero
 semantics, idempotency, bounded backoff, scheduled/fixture gates, worker recovery, official-provider
 `not_configured` behavior, analytics APIs and mock-labelled responsive Studio presentation.
+The V2-11 suite separately covers service authentication, HMAC rotation, bridge API contracts,
+secret rejection, idempotency, signed fixture delivery, backoff and worker queue recovery.
 
 The script removes only its disposable Compose volumes on exit. Normal CI performs no paid
 call. The manual paid-provider smoke still requires explicit dispatch, protected-environment

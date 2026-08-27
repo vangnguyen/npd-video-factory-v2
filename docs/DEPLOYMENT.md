@@ -1,6 +1,6 @@
-# Deployment — V2-10
+# Deployment — V2-11
 
-V2-10 is a development/CI platform increment and is not approved for production deployment.
+V2-11 provides a production-hardening bundle but is not approved for production deployment.
 
 ## Dev/CI
 
@@ -55,7 +55,7 @@ Before any production proposal, a separate owner-approved PR/task must add and v
 25. production analytics scheduling, retention, restore and cost acceptance;
 26. an explicit owner decision before any recommendation can be applied.
 
-V2-10 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
+V2-11 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
 `VISION_FIXTURE_ENABLED=false`, `VISION_PROVIDER=contract`,
 `MEDIA_FIXTURE_ENABLED=false`, media providers set to `contract`, and external/paid/ComfyUI
 execution disabled until their separate owner gates;
@@ -70,6 +70,12 @@ Production also requires `ANALYTICS_FIXTURE_ENABLED=false`,
 `ANALYTICS_SCHEDULED_REFRESH_ENABLED=false`. V2-10 deliberately cannot start with external
 analytics execution enabled; that capability requires a later implementation and separate owner
 gate.
+
+V2-11 adds `deploy/production/docker-compose.production.yml` and the guarded `v2-11-*` helpers.
+They preserve the dedicated Compose project/network and do not define Agent Hub, n8n or Caddy.
+Use [the production runbook](V2_11_PRODUCTION_RUNBOOK.md), [backup/restore](BACKUP_RESTORE.md) and
+[soak testing](SOAK_TESTING.md). These artifacts are implementation evidence only; running them on
+production requires a separate owner approval.
 
 The checked-in V2-09 publishing defaults are:
 

@@ -1,7 +1,8 @@
-# API — V2-10
+# API — V2-11
 
-Base path: `/api/v1`. Request models forbid unknown fields. This local/CI increment has no
-authentication layer and must not be exposed to an untrusted network.
+Base path: `/api/v1`. Request models forbid unknown fields. V2-11 adds dedicated HMAC service
+authentication for `/api/v1/bridge`; the remaining interactive API still requires an accepted
+user-auth deployment boundary before public exposure.
 
 ## Health and capability
 
@@ -201,4 +202,20 @@ The create route requires a successful publication receipt. The enabled developm
 metrics are returned as JSON `null` with `supported=false`. Revenue and RPM use VND. All responses
 retain explicit no-execution literals described in [Analytics and Learning](ANALYTICS_LEARNING.md).
 
-The API has no authentication/RBAC in V2-10 and therefore remains localhost/CI-only.
+## Agent Hub bridge
+
+- `GET /api/v1/bridge/contract`
+- `POST /api/v1/bridge/project-requests`
+- `GET /api/v1/bridge/project-requests/{request_id}`
+- `GET /api/v1/bridge/projects/{project_id}/summary`
+- `GET /api/v1/bridge/events?project_id=...`
+- `GET /api/v1/bridge/webhook-deliveries?project_id=...`
+
+All routes require `agent-hub-bridge.v1`, a dedicated `service` identity and an HMAC signature
+bound to method/path/query/body/timestamp/nonce. POST also requires a 16–200 character
+`Idempotency-Key`. The only V2-11 inbound action creates a draft project and immutable initial
+version. It cannot create a job, render, publication or external action. See
+[Agent Hub Bridge](AGENT_HUB_BRIDGE.md).
+
+Interactive user authentication/RBAC is not production-deployed in V2-11, so the Studio and
+non-bridge API remain localhost/CI-only until that separate owner gate is accepted.

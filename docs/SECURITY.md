@@ -1,4 +1,4 @@
-# Security and safety — V2-10
+# Security and safety — V2-11
 
 ## Defaults
 
@@ -32,6 +32,12 @@
 - Analytics fixtures are synthetic and rejected in production. Official analytics adapters are
   contract-only, external execution is rejected, scheduled refresh is off and recommendations
   cannot apply themselves.
+- Bridge routes require a dedicated HMAC service identity, timestamp, nonce, exact body hash and
+  version header. Valid nonces are single-use and unknown/historical keys never leak material.
+- Bridge payloads reject secret-like fields. Database checks prevent execution, external action
+  and secret-bearing event flags.
+- HTTP webhook delivery is disabled by default and requires HTTPS plus an exact host allowlist;
+  CI/test prohibit it and production prohibits the fixture adapter.
 
 ## Data and artifact controls
 
@@ -63,10 +69,10 @@
 
 ## Known security gate
 
-V2-10 does not yet implement API authentication, RBAC or workspace membership. Localhost
-binding is the only access boundary in this increment. Public routing and production
-deployment are prohibited until those controls, rate limits and audit actor identity are
-implemented and accepted.
+V2-11 implements the dedicated `service` identity on bridge routes, but interactive Studio user
+SSO/session enforcement and workspace membership are not production-deployed. Public routing of
+the Studio/non-bridge API remains prohibited until those controls, rate limits and auditable user
+identity are implemented and accepted. Caddy exposure remains a separate owner-gated change.
 
 ## Credential contract
 
@@ -77,8 +83,8 @@ gates, `PUBLISHING_CREDENTIAL_STORE` and platform credential reference names. Re
 external secret manager. They must never be
 stored in project snapshots, jobs, assets, provider metadata, costs, logs or Git.
 
-AgentHub and V2 must not share database, Redis, packages or process memory. Future bridge
-traffic requires authentication, replay protection, signed requests and versioned contracts.
+Agent Hub and V2 do not share database, Redis, packages or process memory. Bridge traffic uses
+authentication, replay protection, signed requests/webhooks and versioned contracts.
 
 Analytics adds only `ANALYTICS_*` policy settings and four platform analytics credential-reference
 names. Raw analytics keys/tokens are invalid configuration. Fixture output is not evidence that a

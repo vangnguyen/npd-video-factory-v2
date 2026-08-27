@@ -13,7 +13,7 @@ import {
   publicationGateItems,
   qcItems,
   timelinePositionFromPointer,
-} from "/studio-utils.mjs?v=0.11.0";
+} from "/studio-utils.mjs?v=0.12.0";
 
 const state = {
   workspaceId: null,
