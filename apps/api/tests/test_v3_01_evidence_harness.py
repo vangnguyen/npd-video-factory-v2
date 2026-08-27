@@ -99,5 +99,32 @@ def test_matrix_validation_rejects_pass_without_evidence(tmp_path: Path) -> None
         HARNESS.validate_matrix(path)
 
 
+def test_approval_validation_rejects_filename_mismatch(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    schemas = docs / "schemas"
+    approvals = docs / "approvals"
+    schemas.mkdir(parents=True)
+    approvals.mkdir()
+    source_schema = REPO_ROOT / "docs" / "acceptance" / "v3-01" / "schemas" / "approval-record.schema.json"
+    (schemas / source_schema.name).write_text(source_schema.read_text(encoding="utf-8"), encoding="utf-8")
+    record = {
+        "approval_id": "V3-01-APP-999",
+        "gate_id": "G-00",
+        "decision": "APPROVED",
+        "scope": "local tests only",
+        "artifact_or_commit_hashes": [],
+        "target_account_or_environment": "LOCAL",
+        "limits": ["no merge"],
+        "approved_by": "owner",
+        "approved_at_utc": "2026-08-27T13:29:26Z",
+        "expires_at_utc": None,
+        "notes": "fixture",
+    }
+    (approvals / "V3-01-APP-998.json").write_text(json.dumps(record), encoding="utf-8")
+
+    with pytest.raises(HARNESS.ValidationFailure, match="filename does not match"):
+        HARNESS.validate_approval_records(docs)
+
+
 def test_checked_in_v3_01_register_is_complete() -> None:
     HARNESS.validate_repo(REPO_ROOT)

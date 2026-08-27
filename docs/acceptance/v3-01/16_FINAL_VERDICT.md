@@ -8,7 +8,7 @@ SCOPE: V3-01-00 read-only baseline, static/mock audit and redacted evidence harn
 RELEASE CANDIDATE: NOT ESTABLISHED
 EVIDENCE RUN: vf-v3-01-20260827T120208Z-cae40ed
 DATE: 2026-08-27
-OWNER DECISION: PENDING G-00
+OWNER DECISION: G-00 APPROVED BY V3-01-APP-001; G-08 AND ALL EXECUTION GATES PENDING
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -33,7 +33,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Backup/restore | helpers exist; no isolated drill |
 | Observability/soak | no production-like monitoring or 48-hour run |
 | Gaps | P0=10, P1=5, P2=1 |
-| Allowed scope | repository inspection, static/mock tests, redacted evidence, draft PR |
+| Allowed scope | LOCAL/CI remediation, static/mock/security tests, redacted evidence, draft PRs |
 | Disabled scope | merge, deploy, paid/provider calls, public ingress, publish, analytics writes |
 
 ## Critical failures
@@ -55,7 +55,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: none; `EV-V3-DR-001` is BLOCKED static evidence;
-- owner approval IDs: none.
+- owner approval IDs: `V3-01-APP-001` for G-00 only.
 
 ## Open gaps and remediation
 

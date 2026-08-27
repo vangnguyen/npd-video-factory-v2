@@ -1,6 +1,7 @@
 # V3-01 baseline
 
 Captured at `2026-08-27T12:02:08Z` (`2026-08-27 19:02:08 Asia/Ho_Chi_Minh`).
+Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
 
 ## Control state
 
@@ -9,10 +10,15 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: not yet established
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Phase 0-2 (read-only/static/mock)
-NEXT OWNER GATE: G-00 production scope
+CURRENT SAFE PHASE: remediation development in LOCAL/CI; draft PRs only
+G-00: APPROVED by V3-01-APP-001
+NEXT OWNER GATE: G-08 for each remediation PR merge
 NO MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
 ```
+
+G-00 accepts the feature freeze, matrix, gaps and remediation sequence. It does not authorize a
+merge, deployment, public ingress, credential use, provider execution, spend, external publish,
+analytics write or takedown. Those actions remain bound to their separate gates.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is

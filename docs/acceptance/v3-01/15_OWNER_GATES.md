@@ -1,11 +1,11 @@
 # Owner gate register
 
-No gate is approved merely because the owner asked to begin V3. All gates below are `PENDING`; no
-approval record has been created. Use `schemas/approval-record.schema.json` for a bounded decision.
+G-00 has one bounded approval record. Every other gate remains `PENDING`. Use
+`schemas/approval-record.schema.json` for each later decision; no approval is implied by CI success.
 
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
-| G-00 | production acceptance scope and remediation sequence | PENDING — next gate | owner accepts matrix, gaps, environments and review roles |
+| G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
 | G-01 | real-provider credential aliases/scopes | PENDING | provider, capability, least privilege, target/region and expiry |
 | G-02 | VND provider budgets and cost controls | PENDING | per-provider ceiling, retry/poll limits and hard stop |
 | G-03 | owned inputs, rights and provenance policy | PENDING | source ownership, licensing, consent and retention |
@@ -25,6 +25,7 @@ An approval must identify the gate, owner, UTC time, commit/RC, environment, bou
 IDs, expiry and decision. Changing commit, artifact, provider, platform target, budget, environment or
 time window invalidates or narrows the approval.
 
-The current allowed scope is repository inspection, static/mock testing, redacted evidence creation
-and a draft PR. It authorizes no merge, deployment, credential use, paid call, public route,
-publishing, analytics collection or production write.
+The current allowed scope is repository inspection, remediation implementation in LOCAL/CI,
+static/mock/security testing, redacted evidence creation and draft PR preparation. It authorizes no
+merge, deployment, credential use, paid call, public route, publishing, analytics collection or
+production write. Approval record: [`approvals/V3-01-APP-001.json`](approvals/V3-01-APP-001.json).

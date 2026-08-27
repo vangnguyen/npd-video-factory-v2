@@ -162,6 +162,28 @@ def validate_schema_file(path: Path) -> None:
     Draft202012Validator.check_schema(schema)
 
 
+def validate_approval_records(docs: Path) -> int:
+    schema_path = docs / "schemas" / "approval-record.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    validator = Draft202012Validator(schema)
+    approval_dir = docs / "approvals"
+    approval_files = sorted(approval_dir.glob("V3-01-APP-*.json")) if approval_dir.exists() else []
+    seen: set[str] = set()
+    for approval_file in approval_files:
+        record = json.loads(approval_file.read_text(encoding="utf-8"))
+        try:
+            validator.validate(record)
+        except ValidationError as exc:
+            raise ValidationFailure(f"invalid approval record {approval_file.name}: {exc.message}") from exc
+        approval_id = record["approval_id"]
+        if approval_file.stem != approval_id:
+            raise ValidationFailure(f"approval filename does not match approval_id: {approval_file.name}")
+        if approval_id in seen:
+            raise ValidationFailure(f"duplicate approval ID: {approval_id}")
+        seen.add(approval_id)
+    return len(approval_files)
+
+
 def validate_repo(repo: Path) -> None:
     docs = repo / "docs" / "acceptance" / "v3-01"
     missing = [name for name in REQUIRED_DOCS if not (docs / name).is_file()]
@@ -179,6 +201,7 @@ def validate_repo(repo: Path) -> None:
         raise ValidationFailure("no V3-01 evidence schemas found")
     for schema_file in schema_files:
         validate_schema_file(schema_file)
+    approval_count = validate_approval_records(docs)
     scan_targets = [docs]
     evidence_root = repo / "evidence" / "v3-01"
     if evidence_root.exists():
@@ -202,7 +225,7 @@ def validate_repo(repo: Path) -> None:
         raise ValidationFailure(f"matrix references missing evidence records: {missing_evidence}")
     print(
         f"v3-01 validation=PASS matrix_rows={matrix_count} gaps={gap_count} "
-        f"schemas={len(schema_files)} evidence_runs={len(run_dirs)}"
+        f"schemas={len(schema_files)} approvals={approval_count} evidence_runs={len(run_dirs)}"
     )
 
 
