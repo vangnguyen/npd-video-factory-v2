@@ -5,7 +5,7 @@ import request from "supertest";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
 import {createRendererApp, mapRenderProgress, type RenderEngine} from "./app";
-import {makeManifest} from "./test-fixtures";
+import {makeManifest, makeTimelineManifest} from "./test-fixtures";
 
 const roots: string[] = [];
 
@@ -57,6 +57,7 @@ describe("renderer HTTP service", () => {
     expect(progresses).toEqual([70, 83, 95]);
     expect(engine.render).toHaveBeenCalledOnce();
     const renderInput = vi.mocked(engine.render).mock.calls[0][0];
+    if (renderInput.manifest.version !== "1.0") throw new Error("expected legacy manifest");
     expect(renderInput.manifest.scenes[0].visual.uri).toMatch(
       /^http:\/\/127\.0\.0\.1:3001\/media\/fixture\.png$/,
     );
@@ -75,6 +76,29 @@ describe("renderer HTTP service", () => {
     expect(response.status).toBe(422);
     expect(response.body).toMatchObject({status: "failed", error_code: "RENDER_ASSET_MISSING"});
     expect(engine.render).not.toHaveBeenCalled();
+  });
+
+  it("renders a V2-08 timeline manifest with local audio and visual URLs", async () => {
+    const root = await mkdtemp(join(tmpdir(), "npd-renderer-v208-"));
+    roots.push(root);
+    const assetPath = join(root, "fixture.png");
+    const audioPath = join(root, "audio.wav");
+    const manifestPath = join(root, "timeline-render.json");
+    await writeFile(assetPath, Buffer.from("png fixture"));
+    await writeFile(audioPath, Buffer.from("wav fixture"));
+    await writeFile(manifestPath, JSON.stringify(makeTimelineManifest(assetPath, audioPath)));
+    const engine: RenderEngine = {render: vi.fn(async () => undefined)};
+
+    const response = await request(createRendererApp({engine, port: 3001, storageRoot: root}))
+      .post("/render")
+      .send({job_id: "rnd_12345678", manifest_path: manifestPath});
+
+    expect(response.status).toBe(200);
+    const input = vi.mocked(engine.render).mock.calls[0][0];
+    expect(input.manifest.version).toBe("2.0");
+    if (input.manifest.version !== "2.0") throw new Error("expected timeline manifest");
+    expect(input.manifest.audio.mix_uri).toMatch(/^http:\/\/127\.0\.0\.1:3001\/media\/audio\.wav$/);
+    expect(input.manifest.visual_clips[0].uri).toMatch(/^http:\/\/127\.0\.0\.1:3001\/media\/fixture\.png$/);
   });
 
   it("returns a stable error for an invalid manifest", async () => {

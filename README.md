@@ -1,10 +1,11 @@
 # NPD Video Factory V2
 
-NPD Video Factory V2 is an independent media execution platform. V2-07 keeps the durable
+NPD Video Factory V2 is an independent media execution platform. V2-08 keeps the durable
 video, Trend/Idea, Auto Edit, Vision and Media Intelligence platform, then adds a versioned
-editable timeline, responsive Auto Edit Studio and asynchronous 540p proxy preview.
+editable timeline, responsive Auto Edit Studio, dynamic subtitles, scene-aligned Vietnamese
+audio, human approval, production-profile rendering and full media QC.
 
-## V2-07 status
+## V2-08 status
 
 Implemented and locally acceptance-tested:
 
@@ -52,11 +53,24 @@ Implemented and locally acceptance-tested:
   playhead, snapping, undo/redo, track lock and mute interactions;
 - worker-rendered, cancellable 540x960 H.264 video-only previews with persisted progress,
   object-store checksums and version-bound playback.
+- immutable subtitle and audio-mix versions bound to the exact timeline version;
+- a responsive Subtitle Editor and Audio Mixer with safe-area/style controls, Vietnamese
+  per-cue narration, optional licensed music, ducking, fades and a 48 kHz limited mix;
+- review renders that stop at `awaiting_review`, plus recorded owner decisions bound to the
+  review, timeline, subtitle and audio versions;
+- final 1080x1920, 1920x1080 and 1080x1080 H.264/AAC renders that require the current approved
+  review package and remain non-publishing artifacts;
+- automatic invalidation of approvals and render artifacts after any accepted timeline,
+  subtitle or audio change;
+- full QC for duration, resolution, frame rate, codecs, decoded frames, black/freeze ratios,
+  audio silence/clipping, A/V sync, subtitle bounds and missing timeline assets;
+- PostgreSQL recovery for packages, approvals, render jobs and audit history, with transient
+  Redis delivery and deterministic worker recovery.
 
-Not implemented in V2-07: real Vision/stock/generation credentials or accuracy acceptance,
-production ComfyUI/GPU execution, subtitle styling, TTS/music/audio mix, final render/QC from the
-editable timeline, approval actions, API authentication/RBAC, publishing, analytics/learning
-loops or a production rollout. Those remain later, separately gated increments.
+Not implemented in V2-08: real Vision/stock/generation credentials or accuracy acceptance,
+production ComfyUI/GPU execution, a human-accepted production Vietnamese voice/provider,
+API authentication/RBAC, publishing, analytics/learning loops or a production rollout. Those
+remain later, separately gated increments.
 
 ## Safety boundary
 
@@ -74,6 +88,11 @@ loops or a production rollout. Those remain later, separately gated increments.
   stale instead of being silently reused.
 - Proxy preview is video-only, performs no external call, cannot publish and is never a final
   output claim.
+- Review/final renders carry `publishing_allowed=false`; a final render is impossible until an
+  owner decision approves the exact review/timeline/subtitle/audio tuple.
+- eSpeak is an offline dev/CI voice and is not a production voice acceptance. External audio is
+  disabled by default and requires a separate owner gate.
+- Music is accepted only from a project asset with explicit usable rights; unclear rights fail closed.
 - Trend references are metadata-only; creator media is never downloaded or copied.
 - No secrets or production media are included.
 
@@ -90,7 +109,9 @@ The E2E creates copyright-safe media and trend fixtures, migrates PostgreSQL, re
 verifies Trend -> Ideas -> Queue -> Draft Project, uploads the MP4 through the resumable API,
 persists transcript/scene/silence/highlight, Vision/reframe and media-plan/provenance evidence,
 resolves four fixture strategies asynchronously, builds and edits a versioned timeline, rejects a
-stale write, renders and invalidates a 540p proxy, restarts the API,
+stale write, renders and invalidates a 540p proxy, restores a safe timeline version, edits dynamic
+subtitles, proves that unapproved final rendering is blocked, renders an A/V review, records owner
+approval, renders the approved 1080x1920 final profile, performs full QC, restarts the API,
 restores the final artifact from MinIO and validates decoded video/audio quality. Its temporary
 stack and volumes are removed on exit.
 
@@ -111,6 +132,12 @@ Useful endpoints after `docker compose up -d --build`:
 - `GET http://localhost:8000/api/v1/projects/{project_id}/media-assets`
 - `POST|GET|PUT http://localhost:8000/api/v1/projects/{project_id}/timeline`
 - `POST http://localhost:8000/api/v1/projects/{project_id}/preview`
+- `POST|GET http://localhost:8000/api/v1/projects/{project_id}/production-package`
+- `PUT http://localhost:8000/api/v1/projects/{project_id}/subtitles`
+- `PUT http://localhost:8000/api/v1/projects/{project_id}/audio-mix`
+- `POST http://localhost:8000/api/v1/projects/{project_id}/review-render`
+- `POST http://localhost:8000/api/v1/projects/{project_id}/approvals`
+- `POST http://localhost:8000/api/v1/projects/{project_id}/final-render`
 - `GET http://localhost:3000` (local Trend Radar)
 - `GET http://localhost:3000/studio.html` (local Auto Edit Studio)
 
@@ -121,6 +148,8 @@ See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
 [Auto Edit Analysis](docs/AUTO_EDIT_ANALYSIS.md),
 [Vision and Smart Reframe](docs/VISION_SMART_REFRAME.md),
 [Media Intelligence](docs/MEDIA_INTELLIGENCE.md), [media provider contracts](docs/MEDIA_PROVIDERS.md), [ComfyUI setup](docs/COMFYUI_SETUP.md),
-[Auto Edit Studio](docs/AUTO_EDIT_STUDIO.md), [V2-07 acceptance](docs/V2_07_ACCEPTANCE.md),
+[Auto Edit Studio](docs/AUTO_EDIT_STUDIO.md),
+[Audio, Subtitle, Render and QC](docs/AUDIO_SUBTITLE_RENDER_QC.md),
+[V2-08 acceptance](docs/V2_08_ACCEPTANCE.md), [V2-07 acceptance](docs/V2_07_ACCEPTANCE.md),
 [V2-06 acceptance](docs/V2_06_ACCEPTANCE.md) and the
 [V2 master specification](docs/CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md).

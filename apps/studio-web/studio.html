@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="NPD Video Factory V2 Auto Edit Studio — editable, versioned timeline and proxy preview" />
+    <meta name="description" content="NPD Video Factory V2 Auto Edit Studio — timeline, subtitles, audio, review approval and final QC" />
     <title>NPD Studio · Auto Edit</title>
     <link rel="stylesheet" href="/styles.css" />
-    <link rel="stylesheet" href="/studio.css?v=0.8.0" />
+    <link rel="stylesheet" href="/studio.css?v=0.9.0" />
   </head>
   <body>
     <div class="app-shell studio-shell">
@@ -25,7 +25,7 @@
         <div class="boundary-card">
           <span class="status-dot"></span>
           <strong>Chế độ chỉnh sửa an toàn</strong>
-          <p>Timeline có phiên bản. Preview 540p không âm thanh. Không sửa media gốc và không publish.</p>
+          <p>Timeline, phụ đề, audio và review đều có phiên bản. Không sửa media gốc và không publish.</p>
         </div>
       </aside>
 
@@ -33,7 +33,7 @@
         <header class="topbar studio-topbar">
           <button id="menu-button" class="icon-button menu-button" aria-label="Mở menu">☰</button>
           <div>
-            <p class="eyebrow">AI-assisted workspace · V2-07</p>
+            <p class="eyebrow">AI-assisted workspace · V2-08</p>
             <h1>Auto Edit Studio</h1>
           </div>
           <div class="project-picker">
@@ -61,6 +61,7 @@
             <div><small>Thời lượng</small><strong id="metric-duration">—</strong><span>source of truth</span></div>
             <div><small>Cảnh / clip</small><strong id="metric-clips">0</strong><span id="metric-scenes">0 scene AI</span></div>
             <div><small>Preview</small><strong id="metric-preview">Chưa có</strong><span>proxy 540p</span></div>
+            <div><small>Approval</small><strong id="metric-approval">Draft</strong><span>gắn đúng phiên bản</span></div>
             <div class="summary-boundary"><small>An toàn</small><strong>Không publish</strong><span>media gốc bất biến</span></div>
           </section>
 
@@ -86,7 +87,7 @@
                 <div id="preview-placeholder" class="preview-placeholder">
                   <span class="preview-play">▶</span>
                   <strong>Preview gắn với timeline</strong>
-                  <p>Tạo proxy 540p để kiểm tra nhịp dựng. Âm thanh hoàn chỉnh thuộc V2-08.</p>
+                  <p>Tạo proxy nhanh để kiểm tra nhịp dựng; review A/V hoàn chỉnh nằm ở bàn giao V2-08 bên dưới.</p>
                 </div>
                 <div class="safe-frame" aria-hidden="true"></div>
               </div>
@@ -100,7 +101,7 @@
               <div class="preview-actions">
                 <button id="preview-button" class="primary-button">Tạo preview 540p</button>
                 <button id="cancel-preview-button" class="secondary-button" disabled>Hủy preview</button>
-                <span>Video-only proxy · không gửi ra ngoài · không publish</span>
+                <span>Proxy dựng nhanh · không gửi ra ngoài · không publish</span>
               </div>
             </section>
 
@@ -144,9 +145,9 @@
                 <button id="toggle-clip-button" class="secondary-button" disabled>Ẩn clip</button>
                 <button id="delete-button" class="danger-button" disabled>Xóa khỏi timeline</button>
               </div>
-              <div class="deferred-card">
-                <strong>Tiếp theo · V2-08</strong>
-                <p>Subtitle Editor, Audio Mixer và final renderer đang khóa đúng lộ trình.</p>
+              <div class="deferred-card active-card">
+                <strong>Đang hoạt động · V2-08</strong>
+                <p>Subtitle Editor, Audio Mixer, review approval và final QC ở Production Workbench.</p>
               </div>
             </aside>
           </section>
@@ -172,21 +173,92 @@
             <div class="timeline-help">Kéo clip để di chuyển · thả sang track cùng loại · chọn clip để trim/split/disable/duplicate · mọi thay đổi tạo một phiên bản mới.</div>
           </section>
 
+          <section id="production-workbench" class="production-workbench" aria-label="V2-08 Production Workbench">
+            <div class="production-heading">
+              <div>
+                <span class="panel-kicker">V2-08 · Audio, Subtitle, Render & QC</span>
+                <h2>Production Workbench</h2>
+                <p>Mọi approval gắn với timeline + phụ đề + audio + review cụ thể. Chỉnh bất kỳ phần nào sẽ hủy hiệu lực approval cũ.</p>
+              </div>
+              <div class="production-heading-actions">
+                <span id="production-package-status" class="pill muted">Chưa khởi tạo</span>
+                <button id="production-package-button" class="primary-button">Khởi tạo gói dựng</button>
+              </div>
+            </div>
+
+            <div id="production-empty" class="production-empty">
+              Khởi tạo gói dựng từ timeline hiện tại để mở Subtitle Editor, Audio Mixer và approval flow.
+            </div>
+
+            <div id="production-content" class="production-grid" hidden>
+              <article class="production-card subtitle-card">
+                <div class="production-card-title">
+                  <div><span class="card-icon">CC</span><strong>Subtitle Editor</strong></div>
+                  <span id="subtitle-version" class="pill muted">v—</span>
+                </div>
+                <div id="subtitle-list" class="subtitle-list"></div>
+                <div class="subtitle-style-grid">
+                  <label>Vị trí<select id="subtitle-position"><option value="bottom">Dưới</option><option value="center">Giữa</option><option value="top">Trên</option></select></label>
+                  <label>Hiệu ứng<select id="subtitle-animation"><option value="word_highlight">Highlight từng từ</option><option value="fade">Fade</option><option value="pop">Pop</option><option value="none">Không</option></select></label>
+                  <label>Cỡ chữ<input id="subtitle-font-size" type="number" min="28" max="84" /></label>
+                  <label>Safe margin %<input id="subtitle-safe-margin" type="number" min="3" max="15" step="0.5" /></label>
+                </div>
+                <button id="save-subtitles-button" class="secondary-button">Lưu phiên bản phụ đề</button>
+              </article>
+
+              <article class="production-card audio-card">
+                <div class="production-card-title">
+                  <div><span class="card-icon">♫</span><strong>Audio Mixer</strong></div>
+                  <span id="audio-version" class="pill muted">v—</span>
+                </div>
+                <p id="audio-provider-status" class="compact-note">TTS: —</p>
+                <div class="audio-controls">
+                  <label class="toggle-line"><input id="voice-enabled" type="checkbox" /> Voice narration</label>
+                  <label>Tốc độ voice<input id="voice-speed" type="range" min="0.75" max="1.35" step="0.05" /><output id="voice-speed-output">1.00×</output></label>
+                  <label>Voice gain dB<input id="voice-gain" type="number" min="-18" max="9" step="0.5" /></label>
+                  <label>Nhạc có quyền sử dụng<select id="music-asset"><option value="">Không dùng nhạc</option></select></label>
+                  <label>Music gain dB<input id="music-gain" type="number" min="-40" max="-3" step="0.5" /></label>
+                  <label>Ducking dB<input id="music-ducking" type="number" min="-30" max="-3" step="0.5" /></label>
+                </div>
+                <button id="save-audio-button" class="secondary-button">Lưu phiên bản audio</button>
+              </article>
+
+              <article class="production-card review-card">
+                <div class="production-card-title">
+                  <div><span class="card-icon">✓</span><strong>Review, Approval & Final QC</strong></div>
+                  <span id="approval-status" class="pill muted">Draft</span>
+                </div>
+                <div id="render-summary" class="render-summary">Chưa có review A/V.</div>
+                <video id="production-video" controls playsinline hidden></video>
+                <div id="qc-summary" class="qc-summary"></div>
+                <div class="approval-actions">
+                  <button id="review-render-button" class="primary-button">Tạo review A/V 540p</button>
+                  <button id="request-approval-button" class="secondary-button" disabled>Gửi owner duyệt</button>
+                  <button id="approve-button" class="safe-button" disabled>Owner phê duyệt</button>
+                  <button id="changes-button" class="danger-button" disabled>Yêu cầu chỉnh sửa</button>
+                </div>
+                <div class="final-render-row">
+                  <label>Final profile<select id="final-profile"><option value="vertical-1080x1920">Dọc 1080×1920</option><option value="landscape-1920x1080">Ngang 1920×1080</option><option value="square-1080x1080">Vuông 1080×1080</option></select></label>
+                  <button id="final-render-button" class="primary-button" disabled>Render final đã duyệt</button>
+                </div>
+                <p class="hard-boundary">Final sẵn sàng để tải nội bộ, nhưng publish và mọi gửi ra ngoài vẫn bị khóa ở V2-08.</p>
+              </article>
+            </div>
+          </section>
+
           <section id="future-panels" class="future-grid">
-            <article><span>CC</span><div><strong>Subtitle Editor</strong><p>Đồng bộ và hiệu ứng phụ đề ở V2-08.</p></div><em>Khóa</em></article>
-            <article><span>♫</span><div><strong>Audio Mixer</strong><p>Voice, music ducking và QC âm thanh ở V2-08.</p></div><em>Khóa</em></article>
             <article><span>↗</span><div><strong>Publish Panel</strong><p>Chỉ mở sau approval và rights gate ở V2-09.</p></div><em>Disabled</em></article>
             <article><span>⌁</span><div><strong>Analytics Panel</strong><p>Learning loop và winner detection ở V2-10.</p></div><em>Preview</em></article>
           </section>
         </div>
 
         <footer>
-          <span>NPD Video Factory V2 · Auto Edit Studio 0.8.0</span>
+          <span>NPD Video Factory V2 · Auto Edit Studio 0.9.0</span>
           <span>Timeline versioned · VND only · Human approval required · Publishing disabled</span>
         </footer>
       </main>
     </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script type="module" src="/studio.js?v=0.8.0"></script>
+    <script type="module" src="/studio.js?v=0.9.0"></script>
   </body>
 </html>

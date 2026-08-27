@@ -1,7 +1,7 @@
 import {describe, expect, it} from "vitest";
 
-import {renderRequestSchema, videoManifestSchema} from "./contract";
-import {makeManifest} from "./test-fixtures";
+import {renderRequestSchema, timelineRenderManifestSchema, videoManifestSchema} from "./contract";
+import {makeManifest, makeTimelineManifest} from "./test-fixtures";
 
 describe("renderer contracts", () => {
   it("accepts the current manifest and two-field render request", () => {
@@ -44,5 +44,30 @@ describe("renderer contracts", () => {
     legacy.metadata.niche = "real_estate";
     legacy.metadata.template = "real-estate-short-v1";
     expect(videoManifestSchema.parse(legacy).metadata.template).toBe("real-estate-short-v1");
+  });
+
+  it("accepts the V2-08 timeline manifest and production render identifiers", () => {
+    const manifest = makeTimelineManifest("data:image/png;base64,AA==");
+    expect(timelineRenderManifestSchema.parse(manifest)).toMatchObject({
+      version: "2.0",
+      safety: {publishing_allowed: false, external_publish_requested: false},
+    });
+    expect(renderRequestSchema.parse({job_id: "rnd_12345678", manifest_path: "/storage/v2.json"}))
+      .toMatchObject({job_id: "rnd_12345678"});
+  });
+
+  it("rejects unsafe, mistimed, or unsupported V2-08 manifests", () => {
+    const unsafe = makeTimelineManifest("data:image/png;base64,AA==");
+    (unsafe.safety as {publishing_allowed: boolean}).publishing_allowed = true;
+    expect(timelineRenderManifestSchema.safeParse(unsafe).success).toBe(false);
+
+    const mistimed = makeTimelineManifest("data:image/png;base64,AA==");
+    mistimed.subtitles[0].words[0].end_seconds = 2;
+    expect(timelineRenderManifestSchema.safeParse(mistimed).success).toBe(false);
+
+    const unsupported = makeTimelineManifest("data:image/png;base64,AA==");
+    unsupported.metadata.width = 1920;
+    unsupported.metadata.height = 1920;
+    expect(timelineRenderManifestSchema.safeParse(unsupported).success).toBe(false);
   });
 });

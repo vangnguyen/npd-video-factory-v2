@@ -1,4 +1,4 @@
-# Cost control — V2-07
+# Cost control — V2-08
 
 VND is the only accepted cost currency in Pydantic contracts, ORM defaults and the database
 check constraint. USD is not a supported runtime currency.
@@ -36,3 +36,8 @@ V2-07 timeline mutations and local FFmpeg proxy previews make no external provid
 paid usage record. The preview response declares `external_call=false`; compute/storage capacity is
 an operational resource rather than a silently converted provider charge. A future hosted preview
 provider must add an idempotent VND price contract and owner gate before it can be selected.
+
+V2-08 records one idempotent TTS operation and one Remotion operation for each production render.
+Offline eSpeak and local Remotion are `0 VND`. An owner-gated external TTS provider remains
+explicitly unpriced until an approved VND price contract exists; it must never be coerced to zero
+or converted/displayed as USD. External audio execution remains disabled in normal CI.

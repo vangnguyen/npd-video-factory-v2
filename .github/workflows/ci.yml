@@ -96,6 +96,8 @@ jobs:
           grep -qx 'MEDIA_EXTERNAL_EXECUTION_ENABLED=false' .env.example
           grep -qx 'MEDIA_PAID_EXECUTION_ENABLED=false' .env.example
           grep -qx 'COMFYUI_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'AUDIO_TTS_PROVIDER=espeak' .env.example
+          grep -qx 'AUDIO_EXTERNAL_EXECUTION_ENABLED=false' .env.example
       - name: Verify V2-owned durable services and VND-only ledger
         run: |
           grep -q '^  postgres:' docker-compose.yml
@@ -157,6 +159,15 @@ jobs:
           grep -q '0006_v2_07' apps/api/migrations/versions/0006_v2_07_auto_edit_studio.py
           python -c 'import json; from pathlib import Path; schema=json.loads(Path("packages/contracts/timeline.schema.json").read_text()); assert schema["$schema"].endswith("2020-12/schema"); assert schema["additionalProperties"] is False'
           ! git grep -I -n -E 'PUBLISH_ENABLED=true|HUMAN_APPROVAL_REQUIRED=false' -- .env.example apps services packages
+      - name: Verify V2-08 audio, subtitle, approval and render-QC boundary
+        run: |
+          grep -Fq 'publishing_allowed: Literal[False] = False' apps/api/app/production_models.py
+          grep -Fq 'external_publish_requested: Literal[False] = False' apps/api/app/production_models.py
+          grep -Fq 'PRODUCTION_RENDER_QUEUE_KEY = "npd:video-factory:v2:production-render:queued"' apps/api/app/production_service.py
+          grep -Fq 'final render requires the current approved review package' apps/api/app/production_repository.py
+          grep -q '0007_v2_08' apps/api/migrations/versions/0007_v2_08_audio_subtitle_render_qc.py
+          python -c 'import json; from pathlib import Path; schema=json.loads(Path("packages/contracts/timeline-render.schema.json").read_text()); assert schema["$schema"].endswith("2020-12/schema"); assert schema["additionalProperties"] is False; assert schema["properties"]["safety"]["properties"]["publishing_allowed"]["const"] is False'
+          ! git grep -I -n -E 'AUDIO_EXTERNAL_EXECUTION_ENABLED=true|PUBLISH_ENABLED=true|HUMAN_APPROVAL_REQUIRED=false' -- .env.example apps services packages
       - name: Secret pattern scan
         run: |
           if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
@@ -168,7 +179,7 @@ jobs:
   docker-e2e:
     name: Docker deterministic E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -179,7 +190,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v2-07-auto-edit-studio-e2e
+          name: v2-08-audio-subtitle-render-qc-e2e
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 7

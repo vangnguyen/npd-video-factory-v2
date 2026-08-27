@@ -124,7 +124,14 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["timeline_versioning"] is True
     assert result["timeline_optimistic_concurrency"] is True
     assert result["proxy_preview"] == "asynchronous_540p"
-    assert result["preview_audio"] == "deferred_to_v2_08"
+    assert result["preview_audio"] == "version_bound_av_review"
+    assert result["subtitle_editor"] is True
+    assert result["audio_mixer"] is True
+    assert result["final_render_profiles"] == [
+        "vertical-1080x1920",
+        "landscape-1920x1080",
+        "square-1080x1080",
+    ]
     assert result["preview_publish"] is False
     assert result["source_media_mutation"] is False
     assert result["vision_analysis"] is True

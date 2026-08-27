@@ -1,4 +1,4 @@
-import type {VideoManifest} from "./types";
+import type {TimelineRenderManifest, VideoManifest} from "./types";
 
 export const makeManifest = (visualUri: string): VideoManifest => ({
   version: "1.0",
@@ -28,4 +28,69 @@ export const makeManifest = (visualUri: string): VideoManifest => ({
     overlay: {headline: "TIN NOI BAT", body: "Thong tin", emphasis: "Moi"},
   }],
   subtitles: [{start_seconds: 0, end_seconds: 1, text: "Phu de thu nghiem"}],
+});
+
+export const makeTimelineManifest = (
+  visualUri: string,
+  audioUri = "data:audio/wav;base64,UklGRg==",
+): TimelineRenderManifest => ({
+  version: "2.0",
+  metadata: {
+    title: "V2-08 timeline",
+    project: "project-v2-08",
+    niche: "real_estate",
+    template: "timeline-render-v1",
+    duration_seconds: 1,
+    fps: 30,
+    width: 1080,
+    height: 1920,
+    language: "vi",
+  },
+  brand: {name: "NPD", primary_color: "#F5C451", accent_color: "#17B9A6"},
+  audio: {mix_uri: audioUri, gain_db: 0, sample_rate: 48000, ducking_applied: true},
+  visual_clips: [{
+    clip_id: "clip_sample",
+    track_order: 0,
+    type: "image",
+    uri: visualUri,
+    timeline_start: 0,
+    duration: 1,
+    source_start: 0,
+    source_end: 1,
+    fit: "cover",
+    crop: {x: 0, y: 0, width: 1, height: 1},
+    transform: {x: 0, y: 0, scale: 1, rotation_degrees: 0},
+    opacity: 1,
+  }],
+  subtitles: [{
+    cue_id: "sub_sample",
+    start_seconds: 0,
+    end_seconds: 1,
+    text: "Phụ đề theo từng từ",
+    words: [
+      {text: "Phụ", start_seconds: 0, end_seconds: 0.25},
+      {text: "đề", start_seconds: 0.25, end_seconds: 0.5},
+      {text: "theo", start_seconds: 0.5, end_seconds: 0.75},
+      {text: "từ", start_seconds: 0.75, end_seconds: 1},
+    ],
+  }],
+  subtitle_style: {
+    font_family: "Noto Sans",
+    font_size: 48,
+    font_weight: 800,
+    text_color: "#FFFFFF",
+    highlight_color: "#F5C451",
+    background_color: "#000000",
+    background_opacity: 0.58,
+    position: "bottom",
+    animation: "word_highlight",
+    max_lines: 3,
+    safe_margin_percent: 7,
+  },
+  safety: {
+    human_approval_required: true,
+    publishing_allowed: false,
+    external_publish_requested: false,
+    source_media_mutated: false,
+  },
 });

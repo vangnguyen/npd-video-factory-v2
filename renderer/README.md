@@ -1,7 +1,7 @@
 # Remotion renderer
 
-V2-01 renderer service for the generic `vertical-short-v1` composition and the
-backward-compatible `real-estate-short-v1` adapter.
+Renderer service for the generic `vertical-short-v1`, backward-compatible
+`real-estate-short-v1`, and V2-08 `timeline-render-v1` compositions.
 
 ## Contract
 
@@ -42,7 +42,13 @@ The service:
 5. selects the allowlisted composition from `manifest.metadata.template`;
 6. renders H.264 + AAC to the requested output path.
 
-The template supports timeline scenes, local video/image media, narration/music, mobile-safe subtitles, Vietnamese Noto Sans glyph coverage, brand logo, headline/body/emphasis overlays, and a final CTA card. Subtitle seconds are converted into explicit global frame ranges at the composition FPS. Renderer progress events map 0-100% render completion into overall job progress 70-95.
+The legacy templates support timeline scenes, local video/image media, narration/music,
+mobile-safe subtitles, Vietnamese Noto Sans glyph coverage, brand logo, headline/body/emphasis
+overlays and a final CTA card. The V2-08 composition accepts ordered editable-timeline layers,
+crop/transform/opacity, the pre-mixed 48 kHz audio artifact, dynamic word-highlight subtitles and
+540x960/1080x1920/1920x1080/1080x1080 profiles. Subtitle seconds are converted into explicit global
+frame ranges at the composition FPS. Renderer progress events map 0-100% render completion into
+overall worker progress.
 
 ## Development checks
 

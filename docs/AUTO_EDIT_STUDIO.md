@@ -1,8 +1,9 @@
-# Auto Edit Studio — V2-07
+# Auto Edit Studio — V2-08
 
-V2-07 turns the evidence produced by Auto Edit Analysis, Vision and Media Intelligence into an
-editable timeline and an asynchronous 540p proxy preview. It remains a local/CI increment: source
-media is immutable, human approval is mandatory, and no publishing path exists.
+V2-08 keeps the editable V2-07 timeline and asynchronous proxy, then adds a Production Workbench
+for subtitle/audio versions, review, human approval, final rendering and full QC. It remains a
+local/CI increment: source media is immutable, human approval is mandatory, and no publishing path
+exists.
 
 ## Studio workflow
 
@@ -17,6 +18,10 @@ are included. The Studio then exposes:
 - zoom, playhead, quarter-second snapping, a clearly labelled visual proxy waveform, undo/redo, track lock
   and track mute;
 - an asynchronous, cancellable 540x960 video-only preview bound to an immutable timeline version.
+- dynamic subtitle text/style/word-timing controls and immutable saves;
+- narration/mix controls plus optional project music with explicit rights;
+- review playback, exact version-binding labels and recorded owner decision controls;
+- 9:16, 16:9 and 1:1 final-render choices with summarized full-QC evidence.
 
 The current editable JSON is the source of truth. UI operations never mutate the source asset.
 
@@ -51,8 +56,9 @@ The first version is deterministic and traceable:
    assets remain absent rather than being fabricated.
 6. Validate the result against the JSON Schema before persistence.
 
-Subtitle content is visible as evidence, but subtitle styling, TTS, music and final audio mixing are
-deliberately deferred to V2-08.
+The initial subtitle content remains traceable to transcript evidence. V2-08 stores later subtitle
+and audio edits as separate immutable production-package versions; it never overwrites transcript
+or timeline evidence.
 
 ## Preview lifecycle
 
@@ -81,14 +87,22 @@ as review evidence.
 - `GET /api/v1/projects/{project_id}/previews/{preview_id}`
 - `POST /api/v1/projects/{project_id}/previews/{preview_id}/cancel`
 - `GET /api/v1/projects/{project_id}/previews/{preview_id}/content`
+- `POST|GET /api/v1/projects/{project_id}/production-package`
+- `PUT /api/v1/projects/{project_id}/subtitles`
+- `PUT /api/v1/projects/{project_id}/audio-mix`
+- `POST /api/v1/projects/{project_id}/review-render`
+- `POST /api/v1/projects/{project_id}/approvals`
+- `POST /api/v1/projects/{project_id}/approvals/{approval_id}/decision`
+- `POST /api/v1/projects/{project_id}/final-render`
+- `GET /api/v1/projects/{project_id}/production-history`
 
 ## Intentional limits
 
-- Preview is video-only; the original-audio track is represented in the editor but mixed output is
-  V2-08 work.
+- The fast proxy remains video-only; review/final jobs are the separate mixed A/V path.
 - Transition/effect values exist in the timeline contract, but professional transition/effect
   authoring is not claimed in this MVP.
-- The Studio does not expose approval, final render, publishing or analytics actions.
+- The Studio exposes approval and artifact rendering, but no publishing or analytics action.
+- eSpeak is a dev/CI voice and does not satisfy human production voice acceptance.
 - API authentication, RBAC and workspace membership are not implemented; localhost binding remains
   the access boundary and production deployment is prohibited.
 - Live Vision, stock and generation providers remain `not_configured`; fixture assets never become

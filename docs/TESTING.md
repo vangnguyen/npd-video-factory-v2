@@ -1,4 +1,4 @@
-# Testing — V2-07
+# Testing — V2-08
 
 ## Local checks
 
@@ -71,6 +71,13 @@ The E2E creates five copyright-safe fixtures and one deterministic job, then ver
 - a real FFmpeg 540x960 H.264 video-only preview, checksum/object registration and content route;
 - responsive Studio utility rules for timecode, zoom, snapping, track compatibility and preview
   state labels.
+- strict subtitle/word timing, Vietnamese safe-area styles and immutable subtitle versions;
+- audio provider configured/not-configured state, licensed-music gate and immutable mix versions;
+- review render, negative unapproved-final request, version-bound owner approval and final render;
+- real 540x960 review and 1080x1920 final H.264/AAC/48 kHz artifacts;
+- full duration/fps/codec/A-V/black/freeze/silence/clipping/decode/subtitle/timeline QC;
+- production package, approval, final render and audit recovery after API restart;
+- deterministic Redis production-render recovery and no side effects/publishing.
 
 The API/unit suite separately covers signature/MIME rejection, missing or corrupt upload parts,
 same-project checksum duplicate reuse and Top 5 output. The repository also resolves a
@@ -79,6 +86,9 @@ The Vision suite separately covers normalized box/request validation, replay ide
 reads, manual-override versioning, provider failure state and source immutability.
 The timeline suite separately covers locked-track rejection, source immutability, publish/external
 call literals, preview reuse/invalidation and deterministic worker queue recovery.
+The V2-08 suite separately covers exact version binding, stale approval/render invalidation,
+missing/changed approval rejection, deterministic processor evidence, VND-only cost records and
+worker queue recovery.
 
 The script removes only its disposable Compose volumes on exit. Normal CI performs no paid
 call. The manual paid-provider smoke still requires explicit dispatch, protected-environment
