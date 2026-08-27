@@ -1,7 +1,8 @@
 # Owner gate register
 
-G-00 has one bounded approval record. Every other gate remains `PENDING`. Use
-`schemas/approval-record.schema.json` for each later decision; no approval is implied by CI success.
+G-00 and one bounded G-08 merge sequence have approval records. Every other gate remains
+`PENDING`. Use `schemas/approval-record.schema.json` for each later decision; no approval is implied
+by CI success.
 
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
@@ -13,7 +14,7 @@ G-00 has one bounded approval record. Every other gate remains `PENDING`. Use
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation PR merge | PENDING | PR evidence, CI, rollback and explicit merge decision |
+| G-08 | remediation PR merge | APPROVED — `V3-01-APP-002`, PR #12 → retest #13 → PR #13 only | all five CI jobs must pass on retargeted #13; approval is exhausted after this sequence |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
@@ -26,6 +27,8 @@ IDs, expiry and decision. Changing commit, artifact, provider, platform target, 
 time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, remediation implementation in LOCAL/CI,
-static/mock/security testing, redacted evidence creation and draft PR preparation. It authorizes no
-merge, deployment, credential use, paid call, public route, publishing, analytics collection or
-production write. Approval record: [`approvals/V3-01-APP-001.json`](approvals/V3-01-APP-001.json).
+static/mock/security testing, redacted evidence creation, and only the exact PR #12/#13 merge
+sequence authorized by G-08. It authorizes no deployment, credential use, paid call, public route,
+publishing, analytics collection or production write. Records:
+[`V3-01-APP-001`](approvals/V3-01-APP-001.json) and
+[`V3-01-APP-002`](approvals/V3-01-APP-002.json).

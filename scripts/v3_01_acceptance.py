@@ -40,6 +40,7 @@ REQUIRED_DOCS = (
     "10_RIGHTS_PROVENANCE_AUDIT.md", "11_BACKUP_RESTORE_ROLLBACK.md",
     "12_OBSERVABILITY_SOAK.md", "13_GAP_REGISTER.md", "13_GAP_REGISTER.csv",
     "14_REMEDIATION_PR_PLAN.md", "15_OWNER_GATES.md", "16_FINAL_VERDICT.md",
+    "17_V3_01_01_IDENTITY_INGRESS_SAFETY.md",
 )
 SENSITIVE_KEY = re.compile(
     r"(^|_)(authorization|cookie|password|passwd|secret|token|api_key|private_key|client_secret)($|_)",

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260827T141431Z-9635fb3",
+  "started_at_utc": "2026-08-27T14:04:00Z",
+  "completed_at_utc": "2026-08-27T14:15:00Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "9635fb3ecf5d5fc5ba20aef3486708bad5960b8b",
+  "base_sha": "b6686ab5a9740770bae991d79fc8b2ea062a54b4",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-01-remediation",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0010_v2_11_agent_hub_bridge",
+  "config_fingerprint_redacted": "human-auth-hash-registry-writes-disabled-production-no-secrets-read",
+  "providers": [
+    {
+      "capability": "all-external-capabilities",
+      "provider": "contract-or-disabled",
+      "model_or_workflow": "none-executed",
+      "region": "not-applicable",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "SEC-001",
+    "SEC-002-PARTIAL",
+    "CI-LOCAL-REGRESSION",
+    "DOCKER-E2E"
+  ],
+  "artifact_manifest": [
+    "matrix/evidence-EV-V3-SEC-001.json",
+    "matrix/evidence-EV-V3-SEC-002-PARTIAL.json",
+    "security/test-summary.json",
+    "security/status.json",
+    "final/status.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-001",
+    "V3-01-GAP-011"
+  ],
+  "owner_gate_ids": [
+    "G-00"
+  ],
+  "result": "BLOCKED"
+}

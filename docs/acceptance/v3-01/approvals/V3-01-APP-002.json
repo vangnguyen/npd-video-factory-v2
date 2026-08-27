@@ -1,0 +1,25 @@
+{
+  "approval_id": "V3-01-APP-002",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize the bounded merge sequence PR #12 into main, retarget and fully retest PR #13 against that exact main, then merge PR #13 only if all five Video Factory V2 CI jobs pass.",
+  "artifact_or_commit_hashes": [
+    "a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4",
+    "9635fb3ecf5d5fc5ba20aef3486708bad5960b8b",
+    "21d59149754a12f07d0c34479c786e381a675feb"
+  ],
+  "target_account_or_environment": "GitHub repository main branch merge sequence only; no runtime environment",
+  "limits": [
+    "PR #13 must be retargeted to exact main after PR #12 merge",
+    "PR #13 must rerun all five Video Factory V2 CI jobs and all must pass",
+    "No production deployment or public ingress",
+    "No credential activation or provider execution",
+    "No paid provider call or spend",
+    "No real publish, analytics write, or takedown",
+    "No permission for later remediation PR merges"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-27T14:50:28Z",
+  "expires_at_utc": null,
+  "notes": "Captured from the owner's explicit G-08 instruction in the Codex task and mirrored in PR #12 comment 5440886772. This approval is exhausted after the #12 then #13 merge sequence and does not imply G-01 through G-07 or G-09 through G-12."
+}

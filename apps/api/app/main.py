@@ -5,7 +5,7 @@ import time
 import uuid
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Header, HTTPException, Request, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from redis.asyncio import Redis
 
@@ -41,6 +41,14 @@ from .media_intelligence_service import (
     MediaPlanningService,
     MediaResolutionService,
     create_media_provider_bundle,
+)
+from .human_auth import (
+    HumanAuthVerifier,
+    HumanRateLimiter,
+    authorize_human_request,
+    authorize_project,
+    authorize_workspace,
+    principal_from,
 )
 from .models import JobCreateResponse, JobRecord, VideoJobCreate
 from .object_storage import create_object_storage, sha256_file
@@ -93,6 +101,10 @@ async def lifespan(app: FastAPI):
     engine = create_engine(settings.database_url)
     session_factory = create_session_factory(engine)
     redis = Redis.from_url(settings.redis_url, decode_responses=False)
+    human_auth_verifier = HumanAuthVerifier.from_file(
+        settings.human_auth_keys_file,
+        max_token_ttl_seconds=settings.human_auth_max_token_ttl_seconds,
+    )
     object_storage = create_object_storage(settings)
     platform = PlatformRepository(session_factory)
     trend_repository = TrendRepository(session_factory)
@@ -122,6 +134,13 @@ async def lifespan(app: FastAPI):
     app.state.database_engine = engine
     app.state.database_session_factory = session_factory
     app.state.redis = redis
+    app.state.human_api_enabled = settings.human_api_enabled
+    app.state.human_write_enabled = settings.human_write_enabled
+    app.state.human_auth_verifier = human_auth_verifier
+    app.state.human_rate_limiter = HumanRateLimiter(
+        redis,
+        requests_per_minute=settings.human_rate_limit_per_minute,
+    )
     app.state.object_storage = object_storage
     app.state.platform_repository = platform
     app.state.trend_repository = trend_repository
@@ -286,16 +305,25 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.12.0", lifespan=lifespan)
-app.include_router(platform_router)
-app.include_router(trend_router)
-app.include_router(auto_edit_router)
-app.include_router(vision_router)
-app.include_router(media_intelligence_router)
-app.include_router(timeline_router)
-app.include_router(production_router)
-app.include_router(publishing_router)
-app.include_router(analytics_router)
+_production_mode = settings.app_env.lower() == "production"
+app = FastAPI(
+    title="NPD Video Factory V2 API",
+    version="0.12.0",
+    lifespan=lifespan,
+    docs_url=None if _production_mode else "/docs",
+    redoc_url=None if _production_mode else "/redoc",
+    openapi_url=None if _production_mode else "/openapi.json",
+)
+_human_route_dependencies = [Depends(authorize_human_request)]
+app.include_router(platform_router, dependencies=_human_route_dependencies)
+app.include_router(trend_router, dependencies=_human_route_dependencies)
+app.include_router(auto_edit_router, dependencies=_human_route_dependencies)
+app.include_router(vision_router, dependencies=_human_route_dependencies)
+app.include_router(media_intelligence_router, dependencies=_human_route_dependencies)
+app.include_router(timeline_router, dependencies=_human_route_dependencies)
+app.include_router(production_router, dependencies=_human_route_dependencies)
+app.include_router(publishing_router, dependencies=_human_route_dependencies)
+app.include_router(analytics_router, dependencies=_human_route_dependencies)
 app.include_router(bridge_router)
 
 
@@ -781,7 +809,20 @@ async def readyz(request: Request) -> dict[str, str]:
     return {"status": "ready"}
 
 
-@app.get("/api/v1/capabilities")
+@app.get("/api/v1/auth/session", dependencies=_human_route_dependencies)
+async def human_session(request: Request) -> dict[str, object]:
+    principal = principal_from(request)
+    return {
+        "subject": principal.subject,
+        "display_name": principal.display_name,
+        "platform_role": principal.platform_role,
+        "workspace_roles": dict(principal.workspace_roles),
+        "expires_at": principal.expires_at.isoformat(),
+        "human_write_enabled": bool(request.app.state.human_write_enabled),
+    }
+
+
+@app.get("/api/v1/capabilities", dependencies=_human_route_dependencies)
 async def capabilities() -> dict[str, object]:
     return {
         "video_jobs": True,
@@ -792,6 +833,11 @@ async def capabilities() -> dict[str, object]:
         "publish_external_execution_enabled": settings.publish_external_execution_enabled,
         "publish_owner_gate_enabled": settings.publish_owner_gate_enabled,
         "human_approval_required": settings.human_approval_required,
+        "human_authentication": "short_lived_external_bearer",
+        "human_rbac_roles": ["viewer", "editor", "reviewer", "owner"],
+        "workspace_isolation": "deny_by_default",
+        "human_write_enabled": settings.human_write_enabled,
+        "human_rate_limit_per_minute": settings.human_rate_limit_per_minute,
         "analytics_implemented": True,
         "analytics_mode": "deterministic_fixture" if settings.analytics_fixture_enabled else "not_configured",
         "analytics_external_execution_enabled": False,
@@ -869,7 +915,12 @@ async def capabilities() -> dict[str, object]:
     }
 
 
-@app.post("/api/v1/video-jobs", response_model=JobCreateResponse, status_code=status.HTTP_202_ACCEPTED)
+@app.post(
+    "/api/v1/video-jobs",
+    response_model=JobCreateResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+    dependencies=_human_route_dependencies,
+)
 async def create_video_job(
     payload: VideoJobCreate,
     request: Request,
@@ -880,6 +931,12 @@ async def create_video_job(
     context = None
     if platform is not None:
         try:
+            if payload.project_id:
+                await authorize_project(request, payload.project_id, "editor")
+            elif payload.workspace_id:
+                await authorize_workspace(request, payload.workspace_id, "editor")
+            else:
+                await authorize_workspace(request, request.app.state.default_workspace_id, "editor")
             context = await platform.resolve_job_context(
                 payload.model_dump(mode="json"),
                 default_workspace=WorkspaceCreate(
@@ -916,7 +973,11 @@ async def create_video_job(
     )
 
 
-@app.get("/api/v1/video-jobs/{job_id}", response_model=JobRecord)
+@app.get(
+    "/api/v1/video-jobs/{job_id}",
+    response_model=JobRecord,
+    dependencies=_human_route_dependencies,
+)
 async def get_video_job(job_id: str, request: Request) -> JobRecord:
     if not job_id.startswith("vid_") or len(job_id) > 80:
         raise not_found()
@@ -926,7 +987,10 @@ async def get_video_job(job_id: str, request: Request) -> JobRecord:
     return record
 
 
-@app.get("/api/v1/video-jobs/{job_id}/artifacts/{artifact_name}")
+@app.get(
+    "/api/v1/video-jobs/{job_id}/artifacts/{artifact_name}",
+    dependencies=_human_route_dependencies,
+)
 async def get_video_artifact(job_id: str, artifact_name: str, request: Request) -> FileResponse:
     record = await store_from(request).get(job_id)
     if record is None:

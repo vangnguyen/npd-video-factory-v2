@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Query, Request, status
 
+from .human_auth import principal_from
 from .platform_models import (
     AssetRead,
     AssetRegister,
@@ -47,7 +48,13 @@ async def create_workspace(payload: WorkspaceCreate, request: Request) -> Worksp
 
 @router.get("/workspaces", response_model=list[WorkspaceRead])
 async def list_workspaces(request: Request) -> list[WorkspaceRead]:
-    return await platform_from(request).list_workspaces()
+    principal = principal_from(request)
+    workspaces = await platform_from(request).list_workspaces()
+    return [
+        workspace
+        for workspace in workspaces
+        if principal.role_for(workspace.workspace_id, workspace.slug) is not None
+    ]
 
 
 @router.get("/workspaces/{workspace_id}", response_model=WorkspaceRead)

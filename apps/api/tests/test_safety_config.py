@@ -38,6 +38,30 @@ def test_v2_01_rejects_disabling_human_approval() -> None:
         Settings(_env_file=None, human_approval_required=False)
 
 
+def test_v3_01_human_auth_config_bounds_and_production_boundary() -> None:
+    with pytest.raises(ValidationError, match="token TTL"):
+        Settings(_env_file=None, human_auth_max_token_ttl_seconds=86_401)
+    with pytest.raises(ValidationError, match="rate limit"):
+        Settings(_env_file=None, human_rate_limit_per_minute=9)
+    with pytest.raises(ValidationError, match="human auth boundary"):
+        Settings(
+            _env_file=None,
+            app_env="production",
+            human_api_enabled=False,
+            trend_fixture_enabled=False,
+            auto_edit_fixture_enabled=False,
+            vision_fixture_enabled=False,
+            media_fixture_enabled=False,
+            analytics_fixture_enabled=False,
+            transcription_provider="contract",
+            auto_edit_signal_provider="ffmpeg",
+            vision_provider="contract",
+            object_storage_provider="s3",
+            object_storage_access_key="test-access-key",
+            object_storage_secret_key="test-secret-key",
+        )
+
+
 def test_v2_03_rejects_fixture_provider_in_production() -> None:
     with pytest.raises(ValidationError, match="trend fixtures must be disabled"):
         Settings(
@@ -213,6 +237,9 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["publish_external_execution_enabled"] is False
     assert result["publish_owner_gate_enabled"] is False
     assert result["human_approval_required"] is True
+    assert result["human_authentication"] == "short_lived_external_bearer"
+    assert result["human_rbac_roles"] == ["viewer", "editor", "reviewer", "owner"]
+    assert result["workspace_isolation"] == "deny_by_default"
     assert result["analytics_implemented"] is True
     assert result["analytics_external_execution_enabled"] is False
     assert result["analytics_historical_snapshots"] is True

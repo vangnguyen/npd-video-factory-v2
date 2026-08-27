@@ -5,6 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from auth_test_support import TEST_HUMAN_HEADERS, install_test_human_auth
 
 from app.analytics_logic import assess_winner
 from app.analytics_models import AnalyticsSyncRequest, NormalizedMetrics
@@ -280,7 +281,10 @@ async def test_scheduled_refresh_and_fixture_gates_fail_closed(tmp_path) -> None
 async def test_analytics_api_exposes_report_history_and_provider_truth(tmp_path) -> None:
     stack = await analytics_stack(tmp_path)
     app.state.analytics_service = stack.service
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+    install_test_human_auth(app, platform_repository=stack.production.platform)
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test", headers=TEST_HUMAN_HEADERS
+    ) as client:
         response = await client.post(
             f"/api/v1/projects/{stack.production.project.project_id}/analytics/syncs",
             headers={"Idempotency-Key": "v2-10-api-analytics-sync-0001"},

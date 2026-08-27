@@ -1,20 +1,23 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27`.
+derived from the audit captured on `2026-08-27` and the V3-01-01 remediation locked to
+`9635fb3ecf5d5fc5ba20aef3486708bad5960b8b`.
 
-| Severity | Open count | Production effect |
-|---|---:|---|
-| P0 | 10 | blocks release candidate GO |
-| P1 | 5 | blocks production hardening/full acceptance |
-| P2 | 1 | tracked maintenance risk |
-| Total | 16 | default verdict remains NO-GO |
+| Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
+|---|---:|---:|---:|---:|---|
+| P0 | 9 | 0 | 1 | 10 | all unverified P0 work still blocks release-candidate GO |
+| P1 | 4 | 1 | 0 | 5 | blocks production hardening/full acceptance |
+| P2 | 1 | 0 | 0 | 1 | tracked maintenance risk |
+| Total | 14 | 1 | 1 | 16 | default verdict remains NO-GO |
+
+`V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence. G-08 now
+authorizes only the PR #12/#13 sequence; production remains undeployed and unverified.
 
 ## P0 release blockers
 
 | Gap | Short description | Containment |
 |---|---|---|
-| V3-01-GAP-001 | interactive auth/RBAC/workspace isolation absent | localhost only |
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | no production-ready claim |
 | V3-01-GAP-003 | no real ASR/Vision/reframe evidence | fixtures/contract only |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | external execution false |
@@ -29,11 +32,13 @@ derived from the audit captured on `2026-08-27`.
 
 - `V3-01-GAP-009`: observability, alerts, retention and 48-hour soak.
 - `V3-01-GAP-010`: provider budgets, usage, circuit breaker and global cost kill switch.
-- `V3-01-GAP-011`: upload malware/quarantine/rate-limit/SSRF security suite.
+- `V3-01-GAP-011` (`IN_PROGRESS`): auth rate limiting, URL-import denial and bounded malicious-input
+  tests pass; malware quarantine, decompression-resource acceptance and production ingress remain.
 - `V3-01-GAP-012`: GitHub `main` branch protection is disabled.
 - `V3-01-GAP-014`: real Agent Hub HTTP bridge acceptance is absent.
 - `V3-01-GAP-015`: GitHub Actions runtime deprecation warning.
 
-No gap is closed by this baseline PR. A gap moves from `OPEN` to `VERIFIED` only when its remediation
-PR, prescribed test plan and artifact-bound evidence all pass on the locked commit. Owner exceptions
-must name an expiry and approval record; no implicit exception exists.
+No gap is `VERIFIED` or closed by V3-01-01. `REMEDIATED` means its code and prescribed local/mock
+evidence pass on the locked commit; it still needs the authorized merge and any applicable
+production-path evidence before `VERIFIED`. Owner exceptions must name an expiry and approval record; no implicit
+exception exists.

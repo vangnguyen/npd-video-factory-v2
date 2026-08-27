@@ -14,6 +14,7 @@ import {
   qcItems,
   timelinePositionFromPointer,
 } from "/studio-utils.mjs?v=0.12.0";
+import { authenticatedFetch, ensureAuthenticatedSession } from "/auth.mjs";
 
 const state = {
   workspaceId: null,
@@ -60,9 +61,9 @@ class ApiError extends Error {
 }
 
 async function api(path, options = {}) {
-  const response = await fetch(path, {
-    headers: { "Content-Type": "application/json", ...(options.headers ?? {}) },
+  const response = await authenticatedFetch(path, {
     ...options,
+    headers: { "Content-Type": "application/json", ...(options.headers ?? {}) },
   });
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
@@ -1305,4 +1306,6 @@ window.addEventListener("beforeunload", () => {
   stopProductionPolling();
   stopAnalyticsPolling();
 });
-loadProjectList().catch((error) => { renderNoProject("Không tải được Studio.", error.message); toast(error.message, true); });
+ensureAuthenticatedSession()
+  .then(() => loadProjectList())
+  .catch((error) => { renderNoProject("Không tải được Studio.", error.message); toast(error.message, true); });

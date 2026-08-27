@@ -14,6 +14,7 @@ from .auto_edit_models import (
 )
 from .auto_edit_providers import MediaProbeError, ProviderNotConfigured
 from .auto_edit_service import AutoEditAnalysisService, UploadConflictError, UploadService, UploadSizeError
+from .human_auth import authorize_project
 from .media_validation import MediaValidationError
 
 
@@ -43,6 +44,7 @@ def error(status_code: int, code: str, message: str) -> HTTPException:
 @router.post("/uploads/init", response_model=UploadRead, status_code=status.HTTP_201_CREATED)
 async def initialize_upload(payload: UploadInitRequest, request: Request) -> UploadRead:
     try:
+        await authorize_project(request, payload.project_id, "editor")
         return await upload_service_from(request).initialize(payload)
     except KeyError as exc:
         raise missing("Project or version") from exc

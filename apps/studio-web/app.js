@@ -5,6 +5,7 @@ import {
   lifecycleLabel,
   lifecycleTone,
 } from "/trend-utils.mjs";
+import { authenticatedFetch, ensureAuthenticatedSession } from "/auth.mjs";
 
 const state = {
   workspaceId: null,
@@ -30,9 +31,9 @@ const safeUrl = (value) => {
 };
 
 async function api(path, options = {}) {
-  const response = await fetch(path, {
-    headers: { "Content-Type": "application/json", ...(options.headers ?? {}) },
+  const response = await authenticatedFetch(path, {
     ...options,
+    headers: { "Content-Type": "application/json", ...(options.headers ?? {}) },
   });
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
@@ -276,4 +277,6 @@ document.addEventListener("click", (event) => {
 });
 
 renderTabs();
-reloadData().catch((error) => { toast(error.message, true); renderAll(); });
+ensureAuthenticatedSession()
+  .then(() => reloadData())
+  .catch((error) => { toast(error.message, true); renderAll(); });

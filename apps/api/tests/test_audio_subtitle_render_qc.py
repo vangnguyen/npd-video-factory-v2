@@ -6,6 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from auth_test_support import TEST_HUMAN_HEADERS, install_test_human_auth
 from sqlalchemy import event
 
 from app.auto_edit_repository import AutoEditRepository
@@ -426,7 +427,10 @@ async def test_api_contract_and_not_configured_provider_state(tmp_path: Path) ->
     app.state.auto_edit_repository = stack.asset_repository
     app.state.object_storage = stack.storage
     app.state.production_render_download_root = tmp_path / "downloads"
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+    install_test_human_auth(app, platform_repository=stack.platform)
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test", headers=TEST_HUMAN_HEADERS
+    ) as client:
         created = await client.post(
             f"/api/v1/projects/{stack.project.project_id}/production-package",
             json={"expected_timeline_version": 1, "actor_ref": "owner-fixture"},

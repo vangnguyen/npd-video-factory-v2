@@ -10,15 +10,18 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: not yet established
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: remediation development in LOCAL/CI; draft PRs only
+CURRENT SAFE PHASE: remediation development in LOCAL/CI; G-08 merge sequence #12/#13 only
 G-00: APPROVED by V3-01-APP-001
-NEXT OWNER GATE: G-08 for each remediation PR merge
-NO MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
+G-08: APPROVED by V3-01-APP-002 for #12 -> retarget/retest #13 -> #13 only
+NO OTHER MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
 ```
 
 G-00 accepts the feature freeze, matrix, gaps and remediation sequence. It does not authorize a
 merge, deployment, public ingress, credential use, provider execution, spend, external publish,
 analytics write or takedown. Those actions remain bound to their separate gates.
+
+G-08 later authorized only the repository merge sequence PR #12, then retarget/retest PR #13, then
+PR #13 if all five CI jobs pass. It grants no runtime or external-execution authority.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
@@ -108,3 +111,11 @@ Current checked-in production override deliberately selects contract-only or dis
 
 Evidence: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`, `EV-V3-SAFETY-001`,
 `EV-V3-DR-001`.
+
+## V3-01-01 remediation checkpoint
+
+The historical baseline above remains unchanged. A stacked remediation branch now locks human
+identity/ingress code at `9635fb3ecf5d5fc5ba20aef3486708bad5960b8b`. Local/CI and disposable
+Docker evidence passes for external hash-only sessions, RBAC, workspace isolation, Studio session
+handling and valid-session rate limiting. This checkpoint is unmerged, undeployed and not a release
+candidate; public ingress, credentials, real providers and publishing remain prohibited.

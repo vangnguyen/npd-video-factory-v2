@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-SEC-001",
+  "test_case_id": "SEC-001",
+  "matrix_rows": [
+    "FND-02",
+    "FND-10",
+    "OPS-02"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "9635fb3ecf5d5fc5ba20aef3486708bad5960b8b",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "local-human-auth-registry",
+    "model_or_workflow": "hash-only-external-session-rbac-workspace-isolation",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "c8f1f25583acccddfbd869b1fa1241535d7906a3b0de6cc491dd90d817187f56",
+  "started_at_utc": "2026-08-27T14:04:00Z",
+  "completed_at_utc": "2026-08-27T14:10:51Z",
+  "duration_seconds": 411,
+  "result": "PASS",
+  "assertion": "Normal API routes fail closed without a valid human session; role boundaries, expiry, revocation, workspace isolation, Studio session handling and the separate Agent Hub HMAC boundary pass in local tests and disposable Docker.",
+  "correlation_id": "v3-01-01-local-security-9635fb3",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex local security reviewer",
+  "gap_ids": [
+    "V3-01-GAP-001"
+  ],
+  "reproduce": "Run the Python, Studio and Docker E2E commands recorded in security/test-summary.json on commit 9635fb3ecf5d5fc5ba20aef3486708bad5960b8b without enabling public ingress or external providers."
+}

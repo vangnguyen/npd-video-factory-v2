@@ -43,6 +43,7 @@ cleanup() {
   [[ -z "${studio_headers_probe:-}" ]] || rm -f "$studio_headers_probe"
   [[ -z "${studio_headers_normalized:-}" ]] || rm -f "$studio_headers_normalized"
   rm -f storage/e2e-agent-hub-keys.json
+  rm -f storage/e2e-human-auth.json storage/.e2e-human-token
 }
 trap cleanup EXIT
 
@@ -53,7 +54,10 @@ cp .env.example .env
 # It is mounted read-only, removed on exit and never copied into acceptance artifacts.
 "$PYTHON_BIN" - <<'PY'
 import base64
+import hashlib
 import json
+import secrets
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 key_v1 = b"v2-11-e2e-inbound-key-at-least-32-bytes"
@@ -77,12 +81,53 @@ Path("storage/e2e-agent-hub-keys.json").write_text(
     ),
     encoding="utf-8",
 )
+
+issued_at = datetime.now(timezone.utc)
+raw_token = f"vf1.e2e-owner.{secrets.token_urlsafe(36)}"
+Path("storage/e2e-human-auth.json").write_text(
+    json.dumps(
+        {
+            "version": 1,
+            "tokens": {
+                "e2e-owner": {
+                    "token_id": "e2e-owner",
+                    "token_sha256": hashlib.sha256(raw_token.encode("utf-8")).hexdigest(),
+                    "subject": "usr:e2e-owner",
+                    "display_name": "E2E Owner",
+                    "platform_role": "owner",
+                    "workspace_roles": {"*": "owner"},
+                    "issued_at": issued_at.isoformat(),
+                    "not_before": issued_at.isoformat(),
+                    "expires_at": (issued_at + timedelta(minutes=30)).isoformat(),
+                    "enabled": True,
+                }
+            },
+        },
+        sort_keys=True,
+    ),
+    encoding="utf-8",
+)
+Path("storage/.e2e-human-token").write_text(raw_token, encoding="utf-8")
 PY
-chmod 0600 storage/e2e-agent-hub-keys.json
+chmod 0600 storage/e2e-agent-hub-keys.json storage/e2e-human-auth.json storage/.e2e-human-token
 printf '%s\n' \
+  'VIDEO_FACTORY_HUMAN_AUTH_FILE=./storage/e2e-human-auth.json' \
   'VIDEO_FACTORY_AGENT_HUB_KEYS_FILE=./storage/e2e-agent-hub-keys.json' \
   'AGENT_HUB_BRIDGE_ENABLED=true' \
   'AGENT_HUB_WEBHOOK_MODE=fixture' >>.env
+
+HUMAN_SESSION_TOKEN="$(<storage/.e2e-human-token)"
+curl() {
+  local argument
+  for argument in "$@"; do
+    if [[ "$argument" == http://localhost:8000/api/v1/* \
+      && "$argument" != http://localhost:8000/api/v1/bridge/* ]]; then
+      command curl -H "Authorization: Bearer ${HUMAN_SESSION_TOKEN}" "$@"
+      return
+    fi
+  done
+  command curl "$@"
+}
 
 # Copyright-safe, visibly distinct PNG fixtures. A previous 1x1 fixture encoded
 # an opaque black pixel, which let a black video pass metadata-only QC.
@@ -131,6 +176,28 @@ if ! grep -Eqi '^content-type:[[:space:]]*application/javascript' "$studio_heade
   echo "Auto Edit Studio ES module MIME check failed" >&2
   exit 1
 fi
+
+echo "[e2e] verifying V3-01 human auth boundary"
+unauthenticated_status="$(command curl --silent --output /dev/null --write-out '%{http_code}' \
+  http://localhost:8000/api/v1/workspaces)"
+if [[ "$unauthenticated_status" != "401" ]]; then
+  echo "Unauthenticated workspace request did not fail closed: HTTP $unauthenticated_status" >&2
+  exit 1
+fi
+curl --fail --silent --show-error \
+  http://localhost:8000/api/v1/auth/session >e2e-artifacts/human-session.json
+"$PYTHON_BIN" - <<'PY'
+import json
+from pathlib import Path
+
+session = json.loads(Path("e2e-artifacts/human-session.json").read_text(encoding="utf-8"))
+assert session["subject"] == "usr:e2e-owner", session
+assert session["platform_role"] == "owner", session
+assert session["human_write_enabled"] is True, session
+serialized = json.dumps(session, sort_keys=True).lower()
+assert "token_sha256" not in serialized and "authorization" not in serialized, session
+print("[e2e] human auth and secret-safe session contract verified")
+PY
 
 echo "[e2e] exercising V2-11 signed Agent Hub bridge"
 unsigned_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
