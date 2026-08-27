@@ -1,6 +1,6 @@
-# Deployment — V2-07
+# Deployment — V2-08
 
-V2-07 is a development/CI platform increment and is not approved for production deployment.
+V2-08 is a development/CI platform increment and is not approved for production deployment.
 
 ## Dev/CI
 
@@ -41,11 +41,17 @@ Before any production proposal, a separate owner-approved PR/task must add and v
 13. Auto Edit Studio authentication, project/workspace authorization and auditable human identity;
 14. timeline/preview retention, quota and cleanup policies plus a PostgreSQL/object-store restore drill;
 15. resource ceilings and observability for FFmpeg preview workers.
+16. human acceptance of Vietnamese narration, subtitle readability and all final output profiles;
+17. production render queue/SLO monitoring, retention and failed-QC incident handling;
+18. explicit VND price/budget approval for any external TTS provider;
+19. rights audit for every music asset and a restore drill for approval/render evidence.
 
-V2-07 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
+V2-08 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
 `VISION_FIXTURE_ENABLED=false`, `VISION_PROVIDER=contract`,
 `MEDIA_FIXTURE_ENABLED=false`, media providers set to `contract`, and external/paid/ComfyUI
 execution disabled until their separate owner gates;
 `TRANSCRIPTION_PROVIDER=contract` (until a live adapter is approved) and
-`AUTO_EDIT_SIGNAL_PROVIDER=ffmpeg` for production. This branch changes no existing NPD production
-service and must not be deployed as-is.
+`AUTO_EDIT_SIGNAL_PROVIDER=ffmpeg` for production. `AUDIO_TTS_PROVIDER=contract` must remain
+`not_configured` until the production voice/provider is accepted; enabling an external provider
+requires the separate owner gate. This branch changes no existing NPD production service and must
+not be deployed as-is.

@@ -4,10 +4,13 @@ import test from "node:test";
 import {
   canDropOnTrack,
   clipStyle,
+  describeApproval,
+  describeProductionRender,
   describePreview,
   formatTime,
   getClip,
   pixelsPerSecond,
+  qcItems,
   snapTime,
   timelinePositionFromPointer,
 } from "../studio-utils.mjs";
@@ -33,6 +36,25 @@ test("formats editor timecodes and zoom deterministically", () => {
   assert.equal(formatTime(65.25), "01:05.3");
   assert.equal(pixelsPerSecond(1), 34);
   assert.equal(pixelsPerSecond(10), 136);
+});
+
+test("labels version-bound approval and production render states", () => {
+  assert.deepEqual(describeApproval({ status: "approved" }), { label: "Đã duyệt", tone: "safe" });
+  assert.equal(describeApproval({ status: "changes_requested" }).tone, "danger");
+  assert.equal(
+    describeProductionRender({ status: "awaiting_review", qc_status: "passed", progress: 100 }).label,
+    "Review sẵn sàng · QC PASS",
+  );
+  assert.equal(describeProductionRender({ status: "running", progress: 42 }).terminal, false);
+  assert.deepEqual(qcItems({
+    status: "passed",
+    width: 1080,
+    height: 1920,
+    fps: 30,
+    video_codec: "h264",
+    audio_codec: "aac",
+    av_sync_delta_seconds: 0.01,
+  })[1], ["Kích thước", "1080×1920"]);
 });
 
 test("snaps pointer placement to quarter seconds", () => {

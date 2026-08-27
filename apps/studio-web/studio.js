@@ -1,12 +1,15 @@
 import {
   canDropOnTrack,
   clipStyle,
+  describeApproval,
+  describeProductionRender,
   describePreview,
   formatTime,
   getClip,
   pixelsPerSecond,
+  qcItems,
   timelinePositionFromPointer,
-} from "/studio-utils.mjs?v=0.8.0";
+} from "/studio-utils.mjs?v=0.9.0";
 
 const state = {
   workspaceId: null,
@@ -18,6 +21,8 @@ const state = {
   timeline: null,
   versions: [],
   preview: null,
+  productionPackage: null,
+  activeProductionRender: null,
   selectedClipId: null,
   panelTab: "media",
   query: "",
@@ -27,6 +32,7 @@ const state = {
   redoStack: [],
   draggingClipId: null,
   pollTimer: null,
+  productionPollTimer: null,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -109,6 +115,7 @@ async function loadProjectList() {
 async function loadProject({ quiet = false } = {}) {
   if (!state.projectId) return;
   stopPreviewPolling();
+  stopProductionPolling();
   if (!quiet) setSaveStatus("Đang tải…", "muted");
   try {
     const [assets, analyses, mediaPlans, timeline] = await Promise.all([
@@ -123,12 +130,24 @@ async function loadProject({ quiet = false } = {}) {
     Object.assign(state, { assets, analyses, mediaPlans, timeline, selectedClipId: null, redoStack: [] });
     state.versions = timeline ? await api(`/api/v1/projects/${state.projectId}/timeline/versions`) : [];
     state.preview = null;
+    state.productionPackage = null;
+    state.activeProductionRender = null;
     if (timeline?.latest_preview_id) {
       state.preview = await api(`/api/v1/projects/${state.projectId}/previews/${timeline.latest_preview_id}`).catch(() => null);
+    }
+    if (timeline) {
+      state.productionPackage = await api(`/api/v1/projects/${state.projectId}/production-package`).catch((error) => {
+        if (error.status === 404) return null;
+        throw error;
+      });
+      state.activeProductionRender = state.productionPackage?.latest_final_render
+        ?? state.productionPackage?.latest_review_render
+        ?? null;
     }
     state.playhead = Math.min(state.playhead, timeline?.snapshot?.duration_seconds ?? 0);
     render();
     if (["queued", "running"].includes(state.preview?.status)) startPreviewPolling();
+    if (["queued", "running"].includes(state.activeProductionRender?.status)) startProductionPolling();
     setSaveStatus("Đã lưu", "safe");
   } catch (error) {
     setSaveStatus("Lỗi tải", "danger");
@@ -163,6 +182,7 @@ function render() {
   renderTimeline();
   renderInspector();
   renderPreview();
+  renderProduction();
 }
 
 function renderSummary() {
@@ -175,6 +195,7 @@ function renderSummary() {
   $("#metric-clips").textContent = clips.length;
   $("#metric-scenes").textContent = `${analysis?.scenes?.length ?? 0} scene AI`;
   $("#metric-preview").textContent = previewState.label.split(" · ")[0];
+  $("#metric-approval").textContent = describeApproval(state.productionPackage?.approval).label;
 }
 
 function renderBrowser() {
@@ -321,6 +342,295 @@ function renderPreview() {
   $("#preview-title").textContent = currentVersion ? `Timeline v${currentVersion}` : "Timeline hiện tại";
 }
 
+function renderProduction() {
+  const packageState = state.productionPackage;
+  const empty = $("#production-empty");
+  const content = $("#production-content");
+  const packagePill = $("#production-package-status");
+  const packageButton = $("#production-package-button");
+  if (!packageState) {
+    empty.hidden = false;
+    content.hidden = true;
+    packagePill.textContent = "Chưa khởi tạo";
+    packagePill.className = "pill muted";
+    packageButton.textContent = "Khởi tạo gói dựng";
+    return;
+  }
+  empty.hidden = true;
+  content.hidden = false;
+  packagePill.textContent = packageState.current_for_timeline
+    ? `Timeline v${packageState.timeline_version}`
+    : `Cần làm mới từ timeline v${state.timeline.current_version}`;
+  packagePill.className = `pill ${packageState.current_for_timeline ? "safe" : "warning"}`;
+  packageButton.textContent = packageState.current_for_timeline ? "Làm mới gói dựng" : "Đồng bộ timeline mới";
+
+  $("#subtitle-version").textContent = `v${packageState.subtitle.version}`;
+  $("#subtitle-list").innerHTML = packageState.subtitle.cues.map((cue) => `
+    <div class="subtitle-row" data-cue-id="${escapeHtml(cue.cue_id)}">
+      <label>Bắt đầu<input data-cue-field="start" type="number" min="0" step="0.01" value="${Number(cue.start_seconds).toFixed(2)}" /></label>
+      <label>Kết thúc<input data-cue-field="end" type="number" min="0.05" step="0.01" value="${Number(cue.end_seconds).toFixed(2)}" /></label>
+      <label>Nội dung<textarea data-cue-field="text" maxlength="180">${escapeHtml(cue.text)}</textarea></label>
+    </div>
+  `).join("");
+  $("#subtitle-position").value = packageState.subtitle.style.position;
+  $("#subtitle-animation").value = packageState.subtitle.style.animation;
+  $("#subtitle-font-size").value = packageState.subtitle.style.font_size;
+  $("#subtitle-safe-margin").value = packageState.subtitle.style.safe_margin_percent;
+
+  const mix = packageState.audio_mix.config;
+  $("#audio-version").textContent = `v${packageState.audio_mix.version}`;
+  $("#audio-provider-status").textContent = `TTS: ${packageState.audio_mix.provider_status === "configured" ? "đã cấu hình" : "chưa cấu hình"} · 48 kHz · limiter ${mix.limiter_peak_db} dB`;
+  $("#voice-enabled").checked = mix.voice.enabled;
+  $("#voice-speed").value = mix.voice.speed;
+  $("#voice-speed-output").textContent = `${Number(mix.voice.speed).toFixed(2)}×`;
+  $("#voice-gain").value = mix.voice.gain_db;
+  $("#music-gain").value = mix.music.gain_db;
+  $("#music-ducking").value = mix.music.ducking_db;
+  const licensedAudio = state.assets.filter((asset) => {
+    const rights = String(asset.provenance?.rights_status ?? "").toLowerCase();
+    return asset.content_type.startsWith("audio/") && ["owned", "licensed", "public_domain", "royalty_free"].includes(rights);
+  });
+  $("#music-asset").innerHTML = `<option value="">Không dùng nhạc</option>${licensedAudio.map((asset) => `
+    <option value="${escapeHtml(asset.asset_id)}">${escapeHtml(asset.filename)} · ${escapeHtml(asset.provenance.rights_status)}</option>
+  `).join("")}`;
+  $("#music-asset").value = mix.music.asset_id ?? "";
+
+  const approvalState = describeApproval(packageState.approval);
+  $("#approval-status").textContent = approvalState.label;
+  $("#approval-status").className = `pill ${approvalState.tone}`;
+  const render = state.activeProductionRender
+    ?? packageState.latest_final_render
+    ?? packageState.latest_review_render;
+  const renderState = describeProductionRender(render);
+  $("#render-summary").textContent = render
+    ? `${renderState.label} · ${render.render_kind === "final" ? "Final" : "Review"} v${render.version} · timeline v${render.timeline_version} / subtitle v${render.subtitle_version} / audio v${render.audio_version}`
+    : renderState.label;
+  const productionVideo = $("#production-video");
+  if (render?.playback_url && ["awaiting_review", "ready"].includes(render.status)) {
+    productionVideo.src = `${render.playback_url}?render=${encodeURIComponent(render.render_id)}`;
+    productionVideo.hidden = false;
+  } else {
+    productionVideo.hidden = true;
+    productionVideo.removeAttribute("src");
+  }
+  $("#qc-summary").innerHTML = qcItems(render?.qc_report).map(([label, value]) => `
+    <div class="qc-item">${escapeHtml(label)}<strong>${escapeHtml(value)}</strong></div>
+  `).join("");
+  const busy = ["queued", "running"].includes(render?.status);
+  const reviewReady = packageState.latest_review_render?.status === "awaiting_review"
+    && packageState.latest_review_render?.qc_status === "passed";
+  const awaitingDecision = packageState.approval?.status === "awaiting_review";
+  const approved = packageState.approval?.status === "approved";
+  $("#review-render-button").disabled = busy || !packageState.current_for_timeline;
+  $("#review-render-button").textContent = busy && render?.render_kind === "review"
+    ? `Đang render ${render.progress}%`
+    : "Tạo review A/V 540p";
+  $("#request-approval-button").disabled = busy || !reviewReady || awaitingDecision || approved;
+  $("#approve-button").disabled = !awaitingDecision;
+  $("#changes-button").disabled = !awaitingDecision;
+  $("#final-render-button").disabled = busy || !approved;
+  $("#final-render-button").textContent = busy && render?.render_kind === "final"
+    ? `Đang render ${render.progress}%`
+    : "Render final đã duyệt";
+}
+
+function timedWords(text, start, end) {
+  const words = String(text).trim().split(/\s+/u).filter(Boolean);
+  const slot = (end - start) / Math.max(1, words.length);
+  return words.map((word, index) => ({
+    text: word,
+    start_seconds: Number((start + index * slot).toFixed(3)),
+    end_seconds: Number((start + (index + 1) * slot).toFixed(3)),
+  }));
+}
+
+async function createOrRefreshProductionPackage() {
+  if (!state.timeline) return;
+  try {
+    state.productionPackage = await api(`/api/v1/projects/${state.projectId}/production-package`, {
+      method: "POST",
+      body: JSON.stringify({
+        expected_timeline_version: state.timeline.current_version,
+        actor_ref: "studio-user",
+      }),
+    });
+    state.activeProductionRender = null;
+    renderSummary();
+    renderProduction();
+    toast("Gói dựng V2-08 đã đồng bộ với timeline hiện tại.");
+  } catch (error) {
+    toast(error.message, true);
+  }
+}
+
+async function saveSubtitles() {
+  const packageState = state.productionPackage;
+  if (!packageState) return;
+  const cues = [...document.querySelectorAll(".subtitle-row")].map((row) => {
+    const start = Number(row.querySelector('[data-cue-field="start"]').value);
+    const end = Number(row.querySelector('[data-cue-field="end"]').value);
+    const text = row.querySelector('[data-cue-field="text"]').value.trim();
+    return {
+      cue_id: row.dataset.cueId,
+      start_seconds: start,
+      end_seconds: end,
+      text,
+      words: timedWords(text, start, end),
+    };
+  });
+  try {
+    state.productionPackage = await api(`/api/v1/projects/${state.projectId}/subtitles`, {
+      method: "PUT",
+      body: JSON.stringify({
+        expected_timeline_version: packageState.timeline_version,
+        expected_subtitle_version: packageState.subtitle.version,
+        cues,
+        style: {
+          ...packageState.subtitle.style,
+          position: $("#subtitle-position").value,
+          animation: $("#subtitle-animation").value,
+          font_size: Number($("#subtitle-font-size").value),
+          safe_margin_percent: Number($("#subtitle-safe-margin").value),
+        },
+        actor_ref: "studio-user",
+        reason: "subtitle-editor",
+      }),
+    });
+    state.activeProductionRender = null;
+    renderSummary();
+    renderProduction();
+    toast("Đã lưu phiên bản phụ đề mới; approval/render cũ đã được vô hiệu hóa nếu có.");
+  } catch (error) {
+    toast(error.message, true);
+  }
+}
+
+async function saveAudioMix() {
+  const packageState = state.productionPackage;
+  if (!packageState) return;
+  const config = structuredClone(packageState.audio_mix.config);
+  config.voice.enabled = $("#voice-enabled").checked;
+  config.voice.speed = Number($("#voice-speed").value);
+  config.voice.gain_db = Number($("#voice-gain").value);
+  config.music.asset_id = $("#music-asset").value || null;
+  config.music.gain_db = Number($("#music-gain").value);
+  config.music.ducking_db = Number($("#music-ducking").value);
+  try {
+    state.productionPackage = await api(`/api/v1/projects/${state.projectId}/audio-mix`, {
+      method: "PUT",
+      body: JSON.stringify({
+        expected_timeline_version: packageState.timeline_version,
+        expected_audio_version: packageState.audio_mix.version,
+        config,
+        actor_ref: "studio-user",
+        reason: "audio-mixer",
+      }),
+    });
+    state.activeProductionRender = null;
+    renderSummary();
+    renderProduction();
+    toast("Đã lưu phiên bản audio mix mới; chỉ nhạc có metadata quyền sử dụng mới được chấp nhận.");
+  } catch (error) {
+    toast(error.message, true);
+  }
+}
+
+async function createProductionRender(kind) {
+  const packageState = state.productionPackage;
+  if (!packageState) return;
+  const isFinal = kind === "final";
+  const path = isFinal ? "final-render" : "review-render";
+  try {
+    state.activeProductionRender = await api(`/api/v1/projects/${state.projectId}/${path}`, {
+      method: "POST",
+      body: JSON.stringify({
+        expected_timeline_version: packageState.timeline_version,
+        expected_subtitle_version: packageState.subtitle.version,
+        expected_audio_version: packageState.audio_mix.version,
+        profile: isFinal ? $("#final-profile").value : "review-540x960",
+        actor_ref: "studio-user",
+        ...(isFinal ? {approval_id: packageState.approval?.approval_id} : {}),
+      }),
+    });
+    renderProduction();
+    startProductionPolling();
+    toast(isFinal ? "Final render đã vào hàng đợi nội bộ." : "Review A/V đã vào hàng đợi nội bộ.");
+  } catch (error) {
+    toast(error.message, true);
+  }
+}
+
+function startProductionPolling() {
+  stopProductionPolling();
+  if (!state.activeProductionRender) return;
+  state.productionPollTimer = window.setInterval(async () => {
+    try {
+      const renderId = state.activeProductionRender.render_id;
+      state.activeProductionRender = await api(`/api/v1/projects/${state.projectId}/renders/${renderId}`);
+      state.productionPackage = await api(`/api/v1/projects/${state.projectId}/production-package`);
+      renderSummary();
+      renderProduction();
+      const description = describeProductionRender(state.activeProductionRender);
+      if (description.terminal) {
+        stopProductionPolling();
+        toast(description.label, !["awaiting_review", "ready"].includes(state.activeProductionRender.status));
+      }
+    } catch (error) {
+      stopProductionPolling();
+      toast(error.message, true);
+    }
+  }, 1200);
+}
+
+function stopProductionPolling() {
+  if (state.productionPollTimer) window.clearInterval(state.productionPollTimer);
+  state.productionPollTimer = null;
+}
+
+async function requestProductionApproval() {
+  const review = state.productionPackage?.latest_review_render;
+  if (!review) return;
+  try {
+    const approval = await api(`/api/v1/projects/${state.projectId}/approvals`, {
+      method: "POST",
+      body: JSON.stringify({
+        review_render_id: review.render_id,
+        requester_ref: "studio-user",
+        note: "Vui lòng duyệt đúng review A/V và các phiên bản đang hiển thị.",
+      }),
+    });
+    state.productionPackage = {...state.productionPackage, approval};
+    renderSummary();
+    renderProduction();
+    toast("Đã gửi gói review gắn phiên bản cho owner.");
+  } catch (error) {
+    toast(error.message, true);
+  }
+}
+
+async function decideProductionApproval(decision) {
+  const approval = state.productionPackage?.approval;
+  if (!approval) return;
+  try {
+    const updated = await api(`/api/v1/projects/${state.projectId}/approvals/${approval.approval_id}/decision`, {
+      method: "POST",
+      body: JSON.stringify({
+        decision,
+        reviewer_ref: "studio-owner",
+        comment: decision === "approved"
+          ? "Owner xác nhận đã xem hình, nghe audio và kiểm tra phụ đề/QC."
+          : "Owner yêu cầu chỉnh lại gói dựng trước khi render final.",
+      }),
+    });
+    state.productionPackage = {...state.productionPackage, approval: updated};
+    renderSummary();
+    renderProduction();
+    toast(decision === "approved" ? "Gói review đã được owner phê duyệt." : "Đã trả gói dựng về trạng thái cần chỉnh sửa.");
+  } catch (error) {
+    toast(error.message, true);
+  }
+}
+
 async function createTimeline() {
   const analysis = activeAnalysis();
   if (!analysis) return;
@@ -365,6 +675,16 @@ async function mutate(operations, reason, { preserveRedo = false } = {}) {
     if (!preserveRedo) state.redoStack = [];
     state.versions = await api(`/api/v1/projects/${state.projectId}/timeline/versions`);
     if (priorPreview) state.preview = { ...priorPreview, status: "stale", valid_for_current_timeline: false };
+    if (state.productionPackage) {
+      state.productionPackage = {
+        ...state.productionPackage,
+        current_for_timeline: false,
+        approval: null,
+        latest_review_render: null,
+        latest_final_render: null,
+      };
+      state.activeProductionRender = null;
+    }
     if (state.selectedClipId && !selectedClip()) state.selectedClipId = null;
     state.playhead = Math.min(state.playhead, state.timeline.snapshot.duration_seconds);
     render();
@@ -396,6 +716,16 @@ async function restoreVersion(targetVersion, { isUndo = false } = {}) {
     });
     if (isUndo) state.redoStack.push(previousVersion);
     state.preview = state.preview ? { ...state.preview, status: "stale", valid_for_current_timeline: false } : null;
+    if (state.productionPackage) {
+      state.productionPackage = {
+        ...state.productionPackage,
+        current_for_timeline: false,
+        approval: null,
+        latest_review_render: null,
+        latest_final_render: null,
+      };
+      state.activeProductionRender = null;
+    }
     state.versions = await api(`/api/v1/projects/${state.projectId}/timeline/versions`);
     state.selectedClipId = null;
     render();
@@ -481,6 +811,17 @@ $("#reload-button").addEventListener("click", () => loadProject());
 $("#create-timeline-button").addEventListener("click", createTimeline);
 $("#preview-button").addEventListener("click", createPreview);
 $("#cancel-preview-button").addEventListener("click", cancelPreview);
+$("#production-package-button").addEventListener("click", createOrRefreshProductionPackage);
+$("#save-subtitles-button").addEventListener("click", saveSubtitles);
+$("#save-audio-button").addEventListener("click", saveAudioMix);
+$("#review-render-button").addEventListener("click", () => createProductionRender("review"));
+$("#request-approval-button").addEventListener("click", requestProductionApproval);
+$("#approve-button").addEventListener("click", () => decideProductionApproval("approved"));
+$("#changes-button").addEventListener("click", () => decideProductionApproval("changes_requested"));
+$("#final-render-button").addEventListener("click", () => createProductionRender("final"));
+$("#voice-speed").addEventListener("input", (event) => {
+  $("#voice-speed-output").textContent = `${Number(event.target.value).toFixed(2)}×`;
+});
 $("#menu-button").addEventListener("click", () => $(".sidebar").classList.toggle("open"));
 
 document.querySelector(".panel-tabs").addEventListener("click", (event) => {
@@ -648,5 +989,8 @@ $("#play-button").addEventListener("click", () => {
 $("#back-button").addEventListener("click", () => setPlayhead(state.playhead - 1));
 $("#preview-video").addEventListener("timeupdate", (event) => setPlayhead(event.target.currentTime, false));
 
-window.addEventListener("beforeunload", stopPreviewPolling);
+window.addEventListener("beforeunload", () => {
+  stopPreviewPolling();
+  stopProductionPolling();
+});
 loadProjectList().catch((error) => { renderNoProject("Không tải được Studio.", error.message); toast(error.message, true); });

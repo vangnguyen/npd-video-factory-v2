@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/timeline-render.schema.json",
+  "title": "NPD Timeline Render Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "metadata", "brand", "audio", "visual_clips", "subtitles", "subtitle_style", "safety"],
+  "properties": {
+    "version": {"const": "2.0"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "project", "niche", "template", "duration_seconds", "fps", "width", "height", "language"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "project": {"type": "string", "minLength": 1},
+        "niche": {"type": "string", "minLength": 1},
+        "template": {"const": "timeline-render-v1"},
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 180},
+        "fps": {"type": "integer", "minimum": 24, "maximum": 60},
+        "width": {"enum": [540, 1080, 1920]},
+        "height": {"enum": [960, 1080, 1920]},
+        "language": {"const": "vi"}
+      }
+    },
+    "brand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "primary_color", "accent_color"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "primary_color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "accent_color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+      }
+    },
+    "audio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mix_uri", "gain_db", "sample_rate", "ducking_applied"],
+      "properties": {
+        "mix_uri": {"type": "string", "minLength": 1},
+        "gain_db": {"type": "number", "minimum": -18, "maximum": 9},
+        "sample_rate": {"const": 48000},
+        "ducking_applied": {"type": "boolean"}
+      }
+    },
+    "visual_clips": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 400,
+      "items": {"$ref": "#/$defs/visual_clip"}
+    },
+    "subtitles": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 300,
+      "items": {"$ref": "#/$defs/subtitle"}
+    },
+    "subtitle_style": {"$ref": "#/$defs/subtitle_style"},
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["human_approval_required", "publishing_allowed", "external_publish_requested", "source_media_mutated"],
+      "properties": {
+        "human_approval_required": {"const": true},
+        "publishing_allowed": {"const": false},
+        "external_publish_requested": {"const": false},
+        "source_media_mutated": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "crop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": {"type": "number", "minimum": 0, "maximum": 1},
+        "y": {"type": "number", "minimum": 0, "maximum": 1},
+        "width": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "height": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
+    },
+    "transform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "scale", "rotation_degrees"],
+      "properties": {
+        "x": {"type": "number", "minimum": -2, "maximum": 2},
+        "y": {"type": "number", "minimum": -2, "maximum": 2},
+        "scale": {"type": "number", "exclusiveMinimum": 0, "maximum": 8},
+        "rotation_degrees": {"type": "number", "minimum": -360, "maximum": 360}
+      }
+    },
+    "visual_clip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clip_id", "track_order", "type", "uri", "timeline_start", "duration", "source_start", "source_end", "fit", "crop", "transform", "opacity"],
+      "properties": {
+        "clip_id": {"type": "string", "pattern": "^clip_[A-Za-z0-9_-]{4,60}$"},
+        "track_order": {"type": "integer", "minimum": 0},
+        "type": {"enum": ["video", "image"]},
+        "uri": {"type": "string", "minLength": 1},
+        "timeline_start": {"type": "number", "minimum": 0},
+        "duration": {"type": "number", "exclusiveMinimum": 0},
+        "source_start": {"type": "number", "minimum": 0},
+        "source_end": {"type": "number", "exclusiveMinimum": 0},
+        "fit": {"enum": ["cover", "contain"]},
+        "crop": {"$ref": "#/$defs/crop"},
+        "transform": {"$ref": "#/$defs/transform"},
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "word": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "start_seconds", "end_seconds"],
+      "properties": {
+        "text": {"type": "string", "minLength": 1, "maxLength": 60},
+        "start_seconds": {"type": "number", "minimum": 0},
+        "end_seconds": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "subtitle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cue_id", "start_seconds", "end_seconds", "text", "words"],
+      "properties": {
+        "cue_id": {"type": "string", "pattern": "^sub_[A-Za-z0-9_-]{4,60}$"},
+        "start_seconds": {"type": "number", "minimum": 0},
+        "end_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "text": {"type": "string", "minLength": 1, "maxLength": 180},
+        "words": {"type": "array", "maxItems": 40, "items": {"$ref": "#/$defs/word"}}
+      }
+    },
+    "subtitle_style": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["font_family", "font_size", "font_weight", "text_color", "highlight_color", "background_color", "background_opacity", "position", "animation", "max_lines", "safe_margin_percent"],
+      "properties": {
+        "font_family": {"enum": ["Noto Sans", "Noto Sans Display"]},
+        "font_size": {"type": "integer", "minimum": 28, "maximum": 84},
+        "font_weight": {"type": "integer", "minimum": 400, "maximum": 900},
+        "text_color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "highlight_color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "background_color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "background_opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "position": {"enum": ["top", "center", "bottom"]},
+        "animation": {"enum": ["none", "fade", "pop", "word_highlight"]},
+        "max_lines": {"type": "integer", "minimum": 1, "maximum": 3},
+        "safe_margin_percent": {"type": "number", "minimum": 3, "maximum": 15}
+      }
+    }
+  }
+}

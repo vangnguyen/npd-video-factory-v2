@@ -37,6 +37,9 @@ from .models import JobCreateResponse, JobRecord, VideoJobCreate
 from .object_storage import create_object_storage, sha256_file
 from .platform_models import WorkspaceCreate
 from .platform_routes import router as platform_router
+from .production_repository import ProductionRepository
+from .production_routes import router as production_router
+from .production_service import ProductionPackageService
 from .repositories import PlatformRepository, PostgresJobStore
 from .trend_providers import create_trend_provider_registry
 from .trend_repository import TrendRepository
@@ -71,6 +74,8 @@ async def lifespan(app: FastAPI):
     settings.media_staging_root.mkdir(parents=True, exist_ok=True)
     settings.preview_staging_root.mkdir(parents=True, exist_ok=True)
     settings.preview_download_root.mkdir(parents=True, exist_ok=True)
+    settings.production_render_staging_root.mkdir(parents=True, exist_ok=True)
+    settings.production_render_download_root.mkdir(parents=True, exist_ok=True)
     engine = create_engine(settings.database_url)
     session_factory = create_session_factory(engine)
     redis = Redis.from_url(settings.redis_url, decode_responses=False)
@@ -81,6 +86,7 @@ async def lifespan(app: FastAPI):
     vision_repository = VisionRepository(session_factory)
     media_intelligence_repository = MediaIntelligenceRepository(session_factory)
     timeline_repository = TimelineRepository(session_factory)
+    production_repository = ProductionRepository(session_factory)
     trend_providers = create_trend_provider_registry(
         settings.trend_fixture_path,
         fixture_enabled=settings.trend_fixture_enabled,
@@ -107,6 +113,7 @@ async def lifespan(app: FastAPI):
     app.state.vision_repository = vision_repository
     app.state.media_intelligence_repository = media_intelligence_repository
     app.state.timeline_repository = timeline_repository
+    app.state.production_repository = production_repository
     app.state.trend_provider_registry = trend_providers
     app.state.trend_intelligence_service = TrendIntelligenceService(
         trend_repository,
@@ -200,6 +207,14 @@ async def lifespan(app: FastAPI):
         staging_root=settings.preview_staging_root,
     )
     app.state.preview_download_root = settings.preview_download_root
+    app.state.production_package_service = ProductionPackageService(
+        repository=production_repository,
+        timeline_repository=timeline_repository,
+        asset_repository=auto_edit_repository,
+        queue=redis,
+        settings=settings,
+    )
+    app.state.production_render_download_root = settings.production_render_download_root
     try:
         yield
     finally:
@@ -207,13 +222,14 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.8.0", lifespan=lifespan)
+app = FastAPI(title="NPD Video Factory V2 API", version="0.9.0", lifespan=lifespan)
 app.include_router(platform_router)
 app.include_router(trend_router)
 app.include_router(auto_edit_router)
 app.include_router(vision_router)
 app.include_router(media_intelligence_router)
 app.include_router(timeline_router)
+app.include_router(production_router)
 
 
 def store_from(request: Request) -> PostgresJobStore:
@@ -221,6 +237,9 @@ def store_from(request: Request) -> PostgresJobStore:
 
 
 def _provider_definitions() -> list[dict[str, object]]:
+    # The durable provider registry describes the original video-job pipeline,
+    # whose worker is still selected with TTS_PROVIDER. V2-08 has a separate,
+    # fail-closed AUDIO_TTS_PROVIDER contract exposed by the production package.
     selected_tts = settings.tts_provider.lower()
     return [
         {
@@ -593,8 +612,23 @@ async def capabilities() -> dict[str, object]:
         "timeline_versioning": True,
         "timeline_optimistic_concurrency": True,
         "proxy_preview": "asynchronous_540p",
-        "preview_audio": "deferred_to_v2_08",
+        "preview_audio": "version_bound_av_review",
         "preview_publish": False,
+        "subtitle_editor": True,
+        "dynamic_subtitles": True,
+        "audio_mixer": True,
+        "music_ducking": True,
+        "audio_tts_provider": settings.audio_tts_provider,
+        "audio_external_execution_enabled": settings.audio_external_execution_enabled,
+        "review_render": "asynchronous_540x960",
+        "final_render_profiles": [
+            "vertical-1080x1920",
+            "landscape-1920x1080",
+            "square-1080x1080",
+        ],
+        "final_render_requires_version_bound_approval": True,
+        "full_video_qc": True,
+        "final_render_publish": False,
         "source_media_mutation": False,
         "transcription_provider": settings.transcription_provider,
         "media_signal_provider": settings.auto_edit_signal_provider,

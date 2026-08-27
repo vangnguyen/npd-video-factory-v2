@@ -68,3 +68,58 @@ export function describePreview(preview, currentVersion) {
   }
   return { label: preview.status === "cancelled" ? "Đã hủy" : "Tạo preview lỗi", tone: "danger" };
 }
+
+export function describeApproval(approval) {
+  if (!approval) return { label: "Draft", tone: "muted" };
+  const labels = {
+    awaiting_review: "Chờ owner duyệt",
+    approved: "Đã duyệt",
+    changes_requested: "Cần chỉnh sửa",
+    rejected: "Đã từ chối",
+    draft: "Draft",
+  };
+  const tones = {
+    approved: "safe",
+    awaiting_review: "warning",
+    changes_requested: "danger",
+    rejected: "danger",
+    draft: "muted",
+  };
+  return {
+    label: labels[approval.status] ?? approval.status,
+    tone: tones[approval.status] ?? "muted",
+  };
+}
+
+export function describeProductionRender(render) {
+  if (!render) return { label: "Chưa có render", tone: "muted", terminal: false };
+  if (["queued", "running"].includes(render.status)) {
+    return {
+      label: `${render.status === "queued" ? "Đang chờ" : "Đang render"} · ${render.progress}%`,
+      tone: "warning",
+      terminal: false,
+    };
+  }
+  if (["awaiting_review", "ready"].includes(render.status) && render.qc_status === "passed") {
+    return {
+      label: render.status === "ready" ? "Final sẵn sàng · QC PASS" : "Review sẵn sàng · QC PASS",
+      tone: "safe",
+      terminal: true,
+    };
+  }
+  if (render.status === "stale") return { label: "Render đã cũ", tone: "warning", terminal: true };
+  if (render.status === "cancelled") return { label: "Render đã hủy", tone: "muted", terminal: true };
+  return { label: `Render lỗi · ${render.error_code ?? "UNKNOWN"}`, tone: "danger", terminal: true };
+}
+
+export function qcItems(report = {}) {
+  if (!report || report.status !== "passed") return [];
+  return [
+    ["QC", "PASS"],
+    ["Kích thước", `${report.width ?? "—"}×${report.height ?? "—"}`],
+    ["FPS", String(report.fps ?? "—")],
+    ["Video", String(report.video_codec ?? "—").toUpperCase()],
+    ["Audio", String(report.audio_codec ?? "—").toUpperCase()],
+    ["A/V sync", `${Number(report.av_sync_delta_seconds ?? 0).toFixed(3)}s`],
+  ];
+}

@@ -1,4 +1,4 @@
-# API — V2-07
+# API — V2-08
 
 Base path: `/api/v1`. Request models forbid unknown fields. This local/CI increment has no
 authentication layer and must not be exposed to an untrusted network.
@@ -132,7 +132,31 @@ Timeline operations are `move`, `trim`, `split`, `delete`, `reorder`, `disable`,
 `TIMELINE_VERSION_CONFLICT` and the actual current version. Every accepted change creates a new
 immutable timeline version, resets approval to `draft` and invalidates earlier previews.
 
-Preview statuses are `queued`, `running`, `ready`, `stale`, `cancelled` and `failed`. Preview is
-video-only in V2-07; TTS/music/audio mixing and final rendering are deferred to V2-08. All timeline
-and preview contracts keep `source_media_mutated=false`, `publish_requested=false`; preview also
-keeps `external_call=false`.
+Preview statuses are `queued`, `running`, `ready`, `stale`, `cancelled` and `failed`. Preview remains
+the fast video-only V2-07 path. All timeline and preview contracts keep
+`source_media_mutated=false`, `publish_requested=false`; preview also keeps `external_call=false`.
+
+## Audio, subtitle, review, approval and final render
+
+- `POST|GET /api/v1/projects/{project_id}/production-package`: create/refresh or read the package
+  bound to the current timeline.
+- `PUT /api/v1/projects/{project_id}/subtitles`: append an immutable cue/style version using
+  expected timeline and subtitle versions.
+- `PUT /api/v1/projects/{project_id}/audio-mix`: append an immutable voice/music/mix version using
+  expected timeline and audio versions.
+- `POST /api/v1/projects/{project_id}/review-render`: enqueue the exact package tuple at
+  `review-540x960`.
+- `GET /api/v1/projects/{project_id}/renders/{render_id}`: read progress, QC and evidence.
+- `POST /api/v1/projects/{project_id}/renders/{render_id}/cancel`: request cancellation.
+- `GET /api/v1/projects/{project_id}/renders/{render_id}/content`: serve only the registered
+  project-scoped MP4 artifact.
+- `POST /api/v1/projects/{project_id}/approvals`: request review for an `awaiting_review` artifact.
+- `POST /api/v1/projects/{project_id}/approvals/{approval_id}/decision`: record `approved`,
+  `changes_requested` or `rejected` with reviewer identity/comment.
+- `POST /api/v1/projects/{project_id}/final-render`: enqueue a final profile only when the supplied
+  approval matches the current review/timeline/subtitle/audio tuple.
+- `GET /api/v1/projects/{project_id}/production-history`: ordered production audit history.
+
+Review jobs end at `awaiting_review`; final jobs end at `ready` only after full QC. Version conflict
+or an invalid approval boundary returns HTTP 409. All render records hard-code
+`publishing_allowed=false` and `external_publish_requested=false`; V2-08 has no publish endpoint.

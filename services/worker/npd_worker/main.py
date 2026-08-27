@@ -17,6 +17,16 @@ from app.media_intelligence_service import (
     create_media_provider_bundle,
 )
 from app.object_storage import create_object_storage
+from app.production_audio import AudioMixEngine, create_audio_tts_provider
+from app.production_logic import TimelineRenderContractValidator
+from app.production_qc import FullProductionQC
+from app.production_repository import ProductionRepository
+from app.production_service import (
+    PRODUCTION_RENDER_PROCESSING_KEY,
+    PRODUCTION_RENDER_QUEUE_KEY,
+    ProductionRenderProcessor,
+    RemotionTimelineRenderEngine,
+)
 from app.repositories import PlatformRepository, PostgresJobStore
 from app.state import QUEUE_KEY
 from app.timeline_repository import TimelineRepository
@@ -77,6 +87,24 @@ async def recover_preview_jobs(redis: Redis, repository: TimelineRepository) -> 
         await pipe.execute()
     if identifiers:
         logger.warning("recovered_preview count=%d", len(identifiers))
+    return len(identifiers)
+
+
+async def recover_production_render_jobs(
+    redis: Redis,
+    repository: ProductionRepository,
+) -> int:
+    inflight = await redis.lrange(PRODUCTION_RENDER_PROCESSING_KEY, 0, -1)
+    pending = await repository.list_incomplete_render_ids()
+    identifiers = list(dict.fromkeys([*inflight, *pending]))
+    async with redis.pipeline(transaction=True) as pipe:
+        pipe.delete(PRODUCTION_RENDER_PROCESSING_KEY)
+        for identifier in identifiers:
+            pipe.lrem(PRODUCTION_RENDER_QUEUE_KEY, 0, identifier)
+            pipe.rpush(PRODUCTION_RENDER_QUEUE_KEY, identifier)
+        await pipe.execute()
+    if identifiers:
+        logger.warning("recovered_production_render count=%d", len(identifiers))
     return len(identifiers)
 
 
@@ -142,6 +170,28 @@ async def run_preview_queue(redis: Redis, service: PreviewService) -> None:
             await redis.lrem(PREVIEW_PROCESSING_KEY, 1, preview_id)
 
 
+async def run_production_render_queue(
+    redis: Redis,
+    service: ProductionRenderProcessor,
+) -> None:
+    while True:
+        render_id = await redis.brpoplpush(
+            PRODUCTION_RENDER_QUEUE_KEY,
+            PRODUCTION_RENDER_PROCESSING_KEY,
+            timeout=5,
+        )
+        if render_id is None:
+            continue
+        logger.info("production_render_claimed render_id=%s", render_id)
+        try:
+            result = await service.process(render_id)
+            logger.info("production_render_completed render_id=%s status=%s", render_id, result.status)
+        except Exception:
+            logger.exception("production_render_worker_error render_id=%s", render_id)
+        finally:
+            await redis.lrem(PRODUCTION_RENDER_PROCESSING_KEY, 1, render_id)
+
+
 async def main() -> None:
     redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
     redis = Redis.from_url(redis_url, decode_responses=True)
@@ -154,6 +204,7 @@ async def main() -> None:
     auto_edit_repository = AutoEditRepository(session_factory)
     media_repository = MediaIntelligenceRepository(session_factory)
     timeline_repository = TimelineRepository(session_factory)
+    production_repository = ProductionRepository(session_factory)
     store = PostgresJobStore(
         session_factory,
         redis,
@@ -183,14 +234,37 @@ async def main() -> None:
         renderer=FFmpegProxyRenderer(settings.ffmpeg_path),
         staging_root=settings.preview_staging_root,
     )
+    production_render_service = ProductionRenderProcessor(
+        repository=production_repository,
+        platform=platform,
+        asset_repository=auto_edit_repository,
+        object_storage=object_storage,
+        renderer=RemotionTimelineRenderEngine(
+            renderer_url=settings.renderer_url,
+            timeout_seconds=settings.renderer_timeout_seconds,
+        ),
+        qc=FullProductionQC(
+            ffprobe_path=settings.ffprobe_path,
+            ffmpeg_path=settings.ffmpeg_path,
+        ),
+        tts_provider=create_audio_tts_provider(settings),
+        audio_engine=AudioMixEngine(ffmpeg_path=settings.ffmpeg_path),
+        manifest_validator=TimelineRenderContractValidator(
+            settings.contracts_root / "timeline-render.schema.json"
+        ),
+        staging_root=settings.production_render_staging_root,
+        brand_name=settings.video_factory_brand_name,
+    )
     await recover_media_resolution_jobs(redis, media_repository)
     await recover_preview_jobs(redis, timeline_repository)
+    await recover_production_render_jobs(redis, production_repository)
     logger.info("worker_booted queue=%s processing=%s", QUEUE_KEY, PROCESSING_KEY)
     try:
         await asyncio.gather(
             run_video_queue(redis, store, config=config),
             run_media_resolution_queue(redis, media_resolution_service),
             run_preview_queue(redis, preview_service),
+            run_production_render_queue(redis, production_render_service),
         )
     finally:
         await redis.aclose()

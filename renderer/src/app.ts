@@ -2,14 +2,14 @@ import express from "express";
 import {access, mkdir, readFile} from "node:fs/promises";
 import {dirname, isAbsolute, relative, resolve} from "node:path";
 
-import {renderRequestSchema, videoManifestSchema} from "./contract";
-import type {VideoManifest} from "./types";
+import {anyVideoManifestSchema, renderRequestSchema} from "./contract";
+import type {AnyVideoManifest} from "./types";
 
 export type RenderProgress = (progress: number) => void;
 
 export interface RenderEngine {
   render(input: {
-    manifest: VideoManifest;
+    manifest: AnyVideoManifest;
     outputPath: string;
     onProgress: RenderProgress;
   }): Promise<void>;
@@ -61,25 +61,40 @@ export const createRendererApp = ({engine, port, storageRoot}: RendererAppOption
     return `http://127.0.0.1:${port}/media/${rel.split("/").map(encodeURIComponent).join("/")}`;
   };
 
-  const browserManifest = (manifest: VideoManifest): VideoManifest => ({
-    ...manifest,
-    brand: {...manifest.brand, logo_uri: manifest.brand.logo_uri ? mediaUrl(manifest.brand.logo_uri) : ""},
-    voice: manifest.voice ? {...manifest.voice, audio_uri: mediaUrl(manifest.voice.audio_uri)} : undefined,
-    music: manifest.music ? {...manifest.music, audio_uri: mediaUrl(manifest.music.audio_uri)} : undefined,
-    scenes: manifest.scenes.map((scene) => ({
-      ...scene,
-      visual: {...scene.visual, uri: mediaUrl(scene.visual.uri)},
-    })),
-  });
+  const browserManifest = (manifest: AnyVideoManifest): AnyVideoManifest => {
+    if (manifest.version === "1.0") {
+      return {
+        ...manifest,
+        brand: {...manifest.brand, logo_uri: manifest.brand.logo_uri ? mediaUrl(manifest.brand.logo_uri) : ""},
+        voice: manifest.voice ? {...manifest.voice, audio_uri: mediaUrl(manifest.voice.audio_uri)} : undefined,
+        music: manifest.music ? {...manifest.music, audio_uri: mediaUrl(manifest.music.audio_uri)} : undefined,
+        scenes: manifest.scenes.map((scene) => ({
+          ...scene,
+          visual: {...scene.visual, uri: mediaUrl(scene.visual.uri)},
+        })),
+      };
+    }
+    return {
+      ...manifest,
+      audio: {...manifest.audio, mix_uri: mediaUrl(manifest.audio.mix_uri)},
+      visual_clips: manifest.visual_clips.map((clip) => ({
+        ...clip,
+        uri: mediaUrl(clip.uri),
+      })),
+    };
+  };
 
-  const assertLocalAssets = async (manifest: VideoManifest): Promise<void> => {
-    const candidates = [
-      manifest.brand.logo_uri,
-      manifest.voice?.audio_uri,
-      manifest.music?.audio_uri,
-      ...manifest.scenes.map((scene) => scene.visual.uri),
-    ].filter((value): value is string => Boolean(value));
+  const assertLocalAssets = async (manifest: AnyVideoManifest): Promise<void> => {
+    const candidates = manifest.version === "1.0"
+      ? [
+          manifest.brand.logo_uri,
+          manifest.voice?.audio_uri,
+          manifest.music?.audio_uri,
+          ...manifest.scenes.map((scene) => scene.visual.uri),
+        ]
+      : [manifest.audio.mix_uri, ...manifest.visual_clips.map((clip) => clip.uri)];
     await Promise.all(candidates.map(async (candidate) => {
+      if (!candidate) return;
       const path = localPath(candidate);
       if (path !== null) await access(path);
     }));
@@ -89,7 +104,7 @@ export const createRendererApp = ({engine, port, storageRoot}: RendererAppOption
     res.json({
       status: "ok",
       renderer: "remotion",
-      compositions: ["vertical-short-v1", "real-estate-short-v1"],
+      compositions: ["vertical-short-v1", "real-estate-short-v1", "timeline-render-v1"],
     });
   });
 
@@ -116,10 +131,10 @@ export const createRendererApp = ({engine, port, storageRoot}: RendererAppOption
       return res.status(422).json(failed("REQUEST_INVALID", "Render paths must remain inside storage."));
     }
 
-    let manifest: VideoManifest;
+    let manifest: AnyVideoManifest;
     try {
       const raw: unknown = JSON.parse(await readFile(manifestPath, "utf8"));
-      const parsedManifest = videoManifestSchema.safeParse(raw);
+      const parsedManifest = anyVideoManifestSchema.safeParse(raw);
       if (!parsedManifest.success) {
         return res.status(422).json(failed(
           "MANIFEST_VALIDATION_FAILED",
@@ -128,7 +143,7 @@ export const createRendererApp = ({engine, port, storageRoot}: RendererAppOption
           parsedManifest.error.issues,
         ));
       }
-      manifest = parsedManifest.data as VideoManifest;
+      manifest = parsedManifest.data as AnyVideoManifest;
     } catch (error) {
       if (error instanceof SyntaxError) {
         return res.status(422).json(failed("MANIFEST_VALIDATION_FAILED", "Video manifest is not valid JSON."));

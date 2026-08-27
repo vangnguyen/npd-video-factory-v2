@@ -1,4 +1,4 @@
-# Architecture — V2-07
+# Architecture — V2-08
 
 ## Bounded context
 
@@ -17,8 +17,9 @@ FastAPI API -------------------------- PostgreSQL
    |   vision-frame/OCR/quality/track/reframe evidence
    |   media plans/items/rights/provenance/resolution jobs
    |   timeline/current version/history/preview jobs
+   |   production package/subtitle/audio/approval/render/audit versions
    |
-   +----> V2 Redis transient queues ---> Worker ----> Remotion ----> FFmpeg QC
+   +----> V2 Redis transient queues ---> Worker ----> Remotion ----> full FFmpeg QC
    |                                      |
    |                                      +---- media resolver/provider contracts
    |                                      +---- FFmpeg 540p proxy renderer
@@ -33,8 +34,8 @@ FastAPI API -------------------------- PostgreSQL
 
 | Component | Owns | Durability |
 |---|---|---|
-| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload, Auto Edit, Vision/reframe, Media Intelligence, timeline versions and preview state | canonical |
-| Redis | pending and processing job/media/preview delivery IDs | transient/recoverable |
+| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload, Auto Edit, Vision/reframe, Media Intelligence, timeline versions, preview state, production packages, subtitle/audio versions, approvals and render state | canonical |
+| Redis | pending and processing job/media/preview/production-render delivery IDs | transient/recoverable |
 | S3/MinIO | source, generated, metadata, final-render and proxy-preview objects | canonical binary store |
 | job volume | resumable local worker scratch/cache | replaceable |
 | renderer | strict manifest-to-MP4 execution | stateless apart from job scratch |
@@ -84,6 +85,15 @@ The worker downloads bounded scratch inputs, renders a 540x960 H.264 video-only 
 stores it in the same V2 object store, registers it as a non-publishing render asset and removes
 scratch. Incomplete preview IDs are recoverable after worker restart.
 
+V2-08 creates one production package for the project's current timeline. Subtitle and audio-mix
+edits append immutable versions. Review renders are bound to the exact timeline/subtitle/audio
+tuple and stop at `awaiting_review`. An approval adds the review-render version to that tuple; only
+an exact current `approved` tuple can enqueue a final render. Any later edit invalidates the
+approval and affected renders. Production render IDs use the same transient Redis delivery model,
+while PostgreSQL and the object store remain canonical. The worker composes per-cue Vietnamese
+narration, optional licensed music, dynamic subtitles and timeline layers through Remotion, then
+runs full FFmpeg/FFprobe QC before persisting evidence and the H.264/AAC artifact.
+
 ## Durable job rules
 
 - PostgreSQL is the source of truth; Redis never stores canonical job JSON.
@@ -96,10 +106,12 @@ scratch. Incomplete preview IDs are recoverable after worker restart.
 
 ## Safety state
 
-V2-07 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
+V2-08 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
 `HUMAN_APPROVAL_REQUIRED=false`. Successful jobs stop at `awaiting_review`. API auth/RBAC is
 not yet implemented, so this increment is local/CI only and must not be exposed publicly. The
 Vision and media fixtures are rejected in production, and mock provenance must not be interpreted
 as real pixel-model or provider-quality evidence. External/paid media and ComfyUI execution are
 separate fail-closed settings. Proxy previews are explicitly non-final, video-only, zero-external-call
-artifacts and cannot be published.
+artifacts and cannot be published. Review and final render contracts both hard-code
+`publishing_allowed=false`; final rendering requires human approval but still creates only an
+artifact. eSpeak is dev/CI evidence rather than a production voice acceptance.

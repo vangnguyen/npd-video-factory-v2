@@ -1,4 +1,4 @@
-# Security and safety — V2-07
+# Security and safety — V2-08
 
 ## Defaults
 
@@ -21,6 +21,13 @@
   uploads and direct frontend-to-ComfyUI access are absent.
 - Timeline writes require optimistic concurrency and preserve immutable historical snapshots.
 - Proxy previews are project-scoped, video-only, external-call-free and marked non-publishing.
+- Subtitle/audio edits require expected versions; approval binds the exact review, timeline,
+  subtitle and audio versions and is invalidated by any later accepted edit.
+- Review/final responses and render schema use literal false publishing/external-action fields.
+- External audio execution is disabled by default. eSpeak is local/CI only; a contract-only audio
+  provider reports `not_configured` rather than pretending to use live data.
+- Optional music must be a project-scoped audio asset with explicit owned/licensed/public-domain/
+  royalty-free provenance. Unknown rights fail closed.
 
 ## Data and artifact controls
 
@@ -39,10 +46,13 @@
   no owner-override write and no publishing route.
 - Preview input paths come only from recorded project assets; output object keys are server-built,
   checksummed and registered before playback. Bounded render/download scratch is removed.
+- Production-render input paths are derived from recorded project assets. Persisted render
+  evidence replaces local paths with asset references and contains no provider secret.
+- Full QC failures become `failed_qc` and cannot pass the approval/final-render boundary.
 
 ## Known security gate
 
-V2-07 does not yet implement API authentication, RBAC or workspace membership. Localhost
+V2-08 does not yet implement API authentication, RBAC or workspace membership. Localhost
 binding is the only access boundary in this increment. Public routing and production
 deployment are prohibited until those controls, rate limits and audit actor identity are
 implemented and accepted.
@@ -50,8 +60,8 @@ implemented and accepted.
 ## Credential contract
 
 Only variable names/config references appear in source: `DATABASE_URL`, `OBJECT_STORAGE_*`,
-optional `OPENAI_API_KEY`, `TRANSCRIPTION_PROVIDER`, `VISION_PROVIDER`, media provider selectors
-and `COMFYUI_BRIDGE_URL` plus future provider
+optional `OPENAI_API_KEY`, `TRANSCRIPTION_PROVIDER`, `VISION_PROVIDER`, media provider selectors,
+`COMFYUI_BRIDGE_URL`, `AUDIO_TTS_PROVIDER` and `AUDIO_EXTERNAL_EXECUTION_ENABLED` plus future provider
 contract names. Real values must come from an
 external secret manager. They must never be
 stored in project snapshots, jobs, assets, provider metadata, costs, logs or Git.

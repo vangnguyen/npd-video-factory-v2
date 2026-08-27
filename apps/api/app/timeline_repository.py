@@ -10,6 +10,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from .db import VideoProjectORM, utc_now
 from .timeline_db import PreviewJobORM, TimelineORM, TimelineVersionORM
 from .timeline_models import PreviewRead, TimelineRead, TimelineSnapshot, TimelineVersionRead
+from .production_db import (
+    ProductionApprovalORM,
+    ProductionEventORM,
+    ProductionPackageORM,
+    ProductionRenderJobORM,
+)
 
 
 class TimelineConflictError(RuntimeError):
@@ -169,6 +175,58 @@ class TimelineRepository:
                         updated_at=now,
                     )
                 )
+                production_package = await session.scalar(
+                    select(ProductionPackageORM).where(
+                        ProductionPackageORM.timeline_id == timeline.timeline_id
+                    )
+                )
+                if production_package is not None:
+                    await session.execute(
+                        update(ProductionApprovalORM)
+                        .where(
+                            ProductionApprovalORM.package_id == production_package.package_id,
+                            ProductionApprovalORM.status.in_(["awaiting_review", "approved"]),
+                        )
+                        .values(
+                            status="changes_requested",
+                            invalidated_reason="timeline-version-changed",
+                            updated_at=now,
+                        )
+                    )
+                    await session.execute(
+                        update(ProductionRenderJobORM)
+                        .where(
+                            ProductionRenderJobORM.package_id == production_package.package_id,
+                            ProductionRenderJobORM.status.in_(["queued", "running", "awaiting_review", "ready"]),
+                        )
+                        .values(
+                            status="stale",
+                            cancellation_requested=True,
+                            invalidated_at=now,
+                            updated_at=now,
+                        )
+                    )
+                    production_package.current_approval_id = None
+                    production_package.latest_review_render_id = None
+                    production_package.latest_final_render_id = None
+                    production_package.updated_at = now
+                    session.add(
+                        ProductionEventORM(
+                            event_id=_new_id("pev"),
+                            package_id=production_package.package_id,
+                            project_id=project_id,
+                            event_type="production_package.invalidated",
+                            entity_type="timeline",
+                            entity_id=timeline.timeline_id,
+                            actor_ref=actor_ref,
+                            payload_json={
+                                "reason": "timeline-version-changed",
+                                "previous_timeline_version": expected_version,
+                                "new_timeline_version": new_version,
+                            },
+                            created_at=now,
+                        )
+                    )
                 timeline.current_version_id = version_id
                 timeline.current_version = new_version
                 timeline.approval_status = "draft"

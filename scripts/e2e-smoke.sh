@@ -338,7 +338,7 @@ curl --fail --silent --show-error \
   -X PUT "http://localhost:8000/api/v1/projects/$project_id/timeline" \
   -H 'Content-Type: application/json' \
   --data "{\"expected_version\":2,\"actor_ref\":\"github-actions-e2e\",\"reason\":\"preview-invalidation\",\"operations\":[{\"type\":\"set_clip_properties\",\"clip_id\":\"$source_clip_id\",\"opacity\":0.9}]}" \
-  > e2e-artifacts/timeline-before-restart.json
+  > e2e-artifacts/timeline-v3.json
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/previews/$preview_id" \
   > e2e-artifacts/preview-stale-before-restart.json
@@ -353,7 +353,7 @@ from pathlib import Path
 root = Path("e2e-artifacts")
 v1 = json.loads((root / "timeline-v1.json").read_text(encoding="utf-8"))
 v2 = json.loads((root / "timeline-v2.json").read_text(encoding="utf-8"))
-v3 = json.loads((root / "timeline-before-restart.json").read_text(encoding="utf-8"))
+v3 = json.loads((root / "timeline-v3.json").read_text(encoding="utf-8"))
 conflict = json.loads((root / "timeline-conflict.json").read_text(encoding="utf-8"))
 ready = json.loads((root / "preview-ready.json").read_text(encoding="utf-8"))
 stale = json.loads((root / "preview-stale-before-restart.json").read_text(encoding="utf-8"))
@@ -377,6 +377,287 @@ assert len(video_streams) == 1 and video_streams[0]["codec_name"] == "h264", pro
 assert video_streams[0]["width"] == 540 and video_streams[0]["height"] == 960, probe
 assert not audio_streams and float(probe["format"]["duration"]) > 0, probe
 print("[e2e] V2-07 timeline, version conflict, 540p preview and invalidation verified")
+PY
+
+echo "[e2e] exercising V2-08 subtitle, audio, approval and final-render workflow"
+echo "[e2e] generating a short encoded A/V fixture for bounded production-render acceptance"
+"$docker_bin" compose exec -T worker ffmpeg -y -hide_banner -loglevel error \
+  -f lavfi -i 'testsrc2=size=1080x1920:rate=30' \
+  -f lavfi -i 'sine=frequency=440:sample_rate=48000' \
+  -t 3 -shortest \
+  -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+  -c:a aac -ar 48000 -movflags +faststart \
+  /tmp/v2-08-short-source.mp4
+"$docker_bin" compose cp worker:/tmp/v2-08-short-source.mp4 e2e-artifacts/v2-08-short-source.mp4 >/dev/null
+
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/workspaces/$workspace_id/projects" \
+  -H 'Content-Type: application/json' \
+  --data '{"slug":"v2-08-render-qc","name":"V2-08 Audio Subtitle Render QC","niche":"real_estate","provenance":{"source":"docker-e2e","production_fixture":true}}' \
+  > e2e-artifacts/production-project.json
+production_project_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/production-project.json", encoding="utf-8"))["project_id"])' | tr -d '\r')"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/versions" \
+  -H 'Content-Type: application/json' \
+  --data '{"label":"v2-08-short-source","snapshot":{"acceptance":"audio-subtitle-render-qc"},"provenance":{"source":"docker-e2e"}}' \
+  > e2e-artifacts/production-project-version.json
+production_project_version_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/production-project-version.json", encoding="utf-8"))["project_version_id"])' | tr -d '\r')"
+
+production_upload_source="e2e-artifacts/v2-08-short-source.mp4"
+production_upload_size="$(wc -c < "$production_upload_source" | tr -d ' ')"
+production_upload_checksum="$("$PYTHON_BIN" -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest())' "$production_upload_source" | tr -d '\r')"
+production_upload_init_payload="$(
+  "$PYTHON_BIN" -c '
+import json, sys
+print(json.dumps({
+    "project_id": sys.argv[1],
+    "project_version_id": sys.argv[2],
+    "filename": "v2-08-short-source.mp4",
+    "media_kind": "video",
+    "content_type": "video/mp4",
+    "size_bytes": int(sys.argv[3]),
+    "checksum_sha256": sys.argv[4],
+    "part_size_bytes": 8388608,
+    "rights_status": "owned",
+    "license": "ci-synthetic-fixture"
+}))
+' "$production_project_id" "$production_project_version_id" "$production_upload_size" "$production_upload_checksum"
+)"
+printf '%s' "$production_upload_init_payload" | curl --fail --silent --show-error \
+  -X POST http://localhost:8000/api/v1/uploads/init \
+  -H 'Content-Type: application/json' \
+  --data-binary @- > e2e-artifacts/production-upload-init.json
+production_upload_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/production-upload-init.json", encoding="utf-8"))["upload_id"])' | tr -d '\r')"
+production_part_checksum="$("$PYTHON_BIN" -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest())' "$production_upload_source" | tr -d '\r')"
+curl --fail --silent --show-error \
+  -X PUT "http://localhost:8000/api/v1/uploads/$production_upload_id/parts/1" \
+  -H "X-Part-SHA256: $production_part_checksum" \
+  --data-binary "@$production_upload_source" > e2e-artifacts/production-upload-part-1.json
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/uploads/$production_upload_id/complete" \
+  -H 'Content-Type: application/json' \
+  --data "{\"checksum_sha256\":\"$production_upload_checksum\"}" \
+  > e2e-artifacts/production-upload-complete.json
+production_source_asset_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/production-upload-complete.json", encoding="utf-8"))["asset_id"])' | tr -d '\r')"
+
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/analyze" \
+  -H 'Content-Type: application/json' \
+  --data "{\"asset_id\":\"$production_source_asset_id\",\"top_highlights\":3}" \
+  > e2e-artifacts/production-auto-edit-analysis.json
+production_analysis_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/production-auto-edit-analysis.json", encoding="utf-8"))["analysis_id"])' | tr -d '\r')"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/timeline" \
+  -H 'Content-Type: application/json' \
+  --data "{\"analysis_id\":\"$production_analysis_id\",\"actor_ref\":\"github-actions-e2e\"}" \
+  > e2e-artifacts/production-timeline-before-restart.json
+
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/production-package" \
+  -H 'Content-Type: application/json' \
+  --data '{"expected_timeline_version":1,"actor_ref":"github-actions-e2e"}' \
+  > e2e-artifacts/production-package-created.json
+
+"$PYTHON_BIN" - <<'PY'
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+timeline = json.loads((root / "production-timeline-before-restart.json").read_text(encoding="utf-8"))
+package = json.loads((root / "production-package-created.json").read_text(encoding="utf-8"))
+duration = float(timeline["snapshot"]["duration_seconds"])
+words = ["Vịnh", "Tiên", "xanh"]
+slot = duration / len(words)
+payload = {
+    "expected_timeline_version": 1,
+    "expected_subtitle_version": 1,
+    "cues": [
+        {
+            "cue_id": "sub_vinh_tien_e2e",
+            "start_seconds": 0,
+            "end_seconds": duration,
+            "text": "Vịnh Tiên xanh",
+            "words": [
+                {
+                    "text": word,
+                    "start_seconds": index * slot,
+                    "end_seconds": (index + 1) * slot,
+                }
+                for index, word in enumerate(words)
+            ],
+        }
+    ],
+    "style": package["subtitle"]["style"],
+    "actor_ref": "github-actions-e2e",
+    "reason": "v2-08-e2e-subtitle",
+}
+(root / "subtitle-request.json").write_text(
+    json.dumps(payload, ensure_ascii=False), encoding="utf-8"
+)
+assert timeline["current_version"] == 1, timeline
+assert package["timeline_version"] == 1, package
+assert 2.9 <= duration <= 3.1, timeline
+assert not next(track for track in timeline["snapshot"]["tracks"] if track["kind"] == "broll")["clips"]
+assert package["subtitle"]["version"] == 1 and package["audio_mix"]["version"] == 1, package
+assert package["publishing_allowed"] is False, package
+PY
+
+curl --fail --silent --show-error \
+  -X PUT "http://localhost:8000/api/v1/projects/$production_project_id/subtitles" \
+  -H 'Content-Type: application/json' \
+  --data-binary @e2e-artifacts/subtitle-request.json \
+  > e2e-artifacts/production-package-subtitles-v2.json
+
+final_without_approval_status="$(curl --silent --show-error \
+  -o e2e-artifacts/final-without-approval.json \
+  -w '%{http_code}' \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/final-render" \
+  -H 'Content-Type: application/json' \
+  --data '{"expected_timeline_version":1,"expected_subtitle_version":2,"expected_audio_version":1,"profile":"vertical-1080x1920","approval_id":"apr_missing_fixture","actor_ref":"github-actions-e2e"}')"
+if [[ "$final_without_approval_status" != "409" ]]; then
+  echo "Expected final render without approval to fail with HTTP 409, received $final_without_approval_status" >&2
+  exit 1
+fi
+
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/review-render" \
+  -H 'Content-Type: application/json' \
+  --data '{"expected_timeline_version":1,"expected_subtitle_version":2,"expected_audio_version":1,"profile":"review-540x960","actor_ref":"github-actions-e2e"}' \
+  > e2e-artifacts/review-render-created.json
+review_render_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/review-render-created.json", encoding="utf-8"))["render_id"])' | tr -d '\r')"
+review_terminal=0
+for _ in $(seq 1 300); do
+  review_json="$(curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$production_project_id/renders/$review_render_id")"
+  printf '%s\n' "$review_json" > e2e-artifacts/review-render-ready.json
+  review_status="$(printf '%s' "$review_json" | "$PYTHON_BIN" -c 'import json,sys; print(json.load(sys.stdin)["status"])' | tr -d '\r')"
+  if [[ "$review_status" == "awaiting_review" ]]; then
+    review_terminal=1
+    break
+  fi
+  if [[ "$review_status" == "failed" || "$review_status" == "failed_qc" || "$review_status" == "cancelled" || "$review_status" == "stale" ]]; then
+    echo "V2-08 review render ended unexpectedly: $review_status" >&2
+    printf '%s\n' "$review_json" >&2
+    exit 1
+  fi
+  sleep 1
+done
+if [[ "$review_terminal" != "1" ]]; then
+  echo "V2-08 review render did not finish before timeout: $review_render_id" >&2
+  exit 1
+fi
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/renders/$review_render_id/content" \
+  --output e2e-artifacts/review-render.mp4
+"$docker_bin" compose cp e2e-artifacts/review-render.mp4 worker:/tmp/v2-08-e2e-review.mp4 >/dev/null
+"$docker_bin" compose exec -T worker ffprobe -v error \
+  -show_entries stream=codec_type,codec_name,width,height,sample_rate \
+  -show_entries format=duration \
+  -of json /tmp/v2-08-e2e-review.mp4 \
+  > e2e-artifacts/review-render-probe.json
+
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/approvals" \
+  -H 'Content-Type: application/json' \
+  --data "{\"review_render_id\":\"$review_render_id\",\"requester_ref\":\"github-actions-e2e\",\"note\":\"V2-08 deterministic review\"}" \
+  > e2e-artifacts/approval-requested.json
+approval_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/approval-requested.json", encoding="utf-8"))["approval_id"])' | tr -d '\r')"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/approvals/$approval_id/decision" \
+  -H 'Content-Type: application/json' \
+  --data '{"decision":"approved","reviewer_ref":"owner-github-actions-e2e","comment":"Reviewed voice, subtitles and preview fixture."}' \
+  > e2e-artifacts/approval-approved.json
+
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/final-render" \
+  -H 'Content-Type: application/json' \
+  --data "{\"expected_timeline_version\":1,\"expected_subtitle_version\":2,\"expected_audio_version\":1,\"profile\":\"vertical-1080x1920\",\"approval_id\":\"$approval_id\",\"actor_ref\":\"owner-github-actions-e2e\"}" \
+  > e2e-artifacts/final-render-created.json
+final_render_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/final-render-created.json", encoding="utf-8"))["render_id"])' | tr -d '\r')"
+final_terminal=0
+for _ in $(seq 1 600); do
+  final_json="$(curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$production_project_id/renders/$final_render_id")"
+  printf '%s\n' "$final_json" > e2e-artifacts/final-render-ready.json
+  final_status="$(printf '%s' "$final_json" | "$PYTHON_BIN" -c 'import json,sys; print(json.load(sys.stdin)["status"])' | tr -d '\r')"
+  if [[ "$final_status" == "ready" ]]; then
+    final_terminal=1
+    break
+  fi
+  if [[ "$final_status" == "failed" || "$final_status" == "failed_qc" || "$final_status" == "cancelled" || "$final_status" == "stale" ]]; then
+    echo "V2-08 final render ended unexpectedly: $final_status" >&2
+    printf '%s\n' "$final_json" >&2
+    exit 1
+  fi
+  sleep 1
+done
+if [[ "$final_terminal" != "1" ]]; then
+  echo "V2-08 final render did not finish before timeout: $final_render_id" >&2
+  exit 1
+fi
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/renders/$final_render_id/content" \
+  --output e2e-artifacts/final-render-v2-08.mp4
+"$docker_bin" compose cp e2e-artifacts/final-render-v2-08.mp4 worker:/tmp/v2-08-e2e-final.mp4 >/dev/null
+"$docker_bin" compose exec -T worker ffprobe -v error \
+  -show_entries stream=codec_type,codec_name,width,height,sample_rate \
+  -show_entries format=duration \
+  -of json /tmp/v2-08-e2e-final.mp4 \
+  > e2e-artifacts/final-render-probe.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/production-package" \
+  > e2e-artifacts/production-package-before-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/production-history" \
+  > e2e-artifacts/production-history-before-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/timeline" \
+  > e2e-artifacts/production-timeline-before-restart.json
+
+"$PYTHON_BIN" - <<'PY'
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+package = json.loads((root / "production-package-before-restart.json").read_text(encoding="utf-8"))
+review = json.loads((root / "review-render-ready.json").read_text(encoding="utf-8"))
+review_probe = json.loads((root / "review-render-probe.json").read_text(encoding="utf-8"))
+approval = json.loads((root / "approval-approved.json").read_text(encoding="utf-8"))
+final = json.loads((root / "final-render-ready.json").read_text(encoding="utf-8"))
+final_probe = json.loads((root / "final-render-probe.json").read_text(encoding="utf-8"))
+blocked = json.loads((root / "final-without-approval.json").read_text(encoding="utf-8"))
+history = json.loads((root / "production-history-before-restart.json").read_text(encoding="utf-8"))
+
+def assert_av(probe, width, height):
+    video = [item for item in probe["streams"] if item["codec_type"] == "video"]
+    audio = [item for item in probe["streams"] if item["codec_type"] == "audio"]
+    assert len(video) == 1 and video[0]["codec_name"] == "h264", probe
+    assert video[0]["width"] == width and video[0]["height"] == height, probe
+    assert len(audio) == 1 and audio[0]["codec_name"] == "aac", probe
+    assert int(audio[0]["sample_rate"]) == 48000, probe
+    assert float(probe["format"]["duration"]) > 0, probe
+
+assert blocked["detail"]["code"] == "PRODUCTION_PACKAGE_CONFLICT", blocked
+assert review["status"] == "awaiting_review" and review["qc_status"] == "passed", review
+assert review["manifest"]["safety"]["publishing_allowed"] is False, review
+assert review["external_publish_requested"] is False, review
+assert approval["status"] == "approved" and approval["timeline_version"] == 1, approval
+assert approval["subtitle_version"] == 2 and approval["audio_version"] == 1, approval
+assert final["status"] == "ready" and final["qc_status"] == "passed", final
+assert final["profile"] == "vertical-1080x1920", final
+assert final["publishing_allowed"] is False and final["external_publish_requested"] is False, final
+assert final["manifest"]["qc_status"] == "passed", final
+assert package["approval"]["approval_id"] == approval["approval_id"], package
+assert package["latest_final_render"]["render_id"] == final["render_id"], package
+assert package["current_for_timeline"] is True and package["publishing_allowed"] is False, package
+assert {item["event_type"] for item in history} >= {
+    "production_package.created",
+    "subtitles.version_created",
+    "render.review_completed",
+    "approval.approved",
+    "render.final_completed",
+}, history
+assert_av(review_probe, 540, 960)
+assert_av(final_probe, 1080, 1920)
+print("[e2e] V2-08 version-bound review, owner approval, A/V render and full QC verified")
 PY
 
 replay_response="$(
@@ -636,6 +917,18 @@ curl --fail --silent --show-error \
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/previews/$preview_id" \
   > e2e-artifacts/preview-stale-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/timeline" \
+  > e2e-artifacts/production-timeline-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/production-package" \
+  > e2e-artifacts/production-package-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/renders/$final_render_id" \
+  > e2e-artifacts/final-render-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/production-history" \
+  > e2e-artifacts/production-history-after-restart.json
 "$PYTHON_BIN" - <<'PY'
 import json
 from pathlib import Path
@@ -655,10 +948,22 @@ media_before = json.loads((root / "media-plan-resolved.json").read_text(encoding
 media_after = json.loads((root / "media-plan-after-restart.json").read_text(encoding="utf-8"))
 media_assets_before = json.loads((root / "media-assets.json").read_text(encoding="utf-8"))
 media_assets_after = json.loads((root / "media-assets-after-restart.json").read_text(encoding="utf-8"))
-timeline_before = json.loads((root / "timeline-before-restart.json").read_text(encoding="utf-8"))
+timeline_before = json.loads((root / "timeline-v3.json").read_text(encoding="utf-8"))
 timeline_after = json.loads((root / "timeline-after-restart.json").read_text(encoding="utf-8"))
 preview_before = json.loads((root / "preview-stale-before-restart.json").read_text(encoding="utf-8"))
 preview_after = json.loads((root / "preview-stale-after-restart.json").read_text(encoding="utf-8"))
+production_timeline_before = json.loads(
+    (root / "production-timeline-before-restart.json").read_text(encoding="utf-8")
+)
+production_timeline_after = json.loads(
+    (root / "production-timeline-after-restart.json").read_text(encoding="utf-8")
+)
+package_before = json.loads((root / "production-package-before-restart.json").read_text(encoding="utf-8"))
+package_after = json.loads((root / "production-package-after-restart.json").read_text(encoding="utf-8"))
+final_before = json.loads((root / "final-render-ready.json").read_text(encoding="utf-8"))
+final_after = json.loads((root / "final-render-after-restart.json").read_text(encoding="utf-8"))
+production_history_before = json.loads((root / "production-history-before-restart.json").read_text(encoding="utf-8"))
+production_history_after = json.loads((root / "production-history-after-restart.json").read_text(encoding="utf-8"))
 assert after == before, (before, after)
 assert queue_after == queue_before, (queue_before, queue_after)
 assert analysis_after == analysis_before, (analysis_before, analysis_after)
@@ -667,7 +972,19 @@ assert media_after == media_before, (media_before, media_after)
 assert media_assets_after == media_assets_before, (media_assets_before, media_assets_after)
 assert timeline_after == timeline_before, (timeline_before, timeline_after)
 assert preview_after == preview_before, (preview_before, preview_after)
-print("[e2e] PostgreSQL job, content queue, Auto Edit, Vision, Media Intelligence and timeline recovery verified")
+assert production_timeline_after == production_timeline_before, (
+    production_timeline_before,
+    production_timeline_after,
+)
+assert package_after == package_before, (package_before, package_after)
+assert final_after == final_before, (final_before, final_after)
+assert production_history_after == production_history_before, (
+    production_history_before,
+    production_history_after,
+)
+assert package_after["approval"]["status"] == "approved", package_after
+assert final_after["status"] == "ready" and final_after["publishing_allowed"] is False, final_after
+print("[e2e] PostgreSQL jobs, timeline, production package, approval and V2-08 render recovery verified")
 PY
 
 "$docker_bin" compose exec -T api python -c '

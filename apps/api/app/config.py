@@ -46,6 +46,8 @@ class Settings(BaseSettings):
     media_staging_root: Path = Path("/workspace/storage/media-resolution")
     preview_staging_root: Path = Path("/workspace/storage/previews")
     preview_download_root: Path = Path("/workspace/storage/preview-downloads")
+    production_render_staging_root: Path = Path("/workspace/storage/production-renders")
+    production_render_download_root: Path = Path("/workspace/storage/production-downloads")
     media_external_execution_enabled: bool = False
     media_paid_execution_enabled: bool = False
     comfyui_bridge_url: str = "http://comfyui-bridge:8011"
@@ -60,6 +62,15 @@ class Settings(BaseSettings):
     upload_max_size_bytes: int = 2_000_000_000
     tts_provider: str = "espeak"
     openai_api_key: str = ""
+    audio_tts_provider: str = "espeak"
+    audio_external_execution_enabled: bool = False
+    audio_tts_voice: str = "vi"
+    audio_tts_rate: int = 145
+    openai_tts_model: str = "gpt-4o-mini-tts"
+    openai_tts_voice: str = "marin"
+    openai_tts_instructions: str = ""
+    openai_base_url: str = "https://api.openai.com"
+    renderer_timeout_seconds: float = 600.0
     public_base_url: str = "http://localhost:8000"
     video_factory_brand_name: str = "NPD Video Factory"
     video_factory_logo_path: Path = Path("/workspace/storage/assets/brand/default-logo.png")
@@ -69,9 +80,9 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
         if self.publish_enabled:
-            raise ValueError("publishing is not implemented in V2-07 and must remain disabled")
+            raise ValueError("publishing is not implemented in V2-08 and must remain disabled")
         if not self.human_approval_required:
-            raise ValueError("human approval must remain required in V2-07")
+            raise ValueError("human approval must remain required in V2-08")
         if self.app_env == "production" and self.trend_fixture_enabled:
             raise ValueError("deterministic trend fixtures must be disabled in production")
         if self.app_env == "production" and self.auto_edit_fixture_enabled:
@@ -129,6 +140,14 @@ class Settings(BaseSettings):
             raise ValueError("S3 object storage credentials must be configured outside source control")
         if self.app_env == "production" and self.object_storage_provider == "local":
             raise ValueError("production must use S3-compatible object storage")
+        if self.audio_tts_provider not in {"espeak", "contract", "openai"}:
+            raise ValueError("AUDIO_TTS_PROVIDER must be espeak, contract or openai")
+        if self.audio_tts_provider == "openai" and not self.audio_external_execution_enabled:
+            raise ValueError("OpenAI audio TTS requires the external audio execution owner gate")
+        if self.audio_external_execution_enabled and self.audio_tts_provider != "openai":
+            raise ValueError("external audio execution is only valid for the owner-gated OpenAI adapter")
+        if self.audio_tts_rate < 80 or self.audio_tts_rate > 260:
+            raise ValueError("AUDIO_TTS_RATE must be between 80 and 260")
         return self
 
 
