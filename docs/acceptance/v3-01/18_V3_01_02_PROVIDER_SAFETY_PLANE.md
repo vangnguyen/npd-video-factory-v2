@@ -92,5 +92,5 @@ acceptance remain outstanding. Real rights coverage under `V3-01-GAP-013` also r
 - no release candidate and no change to the repository verdict `NO-GO`.
 
 The earlier G-08 record `V3-01-APP-002` was exhausted by the completed PR #12 and PR #13 merge
-sequence. This checkpoint may be pushed as a draft PR under G-00, but merging it requires a new,
+sequence. This checkpoint is published as draft PR #14 under G-00; merging it requires a new,
 explicit G-08 approval.
