@@ -1,4 +1,4 @@
-# API — V2-03
+# API — V2-04
 
 Base path: `/api/v1`. Request models forbid unknown fields. This local/CI increment has no
 authentication layer and must not be exposed to an untrusted network.
@@ -59,3 +59,21 @@ Collection accepts a provider key plus optional query/country/locale/language/li
 idea requests carry channel, niche, objective and configurable weights. Response scores always
 declare `estimated=true`. Live providers return `PROVIDER_NOT_CONFIGURED` until authorized
 credentials/adapters exist. Creating a project from an idea is idempotent and draft-only.
+
+## Upload and Auto Edit Analysis
+
+- `POST /api/v1/uploads/init`: initialize a bounded resumable upload.
+- `PUT /api/v1/uploads/{upload_id}/parts/{part_number}`: raw part body; optional
+  `X-Part-SHA256` must be lowercase SHA-256.
+- `GET /api/v1/uploads/{upload_id}`: durable part and completion status.
+- `POST /api/v1/uploads/{upload_id}/complete`: assemble, hash, inspect, deduplicate,
+  store and register the source asset.
+- `POST /api/v1/projects/{project_id}/analyze`: create or replay an idempotent analysis
+  for a validated source video.
+- `GET /api/v1/projects/{project_id}/analyses`
+- `GET /api/v1/projects/{project_id}/analyses/{analysis_id}`
+
+Completion checks declared size/checksum, file signature and declared MIME/kind before FFprobe.
+The source asset records rights/provenance and immutable checksum. Analysis responses contain
+the original transcript evidence, scenes, user-toggleable silence decisions and ranked highlights.
+They always report `source_media_mutated=false` and `publish_requested=false`.

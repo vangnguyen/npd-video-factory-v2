@@ -8,6 +8,16 @@ from fastapi import FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from redis.asyncio import Redis
 
+from .auto_edit_providers import (
+    ContractOnlyTranscriptionProvider,
+    DeterministicMediaSignalProvider,
+    DeterministicTranscriptionProvider,
+    FFmpegMediaSignalProvider,
+    FFprobeMediaProbe,
+)
+from .auto_edit_repository import AutoEditRepository
+from .auto_edit_routes import router as auto_edit_router
+from .auto_edit_service import AutoEditAnalysisService, UploadService
 from .artifacts import (
     ArtifactAccessError,
     recorded_artifact,
@@ -36,12 +46,15 @@ def new_job_id() -> str:
 async def lifespan(app: FastAPI):
     settings.job_storage_root.mkdir(parents=True, exist_ok=True)
     settings.asset_storage_root.mkdir(parents=True, exist_ok=True)
+    settings.upload_staging_root.mkdir(parents=True, exist_ok=True)
+    settings.analysis_staging_root.mkdir(parents=True, exist_ok=True)
     engine = create_engine(settings.database_url)
     session_factory = create_session_factory(engine)
     redis = Redis.from_url(settings.redis_url, decode_responses=False)
     object_storage = create_object_storage(settings)
     platform = PlatformRepository(session_factory)
     trend_repository = TrendRepository(session_factory)
+    auto_edit_repository = AutoEditRepository(session_factory)
     trend_providers = create_trend_provider_registry(
         settings.trend_fixture_path,
         fixture_enabled=settings.trend_fixture_enabled,
@@ -64,6 +77,7 @@ async def lifespan(app: FastAPI):
     app.state.object_storage = object_storage
     app.state.platform_repository = platform
     app.state.trend_repository = trend_repository
+    app.state.auto_edit_repository = auto_edit_repository
     app.state.trend_provider_registry = trend_providers
     app.state.trend_intelligence_service = TrendIntelligenceService(
         trend_repository,
@@ -76,6 +90,35 @@ async def lifespan(app: FastAPI):
         platform=platform,
         object_storage=object_storage,
     )
+    media_probe = FFprobeMediaProbe(settings.ffprobe_path)
+    transcription_provider = (
+        DeterministicTranscriptionProvider()
+        if settings.transcription_provider == "fixture"
+        else ContractOnlyTranscriptionProvider()
+    )
+    signal_provider = (
+        DeterministicMediaSignalProvider()
+        if settings.auto_edit_signal_provider == "fixture"
+        else FFmpegMediaSignalProvider(settings.ffmpeg_path)
+    )
+    app.state.upload_service = UploadService(
+        repository=auto_edit_repository,
+        platform=platform,
+        object_storage=object_storage,
+        media_probe=media_probe,
+        staging_root=settings.upload_staging_root,
+        default_part_size_bytes=settings.upload_default_part_size_bytes,
+        max_part_size_bytes=settings.upload_max_part_size_bytes,
+        max_upload_size_bytes=settings.upload_max_size_bytes,
+    )
+    app.state.auto_edit_analysis_service = AutoEditAnalysisService(
+        repository=auto_edit_repository,
+        platform=platform,
+        object_storage=object_storage,
+        transcription_provider=transcription_provider,
+        signal_provider=signal_provider,
+        staging_root=settings.analysis_staging_root,
+    )
     try:
         yield
     finally:
@@ -83,9 +126,10 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.4.0", lifespan=lifespan)
+app = FastAPI(title="NPD Video Factory V2 API", version="0.5.0", lifespan=lifespan)
 app.include_router(platform_router)
 app.include_router(trend_router)
+app.include_router(auto_edit_router)
 
 
 def store_from(request: Request) -> PostgresJobStore:
@@ -155,6 +199,54 @@ def _provider_definitions() -> list[dict[str, object]]:
             "supports_dry_run": True,
             "config_ref": "env:OBJECT_STORAGE_*" if settings.object_storage_provider == "s3" else None,
             "metadata": {"production_supported": settings.object_storage_provider == "s3"},
+        },
+        {
+            "provider_key": "fixture-transcription",
+            "display_name": "Deterministic Vietnamese Transcript Fixture",
+            "capability": "transcription",
+            "adapter": "app.auto_edit_providers.DeterministicTranscriptionProvider",
+            "routing_mode": "primary" if settings.transcription_provider == "fixture" else "disabled",
+            "status": "healthy" if settings.transcription_provider == "fixture" else "not_configured",
+            "enabled": settings.transcription_provider == "fixture",
+            "supports_dry_run": True,
+            "config_ref": "built-in:synthetic-transcript",
+            "metadata": {"paid": False, "ci_safe": True, "fixture": True},
+        },
+        {
+            "provider_key": "transcription-not-configured",
+            "display_name": "Live Transcription Provider Contract",
+            "capability": "transcription",
+            "adapter": "app.auto_edit_providers.ContractOnlyTranscriptionProvider",
+            "routing_mode": "disabled",
+            "status": "not_configured",
+            "enabled": False,
+            "supports_dry_run": True,
+            "config_ref": "env:TRANSCRIPTION_PROVIDER_*",
+            "metadata": {"contract_only": True, "paid": None},
+        },
+        {
+            "provider_key": "fixture-media-signals",
+            "display_name": "Deterministic Media Signal Fixture",
+            "capability": "media_analysis",
+            "adapter": "app.auto_edit_providers.DeterministicMediaSignalProvider",
+            "routing_mode": "primary" if settings.auto_edit_signal_provider == "fixture" else "disabled",
+            "status": "healthy" if settings.auto_edit_signal_provider == "fixture" else "not_configured",
+            "enabled": settings.auto_edit_signal_provider == "fixture",
+            "supports_dry_run": True,
+            "config_ref": "built-in:synthetic-media-signals",
+            "metadata": {"paid": False, "ci_safe": True, "fixture": True},
+        },
+        {
+            "provider_key": "ffmpeg-media-signals",
+            "display_name": "FFmpeg Scene and Silence Signals",
+            "capability": "media_analysis",
+            "adapter": "app.auto_edit_providers.FFmpegMediaSignalProvider",
+            "routing_mode": "primary" if settings.auto_edit_signal_provider == "ffmpeg" else "disabled",
+            "status": "healthy" if settings.auto_edit_signal_provider == "ffmpeg" else "not_configured",
+            "enabled": settings.auto_edit_signal_provider == "ffmpeg",
+            "supports_dry_run": True,
+            "config_ref": "env:FFMPEG_PATH",
+            "metadata": {"paid": False, "production_supported": True, "fixture": False},
         },
         {
             "provider_key": "fixture-trends",
@@ -251,6 +343,12 @@ async def capabilities() -> dict[str, object]:
         "live_trend_providers_configured": False,
         "creator_media_download": False,
         "idea_to_project_state": "draft_only",
+        "resumable_upload": True,
+        "auto_edit_analysis": True,
+        "auto_edit_timeline": False,
+        "source_media_mutation": False,
+        "transcription_provider": settings.transcription_provider,
+        "media_signal_provider": settings.auto_edit_signal_provider,
     }
 
 

@@ -150,6 +150,66 @@ curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$projec
 curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$project_id/cost-summary" > e2e-artifacts/cost-summary.json
 curl --fail --silent --show-error "http://localhost:8000/api/v1/video-jobs/$job_id/events" > e2e-artifacts/job-events.json
 
+echo "[e2e] uploading rendered fixture through resumable V2-04 upload contract"
+upload_source="e2e-artifacts/final.mp4"
+upload_size="$(wc -c < "$upload_source" | tr -d ' ')"
+upload_checksum="$("$PYTHON_BIN" -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest())' "$upload_source" | tr -d '\r')"
+upload_init_payload="$(
+  "$PYTHON_BIN" -c '
+import json, sys
+print(json.dumps({
+    "project_id": sys.argv[1],
+    "project_version_id": sys.argv[2],
+    "filename": "uploaded-footage.mp4",
+    "media_kind": "video",
+    "content_type": "video/mp4",
+    "size_bytes": int(sys.argv[3]),
+    "checksum_sha256": sys.argv[4],
+    "part_size_bytes": 8388608,
+    "rights_status": "owned",
+    "license": "ci-synthetic-fixture"
+}))
+' "$project_id" "$project_version_id" "$upload_size" "$upload_checksum"
+)"
+printf '%s' "$upload_init_payload" | curl --fail --silent --show-error \
+  -X POST http://localhost:8000/api/v1/uploads/init \
+  -H 'Content-Type: application/json' \
+  --data-binary @- > e2e-artifacts/upload-init.json
+upload_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/upload-init.json", encoding="utf-8"))["upload_id"])' | tr -d '\r')"
+upload_part_size="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/upload-init.json", encoding="utf-8"))["part_size_bytes"])' | tr -d '\r')"
+upload_total_parts="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/upload-init.json", encoding="utf-8"))["total_parts"])' | tr -d '\r')"
+for part_number in $(seq 1 "$upload_total_parts"); do
+  part_file="e2e-artifacts/upload-part-${part_number}.bin"
+  dd if="$upload_source" of="$part_file" bs="$upload_part_size" skip=$((part_number - 1)) count=1 status=none
+  part_checksum="$("$PYTHON_BIN" -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest())' "$part_file" | tr -d '\r')"
+  curl --fail --silent --show-error \
+    -X PUT "http://localhost:8000/api/v1/uploads/$upload_id/parts/$part_number" \
+    -H "X-Part-SHA256: $part_checksum" \
+    --data-binary "@$part_file" > "e2e-artifacts/upload-part-${part_number}.json"
+  rm -f "$part_file"
+done
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/uploads/$upload_id/complete" \
+  -H 'Content-Type: application/json' \
+  --data "{\"checksum_sha256\":\"$upload_checksum\"}" \
+  > e2e-artifacts/upload-complete.json
+source_asset_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/upload-complete.json", encoding="utf-8"))["asset_id"])' | tr -d '\r')"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$project_id/analyze" \
+  -H 'Content-Type: application/json' \
+  --data "{\"asset_id\":\"$source_asset_id\",\"top_highlights\":3}" \
+  > e2e-artifacts/auto-edit-analysis.json
+analysis_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/auto-edit-analysis.json", encoding="utf-8"))["analysis_id"])' | tr -d '\r')"
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/analyses/$analysis_id" \
+  > e2e-artifacts/auto-edit-analysis-before-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/assets" \
+  > e2e-artifacts/project-assets-after-upload.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/cost-summary" \
+  > e2e-artifacts/cost-summary-after-auto-edit.json
+
 replay_response="$(
   curl --fail --silent --show-error \
     -X POST http://localhost:8000/api/v1/video-jobs \
@@ -285,6 +345,43 @@ assert "content-security-policy:" in headers, headers
 print("[e2e] V2-03 trend, idea, queue and Studio contracts verified")
 PY
 
+"$PYTHON_BIN" - <<'PY'
+import hashlib
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+upload = json.loads((root / "upload-complete.json").read_text(encoding="utf-8"))
+analysis = json.loads((root / "auto-edit-analysis.json").read_text(encoding="utf-8"))
+assets = json.loads((root / "project-assets-after-upload.json").read_text(encoding="utf-8"))
+cost = json.loads((root / "cost-summary-after-auto-edit.json").read_text(encoding="utf-8"))
+source = root / "final.mp4"
+
+assert upload["duplicate"] is False, upload
+assert upload["checksum_sha256"] == hashlib.sha256(source.read_bytes()).hexdigest(), upload
+assert upload["media_metadata"]["media_kind"] == "video", upload
+assert upload["media_metadata"]["width"] == 1080, upload
+assert upload["media_metadata"]["height"] == 1920, upload
+asset = next(item for item in assets if item["asset_id"] == upload["asset_id"])
+assert asset["asset_class"] == "source" and asset["kind"] == "video", asset
+assert asset["provenance"]["source_type"] == "user_upload", asset
+assert asset["provenance"]["rights_status"] == "owned", asset
+assert analysis["status"] == "succeeded", analysis
+assert analysis["transcript"]["is_original_evidence"] is True, analysis
+assert analysis["transcript"]["version"] == 1, analysis
+assert len(analysis["transcript"]["segments"]) == 4, analysis
+assert len(analysis["scenes"]) == 4, analysis
+assert len(analysis["silence_decisions"]) == 3, analysis
+assert len(analysis["highlights"]) == 3, analysis
+assert [item["rank"] for item in analysis["highlights"]] == [1, 2, 3], analysis
+assert all(not item["conflicts_with_speech"] for item in analysis["silence_decisions"] if item["enabled"])
+assert analysis["source_media_mutated"] is False, analysis
+assert analysis["publish_requested"] is False, analysis
+assert cost["currency"] == "VND" and float(cost["actual_cost"]) == 0, cost
+assert cost["records"] >= 3, cost
+print("[e2e] V2-04 upload, transcript, scene, silence and highlight contracts verified")
+PY
+
 echo "[e2e] restarting API to verify PostgreSQL recovery"
 "$docker_bin" compose restart api >/dev/null
 ready=0
@@ -301,6 +398,9 @@ if [[ "$ready" != "1" ]]; then
 fi
 curl --fail --silent --show-error "http://localhost:8000/api/v1/video-jobs/$job_id" > e2e-artifacts/job-status-after-restart.json
 curl --fail --silent --show-error "http://localhost:8000/api/v1/workspaces/$workspace_id/content-opportunities" > e2e-artifacts/content-opportunity-queue-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/analyses/$analysis_id" \
+  > e2e-artifacts/auto-edit-analysis-after-restart.json
 "$PYTHON_BIN" - <<'PY'
 import json
 from pathlib import Path
@@ -312,9 +412,12 @@ queue_before = json.loads(
     (root / "content-opportunity-queue-before-restart.json").read_text(encoding="utf-8")
 )
 queue_after = json.loads((root / "content-opportunity-queue-after-restart.json").read_text(encoding="utf-8"))
+analysis_before = json.loads((root / "auto-edit-analysis-before-restart.json").read_text(encoding="utf-8"))
+analysis_after = json.loads((root / "auto-edit-analysis-after-restart.json").read_text(encoding="utf-8"))
 assert after == before, (before, after)
 assert queue_after == queue_before, (queue_before, queue_after)
-print("[e2e] PostgreSQL job and content queue recovery verified")
+assert analysis_after == analysis_before, (analysis_before, analysis_after)
+print("[e2e] PostgreSQL job, content queue and Auto Edit recovery verified")
 PY
 
 "$docker_bin" compose exec -T api python -c '
@@ -388,4 +491,4 @@ for cue, scene in zip(timing["cues"], manifest["scenes"], strict=True):
 print("[e2e] QC verified", json.dumps(qc, ensure_ascii=False))
 PY
 
-echo "[e2e] V2-03 Trend Radar and Idea Intelligence passed"
+echo "[e2e] V2-04 Auto Edit Analysis passed"
