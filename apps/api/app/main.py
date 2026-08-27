@@ -8,6 +8,10 @@ from fastapi import FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from redis.asyncio import Redis
 
+from .analytics_providers import AnalyticsProviderRegistry
+from .analytics_repository import AnalyticsRepository
+from .analytics_routes import router as analytics_router
+from .analytics_service import AnalyticsService
 from .auto_edit_providers import (
     ContractOnlyTranscriptionProvider,
     DeterministicMediaSignalProvider,
@@ -93,6 +97,7 @@ async def lifespan(app: FastAPI):
     timeline_repository = TimelineRepository(session_factory)
     production_repository = ProductionRepository(session_factory)
     publishing_repository = PublishingRepository(session_factory)
+    analytics_repository = AnalyticsRepository(session_factory)
     trend_providers = create_trend_provider_registry(
         settings.trend_fixture_path,
         fixture_enabled=settings.trend_fixture_enabled,
@@ -121,6 +126,7 @@ async def lifespan(app: FastAPI):
     app.state.timeline_repository = timeline_repository
     app.state.production_repository = production_repository
     app.state.publishing_repository = publishing_repository
+    app.state.analytics_repository = analytics_repository
     app.state.trend_provider_registry = trend_providers
     app.state.trend_intelligence_service = TrendIntelligenceService(
         trend_repository,
@@ -233,6 +239,16 @@ async def lifespan(app: FastAPI):
         providers=publishing_providers,
         settings=settings,
     )
+    analytics_providers = AnalyticsProviderRegistry(settings)
+    app.state.analytics_provider_registry = analytics_providers
+    app.state.analytics_service = AnalyticsService(
+        repository=analytics_repository,
+        publishing_repository=publishing_repository,
+        platform_repository=platform,
+        providers=analytics_providers,
+        queue=redis,
+        settings=settings,
+    )
     app.state.production_render_download_root = settings.production_render_download_root
     try:
         yield
@@ -241,7 +257,7 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.10.0", lifespan=lifespan)
+app = FastAPI(title="NPD Video Factory V2 API", version="0.11.0", lifespan=lifespan)
 app.include_router(platform_router)
 app.include_router(trend_router)
 app.include_router(auto_edit_router)
@@ -250,6 +266,7 @@ app.include_router(media_intelligence_router)
 app.include_router(timeline_router)
 app.include_router(production_router)
 app.include_router(publishing_router)
+app.include_router(analytics_router)
 
 
 def store_from(request: Request) -> PostgresJobStore:
@@ -575,6 +592,7 @@ def _provider_definitions() -> list[dict[str, object]]:
             )
         ],
         *_publishing_provider_definitions(),
+        *_analytics_provider_definitions(),
     ]
 
 
@@ -635,6 +653,59 @@ def _publishing_provider_definitions() -> list[dict[str, object]]:
     return definitions
 
 
+def _analytics_provider_definitions() -> list[dict[str, object]]:
+    definitions: list[dict[str, object]] = [
+        {
+            "provider_key": "fixture-analytics-v1",
+            "display_name": "Deterministic Analytics Fixture",
+            "capability": "analytics",
+            "adapter": "app.analytics_providers.DeterministicAnalyticsProvider",
+            "routing_mode": "primary" if settings.analytics_fixture_enabled else "disabled",
+            "status": "healthy" if settings.analytics_fixture_enabled else "not_configured",
+            "enabled": settings.analytics_fixture_enabled,
+            "supports_dry_run": True,
+            "config_ref": "built-in:v2-10-analytics-fixture",
+            "metadata": {
+                "mock": True,
+                "external_call": False,
+                "historical_snapshots": True,
+                "real_provider_tested": False,
+                "production_deployed": False,
+            },
+        }
+    ]
+    credential_refs = {
+        "youtube": settings.youtube_analytics_credential_ref,
+        "tiktok": settings.tiktok_analytics_credential_ref,
+        "instagram_reels": settings.instagram_analytics_credential_ref,
+        "facebook": settings.facebook_analytics_credential_ref,
+    }
+    for platform, provider_key in AnalyticsProviderRegistry.OFFICIAL_KEYS.items():
+        configured = bool(credential_refs[platform])
+        definitions.append(
+            {
+                "provider_key": provider_key,
+                "display_name": f"{platform.replace('_', ' ').title()} Analytics API",
+                "capability": "analytics",
+                "adapter": "app.analytics_providers.OfficialAnalyticsProvider",
+                "routing_mode": "disabled",
+                "status": "degraded" if configured else "not_configured",
+                "enabled": False,
+                "supports_dry_run": False,
+                "config_ref": f"external-secret-ref:{platform}:analytics",
+                "metadata": {
+                    "platform": platform,
+                    "contract_only": True,
+                    "external_call": False,
+                    "credential_reference_configured": configured,
+                    "real_provider_tested": False,
+                    "production_deployed": False,
+                },
+            }
+        )
+    return definitions
+
+
 def not_found(message: str = "Job not found.") -> HTTPException:
     return HTTPException(status_code=404, detail={"error": {"code": "ARTIFACT_NOT_FOUND", "message": message}})
 
@@ -674,6 +745,12 @@ async def capabilities() -> dict[str, object]:
         "publish_external_execution_enabled": settings.publish_external_execution_enabled,
         "publish_owner_gate_enabled": settings.publish_owner_gate_enabled,
         "human_approval_required": settings.human_approval_required,
+        "analytics_implemented": True,
+        "analytics_mode": "deterministic_fixture" if settings.analytics_fixture_enabled else "not_configured",
+        "analytics_external_execution_enabled": False,
+        "analytics_historical_snapshots": True,
+        "winner_detection": "explainable_recommendation_only",
+        "learning_feedback_auto_applied": False,
         "agent_hub_runtime_dependency": False,
         "metadata_database": "postgresql",
         "queue": "redis-transient",

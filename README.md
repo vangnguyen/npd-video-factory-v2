@@ -1,11 +1,12 @@
 # NPD Video Factory V2
 
-NPD Video Factory V2 is an independent media execution platform. V2-09 keeps the durable
+NPD Video Factory V2 is an independent media execution platform. V2-10 keeps the durable
 video, Trend/Idea, Auto Edit, Vision and Media Intelligence platform, editable timeline,
 human approval, production-profile rendering and full media QC, then adds fail-closed publishing
-validation, versioned platform contracts and durable dry-run receipts.
+validation, durable dry-run receipts, normalized analytics snapshots and recommendation-only
+learning feedback.
 
-## V2-09 status
+## V2-10 status
 
 Implemented and locally acceptance-tested:
 
@@ -72,11 +73,21 @@ Implemented and locally acceptance-tested:
 - durable publication/audit records, hashed idempotency keys and exact replay after restart;
 - a responsive Publishing Panel that can create only mock receipts and exposes no live button;
 - all live publishing gates false and official adapters contract-only.
+- a provider-neutral `AnalyticsProvider` contract plus deterministic YouTube/TikTok/Instagram
+  Reels/Facebook fixture collection and truthful `not_configured` official adapters;
+- durable sync jobs, nullable normalized metric points, historical snapshots, backoff state,
+  restart recovery and append-only analytics events;
+- explainable winner states (`winner_candidate`, `normal`, `underperforming`,
+  `insufficient_data`) with factor-level evidence and no automatic action;
+- immutable video-feature capture and recommendation-only feedback linked to Trend/Idea evidence;
+- a responsive Analytics & Learning panel that labels mock data, preserves missing metrics and
+  exposes no real-provider or autonomous-execution control.
 
-Not implemented in V2-09: real Vision/stock/generation credentials or accuracy acceptance,
+Not implemented in V2-10: real Vision/stock/generation credentials or accuracy acceptance,
 production ComfyUI/GPU execution, a human-accepted production Vietnamese voice/provider,
-API authentication/RBAC, live publishing credentials/adapters, analytics/learning loops or a
-production rollout. Those remain later, separately gated increments.
+API authentication/RBAC, live publishing credentials/adapters, official analytics data collection,
+automatic recommendation application or a production rollout. Those remain later, separately
+gated increments.
 
 ## Safety boundary
 
@@ -99,6 +110,11 @@ production rollout. Those remain later, separately gated increments.
   owner-approved tuple and issue a mock dry-run receipt, but cannot contact a platform.
 - Publishing idempotency keys are hashed; raw OAuth tokens are rejected as configuration and never
   enter the API, PostgreSQL, audit history or logs.
+- `ANALYTICS_EXTERNAL_EXECUTION_ENABLED=false` is invariant in V2-10. Official analytics adapters
+  cannot call a network API even when an opaque external credential reference is configured.
+- Analytics fixtures are rejected in production; scheduled refresh is disabled; unsupported
+  metrics remain `null`; learning keeps `applied=false` and never changes Trend/Idea rank, media,
+  budget or publishing state.
 - eSpeak is an offline dev/CI voice and is not a production voice acceptance. External audio is
   disabled by default and requires a separate owner gate.
 - Music is accepted only from a project asset with explicit usable rights; unclear rights fail closed.
@@ -122,8 +138,10 @@ stale write, renders and invalidates a 540p proxy, restores a safe timeline vers
 subtitles, proves that unapproved final rendering is blocked, renders an A/V review, records owner
 approval, renders the approved 1080x1920 final profile, performs full QC, restarts the API,
 restores the final artifact from MinIO, creates and exactly replays one platform dry-run receipt,
-proves that live mode is blocked with no external action, and validates decoded video/audio
-quality. Its temporary stack and volumes are removed on exit.
+proves that live mode is blocked with no external action, creates two historical mock analytics
+snapshots across a worker restart, validates nullable metrics, winner scoring, Trend/Idea-linked
+learning and API-restart recovery, and validates decoded video/audio quality. Its temporary stack
+and volumes are removed on exit.
 
 Useful endpoints after `docker compose up -d --build`:
 
@@ -151,6 +169,10 @@ Useful endpoints after `docker compose up -d --build`:
 - `POST http://localhost:8000/api/v1/projects/{project_id}/publish` (dry run only)
 - `GET http://localhost:8000/api/v1/projects/{project_id}/publications`
 - `GET http://localhost:8000/api/v1/publishing-platforms`
+- `POST http://localhost:8000/api/v1/projects/{project_id}/analytics/syncs` (fixture only)
+- `GET http://localhost:8000/api/v1/projects/{project_id}/analytics`
+- `GET http://localhost:8000/api/v1/projects/{project_id}/analytics/history`
+- `GET http://localhost:8000/api/v1/analytics-providers`
 - `GET http://localhost:3000` (local Trend Radar)
 - `GET http://localhost:3000/studio.html` (local Auto Edit Studio)
 
@@ -163,7 +185,8 @@ See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
 [Media Intelligence](docs/MEDIA_INTELLIGENCE.md), [media provider contracts](docs/MEDIA_PROVIDERS.md), [ComfyUI setup](docs/COMFYUI_SETUP.md),
 [Auto Edit Studio](docs/AUTO_EDIT_STUDIO.md),
 [Audio, Subtitle, Render and QC](docs/AUDIO_SUBTITLE_RENDER_QC.md),
-[Publishing](docs/PUBLISHING.md), [V2-09 acceptance](docs/V2_09_ACCEPTANCE.md),
+[Publishing](docs/PUBLISHING.md), [Analytics and Learning](docs/ANALYTICS_LEARNING.md),
+[V2-10 acceptance](docs/V2_10_ACCEPTANCE.md), [V2-09 acceptance](docs/V2_09_ACCEPTANCE.md),
 [V2-08 acceptance](docs/V2_08_ACCEPTANCE.md), [V2-07 acceptance](docs/V2_07_ACCEPTANCE.md),
 [V2-06 acceptance](docs/V2_06_ACCEPTANCE.md) and the
 [V2 master specification](docs/CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md).

@@ -57,6 +57,8 @@ def test_v2_04_allows_all_fixture_providers_to_be_disabled_in_production() -> No
         trend_fixture_enabled=False,
         auto_edit_fixture_enabled=False,
         vision_fixture_enabled=False,
+        media_fixture_enabled=False,
+        analytics_fixture_enabled=False,
         transcription_provider="contract",
         auto_edit_signal_provider="ffmpeg",
         vision_provider="contract",
@@ -68,6 +70,14 @@ def test_v2_04_allows_all_fixture_providers_to_be_disabled_in_production() -> No
     assert production.trend_fixture_enabled is False
     assert production.auto_edit_fixture_enabled is False
     assert production.vision_fixture_enabled is False
+    assert production.analytics_fixture_enabled is False
+
+
+def test_v2_10_rejects_live_analytics_and_raw_credential_values() -> None:
+    with pytest.raises(ValidationError, match="not activated in V2-10"):
+        Settings(_env_file=None, analytics_external_execution_enabled=True)
+    with pytest.raises(ValidationError, match="external secret references"):
+        Settings(_env_file=None, youtube_analytics_credential_ref="plain-text-token")
 
 
 def test_v2_04_rejects_auto_edit_fixture_in_production() -> None:
@@ -145,6 +155,11 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["publish_external_execution_enabled"] is False
     assert result["publish_owner_gate_enabled"] is False
     assert result["human_approval_required"] is True
+    assert result["analytics_implemented"] is True
+    assert result["analytics_external_execution_enabled"] is False
+    assert result["analytics_historical_snapshots"] is True
+    assert result["winner_detection"] == "explainable_recommendation_only"
+    assert result["learning_feedback_auto_applied"] is False
     assert result["auto_edit_analysis"] is True
     assert result["auto_edit_timeline"] is True
     assert result["timeline_versioning"] is True

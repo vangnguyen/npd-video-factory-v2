@@ -1,6 +1,8 @@
 import {
+  analyticsMetricItems,
   canDropOnTrack,
   clipStyle,
+  describeAnalytics,
   describeApproval,
   describePublication,
   describeProductionRender,
@@ -11,7 +13,7 @@ import {
   publicationGateItems,
   qcItems,
   timelinePositionFromPointer,
-} from "/studio-utils.mjs?v=0.10.0";
+} from "/studio-utils.mjs?v=0.11.0";
 
 const state = {
   workspaceId: null,
@@ -27,6 +29,9 @@ const state = {
   publications: [],
   publishingPlatforms: [],
   activePublication: null,
+  analyticsReport: null,
+  analyticsProviders: [],
+  activeAnalyticsSync: null,
   publishRequestSignature: null,
   publishIdempotencyKey: null,
   activeProductionRender: null,
@@ -40,6 +45,7 @@ const state = {
   draggingClipId: null,
   pollTimer: null,
   productionPollTimer: null,
+  analyticsPollTimer: null,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -123,9 +129,10 @@ async function loadProject({ quiet = false } = {}) {
   if (!state.projectId) return;
   stopPreviewPolling();
   stopProductionPolling();
+  stopAnalyticsPolling();
   if (!quiet) setSaveStatus("Đang tải…", "muted");
   try {
-    const [assets, analyses, mediaPlans, timeline, publications, publishingPlatforms] = await Promise.all([
+    const [assets, analyses, mediaPlans, timeline, publications, publishingPlatforms, analyticsReport, analyticsProviders] = await Promise.all([
       api(`/api/v1/projects/${state.projectId}/assets`),
       api(`/api/v1/projects/${state.projectId}/analyses`),
       api(`/api/v1/projects/${state.projectId}/media-plans`),
@@ -135,6 +142,8 @@ async function loadProject({ quiet = false } = {}) {
       }),
       api(`/api/v1/projects/${state.projectId}/publications`),
       api("/api/v1/publishing-platforms"),
+      api(`/api/v1/projects/${state.projectId}/analytics`),
+      api("/api/v1/analytics-providers"),
     ]);
     Object.assign(state, {
       assets,
@@ -144,6 +153,9 @@ async function loadProject({ quiet = false } = {}) {
       publications,
       publishingPlatforms,
       activePublication: publications[0] ?? null,
+      analyticsReport,
+      analyticsProviders,
+      activeAnalyticsSync: analyticsReport.latest_sync,
       selectedClipId: null,
       redoStack: [],
       publishRequestSignature: null,
@@ -169,6 +181,7 @@ async function loadProject({ quiet = false } = {}) {
     render();
     if (["queued", "running"].includes(state.preview?.status)) startPreviewPolling();
     if (["queued", "running"].includes(state.activeProductionRender?.status)) startProductionPolling();
+    if (["scheduled", "queued", "running", "retry_scheduled"].includes(state.activeAnalyticsSync?.status)) startAnalyticsPolling();
     setSaveStatus("Đã lưu", "safe");
   } catch (error) {
     setSaveStatus("Lỗi tải", "danger");
@@ -205,6 +218,7 @@ function render() {
   renderPreview();
   renderProduction();
   renderPublishing();
+  renderAnalytics();
 }
 
 function renderSummary() {
@@ -513,6 +527,155 @@ function renderPublishing() {
       return `<button type="button" data-publication-id="${escapeHtml(item.publication_id)}"><span>${escapeHtml(item.platform)}</span><small class="${escapeHtml(itemStatus.tone)}">${escapeHtml(itemStatus.label)} · ${escapeHtml(item.publication_id)}</small></button>`;
     }).join("")}`
     : `<p class="browser-empty">Chưa có dry-run receipt.</p>`;
+}
+
+function analyticsPublication() {
+  return state.publications.find((item) => item.status === "dry_run_succeeded" && item.mock === true) ?? null;
+}
+
+function analyticsFactorLabel(name) {
+  return ({
+    view_velocity: "Tốc độ view",
+    retention: "Giữ chân",
+    completion: "Xem hết",
+    engagement: "Tương tác",
+    shares: "Chia sẻ",
+    saves: "Lưu",
+    ctr: "CTR",
+    follower_conversion: "Tăng follower",
+    revenue_efficiency: "Hiệu quả doanh thu",
+    production_cost_efficiency: "Hiệu quả chi phí",
+  })[name] ?? name;
+}
+
+function renderAnalytics() {
+  const report = state.analyticsReport;
+  const status = describeAnalytics(report);
+  const sync = state.activeAnalyticsSync ?? report?.latest_sync ?? null;
+  const collecting = ["scheduled", "queued", "running", "retry_scheduled"].includes(sync?.status);
+  const eligiblePublication = analyticsPublication();
+  const snapshot = report?.latest_snapshot ?? null;
+  const assessment = report?.latest_assessment ?? null;
+  const providers = state.analyticsProviders ?? [];
+  const officialProviders = providers.filter((item) => item.mode === "official");
+  const unavailableCount = officialProviders.filter((item) => !item.supports_sync).length;
+
+  $("#analytics-status").textContent = collecting ? "Đang thu thập" : status.label;
+  $("#analytics-status").className = `pill ${collecting ? "warning" : status.tone}`;
+  $("#analytics-source-status").textContent = snapshot?.mock === false ? "Nguồn provider" : "Dữ liệu mô phỏng";
+  $("#analytics-source-status").className = `pill ${snapshot?.mock === false ? "safe" : "muted"}`;
+  $("#analytics-provider-summary").textContent = officialProviders.length
+    ? `Provider thật: ${unavailableCount}/${officialProviders.length} chưa cấu hình; external calls=false.`
+    : "Provider thật: chưa đăng ký; external calls=false.";
+
+  const syncButton = $("#analytics-sync-button");
+  syncButton.disabled = collecting || !eligiblePublication;
+  syncButton.textContent = collecting ? "Đang xử lý…" : "Chạy dữ liệu mô phỏng";
+  syncButton.title = eligiblePublication
+    ? "Tạo một snapshot fixture nội bộ, không gọi nền tảng ngoài."
+    : "Cần một V2-09 dry-run receipt thành công trước khi thu thập fixture.";
+
+  $("#analytics-metrics").innerHTML = snapshot
+    ? analyticsMetricItems(report).map((item) => `
+      <div class="analytics-metric${item.value === "Không có dữ liệu" ? " missing" : ""}">
+        <small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.value)}</strong>
+      </div>
+    `).join("")
+    : `<p class="browser-empty">${collecting ? "Worker đang tạo snapshot…" : "Chưa có snapshot."}</p>`;
+  $("#analytics-history-count").textContent = `${report?.history_count ?? 0} snapshot`;
+  $("#analytics-winner-score").textContent = assessment?.score === null || assessment?.score === undefined
+    ? "—"
+    : String(Math.round(assessment.score));
+  $("#analytics-winner-state").textContent = status.winnerLabel;
+  $("#analytics-factor-list").innerHTML = assessment?.factors?.length
+    ? assessment.factors.map((factor) => `
+      <div class="analytics-factor">
+        <span>${escapeHtml(analyticsFactorLabel(factor.factor))}</span>
+        <progress max="100" value="${factor.score ?? 0}"></progress>
+        <strong>${factor.score === null || factor.score === undefined ? "—" : Math.round(factor.score)}</strong>
+      </div>
+    `).join("")
+    : `<p class="browser-empty">Chưa có yếu tố đánh giá.</p>`;
+
+  $("#analytics-learning-list").innerHTML = report?.learning_insights?.length
+    ? report.learning_insights.map((insight) => `
+      <div class="analytics-insight">
+        <strong>${escapeHtml(insight.statement)}</strong>
+        <span>${escapeHtml(insight.recommendation)}</span>
+        <small>${escapeHtml(insight.insight_type)} · confidence ${Math.round(insight.confidence * 100)}% · applied=false</small>
+      </div>
+    `).join("")
+    : `<p class="browser-empty">Chưa có khuyến nghị.</p>`;
+
+  const features = report?.video_features;
+  const featureItems = features ? [
+    ["Trend", features.trend_cluster_id],
+    ["Idea", features.idea_id],
+    ["Hook", features.hook_type],
+    ["Thời lượng", features.duration_seconds === null ? null : `${features.duration_seconds}s`],
+    ["Scene", features.scene_count],
+    ["Subtitle", features.subtitle_template],
+    ["Voice", features.voice_profile],
+    ["Visual", features.visual_strategy],
+  ].filter(([, value]) => value !== null && value !== undefined && value !== "") : [];
+  $("#analytics-feature-list").innerHTML = featureItems.map(([label, value]) => (
+    `<span><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</span>`
+  )).join("");
+}
+
+async function createAnalyticsFixtureSync() {
+  const publication = analyticsPublication();
+  if (!publication) return toast("Cần V2-09 dry-run receipt thành công trước khi chạy analytics fixture.", true);
+  $("#analytics-sync-button").disabled = true;
+  try {
+    state.activeAnalyticsSync = await api(`/api/v1/projects/${state.projectId}/analytics/syncs`, {
+      method: "POST",
+      headers: { "Idempotency-Key": `v2-10-studio-${crypto.randomUUID()}` },
+      body: JSON.stringify({
+        publication_id: publication.publication_id,
+        provider_mode: "fixture",
+        trigger: state.analyticsReport?.latest_snapshot ? "manual_refresh" : "initial",
+        fixture_profile: "winner_candidate",
+        actor_ref: "studio-user",
+      }),
+    });
+    renderAnalytics();
+    startAnalyticsPolling();
+    toast("Đã xếp hàng fixture analytics; không có external call.");
+  } catch (error) {
+    toast(error.message, true);
+    renderAnalytics();
+  }
+}
+
+function startAnalyticsPolling() {
+  stopAnalyticsPolling();
+  state.analyticsPollTimer = window.setInterval(async () => {
+    try {
+      if (!state.activeAnalyticsSync) return stopAnalyticsPolling();
+      state.activeAnalyticsSync = await api(
+        `/api/v1/projects/${state.projectId}/analytics/syncs/${state.activeAnalyticsSync.sync_id}`,
+      );
+      const terminal = ["succeeded", "not_configured", "failed", "cancelled"].includes(state.activeAnalyticsSync.status);
+      if (terminal) {
+        stopAnalyticsPolling();
+        state.analyticsReport = await api(`/api/v1/projects/${state.projectId}/analytics`);
+        toast(state.activeAnalyticsSync.status === "succeeded"
+          ? "Analytics fixture đã chuẩn hóa; recommendation vẫn chưa áp dụng."
+          : `Analytics kết thúc ở trạng thái ${state.activeAnalyticsSync.status}.`,
+          state.activeAnalyticsSync.status === "failed");
+      }
+      renderAnalytics();
+    } catch (error) {
+      stopAnalyticsPolling();
+      toast(error.message, true);
+    }
+  }, 1000);
+}
+
+function stopAnalyticsPolling() {
+  if (state.analyticsPollTimer) window.clearInterval(state.analyticsPollTimer);
+  state.analyticsPollTimer = null;
 }
 
 function publicationPayload() {
@@ -954,6 +1117,7 @@ $("#approve-button").addEventListener("click", () => decideProductionApproval("a
 $("#changes-button").addEventListener("click", () => decideProductionApproval("changes_requested"));
 $("#final-render-button").addEventListener("click", () => createProductionRender("final"));
 $("#publishing-form").addEventListener("submit", createPublishingDryRun);
+$("#analytics-sync-button").addEventListener("click", createAnalyticsFixtureSync);
 $("#publishing-platform").addEventListener("change", () => {
   state.activePublication = state.publications.find((item) => item.platform === $("#publishing-platform").value) ?? null;
   state.publishRequestSignature = null;
@@ -1139,5 +1303,6 @@ $("#preview-video").addEventListener("timeupdate", (event) => setPlayhead(event.
 window.addEventListener("beforeunload", () => {
   stopPreviewPolling();
   stopProductionPolling();
+  stopAnalyticsPolling();
 });
 loadProjectList().catch((error) => { renderNoProject("Không tải được Studio.", error.message); toast(error.message, true); });

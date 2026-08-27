@@ -1,4 +1,4 @@
-# Security and safety — V2-09
+# Security and safety — V2-10
 
 ## Defaults
 
@@ -29,6 +29,9 @@
   provider reports `not_configured` rather than pretending to use live data.
 - Optional music must be a project-scoped audio asset with explicit owned/licensed/public-domain/
   royalty-free provenance. Unknown rights fail closed.
+- Analytics fixtures are synthetic and rejected in production. Official analytics adapters are
+  contract-only, external execution is rejected, scheduled refresh is off and recommendations
+  cannot apply themselves.
 
 ## Data and artifact controls
 
@@ -54,10 +57,13 @@
   and preserve blocked attempts with `external_action=false`.
 - Platform OAuth/token material is external-only. Raw credential values and non-secret-store URI
   schemes fail startup validation; receipts and audits contain no credential reference value.
+- Analytics sync/snapshot/assessment/insight tables have database checks for no external call,
+  no automatic action, no paid-media mutation, no deletion and no autonomous execution. Platform
+  analytics credentials follow the same opaque external-reference rule and are never serialized.
 
 ## Known security gate
 
-V2-09 does not yet implement API authentication, RBAC or workspace membership. Localhost
+V2-10 does not yet implement API authentication, RBAC or workspace membership. Localhost
 binding is the only access boundary in this increment. Public routing and production
 deployment are prohibited until those controls, rate limits and audit actor identity are
 implemented and accepted.
@@ -73,3 +79,7 @@ stored in project snapshots, jobs, assets, provider metadata, costs, logs or Git
 
 AgentHub and V2 must not share database, Redis, packages or process memory. Future bridge
 traffic requires authentication, replay protection, signed requests and versioned contracts.
+
+Analytics adds only `ANALYTICS_*` policy settings and four platform analytics credential-reference
+names. Raw analytics keys/tokens are invalid configuration. Fixture output is not evidence that a
+real provider credential or platform API works.

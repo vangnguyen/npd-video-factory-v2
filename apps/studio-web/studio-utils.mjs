@@ -137,6 +137,54 @@ export function publicationGateItems(publication) {
   })));
 }
 
+export function describeAnalytics(report) {
+  if (!report || report.status === "not_started") {
+    return { label: "Chưa thu thập", tone: "muted", winnerLabel: "Chưa đủ dữ liệu" };
+  }
+  if (["collecting"].includes(report.status)) {
+    return { label: "Đang thu thập", tone: "warning", winnerLabel: "Đang đánh giá" };
+  }
+  if (report.status === "not_configured") {
+    return { label: "Provider chưa cấu hình", tone: "warning", winnerLabel: "Không đánh giá" };
+  }
+  if (report.status === "failed") {
+    return { label: "Thu thập lỗi", tone: "danger", winnerLabel: "Không đánh giá" };
+  }
+  const winnerLabels = {
+    winner_candidate: "Ứng viên nội dung thắng",
+    normal: "Hiệu suất bình thường",
+    underperforming: "Hiệu suất thấp",
+    insufficient_data: "Chưa đủ dữ liệu",
+  };
+  return {
+    label: "Dữ liệu đã chuẩn hóa",
+    tone: "safe",
+    winnerLabel: winnerLabels[report.latest_assessment?.state] ?? "Chưa đủ dữ liệu",
+  };
+}
+
+export function formatAnalyticsMetric(value, kind = "number") {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "Không có dữ liệu";
+  const numeric = Number(value);
+  if (kind === "percent") return `${(numeric * 100).toFixed(1)}%`;
+  if (kind === "seconds") return `${numeric.toFixed(1)} giây`;
+  if (kind === "currency") return `${Math.round(numeric).toLocaleString("vi-VN")} VND`;
+  if (kind === "decimal") return numeric.toLocaleString("vi-VN", { maximumFractionDigits: 2 });
+  return Math.round(numeric).toLocaleString("vi-VN");
+}
+
+export function analyticsMetricItems(report) {
+  const metrics = report?.latest_snapshot?.metrics ?? {};
+  return [
+    { key: "views", label: "Lượt xem", value: formatAnalyticsMetric(metrics.views) },
+    { key: "average_view_duration", label: "Thời lượng xem TB", value: formatAnalyticsMetric(metrics.average_view_duration, "seconds") },
+    { key: "completion_rate", label: "Tỷ lệ xem hết", value: formatAnalyticsMetric(metrics.completion_rate, "percent") },
+    { key: "ctr", label: "CTR", value: formatAnalyticsMetric(metrics.ctr, "percent") },
+    { key: "followers_gained", label: "Follower tăng", value: formatAnalyticsMetric(metrics.followers_gained) },
+    { key: "revenue", label: "Doanh thu", value: formatAnalyticsMetric(metrics.revenue, "currency") },
+  ];
+}
+
 export function qcItems(report = {}) {
   if (!report || report.status !== "passed") return [];
   return [

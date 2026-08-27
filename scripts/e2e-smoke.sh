@@ -399,7 +399,7 @@ production_project_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2
 curl --fail --silent --show-error \
   -X POST "http://localhost:8000/api/v1/projects/$production_project_id/versions" \
   -H 'Content-Type: application/json' \
-  --data '{"label":"v2-08-short-source","snapshot":{"acceptance":"audio-subtitle-render-qc"},"provenance":{"source":"docker-e2e"}}' \
+  --data '{"label":"v2-10-learning-source","snapshot":{"acceptance":"analytics-learning","topic":"Vịnh Tiên","source_idea":{"cluster_id":"cluster_fixture_v2_10","idea_id":"idea_fixture_v2_10","title":"Vịnh Tiên - hành trình sống ven biển","hook_concept":"Mở bằng câu hỏi về không gian sống ven biển","cta_concept":"Đăng ký nhận tư vấn","visual_concept":"flycam-waterfront-plus-lifestyle"}},"provenance":{"source":"docker-e2e","fixture":true}}' \
   > e2e-artifacts/production-project-version.json
 production_project_version_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/production-project-version.json", encoding="utf-8"))["project_version_id"])' | tr -d '\r')"
 
@@ -742,6 +742,155 @@ assert all(item["official_provider"]["supports_live_publish"] is False for item 
 print("[e2e] V2-08 final QC and V2-09 fail-closed publishing dry-run verified")
 PY
 
+echo "[e2e] exercising V2-10 normalized analytics, winner detection and learning feedback"
+publication_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/publication-dry-run.json", encoding="utf-8"))["publication_id"])' | tr -d '\r')"
+"$PYTHON_BIN" -c '
+import json, sys
+payload = {
+    "publication_id": sys.argv[1],
+    "provider_mode": "fixture",
+    "trigger": "initial",
+    "fixture_profile": "winner_candidate",
+    "actor_ref": "owner-github-actions-e2e"
+}
+open("e2e-artifacts/analytics-winner-request.json", "w", encoding="utf-8").write(json.dumps(payload))
+' "$publication_id"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/analytics/syncs" \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-Key: github-actions-v2-10-winner-0001' \
+  --data-binary @e2e-artifacts/analytics-winner-request.json \
+  > e2e-artifacts/analytics-winner-created.json
+analytics_winner_sync_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/analytics-winner-created.json", encoding="utf-8"))["sync_id"])' | tr -d '\r')"
+analytics_terminal="0"
+for _attempt in $(seq 1 90); do
+  curl --fail --silent --show-error \
+    "http://localhost:8000/api/v1/projects/$production_project_id/analytics/syncs/$analytics_winner_sync_id" \
+    > e2e-artifacts/analytics-winner-status.json
+  analytics_status="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/analytics-winner-status.json", encoding="utf-8"))["status"])' | tr -d '\r')"
+  if [[ "$analytics_status" == "succeeded" ]]; then
+    analytics_terminal="1"
+    break
+  fi
+  if [[ "$analytics_status" == "failed" || "$analytics_status" == "not_configured" || "$analytics_status" == "cancelled" ]]; then
+    break
+  fi
+  sleep 1
+done
+if [[ "$analytics_terminal" != "1" ]]; then
+  echo "V2-10 winner analytics sync did not succeed: $analytics_winner_sync_id" >&2
+  exit 1
+fi
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/analytics" \
+  > e2e-artifacts/analytics-winner-report.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/analytics/snapshots" \
+  > e2e-artifacts/analytics-winner-snapshots.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/analytics/learning-insights" \
+  > e2e-artifacts/analytics-winner-insights.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/analytics-providers" \
+  > e2e-artifacts/analytics-providers.json
+
+"$PYTHON_BIN" - <<'PY'
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+report = json.loads((root / "analytics-winner-report.json").read_text(encoding="utf-8"))
+snapshots = json.loads((root / "analytics-winner-snapshots.json").read_text(encoding="utf-8"))
+insights = json.loads((root / "analytics-winner-insights.json").read_text(encoding="utf-8"))
+providers = json.loads((root / "analytics-providers.json").read_text(encoding="utf-8"))
+assert report["status"] == "ready" and report["history_count"] == 1, report
+assert report["latest_snapshot"]["mock"] is True, report
+assert report["latest_snapshot"]["external_call"] is False, report
+assert len(report["latest_snapshot"]["points"]) == 16, report
+assert report["latest_assessment"]["state"] == "winner_candidate", report
+assert report["latest_assessment"]["automatic_action"] is False, report
+assert report["latest_assessment"]["paid_media_mutation"] is False, report
+assert report["latest_assessment"]["content_deletion"] is False, report
+assert report["video_features"]["trend_cluster_id"] == "cluster_fixture_v2_10", report
+assert report["video_features"]["idea_id"] == "idea_fixture_v2_10", report
+assert report["video_features"]["evidence"]["trend_rank_mutated"] is False, report
+assert report["video_features"]["evidence"]["idea_rank_mutated"] is False, report
+assert len(snapshots) == 1 and snapshots[0]["metrics"]["revenue"] == 12000000, snapshots
+assert insights and all(item["applied"] is False for item in insights), insights
+assert all(item["autonomous_execution"] is False for item in insights), insights
+assert any(item["trend_cluster_id"] == "cluster_fixture_v2_10" for item in insights), insights
+assert len(providers) == 8, providers
+assert all(item["external_calls_enabled"] is False for item in providers), providers
+assert all(item["production_deployed"] is False for item in providers), providers
+assert all(item["supports_sync"] is False for item in providers if item["mode"] == "official"), providers
+PY
+
+echo "[e2e] restarting worker before a second analytics snapshot"
+"$docker_bin" compose restart worker >/dev/null
+"$PYTHON_BIN" -c '
+import json, sys
+payload = {
+    "publication_id": sys.argv[1],
+    "provider_mode": "fixture",
+    "trigger": "manual_refresh",
+    "fixture_profile": "normal",
+    "actor_ref": "owner-github-actions-e2e"
+}
+open("e2e-artifacts/analytics-normal-request.json", "w", encoding="utf-8").write(json.dumps(payload))
+' "$publication_id"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/analytics/syncs" \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-Key: github-actions-v2-10-normal-0002' \
+  --data-binary @e2e-artifacts/analytics-normal-request.json \
+  > e2e-artifacts/analytics-normal-created.json
+analytics_normal_sync_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/analytics-normal-created.json", encoding="utf-8"))["sync_id"])' | tr -d '\r')"
+analytics_terminal="0"
+for _attempt in $(seq 1 90); do
+  curl --fail --silent --show-error \
+    "http://localhost:8000/api/v1/projects/$production_project_id/analytics/syncs/$analytics_normal_sync_id" \
+    > e2e-artifacts/analytics-normal-status.json
+  analytics_status="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/analytics-normal-status.json", encoding="utf-8"))["status"])' | tr -d '\r')"
+  if [[ "$analytics_status" == "succeeded" ]]; then
+    analytics_terminal="1"
+    break
+  fi
+  if [[ "$analytics_status" == "failed" || "$analytics_status" == "not_configured" || "$analytics_status" == "cancelled" ]]; then
+    break
+  fi
+  sleep 1
+done
+if [[ "$analytics_terminal" != "1" ]]; then
+  echo "V2-10 normal analytics sync did not succeed after worker restart: $analytics_normal_sync_id" >&2
+  exit 1
+fi
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/analytics" \
+  > e2e-artifacts/analytics-report-before-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/analytics/history" \
+  > e2e-artifacts/analytics-history-before-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/analytics/assessments" \
+  > e2e-artifacts/analytics-assessments-before-restart.json
+"$PYTHON_BIN" - <<'PY'
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+report = json.loads((root / "analytics-report-before-restart.json").read_text(encoding="utf-8"))
+history = json.loads((root / "analytics-history-before-restart.json").read_text(encoding="utf-8"))
+assessments = json.loads((root / "analytics-assessments-before-restart.json").read_text(encoding="utf-8"))
+assert report["history_count"] == 2, report
+assert report["latest_assessment"]["state"] == "normal", report
+assert report["latest_snapshot"]["metrics"]["revenue"] is None, report
+revenue = next(item for item in report["latest_snapshot"]["points"] if item["metric"] == "revenue")
+assert revenue["value"] is None and revenue["supported"] is False, revenue
+assert {item["state"] for item in assessments} >= {"winner_candidate", "normal"}, assessments
+assert {item["event_type"] for item in history} >= {"video.analytics.updated", "video.winner.detected"}, history
+print("[e2e] V2-10 mock snapshots, null semantics, worker restart and learning verified")
+PY
+
 replay_response="$(
   curl --fail --silent --show-error \
     -X POST http://localhost:8000/api/v1/video-jobs \
@@ -1017,6 +1166,12 @@ curl --fail --silent --show-error \
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$production_project_id/publication-history" \
   > e2e-artifacts/publication-history-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/analytics" \
+  > e2e-artifacts/analytics-report-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/analytics/history" \
+  > e2e-artifacts/analytics-history-after-restart.json
 "$PYTHON_BIN" - <<'PY'
 import json
 from pathlib import Path
@@ -1056,6 +1211,10 @@ publications_before = json.loads((root / "publications-before-restart.json").rea
 publications_after = json.loads((root / "publications-after-restart.json").read_text(encoding="utf-8"))
 publication_history_before = json.loads((root / "publication-history-before-restart.json").read_text(encoding="utf-8"))
 publication_history_after = json.loads((root / "publication-history-after-restart.json").read_text(encoding="utf-8"))
+analytics_report_before = json.loads((root / "analytics-report-before-restart.json").read_text(encoding="utf-8"))
+analytics_report_after = json.loads((root / "analytics-report-after-restart.json").read_text(encoding="utf-8"))
+analytics_history_before = json.loads((root / "analytics-history-before-restart.json").read_text(encoding="utf-8"))
+analytics_history_after = json.loads((root / "analytics-history-after-restart.json").read_text(encoding="utf-8"))
 assert after == before, (before, after)
 assert queue_after == queue_before, (queue_before, queue_after)
 assert analysis_after == analysis_before, (analysis_before, analysis_after)
@@ -1079,11 +1238,15 @@ assert publication_history_after == publication_history_before, (
     publication_history_before,
     publication_history_after,
 )
+assert analytics_report_after == analytics_report_before, (analytics_report_before, analytics_report_after)
+assert analytics_history_after == analytics_history_before, (analytics_history_before, analytics_history_after)
 assert package_after["approval"]["status"] == "approved", package_after
 assert final_after["status"] == "ready" and final_after["publishing_allowed"] is False, final_after
 assert {item["status"] for item in publications_after} == {"dry_run_succeeded", "blocked"}, publications_after
 assert all(item["external_action"] is False for item in publications_after), publications_after
-print("[e2e] PostgreSQL jobs, V2-08 production and V2-09 publication recovery verified")
+assert analytics_report_after["history_count"] == 2, analytics_report_after
+assert analytics_report_after["external_execution_enabled"] is False, analytics_report_after
+print("[e2e] PostgreSQL jobs, V2-08 production, V2-09 publication and V2-10 analytics recovery verified")
 PY
 
 "$docker_bin" compose exec -T api python -c '

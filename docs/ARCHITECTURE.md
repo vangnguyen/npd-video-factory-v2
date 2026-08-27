@@ -1,4 +1,4 @@
-# Architecture — V2-09
+# Architecture — V2-10
 
 ## Bounded context
 
@@ -102,6 +102,14 @@ creates a durable mock receipt without network access. Official YouTube, TikTok,
 Facebook adapters stop at a typed contract-only boundary; they contain no live call and no browser
 automation. Publication and event rows survive API restart without using Redis as canonical state.
 
+V2-10 adds a read-only analytics boundary after a successful publication or explicitly mock
+receipt. A hashed-idempotency sync row is canonical in PostgreSQL before its identifier enters the
+V2-owned Redis analytics queue. The worker normalizes provider output into one immutable snapshot
+and 16 nullable metric rows, captures the current video-feature evidence, creates a deterministic
+winner assessment and writes recommendation-only learning insights. Historical snapshots are
+append-only and incomplete work is recoverable after worker restart. Official providers remain
+contract-only and no analytics record contains a credential value.
+
 ## Durable job rules
 
 - PostgreSQL is the source of truth; Redis never stores canonical job JSON.
@@ -114,7 +122,7 @@ automation. Publication and event rows survive API restart without using Redis a
 
 ## Safety state
 
-V2-09 has a dry-run-only publishing endpoint. Startup requires all live publishing gates to remain
+V2-10 retains the V2-09 dry-run-only publishing endpoint. Startup requires all live publishing gates to remain
 coherent, requires an external secret-store contract and rejects every live gate in CI/test.
 Official adapters remain contract-only and cannot execute even if configuration is accidentally
 changed. `HUMAN_APPROVAL_REQUIRED=false` is rejected. API auth/RBAC is not yet implemented, so this
@@ -126,3 +134,8 @@ artifacts and cannot be published. Review and final render contracts both hard-c
 `publishing_allowed=false`; final rendering requires human approval but still creates only an
 artifact. Publishing creates only a separate mock receipt with `external_action=false`. eSpeak is
 dev/CI evidence rather than a production voice acceptance.
+
+Analytics adds a second fail-closed boundary: production rejects deterministic fixtures and V2-10
+always rejects external analytics execution. Database constraints prohibit external-call,
+automatic-action, paid-media-mutation, content-deletion and autonomous-execution state. Missing
+provider metrics remain null, and learning never mutates Trend/Idea rank or downstream systems.

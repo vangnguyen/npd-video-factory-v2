@@ -100,6 +100,7 @@ manufacturing browser-local state.
 - no live platform credentials;
 - no external network request;
 - no upload, scheduling, deletion or cancellation against a platform;
-- no analytics polling or learning loop (V2-10);
+- no platform-side analytics polling in V2-09; the separate V2-10 fixture learning loop consumes
+  only successful/mock receipt evidence and cannot change publishing state;
 - no public API exposure, authentication/RBAC or AgentHub bridge (V2-11);
 - no production deployment from this PR.
