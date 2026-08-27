@@ -36,6 +36,9 @@ class Settings(BaseSettings):
     ffmpeg_path: str = "ffmpeg"
     upload_staging_root: Path = Path("/workspace/storage/uploads")
     analysis_staging_root: Path = Path("/workspace/storage/analysis")
+    vision_fixture_enabled: bool = True
+    vision_provider: str = "fixture"
+    vision_staging_root: Path = Path("/workspace/storage/vision")
     upload_default_part_size_bytes: int = 8 * 1024 * 1024
     upload_max_part_size_bytes: int = 32 * 1024 * 1024
     # Asset and upload byte counts use PostgreSQL INTEGER in the current
@@ -52,21 +55,27 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
         if self.publish_enabled:
-            raise ValueError("publishing is not implemented in V2-04 and must remain disabled")
+            raise ValueError("publishing is not implemented in V2-05 and must remain disabled")
         if not self.human_approval_required:
-            raise ValueError("human approval must remain required in V2-04")
+            raise ValueError("human approval must remain required in V2-05")
         if self.app_env == "production" and self.trend_fixture_enabled:
             raise ValueError("deterministic trend fixtures must be disabled in production")
         if self.app_env == "production" and self.auto_edit_fixture_enabled:
             raise ValueError("deterministic auto-edit fixtures must be disabled in production")
+        if self.app_env == "production" and self.vision_fixture_enabled:
+            raise ValueError("deterministic Vision fixtures must be disabled in production")
         if self.transcription_provider not in {"fixture", "contract"}:
             raise ValueError("TRANSCRIPTION_PROVIDER must be fixture or contract")
         if self.auto_edit_signal_provider not in {"fixture", "ffmpeg"}:
             raise ValueError("AUTO_EDIT_SIGNAL_PROVIDER must be fixture or ffmpeg")
+        if self.vision_provider not in {"fixture", "contract"}:
+            raise ValueError("VISION_PROVIDER must be fixture or contract")
         if self.transcription_provider == "fixture" and not self.auto_edit_fixture_enabled:
             raise ValueError("fixture transcription requires AUTO_EDIT_FIXTURE_ENABLED=true")
         if self.auto_edit_signal_provider == "fixture" and not self.auto_edit_fixture_enabled:
             raise ValueError("fixture media signals require AUTO_EDIT_FIXTURE_ENABLED=true")
+        if self.vision_provider == "fixture" and not self.vision_fixture_enabled:
+            raise ValueError("fixture Vision provider requires VISION_FIXTURE_ENABLED=true")
         if self.upload_default_part_size_bytes > self.upload_max_part_size_bytes:
             raise ValueError("default upload part size cannot exceed maximum part size")
         if self.upload_max_part_size_bytes > self.upload_max_size_bytes:

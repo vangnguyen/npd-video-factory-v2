@@ -1,4 +1,4 @@
-# Testing — V2-04
+# Testing — V2-05
 
 ## Local checks
 
@@ -50,10 +50,17 @@ The E2E creates five copyright-safe fixtures and one deterministic job, then ver
 - four deterministic scenes, three non-destructive silence decisions and Top 3 highlights;
 - no enabled silence decision overlaps a spoken word;
 - Auto Edit recovery after API restart and fail-closed missing live transcription provider.
+- structured Vision/OCR/composition/quality evidence and explicit mock provenance;
+- subject tracking, best frames and thumbnail candidates;
+- all four reframe ratios, bounded crop jumps, subtitle-safe metadata and manual override;
+- low-confidence center-crop fallback and fail-closed missing live Vision provider;
+- Vision/reframe recovery after API restart and a zero-VND fixture provider record.
 
 The API/unit suite separately covers signature/MIME rejection, missing or corrupt upload parts,
 same-project checksum duplicate reuse and Top 5 output. The repository also resolves a
 unique-fingerprint race to the already-created analysis instead of leaking a database conflict.
+The Vision suite separately covers normalized box/request validation, replay idempotency, restart
+reads, manual-override versioning, provider failure state and source immutability.
 
 The script removes only its disposable Compose volumes on exit. Normal CI performs no paid
 call. The manual paid-provider smoke still requires explicit dispatch, protected-environment

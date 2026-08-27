@@ -33,8 +33,10 @@ def test_v2_04_allows_all_fixture_providers_to_be_disabled_in_production() -> No
         app_env="production",
         trend_fixture_enabled=False,
         auto_edit_fixture_enabled=False,
+        vision_fixture_enabled=False,
         transcription_provider="contract",
         auto_edit_signal_provider="ffmpeg",
+        vision_provider="contract",
         object_storage_provider="s3",
         object_storage_access_key="test-access-key",
         object_storage_secret_key="test-secret-key",
@@ -42,6 +44,7 @@ def test_v2_04_allows_all_fixture_providers_to_be_disabled_in_production() -> No
 
     assert production.trend_fixture_enabled is False
     assert production.auto_edit_fixture_enabled is False
+    assert production.vision_fixture_enabled is False
 
 
 def test_v2_04_rejects_auto_edit_fixture_in_production() -> None:
@@ -62,6 +65,23 @@ def test_v2_04_rejects_upload_limit_that_exceeds_durable_schema() -> None:
         Settings(_env_file=None, upload_max_size_bytes=2_147_483_648)
 
 
+def test_v2_05_rejects_vision_fixture_in_production() -> None:
+    with pytest.raises(ValidationError, match="Vision fixtures must be disabled"):
+        Settings(
+            _env_file=None,
+            app_env="production",
+            trend_fixture_enabled=False,
+            auto_edit_fixture_enabled=False,
+            transcription_provider="contract",
+            auto_edit_signal_provider="ffmpeg",
+            vision_fixture_enabled=True,
+            vision_provider="fixture",
+            object_storage_provider="s3",
+            object_storage_access_key="test-access-key",
+            object_storage_secret_key="test-secret-key",
+        )
+
+
 @pytest.mark.asyncio
 async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     result = await capabilities()
@@ -72,3 +92,9 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["auto_edit_analysis"] is True
     assert result["auto_edit_timeline"] is False
     assert result["source_media_mutation"] is False
+    assert result["vision_analysis"] is True
+    assert result["ocr"] is True
+    assert result["subject_tracking"] is True
+    assert result["smart_reframe"] is True
+    assert result["smart_reframe_aspect_ratios"] == ["9:16", "16:9", "1:1", "4:5"]
+    assert result["smart_reframe_preview_only"] is True

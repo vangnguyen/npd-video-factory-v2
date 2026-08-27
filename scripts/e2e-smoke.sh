@@ -204,11 +204,20 @@ curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/analyses/$analysis_id" \
   > e2e-artifacts/auto-edit-analysis-before-restart.json
 curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$project_id/analyses/$analysis_id/vision" \
+  -H 'Content-Type: application/json' \
+  --data '{"aspect_ratios":["9:16","16:9","1:1","4:5"],"sample_interval_seconds":4,"minimum_tracking_confidence":0.6,"subtitle_safe_area_bottom":0.18,"maximum_crop_jump":0.08,"manual_overrides":[]}' \
+  > e2e-artifacts/vision-analysis.json
+vision_analysis_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/vision-analysis.json", encoding="utf-8"))["vision_analysis_id"])' | tr -d '\r')"
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/vision-analyses/$vision_analysis_id" \
+  > e2e-artifacts/vision-analysis-before-restart.json
+curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/assets" \
   > e2e-artifacts/project-assets-after-upload.json
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/cost-summary" \
-  > e2e-artifacts/cost-summary-after-auto-edit.json
+  > e2e-artifacts/cost-summary-after-vision.json
 
 replay_response="$(
   curl --fail --silent --show-error \
@@ -354,7 +363,8 @@ root = Path("e2e-artifacts")
 upload = json.loads((root / "upload-complete.json").read_text(encoding="utf-8"))
 analysis = json.loads((root / "auto-edit-analysis.json").read_text(encoding="utf-8"))
 assets = json.loads((root / "project-assets-after-upload.json").read_text(encoding="utf-8"))
-cost = json.loads((root / "cost-summary-after-auto-edit.json").read_text(encoding="utf-8"))
+vision = json.loads((root / "vision-analysis.json").read_text(encoding="utf-8"))
+cost = json.loads((root / "cost-summary-after-vision.json").read_text(encoding="utf-8"))
 source = root / "final.mp4"
 
 assert upload["duplicate"] is False, upload
@@ -377,9 +387,28 @@ assert [item["rank"] for item in analysis["highlights"]] == [1, 2, 3], analysis
 assert all(not item["conflicts_with_speech"] for item in analysis["silence_decisions"] if item["enabled"])
 assert analysis["source_media_mutated"] is False, analysis
 assert analysis["publish_requested"] is False, analysis
+assert vision["status"] == "succeeded", vision
+assert vision["provider_key"] == "fixture-vision", vision
+assert vision["model"] == "deterministic-vision-v2-05", vision
+assert vision["frames"] and vision["scenes"] and vision["subject_tracks"], vision
+assert vision["ocr_detection_count"] > 0, vision
+assert [item["aspect_ratio"] for item in vision["reframe_plans"]] == ["9:16", "16:9", "1:1", "4:5"], vision
+assert all(item["keyframes"] for item in vision["reframe_plans"]), vision
+for plan in vision["reframe_plans"]:
+    for previous, current in zip(plan["keyframes"], plan["keyframes"][1:]):
+        assert abs(current["x"] - previous["x"]) <= plan["maximum_jump"] + 1e-9, plan
+        assert abs(current["y"] - previous["y"]) <= plan["maximum_jump"] + 1e-9, plan
+assert all(frame["evidence_frame_reference"].startswith("asset://") for frame in vision["frames"]), vision
+assert all(0 <= frame["quality"]["quality_score"] <= 1 for frame in vision["frames"]), vision
+assert vision["best_frame_ids"] and vision["thumbnail_candidate_ids"], vision
+assert vision["source_media_mutated"] is False, vision
+assert vision["publish_requested"] is False, vision
+assert vision["paid_external_call"] is False, vision
+assert vision["provenance"]["provider_evidence"]["fixture"] is True, vision
+assert vision["provenance"]["provider_evidence"]["real_provider_tested"] is False, vision
 assert cost["currency"] == "VND" and float(cost["actual_cost"]) == 0, cost
-assert cost["records"] >= 3, cost
-print("[e2e] V2-04 upload, transcript, scene, silence and highlight contracts verified")
+assert cost["records"] >= 6, cost
+print("[e2e] V2-04 plus V2-05 structured Vision and Smart Reframe contracts verified")
 PY
 
 echo "[e2e] restarting API to verify PostgreSQL recovery"
@@ -401,6 +430,9 @@ curl --fail --silent --show-error "http://localhost:8000/api/v1/workspaces/$work
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/analyses/$analysis_id" \
   > e2e-artifacts/auto-edit-analysis-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/vision-analyses/$vision_analysis_id" \
+  > e2e-artifacts/vision-analysis-after-restart.json
 "$PYTHON_BIN" - <<'PY'
 import json
 from pathlib import Path
@@ -414,10 +446,13 @@ queue_before = json.loads(
 queue_after = json.loads((root / "content-opportunity-queue-after-restart.json").read_text(encoding="utf-8"))
 analysis_before = json.loads((root / "auto-edit-analysis-before-restart.json").read_text(encoding="utf-8"))
 analysis_after = json.loads((root / "auto-edit-analysis-after-restart.json").read_text(encoding="utf-8"))
+vision_before = json.loads((root / "vision-analysis-before-restart.json").read_text(encoding="utf-8"))
+vision_after = json.loads((root / "vision-analysis-after-restart.json").read_text(encoding="utf-8"))
 assert after == before, (before, after)
 assert queue_after == queue_before, (queue_before, queue_after)
 assert analysis_after == analysis_before, (analysis_before, analysis_after)
-print("[e2e] PostgreSQL job, content queue and Auto Edit recovery verified")
+assert vision_after == vision_before, (vision_before, vision_after)
+print("[e2e] PostgreSQL job, content queue, Auto Edit and Vision recovery verified")
 PY
 
 "$docker_bin" compose exec -T api python -c '
@@ -491,4 +526,4 @@ for cue, scene in zip(timing["cues"], manifest["scenes"], strict=True):
 print("[e2e] QC verified", json.dumps(qc, ensure_ascii=False))
 PY
 
-echo "[e2e] V2-04 Auto Edit Analysis passed"
+echo "[e2e] V2-05 Vision & Smart Reframe passed"
