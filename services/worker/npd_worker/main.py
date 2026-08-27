@@ -8,6 +8,13 @@ from redis.asyncio import Redis
 
 from app.config import settings
 from app.db import create_engine, create_session_factory, verify_database
+from app.analytics_providers import AnalyticsProviderRegistry
+from app.analytics_repository import AnalyticsRepository
+from app.analytics_service import (
+    ANALYTICS_SYNC_PROCESSING_KEY,
+    ANALYTICS_SYNC_QUEUE_KEY,
+    AnalyticsSyncProcessor,
+)
 from app.auto_edit_repository import AutoEditRepository
 from app.media_intelligence_repository import MediaIntelligenceRepository
 from app.media_intelligence_service import (
@@ -21,6 +28,7 @@ from app.production_audio import AudioMixEngine, create_audio_tts_provider
 from app.production_logic import TimelineRenderContractValidator
 from app.production_qc import FullProductionQC
 from app.production_repository import ProductionRepository
+from app.publishing_repository import PublishingRepository
 from app.production_service import (
     PRODUCTION_RENDER_PROCESSING_KEY,
     PRODUCTION_RENDER_QUEUE_KEY,
@@ -30,6 +38,7 @@ from app.production_service import (
 from app.repositories import PlatformRepository, PostgresJobStore
 from app.state import QUEUE_KEY
 from app.timeline_repository import TimelineRepository
+from app.trend_repository import TrendRepository
 from app.timeline_service import (
     PREVIEW_PROCESSING_KEY,
     PREVIEW_QUEUE_KEY,
@@ -105,6 +114,24 @@ async def recover_production_render_jobs(
         await pipe.execute()
     if identifiers:
         logger.warning("recovered_production_render count=%d", len(identifiers))
+    return len(identifiers)
+
+
+async def recover_analytics_sync_jobs(
+    redis: Redis,
+    repository: AnalyticsRepository,
+) -> int:
+    inflight = await redis.lrange(ANALYTICS_SYNC_PROCESSING_KEY, 0, -1)
+    pending = await repository.recover_incomplete_sync_ids()
+    identifiers = list(dict.fromkeys([*inflight, *pending]))
+    async with redis.pipeline(transaction=True) as pipe:
+        pipe.delete(ANALYTICS_SYNC_PROCESSING_KEY)
+        for identifier in identifiers:
+            pipe.lrem(ANALYTICS_SYNC_QUEUE_KEY, 0, identifier)
+            pipe.rpush(ANALYTICS_SYNC_QUEUE_KEY, identifier)
+        await pipe.execute()
+    if identifiers:
+        logger.warning("recovered_analytics_sync count=%d", len(identifiers))
     return len(identifiers)
 
 
@@ -192,6 +219,35 @@ async def run_production_render_queue(
             await redis.lrem(PRODUCTION_RENDER_PROCESSING_KEY, 1, render_id)
 
 
+async def run_analytics_sync_queue(redis: Redis, processor: AnalyticsSyncProcessor) -> None:
+    while True:
+        sync_id = await redis.brpoplpush(
+            ANALYTICS_SYNC_QUEUE_KEY,
+            ANALYTICS_SYNC_PROCESSING_KEY,
+            timeout=5,
+        )
+        if sync_id is None:
+            continue
+        logger.info("analytics_sync_claimed sync_id=%s", sync_id)
+        try:
+            result = await processor.process(sync_id)
+            logger.info("analytics_sync_completed sync_id=%s status=%s", sync_id, result.status)
+        except Exception:
+            logger.exception("analytics_sync_worker_error sync_id=%s", sync_id)
+        finally:
+            await redis.lrem(ANALYTICS_SYNC_PROCESSING_KEY, 1, sync_id)
+
+
+async def run_analytics_due_scheduler(redis: Redis, repository: AnalyticsRepository) -> None:
+    while True:
+        identifiers = await repository.activate_due_sync_ids()
+        for sync_id in identifiers:
+            await redis.rpush(ANALYTICS_SYNC_QUEUE_KEY, sync_id)
+        if identifiers:
+            logger.info("analytics_due_enqueued count=%d", len(identifiers))
+        await asyncio.sleep(5)
+
+
 async def main() -> None:
     redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
     redis = Redis.from_url(redis_url, decode_responses=True)
@@ -205,6 +261,8 @@ async def main() -> None:
     media_repository = MediaIntelligenceRepository(session_factory)
     timeline_repository = TimelineRepository(session_factory)
     production_repository = ProductionRepository(session_factory)
+    publishing_repository = PublishingRepository(session_factory)
+    analytics_repository = AnalyticsRepository(session_factory)
     store = PostgresJobStore(
         session_factory,
         redis,
@@ -255,9 +313,20 @@ async def main() -> None:
         staging_root=settings.production_render_staging_root,
         brand_name=settings.video_factory_brand_name,
     )
+    analytics_processor = AnalyticsSyncProcessor(
+        repository=analytics_repository,
+        publishing_repository=publishing_repository,
+        platform_repository=platform,
+        trend_repository=TrendRepository(session_factory),
+        timeline_repository=timeline_repository,
+        production_repository=production_repository,
+        providers=AnalyticsProviderRegistry(settings),
+        settings=settings,
+    )
     await recover_media_resolution_jobs(redis, media_repository)
     await recover_preview_jobs(redis, timeline_repository)
     await recover_production_render_jobs(redis, production_repository)
+    await recover_analytics_sync_jobs(redis, analytics_repository)
     logger.info("worker_booted queue=%s processing=%s", QUEUE_KEY, PROCESSING_KEY)
     try:
         await asyncio.gather(
@@ -265,6 +334,8 @@ async def main() -> None:
             run_media_resolution_queue(redis, media_resolution_service),
             run_preview_queue(redis, preview_service),
             run_production_render_queue(redis, production_render_service),
+            run_analytics_sync_queue(redis, analytics_processor),
+            run_analytics_due_scheduler(redis, analytics_repository),
         )
     finally:
         await redis.aclose()

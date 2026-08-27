@@ -1,4 +1,4 @@
-# API — V2-09
+# API — V2-10
 
 Base path: `/api/v1`. Request models forbid unknown fields. This local/CI increment has no
 authentication layer and must not be exposed to an untrusted network.
@@ -180,5 +180,25 @@ returns HTTP 409. Once reserved, a blocked attempt remains readable for audit. A
 returns the original record with `X-Idempotent-Replay: true`; a reused key with a changed payload
 returns `IDEMPOTENCY_KEY_CONFLICT`.
 
-Publication responses never include provider credentials or secret-reference values. The API has
-no authentication/RBAC in V2-09 and therefore remains localhost/CI-only.
+Publication responses never include provider credentials or secret-reference values.
+
+## Analytics and Learning
+
+- `POST /api/v1/projects/{project_id}/analytics/syncs`: enqueue an idempotent fixture or
+  contract-only provider sync; requires `Idempotency-Key`.
+- `GET /api/v1/projects/{project_id}/analytics`: latest report, snapshot, assessment, feature
+  evidence and recommendation-only insights.
+- `GET /api/v1/projects/{project_id}/analytics/syncs`: durable sync history.
+- `GET /api/v1/projects/{project_id}/analytics/syncs/{sync_id}`: one durable sync.
+- `GET /api/v1/projects/{project_id}/analytics/snapshots`: historical normalized snapshots.
+- `GET /api/v1/projects/{project_id}/analytics/assessments`: historical winner assessments.
+- `GET /api/v1/projects/{project_id}/analytics/learning-insights`: learning evidence.
+- `GET /api/v1/projects/{project_id}/analytics/history`: append-only analytics events.
+- `GET /api/v1/analytics-providers`: fixture/official provider truth matrix.
+
+The create route requires a successful publication receipt. The enabled development/CI path uses
+`provider_mode=fixture`; official modes terminate `not_configured` without a network call. Missing
+metrics are returned as JSON `null` with `supported=false`. Revenue and RPM use VND. All responses
+retain explicit no-execution literals described in [Analytics and Learning](ANALYTICS_LEARNING.md).
+
+The API has no authentication/RBAC in V2-10 and therefore remains localhost/CI-only.

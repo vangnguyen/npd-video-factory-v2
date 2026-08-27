@@ -1,6 +1,6 @@
-# Deployment — V2-09
+# Deployment — V2-10
 
-V2-09 is a development/CI platform increment and is not approved for production deployment.
+V2-10 is a development/CI platform increment and is not approved for production deployment.
 
 ## Dev/CI
 
@@ -49,9 +49,13 @@ Before any production proposal, a separate owner-approved PR/task must add and v
 21. current owner-verified platform limits and content-policy acceptance;
 22. an accepted official API adapter, external encrypted credential reference, rate-limit and
     retry/cancel runbook, monitoring and platform-specific correction procedure;
-23. a separate owner decision before any live publishing switch is changed.
+23. a separate owner decision before any live publishing switch is changed;
+24. official analytics provider acceptance, least-privilege read-only credentials, current API
+    quota/rate-limit review and a monitored retry/correction runbook;
+25. production analytics scheduling, retention, restore and cost acceptance;
+26. an explicit owner decision before any recommendation can be applied.
 
-V2-09 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
+V2-10 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
 `VISION_FIXTURE_ENABLED=false`, `VISION_PROVIDER=contract`,
 `MEDIA_FIXTURE_ENABLED=false`, media providers set to `contract`, and external/paid/ComfyUI
 execution disabled until their separate owner gates;
@@ -60,6 +64,12 @@ execution disabled until their separate owner gates;
 `not_configured` until the production voice/provider is accepted; enabling an external provider
 requires the separate owner gate. This branch changes no existing NPD production service and must
 not be deployed as-is.
+
+Production also requires `ANALYTICS_FIXTURE_ENABLED=false`,
+`ANALYTICS_EXTERNAL_EXECUTION_ENABLED=false`, and
+`ANALYTICS_SCHEDULED_REFRESH_ENABLED=false`. V2-10 deliberately cannot start with external
+analytics execution enabled; that capability requires a later implementation and separate owner
+gate.
 
 The checked-in V2-09 publishing defaults are:
 

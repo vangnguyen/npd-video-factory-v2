@@ -2,13 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  analyticsMetricItems,
   canDropOnTrack,
   clipStyle,
+  describeAnalytics,
   describeApproval,
   describePublication,
   describeProductionRender,
   describePreview,
   formatTime,
+  formatAnalyticsMetric,
   getClip,
   pixelsPerSecond,
   publicationGateItems,
@@ -97,4 +100,40 @@ test("labels ready, stale and running previews without overstating readiness", (
   );
   assert.equal(describePreview({ status: "ready", timeline_version: 2, valid_for_current_timeline: false }, 3).tone, "warning");
   assert.equal(describePreview({ status: "running", timeline_version: 3, progress: 45 }, 3).label, "Đang tạo · 45%");
+});
+
+test("renders analytics truth states and never turns missing metrics into zero", () => {
+  assert.deepEqual(describeAnalytics(null), {
+    label: "Chưa thu thập",
+    tone: "muted",
+    winnerLabel: "Chưa đủ dữ liệu",
+  });
+  assert.equal(
+    describeAnalytics({ status: "ready", latest_assessment: { state: "winner_candidate" } }).winnerLabel,
+    "Ứng viên nội dung thắng",
+  );
+  assert.equal(describeAnalytics({ status: "not_configured" }).tone, "warning");
+  assert.equal(formatAnalyticsMetric(null), "Không có dữ liệu");
+  assert.equal(formatAnalyticsMetric(0), "0");
+  assert.equal(formatAnalyticsMetric(0.321, "percent"), "32.1%");
+  assert.match(formatAnalyticsMetric(125000, "currency"), /125[.\s]000 VND/u);
+});
+
+test("builds a stable V2-10 metric panel from normalized nullable metrics", () => {
+  const items = analyticsMetricItems({
+    latest_snapshot: {
+      metrics: {
+        views: 1250,
+        average_view_duration: 18.4,
+        completion_rate: 0.61,
+        ctr: null,
+        followers_gained: 14,
+        revenue: null,
+      },
+    },
+  });
+  assert.equal(items.length, 6);
+  assert.equal(items.find((item) => item.key === "ctr").value, "Không có dữ liệu");
+  assert.equal(items.find((item) => item.key === "revenue").value, "Không có dữ liệu");
+  assert.equal(items.find((item) => item.key === "average_view_duration").value, "18.4 giây");
 });

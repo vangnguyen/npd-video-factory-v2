@@ -1,4 +1,4 @@
-# Cost control — V2-09
+# Cost control — V2-10
 
 VND is the only accepted cost currency in Pydantic contracts, ORM defaults and the database
 check constraint. USD is not a supported runtime currency.
@@ -46,3 +46,9 @@ V2-09 dry-run publishing makes no external request and costs `0 VND`; it creates
 than a paid provider-usage record. Live platform adapters are contract-only, have no approved VND
 price contract and cannot execute. A later live adapter must add idempotent VND pricing/budget
 evidence before its owner gate can be considered.
+
+V2-10 deterministic analytics collection and scoring make no external call and create no paid
+provider usage. Revenue and RPM are normalized only in VND; unavailable values remain `null`, not
+zero and not USD-converted. Official analytics adapters have no approved pricing/quota contract
+and cannot execute. A later provider must add idempotent VND cost/quota evidence and an owner gate
+before scheduled collection is considered.

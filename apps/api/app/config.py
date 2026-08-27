@@ -82,6 +82,16 @@ class Settings(BaseSettings):
     tiktok_publishing_credential_ref: str = ""
     instagram_publishing_credential_ref: str = ""
     facebook_publishing_credential_ref: str = ""
+    analytics_fixture_enabled: bool = True
+    analytics_external_execution_enabled: bool = False
+    analytics_scheduled_refresh_enabled: bool = False
+    analytics_max_attempts: int = 3
+    analytics_retry_base_seconds: int = 30
+    analytics_retry_max_seconds: int = 900
+    youtube_analytics_credential_ref: str = ""
+    tiktok_analytics_credential_ref: str = ""
+    instagram_analytics_credential_ref: str = ""
+    facebook_analytics_credential_ref: str = ""
     human_approval_required: bool = True
 
     @model_validator(mode="after")
@@ -115,6 +125,23 @@ class Settings(BaseSettings):
             self.publish_enabled or self.publish_external_execution_enabled or self.publish_owner_gate_enabled
         ):
             raise ValueError("CI and test environments prohibit external publishing")
+        analytics_credential_refs = (
+            self.youtube_analytics_credential_ref,
+            self.tiktok_analytics_credential_ref,
+            self.instagram_analytics_credential_ref,
+            self.facebook_analytics_credential_ref,
+        )
+        for credential_ref in analytics_credential_refs:
+            if credential_ref and not credential_ref.startswith(("secret://", "vault://", "external://")):
+                raise ValueError("analytics credential values must be external secret references, never tokens")
+        if self.analytics_external_execution_enabled:
+            raise ValueError("official analytics API execution is not activated in V2-10")
+        if not 1 <= self.analytics_max_attempts <= 10:
+            raise ValueError("ANALYTICS_MAX_ATTEMPTS must be between 1 and 10")
+        if self.analytics_retry_base_seconds < 1:
+            raise ValueError("ANALYTICS_RETRY_BASE_SECONDS must be positive")
+        if self.analytics_retry_max_seconds < self.analytics_retry_base_seconds:
+            raise ValueError("analytics retry maximum cannot be lower than the base delay")
         if self.app_env == "production" and self.trend_fixture_enabled:
             raise ValueError("deterministic trend fixtures must be disabled in production")
         if self.app_env == "production" and self.auto_edit_fixture_enabled:
@@ -123,6 +150,8 @@ class Settings(BaseSettings):
             raise ValueError("deterministic Vision fixtures must be disabled in production")
         if self.app_env == "production" and self.media_fixture_enabled:
             raise ValueError("deterministic media fixtures must be disabled in production")
+        if self.app_env == "production" and self.analytics_fixture_enabled:
+            raise ValueError("deterministic analytics fixtures must be disabled in production")
         if self.transcription_provider not in {"fixture", "contract"}:
             raise ValueError("TRANSCRIPTION_PROVIDER must be fixture or contract")
         if self.auto_edit_signal_provider not in {"fixture", "ffmpeg"}:

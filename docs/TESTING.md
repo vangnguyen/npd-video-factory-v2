@@ -1,4 +1,4 @@
-# Testing — V2-09
+# Testing — V2-10
 
 ## Local checks
 
@@ -81,6 +81,10 @@ The E2E creates five copyright-safe fixtures and one deterministic job, then ver
 - exact final-render dry-run validation, mock receipt and `external_action=false`;
 - idempotent publication replay, blocked live mode and PostgreSQL recovery after API restart;
 - four versioned platform profiles and contract-only official adapters.
+- two historical fixture analytics snapshots across a worker restart;
+- 16 nullable normalized metric points, including `null`/unsupported VND revenue semantics;
+- explainable winner/normal state, feature metadata and Trend/Idea-linked learning evidence;
+- provider truth, no external calls/actions and API-restart recovery of analytics report/history.
 
 The API/unit suite separately covers signature/MIME rejection, missing or corrupt upload parts,
 same-project checksum duplicate reuse and Top 5 output. The repository also resolves a
@@ -95,6 +99,9 @@ worker queue recovery.
 The V2-09 suite separately covers rights/platform/provider gates, idempotency conflict, blocked
 attempt audit, secret-free serialization, partial live-gate rejection and CI live-execution
 rejection. Studio tests cover publishing gate and receipt presentation.
+The V2-10 suite separately covers winner/normal/underperforming/insufficient states, null-vs-zero
+semantics, idempotency, bounded backoff, scheduled/fixture gates, worker recovery, official-provider
+`not_configured` behavior, analytics APIs and mock-labelled responsive Studio presentation.
 
 The script removes only its disposable Compose volumes on exit. Normal CI performs no paid
 call. The manual paid-provider smoke still requires explicit dispatch, protected-environment

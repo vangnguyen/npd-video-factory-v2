@@ -100,6 +100,9 @@ jobs:
           grep -qx 'COMFYUI_EXECUTION_ENABLED=false' .env.example
           grep -qx 'AUDIO_TTS_PROVIDER=espeak' .env.example
           grep -qx 'AUDIO_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'ANALYTICS_FIXTURE_ENABLED=true' .env.example
+          grep -qx 'ANALYTICS_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'ANALYTICS_SCHEDULED_REFRESH_ENABLED=false' .env.example
       - name: Verify V2-owned durable services and VND-only ledger
         run: |
           grep -q '^  postgres:' docker-compose.yml
@@ -179,6 +182,17 @@ jobs:
           grep -q '0008_v2_09' apps/api/migrations/versions/0008_v2_09_publishing.py
           python -c 'import json; from pathlib import Path; data=json.loads(Path("packages/contracts/publishing-capabilities.json").read_text()); assert set(data["platforms"]) == {"youtube", "tiktok", "instagram_reels", "facebook"}; assert all(item["verification_state"] == "internal_safe_profile" for item in data["platforms"].values())'
           ! git grep -I -n -E '^(PUBLISH_EXTERNAL_EXECUTION_ENABLED=true|PUBLISH_OWNER_GATE_ENABLED=true|YOUTUBE_PUBLISHING_CREDENTIAL_REF=.+|TIKTOK_PUBLISHING_CREDENTIAL_REF=.+|INSTAGRAM_PUBLISHING_CREDENTIAL_REF=.+|FACEBOOK_PUBLISHING_CREDENTIAL_REF=.+)$' -- .env.example apps services packages
+      - name: Verify V2-10 analytics, nullable metrics and recommendation-only boundary
+        run: |
+          grep -Fq 'class AnalyticsProvider(Protocol)' apps/api/app/analytics_providers.py
+          grep -Fq 'external_call: Literal[False] = False' apps/api/app/analytics_models.py
+          grep -Fq 'automatic_action: Literal[False] = False' apps/api/app/analytics_models.py
+          grep -Fq 'autonomous_execution: Literal[False] = False' apps/api/app/analytics_models.py
+          grep -Fq 'idea_rank_mutated": False' apps/api/app/analytics_service.py
+          grep -Fq 'ANALYTICS_SYNC_QUEUE_KEY = "npd:video-factory:v2:analytics:queued"' apps/api/app/analytics_service.py
+          grep -q '0009_v2_10' apps/api/migrations/versions/0009_v2_10_analytics_learning.py
+          grep -Fq 'CheckConstraint("external_call = false"' apps/api/app/analytics_db.py
+          ! git grep -I -n -E '^(ANALYTICS_EXTERNAL_EXECUTION_ENABLED=true|ANALYTICS_SCHEDULED_REFRESH_ENABLED=true|YOUTUBE_ANALYTICS_CREDENTIAL_REF=.+|TIKTOK_ANALYTICS_CREDENTIAL_REF=.+|INSTAGRAM_ANALYTICS_CREDENTIAL_REF=.+|FACEBOOK_ANALYTICS_CREDENTIAL_REF=.+)$' -- .env.example apps services packages
       - name: Secret pattern scan
         run: |
           if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
@@ -201,7 +215,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v2-09-publishing-dry-run-e2e
+          name: v2-10-analytics-learning-e2e
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 7

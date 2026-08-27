@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="NPD Video Factory V2 Auto Edit Studio — timeline, subtitles, audio, review approval and final QC" />
+    <meta name="description" content="NPD Video Factory V2 Studio — auto edit, publishing dry run and read-only analytics learning" />
     <title>NPD Studio · Auto Edit</title>
     <link rel="stylesheet" href="/styles.css" />
-    <link rel="stylesheet" href="/studio.css?v=0.10.0" />
+    <link rel="stylesheet" href="/studio.css?v=0.11.0" />
   </head>
   <body>
     <div class="app-shell studio-shell">
@@ -20,12 +20,13 @@
           <a href="/#ideas"><span>✦</span>Idea Engine</a>
           <a href="/#queue"><span>≋</span>Content Queue</a>
           <a class="active" href="/studio.html"><span>✂</span>Auto Edit Studio</a>
-          <a href="#future-panels"><span>□</span>Publish & Analytics</a>
+          <a href="#publishing-workbench"><span>↗</span>Publishing safety</a>
+          <a href="#analytics-workbench"><span>⌁</span>Analytics & Learning</a>
         </nav>
         <div class="boundary-card">
           <span class="status-dot"></span>
           <strong>Chế độ chỉnh sửa an toàn</strong>
-          <p>Timeline, phụ đề, audio và review đều có phiên bản. Publish thật bị khóa; V2-09 chỉ tạo dry-run receipt.</p>
+          <p>Publish thật và analytics provider thật đều bị khóa. V2-10 chỉ đọc receipt và chạy learning trên fixture có nhãn rõ.</p>
         </div>
       </aside>
 
@@ -33,7 +34,7 @@
         <header class="topbar studio-topbar">
           <button id="menu-button" class="icon-button menu-button" aria-label="Mở menu">☰</button>
           <div>
-            <p class="eyebrow">AI-assisted workspace · V2-09</p>
+            <p class="eyebrow">AI-assisted workspace · V2-10</p>
             <h1>Auto Edit Studio</h1>
           </div>
           <div class="project-picker">
@@ -274,18 +275,51 @@
             </div>
           </section>
 
-          <section id="future-panels" class="future-grid">
-            <article><span>⌁</span><div><strong>Analytics Panel</strong><p>Learning loop và winner detection ở V2-10.</p></div><em>Preview</em></article>
+          <section id="analytics-workbench" class="analytics-workbench" aria-label="V2-10 Analytics and Learning">
+            <div class="production-heading">
+              <div>
+                <span class="panel-kicker">V2-10 · Read-only analytics</span>
+                <h2>Analytics & Learning</h2>
+                <p>Chuẩn hóa snapshot, chấm winner minh bạch và tạo khuyến nghị. Không sửa trend rank, không xóa nội dung, không đổi ngân sách.</p>
+              </div>
+              <div class="analytics-heading-actions">
+                <span id="analytics-source-status" class="pill muted">Dữ liệu mô phỏng</span>
+                <button id="analytics-sync-button" class="secondary-button" type="button" disabled>Chạy dữ liệu mô phỏng</button>
+              </div>
+            </div>
+            <div class="analytics-truth-banner">
+              <strong>Phạm vi kiểm thử:</strong>
+              <span>Fixture nội bộ, không gọi YouTube/TikTok/Instagram/Facebook API.</span>
+              <span id="analytics-provider-summary">Provider thật: chưa cấu hình.</span>
+            </div>
+            <div class="analytics-grid">
+              <article class="analytics-card analytics-overview-card">
+                <div class="production-card-title"><div><span class="card-icon">◎</span><strong>Chỉ số chuẩn hóa</strong></div><span id="analytics-status" class="pill muted">Chưa thu thập</span></div>
+                <div id="analytics-metrics" class="analytics-metrics"><p class="browser-empty">Chưa có snapshot.</p></div>
+                <p class="analytics-history">Lịch sử bền vững: <strong id="analytics-history-count">0 snapshot</strong></p>
+              </article>
+              <article class="analytics-card analytics-winner-card">
+                <div class="production-card-title"><div><span class="card-icon">★</span><strong>Winner detection</strong></div><span class="pill muted">Recommendation only</span></div>
+                <div class="winner-summary"><strong id="analytics-winner-score">—</strong><div><span id="analytics-winner-state">Chưa đủ dữ liệu</span><small>Điểm giải thích được, không kích hoạt hành động tự động.</small></div></div>
+                <div id="analytics-factor-list" class="analytics-factor-list"><p class="browser-empty">Chưa có yếu tố đánh giá.</p></div>
+              </article>
+              <article class="analytics-card analytics-learning-card">
+                <div class="production-card-title"><div><span class="card-icon">✦</span><strong>Learning feedback</strong></div><span class="pill muted">Chưa áp dụng</span></div>
+                <div id="analytics-learning-list" class="analytics-learning-list"><p class="browser-empty">Chưa có khuyến nghị.</p></div>
+                <div id="analytics-feature-list" class="analytics-feature-list"></div>
+              </article>
+            </div>
+            <p class="hard-boundary analytics-boundary">Mọi recommendation đều <strong>applied=false</strong>. External calls, content deletion, paid-media mutation và autonomous execution đều false.</p>
           </section>
         </div>
 
         <footer>
-          <span>NPD Video Factory V2 · Studio 0.10.0</span>
+          <span>NPD Video Factory V2 · Studio 0.11.0</span>
           <span>VND only · Human approval required · External publishing disabled</span>
         </footer>
       </main>
     </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script type="module" src="/studio.js?v=0.10.0"></script>
+    <script type="module" src="/studio.js?v=0.11.0"></script>
   </body>
 </html>

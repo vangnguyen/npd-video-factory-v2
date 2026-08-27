@@ -727,6 +727,22 @@ class TrendRepository:
                 raise RuntimeError("idea candidate is missing its score")
             return _idea_read(row, score)
 
+    async def get_idea_for_project(self, project_id: str) -> IdeaCandidateRead | None:
+        """Return the selected idea linked to a project without mutating its rank."""
+        async with self.session_factory() as session:
+            row = await session.scalar(
+                select(IdeaCandidateORM)
+                .where(IdeaCandidateORM.project_id == project_id)
+                .order_by(IdeaCandidateORM.updated_at.desc())
+                .limit(1)
+            )
+            if row is None:
+                return None
+            score = await session.scalar(select(IdeaScoreORM).where(IdeaScoreORM.idea_id == row.idea_id))
+            if score is None:
+                raise RuntimeError("idea candidate is missing its score")
+            return _idea_read(row, score)
+
     async def refresh_queue(
         self,
         workspace_id: str,
