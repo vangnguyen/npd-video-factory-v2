@@ -4,8 +4,10 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-The V3-01-01 delta is locked to `9635fb3ecf5d5fc5ba20aef3486708bad5960b8b`; entries below that
-mention human identity describe this unmerged remediation, not the historical base or production.
+V3-01-01 is merged at exact `main` `9b66d6917d6d58fea995b3a1049fc95198e81bf1`.
+The V3-01-02 provider-safety code checkpoint is
+`062959287497a5999999adccb65602b88c04947e`; entries below that mention the provider safety
+plane describe local/CI remediation only, not production.
 
 ## Foundation
 
@@ -67,8 +69,9 @@ mention human identity describe this unmerged remediation, not the historical ba
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
 | Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
-| Cost | VND provider/cost records and selected budget checks | platform/media tests | No global cap/circuit breaker/alerts |
-| Rights/provenance | asset/media models and publishing validation | fixture rights tests | Schema implemented; real rights unaccepted |
+| Provider safety plane | `provider_safety.py`, authenticated snapshot route, settings and Compose contracts | `test_provider_safety.py`, full regression and Docker E2E | Central contract/mock controls pass; external execution hard-blocked |
+| Cost | central VND-only budgets, attempt costing, 50/80/100 alerts and global kill switch | provider safety and configuration tests | Implemented/mock-tested; durable multi-instance accounting and real acceptance absent |
+| Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests | Schema/hook implemented; real rights unaccepted |
 | Backup/restore | `v2-11-backup.sh`, `v2-11-restore.sh` | syntax/config only | No drill |
 | Rollback/deploy | guarded V2-11 helpers and runbook | syntax/config only | No image/deployment drill |
 | Observability | request IDs and basic worker logging | limited assertions | Metrics/traces/dashboards/alerts missing |

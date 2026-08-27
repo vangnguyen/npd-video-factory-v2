@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "scope": "V3-01-02 provider safety plane on locked code commit",
+  "commit_sha": "062959287497a5999999adccb65602b88c04947e",
+  "base_sha": "9b66d6917d6d58fea995b3a1049fc95198e81bf1",
+  "environment": "LOCAL_AND_DISPOSABLE_DOCKER",
+  "results": {
+    "provider_safety_focused": {
+      "command": "python -m pytest apps/api/tests/test_provider_safety.py -q",
+      "passed": 10,
+      "failed": 0
+    },
+    "python_api_worker_bridge": {
+      "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+      "passed": 157,
+      "failed": 0
+    },
+    "renderer": {
+      "command": "bundled Node: vitest run; tsc --noEmit; tsx src/smoke-bundle.ts",
+      "passed": 14,
+      "failed": 0,
+      "typecheck": "PASS",
+      "bundle_check": "PASS"
+    },
+    "studio": {
+      "command": "bundled Node: node --test tests/*.test.mjs; node --check app.js",
+      "passed": 14,
+      "failed": 0,
+      "javascript_syntax": "PASS"
+    },
+    "docker_e2e": {
+      "command": "bash scripts/e2e-smoke.sh",
+      "result": "PASS",
+      "checks": [
+        "human authentication and secret-safe session contract",
+        "signed Agent Hub draft-only bridge",
+        "job, media, timeline, approval, final render and decoded audio/video QC",
+        "publishing dry-run and analytics null semantics",
+        "PostgreSQL, Redis and MinIO restart recovery"
+      ]
+    },
+    "compose_and_static": {
+      "development_compose": "PASS",
+      "production_compose": "PASS",
+      "python_compile": "PASS",
+      "shell_syntax": "PASS",
+      "acceptance_repository_validation": "PASS",
+      "markdown_link_sanity": "PASS",
+      "git_diff_check": "PASS"
+    }
+  },
+  "provider_controls": {
+    "fail_closed_global_gate": "PASS",
+    "vnd_only_and_zero_default_budget": "PASS",
+    "attempt_cost_and_50_80_100_alerts": "PASS",
+    "bounded_retry_poll_timeout_and_concurrency": "PASS",
+    "closed_open_half_open_circuit": "PASS",
+    "duplicate_operation_block": "PASS",
+    "credential_alias_only_contract": "PASS",
+    "rights_decision_hook": "PASS_FIXTURE_ONLY",
+    "artifact_and_storage_receipt_verification": "PASS_FIXTURE_ONLY",
+    "durable_multi_instance_accounting": "NOT_IMPLEMENTED",
+    "real_provider_and_production_path": "NOT_TESTED"
+  },
+  "external_calls": 0,
+  "cost": {
+    "currency": "VND",
+    "actual": 0
+  },
+  "secret_recorded": false
+}

@@ -27,7 +27,18 @@ def audio_provider_status(settings: Any) -> str:
     if provider == "contract":
         return "not_configured"
     if provider == "openai":
-        return "configured" if settings.audio_external_execution_enabled and settings.openai_api_key.strip() else "not_configured"
+        globally_allowed = bool(
+            getattr(settings, "provider_external_execution_enabled", False)
+            and getattr(settings, "provider_paid_execution_enabled", False)
+            and not getattr(settings, "provider_global_kill_switch_engaged", True)
+        )
+        return (
+            "configured"
+            if globally_allowed
+            and settings.audio_external_execution_enabled
+            and settings.openai_api_key.strip()
+            else "not_configured"
+        )
     return "configured"
 
 
@@ -39,6 +50,12 @@ def create_audio_tts_provider(settings: Any):
             rate=settings.audio_tts_rate,
         )
     if provider == "openai":
+        if (
+            getattr(settings, "provider_global_kill_switch_engaged", True)
+            or not getattr(settings, "provider_external_execution_enabled", False)
+            or not getattr(settings, "provider_paid_execution_enabled", False)
+        ):
+            raise TTSNotConfiguredError("external audio TTS is blocked by the global provider safety gate")
         if not settings.audio_external_execution_enabled:
             raise TTSNotConfiguredError("external audio TTS execution is disabled")
         return OpenAIVietnameseTTSProvider(

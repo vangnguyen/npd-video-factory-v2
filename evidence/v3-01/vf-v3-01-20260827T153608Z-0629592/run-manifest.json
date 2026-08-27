@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260827T153608Z-0629592",
+  "started_at_utc": "2026-08-27T15:28:00Z",
+  "completed_at_utc": "2026-08-27T15:36:08Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "062959287497a5999999adccb65602b88c04947e",
+  "base_sha": "9b66d6917d6d58fea995b3a1049fc95198e81bf1",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-02-remediation",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0010_v2_11_agent_hub_bridge",
+  "config_fingerprint_redacted": "provider-safety-vnd-zero-budget-kill-switch-engaged-no-credentials-read",
+  "providers": [
+    {
+      "capability": "all-external-capabilities",
+      "provider": "contract-or-disabled",
+      "model_or_workflow": "provider-safety-plane-v1-none-executed",
+      "region": "not-applicable",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "RES-002",
+    "CST-001",
+    "CI-LOCAL-REGRESSION",
+    "DOCKER-E2E"
+  ],
+  "artifact_manifest": [
+    "matrix/evidence-EV-V3-PROVIDER-SAFETY-001.json",
+    "providers/provider-safety/status.json",
+    "providers/provider-safety/test-summary.json",
+    "final/status.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-004",
+    "V3-01-GAP-005",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013",
+    "V3-01-GAP-014"
+  ],
+  "owner_gate_ids": [
+    "G-00"
+  ],
+  "result": "BLOCKED"
+}

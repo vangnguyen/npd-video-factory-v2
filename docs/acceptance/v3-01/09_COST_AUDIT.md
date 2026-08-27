@@ -28,11 +28,18 @@ successful response without a usage/cost record is `FAIL` for cost acceptance.
 
 ## Current gaps and containment
 
-The code has VND ledger concepts and bounded behavior in selected paths, but not one global
-provider circuit breaker, budget reservation system or kill switch covering every capability.
-Therefore all external, paid, ComfyUI, publishing and analytics execution gates remain false.
+V3-01-02 now implements one VND-only control plane with per-operation/daily reservation, attempt
+costing, exact 50/80/100 alerts, bounded retry/poll/timeout/concurrency, circuit state and a global
+kill switch. Local tests prove those contracts while all configured limits stay zero and the kill
+switch remains engaged.
+
+The runtime attempt, circuit and reservation state is process-local at this checkpoint. Durable
+multi-instance reconciliation, monitoring/retention and owner-gated real-provider acceptance are
+still required. Therefore all external, paid, ComfyUI, publishing and analytics execution gates
+remain false.
 
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.
 
-Open gap: `V3-01-GAP-010`.
+Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001`; not remediated or
+production-verified.

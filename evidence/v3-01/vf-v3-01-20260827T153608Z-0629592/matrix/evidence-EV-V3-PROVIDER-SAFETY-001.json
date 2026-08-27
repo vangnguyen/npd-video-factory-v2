@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-PROVIDER-SAFETY-001",
+  "test_case_id": "RES-002+CST-001",
+  "matrix_rows": [
+    "OPS-01",
+    "OPS-03",
+    "OPS-04"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "062959287497a5999999adccb65602b88c04947e",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "all-provider-contracts",
+    "model_or_workflow": "provider-safety-plane-v1",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "fa9450c39b07b1812ee88a1c85a1b434e389722f82dcbc7e62a7f5f2ce09310e",
+  "started_at_utc": "2026-08-27T15:28:00Z",
+  "completed_at_utc": "2026-08-27T15:36:08Z",
+  "duration_seconds": 488,
+  "result": "PASS",
+  "assertion": "The central VND-only provider safety contract passes deterministic tests for fail-closed gates, budgets, attempt costing, alerts, retry, polling, timeout, concurrency, circuit state, rights decisions and artifact/storage verification. No real provider, credential, deployment or public ingress was used.",
+  "correlation_id": "v3-01-02-local-provider-safety-0629592",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex local provider-safety reviewer",
+  "gap_ids": [
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On commit 062959287497a5999999adccb65602b88c04947e, run the full Python, Renderer, Studio, Compose/static and Docker deterministic E2E commands recorded in providers/provider-safety/test-summary.json while retaining zero budgets, disabled external execution and an engaged global kill switch."
+}

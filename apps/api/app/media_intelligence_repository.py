@@ -443,6 +443,7 @@ class MediaIntelligenceRepository:
                 job.output_media_asset_id = selected_media_asset_id
                 job.error_code = None
                 job.failure_reason = None
+                job.provenance_json = {**job.provenance_json, **provenance}
                 job.updated_at = utc_now()
                 item.selected_media_asset_id = selected_media_asset_id
                 item.status = "resolved"

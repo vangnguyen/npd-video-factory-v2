@@ -62,6 +62,12 @@ from .publishing_service import PublishingService
 from .production_repository import ProductionRepository
 from .production_routes import router as production_router
 from .production_service import ProductionPackageService
+from .provider_safety import (
+    ProviderSafetyController,
+    normalize_provider_definitions,
+    provider_safety_policy_from_settings,
+)
+from .provider_safety_routes import router as provider_safety_router
 from .repositories import PlatformRepository, PostgresJobStore
 from .trend_providers import create_trend_provider_registry
 from .trend_repository import TrendRepository
@@ -129,7 +135,8 @@ async def lifespan(app: FastAPI):
             provenance={"source": "bootstrap-config"},
         )
     )
-    await platform.seed_providers(_provider_definitions())
+    provider_definitions = normalize_provider_definitions(_provider_definitions())
+    await platform.seed_providers(provider_definitions)
     await trend_repository.seed_sources(trend_providers.definitions())
     app.state.database_engine = engine
     app.state.database_session_factory = session_factory
@@ -143,6 +150,10 @@ async def lifespan(app: FastAPI):
     )
     app.state.object_storage = object_storage
     app.state.platform_repository = platform
+    app.state.provider_safety_controller = ProviderSafetyController(
+        provider_safety_policy_from_settings(settings),
+        provider_definitions=provider_definitions,
+    )
     app.state.trend_repository = trend_repository
     app.state.auto_edit_repository = auto_edit_repository
     app.state.vision_repository = vision_repository
@@ -227,6 +238,7 @@ async def lifespan(app: FastAPI):
         staging_root=settings.media_staging_root,
         allow_external_execution=settings.media_external_execution_enabled,
         allow_paid_execution=settings.media_paid_execution_enabled,
+        provider_safety=app.state.provider_safety_controller,
     )
     app.state.timeline_service = TimelineService(
         repository=timeline_repository,
@@ -324,6 +336,7 @@ app.include_router(timeline_router, dependencies=_human_route_dependencies)
 app.include_router(production_router, dependencies=_human_route_dependencies)
 app.include_router(publishing_router, dependencies=_human_route_dependencies)
 app.include_router(analytics_router, dependencies=_human_route_dependencies)
+app.include_router(provider_safety_router, dependencies=_human_route_dependencies)
 app.include_router(bridge_router)
 
 
@@ -858,6 +871,11 @@ async def capabilities() -> dict[str, object]:
         "object_storage": settings.object_storage_provider,
         "durable_job_state": True,
         "cost_currency": "VND",
+        "provider_safety_plane": "enforced",
+        "provider_external_execution_enabled": settings.provider_external_execution_enabled,
+        "provider_paid_execution_enabled": settings.provider_paid_execution_enabled,
+        "provider_global_kill_switch_engaged": settings.provider_global_kill_switch_engaged,
+        "provider_budget_currency": settings.provider_budget_currency,
         "trend_radar": True,
         "idea_intelligence": True,
         "content_opportunity_queue": True,

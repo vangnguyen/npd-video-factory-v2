@@ -221,6 +221,21 @@ def test_v2_06_paid_and_comfyui_execution_require_explicit_parent_gates() -> Non
         Settings(_env_file=None, image_generation_provider="comfyui")
 
 
+def test_v3_01_02_global_provider_gate_is_vnd_only_and_cannot_be_activated() -> None:
+    with pytest.raises(ValidationError, match="must be VND"):
+        Settings(_env_file=None, provider_budget_currency="USD")
+    with pytest.raises(ValidationError, match="G-02 owner gate"):
+        Settings(_env_file=None, provider_per_operation_limit_vnd=1, provider_daily_limit_vnd=1)
+    with pytest.raises(ValidationError, match="not activated in V3-01-02"):
+        Settings(_env_file=None, provider_external_execution_enabled=True)
+    with pytest.raises(ValidationError, match="kill switch must remain engaged"):
+        Settings(_env_file=None, provider_global_kill_switch_engaged=False)
+    with pytest.raises(ValidationError, match="REQUEST_TIMEOUT_SECONDS"):
+        Settings(_env_file=None, provider_request_timeout_seconds=0)
+    with pytest.raises(ValidationError, match="MAX_CONCURRENT_CALLS"):
+        Settings(_env_file=None, provider_max_concurrent_calls=0)
+
+
 @pytest.mark.asyncio
 async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     result = await capabilities()
@@ -276,3 +291,8 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["comfyui_execution_enabled"] is False
     assert result["media_external_execution_enabled"] is False
     assert result["media_paid_execution_enabled"] is False
+    assert result["provider_safety_plane"] == "enforced"
+    assert result["provider_external_execution_enabled"] is False
+    assert result["provider_paid_execution_enabled"] is False
+    assert result["provider_global_kill_switch_engaged"] is True
+    assert result["provider_budget_currency"] == "VND"

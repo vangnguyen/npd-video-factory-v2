@@ -1,3 +1,4 @@
+from decimal import Decimal
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -113,6 +114,22 @@ class Settings(BaseSettings):
     human_auth_max_token_ttl_seconds: int = 86_400
     human_rate_limit_per_minute: int = 300
     human_approval_required: bool = True
+    provider_external_execution_enabled: bool = False
+    provider_paid_execution_enabled: bool = False
+    provider_global_kill_switch_engaged: bool = True
+    provider_budget_currency: str = "VND"
+    provider_per_operation_limit_vnd: Decimal = Decimal("0")
+    provider_daily_limit_vnd: Decimal = Decimal("0")
+    provider_retry_max_attempts: int = 3
+    provider_request_timeout_seconds: float = 60.0
+    provider_retry_base_seconds: float = 1.0
+    provider_retry_max_seconds: float = 30.0
+    provider_retry_max_elapsed_seconds: float = 120.0
+    provider_poll_max_attempts: int = 20
+    provider_poll_interval_seconds: float = 2.0
+    provider_max_concurrent_calls: int = 2
+    provider_circuit_failure_threshold: int = 3
+    provider_circuit_cooldown_seconds: int = 60
 
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
@@ -273,6 +290,50 @@ class Settings(BaseSettings):
             raise ValueError("external audio execution is only valid for the owner-gated OpenAI adapter")
         if self.audio_tts_rate < 80 or self.audio_tts_rate > 260:
             raise ValueError("AUDIO_TTS_RATE must be between 80 and 260")
+        if self.provider_budget_currency != "VND":
+            raise ValueError("PROVIDER_BUDGET_CURRENCY must be VND")
+        if self.provider_per_operation_limit_vnd < 0 or self.provider_daily_limit_vnd < 0:
+            raise ValueError("provider VND budget limits cannot be negative")
+        if self.provider_daily_limit_vnd < self.provider_per_operation_limit_vnd:
+            raise ValueError("provider daily VND limit cannot be lower than the per-operation limit")
+        if self.provider_per_operation_limit_vnd or self.provider_daily_limit_vnd:
+            raise ValueError("provider budgets cannot be activated before the separate G-02 owner gate")
+        if not 1 <= self.provider_retry_max_attempts <= 10:
+            raise ValueError("PROVIDER_RETRY_MAX_ATTEMPTS must be between 1 and 10")
+        if not 0 < self.provider_request_timeout_seconds <= 3600:
+            raise ValueError("PROVIDER_REQUEST_TIMEOUT_SECONDS must be between 0 and 3600")
+        if self.provider_retry_base_seconds < 0:
+            raise ValueError("PROVIDER_RETRY_BASE_SECONDS cannot be negative")
+        if self.provider_retry_max_seconds < self.provider_retry_base_seconds:
+            raise ValueError("provider retry maximum cannot be lower than the base delay")
+        if self.provider_retry_max_elapsed_seconds <= 0:
+            raise ValueError("PROVIDER_RETRY_MAX_ELAPSED_SECONDS must be positive")
+        if not 1 <= self.provider_poll_max_attempts <= 200:
+            raise ValueError("PROVIDER_POLL_MAX_ATTEMPTS must be between 1 and 200")
+        if self.provider_poll_interval_seconds < 0:
+            raise ValueError("PROVIDER_POLL_INTERVAL_SECONDS cannot be negative")
+        if not 1 <= self.provider_max_concurrent_calls <= 100:
+            raise ValueError("PROVIDER_MAX_CONCURRENT_CALLS must be between 1 and 100")
+        if not 1 <= self.provider_circuit_failure_threshold <= 20:
+            raise ValueError("PROVIDER_CIRCUIT_FAILURE_THRESHOLD must be between 1 and 20")
+        if not 1 <= self.provider_circuit_cooldown_seconds <= 86_400:
+            raise ValueError("PROVIDER_CIRCUIT_COOLDOWN_SECONDS must be between 1 and 86400")
+        if self.provider_paid_execution_enabled and not self.provider_external_execution_enabled:
+            raise ValueError("paid provider execution requires external provider execution")
+        provider_specific_external_gates = (
+            self.media_external_execution_enabled,
+            self.audio_external_execution_enabled,
+            self.publish_external_execution_enabled,
+            self.analytics_external_execution_enabled,
+            self.agent_hub_webhook_external_delivery_enabled,
+            self.comfyui_execution_enabled,
+        )
+        if any(provider_specific_external_gates) and not self.provider_external_execution_enabled:
+            raise ValueError("provider-specific external execution requires the global provider safety gate")
+        if self.provider_external_execution_enabled:
+            raise ValueError("real provider execution is not activated in V3-01-02")
+        if not self.provider_global_kill_switch_engaged:
+            raise ValueError("the global provider kill switch must remain engaged in V3-01-02")
         return self
 
 

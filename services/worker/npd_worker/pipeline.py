@@ -67,6 +67,9 @@ class WorkerConfig:
     openai_base_url: str = "https://api.openai.com"
     openai_tts_timeout_seconds: float = 120.0
     pilot_strict_assets: bool = False
+    provider_external_execution_enabled: bool = False
+    provider_paid_execution_enabled: bool = False
+    provider_global_kill_switch_engaged: bool = True
 
     @classmethod
     def from_env(cls) -> "WorkerConfig":
@@ -102,6 +105,13 @@ class WorkerConfig:
             openai_base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com").rstrip("/"),
             openai_tts_timeout_seconds=float(os.getenv("OPENAI_TTS_TIMEOUT_SECONDS", "120")),
             pilot_strict_assets=_env_flag("PILOT_STRICT_ASSETS", False),
+            provider_external_execution_enabled=_env_flag(
+                "PROVIDER_EXTERNAL_EXECUTION_ENABLED", False
+            ),
+            provider_paid_execution_enabled=_env_flag("PROVIDER_PAID_EXECUTION_ENABLED", False),
+            provider_global_kill_switch_engaged=_env_flag(
+                "PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED", True
+            ),
         )
 
 
@@ -744,6 +754,14 @@ def get_tts_provider(config: WorkerConfig):
             rate=config.espeak_rate,
         )
     if config.tts_provider == "openai":
+        if not config.openai_api_key.strip():
+            raise TTSNotConfiguredError("OPENAI_API_KEY is required when TTS_PROVIDER=openai")
+        if (
+            config.provider_global_kill_switch_engaged
+            or not config.provider_external_execution_enabled
+            or not config.provider_paid_execution_enabled
+        ):
+            raise TTSNotConfiguredError("OpenAI TTS is blocked by the global provider safety gate")
         return OpenAIVietnameseTTSProvider(
             api_key=config.openai_api_key,
             model=config.openai_tts_model,

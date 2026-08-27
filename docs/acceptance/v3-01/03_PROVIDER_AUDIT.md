@@ -2,6 +2,12 @@
 
 No credential value was read and no provider was called. G-01 and G-02 are pending.
 
+V3-01-02 adds a central fail-closed provider safety contract on code commit
+`062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
+mock callables. Media resolution and OpenAI TTS entry points now consult the global external,
+paid, rights, budget and kill-switch state; the checked-in configuration makes real execution
+impossible. All real states in the table therefore remain `BLOCKED`.
+
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
@@ -24,9 +30,16 @@ No credential value was read and no provider was called. G-01 and G-02 are pendi
 - Provider/model/workflow, request and artifact hashes, duration, cost and RightsRecord are required.
 - External execution remains disabled until explicit gates identify the provider, credential alias,
   target, budget and authorized input rights.
+- The authenticated provider-safety snapshot reports policy/circuit/cost metadata only and omits
+  credential aliases and values.
+- A returned provider payload is not accepted until its non-empty/size/content-type/SHA-256 checks
+  and object-storage receipt consistency pass.
 - The ignored local `.env` and GitHub secret names are not authorization and are not evidence that a
   credential is valid.
 
 ## Cost and network state
 
 Cost incurred by this baseline/provider audit: `0 VND`. External provider requests: `0`.
+
+Local evidence `EV-V3-PROVIDER-SAFETY-001` changes only the implemented/mock-tested state for the
+control plane. It is not a credential, provider, production-path or human-quality acceptance.
