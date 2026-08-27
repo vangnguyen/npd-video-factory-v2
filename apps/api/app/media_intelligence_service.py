@@ -46,6 +46,13 @@ from .media_intelligence_repository import MediaIntelligenceRepository
 from .object_storage import ObjectStorageProvider, validate_object_key
 from .platform_models import AssetRead, AssetRegister
 from .repositories import PlatformRepository
+from .provider_safety import (
+    ProviderCallContext,
+    ProviderSafetyBlocked,
+    ProviderSafetyController,
+    verify_provider_artifact,
+    verify_provider_artifact_storage,
+)
 from .vision_repository import VisionRepository
 
 
@@ -340,6 +347,7 @@ class MediaResolutionService:
         staging_root: Path,
         allow_external_execution: bool,
         allow_paid_execution: bool,
+        provider_safety: ProviderSafetyController | None = None,
     ) -> None:
         self.repository = repository
         self.platform = platform
@@ -350,6 +358,7 @@ class MediaResolutionService:
         self.staging_root = staging_root
         self.allow_external_execution = allow_external_execution
         self.allow_paid_execution = allow_paid_execution
+        self.provider_safety = provider_safety or ProviderSafetyController.fail_closed()
 
     async def enqueue(
         self,
@@ -427,8 +436,30 @@ class MediaResolutionService:
             return job
         await self.repository.mark_resolution_running(resolution_job_id)
         staging_path: Path | None = None
+        artifact_evidence = None
         try:
-            materialized, existing_asset = await self._materialize(job, plan, item)
+            self._ensure_provider_configured(item)
+            provider_context = ProviderCallContext(
+                operation_key=f"media-resolution:{resolution_job_id}",
+                workspace_id=plan.workspace_id,
+                project_id=plan.project_id,
+                job_id=resolution_job_id,
+                provider_key=job.provider_key,
+                capability=job.capability,
+                operation=job.operation,
+                external_call=job.external_call,
+                paid=job.paid,
+                estimated_cost_vnd=job.estimated_cost_vnd,
+                # G-01 and G-03 are pending. No credential alias or full RightsRecord is inferred
+                # from environment variables, provider configuration or a downloadable asset.
+                credential_alias=None,
+                rights_required=job.external_call,
+            )
+            execution = await self.provider_safety.execute(
+                provider_context,
+                lambda: self._materialize(job, plan, item),
+            )
+            materialized, existing_asset = execution.value
             if materialized.external_call and not self.allow_external_execution:
                 raise RuntimeError("external media execution is disabled in V2-06")
             if materialized.paid and not self.allow_paid_execution:
@@ -448,6 +479,17 @@ class MediaResolutionService:
                 return result
             asset = existing_asset
             if asset is None:
+                artifact_evidence = verify_provider_artifact(
+                    operation_key=provider_context.operation_key,
+                    provider_key=job.provider_key,
+                    capability=job.capability,
+                    request_payload=job.provenance.get("request", {}),
+                    payload=materialized.payload,
+                    content_type=materialized.content_type,
+                    provider_job_id=materialized.provider_job_id,
+                    source_reference=materialized.source_reference,
+                    real_provider_tested=materialized.real_provider_tested,
+                )
                 safe_name = _safe_filename(materialized.filename)
                 self.staging_root.mkdir(parents=True, exist_ok=True)
                 staging_path = self.staging_root / f"{resolution_job_id}-{safe_name}"
@@ -460,6 +502,12 @@ class MediaResolutionService:
                     object_key=object_key,
                     path=staging_path,
                     content_type=materialized.content_type,
+                )
+                artifact_evidence = verify_provider_artifact_storage(
+                    artifact_evidence,
+                    checksum_sha256=stored.checksum_sha256,
+                    size_bytes=stored.size_bytes,
+                    content_type=stored.content_type,
                 )
                 asset_class = "stock" if materialized.source_type == "stock" else "generated"
                 asset = await self.platform.register_asset(
@@ -485,6 +533,7 @@ class MediaResolutionService:
                             "generation_provenance": materialized.generation_provenance,
                             "production_eligible": materialized.production_eligible,
                             "fixture": not materialized.external_call,
+                            "provider_artifact_evidence": artifact_evidence.model_dump(mode="json"),
                         },
                     ),
                 )
@@ -537,12 +586,26 @@ class MediaResolutionService:
                     "owner_override_recorded": False,
                     "source_media_mutated": False,
                     "publish_requested": False,
+                    "provider_safety_receipt": execution.receipt.model_dump(mode="json"),
+                    "provider_artifact_evidence_id": (
+                        artifact_evidence.evidence_id if artifact_evidence else None
+                    ),
+                    "provider_artifact_storage_verified": bool(
+                        artifact_evidence and artifact_evidence.storage_receipt_verified
+                    ),
+                    "full_rights_record_required_for_production": True,
                 },
             )
         except MediaProviderNotConfigured as exc:
             await self.repository.mark_resolution_failed(
                 resolution_job_id,
                 error_code="PROVIDER_NOT_CONFIGURED",
+                reason=str(exc),
+            )
+        except ProviderSafetyBlocked as exc:
+            await self.repository.mark_resolution_failed(
+                resolution_job_id,
+                error_code=exc.code,
                 reason=str(exc),
             )
         except Exception as exc:
@@ -633,12 +696,7 @@ class MediaResolutionService:
         )
 
     async def _materialize(self, job, plan, item) -> tuple[ProviderMaterializedMedia, AssetRead | None]:
-        if item.strategy in {"stock_image", "stock_video"} and not self.providers.stock.configured:
-            raise MediaProviderNotConfigured("Stock media provider is not configured")
-        if item.strategy in {"ai_image", "motion_graphic"} and not self.providers.image.configured:
-            raise MediaProviderNotConfigured("Image generation provider is not configured")
-        if item.strategy == "ai_video" and not self.providers.video.configured:
-            raise MediaProviderNotConfigured("Video generation provider is not configured")
+        self._ensure_provider_configured(item)
         if job.external_call and not self.allow_external_execution:
             raise RuntimeError("external media execution is disabled in V2-06")
         if job.paid and not self.allow_paid_execution:
@@ -683,6 +741,7 @@ class MediaResolutionService:
                 ),
                 asset,
             )
+
         if item.strategy in {"stock_image", "stock_video"}:
             selected = next(
                 (
@@ -712,6 +771,14 @@ class MediaResolutionService:
             return await self.providers.image.generate(request), None
         request = VideoGenerationInput.model_validate(job.provenance.get("request") or {})
         return await self.providers.video.generate(request), None
+
+    def _ensure_provider_configured(self, item) -> None:
+        if item.strategy in {"stock_image", "stock_video"} and not self.providers.stock.configured:
+            raise MediaProviderNotConfigured("Stock media provider is not configured")
+        if item.strategy in {"ai_image", "motion_graphic"} and not self.providers.image.configured:
+            raise MediaProviderNotConfigured("Image generation provider is not configured")
+        if item.strategy == "ai_video" and not self.providers.video.configured:
+            raise MediaProviderNotConfigured("Video generation provider is not configured")
 
 
 def _provider_state(provider, available: bool) -> dict[str, object]:

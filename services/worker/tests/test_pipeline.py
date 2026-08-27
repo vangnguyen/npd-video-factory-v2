@@ -597,6 +597,12 @@ def test_openai_provider_selection_requires_key(tmp_path: Path) -> None:
         get_tts_provider(config)
 
 
+def test_openai_provider_selection_requires_global_provider_gate(tmp_path: Path) -> None:
+    config = _config(tmp_path, tts_provider="openai", openai_api_key="test-only-key")
+    with pytest.raises(Exception, match="global provider safety gate"):
+        get_tts_provider(config)
+
+
 def test_preflight_accepts_real_logo_and_media(tmp_path: Path) -> None:
     asset_root = tmp_path / "assets"
     project = asset_root / "vinhomes-green-paradise"

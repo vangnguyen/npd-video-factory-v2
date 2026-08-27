@@ -341,6 +341,16 @@ async def test_media_plan_broll_resolution_rights_cost_and_restart(tmp_path: Pat
     )
     results = [await resolver_after_restart.process(job.resolution_job_id) for job in jobs]
     assert all(result.status == "succeeded" for result in results)
+    materialized_results = [
+        result for result in results if result.capability != "internal_media"
+    ]
+    assert materialized_results
+    assert all(
+        result.provenance["provider_artifact_storage_verified"] is True
+        and result.provenance["provider_artifact_evidence_id"].startswith("pae_")
+        and result.provenance["provider_safety_receipt"]["external_call"] is False
+        for result in materialized_results
+    )
     completed = await stack["media_repository"].get_plan(plan.media_plan_id)
     assert completed is not None
     assert completed.unresolved_items == 0

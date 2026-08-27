@@ -102,6 +102,12 @@ jobs:
           grep -qx 'MEDIA_FIXTURE_ENABLED=true' .env.example
           grep -qx 'MEDIA_EXTERNAL_EXECUTION_ENABLED=false' .env.example
           grep -qx 'MEDIA_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
+          grep -qx 'PROVIDER_BUDGET_CURRENCY=VND' .env.example
+          grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
+          grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
           grep -qx 'COMFYUI_EXECUTION_ENABLED=false' .env.example
           grep -qx 'AUDIO_TTS_PROVIDER=espeak' .env.example
           grep -qx 'AUDIO_EXTERNAL_EXECUTION_ENABLED=false' .env.example
@@ -221,6 +227,15 @@ jobs:
           python -c 'import json; from pathlib import Path; data=json.loads(Path("deploy/testing/disabled-human-auth.json").read_text()); assert data == {"version": 1, "tokens": {}}'
           python -c 'import json; from pathlib import Path; schema=json.loads(Path("packages/contracts/human-auth-registry.schema.json").read_text()); assert schema["additionalProperties"] is False; assert schema["properties"]["tokens"]["additionalProperties"]["properties"]["token_sha256"]["pattern"] == "^[a-f0-9]{64}$"'
           ! git grep -I -n -E 'vf1\.[A-Za-z0-9._-]+\.[A-Za-z0-9_-]{32,}' -- ':!scripts/e2e-smoke.sh' ':!apps/api/tests' ':!apps/studio-web/tests'
+      - name: Verify V3-01-02 provider safety boundary
+        run: |
+          grep -Fq 'class ProviderSafetyController' apps/api/app/provider_safety.py
+          grep -Fq 'currency: Literal["VND"]' apps/api/app/provider_safety.py
+          grep -Fq 'warning_threshold_percent' apps/api/app/provider_safety.py
+          grep -Fq 'GLOBAL_KILL_SWITCH_ENGAGED' apps/api/app/provider_safety.py
+          grep -Fq 'ARTIFACT_STORAGE_MISMATCH' apps/api/app/provider_safety.py
+          grep -Fq 'provider_safety=app.state.provider_safety_controller' apps/api/app/main.py
+          ! git grep -I -n -E '^(PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_BUDGET_CURRENCY=USD)$' -- .env.example apps services packages deploy
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json
