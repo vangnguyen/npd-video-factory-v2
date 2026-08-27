@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ngocphuongdong.com/video-factory/agent-hub-bridge.v1.schema.json",
+  "title": "NPD Video Factory to Agent Hub event v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "event_id", "event_type", "occurred_at", "payload"],
+  "properties": {
+    "contract_version": {"const": "agent-hub-bridge.v1"},
+    "event_id": {"type": "string", "pattern": "^bevt_[A-Za-z0-9_-]{4,60}$"},
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "trend.opportunity.detected",
+        "idea.shortlist.ready",
+        "video.project.created",
+        "video.analysis.completed",
+        "video.preview.ready",
+        "video.approval.required",
+        "video.approved",
+        "video.render.completed",
+        "video.render.failed",
+        "video.publish.completed",
+        "video.publish.failed",
+        "video.analytics.updated",
+        "video.winner.detected"
+      ]
+    },
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "not": {
+        "anyOf": [
+          {"required": ["token"]},
+          {"required": ["secret"]},
+          {"required": ["password"]},
+          {"required": ["credential"]}
+        ]
+      }
+    }
+  }
+}

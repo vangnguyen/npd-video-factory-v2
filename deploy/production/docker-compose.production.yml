@@ -1,0 +1,91 @@
+name: npd-video-factory-v2
+
+services:
+  postgres:
+    networks: [video-factory-v2]
+
+  redis:
+    networks: [video-factory-v2]
+
+  minio:
+    networks: [video-factory-v2]
+
+  migrate:
+    networks: [video-factory-v2]
+
+  api:
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      TREND_FIXTURE_ENABLED: "false"
+      AUTO_EDIT_FIXTURE_ENABLED: "false"
+      VISION_FIXTURE_ENABLED: "false"
+      MEDIA_FIXTURE_ENABLED: "false"
+      ANALYTICS_FIXTURE_ENABLED: "false"
+      TRANSCRIPTION_PROVIDER: contract
+      AUTO_EDIT_SIGNAL_PROVIDER: ffmpeg
+      VISION_PROVIDER: contract
+      STOCK_MEDIA_PROVIDER: contract
+      IMAGE_GENERATION_PROVIDER: contract
+      VIDEO_GENERATION_PROVIDER: contract
+      AUDIO_TTS_PROVIDER: contract
+      AUDIO_EXTERNAL_EXECUTION_ENABLED: "false"
+      MEDIA_EXTERNAL_EXECUTION_ENABLED: "false"
+      MEDIA_PAID_EXECUTION_ENABLED: "false"
+      COMFYUI_EXECUTION_ENABLED: "false"
+      ANALYTICS_EXTERNAL_EXECUTION_ENABLED: "false"
+      ANALYTICS_SCHEDULED_REFRESH_ENABLED: "false"
+      PUBLISH_ENABLED: "false"
+      PUBLISH_EXTERNAL_EXECUTION_ENABLED: "false"
+      PUBLISH_OWNER_GATE_ENABLED: "false"
+      HUMAN_APPROVAL_REQUIRED: "true"
+      AGENT_HUB_BRIDGE_ENABLED: ${AGENT_HUB_BRIDGE_ENABLED:-false}
+      AGENT_HUB_SERVICE_KEYS_FILE: /run/secrets/video-factory-agent-hub.json
+      AGENT_HUB_WEBHOOK_SIGNING_KEYS_FILE: /run/secrets/video-factory-agent-hub.json
+      AGENT_HUB_WEBHOOK_MODE: ${AGENT_HUB_WEBHOOK_MODE:-disabled}
+      AGENT_HUB_WEBHOOK_EXTERNAL_DELIVERY_ENABLED: ${AGENT_HUB_WEBHOOK_EXTERNAL_DELIVERY_ENABLED:-false}
+    networks: [video-factory-v2]
+
+  worker:
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      TREND_FIXTURE_ENABLED: "false"
+      AUTO_EDIT_FIXTURE_ENABLED: "false"
+      VISION_FIXTURE_ENABLED: "false"
+      MEDIA_FIXTURE_ENABLED: "false"
+      ANALYTICS_FIXTURE_ENABLED: "false"
+      TRANSCRIPTION_PROVIDER: contract
+      AUTO_EDIT_SIGNAL_PROVIDER: ffmpeg
+      VISION_PROVIDER: contract
+      STOCK_MEDIA_PROVIDER: contract
+      IMAGE_GENERATION_PROVIDER: contract
+      VIDEO_GENERATION_PROVIDER: contract
+      AUDIO_TTS_PROVIDER: contract
+      AUDIO_EXTERNAL_EXECUTION_ENABLED: "false"
+      MEDIA_EXTERNAL_EXECUTION_ENABLED: "false"
+      MEDIA_PAID_EXECUTION_ENABLED: "false"
+      COMFYUI_EXECUTION_ENABLED: "false"
+      ANALYTICS_EXTERNAL_EXECUTION_ENABLED: "false"
+      ANALYTICS_SCHEDULED_REFRESH_ENABLED: "false"
+      PUBLISH_ENABLED: "false"
+      PUBLISH_EXTERNAL_EXECUTION_ENABLED: "false"
+      PUBLISH_OWNER_GATE_ENABLED: "false"
+      HUMAN_APPROVAL_REQUIRED: "true"
+      AGENT_HUB_BRIDGE_ENABLED: ${AGENT_HUB_BRIDGE_ENABLED:-false}
+      AGENT_HUB_WEBHOOK_SIGNING_KEYS_FILE: /run/secrets/video-factory-agent-hub.json
+      AGENT_HUB_WEBHOOK_MODE: ${AGENT_HUB_WEBHOOK_MODE:-disabled}
+      AGENT_HUB_WEBHOOK_EXTERNAL_DELIVERY_ENABLED: ${AGENT_HUB_WEBHOOK_EXTERNAL_DELIVERY_ENABLED:-false}
+    networks: [video-factory-v2]
+
+  renderer:
+    restart: unless-stopped
+    networks: [video-factory-v2]
+
+  studio-web:
+    networks: [video-factory-v2]
+
+networks:
+  video-factory-v2:
+    name: npd-video-factory-v2
+    internal: false

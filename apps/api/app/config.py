@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib.parse import urlparse
 
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -92,6 +93,20 @@ class Settings(BaseSettings):
     tiktok_analytics_credential_ref: str = ""
     instagram_analytics_credential_ref: str = ""
     facebook_analytics_credential_ref: str = ""
+    agent_hub_bridge_enabled: bool = False
+    agent_hub_service_keys_file: Path = Path("/run/secrets/video-factory-agent-hub.json")
+    agent_hub_webhook_signing_keys_file: Path = Path("/run/secrets/video-factory-agent-hub.json")
+    agent_hub_webhook_mode: str = "disabled"
+    agent_hub_webhook_destination_ref: str = "agent-hub"
+    agent_hub_webhook_url: str = ""
+    agent_hub_webhook_allowed_hosts: str = "mkt.ngocphuongdong.com"
+    agent_hub_webhook_external_delivery_enabled: bool = False
+    agent_hub_webhook_timeout_seconds: float = 10.0
+    agent_hub_webhook_max_attempts: int = 3
+    agent_hub_webhook_retry_base_seconds: int = 30
+    agent_hub_webhook_retry_max_seconds: int = 900
+    service_auth_max_clock_skew_seconds: int = 300
+    service_auth_replay_ttl_seconds: int = 600
     human_approval_required: bool = True
 
     @model_validator(mode="after")
@@ -142,6 +157,44 @@ class Settings(BaseSettings):
             raise ValueError("ANALYTICS_RETRY_BASE_SECONDS must be positive")
         if self.analytics_retry_max_seconds < self.analytics_retry_base_seconds:
             raise ValueError("analytics retry maximum cannot be lower than the base delay")
+        if self.agent_hub_webhook_mode not in {"disabled", "fixture", "http"}:
+            raise ValueError("AGENT_HUB_WEBHOOK_MODE must be disabled, fixture or http")
+        if self.agent_hub_webhook_mode != "disabled" and not self.agent_hub_bridge_enabled:
+            raise ValueError("webhook delivery requires AGENT_HUB_BRIDGE_ENABLED=true")
+        if self.agent_hub_webhook_external_delivery_enabled and self.agent_hub_webhook_mode != "http":
+            raise ValueError("external webhook delivery requires AGENT_HUB_WEBHOOK_MODE=http")
+        if self.agent_hub_webhook_mode == "http":
+            if not self.agent_hub_webhook_external_delivery_enabled:
+                raise ValueError("HTTP webhook mode requires its explicit external delivery gate")
+            parsed = urlparse(self.agent_hub_webhook_url)
+            allowed_hosts = {host.strip().lower() for host in self.agent_hub_webhook_allowed_hosts.split(",") if host.strip()}
+            if parsed.scheme != "https" or not parsed.hostname or parsed.hostname.lower() not in allowed_hosts:
+                raise ValueError("Agent Hub webhook URL must use HTTPS and an allowlisted host")
+            if parsed.username or parsed.password:
+                raise ValueError("Agent Hub webhook URL must not contain credentials")
+            if (
+                parsed.path != "/agent-hub/events/v1"
+                or parsed.params
+                or parsed.query
+                or parsed.fragment
+            ):
+                raise ValueError(
+                    "Agent Hub webhook URL must use the exact versioned event path without query data"
+                )
+        if self.app_env.lower() in {"ci", "test"} and self.agent_hub_webhook_external_delivery_enabled:
+            raise ValueError("CI and test environments prohibit external Agent Hub webhooks")
+        if self.app_env.lower() == "production" and self.agent_hub_webhook_mode == "fixture":
+            raise ValueError("fixture Agent Hub webhooks are prohibited in production")
+        if not 1 <= self.agent_hub_webhook_max_attempts <= 10:
+            raise ValueError("AGENT_HUB_WEBHOOK_MAX_ATTEMPTS must be between 1 and 10")
+        if self.agent_hub_webhook_retry_base_seconds < 1:
+            raise ValueError("Agent Hub webhook retry base must be positive")
+        if self.agent_hub_webhook_retry_max_seconds < self.agent_hub_webhook_retry_base_seconds:
+            raise ValueError("Agent Hub webhook retry maximum cannot be lower than the base delay")
+        if not 30 <= self.service_auth_max_clock_skew_seconds <= 900:
+            raise ValueError("service auth clock skew must be between 30 and 900 seconds")
+        if self.service_auth_replay_ttl_seconds < self.service_auth_max_clock_skew_seconds:
+            raise ValueError("service auth replay TTL cannot be shorter than the clock-skew window")
         if self.app_env == "production" and self.trend_fixture_enabled:
             raise ValueError("deterministic trend fixtures must be disabled in production")
         if self.app_env == "production" and self.auto_edit_fixture_enabled:

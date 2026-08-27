@@ -193,6 +193,29 @@ jobs:
           grep -q '0009_v2_10' apps/api/migrations/versions/0009_v2_10_analytics_learning.py
           grep -Fq 'CheckConstraint("external_call = false"' apps/api/app/analytics_db.py
           ! git grep -I -n -E '^(ANALYTICS_EXTERNAL_EXECUTION_ENABLED=true|ANALYTICS_SCHEDULED_REFRESH_ENABLED=true|YOUTUBE_ANALYTICS_CREDENTIAL_REF=.+|TIKTOK_ANALYTICS_CREDENTIAL_REF=.+|INSTAGRAM_ANALYTICS_CREDENTIAL_REF=.+|FACEBOOK_ANALYTICS_CREDENTIAL_REF=.+)$' -- .env.example apps services packages
+      - name: Verify V2-11 Agent Hub bridge and production hardening boundary
+        run: |
+          grep -Fq 'WEBHOOK_QUEUE_KEY = "npd:video-factory:v2:bridge:webhooks:queued"' apps/api/app/bridge_service.py
+          grep -Fq 'execution_started: Literal[False] = False' apps/api/app/bridge_models.py
+          grep -Fq 'external_action_requested: Literal[False] = False' apps/api/app/bridge_models.py
+          grep -Fq 'CheckConstraint("execution_started = false"' apps/api/app/bridge_db.py
+          grep -Fq 'hmac.compare_digest' apps/api/app/bridge_auth.py
+          grep -q '0010_v2_11' apps/api/migrations/versions/0010_v2_11_agent_hub_bridge.py
+          python -c 'import json; from pathlib import Path; schema=json.loads(Path("packages/contracts/agent-hub-bridge.v1.schema.json").read_text()); assert schema["properties"]["contract_version"]["const"] == "agent-hub-bridge.v1"; assert schema["additionalProperties"] is False'
+          grep -qx 'AGENT_HUB_BRIDGE_ENABLED=false' .env.example
+          grep -qx 'AGENT_HUB_WEBHOOK_MODE=disabled' .env.example
+          grep -qx 'AGENT_HUB_WEBHOOK_EXTERNAL_DELIVERY_ENABLED=false' .env.example
+          ! git grep -I -n -E '^(AGENT_HUB_BRIDGE_ENABLED=true|AGENT_HUB_WEBHOOK_MODE=http|AGENT_HUB_WEBHOOK_EXTERNAL_DELIVERY_ENABLED=true)$' -- .env.example
+          ! git grep -I -n -E 'services/agent_hub|from .*agent_hub|import .*agent_hub|AGENT_REDIS|AGENT_STORE' -- apps services docker-compose.yml deploy
+      - name: Validate V2-11 deployment bundle
+        env:
+          VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json
+        run: |
+          install -m 0600 deploy/testing/disabled-agent-hub.json "$VIDEO_FACTORY_AGENT_HUB_KEYS_FILE"
+          docker compose -f docker-compose.yml -f deploy/production/docker-compose.production.yml config --quiet
+          bash -n scripts/v2-11-preflight.sh scripts/v2-11-backup.sh scripts/v2-11-restore.sh scripts/v2-11-deploy.sh scripts/v2-11-smoke.sh scripts/v2-11-soak.sh
+          services="$(docker compose -f docker-compose.yml -f deploy/production/docker-compose.production.yml config --services)"
+          ! grep -Eq '^(agent-hub|agent_hub|caddy|n8n)$' <<<"$services"
       - name: Secret pattern scan
         run: |
           if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
@@ -215,7 +238,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v2-10-analytics-learning-e2e
+          name: v2-11-agent-hub-bridge-e2e
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 7

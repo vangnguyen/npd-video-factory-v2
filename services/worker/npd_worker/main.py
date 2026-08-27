@@ -15,6 +15,15 @@ from app.analytics_service import (
     ANALYTICS_SYNC_QUEUE_KEY,
     AnalyticsSyncProcessor,
 )
+from app.bridge_auth import SigningKeyring
+from app.bridge_repository import BridgeRepository
+from app.bridge_service import (
+    WEBHOOK_PROCESSING_KEY,
+    WEBHOOK_QUEUE_KEY,
+    WebhookDeliveryProcessor,
+    create_webhook_provider,
+    webhook_scheduler,
+)
 from app.auto_edit_repository import AutoEditRepository
 from app.media_intelligence_repository import MediaIntelligenceRepository
 from app.media_intelligence_service import (
@@ -135,6 +144,21 @@ async def recover_analytics_sync_jobs(
     return len(identifiers)
 
 
+async def recover_webhook_deliveries(redis: Redis, repository: BridgeRepository) -> int:
+    inflight = await redis.lrange(WEBHOOK_PROCESSING_KEY, 0, -1)
+    pending = await repository.recover_incomplete_delivery_ids()
+    identifiers = list(dict.fromkeys([*inflight, *pending]))
+    async with redis.pipeline(transaction=True) as pipe:
+        pipe.delete(WEBHOOK_PROCESSING_KEY)
+        for identifier in identifiers:
+            pipe.lrem(WEBHOOK_QUEUE_KEY, 0, identifier)
+            pipe.rpush(WEBHOOK_QUEUE_KEY, identifier)
+        await pipe.execute()
+    if identifiers:
+        logger.warning("recovered_agent_hub_webhooks count=%d", len(identifiers))
+    return len(identifiers)
+
+
 async def run_video_queue(
     redis: Redis,
     store: PostgresJobStore,
@@ -248,6 +272,21 @@ async def run_analytics_due_scheduler(redis: Redis, repository: AnalyticsReposit
         await asyncio.sleep(5)
 
 
+async def run_webhook_queue(redis: Redis, processor: WebhookDeliveryProcessor) -> None:
+    while True:
+        delivery_id = await redis.brpoplpush(WEBHOOK_QUEUE_KEY, WEBHOOK_PROCESSING_KEY, timeout=5)
+        if delivery_id is None:
+            continue
+        logger.info("agent_hub_webhook_claimed delivery_id=%s", delivery_id)
+        try:
+            result = await processor.process(delivery_id)
+            logger.info("agent_hub_webhook_completed delivery_id=%s status=%s", delivery_id, result.status)
+        except Exception:
+            logger.exception("agent_hub_webhook_worker_error delivery_id=%s", delivery_id)
+        finally:
+            await redis.lrem(WEBHOOK_PROCESSING_KEY, 1, delivery_id)
+
+
 async def main() -> None:
     redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
     redis = Redis.from_url(redis_url, decode_responses=True)
@@ -263,6 +302,7 @@ async def main() -> None:
     production_repository = ProductionRepository(session_factory)
     publishing_repository = PublishingRepository(session_factory)
     analytics_repository = AnalyticsRepository(session_factory)
+    bridge_repository = BridgeRepository(session_factory)
     store = PostgresJobStore(
         session_factory,
         redis,
@@ -327,16 +367,35 @@ async def main() -> None:
     await recover_preview_jobs(redis, timeline_repository)
     await recover_production_render_jobs(redis, production_repository)
     await recover_analytics_sync_jobs(redis, analytics_repository)
+    webhook_processor = None
+    if settings.agent_hub_bridge_enabled and settings.agent_hub_webhook_mode != "disabled":
+        webhook_signer = SigningKeyring.from_file(settings.agent_hub_webhook_signing_keys_file)
+        webhook_processor = WebhookDeliveryProcessor(
+            repository=bridge_repository,
+            signer=webhook_signer,
+            provider=create_webhook_provider(settings, webhook_signer),
+            retry_base_seconds=settings.agent_hub_webhook_retry_base_seconds,
+            retry_max_seconds=settings.agent_hub_webhook_retry_max_seconds,
+        )
+        await recover_webhook_deliveries(redis, bridge_repository)
     logger.info("worker_booted queue=%s processing=%s", QUEUE_KEY, PROCESSING_KEY)
     try:
-        await asyncio.gather(
+        tasks = [
             run_video_queue(redis, store, config=config),
             run_media_resolution_queue(redis, media_resolution_service),
             run_preview_queue(redis, preview_service),
             run_production_render_queue(redis, production_render_service),
             run_analytics_sync_queue(redis, analytics_processor),
             run_analytics_due_scheduler(redis, analytics_repository),
-        )
+        ]
+        if webhook_processor is not None:
+            tasks.extend(
+                [
+                    run_webhook_queue(redis, webhook_processor),
+                    webhook_scheduler(bridge_repository, redis),
+                ]
+            )
+        await asyncio.gather(*tasks)
     finally:
         await redis.aclose()
         await engine.dispose()

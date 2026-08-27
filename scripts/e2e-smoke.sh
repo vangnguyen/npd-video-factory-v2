@@ -39,11 +39,47 @@ cleanup() {
     rm -f .env
   fi
   [[ -z "$env_backup" ]] || rm -f "$env_backup"
+  rm -f storage/e2e-agent-hub-keys.json
 }
 trap cleanup EXIT
 
 mkdir -p e2e-artifacts storage/assets/vinhomes-green-paradise storage/jobs
 cp .env.example .env
+
+# Ephemeral deterministic HMAC material exists only for this disposable E2E stack.
+# It is mounted read-only, removed on exit and never copied into acceptance artifacts.
+"$PYTHON_BIN" - <<'PY'
+import base64
+import json
+from pathlib import Path
+
+key_v1 = b"v2-11-e2e-inbound-key-at-least-32-bytes"
+key_v2 = b"v2-11-e2e-outbound-key-at-least-32-bytes"
+Path("storage/e2e-agent-hub-keys.json").write_text(
+    json.dumps(
+        {
+            "version": 1,
+            "service_identities": {
+                "agent-hub-e2e": {
+                    "roles": ["service"],
+                    "keys": {"inbound-v1": base64.b64encode(key_v1).decode("ascii")},
+                }
+            },
+            "webhook_signing": {
+                "active_key_id": "outbound-v2",
+                "keys": {"outbound-v2": base64.b64encode(key_v2).decode("ascii")},
+            },
+        },
+        sort_keys=True,
+    ),
+    encoding="utf-8",
+)
+PY
+chmod 0600 storage/e2e-agent-hub-keys.json
+printf '%s\n' \
+  'VIDEO_FACTORY_AGENT_HUB_KEYS_FILE=./storage/e2e-agent-hub-keys.json' \
+  'AGENT_HUB_BRIDGE_ENABLED=true' \
+  'AGENT_HUB_WEBHOOK_MODE=fixture' >>.env
 
 # Copyright-safe, visibly distinct PNG fixtures. A previous 1x1 fixture encoded
 # an opaque black pixel, which let a black video pass metadata-only QC.
@@ -83,6 +119,103 @@ if ! curl --fail --silent --show-error --head http://localhost:3000/studio-utils
   echo "Auto Edit Studio ES module MIME check failed" >&2
   exit 1
 fi
+
+echo "[e2e] exercising V2-11 signed Agent Hub bridge"
+unsigned_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+  http://localhost:8000/api/v1/bridge/contract)"
+if [[ "$unsigned_status" != "400" && "$unsigned_status" != "401" ]]; then
+  echo "Unsigned bridge request did not fail closed: HTTP $unsigned_status" >&2
+  exit 1
+fi
+"$PYTHON_BIN" - <<'PY'
+import hashlib
+import hmac
+import json
+import time
+import urllib.request
+from pathlib import Path
+
+base = "http://localhost:8000"
+service_id = "agent-hub-e2e"
+key_id = "inbound-v1"
+key = b"v2-11-e2e-inbound-key-at-least-32-bytes"
+
+def call(method, path, payload=None, nonce="nonce"):
+    body = b"" if payload is None else json.dumps(
+        payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    timestamp = int(time.time())
+    content_hash = hashlib.sha256(body).hexdigest()
+    canonical = "\n".join((method, path, "", str(timestamp), nonce, content_hash))
+    signature = hmac.new(key, canonical.encode("utf-8"), hashlib.sha256).hexdigest()
+    headers = {
+        "X-NPD-Service-Id": service_id,
+        "X-NPD-Key-Id": key_id,
+        "X-NPD-Timestamp": str(timestamp),
+        "X-NPD-Nonce": nonce,
+        "X-NPD-Content-SHA256": content_hash,
+        "X-NPD-Signature": signature,
+        "X-NPD-Contract-Version": "agent-hub-bridge.v1",
+    }
+    if payload is not None:
+        headers["Content-Type"] = "application/json"
+    request = urllib.request.Request(base + path, data=body if payload is not None else None, headers=headers, method=method)
+    with urllib.request.urlopen(request, timeout=10) as response:
+        return json.load(response)
+
+project_request = {
+    "workspace_id": None,
+    "slug": "v2-11-agent-hub-e2e",
+    "name": "V2-11 Agent Hub E2E",
+    "niche": "real_estate",
+    "source_campaign_id": "CMP-V2-11-E2E",
+    "brief": {"objective": "contract_acceptance", "fixture": True},
+    "execution_mode": "draft_only",
+    "start_pipeline": False,
+    "publish_requested": False,
+    "external_action_requested": False,
+}
+body = json.dumps(project_request, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+timestamp = int(time.time())
+content_hash = hashlib.sha256(body).hexdigest()
+path = "/api/v1/bridge/project-requests"
+canonical = "\n".join(("POST", path, "", str(timestamp), "project-create-0001", content_hash))
+headers = {
+    "X-NPD-Service-Id": service_id,
+    "X-NPD-Key-Id": key_id,
+    "X-NPD-Timestamp": str(timestamp),
+    "X-NPD-Nonce": "project-create-0001",
+    "X-NPD-Content-SHA256": content_hash,
+    "X-NPD-Signature": hmac.new(key, canonical.encode("utf-8"), hashlib.sha256).hexdigest(),
+    "X-NPD-Contract-Version": "agent-hub-bridge.v1",
+    "Idempotency-Key": "v2-11-docker-e2e-project-0001",
+    "Content-Type": "application/json",
+}
+request = urllib.request.Request(base + path, data=body, headers=headers, method="POST")
+with urllib.request.urlopen(request, timeout=10) as response:
+    created = json.load(response)
+Path("e2e-artifacts/bridge-project-created.json").write_text(json.dumps(created, indent=2, ensure_ascii=False), encoding="utf-8")
+assert created["project"]["status"] == "draft", created
+assert created["bridge_request"]["execution_started"] is False, created
+assert created["bridge_request"]["external_action"] is False, created
+
+deliveries = []
+for attempt in range(30):
+    deliveries = call("GET", "/api/v1/bridge/webhook-deliveries", nonce=f"delivery-poll-{attempt:04d}")
+    if deliveries and deliveries[0]["status"] == "succeeded":
+        break
+    time.sleep(1)
+assert deliveries and deliveries[0]["status"] == "succeeded", deliveries
+assert deliveries[0]["provider_mode"] == "fixture" and deliveries[0]["external_call"] is False, deliveries
+assert deliveries[0]["key_id"] == "outbound-v2", deliveries
+assert isinstance(deliveries[0]["signed_at_unix"], int), deliveries
+assert deliveries[0]["receipt"]["signed_at_unix"] == deliveries[0]["signed_at_unix"], deliveries
+Path("e2e-artifacts/bridge-deliveries-before-restart.json").write_text(json.dumps(deliveries, indent=2), encoding="utf-8")
+events = call("GET", "/api/v1/bridge/events", nonce="event-history-0001")
+assert events[0]["event_type"] == "video.project.created" and events[0]["contains_secret"] is False, events
+Path("e2e-artifacts/bridge-events-before-restart.json").write_text(json.dumps(events, indent=2), encoding="utf-8")
+print("[e2e] V2-11 service auth, draft boundary and signed webhook verified")
+PY
 
 expected_duration="$("$PYTHON_BIN" -c 'import json; print(json.load(open("examples/vinhomes-green-paradise.request.json", encoding="utf-8"))["video"]["duration_seconds"])')"
 echo "[e2e] creating ${expected_duration}-second video job"
@@ -1128,6 +1261,41 @@ if [[ "$ready" != "1" ]]; then
   echo "API did not recover after restart" >&2
   exit 1
 fi
+"$PYTHON_BIN" - <<'PY'
+import hashlib
+import hmac
+import json
+import time
+import urllib.request
+from pathlib import Path
+
+key = b"v2-11-e2e-inbound-key-at-least-32-bytes"
+def get(path, nonce):
+    timestamp = int(time.time())
+    content_hash = hashlib.sha256(b"").hexdigest()
+    canonical = "\n".join(("GET", path, "", str(timestamp), nonce, content_hash))
+    headers = {
+        "X-NPD-Service-Id": "agent-hub-e2e",
+        "X-NPD-Key-Id": "inbound-v1",
+        "X-NPD-Timestamp": str(timestamp),
+        "X-NPD-Nonce": nonce,
+        "X-NPD-Content-SHA256": content_hash,
+        "X-NPD-Signature": hmac.new(key, canonical.encode("utf-8"), hashlib.sha256).hexdigest(),
+        "X-NPD-Contract-Version": "agent-hub-bridge.v1",
+    }
+    with urllib.request.urlopen(urllib.request.Request("http://localhost:8000" + path, headers=headers), timeout=10) as response:
+        return json.load(response)
+
+deliveries = get("/api/v1/bridge/webhook-deliveries", "delivery-after-restart-0001")
+events = get("/api/v1/bridge/events", "events-after-restart-0001")
+Path("e2e-artifacts/bridge-deliveries-after-restart.json").write_text(json.dumps(deliveries, indent=2), encoding="utf-8")
+Path("e2e-artifacts/bridge-events-after-restart.json").write_text(json.dumps(events, indent=2), encoding="utf-8")
+before_deliveries = json.loads(Path("e2e-artifacts/bridge-deliveries-before-restart.json").read_text(encoding="utf-8"))
+before_events = json.loads(Path("e2e-artifacts/bridge-events-before-restart.json").read_text(encoding="utf-8"))
+assert deliveries == before_deliveries, (before_deliveries, deliveries)
+assert events == before_events, (before_events, events)
+print("[e2e] V2-11 bridge PostgreSQL recovery verified")
+PY
 curl --fail --silent --show-error "http://localhost:8000/api/v1/video-jobs/$job_id" > e2e-artifacts/job-status-after-restart.json
 curl --fail --silent --show-error "http://localhost:8000/api/v1/workspaces/$workspace_id/content-opportunities" > e2e-artifacts/content-opportunity-queue-after-restart.json
 curl --fail --silent --show-error \
