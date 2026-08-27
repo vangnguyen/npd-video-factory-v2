@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-SEC-002-PARTIAL",
+  "test_case_id": "SEC-002-PARTIAL",
+  "matrix_rows": [
+    "UPL-01",
+    "OPS-02"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "9635fb3ecf5d5fc5ba20aef3486708bad5960b8b",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "local-upload-ingress",
+    "model_or_workflow": "bounded-validation-and-valid-session-rate-control",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "c8f1f25583acccddfbd869b1fa1241535d7906a3b0de6cc491dd90d817187f56",
+  "started_at_utc": "2026-08-27T14:04:00Z",
+  "completed_at_utc": "2026-08-27T14:10:51Z",
+  "duration_seconds": 411,
+  "result": "BLOCKED",
+  "assertion": "Path, MIME, fake-extension, archive-signature, size, URL-import denial and argv-safety tests pass, and valid human sessions are rate limited; malware scanning/quarantine, decompression-resource acceptance and production ingress controls remain untested for V3-01-03.",
+  "correlation_id": "v3-01-01-local-ingress-9635fb3",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex local security reviewer",
+  "gap_ids": [
+    "V3-01-GAP-011"
+  ],
+  "reproduce": "Run the Python security and Auto Edit suites plus disposable Docker E2E recorded in security/test-summary.json; do not enable URL import, public ingress or external execution."
+}

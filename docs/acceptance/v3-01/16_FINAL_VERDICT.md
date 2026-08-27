@@ -4,7 +4,7 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: V3-01-00 read-only baseline, static/mock audit and redacted evidence harness
+SCOPE: V3-01-00 baseline plus V3-01-01 local/CI identity-ingress remediation
 RELEASE CANDIDATE: NOT ESTABLISHED
 EVIDENCE RUN: vf-v3-01-20260827T120208Z-cae40ed
 DATE: 2026-08-27
@@ -19,26 +19,26 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Area | Result |
 |---|---|
 | Matrix catalog | 60 rows present |
-| Implemented axis | 39 PASS, 21 FAIL |
-| Mock-tested axis | 48 PASS, 4 FAIL, 8 NOT_TESTED |
+| Implemented axis | 40 PASS, 20 FAIL |
+| Mock-tested axis | 49 PASS, 4 FAIL, 7 NOT_TESTED |
 | Real-provider-tested axis | 37 NOT_TESTED, 23 N/A |
 | Production-path-tested axis | 60 NOT_TESTED |
 | Quality-accepted axis | 36 NOT_TESTED, 24 N/A |
 | Flow A | BLOCKED; deterministic path only |
 | Flow B | BLOCKED; research/providers/rights/quality incomplete |
 | Flow C | BLOCKED; dry-run only, no official publish/analytics adapter acceptance |
-| Security | NO-GO for public ingress; interactive auth/RBAC missing |
+| Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
 | Cost | 0 VND actual, 0 external calls; global cost controls incomplete |
 | Rights/provenance | real-asset acceptance absent |
 | Backup/restore | helpers exist; no isolated drill |
 | Observability/soak | no production-like monitoring or 48-hour run |
-| Gaps | P0=10, P1=5, P2=1 |
+| Gaps | 14 OPEN, 1 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
 | Allowed scope | LOCAL/CI remediation, static/mock/security tests, redacted evidence, draft PRs |
 | Disabled scope | merge, deploy, paid/provider calls, public ingress, publish, analytics writes |
 
 ## Critical failures
 
-- no interactive authentication/RBAC/workspace isolation;
+- identity/RBAC remediation is unmerged and lacks production-path verification;
 - no production-like target, deployed image digest, backup or DR drill;
 - no owner-approved real provider, rights, budget or production Vietnamese voice evidence;
 - no official publish/analytics acceptance;
@@ -56,6 +56,10 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - analytics snapshot IDs: none;
 - restore report: none; `EV-V3-DR-001` is BLOCKED static evidence;
 - owner approval IDs: `V3-01-APP-001` for G-00 only.
+
+V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
+`EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
+not supersede the baseline run.
 
 ## Open gaps and remediation
 

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "scope": "V3-01-01 identity and ingress safety on locked code commit",
+  "commit_sha": "9635fb3ecf5d5fc5ba20aef3486708bad5960b8b",
+  "base_sha": "b6686ab5a9740770bae991d79fc8b2ea062a54b4",
+  "environment": "LOCAL_AND_DISPOSABLE_DOCKER",
+  "results": {
+    "python_api_worker_bridge": {
+      "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+      "passed": 142,
+      "failed": 0
+    },
+    "studio": {
+      "command": "npm test in apps/studio-web plus JavaScript syntax checks",
+      "passed": 14,
+      "failed": 0
+    },
+    "renderer": {
+      "command": "npm test, npm run typecheck, npm run bundle:check in renderer",
+      "passed": 14,
+      "failed": 0,
+      "typecheck": "PASS",
+      "bundle_check": "PASS"
+    },
+    "docker_e2e": {
+      "command": "bash scripts/e2e-smoke.sh",
+      "result": "PASS",
+      "checks": [
+        "unauthenticated API returns 401",
+        "session response is secret-safe",
+        "human RBAC and workspace denial remain enforced",
+        "Agent Hub HMAC bridge remains independently authenticated",
+        "pipeline, approval, dry-run publishing, analytics and restart recovery pass",
+        "decoded video and audio QC pass"
+      ]
+    },
+    "compose_and_static": {
+      "development_compose": "PASS",
+      "production_compose": "PASS",
+      "python_compile": "PASS",
+      "javascript_syntax": "PASS",
+      "shell_syntax": "PASS",
+      "git_diff_check": "PASS"
+    }
+  },
+  "security_controls": {
+    "human_route_authentication": "PASS",
+    "viewer_editor_reviewer_owner_rbac": "PASS",
+    "cross_workspace_not_found_contract": "PASS",
+    "expiry_revocation_and_registry_change": "PASS",
+    "valid_session_rate_limit": "PASS",
+    "human_write_emergency_switch": "PASS",
+    "raw_session_secret_committed": false,
+    "url_import_enabled": false,
+    "path_fake_extension_archive_size_and_argv_tests": "PASS",
+    "malware_scanner_and_quarantine": "BLOCKED_FOR_V3_01_03",
+    "production_waf_and_public_ingress": "NOT_TESTED"
+  },
+  "external_calls": 0,
+  "cost": {
+    "currency": "VND",
+    "actual": 0
+  },
+  "secret_recorded": false
+}

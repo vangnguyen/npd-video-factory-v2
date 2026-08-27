@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "scope": "V3-01-01 identity and ingress safety",
+  "commit_sha": "9635fb3ecf5d5fc5ba20aef3486708bad5960b8b",
+  "identity_rbac_workspace_isolation": "PASS_LOCAL_CI",
+  "upload_ingress_security": "PARTIAL",
+  "production_path": "NOT_TESTED",
+  "public_ingress_authorized": false,
+  "human_writes_enabled_in_production_contract": false,
+  "real_provider_calls": 0,
+  "cost_vnd": 0,
+  "g08_merge_gate": "PENDING",
+  "overall_v3_verdict": "NO_GO",
+  "secret_recorded": false
+}

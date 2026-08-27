@@ -108,3 +108,11 @@ Current checked-in production override deliberately selects contract-only or dis
 
 Evidence: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`, `EV-V3-SAFETY-001`,
 `EV-V3-DR-001`.
+
+## V3-01-01 remediation checkpoint
+
+The historical baseline above remains unchanged. A stacked remediation branch now locks human
+identity/ingress code at `9635fb3ecf5d5fc5ba20aef3486708bad5960b8b`. Local/CI and disposable
+Docker evidence passes for external hash-only sessions, RBAC, workspace isolation, Studio session
+handling and valid-session rate limiting. This checkpoint is unmerged, undeployed and not a release
+candidate; public ingress, credentials, real providers and publishing remain prohibited.

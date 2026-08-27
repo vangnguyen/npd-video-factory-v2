@@ -1,6 +1,7 @@
 # V3-01 acceptance matrix
 
-Snapshot state: `2026-08-27T12:02:08Z`. `I/M/R/P/Q` mean implemented, mock-tested,
+Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 remediation evidence was added on
+`2026-08-27`. `I/M/R/P/Q` mean implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
 
@@ -9,7 +10,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | ID | Capability | I | M | R | P | Q | Evidence | Gaps |
 |---|---|---|---|---|---|---|---|---|
 | FND-01 | Intake API / project creation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007 |
-| FND-02 | Authentication, RBAC, workspace isolation | FAIL | NOT_TESTED | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001 | GAP-001 |
+| FND-02 | Authentication, RBAC, workspace isolation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-SEC-001 | GAP-001 |
 | FND-03 | Durable job state machine | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007 |
 | FND-04 | Retry, resume, cancellation, idempotency | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007 |
 | FND-05 | PostgreSQL metadata persistence | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007 |
@@ -17,7 +18,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | FND-07 | Object storage and signed asset access | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007 |
 | FND-08 | Artifact registry, versioning, hashing | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007 |
 | FND-09 | Worker orchestration and stage isolation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007 |
-| FND-10 | Studio UI / status / recovery | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-001; GAP-007 |
+| FND-10 | Studio UI / status / recovery | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-001 | GAP-001; GAP-007 |
 | TRD-01 | Permitted trend source adapters | PASS | PASS | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-006 |
 | TRD-02 | Signal normalization and snapshots | PASS | PASS | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-006 |
 | TRD-03 | Trend clustering and lifecycle | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-006 |
@@ -27,7 +28,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | RES-01 | Research / evidence ledger | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001 | GAP-002 |
 | SCR-01 | Script generation and versioning | FAIL | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-002 |
 | SCR-02 | Storyboard and media plan | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-004 |
-| UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007; GAP-011 |
+| UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-002-PARTIAL | GAP-007; GAP-011 |
 | ASR-01 | Real transcription provider | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-003 |
 | EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
@@ -59,7 +60,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | WIN-01 | Winner detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-006 |
 | LRN-01 | Learning feedback | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SAFETY-001 | GAP-006 |
 | OPS-01 | Provider health/retry/circuit breaker | FAIL | FAIL | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-010 |
-| OPS-02 | Secret management / least privilege | FAIL | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-001; GAP-007 |
+| OPS-02 | Secret management / least privilege | FAIL | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-001; EV-V3-SEC-002-PARTIAL | GAP-001; GAP-007; GAP-011 |
 | OPS-03 | Cost budgets / kill switch | FAIL | FAIL | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-010 |
 | OPS-04 | Rights and provenance ledger | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-013 |
 | OPS-05 | Logs/metrics/traces/alerts | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001 | GAP-009 |
@@ -72,6 +73,9 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 ## Interpretation
 
 - `PASS` under I/M proves only current code and deterministic tests.
+- V3-01-01 changes the implemented count to `40 PASS / 20 FAIL` and the mock-tested count to
+  `49 PASS / 4 FAIL / 7 NOT_TESTED`; it does not change any real-provider, production-path or
+  quality axis.
 - All real-provider, production-path and human quality work remains unproven.
 - `N/A` is used only where the master matrix defines an axis as structurally inapplicable; it does
   not remove the need for G-00 scope approval.

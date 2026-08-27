@@ -4,6 +4,9 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
+The V3-01-01 delta is locked to `9635fb3ecf5d5fc5ba20aef3486708bad5960b8b`; entries below that
+mention human identity describe this unmerged remediation, not the historical base or production.
+
 ## Foundation
 
 | Capability | Primary code | Existing tests/evidence | Audit result |
@@ -12,8 +15,8 @@ production-path or human-quality acceptance.
 | Durable state/audit | `db.py`, `state.py`, `repositories.py`, migrations `0001`-`0010` | `test_durable_platform.py`, Alembic CI | Implemented/mock-tested |
 | Redis queues/recovery | API services and `services/worker/npd_worker/main.py` | worker recovery suites, Docker E2E | Implemented/mock-tested |
 | Object storage/assets | `object_storage.py`, `artifacts.py`, `platform_models.py` | artifact and MinIO recovery tests | Implemented/mock-tested |
-| Interactive auth/RBAC | bridge HMAC only in `bridge_auth.py`; no human auth dependency on normal routers | V2-11 explicitly records the limit | Missing for production |
-| Studio | `apps/studio-web` | 12 Studio tests on latest main CI | Implemented locally; unauthenticated |
+| Interactive auth/RBAC | `human_auth.py`, normal-router dependency, external hash-only registry | `test_human_identity_ingress.py`, Docker E2E | Implemented/mock-tested on V3-01-01; production untested |
+| Studio | `apps/studio-web/auth.mjs`, authenticated API wrapper and login shell | 14 Studio tests plus Docker E2E | Authenticated locally; production untested |
 
 ## Trend, ideas and content
 
@@ -63,6 +66,7 @@ production-path or human-quality acceptance.
 | Capability | Primary code/docs | Existing tests/evidence | Audit result |
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
+| Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
 | Cost | VND provider/cost records and selected budget checks | platform/media tests | No global cap/circuit breaker/alerts |
 | Rights/provenance | asset/media models and publishing validation | fixture rights tests | Schema implemented; real rights unaccepted |
 | Backup/restore | `v2-11-backup.sh`, `v2-11-restore.sh` | syntax/config only | No drill |
