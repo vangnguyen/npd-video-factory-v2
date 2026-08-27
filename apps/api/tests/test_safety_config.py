@@ -59,6 +59,7 @@ def test_v3_01_human_auth_config_bounds_and_production_boundary() -> None:
             object_storage_provider="s3",
             object_storage_access_key="test-access-key",
             object_storage_secret_key="test-secret-key",
+            media_malware_scanner_mode="disabled",
         )
 
 
@@ -89,6 +90,7 @@ def test_v2_04_allows_all_fixture_providers_to_be_disabled_in_production() -> No
         object_storage_provider="s3",
         object_storage_access_key="test-access-key",
         object_storage_secret_key="test-secret-key",
+        media_malware_scanner_mode="disabled",
     )
 
     assert production.trend_fixture_enabled is False
@@ -221,12 +223,12 @@ def test_v2_06_paid_and_comfyui_execution_require_explicit_parent_gates() -> Non
         Settings(_env_file=None, image_generation_provider="comfyui")
 
 
-def test_v3_01_02_global_provider_gate_is_vnd_only_and_cannot_be_activated() -> None:
+def test_v3_01_03_global_provider_gate_is_vnd_only_and_cannot_be_activated() -> None:
     with pytest.raises(ValidationError, match="must be VND"):
         Settings(_env_file=None, provider_budget_currency="USD")
     with pytest.raises(ValidationError, match="G-02 owner gate"):
         Settings(_env_file=None, provider_per_operation_limit_vnd=1, provider_daily_limit_vnd=1)
-    with pytest.raises(ValidationError, match="not activated in V3-01-02"):
+    with pytest.raises(ValidationError, match="not activated in V3-01-03"):
         Settings(_env_file=None, provider_external_execution_enabled=True)
     with pytest.raises(ValidationError, match="kill switch must remain engaged"):
         Settings(_env_file=None, provider_global_kill_switch_engaged=False)
@@ -234,6 +236,36 @@ def test_v3_01_02_global_provider_gate_is_vnd_only_and_cannot_be_activated() -> 
         Settings(_env_file=None, provider_request_timeout_seconds=0)
     with pytest.raises(ValidationError, match="MAX_CONCURRENT_CALLS"):
         Settings(_env_file=None, provider_max_concurrent_calls=0)
+    with pytest.raises(ValidationError, match="must cover retry/timeout bounds"):
+        Settings(_env_file=None, provider_operation_lease_seconds=60)
+    with pytest.raises(ValidationError, match="between 30 and 3650"):
+        Settings(_env_file=None, provider_operation_retention_days=29)
+    with pytest.raises(ValidationError, match="ledger deletion is not activated"):
+        Settings(_env_file=None, provider_retention_cleanup_enabled=True)
+
+
+def test_v3_01_03_malware_scanner_config_is_fail_closed() -> None:
+    with pytest.raises(ValidationError, match="must be disabled, fixture or clamd"):
+        Settings(_env_file=None, media_malware_scanner_mode="external")
+    with pytest.raises(ValidationError, match="clamd mode requires"):
+        Settings(_env_file=None, media_malware_scanner_mode="clamd", media_malware_scanner_host="")
+    with pytest.raises(ValidationError, match="deterministic malware scanning is prohibited"):
+        Settings(
+            _env_file=None,
+            app_env="production",
+            trend_fixture_enabled=False,
+            auto_edit_fixture_enabled=False,
+            vision_fixture_enabled=False,
+            media_fixture_enabled=False,
+            analytics_fixture_enabled=False,
+            transcription_provider="contract",
+            auto_edit_signal_provider="ffmpeg",
+            vision_provider="contract",
+            object_storage_provider="s3",
+            object_storage_access_key="test-access-key",
+            object_storage_secret_key="test-secret-key",
+            media_malware_scanner_mode="fixture",
+        )
 
 
 @pytest.mark.asyncio
@@ -292,7 +324,14 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["media_external_execution_enabled"] is False
     assert result["media_paid_execution_enabled"] is False
     assert result["provider_safety_plane"] == "enforced"
+    assert result["provider_safety_state_backend"] == "postgresql"
     assert result["provider_external_execution_enabled"] is False
     assert result["provider_paid_execution_enabled"] is False
     assert result["provider_global_kill_switch_engaged"] is True
     assert result["provider_budget_currency"] == "VND"
+    assert result["provider_ledger_retention_days"] == 400
+    assert result["provider_ledger_cleanup_enabled"] is False
+    assert result["upload_quarantine_required"] is True
+    assert result["upload_malware_scanner_mode"] == "fixture"
+    assert result["archive_ingestion_enabled"] is False
+    assert result["public_ingress_approved"] is False

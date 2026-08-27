@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-MEDIA-SECURITY-001",
+  "test_case_id": "SEC-002",
+  "matrix_rows": [
+    "UPL-01",
+    "OPS-02"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "0f0854466655d2f36cfa8b57785000097b220c4c",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "internal-media-security-contract",
+    "model_or_workflow": "quarantine-eicar-archive-deny-v1",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "fb61fd2ce572b6bdad6c1b9e8bd3bc7b0b5da1fc85381045ff02a4c4608302b9",
+  "started_at_utc": "2026-08-27T16:43:00Z",
+  "completed_at_utc": "2026-08-27T16:58:13Z",
+  "duration_seconds": 913,
+  "result": "PASS",
+  "assertion": "Local tests prove quarantine-before-decoder, clean-only trusted promotion, EICAR rejection, archive-signature rejection without decompression and fail-closed scanner-unavailable behavior. The clean upload path also passed disposable Docker E2E. Internal clamd, signature updates, public ingress, WAF and production quarantine operation remain NOT_TESTED.",
+  "correlation_id": "v3-01-03-local-media-security-0f08544",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex local media-security reviewer",
+  "gap_ids": [
+    "V3-01-GAP-011"
+  ],
+  "reproduce": "On commit 0f0854466655d2f36cfa8b57785000097b220c4c, run test_auto_edit_analysis.py and the full Python/Docker suites recorded in security/media-security/test-summary.json with the deterministic scanner limited to local/CI and production scanner mode disabled."
+}

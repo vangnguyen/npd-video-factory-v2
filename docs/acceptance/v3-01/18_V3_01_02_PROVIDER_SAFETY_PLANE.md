@@ -4,9 +4,9 @@
 
 `PASS FOR LOCAL/CI CONTRACT AND MOCK CONTROLS; NO-GO FOR REAL PROVIDER OR PRODUCTION USE`
 
-The implementation is locked to code commit
-`062959287497a5999999adccb65602b88c04947e`, based on exact `main`
-`9b66d6917d6d58fea995b3a1049fc95198e81bf1`. It introduces a central fail-closed
+The implementation code was locked at `062959287497a5999999adccb65602b88c04947e`, PR #14 exact
+head was `83c31934e9505a2ec076a9a3ccb309a78aacf9ba`, and the bounded G-08 merge produced exact `main`
+`dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3`. It introduces a central fail-closed
 provider control plane without activating a credential, external network call, paid provider,
 public ingress, deployment, publication or analytics write.
 
@@ -91,6 +91,7 @@ acceptance remain outstanding. Real rights coverage under `V3-01-GAP-013` also r
 - no claim that a contract/mock artifact is real-provider evidence;
 - no release candidate and no change to the repository verdict `NO-GO`.
 
-The earlier G-08 record `V3-01-APP-002` was exhausted by the completed PR #12 and PR #13 merge
-sequence. This checkpoint is published as draft PR #14 under G-00; merging it requires a new,
-explicit G-08 approval.
+G-08 record `V3-01-APP-003` authorized only PR #14 after exact-head CI and is now consumed. The
+post-merge exact-main [CI run 33090995730](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33090995730)
+passed all five jobs. No deployment, provider, credential, budget, public-ingress, publishing or
+production-analytics gate was granted.

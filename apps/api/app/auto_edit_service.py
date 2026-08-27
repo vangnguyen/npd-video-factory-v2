@@ -23,6 +23,16 @@ from .auto_edit_models import (
 )
 from .auto_edit_providers import MediaProbe, MediaSignalProvider, ProviderNotConfigured, TranscriptionProvider
 from .auto_edit_repository import AutoEditRepository
+from .media_security import (
+    ArchiveContainerRejected,
+    MediaMalwareScanner,
+    MediaScanResult,
+    MediaScanUnavailable,
+    MediaSecurityError,
+    UnsafeMediaRejected,
+    reject_archive_container,
+    utc_now as media_security_utc_now,
+)
 from .media_validation import MediaValidationError, safe_upload_filename, sniff_media
 from .object_storage import ObjectStorageProvider, validate_object_key
 from .platform_models import AssetRegister
@@ -69,6 +79,7 @@ class UploadService:
         platform: PlatformRepository,
         object_storage: ObjectStorageProvider,
         media_probe: MediaProbe,
+        malware_scanner: MediaMalwareScanner,
         staging_root: Path,
         default_part_size_bytes: int,
         max_part_size_bytes: int,
@@ -78,6 +89,7 @@ class UploadService:
         self.platform = platform
         self.object_storage = object_storage
         self.media_probe = media_probe
+        self.malware_scanner = malware_scanner
         self.staging_root = staging_root.resolve()
         self.default_part_size_bytes = default_part_size_bytes
         self.max_part_size_bytes = max_part_size_bytes
@@ -204,6 +216,47 @@ class UploadService:
         if expected_checksum and checksum != expected_checksum:
             await self.repository.mark_upload_failed(upload_id, "UPLOAD_CHECKSUM_MISMATCH")
             raise UploadConflictError("assembled upload checksum mismatch")
+        await self.repository.mark_upload_quarantined(upload_id)
+        try:
+            reject_archive_container(assembled)
+        except ArchiveContainerRejected as exc:
+            now = media_security_utc_now()
+            await self.repository.record_upload_scan(
+                upload_id,
+                MediaScanResult(
+                    verdict="rejected",
+                    provider="archive-deny-policy",
+                    signature_version="no-archive-v1",
+                    result_code="ARCHIVE_CONTAINER_REJECTED",
+                    checksum_sha256=checksum,
+                    started_at=now,
+                    completed_at=now,
+                ),
+            )
+            raise UnsafeMediaRejected("archive containers are rejected before media parsing") from exc
+        try:
+            scan = await self.malware_scanner.scan(
+                assembled,
+                expected_checksum_sha256=checksum,
+            )
+        except MediaSecurityError as exc:
+            now = media_security_utc_now()
+            scan = MediaScanResult(
+                verdict="error",
+                provider=type(self.malware_scanner).__name__,
+                signature_version="runtime-unavailable",
+                result_code="MALWARE_SCANNER_ERROR",
+                checksum_sha256=checksum,
+                started_at=now,
+                completed_at=now,
+            )
+            await self.repository.record_upload_scan(upload_id, scan)
+            raise MediaScanUnavailable("media remains quarantined because scanning failed") from exc
+        await self.repository.record_upload_scan(upload_id, scan)
+        if scan.verdict == "infected":
+            raise UnsafeMediaRejected("unsafe media was rejected and retained in quarantine")
+        if scan.verdict != "clean":
+            raise MediaScanUnavailable("media remains quarantined without a clean scan verdict")
         try:
             detected_kind, detected_content_type = sniff_media(assembled, upload.declared_content_type)
             compatible = (

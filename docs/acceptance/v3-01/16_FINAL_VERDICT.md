@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: V3-01-00 baseline, merged V3-01-01, and V3-01-02 local/CI provider-safety remediation
+SCOPE: V3-01-00 baseline, merged V3-01-01/V3-01-02, and V3-01-03 local/CI remediation
 RELEASE CANDIDATE: NOT ESTABLISHED
-LATEST EVIDENCE RUN: vf-v3-01-20260827T153608Z-0629592 (baseline remains separately retained)
+LATEST EVIDENCE RUN: vf-v3-01-20260827T165813Z-0f08544 (baseline remains separately retained)
 DATE: 2026-08-27
-OWNER DECISION: G-00 APPROVED; BOUNDED G-08 CONSUMED BY PR #12/#13; ALL LATER MERGE AND EXECUTION GATES PENDING
+OWNER DECISION: G-00 APPROVED; BOUNDED G-08 RECORDS CONSUMED BY PR #12/#13 AND PR #14; ALL LATER MERGE AND EXECUTION GATES PENDING
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -28,7 +28,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Flow B | BLOCKED; research/providers/rights/quality incomplete |
 | Flow C | BLOCKED; dry-run only, no official publish/analytics adapter acceptance |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | 0 VND actual, 0 external calls; central local controls pass, durable/real acceptance incomplete |
+| Cost | 0 VND actual, 0 external calls; durable local controls pass, production-like/real acceptance incomplete |
 | Rights/provenance | strict hook/artifact checks pass for fixtures; real-asset acceptance absent |
 | Backup/restore | helpers exist; no isolated drill |
 | Observability/soak | no production-like monitoring or 48-hour run |
@@ -55,7 +55,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: none; `EV-V3-DR-001` is BLOCKED static evidence;
-- owner approval IDs: `V3-01-APP-001` for G-00 and `V3-01-APP-002` for only the PR #12/#13 merge sequence.
+- owner approval IDs: `V3-01-APP-001` for G-00, `V3-01-APP-002` for only PR #12/#13, and `V3-01-APP-003` for only PR #14.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -65,15 +65,20 @@ V3-01-02 evidence is stored in `vf-v3-01-20260827T153608Z-0629592` as
 `EV-V3-PROVIDER-SAFETY-001`. It proves contract/mock controls only, records zero external calls and
 zero spend, and does not establish a release candidate.
 
+V3-01-03 evidence is stored in `vf-v3-01-20260827T165813Z-0f08544` as
+`EV-V3-DURABLE-SAFETY-001` and `EV-V3-MEDIA-SECURITY-001`. It proves local/CI and disposable-Docker
+remediation only, records zero external calls and zero spend, leaves GAP-010/GAP-011
+`IN_PROGRESS`, and grants no merge or runtime permission.
+
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
-[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). V3-01-01 through V3-01-07 are defined in
+[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-08 sequence is defined in
 [`14_REMEDIATION_PR_PLAN.md`](14_REMEDIATION_PR_PLAN.md). No exception or expiry is recorded.
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; `V3-01-APP-002` was consumed by PR #12/#13.
+- **Merge:** none currently authorized; `V3-01-APP-002` and `V3-01-APP-003` are consumed.
 - **Deploy:** no; no locked RC or G-09.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** zero real-provider calls; 0 VND.

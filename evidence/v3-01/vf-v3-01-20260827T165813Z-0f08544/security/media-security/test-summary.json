@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "scope": "V3-01-03 quarantine and ingress contract on locked code commit",
+  "commit_sha": "0f0854466655d2f36cfa8b57785000097b220c4c",
+  "base_sha": "dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3",
+  "environment": "LOCAL_AND_DISPOSABLE_DOCKER",
+  "results": {
+    "upload_security_contract": {
+      "source": "apps/api/tests/test_auto_edit_analysis.py",
+      "clean_promotion": "PASS",
+      "eicar_rejection": "PASS",
+      "archive_rejection": "PASS",
+      "scanner_unavailable_quarantine": "PASS"
+    },
+    "python_regression": {
+      "passed": 164,
+      "failed": 0
+    },
+    "studio": {
+      "passed": 14,
+      "failed": 0,
+      "javascript_syntax": "PASS"
+    },
+    "renderer": {
+      "passed": 14,
+      "failed": 0,
+      "typecheck": "PASS",
+      "bundle_check": "PASS"
+    },
+    "docker_e2e": {
+      "result": "PASS",
+      "clean_upload_promoted": true,
+      "production_or_public_route_used": false
+    },
+    "edge_contract": {
+      "artifact": "packages/contracts/ingress-media-security.v1.json",
+      "public_ingress_approved": false,
+      "production_deployment_approved": false,
+      "result": "DESIGN_VALIDATED_ONLY"
+    }
+  },
+  "external_calls": 0,
+  "cost": {
+    "currency": "VND",
+    "actual": 0
+  },
+  "secret_recorded": false
+}

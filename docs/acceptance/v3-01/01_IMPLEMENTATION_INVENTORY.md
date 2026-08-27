@@ -4,17 +4,16 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 is merged at exact `main` `9b66d6917d6d58fea995b3a1049fc95198e81bf1`.
-The V3-01-02 provider-safety code checkpoint is
-`062959287497a5999999adccb65602b88c04947e`; entries below that mention the provider safety
-plane describe local/CI remediation only, not production.
+V3-01-01 and V3-01-02 are merged at exact `main`
+`dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3`. Entries below that mention V3-01-03 describe
+local/CI remediation on `remediation/v3-01-03-ingress-durable-safety`, not production.
 
 ## Foundation
 
 | Capability | Primary code | Existing tests/evidence | Audit result |
 |---|---|---|---|
 | API/job intake | `apps/api/app/main.py`, `platform_routes.py`, `models.py` | `test_create_job.py`, Docker E2E | Implemented/mock-tested |
-| Durable state/audit | `db.py`, `state.py`, `repositories.py`, migrations `0001`-`0010` | `test_durable_platform.py`, Alembic CI | Implemented/mock-tested |
+| Durable state/audit | `db.py`, `state.py`, `repositories.py`, migrations `0001`-`0011` | durable platform/provider tests, Alembic CI | Implemented/mock-tested |
 | Redis queues/recovery | API services and `services/worker/npd_worker/main.py` | worker recovery suites, Docker E2E | Implemented/mock-tested |
 | Object storage/assets | `object_storage.py`, `artifacts.py`, `platform_models.py` | artifact and MinIO recovery tests | Implemented/mock-tested |
 | Interactive auth/RBAC | `human_auth.py`, normal-router dependency, external hash-only registry | `test_human_identity_ingress.py`, Docker E2E | Implemented/mock-tested on V3-01-01; production untested |
@@ -35,7 +34,7 @@ plane describe local/CI remediation only, not production.
 
 | Capability | Primary code | Existing tests/evidence | Audit result |
 |---|---|---|---|
-| Resumable upload/validation | `auto_edit_*`, `media_validation.py` | `test_auto_edit_analysis.py`, E2E | Implemented/mock-tested |
+| Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
 | Transcript/scene/silence/highlight | `auto_edit_providers.py`, `auto_edit_logic.py`, `auto_edit_service.py` | Auto Edit suite | Fixture/FFmpeg decisions tested; real accuracy absent |
 | Vision/reframe | `vision_*` | `test_vision_analysis.py`, E2E | Structured fixture + contract only |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
@@ -69,8 +68,9 @@ plane describe local/CI remediation only, not production.
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
 | Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
-| Provider safety plane | `provider_safety.py`, authenticated snapshot route, settings and Compose contracts | `test_provider_safety.py`, full regression and Docker E2E | Central contract/mock controls pass; external execution hard-blocked |
-| Cost | central VND-only budgets, attempt costing, 50/80/100 alerts and global kill switch | provider safety and configuration tests | Implemented/mock-tested; durable multi-instance accounting and real acceptance absent |
+| Provider safety plane | `provider_safety*.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention tests, full regression and Docker E2E | PostgreSQL-backed local contract passes; external execution hard-blocked |
+| Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart and configuration tests | Implemented/mock-tested; production-like multi-instance and real acceptance absent |
+| Upload malware boundary | quarantine state, archive-deny policy, deterministic EICAR contract and internal clamd client | `test_auto_edit_analysis.py`, migration replay | Local/mock PASS; clamd and edge/WAF not deployed |
 | Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests | Schema/hook implemented; real rights unaccepted |
 | Backup/restore | `v2-11-backup.sh`, `v2-11-restore.sh` | syntax/config only | No drill |
 | Rollback/deploy | guarded V2-11 helpers and runbook | syntax/config only | No image/deployment drill |

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "scope": "V3-01-03 durable provider safety on locked code commit",
+  "commit_sha": "0f0854466655d2f36cfa8b57785000097b220c4c",
+  "base_sha": "dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3",
+  "environment": "LOCAL_AND_DISPOSABLE_DOCKER",
+  "results": {
+    "provider_safety_focused": {
+      "command": "python -m pytest apps/api/tests/test_provider_safety.py -q",
+      "passed": 18,
+      "failed": 0
+    },
+    "python_api_worker_bridge": {
+      "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+      "passed": 164,
+      "failed": 0
+    },
+    "migration_replay": {
+      "command": "alembic upgrade head; downgrade base; upgrade head",
+      "result": "PASS",
+      "head": "0011_v3_01_03"
+    },
+    "docker_e2e": {
+      "command": "bash scripts/e2e-smoke.sh",
+      "result": "PASS",
+      "checks": [
+        "PostgreSQL migration and API startup with durable safety tables",
+        "human authentication and signed draft-only Agent Hub bridge",
+        "upload, media, timeline, approval, render and decoded A/V QC",
+        "PostgreSQL, Redis and MinIO restart recovery"
+      ]
+    },
+    "compose_and_static": {
+      "development_compose": "PASS",
+      "production_compose": "PASS",
+      "python_compile": "PASS",
+      "shell_syntax": "PASS",
+      "secret_scan": "PASS",
+      "git_diff_check": "PASS"
+    }
+  },
+  "provider_controls": {
+    "external_execution": "DISABLED",
+    "paid_execution": "DISABLED",
+    "approved_budget_vnd": 0,
+    "global_kill_switch": "ENGAGED",
+    "durable_operation_and_attempt_ledger": "PASS_LOCAL",
+    "atomic_daily_reservation": "PASS_LOCAL",
+    "multi_controller_duplicate_and_concurrency": "PASS_LOCAL",
+    "circuit_and_restart_recovery": "PASS_LOCAL",
+    "retention_cleanup": "IMPLEMENTED_BUT_CONFIGURATION_BLOCKED",
+    "production_like_multi_instance_load": "NOT_TESTED",
+    "real_provider_and_production_path": "NOT_TESTED"
+  },
+  "external_calls": 0,
+  "cost": {
+    "currency": "VND",
+    "actual": 0
+  },
+  "secret_recorded": false
+}

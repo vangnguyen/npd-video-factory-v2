@@ -33,6 +33,7 @@ from .auto_edit_models import (
 )
 from .auto_edit_providers import ProviderTranscript
 from .db import AssetORM, ProjectVersionORM, VideoProjectORM, utc_now
+from .media_security import MediaScanResult
 from .platform_models import AssetRead
 
 
@@ -65,6 +66,24 @@ def _asset_read(row: AssetORM) -> AssetRead:
 def _upload_read(row: UploadSessionORM) -> UploadRead:
     parts = [UploadPartRead.model_validate(item) for item in row.received_parts_json]
     parts.sort(key=lambda item: item.part_number)
+    malware_scan = None
+    if (
+        row.scan_provider
+        and row.scan_signature_version
+        and row.scan_result_code
+        and row.scan_checksum_sha256
+        and row.scan_started_at
+        and row.scan_completed_at
+    ):
+        malware_scan = MediaScanResult(
+            verdict=row.scan_verdict or "error",
+            provider=row.scan_provider,
+            signature_version=row.scan_signature_version,
+            result_code=row.scan_result_code,
+            checksum_sha256=row.scan_checksum_sha256,
+            started_at=row.scan_started_at,
+            completed_at=row.scan_completed_at,
+        )
     return UploadRead(
         upload_id=row.upload_id,
         workspace_id=row.workspace_id,
@@ -88,6 +107,9 @@ def _upload_read(row: UploadSessionORM) -> UploadRead:
         media_metadata=(
             MediaMetadata.model_validate(row.media_metadata_json) if row.media_metadata_json else None
         ),
+        quarantine_state=row.quarantine_state,
+        malware_scan=malware_scan,
+        trusted_at=row.trusted_at,
         error_code=row.error_code,
         created_at=row.created_at,
         updated_at=row.updated_at,
@@ -133,6 +155,7 @@ class AutoEditRepository:
                 status="initialized",
                 rights_status=payload.rights_status,
                 license=payload.license,
+                quarantine_state="not_scanned",
             )
             session.add(row)
             await session.commit()
@@ -176,6 +199,54 @@ class AutoEditRepository:
             row.updated_at = utc_now()
             await session.commit()
 
+    async def mark_upload_quarantined(self, upload_id: str) -> UploadRead:
+        async with self.session_factory() as session:
+            async with session.begin():
+                row = await session.get(UploadSessionORM, upload_id, with_for_update=True)
+                if row is None:
+                    raise KeyError(upload_id)
+                if row.status not in {"initialized", "uploading", "quarantined"}:
+                    raise ValueError("upload cannot enter quarantine")
+                row.status = "quarantined"
+                row.quarantine_state = "quarantined"
+                row.error_code = None
+                row.updated_at = utc_now()
+            await session.refresh(row)
+            return _upload_read(row)
+
+    async def record_upload_scan(
+        self,
+        upload_id: str,
+        result: MediaScanResult,
+    ) -> UploadRead:
+        async with self.session_factory() as session:
+            async with session.begin():
+                row = await session.get(UploadSessionORM, upload_id, with_for_update=True)
+                if row is None:
+                    raise KeyError(upload_id)
+                if row.status != "quarantined" or row.quarantine_state != "quarantined":
+                    raise ValueError("upload is not awaiting a malware verdict")
+                row.scan_provider = result.provider
+                row.scan_verdict = result.verdict
+                row.scan_signature_version = result.signature_version
+                row.scan_result_code = result.result_code
+                row.scan_checksum_sha256 = result.checksum_sha256
+                row.scan_started_at = result.started_at
+                row.scan_completed_at = result.completed_at
+                if result.verdict == "clean":
+                    row.quarantine_state = "trusted"
+                    row.trusted_at = result.completed_at
+                    row.error_code = None
+                elif result.verdict in {"infected", "rejected"}:
+                    row.quarantine_state = "rejected"
+                    row.status = "rejected"
+                    row.error_code = "UNSAFE_MEDIA_REJECTED"
+                else:
+                    row.error_code = "MEDIA_SCAN_UNAVAILABLE"
+                row.updated_at = utc_now()
+            await session.refresh(row)
+            return _upload_read(row)
+
     async def finish_upload(
         self,
         upload_id: str,
@@ -188,6 +259,8 @@ class AutoEditRepository:
             row = await session.get(UploadSessionORM, upload_id)
             if row is None:
                 raise KeyError(upload_id)
+            if row.quarantine_state != "trusted" or row.trusted_at is None:
+                raise ValueError("upload cannot be promoted before a clean malware verdict")
             row.asset_id = asset_id
             row.duplicate_of_asset_id = duplicate_of_asset_id
             row.media_metadata_json = media_metadata.model_dump(mode="json")

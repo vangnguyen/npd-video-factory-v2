@@ -15,6 +15,7 @@ from .auto_edit_models import (
 from .auto_edit_providers import MediaProbeError, ProviderNotConfigured
 from .auto_edit_service import AutoEditAnalysisService, UploadConflictError, UploadService, UploadSizeError
 from .human_auth import authorize_project
+from .media_security import MediaScanUnavailable, MediaSecurityError, UnsafeMediaRejected
 from .media_validation import MediaValidationError
 
 
@@ -98,6 +99,12 @@ async def complete_upload(
         raise error(409, "UPLOAD_CONFLICT", str(exc)) from exc
     except (MediaValidationError, MediaProbeError) as exc:
         raise error(422, "MEDIA_VALIDATION_FAILED", str(exc)) from exc
+    except UnsafeMediaRejected as exc:
+        raise error(422, "UNSAFE_MEDIA_REJECTED", str(exc)) from exc
+    except MediaScanUnavailable as exc:
+        raise error(503, "MEDIA_SCAN_UNAVAILABLE", str(exc)) from exc
+    except MediaSecurityError as exc:
+        raise error(409, "MEDIA_SECURITY_CHECK_FAILED", str(exc)) from exc
 
 
 @router.post(

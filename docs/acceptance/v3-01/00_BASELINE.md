@@ -10,9 +10,9 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: not yet established
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-02 remediation development in LOCAL/CI; no current merge authority
+CURRENT SAFE PHASE: V3-01-03 remediation development in LOCAL/CI; no current merge authority
 G-00: APPROVED by V3-01-APP-001
-G-08: V3-01-APP-002 CONSUMED by completed #12 -> retarget/retest #13 -> #13 sequence
+G-08: V3-01-APP-002 CONSUMED by #12/#13; V3-01-APP-003 CONSUMED by #14
 NO OTHER MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
 ```
 
@@ -23,9 +23,10 @@ analytics write or takedown. Those actions remain bound to their separate gates.
 G-08 later authorized only the repository merge sequence PR #12, then retarget/retest PR #13, then
 PR #13 if all five CI jobs pass. It grants no runtime or external-execution authority.
 
-That bounded sequence completed with PR #12 merge `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4`
-and PR #13 merge `9b66d6917d6d58fea995b3a1049fc95198e81bf1`. The approval is exhausted; it does
-not authorize merging V3-01-02.
+The first bounded sequence completed with PR #12 merge `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4`
+and PR #13 merge `9b66d6917d6d58fea995b3a1049fc95198e81bf1`. A later bounded G-08 record
+authorized only PR #14, which merged at `dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3` after exact-head CI.
+Both approvals are exhausted and do not authorize merging V3-01-03.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
@@ -44,7 +45,7 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Open PRs at capture | none |
 | Tags/releases | none returned by Git/GitHub |
 | Main branch protection | disabled; GitHub API returned `Branch not protected` |
-| Latest main CI | [Video Factory V2 CI run 33062401432](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33062401432), success |
+| Latest verified exact-main CI | [Video Factory V2 CI run 33090995730](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33090995730), 5/5 success |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -52,10 +53,12 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` | `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
-| Exact main tree | `21f54e226ef1459d03634873f33f3d1450c8a66a` |
+| Exact `origin/main` | `dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3` |
+| Exact main tree | `bd72d658f9d507e581669edd8c0ed4fd28eb049c` |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
-| PR #13 | retargeted/retested with 5/5 CI PASS, merged at exact current main |
+| PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
+| PR #14 | exact head `83c31934e9505a2ec076a9a3ccb309a78aacf9ba`; 5/5 CI PASS; merged at exact current main |
+| Exact-main regression | [CI run 33090995730](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33090995730), 5/5 PASS |
 | Deployment/provider/ingress action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in
@@ -67,7 +70,8 @@ README, architecture, security, deployment, testing, V2 acceptance and runbook d
 |---|---|
 | API/worker/renderer/Studio version | `0.12.0` |
 | API title | `NPD Video Factory V2 API` |
-| Latest Alembic migration | `0010_v2_11_agent_hub_bridge` |
+| Latest Alembic migration on `main` | `0010_v2_11_agent_hub_bridge` |
+| V3-01-03 locked branch migration | `0011_v3_01_03_security_durable_safety`; local replay PASS, not on main |
 | Compose project | `npd-video-factory-v2` |
 | Default services | PostgreSQL, Redis, MinIO, migrate, API, Studio, renderer, worker |
 | Optional service | `comfyui-bridge` behind disabled `gpu` profile |
@@ -133,8 +137,14 @@ V3-01-01 human identity/ingress remediation is now merged through PR #13 at exac
 passes for external hash-only sessions, RBAC, workspace isolation, Studio session handling and
 valid-session rate limiting. It remains undeployed and has no public-ingress acceptance.
 
-V3-01-02 provider safety code is locked at
-`062959287497a5999999adccb65602b88c04947e` on branch
-`remediation/v3-01-02-provider-safety-plane`. Local/CI contract and mock controls pass with zero
-external requests and zero VND cost. This checkpoint is unmerged, undeployed and not a release
-candidate; credentials, real providers, public ingress and publishing remain prohibited.
+V3-01-02 provider safety merged through PR #14 at exact `main`
+`dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3`. Exact-main regression passed all five CI jobs with
+zero external requests and zero VND cost. The code is undeployed and is not a release candidate;
+credentials, real providers, public ingress and publishing remain prohibited.
+
+V3-01-03 development is isolated on branch `remediation/v3-01-03-ingress-durable-safety`. Its
+bounded scope is upload quarantine/malware and archive-denial controls, a non-deployed WAF/ingress
+contract, and PostgreSQL-backed provider budget/operation/circuit state. It may create a draft PR
+after local/CI evidence, but has no merge or runtime authority. The locked code checkpoint is
+`0f0854466655d2f36cfa8b57785000097b220c4c`; evidence run
+`vf-v3-01-20260827T165813Z-0f08544` records zero calls and zero VND while retaining `NO-GO`.

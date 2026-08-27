@@ -42,6 +42,7 @@ from .media_intelligence_service import (
     MediaResolutionService,
     create_media_provider_bundle,
 )
+from .media_security import create_media_malware_scanner
 from .human_auth import (
     HumanAuthVerifier,
     HumanRateLimiter,
@@ -63,10 +64,11 @@ from .production_repository import ProductionRepository
 from .production_routes import router as production_router
 from .production_service import ProductionPackageService
 from .provider_safety import (
-    ProviderSafetyController,
     normalize_provider_definitions,
     provider_safety_policy_from_settings,
 )
+from .provider_safety_durable import DurableProviderSafetyController
+from .provider_safety_repository import ProviderSafetyRepository
 from .provider_safety_routes import router as provider_safety_router
 from .repositories import PlatformRepository, PostgresJobStore
 from .trend_providers import create_trend_provider_registry
@@ -121,11 +123,13 @@ async def lifespan(app: FastAPI):
     production_repository = ProductionRepository(session_factory)
     publishing_repository = PublishingRepository(session_factory)
     analytics_repository = AnalyticsRepository(session_factory)
+    provider_safety_repository = ProviderSafetyRepository(session_factory)
     trend_providers = create_trend_provider_registry(
         settings.trend_fixture_path,
         fixture_enabled=settings.trend_fixture_enabled,
     )
     await verify_database(session_factory)
+    await provider_safety_repository.ensure_state()
     await object_storage.ensure_ready()
     default_workspace = await platform.ensure_workspace(
         WorkspaceCreate(
@@ -150,9 +154,15 @@ async def lifespan(app: FastAPI):
     )
     app.state.object_storage = object_storage
     app.state.platform_repository = platform
-    app.state.provider_safety_controller = ProviderSafetyController(
+    app.state.provider_safety_controller = DurableProviderSafetyController(
         provider_safety_policy_from_settings(settings),
+        repository=provider_safety_repository,
         provider_definitions=provider_definitions,
+        operation_lease_seconds=settings.provider_operation_lease_seconds,
+        operation_retention_days=settings.provider_operation_retention_days,
+    )
+    app.state.provider_safety_recovered_operations = len(
+        await app.state.provider_safety_controller.recover_stale_operations()
     )
     app.state.trend_repository = trend_repository
     app.state.auto_edit_repository = auto_edit_repository
@@ -191,6 +201,7 @@ async def lifespan(app: FastAPI):
         platform=platform,
         object_storage=object_storage,
         media_probe=media_probe,
+        malware_scanner=create_media_malware_scanner(settings),
         staging_root=settings.upload_staging_root,
         default_part_size_bytes=settings.upload_default_part_size_bytes,
         max_part_size_bytes=settings.upload_max_part_size_bytes,
@@ -872,10 +883,13 @@ async def capabilities() -> dict[str, object]:
         "durable_job_state": True,
         "cost_currency": "VND",
         "provider_safety_plane": "enforced",
+        "provider_safety_state_backend": "postgresql",
         "provider_external_execution_enabled": settings.provider_external_execution_enabled,
         "provider_paid_execution_enabled": settings.provider_paid_execution_enabled,
         "provider_global_kill_switch_engaged": settings.provider_global_kill_switch_engaged,
         "provider_budget_currency": settings.provider_budget_currency,
+        "provider_ledger_retention_days": settings.provider_operation_retention_days,
+        "provider_ledger_cleanup_enabled": settings.provider_retention_cleanup_enabled,
         "trend_radar": True,
         "idea_intelligence": True,
         "content_opportunity_queue": True,
@@ -884,6 +898,10 @@ async def capabilities() -> dict[str, object]:
         "creator_media_download": False,
         "idea_to_project_state": "draft_only",
         "resumable_upload": True,
+        "upload_quarantine_required": True,
+        "upload_malware_scanner_mode": settings.media_malware_scanner_mode,
+        "archive_ingestion_enabled": False,
+        "public_ingress_approved": False,
         "auto_edit_analysis": True,
         "auto_edit_timeline": True,
         "timeline_versioning": True,

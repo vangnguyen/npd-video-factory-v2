@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "scope": "V3-01-03 durable provider safety state",
+  "commit_sha": "0f0854466655d2f36cfa8b57785000097b220c4c",
+  "state_backend": "SQL_POSTGRESQL_TARGET",
+  "cross_controller_atomic_reservation": "PASS_LOCAL",
+  "duplicate_operation_protection": "PASS_LOCAL",
+  "bounded_attempt_persistence": "PASS_LOCAL",
+  "circuit_restart_recovery": "PASS_LOCAL",
+  "stale_reservation_cost_reconciliation": "PASS_LOCAL",
+  "retention_logic": "PASS_LOCAL_CLEANUP_DISABLED",
+  "production_like_multi_instance_load": "NOT_TESTED",
+  "real_provider_tested": false,
+  "budget_currency": "VND",
+  "approved_budget_vnd": 0,
+  "actual_cost_vnd": 0,
+  "external_calls": 0,
+  "external_execution_enabled": false,
+  "paid_execution_enabled": false,
+  "global_kill_switch_engaged": true,
+  "overall_v3_verdict": "NO_GO",
+  "secret_recorded": false
+}

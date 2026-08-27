@@ -9,6 +9,7 @@ import pytest
 from fastapi import Depends, FastAPI
 from httpx import ASGITransport, AsyncClient
 from pydantic import ValidationError
+from sqlalchemy import text
 
 from app.human_auth import authorize_human_request
 from app.provider_safety import (
@@ -27,6 +28,10 @@ from app.provider_safety import (
     verify_provider_artifact_storage,
 )
 from app.provider_safety_routes import router as provider_safety_router
+from app.provider_safety_durable import DurableProviderSafetyController
+from app.provider_safety_repository import ProviderSafetyRepository
+from app.db import Base, create_engine, create_session_factory
+import app.provider_safety_db  # noqa: F401
 from auth_test_support import TEST_HUMAN_HEADERS, install_test_human_auth
 
 
@@ -502,3 +507,222 @@ async def test_provider_safety_endpoint_is_authenticated_and_secret_free() -> No
 
 async def _return(value):
     return value
+
+
+async def durable_components(tmp_path, policy: ProviderSafetyPolicy, clock: MutableClock):
+    database = tmp_path / "provider-safety.db"
+    engine = create_engine(f"sqlite+aiosqlite:///{database.as_posix()}")
+    async with engine.begin() as connection:
+        await connection.execute(text("PRAGMA foreign_keys=ON"))
+        await connection.run_sync(Base.metadata.create_all)
+    session_factory = create_session_factory(engine)
+    first_repository = ProviderSafetyRepository(session_factory)
+    second_repository = ProviderSafetyRepository(session_factory)
+    await first_repository.ensure_state()
+    first = DurableProviderSafetyController(
+        policy,
+        repository=first_repository,
+        clock=clock.now,
+        sleeper=clock.sleep,
+        operation_lease_seconds=120,
+        operation_retention_days=400,
+    )
+    second = DurableProviderSafetyController(
+        policy,
+        repository=second_repository,
+        clock=clock.now,
+        sleeper=clock.sleep,
+        operation_lease_seconds=120,
+        operation_retention_days=400,
+    )
+    return engine, first_repository, second_repository, first, second
+
+
+@pytest.mark.asyncio
+async def test_durable_multi_instance_duplicate_concurrency_and_snapshot(tmp_path) -> None:
+    clock = MutableClock()
+    policy = approved_policy(max_attempts=1, max_concurrent_calls=1)
+    engine, _, _, first, second = await durable_components(tmp_path, policy, clock)
+    first_context = context("durable-first", paid=False, estimate=Decimal("0"))
+    first_decision = await first.preflight(first_context)
+    assert first_decision.allowed is True
+    assert (await second.preflight(context("durable-second", paid=False, estimate=Decimal("0")))).code == (
+        "PROVIDER_CONCURRENCY_LIMIT"
+    )
+    assert (await second.preflight(first_context)).code == "DUPLICATE_OPERATION_BLOCKED"
+    await first._finish(
+        first_context,
+        first_decision,
+        attempts=1,
+        charged=Decimal("0"),
+        succeeded=True,
+    )
+    snapshot = await second.snapshot()
+    assert snapshot.state_backend == "postgresql"
+    assert snapshot.durable_operations_recorded == 1
+    assert snapshot.active_operations == 0
+    assert snapshot.attempts_recorded == 0
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_durable_budget_reservation_is_atomic_across_controllers(tmp_path) -> None:
+    clock = MutableClock()
+    policy = approved_policy(
+        max_attempts=1,
+        max_concurrent_calls=2,
+        daily_limit=Decimal("100"),
+        per_operation_limit=Decimal("100"),
+    )
+    engine, _, _, first, second = await durable_components(tmp_path, policy, clock)
+    first_context = context("durable-budget-a", estimate=Decimal("60"))
+    second_context = context("durable-budget-b", estimate=Decimal("60"))
+    decisions = await asyncio.gather(
+        first.preflight(first_context),
+        second.preflight(second_context),
+    )
+    assert sum(item.allowed for item in decisions) == 1
+    assert {item.code for item in decisions} == {
+        "PROVIDER_CALL_RESERVED",
+        "DAILY_BUDGET_EXCEEDED",
+    }
+    allowed_index = 0 if decisions[0].allowed else 1
+    allowed_controller = first if allowed_index == 0 else second
+    allowed_context = first_context if allowed_index == 0 else second_context
+    await allowed_controller._finish(
+        allowed_context,
+        decisions[allowed_index],
+        attempts=1,
+        charged=Decimal("60"),
+        succeeded=True,
+    )
+    snapshot = await first.snapshot()
+    assert snapshot.committed_today_vnd == Decimal("60")
+    assert snapshot.reserved_today_vnd == Decimal("0")
+    assert snapshot.paid_calls_recorded == 1
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_durable_execute_persists_bounded_attempts_without_memory_ledger(tmp_path) -> None:
+    clock = MutableClock()
+    policy = approved_policy(max_attempts=3)
+    engine, _, _, first, second = await durable_components(tmp_path, policy, clock)
+    calls = 0
+
+    async def operation() -> str:
+        nonlocal calls
+        calls += 1
+        if calls < 3:
+            raise ProviderRateLimitError()
+        return "durable-asset"
+
+    result = await first.execute(context("durable-retry-operation"), operation)
+    assert result.value == "durable-asset"
+    assert result.receipt.attempts == 3
+    assert result.receipt.retries == 2
+    assert result.receipt.charged_cost_vnd == Decimal("300")
+    snapshot = await second.snapshot()
+    assert snapshot.attempts_recorded == 3
+    assert snapshot.committed_today_vnd == Decimal("300")
+    assert snapshot.reserved_today_vnd == Decimal("0")
+    assert first.attempts == ()
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_durable_circuit_and_stale_reservation_recover_after_restart(tmp_path) -> None:
+    clock = MutableClock()
+    policy = approved_policy(
+        max_attempts=1,
+        max_concurrent_calls=2,
+        failure_threshold=1,
+    )
+    engine, _, second_repository, first, second = await durable_components(tmp_path, policy, clock)
+
+    failed_context = context("durable-failure", paid=False, estimate=Decimal("0"))
+    failed_decision = await first.preflight(failed_context)
+    await first._finish(
+        failed_context,
+        failed_decision,
+        attempts=1,
+        charged=Decimal("0"),
+        succeeded=False,
+    )
+    assert (
+        await second.preflight(context("durable-circuit-blocked", paid=False, estimate=Decimal("0")))
+    ).code == "CIRCUIT_OPEN"
+
+    clock.value += timedelta(seconds=11)
+    probe_context = context("durable-half-open", paid=False, estimate=Decimal("0"))
+    probe_decision = await second.preflight(probe_context)
+    assert probe_decision.allowed is True
+    assert probe_decision.circuit_state == "half_open"
+    assert (
+        await first.preflight(context("durable-half-open-busy", paid=False, estimate=Decimal("0")))
+    ).code == "CIRCUIT_HALF_OPEN_BUSY"
+    await second._finish(
+        probe_context,
+        probe_decision,
+        attempts=1,
+        charged=Decimal("0"),
+        succeeded=True,
+    )
+
+    stale_context = context("durable-stale", estimate=Decimal("25"))
+    assert (await first.preflight(stale_context)).allowed is True
+    await first._record_attempt(
+        stale_context,
+        attempt=1,
+        status="timed_out",
+        retryable=True,
+        error_code="PROVIDER_TIMEOUT",
+        actual_cost_vnd=None,
+        charged_cost_vnd=Decimal("25"),
+        started_at=clock.now(),
+    )
+    clock.value += timedelta(seconds=121)
+    restarted = DurableProviderSafetyController(
+        policy,
+        repository=second_repository,
+        clock=clock.now,
+        sleeper=clock.sleep,
+        operation_lease_seconds=120,
+        operation_retention_days=400,
+    )
+    assert await restarted.recover_stale_operations() == ["durable-stale"]
+    snapshot = await restarted.snapshot()
+    assert snapshot.recovered_operations == 1
+    assert snapshot.active_operations == 0
+    assert snapshot.reserved_today_vnd == Decimal("0")
+    assert snapshot.committed_today_vnd == Decimal("25")
+    assert snapshot.attempts_recorded == 1
+    assert (await restarted.preflight(stale_context)).code == "DUPLICATE_OPERATION_BLOCKED"
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_durable_retention_purges_only_expired_terminal_operations(tmp_path) -> None:
+    clock = MutableClock()
+    policy = approved_policy(max_attempts=1, max_concurrent_calls=2)
+    engine, first_repository, _, first, _ = await durable_components(tmp_path, policy, clock)
+
+    completed_context = context("durable-retention-complete", paid=False, estimate=Decimal("0"))
+    completed_decision = await first.preflight(completed_context)
+    await first._finish(
+        completed_context,
+        completed_decision,
+        attempts=1,
+        charged=Decimal("0"),
+        succeeded=True,
+    )
+    active_context = context("durable-retention-active", paid=False, estimate=Decimal("0"))
+    assert (await first.preflight(active_context)).allowed is True
+
+    clock.value += timedelta(days=401)
+    assert await first_repository.purge_expired_operations(now=clock.now()) == 1
+    snapshot = await first.snapshot()
+    assert snapshot.durable_operations_recorded == 1
+    assert snapshot.active_operations == 1
+    assert snapshot.stale_active_operations == 1
+    await engine.dispose()

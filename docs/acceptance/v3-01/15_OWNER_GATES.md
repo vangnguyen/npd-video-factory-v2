@@ -1,6 +1,6 @@
 # Owner gate register
 
-G-00 and one completed bounded G-08 merge sequence have approval records. The G-08 approval is
+G-00 and two completed bounded G-08 actions have approval records. Both G-08 approvals are
 consumed; every later merge and every other gate remains `PENDING`. Use
 `schemas/approval-record.schema.json` for each later decision; no approval is implied by CI success.
 
@@ -14,7 +14,7 @@ consumed; every later merge and every other gate remains `PENDING`. Use
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation PR merge | CONSUMED — `V3-01-APP-002` completed PR #12 → retest #13 → PR #13 only | a new explicit G-08 record is required for V3-01-02 or any later merge |
+| G-08 | remediation PR merge | CONSUMED — `V3-01-APP-002` completed PR #12 → retest #13 → PR #13; `V3-01-APP-003` completed PR #14 only | a new explicit G-08 record is required for V3-01-03 or any later merge |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
@@ -28,8 +28,9 @@ time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, remediation implementation in LOCAL/CI,
 static/mock/security testing, redacted evidence creation and draft PR creation. The exact PR
-#12/#13 merge sequence authorized by G-08 is complete and cannot be reused. Current authority
+#12/#13 sequence and PR #14 merge authorized by the two G-08 records are complete and cannot be reused. Current authority
 includes no further merge, deployment, credential use, paid call, public route, publishing,
 analytics collection or production write. Records:
 [`V3-01-APP-001`](approvals/V3-01-APP-001.json) and
-[`V3-01-APP-002`](approvals/V3-01-APP-002.json).
+[`V3-01-APP-002`](approvals/V3-01-APP-002.json), and
+[`V3-01-APP-003`](approvals/V3-01-APP-003.json).
