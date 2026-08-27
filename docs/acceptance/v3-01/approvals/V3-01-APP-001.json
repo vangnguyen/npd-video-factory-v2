@@ -1,0 +1,23 @@
+{
+  "approval_id": "V3-01-APP-001",
+  "gate_id": "G-00",
+  "decision": "APPROVED",
+  "scope": "Accept the V3-01 feature freeze, 60-row acceptance matrix, 16-gap register, and remediation sequence V3-01-01 through V3-01-07; authorize local and CI remediation development plus draft PR preparation only.",
+  "artifact_or_commit_hashes": [
+    "cae40eda871d0f9c7fc315229361a40032d48967",
+    "fa20613727acad1572814e97cf1aea6ed4665cf7"
+  ],
+  "target_account_or_environment": "Repository baseline and LOCAL/CI only",
+  "limits": [
+    "PR #12 remains draft and unmerged",
+    "No remediation PR merge without a separate G-08 approval",
+    "No production deployment or public ingress",
+    "No credential activation or provider execution",
+    "No paid provider call or spend",
+    "No real publish, analytics write, or takedown"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-27T13:29:26Z",
+  "expires_at_utc": null,
+  "notes": "Captured from the owner's explicit G-00 approval in the Codex task. This governance approval does not imply G-01 through G-12."
+}

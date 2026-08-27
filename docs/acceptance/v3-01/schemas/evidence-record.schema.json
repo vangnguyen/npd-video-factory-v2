@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/video-factory/v3-01/evidence-record.schema.json",
+  "title": "Video Factory V3-01 evidence record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "test_case_id", "matrix_rows", "axis", "commit_sha", "environment", "provider", "request_hash", "response_or_artifact_hash", "started_at_utc", "completed_at_utc", "duration_seconds", "result", "assertion", "correlation_id", "cost", "rights_record_id", "reviewer", "gap_ids", "reproduce"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "evidence_id": {"type": "string", "pattern": "^EV-V3-[A-Z0-9-]+$"},
+    "test_case_id": {"type": "string", "minLength": 1},
+    "matrix_rows": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[A-Z]{2,3}-[0-9]{2}$"}},
+    "axis": {"enum": ["implemented", "mock-tested", "real-provider-tested", "production-path-tested", "quality-accepted", "cross-cutting"]},
+    "commit_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "environment": {"enum": ["LOCAL", "CI", "STAGING", "PROD-CANARY"]},
+    "provider": {"type": "object", "additionalProperties": false, "required": ["name", "model_or_workflow", "credential_alias", "secret_recorded"], "properties": {"name": {"type": "string"}, "model_or_workflow": {"type": "string"}, "credential_alias": {"type": "string"}, "secret_recorded": {"const": false}}},
+    "request_hash": {"type": ["string", "null"]},
+    "response_or_artifact_hash": {"type": ["string", "null"]},
+    "started_at_utc": {"type": "string", "format": "date-time"},
+    "completed_at_utc": {"type": "string", "format": "date-time"},
+    "duration_seconds": {"type": "number", "minimum": 0},
+    "result": {"enum": ["PASS", "FAIL", "BLOCKED"]},
+    "assertion": {"type": "string", "minLength": 1},
+    "correlation_id": {"type": ["string", "null"]},
+    "cost": {"type": "object", "additionalProperties": false, "required": ["currency", "actual", "status"], "properties": {"currency": {"const": "VND"}, "actual": {"type": ["number", "null"], "minimum": 0}, "status": {"enum": ["ZERO", "RECORDED", "PENDING", "NOT_APPLICABLE"]}}},
+    "rights_record_id": {"type": ["string", "null"]},
+    "reviewer": {"type": "string", "minLength": 1},
+    "gap_ids": {"type": "array", "items": {"type": "string", "pattern": "^V3-01-GAP-[0-9]{3}$"}},
+    "reproduce": {"type": "string", "minLength": 1}
+  }
+}

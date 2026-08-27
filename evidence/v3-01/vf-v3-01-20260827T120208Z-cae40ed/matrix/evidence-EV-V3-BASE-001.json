@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-BASE-001",
+  "test_case_id": "BAS-001",
+  "matrix_rows": ["FND-01", "OPS-09"],
+  "axis": "cross-cutting",
+  "commit_sha": "cae40eda871d0f9c7fc315229361a40032d48967",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "none",
+    "model_or_workflow": "repository-and-github-read-only-audit",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": null,
+  "started_at_utc": "2026-08-27T12:02:08Z",
+  "completed_at_utc": "2026-08-27T12:05:00Z",
+  "duration_seconds": 172,
+  "result": "PASS",
+  "assertion": "Repository main, version, migration, CI and governance state were captured without reading runtime secret files or changing external state.",
+  "correlation_id": "vf-v3-01-20260827T120208Z-cae40ed",
+  "cost": {"currency": "VND", "actual": 0, "status": "ZERO"},
+  "rights_record_id": null,
+  "reviewer": "Codex static audit",
+  "gap_ids": ["V3-01-GAP-007", "V3-01-GAP-012", "V3-01-GAP-015"],
+  "reproduce": "git rev-parse HEAD; gh run view 33062401432; inspect checked-in version and migration metadata"
+}

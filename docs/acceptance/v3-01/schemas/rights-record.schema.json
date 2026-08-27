@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/video-factory/v3-01/rights-record.schema.json",
+  "title": "Video Factory V3-01 rights record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["rights_record_id", "asset_id", "asset_hash", "source_type", "provider", "provider_asset_or_job_id", "source_url_or_reference", "acquired_at_utc", "license_name", "license_version_or_terms_date", "commercial_use", "derivative_use", "social_platform_use", "territory", "expiry", "attribution_required", "attribution_text", "model_or_voice_rights", "person_likeness_consent", "trademark_review", "evidence_reference", "reviewer", "decision"],
+  "properties": {
+    "rights_record_id": {"type": "string", "minLength": 1},
+    "asset_id": {"type": "string", "minLength": 1},
+    "asset_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_type": {"enum": ["user_owned", "stock", "ai_generated", "licensed_library", "internal"]},
+    "provider": {"type": "string"},
+    "provider_asset_or_job_id": {"type": "string"},
+    "source_url_or_reference": {"type": "string"},
+    "acquired_at_utc": {"type": "string", "format": "date-time"},
+    "license_name": {"type": "string"},
+    "license_version_or_terms_date": {"type": "string"},
+    "commercial_use": {"enum": [true, false, "unknown"]},
+    "derivative_use": {"enum": [true, false, "unknown"]},
+    "social_platform_use": {"type": "array", "items": {"type": "string"}},
+    "territory": {"type": "array", "items": {"type": "string"}},
+    "expiry": {"type": ["string", "null"], "format": "date-time"},
+    "attribution_required": {"type": "boolean"},
+    "attribution_text": {"type": "string"},
+    "model_or_voice_rights": {"type": "string"},
+    "person_likeness_consent": {"type": "string"},
+    "trademark_review": {"type": "string"},
+    "evidence_reference": {"type": "string"},
+    "reviewer": {"type": "string"},
+    "decision": {"enum": ["APPROVED", "REJECTED", "BLOCKED"]}
+  }
+}

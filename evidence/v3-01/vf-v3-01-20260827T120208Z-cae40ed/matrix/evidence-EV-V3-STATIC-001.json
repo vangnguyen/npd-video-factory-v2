@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-STATIC-001",
+  "test_case_id": "MAT-001",
+  "matrix_rows": [
+    "FND-01", "FND-02", "FND-03", "FND-04", "FND-05", "FND-06", "FND-07", "FND-08", "FND-09", "FND-10",
+    "TRD-01", "TRD-02", "TRD-03", "TRD-04", "IDE-01", "IDE-02", "RES-01", "SCR-01", "SCR-02",
+    "UPL-01", "ASR-01", "EDT-01", "EDT-02", "EDT-03", "VIS-01", "REF-01", "BRL-01", "STK-01",
+    "CFY-01", "IMG-01", "VID-01", "TTS-01", "SUB-01", "MUS-01", "SFX-01", "TML-01", "PRV-01",
+    "APR-01", "RND-01", "QC-01", "QC-02", "PUB-01", "PUB-02", "PUB-03", "PUB-04", "ANA-01",
+    "ANA-02", "ANA-03", "WIN-01", "LRN-01", "OPS-01", "OPS-02", "OPS-03", "OPS-04", "OPS-05",
+    "OPS-06", "OPS-07", "OPS-08", "OPS-09", "OPS-10"
+  ],
+  "axis": "implemented",
+  "commit_sha": "cae40eda871d0f9c7fc315229361a40032d48967",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "none",
+    "model_or_workflow": "source-and-test-inventory",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": null,
+  "started_at_utc": "2026-08-27T12:05:00Z",
+  "completed_at_utc": "2026-08-27T12:12:00Z",
+  "duration_seconds": 420,
+  "result": "PASS",
+  "assertion": "All 60 catalog rows were inspected and assigned an explicit axis state; this PASS validates inventory completeness, not product readiness.",
+  "correlation_id": "vf-v3-01-20260827T120208Z-cae40ed",
+  "cost": {"currency": "VND", "actual": 0, "status": "ZERO"},
+  "rights_record_id": null,
+  "reviewer": "Codex static audit",
+  "gap_ids": [
+    "V3-01-GAP-001", "V3-01-GAP-002", "V3-01-GAP-003", "V3-01-GAP-004",
+    "V3-01-GAP-005", "V3-01-GAP-006", "V3-01-GAP-007", "V3-01-GAP-008",
+    "V3-01-GAP-009", "V3-01-GAP-010", "V3-01-GAP-011", "V3-01-GAP-013",
+    "V3-01-GAP-014", "V3-01-GAP-016"
+  ],
+  "reproduce": "python scripts/v3_01_acceptance.py validate-repo"
+}

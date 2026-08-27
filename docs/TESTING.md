@@ -1,5 +1,25 @@
 # Testing — V2-11
 
+## V3-01 acceptance-register checks
+
+V3-01 adds a behavior-neutral, secret-safe register/evidence validator. It does not read `.env`,
+call providers, deploy or publish:
+
+```bash
+python scripts/v3_01_acceptance.py validate-repo
+python -m pytest apps/api/tests/test_v3_01_evidence_harness.py -q
+```
+
+For a redacted run bundle under `evidence/v3-01/<run_id>`:
+
+```bash
+python scripts/v3_01_acceptance.py validate-run evidence/v3-01/<run_id>
+python scripts/v3_01_acceptance.py write-hashes evidence/v3-01/<run_id>
+python scripts/v3_01_acceptance.py validate-run evidence/v3-01/<run_id>
+```
+
+See [`acceptance/v3-01/runbooks/V3_01_EVIDENCE_RUNBOOK.md`](acceptance/v3-01/runbooks/V3_01_EVIDENCE_RUNBOOK.md).
+
 ## Local checks
 
 ```bash

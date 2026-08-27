@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-CI-001",
+  "test_case_id": "CI-001",
+  "matrix_rows": ["FND-03", "FND-04", "FND-05", "FND-06", "FND-07", "FND-08", "FND-09", "RND-01", "QC-01"],
+  "axis": "mock-tested",
+  "commit_sha": "cae40eda871d0f9c7fc315229361a40032d48967",
+  "environment": "CI",
+  "provider": {
+    "name": "deterministic-fixtures",
+    "model_or_workflow": "Video Factory V2 CI run 33062401432",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "github-actions-run-33062401432",
+  "started_at_utc": "2026-08-27T10:17:41Z",
+  "completed_at_utc": "2026-08-27T10:22:09Z",
+  "duration_seconds": 268,
+  "result": "PASS",
+  "assertion": "All observed main CI jobs passed: Python, renderer, Studio, safety and Compose, and deterministic Docker E2E.",
+  "correlation_id": "github-actions-33062401432",
+  "cost": {"currency": "VND", "actual": 0, "status": "ZERO"},
+  "rights_record_id": null,
+  "reviewer": "GitHub Actions and Codex audit",
+  "gap_ids": ["V3-01-GAP-007", "V3-01-GAP-015", "V3-01-GAP-016"],
+  "reproduce": "gh run view 33062401432 --repo vangnguyen/npd-video-factory-v2"
+}

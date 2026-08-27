@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-SAFETY-001",
+  "test_case_id": "SAFETY-001",
+  "matrix_rows": ["PUB-01", "PUB-02", "PUB-03", "PUB-04", "ANA-01", "OPS-01", "OPS-02", "OPS-03", "OPS-04"],
+  "axis": "cross-cutting",
+  "commit_sha": "cae40eda871d0f9c7fc315229361a40032d48967",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "none",
+    "model_or_workflow": "checked-in-production-policy-audit",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": null,
+  "started_at_utc": "2026-08-27T12:12:00Z",
+  "completed_at_utc": "2026-08-27T12:15:00Z",
+  "duration_seconds": 180,
+  "result": "PASS",
+  "assertion": "Checked-in production policy keeps fixtures, paid/external media, ComfyUI, analytics execution, publishing and Agent Hub delivery disabled by default.",
+  "correlation_id": "vf-v3-01-20260827T120208Z-cae40ed",
+  "cost": {"currency": "VND", "actual": 0, "status": "ZERO"},
+  "rights_record_id": null,
+  "reviewer": "Codex configuration audit",
+  "gap_ids": ["V3-01-GAP-001", "V3-01-GAP-006", "V3-01-GAP-010", "V3-01-GAP-014"],
+  "reproduce": "inspect .env.example and deploy/production/docker-compose.production.yml without reading runtime credential values"
+}
