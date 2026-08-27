@@ -143,7 +143,7 @@ class Settings(BaseSettings):
         if self.audio_tts_provider not in {"espeak", "contract", "openai"}:
             raise ValueError("AUDIO_TTS_PROVIDER must be espeak, contract or openai")
         if self.audio_tts_provider == "openai" and not self.audio_external_execution_enabled:
-            raise ValueError("OpenAI audio TTS requires AUDIO_EXTERNAL_EXECUTION_ENABLED=true")
+            raise ValueError("OpenAI audio TTS requires the external audio execution owner gate")
         if self.audio_external_execution_enabled and self.audio_tts_provider != "openai":
             raise ValueError("external audio execution is only valid for the owner-gated OpenAI adapter")
         if self.audio_tts_rate < 80 or self.audio_tts_rate > 260:
