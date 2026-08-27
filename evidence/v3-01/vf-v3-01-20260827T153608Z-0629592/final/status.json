@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-02",
+  "result": "PASS_FOR_LOCAL_CI_CONTRACT_AND_MOCK_CONTROLS_ONLY",
+  "repository_verdict": "NO_GO",
+  "release_candidate": "NOT_ESTABLISHED",
+  "merge_authorized": false,
+  "deploy_authorized": false,
+  "credentials_authorized": false,
+  "external_provider_calls_authorized": false,
+  "paid_provider_calls_authorized": false,
+  "public_ingress_authorized": false,
+  "publish_authorized": false,
+  "next_gate": "New explicit G-08 owner review for the V3-01-02 draft PR",
+  "secret_recorded": false
+}

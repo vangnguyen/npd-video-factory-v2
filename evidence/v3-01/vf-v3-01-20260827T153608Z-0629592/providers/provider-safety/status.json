@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "scope": "V3-01-02 central provider safety plane",
+  "commit_sha": "062959287497a5999999adccb65602b88c04947e",
+  "provider_contract_and_mock_controls": "PASS_LOCAL_CI",
+  "budget_currency": "VND",
+  "approved_budget_vnd": 0,
+  "actual_cost_vnd": 0,
+  "external_calls": 0,
+  "external_execution_enabled": false,
+  "paid_execution_enabled": false,
+  "global_kill_switch_engaged": true,
+  "credential_aliases_loaded": 0,
+  "rights_hook": "PASS_FIXTURE_ONLY",
+  "artifact_and_storage_receipt_verification": "PASS_FIXTURE_ONLY",
+  "runtime_state_durability": "PROCESS_LOCAL_REMEDIATION_REQUIRED",
+  "production_path": "NOT_TESTED",
+  "real_provider_tested": false,
+  "overall_v3_verdict": "NO_GO",
+  "secret_recorded": false
+}

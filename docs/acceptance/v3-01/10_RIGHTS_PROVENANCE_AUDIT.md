@@ -8,6 +8,12 @@ Deterministic fixtures are generated for tests and the code has provenance/safet
 stock, music, SFX, uploaded commercial media or AI-generated asset has a completed and owner-accepted
 RightsRecord in this V3-01 audit.
 
+V3-01-02 adds a full strict provider-rights input model, an explicit fail-closed decision hook and
+artifact/object-storage verification evidence on code commit
+`062959287497a5999999adccb65602b88c04947e`. Deterministic tests cover missing, unknown, revoked,
+expired and incompatible records. This proves schema/hook behavior only and does not create or
+approve a RightsRecord for any real asset.
+
 ## Required RightsRecord
 
 Each source or generated asset must validate against `schemas/rights-record.schema.json` and include:

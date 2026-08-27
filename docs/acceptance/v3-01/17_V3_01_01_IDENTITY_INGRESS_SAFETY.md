@@ -2,12 +2,14 @@
 
 ## Decision
 
-`PASS FOR LOCAL/CI REMEDIATION; BOUNDED G-08 APPROVED; NO PUBLIC OR PRODUCTION EXPOSURE`
+`PASS FOR LOCAL/CI REMEDIATION; MERGED UNDER CONSUMED BOUNDED G-08; NO PUBLIC OR PRODUCTION EXPOSURE`
 
 The implementation is locked to code commit
 `9635fb3ecf5d5fc5ba20aef3486708bad5960b8b`. It adds the human identity boundary required before
-real-provider or production-path work. It does not create a release candidate and does not authorize
-merge, deployment, credentials, paid calls, public ingress or publishing.
+real-provider or production-path work. PR #13 was retargeted/retested with all five CI jobs passing
+and merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` under the bounded G-08 record. That
+merge creates no release candidate and authorizes no deployment, credentials, paid calls, public
+ingress or publishing.
 
 ## Architecture
 
@@ -113,8 +115,8 @@ V3-01-01.
 
 ## Remaining gates
 
-- G-08 record `V3-01-APP-002` authorizes merge only after PR #13 is retargeted to exact `main` and
-  all five CI jobs pass.
+- G-08 record `V3-01-APP-002` was consumed after PR #13 was retargeted to exact `main`, all five CI
+  jobs passed and the PR merged. It cannot authorize a later merge.
 - G-04/G-09 must authorize any staging/production-path run or deploy.
 - G-01 remains required before any provider credential is used.
 - G-05/G-06 remain required before any external publication.
