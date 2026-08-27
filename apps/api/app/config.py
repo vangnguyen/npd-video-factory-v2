@@ -39,6 +39,18 @@ class Settings(BaseSettings):
     vision_fixture_enabled: bool = True
     vision_provider: str = "fixture"
     vision_staging_root: Path = Path("/workspace/storage/vision")
+    media_fixture_enabled: bool = False
+    stock_media_provider: str = "contract"
+    image_generation_provider: str = "contract"
+    video_generation_provider: str = "contract"
+    media_staging_root: Path = Path("/workspace/storage/media-resolution")
+    media_external_execution_enabled: bool = False
+    media_paid_execution_enabled: bool = False
+    comfyui_bridge_url: str = "http://comfyui-bridge:8011"
+    comfyui_execution_enabled: bool = False
+    comfyui_bridge_timeout_seconds: float = 300.0
+    comfyui_image_workflow_id: str = "npd-text-to-image-v1"
+    comfyui_video_workflow_id: str = "npd-video-generation-v1"
     upload_default_part_size_bytes: int = 8 * 1024 * 1024
     upload_max_part_size_bytes: int = 32 * 1024 * 1024
     # Asset and upload byte counts use PostgreSQL INTEGER in the current
@@ -55,27 +67,52 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
         if self.publish_enabled:
-            raise ValueError("publishing is not implemented in V2-05 and must remain disabled")
+            raise ValueError("publishing is not implemented in V2-06 and must remain disabled")
         if not self.human_approval_required:
-            raise ValueError("human approval must remain required in V2-05")
+            raise ValueError("human approval must remain required in V2-06")
         if self.app_env == "production" and self.trend_fixture_enabled:
             raise ValueError("deterministic trend fixtures must be disabled in production")
         if self.app_env == "production" and self.auto_edit_fixture_enabled:
             raise ValueError("deterministic auto-edit fixtures must be disabled in production")
         if self.app_env == "production" and self.vision_fixture_enabled:
             raise ValueError("deterministic Vision fixtures must be disabled in production")
+        if self.app_env == "production" and self.media_fixture_enabled:
+            raise ValueError("deterministic media fixtures must be disabled in production")
         if self.transcription_provider not in {"fixture", "contract"}:
             raise ValueError("TRANSCRIPTION_PROVIDER must be fixture or contract")
         if self.auto_edit_signal_provider not in {"fixture", "ffmpeg"}:
             raise ValueError("AUTO_EDIT_SIGNAL_PROVIDER must be fixture or ffmpeg")
         if self.vision_provider not in {"fixture", "contract"}:
             raise ValueError("VISION_PROVIDER must be fixture or contract")
+        if self.stock_media_provider not in {"fixture", "contract"}:
+            raise ValueError("STOCK_MEDIA_PROVIDER must be fixture or contract")
+        if self.image_generation_provider not in {"fixture", "contract", "comfyui"}:
+            raise ValueError("IMAGE_GENERATION_PROVIDER must be fixture, contract or comfyui")
+        if self.video_generation_provider not in {"fixture", "contract", "comfyui"}:
+            raise ValueError("VIDEO_GENERATION_PROVIDER must be fixture, contract or comfyui")
         if self.transcription_provider == "fixture" and not self.auto_edit_fixture_enabled:
             raise ValueError("fixture transcription requires AUTO_EDIT_FIXTURE_ENABLED=true")
         if self.auto_edit_signal_provider == "fixture" and not self.auto_edit_fixture_enabled:
             raise ValueError("fixture media signals require AUTO_EDIT_FIXTURE_ENABLED=true")
         if self.vision_provider == "fixture" and not self.vision_fixture_enabled:
             raise ValueError("fixture Vision provider requires VISION_FIXTURE_ENABLED=true")
+        if (
+            "fixture"
+            in {self.stock_media_provider, self.image_generation_provider, self.video_generation_provider}
+            and not self.media_fixture_enabled
+        ):
+            raise ValueError("fixture media providers require MEDIA_FIXTURE_ENABLED=true")
+        if self.media_paid_execution_enabled and not self.media_external_execution_enabled:
+            raise ValueError("paid media execution requires external media execution to be enabled")
+        if self.comfyui_execution_enabled and not self.media_external_execution_enabled:
+            raise ValueError("ComfyUI execution requires MEDIA_EXTERNAL_EXECUTION_ENABLED=true")
+        if self.comfyui_execution_enabled and not self.comfyui_bridge_url.strip():
+            raise ValueError("COMFYUI_BRIDGE_URL is required when ComfyUI execution is enabled")
+        if (
+            "comfyui" in {self.image_generation_provider, self.video_generation_provider}
+            and not self.comfyui_execution_enabled
+        ):
+            raise ValueError("ComfyUI generation providers require COMFYUI_EXECUTION_ENABLED=true")
         if self.upload_default_part_size_bytes > self.upload_max_part_size_bytes:
             raise ValueError("default upload part size cannot exceed maximum part size")
         if self.upload_max_part_size_bytes > self.upload_max_size_bytes:

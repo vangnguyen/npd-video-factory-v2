@@ -135,6 +135,28 @@ services:
       - ./packages/contracts:/workspace/packages/contracts:ro
     shm_size: "2gb"
 
+  # Optional owner-gated bridge. It does not start in the default stack and it
+  # does not bundle ComfyUI, GPU models or arbitrary user-supplied graphs.
+  comfyui-bridge:
+    profiles: ["gpu"]
+    build:
+      context: ./services/comfyui-bridge
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      COMFYUI_WORKFLOW_MANIFEST: /workspace/workflows/comfyui/manifest.json
+      COMFYUI_EXECUTION_ENABLED: ${COMFYUI_EXECUTION_ENABLED:-false}
+      COMFYUI_BACKEND: ${COMFYUI_BACKEND:-disabled}
+    volumes:
+      - ./workflows/comfyui:/workspace/workflows/comfyui:ro
+    expose:
+      - "8011"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8011/healthz\", timeout=2)'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
 volumes:
   postgres-data:
   redis-data:

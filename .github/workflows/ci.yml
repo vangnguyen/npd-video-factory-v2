@@ -23,9 +23,9 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: python -m pip install -e "apps/api[dev]" -e "services/worker[dev]"
-      - run: python -m compileall -q apps/api/app services/worker/npd_worker
-      - run: python -m pytest apps/api/tests services/worker/tests -q
+      - run: python -m pip install -e "apps/api[dev]" -e "services/worker[dev]" -e "services/comfyui-bridge[dev]"
+      - run: python -m compileall -q apps/api/app services/worker/npd_worker services/comfyui-bridge/npd_comfyui_bridge
+      - run: python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q
       - name: Alembic upgrade, downgrade and replay
         working-directory: apps/api
         env:
@@ -90,6 +90,10 @@ jobs:
           grep -qx 'AUTO_EDIT_FIXTURE_ENABLED=true' .env.example
           grep -qx 'VISION_FIXTURE_ENABLED=true' .env.example
           grep -qx 'VISION_PROVIDER=fixture' .env.example
+          grep -qx 'MEDIA_FIXTURE_ENABLED=true' .env.example
+          grep -qx 'MEDIA_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'MEDIA_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'COMFYUI_EXECUTION_ENABLED=false' .env.example
       - name: Verify V2-owned durable services and VND-only ledger
         run: |
           grep -q '^  postgres:' docker-compose.yml
@@ -125,6 +129,21 @@ jobs:
           grep -Fq 'external or paid Vision execution is disabled in V2-05' apps/api/app/vision_service.py
           grep -q '0004_v2_05' apps/api/migrations/versions/0004_v2_05_vision_smart_reframe.py
           ! git grep -I -n -E 'VISION_(API_KEY|TOKEN|SECRET)=[^[:space:]]+' -- .
+      - name: Verify V2-06 media rights, cost and execution boundary
+        run: |
+          grep -Fq 'source_media_mutated: Literal[False] = False' apps/api/app/media_intelligence_models.py
+          grep -Fq 'publish_requested: Literal[False] = False' apps/api/app/media_intelligence_models.py
+          grep -Fq 'paid_external_call: Literal[False] = False' apps/api/app/media_intelligence_models.py
+          grep -Fq 'owner_override_recorded: Literal[False] = False' apps/api/app/media_intelligence_models.py
+          grep -Fq 'social_media_downloaded": False' apps/api/app/media_intelligence_providers.py
+          grep -Fq 'production_eligible=False' apps/api/app/media_intelligence_providers.py
+          grep -Fq 'external media execution is disabled in V2-06' apps/api/app/media_intelligence_service.py
+          grep -Fq 'paid media execution is disabled in V2-06' apps/api/app/media_intelligence_service.py
+          grep -q '0005_v2_06' apps/api/migrations/versions/0005_v2_06_media_intelligence.py
+          grep -q 'profiles: \["gpu"\]' docker-compose.yml
+          grep -q 'approved allowlist' services/comfyui-bridge/npd_comfyui_bridge/workflows.py
+          python -c 'from pathlib import Path; from npd_comfyui_bridge.models import BridgeJobCreate; from npd_comfyui_bridge.workflows import WorkflowRegistry; registry=WorkflowRegistry(Path("workflows/comfyui/manifest.json")); assert len(registry.manifest.workflows) == 8; assert "graph" not in BridgeJobCreate.model_fields'
+          ! git grep -I -n -E 'COMFYUI_(API_KEY|TOKEN|SECRET)=[^[:space:]]+' -- apps services workflows .env.example
       - name: Secret pattern scan
         run: |
           if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
@@ -147,7 +166,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v2-05-vision-smart-reframe-e2e
+          name: v2-06-media-intelligence-e2e
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 7

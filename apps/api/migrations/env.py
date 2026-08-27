@@ -12,6 +12,7 @@ from app.db import Base, normalize_database_url
 from app import auto_edit_db  # noqa: F401
 from app import trend_db  # noqa: F401
 from app import vision_db  # noqa: F401
+from app import media_intelligence_db  # noqa: F401
 
 
 config = context.config
