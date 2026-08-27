@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NPD Video Factory V2 Auto Edit Studio — editable, versioned timeline and proxy preview" />
+    <title>NPD Studio · Auto Edit</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/studio.css?v=0.8.0" />
+  </head>
+  <body>
+    <div class="app-shell studio-shell">
+      <aside class="sidebar">
+        <a class="brand" href="/" aria-label="NPD Studio home">
+          <span class="brand-mark">N</span>
+          <span><strong>NPD Studio</strong><small>Video Factory V2</small></span>
+        </a>
+        <nav aria-label="Studio navigation">
+          <a href="/"><span>⌁</span>Trend Radar</a>
+          <a href="/#ideas"><span>✦</span>Idea Engine</a>
+          <a href="/#queue"><span>≋</span>Content Queue</a>
+          <a class="active" href="/studio.html"><span>✂</span>Auto Edit Studio</a>
+          <a href="#future-panels"><span>□</span>Publish & Analytics</a>
+        </nav>
+        <div class="boundary-card">
+          <span class="status-dot"></span>
+          <strong>Chế độ chỉnh sửa an toàn</strong>
+          <p>Timeline có phiên bản. Preview 540p không âm thanh. Không sửa media gốc và không publish.</p>
+        </div>
+      </aside>
+
+      <main id="top" class="studio-main">
+        <header class="topbar studio-topbar">
+          <button id="menu-button" class="icon-button menu-button" aria-label="Mở menu">☰</button>
+          <div>
+            <p class="eyebrow">AI-assisted workspace · V2-07</p>
+            <h1>Auto Edit Studio</h1>
+          </div>
+          <div class="project-picker">
+            <label for="project-select">Dự án</label>
+            <select id="project-select" aria-label="Chọn dự án"><option value="">Đang tải…</option></select>
+          </div>
+          <div class="topbar-actions">
+            <span id="save-status" class="pill safe">Đã lưu</span>
+            <span class="pill muted">Draft only</span>
+            <button id="reload-button" class="secondary-button">Làm mới</button>
+          </div>
+        </header>
+
+        <section id="empty-state" class="studio-empty" hidden>
+          <div class="empty-illustration">✂</div>
+          <p class="eyebrow">Bắt đầu Auto Edit</p>
+          <h2 id="empty-title">Chọn một dự án có video đã phân tích.</h2>
+          <p id="empty-description">Studio dùng kết quả transcript, scene và media plan đã lưu để tạo timeline đầu tiên.</p>
+          <button id="create-timeline-button" class="primary-button" hidden>Khởi tạo timeline AI</button>
+        </section>
+
+        <div id="studio-workspace" hidden>
+          <section class="studio-summary" aria-label="Project summary">
+            <div><small>Timeline</small><strong id="metric-version">v—</strong><span id="metric-version-note">chưa tải</span></div>
+            <div><small>Thời lượng</small><strong id="metric-duration">—</strong><span>source of truth</span></div>
+            <div><small>Cảnh / clip</small><strong id="metric-clips">0</strong><span id="metric-scenes">0 scene AI</span></div>
+            <div><small>Preview</small><strong id="metric-preview">Chưa có</strong><span>proxy 540p</span></div>
+            <div class="summary-boundary"><small>An toàn</small><strong>Không publish</strong><span>media gốc bất biến</span></div>
+          </section>
+
+          <section class="editor-grid">
+            <aside class="editor-panel browser-panel">
+              <div class="panel-tabs" role="tablist" aria-label="Nguồn biên tập">
+                <button class="active" data-panel-tab="media">Media</button>
+                <button data-panel-tab="transcript">Transcript</button>
+                <button data-panel-tab="scenes">Scenes</button>
+                <button data-panel-tab="broll">B-roll</button>
+              </div>
+              <div class="panel-filter"><input id="browser-search" type="search" placeholder="Tìm trong nguồn…" /></div>
+              <div id="browser-content" class="browser-content" aria-live="polite"></div>
+            </aside>
+
+            <section class="preview-panel" aria-label="Preview Player">
+              <div class="preview-toolbar">
+                <div><span class="panel-kicker">Preview Player</span><strong id="preview-title">Timeline hiện tại</strong></div>
+                <span id="preview-status" class="pill muted">Chưa có preview</span>
+              </div>
+              <div id="preview-stage" class="preview-stage">
+                <video id="preview-video" controls playsinline hidden></video>
+                <div id="preview-placeholder" class="preview-placeholder">
+                  <span class="preview-play">▶</span>
+                  <strong>Preview gắn với timeline</strong>
+                  <p>Tạo proxy 540p để kiểm tra nhịp dựng. Âm thanh hoàn chỉnh thuộc V2-08.</p>
+                </div>
+                <div class="safe-frame" aria-hidden="true"></div>
+              </div>
+              <div class="player-controls">
+                <button id="play-button" class="transport-button" title="Phát / tạm dừng">▶</button>
+                <button id="back-button" class="transport-button" title="Lùi 1 giây">−1s</button>
+                <span id="playhead-label" class="timecode">00:00.0</span>
+                <input id="playhead-range" type="range" min="0" max="1" step="0.05" value="0" aria-label="Playhead" />
+                <span id="duration-label" class="timecode">00:00.0</span>
+              </div>
+              <div class="preview-actions">
+                <button id="preview-button" class="primary-button">Tạo preview 540p</button>
+                <button id="cancel-preview-button" class="secondary-button" disabled>Hủy preview</button>
+                <span>Video-only proxy · không gửi ra ngoài · không publish</span>
+              </div>
+            </section>
+
+            <aside class="editor-panel inspector-panel">
+              <div class="panel-heading"><div><span class="panel-kicker">Inspector</span><h2>Thuộc tính clip</h2></div></div>
+              <div id="inspector-empty" class="inspector-empty">Chọn một clip trên timeline để chỉnh.</div>
+              <form id="clip-inspector" hidden>
+                <label>Tên clip<input id="clip-label" type="text" disabled /></label>
+                <div class="field-pair">
+                  <label>Bắt đầu nguồn<input id="clip-source-start" type="number" min="0" step="0.05" /></label>
+                  <label>Kết thúc nguồn<input id="clip-source-end" type="number" min="0.05" step="0.05" /></label>
+                </div>
+                <label>Vị trí timeline<input id="clip-timeline-start" type="number" min="0" step="0.05" /></label>
+                <div class="field-pair">
+                  <label>Tốc độ<input id="clip-speed" type="number" min="0.1" max="8" step="0.1" /></label>
+                  <label>Opacity<input id="clip-opacity" type="number" min="0" max="1" step="0.05" /></label>
+                </div>
+                <label>Âm lượng<input id="clip-volume" type="number" min="0" max="2" step="0.05" /></label>
+                <span class="panel-kicker">Crop chuẩn hóa 0–1</span>
+                <div class="field-pair">
+                  <label>Crop X<input id="clip-crop-x" type="number" min="0" max="1" step="0.01" /></label>
+                  <label>Crop Y<input id="clip-crop-y" type="number" min="0" max="1" step="0.01" /></label>
+                  <label>Crop rộng<input id="clip-crop-width" type="number" min="0.01" max="1" step="0.01" /></label>
+                  <label>Crop cao<input id="clip-crop-height" type="number" min="0.01" max="1" step="0.01" /></label>
+                </div>
+                <span class="panel-kicker">Transform</span>
+                <div class="field-pair">
+                  <label>Dịch X<input id="clip-transform-x" type="number" min="-2" max="2" step="0.01" /></label>
+                  <label>Dịch Y<input id="clip-transform-y" type="number" min="-2" max="2" step="0.01" /></label>
+                  <label>Tỷ lệ<input id="clip-transform-scale" type="number" min="0.1" max="8" step="0.05" /></label>
+                  <label>Xoay °<input id="clip-transform-rotation" type="number" min="-360" max="360" step="1" /></label>
+                </div>
+                <button class="primary-button" type="submit">Lưu thuộc tính</button>
+              </form>
+              <div class="inspector-actions">
+                <span class="panel-kicker">AI Actions</span>
+                <button id="split-button" class="secondary-button" disabled>Cắt tại playhead</button>
+                <button id="duplicate-button" class="secondary-button" disabled>Nhân đôi clip</button>
+                <button id="reorder-up-button" class="secondary-button" disabled>Đưa lên trước</button>
+                <button id="reorder-down-button" class="secondary-button" disabled>Đưa xuống sau</button>
+                <button id="toggle-clip-button" class="secondary-button" disabled>Ẩn clip</button>
+                <button id="delete-button" class="danger-button" disabled>Xóa khỏi timeline</button>
+              </div>
+              <div class="deferred-card">
+                <strong>Tiếp theo · V2-08</strong>
+                <p>Subtitle Editor, Audio Mixer và final renderer đang khóa đúng lộ trình.</p>
+              </div>
+            </aside>
+          </section>
+
+          <section class="timeline-panel">
+            <div class="timeline-toolbar">
+              <div class="timeline-title"><span class="panel-kicker">Timeline</span><strong>Edit source of truth</strong></div>
+              <div class="toolbar-group">
+                <button id="undo-button" class="tool-button" disabled title="Hoàn tác">↶ Hoàn tác</button>
+                <button id="redo-button" class="tool-button" disabled title="Làm lại">↷ Làm lại</button>
+                <button id="snap-button" class="tool-button active" aria-pressed="true">⌁ Snap 0.25s</button>
+              </div>
+              <label class="zoom-control">Zoom<input id="zoom-range" type="range" min="0.5" max="4" step="0.25" value="1" /></label>
+              <span id="timeline-conflict" class="timeline-note">Optimistic concurrency đang bật</span>
+            </div>
+            <div id="timeline-scroll" class="timeline-scroll">
+              <div id="timeline-canvas" class="timeline-canvas">
+                <div id="timeline-ruler" class="timeline-ruler"></div>
+                <div id="timeline-tracks" class="timeline-tracks"></div>
+                <div id="timeline-playhead" class="timeline-playhead" aria-hidden="true"><span></span></div>
+              </div>
+            </div>
+            <div class="timeline-help">Kéo clip để di chuyển · thả sang track cùng loại · chọn clip để trim/split/disable/duplicate · mọi thay đổi tạo một phiên bản mới.</div>
+          </section>
+
+          <section id="future-panels" class="future-grid">
+            <article><span>CC</span><div><strong>Subtitle Editor</strong><p>Đồng bộ và hiệu ứng phụ đề ở V2-08.</p></div><em>Khóa</em></article>
+            <article><span>♫</span><div><strong>Audio Mixer</strong><p>Voice, music ducking và QC âm thanh ở V2-08.</p></div><em>Khóa</em></article>
+            <article><span>↗</span><div><strong>Publish Panel</strong><p>Chỉ mở sau approval và rights gate ở V2-09.</p></div><em>Disabled</em></article>
+            <article><span>⌁</span><div><strong>Analytics Panel</strong><p>Learning loop và winner detection ở V2-10.</p></div><em>Preview</em></article>
+          </section>
+        </div>
+
+        <footer>
+          <span>NPD Video Factory V2 · Auto Edit Studio 0.8.0</span>
+          <span>Timeline versioned · VND only · Human approval required · Publishing disabled</span>
+        </footer>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/studio.js?v=0.8.0"></script>
+  </body>
+</html>

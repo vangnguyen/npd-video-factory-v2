@@ -1,4 +1,4 @@
-# Testing — V2-06
+# Testing — V2-07
 
 ## Local checks
 
@@ -21,6 +21,9 @@ cd apps/studio-web
 npm ci
 npm test
 node --check app.js
+node --check trend-utils.mjs
+node --check studio.js
+node --check studio-utils.mjs
 ```
 
 Independent Docker acceptance:
@@ -60,12 +63,22 @@ The E2E creates five copyright-safe fixtures and one deterministic job, then ver
 - unknown-rights, over-budget, external/paid and missing-provider fail-closed behavior;
 - media-plan/assets recovery after API restart and worker queue recovery;
 - ComfyUI manifest allowlisting plus mock progress/result/cancel/timeout/retry behavior.
+- timeline JSON Schema and initial composition from source, transcript, silence and resolved-media
+  evidence;
+- drag/move, trim, split, delete, reorder, disable, duplicate, property and track-state semantics;
+- immutable timeline versions, stale-write HTTP 409 and API/repository restart recovery;
+- Redis preview delivery/recovery, progress, cancellation and stale-on-mutation semantics;
+- a real FFmpeg 540x960 H.264 video-only preview, checksum/object registration and content route;
+- responsive Studio utility rules for timecode, zoom, snapping, track compatibility and preview
+  state labels.
 
 The API/unit suite separately covers signature/MIME rejection, missing or corrupt upload parts,
 same-project checksum duplicate reuse and Top 5 output. The repository also resolves a
 unique-fingerprint race to the already-created analysis instead of leaking a database conflict.
 The Vision suite separately covers normalized box/request validation, replay idempotency, restart
 reads, manual-override versioning, provider failure state and source immutability.
+The timeline suite separately covers locked-track rejection, source immutability, publish/external
+call literals, preview reuse/invalidation and deterministic worker queue recovery.
 
 The script removes only its disposable Compose volumes on exit. Normal CI performs no paid
 call. The manual paid-provider smoke still requires explicit dispatch, protected-environment

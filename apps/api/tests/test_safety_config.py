@@ -120,7 +120,12 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["publish_enabled"] is False
     assert result["human_approval_required"] is True
     assert result["auto_edit_analysis"] is True
-    assert result["auto_edit_timeline"] is False
+    assert result["auto_edit_timeline"] is True
+    assert result["timeline_versioning"] is True
+    assert result["timeline_optimistic_concurrency"] is True
+    assert result["proxy_preview"] == "asynchronous_540p"
+    assert result["preview_audio"] == "deferred_to_v2_08"
+    assert result["preview_publish"] is False
     assert result["source_media_mutation"] is False
     assert result["vision_analysis"] is True
     assert result["ocr"] is True

@@ -19,6 +19,13 @@ from app.media_intelligence_service import (
 from app.object_storage import create_object_storage
 from app.repositories import PlatformRepository, PostgresJobStore
 from app.state import QUEUE_KEY
+from app.timeline_repository import TimelineRepository
+from app.timeline_service import (
+    PREVIEW_PROCESSING_KEY,
+    PREVIEW_QUEUE_KEY,
+    FFmpegProxyRenderer,
+    PreviewService,
+)
 
 from .pipeline import WorkerConfig, run_job
 
@@ -55,6 +62,21 @@ async def recover_media_resolution_jobs(
         await pipe.execute()
     if identifiers:
         logger.warning("recovered_media_resolution count=%d", len(identifiers))
+    return len(identifiers)
+
+
+async def recover_preview_jobs(redis: Redis, repository: TimelineRepository) -> int:
+    inflight = await redis.lrange(PREVIEW_PROCESSING_KEY, 0, -1)
+    pending = await repository.list_incomplete_preview_ids()
+    identifiers = list(dict.fromkeys([*inflight, *pending]))
+    async with redis.pipeline(transaction=True) as pipe:
+        pipe.delete(PREVIEW_PROCESSING_KEY)
+        for identifier in identifiers:
+            pipe.lrem(PREVIEW_QUEUE_KEY, 0, identifier)
+            pipe.rpush(PREVIEW_QUEUE_KEY, identifier)
+        await pipe.execute()
+    if identifiers:
+        logger.warning("recovered_preview count=%d", len(identifiers))
     return len(identifiers)
 
 
@@ -101,6 +123,25 @@ async def run_media_resolution_queue(
             await redis.lrem(MEDIA_RESOLUTION_PROCESSING_KEY, 1, resolution_job_id)
 
 
+async def run_preview_queue(redis: Redis, service: PreviewService) -> None:
+    while True:
+        preview_id = await redis.brpoplpush(
+            PREVIEW_QUEUE_KEY,
+            PREVIEW_PROCESSING_KEY,
+            timeout=5,
+        )
+        if preview_id is None:
+            continue
+        logger.info("preview_claimed preview_id=%s", preview_id)
+        try:
+            result = await service.process(preview_id)
+            logger.info("preview_completed preview_id=%s status=%s", preview_id, result.status)
+        except Exception:
+            logger.exception("preview_worker_error preview_id=%s", preview_id)
+        finally:
+            await redis.lrem(PREVIEW_PROCESSING_KEY, 1, preview_id)
+
+
 async def main() -> None:
     redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
     redis = Redis.from_url(redis_url, decode_responses=True)
@@ -112,6 +153,7 @@ async def main() -> None:
     platform = PlatformRepository(session_factory)
     auto_edit_repository = AutoEditRepository(session_factory)
     media_repository = MediaIntelligenceRepository(session_factory)
+    timeline_repository = TimelineRepository(session_factory)
     store = PostgresJobStore(
         session_factory,
         redis,
@@ -132,12 +174,23 @@ async def main() -> None:
         allow_external_execution=settings.media_external_execution_enabled,
         allow_paid_execution=settings.media_paid_execution_enabled,
     )
+    preview_service = PreviewService(
+        repository=timeline_repository,
+        platform=platform,
+        auto_edit_repository=auto_edit_repository,
+        object_storage=object_storage,
+        queue=redis,
+        renderer=FFmpegProxyRenderer(settings.ffmpeg_path),
+        staging_root=settings.preview_staging_root,
+    )
     await recover_media_resolution_jobs(redis, media_repository)
+    await recover_preview_jobs(redis, timeline_repository)
     logger.info("worker_booted queue=%s processing=%s", QUEUE_KEY, PROCESSING_KEY)
     try:
         await asyncio.gather(
             run_video_queue(redis, store, config=config),
             run_media_resolution_queue(redis, media_resolution_service),
+            run_preview_queue(redis, preview_service),
         )
     finally:
         await redis.aclose()

@@ -70,6 +70,8 @@ jobs:
       - run: npm test
       - run: node --check app.js
       - run: node --check trend-utils.mjs
+      - run: node --check studio.js
+      - run: node --check studio-utils.mjs
 
   safety:
     name: Safety and compose contract
@@ -144,6 +146,17 @@ jobs:
           grep -q 'approved allowlist' services/comfyui-bridge/npd_comfyui_bridge/workflows.py
           python -c 'import json; from pathlib import Path; manifest=json.loads(Path("workflows/comfyui/manifest.json").read_text()); assert len(manifest["workflows"]) == 8; source=Path("services/comfyui-bridge/npd_comfyui_bridge/models.py").read_text(); assert "graph:" not in source'
           ! git grep -I -n -E 'COMFYUI_(API_KEY|TOKEN|SECRET)=[^[:space:]]+' -- apps services workflows .env.example
+      - name: Verify V2-07 timeline and proxy-preview boundary
+        run: |
+          grep -Fq 'source_media_mutated: Literal[False] = False' apps/api/app/timeline_models.py
+          grep -Fq 'publish_requested: Literal[False] = False' apps/api/app/timeline_models.py
+          grep -Fq 'external_call: Literal[False] = False' apps/api/app/timeline_models.py
+          grep -Fq 'PREVIEW_QUEUE_KEY = "npd:video-factory:v2:preview:queued"' apps/api/app/timeline_service.py
+          grep -Fq '"publishing_allowed": False' apps/api/app/timeline_service.py
+          grep -Fq '"audio_mixing": "deferred_to_v2_08"' apps/api/app/timeline_service.py
+          grep -q '0006_v2_07' apps/api/migrations/versions/0006_v2_07_auto_edit_studio.py
+          python -c 'import json; from pathlib import Path; schema=json.loads(Path("packages/contracts/timeline.schema.json").read_text()); assert schema["$schema"].endswith("2020-12/schema"); assert schema["additionalProperties"] is False'
+          ! git grep -I -n -E 'PUBLISH_ENABLED=true|HUMAN_APPROVAL_REQUIRED=false' -- .env.example apps services packages
       - name: Secret pattern scan
         run: |
           if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
@@ -166,7 +179,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v2-06-media-intelligence-e2e
+          name: v2-07-auto-edit-studio-e2e
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 7

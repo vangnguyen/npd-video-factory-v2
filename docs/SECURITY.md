@@ -1,4 +1,4 @@
-# Security and safety — V2-06
+# Security and safety — V2-07
 
 ## Defaults
 
@@ -19,6 +19,8 @@
   is never downloaded, and external/paid media execution is disabled by default.
 - ComfyUI accepts only allowlisted workflow IDs and typed inputs. Arbitrary workflow graphs, model
   uploads and direct frontend-to-ComfyUI access are absent.
+- Timeline writes require optimistic concurrency and preserve immutable historical snapshots.
+- Proxy previews are project-scoped, video-only, external-call-free and marked non-publishing.
 
 ## Data and artifact controls
 
@@ -33,12 +35,14 @@
 - Source objects are immutable. Silence/highlight output is a reversible decision record only.
 - Vision and crop plans are immutable evidence/decision records. Crop keyframes do not render,
   replace or mutate the source object.
-- Media provenance records source, license, creator, rights and generation evidence. V2-06 exposes
+- Media provenance records source, license, creator, rights and generation evidence. V2-07 exposes
   no owner-override write and no publishing route.
+- Preview input paths come only from recorded project assets; output object keys are server-built,
+  checksummed and registered before playback. Bounded render/download scratch is removed.
 
 ## Known security gate
 
-V2-06 does not yet implement API authentication, RBAC or workspace membership. Localhost
+V2-07 does not yet implement API authentication, RBAC or workspace membership. Localhost
 binding is the only access boundary in this increment. Public routing and production
 deployment are prohibited until those controls, rate limits and audit actor identity are
 implemented and accepted.

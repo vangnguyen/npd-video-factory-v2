@@ -1,10 +1,10 @@
 # NPD Video Factory V2
 
-NPD Video Factory V2 is an independent media execution platform. V2-06 keeps the durable
-video, Trend/Idea, Auto Edit and Vision platform, then adds explainable B-roll/media planning,
-rights provenance, asynchronous media resolution and an allowlisted ComfyUI bridge contract.
+NPD Video Factory V2 is an independent media execution platform. V2-07 keeps the durable
+video, Trend/Idea, Auto Edit, Vision and Media Intelligence platform, then adds a versioned
+editable timeline, responsive Auto Edit Studio and asynchronous 540p proxy preview.
 
-## V2-06 status
+## V2-07 status
 
 Implemented and locally acceptance-tested:
 
@@ -42,12 +42,21 @@ Implemented and locally acceptance-tested:
 - durable resolution jobs, Redis delivery, worker recovery and object-store registration;
 - per-asset license, creator, source and generation provenance with fail-closed rights checks;
 - an optional, disabled-by-default ComfyUI bridge with eight versioned allowlisted workflows.
+- a strict JSON Schema/Pydantic timeline contract with typed tracks, clips, crop, transform,
+  audio-level, transition/effect and evidence fields;
+- immutable PostgreSQL timeline versions, optimistic concurrency, restart recovery and preview
+  invalidation after every accepted edit;
+- responsive Auto Edit Studio media/transcript/scene/B-roll browsers and a genuinely editable
+  multi-track timeline;
+- drag/drop, trim, split, move, delete, reorder, disable, duplicate, zoom, proxy waveform,
+  playhead, snapping, undo/redo, track lock and mute interactions;
+- worker-rendered, cancellable 540x960 H.264 video-only previews with persisted progress,
+  object-store checksums and version-bound playback.
 
-Not implemented in V2-06: real Vision/stock/generation credentials or accuracy acceptance,
-production ComfyUI/GPU execution, reframe rendering,
-transcript/crop editing UI, editable timeline, API authentication/RBAC, publishing,
-analytics/learning loops or a production rollout. Those remain later,
-separately gated increments.
+Not implemented in V2-07: real Vision/stock/generation credentials or accuracy acceptance,
+production ComfyUI/GPU execution, subtitle styling, TTS/music/audio mix, final render/QC from the
+editable timeline, approval actions, API authentication/RBAC, publishing, analytics/learning
+loops or a production rollout. Those remain later, separately gated increments.
 
 ## Safety boundary
 
@@ -61,6 +70,10 @@ separately gated increments.
 - Media fixture artifacts are synthetic, not production-eligible and never imply a real-provider test.
 - Unknown rights and unapproved costs block resolution/publishing; external and paid execution are off.
 - ComfyUI accepts only versioned workflow IDs; the optional `gpu` profile is disabled by default.
+- Timeline writes require an expected version, source bytes stay immutable and old previews become
+  stale instead of being silently reused.
+- Proxy preview is video-only, performs no external call, cannot publish and is never a final
+  output claim.
 - Trend references are metadata-only; creator media is never downloaded or copied.
 - No secrets or production media are included.
 
@@ -76,7 +89,8 @@ bash scripts/e2e-smoke.sh
 The E2E creates copyright-safe media and trend fixtures, migrates PostgreSQL, renders one MP4,
 verifies Trend -> Ideas -> Queue -> Draft Project, uploads the MP4 through the resumable API,
 persists transcript/scene/silence/highlight, Vision/reframe and media-plan/provenance evidence,
-resolves four fixture strategies asynchronously, restarts the API,
+resolves four fixture strategies asynchronously, builds and edits a versioned timeline, rejects a
+stale write, renders and invalidates a 540p proxy, restarts the API,
 restores the final artifact from MinIO and validates decoded video/audio quality. Its temporary
 stack and volumes are removed on exit.
 
@@ -95,7 +109,10 @@ Useful endpoints after `docker compose up -d --build`:
 - `POST http://localhost:8000/api/v1/projects/{project_id}/analyses/{analysis_id}/vision`
 - `POST http://localhost:8000/api/v1/projects/{project_id}/media-plans`
 - `GET http://localhost:8000/api/v1/projects/{project_id}/media-assets`
-- `GET http://localhost:3000` (local Trend Radar Studio)
+- `POST|GET|PUT http://localhost:8000/api/v1/projects/{project_id}/timeline`
+- `POST http://localhost:8000/api/v1/projects/{project_id}/preview`
+- `GET http://localhost:3000` (local Trend Radar)
+- `GET http://localhost:3000/studio.html` (local Auto Edit Studio)
 
 See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
 [Deployment](docs/DEPLOYMENT.md), [Testing](docs/TESTING.md),
@@ -104,5 +121,6 @@ See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
 [Auto Edit Analysis](docs/AUTO_EDIT_ANALYSIS.md),
 [Vision and Smart Reframe](docs/VISION_SMART_REFRAME.md),
 [Media Intelligence](docs/MEDIA_INTELLIGENCE.md), [media provider contracts](docs/MEDIA_PROVIDERS.md), [ComfyUI setup](docs/COMFYUI_SETUP.md),
-[V2-06 acceptance](docs/V2_06_ACCEPTANCE.md), [V2-05 acceptance](docs/V2_05_ACCEPTANCE.md) and the
+[Auto Edit Studio](docs/AUTO_EDIT_STUDIO.md), [V2-07 acceptance](docs/V2_07_ACCEPTANCE.md),
+[V2-06 acceptance](docs/V2_06_ACCEPTANCE.md) and the
 [V2 master specification](docs/CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md).

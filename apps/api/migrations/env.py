@@ -13,6 +13,7 @@ from app import auto_edit_db  # noqa: F401
 from app import trend_db  # noqa: F401
 from app import vision_db  # noqa: F401
 from app import media_intelligence_db  # noqa: F401
+from app import timeline_db  # noqa: F401
 
 
 config = context.config

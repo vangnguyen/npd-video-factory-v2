@@ -42,6 +42,14 @@ from .trend_providers import create_trend_provider_registry
 from .trend_repository import TrendRepository
 from .trend_routes import router as trend_router
 from .trend_service import TrendIntelligenceService
+from .timeline_repository import TimelineRepository
+from .timeline_routes import router as timeline_router
+from .timeline_service import (
+    FFmpegProxyRenderer,
+    PreviewService,
+    TimelineContractValidator,
+    TimelineService,
+)
 from .vision_providers import ContractOnlyVisionProvider, DeterministicVisionProvider
 from .vision_repository import VisionRepository
 from .vision_routes import router as vision_router
@@ -61,6 +69,8 @@ async def lifespan(app: FastAPI):
     settings.analysis_staging_root.mkdir(parents=True, exist_ok=True)
     settings.vision_staging_root.mkdir(parents=True, exist_ok=True)
     settings.media_staging_root.mkdir(parents=True, exist_ok=True)
+    settings.preview_staging_root.mkdir(parents=True, exist_ok=True)
+    settings.preview_download_root.mkdir(parents=True, exist_ok=True)
     engine = create_engine(settings.database_url)
     session_factory = create_session_factory(engine)
     redis = Redis.from_url(settings.redis_url, decode_responses=False)
@@ -70,6 +80,7 @@ async def lifespan(app: FastAPI):
     auto_edit_repository = AutoEditRepository(session_factory)
     vision_repository = VisionRepository(session_factory)
     media_intelligence_repository = MediaIntelligenceRepository(session_factory)
+    timeline_repository = TimelineRepository(session_factory)
     trend_providers = create_trend_provider_registry(
         settings.trend_fixture_path,
         fixture_enabled=settings.trend_fixture_enabled,
@@ -95,6 +106,7 @@ async def lifespan(app: FastAPI):
     app.state.auto_edit_repository = auto_edit_repository
     app.state.vision_repository = vision_repository
     app.state.media_intelligence_repository = media_intelligence_repository
+    app.state.timeline_repository = timeline_repository
     app.state.trend_provider_registry = trend_providers
     app.state.trend_intelligence_service = TrendIntelligenceService(
         trend_repository,
@@ -171,6 +183,23 @@ async def lifespan(app: FastAPI):
         allow_external_execution=settings.media_external_execution_enabled,
         allow_paid_execution=settings.media_paid_execution_enabled,
     )
+    app.state.timeline_service = TimelineService(
+        repository=timeline_repository,
+        platform=platform,
+        auto_edit_repository=auto_edit_repository,
+        media_repository=media_intelligence_repository,
+        validator=TimelineContractValidator(settings.contracts_root / "timeline.schema.json"),
+    )
+    app.state.preview_service = PreviewService(
+        repository=timeline_repository,
+        platform=platform,
+        auto_edit_repository=auto_edit_repository,
+        object_storage=object_storage,
+        queue=redis,
+        renderer=FFmpegProxyRenderer(settings.ffmpeg_path),
+        staging_root=settings.preview_staging_root,
+    )
+    app.state.preview_download_root = settings.preview_download_root
     try:
         yield
     finally:
@@ -178,12 +207,13 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.7.0", lifespan=lifespan)
+app = FastAPI(title="NPD Video Factory V2 API", version="0.8.0", lifespan=lifespan)
 app.include_router(platform_router)
 app.include_router(trend_router)
 app.include_router(auto_edit_router)
 app.include_router(vision_router)
 app.include_router(media_intelligence_router)
+app.include_router(timeline_router)
 
 
 def store_from(request: Request) -> PostgresJobStore:
@@ -559,7 +589,12 @@ async def capabilities() -> dict[str, object]:
         "idea_to_project_state": "draft_only",
         "resumable_upload": True,
         "auto_edit_analysis": True,
-        "auto_edit_timeline": False,
+        "auto_edit_timeline": True,
+        "timeline_versioning": True,
+        "timeline_optimistic_concurrency": True,
+        "proxy_preview": "asynchronous_540p",
+        "preview_audio": "deferred_to_v2_08",
+        "preview_publish": False,
         "source_media_mutation": False,
         "transcription_provider": settings.transcription_provider,
         "media_signal_provider": settings.auto_edit_signal_provider,

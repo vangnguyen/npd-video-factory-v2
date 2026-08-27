@@ -1,4 +1,4 @@
-# API — V2-06
+# API — V2-07
 
 Base path: `/api/v1`. Request models forbid unknown fields. This local/CI increment has no
 authentication layer and must not be exposed to an untrusted network.
@@ -107,4 +107,32 @@ analysis. It contains B-roll intent/query/timing/prompt/confidence, chosen strat
 ranked stock candidates, provider state and VND budget state. Resolution is asynchronous and
 returns HTTP 202. Rights/provenance are mandatory; unknown rights or non-production fixture output
 keeps `publishing_blocked=true`. Responses always report no source mutation, no publish request and
-no paid external call in the V2-06 path.
+no paid external call in the V2-06 path inherited by V2-07.
+
+## Auto Edit timeline and proxy preview
+
+- `POST /api/v1/projects/{project_id}/timeline`: create the project's initial timeline from a
+  succeeded Auto Edit analysis and optional matching media plan.
+- `GET /api/v1/projects/{project_id}/timeline`: read the canonical current version.
+- `PUT /api/v1/projects/{project_id}/timeline`: apply one or more typed operations with required
+  `expected_version` optimistic concurrency.
+- `POST /api/v1/projects/{project_id}/timeline/restore`: restore a historical snapshot as a new
+  current version; history is never overwritten.
+- `GET /api/v1/projects/{project_id}/timeline/versions`: ordered immutable version history.
+- `POST /api/v1/projects/{project_id}/preview`: enqueue or replay a 540x960 preview bound to a
+  timeline version.
+- `GET /api/v1/projects/{project_id}/previews/{preview_id}`: status, progress, version validity and
+  checksum-bearing manifest.
+- `POST /api/v1/projects/{project_id}/previews/{preview_id}/cancel`: request cancellation.
+- `GET /api/v1/projects/{project_id}/previews/{preview_id}/content`: serve only the registered
+  project-scoped preview asset.
+
+Timeline operations are `move`, `trim`, `split`, `delete`, `reorder`, `disable`, `duplicate`,
+`set_clip_properties` and `set_track_state`. Stale writes return HTTP 409 with
+`TIMELINE_VERSION_CONFLICT` and the actual current version. Every accepted change creates a new
+immutable timeline version, resets approval to `draft` and invalidates earlier previews.
+
+Preview statuses are `queued`, `running`, `ready`, `stale`, `cancelled` and `failed`. Preview is
+video-only in V2-07; TTS/music/audio mixing and final rendering are deferred to V2-08. All timeline
+and preview contracts keep `source_media_mutated=false`, `publish_requested=false`; preview also
+keeps `external_call=false`.
