@@ -1,4 +1,4 @@
-# API — V2-08
+# API — V2-09
 
 Base path: `/api/v1`. Request models forbid unknown fields. This local/CI increment has no
 authentication layer and must not be exposed to an untrusted network.
@@ -33,7 +33,8 @@ version.
 - `GET /api/v1/video-jobs/{job_id}/artifacts/{artifact_name}`: serves only a recorded safe
   name; if scratch is missing, restores from object storage and checks SHA-256.
 
-The accepted terminal success state is `awaiting_review`; there is no publish API.
+The accepted video-job terminal success state is `awaiting_review`. Publishing is a separate,
+final-render-bound V2-09 resource and succeeds only as a dry run.
 
 ## Providers and cost
 
@@ -159,4 +160,25 @@ the fast video-only V2-07 path. All timeline and preview contracts keep
 
 Review jobs end at `awaiting_review`; final jobs end at `ready` only after full QC. Version conflict
 or an invalid approval boundary returns HTTP 409. All render records hard-code
-`publishing_allowed=false` and `external_publish_requested=false`; V2-08 has no publish endpoint.
+`publishing_allowed=false` and `external_publish_requested=false`. The V2-09 publishing service
+never changes the artifact; it validates an approved final render and records a separate receipt.
+
+## Publishing validation and receipts
+
+- `POST /api/v1/projects/{project_id}/publish`: validate and reserve a publishing request. A
+  16–200 character `Idempotency-Key` header is required.
+- `GET /api/v1/projects/{project_id}/publications`: ordered durable attempts.
+- `GET /api/v1/projects/{project_id}/publications/{publication_id}`: one attempt and receipt.
+- `GET /api/v1/projects/{project_id}/publication-history`: append-only audit events.
+- `GET /api/v1/publishing-platforms`: versioned platform profiles and provider state.
+
+The request names one of `youtube`, `tiktok`, `instagram_reels` or `facebook`, the exact final
+render, metadata and `mode`. `dry_run` is the only successful V2-09 mode. Its mock receipt always
+states `external_action=false` and `duplicate_post_created=false`, with no remote ID or URL.
+`mode=live`, incomplete rights, stale approval, failed QC, unsupported media or invalid metadata
+returns HTTP 409. Once reserved, a blocked attempt remains readable for audit. An exact retry
+returns the original record with `X-Idempotent-Replay: true`; a reused key with a changed payload
+returns `IDEMPOTENCY_KEY_CONFLICT`.
+
+Publication responses never include provider credentials or secret-reference values. The API has
+no authentication/RBAC in V2-09 and therefore remains localhost/CI-only.

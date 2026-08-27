@@ -37,6 +37,11 @@ from .models import JobCreateResponse, JobRecord, VideoJobCreate
 from .object_storage import create_object_storage, sha256_file
 from .platform_models import WorkspaceCreate
 from .platform_routes import router as platform_router
+from .publishing_logic import PublishingCapabilityRegistry
+from .publishing_providers import PublishingProviderRegistry
+from .publishing_repository import PublishingRepository
+from .publishing_routes import router as publishing_router
+from .publishing_service import PublishingService
 from .production_repository import ProductionRepository
 from .production_routes import router as production_router
 from .production_service import ProductionPackageService
@@ -87,6 +92,7 @@ async def lifespan(app: FastAPI):
     media_intelligence_repository = MediaIntelligenceRepository(session_factory)
     timeline_repository = TimelineRepository(session_factory)
     production_repository = ProductionRepository(session_factory)
+    publishing_repository = PublishingRepository(session_factory)
     trend_providers = create_trend_provider_registry(
         settings.trend_fixture_path,
         fixture_enabled=settings.trend_fixture_enabled,
@@ -114,6 +120,7 @@ async def lifespan(app: FastAPI):
     app.state.media_intelligence_repository = media_intelligence_repository
     app.state.timeline_repository = timeline_repository
     app.state.production_repository = production_repository
+    app.state.publishing_repository = publishing_repository
     app.state.trend_provider_registry = trend_providers
     app.state.trend_intelligence_service = TrendIntelligenceService(
         trend_repository,
@@ -214,6 +221,18 @@ async def lifespan(app: FastAPI):
         queue=redis,
         settings=settings,
     )
+    publishing_capabilities = PublishingCapabilityRegistry(
+        settings.contracts_root / "publishing-capabilities.json"
+    )
+    publishing_providers = PublishingProviderRegistry(settings)
+    app.state.publishing_service = PublishingService(
+        repository=publishing_repository,
+        production_repository=production_repository,
+        asset_repository=auto_edit_repository,
+        capabilities=publishing_capabilities,
+        providers=publishing_providers,
+        settings=settings,
+    )
     app.state.production_render_download_root = settings.production_render_download_root
     try:
         yield
@@ -222,7 +241,7 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.9.0", lifespan=lifespan)
+app = FastAPI(title="NPD Video Factory V2 API", version="0.10.0", lifespan=lifespan)
 app.include_router(platform_router)
 app.include_router(trend_router)
 app.include_router(auto_edit_router)
@@ -230,6 +249,7 @@ app.include_router(vision_router)
 app.include_router(media_intelligence_router)
 app.include_router(timeline_router)
 app.include_router(production_router)
+app.include_router(publishing_router)
 
 
 def store_from(request: Request) -> PostgresJobStore:
@@ -554,7 +574,65 @@ def _provider_definitions() -> list[dict[str, object]]:
                 ("public-rss", "Public RSS/News Feeds", "file:TREND_RSS_ALLOWLIST_FILE"),
             )
         ],
+        *_publishing_provider_definitions(),
     ]
+
+
+def _publishing_provider_definitions() -> list[dict[str, object]]:
+    definitions: list[dict[str, object]] = [
+        {
+            "provider_key": "mock-publishing",
+            "display_name": "Deterministic Publishing Dry Run",
+            "capability": "publishing",
+            "adapter": "app.publishing_providers.MockPublishingProvider",
+            "routing_mode": "primary",
+            "status": "healthy",
+            "enabled": True,
+            "supports_dry_run": True,
+            "config_ref": "built-in:v2-09-dry-run",
+            "metadata": {
+                "official_api_only": True,
+                "mock": True,
+                "external_action": False,
+                "ci_safe": True,
+            },
+        }
+    ]
+    credential_refs = {
+        "youtube": settings.youtube_publishing_credential_ref,
+        "tiktok": settings.tiktok_publishing_credential_ref,
+        "instagram_reels": settings.instagram_publishing_credential_ref,
+        "facebook": settings.facebook_publishing_credential_ref,
+    }
+    display_names = {
+        "youtube": "YouTube Data API Publishing",
+        "tiktok": "TikTok Content Posting API",
+        "instagram_reels": "Instagram Graph API Reels Publishing",
+        "facebook": "Facebook Graph API Publishing",
+    }
+    for platform, provider_key in PublishingProviderRegistry.PROVIDER_KEYS.items():
+        configured = bool(credential_refs[platform])
+        definitions.append(
+            {
+                "provider_key": provider_key,
+                "display_name": display_names[platform],
+                "capability": "publishing",
+                "adapter": "app.publishing_providers.OfficialPublishingProvider",
+                "routing_mode": "disabled",
+                "status": "degraded" if configured else "not_configured",
+                "enabled": False,
+                "supports_dry_run": False,
+                "config_ref": f"external-secret-ref:{platform}",
+                "metadata": {
+                    "platform": platform,
+                    "official_api_only": True,
+                    "contract_only": True,
+                    "external_action": False,
+                    "credential_reference_configured": configured,
+                },
+            }
+        )
+    return definitions
 
 
 def not_found(message: str = "Job not found.") -> HTTPException:
@@ -590,8 +668,11 @@ async def capabilities() -> dict[str, object]:
     return {
         "video_jobs": True,
         "deterministic_content": True,
-        "publishing_implemented": False,
+        "publishing_implemented": True,
+        "publishing_mode": "dry_run_only",
         "publish_enabled": settings.publish_enabled,
+        "publish_external_execution_enabled": settings.publish_external_execution_enabled,
+        "publish_owner_gate_enabled": settings.publish_owner_gate_enabled,
         "human_approval_required": settings.human_approval_required,
         "agent_hub_runtime_dependency": False,
         "metadata_database": "postgresql",
@@ -628,7 +709,7 @@ async def capabilities() -> dict[str, object]:
         ],
         "final_render_requires_version_bound_approval": True,
         "full_video_qc": True,
-        "final_render_publish": False,
+        "final_render_publish": "dry_run_validation_only",
         "source_media_mutation": False,
         "transcription_provider": settings.transcription_provider,
         "media_signal_provider": settings.auto_edit_signal_provider,

@@ -87,6 +87,8 @@ jobs:
       - name: Verify fail-closed defaults
         run: |
           grep -qx 'PUBLISH_ENABLED=false' .env.example
+          grep -qx 'PUBLISH_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PUBLISH_OWNER_GATE_ENABLED=false' .env.example
           grep -qx 'HUMAN_APPROVAL_REQUIRED=true' .env.example
           grep -qx 'TREND_FIXTURE_ENABLED=true' .env.example
           grep -qx 'AUTO_EDIT_FIXTURE_ENABLED=true' .env.example
@@ -168,6 +170,15 @@ jobs:
           grep -q '0007_v2_08' apps/api/migrations/versions/0007_v2_08_audio_subtitle_render_qc.py
           python -c 'import json; from pathlib import Path; schema=json.loads(Path("packages/contracts/timeline-render.schema.json").read_text()); assert schema["$schema"].endswith("2020-12/schema"); assert schema["additionalProperties"] is False; assert schema["properties"]["safety"]["properties"]["publishing_allowed"]["const"] is False'
           ! git grep -I -n -E 'AUDIO_EXTERNAL_EXECUTION_ENABLED=true|PUBLISH_ENABLED=true|HUMAN_APPROVAL_REQUIRED=false' -- .env.example apps services packages
+      - name: Verify V2-09 publishing dry-run and external-action boundary
+        run: |
+          grep -Fq 'class PublishingProvider(Protocol)' apps/api/app/publishing_providers.py
+          grep -Fq 'duplicate_post_created: Literal[False] = False' apps/api/app/publishing_models.py
+          grep -Fq 'external_action=False' apps/api/app/publishing_providers.py
+          grep -Fq 'OFFICIAL_ADAPTER_CONTRACT_ONLY' apps/api/app/publishing_providers.py
+          grep -q '0008_v2_09' apps/api/migrations/versions/0008_v2_09_publishing.py
+          python -c 'import json; from pathlib import Path; data=json.loads(Path("packages/contracts/publishing-capabilities.json").read_text()); assert set(data["platforms"]) == {"youtube", "tiktok", "instagram_reels", "facebook"}; assert all(item["verification_state"] == "internal_safe_profile" for item in data["platforms"].values())'
+          ! git grep -I -n -E 'PUBLISH_EXTERNAL_EXECUTION_ENABLED=true|PUBLISH_OWNER_GATE_ENABLED=true|YOUTUBE_PUBLISHING_CREDENTIAL_REF=.+|TIKTOK_PUBLISHING_CREDENTIAL_REF=.+|INSTAGRAM_PUBLISHING_CREDENTIAL_REF=.+|FACEBOOK_PUBLISHING_CREDENTIAL_REF=.+' -- .env.example apps services packages
       - name: Secret pattern scan
         run: |
           if git grep -I -n -E 'sk-[A-Za-z0-9_-]{20,}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
@@ -190,7 +201,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v2-08-audio-subtitle-render-qc-e2e
+          name: v2-09-publishing-dry-run-e2e
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 7

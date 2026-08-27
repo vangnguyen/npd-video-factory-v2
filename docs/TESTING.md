@@ -1,4 +1,4 @@
-# Testing — V2-08
+# Testing — V2-09
 
 ## Local checks
 
@@ -77,7 +77,10 @@ The E2E creates five copyright-safe fixtures and one deterministic job, then ver
 - real 540x960 review and 1080x1920 final H.264/AAC/48 kHz artifacts;
 - full duration/fps/codec/A-V/black/freeze/silence/clipping/decode/subtitle/timeline QC;
 - production package, approval, final render and audit recovery after API restart;
-- deterministic Redis production-render recovery and no side effects/publishing.
+- deterministic Redis production-render recovery and no render-time publishing side effect;
+- exact final-render dry-run validation, mock receipt and `external_action=false`;
+- idempotent publication replay, blocked live mode and PostgreSQL recovery after API restart;
+- four versioned platform profiles and contract-only official adapters.
 
 The API/unit suite separately covers signature/MIME rejection, missing or corrupt upload parts,
 same-project checksum duplicate reuse and Top 5 output. The repository also resolves a
@@ -89,6 +92,9 @@ call literals, preview reuse/invalidation and deterministic worker queue recover
 The V2-08 suite separately covers exact version binding, stale approval/render invalidation,
 missing/changed approval rejection, deterministic processor evidence, VND-only cost records and
 worker queue recovery.
+The V2-09 suite separately covers rights/platform/provider gates, idempotency conflict, blocked
+attempt audit, secret-free serialization, partial live-gate rejection and CI live-execution
+rejection. Studio tests cover publishing gate and receipt presentation.
 
 The script removes only its disposable Compose volumes on exit. Normal CI performs no paid
 call. The manual paid-provider smoke still requires explicit dispatch, protected-environment

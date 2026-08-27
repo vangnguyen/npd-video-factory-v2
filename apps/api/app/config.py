@@ -75,14 +75,46 @@ class Settings(BaseSettings):
     video_factory_brand_name: str = "NPD Video Factory"
     video_factory_logo_path: Path = Path("/workspace/storage/assets/brand/default-logo.png")
     publish_enabled: bool = False
+    publish_external_execution_enabled: bool = False
+    publish_owner_gate_enabled: bool = False
+    publishing_credential_store: str = "external"
+    youtube_publishing_credential_ref: str = ""
+    tiktok_publishing_credential_ref: str = ""
+    instagram_publishing_credential_ref: str = ""
+    facebook_publishing_credential_ref: str = ""
     human_approval_required: bool = True
 
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
-        if self.publish_enabled:
-            raise ValueError("publishing is not implemented in V2-08 and must remain disabled")
         if not self.human_approval_required:
-            raise ValueError("human approval must remain required in V2-08")
+            raise ValueError("human approval must remain required")
+        if self.publish_external_execution_enabled and not self.publish_enabled:
+            raise ValueError("external publishing execution requires PUBLISH_ENABLED=true")
+        if self.publish_enabled and not self.publish_external_execution_enabled:
+            raise ValueError("PUBLISH_ENABLED requires the separate external execution gate")
+        if self.publish_owner_gate_enabled and not (
+            self.publish_enabled and self.publish_external_execution_enabled
+        ):
+            raise ValueError("publishing owner gate requires both publish execution gates")
+        if self.publish_enabled and not self.publish_owner_gate_enabled:
+            raise ValueError("live publishing requires the explicit owner gate")
+        if self.publishing_credential_store != "external":
+            raise ValueError("publishing credentials must use an external encrypted secret store")
+        credential_refs = (
+            self.youtube_publishing_credential_ref,
+            self.tiktok_publishing_credential_ref,
+            self.instagram_publishing_credential_ref,
+            self.facebook_publishing_credential_ref,
+        )
+        for credential_ref in credential_refs:
+            if credential_ref and not credential_ref.startswith(("secret://", "vault://", "external://")):
+                raise ValueError("publishing credential values must be external secret references, never tokens")
+        if self.publish_enabled and not any(credential_refs):
+            raise ValueError("live publishing requires at least one external credential reference")
+        if self.app_env.lower() in {"ci", "test"} and (
+            self.publish_enabled or self.publish_external_execution_enabled or self.publish_owner_gate_enabled
+        ):
+            raise ValueError("CI and test environments prohibit external publishing")
         if self.app_env == "production" and self.trend_fixture_enabled:
             raise ValueError("deterministic trend fixtures must be disabled in production")
         if self.app_env == "production" and self.auto_edit_fixture_enabled:

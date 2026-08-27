@@ -1,4 +1,4 @@
-# Architecture — V2-08
+# Architecture — V2-09
 
 ## Bounded context
 
@@ -94,6 +94,14 @@ while PostgreSQL and the object store remain canonical. The worker composes per-
 narration, optional licensed music, dynamic subtitles and timeline layers through Remotion, then
 runs full FFmpeg/FFprobe QC before persisting evidence and the H.264/AAC artifact.
 
+V2-09 adds a publishing boundary after the approved final artifact. A publication reservation is
+written to PostgreSQL before provider work and is keyed by a hashed idempotency key plus canonical
+request fingerprint. The service validates the exact current approval/render tuple, every active
+asset's rights, full-QC evidence and a versioned platform profile. The deterministic provider then
+creates a durable mock receipt without network access. Official YouTube, TikTok, Instagram and
+Facebook adapters stop at a typed contract-only boundary; they contain no live call and no browser
+automation. Publication and event rows survive API restart without using Redis as canonical state.
+
 ## Durable job rules
 
 - PostgreSQL is the source of truth; Redis never stores canonical job JSON.
@@ -106,12 +114,15 @@ runs full FFmpeg/FFprobe QC before persisting evidence and the H.264/AAC artifac
 
 ## Safety state
 
-V2-08 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
-`HUMAN_APPROVAL_REQUIRED=false`. Successful jobs stop at `awaiting_review`. API auth/RBAC is
-not yet implemented, so this increment is local/CI only and must not be exposed publicly. The
+V2-09 has a dry-run-only publishing endpoint. Startup requires all live publishing gates to remain
+coherent, requires an external secret-store contract and rejects every live gate in CI/test.
+Official adapters remain contract-only and cannot execute even if configuration is accidentally
+changed. `HUMAN_APPROVAL_REQUIRED=false` is rejected. API auth/RBAC is not yet implemented, so this
+increment is local/CI only and must not be exposed publicly. The
 Vision and media fixtures are rejected in production, and mock provenance must not be interpreted
 as real pixel-model or provider-quality evidence. External/paid media and ComfyUI execution are
 separate fail-closed settings. Proxy previews are explicitly non-final, video-only, zero-external-call
 artifacts and cannot be published. Review and final render contracts both hard-code
 `publishing_allowed=false`; final rendering requires human approval but still creates only an
-artifact. eSpeak is dev/CI evidence rather than a production voice acceptance.
+artifact. Publishing creates only a separate mock receipt with `external_action=false`. eSpeak is
+dev/CI evidence rather than a production voice acceptance.

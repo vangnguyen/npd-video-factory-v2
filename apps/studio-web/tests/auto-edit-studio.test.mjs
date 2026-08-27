@@ -5,11 +5,13 @@ import {
   canDropOnTrack,
   clipStyle,
   describeApproval,
+  describePublication,
   describeProductionRender,
   describePreview,
   formatTime,
   getClip,
   pixelsPerSecond,
+  publicationGateItems,
   qcItems,
   snapTime,
   timelinePositionFromPointer,
@@ -55,6 +57,21 @@ test("labels version-bound approval and production render states", () => {
     audio_codec: "aac",
     av_sync_delta_seconds: 0.01,
   })[1], ["Kích thước", "1080×1920"]);
+});
+
+test("labels publishing dry-run truthfully and flattens gate evidence", () => {
+  const publication = {
+    status: "dry_run_succeeded",
+    provider_validation: { checks: [{ key: "approval", passed: true, code: "APPROVED", message: "Approved" }] },
+    rights_validation: { checks: [{ key: "asset", passed: true, code: "RIGHTS_VERIFIED", message: "Owned" }] },
+    platform_validation: { checks: [{ key: "codec", passed: false, code: "CODEC_BLOCKED", message: "Blocked" }] },
+  };
+  assert.deepEqual(describePublication(publication), { label: "Dry-run PASS", tone: "safe" });
+  assert.equal(describePublication({ status: "blocked" }).tone, "danger");
+  const gates = publicationGateItems(publication);
+  assert.equal(gates.length, 3);
+  assert.deepEqual(gates.map((item) => item.group), ["Approval / final", "Quyền media", "Nền tảng"]);
+  assert.equal(gates[2].passed, false);
 });
 
 test("snaps pointer placement to quarter seconds", () => {

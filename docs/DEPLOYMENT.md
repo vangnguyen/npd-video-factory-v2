@@ -1,6 +1,6 @@
-# Deployment — V2-08
+# Deployment — V2-09
 
-V2-08 is a development/CI platform increment and is not approved for production deployment.
+V2-09 is a development/CI platform increment and is not approved for production deployment.
 
 ## Dev/CI
 
@@ -45,8 +45,13 @@ Before any production proposal, a separate owner-approved PR/task must add and v
 17. production render queue/SLO monitoring, retention and failed-QC incident handling;
 18. explicit VND price/budget approval for any external TTS provider;
 19. rights audit for every music asset and a restore drill for approval/render evidence.
+20. API authentication/RBAC, workspace authorization and auditable publisher identity;
+21. current owner-verified platform limits and content-policy acceptance;
+22. an accepted official API adapter, external encrypted credential reference, rate-limit and
+    retry/cancel runbook, monitoring and platform-specific correction procedure;
+23. a separate owner decision before any live publishing switch is changed.
 
-V2-08 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
+V2-09 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
 `VISION_FIXTURE_ENABLED=false`, `VISION_PROVIDER=contract`,
 `MEDIA_FIXTURE_ENABLED=false`, media providers set to `contract`, and external/paid/ComfyUI
 execution disabled until their separate owner gates;
@@ -55,3 +60,16 @@ execution disabled until their separate owner gates;
 `not_configured` until the production voice/provider is accepted; enabling an external provider
 requires the separate owner gate. This branch changes no existing NPD production service and must
 not be deployed as-is.
+
+The checked-in V2-09 publishing defaults are:
+
+```text
+PUBLISH_ENABLED=false
+PUBLISH_EXTERNAL_EXECUTION_ENABLED=false
+PUBLISH_OWNER_GATE_ENABLED=false
+PUBLISHING_CREDENTIAL_STORE=external
+```
+
+All four platform credential references remain blank. Dry-run validation needs no credential and
+makes no external request. This PR must not be used to onboard OAuth tokens or as authorization to
+deploy, expose the API publicly or publish content.

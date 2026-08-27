@@ -112,6 +112,31 @@ export function describeProductionRender(render) {
   return { label: `Render lỗi · ${render.error_code ?? "UNKNOWN"}`, tone: "danger", terminal: true };
 }
 
+export function describePublication(publication) {
+  if (!publication) return { label: "Chưa chạy", tone: "muted" };
+  if (publication.status === "dry_run_succeeded") return { label: "Dry-run PASS", tone: "safe" };
+  if (publication.status === "blocked") return { label: "Bị chặn an toàn", tone: "danger" };
+  if (["validating", "publishing"].includes(publication.status)) return { label: "Đang kiểm tra", tone: "warning" };
+  if (publication.status === "published") return { label: "Đã publish", tone: "safe" };
+  return { label: publication.status === "cancelled" ? "Đã hủy" : "Thất bại", tone: "danger" };
+}
+
+export function publicationGateItems(publication) {
+  if (!publication) return [];
+  const groups = [
+    ["Approval / final", publication.provider_validation?.checks ?? []],
+    ["Quyền media", publication.rights_validation?.checks ?? []],
+    ["Nền tảng", publication.platform_validation?.checks ?? []],
+  ];
+  return groups.flatMap(([group, checks]) => checks.map((check) => ({
+    group,
+    key: check.key,
+    passed: Boolean(check.passed),
+    code: check.code,
+    message: check.message,
+  })));
+}
+
 export function qcItems(report = {}) {
   if (!report || report.status !== "passed") return [];
   return [
