@@ -10,15 +10,18 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: not yet established
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: remediation development in LOCAL/CI; draft PRs only
+CURRENT SAFE PHASE: remediation development in LOCAL/CI; G-08 merge sequence #12/#13 only
 G-00: APPROVED by V3-01-APP-001
-NEXT OWNER GATE: G-08 for each remediation PR merge
-NO MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
+G-08: APPROVED by V3-01-APP-002 for #12 -> retarget/retest #13 -> #13 only
+NO OTHER MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
 ```
 
 G-00 accepts the feature freeze, matrix, gaps and remediation sequence. It does not authorize a
 merge, deployment, public ingress, credential use, provider execution, spend, external publish,
 analytics write or takedown. Those actions remain bound to their separate gates.
+
+G-08 later authorized only the repository merge sequence PR #12, then retarget/retest PR #13, then
+PR #13 if all five CI jobs pass. It grants no runtime or external-execution authority.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is

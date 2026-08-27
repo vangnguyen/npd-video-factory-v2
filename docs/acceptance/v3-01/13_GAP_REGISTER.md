@@ -11,8 +11,8 @@ derived from the audit captured on `2026-08-27` and the V3-01-01 remediation loc
 | P2 | 1 | 0 | 0 | 1 | tracked maintenance risk |
 | Total | 14 | 1 | 1 | 16 | default verdict remains NO-GO |
 
-`V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence, but remains
-unmerged, undeployed and unverified on a production path. G-08 is still required before merge.
+`V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence. G-08 now
+authorizes only the PR #12/#13 sequence; production remains undeployed and unverified.
 
 ## P0 release blockers
 
@@ -39,6 +39,6 @@ unmerged, undeployed and unverified on a production path. G-08 is still required
 - `V3-01-GAP-015`: GitHub Actions runtime deprecation warning.
 
 No gap is `VERIFIED` or closed by V3-01-01. `REMEDIATED` means its code and prescribed local/mock
-evidence pass on the locked commit; it still needs G-08, merge and any applicable production-path
-evidence before `VERIFIED`. Owner exceptions must name an expiry and approval record; no implicit
+evidence pass on the locked commit; it still needs the authorized merge and any applicable
+production-path evidence before `VERIFIED`. Owner exceptions must name an expiry and approval record; no implicit
 exception exists.

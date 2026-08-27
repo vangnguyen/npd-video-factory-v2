@@ -2,7 +2,7 @@
 
 ## Decision
 
-`PASS FOR LOCAL/CI REMEDIATION; G-08 PENDING; NO PUBLIC OR PRODUCTION EXPOSURE`
+`PASS FOR LOCAL/CI REMEDIATION; BOUNDED G-08 APPROVED; NO PUBLIC OR PRODUCTION EXPOSURE`
 
 The implementation is locked to code commit
 `9635fb3ecf5d5fc5ba20aef3486708bad5960b8b`. It adds the human identity boundary required before
@@ -113,7 +113,8 @@ V3-01-01.
 
 ## Remaining gates
 
-- G-08 must explicitly authorize merge of the V3-01-01 draft PR.
+- G-08 record `V3-01-APP-002` authorizes merge only after PR #13 is retargeted to exact `main` and
+  all five CI jobs pass.
 - G-04/G-09 must authorize any staging/production-path run or deploy.
 - G-01 remains required before any provider credential is used.
 - G-05/G-06 remain required before any external publication.

@@ -8,7 +8,7 @@ SCOPE: V3-01-00 baseline plus V3-01-01 local/CI identity-ingress remediation
 RELEASE CANDIDATE: NOT ESTABLISHED
 EVIDENCE RUN: vf-v3-01-20260827T120208Z-cae40ed
 DATE: 2026-08-27
-OWNER DECISION: G-00 APPROVED BY V3-01-APP-001; G-08 AND ALL EXECUTION GATES PENDING
+OWNER DECISION: G-00 APPROVED BY V3-01-APP-001; BOUNDED G-08 APPROVED BY V3-01-APP-002; ALL EXECUTION GATES PENDING
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -55,7 +55,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: none; `EV-V3-DR-001` is BLOCKED static evidence;
-- owner approval IDs: `V3-01-APP-001` for G-00 only.
+- owner approval IDs: `V3-01-APP-001` for G-00 and `V3-01-APP-002` for only the PR #12/#13 merge sequence.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -69,7 +69,7 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** no; draft PR only until G-08.
+- **Merge:** only PR #12 then retarget/retest PR #13 then PR #13 under `V3-01-APP-002`.
 - **Deploy:** no; no locked RC or G-09.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** zero real-provider calls; 0 VND.

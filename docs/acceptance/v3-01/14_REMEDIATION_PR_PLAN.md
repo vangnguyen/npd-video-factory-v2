@@ -6,8 +6,8 @@ reversible and prohibited from merge/deploy until its owner gate is recorded.
 
 | Order | Proposed PR | Status | Scope | Gaps | Gate before external action |
 |---:|---|---|---|---|---|
-| 0 | V3-01-00 baseline/evidence | draft PR #12; G-00 accepted; unmerged | documents, schemas, matrix, secret-safe harness | establishes register only | G-08 before merge |
-| 1 | V3-01-01 identity/ingress safety | code/evidence locked; local and Docker PASS; stacked draft review only | user auth, RBAC, workspace isolation, bounded ingress tests | 001 remediated; 011 in progress | G-08 before merge |
+| 0 | V3-01-00 baseline/evidence | PR #12 merged at `a9dfe87`; G-08 recorded | documents, schemas, matrix, secret-safe harness | establishes register only | completed repository merge; no runtime authority |
+| 1 | V3-01-01 identity/ingress safety | PR #13 retargeted to exact `main`; full CI rerun required before merge | user auth, RBAC, workspace isolation, bounded ingress tests | 001 remediated; 011 in progress | G-08 approved only for #13 after 5/5 CI PASS |
 | 2 | V3-01-02 provider safety plane | planned; not started | provider metadata, VND budgets, usage, bounded retries, circuit breaker, rights hooks | 003, 004, 005, 010, 013, 014 | G-01/G-02/G-03 before real calls; G-08 before merge |
 | 3 | V3-01-03 Flow A closure | planned; not started | owned media, real ASR/Vision/reframe, upload security and two consecutive runs | 003, 005, 011, 016 | G-03/G-04 before real run; G-08 before merge; G-11 for quality |
 | 4 | V3-01-04 Flow B closure | planned; not started | research/claims/originality, real media providers, rights and two consecutive runs | 002, 004, 005, 013, 016 | G-01 through G-04 as applicable; G-08 before merge; G-11 for quality |

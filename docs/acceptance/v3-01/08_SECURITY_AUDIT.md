@@ -43,5 +43,6 @@ are ignored and must not be committed.
 - secret scan plus dependency/container vulnerability review;
 - signed webhook replay/clock-skew/key-rotation tests retained.
 
-Security state: `V3-01-GAP-001` is `REMEDIATED` pending G-08 and production verification;
+Security state: `V3-01-GAP-001` is `REMEDIATED`; bounded G-08 merge approval is recorded while
+production verification remains absent;
 `V3-01-GAP-011` is `IN_PROGRESS`; `V3-01-GAP-012` and `V3-01-GAP-014` remain open.
