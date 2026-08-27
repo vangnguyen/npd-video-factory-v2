@@ -39,6 +39,9 @@ cleanup() {
     rm -f .env
   fi
   [[ -z "$env_backup" ]] || rm -f "$env_backup"
+  [[ -z "${studio_body_probe:-}" ]] || rm -f "$studio_body_probe"
+  [[ -z "${studio_headers_probe:-}" ]] || rm -f "$studio_headers_probe"
+  [[ -z "${studio_headers_normalized:-}" ]] || rm -f "$studio_headers_normalized"
   rm -f storage/e2e-agent-hub-keys.json
 }
 trap cleanup EXIT
@@ -111,11 +114,20 @@ if ! curl --fail --silent http://localhost:3000/ >/dev/null; then
   echo "Studio health check failed" >&2
   exit 1
 fi
-if ! curl --fail --silent http://localhost:3000/studio.html | grep -q 'Auto Edit Studio'; then
+studio_body_probe="$(mktemp)"
+if ! curl --fail --silent --show-error --output "$studio_body_probe" http://localhost:3000/studio.html \
+  || ! grep -Fq 'Auto Edit Studio' "$studio_body_probe"; then
   echo "Auto Edit Studio route/content check failed" >&2
   exit 1
 fi
-if ! curl --fail --silent --show-error --head http://localhost:3000/studio-utils.mjs | tr -d '\r' | grep -qi '^content-type: application/javascript'; then
+studio_headers_probe="$(mktemp)"
+studio_headers_normalized="$(mktemp)"
+if ! curl --fail --silent --show-error --head --output "$studio_headers_probe" http://localhost:3000/studio-utils.mjs; then
+  echo "Auto Edit Studio ES module route check failed" >&2
+  exit 1
+fi
+tr -d '\r' < "$studio_headers_probe" > "$studio_headers_normalized"
+if ! grep -Eqi '^content-type:[[:space:]]*application/javascript' "$studio_headers_normalized"; then
   echo "Auto Edit Studio ES module MIME check failed" >&2
   exit 1
 fi
