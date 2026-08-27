@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from auth_test_support import TEST_HUMAN_HEADERS, install_test_human_auth
 
 from app.auto_edit_models import (
     AutoEditAnalysisRead,
@@ -423,7 +424,10 @@ async def test_auto_edit_studio_api_contract(tmp_path: Path) -> None:
     )
     app.state.timeline_service = timeline_service
     app.state.preview_service = preview_service
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+    install_test_human_auth(app, platform_repository=stack["platform"])
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test", headers=TEST_HUMAN_HEADERS
+    ) as client:
         fetched = await client.get(f"/api/v1/projects/{stack['project'].project_id}/timeline")
         assert fetched.status_code == 200 and fetched.json()["current_version"] == 1
         changed = await client.put(

@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from collections.abc import AsyncIterator
 from pathlib import Path
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from auth_test_support import TEST_HUMAN_HEADERS, install_test_human_auth
+from pydantic import ValidationError
 from sqlalchemy import text
 
+import app.auto_edit_providers as auto_edit_providers
 from app.auto_edit_models import (
     AutoEditAnalysisRequest,
     MediaMetadata,
@@ -19,6 +23,7 @@ from app.auto_edit_providers import (
     ContractOnlyTranscriptionProvider,
     DeterministicMediaSignalProvider,
     DeterministicTranscriptionProvider,
+    FFprobeMediaProbe,
     ProviderNotConfigured,
     MediaSignals,
     ProviderSegment,
@@ -26,7 +31,12 @@ from app.auto_edit_providers import (
     ProviderWord,
 )
 from app.auto_edit_repository import AutoEditRepository
-from app.auto_edit_service import AutoEditAnalysisService, UploadConflictError, UploadService
+from app.auto_edit_service import (
+    AutoEditAnalysisService,
+    UploadConflictError,
+    UploadService,
+    UploadSizeError,
+)
 from app.db import Base, create_engine, create_session_factory
 from app.media_validation import MediaValidationError, safe_upload_filename, sniff_media
 from app.main import app
@@ -164,6 +174,86 @@ def test_safe_filename_and_magic_byte_validation(tmp_path: Path) -> None:
     assert sniff_media(video, "video/mp4") == ("video", "video/mp4")
     with pytest.raises(MediaValidationError, match="does not match"):
         sniff_media(video, "image/png")
+
+
+def test_upload_contract_rejects_url_import_fake_extension_and_archive_payload(tmp_path: Path) -> None:
+    with pytest.raises(ValidationError, match="source_url"):
+        UploadInitRequest.model_validate(
+            {
+                "project_id": "prj_fixture1234",
+                "filename": "remote.mp4",
+                "media_kind": "video",
+                "content_type": "video/mp4",
+                "size_bytes": 100,
+                "source_url": "http://127.0.0.1/internal",
+            }
+        )
+
+    fake_extension = tmp_path / "looks-like-video.mp4"
+    fake_extension.write_bytes(b"\x89PNG\r\n\x1a\n" + b"P" * 64)
+    with pytest.raises(MediaValidationError, match="does not match"):
+        sniff_media(fake_extension, "video/mp4")
+
+    archive = tmp_path / "archive-bomb.mp4"
+    archive.write_bytes(b"PK\x03\x04" + b"Z" * 64)
+    with pytest.raises(MediaValidationError, match="unsupported or unrecognized"):
+        sniff_media(archive, "video/mp4")
+
+
+@pytest.mark.asyncio
+async def test_upload_size_and_ffprobe_arguments_fail_closed_without_shell(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    engine, _, _, _, upload_service, _, project, version = await setup_services(tmp_path)
+    with pytest.raises(UploadSizeError, match="configured maximum"):
+        await upload_service.initialize(
+            UploadInitRequest(
+                project_id=project.project_id,
+                project_version_id=version.project_version_id,
+                filename="oversized.mp4",
+                media_kind="video",
+                content_type="video/mp4",
+                size_bytes=1024 * 1024 + 1,
+            )
+        )
+
+    captured: dict[str, object] = {}
+
+    class Process:
+        returncode = 0
+
+        async def communicate(self) -> tuple[bytes, bytes]:
+            payload = {
+                "format": {"format_name": "mov,mp4", "duration": "1.0"},
+                "streams": [
+                    {
+                        "codec_type": "video",
+                        "codec_name": "h264",
+                        "width": 1080,
+                        "height": 1920,
+                        "r_frame_rate": "30/1",
+                    }
+                ],
+            }
+            return json.dumps(payload).encode("utf-8"), b""
+
+    async def fake_exec(*arguments: str, **options: object) -> Process:
+        captured["arguments"] = arguments
+        captured["options"] = options
+        return Process()
+
+    monkeypatch.setattr(auto_edit_providers.shutil, "which", lambda _: "/usr/bin/ffprobe")
+    monkeypatch.setattr(auto_edit_providers.asyncio, "create_subprocess_exec", fake_exec)
+    hostile_name = tmp_path / "clip;touch-owned.mp4"
+    hostile_name.write_bytes(synthetic_mp4())
+    await FFprobeMediaProbe().probe(
+        hostile_name,
+        detected_content_type="video/mp4",
+        media_kind="video",
+    )
+    assert captured["arguments"][-1] == str(hostile_name)
+    assert "shell" not in captured["options"]
+    await engine.dispose()
 
 
 def test_spoken_word_conflict_disables_cut_and_top_five_is_supported() -> None:
@@ -331,12 +421,15 @@ async def test_missing_live_transcription_provider_fails_closed(tmp_path: Path) 
 
 @pytest.mark.asyncio
 async def test_upload_and_analysis_api_contract(tmp_path: Path) -> None:
-    engine, _, _, _, upload_service, analysis_service, project, version = await setup_services(tmp_path)
+    engine, _, platform, _, upload_service, analysis_service, project, version = await setup_services(tmp_path)
     app.state.upload_service = upload_service
     app.state.auto_edit_analysis_service = analysis_service
+    install_test_human_auth(app, platform_repository=platform)
     payload = synthetic_mp4()
     checksum = hashlib.sha256(payload).hexdigest()
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test", headers=TEST_HUMAN_HEADERS
+    ) as client:
         initialized = await client.post(
             "/api/v1/uploads/init",
             json={

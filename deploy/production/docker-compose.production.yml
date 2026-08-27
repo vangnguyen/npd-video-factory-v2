@@ -17,6 +17,11 @@ services:
     restart: unless-stopped
     environment:
       APP_ENV: production
+      HUMAN_API_ENABLED: "true"
+      HUMAN_WRITE_ENABLED: "false"
+      HUMAN_AUTH_KEYS_FILE: /run/secrets/video-factory-human-auth.json
+      HUMAN_AUTH_MAX_TOKEN_TTL_SECONDS: "86400"
+      HUMAN_RATE_LIMIT_PER_MINUTE: "120"
       TREND_FIXTURE_ENABLED: "false"
       AUTO_EDIT_FIXTURE_ENABLED: "false"
       VISION_FIXTURE_ENABLED: "false"

@@ -73,6 +73,7 @@ services:
     volumes:
       - ./storage:/workspace/storage
       - ./packages/contracts:/workspace/packages/contracts:ro
+      - ${VIDEO_FACTORY_HUMAN_AUTH_FILE:-./deploy/testing/disabled-human-auth.json}:/run/secrets/video-factory-human-auth.json:ro
       - ${VIDEO_FACTORY_AGENT_HUB_KEYS_FILE:-./deploy/testing/disabled-agent-hub.json}:/run/secrets/video-factory-agent-hub.json:ro
     depends_on:
       migrate:

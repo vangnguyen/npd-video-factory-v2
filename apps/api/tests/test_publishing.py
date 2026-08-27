@@ -6,6 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from auth_test_support import TEST_HUMAN_HEADERS, install_test_human_auth
 
 from app.db import AssetORM
 from app.main import app
@@ -226,7 +227,10 @@ async def test_rights_platform_and_live_boundaries_fail_closed(tmp_path: Path) -
 async def test_publishing_api_returns_receipt_history_and_block_evidence(tmp_path: Path) -> None:
     stack, final, publishing = await approved_stack(tmp_path)
     app.state.publishing_service = publishing
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+    install_test_human_auth(app, platform_repository=stack.platform)
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test", headers=TEST_HUMAN_HEADERS
+    ) as client:
         response = await client.post(
             f"/api/v1/projects/{stack.project.project_id}/publish",
             headers={"Idempotency-Key": "v2-09-api-dry-run-0000001"},

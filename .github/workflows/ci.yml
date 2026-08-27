@@ -71,6 +71,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: node --check app.js
+      - run: node --check auth.mjs
       - run: node --check trend-utils.mjs
       - run: node --check studio.js
       - run: node --check studio-utils.mjs
@@ -92,6 +93,8 @@ jobs:
           grep -qx 'PUBLISH_EXTERNAL_EXECUTION_ENABLED=false' .env.example
           grep -qx 'PUBLISH_OWNER_GATE_ENABLED=false' .env.example
           grep -qx 'HUMAN_APPROVAL_REQUIRED=true' .env.example
+          grep -qx 'HUMAN_API_ENABLED=true' .env.example
+          grep -qx 'HUMAN_WRITE_ENABLED=true' .env.example
           grep -qx 'TREND_FIXTURE_ENABLED=true' .env.example
           grep -qx 'AUTO_EDIT_FIXTURE_ENABLED=true' .env.example
           grep -qx 'VISION_FIXTURE_ENABLED=true' .env.example
@@ -209,6 +212,15 @@ jobs:
           grep -qx 'AGENT_HUB_WEBHOOK_EXTERNAL_DELIVERY_ENABLED=false' .env.example
           ! git grep -I -n -E '^(AGENT_HUB_BRIDGE_ENABLED=true|AGENT_HUB_WEBHOOK_MODE=http|AGENT_HUB_WEBHOOK_EXTERNAL_DELIVERY_ENABLED=true)$' -- .env.example
           ! git grep -I -n -E 'services/agent_hub|from .*agent_hub|import .*agent_hub|AGENT_REDIS|AGENT_STORE' -- apps services docker-compose.yml deploy
+      - name: Verify V3-01-01 human identity and ingress boundary
+        run: |
+          grep -Fq 'hmac.compare_digest' apps/api/app/human_auth.py
+          grep -Fq 'workspace_isolation": "deny_by_default"' apps/api/app/main.py
+          grep -Fq 'HUMAN_WRITE_ENABLED: "false"' deploy/production/docker-compose.production.yml
+          grep -Fq 'HUMAN_API_ENABLED: "true"' deploy/production/docker-compose.production.yml
+          python -c 'import json; from pathlib import Path; data=json.loads(Path("deploy/testing/disabled-human-auth.json").read_text()); assert data == {"version": 1, "tokens": {}}'
+          python -c 'import json; from pathlib import Path; schema=json.loads(Path("packages/contracts/human-auth-registry.schema.json").read_text()); assert schema["additionalProperties"] is False; assert schema["properties"]["tokens"]["additionalProperties"]["properties"]["token_sha256"]["pattern"] == "^[a-f0-9]{64}$"'
+          ! git grep -I -n -E 'vf1\.[A-Za-z0-9._-]+\.[A-Za-z0-9_-]{32,}' -- ':!scripts/e2e-smoke.sh' ':!apps/api/tests' ':!apps/studio-web/tests'
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

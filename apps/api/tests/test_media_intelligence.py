@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 import httpx
 from httpx import ASGITransport, AsyncClient
+from auth_test_support import TEST_HUMAN_HEADERS, install_test_human_auth
 from sqlalchemy import text
 
 from app.auto_edit_models import (
@@ -493,8 +494,11 @@ async def test_media_intelligence_api_contract(tmp_path: Path) -> None:
     stack = await setup_media_stack(tmp_path)
     app.state.media_planning_service = stack["planner"]
     app.state.media_resolution_service = stack["resolver"]
+    install_test_human_auth(app, platform_repository=stack["platform"])
     payload = plan_request(stack).model_dump(mode="json")
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test", headers=TEST_HUMAN_HEADERS
+    ) as client:
         response = await client.post(
             f"/api/v1/projects/{stack['project'].project_id}/media-plans", json=payload
         )

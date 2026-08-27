@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npd.local/contracts/human-auth-registry.schema.json",
+  "title": "NPD Video Factory human authentication registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "tokens"],
+  "properties": {
+    "version": { "const": 1 },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "token_id",
+          "token_sha256",
+          "subject",
+          "display_name",
+          "issued_at",
+          "expires_at",
+          "enabled"
+        ],
+        "properties": {
+          "token_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$" },
+          "token_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "subject": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{2,159}$" },
+          "display_name": { "type": "string", "minLength": 1, "maxLength": 160 },
+          "platform_role": { "type": ["string", "null"], "enum": ["viewer", "editor", "reviewer", "owner", null] },
+          "workspace_roles": {
+            "type": "object",
+            "propertyNames": { "pattern": "^(\\*|wsp_[A-Za-z0-9_-]{4,64}|slug:[a-z0-9][a-z0-9-]{1,62})$" },
+            "additionalProperties": { "enum": ["viewer", "editor", "reviewer", "owner"] }
+          },
+          "issued_at": { "type": "string", "format": "date-time" },
+          "not_before": { "type": ["string", "null"], "format": "date-time" },
+          "expires_at": { "type": "string", "format": "date-time" },
+          "enabled": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

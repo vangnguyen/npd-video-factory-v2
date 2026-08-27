@@ -107,12 +107,23 @@ class Settings(BaseSettings):
     agent_hub_webhook_retry_max_seconds: int = 900
     service_auth_max_clock_skew_seconds: int = 300
     service_auth_replay_ttl_seconds: int = 600
+    human_api_enabled: bool = True
+    human_write_enabled: bool = False
+    human_auth_keys_file: Path = Path("/run/secrets/video-factory-human-auth.json")
+    human_auth_max_token_ttl_seconds: int = 86_400
+    human_rate_limit_per_minute: int = 300
     human_approval_required: bool = True
 
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
         if not self.human_approval_required:
             raise ValueError("human approval must remain required")
+        if not 900 <= self.human_auth_max_token_ttl_seconds <= 86_400:
+            raise ValueError("human auth token TTL must be between 15 minutes and 24 hours")
+        if not 10 <= self.human_rate_limit_per_minute <= 1_000:
+            raise ValueError("human API rate limit must be between 10 and 1000 requests per minute")
+        if self.app_env.lower() == "production" and not self.human_api_enabled:
+            raise ValueError("production readiness requires the human auth boundary to be enabled")
         if self.publish_external_execution_enabled and not self.publish_enabled:
             raise ValueError("external publishing execution requires PUBLISH_ENABLED=true")
         if self.publish_enabled and not self.publish_external_execution_enabled:

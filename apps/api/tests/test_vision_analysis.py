@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from auth_test_support import TEST_HUMAN_HEADERS, install_test_human_auth
 from pydantic import ValidationError
 from sqlalchemy import text
 
@@ -440,7 +441,7 @@ async def test_vision_api_contract_and_restart_read(tmp_path: Path) -> None:
     (
         engine,
         _,
-        _,
+        platform,
         _,
         _,
         upload_service,
@@ -452,7 +453,10 @@ async def test_vision_api_contract_and_restart_read(tmp_path: Path) -> None:
     ) = await setup_services(tmp_path)
     _, auto_edit = await create_auto_edit(upload_service, auto_service, project, version)
     app.state.vision_analysis_service = vision_service
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+    install_test_human_auth(app, platform_repository=platform)
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test", headers=TEST_HUMAN_HEADERS
+    ) as client:
         response = await client.post(
             f"/api/v1/projects/{project.project_id}/analyses/{auto_edit.analysis_id}/vision",
             json={"aspect_ratios": ["9:16", "1:1"], "sample_interval_seconds": 4},
