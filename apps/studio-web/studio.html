@@ -6,7 +6,7 @@
     <meta name="description" content="NPD Video Factory V2 Auto Edit Studio — timeline, subtitles, audio, review approval and final QC" />
     <title>NPD Studio · Auto Edit</title>
     <link rel="stylesheet" href="/styles.css" />
-    <link rel="stylesheet" href="/studio.css?v=0.9.0" />
+    <link rel="stylesheet" href="/studio.css?v=0.10.0" />
   </head>
   <body>
     <div class="app-shell studio-shell">
@@ -25,7 +25,7 @@
         <div class="boundary-card">
           <span class="status-dot"></span>
           <strong>Chế độ chỉnh sửa an toàn</strong>
-          <p>Timeline, phụ đề, audio và review đều có phiên bản. Không sửa media gốc và không publish.</p>
+          <p>Timeline, phụ đề, audio và review đều có phiên bản. Publish thật bị khóa; V2-09 chỉ tạo dry-run receipt.</p>
         </div>
       </aside>
 
@@ -33,7 +33,7 @@
         <header class="topbar studio-topbar">
           <button id="menu-button" class="icon-button menu-button" aria-label="Mở menu">☰</button>
           <div>
-            <p class="eyebrow">AI-assisted workspace · V2-08</p>
+            <p class="eyebrow">AI-assisted workspace · V2-09</p>
             <h1>Auto Edit Studio</h1>
           </div>
           <div class="project-picker">
@@ -62,7 +62,7 @@
             <div><small>Cảnh / clip</small><strong id="metric-clips">0</strong><span id="metric-scenes">0 scene AI</span></div>
             <div><small>Preview</small><strong id="metric-preview">Chưa có</strong><span>proxy 540p</span></div>
             <div><small>Approval</small><strong id="metric-approval">Draft</strong><span>gắn đúng phiên bản</span></div>
-            <div class="summary-boundary"><small>An toàn</small><strong>Không publish</strong><span>media gốc bất biến</span></div>
+            <div class="summary-boundary"><small>An toàn</small><strong>Dry-run only</strong><span>không gửi ra nền tảng</span></div>
           </section>
 
           <section class="editor-grid">
@@ -241,24 +241,51 @@
                   <label>Final profile<select id="final-profile"><option value="vertical-1080x1920">Dọc 1080×1920</option><option value="landscape-1920x1080">Ngang 1920×1080</option><option value="square-1080x1080">Vuông 1080×1080</option></select></label>
                   <button id="final-render-button" class="primary-button" disabled>Render final đã duyệt</button>
                 </div>
-                <p class="hard-boundary">Final sẵn sàng để tải nội bộ, nhưng publish và mọi gửi ra ngoài vẫn bị khóa ở V2-08.</p>
+                <p class="hard-boundary">Final sẵn sàng chỉ được chuyển sang rights/platform validation. Mọi publish thật vẫn bị khóa.</p>
               </article>
             </div>
           </section>
 
+          <section id="publishing-workbench" class="publishing-workbench" aria-label="V2-09 Publishing Dry Run">
+            <div class="production-heading">
+              <div>
+                <span class="panel-kicker">V2-09 · Publishing safety</span>
+                <h2>Publishing Panel</h2>
+                <p>Kiểm tra đúng final render, approval, quyền media và giới hạn nền tảng. Kết quả chỉ là receipt mô phỏng; không có bài đăng thật.</p>
+              </div>
+              <span id="publishing-live-status" class="pill warning">Live bị khóa</span>
+            </div>
+            <div class="publishing-grid">
+              <form id="publishing-form" class="publishing-form">
+                <label>Nền tảng<select id="publishing-platform"><option value="youtube">YouTube</option><option value="tiktok">TikTok</option><option value="instagram_reels">Instagram Reels</option><option value="facebook">Facebook</option></select></label>
+                <label>Tiêu đề<input id="publishing-title" type="text" maxlength="300" required placeholder="Tiêu đề video" /></label>
+                <label class="wide-field">Mô tả<textarea id="publishing-description" maxlength="10000" placeholder="Mô tả dài, CTA và thông tin nguồn"></textarea></label>
+                <label class="wide-field">Caption<textarea id="publishing-caption" maxlength="10000" placeholder="Caption hiển thị trên nền tảng"></textarea></label>
+                <label>Hashtag<input id="publishing-hashtags" type="text" placeholder="VinhTien, NgocPhuongDong" /></label>
+                <label>Quyền riêng tư<select id="publishing-privacy"><option value="private">Private</option><option value="unlisted">Unlisted</option><option value="public">Public (dry-run)</option></select></label>
+                <button id="publishing-dry-run-button" class="primary-button wide-field" type="submit" disabled>Kiểm tra và tạo dry-run receipt</button>
+                <p class="hard-boundary wide-field">Không có nút publish live. OAuth/token chỉ dùng qua external secret reference và chưa được kích hoạt.</p>
+              </form>
+              <div class="publishing-result">
+                <div class="production-card-title"><div><span class="card-icon">↗</span><strong>Kết quả kiểm tra</strong></div><span id="publishing-status" class="pill muted">Chưa chạy</span></div>
+                <div id="publishing-gates" class="publishing-gates"><p class="browser-empty">Cần final render đã duyệt và QC PASS.</p></div>
+                <div id="publication-history" class="publication-history"></div>
+              </div>
+            </div>
+          </section>
+
           <section id="future-panels" class="future-grid">
-            <article><span>↗</span><div><strong>Publish Panel</strong><p>Chỉ mở sau approval và rights gate ở V2-09.</p></div><em>Disabled</em></article>
             <article><span>⌁</span><div><strong>Analytics Panel</strong><p>Learning loop và winner detection ở V2-10.</p></div><em>Preview</em></article>
           </section>
         </div>
 
         <footer>
-          <span>NPD Video Factory V2 · Auto Edit Studio 0.9.0</span>
-          <span>Timeline versioned · VND only · Human approval required · Publishing disabled</span>
+          <span>NPD Video Factory V2 · Studio 0.10.0</span>
+          <span>VND only · Human approval required · External publishing disabled</span>
         </footer>
       </main>
     </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script type="module" src="/studio.js?v=0.9.0"></script>
+    <script type="module" src="/studio.js?v=0.10.0"></script>
   </body>
 </html>

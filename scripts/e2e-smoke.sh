@@ -602,6 +602,64 @@ curl --fail --silent --show-error \
   -show_entries format=duration \
   -of json /tmp/v2-08-e2e-final.mp4 \
   > e2e-artifacts/final-render-probe.json
+
+echo "[e2e] exercising V2-09 rights/platform gates and idempotent publishing dry-run"
+"$PYTHON_BIN" -c '
+import json, sys
+payload = {
+    "platform": "youtube",
+    "final_render_id": sys.argv[1],
+    "mode": "dry_run",
+    "metadata": {
+        "title": "Vịnh Tiên - hành trình sống ven biển",
+        "description": "Deterministic V2-09 publishing validation.",
+        "caption": "Dry-run only; no external post.",
+        "hashtags": ["VinhTien", "NgocPhuongDong"],
+        "privacy": "private"
+    },
+    "actor_ref": "owner-github-actions-e2e"
+}
+open("e2e-artifacts/publication-request.json", "w", encoding="utf-8").write(json.dumps(payload, ensure_ascii=False))
+' "$final_render_id"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/publish" \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-Key: github-actions-v2-09-dry-run-0001' \
+  --data-binary @e2e-artifacts/publication-request.json \
+  > e2e-artifacts/publication-dry-run.json
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/publish" \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-Key: github-actions-v2-09-dry-run-0001' \
+  --data-binary @e2e-artifacts/publication-request.json \
+  > e2e-artifacts/publication-idempotent-replay.json
+"$PYTHON_BIN" -c '
+import json
+path = "e2e-artifacts/publication-request.json"
+payload = json.load(open(path, encoding="utf-8"))
+payload["mode"] = "live"
+open("e2e-artifacts/publication-live-request.json", "w", encoding="utf-8").write(json.dumps(payload, ensure_ascii=False))
+'
+publication_live_status="$(curl --silent --show-error \
+  -o e2e-artifacts/publication-live-blocked.json \
+  -w '%{http_code}' \
+  -X POST "http://localhost:8000/api/v1/projects/$production_project_id/publish" \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-Key: github-actions-v2-09-live-blocked-01' \
+  --data-binary @e2e-artifacts/publication-live-request.json)"
+if [[ "$publication_live_status" != "409" ]]; then
+  echo "Expected V2-09 live publishing to fail closed with HTTP 409, received $publication_live_status" >&2
+  exit 1
+fi
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/publications" \
+  > e2e-artifacts/publications-before-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/publication-history" \
+  > e2e-artifacts/publication-history-before-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/publishing-platforms" \
+  > e2e-artifacts/publishing-platforms.json
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$production_project_id/production-package" \
   > e2e-artifacts/production-package-before-restart.json
@@ -625,6 +683,12 @@ final = json.loads((root / "final-render-ready.json").read_text(encoding="utf-8"
 final_probe = json.loads((root / "final-render-probe.json").read_text(encoding="utf-8"))
 blocked = json.loads((root / "final-without-approval.json").read_text(encoding="utf-8"))
 history = json.loads((root / "production-history-before-restart.json").read_text(encoding="utf-8"))
+publication = json.loads((root / "publication-dry-run.json").read_text(encoding="utf-8"))
+publication_replay = json.loads((root / "publication-idempotent-replay.json").read_text(encoding="utf-8"))
+publication_live = json.loads((root / "publication-live-blocked.json").read_text(encoding="utf-8"))
+publications = json.loads((root / "publications-before-restart.json").read_text(encoding="utf-8"))
+publication_history = json.loads((root / "publication-history-before-restart.json").read_text(encoding="utf-8"))
+publishing_platforms = json.loads((root / "publishing-platforms.json").read_text(encoding="utf-8"))
 
 def assert_av(probe, width, height):
     video = [item for item in probe["streams"] if item["codec_type"] == "video"]
@@ -657,7 +721,25 @@ assert {item["event_type"] for item in history} >= {
 }, history
 assert_av(review_probe, 540, 960)
 assert_av(final_probe, 1080, 1920)
-print("[e2e] V2-08 version-bound review, owner approval, A/V render and full QC verified")
+assert publication["status"] == "dry_run_succeeded", publication
+assert publication["rights_validation"]["status"] == "passed", publication
+assert publication["platform_validation"]["status"] == "passed", publication
+assert publication["receipt"]["mock"] is True, publication
+assert publication["receipt"]["external_action"] is False, publication
+assert publication["receipt"]["remote_post_id"] is None, publication
+assert publication_replay["publication_id"] == publication["publication_id"], publication_replay
+assert publication_live["detail"]["error"]["external_action"] is False, publication_live
+assert len(publications) == 2, publications
+assert {item["status"] for item in publications} == {"dry_run_succeeded", "blocked"}, publications
+assert {item["event_type"] for item in publication_history} >= {
+    "publication.validation_reserved",
+    "publication.dry_run_succeeded",
+    "publication.blocked",
+}, publication_history
+assert len(publishing_platforms) == 4, publishing_platforms
+assert all(item["live_execution_enabled"] is False for item in publishing_platforms), publishing_platforms
+assert all(item["official_provider"]["supports_live_publish"] is False for item in publishing_platforms), publishing_platforms
+print("[e2e] V2-08 final QC and V2-09 fail-closed publishing dry-run verified")
 PY
 
 replay_response="$(
@@ -929,6 +1011,12 @@ curl --fail --silent --show-error \
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$production_project_id/production-history" \
   > e2e-artifacts/production-history-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/publications" \
+  > e2e-artifacts/publications-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$production_project_id/publication-history" \
+  > e2e-artifacts/publication-history-after-restart.json
 "$PYTHON_BIN" - <<'PY'
 import json
 from pathlib import Path
@@ -964,6 +1052,10 @@ final_before = json.loads((root / "final-render-ready.json").read_text(encoding=
 final_after = json.loads((root / "final-render-after-restart.json").read_text(encoding="utf-8"))
 production_history_before = json.loads((root / "production-history-before-restart.json").read_text(encoding="utf-8"))
 production_history_after = json.loads((root / "production-history-after-restart.json").read_text(encoding="utf-8"))
+publications_before = json.loads((root / "publications-before-restart.json").read_text(encoding="utf-8"))
+publications_after = json.loads((root / "publications-after-restart.json").read_text(encoding="utf-8"))
+publication_history_before = json.loads((root / "publication-history-before-restart.json").read_text(encoding="utf-8"))
+publication_history_after = json.loads((root / "publication-history-after-restart.json").read_text(encoding="utf-8"))
 assert after == before, (before, after)
 assert queue_after == queue_before, (queue_before, queue_after)
 assert analysis_after == analysis_before, (analysis_before, analysis_after)
@@ -982,9 +1074,16 @@ assert production_history_after == production_history_before, (
     production_history_before,
     production_history_after,
 )
+assert publications_after == publications_before, (publications_before, publications_after)
+assert publication_history_after == publication_history_before, (
+    publication_history_before,
+    publication_history_after,
+)
 assert package_after["approval"]["status"] == "approved", package_after
 assert final_after["status"] == "ready" and final_after["publishing_allowed"] is False, final_after
-print("[e2e] PostgreSQL jobs, timeline, production package, approval and V2-08 render recovery verified")
+assert {item["status"] for item in publications_after} == {"dry_run_succeeded", "blocked"}, publications_after
+assert all(item["external_action"] is False for item in publications_after), publications_after
+print("[e2e] PostgreSQL jobs, V2-08 production and V2-09 publication recovery verified")
 PY
 
 "$docker_bin" compose exec -T api python -c '

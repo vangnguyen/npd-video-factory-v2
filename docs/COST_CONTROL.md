@@ -1,4 +1,4 @@
-# Cost control — V2-08
+# Cost control — V2-09
 
 VND is the only accepted cost currency in Pydantic contracts, ORM defaults and the database
 check constraint. USD is not a supported runtime currency.
@@ -41,3 +41,8 @@ V2-08 records one idempotent TTS operation and one Remotion operation for each p
 Offline eSpeak and local Remotion are `0 VND`. An owner-gated external TTS provider remains
 explicitly unpriced until an approved VND price contract exists; it must never be coerced to zero
 or converted/displayed as USD. External audio execution remains disabled in normal CI.
+
+V2-09 dry-run publishing makes no external request and costs `0 VND`; it creates a receipt rather
+than a paid provider-usage record. Live platform adapters are contract-only, have no approved VND
+price contract and cannot execute. A later live adapter must add idempotent VND pricing/budget
+evidence before its owner gate can be considered.

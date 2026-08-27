@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "policy": "v2-09-internal-safe-profile",
+  "notice": "Versioned internal validation profiles for dry-run only. Re-verify against official platform documentation before any live adapter is activated.",
+  "platforms": {
+    "youtube": {
+      "version": "2026-08-27.v1",
+      "verification_state": "internal_safe_profile",
+      "supported_profiles": ["vertical-1080x1920", "landscape-1920x1080", "square-1080x1080"],
+      "min_duration_seconds": 1,
+      "max_duration_seconds": 180,
+      "max_file_size_bytes": 2000000000,
+      "video_codecs": ["h264"],
+      "audio_codecs": ["aac"],
+      "max_title_characters": 100,
+      "max_caption_characters": 5000,
+      "max_hashtags": 15,
+      "thumbnail": "optional"
+    },
+    "tiktok": {
+      "version": "2026-08-27.v1",
+      "verification_state": "internal_safe_profile",
+      "supported_profiles": ["vertical-1080x1920"],
+      "min_duration_seconds": 1,
+      "max_duration_seconds": 180,
+      "max_file_size_bytes": 2000000000,
+      "video_codecs": ["h264"],
+      "audio_codecs": ["aac"],
+      "max_title_characters": 150,
+      "max_caption_characters": 2200,
+      "max_hashtags": 20,
+      "thumbnail": "optional"
+    },
+    "instagram_reels": {
+      "version": "2026-08-27.v1",
+      "verification_state": "internal_safe_profile",
+      "supported_profiles": ["vertical-1080x1920", "square-1080x1080"],
+      "min_duration_seconds": 1,
+      "max_duration_seconds": 180,
+      "max_file_size_bytes": 2000000000,
+      "video_codecs": ["h264"],
+      "audio_codecs": ["aac"],
+      "max_title_characters": 150,
+      "max_caption_characters": 2200,
+      "max_hashtags": 30,
+      "thumbnail": "optional"
+    },
+    "facebook": {
+      "version": "2026-08-27.v1",
+      "verification_state": "internal_safe_profile",
+      "supported_profiles": ["vertical-1080x1920", "landscape-1920x1080", "square-1080x1080"],
+      "min_duration_seconds": 1,
+      "max_duration_seconds": 180,
+      "max_file_size_bytes": 2000000000,
+      "video_codecs": ["h264"],
+      "audio_codecs": ["aac"],
+      "max_title_characters": 255,
+      "max_caption_characters": 5000,
+      "max_hashtags": 30,
+      "thumbnail": "optional"
+    }
+  }
+}

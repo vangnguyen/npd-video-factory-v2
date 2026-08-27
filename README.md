@@ -1,11 +1,11 @@
 # NPD Video Factory V2
 
-NPD Video Factory V2 is an independent media execution platform. V2-08 keeps the durable
-video, Trend/Idea, Auto Edit, Vision and Media Intelligence platform, then adds a versioned
-editable timeline, responsive Auto Edit Studio, dynamic subtitles, scene-aligned Vietnamese
-audio, human approval, production-profile rendering and full media QC.
+NPD Video Factory V2 is an independent media execution platform. V2-09 keeps the durable
+video, Trend/Idea, Auto Edit, Vision and Media Intelligence platform, editable timeline,
+human approval, production-profile rendering and full media QC, then adds fail-closed publishing
+validation, versioned platform contracts and durable dry-run receipts.
 
-## V2-08 status
+## V2-09 status
 
 Implemented and locally acceptance-tested:
 
@@ -17,7 +17,7 @@ Implemented and locally acceptance-tested:
 - provider registry plus idempotent usage and VND cost records;
 - restart recovery and object-store artifact recovery;
 - the V2-01 9:16 deterministic render, scene-aligned Vietnamese narration and FFmpeg QC;
-- terminal `awaiting_review` state with no publishing implementation.
+- terminal `awaiting_review` video-job state and an independently gated publishing layer.
 - provider-agnostic trend sources with deterministic legal fixtures and explicit
   `not_configured` live-provider contracts;
 - normalized trend evidence, deterministic clusters, seven-state lifecycle and explainable
@@ -66,17 +66,24 @@ Implemented and locally acceptance-tested:
   audio silence/clipping, A/V sync, subtitle bounds and missing timeline assets;
 - PostgreSQL recovery for packages, approvals, render jobs and audit history, with transient
   Redis delivery and deterministic worker recovery.
+- versioned YouTube, TikTok, Instagram Reels and Facebook capability profiles;
+- official-API provider contracts plus a deterministic no-network dry-run provider;
+- exact final-render, approval, rights, QC, platform and metadata validation;
+- durable publication/audit records, hashed idempotency keys and exact replay after restart;
+- a responsive Publishing Panel that can create only mock receipts and exposes no live button;
+- all live publishing gates false and official adapters contract-only.
 
-Not implemented in V2-08: real Vision/stock/generation credentials or accuracy acceptance,
+Not implemented in V2-09: real Vision/stock/generation credentials or accuracy acceptance,
 production ComfyUI/GPU execution, a human-accepted production Vietnamese voice/provider,
-API authentication/RBAC, publishing, analytics/learning loops or a production rollout. Those
-remain later, separately gated increments.
+API authentication/RBAC, live publishing credentials/adapters, analytics/learning loops or a
+production rollout. Those remain later, separately gated increments.
 
 ## Safety boundary
 
 - No AgentHub package, database, Redis namespace or process dependency.
 - No production route, service or deployment is changed by this branch.
-- `PUBLISH_ENABLED=false` and `HUMAN_APPROVAL_REQUIRED=true` are enforced at startup.
+- `PUBLISH_ENABLED=false`, `PUBLISH_EXTERNAL_EXECUTION_ENABLED=false`,
+  `PUBLISH_OWNER_GATE_ENABLED=false` and `HUMAN_APPROVAL_REQUIRED=true` are enforced at startup.
 - Normal CI uses deterministic providers and makes no paid call.
 - Auto Edit outputs decisions only; uploaded source bytes are immutable.
 - Vision fixture output is explicitly mock evidence; live Vision remains `not_configured`.
@@ -88,8 +95,10 @@ remain later, separately gated increments.
   stale instead of being silently reused.
 - Proxy preview is video-only, performs no external call, cannot publish and is never a final
   output claim.
-- Review/final renders carry `publishing_allowed=false`; a final render is impossible until an
-  owner decision approves the exact review/timeline/subtitle/audio tuple.
+- Review/final renders remain non-publishing artifacts. V2-09 can validate the exact current
+  owner-approved tuple and issue a mock dry-run receipt, but cannot contact a platform.
+- Publishing idempotency keys are hashed; raw OAuth tokens are rejected as configuration and never
+  enter the API, PostgreSQL, audit history or logs.
 - eSpeak is an offline dev/CI voice and is not a production voice acceptance. External audio is
   disabled by default and requires a separate owner gate.
 - Music is accepted only from a project asset with explicit usable rights; unclear rights fail closed.
@@ -112,8 +121,9 @@ resolves four fixture strategies asynchronously, builds and edits a versioned ti
 stale write, renders and invalidates a 540p proxy, restores a safe timeline version, edits dynamic
 subtitles, proves that unapproved final rendering is blocked, renders an A/V review, records owner
 approval, renders the approved 1080x1920 final profile, performs full QC, restarts the API,
-restores the final artifact from MinIO and validates decoded video/audio quality. Its temporary
-stack and volumes are removed on exit.
+restores the final artifact from MinIO, creates and exactly replays one platform dry-run receipt,
+proves that live mode is blocked with no external action, and validates decoded video/audio
+quality. Its temporary stack and volumes are removed on exit.
 
 Useful endpoints after `docker compose up -d --build`:
 
@@ -138,6 +148,9 @@ Useful endpoints after `docker compose up -d --build`:
 - `POST http://localhost:8000/api/v1/projects/{project_id}/review-render`
 - `POST http://localhost:8000/api/v1/projects/{project_id}/approvals`
 - `POST http://localhost:8000/api/v1/projects/{project_id}/final-render`
+- `POST http://localhost:8000/api/v1/projects/{project_id}/publish` (dry run only)
+- `GET http://localhost:8000/api/v1/projects/{project_id}/publications`
+- `GET http://localhost:8000/api/v1/publishing-platforms`
 - `GET http://localhost:3000` (local Trend Radar)
 - `GET http://localhost:3000/studio.html` (local Auto Edit Studio)
 
@@ -150,6 +163,7 @@ See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
 [Media Intelligence](docs/MEDIA_INTELLIGENCE.md), [media provider contracts](docs/MEDIA_PROVIDERS.md), [ComfyUI setup](docs/COMFYUI_SETUP.md),
 [Auto Edit Studio](docs/AUTO_EDIT_STUDIO.md),
 [Audio, Subtitle, Render and QC](docs/AUDIO_SUBTITLE_RENDER_QC.md),
+[Publishing](docs/PUBLISHING.md), [V2-09 acceptance](docs/V2_09_ACCEPTANCE.md),
 [V2-08 acceptance](docs/V2_08_ACCEPTANCE.md), [V2-07 acceptance](docs/V2_07_ACCEPTANCE.md),
 [V2-06 acceptance](docs/V2_06_ACCEPTANCE.md) and the
 [V2 master specification](docs/CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md).

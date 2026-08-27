@@ -2,14 +2,16 @@ import {
   canDropOnTrack,
   clipStyle,
   describeApproval,
+  describePublication,
   describeProductionRender,
   describePreview,
   formatTime,
   getClip,
   pixelsPerSecond,
+  publicationGateItems,
   qcItems,
   timelinePositionFromPointer,
-} from "/studio-utils.mjs?v=0.9.0";
+} from "/studio-utils.mjs?v=0.10.0";
 
 const state = {
   workspaceId: null,
@@ -22,6 +24,11 @@ const state = {
   versions: [],
   preview: null,
   productionPackage: null,
+  publications: [],
+  publishingPlatforms: [],
+  activePublication: null,
+  publishRequestSignature: null,
+  publishIdempotencyKey: null,
   activeProductionRender: null,
   selectedClipId: null,
   panelTab: "media",
@@ -118,7 +125,7 @@ async function loadProject({ quiet = false } = {}) {
   stopProductionPolling();
   if (!quiet) setSaveStatus("Đang tải…", "muted");
   try {
-    const [assets, analyses, mediaPlans, timeline] = await Promise.all([
+    const [assets, analyses, mediaPlans, timeline, publications, publishingPlatforms] = await Promise.all([
       api(`/api/v1/projects/${state.projectId}/assets`),
       api(`/api/v1/projects/${state.projectId}/analyses`),
       api(`/api/v1/projects/${state.projectId}/media-plans`),
@@ -126,8 +133,22 @@ async function loadProject({ quiet = false } = {}) {
         if (error.status === 404) return null;
         throw error;
       }),
+      api(`/api/v1/projects/${state.projectId}/publications`),
+      api("/api/v1/publishing-platforms"),
     ]);
-    Object.assign(state, { assets, analyses, mediaPlans, timeline, selectedClipId: null, redoStack: [] });
+    Object.assign(state, {
+      assets,
+      analyses,
+      mediaPlans,
+      timeline,
+      publications,
+      publishingPlatforms,
+      activePublication: publications[0] ?? null,
+      selectedClipId: null,
+      redoStack: [],
+      publishRequestSignature: null,
+      publishIdempotencyKey: null,
+    });
     state.versions = timeline ? await api(`/api/v1/projects/${state.projectId}/timeline/versions`) : [];
     state.preview = null;
     state.productionPackage = null;
@@ -183,6 +204,7 @@ function render() {
   renderInspector();
   renderPreview();
   renderProduction();
+  renderPublishing();
 }
 
 function renderSummary() {
@@ -432,6 +454,118 @@ function renderProduction() {
   $("#final-render-button").textContent = busy && render?.render_kind === "final"
     ? `Đang render ${render.progress}%`
     : "Render final đã duyệt";
+  renderPublishing();
+}
+
+function selectedPublishingPlatform() {
+  const key = $("#publishing-platform")?.value ?? "youtube";
+  return state.publishingPlatforms.find((item) => item.platform === key) ?? null;
+}
+
+function renderPublishing() {
+  const packageState = state.productionPackage;
+  const finalRender = packageState?.latest_final_render ?? null;
+  const approved = packageState?.approval?.status === "approved";
+  const eligible = Boolean(
+    packageState?.current_for_timeline
+    && approved
+    && finalRender?.status === "ready"
+    && finalRender?.qc_status === "passed",
+  );
+  const platformState = selectedPublishingPlatform();
+  const liveEnabled = Boolean(platformState?.live_execution_enabled);
+  $("#publishing-live-status").textContent = liveEnabled ? "Owner gate đang bật" : "Live bị khóa";
+  $("#publishing-live-status").className = `pill ${liveEnabled ? "warning" : "muted"}`;
+  $("#publishing-dry-run-button").disabled = !eligible;
+  if (!$("#publishing-title").value && state.projectId) {
+    const project = state.projects.find((item) => item.project_id === state.projectId);
+    $("#publishing-title").value = project?.name ?? "NPD Video";
+  }
+
+  const publication = state.activePublication ?? state.publications[0] ?? null;
+  const status = describePublication(publication);
+  $("#publishing-status").textContent = status.label;
+  $("#publishing-status").className = `pill ${status.tone}`;
+  const gates = publicationGateItems(publication);
+  if (gates.length) {
+    $("#publishing-gates").innerHTML = gates.map((item) => `
+      <div class="publishing-gate ${item.passed ? "passed" : "failed"}">
+        <span>${item.passed ? "✓" : "!"}</span>
+        <div><small>${escapeHtml(item.group)} · ${escapeHtml(item.code)}</small><strong>${escapeHtml(item.message)}</strong></div>
+      </div>
+    `).join("");
+  } else {
+    const capability = platformState?.capability;
+    $("#publishing-gates").innerHTML = `
+      <div class="publishing-gate ${eligible ? "passed" : "pending"}">
+        <span>${eligible ? "✓" : "…"}</span>
+        <div><small>Điều kiện đầu vào</small><strong>${eligible ? "Final render đã duyệt và QC PASS." : "Cần final render đã duyệt và QC PASS."}</strong></div>
+      </div>
+      <div class="publishing-gate pending">
+        <span>i</span>
+        <div><small>Capability ${escapeHtml(capability?.version ?? "—")}</small><strong>Internal safe profile · phải xác minh lại trước live.</strong></div>
+      </div>
+    `;
+  }
+  $("#publication-history").innerHTML = state.publications.length
+    ? `<strong>Receipt gần đây</strong>${state.publications.slice(0, 5).map((item) => {
+      const itemStatus = describePublication(item);
+      return `<button type="button" data-publication-id="${escapeHtml(item.publication_id)}"><span>${escapeHtml(item.platform)}</span><small class="${escapeHtml(itemStatus.tone)}">${escapeHtml(itemStatus.label)} · ${escapeHtml(item.publication_id)}</small></button>`;
+    }).join("")}`
+    : `<p class="browser-empty">Chưa có dry-run receipt.</p>`;
+}
+
+function publicationPayload() {
+  const finalRender = state.productionPackage?.latest_final_render;
+  if (!finalRender) return null;
+  return {
+    platform: $("#publishing-platform").value,
+    final_render_id: finalRender.render_id,
+    mode: "dry_run",
+    metadata: {
+      title: $("#publishing-title").value.trim(),
+      description: $("#publishing-description").value.trim(),
+      caption: $("#publishing-caption").value.trim(),
+      hashtags: $("#publishing-hashtags").value.split(",").map((item) => item.trim().replace(/^#/, "")).filter(Boolean),
+      privacy: $("#publishing-privacy").value,
+    },
+    actor_ref: "studio-user",
+  };
+}
+
+async function createPublishingDryRun(event) {
+  event.preventDefault();
+  const payload = publicationPayload();
+  if (!payload) return toast("Cần final render đã duyệt trước khi kiểm tra publishing.", true);
+  const signature = JSON.stringify(payload);
+  if (signature !== state.publishRequestSignature) {
+    state.publishRequestSignature = signature;
+    state.publishIdempotencyKey = `v2-09-${crypto.randomUUID()}`;
+  }
+  $("#publishing-dry-run-button").disabled = true;
+  $("#publishing-dry-run-button").textContent = "Đang kiểm tra…";
+  try {
+    const publication = await api(`/api/v1/projects/${state.projectId}/publish`, {
+      method: "POST",
+      headers: { "Idempotency-Key": state.publishIdempotencyKey },
+      body: JSON.stringify(payload),
+    });
+    state.activePublication = publication;
+    state.publications = [publication, ...state.publications.filter((item) => item.publication_id !== publication.publication_id)];
+    toast("Dry-run PASS: đã tạo receipt, không có bài đăng hoặc external action.");
+  } catch (error) {
+    const publicationId = error.detail?.error?.publication_id;
+    if (publicationId) {
+      state.activePublication = await api(`/api/v1/projects/${state.projectId}/publications/${publicationId}`).catch(() => null);
+      if (state.activePublication) {
+        state.publications = [state.activePublication, ...state.publications.filter((item) => item.publication_id !== publicationId)];
+      }
+    }
+    toast(error.message, true);
+  } finally {
+    $("#publishing-dry-run-button").textContent = "Kiểm tra và tạo dry-run receipt";
+    renderPublishing();
+  }
 }
 
 function timedWords(text, start, end) {
@@ -819,6 +953,19 @@ $("#request-approval-button").addEventListener("click", requestProductionApprova
 $("#approve-button").addEventListener("click", () => decideProductionApproval("approved"));
 $("#changes-button").addEventListener("click", () => decideProductionApproval("changes_requested"));
 $("#final-render-button").addEventListener("click", () => createProductionRender("final"));
+$("#publishing-form").addEventListener("submit", createPublishingDryRun);
+$("#publishing-platform").addEventListener("change", () => {
+  state.activePublication = state.publications.find((item) => item.platform === $("#publishing-platform").value) ?? null;
+  state.publishRequestSignature = null;
+  state.publishIdempotencyKey = null;
+  renderPublishing();
+});
+$("#publication-history").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-publication-id]");
+  if (!button) return;
+  state.activePublication = state.publications.find((item) => item.publication_id === button.dataset.publicationId) ?? null;
+  renderPublishing();
+});
 $("#voice-speed").addEventListener("input", (event) => {
   $("#voice-speed-output").textContent = `${Number(event.target.value).toFixed(2)}×`;
 });

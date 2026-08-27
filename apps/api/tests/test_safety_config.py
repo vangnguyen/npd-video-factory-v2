@@ -5,9 +5,32 @@ from app.config import Settings
 from app.main import capabilities
 
 
-def test_v2_01_rejects_publish_enablement() -> None:
-    with pytest.raises(ValidationError, match="publishing is not implemented"):
+def test_v2_09_rejects_partial_publish_enablement() -> None:
+    with pytest.raises(ValidationError, match="separate external execution gate"):
         Settings(_env_file=None, publish_enabled=True)
+    with pytest.raises(ValidationError, match="requires PUBLISH_ENABLED"):
+        Settings(_env_file=None, publish_external_execution_enabled=True)
+    with pytest.raises(ValidationError, match="explicit owner gate"):
+        Settings(
+            _env_file=None,
+            publish_enabled=True,
+            publish_external_execution_enabled=True,
+            youtube_publishing_credential_ref="secret://video-factory/youtube",
+        )
+
+
+def test_v2_09_rejects_raw_credentials_and_ci_external_publish() -> None:
+    with pytest.raises(ValidationError, match="external secret references"):
+        Settings(_env_file=None, youtube_publishing_credential_ref="plain-text-token")
+    with pytest.raises(ValidationError, match="prohibit external publishing"):
+        Settings(
+            _env_file=None,
+            app_env="ci",
+            publish_enabled=True,
+            publish_external_execution_enabled=True,
+            publish_owner_gate_enabled=True,
+            youtube_publishing_credential_ref="secret://video-factory/youtube",
+        )
 
 
 def test_v2_01_rejects_disabling_human_approval() -> None:
@@ -116,8 +139,11 @@ def test_v2_06_paid_and_comfyui_execution_require_explicit_parent_gates() -> Non
 async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     result = await capabilities()
     assert result["agent_hub_runtime_dependency"] is False
-    assert result["publishing_implemented"] is False
+    assert result["publishing_implemented"] is True
+    assert result["publishing_mode"] == "dry_run_only"
     assert result["publish_enabled"] is False
+    assert result["publish_external_execution_enabled"] is False
+    assert result["publish_owner_gate_enabled"] is False
     assert result["human_approval_required"] is True
     assert result["auto_edit_analysis"] is True
     assert result["auto_edit_timeline"] is True
@@ -133,6 +159,7 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
         "square-1080x1080",
     ]
     assert result["preview_publish"] is False
+    assert result["final_render_publish"] == "dry_run_validation_only"
     assert result["source_media_mutation"] is False
     assert result["vision_analysis"] is True
     assert result["ocr"] is True
