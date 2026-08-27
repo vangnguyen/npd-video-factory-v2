@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/video-factory/v3-01/approval-record.schema.json",
+  "title": "Video Factory V3-01 approval record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["approval_id", "gate_id", "decision", "scope", "artifact_or_commit_hashes", "target_account_or_environment", "limits", "approved_by", "approved_at_utc", "expires_at_utc", "notes"],
+  "properties": {
+    "approval_id": {"type": "string", "pattern": "^V3-01-APP-[0-9]{3}$"},
+    "gate_id": {"type": "string", "pattern": "^G-[0-9]{2}$"},
+    "decision": {"enum": ["APPROVED", "REJECTED", "REVOKED"]},
+    "scope": {"type": "string", "minLength": 1},
+    "artifact_or_commit_hashes": {"type": "array", "items": {"type": "string"}},
+    "target_account_or_environment": {"type": "string"},
+    "limits": {"type": "array", "items": {"type": "string"}},
+    "approved_by": {"type": "string", "minLength": 1},
+    "approved_at_utc": {"type": "string", "format": "date-time"},
+    "expires_at_utc": {"type": ["string", "null"], "format": "date-time"},
+    "notes": {"type": "string"}
+  }
+}

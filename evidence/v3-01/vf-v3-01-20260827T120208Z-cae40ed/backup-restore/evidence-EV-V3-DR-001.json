@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-DR-001",
+  "test_case_id": "DR-001",
+  "matrix_rows": ["OPS-06", "OPS-07", "OPS-08"],
+  "axis": "production-path-tested",
+  "commit_sha": "cae40eda871d0f9c7fc315229361a40032d48967",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "none",
+    "model_or_workflow": "runbook-and-script-static-audit",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": null,
+  "started_at_utc": "2026-08-27T12:15:00Z",
+  "completed_at_utc": "2026-08-27T12:18:00Z",
+  "duration_seconds": 180,
+  "result": "BLOCKED",
+  "assertion": "Backup, restore and rollback helpers exist, but no isolated data-integrity or image rollback drill has been executed and no production state exists.",
+  "correlation_id": "vf-v3-01-20260827T120208Z-cae40ed",
+  "cost": {"currency": "VND", "actual": 0, "status": "NOT_APPLICABLE"},
+  "rights_record_id": null,
+  "reviewer": "Codex static audit",
+  "gap_ids": ["V3-01-GAP-007", "V3-01-GAP-008"],
+  "reproduce": "review scripts/v2-11-backup.sh scripts/v2-11-restore.sh scripts/v2-11-deploy.sh and docs/BACKUP_RESTORE.md; do not execute without G-10"
+}

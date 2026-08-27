@@ -1,5 +1,13 @@
 # NPD Video Factory V2
 
+> **V3-01 production acceptance is in feature freeze.** The current checkpoint is a
+> read-only/static/mock audit with verdict **NO-GO** and no release candidate. Start with the
+> [V3-01 baseline](docs/acceptance/v3-01/00_BASELINE.md),
+> [60-row acceptance matrix](docs/acceptance/v3-01/02_ACCEPTANCE_MATRIX.md),
+> [gap register](docs/acceptance/v3-01/13_GAP_REGISTER.md) and
+> [owner gates](docs/acceptance/v3-01/15_OWNER_GATES.md). No merge, deployment, provider call or
+> publication is authorized by these documents.
+
 NPD Video Factory V2 is an independent media execution platform. V2-11 keeps the durable
 video, Trend/Idea, Auto Edit, Vision and Media Intelligence platform, editable timeline,
 human approval, production-profile rendering and full media QC, then adds fail-closed publishing

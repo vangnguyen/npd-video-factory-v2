@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/video-factory/v3-01/gap-record.schema.json",
+  "title": "Video Factory V3-01 gap record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["gap_id", "title", "severity", "status", "discovered_at_utc", "matrix_rows", "flows", "providers", "environment", "evidence_ids", "impact", "root_cause", "containment", "remediation", "test_plan", "rollback", "owner", "target_date", "pr_ids", "verified_on_commit", "exception_expiry", "owner_approval_id"],
+  "properties": {
+    "gap_id": {"type": "string", "pattern": "^V3-01-GAP-[0-9]{3}$"},
+    "title": {"type": "string", "minLength": 1},
+    "severity": {"enum": ["P0", "P1", "P2"]},
+    "status": {"enum": ["OPEN", "IN_PROGRESS", "REMEDIATED", "VERIFIED", "ACCEPTED_EXCEPTION"]},
+    "discovered_at_utc": {"type": "string", "format": "date-time"},
+    "matrix_rows": {"type": "array", "items": {"type": "string"}},
+    "flows": {"type": "array", "items": {"type": "string"}},
+    "providers": {"type": "array", "items": {"type": "string"}},
+    "environment": {"type": "string"},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}},
+    "impact": {"type": "string"},
+    "root_cause": {"type": "string"},
+    "containment": {"type": "string"},
+    "remediation": {"type": "string"},
+    "test_plan": {"type": "string"},
+    "rollback": {"type": "string"},
+    "owner": {"type": "string"},
+    "target_date": {"type": "string"},
+    "pr_ids": {"type": "array", "items": {"type": "string"}},
+    "verified_on_commit": {"type": "string"},
+    "exception_expiry": {"type": ["string", "null"], "format": "date-time"},
+    "owner_approval_id": {"type": ["string", "null"]}
+  }
+}

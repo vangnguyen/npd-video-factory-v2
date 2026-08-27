@@ -19,3 +19,6 @@ production-pilot-artifacts/
 coverage/
 .pytest_cache/
 apps/api/migration-*.db
+evidence/v3-01/**/private/
+evidence/v3-01/**/raw/
+evidence/v3-01/**/*.har

@@ -1,0 +1,18 @@
+{
+  "captured_at_utc": "2026-08-27T12:02:08Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "branch": "main",
+  "commit_sha": "cae40eda871d0f9c7fc315229361a40032d48967",
+  "application_version": "0.12.0",
+  "migration_head": "0010_v2_11_agent_hub_bridge",
+  "latest_ci_run_id": 33062401432,
+  "latest_ci_conclusion": "success",
+  "main_branch_protected": false,
+  "production_deployment_evidenced": false,
+  "production_commit_or_image_evidenced": false,
+  "runtime_secret_files_read": false,
+  "external_calls": 0,
+  "external_cost_vnd": 0,
+  "feature_freeze": true,
+  "verdict": "NO-GO"
+}

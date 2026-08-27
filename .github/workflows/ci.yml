@@ -26,6 +26,8 @@ jobs:
       - run: python -m pip install -e "apps/api[dev]" -e "services/worker[dev]" -e "services/comfyui-bridge[dev]"
       - run: python -m compileall -q apps/api/app services/worker/npd_worker services/comfyui-bridge/npd_comfyui_bridge
       - run: python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q
+      - name: Validate V3-01 acceptance register and redacted evidence
+        run: python scripts/v3_01_acceptance.py validate-repo
       - name: Alembic upgrade, downgrade and replay
         working-directory: apps/api
         env:
