@@ -75,6 +75,14 @@ if ! curl --fail --silent http://localhost:3000/ >/dev/null; then
   echo "Studio health check failed" >&2
   exit 1
 fi
+if ! curl --fail --silent http://localhost:3000/studio.html | grep -q 'Auto Edit Studio'; then
+  echo "Auto Edit Studio route/content check failed" >&2
+  exit 1
+fi
+if ! curl --fail --silent --show-error --head http://localhost:3000/studio-utils.mjs | tr -d '\r' | grep -qi '^content-type: application/javascript'; then
+  echo "Auto Edit Studio ES module MIME check failed" >&2
+  exit 1
+fi
 
 expected_duration="$("$PYTHON_BIN" -c 'import json; print(json.load(open("examples/vinhomes-green-paradise.request.json", encoding="utf-8"))["video"]["duration_seconds"])')"
 echo "[e2e] creating ${expected_duration}-second video job"
@@ -267,6 +275,109 @@ curl --fail --silent --show-error \
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/cost-summary" \
   > e2e-artifacts/cost-summary-after-media.json
+
+echo "[e2e] creating the V2-07 editable timeline and version-bound 540p preview"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$project_id/timeline" \
+  -H 'Content-Type: application/json' \
+  --data "{\"analysis_id\":\"$analysis_id\",\"media_plan_id\":\"$media_plan_id\",\"actor_ref\":\"github-actions-e2e\"}" \
+  > e2e-artifacts/timeline-v1.json
+timeline_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/timeline-v1.json", encoding="utf-8"))["timeline_id"])' | tr -d '\r')"
+source_clip_id="$("$PYTHON_BIN" -c 'import json; d=json.load(open("e2e-artifacts/timeline-v1.json", encoding="utf-8")); print(next(c["clip_id"] for t in d["snapshot"]["tracks"] if t["kind"] == "source" for c in t["clips"]))' | tr -d '\r')"
+curl --fail --silent --show-error \
+  -X PUT "http://localhost:8000/api/v1/projects/$project_id/timeline" \
+  -H 'Content-Type: application/json' \
+  --data "{\"expected_version\":1,\"actor_ref\":\"github-actions-e2e\",\"reason\":\"e2e-editor-interaction\",\"operations\":[{\"type\":\"move\",\"clip_id\":\"$source_clip_id\",\"timeline_start\":0.25}]}" \
+  > e2e-artifacts/timeline-v2.json
+stale_status="$(curl --silent --show-error \
+  -o e2e-artifacts/timeline-conflict.json \
+  -w '%{http_code}' \
+  -X PUT "http://localhost:8000/api/v1/projects/$project_id/timeline" \
+  -H 'Content-Type: application/json' \
+  --data "{\"expected_version\":1,\"actor_ref\":\"stale-editor\",\"operations\":[{\"type\":\"disable\",\"clip_id\":\"$source_clip_id\",\"disabled\":true}]}")"
+if [[ "$stale_status" != "409" ]]; then
+  echo "Expected optimistic-concurrency HTTP 409, received $stale_status" >&2
+  exit 1
+fi
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$project_id/preview" \
+  -H 'Content-Type: application/json' \
+  --data '{"timeline_version":2,"width":540,"height":960,"actor_ref":"github-actions-e2e"}' \
+  > e2e-artifacts/preview-created.json
+preview_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/preview-created.json", encoding="utf-8"))["preview_id"])' | tr -d '\r')"
+preview_terminal=0
+for _ in $(seq 1 180); do
+  preview_json="$(curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$project_id/previews/$preview_id")"
+  printf '%s\n' "$preview_json" > e2e-artifacts/preview-ready.json
+  preview_status="$(printf '%s' "$preview_json" | "$PYTHON_BIN" -c 'import json,sys; print(json.load(sys.stdin)["status"])' | tr -d '\r')"
+  if [[ "$preview_status" == "ready" ]]; then
+    preview_terminal=1
+    break
+  fi
+  if [[ "$preview_status" == "failed" || "$preview_status" == "cancelled" || "$preview_status" == "stale" ]]; then
+    echo "Preview ended unexpectedly: $preview_status" >&2
+    printf '%s\n' "$preview_json" >&2
+    exit 1
+  fi
+  sleep 1
+done
+if [[ "$preview_terminal" != "1" ]]; then
+  echo "Preview did not finish before timeout: $preview_id" >&2
+  exit 1
+fi
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/previews/$preview_id/content" \
+  --output e2e-artifacts/preview.mp4
+"$docker_bin" compose cp e2e-artifacts/preview.mp4 worker:/tmp/v2-07-e2e-preview.mp4 >/dev/null
+"$docker_bin" compose exec -T worker ffprobe -v error \
+  -show_entries stream=codec_type,codec_name,width,height \
+  -show_entries format=duration \
+  -of json /tmp/v2-07-e2e-preview.mp4 \
+  > e2e-artifacts/preview-probe.json
+curl --fail --silent --show-error \
+  -X PUT "http://localhost:8000/api/v1/projects/$project_id/timeline" \
+  -H 'Content-Type: application/json' \
+  --data "{\"expected_version\":2,\"actor_ref\":\"github-actions-e2e\",\"reason\":\"preview-invalidation\",\"operations\":[{\"type\":\"set_clip_properties\",\"clip_id\":\"$source_clip_id\",\"opacity\":0.9}]}" \
+  > e2e-artifacts/timeline-before-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/previews/$preview_id" \
+  > e2e-artifacts/preview-stale-before-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/timeline/versions" \
+  > e2e-artifacts/timeline-versions-before-restart.json
+
+"$PYTHON_BIN" - <<'PY'
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+v1 = json.loads((root / "timeline-v1.json").read_text(encoding="utf-8"))
+v2 = json.loads((root / "timeline-v2.json").read_text(encoding="utf-8"))
+v3 = json.loads((root / "timeline-before-restart.json").read_text(encoding="utf-8"))
+conflict = json.loads((root / "timeline-conflict.json").read_text(encoding="utf-8"))
+ready = json.loads((root / "preview-ready.json").read_text(encoding="utf-8"))
+stale = json.loads((root / "preview-stale-before-restart.json").read_text(encoding="utf-8"))
+probe = json.loads((root / "preview-probe.json").read_text(encoding="utf-8"))
+versions = json.loads((root / "timeline-versions-before-restart.json").read_text(encoding="utf-8"))
+
+assert v1["current_version"] == 1 and v2["current_version"] == 2 and v3["current_version"] == 3
+assert v1["source_media_mutated"] is False and v3["publish_requested"] is False
+assert conflict["detail"]["code"] == "TIMELINE_VERSION_CONFLICT", conflict
+assert conflict["detail"]["current_version"] == 2, conflict
+assert len(versions) == 3 and [item["version"] for item in versions] == [3, 2, 1], versions
+assert ready["status"] == "ready" and ready["timeline_version"] == 2, ready
+assert ready["progress"] == 100 and ready["valid_for_current_timeline"] is True, ready
+assert ready["manifest"]["renderer"] == "ffmpeg-proxy-v1", ready
+assert ready["manifest"]["proxy_only"] is True and ready["manifest"]["audio_included"] is False, ready
+assert ready["external_call"] is False and ready["publish_requested"] is False, ready
+assert stale["status"] == "stale" and stale["valid_for_current_timeline"] is False, stale
+video_streams = [item for item in probe["streams"] if item["codec_type"] == "video"]
+audio_streams = [item for item in probe["streams"] if item["codec_type"] == "audio"]
+assert len(video_streams) == 1 and video_streams[0]["codec_name"] == "h264", probe
+assert video_streams[0]["width"] == 540 and video_streams[0]["height"] == 960, probe
+assert not audio_streams and float(probe["format"]["duration"]) > 0, probe
+print("[e2e] V2-07 timeline, version conflict, 540p preview and invalidation verified")
+PY
 
 replay_response="$(
   curl --fail --silent --show-error \
@@ -519,6 +630,12 @@ curl --fail --silent --show-error \
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/media-assets" \
   > e2e-artifacts/media-assets-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/timeline" \
+  > e2e-artifacts/timeline-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/previews/$preview_id" \
+  > e2e-artifacts/preview-stale-after-restart.json
 "$PYTHON_BIN" - <<'PY'
 import json
 from pathlib import Path
@@ -538,13 +655,19 @@ media_before = json.loads((root / "media-plan-resolved.json").read_text(encoding
 media_after = json.loads((root / "media-plan-after-restart.json").read_text(encoding="utf-8"))
 media_assets_before = json.loads((root / "media-assets.json").read_text(encoding="utf-8"))
 media_assets_after = json.loads((root / "media-assets-after-restart.json").read_text(encoding="utf-8"))
+timeline_before = json.loads((root / "timeline-before-restart.json").read_text(encoding="utf-8"))
+timeline_after = json.loads((root / "timeline-after-restart.json").read_text(encoding="utf-8"))
+preview_before = json.loads((root / "preview-stale-before-restart.json").read_text(encoding="utf-8"))
+preview_after = json.loads((root / "preview-stale-after-restart.json").read_text(encoding="utf-8"))
 assert after == before, (before, after)
 assert queue_after == queue_before, (queue_before, queue_after)
 assert analysis_after == analysis_before, (analysis_before, analysis_after)
 assert vision_after == vision_before, (vision_before, vision_after)
 assert media_after == media_before, (media_before, media_after)
 assert media_assets_after == media_assets_before, (media_assets_before, media_assets_after)
-print("[e2e] PostgreSQL job, content queue, Auto Edit, Vision and Media Intelligence recovery verified")
+assert timeline_after == timeline_before, (timeline_before, timeline_after)
+assert preview_after == preview_before, (preview_before, preview_after)
+print("[e2e] PostgreSQL job, content queue, Auto Edit, Vision, Media Intelligence and timeline recovery verified")
 PY
 
 "$docker_bin" compose exec -T api python -c '
@@ -618,4 +741,4 @@ for cue, scene in zip(timing["cues"], manifest["scenes"], strict=True):
 print("[e2e] QC verified", json.dumps(qc, ensure_ascii=False))
 PY
 
-echo "[e2e] V2-06 Media Intelligence passed"
+echo "[e2e] V2-07 Auto Edit Studio passed"

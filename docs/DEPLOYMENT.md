@@ -1,6 +1,6 @@
-# Deployment — V2-06
+# Deployment — V2-07
 
-V2-06 is a development/CI platform increment and is not approved for production deployment.
+V2-07 is a development/CI platform increment and is not approved for production deployment.
 
 ## Dev/CI
 
@@ -38,8 +38,11 @@ Before any production proposal, a separate owner-approved PR/task must add and v
     OCR/tracking/reframe accuracy acceptance.
 11. owner-approved stock and image/video-generation adapters with rights and VND pricing acceptance;
 12. reviewed/pinned ComfyUI graph, nodes and model checksums plus authenticated bridge networking.
+13. Auto Edit Studio authentication, project/workspace authorization and auditable human identity;
+14. timeline/preview retention, quota and cleanup policies plus a PostgreSQL/object-store restore drill;
+15. resource ceilings and observability for FFmpeg preview workers.
 
-V2-06 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
+V2-07 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
 `VISION_FIXTURE_ENABLED=false`, `VISION_PROVIDER=contract`,
 `MEDIA_FIXTURE_ENABLED=false`, media providers set to `contract`, and external/paid/ComfyUI
 execution disabled until their separate owner gates;

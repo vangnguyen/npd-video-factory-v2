@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/contracts/video-factory-v2/timeline.schema.json",
+  "title": "NPD Video Factory V2 Timeline",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "width",
+    "height",
+    "fps",
+    "aspect_ratio",
+    "duration_seconds",
+    "tracks",
+    "metadata",
+    "source_media_mutated",
+    "publish_requested"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "width": { "type": "integer", "minimum": 16, "maximum": 7680 },
+    "height": { "type": "integer", "minimum": 16, "maximum": 7680 },
+    "fps": { "type": "number", "exclusiveMinimum": 0, "maximum": 120 },
+    "aspect_ratio": { "enum": ["9:16", "16:9", "1:1", "4:5"] },
+    "duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
+    "tracks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": { "$ref": "#/$defs/track" }
+    },
+    "metadata": { "type": "object" },
+    "source_media_mutated": { "const": false },
+    "publish_requested": { "const": false }
+  },
+  "$defs": {
+    "crop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y": { "type": "number", "minimum": 0, "maximum": 1 },
+        "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+      }
+    },
+    "transform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "scale", "rotation_degrees"],
+      "properties": {
+        "x": { "type": "number", "minimum": -2, "maximum": 2 },
+        "y": { "type": "number", "minimum": -2, "maximum": 2 },
+        "scale": { "type": "number", "exclusiveMinimum": 0, "maximum": 8 },
+        "rotation_degrees": { "type": "number", "minimum": -360, "maximum": 360 }
+      }
+    },
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "duration_seconds"],
+      "properties": {
+        "kind": { "enum": ["none", "cut", "fade", "crossfade", "slide"] },
+        "duration_seconds": { "type": "number", "minimum": 0, "maximum": 5 }
+      }
+    },
+    "clip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clip_id",
+        "kind",
+        "label",
+        "asset_id",
+        "source_start",
+        "source_end",
+        "timeline_start",
+        "duration",
+        "speed",
+        "crop",
+        "transform",
+        "opacity",
+        "volume",
+        "transition_in",
+        "transition_out",
+        "effects",
+        "disabled",
+        "metadata"
+      ],
+      "properties": {
+        "clip_id": { "type": "string", "pattern": "^clip_[A-Za-z0-9_-]{4,60}$" },
+        "kind": {
+          "enum": [
+            "source",
+            "broll",
+            "overlay",
+            "generated",
+            "subtitle",
+            "original_audio",
+            "voice",
+            "music",
+            "sfx",
+            "metadata"
+          ]
+        },
+        "label": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "asset_id": {
+          "anyOf": [
+            { "type": "string", "pattern": "^ast_[A-Za-z0-9_-]{4,60}$" },
+            { "type": "null" }
+          ]
+        },
+        "source_start": { "type": "number", "minimum": 0 },
+        "source_end": { "type": "number", "exclusiveMinimum": 0 },
+        "timeline_start": { "type": "number", "minimum": 0 },
+        "duration": { "type": "number", "exclusiveMinimum": 0 },
+        "speed": { "type": "number", "exclusiveMinimum": 0, "maximum": 8 },
+        "crop": { "$ref": "#/$defs/crop" },
+        "transform": { "$ref": "#/$defs/transform" },
+        "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "volume": { "type": "number", "minimum": 0, "maximum": 2 },
+        "transition_in": { "$ref": "#/$defs/transition" },
+        "transition_out": { "$ref": "#/$defs/transition" },
+        "effects": { "type": "array", "maxItems": 20, "items": { "type": "object" } },
+        "disabled": { "type": "boolean" },
+        "metadata": { "type": "object" }
+      }
+    },
+    "track": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["track_id", "type", "kind", "label", "order", "locked", "muted", "disabled", "clips"],
+      "properties": {
+        "track_id": { "type": "string", "pattern": "^trk_[A-Za-z0-9_-]{4,60}$" },
+        "type": { "enum": ["video", "text", "audio", "metadata"] },
+        "kind": {
+          "enum": [
+            "source",
+            "broll",
+            "overlay",
+            "generated",
+            "subtitles",
+            "original_audio",
+            "voice",
+            "music",
+            "sfx",
+            "metadata"
+          ]
+        },
+        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "order": { "type": "integer", "minimum": 0 },
+        "locked": { "type": "boolean" },
+        "muted": { "type": "boolean" },
+        "disabled": { "type": "boolean" },
+        "clips": { "type": "array", "items": { "$ref": "#/$defs/clip" } }
+      }
+    }
+  }
+}

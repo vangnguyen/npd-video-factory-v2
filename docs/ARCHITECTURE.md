@@ -1,4 +1,4 @@
-# Architecture — V2-06
+# Architecture — V2-07
 
 ## Bounded context
 
@@ -16,10 +16,12 @@ FastAPI API -------------------------- PostgreSQL
    |   upload/transcript/scene/silence/highlight
    |   vision-frame/OCR/quality/track/reframe evidence
    |   media plans/items/rights/provenance/resolution jobs
+   |   timeline/current version/history/preview jobs
    |
    +----> V2 Redis transient queues ---> Worker ----> Remotion ----> FFmpeg QC
    |                                      |
    |                                      +---- media resolver/provider contracts
+   |                                      +---- FFmpeg 540p proxy renderer
    |                                                  |
    |                                                  +---- optional allowlisted ComfyUI bridge
                                             |
@@ -31,12 +33,12 @@ FastAPI API -------------------------- PostgreSQL
 
 | Component | Owns | Durability |
 |---|---|---|
-| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload, Auto Edit, Vision/reframe and Media Intelligence state | canonical |
-| Redis | pending and processing delivery queues | transient/recoverable |
-| S3/MinIO | source, generated, metadata and render objects | canonical binary store |
+| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload, Auto Edit, Vision/reframe, Media Intelligence, timeline versions and preview state | canonical |
+| Redis | pending and processing job/media/preview delivery IDs | transient/recoverable |
+| S3/MinIO | source, generated, metadata, final-render and proxy-preview objects | canonical binary store |
 | job volume | resumable local worker scratch/cache | replaceable |
 | renderer | strict manifest-to-MP4 execution | stateless apart from job scratch |
-| Studio Nginx | responsive Trend Radar assets and same-origin API proxy | stateless |
+| Studio Nginx | responsive Trend Radar/Auto Edit Studio assets and same-origin API proxy | stateless |
 
 The Compose project remains `npd-video-factory-v2`. PostgreSQL, Redis and MinIO are V2-owned
 and are not published to the host. API and renderer bind to `127.0.0.1` by default.
@@ -73,6 +75,15 @@ rights/source/generation provenance. Unknown rights, non-production fixture medi
 items keep the plan publishing-blocked. The optional ComfyUI bridge is a separate bounded adapter:
 only allowlisted workflow IDs cross the API boundary and its Compose `gpu` profile is off by default.
 
+V2-07 converts the same persisted evidence into one canonical timeline per project. The current
+snapshot points at immutable version rows; every write uses optimistic concurrency and creates a
+new row. Timeline edits reference existing assets and never modify their object keys or bytes.
+Earlier previews are marked stale after a mutation, so UI playback cannot silently represent a
+different timeline version. Preview IDs travel through V2 Redis, while PostgreSQL remains canonical.
+The worker downloads bounded scratch inputs, renders a 540x960 H.264 video-only proxy with FFmpeg,
+stores it in the same V2 object store, registers it as a non-publishing render asset and removes
+scratch. Incomplete preview IDs are recoverable after worker restart.
+
 ## Durable job rules
 
 - PostgreSQL is the source of truth; Redis never stores canonical job JSON.
@@ -85,9 +96,10 @@ only allowlisted workflow IDs cross the API boundary and its Compose `gpu` profi
 
 ## Safety state
 
-V2-06 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
+V2-07 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
 `HUMAN_APPROVAL_REQUIRED=false`. Successful jobs stop at `awaiting_review`. API auth/RBAC is
 not yet implemented, so this increment is local/CI only and must not be exposed publicly. The
 Vision and media fixtures are rejected in production, and mock provenance must not be interpreted
 as real pixel-model or provider-quality evidence. External/paid media and ComfyUI execution are
-separate fail-closed settings.
+separate fail-closed settings. Proxy previews are explicitly non-final, video-only, zero-external-call
+artifacts and cannot be published.

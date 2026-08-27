@@ -44,6 +44,8 @@ class Settings(BaseSettings):
     image_generation_provider: str = "contract"
     video_generation_provider: str = "contract"
     media_staging_root: Path = Path("/workspace/storage/media-resolution")
+    preview_staging_root: Path = Path("/workspace/storage/previews")
+    preview_download_root: Path = Path("/workspace/storage/preview-downloads")
     media_external_execution_enabled: bool = False
     media_paid_execution_enabled: bool = False
     comfyui_bridge_url: str = "http://comfyui-bridge:8011"
@@ -67,9 +69,9 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
         if self.publish_enabled:
-            raise ValueError("publishing is not implemented in V2-06 and must remain disabled")
+            raise ValueError("publishing is not implemented in V2-07 and must remain disabled")
         if not self.human_approval_required:
-            raise ValueError("human approval must remain required in V2-06")
+            raise ValueError("human approval must remain required in V2-07")
         if self.app_env == "production" and self.trend_fixture_enabled:
             raise ValueError("deterministic trend fixtures must be disabled in production")
         if self.app_env == "production" and self.auto_edit_fixture_enabled:

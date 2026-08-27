@@ -1,4 +1,4 @@
-# Cost control — V2-06
+# Cost control — V2-07
 
 VND is the only accepted cost currency in Pydantic contracts, ORM defaults and the database
 check constraint. USD is not a supported runtime currency.
@@ -31,3 +31,8 @@ remains unpriced and cannot be silently treated as zero or converted from USD.
 The real-provider smoke still requires manual dispatch text `APPROVED`, protected-environment
 approval and a configured secret. Publishing, GPU generation and scale tests remain disabled
 until their own owner-approved budget and execution gates exist.
+
+V2-07 timeline mutations and local FFmpeg proxy previews make no external provider call and add no
+paid usage record. The preview response declares `external_call=false`; compute/storage capacity is
+an operational resource rather than a silently converted provider charge. A future hosted preview
+provider must add an idempotent VND price contract and owner gate before it can be selected.
