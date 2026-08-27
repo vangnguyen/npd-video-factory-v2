@@ -82,6 +82,36 @@ def test_v2_05_rejects_vision_fixture_in_production() -> None:
         )
 
 
+def test_v2_06_rejects_media_fixture_in_production() -> None:
+    with pytest.raises(ValidationError, match="media fixtures must be disabled"):
+        Settings(
+            _env_file=None,
+            app_env="production",
+            trend_fixture_enabled=False,
+            auto_edit_fixture_enabled=False,
+            vision_fixture_enabled=False,
+            transcription_provider="contract",
+            auto_edit_signal_provider="ffmpeg",
+            vision_provider="contract",
+            media_fixture_enabled=True,
+            stock_media_provider="fixture",
+            image_generation_provider="fixture",
+            video_generation_provider="fixture",
+            object_storage_provider="s3",
+            object_storage_access_key="test-access-key",
+            object_storage_secret_key="test-secret-key",
+        )
+
+
+def test_v2_06_paid_and_comfyui_execution_require_explicit_parent_gates() -> None:
+    with pytest.raises(ValidationError, match="paid media execution requires external"):
+        Settings(_env_file=None, media_paid_execution_enabled=True)
+    with pytest.raises(ValidationError, match="ComfyUI execution requires"):
+        Settings(_env_file=None, comfyui_execution_enabled=True)
+    with pytest.raises(ValidationError, match="generation providers require"):
+        Settings(_env_file=None, image_generation_provider="comfyui")
+
+
 @pytest.mark.asyncio
 async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     result = await capabilities()
@@ -98,3 +128,12 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["smart_reframe"] is True
     assert result["smart_reframe_aspect_ratios"] == ["9:16", "16:9", "1:1", "4:5"]
     assert result["smart_reframe_preview_only"] is True
+    assert result["media_intelligence"] is True
+    assert result["media_planner"] is True
+    assert result["broll_planner"] is True
+    assert result["media_rights_gate"] == "fail_closed"
+    assert result["media_resolution"] == "asynchronous"
+    assert result["media_fixture_production_eligible"] is False
+    assert result["comfyui_execution_enabled"] is False
+    assert result["media_external_execution_enabled"] is False
+    assert result["media_paid_execution_enabled"] is False

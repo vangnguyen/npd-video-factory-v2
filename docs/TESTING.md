@@ -1,11 +1,11 @@
-# Testing — V2-05
+# Testing — V2-06
 
 ## Local checks
 
 ```bash
-python -m pip install -e "apps/api[dev]" -e "services/worker[dev]"
-python -m compileall -q apps/api/app services/worker/npd_worker
-python -m pytest apps/api/tests services/worker/tests -q
+python -m pip install -e "apps/api[dev]" -e "services/worker[dev]" -e "services/comfyui-bridge[dev]"
+python -m compileall -q apps/api/app services/worker/npd_worker services/comfyui-bridge/npd_comfyui_bridge
+python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q
 ```
 
 ```bash
@@ -55,6 +55,11 @@ The E2E creates five copyright-safe fixtures and one deterministic job, then ver
 - all four reframe ratios, bounded crop jumps, subtitle-safe metadata and manual override;
 - low-confidence center-crop fallback and fail-closed missing live Vision provider;
 - Vision/reframe recovery after API restart and a zero-VND fixture provider record.
+- four deterministic media strategies with explainable B-roll decisions and ranked stock evidence;
+- async resolution, rights/provenance registration, VND-only cost and scratch cleanup;
+- unknown-rights, over-budget, external/paid and missing-provider fail-closed behavior;
+- media-plan/assets recovery after API restart and worker queue recovery;
+- ComfyUI manifest allowlisting plus mock progress/result/cancel/timeout/retry behavior.
 
 The API/unit suite separately covers signature/MIME rejection, missing or corrupt upload parts,
 same-project checksum duplicate reuse and Top 5 output. The repository also resolves a

@@ -1,4 +1,4 @@
-# Security and safety — V2-05
+# Security and safety — V2-06
 
 ## Defaults
 
@@ -15,6 +15,10 @@
   `not_configured` until an owner-approved credential/adapter exists.
 - The Vision fixture is synthetic, makes no network call and is rejected at production startup.
   Live Vision stays `not_configured`; fixture output never claims real pixel-model accuracy.
+- Media fixtures are synthetic and production-ineligible. Unknown rights fail closed, social media
+  is never downloaded, and external/paid media execution is disabled by default.
+- ComfyUI accepts only allowlisted workflow IDs and typed inputs. Arbitrary workflow graphs, model
+  uploads and direct frontend-to-ComfyUI access are absent.
 
 ## Data and artifact controls
 
@@ -29,10 +33,12 @@
 - Source objects are immutable. Silence/highlight output is a reversible decision record only.
 - Vision and crop plans are immutable evidence/decision records. Crop keyframes do not render,
   replace or mutate the source object.
+- Media provenance records source, license, creator, rights and generation evidence. V2-06 exposes
+  no owner-override write and no publishing route.
 
 ## Known security gate
 
-V2-05 does not yet implement API authentication, RBAC or workspace membership. Localhost
+V2-06 does not yet implement API authentication, RBAC or workspace membership. Localhost
 binding is the only access boundary in this increment. Public routing and production
 deployment are prohibited until those controls, rate limits and audit actor identity are
 implemented and accepted.
@@ -40,7 +46,8 @@ implemented and accepted.
 ## Credential contract
 
 Only variable names/config references appear in source: `DATABASE_URL`, `OBJECT_STORAGE_*`,
-optional `OPENAI_API_KEY`, `TRANSCRIPTION_PROVIDER`, `VISION_PROVIDER` and future provider
+optional `OPENAI_API_KEY`, `TRANSCRIPTION_PROVIDER`, `VISION_PROVIDER`, media provider selectors
+and `COMFYUI_BRIDGE_URL` plus future provider
 contract names. Real values must come from an
 external secret manager. They must never be
 stored in project snapshots, jobs, assets, provider metadata, costs, logs or Git.

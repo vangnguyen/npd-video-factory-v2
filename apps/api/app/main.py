@@ -26,6 +26,13 @@ from .artifacts import (
 )
 from .config import settings
 from .db import create_engine, create_session_factory, verify_database
+from .media_intelligence_repository import MediaIntelligenceRepository
+from .media_intelligence_routes import router as media_intelligence_router
+from .media_intelligence_service import (
+    MediaPlanningService,
+    MediaResolutionService,
+    create_media_provider_bundle,
+)
 from .models import JobCreateResponse, JobRecord, VideoJobCreate
 from .object_storage import create_object_storage, sha256_file
 from .platform_models import WorkspaceCreate
@@ -53,6 +60,7 @@ async def lifespan(app: FastAPI):
     settings.upload_staging_root.mkdir(parents=True, exist_ok=True)
     settings.analysis_staging_root.mkdir(parents=True, exist_ok=True)
     settings.vision_staging_root.mkdir(parents=True, exist_ok=True)
+    settings.media_staging_root.mkdir(parents=True, exist_ok=True)
     engine = create_engine(settings.database_url)
     session_factory = create_session_factory(engine)
     redis = Redis.from_url(settings.redis_url, decode_responses=False)
@@ -61,6 +69,7 @@ async def lifespan(app: FastAPI):
     trend_repository = TrendRepository(session_factory)
     auto_edit_repository = AutoEditRepository(session_factory)
     vision_repository = VisionRepository(session_factory)
+    media_intelligence_repository = MediaIntelligenceRepository(session_factory)
     trend_providers = create_trend_provider_registry(
         settings.trend_fixture_path,
         fixture_enabled=settings.trend_fixture_enabled,
@@ -85,6 +94,7 @@ async def lifespan(app: FastAPI):
     app.state.trend_repository = trend_repository
     app.state.auto_edit_repository = auto_edit_repository
     app.state.vision_repository = vision_repository
+    app.state.media_intelligence_repository = media_intelligence_repository
     app.state.trend_provider_registry = trend_providers
     app.state.trend_intelligence_service = TrendIntelligenceService(
         trend_repository,
@@ -139,6 +149,28 @@ async def lifespan(app: FastAPI):
         provider=vision_provider,
         staging_root=settings.vision_staging_root,
     )
+    media_providers = create_media_provider_bundle(settings)
+    app.state.media_provider_bundle = media_providers
+    app.state.media_planning_service = MediaPlanningService(
+        repository=media_intelligence_repository,
+        auto_edit_repository=auto_edit_repository,
+        vision_repository=vision_repository,
+        platform=platform,
+        providers=media_providers,
+        allow_external_execution=settings.media_external_execution_enabled,
+        allow_paid_execution=settings.media_paid_execution_enabled,
+    )
+    app.state.media_resolution_service = MediaResolutionService(
+        repository=media_intelligence_repository,
+        platform=platform,
+        auto_edit_repository=auto_edit_repository,
+        object_storage=object_storage,
+        providers=media_providers,
+        queue=redis,
+        staging_root=settings.media_staging_root,
+        allow_external_execution=settings.media_external_execution_enabled,
+        allow_paid_execution=settings.media_paid_execution_enabled,
+    )
     try:
         yield
     finally:
@@ -146,11 +178,12 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="NPD Video Factory V2 API", version="0.6.0", lifespan=lifespan)
+app = FastAPI(title="NPD Video Factory V2 API", version="0.7.0", lifespan=lifespan)
 app.include_router(platform_router)
 app.include_router(trend_router)
 app.include_router(auto_edit_router)
 app.include_router(vision_router)
+app.include_router(media_intelligence_router)
 
 
 def store_from(request: Request) -> PostgresJobStore:
@@ -299,6 +332,137 @@ def _provider_definitions() -> list[dict[str, object]]:
             "metadata": {"contract_only": True, "paid": None, "real_provider_tested": False},
         },
         {
+            "provider_key": "internal-media",
+            "display_name": "Immutable User and Internal Media Resolver",
+            "capability": "internal_media",
+            "adapter": "app.media_intelligence_service.MediaResolutionService",
+            "routing_mode": "primary",
+            "status": "healthy",
+            "enabled": True,
+            "supports_dry_run": True,
+            "metadata": {
+                "paid": False,
+                "ci_safe": True,
+                "source_media_mutation": False,
+                "rights_evidence_required": True,
+            },
+        },
+        {
+            "provider_key": "fixture-stock",
+            "display_name": "Deterministic Licensed Stock Fixture",
+            "capability": "stock_media",
+            "adapter": "app.media_intelligence_providers.DeterministicStockMediaProvider",
+            "routing_mode": "primary" if settings.stock_media_provider == "fixture" else "disabled",
+            "status": "healthy" if settings.stock_media_provider == "fixture" else "not_configured",
+            "enabled": settings.stock_media_provider == "fixture",
+            "supports_dry_run": True,
+            "config_ref": "built-in:synthetic-stock-fixtures",
+            "metadata": {
+                "paid": False,
+                "fixture": True,
+                "ci_safe": True,
+                "real_provider_tested": False,
+                "social_media_downloaded": False,
+                "production_eligible": False,
+            },
+        },
+        {
+            "provider_key": "stock-not-configured",
+            "display_name": "Licensed Stock Provider Contract",
+            "capability": "stock_media",
+            "adapter": "app.media_intelligence_providers.ContractOnlyStockMediaProvider",
+            "routing_mode": "disabled",
+            "status": "not_configured",
+            "enabled": False,
+            "supports_dry_run": True,
+            "config_ref": "env:STOCK_MEDIA_PROVIDER_*",
+            "metadata": {"contract_only": True, "real_provider_tested": False},
+        },
+        {
+            "provider_key": "fixture-image-generation",
+            "display_name": "Deterministic Image Generation Fixture",
+            "capability": "image_generation",
+            "adapter": "app.media_intelligence_providers.DeterministicImageGenerationProvider",
+            "routing_mode": "primary" if settings.image_generation_provider == "fixture" else "disabled",
+            "status": "healthy" if settings.image_generation_provider == "fixture" else "not_configured",
+            "enabled": settings.image_generation_provider == "fixture",
+            "supports_dry_run": True,
+            "config_ref": "built-in:synthetic-svg-generator",
+            "metadata": {
+                "paid": False,
+                "fixture": True,
+                "ci_safe": True,
+                "real_provider_tested": False,
+                "production_eligible": False,
+            },
+        },
+        {
+            "provider_key": "image-generation-not-configured",
+            "display_name": "Remote Image Generation Provider Contract",
+            "capability": "image_generation",
+            "adapter": "app.media_intelligence_providers.ContractOnlyImageGenerationProvider",
+            "routing_mode": "disabled",
+            "status": "not_configured",
+            "enabled": False,
+            "supports_dry_run": True,
+            "config_ref": "env:IMAGE_GENERATION_PROVIDER_*",
+            "metadata": {"contract_only": True, "paid": True, "real_provider_tested": False},
+        },
+        {
+            "provider_key": "fixture-video-generation",
+            "display_name": "Deterministic Video Generation Contract Fixture",
+            "capability": "video_generation",
+            "adapter": "app.media_intelligence_providers.DeterministicVideoGenerationProvider",
+            "routing_mode": "primary" if settings.video_generation_provider == "fixture" else "disabled",
+            "status": "healthy" if settings.video_generation_provider == "fixture" else "not_configured",
+            "enabled": settings.video_generation_provider == "fixture",
+            "supports_dry_run": True,
+            "config_ref": "built-in:synthetic-video-contract",
+            "metadata": {
+                "paid": False,
+                "fixture": True,
+                "ci_safe": True,
+                "playable_video": False,
+                "real_provider_tested": False,
+                "production_eligible": False,
+            },
+        },
+        {
+            "provider_key": "video-generation-not-configured",
+            "display_name": "Remote Video Generation Provider Contract",
+            "capability": "video_generation",
+            "adapter": "app.media_intelligence_providers.ContractOnlyVideoGenerationProvider",
+            "routing_mode": "disabled",
+            "status": "not_configured",
+            "enabled": False,
+            "supports_dry_run": True,
+            "config_ref": "env:VIDEO_GENERATION_PROVIDER_*",
+            "metadata": {"contract_only": True, "paid": True, "real_provider_tested": False},
+        },
+        *[
+            {
+                "provider_key": f"comfyui-{modality}",
+                "display_name": f"ComfyUI {modality.title()} Generation Bridge",
+                "capability": f"{modality}_generation",
+                "adapter": "app.media_intelligence_providers.ComfyUIBridgeGenerationProvider",
+                "routing_mode": "primary" if selected == "comfyui" else "disabled",
+                "status": "degraded" if selected == "comfyui" else "not_configured",
+                "enabled": selected == "comfyui" and settings.comfyui_execution_enabled,
+                "supports_dry_run": True,
+                "config_ref": "env:COMFYUI_BRIDGE_URL",
+                "metadata": {
+                    "paid": False,
+                    "gpu": True,
+                    "approved_workflows_only": True,
+                    "real_provider_tested": False,
+                },
+            }
+            for modality, selected in (
+                ("image", settings.image_generation_provider),
+                ("video", settings.video_generation_provider),
+            )
+        ],
+        {
             "provider_key": "fixture-trends",
             "display_name": "Deterministic Trend Fixtures",
             "capability": "trend_source",
@@ -407,6 +571,19 @@ async def capabilities() -> dict[str, object]:
         "smart_reframe": True,
         "smart_reframe_aspect_ratios": ["9:16", "16:9", "1:1", "4:5"],
         "smart_reframe_preview_only": True,
+        "media_intelligence": True,
+        "media_planner": True,
+        "broll_planner": True,
+        "stock_media_provider": settings.stock_media_provider,
+        "image_generation_provider": settings.image_generation_provider,
+        "video_generation_provider": settings.video_generation_provider,
+        "comfyui_bridge_contract": True,
+        "comfyui_execution_enabled": settings.comfyui_execution_enabled,
+        "media_external_execution_enabled": settings.media_external_execution_enabled,
+        "media_paid_execution_enabled": settings.media_paid_execution_enabled,
+        "media_rights_gate": "fail_closed",
+        "media_resolution": "asynchronous",
+        "media_fixture_production_eligible": False,
     }
 
 

@@ -1,4 +1,4 @@
-# Architecture — V2-05
+# Architecture — V2-06
 
 ## Bounded context
 
@@ -15,8 +15,13 @@ FastAPI API -------------------------- PostgreSQL
    |   provider/cost/asset metadata      trend/evidence/cluster/idea/queue
    |   upload/transcript/scene/silence/highlight
    |   vision-frame/OCR/quality/track/reframe evidence
+   |   media plans/items/rights/provenance/resolution jobs
    |
-   +----> V2 Redis transient queue ----> Worker ----> Remotion ----> FFmpeg QC
+   +----> V2 Redis transient queues ---> Worker ----> Remotion ----> FFmpeg QC
+   |                                      |
+   |                                      +---- media resolver/provider contracts
+   |                                                  |
+   |                                                  +---- optional allowlisted ComfyUI bridge
                                             |
                                             +-------> S3-compatible object storage
                                                        (MinIO in local/CI)
@@ -26,7 +31,7 @@ FastAPI API -------------------------- PostgreSQL
 
 | Component | Owns | Durability |
 |---|---|---|
-| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload, Auto Edit and Vision/reframe state | canonical |
+| PostgreSQL | workspace/project/job/audit, assets/providers/cost, trend/idea, upload, Auto Edit, Vision/reframe and Media Intelligence state | canonical |
 | Redis | pending and processing delivery queues | transient/recoverable |
 | S3/MinIO | source, generated, metadata and render objects | canonical binary store |
 | job volume | resumable local worker scratch/cache | replaceable |
@@ -61,6 +66,13 @@ keyframes for four ratios. The service persists these decisions under a source/p
 fingerprint, records the provider operation in VND, and deletes its bounded scratch copy. A manual
 override creates a new fingerprint; historical analyses are not overwritten.
 
+V2-06 consumes those succeeded analyses without modifying them. B-roll and media plans are pure,
+versioned decisions. Resolution IDs travel through the existing V2 Redis, while PostgreSQL remains
+canonical. Resolved binaries are registered in the same V2 object store and linked to explicit
+rights/source/generation provenance. Unknown rights, non-production fixture media and unresolved
+items keep the plan publishing-blocked. The optional ComfyUI bridge is a separate bounded adapter:
+only allowlisted workflow IDs cross the API boundary and its Compose `gpu` profile is off by default.
+
 ## Durable job rules
 
 - PostgreSQL is the source of truth; Redis never stores canonical job JSON.
@@ -73,8 +85,9 @@ override creates a new fingerprint; historical analyses are not overwritten.
 
 ## Safety state
 
-V2-05 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
+V2-06 has no publish endpoint. Startup rejects `PUBLISH_ENABLED=true` and
 `HUMAN_APPROVAL_REQUIRED=false`. Successful jobs stop at `awaiting_review`. API auth/RBAC is
 not yet implemented, so this increment is local/CI only and must not be exposed publicly. The
-Vision fixture is rejected in production, and its mock provenance must not be interpreted as real
-pixel-model accuracy evidence.
+Vision and media fixtures are rejected in production, and mock provenance must not be interpreted
+as real pixel-model or provider-quality evidence. External/paid media and ComfyUI execution are
+separate fail-closed settings.

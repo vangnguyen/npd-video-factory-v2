@@ -1,4 +1,4 @@
-# API — V2-05
+# API — V2-06
 
 Base path: `/api/v1`. Request models forbid unknown fields. This local/CI increment has no
 authentication layer and must not be exposed to an untrusted network.
@@ -93,3 +93,18 @@ composition, quality, scene, subject-track, best-frame and reframe-plan evidence
 Normal development and CI use `fixture-vision`; its provenance states that it is mock tested and
 not real-provider tested. The contract-only live adapter returns `PROVIDER_NOT_CONFIGURED` until an
 owner-approved provider and credentials exist.
+
+## Media Intelligence and B-roll resolution
+
+- `POST|GET /api/v1/projects/{project_id}/media-plans`
+- `GET /api/v1/projects/{project_id}/media-plans/{media_plan_id}`
+- `POST /api/v1/projects/{project_id}/media-plans/{media_plan_id}/items/{item_id}/resolve`
+- `GET /api/v1/projects/{project_id}/media-resolution-jobs/{resolution_job_id}`
+- `GET /api/v1/projects/{project_id}/media-assets`
+
+A plan requires a succeeded Auto Edit analysis and may reference its matching succeeded Vision
+analysis. It contains B-roll intent/query/timing/prompt/confidence, chosen strategy, fallbacks,
+ranked stock candidates, provider state and VND budget state. Resolution is asynchronous and
+returns HTTP 202. Rights/provenance are mandatory; unknown rights or non-production fixture output
+keeps `publishing_blocked=true`. Responses always report no source mutation, no publish request and
+no paid external call in the V2-06 path.

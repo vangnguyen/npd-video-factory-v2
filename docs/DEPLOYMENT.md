@@ -1,6 +1,6 @@
-# Deployment — V2-05
+# Deployment — V2-06
 
-V2-05 is a development/CI platform increment and is not approved for production deployment.
+V2-06 is a development/CI platform increment and is not approved for production deployment.
 
 ## Dev/CI
 
@@ -12,8 +12,9 @@ curl --fail http://localhost:8000/api/v1/capabilities
 curl --fail http://localhost:3000/
 ```
 
-Services are `postgres`, `redis`, `minio`, one-shot `migrate`, `api`, `studio-web`, `worker` and
-`renderer`. API, Studio and renderer bind only to `127.0.0.1` by default. No AgentHub, n8n,
+Default services are `postgres`, `redis`, `minio`, one-shot `migrate`, `api`, `studio-web`,
+`worker` and `renderer`. The optional `comfyui-bridge` is behind the `gpu` profile and remains
+disabled/not configured. API, Studio and renderer bind only to `127.0.0.1` by default. No AgentHub, n8n,
 Caddy, CRM or shared Redis service is created. Stop with
 `docker compose down`; add `-v` only for an explicitly disposable development stack.
 
@@ -35,9 +36,13 @@ Before any production proposal, a separate owner-approved PR/task must add and v
 9. upload malware scanning/quarantine, API rate limits and workspace authorization;
 10. owner-approved live Vision adapter, credential isolation, paid-call budget and real-media
     OCR/tracking/reframe accuracy acceptance.
+11. owner-approved stock and image/video-generation adapters with rights and VND pricing acceptance;
+12. reviewed/pinned ComfyUI graph, nodes and model checksums plus authenticated bridge networking.
 
-V2-05 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
+V2-06 additionally requires `TREND_FIXTURE_ENABLED=false`, `AUTO_EDIT_FIXTURE_ENABLED=false`,
 `VISION_FIXTURE_ENABLED=false`, `VISION_PROVIDER=contract`,
+`MEDIA_FIXTURE_ENABLED=false`, media providers set to `contract`, and external/paid/ComfyUI
+execution disabled until their separate owner gates;
 `TRANSCRIPTION_PROVIDER=contract` (until a live adapter is approved) and
 `AUTO_EDIT_SIGNAL_PROVIDER=ffmpeg` for production. This branch changes no existing NPD production
 service and must not be deployed as-is.

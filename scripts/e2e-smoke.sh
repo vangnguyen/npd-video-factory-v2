@@ -219,6 +219,55 @@ curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/cost-summary" \
   > e2e-artifacts/cost-summary-after-vision.json
 
+echo "[e2e] building V2-06 media plan and resolving fixture media asynchronously"
+curl --fail --silent --show-error \
+  -X POST "http://localhost:8000/api/v1/projects/$project_id/media-plans" \
+  -H 'Content-Type: application/json' \
+  --data "{\"analysis_id\":\"$analysis_id\",\"vision_analysis_id\":\"$vision_analysis_id\",\"platform\":\"facebook_reels\",\"brand_context\":\"Ngoc Phuong Dong original media\",\"max_ai_cost_vnd\":0}" \
+  > e2e-artifacts/media-plan.json
+media_plan_id="$("$PYTHON_BIN" -c 'import json; print(json.load(open("e2e-artifacts/media-plan.json", encoding="utf-8"))["media_plan_id"])' | tr -d '\r')"
+media_item_ids="$("$PYTHON_BIN" -c 'import json; print(" ".join(item["media_plan_item_id"] for item in json.load(open("e2e-artifacts/media-plan.json", encoding="utf-8"))["items"]))' | tr -d '\r')"
+: > e2e-artifacts/media-resolution-jobs.jsonl
+for media_item_id in $media_item_ids; do
+  curl --fail --silent --show-error \
+    -X POST "http://localhost:8000/api/v1/projects/$project_id/media-plans/$media_plan_id/items/$media_item_id/resolve" \
+    -H 'Content-Type: application/json' \
+    --data '{}' >> e2e-artifacts/media-resolution-jobs.jsonl
+  printf '\n' >> e2e-artifacts/media-resolution-jobs.jsonl
+done
+media_job_ids="$("$PYTHON_BIN" -c 'import json; print(" ".join(json.loads(line)["resolution_job_id"] for line in open("e2e-artifacts/media-resolution-jobs.jsonl", encoding="utf-8") if line.strip()))' | tr -d '\r')"
+for media_job_id in $media_job_ids; do
+  media_terminal=0
+  for _ in $(seq 1 60); do
+    media_status_json="$(curl --fail --silent --show-error "http://localhost:8000/api/v1/projects/$project_id/media-resolution-jobs/$media_job_id")"
+    printf '%s\n' "$media_status_json" > "e2e-artifacts/media-resolution-$media_job_id.json"
+    media_status="$(printf '%s' "$media_status_json" | "$PYTHON_BIN" -c 'import json,sys; print(json.load(sys.stdin)["status"])' | tr -d '\r')"
+    if [[ "$media_status" == "succeeded" ]]; then
+      media_terminal=1
+      break
+    fi
+    if [[ "$media_status" == "failed" || "$media_status" == "cancelled" || "$media_status" == "needs_approval" ]]; then
+      echo "Media resolution job ended unexpectedly: $media_status" >&2
+      printf '%s\n' "$media_status_json" >&2
+      exit 1
+    fi
+    sleep 1
+  done
+  if [[ "$media_terminal" != "1" ]]; then
+    echo "Media resolution job did not finish before timeout: $media_job_id" >&2
+    exit 1
+  fi
+done
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/media-plans/$media_plan_id" \
+  > e2e-artifacts/media-plan-resolved.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/media-assets" \
+  > e2e-artifacts/media-assets.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/cost-summary" \
+  > e2e-artifacts/cost-summary-after-media.json
+
 replay_response="$(
   curl --fail --silent --show-error \
     -X POST http://localhost:8000/api/v1/video-jobs \
@@ -411,6 +460,37 @@ assert cost["records"] >= 6, cost
 print("[e2e] V2-04 plus V2-05 structured Vision and Smart Reframe contracts verified")
 PY
 
+"$PYTHON_BIN" - <<'PY'
+import json
+from pathlib import Path
+
+root = Path("e2e-artifacts")
+plan = json.loads((root / "media-plan-resolved.json").read_text(encoding="utf-8"))
+assets = json.loads((root / "media-assets.json").read_text(encoding="utf-8"))
+cost = json.loads((root / "cost-summary-after-media.json").read_text(encoding="utf-8"))
+strategies = [item["strategy"] for item in plan["items"]]
+
+assert strategies == ["user_asset", "stock_video", "ai_image", "ai_video"], strategies
+assert all(item["broll"]["search_query"] and item["broll"]["generation_prompt"] for item in plan["items"])
+assert all(item["status"] == "resolved" for item in plan["items"]), plan
+assert plan["unresolved_items"] == 0, plan
+assert plan["projected_ai_cost_vnd"] == "0.0000", plan
+assert plan["source_media_mutated"] is False and plan["publish_requested"] is False, plan
+assert plan["paid_external_call"] is False, plan
+assert plan["publishing_blocked"] is True, plan
+assert len(assets) == 4, assets
+assert any(item["source_type"] == "user_upload" and item["publishing_allowed"] for item in assets), assets
+fixtures = [item for item in assets if item["source_type"] != "user_upload"]
+assert fixtures and all(not item["production_eligible"] for item in fixtures), fixtures
+assert all(not item["publishing_allowed"] and not item["owner_override_recorded"] for item in fixtures), fixtures
+assert all(item["generation_provenance"].get("real_provider_tested") is False for item in fixtures), fixtures
+assert all(job["status"] == "succeeded" and not job["external_call"] and not job["paid"] and not job["real_provider_tested"] for job in plan["resolution_jobs"]), plan["resolution_jobs"]
+assert all(candidate["provenance"]["social_media_downloaded"] is False for item in plan["items"] for candidate in item["candidates"])
+assert cost["currency"] == "VND" and float(cost["actual_cost"]) == 0, cost
+assert cost["records"] >= 11, cost
+print("[e2e] V2-06 B-roll, media provider, rights and asynchronous resolution contracts verified")
+PY
+
 echo "[e2e] restarting API to verify PostgreSQL recovery"
 "$docker_bin" compose restart api >/dev/null
 ready=0
@@ -433,6 +513,12 @@ curl --fail --silent --show-error \
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/vision-analyses/$vision_analysis_id" \
   > e2e-artifacts/vision-analysis-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/media-plans/$media_plan_id" \
+  > e2e-artifacts/media-plan-after-restart.json
+curl --fail --silent --show-error \
+  "http://localhost:8000/api/v1/projects/$project_id/media-assets" \
+  > e2e-artifacts/media-assets-after-restart.json
 "$PYTHON_BIN" - <<'PY'
 import json
 from pathlib import Path
@@ -448,11 +534,17 @@ analysis_before = json.loads((root / "auto-edit-analysis-before-restart.json").r
 analysis_after = json.loads((root / "auto-edit-analysis-after-restart.json").read_text(encoding="utf-8"))
 vision_before = json.loads((root / "vision-analysis-before-restart.json").read_text(encoding="utf-8"))
 vision_after = json.loads((root / "vision-analysis-after-restart.json").read_text(encoding="utf-8"))
+media_before = json.loads((root / "media-plan-resolved.json").read_text(encoding="utf-8"))
+media_after = json.loads((root / "media-plan-after-restart.json").read_text(encoding="utf-8"))
+media_assets_before = json.loads((root / "media-assets.json").read_text(encoding="utf-8"))
+media_assets_after = json.loads((root / "media-assets-after-restart.json").read_text(encoding="utf-8"))
 assert after == before, (before, after)
 assert queue_after == queue_before, (queue_before, queue_after)
 assert analysis_after == analysis_before, (analysis_before, analysis_after)
 assert vision_after == vision_before, (vision_before, vision_after)
-print("[e2e] PostgreSQL job, content queue, Auto Edit and Vision recovery verified")
+assert media_after == media_before, (media_before, media_after)
+assert media_assets_after == media_assets_before, (media_assets_before, media_assets_after)
+print("[e2e] PostgreSQL job, content queue, Auto Edit, Vision and Media Intelligence recovery verified")
 PY
 
 "$docker_bin" compose exec -T api python -c '
@@ -526,4 +618,4 @@ for cue, scene in zip(timing["cues"], manifest["scenes"], strict=True):
 print("[e2e] QC verified", json.dumps(qc, ensure_ascii=False))
 PY
 
-echo "[e2e] V2-05 Vision & Smart Reframe passed"
+echo "[e2e] V2-06 Media Intelligence passed"

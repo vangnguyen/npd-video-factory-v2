@@ -1,10 +1,10 @@
 # NPD Video Factory V2
 
-NPD Video Factory V2 is an independent media execution platform. V2-05 keeps the durable
-video, Trend/Idea and Auto Edit platform, then adds structured Vision evidence and
-non-destructive Smart Reframe plans for uploaded footage.
+NPD Video Factory V2 is an independent media execution platform. V2-06 keeps the durable
+video, Trend/Idea, Auto Edit and Vision platform, then adds explainable B-roll/media planning,
+rights provenance, asynchronous media resolution and an allowlisted ComfyUI bridge contract.
 
-## V2-05 status
+## V2-06 status
 
 Implemented and locally acceptance-tested:
 
@@ -37,10 +37,16 @@ Implemented and locally acceptance-tested:
   manual overrides and low-confidence center-crop fallback;
 - PostgreSQL recovery for Vision evidence and reframe plans, with an idempotent zero-VND fixture
   provider operation.
+- deterministic MediaPlanner and BrollPlanner outputs for reusable, stock and generated media;
+- provider-neutral stock/image/video contracts with explicit `not_configured` live state;
+- durable resolution jobs, Redis delivery, worker recovery and object-store registration;
+- per-asset license, creator, source and generation provenance with fail-closed rights checks;
+- an optional, disabled-by-default ComfyUI bridge with eight versioned allowlisted workflows.
 
-Not implemented in V2-05: real Vision credentials/accuracy acceptance, reframe rendering,
+Not implemented in V2-06: real Vision/stock/generation credentials or accuracy acceptance,
+production ComfyUI/GPU execution, reframe rendering,
 transcript/crop editing UI, editable timeline, API authentication/RBAC, publishing,
-analytics/learning loops, GPU generation or a production rollout. Those remain later,
+analytics/learning loops or a production rollout. Those remain later,
 separately gated increments.
 
 ## Safety boundary
@@ -52,6 +58,9 @@ separately gated increments.
 - Auto Edit outputs decisions only; uploaded source bytes are immutable.
 - Vision fixture output is explicitly mock evidence; live Vision remains `not_configured`.
 - Smart Reframe stores decision keyframes only and never changes source media.
+- Media fixture artifacts are synthetic, not production-eligible and never imply a real-provider test.
+- Unknown rights and unapproved costs block resolution/publishing; external and paid execution are off.
+- ComfyUI accepts only versioned workflow IDs; the optional `gpu` profile is disabled by default.
 - Trend references are metadata-only; creator media is never downloaded or copied.
 - No secrets or production media are included.
 
@@ -66,7 +75,8 @@ bash scripts/e2e-smoke.sh
 
 The E2E creates copyright-safe media and trend fixtures, migrates PostgreSQL, renders one MP4,
 verifies Trend -> Ideas -> Queue -> Draft Project, uploads the MP4 through the resumable API,
-persists transcript/scene/silence/highlight and Vision/reframe evidence, restarts the API,
+persists transcript/scene/silence/highlight, Vision/reframe and media-plan/provenance evidence,
+resolves four fixture strategies asynchronously, restarts the API,
 restores the final artifact from MinIO and validates decoded video/audio quality. Its temporary
 stack and volumes are removed on exit.
 
@@ -83,6 +93,8 @@ Useful endpoints after `docker compose up -d --build`:
 - `POST http://localhost:8000/api/v1/uploads/init`
 - `POST http://localhost:8000/api/v1/projects/{project_id}/analyze`
 - `POST http://localhost:8000/api/v1/projects/{project_id}/analyses/{analysis_id}/vision`
+- `POST http://localhost:8000/api/v1/projects/{project_id}/media-plans`
+- `GET http://localhost:8000/api/v1/projects/{project_id}/media-assets`
 - `GET http://localhost:3000` (local Trend Radar Studio)
 
 See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
@@ -91,5 +103,6 @@ See [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md),
 [Idea Intelligence](docs/IDEA_INTELLIGENCE.md),
 [Auto Edit Analysis](docs/AUTO_EDIT_ANALYSIS.md),
 [Vision and Smart Reframe](docs/VISION_SMART_REFRAME.md),
-[V2-05 acceptance](docs/V2_05_ACCEPTANCE.md), [V2-04 acceptance](docs/V2_04_ACCEPTANCE.md) and the
+[Media Intelligence](docs/MEDIA_INTELLIGENCE.md), [media provider contracts](docs/MEDIA_PROVIDERS.md), [ComfyUI setup](docs/COMFYUI_SETUP.md),
+[V2-06 acceptance](docs/V2_06_ACCEPTANCE.md), [V2-05 acceptance](docs/V2_05_ACCEPTANCE.md) and the
 [V2 master specification](docs/CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md).

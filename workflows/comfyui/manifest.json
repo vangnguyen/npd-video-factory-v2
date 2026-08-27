@@ -1,0 +1,126 @@
+{
+  "manifest_version": "v2-06.1",
+  "workflows": [
+    {
+      "workflow_id": "npd-text-to-image-v1",
+      "version": "1.0.0",
+      "graph_file": "text-to-image-v1.json",
+      "capability": "text_to_image",
+      "required_custom_nodes": [],
+      "required_model_identifiers": ["owner-provisioned-image-model"],
+      "vram_expectation_gb": 12,
+      "timeout_seconds": 300,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "prompt": {"type": "string", "minLength": 1, "maxLength": 4000},
+          "negative_prompt": {"type": "string", "maxLength": 2000},
+          "aspect_ratio": {"enum": ["9:16", "16:9", "1:1", "4:5"]},
+          "reference_images": {"type": "array", "items": {"type": "string"}, "maxItems": 10},
+          "style": {"type": "string"},
+          "seed": {"type": "integer", "minimum": 0},
+          "quality": {"enum": ["draft", "standard", "high"]},
+          "operation": {"enum": ["generate", "variation", "upscale", "inpaint"]}
+        },
+        "required": ["prompt", "aspect_ratio", "seed"],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_reference": {"type": "string", "minLength": 1},
+          "checksum_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "workflow_id": {"const": "npd-text-to-image-v1"},
+          "workflow_version": {"const": "1.0.0"},
+          "fixture": {"type": "boolean"}
+        },
+        "required": ["artifact_reference", "checksum_sha256", "workflow_id", "workflow_version", "fixture"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "workflow_id": "npd-image-to-image-v1",
+      "version": "1.0.0",
+      "graph_file": "image-to-image-v1.json",
+      "capability": "image_to_image",
+      "required_custom_nodes": [],
+      "required_model_identifiers": ["owner-provisioned-image-model"],
+      "vram_expectation_gb": 12,
+      "timeout_seconds": 300,
+      "input_schema": {"$ref": "#/$defs/imageInput", "$defs": {"imageInput": {"type": "object", "properties": {"prompt": {"type": "string", "minLength": 1}, "reference_images": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 10}, "aspect_ratio": {"enum": ["9:16", "16:9", "1:1", "4:5"]}, "seed": {"type": "integer", "minimum": 0}}, "required": ["prompt", "reference_images", "aspect_ratio", "seed"], "additionalProperties": true}}},
+      "output_schema": {"$ref": "#/$defs/output", "$defs": {"output": {"type": "object", "required": ["artifact_reference", "checksum_sha256", "workflow_id", "workflow_version", "fixture"], "properties": {"artifact_reference": {"type": "string"}, "checksum_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "workflow_id": {"const": "npd-image-to-image-v1"}, "workflow_version": {"const": "1.0.0"}, "fixture": {"type": "boolean"}}, "additionalProperties": false}}}
+    },
+    {
+      "workflow_id": "npd-inpaint-v1",
+      "version": "1.0.0",
+      "graph_file": "inpaint-v1.json",
+      "capability": "inpainting",
+      "required_custom_nodes": [],
+      "required_model_identifiers": ["owner-provisioned-inpaint-model"],
+      "vram_expectation_gb": 12,
+      "timeout_seconds": 300,
+      "input_schema": {"type": "object", "properties": {"prompt": {"type": "string", "minLength": 1}, "reference_images": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "mask_reference": {"type": "string"}, "seed": {"type": "integer", "minimum": 0}}, "required": ["prompt", "reference_images", "mask_reference", "seed"], "additionalProperties": false},
+      "output_schema": {"type": "object", "required": ["artifact_reference", "checksum_sha256", "workflow_id", "workflow_version", "fixture"], "properties": {"artifact_reference": {"type": "string"}, "checksum_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "workflow_id": {"const": "npd-inpaint-v1"}, "workflow_version": {"const": "1.0.0"}, "fixture": {"type": "boolean"}}, "additionalProperties": false}
+    },
+    {
+      "workflow_id": "npd-outpaint-v1",
+      "version": "1.0.0",
+      "graph_file": "outpaint-v1.json",
+      "capability": "outpainting",
+      "required_custom_nodes": [],
+      "required_model_identifiers": ["owner-provisioned-outpaint-model"],
+      "vram_expectation_gb": 12,
+      "timeout_seconds": 300,
+      "input_schema": {"type": "object", "properties": {"prompt": {"type": "string", "minLength": 1}, "reference_images": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "aspect_ratio": {"enum": ["9:16", "16:9", "1:1", "4:5"]}, "seed": {"type": "integer", "minimum": 0}}, "required": ["prompt", "reference_images", "aspect_ratio", "seed"], "additionalProperties": false},
+      "output_schema": {"type": "object", "required": ["artifact_reference", "checksum_sha256", "workflow_id", "workflow_version", "fixture"], "properties": {"artifact_reference": {"type": "string"}, "checksum_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "workflow_id": {"const": "npd-outpaint-v1"}, "workflow_version": {"const": "1.0.0"}, "fixture": {"type": "boolean"}}, "additionalProperties": false}
+    },
+    {
+      "workflow_id": "npd-upscale-v1",
+      "version": "1.0.0",
+      "graph_file": "upscale-v1.json",
+      "capability": "upscale",
+      "required_custom_nodes": [],
+      "required_model_identifiers": ["owner-provisioned-upscale-model"],
+      "vram_expectation_gb": 8,
+      "timeout_seconds": 240,
+      "input_schema": {"type": "object", "properties": {"prompt": {"type": "string", "minLength": 1}, "reference_images": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "scale": {"type": "integer", "enum": [2, 4]}, "seed": {"type": "integer", "minimum": 0}}, "required": ["prompt", "reference_images", "scale", "seed"], "additionalProperties": false},
+      "output_schema": {"type": "object", "required": ["artifact_reference", "checksum_sha256", "workflow_id", "workflow_version", "fixture"], "properties": {"artifact_reference": {"type": "string"}, "checksum_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "workflow_id": {"const": "npd-upscale-v1"}, "workflow_version": {"const": "1.0.0"}, "fixture": {"type": "boolean"}}, "additionalProperties": false}
+    },
+    {
+      "workflow_id": "npd-background-replacement-v1",
+      "version": "1.0.0",
+      "graph_file": "background-replacement-v1.json",
+      "capability": "background_replacement",
+      "required_custom_nodes": [],
+      "required_model_identifiers": ["owner-provisioned-segmentation-model"],
+      "vram_expectation_gb": 12,
+      "timeout_seconds": 300,
+      "input_schema": {"type": "object", "properties": {"prompt": {"type": "string", "minLength": 1}, "reference_images": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "background_prompt": {"type": "string", "minLength": 1}, "seed": {"type": "integer", "minimum": 0}}, "required": ["prompt", "reference_images", "background_prompt", "seed"], "additionalProperties": false},
+      "output_schema": {"type": "object", "required": ["artifact_reference", "checksum_sha256", "workflow_id", "workflow_version", "fixture"], "properties": {"artifact_reference": {"type": "string"}, "checksum_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "workflow_id": {"const": "npd-background-replacement-v1"}, "workflow_version": {"const": "1.0.0"}, "fixture": {"type": "boolean"}}, "additionalProperties": false}
+    },
+    {
+      "workflow_id": "npd-image-to-video-v1",
+      "version": "1.0.0",
+      "graph_file": "image-to-video-v1.json",
+      "capability": "image_to_video",
+      "required_custom_nodes": [],
+      "required_model_identifiers": ["owner-provisioned-video-model"],
+      "vram_expectation_gb": 24,
+      "timeout_seconds": 900,
+      "input_schema": {"type": "object", "properties": {"prompt": {"type": "string", "minLength": 1}, "negative_prompt": {"type": "string"}, "reference_images": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "aspect_ratio": {"enum": ["9:16", "16:9", "1:1", "4:5"]}, "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 30}, "seed": {"type": "integer", "minimum": 0}, "mode": {"enum": ["image_to_video", "reference_assisted"]}}, "required": ["prompt", "reference_images", "aspect_ratio", "duration_seconds", "seed", "mode"], "additionalProperties": false},
+      "output_schema": {"type": "object", "required": ["artifact_reference", "checksum_sha256", "workflow_id", "workflow_version", "fixture"], "properties": {"artifact_reference": {"type": "string"}, "checksum_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "workflow_id": {"const": "npd-image-to-video-v1"}, "workflow_version": {"const": "1.0.0"}, "fixture": {"type": "boolean"}}, "additionalProperties": false}
+    },
+    {
+      "workflow_id": "npd-video-generation-v1",
+      "version": "1.0.0",
+      "graph_file": "video-generation-v1.json",
+      "capability": "video_generation",
+      "required_custom_nodes": [],
+      "required_model_identifiers": ["owner-provisioned-video-model"],
+      "vram_expectation_gb": 24,
+      "timeout_seconds": 900,
+      "input_schema": {"type": "object", "properties": {"prompt": {"type": "string", "minLength": 1}, "negative_prompt": {"type": "string"}, "reference_images": {"type": "array", "items": {"type": "string"}, "maxItems": 10}, "aspect_ratio": {"enum": ["9:16", "16:9", "1:1", "4:5"]}, "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 30}, "seed": {"type": "integer", "minimum": 0}, "mode": {"enum": ["text_to_video", "image_to_video", "reference_assisted"]}}, "required": ["prompt", "aspect_ratio", "duration_seconds", "seed", "mode"], "additionalProperties": false},
+      "output_schema": {"type": "object", "required": ["artifact_reference", "checksum_sha256", "workflow_id", "workflow_version", "fixture"], "properties": {"artifact_reference": {"type": "string"}, "checksum_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "workflow_id": {"const": "npd-video-generation-v1"}, "workflow_version": {"const": "1.0.0"}, "fixture": {"type": "boolean"}}, "additionalProperties": false}
+    }
+  ]
+}
