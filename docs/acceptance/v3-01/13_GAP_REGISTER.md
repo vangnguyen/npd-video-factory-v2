@@ -2,8 +2,7 @@
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
 derived from the audit captured on `2026-08-27`, exact merged `main`
-`9b66d6917d6d58fea995b3a1049fc95198e81bf1`, and V3-01-02 local/CI code checkpoint
-`062959287497a5999999adccb65602b88c04947e`.
+`dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3`, and the in-progress V3-01-03 local/CI branch.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -13,7 +12,8 @@ derived from the audit captured on `2026-08-27`, exact merged `main`
 | Total | 13 | 2 | 1 | 16 | default verdict remains NO-GO |
 
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
-through PR #13. The bounded G-08 approval is exhausted; production remains undeployed and
+through PR #13. V3-01-02 is merged through PR #14, while its GAP-010 remains `IN_PROGRESS`.
+Both bounded G-08 approvals are exhausted; production remains undeployed and
 unverified.
 
 ## P0 release blockers
@@ -34,15 +34,18 @@ unverified.
 
 - `V3-01-GAP-009`: observability, alerts, retention and 48-hour soak.
 - `V3-01-GAP-010` (`IN_PROGRESS`): VND budgets, retry/poll/concurrency, circuit breaker, rights hook,
-  artifact verification and global cost kill switch pass locally; durable multi-instance state,
-  monitoring/retention and real-provider acceptance remain.
+  artifact verification and global cost kill switch pass locally. V3-01-03 adds a PostgreSQL ledger,
+  atomic cross-instance reservation, durable circuit/duplicate state, restart recovery and
+  retention/health metrics; production-like multi-instance and real-provider acceptance remain.
 - `V3-01-GAP-011` (`IN_PROGRESS`): auth rate limiting, URL-import denial and bounded malicious-input
-  tests pass; malware quarantine, decompression-resource acceptance and production ingress remain.
+  tests pass. V3-01-03 adds quarantine-before-decoder, archive-signature denial, EICAR contract
+  tests, clean-verdict promotion and an internal clamd/WAF design contract; approved internal
+  scanner deployment and production public-ingress/WAF evidence remain.
 - `V3-01-GAP-012`: GitHub `main` branch protection is disabled.
 - `V3-01-GAP-014`: real Agent Hub HTTP bridge acceptance is absent.
 - `V3-01-GAP-015`: GitHub Actions runtime deprecation warning.
 
-No gap is `VERIFIED` or closed by V3-01-02. `REMEDIATED` means its code and prescribed local/mock
+No gap is `VERIFIED` or newly closed by V3-01-03. `REMEDIATED` means its code and prescribed local/mock
 evidence pass on the locked commit; it still needs any applicable
 production-path evidence before `VERIFIED`. Owner exceptions must name an expiry and approval record; no implicit
 exception exists.

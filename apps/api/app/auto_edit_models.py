@@ -5,10 +5,20 @@ from typing import Any, Literal
 
 from pydantic import Field, model_validator
 
+from .media_security import MediaScanResult
 from .models import StrictModel
 
 
-UploadStatus = Literal["initialized", "uploading", "completed", "completed_duplicate", "failed"]
+UploadStatus = Literal[
+    "initialized",
+    "uploading",
+    "quarantined",
+    "completed",
+    "completed_duplicate",
+    "rejected",
+    "failed",
+]
+QuarantineState = Literal["not_scanned", "quarantined", "trusted", "rejected"]
 AnalysisStatus = Literal["pending", "analyzing", "succeeded", "failed"]
 MediaKind = Literal["video", "audio", "image", "logo", "music", "subtitle"]
 
@@ -69,6 +79,9 @@ class UploadRead(StrictModel):
     asset_id: str | None
     duplicate_of_asset_id: str | None
     media_metadata: MediaMetadata | None
+    quarantine_state: QuarantineState
+    malware_scan: MediaScanResult | None
+    trusted_at: datetime | None
     error_code: str | None
     created_at: datetime
     updated_at: datetime

@@ -28,18 +28,24 @@ successful response without a usage/cost record is `FAIL` for cost acceptance.
 
 ## Current gaps and containment
 
-V3-01-02 now implements one VND-only control plane with per-operation/daily reservation, attempt
+V3-01-02 implements one VND-only control plane with per-operation/daily reservation, attempt
 costing, exact 50/80/100 alerts, bounded retry/poll/timeout/concurrency, circuit state and a global
 kill switch. Local tests prove those contracts while all configured limits stay zero and the kill
 switch remains engaged.
 
-The runtime attempt, circuit and reservation state is process-local at this checkpoint. Durable
-multi-instance reconciliation, monitoring/retention and owner-gated real-provider acceptance are
-still required. Therefore all external, paid, ComfyUI, publishing and analytics execution gates
-remain false.
+V3-01-03 moves operation, attempt, daily reservation, threshold alert and circuit state into the
+V2-owned PostgreSQL database. A serialized control-row transaction makes duplicate/concurrency and
+daily reservation decisions atomic across API instances; startup recovers stale reservations and
+opens the associated circuit. Secret-free snapshot fields expose active/stale/recovered operations,
+attempt counts and oldest active age. Retention deletion exists as a repository operation but is
+configuration-blocked until a later retention/DR gate.
+
+These are local/CI controls only. Production-like PostgreSQL contention/restart evidence and
+owner-gated real-provider acceptance are still required. Therefore all external, paid, ComfyUI,
+publishing and analytics execution gates remain false.
 
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.
 
-Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001`; not remediated or
-production-verified.
+Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and the pending
+V3-01-03 locked-commit evidence; not closed or production-verified.

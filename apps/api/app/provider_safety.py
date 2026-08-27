@@ -282,6 +282,14 @@ class ProviderSafetySnapshot(StrictModel):
     providers: list[ProviderCapabilitySafetyRead]
     external_calls_recorded: int = Field(ge=0)
     paid_calls_recorded: int = Field(ge=0)
+    state_backend: Literal["memory", "postgresql"] = "memory"
+    durable_operations_recorded: int = Field(default=0, ge=0)
+    active_operations: int = Field(default=0, ge=0)
+    recovered_operations: int = Field(default=0, ge=0)
+    attempts_recorded: int = Field(default=0, ge=0)
+    stale_active_operations: int = Field(default=0, ge=0)
+    oldest_active_age_seconds: float | None = Field(default=None, ge=0)
+    operation_retention_days: int | None = Field(default=None, ge=1)
 
 
 @dataclass(frozen=True)
@@ -501,7 +509,9 @@ class ProviderSafetyController:
         started_at = self._clock()
         charged = Decimal("0")
         last_error_code = "PROVIDER_EXECUTION_FAILED"
+        attempts_made = 0
         for attempt in range(1, self.policy.retry.max_attempts + 1):
+            attempts_made = attempt
             attempt_started = self._clock()
             try:
                 value = await asyncio.wait_for(
@@ -576,7 +586,7 @@ class ProviderSafetyController:
         receipt = await self._finish(
             context,
             decision,
-            attempts=max(1, len([item for item in self._attempts if item.operation_key == context.operation_key])),
+            attempts=max(1, attempts_made),
             charged=charged,
             succeeded=False,
         )
@@ -655,6 +665,44 @@ class ProviderSafetyController:
             return Decimal("0")
         return actual_cost_vnd if actual_cost_vnd is not None else (context.estimated_cost_vnd or Decimal("0"))
 
+    def _build_attempt_record(
+        self,
+        context: ProviderCallContext,
+        *,
+        attempt: int,
+        status: Literal["succeeded", "failed", "rate_limited", "timed_out"],
+        retryable: bool,
+        error_code: str | None,
+        actual_cost_vnd: Decimal | None,
+        charged_cost_vnd: Decimal,
+        started_at: datetime,
+    ) -> ProviderAttemptRecord:
+        usage_id = "pus_" + hashlib.sha256(
+            f"{context.operation_key}|{attempt}".encode("utf-8")
+        ).hexdigest()[:24]
+        return ProviderAttemptRecord(
+            usage_id=usage_id,
+            operation_key=context.operation_key,
+            provider_key=context.provider_key,
+            capability=context.capability,
+            attempt=attempt,
+            status=status,
+            estimated_cost_vnd=context.estimated_cost_vnd,
+            actual_cost_vnd=actual_cost_vnd,
+            charged_cost_vnd=charged_cost_vnd,
+            cost_status=(
+                "actual"
+                if actual_cost_vnd is not None
+                else "estimated"
+                if context.estimated_cost_vnd is not None
+                else "pending"
+            ),
+            retryable=retryable,
+            error_code=error_code,
+            created_at=started_at,
+            completed_at=self._clock(),
+        )
+
     async def _record_attempt(
         self,
         context: ProviderCallContext,
@@ -667,31 +715,16 @@ class ProviderSafetyController:
         charged_cost_vnd: Decimal,
         started_at: datetime,
     ) -> None:
-        usage_id = "pus_" + hashlib.sha256(
-            f"{context.operation_key}|{attempt}".encode("utf-8")
-        ).hexdigest()[:24]
         self._attempts.append(
-            ProviderAttemptRecord(
-                usage_id=usage_id,
-                operation_key=context.operation_key,
-                provider_key=context.provider_key,
-                capability=context.capability,
+            self._build_attempt_record(
+                context,
                 attempt=attempt,
                 status=status,
-                estimated_cost_vnd=context.estimated_cost_vnd,
-                actual_cost_vnd=actual_cost_vnd,
-                charged_cost_vnd=charged_cost_vnd,
-                cost_status=(
-                    "actual"
-                    if actual_cost_vnd is not None
-                    else "estimated"
-                    if context.estimated_cost_vnd is not None
-                    else "pending"
-                ),
                 retryable=retryable,
                 error_code=error_code,
-                created_at=started_at,
-                completed_at=self._clock(),
+                actual_cost_vnd=actual_cost_vnd,
+                charged_cost_vnd=charged_cost_vnd,
+                started_at=started_at,
             )
         )
 

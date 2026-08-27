@@ -27,7 +27,7 @@ and prove:
 
 | Stage | Implementation | Current evidence | V3-01 decision |
 |---|---|---|---|
-| Intake/upload | Present | deterministic API/E2E | mock PASS; production NOT_TESTED |
+| Intake/upload | Present with quarantine-before-decoder and clean-verdict promotion | deterministic API/E2E plus EICAR/archive/error tests | mock PASS; internal scanner/production NOT_TESTED |
 | Source preservation | Present | object hash and immutable asset tests | mock PASS |
 | ASR | fixture/contract | deterministic fixture only | real provider BLOCKED |
 | Auto Edit analysis | Present | synthetic video tests | mock PASS |

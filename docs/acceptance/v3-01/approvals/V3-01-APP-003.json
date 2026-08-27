@@ -1,0 +1,27 @@
+{
+  "approval_id": "V3-01-APP-003",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #14 V3-01-02 Provider Safety Plane into main as a fail-closed foundation after exact-head CI verification, followed by exact-main regression only.",
+  "artifact_or_commit_hashes": [
+    "9b66d6917d6d58fea995b3a1049fc95198e81bf1",
+    "83c31934e9505a2ec076a9a3ccb309a78aacf9ba",
+    "dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3"
+  ],
+  "target_account_or_environment": "GitHub repository main branch merge of PR #14 only; no runtime environment",
+  "limits": [
+    "All required CI must pass on exact PR head before merge",
+    "Run exact-main regression after merge",
+    "No production deployment or public ingress",
+    "No credential activation or real provider execution",
+    "No paid provider call; approved budget remains 0 VND",
+    "Global provider kill switch remains engaged",
+    "No real publish or production analytics",
+    "GAP-010 remains IN_PROGRESS",
+    "No permission for V3-01-03 or later remediation PR merges"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-27T16:00:16Z",
+  "expires_at_utc": null,
+  "notes": "Captured from the owner's explicit G-08 instruction and mirrored in PR #14 comment 5441783600. PR #14 merged at 2026-08-27T16:00:54Z. Exact-main CI run 33090995730 passed all five jobs. This record grants no G-01 through G-07 or G-09 through G-12 authority."
+}

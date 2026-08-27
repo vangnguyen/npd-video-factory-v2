@@ -40,6 +40,14 @@ from app.auto_edit_service import (
 from app.db import Base, create_engine, create_session_factory
 from app.media_validation import MediaValidationError, safe_upload_filename, sniff_media
 from app.main import app
+from app.media_security import (
+    ArchiveContainerRejected,
+    DeterministicMediaMalwareScanner,
+    DisabledMediaMalwareScanner,
+    MediaScanUnavailable,
+    UnsafeMediaRejected,
+    reject_archive_container,
+)
 from app.object_storage import LocalObjectStorageProvider
 from app.platform_models import ProjectCreate, WorkspaceCreate
 from app.repositories import PlatformRepository
@@ -122,6 +130,7 @@ async def setup_services(tmp_path: Path):
         platform=platform,
         object_storage=object_storage,
         media_probe=FakeMediaProbe(),
+        malware_scanner=DeterministicMediaMalwareScanner(),
         staging_root=tmp_path / "uploads",
         default_part_size_bytes=64 * 1024,
         max_part_size_bytes=128 * 1024,
@@ -138,7 +147,7 @@ async def setup_services(tmp_path: Path):
     return engine, session_factory, platform, repository, upload_service, analysis_service, project, version
 
 
-async def upload_fixture(upload_service: UploadService, project, version, payload: bytes):
+async def stage_fixture(upload_service: UploadService, project, version, payload: bytes):
     checksum = hashlib.sha256(payload).hexdigest()
     upload = await upload_service.initialize(
         UploadInitRequest(
@@ -161,10 +170,12 @@ async def upload_fixture(upload_service: UploadService, project, version, payloa
             bytes_stream(part),
             expected_part_sha256=hashlib.sha256(part).hexdigest(),
         )
-    return await upload_service.complete(
-        upload.upload_id,
-        UploadCompleteRequest(checksum_sha256=checksum),
-    )
+    return upload, checksum
+
+
+async def upload_fixture(upload_service: UploadService, project, version, payload: bytes):
+    upload, checksum = await stage_fixture(upload_service, project, version, payload)
+    return await upload_service.complete(upload.upload_id, UploadCompleteRequest(checksum_sha256=checksum))
 
 
 def test_safe_filename_and_magic_byte_validation(tmp_path: Path) -> None:
@@ -196,6 +207,8 @@ def test_upload_contract_rejects_url_import_fake_extension_and_archive_payload(t
 
     archive = tmp_path / "archive-bomb.mp4"
     archive.write_bytes(b"PK\x03\x04" + b"Z" * 64)
+    with pytest.raises(ArchiveContainerRejected, match="not accepted"):
+        reject_archive_container(archive)
     with pytest.raises(MediaValidationError, match="unsupported or unrecognized"):
         sniff_media(archive, "video/mp4")
 
@@ -310,6 +323,10 @@ async def test_resumable_upload_hash_metadata_and_duplicate_detection(tmp_path: 
     assert first.duplicate is False
     assert first.upload.safe_filename == "Video-thu-nghiem.MP4"
     assert first.upload.received_bytes == len(payload)
+    assert first.upload.quarantine_state == "trusted"
+    assert first.upload.malware_scan is not None
+    assert first.upload.malware_scan.verdict == "clean"
+    assert first.upload.trusted_at is not None
     assert first.media_metadata.duration_seconds == 16
     asset = await repository.get_asset(first.asset_id)
     assert asset is not None
@@ -321,6 +338,61 @@ async def test_resumable_upload_hash_metadata_and_duplicate_detection(tmp_path: 
     assert second.duplicate is True
     assert second.asset_id == first.asset_id
     assert second.upload.duplicate_of_asset_id == first.asset_id
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_upload_quarantine_rejects_eicar_archive_and_unavailable_scanner(tmp_path: Path) -> None:
+    engine, _, _, repository, upload_service, _, project, version = await setup_services(tmp_path)
+
+    eicar = synthetic_mp4(70_000) + b"EICAR-STANDARD-ANTIVIRUS-TEST-FILE"
+    upload, checksum = await stage_fixture(upload_service, project, version, eicar)
+    with pytest.raises(UnsafeMediaRejected, match="unsafe media"):
+        await upload_service.complete(
+            upload.upload_id,
+            UploadCompleteRequest(checksum_sha256=checksum),
+        )
+    rejected = await repository.get_upload(upload.upload_id)
+    assert rejected is not None
+    assert rejected.status == "rejected"
+    assert rejected.quarantine_state == "rejected"
+    assert rejected.asset_id is None
+    assert rejected.malware_scan is not None
+    assert rejected.malware_scan.verdict == "infected"
+
+    archive_payload = b"PK\x03\x04" + b"Z" * 69_996
+    archive, archive_checksum = await stage_fixture(upload_service, project, version, archive_payload)
+    with pytest.raises(UnsafeMediaRejected, match="archive containers"):
+        await upload_service.complete(
+            archive.upload_id,
+            UploadCompleteRequest(checksum_sha256=archive_checksum),
+        )
+    archive_record = await repository.get_upload(archive.upload_id)
+    assert archive_record is not None
+    assert archive_record.status == "rejected"
+    assert archive_record.malware_scan is not None
+    assert archive_record.malware_scan.verdict == "rejected"
+    assert archive_record.malware_scan.result_code == "ARCHIVE_CONTAINER_REJECTED"
+
+    upload_service.malware_scanner = DisabledMediaMalwareScanner()
+    unscanned, unscanned_checksum = await stage_fixture(
+        upload_service,
+        project,
+        version,
+        synthetic_mp4(70_000),
+    )
+    with pytest.raises(MediaScanUnavailable, match="clean scan verdict"):
+        await upload_service.complete(
+            unscanned.upload_id,
+            UploadCompleteRequest(checksum_sha256=unscanned_checksum),
+        )
+    quarantined = await repository.get_upload(unscanned.upload_id)
+    assert quarantined is not None
+    assert quarantined.status == "quarantined"
+    assert quarantined.quarantine_state == "quarantined"
+    assert quarantined.asset_id is None
+    assert quarantined.malware_scan is not None
+    assert quarantined.malware_scan.verdict == "error"
     await engine.dispose()
 
 

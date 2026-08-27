@@ -108,6 +108,8 @@ jobs:
           grep -qx 'PROVIDER_BUDGET_CURRENCY=VND' .env.example
           grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
           grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
+          grep -qx 'PROVIDER_RETENTION_CLEANUP_ENABLED=false' .env.example
+          grep -qx 'MEDIA_MALWARE_SCANNER_MODE=fixture' .env.example
           grep -qx 'COMFYUI_EXECUTION_ENABLED=false' .env.example
           grep -qx 'AUDIO_TTS_PROVIDER=espeak' .env.example
           grep -qx 'AUDIO_EXTERNAL_EXECUTION_ENABLED=false' .env.example
@@ -236,6 +238,21 @@ jobs:
           grep -Fq 'ARTIFACT_STORAGE_MISMATCH' apps/api/app/provider_safety.py
           grep -Fq 'provider_safety=app.state.provider_safety_controller' apps/api/app/main.py
           ! git grep -I -n -E '^(PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_BUDGET_CURRENCY=USD)$' -- .env.example apps services packages deploy
+      - name: Verify V3-01-03 ingress media and durable safety boundary
+        run: |
+          grep -Fq 'class DurableProviderSafetyController' apps/api/app/provider_safety_durable.py
+          grep -Fq 'class ProviderSafetyOperationORM' apps/api/app/provider_safety_db.py
+          grep -Fq 'ProviderSafetyControlORM.revision + 1' apps/api/app/provider_safety_repository.py
+          grep -Fq 'state_backend="postgresql"' apps/api/app/provider_safety_durable.py
+          grep -Fq 'class ClamdMediaMalwareScanner' apps/api/app/media_security.py
+          grep -Fq 'reject_archive_container(assembled)' apps/api/app/auto_edit_service.py
+          grep -Fq 'upload cannot be promoted before a clean malware verdict' apps/api/app/auto_edit_repository.py
+          grep -q '0011_v3_01_03' apps/api/migrations/versions/0011_v3_01_03_security_durable_safety.py
+          grep -Fq 'MEDIA_MALWARE_SCANNER_MODE: disabled' deploy/production/docker-compose.production.yml
+          grep -Fq 'PROVIDER_RETENTION_CLEANUP_ENABLED: "false"' deploy/production/docker-compose.production.yml
+          python -c 'import json; from pathlib import Path; data=json.loads(Path("packages/contracts/ingress-media-security.v1.json").read_text()); assert data["contract_version"] == "ingress-media-security.v1"; assert data["authorization"]["public_ingress_approved"] is False; assert data["media_pipeline"]["archive_ingestion_enabled"] is False; assert data["media_pipeline"]["clean_verdict_required_for_trusted_storage"] is True'
+          ! grep -Eq '^  (clamd|caddy|nginx|traefik):' docker-compose.yml deploy/production/docker-compose.production.yml
+          ! git grep -I -n -E '^(MEDIA_MALWARE_SCANNER_MODE=fixture|PROVIDER_RETENTION_CLEANUP_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false)$' -- deploy/production
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

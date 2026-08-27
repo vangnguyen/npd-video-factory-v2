@@ -1,0 +1,63 @@
+{
+  "contract_version": "ingress-media-security.v1",
+  "status": "design_and_local_contract_only",
+  "authorization": {
+    "public_ingress_approved": false,
+    "production_deployment_approved": false,
+    "edge_enforcement_required_before_public_ingress": true,
+    "owner_gate": "G-04"
+  },
+  "application_boundary": {
+    "authentication": "short_lived_external_bearer",
+    "workspace_isolation": "deny_by_default",
+    "valid_session_rate_limit": "redis_backed",
+    "url_import_enabled": false,
+    "localhost_bind_default": true
+  },
+  "upload_routes": [
+    {
+      "method": "POST",
+      "path": "/api/v1/uploads/init",
+      "required_role": "editor",
+      "body_limit_bytes": 65536
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/uploads/{upload_id}/parts/{part_number}",
+      "required_role": "editor",
+      "body_limit_source": "UPLOAD_MAX_PART_SIZE_BYTES"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/uploads/{upload_id}/complete",
+      "required_role": "editor",
+      "body_limit_bytes": 65536
+    }
+  ],
+  "required_edge_controls": {
+    "tls": true,
+    "request_body_limits": true,
+    "per_ip_and_authenticated_principal_rate_limits": true,
+    "connection_and_request_timeouts": true,
+    "block_path_normalization_anomalies": true,
+    "security_event_logging_without_tokens_or_media": true,
+    "route_allowlist_only": true
+  },
+  "media_pipeline": {
+    "quarantine_before_decoder": true,
+    "archive_ingestion_enabled": false,
+    "decompression_performed": false,
+    "clean_verdict_required_for_trusted_storage": true,
+    "fixture_scanner_production_allowed": false,
+    "production_scanner_transport": "internal_clamd_instream_contract",
+    "production_scanner_current_state": "not_configured_fail_closed",
+    "unsafe_media_promotion_allowed": false
+  },
+  "explicit_non_actions": [
+    "no public route was created",
+    "no WAF or reverse proxy was changed",
+    "no scanner service was deployed",
+    "no provider credential or paid execution was enabled",
+    "no production upload was performed"
+  ]
+}

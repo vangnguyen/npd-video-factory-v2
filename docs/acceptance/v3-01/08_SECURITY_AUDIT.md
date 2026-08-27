@@ -2,11 +2,11 @@
 
 ## Current decision
 
-`V3-01-01 LOCAL/CI SECURITY REMEDIATION PASS; NO-GO FOR PUBLIC OR PRODUCTION EXPOSURE`
+`V3-01-03 LOCAL/CI MEDIA-INGRESS SECURITY CONTRACT PASS; NO-GO FOR PUBLIC OR PRODUCTION EXPOSURE`
 
-Commit `9635fb3ecf5d5fc5ba20aef3486708bad5960b8b` adds the interactive identity boundary that was
-missing from the baseline. It passes local/CI and disposable Docker tests, but it is not merged,
-deployed or production-path tested. Agent Hub HMAC remains an independent service identity.
+V3-01-01 identity/RBAC is merged. V3-01-03 adds local quarantine and malware/archive controls on an
+isolated branch. The new edge/WAF document is a contract, not a deployed route. No public ingress,
+scanner service, provider credential, deployment or production-path test is authorized.
 
 ## Control review
 
@@ -18,18 +18,20 @@ deployed or production-path tested. Agent Hub HMAC remains an independent servic
 | Request correlation/security headers | middleware and tests | mock PASS |
 | Input schema/unknown fields | strict models/tests | mock PASS |
 | Upload size/MIME/hash/FFprobe | implemented/tests | mock PASS |
-| Malware quarantine | no complete scanner/quarantine acceptance | BLOCKED for V3-01-03 |
+| Malware quarantine | assembled media enters quarantine; clean scan is required before trusted storage; EICAR is rejected | local/mock PASS; production scanner NOT_CONFIGURED |
 | Rate limiting | Redis-backed limit per valid human session; unauthenticated ingress/WAF still absent | partial PASS |
-| SSRF/path traversal/argument injection suite | URL import rejected; traversal/fake/archive/argv tests pass | local/mock PASS |
+| SSRF/path traversal/argument injection suite | URL import rejected; traversal/fake/archive/argv tests pass; archive containers never decompress | local/mock PASS |
+| Edge WAF/body/rate controls | `ingress-media-security.v1` defines route/body/rate/TLS requirements | DESIGN ONLY; no public route |
 | Object/project authorization | workspace resolved through workspace/project/job/upload/cluster/idea and cross-scope objects return 404 | local/mock PASS |
 | Secrets in repo/evidence | ignore rules, redaction and pattern scan | PASS for this audit scope |
 | Live write controls | publish/external/paid gates false | PASS at configuration boundary |
 
 ## Threat-boundary decision
 
-`SEC-001` passes only at local/CI scope. `SEC-002` is partial. API and Studio must therefore stay on
-localhost with no public reverse proxy. URL import remains disabled. Uploaded media is untrusted
-input; extension, MIME and FFprobe agreement are not malware clearance.
+`SEC-001` passes only at local/CI scope. `SEC-002` remains partial. API and Studio must therefore stay
+on localhost with no public reverse proxy. URL import and archive ingestion remain disabled. An
+upload is not trusted until the configured scanner returns `clean`; unavailable/error/infected
+verdicts fail closed and cannot create an asset.
 
 The evidence harness reads only checked-in acceptance files and redacted evidence. It does not read
 `.env`, contact providers, deploy, publish or rotate credentials. `private/`, `raw/` and HAR evidence
@@ -39,10 +41,10 @@ are ignored and must not be committed.
 
 - production identity provisioning/SSO decision and production-path session evidence;
 - ingress/WAF request/body/rate limits, including unauthenticated attempts;
-- malware scanning/quarantine and decompression-resource acceptance;
+- approved internal clamd deployment, signature-update evidence and quarantine retention operation;
 - secret scan plus dependency/container vulnerability review;
 - signed webhook replay/clock-skew/key-rotation tests retained.
 
-Security state: `V3-01-GAP-001` is `REMEDIATED`; bounded G-08 merge approval is recorded while
-production verification remains absent;
+Security state: `V3-01-GAP-001` is `REMEDIATED`; bounded G-08 approvals through PR #14 are consumed
+while production verification remains absent;
 `V3-01-GAP-011` is `IN_PROGRESS`; `V3-01-GAP-012` and `V3-01-GAP-014` remain open.

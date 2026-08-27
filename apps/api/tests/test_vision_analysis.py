@@ -21,6 +21,7 @@ from app.auto_edit_repository import AutoEditRepository
 from app.auto_edit_service import AutoEditAnalysisService, UploadService
 from app.db import Base, create_engine, create_session_factory
 from app.main import app
+from app.media_security import DeterministicMediaMalwareScanner
 from app.object_storage import LocalObjectStorageProvider
 from app.platform_models import ProjectCreate, WorkspaceCreate
 from app.repositories import PlatformRepository
@@ -140,6 +141,7 @@ async def setup_services(tmp_path: Path):
         platform=platform,
         object_storage=storage,
         media_probe=FakeMediaProbe(),
+        malware_scanner=DeterministicMediaMalwareScanner(),
         staging_root=tmp_path / "uploads",
         default_part_size_bytes=64 * 1024,
         max_part_size_bytes=128 * 1024,

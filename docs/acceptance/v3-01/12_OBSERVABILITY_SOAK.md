@@ -9,10 +9,11 @@ helper. Deterministic restart/recovery behavior is covered in tests. There is no
 Factory environment, monitoring backend, accepted alert route, retention evidence or continuous
 48-hour RC observation.
 
-V3-01-02 adds an authenticated, secret-free provider safety snapshot containing current aggregate
-budget, call and circuit metadata. The underlying controller state is process-local and the
-snapshot is not a production monitoring backend, durable history, alert-delivery acceptance or soak
-record. It therefore does not close any observability/soak gap.
+V3-01-02 adds an authenticated, secret-free provider safety snapshot. V3-01-03 backs its budget,
+operation, attempt and circuit data with PostgreSQL and adds active/stale/recovered counts, oldest
+active age and retention metadata. This improves restart-safe observability, but it is not a
+production monitoring backend, alert-delivery acceptance or soak record and therefore closes no
+observability/soak gap.
 
 ## Required signals
 

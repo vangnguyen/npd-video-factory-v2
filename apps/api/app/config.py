@@ -62,6 +62,11 @@ class Settings(BaseSettings):
     # Asset and upload byte counts use PostgreSQL INTEGER in the current
     # durable schema, so the configurable ceiling must stay within int32.
     upload_max_size_bytes: int = 2_000_000_000
+    media_malware_scanner_mode: str = "fixture"
+    media_malware_scanner_host: str = "clamd"
+    media_malware_scanner_port: int = 3310
+    media_malware_scan_timeout_seconds: float = 30.0
+    media_quarantine_retention_days: int = 30
     tts_provider: str = "espeak"
     openai_api_key: str = ""
     audio_tts_provider: str = "espeak"
@@ -130,6 +135,9 @@ class Settings(BaseSettings):
     provider_max_concurrent_calls: int = 2
     provider_circuit_failure_threshold: int = 3
     provider_circuit_cooldown_seconds: int = 60
+    provider_operation_lease_seconds: int = 900
+    provider_operation_retention_days: int = 400
+    provider_retention_cleanup_enabled: bool = False
 
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
@@ -274,6 +282,18 @@ class Settings(BaseSettings):
             raise ValueError("maximum upload part size cannot exceed maximum upload size")
         if self.upload_max_size_bytes > 2_147_483_647:
             raise ValueError("maximum upload size exceeds the current durable schema limit")
+        if self.media_malware_scanner_mode not in {"disabled", "fixture", "clamd"}:
+            raise ValueError("MEDIA_MALWARE_SCANNER_MODE must be disabled, fixture or clamd")
+        if self.app_env.lower() == "production" and self.media_malware_scanner_mode == "fixture":
+            raise ValueError("deterministic malware scanning is prohibited in production")
+        if self.media_malware_scanner_mode == "clamd" and not self.media_malware_scanner_host.strip():
+            raise ValueError("clamd mode requires MEDIA_MALWARE_SCANNER_HOST")
+        if not 1 <= self.media_malware_scanner_port <= 65535:
+            raise ValueError("MEDIA_MALWARE_SCANNER_PORT must be a valid TCP port")
+        if not 1 <= self.media_malware_scan_timeout_seconds <= 300:
+            raise ValueError("MEDIA_MALWARE_SCAN_TIMEOUT_SECONDS must be between 1 and 300")
+        if not 1 <= self.media_quarantine_retention_days <= 365:
+            raise ValueError("MEDIA_QUARANTINE_RETENTION_DAYS must be between 1 and 365")
         if self.object_storage_provider not in {"local", "s3"}:
             raise ValueError("OBJECT_STORAGE_PROVIDER must be local or s3")
         if self.object_storage_provider == "s3" and (
@@ -318,6 +338,17 @@ class Settings(BaseSettings):
             raise ValueError("PROVIDER_CIRCUIT_FAILURE_THRESHOLD must be between 1 and 20")
         if not 1 <= self.provider_circuit_cooldown_seconds <= 86_400:
             raise ValueError("PROVIDER_CIRCUIT_COOLDOWN_SECONDS must be between 1 and 86400")
+        minimum_lease = int(
+            self.provider_retry_max_elapsed_seconds + self.provider_request_timeout_seconds + 60
+        )
+        if not minimum_lease <= self.provider_operation_lease_seconds <= 86_400:
+            raise ValueError(
+                "PROVIDER_OPERATION_LEASE_SECONDS must cover retry/timeout bounds and be at most one day"
+            )
+        if not 30 <= self.provider_operation_retention_days <= 3650:
+            raise ValueError("PROVIDER_OPERATION_RETENTION_DAYS must be between 30 and 3650")
+        if self.provider_retention_cleanup_enabled:
+            raise ValueError("provider ledger deletion is not activated in V3-01-03")
         if self.provider_paid_execution_enabled and not self.provider_external_execution_enabled:
             raise ValueError("paid provider execution requires external provider execution")
         provider_specific_external_gates = (
@@ -331,9 +362,9 @@ class Settings(BaseSettings):
         if any(provider_specific_external_gates) and not self.provider_external_execution_enabled:
             raise ValueError("provider-specific external execution requires the global provider safety gate")
         if self.provider_external_execution_enabled:
-            raise ValueError("real provider execution is not activated in V3-01-02")
+            raise ValueError("real provider execution is not activated in V3-01-03")
         if not self.provider_global_kill_switch_engaged:
-            raise ValueError("the global provider kill switch must remain engaged in V3-01-02")
+            raise ValueError("the global provider kill switch must remain engaged in V3-01-03")
         return self
 
 

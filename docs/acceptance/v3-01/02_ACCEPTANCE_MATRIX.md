@@ -1,6 +1,6 @@
 # V3-01 acceptance matrix
 
-Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 and V3-01-02 local/CI remediation evidence
+Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01/V3-01-02 merged evidence and V3-01-03 local/CI remediation
 was added on `2026-08-27`. `I/M/R/P/Q` mean implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
@@ -73,7 +73,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 ## Interpretation
 
 - `PASS` under I/M proves only current code and deterministic tests.
-- V3-01-01 plus V3-01-02 change the implemented count to `42 PASS / 18 FAIL` and the mock-tested
+- V3-01-01 through V3-01-03 keep the implemented count at `42 PASS / 18 FAIL` and the mock-tested
   count to `51 PASS / 2 FAIL / 7 NOT_TESTED`; they do not change any real-provider,
   production-path or quality axis.
 - All real-provider, production-path and human quality work remains unproven.
