@@ -47,5 +47,6 @@ publishing and analytics execution gates remain false.
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.
 
-Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and the pending
-V3-01-03 locked-commit evidence; not closed or production-verified.
+Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
+`EV-V3-DURABLE-SAFETY-001` on locked commit
+`0f0854466655d2f36cfa8b57785000097b220c4c`; not closed or production-verified.

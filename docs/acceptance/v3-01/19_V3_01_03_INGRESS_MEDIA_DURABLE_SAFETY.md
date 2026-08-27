@@ -9,6 +9,11 @@ This checkpoint begins from exact merged `main`
 `V3-01-GAP-010` and `V3-01-GAP-011` without activating a public route, credential, provider call,
 paid execution, deployment, publication or production analytics.
 
+Locked code commit: `0f0854466655d2f36cfa8b57785000097b220c4c`. Redacted evidence run:
+`vf-v3-01-20260827T165813Z-0f08544`, containing `EV-V3-DURABLE-SAFETY-001` and
+`EV-V3-MEDIA-SECURITY-001`. The run result is deliberately `BLOCKED` at repository level because
+all production-path and real-provider gates remain pending.
+
 ## Media trust boundary
 
 The upload lifecycle becomes:

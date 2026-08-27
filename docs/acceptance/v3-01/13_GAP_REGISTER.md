@@ -2,7 +2,8 @@
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
 derived from the audit captured on `2026-08-27`, exact merged `main`
-`dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3`, and the in-progress V3-01-03 local/CI branch.
+`dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3`, and locked V3-01-03 local/CI commit
+`0f0854466655d2f36cfa8b57785000097b220c4c`.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -36,11 +37,13 @@ unverified.
 - `V3-01-GAP-010` (`IN_PROGRESS`): VND budgets, retry/poll/concurrency, circuit breaker, rights hook,
   artifact verification and global cost kill switch pass locally. V3-01-03 adds a PostgreSQL ledger,
   atomic cross-instance reservation, durable circuit/duplicate state, restart recovery and
-  retention/health metrics; production-like multi-instance and real-provider acceptance remain.
+  retention/health metrics. `EV-V3-DURABLE-SAFETY-001` passes locally; production-like
+  multi-instance and real-provider acceptance remain.
 - `V3-01-GAP-011` (`IN_PROGRESS`): auth rate limiting, URL-import denial and bounded malicious-input
   tests pass. V3-01-03 adds quarantine-before-decoder, archive-signature denial, EICAR contract
   tests, clean-verdict promotion and an internal clamd/WAF design contract; approved internal
-  scanner deployment and production public-ingress/WAF evidence remain.
+  scanner deployment and production public-ingress/WAF evidence remain. Local evidence is
+  `EV-V3-MEDIA-SECURITY-001`.
 - `V3-01-GAP-012`: GitHub `main` branch protection is disabled.
 - `V3-01-GAP-014`: real Agent Hub HTTP bridge acceptance is absent.
 - `V3-01-GAP-015`: GitHub Actions runtime deprecation warning.

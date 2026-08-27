@@ -70,8 +70,8 @@ README, architecture, security, deployment, testing, V2 acceptance and runbook d
 |---|---|
 | API/worker/renderer/Studio version | `0.12.0` |
 | API title | `NPD Video Factory V2 API` |
-| Latest Alembic migration | `0010_v2_11_agent_hub_bridge` |
-| V3-01-03 branch migration | proposed `0011_v3_01_03_security_durable_safety`; not on main |
+| Latest Alembic migration on `main` | `0010_v2_11_agent_hub_bridge` |
+| V3-01-03 locked branch migration | `0011_v3_01_03_security_durable_safety`; local replay PASS, not on main |
 | Compose project | `npd-video-factory-v2` |
 | Default services | PostgreSQL, Redis, MinIO, migrate, API, Studio, renderer, worker |
 | Optional service | `comfyui-bridge` behind disabled `gpu` profile |
@@ -145,4 +145,6 @@ credentials, real providers, public ingress and publishing remain prohibited.
 V3-01-03 development is isolated on branch `remediation/v3-01-03-ingress-durable-safety`. Its
 bounded scope is upload quarantine/malware and archive-denial controls, a non-deployed WAF/ingress
 contract, and PostgreSQL-backed provider budget/operation/circuit state. It may create a draft PR
-after local/CI evidence, but has no merge or runtime authority.
+after local/CI evidence, but has no merge or runtime authority. The locked code checkpoint is
+`0f0854466655d2f36cfa8b57785000097b220c4c`; evidence run
+`vf-v3-01-20260827T165813Z-0f08544` records zero calls and zero VND while retaining `NO-GO`.

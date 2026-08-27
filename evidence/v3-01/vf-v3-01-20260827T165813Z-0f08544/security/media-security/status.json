@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "scope": "V3-01-03 ingress and media security",
+  "commit_sha": "0f0854466655d2f36cfa8b57785000097b220c4c",
+  "quarantine_before_decoder": "PASS_LOCAL",
+  "clean_only_trusted_promotion": "PASS_LOCAL",
+  "eicar_rejection": "PASS_LOCAL",
+  "archive_ingestion_enabled": false,
+  "archive_signature_rejection": "PASS_LOCAL",
+  "decompression_performed": false,
+  "scanner_unavailable_behavior": "PASS_FAIL_CLOSED_LOCAL",
+  "internal_clamd": "NOT_CONFIGURED",
+  "production_scanner_mode": "DISABLED_FAIL_CLOSED",
+  "public_ingress": "NOT_CREATED",
+  "waf_and_edge_rate_limit": "DESIGN_ONLY_NOT_TESTED",
+  "production_path": "NOT_TESTED",
+  "overall_v3_verdict": "NO_GO",
+  "secret_recorded": false
+}

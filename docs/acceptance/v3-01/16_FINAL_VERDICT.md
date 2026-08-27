@@ -6,7 +6,7 @@
 VERDICT: NO-GO
 SCOPE: V3-01-00 baseline, merged V3-01-01/V3-01-02, and V3-01-03 local/CI remediation
 RELEASE CANDIDATE: NOT ESTABLISHED
-LATEST EVIDENCE RUN: vf-v3-01-20260827T153608Z-0629592 (baseline remains separately retained)
+LATEST EVIDENCE RUN: vf-v3-01-20260827T165813Z-0f08544 (baseline remains separately retained)
 DATE: 2026-08-27
 OWNER DECISION: G-00 APPROVED; BOUNDED G-08 RECORDS CONSUMED BY PR #12/#13 AND PR #14; ALL LATER MERGE AND EXECUTION GATES PENDING
 ```
@@ -64,6 +64,11 @@ not supersede the baseline run.
 V3-01-02 evidence is stored in `vf-v3-01-20260827T153608Z-0629592` as
 `EV-V3-PROVIDER-SAFETY-001`. It proves contract/mock controls only, records zero external calls and
 zero spend, and does not establish a release candidate.
+
+V3-01-03 evidence is stored in `vf-v3-01-20260827T165813Z-0f08544` as
+`EV-V3-DURABLE-SAFETY-001` and `EV-V3-MEDIA-SECURITY-001`. It proves local/CI and disposable-Docker
+remediation only, records zero external calls and zero spend, leaves GAP-010/GAP-011
+`IN_PROGRESS`, and grants no merge or runtime permission.
 
 ## Open gaps and remediation
 

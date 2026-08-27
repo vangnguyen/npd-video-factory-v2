@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-DURABLE-SAFETY-001",
+  "test_case_id": "RES-003+CST-002",
+  "matrix_rows": [
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "0f0854466655d2f36cfa8b57785000097b220c4c",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "all-provider-contracts",
+    "model_or_workflow": "durable-provider-safety-v1",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "c7c3d2d7fc0212f633df776962fc0c03fceed74911439a1833d4e7b7c4b90903",
+  "started_at_utc": "2026-08-27T16:43:00Z",
+  "completed_at_utc": "2026-08-27T16:58:13Z",
+  "duration_seconds": 913,
+  "result": "PASS",
+  "assertion": "The secret-free SQL ledger passes local tests for cross-controller duplicate and concurrency blocking, atomic VND reservation, bounded retry attempt persistence, circuit recovery, stale-operation cost reconciliation and retention behavior. PostgreSQL migration/startup/restart passed in disposable Docker, but production-like multi-instance load and every real-provider axis remain NOT_TESTED.",
+  "correlation_id": "v3-01-03-local-durable-safety-0f08544",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex local durable-safety reviewer",
+  "gap_ids": [
+    "V3-01-GAP-010"
+  ],
+  "reproduce": "On commit 0f0854466655d2f36cfa8b57785000097b220c4c, run the Python, migration replay, Compose and Docker commands recorded in providers/provider-safety/test-summary.json while external execution and paid execution are false, budget is 0 VND and the global kill switch is engaged."
+}

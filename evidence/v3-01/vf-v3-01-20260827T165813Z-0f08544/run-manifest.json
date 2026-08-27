@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260827T165813Z-0f08544",
+  "started_at_utc": "2026-08-27T16:43:00Z",
+  "completed_at_utc": "2026-08-27T16:58:13Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "0f0854466655d2f36cfa8b57785000097b220c4c",
+  "base_sha": "dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-03-remediation",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0011_v3_01_03",
+  "config_fingerprint_redacted": "quarantine-required-prod-scanner-disabled-durable-vnd-zero-budget-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "media-malware-scan",
+      "provider": "deterministic-contract-or-disabled",
+      "model_or_workflow": "clean-eicar-archive-deny-no-external-call",
+      "region": "local-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    },
+    {
+      "capability": "all-external-provider-capabilities",
+      "provider": "contract-or-disabled",
+      "model_or_workflow": "durable-safety-ledger-none-executed",
+      "region": "not-applicable",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "SEC-002",
+    "RES-003",
+    "CST-002",
+    "CI-LOCAL-REGRESSION",
+    "DOCKER-E2E"
+  ],
+  "artifact_manifest": [
+    "matrix/evidence-EV-V3-DURABLE-SAFETY-001.json",
+    "matrix/evidence-EV-V3-MEDIA-SECURITY-001.json",
+    "providers/provider-safety/status.json",
+    "providers/provider-safety/test-summary.json",
+    "security/media-security/status.json",
+    "security/media-security/test-summary.json",
+    "final/status.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-010",
+    "V3-01-GAP-011"
+  ],
+  "owner_gate_ids": [
+    "G-00"
+  ],
+  "result": "BLOCKED"
+}
