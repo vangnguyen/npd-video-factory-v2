@@ -258,6 +258,8 @@ async def lifespan(app: FastAPI):
             base_url=settings.openai_base_url,
             timeout_seconds=settings.provider_request_timeout_seconds,
             image_detail=settings.openai_vision_image_detail,
+            max_dimension_pixels=settings.openai_vision_max_dimension_pixels,
+            input_token_ceiling=settings.openai_vision_input_token_ceiling,
             max_output_tokens=settings.openai_vision_max_output_tokens,
             estimated_cost_vnd=settings.openai_vision_estimated_cost_vnd,
             input_vnd_per_million_tokens=(

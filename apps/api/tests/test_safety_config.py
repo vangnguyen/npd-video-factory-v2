@@ -248,7 +248,7 @@ def test_v3_01_03_global_provider_gate_is_vnd_only_and_cannot_be_activated() -> 
         Settings(_env_file=None, provider_budget_currency="USD")
     with pytest.raises(ValidationError, match="G-02 owner gate"):
         Settings(_env_file=None, provider_per_operation_limit_vnd=1, provider_daily_limit_vnd=1)
-    with pytest.raises(ValidationError, match="not activated in V3-01-03"):
+    with pytest.raises(ValidationError, match="verified owner-gate bundle"):
         Settings(_env_file=None, provider_external_execution_enabled=True)
     with pytest.raises(ValidationError, match="kill switch must remain engaged"):
         Settings(_env_file=None, provider_global_kill_switch_engaged=False)

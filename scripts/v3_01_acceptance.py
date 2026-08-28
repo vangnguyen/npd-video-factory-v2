@@ -49,6 +49,7 @@ REQUIRED_DOCS = (
     "23_V3_01_07_DR_OBSERVABILITY.md",
     "24_V3_01_08_CONSOLIDATION_RC_GATE.md",
     "25_V3_01_09_OPENAI_VISION_ADAPTER.md",
+    "26_V3_01_10_VERIFIED_ACCEPTANCE_GATE_LOADER.md",
 )
 SENSITIVE_KEY = re.compile(
     r"(^|_)(authorization|cookie|password|passwd|secret|token|api_key|private_key|client_secret)($|_)",
@@ -193,6 +194,32 @@ def validate_approval_records(docs: Path) -> int:
     return len(approval_files)
 
 
+def validate_rights_records(docs: Path) -> int:
+    schema_path = docs / "schemas" / "rights-record.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    validator = Draft202012Validator(schema)
+    rights_dir = docs / "rights"
+    rights_files = sorted(rights_dir.glob("*.json")) if rights_dir.exists() else []
+    seen: set[str] = set()
+    for rights_file in rights_files:
+        record = json.loads(rights_file.read_text(encoding="utf-8"))
+        try:
+            validator.validate(record)
+        except ValidationError as exc:
+            raise ValidationFailure(
+                f"invalid RightsRecord {rights_file.name}: {exc.message}"
+            ) from exc
+        rights_record_id = record["rights_record_id"]
+        if rights_file.stem != rights_record_id:
+            raise ValidationFailure(
+                f"rights filename does not match rights_record_id: {rights_file.name}"
+            )
+        if rights_record_id in seen:
+            raise ValidationFailure(f"duplicate RightsRecord ID: {rights_record_id}")
+        seen.add(rights_record_id)
+    return len(rights_files)
+
+
 def validate_repo(repo: Path) -> None:
     docs = repo / "docs" / "acceptance" / "v3-01"
     missing = [name for name in REQUIRED_DOCS if not (docs / name).is_file()]
@@ -211,6 +238,7 @@ def validate_repo(repo: Path) -> None:
     for schema_file in schema_files:
         validate_schema_file(schema_file)
     approval_count = validate_approval_records(docs)
+    rights_count = validate_rights_records(docs)
     scan_targets = [docs]
     evidence_root = repo / "evidence" / "v3-01"
     if evidence_root.exists():
@@ -234,7 +262,8 @@ def validate_repo(repo: Path) -> None:
         raise ValidationFailure(f"matrix references missing evidence records: {missing_evidence}")
     print(
         f"v3-01 validation=PASS matrix_rows={matrix_count} gaps={gap_count} "
-        f"schemas={len(schema_files)} approvals={approval_count} evidence_runs={len(run_dirs)}"
+        f"schemas={len(schema_files)} approvals={approval_count} rights={rights_count} "
+        f"evidence_runs={len(run_dirs)}"
     )
 
 

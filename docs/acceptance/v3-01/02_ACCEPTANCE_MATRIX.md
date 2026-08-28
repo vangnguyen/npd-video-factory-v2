@@ -1,9 +1,9 @@
 # V3-01 acceptance matrix
 
-Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-08 are merged at exact `main`
-`f42a1709cba6f087369c1636bab9bd06053f7613` and locked as planning-only RC-1. V3-01-09 is an
-unmerged adapter remediation that adds implemented/mock evidence for VIS-01 only. `I/M/R/P/Q`
-mean implemented, mock-tested,
+Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-09 are merged at exact `main`
+`5936aa7a9656d728be751d0ee61011fc1a5abc7a` and locked as planning-only RC-2. V3-01-10 is an
+unmerged gate-loader remediation that does not change an acceptance axis. `I/M/R/P/Q` mean
+implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
 

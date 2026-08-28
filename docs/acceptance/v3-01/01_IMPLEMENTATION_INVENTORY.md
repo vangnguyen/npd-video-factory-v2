@@ -4,10 +4,11 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 through V3-01-08 are merged at exact `main`
-`f42a1709cba6f087369c1636bab9bd06053f7613`, tagged `vf-v3-01-rc1` for controlled acceptance
-planning only. V3-01-09 is an unmerged OpenAI Vision adapter remediation based on RC-1. None of
-these local/CI entries establish production-path, real-provider or quality acceptance.
+V3-01-01 through V3-01-09 are merged at exact `main`
+`5936aa7a9656d728be751d0ee61011fc1a5abc7a`, tagged `vf-v3-01-rc2` for controlled acceptance
+planning only. V3-01-09 remains disabled. V3-01-10 is an unmerged verified gate-loader remediation
+based on RC-2. None of these local/CI entries establish production-path, real-provider or quality
+acceptance.
 
 ## Foundation
 
@@ -72,7 +73,7 @@ these local/CI entries establish production-path, real-provider or quality accep
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
 | Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
-| Provider safety plane | `provider_safety*.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention plus V3-01-09 pre-secret/pre-network denial tests | PostgreSQL-backed local contract passes; external execution hard-blocked; local key excluded from Compose containers |
+| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention plus V3-01-09 adapter and V3-01-10 hash/RC/approval/allowlist/expiry tests | PostgreSQL-backed local contract passes; checked-in external execution remains hard-blocked; local key excluded from Compose containers |
 | Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart and configuration tests | Implemented/mock-tested; production-like multi-instance and real acceptance absent |
 | Upload malware boundary | quarantine state, archive-deny policy, deterministic EICAR contract and internal clamd client | `test_auto_edit_analysis.py`, migration replay | Local/mock PASS; clamd and edge/WAF not deployed |
 | Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests | Schema/hook implemented; real rights unaccepted |

@@ -33,6 +33,7 @@ from app.vision_providers import VisionProviderNotConfigured
 class StaticFrameExtractor:
     def __init__(self, count: int = 2) -> None:
         self.calls = 0
+        self.max_frames = count
         self.frames = tuple(
             ExtractedVisionFrame(
                 timestamp_seconds=float(index),
@@ -355,6 +356,47 @@ async def test_mock_usage_calculates_vnd_receipt_without_real_spend(tmp_path: Pa
     assert receipt["currency"] == "VND"
     assert receipt["status"] == "contract_test_calculated"
     assert receipt["actual_cost_vnd"] == "270.000000"
+
+
+@pytest.mark.asyncio
+async def test_input_dimensions_frames_and_usage_ceilings_are_fail_closed(tmp_path: Path) -> None:
+    source = tmp_path / "owned.jpg"
+    source.write_bytes(b"trusted-input-placeholder")
+
+    oversized, _, oversized_extractor = provider(
+        lambda _request: httpx.Response(200, json=response_payload())
+    )
+    with pytest.raises(VisionFrameExtractionError, match="dimension"):
+        await oversized.analyze(
+            source,
+            metadata=metadata().model_copy(update={"width": 2049}),
+            scenes=[],
+            asset_id="ast_test",
+            checksum_sha256="a" * 64,
+            sample_interval_seconds=4,
+        )
+    assert oversized_extractor.calls == 0
+
+    one_frame = StaticFrameExtractor(count=1)
+    usage_payload = response_payload(count=1)
+    usage_payload["usage"]["input_tokens"] = 16_385
+    adapter = OpenAIVisionProvider(
+        credential_alias="secret://openai/codex-video",
+        credential_resolver=SecretResolver(),
+        frame_extractor=one_frame,
+        max_dimension_pixels=2048,
+        input_token_ceiling=16_384,
+        max_output_tokens=4_096,
+        estimated_cost_vnd=Decimal("500"),
+        input_vnd_per_million_tokens=Decimal("6565"),
+        cached_input_vnd_per_million_tokens=Decimal("656.5"),
+        output_vnd_per_million_tokens=Decimal("52520"),
+        transport=httpx.MockTransport(
+            lambda _request: httpx.Response(200, json=usage_payload)
+        ),
+    )
+    with pytest.raises(OpenAIVisionResponseError, match="input usage"):
+        await analyze(adapter, source)
 
 
 @pytest.mark.asyncio

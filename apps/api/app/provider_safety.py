@@ -96,28 +96,6 @@ class ProviderBudgetPolicy(StrictModel):
         return now < expiry.astimezone(timezone.utc)
 
 
-class ProviderSafetyPolicy(StrictModel):
-    version: Literal[1] = 1
-    external_execution_enabled: bool = False
-    paid_execution_enabled: bool = False
-    global_kill_switch_engaged: bool = True
-    credential_gate_approved: bool = False
-    rights_gate_approved: bool = False
-    budget: ProviderBudgetPolicy = Field(default_factory=ProviderBudgetPolicy)
-    retry: ProviderRetryPolicy = Field(default_factory=ProviderRetryPolicy)
-    circuit: ProviderCircuitPolicy = Field(default_factory=ProviderCircuitPolicy)
-
-    @model_validator(mode="after")
-    def validate_execution_gates(self) -> "ProviderSafetyPolicy":
-        if self.paid_execution_enabled and not self.external_execution_enabled:
-            raise ValueError("paid provider execution requires external provider execution")
-        if self.external_execution_enabled and not self.credential_gate_approved:
-            raise ValueError("external provider execution requires the credential owner gate")
-        if self.paid_execution_enabled and not self.budget.approved:
-            raise ValueError("paid provider execution requires an approved VND budget")
-        return self
-
-
 class ProviderRightsEvidence(StrictModel):
     rights_record_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{2,159}$")
     asset_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{2,159}$")
@@ -142,11 +120,135 @@ class ProviderRightsEvidence(StrictModel):
     evidence_reference: str = Field(min_length=1, max_length=1000)
     reviewer: str = Field(min_length=1, max_length=240)
     decision: RightsDecision
+    secret_recorded: Literal[False] = False
 
     @model_validator(mode="after")
     def validate_approval(self) -> "ProviderRightsEvidence":
         if self.attribution_required and not self.attribution_text.strip():
             raise ValueError("approved rights with attribution require attribution text")
+        return self
+
+
+class ProviderAllowedOperation(StrictModel):
+    operation_key: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:/-]{2,199}$")
+    operation: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{1,159}$")
+    asset_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{2,159}$")
+    asset_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
+class ProviderExecutionGateScope(StrictModel):
+    bundle_id: str = Field(pattern=r"^V3-01-GATE-[A-Za-z0-9._-]{3,120}$")
+    bundle_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    rc_tag: str = Field(pattern=r"^vf-v3-01-rc[0-9]+$")
+    rc_commit: str = Field(pattern=r"^[a-f0-9]{40}$")
+    provider_key: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{1,119}$")
+    model: str = Field(min_length=1, max_length=160)
+    capability: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{1,119}$")
+    credential_alias: str = Field(min_length=1, max_length=240)
+    valid_from_utc: datetime
+    expires_at_utc: datetime
+    budget_day_utc: date
+    per_operation_limit_vnd: Decimal = Field(gt=0)
+    acceptance_window_limit_vnd: Decimal = Field(gt=0)
+    input_vnd_per_million_tokens: Decimal = Field(gt=0)
+    cached_input_vnd_per_million_tokens: Decimal = Field(gt=0)
+    output_vnd_per_million_tokens: Decimal = Field(gt=0)
+    max_frames: int = Field(ge=1, le=32)
+    max_dimension_pixels: int = Field(ge=32, le=65_535)
+    image_detail: Literal["low", "high", "auto"]
+    input_token_ceiling: int = Field(ge=1)
+    max_output_tokens: int = Field(ge=256, le=32_768)
+    timeout_seconds: float = Field(gt=0, le=3600)
+    max_attempts: Literal[1] = 1
+    max_concurrent_calls: Literal[1] = 1
+    credential_approval_id: str = Field(pattern=r"^V3-01-APP-[0-9]{3,}$")
+    budget_approval_id: str = Field(pattern=r"^V3-01-APP-[0-9]{3,}$")
+    rights_approval_id: str = Field(pattern=r"^V3-01-APP-[0-9]{3,}$")
+    approval_record_sha256: dict[str, str]
+    rights_record_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    allowed_operations: tuple[ProviderAllowedOperation, ProviderAllowedOperation]
+    rights_record: ProviderRightsEvidence
+
+    @field_validator("credential_alias")
+    @classmethod
+    def validate_credential_alias(cls, value: str) -> str:
+        if not value.startswith(("secret://", "vault://", "external://")):
+            raise ValueError("verified provider gates may reference credentials only by alias")
+        return value
+
+    @field_validator("approval_record_sha256")
+    @classmethod
+    def validate_approval_hashes(cls, value: dict[str, str]) -> dict[str, str]:
+        if set(value) != {"G-01", "G-02", "G-03"}:
+            raise ValueError("verified gate scope requires G-01, G-02 and G-03 approval hashes")
+        if any(len(item) != 64 or any(char not in "0123456789abcdef" for char in item) for item in value.values()):
+            raise ValueError("verified approval hashes must be lowercase SHA-256 values")
+        return value
+
+    @model_validator(mode="after")
+    def validate_window_and_operations(self) -> "ProviderExecutionGateScope":
+        start = self.valid_from_utc
+        expiry = self.expires_at_utc
+        if start.tzinfo is None or expiry.tzinfo is None:
+            raise ValueError("verified gate window timestamps must be timezone aware")
+        start = start.astimezone(timezone.utc)
+        expiry = expiry.astimezone(timezone.utc)
+        if expiry <= start or expiry - start > timedelta(hours=4):
+            raise ValueError("verified gate window must be positive and at most four hours")
+        if start.date() != expiry.date() or self.budget_day_utc != start.date():
+            raise ValueError("verified gate window cannot cross the UTC budget day")
+        if self.acceptance_window_limit_vnd < self.per_operation_limit_vnd * 2:
+            raise ValueError("acceptance budget must cover both allowlisted operations")
+        operation_keys = [item.operation_key for item in self.allowed_operations]
+        if len(set(operation_keys)) != 2:
+            raise ValueError("verified gate scope requires two distinct operation IDs")
+        for item in self.allowed_operations:
+            if item.asset_id != self.rights_record.asset_id or item.asset_hash != self.rights_record.asset_hash:
+                raise ValueError("every allowlisted operation must bind the approved rights asset")
+        if self.rights_record.decision != "APPROVED":
+            raise ValueError("verified gate scope requires an approved RightsRecord")
+        return self
+
+    def active(self, now: datetime) -> bool:
+        current = now if now.tzinfo is not None else now.replace(tzinfo=timezone.utc)
+        current = current.astimezone(timezone.utc)
+        return (
+            self.valid_from_utc.astimezone(timezone.utc)
+            <= current
+            < self.expires_at_utc.astimezone(timezone.utc)
+            and current.date() == self.budget_day_utc
+        )
+
+    def operation_for(self, operation_key: str) -> ProviderAllowedOperation | None:
+        return next(
+            (item for item in self.allowed_operations if item.operation_key == operation_key),
+            None,
+        )
+
+
+class ProviderSafetyPolicy(StrictModel):
+    version: Literal[1] = 1
+    external_execution_enabled: bool = False
+    paid_execution_enabled: bool = False
+    global_kill_switch_engaged: bool = True
+    credential_gate_approved: bool = False
+    rights_gate_approved: bool = False
+    verified_gate_required: bool = False
+    execution_gate: ProviderExecutionGateScope | None = None
+    budget: ProviderBudgetPolicy = Field(default_factory=ProviderBudgetPolicy)
+    retry: ProviderRetryPolicy = Field(default_factory=ProviderRetryPolicy)
+    circuit: ProviderCircuitPolicy = Field(default_factory=ProviderCircuitPolicy)
+
+    @model_validator(mode="after")
+    def validate_execution_gates(self) -> "ProviderSafetyPolicy":
+        if self.paid_execution_enabled and not self.external_execution_enabled:
+            raise ValueError("paid provider execution requires external provider execution")
+        if self.external_execution_enabled and not self.credential_gate_approved:
+            raise ValueError("external provider execution requires the credential owner gate")
+        if self.paid_execution_enabled and not self.budget.approved:
+            raise ValueError("paid provider execution requires an approved VND budget")
+        if self.external_execution_enabled and self.verified_gate_required and self.execution_gate is None:
+            raise ValueError("external provider execution requires a verified gate bundle")
         return self
 
 
@@ -163,12 +265,22 @@ class ProviderCallContext(StrictModel):
     project_id: str | None = Field(default=None, max_length=80)
     job_id: str | None = Field(default=None, max_length=80)
     provider_key: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{1,119}$")
+    model: str | None = Field(default=None, max_length=160)
     capability: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{1,119}$")
     operation: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{1,159}$")
     external_call: bool
     paid: bool
     estimated_cost_vnd: Decimal | None = Field(default=None, ge=0)
     credential_alias: str | None = Field(default=None, max_length=240)
+    asset_id: str | None = Field(default=None, max_length=160)
+    asset_hash: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    input_media_kind: Literal["image", "video", "audio", "document"] | None = None
+    input_width: int | None = Field(default=None, ge=1)
+    input_height: int | None = Field(default=None, ge=1)
+    requested_frames: int | None = Field(default=None, ge=1, le=32)
+    image_detail: Literal["low", "high", "auto"] | None = None
+    input_token_ceiling: int | None = Field(default=None, ge=1)
+    max_output_tokens: int | None = Field(default=None, ge=256, le=32_768)
     rights_required: bool = False
     rights: list[ProviderRightsEvidence] = Field(default_factory=list, max_length=100)
 
@@ -405,7 +517,31 @@ class ProviderSafetyController:
 
     async def preflight(self, context: ProviderCallContext) -> ProviderSafetyDecision:
         now = self._clock()
-        rights = self.evaluate_rights(context.rights, required=context.rights_required, now=now)
+        rights_records: Sequence[ProviderRightsEvidence] = context.rights
+        if context.external_call and self.policy.verified_gate_required:
+            scope = self.policy.execution_gate
+            if scope is None:
+                rights = self.evaluate_rights(
+                    rights_records,
+                    required=context.rights_required,
+                    now=now,
+                )
+                return self._denied(context, "VERIFIED_GATE_BUNDLE_REQUIRED", rights)
+            rights_records = (scope.rights_record,)
+            rights = self.evaluate_rights(
+                rights_records,
+                required=context.rights_required,
+                now=now,
+            )
+            scope_denial = self._verified_scope_denial(scope, context=context, now=now)
+            if scope_denial is not None:
+                return self._denied(context, scope_denial, rights)
+        else:
+            rights = self.evaluate_rights(
+                rights_records,
+                required=context.rights_required,
+                now=now,
+            )
         if not context.external_call:
             if not rights.allowed:
                 return self._denied(context, rights.code, rights)
@@ -476,6 +612,56 @@ class ProviderSafetyController:
                 circuit_state=circuit.state,
                 rights=rights,
             )
+
+    @staticmethod
+    def _verified_scope_denial(
+        scope: ProviderExecutionGateScope,
+        *,
+        context: ProviderCallContext,
+        now: datetime,
+    ) -> str | None:
+        current = now if now.tzinfo is not None else now.replace(tzinfo=timezone.utc)
+        current = current.astimezone(timezone.utc)
+        if current < scope.valid_from_utc.astimezone(timezone.utc):
+            return "VERIFIED_GATE_NOT_ACTIVE"
+        if current >= scope.expires_at_utc.astimezone(timezone.utc):
+            return "VERIFIED_GATE_EXPIRED"
+        if current.date() != scope.budget_day_utc:
+            return "VERIFIED_GATE_BUDGET_DAY_MISMATCH"
+        if context.provider_key != scope.provider_key:
+            return "PROVIDER_NOT_AUTHORIZED"
+        if context.model != scope.model:
+            return "MODEL_NOT_AUTHORIZED"
+        if context.capability != scope.capability:
+            return "CAPABILITY_NOT_AUTHORIZED"
+        if context.credential_alias != scope.credential_alias:
+            return "CREDENTIAL_ALIAS_NOT_AUTHORIZED"
+        operation = scope.operation_for(context.operation_key)
+        if operation is None:
+            return "OPERATION_NOT_ALLOWLISTED"
+        if context.operation != operation.operation:
+            return "OPERATION_SCOPE_MISMATCH"
+        if context.asset_id != operation.asset_id or context.asset_hash != operation.asset_hash:
+            return "RIGHTS_ASSET_BINDING_MISMATCH"
+        if context.input_media_kind != "image":
+            return "INPUT_MEDIA_KIND_NOT_AUTHORIZED"
+        if context.input_width is None or context.input_height is None:
+            return "INPUT_DIMENSIONS_REQUIRED"
+        if max(context.input_width, context.input_height) > scope.max_dimension_pixels:
+            return "INPUT_DIMENSION_LIMIT_EXCEEDED"
+        if context.requested_frames != scope.max_frames:
+            return "FRAME_LIMIT_MISMATCH"
+        if context.image_detail != scope.image_detail:
+            return "IMAGE_DETAIL_MISMATCH"
+        if context.input_token_ceiling != scope.input_token_ceiling:
+            return "INPUT_TOKEN_CEILING_MISMATCH"
+        if context.max_output_tokens != scope.max_output_tokens:
+            return "OUTPUT_TOKEN_LIMIT_MISMATCH"
+        if context.estimated_cost_vnd is None:
+            return "COST_ESTIMATE_REQUIRED"
+        if context.estimated_cost_vnd != scope.per_operation_limit_vnd:
+            return "COST_RESERVATION_MISMATCH"
+        return None
 
     async def execute(
         self,
@@ -1035,21 +1221,47 @@ def _payload_matches_content_type(payload: bytes, content_type: str) -> bool:
 
 
 def provider_safety_policy_from_settings(settings: Any) -> ProviderSafetyPolicy:
-    """Build the active policy without reading credential values or external approval files."""
+    """Build the active policy without reading credential values.
+
+    A verified gate bundle contains approval metadata and hashes only. It is read from a protected
+    file, hash-pinned by deployment configuration, and never contains provider credential values.
+    """
+
+    execution_gate: ProviderExecutionGateScope | None = None
+    if settings.provider_verified_gate_bundle_enabled:
+        from .provider_gate_loader import load_verified_provider_gate_bundle
+
+        execution_gate = load_verified_provider_gate_bundle(
+            settings.provider_verified_gate_bundle_file,
+            expected_bundle_sha256=settings.provider_verified_gate_bundle_sha256,
+            expected_rc_commit=settings.provider_gate_expected_rc_commit,
+            expected_rc_tag=settings.provider_gate_expected_rc_tag,
+        )
+    gate_loaded = execution_gate is not None
 
     return ProviderSafetyPolicy(
         external_execution_enabled=bool(settings.provider_external_execution_enabled),
         paid_execution_enabled=bool(settings.provider_paid_execution_enabled),
         global_kill_switch_engaged=bool(settings.provider_global_kill_switch_engaged),
-        # G-01/G-02/G-03 are intentionally not inferred from environment values. A later,
-        # separately owner-gated PR must introduce verified approval-record loading.
-        credential_gate_approved=False,
-        rights_gate_approved=False,
+        credential_gate_approved=gate_loaded,
+        rights_gate_approved=gate_loaded,
+        verified_gate_required=True,
+        execution_gate=execution_gate,
         budget=ProviderBudgetPolicy(
             currency=settings.provider_budget_currency,
-            approved=False,
-            per_operation_limit_vnd=settings.provider_per_operation_limit_vnd,
-            daily_limit_vnd=settings.provider_daily_limit_vnd,
+            approved=gate_loaded,
+            owner_approval_id=(execution_gate.budget_approval_id if execution_gate else None),
+            per_operation_limit_vnd=(
+                execution_gate.per_operation_limit_vnd
+                if execution_gate
+                else settings.provider_per_operation_limit_vnd
+            ),
+            daily_limit_vnd=(
+                execution_gate.acceptance_window_limit_vnd
+                if execution_gate
+                else settings.provider_daily_limit_vnd
+            ),
+            expires_at=(execution_gate.expires_at_utc if execution_gate else None),
         ),
         retry=ProviderRetryPolicy(
             max_attempts=settings.provider_retry_max_attempts,

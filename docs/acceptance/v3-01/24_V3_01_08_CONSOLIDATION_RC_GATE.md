@@ -45,10 +45,11 @@ human quality or a 48-hour soak.
 The canonical row-level source remains [`02_ACCEPTANCE_MATRIX.csv`](02_ACCEPTANCE_MATRIX.csv).
 V3-01-08 changes no matrix axis because it creates no new runtime evidence.
 
-Post-consolidation note: V3-01-09 is an unmerged adapter remediation based on RC-1. Its mock-only
-evidence changes GAP-003 from `OPEN` to `IN_PROGRESS`, producing a current register of 4 open,
-11 in progress and 1 remediated. It does not alter this checkpoint's RC-1 lock, production verdict
-or any real-provider/production-path/quality axis.
+Post-consolidation update: V3-01-09 later merged as RC-2
+`5936aa7a9656d728be751d0ee61011fc1a5abc7a`. Its mock-only evidence changes GAP-003 from `OPEN` to
+`IN_PROGRESS`, producing a current register of 4 open, 11 in progress and 1 remediated. V3-01-10
+is an unmerged gate-loader remediation and does not alter the production verdict or any
+real-provider/production-path/quality axis.
 
 | Axis | PASS | FAIL | NOT_TESTED | N/A | Decision |
 |---|---:|---:|---:|---:|---|
@@ -158,16 +159,17 @@ receipt, alert gap or safety-flag drift fails the staging window.
 
 ## Cost envelope
 
-Current effective envelope is immutable until G-02:
+The checked-in effective envelope remains fail-closed:
 
 | Capability | Maximum calls | Per-operation limit | Daily limit | Paid execution |
 |---|---:|---:|---:|---|
 | Every external provider and platform | 0 | 0 VND | 0 VND | false |
 
-The future G-02 record must supply owner-approved values rather than defaults. It must include the
-provider/capability, pricing source/time, VND conversion rule if required, calls/media units,
-retry/poll maximums, 50%/80% alerts, 100% hard stop and expiry. Failed, moderated, timed-out and
-retried calls count toward spend. Missing usage or cost evidence is a test failure.
+G-02-A later approved a preparation-only envelope for two OpenAI Vision operations: 500 VND per
+operation, 1,250 VND per acceptance window, no retry, concurrency one and maximum four hours in a
+single UTC budget day. That envelope is inactive and grants no call authority. A runtime record
+must still bind exact RC-3, dated pricing/window, operation IDs and G-03-A. Failed, moderated,
+timed-out and retried calls count toward spend. Missing usage or cost evidence is a test failure.
 
 ## Rights and credential plan
 
@@ -193,8 +195,8 @@ deployment or real-provider execution now** because ten P0 gaps remain unverifie
 production-path rows are `NOT_TESTED`, 36 real-provider rows and 36 quality rows remain
 `NOT_TESTED`, and G-01 through G-07 plus G-09 through G-12 are pending.
 
-The consolidation merge and RC-1 lock are complete. V3-01-09 now adds the missing OpenAI Vision
-adapter on an unmerged branch, so the exact next decision is a new G-08 for that adapter PR. If it
-is merged, RC-1 is not eligible for adapter acceptance; run exact-main regression and lock RC-2.
-Only then consider G-01-A for one named provider capability. Do not combine G-01-A, G-02-A,
-G-03-A or an execution in the same decision.
+This section records the historical V3-01-08 checkpoint. PR #22 later merged the missing OpenAI
+Vision adapter and RC-2 was locked. G-01-A/G-02-A now cover preparation only. The exact next
+decision is G-03-A for the checked-in owned image plus a new G-08 for V3-01-10. If V3-01-10 merges,
+run exact-main regression, lock RC-3 and rebind all runtime records before any separate execution
+decision.

@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-08 plus unmerged V3-01-09 adapter remediation
-RELEASE CANDIDATE: RC-1 f42a1709cba6f087369c1636bab9bd06053f7613 LOCKED FOR CONTROLLED PLANNING ONLY; NOT DEPLOYED
+SCOPE: merged V3-01-00 through V3-01-09 plus unmerged V3-01-10 gate-loader remediation
+RELEASE CANDIDATE: RC-2 5936aa7a9656d728be751d0ee61011fc1a5abc7a LOCKED FOR CONTROLLED PLANNING ONLY; NOT DEPLOYED
 LATEST EVIDENCE RUN: vf-v3-01-20260828T094813Z-fe4837b (earlier runs remain separately retained)
 DATE: 2026-08-28
-OWNER DECISION: G-00 APPROVED; BOUNDED G-08 RECORDS CONSUMED BY PR #12 THROUGH PR #20; V3-01-09 G-08 AND ALL EXECUTION GATES PENDING
+OWNER DECISION: G-00 APPROVED; G-08 RECORDS CONSUMED THROUGH PR #22; G-01-A/G-02-A PREPARATION ONLY; G-03-A AND V3-01-10 G-08 PENDING
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -34,7 +34,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
 | Allowed scope | LOCAL/CI remediation, static/mock/security tests, redacted evidence, draft PRs |
-| Disabled scope | V3-01-09 merge, deploy, paid/provider calls, public ingress, publish, production analytics, external notifications |
+| Disabled scope | V3-01-10 merge, credential-value access, paid/provider calls, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
 
@@ -48,8 +48,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 ## Evidence
 
 - baseline run: `vf-v3-01-20260827T120208Z-cae40ed`;
-- exact merged `main` and locked planning-only RC-1: `f42a1709cba6f087369c1636bab9bd06053f7613` (`vf-v3-01-rc1`);
-- V3-01-09 code-only commit: `fe4837bfd2ae0436f5fca557eab6101ca4cf5654` (unmerged; not RC-2);
+- exact merged `main` and locked planning-only RC-2: `5936aa7a9656d728be751d0ee61011fc1a5abc7a` (`vf-v3-01-rc2`);
+- V3-01-09 PR #22 exact head: `e6651948751fc8789ff83f91e0e7e8f88564e2aa`; merged into RC-2;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
 - production image digest: none;
@@ -62,8 +62,9 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - owner approval IDs: `V3-01-APP-001` for G-00, `V3-01-APP-002` for only PR #12/#13,
   `V3-01-APP-003` for only PR #14, `V3-01-APP-004` for only PR #15,
   `V3-01-APP-005` for only PR #16, `V3-01-APP-006` for only PR #17,
-  `V3-01-APP-007` for only PR #18, `V3-01-APP-008` for only PR #19 and
-  `V3-01-APP-009` for only PR #20.
+  `V3-01-APP-007` for only PR #18, `V3-01-APP-008` for only PR #19,
+  `V3-01-APP-009` for only PR #20, `V3-01-APP-010` for only PR #22,
+  `V3-01-APP-011` for G-01-A preparation and `V3-01-APP-012` for G-02-A preparation.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -120,19 +121,26 @@ duplicate, missing-credential, rights and budget tests through MockTransport. Ex
 actual spend are both zero. GAP-003 moves from `OPEN` to `IN_PROGRESS`; every real/provider,
 production-path and quality axis remains unchanged.
 
+V3-01-10 adds a verified acceptance gate loader and one internally generated G-03-A candidate.
+The loader binds raw/canonical hashes, exact RC, G-01/G-02/G-03 records, a dated VND envelope,
+exactly two operation IDs and the asset SHA-256; it checks expiry and reserves cost atomically in
+the durable ledger. The checked-in RightsRecord is deliberately `BLOCKED` pending owner G-03-A.
+This remediation performs zero external calls, spends 0 VND and changes no acceptance axis.
+
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
-[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-09 sequence is defined in
+[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-10 sequence is defined in
 [`14_REMEDIATION_PR_PLAN.md`](14_REMEDIATION_PR_PLAN.md). No exception or expiry is recorded.
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; `V3-01-APP-002` through `V3-01-APP-009` are consumed.
-  V3-01-09 requires a new explicit G-08.
-- **Deploy:** no; RC-1 is planning-only and G-09 is pending.
+- **Merge:** none currently authorized; `V3-01-APP-002` through `V3-01-APP-010` are consumed.
+  V3-01-10 requires a new explicit G-08.
+- **Deploy:** no; RC-2 is planning-only and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
-- **Volume/concurrency/budget:** zero real-provider calls; 0 VND.
+- **Volume/concurrency/budget:** zero real-provider calls and 0 VND actual; G-02-A envelope is
+  preparation-only and inactive.
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited:** credentials use, paid calls, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.

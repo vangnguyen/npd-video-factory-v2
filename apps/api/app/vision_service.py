@@ -112,18 +112,37 @@ class VisionAnalysisService:
             await self.object_storage.download_file(object_key=asset.object_key, destination=local_path)
             if sha256_file(local_path) != asset.checksum_sha256:
                 raise ValueError("downloaded Vision source checksum does not match the asset record")
+            operation_key = (
+                payload.acceptance_operation_id
+                if self.provider.external_call and payload.acceptance_operation_id
+                else f"{vision_analysis_id}:vision"
+            )
             execution = await self.provider_safety.execute(
                 ProviderCallContext(
-                    operation_key=f"{vision_analysis_id}:vision",
+                    operation_key=operation_key,
                     workspace_id=asset.workspace_id,
                     project_id=asset.project_id,
                     provider_key=self.provider.key,
+                    model=self.provider.model,
                     capability="vision",
                     operation="vision_analysis",
                     external_call=self.provider.external_call,
                     paid=self.provider.paid,
                     estimated_cost_vnd=self.provider.estimated_cost_vnd,
                     credential_alias=self.provider.credential_alias,
+                    asset_id=asset.asset_id,
+                    asset_hash=asset.checksum_sha256,
+                    input_media_kind=(
+                        base.source_media.media_kind
+                        if base.source_media.media_kind in {"image", "video", "audio", "document"}
+                        else None
+                    ),
+                    input_width=base.source_media.width,
+                    input_height=base.source_media.height,
+                    requested_frames=getattr(self.provider, "max_frames", None),
+                    image_detail=getattr(self.provider, "image_detail", None),
+                    input_token_ceiling=getattr(self.provider, "input_token_ceiling", None),
+                    max_output_tokens=getattr(self.provider, "max_output_tokens", None),
                     rights_required=self.provider.external_call,
                     rights=[],
                 ),

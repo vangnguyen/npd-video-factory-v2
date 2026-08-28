@@ -40,7 +40,11 @@ removed from active timelines; no evidence is silently deleted.
 
 ## Current scope boundary
 
-No real asset was downloaded, uploaded to a provider, generated, published or redistributed during
-this audit. G-03 remains pending.
+No external asset was downloaded, uploaded to a provider, published or redistributed during this
+audit. V3-01-10 creates one deterministic internal test card entirely from checked-in drawing code:
+[`assets/g03-a-owned-vision-test.png`](assets/g03-a-owned-vision-test.png), SHA-256
+`a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e`. Its candidate record
+[`V3-01-RIGHTS-G03A-001`](rights/V3-01-RIGHTS-G03A-001.json) remains `BLOCKED` pending explicit
+owner G-03-A. It is acceptance input only, not commercial creative or publication approval.
 
 Open gap: `V3-01-GAP-013`.

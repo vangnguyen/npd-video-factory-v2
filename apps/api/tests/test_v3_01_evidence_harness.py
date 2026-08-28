@@ -128,6 +128,39 @@ def test_approval_validation_rejects_filename_mismatch(tmp_path: Path) -> None:
         HARNESS.validate_approval_records(docs)
 
 
+def test_rights_validation_rejects_filename_mismatch(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    schemas = docs / "schemas"
+    rights = docs / "rights"
+    schemas.mkdir(parents=True)
+    rights.mkdir()
+    source_schema = (
+        REPO_ROOT
+        / "docs"
+        / "acceptance"
+        / "v3-01"
+        / "schemas"
+        / "rights-record.schema.json"
+    )
+    (schemas / source_schema.name).write_text(
+        source_schema.read_text(encoding="utf-8"), encoding="utf-8"
+    )
+    record = json.loads(
+        (
+            REPO_ROOT
+            / "docs"
+            / "acceptance"
+            / "v3-01"
+            / "rights"
+            / "V3-01-RIGHTS-G03A-001.json"
+        ).read_text(encoding="utf-8")
+    )
+    (rights / "WRONG-ID.json").write_text(json.dumps(record), encoding="utf-8")
+
+    with pytest.raises(HARNESS.ValidationFailure, match="filename does not match"):
+        HARNESS.validate_rights_records(docs)
+
+
 def test_checked_in_v3_01_register_is_complete() -> None:
     HARNESS.validate_repo(REPO_ROOT)
 

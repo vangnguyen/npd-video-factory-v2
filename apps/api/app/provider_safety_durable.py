@@ -62,7 +62,31 @@ class DurableProviderSafetyController(ProviderSafetyController):
             return await super().preflight(context)
 
         now = self._clock()
-        rights = self.evaluate_rights(context.rights, required=context.rights_required, now=now)
+        rights_records = context.rights
+        if self.policy.verified_gate_required:
+            scope = self.policy.execution_gate
+            if scope is None:
+                rights = self.evaluate_rights(
+                    rights_records,
+                    required=context.rights_required,
+                    now=now,
+                )
+                return self._denied(context, "VERIFIED_GATE_BUNDLE_REQUIRED", rights)
+            rights_records = [scope.rights_record]
+            rights = self.evaluate_rights(
+                rights_records,
+                required=context.rights_required,
+                now=now,
+            )
+            scope_denial = self._verified_scope_denial(scope, context=context, now=now)
+            if scope_denial is not None:
+                return self._denied(context, scope_denial, rights)
+        else:
+            rights = self.evaluate_rights(
+                rights_records,
+                required=context.rights_required,
+                now=now,
+            )
         denied = self._static_denial(context, rights, now)
         if denied is not None:
             return denied
