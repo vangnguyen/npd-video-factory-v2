@@ -165,7 +165,7 @@ def test_checked_in_v3_01_register_is_complete() -> None:
     HARNESS.validate_repo(REPO_ROOT)
 
 
-def test_v3_01_08_snapshot_and_v3_01_09_gap_delta_are_consistent() -> None:
+def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     docs = REPO_ROOT / "docs" / "acceptance" / "v3-01"
     contract_path = (
         REPO_ROOT
@@ -207,7 +207,13 @@ def test_v3_01_08_snapshot_and_v3_01_09_gap_delta_are_consistent() -> None:
     gap_003 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-003")
     assert gap_003["status"] == "IN_PROGRESS"
     assert "EV-V3-OPENAI-VISION-ADAPTER-001" in gap_003["evidence_ids"]
-    assert gap_003["verified_on_commit"] == "fe4837bfd2ae0436f5fca557eab6101ca4cf5654"
+    assert "EV-V3-VERIFIED-GATE-LOADER-001" in gap_003["evidence_ids"]
+    assert gap_003["verified_on_commit"] == "e7e9ccceeb97830db47d66cfa392c854f8a2e2e4"
+    for gap_id in ("V3-01-GAP-010", "V3-01-GAP-013"):
+        gap = next(row for row in gaps if row["gap_id"] == gap_id)
+        assert gap["status"] == "IN_PROGRESS"
+        assert "EV-V3-VERIFIED-GATE-LOADER-001" in gap["evidence_ids"]
+        assert gap["verified_on_commit"] == "e7e9ccceeb97830db47d66cfa392c854f8a2e2e4"
     assert contract["gaps"]["by_severity"] == dict(Counter(row["severity"] for row in gaps))
     assert contract["production_verdict"] == "NO-GO"
     assert contract["rc_candidate"]["status"] == "CONDITIONAL-RC"
