@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-05",
+  "commit_sha": "2563dfd4735fd24497fd285d40e2173093c0a351",
+  "suite": "apps/api/tests/test_flow_b_acceptance.py",
+  "tests_passed": 17,
+  "tests_failed": 0,
+  "assertions": [
+    "two locked-commit fixture runs pass only the contract/mock axis",
+    "fixture providers and fixture research sources cannot claim real evidence",
+    "fixture assets cannot satisfy the real-provider axis after gates open",
+    "claim-source and verified-claim coverage are independently measured",
+    "originality similarity threshold fails closed",
+    "storyboard/media-plan and visual asset coverage are measured",
+    "rights, provider receipts, transformation lineage and provider references are enforced",
+    "visual relevance, TTS duration and subtitle drift thresholds are measured",
+    "loudness, peak, clipping, speech/music ratio and ducking fail closed",
+    "timeline/render-input approval hashes and restart recovery are required",
+    "render resolution and decoded technical QC are enforced",
+    "VND is the only accepted currency",
+    "real-provider, production-path and human-quality axes require separate owner gates"
+  ],
+  "external_execution": false,
+  "paid_execution": false,
+  "budget_vnd": 0,
+  "global_kill_switch_engaged": true,
+  "credentials_used": false,
+  "production_path_tested": false,
+  "human_quality_accepted": false,
+  "publish_performed": false,
+  "result": "PASS"
+}

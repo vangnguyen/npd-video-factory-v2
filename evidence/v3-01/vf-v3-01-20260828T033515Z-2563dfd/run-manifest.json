@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260828T033515Z-2563dfd",
+  "started_at_utc": "2026-08-28T01:00:00Z",
+  "completed_at_utc": "2026-08-28T04:01:23Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "2563dfd4735fd24497fd285d40e2173093c0a351",
+  "base_sha": "e06ac3c76b03c7923c83aeeeda23281c1b83d45a",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-05-remediation",
+  "environment": "CI",
+  "container_images": [],
+  "database_migration_version": "0011_v3_01_03",
+  "config_fingerprint_redacted": "flow-b-contract-fixtures-provider-external-false-paid-false-zero-vnd-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "research",
+      "provider": "fixture-research",
+      "model_or_workflow": "deterministic-research-v1",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    },
+    {
+      "capability": "stock",
+      "provider": "fixture-stock",
+      "model_or_workflow": "deterministic-stock-v1",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    },
+    {
+      "capability": "ai_image",
+      "provider": "fixture-ai-image",
+      "model_or_workflow": "deterministic-image-v1",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    },
+    {
+      "capability": "ai_video",
+      "provider": "fixture-ai-video",
+      "model_or_workflow": "deterministic-video-v1",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    },
+    {
+      "capability": "vision",
+      "provider": "fixture-vision",
+      "model_or_workflow": "deterministic-vision-v1",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    },
+    {
+      "capability": "tts",
+      "provider": "fixture-tts",
+      "model_or_workflow": "deterministic-tts-v1",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "FLB-001",
+    "FLB-002",
+    "SEC-004",
+    "CI-LOCAL-REGRESSION"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "flows/flow-b-idea-ai-video/evaluation.json",
+    "flows/flow-b-idea-ai-video/regression-summary.json",
+    "flows/flow-b-idea-ai-video/test-summary.json",
+    "flows/flow-b-idea-ai-video/two-run-contract.json",
+    "matrix/evidence-EV-V3-FLOW-B-CONTRACT-001.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-002",
+    "V3-01-GAP-004",
+    "V3-01-GAP-005",
+    "V3-01-GAP-013",
+    "V3-01-GAP-016"
+  ],
+  "owner_gate_ids": ["G-00"],
+  "result": "BLOCKED"
+}

@@ -4,9 +4,9 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 through V3-01-03 are merged at exact `main`
-`4779ddcb1af5cc0138922ea144ddf4496fc313f1`. Entries below that mention V3-01-04 describe
-local/CI remediation on `remediation/v3-01-04-flow-a-closure`, not production.
+V3-01-01 through V3-01-04 are merged at exact `main`
+`e06ac3c76b03c7923c83aeeeda23281c1b83d45a`. Entries below that mention V3-01-05 describe
+local/CI remediation on `remediation/v3-01-05-flow-b-closure`, not production.
 
 ## Foundation
 
@@ -29,6 +29,7 @@ local/CI remediation on `remediation/v3-01-04-flow-a-closure`, not production.
 | Research/claim ledger | no claim-level source ledger located | none | Missing |
 | Originality/similarity | no enforceable guard located | none | Missing |
 | Immutable script versions | script JSON is a job artifact, not a claim-linked version model | pipeline tests only | Does not meet V3 acceptance |
+| Flow B acceptance plane | `flow_b_acceptance.py`, strict VND policy and offline evaluator | 17 focused tests plus two-run redacted fixture evidence | Contract/mock PASS; runtime research/originality and all real axes remain blocked |
 
 ## Upload, Auto Edit, Vision and media
 
@@ -40,6 +41,7 @@ local/CI remediation on `remediation/v3-01-04-flow-a-closure`, not production.
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |
 | ComfyUI | `services/comfyui-bridge`, eight allowlisted workflows | bridge unit tests | Mock/disabled backend only; no GPU evidence |
+| Flow B cross-stage evidence | source/claim/script/storyboard/provider/asset/audio/render hash contract | `EV-V3-FLOW-B-CONTRACT-001` | Two locked-commit fixtures PASS; no real source/provider or production path |
 
 ## Studio, production and QC
 
