@@ -4,9 +4,10 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 through V3-01-07 are merged at exact `main`
-`b132e839904b377ec7e82e9135920f895ddf704e`. V3-01-08 is a consolidation/RC review only;
-none of these local/CI entries establish production-path, real-provider or quality acceptance.
+V3-01-01 through V3-01-08 are merged at exact `main`
+`f42a1709cba6f087369c1636bab9bd06053f7613`, tagged `vf-v3-01-rc1` for controlled acceptance
+planning only. V3-01-09 is an unmerged OpenAI Vision adapter remediation based on RC-1. None of
+these local/CI entries establish production-path, real-provider or quality acceptance.
 
 ## Foundation
 
@@ -37,7 +38,7 @@ none of these local/CI entries establish production-path, real-provider or quali
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
 | Transcript/scene/silence/highlight | `auto_edit_providers.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py` | Auto Edit suite and measured two-run fixture evidence | Contract/mock PASS with pre-call safety; real accuracy absent |
-| Vision/reframe | `vision_*`, `flow_a_acceptance.py` | Vision suite, measured two-run fixture evidence and E2E | Contract/mock PASS with pre-call safety; real provider absent |
+| Vision/reframe | `vision_*`, `openai_vision_provider.py`, `flow_a_acceptance.py` | fixture/E2E plus V3-01-09 strict Responses-schema, retry/circuit/rights/budget/secret tests | OpenAI `gpt-5-mini` adapter implemented/mock-tested and disabled; real provider absent |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |
 | ComfyUI | `services/comfyui-bridge`, eight allowlisted workflows | bridge unit tests | Mock/disabled backend only; no GPU evidence |
@@ -71,7 +72,7 @@ none of these local/CI entries establish production-path, real-provider or quali
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
 | Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
-| Provider safety plane | `provider_safety*.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention tests, full regression and Docker E2E | PostgreSQL-backed local contract passes; external execution hard-blocked |
+| Provider safety plane | `provider_safety*.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention plus V3-01-09 pre-secret/pre-network denial tests | PostgreSQL-backed local contract passes; external execution hard-blocked; local key excluded from Compose containers |
 | Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart and configuration tests | Implemented/mock-tested; production-like multi-instance and real acceptance absent |
 | Upload malware boundary | quarantine state, archive-deny policy, deterministic EICAR contract and internal clamd client | `test_auto_edit_analysis.py`, migration replay | Local/mock PASS; clamd and edge/WAF not deployed |
 | Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests | Schema/hook implemented; real rights unaccepted |

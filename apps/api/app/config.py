@@ -41,6 +41,15 @@ class Settings(BaseSettings):
     vision_fixture_enabled: bool = True
     vision_provider: str = "fixture"
     vision_staging_root: Path = Path("/workspace/storage/vision")
+    openai_vision_model: str = "gpt-5-mini"
+    openai_vision_credential_alias: str = "secret://openai/codex-video"
+    openai_vision_image_detail: str = "high"
+    openai_vision_max_frames: int = 8
+    openai_vision_max_output_tokens: int = 8000
+    openai_vision_estimated_cost_vnd: Decimal = Decimal("0")
+    openai_vision_input_vnd_per_million_tokens: Decimal = Decimal("0")
+    openai_vision_cached_input_vnd_per_million_tokens: Decimal = Decimal("0")
+    openai_vision_output_vnd_per_million_tokens: Decimal = Decimal("0")
     media_fixture_enabled: bool = False
     stock_media_provider: str = "contract"
     image_generation_provider: str = "contract"
@@ -252,8 +261,8 @@ class Settings(BaseSettings):
             raise ValueError("TRANSCRIPTION_PROVIDER must be fixture or contract")
         if self.auto_edit_signal_provider not in {"fixture", "ffmpeg"}:
             raise ValueError("AUTO_EDIT_SIGNAL_PROVIDER must be fixture or ffmpeg")
-        if self.vision_provider not in {"fixture", "contract"}:
-            raise ValueError("VISION_PROVIDER must be fixture or contract")
+        if self.vision_provider not in {"fixture", "contract", "openai"}:
+            raise ValueError("VISION_PROVIDER must be fixture, contract or openai")
         if self.stock_media_provider not in {"fixture", "contract"}:
             raise ValueError("STOCK_MEDIA_PROVIDER must be fixture or contract")
         if self.image_generation_provider not in {"fixture", "contract", "comfyui"}:
@@ -266,6 +275,30 @@ class Settings(BaseSettings):
             raise ValueError("fixture media signals require AUTO_EDIT_FIXTURE_ENABLED=true")
         if self.vision_provider == "fixture" and not self.vision_fixture_enabled:
             raise ValueError("fixture Vision provider requires VISION_FIXTURE_ENABLED=true")
+        if self.openai_vision_model != "gpt-5-mini":
+            raise ValueError("OPENAI_VISION_MODEL is locked to gpt-5-mini in V3-01-09")
+        if not self.openai_vision_credential_alias.startswith(
+            ("secret://", "vault://", "external://")
+        ):
+            raise ValueError("OpenAI Vision credentials must be referenced by external alias")
+        if self.openai_vision_image_detail not in {"low", "high", "auto"}:
+            raise ValueError("OPENAI_VISION_IMAGE_DETAIL must be low, high or auto")
+        if not 1 <= self.openai_vision_max_frames <= 32:
+            raise ValueError("OPENAI_VISION_MAX_FRAMES must be between 1 and 32")
+        if not 256 <= self.openai_vision_max_output_tokens <= 32768:
+            raise ValueError("OPENAI_VISION_MAX_OUTPUT_TOKENS is outside the supported range")
+        vision_cost_values = (
+            self.openai_vision_estimated_cost_vnd,
+            self.openai_vision_input_vnd_per_million_tokens,
+            self.openai_vision_cached_input_vnd_per_million_tokens,
+            self.openai_vision_output_vnd_per_million_tokens,
+        )
+        if any(value < 0 for value in vision_cost_values):
+            raise ValueError("OpenAI Vision VND cost configuration cannot be negative")
+        if self.vision_provider == "openai" and self.openai_base_url.rstrip("/") != (
+            "https://api.openai.com"
+        ):
+            raise ValueError("OpenAI Vision requires the official HTTPS API origin")
         if (
             "fixture"
             in {self.stock_media_provider, self.image_generation_provider, self.video_generation_provider}

@@ -48,6 +48,7 @@ REQUIRED_DOCS = (
     "22_V3_01_06_FLOW_C_CLOSURE.md",
     "23_V3_01_07_DR_OBSERVABILITY.md",
     "24_V3_01_08_CONSOLIDATION_RC_GATE.md",
+    "25_V3_01_09_OPENAI_VISION_ADAPTER.md",
 )
 SENSITIVE_KEY = re.compile(
     r"(^|_)(authorization|cookie|password|passwd|secret|token|api_key|private_key|client_secret)($|_)",

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-OPENAI-VISION-ADAPTER-001",
+  "test_case_id": "PRO-001-MOCK-CONTRACT",
+  "matrix_rows": [
+    "VIS-01"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "fe4837bfd2ae0436f5fca557eab6101ca4cf5654",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-mocktransport",
+    "model_or_workflow": "gpt-5-mini Responses strict structured output",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "871444b6e3fb80733305d4a04080a9819001e4a175fa2a83a3aed40a46794a02",
+  "started_at_utc": "2026-08-28T09:48:13.2023357Z",
+  "completed_at_utc": "2026-08-28T09:48:19.3985775Z",
+  "duration_seconds": 6.196,
+  "result": "PASS",
+  "assertion": "The disabled OpenAI gpt-5-mini Vision adapter passes 36 focused contract tests through httpx MockTransport. Tests cover strict Responses schema, image and bounded video-frame evidence, Vietnamese OCR, composition, subject and safe-crop mapping, request/response/artifact hashes, latency, VND receipts, missing credentials, malformed responses, timeout, bounded retry, circuit breaker, duplicate operation, rights rejection and budget denial. The safety controller blocks before secret resolution and network under checked-in defaults. External calls and actual cost were both zero; no real-provider, production-path or quality acceptance is claimed.",
+  "correlation_id": "v3-01-09-openai-vision-fe4837b",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex deterministic adapter contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "From apps/api on commit fe4837bfd2ae0436f5fca557eab6101ca4cf5654 with OPENAI_API_KEY explicitly empty, run: python -m pytest tests/test_openai_vision_provider.py tests/test_safety_config.py tests/test_vision_analysis.py -q. The transport is injected MockTransport only; do not enable provider execution."
+}

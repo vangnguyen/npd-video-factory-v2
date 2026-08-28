@@ -63,6 +63,7 @@ class ProviderVisionFrame:
 class ProviderVisionResult:
     frames: tuple[ProviderVisionFrame, ...]
     provenance: dict[str, object]
+    actual_cost_vnd: Decimal | None = None
 
 
 class VisionProvider(Protocol):

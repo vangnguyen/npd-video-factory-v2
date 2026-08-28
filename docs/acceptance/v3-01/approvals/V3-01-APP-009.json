@@ -1,0 +1,29 @@
+{
+  "approval_id": "V3-01-APP-009",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #20 V3-01-08 consolidation and RC review into main after exact-head CI, exact-main regression, and lock RC-1 for controlled acceptance planning only.",
+  "artifact_or_commit_hashes": [
+    "b132e839904b377ec7e82e9135920f895ddf704e",
+    "a8a2cecc620cae4fc3bd072b53489db8b2acd7ec",
+    "f42a1709cba6f087369c1636bab9bd06053f7613"
+  ],
+  "target_account_or_environment": "GitHub repository main branch merge of PR #20 and annotated RC-1 tag only; no runtime environment",
+  "limits": [
+    "All five Video Factory V2 CI jobs must pass on exact PR #20 head before merge",
+    "Run exact-main regression after merge",
+    "RC-1 is conditional acceptance planning only and is not a production approval",
+    "No G-01 credential-use or real-provider execution authority",
+    "No G-02 budget authority; approved budget remains 0 VND",
+    "No G-03 real-input rights acceptance authority",
+    "Global provider kill switch remains engaged",
+    "No production deployment or public ingress",
+    "No remote publish or production analytics",
+    "No external notification delivery",
+    "No permission to merge V3-01-09 or any later remediation PR"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-28T08:35:55Z",
+  "expires_at_utc": null,
+  "notes": "Captured from the owner's explicit G-08 approval in the Codex task. PR #20 merged at 2026-08-28T08:35:56Z as f42a1709cba6f087369c1636bab9bd06053f7613; exact-main CI run 33155981828 passed 5/5; annotated tag vf-v3-01-rc1 peels to that commit. This record grants no runtime authority."
+}

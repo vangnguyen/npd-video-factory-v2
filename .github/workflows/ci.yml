@@ -155,7 +155,8 @@ jobs:
           grep -Fq 'paid_external_call: Literal[False] = False' apps/api/app/vision_models.py
           grep -Fq 'class ContractOnlyVisionProvider' apps/api/app/vision_providers.py
           grep -Fq 'real_provider_tested": False' apps/api/app/vision_providers.py
-          grep -Fq 'estimated_cost=Decimal("0")' apps/api/app/vision_service.py
+          grep -Fq 'estimated_cost_vnd = Decimal("0")' apps/api/app/vision_providers.py
+          grep -Fq 'estimated_cost=self.provider.estimated_cost_vnd or Decimal("0")' apps/api/app/vision_service.py
           grep -Fq 'self.provider_safety.execute(' apps/api/app/vision_service.py
           grep -q '0004_v2_05' apps/api/migrations/versions/0004_v2_05_vision_smart_reframe.py
           ! git grep -I -n -E 'VISION_(API_KEY|TOKEN|SECRET)=[^[:space:]]+' -- .
@@ -299,6 +300,21 @@ jobs:
           grep -qx 'OPERATIONS_EXTERNAL_NOTIFICATIONS_ENABLED=false' .env.example
           grep -Fq 'OPERATIONS_EXTERNAL_NOTIFICATIONS_ENABLED: "false"' deploy/production/docker-compose.production.yml
           ! git grep -I -n -E '^(OPERATIONS_EXTERNAL_NOTIFICATIONS_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_BUDGET_CURRENCY=USD)$' -- .env.example deploy/production
+      - name: Verify V3-01-09 OpenAI Vision adapter boundary
+        run: |
+          grep -Fq 'class OpenAIVisionProvider' apps/api/app/openai_vision_provider.py
+          grep -Fq '"store": False' apps/api/app/openai_vision_provider.py
+          grep -Fq '"type": "json_schema"' apps/api/app/openai_vision_provider.py
+          grep -Fq 'actual_cost=lambda result: result.actual_cost_vnd' apps/api/app/vision_service.py
+          grep -Fq 'if self.openai_vision_model != "gpt-5-mini"' apps/api/app/config.py
+          grep -qx 'VISION_PROVIDER=fixture' .env.example
+          grep -qx 'OPENAI_VISION_MODEL=gpt-5-mini' .env.example
+          grep -qx 'OPENAI_VISION_ESTIMATED_COST_VND=0' .env.example
+          grep -qx 'OPENAI_VISION_INPUT_VND_PER_MILLION_TOKENS=0' .env.example
+          grep -qx 'OPENAI_VISION_CACHED_INPUT_VND_PER_MILLION_TOKENS=0' .env.example
+          grep -qx 'OPENAI_VISION_OUTPUT_VND_PER_MILLION_TOKENS=0' .env.example
+          test "$(grep -Fc 'OPENAI_API_KEY: ""' docker-compose.yml)" -eq 4
+          ! git grep -I -n -E '^(VISION_PROVIDER=openai|OPENAI_API_KEY=.+|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|OPENAI_VISION_ESTIMATED_COST_VND=[1-9][0-9]*)$' -- .env.example docker-compose.yml deploy apps services
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

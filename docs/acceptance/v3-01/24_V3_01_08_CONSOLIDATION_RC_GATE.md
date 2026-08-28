@@ -5,14 +5,16 @@
 ```text
 PRODUCTION VERDICT: NO-GO
 RC REVIEW VERDICT: CONDITIONAL-RC FOR CONTROLLED ACCEPTANCE ONLY
-RC CANDIDATE COMMIT: b132e839904b377ec7e82e9135920f895ddf704e
+RC-1 COMMIT: f42a1709cba6f087369c1636bab9bd06053f7613
+RC-1 TAG: vf-v3-01-rc1
+RC-1 STATUS: LOCKED FOR CONTROLLED ACCEPTANCE PLANNING ONLY; NOT DEPLOYED
 RC IMAGE DIGEST: NOT BUILT OR LOCKED
 PRODUCTION-LIKE ENVIRONMENT: NOT AUTHORIZED OR CREATED
 REAL PROVIDER EXECUTION: NOT AUTHORIZED
 APPROVED REAL-PROVIDER BUDGET: 0 VND
 ```
 
-The exact `main` commit above contains V3-01-00 through V3-01-07 and is the first coherent candidate
+The exact `main` commit above contains V3-01-00 through V3-01-08 and is the first locked candidate
 for a controlled acceptance sequence. `CONDITIONAL-RC` means only that the repository foundation
 may be proposed for an owner-gated, locked acceptance candidate. It is not a production release,
 does not satisfy G-09, and does not change the repository production verdict from `NO-GO`.
@@ -24,8 +26,10 @@ dependencies, future provider/staging plans and current evidence boundaries.
 
 | Item | Consolidated result |
 |---|---|
-| PR #19 | merged under `V3-01-APP-008` as `b132e839904b377ec7e82e9135920f895ddf704e` |
-| Exact-main CI | run `33154214869`; Python, Studio, renderer, safety/Compose and Docker deterministic E2E |
+| PR #20 | merged under `V3-01-APP-009` as `f42a1709cba6f087369c1636bab9bd06053f7613` |
+| PR #20 exact-head CI | run `33155313793`; 5/5 PASS |
+| Exact-main CI | run `33155981828`; 5/5 PASS on `f42a1709cba6f087369c1636bab9bd06053f7613` |
+| RC lock | annotated `vf-v3-01-rc1` peels to exact main `f42a1709cba6f087369c1636bab9bd06053f7613` |
 | V3-01-07 exact-head CI | run `33153548402`, 5/5 PASS |
 | Local disposable DR | 9/9 recovery hashes, RPO 0 seconds, RTO 33 seconds |
 | External calls and cost | 0 calls, 0 VND |
@@ -40,6 +44,11 @@ human quality or a 48-hour soak.
 
 The canonical row-level source remains [`02_ACCEPTANCE_MATRIX.csv`](02_ACCEPTANCE_MATRIX.csv).
 V3-01-08 changes no matrix axis because it creates no new runtime evidence.
+
+Post-consolidation note: V3-01-09 is an unmerged adapter remediation based on RC-1. Its mock-only
+evidence changes GAP-003 from `OPEN` to `IN_PROGRESS`, producing a current register of 4 open,
+11 in progress and 1 remediated. It does not alter this checkpoint's RC-1 lock, production verdict
+or any real-provider/production-path/quality axis.
 
 | Axis | PASS | FAIL | NOT_TESTED | N/A | Decision |
 |---|---:|---:|---:|---:|---|
@@ -178,12 +187,14 @@ retried calls count toward spend. Missing usage or cost evidence is a test failu
 
 ## Final checkpoint verdict
 
-`b132e839904b377ec7e82e9135920f895ddf704e` is suitable to identify as a **conditional acceptance
-RC candidate**, subject to an explicit later lock and G-04/G-09. It is **not suitable for production
+`f42a1709cba6f087369c1636bab9bd06053f7613` is locked as **RC-1 for conditional acceptance
+planning**, still subject to G-04/G-09 before any deployment. It is **not suitable for production
 deployment or real-provider execution now** because ten P0 gaps remain unverified, all 60
 production-path rows are `NOT_TESTED`, 36 real-provider rows and 36 quality rows remain
 `NOT_TESTED`, and G-01 through G-07 plus G-09 through G-12 are pending.
 
-The exact next decision is owner review of this consolidation. If accepted and the candidate commit
-is unchanged, request G-01 for one named provider capability only. Do not open G-02 or execute a
-call in the same step.
+The consolidation merge and RC-1 lock are complete. V3-01-09 now adds the missing OpenAI Vision
+adapter on an unmerged branch, so the exact next decision is a new G-08 for that adapter PR. If it
+is merged, RC-1 is not eligible for adapter acceptance; run exact-main regression and lock RC-2.
+Only then consider G-01-A for one named provider capability. Do not combine G-01-A, G-02-A,
+G-03-A or an execution in the same decision.

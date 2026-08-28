@@ -132,7 +132,7 @@ def test_checked_in_v3_01_register_is_complete() -> None:
     HARNESS.validate_repo(REPO_ROOT)
 
 
-def test_v3_01_08_consolidation_matches_canonical_registers() -> None:
+def test_v3_01_08_snapshot_and_v3_01_09_gap_delta_are_consistent() -> None:
     docs = REPO_ROOT / "docs" / "acceptance" / "v3-01"
     contract_path = (
         REPO_ROOT
@@ -161,7 +161,20 @@ def test_v3_01_08_consolidation_matches_canonical_registers() -> None:
         assert contract["matrix"][axis] == actual
 
     assert contract["gaps"]["total"] == len(gaps) == 16
-    assert contract["gaps"]["by_status"] == dict(Counter(row["status"] for row in gaps))
+    assert contract["gaps"]["by_status"] == {
+        "OPEN": 5,
+        "IN_PROGRESS": 10,
+        "REMEDIATED": 1,
+    }
+    assert dict(Counter(row["status"] for row in gaps)) == {
+        "OPEN": 4,
+        "IN_PROGRESS": 11,
+        "REMEDIATED": 1,
+    }
+    gap_003 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-003")
+    assert gap_003["status"] == "IN_PROGRESS"
+    assert "EV-V3-OPENAI-VISION-ADAPTER-001" in gap_003["evidence_ids"]
+    assert gap_003["verified_on_commit"] == "fe4837bfd2ae0436f5fca557eab6101ca4cf5654"
     assert contract["gaps"]["by_severity"] == dict(Counter(row["severity"] for row in gaps))
     assert contract["production_verdict"] == "NO-GO"
     assert contract["rc_candidate"]["status"] == "CONDITIONAL-RC"

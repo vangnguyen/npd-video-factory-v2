@@ -1,0 +1,4 @@
+958a59196ef024bf61864190987aeb57bad07064c61baf4ffdd3d85e4798785c  final/status.json
+c623a101ca715722ad590e3b3e4933c92a2164dcfee9a764d3c303a03e1d0cdc  matrix/evidence-EV-V3-OPENAI-VISION-ADAPTER-001.json
+ff89031dffb40bc61aa043a5f98d86d8be7551f55b4f3ef9ed2eb21d09440bb1  provider/openai-vision-adapter.json
+8b12fbc779f00b2686bd0d9aa6d0207e2de9605e941b0ee82f6135dc6a078fb5  run-manifest.json

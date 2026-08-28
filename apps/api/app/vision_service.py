@@ -135,6 +135,7 @@ class VisionAnalysisService:
                     checksum_sha256=asset.checksum_sha256,
                     sample_interval_seconds=payload.sample_interval_seconds,
                 ),
+                actual_cost=lambda result: result.actual_cost_vnd,
             )
             provider_result = ProviderVisionResult(
                 frames=execution.value.frames,
@@ -142,6 +143,7 @@ class VisionAnalysisService:
                     **execution.value.provenance,
                     "provider_safety_receipt": execution.receipt.model_dump(mode="json"),
                 },
+                actual_cost_vnd=execution.value.actual_cost_vnd,
             )
             frames = normalize_frames(
                 provider_result.frames,
@@ -183,11 +185,15 @@ class VisionAnalysisService:
                 model=self.provider.model,
                 units=Decimal(len(frames)),
                 unit_name="sampled_frame",
-                estimated_cost=Decimal("0"),
-                actual_cost=Decimal("0"),
+                estimated_cost=self.provider.estimated_cost_vnd or Decimal("0"),
+                actual_cost=execution.receipt.charged_cost_vnd,
                 metadata={
                     "fixture": provider_result.provenance.get("fixture", False),
                     "external_call": provider_result.provenance.get("external_call", False),
+                    "currency": "VND",
+                    "cost_receipt_recorded": bool(
+                        provider_result.provenance.get("cost_receipt")
+                    ),
                 },
             )
             await self.repository.save_results(
