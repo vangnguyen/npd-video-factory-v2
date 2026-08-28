@@ -22,10 +22,19 @@ chmod 0700 "$TARGET"
 "$DOCKER_CLI" compose -p "$PROJECT" -f "$COMPOSE_FILE" exec -T postgres \
   pg_dump -U "${VIDEO_POSTGRES_USER:-video_factory}" -d "${VIDEO_POSTGRES_DB:-video_factory}" \
   --format=custom --no-owner --no-acl >"$TARGET/postgres.dump"
-"$DOCKER_CLI" run --rm -v "${PROJECT}_minio-data:/source:ro" -v "$(docker_host_path "$TARGET"):/backup" alpine:3.20 \
-  tar -C /source -czf /backup/minio-data.tar.gz .
-"$DOCKER_CLI" run --rm -v "${PROJECT}_redis-data:/source:ro" -v "$(docker_host_path "$TARGET"):/backup" alpine:3.20 \
-  tar -C /source -czf /backup/redis-aof.tar.gz .
+if [[ "$DOCKER_CLI" == *.exe ]]; then
+  "$DOCKER_CLI" run --rm -v "${PROJECT}_minio-data:/source:ro" -v "$(docker_host_path "$TARGET"):/backup" alpine:3.20 \
+    tar -C /source -czf /backup/minio-data.tar.gz .
+  "$DOCKER_CLI" run --rm -v "${PROJECT}_redis-data:/source:ro" -v "$(docker_host_path "$TARGET"):/backup" alpine:3.20 \
+    tar -C /source -czf /backup/redis-aof.tar.gz .
+else
+  host_uid="$(id -u)"
+  host_gid="$(id -g)"
+  "$DOCKER_CLI" run --rm -v "${PROJECT}_minio-data:/source:ro" -v "$(docker_host_path "$TARGET"):/backup" alpine:3.20 \
+    sh -c "tar -C /source -czf /backup/minio-data.tar.gz . && chown ${host_uid}:${host_gid} /backup/minio-data.tar.gz && chmod 0600 /backup/minio-data.tar.gz"
+  "$DOCKER_CLI" run --rm -v "${PROJECT}_redis-data:/source:ro" -v "$(docker_host_path "$TARGET"):/backup" alpine:3.20 \
+    sh -c "tar -C /source -czf /backup/redis-aof.tar.gz . && chown ${host_uid}:${host_gid} /backup/redis-aof.tar.gz && chmod 0600 /backup/redis-aof.tar.gz"
+fi
 "$DOCKER_CLI" compose -p "$PROJECT" -f "$COMPOSE_FILE" exec -T postgres \
   psql -U "${VIDEO_POSTGRES_USER:-video_factory}" -d "${VIDEO_POSTGRES_DB:-video_factory}" \
   -Atc 'SELECT version_num FROM alembic_version' >"$TARGET/migration-head.txt"
