@@ -4,19 +4,19 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 through V3-01-10 are merged in executable RC-3
-`adde8d9c5a7f608db80cbd9d21aecd45f721065e`, tagged `vf-v3-01-rc3` for controlled acceptance
-only. Evidence/governance main is now `2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38` after PR #25.
-Operation 1 was authorized, consumed once and ended `REVIEW_REQUIRED`; operation 2 is locked.
-V3-01-11 is an unmerged zero-call remediation draft. None of these local/CI entries establish
-production-path, accepted real-provider or quality acceptance.
+V3-01-01 through V3-01-11 are merged in executable RC-4
+`061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`, tagged `vf-v3-01-rc4`. RC-3 operation 1 was
+authorized, consumed once and ended `REVIEW_REQUIRED`; RC-3 operation 2 is locked. RC-4 is retained
+as evidence that the stale hard-coded operation allowlist failed closed and is prohibited for live
+acceptance. V3-01-12 is an unmerged zero-call remediation draft. None of these local/CI entries
+establish production-path, accepted real-provider or quality acceptance.
 
 ## Foundation
 
 | Capability | Primary code | Existing tests/evidence | Audit result |
 |---|---|---|---|
 | API/job intake | `apps/api/app/main.py`, `platform_routes.py`, `models.py` | `test_create_job.py`, Docker E2E | Implemented/mock-tested |
-| Durable state/audit | `db.py`, `state.py`, `repositories.py`, main migrations `0001`-`0011`; draft `0012` adds provider error evidence | durable platform/provider tests, Alembic replay | Implemented/mock-tested; V3-01-11 merge pending |
+| Durable state/audit | `db.py`, `state.py`, `repositories.py`, main migrations `0001`-`0012` | durable platform/provider tests, Alembic replay | Implemented/mock-tested; production path untested |
 | Redis queues/recovery | API services and `services/worker/npd_worker/main.py` | worker recovery suites, Docker E2E | Implemented/mock-tested |
 | Object storage/assets | `object_storage.py`, `artifacts.py`, `platform_models.py` | artifact and MinIO recovery tests | Implemented/mock-tested |
 | Interactive auth/RBAC | `human_auth.py`, normal-router dependency, external hash-only registry | `test_human_identity_ingress.py`, Docker E2E | Implemented/mock-tested on V3-01-01; production untested |
@@ -74,7 +74,7 @@ production-path, accepted real-provider or quality acceptance.
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
 | Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
-| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, V3-01-09 adapter, V3-01-10 gate loader and V3-01-11 redacted error-ledger tests | PostgreSQL-backed local contract passes; V3-01-11 draft is zero-call/unmerged; checked-in external execution remains hard-blocked |
+| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, V3-01-09 adapter, V3-01-10 gate loader, V3-01-11 redacted error-ledger and V3-01-12 RC-bound-ID tests | PostgreSQL-backed local contract passes; RC-4 stale-ID blocker failed closed; V3-01-12 remains unmerged and checked-in external execution remains hard-blocked |
 | Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart and configuration tests | Implemented/mock-tested; production-like multi-instance and real acceptance absent |
 | Upload malware boundary | quarantine state, archive-deny policy, deterministic EICAR contract and internal clamd client | `test_auto_edit_analysis.py`, migration replay | Local/mock PASS; clamd and edge/WAF not deployed |
 | Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests | Schema/hook implemented; real rights unaccepted |

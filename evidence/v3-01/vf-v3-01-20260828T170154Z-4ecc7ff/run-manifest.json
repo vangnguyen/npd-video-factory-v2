@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260828T170154Z-4ecc7ff",
+  "started_at_utc": "2026-08-28T16:32:00Z",
+  "completed_at_utc": "2026-08-28T17:01:54.2768568Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "4ecc7ff2e687879bdb1e5b5acb42a144cbe8b806",
+  "base_sha": "061ca5d03248d6721ef8dc7a53cf4608e7ebe79e",
+  "release_candidate": "vf-v3-01-rc4 is retained as blocker evidence; V3-01-12 is unmerged and vf-v3-01-rc5 does not exist",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0012_v3_01_11",
+  "config_fingerprint_redacted": "rc-bound-operation-id-exact-scope-mock-only-external-false-paid-false-zero-vnd-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "vision-operation-allowlist-contract",
+      "provider": "offline-validator",
+      "model_or_workflow": "openai-vision/gpt-5-mini RC-bound mock contract",
+      "region": "not-applicable-offline",
+      "credential_alias": "secret://openai/codex-video",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "V3-01-12-RC-BOUND-ID-DERIVATION",
+    "V3-01-12-EXACT-SCOPE-BINDING",
+    "V3-01-12-STALE-TAMPERED-CONSUMED-REJECTION",
+    "LOCAL-FULL-REGRESSION"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "matrix/evidence-EV-V3-RC-BOUND-ALLOWLIST-001.json",
+    "provider/rc-bound-operation-allowlist.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010"
+  ],
+  "owner_gate_ids": [
+    "G-00"
+  ],
+  "result": "BLOCKED"
+}

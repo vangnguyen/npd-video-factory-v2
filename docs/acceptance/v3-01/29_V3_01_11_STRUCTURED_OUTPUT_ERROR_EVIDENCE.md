@@ -5,14 +5,14 @@
 ```text
 CHECKPOINT: V3-01-11
 SCOPE: ZERO-CALL STRUCTURED OUTPUT AND ERROR-EVIDENCE REMEDIATION
-IMPLEMENTED / MOCK-TESTED: PASS LOCALLY
+IMPLEMENTED / MOCK-TESTED: PASS ON EXACT MAIN
 REAL-PROVIDER ACCEPTANCE: NOT TESTED
 PRODUCTION-PATH ACCEPTANCE: NOT TESTED
 QUALITY ACCEPTANCE: NOT TESTED
 EXTERNAL CALLS: 0
 ACTUAL COST: 0 VND
-G-08 FOR THIS REMEDIATION: PENDING
-RC-4: NOT LOCKED
+G-08 FOR THIS REMEDIATION: CONSUMED — V3-01-APP-018 / PR #26
+RC-4: LOCKED AT 061ca5d03248d6721ef8dc7a53cf4608e7ebe79e; NOT LIVE-ELIGIBLE
 PRODUCTION VERDICT: NO-GO
 ```
 
@@ -21,9 +21,14 @@ PR #25 was merged as evidence/governance only at main
 `REVIEW_REQUIRED`; it does not convert that attempt into accepted real-provider, production-path or
 quality evidence. Operation 1 remains consumed and old RC-3 operation 2 remains locked.
 
-V3-01-11 changes executable adapter and durable-state code, so it cannot run on RC-3 authority.
-It is eligible only for a draft remediation PR and a new G-08 review. If it later merges, exact-main
-full regression must pass before a new annotated RC-4 can be locked.
+V3-01-11 changed executable adapter and durable-state code, so it could not run on RC-3 authority.
+PR #26 merged after `V3-01-APP-018`; exact-main regression and GitHub CI run `33189441083` passed
+5/5, and annotated tag `vf-v3-01-rc4` now points to exact main
+`061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`. No provider call occurred during remediation.
+
+The RC-4 post-lock audit then found a separate fail-closed blocker: executable operation IDs still
+named RC-3. RC-4 is therefore retained as evidence of blocker detection and must not be used for
+live acceptance. V3-01-12 addresses only that RC-bound allowlist contract.
 
 ## Confirmed root cause
 
@@ -112,7 +117,7 @@ Local validation on the isolated remediation worktree:
 | Flow A/B/C and DR boundary evaluators | expected `BLOCKED` PASS |
 | Docker Compose config | PASS |
 | Fail-closed defaults / secret scan / `git diff --check` | PASS |
-| Renderer/typecheck/bundle | pending GitHub exact-head CI; local pnpm build scripts were blocked by host policy |
+| Renderer/typecheck/bundle | PASS in exact-head and exact-main GitHub CI |
 
 All provider tests use injected mock transport or local callables. No OpenAI credential was read,
 no external request was made and no VND budget was enabled.
@@ -128,18 +133,19 @@ no external request was made and no VND budget was enabled.
 - RC-3 operation 2 must not be executed.
 - Production remains undeployed and `NO-GO`.
 
-## Required next sequence
+## Completed sequence and required next sequence
 
 ```text
-draft V3-01-11 PR
-→ exact-head CI
-→ separate owner G-08
-→ merge only if approved
-→ exact-main full regression
+V3-01-11 PR #26 + exact-head CI + G-08
+→ merge + exact-main full regression
 → lock vf-v3-01-rc4
-→ rebind G-01/G-02/G-03 to RC-4 and a new execution-scope hash
-→ create new operation IDs and dated window
-→ separate owner decision for the first new operation
+→ detect stale RC-3 operation IDs and retain RC-4 as blocker evidence
+→ V3-01-12 zero-call remediation + separate G-08
+→ merge only if approved + exact-main regression
+→ lock vf-v3-01-rc5
+→ derive RC-5 operation IDs
+→ rebind G-01/G-02/G-03 to RC-5 and a new execution-scope hash/window
+→ separate owner decision for RC-5 operation 1
 ```
 
 No step in V3-01-11 authorizes a provider call, deployment, public ingress, publishing or

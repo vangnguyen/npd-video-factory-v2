@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC-BOUND-ALLOWLIST-001",
+  "test_case_id": "V3-01-12-RC-BOUND-OPERATION-ALLOWLIST",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "4ecc7ff2e687879bdb1e5b5acb42a144cbe8b806",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-validator",
+    "model_or_workflow": "openai-vision/gpt-5-mini RC-bound mock contract",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "1ff6613287043a8b0b1662b99f77bb08b28add3f5b5158eb3885756e0870db47",
+  "started_at_utc": "2026-08-28T16:32:00Z",
+  "completed_at_utc": "2026-08-28T17:01:54.2768568Z",
+  "duration_seconds": 1794.277,
+  "result": "PASS",
+  "assertion": "V3-01-12 derives the two immutable operation IDs from exact RC tag, openai-vision provider, vision capability and ordered slots, then binds them to exact commit/tag/model, execution-scope hash, RightsRecord asset hash and acceptance window. Tests reject RC-3 IDs on RC-5, an old-RC bundle, commit/tag/provider/model/capability drift, invalid slot, tampered ID, consumed duplicate and expired window. Full Python, Studio, Renderer, migration and acceptance checks passed locally. No credential was read, no external call occurred and actual cost was 0 VND. This evidence is mock-tested only; RC-4 remains prohibited from live acceptance, RC-5 is not locked and no runtime gate is granted.",
+  "correlation_id": "v3-01-12-rc-bound-allowlist-4ecc7ff",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex deterministic provider-contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010"
+  ],
+  "reproduce": "On code commit 4ecc7ff2e687879bdb1e5b5acb42a144cbe8b806 with checked-in fail-closed defaults, run python -m pytest apps/api/tests/test_provider_gate_loader.py apps/api/tests/test_provider_safety.py apps/api/tests/test_openai_vision_provider.py apps/api/tests/test_vision_analysis.py -q and the full Python/acceptance/migration suite. Do not mount a credential, enable execution, reuse any RC-3 ID or use RC-4 for a live attempt."
+}

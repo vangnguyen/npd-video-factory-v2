@@ -1,10 +1,11 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27`, updated through executable RC-3
-`adde8d9c5a7f608db80cbd9d21aecd45f721065e`, evidence main
-`2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38`, and one failed bounded Vision operation.
-V3-01-11 remains an unmerged zero-call remediation draft. No acceptance-axis promotion occurred.
+derived from the audit captured on `2026-08-27`, updated through RC-4
+`061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`, PR #26 exact-main CI run `33189441083`
+(5/5 PASS), and one failed bounded Vision operation retained from RC-3. RC-4 is evidence of a
+fail-closed executable-contract blocker and is not eligible for live acceptance. V3-01-12 remains
+an unmerged zero-call remediation draft. No acceptance-axis promotion occurred.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -16,22 +17,24 @@ V3-01-11 remains an unmerged zero-call remediation draft. No acceptance-axis pro
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. The bounded G-08 records through PR #25 are exhausted. G-01-A/G-02-A/G-03-A were
+`IN_PROGRESS`. The bounded G-08 records through PR #26 are exhausted. G-01-A/G-02-A/G-03-A were
 consumed only for operation 1; it failed non-retryably without accepted output or a usage receipt.
-Operation 2 remains locked, and production remains undeployed and unverified.
+Both RC-3 operation IDs remain permanently locked. RC-4 must not be used for live acceptance
+because its executable allowlist is still bound to RC-3 identifiers. Production remains undeployed
+and unverified.
 
 ## P0 release blockers
 
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | one Vision attempt failed before structured output; zero-call schema remediation and a new RC/gate set are required |
+| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | one Vision attempt failed before structured output; RC-4 exposed a stale-operation-ID blocker, so V3-01-12 and a newly locked RC-5/gate set are required |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | production-like backup/restore/image rollback incomplete | local disposable drill only; no production state touched |
-| V3-01-GAP-013 | no accepted real-asset rights coverage | the one RC-3 asset binding held during the failed attempt; broader/final-asset rights remain absent |
+| V3-01-GAP-013 | no accepted real-asset rights coverage | the one RC-3 asset binding held during the failed attempt; any RC-5 asset use requires a newly hashed scope and rights rebind |
 | V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work
@@ -43,8 +46,10 @@ Operation 2 remains locked, and production remains undeployed and unverified.
   artifact verification and global cost kill switch pass locally. V3-01-03 adds a PostgreSQL ledger,
   atomic cross-instance reservation, durable circuit/duplicate state, restart recovery and
   retention/health metrics. During operation 1, atomic reservation, one-attempt/no-retry semantics,
-  duplicate blocking and circuit state operated as designed. Structured output, actual-cost receipt,
-  production-like multi-instance and real-provider acceptance remain.
+  duplicate blocking and circuit state operated as designed. V3-01-11 fixed the strict schema and
+  error-evidence contract in RC-4. V3-01-12 now derives each operation ID from the exact RC,
+  provider, capability and slot and binds that ID to the full execution scope. Structured output,
+  actual-cost receipt, production-like multi-instance and accepted real-provider evidence remain.
 - `V3-01-GAP-011` (`IN_PROGRESS`): auth rate limiting, URL-import denial and bounded malicious-input
   tests pass. V3-01-03 adds quarantine-before-decoder, archive-signature denial, EICAR contract
   tests, clean-verdict promotion and an internal clamd/WAF design contract; approved internal
@@ -83,7 +88,12 @@ exception exists.
 
 V3-01-11 makes `track_hint` required-nullable, recursively validates strict object schemas and adds
 secret-free durable provider error evidence for HTTP, transport, parse, refusal/incomplete,
-validation and usage failures. Its local tests use mock transport only and record 0 external calls
-and 0 VND in `EV-V3-STRUCTURED-ERROR-EVIDENCE-001`. Until a separate G-08 merge and exact-main
-regression, it changes no gap status or acceptance axis; after any merge, a new RC-4 and newly bound
-operations are still required.
+validation and usage failures. PR #26 merged under `V3-01-APP-018`; exact-main CI passed and RC-4
+was locked with 0 remediation calls and 0 VND spend. Audit then found that the executable operation
+allowlist still hard-coded RC-3 IDs. This blocker is retained as RC-4 evidence and prevents live use.
+
+V3-01-12 replaces that hard-coded contract with deterministic IDs derived from exact RC tag,
+provider, capability and ordinal, while the verified loader also binds commit, model,
+execution-scope hash, asset hash and acceptance window. Its required regression matrix is mock-only.
+Until a separate G-08 merge, exact-main regression and a newly locked `vf-v3-01-rc5`, it changes no
+gap status or acceptance axis and authorizes no provider call.

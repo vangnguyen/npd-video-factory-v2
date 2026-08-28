@@ -319,8 +319,7 @@ jobs:
         run: |
           grep -Fq 'class ProviderGateBundle' apps/api/app/provider_gate_loader.py
           grep -Fq 'hmac.compare_digest' apps/api/app/provider_gate_loader.py
-          grep -Fq 'v3-01-g03a-openai-vision-call-01' apps/api/app/provider_gate_loader.py
-          grep -Fq 'v3-01-g03a-openai-vision-call-02' apps/api/app/provider_gate_loader.py
+          grep -Fq 'derive_rc_bound_operation_key' apps/api/app/provider_gate_loader.py
           grep -Fq 'every owner approval must bind the exact execution scope hash' apps/api/app/provider_gate_loader.py
           grep -Fq 'self.provider_safety.execute(' apps/api/app/vision_service.py
           grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false' .env.example
@@ -342,6 +341,21 @@ jobs:
           grep -Fq 'error_evidence: Mapped[dict[str, object] | None]' apps/api/app/provider_safety_db.py
           grep -q '0012_v3_01_11' apps/api/migrations/versions/0012_v3_01_11_provider_error_evidence.py
           ! git grep -I -n -E '^(VISION_PROVIDER=openai|OPENAI_API_KEY=.+|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_PER_OPERATION_LIMIT_VND=[1-9][0-9]*|PROVIDER_DAILY_LIMIT_VND=[1-9][0-9]*)$' -- .env.example docker-compose.yml deploy apps services
+      - name: Verify V3-01-12 RC-bound operation allowlist boundary
+        run: |
+          grep -Fq 'RC_BOUND_OPERATION_SLOTS = (1, 2)' apps/api/app/provider_safety.py
+          grep -Fq 'def derive_rc_bound_operation_key(' apps/api/app/provider_safety.py
+          grep -Fq 'operation IDs must derive from the exact RC/provider/capability/slot' apps/api/app/provider_gate_loader.py
+          grep -Fq 'execution_scope_sha256=scope_hash' apps/api/app/provider_gate_loader.py
+          ! grep -Fq 'v3-01-g03a-openai-vision-call-01' apps/api/app/provider_gate_loader.py
+          ! grep -Fq 'v3-01-g03a-openai-vision-call-02' apps/api/app/provider_gate_loader.py
+          grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
+          grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
+          grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
+          ! git grep -I -n -E '^(VISION_PROVIDER=openai|OPENAI_API_KEY=.+|PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_PER_OPERATION_LIMIT_VND=[1-9][0-9]*|PROVIDER_DAILY_LIMIT_VND=[1-9][0-9]*)$' -- .env.example docker-compose.yml deploy apps services
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

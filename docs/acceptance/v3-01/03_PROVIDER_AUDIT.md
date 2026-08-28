@@ -23,14 +23,19 @@ Governance-only PR #24 later merged as `a73bad37f1f3aa7c2347e6a76503246a46d3c112
 CI run `33175813324` passing 5/5; executable RC-3 did not change. The adapter remains unaccepted as
 real-provider-tested. Exact operation evidence is `EV-V3-OPENAI-VISION-OP1-FAILED-001`.
 Evidence-only PR #25 then merged as `2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38`; exact-main CI
-run `33182052862` passed 5/5. V3-01-11 is an unmerged zero-call remediation draft that corrects the
-strict schema and adds typed redacted error evidence; it grants no new execution authority.
+run `33182052862` passed 5/5. PR #26 merged V3-01-11 as
+`061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`; exact-main CI run `33189441083` passed 5/5 and
+`vf-v3-01-rc4` peels to that commit. Audit then confirmed RC-4 still hard-coded the consumed/locked
+RC-3 operation IDs. RC-4 is retained as fail-closed blocker evidence and cannot be used for live
+acceptance. V3-01-12 is an unmerged zero-call remediation that derives operation IDs from the exact
+RC/provider/capability/slot and preserves the execution-scope hash binding. Local evidence
+`EV-V3-RC-BOUND-ALLOWLIST-001` passes the mock rejection matrix; exact-head CI and G-08 are pending.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | strict mock contract plus one failed, non-retryable live attempt; gate/ledger/rights/duplicate controls held, but no structured/provider/usage receipt exists | `BLOCKED` | zero-call schema/error-evidence remediation, G-08, new RC and newly bound acceptance gates before any later operation; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | strict mock contract plus one failed, non-retryable RC-3 attempt; V3-01-11 schema/error evidence passes locally/CI; RC-4 stale-ID blocker failed closed | `BLOCKED` | G-08 for V3-01-12, merge/regression, RC-5 and newly bound G-01/G-02/G-03 before any later operation; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |

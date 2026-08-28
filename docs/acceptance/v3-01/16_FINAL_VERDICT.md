@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-10 plus RC-3 governance/evidence; one failed bounded live attempt; V3-01-11 draft
-RELEASE CANDIDATE: RC-3 adde8d9c5a7f608db80cbd9d21aecd45f721065e LOCKED FOR CONTROLLED ACCEPTANCE ONLY; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-OPENAI-VISION-OP1-FAILED-001 (earlier runs remain separately retained)
+SCOPE: merged V3-01-00 through V3-01-11; one failed bounded RC-3 attempt; V3-01-12 zero-call draft
+RELEASE CANDIDATE: RC-4 061ca5d03248d6721ef8dc7a53cf4608e7ebe79e LOCKED AS BLOCKER EVIDENCE; NOT LIVE-ELIGIBLE; NOT DEPLOYED
+LATEST EVIDENCE: EV-V3-RC-BOUND-ALLOWLIST-001 local/mock PASS; exact-head CI pending (earlier runs retained)
 DATE: 2026-08-28
-OWNER DECISION: G-00 APPROVED; G-08 CONSUMED THROUGH PR #25; V3-01-11 G-08 PENDING; RC-3 OPERATION 1 CONSUMED; OPERATION 2 LOCKED
+OWNER DECISION: G-00 APPROVED; G-08 CONSUMED THROUGH PR #26; V3-01-12 G-08 PENDING; RC-3 OPERATION 1 CONSUMED; ALL OLD OPERATION IDS LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -40,7 +40,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
 - no production-like target, deployed image digest or owner-accepted production-like DR drill;
-- OpenAI Vision operation 1 failed before structured output/provider/usage receipts; it is not accepted real-provider evidence, operation 2 is locked and no production Vietnamese voice evidence exists;
+- OpenAI Vision operation 1 failed before structured output/provider/usage receipts; it is not accepted real-provider evidence, all RC-3 IDs are locked, and RC-4 cannot be used because its executable allowlist still names RC-3;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
 - GitHub `main` is not protected.
@@ -48,10 +48,12 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 ## Evidence
 
 - baseline run: `vf-v3-01-20260827T120208Z-cae40ed`;
-- exact merged `main` and locked NO-GO RC-3: `adde8d9c5a7f608db80cbd9d21aecd45f721065e` (`vf-v3-01-rc3`);
+- exact merged `main` and locked NO-GO RC-4 blocker evidence: `061ca5d03248d6721ef8dc7a53cf4608e7ebe79e` (`vf-v3-01-rc4`); annotated tag object `b32680a8f6e1bbfbff0dd7425bc5a231ef2ac6a5`;
 - V3-01-10 PR #23 exact head: `40149c2b439c78e75fdd3ff8996c2ed8c3ec4575`; exact-main CI `33173094529` PASS; merged into RC-3;
 - governance-only PR #24 merged as `a73bad37f1f3aa7c2347e6a76503246a46d3c112`; exact-main CI `33175813324` PASS 5/5; executable RC-3 unchanged;
 - evidence/governance-only PR #25 merged as `2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38`; exact-main CI `33182052862` PASS 5/5; executable RC-3 unchanged;
+- V3-01-11 PR #26 exact head `a09919db67f23253bc45ff3171b99e220c25c599`; merged as `061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`; exact-main CI `33189441083` PASS 5/5; `V3-01-APP-018` consumed;
+- RC-4 post-lock audit: executable allowlist still named RC-3 operation IDs, so RC-4 is retained as fail-closed blocker evidence and prohibited from live acceptance;
 - operation-1 evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`, evidence SHA-256 `e94fcafcbab8adefb9506cb91d98010cdb1713ba79ce209ec2dfdb154f97fd2d`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
@@ -60,7 +62,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `EV-V3-SAFETY-001`, `EV-V3-DR-001`, `EV-V3-DR-OBS-001`,
   `EV-V3-RC-CONSOLIDATION-001`, `EV-V3-OPENAI-VISION-ADAPTER-001`,
   `EV-V3-VERIFIED-GATE-LOADER-001`, `EV-V3-OPENAI-VISION-OP1-FAILED-001`,
-  `EV-V3-STRUCTURED-ERROR-EVIDENCE-001`;
+  `EV-V3-STRUCTURED-ERROR-EVIDENCE-001`, `EV-V3-RC-BOUND-ALLOWLIST-001`;
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: local disposable `EV-V3-DR-OBS-001` PASS; production-like restore remains absent;
@@ -70,8 +72,9 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `V3-01-APP-007` for only PR #18, `V3-01-APP-008` for only PR #19,
   `V3-01-APP-009` for only PR #20, `V3-01-APP-010` for only PR #22,
   `V3-01-APP-013` for only PR #23, `V3-01-APP-014` for RC-3 G-01-A,
-  `V3-01-APP-015` for RC-3 G-02-A, `V3-01-APP-016` for narrow RC-3 G-03-A, and
-  `V3-01-APP-017` for evidence-only PR #25.
+  `V3-01-APP-015` for RC-3 G-02-A, `V3-01-APP-016` for narrow RC-3 G-03-A,
+  `V3-01-APP-017` for evidence-only PR #25, and `V3-01-APP-018` for PR #26 merge,
+  exact-main regression and RC-4 tag only.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -137,27 +140,35 @@ executable RC. Operation 1 was dispatched once, failed non-retryably, and produc
 provider or usage receipt. Atomic reservation, one-attempt/no-retry semantics, duplicate blocking,
 rights binding and secret containment held. Operation 2 remains locked and no acceptance axis changed.
 
-V3-01-11 is a zero-call remediation draft. It corrects required-nullable Structured Outputs,
+V3-01-11 is merged zero-call remediation. It corrects required-nullable Structured Outputs,
 recursively validates nested strict objects and stores only bounded, redacted provider error
-metadata in the durable attempt ledger. Local Python, Studio, migration, acceptance and safety
-checks pass; exact-head GitHub CI and a separate G-08 remain mandatory. It is not RC-4 and changes
-no real-provider, production-path or quality axis.
+metadata in the durable attempt ledger. Exact-head and exact-main CI passed, and RC-4 was locked.
+It changes no real-provider, production-path or quality axis. RC-4 post-lock audit then found a
+different executable-contract blocker: its allowed operation IDs remained hard-coded to RC-3.
+
+V3-01-12 is a zero-call remediation draft. It derives operation IDs from exact RC tag, provider,
+capability and slot and binds them to exact commit/tag/model, execution-scope hash, asset hash and
+acceptance window. Its tests reject stale RC-3 bundles, commit/tag/provider/model/capability drift,
+invalid ordinals, consumed duplicates, tampering and expired windows. Local evidence
+`EV-V3-RC-BOUND-ALLOWLIST-001` records focused 59/59, full Python 259/259, Studio 14/14 and Renderer
+14/14 plus typecheck/bundle PASS with zero credential reads, zero external calls and zero VND.
+Exact-head CI is pending. It has no merge or runtime authority and changes no acceptance axis.
 
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
-[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-11 sequence is defined in
+[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-12 sequence is defined in
 [`14_REMEDIATION_PR_PLAN.md`](14_REMEDIATION_PR_PLAN.md). No exception or expiry is recorded.
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; the G-08 decisions through PR #25 are consumed and V3-01-11 requires a new decision.
-- **Deploy:** no; RC-3 is NO-GO and G-09 is pending.
+- **Merge:** none currently authorized; the G-08 decisions through PR #26 are consumed and V3-01-12 requires a new decision.
+- **Deploy:** no; RC-4 is NO-GO, not live-eligible, and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** operation 1 consumed exactly one attempt with no retry/fallback;
   actual provider cost is unknown and the ledger committed 500 VND as an estimated safety charge.
 - **Publish visibility/channel:** none; no remote publication.
-- **Still prohibited:** any further provider call, credentials use, production-path writes, public route, publish,
+- **Still prohibited:** any further provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
 - **Rollback trigger:** no runtime change exists; revert the isolated docs/harness PR if it regresses
   CI or evidence integrity.
