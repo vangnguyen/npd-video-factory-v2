@@ -149,6 +149,13 @@ The zero-network suite validates:
 Test bundles use synthetic approval IDs, hashes, RC and image hash. They are fixtures only and
 cannot be promoted into runtime evidence.
 
+The secret-free local evidence bundle is
+[`vf-v3-01-20260828T122937Z-e7e9ccc`](../../../evidence/v3-01/vf-v3-01-20260828T122937Z-e7e9ccc)
+with evidence ID `EV-V3-VERIFIED-GATE-LOADER-001`, bound to implementation commit
+`e7e9ccceeb97830db47d66cfa392c854f8a2e2e4`. It records 28 focused tests, the broader local
+regression and Docker deterministic E2E as mock/local evidence only, with 0 external calls and
+0 VND actual cost.
+
 ## Required sequence after a future G-08
 
 ```text
