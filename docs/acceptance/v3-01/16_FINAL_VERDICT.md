@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-09 plus unmerged V3-01-10 gate-loader remediation
-RELEASE CANDIDATE: RC-2 5936aa7a9656d728be751d0ee61011fc1a5abc7a LOCKED FOR CONTROLLED PLANNING ONLY; NOT DEPLOYED
+SCOPE: merged V3-01-00 through V3-01-10 plus RC-3 governance rebind; zero live calls
+RELEASE CANDIDATE: RC-3 adde8d9c5a7f608db80cbd9d21aecd45f721065e LOCKED FOR CONTROLLED ACCEPTANCE ONLY; NOT DEPLOYED
 LATEST EVIDENCE RUN: vf-v3-01-20260828T094813Z-fe4837b (earlier runs remain separately retained)
 DATE: 2026-08-28
-OWNER DECISION: G-00 APPROVED; G-08 RECORDS CONSUMED THROUGH PR #22; G-01-A/G-02-A PREPARATION ONLY; G-03-A AND V3-01-10 G-08 PENDING
+OWNER DECISION: G-00 APPROVED; G-08 RECORDS CONSUMED THROUGH PR #23; G-01-A/G-02-A/G-03-A REBOUND TO RC-3; OPERATION 1 PENDING
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -29,18 +29,18 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
 | Cost | 0 VND actual, 0 external calls; durable local controls pass, production-like/real acceptance incomplete |
-| Rights/provenance | strict hook/artifact checks pass for fixtures; real-asset acceptance absent |
+| Rights/provenance | exact owned test image approved for Vision acceptance only; broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
 | Allowed scope | LOCAL/CI remediation, static/mock/security tests, redacted evidence, draft PRs |
-| Disabled scope | V3-01-10 merge, credential-value access, paid/provider calls, deploy, public ingress, publish, production analytics, external notifications |
+| Disabled scope | credential-value access, paid/provider calls, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
 
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
 - no production-like target, deployed image digest or owner-accepted production-like DR drill;
-- OpenAI Vision adapter is mock-tested only; no owner-approved real provider call, rights, budget or production Vietnamese voice evidence;
+- OpenAI Vision adapter is mock-tested only; exact RC-3 rights/budget scope is prepared but operation 1 is not authorized and no real-provider or production Vietnamese voice evidence exists;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
 - GitHub `main` is not protected.
@@ -48,14 +48,15 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 ## Evidence
 
 - baseline run: `vf-v3-01-20260827T120208Z-cae40ed`;
-- exact merged `main` and locked planning-only RC-2: `5936aa7a9656d728be751d0ee61011fc1a5abc7a` (`vf-v3-01-rc2`);
-- V3-01-09 PR #22 exact head: `e6651948751fc8789ff83f91e0e7e8f88564e2aa`; merged into RC-2;
+- exact merged `main` and locked NO-GO RC-3: `adde8d9c5a7f608db80cbd9d21aecd45f721065e` (`vf-v3-01-rc3`);
+- V3-01-10 PR #23 exact head: `40149c2b439c78e75fdd3ff8996c2ed8c3ec4575`; exact-main CI `33173094529` PASS; merged into RC-3;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
 - production image digest: none;
 - evidence IDs: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`,
   `EV-V3-SAFETY-001`, `EV-V3-DR-001`, `EV-V3-DR-OBS-001`,
-  `EV-V3-RC-CONSOLIDATION-001`;
+  `EV-V3-RC-CONSOLIDATION-001`, `EV-V3-OPENAI-VISION-ADAPTER-001`,
+  `EV-V3-VERIFIED-GATE-LOADER-001`;
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: local disposable `EV-V3-DR-OBS-001` PASS; production-like restore remains absent;
@@ -64,7 +65,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `V3-01-APP-005` for only PR #16, `V3-01-APP-006` for only PR #17,
   `V3-01-APP-007` for only PR #18, `V3-01-APP-008` for only PR #19,
   `V3-01-APP-009` for only PR #20, `V3-01-APP-010` for only PR #22,
-  `V3-01-APP-011` for G-01-A preparation and `V3-01-APP-012` for G-02-A preparation.
+  `V3-01-APP-013` for only PR #23, `V3-01-APP-014` for RC-3 G-01-A,
+  `V3-01-APP-015` for RC-3 G-02-A, and `V3-01-APP-016` for narrow RC-3 G-03-A.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -121,11 +123,12 @@ duplicate, missing-credential, rights and budget tests through MockTransport. Ex
 actual spend are both zero. GAP-003 moves from `OPEN` to `IN_PROGRESS`; every real/provider,
 production-path and quality axis remains unchanged.
 
-V3-01-10 adds a verified acceptance gate loader and one internally generated G-03-A candidate.
+V3-01-10 adds a verified acceptance gate loader and one internally generated G-03-A asset.
 The loader binds raw/canonical hashes, exact RC, G-01/G-02/G-03 records, a dated VND envelope,
 exactly two operation IDs and the asset SHA-256; it checks expiry and reserves cost atomically in
-the durable ledger. The checked-in RightsRecord is deliberately `BLOCKED` pending owner G-03-A.
-This remediation performs zero external calls, spends 0 VND and changes no acceptance axis.
+the durable ledger. The owner approved this exact RightsRecord only for Vision acceptance, and all
+three gate records now bind RC-3 plus the same complete scope hash. The bundle remains unmounted,
+runtime defaults remain disabled, operation 1 is pending, and no acceptance axis has yet changed.
 
 ## Open gaps and remediation
 
@@ -135,12 +138,11 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; `V3-01-APP-002` through `V3-01-APP-010` are consumed.
-  V3-01-10 requires a new explicit G-08.
-- **Deploy:** no; RC-2 is planning-only and G-09 is pending.
+- **Merge:** none currently authorized; all G-08 records through `V3-01-APP-013` are consumed.
+- **Deploy:** no; RC-3 is NO-GO and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
-- **Volume/concurrency/budget:** zero real-provider calls and 0 VND actual; G-02-A envelope is
-  preparation-only and inactive.
+- **Volume/concurrency/budget:** zero real-provider calls and 0 VND actual; the RC-3 G-02-A
+  envelope is hash-bound but unmounted and inactive.
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited:** credentials use, paid calls, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.

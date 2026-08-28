@@ -1,8 +1,8 @@
 # V3-01 acceptance matrix
 
-Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-09 are merged at exact `main`
-`5936aa7a9656d728be751d0ee61011fc1a5abc7a` and locked as planning-only RC-2. V3-01-10 is an
-unmerged gate-loader remediation that does not change an acceptance axis. `I/M/R/P/Q` mean
+Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-10 are merged at exact `main`
+`adde8d9c5a7f608db80cbd9d21aecd45f721065e` and locked as NO-GO RC-3. The verified governance
+bundle remains unmounted and no live call has occurred, so no acceptance axis changes. `I/M/R/P/Q` mean
 implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.

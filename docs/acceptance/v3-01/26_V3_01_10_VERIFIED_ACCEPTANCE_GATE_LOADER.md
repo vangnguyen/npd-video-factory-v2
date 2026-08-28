@@ -4,11 +4,12 @@
 
 ```text
 PRODUCTION VERDICT: NO-GO
-BASE RC: vf-v3-01-rc2 / 5936aa7a9656d728be751d0ee61011fc1a5abc7a
-G-01-A: APPROVED FOR PREPARATION ONLY
-G-02-A: APPROVED FOR PREPARATION ONLY
-G-03-A: PENDING OWNER REVIEW
-VERIFIED RUNTIME BUNDLE: NOT CREATED
+LOCKED RC: vf-v3-01-rc3 / adde8d9c5a7f608db80cbd9d21aecd45f721065e
+G-01-A: REBOUND TO EXACT RC-3 SCOPE
+G-02-A: REBOUND TO DATED RC-3 VND ENVELOPE
+G-03-A: APPROVED FOR THE EXACT TEST ASSET ONLY
+VERIFIED GOVERNANCE BUNDLE: CREATED AND HASH-VERIFIED; NOT MOUNTED
+OPERATION 1 DECISION: PENDING
 EXTERNAL EXECUTION: false
 PAID EXECUTION: false
 GLOBAL KILL SWITCH: engaged
@@ -16,13 +17,14 @@ EXTERNAL CALLS IN V3-01-10: 0
 ACTUAL COST IN V3-01-10: 0 VND
 ```
 
-V3-01-10 implements a secret-free, fail-closed loader for a future bounded Vision acceptance
-window. It does not activate the OpenAI adapter, read the credential, create a runtime gate bundle,
-call a provider, deploy, open ingress, publish or collect production analytics.
+V3-01-10 implements a secret-free, fail-closed loader for a bounded Vision acceptance window. PR
+#23 is merged and RC-3 is locked. The governance-only bundle is hash-verified, but it is not mounted
+and this work does not activate the OpenAI adapter, read the credential, call a provider, deploy,
+open ingress, publish or collect production analytics.
 
-Because V3-01-10 changes code after RC-2, RC-2 must never be used for the live acceptance. A future
-merge requires exact-main regression and a new annotated `vf-v3-01-rc3` lock. Every runtime approval
-record and the protected bundle must then bind that exact RC-3 commit.
+RC-2 must never be used for live acceptance. Exact-main regression passed on merge commit
+`adde8d9c5a7f608db80cbd9d21aecd45f721065e`, and annotated tag `vf-v3-01-rc3` peels to that exact
+commit. Every rebound approval and the governance bundle binds this RC-3.
 
 ## Owner-approved G-02-A envelope
 
@@ -92,7 +94,7 @@ dimensions, frame count, detail, token limits and the exact 500 VND reservation.
 unlisted third operation, a repeated operation, another image, another model or any configuration
 drift fails closed before the provider adapter.
 
-## G-03-A candidate
+## G-03-A exact asset
 
 One deterministic image was created entirely inside this repository without external media,
 people or third-party trademarks:
@@ -101,14 +103,12 @@ people or third-party trademarks:
 - asset SHA-256: `a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e`;
 - generator: [`../../../scripts/generate-g03-owned-vision-asset.ps1`](../../../scripts/generate-g03-owned-vision-asset.ps1);
 - generator SHA-256: `c2cf9da538709dcf251e769cad17138b6c17d082cd0d052fd5987730aa4a8538`;
-- candidate RightsRecord:
+- approved-for-acceptance RightsRecord:
   [`rights/V3-01-RIGHTS-G03A-001.json`](rights/V3-01-RIGHTS-G03A-001.json).
 
-The record deliberately remains `decision=BLOCKED` with reviewer `Pending owner G-03-A review`.
-This prevents repository preparation from becoming owner approval. It may change to `APPROVED`
-only after the owner explicitly grants G-03-A for this exact asset hash and after the decision is
-rebound to the future exact RC-3. This image is only acceptance input; it is not human-quality or
-commercial creative acceptance evidence and will not be published.
+The owner explicitly granted G-03-A for this exact hash and the record is rebound to RC-3 through
+`V3-01-APP-016`. The permission is only for Vision acceptance input. Publishing, training, resale
+and every other use remain prohibited; it is not human-quality or commercial creative acceptance.
 
 ## Checked-in safe state
 
@@ -125,10 +125,13 @@ PROVIDER_DAILY_LIMIT_VND=0
 OPENAI_API_KEY="" in Compose
 ```
 
-G-01-A and G-02-A governance records are
-[`V3-01-APP-011`](approvals/V3-01-APP-011.json) and
-[`V3-01-APP-012`](approvals/V3-01-APP-012.json). They record the owner decisions on RC-2 but grant
-no call authority and cannot satisfy the future loader because V3-01-10 changes the candidate.
+Historical preparation records are `V3-01-APP-011` and `V3-01-APP-012`. The exact RC-3 records are
+[`V3-01-APP-014`](approvals/V3-01-APP-014.json),
+[`V3-01-APP-015`](approvals/V3-01-APP-015.json), and
+[`V3-01-APP-016`](approvals/V3-01-APP-016.json). The verified secret-free bundle is
+[`V3-01-GATE-RC3-OPENAI-VISION-A.json`](V3-01-GATE-RC3-OPENAI-VISION-A.json), raw SHA-256
+`da4450ce9f3c6f2015d2fbea3af8ca2ffb108c13dd53daafdad294570ecf4d83`. It remains unmounted and
+grants no call authority by itself.
 
 ## Acceptance tests
 
@@ -142,7 +145,7 @@ The zero-network suite validates:
 - exact cost reservation, expiry and no-model-fallback behavior;
 - two-operation ceiling and duplicate prevention;
 - atomic durable reservation and restart persistence;
-- checked-in image SHA-256 and intentionally blocked G-03-A decision;
+- checked-in image SHA-256 and exact narrow G-03-A decision;
 - existing OpenAI adapter malformed-response, timeout, retry, circuit, rights, budget and secret
   tests without any network call.
 
@@ -156,17 +159,16 @@ with evidence ID `EV-V3-VERIFIED-GATE-LOADER-001`, bound to implementation commi
 regression and Docker deterministic E2E as mock/local evidence only, with 0 external calls and
 0 VND actual cost.
 
-## Required sequence after a future G-08
+## Current sequence
 
 ```text
-merge V3-01-10
-→ exact-main full regression
-→ annotated vf-v3-01-rc3 lock
-→ owner approves G-03-A for the exact image and RightsRecord hash
-→ owner rebinds G-01-A and G-02-A to exact RC-3 and a dated <=4h window
-→ bind the two predeclared operation IDs and protected secret-free bundle
-→ verify bundle hash and fail-closed preflight with kill switch engaged
-→ separate owner execution decision for exactly operation 1
+merge V3-01-10                                      DONE
+→ exact-main full regression                        DONE
+→ annotated vf-v3-01-rc3 lock                       DONE
+→ owner approves exact G-03-A asset                 DONE
+→ rebind G-01-A/G-02-A/G-03-A to RC-3/window       DONE
+→ bind two operation IDs and verify bundle hash     DONE, BUNDLE UNMOUNTED
+→ separate owner execution decision for operation 1 PENDING
 → one bounded live call
 → evidence review
 → separate decision for operation 2 if operation 1 passes

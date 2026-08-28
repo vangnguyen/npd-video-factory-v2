@@ -4,11 +4,11 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 through V3-01-09 are merged at exact `main`
-`5936aa7a9656d728be751d0ee61011fc1a5abc7a`, tagged `vf-v3-01-rc2` for controlled acceptance
-planning only. V3-01-09 remains disabled. V3-01-10 is an unmerged verified gate-loader remediation
-based on RC-2. None of these local/CI entries establish production-path, real-provider or quality
-acceptance.
+V3-01-01 through V3-01-10 are merged at exact `main`
+`adde8d9c5a7f608db80cbd9d21aecd45f721065e`, tagged `vf-v3-01-rc3` for controlled acceptance
+only. The OpenAI adapter remains disabled. A hash-pinned RC-3 gate bundle is verified as a
+governance artifact but is not mounted, and operation 1 lacks its separate owner decision. None of
+these local/CI entries establish production-path, real-provider or quality acceptance.
 
 ## Foundation
 

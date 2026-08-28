@@ -291,7 +291,7 @@ def test_valid_bundle_is_hash_pinned_and_loads_without_enabling_calls(tmp_path) 
     assert policy.budget.daily_limit_vnd == Decimal("1250")
 
 
-def test_checked_in_g03_candidate_is_hash_bound_but_not_owner_approved() -> None:
+def test_checked_in_g03_asset_is_hash_bound_and_narrowly_owner_approved() -> None:
     rights_path = (
         REPO_ROOT
         / "docs"
@@ -315,7 +315,12 @@ def test_checked_in_g03_candidate_is_hash_bound_but_not_owner_approved() -> None
     assert record.commercial_use is True
     assert record.derivative_use is True
     assert record.secret_recorded is False
-    assert record.decision == "BLOCKED"
+    assert record.decision == "APPROVED"
+    assert record.reviewer == "Owner (GitHub: vangnguyen)"
+    assert record.social_platform_use == []
+    assert record.license_name == (
+        "NPD owner-approved Vision acceptance only; no publishing, training, resale or other use"
+    )
 
 
 def test_loader_rejects_file_tampering_internal_hash_drift_and_wrong_rc(tmp_path) -> None:

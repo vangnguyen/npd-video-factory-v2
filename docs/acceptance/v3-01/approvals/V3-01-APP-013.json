@@ -1,0 +1,22 @@
+{
+  "approval_id": "V3-01-APP-013",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #23 V3-01-10 Verified Acceptance Gate Loader into main, exact-main regression, and annotated RC-3 lock only.",
+  "artifact_or_commit_hashes": [
+    "5936aa7a9656d728be751d0ee61011fc1a5abc7a",
+    "40149c2b439c78e75fdd3ff8996c2ed8c3ec4575",
+    "adde8d9c5a7f608db80cbd9d21aecd45f721065e"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and annotated vf-v3-01-rc3 tag only; no runtime environment",
+  "limits": [
+    "Exact-head CI run 33171973815 must remain green",
+    "Run exact-main full regression after merge",
+    "RC-3 remains NO-GO and provider execution is not authorized",
+    "No credential read, API call, deployment, public ingress, publish or production analytics"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-28T13:06:13Z",
+  "expires_at_utc": null,
+  "notes": "Captured after the owner's explicit G-08 approval. PR #23 merged at 2026-08-28T12:55:13Z as adde8d9c5a7f608db80cbd9d21aecd45f721065e; exact-main CI run 33173094529 and the local full regression passed. Annotated tag vf-v3-01-rc3 peels to that merge commit. This record grants no runtime authority."
+}

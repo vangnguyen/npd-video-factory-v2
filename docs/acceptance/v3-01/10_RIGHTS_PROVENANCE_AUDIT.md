@@ -43,8 +43,9 @@ removed from active timelines; no evidence is silently deleted.
 No external asset was downloaded, uploaded to a provider, published or redistributed during this
 audit. V3-01-10 creates one deterministic internal test card entirely from checked-in drawing code:
 [`assets/g03-a-owned-vision-test.png`](assets/g03-a-owned-vision-test.png), SHA-256
-`a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e`. Its candidate record
-[`V3-01-RIGHTS-G03A-001`](rights/V3-01-RIGHTS-G03A-001.json) remains `BLOCKED` pending explicit
-owner G-03-A. It is acceptance input only, not commercial creative or publication approval.
+`a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e`. Its record
+[`V3-01-RIGHTS-G03A-001`](rights/V3-01-RIGHTS-G03A-001.json) is owner-approved only for the exact
+RC-3 Vision acceptance input. Publishing, training, resale and every other use remain prohibited.
+This narrow approval does not provide broader real-asset or final-render rights coverage.
 
 Open gap: `V3-01-GAP-013`.

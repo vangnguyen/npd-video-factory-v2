@@ -1,0 +1,157 @@
+{
+  "version": 1,
+  "bundle_id": "V3-01-GATE-RC3-OPENAI-VISION-A",
+  "rc_tag": "vf-v3-01-rc3",
+  "rc_commit": "adde8d9c5a7f608db80cbd9d21aecd45f721065e",
+  "provider_key": "openai-vision",
+  "model": "gpt-5-mini",
+  "capability": "vision",
+  "credential_alias": "secret://openai/codex-video",
+  "valid_from_utc": "2026-08-28T14:00:00Z",
+  "expires_at_utc": "2026-08-28T18:00:00Z",
+  "budget": {
+    "currency": "VND",
+    "per_operation_limit_vnd": "500",
+    "acceptance_window_limit_vnd": "1250",
+    "input_vnd_per_million_tokens": "6565",
+    "cached_input_vnd_per_million_tokens": "656.5",
+    "output_vnd_per_million_tokens": "52520",
+    "budget_day_utc": "2026-08-28",
+    "max_frames": 1,
+    "max_dimension_pixels": 2048,
+    "image_detail": "high",
+    "input_token_ceiling": 16384,
+    "max_output_tokens": 4096,
+    "timeout_seconds": 60.0,
+    "max_attempts": 1,
+    "max_concurrent_calls": 1
+  },
+  "credential_approval": {
+    "record_sha256": "53c882317bea811f8fd24b12094991250c864415ed399065aa2c0ab3be73e785",
+    "record": {
+      "approval_id": "V3-01-APP-014",
+      "gate_id": "G-01",
+      "decision": "APPROVED",
+      "scope": "Rebind G-01-A to exactly openai-vision / gpt-5-mini / vision on vf-v3-01-rc3 using only credential alias secret://openai/codex-video for the dated acceptance window.",
+      "artifact_or_commit_hashes": [
+        "adde8d9c5a7f608db80cbd9d21aecd45f721065e",
+        "f1cff1c8370caf6218577cdabfbd06c0665dfabb2407ec320b4668f7bf50072a",
+        "a5ba3e0e1e39384cb1d6beb892b3c85a2266ea30be436faed529d6fdfe8aa9a0"
+      ],
+      "target_account_or_environment": "Isolated owner-gated acceptance runner; credential value remains in the external secret mechanism",
+      "limits": [
+        "Provider openai-vision only",
+        "Model alias gpt-5-mini only; no automatic fallback",
+        "Capability vision only",
+        "Credential alias secret://openai/codex-video only",
+        "No provider call until a separate owner decision authorizes operation 1",
+        "No deployment, public ingress, publishing or production analytics"
+      ],
+      "approved_by": "Owner (GitHub: vangnguyen)",
+      "approved_at_utc": "2026-08-28T13:06:13Z",
+      "expires_at_utc": "2026-08-28T18:00:00Z",
+      "notes": "Rebound from V3-01-APP-011 to exact RC-3 and execution-scope hash. The governance bundle is not mounted and runtime execution defaults remain disabled. This record alone grants no API-call authority."
+    }
+  },
+  "budget_approval": {
+    "record_sha256": "4a581048aa00cca3572cf6a03b6eb6e7de1d0286f0004b297fec7adb527cc052",
+    "record": {
+      "approval_id": "V3-01-APP-015",
+      "gate_id": "G-02",
+      "decision": "APPROVED",
+      "scope": "Rebind G-02-A to the dated RC-3 VND envelope for at most two predeclared OpenAI gpt-5-mini Vision acceptance operations.",
+      "artifact_or_commit_hashes": [
+        "adde8d9c5a7f608db80cbd9d21aecd45f721065e",
+        "bbc90bcb6b29f5e28bdfd8c0fa2857a0b69ff072538edfbfd3e37e7293e228e8",
+        "a5ba3e0e1e39384cb1d6beb892b3c85a2266ea30be436faed529d6fdfe8aa9a0"
+      ],
+      "target_account_or_environment": "Isolated owner-gated acceptance runner; no budget is enabled in repository or production defaults",
+      "limits": [
+        "500 VND atomic reservation per operation",
+        "1250 VND maximum for the whole acceptance window",
+        "Exactly two predeclared operation IDs",
+        "One image per call at no more than 2048x2048 with detail high",
+        "Input accounting ceiling 16384 tokens and output ceiling 4096 tokens",
+        "60 second timeout, concurrency 1 and no automatic retry",
+        "Window 2026-08-28T14:00:00Z through 2026-08-28T18:00:00Z only",
+        "No provider call until a separate owner decision authorizes operation 1"
+      ],
+      "approved_by": "Owner (GitHub: vangnguyen)",
+      "approved_at_utc": "2026-08-28T13:06:13Z",
+      "expires_at_utc": "2026-08-28T18:00:00Z",
+      "notes": "Rebound from V3-01-APP-012 to the exact dated budget and execution-scope hashes on RC-3. The budget remains zero in checked-in runtime defaults. This record alone grants no API-call authority."
+    }
+  },
+  "rights_approval": {
+    "record_sha256": "545139d6e81d5fbdfaf9938addd423ac7c2810a7a4a45499c7fdf19a6c176885",
+    "record": {
+      "approval_id": "V3-01-APP-016",
+      "gate_id": "G-03",
+      "decision": "APPROVED",
+      "scope": "Authorize only g03-a-owned-vision-test.png as the Vision acceptance input on exact RC-3; no publishing, training, resale or other use.",
+      "artifact_or_commit_hashes": [
+        "adde8d9c5a7f608db80cbd9d21aecd45f721065e",
+        "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+        "f469930a74b477751fc4417774b486ccbf2d7822487478875e099552c83e06ba",
+        "a5ba3e0e1e39384cb1d6beb892b3c85a2266ea30be436faed529d6fdfe8aa9a0"
+      ],
+      "target_account_or_environment": "Isolated owner-gated Vision acceptance runner only",
+      "limits": [
+        "Exact asset g03-a-owned-vision-test.png only",
+        "Asset SHA-256 a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+        "Vision acceptance input only",
+        "No publishing, training, resale or other use",
+        "No provider call until a separate owner decision authorizes operation 1"
+      ],
+      "approved_by": "Owner (GitHub: vangnguyen)",
+      "approved_at_utc": "2026-08-28T13:06:13Z",
+      "expires_at_utc": "2026-08-28T18:00:00Z",
+      "notes": "The owner explicitly approved the exact asset rights subject to RC-3 rebind. This record binds the approved RightsRecord and complete execution-scope hashes. The bundle remains unmounted and this record alone grants no API-call authority."
+    }
+  },
+  "rights_record": {
+    "record_sha256": "f469930a74b477751fc4417774b486ccbf2d7822487478875e099552c83e06ba",
+    "record": {
+      "rights_record_id": "V3-01-RIGHTS-G03A-001",
+      "asset_id": "asset-g03-a-owned-vision-test",
+      "asset_hash": "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+      "source_type": "internal",
+      "provider": "Ngoc Phuong Dong",
+      "provider_asset_or_job_id": "g03-owned-test-card-v1",
+      "source_url_or_reference": "repo://docs/acceptance/v3-01/assets/g03-a-owned-vision-test.png",
+      "acquired_at_utc": "2026-08-28T11:58:39.723595Z",
+      "license_name": "NPD owner-approved Vision acceptance only; no publishing, training, resale or other use",
+      "license_version_or_terms_date": "2026-08-28",
+      "commercial_use": true,
+      "derivative_use": true,
+      "social_platform_use": [],
+      "territory": [
+        "VN"
+      ],
+      "expiry": null,
+      "attribution_required": false,
+      "attribution_text": "",
+      "model_or_voice_rights": "not-applicable",
+      "person_likeness_consent": "not-applicable-no-person",
+      "trademark_review": "no-third-party-trademark",
+      "evidence_reference": "repo://scripts/generate-g03-owned-vision-asset.ps1#sha256=c2cf9da538709dcf251e769cad17138b6c17d082cd0d052fd5987730aa4a8538",
+      "reviewer": "Owner (GitHub: vangnguyen)",
+      "decision": "APPROVED",
+      "secret_recorded": false
+    }
+  },
+  "allowed_operations": [
+    {
+      "operation_key": "v3-01-g03a-openai-vision-call-01",
+      "operation": "vision_analysis",
+      "asset_id": "asset-g03-a-owned-vision-test",
+      "asset_hash": "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e"
+    },
+    {
+      "operation_key": "v3-01-g03a-openai-vision-call-02",
+      "operation": "vision_analysis",
+      "asset_id": "asset-g03-a-owned-vision-test",
+      "asset_hash": "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e"
+    }
+  ]
+}

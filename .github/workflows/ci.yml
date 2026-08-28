@@ -332,7 +332,7 @@ jobs:
           grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
           grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
           grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
-          python -c 'import hashlib,json; from pathlib import Path; record=json.loads(Path("docs/acceptance/v3-01/rights/V3-01-RIGHTS-G03A-001.json").read_text()); assert record["decision"] == "BLOCKED"; assert record["secret_recorded"] is False; assert hashlib.sha256(Path("docs/acceptance/v3-01/assets/g03-a-owned-vision-test.png").read_bytes()).hexdigest() == record["asset_hash"]'
+          python -c 'import hashlib,json; from pathlib import Path; record=json.loads(Path("docs/acceptance/v3-01/rights/V3-01-RIGHTS-G03A-001.json").read_text()); assert record["decision"] == "APPROVED"; assert record["reviewer"] == "Owner (GitHub: vangnguyen)"; assert record["social_platform_use"] == []; assert record["license_name"] == "NPD owner-approved Vision acceptance only; no publishing, training, resale or other use"; assert record["secret_recorded"] is False; assert hashlib.sha256(Path("docs/acceptance/v3-01/assets/g03-a-owned-vision-test.png").read_bytes()).hexdigest() == record["asset_hash"]'
           ! git grep -I -n -E '^(PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_PER_OPERATION_LIMIT_VND=[1-9][0-9]*|PROVIDER_DAILY_LIMIT_VND=[1-9][0-9]*)$' -- .env.example deploy apps services
       - name: Validate V2-11 deployment bundle
         env:
