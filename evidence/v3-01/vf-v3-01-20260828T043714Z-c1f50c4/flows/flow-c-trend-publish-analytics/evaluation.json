@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-06",
+  "verdict": "BLOCKED",
+  "two_consecutive_runs": true,
+  "run_metrics": [
+    {
+      "run_id": "flow-c-contract-run-01",
+      "trend_source_count": 3,
+      "provenance_completeness": 1.0,
+      "cluster_determinism": 1.0,
+      "maximum_opportunity_score_delta": 0.0,
+      "idea_trend_binding": true,
+      "project_idea_binding": true,
+      "video_hash_binding": true,
+      "rights_gate_passed": true,
+      "platform_validation_passed": true,
+      "idempotency_replay_passed": true,
+      "duplicate_prevention_passed": true,
+      "receipt_integrity_passed": true,
+      "analytics_metric_completeness": 1.0,
+      "missing_metric_null_semantics_passed": true,
+      "snapshot_ordering_passed": true,
+      "winner_explainability_passed": true,
+      "learning_lineage_completeness": 1.0,
+      "cost_total_vnd": "0",
+      "restart_recovered": true,
+      "technical_passed": true,
+      "failures": []
+    },
+    {
+      "run_id": "flow-c-contract-run-02",
+      "trend_source_count": 3,
+      "provenance_completeness": 1.0,
+      "cluster_determinism": 1.0,
+      "maximum_opportunity_score_delta": 0.0,
+      "idea_trend_binding": true,
+      "project_idea_binding": true,
+      "video_hash_binding": true,
+      "rights_gate_passed": true,
+      "platform_validation_passed": true,
+      "idempotency_replay_passed": true,
+      "duplicate_prevention_passed": true,
+      "receipt_integrity_passed": true,
+      "analytics_metric_completeness": 1.0,
+      "missing_metric_null_semantics_passed": true,
+      "snapshot_ordering_passed": true,
+      "winner_explainability_passed": true,
+      "learning_lineage_completeness": 1.0,
+      "cost_total_vnd": "0",
+      "restart_recovered": true,
+      "technical_passed": true,
+      "failures": []
+    }
+  ],
+  "implemented": {
+    "status": "PASS",
+    "reasons": [
+      "FLOW_C_ACCEPTANCE_CONTRACT_AND_DETERMINISTIC_EVALUATOR_PRESENT"
+    ]
+  },
+  "mock_tested": {
+    "status": "PASS",
+    "reasons": []
+  },
+  "real_provider_tested": {
+    "status": "BLOCKED",
+    "reasons": [
+      "OWNER_GATE_PENDING:G-01",
+      "OWNER_GATE_PENDING:G-02",
+      "OWNER_GATE_PENDING:G-03"
+    ]
+  },
+  "production_path_tested": {
+    "status": "BLOCKED",
+    "reasons": [
+      "OWNER_GATE_PENDING:G-04",
+      "OWNER_GATE_PENDING:G-05",
+      "OWNER_GATE_PENDING:G-06"
+    ]
+  },
+  "quality_accepted": {
+    "status": "BLOCKED",
+    "reasons": [
+      "OWNER_GATE_PENDING:G-11"
+    ]
+  },
+  "pending_owner_gates": [
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-04",
+    "G-05",
+    "G-06",
+    "G-11"
+  ],
+  "cost_total_vnd": "0",
+  "currency": "VND",
+  "external_actions_performed": false,
+  "publish_performed": false
+}

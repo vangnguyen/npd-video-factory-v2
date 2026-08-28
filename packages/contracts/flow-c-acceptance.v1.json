@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-06",
+  "consecutive_runs_required": 2,
+  "minimum_trend_sources": 3,
+  "minimum_provenance_completeness": 1.0,
+  "minimum_cluster_determinism": 1.0,
+  "maximum_opportunity_score_delta": 0.000001,
+  "minimum_analytics_snapshots": 2,
+  "minimum_analytics_metric_completeness": 1.0,
+  "minimum_learning_lineage_completeness": 1.0,
+  "required_provider_capabilities": [
+    "trend",
+    "analytics"
+  ],
+  "required_metrics": [
+    "views",
+    "impressions",
+    "reach",
+    "watch_time",
+    "average_view_duration",
+    "completion_rate",
+    "likes",
+    "comments",
+    "shares",
+    "saves",
+    "followers_gained",
+    "clicks",
+    "ctr",
+    "revenue",
+    "rpm",
+    "observation_window_hours"
+  ],
+  "required_owner_gates": [
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-04",
+    "G-05",
+    "G-06",
+    "G-11"
+  ],
+  "currency": "VND",
+  "external_action_allowed_during_contract_test": false,
+  "real_publish_allowed_during_contract_test": false
+}

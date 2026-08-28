@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: V3-01-00 baseline, merged V3-01-01 through V3-01-04, and V3-01-05 local/CI remediation
+SCOPE: V3-01-00 baseline, merged V3-01-01 through V3-01-05, and V3-01-06 local/CI remediation
 RELEASE CANDIDATE: NOT ESTABLISHED
-LATEST EVIDENCE RUN: vf-v3-01-20260828T033515Z-2563dfd (earlier runs remain separately retained)
+LATEST EVIDENCE RUN: vf-v3-01-20260828T043714Z-c1f50c4 (earlier runs remain separately retained)
 DATE: 2026-08-28
-OWNER DECISION: G-00 APPROVED; BOUNDED G-08 RECORDS CONSUMED BY PR #12/#13, PR #14, PR #15 AND PR #16; ALL LATER MERGE AND EXECUTION GATES PENDING
+OWNER DECISION: G-00 APPROVED; BOUNDED G-08 RECORDS CONSUMED BY PR #12/#13, PR #14, PR #15, PR #16 AND PR #17; ALL LATER MERGE AND EXECUTION GATES PENDING
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -26,15 +26,15 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Quality-accepted axis | 36 NOT_TESTED, 24 N/A |
 | Flow A | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
-| Flow C | BLOCKED; dry-run only, no official publish/analytics adapter acceptance |
+| Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
 | Cost | 0 VND actual, 0 external calls; durable local controls pass, production-like/real acceptance incomplete |
 | Rights/provenance | strict hook/artifact checks pass for fixtures; real-asset acceptance absent |
 | Backup/restore | helpers exist; no isolated drill |
 | Observability/soak | no production-like monitoring or 48-hour run |
-| Gaps | 8 OPEN, 7 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
+| Gaps | 7 OPEN, 8 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
 | Allowed scope | LOCAL/CI remediation, static/mock/security tests, redacted evidence, draft PRs |
-| Disabled scope | V3-01-05 merge, deploy, paid/provider calls, public ingress, publish, analytics writes |
+| Disabled scope | V3-01-06 merge, deploy, paid/provider calls, public ingress, publish, production analytics |
 
 ## Critical failures
 
@@ -48,8 +48,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 ## Evidence
 
 - baseline run: `vf-v3-01-20260827T120208Z-cae40ed`;
-- exact merged `main`: `e06ac3c76b03c7923c83aeeeda23281c1b83d45a`;
-- locked V3-01-05 code-only commit: `2563dfd4735fd24497fd285d40e2173093c0a351`;
+- exact merged `main`: `e7888649c97f60be0b7ee5201633aa5481deb591`;
+- locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - production image digest: none;
 - evidence IDs: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`,
   `EV-V3-SAFETY-001`, `EV-V3-DR-001`;
@@ -57,8 +57,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - analytics snapshot IDs: none;
 - restore report: none; `EV-V3-DR-001` is BLOCKED static evidence;
 - owner approval IDs: `V3-01-APP-001` for G-00, `V3-01-APP-002` for only PR #12/#13,
-  `V3-01-APP-003` for only PR #14, `V3-01-APP-004` for only PR #15 and
-  `V3-01-APP-005` for only PR #16.
+  `V3-01-APP-003` for only PR #14, `V3-01-APP-004` for only PR #15,
+  `V3-01-APP-005` for only PR #16 and `V3-01-APP-006` for only PR #17.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -85,6 +85,14 @@ research/claims/originality, media coverage, rights/receipts, visual relevance, 
 approval, render QC, restart recovery and 0 VND cost. Real-provider, production-path and quality
 axes remain `BLOCKED`; no G-01/G-02/G-03/G-04/G-11 authority was granted.
 
+V3-01-06 evidence is stored in `vf-v3-01-20260828T043714Z-c1f50c4` as
+`EV-V3-FLOW-C-CONTRACT-001`. It proves two deterministic fixture runs covering trend provenance,
+cluster/score reproducibility, idea/project/video approval bindings, rights/platform validation,
+publication idempotency and receipt integrity, nullable normalized analytics, explainable winner
+assessment, recommendation-only learning lineage, restart recovery and 0 VND cost. No credential,
+external call, remote post or production analytics was used. Real-provider, production-path and
+quality axes remain `BLOCKED`; G-01 through G-06 and G-11 remain pending.
+
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
@@ -93,8 +101,8 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; `V3-01-APP-002` through `V3-01-APP-005` are consumed.
-  V3-01-05 requires a new explicit G-08.
+- **Merge:** none currently authorized; `V3-01-APP-002` through `V3-01-APP-006` are consumed.
+  V3-01-06 requires a new explicit G-08.
 - **Deploy:** no; no locked RC or G-09.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** zero real-provider calls; 0 VND.

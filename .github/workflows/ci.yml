@@ -32,6 +32,8 @@ jobs:
         run: python scripts/v3_01_flow_a_acceptance.py evidence/v3-01/vf-v3-01-20260828T010641Z-88e6bcc/flows/flow-a-upload-auto-edit/two-run-contract.json --expect-verdict BLOCKED
       - name: Evaluate V3-01-05 Flow B fixture boundary
         run: python scripts/v3_01_flow_b_acceptance.py evidence/v3-01/vf-v3-01-20260828T033515Z-2563dfd/flows/flow-b-idea-ai-video/two-run-contract.json --expect-verdict BLOCKED
+      - name: Evaluate V3-01-06 Flow C fixture boundary
+        run: python scripts/v3_01_flow_c_acceptance.py evidence/v3-01/vf-v3-01-20260828T043714Z-c1f50c4/flows/flow-c-trend-publish-analytics/two-run-contract.json --expect-verdict BLOCKED
       - name: Alembic upgrade, downgrade and replay
         working-directory: apps/api
         env:
@@ -273,6 +275,17 @@ jobs:
           grep -Fq 'external_action_performed: Literal[False] = False' apps/api/app/flow_b_acceptance.py
           grep -Fq 'publish_requested: Literal[False] = False' apps/api/app/flow_b_acceptance.py
           ! git grep -I -n -E '^(PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_BUDGET_CURRENCY=USD|AUDIO_EXTERNAL_EXECUTION_ENABLED=true|PUBLISH_ENABLED=true)$' -- .env.example deploy/production
+      - name: Verify V3-01-06 Flow C acceptance boundary
+        run: |
+          grep -Fq 'class FlowCAcceptanceBundle' apps/api/app/flow_c_acceptance.py
+          grep -Fq 'fixture provider cannot be promoted to real-provider evidence' apps/api/app/flow_c_acceptance.py
+          grep -Fq 'fixture trend source cannot be promoted to real-source evidence' apps/api/app/flow_c_acceptance.py
+          grep -Fq 'fixture analytics snapshot cannot be promoted to real evidence' apps/api/app/flow_c_acceptance.py
+          grep -Fq 'fixture publication cannot be promoted to real publication evidence' apps/api/app/flow_c_acceptance.py
+          grep -Fq 'currency: Literal["VND"]' apps/api/app/flow_c_acceptance.py
+          grep -Fq 'external_action_allowed_during_contract_test: Literal[False] = False' apps/api/app/flow_c_acceptance.py
+          grep -Fq 'real_publish_allowed_during_contract_test: Literal[False] = False' apps/api/app/flow_c_acceptance.py
+          ! git grep -I -n -E '^(PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_BUDGET_CURRENCY=USD|PUBLISH_ENABLED=true|PUBLISH_EXTERNAL_EXECUTION_ENABLED=true|ANALYTICS_EXTERNAL_EXECUTION_ENABLED=true)$' -- .env.example deploy/production
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json
