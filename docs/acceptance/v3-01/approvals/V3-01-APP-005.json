@@ -1,0 +1,28 @@
+{
+  "approval_id": "V3-01-APP-005",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #16 V3-01-04 Flow A contract and acceptance plane into main after exact-head CI, followed by exact-main verification and local or CI implementation of a draft V3-01-05 Flow B acceptance plane only.",
+  "artifact_or_commit_hashes": [
+    "4779ddcb1af5cc0138922ea144ddf4496fc313f1",
+    "2c91c96f958a78df0e998f4c340f13d84611436b",
+    "e06ac3c76b03c7923c83aeeeda23281c1b83d45a"
+  ],
+  "target_account_or_environment": "GitHub repository main branch merge of PR #16 and local or CI draft work for V3-01-05; no runtime environment",
+  "limits": [
+    "All five Video Factory V2 CI jobs must pass on exact PR #16 head before merge",
+    "Run exact-main regression after merge",
+    "No production deployment or public ingress",
+    "No credential activation or real provider execution",
+    "No paid provider call; approved budget remains 0 VND",
+    "Global provider kill switch remains engaged",
+    "No real publish or production analytics",
+    "Flow A real-provider, production-path and quality axes remain BLOCKED",
+    "V3-01-05 may create contract, mock evaluator, redacted evidence and a draft PR only",
+    "No permission to merge V3-01-05 or any later remediation PR"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-28T03:17:00Z",
+  "expires_at_utc": null,
+  "notes": "Captured from the owner's explicit G-08 approval in the Codex task before merge. PR #16 merged at 2026-08-28T03:17:14Z. Exact-main CI run 33138440452 passed all five jobs on merge commit e06ac3c76b03c7923c83aeeeda23281c1b83d45a. This record grants no G-01 through G-07 or G-09 through G-12 authority."
+}

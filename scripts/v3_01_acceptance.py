@@ -44,6 +44,7 @@ REQUIRED_DOCS = (
     "18_V3_01_02_PROVIDER_SAFETY_PLANE.md",
     "19_V3_01_03_INGRESS_MEDIA_DURABLE_SAFETY.md",
     "20_V3_01_04_FLOW_A_CLOSURE.md",
+    "21_V3_01_05_FLOW_B_CLOSURE.md",
 )
 SENSITIVE_KEY = re.compile(
     r"(^|_)(authorization|cookie|password|passwd|secret|token|api_key|private_key|client_secret)($|_)",

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-FLOW-B-CONTRACT-001",
+  "test_case_id": "FLB-001+FLB-002+SEC-004",
+  "matrix_rows": [
+    "IDE-02",
+    "RES-01",
+    "SCR-01",
+    "SCR-02",
+    "BRL-01",
+    "STK-01",
+    "CFY-01",
+    "IMG-01",
+    "VID-01",
+    "TTS-01",
+    "SUB-01",
+    "MUS-01",
+    "TML-01",
+    "PRV-01",
+    "APR-01",
+    "RND-01",
+    "QC-01",
+    "QC-02",
+    "OPS-03",
+    "OPS-04"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "2563dfd4735fd24497fd285d40e2173093c0a351",
+  "environment": "CI",
+  "provider": {
+    "name": "fixture-research-stock-image-video-vision-tts",
+    "model_or_workflow": "flow-b-acceptance-v1-deterministic-contract",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": "d6cb7fb94032d964a32f52276efe7ba4374ec1ae9da4c50820761cda89c04c81",
+  "response_or_artifact_hash": "0e914c96ba81a0fe6436f09a053b02291dc67e16039bd2f9942524779a7c746a",
+  "started_at_utc": "2026-08-28T01:00:00Z",
+  "completed_at_utc": "2026-08-28T03:05:00Z",
+  "duration_seconds": 7500,
+  "result": "PASS",
+  "assertion": "The strict V3-01-05 evaluator independently measures two locked-commit fixture runs for source and claim coverage, originality, storyboard/media coverage, rights and receipts, visual relevance, TTS/subtitle/audio/render thresholds, approval hashes, restart recovery and VND-only cost. It leaves real-provider, production-path and quality axes BLOCKED.",
+  "correlation_id": "v3-01-05-flow-b-contract-2563dfd",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex contract-test reviewer",
+  "gap_ids": [
+    "V3-01-GAP-002",
+    "V3-01-GAP-004",
+    "V3-01-GAP-005",
+    "V3-01-GAP-013",
+    "V3-01-GAP-016"
+  ],
+  "reproduce": "Run python scripts/v3_01_flow_b_acceptance.py evidence/v3-01/vf-v3-01-20260828T033515Z-2563dfd/flows/flow-b-idea-ai-video/two-run-contract.json --expect-verdict BLOCKED on commit 2563dfd4735fd24497fd285d40e2173093c0a351."
+}

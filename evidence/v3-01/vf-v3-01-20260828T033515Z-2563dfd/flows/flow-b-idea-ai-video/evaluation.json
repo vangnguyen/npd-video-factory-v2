@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-05",
+  "verdict": "BLOCKED",
+  "two_consecutive_runs": true,
+  "run_metrics": [
+    {
+      "run_id": "flow-b-contract-run-01",
+      "research_source_count": 3,
+      "claim_source_coverage": 1.0,
+      "verified_claim_coverage": 1.0,
+      "maximum_originality_similarity": 0.24,
+      "storyboard_plan_coverage": 1.0,
+      "asset_shot_coverage": 1.0,
+      "rights_completeness": 1.0,
+      "receipt_completeness": 1.0,
+      "minimum_visual_relevance": 0.88,
+      "tts_duration_deviation_ratio": 0.03,
+      "subtitle_median_drift_seconds": 0.18,
+      "subtitle_p95_drift_seconds": 0.36,
+      "cost_total_vnd": "0",
+      "technical_passed": true,
+      "failures": []
+    },
+    {
+      "run_id": "flow-b-contract-run-02",
+      "research_source_count": 3,
+      "claim_source_coverage": 1.0,
+      "verified_claim_coverage": 1.0,
+      "maximum_originality_similarity": 0.22,
+      "storyboard_plan_coverage": 1.0,
+      "asset_shot_coverage": 1.0,
+      "rights_completeness": 1.0,
+      "receipt_completeness": 1.0,
+      "minimum_visual_relevance": 0.89,
+      "tts_duration_deviation_ratio": 0.02,
+      "subtitle_median_drift_seconds": 0.17,
+      "subtitle_p95_drift_seconds": 0.34,
+      "cost_total_vnd": "0",
+      "technical_passed": true,
+      "failures": []
+    }
+  ],
+  "implemented": {
+    "status": "PASS",
+    "reasons": ["FLOW_B_ACCEPTANCE_CONTRACT_AND_DETERMINISTIC_EVALUATOR_PRESENT"]
+  },
+  "mock_tested": {
+    "status": "PASS",
+    "reasons": []
+  },
+  "real_provider_tested": {
+    "status": "BLOCKED",
+    "reasons": [
+      "OWNER_GATE_PENDING:G-01",
+      "OWNER_GATE_PENDING:G-02",
+      "OWNER_GATE_PENDING:G-03"
+    ]
+  },
+  "production_path_tested": {
+    "status": "BLOCKED",
+    "reasons": ["OWNER_GATE_PENDING:G-04"]
+  },
+  "quality_accepted": {
+    "status": "BLOCKED",
+    "reasons": ["OWNER_GATE_PENDING:G-11"]
+  },
+  "pending_owner_gates": ["G-01", "G-02", "G-03", "G-04", "G-11"],
+  "cost_total_vnd": "0",
+  "currency": "VND",
+  "external_actions_performed": false,
+  "publish_performed": false
+}

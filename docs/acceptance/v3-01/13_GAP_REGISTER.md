@@ -2,34 +2,35 @@
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
 derived from the audit captured on `2026-08-27`, exact merged `main`
-`4779ddcb1af5cc0138922ea144ddf4496fc313f1`, and locked V3-01-04 code-only local/CI commit
-`88e6bcce22bf31bb3f23547c1d4d4a445abc0407`.
+`e06ac3c76b03c7923c83aeeeda23281c1b83d45a`, and locked V3-01-05 code-only local/CI commit
+`2563dfd4735fd24497fd285d40e2173093c0a351`.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
-| P0 | 9 | 0 | 1 | 10 | all unverified P0 work still blocks release-candidate GO |
+| P0 | 4 | 5 | 1 | 10 | all unverified P0 work still blocks release-candidate GO |
 | P1 | 3 | 2 | 0 | 5 | blocks production hardening/full acceptance |
 | P2 | 1 | 0 | 0 | 1 | tracked maintenance risk |
-| Total | 13 | 2 | 1 | 16 | default verdict remains NO-GO |
+| Total | 8 | 7 | 1 | 16 | default verdict remains NO-GO |
 
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
-through PR #13. V3-01-02 is merged through PR #14. V3-01-03 is merged through PR #15, while
-GAP-010 and GAP-011 remain `IN_PROGRESS`. All three bounded G-08 approvals are exhausted;
+through PR #13. V3-01-02 is merged through PR #14, V3-01-03 through PR #15 and V3-01-04 through
+PR #16. GAP-002, GAP-004, GAP-005, GAP-010, GAP-011, GAP-013 and GAP-016 remain
+`IN_PROGRESS`. All four bounded G-08 approvals are exhausted;
 production remains undeployed and unverified.
 
 ## P0 release blockers
 
 | Gap | Short description | Containment |
 |---|---|---|
-| V3-01-GAP-002 | research/originality/claim-linked script incomplete | no production-ready claim |
+| V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
 | V3-01-GAP-003 | no real ASR/Vision/reframe evidence | measured fixture contract only; real execution gated |
-| V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | external execution false |
-| V3-01-GAP-005 | no accepted Vietnamese voice/music mix | provider/rights contract only; eSpeak remains dev/CI |
+| V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
+| V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | dry-run only |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | no backup/restore/rollback drill | no production state touched |
-| V3-01-GAP-013 | no accepted real-asset rights coverage | unknown rights hard-block |
-| V3-01-GAP-016 | no human full-watch quality acceptance | approval hashes enforced; no publish-ready claim |
+| V3-01-GAP-013 | no accepted real-asset rights coverage | 100% fixture rights/lineage required; unknown real rights hard-block |
+| V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work
 
