@@ -1,10 +1,10 @@
 # V3-01 provider audit
 
-No real provider was called and no credential value is present in Git/evidence. A separate OpenAI
-key has been provisioned in the ignored workstation `.env`, but V3-01-09 tests use only an injected
-fake resolver and `MockTransport`. G-01-A, G-02-A and the narrowly scoped G-03-A asset decision are
-rebound to exact RC-3 and one dated window. The verified bundle remains unmounted and operation 1
-still requires a separate owner decision. Credential presence grants no execution authority.
+One owner-authorized OpenAI Vision operation was dispatched on exact RC-3 inside the bound window.
+It failed non-retryably with `OpenAIVisionResponseError` before structured output or a
+provider/usage receipt was available. It is a failed attempt, not accepted real-provider evidence.
+No credential value is present in Git/evidence; operation 1 cannot be reused and operation 2 remains
+locked. Credential presence grants no further execution authority.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
@@ -19,14 +19,15 @@ owner gate or execution permission in the table.
 
 PR #23 merged V3-01-10 at exact `main` `adde8d9c5a7f608db80cbd9d21aecd45f721065e`;
 `vf-v3-01-rc3` peels to that commit. Exact-main local regression and CI run `33173094529` passed.
-The OpenAI `gpt-5-mini` Vision adapter remains disabled and mock-tested only. The RC-3 bundle hash
-is verified in governance, but no runtime configuration was changed and no credential was read.
+Governance-only PR #24 later merged as `a73bad37f1f3aa7c2347e6a76503246a46d3c112` with exact-main
+CI run `33175813324` passing 5/5; executable RC-3 did not change. The adapter remains unaccepted as
+real-provider-tested. Exact operation evidence is `EV-V3-OPENAI-VISION-OP1-FAILED-001`.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | strict mock frames/OCR/composition/objects/safe-crop/quality, hashes, timeout/retry/circuit/duplicate/rights/budget, VND receipt and verified-loader tests | `BLOCKED` | separate owner decision for operation 1, then one bounded call and evidence review; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | strict mock contract plus one failed, non-retryable live attempt; gate/ledger/rights/duplicate controls held, but no structured/provider/usage receipt exists | `BLOCKED` | zero-call schema/error-evidence remediation, G-08, new RC and newly bound acceptance gates before any later operation; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -53,10 +54,13 @@ is verified in governance, but no runtime configuration was changed and no crede
 
 ## Cost and network state
 
-Cost incurred by this baseline/provider audit through V3-01-10: `0 VND`. External provider
-requests: `0`. MockTransport calls and simulated VND arithmetic are contract tests, not real usage.
+External provider attempts: `1`, with zero retry and zero fallback. Actual provider billing is
+`unknown` because no usage receipt was returned. The durable safety ledger conservatively committed
+the reserved `500 VND` as an estimated charge; this must not be represented as actual billed cost.
 
 Local evidence `EV-V3-PROVIDER-SAFETY-001` and V3-01-03 locked-commit evidence change
 only the implemented/mock-tested state for the control plane. They are not credentials, provider,
 production-path or human-quality acceptance. `EV-V3-OPENAI-VISION-ADAPTER-001` changes only the
-implemented/mock-tested Vision adapter evidence and leaves GAP-003 `IN_PROGRESS`.
+implemented/mock-tested Vision adapter evidence. `EV-V3-OPENAI-VISION-OP1-FAILED-001` demonstrates
+the bounded gate/ledger failure path but does not promote the real-provider axis; GAP-003 remains
+`IN_PROGRESS`.

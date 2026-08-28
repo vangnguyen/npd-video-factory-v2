@@ -1,8 +1,10 @@
 # V3-01 acceptance matrix
 
-Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-10 are merged at exact `main`
-`adde8d9c5a7f608db80cbd9d21aecd45f721065e` and locked as NO-GO RC-3. The verified governance
-bundle remains unmounted and no live call has occurred, so no acceptance axis changes. `I/M/R/P/Q` mean
+Baseline captured at `2026-08-27T12:02:08Z`; executable V3-01-01 through V3-01-10 remain locked at
+NO-GO RC-3 `adde8d9c5a7f608db80cbd9d21aecd45f721065e`. Governance-only PR #24 merged as
+`a73bad37f1f3aa7c2347e6a76503246a46d3c112`. Operation 1 was dispatched exactly once and failed
+non-retryably without structured output or a provider/usage receipt. The attempt is evidence of
+fail-closed controls, not accepted real-provider output, so no acceptance axis changes. `I/M/R/P/Q` mean
 implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
@@ -35,7 +37,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
 | EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
-| VIS-01 | Vision AI structured analysis | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-VISION-ADAPTER-001; EV-V3-VERIFIED-GATE-LOADER-001 | GAP-003 |
+| VIS-01 | Vision AI structured analysis | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-VISION-ADAPTER-001; EV-V3-VERIFIED-GATE-LOADER-001; EV-V3-OPENAI-VISION-OP1-FAILED-001 | GAP-003 |
 | REF-01 | Smart reframe / tracking | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003; GAP-016 |
 | BRL-01 | B-roll planning and placement | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-004; GAP-013 |
 | STK-01 | Licensed stock search/download | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-004; GAP-013 |
@@ -61,10 +63,10 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | ANA-03 | Analytics freshness/reconciliation | PASS | PASS | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-C-CONTRACT-001 | GAP-006 |
 | WIN-01 | Winner detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-C-CONTRACT-001 | GAP-006 |
 | LRN-01 | Learning feedback | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SAFETY-001; EV-V3-FLOW-C-CONTRACT-001 | GAP-006 |
-| OPS-01 | Provider health/retry/circuit breaker | PASS | PASS | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-PROVIDER-SAFETY-001; EV-V3-VERIFIED-GATE-LOADER-001 | GAP-010 |
+| OPS-01 | Provider health/retry/circuit breaker | PASS | PASS | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-PROVIDER-SAFETY-001; EV-V3-VERIFIED-GATE-LOADER-001; EV-V3-OPENAI-VISION-OP1-FAILED-001 | GAP-010 |
 | OPS-02 | Secret management / least privilege | FAIL | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-001; EV-V3-SEC-002-PARTIAL | GAP-001; GAP-007; GAP-011 |
-| OPS-03 | Cost budgets / kill switch | PASS | PASS | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-PROVIDER-SAFETY-001; EV-V3-FLOW-B-CONTRACT-001; EV-V3-VERIFIED-GATE-LOADER-001 | GAP-010 |
-| OPS-04 | Rights and provenance ledger | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-PROVIDER-SAFETY-001; EV-V3-FLOW-B-CONTRACT-001; EV-V3-VERIFIED-GATE-LOADER-001 | GAP-013 |
+| OPS-03 | Cost budgets / kill switch | PASS | PASS | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-PROVIDER-SAFETY-001; EV-V3-FLOW-B-CONTRACT-001; EV-V3-VERIFIED-GATE-LOADER-001; EV-V3-OPENAI-VISION-OP1-FAILED-001 | GAP-010 |
+| OPS-04 | Rights and provenance ledger | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-PROVIDER-SAFETY-001; EV-V3-FLOW-B-CONTRACT-001; EV-V3-VERIFIED-GATE-LOADER-001; EV-V3-OPENAI-VISION-OP1-FAILED-001 | GAP-013 |
 | OPS-05 | Logs/metrics/traces/alerts | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-DR-OBS-001 | GAP-009 |
 | OPS-06 | Backup creation/integrity | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-DR-001; EV-V3-DR-OBS-001 | GAP-008 |
 | OPS-07 | Isolated restore drill | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-DR-001; EV-V3-DR-OBS-001 | GAP-008 |

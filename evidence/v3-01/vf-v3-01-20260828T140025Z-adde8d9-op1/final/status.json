@@ -1,0 +1,8 @@
+{
+  "verdict": "REVIEW_REQUIRED",
+  "production_verdict": "NO-GO",
+  "real_provider_acceptance": "NOT_ACCEPTED",
+  "operation_1_reusable": false,
+  "operation_2_authorized": false,
+  "next_action": "ZERO_CALL_SCHEMA_AND_ERROR_EVIDENCE_REMEDIATION_REQUIRING_NEW_G08_AND_NEW_RC"
+}

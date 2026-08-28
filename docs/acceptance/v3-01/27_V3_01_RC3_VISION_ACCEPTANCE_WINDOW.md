@@ -6,12 +6,13 @@
 PRODUCTION VERDICT: NO-GO
 RC: vf-v3-01-rc3 / adde8d9c5a7f608db80cbd9d21aecd45f721065e
 PROVIDER / MODEL / CAPABILITY: openai-vision / gpt-5-mini / vision
-CREDENTIAL: alias secret://openai/codex-video only; value not read
-G-01-A / G-02-A / G-03-A: hash-bound to exact RC-3 scope
-GOVERNANCE BUNDLE: verified, not mounted
-OPERATION 1: PENDING SEPARATE OWNER DECISION
-LIVE CALLS: 0
-ACTUAL COST: 0 VND
+CREDENTIAL: alias secret://openai/codex-video only; value resolved ephemerally and never logged/evidenced
+G-01-A / G-02-A / G-03-A: consumed for operation 1 only; no further call authority
+GOVERNANCE BUNDLE: mounted ephemerally for operation 1; not enabled in checked-in defaults
+OPERATION 1: EXECUTED ONCE; REVIEW_REQUIRED; NEVER RETRY/REUSE
+OPERATION 2: NOT AUTHORIZED / NOT EXECUTED
+LIVE ATTEMPTS: 1; RETRIES: 0; FALLBACKS: 0
+ACTUAL PROVIDER COST: UNKNOWN; SAFETY LEDGER COMMITTED 500 VND ESTIMATED
 DEPLOY / PUBLIC INGRESS / PUBLISH / PRODUCTION ANALYTICS: NOT AUTHORIZED
 ```
 
@@ -19,6 +20,13 @@ PR #23 merged at `2026-08-28T12:55:13Z` after exact-head CI run `33171973815` pa
 jobs. Merge commit `adde8d9c5a7f608db80cbd9d21aecd45f721065e` passed exact-main GitHub CI run
 `33173094529` and the local regression below. Annotated tag `vf-v3-01-rc3` peels to that exact
 commit and explicitly remains a `NO-GO` candidate with no provider execution.
+
+Governance-only PR #24 later merged as `a73bad37f1f3aa7c2347e6a76503246a46d3c112` after exact-main
+CI run `33175813324` passed 5/5. Executable RC-3 did not change. Operation 1 was dispatched exactly
+once at `2026-08-28T14:00:25.217418Z` and ended non-retryably at
+`2026-08-28T14:00:27.025598Z` with `OpenAIVisionResponseError`. It returned no accepted structured
+output, provider receipt or usage receipt. See
+[`28_V3_01_RC3_VISION_OPERATION_1_EVIDENCE.md`](28_V3_01_RC3_VISION_OPERATION_1_EVIDENCE.md).
 
 ## Exact-main regression
 
@@ -92,14 +100,15 @@ PROVIDER_DAILY_LIMIT_VND=0
 OPENAI_API_KEY="" in Compose
 ```
 
-No deployment or environment file was changed. The credential alias was not resolved and the key
-value was not read, copied, logged or committed.
+No deployment or checked-in environment file was changed. For the one authorized operation, the
+credential was resolved from the ignored secret file and passed only through container stdin after
+all preflights passed. Its value was not printed, copied to evidence, logged or committed. Checked-in
+runtime defaults remain fail-closed.
 
 ## Exact next owner decision
 
-The only next execution decision is whether to authorize exactly operation
-`v3-01-g03a-openai-vision-call-01` within the unexpired window and bound scope above. Approval must
-not be inferred from this document, CI, bundle validation, credential presence or the prior gate
-records. If operation 1 is not separately approved before `2026-08-28T18:00:00Z`, the window
-expires and no call may occur. Operation 2 always requires a later, separate decision after review
-of operation-1 evidence.
+Do not authorize operation 2. The next decision is a new G-08 for a zero-call schema/error-evidence
+remediation only. Because that changes executable adapter code, it must be merged after review,
+fully regressed and locked as a new RC. Any later live attempt requires a new gate bundle, dated
+budget window, rights binding and immutable operation IDs. Operation 1 must never be retried or
+reused; operation 2 under RC-3 remains locked.

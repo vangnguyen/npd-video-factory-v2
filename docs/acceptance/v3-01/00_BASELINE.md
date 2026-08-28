@@ -10,11 +10,11 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: RC-3 adde8d9c5a7f608db80cbd9d21aecd45f721065e; locked for controlled acceptance only; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-10 merged; RC-3 locked; secret-free gate bundle verified but unmounted; operation 1 decision pending
+CURRENT SAFE PHASE: RC-3 operation 1 consumed once; result REVIEW_REQUIRED; operation 2 locked
 G-00: APPROVED by V3-01-APP-001
-G-08: V3-01-APP-002 through V3-01-APP-013 CONSUMED by PR #12 through PR #23
-G-01-A / G-02-A / G-03-A: REBOUND TO EXACT RC-3 AND DATED WINDOW; NO CALL AUTHORITY
-OPERATION 1: PENDING SEPARATE OWNER DECISION
+G-08: RECORDS THROUGH PR #23 PLUS GOVERNANCE-ONLY PR #24 DECISION CONSUMED
+G-01-A / G-02-A / G-03-A: RC-3 WINDOW CONSUMED FOR OPERATION 1 ONLY; NO FURTHER CALL AUTHORITY
+OPERATION 1: EXECUTED ONCE; FAILED NON-RETRYABLE; NEVER REUSE
 NO OTHER MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
 ```
 
@@ -25,12 +25,13 @@ analytics write or takedown. Those actions remain bound to their separate gates.
 G-08 later authorized only the repository merge sequence PR #12, then retarget/retest PR #13, then
 PR #13 if all five CI jobs pass. It grants no runtime or external-execution authority.
 
-The bounded remediation sequence completed PR #12 through PR #23. PR #23 merged at
-`adde8d9c5a7f608db80cbd9d21aecd45f721065e` after exact-head CI run `33171973815`; exact-main CI
-run `33173094529` and the local full regression both passed. `V3-01-APP-013` is exhausted.
-Annotated tag `vf-v3-01-rc3` peels to that exact commit and remains `NO-GO`. The RC-3 approvals
-and secret-free bundle are governance artifacts only: they are not mounted, checked-in runtime
-defaults remain disabled, and operation 1 still requires a separate owner decision.
+The bounded remediation sequence completed PR #12 through PR #23. PR #24 then merged governance
+rebind only as `a73bad37f1f3aa7c2347e6a76503246a46d3c112`; exact-main CI run `33175813324`
+passed 5/5. Executable RC-3 remains immutable at
+`adde8d9c5a7f608db80cbd9d21aecd45f721065e`. Operation 1 was mounted ephemerally and dispatched
+exactly once inside its approved window. It failed non-retryably with
+`OpenAIVisionResponseError`, produced no structured/provider/usage receipt and is not accepted as
+real-provider evidence. Operation 2 remains locked and checked-in runtime defaults remain disabled.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
@@ -49,7 +50,7 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Open PRs at capture | none |
 | Tags/releases | none returned by Git/GitHub |
 | Main branch protection | disabled; GitHub API returned `Branch not protected` |
-| Latest verified exact-main CI | [Video Factory V2 CI run 33173094529](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33173094529), 5/5 success on `adde8d9c5a7f608db80cbd9d21aecd45f721065e` |
+| Latest verified exact-main CI | [Video Factory V2 CI run 33175813324](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33175813324), 5/5 success on governance main `a73bad37f1f3aa7c2347e6a76503246a46d3c112` |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -57,7 +58,7 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` | `adde8d9c5a7f608db80cbd9d21aecd45f721065e` |
+| Exact `origin/main` | `a73bad37f1f3aa7c2347e6a76503246a46d3c112` |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
@@ -68,8 +69,10 @@ Current repository checkpoint after the bounded merge sequence:
 | RC-2 | annotated `vf-v3-01-rc2` peels to exact main `5936aa7a9656d728be751d0ee61011fc1a5abc7a`; planning-only, not deployed |
 | PR #23 / V3-01-10 | exact head `40149c2b439c78e75fdd3ff8996c2ed8c3ec4575`; CI run `33171973815` PASS; merged as `adde8d9c5a7f608db80cbd9d21aecd45f721065e` |
 | RC-3 | annotated `vf-v3-01-rc3` peels to exact main `adde8d9c5a7f608db80cbd9d21aecd45f721065e`; NO-GO, not deployed |
-| Exact-main regression | local Python 245/245, Studio 14/14, Renderer 14/14, migration replay, safety/secret checks and Docker E2E PASS; CI run `33173094529` 5/5 PASS |
-| Deployment/provider/ingress action | none |
+| PR #24 / RC-3 governance rebind | exact head `c13e78b7afaf852ce0682f8f117138ea34a9297f`; governance-only merge `a73bad37f1f3aa7c2347e6a76503246a46d3c112`; exact-main CI run `33175813324` 5/5 PASS |
+| Exact-main regression | local Python 245/245, Studio 14/14, Renderer 14/14, migration replay, safety/secret checks and Docker E2E PASS on RC-3; governance main CI run `33175813324` 5/5 PASS |
+| Provider acceptance action | operation 1 dispatched once on RC-3; `REVIEW_REQUIRED`; no retry/fallback; operation 2 not executed |
+| Deployment/ingress/publish action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in
 README, architecture, security, deployment, testing, V2 acceptance and runbook documents.
@@ -168,6 +171,8 @@ locked for controlled acceptance. Production verdict remains `NO-GO`.
 
 V3-01-09 implements a disabled OpenAI `gpt-5-mini` Vision adapter. Its strict
 Responses-schema, timeout/retry/circuit, duplicate, missing-credential, rights, budget, provenance
-and VND receipt tests use MockTransport. External calls and actual spend are zero. V3-01-10 adds a
-hash-pinned verified gate loader. RC-3 is locked, the exact asset and approvals are rebound, and the
-governance bundle is verified but unmounted. A separate operation-1 decision remains required.
+and VND receipt tests use MockTransport. V3-01-10 adds a hash-pinned verified gate loader. RC-3 was
+locked, the exact asset and approvals were rebound through governance-only PR #24, and operation 1
+was executed once. The failed attempt is retained as `EV-V3-OPENAI-VISION-OP1-FAILED-001`; actual
+provider cost is unknown because no usage receipt was returned, while the safety ledger conservatively
+committed the 500 VND reservation. Operation 2 remains locked and production remains `NO-GO`.

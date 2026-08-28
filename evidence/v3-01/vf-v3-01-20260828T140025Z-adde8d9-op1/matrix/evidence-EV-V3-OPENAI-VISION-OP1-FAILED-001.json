@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-OPENAI-VISION-OP1-FAILED-001",
+  "test_case_id": "V3-01-RC3-OPENAI-VISION-OPERATION-1",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03",
+    "OPS-04"
+  ],
+  "axis": "real-provider-tested",
+  "commit_sha": "adde8d9c5a7f608db80cbd9d21aecd45f721065e",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-vision",
+    "model_or_workflow": "gpt-5-mini / Responses API / vision",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "e94fcafcbab8adefb9506cb91d98010cdb1713ba79ce209ec2dfdb154f97fd2d",
+  "started_at_utc": "2026-08-28T14:00:25.217418Z",
+  "completed_at_utc": "2026-08-28T14:00:27.025598Z",
+  "duration_seconds": 1.80818,
+  "result": "FAIL",
+  "assertion": "Exactly one owner-authorized RC-3 OpenAI Vision operation was attempted inside the bound window. It failed non-retryably with OpenAIVisionResponseError before structured output, provider receipt or usage receipt. Atomic reservation, one-attempt/no-retry semantics, rights binding, durable failure state, duplicate blocking and secret containment held. This is failed real-provider evidence and does not promote VIS-01 or any other real-provider axis to PASS.",
+  "correlation_id": "v3-01-g03a-openai-vision-call-01",
+  "cost": {
+    "currency": "VND",
+    "actual": null,
+    "status": "PENDING"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Codex bounded provider-acceptance reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "Do not repeat or reuse operation 1. Offline-only verification: validate this run with python scripts/v3_01_acceptance.py --repo . validate-run evidence/v3-01/vf-v3-01-20260828T140025Z-adde8d9-op1 and review docs/acceptance/v3-01/28_V3_01_RC3_VISION_OPERATION_1_EVIDENCE.md."
+}
