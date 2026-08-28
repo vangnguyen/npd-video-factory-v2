@@ -59,6 +59,7 @@ Current repository checkpoint after the bounded merge sequence:
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
 | PR #14 through PR #17 | merged sequentially under bounded G-08 records; no runtime authority |
 | PR #18 | exact head `6f68e0091829801c570375f63365e387f1234f0c`; CI run `33143473424` PASS; merged as exact current main |
+| PR #19 | V3-01-07 draft opened from exact `main`; merge and all runtime gates remain pending |
 | Exact-main regression | local Python/Studio/renderer/migration/Docker deterministic suite PASS before V3-01-07 development |
 | Deployment/provider/ingress action | none |
 
