@@ -1,0 +1,27 @@
+{
+  "approval_id": "V3-01-APP-004",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #15 V3-01-03 ingress/media quarantine and durable provider safety state into main after exact-head CI, followed by exact-main verification only.",
+  "artifact_or_commit_hashes": [
+    "dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3",
+    "9b53b22949a65182a2be5a88bacd389d994d8915",
+    "4779ddcb1af5cc0138922ea144ddf4496fc313f1"
+  ],
+  "target_account_or_environment": "GitHub repository main branch merge of PR #15 only; no runtime environment",
+  "limits": [
+    "All five Video Factory V2 CI jobs must pass on exact PR head before merge",
+    "Run exact-main regression after merge",
+    "No production deployment or public ingress",
+    "No credential activation or real provider execution",
+    "No paid provider call; approved budget remains 0 VND",
+    "Global provider kill switch remains engaged",
+    "No real publish or production analytics",
+    "GAP-010 and GAP-011 remain IN_PROGRESS",
+    "No permission for V3-01-04 or later remediation PR merges"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-27T17:37:13Z",
+  "expires_at_utc": null,
+  "notes": "Captured from the owner's explicit approval and PR #15 comment 5442890344. PR #15 merged at 2026-08-27T17:37:35Z. Exact-main CI run 33099363819 passed all five jobs on merge commit 4779ddcb1af5cc0138922ea144ddf4496fc313f1. This record grants no G-01 through G-07 or G-09 through G-12 authority."
+}

@@ -2,12 +2,18 @@
 
 ## Current result
 
-`BLOCKED / NOT RUN ON REAL MEDIA`
+`BLOCKED / CONTRACT-MOCK PASS / NOT RUN ON REAL MEDIA`
 
 The repository has a deterministic upload, media-inspection, analysis, timeline, preview, subtitle,
 audio, render and QC path. Main CI proves that path only with generated fixtures. V3-01 has not
 received owner-approved source media, provider credentials, a production-like environment or a
 designated human reviewer. No external provider was called in this audit.
+
+V3-01-04 adds a fail-closed pre-call ASR/Vision safety boundary and a measured two-run evaluator.
+The redacted evidence run `vf-v3-01-20260828T010641Z-88e6bcc` passes the implemented and mock-tested
+axes on locked code-only commit `88e6bcce22bf31bb3f23547c1d4d4a445abc0407`. It intentionally
+returns `BLOCKED` overall because G-01/G-02/G-03/G-04/G-11 and all corresponding real evidence are
+absent.
 
 ## Acceptance contract
 
@@ -29,11 +35,11 @@ and prove:
 |---|---|---|---|
 | Intake/upload | Present with quarantine-before-decoder and clean-verdict promotion | deterministic API/E2E plus EICAR/archive/error tests | mock PASS; internal scanner/production NOT_TESTED |
 | Source preservation | Present | object hash and immutable asset tests | mock PASS |
-| ASR | fixture/contract | deterministic fixture only | real provider BLOCKED |
+| ASR | fixture/contract plus pre-call safety | measured deterministic fixtures, WER/critical-term checks and zero-call receipt | mock PASS; real provider BLOCKED |
 | Auto Edit analysis | Present | synthetic video tests | mock PASS |
-| Vision/reframe | fixture/contract | mock bridge and fixtures | real provider BLOCKED |
+| Vision/reframe | fixture/contract plus pre-call safety | measured scene F1/reframe coverage and zero-call receipt | mock PASS; real provider BLOCKED |
 | Timeline/preview | Present | FFmpeg container E2E | mock PASS; human quality NOT_TESTED |
-| Audio/subtitle/render | Present | eSpeak and generated media | mock PASS; production voice NOT_ACCEPTED |
+| Audio/subtitle/render | Present | measured subtitle drift, eSpeak and generated media | mock PASS; production voice NOT_ACCEPTED |
 | Automated QC | Present | probe, black/silent/subtitle checks | mock PASS |
 | Human full-watch | Not executed | none | BLOCKED |
 
@@ -53,5 +59,5 @@ Stop without retrying when a provider scope, budget, rights record, source owner
 alias, human reviewer or production-like target is missing. A black, silent, corrupt, clipped,
 mis-timed or unreadable result is `FAIL`, never a partial pass.
 
-Open gaps: `V3-01-GAP-001`, `V3-01-GAP-003`, `V3-01-GAP-005`, `V3-01-GAP-007`,
+Open gaps: `V3-01-GAP-003`, `V3-01-GAP-005`, `V3-01-GAP-007`,
 `V3-01-GAP-011`, `V3-01-GAP-013`, `V3-01-GAP-016`.

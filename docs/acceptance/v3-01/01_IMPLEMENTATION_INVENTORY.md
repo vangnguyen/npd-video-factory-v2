@@ -4,9 +4,9 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 and V3-01-02 are merged at exact `main`
-`dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3`. Entries below that mention V3-01-03 describe
-local/CI remediation on `remediation/v3-01-03-ingress-durable-safety`, not production.
+V3-01-01 through V3-01-03 are merged at exact `main`
+`4779ddcb1af5cc0138922ea144ddf4496fc313f1`. Entries below that mention V3-01-04 describe
+local/CI remediation on `remediation/v3-01-04-flow-a-closure`, not production.
 
 ## Foundation
 
@@ -35,8 +35,8 @@ local/CI remediation on `remediation/v3-01-03-ingress-durable-safety`, not produ
 | Capability | Primary code | Existing tests/evidence | Audit result |
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
-| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `auto_edit_logic.py`, `auto_edit_service.py` | Auto Edit suite | Fixture/FFmpeg decisions tested; real accuracy absent |
-| Vision/reframe | `vision_*` | `test_vision_analysis.py`, E2E | Structured fixture + contract only |
+| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py` | Auto Edit suite and measured two-run fixture evidence | Contract/mock PASS with pre-call safety; real accuracy absent |
+| Vision/reframe | `vision_*`, `flow_a_acceptance.py` | Vision suite, measured two-run fixture evidence and E2E | Contract/mock PASS with pre-call safety; real provider absent |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |
 | ComfyUI | `services/comfyui-bridge`, eight allowlisted workflows | bridge unit tests | Mock/disabled backend only; no GPU evidence |

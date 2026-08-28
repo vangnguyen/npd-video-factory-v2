@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-04",
+  "verdict": "BLOCKED",
+  "two_consecutive_runs": true,
+  "run_metrics": [
+    {
+      "run_id": "flow-a-contract-run-01",
+      "wer": 0.0,
+      "critical_term_accuracy": 1.0,
+      "scene_boundary_f1": 1.0,
+      "subtitle_median_drift_seconds": 0.18,
+      "subtitle_p95_drift_seconds": 0.32,
+      "reframe_safe_coverage": 0.98,
+      "technical_passed": true,
+      "failures": []
+    },
+    {
+      "run_id": "flow-a-contract-run-02",
+      "wer": 0.0,
+      "critical_term_accuracy": 1.0,
+      "scene_boundary_f1": 1.0,
+      "subtitle_median_drift_seconds": 0.19,
+      "subtitle_p95_drift_seconds": 0.4,
+      "reframe_safe_coverage": 0.97,
+      "technical_passed": true,
+      "failures": []
+    }
+  ],
+  "implemented": {
+    "status": "PASS",
+    "reasons": [
+      "FLOW_A_ACCEPTANCE_CONTRACT_AND_DETERMINISTIC_EVALUATOR_PRESENT"
+    ]
+  },
+  "mock_tested": {
+    "status": "PASS",
+    "reasons": []
+  },
+  "real_provider_tested": {
+    "status": "BLOCKED",
+    "reasons": [
+      "OWNER_GATE_PENDING:G-01",
+      "OWNER_GATE_PENDING:G-02",
+      "OWNER_GATE_PENDING:G-03"
+    ]
+  },
+  "production_path_tested": {
+    "status": "BLOCKED",
+    "reasons": [
+      "OWNER_GATE_PENDING:G-04"
+    ]
+  },
+  "quality_accepted": {
+    "status": "BLOCKED",
+    "reasons": [
+      "OWNER_GATE_PENDING:G-11"
+    ]
+  },
+  "pending_owner_gates": [
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-04",
+    "G-11"
+  ],
+  "cost_total_vnd": "0",
+  "currency": "VND",
+  "external_actions_performed": false,
+  "publish_performed": false
+}

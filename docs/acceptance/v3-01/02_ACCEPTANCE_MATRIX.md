@@ -1,7 +1,7 @@
 # V3-01 acceptance matrix
 
-Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01/V3-01-02 merged evidence and V3-01-03 local/CI remediation
-was added on `2026-08-27`. `I/M/R/P/Q` mean implemented, mock-tested,
+Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-03 are merged and V3-01-04
+contract/mock evidence was added on `2026-08-28`. `I/M/R/P/Q` mean implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
 
@@ -29,26 +29,26 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | SCR-01 | Script generation and versioning | FAIL | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-002 |
 | SCR-02 | Storyboard and media plan | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-004 |
 | UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-002-PARTIAL | GAP-007; GAP-011 |
-| ASR-01 | Real transcription provider | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-003 |
-| EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-003 |
+| ASR-01 | Real transcription provider | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
+| EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
-| EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-003 |
-| VIS-01 | Vision AI structured analysis | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-003 |
-| REF-01 | Smart reframe / tracking | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-003; GAP-016 |
+| EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
+| VIS-01 | Vision AI structured analysis | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
+| REF-01 | Smart reframe / tracking | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003; GAP-016 |
 | BRL-01 | B-roll planning and placement | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-004; GAP-013 |
 | STK-01 | Licensed stock search/download | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-004; GAP-013 |
 | CFY-01 | ComfyUI GPU workflow | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-004 |
 | IMG-01 | AI image generation | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-004; GAP-013 |
 | VID-01 | AI video generation | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-004; GAP-013 |
-| TTS-01 | Production TTS / voice | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-005; GAP-016 |
-| SUB-01 | Dynamic Vietnamese subtitles | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
+| TTS-01 | Production TTS / voice | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-005; GAP-016 |
+| SUB-01 | Dynamic Vietnamese subtitles | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-016 |
 | MUS-01 | Music licence / loop / ducking | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-005; GAP-013 |
 | SFX-01 | SFX licence and mix | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001 | GAP-004; GAP-013 |
 | TML-01 | Versioned editable timeline | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007; GAP-016 |
 | PRV-01 | Preview render fidelity | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
-| APR-01 | Human approval state/audit | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
+| APR-01 | Human approval state/audit | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-016 |
 | RND-01 | Final Remotion/FFmpeg render | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-007; GAP-016 |
-| QC-01 | Technical video/audio QC | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
+| QC-01 | Technical video/audio QC | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-016 |
 | QC-02 | Content/factual/brand/policy QC | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001 | GAP-002; GAP-013; GAP-016 |
 | PUB-01 | Publishing orchestration/idempotency | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SAFETY-001 | GAP-006 |
 | PUB-02 | YouTube adapter | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-006 |
@@ -73,7 +73,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 ## Interpretation
 
 - `PASS` under I/M proves only current code and deterministic tests.
-- V3-01-01 through V3-01-03 keep the implemented count at `42 PASS / 18 FAIL` and the mock-tested
+- V3-01-01 through V3-01-04 keep the implemented count at `42 PASS / 18 FAIL` and the mock-tested
   count to `51 PASS / 2 FAIL / 7 NOT_TESTED`; they do not change any real-provider,
   production-path or quality axis.
 - All real-provider, production-path and human quality work remains unproven.
