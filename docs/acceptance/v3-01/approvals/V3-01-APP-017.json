@@ -1,0 +1,24 @@
+{
+  "approval_id": "V3-01-APP-017",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #25 as RC-3 operation-1 evidence/governance only, followed by exact-main regression and zero-call V3-01-11 remediation work in a separate draft PR.",
+  "artifact_or_commit_hashes": [
+    "b0de3903b5e630bcb288074c7939e59248f81490",
+    "2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and isolated local remediation worktree only; no runtime environment",
+  "limits": [
+    "PR #25 may record operation 1 only as REVIEW_REQUIRED",
+    "Operation 1 is consumed and cannot be reused",
+    "RC-3 operation 2 remains locked",
+    "Actual provider cost remains unknown; 500 VND is only a conservative safety-ledger charge",
+    "V3-01-11 must perform zero OpenAI calls and incur zero VND",
+    "A separate G-08 is required before merging V3-01-11",
+    "No deployment, public ingress, publishing or production analytics"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-28T14:48:56Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved PR #25 in the controlling task. The task interface did not expose the exact message timestamp, so approved_at_utc is conservatively recorded as the merge-commit time. Exact-main CI run 33182052862 passed 5/5. This approval does not authorize the V3-01-11 merge or any runtime action."
+}

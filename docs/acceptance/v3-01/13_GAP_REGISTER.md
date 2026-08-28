@@ -2,9 +2,9 @@
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
 derived from the audit captured on `2026-08-27`, updated through executable RC-3
-`adde8d9c5a7f608db80cbd9d21aecd45f721065e`, governance main
-`a73bad37f1f3aa7c2347e6a76503246a46d3c112`, and one failed bounded Vision operation. No
-acceptance-axis promotion occurred.
+`adde8d9c5a7f608db80cbd9d21aecd45f721065e`, evidence main
+`2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38`, and one failed bounded Vision operation.
+V3-01-11 remains an unmerged zero-call remediation draft. No acceptance-axis promotion occurred.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -16,7 +16,7 @@ acceptance-axis promotion occurred.
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. The bounded G-08 records through PR #24 are exhausted. G-01-A/G-02-A/G-03-A were
+`IN_PROGRESS`. The bounded G-08 records through PR #25 are exhausted. G-01-A/G-02-A/G-03-A were
 consumed only for operation 1; it failed non-retryably without accepted output or a usage receipt.
 Operation 2 remains locked, and production remains undeployed and unverified.
 
@@ -80,3 +80,9 @@ No gap is `VERIFIED` or newly closed by V3-01-07 through V3-01-10. `REMEDIATED` 
 evidence pass on the locked commit; it still needs any applicable
 production-path evidence before `VERIFIED`. Owner exceptions must name an expiry and approval record; no implicit
 exception exists.
+
+V3-01-11 makes `track_hint` required-nullable, recursively validates strict object schemas and adds
+secret-free durable provider error evidence for HTTP, transport, parse, refusal/incomplete,
+validation and usage failures. Its local tests use mock transport only and record 0 external calls
+and 0 VND. Until a separate G-08 merge and exact-main regression, it changes no gap status or
+acceptance axis; after any merge, a new RC-4 and newly bound operations are still required.

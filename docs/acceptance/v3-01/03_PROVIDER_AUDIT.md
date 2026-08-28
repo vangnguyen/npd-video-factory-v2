@@ -22,6 +22,9 @@ PR #23 merged V3-01-10 at exact `main` `adde8d9c5a7f608db80cbd9d21aecd45f721065e
 Governance-only PR #24 later merged as `a73bad37f1f3aa7c2347e6a76503246a46d3c112` with exact-main
 CI run `33175813324` passing 5/5; executable RC-3 did not change. The adapter remains unaccepted as
 real-provider-tested. Exact operation evidence is `EV-V3-OPENAI-VISION-OP1-FAILED-001`.
+Evidence-only PR #25 then merged as `2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38`; exact-main CI
+run `33182052862` passed 5/5. V3-01-11 is an unmerged zero-call remediation draft that corrects the
+strict schema and adds typed redacted error evidence; it grants no new execution authority.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|

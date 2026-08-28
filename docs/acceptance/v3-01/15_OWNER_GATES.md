@@ -1,6 +1,6 @@
 # Owner gate register
 
-G-00 and the completed bounded G-08 actions through governance-only PR #24 have approval records.
+G-00 and the completed bounded G-08 actions through evidence-only PR #25 have approval records.
 Executable RC-3 is locked. G-01-A, G-02-A, G-03-A and the separate operation-1 decision were
 consumed for exactly one failed, non-retryable attempt. They grant no further provider-call
 authority. Use `schemas/approval-record.schema.json` for each later decision; no approval is implied
@@ -16,7 +16,7 @@ by CI success or the failed attempt.
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation PR merge | CONSUMED through PR #24; PR #24 was governance-only and left executable RC-3 unchanged | a new explicit G-08 record is required for any later merge, including zero-call schema remediation |
+| G-08 | remediation PR merge | CONSUMED through PR #25 via `V3-01-APP-017`; PR #25 was evidence/governance-only and left executable RC-3 unchanged | a new explicit G-08 record is required before merging V3-01-11 |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
@@ -30,7 +30,7 @@ time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, LOCAL/CI validation, redacted evidence and a
 draft evidence/remediation PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/#18/#19/#20/#22/
-#23/#24 merges are complete and their G-08 records cannot be reused. The RC-3 operation-1 authority
+#23/#24/#25 merges are complete and their G-08 records cannot be reused. The RC-3 operation-1 authority
 has also been consumed. Runtime defaults remain disabled. Current authority includes no further
 merge, credential-value read, provider call, deployment, public route, publishing, analytics
 collection or production write. Operation 2 is explicitly not authorized. Records:
@@ -49,4 +49,5 @@ collection or production write. Operation 2 is explicitly not authorized. Record
 [`V3-01-APP-013`](approvals/V3-01-APP-013.json),
 [`V3-01-APP-014`](approvals/V3-01-APP-014.json),
 [`V3-01-APP-015`](approvals/V3-01-APP-015.json), and
-[`V3-01-APP-016`](approvals/V3-01-APP-016.json).
+[`V3-01-APP-016`](approvals/V3-01-APP-016.json), and
+[`V3-01-APP-017`](approvals/V3-01-APP-017.json).

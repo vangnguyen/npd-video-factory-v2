@@ -11,6 +11,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    JSON,
     Numeric,
     String,
     UniqueConstraint,
@@ -143,6 +144,7 @@ class ProviderSafetyAttemptORM(Base):
     cost_status: Mapped[str] = mapped_column(String(20), nullable=False)
     retryable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     error_code: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    error_evidence: Mapped[dict[str, object] | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 

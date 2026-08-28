@@ -4,6 +4,7 @@ import asyncio
 import hashlib
 import hmac
 import json
+import re
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
@@ -19,7 +20,23 @@ CircuitState = Literal["closed", "open", "half_open"]
 ExecutionClass = Literal["local", "fixture", "contract", "external"]
 RightsDecision = Literal["APPROVED", "REJECTED", "BLOCKED"]
 RightsBoolean = bool | Literal["unknown"]
+ProviderErrorCategory = Literal[
+    "http_provider_error",
+    "transport_timeout",
+    "transport_error",
+    "response_parse_failure",
+    "structured_output_refusal",
+    "structured_output_incomplete",
+    "structured_output_validation",
+    "usage_receipt_missing",
+    "usage_receipt_invalid",
+]
 T = TypeVar("T")
+
+
+_SECRET_EVIDENCE_PATTERN = re.compile(
+    r"(?i)(?:sk-[A-Za-z0-9_-]{8,}|bearer\s+\S+|(?:api[_-]?key|token|password|secret)\s*[:=]\s*\S+)"
+)
 
 
 def utc_now() -> datetime:
@@ -310,6 +327,43 @@ class ProviderSafetyDecision(StrictModel):
     rights: ProviderRightsDecision
 
 
+class ProviderErrorEvidence(StrictModel):
+    """Bounded, secret-free provider failure metadata safe for durable persistence."""
+
+    category: ProviderErrorCategory
+    code: str = Field(pattern=r"^[A-Z0-9][A-Z0-9_]{2,119}$")
+    http_status: int | None = Field(default=None, ge=100, le=599)
+    provider_error_type: str | None = Field(default=None, max_length=160)
+    provider_error_code: str | None = Field(default=None, max_length=160)
+    provider_error_parameter: str | None = Field(default=None, max_length=160)
+    provider_error_message: str | None = Field(default=None, max_length=1000)
+    provider_request_id: str | None = Field(
+        default=None,
+        pattern=r"^(?:[A-Za-z0-9._:-]{1,200}|sha256:[a-f0-9]{64})$",
+    )
+    client_request_id: str | None = Field(
+        default=None,
+        pattern=r"^[A-Za-z0-9._:-]{1,200}$",
+    )
+    response_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    retryable: bool
+    secret_recorded: Literal[False] = False
+
+    @field_validator(
+        "provider_error_type",
+        "provider_error_code",
+        "provider_error_parameter",
+        "provider_error_message",
+        "provider_request_id",
+        "client_request_id",
+    )
+    @classmethod
+    def reject_secret_material(cls, value: str | None) -> str | None:
+        if value is not None and _SECRET_EVIDENCE_PATTERN.search(value):
+            raise ValueError("provider error evidence cannot contain credential material")
+        return value
+
+
 class ProviderAttemptRecord(StrictModel):
     usage_id: str
     operation_key: str
@@ -323,6 +377,7 @@ class ProviderAttemptRecord(StrictModel):
     cost_status: Literal["actual", "estimated", "pending"]
     retryable: bool
     error_code: str | None
+    error_evidence: ProviderErrorEvidence | None = None
     created_at: datetime
     completed_at: datetime
 
@@ -411,25 +466,38 @@ class ProviderExecutionResult(Generic[T]):
 
 
 class ProviderSafetyBlocked(RuntimeError):
-    def __init__(self, code: str, message: str):
+    def __init__(
+        self,
+        code: str,
+        message: str,
+        *,
+        error_evidence: ProviderErrorEvidence | None = None,
+    ):
         super().__init__(message)
         self.code = code
+        self.error_evidence = error_evidence
 
 
 class ProviderTransientError(RuntimeError):
-    def __init__(self, code: str = "PROVIDER_TRANSIENT_ERROR"):
+    def __init__(
+        self,
+        code: str = "PROVIDER_TRANSIENT_ERROR",
+        *,
+        error_evidence: ProviderErrorEvidence | None = None,
+    ):
         super().__init__(code)
         self.code = code
+        self.error_evidence = error_evidence
 
 
 class ProviderRateLimitError(ProviderTransientError):
-    def __init__(self):
-        super().__init__("PROVIDER_RATE_LIMITED")
+    def __init__(self, *, error_evidence: ProviderErrorEvidence | None = None):
+        super().__init__("PROVIDER_RATE_LIMITED", error_evidence=error_evidence)
 
 
 class ProviderTimeoutError(ProviderTransientError):
-    def __init__(self):
-        super().__init__("PROVIDER_TIMEOUT")
+    def __init__(self, *, error_evidence: ProviderErrorEvidence | None = None):
+        super().__init__("PROVIDER_TIMEOUT", error_evidence=error_evidence)
 
 
 @dataclass
@@ -695,6 +763,8 @@ class ProviderSafetyController:
         started_at = self._clock()
         charged = Decimal("0")
         last_error_code = "PROVIDER_EXECUTION_FAILED"
+        last_error_evidence: ProviderErrorEvidence | None = None
+        last_exception: Exception | None = None
         attempts_made = 0
         for attempt in range(1, self.policy.retry.max_attempts + 1):
             attempts_made = attempt
@@ -713,6 +783,7 @@ class ProviderSafetyController:
                     status="succeeded",
                     retryable=False,
                     error_code=None,
+                    error_evidence=None,
                     actual_cost_vnd=actual,
                     charged_cost_vnd=charge,
                     started_at=attempt_started,
@@ -729,6 +800,8 @@ class ProviderSafetyController:
                 if isinstance(exc, TimeoutError):
                     exc = ProviderTimeoutError()
                 last_error_code = exc.code
+                last_error_evidence = exc.error_evidence
+                last_exception = exc
                 status: Literal["rate_limited", "timed_out", "failed"]
                 if isinstance(exc, ProviderRateLimitError):
                     status = "rate_limited"
@@ -744,6 +817,7 @@ class ProviderSafetyController:
                     status=status,
                     retryable=True,
                     error_code=exc.code,
+                    error_evidence=exc.error_evidence,
                     actual_cost_vnd=None,
                     charged_cost_vnd=charge,
                     started_at=attempt_started,
@@ -754,7 +828,12 @@ class ProviderSafetyController:
                     break
                 await self._sleeper(delay)
             except Exception as exc:
-                last_error_code = type(exc).__name__
+                evidence = getattr(exc, "error_evidence", None)
+                if not isinstance(evidence, ProviderErrorEvidence):
+                    evidence = None
+                last_error_evidence = evidence
+                last_error_code = evidence.code if evidence is not None else type(exc).__name__
+                last_exception = exc
                 charge = self._charge_for_attempt(context, None)
                 charged += charge
                 await self._record_attempt(
@@ -762,7 +841,8 @@ class ProviderSafetyController:
                     attempt=attempt,
                     status="failed",
                     retryable=False,
-                    error_code="PROVIDER_NON_RETRYABLE_ERROR",
+                    error_code=last_error_code,
+                    error_evidence=evidence,
                     actual_cost_vnd=None,
                     charged_cost_vnd=charge,
                     started_at=attempt_started,
@@ -776,7 +856,14 @@ class ProviderSafetyController:
             charged=charged,
             succeeded=False,
         )
-        raise ProviderSafetyBlocked(last_error_code, f"provider execution failed after {receipt.attempts} attempt(s)")
+        blocked = ProviderSafetyBlocked(
+            last_error_code,
+            f"provider execution failed after {receipt.attempts} attempt(s)",
+            error_evidence=last_error_evidence,
+        )
+        if last_exception is not None:
+            raise blocked from last_exception
+        raise blocked
 
     async def bounded_poll(
         self,
@@ -859,6 +946,7 @@ class ProviderSafetyController:
         status: Literal["succeeded", "failed", "rate_limited", "timed_out"],
         retryable: bool,
         error_code: str | None,
+        error_evidence: ProviderErrorEvidence | None,
         actual_cost_vnd: Decimal | None,
         charged_cost_vnd: Decimal,
         started_at: datetime,
@@ -885,6 +973,7 @@ class ProviderSafetyController:
             ),
             retryable=retryable,
             error_code=error_code,
+            error_evidence=error_evidence,
             created_at=started_at,
             completed_at=self._clock(),
         )
@@ -900,6 +989,7 @@ class ProviderSafetyController:
         actual_cost_vnd: Decimal | None,
         charged_cost_vnd: Decimal,
         started_at: datetime,
+        error_evidence: ProviderErrorEvidence | None = None,
     ) -> None:
         self._attempts.append(
             self._build_attempt_record(
@@ -908,6 +998,7 @@ class ProviderSafetyController:
                 status=status,
                 retryable=retryable,
                 error_code=error_code,
+                error_evidence=error_evidence,
                 actual_cost_vnd=actual_cost_vnd,
                 charged_cost_vnd=charged_cost_vnd,
                 started_at=started_at,

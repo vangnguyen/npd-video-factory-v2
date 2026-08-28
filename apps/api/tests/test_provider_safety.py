@@ -9,13 +9,14 @@ import pytest
 from fastapi import Depends, FastAPI
 from httpx import ASGITransport, AsyncClient
 from pydantic import ValidationError
-from sqlalchemy import text
+from sqlalchemy import select, text
 
 from app.human_auth import authorize_human_request
 from app.provider_safety import (
     ProviderBudgetPolicy,
     ProviderCallContext,
     ProviderCircuitPolicy,
+    ProviderErrorEvidence,
     ProviderRateLimitError,
     ProviderRetryPolicy,
     ProviderRightsEvidence,
@@ -32,6 +33,7 @@ from app.provider_safety_durable import DurableProviderSafetyController
 from app.provider_safety_repository import ProviderSafetyRepository
 from app.db import Base, create_engine, create_session_factory
 import app.provider_safety_db  # noqa: F401
+from app.provider_safety_db import ProviderSafetyAttemptORM
 from auth_test_support import TEST_HUMAN_HEADERS, install_test_human_auth
 
 
@@ -627,6 +629,52 @@ async def test_durable_execute_persists_bounded_attempts_without_memory_ledger(t
     assert snapshot.committed_today_vnd == Decimal("300")
     assert snapshot.reserved_today_vnd == Decimal("0")
     assert first.attempts == ()
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_durable_attempt_persists_only_structured_secret_free_error_evidence(tmp_path) -> None:
+    clock = MutableClock()
+    policy = approved_policy(max_attempts=1)
+    engine, repository, _, controller, _ = await durable_components(tmp_path, policy, clock)
+    evidence = ProviderErrorEvidence(
+        category="http_provider_error",
+        code="OPENAI_VISION_TRANSIENT_HTTP",
+        http_status=503,
+        provider_error_type="server_error",
+        provider_error_code="temporarily_unavailable",
+        provider_error_parameter="text.format.schema",
+        provider_error_message="Provider temporarily unavailable",
+        provider_request_id="req_durable_error",
+        client_request_id="vf-durable-error",
+        response_sha256="b" * 64,
+        retryable=True,
+        secret_recorded=False,
+    )
+
+    async def operation() -> str:
+        raise ProviderTransientError(
+            "OPENAI_VISION_TRANSIENT_HTTP",
+            error_evidence=evidence,
+        )
+
+    with pytest.raises(ProviderSafetyBlocked) as blocked:
+        await controller.execute(
+            context("durable-error-evidence", paid=False, estimate=Decimal("0")),
+            operation,
+        )
+
+    assert blocked.value.error_evidence == evidence
+    async with repository.session_factory() as session:
+        row = await session.scalar(
+            select(ProviderSafetyAttemptORM).where(
+                ProviderSafetyAttemptORM.operation_key == "durable-error-evidence"
+            )
+        )
+    assert row is not None
+    assert row.error_code == "OPENAI_VISION_TRANSIENT_HTTP"
+    assert row.error_evidence == evidence.model_dump(mode="json")
+    assert "credential" not in json.dumps(row.error_evidence).lower()
     await engine.dispose()
 
 
