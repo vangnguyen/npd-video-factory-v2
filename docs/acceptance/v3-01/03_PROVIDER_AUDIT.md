@@ -66,4 +66,5 @@ only the implemented/mock-tested state for the control plane. They are not crede
 production-path or human-quality acceptance. `EV-V3-OPENAI-VISION-ADAPTER-001` changes only the
 implemented/mock-tested Vision adapter evidence. `EV-V3-OPENAI-VISION-OP1-FAILED-001` demonstrates
 the bounded gate/ledger failure path but does not promote the real-provider axis; GAP-003 remains
-`IN_PROGRESS`.
+`IN_PROGRESS`. Draft evidence `EV-V3-STRUCTURED-ERROR-EVIDENCE-001` proves only the zero-call
+V3-01-11 schema/error contract on its code commit and also leaves every real axis unchanged.

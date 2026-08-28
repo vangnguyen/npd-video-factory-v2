@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-STRUCTURED-ERROR-EVIDENCE-001",
+  "test_case_id": "V3-01-11-STRICT-SCHEMA-ERROR-EVIDENCE",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "3cd17686e89b5abfe6a83d9cae8c8700975f6e81",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-mocktransport",
+    "model_or_workflow": "gpt-5-mini Responses strict schema and redacted errors",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "c8ddc43bfc11cc02584aa164318c696263e6c9e02aafb4113144c8b900a2b7d8",
+  "started_at_utc": "2026-08-28T14:48:56Z",
+  "completed_at_utc": "2026-08-28T15:19:38.2608474Z",
+  "duration_seconds": 1842.261,
+  "result": "PASS",
+  "assertion": "V3-01-11 corrects track_hint to required-nullable, rejects every nested object whose properties and required sets differ or whose additionalProperties is not false, and carries only bounded redacted provider failure metadata into the durable attempt ledger. Mock tests cover an OpenAI-equivalent 400 schema rejection, transport timeout, response parse failure, refusal, incomplete response, structured validation and missing or invalid usage. Full Python, Studio, migration, acceptance, Compose and safety checks passed locally. No credential was read, no external call occurred and actual cost was 0 VND. This evidence is mock-tested only; RC-3 operation 1 remains REVIEW_REQUIRED and consumed, old operation 2 remains locked, and no real-provider, production-path or quality axis is promoted.",
+  "correlation_id": "v3-01-11-structured-error-3cd1768",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex deterministic provider-contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On code commit 3cd17686e89b5abfe6a83d9cae8c8700975f6e81 with checked-in fail-closed defaults, run python -m pytest apps/api/tests/test_openai_vision_provider.py apps/api/tests/test_provider_safety.py -q and the full Python/acceptance/migration suite. Do not mount a credential, enable execution or reuse an RC-3 operation."
+}

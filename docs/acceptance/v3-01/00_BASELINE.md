@@ -147,7 +147,8 @@ Current checked-in production override deliberately selects contract-only or dis
   not authority to use it, and local/CI Compose explicitly receives an empty key.
 
 Evidence: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`, `EV-V3-SAFETY-001`,
-`EV-V3-DR-001`, `EV-V3-OPENAI-VISION-ADAPTER-001`.
+`EV-V3-DR-001`, `EV-V3-OPENAI-VISION-ADAPTER-001`,
+`EV-V3-STRUCTURED-ERROR-EVIDENCE-001`.
 
 ## Remediation checkpoints
 

@@ -84,5 +84,6 @@ exception exists.
 V3-01-11 makes `track_hint` required-nullable, recursively validates strict object schemas and adds
 secret-free durable provider error evidence for HTTP, transport, parse, refusal/incomplete,
 validation and usage failures. Its local tests use mock transport only and record 0 external calls
-and 0 VND. Until a separate G-08 merge and exact-main regression, it changes no gap status or
-acceptance axis; after any merge, a new RC-4 and newly bound operations are still required.
+and 0 VND in `EV-V3-STRUCTURED-ERROR-EVIDENCE-001`. Until a separate G-08 merge and exact-main
+regression, it changes no gap status or acceptance axis; after any merge, a new RC-4 and newly bound
+operations are still required.

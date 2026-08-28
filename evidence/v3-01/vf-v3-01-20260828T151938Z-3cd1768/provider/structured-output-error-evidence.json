@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-11",
+  "code_commit": "3cd17686e89b5abfe6a83d9cae8c8700975f6e81",
+  "base_commit": "2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38",
+  "provider": "OpenAI MockTransport",
+  "model": "gpt-5-mini",
+  "external_calls": 0,
+  "actual_cost_vnd": 0,
+  "strict_schema": {
+    "track_hint_required": true,
+    "track_hint_nullable": true,
+    "recursive_properties_equal_required": true,
+    "recursive_additional_properties_false": true
+  },
+  "error_evidence": {
+    "http_status": true,
+    "provider_type": true,
+    "provider_code": true,
+    "provider_parameter": true,
+    "provider_message": true,
+    "provider_request_id": true,
+    "client_request_id": true,
+    "response_sha256": true,
+    "raw_body_persisted": false,
+    "request_payload_persisted": false,
+    "credential_persisted": false
+  },
+  "failure_categories": [
+    "http_provider_error",
+    "transport_timeout",
+    "transport_error",
+    "response_parse_failure",
+    "structured_output_refusal",
+    "structured_output_incomplete",
+    "structured_output_validation",
+    "usage_receipt_missing",
+    "usage_receipt_invalid"
+  ],
+  "focused_tests": {
+    "passed": 39,
+    "failed": 0
+  },
+  "full_python_tests": {
+    "passed": 253,
+    "failed": 0
+  },
+  "studio_tests": {
+    "passed": 14,
+    "failed": 0
+  },
+  "migration_replay": "PASS",
+  "acceptance_validation": "PASS",
+  "compose_and_safety": "PASS",
+  "renderer_local": "NOT_RUN_HOST_PNPM_BUILD_POLICY",
+  "renderer_required_ci": "PENDING_EXACT_HEAD",
+  "source_sha256": {
+    "openai_vision_provider": "c8ddc43bfc11cc02584aa164318c696263e6c9e02aafb4113144c8b900a2b7d8",
+    "provider_safety": "2952bfba8a91002cdefe7749f38754964165907824514f471e265102875d705e",
+    "openai_tests": "6b0dac7ddc5e10a0650113fb38e50c19aa14e19ed7e71c41fef34da5e37f24e7",
+    "provider_safety_tests": "653c8ee2d15055dc8ff31ba293f332388da35da0a7aa0eba5f4de96da6715ea6",
+    "remediation_document": "1d1ca78affb8afac14078e42b388efe6df03b59bdec64ab4cd53d382c7bed0ea"
+  },
+  "safety": {
+    "external_execution_enabled": false,
+    "paid_execution_enabled": false,
+    "approved_budget_vnd": 0,
+    "global_kill_switch_engaged": true,
+    "credential_read": false,
+    "provider_call_authorized": false,
+    "old_operation_2_locked": true,
+    "deploy_performed": false,
+    "publish_performed": false
+  },
+  "next_gate": "exact-head CI and separate G-08 for the V3-01-11 draft PR; no RC-4 or new operation before merge and exact-main regression",
+  "overall_verdict": "NO-GO"
+}
