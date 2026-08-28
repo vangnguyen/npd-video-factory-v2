@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-10",
+  "code_commit": "e7e9ccceeb97830db47d66cfa392c854f8a2e2e4",
+  "base_commit": "5936aa7a9656d728be751d0ee61011fc1a5abc7a",
+  "base_tag": "vf-v3-01-rc2",
+  "provider": "openai-vision",
+  "model": "gpt-5-mini",
+  "capability": "vision",
+  "credential_alias": "secret://openai/codex-video",
+  "secret_recorded": false,
+  "gate_loader_source_sha256": "16fad770c7ab5c5f00d3001e1cc02905a0ee54862266b76f35844ceebfd3d8b5",
+  "gate_loader_test_sha256": "3305089d574aacbbfa6f1ced253842b21148a0dce680dff0384b5e715f39a64f",
+  "g03_asset_sha256": "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+  "g03_rights_record_file_sha256": "d0f1ee0069739bce5a370ffded5a26e0a0f51f50937239804871c00cfb807fba",
+  "g03_rights_decision": "BLOCKED",
+  "predeclared_operation_ids": [
+    "v3-01-g03a-openai-vision-call-01",
+    "v3-01-g03a-openai-vision-call-02"
+  ],
+  "approved_envelope": {
+    "currency": "VND",
+    "per_operation_reservation": 500,
+    "acceptance_window_ceiling": 1250,
+    "maximum_operations": 2,
+    "maximum_frames_per_call": 1,
+    "maximum_dimension_pixels": 2048,
+    "image_detail": "high",
+    "input_token_ceiling": 16384,
+    "output_token_ceiling": 4096,
+    "timeout_seconds": 60,
+    "concurrency": 1,
+    "automatic_retry": false,
+    "maximum_window_hours": 4,
+    "may_cross_utc_budget_day": false
+  },
+  "focused_tests": {
+    "passed": 28,
+    "failed": 0,
+    "pytest_duration_seconds": 1.5,
+    "wall_duration_seconds": 2.354
+  },
+  "full_regression": {
+    "python_tests_passed": 245,
+    "studio_tests_passed": 14,
+    "renderer_tests_passed": 14,
+    "python_compile": "PASS",
+    "studio_syntax": "PASS",
+    "renderer_typecheck": "PASS",
+    "renderer_bundle": "PASS",
+    "migration_upgrade_downgrade_replay": "PASS",
+    "docker_compose_config": "PASS",
+    "docker_deterministic_e2e": "PASS",
+    "local_env_restored": true
+  },
+  "safety": {
+    "verified_bundle_enabled": false,
+    "external_execution_enabled": false,
+    "paid_execution_enabled": false,
+    "checked_in_budget_vnd": 0,
+    "global_kill_switch_engaged": true,
+    "credential_resolved": false,
+    "real_provider_tested": false,
+    "production_path_tested": false,
+    "quality_accepted": false
+  },
+  "actual_external_calls": 0,
+  "actual_cost": {
+    "currency": "VND",
+    "amount": 0
+  },
+  "next_gate": "G-08 for the V3-01-10 draft PR and explicit G-03-A review of the exact asset and RightsRecord; after merge, exact-main regression and vf-v3-01-rc3 lock are still required before any runtime decision",
+  "overall_verdict": "NO-GO"
+}

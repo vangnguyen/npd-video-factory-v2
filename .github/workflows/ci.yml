@@ -315,6 +315,25 @@ jobs:
           grep -qx 'OPENAI_VISION_OUTPUT_VND_PER_MILLION_TOKENS=0' .env.example
           test "$(grep -Fc 'OPENAI_API_KEY: ""' docker-compose.yml)" -eq 4
           ! git grep -I -n -E '^(VISION_PROVIDER=openai|OPENAI_API_KEY=.+|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|OPENAI_VISION_ESTIMATED_COST_VND=[1-9][0-9]*)$' -- .env.example docker-compose.yml deploy apps services
+      - name: Verify V3-01-10 bounded provider gate-loader boundary
+        run: |
+          grep -Fq 'class ProviderGateBundle' apps/api/app/provider_gate_loader.py
+          grep -Fq 'hmac.compare_digest' apps/api/app/provider_gate_loader.py
+          grep -Fq 'v3-01-g03a-openai-vision-call-01' apps/api/app/provider_gate_loader.py
+          grep -Fq 'v3-01-g03a-openai-vision-call-02' apps/api/app/provider_gate_loader.py
+          grep -Fq 'every owner approval must bind the exact execution scope hash' apps/api/app/provider_gate_loader.py
+          grep -Fq 'self.provider_safety.execute(' apps/api/app/vision_service.py
+          grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_SHA256=' .env.example
+          grep -qx 'PROVIDER_GATE_EXPECTED_RC_COMMIT=' .env.example
+          grep -qx 'PROVIDER_GATE_EXPECTED_RC_TAG=' .env.example
+          grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
+          grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
+          grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
+          python -c 'import hashlib,json; from pathlib import Path; record=json.loads(Path("docs/acceptance/v3-01/rights/V3-01-RIGHTS-G03A-001.json").read_text()); assert record["decision"] == "BLOCKED"; assert record["secret_recorded"] is False; assert hashlib.sha256(Path("docs/acceptance/v3-01/assets/g03-a-owned-vision-test.png").read_bytes()).hexdigest() == record["asset_hash"]'
+          ! git grep -I -n -E '^(PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_PER_OPERATION_LIMIT_VND=[1-9][0-9]*|PROVIDER_DAILY_LIMIT_VND=[1-9][0-9]*)$' -- .env.example deploy apps services
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

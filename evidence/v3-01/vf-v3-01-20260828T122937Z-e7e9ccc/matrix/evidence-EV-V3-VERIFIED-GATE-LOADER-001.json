@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-VERIFIED-GATE-LOADER-001",
+  "test_case_id": "V3-01-10-VERIFIED-GATE-LOADER",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03",
+    "OPS-04"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "e7e9ccceeb97830db47d66cfa392c854f8a2e2e4",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-synthetic-gate-bundle",
+    "model_or_workflow": "openai-vision / gpt-5-mini / vision",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "16fad770c7ab5c5f00d3001e1cc02905a0ee54862266b76f35844ceebfd3d8b5",
+  "started_at_utc": "2026-08-28T12:29:37.6555944Z",
+  "completed_at_utc": "2026-08-28T12:29:40.0091828Z",
+  "duration_seconds": 2.354,
+  "result": "PASS",
+  "assertion": "V3-01-10 loads only a raw-hash-pinned, internally hash-verified, secret-free G-01/G-02/G-03 bundle bound to one exact RC, complete execution-scope hash, fixed G-02-A VND envelope, one approved RightsRecord and exactly two immutable operation IDs. Both in-memory and PostgreSQL-backed safety controllers reject expiry, UTC-day drift, config drift, unlisted or duplicate operations, another model, another asset, dimensions, token limits and any reservation other than 500 VND. The checked-in configuration remains disabled with zero VND and the G-03-A candidate remains BLOCKED. Twenty-eight focused tests passed with no network, credential read or provider call; full Python, Studio, Renderer, migration and deterministic Docker E2E regressions also passed. This is mock-tested evidence only and does not establish real-provider, production-path or human-quality acceptance.",
+  "correlation_id": "v3-01-10-gate-loader-e7e9ccc",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Codex deterministic safety-contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On commit e7e9ccceeb97830db47d66cfa392c854f8a2e2e4, run: python -m pytest apps/api/tests/test_provider_gate_loader.py apps/api/tests/test_openai_vision_provider.py apps/api/tests/test_v3_01_evidence_harness.py -q. Keep PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false, external=false, paid=false, budgets=0 and the global kill switch engaged. Do not mount or resolve the credential."
+}

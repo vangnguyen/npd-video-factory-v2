@@ -1,0 +1,24 @@
+{
+  "approval_id": "V3-01-APP-011",
+  "gate_id": "G-01",
+  "decision": "APPROVED",
+  "scope": "Authorize preparation of real-provider acceptance for exactly openai-vision / gpt-5-mini / vision on RC-2 using only credential alias secret://openai/codex-video.",
+  "artifact_or_commit_hashes": [
+    "5936aa7a9656d728be751d0ee61011fc1a5abc7a",
+    "f1cff1c8370caf6218577cdabfbd06c0665dfabb2407ec320b4668f7bf50072a"
+  ],
+  "target_account_or_environment": "Isolated acceptance preparation only; credential value remains in an external secret mechanism",
+  "limits": [
+    "Provider openai-vision only",
+    "Model alias gpt-5-mini only; no automatic fallback",
+    "Capability vision only",
+    "Credential alias secret://openai/codex-video only",
+    "No API call authority",
+    "No deployment, public ingress, publishing or production analytics",
+    "A new exact RC binding is required after V3-01-10 changes code"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-28T12:00:19Z",
+  "expires_at_utc": null,
+  "notes": "Captured from the owner's explicit G-01-A approval. This record authorizes provider/capability and credential-alias preparation on RC-2 but explicitly does not authorize a provider call. V3-01-10 changes code, so a future runtime bundle must carry an owner record rebound to exact RC-3."
+}

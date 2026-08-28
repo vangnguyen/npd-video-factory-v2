@@ -1,0 +1,23 @@
+{
+  "approval_id": "V3-01-APP-010",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #22 V3-01-09 OpenAI gpt-5-mini Vision adapter into main, exact-main regression, and annotated RC-2 lock only.",
+  "artifact_or_commit_hashes": [
+    "f42a1709cba6f087369c1636bab9bd06053f7613",
+    "e6651948751fc8789ff83f91e0e7e8f88564e2aa",
+    "5936aa7a9656d728be751d0ee61011fc1a5abc7a"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and annotated vf-v3-01-rc2 tag only; no runtime environment",
+  "limits": [
+    "Exact-head CI must remain green",
+    "Run exact-main regression after merge",
+    "RC-2 remains NO-GO and provider execution is not authorized",
+    "No G-01-A, G-02-A or G-03-A runtime execution authority",
+    "No credential read, API call, deployment, public ingress, publish or production analytics"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-28T10:09:57Z",
+  "expires_at_utc": null,
+  "notes": "Captured from the owner's explicit G-08 approval and consumed when PR #22 merged at 2026-08-28T10:09:57Z. Exact head e6651948751fc8789ff83f91e0e7e8f88564e2aa passed CI run 33161662691; annotated tag vf-v3-01-rc2 peels to merge commit 5936aa7a9656d728be751d0ee61011fc1a5abc7a. This grants no runtime authority."
+}

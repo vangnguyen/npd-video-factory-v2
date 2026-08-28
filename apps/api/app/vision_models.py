@@ -146,6 +146,10 @@ class ReframePlanRead(StrictModel):
 
 
 class VisionAnalysisRequest(StrictModel):
+    acceptance_operation_id: str | None = Field(
+        default=None,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._:/-]{2,199}$",
+    )
     aspect_ratios: list[AspectRatio] = Field(
         default_factory=lambda: ["9:16", "16:9", "1:1", "4:5"],
         min_length=1,

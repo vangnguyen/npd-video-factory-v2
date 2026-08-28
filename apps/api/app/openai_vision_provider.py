@@ -312,6 +312,8 @@ class OpenAIVisionProvider:
         base_url: str = "https://api.openai.com",
         timeout_seconds: float = 60.0,
         image_detail: Literal["low", "high", "auto"] = "high",
+        max_dimension_pixels: int = 2048,
+        input_token_ceiling: int = 16_384,
         max_output_tokens: int = 8000,
         estimated_cost_vnd: Decimal = Decimal("0"),
         input_vnd_per_million_tokens: Decimal = Decimal("0"),
@@ -326,6 +328,10 @@ class OpenAIVisionProvider:
             raise ValueError("OpenAI Vision base URL must be the official HTTPS API origin")
         if timeout_seconds <= 0:
             raise ValueError("OpenAI Vision timeout must be positive")
+        if not 32 <= max_dimension_pixels <= 65_535:
+            raise ValueError("OpenAI Vision maximum dimension is invalid")
+        if input_token_ceiling < 1:
+            raise ValueError("OpenAI Vision input-token ceiling must be positive")
         if not 256 <= max_output_tokens <= 32768:
             raise ValueError("OpenAI Vision output-token bound is invalid")
         costs = (
@@ -343,8 +349,12 @@ class OpenAIVisionProvider:
         self._frame_extractor = frame_extractor
         self._base_url = base_url.rstrip("/")
         self._timeout_seconds = timeout_seconds
-        self._image_detail = image_detail
-        self._max_output_tokens = max_output_tokens
+        self.timeout_seconds = timeout_seconds
+        self.image_detail = image_detail
+        self.max_frames = int(getattr(frame_extractor, "max_frames", 8))
+        self.max_dimension_pixels = max_dimension_pixels
+        self.input_token_ceiling = input_token_ceiling
+        self.max_output_tokens = max_output_tokens
         self._input_rate = input_vnd_per_million_tokens
         self._cached_input_rate = cached_input_vnd_per_million_tokens
         self._output_rate = output_vnd_per_million_tokens
@@ -364,6 +374,10 @@ class OpenAIVisionProvider:
         checksum_sha256: str,
         sample_interval_seconds: float,
     ) -> ProviderVisionResult:
+        if metadata.width is None or metadata.height is None:
+            raise VisionFrameExtractionError("Vision input dimensions are required")
+        if max(metadata.width, metadata.height) > self.max_dimension_pixels:
+            raise VisionFrameExtractionError("Vision input exceeds the approved dimension limit")
         alias = self.credential_alias
         if not alias:
             raise VisionProviderNotConfigured("OpenAI Vision credential alias is not configured")
@@ -384,6 +398,10 @@ class OpenAIVisionProvider:
             asset_id=asset_id,
             sample_interval_seconds=sample_interval_seconds,
         )
+        if len(extracted) != self.max_frames:
+            raise VisionFrameExtractionError(
+                "Vision evidence frame count does not match the approved frame limit"
+            )
         request_payload = self._request_payload(extracted)
         request_bytes = _canonical_json(request_payload)
         started = time.perf_counter()
@@ -511,7 +529,7 @@ class OpenAIVisionProvider:
                         f"data:{frame.content_type};base64,"
                         f"{base64.b64encode(frame.payload).decode('ascii')}"
                     ),
-                    "detail": self._image_detail,
+                    "detail": self.image_detail,
                 }
             )
         return {
@@ -526,7 +544,7 @@ class OpenAIVisionProvider:
                     "schema": _VisionOutput.model_json_schema(),
                 }
             },
-            "max_output_tokens": self._max_output_tokens,
+            "max_output_tokens": self.max_output_tokens,
         }
 
     @staticmethod
@@ -603,6 +621,10 @@ class OpenAIVisionProvider:
         except (TypeError, ValueError) as exc:
             raise OpenAIVisionResponseError("OpenAI Vision usage receipt is malformed") from exc
         cached_tokens = min(cached_tokens, input_tokens)
+        if input_tokens > self.input_token_ceiling:
+            raise OpenAIVisionResponseError("OpenAI Vision input usage exceeds its accounting ceiling")
+        if output_tokens > self.max_output_tokens:
+            raise OpenAIVisionResponseError("OpenAI Vision output usage exceeds its configured ceiling")
         uncached_tokens = input_tokens - cached_tokens
         million = Decimal("1000000")
         actual = (

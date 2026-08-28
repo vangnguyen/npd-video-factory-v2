@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     openai_vision_credential_alias: str = "secret://openai/codex-video"
     openai_vision_image_detail: str = "high"
     openai_vision_max_frames: int = 8
+    openai_vision_max_dimension_pixels: int = 2048
+    openai_vision_input_token_ceiling: int = 16_384
     openai_vision_max_output_tokens: int = 8000
     openai_vision_estimated_cost_vnd: Decimal = Decimal("0")
     openai_vision_input_vnd_per_million_tokens: Decimal = Decimal("0")
@@ -131,6 +133,13 @@ class Settings(BaseSettings):
     provider_external_execution_enabled: bool = False
     provider_paid_execution_enabled: bool = False
     provider_global_kill_switch_engaged: bool = True
+    provider_verified_gate_bundle_enabled: bool = False
+    provider_verified_gate_bundle_file: Path = Path(
+        "/run/secrets/video-factory-provider-gates.json"
+    )
+    provider_verified_gate_bundle_sha256: str = ""
+    provider_gate_expected_rc_commit: str = ""
+    provider_gate_expected_rc_tag: str = ""
     provider_budget_currency: str = "VND"
     provider_per_operation_limit_vnd: Decimal = Decimal("0")
     provider_daily_limit_vnd: Decimal = Decimal("0")
@@ -285,6 +294,10 @@ class Settings(BaseSettings):
             raise ValueError("OPENAI_VISION_IMAGE_DETAIL must be low, high or auto")
         if not 1 <= self.openai_vision_max_frames <= 32:
             raise ValueError("OPENAI_VISION_MAX_FRAMES must be between 1 and 32")
+        if not 32 <= self.openai_vision_max_dimension_pixels <= 65_535:
+            raise ValueError("OPENAI_VISION_MAX_DIMENSION_PIXELS is outside the supported range")
+        if self.openai_vision_input_token_ceiling < 1:
+            raise ValueError("OPENAI_VISION_INPUT_TOKEN_CEILING must be positive")
         if not 256 <= self.openai_vision_max_output_tokens <= 32768:
             raise ValueError("OPENAI_VISION_MAX_OUTPUT_TOKENS is outside the supported range")
         vision_cost_values = (
@@ -356,7 +369,9 @@ class Settings(BaseSettings):
             raise ValueError("provider VND budget limits cannot be negative")
         if self.provider_daily_limit_vnd < self.provider_per_operation_limit_vnd:
             raise ValueError("provider daily VND limit cannot be lower than the per-operation limit")
-        if self.provider_per_operation_limit_vnd or self.provider_daily_limit_vnd:
+        if (
+            self.provider_per_operation_limit_vnd or self.provider_daily_limit_vnd
+        ) and not self.provider_verified_gate_bundle_enabled:
             raise ValueError("provider budgets cannot be activated before the separate G-02 owner gate")
         if not 1 <= self.provider_retry_max_attempts <= 10:
             raise ValueError("PROVIDER_RETRY_MAX_ATTEMPTS must be between 1 and 10")
@@ -413,10 +428,68 @@ class Settings(BaseSettings):
         )
         if any(provider_specific_external_gates) and not self.provider_external_execution_enabled:
             raise ValueError("provider-specific external execution requires the global provider safety gate")
+        if self.provider_verified_gate_bundle_enabled:
+            if not self.provider_verified_gate_bundle_sha256:
+                raise ValueError("verified provider gate bundle SHA-256 is required")
+            if not self.provider_gate_expected_rc_commit or not self.provider_gate_expected_rc_tag:
+                raise ValueError("verified provider gates require an exact RC commit and tag")
+            acceptance_limits = {
+                "model": self.openai_vision_model,
+                "credential_alias": self.openai_vision_credential_alias,
+                "detail": self.openai_vision_image_detail,
+                "max_frames": self.openai_vision_max_frames,
+                "max_dimension_pixels": self.openai_vision_max_dimension_pixels,
+                "input_token_ceiling": self.openai_vision_input_token_ceiling,
+                "max_output_tokens": self.openai_vision_max_output_tokens,
+                "estimated_cost_vnd": self.openai_vision_estimated_cost_vnd,
+                "input_vnd_per_million_tokens": (
+                    self.openai_vision_input_vnd_per_million_tokens
+                ),
+                "cached_input_vnd_per_million_tokens": (
+                    self.openai_vision_cached_input_vnd_per_million_tokens
+                ),
+                "output_vnd_per_million_tokens": (
+                    self.openai_vision_output_vnd_per_million_tokens
+                ),
+                "per_operation_limit_vnd": self.provider_per_operation_limit_vnd,
+                "daily_limit_vnd": self.provider_daily_limit_vnd,
+                "retry_max_attempts": self.provider_retry_max_attempts,
+                "request_timeout_seconds": self.provider_request_timeout_seconds,
+                "retry_max_elapsed_seconds": self.provider_retry_max_elapsed_seconds,
+                "max_concurrent_calls": self.provider_max_concurrent_calls,
+            }
+            expected_limits = {
+                "model": "gpt-5-mini",
+                "credential_alias": "secret://openai/codex-video",
+                "detail": "high",
+                "max_frames": 1,
+                "max_dimension_pixels": 2048,
+                "input_token_ceiling": 16_384,
+                "max_output_tokens": 4_096,
+                "estimated_cost_vnd": Decimal("500"),
+                "input_vnd_per_million_tokens": Decimal("6565"),
+                "cached_input_vnd_per_million_tokens": Decimal("656.5"),
+                "output_vnd_per_million_tokens": Decimal("52520"),
+                "per_operation_limit_vnd": Decimal("500"),
+                "daily_limit_vnd": Decimal("1250"),
+                "retry_max_attempts": 1,
+                "request_timeout_seconds": 60.0,
+                "retry_max_elapsed_seconds": 60.0,
+                "max_concurrent_calls": 1,
+            }
+            if acceptance_limits != expected_limits:
+                raise ValueError("provider settings do not match the approved G-02-A envelope")
+        elif self.provider_external_execution_enabled:
+            raise ValueError("real provider execution requires a verified owner-gate bundle")
         if self.provider_external_execution_enabled:
-            raise ValueError("real provider execution is not activated in V3-01-03")
-        if not self.provider_global_kill_switch_engaged:
-            raise ValueError("the global provider kill switch must remain engaged in V3-01-03")
+            if not self.provider_verified_gate_bundle_enabled:
+                raise ValueError("real provider execution requires a verified owner-gate bundle")
+            if self.vision_provider != "openai" or not self.provider_paid_execution_enabled:
+                raise ValueError("G-01-A execution is limited to the paid OpenAI Vision adapter")
+        if not self.provider_global_kill_switch_engaged and not self.provider_external_execution_enabled:
+            raise ValueError(
+                "the global provider kill switch must remain engaged outside gated execution"
+            )
         return self
 
 

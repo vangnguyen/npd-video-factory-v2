@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260828T122937Z-e7e9ccc",
+  "started_at_utc": "2026-08-28T12:29:37.6555944Z",
+  "completed_at_utc": "2026-08-28T12:29:40.0091828Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "e7e9ccceeb97830db47d66cfa392c854f8a2e2e4",
+  "base_sha": "5936aa7a9656d728be751d0ee61011fc1a5abc7a",
+  "release_candidate": "vf-v3-01-rc2 is the base only; V3-01-10 is unmerged and is not RC-3",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0011_v3_01_03",
+  "config_fingerprint_redacted": "v3-01-10-gate-loader-disabled-external-false-paid-false-zero-vnd-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "vision-gate-loader-contract",
+      "provider": "offline-synthetic-gate-bundle",
+      "model_or_workflow": "openai-vision / gpt-5-mini / vision",
+      "region": "not-applicable-offline",
+      "credential_alias": "secret://openai/codex-video",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "V3-01-10-VERIFIED-GATE-LOADER",
+    "G03-A-RIGHTS-CANDIDATE",
+    "LOCAL-FOCUSED-REGRESSION",
+    "LOCAL-FULL-REGRESSION",
+    "DOCKER-DETERMINISTIC-E2E"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "matrix/evidence-EV-V3-VERIFIED-GATE-LOADER-001.json",
+    "provider/verified-gate-loader.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 1250,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-01",
+    "G-02"
+  ],
+  "result": "BLOCKED"
+}

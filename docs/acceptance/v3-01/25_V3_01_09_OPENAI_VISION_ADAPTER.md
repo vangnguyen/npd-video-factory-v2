@@ -4,14 +4,15 @@
 
 ```text
 PRODUCTION VERDICT: NO-GO
-IMPLEMENTED AXIS: PASS ON CODE-ONLY COMMIT fe4837bfd2ae0436f5fca557eab6101ca4cf5654
+IMPLEMENTED AXIS: PASS ON MERGED RC-2 5936aa7a9656d728be751d0ee61011fc1a5abc7a
 MOCK-TESTED AXIS: PASS
 REAL-PROVIDER-TESTED AXIS: NOT_TESTED
 PRODUCTION-PATH-TESTED AXIS: NOT_TESTED
 QUALITY-ACCEPTED AXIS: NOT_TESTED
 EXTERNAL CALLS: 0
 ACTUAL COST: 0 VND
-NEXT OWNER GATE: NEW G-08 FOR THE V3-01-09 DRAFT PR
+PR: #22 MERGED; G-08 V3-01-APP-010 CONSUMED
+NEXT OWNER GATES: G-03-A AND NEW G-08 FOR V3-01-10
 ```
 
 V3-01-09 implements only the missing OpenAI Vision adapter foundation. It does not use the
@@ -56,10 +57,16 @@ extraction or HTTP unless an explicit contract-test-only mock flag is injected b
 
 ## Cost contract
 
-The adapter never stores or reports USD. Future G-02 must supply approved VND-per-million-token
-rates and a positive operation estimate. Missing usage produces `PENDING`; missing VND rates in
-live mode blocks before HTTP. Mock tests cover both zero-cost receipts and deterministic VND math,
-but simulated values are not actual spend evidence. Current actual spend remains `0 VND`.
+The adapter never stores or reports USD. G-02-A now approves a preparation-only envelope of 500
+VND per operation and 1,250 VND for two predeclared operations, with rates of 6,565 VND/M input,
+656.5 VND/M cached input and 52,520 VND/M output. That approval grants no call authority and is not
+active in checked-in settings. Missing usage produces `PENDING`; missing VND rates in live mode
+blocks before HTTP. Mock tests cover both zero-cost receipts and deterministic VND math, but
+simulated values are not actual spend evidence. Current actual spend remains `0 VND`.
+
+The `gpt-5-mini` alias remains the approved model and is still listed as available. The deprecated
+entry is the dated `gpt-5-mini-2025-08-07` snapshot; this audit has no evidence of an announced
+shutdown date for the alias. Runtime failure must stop without automatic fallback.
 
 ## Contract tests
 
@@ -98,19 +105,16 @@ billing path works.
 
 ## RC and next gates
 
-`vf-v3-01-rc1` peels to exact `main`
-`f42a1709cba6f087369c1636bab9bd06053f7613`. V3-01-09 is based on RC-1 but changes adapter code. If
-its draft PR is later approved and merged, RC-1 must not be used for live Vision acceptance; run
-exact-main regression and lock a new RC-2 first.
-
-The next action is a new bounded G-08 for the V3-01-09 PR. Only after merge, exact-main verification
-and RC-2 lock may the owner consider G-01-A for exactly OpenAI / `gpt-5-mini` / Vision. G-02-A and
-G-03-A remain separate. No call is allowed until all three apply to the same RC, alias, owned image,
-operation ID, time window and VND ceiling.
+PR #22 merged as `5936aa7a9656d728be751d0ee61011fc1a5abc7a`; annotated tag
+`vf-v3-01-rc2` peels to that exact commit. G-01-A and G-02-A were subsequently approved for
+preparation only. G-03-A remains pending, and V3-01-10 changes code after RC-2. Therefore no live
+acceptance may run on RC-2. Merge V3-01-10 only under a new G-08, run exact-main regression, lock
+RC-3, and rebind all three runtime records to the same RC, alias, owned image, operation IDs, time
+window and VND ceiling before a separate execution decision.
 
 ## Rollback
 
-Before merge, abandon the draft branch. After a future merge, revert only the V3-01-09 commits,
-restore `VISION_PROVIDER=fixture` or `contract`, keep the key unmounted, keep budgets at 0 VND and
-keep the global kill switch engaged. No runtime rollback is currently required because this work
-was not deployed.
+If the adapter foundation must be removed, revert PR #22, restore `VISION_PROVIDER=fixture` or
+`contract`, keep the key unmounted, keep budgets at 0 VND and keep the global kill switch engaged.
+No runtime rollback is currently required because RC-2 was not deployed and no provider call was
+made.

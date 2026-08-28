@@ -2,8 +2,9 @@
 
 No real provider was called and no credential value is present in Git/evidence. A separate OpenAI
 key has been provisioned in the ignored workstation `.env`, but V3-01-09 tests use only an injected
-fake resolver and `MockTransport`. G-01, G-02 and G-03 remain pending; credential presence grants
-no execution authority.
+fake resolver and `MockTransport`. G-01-A and G-02-A are approved for preparation only on RC-2;
+G-03-A remains pending, and all three must be rebound to future exact RC-3 before execution.
+Credential presence grants no execution authority.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
@@ -16,16 +17,16 @@ V3-01-03 replaces its process-local external-operation accounting with a Postgre
 for local/CI validation. This changes durability mechanics only; it does not change any real state,
 owner gate or execution permission in the table.
 
-PR #20 merged V3-01-08 at exact `main` `f42a1709cba6f087369c1636bab9bd06053f7613`;
-`vf-v3-01-rc1` peels to that commit. V3-01-09 adds a minimal OpenAI `gpt-5-mini` Vision adapter on
-code-only commit `fe4837bfd2ae0436f5fca557eab6101ca4cf5654`. It remains unmerged, disabled,
-mock-tested only and requires a new G-08. If merged, RC-2 must be locked before any live test.
+PR #22 merged V3-01-09 at exact `main` `5936aa7a9656d728be751d0ee61011fc1a5abc7a`;
+`vf-v3-01-rc2` peels to that commit. The OpenAI `gpt-5-mini` Vision adapter remains disabled and
+mock-tested only. V3-01-10 adds an unmerged verified gate loader and a blocked G-03-A candidate;
+if merged under a new G-08, RC-3 must be locked before any live test.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | strict mock frames/OCR/composition/objects/safe-crop/quality, hashes, timeout/retry/circuit/duplicate/rights/budget and VND receipt | `BLOCKED` | new G-08, RC-2, then separate G-01-A/G-02-A/G-03-A; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | strict mock frames/OCR/composition/objects/safe-crop/quality, hashes, timeout/retry/circuit/duplicate/rights/budget, VND receipt and verified-loader tests | `BLOCKED` | new G-08 for V3-01-10, RC-3, G-03-A and exact RC-3 rebinding of G-01-A/G-02-A; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -52,10 +53,10 @@ mock-tested only and requires a new G-08. If merged, RC-2 must be locked before 
 
 ## Cost and network state
 
-Cost incurred by this baseline/provider audit and V3-01-09: `0 VND`. External provider requests:
-`0`. MockTransport calls and simulated VND arithmetic are contract tests, not real usage.
+Cost incurred by this baseline/provider audit through V3-01-10: `0 VND`. External provider
+requests: `0`. MockTransport calls and simulated VND arithmetic are contract tests, not real usage.
 
-Local evidence `EV-V3-PROVIDER-SAFETY-001` and the pending V3-01-03 locked-commit evidence change
+Local evidence `EV-V3-PROVIDER-SAFETY-001` and V3-01-03 locked-commit evidence change
 only the implemented/mock-tested state for the control plane. They are not credentials, provider,
 production-path or human-quality acceptance. `EV-V3-OPENAI-VISION-ADAPTER-001` changes only the
 implemented/mock-tested Vision adapter evidence and leaves GAP-003 `IN_PROGRESS`.
