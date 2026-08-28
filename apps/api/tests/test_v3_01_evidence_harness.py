@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import importlib.util
+import csv
 import json
+from collections import Counter
 from pathlib import Path
 
 import pytest
@@ -128,3 +130,52 @@ def test_approval_validation_rejects_filename_mismatch(tmp_path: Path) -> None:
 
 def test_checked_in_v3_01_register_is_complete() -> None:
     HARNESS.validate_repo(REPO_ROOT)
+
+
+def test_v3_01_08_consolidation_matches_canonical_registers() -> None:
+    docs = REPO_ROOT / "docs" / "acceptance" / "v3-01"
+    contract_path = (
+        REPO_ROOT
+        / "evidence"
+        / "v3-01"
+        / "vf-v3-01-20260828T081742Z-b132e83"
+        / "consolidation"
+        / "rc-gate.json"
+    )
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+
+    with (docs / "02_ACCEPTANCE_MATRIX.csv").open(encoding="utf-8", newline="") as handle:
+        matrix = list(csv.DictReader(handle))
+    with (docs / "13_GAP_REGISTER.csv").open(encoding="utf-8", newline="") as handle:
+        gaps = list(csv.DictReader(handle))
+
+    assert contract["matrix"]["rows"] == len(matrix) == 60
+    for axis in (
+        "implemented",
+        "mock_tested",
+        "real_provider_tested",
+        "production_path_tested",
+        "quality_accepted",
+    ):
+        actual = dict(Counter(row[axis] for row in matrix))
+        assert contract["matrix"][axis] == actual
+
+    assert contract["gaps"]["total"] == len(gaps) == 16
+    assert contract["gaps"]["by_status"] == dict(Counter(row["status"] for row in gaps))
+    assert contract["gaps"]["by_severity"] == dict(Counter(row["severity"] for row in gaps))
+    assert contract["production_verdict"] == "NO-GO"
+    assert contract["rc_candidate"]["status"] == "CONDITIONAL-RC"
+    assert contract["rc_candidate"]["locked"] is False
+    assert contract["safety"] == {
+        "external_execution": False,
+        "paid_execution": False,
+        "budget_vnd": 0,
+        "currency": "VND",
+        "global_kill_switch_engaged": True,
+        "external_notifications_enabled": False,
+        "credentials_used": False,
+        "deploy_performed": False,
+        "public_ingress_enabled": False,
+        "publish_performed": False,
+        "production_analytics_enabled": False,
+    }

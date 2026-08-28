@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC-CONSOLIDATION-001",
+  "test_case_id": "RC-CONSOLIDATION-001",
+  "matrix_rows": [
+    "OPS-09"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "b132e839904b377ec7e82e9135920f895ddf704e",
+  "environment": "CI",
+  "provider": {
+    "name": "none",
+    "model_or_workflow": "v3-01-08-consolidation-v1",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "b132e839904b377ec7e82e9135920f895ddf704e",
+  "started_at_utc": "2026-08-28T08:09:13Z",
+  "completed_at_utc": "2026-08-28T08:17:42Z",
+  "duration_seconds": 509,
+  "result": "PASS",
+  "assertion": "PR #19 merged under bounded G-08, exact-main CI passed 5/5, and V3-01-00 through V3-01-07 were consolidated without changing acceptance axes or enabling runtime capabilities. Commit b132e839 is a conditional acceptance candidate only; production remains NO-GO with 10 unverified P0 gaps, zero real calls, zero VND spend and all execution gates pending.",
+  "correlation_id": "v3-01-08-rc-b132e839",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex V3-01 consolidation reviewer",
+  "gap_ids": [
+    "V3-01-GAP-007",
+    "V3-01-GAP-009",
+    "V3-01-GAP-016"
+  ],
+  "reproduce": "Checkout b132e839904b377ec7e82e9135920f895ddf704e, verify GitHub CI run 33154214869, run python scripts/v3_01_acceptance.py validate-repo, and compare docs/acceptance/v3-01/02_ACCEPTANCE_MATRIX.csv plus 13_GAP_REGISTER.csv with consolidation/rc-gate.json. No provider, credential, deployment or external action is part of reproduction."
+}

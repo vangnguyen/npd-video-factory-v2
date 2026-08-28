@@ -1,9 +1,8 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27`, exact merged `main`
-`f3ef5431fcc14289351163057fbffa407f7bd226`, and V3-01-07 local/CI remediation on
-`remediation/v3-01-07-dr-observability`.
+derived from the audit captured on `2026-08-27` and consolidated after V3-01-07 merged at exact
+`main` `b132e839904b377ec7e82e9135920f895ddf704e`.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -15,7 +14,7 @@ derived from the audit captured on `2026-08-27`, exact merged `main`
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-06 are merged through PR #14 through PR #18. GAP-002,
 GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. All six bounded G-08 approvals are exhausted;
+`IN_PROGRESS`. All seven bounded G-08 approval records are exhausted;
 production remains undeployed and unverified.
 
 ## P0 release blockers
@@ -60,7 +59,7 @@ V3-01-05 adds `EV-V3-FLOW-B-CONTRACT-001`, and V3-01-06 adds
 cross-stage hashes, publication safety, nullable analytics, explainable winner scoring and learning
 lineage with zero external calls and zero VND spend. It moves GAP-006 to `IN_PROGRESS` only.
 
-No gap is `VERIFIED` or newly closed by V3-01-07. `REMEDIATED` means its code and prescribed local/mock
+No gap is `VERIFIED` or newly closed by V3-01-07/V3-01-08. `REMEDIATED` means its code and prescribed local/mock
 evidence pass on the locked commit; it still needs any applicable
 production-path evidence before `VERIFIED`. Owner exceptions must name an expiry and approval record; no implicit
 exception exists.

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260828T081742Z-b132e83",
+  "started_at_utc": "2026-08-28T08:09:13Z",
+  "completed_at_utc": "2026-08-28T08:17:42Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "b132e839904b377ec7e82e9135920f895ddf704e",
+  "base_sha": "f3ef5431fcc14289351163057fbffa407f7bd226",
+  "release_candidate": "CONDITIONAL-ACCEPTANCE-CANDIDATE-b132e839-NOT-LOCKED",
+  "environment": "CI",
+  "container_images": [],
+  "database_migration_version": "0011_v3_01_03",
+  "config_fingerprint_redacted": "v3-01-08-consolidation-external-false-paid-false-zero-vnd-kill-switch-engaged-notifications-false-no-deploy",
+  "providers": [],
+  "test_cases": [
+    "RC-CONSOLIDATION-001",
+    "EXACT-MAIN-CI-33154214869"
+  ],
+  "artifact_manifest": [
+    "consolidation/rc-gate.json",
+    "final/status.json",
+    "matrix/evidence-EV-V3-RC-CONSOLIDATION-001.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-001",
+    "V3-01-GAP-002",
+    "V3-01-GAP-003",
+    "V3-01-GAP-004",
+    "V3-01-GAP-005",
+    "V3-01-GAP-006",
+    "V3-01-GAP-007",
+    "V3-01-GAP-008",
+    "V3-01-GAP-009",
+    "V3-01-GAP-010",
+    "V3-01-GAP-011",
+    "V3-01-GAP-012",
+    "V3-01-GAP-013",
+    "V3-01-GAP-014",
+    "V3-01-GAP-015",
+    "V3-01-GAP-016"
+  ],
+  "owner_gate_ids": [
+    "G-00",
+    "G-08"
+  ],
+  "result": "BLOCKED"
+}

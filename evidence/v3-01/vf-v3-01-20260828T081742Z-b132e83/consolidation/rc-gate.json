@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-08",
+  "repository_commit": "b132e839904b377ec7e82e9135920f895ddf704e",
+  "exact_main_ci": {
+    "run_id": 33154214869,
+    "conclusion": "success",
+    "jobs_passed": 5,
+    "jobs_total": 5
+  },
+  "rc_candidate": {
+    "identifier": "VF-V3-01-RC0-b132e839",
+    "status": "CONDITIONAL-RC",
+    "locked": false,
+    "image_digest": null,
+    "deployed": false
+  },
+  "production_verdict": "NO-GO",
+  "matrix": {
+    "rows": 60,
+    "implemented": {"PASS": 44, "FAIL": 16},
+    "mock_tested": {"PASS": 54, "FAIL": 1, "NOT_TESTED": 5},
+    "real_provider_tested": {"NOT_TESTED": 36, "N/A": 24},
+    "production_path_tested": {"NOT_TESTED": 60},
+    "quality_accepted": {"NOT_TESTED": 36, "N/A": 24}
+  },
+  "gaps": {
+    "total": 16,
+    "by_status": {"OPEN": 5, "IN_PROGRESS": 10, "REMEDIATED": 1},
+    "by_severity": {"P0": 10, "P1": 5, "P2": 1},
+    "production_verified": 0
+  },
+  "pending_owner_gates": [
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-04",
+    "G-05",
+    "G-06",
+    "G-07",
+    "G-09",
+    "G-10",
+    "G-11",
+    "G-12"
+  ],
+  "safety": {
+    "external_execution": false,
+    "paid_execution": false,
+    "budget_vnd": 0,
+    "currency": "VND",
+    "global_kill_switch_engaged": true,
+    "external_notifications_enabled": false,
+    "credentials_used": false,
+    "deploy_performed": false,
+    "public_ingress_enabled": false,
+    "publish_performed": false,
+    "production_analytics_enabled": false
+  },
+  "next_gate": "OWNER_REVIEW_V3-01-08_THEN_G-01_FOR_ONE_NAMED_PROVIDER_ONLY"
+}

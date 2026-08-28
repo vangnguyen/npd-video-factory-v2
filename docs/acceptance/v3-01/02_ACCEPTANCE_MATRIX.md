@@ -1,7 +1,8 @@
 # V3-01 acceptance matrix
 
-Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-06 are merged and V3-01-07
-local/CI DR and observability evidence was added on `2026-08-28`. `I/M/R/P/Q` mean implemented, mock-tested,
+Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-07 are merged at exact `main`
+`b132e839904b377ec7e82e9135920f895ddf704e`. V3-01-08 consolidates the existing evidence without
+changing any row or axis. `I/M/R/P/Q` mean implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
 
@@ -76,6 +77,8 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 - V3-01-01 through V3-01-07 leave the implemented count at `44 PASS / 16 FAIL` and the mock-tested
   count at `54 PASS / 1 FAIL / 5 NOT_TESTED`; they do not change any real-provider,
   production-path or quality axis.
+- The consolidated real-provider axis is `36 NOT_TESTED / 24 N/A`; production-path is
+  `60 NOT_TESTED`; quality is `36 NOT_TESTED / 24 N/A`.
 - All real-provider, production-path and human quality work remains unproven.
 - `N/A` is used only where the master matrix defines an axis as structurally inapplicable; it does
   not remove the need for G-00 scope approval.

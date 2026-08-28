@@ -8,11 +8,11 @@ Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: not yet established
+CURRENT RC: conditional acceptance candidate b132e839904b377ec7e82e9135920f895ddf704e; not locked or deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-07 remediation development in LOCAL/CI; no current merge authority
+CURRENT SAFE PHASE: V3-01-08 consolidation/RC review in LOCAL/CI; no current merge authority
 G-00: APPROVED by V3-01-APP-001
-G-08: V3-01-APP-002 through V3-01-APP-007 CONSUMED by PR #12 through PR #18
+G-08: V3-01-APP-002 through V3-01-APP-008 CONSUMED by PR #12 through PR #19
 NO OTHER MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
 ```
 
@@ -23,10 +23,11 @@ analytics write or takedown. Those actions remain bound to their separate gates.
 G-08 later authorized only the repository merge sequence PR #12, then retarget/retest PR #13, then
 PR #13 if all five CI jobs pass. It grants no runtime or external-execution authority.
 
-The bounded remediation sequence completed PR #12 through PR #18. The latest merge is PR #18 at
-`f3ef5431fcc14289351163057fbffa407f7bd226`, after exact-head CI passed on
-`6f68e0091829801c570375f63365e387f1234f0c`. `V3-01-APP-007` is exhausted and authorizes only
-local/CI draft work for V3-01-07; it does not authorize merging V3-01-07 or any runtime action.
+The bounded remediation sequence completed PR #12 through PR #19. The latest merge is PR #19 at
+`b132e839904b377ec7e82e9135920f895ddf704e`, after exact-head CI passed on
+`4b17fc1352ee4582db9b69f795531ef9b6a4feb4`. `V3-01-APP-008` is exhausted and authorizes only
+local/CI consolidation work for V3-01-08; it does not authorize merging V3-01-08 or any runtime
+action.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
@@ -45,7 +46,7 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Open PRs at capture | none |
 | Tags/releases | none returned by Git/GitHub |
 | Main branch protection | disabled; GitHub API returned `Branch not protected` |
-| Latest verified exact-main CI | [Video Factory V2 CI run 33090995730](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33090995730), 5/5 success |
+| Latest verified exact-main CI | [Video Factory V2 CI run 33154214869](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33154214869), 5/5 success on `b132e839904b377ec7e82e9135920f895ddf704e` |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -53,14 +54,13 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` | `f3ef5431fcc14289351163057fbffa407f7bd226` |
+| Exact `origin/main` | `b132e839904b377ec7e82e9135920f895ddf704e` |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
-| PR #14 through PR #17 | merged sequentially under bounded G-08 records; no runtime authority |
-| PR #18 | exact head `6f68e0091829801c570375f63365e387f1234f0c`; CI run `33143473424` PASS; merged as exact current main |
-| PR #19 | V3-01-07 draft opened from exact `main`; merge and all runtime gates remain pending |
-| Exact-main regression | local Python/Studio/renderer/migration/Docker deterministic suite PASS before V3-01-07 development |
+| PR #14 through PR #18 | merged sequentially under bounded G-08 records; no runtime authority |
+| PR #19 | exact head `4b17fc1352ee4582db9b69f795531ef9b6a4feb4`; CI run `33153548402` PASS; merged as exact current main |
+| Exact-main regression | CI run `33154214869` on `b132e839904b377ec7e82e9135920f895ddf704e`, all five jobs PASS |
 | Deployment/provider/ingress action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in
