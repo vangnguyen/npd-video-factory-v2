@@ -286,13 +286,24 @@ jobs:
           grep -Fq 'external_action_allowed_during_contract_test: Literal[False] = False' apps/api/app/flow_c_acceptance.py
           grep -Fq 'real_publish_allowed_during_contract_test: Literal[False] = False' apps/api/app/flow_c_acceptance.py
           ! git grep -I -n -E '^(PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_BUDGET_CURRENCY=USD|PUBLISH_ENABLED=true|PUBLISH_EXTERNAL_EXECUTION_ENABLED=true|ANALYTICS_EXTERNAL_EXECUTION_ENABLED=true)$' -- .env.example deploy/production
+      - name: Verify V3-01-07 DR and observability boundary
+        run: |
+          grep -Fq 'class OperationsObservabilityService' apps/api/app/operations_observability.py
+          grep -Fq 'prefix="/api/v1/operations"' apps/api/app/operations_routes.py
+          grep -Fq 'external_notifications_allowed: Literal[False] = False' apps/api/app/dr_observability_acceptance.py
+          grep -Fq 'production_restore_allowed: Literal[False] = False' apps/api/app/dr_observability_acceptance.py
+          grep -Fq 'VIDEO_FACTORY_DRILL_MODE=disposable-ci' scripts/e2e-smoke.sh
+          grep -Fq 'Refusing non-disposable compose project' scripts/v3-01-dr-observability-drill.sh
+          grep -qx 'OPERATIONS_EXTERNAL_NOTIFICATIONS_ENABLED=false' .env.example
+          grep -Fq 'OPERATIONS_EXTERNAL_NOTIFICATIONS_ENABLED: "false"' deploy/production/docker-compose.production.yml
+          ! git grep -I -n -E '^(OPERATIONS_EXTERNAL_NOTIFICATIONS_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_BUDGET_CURRENCY=USD)$' -- .env.example deploy/production
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json
         run: |
           install -m 0600 deploy/testing/disabled-agent-hub.json "$VIDEO_FACTORY_AGENT_HUB_KEYS_FILE"
           docker compose -f docker-compose.yml -f deploy/production/docker-compose.production.yml config --quiet
-          bash -n scripts/v2-11-preflight.sh scripts/v2-11-backup.sh scripts/v2-11-restore.sh scripts/v2-11-deploy.sh scripts/v2-11-smoke.sh scripts/v2-11-soak.sh
+          bash -n scripts/v2-11-preflight.sh scripts/v2-11-backup.sh scripts/v2-11-restore.sh scripts/v2-11-deploy.sh scripts/v2-11-smoke.sh scripts/v2-11-soak.sh scripts/v3-01-dr-observability-drill.sh
           services="$(docker compose -f docker-compose.yml -f deploy/production/docker-compose.production.yml config --services)"
           ! grep -Eq '^(agent-hub|agent_hub|caddy|n8n)$' <<<"$services"
       - name: Secret pattern scan

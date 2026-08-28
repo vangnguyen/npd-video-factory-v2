@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-07",
+  "required_alert_scenarios": [
+    "queue_backlog",
+    "provider_degradation",
+    "storage_unavailable",
+    "disk_pressure",
+    "failed_job",
+    "cost_threshold",
+    "service_unhealthy"
+  ],
+  "required_recovery_targets": [
+    "postgresql",
+    "object_storage",
+    "provider_safety_state",
+    "worker_pending_work",
+    "render_state",
+    "publication_retry_state",
+    "webhook_retry_state",
+    "analytics_snapshot_state",
+    "audit_evidence"
+  ],
+  "maximum_local_rpo_seconds": 60,
+  "maximum_local_rto_seconds": 900,
+  "evidence_retention_days": 400,
+  "log_retention_days": 30,
+  "currency": "VND",
+  "external_notifications_allowed": false,
+  "production_restore_allowed": false
+}
