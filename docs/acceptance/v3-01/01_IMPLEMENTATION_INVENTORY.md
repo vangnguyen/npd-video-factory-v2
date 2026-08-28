@@ -4,9 +4,9 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 through V3-01-04 are merged at exact `main`
-`e06ac3c76b03c7923c83aeeeda23281c1b83d45a`. Entries below that mention V3-01-05 describe
-local/CI remediation on `remediation/v3-01-05-flow-b-closure`, not production.
+V3-01-01 through V3-01-05 are merged at exact `main`
+`e7888649c97f60be0b7ee5201633aa5481deb591`. Entries below that mention V3-01-06 describe
+local/CI remediation on `remediation/v3-01-06-flow-c-closure`, not production.
 
 ## Foundation
 
@@ -62,6 +62,7 @@ local/CI remediation on `remediation/v3-01-05-flow-b-closure`, not production.
 | Official platform adapters | contract-only provider definitions | not-configured tests | Missing |
 | Analytics | `analytics_*` | `test_analytics_learning.py`, E2E | Fixture + contract only |
 | Winner/learning | `analytics_logic.py`, `analytics_service.py` | explainability/null tests | Recommendation-only mock path |
+| Flow C acceptance plane | `flow_c_acceptance.py`, strict VND policy and offline evaluator | 16 focused tests plus two-run redacted fixture evidence | Contract/mock PASS; official providers, remote publish, production path and quality remain blocked |
 | Agent Hub bridge | `bridge_*`, `agent-hub-bridge.v1.schema.json` | `test_agent_hub_bridge.py`, E2E | Signed fixture/draft-only path; real HTTP untested |
 
 ## Operations

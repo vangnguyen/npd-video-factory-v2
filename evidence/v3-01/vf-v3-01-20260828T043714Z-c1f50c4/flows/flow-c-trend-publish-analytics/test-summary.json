@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-06",
+  "commit_sha": "c1f50c4941929120b815fda33acd75acd07f454a",
+  "suite": "apps/api/tests/test_flow_c_acceptance.py",
+  "tests_passed": 16,
+  "tests_failed": 0,
+  "assertions": [
+    "two locked-commit fixture runs pass only contract and mock axes",
+    "fixture provider, trend source, analytics and publication evidence cannot claim real status",
+    "trend provenance and normalized source references are complete",
+    "cluster hashes and opportunity scores are deterministic and reproducible",
+    "idea, project, final-video, approval and publication hashes are bound",
+    "rights and platform validation fail closed",
+    "publication idempotency, duplicate prevention and receipt integrity are enforced",
+    "analytics metrics are normalized and unsupported values remain null",
+    "analytics snapshots are chronologically ordered",
+    "winner score and learning-feedback lineage are reproducible and explainable",
+    "restart recovery and offline external-action boundaries are enforced",
+    "VND is the only accepted currency",
+    "real-provider, production-path and human-quality axes require separate owner gates"
+  ],
+  "external_execution": false,
+  "paid_execution": false,
+  "budget_vnd": 0,
+  "global_kill_switch_engaged": true,
+  "credentials_used": false,
+  "production_path_tested": false,
+  "human_quality_accepted": false,
+  "publish_performed": false,
+  "result": "PASS"
+}

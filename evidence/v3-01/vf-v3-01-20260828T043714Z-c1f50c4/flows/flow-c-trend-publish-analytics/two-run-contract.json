@@ -1,0 +1,906 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-06",
+  "release_candidate_commit": "c1f50c4941929120b815fda33acd75acd07f454a",
+  "environment": "CI",
+  "gates": {
+    "g01_credentials": false,
+    "g02_vnd_budget": false,
+    "g03_rights_inputs": false,
+    "g04_production_like_staging": false,
+    "g05_exact_artifact_approval": false,
+    "g06_live_publication": false,
+    "g11_human_quality": false,
+    "approval_ids": []
+  },
+  "safety": {
+    "external_execution_enabled": false,
+    "paid_execution_enabled": false,
+    "analytics_external_execution_enabled": false,
+    "global_kill_switch_engaged": true,
+    "daily_budget_vnd": 0,
+    "production_write_performed": false,
+    "publish_performed": false
+  },
+  "runs": [
+    {
+      "sequence": 1,
+      "run_id": "flow-c-contract-run-01",
+      "release_candidate_commit": "c1f50c4941929120b815fda33acd75acd07f454a",
+      "started_at_utc": "2026-08-28T01:00:00Z",
+      "completed_at_utc": "2026-08-28T05:00:00Z",
+      "workspace_id": "WORKSPACE-NPD-001",
+      "providers": [
+        {
+          "capability": "trend",
+          "provider_key": "fixture-trend",
+          "adapter_or_api_version": "deterministic-trend-v1",
+          "fixture": true,
+          "external_call": false,
+          "paid": false,
+          "real_provider_tested": false,
+          "production_eligible": false,
+          "request_sha256": "0df27305fc0eefd047a1d509690b4eb3d9c54ddd217e39044ff48e3b3a8a1ec4",
+          "response_sha256": "4b3cd9d610ac93c52f9015442e78eea75d8a5046b90cbd61d564dedaf1b75f36",
+          "charged_cost_vnd": 0,
+          "currency": "VND",
+          "secret_recorded": false
+        },
+        {
+          "capability": "analytics",
+          "provider_key": "fixture-analytics",
+          "adapter_or_api_version": "deterministic-analytics-v1",
+          "fixture": true,
+          "external_call": false,
+          "paid": false,
+          "real_provider_tested": false,
+          "production_eligible": false,
+          "request_sha256": "a1bd63a7582e6cb9bba412e91817306069c6f40edc9318ce75cdcd8cf4b12b0e",
+          "response_sha256": "19a33ba2920297deb91facf46ee51b5ce81f156b7969a09a1d8ac1b07781f537",
+          "charged_cost_vnd": 0,
+          "currency": "VND",
+          "secret_recorded": false
+        }
+      ],
+      "trend_sources": [
+        {
+          "source_id": "SRC-1-1",
+          "provider_key": "fixture-trend",
+          "source_locator_sha256": "bab499c30fcb63e81c320bf9f2b645e2114fde5f200b1c5aa15bbd6c932b5165",
+          "title": "Nguồn xu hướng fixture 1",
+          "publisher": "NPD deterministic fixture",
+          "retrieved_at_utc": "2026-08-28T01:01:00Z",
+          "response_sha256": "e4f497684d1de8e7ed3e967342ae3d99bce848d928457545b0d4cd14dfdfc434",
+          "provenance_complete": true,
+          "fixture": true,
+          "external_call": false,
+          "real_source_tested": false,
+          "secret_recorded": false
+        },
+        {
+          "source_id": "SRC-1-2",
+          "provider_key": "fixture-trend",
+          "source_locator_sha256": "e838fe25aef0a2f3f286f3eb2fd3cbbde93f971ce36e049bd9e9e31e30fca8f4",
+          "title": "Nguồn xu hướng fixture 2",
+          "publisher": "NPD deterministic fixture",
+          "retrieved_at_utc": "2026-08-28T01:02:00Z",
+          "response_sha256": "56cbab662e6b76fbb143339aa06763669b68bae821764672ff8621ef18955736",
+          "provenance_complete": true,
+          "fixture": true,
+          "external_call": false,
+          "real_source_tested": false,
+          "secret_recorded": false
+        },
+        {
+          "source_id": "SRC-1-3",
+          "provider_key": "fixture-trend",
+          "source_locator_sha256": "413aed59a2831b7655ffc6e89af8b00bda6c6bef49b91d883230147648718b5d",
+          "title": "Nguồn xu hướng fixture 3",
+          "publisher": "NPD deterministic fixture",
+          "retrieved_at_utc": "2026-08-28T01:03:00Z",
+          "response_sha256": "60d59df8626b3fdac1b263e32a8906d79f9b5a7ecf3b9e51abad9cad4608aac2",
+          "provenance_complete": true,
+          "fixture": true,
+          "external_call": false,
+          "real_source_tested": false,
+          "secret_recorded": false
+        }
+      ],
+      "trend_signals": [
+        {
+          "signal_id": "SIG-1-1",
+          "source_id": "SRC-1-1",
+          "normalized_topic": "Vịnh Tiên lifestyle",
+          "normalized_signal_sha256": "799bc11de71a9e0279f82ac08960380d085a132996ae0c3ac7ff84536a2fd2a0"
+        },
+        {
+          "signal_id": "SIG-1-2",
+          "source_id": "SRC-1-2",
+          "normalized_topic": "Vịnh Tiên lifestyle",
+          "normalized_signal_sha256": "48901dd8a73456d08a8eee0254151be3ec0a023ac4078b505cc82b6e87dfe2c5"
+        },
+        {
+          "signal_id": "SIG-1-3",
+          "source_id": "SRC-1-3",
+          "normalized_topic": "Vịnh Tiên lifestyle",
+          "normalized_signal_sha256": "ef33299c8d6c4fe7bfdac269618e20acd165faf23a6b137c089f97eb26a2bbf2"
+        }
+      ],
+      "trend_clusters": [
+        {
+          "cluster_id": "CLUSTER-1-01",
+          "member_signal_ids": [
+            "SIG-1-1",
+            "SIG-1-2",
+            "SIG-1-3"
+          ],
+          "cluster_sha256": "03c330d778ea65b5f23a8e6dc16f8ab06476c09324a1dcc7cc387660d11f3dbc",
+          "recomputed_cluster_sha256": "03c330d778ea65b5f23a8e6dc16f8ab06476c09324a1dcc7cc387660d11f3dbc"
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "OPP-1-01",
+          "cluster_id": "CLUSTER-1-01",
+          "score_input_sha256": "e0e961223c1a24af7a75295053f837ead489be45547830256793e53f18c8f5b6",
+          "opportunity_score": 82.5,
+          "recomputed_opportunity_score": 82.5,
+          "formula_version": "trend-opportunity-v1"
+        }
+      ],
+      "selected_opportunity_id": "OPP-1-01",
+      "idea_id": "IDEA-1-01",
+      "idea_sha256": "50daee67d9acd5540215b68e219a6fe7ce340231a9a17d7e81b0ec434741c2d6",
+      "idea_bound_cluster_sha256": "03c330d778ea65b5f23a8e6dc16f8ab06476c09324a1dcc7cc387660d11f3dbc",
+      "project_id": "PROJECT-1-01",
+      "project_bound_idea_sha256": "50daee67d9acd5540215b68e219a6fe7ce340231a9a17d7e81b0ec434741c2d6",
+      "publication": {
+        "publication_id": "PUB-FLOW-C-1",
+        "project_id": "PROJECT-1-01",
+        "platform": "youtube",
+        "final_video_sha256": "68a433fe8aa98893b1a4192234c7da9be311a6d32847edcab0430f6eb7700a21",
+        "approved_final_video_sha256": "68a433fe8aa98893b1a4192234c7da9be311a6d32847edcab0430f6eb7700a21",
+        "publication_bound_video_sha256": "68a433fe8aa98893b1a4192234c7da9be311a6d32847edcab0430f6eb7700a21",
+        "rights_record_ids": [
+          "RIGHTS-1-01"
+        ],
+        "rights_gate_passed": true,
+        "platform_validation_passed": true,
+        "platform_validation_sha256": "ffb2a6e1271a19ed0eef3f13c4d05f841347ab17c44e452fbe3d4a421ca420a1",
+        "request_sha256": "a520725decc01d8bfe12910b4620a6305152363e901e2b2a737d55880d50416f",
+        "idempotency_key_sha256": "19af8bc5bde42756c720b8121c4b5a9dad5210e396fdb18169b4173b074e81d1",
+        "duplicate_fingerprint_sha256": "ac5247a7d55e03ecf9d929945cc515b3ca03b7ca88769cf7369758a82fe77997",
+        "replay_publication_id": "PUB-FLOW-C-1",
+        "idempotent_replay": true,
+        "duplicate_post_created": false,
+        "duplicate_prevention_passed": true,
+        "status": "dry_run_succeeded",
+        "fixture": true,
+        "external_action": false,
+        "real_publication_tested": false,
+        "remote_post_id": null,
+        "receipt_payload_sha256": "baea3e3060ffcb4771435d2ed8e97efd7f99bdac4d435bb3e11e0930301aa8e8",
+        "verified_receipt_payload_sha256": "baea3e3060ffcb4771435d2ed8e97efd7f99bdac4d435bb3e11e0930301aa8e8",
+        "receipt_valid": true,
+        "production_path_tested": false
+      },
+      "analytics_snapshots": [
+        {
+          "snapshot_id": "SNAP-1-1",
+          "publication_id": "PUB-FLOW-C-1",
+          "provider_key": "fixture-analytics",
+          "collected_at_utc": "2026-08-28T03:30:00Z",
+          "source_kind": "fixture",
+          "fixture": true,
+          "external_call": false,
+          "real_provider_tested": false,
+          "request_sha256": "e4082c94b3473f171545e1935cd6a69125bb3a1cb1499c8fd5b70993b2ebdbb8",
+          "response_sha256": "f93dc6f1fdd3c0e279fd50c7670a4499428be7a649da13f3f0ac77af3386c4c5",
+          "points": [
+            {
+              "metric": "views",
+              "value": 1150,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "impressions",
+              "value": 1650,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "reach",
+              "value": 1050,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "watch_time",
+              "value": 29000,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "average_view_duration",
+              "value": 28,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "completion_rate",
+              "value": 0.72,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "likes",
+              "value": 120,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "comments",
+              "value": 18,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "shares",
+              "value": 35,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "saves",
+              "value": 22,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "followers_gained",
+              "value": 15,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "clicks",
+              "value": 40,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "ctr",
+              "value": 0.04,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "revenue",
+              "value": null,
+              "unit": "VND",
+              "supported": false
+            },
+            {
+              "metric": "rpm",
+              "value": null,
+              "unit": "VND",
+              "supported": false
+            },
+            {
+              "metric": "observation_window_hours",
+              "value": 12,
+              "unit": "normalized",
+              "supported": true
+            }
+          ]
+        },
+        {
+          "snapshot_id": "SNAP-1-2",
+          "publication_id": "PUB-FLOW-C-1",
+          "provider_key": "fixture-analytics",
+          "collected_at_utc": "2026-08-28T04:30:00Z",
+          "source_kind": "fixture",
+          "fixture": true,
+          "external_call": false,
+          "real_provider_tested": false,
+          "request_sha256": "6fdc4904a92dcaa8257f7c34cc7153fc93410a82f830e5aa9cd4db3de0a9a4e3",
+          "response_sha256": "6ea2695e5c74e85be6dc22f691c6ad81079da45c4f5a763c00dcf79b1c26465b",
+          "points": [
+            {
+              "metric": "views",
+              "value": 1200,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "impressions",
+              "value": 1700,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "reach",
+              "value": 1100,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "watch_time",
+              "value": 29000,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "average_view_duration",
+              "value": 28,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "completion_rate",
+              "value": 0.72,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "likes",
+              "value": 120,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "comments",
+              "value": 18,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "shares",
+              "value": 35,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "saves",
+              "value": 22,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "followers_gained",
+              "value": 15,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "clicks",
+              "value": 40,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "ctr",
+              "value": 0.04,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "revenue",
+              "value": null,
+              "unit": "VND",
+              "supported": false
+            },
+            {
+              "metric": "rpm",
+              "value": null,
+              "unit": "VND",
+              "supported": false
+            },
+            {
+              "metric": "observation_window_hours",
+              "value": 24,
+              "unit": "normalized",
+              "supported": true
+            }
+          ]
+        }
+      ],
+      "winner_assessment": {
+        "assessment_id": "ASSESS-1-01",
+        "snapshot_id": "SNAP-1-2",
+        "state": "winner_candidate",
+        "score": 78.25,
+        "recomputed_score": 78.25,
+        "factors": [
+          {
+            "factor": "retention",
+            "score": 80,
+            "weight": 0.5,
+            "evidence_refs": [
+              "SNAP-1-2:completion_rate"
+            ]
+          },
+          {
+            "factor": "engagement",
+            "score": 76.5,
+            "weight": 0.5,
+            "evidence_refs": [
+              "SNAP-1-2:shares"
+            ]
+          }
+        ],
+        "evidence_refs": [
+          "SNAP-1-2",
+          "PUB-FLOW-C-1"
+        ],
+        "algorithm_version": "winner-score-v1",
+        "automatic_action": false,
+        "paid_media_mutation": false
+      },
+      "learning_insights": [
+        {
+          "insight_id": "INSIGHT-1-01",
+          "assessment_id": "ASSESS-1-01",
+          "snapshot_id": "SNAP-1-2",
+          "trend_cluster_id": "CLUSTER-1-01",
+          "idea_id": "IDEA-1-01",
+          "recommendation": "Ưu tiên kiểm thử lại hook, không tự động xuất bản.",
+          "evidence_refs": [
+            "SNAP-1-2",
+            "CLUSTER-1-01"
+          ],
+          "applied": false,
+          "autonomous_execution": false
+        }
+      ],
+      "cost_ledger_total_vnd": 0,
+      "currency": "VND",
+      "restart_recovered": true,
+      "human_review_passed": false,
+      "human_review_final_sha256": null,
+      "external_action_performed": false,
+      "publish_performed": false
+    },
+    {
+      "sequence": 2,
+      "run_id": "flow-c-contract-run-02",
+      "release_candidate_commit": "c1f50c4941929120b815fda33acd75acd07f454a",
+      "started_at_utc": "2026-08-28T06:00:00Z",
+      "completed_at_utc": "2026-08-28T10:00:00Z",
+      "workspace_id": "WORKSPACE-NPD-001",
+      "providers": [
+        {
+          "capability": "trend",
+          "provider_key": "fixture-trend",
+          "adapter_or_api_version": "deterministic-trend-v1",
+          "fixture": true,
+          "external_call": false,
+          "paid": false,
+          "real_provider_tested": false,
+          "production_eligible": false,
+          "request_sha256": "3ececffb46c1951e92ea89489b6bc24f8ff00a36b8ac3ff4a228ee095d39983e",
+          "response_sha256": "650ef93c7d80b6fd99ab2196077307240bf2f8736915a293b034906aecbee8dc",
+          "charged_cost_vnd": 0,
+          "currency": "VND",
+          "secret_recorded": false
+        },
+        {
+          "capability": "analytics",
+          "provider_key": "fixture-analytics",
+          "adapter_or_api_version": "deterministic-analytics-v1",
+          "fixture": true,
+          "external_call": false,
+          "paid": false,
+          "real_provider_tested": false,
+          "production_eligible": false,
+          "request_sha256": "e2147a403c334abcfb6c2f4550cd2e32c0d61c6851f447b8c4c881fcf1748939",
+          "response_sha256": "a1b1f8ce5aad9961a25734bed810fd2d79cc9efdb77085f8340ecbc80da60381",
+          "charged_cost_vnd": 0,
+          "currency": "VND",
+          "secret_recorded": false
+        }
+      ],
+      "trend_sources": [
+        {
+          "source_id": "SRC-2-1",
+          "provider_key": "fixture-trend",
+          "source_locator_sha256": "e0dfa3947980f5a042f6266fd0ec2086deb3690e6ba5e3469e0f86ca57caa2cd",
+          "title": "Nguồn xu hướng fixture 1",
+          "publisher": "NPD deterministic fixture",
+          "retrieved_at_utc": "2026-08-28T02:01:00Z",
+          "response_sha256": "839f963f065bd43d2a31ca16eccf4c5a98efbc835705a81a60599e284a752018",
+          "provenance_complete": true,
+          "fixture": true,
+          "external_call": false,
+          "real_source_tested": false,
+          "secret_recorded": false
+        },
+        {
+          "source_id": "SRC-2-2",
+          "provider_key": "fixture-trend",
+          "source_locator_sha256": "176685b61e5026a3542f4e6f68c0acc9b104f33f1c7930ae975d71c483a21f3f",
+          "title": "Nguồn xu hướng fixture 2",
+          "publisher": "NPD deterministic fixture",
+          "retrieved_at_utc": "2026-08-28T02:02:00Z",
+          "response_sha256": "678252ecb32bf735a67dc8b3768a36f76818df1109cb4bebc3655957757be17e",
+          "provenance_complete": true,
+          "fixture": true,
+          "external_call": false,
+          "real_source_tested": false,
+          "secret_recorded": false
+        },
+        {
+          "source_id": "SRC-2-3",
+          "provider_key": "fixture-trend",
+          "source_locator_sha256": "42542bc9aaff1cd260a163c65605512612703e32b7d7745f7371dacae4295b1f",
+          "title": "Nguồn xu hướng fixture 3",
+          "publisher": "NPD deterministic fixture",
+          "retrieved_at_utc": "2026-08-28T02:03:00Z",
+          "response_sha256": "0697b208e988a7b23003830818fa9617addd1a137de192c2c56fd2ad65eab603",
+          "provenance_complete": true,
+          "fixture": true,
+          "external_call": false,
+          "real_source_tested": false,
+          "secret_recorded": false
+        }
+      ],
+      "trend_signals": [
+        {
+          "signal_id": "SIG-2-1",
+          "source_id": "SRC-2-1",
+          "normalized_topic": "Vịnh Tiên lifestyle",
+          "normalized_signal_sha256": "967559874c08663e5d22276258e5687b10f38310ebe63af99ad03cf15dd865c8"
+        },
+        {
+          "signal_id": "SIG-2-2",
+          "source_id": "SRC-2-2",
+          "normalized_topic": "Vịnh Tiên lifestyle",
+          "normalized_signal_sha256": "121f5ecac2ba14b04cf094c42704f73b8ec6391ba5cafb90d46c6b60293d6259"
+        },
+        {
+          "signal_id": "SIG-2-3",
+          "source_id": "SRC-2-3",
+          "normalized_topic": "Vịnh Tiên lifestyle",
+          "normalized_signal_sha256": "ee203a1a0ee96bc718a26248ff9fa95d03435a8c9d5081c229ae4b0d80995f1c"
+        }
+      ],
+      "trend_clusters": [
+        {
+          "cluster_id": "CLUSTER-2-01",
+          "member_signal_ids": [
+            "SIG-2-1",
+            "SIG-2-2",
+            "SIG-2-3"
+          ],
+          "cluster_sha256": "f2c4799649183121a1717bede85451d642ffe00f4813adc67fdc10e0faba80d2",
+          "recomputed_cluster_sha256": "f2c4799649183121a1717bede85451d642ffe00f4813adc67fdc10e0faba80d2"
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "OPP-2-01",
+          "cluster_id": "CLUSTER-2-01",
+          "score_input_sha256": "e2e58cc694892297a7ce04da6019e6a59484e779da9eaed94d48c35819a23858",
+          "opportunity_score": 82.5,
+          "recomputed_opportunity_score": 82.5,
+          "formula_version": "trend-opportunity-v1"
+        }
+      ],
+      "selected_opportunity_id": "OPP-2-01",
+      "idea_id": "IDEA-2-01",
+      "idea_sha256": "d1d869f5f8628e028fc729eaee128fe47b1267aec4b664b37fce588048053b27",
+      "idea_bound_cluster_sha256": "f2c4799649183121a1717bede85451d642ffe00f4813adc67fdc10e0faba80d2",
+      "project_id": "PROJECT-2-01",
+      "project_bound_idea_sha256": "d1d869f5f8628e028fc729eaee128fe47b1267aec4b664b37fce588048053b27",
+      "publication": {
+        "publication_id": "PUB-FLOW-C-2",
+        "project_id": "PROJECT-2-01",
+        "platform": "youtube",
+        "final_video_sha256": "eaa32e5bec4fe125a9333727b5fd66ba0feb13bc15aef3fb95736f4525f5b09f",
+        "approved_final_video_sha256": "eaa32e5bec4fe125a9333727b5fd66ba0feb13bc15aef3fb95736f4525f5b09f",
+        "publication_bound_video_sha256": "eaa32e5bec4fe125a9333727b5fd66ba0feb13bc15aef3fb95736f4525f5b09f",
+        "rights_record_ids": [
+          "RIGHTS-2-01"
+        ],
+        "rights_gate_passed": true,
+        "platform_validation_passed": true,
+        "platform_validation_sha256": "c6a86ba65337e3b193a2529dcad6387552aee24d97ba50b66d888b7181bdecd7",
+        "request_sha256": "357120141eee9c5de79701ee20f767b93c451f2d74042d887e87b00d7744da06",
+        "idempotency_key_sha256": "9eb38e4a5f259e8b7bf376d150bcb3f0bffafc3619a49c1597e62ca6c4b3d333",
+        "duplicate_fingerprint_sha256": "ab734293748a59a99baa74cb899afd7e25f99aac4832b7b00078242dd8976932",
+        "replay_publication_id": "PUB-FLOW-C-2",
+        "idempotent_replay": true,
+        "duplicate_post_created": false,
+        "duplicate_prevention_passed": true,
+        "status": "dry_run_succeeded",
+        "fixture": true,
+        "external_action": false,
+        "real_publication_tested": false,
+        "remote_post_id": null,
+        "receipt_payload_sha256": "239ef4ec53bd935278d192d7d1a81c0ebbe1c9cc9f4efacb34822fa2c2929187",
+        "verified_receipt_payload_sha256": "239ef4ec53bd935278d192d7d1a81c0ebbe1c9cc9f4efacb34822fa2c2929187",
+        "receipt_valid": true,
+        "production_path_tested": false
+      },
+      "analytics_snapshots": [
+        {
+          "snapshot_id": "SNAP-2-1",
+          "publication_id": "PUB-FLOW-C-2",
+          "provider_key": "fixture-analytics",
+          "collected_at_utc": "2026-08-28T05:30:00Z",
+          "source_kind": "fixture",
+          "fixture": true,
+          "external_call": false,
+          "real_provider_tested": false,
+          "request_sha256": "c9287331c654d04bfc26824638588285cfeaffcf3eb3b6c72cfcaae8cf65cae9",
+          "response_sha256": "eda268c56a542d267b168915e846511969f13ca47f45302fb3d9263e094b08a3",
+          "points": [
+            {
+              "metric": "views",
+              "value": 1250,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "impressions",
+              "value": 1750,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "reach",
+              "value": 1150,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "watch_time",
+              "value": 30000,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "average_view_duration",
+              "value": 28,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "completion_rate",
+              "value": 0.72,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "likes",
+              "value": 120,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "comments",
+              "value": 18,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "shares",
+              "value": 35,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "saves",
+              "value": 22,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "followers_gained",
+              "value": 15,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "clicks",
+              "value": 40,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "ctr",
+              "value": 0.04,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "revenue",
+              "value": null,
+              "unit": "VND",
+              "supported": false
+            },
+            {
+              "metric": "rpm",
+              "value": null,
+              "unit": "VND",
+              "supported": false
+            },
+            {
+              "metric": "observation_window_hours",
+              "value": 12,
+              "unit": "normalized",
+              "supported": true
+            }
+          ]
+        },
+        {
+          "snapshot_id": "SNAP-2-2",
+          "publication_id": "PUB-FLOW-C-2",
+          "provider_key": "fixture-analytics",
+          "collected_at_utc": "2026-08-28T06:30:00Z",
+          "source_kind": "fixture",
+          "fixture": true,
+          "external_call": false,
+          "real_provider_tested": false,
+          "request_sha256": "c588399d13ae6551f22907ef75e4f3a829cb058efb2d18caf7c7eeda4b5b4574",
+          "response_sha256": "e1fa84747cac23b7321abd619052b783b48fbbea68b348fe2e9180327763ad57",
+          "points": [
+            {
+              "metric": "views",
+              "value": 1300,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "impressions",
+              "value": 1800,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "reach",
+              "value": 1200,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "watch_time",
+              "value": 30000,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "average_view_duration",
+              "value": 28,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "completion_rate",
+              "value": 0.72,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "likes",
+              "value": 120,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "comments",
+              "value": 18,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "shares",
+              "value": 35,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "saves",
+              "value": 22,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "followers_gained",
+              "value": 15,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "clicks",
+              "value": 40,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "ctr",
+              "value": 0.04,
+              "unit": "normalized",
+              "supported": true
+            },
+            {
+              "metric": "revenue",
+              "value": null,
+              "unit": "VND",
+              "supported": false
+            },
+            {
+              "metric": "rpm",
+              "value": null,
+              "unit": "VND",
+              "supported": false
+            },
+            {
+              "metric": "observation_window_hours",
+              "value": 24,
+              "unit": "normalized",
+              "supported": true
+            }
+          ]
+        }
+      ],
+      "winner_assessment": {
+        "assessment_id": "ASSESS-2-01",
+        "snapshot_id": "SNAP-2-2",
+        "state": "winner_candidate",
+        "score": 78.25,
+        "recomputed_score": 78.25,
+        "factors": [
+          {
+            "factor": "retention",
+            "score": 80,
+            "weight": 0.5,
+            "evidence_refs": [
+              "SNAP-2-2:completion_rate"
+            ]
+          },
+          {
+            "factor": "engagement",
+            "score": 76.5,
+            "weight": 0.5,
+            "evidence_refs": [
+              "SNAP-2-2:shares"
+            ]
+          }
+        ],
+        "evidence_refs": [
+          "SNAP-2-2",
+          "PUB-FLOW-C-2"
+        ],
+        "algorithm_version": "winner-score-v1",
+        "automatic_action": false,
+        "paid_media_mutation": false
+      },
+      "learning_insights": [
+        {
+          "insight_id": "INSIGHT-2-01",
+          "assessment_id": "ASSESS-2-01",
+          "snapshot_id": "SNAP-2-2",
+          "trend_cluster_id": "CLUSTER-2-01",
+          "idea_id": "IDEA-2-01",
+          "recommendation": "Ưu tiên kiểm thử lại hook, không tự động xuất bản.",
+          "evidence_refs": [
+            "SNAP-2-2",
+            "CLUSTER-2-01"
+          ],
+          "applied": false,
+          "autonomous_execution": false
+        }
+      ],
+      "cost_ledger_total_vnd": 0,
+      "currency": "VND",
+      "restart_recovered": true,
+      "human_review_passed": false,
+      "human_review_final_sha256": null,
+      "external_action_performed": false,
+      "publish_performed": false
+    }
+  ],
+  "secret_recorded": false
+}
