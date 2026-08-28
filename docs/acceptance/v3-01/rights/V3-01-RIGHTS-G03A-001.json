@@ -7,7 +7,7 @@
   "provider_asset_or_job_id": "g03-owned-test-card-v1",
   "source_url_or_reference": "repo://docs/acceptance/v3-01/assets/g03-a-owned-vision-test.png",
   "acquired_at_utc": "2026-08-28T11:58:39.723595Z",
-  "license_name": "NPD internally created acceptance asset",
+  "license_name": "NPD owner-approved Vision acceptance only; no publishing, training, resale or other use",
   "license_version_or_terms_date": "2026-08-28",
   "commercial_use": true,
   "derivative_use": true,
@@ -22,7 +22,7 @@
   "person_likeness_consent": "not-applicable-no-person",
   "trademark_review": "no-third-party-trademark",
   "evidence_reference": "repo://scripts/generate-g03-owned-vision-asset.ps1#sha256=c2cf9da538709dcf251e769cad17138b6c17d082cd0d052fd5987730aa4a8538",
-  "reviewer": "Pending owner G-03-A review",
-  "decision": "BLOCKED",
+  "reviewer": "Owner (GitHub: vangnguyen)",
+  "decision": "APPROVED",
   "secret_recorded": false
 }

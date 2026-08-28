@@ -1,0 +1,24 @@
+{
+  "approval_id": "V3-01-APP-014",
+  "gate_id": "G-01",
+  "decision": "APPROVED",
+  "scope": "Rebind G-01-A to exactly openai-vision / gpt-5-mini / vision on vf-v3-01-rc3 using only credential alias secret://openai/codex-video for the dated acceptance window.",
+  "artifact_or_commit_hashes": [
+    "adde8d9c5a7f608db80cbd9d21aecd45f721065e",
+    "f1cff1c8370caf6218577cdabfbd06c0665dfabb2407ec320b4668f7bf50072a",
+    "a5ba3e0e1e39384cb1d6beb892b3c85a2266ea30be436faed529d6fdfe8aa9a0"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; credential value remains in the external secret mechanism",
+  "limits": [
+    "Provider openai-vision only",
+    "Model alias gpt-5-mini only; no automatic fallback",
+    "Capability vision only",
+    "Credential alias secret://openai/codex-video only",
+    "No provider call until a separate owner decision authorizes operation 1",
+    "No deployment, public ingress, publishing or production analytics"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-28T13:06:13Z",
+  "expires_at_utc": "2026-08-28T18:00:00Z",
+  "notes": "Rebound from V3-01-APP-011 to exact RC-3 and execution-scope hash. The governance bundle is not mounted and runtime execution defaults remain disabled. This record alone grants no API-call authority."
+}

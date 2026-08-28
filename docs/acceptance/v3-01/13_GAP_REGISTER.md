@@ -1,9 +1,9 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27`, updated through merged V3-01-09/RC-2 at exact
-`main` `5936aa7a9656d728be751d0ee61011fc1a5abc7a`, and supplemented by the unmerged V3-01-10
-verified-loader and G-03-A candidate evidence.
+derived from the audit captured on `2026-08-27`, updated through merged V3-01-10/RC-3 at exact
+`main` `adde8d9c5a7f608db80cbd9d21aecd45f721065e`, plus the unmounted RC-3 gate bundle and narrowly
+approved G-03-A asset. No live provider call or acceptance-axis promotion has occurred.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -15,8 +15,9 @@ verified-loader and G-03-A candidate evidence.
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. All nine bounded G-08 approval records are exhausted; G-01-A/G-02-A allow
-preparation only, G-03-A remains pending, and production remains undeployed and unverified.
+`IN_PROGRESS`. All ten bounded G-08 approval records are exhausted. G-01-A/G-02-A/G-03-A bind one
+exact RC-3 scope, but operation 1 is pending, the bundle is unmounted, and production remains
+undeployed and unverified.
 
 ## P0 release blockers
 
@@ -68,8 +69,9 @@ production-path evidence and human quality remain absent.
 
 V3-01-10 adds a hash-pinned verified gate loader, exact RC/approval/rights binding, a two-operation
 allowlist, exact G-02-A limits, expiry checks and durable restart/atomic-reservation tests. Its one
-internally generated RightsRecord candidate remains `BLOCKED`, so GAP-003, GAP-010 and GAP-013 stay
-`IN_PROGRESS`; no real-provider axis changes.
+internally generated RightsRecord is narrowly approved for RC-3 Vision acceptance, but the bundle
+is unmounted and operation 1 is pending. GAP-003, GAP-010 and GAP-013 stay `IN_PROGRESS`; no
+real-provider axis changes.
 
 No gap is `VERIFIED` or newly closed by V3-01-07 through V3-01-10. `REMEDIATED` means its code and prescribed local/mock
 evidence pass on the locked commit; it still needs any applicable

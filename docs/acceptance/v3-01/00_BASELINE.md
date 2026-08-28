@@ -8,13 +8,13 @@ Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-2 5936aa7a9656d728be751d0ee61011fc1a5abc7a; locked for controlled acceptance planning only; not deployed
+CURRENT RC: RC-3 adde8d9c5a7f608db80cbd9d21aecd45f721065e; locked for controlled acceptance only; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-10 verified gate loader in LOCAL/CI; unmerged; no current merge or call authority
+CURRENT SAFE PHASE: V3-01-10 merged; RC-3 locked; secret-free gate bundle verified but unmounted; operation 1 decision pending
 G-00: APPROVED by V3-01-APP-001
-G-08: V3-01-APP-002 through V3-01-APP-010 CONSUMED by PR #12 through PR #22
-G-01-A / G-02-A: APPROVED FOR PREPARATION ONLY; MUST BE REBOUND TO RC-3
-G-03-A: PENDING; CANDIDATE RIGHTS RECORD REMAINS BLOCKED
+G-08: V3-01-APP-002 through V3-01-APP-013 CONSUMED by PR #12 through PR #23
+G-01-A / G-02-A / G-03-A: REBOUND TO EXACT RC-3 AND DATED WINDOW; NO CALL AUTHORITY
+OPERATION 1: PENDING SEPARATE OWNER DECISION
 NO OTHER MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
 ```
 
@@ -25,11 +25,12 @@ analytics write or takedown. Those actions remain bound to their separate gates.
 G-08 later authorized only the repository merge sequence PR #12, then retarget/retest PR #13, then
 PR #13 if all five CI jobs pass. It grants no runtime or external-execution authority.
 
-The bounded remediation sequence completed PR #12 through PR #22. The latest merge is PR #22 at
-`5936aa7a9656d728be751d0ee61011fc1a5abc7a`, after exact-head CI run `33161662691` and exact-main
-CI run `33162305543` both passed 5/5. `V3-01-APP-010` is exhausted. Annotated tag
-`vf-v3-01-rc2` peels to that exact main commit and means controlled acceptance planning only; it
-does not authorize any runtime action. V3-01-10 requires a new G-08 before merge.
+The bounded remediation sequence completed PR #12 through PR #23. PR #23 merged at
+`adde8d9c5a7f608db80cbd9d21aecd45f721065e` after exact-head CI run `33171973815`; exact-main CI
+run `33173094529` and the local full regression both passed. `V3-01-APP-013` is exhausted.
+Annotated tag `vf-v3-01-rc3` peels to that exact commit and remains `NO-GO`. The RC-3 approvals
+and secret-free bundle are governance artifacts only: they are not mounted, checked-in runtime
+defaults remain disabled, and operation 1 still requires a separate owner decision.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
@@ -48,7 +49,7 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Open PRs at capture | none |
 | Tags/releases | none returned by Git/GitHub |
 | Main branch protection | disabled; GitHub API returned `Branch not protected` |
-| Latest verified exact-main CI | [Video Factory V2 CI run 33162305543](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33162305543), 5/5 success on `5936aa7a9656d728be751d0ee61011fc1a5abc7a` |
+| Latest verified exact-main CI | [Video Factory V2 CI run 33173094529](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33173094529), 5/5 success on `adde8d9c5a7f608db80cbd9d21aecd45f721065e` |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -56,7 +57,7 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` | `5936aa7a9656d728be751d0ee61011fc1a5abc7a` |
+| Exact `origin/main` | `adde8d9c5a7f608db80cbd9d21aecd45f721065e` |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
@@ -65,8 +66,9 @@ Current repository checkpoint after the bounded merge sequence:
 | PR #20 | exact head `a8a2cecc620cae4fc3bd072b53489db8b2acd7ec`; CI run `33155313793` PASS; merged as RC-1 |
 | PR #22 / V3-01-09 | exact head `e6651948751fc8789ff83f91e0e7e8f88564e2aa`; CI run `33161662691` PASS; merged as exact current main |
 | RC-2 | annotated `vf-v3-01-rc2` peels to exact main `5936aa7a9656d728be751d0ee61011fc1a5abc7a`; planning-only, not deployed |
-| V3-01-10 | local/CI remediation branch; verified loader and G-03-A candidate only; unmerged and not RC-3 |
-| Exact-main regression | CI run `33162305543` on `5936aa7a9656d728be751d0ee61011fc1a5abc7a`, all five jobs PASS |
+| PR #23 / V3-01-10 | exact head `40149c2b439c78e75fdd3ff8996c2ed8c3ec4575`; CI run `33171973815` PASS; merged as `adde8d9c5a7f608db80cbd9d21aecd45f721065e` |
+| RC-3 | annotated `vf-v3-01-rc3` peels to exact main `adde8d9c5a7f608db80cbd9d21aecd45f721065e`; NO-GO, not deployed |
+| Exact-main regression | local Python 245/245, Studio 14/14, Renderer 14/14, migration replay, safety/secret checks and Docker E2E PASS; CI run `33173094529` 5/5 PASS |
 | Deployment/provider/ingress action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in
@@ -161,12 +163,11 @@ after local/CI evidence, but has no merge or runtime authority. The locked code 
 
 V3-01-04 through V3-01-07 are merged Flow A, Flow B, Flow C and local DR/observability acceptance
 planes. They prove deterministic fixture and disposable local/CI behavior only. V3-01-08 is merged
-through PR #20; V3-01-09 is merged through PR #22; RC-2 is locked for planning. Production verdict
-remains `NO-GO`.
+through PR #20; V3-01-09 is merged through PR #22; V3-01-10 is merged through PR #23; RC-3 is
+locked for controlled acceptance. Production verdict remains `NO-GO`.
 
-V3-01-09 implements a disabled OpenAI `gpt-5-mini` Vision adapter on RC-2. Its strict
+V3-01-09 implements a disabled OpenAI `gpt-5-mini` Vision adapter. Its strict
 Responses-schema, timeout/retry/circuit, duplicate, missing-credential, rights, budget, provenance
-and VND receipt tests use MockTransport. External calls and actual spend are zero. V3-01-10 now
-adds only a hash-pinned verified gate loader and an owner-review-pending G-03-A asset/rights
-candidate. Because it changes code after RC-2, a future approved merge must be followed by
-exact-main regression and an RC-3 lock before any runtime gate can be rebound.
+and VND receipt tests use MockTransport. External calls and actual spend are zero. V3-01-10 adds a
+hash-pinned verified gate loader. RC-3 is locked, the exact asset and approvals are rebound, and the
+governance bundle is verified but unmounted. A separate operation-1 decision remains required.

@@ -2,9 +2,9 @@
 
 No real provider was called and no credential value is present in Git/evidence. A separate OpenAI
 key has been provisioned in the ignored workstation `.env`, but V3-01-09 tests use only an injected
-fake resolver and `MockTransport`. G-01-A and G-02-A are approved for preparation only on RC-2;
-G-03-A remains pending, and all three must be rebound to future exact RC-3 before execution.
-Credential presence grants no execution authority.
+fake resolver and `MockTransport`. G-01-A, G-02-A and the narrowly scoped G-03-A asset decision are
+rebound to exact RC-3 and one dated window. The verified bundle remains unmounted and operation 1
+still requires a separate owner decision. Credential presence grants no execution authority.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
@@ -17,16 +17,16 @@ V3-01-03 replaces its process-local external-operation accounting with a Postgre
 for local/CI validation. This changes durability mechanics only; it does not change any real state,
 owner gate or execution permission in the table.
 
-PR #22 merged V3-01-09 at exact `main` `5936aa7a9656d728be751d0ee61011fc1a5abc7a`;
-`vf-v3-01-rc2` peels to that commit. The OpenAI `gpt-5-mini` Vision adapter remains disabled and
-mock-tested only. V3-01-10 adds an unmerged verified gate loader and a blocked G-03-A candidate;
-if merged under a new G-08, RC-3 must be locked before any live test.
+PR #23 merged V3-01-10 at exact `main` `adde8d9c5a7f608db80cbd9d21aecd45f721065e`;
+`vf-v3-01-rc3` peels to that commit. Exact-main local regression and CI run `33173094529` passed.
+The OpenAI `gpt-5-mini` Vision adapter remains disabled and mock-tested only. The RC-3 bundle hash
+is verified in governance, but no runtime configuration was changed and no credential was read.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | strict mock frames/OCR/composition/objects/safe-crop/quality, hashes, timeout/retry/circuit/duplicate/rights/budget, VND receipt and verified-loader tests | `BLOCKED` | new G-08 for V3-01-10, RC-3, G-03-A and exact RC-3 rebinding of G-01-A/G-02-A; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | strict mock frames/OCR/composition/objects/safe-crop/quality, hashes, timeout/retry/circuit/duplicate/rights/budget, VND receipt and verified-loader tests | `BLOCKED` | separate owner decision for operation 1, then one bounded call and evidence review; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
