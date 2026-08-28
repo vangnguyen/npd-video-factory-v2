@@ -214,6 +214,7 @@ async def lifespan(app: FastAPI):
         transcription_provider=transcription_provider,
         signal_provider=signal_provider,
         staging_root=settings.analysis_staging_root,
+        provider_safety=app.state.provider_safety_controller,
     )
     vision_provider = (
         DeterministicVisionProvider()
@@ -227,6 +228,7 @@ async def lifespan(app: FastAPI):
         object_storage=object_storage,
         provider=vision_provider,
         staging_root=settings.vision_staging_root,
+        provider_safety=app.state.provider_safety_controller,
     )
     media_providers = create_media_provider_bundle(settings)
     app.state.media_provider_bundle = media_providers

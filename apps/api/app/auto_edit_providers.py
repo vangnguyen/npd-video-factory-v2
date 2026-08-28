@@ -5,6 +5,7 @@ import json
 import re
 import shutil
 from dataclasses import dataclass
+from decimal import Decimal
 from pathlib import Path
 from typing import Protocol
 
@@ -58,6 +59,11 @@ class MediaProbe(Protocol):
 
 class TranscriptionProvider(Protocol):
     key: str
+    model: str
+    external_call: bool
+    paid: bool
+    credential_alias: str | None
+    estimated_cost_vnd: Decimal | None
 
     async def transcribe(
         self, path: Path, *, metadata: MediaMetadata, checksum_sha256: str
@@ -151,6 +157,11 @@ class FFprobeMediaProbe:
 
 class DeterministicTranscriptionProvider:
     key = "fixture-transcription"
+    model = "deterministic-transcription-v2-04"
+    external_call = False
+    paid = False
+    credential_alias = None
+    estimated_cost_vnd = Decimal("0")
     _phrases = (
         "Ba giây đầu tiên quyết định người xem có tiếp tục hay không.",
         "Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra.",
@@ -204,6 +215,11 @@ class DeterministicTranscriptionProvider:
 
 class ContractOnlyTranscriptionProvider:
     key = "transcription-not-configured"
+    model = "not-configured"
+    external_call = False
+    paid = False
+    credential_alias = None
+    estimated_cost_vnd = Decimal("0")
 
     async def transcribe(
         self, path: Path, *, metadata: MediaMetadata, checksum_sha256: str

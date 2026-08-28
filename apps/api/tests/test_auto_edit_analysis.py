@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import AsyncIterator
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -50,6 +51,7 @@ from app.media_security import (
 )
 from app.object_storage import LocalObjectStorageProvider
 from app.platform_models import ProjectCreate, WorkspaceCreate
+from app.provider_safety import ProviderSafetyBlocked
 from app.repositories import PlatformRepository
 
 
@@ -69,6 +71,22 @@ class FakeMediaProbe:
             audio_channels=2,
             audio_sample_rate=48000,
         )
+
+
+class UnsafeExternalTranscriptionProvider(DeterministicTranscriptionProvider):
+    key = "external-transcription-test"
+    model = "external-test-model"
+    external_call = True
+    paid = True
+    credential_alias = "external://test-only"
+    estimated_cost_vnd = Decimal("1000")
+
+    def __init__(self) -> None:
+        self.call_count = 0
+
+    async def transcribe(self, *args, **kwargs) -> ProviderTranscript:
+        self.call_count += 1
+        return await super().transcribe(*args, **kwargs)
 
 
 async def bytes_stream(payload: bytes) -> AsyncIterator[bytes]:
@@ -438,6 +456,8 @@ async def test_analysis_persists_original_transcript_scenes_safe_silence_and_hig
     assert analysis.transcript.version == 1
     assert analysis.transcript.is_original_evidence is True
     assert analysis.transcript.provenance["original_evidence"] is True
+    assert analysis.transcript.provenance["provider_safety_receipt"]["external_call"] is False
+    assert analysis.transcript.provenance["provider_safety_receipt"]["currency"] == "VND"
     assert len(analysis.scenes) == 4
     assert len(analysis.highlights) == 3
     assert [item.rank for item in analysis.highlights] == [1, 2, 3]
@@ -488,6 +508,37 @@ async def test_missing_live_transcription_provider_fails_closed(tmp_path: Path) 
     assert failed.status == "failed"
     assert failed.error_code == "PROVIDER_NOT_CONFIGURED"
     assert failed.publish_requested is False
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_external_transcription_is_blocked_before_provider_call(tmp_path: Path) -> None:
+    engine, _, platform, repository, upload_service, _, project, version = await setup_services(
+        tmp_path
+    )
+    completed = await upload_fixture(upload_service, project, version, synthetic_mp4())
+    provider = UnsafeExternalTranscriptionProvider()
+    service = AutoEditAnalysisService(
+        repository=repository,
+        platform=platform,
+        object_storage=upload_service.object_storage,
+        transcription_provider=provider,
+        signal_provider=DeterministicMediaSignalProvider(),
+        staging_root=tmp_path / "analysis-external-rejected",
+    )
+    with pytest.raises(ProviderSafetyBlocked) as blocked:
+        await service.analyze(
+            project.project_id,
+            AutoEditAnalysisRequest(asset_id=completed.asset_id, top_highlights=5),
+        )
+    assert blocked.value.code == "GLOBAL_KILL_SWITCH_ENGAGED"
+    assert provider.call_count == 0
+    failed = (await service.list(project.project_id))[0]
+    assert failed.status == "failed"
+    assert failed.error_code == "PROVIDER_SAFETY_BLOCKED"
+    summary = await platform.project_cost_summary(project.project_id)
+    assert summary.records == 0
+    assert not any((tmp_path / "analysis-external-rejected").iterdir())
     await engine.dispose()
 
 

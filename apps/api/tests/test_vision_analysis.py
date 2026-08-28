@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import AsyncIterator
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -24,6 +25,7 @@ from app.main import app
 from app.media_security import DeterministicMediaMalwareScanner
 from app.object_storage import LocalObjectStorageProvider
 from app.platform_models import ProjectCreate, WorkspaceCreate
+from app.provider_safety import ProviderSafetyBlocked
 from app.repositories import PlatformRepository
 from app.vision_logic import build_reframe_plans
 from app.vision_models import ManualCropOverride, VisionAnalysisRequest
@@ -58,8 +60,16 @@ class FakeMediaProbe:
 class UnsafeExternalVisionProvider(DeterministicVisionProvider):
     key = "external-vision-test"
     model = "external-test-model"
+    external_call = True
+    paid = True
+    credential_alias = "external://test-only"
+    estimated_cost_vnd = Decimal("1000")
+
+    def __init__(self) -> None:
+        self.call_count = 0
 
     async def analyze(self, *args, **kwargs) -> ProviderVisionResult:
+        self.call_count += 1
         result = await super().analyze(*args, **kwargs)
         return ProviderVisionResult(
             frames=result.frames,
@@ -274,6 +284,8 @@ async def test_structured_vision_ocr_tracking_reframe_persistence_and_replay(tmp
     assert result.paid_external_call is False
     assert result.provenance["provider_evidence"]["fixture"] is True
     assert result.provenance["provider_evidence"]["real_provider_tested"] is False
+    assert result.provenance["provider_evidence"]["provider_safety_receipt"]["external_call"] is False
+    assert result.provenance["provider_evidence"]["provider_safety_receipt"]["currency"] == "VND"
     after_path = tmp_path / "source-after-vision.mp4"
     await storage.download_file(object_key=source_asset.object_key, destination=after_path)
     assert hashlib.sha256(after_path.read_bytes()).hexdigest() == before_checksum
@@ -414,23 +426,26 @@ async def test_external_or_paid_vision_provider_is_rejected_before_cost_record(t
         version,
     ) = await setup_services(tmp_path)
     _, auto_edit = await create_auto_edit(upload_service, auto_service, project, version)
+    provider = UnsafeExternalVisionProvider()
     service = VisionAnalysisService(
         repository=vision_repository,
         auto_edit_repository=auto_repository,
         platform=platform,
         object_storage=storage,
-        provider=UnsafeExternalVisionProvider(),
+        provider=provider,
         staging_root=tmp_path / "vision-external-rejected",
     )
-    with pytest.raises(RuntimeError, match="external or paid Vision execution is disabled"):
+    with pytest.raises(ProviderSafetyBlocked) as blocked:
         await service.analyze(
             project_id=project.project_id,
             analysis_id=auto_edit.analysis_id,
             payload=VisionAnalysisRequest(),
         )
+    assert blocked.value.code == "GLOBAL_KILL_SWITCH_ENGAGED"
+    assert provider.call_count == 0
     failed = (await service.list(project.project_id))[0]
     assert failed.status == "failed"
-    assert failed.error_code == "VISION_ANALYSIS_FAILED"
+    assert failed.error_code == "PROVIDER_SAFETY_BLOCKED"
     summary = await platform.project_cost_summary(project.project_id)
     assert summary.records == 2
     assert summary.actual_cost == 0
