@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-10 plus RC-3 governance rebind; one failed bounded live attempt
+SCOPE: merged V3-01-00 through V3-01-10 plus RC-3 governance/evidence; one failed bounded live attempt; V3-01-11 draft
 RELEASE CANDIDATE: RC-3 adde8d9c5a7f608db80cbd9d21aecd45f721065e LOCKED FOR CONTROLLED ACCEPTANCE ONLY; NOT DEPLOYED
 LATEST EVIDENCE: EV-V3-OPENAI-VISION-OP1-FAILED-001 (earlier runs remain separately retained)
 DATE: 2026-08-28
-OWNER DECISION: G-00 APPROVED; G-08 CONSUMED THROUGH PR #24; RC-3 OPERATION 1 CONSUMED; OPERATION 2 LOCKED
+OWNER DECISION: G-00 APPROVED; G-08 CONSUMED THROUGH PR #25; V3-01-11 G-08 PENDING; RC-3 OPERATION 1 CONSUMED; OPERATION 2 LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -51,6 +51,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - exact merged `main` and locked NO-GO RC-3: `adde8d9c5a7f608db80cbd9d21aecd45f721065e` (`vf-v3-01-rc3`);
 - V3-01-10 PR #23 exact head: `40149c2b439c78e75fdd3ff8996c2ed8c3ec4575`; exact-main CI `33173094529` PASS; merged into RC-3;
 - governance-only PR #24 merged as `a73bad37f1f3aa7c2347e6a76503246a46d3c112`; exact-main CI `33175813324` PASS 5/5; executable RC-3 unchanged;
+- evidence/governance-only PR #25 merged as `2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38`; exact-main CI `33182052862` PASS 5/5; executable RC-3 unchanged;
 - operation-1 evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`, evidence SHA-256 `e94fcafcbab8adefb9506cb91d98010cdb1713ba79ce209ec2dfdb154f97fd2d`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
@@ -58,7 +59,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - evidence IDs: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`,
   `EV-V3-SAFETY-001`, `EV-V3-DR-001`, `EV-V3-DR-OBS-001`,
   `EV-V3-RC-CONSOLIDATION-001`, `EV-V3-OPENAI-VISION-ADAPTER-001`,
-  `EV-V3-VERIFIED-GATE-LOADER-001`, `EV-V3-OPENAI-VISION-OP1-FAILED-001`;
+  `EV-V3-VERIFIED-GATE-LOADER-001`, `EV-V3-OPENAI-VISION-OP1-FAILED-001`,
+  `EV-V3-STRUCTURED-ERROR-EVIDENCE-001`;
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: local disposable `EV-V3-DR-OBS-001` PASS; production-like restore remains absent;
@@ -68,7 +70,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `V3-01-APP-007` for only PR #18, `V3-01-APP-008` for only PR #19,
   `V3-01-APP-009` for only PR #20, `V3-01-APP-010` for only PR #22,
   `V3-01-APP-013` for only PR #23, `V3-01-APP-014` for RC-3 G-01-A,
-  `V3-01-APP-015` for RC-3 G-02-A, and `V3-01-APP-016` for narrow RC-3 G-03-A.
+  `V3-01-APP-015` for RC-3 G-02-A, `V3-01-APP-016` for narrow RC-3 G-03-A, and
+  `V3-01-APP-017` for evidence-only PR #25.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -134,15 +137,21 @@ executable RC. Operation 1 was dispatched once, failed non-retryably, and produc
 provider or usage receipt. Atomic reservation, one-attempt/no-retry semantics, duplicate blocking,
 rights binding and secret containment held. Operation 2 remains locked and no acceptance axis changed.
 
+V3-01-11 is a zero-call remediation draft. It corrects required-nullable Structured Outputs,
+recursively validates nested strict objects and stores only bounded, redacted provider error
+metadata in the durable attempt ledger. Local Python, Studio, migration, acceptance and safety
+checks pass; exact-head GitHub CI and a separate G-08 remain mandatory. It is not RC-4 and changes
+no real-provider, production-path or quality axis.
+
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
-[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-10 sequence is defined in
+[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-11 sequence is defined in
 [`14_REMEDIATION_PR_PLAN.md`](14_REMEDIATION_PR_PLAN.md). No exception or expiry is recorded.
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; the G-08 decision for PR #24 is consumed.
+- **Merge:** none currently authorized; the G-08 decisions through PR #25 are consumed and V3-01-11 requires a new decision.
 - **Deploy:** no; RC-3 is NO-GO and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** operation 1 consumed exactly one attempt with no retry/fallback;

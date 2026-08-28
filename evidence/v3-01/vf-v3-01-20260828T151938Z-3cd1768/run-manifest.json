@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260828T151938Z-3cd1768",
+  "started_at_utc": "2026-08-28T14:48:56Z",
+  "completed_at_utc": "2026-08-28T15:19:38.2608474Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "3cd17686e89b5abfe6a83d9cae8c8700975f6e81",
+  "base_sha": "2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38",
+  "release_candidate": "vf-v3-01-rc3 remains immutable; V3-01-11 is unmerged and is not RC-4",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0012_v3_01_11",
+  "config_fingerprint_redacted": "openai-vision-mocktransport-required-nullable-schema-redacted-error-ledger-external-false-paid-false-zero-vnd-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "vision-structured-output-error-contract",
+      "provider": "openai-mocktransport",
+      "model_or_workflow": "gpt-5-mini Responses strict schema and redacted errors",
+      "region": "not-applicable-offline",
+      "credential_alias": "secret://openai/codex-video",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "V3-01-11-STRICT-SCHEMA",
+    "V3-01-11-ERROR-EVIDENCE",
+    "V3-01-11-DURABLE-ERROR-LEDGER",
+    "LOCAL-FULL-REGRESSION"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "matrix/evidence-EV-V3-STRUCTURED-ERROR-EVIDENCE-001.json",
+    "provider/structured-output-error-evidence.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-00"
+  ],
+  "result": "BLOCKED"
+}

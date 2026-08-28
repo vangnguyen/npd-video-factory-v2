@@ -15,6 +15,8 @@ from app.openai_vision_provider import (
     OpenAIVisionProvider,
     OpenAIVisionResponseError,
     VisionFrameExtractionError,
+    _VisionOutput,
+    validate_strict_structured_output_schema,
 )
 from app.provider_safety import (
     ProviderBudgetPolicy,
@@ -253,6 +255,45 @@ def context(
     )
 
 
+def test_openai_structured_output_schema_is_recursively_strict_and_nullable_required() -> None:
+    schema = _VisionOutput.model_json_schema()
+
+    validate_strict_structured_output_schema(schema)
+
+    objects: list[dict[str, object]] = []
+
+    def walk(node: object) -> None:
+        if isinstance(node, dict):
+            if isinstance(node.get("properties"), dict):
+                objects.append(node)
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+
+    walk(schema)
+    assert objects
+    assert all(set(item["properties"]) == set(item["required"]) for item in objects)
+    assert all(item.get("additionalProperties") is False for item in objects)
+    object_schema = schema["$defs"]["_ObjectOutput"]
+    assert "track_hint" in object_schema["required"]
+    assert {item["type"] for item in object_schema["properties"]["track_hint"]["anyOf"]} == {
+        "null",
+        "string",
+    }
+
+    malformed = json.loads(json.dumps(schema))
+    malformed["$defs"]["_ObjectOutput"]["required"].remove("track_hint")
+    malformed["$defs"]["_OCROutput"]["additionalProperties"] = True
+    malformed["$defs"]["_FrameOutput"]["required"].append("unknown_field")
+    with pytest.raises(ValueError) as failed:
+        validate_strict_structured_output_schema(malformed)
+    assert "track_hint" in str(failed.value)
+    assert "additionalProperties" in str(failed.value)
+    assert "unknown_field" in str(failed.value)
+
+
 @pytest.mark.asyncio
 async def test_openai_vision_contract_uses_responses_structured_output_without_network(
     tmp_path: Path,
@@ -263,7 +304,11 @@ async def test_openai_vision_contract_uses_responses_structured_output_without_n
         captured["path"] = request.url.path
         captured["authorization"] = request.headers.get("Authorization")
         captured["payload"] = json.loads(request.content)
-        return httpx.Response(200, json=response_payload())
+        return httpx.Response(
+            200,
+            headers={"x-request-id": "req_contract_success"},
+            json=response_payload(),
+        )
 
     adapter, resolver, extractor = provider(handler)
     source = tmp_path / "owned.jpg"
@@ -279,6 +324,9 @@ async def test_openai_vision_contract_uses_responses_structured_output_without_n
     assert request_payload["store"] is False
     assert request_payload["text"]["format"]["type"] == "json_schema"
     assert request_payload["text"]["format"]["strict"] is True
+    assert request_payload["text"]["format"]["schema"]["$defs"]["_ObjectOutput"][
+        "required"
+    ] == ["label", "category", "confidence", "bounding_box", "track_hint"]
     image_parts = [
         item
         for item in request_payload["input"][0]["content"]
@@ -295,6 +343,8 @@ async def test_openai_vision_contract_uses_responses_structured_output_without_n
     assert result.provenance["mock_tested"] is True
     assert result.provenance["cost_receipt"]["currency"] == "VND"
     assert result.provenance["cost_receipt"]["status"] == "contract_test_zero"
+    assert result.provenance["provider_request_id"] == "req_contract_success"
+    assert str(result.provenance["client_request_id"]).startswith("vf-")
     serialized = json.dumps(result.provenance, ensure_ascii=False)
     assert "contract-test-credential" not in serialized
     assert "secret://openai/codex-video" not in serialized
@@ -500,8 +550,164 @@ async def test_openai_vision_rejects_malformed_structured_response(tmp_path: Pat
     source = tmp_path / "owned.jpg"
     source.write_bytes(b"trusted-input-placeholder")
 
-    with pytest.raises(OpenAIVisionResponseError, match="structured-output"):
+    with pytest.raises(OpenAIVisionResponseError, match="structured-output") as failed:
         await analyze(adapter, source)
+    assert failed.value.error_evidence.category == "structured_output_validation"
+    assert failed.value.error_evidence.code == "OPENAI_VISION_STRUCTURED_OUTPUT_INVALID"
+
+
+@pytest.mark.asyncio
+async def test_openai_vision_accepts_required_nullable_track_hint(tmp_path: Path) -> None:
+    payload = response_payload()
+    payload["output"][0]["content"][0]["text"] = json.dumps(
+        {
+            "frames": [
+                {
+                    **output_frame(index),
+                    "objects": [
+                        {
+                            **output_frame(index)["objects"][0],
+                            "track_hint": None,
+                        }
+                    ],
+                }
+                for index in range(2)
+            ]
+        },
+        ensure_ascii=False,
+    )
+    adapter, _, _ = provider(lambda _request: httpx.Response(200, json=payload))
+    source = tmp_path / "owned.jpg"
+    source.write_bytes(b"trusted-input-placeholder")
+
+    result = await analyze(adapter, source)
+
+    assert result.frames[0].objects[0].track_hint is None
+
+
+@pytest.mark.asyncio
+async def test_openai_400_error_is_redacted_classified_and_recorded_once(tmp_path: Path) -> None:
+    calls = 0
+    secret_fragment = "sk-" + ("x" * 24)
+
+    def handler(_request: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        return httpx.Response(
+            400,
+            headers={"x-request-id": "req_schema_contract_400"},
+            json={
+                "error": {
+                    "type": "invalid_request_error",
+                    "code": "invalid_json_schema",
+                    "param": "text.format.schema",
+                    "message": (
+                        "Invalid schema: track_hint must be required; "
+                        f"Bearer {secret_fragment}; token={secret_fragment}"
+                    ),
+                }
+            },
+        )
+
+    adapter, _, _ = provider(handler)
+    source = tmp_path / "owned.jpg"
+    source.write_bytes(b"trusted-input-placeholder")
+    controller = ProviderSafetyController(approved_policy(max_attempts=1))
+
+    with pytest.raises(ProviderSafetyBlocked) as blocked:
+        await controller.execute(
+            context("openai-vision-schema-400", adapter),
+            lambda: analyze(adapter, source),
+        )
+
+    evidence = blocked.value.error_evidence
+    assert calls == 1
+    assert blocked.value.code == "OPENAI_VISION_HTTP_ERROR"
+    assert evidence is not None
+    assert evidence.category == "http_provider_error"
+    assert evidence.http_status == 400
+    assert evidence.provider_error_type == "invalid_request_error"
+    assert evidence.provider_error_code == "invalid_json_schema"
+    assert evidence.provider_error_parameter == "text.format.schema"
+    assert evidence.provider_request_id == "req_schema_contract_400"
+    assert evidence.response_sha256 is not None
+    assert evidence.retryable is False
+    assert controller.attempts[0].error_evidence == evidence
+    serialized = json.dumps(evidence.model_dump(mode="json"))
+    assert secret_fragment not in serialized
+    assert "<redacted>" in serialized
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("response_factory", "category", "code"),
+    [
+        (
+            lambda: httpx.Response(200, content=b"{not-json"),
+            "response_parse_failure",
+            "OPENAI_VISION_RESPONSE_PARSE_FAILED",
+        ),
+        (
+            lambda: httpx.Response(
+                200,
+                json={
+                    "status": "incomplete",
+                    "incomplete_details": {"reason": "max_output_tokens"},
+                },
+            ),
+            "structured_output_incomplete",
+            "OPENAI_VISION_RESPONSE_INCOMPLETE",
+        ),
+        (
+            lambda: httpx.Response(
+                200,
+                json={
+                    "status": "completed",
+                    "output": [
+                        {
+                            "type": "message",
+                            "content": [{"type": "refusal", "refusal": "Cannot analyze image"}],
+                        }
+                    ],
+                },
+            ),
+            "structured_output_refusal",
+            "OPENAI_VISION_STRUCTURED_OUTPUT_REFUSAL",
+        ),
+        (
+            lambda: httpx.Response(
+                200,
+                json={key: value for key, value in response_payload().items() if key != "usage"},
+            ),
+            "usage_receipt_missing",
+            "OPENAI_VISION_USAGE_RECEIPT_MISSING",
+        ),
+    ],
+)
+async def test_openai_failure_categories_are_distinct_and_secret_safe(
+    tmp_path: Path,
+    response_factory,
+    category: str,
+    code: str,
+) -> None:
+    def handler(_request: httpx.Request) -> httpx.Response:
+        response = response_factory()
+        response.headers["x-request-id"] = "req_failure_contract"
+        return response
+
+    adapter, _, _ = provider(handler)
+    source = tmp_path / f"{category}.jpg"
+    source.write_bytes(b"trusted-input-placeholder")
+
+    with pytest.raises(OpenAIVisionResponseError) as failed:
+        await analyze(adapter, source)
+
+    evidence = failed.value.error_evidence
+    assert evidence.category == category
+    assert evidence.code == code
+    assert evidence.provider_request_id == "req_failure_contract"
+    assert evidence.secret_recorded is False
+    assert "contract-test-credential" not in json.dumps(evidence.model_dump(mode="json"))
 
 
 @pytest.mark.asyncio
@@ -513,8 +719,12 @@ async def test_openai_vision_maps_transport_timeout_for_central_retry(tmp_path: 
     source = tmp_path / "owned.jpg"
     source.write_bytes(b"trusted-input-placeholder")
 
-    with pytest.raises(ProviderTimeoutError):
+    with pytest.raises(ProviderTimeoutError) as timed_out:
         await analyze(adapter, source)
+    assert timed_out.value.error_evidence is not None
+    assert timed_out.value.error_evidence.category == "transport_timeout"
+    assert timed_out.value.error_evidence.code == "OPENAI_VISION_TIMEOUT"
+    assert str(timed_out.value.error_evidence.client_request_id).startswith("vf-")
 
 
 @pytest.mark.asyncio

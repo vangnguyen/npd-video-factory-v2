@@ -4,7 +4,9 @@ import asyncio
 import base64
 import hashlib
 import json
+import re
 import time
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from decimal import Decimal
@@ -17,6 +19,7 @@ from pydantic import Field, ValidationError, model_validator
 from .auto_edit_models import MediaMetadata, SceneRead
 from .models import StrictModel
 from .provider_safety import (
+    ProviderErrorEvidence,
     ProviderRateLimitError,
     ProviderTimeoutError,
     ProviderTransientError,
@@ -33,10 +36,97 @@ from .vision_providers import (
 
 _SUPPORTED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 _CATEGORY = Literal["person", "face", "product", "object", "building", "logo", "text"]
+_SECRET_TEXT_PATTERNS = (
+    re.compile(r"sk-[A-Za-z0-9_-]{8,}", re.IGNORECASE),
+    re.compile(r"(?i)(bearer\s+)\S+"),
+    re.compile(r"(?i)((?:api[_-]?key|token|password|secret)\s*[:=]\s*)\S+"),
+)
+
+
+def _redact_provider_text(value: object, *, limit: int) -> str | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    redacted = value.strip()
+    for pattern in _SECRET_TEXT_PATTERNS:
+        redacted = pattern.sub("<redacted>", redacted)
+    return redacted[:limit]
+
+
+def _safe_request_id(value: object) -> str | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    candidate = value.strip()
+    if re.fullmatch(r"[A-Za-z0-9._:-]{1,200}", candidate):
+        return candidate
+    return "sha256:" + hashlib.sha256(candidate.encode("utf-8")).hexdigest()
+
+
+def validate_strict_structured_output_schema(schema: dict[str, object]) -> None:
+    """Reject any nested object whose strict required contract is incomplete."""
+
+    violations: list[str] = []
+
+    def walk(node: object, path: str) -> None:
+        if isinstance(node, dict):
+            properties = node.get("properties")
+            if node.get("type") == "object" or isinstance(properties, dict):
+                if not isinstance(properties, dict):
+                    violations.append(f"{path}: object properties must be an object")
+                    properties = {}
+                required = node.get("required")
+                if not isinstance(required, list):
+                    violations.append(f"{path}: required must be an array")
+                    required = []
+                required_fields = set(required)
+                property_fields = set(properties)
+                missing = sorted(property_fields - required_fields)
+                unknown = sorted(required_fields - property_fields)
+                if missing:
+                    violations.append(f"{path}: properties missing from required: {','.join(missing)}")
+                if unknown:
+                    violations.append(f"{path}: required contains unknown fields: {','.join(unknown)}")
+                if len(required_fields) != len(required):
+                    violations.append(f"{path}: required contains duplicate fields")
+                if node.get("additionalProperties") is not False:
+                    violations.append(f"{path}: additionalProperties must be false")
+            for key, value in node.items():
+                walk(value, f"{path}.{key}")
+        elif isinstance(node, list):
+            for index, value in enumerate(node):
+                walk(value, f"{path}[{index}]")
+
+    walk(schema, "$")
+    if violations:
+        raise ValueError("invalid strict Structured Outputs schema: " + "; ".join(violations))
 
 
 class OpenAIVisionResponseError(RuntimeError):
     """A provider response failed the strict, secret-safe contract."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        error_evidence: ProviderErrorEvidence | None = None,
+        code: str = "OPENAI_VISION_STRUCTURED_OUTPUT_INVALID",
+        category: Literal[
+            "http_provider_error",
+            "response_parse_failure",
+            "structured_output_refusal",
+            "structured_output_incomplete",
+            "structured_output_validation",
+            "usage_receipt_missing",
+            "usage_receipt_invalid",
+        ] = "structured_output_validation",
+    ) -> None:
+        super().__init__(message)
+        self.code = code
+        self.error_evidence = error_evidence or ProviderErrorEvidence(
+            category=category,
+            code=code,
+            provider_error_message=message,
+            retryable=False,
+        )
 
 
 class VisionFrameExtractionError(RuntimeError):
@@ -48,7 +138,7 @@ class _ObjectOutput(StrictModel):
     category: _CATEGORY
     confidence: float = Field(ge=0, le=1)
     bounding_box: NormalizedBox
-    track_hint: str | None = Field(default=None, max_length=120)
+    track_hint: str | None = Field(max_length=120)
 
 
 class _OCROutput(StrictModel):
@@ -272,7 +362,7 @@ def _canonical_json(value: object) -> bytes:
     ).encode("utf-8")
 
 
-def _response_text(payload: dict[str, object]) -> str:
+def _response_text(payload: dict[str, object]) -> str | None:
     direct = payload.get("output_text")
     if isinstance(direct, str) and direct.strip():
         return direct
@@ -292,7 +382,85 @@ def _response_text(payload: dict[str, object]) -> str:
                     and part["text"].strip()
                 ):
                     return part["text"]
-    raise OpenAIVisionResponseError("OpenAI Vision response has no structured output text")
+    return None
+
+
+def _response_refusal(payload: dict[str, object]) -> str | None:
+    output = payload.get("output")
+    if not isinstance(output, list):
+        return None
+    for item in output:
+        if not isinstance(item, dict):
+            continue
+        content = item.get("content")
+        if not isinstance(content, list):
+            continue
+        for part in content:
+            if not isinstance(part, dict) or part.get("type") != "refusal":
+                continue
+            refusal = _redact_provider_text(part.get("refusal"), limit=1000)
+            return refusal or "OpenAI returned a structured-output refusal"
+    return None
+
+
+def _provider_error_fields(
+    response_bytes: bytes,
+) -> tuple[str | None, str | None, str | None, str | None]:
+    try:
+        payload = json.loads(response_bytes)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return None, None, None, None
+    if not isinstance(payload, dict) or not isinstance(payload.get("error"), dict):
+        return None, None, None, None
+    error = payload["error"]
+    return (
+        _redact_provider_text(error.get("type"), limit=160),
+        _redact_provider_text(error.get("code"), limit=160),
+        _redact_provider_text(error.get("param"), limit=160),
+        _redact_provider_text(error.get("message"), limit=1000),
+    )
+
+
+def _error_evidence(
+    *,
+    category: Literal[
+        "http_provider_error",
+        "transport_timeout",
+        "transport_error",
+        "response_parse_failure",
+        "structured_output_refusal",
+        "structured_output_incomplete",
+        "structured_output_validation",
+        "usage_receipt_missing",
+        "usage_receipt_invalid",
+    ],
+    code: str,
+    retryable: bool,
+    http_status: int | None = None,
+    response_bytes: bytes | None = None,
+    provider_request_id: object = None,
+    client_request_id: str | None = None,
+    provider_error_type: object = None,
+    provider_error_code: object = None,
+    provider_error_parameter: object = None,
+    provider_error_message: object = None,
+) -> ProviderErrorEvidence:
+    return ProviderErrorEvidence(
+        category=category,
+        code=code,
+        http_status=http_status,
+        provider_error_type=_redact_provider_text(provider_error_type, limit=160),
+        provider_error_code=_redact_provider_text(provider_error_code, limit=160),
+        provider_error_parameter=_redact_provider_text(provider_error_parameter, limit=160),
+        provider_error_message=_redact_provider_text(provider_error_message, limit=1000),
+        provider_request_id=_safe_request_id(provider_request_id),
+        client_request_id=client_request_id,
+        response_sha256=(
+            hashlib.sha256(response_bytes).hexdigest() if response_bytes is not None else None
+        ),
+        retryable=retryable,
+        secret_recorded=False,
+    )
 
 
 class OpenAIVisionProvider:
@@ -342,6 +510,8 @@ class OpenAIVisionProvider:
         )
         if any(value < 0 for value in costs):
             raise ValueError("OpenAI Vision VND costs cannot be negative")
+        response_schema = _VisionOutput.model_json_schema()
+        validate_strict_structured_output_schema(response_schema)
         self.model = model
         self.credential_alias = credential_alias or None
         self.estimated_cost_vnd = estimated_cost_vnd
@@ -360,6 +530,7 @@ class OpenAIVisionProvider:
         self._output_rate = output_vnd_per_million_tokens
         self._transport = transport
         self._allow_zero_cost_contract_test = allow_zero_cost_contract_test
+        self._response_schema = response_schema
 
     def __repr__(self) -> str:
         return f"OpenAIVisionProvider(model={self.model!r}, credential_alias=<redacted>)"
@@ -404,6 +575,7 @@ class OpenAIVisionProvider:
             )
         request_payload = self._request_payload(extracted)
         request_bytes = _canonical_json(request_payload)
+        client_request_id = "vf-" + uuid.uuid4().hex
         started = time.perf_counter()
         timeout = httpx.Timeout(self._timeout_seconds, connect=min(15.0, self._timeout_seconds))
         try:
@@ -418,32 +590,221 @@ class OpenAIVisionProvider:
                     headers={
                         "Authorization": f"Bearer {api_key}",
                         "Content-Type": "application/json",
+                        "X-Client-Request-Id": client_request_id,
                     },
                 )
         except httpx.TimeoutException as exc:
-            raise ProviderTimeoutError() from exc
+            raise ProviderTimeoutError(
+                error_evidence=_error_evidence(
+                    category="transport_timeout",
+                    code="OPENAI_VISION_TIMEOUT",
+                    retryable=True,
+                    client_request_id=client_request_id,
+                    provider_error_message="OpenAI Vision transport timed out",
+                )
+            ) from exc
         except httpx.RequestError as exc:
-            raise ProviderTransientError("OPENAI_VISION_NETWORK_ERROR") from exc
+            raise ProviderTransientError(
+                "OPENAI_VISION_NETWORK_ERROR",
+                error_evidence=_error_evidence(
+                    category="transport_error",
+                    code="OPENAI_VISION_NETWORK_ERROR",
+                    retryable=True,
+                    client_request_id=client_request_id,
+                    provider_error_type=type(exc).__name__,
+                    provider_error_message="OpenAI Vision transport failed",
+                ),
+            ) from exc
         latency_ms = round((time.perf_counter() - started) * 1000, 3)
-        if response.status_code == 429:
-            raise ProviderRateLimitError()
-        if response.status_code in {408, 409} or response.status_code >= 500:
-            raise ProviderTransientError("OPENAI_VISION_TRANSIENT_HTTP")
-        if response.status_code >= 400:
-            raise OpenAIVisionResponseError(
-                f"OpenAI Vision request was rejected with HTTP {response.status_code}"
-            )
         response_bytes = response.content
+        provider_request_id = response.headers.get("x-request-id")
+        error_type, error_code, error_parameter, error_message = _provider_error_fields(
+            response_bytes
+        )
+        if response.status_code == 429:
+            raise ProviderRateLimitError(
+                error_evidence=_error_evidence(
+                    category="http_provider_error",
+                    code="OPENAI_VISION_RATE_LIMITED",
+                    retryable=True,
+                    http_status=response.status_code,
+                    response_bytes=response_bytes,
+                    provider_request_id=provider_request_id,
+                    client_request_id=client_request_id,
+                    provider_error_type=error_type,
+                    provider_error_code=error_code,
+                    provider_error_parameter=error_parameter,
+                    provider_error_message=error_message,
+                )
+            )
+        if response.status_code in {408, 409} or response.status_code >= 500:
+            raise ProviderTransientError(
+                "OPENAI_VISION_TRANSIENT_HTTP",
+                error_evidence=_error_evidence(
+                    category="http_provider_error",
+                    code="OPENAI_VISION_TRANSIENT_HTTP",
+                    retryable=True,
+                    http_status=response.status_code,
+                    response_bytes=response_bytes,
+                    provider_request_id=provider_request_id,
+                    client_request_id=client_request_id,
+                    provider_error_type=error_type,
+                    provider_error_code=error_code,
+                    provider_error_parameter=error_parameter,
+                    provider_error_message=error_message,
+                ),
+            )
+        if response.status_code >= 400:
+            evidence = _error_evidence(
+                category="http_provider_error",
+                code="OPENAI_VISION_HTTP_ERROR",
+                retryable=False,
+                http_status=response.status_code,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_type=error_type,
+                provider_error_code=error_code,
+                provider_error_parameter=error_parameter,
+                provider_error_message=error_message,
+            )
+            raise OpenAIVisionResponseError(
+                f"OpenAI Vision request was rejected with HTTP {response.status_code}",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="http_provider_error",
+            )
         try:
             response_payload = response.json()
-            if not isinstance(response_payload, dict):
-                raise TypeError("response root must be an object")
-            if response_payload.get("status") not in {None, "completed"}:
-                raise OpenAIVisionResponseError("OpenAI Vision response did not complete")
-            structured = _VisionOutput.model_validate_json(_response_text(response_payload))
-        except (json.JSONDecodeError, TypeError, ValidationError) as exc:
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            evidence = _error_evidence(
+                category="response_parse_failure",
+                code="OPENAI_VISION_RESPONSE_PARSE_FAILED",
+                retryable=False,
+                http_status=response.status_code,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message="OpenAI Vision response was not valid JSON",
+            )
             raise OpenAIVisionResponseError(
-                "OpenAI Vision response failed strict structured-output validation"
+                "OpenAI Vision response was not valid JSON",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="response_parse_failure",
+            ) from exc
+        if not isinstance(response_payload, dict):
+            evidence = _error_evidence(
+                category="response_parse_failure",
+                code="OPENAI_VISION_RESPONSE_PARSE_FAILED",
+                retryable=False,
+                http_status=response.status_code,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message="OpenAI Vision response root was not an object",
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision response root was not an object",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="response_parse_failure",
+            )
+        if response_payload.get("status") not in {None, "completed"}:
+            details = response_payload.get("incomplete_details")
+            reason = details.get("reason") if isinstance(details, dict) else None
+            evidence = _error_evidence(
+                category="structured_output_incomplete",
+                code="OPENAI_VISION_RESPONSE_INCOMPLETE",
+                retryable=False,
+                http_status=response.status_code,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_code=reason,
+                provider_error_message="OpenAI Vision response did not complete",
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision response did not complete",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="structured_output_incomplete",
+            )
+        refusal = _response_refusal(response_payload)
+        if refusal is not None:
+            evidence = _error_evidence(
+                category="structured_output_refusal",
+                code="OPENAI_VISION_STRUCTURED_OUTPUT_REFUSAL",
+                retryable=False,
+                http_status=response.status_code,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message=refusal,
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision returned a structured-output refusal",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="structured_output_refusal",
+            )
+        structured_text = _response_text(response_payload)
+        if structured_text is None:
+            evidence = _error_evidence(
+                category="response_parse_failure",
+                code="OPENAI_VISION_RESPONSE_TEXT_MISSING",
+                retryable=False,
+                http_status=response.status_code,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message="OpenAI Vision response has no structured output text",
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision response has no structured output text",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="response_parse_failure",
+            )
+        try:
+            structured_payload = json.loads(structured_text)
+            if not isinstance(structured_payload, dict):
+                raise TypeError("structured output root must be an object")
+        except (json.JSONDecodeError, TypeError) as exc:
+            evidence = _error_evidence(
+                category="response_parse_failure",
+                code="OPENAI_VISION_STRUCTURED_OUTPUT_PARSE_FAILED",
+                retryable=False,
+                http_status=response.status_code,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message="OpenAI Vision structured output was not valid JSON",
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision structured output was not valid JSON",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="response_parse_failure",
+            ) from exc
+        try:
+            structured = _VisionOutput.model_validate(structured_payload)
+        except ValidationError as exc:
+            evidence = _error_evidence(
+                category="structured_output_validation",
+                code="OPENAI_VISION_STRUCTURED_OUTPUT_INVALID",
+                retryable=False,
+                http_status=response.status_code,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message="OpenAI Vision response failed strict structured-output validation",
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision response failed strict structured-output validation",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="structured_output_validation",
             ) from exc
 
         expected_indexes = set(range(len(extracted)))
@@ -458,7 +819,13 @@ class OpenAIVisionProvider:
             for index, source in enumerate(extracted)
         )
         usage = response_payload.get("usage")
-        cost_receipt, actual_cost = self._cost_receipt(usage)
+        cost_receipt, actual_cost = self._cost_receipt(
+            usage,
+            http_status=response.status_code,
+            response_bytes=response_bytes,
+            provider_request_id=provider_request_id,
+            client_request_id=client_request_id,
+        )
         response_id = response_payload.get("id")
         provenance: dict[str, object] = {
             "fixture": False,
@@ -479,6 +846,8 @@ class OpenAIVisionProvider:
                 else None
             ),
             "latency_ms": latency_ms,
+            "provider_request_id": _safe_request_id(provider_request_id),
+            "client_request_id": client_request_id,
             "credential_alias_sha256": hashlib.sha256(alias.encode("utf-8")).hexdigest(),
             "artifact_evidence": [
                 {
@@ -541,7 +910,7 @@ class OpenAIVisionProvider:
                     "type": "json_schema",
                     "name": "npd_vision_analysis",
                     "strict": True,
-                    "schema": _VisionOutput.model_json_schema(),
+                    "schema": self._response_schema,
                 }
             },
             "max_output_tokens": self.max_output_tokens,
@@ -597,17 +966,30 @@ class OpenAIVisionProvider:
         )
 
     def _cost_receipt(
-        self, usage: object
+        self,
+        usage: object,
+        *,
+        http_status: int,
+        response_bytes: bytes,
+        provider_request_id: object,
+        client_request_id: str,
     ) -> tuple[dict[str, object], Decimal | None]:
         if not isinstance(usage, dict):
-            return (
-                {
-                    "currency": "VND",
-                    "status": "pending",
-                    "reason": "provider_usage_missing",
-                    "actual_cost_vnd": None,
-                },
-                None,
+            evidence = _error_evidence(
+                category="usage_receipt_missing",
+                code="OPENAI_VISION_USAGE_RECEIPT_MISSING",
+                retryable=False,
+                http_status=http_status,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message="OpenAI Vision usage receipt is missing",
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision usage receipt is missing",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="usage_receipt_missing",
             )
         try:
             input_tokens = max(0, int(usage.get("input_tokens", 0)))
@@ -619,12 +1001,57 @@ class OpenAIVisionProvider:
                 else 0
             )
         except (TypeError, ValueError) as exc:
-            raise OpenAIVisionResponseError("OpenAI Vision usage receipt is malformed") from exc
+            evidence = _error_evidence(
+                category="usage_receipt_invalid",
+                code="OPENAI_VISION_USAGE_RECEIPT_MALFORMED",
+                retryable=False,
+                http_status=http_status,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message="OpenAI Vision usage receipt is malformed",
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision usage receipt is malformed",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="usage_receipt_invalid",
+            ) from exc
         cached_tokens = min(cached_tokens, input_tokens)
         if input_tokens > self.input_token_ceiling:
-            raise OpenAIVisionResponseError("OpenAI Vision input usage exceeds its accounting ceiling")
+            evidence = _error_evidence(
+                category="usage_receipt_invalid",
+                code="OPENAI_VISION_INPUT_USAGE_LIMIT_EXCEEDED",
+                retryable=False,
+                http_status=http_status,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message="OpenAI Vision input usage exceeds its accounting ceiling",
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision input usage exceeds its accounting ceiling",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="usage_receipt_invalid",
+            )
         if output_tokens > self.max_output_tokens:
-            raise OpenAIVisionResponseError("OpenAI Vision output usage exceeds its configured ceiling")
+            evidence = _error_evidence(
+                category="usage_receipt_invalid",
+                code="OPENAI_VISION_OUTPUT_USAGE_LIMIT_EXCEEDED",
+                retryable=False,
+                http_status=http_status,
+                response_bytes=response_bytes,
+                provider_request_id=provider_request_id,
+                client_request_id=client_request_id,
+                provider_error_message="OpenAI Vision output usage exceeds its configured ceiling",
+            )
+            raise OpenAIVisionResponseError(
+                "OpenAI Vision output usage exceeds its configured ceiling",
+                error_evidence=evidence,
+                code=evidence.code,
+                category="usage_receipt_invalid",
+            )
         uncached_tokens = input_tokens - cached_tokens
         million = Decimal("1000000")
         actual = (

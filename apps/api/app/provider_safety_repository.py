@@ -249,6 +249,11 @@ class ProviderSafetyRepository:
                         cost_status=record.cost_status,
                         retryable=record.retryable,
                         error_code=record.error_code,
+                        error_evidence=(
+                            record.error_evidence.model_dump(mode="json")
+                            if record.error_evidence is not None
+                            else None
+                        ),
                         created_at=record.created_at,
                         completed_at=record.completed_at,
                     )

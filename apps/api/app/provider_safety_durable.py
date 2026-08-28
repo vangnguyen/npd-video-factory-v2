@@ -10,6 +10,7 @@ from .provider_safety import (
     ProviderCallContext,
     ProviderCapabilitySafetyRead,
     ProviderExecutionReceipt,
+    ProviderErrorEvidence,
     ProviderRightsDecision,
     ProviderSafetyController,
     ProviderSafetyDecision,
@@ -149,6 +150,7 @@ class DurableProviderSafetyController(ProviderSafetyController):
         actual_cost_vnd: Decimal | None,
         charged_cost_vnd: Decimal,
         started_at: datetime,
+        error_evidence: ProviderErrorEvidence | None = None,
     ) -> None:
         record: ProviderAttemptRecord = self._build_attempt_record(
             context,
@@ -156,6 +158,7 @@ class DurableProviderSafetyController(ProviderSafetyController):
             status=status,
             retryable=retryable,
             error_code=error_code,
+            error_evidence=error_evidence,
             actual_cost_vnd=actual_cost_vnd,
             charged_cost_vnd=charged_cost_vnd,
             started_at=started_at,

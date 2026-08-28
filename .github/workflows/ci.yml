@@ -334,6 +334,14 @@ jobs:
           grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
           python -c 'import hashlib,json; from pathlib import Path; record=json.loads(Path("docs/acceptance/v3-01/rights/V3-01-RIGHTS-G03A-001.json").read_text()); assert record["decision"] == "APPROVED"; assert record["reviewer"] == "Owner (GitHub: vangnguyen)"; assert record["social_platform_use"] == []; assert record["license_name"] == "NPD owner-approved Vision acceptance only; no publishing, training, resale or other use"; assert record["secret_recorded"] is False; assert hashlib.sha256(Path("docs/acceptance/v3-01/assets/g03-a-owned-vision-test.png").read_bytes()).hexdigest() == record["asset_hash"]'
           ! git grep -I -n -E '^(PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_PER_OPERATION_LIMIT_VND=[1-9][0-9]*|PROVIDER_DAILY_LIMIT_VND=[1-9][0-9]*)$' -- .env.example deploy apps services
+      - name: Verify V3-01-11 Structured Outputs and error-evidence boundary
+        run: |
+          grep -Fq 'track_hint: str | None = Field(max_length=120)' apps/api/app/openai_vision_provider.py
+          grep -Fq 'validate_strict_structured_output_schema(response_schema)' apps/api/app/openai_vision_provider.py
+          grep -Fq 'class ProviderErrorEvidence' apps/api/app/provider_safety.py
+          grep -Fq 'error_evidence: Mapped[dict[str, object] | None]' apps/api/app/provider_safety_db.py
+          grep -q '0012_v3_01_11' apps/api/migrations/versions/0012_v3_01_11_provider_error_evidence.py
+          ! git grep -I -n -E '^(VISION_PROVIDER=openai|OPENAI_API_KEY=.+|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_PER_OPERATION_LIMIT_VND=[1-9][0-9]*|PROVIDER_DAILY_LIMIT_VND=[1-9][0-9]*)$' -- .env.example docker-compose.yml deploy apps services
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json
