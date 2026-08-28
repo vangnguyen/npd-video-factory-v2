@@ -36,6 +36,11 @@ from .media_security import (
 from .media_validation import MediaValidationError, safe_upload_filename, sniff_media
 from .object_storage import ObjectStorageProvider, validate_object_key
 from .platform_models import AssetRegister
+from .provider_safety import (
+    ProviderCallContext,
+    ProviderSafetyBlocked,
+    ProviderSafetyController,
+)
 from .repositories import PlatformRepository
 
 
@@ -355,6 +360,7 @@ class AutoEditAnalysisService:
         transcription_provider: TranscriptionProvider,
         signal_provider: MediaSignalProvider,
         staging_root: Path,
+        provider_safety: ProviderSafetyController | None = None,
     ):
         self.repository = repository
         self.platform = platform
@@ -362,6 +368,7 @@ class AutoEditAnalysisService:
         self.transcription_provider = transcription_provider
         self.signal_provider = signal_provider
         self.staging_root = staging_root.resolve()
+        self.provider_safety = provider_safety or ProviderSafetyController.fail_closed()
 
     async def analyze(
         self, project_id: str, payload: AutoEditAnalysisRequest
@@ -415,18 +422,46 @@ class AutoEditAnalysisService:
         local_path = self.staging_root / f"{analysis_id}-{asset.filename}"
         try:
             await self.object_storage.download_file(object_key=asset.object_key, destination=local_path)
-            transcript, signals = await asyncio.gather(
-                self.transcription_provider.transcribe(
+            transcription = self.provider_safety.execute(
+                ProviderCallContext(
+                    operation_key=f"{analysis_id}:transcription",
+                    workspace_id=asset.workspace_id,
+                    project_id=asset.project_id,
+                    provider_key=self.transcription_provider.key,
+                    capability="transcription",
+                    operation="auto_edit_transcription",
+                    external_call=self.transcription_provider.external_call,
+                    paid=self.transcription_provider.paid,
+                    estimated_cost_vnd=self.transcription_provider.estimated_cost_vnd,
+                    credential_alias=self.transcription_provider.credential_alias,
+                    # A real Flow A run must supply the separate G-03 rights record. Basic upload
+                    # labels are not silently promoted into approved provider-rights evidence.
+                    rights_required=self.transcription_provider.external_call,
+                    rights=[],
+                ),
+                lambda: self.transcription_provider.transcribe(
                     local_path,
                     metadata=source_media,
                     checksum_sha256=asset.checksum_sha256,
                 ),
+            )
+            transcription_result, signals = await asyncio.gather(
+                transcription,
                 self.signal_provider.analyze(
                     local_path,
                     metadata=source_media,
                     silence_threshold_db=payload.silence_threshold_db,
                     minimum_silence_duration=payload.minimum_silence_duration,
                 ),
+            )
+            transcript = type(transcription_result.value)(
+                language=transcription_result.value.language,
+                confidence=transcription_result.value.confidence,
+                segments=transcription_result.value.segments,
+                provenance={
+                    **transcription_result.value.provenance,
+                    "provider_safety_receipt": transcription_result.receipt.model_dump(mode="json"),
+                },
             )
             scenes = build_scenes(
                 duration=float(source_media.duration_seconds),
@@ -468,6 +503,9 @@ class AutoEditAnalysisService:
             )
         except ProviderNotConfigured:
             await self.repository.mark_analysis_failed(analysis_id, "PROVIDER_NOT_CONFIGURED")
+            raise
+        except ProviderSafetyBlocked:
+            await self.repository.mark_analysis_failed(analysis_id, "PROVIDER_SAFETY_BLOCKED")
             raise
         except Exception:
             await self.repository.mark_analysis_failed(analysis_id, "AUTO_EDIT_ANALYSIS_FAILED")

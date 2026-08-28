@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-FLOW-A-CONTRACT-001",
+  "test_case_id": "FLA-001+FLA-002+SEC-003",
+  "matrix_rows": [
+    "ASR-01",
+    "EDT-01",
+    "EDT-03",
+    "VIS-01",
+    "REF-01",
+    "TTS-01",
+    "SUB-01",
+    "APR-01",
+    "QC-01"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "88e6bcce22bf31bb3f23547c1d4d4a445abc0407",
+  "environment": "CI",
+  "provider": {
+    "name": "fixture-asr-vision-tts",
+    "model_or_workflow": "flow-a-acceptance-v1-deterministic-contract",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": "f5444e2f382b775960391b86d2a707d9fd93ae645626215ca35db21b5ec0bb09",
+  "response_or_artifact_hash": "5a2e375d6da149ff92d04051f305bc93709818e03ca4ff188df2b13d3c07ad2f",
+  "started_at_utc": "2026-08-28T00:00:00Z",
+  "completed_at_utc": "2026-08-28T01:06:41Z",
+  "duration_seconds": 4001,
+  "result": "PASS",
+  "assertion": "The strict V3-01-04 evaluator independently measures two locked-RC fixture runs for WER, critical Vietnamese names/numbers/CTA, scene F1, reframe coverage, subtitle drift, approval hashes, technical QC, restart recovery and VND-only cost. It correctly leaves real-provider, production-path and quality axes BLOCKED.",
+  "correlation_id": "v3-01-04-flow-a-contract-88e6bcc",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex contract-test reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-005",
+    "V3-01-GAP-016"
+  ],
+  "reproduce": "Run python scripts/v3_01_flow_a_acceptance.py evidence/v3-01/vf-v3-01-20260828T010641Z-88e6bcc/flows/flow-a-upload-auto-edit/two-run-contract.json --expect-verdict BLOCKED on commit 88e6bcce22bf31bb3f23547c1d4d4a445abc0407."
+}

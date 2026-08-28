@@ -7,6 +7,11 @@ from pathlib import Path
 
 from .auto_edit_repository import AutoEditRepository
 from .object_storage import ObjectStorageProvider, sha256_file
+from .provider_safety import (
+    ProviderCallContext,
+    ProviderSafetyBlocked,
+    ProviderSafetyController,
+)
 from .repositories import PlatformRepository
 from .vision_logic import (
     build_reframe_plans,
@@ -16,7 +21,7 @@ from .vision_logic import (
     rank_best_frames,
 )
 from .vision_models import VisionAnalysisRead, VisionAnalysisRequest
-from .vision_providers import VisionProvider, VisionProviderNotConfigured
+from .vision_providers import ProviderVisionResult, VisionProvider, VisionProviderNotConfigured
 from .vision_repository import VisionRepository
 
 
@@ -32,6 +37,7 @@ class VisionAnalysisService:
         object_storage: ObjectStorageProvider,
         provider: VisionProvider,
         staging_root: Path,
+        provider_safety: ProviderSafetyController | None = None,
     ):
         self.repository = repository
         self.auto_edit_repository = auto_edit_repository
@@ -39,6 +45,7 @@ class VisionAnalysisService:
         self.object_storage = object_storage
         self.provider = provider
         self.staging_root = staging_root.resolve()
+        self.provider_safety = provider_safety or ProviderSafetyController.fail_closed()
 
     async def analyze(
         self,
@@ -105,18 +112,37 @@ class VisionAnalysisService:
             await self.object_storage.download_file(object_key=asset.object_key, destination=local_path)
             if sha256_file(local_path) != asset.checksum_sha256:
                 raise ValueError("downloaded Vision source checksum does not match the asset record")
-            provider_result = await self.provider.analyze(
-                local_path,
-                metadata=base.source_media,
-                scenes=base.scenes,
-                asset_id=asset.asset_id,
-                checksum_sha256=asset.checksum_sha256,
-                sample_interval_seconds=payload.sample_interval_seconds,
+            execution = await self.provider_safety.execute(
+                ProviderCallContext(
+                    operation_key=f"{vision_analysis_id}:vision",
+                    workspace_id=asset.workspace_id,
+                    project_id=asset.project_id,
+                    provider_key=self.provider.key,
+                    capability="vision",
+                    operation="vision_analysis",
+                    external_call=self.provider.external_call,
+                    paid=self.provider.paid,
+                    estimated_cost_vnd=self.provider.estimated_cost_vnd,
+                    credential_alias=self.provider.credential_alias,
+                    rights_required=self.provider.external_call,
+                    rights=[],
+                ),
+                lambda: self.provider.analyze(
+                    local_path,
+                    metadata=base.source_media,
+                    scenes=base.scenes,
+                    asset_id=asset.asset_id,
+                    checksum_sha256=asset.checksum_sha256,
+                    sample_interval_seconds=payload.sample_interval_seconds,
+                ),
             )
-            if provider_result.provenance.get("external_call") or provider_result.provenance.get(
-                "paid"
-            ):
-                raise RuntimeError("external or paid Vision execution is disabled in V2-05")
+            provider_result = ProviderVisionResult(
+                frames=execution.value.frames,
+                provenance={
+                    **execution.value.provenance,
+                    "provider_safety_receipt": execution.receipt.model_dump(mode="json"),
+                },
+            )
             frames = normalize_frames(
                 provider_result.frames,
                 provider_key=self.provider.key,
@@ -176,6 +202,9 @@ class VisionAnalysisService:
             )
         except VisionProviderNotConfigured:
             await self.repository.mark_failed(vision_analysis_id, "PROVIDER_NOT_CONFIGURED")
+            raise
+        except ProviderSafetyBlocked:
+            await self.repository.mark_failed(vision_analysis_id, "PROVIDER_SAFETY_BLOCKED")
             raise
         except Exception:
             await self.repository.mark_failed(vision_analysis_id, "VISION_ANALYSIS_FAILED")

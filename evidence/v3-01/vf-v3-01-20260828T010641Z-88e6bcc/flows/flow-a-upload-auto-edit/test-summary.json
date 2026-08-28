@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-04",
+  "locked_code_commit": "88e6bcce22bf31bb3f23547c1d4d4a445abc0407",
+  "scope": "Flow A acceptance contract, measured threshold evaluator and ASR/Vision provider preflight",
+  "tests": {
+    "focused_flow_a_provider_and_analysis": "30 passed",
+    "api_full_regression": "133 passed",
+    "python_api_worker_comfyui_full_regression": "177 passed",
+    "studio_web": "14 passed",
+    "renderer": "14 passed",
+    "renderer_typecheck": "PASS",
+    "renderer_bundle": "PASS",
+    "migration_upgrade_downgrade_replay": "PASS",
+    "docker_deterministic_e2e": "PASS",
+    "python_compile": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "contract_fixture_runs": 2,
+  "contract_fixture_result": "PASS",
+  "overall_acceptance_result": "BLOCKED",
+  "blocking_owner_gates": [
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-04",
+    "G-11"
+  ],
+  "real_provider_calls": 0,
+  "paid_provider_calls": 0,
+  "cost": {
+    "currency": "VND",
+    "actual": 0
+  },
+  "production_deployments": 0,
+  "public_ingress_changes": 0,
+  "publishes": 0,
+  "secret_recorded": false,
+  "note": "The two runs are redacted deterministic contract fixtures. They prove evaluator behavior only and are not real-media, real-provider, production-path or human-quality evidence."
+}

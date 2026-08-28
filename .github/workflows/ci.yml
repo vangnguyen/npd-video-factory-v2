@@ -28,6 +28,8 @@ jobs:
       - run: python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q
       - name: Validate V3-01 acceptance register and redacted evidence
         run: python scripts/v3_01_acceptance.py validate-repo
+      - name: Evaluate V3-01-04 Flow A fixture boundary
+        run: python scripts/v3_01_flow_a_acceptance.py evidence/v3-01/vf-v3-01-20260828T010641Z-88e6bcc/flows/flow-a-upload-auto-edit/two-run-contract.json --expect-verdict BLOCKED
       - name: Alembic upgrade, downgrade and replay
         working-directory: apps/api
         env:
@@ -148,7 +150,7 @@ jobs:
           grep -Fq 'class ContractOnlyVisionProvider' apps/api/app/vision_providers.py
           grep -Fq 'real_provider_tested": False' apps/api/app/vision_providers.py
           grep -Fq 'estimated_cost=Decimal("0")' apps/api/app/vision_service.py
-          grep -Fq 'external or paid Vision execution is disabled in V2-05' apps/api/app/vision_service.py
+          grep -Fq 'self.provider_safety.execute(' apps/api/app/vision_service.py
           grep -q '0004_v2_05' apps/api/migrations/versions/0004_v2_05_vision_smart_reframe.py
           ! git grep -I -n -E 'VISION_(API_KEY|TOKEN|SECRET)=[^[:space:]]+' -- .
       - name: Verify V2-06 media rights, cost and execution boundary
@@ -253,6 +255,13 @@ jobs:
           python -c 'import json; from pathlib import Path; data=json.loads(Path("packages/contracts/ingress-media-security.v1.json").read_text()); assert data["contract_version"] == "ingress-media-security.v1"; assert data["authorization"]["public_ingress_approved"] is False; assert data["media_pipeline"]["archive_ingestion_enabled"] is False; assert data["media_pipeline"]["clean_verdict_required_for_trusted_storage"] is True'
           ! grep -Eq '^  (clamd|caddy|nginx|traefik):' docker-compose.yml deploy/production/docker-compose.production.yml
           ! git grep -I -n -E '^(MEDIA_MALWARE_SCANNER_MODE=fixture|PROVIDER_RETENTION_CLEANUP_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false)$' -- deploy/production
+      - name: Verify V3-01-04 Flow A acceptance boundary
+        run: |
+          grep -Fq 'class FlowAAcceptanceBundle' apps/api/app/flow_a_acceptance.py
+          grep -Fq 'self.provider_safety.execute(' apps/api/app/auto_edit_service.py
+          grep -Fq 'self.provider_safety.execute(' apps/api/app/vision_service.py
+          grep -Fq 'fixture evidence cannot be promoted to real-provider evidence' apps/api/app/flow_a_acceptance.py
+          ! git grep -I -n -E '^(PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|AUDIO_EXTERNAL_EXECUTION_ENABLED=true)$' -- .env.example deploy/production
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-04",
+  "consecutive_runs_required": 2,
+  "minimum_source_duration_seconds": 90,
+  "minimum_source_width": 1080,
+  "minimum_source_height": 1080,
+  "maximum_asr_wer": 0.15,
+  "minimum_critical_term_accuracy": 1.0,
+  "scene_boundary_tolerance_seconds": 0.5,
+  "minimum_scene_boundary_f1": 0.8,
+  "minimum_reframe_safe_coverage": 0.95,
+  "maximum_subtitle_median_drift_seconds": 0.2,
+  "maximum_subtitle_p95_drift_seconds": 0.5,
+  "required_provider_capabilities": [
+    "asr",
+    "vision",
+    "tts"
+  ],
+  "required_owner_gates": [
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-04",
+    "G-11"
+  ],
+  "currency": "VND",
+  "publish_allowed": false,
+  "external_action_allowed_during_contract_test": false
+}

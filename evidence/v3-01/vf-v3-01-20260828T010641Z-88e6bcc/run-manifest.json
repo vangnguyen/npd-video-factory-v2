@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260828T010641Z-88e6bcc",
+  "started_at_utc": "2026-08-28T00:00:00Z",
+  "completed_at_utc": "2026-08-28T01:06:41Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "88e6bcce22bf31bb3f23547c1d4d4a445abc0407",
+  "base_sha": "4779ddcb1af5cc0138922ea144ddf4496fc313f1",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-04-remediation",
+  "environment": "CI",
+  "container_images": [],
+  "database_migration_version": "0011_v3_01_03",
+  "config_fingerprint_redacted": "flow-a-contract-fixtures-provider-external-false-paid-false-zero-vnd-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "asr",
+      "provider": "fixture-transcription",
+      "model_or_workflow": "deterministic-transcription-v2-04",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    },
+    {
+      "capability": "vision",
+      "provider": "fixture-vision",
+      "model_or_workflow": "deterministic-vision-v2-05",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    },
+    {
+      "capability": "tts",
+      "provider": "fixture-tts",
+      "model_or_workflow": "deterministic-audio-contract",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "FLA-001",
+    "FLA-002",
+    "SEC-003",
+    "CI-LOCAL-REGRESSION"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "flows/flow-a-upload-auto-edit/evaluation.json",
+    "flows/flow-a-upload-auto-edit/test-summary.json",
+    "flows/flow-a-upload-auto-edit/two-run-contract.json",
+    "matrix/evidence-EV-V3-FLOW-A-CONTRACT-001.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-005",
+    "V3-01-GAP-016"
+  ],
+  "owner_gate_ids": [
+    "G-00"
+  ],
+  "result": "BLOCKED"
+}

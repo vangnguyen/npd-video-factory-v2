@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-04",
+  "result": "PASS_FOR_LOCAL_CI_REMEDIATION_ONLY",
+  "repository_verdict": "NO_GO",
+  "release_candidate": "NOT_ESTABLISHED",
+  "merge_authorized": false,
+  "deploy_authorized": false,
+  "credentials_authorized": false,
+  "external_provider_calls_authorized": false,
+  "paid_provider_calls_authorized": false,
+  "public_ingress_authorized": false,
+  "publish_authorized": false,
+  "quality_accepted": false,
+  "gap_003_status": "OPEN",
+  "gap_005_status": "OPEN",
+  "gap_016_status": "OPEN",
+  "next_gate": "New explicit G-08 owner review for the V3-01-04 draft PR; G-01 through G-04 and G-11 remain separate later gates",
+  "secret_recorded": false
+}

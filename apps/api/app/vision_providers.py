@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from decimal import Decimal
 from pathlib import Path
 from typing import Protocol
 
@@ -67,6 +68,10 @@ class ProviderVisionResult:
 class VisionProvider(Protocol):
     key: str
     model: str
+    external_call: bool
+    paid: bool
+    credential_alias: str | None
+    estimated_cost_vnd: Decimal | None
 
     async def analyze(
         self,
@@ -101,6 +106,10 @@ class DeterministicVisionProvider:
 
     key = "fixture-vision"
     model = "deterministic-vision-v2-05"
+    external_call = False
+    paid = False
+    credential_alias = None
+    estimated_cost_vnd = Decimal("0")
 
     async def analyze(
         self,
@@ -207,6 +216,10 @@ class DeterministicVisionProvider:
 class ContractOnlyVisionProvider:
     key = "vision-not-configured"
     model = "not-configured"
+    external_call = False
+    paid = False
+    credential_alias = None
+    estimated_cost_vnd = Decimal("0")
 
     async def analyze(
         self,
