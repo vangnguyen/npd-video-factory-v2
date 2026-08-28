@@ -8,13 +8,14 @@ Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-4 061ca5d03248d6721ef8dc7a53cf4608e7ebe79e; retained as fail-closed blocker evidence; not eligible for live acceptance; not deployed
+CURRENT RC: RC-5 26adafb2eeed4b4de1169db73a13e50a683e094c; locked NO-GO; not deployed; operation 1 not authorized
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-12 zero-call RC-bound operation allowlist draft; RC-3 operation 1 consumed and operation 2 locked
+CURRENT SAFE PHASE: RC-5 governance rebind, bundle unmounted; RC-3 IDs locked; RC-4 retained as blocker evidence
 G-00: APPROVED by V3-01-APP-001
-G-08: RECORDS THROUGH PR #26 CONSUMED; V3-01-12 MERGE NOT AUTHORIZED
-G-01-A / G-02-A / G-03-A: RC-3 WINDOW CONSUMED FOR OPERATION 1 ONLY; NO FURTHER CALL AUTHORITY
-OPERATION 1: EXECUTED ONCE; FAILED NON-RETRYABLE; NEVER REUSE
+G-08: PR #27 MERGE CONSUMED; GOVERNANCE REBIND PR MERGE NOT AUTHORIZED
+G-01-A / G-02-A / G-03-A: REBOUND TO RC-5 WINDOW; THIS DOES NOT AUTHORIZE A CALL
+RC-5 OPERATION 1: PENDING SEPARATE OWNER AUTHORITY
+HISTORICAL RC-3 OPERATION 1: EXECUTED ONCE; FAILED NON-RETRYABLE; NEVER REUSE
 NO OTHER MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
 ```
 
@@ -40,7 +41,11 @@ PR #26 then merged the zero-call V3-01-11 remediation as
 `061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`; exact-main CI run `33189441083` passed 5/5 and
 annotated tag `vf-v3-01-rc4` peels to that commit. Post-lock audit proved RC-4 still accepted only
 the hard-coded RC-3 operation IDs. RC-4 is therefore retained as fail-closed blocker evidence and
-is prohibited for live acceptance. V3-01-12 is an unmerged zero-call executable remediation.
+is prohibited for live acceptance. PR #27 then merged V3-01-12 as
+`26adafb2eeed4b4de1169db73a13e50a683e094c`; exact-main CI run `33194523231` passed 5/5 and
+annotated tag `vf-v3-01-rc5` peels to that exact commit. RC-5 operation IDs were derived and
+G-01-A/G-02-A/G-03-A were rebound to a new hash-bound window in an unmounted governance bundle.
+No RC-5 operation is authorized yet.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
@@ -59,7 +64,7 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Open PRs at capture | none |
 | Tags/releases | none returned by Git/GitHub |
 | Main branch protection | disabled; GitHub API returned `Branch not protected` |
-| Latest verified exact-main CI | [Video Factory V2 CI run 33189441083](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33189441083), 5/5 success on RC-4 main `061ca5d03248d6721ef8dc7a53cf4608e7ebe79e` |
+| Latest verified exact-main CI | [Video Factory V2 CI run 33194523231](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33194523231), 5/5 success on RC-5 main `26adafb2eeed4b4de1169db73a13e50a683e094c` |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -67,7 +72,7 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` | `061ca5d03248d6721ef8dc7a53cf4608e7ebe79e` after PR #26 |
+| Exact `origin/main` | `26adafb2eeed4b4de1169db73a13e50a683e094c` after PR #27 |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
@@ -82,7 +87,9 @@ Current repository checkpoint after the bounded merge sequence:
 | PR #25 / operation-1 evidence | exact head `b0de3903b5e630bcb288074c7939e59248f81490`; evidence/governance-only merge `2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38`; exact-main CI run `33182052862` 5/5 PASS |
 | PR #26 / V3-01-11 | exact head `a09919db67f23253bc45ff3171b99e220c25c599`; merge `061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`; exact-main CI run `33189441083` 5/5 PASS |
 | RC-4 | annotated `vf-v3-01-rc4` peels to `061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`; NO-GO; retained as blocker evidence; no live acceptance |
-| Exact-main regression | local Python 253/253, Studio 14/14, migration replay and acceptance/safety checks PASS; exact-main CI run `33189441083` passed Python, Studio, Renderer, Safety/Compose and Docker E2E |
+| PR #27 / V3-01-12 | exact head `703fec6931c315b853ee4691aef5ce290510eb8b`; merge `26adafb2eeed4b4de1169db73a13e50a683e094c`; exact-main CI run `33194523231` 5/5 PASS |
+| RC-5 | annotated `vf-v3-01-rc5` peels to `26adafb2eeed4b4de1169db73a13e50a683e094c`; NO-GO; not deployed; operation 1 pending |
+| Exact-main regression | local Python 259/259, Studio 14/14, Renderer 14/14 with typecheck/bundle, migration replay and acceptance/safety checks PASS; exact-main CI run `33194523231` passed Python, Studio, Renderer, Safety/Compose and Docker E2E |
 | Provider acceptance action | operation 1 dispatched once on RC-3; `REVIEW_REQUIRED`; no retry/fallback; operation 2 not executed |
 | Deployment/ingress/publish action | none |
 
@@ -193,9 +200,11 @@ committed the 500 VND reservation. Operation 2 remains locked and production rem
 V3-01-11 merged through PR #26 and is locked as RC-4. It makes the OpenAI strict schema recursively
 complete and persists only bounded, redacted provider failure metadata. Post-lock audit found the
 RC-3 operation IDs were still hard-coded in the executable loader, so RC-4 cannot be used for a new
-operation. V3-01-12 removes that RC-specific constant in a zero-call draft, derives IDs from exact
-RC/provider/capability/slot and keeps all execution/budget defaults fail-closed. Local evidence
-`EV-V3-RC-BOUND-ALLOWLIST-001` passes only the implemented/mock-tested axis; exact-head CI and G-08
-remain pending. See
+operation. V3-01-12 removed that RC-specific constant, merged through PR #27 and is locked as RC-5.
+It derives IDs from exact RC/provider/capability/slot and keeps all execution/budget defaults
+fail-closed. Evidence `EV-V3-RC-BOUND-ALLOWLIST-001` and `EV-V3-RC5-VISION-REBIND-001` pass only
+implemented/mock-tested governance axes. The fresh bundle is unmounted and operation 1 remains
+separately owner-gated. See
 [`29_V3_01_11_STRUCTURED_OUTPUT_ERROR_EVIDENCE.md`](29_V3_01_11_STRUCTURED_OUTPUT_ERROR_EVIDENCE.md)
-and [`30_V3_01_12_RC_BOUND_OPERATION_ALLOWLIST.md`](30_V3_01_12_RC_BOUND_OPERATION_ALLOWLIST.md).
+[`30_V3_01_12_RC_BOUND_OPERATION_ALLOWLIST.md`](30_V3_01_12_RC_BOUND_OPERATION_ALLOWLIST.md), and
+[`31_V3_01_RC5_VISION_ACCEPTANCE_WINDOW.md`](31_V3_01_RC5_VISION_ACCEPTANCE_WINDOW.md).

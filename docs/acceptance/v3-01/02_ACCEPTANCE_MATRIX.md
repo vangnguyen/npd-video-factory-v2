@@ -1,10 +1,11 @@
 # V3-01 acceptance matrix
 
-Baseline captured at `2026-08-27T12:02:08Z`; executable V3-01-01 through V3-01-10 remain locked at
-NO-GO RC-3 `adde8d9c5a7f608db80cbd9d21aecd45f721065e`. Governance-only PR #24 merged as
-`a73bad37f1f3aa7c2347e6a76503246a46d3c112`. Operation 1 was dispatched exactly once and failed
-non-retryably without structured output or a provider/usage receipt. The attempt is evidence of
-fail-closed controls, not accepted real-provider output, so no acceptance axis changes. `I/M/R/P/Q` mean
+Baseline captured at `2026-08-27T12:02:08Z`; executable remediation through V3-01-12 is locked at
+NO-GO RC-5 `26adafb2eeed4b4de1169db73a13e50a683e094c`. Historical RC-3 operation 1 was dispatched exactly
+once and failed non-retryably without structured output or a provider/usage receipt. V3-01-11 and
+V3-01-12 remediate its schema/error evidence and RC-bound operation contract, while the fresh RC-5
+governance bundle remains unmounted and operation 1 is not authorized. These are fail-closed and
+mock/governance results, not accepted real-provider output, so no acceptance axis changes. `I/M/R/P/Q` mean
 implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.

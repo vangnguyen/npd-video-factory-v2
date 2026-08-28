@@ -1,0 +1,23 @@
+{
+  "approval_id": "V3-01-APP-019",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #27 as V3-01-12 RC-bound Operation Allowlist, followed by exact-main full regression and annotated RC-5 lock.",
+  "artifact_or_commit_hashes": [
+    "703fec6931c315b853ee4691aef5ce290510eb8b",
+    "26adafb2eeed4b4de1169db73a13e50a683e094c",
+    "d299314bd07d40bc353b6a977a7ab63a88eb3751"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and isolated local/CI verification only; no runtime environment",
+  "limits": [
+    "Zero OpenAI calls and zero VND during merge, regression and RC-5 lock",
+    "No RC-3 or RC-4 operation ID reuse",
+    "No provider credential read or runtime bundle mount",
+    "No deployment, public ingress, publishing or production analytics",
+    "RC-5 remains NO-GO and has no provider-execution authority"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-28T17:24:22Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved PR #27 in the controlling task. PR #27 merged as 26adafb2eeed4b4de1169db73a13e50a683e094c, exact-main CI run 33194523231 passed 5/5, and annotated tag vf-v3-01-rc5 peels to that merge commit. This record grants no runtime action."
+}

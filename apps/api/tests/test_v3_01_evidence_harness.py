@@ -210,19 +210,22 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-VERIFIED-GATE-LOADER-001" in gap_003["evidence_ids"]
     assert "EV-V3-STRUCTURED-ERROR-EVIDENCE-001" in gap_003["evidence_ids"]
     assert "EV-V3-RC-BOUND-ALLOWLIST-001" in gap_003["evidence_ids"]
-    assert gap_003["verified_on_commit"] == "061ca5d03248d6721ef8dc7a53cf4608e7ebe79e"
+    assert "EV-V3-RC5-VISION-REBIND-001" in gap_003["evidence_ids"]
+    assert gap_003["verified_on_commit"] == "26adafb2eeed4b4de1169db73a13e50a683e094c"
 
     gap_010 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-010")
     assert gap_010["status"] == "IN_PROGRESS"
     assert "EV-V3-VERIFIED-GATE-LOADER-001" in gap_010["evidence_ids"]
     assert "EV-V3-STRUCTURED-ERROR-EVIDENCE-001" in gap_010["evidence_ids"]
     assert "EV-V3-RC-BOUND-ALLOWLIST-001" in gap_010["evidence_ids"]
-    assert gap_010["verified_on_commit"] == "061ca5d03248d6721ef8dc7a53cf4608e7ebe79e"
+    assert "EV-V3-RC5-VISION-REBIND-001" in gap_010["evidence_ids"]
+    assert gap_010["verified_on_commit"] == "26adafb2eeed4b4de1169db73a13e50a683e094c"
 
     gap_013 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-013")
     assert gap_013["status"] == "IN_PROGRESS"
     assert "EV-V3-VERIFIED-GATE-LOADER-001" in gap_013["evidence_ids"]
-    assert gap_013["verified_on_commit"] == "e7e9ccceeb97830db47d66cfa392c854f8a2e2e4"
+    assert "EV-V3-RC5-VISION-REBIND-001" in gap_013["evidence_ids"]
+    assert gap_013["verified_on_commit"] == "26adafb2eeed4b4de1169db73a13e50a683e094c"
     assert contract["gaps"]["by_severity"] == dict(Counter(row["severity"] for row in gaps))
     assert contract["production_verdict"] == "NO-GO"
     assert contract["rc_candidate"]["status"] == "CONDITIONAL-RC"
