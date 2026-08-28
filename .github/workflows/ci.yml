@@ -155,7 +155,8 @@ jobs:
           grep -Fq 'paid_external_call: Literal[False] = False' apps/api/app/vision_models.py
           grep -Fq 'class ContractOnlyVisionProvider' apps/api/app/vision_providers.py
           grep -Fq 'real_provider_tested": False' apps/api/app/vision_providers.py
-          grep -Fq 'estimated_cost=Decimal("0")' apps/api/app/vision_service.py
+          grep -Fq 'estimated_cost_vnd = Decimal("0")' apps/api/app/vision_providers.py
+          grep -Fq 'estimated_cost=self.provider.estimated_cost_vnd or Decimal("0")' apps/api/app/vision_service.py
           grep -Fq 'self.provider_safety.execute(' apps/api/app/vision_service.py
           grep -q '0004_v2_05' apps/api/migrations/versions/0004_v2_05_vision_smart_reframe.py
           ! git grep -I -n -E 'VISION_(API_KEY|TOKEN|SECRET)=[^[:space:]]+' -- .
