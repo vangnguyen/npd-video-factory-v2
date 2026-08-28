@@ -193,6 +193,26 @@ def test_v2_05_rejects_vision_fixture_in_production() -> None:
         )
 
 
+def test_v3_01_09_openai_vision_config_is_adapter_only_and_fail_closed() -> None:
+    configured = Settings(_env_file=None, vision_provider="openai")
+    assert configured.openai_vision_model == "gpt-5-mini"
+    assert configured.openai_vision_credential_alias == "secret://openai/codex-video"
+    assert configured.openai_vision_estimated_cost_vnd == 0
+    assert configured.provider_external_execution_enabled is False
+    assert configured.provider_paid_execution_enabled is False
+    assert configured.provider_global_kill_switch_engaged is True
+    with pytest.raises(ValidationError, match="external alias"):
+        Settings(_env_file=None, openai_vision_credential_alias="raw-credential")
+    with pytest.raises(ValidationError, match="locked to gpt-5-mini"):
+        Settings(_env_file=None, openai_vision_model="another-model")
+    with pytest.raises(ValidationError, match="official HTTPS API origin"):
+        Settings(
+            _env_file=None,
+            vision_provider="openai",
+            openai_base_url="https://proxy.invalid",
+        )
+
+
 def test_v2_06_rejects_media_fixture_in_production() -> None:
     with pytest.raises(ValidationError, match="media fixtures must be disabled"):
         Settings(
@@ -309,6 +329,11 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["final_render_publish"] == "dry_run_validation_only"
     assert result["source_media_mutation"] is False
     assert result["vision_analysis"] is True
+    assert result["openai_vision_adapter_implemented"] is True
+    assert result["live_vision_provider_configured"] is False
+    assert result["vision_external_execution_enabled"] is False
+    assert result["vision_paid_execution_enabled"] is False
+    assert result["vision_real_provider_tested"] is False
     assert result["ocr"] is True
     assert result["subject_tracking"] is True
     assert result["smart_reframe"] is True

@@ -55,6 +55,7 @@ from .human_auth import (
 )
 from .models import JobCreateResponse, JobRecord, VideoJobCreate
 from .object_storage import create_object_storage, sha256_file
+from .openai_vision_provider import FFmpegVisionFrameExtractor, OpenAIVisionProvider
 from .operations_observability import OperationsObservabilityService
 from .operations_routes import router as operations_router
 from .platform_models import WorkspaceCreate
@@ -239,11 +240,38 @@ async def lifespan(app: FastAPI):
         staging_root=settings.analysis_staging_root,
         provider_safety=app.state.provider_safety_controller,
     )
-    vision_provider = (
-        DeterministicVisionProvider()
-        if settings.vision_provider == "fixture"
-        else ContractOnlyVisionProvider()
-    )
+    if settings.vision_provider == "fixture":
+        vision_provider = DeterministicVisionProvider()
+    elif settings.vision_provider == "openai":
+        vision_provider = OpenAIVisionProvider(
+            credential_alias=settings.openai_vision_credential_alias,
+            credential_resolver=lambda alias: (
+                settings.openai_api_key
+                if alias == settings.openai_vision_credential_alias
+                else ""
+            ),
+            frame_extractor=FFmpegVisionFrameExtractor(
+                settings.ffmpeg_path,
+                max_frames=settings.openai_vision_max_frames,
+            ),
+            model=settings.openai_vision_model,
+            base_url=settings.openai_base_url,
+            timeout_seconds=settings.provider_request_timeout_seconds,
+            image_detail=settings.openai_vision_image_detail,
+            max_output_tokens=settings.openai_vision_max_output_tokens,
+            estimated_cost_vnd=settings.openai_vision_estimated_cost_vnd,
+            input_vnd_per_million_tokens=(
+                settings.openai_vision_input_vnd_per_million_tokens
+            ),
+            cached_input_vnd_per_million_tokens=(
+                settings.openai_vision_cached_input_vnd_per_million_tokens
+            ),
+            output_vnd_per_million_tokens=(
+                settings.openai_vision_output_vnd_per_million_tokens
+            ),
+        )
+    else:
+        vision_provider = ContractOnlyVisionProvider()
     app.state.vision_analysis_service = VisionAnalysisService(
         repository=vision_repository,
         auto_edit_repository=auto_edit_repository,
@@ -573,6 +601,30 @@ def _provider_definitions() -> list[dict[str, object]]:
             "supports_dry_run": True,
             "config_ref": "env:VISION_PROVIDER_*",
             "metadata": {"contract_only": True, "paid": None, "real_provider_tested": False},
+        },
+        {
+            "provider_key": "openai-vision",
+            "display_name": "OpenAI gpt-5-mini Vision",
+            "capability": "vision",
+            "adapter": "app.openai_vision_provider.OpenAIVisionProvider",
+            "routing_mode": "disabled",
+            "status": (
+                "degraded"
+                if settings.openai_api_key and settings.openai_vision_credential_alias
+                else "not_configured"
+            ),
+            "enabled": False,
+            "supports_dry_run": False,
+            "config_ref": "env:OPENAI_VISION_CREDENTIAL_ALIAS",
+            "metadata": {
+                "paid": True,
+                "model": "gpt-5-mini",
+                "contract_mock_tested": True,
+                "real_provider_tested": False,
+                "external_execution_enabled": False,
+                "credential_reference_only": True,
+                "cost_currency": "VND",
+            },
         },
         {
             "provider_key": "internal-media",
@@ -992,7 +1044,11 @@ async def capabilities() -> dict[str, object]:
         "media_signal_provider": settings.auto_edit_signal_provider,
         "vision_analysis": True,
         "vision_provider": settings.vision_provider,
+        "openai_vision_adapter_implemented": True,
         "live_vision_provider_configured": False,
+        "vision_external_execution_enabled": False,
+        "vision_paid_execution_enabled": False,
+        "vision_real_provider_tested": False,
         "ocr": True,
         "subject_tracking": True,
         "smart_reframe": True,
