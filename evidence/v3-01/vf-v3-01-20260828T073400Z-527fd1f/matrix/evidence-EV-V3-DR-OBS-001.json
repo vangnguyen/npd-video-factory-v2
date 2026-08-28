@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-DR-OBS-001",
+  "test_case_id": "OPS-DR-LOCAL-001",
+  "matrix_rows": [
+    "OPS-05",
+    "OPS-06",
+    "OPS-07",
+    "OPS-08",
+    "OPS-09"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "527fd1f482e4afa80105cb6ebab92545c10a79fc",
+  "environment": "CI",
+  "provider": {
+    "name": "local-disposable-docker",
+    "model_or_workflow": "v3-01-07-dr-observability-v1",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": "251ecbcbc11791d2b13dda340ff4b62c11a652192768b157df2b8258537adffc",
+  "response_or_artifact_hash": "0da713e21978f0858ae608ddad41102d065625447a911d09350b8a1ee4cc349c",
+  "started_at_utc": "2026-08-28T07:34:00Z",
+  "completed_at_utc": "2026-08-28T07:34:33Z",
+  "duration_seconds": 33,
+  "result": "PASS",
+  "assertion": "The guarded V3-01-07 local disposable Docker drill performed backup, destructive failure, restore, restart and recovery with 9/9 target hashes preserved, RPO 0 seconds, RTO 33 seconds, PostgreSQL-canonical Redis queue reconstruction, pending-work resume, correlated secret-redacted operations evidence, seven internal alert previews, zero external actions, zero notifications and zero VND cost. It is local/CI evidence only; production-path and soak axes remain BLOCKED.",
+  "correlation_id": "v3-01-07-dr-local-527fd1f",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex DR contract-test reviewer",
+  "gap_ids": [
+    "V3-01-GAP-008",
+    "V3-01-GAP-009"
+  ],
+  "reproduce": "Run VIDEO_FACTORY_DRILL_MODE=disposable-ci scripts/e2e-smoke.sh for the isolated npd-video-factory-v3-dr-e2e project, then run python scripts/v3_01_dr_observability_acceptance.py evidence/v3-01/vf-v3-01-20260828T073400Z-527fd1f/operations/dr-observability/two-axis-contract.json --expect-verdict BLOCKED on commit 527fd1f482e4afa80105cb6ebab92545c10a79fc. Never run the destructive drill against a shared or production Compose project."
+}

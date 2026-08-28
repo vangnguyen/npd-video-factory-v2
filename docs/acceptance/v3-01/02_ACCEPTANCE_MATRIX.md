@@ -1,7 +1,7 @@
 # V3-01 acceptance matrix
 
-Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-03 are merged and V3-01-04
-contract/mock evidence was added on `2026-08-28`. `I/M/R/P/Q` mean implemented, mock-tested,
+Baseline captured at `2026-08-27T12:02:08Z`; V3-01-01 through V3-01-06 are merged and V3-01-07
+local/CI DR and observability evidence was added on `2026-08-28`. `I/M/R/P/Q` mean implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
 
@@ -63,18 +63,18 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | OPS-02 | Secret management / least privilege | FAIL | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-001; EV-V3-SEC-002-PARTIAL | GAP-001; GAP-007; GAP-011 |
 | OPS-03 | Cost budgets / kill switch | PASS | PASS | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-PROVIDER-SAFETY-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-010 |
 | OPS-04 | Rights and provenance ledger | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-PROVIDER-SAFETY-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-013 |
-| OPS-05 | Logs/metrics/traces/alerts | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001 | GAP-009 |
-| OPS-06 | Backup creation/integrity | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-DR-001 | GAP-008 |
-| OPS-07 | Isolated restore drill | PASS | NOT_TESTED | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-DR-001 | GAP-008 |
-| OPS-08 | Release rollback plan | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-DR-001 | GAP-008 |
-| OPS-09 | Audit/evidence retention | FAIL | FAIL | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001 | GAP-009; GAP-013 |
+| OPS-05 | Logs/metrics/traces/alerts | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-DR-OBS-001 | GAP-009 |
+| OPS-06 | Backup creation/integrity | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-DR-001; EV-V3-DR-OBS-001 | GAP-008 |
+| OPS-07 | Isolated restore drill | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-DR-001; EV-V3-DR-OBS-001 | GAP-008 |
+| OPS-08 | Release rollback plan | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-DR-001; EV-V3-DR-OBS-001 | GAP-008 |
+| OPS-09 | Audit/evidence retention | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-DR-OBS-001 | GAP-009; GAP-013 |
 | OPS-10 | 48-hour production-like soak | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | N/A | EV-V3-STATIC-001 | GAP-009 |
 
 ## Interpretation
 
 - `PASS` under I/M proves only current code and deterministic tests.
-- V3-01-01 through V3-01-04 keep the implemented count at `42 PASS / 18 FAIL` and the mock-tested
-  count to `51 PASS / 2 FAIL / 7 NOT_TESTED`; they do not change any real-provider,
+- V3-01-01 through V3-01-07 leave the implemented count at `44 PASS / 16 FAIL` and the mock-tested
+  count at `54 PASS / 1 FAIL / 5 NOT_TESTED`; they do not change any real-provider,
   production-path or quality axis.
 - All real-provider, production-path and human quality work remains unproven.
 - `N/A` is used only where the master matrix defines an axis as structurally inapplicable; it does

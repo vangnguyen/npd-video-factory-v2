@@ -4,9 +4,9 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 through V3-01-05 are merged at exact `main`
-`e7888649c97f60be0b7ee5201633aa5481deb591`. Entries below that mention V3-01-06 describe
-local/CI remediation on `remediation/v3-01-06-flow-c-closure`, not production.
+V3-01-01 through V3-01-06 are merged at exact `main`
+`f3ef5431fcc14289351163057fbffa407f7bd226`. Entries below that mention V3-01-07 describe
+local/CI remediation on `remediation/v3-01-07-dr-observability`, not production.
 
 ## Foundation
 
@@ -75,9 +75,9 @@ local/CI remediation on `remediation/v3-01-06-flow-c-closure`, not production.
 | Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart and configuration tests | Implemented/mock-tested; production-like multi-instance and real acceptance absent |
 | Upload malware boundary | quarantine state, archive-deny policy, deterministic EICAR contract and internal clamd client | `test_auto_edit_analysis.py`, migration replay | Local/mock PASS; clamd and edge/WAF not deployed |
 | Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests | Schema/hook implemented; real rights unaccepted |
-| Backup/restore | `v2-11-backup.sh`, `v2-11-restore.sh` | syntax/config only | No drill |
-| Rollback/deploy | guarded V2-11 helpers and runbook | syntax/config only | No image/deployment drill |
-| Observability | request IDs and basic worker logging | limited assertions | Metrics/traces/dashboards/alerts missing |
+| Backup/restore | `v2-11-backup.sh`, `v2-11-restore.sh`, `v3-01-dr-observability-drill.sh` | guarded disposable Docker backup/failure/restore/hash verification target | Local/CI only; production-like DR untested |
+| Rollback/deploy | guarded V2-11 helpers and DR runbook | migration replay and disposable data restore; no locked image rollback | Production-like rollback remains blocked |
+| Observability | authenticated `operations` snapshot, correlation headers, structured secret-redacted logs and alert previews | focused tests plus disposable E2E target | Local/CI only; no monitoring backend or external alert delivery |
 | Soak | `v2-11-soak.sh` | no completed window | 24-hour helper does not meet V3 48-hour gate |
 
 ## Runtime ownership

@@ -1,6 +1,6 @@
 # Owner gate register
 
-G-00 and five completed bounded G-08 actions have approval records. All G-08 approvals are
+G-00 and six completed bounded G-08 actions have approval records. All G-08 approvals are
 consumed; every later merge and every other gate remains `PENDING`. Use
 `schemas/approval-record.schema.json` for each later decision; no approval is implied by CI success.
 
@@ -14,7 +14,7 @@ consumed; every later merge and every other gate remains `PENDING`. Use
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation PR merge | CONSUMED — `V3-01-APP-002` completed PR #12 → retest #13 → PR #13; `V3-01-APP-003` completed PR #14; `V3-01-APP-004` completed PR #15; `V3-01-APP-005` completed PR #16; `V3-01-APP-006` completed PR #17 | a new explicit G-08 record is required for V3-01-06 or any later merge |
+| G-08 | remediation PR merge | CONSUMED — `V3-01-APP-002` completed PR #12/#13; `V3-01-APP-003` through `V3-01-APP-007` completed PR #14 through PR #18 | a new explicit G-08 record is required for V3-01-07 or any later merge |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
@@ -28,7 +28,7 @@ time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, remediation implementation in LOCAL/CI,
 static/mock/security testing, redacted evidence creation and draft PR creation. The exact PR
-#12/#13 sequence and PR #14/#15/#16/#17 merges authorized by the five G-08 records are complete and cannot be reused. Current authority
+#12/#13 sequence and PR #14/#15/#16/#17/#18 merges authorized by the six G-08 records are complete and cannot be reused. Current authority
 includes no further merge, deployment, credential use, paid call, public route, publishing,
 analytics collection or production write. Records:
 [`V3-01-APP-001`](approvals/V3-01-APP-001.json) and
@@ -36,4 +36,5 @@ analytics collection or production write. Records:
 [`V3-01-APP-003`](approvals/V3-01-APP-003.json), and
 [`V3-01-APP-004`](approvals/V3-01-APP-004.json), and
 [`V3-01-APP-005`](approvals/V3-01-APP-005.json), and
-[`V3-01-APP-006`](approvals/V3-01-APP-006.json).
+[`V3-01-APP-006`](approvals/V3-01-APP-006.json), and
+[`V3-01-APP-007`](approvals/V3-01-APP-007.json).

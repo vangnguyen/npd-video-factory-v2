@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-07",
+  "overall_verdict": "NO-GO",
+  "dr_observability_contract_verdict": "BLOCKED",
+  "implemented": "PASS",
+  "local_disposable_drill": "PASS",
+  "production_path_tested": "BLOCKED",
+  "soak_accepted": "BLOCKED",
+  "pending_owner_gates": [
+    "G-04",
+    "G-08",
+    "G-09",
+    "G-10",
+    "G-12"
+  ],
+  "external_execution": false,
+  "paid_execution": false,
+  "budget_vnd": 0,
+  "currency": "VND",
+  "global_kill_switch_engaged": true,
+  "credentials_used": false,
+  "deploy_performed": false,
+  "public_ingress_enabled": false,
+  "publish_performed": false,
+  "production_analytics_enabled": false,
+  "external_notifications_enabled": false
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-07",
+  "focused_python": {
+    "passed": 30,
+    "failed": 0,
+    "scope": "DR acceptance, operations observability and provider safety"
+  },
+  "full_python": {
+    "passed": 222,
+    "failed": 0
+  },
+  "operations_route_python": {
+    "passed": 10,
+    "failed": 0,
+    "scope": "operations API and Agent Hub bridge correlation"
+  },
+  "renderer": {
+    "passed": 14,
+    "failed": 0,
+    "typecheck": "PASS",
+    "bundle_check": "PASS"
+  },
+  "studio": {
+    "passed": 14,
+    "failed": 0,
+    "javascript_syntax": "PASS"
+  },
+  "migration_replay": "PASS",
+  "docker_disposable_dr": "PASS",
+  "python_compile": "PASS",
+  "shell_syntax": "PASS",
+  "external_calls": 0,
+  "cost_total_vnd": 0
+}

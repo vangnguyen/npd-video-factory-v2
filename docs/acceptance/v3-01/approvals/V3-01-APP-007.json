@@ -1,0 +1,29 @@
+{
+  "approval_id": "V3-01-APP-007",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #18 V3-01-06 Flow C offline acceptance plane into main after exact-head CI, followed by exact-main regression and local or CI implementation of a draft V3-01-07 DR and observability foundation only.",
+  "artifact_or_commit_hashes": [
+    "e7888649c97f60be0b7ee5201633aa5481deb591",
+    "6f68e0091829801c570375f63365e387f1234f0c",
+    "f3ef5431fcc14289351163057fbffa407f7bd226"
+  ],
+  "target_account_or_environment": "GitHub repository main branch merge of PR #18 and local or CI draft work for V3-01-07; no runtime environment",
+  "limits": [
+    "All five Video Factory V2 CI jobs must pass on exact PR #18 head before merge",
+    "Run exact-main regression after merge",
+    "No production deployment or public ingress",
+    "No credential activation or real provider execution",
+    "No paid provider call; approved budget remains 0 VND",
+    "Global provider kill switch remains engaged",
+    "No real publish or production analytics",
+    "Flow C fixture evidence cannot be promoted to real-provider or production evidence",
+    "V3-01-07 may create guarded local or CI DR, observability contracts, redacted evidence and a draft PR only",
+    "No permission to merge V3-01-07 or any later remediation PR",
+    "No permission to start a production-like restore or 48-hour soak"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-28T06:18:00Z",
+  "expires_at_utc": null,
+  "notes": "Captured from the owner's explicit G-08 approval in the Codex task. PR #18 merged at 2026-08-28T06:19:17Z as f3ef5431fcc14289351163057fbffa407f7bd226. This record grants no G-01 through G-07 or G-09 through G-12 authority."
+}

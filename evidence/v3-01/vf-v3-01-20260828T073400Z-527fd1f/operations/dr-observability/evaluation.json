@@ -1,0 +1,38 @@
+{
+  "implemented": {
+    "status": "PASS",
+    "reasons": [
+      "DR contract, guarded scripts, authenticated operations snapshot and alert-preview policy are present."
+    ]
+  },
+  "local_disposable_drill": {
+    "status": "PASS",
+    "reasons": [
+      "Disposable Docker backup/failure/restore/restart/recovery drill passed."
+    ]
+  },
+  "production_path_tested": {
+    "status": "BLOCKED",
+    "reasons": [
+      "G-04/G-09/G-10 production-like DR evidence is pending."
+    ]
+  },
+  "soak_accepted": {
+    "status": "BLOCKED",
+    "reasons": [
+      "A non-backdated 48-hour locked-RC soak has not been accepted."
+    ]
+  },
+  "failures": [],
+  "pending_owner_gates": [
+    "G-04",
+    "G-08",
+    "G-09",
+    "G-10",
+    "G-12"
+  ],
+  "verdict": "BLOCKED",
+  "external_actions_performed": false,
+  "external_notifications_sent": false,
+  "cost_total_vnd": 0
+}
