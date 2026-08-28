@@ -2,12 +2,17 @@
 
 ## Current result
 
-`BLOCKED / NO DR DRILL EXECUTED`
+`LOCAL DISPOSABLE DR PASS / PRODUCTION-LIKE DR BLOCKED`
 
-V2-11 contains guarded deployment, backup, restore, smoke and soak helpers plus runbooks. CI checks
-their syntax and deterministic contracts. There is no Video Factory production deployment, image
-digest, canonical production database/object store or production backup to restore. This audit did
-not create, overwrite or restore any runtime state.
+V3-01-07 executed an actual backup, destructive failure, restore, restart and recovery drill inside
+the isolated Compose project `npd-video-factory-v3-dr-e2e`. PostgreSQL and MinIO were restored,
+Redis work was reconstructed from canonical PostgreSQL state, one pending analytics job resumed,
+and all 9 required recovery target hashes matched. Measured local RPO was 0 seconds and RTO was 33
+seconds. Evidence is `EV-V3-DR-OBS-001` on code commit
+`527fd1f482e4afa80105cb6ebab92545c10a79fc`.
+
+This did not touch production, deploy an image, restore a shared volume or establish production-like
+DR. There is still no accepted immutable RC image or owner-approved production RPO/RTO.
 
 ## Data ownership boundary
 
@@ -21,7 +26,19 @@ not create, overwrite or restore any runtime state.
 Backups must be Video Factory-scoped. They must not create or overwrite Agent Hub, SaleHub, n8n,
 Caddy or another product's database/Redis namespace.
 
-## Required isolated drill
+## Completed local disposable drill
+
+The local drill completed this sequence:
+
+1. captured migration and recovery fingerprints;
+2. created PostgreSQL, MinIO and retained Redis-AOF backups with integrity checks;
+3. stopped services and destructively cleared only the disposable target;
+4. restored PostgreSQL and MinIO, then rebuilt Redis queues from PostgreSQL;
+5. restarted services and resumed one deliberately pending analytics job;
+6. verified 9/9 state and artifact hashes, readiness and zero duplicate external action;
+7. recorded zero provider calls, zero notifications, zero production writes and 0 VND cost.
+
+## Remaining production-like drill
 
 After G-04 approves the isolated target and before G-10 can accept the result:
 
@@ -40,8 +57,8 @@ backup and evidence remain retained after cleanup of the isolated target.
 
 ## Acceptance thresholds
 
-Owner-approved RPO/RTO are currently `TBD`; therefore `OPS-06`, `OPS-07` and `OPS-08` cannot pass.
-A script existing or returning zero is insufficient without data-integrity, recovery and rollback
-evidence bound to one RC.
+`OPS-06`, `OPS-07` and `OPS-08` pass only the implemented/local deterministic axis. Their
+production-path axis remains `NOT_TESTED`. Owner-approved production RPO/RTO are still `TBD`, so
+G-04/G-09/G-10 remain mandatory before production-like DR can pass.
 
 Open gaps: `V3-01-GAP-007`, `V3-01-GAP-008`.

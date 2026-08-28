@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import logging
 import re
 import time
 import uuid
@@ -53,6 +55,8 @@ from .human_auth import (
 )
 from .models import JobCreateResponse, JobRecord, VideoJobCreate
 from .object_storage import create_object_storage, sha256_file
+from .operations_observability import OperationsObservabilityService
+from .operations_routes import router as operations_router
 from .platform_models import WorkspaceCreate
 from .platform_routes import router as platform_router
 from .publishing_logic import PublishingCapabilityRegistry
@@ -87,6 +91,9 @@ from .vision_providers import ContractOnlyVisionProvider, DeterministicVisionPro
 from .vision_repository import VisionRepository
 from .vision_routes import router as vision_router
 from .vision_service import VisionAnalysisService
+
+
+logger = logging.getLogger("uvicorn.error")
 
 
 def new_job_id() -> str:
@@ -163,6 +170,22 @@ async def lifespan(app: FastAPI):
     )
     app.state.provider_safety_recovered_operations = len(
         await app.state.provider_safety_controller.recover_stale_operations()
+    )
+    app.state.operations_observability = OperationsObservabilityService(
+        session_factory=session_factory,
+        redis=redis,
+        object_storage=object_storage,
+        provider_safety=app.state.provider_safety_controller,
+        job_storage_root=settings.job_storage_root,
+        object_storage_provider=settings.object_storage_provider,
+        queue_backlog_warning=settings.operations_queue_backlog_warning,
+        failed_jobs_warning=settings.operations_failed_jobs_warning,
+        disk_warning_percent=settings.operations_disk_warning_percent,
+        disk_critical_percent=settings.operations_disk_critical_percent,
+        provider_ledger_retention_days=settings.provider_operation_retention_days,
+        evidence_retention_days=settings.operations_evidence_retention_days,
+        operations_log_retention_days=settings.operations_log_retention_days,
+        retention_cleanup_enabled=settings.provider_retention_cleanup_enabled,
     )
     app.state.trend_repository = trend_repository
     app.state.auto_edit_repository = auto_edit_repository
@@ -350,6 +373,7 @@ app.include_router(production_router, dependencies=_human_route_dependencies)
 app.include_router(publishing_router, dependencies=_human_route_dependencies)
 app.include_router(analytics_router, dependencies=_human_route_dependencies)
 app.include_router(provider_safety_router, dependencies=_human_route_dependencies)
+app.include_router(operations_router, dependencies=_human_route_dependencies)
 app.include_router(bridge_router)
 
 
@@ -361,12 +385,44 @@ async def security_headers(request: Request, call_next):
         if re.fullmatch(r"[A-Za-z0-9._:-]{1,128}", supplied_request_id)
         else uuid.uuid4().hex
     )
+    supplied_correlation_id = request.headers.get("X-Correlation-ID", "")
+    correlation_id = (
+        supplied_correlation_id
+        if re.fullmatch(r"[A-Za-z0-9._:-]{1,128}", supplied_correlation_id)
+        else request_id
+    )
+    request.state.request_id = request_id
+    request.state.correlation_id = correlation_id
+    started = time.perf_counter()
     response = await call_next(request)
     response.headers["X-Request-ID"] = request_id
+    response.headers["X-Correlation-ID"] = correlation_id
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["Cache-Control"] = "no-store" if request.url.path.startswith("/api/") else response.headers.get("Cache-Control", "no-cache")
+    path_ids = {
+        key: value
+        for key, value in request.path_params.items()
+        if key in {"workspace_id", "project_id", "job_id"}
+        and re.fullmatch(r"[A-Za-z0-9._:-]{1,128}", str(value))
+    }
+    logger.info(
+        json.dumps(
+            {
+                "event": "http_request_completed",
+                "request_id": request_id,
+                "correlation_id": correlation_id,
+                "method": request.method,
+                "route": request.url.path,
+                "status_code": response.status_code,
+                "duration_ms": round((time.perf_counter() - started) * 1000, 3),
+                **path_ids,
+                "secret_free": True,
+            },
+            sort_keys=True,
+        )
+    )
     return response
 
 
@@ -892,6 +948,11 @@ async def capabilities() -> dict[str, object]:
         "provider_budget_currency": settings.provider_budget_currency,
         "provider_ledger_retention_days": settings.provider_operation_retention_days,
         "provider_ledger_cleanup_enabled": settings.provider_retention_cleanup_enabled,
+        "operations_snapshot": "authenticated_read_only",
+        "operations_external_notifications_enabled": settings.operations_external_notifications_enabled,
+        "request_correlation_headers": ["X-Request-ID", "X-Correlation-ID"],
+        "operations_evidence_retention_days": settings.operations_evidence_retention_days,
+        "operations_log_retention_days": settings.operations_log_retention_days,
         "trend_radar": True,
         "idea_intelligence": True,
         "content_opportunity_queue": True,

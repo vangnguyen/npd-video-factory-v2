@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-07",
+  "release_candidate_commit": "527fd1f482e4afa80105cb6ebab92545c10a79fc",
+  "gates": {
+    "g04_production_like_staging": false,
+    "g08_merge": false,
+    "g09_deploy_locked_rc": false,
+    "g10_accept_dr": false,
+    "g12_final_verdict": false,
+    "approval_ids": []
+  },
+  "safety": {
+    "external_execution_enabled": false,
+    "paid_execution_enabled": false,
+    "global_kill_switch_engaged": true,
+    "daily_budget_vnd": 0,
+    "external_notifications_enabled": false,
+    "production_write_performed": false,
+    "publish_performed": false
+  },
+  "drill": {
+    "run_id": "dr-local-20260828T073400Z-527fd1f",
+    "release_candidate_commit": "527fd1f482e4afa80105cb6ebab92545c10a79fc",
+    "environment": "LOCAL_DISPOSABLE_DOCKER",
+    "started_at_utc": "2026-08-28T07:34:00Z",
+    "completed_at_utc": "2026-08-28T07:34:33Z",
+    "source_and_restore_targets_isolated": true,
+    "backup_integrity_verified": true,
+    "migration_head_before": "0011_v3_01_03",
+    "migration_head_after": "0011_v3_01_03",
+    "recovery_targets": [
+      {
+        "target": "postgresql",
+        "backup_sha256": "7c28266431d66be6de8e88afdfbd963c74629f59cdb05e7565d93848d16d7462",
+        "restored_sha256": "7c28266431d66be6de8e88afdfbd963c74629f59cdb05e7565d93848d16d7462",
+        "verified": true
+      },
+      {
+        "target": "object_storage",
+        "backup_sha256": "43678b31679168418b6d4d0ca0648dfec27a3412e932b74e61061f0e70f44fa6",
+        "restored_sha256": "43678b31679168418b6d4d0ca0648dfec27a3412e932b74e61061f0e70f44fa6",
+        "verified": true
+      },
+      {
+        "target": "provider_safety_state",
+        "backup_sha256": "f88c0e8236fed601612291e9494f284ae963398b372bc82913a2d6cf6cc1bbcd",
+        "restored_sha256": "f88c0e8236fed601612291e9494f284ae963398b372bc82913a2d6cf6cc1bbcd",
+        "verified": true
+      },
+      {
+        "target": "worker_pending_work",
+        "backup_sha256": "4cb8f5322ef413487e37edb42729d272b590f5dd08d8bbc15d3cd25d07b62676",
+        "restored_sha256": "4cb8f5322ef413487e37edb42729d272b590f5dd08d8bbc15d3cd25d07b62676",
+        "verified": true
+      },
+      {
+        "target": "render_state",
+        "backup_sha256": "f684f82de603cab70d96c2ad87f821a2d8b8f5f97ff0def2b8a8613a51885b3b",
+        "restored_sha256": "f684f82de603cab70d96c2ad87f821a2d8b8f5f97ff0def2b8a8613a51885b3b",
+        "verified": true
+      },
+      {
+        "target": "publication_retry_state",
+        "backup_sha256": "864eecbbfbe1cf7a64bc211d0a625e1cad33f346cbf786ccb2514d24527fbfe6",
+        "restored_sha256": "864eecbbfbe1cf7a64bc211d0a625e1cad33f346cbf786ccb2514d24527fbfe6",
+        "verified": true
+      },
+      {
+        "target": "webhook_retry_state",
+        "backup_sha256": "586ec20357604ed5b499bd50f7dd20bc264adbfeb3d5df5c52c9a49296bf9fed",
+        "restored_sha256": "586ec20357604ed5b499bd50f7dd20bc264adbfeb3d5df5c52c9a49296bf9fed",
+        "verified": true
+      },
+      {
+        "target": "analytics_snapshot_state",
+        "backup_sha256": "c5c62243dea331877163fc749fc200c53a347306264132229ffc2bfb07a2bcb1",
+        "restored_sha256": "c5c62243dea331877163fc749fc200c53a347306264132229ffc2bfb07a2bcb1",
+        "verified": true
+      },
+      {
+        "target": "audit_evidence",
+        "backup_sha256": "66059138bf5f4a28cbc7e5b4efcc79ade43098c7bd4019888db304132eefaf2b",
+        "restored_sha256": "66059138bf5f4a28cbc7e5b4efcc79ade43098c7bd4019888db304132eefaf2b",
+        "verified": true
+      }
+    ],
+    "postgres_counts_equal": true,
+    "redis_recovery_mode": "rebuild_from_postgresql",
+    "redis_queue_rebuilt": true,
+    "pending_work_resumed": true,
+    "worker_restarted": true,
+    "services_ready_after_restore": true,
+    "no_duplicate_external_action": true,
+    "external_action_count": 0,
+    "external_notification_count": 0,
+    "production_write_count": 0,
+    "measured_rpo_seconds": 0,
+    "measured_rto_seconds": 33,
+    "request_id_propagated": true,
+    "job_id_correlated": true,
+    "project_id_correlated": true,
+    "structured_logs_verified": true,
+    "health_and_readiness_verified": true,
+    "queue_backlog_visible": true,
+    "failed_jobs_visible": true,
+    "provider_degradation_visible": true,
+    "disk_pressure_visible": true,
+    "cost_budget_visible": true,
+    "secret_redaction_verified": true,
+    "retention_policy_verified": true,
+    "alert_scenarios": [
+      {
+        "scenario": "queue_backlog",
+        "detected": true,
+        "severity": "warning",
+        "correlation_id": "v3-01-07-alert-queue-backlog",
+        "runbook": "DR_OBSERVABILITY.md#queue-backlog",
+        "secret_recorded": false,
+        "external_notification_sent": false
+      },
+      {
+        "scenario": "provider_degradation",
+        "detected": true,
+        "severity": "critical",
+        "correlation_id": "v3-01-07-alert-provider-degradation",
+        "runbook": "DR_OBSERVABILITY.md#provider-degradation",
+        "secret_recorded": false,
+        "external_notification_sent": false
+      },
+      {
+        "scenario": "storage_unavailable",
+        "detected": true,
+        "severity": "critical",
+        "correlation_id": "v3-01-07-alert-storage-unavailable",
+        "runbook": "DR_OBSERVABILITY.md#storage-unavailable",
+        "secret_recorded": false,
+        "external_notification_sent": false
+      },
+      {
+        "scenario": "disk_pressure",
+        "detected": true,
+        "severity": "critical",
+        "correlation_id": "v3-01-07-alert-disk-pressure",
+        "runbook": "DR_OBSERVABILITY.md#disk-pressure",
+        "secret_recorded": false,
+        "external_notification_sent": false
+      },
+      {
+        "scenario": "failed_job",
+        "detected": true,
+        "severity": "warning",
+        "correlation_id": "v3-01-07-alert-failed-job",
+        "runbook": "DR_OBSERVABILITY.md#failed-jobs",
+        "secret_recorded": false,
+        "external_notification_sent": false
+      },
+      {
+        "scenario": "cost_threshold",
+        "detected": true,
+        "severity": "warning",
+        "correlation_id": "v3-01-07-alert-cost-threshold",
+        "runbook": "DR_OBSERVABILITY.md#cost-threshold",
+        "secret_recorded": false,
+        "external_notification_sent": false
+      },
+      {
+        "scenario": "service_unhealthy",
+        "detected": true,
+        "severity": "critical",
+        "correlation_id": "v3-01-07-alert-service-unhealthy",
+        "runbook": "DR_OBSERVABILITY.md#service-unhealthy",
+        "secret_recorded": false,
+        "external_notification_sent": false
+      }
+    ],
+    "currency": "VND",
+    "cost_total_vnd": 0,
+    "secret_recorded": false,
+    "real_provider_tested": false,
+    "production_path_tested": false
+  },
+  "soak_started": false,
+  "soak_duration_hours": 0,
+  "secret_recorded": false
+}

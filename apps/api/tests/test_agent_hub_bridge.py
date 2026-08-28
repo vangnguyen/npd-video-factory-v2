@@ -425,13 +425,23 @@ async def test_bridge_api_requires_signed_service_role_and_preserves_contract(tm
         assert "trend.opportunity.detected" in contract.json()["outbound_events"]
         unsigned = await client.post(path, content=body, headers={"Content-Type": "application/json"})
         assert unsigned.status_code in {400, 401}
-        response = await client.post(path, content=body, headers={**headers, "Content-Type": "application/json"})
+        response = await client.post(
+            path,
+            content=body,
+            headers={
+                **headers,
+                "Content-Type": "application/json",
+                "X-Request-ID": "request-api-bridge-001",
+                "X-Correlation-ID": "correlation-api-bridge-001",
+            },
+        )
         assert response.status_code == 201
         assert response.headers["X-Content-Type-Options"] == "nosniff"
         assert response.headers["X-Frame-Options"] == "DENY"
         assert response.headers["Referrer-Policy"] == "no-referrer"
         assert response.headers["Cache-Control"] == "no-store"
-        assert len(response.headers["X-Request-ID"]) == 32
+        assert response.headers["X-Request-ID"] == "request-api-bridge-001"
+        assert response.headers["X-Correlation-ID"] == "correlation-api-bridge-001"
         result = response.json()
         assert result["project"]["status"] == "draft"
         assert result["bridge_request"]["execution_started"] is False

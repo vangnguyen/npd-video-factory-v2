@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "base_main_sha": "f3ef5431fcc14289351163057fbffa407f7bd226",
+  "code_commit_sha": "527fd1f482e4afa80105cb6ebab92545c10a79fc",
+  "exact_main_before_remediation": {
+    "python": "PASS",
+    "studio": "PASS",
+    "renderer": "PASS",
+    "migration_replay": "PASS",
+    "docker_deterministic_e2e": "PASS"
+  },
+  "remediation_worktree": {
+    "renderer_tests": "14/14 PASS",
+    "renderer_typecheck": "PASS",
+    "renderer_bundle": "PASS",
+    "migration_replay": "PASS",
+    "docker_dr_e2e": "PASS",
+    "final_full_python": "222/222 PASS"
+  },
+  "safety": {
+    "external_execution": false,
+    "paid_execution": false,
+    "budget_vnd": 0,
+    "global_kill_switch_engaged": true,
+    "external_notifications": false,
+    "deploy_performed": false,
+    "public_ingress_enabled": false,
+    "publish_performed": false
+  }
+}

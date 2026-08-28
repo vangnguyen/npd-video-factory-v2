@@ -2,18 +2,16 @@
 
 ## Current result
 
-`BLOCKED / SOAK NOT STARTED`
+`LOCAL OBSERVABILITY PASS / DELIVERY AND SOAK BLOCKED`
 
-V2-11 has request IDs, basic structured application logs, readiness checks and a guarded soak
-helper. Deterministic restart/recovery behavior is covered in tests. There is no deployed Video
-Factory environment, monitoring backend, accepted alert route, retention evidence or continuous
-48-hour RC observation.
+V3-01-07 adds an authenticated read-only operations snapshot, request/correlation propagation,
+structured secret-redacted logs and visibility for dependencies, queues, failed jobs, disk,
+provider safety state, VND cost and retention. Seven alert scenarios are detected as internal
+previews with runbook and correlation IDs; external delivery is hard-disabled. The disposable DR
+run verifies these signals after restore under `EV-V3-DR-OBS-001`.
 
-V3-01-02 adds an authenticated, secret-free provider safety snapshot. V3-01-03 backs its budget,
-operation, attempt and circuit data with PostgreSQL and adds active/stale/recovered counts, oldest
-active age and retention metadata. This improves restart-safe observability, but it is not a
-production monitoring backend, alert-delivery acceptance or soak record and therefore closes no
-observability/soak gap.
+This remains local/CI evidence. There is no deployed monitoring backend, accepted alert destination
+or continuous 48-hour locked-RC observation. `V3-01-GAP-009` therefore remains `IN_PROGRESS`.
 
 ## Required signals
 
@@ -28,10 +26,10 @@ observability/soak gap.
 
 ## Alert tests
 
-`ALT-001` must inject bounded staging failures for stalled queue, provider failure, storage
-unavailability, expired credential alias, cost threshold and unhealthy service. Each alert must
-identify component, severity, first/last occurrence, correlation ID and runbook, while containing no
-secret or customer PII. External notification delivery itself requires its own approved target.
+The local `ALT-001` contract covers queue backlog, provider degradation, storage unavailability,
+disk pressure, failed jobs, VND cost threshold and unhealthy service. Each preview includes severity,
+correlation ID and runbook and contains no secret or customer PII. Production alert delivery remains
+separately owner-gated and disabled.
 
 ## 48-hour soak contract
 

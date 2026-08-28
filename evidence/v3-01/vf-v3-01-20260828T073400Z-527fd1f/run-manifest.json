@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260828T073400Z-527fd1f",
+  "started_at_utc": "2026-08-28T07:34:00Z",
+  "completed_at_utc": "2026-08-28T07:34:33Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "527fd1f482e4afa80105cb6ebab92545c10a79fc",
+  "base_sha": "f3ef5431fcc14289351163057fbffa407f7bd226",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-07-remediation",
+  "environment": "CI",
+  "container_images": [],
+  "database_migration_version": "0011_v3_01_03",
+  "config_fingerprint_redacted": "dr-observability-local-disposable-provider-external-false-paid-false-zero-vnd-kill-switch-engaged-notifications-false",
+  "providers": [
+    {
+      "capability": "local-disposable-dr",
+      "provider": "docker-compose-local",
+      "model_or_workflow": "v3-01-07-dr-observability-v1",
+      "region": "ci-only",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "OPS-DR-LOCAL-001",
+    "CI-LOCAL-REGRESSION"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "matrix/evidence-EV-V3-DR-OBS-001.json",
+    "operations/dr-observability/drill-summary.json",
+    "operations/dr-observability/evaluation.json",
+    "operations/dr-observability/regression-summary.json",
+    "operations/dr-observability/test-summary.json",
+    "operations/dr-observability/two-axis-contract.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-008",
+    "V3-01-GAP-009"
+  ],
+  "owner_gate_ids": [
+    "G-00"
+  ],
+  "result": "BLOCKED"
+}

@@ -138,6 +138,13 @@ class Settings(BaseSettings):
     provider_operation_lease_seconds: int = 900
     provider_operation_retention_days: int = 400
     provider_retention_cleanup_enabled: bool = False
+    operations_queue_backlog_warning: int = 50
+    operations_failed_jobs_warning: int = 1
+    operations_disk_warning_percent: float = 85.0
+    operations_disk_critical_percent: float = 95.0
+    operations_evidence_retention_days: int = 400
+    operations_log_retention_days: int = 30
+    operations_external_notifications_enabled: bool = False
 
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
@@ -349,6 +356,18 @@ class Settings(BaseSettings):
             raise ValueError("PROVIDER_OPERATION_RETENTION_DAYS must be between 30 and 3650")
         if self.provider_retention_cleanup_enabled:
             raise ValueError("provider ledger deletion is not activated in V3-01-03")
+        if not 1 <= self.operations_queue_backlog_warning <= 1_000_000:
+            raise ValueError("operations queue warning threshold must be positive and bounded")
+        if not 1 <= self.operations_failed_jobs_warning <= 1_000_000:
+            raise ValueError("operations failed-job threshold must be positive and bounded")
+        if not 1 <= self.operations_disk_warning_percent < self.operations_disk_critical_percent <= 100:
+            raise ValueError("operations disk thresholds must be ordered percentages")
+        if not 30 <= self.operations_evidence_retention_days <= 3650:
+            raise ValueError("operations evidence retention must be between 30 and 3650 days")
+        if not 7 <= self.operations_log_retention_days <= 365:
+            raise ValueError("operations log retention must be between 7 and 365 days")
+        if self.operations_external_notifications_enabled:
+            raise ValueError("external operations notifications are not activated in V3-01-07")
         if self.provider_paid_execution_enabled and not self.provider_external_execution_enabled:
             raise ValueError("paid provider execution requires external provider execution")
         provider_specific_external_gates = (

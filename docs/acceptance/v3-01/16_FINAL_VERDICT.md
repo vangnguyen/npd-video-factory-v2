@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: V3-01-00 baseline, merged V3-01-01 through V3-01-05, and V3-01-06 local/CI remediation
+SCOPE: V3-01-00 baseline, merged V3-01-01 through V3-01-06, and V3-01-07 local/CI remediation
 RELEASE CANDIDATE: NOT ESTABLISHED
-LATEST EVIDENCE RUN: vf-v3-01-20260828T043714Z-c1f50c4 (earlier runs remain separately retained)
+LATEST EVIDENCE RUN: vf-v3-01-20260828T073400Z-527fd1f (earlier runs remain separately retained)
 DATE: 2026-08-28
-OWNER DECISION: G-00 APPROVED; BOUNDED G-08 RECORDS CONSUMED BY PR #12/#13, PR #14, PR #15, PR #16 AND PR #17; ALL LATER MERGE AND EXECUTION GATES PENDING
+OWNER DECISION: G-00 APPROVED; BOUNDED G-08 RECORDS CONSUMED BY PR #12 THROUGH PR #18; ALL LATER MERGE AND EXECUTION GATES PENDING
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -19,8 +19,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Area | Result |
 |---|---|
 | Matrix catalog | 60 rows present |
-| Implemented axis | 42 PASS, 18 FAIL |
-| Mock-tested axis | 51 PASS, 2 FAIL, 7 NOT_TESTED |
+| Implemented axis | 44 PASS, 16 FAIL |
+| Mock-tested axis | 54 PASS, 1 FAIL, 5 NOT_TESTED |
 | Real-provider-tested axis | 37 NOT_TESTED, 23 N/A |
 | Production-path-tested axis | 60 NOT_TESTED |
 | Quality-accepted axis | 36 NOT_TESTED, 24 N/A |
@@ -30,16 +30,16 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
 | Cost | 0 VND actual, 0 external calls; durable local controls pass, production-like/real acceptance incomplete |
 | Rights/provenance | strict hook/artifact checks pass for fixtures; real-asset acceptance absent |
-| Backup/restore | helpers exist; no isolated drill |
-| Observability/soak | no production-like monitoring or 48-hour run |
-| Gaps | 7 OPEN, 8 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
+| Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
+| Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
+| Gaps | 5 OPEN, 10 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
 | Allowed scope | LOCAL/CI remediation, static/mock/security tests, redacted evidence, draft PRs |
-| Disabled scope | V3-01-06 merge, deploy, paid/provider calls, public ingress, publish, production analytics |
+| Disabled scope | V3-01-07 merge, deploy, paid/provider calls, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
 
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
-- no production-like target, deployed image digest, backup or DR drill;
+- no production-like target, deployed image digest or owner-accepted production-like DR drill;
 - no owner-approved real provider, rights, budget or production Vietnamese voice evidence;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
@@ -48,17 +48,19 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 ## Evidence
 
 - baseline run: `vf-v3-01-20260827T120208Z-cae40ed`;
-- exact merged `main`: `e7888649c97f60be0b7ee5201633aa5481deb591`;
+- exact merged `main`: `f3ef5431fcc14289351163057fbffa407f7bd226`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
+- locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
 - production image digest: none;
 - evidence IDs: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`,
-  `EV-V3-SAFETY-001`, `EV-V3-DR-001`;
+  `EV-V3-SAFETY-001`, `EV-V3-DR-001`, `EV-V3-DR-OBS-001`;
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
-- restore report: none; `EV-V3-DR-001` is BLOCKED static evidence;
+- restore report: local disposable `EV-V3-DR-OBS-001` PASS; production-like restore remains absent;
 - owner approval IDs: `V3-01-APP-001` for G-00, `V3-01-APP-002` for only PR #12/#13,
   `V3-01-APP-003` for only PR #14, `V3-01-APP-004` for only PR #15,
-  `V3-01-APP-005` for only PR #16 and `V3-01-APP-006` for only PR #17.
+  `V3-01-APP-005` for only PR #16, `V3-01-APP-006` for only PR #17 and
+  `V3-01-APP-007` for only PR #18.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -93,6 +95,14 @@ assessment, recommendation-only learning lineage, restart recovery and 0 VND cos
 external call, remote post or production analytics was used. Real-provider, production-path and
 quality axes remain `BLOCKED`; G-01 through G-06 and G-11 remain pending.
 
+V3-01-07 evidence is stored in `vf-v3-01-20260828T073400Z-527fd1f` as
+`EV-V3-DR-OBS-001`. The guarded disposable Docker drill restored PostgreSQL and object storage,
+rebuilt Redis queues from canonical PostgreSQL state, resumed pending work and verified 9/9
+recovery target hashes with RPO 0 seconds and RTO 33 seconds. Authenticated operations snapshots,
+request/job/project correlation, secret-redacted logs and seven external-notification-disabled alert
+previews also pass locally. Production-path DR, monitoring delivery and the 48-hour soak remain
+`BLOCKED`; G-04/G-08/G-09/G-10/G-12 are pending for this checkpoint.
+
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
@@ -101,8 +111,8 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; `V3-01-APP-002` through `V3-01-APP-006` are consumed.
-  V3-01-06 requires a new explicit G-08.
+- **Merge:** none currently authorized; `V3-01-APP-002` through `V3-01-APP-007` are consumed.
+  V3-01-07 requires a new explicit G-08.
 - **Deploy:** no; no locked RC or G-09.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** zero real-provider calls; 0 VND.

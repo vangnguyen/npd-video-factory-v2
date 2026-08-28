@@ -4,6 +4,12 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
+COMPOSE_PROJECT_NAME="${VIDEO_FACTORY_E2E_COMPOSE_PROJECT:-npd-video-factory-v3-dr-e2e}"
+case "$COMPOSE_PROJECT_NAME" in
+  npd-video-factory-v3-dr-*) ;;
+  *) echo "Disposable E2E compose project must start with npd-video-factory-v3-dr-" >&2; exit 2 ;;
+esac
+export COMPOSE_PROJECT_NAME
 
 if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
   echo "Python interpreter not found: $PYTHON_BIN" >&2
@@ -22,6 +28,9 @@ else
   echo "Docker CLI was not found" >&2
   exit 1
 fi
+docker_compose() {
+  "$docker_bin" compose -p "$COMPOSE_PROJECT_NAME" "$@"
+}
 env_backup=""
 had_env=0
 if [[ -f .env ]]; then
@@ -31,8 +40,8 @@ if [[ -f .env ]]; then
 fi
 
 cleanup() {
-  "$docker_bin" compose logs --no-color > e2e-artifacts/compose.log 2>&1 || true
-  "$docker_bin" compose down -v >/dev/null 2>&1 || true
+  docker_compose logs --no-color > e2e-artifacts/compose.log 2>&1 || true
+  docker_compose down -v >/dev/null 2>&1 || true
   if [[ "$had_env" == "1" ]]; then
     cp "$env_backup" .env
   else
@@ -134,7 +143,7 @@ curl() {
 "$PYTHON_BIN" scripts/generate-e2e-fixtures.py
 
 echo "[e2e] building and starting stack"
-"$docker_bin" compose up -d --build
+docker_compose up -d --build
 
 echo "[e2e] waiting for API readiness"
 ready=0
@@ -540,8 +549,8 @@ fi
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$project_id/previews/$preview_id/content" \
   --output e2e-artifacts/preview.mp4
-"$docker_bin" compose cp e2e-artifacts/preview.mp4 worker:/tmp/v2-07-e2e-preview.mp4 >/dev/null
-"$docker_bin" compose exec -T worker ffprobe -v error \
+docker_compose cp e2e-artifacts/preview.mp4 worker:/tmp/v2-07-e2e-preview.mp4 >/dev/null
+docker_compose exec -T worker ffprobe -v error \
   -show_entries stream=codec_type,codec_name,width,height \
   -show_entries format=duration \
   -of json /tmp/v2-07-e2e-preview.mp4 \
@@ -593,14 +602,14 @@ PY
 
 echo "[e2e] exercising V2-08 subtitle, audio, approval and final-render workflow"
 echo "[e2e] generating a short encoded A/V fixture for bounded production-render acceptance"
-"$docker_bin" compose exec -T worker ffmpeg -y -hide_banner -loglevel error \
+docker_compose exec -T worker ffmpeg -y -hide_banner -loglevel error \
   -f lavfi -i 'testsrc2=size=1080x1920:rate=30' \
   -f lavfi -i 'sine=frequency=440:sample_rate=48000' \
   -t 3 -shortest \
   -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
   -c:a aac -ar 48000 -movflags +faststart \
   /tmp/v2-08-short-source.mp4
-"$docker_bin" compose cp worker:/tmp/v2-08-short-source.mp4 e2e-artifacts/v2-08-short-source.mp4 >/dev/null
+docker_compose cp worker:/tmp/v2-08-short-source.mp4 e2e-artifacts/v2-08-short-source.mp4 >/dev/null
 
 curl --fail --silent --show-error \
   -X POST "http://localhost:8000/api/v1/workspaces/$workspace_id/projects" \
@@ -760,8 +769,8 @@ fi
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$production_project_id/renders/$review_render_id/content" \
   --output e2e-artifacts/review-render.mp4
-"$docker_bin" compose cp e2e-artifacts/review-render.mp4 worker:/tmp/v2-08-e2e-review.mp4 >/dev/null
-"$docker_bin" compose exec -T worker ffprobe -v error \
+docker_compose cp e2e-artifacts/review-render.mp4 worker:/tmp/v2-08-e2e-review.mp4 >/dev/null
+docker_compose exec -T worker ffprobe -v error \
   -show_entries stream=codec_type,codec_name,width,height,sample_rate \
   -show_entries format=duration \
   -of json /tmp/v2-08-e2e-review.mp4 \
@@ -808,8 +817,8 @@ fi
 curl --fail --silent --show-error \
   "http://localhost:8000/api/v1/projects/$production_project_id/renders/$final_render_id/content" \
   --output e2e-artifacts/final-render-v2-08.mp4
-"$docker_bin" compose cp e2e-artifacts/final-render-v2-08.mp4 worker:/tmp/v2-08-e2e-final.mp4 >/dev/null
-"$docker_bin" compose exec -T worker ffprobe -v error \
+docker_compose cp e2e-artifacts/final-render-v2-08.mp4 worker:/tmp/v2-08-e2e-final.mp4 >/dev/null
+docker_compose exec -T worker ffprobe -v error \
   -show_entries stream=codec_type,codec_name,width,height,sample_rate \
   -show_entries format=duration \
   -of json /tmp/v2-08-e2e-final.mp4 \
@@ -1038,7 +1047,7 @@ assert all(item["supports_sync"] is False for item in providers if item["mode"] 
 PY
 
 echo "[e2e] restarting worker before a second analytics snapshot"
-"$docker_bin" compose restart worker >/dev/null
+docker_compose restart worker >/dev/null
 "$PYTHON_BIN" -c '
 import json, sys
 payload = {
@@ -1327,7 +1336,7 @@ print("[e2e] V2-06 B-roll, media provider, rights and asynchronous resolution co
 PY
 
 echo "[e2e] restarting API to verify PostgreSQL recovery"
-"$docker_bin" compose restart api >/dev/null
+docker_compose restart api >/dev/null
 ready=0
 for _ in $(seq 1 45); do
   if curl --fail --silent http://localhost:8000/readyz >/dev/null; then
@@ -1496,7 +1505,7 @@ assert analytics_report_after["external_execution_enabled"] is False, analytics_
 print("[e2e] PostgreSQL jobs, V2-08 production, V2-09 publication and V2-10 analytics recovery verified")
 PY
 
-"$docker_bin" compose exec -T api python -c '
+docker_compose exec -T api python -c '
 from pathlib import Path
 import sys
 
@@ -1522,7 +1531,22 @@ assert hashlib.sha256((root / "final.mp4").read_bytes()).hexdigest() == video["c
 print("[e2e] MinIO artifact recovery verified")
 PY
 
-"$docker_bin" compose exec -T worker ffmpeg -hide_banner -loglevel error -y \
+echo "[e2e] running V3-01-07 disposable backup, failure, restore and queue-recovery drill"
+final_artifact_sha="$("$PYTHON_BIN" -c 'import json; data=json.load(open("e2e-artifacts/job-status.json", encoding="utf-8")); print(next(item["checksum_sha256"] for item in data["artifacts"] if item["name"] == "final.mp4"))' | tr -d '\r')"
+VIDEO_FACTORY_DRILL_MODE=disposable-ci \
+VIDEO_FACTORY_DRILL_HUMAN_TOKEN="$HUMAN_SESSION_TOKEN" \
+VIDEO_FACTORY_DRILL_PROJECT_ID="$production_project_id" \
+VIDEO_FACTORY_DRILL_PUBLICATION_ID="$publication_id" \
+VIDEO_FACTORY_DRILL_JOB_ID="$job_id" \
+VIDEO_FACTORY_DRILL_ARTIFACT_SHA256="$final_artifact_sha" \
+VIDEO_FACTORY_COMPOSE_PROJECT="$COMPOSE_PROJECT_NAME" \
+DOCKER_BIN="$docker_bin" \
+PYTHON_BIN="$PYTHON_BIN" \
+  bash scripts/v3-01-dr-observability-drill.sh --confirm-disposable \
+  >e2e-artifacts/v3-01-drill-report-path.txt
+echo "[e2e] V3-01-07 disposable DR and PostgreSQL-backed Redis queue recovery verified"
+
+docker_compose exec -T worker ffmpeg -hide_banner -loglevel error -y \
   -i "/workspace/storage/jobs/$job_id/final.mp4" \
   -vf "fps=1/5,scale=360:640,tile=3x3:padding=8:margin=8:color=white" \
   -frames:v 1 "/workspace/storage/jobs/$job_id/contact-sheet.jpg"

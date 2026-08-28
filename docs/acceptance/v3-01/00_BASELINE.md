@@ -10,9 +10,9 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: not yet established
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-03 remediation development in LOCAL/CI; no current merge authority
+CURRENT SAFE PHASE: V3-01-07 remediation development in LOCAL/CI; no current merge authority
 G-00: APPROVED by V3-01-APP-001
-G-08: V3-01-APP-002 CONSUMED by #12/#13; V3-01-APP-003 CONSUMED by #14
+G-08: V3-01-APP-002 through V3-01-APP-007 CONSUMED by PR #12 through PR #18
 NO OTHER MERGE / NO DEPLOY / NO PUBLISH WITHOUT EXPLICIT OWNER APPROVAL
 ```
 
@@ -23,10 +23,10 @@ analytics write or takedown. Those actions remain bound to their separate gates.
 G-08 later authorized only the repository merge sequence PR #12, then retarget/retest PR #13, then
 PR #13 if all five CI jobs pass. It grants no runtime or external-execution authority.
 
-The first bounded sequence completed with PR #12 merge `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4`
-and PR #13 merge `9b66d6917d6d58fea995b3a1049fc95198e81bf1`. A later bounded G-08 record
-authorized only PR #14, which merged at `dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3` after exact-head CI.
-Both approvals are exhausted and do not authorize merging V3-01-03.
+The bounded remediation sequence completed PR #12 through PR #18. The latest merge is PR #18 at
+`f3ef5431fcc14289351163057fbffa407f7bd226`, after exact-head CI passed on
+`6f68e0091829801c570375f63365e387f1234f0c`. `V3-01-APP-007` is exhausted and authorizes only
+local/CI draft work for V3-01-07; it does not authorize merging V3-01-07 or any runtime action.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
@@ -53,12 +53,14 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` | `dee8ac279b9ae5f4f94fbb654efb41bfdaf38ae3` |
-| Exact main tree | `bd72d658f9d507e581669edd8c0ed4fd28eb049c` |
+| Exact `origin/main` | `f3ef5431fcc14289351163057fbffa407f7bd226` |
+| Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
-| PR #14 | exact head `83c31934e9505a2ec076a9a3ccb309a78aacf9ba`; 5/5 CI PASS; merged at exact current main |
-| Exact-main regression | [CI run 33090995730](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33090995730), 5/5 PASS |
+| PR #14 through PR #17 | merged sequentially under bounded G-08 records; no runtime authority |
+| PR #18 | exact head `6f68e0091829801c570375f63365e387f1234f0c`; CI run `33143473424` PASS; merged as exact current main |
+| PR #19 | V3-01-07 draft opened from exact `main`; merge and all runtime gates remain pending |
+| Exact-main regression | local Python/Studio/renderer/migration/Docker deterministic suite PASS before V3-01-07 development |
 | Deployment/provider/ingress action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in
@@ -70,8 +72,8 @@ README, architecture, security, deployment, testing, V2 acceptance and runbook d
 |---|---|
 | API/worker/renderer/Studio version | `0.12.0` |
 | API title | `NPD Video Factory V2 API` |
-| Latest Alembic migration on `main` | `0010_v2_11_agent_hub_bridge` |
-| V3-01-03 locked branch migration | `0011_v3_01_03_security_durable_safety`; local replay PASS, not on main |
+| Latest Alembic migration on `main` | `0011_v3_01_03_security_durable_safety` |
+| V3-01-07 schema change | none; public API and Redis key formats remain compatible |
 | Compose project | `npd-video-factory-v2` |
 | Default services | PostgreSQL, Redis, MinIO, migrate, API, Studio, renderer, worker |
 | Optional service | `comfyui-bridge` behind disabled `gpu` profile |
@@ -96,7 +98,7 @@ runs inside the pinned containers. The host operating system is Windows NT `10.0
 | Production ingress/TLS/Caddy route | absent by design |
 | Production database/storage | not provisioned or evidenced |
 | Latest production backup | none evidenced |
-| Restore/rollback drill | not performed |
+| Restore/rollback drill | local disposable V3-01-07 data recovery PASS; production-like/image rollback not performed |
 | Production incident | none applicable because V2 is not deployed |
 
 This audit does not infer any Video Factory deployment from the separate Agent Hub/SaleHub VPS.
