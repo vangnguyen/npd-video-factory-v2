@@ -1,0 +1,26 @@
+{
+  "audit_version": 1,
+  "evidence_id": "EV-V3-OPENAI-VISION-OP1-FAILED-001",
+  "operation_key": "v3-01-g03a-openai-vision-call-01",
+  "rc_commit": "adde8d9c5a7f608db80cbd9d21aecd45f721065e",
+  "generated_schema_sha256": "7774228503f1f590731aceb440ab1136bae631663fd39cdb5756e9e829855f8d",
+  "audit_result": "FAIL",
+  "violations": [
+    {
+      "path": "#/$defs/_ObjectOutput",
+      "property": "track_hint",
+      "issue": "property is present but absent from required",
+      "additional_properties": false
+    }
+  ],
+  "official_requirement": {
+    "source": "https://developers.openai.com/api/docs/guides/structured-outputs",
+    "rule": "All fields must be required; optional values are represented by a required nullable union."
+  },
+  "diagnosis": {
+    "classification": "HIGH_CONFIDENCE_INFERENCE_NOT_SERVER_CONFIRMED",
+    "reason": "The exact RC-3 strict schema violates the documented Structured Outputs requirement at one deterministic path. The adapter did not retain the redacted HTTP error body, so this record does not claim the provider's exact message."
+  },
+  "provider_calls_added_by_audit": 0,
+  "operation_2_executed": false
+}

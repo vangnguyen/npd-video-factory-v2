@@ -1,5 +1,11 @@
 # V3-01-10 — Verified Acceptance Gate Loader
 
+> Historical checkpoint: the `OPERATION 1 DECISION: PENDING` statements below describe the state
+> when V3-01-10 was accepted. Operation 1 was later authorized, executed once and ended
+> `REVIEW_REQUIRED`; current evidence is
+> [28_V3_01_RC3_VISION_OPERATION_1_EVIDENCE.md](28_V3_01_RC3_VISION_OPERATION_1_EVIDENCE.md).
+> Operation 2 remains locked.
+
 ## Decision summary
 
 ```text

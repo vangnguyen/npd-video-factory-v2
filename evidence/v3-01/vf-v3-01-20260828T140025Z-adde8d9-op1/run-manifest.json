@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260828T140025Z-adde8d9-op1",
+  "started_at_utc": "2026-08-28T14:00:25.217418Z",
+  "completed_at_utc": "2026-08-28T14:00:27.025598Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "adde8d9c5a7f608db80cbd9d21aecd45f721065e",
+  "base_sha": "a73bad37f1f3aa7c2347e6a76503246a46d3c112",
+  "release_candidate": "vf-v3-01-rc3; immutable controlled-acceptance code; NO-GO; not deployed",
+  "environment": "LOCAL",
+  "container_images": [
+    {
+      "name": "npd-video-factory-v2:rc3-op1-adde8d9",
+      "digest": "sha256:9339c880b48c8e3e57a8acfa2f9f692d553d316ac265f1133076ba4e99b3eb8a"
+    }
+  ],
+  "database_migration_version": "0011_v3_01_03",
+  "config_fingerprint_redacted": "rc3-openai-vision-op1-one-attempt-no-retry-no-fallback-500-vnd-reservation-operation2-locked",
+  "providers": [
+    {
+      "capability": "vision",
+      "provider": "openai-vision",
+      "model_or_workflow": "gpt-5-mini / Responses API",
+      "region": "provider-managed",
+      "credential_alias": "secret://openai/codex-video",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "V3-01-RC3-OPENAI-VISION-OPERATION-1",
+    "DUPLICATE-OPERATION-BLOCK",
+    "SECRET-LEAK-SCAN"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "matrix/evidence-EV-V3-OPENAI-VISION-OP1-FAILED-001.json",
+    "provider/operation-1-summary.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved_window": 1250,
+    "reserved_operation": 500,
+    "committed_estimated": 500,
+    "actual": null,
+    "external_attempts": 1,
+    "retries": 0,
+    "operation_2_attempts": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-01",
+    "G-02",
+    "G-03"
+  ],
+  "result": "BLOCKED"
+}

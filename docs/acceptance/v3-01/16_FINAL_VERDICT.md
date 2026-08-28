@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-10 plus RC-3 governance rebind; zero live calls
+SCOPE: merged V3-01-00 through V3-01-10 plus RC-3 governance rebind; one failed bounded live attempt
 RELEASE CANDIDATE: RC-3 adde8d9c5a7f608db80cbd9d21aecd45f721065e LOCKED FOR CONTROLLED ACCEPTANCE ONLY; NOT DEPLOYED
-LATEST EVIDENCE RUN: vf-v3-01-20260828T094813Z-fe4837b (earlier runs remain separately retained)
+LATEST EVIDENCE: EV-V3-OPENAI-VISION-OP1-FAILED-001 (earlier runs remain separately retained)
 DATE: 2026-08-28
-OWNER DECISION: G-00 APPROVED; G-08 RECORDS CONSUMED THROUGH PR #23; G-01-A/G-02-A/G-03-A REBOUND TO RC-3; OPERATION 1 PENDING
+OWNER DECISION: G-00 APPROVED; G-08 CONSUMED THROUGH PR #24; RC-3 OPERATION 1 CONSUMED; OPERATION 2 LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -28,19 +28,19 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | 0 VND actual, 0 external calls; durable local controls pass, production-like/real acceptance incomplete |
+| Cost | one external attempt; actual provider cost unknown; durable ledger committed 500 VND estimated safety charge; production-like/real acceptance incomplete |
 | Rights/provenance | exact owned test image approved for Vision acceptance only; broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
-| Allowed scope | LOCAL/CI remediation, static/mock/security tests, redacted evidence, draft PRs |
-| Disabled scope | credential-value access, paid/provider calls, deploy, public ingress, publish, production analytics, external notifications |
+| Allowed scope | LOCAL/CI zero-call remediation, static/mock/security tests, redacted evidence, draft PRs |
+| Disabled scope | further provider calls, credential-value access, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
 
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
 - no production-like target, deployed image digest or owner-accepted production-like DR drill;
-- OpenAI Vision adapter is mock-tested only; exact RC-3 rights/budget scope is prepared but operation 1 is not authorized and no real-provider or production Vietnamese voice evidence exists;
+- OpenAI Vision operation 1 failed before structured output/provider/usage receipts; it is not accepted real-provider evidence, operation 2 is locked and no production Vietnamese voice evidence exists;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
 - GitHub `main` is not protected.
@@ -50,13 +50,15 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - baseline run: `vf-v3-01-20260827T120208Z-cae40ed`;
 - exact merged `main` and locked NO-GO RC-3: `adde8d9c5a7f608db80cbd9d21aecd45f721065e` (`vf-v3-01-rc3`);
 - V3-01-10 PR #23 exact head: `40149c2b439c78e75fdd3ff8996c2ed8c3ec4575`; exact-main CI `33173094529` PASS; merged into RC-3;
+- governance-only PR #24 merged as `a73bad37f1f3aa7c2347e6a76503246a46d3c112`; exact-main CI `33175813324` PASS 5/5; executable RC-3 unchanged;
+- operation-1 evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`, evidence SHA-256 `e94fcafcbab8adefb9506cb91d98010cdb1713ba79ce209ec2dfdb154f97fd2d`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
 - production image digest: none;
 - evidence IDs: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`,
   `EV-V3-SAFETY-001`, `EV-V3-DR-001`, `EV-V3-DR-OBS-001`,
   `EV-V3-RC-CONSOLIDATION-001`, `EV-V3-OPENAI-VISION-ADAPTER-001`,
-  `EV-V3-VERIFIED-GATE-LOADER-001`;
+  `EV-V3-VERIFIED-GATE-LOADER-001`, `EV-V3-OPENAI-VISION-OP1-FAILED-001`;
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: local disposable `EV-V3-DR-OBS-001` PASS; production-like restore remains absent;
@@ -127,8 +129,10 @@ V3-01-10 adds a verified acceptance gate loader and one internally generated G-0
 The loader binds raw/canonical hashes, exact RC, G-01/G-02/G-03 records, a dated VND envelope,
 exactly two operation IDs and the asset SHA-256; it checks expiry and reserves cost atomically in
 the durable ledger. The owner approved this exact RightsRecord only for Vision acceptance, and all
-three gate records now bind RC-3 plus the same complete scope hash. The bundle remains unmounted,
-runtime defaults remain disabled, operation 1 is pending, and no acceptance axis has yet changed.
+three gate records bind RC-3 plus the same complete scope hash. Governance-only PR #24 preserved the
+executable RC. Operation 1 was dispatched once, failed non-retryably, and produced no structured,
+provider or usage receipt. Atomic reservation, one-attempt/no-retry semantics, duplicate blocking,
+rights binding and secret containment held. Operation 2 remains locked and no acceptance axis changed.
 
 ## Open gaps and remediation
 
@@ -138,13 +142,13 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; all G-08 records through `V3-01-APP-013` are consumed.
+- **Merge:** none currently authorized; the G-08 decision for PR #24 is consumed.
 - **Deploy:** no; RC-3 is NO-GO and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
-- **Volume/concurrency/budget:** zero real-provider calls and 0 VND actual; the RC-3 G-02-A
-  envelope is hash-bound but unmounted and inactive.
+- **Volume/concurrency/budget:** operation 1 consumed exactly one attempt with no retry/fallback;
+  actual provider cost is unknown and the ledger committed 500 VND as an estimated safety charge.
 - **Publish visibility/channel:** none; no remote publication.
-- **Still prohibited:** credentials use, paid calls, production-path writes, public route, publish,
+- **Still prohibited:** any further provider call, credentials use, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
 - **Rollback trigger:** no runtime change exists; revert the isolated docs/harness PR if it regresses
   CI or evidence integrity.

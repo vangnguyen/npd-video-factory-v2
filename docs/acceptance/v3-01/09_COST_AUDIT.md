@@ -2,13 +2,15 @@
 
 ## Current result
 
-| Currency | Approved budget | Actual external cost | External calls |
-|---|---:|---:|---:|
-| VND | 0 | 0 | 0 |
+| Currency | Approved acceptance envelope | Safety-ledger committed | Actual external cost | External attempts |
+|---|---:|---:|---:|---:|
+| VND | 1,250 window / 500 operation | 500 estimated | unknown | 1 |
 
-The baseline audit used repository, GitHub CI and local static/mock evidence only. No provider call,
-GPU workflow, hosted render, publish or analytics collection was performed. USD is not an accepted
-operating currency for this acceptance program.
+The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
+later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
+receipt, so actual provider billing cannot be asserted. The safety ledger committed the reserved
+500 VND conservatively as an estimated charge. No GPU workflow, hosted render, publish or analytics
+collection was performed. USD is not an accepted operating currency for this acceptance program.
 
 ## Required provider budget contract
 
@@ -44,9 +46,16 @@ These are local/CI controls only. Production-like PostgreSQL contention/restart 
 owner-gated real-provider acceptance are still required. Therefore all external, paid, ComfyUI,
 publishing and analytics execution gates remain false.
 
+Operation `v3-01-g03a-openai-vision-call-01` was attempted once with no automatic retry or model
+fallback. Its durable record is failed/non-retryable, duplicate preflight is blocked, operation 2
+has no ledger row, and the circuit remains closed with one consecutive failure. Because the provider
+returned no usage receipt, the 500 VND ledger amount is safety accounting rather than accepted
+actual cost. Evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`.
+
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.
 
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit
-`0f0854466655d2f36cfa8b57785000097b220c4c`; not closed or production-verified.
+`0f0854466655d2f36cfa8b57785000097b220c4c`, plus the failed bounded-operation evidence above;
+not closed or production-verified.
