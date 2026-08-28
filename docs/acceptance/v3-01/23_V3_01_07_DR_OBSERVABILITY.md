@@ -45,7 +45,9 @@ The checkpoint covers:
 | Human quality | N/A | no media-quality claim is made by this checkpoint |
 
 The checked-in secret-free evidence is `EV-V3-DR-OBS-001`, bound to code commit
-`527fd1f482e4afa80105cb6ebab92545c10a79fc`. Exact-head CI is still required before owner review.
+`527fd1f482e4afa80105cb6ebab92545c10a79fc`. PR #19 exact head
+`4b17fc1352ee4582db9b69f795531ef9b6a4feb4` passed all five CI jobs and merged under
+`V3-01-APP-008` as exact `main` `b132e839904b377ec7e82e9135920f895ddf704e`.
 Neither local PASS may be promoted to production evidence.
 
 ## Remaining gates and gaps
@@ -56,10 +58,10 @@ Neither local PASS may be promoted to production evidence.
 - `V3-01-GAP-009` may move to `IN_PROGRESS`: local signals and alert previews exist, but there is no
   monitoring backend, accepted alert destination or 48-hour soak.
 - `V3-01-GAP-010` remains `IN_PROGRESS`: no provider is activated.
-- G-04, G-08, G-09, G-10 and G-12 remain pending for this checkpoint.
+- G-08 was consumed by the repository merge only. G-04, G-09, G-10 and G-12 remain pending.
 
 ## Exact next gate
 
-After final-head CI is green, owner G-08 may authorize merge of the V3-01-07 foundation only.
-That decision must remain separate from staging/deployment G-04/G-09, DR acceptance G-10 and final
-verdict G-12. It must not imply any real-provider or publishing gate.
+The repository merge is complete. The next checkpoint is V3-01-08 consolidation/RC review. Any
+production-like staging/deployment, DR acceptance or final verdict remains separately bound to
+G-04/G-09, G-10 and G-12 and must not imply a real-provider or publishing gate.

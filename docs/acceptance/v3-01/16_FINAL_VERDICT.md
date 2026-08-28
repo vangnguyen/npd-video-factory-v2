@@ -1,14 +1,14 @@
-# V3-01 checkpoint verdict
+# V3-01 consolidation checkpoint verdict
 
 ## Executive verdict
 
 ```text
 VERDICT: NO-GO
-SCOPE: V3-01-00 baseline, merged V3-01-01 through V3-01-06, and V3-01-07 local/CI remediation
-RELEASE CANDIDATE: NOT ESTABLISHED
-LATEST EVIDENCE RUN: vf-v3-01-20260828T073400Z-527fd1f (earlier runs remain separately retained)
+SCOPE: V3-01-00 baseline, merged V3-01-01 through V3-01-07, and V3-01-08 consolidation
+RELEASE CANDIDATE: CONDITIONAL ACCEPTANCE CANDIDATE b132e839904b377ec7e82e9135920f895ddf704e; NOT LOCKED OR DEPLOYED
+LATEST EVIDENCE RUN: vf-v3-01-20260828T081742Z-b132e83 (earlier runs remain separately retained)
 DATE: 2026-08-28
-OWNER DECISION: G-00 APPROVED; BOUNDED G-08 RECORDS CONSUMED BY PR #12 THROUGH PR #18; ALL LATER MERGE AND EXECUTION GATES PENDING
+OWNER DECISION: G-00 APPROVED; BOUNDED G-08 RECORDS CONSUMED BY PR #12 THROUGH PR #19; V3-01-08 MERGE AND ALL EXECUTION GATES PENDING
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -21,7 +21,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Matrix catalog | 60 rows present |
 | Implemented axis | 44 PASS, 16 FAIL |
 | Mock-tested axis | 54 PASS, 1 FAIL, 5 NOT_TESTED |
-| Real-provider-tested axis | 37 NOT_TESTED, 23 N/A |
+| Real-provider-tested axis | 36 NOT_TESTED, 24 N/A |
 | Production-path-tested axis | 60 NOT_TESTED |
 | Quality-accepted axis | 36 NOT_TESTED, 24 N/A |
 | Flow A | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
@@ -34,7 +34,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 5 OPEN, 10 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
 | Allowed scope | LOCAL/CI remediation, static/mock/security tests, redacted evidence, draft PRs |
-| Disabled scope | V3-01-07 merge, deploy, paid/provider calls, public ingress, publish, production analytics, external notifications |
+| Disabled scope | V3-01-08 merge, deploy, paid/provider calls, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
 
@@ -48,19 +48,20 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 ## Evidence
 
 - baseline run: `vf-v3-01-20260827T120208Z-cae40ed`;
-- exact merged `main`: `f3ef5431fcc14289351163057fbffa407f7bd226`;
+- exact merged `main` and conditional acceptance candidate: `b132e839904b377ec7e82e9135920f895ddf704e`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
 - production image digest: none;
 - evidence IDs: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`,
-  `EV-V3-SAFETY-001`, `EV-V3-DR-001`, `EV-V3-DR-OBS-001`;
+  `EV-V3-SAFETY-001`, `EV-V3-DR-001`, `EV-V3-DR-OBS-001`,
+  `EV-V3-RC-CONSOLIDATION-001`;
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: local disposable `EV-V3-DR-OBS-001` PASS; production-like restore remains absent;
 - owner approval IDs: `V3-01-APP-001` for G-00, `V3-01-APP-002` for only PR #12/#13,
   `V3-01-APP-003` for only PR #14, `V3-01-APP-004` for only PR #15,
-  `V3-01-APP-005` for only PR #16, `V3-01-APP-006` for only PR #17 and
-  `V3-01-APP-007` for only PR #18.
+  `V3-01-APP-005` for only PR #16, `V3-01-APP-006` for only PR #17,
+  `V3-01-APP-007` for only PR #18 and `V3-01-APP-008` for only PR #19.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -101,7 +102,13 @@ rebuilt Redis queues from canonical PostgreSQL state, resumed pending work and v
 recovery target hashes with RPO 0 seconds and RTO 33 seconds. Authenticated operations snapshots,
 request/job/project correlation, secret-redacted logs and seven external-notification-disabled alert
 previews also pass locally. Production-path DR, monitoring delivery and the 48-hour soak remain
-`BLOCKED`; G-04/G-08/G-09/G-10/G-12 are pending for this checkpoint.
+`BLOCKED`; PR #19 is merged, but G-04/G-09/G-10/G-12 are pending for runtime acceptance.
+
+V3-01-08 consolidates the evidence without changing an acceptance axis. The detailed RC decision,
+gate dependency map and future provider/staging/cost/rights plans are in
+[`24_V3_01_08_CONSOLIDATION_RC_GATE.md`](24_V3_01_08_CONSOLIDATION_RC_GATE.md). The RC review is
+`CONDITIONAL-RC` for controlled acceptance planning only while the production verdict stays
+`NO-GO`.
 
 ## Open gaps and remediation
 
@@ -111,8 +118,8 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; `V3-01-APP-002` through `V3-01-APP-007` are consumed.
-  V3-01-07 requires a new explicit G-08.
+- **Merge:** none currently authorized; `V3-01-APP-002` through `V3-01-APP-008` are consumed.
+  V3-01-08 requires a new explicit G-08.
 - **Deploy:** no; no locked RC or G-09.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** zero real-provider calls; 0 VND.

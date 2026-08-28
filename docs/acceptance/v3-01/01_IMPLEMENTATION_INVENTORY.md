@@ -4,9 +4,9 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 through V3-01-06 are merged at exact `main`
-`f3ef5431fcc14289351163057fbffa407f7bd226`. Entries below that mention V3-01-07 describe
-local/CI remediation on `remediation/v3-01-07-dr-observability`, not production.
+V3-01-01 through V3-01-07 are merged at exact `main`
+`b132e839904b377ec7e82e9135920f895ddf704e`. V3-01-08 is a consolidation/RC review only;
+none of these local/CI entries establish production-path, real-provider or quality acceptance.
 
 ## Foundation
 
