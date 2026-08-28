@@ -28,6 +28,8 @@ jobs:
       - run: python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q
       - name: Validate V3-01 acceptance register and redacted evidence
         run: python scripts/v3_01_acceptance.py validate-repo
+      - name: Evaluate V3-01-04 Flow A fixture boundary
+        run: python scripts/v3_01_flow_a_acceptance.py evidence/v3-01/vf-v3-01-20260828T010641Z-88e6bcc/flows/flow-a-upload-auto-edit/two-run-contract.json --expect-verdict BLOCKED
       - name: Alembic upgrade, downgrade and replay
         working-directory: apps/api
         env:
@@ -259,7 +261,6 @@ jobs:
           grep -Fq 'self.provider_safety.execute(' apps/api/app/auto_edit_service.py
           grep -Fq 'self.provider_safety.execute(' apps/api/app/vision_service.py
           grep -Fq 'fixture evidence cannot be promoted to real-provider evidence' apps/api/app/flow_a_acceptance.py
-          python scripts/v3_01_flow_a_acceptance.py evidence/v3-01/vf-v3-01-20260828T010641Z-88e6bcc/flows/flow-a-upload-auto-edit/two-run-contract.json --expect-verdict BLOCKED
           ! git grep -I -n -E '^(PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|AUDIO_EXTERNAL_EXECUTION_ENABLED=true)$' -- .env.example deploy/production
       - name: Validate V2-11 deployment bundle
         env:
