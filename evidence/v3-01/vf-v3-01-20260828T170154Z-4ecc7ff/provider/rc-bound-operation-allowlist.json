@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-12",
+  "code_commit": "4ecc7ff2e687879bdb1e5b5acb42a144cbe8b806",
+  "base_commit": "061ca5d03248d6721ef8dc7a53cf4608e7ebe79e",
+  "provider": "openai-vision",
+  "model": "gpt-5-mini",
+  "capability": "vision",
+  "external_calls": 0,
+  "actual_cost_vnd": 0,
+  "operation_contract": {
+    "rc_tag_pattern": "vf-v3-01-rcN",
+    "derived_id_pattern": "v3-01-rcN-openai-vision-call-NN",
+    "ordered_slots": [
+      1,
+      2
+    ],
+    "binds_exact_rc_commit": true,
+    "binds_exact_rc_tag": true,
+    "binds_provider_model_capability": true,
+    "binds_execution_scope_sha256": true,
+    "binds_asset_sha256": true,
+    "binds_acceptance_window": true
+  },
+  "regression_matrix": {
+    "valid_rc5_mock_bundle": "PASS",
+    "rc3_ids_on_rc5": "REJECTED",
+    "wrong_commit": "REJECTED",
+    "wrong_tag": "REJECTED",
+    "wrong_provider_model_capability": "REJECTED",
+    "ordinal_outside_allowlist": "REJECTED",
+    "duplicate_consumed_operation": "REJECTED",
+    "tampered_operation_id": "REJECTED",
+    "expired_window": "REJECTED",
+    "old_rc_bundle": "REJECTED"
+  },
+  "focused_tests": {
+    "passed": 59,
+    "failed": 0
+  },
+  "full_python_tests": {
+    "passed": 259,
+    "failed": 0
+  },
+  "studio_tests": {
+    "passed": 14,
+    "failed": 0
+  },
+  "renderer_tests": {
+    "passed": 14,
+    "failed": 0,
+    "typecheck": "PASS",
+    "bundle": "PASS"
+  },
+  "migration_replay": "PASS_THROUGH_0012",
+  "acceptance_validation": "PASS",
+  "compose_and_docker_e2e": "PENDING_EXACT_HEAD_CI",
+  "source_sha256": {
+    "provider_safety": "2e4eba5d099fbbf7673cd009086c4f7268f1f50d4cdfce31ef750cecd4f8367f",
+    "provider_gate_loader": "1ff6613287043a8b0b1662b99f77bb08b28add3f5b5158eb3885756e0870db47",
+    "provider_gate_tests": "1a00336c6dd26151ffa96aa30e522d52243cdc384ad1ab03da8a4f8cf508ca49",
+    "evidence_harness_tests": "b39a355ad2c2bb33e6352c75cbed05dec74b13037215b820417baf31d9ee89d7",
+    "ci_workflow": "b13456eee5c9c6956768144062715520973b445cfa3dafc2d0c88d941021d685",
+    "remediation_document": "5e93f5c910ea87f59662673291ff252b1370d44ec6552f93a46d535ab0ce7947"
+  },
+  "safety": {
+    "external_execution_enabled": false,
+    "paid_execution_enabled": false,
+    "approved_budget_vnd": 0,
+    "global_kill_switch_engaged": true,
+    "credential_read": false,
+    "provider_call_authorized": false,
+    "rc3_operation_ids_locked": true,
+    "rc4_live_eligible": false,
+    "rc5_locked": false,
+    "deploy_performed": false,
+    "publish_performed": false
+  },
+  "next_gate": "exact-head CI and separate G-08 for the V3-01-12 draft PR; only after approved merge and exact-main regression may vf-v3-01-rc5 be locked",
+  "overall_verdict": "NO-GO"
+}
