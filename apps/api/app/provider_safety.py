@@ -37,6 +37,35 @@ T = TypeVar("T")
 _SECRET_EVIDENCE_PATTERN = re.compile(
     r"(?i)(?:sk-[A-Za-z0-9_-]{8,}|bearer\s+\S+|(?:api[_-]?key|token|password|secret)\s*[:=]\s*\S+)"
 )
+_V3_RC_TAG_PATTERN = re.compile(r"^vf-v3-01-(rc[1-9][0-9]*)$")
+RC_BOUND_OPERATION_SLOTS = (1, 2)
+
+
+def derive_rc_bound_operation_key(
+    *,
+    rc_tag: str,
+    provider_key: str,
+    capability: str,
+    slot: int,
+) -> str:
+    """Derive one immutable acceptance operation ID from its exact RC scope."""
+
+    rc_match = _V3_RC_TAG_PATTERN.fullmatch(rc_tag)
+    if rc_match is None:
+        raise ValueError("operation ID requires an exact V3-01 RC tag")
+    if slot not in RC_BOUND_OPERATION_SLOTS:
+        raise ValueError("operation slot is outside the two-operation acceptance allowlist")
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,119}", provider_key):
+        raise ValueError("operation ID requires a canonical provider key")
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,119}", capability):
+        raise ValueError("operation ID requires a canonical capability")
+
+    provider_capability = (
+        provider_key
+        if provider_key.endswith(f"-{capability}")
+        else f"{provider_key}-{capability}"
+    )
+    return f"v3-01-{rc_match.group(1)}-{provider_capability}-call-{slot:02d}"
 
 
 def utc_now() -> datetime:
@@ -148,6 +177,7 @@ class ProviderRightsEvidence(StrictModel):
 
 class ProviderAllowedOperation(StrictModel):
     operation_key: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:/-]{2,199}$")
+    slot: Literal[1, 2]
     operation: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{1,159}$")
     asset_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{2,159}$")
     asset_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
@@ -183,6 +213,7 @@ class ProviderExecutionGateScope(StrictModel):
     rights_approval_id: str = Field(pattern=r"^V3-01-APP-[0-9]{3,}$")
     approval_record_sha256: dict[str, str]
     rights_record_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    execution_scope_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     allowed_operations: tuple[ProviderAllowedOperation, ProviderAllowedOperation]
     rights_record: ProviderRightsEvidence
 
@@ -216,9 +247,21 @@ class ProviderExecutionGateScope(StrictModel):
             raise ValueError("verified gate window cannot cross the UTC budget day")
         if self.acceptance_window_limit_vnd < self.per_operation_limit_vnd * 2:
             raise ValueError("acceptance budget must cover both allowlisted operations")
-        operation_keys = [item.operation_key for item in self.allowed_operations]
-        if len(set(operation_keys)) != 2:
-            raise ValueError("verified gate scope requires two distinct operation IDs")
+        operation_keys = tuple(item.operation_key for item in self.allowed_operations)
+        operation_slots = tuple(item.slot for item in self.allowed_operations)
+        if operation_slots != RC_BOUND_OPERATION_SLOTS:
+            raise ValueError("verified gate scope requires ordered operation slots 1 and 2")
+        expected_keys = tuple(
+            derive_rc_bound_operation_key(
+                rc_tag=self.rc_tag,
+                provider_key=self.provider_key,
+                capability=self.capability,
+                slot=slot,
+            )
+            for slot in RC_BOUND_OPERATION_SLOTS
+        )
+        if operation_keys != expected_keys:
+            raise ValueError("verified gate scope operation IDs do not match the exact RC scope")
         for item in self.allowed_operations:
             if item.asset_id != self.rights_record.asset_id or item.asset_hash != self.rights_record.asset_hash:
                 raise ValueError("every allowlisted operation must bind the approved rights asset")

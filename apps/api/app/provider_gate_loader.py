@@ -15,12 +15,8 @@ from .provider_safety import (
     ProviderAllowedOperation,
     ProviderExecutionGateScope,
     ProviderRightsEvidence,
-)
-
-
-G02_A_OPERATION_KEYS = (
-    "v3-01-g03a-openai-vision-call-01",
-    "v3-01-g03a-openai-vision-call-02",
+    RC_BOUND_OPERATION_SLOTS,
+    derive_rc_bound_operation_key,
 )
 
 
@@ -254,9 +250,21 @@ class ProviderGateBundle(StrictModel):
         if rights.expiry is not None and rights.expiry.astimezone(timezone.utc) <= self.expires_at_utc:
             raise ValueError("RightsRecord expires before the gate window closes")
 
-        keys = [item.operation_key for item in self.allowed_operations]
-        if tuple(keys) != G02_A_OPERATION_KEYS:
-            raise ValueError("the two predeclared G-02-A operation IDs must match exactly")
+        slots = tuple(item.slot for item in self.allowed_operations)
+        if slots != RC_BOUND_OPERATION_SLOTS:
+            raise ValueError("the two predeclared operations must use ordered slots 1 and 2")
+        keys = tuple(item.operation_key for item in self.allowed_operations)
+        expected_keys = tuple(
+            derive_rc_bound_operation_key(
+                rc_tag=self.rc_tag,
+                provider_key=self.provider_key,
+                capability=self.capability,
+                slot=slot,
+            )
+            for slot in RC_BOUND_OPERATION_SLOTS
+        )
+        if keys != expected_keys:
+            raise ValueError("operation IDs must derive from the exact RC/provider/capability/slot")
         for operation in self.allowed_operations:
             if operation.operation != "vision_analysis":
                 raise ValueError("G-02-A allows only the Vision analysis operation")
@@ -312,6 +320,19 @@ def load_verified_provider_gate_bundle(
         "G-02": bundle.budget_approval.record_sha256,
         "G-03": bundle.rights_approval.record_sha256,
     }
+    scope_hash = execution_scope_sha256(
+        rc_tag=bundle.rc_tag,
+        rc_commit=bundle.rc_commit,
+        provider_key=bundle.provider_key,
+        model=bundle.model,
+        capability=bundle.capability,
+        credential_alias=bundle.credential_alias,
+        valid_from_utc=bundle.valid_from_utc,
+        expires_at_utc=bundle.expires_at_utc,
+        budget=bundle.budget,
+        rights_record_sha256=bundle.rights_record.record_sha256,
+        allowed_operations=bundle.allowed_operations,
+    )
     return ProviderExecutionGateScope(
         bundle_id=bundle.bundle_id,
         bundle_sha256=actual_bundle_sha256,
@@ -344,6 +365,7 @@ def load_verified_provider_gate_bundle(
         rights_approval_id=bundle.rights_approval.record.approval_id,
         approval_record_sha256=approval_hashes,
         rights_record_sha256=bundle.rights_record.record_sha256,
+        execution_scope_sha256=scope_hash,
         allowed_operations=bundle.allowed_operations,
         rights_record=bundle.rights_record.record,
     )

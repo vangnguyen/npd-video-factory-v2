@@ -12,7 +12,6 @@ from pydantic import ValidationError
 from app.config import Settings
 from app.db import Base, create_engine, create_session_factory
 from app.provider_gate_loader import (
-    G02_A_OPERATION_KEYS,
     HashedApprovalRecord,
     HashedRightsRecord,
     ProviderApprovalRecord,
@@ -27,7 +26,9 @@ from app.provider_safety import (
     ProviderAllowedOperation,
     ProviderCallContext,
     ProviderRightsEvidence,
+    RC_BOUND_OPERATION_SLOTS,
     ProviderSafetyController,
+    derive_rc_bound_operation_key,
     provider_safety_policy_from_settings,
 )
 from app.provider_safety_durable import DurableProviderSafetyController
@@ -35,11 +36,21 @@ from app.provider_safety_repository import ProviderSafetyRepository
 import app.provider_safety_db  # noqa: F401
 
 
-RC_COMMIT = "c" * 40
-RC_TAG = "vf-v3-01-rc3"
+RC_COMMIT = "e" * 40
+RC_TAG = "vf-v3-01-rc5"
+OLD_RC_COMMIT = "c" * 40
+OLD_RC_TAG = "vf-v3-01-rc3"
 ASSET_ID = "asset-g03-a-owned-vision-test"
 ASSET_HASH = "a" * 64
-OPERATION_ONE, OPERATION_TWO = G02_A_OPERATION_KEYS
+OPERATION_ONE, OPERATION_TWO = tuple(
+    derive_rc_bound_operation_key(
+        rc_tag=RC_TAG,
+        provider_key="openai-vision",
+        capability="vision",
+        slot=slot,
+    )
+    for slot in RC_BOUND_OPERATION_SLOTS
+)
 ACTIVATES_AT = datetime(2026, 8, 28, 10, 0, tzinfo=timezone.utc)
 EXPIRES_AT = ACTIVATES_AT + timedelta(hours=3)
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -122,7 +133,11 @@ def _approval(
     )
 
 
-def _valid_bundle() -> ProviderGateBundle:
+def _valid_bundle(
+    *,
+    rc_commit: str = RC_COMMIT,
+    rc_tag: str = RC_TAG,
+) -> ProviderGateBundle:
     budget = _budget()
     rights = _rights_record()
     rights_hash = canonical_sha256(rights)
@@ -134,23 +149,24 @@ def _valid_bundle() -> ProviderGateBundle:
             "credential_alias": "secret://openai/codex-video",
         }
     )
-    allowed_operations = (
+    allowed_operations = tuple(
         ProviderAllowedOperation(
-            operation_key=OPERATION_ONE,
+            operation_key=derive_rc_bound_operation_key(
+                rc_tag=rc_tag,
+                provider_key="openai-vision",
+                capability="vision",
+                slot=slot,
+            ),
+            slot=slot,
             operation="vision_analysis",
             asset_id=ASSET_ID,
             asset_hash=ASSET_HASH,
-        ),
-        ProviderAllowedOperation(
-            operation_key=OPERATION_TWO,
-            operation="vision_analysis",
-            asset_id=ASSET_ID,
-            asset_hash=ASSET_HASH,
-        ),
+        )
+        for slot in RC_BOUND_OPERATION_SLOTS
     )
     scope_hash = execution_scope_sha256(
-        rc_tag=RC_TAG,
-        rc_commit=RC_COMMIT,
+        rc_tag=rc_tag,
+        rc_commit=rc_commit,
         provider_key="openai-vision",
         model="gpt-5-mini",
         capability="vision",
@@ -162,9 +178,9 @@ def _valid_bundle() -> ProviderGateBundle:
         allowed_operations=allowed_operations,
     )
     return ProviderGateBundle(
-        bundle_id="V3-01-GATE-RC3-OPENAI-VISION-A",
-        rc_tag=RC_TAG,
-        rc_commit=RC_COMMIT,
+        bundle_id=f"V3-01-GATE-{rc_tag.removeprefix('vf-v3-01-').upper()}-OPENAI-VISION-A",
+        rc_tag=rc_tag,
+        rc_commit=rc_commit,
         provider_key="openai-vision",
         model="gpt-5-mini",
         capability="vision",
@@ -175,17 +191,17 @@ def _valid_bundle() -> ProviderGateBundle:
         credential_approval=_approval(
             "V3-01-APP-101",
             "G-01",
-            artifact_hashes=[RC_COMMIT, provider_scope_hash, scope_hash],
+            artifact_hashes=[rc_commit, provider_scope_hash, scope_hash],
         ),
         budget_approval=_approval(
             "V3-01-APP-102",
             "G-02",
-            artifact_hashes=[RC_COMMIT, canonical_sha256(budget), scope_hash],
+            artifact_hashes=[rc_commit, canonical_sha256(budget), scope_hash],
         ),
         rights_approval=_approval(
             "V3-01-APP-103",
             "G-03",
-            artifact_hashes=[RC_COMMIT, rights_hash, scope_hash],
+            artifact_hashes=[rc_commit, rights_hash, scope_hash],
         ),
         rights_record=HashedRightsRecord(
             record_sha256=rights_hash,
@@ -276,14 +292,44 @@ def _context(operation_key: str, **updates: object) -> ProviderCallContext:
     return ProviderCallContext.model_validate(payload)
 
 
-def test_valid_bundle_is_hash_pinned_and_loads_without_enabling_calls(tmp_path) -> None:
+def test_rc_bound_operation_ids_derive_from_rc_provider_capability_and_slot() -> None:
+    assert OPERATION_ONE == "v3-01-rc5-openai-vision-call-01"
+    assert OPERATION_TWO == "v3-01-rc5-openai-vision-call-02"
+    with pytest.raises(ValueError, match="outside the two-operation acceptance allowlist"):
+        derive_rc_bound_operation_key(
+            rc_tag=RC_TAG,
+            provider_key="openai-vision",
+            capability="vision",
+            slot=3,
+        )
+
+
+def test_rc5_bundle_is_hash_pinned_and_loads_without_enabling_calls(tmp_path) -> None:
     path, bundle_sha256 = _write_bundle(tmp_path)
     settings = _settings(path, bundle_sha256)
     policy = provider_safety_policy_from_settings(settings)
 
     assert policy.execution_gate is not None
     assert policy.execution_gate.bundle_sha256 == bundle_sha256
+    assert policy.execution_gate.rc_commit == RC_COMMIT
+    assert policy.execution_gate.rc_tag == RC_TAG
+    assert policy.execution_gate.execution_scope_sha256 == execution_scope_sha256(
+        rc_tag=RC_TAG,
+        rc_commit=RC_COMMIT,
+        provider_key="openai-vision",
+        model="gpt-5-mini",
+        capability="vision",
+        credential_alias="secret://openai/codex-video",
+        valid_from_utc=ACTIVATES_AT,
+        expires_at_utc=EXPIRES_AT,
+        budget=_budget(),
+        rights_record_sha256=canonical_sha256(_rights_record()),
+        allowed_operations=_valid_bundle().allowed_operations,
+    )
     assert policy.execution_gate.allowed_operations[0].operation_key == OPERATION_ONE
+    assert policy.execution_gate.allowed_operations[0].slot == 1
+    assert policy.execution_gate.allowed_operations[1].operation_key == OPERATION_TWO
+    assert policy.execution_gate.allowed_operations[1].slot == 2
     assert policy.external_execution_enabled is False
     assert policy.paid_execution_enabled is False
     assert policy.global_kill_switch_engaged is True
@@ -354,11 +400,72 @@ def test_loader_rejects_file_tampering_internal_hash_drift_and_wrong_rc(tmp_path
             expected_rc_tag=RC_TAG,
         )
 
+    with pytest.raises(ProviderGateBundleError, match="exact RC"):
+        load_verified_provider_gate_bundle(
+            path,
+            expected_bundle_sha256=bundle_sha256,
+            expected_rc_commit=RC_COMMIT,
+            expected_rc_tag="vf-v3-01-rc4",
+        )
+
+
+def test_loader_rejects_rc3_ids_and_old_rc_bundle_on_rc5(tmp_path) -> None:
+    payload = _valid_bundle().model_dump(mode="json")
+    payload["allowed_operations"][0]["operation_key"] = (
+        "v3-01-g03a-openai-vision-call-01"
+    )
+    payload["allowed_operations"][1]["operation_key"] = (
+        "v3-01-g03a-openai-vision-call-02"
+    )
+    with pytest.raises(
+        ValidationError,
+        match="operation IDs must derive from the exact RC/provider/capability/slot",
+    ):
+        ProviderGateBundle.model_validate(payload)
+
+    old_bundle = _valid_bundle(rc_commit=OLD_RC_COMMIT, rc_tag=OLD_RC_TAG)
+    old_path, old_sha256 = _write_bundle(
+        tmp_path,
+        payload=old_bundle.model_dump(mode="json"),
+    )
+    with pytest.raises(ProviderGateBundleError, match="exact RC"):
+        load_verified_provider_gate_bundle(
+            old_path,
+            expected_bundle_sha256=old_sha256,
+            expected_rc_commit=RC_COMMIT,
+            expected_rc_tag=RC_TAG,
+        )
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("provider_key", "other-vision"),
+        ("model", "automatic-fallback-model"),
+        ("capability", "other-capability"),
+    ],
+)
+def test_bundle_rejects_wrong_provider_model_or_capability(field: str, value: str) -> None:
+    payload = _valid_bundle().model_dump(mode="json")
+    payload[field] = value
+    with pytest.raises(ValidationError):
+        ProviderGateBundle.model_validate(payload)
+
+
+def test_bundle_rejects_operation_slot_outside_allowlist() -> None:
+    payload = _valid_bundle().model_dump(mode="json")
+    payload["allowed_operations"][1]["slot"] = 3
+    with pytest.raises(ValidationError):
+        ProviderGateBundle.model_validate(payload)
+
 
 def test_loader_rejects_unapproved_operation_ids_and_scope_drift() -> None:
     payload = _valid_bundle().model_dump(mode="json")
     payload["allowed_operations"][1]["operation_key"] = "unexpected-operation"
-    with pytest.raises(ValidationError, match="predeclared G-02-A operation IDs"):
+    with pytest.raises(
+        ValidationError,
+        match="operation IDs must derive from the exact RC/provider/capability/slot",
+    ):
         ProviderGateBundle.model_validate(payload)
 
     payload = _valid_bundle().model_dump(mode="json")
