@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-09",
+  "code_commit": "fe4837bfd2ae0436f5fca557eab6101ca4cf5654",
+  "base_commit": "f42a1709cba6f087369c1636bab9bd06053f7613",
+  "provider": "OpenAI",
+  "model": "gpt-5-mini",
+  "endpoint_contract": "/v1/responses",
+  "transport": "httpx.MockTransport",
+  "structured_output": "strict JSON Schema",
+  "credential_alias": "secret://openai/codex-video",
+  "secret_recorded": false,
+  "adapter_source_sha256": "871444b6e3fb80733305d4a04080a9819001e4a175fa2a83a3aed40a46794a02",
+  "adapter_test_sha256": "bfa18767f0d2adfacd3af8e00d2452d29034d72690311bf97c8c365836b9d6fc",
+  "focused_tests": {
+    "passed": 36,
+    "failed": 0,
+    "duration_seconds": 6.196
+  },
+  "safety": {
+    "external_execution_enabled": false,
+    "paid_execution_enabled": false,
+    "approved_budget_vnd": 0,
+    "global_kill_switch_engaged": true,
+    "compose_secret_mount_enabled": false,
+    "real_provider_tested": false,
+    "production_path_tested": false,
+    "quality_accepted": false
+  },
+  "actual_external_calls": 0,
+  "actual_cost": {
+    "currency": "VND",
+    "amount": 0
+  },
+  "next_gate": "G-08 for the V3-01-09 draft PR; after merge lock RC-2 before separate G-01-A, G-02-A and G-03-A decisions",
+  "overall_verdict": "NO-GO"
+}

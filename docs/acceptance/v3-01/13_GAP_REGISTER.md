@@ -1,20 +1,21 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27` and consolidated after V3-01-07 merged at exact
-`main` `b132e839904b377ec7e82e9135920f895ddf704e`.
+derived from the audit captured on `2026-08-27`, consolidated through V3-01-08/RC-1 at exact
+`main` `f42a1709cba6f087369c1636bab9bd06053f7613`, and updated for the unmerged V3-01-09
+OpenAI Vision adapter evidence.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
-| P0 | 2 | 7 | 1 | 10 | all unverified P0 work still blocks release-candidate GO |
+| P0 | 1 | 8 | 1 | 10 | all unverified P0 work still blocks release-candidate GO |
 | P1 | 2 | 3 | 0 | 5 | blocks production hardening/full acceptance |
 | P2 | 1 | 0 | 0 | 1 | tracked maintenance risk |
-| Total | 5 | 10 | 1 | 16 | default verdict remains NO-GO |
+| Total | 4 | 11 | 1 | 16 | default verdict remains NO-GO |
 
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
-through PR #13. V3-01-02 through V3-01-06 are merged through PR #14 through PR #18. GAP-002,
-GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. All seven bounded G-08 approval records are exhausted;
+through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
+GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
+`IN_PROGRESS`. All eight bounded G-08 approval records are exhausted;
 production remains undeployed and unverified.
 
 ## P0 release blockers
@@ -22,7 +23,7 @@ production remains undeployed and unverified.
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | no real ASR/Vision/reframe evidence | measured fixture contract only; real execution gated |
+| V3-01-GAP-003 | no real ASR/Vision/reframe evidence | OpenAI Vision adapter passes mock contract only; real execution gated |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
@@ -59,7 +60,13 @@ V3-01-05 adds `EV-V3-FLOW-B-CONTRACT-001`, and V3-01-06 adds
 cross-stage hashes, publication safety, nullable analytics, explainable winner scoring and learning
 lineage with zero external calls and zero VND spend. It moves GAP-006 to `IN_PROGRESS` only.
 
-No gap is `VERIFIED` or newly closed by V3-01-07/V3-01-08. `REMEDIATED` means its code and prescribed local/mock
+V3-01-09 adds `EV-V3-OPENAI-VISION-ADAPTER-001`: exact `gpt-5-mini` request/schema mapping,
+bounded image/video frame evidence, request/response/artifact hashes, secret-safe alias resolution,
+VND-only cost receipts and central timeout/retry/circuit/duplicate/rights/budget tests pass using
+MockTransport. This moves GAP-003 from `OPEN` to `IN_PROGRESS`; ASR, a real Vision call,
+production-path evidence and human quality remain absent.
+
+No gap is `VERIFIED` or newly closed by V3-01-07/V3-01-08/V3-01-09. `REMEDIATED` means its code and prescribed local/mock
 evidence pass on the locked commit; it still needs any applicable
 production-path evidence before `VERIFIED`. Owner exceptions must name an expiry and approval record; no implicit
 exception exists.
