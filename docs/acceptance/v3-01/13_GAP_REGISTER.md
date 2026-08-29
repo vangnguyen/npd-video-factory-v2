@@ -1,12 +1,12 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27`, updated through RC-5
-`26adafb2eeed4b4de1169db73a13e50a683e094c`, governance-only PR #28 main
-`8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee`, and RC-5 operation 1. Provider execution succeeded,
+derived from the audit captured on `2026-08-27`, updated through RC-6
+`8df74a202dc2160e9358ca4cc9be54d989af2292`, PR #29 exact-main regression, and the offline RC-6
+governance rebind. Historical RC-5 operation-1 provider execution succeeded,
 but request-level acceptance evidence was incomplete after post-call serialization failed. The
-operation is consumed/`REVIEW_REQUIRED`; V3-01-13 is a zero-call remediation. No acceptance-axis
-promotion occurred.
+operation is consumed/`REVIEW_REQUIRED`; V3-01-13 is now merged and exact-main tested. Fresh RC-6
+bindings are unmounted and neither operation is authorized. No acceptance-axis promotion occurred.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -18,17 +18,17 @@ promotion occurred.
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. The bounded G-08 record for PR #28 is exhausted. Historical RC-3 and RC-5 operation
-1 IDs are consumed and permanently locked. RC-5 operation 2 was not approved. A future RC-6 must
-use new G-01-A/G-02-A/G-03-A records, IDs, scope and window. Production remains undeployed and
-unverified.
+`IN_PROGRESS`. The bounded G-08 record for PR #29 is exhausted. Historical RC-3 and RC-5 operation
+1 IDs are consumed and permanently locked; RC-5 operation 2 is also locked. RC-6 now uses new
+G-01-A/G-02-A/G-03-A records, IDs, scope and window in an unmounted bundle, but the governance PR
+and separate operation-1 authority remain pending. Production remains undeployed and unverified.
 
 ## P0 release blockers
 
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | RC-5 provider execution succeeded once, but incomplete serialized evidence keeps it `REVIEW_REQUIRED`; V3-01-13 repairs only future evidence writes offline |
+| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | RC-5 provider execution succeeded once, but incomplete serialized evidence keeps it `REVIEW_REQUIRED`; RC-6 repairs future evidence writes and validates the new scope offline only |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
@@ -48,8 +48,8 @@ unverified.
   retention/health metrics. RC-5 operation 1 proved one successful durable attempt, atomic
   reservation, duplicate blocking, a closed circuit and `137.6287 VND` actual cost. Its structured
   payload/request IDs/hashes were not retained. V3-01-13 adds canonical serialization and a
-  durable-context fallback, while production-like multi-instance and accepted real-provider
-  evidence remain absent.
+  durable-context fallback in locked RC-6; the new gate bundle validates offline, while
+  production-like multi-instance and accepted real-provider evidence remain absent.
 - `V3-01-GAP-011` (`IN_PROGRESS`): auth rate limiting, URL-import denial and bounded malicious-input
   tests pass. V3-01-03 adds quarantine-before-decoder, archive-signature denial, EICAR contract
   tests, clean-verdict promotion and an internal clamd/WAF design contract; approved internal
@@ -102,4 +102,7 @@ V3-01-13 adds `EV-V3-EVIDENCE-SERIALIZATION-001` and
 `EV-V3-RC5-VISION-OP1-REVIEW-001`. The first proves the canonical dataclass/Pydantic serializer,
 deterministic SHA and secret-free durable fallback offline. The second permanently records provider
 execution `SUCCESS`, acceptance evidence `INCOMPLETE`, operation 1 `CONSUMED/REVIEW_REQUIRED`,
-operation 2 `NOT APPROVED` and production `NO-GO`. Missing request-level values stay `null`.
+operation 2 `NOT APPROVED` and production `NO-GO`. Missing request-level values stay `null`. PR #29
+merged that remediation and exact-main CI passed 5/5 before `vf-v3-01-rc6` was locked.
+`EV-V3-RC6-VISION-REBIND-001` then proves the fresh RC-6 IDs, approval/rights hashes, dated VND
+envelope and unmounted bundle offline. It grants no operation authority and closes no gap.

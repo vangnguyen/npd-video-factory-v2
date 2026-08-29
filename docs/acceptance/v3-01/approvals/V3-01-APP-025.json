@@ -1,0 +1,23 @@
+{
+  "approval_id": "V3-01-APP-025",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #29 as V3-01-13 Evidence Serialization Remediation only; no provider execution or production authority is granted.",
+  "artifact_or_commit_hashes": [
+    "2fc80e511e6ab0382b3a05b141764ea37725d245",
+    "8df74a202dc2160e9358ca4cc9be54d989af2292"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and exact-main regression only",
+  "limits": [
+    "V3-01-13 evidence serialization remediation only",
+    "No OpenAI call",
+    "No reuse of RC-5 operation 1",
+    "RC-5 operation 2 remains permanently locked",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-29T16:04:22Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved PR #29 in the controlling task. The approval is recorded at the exact GitHub merge timestamp because no separate machine timestamp was retained for the preceding chat decision. PR #29 merged as 8df74a202dc2160e9358ca4cc9be54d989af2292 and exact-main CI run 33261962445 passed 5/5. This record grants no runtime action."
+}

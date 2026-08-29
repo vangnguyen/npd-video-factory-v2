@@ -1,24 +1,25 @@
 # Owner gate register
 
-G-00 and the completed bounded G-08 actions through PR #28 have approval records. RC-4 remains
+G-00 and the completed bounded G-08 actions through PR #29 have approval records. RC-4 remains
 evidence of a fail-closed executable-contract blocker. RC-5 operation 1 consumed its exact G-01-A,
 G-02-A, G-03-A and separate operation authority; provider execution succeeded but acceptance
 evidence is incomplete, so the result is permanently `REVIEW_REQUIRED`. Operation 2 is not
-approved. Historical RC-3/RC-5 authorities grant no further call. Use
+approved. RC-6 is locked and G-01-A/G-02-A/G-03-A are freshly rebound in an unmounted bundle, but
+neither RC-6 operation is authorized. Historical RC-3/RC-5 authorities grant no further call. Use
 `schemas/approval-record.schema.json` for each later decision; no approval is implied by CI success,
 an RC tag or the failed attempt.
 
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
 | G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
-| G-01 | real-provider credential aliases/scopes | RC-5 scope `V3-01-APP-020` and one-operation authority `V3-01-APP-024` consumed; RC-6 pending | new exact RC-6/provider/model/capability/alias scope, window and separate operation authority required |
-| G-02 | VND provider budgets and cost controls | RC-5 scope `V3-01-APP-021` consumed; checked-in runtime budget remains 0 | new RC-6 envelope required; RC-5 actual cost `137.6287 VND` does not create reusable budget |
-| G-03 | owned inputs, rights and provenance policy | RC-5 scope `V3-01-APP-022` consumed; no publishing rights | new RC-6 binding required for the exact image/RightsRecord; no training, resale or other use |
+| G-01 | real-provider credential aliases/scopes | RC-6 scope rebound by `V3-01-APP-026`; credential value unread; operation authority pending | exact RC-6/provider/model/capability/alias verified; separate operation-1 authority still required |
+| G-02 | VND provider budgets and cost controls | RC-6 envelope rebound by `V3-01-APP-027`; bundle unmounted; checked-in runtime budget remains 0 | exact dated 1,250/500 VND envelope verified; atomic reservation can occur only after separate operation authority |
+| G-03 | owned inputs, rights and provenance policy | RC-6 asset/RightsRecord rebound by `V3-01-APP-028`; no publishing rights | exact image/RightsRecord hash verified; no training, resale, publishing or other use |
 | G-04 | production-like staging execution | PENDING | locked commit/images, isolated topology and rollback plan |
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation PR merge | CONSUMED through PR #28 via `V3-01-APP-023`; V3-01-13 pending | a new explicit G-08 record is required before merging the V3-01-13 executable remediation |
+| G-08 | remediation PR merge | CONSUMED through PR #29 via `V3-01-APP-025`; RC-6 governance rebind PR pending | a new explicit G-08 record is required before merging the governance/evidence-only RC-6 rebind |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
@@ -31,10 +32,11 @@ IDs, expiry and decision. Changing commit, artifact, provider, platform target, 
 time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, LOCAL/CI validation, redacted evidence and a
-draft V3-01-13 remediation PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/#18/#19/#20/
-#22/#23/#24/#25/#26/#27/#28 merges are complete and their G-08 records cannot be reused. RC-3 IDs
-are locked, RC-4 remains blocker evidence, and RC-5 operation 1 is consumed/`REVIEW_REQUIRED`.
-Operation 2 is not approved. Runtime defaults remain disabled. Current authority includes no
+draft governance/evidence-only RC-6 rebind PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
+#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29 merges are complete and their G-08 records cannot be
+reused. RC-3 IDs are locked, RC-4 remains blocker evidence, and RC-5 operation 1 is consumed/
+`REVIEW_REQUIRED`; RC-5 operation 2 is locked. The RC-6 bundle is unmounted and both RC-6
+operations lack authority. Runtime defaults remain disabled. Current authority includes no
 further merge, credential-value read, provider call,
 deployment, public route, publishing, analytics collection or production write. Records:
 [`V3-01-APP-001`](approvals/V3-01-APP-001.json) and
@@ -59,5 +61,9 @@ deployment, public route, publishing, analytics collection or production write. 
 [`V3-01-APP-020`](approvals/V3-01-APP-020.json),
 [`V3-01-APP-021`](approvals/V3-01-APP-021.json),
 [`V3-01-APP-022`](approvals/V3-01-APP-022.json),
-[`V3-01-APP-023`](approvals/V3-01-APP-023.json), and
-[`V3-01-APP-024`](approvals/V3-01-APP-024.json).
+[`V3-01-APP-023`](approvals/V3-01-APP-023.json),
+[`V3-01-APP-024`](approvals/V3-01-APP-024.json),
+[`V3-01-APP-025`](approvals/V3-01-APP-025.json),
+[`V3-01-APP-026`](approvals/V3-01-APP-026.json),
+[`V3-01-APP-027`](approvals/V3-01-APP-027.json), and
+[`V3-01-APP-028`](approvals/V3-01-APP-028.json).
