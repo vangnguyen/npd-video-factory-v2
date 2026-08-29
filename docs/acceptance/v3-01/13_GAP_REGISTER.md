@@ -1,11 +1,11 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27`, updated through RC-4
-`061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`, PR #26 exact-main CI run `33189441083`
-(5/5 PASS), and one failed bounded Vision operation retained from RC-3. RC-4 is evidence of a
-fail-closed executable-contract blocker and is not eligible for live acceptance. V3-01-12 remains
-an unmerged zero-call remediation draft. No acceptance-axis promotion occurred.
+derived from the audit captured on `2026-08-27`, updated through RC-5
+`26adafb2eeed4b4de1169db73a13e50a683e094c`, PR #27 exact-main CI run `33194523231`
+(5/5 PASS), and one failed bounded Vision operation retained from RC-3. RC-4 remains evidence of a
+fail-closed executable-contract blocker. V3-01-12 is merged, RC-5 is locked and a fresh governance
+bundle is rebound but unmounted. No acceptance-axis promotion occurred.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -17,24 +17,23 @@ an unmerged zero-call remediation draft. No acceptance-axis promotion occurred.
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. The bounded G-08 records through PR #26 are exhausted. G-01-A/G-02-A/G-03-A were
-consumed only for operation 1; it failed non-retryably without accepted output or a usage receipt.
-Both RC-3 operation IDs remain permanently locked. RC-4 must not be used for live acceptance
-because its executable allowlist is still bound to RC-3 identifiers. Production remains undeployed
-and unverified.
+`IN_PROGRESS`. The bounded G-08 record for PR #27 is exhausted. Historical RC-3 G-01-A/G-02-A/
+G-03-A were consumed by the failed operation 1 and all old IDs remain permanently locked. Fresh
+RC-5 G-01-A/G-02-A/G-03-A records bind a new execution scope and window, but the bundle is
+unmounted and operation 1 has no authority. Production remains undeployed and unverified.
 
 ## P0 release blockers
 
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | one Vision attempt failed before structured output; RC-4 exposed a stale-operation-ID blocker, so V3-01-12 and a newly locked RC-5/gate set are required |
+| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | one Vision attempt failed before structured output; RC-4 exposed a stale-ID blocker; V3-01-12 and RC-5 rebind are complete, but operation 1 remains separately gated and unexecuted |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | production-like backup/restore/image rollback incomplete | local disposable drill only; no production state touched |
-| V3-01-GAP-013 | no accepted real-asset rights coverage | the one RC-3 asset binding held during the failed attempt; any RC-5 asset use requires a newly hashed scope and rights rebind |
+| V3-01-GAP-013 | no accepted real-asset rights coverage | the RC-5 asset and RightsRecord are rebound to a new scope hash, but no RC-5 provider operation has been authorized or accepted |
 | V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work

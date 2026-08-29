@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-11; one failed bounded RC-3 attempt; V3-01-12 zero-call draft
-RELEASE CANDIDATE: RC-4 061ca5d03248d6721ef8dc7a53cf4608e7ebe79e LOCKED AS BLOCKER EVIDENCE; NOT LIVE-ELIGIBLE; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-RC-BOUND-ALLOWLIST-001 local/mock PASS; exact-head CI pending (earlier runs retained)
+SCOPE: merged V3-01-00 through V3-01-12; one failed bounded RC-3 attempt; RC-5 governance rebind unmounted
+RELEASE CANDIDATE: RC-5 26adafb2eeed4b4de1169db73a13e50a683e094c LOCKED NO-GO; NOT DEPLOYED; OPERATION 1 PENDING
+LATEST EVIDENCE: EV-V3-RC5-VISION-REBIND-001 local governance/mock PASS; exact-main CI 33194523231 PASS 5/5
 DATE: 2026-08-28
-OWNER DECISION: G-00 APPROVED; G-08 CONSUMED THROUGH PR #26; V3-01-12 G-08 PENDING; RC-3 OPERATION 1 CONSUMED; ALL OLD OPERATION IDS LOCKED
+OWNER DECISION: G-00 APPROVED; G-08 CONSUMED THROUGH PR #27; RC-5 G-01-A/G-02-A/G-03-A REBOUND; RC-5 OPERATION 1 PENDING; ALL OLD IDS LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -40,7 +40,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
 - no production-like target, deployed image digest or owner-accepted production-like DR drill;
-- OpenAI Vision operation 1 failed before structured output/provider/usage receipts; it is not accepted real-provider evidence, all RC-3 IDs are locked, and RC-4 cannot be used because its executable allowlist still names RC-3;
+- OpenAI Vision operation 1 failed before structured output/provider/usage receipts; it is not accepted real-provider evidence; all RC-3 IDs are locked, RC-4 remains blocker evidence and RC-5 operation 1 is not yet authorized;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
 - GitHub `main` is not protected.
@@ -54,6 +54,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - evidence/governance-only PR #25 merged as `2ab6b51d63b86c7e4cc9febe347929d8cc3f2e38`; exact-main CI `33182052862` PASS 5/5; executable RC-3 unchanged;
 - V3-01-11 PR #26 exact head `a09919db67f23253bc45ff3171b99e220c25c599`; merged as `061ca5d03248d6721ef8dc7a53cf4608e7ebe79e`; exact-main CI `33189441083` PASS 5/5; `V3-01-APP-018` consumed;
 - RC-4 post-lock audit: executable allowlist still named RC-3 operation IDs, so RC-4 is retained as fail-closed blocker evidence and prohibited from live acceptance;
+- V3-01-12 PR #27 exact head `703fec6931c315b853ee4691aef5ce290510eb8b`; merged as `26adafb2eeed4b4de1169db73a13e50a683e094c`; exact-main CI `33194523231` PASS 5/5; `V3-01-APP-019` consumed;
+- annotated `vf-v3-01-rc5` peels to `26adafb2eeed4b4de1169db73a13e50a683e094c`; fresh operation IDs and scope hash are recorded in an unmounted governance bundle;
 - operation-1 evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`, evidence SHA-256 `e94fcafcbab8adefb9506cb91d98010cdb1713ba79ce209ec2dfdb154f97fd2d`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
@@ -73,8 +75,9 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `V3-01-APP-009` for only PR #20, `V3-01-APP-010` for only PR #22,
   `V3-01-APP-013` for only PR #23, `V3-01-APP-014` for RC-3 G-01-A,
   `V3-01-APP-015` for RC-3 G-02-A, `V3-01-APP-016` for narrow RC-3 G-03-A,
-  `V3-01-APP-017` for evidence-only PR #25, and `V3-01-APP-018` for PR #26 merge,
-  exact-main regression and RC-4 tag only.
+  `V3-01-APP-017` for evidence-only PR #25, `V3-01-APP-018` for PR #26/RC-4,
+  `V3-01-APP-019` for PR #27/RC-5, and `V3-01-APP-020` through `V3-01-APP-022` for the unmounted
+  RC-5 G-01-A/G-02-A/G-03-A rebind only.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -146,13 +149,14 @@ metadata in the durable attempt ledger. Exact-head and exact-main CI passed, and
 It changes no real-provider, production-path or quality axis. RC-4 post-lock audit then found a
 different executable-contract blocker: its allowed operation IDs remained hard-coded to RC-3.
 
-V3-01-12 is a zero-call remediation draft. It derives operation IDs from exact RC tag, provider,
+V3-01-12 is a merged zero-call remediation locked in RC-5. It derives operation IDs from exact RC tag, provider,
 capability and slot and binds them to exact commit/tag/model, execution-scope hash, asset hash and
 acceptance window. Its tests reject stale RC-3 bundles, commit/tag/provider/model/capability drift,
 invalid ordinals, consumed duplicates, tampering and expired windows. Local evidence
 `EV-V3-RC-BOUND-ALLOWLIST-001` records focused 59/59, full Python 259/259, Studio 14/14 and Renderer
 14/14 plus typecheck/bundle PASS with zero credential reads, zero external calls and zero VND.
-Exact-head CI is pending. It has no merge or runtime authority and changes no acceptance axis.
+PR #27 exact-head and exact-main CI passed 5/5, and RC-5 is locked. The new governance rebind still
+has no merge or runtime authority and changes no acceptance axis.
 
 ## Open gaps and remediation
 
@@ -162,8 +166,8 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; the G-08 decisions through PR #26 are consumed and V3-01-12 requires a new decision.
-- **Deploy:** no; RC-4 is NO-GO, not live-eligible, and G-09 is pending.
+- **Merge:** none currently authorized; G-08 through PR #27 is consumed and the governance-only RC-5 rebind requires a new decision.
+- **Deploy:** no; RC-5 is NO-GO, not deployed, and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** operation 1 consumed exactly one attempt with no retry/fallback;
   actual provider cost is unknown and the ledger committed 500 VND as an estimated safety charge.

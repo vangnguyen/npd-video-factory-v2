@@ -6,6 +6,8 @@
 CHECKPOINT: V3-01-12
 SCOPE: ZERO-CALL EXECUTABLE OPERATION-ID REMEDIATION
 BASE: vf-v3-01-rc4 / 061ca5d03248d6721ef8dc7a53cf4608e7ebe79e
+MERGED: PR #27 / 26adafb2eeed4b4de1169db73a13e50a683e094c
+LOCKED RESULT: vf-v3-01-rc5 / NO-GO / NOT DEPLOYED
 RC-4 LIVE ACCEPTANCE: PROHIBITED
 EXTERNAL EXECUTION: false
 PAID EXECUTION: false
@@ -16,6 +18,10 @@ EXTERNAL CALLS: 0
 ACTUAL COST: 0 VND
 PRODUCTION VERDICT: NO-GO
 ```
+
+PR #27 merged after bounded G-08 approval. Exact-main CI run `33194523231` passed 5/5 and
+annotated tag `vf-v3-01-rc5` peels to the merge commit. This completion does not authorize either
+RC-5 operation; the separate governance bundle remains unmounted.
 
 PR #26 merged V3-01-11 at `061ca5d03248d6721ef8dc7a53cf4608e7ebe79e` after exact-main
 CI run `33189441083` passed all five jobs. Annotated tag `vf-v3-01-rc4` peels to that exact
