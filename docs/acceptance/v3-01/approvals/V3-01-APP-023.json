@@ -1,0 +1,25 @@
+{
+  "approval_id": "V3-01-APP-023",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of governance-only PR #28 to record the exact RC-5 Vision acceptance scope; executable RC-5 remains unchanged and operation authority stays separate.",
+  "artifact_or_commit_hashes": [
+    "e43826a4e05e814210e4319ba9470d59f645622c",
+    "8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee",
+    "6a5955943f0b8291ee02c3d10fbf60fe627b9968b75171dfa2a2c730264f58ae",
+    "e4c4604bbbfa4331d8fccf7c7ca41b23d3f1aff0472fddfa71fca3d9cb040e7f"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and governance verification only; executable runtime remains exact vf-v3-01-rc5",
+  "limits": [
+    "Governance/evidence changes only",
+    "No runtime code or configuration change",
+    "No provider call authority",
+    "No operation 2 authority",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-29T01:17:40Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved PR #28 in the controlling task. The approval is recorded at the exact GitHub merge timestamp because no separate machine timestamp was retained for the preceding chat decision. PR #28 merged as 8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee and exact-main CI run 33226016184 passed 5/5. This record grants no runtime action."
+}

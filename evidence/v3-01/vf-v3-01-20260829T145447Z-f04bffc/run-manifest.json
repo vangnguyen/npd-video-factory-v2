@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260829T145447Z-f04bffc",
+  "started_at_utc": "2026-08-29T14:49:58Z",
+  "completed_at_utc": "2026-08-29T14:54:47Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "f04bffc0aa4b14248a20602fe4a6be073cd6655f",
+  "base_sha": "8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee",
+  "release_candidate": "RC-5 retained as REVIEW_REQUIRED evidence; V3-01-13 remediation is not an RC and RC-6 is not locked",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0012_v3_01_11",
+  "config_fingerprint_redacted": "v3-01-13-zero-call-canonical-evidence-serializer-external-false-paid-false-zero-vnd-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "evidence-serialization",
+      "provider": "offline-recorded-provider-success",
+      "model_or_workflow": "ProviderVisionFrame canonical serialization",
+      "region": "not-applicable-offline",
+      "credential_alias": "not-read",
+      "secret_recorded": false
+    },
+    {
+      "capability": "historical-vision-operation-audit",
+      "provider": "openai-vision",
+      "model_or_workflow": "gpt-5-mini RC-5 operation 1 retained as REVIEW_REQUIRED",
+      "region": "not-recorded",
+      "credential_alias": "secret://openai/codex-video",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "V3-01-13-PROVIDER-VISION-FRAME-CANONICALIZATION",
+    "V3-01-13-NESTED-NULLABLE-UNICODE",
+    "V3-01-13-DETERMINISTIC-JSON-SHA256",
+    "V3-01-13-RECORDED-PROVIDER-SUCCESS-WRITER",
+    "V3-01-13-SERIALIZATION-FAILURE-DURABLE-FALLBACK",
+    "V3-01-13-SECRET-CONTAINMENT"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "matrix/evidence-EV-V3-EVIDENCE-SERIALIZATION-001.json",
+    "matrix/evidence-EV-V3-RC5-VISION-OP1-REVIEW-001.json",
+    "provider/rc5-operation-1-review.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "external_calls_during_remediation": 0,
+    "actual_during_remediation": 0,
+    "historical_rc5_operation_1_actual": 137.6287
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-00",
+    "G-01",
+    "G-02",
+    "G-03"
+  ],
+  "result": "BLOCKED"
+}

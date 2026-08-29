@@ -2,15 +2,20 @@
 
 ## Current result
 
-| Currency | Approved acceptance envelope | Safety-ledger committed | Actual external cost | External attempts |
-|---|---:|---:|---:|---:|
-| VND | 1,250 window / 500 operation | 500 estimated | unknown | 1 |
+| Event | Currency | Approved envelope | Safety-ledger committed | Actual external cost | Attempts |
+|---|---|---:|---:|---:|---:|
+| RC-3 operation 1 | VND | 1,250 window / 500 operation | 500 estimated | unknown | 1 |
+| RC-5 operation 1 | VND | 1,250 window / 500 operation | 137.6287 actual | 137.6287 | 1 |
+| V3-01-13 remediation | VND | 0 | 0 | 0 | 0 |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
 later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
-receipt, so actual provider billing cannot be asserted. The safety ledger committed the reserved
-500 VND conservatively as an estimated charge. No GPU workflow, hosted render, publish or analytics
-collection was performed. USD is not an accepted operating currency for this acceptance program.
+receipt, so its actual provider billing cannot be asserted; the ledger committed the 500 VND
+reservation conservatively. A separate RC-5 operation then completed provider execution once and
+recorded 1,996 input tokens, 2,371 output tokens and `137.6287 VND` actual/charged cost. Its
+post-call evidence artifact remained incomplete. V3-01-13 itself performs zero calls and costs
+0 VND. No GPU workflow, hosted render, publish or analytics collection was performed. USD is not
+an accepted operating currency for this acceptance program.
 
 ## Required provider budget contract
 
@@ -52,10 +57,16 @@ has no ledger row, and the circuit remains closed with one consecutive failure. 
 returned no usage receipt, the 500 VND ledger amount is safety accounting rather than accepted
 actual cost. Evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`.
 
+Operation `v3-01-rc5-openai-vision-call-01` later completed once with no retry/fallback. Its durable
+operation and attempt both succeeded, 500 VND was reserved, `137.6287 VND` was committed and the
+remaining reservation returned to zero; the circuit stayed closed with zero consecutive failures.
+The post-call serializer did not retain request-level evidence, so the operation remains consumed
+and `REVIEW_REQUIRED`. Evidence: `EV-V3-RC5-VISION-OP1-REVIEW-001`. Operation 2 remains unapproved.
+
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.
 
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit
 `0f0854466655d2f36cfa8b57785000097b220c4c`, plus the failed bounded-operation evidence above;
-not closed or production-verified.
+the RC-5 cost record and offline V3-01-13 serializer evidence do not close or production-verify it.

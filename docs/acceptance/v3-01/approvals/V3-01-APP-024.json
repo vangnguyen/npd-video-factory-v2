@@ -1,0 +1,28 @@
+{
+  "approval_id": "V3-01-APP-024",
+  "gate_id": "G-01",
+  "decision": "APPROVED",
+  "scope": "Authorize exactly one execution of v3-01-rc5-openai-vision-call-01 on immutable vf-v3-01-rc5 for bounded OpenAI gpt-5-mini Vision acceptance; operation 2 and every other runtime action remain unauthorized.",
+  "artifact_or_commit_hashes": [
+    "26adafb2eeed4b4de1169db73a13e50a683e094c",
+    "8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee",
+    "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+    "6a5955943f0b8291ee02c3d10fbf60fe627b9968b75171dfa2a2c730264f58ae",
+    "e4c4604bbbfa4331d8fccf7c7ca41b23d3f1aff0472fddfa71fca3d9cb040e7f",
+    "ed11a15d05a0936dab50463ad0cd6ab9b144579d5a009bfd6d3852bff1955e94"
+  ],
+  "target_account_or_environment": "Isolated owner-gated RC-5 Vision acceptance runner; credential value remains in the external secret mechanism",
+  "limits": [
+    "Operation v3-01-rc5-openai-vision-call-01 only",
+    "Provider openai-vision, model gpt-5-mini and capability vision only",
+    "One owned image bound by the approved asset and RightsRecord hashes",
+    "Maximum reservation 500 VND; timeout 60 seconds; concurrency one",
+    "One attempt; no automatic retry; no model fallback",
+    "Valid only from 2026-08-29T14:00:00Z through 2026-08-29T18:00:00Z",
+    "Operation 2, deployment, public ingress, publishing and production analytics remain unauthorized"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-29T14:22:48Z",
+  "expires_at_utc": "2026-08-29T18:00:00Z",
+  "notes": "Recorded from the original secret-free local authority artifact whose SHA-256 is ed11a15d05a0936dab50463ad0cd6ab9b144579d5a009bfd6d3852bff1955e94. The authority was consumed by one operation. Provider execution succeeded, but acceptance remains REVIEW_REQUIRED because post-call request-level evidence was incomplete. This record cannot authorize reuse or operation 2."
+}

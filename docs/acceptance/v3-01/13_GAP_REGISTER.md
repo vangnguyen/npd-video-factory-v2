@@ -2,10 +2,11 @@
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
 derived from the audit captured on `2026-08-27`, updated through RC-5
-`26adafb2eeed4b4de1169db73a13e50a683e094c`, PR #27 exact-main CI run `33194523231`
-(5/5 PASS), and one failed bounded Vision operation retained from RC-3. RC-4 remains evidence of a
-fail-closed executable-contract blocker. V3-01-12 is merged, RC-5 is locked and a fresh governance
-bundle is rebound but unmounted. No acceptance-axis promotion occurred.
+`26adafb2eeed4b4de1169db73a13e50a683e094c`, governance-only PR #28 main
+`8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee`, and RC-5 operation 1. Provider execution succeeded,
+but request-level acceptance evidence was incomplete after post-call serialization failed. The
+operation is consumed/`REVIEW_REQUIRED`; V3-01-13 is a zero-call remediation. No acceptance-axis
+promotion occurred.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -17,23 +18,23 @@ bundle is rebound but unmounted. No acceptance-axis promotion occurred.
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. The bounded G-08 record for PR #27 is exhausted. Historical RC-3 G-01-A/G-02-A/
-G-03-A were consumed by the failed operation 1 and all old IDs remain permanently locked. Fresh
-RC-5 G-01-A/G-02-A/G-03-A records bind a new execution scope and window, but the bundle is
-unmounted and operation 1 has no authority. Production remains undeployed and unverified.
+`IN_PROGRESS`. The bounded G-08 record for PR #28 is exhausted. Historical RC-3 and RC-5 operation
+1 IDs are consumed and permanently locked. RC-5 operation 2 was not approved. A future RC-6 must
+use new G-01-A/G-02-A/G-03-A records, IDs, scope and window. Production remains undeployed and
+unverified.
 
 ## P0 release blockers
 
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | one Vision attempt failed before structured output; RC-4 exposed a stale-ID blocker; V3-01-12 and RC-5 rebind are complete, but operation 1 remains separately gated and unexecuted |
+| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | RC-5 provider execution succeeded once, but incomplete serialized evidence keeps it `REVIEW_REQUIRED`; V3-01-13 repairs only future evidence writes offline |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | production-like backup/restore/image rollback incomplete | local disposable drill only; no production state touched |
-| V3-01-GAP-013 | no accepted real-asset rights coverage | the RC-5 asset and RightsRecord are rebound to a new scope hash, but no RC-5 provider operation has been authorized or accepted |
+| V3-01-GAP-013 | no accepted real-asset rights coverage | RC-5 exact rights binding held, but its structured output was not retained; the consumed scope cannot authorize reuse or public output |
 | V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work
@@ -44,11 +45,11 @@ unmounted and operation 1 has no authority. Production remains undeployed and un
 - `V3-01-GAP-010` (`IN_PROGRESS`): VND budgets, retry/poll/concurrency, circuit breaker, rights hook,
   artifact verification and global cost kill switch pass locally. V3-01-03 adds a PostgreSQL ledger,
   atomic cross-instance reservation, durable circuit/duplicate state, restart recovery and
-  retention/health metrics. During operation 1, atomic reservation, one-attempt/no-retry semantics,
-  duplicate blocking and circuit state operated as designed. V3-01-11 fixed the strict schema and
-  error-evidence contract in RC-4. V3-01-12 now derives each operation ID from the exact RC,
-  provider, capability and slot and binds that ID to the full execution scope. Structured output,
-  actual-cost receipt, production-like multi-instance and accepted real-provider evidence remain.
+  retention/health metrics. RC-5 operation 1 proved one successful durable attempt, atomic
+  reservation, duplicate blocking, a closed circuit and `137.6287 VND` actual cost. Its structured
+  payload/request IDs/hashes were not retained. V3-01-13 adds canonical serialization and a
+  durable-context fallback, while production-like multi-instance and accepted real-provider
+  evidence remain absent.
 - `V3-01-GAP-011` (`IN_PROGRESS`): auth rate limiting, URL-import denial and bounded malicious-input
   tests pass. V3-01-03 adds quarantine-before-decoder, archive-signature denial, EICAR contract
   tests, clean-verdict promotion and an internal clamd/WAF design contract; approved internal
@@ -93,6 +94,12 @@ allowlist still hard-coded RC-3 IDs. This blocker is retained as RC-4 evidence a
 
 V3-01-12 replaces that hard-coded contract with deterministic IDs derived from exact RC tag,
 provider, capability and ordinal, while the verified loader also binds commit, model,
-execution-scope hash, asset hash and acceptance window. Its required regression matrix is mock-only.
-Until a separate G-08 merge, exact-main regression and a newly locked `vf-v3-01-rc5`, it changes no
-gap status or acceptance axis and authorizes no provider call.
+execution-scope hash, asset hash and acceptance window. Its required regression matrix is mock-only;
+PR #27 merged and `vf-v3-01-rc5` was locked. Governance-only PR #28 later rebound the scope without
+changing executable RC-5. Neither merge alone authorized a call or changed an acceptance axis.
+
+V3-01-13 adds `EV-V3-EVIDENCE-SERIALIZATION-001` and
+`EV-V3-RC5-VISION-OP1-REVIEW-001`. The first proves the canonical dataclass/Pydantic serializer,
+deterministic SHA and secret-free durable fallback offline. The second permanently records provider
+execution `SUCCESS`, acceptance evidence `INCOMPLETE`, operation 1 `CONSUMED/REVIEW_REQUIRED`,
+operation 2 `NOT APPROVED` and production `NO-GO`. Missing request-level values stay `null`.

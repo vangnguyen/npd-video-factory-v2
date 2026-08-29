@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import csv
 import json
@@ -211,7 +212,9 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-STRUCTURED-ERROR-EVIDENCE-001" in gap_003["evidence_ids"]
     assert "EV-V3-RC-BOUND-ALLOWLIST-001" in gap_003["evidence_ids"]
     assert "EV-V3-RC5-VISION-REBIND-001" in gap_003["evidence_ids"]
-    assert gap_003["verified_on_commit"] == "26adafb2eeed4b4de1169db73a13e50a683e094c"
+    assert "EV-V3-RC5-VISION-OP1-REVIEW-001" in gap_003["evidence_ids"]
+    assert "EV-V3-EVIDENCE-SERIALIZATION-001" in gap_003["evidence_ids"]
+    assert gap_003["verified_on_commit"] == "f04bffc0aa4b14248a20602fe4a6be073cd6655f"
 
     gap_010 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-010")
     assert gap_010["status"] == "IN_PROGRESS"
@@ -219,13 +222,16 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-STRUCTURED-ERROR-EVIDENCE-001" in gap_010["evidence_ids"]
     assert "EV-V3-RC-BOUND-ALLOWLIST-001" in gap_010["evidence_ids"]
     assert "EV-V3-RC5-VISION-REBIND-001" in gap_010["evidence_ids"]
-    assert gap_010["verified_on_commit"] == "26adafb2eeed4b4de1169db73a13e50a683e094c"
+    assert "EV-V3-RC5-VISION-OP1-REVIEW-001" in gap_010["evidence_ids"]
+    assert "EV-V3-EVIDENCE-SERIALIZATION-001" in gap_010["evidence_ids"]
+    assert gap_010["verified_on_commit"] == "f04bffc0aa4b14248a20602fe4a6be073cd6655f"
 
     gap_013 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-013")
     assert gap_013["status"] == "IN_PROGRESS"
     assert "EV-V3-VERIFIED-GATE-LOADER-001" in gap_013["evidence_ids"]
     assert "EV-V3-RC5-VISION-REBIND-001" in gap_013["evidence_ids"]
-    assert gap_013["verified_on_commit"] == "26adafb2eeed4b4de1169db73a13e50a683e094c"
+    assert "EV-V3-RC5-VISION-OP1-REVIEW-001" in gap_013["evidence_ids"]
+    assert gap_013["verified_on_commit"] == "f04bffc0aa4b14248a20602fe4a6be073cd6655f"
     assert contract["gaps"]["by_severity"] == dict(Counter(row["severity"] for row in gaps))
     assert contract["production_verdict"] == "NO-GO"
     assert contract["rc_candidate"]["status"] == "CONDITIONAL-RC"
@@ -243,3 +249,44 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
         "publish_performed": False,
         "production_analytics_enabled": False,
     }
+
+
+def test_rc5_operation_1_review_record_is_permanently_fail_closed() -> None:
+    record_path = (
+        REPO_ROOT
+        / "evidence"
+        / "v3-01"
+        / "vf-v3-01-20260829T145447Z-f04bffc"
+        / "provider"
+        / "rc5-operation-1-review.json"
+    )
+    record = json.loads(record_path.read_text(encoding="utf-8"))
+
+    assert record["provider_execution"] == "SUCCESS"
+    assert record["acceptance_evidence"] == "INCOMPLETE"
+    assert record["verdict"] == "REVIEW_REQUIRED"
+    assert record["production_verdict"] == "NO-GO"
+    assert record["operation"]["consumed"] is True
+    assert record["operation"]["attempt_count"] == 1
+    assert record["operation"]["retry_count"] == 0
+    assert record["operation"]["fallback_count"] == 0
+    assert record["operation_2"] == {
+        "operation_key": "v3-01-rc5-openai-vision-call-02",
+        "authorized": False,
+        "executed": False,
+        "ledger_rows": 0,
+    }
+    assert record["usage_and_cost"]["actual_cost_vnd"] == "137.6287"
+    missing = record["missing_request_level_evidence"]
+    assert missing["structured_output_payload"] is None
+    assert missing["provider_request_id"] is None
+    assert missing["client_request_id"] is None
+    assert missing["request_sha256"] is None
+    assert missing["response_sha256"] is None
+    assert missing["provider_response_receipt"] is None
+    assert missing["reconstructed"] is False
+    assert record["acceptance_impact"]["real_provider_axis_promoted"] is False
+    historical_runner = record["historical_runner"]
+    runner_path = REPO_ROOT / historical_runner["path"]
+    assert historical_runner["modified_for_remediation"] is False
+    assert hashlib.sha256(runner_path.read_bytes()).hexdigest() == historical_runner["sha256"]
