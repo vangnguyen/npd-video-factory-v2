@@ -7,14 +7,17 @@
 | RC-3 operation 1 | VND | 1,250 window / 500 operation | 500 estimated | unknown | 1 |
 | RC-5 operation 1 | VND | 1,250 window / 500 operation | 137.6287 actual | 137.6287 | 1 |
 | V3-01-13 remediation | VND | 0 | 0 | 0 | 0 |
+| RC-6 governance rebind | VND | checked-in runtime budget 0; conditional envelope 1,250/500 remains unmounted | 0 | 0 | 0 |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
 later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
 receipt, so its actual provider billing cannot be asserted; the ledger committed the 500 VND
 reservation conservatively. A separate RC-5 operation then completed provider execution once and
 recorded 1,996 input tokens, 2,371 output tokens and `137.6287 VND` actual/charged cost. Its
-post-call evidence artifact remained incomplete. V3-01-13 itself performs zero calls and costs
-0 VND. No GPU workflow, hosted render, publish or analytics collection was performed. USD is not
+post-call evidence artifact remained incomplete. V3-01-13 itself and the RC-6 governance rebind
+perform zero calls and cost 0 VND. The dated 1,250/500 VND RC-6 envelope is only an unmounted,
+hash-bound approval artifact; it grants no operation authority and changes no checked-in runtime
+budget. No GPU workflow, hosted render, publish or analytics collection was performed. USD is not
 an accepted operating currency for this acceptance program.
 
 ## Required provider budget contract
@@ -61,7 +64,9 @@ Operation `v3-01-rc5-openai-vision-call-01` later completed once with no retry/f
 operation and attempt both succeeded, 500 VND was reserved, `137.6287 VND` was committed and the
 remaining reservation returned to zero; the circuit stayed closed with zero consecutive failures.
 The post-call serializer did not retain request-level evidence, so the operation remains consumed
-and `REVIEW_REQUIRED`. Evidence: `EV-V3-RC5-VISION-OP1-REVIEW-001`. Operation 2 remains unapproved.
+and `REVIEW_REQUIRED`. Evidence: `EV-V3-RC5-VISION-OP1-REVIEW-001`. Operation 2 remains locked.
+RC-6 rebind evidence `EV-V3-RC6-VISION-REBIND-001` validates the new VND envelope offline only;
+both RC-6 operations remain unauthorized and unexecuted.
 
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.
@@ -69,4 +74,5 @@ as authoritative cost without its dated source and calculated VND value.
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit
 `0f0854466655d2f36cfa8b57785000097b220c4c`, plus the failed bounded-operation evidence above;
-the RC-5 cost record and offline V3-01-13 serializer evidence do not close or production-verify it.
+the RC-5 cost record, exact-main V3-01-13 serializer evidence and offline RC-6 rebind evidence do
+not close or production-verify it.

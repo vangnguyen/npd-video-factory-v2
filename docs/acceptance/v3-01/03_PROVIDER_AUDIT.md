@@ -4,7 +4,7 @@ The historical owner-authorized RC-3 OpenAI Vision operation failed non-retryabl
 locked. RC-5 operation 1 later executed exactly once: provider execution and the durable
 operation/usage/cost ledger succeeded, but post-call evidence serialization failed before the
 structured payload and request-level IDs/hashes were retained. It is consumed and permanently
-`REVIEW_REQUIRED`, not accepted real-provider evidence. RC-5 operation 2 is not approved. No
+`REVIEW_REQUIRED`, not accepted real-provider evidence. RC-5 operation 2 is permanently locked. No
 credential value is present in Git/evidence, and credential presence grants no further authority.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
@@ -36,13 +36,18 @@ recorded in a governance bundle. PR #28 merged that governance-only scope as
 RC-5 remained unchanged. After separate owner authority, operation 1 completed provider execution
 with one attempt, zero retry/fallback and actual cost `137.6287 VND`. The runner then called
 `model_dump()` on dataclass `ProviderVisionFrame`, so request-level evidence was not written.
-V3-01-13 fixes only that serialization path offline and cannot repair the historical missing data.
+PR #29 merged the zero-call V3-01-13 remediation as
+`8df74a202dc2160e9358ca4cc9be54d989af2292`; exact-main CI run `33261962445` passed 5/5 and
+annotated `vf-v3-01-rc6` peels to that commit. V3-01-13 fixes only future serialization and cannot
+repair the historical missing data. Fresh RC-6 operation IDs and G-01-A/G-02-A/G-03-A records are
+verified in an unmounted bundle. Neither RC-6 operation is authorized; no new provider call or VND
+spend occurred.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; V3-01-13 canonical serializer passes offline | `BLOCKED` | G-08 for V3-01-13, merge/exact-main, lock RC-6, rebind gates and obtain separate RC-6 operation-1 authority; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; V3-01-13 canonical serializer passes exact-main in locked RC-6; new gate bundle validates offline | `BLOCKED` | merge the governance-only RC-6 rebind under a new G-08, re-verify exact-main/bundle hashes, then obtain separate RC-6 operation-1 authority; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -83,4 +88,6 @@ the bounded gate/ledger failure path but does not promote the real-provider axis
 `IN_PROGRESS`. Draft evidence `EV-V3-STRUCTURED-ERROR-EVIDENCE-001` proves only the zero-call
 V3-01-11 schema/error contract on its code commit and also leaves every real axis unchanged.
 `EV-V3-RC5-VISION-OP1-REVIEW-001` records provider success and incomplete evidence without
-promotion. `EV-V3-EVIDENCE-SERIALIZATION-001` proves only the offline V3-01-13 serializer/fallback.
+promotion. `EV-V3-EVIDENCE-SERIALIZATION-001` proves the exact-main V3-01-13 serializer/fallback.
+`EV-V3-RC6-VISION-REBIND-001` proves only the offline RC-6 hash/rights/budget binding. No RC-6
+operation authority or acceptance-axis promotion follows from either record.

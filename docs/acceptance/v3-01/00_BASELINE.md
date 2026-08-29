@@ -8,12 +8,14 @@ Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-5 26adafb2eeed4b4de1169db73a13e50a683e094c; locked NO-GO; not deployed; operation 1 consumed/REVIEW_REQUIRED
+CURRENT RC: RC-6 8df74a202dc2160e9358ca4cc9be54d989af2292; locked NO-GO; not deployed; no RC-6 operation authorized
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-13 zero-call evidence serialization remediation; RC-6 not locked
+CURRENT SAFE PHASE: RC-6 governance rebind; zero calls; bundle unmounted
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #28 MERGE CONSUMED; V3-01-13 MERGE NOT AUTHORIZED
-G-01-A / G-02-A / G-03-A: RC-5 AUTHORITY CONSUMED BY OPERATION 1; RC-6 REBIND NOT CREATED
+G-08: PR #29 MERGE CONSUMED; RC-6 GOVERNANCE REBIND PR NOT YET APPROVED
+G-01-A / G-02-A / G-03-A: REBOUND TO EXACT RC-6; THESE RECORDS DO NOT AUTHORIZE A CALL
+RC-6 OPERATION 1: NOT APPROVED; NOT EXECUTED
+RC-6 OPERATION 2: NOT APPROVED; NOT EXECUTED
 RC-5 OPERATION 1: PROVIDER SUCCESS; EVIDENCE INCOMPLETE; REVIEW_REQUIRED; CONSUMED
 RC-5 OPERATION 2: NOT APPROVED; LOCKED
 HISTORICAL RC-3 OPERATION 1: EXECUTED ONCE; FAILED NON-RETRYABLE; NEVER REUSE
@@ -51,8 +53,12 @@ PR #28 then merged the governance-only RC-5 rebind as
 changing executable RC-5. The owner separately authorized operation 1. It executed exactly once:
 OpenAI/provider execution and the durable operation/usage/cost ledger succeeded, but the post-call
 runner failed to serialize frozen dataclass `ProviderVisionFrame`. Operation 1 is consumed and
-permanently `REVIEW_REQUIRED`; operation 2 was not approved and has no ledger row. V3-01-13 is the
-zero-call remediation for that defect and requires a new G-08 before merge.
+permanently `REVIEW_REQUIRED`; operation 2 was not approved and has no ledger row. PR #29 then
+merged the zero-call V3-01-13 remediation as
+`8df74a202dc2160e9358ca4cc9be54d989af2292`; exact-main CI run `33261962445` passed 5/5.
+Annotated tag `vf-v3-01-rc6` peels to that exact merge commit. Fresh RC-6 operation IDs and
+G-01-A/G-02-A/G-03-A records are now bound in a verified but unmounted governance bundle. Neither
+operation is authorized, no credential was read and no provider call occurred in this checkpoint.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
@@ -71,7 +77,7 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Open PRs at capture | none |
 | Tags/releases | none returned by Git/GitHub |
 | Main branch protection | disabled; GitHub API returned `Branch not protected` |
-| Latest verified exact-main CI | [Video Factory V2 CI run 33226016184](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33226016184), 5/5 success after governance-only PR #28 on main `8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee`; executable RC-5 unchanged |
+| Latest verified exact-main CI | [Video Factory V2 CI run 33261962445](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33261962445), 5/5 success after PR #29 on exact main/RC-6 `8df74a202dc2160e9358ca4cc9be54d989af2292` |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -79,7 +85,7 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` | `8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee` after governance-only PR #28 |
+| Exact `origin/main` | `8df74a202dc2160e9358ca4cc9be54d989af2292` after PR #29 |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
@@ -97,8 +103,10 @@ Current repository checkpoint after the bounded merge sequence:
 | PR #27 / V3-01-12 | exact head `703fec6931c315b853ee4691aef5ce290510eb8b`; merge `26adafb2eeed4b4de1169db73a13e50a683e094c`; exact-main CI run `33194523231` 5/5 PASS |
 | PR #28 / RC-5 governance rebind | governance-only merge `8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee`; exact-main CI run `33226016184` 5/5 PASS; executable RC-5 unchanged |
 | RC-5 | annotated `vf-v3-01-rc5` peels to `26adafb2eeed4b4de1169db73a13e50a683e094c`; NO-GO; not deployed; operation 1 consumed/`REVIEW_REQUIRED`; operation 2 locked |
-| V3-01-13 code under test | `f04bffc0aa4b14248a20602fe4a6be073cd6655f`; canonical dataclass/Pydantic evidence serializer; draft remediation, not merged and not an RC |
-| Exact-main regression | PR #28 exact-main CI run `33226016184` passed Python, Studio, Renderer, Safety/Compose and Docker E2E; V3-01-13 branch regression cannot replace exact-main evidence before merge |
+| PR #29 / V3-01-13 | exact head `2fc80e511e6ab0382b3a05b141764ea37725d245`; merge `8df74a202dc2160e9358ca4cc9be54d989af2292`; exact-main CI run `33261962445` 5/5 PASS; `V3-01-APP-025` consumed |
+| RC-6 | annotated `vf-v3-01-rc6` peels to `8df74a202dc2160e9358ca4cc9be54d989af2292`; tag object `b285bfec8c7f398d56ec513cf35cd6f14fb5c596`; NO-GO; not deployed; no operation authorized |
+| RC-6 governance rebind | G-01-A/G-02-A/G-03-A bound by `V3-01-APP-026` through `V3-01-APP-028`; bundle raw SHA `186ce157e94cbb2f321dbdcf59df1eb80d6d6df84fb5eca5422f4f5b94ba38f9`; unmounted; zero calls |
+| Exact-main regression | PR #29 exact-main CI run `33261962445` passed Python, Studio, Renderer, Safety/Compose and Docker deterministic E2E |
 | Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 later completed provider execution once but evidence serialization was incomplete, so it is consumed/`REVIEW_REQUIRED`; no operation 2 executed |
 | Deployment/ingress/publish action | none |
 

@@ -1,0 +1,26 @@
+{
+  "approval_id": "V3-01-APP-027",
+  "gate_id": "G-02",
+  "decision": "APPROVED",
+  "scope": "Rebind G-02-A to the dated RC-6 VND envelope for at most two derived OpenAI gpt-5-mini Vision acceptance operations.",
+  "artifact_or_commit_hashes": [
+    "8df74a202dc2160e9358ca4cc9be54d989af2292",
+    "c32e593beeff3c6d364af5ac327a391b8b4ed5b9fd9cb5b4e36afce571d76bab",
+    "7bb1058dd7f3a15a68e206c5c8dea0e627918bc20a69af86b1d583aebedbd028"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; no budget is enabled in repository or production defaults",
+  "limits": [
+    "500 VND atomic reservation per operation",
+    "1250 VND maximum for the whole acceptance window",
+    "Exactly two RC-derived operation IDs",
+    "One image per call at no more than 2048x2048 with detail high",
+    "Input accounting ceiling 16384 tokens and output ceiling 4096 tokens",
+    "60 second timeout, concurrency 1 and no automatic retry",
+    "Window 2026-08-30T14:00:00Z through 2026-08-30T18:00:00Z only",
+    "No provider call until a separate owner decision authorizes RC-6 operation 1"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-29T16:16:21Z",
+  "expires_at_utc": "2026-08-30T18:00:00Z",
+  "notes": "Rebound under the owner-approved post-PR29 sequence to exact RC-6 and the new dated execution-scope hash. Runtime budget remains zero in checked-in defaults. This record alone grants no API-call authority."
+}

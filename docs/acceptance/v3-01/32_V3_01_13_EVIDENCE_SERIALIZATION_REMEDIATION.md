@@ -5,15 +5,15 @@
 ```text
 CHECKPOINT: V3-01-13
 SCOPE: ZERO-CALL EVIDENCE SERIALIZATION REMEDIATION
-CODE COMMIT UNDER TEST: f04bffc0aa4b14248a20602fe4a6be073cd6655f
-IMPLEMENTED / MOCK-TESTED: PASS LOCALLY
+MERGED COMMIT: 8df74a202dc2160e9358ca4cc9be54d989af2292
+IMPLEMENTED / MOCK-TESTED: PASS EXACT-MAIN
 REAL-PROVIDER ACCEPTANCE: NOT TESTED
 PRODUCTION-PATH ACCEPTANCE: NOT TESTED
 QUALITY ACCEPTANCE: NOT TESTED
 EXTERNAL CALLS DURING REMEDIATION: 0
 ACTUAL COST DURING REMEDIATION: 0 VND
-G-08 FOR THIS REMEDIATION: PENDING
-RC-6: NOT LOCKED
+G-08 FOR THIS REMEDIATION: CONSUMED BY V3-01-APP-025
+RC-6: LOCKED AT vf-v3-01-rc6
 PRODUCTION VERDICT: NO-GO
 ```
 
@@ -80,8 +80,9 @@ The exact regression suite covers:
 Focused serializer tests pass `5/5`; the API suite passes `221/221`; and the repository-wide API,
 worker and ComfyUI bridge suite passes `265/265`. Studio tests pass `14/14`; renderer tests pass
 `14/14` together with typecheck and bundle validation. Migration upgrade/downgrade/re-upgrade,
-repository evidence validation and the deterministic Docker E2E/DR drill also pass. Every check ran
-offline with fixture providers and performed zero external provider calls.
+repository evidence validation and the deterministic Docker E2E/DR drill also pass. PR #29 merged
+the remediation and exact-main CI run `33261962445` passed all five jobs. Every check ran offline
+with fixture providers and performed zero external provider calls.
 
 ## Acceptance impact
 
@@ -89,17 +90,15 @@ The new serializer changes only the implemented/mock-tested evidence path. It do
 missing RC-5 artifact retroactively and does not change `VIS-01` real-provider status from
 `NOT_TESTED`. GAP-003, GAP-010 and GAP-013 remain `IN_PROGRESS`.
 
-## Required sequence after review
+## Sequence status after merge
 
 ```text
-draft remediation PR
-  -> G-08 review
-  -> merge
-  -> exact-main full regression
-  -> lock vf-v3-01-rc6
-  -> new RC-6 operation IDs and scope/window
-  -> rebind G-01-A / G-02-A / G-03-A
-  -> separate owner authority for RC-6 operation 1
+PR #29 / G-08 / merge / exact-main regression: COMPLETE
+  -> vf-v3-01-rc6 lock: COMPLETE
+  -> new RC-6 operation IDs and scope/window: COMPLETE OFFLINE
+  -> G-01-A / G-02-A / G-03-A rebind: COMPLETE IN UNMOUNTED BUNDLE
+  -> governance rebind PR G-08: PENDING
+  -> separate owner authority for RC-6 operation 1: PENDING
 ```
 
 No RC-5 operation ID may be reused. RC-5 operation 2 remains locked.
