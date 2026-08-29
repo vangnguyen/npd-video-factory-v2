@@ -7,8 +7,11 @@ production-path or human-quality acceptance.
 V3-01-01 through V3-01-12 are merged in executable RC-5
 `26adafb2eeed4b4de1169db73a13e50a683e094c`, tagged `vf-v3-01-rc5`. RC-3 operation 1 was
 authorized, consumed once and ended `REVIEW_REQUIRED`; all RC-3 IDs are locked. RC-4 is retained
-as evidence that the stale hard-coded operation allowlist failed closed. RC-5 has fresh derived
-operation IDs and an unmounted governance bundle, but operation 1 remains separately owner-gated.
+as evidence that the stale hard-coded operation allowlist failed closed. RC-5 operation 1 later
+completed provider execution once, but its post-call evidence serialization failed; it is consumed
+and permanently `REVIEW_REQUIRED`, while operation 2 is not approved. V3-01-13 is implemented and
+mock-tested on code commit `f04bffc0aa4b14248a20602fe4a6be073cd6655f` but is not merged or
+locked as RC-6.
 None of these local/CI entries establish production-path, accepted real-provider or quality
 acceptance.
 
@@ -41,7 +44,7 @@ acceptance.
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
 | Transcript/scene/silence/highlight | `auto_edit_providers.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py` | Auto Edit suite and measured two-run fixture evidence | Contract/mock PASS with pre-call safety; real accuracy absent |
-| Vision/reframe | `vision_*`, `openai_vision_provider.py`, `flow_a_acceptance.py` | fixture/E2E plus V3-01-09 strict Responses-schema, retry/circuit/rights/budget/secret tests | OpenAI `gpt-5-mini` adapter implemented/mock-tested and disabled; real provider absent |
+| Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema and V3-01-13 canonical dataclass/Pydantic evidence tests | Adapter and evidence path implemented/mock-tested; RC-5 provider execution succeeded but acceptance evidence is incomplete, so real-provider axis remains `NOT_TESTED` |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |
 | ComfyUI | `services/comfyui-bridge`, eight allowlisted workflows | bridge unit tests | Mock/disabled backend only; no GPU evidence |
@@ -75,8 +78,8 @@ acceptance.
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
 | Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
-| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, V3-01-09 adapter, V3-01-10 gate loader, V3-01-11 redacted error-ledger and V3-01-12 RC-bound-ID tests | PostgreSQL-backed local contract passes; RC-4 stale-ID blocker failed closed; V3-01-12 is merged in RC-5, whose bundle remains unmounted and checked-in external execution remains hard-blocked |
-| Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart and configuration tests | Implemented/mock-tested; production-like multi-instance and real acceptance absent |
+| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, `evidence_serialization.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, gate-loader/RC binding, redacted error ledger and canonical evidence/fallback tests | PostgreSQL-backed local contract passes; RC-5 operation 1 proved the durable success/cost path but incomplete post-call evidence prevents acceptance; checked-in execution remains hard-blocked |
+| Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart/configuration tests and one bounded RC-5 operation | RC-5 recorded `137.6287 VND` actual cost within a 500 VND reservation; production-like multi-instance and accepted provider evidence remain absent |
 | Upload malware boundary | quarantine state, archive-deny policy, deterministic EICAR contract and internal clamd client | `test_auto_edit_analysis.py`, migration replay | Local/mock PASS; clamd and edge/WAF not deployed |
 | Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests | Schema/hook implemented; real rights unaccepted |
 | Backup/restore | `v2-11-backup.sh`, `v2-11-restore.sh`, `v3-01-dr-observability-drill.sh` | guarded disposable Docker backup/failure/restore/hash verification target | Local/CI only; production-like DR untested |

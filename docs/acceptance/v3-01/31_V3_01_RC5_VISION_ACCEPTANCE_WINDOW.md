@@ -6,15 +6,16 @@
 RC: vf-v3-01-rc5 / 26adafb2eeed4b4de1169db73a13e50a683e094c
 RC STATUS: LOCKED, NO-GO, NOT DEPLOYED
 G-08 PR #27: CONSUMED
-G-01-A / G-02-A / G-03-A: REBOUND TO RC-5 WINDOW
-GOVERNANCE BUNDLE: VERIFIED OFFLINE, NOT MOUNTED
-OPERATION 1 AUTHORITY: PENDING
-OPERATION 2 AUTHORITY: NOT GRANTED
+G-08 PR #28: CONSUMED; EXECUTABLE RC-5 UNCHANGED
+G-01-A / G-02-A / G-03-A: CONSUMED BY RC-5 OPERATION 1
+GOVERNANCE BUNDLE: VERIFIED; EPHEMERALLY USED FOR OPERATION 1; CHECKED-IN DEFAULT UNMOUNTED
+OPERATION 1: PROVIDER SUCCESS; ACCEPTANCE EVIDENCE INCOMPLETE; REVIEW_REQUIRED; CONSUMED
+OPERATION 2 AUTHORITY: NOT GRANTED; NOT EXECUTED
 EXTERNAL EXECUTION: false
 PAID EXECUTION: false
 CHECKED-IN BUDGET: 0 VND
 GLOBAL KILL SWITCH: engaged
-OPENAI CALLS IN THIS CHECKPOINT: 0
+OPENAI CALLS IN THIS CHECKPOINT: 1 AUTHORIZED CALL; NO RETRY/FALLBACK
 ```
 
 PR #27 merged V3-01-12 as
@@ -23,8 +24,8 @@ PR #27 merged V3-01-12 as
 Annotated tag `vf-v3-01-rc5` peels to that exact merge commit. RC-4 remains immutable evidence of
 the earlier fail-closed executable blocker and is not eligible for live acceptance.
 
-The governance records in this checkpoint do not modify executable RC-5. They prepare a new
-hash-bound, dated scope and remain inactive until a separate owner decision authorizes operation 1.
+The governance records did not modify executable RC-5. PR #28 merged them into main and exact-main
+CI passed. A later separate owner decision authorized only operation 1 inside the bound window.
 
 ## Exact RC-5 scope
 
@@ -62,9 +63,9 @@ The executable derivation helper produced exactly:
 1. `v3-01-rc5-openai-vision-call-01`
 2. `v3-01-rc5-openai-vision-call-02`
 
-Neither operation is authorized by this document. All RC-3 and RC-4 operation identifiers remain
-locked and cannot validate against RC-5. Operation 2 requires its own later decision even if
-operation 1 passes.
+This document alone authorized neither operation. The owner later authorized only operation 1; it
+is now consumed and cannot be reused. All RC-3, RC-4 and RC-5 operation-1 identifiers remain locked.
+Operation 2 was never approved and has no ledger row.
 
 ## Budget and execution envelope
 
@@ -83,9 +84,10 @@ Checked-in runtime defaults remain zero-budget and disabled. The envelope become
 the exact operation separately authorized by the owner and only after all loader, hash, time,
 rights, budget and duplicate-operation checks pass.
 
-## Activation conditions for operation 1
+## Historical activation conditions for operation 1
 
-Every condition must hold simultaneously, otherwise execution remains at zero calls:
+Every condition had to hold simultaneously. The bounded runner verified them before the single
+operation; these conditions grant no future or operation-2 authority:
 
 1. the governance-only rebind PR is merged and exact-main governance regression passes;
 2. the runtime executes exact immutable RC-5;
@@ -97,13 +99,20 @@ Every condition must hold simultaneously, otherwise execution remains at zero ca
 8. the exact asset and RightsRecord hashes match;
 9. no retry, fallback, second operation, publish, deploy or analytics action is enabled.
 
-## Current verdict and next decision
+## Post-window outcome
 
-This checkpoint performed no credential read, provider request, deployment, ingress change,
-publication or analytics write. It spent 0 VND. Overall remains **NO-GO**.
+Operation 1 ran once from `2026-08-29T14:28:08.019547Z` through
+`2026-08-29T14:28:39.431325Z`. Provider execution and the durable operation/attempt/cost ledger
+succeeded with one attempt, zero retry/fallback and `137.6287 VND` actual cost. The runner then
+failed while calling `model_dump()` on dataclass `ProviderVisionFrame`, so it did not retain the
+structured frame payload, provider/client request IDs or request/response hashes. These fields stay
+`null` and are not reconstructed. Operation 1 is therefore permanently `REVIEW_REQUIRED` and
+consumed; operation 2 remains unauthorized. No deployment, ingress change, publication or
+production analytics write occurred. Overall remains **NO-GO**.
 
-The next owner decisions are separate:
+The next sequence is separate:
 
-1. G-08 for the governance-only rebind PR;
-2. only after that merge and exact-main governance verification, authority for
-   `v3-01-rc5-openai-vision-call-01` within the stated window.
+1. review V3-01-13 zero-call evidence serialization remediation under a new G-08;
+2. merge and run exact-main full regression;
+3. lock RC-6, create new operation IDs/scope/window and rebind G-01-A/G-02-A/G-03-A;
+4. request separate authority for RC-6 operation 1.

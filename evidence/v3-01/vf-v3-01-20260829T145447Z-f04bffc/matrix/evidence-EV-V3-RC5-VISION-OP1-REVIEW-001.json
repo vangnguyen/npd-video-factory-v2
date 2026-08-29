@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC5-VISION-OP1-REVIEW-001",
+  "test_case_id": "V3-01-RC5-OPENAI-VISION-OPERATION-1-REVIEW",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03",
+    "OPS-04",
+    "OPS-09"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "f04bffc0aa4b14248a20602fe4a6be073cd6655f",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-vision",
+    "model_or_workflow": "gpt-5-mini RC-5 operation 1",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": null,
+  "started_at_utc": "2026-08-29T14:28:08.019547Z",
+  "completed_at_utc": "2026-08-29T14:28:39.431325Z",
+  "duration_seconds": 31.411778,
+  "result": "BLOCKED",
+  "assertion": "Provider execution and the durable operation/attempt ledger succeeded exactly once with 1996 input tokens, 2371 output tokens and 137.6287 VND actual cost. Post-call serialization failed because ProviderVisionFrame is a dataclass without model_dump. Structured payload, provider/client request IDs and request/response hashes were not retained and remain null. Operation 1 is consumed and permanently REVIEW_REQUIRED; operation 2 is not approved. This record does not promote VIS-01 to real-provider-tested PASS.",
+  "correlation_id": "v3-01-rc5-openai-vision-call-01",
+  "cost": {
+    "currency": "VND",
+    "actual": 137.6287,
+    "status": "RECORDED"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Owner and Codex evidence review",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "Do not rerun or reconstruct RC-5 operation 1. Verify the immutable review record, durable status/cost fields and null request-level fields. Any future provider acceptance requires merged V3-01-13, exact-main regression, locked RC-6, new operation IDs/scope/window and separate owner authority."
+}

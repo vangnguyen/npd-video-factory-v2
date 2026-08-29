@@ -1,10 +1,11 @@
 # V3-01 provider audit
 
-One owner-authorized OpenAI Vision operation was dispatched on exact RC-3 inside the bound window.
-It failed non-retryably with `OpenAIVisionResponseError` before structured output or a
-provider/usage receipt was available. It is a failed attempt, not accepted real-provider evidence.
-No credential value is present in Git/evidence; operation 1 cannot be reused and operation 2 remains
-locked. Credential presence grants no further execution authority.
+The historical owner-authorized RC-3 OpenAI Vision operation failed non-retryably and remains
+locked. RC-5 operation 1 later executed exactly once: provider execution and the durable
+operation/usage/cost ledger succeeded, but post-call evidence serialization failed before the
+structured payload and request-level IDs/hashes were retained. It is consumed and permanently
+`REVIEW_REQUIRED`, not accepted real-provider evidence. RC-5 operation 2 is not approved. No
+credential value is present in Git/evidence, and credential presence grants no further authority.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
@@ -30,13 +31,18 @@ RC-3 operation IDs. RC-4 is retained as fail-closed blocker evidence and cannot 
 acceptance. V3-01-12 merged through PR #27 as
 `26adafb2eeed4b4de1169db73a13e50a683e094c`; exact-main CI run `33194523231` passed 5/5 and
 `vf-v3-01-rc5` peels to that commit. Fresh RC-5 operation IDs and G-01-A/G-02-A/G-03-A hashes are
-recorded in an unmounted governance bundle. Operation 1 remains separately owner-gated.
+recorded in a governance bundle. PR #28 merged that governance-only scope as
+`8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee`; exact-main CI `33226016184` passed 5/5 and executable
+RC-5 remained unchanged. After separate owner authority, operation 1 completed provider execution
+with one attempt, zero retry/fallback and actual cost `137.6287 VND`. The runner then called
+`model_dump()` on dataclass `ProviderVisionFrame`, so request-level evidence was not written.
+V3-01-13 fixes only that serialization path offline and cannot repair the historical missing data.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | strict mock contract plus one failed, non-retryable RC-3 attempt; RC-4 stale-ID blocker failed closed; RC-5 allowlist and rebind validate offline | `BLOCKED` | G-08 for governance-only rebind, then separate RC-5 operation-1 authority and bounded evidence review; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; V3-01-13 canonical serializer passes offline | `BLOCKED` | G-08 for V3-01-13, merge/exact-main, lock RC-6, rebind gates and obtain separate RC-6 operation-1 authority; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -63,9 +69,11 @@ recorded in an unmounted governance bundle. Operation 1 remains separately owner
 
 ## Cost and network state
 
-External provider attempts: `1`, with zero retry and zero fallback. Actual provider billing is
-`unknown` because no usage receipt was returned. The durable safety ledger conservatively committed
-the reserved `500 VND` as an estimated charge; this must not be represented as actual billed cost.
+External provider history now contains the failed RC-3 attempt and one successful RC-5 provider
+execution, both with zero retry and zero fallback. RC-3 actual cost remains unknown. RC-5 recorded
+1,996 input tokens, 2,371 output tokens and `137.6287 VND` actual/charged cost inside a 500 VND
+reservation. The RC-5 structured payload/request IDs/hashes were not retained, so cost evidence is
+real but the Vision real-provider acceptance axis remains `NOT_TESTED`.
 
 Local evidence `EV-V3-PROVIDER-SAFETY-001` and V3-01-03 locked-commit evidence change
 only the implemented/mock-tested state for the control plane. They are not credentials, provider,
@@ -74,3 +82,5 @@ implemented/mock-tested Vision adapter evidence. `EV-V3-OPENAI-VISION-OP1-FAILED
 the bounded gate/ledger failure path but does not promote the real-provider axis; GAP-003 remains
 `IN_PROGRESS`. Draft evidence `EV-V3-STRUCTURED-ERROR-EVIDENCE-001` proves only the zero-call
 V3-01-11 schema/error contract on its code commit and also leaves every real axis unchanged.
+`EV-V3-RC5-VISION-OP1-REVIEW-001` records provider success and incomplete evidence without
+promotion. `EV-V3-EVIDENCE-SERIALIZATION-001` proves only the offline V3-01-13 serializer/fallback.

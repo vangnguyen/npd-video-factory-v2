@@ -1,0 +1,103 @@
+{
+  "evidence_version": 1,
+  "generated_at_utc": "2026-08-29T14:34:06Z",
+  "evidence_class": "real-provider execution evidence; acceptance artifact incomplete",
+  "provider_execution": "SUCCESS",
+  "acceptance_evidence": "INCOMPLETE",
+  "verdict": "REVIEW_REQUIRED",
+  "production_verdict": "NO-GO",
+  "authority": {
+    "approval_id": "V3-01-APP-024",
+    "authority_artifact_sha256": "ed11a15d05a0936dab50463ad0cd6ab9b144579d5a009bfd6d3852bff1955e94",
+    "consumed": true,
+    "reusable": false
+  },
+  "operation": {
+    "operation_key": "v3-01-rc5-openai-vision-call-01",
+    "consumed": true,
+    "attempt_count": 1,
+    "retry_count": 0,
+    "fallback_count": 0,
+    "started_at_utc": "2026-08-29T14:28:08.019547Z",
+    "completed_at_utc": "2026-08-29T14:28:39.431325Z",
+    "duration_ms": 31411.778,
+    "durable_operation_status": "succeeded",
+    "durable_attempt_status": "succeeded"
+  },
+  "operation_2": {
+    "operation_key": "v3-01-rc5-openai-vision-call-02",
+    "authorized": false,
+    "executed": false,
+    "ledger_rows": 0
+  },
+  "runtime": {
+    "rc_tag": "vf-v3-01-rc5",
+    "rc_commit": "26adafb2eeed4b4de1169db73a13e50a683e094c",
+    "governance_main_commit": "8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee",
+    "exact_main_ci_run_id": "33226016184",
+    "exact_main_ci_conclusion": "success",
+    "isolated": true
+  },
+  "scope": {
+    "provider": "openai-vision",
+    "model_requested": "gpt-5-mini",
+    "model_reported_by_usage": "gpt-5-mini-2025-08-07",
+    "capability": "vision",
+    "asset_sha256": "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+    "rights_record_id": "V3-01-RIGHTS-G03A-001",
+    "rights_record_sha256": "f469930a74b477751fc4417774b486ccbf2d7822487478875e099552c83e06ba",
+    "execution_scope_sha256": "6a5955943f0b8291ee02c3d10fbf60fe627b9968b75171dfa2a2c730264f58ae",
+    "gate_bundle_sha256": "e4c4604bbbfa4331d8fccf7c7ca41b23d3f1aff0472fddfa71fca3d9cb040e7f"
+  },
+  "usage_and_cost": {
+    "input_tokens": 1996,
+    "output_tokens": 2371,
+    "actual_cost_vnd": "137.6287",
+    "reserved_vnd": "500.0000",
+    "daily_limit_vnd": "1250.0000",
+    "committed_vnd": "137.6287",
+    "reserved_after_completion_vnd": "0.0000",
+    "cost_match": true,
+    "request_level_receipt_retained": false
+  },
+  "durable_safety": {
+    "operation_rows": 1,
+    "attempt_rows": 1,
+    "budget_rows": 1,
+    "circuit_rows": 1,
+    "circuit_state": "closed",
+    "circuit_consecutive_failures": 0,
+    "duplicate_reuse_allowed": false
+  },
+  "serialization_defect": {
+    "phase": "post_call_evidence_serialization",
+    "type": "AttributeError",
+    "redacted_message": "ProviderVisionFrame has no model_dump",
+    "root_cause": "ProviderVisionFrame is a frozen dataclass while the historical runner used a Pydantic-only serializer."
+  },
+  "historical_runner": {
+    "path": "docs/acceptance/v3-01/evidence/openai-vision-operation-1/raw/operation-1-runner.py",
+    "sha256": "4e47d81a1466543c0b3594cf969fe75533704622954ea0cd8574300b0e4b292b",
+    "modified_for_remediation": false
+  },
+  "missing_request_level_evidence": {
+    "structured_output_payload": null,
+    "provider_request_id": null,
+    "client_request_id": null,
+    "request_sha256": null,
+    "response_sha256": null,
+    "provider_response_receipt": null,
+    "reconstructed": false
+  },
+  "secret_containment": {
+    "credential_alias": "secret://openai/codex-video",
+    "credential_value_recorded": false,
+    "secret_pattern_found": false
+  },
+  "acceptance_impact": {
+    "real_provider_axis_promoted": false,
+    "production_path_axis_promoted": false,
+    "quality_axis_promoted": false,
+    "next_required_checkpoint": "V3-01-13 zero-call remediation, G-08, merge, exact-main regression and RC-6 lock"
+  }
+}

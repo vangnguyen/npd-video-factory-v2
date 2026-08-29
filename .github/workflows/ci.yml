@@ -356,6 +356,20 @@ jobs:
           grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
           grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
           ! git grep -I -n -E '^(VISION_PROVIDER=openai|OPENAI_API_KEY=.+|PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false|PROVIDER_PER_OPERATION_LIMIT_VND=[1-9][0-9]*|PROVIDER_DAILY_LIMIT_VND=[1-9][0-9]*)$' -- .env.example docker-compose.yml deploy apps services
+      - name: Verify V3-01-13 evidence serialization boundary
+        run: |
+          grep -Fq 'def canonical_evidence_value(' apps/api/app/evidence_serialization.py
+          grep -Fq 'if is_dataclass(value)' apps/api/app/evidence_serialization.py
+          grep -Fq 'def write_evidence_bundle(' apps/api/app/evidence_serialization.py
+          grep -Fq 'post_call_evidence_serialization' apps/api/app/evidence_serialization.py
+          python -c 'import json; from pathlib import Path; p=Path("evidence/v3-01/vf-v3-01-20260829T145447Z-f04bffc/provider/rc5-operation-1-review.json"); d=json.loads(p.read_text()); assert d["provider_execution"] == "SUCCESS"; assert d["acceptance_evidence"] == "INCOMPLETE"; assert d["verdict"] == "REVIEW_REQUIRED"; assert d["operation"]["consumed"] is True; assert d["operation_2"]["authorized"] is False; assert d["missing_request_level_evidence"]["reconstructed"] is False; assert d["production_verdict"] == "NO-GO"'
+          grep -qx 'VISION_PROVIDER=fixture' .env.example
+          grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
+          grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
+          grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

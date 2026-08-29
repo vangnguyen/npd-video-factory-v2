@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-13 Evidence Serialization Remediation",
+  "overall_verdict": "NO-GO",
+  "implemented": "PASS",
+  "mock_tested": "PASS",
+  "real_provider_tested": "NOT_TESTED",
+  "production_path_tested": "NOT_TESTED",
+  "quality_accepted": "NOT_TESTED",
+  "code_commit_under_test": "f04bffc0aa4b14248a20602fe4a6be073cd6655f",
+  "g08_for_remediation": "PENDING",
+  "rc6_locked": false,
+  "external_calls_during_remediation": 0,
+  "actual_cost_during_remediation_vnd": 0,
+  "credential_read_during_remediation": false,
+  "rc5_operation_1": {
+    "provider_execution": "SUCCESS",
+    "acceptance_evidence": "INCOMPLETE",
+    "verdict": "REVIEW_REQUIRED",
+    "consumed": true,
+    "actual_cost_vnd": "137.6287"
+  },
+  "rc5_operation_2": {
+    "authority": "NOT_APPROVED",
+    "executed": false
+  },
+  "external_execution": false,
+  "paid_execution": false,
+  "checked_in_budget_vnd": 0,
+  "currency": "VND",
+  "global_kill_switch_engaged": true,
+  "deploy_performed": false,
+  "public_ingress_enabled": false,
+  "publish_performed": false,
+  "production_analytics_enabled": false
+}

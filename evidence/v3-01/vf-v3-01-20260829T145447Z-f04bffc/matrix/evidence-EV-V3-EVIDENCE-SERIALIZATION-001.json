@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-EVIDENCE-SERIALIZATION-001",
+  "test_case_id": "V3-01-13-CANONICAL-EVIDENCE-SERIALIZATION",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-09"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "f04bffc0aa4b14248a20602fe4a6be073cd6655f",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-recorded-provider-success",
+    "model_or_workflow": "ProviderVisionFrame canonical evidence writer",
+    "credential_alias": "not-read",
+    "secret_recorded": false
+  },
+  "request_hash": "59b90b3233255666262699c781c474521716b107c7854256d7033a6d04966480",
+  "response_or_artifact_hash": "59b90b3233255666262699c781c474521716b107c7854256d7033a6d04966480",
+  "started_at_utc": "2026-08-29T14:49:58Z",
+  "completed_at_utc": "2026-08-29T14:54:47Z",
+  "duration_seconds": 289.0,
+  "result": "PASS",
+  "assertion": "The canonical evidence serializer handles the exact frozen ProviderVisionFrame contract, nested dataclass and Pydantic values, nullable fields, lists/dictionaries, Vietnamese Unicode, Decimal cost and deterministic JSON/SHA-256. A recorded successful provider result writes offline. Unsupported serialization writes a separate secret-free REVIEW_REQUIRED artifact while the durable operation/usage/cost context remains unchanged. The API suite passed 221/221 with zero provider calls and zero VND spend.",
+  "correlation_id": "v3-01-13-evidence-serialization-f04bffc",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex offline regression runner",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010"
+  ],
+  "reproduce": "On commit f04bffc0aa4b14248a20602fe4a6be073cd6655f run python -m pytest apps/api/tests/test_evidence_serialization.py -q and python -m pytest apps/api/tests -q. Keep provider execution disabled and do not read a credential."
+}
