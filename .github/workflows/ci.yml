@@ -370,6 +370,20 @@ jobs:
           grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
           grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
           grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
+      - name: Verify V3-01-14 operation authority limits boundary
+        run: |
+          grep -Fq 'class ProviderOperationAuthorityLimits(StrictModel)' apps/api/app/provider_gate_loader.py
+          grep -Fq 'def validate_operation_authority_limits(' apps/api/app/provider_gate_loader.py
+          grep -Fq 'acceptance_window_limit_vnd' apps/api/app/provider_gate_loader.py
+          grep -Fq 'same_utc_day_runtime_daily_limit_vnd' apps/api/app/provider_gate_loader.py
+          python -c 'import json; from pathlib import Path; p=Path("docs/acceptance/v3-01/evidence/rc6-openai-vision-operation-1/operation-1-blocked-0-call.json"); d=json.loads(p.read_text()); assert d["acceptance_verdict"] == "BLOCKED_0_CALL"; assert d["provider_request_sent"] is False; assert d["api_calls"] == 0; assert d["operation_consumed"] is False; assert d["actual_cost_vnd"] == "0"; assert d["durable_ledger_counts_after_block"] == {"operations": 0, "attempts": 0, "budget_days": 0, "circuits": 0}; assert d["operation_2_authorized"] is False'
+          grep -qx 'VISION_PROVIDER=fixture' .env.example
+          grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
+          grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
+          grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

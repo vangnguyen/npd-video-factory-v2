@@ -3,12 +3,13 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import re
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, ValidationError, field_validator, model_validator
 
 from .models import StrictModel
 from .provider_safety import (
@@ -22,6 +23,10 @@ from .provider_safety import (
 
 class ProviderGateBundleError(ValueError):
     """Raised when an owner-gate bundle cannot be trusted."""
+
+
+class ProviderOperationAuthorityLimitsError(ValueError):
+    """Raised when an operation authority does not exactly match its gate budget."""
 
 
 def canonical_sha256(value: StrictModel | dict[str, object]) -> str:
@@ -166,6 +171,131 @@ class ProviderGateBudgetEnvelope(StrictModel):
         if actual != expected:
             raise ValueError("gate bundle exceeds or changes the owner-approved G-02-A envelope")
         return self
+
+
+class ProviderOperationAuthorityLimits(StrictModel):
+    """Canonical VND limits contract shared by authority records and runners.
+
+    Decimal VND amounts must use canonical JSON strings.  The verified gate owns
+    the acceptance-window name; ``daily_limit_vnd`` is deliberately not accepted
+    here because it is only the durable ledger projection for this same-UTC-day
+    window.
+    """
+
+    currency: Literal["VND"]
+    images: Literal[1]
+    max_dimension_pixels: int = Field(ge=32, le=65_535)
+    image_detail: Literal["low", "high", "auto"]
+    input_token_ceiling: int = Field(ge=1)
+    max_output_tokens: int = Field(ge=256, le=32_768)
+    per_operation_limit_vnd: Decimal = Field(gt=0)
+    acceptance_window_limit_vnd: Decimal = Field(gt=0)
+    timeout_seconds: int = Field(ge=1, le=3_600)
+    max_concurrent_calls: Literal[1]
+    max_attempts: Literal[1]
+    automatic_retry: Literal[False]
+    model_fallback: Literal[False]
+
+    @field_validator(
+        "images",
+        "max_dimension_pixels",
+        "input_token_ceiling",
+        "max_output_tokens",
+        "timeout_seconds",
+        "max_concurrent_calls",
+        "max_attempts",
+        mode="before",
+    )
+    @classmethod
+    def integer_limits_must_be_json_integers(cls, value: object) -> object:
+        if type(value) is not int:
+            raise ValueError("operation authority integer limits must be JSON integers")
+        return value
+
+    @field_validator("automatic_retry", "model_fallback", mode="before")
+    @classmethod
+    def boolean_limits_must_be_json_booleans(cls, value: object) -> object:
+        if type(value) is not bool:
+            raise ValueError("operation authority boolean limits must be JSON booleans")
+        return value
+
+    @field_validator(
+        "per_operation_limit_vnd",
+        "acceptance_window_limit_vnd",
+        mode="before",
+    )
+    @classmethod
+    def vnd_limits_must_be_canonical_strings(cls, value: object) -> object:
+        if not isinstance(value, str) or re.fullmatch(r"(?:0|[1-9][0-9]*)(?:\.[0-9]{1,4})?", value) is None:
+            raise ValueError("operation authority VND limits must be canonical decimal strings")
+        return value
+
+    @model_validator(mode="after")
+    def enforce_two_operation_window(self) -> "ProviderOperationAuthorityLimits":
+        if self.acceptance_window_limit_vnd < self.per_operation_limit_vnd * 2:
+            raise ValueError("acceptance window must cover both allowlisted operations")
+        return self
+
+    @classmethod
+    def from_gate_budget(
+        cls,
+        budget: ProviderGateBudgetEnvelope,
+    ) -> "ProviderOperationAuthorityLimits":
+        timeout_seconds = int(budget.timeout_seconds)
+        if Decimal(str(timeout_seconds)) != Decimal(str(budget.timeout_seconds)):
+            raise ProviderOperationAuthorityLimitsError(
+                "gate timeout cannot be represented by the integer authority contract"
+            )
+        return cls.model_validate(
+            {
+                "currency": budget.currency,
+                "images": budget.max_frames,
+                "max_dimension_pixels": budget.max_dimension_pixels,
+                "image_detail": budget.image_detail,
+                "input_token_ceiling": budget.input_token_ceiling,
+                "max_output_tokens": budget.max_output_tokens,
+                "per_operation_limit_vnd": str(budget.per_operation_limit_vnd),
+                "acceptance_window_limit_vnd": str(
+                    budget.acceptance_window_limit_vnd
+                ),
+                "timeout_seconds": timeout_seconds,
+                "max_concurrent_calls": budget.max_concurrent_calls,
+                "max_attempts": budget.max_attempts,
+                "automatic_retry": False,
+                "model_fallback": False,
+            }
+        )
+
+    @property
+    def same_utc_day_runtime_daily_limit_vnd(self) -> Decimal:
+        """Project the bounded window onto the durable ledger's daily column.
+
+        ProviderGateBundle separately proves that the window cannot cross its
+        UTC budget day; this alias must never be accepted from authority input.
+        """
+
+        return self.acceptance_window_limit_vnd
+
+
+def validate_operation_authority_limits(
+    payload: object,
+    *,
+    budget: ProviderGateBudgetEnvelope,
+) -> ProviderOperationAuthorityLimits:
+    """Validate strict authority JSON and compare it to the exact gate budget."""
+
+    try:
+        actual = ProviderOperationAuthorityLimits.model_validate(payload)
+    except ValidationError as exc:
+        raise ProviderOperationAuthorityLimitsError(
+            "operation authority limits are invalid"
+        ) from exc
+    expected = ProviderOperationAuthorityLimits.from_gate_budget(budget)
+    if actual != expected:
+        raise ProviderOperationAuthorityLimitsError(
+            "operation authority limits do not match the verified gate budget"
+        )
+    return actual
 
 
 class ProviderGateBundle(StrictModel):
@@ -333,6 +463,7 @@ def load_verified_provider_gate_bundle(
         rights_record_sha256=bundle.rights_record.record_sha256,
         allowed_operations=bundle.allowed_operations,
     )
+    authority_limits = ProviderOperationAuthorityLimits.from_gate_budget(bundle.budget)
     return ProviderExecutionGateScope(
         bundle_id=bundle.bundle_id,
         bundle_sha256=actual_bundle_sha256,
@@ -345,21 +476,23 @@ def load_verified_provider_gate_bundle(
         valid_from_utc=bundle.valid_from_utc,
         expires_at_utc=bundle.expires_at_utc,
         budget_day_utc=bundle.budget.budget_day_utc,
-        per_operation_limit_vnd=bundle.budget.per_operation_limit_vnd,
-        acceptance_window_limit_vnd=bundle.budget.acceptance_window_limit_vnd,
+        per_operation_limit_vnd=authority_limits.per_operation_limit_vnd,
+        acceptance_window_limit_vnd=(
+            authority_limits.same_utc_day_runtime_daily_limit_vnd
+        ),
         input_vnd_per_million_tokens=bundle.budget.input_vnd_per_million_tokens,
         cached_input_vnd_per_million_tokens=(
             bundle.budget.cached_input_vnd_per_million_tokens
         ),
         output_vnd_per_million_tokens=bundle.budget.output_vnd_per_million_tokens,
-        max_frames=bundle.budget.max_frames,
-        max_dimension_pixels=bundle.budget.max_dimension_pixels,
-        image_detail=bundle.budget.image_detail,
-        input_token_ceiling=bundle.budget.input_token_ceiling,
-        max_output_tokens=bundle.budget.max_output_tokens,
-        timeout_seconds=bundle.budget.timeout_seconds,
-        max_attempts=bundle.budget.max_attempts,
-        max_concurrent_calls=bundle.budget.max_concurrent_calls,
+        max_frames=authority_limits.images,
+        max_dimension_pixels=authority_limits.max_dimension_pixels,
+        image_detail=authority_limits.image_detail,
+        input_token_ceiling=authority_limits.input_token_ceiling,
+        max_output_tokens=authority_limits.max_output_tokens,
+        timeout_seconds=authority_limits.timeout_seconds,
+        max_attempts=authority_limits.max_attempts,
+        max_concurrent_calls=authority_limits.max_concurrent_calls,
         credential_approval_id=bundle.credential_approval.record.approval_id,
         budget_approval_id=bundle.budget_approval.record.approval_id,
         rights_approval_id=bundle.rights_approval.record.approval_id,
