@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC6-OP1-BLOCKED-001",
+  "test_case_id": "V3-01-RC6-VISION-OP1-BLOCKED-PRE-CALL",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "371b70b44aee306da1d46541239c54f811e668f3",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-vision",
+    "model_or_workflow": "gpt-5-mini authority preflight only",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "c1eba9d4fb23b728c2173713801b19e5f48011e213f4b352ed368f9e25f2d3ac",
+  "started_at_utc": "2026-08-30T14:13:27Z",
+  "completed_at_utc": "2026-08-30T14:14:29Z",
+  "duration_seconds": 62.0,
+  "result": "PASS",
+  "assertion": "The approved RC-6 operation stopped fail-closed on OPERATION_AUTHORITY_LIMITS_MISMATCH before credential read, reservation, durable operation creation or provider dispatch. Provider requests are 0, cost is 0 VND, ledger is 0|0|0|0, operation 1 is not consumed, operation 2 is locked and production remains NO-GO. This proves only fail-closed behavior and does not promote real-provider or production acceptance.",
+  "correlation_id": "v3-01-rc6-op1-blocked-0-call",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Codex fail-closed acceptance reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "Validate the preserved receipt at docs/acceptance/v3-01/evidence/rc6-openai-vision-operation-1/operation-1-blocked-0-call.json. Do not retry RC-6, resolve a credential, mount a live gate or send a provider request."
+}

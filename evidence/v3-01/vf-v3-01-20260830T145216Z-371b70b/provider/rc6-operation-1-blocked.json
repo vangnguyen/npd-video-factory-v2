@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "operation_key": "v3-01-rc6-openai-vision-call-01",
+  "classification": "BLOCKED_PRE_CALL_NOT_CONSUMED",
+  "blocker_code": "OPERATION_AUTHORITY_LIMITS_MISMATCH",
+  "provider_request_sent": false,
+  "provider_execution": "NOT_STARTED",
+  "provider_error": null,
+  "runtime_provider_path_error": null,
+  "credential_read_by_runner": false,
+  "budget_reserved_vnd": "0",
+  "actual_cost_vnd": "0",
+  "ledger_counts": "0|0|0|0",
+  "operation_consumed": false,
+  "operation_2_authorized": false,
+  "production_verdict": "NO-GO",
+  "receipt_path": "docs/acceptance/v3-01/evidence/rc6-openai-vision-operation-1/operation-1-blocked-0-call.json",
+  "receipt_sha256": "c1eba9d4fb23b728c2173713801b19e5f48011e213f4b352ed368f9e25f2d3ac",
+  "rc6_authority_reusable": false,
+  "next_candidate": "RC-7 only after V3-01-14 G-08, merge and exact-main regression"
+}

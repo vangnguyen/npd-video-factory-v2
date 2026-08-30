@@ -7,17 +7,18 @@
 | RC-3 operation 1 | VND | 1,250 window / 500 operation | 500 estimated | unknown | 1 |
 | RC-5 operation 1 | VND | 1,250 window / 500 operation | 137.6287 actual | 137.6287 | 1 |
 | V3-01-13 remediation | VND | 0 | 0 | 0 | 0 |
-| RC-6 governance rebind | VND | checked-in runtime budget 0; conditional envelope 1,250/500 remains unmounted | 0 | 0 | 0 |
+| RC-6 operation 1 pre-call block | VND | checked-in runtime budget 0; conditional window/operation envelope 1,250/500 retired after mismatch | 0 | 0 | 0 |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
 later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
 receipt, so its actual provider billing cannot be asserted; the ledger committed the 500 VND
 reservation conservatively. A separate RC-5 operation then completed provider execution once and
 recorded 1,996 input tokens, 2,371 output tokens and `137.6287 VND` actual/charged cost. Its
-post-call evidence artifact remained incomplete. V3-01-13 itself and the RC-6 governance rebind
-perform zero calls and cost 0 VND. The dated 1,250/500 VND RC-6 envelope is only an unmounted,
-hash-bound approval artifact; it grants no operation authority and changes no checked-in runtime
-budget. No GPU workflow, hosted render, publish or analytics collection was performed. USD is not
+post-call evidence artifact remained incomplete. V3-01-13 itself and V3-01-14 perform zero calls
+and cost 0 VND. RC-6 operation 1 stopped before reservation/provider dispatch, so the dated
+1,250/500 VND envelope committed nothing and is now retired with that failed window; it grants no
+further operation authority and changes no checked-in runtime budget. No GPU workflow, hosted
+render, publish or analytics collection was performed. USD is not
 an accepted operating currency for this acceptance program.
 
 ## Required provider budget contract
@@ -66,7 +67,11 @@ remaining reservation returned to zero; the circuit stayed closed with zero cons
 The post-call serializer did not retain request-level evidence, so the operation remains consumed
 and `REVIEW_REQUIRED`. Evidence: `EV-V3-RC5-VISION-OP1-REVIEW-001`. Operation 2 remains locked.
 RC-6 rebind evidence `EV-V3-RC6-VISION-REBIND-001` validates the new VND envelope offline only;
-both RC-6 operations remain unauthorized and unexecuted.
+operation 1 later received separate authority but stopped before reservation/provider dispatch on an
+authority-limits mismatch. It remains not consumed, with provider calls 0, actual cost 0 VND and
+ledger `0|0|0|0`; its RC-6 authority is retired. Operation 2 remains locked. V3-01-14 keeps both
+`per_operation_limit_vnd` and `acceptance_window_limit_vnd` in one canonical VND contract and makes
+no external call.
 
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.

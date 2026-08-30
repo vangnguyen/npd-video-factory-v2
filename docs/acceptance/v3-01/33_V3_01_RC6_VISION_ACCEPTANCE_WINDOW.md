@@ -8,14 +8,29 @@ RC STATUS: LOCKED, NO-GO, NOT DEPLOYED
 G-08 PR #29: CONSUMED
 G-01-A / G-02-A / G-03-A: REBOUND TO EXACT RC-6
 GOVERNANCE BUNDLE: VERIFIED OFFLINE; UNMOUNTED
-RC-6 OPERATION 1 AUTHORITY: NOT GRANTED; NOT EXECUTED
+RC-6 OPERATION 1 AUTHORITY: GRANTED, THEN RETIRED AFTER FAIL-CLOSED BLOCK
+RC-6 OPERATION 1 RESULT: BLOCKED PRE-CALL / NOT CONSUMED
 RC-6 OPERATION 2 AUTHORITY: NOT GRANTED; NOT EXECUTED
 EXTERNAL EXECUTION: false
 PAID EXECUTION: false
 CHECKED-IN BUDGET: 0 VND
 GLOBAL KILL SWITCH: engaged
 OPENAI CALLS IN THIS CHECKPOINT: 0
+ACTUAL COST: 0 VND
+DURABLE LEDGER: 0|0|0|0
 ```
+
+On 2026-08-30, the separately approved operation-1 runner passed outer preflight and then rejected
+the authority before reading the credential, reserving budget, creating a durable operation or
+sending a provider request. The immutable RC-6 runner expected a private limits dictionary with
+legacy field `reservation_vnd` and omitted the owner-approved
+`acceptance_window_limit_vnd=1250`. The authority correctly retained that window cap, so the exact
+dictionary comparison returned `OPERATION_AUTHORITY_LIMITS_MISMATCH / BLOCKED_0_CALL`.
+
+This is an authority-contract mismatch, not an OpenAI error and not a provider-runtime-path error.
+Operation 1 remains not consumed because no provider call, reservation or ledger row exists, but its
+RC-6 authority/window is retired and must not be reused. The secret-free receipt is
+[`operation-1-blocked-0-call.json`](evidence/rc6-openai-vision-operation-1/operation-1-blocked-0-call.json).
 
 PR #29 merged V3-01-13 as
 `8df74a202dc2160e9358ca4cc9be54d989af2292`. Exact-main CI run `33261962445` passed
@@ -75,9 +90,9 @@ The executable derivation helper produced exactly:
 1. `v3-01-rc6-openai-vision-call-01`
 2. `v3-01-rc6-openai-vision-call-02`
 
-Both operations are unconsumed, but neither is authorized. Operation 1 requires a separate owner
-decision after the governance-only rebind PR is merged and exact-main governance verification
-passes. Operation 2 remains locked even if operation 1 is later approved.
+Both operation IDs have no durable consumption row. Operation 1 received one separate bounded owner
+authority but stopped pre-call; that authority is retired and cannot be reused after executable
+remediation. Operation 2 was never authorized and remains locked.
 
 ## Budget and execution envelope
 
@@ -110,5 +125,8 @@ Every condition must hold simultaneously. Any failure means zero calls:
 8. the exact asset and RightsRecord hashes match;
 9. no retry, fallback, second operation, publish, deploy or analytics action is enabled.
 
-This checkpoint stops before condition 6. The bundle remains unmounted, no credential was read,
-no budget was enabled, no API call occurred and the production verdict remains **NO-GO**.
+The historical RC-6 activation reached condition 6, then failed closed on the authority-limits
+contract before credential read or condition 7 reservation. The bundle was mounted only inside the
+isolated runner process, no budget was committed, no API call occurred and the production verdict
+remains **NO-GO**. Any future attempt requires V3-01-14 merge, a new locked RC, new operation IDs,
+new scope/window and new owner authority.

@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-13; RC-5 operation 1 consumed/REVIEW_REQUIRED; RC-6 governance rebind offline only
-RELEASE CANDIDATE: RC-6 8df74a202dc2160e9358ca4cc9be54d989af2292 LOCKED NO-GO; NOT DEPLOYED; NO RC-6 OPERATION AUTHORIZED
-LATEST EVIDENCE: EV-V3-EVIDENCE-SERIALIZATION-001 exact-main mock PASS + EV-V3-RC6-VISION-REBIND-001 offline PASS; exact-main CI 33261962445 PASS 5/5
-DATE: 2026-08-29
-OWNER DECISION: G-08 CONSUMED THROUGH PR #29; RC-6 G-01-A/G-02-A/G-03-A REBOUND; GOVERNANCE PR G-08 AND RC-6 OPERATION-1 AUTHORITY PENDING
+SCOPE: merged V3-01-00 through V3-01-13; RC-5 operation 1 consumed/REVIEW_REQUIRED; RC-6 operation 1 BLOCKED PRE-CALL / NOT CONSUMED; V3-01-14 draft zero-call remediation
+RELEASE CANDIDATE: RC-6 8df74a202dc2160e9358ca4cc9be54d989af2292 LOCKED NO-GO; NOT DEPLOYED; RC-6 AUTHORITY RETIRED
+LATEST EVIDENCE: RC-6 BLOCKED_0_CALL receipt with provider calls 0, cost 0 VND and ledger 0|0|0|0; V3-01-14 canonical limits tests offline
+DATE: 2026-08-30
+OWNER DECISION: RC-6 OPERATION-1 AUTHORITY ENDED FAIL-CLOSED; NO RETRY; V3-01-14 REQUIRES NEW G-08 BEFORE MERGE
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -28,7 +28,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | RC-3 actual cost unknown; RC-5 operation 1 recorded `137.6287 VND` actual cost inside a 500 VND reservation; V3-01-13 and RC-6 rebind cost 0 VND; production-like/accepted provider evidence incomplete |
+| Cost | RC-3 actual cost unknown; RC-5 operation 1 recorded `137.6287 VND`; RC-6 operation 1 stopped before reservation/provider dispatch with 0 VND cost and ledger `0|0|0|0`; production-like/accepted provider evidence incomplete |
 | Rights/provenance | exact owned test image approved for Vision acceptance only; broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
@@ -40,7 +40,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
 - no production-like target, deployed image digest or owner-accepted production-like DR drill;
-- RC-5 OpenAI Vision provider execution succeeded once, but post-call serialization lost structured payload/request-level IDs and hashes; operation 1 is consumed/`REVIEW_REQUIRED`, operation 2 is locked and Vision remains unaccepted; RC-6 has no authorized operation yet;
+- RC-5 OpenAI Vision provider execution succeeded once, but post-call serialization lost structured payload/request-level IDs and hashes; operation 1 is consumed/`REVIEW_REQUIRED` and Vision remains unaccepted. RC-6 operation 1 later stopped pre-call on an authority-limits mismatch, remains not consumed, and its authority is retired; both RC-6 operation IDs are prohibited from further execution;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
 - GitHub `main` is not protected.
@@ -65,6 +65,9 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `b285bfec8c7f398d56ec513cf35cd6f14fb5c596`; NO-GO and not deployed;
 - RC-6 rebind evidence `EV-V3-RC6-VISION-REBIND-001` validates fresh operation IDs, exact
   provider/model/asset/RightsRecord, VND envelope, bundle SHA and scope SHA offline with 0 calls/0 VND;
+- RC-6 operation-1 blocker receipt records `BLOCKED_0_CALL`, no provider request, no reservation,
+  cost 0 VND and durable ledger `0|0|0|0`; this is fail-closed evidence only, not an acceptance-axis
+  promotion;
 - operation-1 evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`, evidence SHA-256 `e94fcafcbab8adefb9506cb91d98010cdb1713ba79ce209ec2dfdb154f97fd2d`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
@@ -75,7 +78,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `EV-V3-VERIFIED-GATE-LOADER-001`, `EV-V3-OPENAI-VISION-OP1-FAILED-001`,
   `EV-V3-STRUCTURED-ERROR-EVIDENCE-001`, `EV-V3-RC-BOUND-ALLOWLIST-001`,
   `EV-V3-RC5-VISION-OP1-REVIEW-001`, `EV-V3-EVIDENCE-SERIALIZATION-001`,
-  `EV-V3-RC6-VISION-REBIND-001`;
+  `EV-V3-RC6-VISION-REBIND-001`, `EV-V3-RC6-OP1-BLOCKED-001`,
+  `EV-V3-AUTHORITY-LIMITS-001`;
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: local disposable `EV-V3-DR-OBS-001` PASS; production-like restore remains absent;
@@ -179,23 +183,26 @@ durable safety transaction succeeded with 1,996 input tokens, 2,371 output token
 JSON/SHA and a separate secret-free `REVIEW_REQUIRED` fallback that preserves durable
 operation/usage/cost context. It performs zero external calls and cannot reconstruct or promote the
 missing RC-5 structured payload, request IDs or hashes. PR #29 merged it, exact-main CI passed 5/5
-and RC-6 was locked. The fresh RC-6 scope validates offline in an unmounted bundle; neither
-operation has authority.
+and RC-6 was locked. The fresh RC-6 scope validated offline. Its separately approved operation 1
+later failed closed before provider dispatch because the runner's private limits dictionary omitted
+the owner-approved window cap; operation 1 is not consumed, but the authority is retired and
+operation 2 remains locked. V3-01-14 replaces future private runner dictionaries with one canonical
+strict authority/bundle adapter and makes zero calls.
 
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
-[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-13 sequence is defined in
+[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-14 sequence is defined in
 [`14_REMEDIATION_PR_PLAN.md`](14_REMEDIATION_PR_PLAN.md). No exception or expiry is recorded.
 
 ## Allowed actions
 
-- **Merge:** none currently authorized; G-08 through PR #29 is consumed and the governance-only RC-6 rebind requires a new decision.
+- **Merge:** none currently authorized; V3-01-14 is a draft/source-only remediation and requires a new G-08.
 - **Deploy:** no; RC-6 is NO-GO, not deployed, and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** RC-5 operation 1 consumed exactly one attempt with no retry/fallback
-  and recorded `137.6287 VND` actual cost; all RC-5 IDs are locked. Neither RC-6 operation is
-  authorized and checked-in budget is 0.
+  and recorded `137.6287 VND` actual cost; all RC-5 IDs are locked. RC-6 operation 1 is not consumed
+  but its failed-window authority is retired, operation 2 is locked, and checked-in budget is 0.
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited:** any further provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
