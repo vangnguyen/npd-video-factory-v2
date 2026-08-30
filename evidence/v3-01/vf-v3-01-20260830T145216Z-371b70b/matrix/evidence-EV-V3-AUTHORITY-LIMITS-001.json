@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-AUTHORITY-LIMITS-001",
+  "test_case_id": "V3-01-14-CANONICAL-AUTHORITY-LIMITS",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "371b70b44aee306da1d46541239c54f811e668f3",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-validator",
+    "model_or_workflow": "ProviderOperationAuthorityLimits plus RC-6 verified bundle",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "7bb1058dd7f3a15a68e206c5c8dea0e627918bc20a69af86b1d583aebedbd028",
+  "started_at_utc": "2026-08-30T14:31:00Z",
+  "completed_at_utc": "2026-08-30T14:52:16Z",
+  "duration_seconds": 1276.0,
+  "result": "PASS",
+  "assertion": "One strict canonical VND model now derives future runner limits from the verified gate budget and enforces both per_operation_limit_vnd=500 and acceptance_window_limit_vnd=1250. Missing, legacy, extra, wrong-type and wrong-amount fields fail closed. daily_limit_vnd is not authority input; it is only a same-UTC-day durable-ledger projection after the gate window invariant passes. Focused tests passed 25/25 with zero credential reads, zero provider calls and zero VND.",
+  "correlation_id": "v3-01-14-authority-limits-371b70b",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Codex deterministic contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On source commit 371b70b44aee306da1d46541239c54f811e668f3 run python -m pytest -q apps/api/tests/test_operation_authority_limits.py apps/api/tests/test_provider_gate_loader.py. Keep all provider execution defaults disabled and do not read a credential."
+}

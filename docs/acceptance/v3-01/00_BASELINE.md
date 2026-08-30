@@ -2,20 +2,21 @@
 
 Captured at `2026-08-27T12:02:08Z` (`2026-08-27 19:02:08 Asia/Ho_Chi_Minh`).
 Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
+Current checkpoint status updated after the RC-6 pre-call block on `2026-08-30`.
 
 ## Control state
 
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-6 8df74a202dc2160e9358ca4cc9be54d989af2292; locked NO-GO; not deployed; no RC-6 operation authorized
+CURRENT RC: RC-6 8df74a202dc2160e9358ca4cc9be54d989af2292; locked NO-GO; not deployed; RC-6 authority retired
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: RC-6 governance rebind; zero calls; bundle unmounted
+CURRENT SAFE PHASE: V3-01-14 source-only authority-limits remediation; zero calls; zero VND
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #29 MERGE CONSUMED; RC-6 GOVERNANCE REBIND PR NOT YET APPROVED
-G-01-A / G-02-A / G-03-A: REBOUND TO EXACT RC-6; THESE RECORDS DO NOT AUTHORIZE A CALL
-RC-6 OPERATION 1: NOT APPROVED; NOT EXECUTED
-RC-6 OPERATION 2: NOT APPROVED; NOT EXECUTED
+G-08: PR #30 GOVERNANCE MERGE CONSUMED; V3-01-14 REQUIRES A NEW G-08
+G-01-A / G-02-A / G-03-A: REBOUND TO EXACT RC-6; FAILED-WINDOW AUTHORITY RETIRED
+RC-6 OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; PROVIDER CALLS 0; COST 0 VND
+RC-6 OPERATION 2: LOCKED; NOT EXECUTED
 RC-5 OPERATION 1: PROVIDER SUCCESS; EVIDENCE INCOMPLETE; REVIEW_REQUIRED; CONSUMED
 RC-5 OPERATION 2: NOT APPROVED; LOCKED
 HISTORICAL RC-3 OPERATION 1: EXECUTED ONCE; FAILED NON-RETRYABLE; NEVER REUSE
@@ -56,9 +57,13 @@ runner failed to serialize frozen dataclass `ProviderVisionFrame`. Operation 1 i
 permanently `REVIEW_REQUIRED`; operation 2 was not approved and has no ledger row. PR #29 then
 merged the zero-call V3-01-13 remediation as
 `8df74a202dc2160e9358ca4cc9be54d989af2292`; exact-main CI run `33261962445` passed 5/5.
-Annotated tag `vf-v3-01-rc6` peels to that exact merge commit. Fresh RC-6 operation IDs and
-G-01-A/G-02-A/G-03-A records are now bound in a verified but unmounted governance bundle. Neither
-operation is authorized, no credential was read and no provider call occurred in this checkpoint.
+Annotated tag `vf-v3-01-rc6` peels to that exact merge commit. PR #30 subsequently merged only the
+RC-6 governance rebind as `5f6842c022b4ac71893fb251122c5a74aa50ac41`; executable RC-6 stayed
+unchanged. The owner separately authorized RC-6 operation 1, but the runner rejected the verified
+bundle before credential read, reservation, ledger mutation or provider dispatch because its
+private limits dictionary omitted `acceptance_window_limit_vnd`. The result is `BLOCKED PRE-CALL /
+NOT CONSUMED`, provider calls 0, cost 0 VND and ledger `0|0|0|0`. The failed-window authority is
+retired, operation 2 remains locked and neither RC-6 operation may be retried.
 
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
@@ -85,7 +90,7 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` | `8df74a202dc2160e9358ca4cc9be54d989af2292` after PR #29 |
+| Exact `origin/main` | `5f6842c022b4ac71893fb251122c5a74aa50ac41` after governance-only PR #30; executable RC remains `8df74a202dc2160e9358ca4cc9be54d989af2292` |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
@@ -104,10 +109,10 @@ Current repository checkpoint after the bounded merge sequence:
 | PR #28 / RC-5 governance rebind | governance-only merge `8fa96409b0db6ec6d4dc3c04f6e3aaab2f3201ee`; exact-main CI run `33226016184` 5/5 PASS; executable RC-5 unchanged |
 | RC-5 | annotated `vf-v3-01-rc5` peels to `26adafb2eeed4b4de1169db73a13e50a683e094c`; NO-GO; not deployed; operation 1 consumed/`REVIEW_REQUIRED`; operation 2 locked |
 | PR #29 / V3-01-13 | exact head `2fc80e511e6ab0382b3a05b141764ea37725d245`; merge `8df74a202dc2160e9358ca4cc9be54d989af2292`; exact-main CI run `33261962445` 5/5 PASS; `V3-01-APP-025` consumed |
-| RC-6 | annotated `vf-v3-01-rc6` peels to `8df74a202dc2160e9358ca4cc9be54d989af2292`; tag object `b285bfec8c7f398d56ec513cf35cd6f14fb5c596`; NO-GO; not deployed; no operation authorized |
-| RC-6 governance rebind | G-01-A/G-02-A/G-03-A bound by `V3-01-APP-026` through `V3-01-APP-028`; bundle raw SHA `186ce157e94cbb2f321dbdcf59df1eb80d6d6df84fb5eca5422f4f5b94ba38f9`; unmounted; zero calls |
+| RC-6 | annotated `vf-v3-01-rc6` peels to `8df74a202dc2160e9358ca4cc9be54d989af2292`; tag object `b285bfec8c7f398d56ec513cf35cd6f14fb5c596`; NO-GO; not deployed; operation 1 blocked pre-call/not consumed; operation 2 locked; authority retired |
+| RC-6 governance rebind | PR #30 governance-only merge `5f6842c022b4ac71893fb251122c5a74aa50ac41`; G-01-A/G-02-A/G-03-A bound by `V3-01-APP-026` through `V3-01-APP-028`; bundle raw SHA `186ce157e94cbb2f321dbdcf59df1eb80d6d6df84fb5eca5422f4f5b94ba38f9`; failed-window authority retired |
 | Exact-main regression | PR #29 exact-main CI run `33261962445` passed Python, Studio, Renderer, Safety/Compose and Docker deterministic E2E |
-| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 later completed provider execution once but evidence serialization was incomplete, so it is consumed/`REVIEW_REQUIRED`; no operation 2 executed |
+| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete, so it is consumed/`REVIEW_REQUIRED`; RC-6 operation 1 then blocked before provider dispatch with 0 calls/0 VND and is not consumed; every operation 2 remains locked |
 | Deployment/ingress/publish action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in
@@ -180,7 +185,8 @@ Current checked-in production override deliberately selects contract-only or dis
 
 Evidence: `EV-V3-BASE-001`, `EV-V3-STATIC-001`, `EV-V3-CI-001`, `EV-V3-SAFETY-001`,
 `EV-V3-DR-001`, `EV-V3-OPENAI-VISION-ADAPTER-001`,
-`EV-V3-STRUCTURED-ERROR-EVIDENCE-001`.
+`EV-V3-STRUCTURED-ERROR-EVIDENCE-001`, `EV-V3-RC6-OP1-BLOCKED-001`,
+`EV-V3-AUTHORITY-LIMITS-001`.
 
 ## Remediation checkpoints
 

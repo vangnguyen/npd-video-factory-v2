@@ -10,8 +10,11 @@ authorized, consumed once and ended `REVIEW_REQUIRED`; all RC-3 IDs are locked. 
 as evidence that the stale hard-coded operation allowlist failed closed. RC-5 operation 1 later
 completed provider execution once, but its post-call evidence serialization failed; it is consumed
 and permanently `REVIEW_REQUIRED`, while operation 2 is permanently locked. V3-01-13 is merged and
-mock-tested in exact RC-6. Fresh RC-6 G-01-A/G-02-A/G-03-A bindings exist only in an unmounted
-governance bundle; neither RC-6 operation is authorized and this checkpoint made zero calls.
+mock-tested in exact RC-6. PR #30 preserved executable RC-6 while merging its governance rebind.
+The separately authorized operation 1 then stopped fail-closed before credential read, reservation,
+ledger mutation or provider dispatch because the runner omitted the bundle's window-limit field.
+It remains not consumed with 0 calls/0 VND; its authority is retired and operation 2 is locked.
+V3-01-14 unifies the future runner/bundle limits model offline and makes zero calls.
 None of these local/CI entries establish production-path, accepted real-provider or quality
 acceptance.
 

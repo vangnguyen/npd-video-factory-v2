@@ -104,15 +104,14 @@ def test_authority_limits_fail_closed_on_missing_wrong_type_name_or_amount(
         validate_operation_authority_limits(payload, budget=_rc6_bundle().budget)
 
 
-def test_rc6_blocked_authority_shape_reproduces_the_exact_pre_call_mismatch() -> None:
-    blocked_rc6_limits = {
+def test_rc6_legacy_runner_shape_reproduces_the_exact_pre_call_mismatch() -> None:
+    legacy_rc6_runner_limits = {
         "images": 1,
         "max_dimension_pixels": 2048,
         "image_detail": "high",
         "input_token_ceiling": 16_384,
         "max_output_tokens": 4_096,
         "reservation_vnd": "500",
-        "acceptance_window_limit_vnd": "1250",
         "timeout_seconds": 60,
         "max_concurrent_calls": 1,
         "max_attempts": 1,
@@ -125,7 +124,7 @@ def test_rc6_blocked_authority_shape_reproduces_the_exact_pre_call_mismatch() ->
         match="operation authority limits are invalid",
     ):
         validate_operation_authority_limits(
-            blocked_rc6_limits,
+            legacy_rc6_runner_limits,
             budget=_rc6_bundle().budget,
         )
 
