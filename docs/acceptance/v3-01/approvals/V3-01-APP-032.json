@@ -1,0 +1,24 @@
+{
+  "approval_id": "V3-01-APP-032",
+  "gate_id": "G-03",
+  "decision": "APPROVED",
+  "scope": "Rebind use of only g03-a-owned-vision-test.png as the Vision acceptance input on exact RC-7; no publishing, training, resale or other use.",
+  "artifact_or_commit_hashes": [
+    "94170ed42f6ffba4432f29750402eafe0d922a45",
+    "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+    "f469930a74b477751fc4417774b486ccbf2d7822487478875e099552c83e06ba",
+    "60d9898de38f9536ed3391ca81f1d59eca04b61537edad42e85597702c143a56"
+  ],
+  "target_account_or_environment": "Isolated owner-gated Vision acceptance runner only",
+  "limits": [
+    "Exact asset g03-a-owned-vision-test.png only",
+    "Asset SHA-256 a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+    "Vision acceptance input only",
+    "No publishing, training, resale or other use",
+    "No provider call until a separate owner decision authorizes RC-7 operation 1"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-30T16:01:17Z",
+  "expires_at_utc": "2026-08-31T18:00:00Z",
+  "notes": "The owner directed G-03-A rebind after RC-7 lock. This record binds the existing approved RightsRecord and the new complete execution-scope hash. The bundle remains unmounted and this record alone grants no API-call authority."
+}

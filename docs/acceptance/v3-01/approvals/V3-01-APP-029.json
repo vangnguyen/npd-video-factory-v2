@@ -1,0 +1,24 @@
+{
+  "approval_id": "V3-01-APP-029",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #31 as V3-01-14 Operation Authority Limits Contract Remediation only; no provider execution or production authority is granted.",
+  "artifact_or_commit_hashes": [
+    "ff67fb05f32e300cdb4daac3fd29d8135a62879f",
+    "94170ed42f6ffba4432f29750402eafe0d922a45"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and exact-main regression only",
+  "limits": [
+    "V3-01-14 operation authority limits contract remediation only",
+    "No provider call or credential read",
+    "No reuse of RC-6 operation authority",
+    "RC-6 operation 1 remains BLOCKED PRE-CALL / NOT CONSUMED with authority retired",
+    "RC-6 operation 2 remains locked",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-30T15:55:39Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved PR #31 in the controlling task. The approval is recorded at the exact GitHub merge timestamp because no separate machine timestamp was retained for the preceding chat decision. PR #31 merged as 94170ed42f6ffba4432f29750402eafe0d922a45 and exact-main CI run 33321003243 passed 5/5. This record grants no runtime action."
+}

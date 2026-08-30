@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01 RC-7 Vision gate rebind",
+  "rc_tag": "vf-v3-01-rc7",
+  "rc_commit": "94170ed42f6ffba4432f29750402eafe0d922a45",
+  "tag_object": "14e1c09550aaa92c937e275bbe8d1e38c6ed8b8c",
+  "exact_main_ci_run": 33321003243,
+  "exact_main_ci_jobs_passed": 5,
+  "bundle": {
+    "path": "docs/acceptance/v3-01/V3-01-GATE-RC7-OPENAI-VISION-A.json",
+    "raw_sha256": "ce772a941766b12a99943b9165cbf588c314e3d1b59543f103c7671a58856a44",
+    "execution_scope_sha256": "60d9898de38f9536ed3391ca81f1d59eca04b61537edad42e85597702c143a56",
+    "mounted": false,
+    "offline_validation": "PASS"
+  },
+  "provider_scope": {
+    "provider": "openai-vision",
+    "model": "gpt-5-mini",
+    "capability": "vision",
+    "credential_alias": "secret://openai/codex-video",
+    "credential_value_read": false
+  },
+  "rights": {
+    "asset_id": "asset-g03-a-owned-vision-test",
+    "asset_sha256": "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+    "rights_record_sha256": "f469930a74b477751fc4417774b486ccbf2d7822487478875e099552c83e06ba",
+    "purpose": "Vision acceptance input only; no publishing, training, resale or other use"
+  },
+  "window": {
+    "valid_from_utc": "2026-08-31T14:00:00Z",
+    "expires_at_utc": "2026-08-31T18:00:00Z",
+    "budget_day_utc": "2026-08-31"
+  },
+  "operations": [
+    {
+      "slot": 1,
+      "operation_key": "v3-01-rc7-openai-vision-call-01",
+      "authority": "PENDING_SEPARATE_OWNER_DECISION"
+    },
+    {
+      "slot": 2,
+      "operation_key": "v3-01-rc7-openai-vision-call-02",
+      "authority": "NOT_GRANTED"
+    }
+  ],
+  "budget": {
+    "currency": "VND",
+    "per_operation_limit": 500,
+    "acceptance_window_limit": 1250,
+    "checked_in_runtime_budget": 0,
+    "actual_cost": 0
+  },
+  "safety": {
+    "external_execution": false,
+    "paid_execution": false,
+    "global_kill_switch_engaged": true,
+    "retry": false,
+    "fallback": false,
+    "external_calls": 0,
+    "credential_reads": 0,
+    "deploy_performed": false,
+    "public_ingress_enabled": false,
+    "publish_performed": false,
+    "production_analytics_enabled": false
+  },
+  "historical_operations": {
+    "rc3_operation_ids": "PERMANENTLY_LOCKED",
+    "rc4_live_acceptance": "PROHIBITED",
+    "rc5_operation_1": "PROVIDER_SUCCESS_EVIDENCE_INCOMPLETE_REVIEW_REQUIRED_CONSUMED",
+    "rc5_operation_2": "PERMANENTLY_LOCKED",
+    "rc6_operation_1": "BLOCKED_PRE_CALL_NOT_CONSUMED_AUTHORITY_RETIRED",
+    "rc6_operation_2": "PERMANENTLY_LOCKED"
+  },
+  "overall_verdict": "NO-GO"
+}

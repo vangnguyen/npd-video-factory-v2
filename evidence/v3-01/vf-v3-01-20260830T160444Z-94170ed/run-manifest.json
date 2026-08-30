@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260830T160444Z-94170ed",
+  "started_at_utc": "2026-08-30T15:55:39Z",
+  "completed_at_utc": "2026-08-30T16:04:44Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "94170ed42f6ffba4432f29750402eafe0d922a45",
+  "base_sha": "5f6842c022b4ac71893fb251122c5a74aa50ac41",
+  "release_candidate": "vf-v3-01-rc7 locked; NO-GO; governance bundle unmounted; operation 1 pending separate owner authority",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0012_v3_01_11",
+  "config_fingerprint_redacted": "rc7-openai-vision-rebind-unmounted-external-false-paid-false-zero-vnd-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "vision-gate-governance",
+      "provider": "offline-validator",
+      "model_or_workflow": "openai-vision/gpt-5-mini RC-7 bundle",
+      "region": "not-applicable-offline",
+      "credential_alias": "secret://openai/codex-video",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "PR31-EXACT-MAIN-REGRESSION",
+    "RC7-ANNOTATED-TAG-LOCK",
+    "RC7-OPERATION-ID-DERIVATION",
+    "RC7-G01-G02-G03-HASH-REBIND",
+    "RC7-BUNDLE-OFFLINE-VALIDATION"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "matrix/evidence-EV-V3-RC7-VISION-REBIND-001.json",
+    "provider/rc7-vision-gate-rebind.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-00",
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-08"
+  ],
+  "result": "BLOCKED"
+}

@@ -399,6 +399,63 @@ def test_checked_in_rc6_bundle_is_exactly_bound_and_unconsumed() -> None:
         assert embedded.record_sha256 == canonical_sha256(record)
 
 
+def test_checked_in_rc7_bundle_is_exactly_bound_and_requires_separate_authority() -> None:
+    bundle_path = (
+        REPO_ROOT
+        / "docs"
+        / "acceptance"
+        / "v3-01"
+        / "V3-01-GATE-RC7-OPENAI-VISION-A.json"
+    )
+    raw = bundle_path.read_bytes()
+    bundle = ProviderGateBundle.model_validate_json(raw)
+
+    assert hashlib.sha256(raw).hexdigest() == (
+        "ce772a941766b12a99943b9165cbf588c314e3d1b59543f103c7671a58856a44"
+    )
+    assert bundle.rc_tag == "vf-v3-01-rc7"
+    assert bundle.rc_commit == "94170ed42f6ffba4432f29750402eafe0d922a45"
+    assert bundle.provider_key == "openai-vision"
+    assert bundle.model == "gpt-5-mini"
+    assert bundle.capability == "vision"
+    assert bundle.credential_alias == "secret://openai/codex-video"
+    assert bundle.budget.currency == "VND"
+    assert bundle.budget.per_operation_limit_vnd == Decimal("500")
+    assert bundle.budget.acceptance_window_limit_vnd == Decimal("1250")
+    assert [operation.operation_key for operation in bundle.allowed_operations] == [
+        "v3-01-rc7-openai-vision-call-01",
+        "v3-01-rc7-openai-vision-call-02",
+    ]
+
+    scope_sha256 = execution_scope_sha256(
+        rc_tag=bundle.rc_tag,
+        rc_commit=bundle.rc_commit,
+        provider_key=bundle.provider_key,
+        model=bundle.model,
+        capability=bundle.capability,
+        credential_alias=bundle.credential_alias,
+        valid_from_utc=bundle.valid_from_utc,
+        expires_at_utc=bundle.expires_at_utc,
+        budget=bundle.budget,
+        rights_record_sha256=bundle.rights_record.record_sha256,
+        allowed_operations=bundle.allowed_operations,
+    )
+    assert scope_sha256 == (
+        "60d9898de38f9536ed3391ca81f1d59eca04b61537edad42e85597702c143a56"
+    )
+
+    approvals = (
+        ("V3-01-APP-030.json", bundle.credential_approval),
+        ("V3-01-APP-031.json", bundle.budget_approval),
+        ("V3-01-APP-032.json", bundle.rights_approval),
+    )
+    approval_root = REPO_ROOT / "docs" / "acceptance" / "v3-01" / "approvals"
+    for filename, embedded in approvals:
+        record = json.loads((approval_root / filename).read_text(encoding="utf-8"))
+        assert embedded.record.model_dump(mode="json") == record
+        assert embedded.record_sha256 == canonical_sha256(record)
+
+
 def test_checked_in_g03_asset_is_hash_bound_and_narrowly_owner_approved() -> None:
     rights_path = (
         REPO_ROOT

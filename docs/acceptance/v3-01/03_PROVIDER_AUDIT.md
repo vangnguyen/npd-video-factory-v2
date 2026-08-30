@@ -43,12 +43,17 @@ repair the historical missing data. Fresh RC-6 operation IDs and G-01-A/G-02-A/G
 verified in a governance bundle. A separately approved operation 1 stopped before credential read,
 reservation, ledger mutation or provider dispatch on an authority-limits contract mismatch. It is
 not consumed; its authority is retired, operation 2 is locked, and the result was 0 calls/0 VND.
+PR #31 then merged V3-01-14 as
+`94170ed42f6ffba4432f29750402eafe0d922a45`; exact-main CI `33321003243` passed 5/5 and
+`vf-v3-01-rc7` peels to that commit. RC-7 now binds the canonical per-operation and acceptance-window
+limits to fresh operation IDs, scope and a dated unmounted bundle. No RC-7 operation has authority,
+no credential was read and no provider call occurred.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; RC-6 operation 1 blocked pre-call/not consumed on an authority-limits mismatch; V3-01-14 canonical limits tests pass offline | `BLOCKED` | G-08/merge V3-01-14, exact-main regression, lock RC-7, then use new IDs/scope/window and separate owner authority; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; RC-6 operation 1 blocked pre-call/not consumed; RC-7 canonical limits and fresh scope validate offline with 0 calls | `BLOCKED` | merge the governance rebind under a new G-08, then obtain separate owner authority for only RC-7 operation 1; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -94,3 +99,6 @@ promotion. `EV-V3-EVIDENCE-SERIALIZATION-001` proves the exact-main V3-01-13 ser
 separate RC-6 operation-1 authority stopped pre-call on `OPERATION_AUTHORITY_LIMITS_MISMATCH` with
 0 provider requests, 0 VND and ledger `0|0|0|0`; this is not an OpenAI/provider-path failure and
 does not promote an axis. V3-01-14 unifies the future authority/bundle limits contract offline.
+`EV-V3-RC7-VISION-REBIND-001` proves the exact RC-7 tag/commit, fresh operation derivation,
+approval/rights hashes and both canonical VND limits offline. It does not mount the bundle, authorize
+an operation or promote real-provider, production-path or quality acceptance.
