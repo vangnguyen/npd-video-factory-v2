@@ -162,11 +162,11 @@ class VisionAnalysisService:
                 ),
                 provider_operation,
                 actual_cost=lambda result: result.actual_cost_vnd,
-                timeout_evidence_factory=lambda timeout_seconds, error: (
+                timeout_evidence_factory=lambda timeout_envelope, error: (
                     execution_trace.timeout_evidence(
-                        code="PROVIDER_TIMEOUT",
+                        code="CONTROLLER_ENVELOPE_TIMEOUT",
                         timeout_kind="controller_envelope",
-                        configured_timeout_seconds=timeout_seconds,
+                        timeout_envelope=timeout_envelope,
                         error=error,
                         retryable=True,
                         provider_error_message=(

@@ -1,6 +1,6 @@
 # Owner gate register
 
-G-00 and the completed bounded G-08 actions through PR #31 have approval records or recorded owner
+G-00 and the completed bounded G-08 actions through PR #33 have approval records or recorded owner
 decisions. RC-4 remains
 evidence of a fail-closed executable-contract blocker. RC-5 operation 1 consumed its exact G-01-A,
 G-02-A, G-03-A and separate operation authority; provider execution succeeded but acceptance
@@ -8,7 +8,9 @@ evidence is incomplete, so the result is permanently `REVIEW_REQUIRED`. Operatio
 approved. RC-6 is locked; its separately authorized operation 1 stopped pre-call/not consumed on a
 limits-contract mismatch, and that authority is retired. Operation 2 is locked. Historical RC-3,
 RC-5 and RC-6 authorities grant no further call. RC-7 operation 1 later ran once, timed out and is
-consumed/`REVIEW_REQUIRED`; its authority is retired and operation 2 is locked. Use
+consumed/`REVIEW_REQUIRED`; its authority is retired and operation 2 is locked. RC-8 is locked
+NO-GO and retired from live acceptance because its provider/controller timeout
+architecture remained shared. It has no operation authority. Use
 `schemas/approval-record.schema.json` for each later decision; no approval is implied by CI success,
 an RC tag or the failed attempt.
 
@@ -16,13 +18,13 @@ an RC tag or the failed attempt.
 |---|---|---|---|
 | G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
 | G-01 | real-provider credential aliases/scopes | RC-7 scope/operation authority consumed and retired after one timeout | fresh exact-RC/provider/model/capability rebind required; no other provider authority |
-| G-02 | VND provider budgets and cost controls | RC-7 used one 500 VND reservation and committed a 500 VND safety charge; actual cost unknown | fresh timeout/budget envelope and G-02 rebind required before any later operation |
+| G-02 | VND provider budgets and cost controls | RC-7 used one 500 VND reservation and committed a 500 VND safety charge; RC-8 has no authority | fresh 90s provider / 120s controller envelope and G-02 rebind required before any later operation |
 | G-03 | owned inputs, rights and provenance policy | RC-7 exact asset/RightsRecord scope consumed for acceptance only; no publishing rights | fresh exact-RC binding required; no training, resale, publishing or other use |
 | G-04 | production-like staging execution | PENDING | locked commit/images, isolated topology and rollback plan |
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation PR merge | decisions through governance-only PR #32 consumed | a new explicit G-08 decision is required before merging V3-01-15 |
+| G-08 | remediation PR merge | decisions through PR #33 consumed | a new explicit G-08 decision is required before merging V3-01-16 |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
@@ -35,12 +37,13 @@ IDs, expiry and decision. Changing commit, artifact, provider, platform target, 
 time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, LOCAL/CI validation, redacted evidence and a
-draft zero-call V3-01-15 remediation PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
-#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32 merges are complete and their G-08 decisions cannot be
+draft zero-call V3-01-16 remediation PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
+#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33 merges are complete and their G-08 decisions cannot be
 reused. RC-3 IDs are locked, RC-4 remains blocker evidence, and RC-5 operation 1 is consumed/
 `REVIEW_REQUIRED`; RC-5 operation 2 is locked. RC-6 operation 1 is blocked pre-call/not consumed,
 its failed-window authority is retired, and operation 2 is locked. RC-7 operation 1 is consumed after
-one timeout, its authority is retired, and operation 2 is locked. Runtime defaults remain disabled.
+one timeout, its authority is retired, and operation 2 is locked. RC-8 is retired from live
+acceptance and has no operation authority. Runtime defaults remain disabled.
 Current authority includes no
 further merge, credential-value read, provider call,
 deployment, public route, publishing, analytics collection or production write. Records:

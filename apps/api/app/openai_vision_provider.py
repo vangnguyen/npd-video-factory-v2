@@ -22,6 +22,7 @@ from .provider_safety import (
     ProviderErrorEvidence,
     ProviderExecutionTrace,
     ProviderRateLimitError,
+    ProviderTimeoutEnvelope,
     ProviderTimeoutError,
     ProviderTransientError,
 )
@@ -479,7 +480,8 @@ class OpenAIVisionProvider:
         frame_extractor: VisionFrameExtractor,
         model: str = "gpt-5-mini",
         base_url: str = "https://api.openai.com",
-        timeout_seconds: float = 60.0,
+        provider_http_timeout_seconds: float = 90.0,
+        controller_hard_timeout_seconds: float = 120.0,
         image_detail: Literal["low", "high", "auto"] = "high",
         max_dimension_pixels: int = 2048,
         input_token_ceiling: int = 16_384,
@@ -496,8 +498,10 @@ class OpenAIVisionProvider:
             raise ValueError("V3-01-09 is locked to gpt-5-mini")
         if base_url.rstrip("/") != "https://api.openai.com":
             raise ValueError("OpenAI Vision base URL must be the official HTTPS API origin")
-        if timeout_seconds <= 0:
-            raise ValueError("OpenAI Vision timeout must be positive")
+        timeout_envelope = ProviderTimeoutEnvelope(
+            provider_http_timeout_seconds=provider_http_timeout_seconds,
+            controller_hard_timeout_seconds=controller_hard_timeout_seconds,
+        )
         if not 32 <= max_dimension_pixels <= 65_535:
             raise ValueError("OpenAI Vision maximum dimension is invalid")
         if input_token_ceiling < 1:
@@ -520,8 +524,13 @@ class OpenAIVisionProvider:
         self._credential_resolver = credential_resolver
         self._frame_extractor = frame_extractor
         self._base_url = base_url.rstrip("/")
-        self._timeout_seconds = timeout_seconds
-        self.timeout_seconds = timeout_seconds
+        self.timeout_envelope = timeout_envelope
+        self.provider_http_timeout_seconds = (
+            timeout_envelope.provider_http_timeout_seconds
+        )
+        self.controller_hard_timeout_seconds = (
+            timeout_envelope.controller_hard_timeout_seconds
+        )
         self.image_detail = image_detail
         self.max_frames = int(getattr(frame_extractor, "max_frames", 8))
         self.max_dimension_pixels = max_dimension_pixels
@@ -590,7 +599,10 @@ class OpenAIVisionProvider:
             dispatch_state="possibly_sent",
             client_request_id=client_request_id,
         )
-        timeout = httpx.Timeout(self._timeout_seconds, connect=min(15.0, self._timeout_seconds))
+        timeout = httpx.Timeout(
+            self.provider_http_timeout_seconds,
+            connect=min(15.0, self.provider_http_timeout_seconds),
+        )
         response: httpx.Response | None = None
         response_bytes: bytes | None = None
         provider_request_id: str | None = None
@@ -636,9 +648,9 @@ class OpenAIVisionProvider:
                 timeout_kind = "transport"
             raise ProviderTimeoutError(
                 error_evidence=trace.timeout_evidence(
-                    code="OPENAI_VISION_TIMEOUT",
+                    code="PROVIDER_TIMEOUT",
                     timeout_kind=timeout_kind,
-                    configured_timeout_seconds=self._timeout_seconds,
+                    timeout_envelope=self.timeout_envelope,
                     error=exc,
                     retryable=True,
                     provider_error_message="OpenAI Vision transport timed out",

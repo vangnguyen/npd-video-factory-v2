@@ -130,6 +130,21 @@ class VirtualDelayTransport(httpx.AsyncBaseTransport):
         )
 
 
+class VirtualControllerWaitFor:
+    def __init__(self, *, elapsed_seconds: float, clock: VirtualMonotonic) -> None:
+        self.elapsed_seconds = elapsed_seconds
+        self.clock = clock
+        self.timeouts: list[float] = []
+
+    async def __call__(self, awaitable, timeout_seconds: float):
+        self.timeouts.append(timeout_seconds)
+        self.clock.advance_to(self.elapsed_seconds)
+        if self.elapsed_seconds >= timeout_seconds:
+            awaitable.close()
+            raise TimeoutError("virtual controller deadline")
+        return await awaitable
+
+
 def output_frame(index: int) -> dict[str, object]:
     return {
         "frame_index": index,
@@ -213,7 +228,8 @@ def provider(
     extractor: StaticFrameExtractor | None = None,
     estimate: Decimal = Decimal("0"),
     transport: httpx.AsyncBaseTransport | None = None,
-    timeout_seconds: float = 60.0,
+    provider_http_timeout_seconds: float = 90.0,
+    controller_hard_timeout_seconds: float = 120.0,
     monotonic_clock=None,
 ) -> tuple[OpenAIVisionProvider, SecretResolver, StaticFrameExtractor]:
     secret_resolver = resolver or SecretResolver()
@@ -232,7 +248,8 @@ def provider(
         frame_extractor=frame_extractor,
         estimated_cost_vnd=estimate,
         transport=selected_transport,
-        timeout_seconds=timeout_seconds,
+        provider_http_timeout_seconds=provider_http_timeout_seconds,
+        controller_hard_timeout_seconds=controller_hard_timeout_seconds,
         allow_zero_cost_contract_test=True,
         **kwargs,
     )
@@ -256,7 +273,8 @@ def approved_policy(
     failure_threshold: int = 2,
     per_operation_limit: Decimal = Decimal("10"),
     daily_limit: Decimal = Decimal("20"),
-    per_request_timeout: float = 1,
+    provider_http_timeout: float = 0.5,
+    controller_hard_timeout: float = 1,
 ) -> ProviderSafetyPolicy:
     return ProviderSafetyPolicy(
         external_execution_enabled=True,
@@ -272,7 +290,8 @@ def approved_policy(
         ),
         retry=ProviderRetryPolicy(
             max_attempts=max_attempts,
-            per_request_timeout_seconds=per_request_timeout,
+            provider_http_timeout_seconds=provider_http_timeout,
+            controller_hard_timeout_seconds=controller_hard_timeout,
             base_delay_seconds=0,
             max_delay_seconds=0,
             max_elapsed_seconds=5,
@@ -803,7 +822,7 @@ async def test_openai_vision_maps_transport_timeout_for_central_retry(tmp_path: 
         await analyze(adapter, source)
     assert timed_out.value.error_evidence is not None
     assert timed_out.value.error_evidence.category == "transport_timeout"
-    assert timed_out.value.error_evidence.code == "OPENAI_VISION_TIMEOUT"
+    assert timed_out.value.error_evidence.code == "PROVIDER_TIMEOUT"
     assert str(timed_out.value.error_evidence.client_request_id).startswith("vf-")
     assert timed_out.value.error_evidence.timeout_phase == "http_response_wait"
     assert timed_out.value.error_evidence.timeout_kind == "read"
@@ -814,9 +833,9 @@ async def test_openai_vision_maps_transport_timeout_for_central_retry(tmp_path: 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("virtual_delay_seconds", "expect_timeout"),
-    [(59.0, False), (60.0, True), (61.0, True)],
+    [(89.0, False), (90.0, True), (91.0, True)],
 )
-async def test_openai_vision_virtual_59_60_61_second_boundary_without_wall_clock_wait(
+async def test_openai_vision_virtual_89_90_91_second_boundary_without_wall_clock_wait(
     tmp_path: Path,
     virtual_delay_seconds: float,
     expect_timeout: bool,
@@ -825,11 +844,12 @@ async def test_openai_vision_virtual_59_60_61_second_boundary_without_wall_clock
     transport = VirtualDelayTransport(
         clock=clock,
         delay_seconds=virtual_delay_seconds,
-        timeout_seconds=60.0,
+        timeout_seconds=90.0,
     )
     adapter, resolver, _ = provider(
         transport=transport,
-        timeout_seconds=60.0,
+        provider_http_timeout_seconds=90.0,
+        controller_hard_timeout_seconds=120.0,
         monotonic_clock=clock,
     )
     source = tmp_path / f"virtual-{int(virtual_delay_seconds)}.jpg"
@@ -837,7 +857,7 @@ async def test_openai_vision_virtual_59_60_61_second_boundary_without_wall_clock
 
     if not expect_timeout:
         result = await analyze(adapter, source)
-        assert result.provenance["latency_ms"] == 59_000.0
+        assert result.provenance["latency_ms"] == 89_000.0
         assert result.provenance["provider_request_id"] == "req_virtual_delay"
     else:
         with pytest.raises(ProviderTimeoutError) as timed_out:
@@ -846,7 +866,8 @@ async def test_openai_vision_virtual_59_60_61_second_boundary_without_wall_clock
         assert evidence is not None
         assert evidence.timeout_phase == "http_response_read"
         assert evidence.timeout_kind == "read"
-        assert evidence.configured_timeout_seconds == 60.0
+        assert evidence.provider_http_timeout_seconds == 90.0
+        assert evidence.controller_hard_timeout_seconds == 120.0
         assert evidence.elapsed_ms == virtual_delay_seconds * 1000
         assert evidence.request_dispatch_state == "response_headers_received"
         assert evidence.provider_request_id == "req_virtual_delay"
@@ -857,9 +878,67 @@ async def test_openai_vision_virtual_59_60_61_second_boundary_without_wall_clock
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("virtual_elapsed_seconds", "expect_timeout"),
+    [(119.0, False), (120.0, True), (121.0, True)],
+)
+async def test_controller_virtual_119_120_121_second_boundary_without_wall_clock_wait(
+    virtual_elapsed_seconds: float,
+    expect_timeout: bool,
+) -> None:
+    clock = VirtualMonotonic()
+    wait_for = VirtualControllerWaitFor(
+        elapsed_seconds=virtual_elapsed_seconds,
+        clock=clock,
+    )
+    adapter, _, _ = provider(
+        lambda _request: httpx.Response(200, json=response_payload()),
+    )
+    controller = ProviderSafetyController(
+        approved_policy(
+            max_attempts=1,
+            provider_http_timeout=90,
+            controller_hard_timeout=120,
+        ),
+        monotonic=clock,
+        wait_for=wait_for,
+    )
+
+    async def completed() -> str:
+        return "done"
+
+    operation_key = f"controller-boundary-{int(virtual_elapsed_seconds)}"
+    if not expect_timeout:
+        result = await controller.execute(
+            context(operation_key, adapter),
+            completed,
+        )
+        assert result.value == "done"
+    else:
+        with pytest.raises(ProviderSafetyBlocked) as blocked:
+            await controller.execute(
+                context(operation_key, adapter),
+                completed,
+            )
+        evidence = blocked.value.error_evidence
+        assert blocked.value.code == "CONTROLLER_ENVELOPE_TIMEOUT"
+        assert evidence is not None
+        assert evidence.timeout_kind == "controller_envelope"
+        assert evidence.provider_http_timeout_seconds == 90
+        assert evidence.controller_hard_timeout_seconds == 120
+        assert evidence.elapsed_ms == virtual_elapsed_seconds * 1000
+
+    assert wait_for.timeouts == [120]
+
+
+@pytest.mark.asyncio
 async def test_controller_envelope_timeout_keeps_phase_evidence_and_never_retries() -> None:
     controller = ProviderSafetyController(
-        approved_policy(max_attempts=1, per_request_timeout=0.01)
+        approved_policy(
+            max_attempts=1,
+            provider_http_timeout=0.005,
+            controller_hard_timeout=0.01,
+        )
     )
     trace = ProviderExecutionTrace()
     calls = 0
@@ -880,10 +959,10 @@ async def test_controller_envelope_timeout_keeps_phase_evidence_and_never_retrie
         await controller.execute(
             context("controller-envelope-timeout", provider(lambda _request: None)[0]),
             waits_after_dispatch,
-            timeout_evidence_factory=lambda timeout_seconds, error: trace.timeout_evidence(
-                code="PROVIDER_TIMEOUT",
+            timeout_evidence_factory=lambda timeout_envelope, error: trace.timeout_evidence(
+                code="CONTROLLER_ENVELOPE_TIMEOUT",
                 timeout_kind="controller_envelope",
-                configured_timeout_seconds=timeout_seconds,
+                timeout_envelope=timeout_envelope,
                 error=error,
                 retryable=True,
                 provider_error_message="Vision provider operation exceeded controller deadline",
@@ -891,10 +970,12 @@ async def test_controller_envelope_timeout_keeps_phase_evidence_and_never_retrie
         )
 
     evidence = blocked.value.error_evidence
-    assert blocked.value.code == "PROVIDER_TIMEOUT"
+    assert blocked.value.code == "CONTROLLER_ENVELOPE_TIMEOUT"
     assert evidence is not None
     assert evidence.timeout_phase == "http_response_wait"
     assert evidence.timeout_kind == "controller_envelope"
+    assert evidence.provider_http_timeout_seconds == 0.005
+    assert evidence.controller_hard_timeout_seconds == 0.01
     assert evidence.request_dispatch_state == "possibly_sent"
     assert evidence.client_request_id == "vf-controller-timeout"
     assert evidence.provider_request_id is None

@@ -5,6 +5,8 @@ from urllib.parse import urlparse
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from .provider_safety import ProviderTimeoutEnvelope
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -144,7 +146,8 @@ class Settings(BaseSettings):
     provider_per_operation_limit_vnd: Decimal = Decimal("0")
     provider_daily_limit_vnd: Decimal = Decimal("0")
     provider_retry_max_attempts: int = 3
-    provider_request_timeout_seconds: float = 60.0
+    provider_http_timeout_seconds: float = 90.0
+    controller_hard_timeout_seconds: float = 120.0
     provider_retry_base_seconds: float = 1.0
     provider_retry_max_seconds: float = 30.0
     provider_retry_max_elapsed_seconds: float = 120.0
@@ -375,8 +378,10 @@ class Settings(BaseSettings):
             raise ValueError("provider budgets cannot be activated before the separate G-02 owner gate")
         if not 1 <= self.provider_retry_max_attempts <= 10:
             raise ValueError("PROVIDER_RETRY_MAX_ATTEMPTS must be between 1 and 10")
-        if not 0 < self.provider_request_timeout_seconds <= 3600:
-            raise ValueError("PROVIDER_REQUEST_TIMEOUT_SECONDS must be between 0 and 3600")
+        ProviderTimeoutEnvelope(
+            provider_http_timeout_seconds=self.provider_http_timeout_seconds,
+            controller_hard_timeout_seconds=self.controller_hard_timeout_seconds,
+        )
         if self.provider_retry_base_seconds < 0:
             raise ValueError("PROVIDER_RETRY_BASE_SECONDS cannot be negative")
         if self.provider_retry_max_seconds < self.provider_retry_base_seconds:
@@ -394,7 +399,9 @@ class Settings(BaseSettings):
         if not 1 <= self.provider_circuit_cooldown_seconds <= 86_400:
             raise ValueError("PROVIDER_CIRCUIT_COOLDOWN_SECONDS must be between 1 and 86400")
         minimum_lease = int(
-            self.provider_retry_max_elapsed_seconds + self.provider_request_timeout_seconds + 60
+            self.provider_retry_max_elapsed_seconds
+            + self.controller_hard_timeout_seconds
+            + 60
         )
         if not minimum_lease <= self.provider_operation_lease_seconds <= 86_400:
             raise ValueError(
@@ -454,7 +461,8 @@ class Settings(BaseSettings):
                 "per_operation_limit_vnd": self.provider_per_operation_limit_vnd,
                 "daily_limit_vnd": self.provider_daily_limit_vnd,
                 "retry_max_attempts": self.provider_retry_max_attempts,
-                "request_timeout_seconds": self.provider_request_timeout_seconds,
+                "provider_http_timeout_seconds": self.provider_http_timeout_seconds,
+                "controller_hard_timeout_seconds": self.controller_hard_timeout_seconds,
                 "retry_max_elapsed_seconds": self.provider_retry_max_elapsed_seconds,
                 "max_concurrent_calls": self.provider_max_concurrent_calls,
             }
@@ -473,8 +481,9 @@ class Settings(BaseSettings):
                 "per_operation_limit_vnd": Decimal("500"),
                 "daily_limit_vnd": Decimal("1250"),
                 "retry_max_attempts": 1,
-                "request_timeout_seconds": 60.0,
-                "retry_max_elapsed_seconds": 60.0,
+                "provider_http_timeout_seconds": 90.0,
+                "controller_hard_timeout_seconds": 120.0,
+                "retry_max_elapsed_seconds": 120.0,
                 "max_concurrent_calls": 1,
             }
             if acceptance_limits != expected_limits:

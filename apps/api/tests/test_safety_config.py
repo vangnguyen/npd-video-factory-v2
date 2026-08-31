@@ -252,8 +252,20 @@ def test_v3_01_03_global_provider_gate_is_vnd_only_and_cannot_be_activated() -> 
         Settings(_env_file=None, provider_external_execution_enabled=True)
     with pytest.raises(ValidationError, match="kill switch must remain engaged"):
         Settings(_env_file=None, provider_global_kill_switch_engaged=False)
-    with pytest.raises(ValidationError, match="REQUEST_TIMEOUT_SECONDS"):
-        Settings(_env_file=None, provider_request_timeout_seconds=0)
+    with pytest.raises(ValidationError, match="greater than 0"):
+        Settings(_env_file=None, provider_http_timeout_seconds=0)
+    with pytest.raises(ValidationError, match="lower than the controller hard timeout"):
+        Settings(
+            _env_file=None,
+            provider_http_timeout_seconds=120,
+            controller_hard_timeout_seconds=120,
+        )
+    with pytest.raises(ValidationError, match="lower than the controller hard timeout"):
+        Settings(
+            _env_file=None,
+            provider_http_timeout_seconds=121,
+            controller_hard_timeout_seconds=120,
+        )
     with pytest.raises(ValidationError, match="MAX_CONCURRENT_CALLS"):
         Settings(_env_file=None, provider_max_concurrent_calls=0)
     with pytest.raises(ValidationError, match="must cover retry/timeout bounds"):

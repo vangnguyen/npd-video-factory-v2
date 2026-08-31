@@ -256,7 +256,12 @@ async def lifespan(app: FastAPI):
             ),
             model=settings.openai_vision_model,
             base_url=settings.openai_base_url,
-            timeout_seconds=settings.provider_request_timeout_seconds,
+            provider_http_timeout_seconds=(
+                app.state.provider_safety_controller.policy.retry.provider_http_timeout_seconds
+            ),
+            controller_hard_timeout_seconds=(
+                app.state.provider_safety_controller.policy.retry.controller_hard_timeout_seconds
+            ),
             image_detail=settings.openai_vision_image_detail,
             max_dimension_pixels=settings.openai_vision_max_dimension_pixels,
             input_token_ceiling=settings.openai_vision_input_token_ceiling,

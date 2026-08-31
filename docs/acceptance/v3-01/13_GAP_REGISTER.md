@@ -1,15 +1,16 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27`, updated through RC-7
-`94170ed42f6ffba4432f29750402eafe0d922a45` and the RC-7 operation-1 timeout. Historical RC-5
+derived from the audit captured on `2026-08-27`, updated through retired NO-GO RC-8
+`68d4cf90004054075ebf0f33b9311a3419d8af4d` and the start of V3-01-16. Historical RC-5
 operation-1 provider execution succeeded,
 but request-level acceptance evidence was incomplete after post-call serialization failed. The
 operation is consumed/`REVIEW_REQUIRED`; V3-01-13 is now merged and exact-main tested. RC-6
 operation 1 later blocked before provider dispatch with 0 calls/0 VND and remains not consumed; its
 authority is retired and operation 2 is locked. RC-7 operation 1 later timed out once after entering
 the provider path; it is consumed/`REVIEW_REQUIRED`, actual cost is unknown and operation 2 remains
-locked. V3-01-15 remediates only future timeout evidence offline. No
+locked. V3-01-15 is merged and mock-tested in RC-8; V3-01-16 remediates the shared-timeout
+architecture offline with provider 90 seconds and controller 120 seconds. No
 acceptance-axis promotion occurred.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
@@ -22,18 +23,19 @@ acceptance-axis promotion occurred.
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. The bounded G-08 decisions through PR #32 are exhausted. Historical RC-3 and RC-5 operation
+`IN_PROGRESS`. The bounded G-08 decisions through PR #33 are exhausted. Historical RC-3 and RC-5 operation
 1 IDs are consumed and permanently locked; RC-5 operation 2 is also locked. RC-6 operation 1 is
 not consumed, but its failed-window authority is retired; operation 2 is locked. RC-7 operation 1 is
-consumed after one timeout and its authority is retired; operation 2 is locked. V3-01-15 requires a
-new G-08 before merge. Production remains undeployed and unverified.
+consumed after one timeout and its authority is retired; operation 2 is locked. RC-8 has no live
+operation authority and is retired from live acceptance. V3-01-16 requires a new G-08 before
+merge. Production remains undeployed and unverified.
 
 ## P0 release blockers
 
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | RC-5 provider execution succeeded once but incomplete evidence keeps it `REVIEW_REQUIRED`; RC-6 blocked pre-call; RC-7 timed out once with incomplete evidence and unknown actual cost; V3-01-15 is zero-call remediation only |
+| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | RC-5 provider execution succeeded once but incomplete evidence keeps it `REVIEW_REQUIRED`; RC-6 blocked pre-call; RC-7 timed out once; RC-8 is retired with shared-timeout architecture; V3-01-16 is zero-call remediation only |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |

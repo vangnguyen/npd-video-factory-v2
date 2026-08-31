@@ -16,6 +16,7 @@ from .provider_safety import (
     ProviderAllowedOperation,
     ProviderExecutionGateScope,
     ProviderRightsEvidence,
+    ProviderTimeoutEnvelope,
     RC_BOUND_OPERATION_SLOTS,
     derive_rc_bound_operation_key,
 )
@@ -119,7 +120,7 @@ class HashedRightsRecord(StrictModel):
         return self
 
 
-class ProviderGateBudgetEnvelope(StrictModel):
+class ProviderGateBudgetEnvelope(ProviderTimeoutEnvelope):
     currency: Literal["VND"] = "VND"
     per_operation_limit_vnd: Decimal = Field(gt=0)
     acceptance_window_limit_vnd: Decimal = Field(gt=0)
@@ -132,9 +133,19 @@ class ProviderGateBudgetEnvelope(StrictModel):
     image_detail: Literal["low", "high", "auto"]
     input_token_ceiling: int = Field(ge=1)
     max_output_tokens: int = Field(ge=256, le=32_768)
-    timeout_seconds: float = Field(gt=0, le=3600)
     max_attempts: Literal[1] = 1
     max_concurrent_calls: Literal[1] = 1
+
+    @field_validator(
+        "provider_http_timeout_seconds",
+        "controller_hard_timeout_seconds",
+        mode="before",
+    )
+    @classmethod
+    def timeout_limits_must_be_json_numbers(cls, value: object) -> object:
+        if type(value) not in {int, float}:
+            raise ValueError("gate timeout limits must be JSON numbers")
+        return value
 
     @model_validator(mode="after")
     def enforce_g02_a_envelope(self) -> "ProviderGateBudgetEnvelope":
@@ -149,7 +160,8 @@ class ProviderGateBudgetEnvelope(StrictModel):
             "image_detail": "high",
             "input_token_ceiling": 16_384,
             "max_output_tokens": 4_096,
-            "timeout_seconds": 60.0,
+            "provider_http_timeout_seconds": 90.0,
+            "controller_hard_timeout_seconds": 120.0,
             "max_attempts": 1,
             "max_concurrent_calls": 1,
         }
@@ -164,7 +176,8 @@ class ProviderGateBudgetEnvelope(StrictModel):
             "image_detail": self.image_detail,
             "input_token_ceiling": self.input_token_ceiling,
             "max_output_tokens": self.max_output_tokens,
-            "timeout_seconds": self.timeout_seconds,
+            "provider_http_timeout_seconds": self.provider_http_timeout_seconds,
+            "controller_hard_timeout_seconds": self.controller_hard_timeout_seconds,
             "max_attempts": self.max_attempts,
             "max_concurrent_calls": self.max_concurrent_calls,
         }
@@ -173,7 +186,7 @@ class ProviderGateBudgetEnvelope(StrictModel):
         return self
 
 
-class ProviderOperationAuthorityLimits(StrictModel):
+class ProviderOperationAuthorityLimits(ProviderTimeoutEnvelope):
     """Canonical VND limits contract shared by authority records and runners.
 
     Decimal VND amounts must use canonical JSON strings.  The verified gate owns
@@ -190,7 +203,8 @@ class ProviderOperationAuthorityLimits(StrictModel):
     max_output_tokens: int = Field(ge=256, le=32_768)
     per_operation_limit_vnd: Decimal = Field(gt=0)
     acceptance_window_limit_vnd: Decimal = Field(gt=0)
-    timeout_seconds: int = Field(ge=1, le=3_600)
+    provider_http_timeout_seconds: int = Field(ge=1, le=3_600)
+    controller_hard_timeout_seconds: int = Field(ge=1, le=3_600)
     max_concurrent_calls: Literal[1]
     max_attempts: Literal[1]
     automatic_retry: Literal[False]
@@ -201,7 +215,8 @@ class ProviderOperationAuthorityLimits(StrictModel):
         "max_dimension_pixels",
         "input_token_ceiling",
         "max_output_tokens",
-        "timeout_seconds",
+        "provider_http_timeout_seconds",
+        "controller_hard_timeout_seconds",
         "max_concurrent_calls",
         "max_attempts",
         mode="before",
@@ -241,11 +256,18 @@ class ProviderOperationAuthorityLimits(StrictModel):
         cls,
         budget: ProviderGateBudgetEnvelope,
     ) -> "ProviderOperationAuthorityLimits":
-        timeout_seconds = int(budget.timeout_seconds)
-        if Decimal(str(timeout_seconds)) != Decimal(str(budget.timeout_seconds)):
-            raise ProviderOperationAuthorityLimitsError(
-                "gate timeout cannot be represented by the integer authority contract"
-            )
+        timeout_values: dict[str, int] = {}
+        for field_name in (
+            "provider_http_timeout_seconds",
+            "controller_hard_timeout_seconds",
+        ):
+            raw_value = getattr(budget, field_name)
+            integer_value = int(raw_value)
+            if Decimal(str(integer_value)) != Decimal(str(raw_value)):
+                raise ProviderOperationAuthorityLimitsError(
+                    f"gate {field_name} cannot be represented by the integer authority contract"
+                )
+            timeout_values[field_name] = integer_value
         return cls.model_validate(
             {
                 "currency": budget.currency,
@@ -258,7 +280,7 @@ class ProviderOperationAuthorityLimits(StrictModel):
                 "acceptance_window_limit_vnd": str(
                     budget.acceptance_window_limit_vnd
                 ),
-                "timeout_seconds": timeout_seconds,
+                **timeout_values,
                 "max_concurrent_calls": budget.max_concurrent_calls,
                 "max_attempts": budget.max_attempts,
                 "automatic_retry": False,
@@ -490,7 +512,12 @@ def load_verified_provider_gate_bundle(
         image_detail=authority_limits.image_detail,
         input_token_ceiling=authority_limits.input_token_ceiling,
         max_output_tokens=authority_limits.max_output_tokens,
-        timeout_seconds=authority_limits.timeout_seconds,
+        provider_http_timeout_seconds=(
+            authority_limits.provider_http_timeout_seconds
+        ),
+        controller_hard_timeout_seconds=(
+            authority_limits.controller_hard_timeout_seconds
+        ),
         max_attempts=authority_limits.max_attempts,
         max_concurrent_calls=authority_limits.max_concurrent_calls,
         credential_approval_id=bundle.credential_approval.record.approval_id,

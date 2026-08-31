@@ -102,10 +102,51 @@ def _budget() -> ProviderGateBudgetEnvelope:
         image_detail="high",
         input_token_ceiling=16_384,
         max_output_tokens=4_096,
-        timeout_seconds=60,
+        provider_http_timeout_seconds=90,
+        controller_hard_timeout_seconds=120,
         max_attempts=1,
         max_concurrent_calls=1,
     )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "missing_provider",
+        "missing_controller",
+        "legacy_single_timeout",
+        "wrong_provider_type",
+        "wrong_controller_type",
+        "equal",
+        "provider_greater",
+        "extra",
+    ],
+)
+def test_gate_budget_split_timeout_contract_fails_closed(mutation: str) -> None:
+    payload = _budget().model_dump(mode="json")
+    if mutation == "missing_provider":
+        payload.pop("provider_http_timeout_seconds")
+    elif mutation == "missing_controller":
+        payload.pop("controller_hard_timeout_seconds")
+    elif mutation == "legacy_single_timeout":
+        payload.pop("provider_http_timeout_seconds")
+        payload.pop("controller_hard_timeout_seconds")
+        payload["timeout_seconds"] = 60
+    elif mutation == "wrong_provider_type":
+        payload["provider_http_timeout_seconds"] = "90"
+    elif mutation == "wrong_controller_type":
+        payload["controller_hard_timeout_seconds"] = "120"
+    elif mutation == "equal":
+        payload["controller_hard_timeout_seconds"] = 90
+    elif mutation == "provider_greater":
+        payload["provider_http_timeout_seconds"] = 121
+    elif mutation == "extra":
+        payload["timeout_grace_seconds"] = 30
+    else:  # pragma: no cover - parameter list is exhaustive
+        raise AssertionError(mutation)
+
+    with pytest.raises(ValidationError):
+        ProviderGateBudgetEnvelope.model_validate(payload)
 
 
 def _approval(
@@ -249,8 +290,9 @@ def _settings(
         "provider_per_operation_limit_vnd": Decimal("500"),
         "provider_daily_limit_vnd": Decimal("1250"),
         "provider_retry_max_attempts": 1,
-        "provider_request_timeout_seconds": 60,
-        "provider_retry_max_elapsed_seconds": 60,
+        "provider_http_timeout_seconds": 90,
+        "controller_hard_timeout_seconds": 120,
+        "provider_retry_max_elapsed_seconds": 120,
         "provider_max_concurrent_calls": 1,
         "provider_external_execution_enabled": execution,
         "provider_paid_execution_enabled": execution,
@@ -335,6 +377,8 @@ def test_rc5_bundle_is_hash_pinned_and_loads_without_enabling_calls(tmp_path) ->
     assert policy.global_kill_switch_engaged is True
     assert policy.budget.per_operation_limit_vnd == Decimal("500")
     assert policy.budget.daily_limit_vnd == Decimal("1250")
+    assert policy.retry.provider_http_timeout_seconds == 90
+    assert policy.retry.controller_hard_timeout_seconds == 120
 
 
 def test_checked_in_rc6_bundle_is_exactly_bound_and_unconsumed() -> None:
@@ -346,57 +390,43 @@ def test_checked_in_rc6_bundle_is_exactly_bound_and_unconsumed() -> None:
         / "V3-01-GATE-RC6-OPENAI-VISION-A.json"
     )
     raw = bundle_path.read_bytes()
-    bundle = ProviderGateBundle.model_validate_json(raw)
+    bundle = json.loads(raw)
 
     assert hashlib.sha256(raw).hexdigest() == (
         "186ce157e94cbb2f321dbdcf59df1eb80d6d6df84fb5eca5422f4f5b94ba38f9"
     )
-    assert bundle.rc_tag == "vf-v3-01-rc6"
-    assert bundle.rc_commit == "8df74a202dc2160e9358ca4cc9be54d989af2292"
-    assert bundle.provider_key == "openai-vision"
-    assert bundle.model == "gpt-5-mini"
-    assert bundle.capability == "vision"
-    assert bundle.credential_alias == "secret://openai/codex-video"
-    assert bundle.budget.currency == "VND"
-    assert bundle.budget.per_operation_limit_vnd == Decimal("500")
-    assert bundle.budget.acceptance_window_limit_vnd == Decimal("1250")
-    assert [operation.operation_key for operation in bundle.allowed_operations] == [
+    assert bundle["rc_tag"] == "vf-v3-01-rc6"
+    assert bundle["rc_commit"] == "8df74a202dc2160e9358ca4cc9be54d989af2292"
+    assert bundle["provider_key"] == "openai-vision"
+    assert bundle["model"] == "gpt-5-mini"
+    assert bundle["capability"] == "vision"
+    assert bundle["credential_alias"] == "secret://openai/codex-video"
+    assert bundle["budget"]["currency"] == "VND"
+    assert Decimal(bundle["budget"]["per_operation_limit_vnd"]) == Decimal("500")
+    assert Decimal(bundle["budget"]["acceptance_window_limit_vnd"]) == Decimal("1250")
+    assert bundle["budget"]["timeout_seconds"] == 60
+    assert [operation["operation_key"] for operation in bundle["allowed_operations"]] == [
         "v3-01-rc6-openai-vision-call-01",
         "v3-01-rc6-openai-vision-call-02",
     ]
     assert all(
-        operation.asset_hash
+        operation["asset_hash"]
         == "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e"
-        for operation in bundle.allowed_operations
+        for operation in bundle["allowed_operations"]
     )
-
-    scope_sha256 = execution_scope_sha256(
-        rc_tag=bundle.rc_tag,
-        rc_commit=bundle.rc_commit,
-        provider_key=bundle.provider_key,
-        model=bundle.model,
-        capability=bundle.capability,
-        credential_alias=bundle.credential_alias,
-        valid_from_utc=bundle.valid_from_utc,
-        expires_at_utc=bundle.expires_at_utc,
-        budget=bundle.budget,
-        rights_record_sha256=bundle.rights_record.record_sha256,
-        allowed_operations=bundle.allowed_operations,
-    )
-    assert scope_sha256 == (
-        "7bb1058dd7f3a15a68e206c5c8dea0e627918bc20a69af86b1d583aebedbd028"
-    )
+    with pytest.raises(ValidationError):
+        ProviderGateBundle.model_validate(bundle)
 
     approvals = (
-        ("V3-01-APP-026.json", bundle.credential_approval),
-        ("V3-01-APP-027.json", bundle.budget_approval),
-        ("V3-01-APP-028.json", bundle.rights_approval),
+        ("V3-01-APP-026.json", bundle["credential_approval"]),
+        ("V3-01-APP-027.json", bundle["budget_approval"]),
+        ("V3-01-APP-028.json", bundle["rights_approval"]),
     )
     approval_root = REPO_ROOT / "docs" / "acceptance" / "v3-01" / "approvals"
     for filename, embedded in approvals:
         record = json.loads((approval_root / filename).read_text(encoding="utf-8"))
-        assert embedded.record.model_dump(mode="json") == record
-        assert embedded.record_sha256 == canonical_sha256(record)
+        assert embedded["record"] == record
+        assert embedded["record_sha256"] == canonical_sha256(record)
 
 
 def test_checked_in_rc7_bundle_is_exactly_bound_and_requires_separate_authority() -> None:
@@ -408,52 +438,38 @@ def test_checked_in_rc7_bundle_is_exactly_bound_and_requires_separate_authority(
         / "V3-01-GATE-RC7-OPENAI-VISION-A.json"
     )
     raw = bundle_path.read_bytes()
-    bundle = ProviderGateBundle.model_validate_json(raw)
+    bundle = json.loads(raw)
 
     assert hashlib.sha256(raw).hexdigest() == (
         "ce772a941766b12a99943b9165cbf588c314e3d1b59543f103c7671a58856a44"
     )
-    assert bundle.rc_tag == "vf-v3-01-rc7"
-    assert bundle.rc_commit == "94170ed42f6ffba4432f29750402eafe0d922a45"
-    assert bundle.provider_key == "openai-vision"
-    assert bundle.model == "gpt-5-mini"
-    assert bundle.capability == "vision"
-    assert bundle.credential_alias == "secret://openai/codex-video"
-    assert bundle.budget.currency == "VND"
-    assert bundle.budget.per_operation_limit_vnd == Decimal("500")
-    assert bundle.budget.acceptance_window_limit_vnd == Decimal("1250")
-    assert [operation.operation_key for operation in bundle.allowed_operations] == [
+    assert bundle["rc_tag"] == "vf-v3-01-rc7"
+    assert bundle["rc_commit"] == "94170ed42f6ffba4432f29750402eafe0d922a45"
+    assert bundle["provider_key"] == "openai-vision"
+    assert bundle["model"] == "gpt-5-mini"
+    assert bundle["capability"] == "vision"
+    assert bundle["credential_alias"] == "secret://openai/codex-video"
+    assert bundle["budget"]["currency"] == "VND"
+    assert Decimal(bundle["budget"]["per_operation_limit_vnd"]) == Decimal("500")
+    assert Decimal(bundle["budget"]["acceptance_window_limit_vnd"]) == Decimal("1250")
+    assert bundle["budget"]["timeout_seconds"] == 60
+    assert [operation["operation_key"] for operation in bundle["allowed_operations"]] == [
         "v3-01-rc7-openai-vision-call-01",
         "v3-01-rc7-openai-vision-call-02",
     ]
-
-    scope_sha256 = execution_scope_sha256(
-        rc_tag=bundle.rc_tag,
-        rc_commit=bundle.rc_commit,
-        provider_key=bundle.provider_key,
-        model=bundle.model,
-        capability=bundle.capability,
-        credential_alias=bundle.credential_alias,
-        valid_from_utc=bundle.valid_from_utc,
-        expires_at_utc=bundle.expires_at_utc,
-        budget=bundle.budget,
-        rights_record_sha256=bundle.rights_record.record_sha256,
-        allowed_operations=bundle.allowed_operations,
-    )
-    assert scope_sha256 == (
-        "60d9898de38f9536ed3391ca81f1d59eca04b61537edad42e85597702c143a56"
-    )
+    with pytest.raises(ValidationError):
+        ProviderGateBundle.model_validate(bundle)
 
     approvals = (
-        ("V3-01-APP-030.json", bundle.credential_approval),
-        ("V3-01-APP-031.json", bundle.budget_approval),
-        ("V3-01-APP-032.json", bundle.rights_approval),
+        ("V3-01-APP-030.json", bundle["credential_approval"]),
+        ("V3-01-APP-031.json", bundle["budget_approval"]),
+        ("V3-01-APP-032.json", bundle["rights_approval"]),
     )
     approval_root = REPO_ROOT / "docs" / "acceptance" / "v3-01" / "approvals"
     for filename, embedded in approvals:
         record = json.loads((approval_root / filename).read_text(encoding="utf-8"))
-        assert embedded.record.model_dump(mode="json") == record
-        assert embedded.record_sha256 == canonical_sha256(record)
+        assert embedded["record"] == record
+        assert embedded["record_sha256"] == canonical_sha256(record)
 
 
 def test_checked_in_g03_asset_is_hash_bound_and_narrowly_owner_approved() -> None:
