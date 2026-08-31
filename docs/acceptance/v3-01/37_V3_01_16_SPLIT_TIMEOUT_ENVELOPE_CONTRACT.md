@@ -98,6 +98,13 @@ exact-RC G-01/G-02/G-03 rebind and a separate operation authority.
 - RC-8: retained as NO-GO architecture evidence and retired from live acceptance
 - RC-9: not created by this PR; it may be locked only after G-08 merge and exact-main regression
 
+The secret-free local evidence bundle is recorded at
+`evidence/v3-01/vf-v3-01-20260831T171649Z-2d51409/`. Its manifest binds exact code commit
+`2d51409ab376bfbc4b3dd7838114c8388ac40a95` and records focused tests, the 304-test Python
+regression, Studio/Renderer checks, migration replay, deterministic Docker E2E/DR, acceptance
+validation, secret scan and `git diff --check`. It promotes only `implemented` and `mock-tested`;
+all real-provider, production-path and quality axes remain `NOT_TESTED`.
+
 ## Gate sequence
 
 ```text
