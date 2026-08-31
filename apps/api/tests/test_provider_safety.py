@@ -24,6 +24,7 @@ from app.provider_safety import (
     ProviderSafetyBlocked,
     ProviderSafetyController,
     ProviderSafetyPolicy,
+    ProviderTimeoutError,
     ProviderTransientError,
     normalize_provider_definitions,
     verify_provider_artifact,
@@ -56,9 +57,12 @@ def approved_policy(
     per_operation_limit: Decimal = Decimal("3000"),
     failure_threshold: int = 3,
     max_poll_attempts: int = 4,
-    per_request_timeout: float = 10,
+    provider_http_timeout: float | None = None,
+    controller_hard_timeout: float = 10,
     max_concurrent_calls: int = 2,
 ) -> ProviderSafetyPolicy:
+    if provider_http_timeout is None:
+        provider_http_timeout = controller_hard_timeout / 2
     return ProviderSafetyPolicy(
         external_execution_enabled=True,
         paid_execution_enabled=True,
@@ -73,7 +77,8 @@ def approved_policy(
         ),
         retry=ProviderRetryPolicy(
             max_attempts=max_attempts,
-            per_request_timeout_seconds=per_request_timeout,
+            provider_http_timeout_seconds=provider_http_timeout,
+            controller_hard_timeout_seconds=controller_hard_timeout,
             base_delay_seconds=1,
             max_delay_seconds=4,
             max_elapsed_seconds=30,
@@ -378,7 +383,7 @@ async def test_polling_has_a_deterministic_hard_limit() -> None:
 @pytest.mark.asyncio
 async def test_timeout_and_concurrency_are_hard_limits() -> None:
     timeout_controller = ProviderSafetyController(
-        approved_policy(max_attempts=1, per_request_timeout=0.01)
+        approved_policy(max_attempts=1, controller_hard_timeout=0.01)
     )
 
     async def never_returns() -> str:
@@ -390,7 +395,7 @@ async def test_timeout_and_concurrency_are_hard_limits() -> None:
             context("timeout-operation", paid=False, estimate=Decimal("0")),
             never_returns,
         )
-    assert timeout_error.value.code == "PROVIDER_TIMEOUT"
+    assert timeout_error.value.code == "CONTROLLER_ENVELOPE_TIMEOUT"
     assert timeout_controller.attempts[0].status == "timed_out"
 
     controller = ProviderSafetyController(
@@ -684,7 +689,7 @@ async def test_durable_attempt_persists_only_structured_secret_free_error_eviden
 @pytest.mark.asyncio
 async def test_durable_controller_timeout_preserves_phase_ledger_and_duplicate_guard(tmp_path) -> None:
     clock = MutableClock()
-    policy = approved_policy(max_attempts=1, per_request_timeout=0.01)
+    policy = approved_policy(max_attempts=1, controller_hard_timeout=0.01)
     engine, repository, _, controller, _ = await durable_components(tmp_path, policy, clock)
     trace = ProviderExecutionTrace()
     calls = 0
@@ -706,17 +711,17 @@ async def test_durable_controller_timeout_preserves_phase_ledger_and_duplicate_g
         await controller.execute(
             timeout_context,
             operation,
-            timeout_evidence_factory=lambda timeout_seconds, error: trace.timeout_evidence(
-                code="PROVIDER_TIMEOUT",
+            timeout_evidence_factory=lambda timeout_envelope, error: trace.timeout_evidence(
+                code="CONTROLLER_ENVELOPE_TIMEOUT",
                 timeout_kind="controller_envelope",
-                configured_timeout_seconds=timeout_seconds,
+                timeout_envelope=timeout_envelope,
                 error=error,
                 retryable=True,
                 provider_error_message="Provider operation exceeded controller deadline",
             ),
         )
 
-    assert blocked.value.code == "PROVIDER_TIMEOUT"
+    assert blocked.value.code == "CONTROLLER_ENVELOPE_TIMEOUT"
     assert calls == 1
     async with repository.session_factory() as session:
         row = await session.scalar(
@@ -732,6 +737,8 @@ async def test_durable_controller_timeout_preserves_phase_ledger_and_duplicate_g
     assert row.error_evidence is not None
     assert row.error_evidence["timeout_phase"] == "http_response_wait"
     assert row.error_evidence["timeout_kind"] == "controller_envelope"
+    assert row.error_evidence["provider_http_timeout_seconds"] == 0.005
+    assert row.error_evidence["controller_hard_timeout_seconds"] == 0.01
     assert row.error_evidence["request_dispatch_state"] == "possibly_sent"
     assert row.error_evidence["provider_request_id"] is None
     assert row.error_evidence["client_request_id"] == "vf-durable-timeout"
@@ -744,6 +751,70 @@ async def test_durable_controller_timeout_preserves_phase_ledger_and_duplicate_g
     duplicate = await controller.preflight(timeout_context)
     assert duplicate.allowed is False
     assert duplicate.code == "DUPLICATE_OPERATION_BLOCKED"
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_provider_90s_timeout_keeps_30s_controller_buffer_for_durable_evidence(
+    tmp_path,
+) -> None:
+    clock = MutableClock()
+    policy = approved_policy(
+        max_attempts=1,
+        provider_http_timeout=90,
+        controller_hard_timeout=120,
+    )
+    engine, repository, _, controller, _ = await durable_components(tmp_path, policy, clock)
+    virtual_monotonic = [0.0]
+    trace = ProviderExecutionTrace(monotonic=lambda: virtual_monotonic[0])
+    trace.begin()
+    trace.mark(
+        "http_response_wait",
+        dispatch_state="possibly_sent",
+        client_request_id="vf-provider-timeout-buffer",
+    )
+    virtual_monotonic[0] = 90.0
+    provider_evidence = trace.timeout_evidence(
+        code="PROVIDER_TIMEOUT",
+        timeout_kind="read",
+        timeout_envelope=policy.retry,
+        error=TimeoutError("virtual provider deadline"),
+        retryable=True,
+        provider_error_message="Provider HTTP timeout expired",
+    )
+
+    async def provider_timeout() -> str:
+        raise ProviderTimeoutError(error_evidence=provider_evidence)
+
+    timeout_context = context("durable-provider-timeout", estimate=Decimal("100"))
+    with pytest.raises(ProviderSafetyBlocked) as blocked:
+        await controller.execute(timeout_context, provider_timeout)
+
+    assert policy.retry.controller_hard_timeout_seconds - (
+        policy.retry.provider_http_timeout_seconds
+    ) == 30
+    assert blocked.value.code == "PROVIDER_TIMEOUT"
+    assert blocked.value.error_evidence is not None
+    assert blocked.value.error_evidence.timeout_kind == "read"
+    assert blocked.value.error_evidence.elapsed_ms == 90_000
+    async with repository.session_factory() as session:
+        row = await session.scalar(
+            select(ProviderSafetyAttemptORM).where(
+                ProviderSafetyAttemptORM.operation_key == "durable-provider-timeout"
+            )
+        )
+    assert row is not None
+    assert row.status == "timed_out"
+    assert row.error_code == "PROVIDER_TIMEOUT"
+    assert row.error_evidence is not None
+    assert row.error_evidence["provider_http_timeout_seconds"] == 90
+    assert row.error_evidence["controller_hard_timeout_seconds"] == 120
+    assert row.error_evidence["retryable"] is False
+    assert row.actual_cost_vnd is None
+    assert row.charged_cost_vnd == Decimal("100")
+    assert (await controller.preflight(timeout_context)).code == (
+        "DUPLICATE_OPERATION_BLOCKED"
+    )
     await engine.dispose()
 
 

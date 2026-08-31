@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-14; RC-7 operation 1 timed out once and is consumed/REVIEW_REQUIRED; V3-01-15 zero-call remediation in review
-RELEASE CANDIDATE: RC-7 94170ed42f6ffba4432f29750402eafe0d922a45 CLOSED NO-GO; NOT DEPLOYED; OPERATION 2 LOCKED
+SCOPE: merged V3-01-00 through V3-01-15; RC-7 operation 1 timed out once and is consumed/REVIEW_REQUIRED; V3-01-16 zero-call remediation in review
+RELEASE CANDIDATE: RC-8 68d4cf90004054075ebf0f33b9311a3419d8af4d CLOSED NO-GO; NOT DEPLOYED; RETIRED FROM LIVE ACCEPTANCE
 LATEST EVIDENCE: RC-7 provider path reached once; PROVIDER_TIMEOUT at about 60 seconds; no retry/fallback; actual cost UNKNOWN; 500 VND safety charge; operation 2 NOT APPROVED
 DATE: 2026-08-31
-OWNER DECISION: RC-7 AUTHORITY CONSUMED/RETIRED; V3-01-15 DRAFT REQUIRES A NEW G-08
+OWNER DECISION: RC-8 MUST NOT RUN LIVE; V3-01-16 DRAFT REQUIRES A NEW G-08
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -40,7 +40,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
 - no production-like target, deployed image digest or owner-accepted production-like DR drill;
-- RC-5 OpenAI Vision provider execution succeeded once, but post-call serialization lost structured payload/request-level IDs and hashes. RC-6 operation 1 later stopped pre-call on an authority-limits mismatch. RC-7 operation 1 passed those prior boundaries but timed out once at about 60 seconds without provider request ID/usage; it is consumed/`REVIEW_REQUIRED`, actual cost is unknown and operation 2 remains locked;
+- RC-5 OpenAI Vision provider execution succeeded once, but post-call serialization lost structured payload/request-level IDs and hashes. RC-6 operation 1 later stopped pre-call on an authority-limits mismatch. RC-7 operation 1 passed those prior boundaries but timed out once at about 60 seconds without provider request ID/usage; it is consumed/`REVIEW_REQUIRED`, actual cost is unknown and operation 2 remains locked. V3-01-15 merged as RC-8, but RC-8 still shared one 60-second provider/controller deadline and is retired from live acceptance while V3-01-16 splits the envelope offline;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
 - GitHub `main` is not protected.
@@ -79,6 +79,13 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - RC-7 operation evidence `EV-V3-RC7-VISION-OP1-TIMEOUT-001` freezes one consumed
   `PROVIDER_TIMEOUT`, no retry/fallback, actual cost unknown, 500 VND safety charge and locked
   operation 2; `EV-V3-PROVIDER-TIMEOUT-001` is the later zero-call remediation evidence only;
+- V3-01-15 PR #33 merged as `68d4cf90004054075ebf0f33b9311a3419d8af4d`; exact-main CI
+  `33412301663` passed 5/5; annotated `vf-v3-01-rc8` tag object
+  `aaeefaa31b027fa77aa3bea13a1bbec5cefaefd6` peels to that commit; RC-8 is NO-GO, not deployed,
+  has no live-operation authority and is retired from live acceptance;
+- V3-01-16 is a zero-call source remediation that replaces the shared timeout field with explicit
+  provider 90-second and controller 120-second fields; no real-provider, production-path or quality
+  acceptance axis is promoted;
 - operation-1 evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`, evidence SHA-256 `e94fcafcbab8adefb9506cb91d98010cdb1713ba79ce209ec2dfdb154f97fd2d`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
@@ -209,24 +216,28 @@ new four-hour window. PR #32 merged the scope governance-only. Under separate au
 operation 1 ran exactly once and timed out at about 60 seconds. It is consumed, no retry/fallback
 occurred, actual provider cost is unknown, the 500 VND ledger amount is a safety charge, and
 operation 2 remains locked. V3-01-15 adds future phase-specific timeout evidence without changing
-the 60-second envelope or making an external call.
+the 60-second envelope or making an external call. PR #33 merged it, exact-main CI passed 5/5 and
+RC-8 was locked. RC-8 retains the shared deadline and is therefore retired from live acceptance.
+V3-01-16 now splits provider HTTP timeout 90 seconds from controller hard envelope 120 seconds,
+with virtual boundary and strict legacy/missing/mismatch rejection tests; it remains zero-call.
 
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
-[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-15 sequence is defined in
+[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-16 sequence is defined in
 [`14_REMEDIATION_PR_PLAN.md`](14_REMEDIATION_PR_PLAN.md). No exception or expiry is recorded.
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #32 are consumed. The isolated V3-01-15 remediation requires a new
+- **Merge:** decisions through PR #33 are consumed. The isolated V3-01-16 remediation requires a new
   G-08 before merge.
-- **Deploy:** no; RC-7 is NO-GO, not deployed, and G-09 is pending.
+- **Deploy:** no; RC-8 is NO-GO, not deployed, retired from live acceptance and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** RC-5 operation 1 consumed exactly one attempt with no retry/fallback
   and recorded `137.6287 VND` actual cost; all RC-5 IDs are locked. RC-6 operation 1 is not consumed
   but its failed-window authority is retired and both RC-6 IDs are prohibited. RC-7 operation 1 is
-  consumed after one timeout, operation 2 is locked, and checked-in budget remains 0.
+  consumed after one timeout, operation 2 is locked, RC-8 has no operation authority, and
+  checked-in budget remains 0.
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited:** any further provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.

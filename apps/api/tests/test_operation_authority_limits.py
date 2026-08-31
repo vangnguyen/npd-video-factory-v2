@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from datetime import date
 from decimal import Decimal
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from app.provider_gate_loader import (
     ProviderGateBundle,
+    ProviderGateBudgetEnvelope,
     ProviderOperationAuthorityLimits,
     ProviderOperationAuthorityLimitsError,
     validate_operation_authority_limits,
@@ -24,8 +27,24 @@ RC6_BUNDLE_PATH = (
 )
 
 
-def _rc6_bundle() -> ProviderGateBundle:
-    return ProviderGateBundle.model_validate_json(RC6_BUNDLE_PATH.read_text(encoding="utf-8"))
+def _current_budget() -> ProviderGateBudgetEnvelope:
+    return ProviderGateBudgetEnvelope(
+        per_operation_limit_vnd=Decimal("500"),
+        acceptance_window_limit_vnd=Decimal("1250"),
+        input_vnd_per_million_tokens=Decimal("6565"),
+        cached_input_vnd_per_million_tokens=Decimal("656.5"),
+        output_vnd_per_million_tokens=Decimal("52520"),
+        budget_day_utc=date(2026, 9, 1),
+        max_frames=1,
+        max_dimension_pixels=2048,
+        image_detail="high",
+        input_token_ceiling=16_384,
+        max_output_tokens=4_096,
+        provider_http_timeout_seconds=90,
+        controller_hard_timeout_seconds=120,
+        max_attempts=1,
+        max_concurrent_calls=1,
+    )
 
 
 def _canonical_limits() -> dict[str, object]:
@@ -38,7 +57,8 @@ def _canonical_limits() -> dict[str, object]:
         "max_output_tokens": 4_096,
         "per_operation_limit_vnd": "500",
         "acceptance_window_limit_vnd": "1250",
-        "timeout_seconds": 60,
+        "provider_http_timeout_seconds": 90,
+        "controller_hard_timeout_seconds": 120,
         "max_concurrent_calls": 1,
         "max_attempts": 1,
         "automatic_retry": False,
@@ -46,21 +66,20 @@ def _canonical_limits() -> dict[str, object]:
     }
 
 
-def test_rc6_bundle_passes_the_canonical_runner_limits_contract_offline() -> None:
-    bundle = _rc6_bundle()
-
+def test_current_budget_passes_the_canonical_runner_limits_contract_offline() -> None:
     limits = validate_operation_authority_limits(
         _canonical_limits(),
-        budget=bundle.budget,
+        budget=_current_budget(),
     )
 
-    assert limits == ProviderOperationAuthorityLimits.from_gate_budget(bundle.budget)
+    assert limits == ProviderOperationAuthorityLimits.from_gate_budget(_current_budget())
     assert limits.per_operation_limit_vnd == Decimal("500")
     assert limits.acceptance_window_limit_vnd == Decimal("1250")
     assert limits.same_utc_day_runtime_daily_limit_vnd == Decimal("1250")
     assert set(limits.model_dump(mode="json")) == set(_canonical_limits())
     assert "daily_limit_vnd" not in ProviderOperationAuthorityLimits.model_fields
     assert "reservation_vnd" not in ProviderOperationAuthorityLimits.model_fields
+    assert "timeout_seconds" not in ProviderOperationAuthorityLimits.model_fields
 
 
 @pytest.mark.parametrize(
@@ -74,6 +93,14 @@ def test_rc6_bundle_passes_the_canonical_runner_limits_contract_offline() -> Non
         ("wrong_vnd_amount", "501"),
         ("wrong_window_amount", "1000"),
         ("daily_alias", "1250"),
+        ("missing_provider_timeout", None),
+        ("missing_controller_timeout", None),
+        ("legacy_single_timeout", 60),
+        ("wrong_provider_timeout_type", "90"),
+        ("wrong_controller_timeout_type", "120"),
+        ("equal_timeouts", 90),
+        ("provider_greater_than_controller", 89),
+        ("extra_timeout_field", 150),
     ],
 )
 def test_authority_limits_fail_closed_on_missing_wrong_type_name_or_amount(
@@ -97,11 +124,29 @@ def test_authority_limits_fail_closed_on_missing_wrong_type_name_or_amount(
         payload["acceptance_window_limit_vnd"] = value
     elif mutation == "daily_alias":
         payload["daily_limit_vnd"] = value
+    elif mutation == "missing_provider_timeout":
+        payload.pop("provider_http_timeout_seconds")
+    elif mutation == "missing_controller_timeout":
+        payload.pop("controller_hard_timeout_seconds")
+    elif mutation == "legacy_single_timeout":
+        payload.pop("provider_http_timeout_seconds")
+        payload.pop("controller_hard_timeout_seconds")
+        payload["timeout_seconds"] = value
+    elif mutation == "wrong_provider_timeout_type":
+        payload["provider_http_timeout_seconds"] = value
+    elif mutation == "wrong_controller_timeout_type":
+        payload["controller_hard_timeout_seconds"] = value
+    elif mutation == "equal_timeouts":
+        payload["controller_hard_timeout_seconds"] = value
+    elif mutation == "provider_greater_than_controller":
+        payload["controller_hard_timeout_seconds"] = value
+    elif mutation == "extra_timeout_field":
+        payload["provider_timeout_cap_seconds"] = value
     else:  # pragma: no cover - parameter list is exhaustive
         raise AssertionError(mutation)
 
     with pytest.raises(ProviderOperationAuthorityLimitsError):
-        validate_operation_authority_limits(payload, budget=_rc6_bundle().budget)
+        validate_operation_authority_limits(payload, budget=_current_budget())
 
 
 def test_rc6_legacy_runner_shape_reproduces_the_exact_pre_call_mismatch() -> None:
@@ -125,7 +170,7 @@ def test_rc6_legacy_runner_shape_reproduces_the_exact_pre_call_mismatch() -> Non
     ):
         validate_operation_authority_limits(
             legacy_rc6_runner_limits,
-            budget=_rc6_bundle().budget,
+            budget=_current_budget(),
         )
 
 
@@ -134,4 +179,11 @@ def test_canonical_contract_rejects_window_limit_that_cannot_cover_two_slots() -
     payload["acceptance_window_limit_vnd"] = "999"
 
     with pytest.raises(ProviderOperationAuthorityLimitsError):
-        validate_operation_authority_limits(payload, budget=_rc6_bundle().budget)
+        validate_operation_authority_limits(payload, budget=_current_budget())
+
+
+def test_historical_rc6_bundle_is_preserved_but_rejected_by_split_timeout_contract() -> None:
+    raw = RC6_BUNDLE_PATH.read_text(encoding="utf-8")
+
+    with pytest.raises(ValidationError):
+        ProviderGateBundle.model_validate_json(raw)

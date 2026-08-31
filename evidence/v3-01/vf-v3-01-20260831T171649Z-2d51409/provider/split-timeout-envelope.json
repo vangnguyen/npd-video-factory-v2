@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-16",
+  "code_commit": "2d51409ab376bfbc4b3dd7838114c8388ac40a95",
+  "historical_rc": "vf-v3-01-rc8",
+  "historical_rc_status": "RETIRED_BEFORE_LIVE_ACCEPTANCE",
+  "canonical_model": "ProviderTimeoutEnvelope",
+  "timeout_envelope": {
+    "provider_http_timeout_seconds": 90,
+    "controller_hard_timeout_seconds": 120,
+    "provider_less_than_controller": true,
+    "durable_evidence_margin_seconds": 30
+  },
+  "propagation_path": [
+    "Settings",
+    "ProviderGateBudgetEnvelope",
+    "ProviderOperationAuthorityLimits",
+    "ProviderExecutionGateScope",
+    "runner",
+    "OpenAIVisionProvider",
+    "ProviderSafetyController",
+    "ProviderErrorEvidence"
+  ],
+  "timeout_codes": {
+    "provider": "PROVIDER_TIMEOUT",
+    "controller": "CONTROLLER_ENVELOPE_TIMEOUT"
+  },
+  "virtual_boundaries": {
+    "provider": {
+      "89": "WITHIN_PROVIDER_ENVELOPE",
+      "90": "PROVIDER_TIMEOUT_BOUNDARY",
+      "91": "PROVIDER_TIMEOUT"
+    },
+    "controller": {
+      "119": "WITHIN_CONTROLLER_ENVELOPE",
+      "120": "CONTROLLER_ENVELOPE_TIMEOUT_BOUNDARY",
+      "121": "CONTROLLER_ENVELOPE_TIMEOUT"
+    }
+  },
+  "fail_closed_cases": [
+    "missing_provider_http_timeout_seconds",
+    "missing_controller_hard_timeout_seconds",
+    "legacy_timeout_seconds",
+    "wrong_type",
+    "extra_field",
+    "provider_equals_controller",
+    "provider_greater_than_controller"
+  ],
+  "unchanged_safety_envelope": {
+    "per_operation_limit_vnd": 500,
+    "acceptance_window_limit_vnd": 1250,
+    "attempts": 1,
+    "concurrency": 1,
+    "retry": false,
+    "fallback": false
+  },
+  "v3_01_16_boundary": {
+    "credential_read": false,
+    "provider_calls": 0,
+    "actual_cost_vnd": 0,
+    "deploy": false,
+    "public_ingress": false,
+    "publish": false,
+    "production_analytics": false,
+    "production_verdict": "NO-GO"
+  }
+}

@@ -2,20 +2,20 @@
 
 Captured at `2026-08-27T12:02:08Z` (`2026-08-27 19:02:08 Asia/Ho_Chi_Minh`).
 Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
-Current checkpoint status updated after the bounded RC-7 operation 1 timeout on `2026-08-31` and
-the start of zero-call V3-01-15 remediation.
+Current checkpoint status updated after V3-01-15 merged, RC-8 was locked NO-GO and the owner
+retired RC-8 from live acceptance in favor of zero-call V3-01-16.
 
 ## Control state
 
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-7 94170ed42f6ffba4432f29750402eafe0d922a45; locked NO-GO; not deployed
+CURRENT RC: RC-8 68d4cf90004054075ebf0f33b9311a3419d8af4d; locked NO-GO; not deployed; retired from live acceptance
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-15 timeout evidence/runtime remediation; source-only; zero calls; zero VND
+CURRENT SAFE PHASE: V3-01-16 split timeout envelope remediation; source-only; zero calls; zero VND
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #32 GOVERNANCE MERGE CONSUMED; V3-01-15 DRAFT REQUIRES A NEW G-08
-G-01-A / G-02-A / G-03-A: RC-7 AUTHORITY USED/RETIRED; FUTURE RC REQUIRES REBIND
+G-08: PR #33 MERGE CONSUMED; V3-01-16 DRAFT REQUIRES A NEW G-08
+G-01-A / G-02-A / G-03-A: RC-7 AUTHORITY USED/RETIRED; RC-8 HAS NO LIVE AUTHORITY; FUTURE RC REQUIRES REBIND
 RC-7 OPERATION 1: FAILED PROVIDER_TIMEOUT; REVIEW_REQUIRED; CONSUMED; NO RETRY
 RC-7 OPERATION 2: LOCKED; NOT EXECUTED
 RC-6 OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; PROVIDER CALLS 0; COST 0 VND
@@ -79,6 +79,15 @@ consumed/`REVIEW_REQUIRED`; no retry/fallback occurred, actual provider cost is 
 durable 500 VND amount is a conservative safety charge. Operation 2 remains locked. V3-01-15 now
 remediates timeout-phase evidence offline without changing the 60-second envelope.
 
+PR #33 then merged V3-01-15 as `68d4cf90004054075ebf0f33b9311a3419d8af4d`; exact-main CI run
+`33412301663` passed 5/5. Annotated tag `vf-v3-01-rc8` has tag object
+`aaeefaa31b027fa77aa3bea13a1bbec5cefaefd6` and peels to that merge. RC-8 is locked NO-GO and not
+deployed. Audit confirmed its executable contract still used one shared 60-second timeout for the
+provider transport and controller envelope. The owner therefore retired RC-8 from live acceptance
+and authorized only the zero-call V3-01-16 source remediation with explicit 90-second provider and
+120-second controller limits. No RC-8 operation IDs, bundle, credential read or provider call were
+created.
+
 The V3-01 source supplied by the owner is document `NPD-VF-V3-01`, version `3.01.0`, SHA-256
 `53160020d5d32a5327857c899f3a7cb3cdd2d1292d98e6ec51ba97239cb4fee4`. The source file is
 outside the repository; this record stores only its identifier and hash, not an uncontrolled copy.
@@ -96,7 +105,7 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Open PRs at capture | none |
 | Tags/releases | none returned by Git/GitHub |
 | Main branch protection | disabled; GitHub API returned `Branch not protected` |
-| Latest verified exact-main CI | [Video Factory V2 CI run 33321003243](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33321003243), 5/5 success after PR #31 on exact main/RC-7 `94170ed42f6ffba4432f29750402eafe0d922a45` |
+| Latest verified exact-main CI | [Video Factory V2 CI run 33412301663](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33412301663), 5/5 success after PR #33 on exact main/RC-8 `68d4cf90004054075ebf0f33b9311a3419d8af4d` |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -104,7 +113,7 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` before V3-01-15 branch | `ebe6f91a9ac88364a23871d587ae4564f30283d3` after governance-only PR #32; executable RC-7 remains `94170ed42f6ffba4432f29750402eafe0d922a45` |
+| Exact `origin/main` before V3-01-16 branch | `68d4cf90004054075ebf0f33b9311a3419d8af4d` after PR #33; executable RC-8 is the same commit and is retired from live acceptance |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
@@ -128,7 +137,9 @@ Current repository checkpoint after the bounded merge sequence:
 | PR #31 / V3-01-14 | exact head `ff67fb05f32e300cdb4daac3fd29d8135a62879f`; merge `94170ed42f6ffba4432f29750402eafe0d922a45`; exact-main CI run `33321003243` 5/5 PASS; `V3-01-APP-029` consumed |
 | RC-7 | annotated `vf-v3-01-rc7` peels to `94170ed42f6ffba4432f29750402eafe0d922a45`; tag object `14e1c09550aaa92c937e275bbe8d1e38c6ed8b8c`; NO-GO; not deployed |
 | RC-7 governance rebind | PR #32 merged governance-only as `ebe6f91a9ac88364a23871d587ae4564f30283d3`; G-01-A/G-02-A/G-03-A bound by `V3-01-APP-030` through `V3-01-APP-032`; bundle raw SHA `ce772a941766b12a99943b9165cbf588c314e3d1b59543f103c7671a58856a44`; scope SHA `60d9898de38f9536ed3391ca81f1d59eca04b61537edad42e85597702c143a56` |
-| Exact-main regression | PR #31 exact-main CI run `33321003243` passed Python, Studio, Renderer, Safety/Compose and Docker deterministic E2E |
+| PR #33 / V3-01-15 | merge `68d4cf90004054075ebf0f33b9311a3419d8af4d`; exact-main CI run `33412301663` 5/5 PASS |
+| RC-8 | annotated `vf-v3-01-rc8` peels to `68d4cf90004054075ebf0f33b9311a3419d8af4d`; tag object `aaeefaa31b027fa77aa3bea13a1bbec5cefaefd6`; NO-GO; not deployed; retired from live acceptance because the executable contract still had one shared 60-second deadline |
+| Exact-main regression | PR #33 exact-main CI run `33412301663` passed Python, Studio, Renderer, Safety/Compose and Docker deterministic E2E |
 | Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once at the provider boundary and is consumed/`REVIEW_REQUIRED`; every operation 2 remains locked |
 | Deployment/ingress/publish action | none |
 

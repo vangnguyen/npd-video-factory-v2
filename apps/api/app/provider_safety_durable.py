@@ -38,6 +38,7 @@ class DurableProviderSafetyController(ProviderSafetyController):
         clock=utc_now,
         monotonic=time.perf_counter,
         sleeper=None,
+        wait_for=None,
         operation_lease_seconds: int = 900,
         operation_retention_days: int = 400,
     ) -> None:
@@ -48,6 +49,8 @@ class DurableProviderSafetyController(ProviderSafetyController):
         }
         if sleeper is not None:
             kwargs["sleeper"] = sleeper
+        if wait_for is not None:
+            kwargs["wait_for"] = wait_for
         super().__init__(policy, **kwargs)
         self.repository = repository
         self.operation_lease_seconds = operation_lease_seconds

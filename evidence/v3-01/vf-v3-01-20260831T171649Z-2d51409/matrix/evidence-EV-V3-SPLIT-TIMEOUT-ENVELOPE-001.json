@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-SPLIT-TIMEOUT-ENVELOPE-001",
+  "test_case_id": "V3-01-16-SPLIT-PROVIDER-CONTROLLER-TIMEOUT-ENVELOPE",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "2d51409ab376bfbc4b3dd7838114c8388ac40a95",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-virtual-clock",
+    "model_or_workflow": "openai-vision/gpt-5-mini split timeout contract",
+    "credential_alias": "not-read",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": null,
+  "started_at_utc": "2026-08-31T17:16:49Z",
+  "completed_at_utc": "2026-08-31T17:18:49Z",
+  "duration_seconds": 120.0,
+  "result": "PASS",
+  "assertion": "A canonical timeout envelope now propagates provider_http_timeout_seconds=90 and controller_hard_timeout_seconds=120 through Settings, verified gate loading, operation authority limits, runner, OpenAI adapter, controller and timeout evidence. Virtual-clock tests cover provider boundaries 89/90/91 and controller boundaries 119/120/121. Missing, legacy, wrong-type, extra, equal and reversed fields fail closed. PROVIDER_TIMEOUT remains distinct from CONTROLLER_ENVELOPE_TIMEOUT, and the 30-second controller margin permits durable timeout evidence and ledger completion. No credential was read, no provider call occurred and cost was 0 VND.",
+  "correlation_id": "v3-01-16-split-timeout-2d51409",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex offline timeout-contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On commit 2d51409ab376bfbc4b3dd7838114c8388ac40a95 run python -m pytest apps/api/tests/test_openai_vision_provider.py apps/api/tests/test_provider_safety.py apps/api/tests/test_provider_gate_loader.py apps/api/tests/test_operation_authority_limits.py apps/api/tests/test_safety_config.py -q. Keep external and paid execution disabled, budget at 0 VND and the kill switch engaged."
+}
