@@ -9,6 +9,7 @@ from .auto_edit_repository import AutoEditRepository
 from .object_storage import ObjectStorageProvider, sha256_file
 from .provider_safety import (
     ProviderCallContext,
+    ProviderExecutionTrace,
     ProviderSafetyBlocked,
     ProviderSafetyController,
 )
@@ -117,6 +118,19 @@ class VisionAnalysisService:
                 if self.provider.external_call and payload.acceptance_operation_id
                 else f"{vision_analysis_id}:vision"
             )
+            execution_trace = ProviderExecutionTrace()
+
+            async def provider_operation() -> ProviderVisionResult:
+                return await self.provider.analyze(
+                    local_path,
+                    metadata=base.source_media,
+                    scenes=base.scenes,
+                    asset_id=asset.asset_id,
+                    checksum_sha256=asset.checksum_sha256,
+                    sample_interval_seconds=payload.sample_interval_seconds,
+                    execution_trace=execution_trace,
+                )
+
             execution = await self.provider_safety.execute(
                 ProviderCallContext(
                     operation_key=operation_key,
@@ -146,15 +160,20 @@ class VisionAnalysisService:
                     rights_required=self.provider.external_call,
                     rights=[],
                 ),
-                lambda: self.provider.analyze(
-                    local_path,
-                    metadata=base.source_media,
-                    scenes=base.scenes,
-                    asset_id=asset.asset_id,
-                    checksum_sha256=asset.checksum_sha256,
-                    sample_interval_seconds=payload.sample_interval_seconds,
-                ),
+                provider_operation,
                 actual_cost=lambda result: result.actual_cost_vnd,
+                timeout_evidence_factory=lambda timeout_seconds, error: (
+                    execution_trace.timeout_evidence(
+                        code="PROVIDER_TIMEOUT",
+                        timeout_kind="controller_envelope",
+                        configured_timeout_seconds=timeout_seconds,
+                        error=error,
+                        retryable=True,
+                        provider_error_message=(
+                            "Vision provider operation exceeded the controller deadline"
+                        ),
+                    )
+                ),
             )
             provider_result = ProviderVisionResult(
                 frames=execution.value.frames,

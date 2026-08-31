@@ -5,8 +5,9 @@ import hashlib
 import hmac
 import json
 import re
+import time
 from collections.abc import Awaitable, Callable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Any, Generic, Literal, TypeVar
@@ -30,6 +31,37 @@ ProviderErrorCategory = Literal[
     "structured_output_validation",
     "usage_receipt_missing",
     "usage_receipt_invalid",
+]
+ProviderTimeoutPhase = Literal[
+    "service_dispatch",
+    "credential_resolution",
+    "frame_extraction",
+    "request_build",
+    "http_connection_pool",
+    "http_connect",
+    "http_request_write",
+    "http_request_dispatch",
+    "http_response_wait",
+    "http_response_read",
+    "response_parse",
+    "controller_envelope",
+    "unknown",
+]
+ProviderTimeoutKind = Literal[
+    "connect",
+    "write",
+    "read",
+    "pool",
+    "transport",
+    "controller_envelope",
+    "unknown",
+]
+ProviderRequestDispatchState = Literal[
+    "not_started",
+    "not_sent",
+    "possibly_sent",
+    "response_headers_received",
+    "unknown",
 ]
 T = TypeVar("T")
 
@@ -389,6 +421,12 @@ class ProviderErrorEvidence(StrictModel):
         pattern=r"^[A-Za-z0-9._:-]{1,200}$",
     )
     response_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    timeout_phase: ProviderTimeoutPhase | None = None
+    timeout_kind: ProviderTimeoutKind | None = None
+    configured_timeout_seconds: float | None = Field(default=None, gt=0, le=3600)
+    elapsed_ms: float | None = Field(default=None, ge=0)
+    request_dispatch_state: ProviderRequestDispatchState | None = None
+    exception_chain: tuple[str, ...] = Field(default=(), max_length=8)
     retryable: bool
     secret_recorded: Literal[False] = False
 
@@ -405,6 +443,94 @@ class ProviderErrorEvidence(StrictModel):
         if value is not None and _SECRET_EVIDENCE_PATTERN.search(value):
             raise ValueError("provider error evidence cannot contain credential material")
         return value
+
+    @field_validator("exception_chain")
+    @classmethod
+    def validate_exception_chain(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        if any(not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_.]{0,159}", item) for item in value):
+            raise ValueError("provider exception chain must contain type names only")
+        return value
+
+
+def _exception_type_chain(error: BaseException) -> tuple[str, ...]:
+    """Return bounded exception type lineage without persisting messages or payloads."""
+
+    chain: list[str] = []
+    current: BaseException | None = error
+    seen: set[int] = set()
+    while current is not None and len(chain) < 8 and id(current) not in seen:
+        seen.add(id(current))
+        chain.append(type(current).__name__)
+        current = current.__cause__ or current.__context__
+    return tuple(chain)
+
+
+@dataclass
+class ProviderExecutionTrace:
+    """Per-operation, secret-free phase trace used when a deadline cancels the adapter."""
+
+    monotonic: Callable[[], float] = time.perf_counter
+    phase: ProviderTimeoutPhase = "service_dispatch"
+    request_dispatch_state: ProviderRequestDispatchState = "not_started"
+    client_request_id: str | None = None
+    provider_request_id: str | None = None
+    _started_at: float = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        self._started_at = self.monotonic()
+
+    def begin(self) -> None:
+        self._started_at = self.monotonic()
+        self.phase = "service_dispatch"
+        self.request_dispatch_state = "not_started"
+        self.client_request_id = None
+        self.provider_request_id = None
+
+    def mark(
+        self,
+        phase: ProviderTimeoutPhase,
+        *,
+        dispatch_state: ProviderRequestDispatchState | None = None,
+        client_request_id: str | None = None,
+        provider_request_id: str | None = None,
+    ) -> None:
+        self.phase = phase
+        if dispatch_state is not None:
+            self.request_dispatch_state = dispatch_state
+        if client_request_id is not None:
+            self.client_request_id = client_request_id
+        if provider_request_id is not None:
+            self.provider_request_id = provider_request_id
+
+    def elapsed_ms(self) -> float:
+        return round(max(0.0, self.monotonic() - self._started_at) * 1000, 3)
+
+    def timeout_evidence(
+        self,
+        *,
+        code: str,
+        timeout_kind: ProviderTimeoutKind,
+        configured_timeout_seconds: float,
+        error: BaseException,
+        retryable: bool,
+        provider_error_message: str,
+    ) -> ProviderErrorEvidence:
+        return ProviderErrorEvidence(
+            category="transport_timeout",
+            code=code,
+            provider_error_type=type(error).__name__,
+            provider_error_message=provider_error_message,
+            provider_request_id=self.provider_request_id,
+            client_request_id=self.client_request_id,
+            timeout_phase=self.phase,
+            timeout_kind=timeout_kind,
+            configured_timeout_seconds=configured_timeout_seconds,
+            elapsed_ms=self.elapsed_ms(),
+            request_dispatch_state=self.request_dispatch_state,
+            exception_chain=_exception_type_chain(error),
+            retryable=retryable,
+            secret_recorded=False,
+        )
 
 
 class ProviderAttemptRecord(StrictModel):
@@ -565,11 +691,13 @@ class ProviderSafetyController:
         *,
         provider_definitions: Sequence[dict[str, Any]] = (),
         clock: Callable[[], datetime] = utc_now,
+        monotonic: Callable[[], float] = time.perf_counter,
         sleeper: Callable[[float], Awaitable[None]] = asyncio.sleep,
     ) -> None:
         self.policy = policy
         self._provider_definitions = [dict(value) for value in provider_definitions]
         self._clock = clock
+        self._monotonic = monotonic
         self._sleeper = sleeper
         self._lock = asyncio.Lock()
         self._circuits: dict[tuple[str, str], _CircuitRuntime] = {}
@@ -780,6 +908,10 @@ class ProviderSafetyController:
         operation: Callable[[], Awaitable[T]],
         *,
         actual_cost: Callable[[T], Decimal | None] | None = None,
+        timeout_evidence_factory: Callable[
+            [float, BaseException], ProviderErrorEvidence
+        ]
+        | None = None,
     ) -> ProviderExecutionResult[T]:
         decision = await self.preflight(context)
         if not decision.allowed:
@@ -812,6 +944,7 @@ class ProviderSafetyController:
         for attempt in range(1, self.policy.retry.max_attempts + 1):
             attempts_made = attempt
             attempt_started = self._clock()
+            attempt_started_monotonic = self._monotonic()
             try:
                 value = await asyncio.wait_for(
                     operation(),
@@ -841,9 +974,62 @@ class ProviderSafetyController:
                 return ProviderExecutionResult(value=value, receipt=receipt)
             except (ProviderTransientError, TimeoutError) as exc:
                 if isinstance(exc, TimeoutError):
-                    exc = ProviderTimeoutError()
+                    try:
+                        evidence = (
+                            timeout_evidence_factory(
+                                self.policy.retry.per_request_timeout_seconds,
+                                exc,
+                            )
+                            if timeout_evidence_factory is not None
+                            else ProviderErrorEvidence(
+                                category="transport_timeout",
+                                code="PROVIDER_TIMEOUT",
+                                provider_error_type=type(exc).__name__,
+                                provider_error_message=(
+                                    "Provider operation exceeded the controller deadline"
+                                ),
+                                timeout_phase="controller_envelope",
+                                timeout_kind="controller_envelope",
+                                configured_timeout_seconds=(
+                                    self.policy.retry.per_request_timeout_seconds
+                                ),
+                                elapsed_ms=round(
+                                    max(0.0, self._monotonic() - attempt_started_monotonic)
+                                    * 1000,
+                                    3,
+                                ),
+                                request_dispatch_state="unknown",
+                                exception_chain=_exception_type_chain(exc),
+                                retryable=True,
+                                secret_recorded=False,
+                            )
+                        )
+                    except Exception:
+                        evidence = ProviderErrorEvidence(
+                            category="transport_timeout",
+                            code="PROVIDER_TIMEOUT",
+                            provider_error_type=type(exc).__name__,
+                            provider_error_message=(
+                                "Provider operation exceeded the controller deadline; "
+                                "phase evidence fallback was used"
+                            ),
+                            timeout_phase="controller_envelope",
+                            timeout_kind="controller_envelope",
+                            configured_timeout_seconds=(
+                                self.policy.retry.per_request_timeout_seconds
+                            ),
+                            elapsed_ms=round(
+                                max(0.0, self._monotonic() - attempt_started_monotonic)
+                                * 1000,
+                                3,
+                            ),
+                            request_dispatch_state="unknown",
+                            exception_chain=_exception_type_chain(exc),
+                            retryable=True,
+                            secret_recorded=False,
+                        )
+                    exc = ProviderTimeoutError(error_evidence=evidence)
                 last_error_code = exc.code
-                last_error_evidence = exc.error_evidence
                 last_exception = exc
                 status: Literal["rate_limited", "timed_out", "failed"]
                 if isinstance(exc, ProviderRateLimitError):
@@ -852,22 +1038,35 @@ class ProviderSafetyController:
                     status = "timed_out"
                 else:
                     status = "failed"
+                elapsed = (self._clock() - started_at).total_seconds()
+                delay = self.policy.retry.delay_for_retry(attempt)
+                retry_authorized = not (
+                    attempt >= self.policy.retry.max_attempts
+                    or elapsed + delay > self.policy.retry.max_elapsed_seconds
+                )
+                error_evidence = exc.error_evidence
+                if (
+                    error_evidence is not None
+                    and error_evidence.retryable != retry_authorized
+                ):
+                    error_evidence = error_evidence.model_copy(
+                        update={"retryable": retry_authorized}
+                    )
+                last_error_evidence = error_evidence
                 charge = self._charge_for_attempt(context, None)
                 charged += charge
                 await self._record_attempt(
                     context,
                     attempt=attempt,
                     status=status,
-                    retryable=True,
+                    retryable=retry_authorized,
                     error_code=exc.code,
-                    error_evidence=exc.error_evidence,
+                    error_evidence=error_evidence,
                     actual_cost_vnd=None,
                     charged_cost_vnd=charge,
                     started_at=attempt_started,
                 )
-                elapsed = (self._clock() - started_at).total_seconds()
-                delay = self.policy.retry.delay_for_retry(attempt)
-                if attempt >= self.policy.retry.max_attempts or elapsed + delay > self.policy.retry.max_elapsed_seconds:
+                if not retry_authorized:
                     break
                 await self._sleeper(delay)
             except Exception as exc:

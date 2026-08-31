@@ -17,6 +17,7 @@ from app.provider_safety import (
     ProviderCallContext,
     ProviderCircuitPolicy,
     ProviderErrorEvidence,
+    ProviderExecutionTrace,
     ProviderRateLimitError,
     ProviderRetryPolicy,
     ProviderRightsEvidence,
@@ -664,7 +665,8 @@ async def test_durable_attempt_persists_only_structured_secret_free_error_eviden
             operation,
         )
 
-    assert blocked.value.error_evidence == evidence
+    terminal_evidence = evidence.model_copy(update={"retryable": False})
+    assert blocked.value.error_evidence == terminal_evidence
     async with repository.session_factory() as session:
         row = await session.scalar(
             select(ProviderSafetyAttemptORM).where(
@@ -673,8 +675,75 @@ async def test_durable_attempt_persists_only_structured_secret_free_error_eviden
         )
     assert row is not None
     assert row.error_code == "OPENAI_VISION_TRANSIENT_HTTP"
-    assert row.error_evidence == evidence.model_dump(mode="json")
+    assert row.retryable is False
+    assert row.error_evidence == terminal_evidence.model_dump(mode="json")
     assert "credential" not in json.dumps(row.error_evidence).lower()
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_durable_controller_timeout_preserves_phase_ledger_and_duplicate_guard(tmp_path) -> None:
+    clock = MutableClock()
+    policy = approved_policy(max_attempts=1, per_request_timeout=0.01)
+    engine, repository, _, controller, _ = await durable_components(tmp_path, policy, clock)
+    trace = ProviderExecutionTrace()
+    calls = 0
+
+    async def operation() -> str:
+        nonlocal calls
+        calls += 1
+        trace.begin()
+        trace.mark(
+            "http_response_wait",
+            dispatch_state="possibly_sent",
+            client_request_id="vf-durable-timeout",
+        )
+        await asyncio.Event().wait()
+        return "unreachable"
+
+    timeout_context = context("durable-controller-timeout", estimate=Decimal("100"))
+    with pytest.raises(ProviderSafetyBlocked) as blocked:
+        await controller.execute(
+            timeout_context,
+            operation,
+            timeout_evidence_factory=lambda timeout_seconds, error: trace.timeout_evidence(
+                code="PROVIDER_TIMEOUT",
+                timeout_kind="controller_envelope",
+                configured_timeout_seconds=timeout_seconds,
+                error=error,
+                retryable=True,
+                provider_error_message="Provider operation exceeded controller deadline",
+            ),
+        )
+
+    assert blocked.value.code == "PROVIDER_TIMEOUT"
+    assert calls == 1
+    async with repository.session_factory() as session:
+        row = await session.scalar(
+            select(ProviderSafetyAttemptORM).where(
+                ProviderSafetyAttemptORM.operation_key == "durable-controller-timeout"
+            )
+        )
+    assert row is not None
+    assert row.status == "timed_out"
+    assert row.retryable is False
+    assert row.actual_cost_vnd is None
+    assert row.charged_cost_vnd == Decimal("100")
+    assert row.error_evidence is not None
+    assert row.error_evidence["timeout_phase"] == "http_response_wait"
+    assert row.error_evidence["timeout_kind"] == "controller_envelope"
+    assert row.error_evidence["request_dispatch_state"] == "possibly_sent"
+    assert row.error_evidence["provider_request_id"] is None
+    assert row.error_evidence["client_request_id"] == "vf-durable-timeout"
+    assert row.error_evidence["retryable"] is False
+    assert row.error_evidence["secret_recorded"] is False
+    snapshot = await controller.snapshot()
+    assert snapshot.attempts_recorded == 1
+    assert snapshot.committed_today_vnd == Decimal("100")
+    assert snapshot.reserved_today_vnd == Decimal("0")
+    duplicate = await controller.preflight(timeout_context)
+    assert duplicate.allowed is False
+    assert duplicate.code == "DUPLICATE_OPERATION_BLOCKED"
     await engine.dispose()
 
 
