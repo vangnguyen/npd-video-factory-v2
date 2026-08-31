@@ -1,0 +1,76 @@
+{
+  "evidence_version": "v3-01-15-1",
+  "evidence_id": "EV-V3-RC7-VISION-OP1-TIMEOUT-001",
+  "captured_at": "2026-08-31T14:19:02.146021Z",
+  "source_receipt": {
+    "name": "operation-1-result.json",
+    "sha256": "7a83bfc38331ede5dbedd7c0901adcddd4ef4ce3548ab1ff4deae567cbf7f204",
+    "secret_free_projection": true
+  },
+  "rc": {
+    "tag": "vf-v3-01-rc7",
+    "commit": "94170ed42f6ffba4432f29750402eafe0d922a45",
+    "governance_main": "ebe6f91a9ac88364a23871d587ae4564f30283d3"
+  },
+  "operation": {
+    "id": "v3-01-rc7-openai-vision-call-01",
+    "provider": "openai-vision",
+    "model": "gpt-5-mini",
+    "capability": "vision",
+    "attempts": 1,
+    "consumed": true,
+    "retry_performed": false,
+    "retry_authorized": false,
+    "fallback_performed": false
+  },
+  "bindings": {
+    "asset_sha256": "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+    "rights_record_sha256": "f469930a74b477751fc4417774b486ccbf2d7822487478875e099552c83e06ba",
+    "execution_scope_sha256": "60d9898de38f9536ed3391ca81f1d59eca04b61537edad42e85597702c143a56",
+    "gate_bundle_sha256": "ce772a941766b12a99943b9165cbf588c314e3d1b59543f103c7671a58856a44",
+    "operation_authority_sha256": "8f7dbaa275937a079b0fe56219c7ccae5dbd9d2e66746729f052d55f51dd55e2"
+  },
+  "outcome": {
+    "provider_execution": "FAILED_PROVIDER_TIMEOUT",
+    "acceptance": "INCOMPLETE",
+    "verdict": "REVIEW_REQUIRED",
+    "error_code": "PROVIDER_TIMEOUT",
+    "configured_timeout_seconds": 60,
+    "elapsed_seconds": 60.096,
+    "provider_path_entered": true,
+    "request_delivery": "UNKNOWN_POSSIBLY_SENT",
+    "provider_request_id": null,
+    "usage_receipt": null,
+    "request_sha256": null,
+    "response_sha256": null,
+    "actual_cost_vnd": null,
+    "actual_cost_status": "UNKNOWN",
+    "safety_charge_vnd": "500",
+    "safety_charge_is_actual_cost": false,
+    "canonical_evidence_serialization": "PASS_FOR_AVAILABLE_CONTEXT"
+  },
+  "durable_safety_state": {
+    "operations": 1,
+    "attempts": 1,
+    "budget_days": 1,
+    "circuits": 1,
+    "reserved_vnd_after_attempt": "0",
+    "committed_safety_charge_vnd": "500",
+    "circuit_state": "closed",
+    "circuit_failures": 1,
+    "duplicate_operation_blocked": true
+  },
+  "operation_2": {
+    "id": "v3-01-rc7-openai-vision-call-02",
+    "authorized": false,
+    "executed": false,
+    "state": "LOCKED"
+  },
+  "audit_boundary": {
+    "missing_request_level_evidence_reconstructed": false,
+    "provider_success_inferred": false,
+    "actual_cost_inferred_from_safety_charge": false,
+    "secret_leakage_detected": false,
+    "production_verdict": "NO-GO"
+  }
+}

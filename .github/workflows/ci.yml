@@ -384,6 +384,22 @@ jobs:
           grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
           grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
           grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
+      - name: Verify V3-01-15 provider timeout evidence boundary
+        run: |
+          grep -Fq 'class ProviderExecutionTrace' apps/api/app/provider_safety.py
+          grep -Fq 'timeout_phase: ProviderTimeoutPhase | None' apps/api/app/provider_safety.py
+          grep -Fq 'request_dispatch_state: ProviderRequestDispatchState | None' apps/api/app/provider_safety.py
+          grep -Fq 'timeout_evidence_factory=' apps/api/app/vision_service.py
+          grep -Fq 'response = await client.send(request, stream=True)' apps/api/app/openai_vision_provider.py
+          grep -Fq 'provider_request_timeout_seconds: float = 60.0' apps/api/app/config.py
+          python -c 'import json; from pathlib import Path; p=Path("docs/acceptance/v3-01/evidence/rc7-openai-vision-operation-1/operation-1-timeout-review.json"); d=json.loads(p.read_text()); assert d["outcome"]["provider_execution"] == "FAILED_PROVIDER_TIMEOUT"; assert d["outcome"]["verdict"] == "REVIEW_REQUIRED"; assert d["operation"]["consumed"] is True; assert d["operation"]["retry_performed"] is False; assert d["outcome"]["actual_cost_vnd"] is None; assert d["outcome"]["safety_charge_vnd"] == "500"; assert d["outcome"]["safety_charge_is_actual_cost"] is False; assert d["operation_2"]["authorized"] is False; assert d["audit_boundary"]["production_verdict"] == "NO-GO"'
+          grep -qx 'VISION_PROVIDER=fixture' .env.example
+          grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
+          grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
+          grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

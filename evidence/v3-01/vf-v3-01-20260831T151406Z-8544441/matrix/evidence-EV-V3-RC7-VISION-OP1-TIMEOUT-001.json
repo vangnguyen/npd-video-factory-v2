@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC7-VISION-OP1-TIMEOUT-001",
+  "test_case_id": "V3-01-RC7-OPENAI-VISION-OPERATION-1-TIMEOUT-REVIEW",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "854444110fbc87b41105b82fdfc6e867fa1fb5ff",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-vision",
+    "model_or_workflow": "gpt-5-mini RC-7 operation 1 historical review",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "7a83bfc38331ede5dbedd7c0901adcddd4ef4ce3548ab1ff4deae567cbf7f204",
+  "started_at_utc": "2026-08-31T14:18:02.050024Z",
+  "completed_at_utc": "2026-08-31T14:19:02.146021Z",
+  "duration_seconds": 60.096,
+  "result": "BLOCKED",
+  "assertion": "RC-7 operation 1 entered the provider path exactly once and ended PROVIDER_TIMEOUT at the 60-second envelope. It is consumed and REVIEW_REQUIRED; no retry or fallback occurred. Provider request ID, usage and actual cost are absent, so request delivery is UNKNOWN_POSSIBLY_SENT and actual cost remains unknown. The durable 500 VND amount is a conservative safety charge, not an actual-cost receipt. Operation 2 remains locked. This record does not promote real-provider acceptance.",
+  "correlation_id": "v3-01-rc7-openai-vision-call-01",
+  "cost": {
+    "currency": "VND",
+    "actual": null,
+    "status": "PENDING"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Owner and Codex timeout evidence review",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "Do not rerun RC-7. Validate the secret-free projection at docs/acceptance/v3-01/evidence/rc7-openai-vision-operation-1/operation-1-timeout-review.json against its pinned source receipt SHA-256. Do not infer provider delivery, usage or actual cost from the 500 VND safety charge."
+}

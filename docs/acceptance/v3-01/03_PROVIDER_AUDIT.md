@@ -6,6 +6,9 @@ operation/usage/cost ledger succeeded, but post-call evidence serialization fail
 structured payload and request-level IDs/hashes were retained. It is consumed and permanently
 `REVIEW_REQUIRED`, not accepted real-provider evidence. RC-5 operation 2 is permanently locked. No
 credential value is present in Git/evidence, and credential presence grants no further authority.
+RC-7 operation 1 later entered the provider path exactly once but timed out at the 60-second
+boundary. It is consumed/`REVIEW_REQUIRED`, actual cost is unknown, the 500 VND ledger amount is a
+safety charge only, and operation 2 remains locked.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
@@ -45,15 +48,17 @@ reservation, ledger mutation or provider dispatch on an authority-limits contrac
 not consumed; its authority is retired, operation 2 is locked, and the result was 0 calls/0 VND.
 PR #31 then merged V3-01-14 as
 `94170ed42f6ffba4432f29750402eafe0d922a45`; exact-main CI `33321003243` passed 5/5 and
-`vf-v3-01-rc7` peels to that commit. RC-7 now binds the canonical per-operation and acceptance-window
-limits to fresh operation IDs, scope and a dated unmounted bundle. No RC-7 operation has authority,
-no credential was read and no provider call occurred.
+`vf-v3-01-rc7` peels to that commit. PR #32 merged the governance-only scope as
+`ebe6f91a9ac88364a23871d587ae4564f30283d3` without changing executable RC-7. After separate owner
+authority, operation 1 ran once and ended `PROVIDER_TIMEOUT` at about 60 seconds with no provider
+request ID or usage receipt. No retry/fallback occurred. V3-01-15 keeps the 60-second envelope and
+adds phase/elapsed/dispatch/exception-chain evidence plus deterministic 59/60/61-second mock tests.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; RC-6 operation 1 blocked pre-call/not consumed; RC-7 canonical limits and fresh scope validate offline with 0 calls | `BLOCKED` | merge the governance rebind under a new G-08, then obtain separate owner authority for only RC-7 operation 1; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; RC-6 operation 1 blocked pre-call; RC-7 operation 1 timed out once with incomplete provider evidence and unknown actual cost | `BLOCKED` | merge V3-01-15 under a new G-08, lock RC-8, separately rebind any changed timeout/budget envelope and obtain new one-operation authority; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -102,3 +107,7 @@ does not promote an axis. V3-01-14 unifies the future authority/bundle limits co
 `EV-V3-RC7-VISION-REBIND-001` proves the exact RC-7 tag/commit, fresh operation derivation,
 approval/rights hashes and both canonical VND limits offline. It does not mount the bundle, authorize
 an operation or promote real-provider, production-path or quality acceptance.
+`EV-V3-RC7-VISION-OP1-TIMEOUT-001` freezes the later one-attempt timeout as consumed,
+`REVIEW_REQUIRED`, actual cost unknown and safety charge 500 VND. `EV-V3-PROVIDER-TIMEOUT-001`
+proves only the zero-call V3-01-15 timeout evidence path and no-retry durable behavior; neither
+evidence promotes an acceptance axis.

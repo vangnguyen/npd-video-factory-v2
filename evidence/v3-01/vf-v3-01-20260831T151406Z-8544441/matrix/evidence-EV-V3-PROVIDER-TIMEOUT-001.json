@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-PROVIDER-TIMEOUT-001",
+  "test_case_id": "V3-01-15-PROVIDER-TIMEOUT-PHASE-EVIDENCE",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "854444110fbc87b41105b82fdfc6e867fa1fb5ff",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-virtual-transport",
+    "model_or_workflow": "openai-vision/gpt-5-mini 59/60/61-second boundary",
+    "credential_alias": "not-read",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": null,
+  "started_at_utc": "2026-08-31T15:14:06Z",
+  "completed_at_utc": "2026-08-31T15:14:56Z",
+  "duration_seconds": 50.0,
+  "result": "PASS",
+  "assertion": "A shared execution trace now preserves last-known phase, timeout kind, configured timeout, monotonic elapsed time, dispatch state, client request ID, safe provider request ID when response headers exist and a bounded exception type chain. Virtual 59/60/61-second transport tests run without wall-clock delay. Controller-envelope and durable tests prove one attempt, no retry, conservative charge preservation and duplicate rejection. The executable timeout remains 60 seconds. No credential was read, no provider call occurred and cost was 0 VND.",
+  "correlation_id": "v3-01-15-provider-timeout-8544441",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex offline timeout-contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010"
+  ],
+  "reproduce": "On commit 854444110fbc87b41105b82fdfc6e867fa1fb5ff run python -m pytest apps/api/tests/test_openai_vision_provider.py apps/api/tests/test_provider_safety.py -q. Keep all provider execution defaults disabled; do not resolve a credential or change the 60-second timeout."
+}

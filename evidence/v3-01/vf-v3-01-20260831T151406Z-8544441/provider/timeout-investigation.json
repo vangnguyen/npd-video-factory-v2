@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-15",
+  "code_commit": "854444110fbc87b41105b82fdfc6e867fa1fb5ff",
+  "historical_rc": "vf-v3-01-rc7",
+  "historical_operation": "v3-01-rc7-openai-vision-call-01",
+  "historical_source_receipt_sha256": "7a83bfc38331ede5dbedd7c0901adcddd4ef4ce3548ab1ff4deae567cbf7f204",
+  "historical_outcome": {
+    "provider_execution": "FAILED_PROVIDER_TIMEOUT",
+    "acceptance": "INCOMPLETE",
+    "verdict": "REVIEW_REQUIRED",
+    "consumed": true,
+    "actual_cost_vnd": null,
+    "safety_charge_vnd": "500",
+    "operation_2_locked": true
+  },
+  "direct_source_findings": {
+    "controller_timeout_seconds": 60,
+    "adapter_http_timeout_seconds": 60,
+    "historical_adapter_error_evidence": null,
+    "historical_provider_request_id": null,
+    "historical_usage_receipt": null
+  },
+  "inference": {
+    "statement": "The equal controller and HTTP deadlines likely raced, with the outer controller cancelling the adapter before adapter-specific timeout evidence was persisted.",
+    "proven": false,
+    "request_delivery": "UNKNOWN_POSSIBLY_SENT"
+  },
+  "remediation": {
+    "shared_phase_trace": true,
+    "stream_response_headers_before_body": true,
+    "elapsed_monotonic": true,
+    "exception_messages_persisted": false,
+    "exception_type_chain_bounded": true,
+    "controller_fallback_evidence": true,
+    "durable_no_retry_tested": true,
+    "virtual_boundary_seconds": [
+      59,
+      60,
+      61
+    ],
+    "timeout_seconds_changed": false
+  },
+  "v3_01_15_boundary": {
+    "credential_read": false,
+    "provider_calls": 0,
+    "actual_cost_vnd": 0,
+    "deploy": false,
+    "publish": false,
+    "production_verdict": "NO-GO"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260831T151406Z-8544441",
+  "started_at_utc": "2026-08-31T15:14:06Z",
+  "completed_at_utc": "2026-08-31T15:36:06Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "854444110fbc87b41105b82fdfc6e867fa1fb5ff",
+  "base_sha": "ebe6f91a9ac88364a23871d587ae4564f30283d3",
+  "release_candidate": "RC-7 closed after one consumed PROVIDER_TIMEOUT; V3-01-15 source-only remediation; RC-8 not locked",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0012_v3_01_11",
+  "config_fingerprint_redacted": "v3-01-15-source-only-timeout-60-external-false-paid-false-zero-vnd-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "vision-timeout-evidence",
+      "provider": "offline-virtual-transport",
+      "model_or_workflow": "openai-vision/gpt-5-mini timeout contract",
+      "region": "not-applicable-offline",
+      "credential_alias": "not-read",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "RC7-OP1-TIMEOUT-RECEIPT-REVIEW",
+    "OPENAI-VISION-VIRTUAL-59-SECOND-SUCCESS",
+    "OPENAI-VISION-VIRTUAL-60-SECOND-TIMEOUT",
+    "OPENAI-VISION-VIRTUAL-61-SECOND-TIMEOUT",
+    "CONTROLLER-ENVELOPE-PHASE-EVIDENCE",
+    "DURABLE-TIMEOUT-ONE-ATTEMPT-NO-RETRY-DUPLICATE-GUARD",
+    "FOCUSED-PYTEST-44-PASS",
+    "FULL-PYTEST-283-PASS",
+    "STUDIO-TESTS-14-PASS",
+    "RENDERER-TESTS-14-PASS",
+    "RENDERER-TYPECHECK-PASS",
+    "RENDERER-BUNDLE-PASS",
+    "MIGRATION-UPGRADE-DOWNGRADE-UPGRADE-PASS",
+    "DOCKER-DETERMINISTIC-E2E-DR-PASS"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "matrix/evidence-EV-V3-RC7-VISION-OP1-TIMEOUT-001.json",
+    "matrix/evidence-EV-V3-PROVIDER-TIMEOUT-001.json",
+    "provider/timeout-investigation.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0,
+    "historical_rc7_actual_cost": null,
+    "historical_rc7_safety_charge": 500
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-00",
+    "G-08"
+  ],
+  "result": "BLOCKED"
+}
