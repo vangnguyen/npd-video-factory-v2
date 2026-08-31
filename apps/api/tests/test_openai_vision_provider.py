@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -22,6 +23,7 @@ from app.provider_safety import (
     ProviderBudgetPolicy,
     ProviderCallContext,
     ProviderCircuitPolicy,
+    ProviderExecutionTrace,
     ProviderRetryPolicy,
     ProviderRightsEvidence,
     ProviderSafetyBlocked,
@@ -62,6 +64,70 @@ class SecretResolver:
     def __call__(self, _alias: str) -> str:
         self.calls += 1
         return self.value
+
+
+class VirtualMonotonic:
+    def __init__(self) -> None:
+        self.value = 0.0
+
+    def __call__(self) -> float:
+        return self.value
+
+    def advance_to(self, seconds: float) -> None:
+        self.value = seconds
+
+
+class VirtualDelayStream(httpx.AsyncByteStream):
+    def __init__(
+        self,
+        *,
+        payload: bytes,
+        request: httpx.Request,
+        clock: VirtualMonotonic,
+        delay_seconds: float,
+        timeout_seconds: float,
+    ) -> None:
+        self.payload = payload
+        self.request = request
+        self.clock = clock
+        self.delay_seconds = delay_seconds
+        self.timeout_seconds = timeout_seconds
+
+    async def __aiter__(self):
+        self.clock.advance_to(self.delay_seconds)
+        if self.delay_seconds >= self.timeout_seconds:
+            raise httpx.ReadTimeout("virtual response timeout", request=self.request)
+        yield self.payload
+
+
+class VirtualDelayTransport(httpx.AsyncBaseTransport):
+    def __init__(
+        self,
+        *,
+        clock: VirtualMonotonic,
+        delay_seconds: float,
+        timeout_seconds: float,
+    ) -> None:
+        self.clock = clock
+        self.delay_seconds = delay_seconds
+        self.timeout_seconds = timeout_seconds
+        self.calls = 0
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        self.calls += 1
+        payload = json.dumps(response_payload(), ensure_ascii=False).encode("utf-8")
+        return httpx.Response(
+            200,
+            headers={"content-type": "application/json", "x-request-id": "req_virtual_delay"},
+            stream=VirtualDelayStream(
+                payload=payload,
+                request=request,
+                clock=self.clock,
+                delay_seconds=self.delay_seconds,
+                timeout_seconds=self.timeout_seconds,
+            ),
+            request=request,
+        )
 
 
 def output_frame(index: int) -> dict[str, object]:
@@ -141,21 +207,34 @@ def metadata() -> MediaMetadata:
 
 
 def provider(
-    handler,
+    handler=None,
     *,
     resolver: SecretResolver | None = None,
     extractor: StaticFrameExtractor | None = None,
     estimate: Decimal = Decimal("0"),
+    transport: httpx.AsyncBaseTransport | None = None,
+    timeout_seconds: float = 60.0,
+    monotonic_clock=None,
 ) -> tuple[OpenAIVisionProvider, SecretResolver, StaticFrameExtractor]:
     secret_resolver = resolver or SecretResolver()
     frame_extractor = extractor or StaticFrameExtractor()
+    selected_transport = transport
+    if selected_transport is None:
+        if handler is None:
+            raise ValueError("a mock handler or transport is required")
+        selected_transport = httpx.MockTransport(handler)
+    kwargs = {}
+    if monotonic_clock is not None:
+        kwargs["monotonic_clock"] = monotonic_clock
     adapter = OpenAIVisionProvider(
         credential_alias="secret://openai/codex-video",
         credential_resolver=secret_resolver,
         frame_extractor=frame_extractor,
         estimated_cost_vnd=estimate,
-        transport=httpx.MockTransport(handler),
+        transport=selected_transport,
+        timeout_seconds=timeout_seconds,
         allow_zero_cost_contract_test=True,
+        **kwargs,
     )
     return adapter, secret_resolver, frame_extractor
 
@@ -177,6 +256,7 @@ def approved_policy(
     failure_threshold: int = 2,
     per_operation_limit: Decimal = Decimal("10"),
     daily_limit: Decimal = Decimal("20"),
+    per_request_timeout: float = 1,
 ) -> ProviderSafetyPolicy:
     return ProviderSafetyPolicy(
         external_execution_enabled=True,
@@ -192,7 +272,7 @@ def approved_policy(
         ),
         retry=ProviderRetryPolicy(
             max_attempts=max_attempts,
-            per_request_timeout_seconds=1,
+            per_request_timeout_seconds=per_request_timeout,
             base_delay_seconds=0,
             max_delay_seconds=0,
             max_elapsed_seconds=5,
@@ -725,6 +805,104 @@ async def test_openai_vision_maps_transport_timeout_for_central_retry(tmp_path: 
     assert timed_out.value.error_evidence.category == "transport_timeout"
     assert timed_out.value.error_evidence.code == "OPENAI_VISION_TIMEOUT"
     assert str(timed_out.value.error_evidence.client_request_id).startswith("vf-")
+    assert timed_out.value.error_evidence.timeout_phase == "http_response_wait"
+    assert timed_out.value.error_evidence.timeout_kind == "read"
+    assert timed_out.value.error_evidence.request_dispatch_state == "possibly_sent"
+    assert timed_out.value.error_evidence.exception_chain == ("ReadTimeout",)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("virtual_delay_seconds", "expect_timeout"),
+    [(59.0, False), (60.0, True), (61.0, True)],
+)
+async def test_openai_vision_virtual_59_60_61_second_boundary_without_wall_clock_wait(
+    tmp_path: Path,
+    virtual_delay_seconds: float,
+    expect_timeout: bool,
+) -> None:
+    clock = VirtualMonotonic()
+    transport = VirtualDelayTransport(
+        clock=clock,
+        delay_seconds=virtual_delay_seconds,
+        timeout_seconds=60.0,
+    )
+    adapter, resolver, _ = provider(
+        transport=transport,
+        timeout_seconds=60.0,
+        monotonic_clock=clock,
+    )
+    source = tmp_path / f"virtual-{int(virtual_delay_seconds)}.jpg"
+    source.write_bytes(b"trusted-input-placeholder")
+
+    if not expect_timeout:
+        result = await analyze(adapter, source)
+        assert result.provenance["latency_ms"] == 59_000.0
+        assert result.provenance["provider_request_id"] == "req_virtual_delay"
+    else:
+        with pytest.raises(ProviderTimeoutError) as timed_out:
+            await analyze(adapter, source)
+        evidence = timed_out.value.error_evidence
+        assert evidence is not None
+        assert evidence.timeout_phase == "http_response_read"
+        assert evidence.timeout_kind == "read"
+        assert evidence.configured_timeout_seconds == 60.0
+        assert evidence.elapsed_ms == virtual_delay_seconds * 1000
+        assert evidence.request_dispatch_state == "response_headers_received"
+        assert evidence.provider_request_id == "req_virtual_delay"
+        assert evidence.exception_chain == ("ReadTimeout",)
+
+    assert transport.calls == 1
+    assert resolver.calls == 1
+
+
+@pytest.mark.asyncio
+async def test_controller_envelope_timeout_keeps_phase_evidence_and_never_retries() -> None:
+    controller = ProviderSafetyController(
+        approved_policy(max_attempts=1, per_request_timeout=0.01)
+    )
+    trace = ProviderExecutionTrace()
+    calls = 0
+
+    async def waits_after_dispatch() -> str:
+        nonlocal calls
+        calls += 1
+        trace.begin()
+        trace.mark(
+            "http_response_wait",
+            dispatch_state="possibly_sent",
+            client_request_id="vf-controller-timeout",
+        )
+        await asyncio.Event().wait()
+        return "unreachable"
+
+    with pytest.raises(ProviderSafetyBlocked) as blocked:
+        await controller.execute(
+            context("controller-envelope-timeout", provider(lambda _request: None)[0]),
+            waits_after_dispatch,
+            timeout_evidence_factory=lambda timeout_seconds, error: trace.timeout_evidence(
+                code="PROVIDER_TIMEOUT",
+                timeout_kind="controller_envelope",
+                configured_timeout_seconds=timeout_seconds,
+                error=error,
+                retryable=True,
+                provider_error_message="Vision provider operation exceeded controller deadline",
+            ),
+        )
+
+    evidence = blocked.value.error_evidence
+    assert blocked.value.code == "PROVIDER_TIMEOUT"
+    assert evidence is not None
+    assert evidence.timeout_phase == "http_response_wait"
+    assert evidence.timeout_kind == "controller_envelope"
+    assert evidence.request_dispatch_state == "possibly_sent"
+    assert evidence.client_request_id == "vf-controller-timeout"
+    assert evidence.provider_request_id is None
+    assert evidence.retryable is False
+    assert calls == 1
+    assert len(controller.attempts) == 1
+    assert controller.attempts[0].retryable is False
+    assert controller.attempts[0].error_evidence == evidence
 
 
 @pytest.mark.asyncio

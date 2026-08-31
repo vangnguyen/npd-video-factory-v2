@@ -20,6 +20,7 @@ from .auto_edit_models import MediaMetadata, SceneRead
 from .models import StrictModel
 from .provider_safety import (
     ProviderErrorEvidence,
+    ProviderExecutionTrace,
     ProviderRateLimitError,
     ProviderTimeoutError,
     ProviderTransientError,
@@ -489,6 +490,7 @@ class OpenAIVisionProvider:
         output_vnd_per_million_tokens: Decimal = Decimal("0"),
         transport: httpx.AsyncBaseTransport | None = None,
         allow_zero_cost_contract_test: bool = False,
+        monotonic_clock: Callable[[], float] = time.perf_counter,
     ) -> None:
         if model != "gpt-5-mini":
             raise ValueError("V3-01-09 is locked to gpt-5-mini")
@@ -531,6 +533,7 @@ class OpenAIVisionProvider:
         self._transport = transport
         self._allow_zero_cost_contract_test = allow_zero_cost_contract_test
         self._response_schema = response_schema
+        self._monotonic_clock = monotonic_clock
 
     def __repr__(self) -> str:
         return f"OpenAIVisionProvider(model={self.model!r}, credential_alias=<redacted>)"
@@ -544,7 +547,11 @@ class OpenAIVisionProvider:
         asset_id: str,
         checksum_sha256: str,
         sample_interval_seconds: float,
+        execution_trace: ProviderExecutionTrace | None = None,
     ) -> ProviderVisionResult:
+        trace = execution_trace or ProviderExecutionTrace(monotonic=self._monotonic_clock)
+        trace.begin()
+        trace.mark("credential_resolution")
         if metadata.width is None or metadata.height is None:
             raise VisionFrameExtractionError("Vision input dimensions are required")
         if max(metadata.width, metadata.height) > self.max_dimension_pixels:
@@ -562,6 +569,7 @@ class OpenAIVisionProvider:
                 "OpenAI Vision VND cost envelope requires a separate G-02 configuration"
             )
 
+        trace.mark("frame_extraction")
         extracted = await self._frame_extractor.extract(
             path,
             metadata=metadata,
@@ -573,18 +581,27 @@ class OpenAIVisionProvider:
             raise VisionFrameExtractionError(
                 "Vision evidence frame count does not match the approved frame limit"
             )
+        trace.mark("request_build")
         request_payload = self._request_payload(extracted)
         request_bytes = _canonical_json(request_payload)
         client_request_id = "vf-" + uuid.uuid4().hex
-        started = time.perf_counter()
+        trace.mark(
+            "http_request_dispatch",
+            dispatch_state="possibly_sent",
+            client_request_id=client_request_id,
+        )
         timeout = httpx.Timeout(self._timeout_seconds, connect=min(15.0, self._timeout_seconds))
+        response: httpx.Response | None = None
+        response_bytes: bytes | None = None
+        provider_request_id: str | None = None
         try:
             async with httpx.AsyncClient(
                 base_url=self._base_url,
                 timeout=timeout,
                 transport=self._transport,
             ) as client:
-                response = await client.post(
+                request = client.build_request(
+                    "POST",
                     "/v1/responses",
                     content=request_bytes,
                     headers={
@@ -593,13 +610,37 @@ class OpenAIVisionProvider:
                         "X-Client-Request-Id": client_request_id,
                     },
                 )
+                response = await client.send(request, stream=True)
+                provider_request_id = _safe_request_id(response.headers.get("x-request-id"))
+                trace.mark(
+                    "http_response_read",
+                    dispatch_state="response_headers_received",
+                    provider_request_id=provider_request_id,
+                )
+                response_bytes = await response.aread()
         except httpx.TimeoutException as exc:
+            if isinstance(exc, httpx.PoolTimeout):
+                trace.mark("http_connection_pool", dispatch_state="not_sent")
+                timeout_kind = "pool"
+            elif isinstance(exc, httpx.ConnectTimeout):
+                trace.mark("http_connect", dispatch_state="not_sent")
+                timeout_kind = "connect"
+            elif isinstance(exc, httpx.WriteTimeout):
+                trace.mark("http_request_write", dispatch_state="possibly_sent")
+                timeout_kind = "write"
+            elif isinstance(exc, httpx.ReadTimeout):
+                if trace.request_dispatch_state != "response_headers_received":
+                    trace.mark("http_response_wait", dispatch_state="possibly_sent")
+                timeout_kind = "read"
+            else:
+                timeout_kind = "transport"
             raise ProviderTimeoutError(
-                error_evidence=_error_evidence(
-                    category="transport_timeout",
+                error_evidence=trace.timeout_evidence(
                     code="OPENAI_VISION_TIMEOUT",
+                    timeout_kind=timeout_kind,
+                    configured_timeout_seconds=self._timeout_seconds,
+                    error=exc,
                     retryable=True,
-                    client_request_id=client_request_id,
                     provider_error_message="OpenAI Vision transport timed out",
                 )
             ) from exc
@@ -615,9 +656,17 @@ class OpenAIVisionProvider:
                     provider_error_message="OpenAI Vision transport failed",
                 ),
             ) from exc
-        latency_ms = round((time.perf_counter() - started) * 1000, 3)
-        response_bytes = response.content
-        provider_request_id = response.headers.get("x-request-id")
+        finally:
+            if response is not None:
+                await response.aclose()
+        if response is None or response_bytes is None:
+            raise RuntimeError("OpenAI Vision transport completed without a response")
+        latency_ms = trace.elapsed_ms()
+        trace.mark(
+            "response_parse",
+            dispatch_state="response_headers_received",
+            provider_request_id=provider_request_id,
+        )
         error_type, error_code, error_parameter, error_message = _provider_error_fields(
             response_bytes
         )

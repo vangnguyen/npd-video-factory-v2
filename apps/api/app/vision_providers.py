@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Protocol
 
 from .auto_edit_models import MediaMetadata, SceneRead
+from .provider_safety import ProviderExecutionTrace
 from .vision_models import NormalizedBox
 
 
@@ -83,6 +84,7 @@ class VisionProvider(Protocol):
         asset_id: str,
         checksum_sha256: str,
         sample_interval_seconds: float,
+        execution_trace: ProviderExecutionTrace | None = None,
     ) -> ProviderVisionResult: ...
 
 
@@ -121,7 +123,9 @@ class DeterministicVisionProvider:
         asset_id: str,
         checksum_sha256: str,
         sample_interval_seconds: float,
+        execution_trace: ProviderExecutionTrace | None = None,
     ) -> ProviderVisionResult:
+        del execution_trace
         if not path.is_file():
             raise FileNotFoundError(path)
         duration = float(metadata.duration_seconds or 0)
@@ -231,8 +235,17 @@ class ContractOnlyVisionProvider:
         asset_id: str,
         checksum_sha256: str,
         sample_interval_seconds: float,
+        execution_trace: ProviderExecutionTrace | None = None,
     ) -> ProviderVisionResult:
-        del path, metadata, scenes, asset_id, checksum_sha256, sample_interval_seconds
+        del (
+            path,
+            metadata,
+            scenes,
+            asset_id,
+            checksum_sha256,
+            sample_interval_seconds,
+            execution_trace,
+        )
         raise VisionProviderNotConfigured(
             "Live Vision provider is not configured; select an owner-approved adapter and credentials."
         )

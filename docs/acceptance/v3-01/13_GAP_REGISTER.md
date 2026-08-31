@@ -2,13 +2,14 @@
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
 derived from the audit captured on `2026-08-27`, updated through RC-7
-`94170ed42f6ffba4432f29750402eafe0d922a45` and the new offline governance rebind. Historical RC-5
+`94170ed42f6ffba4432f29750402eafe0d922a45` and the RC-7 operation-1 timeout. Historical RC-5
 operation-1 provider execution succeeded,
 but request-level acceptance evidence was incomplete after post-call serialization failed. The
 operation is consumed/`REVIEW_REQUIRED`; V3-01-13 is now merged and exact-main tested. RC-6
 operation 1 later blocked before provider dispatch with 0 calls/0 VND and remains not consumed; its
-authority is retired and operation 2 is locked. RC-7 now binds the corrected limits contract to
-fresh IDs/scope/window, but its bundle is unmounted and no operation is authorized. No
+authority is retired and operation 2 is locked. RC-7 operation 1 later timed out once after entering
+the provider path; it is consumed/`REVIEW_REQUIRED`, actual cost is unknown and operation 2 remains
+locked. V3-01-15 remediates only future timeout evidence offline. No
 acceptance-axis promotion occurred.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
@@ -21,24 +22,24 @@ acceptance-axis promotion occurred.
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. The bounded G-08 decision for PR #31 is exhausted. Historical RC-3 and RC-5 operation
+`IN_PROGRESS`. The bounded G-08 decisions through PR #32 are exhausted. Historical RC-3 and RC-5 operation
 1 IDs are consumed and permanently locked; RC-5 operation 2 is also locked. RC-6 operation 1 is
-not consumed, but its failed-window authority is retired; operation 2 is locked. RC-7 is locked and
-rebound offline, but the governance rebind requires a new G-08 and operation 1 then requires a
-separate owner decision. Production remains undeployed and unverified.
+not consumed, but its failed-window authority is retired; operation 2 is locked. RC-7 operation 1 is
+consumed after one timeout and its authority is retired; operation 2 is locked. V3-01-15 requires a
+new G-08 before merge. Production remains undeployed and unverified.
 
 ## P0 release blockers
 
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | RC-5 provider execution succeeded once but incomplete evidence keeps it `REVIEW_REQUIRED`; RC-6 blocked pre-call; RC-7 validates only the corrected unmounted governance bundle and has no operation authority |
+| V3-01-GAP-003 | no accepted real ASR/Vision/reframe evidence | RC-5 provider execution succeeded once but incomplete evidence keeps it `REVIEW_REQUIRED`; RC-6 blocked pre-call; RC-7 timed out once with incomplete evidence and unknown actual cost; V3-01-15 is zero-call remediation only |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | production-like backup/restore/image rollback incomplete | local disposable drill only; no production state touched |
-| V3-01-GAP-013 | no accepted real-asset rights coverage | RC-5 exact rights binding held but its structured output was not retained; RC-6 produced no provider artifact; RC-7 rebind remains acceptance-only and unmounted with no public-output authority |
+| V3-01-GAP-013 | no accepted real-asset rights coverage | RC-5 exact rights binding held but its structured output was not retained; RC-6 produced no provider artifact; RC-7 produced no accepted provider artifact after timeout and grants no public-output authority |
 | V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work
@@ -52,8 +53,10 @@ separate owner decision. Production remains undeployed and unverified.
   retention/health metrics. RC-5 operation 1 proved one successful durable attempt, atomic
   reservation, duplicate blocking, a closed circuit and `137.6287 VND` actual cost. Its structured
   payload/request IDs/hashes were not retained. V3-01-13 adds canonical serialization and a
-  durable-context fallback in locked RC-6. V3-01-14 and the new RC-7 gate bundle validate the
-  corrected shared limits path offline, while
+  durable-context fallback in locked RC-6. V3-01-14 and the RC-7 gate bundle validate the corrected
+  shared limits path; RC-7 operation 1 then proved durable one-attempt timeout/charge/duplicate
+  behavior but did not retain provider receipt/usage or actual cost. V3-01-15 adds timeout-phase
+  evidence offline, while
   production-like multi-instance and accepted real-provider evidence remain absent.
 - `V3-01-GAP-011` (`IN_PROGRESS`): auth rate limiting, URL-import denial and bounded malicious-input
   tests pass. V3-01-03 adds quarantine-before-decoder, archive-signature denial, EICAR contract
@@ -118,12 +121,13 @@ classified `BLOCKED PRE-CALL / NOT CONSUMED`: provider calls 0, cost 0 VND, ledg
 operation 2 locked and production `NO-GO`. The RC-6 authority is retired despite the unconsumed ID.
 V3-01-14 adds the shared strict `ProviderOperationAuthorityLimits` contract/adapter and rejects
 missing, legacy, extra, wrong-type or wrong-amount fields offline. It fixes only the future pre-call
-contract; GAP-003, GAP-010 and GAP-013 remain `IN_PROGRESS`. RC-7 is now merged and rebound with new
-IDs/scope/window, but any live continuation still requires governance merge and separate operation
-authority.
+contract; GAP-003, GAP-010 and GAP-013 remain `IN_PROGRESS`. RC-7 operation 1 later timed out once,
+is consumed and cannot be retried; operation 2 remains locked.
 
 PR #31 merged V3-01-14 as exact RC-7 and exact-main CI passed 5/5. Evidence
 `EV-V3-RC7-VISION-REBIND-001` proves the fresh RC-7 IDs, canonical per-operation/window limits,
-approval/rights hashes and new dated scope offline. The bundle is unmounted; operation 1 is pending
-a separate owner decision and operation 2 remains locked. GAP-003, GAP-010 and GAP-013 remain
-`IN_PROGRESS`.
+approval/rights hashes and new dated scope offline. PR #32 merged the governance rebind without
+changing RC-7. The separately authorized operation 1 later timed out once; evidence
+`EV-V3-RC7-VISION-OP1-TIMEOUT-001` preserves the consumed/`REVIEW_REQUIRED` result, unknown actual
+cost and locked operation 2. `EV-V3-PROVIDER-TIMEOUT-001` covers only the zero-call V3-01-15
+remediation. GAP-003, GAP-010 and GAP-013 remain `IN_PROGRESS`.

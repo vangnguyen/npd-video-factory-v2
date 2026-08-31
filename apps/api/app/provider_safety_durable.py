@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Any, Literal, Sequence, cast
@@ -35,6 +36,7 @@ class DurableProviderSafetyController(ProviderSafetyController):
         repository: ProviderSafetyRepository,
         provider_definitions: Sequence[dict[str, Any]] = (),
         clock=utc_now,
+        monotonic=time.perf_counter,
         sleeper=None,
         operation_lease_seconds: int = 900,
         operation_retention_days: int = 400,
@@ -42,6 +44,7 @@ class DurableProviderSafetyController(ProviderSafetyController):
         kwargs: dict[str, Any] = {
             "provider_definitions": provider_definitions,
             "clock": clock,
+            "monotonic": monotonic,
         }
         if sleeper is not None:
             kwargs["sleeper"] = sleeper
