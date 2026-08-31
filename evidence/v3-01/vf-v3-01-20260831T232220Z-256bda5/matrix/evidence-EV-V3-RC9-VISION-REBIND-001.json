@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC9-VISION-REBIND-001",
+  "test_case_id": "V3-01-RC9-VISION-GATE-REBIND",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "256bda59eed028ddd642cdb0988c409c489fd655",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-validator",
+    "model_or_workflow": "openai-vision/gpt-5-mini RC-9 governance bundle",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "f3ff461f27537700160b1ec417905c2bb98aeb874c1e39981762bf4ac32970d4",
+  "started_at_utc": "2026-08-31T23:05:21Z",
+  "completed_at_utc": "2026-08-31T23:22:20Z",
+  "duration_seconds": 1019.0,
+  "result": "PASS",
+  "assertion": "PR #34 merged at exact main 256bda59eed028ddd642cdb0988c409c489fd655, exact-main CI passed 5/5, and annotated vf-v3-01-rc9 peels to that commit. The canonical timeout envelope is 90 seconds provider HTTP and 120 seconds controller hard timeout with a strict provider-less-than-controller invariant. The executable helper derived two fresh RC-9 operation IDs. G-01-A, G-02-A and G-03-A were rebound to the exact RC, provider/model/capability, asset/RightsRecord, dated VND and timeout envelope and identical execution-scope hash. The bundle and standalone records validate offline, but the bundle is unmounted and operation 1 still requires separate owner authority. No credential was read, no external call or reservation occurred and actual cost was 0 VND. No acceptance axis is promoted to real-provider or production-path PASS.",
+  "correlation_id": "v3-01-rc9-vision-rebind-256bda5",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Codex deterministic governance-bundle reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On exact RC-9 commit 256bda59eed028ddd642cdb0988c409c489fd655, validate docs/acceptance/v3-01/V3-01-GATE-RC9-OPENAI-VISION-A.json with ProviderGateBundle and verify its raw SHA-256, embedded approval hashes, RightsRecord hash, derived operation IDs, canonical 90/120 timeout and VND authority limits and execution-scope SHA-256. Do not mount the bundle, read the credential, enable execution or run either operation without a separate owner decision."
+}

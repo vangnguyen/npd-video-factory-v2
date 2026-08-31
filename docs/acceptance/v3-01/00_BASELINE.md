@@ -2,20 +2,22 @@
 
 Captured at `2026-08-27T12:02:08Z` (`2026-08-27 19:02:08 Asia/Ho_Chi_Minh`).
 Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
-Current checkpoint status updated after V3-01-15 merged, RC-8 was locked NO-GO and the owner
-retired RC-8 from live acceptance in favor of zero-call V3-01-16.
+Current checkpoint status updated after V3-01-16 merged, exact-main regression passed, RC-9 was
+locked NO-GO and G-01-A/G-02-A/G-03-A were rebound in an unmounted governance bundle.
 
 ## Control state
 
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-8 68d4cf90004054075ebf0f33b9311a3419d8af4d; locked NO-GO; not deployed; retired from live acceptance
+CURRENT RC: RC-9 256bda59eed028ddd642cdb0988c409c489fd655; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-16 split timeout envelope remediation; source-only; zero calls; zero VND
+CURRENT SAFE PHASE: RC-9 governance rebind; bundle offline/unmounted; zero calls; zero VND
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #33 MERGE CONSUMED; V3-01-16 DRAFT REQUIRES A NEW G-08
-G-01-A / G-02-A / G-03-A: RC-7 AUTHORITY USED/RETIRED; RC-8 HAS NO LIVE AUTHORITY; FUTURE RC REQUIRES REBIND
+G-08: PR #34 MERGE CONSUMED; RC-9 GOVERNANCE REBIND REQUIRES A NEW G-08
+G-01-A / G-02-A / G-03-A: REBOUND TO EXACT RC-9; BUNDLE UNMOUNTED
+RC-9 OPERATION 1: NOT APPROVED; NOT EXECUTED
+RC-9 OPERATION 2: LOCKED; NOT EXECUTED
 RC-7 OPERATION 1: FAILED PROVIDER_TIMEOUT; REVIEW_REQUIRED; CONSUMED; NO RETRY
 RC-7 OPERATION 2: LOCKED; NOT EXECUTED
 RC-6 OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; PROVIDER CALLS 0; COST 0 VND
@@ -105,7 +107,7 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Open PRs at capture | none |
 | Tags/releases | none returned by Git/GitHub |
 | Main branch protection | disabled; GitHub API returned `Branch not protected` |
-| Latest verified exact-main CI | [Video Factory V2 CI run 33412301663](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33412301663), 5/5 success after PR #33 on exact main/RC-8 `68d4cf90004054075ebf0f33b9311a3419d8af4d` |
+| Latest verified exact-main CI | [Video Factory V2 CI run 33449162326](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33449162326), 5/5 success after PR #34 on exact main/RC-9 `256bda59eed028ddd642cdb0988c409c489fd655` |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -113,7 +115,7 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` before V3-01-16 branch | `68d4cf90004054075ebf0f33b9311a3419d8af4d` after PR #33; executable RC-8 is the same commit and is retired from live acceptance |
+| Exact `origin/main` before RC-9 governance branch | `256bda59eed028ddd642cdb0988c409c489fd655` after PR #34; executable RC-9 is this exact commit |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
@@ -139,7 +141,10 @@ Current repository checkpoint after the bounded merge sequence:
 | RC-7 governance rebind | PR #32 merged governance-only as `ebe6f91a9ac88364a23871d587ae4564f30283d3`; G-01-A/G-02-A/G-03-A bound by `V3-01-APP-030` through `V3-01-APP-032`; bundle raw SHA `ce772a941766b12a99943b9165cbf588c314e3d1b59543f103c7671a58856a44`; scope SHA `60d9898de38f9536ed3391ca81f1d59eca04b61537edad42e85597702c143a56` |
 | PR #33 / V3-01-15 | merge `68d4cf90004054075ebf0f33b9311a3419d8af4d`; exact-main CI run `33412301663` 5/5 PASS |
 | RC-8 | annotated `vf-v3-01-rc8` peels to `68d4cf90004054075ebf0f33b9311a3419d8af4d`; tag object `aaeefaa31b027fa77aa3bea13a1bbec5cefaefd6`; NO-GO; not deployed; retired from live acceptance because the executable contract still had one shared 60-second deadline |
-| Exact-main regression | PR #33 exact-main CI run `33412301663` passed Python, Studio, Renderer, Safety/Compose and Docker deterministic E2E |
+| PR #34 / V3-01-16 | exact head `008120e76b37f92927903f3d1a909e257bedcfca`; merge `256bda59eed028ddd642cdb0988c409c489fd655`; exact-main CI run `33449162326` 5/5 PASS; `V3-01-APP-033` consumed |
+| RC-9 | annotated `vf-v3-01-rc9` peels to `256bda59eed028ddd642cdb0988c409c489fd655`; tag object `0a6d091eb22b9d313a2e6894e5abf379bfa0d504`; NO-GO; not deployed |
+| RC-9 governance rebind | G-01-A/G-02-A/G-03-A bound by `V3-01-APP-034` through `V3-01-APP-036`; bundle raw SHA `965ed58e4d1c73e3452aedd90e367ed6ec84d85bff1a9fdd11afe5d7cd64155f`; scope SHA `f3ff461f27537700160b1ec417905c2bb98aeb874c1e39981762bf4ac32970d4`; bundle unmounted and governance PR pending G-08 |
+| Exact-main regression | PR #34 exact-main CI run `33449162326` passed Python, Studio, Renderer, Safety/Compose and Docker deterministic E2E |
 | Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once at the provider boundary and is consumed/`REVIEW_REQUIRED`; every operation 2 remains locked |
 | Deployment/ingress/publish action | none |
 

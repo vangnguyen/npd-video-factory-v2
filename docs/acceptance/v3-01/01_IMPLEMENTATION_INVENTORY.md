@@ -4,8 +4,8 @@ This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.
 
-V3-01-01 through V3-01-14 are merged in executable RC-7
-`94170ed42f6ffba4432f29750402eafe0d922a45`, tagged `vf-v3-01-rc7`. RC-3 operation 1 was
+V3-01-01 through V3-01-16 are merged in executable RC-9
+`256bda59eed028ddd642cdb0988c409c489fd655`, tagged `vf-v3-01-rc9`. RC-3 operation 1 was
 authorized, consumed once and ended `REVIEW_REQUIRED`; all RC-3 IDs are locked. RC-4 is retained
 as evidence that the stale hard-coded operation allowlist failed closed. RC-5 operation 1 later
 completed provider execution once, but its post-call evidence serialization failed; it is consumed
@@ -14,9 +14,12 @@ mock-tested in exact RC-6. PR #30 preserved executable RC-6 while merging its go
 The separately authorized operation 1 then stopped fail-closed before credential read, reservation,
 ledger mutation or provider dispatch because the runner omitted the bundle's window-limit field.
 It remains not consumed with 0 calls/0 VND; its authority is retired and operation 2 is locked.
-V3-01-14 now unifies the runner/bundle limits model in locked RC-7. Fresh RC-7 IDs, scope, budget
-window and G-01-A/G-02-A/G-03-A records validate offline in an unmounted bundle; operation 1 still
-requires separate authority and operation 2 is locked.
+V3-01-14 unifies the runner/bundle limits model in locked RC-7. RC-7 operation 1 later timed out
+once and is consumed/`REVIEW_REQUIRED`; operation 2 is locked. V3-01-15 adds timeout-phase evidence
+offline. V3-01-16 splits provider HTTP timeout at 90 seconds from the controller hard envelope at
+120 seconds in locked RC-9. Fresh RC-9 IDs, scope, budget window and G-01-A/G-02-A/G-03-A records
+validate offline in an unmounted bundle; operation 1 still requires separate authority and
+operation 2 is locked.
 None of these local/CI entries establish production-path, accepted real-provider or quality
 acceptance.
 
@@ -49,7 +52,7 @@ acceptance.
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
 | Transcript/scene/silence/highlight | `auto_edit_providers.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py` | Auto Edit suite and measured two-run fixture evidence | Contract/mock PASS with pre-call safety; real accuracy absent |
-| Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema, exact-main CI, canonical evidence tests and RC-7 offline bundle guard | Adapter, evidence path and authority limits are implemented/mock-tested in RC-7; RC-5 provider execution succeeded but acceptance evidence is incomplete, so real-provider axis remains `NOT_TESTED` |
+| Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema, exact-main CI, canonical evidence, split-timeout and RC-9 offline bundle guards | Adapter, evidence path, authority limits and 90/120 timeout envelope are implemented/mock-tested in RC-9; historical provider attempts did not produce accepted evidence, so real-provider axis remains `NOT_TESTED` |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |
 | ComfyUI | `services/comfyui-bridge`, eight allowlisted workflows | bridge unit tests | Mock/disabled backend only; no GPU evidence |
@@ -83,7 +86,7 @@ acceptance.
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
 | Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
-| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, `evidence_serialization.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, gate-loader/RC binding, redacted error ledger, canonical evidence/fallback/limits tests, exact RC-7 bundle guard and phase-specific timeout tests | PostgreSQL-backed local contract passes; RC-5 operation 1 proved the durable success/cost path but incomplete post-call evidence prevents acceptance; RC-6 failed closed; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; operation 2 remains locked |
+| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, `evidence_serialization.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, gate-loader/RC binding, redacted error ledger, canonical evidence/fallback/limits tests, exact RC-9 bundle guard and phase-specific split-timeout tests | PostgreSQL-backed local contract passes; RC-5 proved the durable success/cost path but incomplete evidence prevents acceptance; RC-6 failed closed; RC-7 timed out once; RC-9 is verified offline with no operation authority |
 | Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart/configuration tests and one bounded RC-5 operation | RC-5 recorded `137.6287 VND` actual cost within a 500 VND reservation; production-like multi-instance and accepted provider evidence remain absent |
 | Upload malware boundary | quarantine state, archive-deny policy, deterministic EICAR contract and internal clamd client | `test_auto_edit_analysis.py`, migration replay | Local/mock PASS; clamd and edge/WAF not deployed |
 | Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests | Schema/hook implemented; real rights unaccepted |
