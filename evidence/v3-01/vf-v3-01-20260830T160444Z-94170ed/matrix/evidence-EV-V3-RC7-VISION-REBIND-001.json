@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC7-VISION-REBIND-001",
+  "test_case_id": "V3-01-RC7-VISION-GATE-REBIND",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "94170ed42f6ffba4432f29750402eafe0d922a45",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-validator",
+    "model_or_workflow": "openai-vision/gpt-5-mini RC-7 governance bundle",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "60d9898de38f9536ed3391ca81f1d59eca04b61537edad42e85597702c143a56",
+  "started_at_utc": "2026-08-30T15:55:39Z",
+  "completed_at_utc": "2026-08-30T16:04:44Z",
+  "duration_seconds": 545.0,
+  "result": "PASS",
+  "assertion": "PR #31 merged at exact main 94170ed42f6ffba4432f29750402eafe0d922a45, exact-main CI passed 5/5, and annotated vf-v3-01-rc7 peels to that commit. The executable helper derived two fresh RC-7 operation IDs. G-01-A, G-02-A and G-03-A were rebound to the exact RC, provider/model/capability, asset/RightsRecord, dated VND envelope and identical execution-scope hash. The new canonical limits contract preserves both per-operation and acceptance-window limits. The bundle and standalone records validate offline, but the bundle is unmounted and operation 1 still requires separate owner authority. No credential was read, no external call occurred and actual cost was 0 VND. No acceptance axis is promoted to real-provider or production-path PASS.",
+  "correlation_id": "v3-01-rc7-vision-rebind-94170ed",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Codex deterministic governance-bundle reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On exact RC-7 commit 94170ed42f6ffba4432f29750402eafe0d922a45, validate docs/acceptance/v3-01/V3-01-GATE-RC7-OPENAI-VISION-A.json with ProviderGateBundle and verify its raw SHA-256, embedded approval hashes, RightsRecord hash, derived operation IDs, canonical authority limits and execution-scope SHA-256. Do not mount the bundle, read the credential, enable execution or run either operation without its separate owner decision."
+}
