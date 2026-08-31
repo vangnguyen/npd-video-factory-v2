@@ -377,7 +377,7 @@ jobs:
           grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
       - name: Verify V3-01-14 operation authority limits boundary
         run: |
-          grep -Fq 'class ProviderOperationAuthorityLimits(StrictModel)' apps/api/app/provider_gate_loader.py
+          grep -Fq 'class ProviderOperationAuthorityLimits(ProviderTimeoutEnvelope)' apps/api/app/provider_gate_loader.py
           grep -Fq 'def validate_operation_authority_limits(' apps/api/app/provider_gate_loader.py
           grep -Fq 'acceptance_window_limit_vnd' apps/api/app/provider_gate_loader.py
           grep -Fq 'same_utc_day_runtime_daily_limit_vnd' apps/api/app/provider_gate_loader.py
