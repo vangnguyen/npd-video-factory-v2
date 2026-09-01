@@ -1,0 +1,24 @@
+{
+  "approval_id": "V3-01-APP-033",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #34 as V3-01-16 Split Provider/Controller Timeout Envelope Contract only; no provider execution or production authority is granted.",
+  "artifact_or_commit_hashes": [
+    "008120e76b37f92927903f3d1a909e257bedcfca",
+    "256bda59eed028ddd642cdb0988c409c489fd655"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and exact-main regression only",
+  "limits": [
+    "V3-01-16 split provider/controller timeout envelope remediation only",
+    "Provider HTTP timeout 90 seconds and controller hard envelope 120 seconds",
+    "Provider timeout must remain strictly less than controller timeout",
+    "No provider call, credential read or runtime gate activation",
+    "No reuse of RC-7 or RC-8 operation authority",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-31T23:05:21Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved PR #34 in the controlling task. The approval is recorded at the exact GitHub merge timestamp because no separate machine timestamp was retained for the preceding chat decision. PR #34 merged as 256bda59eed028ddd642cdb0988c409c489fd655, exact-main CI run 33449162326 passed 5/5 and annotated tag vf-v3-01-rc9 peels to that merge. This record grants no runtime action."
+}

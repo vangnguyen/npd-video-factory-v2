@@ -472,6 +472,55 @@ def test_checked_in_rc7_bundle_is_exactly_bound_and_requires_separate_authority(
         assert embedded["record_sha256"] == canonical_sha256(record)
 
 
+def test_checked_in_rc9_bundle_is_exactly_bound_and_requires_separate_authority() -> None:
+    bundle_path = (
+        REPO_ROOT
+        / "docs"
+        / "acceptance"
+        / "v3-01"
+        / "V3-01-GATE-RC9-OPENAI-VISION-A.json"
+    )
+    raw = bundle_path.read_bytes()
+    bundle = json.loads(raw)
+
+    assert hashlib.sha256(raw).hexdigest() == (
+        "965ed58e4d1c73e3452aedd90e367ed6ec84d85bff1a9fdd11afe5d7cd64155f"
+    )
+    assert bundle["rc_tag"] == "vf-v3-01-rc9"
+    assert bundle["rc_commit"] == "256bda59eed028ddd642cdb0988c409c489fd655"
+    assert bundle["provider_key"] == "openai-vision"
+    assert bundle["model"] == "gpt-5-mini"
+    assert bundle["capability"] == "vision"
+    assert bundle["credential_alias"] == "secret://openai/codex-video"
+    assert bundle["budget"]["currency"] == "VND"
+    assert Decimal(bundle["budget"]["per_operation_limit_vnd"]) == Decimal("500")
+    assert Decimal(bundle["budget"]["acceptance_window_limit_vnd"]) == Decimal(
+        "1250"
+    )
+    assert bundle["budget"]["provider_http_timeout_seconds"] == 90
+    assert bundle["budget"]["controller_hard_timeout_seconds"] == 120
+    assert [operation["operation_key"] for operation in bundle["allowed_operations"]] == [
+        "v3-01-rc9-openai-vision-call-01",
+        "v3-01-rc9-openai-vision-call-02",
+    ]
+
+    verified = ProviderGateBundle.model_validate(bundle)
+    assert verified.rc_tag == "vf-v3-01-rc9"
+    assert verified.budget.provider_http_timeout_seconds == 90
+    assert verified.budget.controller_hard_timeout_seconds == 120
+
+    approvals = (
+        ("V3-01-APP-034.json", bundle["credential_approval"]),
+        ("V3-01-APP-035.json", bundle["budget_approval"]),
+        ("V3-01-APP-036.json", bundle["rights_approval"]),
+    )
+    approval_root = REPO_ROOT / "docs" / "acceptance" / "v3-01" / "approvals"
+    for filename, embedded in approvals:
+        record = json.loads((approval_root / filename).read_text(encoding="utf-8"))
+        assert embedded["record"] == record
+        assert embedded["record_sha256"] == canonical_sha256(record)
+
+
 def test_checked_in_g03_asset_is_hash_bound_and_narrowly_owner_approved() -> None:
     rights_path = (
         REPO_ROOT

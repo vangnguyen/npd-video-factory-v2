@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-15; RC-7 operation 1 timed out once and is consumed/REVIEW_REQUIRED; V3-01-16 zero-call remediation in review
-RELEASE CANDIDATE: RC-8 68d4cf90004054075ebf0f33b9311a3419d8af4d CLOSED NO-GO; NOT DEPLOYED; RETIRED FROM LIVE ACCEPTANCE
-LATEST EVIDENCE: RC-7 provider path reached once; PROVIDER_TIMEOUT at about 60 seconds; no retry/fallback; actual cost UNKNOWN; 500 VND safety charge; operation 2 NOT APPROVED
-DATE: 2026-08-31
-OWNER DECISION: RC-8 MUST NOT RUN LIVE; V3-01-16 DRAFT REQUIRES A NEW G-08
+SCOPE: merged V3-01-00 through V3-01-16; RC-7 operation 1 remains consumed/REVIEW_REQUIRED; RC-9 governance rebind is offline and unmounted
+RELEASE CANDIDATE: RC-9 256bda59eed028ddd642cdb0988c409c489fd655 LOCKED NO-GO; NOT DEPLOYED
+LATEST EVIDENCE: split provider 90s / controller 120s contract and exact RC-9 G-01/G-02/G-03 bundle validate offline; 0 calls, 0 reservation, 0 VND
+DATE: 2026-09-01
+OWNER DECISION: G-02 RC-9 APPROVED FOR EXACT SCOPE/WINDOW ONLY; OPERATION 1 NOT APPROVED; OPERATION 2 LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -229,19 +229,20 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #33 are consumed. The isolated V3-01-16 remediation requires a new
-  G-08 before merge.
-- **Deploy:** no; RC-8 is NO-GO, not deployed, retired from live acceptance and G-09 is pending.
+- **Merge:** decisions through PR #34 are consumed. The isolated RC-9 governance rebind requires a
+  new G-08 before merge.
+- **Deploy:** no; RC-9 is NO-GO, not deployed and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** RC-5 operation 1 consumed exactly one attempt with no retry/fallback
   and recorded `137.6287 VND` actual cost; all RC-5 IDs are locked. RC-6 operation 1 is not consumed
   but its failed-window authority is retired and both RC-6 IDs are prohibited. RC-7 operation 1 is
-  consumed after one timeout, operation 2 is locked, RC-8 has no operation authority, and
-  checked-in budget remains 0.
+  consumed after one timeout, operation 2 is locked and RC-8 has no operation authority. RC-9 has
+  an unmounted 500/1,250 VND governance envelope but neither operation is authorized and checked-in
+  budget remains 0.
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited:** any further provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
-- **Rollback trigger:** no runtime change exists; revert the isolated docs/harness PR if it regresses
+- **Rollback trigger:** no runtime change exists; revert the isolated governance/docs/test PR if it regresses
   CI or evidence integrity.
 
 ## Decision rule

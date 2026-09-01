@@ -1,0 +1,27 @@
+{
+  "approval_id": "V3-01-APP-035",
+  "gate_id": "G-02",
+  "decision": "APPROVED",
+  "scope": "Rebind G-02-A to the dated RC-9 VND and split-timeout envelope for at most two derived OpenAI gpt-5-mini Vision acceptance operations.",
+  "artifact_or_commit_hashes": [
+    "256bda59eed028ddd642cdb0988c409c489fd655",
+    "e48c7b634d9dc6b2903b932c69c99dd2f7884bd930da4896e54be74bf05ddc6c",
+    "f3ff461f27537700160b1ec417905c2bb98aeb874c1e39981762bf4ac32970d4"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; no budget is enabled in repository or production defaults",
+  "limits": [
+    "500 VND atomic reservation per operation",
+    "1250 VND maximum for the whole acceptance window",
+    "Exactly two RC-derived operation IDs",
+    "One image per call at no more than 2048x2048 with detail high",
+    "Input accounting ceiling 16384 tokens and output ceiling 4096 tokens",
+    "Provider HTTP timeout 90 seconds and controller hard envelope 120 seconds",
+    "One attempt, concurrency 1, no automatic retry and no fallback",
+    "Window 2026-09-01T14:00:00Z through 2026-09-01T18:00:00Z only",
+    "No provider call until a separate owner decision authorizes RC-9 operation 1"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-08-31T23:18:22Z",
+  "expires_at_utc": "2026-09-01T18:00:00Z",
+  "notes": "The owner explicitly approved this exact RC-9 budget, timeout, window and execution-scope hash. Runtime budget remains zero in checked-in defaults. This record alone grants no API-call authority, and any mutation of scope or window requires a new G-02 rebind."
+}

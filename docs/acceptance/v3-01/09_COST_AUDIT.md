@@ -11,6 +11,7 @@
 | RC-7 operation 1 timeout | VND | 1,250 window / 500 operation | 500 safety charge | unknown | 1 |
 | V3-01-15 remediation | VND | 0 | 0 | 0 | 0 |
 | V3-01-16 remediation | VND | 0 | 0 | 0 | 0 |
+| RC-9 governance rebind | VND | checked-in runtime budget 0; owner-approved conditional window/operation envelope 1,250/500 | 0 | 0 | 0 |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
 later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
@@ -25,7 +26,9 @@ render, publish or analytics collection was performed. RC-7 operation 1 later ti
 attempt. Its ledger committed the conservative 500 VND charge, but no usage receipt exists, so
 actual provider cost remains unknown. V3-01-15 performs zero calls, reads no credential and costs
 0 VND. V3-01-16 also performs zero calls, reads no credential and costs 0 VND; changing the
-timeout architecture does not expand the 500/1,250 VND owner envelope. USD is not an accepted
+timeout architecture does not expand the 500/1,250 VND owner envelope. The RC-9 G-02 record binds
+that unchanged envelope and the 90/120-second timeouts to one exact scope/window only; the bundle
+is unmounted and no operation authority, reservation, call or cost follows from the record. USD is not an accepted
 operating currency for this acceptance program.
 
 ## Required provider budget contract
@@ -85,7 +88,9 @@ canonical model. Operation 1 later timed out once and is consumed; evidence
 `EV-V3-RC7-VISION-OP1-TIMEOUT-001` preserves actual cost as unknown and distinguishes the 500 VND
 safety charge. Operation 2 is locked. V3-01-15 does not alter any limit.
 V3-01-16 retains 500 VND per operation, 1,250 VND per acceptance window, one attempt, concurrency
-one, no retry and no fallback. Only a future exact-RC G-02 rebind can activate those limits.
+one, no retry and no fallback. `EV-V3-RC9-VISION-REBIND-001` verifies the owner-approved exact-RC
+G-02 record, canonical budget hash and unmounted bundle offline. Operation 1 still requires separate
+authority and operation 2 remains locked.
 
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.
@@ -93,5 +98,5 @@ as authoritative cost without its dated source and calculated VND value.
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit
 `0f0854466655d2f36cfa8b57785000097b220c4c`, plus the failed bounded-operation evidence above;
-the RC-5 cost record, exact-main V3-01-13 serializer evidence, offline RC-6/RC-7 rebind evidence and
-the RC-7 timeout record do not close or production-verify it.
+the RC-5 cost record, exact-main V3-01-13 serializer evidence, offline RC-6/RC-7/RC-9 rebind evidence
+and the RC-7 timeout record do not close or production-verify it.

@@ -56,15 +56,18 @@ adds phase/elapsed/dispatch/exception-chain evidence plus deterministic 59/60/61
 PR #33 merged that remediation as `68d4cf90004054075ebf0f33b9311a3419d8af4d`; exact-main CI
 `33412301663` passed 5/5 and `vf-v3-01-rc8` peels to that commit. RC-8 remains NO-GO and is retired
 from live acceptance because the provider and controller still shared the same 60-second deadline.
-V3-01-16 now separates the provider HTTP deadline at 90 seconds from the controller hard envelope
-at 120 seconds, with strict canonical authority fields and virtual 89/90/91 plus 119/120/121
-boundary tests. This is source-only, zero-call evidence and does not promote an acceptance axis.
+PR #34 merged V3-01-16 as `256bda59eed028ddd642cdb0988c409c489fd655`; exact-main CI
+`33449162326` passed 5/5 and `vf-v3-01-rc9` peels to that commit. V3-01-16 separates the provider
+HTTP deadline at 90 seconds from the controller hard envelope at 120 seconds, with strict canonical
+authority fields and virtual 89/90/91 plus 119/120/121 boundary tests. The owner approved the exact
+RC-9 G-02 envelope and directed G-01/G-02/G-03 rebind in an unmounted governance bundle. Neither
+operation has runtime authority. This is zero-call evidence and does not promote an acceptance axis.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; RC-6 operation 1 blocked pre-call; RC-7 operation 1 timed out once; V3-01-15 is merged in retired NO-GO RC-8; V3-01-16 split-timeout contract is mock-tested only | `BLOCKED` | G-08 for V3-01-16, exact-main regression, lock RC-9, fresh 90s/120s G-02 and G-01/G-03 rebind, then separate one-operation authority; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; RC-6 operation 1 blocked pre-call; RC-7 operation 1 timed out once; RC-8 is retired; RC-9 validates the split-timeout contract and exact gate offline only | `BLOCKED` | G-08 for the governance rebind, exact-main governance regression, then separate authority for only RC-9 operation 1; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -116,5 +119,7 @@ an operation or promote real-provider, production-path or quality acceptance.
 `EV-V3-RC7-VISION-OP1-TIMEOUT-001` freezes the later one-attempt timeout as consumed,
 `REVIEW_REQUIRED`, actual cost unknown and safety charge 500 VND. `EV-V3-PROVIDER-TIMEOUT-001`
 proves only the zero-call V3-01-15 timeout evidence path and no-retry durable behavior; neither
-evidence promotes an acceptance axis. V3-01-16 adds only a zero-call, mock-tested split timeout
-contract; provider, production-path and quality evidence remain absent.
+evidence promotes an acceptance axis. `EV-V3-SPLIT-TIMEOUT-ENVELOPE-001` proves only the zero-call,
+mock-tested 90/120 split timeout contract. `EV-V3-RC9-VISION-REBIND-001` proves the exact RC-9,
+budget, timeout, asset, approval and scope hashes in an unmounted bundle. It grants no operation
+authority; provider, production-path and quality evidence remain absent.
