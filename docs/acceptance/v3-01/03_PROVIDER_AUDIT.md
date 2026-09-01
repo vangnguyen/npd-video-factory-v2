@@ -68,11 +68,19 @@ the executable RC CI run `33449162326` and governance main CI run `33499392585` 
 Operation 1 is not consumed, but its authority is retired; operation 2 is locked. V3-01-17 validates
 both CI roles, commit bindings, allowlisted governance diff and identical executable tree offline.
 
+PR #36 merged V3-01-17 as `c2b1aec2d54dd90bcb486f8a68c97746b39963aa`; exact-main CI run
+`33527973264` passed 5/5 and annotated `vf-v3-01-rc10` peels to that commit. The fresh RC-10
+operations, 90/120-second timeout envelope, 500/1,250 VND limits, asset/RightsRecord and
+G-01-A/G-02-A/G-03-A records validate offline under execution-scope SHA
+`a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0`. The bundle is unmounted;
+governance-main CI and separate operation-1 authority are pending. No credential read, reservation
+or provider call occurred.
+
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; RC-6 operation 1 blocked pre-call; RC-7 operation 1 timed out once; RC-8 is retired; RC-9 operation 1 blocked pre-call on CI provenance ambiguity with 0 calls/0 VND | `BLOCKED` | G-08 for V3-01-17, merge/exact-main regression, lock RC-10, fresh dual-CI provenance/scope/window/rebind and separate operation-1 authority; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; RC-6 operation 1 blocked pre-call; RC-7 operation 1 timed out once; RC-9 operation 1 blocked pre-call; RC-10 exact-main and offline rebind PASS, bundle unmounted | `BLOCKED` | G-08 for RC-10 governance PR, exact governance-main CI with dual-role provenance, then separate RC-10 operation-1 authority; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -128,3 +136,6 @@ evidence promotes an acceptance axis. `EV-V3-SPLIT-TIMEOUT-ENVELOPE-001` proves 
 mock-tested 90/120 split timeout contract. `EV-V3-RC9-VISION-REBIND-001` proves the exact RC-9,
 budget, timeout, asset, approval and scope hashes in an unmounted bundle. It grants no operation
 authority; provider, production-path and quality evidence remain absent.
+`EV-V3-RC10-VISION-REBIND-001` proves the exact RC-10 tag/commit, executable-RC CI, fresh operation
+derivation, dual-CI role separation and the new offline bundle hashes. Governance-main CI remains
+pending until governance merge, and neither operation is authorized.

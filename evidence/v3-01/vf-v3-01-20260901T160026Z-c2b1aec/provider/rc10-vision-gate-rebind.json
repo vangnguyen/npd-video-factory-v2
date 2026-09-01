@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01 RC-10 Vision gate rebind",
+  "rc_tag": "vf-v3-01-rc10",
+  "rc_commit": "c2b1aec2d54dd90bcb486f8a68c97746b39963aa",
+  "tag_object": "32bd6a78048a6ae92538a9195a1386318ebd72b8",
+  "executable_rc_ci": {
+    "run_id": 33527973264,
+    "commit_sha": "c2b1aec2d54dd90bcb486f8a68c97746b39963aa",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs_passed": 5,
+    "role": "executable_rc_ci"
+  },
+  "governance_main_ci": {
+    "run_id": null,
+    "commit_sha": null,
+    "status": "PENDING_POST_GOVERNANCE_MERGE",
+    "conclusion": null,
+    "jobs_passed": null,
+    "role": "governance_main_ci"
+  },
+  "bundle": {
+    "path": "docs/acceptance/v3-01/V3-01-GATE-RC10-OPENAI-VISION-A.json",
+    "raw_sha256": "30f4ffd9353a00b7fdf97d0998dce43798937a2c577ca3fa618c947bbb8040e1",
+    "provider_scope_sha256": "f1cff1c8370caf6218577cdabfbd06c0665dfabb2407ec320b4668f7bf50072a",
+    "budget_sha256": "b1452a62b4cd05d7f2de1f51437a0eca300d4c7c7fc9d7c4a8e58d810259fc14",
+    "execution_scope_sha256": "a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0",
+    "mounted": false,
+    "offline_validation": "PASS"
+  },
+  "provider_scope": {
+    "provider": "openai-vision",
+    "model": "gpt-5-mini",
+    "capability": "vision",
+    "credential_alias": "secret://openai/codex-video",
+    "credential_value_read": false
+  },
+  "rights": {
+    "asset_id": "asset-g03-a-owned-vision-test",
+    "asset_sha256": "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+    "rights_record_sha256": "f469930a74b477751fc4417774b486ccbf2d7822487478875e099552c83e06ba",
+    "purpose": "Vision acceptance input only; no publishing, training, resale or other use"
+  },
+  "window": {
+    "valid_from_utc": "2026-09-02T14:00:00Z",
+    "expires_at_utc": "2026-09-02T18:00:00Z",
+    "budget_day_utc": "2026-09-02"
+  },
+  "operations": [
+    {
+      "slot": 1,
+      "operation_key": "v3-01-rc10-openai-vision-call-01",
+      "authority": "PENDING_SEPARATE_OWNER_DECISION"
+    },
+    {
+      "slot": 2,
+      "operation_key": "v3-01-rc10-openai-vision-call-02",
+      "authority": "NOT_GRANTED"
+    }
+  ],
+  "budget": {
+    "currency": "VND",
+    "per_operation_limit": 500,
+    "acceptance_window_limit": 1250,
+    "provider_http_timeout_seconds": 90,
+    "controller_hard_timeout_seconds": 120,
+    "checked_in_runtime_budget": 0,
+    "reservation": 0,
+    "actual_cost": 0
+  },
+  "safety": {
+    "external_execution": false,
+    "paid_execution": false,
+    "global_kill_switch_engaged": true,
+    "retry": false,
+    "fallback": false,
+    "external_calls": 0,
+    "credential_reads": 0,
+    "deploy_performed": false,
+    "public_ingress_enabled": false,
+    "publish_performed": false,
+    "production_analytics_enabled": false
+  },
+  "historical_operations": {
+    "rc3_operation_ids": "PERMANENTLY_LOCKED",
+    "rc4_live_acceptance": "PROHIBITED",
+    "rc5_operation_1": "PROVIDER_SUCCESS_EVIDENCE_INCOMPLETE_REVIEW_REQUIRED_CONSUMED",
+    "rc5_operation_2": "PERMANENTLY_LOCKED",
+    "rc6_operation_1": "BLOCKED_PRE_CALL_NOT_CONSUMED_AUTHORITY_RETIRED",
+    "rc6_operation_2": "PERMANENTLY_LOCKED",
+    "rc7_operation_1": "PROVIDER_TIMEOUT_REVIEW_REQUIRED_CONSUMED_AUTHORITY_RETIRED",
+    "rc7_operation_2": "PERMANENTLY_LOCKED",
+    "rc8_live_acceptance": "RETIRED_NO_AUTHORITY",
+    "rc9_operation_1": "BLOCKED_PRE_CALL_NOT_CONSUMED_AUTHORITY_RETIRED",
+    "rc9_operation_2": "PERMANENTLY_LOCKED"
+  },
+  "overall_verdict": "NO-GO"
+}

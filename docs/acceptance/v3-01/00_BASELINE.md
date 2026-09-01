@@ -2,22 +2,24 @@
 
 Captured at `2026-08-27T12:02:08Z` (`2026-08-27 19:02:08 Asia/Ho_Chi_Minh`).
 Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
-Current checkpoint status updated after PR #35 merged governance-only and its exact-main CI passed.
-The separately authorized RC-9 operation 1 then stopped before any credential read, reservation,
-ledger mutation or provider dispatch because one bootstrap field ambiguously represented two valid
-CI provenance roles. V3-01-17 remediates that contract offline.
+Current checkpoint status updated after PR #36 merged V3-01-17, exact-main CI passed 5/5 and
+annotated `vf-v3-01-rc10` was locked. RC-10 has fresh operation IDs and an offline-verified,
+unmounted G-01-A/G-02-A/G-03-A bundle. A new governance PR, its governance-main CI and a separate
+operation-1 authority are still required; no provider call is authorized.
 
 ## Control state
 
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-9 256bda59eed028ddd642cdb0988c409c489fd655; locked NO-GO; not deployed
+CURRENT RC: RC-10 c2b1aec2d54dd90bcb486f8a68c97746b39963aa; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: V3-01-17 source-only CI provenance remediation; zero calls; zero VND
+CURRENT SAFE PHASE: RC-10 governance rebind review; bundle unmounted; zero calls; zero VND
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #35 MERGE CONSUMED; V3-01-17 REQUIRES A NEW G-08
-G-01-A / G-02-A / G-03-A: HISTORICAL RC-9 BINDING RETIRED; NO RC-10 REBIND
+G-08: PR #36 MERGE CONSUMED; RC-10 GOVERNANCE REBIND PR REQUIRES A NEW G-08
+G-01-A / G-02-A / G-03-A: REBOUND TO EXACT RC-10; NO OPERATION AUTHORITY
+RC-10 OPERATION 1: NOT APPROVED; NOT EXECUTED
+RC-10 OPERATION 2: LOCKED; NOT EXECUTED
 RC-9 OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; PROVIDER CALLS 0; COST 0 VND; AUTHORITY RETIRED
 RC-9 OPERATION 2: LOCKED; NOT EXECUTED
 RC-7 OPERATION 1: FAILED PROVIDER_TIMEOUT; REVIEW_REQUIRED; CONSUMED; NO RETRY
@@ -111,6 +113,8 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Main branch protection | disabled; GitHub API returned `Branch not protected` |
 | Executable RC CI | [Video Factory V2 CI run 33449162326](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33449162326), 5/5 success on exact RC-9 `256bda59eed028ddd642cdb0988c409c489fd655` |
 | Governance main CI | [Video Factory V2 CI run 33499392585](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33499392585), 5/5 success on post-PR #35 main `e48d7edebcbfb1bd4113c2e40ab4ce46c186f6e4` |
+| Current executable RC CI | [Video Factory V2 CI run 33527973264](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33527973264), 5/5 success on exact RC-10 `c2b1aec2d54dd90bcb486f8a68c97746b39963aa` |
+| Current governance main CI | pending RC-10 governance PR merge; cannot be substituted by executable RC CI |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -118,7 +122,7 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` before V3-01-17 branch | `e48d7edebcbfb1bd4113c2e40ab4ce46c186f6e4` after governance-only PR #35; executable RC-9 remains `256bda59eed028ddd642cdb0988c409c489fd655` |
+| Exact `origin/main` before RC-10 governance branch | `c2b1aec2d54dd90bcb486f8a68c97746b39963aa` after PR #36; executable RC-10 is identical |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
@@ -148,7 +152,10 @@ Current repository checkpoint after the bounded merge sequence:
 | RC-9 | annotated `vf-v3-01-rc9` peels to `256bda59eed028ddd642cdb0988c409c489fd655`; tag object `0a6d091eb22b9d313a2e6894e5abf379bfa0d504`; NO-GO; not deployed |
 | RC-9 governance rebind | PR #35 merged governance-only as `e48d7edebcbfb1bd4113c2e40ab4ce46c186f6e4`; G-01-A/G-02-A/G-03-A were bound by `V3-01-APP-034` through `V3-01-APP-036`; bundle raw SHA `965ed58e4d1c73e3452aedd90e367ed6ec84d85bff1a9fdd11afe5d7cd64155f`; scope SHA `f3ff461f27537700160b1ec417905c2bb98aeb874c1e39981762bf4ac32970d4`; authority now retired |
 | Dual-CI provenance | executable run `33449162326` and governance run `33499392585` each pass 5/5 and bind their separate commits; selected executable-tree SHA is identical at `b57ef070664067f789424bf58f482f40087160a0e446e3e02aa2b1d45b4d9f53` |
-| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; every operation 2 remains locked |
+| PR #36 / V3-01-17 | exact head `8b3e2f595cbf6b7fd710627487808a674b05a383`; merged as `c2b1aec2d54dd90bcb486f8a68c97746b39963aa`; exact-main CI run `33527973264` 5/5 PASS; `V3-01-APP-037` consumed |
+| RC-10 | annotated `vf-v3-01-rc10` peels to `c2b1aec2d54dd90bcb486f8a68c97746b39963aa`; tag object `32bd6a78048a6ae92538a9195a1386318ebd72b8`; NO-GO; not deployed |
+| RC-10 governance rebind | G-01-A/G-02-A/G-03-A bound by `V3-01-APP-038` through `V3-01-APP-040`; bundle raw SHA `30f4ffd9353a00b7fdf97d0998dce43798937a2c577ca3fa618c947bbb8040e1`; scope SHA `a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0`; bundle unmounted; governance G-08 and governance-main CI pending |
+| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 operations have not run and operation 1 has no authority; every operation 2 remains locked |
 | Deployment/ingress/publish action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in

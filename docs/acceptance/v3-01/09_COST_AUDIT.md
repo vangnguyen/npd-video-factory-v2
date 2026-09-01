@@ -14,6 +14,7 @@
 | RC-9 governance rebind | VND | checked-in runtime budget 0; owner-approved conditional window/operation envelope 1,250/500 | 0 | 0 | 0 |
 | RC-9 operation 1 CI-provenance pre-call block | VND | retired conditional envelope 1,250/500 | 0 | 0 | 0 |
 | V3-01-17 remediation | VND | 0 | 0 | 0 | 0 |
+| RC-10 governance rebind | VND | checked-in runtime budget 0; conditional window/operation envelope 1,250/500 | 0 | 0 | 0 |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
 later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
@@ -32,8 +33,10 @@ timeout architecture does not expand the 500/1,250 VND owner envelope. The RC-9 
 that unchanged envelope and the 90/120-second timeouts to one exact scope/window only. A separately
 authorized RC-9 operation 1 later stopped at inner preflight on ambiguous CI provenance before a
 credential read, reservation, ledger mutation or provider call; cost remained 0 VND and the
-authority is retired. V3-01-17 is source-only and costs 0 VND. USD is not an accepted operating
-currency for this acceptance program.
+authority is retired. V3-01-17 is merged in RC-10 and costs 0 VND. The RC-10 governance bundle
+binds the unchanged 500/1,250 VND envelope offline but remains unmounted; no credential read,
+reservation or provider call occurred and operation 1 still requires separate authority. USD is
+not an accepted operating currency for this acceptance program.
 
 ## Required provider budget contract
 
