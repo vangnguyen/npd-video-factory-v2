@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-16; RC-7 operation 1 remains consumed/REVIEW_REQUIRED; RC-9 governance rebind is offline and unmounted
+SCOPE: merged V3-01-00 through V3-01-16 and PR #35 governance; RC-9 operation 1 blocked pre-call on CI provenance; V3-01-17 zero-call remediation in review
 RELEASE CANDIDATE: RC-9 256bda59eed028ddd642cdb0988c409c489fd655 LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: split provider 90s / controller 120s contract and exact RC-9 G-01/G-02/G-03 bundle validate offline; 0 calls, 0 reservation, 0 VND
+LATEST EVIDENCE: executable RC CI and governance main CI both pass 5/5, bind separate commits and have identical executable-tree hash; RC-9 operation 1 made 0 calls, 0 reservation, 0 VND
 DATE: 2026-09-01
-OWNER DECISION: G-02 RC-9 APPROVED FOR EXACT SCOPE/WINDOW ONLY; OPERATION 1 NOT APPROVED; OPERATION 2 LOCKED
+OWNER DECISION: RC-9 OPERATION-1 AUTHORITY RETIRED AFTER BLOCKED_PRE_CALL; OPERATION 2 LOCKED; V3-01-17 REQUIRES G-08
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -40,7 +40,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
 - no production-like target, deployed image digest or owner-accepted production-like DR drill;
-- RC-5 OpenAI Vision provider execution succeeded once, but post-call serialization lost structured payload/request-level IDs and hashes. RC-6 operation 1 later stopped pre-call on an authority-limits mismatch. RC-7 operation 1 passed those prior boundaries but timed out once at about 60 seconds without provider request ID/usage; it is consumed/`REVIEW_REQUIRED`, actual cost is unknown and operation 2 remains locked. V3-01-15 merged as RC-8, but RC-8 still shared one 60-second provider/controller deadline and is retired from live acceptance while V3-01-16 splits the envelope offline;
+- RC-5 OpenAI Vision provider execution succeeded once, but post-call serialization lost structured payload/request-level IDs and hashes. RC-6 operation 1 later stopped pre-call on an authority-limits mismatch. RC-7 operation 1 passed those prior boundaries but timed out once at about 60 seconds without provider request ID/usage; it is consumed/`REVIEW_REQUIRED`, actual cost is unknown and operation 2 remains locked. V3-01-15 merged as RC-8, but RC-8 still shared one deadline. V3-01-16 split the envelope in RC-9; RC-9 operation 1 then stopped pre-call because bootstrap CI provenance was ambiguous. V3-01-17 remediates that contract offline, but no accepted real-provider evidence exists;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
 - GitHub `main` is not protected.
@@ -86,6 +86,13 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - V3-01-16 is a zero-call source remediation that replaces the shared timeout field with explicit
   provider 90-second and controller 120-second fields; no real-provider, production-path or quality
   acceptance axis is promoted;
+- PR #35 merged governance-only as `e48d7edebcbfb1bd4113c2e40ab4ce46c186f6e4`; governance CI
+  `33499392585` passed 5/5 while executable RC-9 CI `33449162326` remained separately bound to
+  `256bda59eed028ddd642cdb0988c409c489fd655`; RC-9 operation 1 then blocked pre-call with 0
+  calls/0 VND and is not consumed, but its authority is retired;
+- V3-01-17 dual-CI evidence SHA-256 is
+  `95af692024f6573b839d8df384c02bf08581cef59b255b216c225bbde0b039e0`; both selected executable
+  tree hashes equal `b57ef070664067f789424bf58f482f40087160a0e446e3e02aa2b1d45b4d9f53`;
 - operation-1 evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`, evidence SHA-256 `e94fcafcbab8adefb9506cb91d98010cdb1713ba79ce209ec2dfdb154f97fd2d`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
@@ -117,6 +124,9 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `V3-01-APP-029` for PR #31, and `V3-01-APP-030` through `V3-01-APP-032` for the bounded
   RC-7 G-01-A/G-02-A/G-03-A scope. Those three records alone did not authorize an operation; the
   later one-operation authority was consumed by the timed-out operation and grants no further use.
+  `V3-01-APP-033` authorized only PR #34; `V3-01-APP-034` through `V3-01-APP-036` bound the now
+  retired RC-9 G-01-A/G-02-A/G-03-A scope. PR #35's merge decision and its separately bounded
+  operation-1 authority are consumed/retired and grant no V3-01-17 or RC-10 authority.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -224,21 +234,20 @@ with virtual boundary and strict legacy/missing/mismatch rejection tests; it rem
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
-[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-16 sequence is defined in
+[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-17 sequence is defined in
 [`14_REMEDIATION_PR_PLAN.md`](14_REMEDIATION_PR_PLAN.md). No exception or expiry is recorded.
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #34 are consumed. The isolated RC-9 governance rebind requires a
-  new G-08 before merge.
-- **Deploy:** no; RC-9 is NO-GO, not deployed and G-09 is pending.
+- **Merge:** decisions through PR #35 are consumed. V3-01-17 requires a new G-08 before merge.
+- **Deploy:** no; RC-9 is retired for future live acceptance, not deployed and G-09 is pending.
 - **Providers/platforms enabled:** none beyond deterministic local fixtures.
 - **Volume/concurrency/budget:** RC-5 operation 1 consumed exactly one attempt with no retry/fallback
   and recorded `137.6287 VND` actual cost; all RC-5 IDs are locked. RC-6 operation 1 is not consumed
   but its failed-window authority is retired and both RC-6 IDs are prohibited. RC-7 operation 1 is
-  consumed after one timeout, operation 2 is locked and RC-8 has no operation authority. RC-9 has
-  an unmounted 500/1,250 VND governance envelope but neither operation is authorized and checked-in
-  budget remains 0.
+  consumed after one timeout, operation 2 is locked and RC-8 has no operation authority. RC-9
+  operation 1 blocked pre-call with 0 calls/0 VND and is not consumed, but its authority is retired;
+  operation 2 is locked and checked-in budget remains 0.
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited:** any further provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.

@@ -10,9 +10,12 @@ pre-call on an authority-limits contract mismatch with 0 provider calls, 0 VND c
 future authority/runner contract offline. RC-7 operation 1 then entered the provider path once and
 timed out at about 60 seconds; it is consumed/`REVIEW_REQUIRED`, actual cost is unknown and
 operation 2 is locked. V3-01-15 remediates timeout evidence offline. V3-01-16 then splits the
-provider HTTP timeout to 90 seconds from the controller hard envelope at 120 seconds and RC-9 binds
-that contract, fresh operation IDs and the owner-approved G-02 scope in an unmounted governance
-bundle. Neither RC-9 operation is authorized. These events are fail-closed, not accepted
+provider HTTP timeout to 90 seconds from the controller hard envelope at 120 seconds and RC-9 bound
+that contract, fresh operation IDs and the owner-approved G-02 scope. PR #35 merged the governance
+scope, then a separately authorized operation 1 stopped before credential read, reservation, ledger
+mutation or provider dispatch because the bootstrap conflated executable-RC CI and governance-main
+CI. Operation 1 is not consumed but its authority is retired; operation 2 is locked. V3-01-17
+remediates that provenance contract offline. These events are fail-closed, not accepted
 real-provider output, so no acceptance axis changes. `I/M/R/P/Q` mean
 implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base

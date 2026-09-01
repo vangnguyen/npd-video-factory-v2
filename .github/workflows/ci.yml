@@ -415,6 +415,17 @@ jobs:
           grep -qx 'PROVIDER_HTTP_TIMEOUT_SECONDS=90' .env.example
           grep -qx 'CONTROLLER_HARD_TIMEOUT_SECONDS=120' .env.example
           ! git grep -I -n -E '^(PROVIDER_REQUEST_TIMEOUT_SECONDS=|[[:space:]]+PROVIDER_REQUEST_TIMEOUT_SECONDS:)' -- .env.example docker-compose.yml deploy
+      - name: Verify V3-01-17 dual-CI provenance boundary
+        run: |
+          grep -Fq 'class ProviderAcceptanceCiProvenance' apps/api/app/provider_ci_provenance.py
+          grep -Fq 'one CI run cannot satisfy both provenance roles' apps/api/app/provider_ci_provenance.py
+          grep -Fq 'governance diff contains a non-allowlisted path' apps/api/app/provider_ci_provenance.py
+          grep -Fq 'governance merge changed the executable tree' apps/api/app/provider_ci_provenance.py
+          grep -Fq 'credential_reads": 0' scripts/v3_01_ci_provenance.py
+          grep -Fq 'provider_calls": 0' scripts/v3_01_ci_provenance.py
+          grep -Fq 'reservation_vnd": "0"' scripts/v3_01_ci_provenance.py
+          ! git grep -I -n 'exact_main_ci_run_id' -- apps/api/app scripts
+          python -c 'import json; from pathlib import Path; p=Path("docs/acceptance/v3-01/evidence/rc9-openai-vision-operation-1/operation-1-blocked-0-call.json"); d=json.loads(p.read_text()); assert d["verdict"] == "BLOCKED_PRE_CALL"; assert d["operation_consumed"] is False; assert d["provider_calls"] == 0; assert d["reservation_vnd"] == "0"; assert d["actual_cost_vnd"] == "0"; assert d["ledger_counts"] == "0|0|0|0"; assert d["operation_2_status"] == "LOCKED"; assert d["production_verdict"] == "NO-GO"'
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json
