@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC10-VISION-REBIND-001",
+  "test_case_id": "V3-01-RC10-VISION-GATE-REBIND",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03"
+  ],
+  "axis": "mock-tested",
+  "commit_sha": "c2b1aec2d54dd90bcb486f8a68c97746b39963aa",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-validator",
+    "model_or_workflow": "openai-vision/gpt-5-mini RC-10 governance bundle",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0",
+  "started_at_utc": "2026-09-01T15:48:09Z",
+  "completed_at_utc": "2026-09-01T16:00:26Z",
+  "duration_seconds": 737.0,
+  "result": "PASS",
+  "assertion": "PR #36 merged at exact main c2b1aec2d54dd90bcb486f8a68c97746b39963aa, exact-main CI run 33527973264 passed 5/5, and annotated vf-v3-01-rc10 peels to that commit. V3-01-17 binds executable-RC CI and governance-main CI as distinct roles; the former is verified and the latter remains pending until governance merge. The executable helper derived two fresh RC-10 operation IDs. G-01-A, G-02-A and G-03-A were rebound to exact RC, provider/model/capability, asset/RightsRecord, dated VND and 90/120 timeout envelope and identical execution-scope hash. The bundle validates offline but is unmounted; operation 1 requires separate owner authority and operation 2 is locked. No credential was read, no external call or reservation occurred and actual cost was 0 VND. No acceptance axis is promoted to real-provider or production-path PASS.",
+  "correlation_id": "v3-01-rc10-vision-rebind-c2b1aec",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Codex deterministic governance-bundle reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On exact RC-10 commit c2b1aec2d54dd90bcb486f8a68c97746b39963aa, validate docs/acceptance/v3-01/V3-01-GATE-RC10-OPENAI-VISION-A.json with ProviderGateBundle and verify its raw SHA-256, embedded approval hashes, RightsRecord hash, derived operation IDs, canonical 90/120 timeout and VND authority limits and execution-scope SHA-256. Verify executable RC CI run 33527973264 independently. Do not treat governance-main CI as complete until the governance PR merges and exact-main CI succeeds. Do not mount the bundle, read the credential, enable execution or run either operation without a separate owner decision."
+}
