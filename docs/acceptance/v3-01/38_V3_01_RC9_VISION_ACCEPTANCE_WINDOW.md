@@ -1,5 +1,8 @@
 # V3-01 RC-9 Vision acceptance window
 
+The decision boundary below is the historical pre-operation snapshot. The authoritative final
+window outcome is recorded at the end of this document.
+
 ## Decision boundary
 
 ```text
@@ -130,3 +133,29 @@ unknown and its 500 VND ledger amount is a safety charge only. RC-7 operation 2 
 retained as NO-GO evidence that a shared provider/controller deadline was unsuitable and has no live
 authority. RC-9 supersedes that timeout architecture only; it does not upgrade any real-provider,
 production-path or human-quality acceptance axis.
+
+## Final window outcome
+
+The governance-only PR #35 merged as
+`e48d7edebcbfb1bd4113c2e40ab4ce46c186f6e4`, and its Video Factory V2 CI run
+`33499392585` completed successfully with 5/5 jobs. A later separate owner decision authorized only
+RC-9 operation 1 inside this window.
+
+Manual preflight stopped at the inner runner before credential read, reservation, ledger mutation
+or provider dispatch. The bootstrap bound the executable RC CI run `33449162326`, while the
+launcher supplied governance-main CI run `33499392585`; both runs were legitimate but represented
+different roles that the old single field could not express.
+
+```text
+RC-9 OPERATION 1: BLOCKED_PRE_CALL; NOT CONSUMED; AUTHORITY RETIRED
+PROVIDER CALLS / ATTEMPTS: 0 / 0
+RESERVATION / ACTUAL COST: 0 VND / 0 VND
+LEDGER: 0|0|0|0
+RC-9 OPERATION 2: LOCKED
+PRODUCTION: NO-GO
+```
+
+No current authority from this window may be reused. V3-01-17 provides a dual-CI provenance
+contract offline; because it changes executable contract code, future live acceptance requires a
+new RC-10, fresh operation IDs/scope/window, G-01-A/G-02-A/G-03-A rebind and separate operation-1
+authority. See [`39_V3_01_17_CI_PROVENANCE_BINDING.md`](39_V3_01_17_CI_PROVENANCE_BINDING.md).

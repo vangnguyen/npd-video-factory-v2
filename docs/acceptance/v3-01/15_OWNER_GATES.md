@@ -1,6 +1,6 @@
 # Owner gate register
 
-G-00 and the completed bounded G-08 actions through PR #34 have approval records or recorded owner
+G-00 and the completed bounded G-08 actions through PR #35 have approval records or recorded owner
 decisions. RC-4 remains
 evidence of a fail-closed executable-contract blocker. RC-5 operation 1 consumed its exact G-01-A,
 G-02-A, G-03-A and separate operation authority; provider execution succeeded but acceptance
@@ -10,23 +10,25 @@ limits-contract mismatch, and that authority is retired. Operation 2 is locked. 
 RC-5 and RC-6 authorities grant no further call. RC-7 operation 1 later ran once, timed out and is
 consumed/`REVIEW_REQUIRED`; its authority is retired and operation 2 is locked. RC-8 is locked
 NO-GO and retired from live acceptance because its provider/controller timeout
-architecture remained shared. It has no operation authority. RC-9 is locked with a verified,
-unmounted governance bundle. G-01-A/G-02-A/G-03-A are rebound to its exact scope and window, but
-operation 1 still needs a separate owner decision and operation 2 remains locked. Use
+architecture remained shared. It has no operation authority. RC-9 operation 1 later received a
+separate bounded authority but stopped before credential read, reservation, ledger mutation or
+provider dispatch on an ambiguous single-CI bootstrap field. It is not consumed, but that authority
+is retired; operation 2 remains locked. V3-01-17 requires a new G-08 and future execution requires
+a fresh RC-10 rebind and separate operation authority. Use
 `schemas/approval-record.schema.json` for each later decision; no approval is implied by CI success,
 an RC tag or the failed attempt.
 
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
 | G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
-| G-01 | real-provider credential aliases/scopes | APPROVED/rebound to exact RC-9 by `V3-01-APP-034`; no operation authority | only `openai-vision/gpt-5-mini/vision` and alias `secret://openai/codex-video`; no credential-value read before separate operation authority |
-| G-02 | VND provider budgets and cost controls | APPROVED/rebound to exact RC-9 by `V3-01-APP-035`; no operation authority | 90s provider / 120s controller, 500 VND/operation, 1,250 VND/window, one attempt, no retry/fallback, exact dated scope only |
-| G-03 | owned inputs, rights and provenance policy | APPROVED/rebound to exact RC-9 by `V3-01-APP-036`; no operation authority | exact owned image/RightsRecord for Vision acceptance only; no training, resale, publishing or other use |
+| G-01 | real-provider credential aliases/scopes | historical RC-9 approval retired after pre-call block; RC-10 rebind pending | only `openai-vision/gpt-5-mini/vision` and alias `secret://openai/codex-video`; no credential-value read before new approval and authority |
+| G-02 | VND provider budgets and cost controls | historical RC-9 approval retired after pre-call block; RC-10 rebind pending | any future record must separately bind the new RC, dual-CI provenance, 90s/120s envelope, VND budget and dated window |
+| G-03 | owned inputs, rights and provenance policy | historical RC-9 approval retired after pre-call block; RC-10 rebind pending | exact owned image/RightsRecord only after a fresh scope; no training, resale, publishing or other use |
 | G-04 | production-like staging execution | PENDING | locked commit/images, isolated topology and rollback plan |
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation PR merge | decision for PR #34 consumed | a new explicit G-08 decision is required before merging the RC-9 governance rebind |
+| G-08 | remediation PR merge | decisions through PR #35 consumed | a new explicit G-08 decision is required before merging V3-01-17 |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
@@ -39,14 +41,15 @@ IDs, expiry and decision. Changing commit, artifact, provider, platform target, 
 time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, LOCAL/CI validation, redacted evidence and a
-draft zero-call RC-9 governance rebind PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
-#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34 merges are complete and their G-08 decisions cannot be
+draft zero-call V3-01-17 remediation PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
+#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35 merges are complete and their G-08 decisions cannot be
 reused. RC-3 IDs are locked, RC-4 remains blocker evidence, and RC-5 operation 1 is consumed/
 `REVIEW_REQUIRED`; RC-5 operation 2 is locked. RC-6 operation 1 is blocked pre-call/not consumed,
 its failed-window authority is retired, and operation 2 is locked. RC-7 operation 1 is consumed after
 one timeout, its authority is retired, and operation 2 is locked. RC-8 is retired from live
-acceptance and has no operation authority. RC-9 G-01-A/G-02-A/G-03-A are rebound only inside the
-unmounted governance artifact; operation 1 remains unapproved and operation 2 remains locked.
+acceptance and has no operation authority. RC-9 operation 1 is blocked pre-call/not consumed, its
+authority and G-01-A/G-02-A/G-03-A scope are retired, and operation 2 remains locked. No RC-10
+approval, operation or window exists.
 Runtime defaults remain disabled.
 Current authority includes no
 further merge, credential-value read, provider call,

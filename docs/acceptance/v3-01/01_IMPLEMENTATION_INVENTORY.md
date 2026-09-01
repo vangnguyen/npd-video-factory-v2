@@ -18,8 +18,12 @@ V3-01-14 unifies the runner/bundle limits model in locked RC-7. RC-7 operation 1
 once and is consumed/`REVIEW_REQUIRED`; operation 2 is locked. V3-01-15 adds timeout-phase evidence
 offline. V3-01-16 splits provider HTTP timeout at 90 seconds from the controller hard envelope at
 120 seconds in locked RC-9. Fresh RC-9 IDs, scope, budget window and G-01-A/G-02-A/G-03-A records
-validate offline in an unmounted bundle; operation 1 still requires separate authority and
-operation 2 is locked.
+validated offline in an unmounted bundle. PR #35 later merged that governance-only scope and its
+exact-main CI passed. Separately authorized operation 1 then stopped before credential read,
+reservation, ledger mutation or provider dispatch because the bootstrap conflated executable-RC CI
+with governance-main CI. It remains not consumed with 0 calls/0 VND, but its authority is retired;
+operation 2 is locked. V3-01-17 introduces a canonical dual-CI provenance model and zero-call
+collector; because it changes executable contract code, future acceptance requires RC-10.
 None of these local/CI entries establish production-path, accepted real-provider or quality
 acceptance.
 
@@ -86,7 +90,7 @@ acceptance.
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
 | Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
-| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, `evidence_serialization.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, gate-loader/RC binding, redacted error ledger, canonical evidence/fallback/limits tests, exact RC-9 bundle guard and phase-specific split-timeout tests | PostgreSQL-backed local contract passes; RC-5 proved the durable success/cost path but incomplete evidence prevents acceptance; RC-6 failed closed; RC-7 timed out once; RC-9 is verified offline with no operation authority |
+| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, `provider_ci_provenance.py`, `evidence_serialization.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, gate-loader/RC binding, dual-CI provenance, redacted error ledger, canonical evidence/fallback/limits tests, exact RC-9 bundle guard and phase-specific split-timeout tests | PostgreSQL-backed local contract passes; RC-5 proved the durable success/cost path but incomplete evidence prevents acceptance; RC-6 failed closed; RC-7 timed out once; RC-9 failed closed before provider dispatch on bootstrap provenance ambiguity; future live acceptance requires RC-10 |
 | Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart/configuration tests and one bounded RC-5 operation | RC-5 recorded `137.6287 VND` actual cost within a 500 VND reservation; production-like multi-instance and accepted provider evidence remain absent |
 | Upload malware boundary | quarantine state, archive-deny policy, deterministic EICAR contract and internal clamd client | `test_auto_edit_analysis.py`, migration replay | Local/mock PASS; clamd and edge/WAF not deployed |
 | Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests | Schema/hook implemented; real rights unaccepted |

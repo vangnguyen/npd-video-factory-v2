@@ -1,0 +1,63 @@
+{
+  "contract": {
+    "executable_rc_ci": {
+      "commit_sha": "256bda59eed028ddd642cdb0988c409c489fd655",
+      "completed_at_utc": "2026-08-31T23:10:22Z",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "role": "executable_rc",
+      "run_id": 33449162326,
+      "status": "completed",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    "executable_rc_commit": "256bda59eed028ddd642cdb0988c409c489fd655",
+    "executable_tree_sha256": "b57ef070664067f789424bf58f482f40087160a0e446e3e02aa2b1d45b4d9f53",
+    "governance_changed_paths": [
+      "apps/api/tests/test_provider_gate_loader.py",
+      "apps/api/tests/test_v3_01_evidence_harness.py",
+      "docs/acceptance/v3-01/00_BASELINE.md",
+      "docs/acceptance/v3-01/01_IMPLEMENTATION_INVENTORY.md",
+      "docs/acceptance/v3-01/02_ACCEPTANCE_MATRIX.csv",
+      "docs/acceptance/v3-01/02_ACCEPTANCE_MATRIX.md",
+      "docs/acceptance/v3-01/03_PROVIDER_AUDIT.md",
+      "docs/acceptance/v3-01/09_COST_AUDIT.md",
+      "docs/acceptance/v3-01/13_GAP_REGISTER.csv",
+      "docs/acceptance/v3-01/13_GAP_REGISTER.md",
+      "docs/acceptance/v3-01/14_REMEDIATION_PR_PLAN.md",
+      "docs/acceptance/v3-01/15_OWNER_GATES.md",
+      "docs/acceptance/v3-01/16_FINAL_VERDICT.md",
+      "docs/acceptance/v3-01/38_V3_01_RC9_VISION_ACCEPTANCE_WINDOW.md",
+      "docs/acceptance/v3-01/V3-01-GATE-RC9-OPENAI-VISION-A.json",
+      "docs/acceptance/v3-01/approvals/V3-01-APP-033.json",
+      "docs/acceptance/v3-01/approvals/V3-01-APP-034.json",
+      "docs/acceptance/v3-01/approvals/V3-01-APP-035.json",
+      "docs/acceptance/v3-01/approvals/V3-01-APP-036.json",
+      "evidence/v3-01/vf-v3-01-20260831T232220Z-256bda5/SHA256SUMS.txt",
+      "evidence/v3-01/vf-v3-01-20260831T232220Z-256bda5/final/status.json",
+      "evidence/v3-01/vf-v3-01-20260831T232220Z-256bda5/matrix/evidence-EV-V3-RC9-VISION-REBIND-001.json",
+      "evidence/v3-01/vf-v3-01-20260831T232220Z-256bda5/provider/rc9-vision-gate-rebind.json",
+      "evidence/v3-01/vf-v3-01-20260831T232220Z-256bda5/run-manifest.json"
+    ],
+    "governance_executable_tree_sha256": "b57ef070664067f789424bf58f482f40087160a0e446e3e02aa2b1d45b4d9f53",
+    "governance_main_ci": {
+      "commit_sha": "e48d7edebcbfb1bd4113c2e40ab4ce46c186f6e4",
+      "completed_at_utc": "2026-09-01T10:54:42Z",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "role": "governance_main",
+      "run_id": 33499392585,
+      "status": "completed",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    "governance_main_commit": "e48d7edebcbfb1bd4113c2e40ab4ce46c186f6e4",
+    "version": 1
+  },
+  "credential_reads": 0,
+  "production_verdict": "NO-GO",
+  "provenance_sha256": "95af692024f6573b839d8df384c02bf08581cef59b255b216c225bbde0b039e0",
+  "provider_calls": 0,
+  "reservation_vnd": "0",
+  "verdict": "PASS"
+}
