@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260902T143651Z-c2b1aec-op1",
+  "started_at_utc": "2026-09-02T14:36:51.411977+00:00",
+  "completed_at_utc": "2026-09-02T14:37:19.241249+00:00",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "c2b1aec2d54dd90bcb486f8a68c97746b39963aa",
+  "base_sha": "fd78a1690a5a2fd7b07e9e7822deda834f02ea6d",
+  "release_candidate": "vf-v3-01-rc10 locked; operation 1 real-provider evidence PASS; Vision consecutive acceptance 1/2; operation 2 locked; NO-GO; not deployed",
+  "environment": "LOCAL",
+  "container_images": [
+    {
+      "name": "npd-video-factory-v2:rc10-operation1-c2b1aec",
+      "digest": "sha256:7beaeb6622201617b0f30ed9f26f8d93845777507d6141d91169cb42936568d6"
+    }
+  ],
+  "database_migration_version": "0012_v3_01_11",
+  "config_fingerprint_redacted": "rc10-openai-vision-op1-provider90-controller120-one-attempt-no-retry-no-fallback-500-vnd-reservation-operation2-locked",
+  "providers": [
+    {
+      "capability": "vision",
+      "provider": "openai-vision",
+      "model_or_workflow": "gpt-5-mini / Responses API / strict structured output",
+      "region": "provider-managed",
+      "credential_alias": "secret://openai/codex-video",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "V3-01-RC10-OPENAI-VISION-OPERATION-1",
+    "STRUCTURED-OUTPUT-SCHEMA",
+    "ACTUAL-VND-USAGE-RECEIPT",
+    "DUPLICATE-OPERATION-BLOCK",
+    "RIGHTS-RECORD-BINDING",
+    "SECRET-CONTAINMENT"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "governance/operation-1-authority.json",
+    "matrix/evidence-EV-V3-RC10-VISION-OP1-PASS-001.json",
+    "provider/operation-1-result.json",
+    "provider/operation-1-summary.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved_window": 1250,
+    "reserved_operation": 500,
+    "actual": 125.18142,
+    "reserved_after_reconciliation": 0,
+    "external_attempts": 1,
+    "retries": 0,
+    "fallbacks": 0,
+    "operation_2_attempts": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-01",
+    "G-02",
+    "G-03"
+  ],
+  "result": "PASS"
+}
