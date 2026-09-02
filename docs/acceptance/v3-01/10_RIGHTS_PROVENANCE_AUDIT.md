@@ -45,7 +45,10 @@ audit. V3-01-10 creates one deterministic internal test card entirely from check
 [`assets/g03-a-owned-vision-test.png`](assets/g03-a-owned-vision-test.png), SHA-256
 `a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e`. Its record
 [`V3-01-RIGHTS-G03A-001`](rights/V3-01-RIGHTS-G03A-001.json) is owner-approved only for the exact
-RC-3 Vision acceptance input. Publishing, training, resale and every other use remain prohibited.
-This narrow approval does not provide broader real-asset or final-render rights coverage.
+Vision acceptance input and was rebound to RC-10 by `V3-01-APP-040`. RC-10 Operation 1 retained
+the exact asset/RightsRecord hashes and completed with structured provider evidence under that
+narrow purpose. Publishing, training, resale and every other use remain prohibited. This one PASS
+does not provide broader real-asset, retention, final-render or public-output rights coverage;
+Operation 2 remains not approved/locked.
 
 Open gap: `V3-01-GAP-013`.

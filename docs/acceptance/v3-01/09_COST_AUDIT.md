@@ -15,6 +15,7 @@
 | RC-9 operation 1 CI-provenance pre-call block | VND | retired conditional envelope 1,250/500 | 0 | 0 | 0 |
 | V3-01-17 remediation | VND | 0 | 0 | 0 | 0 |
 | RC-10 governance rebind | VND | checked-in runtime budget 0; conditional window/operation envelope 1,250/500 | 0 | 0 | 0 |
+| RC-10 operation 1 PASS | VND | 1,250 window / 500 operation | 125.1814 actual; 0 reserved after reconciliation | 125.181420 | 1 |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
 later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
@@ -34,9 +35,12 @@ that unchanged envelope and the 90/120-second timeouts to one exact scope/window
 authorized RC-9 operation 1 later stopped at inner preflight on ambiguous CI provenance before a
 credential read, reservation, ledger mutation or provider call; cost remained 0 VND and the
 authority is retired. V3-01-17 is merged in RC-10 and costs 0 VND. The RC-10 governance bundle
-binds the unchanged 500/1,250 VND envelope offline but remains unmounted; no credential read,
-reservation or provider call occurred and operation 1 still requires separate authority. USD is
-not an accepted operating currency for this acceptance program.
+bound the unchanged 500/1,250 VND envelope. After PR #37 merged, dual-CI provenance passed and a
+separately authorized operation 1 ran once: 500 VND was atomically reserved, 1,996 input and 2,134
+output tokens produced an actual `125.181420 VND` receipt, the durable charge rounded to
+`125.1814 VND`, and reserved VND returned to zero. No retry or fallback occurred. The current
+evidence-only PR makes no provider call, reads no credential and costs 0 VND. USD is not an accepted
+operating currency for this acceptance program.
 
 ## Required provider budget contract
 
@@ -99,11 +103,19 @@ one, no retry and no fallback. `EV-V3-RC9-VISION-REBIND-001` verifies the owner-
 G-02 record, canonical budget hash and unmounted bundle offline. Operation 1 still requires separate
 authority and operation 2 remains locked.
 
+RC-10 evidence `EV-V3-RC10-VISION-OP1-PASS-001` records one complete real-provider cost receipt:
+1,996 input tokens, 0 cached tokens, 2,134 output tokens and `125.181420 VND` actual cost. Atomic
+reservation and reconciliation passed, with zero VND reserved after completion. Operation 1 is
+consumed/succeeded. Operation 2 remains not approved/locked and no budget authority is inferred for
+it.
+
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.
 
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit
 `0f0854466655d2f36cfa8b57785000097b220c4c`, plus the failed bounded-operation evidence above;
-the RC-5 cost record, exact-main V3-01-13 serializer evidence, offline RC-6/RC-7/RC-9 rebind evidence
-and the RC-7 timeout record do not close or production-verify it.
+the RC-5 cost record, exact-main V3-01-13 serializer evidence, offline RC-6/RC-7/RC-9/RC-10 rebind
+evidence, the RC-7 timeout record and the complete RC-10 operation-1 receipt do not close or
+production-verify it. Vision is only 1/2 consecutive PASS, and production-like multi-instance cost
+safety remains unaccepted.

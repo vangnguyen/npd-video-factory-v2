@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01 RC-10 OpenAI Vision operation 1 evidence review",
+  "operation": {
+    "operation_key": "v3-01-rc10-openai-vision-call-01",
+    "status": "succeeded",
+    "consumed": true,
+    "attempts": 1,
+    "retries": 0,
+    "fallbacks": 0
+  },
+  "provider": {
+    "provider_key": "openai-vision",
+    "provider_name": "openai",
+    "model_requested": "gpt-5-mini",
+    "model_returned": "gpt-5-mini-2025-08-07",
+    "provider_request_id": "req_1384cf2d00534d5f8f23a604cc51a1ee",
+    "client_request_id": "vf-276955d628ad4e12a3b5e06bdebe7222",
+    "provider_response_id_sha256": "2fa8473b49ecf408685b90cb84fca83ae767e0c1852b40dfe9737fd0bbd32961",
+    "request_sha256": "138d70333ff7df29f6c986b30f5c251f6c5b6b3ee7d969846f73e2931a4f22a8",
+    "response_sha256": "02f8efbc3da74ecd8b172dc637fcdfdd96bafb207ef9f8789572e978c2b3d61f",
+    "latency_ms": 27790.325,
+    "timeout": null
+  },
+  "structured_output": {
+    "status": "PASS",
+    "frames": 1,
+    "primary_evidence_written": true,
+    "fallback_used": false
+  },
+  "usage": {
+    "input_tokens": 1996,
+    "cached_input_tokens": 0,
+    "output_tokens": 2134
+  },
+  "cost": {
+    "currency": "VND",
+    "reservation_vnd": "500",
+    "actual_cost_vnd": "125.181420",
+    "charged_cost_vnd": "125.1814",
+    "reserved_after_reconciliation_vnd": "0.0000",
+    "acceptance_window_limit_vnd": "1250"
+  },
+  "durable_safety": {
+    "backend": "postgresql",
+    "operations": 1,
+    "attempts": 1,
+    "budget_days": 1,
+    "circuits": 1,
+    "circuit_state": "closed",
+    "circuit_consecutive_failures": 0,
+    "duplicate_preflight": "DUPLICATE_OPERATION_BLOCKED",
+    "operation_2_ledger_row": null
+  },
+  "bindings": {
+    "rc_tag": "vf-v3-01-rc10",
+    "rc_commit": "c2b1aec2d54dd90bcb486f8a68c97746b39963aa",
+    "governance_main_commit": "fd78a1690a5a2fd7b07e9e7822deda834f02ea6d",
+    "executable_rc_ci_run_id": 33527973264,
+    "governance_main_ci_run_id": 33532594395,
+    "dual_ci_provenance_sha256": "fcc59170f09dcebe5abe8afdb0e2ae76f0509aecdb525a22c652dae64c752a49",
+    "executable_tree_sha256": "f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c",
+    "bundle_sha256": "30f4ffd9353a00b7fdf97d0998dce43798937a2c577ca3fa618c947bbb8040e1",
+    "execution_scope_sha256": "a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0",
+    "asset_sha256": "a294fbe16817cef29447e43ff6d510edca01e055295da188d6b87663179c044e",
+    "rights_record_sha256": "f469930a74b477751fc4417774b486ccbf2d7822487478875e099552c83e06ba",
+    "operation_authority_sha256": "c47fc135155bf985af9f5a16f6f921ecb1879fecbd563a660d1cfe4a3551658d",
+    "source_evidence_sha256": "11fd1f7cb8eca120964033aba098e051d2d380713c52ceffec02979a77c9a620"
+  },
+  "secret_containment": {
+    "status": "PASS",
+    "secret_recorded": false,
+    "real_key_pattern_matches": 0
+  },
+  "post_run": {
+    "runner_stopped": true,
+    "gate_unmounted": true,
+    "postgresql_acceptance_stopped_cleanly": true,
+    "ledger_volume_preserved": true,
+    "exact_rc10_worktree_clean": true
+  },
+  "acceptance": {
+    "provider_execution": "SUCCESS",
+    "evidence_completeness": "PASS",
+    "operation_1_real_provider_tested": "PASS",
+    "vision_consecutive_status": "1_OF_2_PASS",
+    "operation_2": "NOT_APPROVED_LOCKED",
+    "production_verdict": "NO-GO"
+  }
+}

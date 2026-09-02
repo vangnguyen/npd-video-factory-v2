@@ -10,6 +10,12 @@ RC-7 operation 1 later entered the provider path exactly once but timed out at t
 boundary. It is consumed/`REVIEW_REQUIRED`, actual cost is unknown, the 500 VND ledger amount is a
 safety charge only, and operation 2 remains locked.
 
+RC-10 operation 1 later completed successfully on the real OpenAI provider with strict structured
+output and complete request/response, usage, VND cost, durable ledger and secret-containment
+evidence. It is consumed/succeeded and is an operation-level real-provider PASS. Vision remains
+1/2 consecutive PASS; operation 2 is not approved/locked, and no production-path or quality axis is
+promoted.
+
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
 mock callables. Media resolution and OpenAI TTS entry points now consult the global external,
@@ -72,15 +78,20 @@ PR #36 merged V3-01-17 as `c2b1aec2d54dd90bcb486f8a68c97746b39963aa`; exact-main
 `33527973264` passed 5/5 and annotated `vf-v3-01-rc10` peels to that commit. The fresh RC-10
 operations, 90/120-second timeout envelope, 500/1,250 VND limits, asset/RightsRecord and
 G-01-A/G-02-A/G-03-A records validate offline under execution-scope SHA
-`a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0`. The bundle is unmounted;
-governance-main CI and separate operation-1 authority are pending. No credential read, reservation
-or provider call occurred.
+`a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0`. Governance-only PR #37
+merged as `fd78a1690a5a2fd7b07e9e7822deda834f02ea6d`; governance-main CI `33532594395` passed, and
+dual-CI provenance verified identical executable trees. After a separate exact operation authority,
+operation 1 ran once and completed successfully. Receipt
+`EV-V3-RC10-VISION-OP1-PASS-001` retains strict structured output, provider request ID, request and
+response hashes, 1,996 input/2,134 output tokens, `125.181420 VND` actual cost, 27,790.325 ms
+latency, the durable ledger, closed circuit, duplicate block and secret scan. The runner stopped and
+the bundle was unmounted after the attempt. Operation 2 remains locked.
 
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
 | ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-3 failed; RC-5 provider execution succeeded once but request-level evidence is incomplete; RC-6 operation 1 blocked pre-call; RC-7 operation 1 timed out once; RC-9 operation 1 blocked pre-call; RC-10 exact-main and offline rebind PASS, bundle unmounted | `BLOCKED` | G-08 for RC-10 governance PR, exact governance-main CI with dual-role provenance, then separate RC-10 operation-1 authority; PRO-001 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operation 1 PASS with complete real-provider evidence; one attempt, no retry/fallback; 1/2 consecutive PASS | `BLOCKED` pending second consecutive PASS, production path and quality | G-08 for this evidence PR, then a separate owner decision for RC-10 operation 2; PRO-001 |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -107,11 +118,12 @@ or provider call occurred.
 
 ## Cost and network state
 
-External provider history now contains the failed RC-3 attempt and one successful RC-5 provider
-execution, both with zero retry and zero fallback. RC-3 actual cost remains unknown. RC-5 recorded
-1,996 input tokens, 2,371 output tokens and `137.6287 VND` actual/charged cost inside a 500 VND
-reservation. The RC-5 structured payload/request IDs/hashes were not retained, so cost evidence is
-real but the Vision real-provider acceptance axis remains `NOT_TESTED`.
+External provider history contains the failed RC-3 attempt, the incomplete-evidence RC-5 success,
+the RC-7 timeout and the complete RC-10 operation-1 success, all with zero retry and zero fallback.
+RC-10 recorded 1,996 input tokens, 2,134 output tokens and `125.181420 VND` actual cost inside a
+500 VND reservation, then reconciled reserved VND to zero. Request/response hashes, provider request
+ID, structured output and primary evidence were retained. This is one operation-level
+real-provider PASS; aggregate Vision remains `NOT_TESTED` until a second consecutive PASS.
 
 Local evidence `EV-V3-PROVIDER-SAFETY-001` and V3-01-03 locked-commit evidence change
 only the implemented/mock-tested state for the control plane. They are not credentials, provider,
@@ -137,5 +149,7 @@ mock-tested 90/120 split timeout contract. `EV-V3-RC9-VISION-REBIND-001` proves 
 budget, timeout, asset, approval and scope hashes in an unmounted bundle. It grants no operation
 authority; provider, production-path and quality evidence remain absent.
 `EV-V3-RC10-VISION-REBIND-001` proves the exact RC-10 tag/commit, executable-RC CI, fresh operation
-derivation, dual-CI role separation and the new offline bundle hashes. Governance-main CI remains
-pending until governance merge, and neither operation is authorized.
+derivation, dual-CI role separation and the offline bundle hashes. `EV-V3-RC10-VISION-OP1-PASS-001`
+then proves the exact owner-authorized operation completed with complete structured, provider,
+usage/cost, rights, ledger, duplicate and secret-containment evidence. Operation 1 is consumed;
+operation 2 remains not approved/locked. No production-path or human-quality acceptance is implied.

@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-17; RC-10 locked; fresh governance scope validated offline and remains unmounted
+SCOPE: merged V3-01-00 through V3-01-17; RC-10 locked; Operation 1 PASS with complete real-provider evidence; Vision 1/2 consecutive PASS
 RELEASE CANDIDATE: RC-10 c2b1aec2d54dd90bcb486f8a68c97746b39963aa LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: executable RC-10 CI run 33527973264 PASS 5/5; dual-CI contract and bundle validate offline; governance-main CI remains pending; 0 credential reads/calls/reservation/VND
-DATE: 2026-09-01
-OWNER DECISION: PR #36 G-08 CONSUMED; RC-10 G-01-A/G-02-A/G-03-A REBOUND; OPERATION 1 NOT APPROVED; OPERATION 2 LOCKED
+LATEST EVIDENCE: EV-V3-RC10-VISION-OP1-PASS-001; request/response/usage/cost/rights/ledger/secret evidence complete; source receipt SHA 11fd1f7c...; evidence PR itself makes 0 calls/reads/spend
+DATE: 2026-09-02
+OWNER DECISION: PR #37 G-08 AND RC-10 OPERATION 1 AUTHORITY CONSUMED; OPERATION 1 SUCCEEDED/CONSUMED; OPERATION 2 NOT APPROVED/LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -28,8 +28,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | RC-3 actual cost unknown; RC-5 operation 1 recorded `137.6287 VND`; RC-6 operation 1 stopped pre-call with 0 VND; RC-7 operation 1 actual cost is unknown and its 500 VND ledger amount is a safety charge only; accepted provider evidence remains incomplete |
-| Rights/provenance | exact owned test image approved for Vision acceptance only; broader real/final-asset coverage absent |
+| Cost | RC-10 Operation 1 recorded 1,996 input, 2,134 output tokens and `125.181420 VND` actual cost; 500 VND reservation reconciled to zero; evidence PR costs 0 VND |
+| Rights/provenance | exact owned test image/RightsRecord and structured provider artifact PASS for Operation 1 Vision acceptance only; broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
@@ -40,7 +40,9 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
 - no production-like target, deployed image digest or owner-accepted production-like DR drill;
-- RC-5 OpenAI Vision provider execution succeeded once, but post-call serialization lost structured payload/request-level IDs and hashes. RC-6 operation 1 later stopped pre-call on an authority-limits mismatch. RC-7 operation 1 passed those prior boundaries but timed out once at about 60 seconds without provider request ID/usage; it is consumed/`REVIEW_REQUIRED`, actual cost is unknown and operation 2 remains locked. V3-01-16 split the timeout envelope in RC-9; RC-9 operation 1 then stopped pre-call because bootstrap CI provenance was ambiguous. V3-01-17 remediates that contract in locked RC-10, but its bundle is unmounted, governance-main CI and operation authority are pending, and no accepted real-provider evidence exists;
+- RC-10 Vision Operation 1 is a complete real-provider PASS, but Vision remains 1/2 consecutive
+  PASS. Operation 2 is not approved/locked, ASR and reframe acceptance remain absent, and no
+  production-path or human-quality evidence exists;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
 - GitHub `main` is not protected.
@@ -100,6 +102,16 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   provider/model/asset/RightsRecord, dual-CI role separation, 90/120 timeout, VND envelope, bundle
   SHA `30f4ffd9353a00b7fdf97d0998dce43798937a2c577ca3fa618c947bbb8040e1` and scope SHA
   `a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0` offline; bundle unmounted;
+- governance-only PR #37 merged as `fd78a1690a5a2fd7b07e9e7822deda834f02ea6d`; governance-main
+  CI `33532594395` passed, dual-CI provenance SHA is
+  `fcc59170f09dcebe5abe8afdb0e2ae76f0509aecdb525a22c652dae64c752a49`, and both executable trees
+  hash to `f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c`;
+- RC-10 Operation 1 evidence `EV-V3-RC10-VISION-OP1-PASS-001` records provider request
+  `req_1384cf2d00534d5f8f23a604cc51a1ee`, request SHA
+  `138d70333ff7df29f6c986b30f5c251f6c5b6b3ee7d969846f73e2931a4f22a8`, response SHA
+  `02f8efbc3da74ecd8b172dc637fcdfdd96bafb207ef9f8789572e978c2b3d61f`, complete structured
+  output, actual `125.181420 VND`, one attempt, duplicate block and secret scan PASS; source evidence
+  SHA is `11fd1f7cb8eca120964033aba098e051d2d380713c52ceffec02979a77c9a620`;
 - operation-1 evidence: `EV-V3-OPENAI-VISION-OP1-FAILED-001`, evidence SHA-256 `e94fcafcbab8adefb9506cb91d98010cdb1713ba79ce209ec2dfdb154f97fd2d`;
 - locked V3-01-06 code-only commit: `c1f50c4941929120b815fda33acd75acd07f454a`;
 - locked V3-01-07 code-only commit: `527fd1f482e4afa80105cb6ebab92545c10a79fc`;
@@ -112,7 +124,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `EV-V3-RC5-VISION-OP1-REVIEW-001`, `EV-V3-EVIDENCE-SERIALIZATION-001`,
   `EV-V3-RC6-VISION-REBIND-001`, `EV-V3-RC6-OP1-BLOCKED-001`,
   `EV-V3-AUTHORITY-LIMITS-001`, `EV-V3-RC7-VISION-REBIND-001`,
-  `EV-V3-RC7-VISION-OP1-TIMEOUT-001`, `EV-V3-PROVIDER-TIMEOUT-001`;
+  `EV-V3-RC7-VISION-OP1-TIMEOUT-001`, `EV-V3-PROVIDER-TIMEOUT-001`,
+  `EV-V3-RC10-VISION-OP1-PASS-001`;
 - remote publication ID/URL: none;
 - analytics snapshot IDs: none;
 - restore report: local disposable `EV-V3-DR-OBS-001` PASS; production-like restore remains absent;
@@ -134,7 +147,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
   `V3-01-APP-033` authorized only PR #34; `V3-01-APP-034` through `V3-01-APP-036` bound the now
   retired RC-9 G-01-A/G-02-A/G-03-A scope. PR #35's merge decision and its separately bounded
   operation-1 authority are consumed/retired. `V3-01-APP-037` authorizes only PR #36; `V3-01-APP-038`
-  through `V3-01-APP-040` bind the unmounted RC-10 scope and grant no operation authority.
+  through `V3-01-APP-040` bound the RC-10 scope. PR #37's G-08 and the separate exact Operation 1
+  authority are consumed by the successful single attempt; they grant no Operation 2 authority.
 
 V3-01-01 evidence is stored in `vf-v3-01-20260827T141431Z-9635fb3` as
 `EV-V3-SEC-001` and `EV-V3-SEC-002-PARTIAL`. It records zero external calls and zero spend and does
@@ -247,16 +261,19 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #36 are consumed. The RC-10 governance rebind requires a new G-08.
+- **Merge:** decisions through PR #37 are consumed. This RC-10 Operation 1 evidence PR requires a
+  new G-08.
 - **Deploy:** no; RC-10 is locked NO-GO, not deployed and G-09 is pending.
-- **Providers/platforms enabled:** none beyond deterministic local fixtures.
+- **Providers/platforms enabled:** none now. RC-10 Operation 1 used a bounded process-local scope
+  that was disabled/unmounted immediately after the single successful attempt.
 - **Volume/concurrency/budget:** RC-5 operation 1 consumed exactly one attempt with no retry/fallback
   and recorded `137.6287 VND` actual cost; all RC-5 IDs are locked. RC-6 operation 1 is not consumed
   but its failed-window authority is retired and both RC-6 IDs are prohibited. RC-7 operation 1 is
   consumed after one timeout, operation 2 is locked and RC-8 has no operation authority. RC-9
   operation 1 blocked pre-call with 0 calls/0 VND and is not consumed, but its authority is retired;
-  operation 2 is locked. RC-10 operations are unexecuted, operation 1 has no authority, operation 2
-  is locked, the bundle is unmounted and checked-in budget remains 0.
+  operation 2 is locked. RC-10 Operation 1 is consumed/succeeded with `125.181420 VND` actual cost;
+  RC-10 Operation 2 remains not approved/locked, the bundle is unmounted and checked-in budget
+  remains 0.
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited:** any further provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
