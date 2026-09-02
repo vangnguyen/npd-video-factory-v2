@@ -2,10 +2,11 @@
 
 Captured at `2026-08-27T12:02:08Z` (`2026-08-27 19:02:08 Asia/Ho_Chi_Minh`).
 Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
-Current checkpoint status updated after PR #37 merged the RC-10 governance rebind, both exact-role
-CI runs passed 5/5, and a separately authorized RC-10 Operation 1 completed with complete evidence.
-The operation is consumed/succeeded and Vision is 1/2 consecutive PASS. The gate is unmounted;
-Operation 2 remains not approved/locked and this evidence-only PR requires a new G-08.
+Current checkpoint status updated after evidence-only PR #38 merged, exact-main CI passed 5/5, and
+a separately authorized RC-10 Operation 2 completed with complete evidence. Operations 1 and 2 are
+consumed/succeeded and Vision is 2/2 consecutive PASS at operation-evidence level. The gate is
+unmounted; this consecutive-evidence PR requires a new G-08 before the aggregate PASS is official
+on `main`.
 
 ## Control state
 
@@ -14,12 +15,13 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: RC-10 c2b1aec2d54dd90bcb486f8a68c97746b39963aa; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: RC-10 Operation 1 evidence review; bundle unmounted; PR calls 0; PR cost 0 VND
+CURRENT SAFE PHASE: RC-10 Vision consecutive evidence review; bundle unmounted; PR calls 0; PR cost 0 VND
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #37 MERGE CONSUMED; RC-10 OPERATION 1 EVIDENCE PR REQUIRES A NEW G-08
-G-01-A / G-02-A / G-03-A: CONSUMED BY EXACT RC-10 OPERATION 1; NO OPERATION 2 AUTHORITY
-RC-10 OPERATION 1: PASS; CONSUMED / SUCCEEDED; VISION 1/2 CONSECUTIVE PASS
-RC-10 OPERATION 2: LOCKED; NOT EXECUTED
+G-08: PR #38 MERGE CONSUMED; RC-10 CONSECUTIVE EVIDENCE PR REQUIRES A NEW G-08
+G-01-A / G-02-A / G-03-A: CONSUMED BY EXACT RC-10 OPERATIONS 1 AND 2; NO FURTHER OPERATION AUTHORITY
+RC-10 OPERATION 1: PASS; CONSUMED / SUCCEEDED
+RC-10 OPERATION 2: PASS; CONSUMED / SUCCEEDED; VISION 2/2 CONSECUTIVE PASS
+RC-10 FURTHER VISION OPERATION: NOT REQUIRED; NOT AUTHORIZED
 RC-9 OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; PROVIDER CALLS 0; COST 0 VND; AUTHORITY RETIRED
 RC-9 OPERATION 2: LOCKED; NOT EXECUTED
 RC-7 OPERATION 1: FAILED PROVIDER_TIMEOUT; REVIEW_REQUIRED; CONSUMED; NO RETRY
@@ -114,7 +116,7 @@ outside the repository; this record stores only its identifier and hash, not an 
 | Executable RC CI | [Video Factory V2 CI run 33449162326](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33449162326), 5/5 success on exact RC-9 `256bda59eed028ddd642cdb0988c409c489fd655` |
 | Governance main CI | [Video Factory V2 CI run 33499392585](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33499392585), 5/5 success on post-PR #35 main `e48d7edebcbfb1bd4113c2e40ab4ce46c186f6e4` |
 | Current executable RC CI | [Video Factory V2 CI run 33527973264](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33527973264), 5/5 success on exact RC-10 `c2b1aec2d54dd90bcb486f8a68c97746b39963aa` |
-| Current governance main CI | pending RC-10 governance PR merge; cannot be substituted by executable RC CI |
+| Current governance main CI | [Video Factory V2 CI run 33650857422](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/33650857422), 5/5 success on evidence-only post-PR #38 main `79b14ded0bbd0cd552420e5964647b6fba16f9b7` |
 | Required checks observed | Python, renderer, Studio, safety/Compose, Docker deterministic E2E |
 | Working tree at capture | clean before the audit branch was created |
 
@@ -122,7 +124,7 @@ Current repository checkpoint after the bounded merge sequence:
 
 | Field | Verified value |
 |---|---|
-| Exact `origin/main` before RC-10 governance branch | `c2b1aec2d54dd90bcb486f8a68c97746b39963aa` after PR #36; executable RC-10 is identical |
+| Exact `origin/main` before RC-10 consecutive-evidence branch | `79b14ded0bbd0cd552420e5964647b6fba16f9b7` after evidence-only PR #38; executable RC-10 remains identical |
 | Exact main tree | re-verify from exact main before any later merge |
 | PR #12 | merged at `a9dfe87b479ebdb4e6a757543a7b47e9ac81ffd4` |
 | PR #13 | retargeted/retested with 5/5 CI PASS, merged at `9b66d6917d6d58fea995b3a1049fc95198e81bf1` |
@@ -154,8 +156,9 @@ Current repository checkpoint after the bounded merge sequence:
 | Dual-CI provenance | executable run `33449162326` and governance run `33499392585` each pass 5/5 and bind their separate commits; selected executable-tree SHA is identical at `b57ef070664067f789424bf58f482f40087160a0e446e3e02aa2b1d45b4d9f53` |
 | PR #36 / V3-01-17 | exact head `8b3e2f595cbf6b7fd710627487808a674b05a383`; merged as `c2b1aec2d54dd90bcb486f8a68c97746b39963aa`; exact-main CI run `33527973264` 5/5 PASS; `V3-01-APP-037` consumed |
 | RC-10 | annotated `vf-v3-01-rc10` peels to `c2b1aec2d54dd90bcb486f8a68c97746b39963aa`; tag object `32bd6a78048a6ae92538a9195a1386318ebd72b8`; NO-GO; not deployed |
-| RC-10 governance rebind | PR #37 merged governance-only as `fd78a1690a5a2fd7b07e9e7822deda834f02ea6d`; executable CI `33527973264` and governance CI `33532594395` each passed 5/5; G-01-A/G-02-A/G-03-A bound by `V3-01-APP-038` through `V3-01-APP-040`; bundle raw SHA `30f4ffd9353a00b7fdf97d0998dce43798937a2c577ca3fa618c947bbb8040e1`; scope SHA `a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0`; bundle unmounted after Operation 1 |
-| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operation 1 completed one attempt with complete structured/usage/cost evidence and is consumed/succeeded; Vision is 1/2 consecutive PASS; every Operation 2 remains locked |
+| RC-10 governance rebind | PR #37 merged governance-only as `fd78a1690a5a2fd7b07e9e7822deda834f02ea6d`; executable CI `33527973264` and governance CI `33532594395` each passed 5/5; G-01-A/G-02-A/G-03-A bound by `V3-01-APP-038` through `V3-01-APP-040`; bundle raw SHA `30f4ffd9353a00b7fdf97d0998dce43798937a2c577ca3fa618c947bbb8040e1`; scope SHA `a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0` |
+| RC-10 Operation 1 evidence | PR #38 merged evidence-only as `79b14ded0bbd0cd552420e5964647b6fba16f9b7`; exact-main CI `33650857422` passed 5/5; executable tree remained `f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c` |
+| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is 2/2 consecutive PASS pending this evidence PR's G-08 merge; no Operation 3 is required or authorized |
 | Deployment/ingress/publish action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in

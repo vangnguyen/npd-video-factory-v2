@@ -1,6 +1,6 @@
 # Owner gate register
 
-G-00 and the completed bounded G-08 actions through PR #37 have approval records or recorded owner
+G-00 and the completed bounded G-08 actions through PR #38 have approval records or recorded owner
 decisions. RC-4 remains
 evidence of a fail-closed executable-contract blocker. RC-5 operation 1 consumed its exact G-01-A,
 G-02-A, G-03-A and separate operation authority; provider execution succeeded but acceptance
@@ -14,23 +14,24 @@ architecture remained shared. It has no operation authority. RC-9 operation 1 la
 separate bounded authority but stopped before credential read, reservation, ledger mutation or
 provider dispatch on an ambiguous single-CI bootstrap field. It is not consumed, but that authority
 is retired; operation 2 remains locked. V3-01-17 is merged in locked RC-10. Fresh G-01-A/G-02-A/
-G-03-A records, governance-only PR #37, post-merge governance-main CI and a separate exact
-operation-1 authority were verified. Operation 1 then succeeded once with complete evidence and is
-consumed. Operation 2 remains not approved/locked. This evidence-only PR requires a new G-08. Use
+G-03-A records, governance-only PR #37, evidence-only PR #38, both post-merge governance-main CI
+runs and separate exact authorities for Operations 1 and 2 were verified. Both operations succeeded
+with complete evidence and are consumed. Vision is 2/2 consecutive PASS; this consecutive
+evidence-only PR requires a new G-08. Use
 `schemas/approval-record.schema.json` for each later decision; no approval is implied by CI success,
 an RC tag or the failed attempt.
 
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
 | G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
-| G-01 | real-provider credential aliases/scopes | RC-10 `V3-01-APP-038` scope consumed by Operation 1; no further operation authority | Operation 1 succeeded and is consumed; only alias metadata is retained; Operation 2 requires a separate decision |
-| G-02 | VND provider budgets and cost controls | RC-10 `V3-01-APP-039` envelope consumed by Operation 1 only | 500 VND reserved, `125.181420 VND` actual, zero reserved after reconciliation; checked-in budget remains zero and Operation 2 has no authority |
-| G-03 | owned inputs, rights and provenance policy | RC-10 `V3-01-APP-040` binding consumed by Operation 1 only | exact owned image/RightsRecord passed for Vision acceptance only; no training, resale, publishing or other use |
+| G-01 | real-provider credential aliases/scopes | RC-10 `V3-01-APP-038` scope consumed by Operations 1 and 2; no further Vision authority | both operations succeeded and are consumed; only alias metadata is retained; no Operation 3 |
+| G-02 | VND provider budgets and cost controls | RC-10 `V3-01-APP-039` window consumed by Operations 1 and 2 | total actual `284.343280 VND`, zero reserved after reconciliation; checked-in budget remains zero and no further spend is authorized |
+| G-03 | owned inputs, rights and provenance policy | RC-10 `V3-01-APP-040` binding consumed by Operations 1 and 2 | exact owned image/RightsRecord passed twice for Vision acceptance only; no training, resale, publishing or other use |
 | G-04 | production-like staging execution | PENDING | locked commit/images, isolated topology and rollback plan |
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation/evidence PR merge | decisions through PR #37 consumed | a new explicit G-08 decision is required before merging the RC-10 Operation 1 evidence PR |
+| G-08 | remediation/evidence PR merge | decisions through PR #38 consumed | a new explicit G-08 decision is required before merging the RC-10 consecutive evidence PR |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
@@ -43,17 +44,17 @@ IDs, expiry and decision. Changing commit, artifact, provider, platform target, 
 time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, LOCAL/CI validation, redacted evidence and a
-draft zero-call RC-10 Operation 1 evidence PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
-#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37 merges are complete and their G-08 decisions cannot be
+draft zero-call RC-10 consecutive evidence PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
+#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37/#38 merges are complete and their G-08 decisions cannot be
 reused. RC-3 IDs are locked, RC-4 remains blocker evidence, and RC-5 operation 1 is consumed/
 `REVIEW_REQUIRED`; RC-5 operation 2 is locked. RC-6 operation 1 is blocked pre-call/not consumed,
 its failed-window authority is retired, and operation 2 is locked. RC-7 operation 1 is consumed after
 one timeout, its authority is retired, and operation 2 is locked. RC-8 is retired from live
 acceptance and has no operation authority. RC-9 operation 1 is blocked pre-call/not consumed, its
-authority and G-01-A/G-02-A/G-03-A scope are retired, and operation 2 remains locked. RC-10
-Operation 1 received one exact authority, succeeded once with complete evidence, and is consumed.
-The runner stopped and bundle was unmounted after execution. Operation 2 remains not approved and
-locked. Runtime defaults remain disabled.
+  authority and G-01-A/G-02-A/G-03-A scope are retired, and operation 2 remains locked. RC-10
+  Operations 1 and 2 each received one exact authority, succeeded once with complete evidence, and
+  are consumed. The runner stopped and bundle was unmounted after each execution. No further Vision
+  operation is required or authorized. Runtime defaults remain disabled.
 Current authority includes no
 further merge, credential-value read, provider call,
 deployment, public route, publishing, analytics collection or production write. Records:
@@ -96,6 +97,8 @@ deployment, public route, publishing, analytics collection or production write. 
 [`V3-01-APP-037`](approvals/V3-01-APP-037.json),
 [`V3-01-APP-038`](approvals/V3-01-APP-038.json),
 [`V3-01-APP-039`](approvals/V3-01-APP-039.json), and
-[`V3-01-APP-040`](approvals/V3-01-APP-040.json). The secret-free consumed RC-10 Operation 1
-authority is retained in
-[`operation-1-authority.json`](../../../evidence/v3-01/vf-v3-01-20260902T143651Z-c2b1aec-op1/governance/operation-1-authority.json).
+[`V3-01-APP-040`](approvals/V3-01-APP-040.json). The secret-free consumed RC-10 operation
+authorities are retained in
+[`operation-1-authority.json`](../../../evidence/v3-01/vf-v3-01-20260902T143651Z-c2b1aec-op1/governance/operation-1-authority.json)
+and
+[`operation-2-authority.json`](../../../evidence/v3-01/vf-v3-01-20260902T162324Z-c2b1aec-op2/governance/operation-2-authority.json).

@@ -187,12 +187,25 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     for axis in (
         "implemented",
         "mock_tested",
-        "real_provider_tested",
         "production_path_tested",
         "quality_accepted",
     ):
         actual = dict(Counter(row[axis] for row in matrix))
         assert contract["matrix"][axis] == actual
+    assert contract["matrix"]["real_provider_tested"] == {
+        "NOT_TESTED": 36,
+        "N/A": 24,
+    }
+    assert dict(Counter(row["real_provider_tested"] for row in matrix)) == {
+        "PASS": 1,
+        "NOT_TESTED": 35,
+        "N/A": 24,
+    }
+    assert [
+        row["id"]
+        for row in matrix
+        if row["real_provider_tested"] == "PASS"
+    ] == ["VIS-01"]
 
     assert contract["gaps"]["total"] == len(gaps) == 16
     assert contract["gaps"]["by_status"] == {
@@ -218,6 +231,7 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-RC7-VISION-REBIND-001" in gap_003["evidence_ids"]
     assert "EV-V3-RC9-VISION-REBIND-001" in gap_003["evidence_ids"]
     assert "EV-V3-RC10-VISION-REBIND-001" in gap_003["evidence_ids"]
+    assert "EV-V3-RC10-VISION-CONSECUTIVE-PASS-001" in gap_003["evidence_ids"]
     assert gap_003["verified_on_commit"] == "c2b1aec2d54dd90bcb486f8a68c97746b39963aa"
 
     gap_010 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-010")
@@ -232,6 +246,7 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-RC7-VISION-REBIND-001" in gap_010["evidence_ids"]
     assert "EV-V3-RC9-VISION-REBIND-001" in gap_010["evidence_ids"]
     assert "EV-V3-RC10-VISION-REBIND-001" in gap_010["evidence_ids"]
+    assert "EV-V3-RC10-VISION-CONSECUTIVE-PASS-001" in gap_010["evidence_ids"]
     assert gap_010["verified_on_commit"] == "c2b1aec2d54dd90bcb486f8a68c97746b39963aa"
 
     gap_013 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-013")
@@ -243,6 +258,7 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-RC7-VISION-REBIND-001" in gap_013["evidence_ids"]
     assert "EV-V3-RC9-VISION-REBIND-001" in gap_013["evidence_ids"]
     assert "EV-V3-RC10-VISION-REBIND-001" in gap_013["evidence_ids"]
+    assert "EV-V3-RC10-VISION-CONSECUTIVE-PASS-001" in gap_013["evidence_ids"]
     assert gap_013["verified_on_commit"] == "c2b1aec2d54dd90bcb486f8a68c97746b39963aa"
     assert contract["gaps"]["by_severity"] == dict(Counter(row["severity"] for row in gaps))
     assert contract["production_verdict"] == "NO-GO"
@@ -261,6 +277,62 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
         "publish_performed": False,
         "production_analytics_enabled": False,
     }
+
+
+def test_rc10_vision_consecutive_evidence_is_complete_and_distinct() -> None:
+    op1_path = (
+        REPO_ROOT
+        / "evidence"
+        / "v3-01"
+        / "vf-v3-01-20260902T143651Z-c2b1aec-op1"
+        / "provider"
+        / "operation-1-result.json"
+    )
+    op2_run = (
+        REPO_ROOT
+        / "evidence"
+        / "v3-01"
+        / "vf-v3-01-20260902T162324Z-c2b1aec-op2"
+    )
+    op2_path = op2_run / "provider" / "operation-2-result.json"
+    summary_path = op2_run / "provider" / "operation-2-summary.json"
+    matrix_path = (
+        op2_run
+        / "matrix"
+        / "evidence-EV-V3-RC10-VISION-CONSECUTIVE-PASS-001.json"
+    )
+
+    op1 = json.loads(op1_path.read_text(encoding="utf-8"))
+    op2 = json.loads(op2_path.read_text(encoding="utf-8"))
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    evidence = json.loads(matrix_path.read_text(encoding="utf-8"))
+
+    assert op1["verdict"] == op2["verdict"] == "PASS"
+    assert op1["acceptance_evidence"] == op2["acceptance_evidence"] == "COMPLETE"
+    op1_provenance = op1["execution"]["provider_provenance"]
+    op2_provenance = op2["execution"]["provider_provenance"]
+    assert op1_provenance["request_sha256"] == op2_provenance["request_sha256"]
+    assert op1_provenance["response_sha256"] != op2_provenance["response_sha256"]
+    assert summary["consecutive_comparison"] == {
+        "operations": 2,
+        "both_pass": True,
+        "same_request_sha256": True,
+        "operation_1_response_sha256": op1_provenance["response_sha256"],
+        "operation_2_response_sha256": op2_provenance["response_sha256"],
+        "distinct_response_sha256": True,
+        "responses_deduplicated": False,
+    }
+    assert summary["cost"]["window_actual_cost_vnd"] == "284.343280"
+    assert summary["cost"]["reserved_after_reconciliation_vnd"] == "0.0000"
+    assert summary["durable_safety"]["operations"] == 2
+    assert summary["durable_safety"]["attempts"] == 2
+    assert summary["durable_safety"]["circuit_state"] == "closed"
+    assert summary["secret_containment"]["status"] == "PASS"
+    assert evidence["result"] == "PASS"
+    assert evidence["axis"] == "real-provider-tested"
+    assert hashlib.sha256(op2_path.read_bytes()).hexdigest() == (
+        "deed47e573079bd53118859f616991aae42b420992aad84f39cbfb4bdb3df0a2"
+    )
 
 
 def test_rc5_operation_1_review_record_is_permanently_fail_closed() -> None:

@@ -1,9 +1,11 @@
 # V3-01 RC-10 Vision acceptance window
 
-This checkpoint records the owner-directed RC-10 rebind after V3-01-17 merged and the later
-bounded Operation 1 outcome. The original pre-execution bindings are retained below as historical
-governance evidence; the current outcome is detailed in
-[41_V3_01_RC10_VISION_OPERATION_1_EVIDENCE.md](41_V3_01_RC10_VISION_OPERATION_1_EVIDENCE.md).
+This checkpoint records the owner-directed RC-10 rebind after V3-01-17 merged and the two later
+bounded operation outcomes. The original pre-execution bindings are retained below as historical
+governance evidence. Operation 1 is detailed in
+[41_V3_01_RC10_VISION_OPERATION_1_EVIDENCE.md](41_V3_01_RC10_VISION_OPERATION_1_EVIDENCE.md), and
+the 2/2 consecutive assessment is in
+[42_V3_01_RC10_VISION_CONSECUTIVE_EVIDENCE.md](42_V3_01_RC10_VISION_CONSECUTIVE_EVIDENCE.md).
 
 ## Decision boundary
 
@@ -12,18 +14,18 @@ RC: vf-v3-01-rc10 / c2b1aec2d54dd90bcb486f8a68c97746b39963aa
 RC STATUS: LOCKED, NO-GO, NOT DEPLOYED
 G-08 PR #36: CONSUMED
 G-08 GOVERNANCE REBIND PR #37: CONSUMED
-G-01-A / G-02-A / G-03-A: CONSUMED BY EXACT RC-10 OPERATION 1
-GOVERNANCE BUNDLE: VERIFIED; UNMOUNTED AFTER OPERATION
+G-01-A / G-02-A / G-03-A: CONSUMED BY THE TWO EXACT RC-10 OPERATIONS
+GOVERNANCE BUNDLE: VERIFIED; UNMOUNTED AFTER EACH OPERATION
 RC-10 OPERATION 1: PASS; CONSUMED / SUCCEEDED
-RC-10 OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
+RC-10 OPERATION 2: PASS; CONSUMED / SUCCEEDED
 EXTERNAL EXECUTION: false
 PAID EXECUTION: false
 CHECKED-IN BUDGET: 0 VND
 GLOBAL KILL SWITCH: engaged
 CREDENTIAL: alias only in evidence; value not recorded
-PROVIDER CALLS: 1 HISTORICAL ACCEPTANCE CALL; 0 IN THIS EVIDENCE PR
-RESERVATION / ACTUAL COST: 500 VND / 125.181420 VND; RESERVED AFTER RECONCILIATION 0 VND
-VISION CONSECUTIVE STATUS: 1/2 PASS
+PROVIDER CALLS: 2 HISTORICAL ACCEPTANCE CALLS; 0 IN THIS EVIDENCE PR
+RESERVATION / ACTUAL COST: 500 VND EACH / 284.343280 VND TOTAL; RESERVED AFTER RECONCILIATION 0 VND
+VISION CONSECUTIVE STATUS: 2/2 PASS PENDING THIS EVIDENCE PR'S G-08 AND MERGE
 PRODUCTION: NO-GO
 ```
 
@@ -75,9 +77,9 @@ It embeds exact copies and canonical hashes of the three rebound approval record
 - G-03-A: `V3-01-APP-040`, SHA-256
   `77caf62c7ded8c9298df932b776886f96a49d59ed0fe280a1f04b15e4d3adcd5`.
 
-These records implement the owner-directed post-PR36 sequence. A later separate authority bound
-exactly Operation 1 and was consumed by its single successful attempt. These records and that
-consumed authority do not authorize Operation 2 or any further API call. Any mutation of the exact
+These records implement the owner-directed post-PR36 sequence. Later separate authorities bound
+exactly Operation 1 and Operation 2, and each was consumed by one successful attempt. These records
+and consumed authorities do not authorize any further API call. Any mutation of the exact
 RC, provider, model, capability, asset, RightsRecord, budget, timeout envelope, operation IDs, scope
 hash or window invalidates the binding.
 
@@ -88,9 +90,9 @@ The executable derivation helper produced exactly:
 1. `v3-01-rc10-openai-vision-call-01`
 2. `v3-01-rc10-openai-vision-call-02`
 
-Operation 1 received one exact owner authority, completed successfully and now has one durable
-`succeeded` row and one attempt. It is consumed and cannot be reused. Operation 2 has no authority
-or ledger row and remains locked. No historical RC operation identifier can be reused on RC-10.
+Each operation received a separate exact owner authority, completed successfully and now has one
+durable `succeeded` row and one attempt. Both are consumed and cannot be reused. No Operation 3 is
+required or authorized, and no historical RC operation identifier can be reused on RC-10.
 
 ## Budget and execution envelope
 
@@ -106,14 +108,16 @@ or ledger row and remains locked. No historical RC operation identifier can be r
 - no fallback model or provider;
 - window and budget day must both be 2026-09-02 UTC.
 
-Checked-in runtime defaults remain zero-budget and disabled. During the single authorized attempt,
-500 VND was reserved and `125.181420 VND` was charged from actual usage; reserved VND returned to
-zero. The bundle is unmounted after the attempt, so no further reservation, credential read or
-provider call is authorized by this artifact.
+Checked-in runtime defaults remain zero-budget and disabled. Each authorized attempt reserved 500
+VND. Actual usage charged `125.181420 VND` and `159.161860 VND`, for `284.343280 VND` total; reserved
+VND returned to zero after reconciliation. The bundle is unmounted after both attempts, so no
+further reservation, credential read or provider call is authorized by this artifact.
 
-## Completed activation and result
+## Completed activations and results
 
-All of the following were verified before Operation 1 execution:
+All of the following were verified before each operation execution, with governance-main CI updated
+to `33650857422` on evidence-only merge commit `79b14ded0bbd0cd552420e5964647b6fba16f9b7`
+for Operation 2:
 
 1. governance-only RC-10 rebind PR #37 received a separate G-08 and merged;
 2. exact governance-main CI `33532594395` completed successfully on its exact merge commit;
@@ -124,22 +128,23 @@ All of the following were verified before Operation 1 execution:
    match;
 7. G-01-A, G-02-A and G-03-A records verify and are unexpired;
 8. current UTC time is inside the bound four-hour window and the same UTC budget day;
-9. the exact RC-10 operation-1 ID received a separate owner approval;
-10. operation 1 was unconsumed and a 500 VND atomic reservation succeeded without exceeding 1,250
-    VND;
+9. the exact operation ID received its own separate owner approval;
+10. the target operation was unconsumed and a 500 VND atomic reservation succeeded without
+    exceeding 1,250 VND, while the prior operation remained consumed/succeeded;
 11. the secret alias exists without exposing its value;
-12. operation 2, retry, fallback, publish, deploy, public ingress and production analytics remain
-    disabled.
+12. every operation outside the single target, retry, fallback, publish, deploy, public ingress and
+    production analytics remained disabled.
 
-The one attempt completed in `27,790.325 ms` without timeout, retry or fallback. Strict structured
-output, request/response hashes, provider request metadata, usage/cost receipt, RightsRecord,
-durable ledger, closed circuit, duplicate blocking and secret containment all passed. The runner
-then stopped and unmounted the gate. Operation 2 authority cannot be inferred from this outcome.
+Operation 1 completed in `27,790.325 ms`; Operation 2 completed in `33,284.965 ms`. Neither timed
+out, retried or used a fallback. Strict structured output, distinct response hashes, provider
+request metadata, usage/cost receipts, RightsRecord, durable ledger, closed circuit, duplicate
+blocking and secret containment all passed. The runner stopped and unmounted the gate after each
+attempt. No further operation authority can be inferred from these outcomes.
 
 ## Historical lineage
 
 RC-9 operation 1 remains `BLOCKED_PRE_CALL`, not consumed, with zero provider calls, zero reservation
 and zero VND; its authority is retired. RC-9 operation 2 remains locked. Earlier provider attempts
-retain their historical verdicts. RC-10 Operation 1 is a real-provider PASS and is consumed;
-aggregate Vision remains 1/2 consecutive PASS, while Operation 2 is not approved/locked and no
+retain their historical verdicts. RC-10 Operations 1 and 2 are real-provider PASS and consumed;
+aggregate Vision is 2/2 consecutive PASS pending this evidence-only PR's G-08 and merge. No
 production-path or quality axis is promoted.
