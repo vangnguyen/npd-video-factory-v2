@@ -6,7 +6,10 @@ Current checkpoint status updated after evidence-only PR #39 merged as
 `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed` and exact-main CI `33703619599` passed 5/5. Operations
 1 and 2 are consumed/succeeded, their receipt hashes remain unchanged, and Vision is officially 2/2
 consecutive PASS on the real-provider-tested axis. The gate is unmounted and all further standalone
-Vision operation authority is retired.
+Vision operation authority is retired. PR #40 then merged the Vision closure/ASR design as
+`4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI `33706971864` passed 5/5 with an
+unchanged executable tree. V3-01-18 is now implemented/mock-tested offline, but ASR model selection
+and every ASR runtime gate remain unapproved.
 
 ## Control state
 
@@ -15,9 +18,10 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: RC-10 c2b1aec2d54dd90bcb486f8a68c97746b39963aa; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Vision closed; zero-call ASR / Flow A real-provider gate design; bundle unmounted
+CURRENT SAFE PHASE: Vision closed; V3-01-18 source-only ASR adapter review; bundle unmounted
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #39 MERGE CONSUMED BY V3-01-APP-041; CURRENT ASR DESIGN PR REQUIRES A NEW G-08
+G-08: PR #40 MERGE CONSUMED BY V3-01-APP-042; V3-01-18 IMPLEMENTATION REQUIRES A NEW G-08
+G-01/G-02/G-03-ASR: NOT APPROVED; MODEL SELECTION PROPOSED / NOT APPROVED
 G-01-A / G-02-A / G-03-A: CONSUMED BY EXACT RC-10 OPERATIONS 1 AND 2; NO FURTHER OPERATION AUTHORITY
 RC-10 OPERATION 1: PASS; CONSUMED / SUCCEEDED
 RC-10 OPERATION 2: PASS; CONSUMED / SUCCEEDED; VISION 2/2 CONSECUTIVE PASS

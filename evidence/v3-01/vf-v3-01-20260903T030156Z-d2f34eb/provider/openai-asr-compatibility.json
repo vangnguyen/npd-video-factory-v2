@@ -1,0 +1,108 @@
+{
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED",
+    "real_provider_tested": "NOT_TESTED"
+  },
+  "candidates": [
+    {
+      "checked_on": "2026-09-03",
+      "credential_reads": 0,
+      "deterministic_provider_transcript_mapping": "SUPPORTED",
+      "evidence_kind": "official_contract_and_recorded_fixture",
+      "language": "SUPPORTED",
+      "live_api_calls": 0,
+      "model": "whisper-1",
+      "notes": [
+        "verbose_json exposes language, duration, segments and words",
+        "native word timing satisfies the strict Flow A timestamp contract",
+        "provider confidence is not fabricated and maps to null"
+      ],
+      "official_references": [
+        "https://developers.openai.com/api/docs/guides/speech-to-text",
+        "https://developers.openai.com/api/reference/resources/audio/subresources/transcriptions/methods/create",
+        "https://developers.openai.com/api/docs/models/whisper-1"
+      ],
+      "provider_request_id": "SUPPORTED",
+      "segment_timestamps": "SUPPORTED",
+      "selection_status": "PROPOSED_NOT_APPROVED",
+      "spend_vnd": 0,
+      "strict_flow_a_compatible": true,
+      "transcript_text": "SUPPORTED",
+      "usage_or_duration": "SUPPORTED",
+      "word_timestamps": "SUPPORTED"
+    },
+    {
+      "checked_on": "2026-09-03",
+      "credential_reads": 0,
+      "deterministic_provider_transcript_mapping": "UNSUPPORTED",
+      "evidence_kind": "official_contract_and_recorded_fixture",
+      "language": "UNRESOLVED",
+      "live_api_calls": 0,
+      "model": "gpt-transcribe",
+      "notes": [
+        "current official guide reserves timestamp granularities for whisper-1",
+        "no alignment layer is introduced by V3-01-18",
+        "model selection remains an owner gate"
+      ],
+      "official_references": [
+        "https://developers.openai.com/api/docs/guides/speech-to-text",
+        "https://developers.openai.com/api/reference/resources/audio/subresources/transcriptions/methods/create",
+        "https://developers.openai.com/api/docs/models/gpt-transcribe"
+      ],
+      "provider_request_id": "SUPPORTED",
+      "segment_timestamps": "UNSUPPORTED",
+      "selection_status": "PROPOSED_NOT_APPROVED",
+      "spend_vnd": 0,
+      "strict_flow_a_compatible": false,
+      "transcript_text": "SUPPORTED",
+      "usage_or_duration": "SUPPORTED",
+      "word_timestamps": "UNSUPPORTED"
+    },
+    {
+      "checked_on": "2026-09-03",
+      "credential_reads": 0,
+      "deterministic_provider_transcript_mapping": "UNSUPPORTED",
+      "evidence_kind": "official_contract_and_recorded_fixture",
+      "language": "UNRESOLVED",
+      "live_api_calls": 0,
+      "model": "gpt-4o-transcribe",
+      "notes": [
+        "current official guide reserves timestamp granularities for whisper-1",
+        "token usage does not replace native segment and word timing",
+        "model selection remains an owner gate"
+      ],
+      "official_references": [
+        "https://developers.openai.com/api/docs/guides/speech-to-text",
+        "https://developers.openai.com/api/reference/resources/audio/subresources/transcriptions/methods/create",
+        "https://developers.openai.com/api/docs/models/gpt-4o-transcribe"
+      ],
+      "provider_request_id": "SUPPORTED",
+      "segment_timestamps": "UNSUPPORTED",
+      "selection_status": "PROPOSED_NOT_APPROVED",
+      "spend_vnd": 0,
+      "strict_flow_a_compatible": false,
+      "transcript_text": "SUPPORTED",
+      "usage_or_duration": "SUPPORTED",
+      "word_timestamps": "UNSUPPORTED"
+    }
+  ],
+  "checkpoint": "V3-01-18",
+  "evidence_kind": "OFFLINE_CONTRACT_MOCK_OFFICIAL_CAPABILITY",
+  "model_selection": "PROPOSED_NOT_APPROVED",
+  "production_verdict": "NO-GO",
+  "runtime_authority": {
+    "credential_reads": 0,
+    "deployments": 0,
+    "g01_asr": "NOT_APPROVED",
+    "g02_asr": "NOT_APPROVED",
+    "g03_asr": "NOT_APPROVED",
+    "provider_calls": 0,
+    "publishes": 0,
+    "spend_vnd": 0
+  },
+  "schema_version": "v3-01-asr-compatibility.v1",
+  "status": "PASS"
+}

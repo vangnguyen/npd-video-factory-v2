@@ -105,7 +105,7 @@ class TranscriptWordRead(StrictModel):
     start_seconds: float = Field(ge=0)
     end_seconds: float = Field(gt=0)
     text: str = Field(min_length=1, max_length=240)
-    confidence: float = Field(ge=0, le=1)
+    confidence: float | None = Field(default=None, ge=0, le=1)
 
     @model_validator(mode="after")
     def validate_window(self) -> "TranscriptWordRead":
@@ -121,7 +121,7 @@ class TranscriptSegmentRead(StrictModel):
     end_seconds: float = Field(gt=0)
     text: str = Field(min_length=1)
     speaker: str | None = Field(default=None, max_length=120)
-    confidence: float = Field(ge=0, le=1)
+    confidence: float | None = Field(default=None, ge=0, le=1)
     words: list[TranscriptWordRead]
 
     @model_validator(mode="after")
@@ -139,7 +139,7 @@ class TranscriptRead(StrictModel):
     is_original_evidence: bool
     provider_key: str
     language: str
-    confidence: float = Field(ge=0, le=1)
+    confidence: float | None = Field(default=None, ge=0, le=1)
     segments: list[TranscriptSegmentRead]
     provenance: dict[str, Any]
     created_at: datetime
@@ -186,6 +186,10 @@ class HighlightRead(StrictModel):
 
 class AutoEditAnalysisRequest(StrictModel):
     asset_id: str = Field(pattern=r"^ast_[A-Za-z0-9_-]{4,60}$")
+    acceptance_operation_id: str | None = Field(
+        default=None,
+        pattern=r"^v3-01-rc[0-9]+-[a-z0-9][a-z0-9-]{1,119}-call-[0-9]{2}$",
+    )
     top_highlights: Literal[3, 5] = 3
     silence_threshold_db: float = Field(default=-35.0, ge=-80, le=-5)
     minimum_silence_duration: float = Field(default=0.5, ge=0.1, le=10)

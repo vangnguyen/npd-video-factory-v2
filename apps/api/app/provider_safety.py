@@ -245,24 +245,32 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
     budget_day_utc: date
     per_operation_limit_vnd: Decimal = Field(gt=0)
     acceptance_window_limit_vnd: Decimal = Field(gt=0)
-    input_vnd_per_million_tokens: Decimal = Field(gt=0)
-    cached_input_vnd_per_million_tokens: Decimal = Field(gt=0)
-    output_vnd_per_million_tokens: Decimal = Field(gt=0)
-    max_frames: int = Field(ge=1, le=32)
-    max_dimension_pixels: int = Field(ge=32, le=65_535)
-    image_detail: Literal["low", "high", "auto"]
-    input_token_ceiling: int = Field(ge=1)
-    max_output_tokens: int = Field(ge=256, le=32_768)
+    input_vnd_per_million_tokens: Decimal | None = Field(default=None, gt=0)
+    cached_input_vnd_per_million_tokens: Decimal | None = Field(default=None, gt=0)
+    output_vnd_per_million_tokens: Decimal | None = Field(default=None, gt=0)
+    max_frames: int | None = Field(default=None, ge=1, le=32)
+    max_dimension_pixels: int | None = Field(default=None, ge=32, le=65_535)
+    image_detail: Literal["low", "high", "auto"] | None = None
+    input_token_ceiling: int | None = Field(default=None, ge=1)
+    max_output_tokens: int | None = Field(default=None, ge=256, le=32_768)
+    vnd_per_minute: Decimal | None = Field(default=None, gt=0)
+    max_file_bytes: int | None = Field(default=None, ge=1, le=25_000_000)
+    max_duration_seconds: float | None = Field(default=None, gt=0, le=3_600)
+    requested_language: str | None = Field(default=None, min_length=2, max_length=16)
+    response_format: Literal["verbose_json"] | None = None
+    timestamp_granularities: tuple[Literal["segment", "word"], ...] = ()
     max_attempts: Literal[1] = 1
     max_concurrent_calls: Literal[1] = 1
     credential_approval_id: str = Field(pattern=r"^V3-01-APP-[0-9]{3,}$")
     budget_approval_id: str = Field(pattern=r"^V3-01-APP-[0-9]{3,}$")
     rights_approval_id: str = Field(pattern=r"^V3-01-APP-[0-9]{3,}$")
     approval_record_sha256: dict[str, str]
-    rights_record_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    rights_record_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    rights_record_sha256s: tuple[str, ...] = ()
     execution_scope_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     allowed_operations: tuple[ProviderAllowedOperation, ProviderAllowedOperation]
-    rights_record: ProviderRightsEvidence
+    rights_record: ProviderRightsEvidence | None = None
+    rights_records: tuple[ProviderRightsEvidence, ...] = ()
 
     @field_validator("credential_alias")
     @classmethod
@@ -309,12 +317,84 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
         )
         if operation_keys != expected_keys:
             raise ValueError("verified gate scope operation IDs do not match the exact RC scope")
+        records = self.all_rights_records()
+        if not records:
+            raise ValueError("verified gate scope requires approved RightsRecord evidence")
+        bindings = {(item.asset_id, item.asset_hash) for item in records}
         for item in self.allowed_operations:
-            if item.asset_id != self.rights_record.asset_id or item.asset_hash != self.rights_record.asset_hash:
-                raise ValueError("every allowlisted operation must bind the approved rights asset")
-        if self.rights_record.decision != "APPROVED":
-            raise ValueError("verified gate scope requires an approved RightsRecord")
+            if (item.asset_id, item.asset_hash) not in bindings:
+                raise ValueError("every allowlisted operation must bind an approved rights asset")
+        if any(item.decision != "APPROVED" for item in records):
+            raise ValueError("verified gate scope requires approved RightsRecord evidence")
+        hashes = (self.rights_record_sha256,) if self.rights_record_sha256 else ()
+        hashes += self.rights_record_sha256s
+        if len(hashes) != len(records) or len(set(hashes)) != len(hashes):
+            raise ValueError("verified gate scope rights hashes must match its rights records")
+        if self.capability == "vision":
+            vision_values = (
+                self.input_vnd_per_million_tokens,
+                self.cached_input_vnd_per_million_tokens,
+                self.output_vnd_per_million_tokens,
+                self.max_frames,
+                self.max_dimension_pixels,
+                self.image_detail,
+                self.input_token_ceiling,
+                self.max_output_tokens,
+            )
+            if any(value is None for value in vision_values):
+                raise ValueError("Vision gate scope requires its complete image/token envelope")
+            if any(
+                value is not None
+                for value in (
+                    self.vnd_per_minute,
+                    self.max_file_bytes,
+                    self.max_duration_seconds,
+                    self.requested_language,
+                    self.response_format,
+                )
+            ) or self.timestamp_granularities:
+                raise ValueError("Vision gate scope cannot contain ASR limits")
+        elif self.capability == "asr":
+            asr_values = (
+                self.vnd_per_minute,
+                self.max_file_bytes,
+                self.max_duration_seconds,
+                self.requested_language,
+                self.response_format,
+            )
+            if any(value is None for value in asr_values):
+                raise ValueError("ASR gate scope requires its complete audio/duration envelope")
+            if self.timestamp_granularities != ("segment", "word"):
+                raise ValueError("ASR gate scope requires native segment and word timestamps")
+            if any(
+                value is not None
+                for value in (
+                    self.input_vnd_per_million_tokens,
+                    self.cached_input_vnd_per_million_tokens,
+                    self.output_vnd_per_million_tokens,
+                    self.max_frames,
+                    self.max_dimension_pixels,
+                    self.image_detail,
+                    self.input_token_ceiling,
+                    self.max_output_tokens,
+                )
+            ):
+                raise ValueError("ASR gate scope cannot contain Vision limits")
+            if len(records) != 2 or len(bindings) != 2:
+                raise ValueError("ASR consecutive acceptance requires two distinct rights assets")
+        else:
+            raise ValueError("verified provider gate capability is not supported")
         return self
+
+    def all_rights_records(self) -> tuple[ProviderRightsEvidence, ...]:
+        legacy = (self.rights_record,) if self.rights_record is not None else ()
+        return legacy + self.rights_records
+
+    def rights_for_asset(self, asset_id: str | None) -> ProviderRightsEvidence | None:
+        return next(
+            (item for item in self.all_rights_records() if item.asset_id == asset_id),
+            None,
+        )
 
     def active(self, now: datetime) -> bool:
         current = now if now.tzinfo is not None else now.replace(tzinfo=timezone.utc)
@@ -388,6 +468,11 @@ class ProviderCallContext(StrictModel):
     image_detail: Literal["low", "high", "auto"] | None = None
     input_token_ceiling: int | None = Field(default=None, ge=1)
     max_output_tokens: int | None = Field(default=None, ge=256, le=32_768)
+    input_file_bytes: int | None = Field(default=None, ge=1, le=25_000_000)
+    input_duration_seconds: float | None = Field(default=None, gt=0, le=3_600)
+    requested_language: str | None = Field(default=None, min_length=2, max_length=16)
+    response_format: Literal["verbose_json"] | None = None
+    timestamp_granularities: tuple[Literal["segment", "word"], ...] = ()
     rights_required: bool = False
     rights: list[ProviderRightsEvidence] = Field(default_factory=list, max_length=100)
 
@@ -811,7 +896,8 @@ class ProviderSafetyController:
                     now=now,
                 )
                 return self._denied(context, "VERIFIED_GATE_BUNDLE_REQUIRED", rights)
-            rights_records = (scope.rights_record,)
+            matching_rights = scope.rights_for_asset(context.asset_id)
+            rights_records = (matching_rights,) if matching_rights is not None else ()
             rights = self.evaluate_rights(
                 rights_records,
                 required=context.rights_required,
@@ -927,20 +1013,43 @@ class ProviderSafetyController:
             return "OPERATION_SCOPE_MISMATCH"
         if context.asset_id != operation.asset_id or context.asset_hash != operation.asset_hash:
             return "RIGHTS_ASSET_BINDING_MISMATCH"
-        if context.input_media_kind != "image":
-            return "INPUT_MEDIA_KIND_NOT_AUTHORIZED"
-        if context.input_width is None or context.input_height is None:
-            return "INPUT_DIMENSIONS_REQUIRED"
-        if max(context.input_width, context.input_height) > scope.max_dimension_pixels:
-            return "INPUT_DIMENSION_LIMIT_EXCEEDED"
-        if context.requested_frames != scope.max_frames:
-            return "FRAME_LIMIT_MISMATCH"
-        if context.image_detail != scope.image_detail:
-            return "IMAGE_DETAIL_MISMATCH"
-        if context.input_token_ceiling != scope.input_token_ceiling:
-            return "INPUT_TOKEN_CEILING_MISMATCH"
-        if context.max_output_tokens != scope.max_output_tokens:
-            return "OUTPUT_TOKEN_LIMIT_MISMATCH"
+        if scope.capability == "vision":
+            if context.input_media_kind != "image":
+                return "INPUT_MEDIA_KIND_NOT_AUTHORIZED"
+            if context.input_width is None or context.input_height is None:
+                return "INPUT_DIMENSIONS_REQUIRED"
+            assert scope.max_dimension_pixels is not None
+            if max(context.input_width, context.input_height) > scope.max_dimension_pixels:
+                return "INPUT_DIMENSION_LIMIT_EXCEEDED"
+            if context.requested_frames != scope.max_frames:
+                return "FRAME_LIMIT_MISMATCH"
+            if context.image_detail != scope.image_detail:
+                return "IMAGE_DETAIL_MISMATCH"
+            if context.input_token_ceiling != scope.input_token_ceiling:
+                return "INPUT_TOKEN_CEILING_MISMATCH"
+            if context.max_output_tokens != scope.max_output_tokens:
+                return "OUTPUT_TOKEN_LIMIT_MISMATCH"
+        elif scope.capability == "asr":
+            if context.input_media_kind not in {"audio", "video"}:
+                return "INPUT_MEDIA_KIND_NOT_AUTHORIZED"
+            if context.input_file_bytes is None:
+                return "INPUT_FILE_SIZE_REQUIRED"
+            assert scope.max_file_bytes is not None
+            if context.input_file_bytes > scope.max_file_bytes:
+                return "INPUT_FILE_SIZE_LIMIT_EXCEEDED"
+            if context.input_duration_seconds is None:
+                return "INPUT_DURATION_REQUIRED"
+            assert scope.max_duration_seconds is not None
+            if context.input_duration_seconds > scope.max_duration_seconds:
+                return "INPUT_DURATION_LIMIT_EXCEEDED"
+            if context.requested_language != scope.requested_language:
+                return "LANGUAGE_SCOPE_MISMATCH"
+            if context.response_format != scope.response_format:
+                return "RESPONSE_FORMAT_MISMATCH"
+            if context.timestamp_granularities != scope.timestamp_granularities:
+                return "TIMESTAMP_GRANULARITY_MISMATCH"
+        else:
+            return "CAPABILITY_NOT_SUPPORTED"
         if context.estimated_cost_vnd is None:
             return "COST_ESTIMATE_REQUIRED"
         if context.estimated_cost_vnd != scope.per_operation_limit_vnd:

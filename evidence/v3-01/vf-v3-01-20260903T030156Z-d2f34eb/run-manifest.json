@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260903T030156Z-d2f34eb",
+  "started_at_utc": "2026-09-03T03:02:21Z",
+  "completed_at_utc": "2026-09-03T03:02:24Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "d2f34eb9e57d60ab6d0497ebf4a87c486cba8e63",
+  "base_sha": "4c74fa18a86b29ae8324885dacc6fdbca74ad066",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-18-remediation",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0013_v3_01_18_nullable_transcript_confidence",
+  "config_fingerprint_redacted": "asr-fixture-model-unselected-zero-budget-kill-switch-engaged-no-credentials-read",
+  "providers": [
+    {
+      "capability": "asr",
+      "provider": "openai-transcription-adapter-offline-contract-only",
+      "model_or_workflow": "whisper-1|gpt-transcribe|gpt-4o-transcribe / selection-not-approved",
+      "region": "not-applicable",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "ASR-01",
+    "PRO-006",
+    "V3-01-18-FOCUSED-REGRESSION"
+  ],
+  "artifact_manifest": [
+    "matrix/evidence-EV-V3-OPENAI-ASR-ADAPTER-001.json",
+    "provider/openai-asr-compatibility.json",
+    "provider/status.json",
+    "provider/test-summary.json",
+    "final/status.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003"
+  ],
+  "owner_gate_ids": [],
+  "result": "PASS"
+}

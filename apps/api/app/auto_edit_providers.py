@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Protocol
 
 from .auto_edit_models import MediaMetadata
+from .provider_safety import ProviderExecutionTrace
 
 
 class ProviderNotConfigured(RuntimeError):
@@ -25,7 +26,7 @@ class ProviderWord:
     start_seconds: float
     end_seconds: float
     text: str
-    confidence: float
+    confidence: float | None
 
 
 @dataclass(frozen=True)
@@ -34,16 +35,17 @@ class ProviderSegment:
     end_seconds: float
     text: str
     speaker: str | None
-    confidence: float
+    confidence: float | None
     words: tuple[ProviderWord, ...]
 
 
 @dataclass(frozen=True)
 class ProviderTranscript:
     language: str
-    confidence: float
+    confidence: float | None
     segments: tuple[ProviderSegment, ...]
     provenance: dict[str, object]
+    actual_cost_vnd: Decimal | None = None
 
 
 @dataclass(frozen=True)
@@ -66,7 +68,12 @@ class TranscriptionProvider(Protocol):
     estimated_cost_vnd: Decimal | None
 
     async def transcribe(
-        self, path: Path, *, metadata: MediaMetadata, checksum_sha256: str
+        self,
+        path: Path,
+        *,
+        metadata: MediaMetadata,
+        checksum_sha256: str,
+        execution_trace: ProviderExecutionTrace | None = None,
     ) -> ProviderTranscript: ...
 
 
@@ -170,9 +177,14 @@ class DeterministicTranscriptionProvider:
     )
 
     async def transcribe(
-        self, path: Path, *, metadata: MediaMetadata, checksum_sha256: str
+        self,
+        path: Path,
+        *,
+        metadata: MediaMetadata,
+        checksum_sha256: str,
+        execution_trace: ProviderExecutionTrace | None = None,
     ) -> ProviderTranscript:
-        del path
+        del path, execution_trace
         duration = max(float(metadata.duration_seconds or 12.0), 4.0)
         slot = duration / len(self._phrases)
         segments: list[ProviderSegment] = []
@@ -210,6 +222,7 @@ class DeterministicTranscriptionProvider:
                 "source_checksum": checksum_sha256,
                 "original_evidence": True,
             },
+            actual_cost_vnd=Decimal("0"),
         )
 
 
@@ -222,9 +235,14 @@ class ContractOnlyTranscriptionProvider:
     estimated_cost_vnd = Decimal("0")
 
     async def transcribe(
-        self, path: Path, *, metadata: MediaMetadata, checksum_sha256: str
+        self,
+        path: Path,
+        *,
+        metadata: MediaMetadata,
+        checksum_sha256: str,
+        execution_trace: ProviderExecutionTrace | None = None,
     ) -> ProviderTranscript:
-        del path, metadata, checksum_sha256
+        del path, metadata, checksum_sha256, execution_trace
         raise ProviderNotConfigured("live transcription provider is not configured")
 
 

@@ -1,6 +1,6 @@
 # Owner gate register
 
-G-00 and the completed bounded G-08 actions through PR #39 have approval records or recorded owner
+G-00 and the completed bounded G-08 actions through PR #40 have approval records or recorded owner
 decisions. RC-4 remains
 evidence of a fail-closed executable-contract blocker. RC-5 operation 1 consumed its exact G-01-A,
 G-02-A, G-03-A and separate operation authority; provider execution succeeded but acceptance
@@ -22,6 +22,11 @@ consecutive PASS; no further standalone Vision operation is authorized. Use
 `schemas/approval-record.schema.json` for each later decision; no approval is implied by CI success,
 an RC tag or the failed attempt.
 
+PR #40's bounded G-08 is recorded as `V3-01-APP-042` and consumed by merge commit
+`4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI `33706971864` passed 5/5 and no RC-11
+was created because the executable tree did not change. V3-01-18 is a new source-only remediation
+and requires its own G-08. ASR model selection and G-01/G-02/G-03-ASR remain not approved.
+
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
 | G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
@@ -32,7 +37,7 @@ an RC tag or the failed attempt.
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation/evidence PR merge | decisions through PR #39 consumed; `V3-01-APP-041` records PR #39 | a new explicit G-08 decision is required before merging the current Vision-closure/ASR-design PR |
+| G-08 | remediation/evidence PR merge | decisions through PR #40 consumed; PR #40 approval merged only the design/closure docs | a new explicit G-08 decision is required before merging V3-01-18 source/evidence |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
@@ -45,8 +50,8 @@ IDs, expiry and decision. Changing commit, artifact, provider, platform target, 
 time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, LOCAL/CI validation, redacted evidence and a
-draft zero-call Vision-closure/ASR-gate-design PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
-#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37/#38/#39 merges are complete and their G-08 decisions cannot be
+draft zero-call V3-01-18 ASR adapter PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
+#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37/#38/#39/#40 merges are complete and their G-08 decisions cannot be
 reused. RC-3 IDs are locked, RC-4 remains blocker evidence, and RC-5 operation 1 is consumed/
 `REVIEW_REQUIRED`; RC-5 operation 2 is locked. RC-6 operation 1 is blocked pre-call/not consumed,
 its failed-window authority is retired, and operation 2 is locked. RC-7 operation 1 is consumed after
@@ -57,7 +62,7 @@ acceptance and has no operation authority. RC-9 operation 1 is blocked pre-call/
   are consumed. The runner stopped and bundle was unmounted after each execution. No further Vision
   operation is required or authorized. Runtime defaults remain disabled.
 Current authority includes no
-further merge, credential-value read, provider call,
+further merge, ASR model selection, credential-value read, provider call,
 deployment, public route, publishing, analytics collection or production write. Records:
 [`V3-01-APP-001`](approvals/V3-01-APP-001.json) and
 [`V3-01-APP-002`](approvals/V3-01-APP-002.json),
@@ -99,7 +104,8 @@ deployment, public route, publishing, analytics collection or production write. 
 [`V3-01-APP-038`](approvals/V3-01-APP-038.json),
 [`V3-01-APP-039`](approvals/V3-01-APP-039.json),
 [`V3-01-APP-040`](approvals/V3-01-APP-040.json), and
-[`V3-01-APP-041`](approvals/V3-01-APP-041.json). The secret-free consumed RC-10 operation
+[`V3-01-APP-041`](approvals/V3-01-APP-041.json), and
+[`V3-01-APP-042`](approvals/V3-01-APP-042.json). The secret-free consumed RC-10 operation
 authorities are retained in
 [`operation-1-authority.json`](../../../evidence/v3-01/vf-v3-01-20260902T143651Z-c2b1aec-op1/governance/operation-1-authority.json)
 and

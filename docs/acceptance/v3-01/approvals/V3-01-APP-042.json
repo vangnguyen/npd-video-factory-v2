@@ -1,0 +1,27 @@
+{
+  "approval_id": "V3-01-APP-042",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #40 as the Vision closure and ASR compatibility/evidence-first design only; permit the next V3-01-18 source-only zero-call remediation but grant no ASR model or runtime authority.",
+  "artifact_or_commit_hashes": [
+    "f16e8266bf8a3daf831f1e63cb8d98f8ba00be60",
+    "4c74fa18a86b29ae8324885dacc6fdbca74ad066",
+    "fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed",
+    "c2b1aec2d54dd90bcb486f8a68c97746b39963aa",
+    "f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c"
+  ],
+  "target_account_or_environment": "GitHub repository main branch, exact-main regression and subsequent isolated LOCAL/CI V3-01-18 source remediation only; executable RC-10 remains immutable and undeployed",
+  "limits": [
+    "Close the Vision checkpoint and retire further standalone Vision authority",
+    "ASR model selection remains PROPOSED / NOT APPROVED",
+    "Compatibility evidence must be offline contract, mock or official capability inspection; unresolved support remains UNKNOWN",
+    "No G-01/G-02/G-03-ASR, credential read, provider call, budget reservation or spend",
+    "No RC-11 creation from the documentation-only PR #40 merge",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-03T02:15:48Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved exact PR #40 head f16e8266bf8a3daf831f1e63cb8d98f8ba00be60 after the narrow ASR documentation correction. No separate machine timestamp was retained for the chat decision, so approval is conservatively recorded at the exact GitHub merge time. Exact-main CI run 33706971864 passed 5/5 and the executable-tree SHA-256 remained unchanged. This record does not approve the V3-01-18 implementation PR or any runtime action."
+}

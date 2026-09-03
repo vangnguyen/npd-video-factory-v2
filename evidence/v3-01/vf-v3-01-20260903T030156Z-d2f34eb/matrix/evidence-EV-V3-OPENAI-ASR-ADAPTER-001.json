@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-OPENAI-ASR-ADAPTER-001",
+  "test_case_id": "ASR-01+PRO-006",
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "d2f34eb9e57d60ab6d0497ebf4a87c486cba8e63",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-transcription-adapter",
+    "model_or_workflow": "three-candidate-offline-compatibility / selection-not-approved",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": null,
+  "started_at_utc": "2026-09-03T03:02:21Z",
+  "completed_at_utc": "2026-09-03T03:02:24Z",
+  "duration_seconds": 3,
+  "result": "PASS",
+  "assertion": "The fail-closed OpenAI ASR adapter, canonical gate contract and offline compatibility matrix pass recorded/mock validation for the three exact candidate models. The evidence promotes only implemented and mock-tested; no model was approved and no provider, credential, budget, deployment or public path was used.",
+  "correlation_id": "v3-01-18-local-openai-asr-d2f34eb",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex local ASR contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003"
+  ],
+  "reproduce": "On commit d2f34eb9e57d60ab6d0497ebf4a87c486cba8e63, run the focused OpenAI ASR provider, gate-loader and safety-config tests plus scripts/v3_01_asr_compatibility.py while retaining fixture defaults, blank model selection, zero budgets and an engaged global kill switch."
+}

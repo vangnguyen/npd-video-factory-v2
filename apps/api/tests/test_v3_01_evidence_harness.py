@@ -184,12 +184,12 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
         gaps = list(csv.DictReader(handle))
 
     assert contract["matrix"]["rows"] == len(matrix) == 60
-    for axis in (
-        "implemented",
-        "mock_tested",
-        "production_path_tested",
-        "quality_accepted",
-    ):
+    assert contract["matrix"]["implemented"] == {"PASS": 44, "FAIL": 16}
+    assert dict(Counter(row["implemented"] for row in matrix)) == {
+        "PASS": 45,
+        "FAIL": 15,
+    }
+    for axis in ("mock_tested", "production_path_tested", "quality_accepted"):
         actual = dict(Counter(row[axis] for row in matrix))
         assert contract["matrix"][axis] == actual
     assert contract["matrix"]["real_provider_tested"] == {
@@ -232,7 +232,8 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-RC9-VISION-REBIND-001" in gap_003["evidence_ids"]
     assert "EV-V3-RC10-VISION-REBIND-001" in gap_003["evidence_ids"]
     assert "EV-V3-RC10-VISION-CONSECUTIVE-PASS-001" in gap_003["evidence_ids"]
-    assert gap_003["verified_on_commit"] == "c2b1aec2d54dd90bcb486f8a68c97746b39963aa"
+    assert "EV-V3-OPENAI-ASR-ADAPTER-001" in gap_003["evidence_ids"]
+    assert gap_003["verified_on_commit"] == "d2f34eb9e57d60ab6d0497ebf4a87c486cba8e63"
 
     gap_010 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-010")
     assert gap_010["status"] == "IN_PROGRESS"

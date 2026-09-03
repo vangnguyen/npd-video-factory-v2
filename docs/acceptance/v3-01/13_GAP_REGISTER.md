@@ -19,7 +19,11 @@ provenance stayed valid. Separately authorized RC-10 Operations 1 and 2 complete
 evidence. Both are consumed/succeeded. PR #39 then merged the consecutive evidence as
 `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed`; exact-main CI `33703619599` passed 5/5 with unchanged
 executable and receipt hashes. Vision is officially 2/2 consecutive real-provider PASS.
-Production-path and quality acceptance are not promoted.
+Production-path and quality acceptance are not promoted. PR #40 then merged the Vision closure/ASR
+design as `4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI `33706971864` passed 5/5 and the
+executable tree stayed unchanged. V3-01-18 now provides source/mock evidence for the fail-closed
+OpenAI ASR adapter and compatibility contract only. ASR model selection and runtime gates remain
+not approved.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -33,8 +37,8 @@ through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
 `IN_PROGRESS`. RC-10 Vision is 2/2 consecutive real-provider PASS, while ASR/reframe,
 production-like safety and broader rights coverage remain open. The bounded G-08 decisions through
-PR #39 are consumed; the current Vision-closure/ASR-design PR requires its own G-08 and grants no
-runtime authority.
+PR #40 are consumed; the current V3-01-18 source/evidence PR requires its own G-08 and grants no
+model selection or runtime authority.
 Historical RC-3 and RC-5 operation
 1 IDs are consumed and permanently locked; RC-5 operation 2 is also locked. RC-6 operation 1 is
 not consumed, but its failed-window authority is retired; operation 2 is locked. RC-7 operation 1 is
@@ -50,7 +54,7 @@ Production remains undeployed and unverified.
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; no accepted real ASR/reframe evidence exists |
+| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; V3-01-18 adds implemented/mock-tested ASR adapter evidence, but no accepted real ASR/reframe evidence exists |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |

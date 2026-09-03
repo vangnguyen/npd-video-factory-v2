@@ -106,7 +106,7 @@ class TranscriptORM(Base):
     is_original_evidence: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     provider_key: Mapped[str] = mapped_column(String(120), nullable=False)
     language: Mapped[str] = mapped_column(String(16), nullable=False)
-    confidence: Mapped[float] = mapped_column(Float, nullable=False)
+    confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
     provenance_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
 
@@ -124,7 +124,7 @@ class TranscriptSegmentORM(Base):
     end_seconds: Mapped[float] = mapped_column(Float, nullable=False)
     text: Mapped[str] = mapped_column(String(4000), nullable=False)
     speaker: Mapped[str | None] = mapped_column(String(120), nullable=True)
-    confidence: Mapped[float] = mapped_column(Float, nullable=False)
+    confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
 
 
 class TranscriptWordORM(Base):
@@ -142,7 +142,7 @@ class TranscriptWordORM(Base):
     start_seconds: Mapped[float] = mapped_column(Float, nullable=False)
     end_seconds: Mapped[float] = mapped_column(Float, nullable=False)
     text: Mapped[str] = mapped_column(String(240), nullable=False)
-    confidence: Mapped[float] = mapped_column(Float, nullable=False)
+    confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
 
 
 class SceneORM(Base):
