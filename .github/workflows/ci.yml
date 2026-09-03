@@ -28,6 +28,8 @@ jobs:
       - run: python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q
       - name: Validate V3-01 acceptance register and redacted evidence
         run: python scripts/v3_01_acceptance.py validate-repo
+      - name: Verify V3-01-18 OpenAI ASR compatibility evidence
+        run: python scripts/v3_01_asr_compatibility.py --verify evidence/v3-01/vf-v3-01-20260903T030156Z-d2f34eb/provider/openai-asr-compatibility.json
       - name: Evaluate V3-01-04 Flow A fixture boundary
         run: python scripts/v3_01_flow_a_acceptance.py evidence/v3-01/vf-v3-01-20260828T010641Z-88e6bcc/flows/flow-a-upload-auto-edit/two-run-contract.json --expect-verdict BLOCKED
       - name: Evaluate V3-01-05 Flow B fixture boundary
@@ -441,7 +443,6 @@ jobs:
           grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
           grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
           grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
-          python scripts/v3_01_asr_compatibility.py --verify evidence/v3-01/vf-v3-01-20260903T030156Z-d2f34eb/provider/openai-asr-compatibility.json
           python -c 'import json; from pathlib import Path; p=Path("evidence/v3-01/vf-v3-01-20260903T030156Z-d2f34eb/final/status.json"); d=json.loads(p.read_text()); assert d["acceptance"] == {"implemented": "PASS", "mock_tested": "PASS", "real_provider_tested": "NOT_TESTED", "production_path_tested": "NOT_TESTED", "quality_accepted": "NOT_TESTED"}; assert d["model_selection"] == "PROPOSED_NOT_APPROVED"; assert d["provider_calls"] == 0; assert d["credential_reads"] == 0; assert d["spend_vnd"] == 0; assert d["repository_verdict"] == "NO_GO"'
           ! git grep -I -n -E '^(TRANSCRIPTION_PROVIDER=openai|OPENAI_TRANSCRIPTION_MODEL=.+|OPENAI_API_KEY=.+|OPENAI_TRANSCRIPTION_ESTIMATED_COST_VND=[1-9][0-9]*|OPENAI_TRANSCRIPTION_VND_PER_MINUTE=[1-9][0-9]*(\.[0-9]+)?|PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false)$' -- .env.example docker-compose.yml deploy apps services
       - name: Validate V2-11 deployment bundle
