@@ -28,7 +28,10 @@ collector in locked RC-10. Exact executable RC CI run `33527973264` passed 5/5. 
 dual-CI provenance proved identical executable trees. Separately authorized RC-10 Operations 1 and
 2 then completed with complete structured output, usage/cost, durable-safety and secret-containment
 evidence. Both are consumed/succeeded and establish 2/2 consecutive real-provider PASS for Vision,
-pending this evidence PR's G-08 merge. Production-path and quality acceptance remain absent.
+officially closed after PR #39 merged and exact-main CI `33703619599` passed 5/5. Production-path
+and quality acceptance remain absent. ASR remains fixture/contract-only with no live adapter; its
+next zero-call adapter and acceptance-gate design is recorded in
+[43_V3_01_VISION_CLOSURE_AND_ASR_GATE_DESIGN.md](43_V3_01_VISION_CLOSURE_AND_ASR_GATE_DESIGN.md).
 
 ## Foundation
 
@@ -58,7 +61,7 @@ pending this evidence PR's G-08 merge. Production-path and quality acceptance re
 | Capability | Primary code | Existing tests/evidence | Audit result |
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
-| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py` | Auto Edit suite and measured two-run fixture evidence | Contract/mock PASS with pre-call safety; real accuracy absent |
+| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py` | Auto Edit suite and measured two-run fixture evidence | Contract/mock PASS with pre-call safety; ASR has no live adapter and real accuracy remains absent; V3-01-18 is design-only |
 | Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema, exact-main CI, canonical evidence, split-timeout, dual-CI and two accepted RC-10 operations | Vision structured analysis is 2/2 consecutive real-provider PASS on immutable RC-10; real subject-tracking/reframe accuracy, production path and human quality remain untested |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |

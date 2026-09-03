@@ -2,11 +2,11 @@
 
 Captured at `2026-08-27T12:02:08Z` (`2026-08-27 19:02:08 Asia/Ho_Chi_Minh`).
 Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
-Current checkpoint status updated after evidence-only PR #38 merged, exact-main CI passed 5/5, and
-a separately authorized RC-10 Operation 2 completed with complete evidence. Operations 1 and 2 are
-consumed/succeeded and Vision is 2/2 consecutive PASS at operation-evidence level. The gate is
-unmounted; this consecutive-evidence PR requires a new G-08 before the aggregate PASS is official
-on `main`.
+Current checkpoint status updated after evidence-only PR #39 merged as
+`fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed` and exact-main CI `33703619599` passed 5/5. Operations
+1 and 2 are consumed/succeeded, their receipt hashes remain unchanged, and Vision is officially 2/2
+consecutive PASS on the real-provider-tested axis. The gate is unmounted and all further standalone
+Vision operation authority is retired.
 
 ## Control state
 
@@ -15,9 +15,9 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: RC-10 c2b1aec2d54dd90bcb486f8a68c97746b39963aa; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: RC-10 Vision consecutive evidence review; bundle unmounted; PR calls 0; PR cost 0 VND
+CURRENT SAFE PHASE: Vision closed; zero-call ASR / Flow A real-provider gate design; bundle unmounted
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #38 MERGE CONSUMED; RC-10 CONSECUTIVE EVIDENCE PR REQUIRES A NEW G-08
+G-08: PR #39 MERGE CONSUMED BY V3-01-APP-041; CURRENT ASR DESIGN PR REQUIRES A NEW G-08
 G-01-A / G-02-A / G-03-A: CONSUMED BY EXACT RC-10 OPERATIONS 1 AND 2; NO FURTHER OPERATION AUTHORITY
 RC-10 OPERATION 1: PASS; CONSUMED / SUCCEEDED
 RC-10 OPERATION 2: PASS; CONSUMED / SUCCEEDED; VISION 2/2 CONSECUTIVE PASS
@@ -158,7 +158,8 @@ Current repository checkpoint after the bounded merge sequence:
 | RC-10 | annotated `vf-v3-01-rc10` peels to `c2b1aec2d54dd90bcb486f8a68c97746b39963aa`; tag object `32bd6a78048a6ae92538a9195a1386318ebd72b8`; NO-GO; not deployed |
 | RC-10 governance rebind | PR #37 merged governance-only as `fd78a1690a5a2fd7b07e9e7822deda834f02ea6d`; executable CI `33527973264` and governance CI `33532594395` each passed 5/5; G-01-A/G-02-A/G-03-A bound by `V3-01-APP-038` through `V3-01-APP-040`; bundle raw SHA `30f4ffd9353a00b7fdf97d0998dce43798937a2c577ca3fa618c947bbb8040e1`; scope SHA `a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0` |
 | RC-10 Operation 1 evidence | PR #38 merged evidence-only as `79b14ded0bbd0cd552420e5964647b6fba16f9b7`; exact-main CI `33650857422` passed 5/5; executable tree remained `f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c` |
-| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is 2/2 consecutive PASS pending this evidence PR's G-08 merge; no Operation 3 is required or authorized |
+| RC-10 consecutive Vision closure | PR #39 merged evidence-only as `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed`; `V3-01-APP-041` consumed; exact-main CI `33703619599` passed 5/5; dual-CI provenance PASS; executable tree remained `f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c`; source receipt SHA values remained `11fd1f7c...` and `deed47e5...` |
+| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is officially 2/2 consecutive real-provider PASS; no Operation 3 is required or authorized; ASR remains `NOT_TESTED` |
 | Deployment/ingress/publish action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in

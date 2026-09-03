@@ -1,0 +1,27 @@
+{
+  "approval_id": "V3-01-APP-041",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #39 as the RC-10 Vision consecutive evidence record only; close VIS-01 real-provider-tested after exact-main regression without granting any runtime authority.",
+  "artifact_or_commit_hashes": [
+    "d1daaefd1934b87563f3206f3e7e3778e2c84a63",
+    "fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed",
+    "c2b1aec2d54dd90bcb486f8a68c97746b39963aa",
+    "11fd1f7cb8eca120964033aba098e051d2d380713c52ceffec02979a77c9a620",
+    "deed47e573079bd53118859f616991aae42b420992aad84f39cbfb4bdb3df0a2"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and exact-main governance regression only; executable RC-10 remains immutable and undeployed",
+  "limits": [
+    "Evidence and governance merge for RC-10 Vision Operations 1 and 2 only",
+    "VIS-01 real-provider-tested may close as PASS after exact-main CI succeeds and source receipt hashes remain unchanged",
+    "No Operation 3 and no further standalone Vision operation authority",
+    "No credential read, provider call, budget reservation or runtime gate activation",
+    "No executable/runtime change and no RC-11 creation",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-03T01:26:04Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved PR #39 in the controlling task. No separate machine timestamp was retained for the preceding chat decision, so the approval is conservatively recorded at the exact GitHub merge time. PR #39 merged as fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed; exact-main CI run 33703619599 passed 5/5, dual-CI provenance passed, the executable-tree SHA-256 remained f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c, and both source receipt hashes remained unchanged. This record grants no runtime action."
+}
