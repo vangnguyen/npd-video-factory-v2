@@ -49,34 +49,41 @@ offline contract tests must be remediated first.
 
 ## Provider/model recommendation for the first ASR acceptance
 
-The current OpenAI file-transcription guide recommends `gpt-transcribe` for ordinary recorded
-speech, but the documented `timestamp_granularities[]` option for word/segment timestamps is
-currently supported only by `whisper-1`. Flow A requires word timing for transcript evidence,
-speech-safe edit decisions and subtitle-drift measurement. For that reason, the proposed first
-strict-contract candidate is:
+ASR model selection remains **PROPOSED / NOT APPROVED**. The official OpenAI materials checked on
+2026-09-03 do not provide one unambiguous per-model compatibility matrix: the file-transcription
+guide demonstrates `timestamp_granularities[]` with `whisper-1`, while the Audio API reference
+describes `word` and `segment` granularities and explicitly excludes
+`gpt-4o-transcribe-diarize`. Flow A requires native word timing for transcript evidence, speech-safe
+edit decisions and subtitle-drift measurement, so V3-01-18 must resolve the exact contract for each
+candidate through an offline compatibility matrix before choosing a model.
 
-```text
-provider: openai-transcription
-model: whisper-1
-capability: asr
-response format: verbose_json
-timestamp granularities: word, segment
-language: vi
-```
+| Candidate | Selection status | Required offline compatibility evidence |
+| --- | --- | --- |
+| `whisper-1` | `PROPOSED / NOT APPROVED` | endpoint/schema and recorded-fixture proof for transcript text, segment timestamps, word timestamps, language, usage/duration, request ID and deterministic `ProviderTranscript` mapping |
+| `gpt-transcribe` | `PROPOSED / NOT APPROVED` | the same proof; lower published per-minute pricing is not capability evidence |
+| `gpt-4o-transcribe` | `PROPOSED / NOT APPROVED` | the same proof; model-page accuracy guidance is not timestamp-contract evidence |
 
-This is a design recommendation, not G-01 approval. The official `whisper-1` model page lists a
-dated reference price of USD 0.006 per minute as of 2026-09-03. Price and availability must be
-refreshed when G-02 is proposed; no VND budget is inferred here. A future quality-first move to
-`gpt-transcribe` requires a separately reviewed deterministic alignment layer if the API still does
-not expose the timing contract needed by Flow A.
+For each candidate, V3-01-18 must record every required field as `SUPPORTED`, `UNSUPPORTED` or
+`UNRESOLVED`, with the exact official contract or recorded offline fixture that supports the result.
+If a model does not provide native word timestamps, it is incompatible with the strict Flow A
+timestamp contract. V3-01-18 must not add or silently propose an alignment layer to compensate.
+Candidate selection occurs only after this compatibility evidence is reviewed; this PR grants no
+G-01 authority.
+
+The official model pages list dated reference prices of USD 0.006 per minute for `whisper-1` and USD
+0.0045 per minute for `gpt-transcribe` as of 2026-09-03. Price, availability and exact response
+contracts must be refreshed when a later G-01/G-02 proposal is prepared; no VND budget is inferred
+here.
 
 Official references, checked 2026-09-03:
 
 - [Speech-to-text guide](https://developers.openai.com/api/docs/guides/speech-to-text)
+- [Audio transcription API reference](https://platform.openai.com/docs/api-reference/audio/createTranscription)
 - [Whisper model](https://developers.openai.com/api/docs/models/whisper-1)
 - [GPT Transcribe model](https://developers.openai.com/api/docs/models/gpt-transcribe)
+- [GPT-4o Transcribe model](https://developers.openai.com/api/docs/models/gpt-4o-transcribe)
 
-## Proposed V3-01-18 — OpenAI timestamped ASR adapter
+## Proposed V3-01-18 — OpenAI ASR compatibility and adapter contract
 
 V3-01-18 should be a source-only, zero-call remediation. The intended execution path is:
 
@@ -92,6 +99,12 @@ AutoEditAnalysisService
 Business logic must not call an SDK or HTTP endpoint directly. The adapter must preserve the
 existing fail-closed safety plane and map provider output into the canonical `ProviderTranscript`,
 `ProviderSegment` and `ProviderWord` contracts.
+
+Before adapter selection, V3-01-18 must build and validate the offline compatibility matrix for
+`whisper-1`, `gpt-transcribe` and `gpt-4o-transcribe`. It must verify transcript text, segment and
+word timestamps, language, usage/duration, provider request ID and deterministic domain mapping.
+The checkpoint remains source-only with zero provider calls, zero credential reads and zero VND;
+it neither chooses an approved production model nor grants G-01.
 
 Required source contract:
 
