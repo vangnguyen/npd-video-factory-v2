@@ -35,6 +35,13 @@ class Settings(BaseSettings):
     trend_fixture_path: Path = Path(__file__).resolve().parent / "fixtures" / "trend-signals.json"
     auto_edit_fixture_enabled: bool = True
     transcription_provider: str = "fixture"
+    openai_transcription_model: str = ""
+    openai_transcription_credential_alias: str = "secret://openai/codex-video"
+    openai_transcription_language: str = "vi"
+    openai_transcription_max_file_bytes: int = 25_000_000
+    openai_transcription_max_duration_seconds: float = 600.0
+    openai_transcription_estimated_cost_vnd: Decimal = Decimal("0")
+    openai_transcription_vnd_per_minute: Decimal = Decimal("0")
     auto_edit_signal_provider: str = "fixture"
     ffprobe_path: str = "ffprobe"
     ffmpeg_path: str = "ffmpeg"
@@ -269,8 +276,8 @@ class Settings(BaseSettings):
             raise ValueError("deterministic media fixtures must be disabled in production")
         if self.app_env == "production" and self.analytics_fixture_enabled:
             raise ValueError("deterministic analytics fixtures must be disabled in production")
-        if self.transcription_provider not in {"fixture", "contract"}:
-            raise ValueError("TRANSCRIPTION_PROVIDER must be fixture or contract")
+        if self.transcription_provider not in {"fixture", "contract", "openai"}:
+            raise ValueError("TRANSCRIPTION_PROVIDER must be fixture, contract or openai")
         if self.auto_edit_signal_provider not in {"fixture", "ffmpeg"}:
             raise ValueError("AUTO_EDIT_SIGNAL_PROVIDER must be fixture or ffmpeg")
         if self.vision_provider not in {"fixture", "contract", "openai"}:
@@ -283,6 +290,29 @@ class Settings(BaseSettings):
             raise ValueError("VIDEO_GENERATION_PROVIDER must be fixture, contract or comfyui")
         if self.transcription_provider == "fixture" and not self.auto_edit_fixture_enabled:
             raise ValueError("fixture transcription requires AUTO_EDIT_FIXTURE_ENABLED=true")
+        if self.transcription_provider == "openai":
+            if self.openai_transcription_model != "whisper-1":
+                raise ValueError(
+                    "OpenAI transcription requires an explicitly configured model compatible "
+                    "with the strict native timestamp contract"
+                )
+            if not self.openai_transcription_credential_alias.startswith(
+                ("secret://", "vault://", "external://")
+            ):
+                raise ValueError(
+                    "OpenAI transcription credentials must be referenced by external alias"
+                )
+            if self.openai_transcription_language != "vi":
+                raise ValueError("OpenAI transcription is locked to Vietnamese for Flow A")
+            if not 1 <= self.openai_transcription_max_file_bytes <= 25_000_000:
+                raise ValueError("OpenAI transcription file bound exceeds the API contract")
+            if not 1 <= self.openai_transcription_max_duration_seconds <= 3_600:
+                raise ValueError("OpenAI transcription duration bound is invalid")
+            if (
+                self.openai_transcription_estimated_cost_vnd < 0
+                or self.openai_transcription_vnd_per_minute < 0
+            ):
+                raise ValueError("OpenAI transcription VND values cannot be negative")
         if self.auto_edit_signal_provider == "fixture" and not self.auto_edit_fixture_enabled:
             raise ValueError("fixture media signals require AUTO_EDIT_FIXTURE_ENABLED=true")
         if self.vision_provider == "fixture" and not self.vision_fixture_enabled:
@@ -311,10 +341,10 @@ class Settings(BaseSettings):
         )
         if any(value < 0 for value in vision_cost_values):
             raise ValueError("OpenAI Vision VND cost configuration cannot be negative")
-        if self.vision_provider == "openai" and self.openai_base_url.rstrip("/") != (
-            "https://api.openai.com"
-        ):
-            raise ValueError("OpenAI Vision requires the official HTTPS API origin")
+        if (
+            self.vision_provider == "openai" or self.transcription_provider == "openai"
+        ) and self.openai_base_url.rstrip("/") != "https://api.openai.com":
+            raise ValueError("OpenAI providers require the official HTTPS API origin")
         if (
             "fixture"
             in {self.stock_media_provider, self.image_generation_provider, self.video_generation_provider}
@@ -440,61 +470,137 @@ class Settings(BaseSettings):
                 raise ValueError("verified provider gate bundle SHA-256 is required")
             if not self.provider_gate_expected_rc_commit or not self.provider_gate_expected_rc_tag:
                 raise ValueError("verified provider gates require an exact RC commit and tag")
-            acceptance_limits = {
-                "model": self.openai_vision_model,
-                "credential_alias": self.openai_vision_credential_alias,
-                "detail": self.openai_vision_image_detail,
-                "max_frames": self.openai_vision_max_frames,
-                "max_dimension_pixels": self.openai_vision_max_dimension_pixels,
-                "input_token_ceiling": self.openai_vision_input_token_ceiling,
-                "max_output_tokens": self.openai_vision_max_output_tokens,
-                "estimated_cost_vnd": self.openai_vision_estimated_cost_vnd,
-                "input_vnd_per_million_tokens": (
-                    self.openai_vision_input_vnd_per_million_tokens
-                ),
-                "cached_input_vnd_per_million_tokens": (
-                    self.openai_vision_cached_input_vnd_per_million_tokens
-                ),
-                "output_vnd_per_million_tokens": (
-                    self.openai_vision_output_vnd_per_million_tokens
-                ),
-                "per_operation_limit_vnd": self.provider_per_operation_limit_vnd,
-                "daily_limit_vnd": self.provider_daily_limit_vnd,
-                "retry_max_attempts": self.provider_retry_max_attempts,
-                "provider_http_timeout_seconds": self.provider_http_timeout_seconds,
-                "controller_hard_timeout_seconds": self.controller_hard_timeout_seconds,
-                "retry_max_elapsed_seconds": self.provider_retry_max_elapsed_seconds,
-                "max_concurrent_calls": self.provider_max_concurrent_calls,
-            }
-            expected_limits = {
-                "model": "gpt-5-mini",
-                "credential_alias": "secret://openai/codex-video",
-                "detail": "high",
-                "max_frames": 1,
-                "max_dimension_pixels": 2048,
-                "input_token_ceiling": 16_384,
-                "max_output_tokens": 4_096,
-                "estimated_cost_vnd": Decimal("500"),
-                "input_vnd_per_million_tokens": Decimal("6565"),
-                "cached_input_vnd_per_million_tokens": Decimal("656.5"),
-                "output_vnd_per_million_tokens": Decimal("52520"),
-                "per_operation_limit_vnd": Decimal("500"),
-                "daily_limit_vnd": Decimal("1250"),
-                "retry_max_attempts": 1,
-                "provider_http_timeout_seconds": 90.0,
-                "controller_hard_timeout_seconds": 120.0,
-                "retry_max_elapsed_seconds": 120.0,
-                "max_concurrent_calls": 1,
-            }
-            if acceptance_limits != expected_limits:
-                raise ValueError("provider settings do not match the approved G-02-A envelope")
+            selected_capabilities = tuple(
+                capability
+                for capability, selected
+                in (
+                    ("vision", self.vision_provider == "openai"),
+                    ("asr", self.transcription_provider == "openai"),
+                )
+                if selected
+            )
+            if len(selected_capabilities) != 1:
+                raise ValueError(
+                    "a verified provider gate must select exactly one OpenAI capability"
+                )
+            if selected_capabilities[0] == "vision":
+                acceptance_limits = {
+                    "model": self.openai_vision_model,
+                    "credential_alias": self.openai_vision_credential_alias,
+                    "detail": self.openai_vision_image_detail,
+                    "max_frames": self.openai_vision_max_frames,
+                    "max_dimension_pixels": self.openai_vision_max_dimension_pixels,
+                    "input_token_ceiling": self.openai_vision_input_token_ceiling,
+                    "max_output_tokens": self.openai_vision_max_output_tokens,
+                    "estimated_cost_vnd": self.openai_vision_estimated_cost_vnd,
+                    "input_vnd_per_million_tokens": (
+                        self.openai_vision_input_vnd_per_million_tokens
+                    ),
+                    "cached_input_vnd_per_million_tokens": (
+                        self.openai_vision_cached_input_vnd_per_million_tokens
+                    ),
+                    "output_vnd_per_million_tokens": (
+                        self.openai_vision_output_vnd_per_million_tokens
+                    ),
+                    "per_operation_limit_vnd": self.provider_per_operation_limit_vnd,
+                    "daily_limit_vnd": self.provider_daily_limit_vnd,
+                    "retry_max_attempts": self.provider_retry_max_attempts,
+                    "provider_http_timeout_seconds": self.provider_http_timeout_seconds,
+                    "controller_hard_timeout_seconds": self.controller_hard_timeout_seconds,
+                    "retry_max_elapsed_seconds": self.provider_retry_max_elapsed_seconds,
+                    "max_concurrent_calls": self.provider_max_concurrent_calls,
+                }
+                expected_limits = {
+                    "model": "gpt-5-mini",
+                    "credential_alias": "secret://openai/codex-video",
+                    "detail": "high",
+                    "max_frames": 1,
+                    "max_dimension_pixels": 2048,
+                    "input_token_ceiling": 16_384,
+                    "max_output_tokens": 4_096,
+                    "estimated_cost_vnd": Decimal("500"),
+                    "input_vnd_per_million_tokens": Decimal("6565"),
+                    "cached_input_vnd_per_million_tokens": Decimal("656.5"),
+                    "output_vnd_per_million_tokens": Decimal("52520"),
+                    "per_operation_limit_vnd": Decimal("500"),
+                    "daily_limit_vnd": Decimal("1250"),
+                    "retry_max_attempts": 1,
+                    "provider_http_timeout_seconds": 90.0,
+                    "controller_hard_timeout_seconds": 120.0,
+                    "retry_max_elapsed_seconds": 120.0,
+                    "max_concurrent_calls": 1,
+                }
+                if acceptance_limits != expected_limits:
+                    raise ValueError(
+                        "provider settings do not match the approved G-02-A envelope"
+                    )
+            else:
+                # ASR has no checked-in price/budget choice. A future G-02-ASR
+                # bundle is hash-pinned first, then its exact values must match
+                # the process settings before any adapter can be activated.
+                from .provider_gate_loader import load_verified_provider_gate_bundle
+
+                scope = load_verified_provider_gate_bundle(
+                    self.provider_verified_gate_bundle_file,
+                    expected_bundle_sha256=self.provider_verified_gate_bundle_sha256,
+                    expected_rc_commit=self.provider_gate_expected_rc_commit,
+                    expected_rc_tag=self.provider_gate_expected_rc_tag,
+                )
+                acceptance_limits = {
+                    "provider_key": "openai-transcription",
+                    "capability": "asr",
+                    "model": self.openai_transcription_model,
+                    "credential_alias": self.openai_transcription_credential_alias,
+                    "language": self.openai_transcription_language,
+                    "max_file_bytes": self.openai_transcription_max_file_bytes,
+                    "max_duration_seconds": self.openai_transcription_max_duration_seconds,
+                    "estimated_cost_vnd": self.openai_transcription_estimated_cost_vnd,
+                    "vnd_per_minute": self.openai_transcription_vnd_per_minute,
+                    "per_operation_limit_vnd": self.provider_per_operation_limit_vnd,
+                    "acceptance_window_limit_vnd": self.provider_daily_limit_vnd,
+                    "retry_max_attempts": self.provider_retry_max_attempts,
+                    "provider_http_timeout_seconds": self.provider_http_timeout_seconds,
+                    "controller_hard_timeout_seconds": self.controller_hard_timeout_seconds,
+                    "retry_max_elapsed_seconds": self.provider_retry_max_elapsed_seconds,
+                    "max_concurrent_calls": self.provider_max_concurrent_calls,
+                }
+                expected_limits = {
+                    "provider_key": scope.provider_key,
+                    "capability": scope.capability,
+                    "model": scope.model,
+                    "credential_alias": scope.credential_alias,
+                    "language": scope.requested_language,
+                    "max_file_bytes": scope.max_file_bytes,
+                    "max_duration_seconds": scope.max_duration_seconds,
+                    "estimated_cost_vnd": scope.per_operation_limit_vnd,
+                    "vnd_per_minute": scope.vnd_per_minute,
+                    "per_operation_limit_vnd": scope.per_operation_limit_vnd,
+                    "acceptance_window_limit_vnd": scope.acceptance_window_limit_vnd,
+                    "retry_max_attempts": scope.max_attempts,
+                    "provider_http_timeout_seconds": scope.provider_http_timeout_seconds,
+                    "controller_hard_timeout_seconds": scope.controller_hard_timeout_seconds,
+                    "retry_max_elapsed_seconds": scope.controller_hard_timeout_seconds,
+                    "max_concurrent_calls": scope.max_concurrent_calls,
+                }
+                if acceptance_limits != expected_limits:
+                    raise ValueError(
+                        "provider settings do not match the verified G-02-ASR envelope"
+                    )
         elif self.provider_external_execution_enabled:
             raise ValueError("real provider execution requires a verified owner-gate bundle")
         if self.provider_external_execution_enabled:
             if not self.provider_verified_gate_bundle_enabled:
                 raise ValueError("real provider execution requires a verified owner-gate bundle")
-            if self.vision_provider != "openai" or not self.provider_paid_execution_enabled:
-                raise ValueError("G-01-A execution is limited to the paid OpenAI Vision adapter")
+            selected_openai_adapters = sum(
+                (
+                    self.vision_provider == "openai",
+                    self.transcription_provider == "openai",
+                )
+            )
+            if selected_openai_adapters != 1 or not self.provider_paid_execution_enabled:
+                raise ValueError(
+                    "gated execution is limited to one paid OpenAI provider capability"
+                )
         if not self.provider_global_kill_switch_engaged and not self.provider_external_execution_enabled:
             raise ValueError(
                 "the global provider kill switch must remain engaged outside gated execution"

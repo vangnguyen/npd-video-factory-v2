@@ -55,6 +55,10 @@ from .human_auth import (
 )
 from .models import JobCreateResponse, JobRecord, VideoJobCreate
 from .object_storage import create_object_storage, sha256_file
+from .openai_transcription_provider import (
+    OpenAITranscriptionProvider,
+    openai_asr_compatibility_matrix,
+)
 from .openai_vision_provider import FFmpegVisionFrameExtractor, OpenAIVisionProvider
 from .operations_observability import OperationsObservabilityService
 from .operations_routes import router as operations_router
@@ -210,11 +214,28 @@ async def lifespan(app: FastAPI):
         object_storage=object_storage,
     )
     media_probe = FFprobeMediaProbe(settings.ffprobe_path)
-    transcription_provider = (
-        DeterministicTranscriptionProvider()
-        if settings.transcription_provider == "fixture"
-        else ContractOnlyTranscriptionProvider()
-    )
+    if settings.transcription_provider == "fixture":
+        transcription_provider = DeterministicTranscriptionProvider()
+    elif settings.transcription_provider == "openai":
+        transcription_provider = OpenAITranscriptionProvider(
+            model=settings.openai_transcription_model,
+            credential_alias=settings.openai_transcription_credential_alias,
+            credential_resolver=lambda alias: (
+                settings.openai_api_key
+                if alias == settings.openai_transcription_credential_alias
+                else ""
+            ),
+            base_url=settings.openai_base_url,
+            language=settings.openai_transcription_language,
+            provider_http_timeout_seconds=settings.provider_http_timeout_seconds,
+            controller_hard_timeout_seconds=settings.controller_hard_timeout_seconds,
+            max_file_bytes=settings.openai_transcription_max_file_bytes,
+            max_duration_seconds=settings.openai_transcription_max_duration_seconds,
+            estimated_cost_vnd=settings.openai_transcription_estimated_cost_vnd,
+            vnd_per_minute=settings.openai_transcription_vnd_per_minute,
+        )
+    else:
+        transcription_provider = ContractOnlyTranscriptionProvider()
     signal_provider = (
         DeterministicMediaSignalProvider()
         if settings.auto_edit_signal_provider == "fixture"
@@ -555,6 +576,31 @@ def _provider_definitions() -> list[dict[str, object]]:
             "supports_dry_run": True,
             "config_ref": "env:TRANSCRIPTION_PROVIDER_*",
             "metadata": {"contract_only": True, "paid": None},
+        },
+        {
+            "provider_key": "openai-transcription",
+            "display_name": "OpenAI ASR Adapter",
+            "capability": "asr",
+            "adapter": "app.openai_transcription_provider.OpenAITranscriptionProvider",
+            "routing_mode": (
+                "owner_gated" if settings.transcription_provider == "openai" else "disabled"
+            ),
+            "status": (
+                "safety_blocked"
+                if settings.transcription_provider == "openai"
+                else "not_configured"
+            ),
+            "enabled": False,
+            "supports_dry_run": True,
+            "config_ref": "env:OPENAI_TRANSCRIPTION_*",
+            "metadata": {
+                "adapter_implemented": True,
+                "model_selection": "PROPOSED_NOT_APPROVED",
+                "paid": True,
+                "real_provider_tested": False,
+                "external_execution_enabled": False,
+                "compatibility_evidence_only": True,
+            },
         },
         {
             "provider_key": "fixture-media-signals",
@@ -1048,6 +1094,14 @@ async def capabilities() -> dict[str, object]:
         "final_render_publish": "dry_run_validation_only",
         "source_media_mutation": False,
         "transcription_provider": settings.transcription_provider,
+        "openai_asr_adapter_implemented": True,
+        "openai_asr_model_selection": "PROPOSED_NOT_APPROVED",
+        "openai_asr_compatibility": [
+            row.model_dump(mode="json") for row in openai_asr_compatibility_matrix()
+        ],
+        "asr_external_execution_enabled": False,
+        "asr_paid_execution_enabled": False,
+        "asr_real_provider_tested": False,
         "media_signal_provider": settings.auto_edit_signal_provider,
         "vision_analysis": True,
         "vision_provider": settings.vision_provider,

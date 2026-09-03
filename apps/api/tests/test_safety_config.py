@@ -213,6 +213,51 @@ def test_v3_01_09_openai_vision_config_is_adapter_only_and_fail_closed() -> None
         )
 
 
+def test_v3_01_18_openai_asr_config_is_unselected_and_fail_closed() -> None:
+    default = Settings(_env_file=None)
+    assert default.transcription_provider == "fixture"
+    assert default.openai_transcription_model == ""
+    assert default.openai_transcription_estimated_cost_vnd == 0
+    assert default.openai_transcription_vnd_per_minute == 0
+    assert default.provider_external_execution_enabled is False
+    assert default.provider_paid_execution_enabled is False
+    assert default.provider_global_kill_switch_engaged is True
+
+    configured = Settings(
+        _env_file=None,
+        transcription_provider="openai",
+        openai_transcription_model="whisper-1",
+    )
+    assert configured.openai_transcription_credential_alias == (
+        "secret://openai/codex-video"
+    )
+    assert configured.openai_transcription_language == "vi"
+    assert configured.openai_transcription_estimated_cost_vnd == 0
+
+    with pytest.raises(ValidationError, match="explicitly configured model"):
+        Settings(_env_file=None, transcription_provider="openai")
+    with pytest.raises(ValidationError, match="native timestamp contract"):
+        Settings(
+            _env_file=None,
+            transcription_provider="openai",
+            openai_transcription_model="gpt-transcribe",
+        )
+    with pytest.raises(ValidationError, match="external alias"):
+        Settings(
+            _env_file=None,
+            transcription_provider="openai",
+            openai_transcription_model="whisper-1",
+            openai_transcription_credential_alias="raw-key",
+        )
+    with pytest.raises(ValidationError, match="official HTTPS API origin"):
+        Settings(
+            _env_file=None,
+            transcription_provider="openai",
+            openai_transcription_model="whisper-1",
+            openai_base_url="https://proxy.invalid",
+        )
+
+
 def test_v2_06_rejects_media_fixture_in_production() -> None:
     with pytest.raises(ValidationError, match="media fixtures must be disabled"):
         Settings(
@@ -342,6 +387,12 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
     assert result["source_media_mutation"] is False
     assert result["vision_analysis"] is True
     assert result["openai_vision_adapter_implemented"] is True
+    assert result["openai_asr_adapter_implemented"] is True
+    assert result["openai_asr_model_selection"] == "PROPOSED_NOT_APPROVED"
+    assert len(result["openai_asr_compatibility"]) == 3
+    assert result["asr_external_execution_enabled"] is False
+    assert result["asr_paid_execution_enabled"] is False
+    assert result["asr_real_provider_tested"] is False
     assert result["live_vision_provider_configured"] is False
     assert result["vision_external_execution_enabled"] is False
     assert result["vision_paid_execution_enabled"] is False

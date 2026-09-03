@@ -38,6 +38,7 @@ from .object_storage import ObjectStorageProvider, validate_object_key
 from .platform_models import AssetRegister
 from .provider_safety import (
     ProviderCallContext,
+    ProviderExecutionTrace,
     ProviderSafetyBlocked,
     ProviderSafetyController,
 )
@@ -422,18 +423,68 @@ class AutoEditAnalysisService:
         local_path = self.staging_root / f"{analysis_id}-{asset.filename}"
         try:
             await self.object_storage.download_file(object_key=asset.object_key, destination=local_path)
+            execution_trace = ProviderExecutionTrace()
+            operation_key = (
+                payload.acceptance_operation_id
+                if self.transcription_provider.external_call
+                and payload.acceptance_operation_id is not None
+                else f"{analysis_id}:transcription"
+            )
+            transcription_capability = getattr(
+                self.transcription_provider,
+                "capability",
+                "transcription",
+            )
             transcription = self.provider_safety.execute(
                 ProviderCallContext(
-                    operation_key=f"{analysis_id}:transcription",
+                    operation_key=operation_key,
                     workspace_id=asset.workspace_id,
                     project_id=asset.project_id,
                     provider_key=self.transcription_provider.key,
-                    capability="transcription",
-                    operation="auto_edit_transcription",
+                    model=self.transcription_provider.model,
+                    capability=transcription_capability,
+                    operation=(
+                        "flow_a_asr"
+                        if self.transcription_provider.external_call
+                        else "auto_edit_transcription"
+                    ),
                     external_call=self.transcription_provider.external_call,
                     paid=self.transcription_provider.paid,
                     estimated_cost_vnd=self.transcription_provider.estimated_cost_vnd,
                     credential_alias=self.transcription_provider.credential_alias,
+                    asset_id=asset.asset_id,
+                    asset_hash=asset.checksum_sha256,
+                    input_media_kind=(
+                        source_media.media_kind
+                        if self.transcription_provider.external_call
+                        and source_media.media_kind in {"audio", "video"}
+                        else None
+                    ),
+                    input_file_bytes=(
+                        local_path.stat().st_size
+                        if self.transcription_provider.external_call
+                        else None
+                    ),
+                    input_duration_seconds=(
+                        source_media.duration_seconds
+                        if self.transcription_provider.external_call
+                        else None
+                    ),
+                    requested_language=(
+                        getattr(self.transcription_provider, "language", None)
+                        if self.transcription_provider.external_call
+                        else None
+                    ),
+                    response_format=(
+                        getattr(self.transcription_provider, "response_format", None)
+                        if self.transcription_provider.external_call
+                        else None
+                    ),
+                    timestamp_granularities=(
+                        getattr(self.transcription_provider, "timestamp_granularities", ())
+                        if self.transcription_provider.external_call
+                        else ()
+                    ),
                     # A real Flow A run must supply the separate G-03 rights record. Basic upload
                     # labels are not silently promoted into approved provider-rights evidence.
                     rights_required=self.transcription_provider.external_call,
@@ -443,6 +494,20 @@ class AutoEditAnalysisService:
                     local_path,
                     metadata=source_media,
                     checksum_sha256=asset.checksum_sha256,
+                    execution_trace=execution_trace,
+                ),
+                actual_cost=lambda result: result.actual_cost_vnd,
+                timeout_evidence_factory=lambda timeout_envelope, error: (
+                    execution_trace.timeout_evidence(
+                        code="CONTROLLER_ENVELOPE_TIMEOUT",
+                        timeout_kind="controller_envelope",
+                        timeout_envelope=timeout_envelope,
+                        error=error,
+                        retryable=True,
+                        provider_error_message=(
+                            "Transcription provider operation exceeded the controller deadline"
+                        ),
+                    )
                 ),
             )
             transcription_result, signals = await asyncio.gather(
@@ -462,6 +527,7 @@ class AutoEditAnalysisService:
                     **transcription_result.value.provenance,
                     "provider_safety_receipt": transcription_result.receipt.model_dump(mode="json"),
                 },
+                actual_cost_vnd=transcription_result.value.actual_cost_vnd,
             )
             scenes = build_scenes(
                 duration=float(source_media.duration_seconds),
@@ -475,11 +541,23 @@ class AutoEditAnalysisService:
                 project_id=asset.project_id,
                 job_id=None,
                 provider_key=self.transcription_provider.key,
-                capability="transcription",
+                capability=transcription_capability,
                 operation=f"auto-edit-transcript:{analysis_id}",
-                estimated_cost=Decimal("0"),
-                actual_cost=Decimal("0"),
-                metadata={"fixture": transcript.provenance.get("fixture", False)},
+                model=self.transcription_provider.model,
+                units=Decimal(str(source_media.duration_seconds)) / Decimal("60"),
+                unit_name="audio_minute",
+                estimated_cost=(
+                    self.transcription_provider.estimated_cost_vnd or Decimal("0")
+                ),
+                actual_cost=transcription_result.receipt.charged_cost_vnd,
+                metadata={
+                    "fixture": transcript.provenance.get("fixture", False),
+                    "external_call": transcript.provenance.get("external_call", False),
+                    "currency": "VND",
+                    "cost_receipt_recorded": bool(
+                        transcript.provenance.get("cost_receipt")
+                    ),
+                },
             )
             await self.platform.record_provider_operation(
                 workspace_id=asset.workspace_id,
