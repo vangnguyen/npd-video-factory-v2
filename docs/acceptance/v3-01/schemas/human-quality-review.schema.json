@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/video-factory/v3-01/human-quality-review.schema.json",
+  "title": "Video Factory V3-01 G-11 human quality review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_kind", "gate", "status", "decision", "review_id", "artifact_bindings", "reviewer", "review_context", "checks", "notes", "evidence_sha256", "invalidation", "safety"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_kind": {"const": "g11_human_quality_review"},
+    "gate": {"const": "G-11"},
+    "status": {"enum": ["NOT_EXECUTED", "IN_PROGRESS", "COMPLETE"]},
+    "decision": {"enum": ["ACCEPT", "REJECT", "REVIEW_REQUIRED"]},
+    "review_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,199}$"},
+    "artifact_bindings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["release_candidate_commit", "final_video_sha256", "timeline_sha256", "subtitle_sha256", "voice_sha256", "music_sha256", "rights_manifest_sha256", "automated_qc_sha256"],
+      "properties": {
+        "release_candidate_commit": {"type": ["string", "null"], "pattern": "^[a-f0-9]{40}$"},
+        "final_video_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "timeline_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "subtitle_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "voice_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "music_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "rights_manifest_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "automated_qc_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "reviewer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "role", "started_at_utc", "completed_at_utc"],
+      "properties": {
+        "name": {"type": ["string", "null"], "minLength": 1},
+        "role": {"type": ["string", "null"], "minLength": 1},
+        "started_at_utc": {"type": ["string", "null"], "format": "date-time"},
+        "completed_at_utc": {"type": ["string", "null"], "format": "date-time"}
+      }
+    },
+    "review_context": {
+      "type": "object", "additionalProperties": false,
+      "required": ["full_watch_from_start_to_end", "desktop_or_large_screen", "mobile_screen", "headphones", "phone_speaker"],
+      "properties": {
+        "full_watch_from_start_to_end": {"type": "boolean"},
+        "desktop_or_large_screen": {"type": "boolean"},
+        "mobile_screen": {"type": "boolean"},
+        "headphones": {"type": "boolean"},
+        "phone_speaker": {"type": "boolean"}
+      }
+    },
+    "checks": {
+      "type": "array", "minItems": 25,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["check_id", "category", "requirement", "result", "artifact_timestamp_seconds", "notes"],
+        "properties": {
+          "check_id": {"type": "string", "pattern": "^(VISUAL|SUBTITLE|VOICE|AUDIO|CONTENT)-[0-9]{2}$"},
+          "category": {"enum": ["VISUAL", "SUBTITLE", "VOICE", "AUDIO", "CONTENT"]},
+          "requirement": {"type": "string", "minLength": 1},
+          "result": {"enum": ["NOT_REVIEWED", "PASS", "FAIL", "REVIEW_REQUIRED"]},
+          "artifact_timestamp_seconds": {"type": ["number", "null"], "minimum": 0},
+          "notes": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "notes": {"type": ["string", "null"]},
+    "evidence_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "invalidation": {
+      "type": "array", "minItems": 6, "uniqueItems": true,
+      "items": {"enum": ["final_video_hash_changed", "timeline_changed", "subtitle_changed", "voice_changed", "music_changed", "rights_manifest_changed", "automated_qc_changed"]}
+    },
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": ["publishing_authorized", "deployment_authorized", "production_verdict"],
+      "properties": {
+        "publishing_authorized": {"const": false},
+        "deployment_authorized": {"const": false},
+        "production_verdict": {"const": "NO-GO"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"decision": {"const": "ACCEPT"}}, "required": ["decision"]},
+      "then": {
+        "properties": {
+          "status": {"const": "COMPLETE"},
+          "artifact_bindings": {
+            "properties": {
+              "release_candidate_commit": {"type": "string"},
+              "final_video_sha256": {"type": "string"},
+              "timeline_sha256": {"type": "string"},
+              "subtitle_sha256": {"type": "string"},
+              "voice_sha256": {"type": "string"},
+              "music_sha256": {"type": "string"},
+              "rights_manifest_sha256": {"type": "string"},
+              "automated_qc_sha256": {"type": "string"}
+            }
+          },
+          "reviewer": {"properties": {"name": {"type": "string"}, "role": {"type": "string"}, "started_at_utc": {"type": "string"}, "completed_at_utc": {"type": "string"}}},
+          "review_context": {"properties": {"full_watch_from_start_to_end": {"const": true}, "desktop_or_large_screen": {"const": true}, "mobile_screen": {"const": true}, "headphones": {"const": true}, "phone_speaker": {"const": true}}},
+          "checks": {"items": {"properties": {"result": {"const": "PASS"}}}},
+          "evidence_sha256": {"type": "string"}
+        }
+      }
+    }
+  ]
+}

@@ -35,8 +35,12 @@ executable tree remained unchanged, so that docs merge did not create RC-11. PR 
 merged the V3-01-18 fail-closed ASR path as exact RC-11
 `207ff9fee5557eb0976f575c9263b61d995b20a0`; exact-head CI `33711738092` and exact-main CI
 `33712762815` passed. The owner selected `whisper-1` and approved the bounded G-01/G-02/G-03-ASR
-parameters and exact two-input rights scope. Their dated bundle is now proposed for G-08 with zero
-runtime authority; real-provider, production-path and quality acceptance remain absent. See
+parameters and exact two-input rights scope. PR #42 merged that governance bundle as
+`8ad490c02c36aafe9447a3eb0766a1d1f1f122d7` without changing executable RC-11. Operation 1 has a
+separate future-window owner authority; this preparation package does not execute it and Operation
+2 remains locked. The offline post-run evaluator, real-media evidence shape, TTS gate design and
+G-11 instruments do not promote any acceptance axis; real-provider, production-path and quality
+acceptance remain absent. See
 [44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md](44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md)
 and [45_V3_01_RC11_OPENAI_ASR_GATE.md](45_V3_01_RC11_OPENAI_ASR_GATE.md).
 
@@ -68,7 +72,7 @@ and [45_V3_01_RC11_OPENAI_ASR_GATE.md](45_V3_01_RC11_OPENAI_ASR_GATE.md).
 | Capability | Primary code | Existing tests/evidence | Audit result |
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
-| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `openai_transcription_provider.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py` | Auto Edit suite, measured two-run fixture evidence, `EV-V3-OPENAI-ASR-ADAPTER-001` and RC-11 gate validation | OpenAI ASR implemented/mock-tested behind fail-closed safety; `whisper-1` and two exact assets are owner-approved for the proposed bounded scope, but both operations remain unauthorized and real accuracy remains absent |
+| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `openai_transcription_provider.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py` | Auto Edit suite, measured two-run fixture evidence, `EV-V3-OPENAI-ASR-ADAPTER-001`, RC-11 gate validation and offline post-run evaluator fixtures | OpenAI ASR implemented/mock-tested behind fail-closed safety; `whisper-1` and two exact assets are owner-approved, Operation 1 has a separate future-window authority but is not executed here, Operation 2 is locked and real accuracy remains absent |
 | Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema, exact-main CI, canonical evidence, split-timeout, dual-CI and two accepted RC-10 operations | Vision structured analysis is 2/2 consecutive real-provider PASS on immutable RC-10; real subject-tracking/reframe accuracy, production path and human quality remain untested |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |
@@ -84,7 +88,7 @@ and [45_V3_01_RC11_OPENAI_ASR_GATE.md](45_V3_01_RC11_OPENAI_ASR_GATE.md).
 | Subtitle/audio mix | `production_*`, `production_audio.py` | V2-08 suite, E2E | Implemented/mock-tested |
 | Approval/final render | `production_service.py`, `production_repository.py` | version invalidation and render tests | Implemented/mock-tested |
 | Technical QC | `production_qc.py`, worker QC | decoded video/audio E2E | Implemented/mock-tested |
-| Human/content QC | no signed full-watch artifact on current RC | none | Missing |
+| Human/content QC | no signed full-watch artifact on current RC | G-11 schema, 27-check JSON template and Markdown full-watch/listen checklist prepared offline | Instrument ready; real human review and quality acceptance remain missing |
 
 ## Publishing, analytics and Agent Hub
 

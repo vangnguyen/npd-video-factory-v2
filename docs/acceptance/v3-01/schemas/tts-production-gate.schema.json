@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/video-factory/v3-01/tts-production-gate.schema.json",
+  "title": "V3-01-19 Vietnamese TTS production gate design",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_kind", "checkpoint", "status", "provider_selection", "quality_target", "candidates", "reference_scripts", "pronunciation_set", "acceptance", "fail_closed_rules", "owner_gates", "safety"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_kind": {"const": "vietnamese_tts_production_gate_design"},
+    "checkpoint": {"const": "V3-01-19"},
+    "status": {"const": "DESIGN_ONLY_ZERO_CALL"},
+    "provider_selection": {"const": "NOT_APPROVED"},
+    "quality_target": {"type": "array", "minItems": 8, "uniqueItems": true, "items": {"type": "string"}},
+    "candidates": {
+      "type": "array", "minItems": 5,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["candidate_id", "class", "provider_or_project", "model_or_voice", "selection_status", "vietnamese_support", "native_quality", "female_voice", "commercial_use", "voice_cloning_consent", "latency", "determinism", "access", "offline", "gpu", "estimated_cost", "privacy", "timestamp_or_phoneme_control", "ssml", "pronunciation_dictionary", "evidence", "risks"],
+        "properties": {
+          "candidate_id": {"type": "string", "pattern": "^TTS-CAND-[0-9]{2}$"},
+          "class": {"enum": ["local_open_source", "cloud", "paid_api", "custom_self_hosted"]},
+          "provider_or_project": {"type": "string"},
+          "model_or_voice": {"type": "string"},
+          "selection_status": {"enum": ["RESEARCH_ONLY", "INCOMPATIBLE_CURRENT_EVIDENCE"]},
+          "vietnamese_support": {"enum": ["SUPPORTED_OFFICIAL", "UNSUPPORTED_OFFICIAL", "UNKNOWN"]},
+          "native_quality": {"const": "UNKNOWN_UNTIL_BOUNDED_HUMAN_TEST"},
+          "female_voice": {"enum": ["SUPPORTED_OFFICIAL", "UNKNOWN", "NOT_APPLICABLE_UNTRAINED"]},
+          "commercial_use": {"enum": ["TERMS_REVIEW_REQUIRED", "MODEL_LICENSE_REVIEW_REQUIRED", "NOT_APPROVED", "NON_COMMERCIAL_MODEL"]},
+          "voice_cloning_consent": {"enum": ["NOT_USED", "MANDATORY_IF_ENABLED", "MANDATORY_FOR_CUSTOM_VOICE"]},
+          "latency": {"const": "UNKNOWN_UNTIL_BOUNDED_TEST"},
+          "determinism": {"enum": ["PINNABLE_MODEL_AND_PARAMETERS_REQUIRED", "SERVICE_VERSION_PINNING_REQUIRED", "TRAINING_AND_INFERENCE_PINNING_REQUIRED"]},
+          "access": {"enum": ["local_cli", "rest_or_sdk", "api", "self_hosted_training_and_inference"]},
+          "offline": {"type": "boolean"},
+          "gpu": {"enum": ["OPTIONAL_FOR_INFERENCE", "CLOUD_MANAGED", "LIKELY_REQUIRED", "UNKNOWN"]},
+          "estimated_cost": {"type": "string"},
+          "privacy": {"type": "string"},
+          "timestamp_or_phoneme_control": {"type": "string"},
+          "ssml": {"enum": ["SUPPORTED", "NOT_NATIVE", "UNKNOWN", "CUSTOM_PIPELINE"]},
+          "pronunciation_dictionary": {"enum": ["SUPPORTED", "NOT_NATIVE", "UNKNOWN", "CUSTOM_PIPELINE"]},
+          "evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "format": "uri"}},
+          "risks": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    },
+    "reference_scripts": {"type": "array", "minItems": 2, "items": {"type": "string"}},
+    "pronunciation_set": {"type": "string"},
+    "acceptance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["runs_required", "distinct_scripts", "naturalness_minimum", "pronunciation_minimum", "prosody_minimum", "artifact_freedom_minimum", "critical_term_accuracy", "duration_deviation_ratio_maximum", "integrated_loudness_lufs", "true_peak_dbfs_maximum", "clipping_samples_maximum", "latency_receipt_required", "cost_receipt_required", "rights_and_consent_required", "human_listening_required"],
+      "properties": {
+        "runs_required": {"const": 2},
+        "distinct_scripts": {"const": true},
+        "naturalness_minimum": {"const": 4},
+        "pronunciation_minimum": {"const": 5},
+        "prosody_minimum": {"const": 4},
+        "artifact_freedom_minimum": {"const": 4},
+        "critical_term_accuracy": {"const": 1.0},
+        "duration_deviation_ratio_maximum": {"const": 0.05},
+        "integrated_loudness_lufs": {"type": "array", "const": [-18.0, -12.0]},
+        "true_peak_dbfs_maximum": {"const": -1.0},
+        "clipping_samples_maximum": {"const": 0},
+        "latency_receipt_required": {"const": true},
+        "cost_receipt_required": {"const": true},
+        "rights_and_consent_required": {"const": true},
+        "human_listening_required": {"const": ["headphones", "phone_speaker"]}
+      }
+    },
+    "fail_closed_rules": {"type": "array", "minItems": 10, "uniqueItems": true, "items": {"type": "string"}},
+    "owner_gates": {"type": "array", "const": ["G-01-TTS", "G-02-TTS", "G-03-TTS", "G-04", "G-08", "G-11"]},
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider_calls", "credential_reads", "reservation_vnd", "spend_vnd", "runtime_wired", "provider_selected", "production_verdict"],
+      "properties": {
+        "provider_calls": {"const": 0},
+        "credential_reads": {"const": 0},
+        "reservation_vnd": {"const": "0"},
+        "spend_vnd": {"const": "0"},
+        "runtime_wired": {"const": false},
+        "provider_selected": {"const": false},
+        "production_verdict": {"const": "NO-GO"}
+      }
+    }
+  }
+}

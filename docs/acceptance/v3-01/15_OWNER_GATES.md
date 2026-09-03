@@ -28,8 +28,11 @@ was created by that docs-only merge because the executable tree did not change. 
 merged V3-01-18 as exact RC-11 `207ff9fee5557eb0976f575c9263b61d995b20a0`; its G-08 is recorded
 as `V3-01-APP-043`, and exact-head/exact-main CI passed. The owner has now selected `whisper-1`,
 approved G-02-ASR v1.1, and approved two exact WAV/RightsRecord inputs. `V3-01-APP-044` through
-`V3-01-APP-046` bind those decisions to the proposed dated scope. The bundle remains unmounted and
-neither ASR operation is approved.
+`V3-01-APP-046` bind those decisions to the dated scope. PR #42 merged governance-only as
+`8ad490c02c36aafe9447a3eb0766a1d1f1f122d7`; the executable candidate remains RC-11. The owner
+subsequently granted one separate authority for Operation 1 only within its exact acceptance
+window. This offline-preparation package neither executes nor extends that authority. The bundle
+remains unmounted outside execution; Operation 2 is not approved.
 
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
@@ -41,10 +44,10 @@ neither ASR operation is approved.
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation/evidence PR merge | decisions through PR #41 consumed; current RC-11 gate branch is governance/evidence-only | a new explicit G-08 decision is required before merging the RC-11 ASR gate bundle |
+| G-08 | remediation/evidence PR merge | decisions through PR #42 consumed; current offline-preparation branch is governance/tests only | a new explicit G-08 decision is required before merging this preparation package; it grants no runtime authority |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
-| G-11 | accept final quality | PENDING | artifact-bound full-watch forms and hashes |
+| G-11 | accept final quality | PENDING; schema, 27-check template and full-watch/listen checklist prepared offline | exact final video and dependent artifact hashes, named reviewer, UTC timestamps, desktop/mobile full watch, headphone/phone-speaker full listen and all checks PASS |
 | G-12 | sign GO, CONDITIONAL GO or NO-GO | PENDING | final bundle, complete matrix and gap register |
 
 ## Approval semantics
@@ -54,8 +57,8 @@ IDs, expiry and decision. Changing commit, artifact, provider, platform target, 
 time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, LOCAL/CI validation, redacted evidence and a
-draft zero-call RC-11 ASR governance bundle PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
-#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37/#38/#39/#40/#41 merges are complete and their G-08 decisions cannot be
+draft zero-call ASR/Flow A/TTS/G-11 preparation PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
+#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37/#38/#39/#40/#41/#42 merges are complete and their G-08 decisions cannot be
 reused. RC-3 IDs are locked, RC-4 remains blocker evidence, and RC-5 operation 1 is consumed/
 `REVIEW_REQUIRED`; RC-5 operation 2 is locked. RC-6 operation 1 is blocked pre-call/not consumed,
 its failed-window authority is retired, and operation 2 is locked. RC-7 operation 1 is consumed after
@@ -65,8 +68,7 @@ acceptance and has no operation authority. RC-9 operation 1 is blocked pre-call/
   Operations 1 and 2 each received one exact authority, succeeded once with complete evidence, and
   are consumed. The runner stopped and bundle was unmounted after each execution. No further Vision
   operation is required or authorized. Runtime defaults remain disabled.
-Current authority includes no
-further merge, ASR operation, credential-value read, provider call,
+This package includes no authority for a merge, ASR operation, credential-value read, provider call,
 deployment, public route, publishing, analytics collection or production write. Records:
 [`V3-01-APP-001`](approvals/V3-01-APP-001.json) and
 [`V3-01-APP-002`](approvals/V3-01-APP-002.json),

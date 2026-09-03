@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/video-factory/v3-01/flow-a-real-media-acceptance.schema.json",
+  "title": "V3-01 Flow A real-media acceptance preparation contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_kind", "checkpoint", "status", "baseline", "pipeline", "consecutive_runs", "thresholds", "run_reference_templates", "evidence_layout", "safety"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_kind": {"const": "flow_a_real_media_acceptance_contract"},
+    "checkpoint": {"const": "V3-01-OFFLINE-PREP"},
+    "status": {"const": "PREPARED_NOT_EXECUTED"},
+    "baseline": {
+      "type": "object", "additionalProperties": false,
+      "required": ["executable_rc_tag", "executable_rc_commit", "governance_base_commit"],
+      "properties": {
+        "executable_rc_tag": {"const": "vf-v3-01-rc11"},
+        "executable_rc_commit": {"const": "207ff9fee5557eb0976f575c9263b61d995b20a0"},
+        "governance_base_commit": {"const": "8ad490c02c36aafe9447a3eb0766a1d1f1f122d7"}
+      }
+    },
+    "pipeline": {
+      "type": "array",
+      "const": ["upload", "asr", "transcript", "scene_detection", "silence_decisions", "highlights", "vision", "smart_reframe", "subtitle", "render", "qc"]
+    },
+    "consecutive_runs": {
+      "type": "object", "additionalProperties": false,
+      "required": ["required", "distinct_input_hashes", "same_locked_rc", "chronological"],
+      "properties": {
+        "required": {"const": 2},
+        "distinct_input_hashes": {"const": true},
+        "same_locked_rc": {"const": true},
+        "chronological": {"const": true}
+      }
+    },
+    "thresholds": {"$ref": "#/$defs/thresholds"},
+    "run_reference_templates": {
+      "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "evidence_layout": {
+      "type": "array", "minItems": 10, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider_calls", "credential_reads", "reservation_vnd", "spend_vnd", "runtime_wired", "acceptance_axis_promoted", "production_verdict"],
+      "properties": {
+        "provider_calls": {"const": 0},
+        "credential_reads": {"const": 0},
+        "reservation_vnd": {"const": "0"},
+        "spend_vnd": {"const": "0"},
+        "runtime_wired": {"const": false},
+        "acceptance_axis_promoted": {"const": false},
+        "production_verdict": {"const": "NO-GO"}
+      }
+    }
+  },
+  "$defs": {
+    "thresholds": {
+      "type": "object", "additionalProperties": false,
+      "required": ["maximum_asr_wer", "minimum_critical_term_recall", "scene_boundary_tolerance_seconds", "minimum_scene_boundary_f1", "minimum_reframe_safe_coverage", "maximum_subtitle_median_drift_seconds", "maximum_subtitle_p95_drift_seconds", "maximum_render_duration_delta_seconds", "maximum_av_duration_delta_seconds", "minimum_render_width", "minimum_render_height", "expected_video_codec", "expected_audio_codec", "expected_audio_sample_rate_hz", "maximum_black_frame_ratio", "maximum_freeze_frame_ratio", "maximum_silence_ratio", "minimum_audio_peak_db", "maximum_audio_peak_db", "maximum_dark_visual_sample_ratio", "maximum_broken_frames", "full_decode_required", "subtitle_safe_area_required", "timeline_renderability_required"],
+      "properties": {
+        "maximum_asr_wer": {"const": 0.15},
+        "minimum_critical_term_recall": {"const": 1.0},
+        "scene_boundary_tolerance_seconds": {"const": 0.5},
+        "minimum_scene_boundary_f1": {"const": 0.8},
+        "minimum_reframe_safe_coverage": {"const": 0.95},
+        "maximum_subtitle_median_drift_seconds": {"const": 0.2},
+        "maximum_subtitle_p95_drift_seconds": {"const": 0.5},
+        "maximum_render_duration_delta_seconds": {"const": 0.5},
+        "maximum_av_duration_delta_seconds": {"const": 0.25},
+        "minimum_render_width": {"const": 1080},
+        "minimum_render_height": {"const": 1920},
+        "expected_video_codec": {"const": "h264"},
+        "expected_audio_codec": {"const": "aac"},
+        "expected_audio_sample_rate_hz": {"const": 48000},
+        "maximum_black_frame_ratio": {"const": 0.1},
+        "maximum_freeze_frame_ratio": {"const": 0.15},
+        "maximum_silence_ratio": {"const": 0.8},
+        "minimum_audio_peak_db": {"const": -35.0},
+        "maximum_audio_peak_db": {"const": -0.05},
+        "maximum_dark_visual_sample_ratio": {"const": 0.1},
+        "maximum_broken_frames": {"const": 0},
+        "full_decode_required": {"const": true},
+        "subtitle_safe_area_required": {"const": true},
+        "timeline_renderability_required": {"const": true}
+      }
+    }
+  }
+}

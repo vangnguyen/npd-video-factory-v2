@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/video-factory/v3-01/offline-preparation-manifest.schema.json",
+  "title": "V3-01 offline preparation package checksum manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_kind", "status", "base", "executable_rc", "files", "file_count", "safety"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_kind": {"const": "offline_preparation_package_manifest"},
+    "status": {"const": "DRAFT_ZERO_CALL"},
+    "base": {
+      "type": "object", "additionalProperties": false,
+      "required": ["governance_main_commit"],
+      "properties": {"governance_main_commit": {"const": "8ad490c02c36aafe9447a3eb0766a1d1f1f122d7"}}
+    },
+    "executable_rc": {
+      "type": "object", "additionalProperties": false,
+      "required": ["tag", "commit", "modified"],
+      "properties": {
+        "tag": {"const": "vf-v3-01-rc11"},
+        "commit": {"const": "207ff9fee5557eb0976f575c9263b61d995b20a0"},
+        "modified": {"const": false}
+      }
+    },
+    "files": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string", "pattern": "^(apps/api/tests|docs/acceptance/v3-01)/"},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "file_count": {"type": "integer", "minimum": 1},
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider_calls", "credential_reads", "reservation_vnd", "spend_vnd", "operation_1_executed", "operation_2_authorized", "runtime_authority_granted", "production_verdict"],
+      "properties": {
+        "provider_calls": {"const": 0},
+        "credential_reads": {"const": 0},
+        "reservation_vnd": {"const": "0"},
+        "spend_vnd": {"const": "0"},
+        "operation_1_executed": {"const": false},
+        "operation_2_authorized": {"const": false},
+        "runtime_authority_granted": {"const": false},
+        "production_verdict": {"const": "NO-GO"}
+      }
+    }
+  }
+}
