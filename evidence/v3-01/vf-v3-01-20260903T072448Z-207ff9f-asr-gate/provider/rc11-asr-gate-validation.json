@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC11-ASR-GATE-001",
+  "rc": {
+    "tag": "vf-v3-01-rc11",
+    "commit": "207ff9fee5557eb0976f575c9263b61d995b20a0",
+    "exact_head_ci_run_id": 33711738092,
+    "exact_main_ci_run_id": 33712762815,
+    "ci_status": "completed_success"
+  },
+  "gate": {
+    "bundle_path": "docs/acceptance/v3-01/V3-01-GATE-RC11-OPENAI-ASR-A.json",
+    "bundle_sha256": "4f8edd02ec62182404976de16e8d75b39ddbbbbe96c0d78efd46e3a97d6ace46",
+    "execution_scope_sha256": "7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a",
+    "provider_scope_sha256": "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "budget_sha256": "778af29ad50dc2f7018c86604dba72a6ad4d212af6a92b409b9c4dcaf9a9934f",
+    "valid_from_utc": "2026-09-04T14:00:00Z",
+    "expires_at_utc": "2026-09-04T18:00:00Z",
+    "mounted": false
+  },
+  "provider": {
+    "key": "openai-transcription",
+    "model": "whisper-1",
+    "capability": "asr",
+    "language": "vi",
+    "credential_alias": "secret://openai/codex-video",
+    "credential_reads": 0,
+    "provider_calls": 0
+  },
+  "budget": {
+    "currency": "VND",
+    "vnd_per_minute": "162",
+    "per_operation_limit_vnd": "500",
+    "acceptance_window_limit_vnd": "1250",
+    "reserved_vnd": "0",
+    "actual_vnd": "0",
+    "provider_http_timeout_seconds": 90,
+    "controller_hard_timeout_seconds": 120,
+    "attempts": 1,
+    "concurrency": 1,
+    "automatic_retry": false,
+    "model_fallback": false
+  },
+  "assets": [
+    {
+      "slot": 1,
+      "sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "bytes": 5800940,
+      "duration_seconds": 120.852,
+      "transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+      "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091"
+    },
+    {
+      "slot": 2,
+      "sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "bytes": 6460396,
+      "duration_seconds": 134.590667,
+      "transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef",
+      "rights_record_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323"
+    }
+  ],
+  "operations": [
+    {
+      "id": "v3-01-rc11-openai-transcription-asr-call-01",
+      "authority": "NOT_APPROVED",
+      "executed": false
+    },
+    {
+      "id": "v3-01-rc11-openai-transcription-asr-call-02",
+      "authority": "NOT_APPROVED_LOCKED",
+      "executed": false
+    }
+  ],
+  "validation": {
+    "focused_tests": "4 passed",
+    "bundle_loader": "PASS",
+    "asset_hashes": "PASS",
+    "audio_headers_and_durations": "PASS",
+    "reference_transcript_hashes": "PASS",
+    "rights_and_consent": "PASS",
+    "approval_hashes": "PASS",
+    "fail_closed_defaults": "PASS",
+    "secret_scan": "PASS"
+  },
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "real_provider_tested": "NOT_TESTED",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED"
+  },
+  "production_verdict": "NO-GO"
+}

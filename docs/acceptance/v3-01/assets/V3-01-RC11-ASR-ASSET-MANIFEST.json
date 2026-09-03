@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "manifest_id": "V3-01-RC11-ASR-ASSET-MANIFEST",
+  "rc_tag": "vf-v3-01-rc11",
+  "rc_commit": "207ff9fee5557eb0976f575c9263b61d995b20a0",
+  "purpose": "Two-input Vietnamese OpenAI ASR acceptance only",
+  "owner_confirmation": {
+    "decision": "APPROVED",
+    "recorded_at_utc": "2026-09-03T07:05:17Z",
+    "content_matches_reference_transcript": true,
+    "voice_processing_consent": true,
+    "publishing_allowed": false,
+    "training_allowed": false,
+    "resale_allowed": false
+  },
+  "assets": [
+    {
+      "slot": 1,
+      "asset_id": "asset-g03-asr-vi-owned-01",
+      "path": "docs/acceptance/v3-01/assets/g03-asr-vi-owned-01.wav",
+      "sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "bytes": 5800940,
+      "duration_seconds": 120.852,
+      "owner_accepted_duration_seconds": 120.852,
+      "audio": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "channels": 1,
+        "sample_rate_hz": 24000,
+        "sample_width_bytes": 2,
+        "frames": 2900448
+      },
+      "source_material": {
+        "label": "Ban ghi 1.m4a",
+        "sha256": "594ea23d4ddb8b84d3ae9c588c76f256da124a0da60c113d64d2857c789b61aa",
+        "bytes": 2026484,
+        "conversion": "PCM WAV conversion only; no trim, stretch, loop or artificial silence padding"
+      },
+      "reference_transcript_path": "docs/acceptance/v3-01/transcripts/g03-asr-vi-owned-01.txt",
+      "reference_transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+      "reference_transcript_basis": "Owner listened to the exact WAV and confirmed the actual spoken content matches this transcript.",
+      "critical_terms": [
+        "Ngọc Phương Đông",
+        "Vinhomes Green Paradise",
+        "Cần Giờ",
+        "đăng ký tư vấn",
+        "tham quan sa bàn",
+        "ngân sách dự kiến",
+        "chính sách bán hàng",
+        "đồng Việt Nam"
+      ],
+      "rights_record_path": "docs/acceptance/v3-01/rights/V3-01-RIGHTS-ASR-001.json"
+    },
+    {
+      "slot": 2,
+      "asset_id": "asset-g03-asr-vi-owned-02",
+      "path": "docs/acceptance/v3-01/assets/g03-asr-vi-owned-02.wav",
+      "sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "bytes": 6460396,
+      "duration_seconds": 134.590667,
+      "owner_accepted_duration_seconds": 134.591,
+      "audio": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "channels": 1,
+        "sample_rate_hz": 24000,
+        "sample_width_bytes": 2,
+        "frames": 3230176
+      },
+      "source_material": {
+        "label": "Ban ghi 2.m4a",
+        "sha256": "fd2119ab9f60bf94d08e63125c3bd4504f93abb505931681c5b099ad0eb0420f",
+        "bytes": 2257970,
+        "conversion": "PCM WAV conversion only; no trim, stretch, loop or artificial silence padding"
+      },
+      "reference_transcript_path": "docs/acceptance/v3-01/transcripts/g03-asr-vi-owned-02.txt",
+      "reference_transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef",
+      "reference_transcript_basis": "Owner listened to the exact WAV and confirmed the actual spoken content matches this transcript.",
+      "critical_terms": [
+        "mã chiến dịch",
+        "nguồn liên hệ",
+        "cơ hội bán hàng",
+        "phạm vi được cấp quyền",
+        "nhận dạng giọng nói",
+        "không tự động gửi tin nhắn",
+        "không tự xuất bản",
+        "không thay đổi giá bán"
+      ],
+      "rights_record_path": "docs/acceptance/v3-01/rights/V3-01-RIGHTS-ASR-002.json"
+    }
+  ],
+  "safety": {
+    "minimum_duration_seconds": 90,
+    "target_duration_seconds": {
+      "minimum": 90,
+      "maximum": 120
+    },
+    "hard_duration_cap_seconds": 180,
+    "hard_file_cap_bytes": 25000000,
+    "owner_accepts_target_overage_for_asset_01": true,
+    "owner_accepts_target_overage_for_asset_02": true,
+    "provider_calls_in_manifest_preparation": 0,
+    "credential_reads_in_manifest_preparation": 0,
+    "spend_vnd_in_manifest_preparation": "0"
+  }
+}

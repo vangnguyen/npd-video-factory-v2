@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: PR #40 closure merged; V3-01-18 OpenAI ASR adapter implemented/mock-tested offline; RC-10 remains locked; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
-RELEASE CANDIDATE: RC-10 c2b1aec2d54dd90bcb486f8a68c97746b39963aa LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-OPENAI-ASR-ADAPTER-001 on source commit d2f34eb...; PR #40 merge 4c74fa18...; exact-main CI 33706971864 PASS 5/5; V3-01-18 made 0 calls/0 credential reads/0 VND
+SCOPE: PR #41/V3-01-18 merged; RC-11 ASR model/budget/two-asset gate proposed; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
+RELEASE CANDIDATE: RC-11 207ff9fee5557eb0976f575c9263b61d995b20a0 LOCKED NO-GO; NOT DEPLOYED
+LATEST EVIDENCE: EV-V3-RC11-ASR-GATE-001; PR #41 exact-head CI 33711738092 and exact-main CI 33712762815 PASS; current proposal made 0 calls/0 credential reads/0 VND
 DATE: 2026-09-03
-OWNER DECISION: G-08 FOR PR #40 CONSUMED; NEW G-08 REQUIRED FOR V3-01-18; NO ASR MODEL OR RUNTIME GATE APPROVED
+OWNER DECISION: G-01/G-02/G-03-ASR APPROVED AND REBOUND FOR REVIEW; NEW G-08 REQUIRED; OPERATIONS 1/2 NOT APPROVED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -28,8 +28,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | RC-10 Operations 1 and 2 recorded `284.343280 VND` total actual cost against the 1,250 VND window; both 500 VND reservations reconciled to zero; evidence PR costs 0 VND |
-| Rights/provenance | exact owned test image/RightsRecord and two distinct structured provider artifacts PASS for bounded Vision acceptance only; broader real/final-asset coverage absent |
+| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR has a conditional 500/1,250 VND owner envelope but 0 reservation, 0 call and 0 actual VND |
+| Rights/provenance | exact Vision asset passed twice; two exact RC-11 WAVs, voices, owner-verified transcripts and RightsRecords are approved only for bounded ASR acceptance; broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
@@ -271,9 +271,9 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #40 and both RC-10 operation authorities are consumed. The current
-  V3-01-18 source/evidence PR requires a new G-08.
-- **Deploy:** no; RC-10 is locked NO-GO, not deployed and G-09 is pending.
+- **Merge:** decisions through PR #41 and both RC-10 operation authorities are consumed. The current
+  RC-11 ASR governance/evidence PR requires a new G-08.
+- **Deploy:** no; RC-11 is locked NO-GO, not deployed and G-09 is pending.
 - **Providers/platforms enabled:** none now. RC-10 Operations 1 and 2 each used the bounded
   process-local scope, which was disabled/unmounted after each successful attempt.
 - **Volume/concurrency/budget:** RC-5 operation 1 consumed exactly one attempt with no retry/fallback
@@ -285,7 +285,7 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
   `159.161860 VND` actual cost respectively; no Operation 3 is required or authorized, the bundle is
   unmounted and checked-in budget remains 0.
 - **Publish visibility/channel:** none; no remote publication.
-- **Still prohibited:** ASR model selection, any further provider call, credential-value read, production-path writes, public route, publish,
+- **Still prohibited:** any ASR operation or further provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
 - **Rollback trigger:** no runtime change exists; revert the isolated governance/docs PR if it regresses
   CI or evidence integrity.
@@ -293,13 +293,14 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 ## V3-01-18 source checkpoint
 
 PR #40 merged the Vision closure/ASR gate design as
-`4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI `33706971864` passed 5/5 and the
-executable tree remained unchanged, so no RC-11 was created. Source commit
-`d2f34eb9e57d60ab6d0497ebf4a87c486cba8e63` now adds the fail-closed OpenAI ASR adapter,
-canonical ASR gate and offline compatibility matrix. Evidence `EV-V3-OPENAI-ASR-ADAPTER-001`
-promotes only `ASR-01` implemented/mock-tested to PASS. Model selection, real-provider,
-production-path and quality remain unapproved/`NOT_TESTED`; provider calls, credential reads and
-spend are all zero. The branch stops at a new G-08.
+`4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI `33706971864` passed 5/5 and that
+docs-only merge did not create an RC. PR #41 then merged the fail-closed OpenAI ASR adapter,
+canonical gate and offline compatibility matrix as exact RC-11
+`207ff9fee5557eb0976f575c9263b61d995b20a0`; exact-head CI `33711738092` and exact-main CI
+`33712762815` passed. `ASR-01` remains only implemented/mock-tested PASS. The owner has since
+approved `whisper-1`, G-02-ASR v1.1 and two exact owner-cleared inputs. Their bundle is unmounted;
+operations 1/2 are unauthorized, so real-provider, production-path and quality remain `NOT_TESTED`.
+The current governance branch stops at a new G-08 with zero calls, credential reads and VND.
 
 ## Decision rule
 

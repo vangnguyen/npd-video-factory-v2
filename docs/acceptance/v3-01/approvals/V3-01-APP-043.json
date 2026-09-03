@@ -1,0 +1,24 @@
+{
+  "approval_id": "V3-01-APP-043",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #41 as V3-01-18 OpenAI ASR compatibility/adapter remediation only; permit RC-11 lock and later bounded ASR gate design without granting runtime authority.",
+  "artifact_or_commit_hashes": [
+    "8ebb1cffe8563e49ccf4847ef37209d9644a4e70",
+    "4c74fa18a86b29ae8324885dacc6fdbca74ad066",
+    "207ff9fee5557eb0976f575c9263b61d995b20a0"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and LOCAL/CI regression only; production and provider execution remain disabled",
+  "limits": [
+    "Source-only fail-closed OpenAI ASR adapter and compatibility contract",
+    "No ASR model authority in PR #41 itself",
+    "No G-01/G-02/G-03-ASR runtime execution authority",
+    "No credential read, provider call, budget reservation or spend",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-03T03:49:24Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved exact PR #41 head 8ebb1cffe8563e49ccf4847ef37209d9644a4e70. No separate machine timestamp was retained for that chat decision, so approval is conservatively recorded at the exact GitHub merge time. Exact-head CI 33711738092 and exact-main CI 33712762815 both completed successfully. Merge commit 207ff9fee5557eb0976f575c9263b61d995b20a0 is the exact annotated RC-11 candidate. This record grants no runtime action."
+}

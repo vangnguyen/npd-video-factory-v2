@@ -1,8 +1,8 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27`, updated through locked NO-GO RC-10
-`c2b1aec2d54dd90bcb486f8a68c97746b39963aa`, PR #38 and both RC-10 Vision operations. Historical RC-5
+derived from the audit captured on `2026-08-27`, updated through locked NO-GO RC-11
+`207ff9fee5557eb0976f575c9263b61d995b20a0`, PR #41 and the RC-11 ASR gate proposal. Historical RC-5
 operation-1 provider execution succeeded,
 but request-level acceptance evidence was incomplete after post-call serialization failed. The
 operation is consumed/`REVIEW_REQUIRED`; V3-01-13 is now merged and exact-main tested. RC-6
@@ -22,8 +22,10 @@ executable and receipt hashes. Vision is officially 2/2 consecutive real-provide
 Production-path and quality acceptance are not promoted. PR #40 then merged the Vision closure/ASR
 design as `4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI `33706971864` passed 5/5 and the
 executable tree stayed unchanged. V3-01-18 now provides source/mock evidence for the fail-closed
-OpenAI ASR adapter and compatibility contract only. ASR model selection and runtime gates remain
-not approved.
+OpenAI ASR adapter and compatibility contract only. PR #41 then merged that executable path as
+RC-11. `whisper-1`, the G-02-ASR v1.1 envelope and two exact owner-approved WAV/RightsRecord inputs
+are now bound in an unmounted governance proposal. Both operation authorities remain unapproved;
+ASR real-provider evidence remains absent.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -37,8 +39,8 @@ through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
 `IN_PROGRESS`. RC-10 Vision is 2/2 consecutive real-provider PASS, while ASR/reframe,
 production-like safety and broader rights coverage remain open. The bounded G-08 decisions through
-PR #40 are consumed; the current V3-01-18 source/evidence PR requires its own G-08 and grants no
-model selection or runtime authority.
+PR #41 are consumed; the current RC-11 ASR gate proposal requires its own G-08 and grants no
+operation authority.
 Historical RC-3 and RC-5 operation
 1 IDs are consumed and permanently locked; RC-5 operation 2 is also locked. RC-6 operation 1 is
 not consumed, but its failed-window authority is retired; operation 2 is locked. RC-7 operation 1 is
@@ -54,13 +56,13 @@ Production remains undeployed and unverified.
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; V3-01-18 adds implemented/mock-tested ASR adapter evidence, but no accepted real ASR/reframe evidence exists |
+| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; RC-11 adds implemented/mock-tested ASR plus exact model/budget/rights gate readiness, but no accepted real ASR/reframe result exists |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | production-like backup/restore/image rollback incomplete | local disposable drill only; no production state touched |
-| V3-01-GAP-013 | broader real-asset rights coverage incomplete | both RC-10 operations retained the narrow owned-image/RightsRecord and separate provider artifacts under Vision-only use; final-render retention and public-output rights remain unaccepted |
+| V3-01-GAP-013 | broader real-asset rights coverage incomplete | both RC-10 operations retained narrow Vision rights; two RC-11 WAV/RightsRecords are now approved only for ASR acceptance, while final-render retention and public-output rights remain unaccepted |
 | V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work

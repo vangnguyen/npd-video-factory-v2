@@ -1,0 +1,25 @@
+{
+  "approval_id": "V3-01-APP-044",
+  "gate_id": "G-01",
+  "decision": "APPROVED",
+  "scope": "Bind G-01-ASR to exactly openai-transcription / whisper-1 / asr / vi on vf-v3-01-rc11 using only credential alias secret://openai/codex-video for the proposed dated acceptance window.",
+  "artifact_or_commit_hashes": [
+    "207ff9fee5557eb0976f575c9263b61d995b20a0",
+    "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; credential value remains in the external secret mechanism",
+  "limits": [
+    "Provider openai-transcription only",
+    "Model whisper-1 only",
+    "Capability asr and language vi only",
+    "Credential alias secret://openai/codex-video only",
+    "No fallback model or provider",
+    "No credential read or provider call until a separate operation authority is granted",
+    "No deployment, public ingress, publishing or production analytics"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-03T07:05:17Z",
+  "expires_at_utc": "2026-09-04T18:00:00Z",
+  "notes": "The owner selected whisper-1 only because RC-11 compatibility evidence supports the strict native segment-and-word timestamp contract. This secret-free rebind records that approval against the exact proposed scope; G-08 review and a separate Operation 1 decision remain mandatory. It grants no API-call authority."
+}

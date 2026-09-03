@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC11-ASR-GATE-001",
+  "test_case_id": "ASR-01+PRO-006",
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "207ff9fee5557eb0976f575c9263b61d995b20a0",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-transcription-gate-validation-only",
+    "model_or_workflow": "whisper-1 / selected-but-not-executed",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "4f8edd02ec62182404976de16e8d75b39ddbbbbe96c0d78efd46e3a97d6ace46",
+  "started_at_utc": "2026-09-03T07:24:47Z",
+  "completed_at_utc": "2026-09-03T07:24:48Z",
+  "duration_seconds": 1,
+  "result": "PASS",
+  "assertion": "The exact RC-11 OpenAI ASR gate, two owner-approved WAVs, owner-verified transcripts, RightsRecords, G-01/G-02/G-03 records, VND limits, native timestamp contract and RC-derived operation IDs validate offline. The bundle remains unmounted and neither operation is authorized, so ASR real-provider remains NOT_TESTED.",
+  "correlation_id": "v3-01-rc11-asr-gate-207ff9f",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-ASR-001;V3-01-RIGHTS-ASR-002",
+  "reviewer": "Codex local ASR gate reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On exact RC-11-compatible source, run apps/api/tests/test_rc11_asr_gate_bundle.py with provider defaults fail-closed and verify the raw bundle SHA, execution-scope SHA, assets, transcripts, RightsRecords, approval records, modeled VND limits and zero runtime authority."
+}

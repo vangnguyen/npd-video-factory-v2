@@ -52,4 +52,21 @@ prohibited. These two PASS operations close only the Vision real-provider test r
 not provide broader real-asset, retention, final-render or public-output rights coverage. No further
 Vision operation is required or authorized.
 
+G-03-ASR now covers exactly two NPD-owned or authorized Vietnamese recordings and the associated
+voice-processing consent for bounded OpenAI ASR acceptance only:
+
+- [`g03-asr-vi-owned-01.wav`](assets/g03-asr-vi-owned-01.wav), SHA-256
+  `fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef`, with
+  [`V3-01-RIGHTS-ASR-001`](rights/V3-01-RIGHTS-ASR-001.json);
+- [`g03-asr-vi-owned-02.wav`](assets/g03-asr-vi-owned-02.wav), SHA-256
+  `dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b`, with
+  [`V3-01-RIGHTS-ASR-002`](rights/V3-01-RIGHTS-ASR-002.json).
+
+The owner listened to each exact WAV and confirmed the actual speech matches its checked-in
+reference transcript. Durations `120.852` and `134.591` seconds are explicitly accepted under the
+180-second hard cap. The asset manifest records exact hashes, technical metadata, transcript hashes
+and critical terms. No publishing, training, resale or other use is granted. The bundle remains
+unmounted and no provider call has occurred, so this rights approval advances gate readiness only;
+it does not close real-provider or production rights acceptance.
+
 Open gap: `V3-01-GAP-013`.

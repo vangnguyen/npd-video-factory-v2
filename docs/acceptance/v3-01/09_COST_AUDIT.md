@@ -19,6 +19,7 @@
 | RC-10 operation 2 PASS | VND | same 1,250 window / 500 operation | 159.1619 actual; 0 reserved after reconciliation | 159.161860 | 1 |
 | RC-10 consecutive total | VND | 1,250 window | 284.3433 actual; 0 reserved | 284.343280 | 2 |
 | PR #40 closure + V3-01-18 source remediation | VND | 0 | 0 | 0 | 0 |
+| RC-11 ASR gate proposal | VND | checked-in runtime budget 0; conditional 1,250 window / 500 operation | 0 | 0 | 0 |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
 later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
@@ -45,8 +46,11 @@ credential read, reservation, ledger mutation or provider call; cost remained 0 
   repeated the same reservation contract: 1,996 input and 2,781 output tokens produced an actual
   `159.161860 VND` receipt. Total actual cost is `284.343280 VND` (`22.7474624%` of the 1,250 VND
   envelope); durable committed cost is `284.3433 VND` and reserved VND is zero. No retry or fallback
-  occurred. PR #40 and V3-01-18 make no provider call, read no credential and cost 0 VND. No ASR
-  price or budget envelope is approved; compatibility inspection is not spending authority.
+  occurred. PR #40 and V3-01-18 make no provider call, read no credential and cost 0 VND. The owner
+  later approved G-02-ASR v1.1 at `162 VND/minute`, 500 VND per operation and 1,250 VND per window.
+  The exact inputs model to `326.300400` and `363.394800 VND` respectively; these are estimates, not
+  charges. The bundle is unmounted, both operations are unauthorized, no reservation exists and the
+  governance proposal costs 0 VND.
   USD is not an accepted operating currency for this acceptance program.
 
 ## Required provider budget contract
@@ -118,6 +122,11 @@ both operations are consumed/succeeded. No further Vision budget or operation au
 
 No budget is inferred from credential availability. No automatic currency conversion may be stored
 as authoritative cost without its dated source and calculated VND value.
+
+For RC-11 ASR, `EV-V3-RC11-ASR-GATE-001` binds the owner-fixed conversion rule of `0.006
+USD/minute` at `27,000 VND/USD` to `162 VND/minute`, with a hard 180-second modeled maximum of
+486 VND and a 500 VND atomic reservation. This is conditional gate evidence only. An actual cost may
+be recorded only from a separately authorized provider receipt; the current actual cost is 0 VND.
 
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit

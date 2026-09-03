@@ -123,20 +123,29 @@ real ASR receipt, reference-transcript score, production path or human quality a
 Vision stays officially 2/2 consecutive real-provider PASS. V3-01-18 neither reopens Vision nor
 creates any new Vision authority.
 
+## Post-merge owner decisions
+
+PR #41 merged V3-01-18 as locked RC-11
+`207ff9fee5557eb0976f575c9263b61d995b20a0`; exact-head CI `33711738092` and exact-main CI
+`33712762815` passed. The owner then selected `whisper-1` for the strict native timestamp contract,
+approved G-02-ASR v1.1, and approved two exact Vietnamese WAVs plus voice-processing consent and
+human-verified reference transcripts. Those decisions are bound in the separate unmounted
+[RC-11 gate proposal](45_V3_01_RC11_OPENAI_ASR_GATE.md). They do not retroactively change this
+source checkpoint or provide operation authority.
+
 ## Next owner boundary
 
-This branch must stop at a new **G-08** review. If G-08 is granted, the safe sequence is:
+The V3-01-18 branch stopped at G-08 and has since merged. The current RC-11 governance branch must
+stop at a new **G-08** review. If that G-08 is granted, the safe sequence is:
 
 ```text
-merge V3-01-18
--> exact-main full regression
--> lock a new executable RC
--> review compatibility evidence and select exactly one ASR model
--> separate G-01-ASR
--> separate G-02-ASR duration/file/timeout/VND envelope
--> separate G-03-ASR for two owned Vietnamese media inputs and reference transcripts
+merge RC-11 ASR governance bundle
+-> exact-main full regression and dual-CI provenance
+-> verify executable RC remains vf-v3-01-rc11
+-> verify bundle/scope/asset/RightsRecord hashes and unmounted state
 -> separate authority for ASR Operation 1
 ```
 
-No G-01/G-02/G-03-ASR, live operation, deployment, public ingress, publishing or production
-analytics is authorized here. The production verdict remains `NO-GO`.
+G-01/G-02/G-03-ASR inputs are owner-approved but do not authorize a live operation. No live
+operation, credential read, deployment, public ingress, publishing or production analytics is
+authorized here. The production verdict remains `NO-GO`.

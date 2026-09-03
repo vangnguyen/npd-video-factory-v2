@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "checkpoint": "RC-11 OpenAI ASR governance gate",
+  "commit_sha": "207ff9fee5557eb0976f575c9263b61d995b20a0",
+  "focused_gate_regression": {
+    "command": "python -m pytest apps/api/tests/test_rc11_asr_gate_bundle.py -q",
+    "passed": 4,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "python_regression": {
+    "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+    "passed": 367,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "migration_replay": {
+    "revision": "0013_v3_01_18_nullable_transcript_confidence",
+    "upgrade": "PASS",
+    "downgrade": "PASS",
+    "reupgrade": "PASS"
+  },
+  "studio_regression": {
+    "passed": 14,
+    "failed": 0,
+    "syntax_checks": "PASS",
+    "result": "PASS"
+  },
+  "renderer_regression": {
+    "passed": 14,
+    "failed": 0,
+    "typecheck": "PASS",
+    "bundle_check": "PASS",
+    "result": "PASS"
+  },
+  "acceptance_and_evidence_validation": "PASS",
+  "json_and_markdown_link_validation": "PASS",
+  "docker_e2e": {
+    "initial_attempt": "BLOCKED_BY_WSL_WINDOWS_WORKTREE_GITDIR_MAPPING",
+    "final_attempt": "PASS",
+    "disposable_stack_cleaned": true
+  },
+  "result": "PASS",
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "spend_vnd": "0"
+}
