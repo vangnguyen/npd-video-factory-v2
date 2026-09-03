@@ -13,8 +13,9 @@ safety charge only, and operation 2 remains locked.
 RC-10 operations 1 and 2 later completed successfully on the real OpenAI provider with strict
 structured output and complete request/response, usage, VND cost, durable ledger and
 secret-containment evidence. Both are consumed/succeeded. They form 2/2 consecutive PASS for the
-Vision real-provider-tested axis, pending this evidence PR's G-08 merge. No production-path or
-quality axis is promoted.
+Vision real-provider-tested axis. PR #39 merged as `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed`,
+exact-main CI `33703619599` passed 5/5, and the executable and receipt hashes remained unchanged, so
+that axis is officially closed. No production-path or quality axis is promoted.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
@@ -94,8 +95,8 @@ distinct response hash. The runner stopped and the bundle was unmounted after ea
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
-| ASR | fixture and not-configured contract | mock transcript/word timing | `BLOCKED` | G-01/G-02/G-03; PRO-006 |
-| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS | real-provider `PASS` proposed by this evidence PR; production path and quality remain `BLOCKED` | G-08 for this consecutive evidence PR; then exact-main regression; PRO-001 real-provider sub-scope closes |
+| ASR | fixture and not-configured contract; no live adapter | mock transcript/word timing | `BLOCKED`; real-provider `NOT_TESTED` | V3-01-18 source-only adapter, then separate G-01/G-02/G-03 and operation authorities; PRO-006 |
+| Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS; PR #39 and exact-main CI complete | real-provider `PASS`; production path and quality remain `BLOCKED` | standalone Vision acceptance closed; no Operation 3; PRO-001 real-provider sub-scope complete |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
 | AI video | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-004 |
@@ -158,5 +159,8 @@ then proves the first exact owner-authorized operation completed with complete s
 usage/cost, rights, ledger, duplicate and secret-containment evidence.
 `EV-V3-RC10-VISION-CONSECUTIVE-PASS-001` binds the unchanged first receipt to the second exact
 owner-authorized PASS and proves the required 2/2 consecutive Vision operations. Both are consumed;
-no further Vision operation is required or authorized. Production-path and human-quality acceptance
-remain absent.
+no further Vision operation is required or authorized. PR #39 and exact-main CI `33703619599`
+officially close only the Vision real-provider-tested axis. Production-path and human-quality
+acceptance remain absent. The proposed ASR path is design-only in
+[43_V3_01_VISION_CLOSURE_AND_ASR_GATE_DESIGN.md](43_V3_01_VISION_CLOSURE_AND_ASR_GATE_DESIGN.md);
+it grants no call, credential, budget or model authority.

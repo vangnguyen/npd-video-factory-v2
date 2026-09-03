@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-17; RC-10 locked; Operations 1 and 2 PASS with complete real-provider evidence; Vision 2/2 consecutive PASS pending this evidence PR's G-08 and merge
+SCOPE: merged V3-01-00 through V3-01-17; RC-10 locked; PR #39 and exact-main CI complete; Vision officially 2/2 consecutive real-provider PASS; ASR real-provider NOT_TESTED
 RELEASE CANDIDATE: RC-10 c2b1aec2d54dd90bcb486f8a68c97746b39963aa LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-RC10-VISION-CONSECUTIVE-PASS-001; two complete request/response/usage/cost/rights/ledger/secret evidence sets; source receipt SHA values 11fd1f7c... and deed47e5...; evidence PR itself makes 0 calls/reads/spend
+LATEST EVIDENCE: EV-V3-RC10-VISION-CONSECUTIVE-PASS-001; PR #39 merge fd0db431...; exact-main CI 33703619599 PASS 5/5; unchanged executable and source receipt SHA values 11fd1f7c... and deed47e5...
 DATE: 2026-09-03
-OWNER DECISION: RC-10 OPERATION 1 AND OPERATION 2 AUTHORITIES CONSUMED; BOTH OPERATIONS SUCCEEDED/CONSUMED; CONSECUTIVE EVIDENCE PR REQUIRES NEW G-08
+OWNER DECISION: V3-01-APP-041 CONSUMED FOR PR #39; RC-10 OPERATIONS 1 AND 2 SUCCEEDED/CONSUMED; FURTHER STANDALONE VISION AUTHORITY RETIRED; ASR DESIGN ONLY
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -41,8 +41,8 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 - identity/RBAC remediation is merged but remains undeployed and lacks production-path verification;
 - no production-like target, deployed image digest or owner-accepted production-like DR drill;
 - RC-10 Vision Operations 1 and 2 are complete consecutive real-provider PASS results. The Vision
-  real-provider axis closes only after this evidence-only PR receives G-08 and merges; real ASR and
-  reframe acceptance remain absent, and no production-path or human-quality evidence exists;
+  real-provider axis is officially closed after PR #39 and exact-main CI; real ASR and reframe
+  acceptance remain absent, and no production-path or human-quality evidence exists;
 - no official publish/analytics acceptance;
 - no human full-watch acceptance or 48-hour soak;
 - GitHub `main` is not protected.
@@ -271,8 +271,8 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #38 and both RC-10 operation authorities are consumed. This RC-10
-  consecutive evidence PR requires a new G-08.
+- **Merge:** decisions through PR #39 and both RC-10 operation authorities are consumed. The current
+  zero-call Vision-closure/ASR-design PR requires a new G-08.
 - **Deploy:** no; RC-10 is locked NO-GO, not deployed and G-09 is pending.
 - **Providers/platforms enabled:** none now. RC-10 Operations 1 and 2 each used the bounded
   process-local scope, which was disabled/unmounted after each successful attempt.
@@ -287,7 +287,7 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited:** any further provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
-- **Rollback trigger:** no runtime change exists; revert the isolated governance/docs/test PR if it regresses
+- **Rollback trigger:** no runtime change exists; revert the isolated governance/docs PR if it regresses
   CI or evidence integrity.
 
 ## Decision rule

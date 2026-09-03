@@ -21,8 +21,10 @@ provenance confirmed identical executable trees. Evidence-only PR #38 later merg
 `79b14ded0bbd0cd552420e5964647b6fba16f9b7`; exact-main CI `33650857422` passed 5/5. Separately
 authorized RC-10 Operations 1 and 2 each completed with strict structured output, complete
 hashes/usage/VND evidence, one attempt, no retry/fallback and clean secret scans. Both are consumed.
-Vision is 2/2 consecutive PASS, so this evidence PR advances `VIS-01` real-provider-tested to
-`PASS`; the change becomes official on `main` only after G-08 merge. `I/M/R/P/Q` mean
+Evidence-only PR #39 merged as `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed`; exact-main CI
+`33703619599` passed 5/5 with unchanged executable and receipt hashes. Vision is therefore
+officially 2/2 consecutive PASS and `VIS-01` real-provider-tested is `PASS`. ASR remains
+`NOT_TESTED`; its next gate is design-only and grants no execution authority. `I/M/R/P/Q` mean
 implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
