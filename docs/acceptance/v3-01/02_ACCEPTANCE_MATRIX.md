@@ -23,8 +23,11 @@ authorized RC-10 Operations 1 and 2 each completed with strict structured output
 hashes/usage/VND evidence, one attempt, no retry/fallback and clean secret scans. Both are consumed.
 Evidence-only PR #39 merged as `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed`; exact-main CI
 `33703619599` passed 5/5 with unchanged executable and receipt hashes. Vision is therefore
-officially 2/2 consecutive PASS and `VIS-01` real-provider-tested is `PASS`. ASR remains
-`NOT_TESTED`; its next gate is design-only and grants no execution authority. `I/M/R/P/Q` mean
+officially 2/2 consecutive PASS and `VIS-01` real-provider-tested is `PASS`. PR #40 then merged the
+Vision closure/ASR design as `4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI
+`33706971864` passed 5/5 with an unchanged executable tree. V3-01-18 now makes `ASR-01`
+implemented/mock-tested PASS through offline adapter, gate and compatibility evidence, while
+real-provider remains `NOT_TESTED` and model selection remains not approved. `I/M/R/P/Q` mean
 implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
@@ -53,7 +56,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | SCR-01 | Script generation and versioning | FAIL | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-002 |
 | SCR-02 | Storyboard and media plan | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-004 |
 | UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-002-PARTIAL | GAP-007; GAP-011 |
-| ASR-01 | Real transcription provider | FAIL | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
+| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001 | GAP-003 |
 | EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
 | EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
@@ -97,14 +100,16 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 ## Interpretation
 
 - `PASS` under I/M proves only current code and deterministic tests.
-- V3-01-01 through V3-01-09 leave the implemented count at `44 PASS / 16 FAIL` and the mock-tested
-  count at `54 PASS / 1 FAIL / 5 NOT_TESTED`; they do not change any real-provider,
-  production-path or quality axis.
-- The consolidated real-provider axis is `36 NOT_TESTED / 24 N/A`; production-path is
+- V3-01-18 advances ASR-01 to implemented, leaving the implemented count at
+  `45 PASS / 15 FAIL`; the mock-tested count remains `54 PASS / 1 FAIL / 5 NOT_TESTED`.
+- The consolidated real-provider axis is `1 PASS / 35 NOT_TESTED / 24 N/A`; production-path is
   `60 NOT_TESTED`; quality is `36 NOT_TESTED / 24 N/A`.
-- All real-provider, production-path and human quality work remains unproven.
+- Vision is the sole real-provider PASS. All other real-provider work and every production-path and
+  human-quality row remain unproven.
 - V3-01-09 proves only a disabled OpenAI Vision adapter contract through MockTransport: no key use,
   external request, real image, provider receipt or quality acceptance occurred.
+- V3-01-18 proves only the disabled OpenAI ASR adapter/gate and offline compatibility contract; it
+  selects no model and performs no credential read, provider call or spend.
 - `N/A` is used only where the master matrix defines an axis as structurally inapplicable; it does
   not remove the need for G-00 scope approval.
 - Current decision remains `NO-GO` because P0 gaps and mandatory gates are open.

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-18",
+  "provider": "openai-transcription-adapter",
+  "capability": "asr",
+  "model_selection": "PROPOSED_NOT_APPROVED",
+  "compatibility_candidates": [
+    "whisper-1",
+    "gpt-transcribe",
+    "gpt-4o-transcribe"
+  ],
+  "implemented": "PASS",
+  "mock_tested": "PASS",
+  "real_provider_tested": "NOT_TESTED",
+  "production_path_tested": "NOT_TESTED",
+  "quality_accepted": "NOT_TESTED",
+  "credential_reads": 0,
+  "provider_calls": 0,
+  "spend_vnd": 0,
+  "runtime_authority": false,
+  "production_verdict": "NO-GO"
+}

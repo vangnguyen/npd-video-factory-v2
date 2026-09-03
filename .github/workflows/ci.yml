@@ -426,6 +426,24 @@ jobs:
           grep -Fq 'reservation_vnd": "0"' scripts/v3_01_ci_provenance.py
           ! git grep -I -n 'exact_main_ci_run_id' -- apps/api/app scripts
           python -c 'import json; from pathlib import Path; p=Path("docs/acceptance/v3-01/evidence/rc9-openai-vision-operation-1/operation-1-blocked-0-call.json"); d=json.loads(p.read_text()); assert d["verdict"] == "BLOCKED_PRE_CALL"; assert d["operation_consumed"] is False; assert d["provider_calls"] == 0; assert d["reservation_vnd"] == "0"; assert d["actual_cost_vnd"] == "0"; assert d["ledger_counts"] == "0|0|0|0"; assert d["operation_2_status"] == "LOCKED"; assert d["production_verdict"] == "NO-GO"'
+      - name: Verify V3-01-18 OpenAI ASR compatibility and adapter boundary
+        run: |
+          grep -Fq 'class OpenAITranscriptionProvider' apps/api/app/openai_transcription_provider.py
+          grep -Fq 'ModelSelectionStatus = Literal["PROPOSED_NOT_APPROVED"]' apps/api/app/openai_transcription_provider.py
+          grep -Fq 'class OpenAIAsrGateBundle' apps/api/app/provider_gate_loader.py
+          grep -Fq 'actual_cost=lambda result: result.actual_cost_vnd' apps/api/app/auto_edit_service.py
+          grep -q '0013_v3_01_18' apps/api/migrations/versions/0013_v3_01_18_nullable_transcript_confidence.py
+          grep -qx 'TRANSCRIPTION_PROVIDER=fixture' .env.example
+          grep -qx 'OPENAI_TRANSCRIPTION_MODEL=' .env.example
+          grep -qx 'OPENAI_TRANSCRIPTION_ESTIMATED_COST_VND=0' .env.example
+          grep -qx 'OPENAI_TRANSCRIPTION_VND_PER_MINUTE=0' .env.example
+          grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
+          python scripts/v3_01_asr_compatibility.py --verify evidence/v3-01/vf-v3-01-20260903T030156Z-d2f34eb/provider/openai-asr-compatibility.json
+          python -c 'import json; from pathlib import Path; p=Path("evidence/v3-01/vf-v3-01-20260903T030156Z-d2f34eb/final/status.json"); d=json.loads(p.read_text()); assert d["acceptance"] == {"implemented": "PASS", "mock_tested": "PASS", "real_provider_tested": "NOT_TESTED", "production_path_tested": "NOT_TESTED", "quality_accepted": "NOT_TESTED"}; assert d["model_selection"] == "PROPOSED_NOT_APPROVED"; assert d["provider_calls"] == 0; assert d["credential_reads"] == 0; assert d["spend_vnd"] == 0; assert d["repository_verdict"] == "NO_GO"'
+          ! git grep -I -n -E '^(TRANSCRIPTION_PROVIDER=openai|OPENAI_TRANSCRIPTION_MODEL=.+|OPENAI_API_KEY=.+|OPENAI_TRANSCRIPTION_ESTIMATED_COST_VND=[1-9][0-9]*|OPENAI_TRANSCRIPTION_VND_PER_MINUTE=[1-9][0-9]*(\.[0-9]+)?|PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false)$' -- .env.example docker-compose.yml deploy apps services
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

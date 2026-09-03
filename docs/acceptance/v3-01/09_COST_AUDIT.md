@@ -18,6 +18,7 @@
 | RC-10 operation 1 PASS | VND | 1,250 window / 500 operation | 125.1814 actual; 0 reserved after reconciliation | 125.181420 | 1 |
 | RC-10 operation 2 PASS | VND | same 1,250 window / 500 operation | 159.1619 actual; 0 reserved after reconciliation | 159.161860 | 1 |
 | RC-10 consecutive total | VND | 1,250 window | 284.3433 actual; 0 reserved | 284.343280 | 2 |
+| PR #40 closure + V3-01-18 source remediation | VND | 0 | 0 | 0 | 0 |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
 later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
@@ -44,7 +45,8 @@ credential read, reservation, ledger mutation or provider call; cost remained 0 
   repeated the same reservation contract: 1,996 input and 2,781 output tokens produced an actual
   `159.161860 VND` receipt. Total actual cost is `284.343280 VND` (`22.7474624%` of the 1,250 VND
   envelope); durable committed cost is `284.3433 VND` and reserved VND is zero. No retry or fallback
-  occurred. The current evidence-only PR makes no provider call, reads no credential and costs 0 VND.
+  occurred. PR #40 and V3-01-18 make no provider call, read no credential and cost 0 VND. No ASR
+  price or budget envelope is approved; compatibility inspection is not spending authority.
   USD is not an accepted operating currency for this acceptance program.
 
 ## Required provider budget contract

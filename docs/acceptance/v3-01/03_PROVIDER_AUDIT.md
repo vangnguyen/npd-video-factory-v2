@@ -95,7 +95,7 @@ distinct response hash. The runner stopped and the bundle was unmounted after ea
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
-| ASR | fixture and not-configured contract; no live adapter | mock transcript/word timing | `BLOCKED`; real-provider `NOT_TESTED` | V3-01-18 source-only adapter, then separate G-01/G-02/G-03 and operation authorities; PRO-006 |
+| ASR | fixture default plus fail-closed OpenAI transcription adapter; model unselected | recorded/mock Vietnamese transcript/segment/word mapping, compatibility matrix and gate rejection tests | implemented/mock-tested `PASS`; real-provider `NOT_TESTED` | new G-08, merge/exact-main/new RC, then model review and separate G-01/G-02/G-03 plus operation authorities; PRO-006 |
 | Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS; PR #39 and exact-main CI complete | real-provider `PASS`; production path and quality remain `BLOCKED` | standalone Vision acceptance closed; no Operation 3; PRO-001 real-provider sub-scope complete |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
@@ -161,6 +161,9 @@ usage/cost, rights, ledger, duplicate and secret-containment evidence.
 owner-authorized PASS and proves the required 2/2 consecutive Vision operations. Both are consumed;
 no further Vision operation is required or authorized. PR #39 and exact-main CI `33703619599`
 officially close only the Vision real-provider-tested axis. Production-path and human-quality
-acceptance remain absent. The proposed ASR path is design-only in
-[43_V3_01_VISION_CLOSURE_AND_ASR_GATE_DESIGN.md](43_V3_01_VISION_CLOSURE_AND_ASR_GATE_DESIGN.md);
-it grants no call, credential, budget or model authority.
+acceptance remain absent. PR #40 merged the proposed ASR design with an unchanged executable tree.
+V3-01-18 evidence `EV-V3-OPENAI-ASR-ADAPTER-001` now proves only the implemented/mock-tested ASR
+adapter, canonical gate contract and offline compatibility matrix. Model selection remains
+`PROPOSED_NOT_APPROVED`; real-provider, production-path and quality axes remain `NOT_TESTED`. See
+[44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md](44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md).
+It grants no call, credential, budget or model authority.

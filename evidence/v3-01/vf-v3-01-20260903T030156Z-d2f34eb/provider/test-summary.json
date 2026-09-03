@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-18",
+  "commit_sha": "d2f34eb9e57d60ab6d0497ebf4a87c486cba8e63",
+  "focused_regression": {
+    "command": "python -m pytest apps/api/tests/test_openai_transcription_provider.py apps/api/tests/test_openai_asr_gate_loader.py apps/api/tests/test_safety_config.py -q",
+    "started_at_utc": "2026-09-03T03:02:21Z",
+    "completed_at_utc": "2026-09-03T03:02:24Z",
+    "passed": 50,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "source_regression": {
+    "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+    "passed": 363,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "migration_replay": {
+    "revision": "0013_v3_01_18_nullable_transcript_confidence",
+    "upgrade": "PASS",
+    "downgrade": "PASS",
+    "reupgrade": "PASS"
+  },
+  "studio_regression": {
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "syntax_checks": "PASS",
+    "result": "PASS"
+  },
+  "renderer_regression": {
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "typecheck": "PASS",
+    "bundle_check": "PASS",
+    "result": "PASS"
+  },
+  "compose_validation": {
+    "base": "PASS",
+    "production_overlay_with_disabled_test_key_file": "PASS"
+  },
+  "docker_e2e": {
+    "local_result": "BLOCKED_BY_UNRELATED_HOST_PORT_3000",
+    "build_result": "PASS",
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "required_resolution": "Exact-head GitHub CI must run Docker deterministic E2E on an isolated runner before G-08 review."
+  },
+  "compatibility_validation": {
+    "command": "python scripts/v3_01_asr_compatibility.py --verify evidence/v3-01/vf-v3-01-20260903T030156Z-d2f34eb/provider/openai-asr-compatibility.json",
+    "result": "PASS"
+  },
+  "live_api_calls": 0,
+  "credential_reads": 0,
+  "spend_vnd": 0,
+  "notes": [
+    "Warnings were Python 3.14 pytest-asyncio deprecation warnings and did not alter the PASS result.",
+    "The local Docker E2E stack built successfully but did not start because an unrelated host process already owned port 3000; that process was not interrupted.",
+    "Final exact-head GitHub CI is recorded at PR handoff rather than invented in this source snapshot."
+  ]
+}

@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: merged V3-01-00 through V3-01-17; RC-10 locked; PR #39 and exact-main CI complete; Vision officially 2/2 consecutive real-provider PASS; ASR real-provider NOT_TESTED
+SCOPE: PR #40 closure merged; V3-01-18 OpenAI ASR adapter implemented/mock-tested offline; RC-10 remains locked; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
 RELEASE CANDIDATE: RC-10 c2b1aec2d54dd90bcb486f8a68c97746b39963aa LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-RC10-VISION-CONSECUTIVE-PASS-001; PR #39 merge fd0db431...; exact-main CI 33703619599 PASS 5/5; unchanged executable and source receipt SHA values 11fd1f7c... and deed47e5...
+LATEST EVIDENCE: EV-V3-OPENAI-ASR-ADAPTER-001 on source commit d2f34eb...; PR #40 merge 4c74fa18...; exact-main CI 33706971864 PASS 5/5; V3-01-18 made 0 calls/0 credential reads/0 VND
 DATE: 2026-09-03
-OWNER DECISION: V3-01-APP-041 CONSUMED FOR PR #39; RC-10 OPERATIONS 1 AND 2 SUCCEEDED/CONSUMED; FURTHER STANDALONE VISION AUTHORITY RETIRED; ASR DESIGN ONLY
+OWNER DECISION: G-08 FOR PR #40 CONSUMED; NEW G-08 REQUIRED FOR V3-01-18; NO ASR MODEL OR RUNTIME GATE APPROVED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -19,12 +19,12 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Area | Result |
 |---|---|
 | Matrix catalog | 60 rows present |
-| Implemented axis | 44 PASS, 16 FAIL |
+| Implemented axis | 45 PASS, 15 FAIL |
 | Mock-tested axis | 54 PASS, 1 FAIL, 5 NOT_TESTED |
 | Real-provider-tested axis | 1 PASS, 35 NOT_TESTED, 24 N/A |
 | Production-path-tested axis | 60 NOT_TESTED |
 | Quality-accepted axis | 36 NOT_TESTED, 24 N/A |
-| Flow A | BLOCKED overall; measured contract/mock PASS and Vision real-provider 2/2 PASS; real ASR/reframe, production and quality axes remain blocked |
+| Flow A | BLOCKED overall; ASR adapter and Flow A contract/mock PASS plus Vision real-provider 2/2 PASS; ASR/reframe real-provider, production and quality axes remain blocked |
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
@@ -33,7 +33,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
-| Allowed scope | LOCAL/CI zero-call remediation, static/mock/security tests, redacted evidence, draft PRs |
+| Allowed scope | LOCAL/CI zero-call remediation, static/mock/security tests, redacted evidence and the V3-01-18 draft PR |
 | Disabled scope | further provider calls, credential-value access, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
@@ -266,13 +266,13 @@ with virtual boundary and strict legacy/missing/mismatch rejection tests; it rem
 ## Open gaps and remediation
 
 The lossless owner/impact/containment/test/rollback/PR mapping is in
-[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-17 sequence is defined in
+[`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). The revised V3-01-01 through V3-01-18 sequence is defined in
 [`14_REMEDIATION_PR_PLAN.md`](14_REMEDIATION_PR_PLAN.md). No exception or expiry is recorded.
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #39 and both RC-10 operation authorities are consumed. The current
-  zero-call Vision-closure/ASR-design PR requires a new G-08.
+- **Merge:** decisions through PR #40 and both RC-10 operation authorities are consumed. The current
+  V3-01-18 source/evidence PR requires a new G-08.
 - **Deploy:** no; RC-10 is locked NO-GO, not deployed and G-09 is pending.
 - **Providers/platforms enabled:** none now. RC-10 Operations 1 and 2 each used the bounded
   process-local scope, which was disabled/unmounted after each successful attempt.
@@ -285,10 +285,21 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
   `159.161860 VND` actual cost respectively; no Operation 3 is required or authorized, the bundle is
   unmounted and checked-in budget remains 0.
 - **Publish visibility/channel:** none; no remote publication.
-- **Still prohibited:** any further provider call, credential-value read, production-path writes, public route, publish,
+- **Still prohibited:** ASR model selection, any further provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
 - **Rollback trigger:** no runtime change exists; revert the isolated governance/docs PR if it regresses
   CI or evidence integrity.
+
+## V3-01-18 source checkpoint
+
+PR #40 merged the Vision closure/ASR gate design as
+`4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI `33706971864` passed 5/5 and the
+executable tree remained unchanged, so no RC-11 was created. Source commit
+`d2f34eb9e57d60ab6d0497ebf4a87c486cba8e63` now adds the fail-closed OpenAI ASR adapter,
+canonical ASR gate and offline compatibility matrix. Evidence `EV-V3-OPENAI-ASR-ADAPTER-001`
+promotes only `ASR-01` implemented/mock-tested to PASS. Model selection, real-provider,
+production-path and quality remain unapproved/`NOT_TESTED`; provider calls, credential reads and
+spend are all zero. The branch stops at a new G-08.
 
 ## Decision rule
 
