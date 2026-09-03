@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ngocphuongdong.com/schemas/video-factory/v3-01/asr-post-run-evaluation.schema.json",
+  "title": "V3-01 ASR post-run evaluation result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_kind", "operation_id", "verdict", "reasons", "normalization", "wer", "critical_terms", "timestamps", "language", "duration_parity", "provider_transcript_mapping", "evidence_completeness", "safety", "evaluation_sha256"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_kind": {"const": "asr_post_run_evaluation"},
+    "operation_id": {"type": "string"},
+    "verdict": {"enum": ["PASS", "REVIEW_REQUIRED", "FAIL"]},
+    "reasons": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fail", "review_required"],
+      "properties": {
+        "fail": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "review_required": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "normalization": {"$ref": "#/$defs/normalization"},
+    "wer": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/wer"}]},
+    "critical_terms": {"$ref": "#/$defs/critical_terms"},
+    "timestamps": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/timestamps"}]},
+    "language": {"$ref": "#/$defs/language"},
+    "duration_parity": {"$ref": "#/$defs/duration_parity"},
+    "provider_transcript_mapping": {"$ref": "#/$defs/provider_transcript_mapping"},
+    "evidence_completeness": {"$ref": "#/$defs/evidence_completeness"},
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider_calls_performed_by_evaluator", "credential_reads_performed_by_evaluator", "budget_reserved_vnd_by_evaluator", "spend_vnd_by_evaluator", "runtime_authority_granted", "production_verdict"],
+      "properties": {
+        "provider_calls_performed_by_evaluator": {"const": 0},
+        "credential_reads_performed_by_evaluator": {"const": 0},
+        "budget_reserved_vnd_by_evaluator": {"const": "0"},
+        "spend_vnd_by_evaluator": {"const": "0"},
+        "runtime_authority_granted": {"const": false},
+        "production_verdict": {"const": "NO-GO"}
+      }
+    },
+    "evaluation_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "$defs": {
+    "normalization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["unicode", "case", "punctuation_and_symbols", "whitespace", "vietnamese_diacritics"],
+      "properties": {
+        "unicode": {"const": "NFKC"},
+        "case": {"const": "casefold"},
+        "punctuation_and_symbols": {"const": "replace_with_space"},
+        "whitespace": {"const": "collapse_by_tokenization"},
+        "vietnamese_diacritics": {"const": "preserved"}
+      }
+    },
+    "wer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reference_words", "hypothesis_words", "edit_errors", "wer", "threshold", "passed"],
+      "properties": {
+        "reference_words": {"type": "integer", "minimum": 0},
+        "hypothesis_words": {"type": "integer", "minimum": 0},
+        "edit_errors": {"type": "integer", "minimum": 0},
+        "wer": {"type": "number", "minimum": 0},
+        "threshold": {"const": 0.15},
+        "passed": {"type": "boolean"}
+      }
+    },
+    "critical_terms": {
+      "type": "object", "additionalProperties": false,
+      "required": ["terms", "exact_recall", "normalized_recall", "precision", "precision_note", "critical_terms_included_in_wer"],
+      "properties": {
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["term", "present_in_reference", "exact_match", "normalized_match", "passed"],
+            "properties": {
+              "term": {"type": "string", "minLength": 1},
+              "present_in_reference": {"type": "boolean"},
+              "exact_match": {"type": "boolean"},
+              "normalized_match": {"type": "boolean"},
+              "passed": {"type": "boolean"}
+            }
+          }
+        },
+        "exact_recall": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "normalized_recall": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "precision": {"type": "null"},
+        "precision_note": {"const": "not_applicable_for_closed_expected_term_set"},
+        "critical_terms_included_in_wer": {"const": true}
+      }
+    },
+    "timestamps": {
+      "type": "object", "additionalProperties": false,
+      "required": ["segment_count", "word_count", "invalid_windows", "non_monotonic_windows", "abnormal_overlaps", "maximum_overlap_seconds", "words_outside_segment", "timestamps_outside_source", "timestamp_token_coverage", "passed"],
+      "properties": {
+        "segment_count": {"type": "integer", "minimum": 0},
+        "word_count": {"type": "integer", "minimum": 0},
+        "invalid_windows": {"type": "integer", "minimum": 0},
+        "non_monotonic_windows": {"type": "integer", "minimum": 0},
+        "abnormal_overlaps": {"type": "integer", "minimum": 0},
+        "maximum_overlap_seconds": {"type": "number", "minimum": 0},
+        "words_outside_segment": {"type": "integer", "minimum": 0},
+        "timestamps_outside_source": {"type": "integer", "minimum": 0},
+        "timestamp_token_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+        "passed": {"type": "boolean"}
+      }
+    },
+    "language": {
+      "type": "object", "additionalProperties": false,
+      "required": ["expected", "actual", "passed"],
+      "properties": {
+        "expected": {"const": "vi"},
+        "actual": {"type": ["string", "null"]},
+        "passed": {"type": "boolean"}
+      }
+    },
+    "duration_parity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_duration_seconds", "provider_duration_seconds", "absolute_delta_seconds", "delta_percent", "passed"],
+      "properties": {
+        "source_duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "provider_duration_seconds": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "absolute_delta_seconds": {"type": ["number", "null"], "minimum": 0},
+        "delta_percent": {"type": ["number", "null"], "minimum": 0},
+        "passed": {"type": "boolean"}
+      }
+    },
+    "provider_transcript_mapping": {
+      "type": "object", "additionalProperties": false,
+      "required": ["complete", "nullable_confidence_preserved"],
+      "properties": {
+        "text": {"type": "boolean"},
+        "segments": {"type": "boolean"},
+        "words": {"type": "boolean"},
+        "language": {"type": "boolean"},
+        "nullable_confidence_preserved": {"type": "boolean"},
+        "provenance": {"type": "boolean"},
+        "actual_cost": {"type": "boolean"},
+        "request_id": {"type": "boolean"},
+        "complete": {"type": "boolean"}
+      }
+    },
+    "evidence_completeness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["checks", "passed"],
+      "properties": {
+        "checks": {
+          "type": "object", "additionalProperties": false,
+          "required": ["provider_request_id", "request_sha256", "response_sha256", "usage_or_duration_receipt", "cost_receipt", "latency", "circuit", "ledger", "duplicate_protection", "secret_scan", "evidence_sha256", "original_provenance", "single_attempt", "reservation_reconciled"],
+          "properties": {
+            "provider_request_id": {"type": "boolean"},
+            "request_sha256": {"type": "boolean"},
+            "response_sha256": {"type": "boolean"},
+            "usage_or_duration_receipt": {"type": "boolean"},
+            "cost_receipt": {"type": "boolean"},
+            "latency": {"type": "boolean"},
+            "circuit": {"type": "boolean"},
+            "ledger": {"type": "boolean"},
+            "duplicate_protection": {"type": "boolean"},
+            "secret_scan": {"type": "boolean"},
+            "evidence_sha256": {"type": "boolean"},
+            "original_provenance": {"type": "boolean"},
+            "single_attempt": {"type": "boolean"},
+            "reservation_reconciled": {"type": "boolean"}
+          }
+        },
+        "passed": {"type": "boolean"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"verdict": {"const": "PASS"}}, "required": ["verdict"]},
+      "then": {
+        "properties": {
+          "reasons": {"properties": {"fail": {"maxItems": 0}, "review_required": {"maxItems": 0}}},
+          "wer": {"type": "object", "properties": {"passed": {"const": true}}},
+          "timestamps": {"type": "object", "properties": {"passed": {"const": true}}},
+          "language": {"properties": {"passed": {"const": true}}},
+          "duration_parity": {"properties": {"passed": {"const": true}}},
+          "provider_transcript_mapping": {"properties": {"complete": {"const": true}}},
+          "evidence_completeness": {"properties": {"passed": {"const": true}}}
+        }
+      }
+    }
+  ]
+}

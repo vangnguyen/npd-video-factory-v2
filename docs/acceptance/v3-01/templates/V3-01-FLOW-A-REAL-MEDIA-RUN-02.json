@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "record_kind": "flow_a_real_media_run_reference",
+  "status": "PREPARED_NOT_EXECUTED",
+  "slot": 2,
+  "asr_reference": {
+    "asset_path": "docs/acceptance/v3-01/assets/g03-asr-vi-owned-02.wav",
+    "asset_sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+    "duration_seconds": 134.590667,
+    "transcript_path": "docs/acceptance/v3-01/transcripts/g03-asr-vi-owned-02.txt",
+    "transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef",
+    "critical_terms": ["mã chiến dịch", "nguồn liên hệ", "cơ hội bán hàng", "phạm vi được cấp quyền", "nhận dạng giọng nói", "không tự động gửi tin nhắn", "không tự xuất bản", "không thay đổi giá bán"],
+    "rights_record_path": "docs/acceptance/v3-01/rights/V3-01-RIGHTS-ASR-002.json"
+  },
+  "visual_source": null,
+  "expected_scene_boundaries_seconds": null,
+  "expected_subject_reframe_zones": null,
+  "expected_subtitle_cues": null,
+  "expected_output_duration_seconds": null,
+  "blocked_by": ["OWNER_CLEARED_VIDEO_NOT_BOUND", "SCENE_REFERENCE_NOT_ANNOTATED", "SUBJECT_REFRAME_REFERENCE_NOT_ANNOTATED", "SUBTITLE_REFERENCE_NOT_ANNOTATED", "OUTPUT_DURATION_NOT_BOUND", "G04_NOT_APPROVED", "G11_NOT_APPROVED"],
+  "acceptance_effect": "NONE"
+}

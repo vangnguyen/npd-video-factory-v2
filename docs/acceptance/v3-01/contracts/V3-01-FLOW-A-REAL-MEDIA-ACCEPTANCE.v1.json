@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "record_kind": "flow_a_real_media_acceptance_contract",
+  "checkpoint": "V3-01-OFFLINE-PREP",
+  "status": "PREPARED_NOT_EXECUTED",
+  "baseline": {
+    "executable_rc_tag": "vf-v3-01-rc11",
+    "executable_rc_commit": "207ff9fee5557eb0976f575c9263b61d995b20a0",
+    "governance_base_commit": "8ad490c02c36aafe9447a3eb0766a1d1f1f122d7"
+  },
+  "pipeline": ["upload", "asr", "transcript", "scene_detection", "silence_decisions", "highlights", "vision", "smart_reframe", "subtitle", "render", "qc"],
+  "consecutive_runs": {
+    "required": 2,
+    "distinct_input_hashes": true,
+    "same_locked_rc": true,
+    "chronological": true
+  },
+  "thresholds": {
+    "maximum_asr_wer": 0.15,
+    "minimum_critical_term_recall": 1.0,
+    "scene_boundary_tolerance_seconds": 0.5,
+    "minimum_scene_boundary_f1": 0.8,
+    "minimum_reframe_safe_coverage": 0.95,
+    "maximum_subtitle_median_drift_seconds": 0.2,
+    "maximum_subtitle_p95_drift_seconds": 0.5,
+    "maximum_render_duration_delta_seconds": 0.5,
+    "maximum_av_duration_delta_seconds": 0.25,
+    "minimum_render_width": 1080,
+    "minimum_render_height": 1920,
+    "expected_video_codec": "h264",
+    "expected_audio_codec": "aac",
+    "expected_audio_sample_rate_hz": 48000,
+    "maximum_black_frame_ratio": 0.1,
+    "maximum_freeze_frame_ratio": 0.15,
+    "maximum_silence_ratio": 0.8,
+    "minimum_audio_peak_db": -35.0,
+    "maximum_audio_peak_db": -0.05,
+    "maximum_dark_visual_sample_ratio": 0.1,
+    "maximum_broken_frames": 0,
+    "full_decode_required": true,
+    "subtitle_safe_area_required": true,
+    "timeline_renderability_required": true
+  },
+  "run_reference_templates": [
+    "docs/acceptance/v3-01/templates/V3-01-FLOW-A-REAL-MEDIA-RUN-01.json",
+    "docs/acceptance/v3-01/templates/V3-01-FLOW-A-REAL-MEDIA-RUN-02.json"
+  ],
+  "evidence_layout": [
+    "run-manifest.json",
+    "inputs/source-media.json",
+    "asr/provider-transcript.json",
+    "asr/post-run-evaluation.json",
+    "scene/reference-and-detection.json",
+    "silence/edit-decisions.json",
+    "vision/subject-safe-crop.json",
+    "reframe/coverage.json",
+    "subtitle/alignment.json",
+    "render/final-artifact.json",
+    "qc/automated-qc.json",
+    "human/g11-review.json",
+    "final/status.json"
+  ],
+  "safety": {
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "reservation_vnd": "0",
+    "spend_vnd": "0",
+    "runtime_wired": false,
+    "acceptance_axis_promoted": false,
+    "production_verdict": "NO-GO"
+  }
+}

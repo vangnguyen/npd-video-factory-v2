@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "record_kind": "asr_post_run_evaluation_input",
+  "operation": {
+    "operation_id": "fixture-v3-01-rc11-asr-fail-01",
+    "provider_execution": "SUCCESS",
+    "status": "SUCCEEDED",
+    "consumed": true,
+    "attempts": 1,
+    "retry_count": 0,
+    "fallback_count": 0
+  },
+  "binding": {
+    "rc_tag": "fixture-vf-v3-01-rc11",
+    "rc_commit": "207ff9fee5557eb0976f575c9263b61d995b20a0",
+    "provider": "fixture-openai-transcription",
+    "model": "fixture-whisper-contract",
+    "capability": "asr",
+    "language": "vi",
+    "asset_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "asset_duration_seconds": 6.0,
+    "rights_record_id": "FIXTURE-RIGHTS-ASR-001",
+    "rights_record_sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "reference": {
+    "transcript": "Ngọc Phương Đông giới thiệu Vinhomes Green Paradise Cần Giờ.",
+    "transcript_path": "docs/acceptance/v3-01/fixtures/asr-post-run/reference-pass.txt",
+    "transcript_sha256": "acbf26ba6f7b02cbdd46aa48818250c85198c7182cc323e18463546b1384e5c5",
+    "critical_terms": ["Ngọc Phương Đông", "Vinhomes Green Paradise", "Cần Giờ"]
+  },
+  "provider_transcript": {
+    "text": "Ngọc Phương Tây giới thiệu dự án Green Paradise ở Cần Thơ.",
+    "language": "vi",
+    "confidence": null,
+    "provider_duration_seconds": 6.0,
+    "segments": [
+      {
+        "start_seconds": 0.0,
+        "end_seconds": 3.0,
+        "text": "Ngọc Phương Tây giới thiệu dự án",
+        "speaker": null,
+        "confidence": null,
+        "words": [
+          {"start_seconds": 0.0, "end_seconds": 0.4, "text": "Ngọc", "confidence": null},
+          {"start_seconds": 0.4, "end_seconds": 0.9, "text": "Phương", "confidence": null},
+          {"start_seconds": 0.9, "end_seconds": 1.3, "text": "Tây", "confidence": null},
+          {"start_seconds": 1.3, "end_seconds": 1.7, "text": "giới", "confidence": null},
+          {"start_seconds": 1.7, "end_seconds": 2.2, "text": "thiệu", "confidence": null},
+          {"start_seconds": 2.2, "end_seconds": 2.8, "text": "dự án", "confidence": null}
+        ]
+      },
+      {
+        "start_seconds": 1.5,
+        "end_seconds": 5.8,
+        "text": "Green Paradise ở Cần Thơ.",
+        "speaker": null,
+        "confidence": null,
+        "words": [
+          {"start_seconds": 1.5, "end_seconds": 2.0, "text": "Green", "confidence": null},
+          {"start_seconds": 2.0, "end_seconds": 2.7, "text": "Paradise", "confidence": null},
+          {"start_seconds": 2.7, "end_seconds": 3.0, "text": "ở", "confidence": null},
+          {"start_seconds": 3.0, "end_seconds": 3.4, "text": "Cần", "confidence": null},
+          {"start_seconds": 3.4, "end_seconds": 3.9, "text": "Thơ.", "confidence": null}
+        ]
+      }
+    ],
+    "provenance": {
+      "provider_request_id": "req_fixture_asr_fail_001",
+      "request_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "response_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "latency_ms": 1234.5,
+      "timestamp_source": "recorded_fixture_native_word_and_segment",
+      "original_evidence": true,
+      "secret_recorded": false
+    },
+    "actual_cost_vnd": "16.200000"
+  },
+  "receipts": {
+    "usage_or_duration_receipt_present": true,
+    "cost_receipt_present": true,
+    "reservation_vnd": "500",
+    "post_reconciliation_reserved_vnd": "0",
+    "ledger": {"operations": 1, "attempts": 1, "budget_days": 1, "circuits": 1},
+    "circuit": {"state": "closed", "consecutive_failures": 0},
+    "duplicate_protection": "DUPLICATE_OPERATION_BLOCKED",
+    "secret_scan": {"status": "PASS", "finding_count": 0},
+    "evidence_sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+  }
+}

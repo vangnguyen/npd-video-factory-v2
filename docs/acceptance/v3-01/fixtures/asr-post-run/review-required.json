@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "record_kind": "asr_post_run_evaluation_input",
+  "operation": {
+    "operation_id": "fixture-v3-01-rc11-asr-timeout-01",
+    "provider_execution": "FAILED",
+    "status": "FAILED",
+    "consumed": true,
+    "attempts": 1,
+    "retry_count": 0,
+    "fallback_count": 0
+  },
+  "binding": {
+    "rc_tag": "fixture-vf-v3-01-rc11",
+    "rc_commit": "207ff9fee5557eb0976f575c9263b61d995b20a0",
+    "provider": "fixture-openai-transcription",
+    "model": "fixture-whisper-contract",
+    "capability": "asr",
+    "language": "vi",
+    "asset_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "asset_duration_seconds": 6.0,
+    "rights_record_id": "FIXTURE-RIGHTS-ASR-001",
+    "rights_record_sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "reference": {
+    "transcript": "Ngọc Phương Đông giới thiệu Vinhomes Green Paradise Cần Giờ.",
+    "transcript_path": "docs/acceptance/v3-01/fixtures/asr-post-run/reference-pass.txt",
+    "transcript_sha256": "acbf26ba6f7b02cbdd46aa48818250c85198c7182cc323e18463546b1384e5c5",
+    "critical_terms": ["Ngọc Phương Đông", "Vinhomes Green Paradise", "Cần Giờ"]
+  },
+  "provider_transcript": null,
+  "receipts": {
+    "usage_or_duration_receipt_present": false,
+    "cost_receipt_present": false,
+    "reservation_vnd": "500",
+    "post_reconciliation_reserved_vnd": "0",
+    "ledger": {"operations": 1, "attempts": 1, "budget_days": 1, "circuits": 1},
+    "circuit": {"state": "open", "consecutive_failures": 1},
+    "duplicate_protection": "NOT_TESTED",
+    "secret_scan": {"status": "PASS", "finding_count": 0},
+    "evidence_sha256": null
+  }
+}

@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: PR #41/V3-01-18 merged; RC-11 ASR model/budget/two-asset gate proposed; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
+SCOPE: PR #42 governance merged; offline ASR evaluator/Flow A/TTS/G-11 preparation only; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
 RELEASE CANDIDATE: RC-11 207ff9fee5557eb0976f575c9263b61d995b20a0 LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-RC11-ASR-GATE-001; PR #41 exact-head CI 33711738092 and exact-main CI 33712762815 PASS; current proposal made 0 calls/0 credential reads/0 VND
+LATEST EVIDENCE: EV-V3-RC11-ASR-GATE-001; governance main 8ad490c02c36aafe9447a3eb0766a1d1f1f122d7; current preparation made 0 calls/0 credential reads/0 VND
 DATE: 2026-09-03
-OWNER DECISION: G-01/G-02/G-03-ASR APPROVED AND REBOUND FOR REVIEW; NEW G-08 REQUIRED; OPERATIONS 1/2 NOT APPROVED
+OWNER DECISION: G-01/G-02/G-03-ASR APPROVED; OPERATION 1 HAS A SEPARATE FUTURE-WINDOW AUTHORITY BUT IS NOT RUN BY THIS PACKAGE; OPERATION 2 LOCKED; NEW G-08 REQUIRED FOR PREPARATION PR
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -33,7 +33,7 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
-| Allowed scope | LOCAL/CI zero-call remediation, static/mock/security tests, redacted evidence and the V3-01-18 draft PR |
+| Allowed scope | LOCAL/CI zero-call preparation, static/mock tests, redacted contracts and a draft governance/tests PR |
 | Disabled scope | further provider calls, credential-value access, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
@@ -271,8 +271,8 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #41 and both RC-10 operation authorities are consumed. The current
-  RC-11 ASR governance/evidence PR requires a new G-08.
+- **Merge:** decisions through PR #42 and both RC-10 operation authorities are consumed. The current
+  offline-preparation PR requires a new G-08.
 - **Deploy:** no; RC-11 is locked NO-GO, not deployed and G-09 is pending.
 - **Providers/platforms enabled:** none now. RC-10 Operations 1 and 2 each used the bounded
   process-local scope, which was disabled/unmounted after each successful attempt.
@@ -285,7 +285,7 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
   `159.161860 VND` actual cost respectively; no Operation 3 is required or authorized, the bundle is
   unmounted and checked-in budget remains 0.
 - **Publish visibility/channel:** none; no remote publication.
-- **Still prohibited:** any ASR operation or further provider call, credential-value read, production-path writes, public route, publish,
+- **Still prohibited by this package:** any ASR operation or provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
 - **Rollback trigger:** no runtime change exists; revert the isolated governance/docs PR if it regresses
   CI or evidence integrity.
@@ -298,9 +298,19 @@ docs-only merge did not create an RC. PR #41 then merged the fail-closed OpenAI 
 canonical gate and offline compatibility matrix as exact RC-11
 `207ff9fee5557eb0976f575c9263b61d995b20a0`; exact-head CI `33711738092` and exact-main CI
 `33712762815` passed. `ASR-01` remains only implemented/mock-tested PASS. The owner has since
-approved `whisper-1`, G-02-ASR v1.1 and two exact owner-cleared inputs. Their bundle is unmounted;
-operations 1/2 are unauthorized, so real-provider, production-path and quality remain `NOT_TESTED`.
-The current governance branch stops at a new G-08 with zero calls, credential reads and VND.
+approved `whisper-1`, G-02-ASR v1.1 and two exact owner-cleared inputs. PR #42 merged the unmounted
+governance bundle as `8ad490c02c36aafe9447a3eb0766a1d1f1f122d7` without changing executable RC-11. The owner later
+approved Operation 1 only for its exact future window; this offline package does not execute or
+extend it, and Operation 2 remains locked. Real-provider, production-path and quality remain
+`NOT_TESTED`. The current preparation branch stops at a new G-08 with zero calls, credential reads
+and VND.
+
+## Offline post-run and quality-gate preparation
+
+The current draft adds a deterministic ASR post-run evaluator, a two-run Flow A real-media contract,
+a Vietnamese TTS candidate/acceptance design and a strict artifact-bound G-11 review template. It
+does not change the acceptance matrix or gap register because no provider, production-path or human
+quality operation occurred. Executable RC-11 remains immutable and Production remains `NO-GO`.
 
 ## Decision rule
 

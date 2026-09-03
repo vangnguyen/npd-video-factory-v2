@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "record_kind": "vietnamese_tts_pronunciation_set",
+  "status": "REFERENCE_ONLY",
+  "terms": [
+    {"text": "Ngọc Phương Đông", "required_result": "EXACT_HUMAN_ACCEPTANCE", "substitution_allowed": false},
+    {"text": "Vinhomes Green Paradise", "required_result": "EXACT_HUMAN_ACCEPTANCE", "substitution_allowed": false},
+    {"text": "Vinhomes Grand Park", "required_result": "EXACT_HUMAN_ACCEPTANCE", "substitution_allowed": false},
+    {"text": "Cần Giờ", "required_result": "EXACT_HUMAN_ACCEPTANCE", "substitution_allowed": false},
+    {"text": "đăng ký tư vấn", "required_result": "EXACT_HUMAN_ACCEPTANCE", "substitution_allowed": false},
+    {"text": "tham quan sa bàn", "required_result": "EXACT_HUMAN_ACCEPTANCE", "substitution_allowed": false},
+    {"text": "chính sách bán hàng", "required_result": "EXACT_HUMAN_ACCEPTANCE", "substitution_allowed": false},
+    {"text": "đồng Việt Nam", "required_result": "EXACT_HUMAN_ACCEPTANCE", "substitution_allowed": false}
+  ],
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "spend_vnd": "0"
+}
