@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC10-VISION-CONSECUTIVE-PASS-001",
+  "test_case_id": "V3-01-RC10-OPENAI-VISION-CONSECUTIVE-2-OF-2",
+  "matrix_rows": [
+    "VIS-01",
+    "OPS-01",
+    "OPS-03",
+    "OPS-04",
+    "OPS-09"
+  ],
+  "axis": "real-provider-tested",
+  "commit_sha": "c2b1aec2d54dd90bcb486f8a68c97746b39963aa",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-vision",
+    "model_or_workflow": "gpt-5-mini / Responses API / vision",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": "138d70333ff7df29f6c986b30f5c251f6c5b6b3ee7d969846f73e2931a4f22a8",
+  "response_or_artifact_hash": "ff8a5d4a1200c09bfbda18db557d89c8d3b9763a95f29e69ac62e72460b299b7",
+  "started_at_utc": "2026-09-02T16:23:24.895527+00:00",
+  "completed_at_utc": "2026-09-02T16:23:58.216748+00:00",
+  "duration_seconds": 33.321221,
+  "result": "PASS",
+  "assertion": "Two separately owner-authorized RC-10 OpenAI Vision operations completed consecutively on the same immutable executable RC, provider/model, asset/RightsRecord, request contract, scope and budget window. Both retained strict structured output, distinct response evidence, actual usage/VND receipts, one-attempt/no-retry/no-fallback semantics, durable ledger/circuit state, duplicate blocking and secret containment. This closes VIS-01 real-provider-tested when this evidence PR receives G-08 and merges. Production-path and human-quality axes remain NOT_TESTED.",
+  "correlation_id": "v3-01-rc10-openai-vision-call-02",
+  "cost": {
+    "currency": "VND",
+    "actual": 284.34328,
+    "status": "RECORDED"
+  },
+  "rights_record_id": "V3-01-RIGHTS-G03A-001",
+  "reviewer": "Codex bounded provider-acceptance evidence reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "Do not repeat either operation. Offline-only verification: compare operation 1 source SHA-256 with 11fd1f7cb8eca120964033aba098e051d2d380713c52ceffec02979a77c9a620 and provider/operation-2-result.json SHA-256 with deed47e573079bd53118859f616991aae42b420992aad84f39cbfb4bdb3df0a2, then run python scripts/v3_01_acceptance.py validate-run evidence/v3-01/vf-v3-01-20260902T162324Z-c2b1aec-op2 and review docs/acceptance/v3-01/42_V3_01_RC10_VISION_CONSECUTIVE_EVIDENCE.md."
+}

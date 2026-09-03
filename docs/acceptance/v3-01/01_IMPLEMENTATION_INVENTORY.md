@@ -25,11 +25,10 @@ with governance-main CI. It remains not consumed with 0 calls/0 VND, but its aut
 operation 2 is locked. V3-01-17 now supplies the canonical dual-CI provenance model and zero-call
 collector in locked RC-10. Exact executable RC CI run `33527973264` passed 5/5. Governance-only PR
 #37 merged at `fd78a1690a5a2fd7b07e9e7822deda834f02ea6d`; governance CI `33532594395` passed 5/5 and
-dual-CI provenance proved identical executable trees. A separately authorized RC-10 Operation 1
-then completed with complete structured output, usage/cost, durable-safety and secret-containment
-evidence. It is consumed/succeeded and establishes one operation-level real-provider PASS. Vision
-remains 1/2 consecutive PASS; Operation 2 is not approved/locked and production-path and quality
-acceptance remain absent.
+dual-CI provenance proved identical executable trees. Separately authorized RC-10 Operations 1 and
+2 then completed with complete structured output, usage/cost, durable-safety and secret-containment
+evidence. Both are consumed/succeeded and establish 2/2 consecutive real-provider PASS for Vision,
+pending this evidence PR's G-08 merge. Production-path and quality acceptance remain absent.
 
 ## Foundation
 
@@ -60,7 +59,7 @@ acceptance remain absent.
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
 | Transcript/scene/silence/highlight | `auto_edit_providers.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py` | Auto Edit suite and measured two-run fixture evidence | Contract/mock PASS with pre-call safety; real accuracy absent |
-| Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema, exact-main CI, canonical evidence, split-timeout, dual-CI and RC-10 offline bundle guards | Adapter, evidence path, authority limits, 90/120 timeout envelope and dual-CI provenance are implemented/mock-tested in RC-10; bundle is unmounted and historical provider attempts did not produce accepted evidence, so real-provider axis remains `NOT_TESTED` |
+| Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema, exact-main CI, canonical evidence, split-timeout, dual-CI and two accepted RC-10 operations | Vision structured analysis is 2/2 consecutive real-provider PASS on immutable RC-10; real subject-tracking/reframe accuracy, production path and human quality remain untested |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |
 | ComfyUI | `services/comfyui-bridge`, eight allowlisted workflows | bridge unit tests | Mock/disabled backend only; no GPU evidence |
@@ -94,10 +93,10 @@ acceptance remain absent.
 |---|---|---|---|
 | Fail-closed configuration | `config.py`, production Compose, CI safety job | main CI safety job | Implemented/mock-tested |
 | Human identity emergency controls | `HUMAN_API_ENABLED`, `HUMAN_WRITE_ENABLED`, empty default registry, Redis rate limit | security suite and Docker E2E | Implemented/mock-tested; production writes remain disabled |
-| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, `provider_ci_provenance.py`, `evidence_serialization.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, gate-loader/RC binding, dual-CI provenance, redacted error ledger, canonical evidence/fallback/limits tests, exact RC-10 bundle guard and phase-specific split-timeout tests | PostgreSQL-backed local contract passes; RC-6/RC-9 failed closed and RC-7 timed out once; RC-10 Operation 1 completed one accepted real-provider attempt with complete evidence, while aggregate two-run and production-like multi-instance acceptance remain pending |
-| Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart/configuration tests and bounded RC-5/RC-10 operations | RC-10 recorded `125.181420 VND` actual cost within a 500 VND reservation and reconciled reserved VND to zero; production-like multi-instance evidence remains absent |
+| Provider safety plane | `provider_safety*.py`, `provider_gate_loader.py`, `provider_ci_provenance.py`, `evidence_serialization.py`, authenticated snapshot route, settings and Compose contracts | multi-controller/restart/retention, gate-loader/RC binding, dual-CI provenance, redacted error ledger, canonical evidence/fallback/limits tests, exact RC-10 bundle guard and phase-specific split-timeout tests | PostgreSQL-backed local contract and two consecutive RC-10 real-provider operations pass with complete evidence; production-like multi-instance acceptance remains pending |
+| Cost | durable VND-only budget days, atomic reservation, operation/attempt ledger, 50/80/100 alerts and global kill switch | concurrent controller, restart/configuration tests and two bounded RC-10 operations | RC-10 recorded `284.343280 VND` total actual cost inside the 1,250 VND window and reconciled reserved VND to zero; production-like multi-instance evidence remains absent |
 | Upload malware boundary | quarantine state, archive-deny policy, deterministic EICAR contract and internal clamd client | `test_auto_edit_analysis.py`, migration replay | Local/mock PASS; clamd and edge/WAF not deployed |
-| Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests plus exact RC-10 Operation 1 RightsRecord binding | Exact owned Vision input binding passed once; broader real/final-asset rights, retention and public-output coverage remain unaccepted |
+| Rights/provenance | asset/media models, full provider rights hook, artifact/storage receipt verification | provider safety, media and publishing fixture tests plus both exact RC-10 RightsRecord bindings | Exact owned Vision input binding passed twice under the Vision-only purpose; broader real/final-asset rights, retention and public-output coverage remain unaccepted |
 | Backup/restore | `v2-11-backup.sh`, `v2-11-restore.sh`, `v3-01-dr-observability-drill.sh` | guarded disposable Docker backup/failure/restore/hash verification target | Local/CI only; production-like DR untested |
 | Rollback/deploy | guarded V2-11 helpers and DR runbook | migration replay and disposable data restore; no locked image rollback | Production-like rollback remains blocked |
 | Observability | authenticated `operations` snapshot, correlation headers, structured secret-redacted logs and alert previews | focused tests plus disposable E2E target | Local/CI only; no monitoring backend or external alert delivery |

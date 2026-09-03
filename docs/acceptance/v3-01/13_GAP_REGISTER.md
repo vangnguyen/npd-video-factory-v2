@@ -2,7 +2,7 @@
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
 derived from the audit captured on `2026-08-27`, updated through locked NO-GO RC-10
-`c2b1aec2d54dd90bcb486f8a68c97746b39963aa`, PR #36 and the offline RC-10 rebind. Historical RC-5
+`c2b1aec2d54dd90bcb486f8a68c97746b39963aa`, PR #38 and both RC-10 Vision operations. Historical RC-5
 operation-1 provider execution succeeded,
 but request-level acceptance evidence was incomplete after post-call serialization failed. The
 operation is consumed/`REVIEW_REQUIRED`; V3-01-13 is now merged and exact-main tested. RC-6
@@ -14,10 +14,10 @@ where it separates provider HTTP timeout at 90 seconds from the controller hard 
 120 seconds. RC-9 operation 1 later stopped before credential read, reservation, ledger mutation or
 provider dispatch because executable-RC CI and governance-main CI were conflated. It is not
 consumed, but its authority is retired; operation 2 is locked. V3-01-17 is merged and exact-main
-tested in RC-10. PR #37 merged governance-only, dual-CI provenance passed, and a separately
-authorized RC-10 Operation 1 completed with complete evidence. That exact operation is a
-real-provider PASS and is consumed; Vision remains 1/2 consecutive PASS, so aggregate Vision,
-production-path and quality acceptance are not promoted.
+tested in RC-10. PR #37 merged governance-only, PR #38 merged the first PASS evidence, and dual-CI
+provenance stayed valid. Separately authorized RC-10 Operations 1 and 2 completed with complete
+evidence. Both are consumed/succeeded; Vision is 2/2 consecutive real-provider PASS pending this
+evidence PR's G-08 merge. Production-path and quality acceptance are not promoted.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -29,18 +29,17 @@ production-path and quality acceptance are not promoted.
 `V3-01-GAP-001` is technically remediated in local/CI and disposable Docker evidence and is merged
 through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #20. GAP-002,
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
-`IN_PROGRESS`. RC-10 operation 1 is a complete real-provider PASS, but Vision is only 1/2
-consecutive PASS and ASR/reframe, production-like safety and broader rights coverage remain open.
-The bounded G-08 decisions through PR #37 are consumed; this evidence-only PR requires its own
-G-08.
+`IN_PROGRESS`. RC-10 Vision is 2/2 consecutive real-provider PASS, while ASR/reframe,
+production-like safety and broader rights coverage remain open. The bounded G-08 decisions through
+PR #38 are consumed; this consecutive evidence-only PR requires its own G-08.
 Historical RC-3 and RC-5 operation
 1 IDs are consumed and permanently locked; RC-5 operation 2 is also locked. RC-6 operation 1 is
 not consumed, but its failed-window authority is retired; operation 2 is locked. RC-7 operation 1 is
 consumed after one timeout and its authority is retired; operation 2 is locked. RC-8 has no live
   operation authority and is retired from live acceptance. RC-9 is locked; operation 1 is not
   consumed but its failed provenance authority is retired, and operation 2 is locked. RC-10 is locked;
-  Operation 1 is consumed/succeeded with a complete PASS record, while Operation 2 has no authority
-  and remains locked.
+  Operations 1 and 2 are consumed/succeeded with complete PASS records; no further Vision operation
+  is required or authorized.
 Production remains undeployed and unverified.
 
 ## P0 release blockers
@@ -48,13 +47,13 @@ Production remains undeployed and unverified.
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | aggregate real ASR/Vision/reframe acceptance incomplete | RC-10 Vision operation 1 is a complete real-provider PASS, but Vision remains 1/2 consecutive PASS and no accepted real ASR/reframe evidence exists |
+| V3-01-GAP-003 | aggregate real ASR/Vision/reframe acceptance incomplete | RC-10 Vision is 2/2 consecutive real-provider PASS; no accepted real ASR/reframe evidence exists |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | production-like backup/restore/image rollback incomplete | local disposable drill only; no production state touched |
-| V3-01-GAP-013 | broader real-asset rights coverage incomplete | RC-10 operation 1 retained the narrow owned-image/RightsRecord and provider artifact under Vision-only use; final-render retention and public-output rights remain unaccepted |
+| V3-01-GAP-013 | broader real-asset rights coverage incomplete | both RC-10 operations retained the narrow owned-image/RightsRecord and separate provider artifacts under Vision-only use; final-render retention and public-output rights remain unaccepted |
 | V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work
@@ -71,10 +70,10 @@ Production remains undeployed and unverified.
   durable-context fallback in locked RC-6. V3-01-14 and the RC-7 gate bundle validate the corrected
   shared limits path; RC-7 operation 1 then proved durable one-attempt timeout/charge/duplicate
   behavior but did not retain provider receipt/usage or actual cost. V3-01-15 adds timeout-phase
-  evidence offline. RC-10 operation 1 now proves one complete real-provider operation with atomic
-  reservation, actual VND reconciliation, a closed circuit, duplicate blocking and complete primary
-  evidence. Vision is still 1/2 consecutive PASS, and production-like multi-instance safety remains
-  unaccepted.
+  evidence offline. RC-10 operations 1 and 2 now prove two complete real-provider operations with
+  atomic reservation, actual VND reconciliation, a closed circuit, duplicate blocking and complete
+  primary evidence. Vision is 2/2 consecutive PASS, while production-like multi-instance safety
+  remains unaccepted.
 - `V3-01-GAP-011` (`IN_PROGRESS`): auth rate limiting, URL-import denial and bounded malicious-input
   tests pass. V3-01-03 adds quarantine-before-decoder, archive-signature denial, EICAR contract
   tests, clean-verdict promotion and an internal clamd/WAF design contract; approved internal
