@@ -1,0 +1,207 @@
+{
+  "allowed_operations": [
+    {
+      "asset_hash": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "asset_id": "asset-g03-asr-vi-owned-01",
+      "operation": "flow_a_asr",
+      "operation_key": "v3-01-rc11-openai-transcription-asr-call-01",
+      "slot": 1
+    },
+    {
+      "asset_hash": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "asset_id": "asset-g03-asr-vi-owned-02",
+      "operation": "flow_a_asr",
+      "operation_key": "v3-01-rc11-openai-transcription-asr-call-02",
+      "slot": 2
+    }
+  ],
+  "budget": {
+    "acceptance_window_limit_vnd": "1250",
+    "automatic_retry": false,
+    "budget_day_utc": "2026-09-04",
+    "controller_hard_timeout_seconds": 120.0,
+    "currency": "VND",
+    "files_per_operation": 1,
+    "max_attempts": 1,
+    "max_concurrent_calls": 1,
+    "max_duration_seconds": 180.0,
+    "max_file_bytes": 25000000,
+    "model_fallback": false,
+    "per_operation_limit_vnd": "500",
+    "provider_http_timeout_seconds": 90.0,
+    "requested_language": "vi",
+    "response_format": "verbose_json",
+    "timestamp_granularities": [
+      "segment",
+      "word"
+    ],
+    "vnd_per_minute": "162"
+  },
+  "budget_approval": {
+    "record": {
+      "approval_id": "V3-01-APP-045",
+      "approved_at_utc": "2026-09-03T07:05:17Z",
+      "approved_by": "Owner (GitHub: vangnguyen)",
+      "artifact_or_commit_hashes": [
+        "207ff9fee5557eb0976f575c9263b61d995b20a0",
+        "778af29ad50dc2f7018c86604dba72a6ad4d212af6a92b409b9c4dcaf9a9934f",
+        "7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a"
+      ],
+      "decision": "APPROVED",
+      "expires_at_utc": "2026-09-04T18:00:00Z",
+      "gate_id": "G-02",
+      "limits": [
+        "500 VND atomic reservation per operation",
+        "1250 VND maximum for the whole acceptance window",
+        "162 VND per minute accounting rate derived from 0.006 USD/minute at fixed 27000 VND/USD",
+        "One file per operation, minimum acceptance duration 90 seconds and hard duration cap 180 seconds",
+        "File size no greater than 25000000 bytes",
+        "Language vi, verbose_json, native segment and word timestamps",
+        "Provider HTTP timeout 90 seconds and controller hard envelope 120 seconds",
+        "One attempt, concurrency 1, no automatic retry and no fallback",
+        "Window 2026-09-04T14:00:00Z through 2026-09-04T18:00:00Z only",
+        "No provider call until a separate owner decision authorizes RC-11 Operation 1"
+      ],
+      "notes": "The owner approved G-02-ASR v1.1 after correcting the target to 90-120 seconds and retaining the hard 180-second cap. Both exact inputs are under the hard cap; their small target-range overages were explicitly accepted. This rebind does not enable checked-in budget or authorize an API call. Any bundle, scope or window mutation requires review and rebind.",
+      "scope": "Bind G-02-ASR v1.1 to the dated RC-11 duration, file-size, native-timestamp, VND and split-timeout envelope for at most two derived whisper-1 acceptance operations.",
+      "target_account_or_environment": "Isolated owner-gated acceptance runner; checked-in and production budgets remain zero"
+    },
+    "record_sha256": "a82024fb4433ed56bd8da49ec1aaefd7515b1e796664b3e1eb7fe61cfd8199ed"
+  },
+  "bundle_id": "V3-01-GATE-RC11-OPENAI-ASR-A",
+  "capability": "asr",
+  "credential_alias": "secret://openai/codex-video",
+  "credential_approval": {
+    "record": {
+      "approval_id": "V3-01-APP-044",
+      "approved_at_utc": "2026-09-03T07:05:17Z",
+      "approved_by": "Owner (GitHub: vangnguyen)",
+      "artifact_or_commit_hashes": [
+        "207ff9fee5557eb0976f575c9263b61d995b20a0",
+        "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+        "7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a"
+      ],
+      "decision": "APPROVED",
+      "expires_at_utc": "2026-09-04T18:00:00Z",
+      "gate_id": "G-01",
+      "limits": [
+        "Provider openai-transcription only",
+        "Model whisper-1 only",
+        "Capability asr and language vi only",
+        "Credential alias secret://openai/codex-video only",
+        "No fallback model or provider",
+        "No credential read or provider call until a separate operation authority is granted",
+        "No deployment, public ingress, publishing or production analytics"
+      ],
+      "notes": "The owner selected whisper-1 only because RC-11 compatibility evidence supports the strict native segment-and-word timestamp contract. This secret-free rebind records that approval against the exact proposed scope; G-08 review and a separate Operation 1 decision remain mandatory. It grants no API-call authority.",
+      "scope": "Bind G-01-ASR to exactly openai-transcription / whisper-1 / asr / vi on vf-v3-01-rc11 using only credential alias secret://openai/codex-video for the proposed dated acceptance window.",
+      "target_account_or_environment": "Isolated owner-gated acceptance runner; credential value remains in the external secret mechanism"
+    },
+    "record_sha256": "d4c5ad7b9fb33ee6eba107bc85b0c9b22db0a1c7fa859dfdabd59ef3cb80cd4f"
+  },
+  "expires_at_utc": "2026-09-04T18:00:00Z",
+  "model": "whisper-1",
+  "provider_key": "openai-transcription",
+  "rc_commit": "207ff9fee5557eb0976f575c9263b61d995b20a0",
+  "rc_tag": "vf-v3-01-rc11",
+  "rights_approval": {
+    "record": {
+      "approval_id": "V3-01-APP-046",
+      "approved_at_utc": "2026-09-03T07:05:17Z",
+      "approved_by": "Owner (GitHub: vangnguyen)",
+      "artifact_or_commit_hashes": [
+        "207ff9fee5557eb0976f575c9263b61d995b20a0",
+        "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+        "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+        "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+        "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef",
+        "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+        "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323",
+        "0d7aef962dcb5e34ed5786fadd2e9cfd156cbfb8784d498092262d33b76de7c0",
+        "7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a"
+      ],
+      "decision": "APPROVED",
+      "expires_at_utc": "2026-09-04T18:00:00Z",
+      "gate_id": "G-03",
+      "limits": [
+        "Exact WAV SHA-256 fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef for slot 1",
+        "Exact WAV SHA-256 dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b for slot 2",
+        "Owner-verified transcript and critical-term manifest for each WAV",
+        "OpenAI ASR acceptance processing only",
+        "Speaker voice-processing consent applies only to this bounded acceptance",
+        "No publishing, training, resale or other use",
+        "No provider call until a separate owner decision authorizes RC-11 Operation 1"
+      ],
+      "notes": "The owner explicitly confirmed NPD ownership or authorization, voice-use consent, actual WAV-to-reference-transcript agreement, and accepted durations of 120.852 and 134.591 seconds under the 180-second hard cap. This record binds both secret-free RightsRecords and the exact proposed scope. It grants no publishing, training, resale or live-call authority.",
+      "scope": "Bind G-03-ASR to exactly two NPD-owned or authorized Vietnamese WAV inputs and their owner-verified reference transcripts for bounded OpenAI ASR acceptance on vf-v3-01-rc11.",
+      "target_account_or_environment": "Isolated owner-gated OpenAI ASR acceptance runner only"
+    },
+    "record_sha256": "7e604d838dd0b0f0f55d379b69c02856ddbd7f21e109d7601ab0aadd1bd79f34"
+  },
+  "rights_records": [
+    {
+      "record": {
+        "acquired_at_utc": "2026-09-03T06:56:00Z",
+        "asset_hash": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+        "asset_id": "asset-g03-asr-vi-owned-01",
+        "attribution_required": false,
+        "attribution_text": "",
+        "commercial_use": true,
+        "decision": "APPROVED",
+        "derivative_use": true,
+        "evidence_reference": "repo://docs/acceptance/v3-01/45_V3_01_RC11_OPENAI_ASR_GATE.md#owner-g-03-asr-decision",
+        "expiry": null,
+        "license_name": "NPD owner-approved OpenAI ASR acceptance only; no publishing, training, resale or other use",
+        "license_version_or_terms_date": "2026-09-03",
+        "model_or_voice_rights": "NPD owns or is authorized to use this recording and the recorded voice for this bounded OpenAI ASR acceptance.",
+        "person_likeness_consent": "The speaker consents to processing this recording through OpenAI ASR solely for the bounded acceptance scope.",
+        "provider": "Ngoc Phuong Dong",
+        "provider_asset_or_job_id": "g03-asr-vi-owned-01",
+        "reviewer": "Owner (GitHub: vangnguyen)",
+        "rights_record_id": "V3-01-RIGHTS-ASR-001",
+        "secret_recorded": false,
+        "social_platform_use": [],
+        "source_type": "user_owned",
+        "source_url_or_reference": "repo://docs/acceptance/v3-01/assets/g03-asr-vi-owned-01.wav",
+        "territory": [
+          "VN"
+        ],
+        "trademark_review": "Internal acceptance references only; no publication or trademark claim is authorized."
+      },
+      "record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091"
+    },
+    {
+      "record": {
+        "acquired_at_utc": "2026-09-03T06:56:02Z",
+        "asset_hash": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+        "asset_id": "asset-g03-asr-vi-owned-02",
+        "attribution_required": false,
+        "attribution_text": "",
+        "commercial_use": true,
+        "decision": "APPROVED",
+        "derivative_use": true,
+        "evidence_reference": "repo://docs/acceptance/v3-01/45_V3_01_RC11_OPENAI_ASR_GATE.md#owner-g-03-asr-decision",
+        "expiry": null,
+        "license_name": "NPD owner-approved OpenAI ASR acceptance only; no publishing, training, resale or other use",
+        "license_version_or_terms_date": "2026-09-03",
+        "model_or_voice_rights": "NPD owns or is authorized to use this recording and the recorded voice for this bounded OpenAI ASR acceptance.",
+        "person_likeness_consent": "The speaker consents to processing this recording through OpenAI ASR solely for the bounded acceptance scope.",
+        "provider": "Ngoc Phuong Dong",
+        "provider_asset_or_job_id": "g03-asr-vi-owned-02",
+        "reviewer": "Owner (GitHub: vangnguyen)",
+        "rights_record_id": "V3-01-RIGHTS-ASR-002",
+        "secret_recorded": false,
+        "social_platform_use": [],
+        "source_type": "user_owned",
+        "source_url_or_reference": "repo://docs/acceptance/v3-01/assets/g03-asr-vi-owned-02.wav",
+        "territory": [
+          "VN"
+        ],
+        "trademark_review": "Internal acceptance references only; no publication or trademark claim is authorized."
+      },
+      "record_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323"
+    }
+  ],
+  "valid_from_utc": "2026-09-04T14:00:00Z",
+  "version": 1
+}

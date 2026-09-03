@@ -1,0 +1,28 @@
+{
+  "approval_id": "V3-01-APP-045",
+  "gate_id": "G-02",
+  "decision": "APPROVED",
+  "scope": "Bind G-02-ASR v1.1 to the dated RC-11 duration, file-size, native-timestamp, VND and split-timeout envelope for at most two derived whisper-1 acceptance operations.",
+  "artifact_or_commit_hashes": [
+    "207ff9fee5557eb0976f575c9263b61d995b20a0",
+    "778af29ad50dc2f7018c86604dba72a6ad4d212af6a92b409b9c4dcaf9a9934f",
+    "7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; checked-in and production budgets remain zero",
+  "limits": [
+    "500 VND atomic reservation per operation",
+    "1250 VND maximum for the whole acceptance window",
+    "162 VND per minute accounting rate derived from 0.006 USD/minute at fixed 27000 VND/USD",
+    "One file per operation, minimum acceptance duration 90 seconds and hard duration cap 180 seconds",
+    "File size no greater than 25000000 bytes",
+    "Language vi, verbose_json, native segment and word timestamps",
+    "Provider HTTP timeout 90 seconds and controller hard envelope 120 seconds",
+    "One attempt, concurrency 1, no automatic retry and no fallback",
+    "Window 2026-09-04T14:00:00Z through 2026-09-04T18:00:00Z only",
+    "No provider call until a separate owner decision authorizes RC-11 Operation 1"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-03T07:05:17Z",
+  "expires_at_utc": "2026-09-04T18:00:00Z",
+  "notes": "The owner approved G-02-ASR v1.1 after correcting the target to 90-120 seconds and retaining the hard 180-second cap. Both exact inputs are under the hard cap; their small target-range overages were explicitly accepted. This rebind does not enable checked-in budget or authorize an API call. Any bundle, scope or window mutation requires review and rebind."
+}

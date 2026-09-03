@@ -1,7 +1,7 @@
 # V3-01 acceptance matrix
 
 Baseline captured at `2026-08-27T12:02:08Z`; the latest executable acceptance candidate is locked
-NO-GO RC-10 `c2b1aec2d54dd90bcb486f8a68c97746b39963aa`. Historical RC-3 operation 1 failed and remains
+NO-GO RC-11 `207ff9fee5557eb0976f575c9263b61d995b20a0`. Historical RC-3 operation 1 failed and remains
 locked. RC-5 operation 1 later completed provider execution once, but its post-call evidence
 serialization failed; it is consumed and permanently `REVIEW_REQUIRED`, and operation 2 is not
 approved. V3-01-13 remediates only that serialization path offline. RC-6 operation 1 then stopped
@@ -25,9 +25,12 @@ Evidence-only PR #39 merged as `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed`; exact
 `33703619599` passed 5/5 with unchanged executable and receipt hashes. Vision is therefore
 officially 2/2 consecutive PASS and `VIS-01` real-provider-tested is `PASS`. PR #40 then merged the
 Vision closure/ASR design as `4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI
-`33706971864` passed 5/5 with an unchanged executable tree. V3-01-18 now makes `ASR-01`
-implemented/mock-tested PASS through offline adapter, gate and compatibility evidence, while
-real-provider remains `NOT_TESTED` and model selection remains not approved. `I/M/R/P/Q` mean
+`33706971864` passed 5/5 with an unchanged executable tree. PR #41 then merged V3-01-18 as RC-11;
+exact-head CI `33711738092` and exact-main CI `33712762815` passed. V3-01-18 makes `ASR-01`
+implemented/mock-tested PASS through offline adapter, gate and compatibility evidence. The owner
+subsequently approved `whisper-1`, the bounded VND envelope and two exact owned/authorized inputs;
+their hash-pinned bundle remains unmounted and both operations remain unauthorized, so real-provider
+is still `NOT_TESTED`. `I/M/R/P/Q` mean
 implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
@@ -56,7 +59,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | SCR-01 | Script generation and versioning | FAIL | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-002 |
 | SCR-02 | Storyboard and media plan | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-004 |
 | UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-002-PARTIAL | GAP-007; GAP-011 |
-| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001 | GAP-003 |
+| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001 | GAP-003 |
 | EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
 | EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
@@ -108,8 +111,9 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
   human-quality row remain unproven.
 - V3-01-09 proves only a disabled OpenAI Vision adapter contract through MockTransport: no key use,
   external request, real image, provider receipt or quality acceptance occurred.
-- V3-01-18 proves only the disabled OpenAI ASR adapter/gate and offline compatibility contract; it
-  selects no model and performs no credential read, provider call or spend.
+- V3-01-18 proves only the disabled OpenAI ASR adapter/gate and offline compatibility contract. The
+  later owner decisions select `whisper-1` and exact gate inputs but still perform no credential
+  read, provider call or spend; gate readiness does not promote the real-provider axis.
 - `N/A` is used only where the master matrix defines an axis as structurally inapplicable; it does
   not remove the need for G-00 scope approval.
 - Current decision remains `NO-GO` because P0 gaps and mandatory gates are open.

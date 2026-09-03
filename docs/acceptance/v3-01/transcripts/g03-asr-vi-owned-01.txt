@@ -1,0 +1,25 @@
+Đây là bản ghi thứ nhất phục vụ kiểm thử nhận dạng giọng nói tiếng Việt cho hệ thống Video Factory
+của Ngọc Phương Đông. Nội dung được chuẩn bị riêng cho hoạt động nghiệm thu kỹ thuật, không phải
+thông báo bán hàng, không phải cam kết thương mại và không được dùng để công bố ra bên ngoài.
+
+Ngọc Phương Đông đang xây dựng một quy trình nội dung có kiểm soát cho dự án Vinhomes Green Paradise
+tại Cần Giờ. Trong quy trình mẫu, người dùng có thể tải lên một video, yêu cầu hệ thống nhận dạng lời
+nói, xác định từng đoạn nội dung và đề xuất khung hình phù hợp. Kết quả chỉ được dùng làm bản xem
+trước cho đến khi người có thẩm quyền kiểm tra nguồn dữ liệu, quyền sử dụng, độ chính xác và chất
+lượng nghe nhìn.
+
+Một khách hàng giả định có thể đăng ký tư vấn, chọn lịch tham quan sa bàn và nêu ngân sách dự kiến.
+Nhân viên cần ghi nhận đúng nhu cầu, nhưng không được tự suy diễn giá bán, chính sách bán hàng hoặc
+thời điểm mở bán. Mọi con số, điều kiện thanh toán và thông tin pháp lý đều phải được đối chiếu với
+nguồn chính thức trước khi xuất hiện trong nội dung dành cho khách hàng. Giá trị giao dịch, nếu được
+nhắc tới trong bài kiểm thử, phải dùng đồng Việt Nam và phải được phân biệt rõ với dữ liệu thực tế.
+
+Bản ghi này cũng kiểm tra khả năng giữ dấu tiếng Việt, tên riêng và cụm từ dài. Hệ thống cần nhận ra
+đúng Ngọc Phương Đông, Vinhomes Green Paradise, Cần Giờ, đăng ký tư vấn, tham quan sa bàn, ngân sách
+dự kiến và chính sách bán hàng. Kết quả phải có mốc thời gian theo từng từ và từng đoạn để bước dựng
+video có thể căn phụ đề với lời nói.
+
+Sau khi nhận dạng hoàn tất, transcript phải được so sánh với bản ghi thực tế. Nếu người đọc thay đổi
+một từ, bỏ một câu hoặc phát âm khác với kịch bản, reference transcript phải được sửa theo đúng âm
+thanh đã ghi. Không được tự điền từ còn thiếu, không được biến phỏng đoán thành dữ liệu thật và không
+được dùng khoảng im lặng nhân tạo để kéo dài thời lượng. Đây là điểm kết thúc của bản ghi thứ nhất.

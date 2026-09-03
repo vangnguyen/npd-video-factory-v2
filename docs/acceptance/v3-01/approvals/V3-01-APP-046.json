@@ -1,0 +1,31 @@
+{
+  "approval_id": "V3-01-APP-046",
+  "gate_id": "G-03",
+  "decision": "APPROVED",
+  "scope": "Bind G-03-ASR to exactly two NPD-owned or authorized Vietnamese WAV inputs and their owner-verified reference transcripts for bounded OpenAI ASR acceptance on vf-v3-01-rc11.",
+  "artifact_or_commit_hashes": [
+    "207ff9fee5557eb0976f575c9263b61d995b20a0",
+    "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+    "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+    "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+    "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef",
+    "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+    "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323",
+    "0d7aef962dcb5e34ed5786fadd2e9cfd156cbfb8784d498092262d33b76de7c0",
+    "7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a"
+  ],
+  "target_account_or_environment": "Isolated owner-gated OpenAI ASR acceptance runner only",
+  "limits": [
+    "Exact WAV SHA-256 fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef for slot 1",
+    "Exact WAV SHA-256 dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b for slot 2",
+    "Owner-verified transcript and critical-term manifest for each WAV",
+    "OpenAI ASR acceptance processing only",
+    "Speaker voice-processing consent applies only to this bounded acceptance",
+    "No publishing, training, resale or other use",
+    "No provider call until a separate owner decision authorizes RC-11 Operation 1"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-03T07:05:17Z",
+  "expires_at_utc": "2026-09-04T18:00:00Z",
+  "notes": "The owner explicitly confirmed NPD ownership or authorization, voice-use consent, actual WAV-to-reference-transcript agreement, and accepted durations of 120.852 and 134.591 seconds under the 180-second hard cap. This record binds both secret-free RightsRecords and the exact proposed scope. It grants no publishing, training, resale or live-call authority."
+}

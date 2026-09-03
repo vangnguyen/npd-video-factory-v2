@@ -8,20 +8,25 @@ Current checkpoint status updated after evidence-only PR #39 merged as
 consecutive PASS on the real-provider-tested axis. The gate is unmounted and all further standalone
 Vision operation authority is retired. PR #40 then merged the Vision closure/ASR design as
 `4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI `33706971864` passed 5/5 with an
-unchanged executable tree. V3-01-18 is now implemented/mock-tested offline, but ASR model selection
-and every ASR runtime gate remain unapproved.
+unchanged executable tree. PR #41 then merged V3-01-18 as exact RC-11
+`207ff9fee5557eb0976f575c9263b61d995b20a0`; exact-head CI `33711738092` and exact-main CI
+`33712762815` passed. The owner has selected `whisper-1` and approved the bounded G-01/G-02/G-03-ASR
+inputs. Their exact dated rebind is checked in for G-08 review only: the bundle is unmounted and both
+operations remain unauthorized.
 
 ## Control state
 
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-10 c2b1aec2d54dd90bcb486f8a68c97746b39963aa; locked NO-GO; not deployed
+CURRENT RC: RC-11 207ff9fee5557eb0976f575c9263b61d995b20a0; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Vision closed; V3-01-18 source-only ASR adapter review; bundle unmounted
+CURRENT SAFE PHASE: Vision closed; RC-11 ASR governance bundle review; bundle unmounted
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #40 MERGE CONSUMED BY V3-01-APP-042; V3-01-18 IMPLEMENTATION REQUIRES A NEW G-08
-G-01/G-02/G-03-ASR: NOT APPROVED; MODEL SELECTION PROPOSED / NOT APPROVED
+G-08: PR #41 MERGE CONSUMED BY V3-01-APP-043; THIS GOVERNANCE BUNDLE REQUIRES A NEW G-08
+G-01/G-02/G-03-ASR: OWNER APPROVED; EXACT RC-11 DATED REBIND PROPOSED BY V3-01-APP-044 THROUGH 046
+RC-11 ASR OPERATION 1: NOT APPROVED; NOT EXECUTED
+RC-11 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
 G-01-A / G-02-A / G-03-A: CONSUMED BY EXACT RC-10 OPERATIONS 1 AND 2; NO FURTHER OPERATION AUTHORITY
 RC-10 OPERATION 1: PASS; CONSUMED / SUCCEEDED
 RC-10 OPERATION 2: PASS; CONSUMED / SUCCEEDED; VISION 2/2 CONSECUTIVE PASS
@@ -163,7 +168,9 @@ Current repository checkpoint after the bounded merge sequence:
 | RC-10 governance rebind | PR #37 merged governance-only as `fd78a1690a5a2fd7b07e9e7822deda834f02ea6d`; executable CI `33527973264` and governance CI `33532594395` each passed 5/5; G-01-A/G-02-A/G-03-A bound by `V3-01-APP-038` through `V3-01-APP-040`; bundle raw SHA `30f4ffd9353a00b7fdf97d0998dce43798937a2c577ca3fa618c947bbb8040e1`; scope SHA `a77a2e38d604214dbcaf0933cbdbf6f2fafa6ee258369e1a629ef5b0d55c6cc0` |
 | RC-10 Operation 1 evidence | PR #38 merged evidence-only as `79b14ded0bbd0cd552420e5964647b6fba16f9b7`; exact-main CI `33650857422` passed 5/5; executable tree remained `f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c` |
 | RC-10 consecutive Vision closure | PR #39 merged evidence-only as `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed`; `V3-01-APP-041` consumed; exact-main CI `33703619599` passed 5/5; dual-CI provenance PASS; executable tree remained `f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c`; source receipt SHA values remained `11fd1f7c...` and `deed47e5...` |
-| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is officially 2/2 consecutive real-provider PASS; no Operation 3 is required or authorized; ASR remains `NOT_TESTED` |
+| PR #41 / RC-11 | PR #41 exact head `8ebb1cffe8563e49ccf4847ef37209d9644a4e70`; merged as `207ff9fee5557eb0976f575c9263b61d995b20a0`; exact-head CI `33711738092` and exact-main CI `33712762815` passed; annotated `vf-v3-01-rc11` peels to the merge; `V3-01-APP-043` records G-08 |
+| RC-11 ASR governance proposal | `whisper-1`; two exact owner-approved WAVs/RightsRecords; G-01/G-02/G-03 records `V3-01-APP-044` through `046`; raw bundle SHA `4f8edd02ec62182404976de16e8d75b39ddbbbbe96c0d78efd46e3a97d6ace46`; scope SHA `7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a`; bundle unmounted; operations not approved |
+| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is officially 2/2 consecutive real-provider PASS; no Operation 3 is required or authorized; RC-11 ASR remains real-provider `NOT_TESTED` and both operations are unauthorized |
 | Deployment/ingress/publish action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in

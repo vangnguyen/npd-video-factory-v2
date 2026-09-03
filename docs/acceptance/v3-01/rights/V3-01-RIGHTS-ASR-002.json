@@ -1,0 +1,28 @@
+{
+  "rights_record_id": "V3-01-RIGHTS-ASR-002",
+  "asset_id": "asset-g03-asr-vi-owned-02",
+  "asset_hash": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+  "source_type": "user_owned",
+  "provider": "Ngoc Phuong Dong",
+  "provider_asset_or_job_id": "g03-asr-vi-owned-02",
+  "source_url_or_reference": "repo://docs/acceptance/v3-01/assets/g03-asr-vi-owned-02.wav",
+  "acquired_at_utc": "2026-09-03T06:56:02Z",
+  "license_name": "NPD owner-approved OpenAI ASR acceptance only; no publishing, training, resale or other use",
+  "license_version_or_terms_date": "2026-09-03",
+  "commercial_use": true,
+  "derivative_use": true,
+  "social_platform_use": [],
+  "territory": [
+    "VN"
+  ],
+  "expiry": null,
+  "attribution_required": false,
+  "attribution_text": "",
+  "model_or_voice_rights": "NPD owns or is authorized to use this recording and the recorded voice for this bounded OpenAI ASR acceptance.",
+  "person_likeness_consent": "The speaker consents to processing this recording through OpenAI ASR solely for the bounded acceptance scope.",
+  "trademark_review": "Internal acceptance references only; no publication or trademark claim is authorized.",
+  "evidence_reference": "repo://docs/acceptance/v3-01/45_V3_01_RC11_OPENAI_ASR_GATE.md#owner-g-03-asr-decision",
+  "reviewer": "Owner (GitHub: vangnguyen)",
+  "decision": "APPROVED",
+  "secret_recorded": false
+}

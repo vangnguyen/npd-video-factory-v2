@@ -1,0 +1,28 @@
+Đây là bản ghi thứ hai phục vụ kiểm thử nhận dạng giọng nói tiếng Việt trên cùng release candidate,
+nhưng sử dụng nội dung và tệp nguồn độc lập. Mục tiêu là xác minh hai lần chạy liên tiếp có thể tạo
+transcript, mốc thời gian và bằng chứng chi phí mà không làm thay đổi mã thực thi, không gọi lại tự
+động và không chuyển sang mô hình dự phòng.
+
+Trong quy trình tiếp nhận khách hàng, mã chiến dịch, nguồn liên hệ và cơ hội bán hàng phải được ghi
+nhận chính xác. Dữ liệu khách hàng và giao dịch thuộc hệ thống quản lý quan hệ khách hàng; Video
+Factory chỉ xử lý nội dung trong phạm vi được cấp quyền. Nhân viên không được đưa số điện thoại, địa
+chỉ, tài khoản, mật khẩu hoặc thông tin nhận dạng cá nhân vào bản ghi nghiệm thu. Bản ghi này vì vậy
+chỉ dùng các câu mô phỏng an toàn và không đại diện cho một khách hàng có thật.
+
+Khi hệ thống nhận một tệp âm thanh, bước đầu tiên là kiểm tra định dạng, dung lượng, thời lượng, mã
+băm và hồ sơ quyền sử dụng. Tiếp theo, bộ điều khiển an toàn kiểm tra mô hình đã được duyệt, ngân sách
+còn lại, thời hạn của gate và operation chưa từng bị tiêu thụ. Chỉ khi toàn bộ điều kiện khớp chính
+xác thì một lần gọi mới có thể được thực hiện. Nếu có sai lệch, hệ thống phải dừng trước khi đọc
+credential hoặc gửi dữ liệu tới nhà cung cấp.
+
+Kết quả nhận dạng giọng nói phải bao gồm nội dung transcript, ngôn ngữ, mốc thời gian theo từ, mốc
+thời gian theo đoạn, thời lượng xử lý, request identifier nếu có và biên nhận usage. Reference
+transcript phải được một người nghe lại từ chính tệp WAV. Danh sách thuật ngữ quan trọng gồm mã chiến
+dịch, nguồn liên hệ, cơ hội bán hàng, phạm vi được cấp quyền, nhận dạng giọng nói, không tự động gửi
+tin nhắn, không tự xuất bản và không thay đổi giá bán.
+
+Operation nghiệm thu không cho phép retry, không cho phép fallback và không cho phép chạy song song.
+Nó cũng không cấp quyền triển khai production, public ingress, publishing hoặc production analytics.
+Sau mỗi attempt, runner phải dừng, ghi durable ledger và giữ bí mật credential. Nếu transcript thiếu
+hoặc bằng chứng không đầy đủ, verdict phải là review required hoặc fail; không được tự nâng thành
+pass. Đây là điểm kết thúc của bản ghi thứ hai.
