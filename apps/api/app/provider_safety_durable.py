@@ -79,7 +79,7 @@ class DurableProviderSafetyController(ProviderSafetyController):
                     now=now,
                 )
                 return self._denied(context, "VERIFIED_GATE_BUNDLE_REQUIRED", rights)
-            rights_records = [scope.rights_record]
+            rights_records = self._verified_rights_records(scope, context=context)
             rights = self.evaluate_rights(
                 rights_records,
                 required=context.rights_required,

@@ -390,9 +390,18 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
         legacy = (self.rights_record,) if self.rights_record is not None else ()
         return legacy + self.rights_records
 
-    def rights_for_asset(self, asset_id: str | None) -> ProviderRightsEvidence | None:
+    def rights_for_asset(
+        self,
+        asset_id: str | None,
+        asset_hash: str | None = None,
+    ) -> ProviderRightsEvidence | None:
         return next(
-            (item for item in self.all_rights_records() if item.asset_id == asset_id),
+            (
+                item
+                for item in self.all_rights_records()
+                if item.asset_id == asset_id
+                and (asset_hash is None or item.asset_hash == asset_hash)
+            ),
             None,
         )
 
@@ -896,8 +905,7 @@ class ProviderSafetyController:
                     now=now,
                 )
                 return self._denied(context, "VERIFIED_GATE_BUNDLE_REQUIRED", rights)
-            matching_rights = scope.rights_for_asset(context.asset_id)
-            rights_records = (matching_rights,) if matching_rights is not None else ()
+            rights_records = self._verified_rights_records(scope, context=context)
             rights = self.evaluate_rights(
                 rights_records,
                 required=context.rights_required,
@@ -982,6 +990,15 @@ class ProviderSafetyController:
                 circuit_state=circuit.state,
                 rights=rights,
             )
+
+    @staticmethod
+    def _verified_rights_records(
+        scope: ProviderExecutionGateScope,
+        *,
+        context: ProviderCallContext,
+    ) -> tuple[ProviderRightsEvidence, ...]:
+        matching = scope.rights_for_asset(context.asset_id, context.asset_hash)
+        return (matching,) if matching is not None else ()
 
     @staticmethod
     def _verified_scope_denial(
