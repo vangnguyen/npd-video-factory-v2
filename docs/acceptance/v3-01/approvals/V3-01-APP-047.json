@@ -1,0 +1,24 @@
+{
+  "approval_id": "V3-01-APP-047",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #44 as V3-01-20 durable multi-asset RightsRecord binding remediation, exact-main regression and the vf-v3-01-rc12 lock only; permit a later governance-only ASR rebind without granting runtime authority.",
+  "artifact_or_commit_hashes": [
+    "090f9085ccccf8ef30b926d7cc04a6c8a402128e",
+    "a5666703fe7d0c0fe9a78deadc7eefd5bd848e61",
+    "ca5483c889742c27af3368b9b487350d7daa217d"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and LOCAL/CI regression only; production and provider execution remain disabled",
+  "limits": [
+    "Merge exact PR #44 head a5666703fe7d0c0fe9a78deadc7eefd5bd848e61 only",
+    "Lock vf-v3-01-rc12 only after exact-main regression succeeds",
+    "No reuse of RC-11 operation IDs, bundle, window or runtime authority",
+    "No credential read, provider call, budget reservation or spend",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-04T15:29:25Z",
+  "expires_at_utc": null,
+  "notes": "The owner approved exact PR #44 head a5666703fe7d0c0fe9a78deadc7eefd5bd848e61. The decision is conservatively recorded at merge time. Exact-head CI 33888514088 and exact-main CI 33889772222 both completed successfully. Annotated tag vf-v3-01-rc12 peels to ca5483c889742c27af3368b9b487350d7daa217d and grants no operation authority."
+}
