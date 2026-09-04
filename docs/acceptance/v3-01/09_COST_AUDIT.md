@@ -20,9 +20,17 @@
 | RC-10 consecutive total | VND | 1,250 window | 284.3433 actual; 0 reserved | 284.343280 | 2 |
 | PR #40 closure + V3-01-18 source remediation | VND | 0 | 0 | 0 | 0 |
 | RC-11 ASR gate proposal | VND | checked-in runtime budget 0; conditional 1,250 window / 500 operation | 0 | 0 | 0 |
+| RC-11 ASR Operation 1 rights-preflight block | VND | retired conditional 1,250 window / 500 operation | 0 | 0 | 0 |
+| V3-01-20 durable multi-asset rights remediation | VND | 0 | 0 | 0 | 0 |
 
-The baseline and remediation audits used repository, GitHub CI and local static/mock evidence. The
-later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
+The baseline and remediation audits used repository, GitHub CI and local static/mock evidence.
+
+RC-11 ASR Operation 1 stopped before atomic reservation, ledger mutation, credential read or
+provider dispatch because durable preflight had not selected from the approved multi-asset
+RightsRecords. It therefore committed and incurred `0 VND`; its conditional 500/1,250 VND
+authority is retired. V3-01-20 performs only offline source/mock validation and also costs `0 VND`.
+
+The later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
 receipt, so its actual provider billing cannot be asserted; the ledger committed the 500 VND
 reservation conservatively. A separate RC-5 operation then completed provider execution once and
 recorded 1,996 input tokens, 2,371 output tokens and `137.6287 VND` actual/charged cost. Its

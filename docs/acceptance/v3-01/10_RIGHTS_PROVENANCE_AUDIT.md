@@ -14,6 +14,15 @@ artifact/object-storage verification evidence on code commit
 expired and incompatible records. This proves schema/hook behavior only and does not create or
 approve a RightsRecord for any real asset.
 
+RC-11 binds two exact owned/authorized Vietnamese WAVs to two distinct RightsRecords. Its first ASR
+operation later exposed a controller-parity defect before external execution: durable preflight
+looked only at legacy `rights_record` while the approved multi-asset gate used `rights_records[]`.
+V3-01-20 keeps the multi-asset gate intact and makes both controllers select exactly one record by
+the current asset ID and SHA-256 before expiry and permission checks. Ordering cannot change the
+selection; wrong, missing, duplicated, tampered, expired or unauthorized evidence fails closed and
+creates no reservation. This validates the rights control offline only and does not extend the
+approved ASR purpose to publishing, training or resale.
+
 ## Required RightsRecord
 
 Each source or generated asset must validate against `schemas/rights-record.schema.json` and include:

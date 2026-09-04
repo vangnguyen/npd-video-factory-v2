@@ -1,0 +1,55 @@
+{
+  "evidence_version": 1,
+  "record_kind": "asr_acceptance_blocked_pre_call",
+  "recorded_at_utc": "2026-09-04T14:35:15.529Z",
+  "operation_key": "v3-01-rc11-openai-transcription-asr-call-01",
+  "provider_execution": "NOT_STARTED",
+  "acceptance_verdict": "BLOCKED_PRE_CALL",
+  "operation_consumed": false,
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "reservation_vnd": "0",
+  "actual_cost_vnd": "0",
+  "operation_2_status": "NOT_APPROVED_LOCKED",
+  "production_verdict": "NO-GO",
+  "binding": {
+    "rc_tag": "vf-v3-01-rc11",
+    "rc_commit": "207ff9fee5557eb0976f575c9263b61d995b20a0",
+    "governance_main_commit": "090f9085ccccf8ef30b926d7cc04a6c8a402128e",
+    "gate_bundle_sha256": "4f8edd02ec62182404976de16e8d75b39ddbbbbe96c0d78efd46e3a97d6ace46",
+    "execution_scope_sha256": "7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a",
+    "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+    "authority_sha256": "b24627d14a9121a15468cdd604a10c4395a359be0008f0de1d73e9744fcbf0a6"
+  },
+  "preflight": {
+    "window_active": true,
+    "automation_paused": true,
+    "dual_ci_provenance": "PASS",
+    "executable_tree_equality": "PASS",
+    "bundle_scope_asset_rights_approvals": "PASS",
+    "durable_ledger_before_and_after": "0|0|0|0",
+    "failure_stage": "durable_provider_safety_preflight_rights_evaluation"
+  },
+  "blocker": {
+    "classification": "EXECUTABLE_CONTRACT_MISMATCH",
+    "code": "ASR_MULTI_ASSET_RIGHTS_SCOPE_NOT_SELECTED",
+    "exception_type": "AttributeError",
+    "observed_location": "apps/api/app/provider_safety_durable.py:83 -> apps/api/app/provider_safety.py:864",
+    "observed_condition": "ASR gate scope has rights_records for two assets and rights_record is null, but durable preflight evaluates scope.rights_record instead of selecting the RightsRecord bound to context.asset_id.",
+    "provider_fault": false,
+    "secret_recorded": false
+  },
+  "diagnostic": {
+    "mode": "offline_zero_call_disposable_database",
+    "provider_contacted": false,
+    "credential_available_to_diagnostic": false,
+    "result": "reproduced_before_reservation",
+    "temporary_database_removed": true
+  },
+  "prior_generic_receipt": {
+    "path": "operation-1-post-execution-review-required.json",
+    "sha256": "e0afb23b85dce7bdc40381a667452827dc97c150b4c30adcf395dc6e9087bc23",
+    "superseded_for_call_state_by_this_receipt": true
+  },
+  "authority_reuse": "NOT_AUTHORIZED_WITHOUT_REMEDIATION_AND_NEW_OWNER_DECISION"
+}

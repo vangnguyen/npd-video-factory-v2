@@ -14,6 +14,15 @@ unchanged executable tree. PR #41 then merged V3-01-18 as exact RC-11
 inputs. Their exact dated rebind is checked in for G-08 review only: the bundle is unmounted and both
 operations remain unauthorized.
 
+PR #42 and PR #43 later merged governance/offline preparation as
+`8ad490c02c36aafe9447a3eb0766a1d1f1f122d7` and
+`090f9085ccccf8ef30b926d7cc04a6c8a402128e` without changing executable RC-11. A separately
+authorized ASR Operation 1 then stopped fail closed in durable rights preflight: the multi-asset
+gate supplied `rights_records[]`, while the durable controller still projected the legacy singular
+record. The operation made zero credential reads, reservations, ledger rows or provider calls; it
+is not consumed, but its authority/window is retired. V3-01-20 remediates that executable contract
+offline on source commit `5e1e16ab8736d2800e1c93a6490eca37d691475e` and now awaits G-08.
+
 ## Control state
 
 ```text
@@ -21,11 +30,11 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: RC-11 207ff9fee5557eb0976f575c9263b61d995b20a0; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Vision closed; RC-11 ASR governance bundle review; bundle unmounted
+CURRENT SAFE PHASE: Vision closed; V3-01-20 durable multi-asset rights remediation; zero-call G-08 pending
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #41 MERGE CONSUMED BY V3-01-APP-043; THIS GOVERNANCE BUNDLE REQUIRES A NEW G-08
-G-01/G-02/G-03-ASR: OWNER APPROVED; EXACT RC-11 DATED REBIND PROPOSED BY V3-01-APP-044 THROUGH 046
-RC-11 ASR OPERATION 1: NOT APPROVED; NOT EXECUTED
+G-08: DECISIONS THROUGH PR #43 CONSUMED; V3-01-20 DRAFT REQUIRES A NEW G-08
+G-01/G-02/G-03-ASR: RC-11 INPUTS APPROVED; LIVE AUTHORITY RETIRED; FRESH RC REBIND REQUIRED
+RC-11 ASR OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; 0 CALLS/READS/VND; AUTHORITY RETIRED
 RC-11 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
 G-01-A / G-02-A / G-03-A: CONSUMED BY EXACT RC-10 OPERATIONS 1 AND 2; NO FURTHER OPERATION AUTHORITY
 RC-10 OPERATION 1: PASS; CONSUMED / SUCCEEDED

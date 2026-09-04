@@ -17,6 +17,13 @@ Vision real-provider-tested axis. PR #39 merged as `fd0db431d2e3786b6b07dcb4b47b
 exact-main CI `33703619599` passed 5/5, and the executable and receipt hashes remained unchanged, so
 that axis is officially closed. No production-path or quality axis is promoted.
 
+RC-11 ASR Operation 1 later stopped in durable rights preflight before any credential read,
+reservation, ledger row or provider dispatch. The gate correctly carried two asset-specific
+`rights_records[]`; only the durable controller still used the legacy singular record. The
+operation is `BLOCKED_PRE_CALL`, not consumed, costs 0 VND and has retired authority. V3-01-20
+routes both controller implementations through one exact asset-ID/hash selector and proves parity
+offline. This does not test OpenAI ASR, `whisper-1`, transcript accuracy or production behavior.
+
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
 mock callables. Media resolution and OpenAI TTS entry points now consult the global external,
