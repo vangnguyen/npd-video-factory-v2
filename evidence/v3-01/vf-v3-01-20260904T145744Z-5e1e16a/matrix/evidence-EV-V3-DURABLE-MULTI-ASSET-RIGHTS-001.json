@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001",
+  "test_case_id": "ASR-01+PRO-006",
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "5e1e16ab8736d2800e1c93a6490eca37d691475e",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "durable-provider-safety",
+    "model_or_workflow": "exact multi-asset RightsRecord selection / offline only",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "ea08b92edcb51e087ab8e8b38adef88573e0c842edf36b93bb7e3caac05492bc",
+  "started_at_utc": "2026-09-04T14:35:15Z",
+  "completed_at_utc": "2026-09-04T14:57:44Z",
+  "duration_seconds": 1349,
+  "result": "PASS",
+  "assertion": "Durable and non-durable provider safety select the exact RightsRecord for each RC-11 ASR asset by ID and SHA-256, remain invariant to record ordering, preserve legacy single-record behavior and fail closed without reservation for wrong, missing, duplicated, tampered, expired or unauthorized rights. This promotes only implemented and mock-tested remediation evidence.",
+  "correlation_id": "v3-01-20-local-durable-rights-5e1e16a",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex local durable-rights contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On commit 5e1e16ab8736d2800e1c93a6490eca37d691475e, run test_rc11_asr_gate_bundle.py and the related provider gate/safety suites using fixture configuration and disposable SQLite state; retain zero provider calls, credential reads, reservations and spend."
+}

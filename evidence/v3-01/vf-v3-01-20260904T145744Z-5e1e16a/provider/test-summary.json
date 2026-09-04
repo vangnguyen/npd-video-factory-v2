@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-20",
+  "commit_sha": "5e1e16ab8736d2800e1c93a6490eca37d691475e",
+  "focused_regression": {
+    "command": "python -m pytest apps/api/tests/test_rc11_asr_gate_bundle.py -q",
+    "passed": 16,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "related_regression": {
+    "command": "python -m pytest apps/api/tests/test_rc11_asr_gate_bundle.py apps/api/tests/test_openai_asr_gate_loader.py apps/api/tests/test_provider_gate_loader.py apps/api/tests/test_provider_safety.py apps/api/tests/test_openai_transcription_provider.py -q",
+    "passed": 94,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "source_regression": {
+    "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+    "passed": 405,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "migration_replay": {
+    "revision": "0013_v3_01_18_nullable_transcript_confidence",
+    "upgrade": "PASS",
+    "downgrade": "PASS",
+    "reupgrade": "PASS"
+  },
+  "studio_regression": {
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "result": "PASS"
+  },
+  "renderer_regression": {
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "typecheck": "PASS",
+    "bundle_check": "PASS",
+    "result": "PASS"
+  },
+  "acceptance_validation": "PASS",
+  "asr_compatibility_validation": "PASS",
+  "docker_e2e": {
+    "local_result": "NOT_RUN_DOCKER_DAEMON_UNAVAILABLE",
+    "required_resolution": "Exact-head GitHub CI must run Docker deterministic E2E before G-08 review."
+  },
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "spend_vnd": 0,
+  "notes": [
+    "All provider and durable-ledger tests used fixtures or disposable SQLite state.",
+    "The blocked RC-11 receipt is preserved without changing its provider or acceptance result.",
+    "No new migration was required."
+  ]
+}

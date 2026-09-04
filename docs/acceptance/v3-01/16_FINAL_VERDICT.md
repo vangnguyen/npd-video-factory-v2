@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: PR #42 governance merged; offline ASR evaluator/Flow A/TTS/G-11 preparation only; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
+SCOPE: V3-01-20 durable multi-asset rights remediation; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
 RELEASE CANDIDATE: RC-11 207ff9fee5557eb0976f575c9263b61d995b20a0 LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-RC11-ASR-GATE-001; governance main 8ad490c02c36aafe9447a3eb0766a1d1f1f122d7; current preparation made 0 calls/0 credential reads/0 VND
-DATE: 2026-09-03
-OWNER DECISION: G-01/G-02/G-03-ASR APPROVED; OPERATION 1 HAS A SEPARATE FUTURE-WINDOW AUTHORITY BUT IS NOT RUN BY THIS PACKAGE; OPERATION 2 LOCKED; NEW G-08 REQUIRED FOR PREPARATION PR
+LATEST EVIDENCE: EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; source commit 5e1e16ab8736d2800e1c93a6490eca37d691475e; 0 calls/0 credential reads/0 VND
+DATE: 2026-09-04
+OWNER DECISION: RC-11 OPERATION 1 BLOCKED PRE-CALL/NOT CONSUMED AND AUTHORITY RETIRED; OPERATION 2 LOCKED; NEW G-08 REQUIRED FOR V3-01-20
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -24,11 +24,11 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Real-provider-tested axis | 1 PASS, 35 NOT_TESTED, 24 N/A |
 | Production-path-tested axis | 60 NOT_TESTED |
 | Quality-accepted axis | 36 NOT_TESTED, 24 N/A |
-| Flow A | BLOCKED overall; ASR adapter and Flow A contract/mock PASS plus Vision real-provider 2/2 PASS; ASR/reframe real-provider, production and quality axes remain blocked |
+| Flow A | BLOCKED overall; ASR adapter, multi-asset durable-rights remediation and Flow A contract/mock PASS plus Vision real-provider 2/2 PASS; RC-11 ASR Op1 remained pre-call/not consumed, so ASR/reframe real-provider, production and quality axes remain blocked |
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR has a conditional 500/1,250 VND owner envelope but 0 reservation, 0 call and 0 actual VND |
+| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR Op1 stopped before reservation with 0 calls/0 actual VND and its 500/1,250 VND authority is retired; V3-01-20 costs 0 VND |
 | Rights/provenance | exact Vision asset passed twice; two exact RC-11 WAVs, voices, owner-verified transcripts and RightsRecords are approved only for bounded ASR acceptance; broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |

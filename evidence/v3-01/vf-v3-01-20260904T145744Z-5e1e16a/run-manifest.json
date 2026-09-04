@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260904T145744Z-5e1e16a",
+  "started_at_utc": "2026-09-04T14:35:15Z",
+  "completed_at_utc": "2026-09-04T14:57:44Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "5e1e16ab8736d2800e1c93a6490eca37d691475e",
+  "base_sha": "090f9085ccccf8ef30b926d7cc04a6c8a402128e",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-20-remediation",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0013_v3_01_18_nullable_transcript_confidence",
+  "config_fingerprint_redacted": "fixture-defaults-zero-budget-kill-switch-engaged-no-credential-read-no-provider-call",
+  "providers": [
+    {
+      "capability": "asr-safety-preflight",
+      "provider": "durable-provider-safety-offline-contract-only",
+      "model_or_workflow": "multi-asset-rights-selection",
+      "region": "not-applicable",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "ASR-01",
+    "PRO-006",
+    "V3-01-20-DURABLE-MULTI-ASSET-RIGHTS"
+  ],
+  "artifact_manifest": [
+    "matrix/evidence-EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001.json",
+    "operations/rc11-asr-operation-1/operation-1-blocked-0-call.json",
+    "provider/status.json",
+    "provider/test-summary.json",
+    "final/status.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [],
+  "result": "PASS"
+}

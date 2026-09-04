@@ -56,13 +56,13 @@ Production remains undeployed and unverified.
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; RC-11 adds implemented/mock-tested ASR plus exact model/budget/rights gate readiness, but no accepted real ASR/reframe result exists |
+| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; RC-11 ASR Operation 1 blocked before provider dispatch on a durable multi-asset rights-selection mismatch, and V3-01-20 remediates only that contract offline; no accepted real ASR/reframe result exists |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | production-like backup/restore/image rollback incomplete | local disposable drill only; no production state touched |
-| V3-01-GAP-013 | broader real-asset rights coverage incomplete | both RC-10 operations retained narrow Vision rights; two RC-11 WAV/RightsRecords are now approved only for ASR acceptance, while final-render retention and public-output rights remain unaccepted |
+| V3-01-GAP-013 | broader real-asset rights coverage incomplete | both RC-10 operations retained narrow Vision rights; V3-01-20 proves exact asset-specific selection for the two RC-11 WAV/RightsRecords offline, while real ASR, final-render retention and public-output rights remain unaccepted |
 | V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work
@@ -165,3 +165,11 @@ unmounted bundle. PR #35 merged the governance scope and a separate owner decisi
 operation 1. It then blocked before provider dispatch on ambiguous CI provenance with 0 calls/0 VND;
 the operation is not consumed, its authority is retired and operation 2 remains locked. V3-01-17
 validates both CI roles offline. GAP-003, GAP-010 and GAP-013 stay `IN_PROGRESS`.
+
+RC-11 ASR Operation 1 later passed all earlier non-secret bootstrap checks but stopped at durable
+rights preflight because the two-asset gate used `rights_records[]` and the durable controller still
+projected legacy `rights_record`. The immutable receipt records `BLOCKED_PRE_CALL`, not consumed,
+zero provider calls, zero credential reads, zero VND and ledger `0|0|0|0`; that authority is
+retired and Operation 2 remains locked. Evidence `EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001` proves the
+V3-01-20 source/mock correction and durable/non-durable parity only. GAP-003 and GAP-013 remain
+`IN_PROGRESS`; no real-provider, production-path or quality axis changes.

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-20",
+  "result": "PASS_FOR_IMPLEMENTED_AND_MOCK_TESTED_ONLY",
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "real_provider_tested": "NOT_TESTED",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED"
+  },
+  "rc11_asr_operation_1": {
+    "verdict": "BLOCKED_PRE_CALL",
+    "consumed": false,
+    "authority": "RETIRED",
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "reservation_vnd": 0,
+    "actual_cost_vnd": 0
+  },
+  "rc11_asr_operation_2": "NOT_APPROVED_LOCKED",
+  "repository_verdict": "NO_GO",
+  "release_candidate": "NOT_ESTABLISHED",
+  "merge_authorized": false,
+  "deploy_authorized": false,
+  "credentials_authorized": false,
+  "external_provider_calls_authorized": false,
+  "paid_provider_calls_authorized": false,
+  "public_ingress_authorized": false,
+  "publish_authorized": false,
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "spend_vnd": 0,
+  "next_gate": "New explicit G-08 owner review for the V3-01-20 draft PR",
+  "secret_recorded": false
+}

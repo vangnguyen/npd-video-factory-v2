@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-20",
+  "source_commit": "5e1e16ab8736d2800e1c93a6490eca37d691475e",
+  "execution_mode": "OFFLINE_ZERO_CALL",
+  "blocker_classification": "EXECUTABLE_CONTRACT_MISMATCH",
+  "blocker_code": "ASR_MULTI_ASSET_RIGHTS_SCOPE_NOT_SELECTED",
+  "remediation": {
+    "canonical_selector": "ProviderSafetyController._verified_rights_records",
+    "selection_keys": [
+      "asset_id",
+      "asset_hash"
+    ],
+    "durable_non_durable_parity": "PASS",
+    "legacy_single_record_compatibility": "PASS",
+    "denied_case_reservations": 0
+  },
+  "rc11_asr_operation_1": {
+    "provider_execution": "NOT_STARTED",
+    "acceptance_verdict": "BLOCKED_PRE_CALL",
+    "operation_consumed": false,
+    "authority": "RETIRED"
+  },
+  "rc11_asr_operation_2": "NOT_APPROVED_LOCKED",
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "reservation_vnd": 0,
+  "actual_cost_vnd": 0,
+  "asr_real_provider_tested": "NOT_TESTED",
+  "production_verdict": "NO-GO",
+  "secret_recorded": false
+}
