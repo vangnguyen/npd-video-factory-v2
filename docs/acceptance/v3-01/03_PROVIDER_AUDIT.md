@@ -22,7 +22,9 @@ reservation, ledger row or provider dispatch. The gate correctly carried two ass
 `rights_records[]`; only the durable controller still used the legacy singular record. The
 operation is `BLOCKED_PRE_CALL`, not consumed, costs 0 VND and has retired authority. V3-01-20
 routes both controller implementations through one exact asset-ID/hash selector and proves parity
-offline. This does not test OpenAI ASR, `whisper-1`, transcript accuracy or production behavior.
+offline. It merged as locked RC-12 `ca5483c889742c27af3368b9b487350d7daa217d`. The fresh RC-12
+bundle remains unmounted, Operation 1 is not approved and Operation 2 is locked. This does not test
+OpenAI ASR, `whisper-1`, transcript accuracy or production behavior.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
@@ -102,7 +104,7 @@ distinct response hash. The runner stopped and the bundle was unmounted after ea
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
-| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock Vietnamese transcript/segment/word mapping, compatibility matrix, gate rejection tests and exact RC-11 two-asset gate proposal | implemented/mock-tested `PASS`; G-01/G-02/G-03 inputs approved; real-provider `NOT_TESTED` | G-08 for the hash-pinned unmounted bundle, exact-main/dual-CI verification, then separate Operation 1 authority; PRO-006 |
+| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock Vietnamese transcript/segment/word mapping, compatibility matrix, gate rejection tests, V3-01-20 controller parity and exact RC-12 two-asset gate rebind | implemented/mock-tested `PASS`; RC-12 G-01/G-02/G-03 scope rebound; real-provider `NOT_TESTED` | G-08 for the hash-pinned unmounted RC-12 bundle, exact governance-main/dual-CI verification, then separate Operation 1 authority; PRO-006 |
 | Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS; PR #39 and exact-main CI complete | real-provider `PASS`; production path and quality remain `BLOCKED` | standalone Vision acceptance closed; no Operation 3; PRO-001 real-provider sub-scope complete |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |

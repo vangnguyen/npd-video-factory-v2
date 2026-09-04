@@ -22,6 +22,7 @@
 | RC-11 ASR gate proposal | VND | checked-in runtime budget 0; conditional 1,250 window / 500 operation | 0 | 0 | 0 |
 | RC-11 ASR Operation 1 rights-preflight block | VND | retired conditional 1,250 window / 500 operation | 0 | 0 | 0 |
 | V3-01-20 durable multi-asset rights remediation | VND | 0 | 0 | 0 | 0 |
+| RC-12 ASR governance rebind | VND | checked-in runtime budget 0; proposed conditional 1,250 window / 500 operation | 0 | 0 | 0 |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence.
 
@@ -29,6 +30,9 @@ RC-11 ASR Operation 1 stopped before atomic reservation, ledger mutation, creden
 provider dispatch because durable preflight had not selected from the approved multi-asset
 RightsRecords. It therefore committed and incurred `0 VND`; its conditional 500/1,250 VND
 authority is retired. V3-01-20 performs only offline source/mock validation and also costs `0 VND`.
+PR #44 merged that remediation as RC-12. The fresh RC-12 bundle remains unmounted and neither
+operation is approved, so this governance rebind also reads no credential, reserves nothing, makes
+no provider call and costs `0 VND`.
 
 The later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
 receipt, so its actual provider billing cannot be asserted; the ledger committed the 500 VND
@@ -133,8 +137,12 @@ as authoritative cost without its dated source and calculated VND value.
 
 For RC-11 ASR, `EV-V3-RC11-ASR-GATE-001` binds the owner-fixed conversion rule of `0.006
 USD/minute` at `27,000 VND/USD` to `162 VND/minute`, with a hard 180-second modeled maximum of
-486 VND and a 500 VND atomic reservation. This is conditional gate evidence only. An actual cost may
-be recorded only from a separately authorized provider receipt; the current actual cost is 0 VND.
+486 VND and a 500 VND atomic reservation. That expired envelope remains historical conditional gate
+evidence only. For RC-12, `EV-V3-RC12-ASR-GATE-001` rebinds the same accounting rule to budget day
+`2026-09-05`, exact scope `6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4`
+and fresh operation IDs. It remains conditional, unmounted and non-executable until separate gates
+complete. An actual cost may be recorded only from a separately authorized provider receipt; the
+current actual cost is 0 VND.
 
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit

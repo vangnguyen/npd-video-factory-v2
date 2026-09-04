@@ -20,22 +20,26 @@ PR #42 and PR #43 later merged governance/offline preparation as
 authorized ASR Operation 1 then stopped fail closed in durable rights preflight: the multi-asset
 gate supplied `rights_records[]`, while the durable controller still projected the legacy singular
 record. The operation made zero credential reads, reservations, ledger rows or provider calls; it
-is not consumed, but its authority/window is retired. V3-01-20 remediates that executable contract
-offline on source commit `5e1e16ab8736d2800e1c93a6490eca37d691475e` and now awaits G-08.
+is not consumed, but its authority/window is retired. V3-01-20 remediated that executable contract
+and PR #44 merged as `ca5483c889742c27af3368b9b487350d7daa217d`; exact-main CI `33889772222`
+passed 5/5 and annotated `vf-v3-01-rc12` now peels to that merge. A fresh RC-12 ASR scope is checked
+in for G-08 review only; its bundle is unmounted and both operations remain unauthorized.
 
 ## Control state
 
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-11 207ff9fee5557eb0976f575c9263b61d995b20a0; locked NO-GO; not deployed
+CURRENT RC: RC-12 ca5483c889742c27af3368b9b487350d7daa217d; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Vision closed; V3-01-20 durable multi-asset rights remediation; zero-call G-08 pending
+CURRENT SAFE PHASE: Vision closed; RC-12 ASR governance rebind; zero-call G-08 pending
 G-00: APPROVED by V3-01-APP-001
-G-08: DECISIONS THROUGH PR #43 CONSUMED; V3-01-20 DRAFT REQUIRES A NEW G-08
-G-01/G-02/G-03-ASR: RC-11 INPUTS APPROVED; LIVE AUTHORITY RETIRED; FRESH RC REBIND REQUIRED
+G-08: PR #44 APPROVED/MERGED; RC-12 GOVERNANCE REBIND DRAFT REQUIRES A NEW G-08
+G-01/G-02/G-03-ASR: RC-12 SCOPE REBOUND; NO OPERATION AUTHORITY
 RC-11 ASR OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; 0 CALLS/READS/VND; AUTHORITY RETIRED
 RC-11 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
+RC-12 ASR OPERATION 1: NOT APPROVED; NOT EXECUTED
+RC-12 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
 G-01-A / G-02-A / G-03-A: CONSUMED BY EXACT RC-10 OPERATIONS 1 AND 2; NO FURTHER OPERATION AUTHORITY
 RC-10 OPERATION 1: PASS; CONSUMED / SUCCEEDED
 RC-10 OPERATION 2: PASS; CONSUMED / SUCCEEDED; VISION 2/2 CONSECUTIVE PASS
@@ -180,6 +184,8 @@ Current repository checkpoint after the bounded merge sequence:
 | PR #41 / RC-11 | PR #41 exact head `8ebb1cffe8563e49ccf4847ef37209d9644a4e70`; merged as `207ff9fee5557eb0976f575c9263b61d995b20a0`; exact-head CI `33711738092` and exact-main CI `33712762815` passed; annotated `vf-v3-01-rc11` peels to the merge; `V3-01-APP-043` records G-08 |
 | RC-11 ASR governance proposal | `whisper-1`; two exact owner-approved WAVs/RightsRecords; G-01/G-02/G-03 records `V3-01-APP-044` through `046`; raw bundle SHA `4f8edd02ec62182404976de16e8d75b39ddbbbbe96c0d78efd46e3a97d6ace46`; scope SHA `7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a`; bundle unmounted; operations not approved |
 | Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is officially 2/2 consecutive real-provider PASS; no Operation 3 is required or authorized; RC-11 ASR remains real-provider `NOT_TESTED` and both operations are unauthorized |
+| PR #44 / RC-12 | PR #44 exact head `a5666703fe7d0c0fe9a78deadc7eefd5bd848e61`; merged as `ca5483c889742c27af3368b9b487350d7daa217d`; exact-head CI `33888514088` and exact-main CI `33889772222` passed 5/5; annotated `vf-v3-01-rc12` peels to the merge; `V3-01-APP-047` records G-08 |
+| RC-12 ASR governance rebind | fresh operations `v3-01-rc12-openai-transcription-asr-call-01/02`; unchanged exact WAV/transcript/RightsRecord hashes; records `V3-01-APP-048` through `050`; raw bundle SHA `218e06d245f43733a2659aff35f4ea0e7e73dcd17258f663d351b198aebf3db1`; scope SHA `6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4`; bundle unmounted; both operations not approved |
 | Deployment/ingress/publish action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in

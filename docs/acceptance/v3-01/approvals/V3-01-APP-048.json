@@ -1,0 +1,25 @@
+{
+  "approval_id": "V3-01-APP-048",
+  "gate_id": "G-01",
+  "decision": "APPROVED",
+  "scope": "Rebind G-01-ASR to exactly openai-transcription / whisper-1 / asr / vi on vf-v3-01-rc12 using only credential alias secret://openai/codex-video for the proposed dated acceptance window.",
+  "artifact_or_commit_hashes": [
+    "ca5483c889742c27af3368b9b487350d7daa217d",
+    "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; credential value remains in the external secret mechanism",
+  "limits": [
+    "Provider openai-transcription only",
+    "Model whisper-1 only",
+    "Capability asr and language vi only",
+    "Credential alias secret://openai/codex-video only",
+    "No fallback model or provider",
+    "No credential read or provider call until a separate RC-12 operation authority is granted",
+    "No deployment, public ingress, publishing or production analytics"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-04T15:29:25Z",
+  "expires_at_utc": "2026-09-05T18:00:00Z",
+  "notes": "The owner instructed a fresh RC-12 G-01/G-02/G-03 rebind after V3-01-20 merged and exact-main regression passed. This secret-free record binds only the proposed scope; a separate G-08 for the governance PR and a separate Operation 1 decision remain mandatory. It grants no credential read or API-call authority."
+}

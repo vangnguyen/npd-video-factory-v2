@@ -20,8 +20,12 @@ looked only at legacy `rights_record` while the approved multi-asset gate used `
 V3-01-20 keeps the multi-asset gate intact and makes both controllers select exactly one record by
 the current asset ID and SHA-256 before expiry and permission checks. Ordering cannot change the
 selection; wrong, missing, duplicated, tampered, expired or unauthorized evidence fails closed and
-creates no reservation. This validates the rights control offline only and does not extend the
-approved ASR purpose to publishing, training or resale.
+creates no durable operation row or reservation. PR #44 merged this correction as RC-12. The RC-12
+governance rebind preserves both exact WAV, transcript and RightsRecord hashes, rechecks that both
+records remain approved with no expiry, and makes no change to the bounded-use restrictions. The
+new bundle is unmounted; neither operation is authorized, publishing/training/resale remain
+prohibited and real ASR rights-path execution remains `NOT_TESTED`. This validates the rights
+control offline only and does not extend the approved ASR purpose.
 
 ## Required RightsRecord
 

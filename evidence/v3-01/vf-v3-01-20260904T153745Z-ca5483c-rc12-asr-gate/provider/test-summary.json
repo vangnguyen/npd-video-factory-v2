@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "checkpoint": "RC-12 OpenAI ASR governance gate",
+  "commit_sha": "ca5483c889742c27af3368b9b487350d7daa217d",
+  "focused_gate_regression": {
+    "command": "python -m pytest apps/api/tests/test_rc12_asr_gate_bundle.py -q",
+    "passed": 7,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "python_regression": {
+    "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+    "passed": 412,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "migration_replay": {
+    "revision": "0013_v3_01_18_nullable_transcript_confidence",
+    "upgrade": "PASS",
+    "downgrade": "PASS",
+    "reupgrade": "PASS"
+  },
+  "studio_regression": {
+    "passed": 14,
+    "failed": 0,
+    "syntax_checks": "PASS",
+    "result": "PASS"
+  },
+  "renderer_regression": {
+    "passed": 14,
+    "failed": 0,
+    "typecheck": "PASS",
+    "bundle_check": "PASS",
+    "result": "PASS"
+  },
+  "acceptance_and_evidence_validation": "PASS",
+  "json_and_markdown_link_validation": "PASS",
+  "docker_e2e": {
+    "run_id": 33889772222,
+    "exact_commit": "ca5483c889742c27af3368b9b487350d7daa217d",
+    "jobs_passed": 5,
+    "jobs_failed": 0,
+    "result": "PASS"
+  },
+  "governance_exact_head_ci": "PENDING_DRAFT_PR",
+  "result": "PASS",
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "spend_vnd": "0"
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "checkpoint": "RC-12 OpenAI ASR governance gate",
+  "gate_readiness": "PASS_PENDING_G08",
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "real_provider_tested": "NOT_TESTED",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED"
+  },
+  "operation_1": "NOT_APPROVED_NOT_EXECUTED",
+  "operation_2": "NOT_APPROVED_LOCKED_NOT_EXECUTED",
+  "bundle_mounted": false,
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "reservation_vnd": "0",
+  "actual_cost_vnd": "0",
+  "production_verdict": "NO_GO"
+}

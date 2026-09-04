@@ -50,7 +50,11 @@ stopped before credential, reservation and provider dispatch because the durable
 the legacy singular rights field against the two-asset ASR gate. It remains `BLOCKED_PRE_CALL`, not
 consumed, with ledger `0|0|0|0`; its authority is retired and Operation 2 is locked. V3-01-20 now
 uses one exact asset-ID/hash rights selector in both non-durable and durable controllers. This
-source/mock remediation does not execute ASR or promote its real-provider axis. See
+source/mock remediation merged in PR #44 as exact RC-12
+`ca5483c889742c27af3368b9b487350d7daa217d`; exact-main CI `33889772222` passed 5/5 and annotated
+`vf-v3-01-rc12` peels to that commit. A fresh unmounted RC-12 ASR bundle binds new operation IDs and
+the unchanged approved inputs, but neither operation has runtime authority. This does not execute
+ASR or promote its real-provider axis. See
 [49_V3_01_20_DURABLE_MULTI_ASSET_RIGHTS_BINDING.md](49_V3_01_20_DURABLE_MULTI_ASSET_RIGHTS_BINDING.md).
 
 ## Foundation
@@ -81,7 +85,7 @@ source/mock remediation does not execute ASR or promote its real-provider axis. 
 | Capability | Primary code | Existing tests/evidence | Audit result |
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
-| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `openai_transcription_provider.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py`, `provider_safety.py`, `provider_safety_durable.py` | Auto Edit suite, measured two-run fixture evidence, `EV-V3-OPENAI-ASR-ADAPTER-001`, RC-11 gate validation, offline post-run evaluator fixtures and `EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001` | OpenAI ASR is implemented/mock-tested behind fail-closed safety; both controller paths now select the exact asset-bound RightsRecord. RC-11 Operation 1 remains blocked/not consumed and its authority is retired; Operation 2 is locked and real accuracy remains absent |
+| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `openai_transcription_provider.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py`, `provider_safety.py`, `provider_safety_durable.py` | Auto Edit suite, measured two-run fixture evidence, `EV-V3-OPENAI-ASR-ADAPTER-001`, RC-11 gate validation, offline post-run evaluator fixtures, `EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001` and `EV-V3-RC12-ASR-GATE-001` | OpenAI ASR is implemented/mock-tested behind fail-closed safety; both controller paths select the exact asset-bound RightsRecord. RC-12 is locked with a fresh unmounted scope, but Operation 1 is not approved, Operation 2 is locked and real accuracy remains absent |
 | Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema, exact-main CI, canonical evidence, split-timeout, dual-CI and two accepted RC-10 operations | Vision structured analysis is 2/2 consecutive real-provider PASS on immutable RC-10; real subject-tracking/reframe accuracy, production path and human quality remain untested |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |

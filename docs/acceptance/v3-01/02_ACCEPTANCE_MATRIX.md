@@ -1,7 +1,7 @@
 # V3-01 acceptance matrix
 
 Baseline captured at `2026-08-27T12:02:08Z`; the latest executable acceptance candidate is locked
-NO-GO RC-11 `207ff9fee5557eb0976f575c9263b61d995b20a0`. Historical RC-3 operation 1 failed and remains
+NO-GO RC-12 `ca5483c889742c27af3368b9b487350d7daa217d`. Historical RC-3 operation 1 failed and remains
 locked. RC-5 operation 1 later completed provider execution once, but its post-call evidence
 serialization failed; it is consumed and permanently `REVIEW_REQUIRED`, and operation 2 is not
 approved. V3-01-13 remediates only that serialization path offline. RC-6 operation 1 then stopped
@@ -33,8 +33,9 @@ their hash-pinned bundle remains unmounted and both operations remain unauthoriz
 is still `NOT_TESTED`. PR #42/#43 later merged without changing RC-11. The separately authorized
 ASR Operation 1 stopped fail closed before credential, reservation and provider dispatch because
 durable preflight had not selected from the gate's multi-asset RightsRecords. It is not consumed,
-its authority is retired, Operation 2 is locked, and V3-01-20 remediates only that executable
-rights-selection contract offline. ASR real-provider therefore remains `NOT_TESTED`. `I/M/R/P/Q` mean
+its authority is retired and Operation 2 is locked. V3-01-20 merged as RC-12 and remediates only that
+executable rights-selection contract offline. The fresh RC-12 scope remains unmounted; Operation 1
+is not approved and Operation 2 is locked. ASR real-provider therefore remains `NOT_TESTED`. `I/M/R/P/Q` mean
 implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
@@ -63,7 +64,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | SCR-01 | Script generation and versioning | FAIL | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-002 |
 | SCR-02 | Storyboard and media plan | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-004 |
 | UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-002-PARTIAL | GAP-007; GAP-011 |
-| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001 | GAP-003 |
+| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; EV-V3-RC12-ASR-GATE-001 | GAP-003 |
 | EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
 | EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |

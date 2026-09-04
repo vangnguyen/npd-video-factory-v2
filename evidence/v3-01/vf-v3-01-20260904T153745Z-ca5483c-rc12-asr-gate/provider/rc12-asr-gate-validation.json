@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC12-ASR-GATE-001",
+  "rc": {
+    "tag": "vf-v3-01-rc12",
+    "commit": "ca5483c889742c27af3368b9b487350d7daa217d",
+    "tag_object": "f5eee009974f8ac2b507d9ffbc0ecfc8f1010414",
+    "remediation_pr": 44,
+    "remediation_exact_head": "a5666703fe7d0c0fe9a78deadc7eefd5bd848e61",
+    "remediation_exact_head_ci_run_id": 33888514088,
+    "exact_main_ci_run_id": 33889772222,
+    "ci_status": "completed_success"
+  },
+  "governance": {
+    "draft_pr": "PENDING",
+    "governance_head": null,
+    "governance_main_commit": null,
+    "governance_main_ci_run_id": null,
+    "dual_ci_provenance": "PENDING_POST_MERGE",
+    "executable_tree_equality": "PASS_PRE_PR"
+  },
+  "gate": {
+    "bundle_path": "docs/acceptance/v3-01/V3-01-GATE-RC12-OPENAI-ASR-A.json",
+    "bundle_sha256": "218e06d245f43733a2659aff35f4ea0e7e73dcd17258f663d351b198aebf3db1",
+    "execution_scope_sha256": "6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4",
+    "provider_scope_sha256": "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "budget_sha256": "4a6b2fb9040ac049b66477e7e455dab6b1c56f734d1cda7014710a4256a89f4c",
+    "valid_from_utc": "2026-09-05T14:00:00Z",
+    "expires_at_utc": "2026-09-05T18:00:00Z",
+    "mounted": false
+  },
+  "approvals": [
+    {
+      "id": "V3-01-APP-048",
+      "gate": "G-01-ASR",
+      "canonical_sha256": "dc3b2a60d2feabdb9bb3bd84305fcc29e63627c1d3dbf2bdf4c7a5ac4321c6e6",
+      "runtime_authority": false
+    },
+    {
+      "id": "V3-01-APP-049",
+      "gate": "G-02-ASR",
+      "canonical_sha256": "c8499dfd63a1fff8b203b3ea5eb7357b520528178dedf61f1d603f8a67052191",
+      "runtime_authority": false
+    },
+    {
+      "id": "V3-01-APP-050",
+      "gate": "G-03-ASR",
+      "canonical_sha256": "88a9b5525d2131ac7c45b3ae5c566b38922c61ba8e5b83130302f90649977422",
+      "runtime_authority": false
+    }
+  ],
+  "provider": {
+    "key": "openai-transcription",
+    "model": "whisper-1",
+    "capability": "asr",
+    "language": "vi",
+    "credential_alias": "secret://openai/codex-video",
+    "credential_reads": 0,
+    "provider_calls": 0
+  },
+  "budget": {
+    "currency": "VND",
+    "vnd_per_minute": "162",
+    "per_operation_limit_vnd": "500",
+    "acceptance_window_limit_vnd": "1250",
+    "reserved_vnd": "0",
+    "actual_vnd": "0",
+    "provider_http_timeout_seconds": 90,
+    "controller_hard_timeout_seconds": 120,
+    "attempts": 1,
+    "concurrency": 1,
+    "automatic_retry": false,
+    "model_fallback": false
+  },
+  "assets": [
+    {
+      "slot": 1,
+      "sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "bytes": 5800940,
+      "duration_seconds": 120.852,
+      "transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+      "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091"
+    },
+    {
+      "slot": 2,
+      "sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "bytes": 6460396,
+      "duration_seconds": 134.590667,
+      "transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef",
+      "rights_record_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323"
+    }
+  ],
+  "operations": [
+    {
+      "id": "v3-01-rc12-openai-transcription-asr-call-01",
+      "authority": "NOT_APPROVED",
+      "executed": false
+    },
+    {
+      "id": "v3-01-rc12-openai-transcription-asr-call-02",
+      "authority": "NOT_APPROVED_LOCKED",
+      "executed": false
+    }
+  ],
+  "validation": {
+    "focused_tests": "7 passed",
+    "bundle_loader": "PASS",
+    "asset_hashes": "PASS",
+    "audio_headers_and_durations": "PASS",
+    "reference_transcript_hashes": "PASS",
+    "multi_asset_rights_binding": "PASS",
+    "durable_nondurable_parity": "PASS",
+    "approval_hashes": "PASS",
+    "fail_closed_defaults": "PASS",
+    "secret_scan": "PASS"
+  },
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "real_provider_tested": "NOT_TESTED",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED"
+  },
+  "production_verdict": "NO-GO"
+}
