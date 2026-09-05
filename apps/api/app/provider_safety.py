@@ -63,6 +63,22 @@ ProviderRequestDispatchState = Literal[
     "response_headers_received",
     "unknown",
 ]
+ProviderValidationIssueKind = Literal[
+    "missing",
+    "type",
+    "range",
+    "ordering",
+    "mapping",
+    "invalid",
+]
+ProviderJsonShapeType = Literal[
+    "object",
+    "array",
+    "string",
+    "number",
+    "boolean",
+    "null",
+]
 T = TypeVar("T")
 
 
@@ -511,10 +527,49 @@ class ProviderSafetyDecision(StrictModel):
     rights: ProviderRightsDecision
 
 
+class ProviderValidationIssue(StrictModel):
+    """Value-free validation detail safe for durable failure evidence."""
+
+    path: str = Field(
+        min_length=1,
+        max_length=240,
+        pattern=r"^\$(?:(?:\.[A-Za-z_][A-Za-z0-9_-]{0,79})|(?:\[[0-9]{1,8}\]))*$",
+    )
+    code: str = Field(
+        min_length=1,
+        max_length=120,
+        pattern=r"^[a-z][a-z0-9_.-]{0,119}$",
+    )
+    kind: ProviderValidationIssueKind
+
+
+class ProviderResponseMetadata(StrictModel):
+    """Allowlisted response shape only; provider values are never retained."""
+
+    top_level_type: ProviderJsonShapeType
+    allowed_fields_present: tuple[str, ...] = Field(default=(), max_length=16)
+    missing_required_fields: tuple[str, ...] = Field(default=(), max_length=16)
+    field_types: dict[str, ProviderJsonShapeType] = Field(default_factory=dict)
+    segment_count: int | None = Field(default=None, ge=0)
+    word_count: int | None = Field(default=None, ge=0)
+    unknown_top_level_field_count: int = Field(default=0, ge=0)
+
+    @model_validator(mode="after")
+    def validate_allowlist(self) -> "ProviderResponseMetadata":
+        allowed = {"task", "language", "duration", "text", "segments", "words"}
+        for values in (self.allowed_fields_present, self.missing_required_fields):
+            if len(values) != len(set(values)) or set(values) - allowed:
+                raise ValueError("response metadata fields must be unique and allowlisted")
+        if set(self.field_types) - allowed:
+            raise ValueError("response metadata types must use allowlisted fields")
+        return self
+
+
 class ProviderErrorEvidence(StrictModel):
     """Bounded, secret-free provider failure metadata safe for durable persistence."""
 
     category: ProviderErrorCategory
+    phase: Literal["structured_output_validation"] | None = None
     code: str = Field(pattern=r"^[A-Z0-9][A-Z0-9_]{2,119}$")
     http_status: int | None = Field(default=None, ge=100, le=599)
     provider_error_type: str | None = Field(default=None, max_length=160)
@@ -529,7 +584,13 @@ class ProviderErrorEvidence(StrictModel):
         default=None,
         pattern=r"^[A-Za-z0-9._:-]{1,200}$",
     )
+    request_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     response_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    validation_issues: tuple[ProviderValidationIssue, ...] = Field(
+        default=(),
+        max_length=32,
+    )
+    response_metadata: ProviderResponseMetadata | None = None
     timeout_phase: ProviderTimeoutPhase | None = None
     timeout_kind: ProviderTimeoutKind | None = None
     provider_http_timeout_seconds: float | None = Field(default=None, gt=0, le=3600)

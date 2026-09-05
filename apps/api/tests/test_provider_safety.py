@@ -19,6 +19,7 @@ from app.provider_safety import (
     ProviderErrorEvidence,
     ProviderExecutionTrace,
     ProviderRateLimitError,
+    ProviderResponseMetadata,
     ProviderRetryPolicy,
     ProviderRightsEvidence,
     ProviderSafetyBlocked,
@@ -26,6 +27,7 @@ from app.provider_safety import (
     ProviderSafetyPolicy,
     ProviderTimeoutError,
     ProviderTransientError,
+    ProviderValidationIssue,
     normalize_provider_definitions,
     verify_provider_artifact,
     verify_provider_artifact_storage,
@@ -683,6 +685,81 @@ async def test_durable_attempt_persists_only_structured_secret_free_error_eviden
     assert row.retryable is False
     assert row.error_evidence == terminal_evidence.model_dump(mode="json")
     assert "credential" not in json.dumps(row.error_evidence).lower()
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_durable_attempt_persists_value_free_response_validation_diagnostics(
+    tmp_path,
+) -> None:
+    clock = MutableClock()
+    policy = approved_policy(max_attempts=1)
+    engine, repository, _, controller, _ = await durable_components(tmp_path, policy, clock)
+    evidence = ProviderErrorEvidence(
+        category="structured_output_validation",
+        phase="structured_output_validation",
+        code="OPENAI_TRANSCRIPTION_RESPONSE_INVALID",
+        http_status=200,
+        provider_error_type="ValidationError",
+        provider_error_message="OpenAI transcription response failed strict validation",
+        provider_request_id="req_durable_asr_validation",
+        client_request_id="vf-durable-asr-validation",
+        request_sha256="a" * 64,
+        response_sha256="b" * 64,
+        validation_issues=(
+            ProviderValidationIssue(path="$.words", code="missing", kind="missing"),
+        ),
+        response_metadata=ProviderResponseMetadata(
+            top_level_type="object",
+            allowed_fields_present=("task", "language", "duration", "text", "segments"),
+            missing_required_fields=("words",),
+            field_types={
+                "task": "string",
+                "language": "string",
+                "duration": "number",
+                "text": "string",
+                "segments": "array",
+            },
+            segment_count=1,
+            unknown_top_level_field_count=0,
+        ),
+        elapsed_ms=9872.566,
+        request_dispatch_state="response_headers_received",
+        exception_chain=("ValidationError",),
+        retryable=False,
+        secret_recorded=False,
+    )
+
+    class ResponseValidationFailure(RuntimeError):
+        def __init__(self) -> None:
+            super().__init__(evidence.code)
+            self.error_evidence = evidence
+
+    async def operation() -> str:
+        raise ResponseValidationFailure()
+
+    with pytest.raises(ProviderSafetyBlocked):
+        await controller.execute(
+            context("durable-asr-validation", paid=False, estimate=Decimal("0")),
+            operation,
+        )
+
+    async with repository.session_factory() as session:
+        row = await session.scalar(
+            select(ProviderSafetyAttemptORM).where(
+                ProviderSafetyAttemptORM.operation_key == "durable-asr-validation"
+            )
+        )
+    assert row is not None
+    assert row.error_evidence == evidence.model_dump(mode="json")
+    assert row.error_evidence["validation_issues"] == [
+        {"path": "$.words", "code": "missing", "kind": "missing"}
+    ]
+    assert row.error_evidence["phase"] == "structured_output_validation"
+    assert row.error_evidence["response_metadata"]["missing_required_fields"] == ["words"]
+    serialized = json.dumps(row.error_evidence, ensure_ascii=False)
+    assert "NỘI DUNG FIXTURE" not in serialized
+    assert "credential" not in serialized.lower()
     await engine.dispose()
 
 

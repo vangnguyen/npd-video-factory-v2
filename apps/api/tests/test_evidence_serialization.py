@@ -5,6 +5,8 @@ import json
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
+
 from app.evidence_serialization import (
     canonical_evidence_bytes,
     canonical_evidence_sha256,
@@ -218,3 +220,56 @@ def test_secret_detection_keeps_only_minimal_fallback_context(tmp_path: Path) ->
         "status": "withheld",
     }
     assert fallback["error"]["secret_recorded"] is False
+
+
+def test_canonical_credential_references_are_evidence_safe(tmp_path: Path) -> None:
+    output = tmp_path / "operation-result.json"
+    payload = {
+        "credential_alias": "secret://openai/codex-video",
+        "secret": "secret://openai/codex-video",
+        "secondary_aliases": [
+            "vault://video-factory/openai",
+            "external://runtime/provider-key",
+        ],
+        "secret_recorded": False,
+    }
+
+    receipt = write_evidence_bundle(
+        output,
+        payload,
+        durable_fallback_context={"operation_status": "not_started"},
+    )
+
+    assert receipt.status == "written"
+    assert receipt.evidence_path == output
+    assert json.loads(output.read_text(encoding="utf-8")) == payload
+
+
+@pytest.mark.parametrize(
+    "unsafe_value",
+    [
+        "sk-proj-" + ("x" * 24),
+        "Bearer synthetic-token-value",
+        "api_key=synthetic-value",
+        "token:synthetic-value",
+        "password=synthetic-value",
+        "secret:synthetic-value",
+        "secret://openai/sk-proj-" + ("x" * 24),
+    ],
+)
+def test_real_credential_shapes_remain_blocked(
+    tmp_path: Path,
+    unsafe_value: str,
+) -> None:
+    output = tmp_path / "operation-result.json"
+
+    receipt = write_evidence_bundle(
+        output,
+        {"value": unsafe_value},
+        durable_fallback_context={"operation_status": "not_started"},
+    )
+
+    assert receipt.status == "fallback_written"
+    assert receipt.error_code == "EVIDENCE_SECRET_DETECTED"
+    serialized = receipt.evidence_path.read_text(encoding="utf-8")
+    assert unsafe_value not in serialized

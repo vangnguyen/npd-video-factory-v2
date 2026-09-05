@@ -18,9 +18,17 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-_SECRET_PATTERN = re.compile(
-    r"(?i)(?:sk-[A-Za-z0-9_-]{8,}|bearer\s+\S+|"
-    r"(?:api[_-]?key|token|password|secret)\s*[:=]\s*\S+)"
+_CREDENTIAL_REFERENCE_PATTERN = re.compile(
+    r"(?i)\b(?:secret|vault|external)://"
+    r"[a-z0-9][a-z0-9._-]{0,63}(?:/[a-z0-9][a-z0-9._-]{0,63}){1,7}\b"
+)
+_DIRECT_SECRET_PATTERNS = (
+    re.compile(r"(?i)sk-(?:proj-)?[A-Za-z0-9_-]{8,}"),
+    re.compile(r"(?i)bearer\s+\S+"),
+)
+_SECRET_ASSIGNMENT_PATTERN = re.compile(
+    r"(?i)(?:\"?(?:api[_-]?key|token|password|secret)\"?\s*[:=]\s*\"?)"
+    r"(?!//)[^\"\s,}]+"
 )
 
 
@@ -185,7 +193,16 @@ def _require_secret_free(payload: bytes, *, forbidden_values: tuple[str, ...]) -
                 "EVIDENCE_SECRET_DETECTED",
                 "a forbidden value was found in evidence",
             )
-    if _SECRET_PATTERN.search(text):
+    if any(pattern.search(text) for pattern in _DIRECT_SECRET_PATTERNS):
+        raise EvidenceSerializationError(
+            "EVIDENCE_SECRET_DETECTED",
+            "a credential pattern was found in evidence",
+        )
+    reference_free = _CREDENTIAL_REFERENCE_PATTERN.sub(
+        "//credential-reference",
+        text,
+    )
+    if _SECRET_ASSIGNMENT_PATTERN.search(reference_free):
         raise EvidenceSerializationError(
             "EVIDENCE_SECRET_DETECTED",
             "a credential pattern was found in evidence",

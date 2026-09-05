@@ -362,6 +362,88 @@ async def test_malformed_transcript_contract_is_fail_closed(
 
 
 @pytest.mark.asyncio
+async def test_structured_validation_records_value_free_diagnostics(
+    tmp_path: Path,
+) -> None:
+    fixture_path = (
+        Path(__file__).parent
+        / "fixtures/openai_transcription/synthetic-missing-words-response.json"
+    )
+    payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+    adapter, _ = provider(
+        transport=mock_transport(payload, request_id="req_asr_diagnostic_001")
+    )
+    source = tmp_path / "invalid.mp3"
+    source.write_bytes(b"offline")
+
+    with pytest.raises(OpenAITranscriptionResponseError) as captured:
+        await transcribe(adapter, source)
+
+    evidence = captured.value.error_evidence
+    serialized = json.dumps(evidence.model_dump(mode="json"), ensure_ascii=False)
+    assert evidence.category == "structured_output_validation"
+    assert evidence.phase == "structured_output_validation"
+    assert evidence.code == "OPENAI_TRANSCRIPTION_RESPONSE_INVALID"
+    assert evidence.http_status == 200
+    assert evidence.provider_request_id == "req_asr_diagnostic_001"
+    assert evidence.request_dispatch_state == "response_headers_received"
+    assert evidence.elapsed_ms is not None and evidence.elapsed_ms >= 0
+    assert evidence.request_sha256 is not None and len(evidence.request_sha256) == 64
+    assert evidence.response_sha256 is not None and len(evidence.response_sha256) == 64
+    assert evidence.exception_chain == ("ValidationError",)
+    assert [item.model_dump(mode="json") for item in evidence.validation_issues] == [
+        {"path": "$.words", "code": "missing", "kind": "missing"}
+    ]
+    assert evidence.response_metadata is not None
+    assert evidence.response_metadata.top_level_type == "object"
+    assert evidence.response_metadata.missing_required_fields == ("words",)
+    assert evidence.response_metadata.allowed_fields_present == (
+        "task",
+        "language",
+        "duration",
+        "text",
+        "segments",
+    )
+    assert evidence.response_metadata.field_types == {
+        "task": "string",
+        "language": "string",
+        "duration": "number",
+        "text": "string",
+        "segments": "array",
+    }
+    assert evidence.response_metadata.segment_count == 1
+    assert evidence.response_metadata.word_count is None
+    assert evidence.response_metadata.unknown_top_level_field_count == 1
+    assert "NỘI DUNG FIXTURE" not in serialized
+    assert "fixture_kind" not in serialized
+
+
+@pytest.mark.asyncio
+async def test_mapping_validation_records_exact_safe_contract_path(tmp_path: Path) -> None:
+    payload = response_payload()
+    payload["words"][2]["end"] = 1.9
+    adapter, _ = provider(transport=mock_transport(payload))
+    source = tmp_path / "invalid-mapping.mp3"
+    source.write_bytes(b"offline")
+
+    with pytest.raises(OpenAITranscriptionResponseError) as captured:
+        await transcribe(adapter, source)
+
+    evidence = captured.value.error_evidence
+    assert evidence.phase == "structured_output_validation"
+    assert [item.model_dump(mode="json") for item in evidence.validation_issues] == [
+        {
+            "path": "$.words[2]",
+            "code": "word_outside_segment",
+            "kind": "mapping",
+        }
+    ]
+    assert evidence.response_metadata is not None
+    assert evidence.response_metadata.segment_count == 2
+    assert evidence.response_metadata.word_count == 7
+
+
+@pytest.mark.asyncio
 async def test_invalid_json_and_missing_request_id_are_distinct(tmp_path: Path) -> None:
     source = tmp_path / "bad-json.mp3"
     source.write_bytes(b"offline")
