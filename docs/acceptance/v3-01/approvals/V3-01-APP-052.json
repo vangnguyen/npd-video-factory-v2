@@ -1,0 +1,25 @@
+{
+  "approval_id": "V3-01-APP-052",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #46 as V3-01-21 ASR response-validation diagnostics and credential-alias secret-scan remediation, exact-main regression and the vf-v3-01-rc13 lock only; permit a later governance-only ASR rebind without granting runtime authority.",
+  "artifact_or_commit_hashes": [
+    "f765f216f90b0d05071cc7c873a2edb6d5bdcec4",
+    "7169cc4db55931ee4fc145411e1e04651c004785",
+    "1e0146b44b19a5afcef267132d71d36d24a952e4"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and LOCAL/CI regression only; production and provider execution remain disabled",
+  "limits": [
+    "Merge exact PR #46 head 7169cc4db55931ee4fc145411e1e04651c004785 only",
+    "Lock vf-v3-01-rc13 only after exact-main regression succeeds",
+    "Do not loosen the ASR response schema based on the incomplete RC-12 response evidence",
+    "No reuse of RC-12 operation IDs, bundle, window or runtime authority",
+    "No credential read, provider call, budget reservation or spend",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-05T15:51:00Z",
+  "expires_at_utc": null,
+  "notes": "The owner approved exact PR #46 head 7169cc4db55931ee4fc145411e1e04651c004785. Exact-head CI 33974602125 and exact-main CI 33976046393 both completed successfully with 5/5 jobs. Annotated tag vf-v3-01-rc13 peels to 1e0146b44b19a5afcef267132d71d36d24a952e4 and grants no operation authority."
+}

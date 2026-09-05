@@ -237,7 +237,8 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001" in gap_003["evidence_ids"]
     assert "EV-V3-RC12-ASR-GATE-001" in gap_003["evidence_ids"]
     assert "EV-V3-ASR-RESPONSE-DIAGNOSTICS-001" in gap_003["evidence_ids"]
-    assert gap_003["verified_on_commit"] == "75f693ab1a1a600b6069a6e13fdd2b3414f91960"
+    assert "EV-V3-RC13-ASR-GATE-001" in gap_003["evidence_ids"]
+    assert gap_003["verified_on_commit"] == "1e0146b44b19a5afcef267132d71d36d24a952e4"
 
     gap_010 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-010")
     assert gap_010["status"] == "IN_PROGRESS"
@@ -253,7 +254,8 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-RC10-VISION-REBIND-001" in gap_010["evidence_ids"]
     assert "EV-V3-RC10-VISION-CONSECUTIVE-PASS-001" in gap_010["evidence_ids"]
     assert "EV-V3-ASR-RESPONSE-DIAGNOSTICS-001" in gap_010["evidence_ids"]
-    assert gap_010["verified_on_commit"] == "75f693ab1a1a600b6069a6e13fdd2b3414f91960"
+    assert "EV-V3-RC13-ASR-GATE-001" in gap_010["evidence_ids"]
+    assert gap_010["verified_on_commit"] == "1e0146b44b19a5afcef267132d71d36d24a952e4"
 
     gap_013 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-013")
     assert gap_013["status"] == "IN_PROGRESS"
@@ -269,7 +271,8 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001" in gap_013["evidence_ids"]
     assert "EV-V3-RC12-ASR-GATE-001" in gap_013["evidence_ids"]
     assert "EV-V3-ASR-RESPONSE-DIAGNOSTICS-001" in gap_013["evidence_ids"]
-    assert gap_013["verified_on_commit"] == "ca5483c889742c27af3368b9b487350d7daa217d"
+    assert "EV-V3-RC13-ASR-GATE-001" in gap_013["evidence_ids"]
+    assert gap_013["verified_on_commit"] == "1e0146b44b19a5afcef267132d71d36d24a952e4"
     assert contract["gaps"]["by_severity"] == dict(Counter(row["severity"] for row in gaps))
     assert contract["production_verdict"] == "NO-GO"
     assert contract["rc_candidate"]["status"] == "CONDITIONAL-RC"

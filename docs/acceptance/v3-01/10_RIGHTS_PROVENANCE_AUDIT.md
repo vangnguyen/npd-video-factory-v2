@@ -88,4 +88,10 @@ and critical terms. No publishing, training, resale or other use is granted. The
 unmounted and no provider call has occurred, so this rights approval advances gate readiness only;
 it does not close real-provider or production rights acceptance.
 
+RC-13 revalidates and rebinds those same immutable WAV, transcript, owner-manifest and canonical
+RightsRecord hashes without changing the permitted purpose. `EV-V3-RC13-ASR-GATE-001` verifies
+asset-specific durable/non-durable selection for both slots offline. The proposed bundle remains
+unmounted, both RC-13 operations are unauthorized, and no credential or media was sent to a
+provider by this package. Publishing, training, resale and unrelated use remain prohibited.
+
 Open gap: `V3-01-GAP-013`.

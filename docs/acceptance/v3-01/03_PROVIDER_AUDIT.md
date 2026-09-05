@@ -108,7 +108,7 @@ distinct response hash. The runner stopped and the bundle was unmounted after ea
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
-| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, RC-12 response-reach evidence and `EV-V3-ASR-RESPONSE-DIAGNOSTICS-001` | implemented/mock-tested `PASS`; RC-12 Operation 1 consumed/failed strict response validation; real-provider `NOT_TESTED` | G-08 for V3-01-21, merge/full regression, lock RC-13, fresh scope/window/IDs and separate provider gates/Operation 1 authority; PRO-006 |
+| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, immutable RC-12 response-validation evidence, V3-01-21 diagnostics and `EV-V3-RC13-ASR-GATE-001` | implemented/mock-tested `PASS`; RC-12 Operation 1 remains consumed/failed; RC-13 is an unmounted zero-call gate proposal; real-provider `NOT_TESTED` | G-08 for the RC-13 governance PR, post-merge dual-CI/equality verification and a separate Operation 1 authority; PRO-006 |
 | Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS; PR #39 and exact-main CI complete | real-provider `PASS`; production path and quality remain `BLOCKED` | standalone Vision acceptance closed; no Operation 3; PRO-001 real-provider sub-scope complete |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
@@ -184,6 +184,11 @@ V3-01-20 fixed the future path in RC-12. The bounded RC-12 operation described a
 response validation, so real-provider, production-path and quality axes remain `NOT_TESTED`.
 V3-01-21 adds safe future validation-path and allowlisted-metadata diagnostics, plus alias-aware
 secret scanning, with zero calls/credential reads/VND; it does not reconstruct RC-12 evidence or
-promote an axis. See
+promote an axis. PR #46 merged that executable remediation as locked `vf-v3-01-rc13` at
+`1e0146b44b19a5afcef267132d71d36d24a952e4`; exact-main CI `33976046393` passed 5/5. Evidence
+`EV-V3-RC13-ASR-GATE-001` binds fresh RC-derived operation IDs, the unchanged approved inputs,
+canonical G-01/G-02/G-03 records, the 500/1,250 VND envelope and a proposed dated window. The
+bundle remains unmounted, both operations remain unauthorized, provider calls/credential reads/
+reservations/spend are all zero, and ASR real-provider remains `NOT_TESTED`. See
 [44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md](44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md)
-and [45_V3_01_RC11_OPENAI_ASR_GATE.md](45_V3_01_RC11_OPENAI_ASR_GATE.md).
+and [52_V3_01_RC13_OPENAI_ASR_GATE.md](52_V3_01_RC13_OPENAI_ASR_GATE.md).
