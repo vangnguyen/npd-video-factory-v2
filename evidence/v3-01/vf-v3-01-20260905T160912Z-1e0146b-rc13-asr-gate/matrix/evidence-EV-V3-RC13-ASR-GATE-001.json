@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC13-ASR-GATE-001",
+  "test_case_id": "ASR-01+PRO-006",
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "1e0146b44b19a5afcef267132d71d36d24a952e4",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-transcription-gate-validation-only",
+    "model_or_workflow": "whisper-1 / selected-but-not-executed",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "236262caf3ae4a10c8c3fa760e9caf134837e4327b860b2d4693e08c7031f1b8",
+  "started_at_utc": "2026-09-05T15:51:00Z",
+  "completed_at_utc": "2026-09-05T16:09:12Z",
+  "duration_seconds": 1092,
+  "result": "PASS",
+  "assertion": "The exact RC-13 OpenAI ASR gate validates offline with fresh RC-derived operation IDs, unchanged owner-approved WAVs and transcripts, exact asset-specific RightsRecords, canonical G-01/G-02/G-03 rebind records, VND limits and split timeout controls. The bundle remains unmounted and neither operation is authorized, so ASR real-provider remains NOT_TESTED.",
+  "correlation_id": "v3-01-rc13-asr-gate-1e0146b",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-ASR-001;V3-01-RIGHTS-ASR-002",
+  "reviewer": "Codex local ASR gate reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On exact vf-v3-01-rc13-compatible source, run apps/api/tests/test_rc13_asr_gate_bundle.py with provider defaults fail-closed and verify the raw bundle SHA, execution-scope SHA, assets, transcripts, per-asset RightsRecords, approval records, VND limits and zero runtime authority."
+}

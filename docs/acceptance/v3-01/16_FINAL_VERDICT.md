@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: V3-01-21 after consumed RC-12 ASR response-validation failure; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
-RELEASE CANDIDATE: RC-12 ca5483c889742c27af3368b9b487350d7daa217d LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-ASR-RESPONSE-DIAGNOSTICS-001; source commit 75f693a; remediation 0 calls/0 credential reads/0 VND
+SCOPE: locked RC-13 plus zero-call OpenAI ASR governance rebind; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
+RELEASE CANDIDATE: RC-13 1e0146b44b19a5afcef267132d71d36d24a952e4 LOCKED NO-GO; NOT DEPLOYED
+LATEST EVIDENCE: EV-V3-RC13-ASR-GATE-001; bundle unmounted; 0 calls/0 credential reads/0 reservation/0 VND
 DATE: 2026-09-05
-OWNER DECISION: RC-12 OPERATION 1 CONSUMED/FAILED/REVIEW_REQUIRED; OPERATION 2 RETIRED/LOCKED; V3-01-21 REQUIRES NEW G-08
+OWNER DECISION: PR #46 G-08 CONSUMED; RC-13 GOVERNANCE PR REQUIRES NEW G-08; BOTH RC-13 OPERATIONS UNAUTHORIZED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -28,12 +28,12 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR Op1 cost 0 VND; RC-12 ASR Op1 has actual cost unknown and a 500 VND conservative safety charge, not an actual-cost receipt; V3-01-21 costs 0 VND |
-| Rights/provenance | exact Vision asset passed twice; two exact unchanged WAVs, voices, owner-verified transcripts and RightsRecords are rebound to RC-12 only for bounded ASR acceptance; broader real/final-asset coverage absent |
+| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR Op1 cost 0 VND; RC-12 ASR Op1 has actual cost unknown and a 500 VND conservative safety charge, not an actual-cost receipt; RC-13 gate preparation costs 0 VND |
+| Rights/provenance | exact Vision asset passed twice; two exact unchanged WAVs, voices, owner-verified transcripts and RightsRecords are rebound to RC-13 only for bounded ASR acceptance; broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
-| Allowed scope | LOCAL/CI V3-01-21 zero-call remediation, static/mock tests, redacted evidence and a draft source PR |
+| Allowed scope | LOCAL/CI zero-call RC-13 gate validation, redacted evidence and a draft governance PR |
 | Disabled scope | further provider calls, credential-value access, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
@@ -271,9 +271,9 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #45 and both RC-10 operation authorities are consumed. The current
-  V3-01-21 response-diagnostics remediation requires a new G-08.
-- **Deploy:** no; RC-12 is locked NO-GO, not deployed and G-09 is pending.
+- **Merge:** decisions through PR #46 and both RC-10 operation authorities are consumed. The RC-13
+  governance rebind requires a new G-08.
+- **Deploy:** no; RC-13 is locked NO-GO, not deployed and G-09 is pending.
 - **Providers/platforms enabled:** none now. RC-10 Operations 1 and 2 each used the bounded
   process-local scope, which was disabled/unmounted after each successful attempt.
 - **Volume/concurrency/budget:** RC-5 operation 1 consumed exactly one attempt with no retry/fallback
@@ -287,6 +287,8 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
   retired authority and Operation 2 is locked. RC-12 ASR Operation 1 is consumed after one provider
   response failed strict mapping/validation; actual cost is unknown, its 500 VND charge is only
   conservative safety accounting, and its authority is retired. RC-12 Operation 2 is retired/locked.
+  RC-13 Operations 1 and 2 have no ledger rows: Operation 1 is not approved/not executed and
+  Operation 2 is not approved/locked. The proposed bundle is unmounted and no reservation exists.
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited by this package:** any ASR operation or provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
@@ -341,7 +343,22 @@ OpenAI-style keys, bearer tokens and assigned secret values. The durable RC-12 r
 immutable and is not promoted. This remediation performed zero provider calls, zero credential
 reads and zero VND spend, and requires its own G-08 before merge. A merge would require full
 exact-main regression and a new RC-13 plus fresh scope/window/operation IDs before any later ASR
-execution decision. Production remains `NO-GO`.
+execution decision. PR #46 then merged at `1e0146b44b19a5afcef267132d71d36d24a952e4`; exact-main CI
+`33976046393` passed 5/5 and annotated tag `vf-v3-01-rc13` peels to that commit. Production remains
+`NO-GO`.
+
+## RC-13 checkpoint
+
+The RC-13 governance proposal uses fresh operations
+`v3-01-rc13-openai-transcription-asr-call-01` and
+`v3-01-rc13-openai-transcription-asr-call-02`. It preserves the unchanged two WAVs, owner-verified
+transcripts and asset-specific RightsRecords, and binds execution scope
+`179624fe3a365e415c41b760e49297da0cd23227cf9b49a634e7fbcaaf90b47e` in raw bundle
+`236262caf3ae4a10c8c3fa760e9caf134837e4327b860b2d4693e08c7031f1b8`. The proposed window is
+`2026-09-06T14:00:00Z` through `2026-09-06T18:00:00Z`. The bundle remains unmounted, both
+operations lack runtime authority, and this package performs zero credential reads, provider calls,
+reservations and spend. Merge approval, post-merge dual-CI/equality verification and a separate
+Operation 1 decision remain mandatory. No RC-12 authority or operation ID is reused.
 
 ## Decision rule
 

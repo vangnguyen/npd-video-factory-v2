@@ -1,6 +1,6 @@
 # Owner gate register
 
-G-00 and the completed bounded G-08 actions through PR #41 have approval records or recorded owner
+G-00 and the completed bounded G-08 actions through PR #46 have approval records or recorded owner
 decisions. RC-4 remains
 evidence of a fail-closed executable-contract blocker. RC-5 operation 1 consumed its exact G-01-A,
 G-02-A, G-03-A and separate operation authority; provider execution succeeded but acceptance
@@ -50,19 +50,24 @@ G-08 is recorded as `V3-01-APP-051` and governance-main CI `33894628759` passed.
 granted a separate one-attempt authority for Operation 1. It reached a provider response but failed
 strict response validation, is consumed/`REVIEW_REQUIRED`, and cannot be reused. Actual cost is
 unknown; 500 VND is only the conservative safety charge. Operation 2 is locked and retired.
-V3-01-21 is a new zero-call source remediation and requires a separate G-08 before merge.
+PR #46 then merged V3-01-21 as locked RC-13
+`1e0146b44b19a5afcef267132d71d36d24a952e4`; exact-main CI `33976046393` passed 5/5 and its
+source G-08 is recorded as `V3-01-APP-052`. Fresh records `V3-01-APP-053` through
+`V3-01-APP-055` rebind provider, budget and unchanged rights to new RC-13 operation IDs and a
+proposed window. This governance bundle is unmounted, neither operation is approved or executed,
+and its draft PR requires a new G-08 before merge.
 
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
 | G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
-| G-01 | real-provider credential aliases/scopes | RC-12 ASR `V3-01-APP-048` was consumed only by Operation 1 for `openai-transcription / whisper-1 / asr / vi`; no RC-12 authority remains | after V3-01-21 merge, lock RC-13 and rebind a fresh exact scope before any credential resolution |
-| G-02 | VND provider budgets and cost controls | RC-12 ASR `V3-01-APP-049` allowed 500 VND/op and 1,250 VND/window; Operation 1 actual cost is unknown and its 500 VND ledger charge is not an actual-cost receipt | checked-in budget stays 0; RC-13 requires a new scope/window rebind and separate operation authority |
-| G-03 | owned inputs, rights and provenance policy | RC-12 ASR `V3-01-APP-050` successfully bound asset 01 during preflight, without extending publishing/training/resale rights | assets may be rebound to RC-13 only if exact hashes, rights and expiry revalidate; broader final-output rights remain open |
+| G-01 | real-provider credential aliases/scopes | RC-13 ASR `V3-01-APP-053` binds only `openai-transcription / whisper-1 / asr / vi` and the credential alias; it grants no credential read or call | governance merge, dual-CI/equality proof and a separate exact Operation 1 authority are still required |
+| G-02 | VND provider budgets and cost controls | RC-13 ASR `V3-01-APP-054` proposes 500 VND/op and 1,250 VND/window with checked-in budget 0; no reservation/spend occurred | any scope/window mutation invalidates the rebind; a separate operation decision remains mandatory |
+| G-03 | owned inputs, rights and provenance policy | RC-13 ASR `V3-01-APP-055` revalidates both unchanged WAV/transcript/RightsRecord hashes without extending publishing/training/resale rights | broader final-output rights remain open; this record is not runtime authority |
 | G-04 | production-like staging execution | PENDING | locked commit/images, isolated topology and rollback plan |
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation/evidence PR merge | PR #45 decision is consumed and recorded as `V3-01-APP-051`; V3-01-21 is a separate draft source remediation | a new explicit G-08 decision is required before merging V3-01-21; it grants no runtime authority |
+| G-08 | remediation/evidence PR merge | PR #46 source decision is consumed and recorded as `V3-01-APP-052`; the RC-13 governance rebind is a separate draft PR | a new explicit G-08 decision is required before merging the RC-13 gate; it grants no runtime authority |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING; schema, 27-check template and full-watch/listen checklist prepared offline | exact final video and dependent artifact hashes, named reviewer, UTC timestamps, desktop/mobile full watch, headphone/phone-speaker full listen and all checks PASS |
@@ -75,8 +80,8 @@ IDs, expiry and decision. Changing commit, artifact, provider, platform target, 
 time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, LOCAL/CI validation, redacted evidence and a
-draft zero-call ASR/Flow A/TTS/G-11 preparation PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
-#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37/#38/#39/#40/#41/#42 merges are complete and their G-08 decisions cannot be
+draft zero-call RC-13 ASR governance PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
+#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37/#38/#39/#40/#41/#42/#43/#44/#45/#46 merges are complete and their G-08 decisions cannot be
 reused. RC-3 IDs are locked, RC-4 remains blocker evidence, and RC-5 operation 1 is consumed/
 `REVIEW_REQUIRED`; RC-5 operation 2 is locked. RC-6 operation 1 is blocked pre-call/not consumed,
 its failed-window authority is retired, and operation 2 is locked. RC-7 operation 1 is consumed after
@@ -86,6 +91,8 @@ acceptance and has no operation authority. RC-9 operation 1 is blocked pre-call/
   Operations 1 and 2 each received one exact authority, succeeded once with complete evidence, and
   are consumed. The runner stopped and bundle was unmounted after each execution. No further Vision
   operation is required or authorized. Runtime defaults remain disabled.
+RC-12 ASR Operation 1 remains consumed/failed/`REVIEW_REQUIRED`; RC-12 Operation 2 is retired and
+locked. RC-13 Operation 1 is not approved/not executed and Operation 2 is not approved/locked.
 This package includes no authority for a merge, ASR operation, credential-value read, provider call,
 deployment, public route, publishing, analytics collection or production write. Records:
 [`V3-01-APP-001`](approvals/V3-01-APP-001.json) and
@@ -137,8 +144,12 @@ deployment, public route, publishing, analytics collection or production write. 
 [`V3-01-APP-047`](approvals/V3-01-APP-047.json),
 [`V3-01-APP-048`](approvals/V3-01-APP-048.json),
 [`V3-01-APP-049`](approvals/V3-01-APP-049.json),
-[`V3-01-APP-050`](approvals/V3-01-APP-050.json), and
-[`V3-01-APP-051`](approvals/V3-01-APP-051.json). The secret-free consumed RC-10 operation
+[`V3-01-APP-050`](approvals/V3-01-APP-050.json),
+[`V3-01-APP-051`](approvals/V3-01-APP-051.json),
+[`V3-01-APP-052`](approvals/V3-01-APP-052.json),
+[`V3-01-APP-053`](approvals/V3-01-APP-053.json),
+[`V3-01-APP-054`](approvals/V3-01-APP-054.json), and
+[`V3-01-APP-055`](approvals/V3-01-APP-055.json). The secret-free consumed RC-10 operation
 authorities are retained in
 [`operation-1-authority.json`](../../../evidence/v3-01/vf-v3-01-20260902T143651Z-c2b1aec-op1/governance/operation-1-authority.json)
 and

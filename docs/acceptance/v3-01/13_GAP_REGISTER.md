@@ -1,9 +1,9 @@
 # Gap register
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
-derived from the audit captured on `2026-08-27`, updated through locked NO-GO RC-12
-`ca5483c889742c27af3368b9b487350d7daa217d`, governance merge PR #45 and the consumed RC-12 ASR
-Operation 1 response-validation failure. Historical RC-5
+derived from the audit captured on `2026-08-27`, updated through locked NO-GO RC-13
+`1e0146b44b19a5afcef267132d71d36d24a952e4`, merged V3-01-21 PR #46 and the fresh zero-call RC-13
+ASR governance proposal. Historical RC-5
 operation-1 provider execution succeeded,
 but request-level acceptance evidence was incomplete after post-call serialization failed. The
 operation is consumed/`REVIEW_REQUIRED`; V3-01-13 is now merged and exact-main tested. RC-6
@@ -31,8 +31,10 @@ mapping/validation failed with `OPENAI_TRANSCRIPTION_RESPONSE_INVALID`. The oper
 acceptance is `REVIEW_REQUIRED`, actual provider cost is unknown and its 500 VND ledger charge is
 only conservative safety accounting. No accepted transcript, usage receipt or exact validation path
 was retained. V3-01-21 therefore adds zero-call response diagnostics and alias-aware secret scanning
-without reconstructing the failed response. Operation 2 is retired/locked; ASR real-provider PASS
-evidence remains absent.
+without reconstructing the failed response. PR #46 merged that remediation, exact-main CI
+`33976046393` passed 5/5 and RC-13 was locked. The fresh bundle binds new operation IDs and the
+unchanged approved assets, but stays unmounted with both operations unauthorized. RC-12 Operation
+2 remains retired/locked; ASR real-provider PASS evidence remains absent.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -46,8 +48,9 @@ through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
 `IN_PROGRESS`. RC-10 Vision is 2/2 consecutive real-provider PASS, while ASR/reframe,
 production-like safety and broader rights coverage remain open. The bounded G-08 decisions through
-PR #45 are consumed. RC-12 Operation 1 is consumed/failed/`REVIEW_REQUIRED`; Operation 2 is retired
-and locked. V3-01-21 now requires its own G-08 and grants no operation authority.
+PR #46 are consumed. RC-12 Operation 1 is consumed/failed/`REVIEW_REQUIRED`; Operation 2 is retired
+and locked. RC-13 is locked with an unmounted proposed gate; the governance PR requires its own
+G-08 and grants no operation authority.
 Historical RC-3 and RC-5 operation
 1 IDs are consumed and permanently locked; RC-5 operation 2 is also locked. RC-6 operation 1 is
 not consumed, but its failed-window authority is retired; operation 2 is locked. RC-7 operation 1 is
@@ -63,13 +66,13 @@ Production remains undeployed and unverified.
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; RC-11 ASR Operation 1 is blocked/not consumed; RC-12 Operation 1 reached a provider response but failed strict response validation, is consumed/`REVIEW_REQUIRED` and produced no accepted transcript/usage/cost receipt; V3-01-21 adds future diagnostics offline but no accepted real ASR/reframe result exists |
+| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; RC-12 Operation 1 remains consumed/`REVIEW_REQUIRED`; RC-13 contains the diagnostic remediation and an unmounted fresh gate, but neither operation is approved and no accepted real ASR/reframe result exists |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | production-like backup/restore/image rollback incomplete | local disposable drill only; no production state touched |
-| V3-01-GAP-013 | broader real-asset rights coverage incomplete | both RC-10 operations retained narrow Vision rights; RC-12 preflight proved exact asset-specific selection for WAV 01 before its later response-validation failure, while accepted real ASR, final-render retention and public-output rights remain absent |
+| V3-01-GAP-013 | broader real-asset rights coverage incomplete | both RC-10 operations retained narrow Vision rights; RC-12 preflight proved exact asset-specific selection for WAV 01 and RC-13 revalidates both unchanged ASR RightsRecords offline, while accepted real ASR, final-render retention and public-output rights remain absent |
 | V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work

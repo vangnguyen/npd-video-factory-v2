@@ -146,6 +146,14 @@ and fresh operation IDs. It remains conditional, unmounted and non-executable un
 complete. An actual cost may be recorded only from a separately authorized provider receipt; the
 current actual cost is 0 VND.
 
+For RC-13, `EV-V3-RC13-ASR-GATE-001` rebinds the same fixed 162 VND/minute accounting rule to
+budget day `2026-09-06`, exact execution scope
+`179624fe3a365e415c41b760e49297da0cd23227cf9b49a634e7fbcaaf90b47e` and two fresh RC-derived
+operation IDs. The proposed limits remain 500 VND per operation and 1,250 VND per window. The
+bundle is unmounted, neither operation is approved, and this governance package performs zero
+reservation, zero provider call and zero spend. RC-12's 500 VND safety charge remains historical
+and is not treated as actual provider cost.
+
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit
 `0f0854466655d2f36cfa8b57785000097b220c4c`, plus the failed bounded-operation evidence above;

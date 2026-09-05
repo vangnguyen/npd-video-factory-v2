@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC13-ASR-GATE-001",
+  "rc": {
+    "tag": "vf-v3-01-rc13",
+    "commit": "1e0146b44b19a5afcef267132d71d36d24a952e4",
+    "tag_object": "75a8c0f1b59452d47cfd7b36397ba1feb7fb14b2",
+    "remediation_pr": 46,
+    "remediation_exact_head": "7169cc4db55931ee4fc145411e1e04651c004785",
+    "remediation_exact_head_ci_run_id": 33974602125,
+    "exact_main_ci_run_id": 33976046393,
+    "ci_status": "completed_success"
+  },
+  "governance": {
+    "draft_pr": "PENDING",
+    "governance_head": null,
+    "governance_main_commit": null,
+    "governance_main_ci_run_id": null,
+    "dual_ci_provenance": "PENDING_POST_MERGE",
+    "executable_tree_equality": "PASS_PRE_PR",
+    "executable_tree_sha256": "51231c4c054e52dbde56fb774fb1937ee4c53f8f572cfdc5e1c6e339cb9a78a8"
+  },
+  "gate": {
+    "bundle_path": "docs/acceptance/v3-01/V3-01-GATE-RC13-OPENAI-ASR-A.json",
+    "bundle_sha256": "236262caf3ae4a10c8c3fa760e9caf134837e4327b860b2d4693e08c7031f1b8",
+    "execution_scope_sha256": "179624fe3a365e415c41b760e49297da0cd23227cf9b49a634e7fbcaaf90b47e",
+    "provider_scope_sha256": "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "budget_sha256": "8675d1147f9c51ba4179fb95168c8799f0940dc0b1ea339230d585d6bd0b46d0",
+    "valid_from_utc": "2026-09-06T14:00:00Z",
+    "expires_at_utc": "2026-09-06T18:00:00Z",
+    "mounted": false
+  },
+  "approvals": [
+    {
+      "id": "V3-01-APP-053",
+      "gate": "G-01-ASR",
+      "canonical_sha256": "df317dc6fd6429ad2ee29eb5c63a49145dd5b0a8b82c80cf99a911d1bac6613b",
+      "runtime_authority": false
+    },
+    {
+      "id": "V3-01-APP-054",
+      "gate": "G-02-ASR",
+      "canonical_sha256": "cf5b198895d3bc288da103ec553d07bda0fa27637ccdcc15a8ad08516a7206d3",
+      "runtime_authority": false
+    },
+    {
+      "id": "V3-01-APP-055",
+      "gate": "G-03-ASR",
+      "canonical_sha256": "ce597576e9844e90200d90b3e4dc14cd2803197b31d6f4471064d43f3bc5f4f9",
+      "runtime_authority": false
+    }
+  ],
+  "provider": {
+    "key": "openai-transcription",
+    "model": "whisper-1",
+    "capability": "asr",
+    "language": "vi",
+    "credential_alias": "secret://openai/codex-video",
+    "credential_reads": 0,
+    "provider_calls": 0
+  },
+  "budget": {
+    "currency": "VND",
+    "vnd_per_minute": "162",
+    "per_operation_limit_vnd": "500",
+    "acceptance_window_limit_vnd": "1250",
+    "reserved_vnd": "0",
+    "actual_vnd": "0",
+    "provider_http_timeout_seconds": 90,
+    "controller_hard_timeout_seconds": 120,
+    "attempts": 1,
+    "concurrency": 1,
+    "automatic_retry": false,
+    "model_fallback": false
+  },
+  "assets": [
+    {
+      "slot": 1,
+      "sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "bytes": 5800940,
+      "duration_seconds": 120.852,
+      "transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+      "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091"
+    },
+    {
+      "slot": 2,
+      "sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "bytes": 6460396,
+      "duration_seconds": 134.590667,
+      "transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef",
+      "rights_record_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323"
+    }
+  ],
+  "operations": [
+    {
+      "id": "v3-01-rc13-openai-transcription-asr-call-01",
+      "authority": "NOT_APPROVED",
+      "executed": false
+    },
+    {
+      "id": "v3-01-rc13-openai-transcription-asr-call-02",
+      "authority": "NOT_APPROVED_LOCKED",
+      "executed": false
+    }
+  ],
+  "validation": {
+    "focused_tests": "7 passed",
+    "bundle_loader": "PASS",
+    "asset_hashes": "PASS",
+    "audio_headers_and_durations": "PASS",
+    "reference_transcript_hashes": "PASS",
+    "multi_asset_rights_binding": "PASS",
+    "durable_nondurable_parity": "PASS",
+    "approval_hashes": "PASS",
+    "strict_response_schema_unchanged": "PASS",
+    "fail_closed_defaults": "PASS",
+    "secret_scan": "PASS"
+  },
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "real_provider_tested": "NOT_TESTED",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED"
+  },
+  "production_verdict": "NO-GO"
+}

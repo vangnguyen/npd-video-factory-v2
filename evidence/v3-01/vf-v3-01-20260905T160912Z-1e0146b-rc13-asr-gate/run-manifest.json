@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260905T160912Z-1e0146b-rc13-asr-gate",
+  "started_at_utc": "2026-09-05T15:51:00Z",
+  "completed_at_utc": "2026-09-05T16:09:12Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "1e0146b44b19a5afcef267132d71d36d24a952e4",
+  "base_sha": "1e0146b44b19a5afcef267132d71d36d24a952e4",
+  "release_candidate": "vf-v3-01-rc13",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0013_v3_01_18_nullable_transcript_confidence",
+  "config_fingerprint_redacted": "fixture-default-rc13-openai-asr-gate-unmounted-zero-budget-kill-switch-engaged-no-credential-read",
+  "providers": [
+    {
+      "capability": "asr",
+      "provider": "openai-transcription-gate-validation-only",
+      "model_or_workflow": "whisper-1 / no provider execution",
+      "region": "not-applicable",
+      "credential_alias": "secret://openai/codex-video",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "ASR-01",
+    "PRO-006",
+    "RC13-ASR-GATE-FOCUSED-REGRESSION"
+  ],
+  "artifact_manifest": [
+    "matrix/evidence-EV-V3-RC13-ASR-GATE-001.json",
+    "provider/rc13-asr-gate-validation.json",
+    "provider/test-summary.json",
+    "final/status.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved_conditional_window": 1250,
+    "reserved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-01",
+    "G-02",
+    "G-03"
+  ],
+  "result": "PASS"
+}
