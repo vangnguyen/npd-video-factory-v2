@@ -22,9 +22,13 @@ reservation, ledger row or provider dispatch. The gate correctly carried two ass
 `rights_records[]`; only the durable controller still used the legacy singular record. The
 operation is `BLOCKED_PRE_CALL`, not consumed, costs 0 VND and has retired authority. V3-01-20
 routes both controller implementations through one exact asset-ID/hash selector and proves parity
-offline. It merged as locked RC-12 `ca5483c889742c27af3368b9b487350d7daa217d`. The fresh RC-12
-bundle remains unmounted, Operation 1 is not approved and Operation 2 is locked. This does not test
-OpenAI ASR, `whisper-1`, transcript accuracy or production behavior.
+offline. It merged as locked RC-12 `ca5483c889742c27af3368b9b487350d7daa217d`. PR #45 then merged
+the fresh RC-12 governance scope. The separately authorized Operation 1 passed preflight, resolved
+the approved alias once and reached an OpenAI response, but strict response mapping/validation failed
+with `OPENAI_TRANSCRIPTION_RESPONSE_INVALID`. It is consumed/failed/`REVIEW_REQUIRED`; actual cost
+is unknown and its 500 VND ledger charge is conservative safety accounting, not actual provider
+cost. No accepted transcript/usage receipt or exact validation path was retained. Operation 2 is
+retired/locked. This proves provider reach, not OpenAI ASR transcript acceptance or production behavior.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
@@ -104,7 +108,7 @@ distinct response hash. The runner stopped and the bundle was unmounted after ea
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
-| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock Vietnamese transcript/segment/word mapping, compatibility matrix, gate rejection tests, V3-01-20 controller parity and exact RC-12 two-asset gate rebind | implemented/mock-tested `PASS`; RC-12 G-01/G-02/G-03 scope rebound; real-provider `NOT_TESTED` | G-08 for the hash-pinned unmounted RC-12 bundle, exact governance-main/dual-CI verification, then separate Operation 1 authority; PRO-006 |
+| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, RC-12 response-reach evidence and `EV-V3-ASR-RESPONSE-DIAGNOSTICS-001` | implemented/mock-tested `PASS`; RC-12 Operation 1 consumed/failed strict response validation; real-provider `NOT_TESTED` | G-08 for V3-01-21, merge/full regression, lock RC-13, fresh scope/window/IDs and separate provider gates/Operation 1 authority; PRO-006 |
 | Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS; PR #39 and exact-main CI complete | real-provider `PASS`; production path and quality remain `BLOCKED` | standalone Vision acceptance closed; no Operation 3; PRO-001 real-provider sub-scope complete |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
@@ -175,7 +179,11 @@ PR #41 then merged V3-01-18 as locked RC-11. Evidence `EV-V3-OPENAI-ASR-ADAPTER-
 the implemented/mock-tested ASR adapter, canonical gate contract and offline compatibility matrix.
 The owner subsequently selected `whisper-1`, approved G-02-ASR v1.1, and approved two exact
 owner-verified WAV/RightsRecord inputs. `EV-V3-RC11-ASR-GATE-001` validates their unmounted bundle
-offline. Real-provider, production-path and quality axes remain `NOT_TESTED`; neither operation has
-authority. See
+offline. RC-11 Operation 1 later blocked pre-call on the durable multi-asset rights projection, and
+V3-01-20 fixed the future path in RC-12. The bounded RC-12 operation described above still failed
+response validation, so real-provider, production-path and quality axes remain `NOT_TESTED`.
+V3-01-21 adds safe future validation-path and allowlisted-metadata diagnostics, plus alias-aware
+secret scanning, with zero calls/credential reads/VND; it does not reconstruct RC-12 evidence or
+promote an axis. See
 [44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md](44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md)
 and [45_V3_01_RC11_OPENAI_ASR_GATE.md](45_V3_01_RC11_OPENAI_ASR_GATE.md).

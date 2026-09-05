@@ -33,12 +33,23 @@ their hash-pinned bundle remains unmounted and both operations remain unauthoriz
 is still `NOT_TESTED`. PR #42/#43 later merged without changing RC-11. The separately authorized
 ASR Operation 1 stopped fail closed before credential, reservation and provider dispatch because
 durable preflight had not selected from the gate's multi-asset RightsRecords. It is not consumed,
-its authority is retired and Operation 2 is locked. V3-01-20 merged as RC-12 and remediates only that
-executable rights-selection contract offline. The fresh RC-12 scope remains unmounted; Operation 1
-is not approved and Operation 2 is locked. ASR real-provider therefore remains `NOT_TESTED`. `I/M/R/P/Q` mean
+its authority is retired and Operation 2 is locked. V3-01-20 merged as RC-12 and remediates that
+executable rights-selection contract offline. PR #45 then merged the fresh RC-12 scope. Its separately
+authorized Operation 1 passed preflight and reached a provider response, but strict response
+mapping/validation failed. The operation is consumed/`REVIEW_REQUIRED`; no accepted transcript,
+usage or actual-cost receipt exists, and Operation 2 is retired/locked. V3-01-21 adds future safe
+diagnostics and alias-aware secret scanning offline without reconstructing the RC-12 response. ASR
+real-provider therefore remains `NOT_TESTED`. `I/M/R/P/Q` mean
 implemented, mock-tested,
 real-provider-tested, production-path-tested and quality-accepted. Every PASS cites current-base
 static or CI evidence. No status in one axis implies a result in another axis.
+
+PR #45 later merged the RC-12 scope and Operation 1 received a separate bounded authority. It
+reached one OpenAI response after exact multi-asset rights preflight, then failed strict response
+validation. The operation is consumed/failed/`REVIEW_REQUIRED`; actual cost and the exact response
+mismatch remain unknown, and Operation 2 is retired/locked. V3-01-21 adds zero-call, value-free
+diagnostics and fixes credential-reference scan semantics. This still does not promote `ASR-01`
+real-provider-tested above `NOT_TESTED`.
 
 The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTANCE_MATRIX.csv).
 
@@ -64,7 +75,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | SCR-01 | Script generation and versioning | FAIL | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-002 |
 | SCR-02 | Storyboard and media plan | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-004 |
 | UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-002-PARTIAL | GAP-007; GAP-011 |
-| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; EV-V3-RC12-ASR-GATE-001 | GAP-003 |
+| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; EV-V3-RC12-ASR-GATE-001; EV-V3-ASR-RESPONSE-DIAGNOSTICS-001 | GAP-003 |
 | EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
 | EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |

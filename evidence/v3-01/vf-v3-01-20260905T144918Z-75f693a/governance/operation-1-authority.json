@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "authority_id": "V3-01-RC12-ASR-OPERATION-1",
+  "decision": "APPROVED",
+  "recorded_at_utc": "2026-09-05T14:06:54Z",
+  "approval_source": "Owner approval in the controlling Codex task",
+  "operation_key": "v3-01-rc12-openai-transcription-asr-call-01",
+  "rc_tag": "vf-v3-01-rc12",
+  "rc_commit": "ca5483c889742c27af3368b9b487350d7daa217d",
+  "governance_main_commit": "f765f216f90b0d05071cc7c873a2edb6d5bdcec4",
+  "executable_rc_ci_run_id": 33889772222,
+  "governance_main_ci_run_id": 33894628759,
+  "dual_ci_provenance_sha256": "4e79d6446292f775ecf44164ce6de278b9ee02d1ee2c04224ba1ff70b0029a13",
+  "executable_tree_sha256": "f745b19bccf39655c50ee35e52dd5cb37f12fdc1e2031d00472813a8a2c30015",
+  "provider_key": "openai-transcription",
+  "model": "whisper-1",
+  "capability": "asr",
+  "language": "vi",
+  "credential_alias": "secret://openai/codex-video",
+  "gate_bundle_sha256": "218e06d245f43733a2659aff35f4ea0e7e73dcd17258f663d351b198aebf3db1",
+  "execution_scope_sha256": "6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4",
+  "asset_id": "asset-g03-asr-vi-owned-01",
+  "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+  "asset_bytes": 5800940,
+  "asset_duration_seconds": 120.852,
+  "reference_transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+  "asset_manifest_sha256": "0d7aef962dcb5e34ed5786fadd2e9cfd156cbfb8784d498092262d33b76de7c0",
+  "rights_record_id": "V3-01-RIGHTS-ASR-001",
+  "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+  "approval_records": {
+    "G-01": {
+      "approval_id": "V3-01-APP-048",
+      "record_sha256": "dc3b2a60d2feabdb9bb3bd84305fcc29e63627c1d3dbf2bdf4c7a5ac4321c6e6"
+    },
+    "G-02": {
+      "approval_id": "V3-01-APP-049",
+      "record_sha256": "c8499dfd63a1fff8b203b3ea5eb7357b520528178dedf61f1d603f8a67052191"
+    },
+    "G-03": {
+      "approval_id": "V3-01-APP-050",
+      "record_sha256": "88a9b5525d2131ac7c45b3ae5c566b38922c61ba8e5b83130302f90649977422"
+    }
+  },
+  "valid_from_utc": "2026-09-05T14:00:00Z",
+  "expires_at_utc": "2026-09-05T18:00:00Z",
+  "limits": {
+    "currency": "VND",
+    "files_per_operation": 1,
+    "minimum_duration_seconds": 90.0,
+    "max_duration_seconds": 180.0,
+    "max_file_bytes": 25000000,
+    "response_format": "verbose_json",
+    "timestamp_granularities": [
+      "segment",
+      "word"
+    ],
+    "vnd_per_minute": "162",
+    "per_operation_limit_vnd": "500",
+    "acceptance_window_limit_vnd": "1250",
+    "provider_http_timeout_seconds": 90.0,
+    "controller_hard_timeout_seconds": 120.0,
+    "max_concurrent_calls": 1,
+    "max_attempts": 1,
+    "automatic_retry": false,
+    "model_fallback": false
+  },
+  "automation_paused_before_manual_execution": true,
+  "operation_2_authorized": false,
+  "deployment_authorized": false,
+  "public_ingress_authorized": false,
+  "publishing_authorized": false,
+  "production_analytics_authorized": false,
+  "production_verdict": "NO-GO"
+}

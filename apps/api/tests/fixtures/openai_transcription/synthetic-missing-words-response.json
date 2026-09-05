@@ -1,0 +1,15 @@
+{
+  "fixture_kind": "synthetic_representative_not_rc12_raw_response",
+  "task": "transcribe",
+  "language": "vietnamese",
+  "duration": 4.0,
+  "text": "NỘI DUNG FIXTURE KHÔNG ĐƯỢC GHI VÀO DIAGNOSTIC",
+  "segments": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 4.0,
+      "text": "NỘI DUNG FIXTURE KHÔNG ĐƯỢC GHI VÀO DIAGNOSTIC"
+    }
+  ]
+}

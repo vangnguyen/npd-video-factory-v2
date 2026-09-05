@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-21",
+  "source_commit": "75f693ab1a1a600b6069a6e13fdd2b3414f91960",
+  "focused_regression": {
+    "tests_passed": 56,
+    "tests_failed": 0,
+    "result": "PASS"
+  },
+  "full_python_regression": {
+    "tests_passed": 424,
+    "tests_failed": 0,
+    "compileall": "PASS",
+    "result": "PASS"
+  },
+  "studio_regression": {
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "syntax_checks": "PASS",
+    "result": "PASS"
+  },
+  "renderer_regression": {
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "typecheck": "PASS",
+    "bundle_check": "PASS",
+    "result": "PASS"
+  },
+  "acceptance_evidence_validation": "PASS",
+  "migration_replay": "PASS_UPGRADE_DOWNGRADE_UPGRADE",
+  "compose_validation": "PASS_BASE_AND_PRODUCTION_OVERLAY",
+  "artifact_sanity": {
+    "json_parse": "PASS",
+    "markdown_links": "PASS",
+    "checksum_validation": "PASS",
+    "secret_scan": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "docker_e2e": "PENDING_EXACT_HEAD_CI_LOCAL_DAEMON_UNAVAILABLE",
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "spend_vnd": 0
+}

@@ -25,10 +25,15 @@ from .models import StrictModel
 from .provider_safety import (
     ProviderErrorEvidence,
     ProviderExecutionTrace,
+    ProviderJsonShapeType,
+    ProviderRequestDispatchState,
+    ProviderResponseMetadata,
     ProviderRateLimitError,
     ProviderTimeoutEnvelope,
     ProviderTimeoutError,
     ProviderTransientError,
+    ProviderValidationIssue,
+    ProviderValidationIssueKind,
 )
 
 
@@ -48,6 +53,7 @@ _OFFICIAL_API = (
 _CHECKED_ON = date(2026, 9, 3)
 _SUPPORTED_MEDIA_KINDS = {"audio", "video"}
 _SUPPORTED_FILE_SUFFIXES = {".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"}
+_ASR_RESPONSE_FIELDS = ("task", "language", "duration", "text", "segments", "words")
 _SECRET_TEXT_PATTERNS = (
     re.compile(r"sk-[A-Za-z0-9_-]{8,}", re.IGNORECASE),
     re.compile(r"(?i)(bearer\s+)\S+"),
@@ -194,6 +200,120 @@ def _safe_request_id(value: object) -> str | None:
     return "sha256:" + hashlib.sha256(candidate.encode("utf-8")).hexdigest()
 
 
+def _exception_type_chain(error: BaseException) -> tuple[str, ...]:
+    chain: list[str] = []
+    current: BaseException | None = error
+    seen: set[int] = set()
+    while current is not None and len(chain) < 8 and id(current) not in seen:
+        seen.add(id(current))
+        chain.append(type(current).__name__)
+        current = current.__cause__ or current.__context__
+    return tuple(chain)
+
+
+def _json_shape_type(value: object) -> ProviderJsonShapeType:
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "boolean"
+    if isinstance(value, dict):
+        return "object"
+    if isinstance(value, list):
+        return "array"
+    if isinstance(value, str):
+        return "string"
+    return "number"
+
+
+def _response_metadata(payload: object) -> ProviderResponseMetadata:
+    if not isinstance(payload, dict):
+        return ProviderResponseMetadata(top_level_type=_json_shape_type(payload))
+    present = tuple(field for field in _ASR_RESPONSE_FIELDS if field in payload)
+    missing = tuple(field for field in _ASR_RESPONSE_FIELDS if field not in payload)
+    field_types = {field: _json_shape_type(payload[field]) for field in present}
+    segments = payload.get("segments")
+    words = payload.get("words")
+    return ProviderResponseMetadata(
+        top_level_type="object",
+        allowed_fields_present=present,
+        missing_required_fields=missing,
+        field_types=field_types,
+        segment_count=len(segments) if isinstance(segments, list) else None,
+        word_count=len(words) if isinstance(words, list) else None,
+        unknown_top_level_field_count=len(set(payload) - set(_ASR_RESPONSE_FIELDS)),
+    )
+
+
+class _ResponseContractViolation(ValueError):
+    def __init__(
+        self,
+        *,
+        path: str,
+        code: str,
+        kind: ProviderValidationIssueKind,
+    ) -> None:
+        super().__init__(code)
+        self.path = path
+        self.code = code
+        self.kind = kind
+
+
+def _validation_path(location: tuple[object, ...]) -> str:
+    path = "$"
+    for item in location:
+        if isinstance(item, int) and item >= 0:
+            path += f"[{item}]"
+        elif isinstance(item, str) and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_-]{0,79}", item):
+            path += f".{item}"
+        else:
+            return "$"
+    return path
+
+
+def _validation_issue_kind(code: str) -> ProviderValidationIssueKind:
+    if code == "missing":
+        return "missing"
+    if "type" in code or code.endswith("_parsing"):
+        return "type"
+    if any(part in code for part in ("greater_than", "less_than", "range")):
+        return "range"
+    if "overlap" in code or "monotonic" in code:
+        return "ordering"
+    if "segment" in code or "mapping" in code or "bound" in code:
+        return "mapping"
+    return "invalid"
+
+
+def _validation_issues(error: BaseException) -> tuple[ProviderValidationIssue, ...]:
+    if isinstance(error, _ResponseContractViolation):
+        return (
+            ProviderValidationIssue(
+                path=error.path,
+                code=error.code,
+                kind=error.kind,
+            ),
+        )
+    if isinstance(error, ValidationError):
+        issues: list[ProviderValidationIssue] = []
+        for item in error.errors(
+            include_url=False,
+            include_context=False,
+            include_input=False,
+        )[:32]:
+            code = str(item.get("type") or "value_error")[:120]
+            issues.append(
+                ProviderValidationIssue(
+                    path=_validation_path(tuple(item.get("loc") or ())),
+                    code=code,
+                    kind=_validation_issue_kind(code),
+                )
+            )
+        return tuple(issues)
+    return (
+        ProviderValidationIssue(path="$", code="value_error", kind="invalid"),
+    )
+
+
 def _provider_error_fields(
     response_bytes: bytes,
 ) -> tuple[str | None, str | None, str | None, str | None]:
@@ -233,9 +353,20 @@ def _error_evidence(
     provider_error_code: object = None,
     provider_error_parameter: object = None,
     provider_error_message: object = None,
+    request_sha256: str | None = None,
+    elapsed_ms: float | None = None,
+    request_dispatch_state: ProviderRequestDispatchState | None = None,
+    exception_chain: tuple[str, ...] = (),
+    validation_issues: tuple[ProviderValidationIssue, ...] = (),
+    response_metadata: ProviderResponseMetadata | None = None,
 ) -> ProviderErrorEvidence:
     return ProviderErrorEvidence(
         category=category,
+        phase=(
+            "structured_output_validation"
+            if category == "structured_output_validation"
+            else None
+        ),
         code=code,
         http_status=http_status,
         provider_error_type=_redact_provider_text(provider_error_type, limit=160),
@@ -244,9 +375,15 @@ def _error_evidence(
         provider_error_message=_redact_provider_text(provider_error_message, limit=1000),
         provider_request_id=_safe_request_id(provider_request_id),
         client_request_id=client_request_id,
+        request_sha256=request_sha256,
         response_sha256=(
             hashlib.sha256(response_bytes).hexdigest() if response_bytes is not None else None
         ),
+        validation_issues=validation_issues,
+        response_metadata=response_metadata,
+        elapsed_ms=elapsed_ms,
+        request_dispatch_state=request_dispatch_state,
+        exception_chain=exception_chain,
         retryable=retryable,
         secret_recorded=False,
     )
@@ -319,13 +456,26 @@ def _validate_ordered_windows(
     media_duration_seconds: float,
 ) -> None:
     previous_end = -1.0
-    for start, end in windows:
+    for index, (start, end) in enumerate(windows):
+        path = f"$.{label}[{index}]"
         if start < 0 or end <= start:
-            raise ValueError(f"{label} contains an invalid timestamp window")
+            raise _ResponseContractViolation(
+                path=path,
+                code="invalid_timestamp_window",
+                kind="range",
+            )
         if start < previous_end - 1e-6:
-            raise ValueError(f"{label} timestamps overlap or are non-monotonic")
+            raise _ResponseContractViolation(
+                path=path,
+                code="timestamp_overlap",
+                kind="ordering",
+            )
         if end > media_duration_seconds + 0.05:
-            raise ValueError(f"{label} timestamp exceeds media duration")
+            raise _ResponseContractViolation(
+                path=path,
+                code="timestamp_out_of_range",
+                kind="range",
+            )
         previous_end = end
 
 
@@ -520,16 +670,15 @@ class OpenAITranscriptionProvider:
                 timeout_kind = "read"
             else:
                 timeout_kind = "transport"
-            raise ProviderTimeoutError(
-                error_evidence=trace.timeout_evidence(
-                    code="PROVIDER_TIMEOUT",
-                    timeout_kind=timeout_kind,
-                    timeout_envelope=self.timeout_envelope,
-                    error=exc,
-                    retryable=True,
-                    provider_error_message="OpenAI transcription transport timed out",
-                )
-            ) from exc
+            timeout_evidence = trace.timeout_evidence(
+                code="PROVIDER_TIMEOUT",
+                timeout_kind=timeout_kind,
+                timeout_envelope=self.timeout_envelope,
+                error=exc,
+                retryable=True,
+                provider_error_message="OpenAI transcription transport timed out",
+            ).model_copy(update={"request_sha256": request_sha256})
+            raise ProviderTimeoutError(error_evidence=timeout_evidence) from exc
         except httpx.RequestError as exc:
             raise ProviderTransientError(
                 "OPENAI_TRANSCRIPTION_NETWORK_ERROR",
@@ -538,6 +687,10 @@ class OpenAITranscriptionProvider:
                     code="OPENAI_TRANSCRIPTION_NETWORK_ERROR",
                     retryable=True,
                     client_request_id=client_request_id,
+                    request_sha256=request_sha256,
+                    elapsed_ms=trace.elapsed_ms(),
+                    request_dispatch_state=trace.request_dispatch_state,
+                    exception_chain=_exception_type_chain(exc),
                     provider_error_type=type(exc).__name__,
                     provider_error_message="OpenAI transcription transport failed",
                 ),
@@ -571,6 +724,9 @@ class OpenAITranscriptionProvider:
                     provider_error_code=error_code,
                     provider_error_parameter=error_parameter,
                     provider_error_message=error_message,
+                    request_sha256=request_sha256,
+                    elapsed_ms=latency_ms,
+                    request_dispatch_state=trace.request_dispatch_state,
                 )
             )
         if response.status_code in {408, 409} or response.status_code >= 500:
@@ -588,6 +744,9 @@ class OpenAITranscriptionProvider:
                     provider_error_code=error_code,
                     provider_error_parameter=error_parameter,
                     provider_error_message=error_message,
+                    request_sha256=request_sha256,
+                    elapsed_ms=latency_ms,
+                    request_dispatch_state=trace.request_dispatch_state,
                 ),
             )
         if response.status_code >= 400:
@@ -603,6 +762,9 @@ class OpenAITranscriptionProvider:
                 provider_error_code=error_code,
                 provider_error_parameter=error_parameter,
                 provider_error_message=error_message,
+                request_sha256=request_sha256,
+                elapsed_ms=latency_ms,
+                request_dispatch_state=trace.request_dispatch_state,
             )
             raise OpenAITranscriptionResponseError(
                 f"OpenAI transcription request was rejected with HTTP {response.status_code}",
@@ -615,6 +777,9 @@ class OpenAITranscriptionProvider:
                 retryable=False,
                 response_bytes=response_bytes,
                 client_request_id=client_request_id,
+                request_sha256=request_sha256,
+                elapsed_ms=latency_ms,
+                request_dispatch_state=trace.request_dispatch_state,
                 provider_error_message="provider request ID is missing",
             )
             raise OpenAITranscriptionResponseError(
@@ -631,6 +796,10 @@ class OpenAITranscriptionProvider:
                 response_bytes=response_bytes,
                 provider_request_id=provider_request_id,
                 client_request_id=client_request_id,
+                request_sha256=request_sha256,
+                elapsed_ms=latency_ms,
+                request_dispatch_state=trace.request_dispatch_state,
+                exception_chain=_exception_type_chain(exc),
                 provider_error_type=type(exc).__name__,
                 provider_error_message="OpenAI transcription returned invalid JSON",
             )
@@ -659,6 +828,13 @@ class OpenAITranscriptionProvider:
                 response_bytes=response_bytes,
                 provider_request_id=provider_request_id,
                 client_request_id=client_request_id,
+                http_status=response.status_code,
+                request_sha256=request_sha256,
+                elapsed_ms=latency_ms,
+                request_dispatch_state=trace.request_dispatch_state,
+                exception_chain=_exception_type_chain(exc),
+                validation_issues=_validation_issues(exc),
+                response_metadata=_response_metadata(raw_payload),
                 provider_error_type=type(exc).__name__,
                 provider_error_message="OpenAI transcription response failed strict validation",
             )
@@ -683,9 +859,17 @@ class OpenAITranscriptionProvider:
     ) -> ProviderTranscript:
         language = _normalize_language(payload.language)
         if language != self.language:
-            raise ValueError("OpenAI transcription response language does not match the request")
+            raise _ResponseContractViolation(
+                path="$.language",
+                code="language_mismatch",
+                kind="invalid",
+            )
         if payload.duration > media_duration_seconds + 0.5:
-            raise ValueError("provider duration exceeds validated media duration")
+            raise _ResponseContractViolation(
+                path="$.duration",
+                code="duration_out_of_range",
+                kind="range",
+            )
 
         segment_windows = [(item.start, item.end) for item in payload.segments]
         word_windows = [(item.start, item.end) for item in payload.words]
@@ -702,15 +886,23 @@ class OpenAITranscriptionProvider:
 
         assigned_word_indexes: set[int] = set()
         segments: list[ProviderSegment] = []
-        for segment in payload.segments:
+        for segment_index, segment in enumerate(payload.segments):
             mapped_words: list[ProviderWord] = []
             for index, word in enumerate(payload.words):
                 midpoint = (word.start + word.end) / 2
                 if segment.start - 0.05 <= midpoint <= segment.end + 0.05:
                     if index in assigned_word_indexes:
-                        raise ValueError("provider word maps to more than one segment")
+                        raise _ResponseContractViolation(
+                            path=f"$.words[{index}]",
+                            code="word_maps_to_multiple_segments",
+                            kind="mapping",
+                        )
                     if word.start < segment.start - 0.05 or word.end > segment.end + 0.05:
-                        raise ValueError("provider word falls outside its segment")
+                        raise _ResponseContractViolation(
+                            path=f"$.words[{index}]",
+                            code="word_outside_segment",
+                            kind="mapping",
+                        )
                     assigned_word_indexes.add(index)
                     mapped_words.append(
                         ProviderWord(
@@ -721,7 +913,11 @@ class OpenAITranscriptionProvider:
                         )
                     )
             if not mapped_words:
-                raise ValueError("provider segment has no native word timestamps")
+                raise _ResponseContractViolation(
+                    path=f"$.segments[{segment_index}]",
+                    code="segment_without_word_timestamps",
+                    kind="mapping",
+                )
             segments.append(
                 ProviderSegment(
                     start_seconds=round(segment.start, 6),
@@ -733,7 +929,11 @@ class OpenAITranscriptionProvider:
                 )
             )
         if len(assigned_word_indexes) != len(payload.words):
-            raise ValueError("one or more provider words are not bound to a segment")
+            raise _ResponseContractViolation(
+                path="$.words",
+                code="unbound_word_timestamps",
+                kind="mapping",
+            )
 
         duration_minutes = Decimal(str(payload.duration)) / Decimal("60")
         actual_cost = (duration_minutes * self._vnd_per_minute).quantize(

@@ -27,6 +27,12 @@ new bundle is unmounted; neither operation is authorized, publishing/training/re
 prohibited and real ASR rights-path execution remains `NOT_TESTED`. This validates the rights
 control offline only and does not extend the approved ASR purpose.
 
+RC-12 Operation 1 later passed that exact asset-01 RightsRecord preflight and reached the provider
+response path. This is positive evidence for the bounded rights-selection path, but the response
+failed strict validation and did not yield accepted ASR output. It does not expand the RightsRecord,
+authorize publishing/training/resale or close broader final-render rights. Operation 2 is retired
+and V3-01-21 performs no media use or provider call.
+
 ## Required RightsRecord
 
 Each source or generated asset must validate against `schemas/rights-record.schema.json` and include:

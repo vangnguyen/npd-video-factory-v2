@@ -1,0 +1,25 @@
+{
+  "approval_id": "V3-01-APP-051",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #45 as the RC-12 OpenAI ASR governance rebind only; no runtime authority is implied.",
+  "artifact_or_commit_hashes": [
+    "e309f3950623002bc4048e955ae07791a7ff282e",
+    "f765f216f90b0d05071cc7c873a2edb6d5bdcec4",
+    "ca5483c889742c27af3368b9b487350d7daa217d",
+    "218e06d245f43733a2659aff35f4ea0e7e73dcd17258f663d351b198aebf3db1",
+    "6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4"
+  ],
+  "target_account_or_environment": "GitHub repository main branch governance only; executable RC-12 remained immutable and undeployed",
+  "limits": [
+    "Governance/evidence/tests merge only",
+    "No provider call or credential read",
+    "No operation authority",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-04T16:21:00Z",
+  "expires_at_utc": null,
+  "notes": "The owner explicitly approved PR #45 in the controlling task. The decision is conservatively recorded at the exact merge timestamp because no separate machine timestamp for the chat decision was retained. Governance-main CI 33894628759 passed; the later RC-12 Operation 1 used a separate bounded authority and is not authorized by this record."
+}

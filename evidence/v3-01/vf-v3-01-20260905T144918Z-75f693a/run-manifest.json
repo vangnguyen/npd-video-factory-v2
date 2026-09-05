@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260905T144918Z-75f693a",
+  "started_at_utc": "2026-09-05T14:49:18Z",
+  "completed_at_utc": "2026-09-05T15:17:17Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "75f693ab1a1a600b6069a6e13fdd2b3414f91960",
+  "base_sha": "f765f216f90b0d05071cc7c873a2edb6d5bdcec4",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-21-remediation",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0013_v3_01_18_nullable_transcript_confidence",
+  "config_fingerprint_redacted": "fixture-defaults-zero-budget-kill-switch-engaged-no-credential-read-no-provider-call",
+  "providers": [
+    {
+      "capability": "asr-response-diagnostics",
+      "provider": "openai-transcription-offline-contract-only",
+      "model_or_workflow": "synthetic validation fixtures / no provider execution",
+      "region": "not-applicable",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "ASR-01",
+    "PRO-006",
+    "V3-01-21-ASR-RESPONSE-DIAGNOSTICS"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "governance/operation-1-authority.json",
+    "matrix/evidence-EV-V3-ASR-RESPONSE-DIAGNOSTICS-001.json",
+    "operations/rc12-asr-operation-1/operation-1-review.json",
+    "provider/status.json",
+    "provider/test-summary.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-01",
+    "G-02",
+    "G-03"
+  ],
+  "result": "PASS"
+}

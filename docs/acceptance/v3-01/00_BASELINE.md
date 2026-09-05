@@ -25,6 +25,16 @@ and PR #44 merged as `ca5483c889742c27af3368b9b487350d7daa217d`; exact-main CI `
 passed 5/5 and annotated `vf-v3-01-rc12` now peels to that merge. A fresh RC-12 ASR scope is checked
 in for G-08 review only; its bundle is unmounted and both operations remain unauthorized.
 
+PR #45 subsequently merged that governance scope as
+`f765f216f90b0d05071cc7c873a2edb6d5bdcec4`; governance-main CI `33894628759` passed and the
+owner separately authorized RC-12 ASR Operation 1. The operation passed preflight, selected the
+exact asset-bound RightsRecord and reached a provider response once, but strict response mapping
+failed with `OPENAI_TRANSCRIPTION_RESPONSE_INVALID`. It is consumed/failed/`REVIEW_REQUIRED`,
+actual provider cost is unknown and its 500 VND ledger amount is only a conservative safety charge.
+The primary evidence writer then misclassified the approved credential alias as a secret value.
+Operation 2 is locked and retired. V3-01-21 remediates future diagnostics and alias scanning
+offline; it does not reconstruct RC-12 evidence or promote ASR real-provider acceptance.
+
 ## Control state
 
 ```text
@@ -32,14 +42,14 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: RC-12 ca5483c889742c27af3368b9b487350d7daa217d; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Vision closed; RC-12 ASR governance rebind; zero-call G-08 pending
+CURRENT SAFE PHASE: Vision closed; V3-01-21 ASR response-diagnostics remediation; zero-call G-08 pending
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #44 APPROVED/MERGED; RC-12 GOVERNANCE REBIND DRAFT REQUIRES A NEW G-08
-G-01/G-02/G-03-ASR: RC-12 SCOPE REBOUND; NO OPERATION AUTHORITY
+G-08: PR #45 APPROVED/MERGED; V3-01-21 DRAFT REQUIRES A NEW G-08
+G-01/G-02/G-03-ASR: RC-12 SCOPE CONSUMED BY FAILED OPERATION 1; REBIND REQUIRED AFTER RC-13
 RC-11 ASR OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; 0 CALLS/READS/VND; AUTHORITY RETIRED
 RC-11 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
-RC-12 ASR OPERATION 1: NOT APPROVED; NOT EXECUTED
-RC-12 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
+RC-12 ASR OPERATION 1: FAILED RESPONSE VALIDATION; REVIEW_REQUIRED; CONSUMED; NO RETRY
+RC-12 ASR OPERATION 2: NOT APPROVED; LOCKED; RETIRED; NOT EXECUTED
 G-01-A / G-02-A / G-03-A: CONSUMED BY EXACT RC-10 OPERATIONS 1 AND 2; NO FURTHER OPERATION AUTHORITY
 RC-10 OPERATION 1: PASS; CONSUMED / SUCCEEDED
 RC-10 OPERATION 2: PASS; CONSUMED / SUCCEEDED; VISION 2/2 CONSECUTIVE PASS
@@ -183,9 +193,9 @@ Current repository checkpoint after the bounded merge sequence:
 | RC-10 consecutive Vision closure | PR #39 merged evidence-only as `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed`; `V3-01-APP-041` consumed; exact-main CI `33703619599` passed 5/5; dual-CI provenance PASS; executable tree remained `f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c`; source receipt SHA values remained `11fd1f7c...` and `deed47e5...` |
 | PR #41 / RC-11 | PR #41 exact head `8ebb1cffe8563e49ccf4847ef37209d9644a4e70`; merged as `207ff9fee5557eb0976f575c9263b61d995b20a0`; exact-head CI `33711738092` and exact-main CI `33712762815` passed; annotated `vf-v3-01-rc11` peels to the merge; `V3-01-APP-043` records G-08 |
 | RC-11 ASR governance proposal | `whisper-1`; two exact owner-approved WAVs/RightsRecords; G-01/G-02/G-03 records `V3-01-APP-044` through `046`; raw bundle SHA `4f8edd02ec62182404976de16e8d75b39ddbbbbe96c0d78efd46e3a97d6ace46`; scope SHA `7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a`; bundle unmounted; operations not approved |
-| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is officially 2/2 consecutive real-provider PASS; no Operation 3 is required or authorized; RC-11 ASR remains real-provider `NOT_TESTED` and both operations are unauthorized |
+| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is officially 2/2 consecutive real-provider PASS; no Operation 3 is required or authorized; RC-11 ASR Operation 1 blocked pre-call/not consumed; RC-12 ASR Operation 1 reached a provider response but failed strict mapping/validation and is consumed/`REVIEW_REQUIRED`; ASR real-provider remains `NOT_TESTED` |
 | PR #44 / RC-12 | PR #44 exact head `a5666703fe7d0c0fe9a78deadc7eefd5bd848e61`; merged as `ca5483c889742c27af3368b9b487350d7daa217d`; exact-head CI `33888514088` and exact-main CI `33889772222` passed 5/5; annotated `vf-v3-01-rc12` peels to the merge; `V3-01-APP-047` records G-08 |
-| RC-12 ASR governance rebind | fresh operations `v3-01-rc12-openai-transcription-asr-call-01/02`; unchanged exact WAV/transcript/RightsRecord hashes; records `V3-01-APP-048` through `050`; raw bundle SHA `218e06d245f43733a2659aff35f4ea0e7e73dcd17258f663d351b198aebf3db1`; scope SHA `6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4`; bundle unmounted; both operations not approved |
+| RC-12 ASR governance rebind and bounded operation | PR #45 merged governance-only as `f765f216f90b0d05071cc7c873a2edb6d5bdcec4`; governance-main CI `33894628759` passed; fresh operations `v3-01-rc12-openai-transcription-asr-call-01/02`; unchanged exact WAV/transcript/RightsRecord hashes; records `V3-01-APP-048` through `051`; raw bundle SHA `218e06d245f43733a2659aff35f4ea0e7e73dcd17258f663d351b198aebf3db1`; scope SHA `6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4`; separately authorized Operation 1 reached a response once, failed strict validation and is consumed/`REVIEW_REQUIRED`; actual cost unknown; Operation 2 retired/locked |
 | Deployment/ingress/publish action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in
@@ -197,7 +207,7 @@ README, architecture, security, deployment, testing, V2 acceptance and runbook d
 |---|---|
 | API/worker/renderer/Studio version | `0.12.0` |
 | API title | `NPD Video Factory V2 API` |
-| Latest Alembic migration on `main` | `0012_v3_01_11_provider_error_evidence` |
+| Latest Alembic migration on `main` | `0013_v3_01_18_nullable_transcript_confidence` |
 | V3-01-07 schema change | none; public API and Redis key formats remain compatible |
 | Compose project | `npd-video-factory-v2` |
 | Default services | PostgreSQL, Redis, MinIO, migrate, API, Studio, renderer, worker |
