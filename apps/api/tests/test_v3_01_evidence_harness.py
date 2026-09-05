@@ -236,7 +236,8 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-RC11-ASR-GATE-001" in gap_003["evidence_ids"]
     assert "EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001" in gap_003["evidence_ids"]
     assert "EV-V3-RC12-ASR-GATE-001" in gap_003["evidence_ids"]
-    assert gap_003["verified_on_commit"] == "ca5483c889742c27af3368b9b487350d7daa217d"
+    assert "EV-V3-ASR-RESPONSE-DIAGNOSTICS-001" in gap_003["evidence_ids"]
+    assert gap_003["verified_on_commit"] == "75f693ab1a1a600b6069a6e13fdd2b3414f91960"
 
     gap_010 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-010")
     assert gap_010["status"] == "IN_PROGRESS"
@@ -251,7 +252,8 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-RC9-VISION-REBIND-001" in gap_010["evidence_ids"]
     assert "EV-V3-RC10-VISION-REBIND-001" in gap_010["evidence_ids"]
     assert "EV-V3-RC10-VISION-CONSECUTIVE-PASS-001" in gap_010["evidence_ids"]
-    assert gap_010["verified_on_commit"] == "c2b1aec2d54dd90bcb486f8a68c97746b39963aa"
+    assert "EV-V3-ASR-RESPONSE-DIAGNOSTICS-001" in gap_010["evidence_ids"]
+    assert gap_010["verified_on_commit"] == "75f693ab1a1a600b6069a6e13fdd2b3414f91960"
 
     gap_013 = next(row for row in gaps if row["gap_id"] == "V3-01-GAP-013")
     assert gap_013["status"] == "IN_PROGRESS"
@@ -266,6 +268,7 @@ def test_v3_01_08_snapshot_and_latest_gap_deltas_are_consistent() -> None:
     assert "EV-V3-RC11-ASR-GATE-001" in gap_013["evidence_ids"]
     assert "EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001" in gap_013["evidence_ids"]
     assert "EV-V3-RC12-ASR-GATE-001" in gap_013["evidence_ids"]
+    assert "EV-V3-ASR-RESPONSE-DIAGNOSTICS-001" in gap_013["evidence_ids"]
     assert gap_013["verified_on_commit"] == "ca5483c889742c27af3368b9b487350d7daa217d"
     assert contract["gaps"]["by_severity"] == dict(Counter(row["severity"] for row in gaps))
     assert contract["production_verdict"] == "NO-GO"
@@ -340,6 +343,44 @@ def test_rc10_vision_consecutive_evidence_is_complete_and_distinct() -> None:
     assert hashlib.sha256(op2_path.read_bytes()).hexdigest() == (
         "deed47e573079bd53118859f616991aae42b420992aad84f39cbfb4bdb3df0a2"
     )
+
+
+def test_rc12_asr_response_validation_review_remains_incomplete() -> None:
+    path = (
+        REPO_ROOT
+        / "evidence"
+        / "v3-01"
+        / "vf-v3-01-20260905T144918Z-75f693a"
+        / "operations"
+        / "rc12-asr-operation-1"
+        / "operation-1-review.json"
+    )
+    record = json.loads(path.read_text(encoding="utf-8"))
+
+    assert record["operation"] == {
+        "operation_id": "v3-01-rc12-openai-transcription-asr-call-01",
+        "status": "FAILED",
+        "consumed": True,
+        "attempts": 1,
+        "retry_count": 0,
+        "fallback_count": 0,
+    }
+    assert record["outcome"]["provider_execution"] == "FAILED_RESPONSE_VALIDATION"
+    assert record["outcome"]["acceptance_verdict"] == "REVIEW_REQUIRED"
+    assert record["outcome"]["provider_request_id"] == (
+        "req_cd17bc6b28c241a58a59805ed8f039fd"
+    )
+    assert record["outcome"]["response_sha256"] == (
+        "1d55f138d8518dfc171fe345be7f7cba948dfa2a3036b9f292ef87230aa22878"
+    )
+    assert record["outcome"]["request_sha256"] is None
+    assert record["outcome"]["actual_cost_vnd"] is None
+    assert record["outcome"]["safety_charge_is_actual_cost"] is False
+    assert record["evidence_boundary"]["exact_response_shape_known"] is False
+    assert record["evidence_boundary"]["response_reconstructed"] is False
+    assert record["evidence_boundary"]["asr_real_provider_axis_promoted"] is False
+    assert record["operation_2"]["status"] == "NOT_APPROVED_LOCKED_RETIRED"
+    assert record["production_verdict"] == "NO-GO"
 
 
 def test_rc5_operation_1_review_record_is_permanently_fail_closed() -> None:

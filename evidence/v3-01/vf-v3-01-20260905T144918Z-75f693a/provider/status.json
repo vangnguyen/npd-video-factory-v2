@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-21",
+  "source_commit": "75f693ab1a1a600b6069a6e13fdd2b3414f91960",
+  "execution_mode": "OFFLINE_ZERO_CALL",
+  "rc12_operation_1": {
+    "provider_execution": "FAILED_RESPONSE_VALIDATION",
+    "acceptance_verdict": "REVIEW_REQUIRED",
+    "consumed": true,
+    "actual_cost_vnd": null,
+    "safety_charge_vnd": "500.0000"
+  },
+  "remediation": {
+    "diagnostic_phase": "structured_output_validation",
+    "value_free_validation_paths": true,
+    "allowlisted_response_shape": true,
+    "request_and_response_hashes_for_future_failures": true,
+    "raw_response_persisted": false,
+    "canonical_credential_references_allowed": true,
+    "credential_values_allowed": false
+  },
+  "exact_rc12_mismatch": "UNKNOWN_NOT_RECONSTRUCTED",
+  "rc12_operation_2": "NOT_APPROVED_LOCKED_RETIRED",
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "spend_vnd": 0,
+  "production_verdict": "NO_GO"
+}

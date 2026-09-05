@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-ASR-RESPONSE-DIAGNOSTICS-001",
+  "test_case_id": "ASR-01+PRO-006",
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "75f693ab1a1a600b6069a6e13fdd2b3414f91960",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-transcription-adapter-diagnostics",
+    "model_or_workflow": "offline response-validation and evidence-containment remediation",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "1d55f138d8518dfc171fe345be7f7cba948dfa2a3036b9f292ef87230aa22878",
+  "started_at_utc": "2026-09-05T14:49:18Z",
+  "completed_at_utc": "2026-09-05T15:17:17Z",
+  "duration_seconds": 1680,
+  "result": "PASS",
+  "assertion": "Future OpenAI ASR validation failures persist bounded value-free paths, response-shape metadata, request identifiers, hashes and durable context while withholding raw provider values; canonical credential-reference URIs no longer trigger a false positive, but real keys and tokens remain blocked. This is source/mock remediation only and does not promote the failed RC-12 operation or ASR real-provider acceptance.",
+  "correlation_id": "v3-01-21-local-asr-diagnostics-75f693a",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-ASR-001",
+  "reviewer": "Codex local ASR response-diagnostics reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On source commit 75f693ab1a1a600b6069a6e13fdd2b3414f91960, run the focused OpenAI transcription/evidence/provider-safety tests and full Python/API/worker/bridge regression with fixture defaults, no credential resolution and zero external calls."
+}

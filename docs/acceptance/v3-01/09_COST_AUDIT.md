@@ -23,6 +23,8 @@
 | RC-11 ASR Operation 1 rights-preflight block | VND | retired conditional 1,250 window / 500 operation | 0 | 0 | 0 |
 | V3-01-20 durable multi-asset rights remediation | VND | 0 | 0 | 0 | 0 |
 | RC-12 ASR governance rebind | VND | checked-in runtime budget 0; proposed conditional 1,250 window / 500 operation | 0 | 0 | 0 |
+| RC-12 ASR Operation 1 response-validation failure | VND | 500 operation / 1,250 window | 500 safety charge; 0 reserved after reconciliation | unknown | 1 provider call; safety charge is not actual provider cost |
+| V3-01-21 response-diagnostics remediation | VND | 0 | 0 | 0 | 0 calls; 0 credential reads |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence.
 

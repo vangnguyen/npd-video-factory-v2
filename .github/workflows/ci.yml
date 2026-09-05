@@ -445,6 +445,21 @@ jobs:
           grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
           python -c 'import json; from pathlib import Path; p=Path("evidence/v3-01/vf-v3-01-20260903T030156Z-d2f34eb/final/status.json"); d=json.loads(p.read_text()); assert d["acceptance"] == {"implemented": "PASS", "mock_tested": "PASS", "real_provider_tested": "NOT_TESTED", "production_path_tested": "NOT_TESTED", "quality_accepted": "NOT_TESTED"}; assert d["model_selection"] == "PROPOSED_NOT_APPROVED"; assert d["provider_calls"] == 0; assert d["credential_reads"] == 0; assert d["spend_vnd"] == 0; assert d["repository_verdict"] == "NO_GO"'
           ! git grep -I -n -E '^(TRANSCRIPTION_PROVIDER=openai|OPENAI_TRANSCRIPTION_MODEL=.+|OPENAI_API_KEY=.+|OPENAI_TRANSCRIPTION_ESTIMATED_COST_VND=[1-9][0-9]*|OPENAI_TRANSCRIPTION_VND_PER_MINUTE=[1-9][0-9]*(\.[0-9]+)?|PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=true|PROVIDER_EXTERNAL_EXECUTION_ENABLED=true|PROVIDER_PAID_EXECUTION_ENABLED=true|PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=false)$' -- .env.example docker-compose.yml deploy apps services
+      - name: Verify V3-01-21 ASR response-diagnostics boundary
+        run: |
+          grep -Fq 'class ProviderValidationIssue' apps/api/app/provider_safety.py
+          grep -Fq 'class ProviderResponseMetadata' apps/api/app/provider_safety.py
+          grep -Fq 'phase: Literal["structured_output_validation"] | None' apps/api/app/provider_safety.py
+          grep -Fq 'synthetic_representative_not_rc12_raw_response' apps/api/tests/fixtures/openai_transcription/synthetic-missing-words-response.json
+          grep -Fq '_CREDENTIAL_REFERENCE_PATTERN' apps/api/app/evidence_serialization.py
+          python -c 'import json; from pathlib import Path; p=Path("evidence/v3-01/vf-v3-01-20260905T144918Z-75f693a/operations/rc12-asr-operation-1/operation-1-review.json"); d=json.loads(p.read_text()); assert d["outcome"]["provider_execution"] == "FAILED_RESPONSE_VALIDATION"; assert d["outcome"]["acceptance_verdict"] == "REVIEW_REQUIRED"; assert d["operation"]["consumed"] is True; assert d["outcome"]["actual_cost_vnd"] is None; assert d["outcome"]["safety_charge_is_actual_cost"] is False; assert d["evidence_boundary"]["exact_response_shape_known"] is False; assert d["evidence_boundary"]["response_reconstructed"] is False; assert d["operation_2"]["status"] == "NOT_APPROVED_LOCKED_RETIRED"; assert d["production_verdict"] == "NO-GO"'
+          grep -qx 'TRANSCRIPTION_PROVIDER=fixture' .env.example
+          grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
+          grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
+          grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

@@ -2,7 +2,8 @@
 
 The canonical, lossless register is [`13_GAP_REGISTER.csv`](13_GAP_REGISTER.csv). This summary is
 derived from the audit captured on `2026-08-27`, updated through locked NO-GO RC-12
-`ca5483c889742c27af3368b9b487350d7daa217d`, PR #44 and the RC-12 ASR gate rebind proposal. Historical RC-5
+`ca5483c889742c27af3368b9b487350d7daa217d`, governance merge PR #45 and the consumed RC-12 ASR
+Operation 1 response-validation failure. Historical RC-5
 operation-1 provider execution succeeded,
 but request-level acceptance evidence was incomplete after post-call serialization failed. The
 operation is consumed/`REVIEW_REQUIRED`; V3-01-13 is now merged and exact-main tested. RC-6
@@ -23,9 +24,15 @@ Production-path and quality acceptance are not promoted. PR #40 then merged the 
 design as `4c74fa18a86b29ae8324885dacc6fdbca74ad066`; exact-main CI `33706971864` passed 5/5 and the
 executable tree stayed unchanged. V3-01-18 now provides source/mock evidence for the fail-closed
 OpenAI ASR adapter and compatibility contract only. PR #41 then merged that executable path as
-RC-11. `whisper-1`, the G-02-ASR v1.1 envelope and two exact owner-approved WAV/RightsRecord inputs
-are now bound in an unmounted governance proposal. Both operation authorities remain unapproved;
-ASR real-provider evidence remains absent.
+RC-11. RC-11 Operation 1 later blocked pre-call on the durable multi-asset rights mismatch, and
+V3-01-20 fixed that path in RC-12. PR #45 merged the exact RC-12 ASR governance scope; the separately
+authorized Operation 1 passed safety preflight and reached a real provider response, but strict
+mapping/validation failed with `OPENAI_TRANSCRIPTION_RESPONSE_INVALID`. The operation is consumed,
+acceptance is `REVIEW_REQUIRED`, actual provider cost is unknown and its 500 VND ledger charge is
+only conservative safety accounting. No accepted transcript, usage receipt or exact validation path
+was retained. V3-01-21 therefore adds zero-call response diagnostics and alias-aware secret scanning
+without reconstructing the failed response. Operation 2 is retired/locked; ASR real-provider PASS
+evidence remains absent.
 
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
@@ -39,8 +46,8 @@ through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
 `IN_PROGRESS`. RC-10 Vision is 2/2 consecutive real-provider PASS, while ASR/reframe,
 production-like safety and broader rights coverage remain open. The bounded G-08 decisions through
-PR #44 are consumed; the current RC-12 ASR governance rebind requires its own G-08 and grants no
-operation authority.
+PR #45 are consumed. RC-12 Operation 1 is consumed/failed/`REVIEW_REQUIRED`; Operation 2 is retired
+and locked. V3-01-21 now requires its own G-08 and grants no operation authority.
 Historical RC-3 and RC-5 operation
 1 IDs are consumed and permanently locked; RC-5 operation 2 is also locked. RC-6 operation 1 is
 not consumed, but its failed-window authority is retired; operation 2 is locked. RC-7 operation 1 is
@@ -56,13 +63,13 @@ Production remains undeployed and unverified.
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; RC-11 ASR Operation 1 remains blocked/not consumed; V3-01-20 merged as RC-12 and its fresh unmounted scope validates offline, but no RC-12 operation is approved and no accepted real ASR/reframe result exists |
+| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; RC-11 ASR Operation 1 is blocked/not consumed; RC-12 Operation 1 reached a provider response but failed strict response validation, is consumed/`REVIEW_REQUIRED` and produced no accepted transcript/usage/cost receipt; V3-01-21 adds future diagnostics offline but no accepted real ASR/reframe result exists |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
 | V3-01-GAP-007 | no production-like staging or production path | no deployment/route |
 | V3-01-GAP-008 | production-like backup/restore/image rollback incomplete | local disposable drill only; no production state touched |
-| V3-01-GAP-013 | broader real-asset rights coverage incomplete | both RC-10 operations retained narrow Vision rights; V3-01-20 and the RC-12 gate rebind prove exact asset-specific selection and unchanged rights for the two WAVs offline, while real ASR, final-render retention and public-output rights remain unaccepted |
+| V3-01-GAP-013 | broader real-asset rights coverage incomplete | both RC-10 operations retained narrow Vision rights; RC-12 preflight proved exact asset-specific selection for WAV 01 before its later response-validation failure, while accepted real ASR, final-render retention and public-output rights remain absent |
 | V3-01-GAP-016 | no human full-watch quality acceptance | Flow A/B approval hashes and thresholds enforced; no publish-ready claim |
 
 ## P1/P2 work
@@ -81,8 +88,13 @@ Production remains undeployed and unverified.
   behavior but did not retain provider receipt/usage or actual cost. V3-01-15 adds timeout-phase
   evidence offline. RC-10 operations 1 and 2 now prove two complete real-provider operations with
   atomic reservation, actual VND reconciliation, a closed circuit, duplicate blocking and complete
-  primary evidence. Vision is 2/2 consecutive PASS, while production-like multi-instance safety
-  remains unaccepted.
+  primary evidence. Vision is 2/2 consecutive PASS. RC-12 ASR Operation 1 additionally proves that
+  durable multi-asset rights and provider dispatch no longer block the path, but strict response
+  mapping failed, actual cost stayed unknown, and the primary writer fell back because the legacy
+  scanner treated an approved credential alias as a secret value. V3-01-21 records value-free
+  validation issue paths/codes, allowlisted response metadata and request/response hashes for future
+  failures, and distinguishes aliases from real credential values. Production-like multi-instance
+  safety remains unaccepted.
 - `V3-01-GAP-011` (`IN_PROGRESS`): auth rate limiting, URL-import denial and bounded malicious-input
   tests pass. V3-01-03 adds quarantine-before-decoder, archive-signature denial, EICAR contract
   tests, clean-verdict promotion and an internal clamd/WAF design contract; approved internal
@@ -176,6 +188,20 @@ V3-01-20 source/mock correction and durable/non-durable parity only. GAP-003 and
 
 PR #44 then merged V3-01-20 as locked RC-12 `ca5483c889742c27af3368b9b487350d7daa217d` after
 exact-main CI `33889772222` passed 5/5. `EV-V3-RC12-ASR-GATE-001` binds fresh RC-derived operation
-IDs, a new dated scope and the unchanged exact assets/transcripts/RightsRecords. The bundle remains
-unmounted, Operation 1 is not approved and Operation 2 is locked, so GAP-003 and GAP-013 remain
-`IN_PROGRESS` and ASR real-provider remains `NOT_TESTED`.
+IDs, a new dated scope and the unchanged exact assets/transcripts/RightsRecords. PR #45 merged that
+governance scope as `f765f216f90b0d05071cc7c873a2edb6d5bdcec4`; governance-main CI `33894628759`
+passed. The separately authorized Operation 1 passed preflight, resolved the credential once and
+reached a provider response, then failed strict response validation. The immutable review record
+keeps request ID/response hash and durable counts but no accepted transcript, request hash, usage or
+actual-cost receipt; those missing values remain missing. The operation is consumed/failed and
+`REVIEW_REQUIRED`; its 500 VND charge is not actual cost. Operation 2 is retired/locked.
+
+V3-01-21 adds `EV-V3-ASR-RESPONSE-DIAGNOSTICS-001` as zero-call source/mock evidence. It introduces
+a shared value-free diagnostic contract for `structured_output_validation`, allowlists safe provider
+metadata, preserves deterministic request/response hashes when available and records precise
+validation paths/codes without raw values. A representative synthetic missing-words fixture is
+explicitly not presented as the unknown RC-12 response shape. The canonical secret scanner now
+permits recognized credential-reference aliases while still rejecting OpenAI-style keys, bearer
+tokens and assigned secret values. RC-12 evidence is not reconstructed or promoted. GAP-003,
+GAP-010 and GAP-013 remain `IN_PROGRESS`; ASR real-provider remains `NOT_TESTED` and production is
+`NO-GO`.

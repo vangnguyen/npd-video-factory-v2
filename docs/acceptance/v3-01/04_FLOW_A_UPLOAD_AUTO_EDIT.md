@@ -35,7 +35,7 @@ and prove:
 |---|---|---|---|
 | Intake/upload | Present with quarantine-before-decoder and clean-verdict promotion | deterministic API/E2E plus EICAR/archive/error tests | mock PASS; internal scanner/production NOT_TESTED |
 | Source preservation | Present | object hash and immutable asset tests | mock PASS |
-| ASR | fixture/contract plus pre-call safety | measured deterministic fixtures, WER/critical-term checks and zero-call receipt | mock PASS; real provider BLOCKED |
+| ASR | fixture/contract plus fail-closed OpenAI adapter | measured deterministic fixtures, WER/critical-term checks, RC-12 response reach and V3-01-21 diagnostics | mock PASS; RC-12 validation failed; real-provider acceptance NOT_TESTED |
 | Auto Edit analysis | Present | synthetic video tests | mock PASS |
 | Vision/reframe | fixture/contract plus pre-call safety | measured scene F1/reframe coverage and zero-call receipt | mock PASS; real provider BLOCKED |
 | Timeline/preview | Present | FFmpeg container E2E | mock PASS; human quality NOT_TESTED |

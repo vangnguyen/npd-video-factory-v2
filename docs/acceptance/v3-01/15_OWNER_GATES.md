@@ -44,21 +44,25 @@ its own G-08. No earlier G-01/G-02/G-03-ASR record or operation authority author
 The owner then approved PR #44 under G-08. It merged as exact RC-12
 `ca5483c889742c27af3368b9b487350d7daa217d`; exact-main CI `33889772222` passed 5/5 and annotated
 `vf-v3-01-rc12` peels to that commit. Records `V3-01-APP-048` through `050` rebind the exact
-provider/budget/unchanged-rights scope to fresh RC-12 operation IDs and a proposed new window. This
-governance bundle remains unmounted. Neither operation is approved, and the governance PR itself
-still requires a new G-08.
+provider/budget/unchanged-rights scope to fresh RC-12 operation IDs and a proposed new window.
+PR #45 later merged that governance bundle as `f765f216f90b0d05071cc7c873a2edb6d5bdcec4`; its bounded
+G-08 is recorded as `V3-01-APP-051` and governance-main CI `33894628759` passed. The owner then
+granted a separate one-attempt authority for Operation 1. It reached a provider response but failed
+strict response validation, is consumed/`REVIEW_REQUIRED`, and cannot be reused. Actual cost is
+unknown; 500 VND is only the conservative safety charge. Operation 2 is locked and retired.
+V3-01-21 is a new zero-call source remediation and requires a separate G-08 before merge.
 
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
 | G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
-| G-01 | real-provider credential aliases/scopes | RC-12 ASR `V3-01-APP-048` binds only `openai-transcription / whisper-1 / asr / vi` and alias `secret://openai/codex-video` inside exact scope `6f0aecf2...` | governance G-08, dual-CI/executable-tree verification and a separate Operation 1 decision remain mandatory; no credential read is authorized |
-| G-02 | VND provider budgets and cost controls | RC-12 ASR `V3-01-APP-049` binds 500 VND/op, 1,250 VND/window, 162 VND/minute, 180s hard cap and 90/120s timeout for the proposed `2026-09-05` UTC window; 0 reserved | checked-in budget stays 0; any scope/window mutation requires rebind and no provider call is authorized |
-| G-03 | owned inputs, rights and provenance policy | RC-12 ASR `V3-01-APP-050` rebinds the two exact unchanged WAVs, voice consent, owner-verified transcripts and RightsRecords; no expiry and no publishing/training/resale | governance G-08 and separate operation authority remain mandatory; broader final-output rights remain open |
+| G-01 | real-provider credential aliases/scopes | RC-12 ASR `V3-01-APP-048` was consumed only by Operation 1 for `openai-transcription / whisper-1 / asr / vi`; no RC-12 authority remains | after V3-01-21 merge, lock RC-13 and rebind a fresh exact scope before any credential resolution |
+| G-02 | VND provider budgets and cost controls | RC-12 ASR `V3-01-APP-049` allowed 500 VND/op and 1,250 VND/window; Operation 1 actual cost is unknown and its 500 VND ledger charge is not an actual-cost receipt | checked-in budget stays 0; RC-13 requires a new scope/window rebind and separate operation authority |
+| G-03 | owned inputs, rights and provenance policy | RC-12 ASR `V3-01-APP-050` successfully bound asset 01 during preflight, without extending publishing/training/resale rights | assets may be rebound to RC-13 only if exact hashes, rights and expiry revalidate; broader final-output rights remain open |
 | G-04 | production-like staging execution | PENDING | locked commit/images, isolated topology and rollback plan |
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation/evidence PR merge | PR #44 decision is consumed and recorded as `V3-01-APP-047`; the RC-12 governance rebind draft is pending | a new explicit G-08 decision is required before merging the RC-12 bundle/evidence PR; it grants no runtime authority |
+| G-08 | remediation/evidence PR merge | PR #45 decision is consumed and recorded as `V3-01-APP-051`; V3-01-21 is a separate draft source remediation | a new explicit G-08 decision is required before merging V3-01-21; it grants no runtime authority |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING; schema, 27-check template and full-watch/listen checklist prepared offline | exact final video and dependent artifact hashes, named reviewer, UTC timestamps, desktop/mobile full watch, headphone/phone-speaker full listen and all checks PASS |
@@ -129,7 +133,12 @@ deployment, public route, publishing, analytics collection or production write. 
 [`V3-01-APP-043`](approvals/V3-01-APP-043.json),
 [`V3-01-APP-044`](approvals/V3-01-APP-044.json),
 [`V3-01-APP-045`](approvals/V3-01-APP-045.json), and
-[`V3-01-APP-046`](approvals/V3-01-APP-046.json). The secret-free consumed RC-10 operation
+[`V3-01-APP-046`](approvals/V3-01-APP-046.json),
+[`V3-01-APP-047`](approvals/V3-01-APP-047.json),
+[`V3-01-APP-048`](approvals/V3-01-APP-048.json),
+[`V3-01-APP-049`](approvals/V3-01-APP-049.json),
+[`V3-01-APP-050`](approvals/V3-01-APP-050.json), and
+[`V3-01-APP-051`](approvals/V3-01-APP-051.json). The secret-free consumed RC-10 operation
 authorities are retained in
 [`operation-1-authority.json`](../../../evidence/v3-01/vf-v3-01-20260902T143651Z-c2b1aec-op1/governance/operation-1-authority.json)
 and
