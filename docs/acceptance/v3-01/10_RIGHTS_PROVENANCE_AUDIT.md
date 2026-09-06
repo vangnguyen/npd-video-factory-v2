@@ -97,4 +97,10 @@ consumed/`REVIEW_REQUIRED` and does not establish accepted ASR output. Operation
 locked. Publishing, training, resale and unrelated use remain prohibited. V3-01-22 uses redacted
 diagnostic fixtures only and performs no media upload or provider call.
 
+RC-14 revalidates the same two exact assets, owner-verified transcripts, manifest and canonical
+RightsRecords without extending their purpose or duration. `EV-V3-RC14-ASR-GATE-001` proves the
+asset-specific durable/non-durable rights selection offline for both new operation slots. The bundle
+remains unmounted, Operation 1 has no runtime authority and Operation 2 is locked; this package makes
+no media upload, credential read or provider call and does not close broader rights acceptance.
+
 Open gap: `V3-01-GAP-013`.

@@ -38,6 +38,10 @@ values; therefore equality versus inversion and every other timestamp subclass r
 Actual cost is also unknown, while 500 VND is only a conservative safety charge. Operation 2 is
 locked/retired. V3-01-22 preserves this boundary and adds only offline classification,
 representation-preserving canonicalization and durable value-safe diagnostics for future attempts.
+PR #48 merged that remediation as locked RC-14
+`0b0965c650f4d06a057acbbb1a7ed9d7b933478b` after exact-head and exact-main CI passed 5/5. Its fresh
+bundle validates offline with unchanged assets and rights, but remains unmounted; both new operations
+are unauthorized and no provider call, credential read, reservation or spend occurred.
 
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
@@ -117,7 +121,7 @@ distinct response hash. The runner stopped and the bundle was unmounted after ea
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
-| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, RC-12/RC-13 immutable failure evidence, V3-01-21 diagnostics and `EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001` | implemented/mock-tested `PASS`; RC-13 Operation 1 reached HTTP 200 but rejected 27/412 word timestamps and remains consumed/`REVIEW_REQUIRED`; real-provider `NOT_TESTED` | G-08 for V3-01-22, merge/exact-main regression, then lock RC-14 and create a fresh separately gated operation lineage; PRO-006 |
+| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, RC-12/RC-13 immutable failure evidence, V3-01-21/V3-01-22 diagnostics and `EV-V3-RC14-ASR-GATE-001` | implemented/mock-tested `PASS`; RC-13 Operation 1 reached HTTP 200 but rejected 27/412 word timestamps and remains consumed/`REVIEW_REQUIRED`; RC-14 gate readiness is offline PASS, while real-provider remains `NOT_TESTED` | G-08 for the RC-14 governance proposal, governance-main CI and executable-tree equality, then a separate owner decision for RC-14 Operation 1; PRO-006 |
 | Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS; PR #39 and exact-main CI complete | real-provider `PASS`; production path and quality remain `BLOCKED` | standalone Vision acceptance closed; no Operation 3; PRO-001 real-provider sub-scope complete |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
@@ -199,6 +203,8 @@ promote an axis. PR #46 merged that executable remediation as locked `vf-v3-01-r
 canonical G-01/G-02/G-03 records, the 500/1,250 VND envelope and a dated window. PR #47 merged the
 governance scope, and a later separate authority produced the RC-13 result described above. Evidence
 `EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001` then proves only the V3-01-22 source/mock remediation;
-it makes zero calls/credential reads/reservations/spend and leaves ASR real-provider `NOT_TESTED`. See
+it makes zero calls/credential reads/reservations/spend and leaves ASR real-provider `NOT_TESTED`.
+PR #48 and exact-main CI then locked `vf-v3-01-rc14`; `EV-V3-RC14-ASR-GATE-001` validates only the
+fresh unmounted gate proposal and grants neither operation authority. See
 [44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md](44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md)
-and [53_V3_01_22_ASR_TIMESTAMP_CANONICALIZATION.md](53_V3_01_22_ASR_TIMESTAMP_CANONICALIZATION.md).
+and [54_V3_01_RC14_OPENAI_ASR_GATE.md](54_V3_01_RC14_OPENAI_ASR_GATE.md).

@@ -1,0 +1,50 @@
+{
+  "acceptance_and_evidence_validation": "PASS",
+  "checkpoint": "RC-14 OpenAI ASR governance gate",
+  "commit_sha": "0b0965c650f4d06a057acbbb1a7ed9d7b933478b",
+  "credential_reads": 0,
+  "docker_e2e": {
+    "exact_commit": "0b0965c650f4d06a057acbbb1a7ed9d7b933478b",
+    "jobs_failed": 0,
+    "jobs_passed": 5,
+    "result": "PASS",
+    "run_id": 34042079905
+  },
+  "focused_gate_regression": {
+    "command": "python -m pytest apps/api/tests/test_rc14_asr_gate_bundle.py -q",
+    "failed": 0,
+    "passed": 7,
+    "result": "PASS"
+  },
+  "governance_exact_head_ci": "PENDING_DRAFT_PR",
+  "json_and_markdown_link_validation": "PASS",
+  "migration_replay": {
+    "downgrade": "PASS",
+    "reupgrade": "PASS",
+    "revision": "0013_v3_01_18_nullable_transcript_confidence",
+    "upgrade": "PASS"
+  },
+  "provider_calls": 0,
+  "python_regression": {
+    "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+    "failed": 0,
+    "passed": 449,
+    "result": "PASS"
+  },
+  "renderer_regression": {
+    "bundle_check": "PASS",
+    "failed": 0,
+    "passed": 14,
+    "result": "PASS",
+    "typecheck": "PASS"
+  },
+  "result": "PASS",
+  "schema_version": 1,
+  "spend_vnd": "0",
+  "studio_regression": {
+    "failed": 0,
+    "passed": 14,
+    "result": "PASS",
+    "syntax_checks": "PASS"
+  }
+}

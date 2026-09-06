@@ -1,0 +1,26 @@
+{
+  "approval_id": "V3-01-APP-056",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of PR #48 as V3-01-22 ASR timestamp canonicalization and validation remediation, exact-main regression and the vf-v3-01-rc14 lock only; permit a later governance-only ASR rebind without granting runtime authority.",
+  "artifact_or_commit_hashes": [
+    "b41ed673bc343e33092a3d91253045729b663c7c",
+    "4f36133399e37683704f1a6605423bc6428159c3",
+    "0b0965c650f4d06a057acbbb1a7ed9d7b933478b"
+  ],
+  "target_account_or_environment": "GitHub repository main branch and LOCAL/CI regression only; production and provider execution remain disabled",
+  "limits": [
+    "Merge exact PR #48 head 4f36133399e37683704f1a6605423bc6428159c3 only",
+    "Lock vf-v3-01-rc14 only after exact-main regression succeeds",
+    "Keep start-equals-end, inverted and representation-unsafe timestamp intervals fail-closed",
+    "Do not infer that RC-14 will pass from the RC-13 diagnostic summary",
+    "No reuse of RC-13 operation IDs, bundle, window or runtime authority",
+    "No credential read, provider call, budget reservation or spend",
+    "No deployment, public ingress, publishing or production analytics",
+    "Production remains NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-06T15:22:02Z",
+  "expires_at_utc": null,
+  "notes": "The owner approved exact PR #48 head 4f36133399e37683704f1a6605423bc6428159c3. Exact-head CI 34041347519 and exact-main CI 34042079905 both completed successfully with 5/5 jobs. Annotated tag vf-v3-01-rc14, tag object d4ee474e02de5146c4a4dd7eea20ac96011abce5, peels to 0b0965c650f4d06a057acbbb1a7ed9d7b933478b and grants no operation authority."
+}
