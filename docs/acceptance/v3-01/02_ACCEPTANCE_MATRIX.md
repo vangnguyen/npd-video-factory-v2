@@ -75,7 +75,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | SCR-01 | Script generation and versioning | FAIL | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-002 |
 | SCR-02 | Storyboard and media plan | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-004 |
 | UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-002-PARTIAL | GAP-007; GAP-011 |
-| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; EV-V3-RC12-ASR-GATE-001; EV-V3-ASR-RESPONSE-DIAGNOSTICS-001; EV-V3-RC13-ASR-GATE-001 | GAP-003 |
+| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; EV-V3-RC12-ASR-GATE-001; EV-V3-ASR-RESPONSE-DIAGNOSTICS-001; EV-V3-RC13-ASR-GATE-001; EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001 | GAP-003 |
 | EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
 | EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
@@ -130,6 +130,9 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 - V3-01-18 proves only the disabled OpenAI ASR adapter/gate and offline compatibility contract. The
   later owner decisions select `whisper-1` and exact gate inputs but still perform no credential
   read, provider call or spend; gate readiness does not promote the real-provider axis.
+- RC-13 Operation 1 reached OpenAI and received 17 segments/412 words, but 27 word timestamp
+  objects failed strict mapping. V3-01-22 classifies and safely canonicalizes future values offline;
+  neither the operation nor this remediation promotes ASR real-provider-tested above `NOT_TESTED`.
 - `N/A` is used only where the master matrix defines an axis as structurally inapplicable; it does
   not remove the need for G-00 scope approval.
 - Current decision remains `NO-GO` because P0 gaps and mandatory gates are open.

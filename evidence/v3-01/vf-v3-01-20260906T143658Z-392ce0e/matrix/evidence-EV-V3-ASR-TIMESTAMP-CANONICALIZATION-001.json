@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001",
+  "test_case_id": "ASR-01+PRO-006",
+  "matrix_rows": [
+    "ASR-01",
+    "OPS-01",
+    "OPS-09"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "392ce0ecfb45d9f4699c1c56b6bde388ffc64a25",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-transcription",
+    "model_or_workflow": "whisper-1 timestamp canonicalization / offline fixtures only",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "05946e55516d16511e43fcb93fca948cb65ac6d594a863c96b9e10c136939ad3",
+  "started_at_utc": "2026-09-06T14:36:58Z",
+  "completed_at_utc": "2026-09-06T14:45:17Z",
+  "duration_seconds": 499,
+  "result": "PASS",
+  "assertion": "The ASR adapter classifies timestamp failures before domain mapping, records numeric raw and canonical values separately, permits only representation-preserving negative-zero and six-decimal rounding transformations, and rejects semantic uncertainty without rewriting transcript text or provider hashes. Historical RC-13 evidence remains REVIEW_REQUIRED because its 27 invalid word paths prove only end <= start and did not retain values needed for exact sub-classification.",
+  "correlation_id": "v3-01-22-local-asr-timestamp-392ce0e",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex local ASR timestamp contract reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On commit 392ce0ecfb45d9f4699c1c56b6bde388ffc64a25, run the focused OpenAI transcription/provider-safety tests and the full local regression with fixture transports only; retain zero provider calls, credential reads, reservations and spend."
+}

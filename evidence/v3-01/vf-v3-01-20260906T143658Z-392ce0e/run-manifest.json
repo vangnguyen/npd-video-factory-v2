@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260906T143658Z-392ce0e",
+  "started_at_utc": "2026-09-06T14:36:58Z",
+  "completed_at_utc": "2026-09-06T14:45:17Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "392ce0ecfb45d9f4699c1c56b6bde388ffc64a25",
+  "base_sha": "b41ed673bc343e33092a3d91253045729b663c7c",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-22-remediation",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0013_v3_01_18_nullable_transcript_confidence",
+  "config_fingerprint_redacted": "fixture-defaults-zero-budget-kill-switch-engaged-no-credential-read-no-provider-call",
+  "providers": [
+    {
+      "capability": "asr-timestamp-contract",
+      "provider": "openai-transcription-mock-transport-only",
+      "model_or_workflow": "whisper-1 timestamp canonicalization and diagnostics",
+      "region": "not-applicable",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "ASR-01",
+    "OPS-01",
+    "OPS-09",
+    "V3-01-22-ASR-TIMESTAMP-CANONICALIZATION"
+  ],
+  "artifact_manifest": [
+    "matrix/evidence-EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001.json",
+    "operations/rc13-asr-operation-1/operation-1-review.json",
+    "provider/timestamp-canonicalization-status.json",
+    "provider/test-summary.json",
+    "final/status.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [],
+  "result": "PASS"
+}

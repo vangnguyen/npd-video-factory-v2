@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-22",
+  "source_commit": "392ce0ecfb45d9f4699c1c56b6bde388ffc64a25",
+  "mode": "SOURCE_ONLY_ZERO_CALL",
+  "canonicalization": {
+    "precision_digits": 6,
+    "safe_transformations": [
+      "negative_zero_to_positive_zero",
+      "six_decimal_half_up_rounding_when_positive_ordering_is_preserved"
+    ],
+    "always_rejected": [
+      "start_equals_end",
+      "end_before_start",
+      "missing",
+      "non_numeric",
+      "out_of_range",
+      "overlap",
+      "word_outside_segment",
+      "precision_rounding_collapses_window"
+    ],
+    "inverted_window_swapped": false,
+    "zero_duration_invented": false,
+    "segment_boundary_invented": false,
+    "transcript_text_rewritten": false
+  },
+  "evidence_contract": {
+    "raw_response_sha256_preserved": true,
+    "raw_timestamp_values_retained_for_diagnostics": true,
+    "canonical_timestamp_values_separate": true,
+    "transformation_reason_per_item": true,
+    "transformed_and_rejected_counts": true,
+    "durable_json_persistence": true,
+    "provider_text_in_error_diagnostics": false,
+    "secret_recorded": false
+  },
+  "historical_rc13": {
+    "provider_http_status": 200,
+    "segments_received": 17,
+    "words_received": 412,
+    "invalid_word_objects": 27,
+    "proven_classification": "end_less_than_or_equal_start",
+    "exact_subclassification": "UNKNOWN_NOT_RETAINED",
+    "response_reconstructed": false,
+    "operation_consumed": true,
+    "operation_2_status": "LOCKED_RETIRED"
+  },
+  "safety": {
+    "provider_calls": 0,
+    "real_credential_reads": 0,
+    "reservation_vnd": "0",
+    "spend_vnd": "0",
+    "deployments": 0,
+    "publishes": 0,
+    "public_ingress_changes": 0,
+    "production_verdict": "NO-GO"
+  }
+}

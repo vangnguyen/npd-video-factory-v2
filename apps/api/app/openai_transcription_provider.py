@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import time
 import uuid
@@ -32,6 +33,9 @@ from .provider_safety import (
     ProviderTimeoutEnvelope,
     ProviderTimeoutError,
     ProviderTransientError,
+    ProviderTimestampDiagnostic,
+    ProviderTimestampDiagnosticKind,
+    ProviderTimestampSummary,
     ProviderValidationIssue,
     ProviderValidationIssueKind,
 )
@@ -244,6 +248,279 @@ def _response_metadata(payload: object) -> ProviderResponseMetadata:
     )
 
 
+class _TimestampCanonicalizationReport(BaseModel):
+    """Internal report containing timestamps only, never provider transcript text."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    segment_count_received: int | None = Field(default=None, ge=0)
+    word_count_received: int | None = Field(default=None, ge=0)
+    diagnostics: tuple[ProviderTimestampDiagnostic, ...] = ()
+
+    def summary(self) -> ProviderTimestampSummary:
+        counts: dict[ProviderTimestampDiagnosticKind, int] = {}
+        for item in self.diagnostics:
+            counts[item.classification] = counts.get(item.classification, 0) + 1
+        return ProviderTimestampSummary(
+            segment_count_received=self.segment_count_received,
+            word_count_received=self.word_count_received,
+            transformed_count=sum(item.action == "transformed" for item in self.diagnostics),
+            rejected_count=sum(item.action == "rejected" for item in self.diagnostics),
+            classification_counts=counts,
+        )
+
+    def with_diagnostic(
+        self,
+        diagnostic: ProviderTimestampDiagnostic,
+    ) -> "_TimestampCanonicalizationReport":
+        return self.model_copy(update={"diagnostics": self.diagnostics + (diagnostic,)})
+
+
+class _TimestampCanonicalizationError(ValueError):
+    def __init__(
+        self,
+        *,
+        report: _TimestampCanonicalizationReport,
+        validation_issues: tuple[ProviderValidationIssue, ...],
+    ) -> None:
+        super().__init__("provider timestamp payload cannot be canonicalized safely")
+        self.report = report
+        self.validation_issues = validation_issues
+
+
+def _timestamp_number(value: object) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    converted = float(value)
+    return converted if math.isfinite(converted) else None
+
+
+def _negative_zero(value: float) -> bool:
+    return value == 0 and math.copysign(1.0, value) < 0
+
+
+def _canonical_timestamp(value: float) -> float:
+    rounded = float(
+        Decimal(str(value)).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+    )
+    return 0.0 if rounded == 0 else rounded
+
+
+def _timestamp_changed(raw: float, canonical: float) -> bool:
+    return raw != canonical or _negative_zero(raw) != _negative_zero(canonical)
+
+
+def _timestamp_issue(
+    diagnostic: ProviderTimestampDiagnostic,
+) -> ProviderValidationIssue:
+    kinds: dict[str, ProviderValidationIssueKind] = {
+        "missing": "missing",
+        "non_numeric": "type",
+        "start_equals_end": "range",
+        "end_before_start": "range",
+        "out_of_range": "range",
+        "precision_rounding": "invalid",
+        "overlap": "ordering",
+        "word_outside_segment": "mapping",
+    }
+    return ProviderValidationIssue(
+        path=diagnostic.path,
+        code=diagnostic.classification,
+        kind=kinds[diagnostic.classification],
+    )
+
+
+def _canonicalize_timestamp_collection(
+    payload: dict[str, object],
+    *,
+    field: Literal["segments", "words"],
+    item_kind: Literal["segment", "word"],
+    media_duration_seconds: float,
+) -> tuple[list[object] | object, tuple[ProviderTimestampDiagnostic, ...]]:
+    raw_items = payload.get(field)
+    if not isinstance(raw_items, list):
+        return raw_items, ()
+
+    canonical_items: list[object] = []
+    diagnostics: list[ProviderTimestampDiagnostic] = []
+    for index, raw_item in enumerate(raw_items):
+        if not isinstance(raw_item, dict):
+            canonical_items.append(raw_item)
+            continue
+        path = f"$.{field}[{index}]"
+        canonical_item = dict(raw_item)
+        missing = tuple(name for name in ("start", "end") if name not in raw_item)
+        raw_start = _timestamp_number(raw_item.get("start"))
+        raw_end = _timestamp_number(raw_item.get("end"))
+        if missing:
+            diagnostics.append(
+                ProviderTimestampDiagnostic(
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification="missing",
+                    action="rejected",
+                    raw_start_seconds=raw_start,
+                    raw_end_seconds=raw_end,
+                    reason="missing_" + "_and_".join(missing),
+                )
+            )
+            canonical_items.append(canonical_item)
+            continue
+        non_numeric = tuple(
+            name
+            for name, value in (("start", raw_start), ("end", raw_end))
+            if value is None
+        )
+        if non_numeric:
+            diagnostics.append(
+                ProviderTimestampDiagnostic(
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification="non_numeric",
+                    action="rejected",
+                    raw_start_seconds=raw_start,
+                    raw_end_seconds=raw_end,
+                    reason="non_numeric_" + "_and_".join(non_numeric),
+                )
+            )
+            canonical_items.append(canonical_item)
+            continue
+        assert raw_start is not None and raw_end is not None
+        if raw_end == raw_start:
+            diagnostics.append(
+                ProviderTimestampDiagnostic(
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification="start_equals_end",
+                    action="rejected",
+                    raw_start_seconds=raw_start,
+                    raw_end_seconds=raw_end,
+                    reason="zero_duration_window_not_invented",
+                )
+            )
+            canonical_items.append(canonical_item)
+            continue
+        if raw_end < raw_start:
+            diagnostics.append(
+                ProviderTimestampDiagnostic(
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification="end_before_start",
+                    action="rejected",
+                    raw_start_seconds=raw_start,
+                    raw_end_seconds=raw_end,
+                    reason="inverted_window_not_swapped",
+                )
+            )
+            canonical_items.append(canonical_item)
+            continue
+        if (
+            raw_start < 0
+            or raw_end < 0
+            or raw_start > media_duration_seconds + 0.05
+            or raw_end > media_duration_seconds + 0.05
+        ):
+            diagnostics.append(
+                ProviderTimestampDiagnostic(
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification="out_of_range",
+                    action="rejected",
+                    raw_start_seconds=raw_start,
+                    raw_end_seconds=raw_end,
+                    reason="window_outside_media_duration",
+                )
+            )
+            canonical_items.append(canonical_item)
+            continue
+
+        canonical_start = _canonical_timestamp(raw_start)
+        canonical_end = _canonical_timestamp(raw_end)
+        if canonical_end <= canonical_start:
+            diagnostics.append(
+                ProviderTimestampDiagnostic(
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification="precision_rounding",
+                    action="rejected",
+                    raw_start_seconds=raw_start,
+                    raw_end_seconds=raw_end,
+                    canonical_start_seconds=canonical_start,
+                    canonical_end_seconds=canonical_end,
+                    reason="six_decimal_rounding_collapsed_window",
+                )
+            )
+            canonical_items.append(canonical_item)
+            continue
+        if _timestamp_changed(raw_start, canonical_start) or _timestamp_changed(
+            raw_end, canonical_end
+        ):
+            diagnostics.append(
+                ProviderTimestampDiagnostic(
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification="precision_rounding",
+                    action="transformed",
+                    raw_start_seconds=raw_start,
+                    raw_end_seconds=raw_end,
+                    canonical_start_seconds=canonical_start,
+                    canonical_end_seconds=canonical_end,
+                    reason="canonical_six_decimal_rounding",
+                )
+            )
+        canonical_item["start"] = canonical_start
+        canonical_item["end"] = canonical_end
+        canonical_items.append(canonical_item)
+    return canonical_items, tuple(diagnostics)
+
+
+def _canonicalize_timestamp_payload(
+    payload: object,
+    *,
+    media_duration_seconds: float,
+) -> tuple[object, _TimestampCanonicalizationReport]:
+    if not isinstance(payload, dict):
+        return payload, _TimestampCanonicalizationReport()
+    segments = payload.get("segments")
+    words = payload.get("words")
+    canonical = dict(payload)
+    canonical_segments, segment_diagnostics = _canonicalize_timestamp_collection(
+        payload,
+        field="segments",
+        item_kind="segment",
+        media_duration_seconds=media_duration_seconds,
+    )
+    canonical_words, word_diagnostics = _canonicalize_timestamp_collection(
+        payload,
+        field="words",
+        item_kind="word",
+        media_duration_seconds=media_duration_seconds,
+    )
+    if "segments" in payload:
+        canonical["segments"] = canonical_segments
+    if "words" in payload:
+        canonical["words"] = canonical_words
+    report = _TimestampCanonicalizationReport(
+        segment_count_received=len(segments) if isinstance(segments, list) else None,
+        word_count_received=len(words) if isinstance(words, list) else None,
+        diagnostics=segment_diagnostics + word_diagnostics,
+    )
+    rejected = tuple(item for item in report.diagnostics if item.action == "rejected")
+    if rejected:
+        raise _TimestampCanonicalizationError(
+            report=report,
+            validation_issues=tuple(_timestamp_issue(item) for item in rejected[:32]),
+        )
+    return canonical, report
+
+
 class _ResponseContractViolation(ValueError):
     def __init__(
         self,
@@ -251,11 +528,13 @@ class _ResponseContractViolation(ValueError):
         path: str,
         code: str,
         kind: ProviderValidationIssueKind,
+        timestamp_diagnostic: ProviderTimestampDiagnostic | None = None,
     ) -> None:
         super().__init__(code)
         self.path = path
         self.code = code
         self.kind = kind
+        self.timestamp_diagnostic = timestamp_diagnostic
 
 
 def _validation_path(location: tuple[object, ...]) -> str:
@@ -285,6 +564,8 @@ def _validation_issue_kind(code: str) -> ProviderValidationIssueKind:
 
 
 def _validation_issues(error: BaseException) -> tuple[ProviderValidationIssue, ...]:
+    if isinstance(error, _TimestampCanonicalizationError):
+        return error.validation_issues
     if isinstance(error, _ResponseContractViolation):
         return (
             ProviderValidationIssue(
@@ -311,6 +592,53 @@ def _validation_issues(error: BaseException) -> tuple[ProviderValidationIssue, .
         return tuple(issues)
     return (
         ProviderValidationIssue(path="$", code="value_error", kind="invalid"),
+    )
+
+
+def _timestamp_report_for_error(
+    error: BaseException,
+    report: _TimestampCanonicalizationReport,
+) -> _TimestampCanonicalizationReport:
+    if isinstance(error, _TimestampCanonicalizationError):
+        return error.report
+    if (
+        isinstance(error, _ResponseContractViolation)
+        and error.timestamp_diagnostic is not None
+    ):
+        return report.with_diagnostic(error.timestamp_diagnostic)
+    return report
+
+
+def _semantic_timestamp_diagnostic(
+    report: _TimestampCanonicalizationReport,
+    *,
+    path: str,
+    item_kind: Literal["segment", "word"],
+    index: int,
+    classification: Literal["word_outside_segment", "overlap", "out_of_range"],
+    start: float,
+    end: float,
+    reason: str,
+) -> ProviderTimestampDiagnostic:
+    prior = next(
+        (
+            item
+            for item in reversed(report.diagnostics)
+            if item.path == path and item.action == "transformed"
+        ),
+        None,
+    )
+    return ProviderTimestampDiagnostic(
+        path=path,
+        item_kind=item_kind,
+        index=index,
+        classification=classification,
+        action="rejected",
+        raw_start_seconds=(prior.raw_start_seconds if prior else start),
+        raw_end_seconds=(prior.raw_end_seconds if prior else end),
+        canonical_start_seconds=start,
+        canonical_end_seconds=end,
+        reason=reason,
     )
 
 
@@ -359,6 +687,7 @@ def _error_evidence(
     exception_chain: tuple[str, ...] = (),
     validation_issues: tuple[ProviderValidationIssue, ...] = (),
     response_metadata: ProviderResponseMetadata | None = None,
+    timestamp_report: _TimestampCanonicalizationReport | None = None,
 ) -> ProviderErrorEvidence:
     return ProviderErrorEvidence(
         category=category,
@@ -380,6 +709,8 @@ def _error_evidence(
             hashlib.sha256(response_bytes).hexdigest() if response_bytes is not None else None
         ),
         validation_issues=validation_issues,
+        timestamp_diagnostics=(timestamp_report.diagnostics if timestamp_report else ()),
+        timestamp_summary=(timestamp_report.summary() if timestamp_report else None),
         response_metadata=response_metadata,
         elapsed_ms=elapsed_ms,
         request_dispatch_state=request_dispatch_state,
@@ -454,27 +785,70 @@ def _validate_ordered_windows(
     *,
     label: str,
     media_duration_seconds: float,
+    timestamp_report: _TimestampCanonicalizationReport,
 ) -> None:
     previous_end = -1.0
+    item_kind: Literal["segment", "word"] = (
+        "segment" if label == "segments" else "word"
+    )
     for index, (start, end) in enumerate(windows):
         path = f"$.{label}[{index}]"
-        if start < 0 or end <= start:
+        if end <= start:
+            classification = (
+                "start_equals_end" if end == start else "end_before_start"
+            )
             raise _ResponseContractViolation(
                 path=path,
                 code="invalid_timestamp_window",
                 kind="range",
+                timestamp_diagnostic=ProviderTimestampDiagnostic(
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification=classification,
+                    action="rejected",
+                    raw_start_seconds=start,
+                    raw_end_seconds=end,
+                    canonical_start_seconds=start,
+                    canonical_end_seconds=end,
+                    reason=(
+                        "zero_duration_window_not_invented"
+                        if end == start
+                        else "inverted_window_not_swapped"
+                    ),
+                ),
             )
         if start < previous_end - 1e-6:
             raise _ResponseContractViolation(
                 path=path,
                 code="timestamp_overlap",
                 kind="ordering",
+                timestamp_diagnostic=_semantic_timestamp_diagnostic(
+                    timestamp_report,
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification="overlap",
+                    start=start,
+                    end=end,
+                    reason="ordered_window_overlap_not_rewritten",
+                ),
             )
         if end > media_duration_seconds + 0.05:
             raise _ResponseContractViolation(
                 path=path,
                 code="timestamp_out_of_range",
                 kind="range",
+                timestamp_diagnostic=_semantic_timestamp_diagnostic(
+                    timestamp_report,
+                    path=path,
+                    item_kind=item_kind,
+                    index=index,
+                    classification="out_of_range",
+                    start=start,
+                    end=end,
+                    reason="window_outside_media_duration",
+                ),
             )
         previous_end = end
 
@@ -807,8 +1181,13 @@ class OpenAITranscriptionProvider:
                 "OpenAI transcription returned invalid JSON",
                 error_evidence=evidence,
             ) from exc
+        timestamp_report = _TimestampCanonicalizationReport()
         try:
-            payload = _WhisperVerboseResponse.model_validate(raw_payload)
+            canonical_payload, timestamp_report = _canonicalize_timestamp_payload(
+                raw_payload,
+                media_duration_seconds=duration,
+            )
+            payload = _WhisperVerboseResponse.model_validate(canonical_payload)
             transcript = self._map_response(
                 payload,
                 media_duration_seconds=duration,
@@ -819,8 +1198,10 @@ class OpenAITranscriptionProvider:
                 client_request_id=client_request_id,
                 latency_ms=latency_ms,
                 credential_alias=alias,
+                timestamp_report=timestamp_report,
             )
         except (ValidationError, ValueError) as exc:
+            timestamp_report = _timestamp_report_for_error(exc, timestamp_report)
             evidence = _error_evidence(
                 category="structured_output_validation",
                 code="OPENAI_TRANSCRIPTION_RESPONSE_INVALID",
@@ -835,6 +1216,7 @@ class OpenAITranscriptionProvider:
                 exception_chain=_exception_type_chain(exc),
                 validation_issues=_validation_issues(exc),
                 response_metadata=_response_metadata(raw_payload),
+                timestamp_report=timestamp_report,
                 provider_error_type=type(exc).__name__,
                 provider_error_message="OpenAI transcription response failed strict validation",
             )
@@ -856,6 +1238,7 @@ class OpenAITranscriptionProvider:
         client_request_id: str,
         latency_ms: float,
         credential_alias: str,
+        timestamp_report: _TimestampCanonicalizationReport,
     ) -> ProviderTranscript:
         language = _normalize_language(payload.language)
         if language != self.language:
@@ -877,11 +1260,13 @@ class OpenAITranscriptionProvider:
             segment_windows,
             label="segments",
             media_duration_seconds=media_duration_seconds,
+            timestamp_report=timestamp_report,
         )
         _validate_ordered_windows(
             word_windows,
             label="words",
             media_duration_seconds=media_duration_seconds,
+            timestamp_report=timestamp_report,
         )
 
         assigned_word_indexes: set[int] = set()
@@ -902,6 +1287,16 @@ class OpenAITranscriptionProvider:
                             path=f"$.words[{index}]",
                             code="word_outside_segment",
                             kind="mapping",
+                            timestamp_diagnostic=_semantic_timestamp_diagnostic(
+                                timestamp_report,
+                                path=f"$.words[{index}]",
+                                item_kind="word",
+                                index=index,
+                                classification="word_outside_segment",
+                                start=word.start,
+                                end=word.end,
+                                reason="word_window_outside_provider_segment",
+                            ),
                         )
                     assigned_word_indexes.add(index)
                     mapped_words.append(
@@ -948,6 +1343,7 @@ class OpenAITranscriptionProvider:
             "actual_cost_vnd": str(actual_cost),
             "estimated_cost_vnd": str(self.estimated_cost_vnd),
         }
+        timestamp_summary = timestamp_report.summary()
         return ProviderTranscript(
             language=language,
             confidence=None,
@@ -971,6 +1367,18 @@ class OpenAITranscriptionProvider:
                 ).hexdigest(),
                 "confidence_semantics": "provider_not_supplied_null_not_fabricated",
                 "timestamp_source": "provider_native_word_and_segment",
+                "timestamp_canonicalization": {
+                    "segment_count_received": timestamp_report.segment_count_received,
+                    "word_count_received": timestamp_report.word_count_received,
+                    "transformed_count": timestamp_summary.transformed_count,
+                    "rejected_count": timestamp_summary.rejected_count,
+                    "classification_counts": timestamp_summary.classification_counts,
+                    "transformations": [
+                        item.model_dump(mode="json")
+                        for item in timestamp_report.diagnostics
+                        if item.action == "transformed"
+                    ],
+                },
                 "original_evidence": True,
                 "secret_recorded": False,
             },

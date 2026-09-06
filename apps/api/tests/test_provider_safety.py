@@ -26,6 +26,8 @@ from app.provider_safety import (
     ProviderSafetyController,
     ProviderSafetyPolicy,
     ProviderTimeoutError,
+    ProviderTimestampDiagnostic,
+    ProviderTimestampSummary,
     ProviderTransientError,
     ProviderValidationIssue,
     normalize_provider_definitions,
@@ -689,7 +691,7 @@ async def test_durable_attempt_persists_only_structured_secret_free_error_eviden
 
 
 @pytest.mark.asyncio
-async def test_durable_attempt_persists_value_free_response_validation_diagnostics(
+async def test_durable_attempt_persists_secret_free_timestamp_validation_diagnostics(
     tmp_path,
 ) -> None:
     clock = MutableClock()
@@ -707,7 +709,30 @@ async def test_durable_attempt_persists_value_free_response_validation_diagnosti
         request_sha256="a" * 64,
         response_sha256="b" * 64,
         validation_issues=(
-            ProviderValidationIssue(path="$.words", code="missing", kind="missing"),
+            ProviderValidationIssue(
+                path="$.words[5]",
+                code="start_equals_end",
+                kind="range",
+            ),
+        ),
+        timestamp_diagnostics=(
+            ProviderTimestampDiagnostic(
+                path="$.words[5]",
+                item_kind="word",
+                index=5,
+                classification="start_equals_end",
+                action="rejected",
+                raw_start_seconds=1.24,
+                raw_end_seconds=1.24,
+                reason="zero_duration_window_not_invented",
+            ),
+        ),
+        timestamp_summary=ProviderTimestampSummary(
+            segment_count_received=17,
+            word_count_received=412,
+            transformed_count=0,
+            rejected_count=1,
+            classification_counts={"start_equals_end": 1},
         ),
         response_metadata=ProviderResponseMetadata(
             top_level_type="object",
@@ -753,8 +778,29 @@ async def test_durable_attempt_persists_value_free_response_validation_diagnosti
     assert row is not None
     assert row.error_evidence == evidence.model_dump(mode="json")
     assert row.error_evidence["validation_issues"] == [
-        {"path": "$.words", "code": "missing", "kind": "missing"}
+        {"path": "$.words[5]", "code": "start_equals_end", "kind": "range"}
     ]
+    assert row.error_evidence["timestamp_diagnostics"] == [
+        {
+            "path": "$.words[5]",
+            "item_kind": "word",
+            "index": 5,
+            "classification": "start_equals_end",
+            "action": "rejected",
+            "raw_start_seconds": 1.24,
+            "raw_end_seconds": 1.24,
+            "canonical_start_seconds": None,
+            "canonical_end_seconds": None,
+            "reason": "zero_duration_window_not_invented",
+        }
+    ]
+    assert row.error_evidence["timestamp_summary"] == {
+        "segment_count_received": 17,
+        "word_count_received": 412,
+        "transformed_count": 0,
+        "rejected_count": 1,
+        "classification_counts": {"start_equals_end": 1},
+    }
     assert row.error_evidence["phase"] == "structured_output_validation"
     assert row.error_evidence["response_metadata"]["missing_required_fields"] == ["words"]
     serialized = json.dumps(row.error_evidence, ensure_ascii=False)

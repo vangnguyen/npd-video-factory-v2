@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "record_kind": "asr_real_provider_operation_review",
+  "recorded_at_utc": "2026-09-06T14:36:58Z",
+  "operation": {
+    "operation_id": "v3-01-rc13-openai-transcription-asr-call-01",
+    "status": "FAILED_RESPONSE_VALIDATION",
+    "consumed": true,
+    "attempts": 1,
+    "retry_count": 0,
+    "fallback_count": 0
+  },
+  "binding": {
+    "rc_tag": "vf-v3-01-rc13",
+    "rc_commit": "1e0146b44b19a5afcef267132d71d36d24a952e4",
+    "governance_main_commit": "b41ed673bc343e33092a3d91253045729b663c7c",
+    "provider": "openai-transcription",
+    "model": "whisper-1",
+    "capability": "asr",
+    "language": "vi",
+    "asset_id": "asset-g03-asr-vi-owned-01",
+    "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+    "rights_record_id": "V3-01-RIGHTS-ASR-001",
+    "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+    "bundle_sha256": "236262caf3ae4a10c8c3fa760e9caf134837e4327b860b2d4693e08c7031f1b8",
+    "scope_sha256": "179624fe3a365e415c41b760e49297da0cd23227cf9b49a634e7fbcaaf90b47e"
+  },
+  "provider_response": {
+    "http_status": 200,
+    "provider_request_id": "req_a1d8fe36c40d40bfaec482d817c11704",
+    "client_request_id": "vf-528ef8e81aca49ea89ee02eccaf58b4b",
+    "request_sha256": "16d078104908239ee4446823c66b87f418db4bd6b0b5c423c374fdbc8e331914",
+    "response_sha256": "1e1113e087236772540d50557ddd6efb8f30e120c3bbd26940978eef9096c06d",
+    "elapsed_ms": 11404.874,
+    "segments_received": 17,
+    "words_received": 412,
+    "invalid_word_objects": 27,
+    "invalid_word_percent": 6.553398,
+    "validation_paths_retained": true,
+    "raw_timestamp_values_retained": false,
+    "raw_response_retained": false,
+    "accepted_provider_transcript": false,
+    "usage_receipt": null,
+    "actual_cost_vnd": null,
+    "safety_charge_vnd": "500.0000",
+    "safety_charge_is_actual_cost": false
+  },
+  "historical_classification": {
+    "proven_by_rc13_executable_contract": "end_less_than_or_equal_start",
+    "start_equals_end_count": null,
+    "end_before_start_count": null,
+    "word_outside_segment_count": null,
+    "overlap_count": null,
+    "precision_rounding_count": null,
+    "missing_or_non_numeric_count": null,
+    "exact_split_available": false,
+    "reason": "RC-13 retained paths and a generic model-level value_error but deliberately omitted provider values; exact sub-classification cannot be reconstructed."
+  },
+  "durable_safety": {
+    "operations": 1,
+    "attempts": 1,
+    "budget_days": 1,
+    "circuits": 1,
+    "reserved_after_reconciliation_vnd": "0.0000",
+    "circuit_state": "closed",
+    "consecutive_failures": 1,
+    "duplicate_protection": "DUPLICATE_OPERATION_BLOCKED"
+  },
+  "evidence": {
+    "source_result_sha256": "a16ba9737b2dd0bdc942470857c7a7296ed56e4a7cfd3655367bc48168a9696e",
+    "evaluator_input_sha256": "7c78d183fdd0503ecf0c469779e73571961858dddb5e1b148e0b24202e1e5849",
+    "post_run_evaluation_sha256": "9b433b7791f8723b41a93b36f1d20df9fe5df27edd84b9e5753b91b3c8d5def9",
+    "primary_writer_status": "written",
+    "fallback_writer_used": false,
+    "secret_scan": "PASS",
+    "real_key_patterns": 0,
+    "response_reconstructed": false,
+    "missing_timestamp_values_invented": false
+  },
+  "acceptance": {
+    "provider_transport": "PASS_HTTP_200",
+    "provider_response_shape": "RECEIVED_17_SEGMENTS_412_WORDS",
+    "adapter_mapping": "FAIL",
+    "structured_provider_transcript": "NOT_PRODUCED",
+    "real_provider_tested": "NOT_TESTED",
+    "verdict": "REVIEW_REQUIRED"
+  },
+  "operation_2": {
+    "operation_id": "v3-01-rc13-openai-transcription-asr-call-02",
+    "authorized": false,
+    "executed": false,
+    "ledger_rows": 0,
+    "status": "NOT_APPROVED_LOCKED_RETIRED"
+  },
+  "production_verdict": "NO-GO"
+}

@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: locked RC-13 plus zero-call OpenAI ASR governance rebind; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
-RELEASE CANDIDATE: RC-13 1e0146b44b19a5afcef267132d71d36d24a952e4 LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-RC13-ASR-GATE-001; bundle unmounted; 0 calls/0 credential reads/0 reservation/0 VND
-DATE: 2026-09-05
-OWNER DECISION: PR #46 G-08 CONSUMED; RC-13 GOVERNANCE PR REQUIRES NEW G-08; BOTH RC-13 OPERATIONS UNAUTHORIZED
+SCOPE: locked RC-13 history plus zero-call V3-01-22 ASR timestamp remediation; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
+RELEASE CANDIDATE: RC-13 1e0146b44b19a5afcef267132d71d36d24a952e4 LOCKED NO-GO; NOT DEPLOYED; NO FURTHER AUTHORITY
+LATEST EVIDENCE: EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001; source/mock only; 0 calls/0 credential reads/0 reservation/0 VND
+DATE: 2026-09-06
+OWNER DECISION: DECISIONS THROUGH PR #47 CONSUMED; V3-01-22 DRAFT REQUIRES NEW G-08; RC-13 OPERATION 2 RETIRED/LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -24,16 +24,16 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Real-provider-tested axis | 1 PASS, 35 NOT_TESTED, 24 N/A |
 | Production-path-tested axis | 60 NOT_TESTED |
 | Quality-accepted axis | 36 NOT_TESTED, 24 N/A |
-| Flow A | BLOCKED overall; Vision real-provider 2/2 PASS and ASR safety/provider response reach proven, but RC-12 Operation 1 failed strict response validation and is consumed; ASR/reframe real-provider, production and quality axes remain blocked |
+| Flow A | BLOCKED overall; Vision real-provider 2/2 PASS and ASR safety/HTTP 200/timestamp-shape reach proven, but RC-13 Operation 1 rejected 27/412 word timestamps and is consumed; ASR/reframe real-provider, production and quality axes remain blocked |
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR Op1 cost 0 VND; RC-12 ASR Op1 has actual cost unknown and a 500 VND conservative safety charge, not an actual-cost receipt; RC-13 gate preparation costs 0 VND |
+| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR Op1 cost 0 VND; RC-12 and RC-13 ASR Op1 actual costs are unknown and each 500 VND amount is a conservative safety charge, not an actual-cost receipt; V3-01-22 costs 0 VND |
 | Rights/provenance | exact Vision asset passed twice; two exact unchanged WAVs, voices, owner-verified transcripts and RightsRecords are rebound to RC-13 only for bounded ASR acceptance; broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
-| Allowed scope | LOCAL/CI zero-call RC-13 gate validation, redacted evidence and a draft governance PR |
+| Allowed scope | LOCAL/CI zero-call V3-01-22 source/mock validation, redacted evidence and a draft source PR |
 | Disabled scope | further provider calls, credential-value access, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
@@ -359,6 +359,27 @@ transcripts and asset-specific RightsRecords, and binds execution scope
 operations lack runtime authority, and this package performs zero credential reads, provider calls,
 reservations and spend. Merge approval, post-merge dual-CI/equality verification and a separate
 Operation 1 decision remain mandatory. No RC-12 authority or operation ID is reused.
+
+The governance scope then merged in PR #47 as
+`b41ed673bc343e33092a3d91253045729b663c7c`. A separately authorized Operation 1 passed full
+preflight, contacted OpenAI once and received HTTP 200 with 17 segments and 412 words in
+11,404.874 ms. Strict RC-13 mapping rejected 27 word objects under its combined `end <= start`
+rule. The operation is consumed/`REVIEW_REQUIRED`; no retry or fallback is permitted. Actual cost is
+unknown and 500 VND is only a conservative safety charge. Operation 2 is retired/locked.
+
+## V3-01-22 checkpoint
+
+V3-01-22 is source/mock-only remediation for future ASR timestamp responses. Evidence
+`EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001` proves deterministic classification, separate numeric
+raw/canonical values, stable transformation reasons, durable count persistence and fail-closed
+semantic validation. Only negative-zero normalization and six-decimal rounding that preserves a
+positive ordered interval may transform a value; equality, inversion, containment, overlap,
+out-of-range, missing/non-numeric and precision collapse remain rejected. The raw provider response
+hash and transcript text are not rewritten. RC-13 did not retain raw timestamp values, so the 27
+historical failures remain classified only as `end <= start`; no exact split or missing receipt is
+reconstructed. This checkpoint uses zero provider calls, zero credential reads and zero VND and
+requires a new G-08. If merged, exact-main regression and a new RC-14 are required before any fresh
+ASR gate proposal.
 
 ## Decision rule
 

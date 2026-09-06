@@ -84,14 +84,17 @@ voice-processing consent for bounded OpenAI ASR acceptance only:
 The owner listened to each exact WAV and confirmed the actual speech matches its checked-in
 reference transcript. Durations `120.852` and `134.591` seconds are explicitly accepted under the
 180-second hard cap. The asset manifest records exact hashes, technical metadata, transcript hashes
-and critical terms. No publishing, training, resale or other use is granted. The bundle remains
-unmounted and no provider call has occurred, so this rights approval advances gate readiness only;
-it does not close real-provider or production rights acceptance.
+and critical terms. No publishing, training, resale or other use is granted. Later bounded ASR
+operations used only asset 01 under this exact acceptance purpose; this does not close real-provider
+or production rights acceptance or authorize any further operation.
 
 RC-13 revalidates and rebinds those same immutable WAV, transcript, owner-manifest and canonical
 RightsRecord hashes without changing the permitted purpose. `EV-V3-RC13-ASR-GATE-001` verifies
-asset-specific durable/non-durable selection for both slots offline. The proposed bundle remains
-unmounted, both RC-13 operations are unauthorized, and no credential or media was sent to a
-provider by this package. Publishing, training, resale and unrelated use remain prohibited.
+asset-specific durable/non-durable selection for both slots offline. A separately authorized
+RC-13 Operation 1 subsequently passed the exact asset-01 RightsRecord boundary and sent only that
+approved recording to the provider. Timestamp validation later failed, so the operation remains
+consumed/`REVIEW_REQUIRED` and does not establish accepted ASR output. Operation 2 is retired/
+locked. Publishing, training, resale and unrelated use remain prohibited. V3-01-22 uses redacted
+diagnostic fixtures only and performs no media upload or provider call.
 
 Open gap: `V3-01-GAP-013`.

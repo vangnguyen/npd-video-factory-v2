@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-22",
+  "result": "PASS_FOR_IMPLEMENTED_AND_MOCK_TESTED_ONLY",
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "real_provider_tested": "NOT_TESTED",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED"
+  },
+  "rc13_asr_operation_1": {
+    "provider_http": 200,
+    "segments_received": 17,
+    "words_received": 412,
+    "invalid_word_objects": 27,
+    "exact_failure_split": "UNKNOWN_NOT_RETAINED",
+    "verdict": "REVIEW_REQUIRED",
+    "consumed": true,
+    "actual_cost_vnd": null,
+    "safety_charge_vnd": 500
+  },
+  "rc13_asr_operation_2": "NOT_APPROVED_LOCKED_RETIRED",
+  "repository_verdict": "NO_GO",
+  "release_candidate": "NOT_ESTABLISHED",
+  "merge_authorized": false,
+  "deploy_authorized": false,
+  "credentials_authorized": false,
+  "external_provider_calls_authorized": false,
+  "paid_provider_calls_authorized": false,
+  "public_ingress_authorized": false,
+  "publish_authorized": false,
+  "provider_calls_in_remediation": 0,
+  "credential_reads_in_remediation": 0,
+  "spend_vnd_in_remediation": 0,
+  "next_gate": "New explicit G-08 owner review for the V3-01-22 draft PR",
+  "secret_recorded": false
+}

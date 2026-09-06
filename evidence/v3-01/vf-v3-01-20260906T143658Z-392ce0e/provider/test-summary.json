@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-22",
+  "commit_sha": "392ce0ecfb45d9f4699c1c56b6bde388ffc64a25",
+  "focused_regression": {
+    "scope": "OpenAI transcription timestamp canonicalization and provider-safety evidence",
+    "passed": 54,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "source_regression": {
+    "scope": "apps/api/tests services/worker/tests services/comfyui-bridge/tests",
+    "passed": 442,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "migration_replay": {
+    "revision": "0013_v3_01_18_nullable_transcript_confidence",
+    "upgrade": "PASS",
+    "downgrade": "PASS",
+    "reupgrade": "PASS"
+  },
+  "studio_regression": {
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "result": "PASS"
+  },
+  "renderer_regression": {
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "typecheck": "PASS",
+    "bundle_check": "PASS",
+    "result": "PASS"
+  },
+  "acceptance_validation": "PASS",
+  "asr_compatibility_validation": "PASS",
+  "docker": {
+    "compose_config": "PASS",
+    "local_deterministic_e2e": "NOT_RUN",
+    "required_resolution": "Exact-head GitHub CI must run the repository deterministic Docker E2E contract before G-08 review."
+  },
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "reservations_vnd": 0,
+  "spend_vnd": 0,
+  "notes": [
+    "All provider behavior used MockTransport or static redacted diagnostic fixtures.",
+    "The RC-13 operation result is preserved as consumed and REVIEW_REQUIRED; no historical response field was reconstructed.",
+    "No database migration is required because diagnostics use the existing durable JSON evidence field."
+  ]
+}
