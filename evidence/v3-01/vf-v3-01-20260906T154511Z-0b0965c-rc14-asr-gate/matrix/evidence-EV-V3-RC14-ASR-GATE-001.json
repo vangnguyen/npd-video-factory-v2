@@ -1,0 +1,38 @@
+{
+  "assertion": "The exact RC-14 OpenAI ASR gate validates offline with fresh RC-derived operation IDs, unchanged owner-approved WAVs and transcripts, exact asset-specific RightsRecords, canonical G-01/G-02/G-03 rebind records, VND limits, split timeout controls and strict timestamp-canonicalization semantics. The bundle remains unmounted and neither operation is authorized, so ASR real-provider remains NOT_TESTED.",
+  "axis": "cross-cutting",
+  "commit_sha": "0b0965c650f4d06a057acbbb1a7ed9d7b933478b",
+  "completed_at_utc": "2026-09-06T15:53:34Z",
+  "correlation_id": "v3-01-rc14-asr-gate-0b0965c",
+  "cost": {
+    "actual": 0,
+    "currency": "VND",
+    "status": "ZERO"
+  },
+  "duration_seconds": 1892,
+  "environment": "LOCAL",
+  "evidence_id": "EV-V3-RC14-ASR-GATE-001",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "provider": {
+    "credential_alias": "secret://openai/codex-video",
+    "model_or_workflow": "whisper-1 / selected-but-not-executed",
+    "name": "openai-transcription-gate-validation-only",
+    "secret_recorded": false
+  },
+  "reproduce": "On exact vf-v3-01-rc14-compatible source, run apps/api/tests/test_rc14_asr_gate_bundle.py with provider defaults fail-closed and verify the raw bundle SHA, execution-scope SHA, assets, transcripts, per-asset RightsRecords, approval records, VND limits, timestamp canonicalization contract and zero runtime authority.",
+  "request_hash": null,
+  "response_or_artifact_hash": "351f1cac3dd90df7ffc8a0b8b70e3c3c9a92480b91d258b012426f570cc410dd",
+  "result": "PASS",
+  "reviewer": "Codex local ASR gate reviewer",
+  "rights_record_id": "V3-01-RIGHTS-ASR-001;V3-01-RIGHTS-ASR-002",
+  "schema_version": 1,
+  "started_at_utc": "2026-09-06T15:22:02Z",
+  "test_case_id": "ASR-01+PRO-006"
+}

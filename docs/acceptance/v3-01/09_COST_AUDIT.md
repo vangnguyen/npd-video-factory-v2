@@ -27,6 +27,7 @@
 | V3-01-21 response-diagnostics remediation | VND | 0 | 0 | 0 | 0 calls; 0 credential reads |
 | RC-13 ASR Operation 1 timestamp-validation failure | VND | 500 operation / 1,250 window | 500 safety charge; 0 reserved after reconciliation | unknown | 1 provider call; HTTP 200; no usage/cost receipt accepted |
 | V3-01-22 timestamp remediation | VND | 0 | 0 | 0 | 0 calls; 0 credential reads |
+| RC-14 ASR governance rebind | VND | checked-in runtime budget 0; proposed conditional 1,250 window / 500 operation | 0 | 0 | 0 calls; 0 credential reads |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence.
 
@@ -37,6 +38,10 @@ authority is retired. V3-01-20 performs only offline source/mock validation and 
 PR #44 merged that remediation as RC-12. The fresh RC-12 bundle remains unmounted and neither
 operation is approved, so this governance rebind also reads no credential, reserves nothing, makes
 no provider call and costs `0 VND`.
+
+PR #48 and exact-main CI locked RC-14 after the zero-call timestamp remediation. Its proposed
+500/1,250 VND envelope remains inactive: the bundle is unmounted, both operations lack runtime
+authority, and this governance package reserves `0 VND`, spends `0 VND` and reads no credential.
 
 The later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
 receipt, so its actual provider billing cannot be asserted; the ledger committed the 500 VND

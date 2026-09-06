@@ -1,0 +1,28 @@
+{
+  "approval_id": "V3-01-APP-058",
+  "gate_id": "G-02",
+  "decision": "APPROVED",
+  "scope": "Rebind G-02-ASR v1.1 to the dated RC-14 duration, file-size, native-timestamp, VND and split-timeout envelope for at most two fresh derived whisper-1 acceptance operations.",
+  "artifact_or_commit_hashes": [
+    "0b0965c650f4d06a057acbbb1a7ed9d7b933478b",
+    "b26045d15d88a20e64592c0ada73c6fb6064f21952f6ab21935fcf84f3e0bae9",
+    "03c2ad3bf2173a890344db0b011ab932fac35a96e98df0f8e501ba7261b7b852"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; checked-in and production budgets remain zero",
+  "limits": [
+    "500 VND atomic reservation per operation",
+    "1250 VND maximum for the whole acceptance window",
+    "162 VND per minute accounting rate derived from 0.006 USD/minute at fixed 27000 VND/USD",
+    "One file per operation, minimum acceptance duration 90 seconds and hard duration cap 180 seconds",
+    "File size no greater than 25000000 bytes",
+    "Language vi, verbose_json, native segment and word timestamps",
+    "Provider HTTP timeout 90 seconds and controller hard envelope 120 seconds",
+    "One attempt, concurrency 1, no automatic retry and no fallback",
+    "Window 2026-09-07T14:00:00Z through 2026-09-07T18:00:00Z only",
+    "No provider call until a separate owner decision authorizes RC-14 Operation 1"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-06T15:22:02Z",
+  "expires_at_utc": "2026-09-07T18:00:00Z",
+  "notes": "The owner instructed a fresh RC-14 rebind while preserving the previously approved 500/1250 VND envelope. The new budget-day and execution-scope hashes are exact. This record does not enable checked-in budget or authorize an API call; any bundle, scope or window mutation requires another review and rebind."
+}

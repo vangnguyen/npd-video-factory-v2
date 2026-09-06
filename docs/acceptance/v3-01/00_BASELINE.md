@@ -47,19 +47,25 @@ mapping rejected 27 word objects under the RC-13 `end <= start` rule, so no acce
 `ProviderTranscript` was produced. The operation is consumed and `REVIEW_REQUIRED`; actual cost is
 unknown and 500 VND remains a conservative safety charge only. Operation 2 is locked and retired.
 V3-01-22 now adds source/mock-only timestamp classification and narrowly bounded canonicalization.
-It performs zero provider calls, zero credential reads and zero VND spend and requires its own G-08.
+It performs zero provider calls, zero credential reads and zero VND spend. PR #48 merged the
+remediation as `0b0965c650f4d06a057acbbb1a7ed9d7b933478b`; exact-head CI `34041347519` and
+exact-main CI `34042079905` passed 5/5, and annotated `vf-v3-01-rc14` peels to that merge. The fresh
+RC-14 G-01/G-02/G-03 rebind and two new RC-derived operation IDs are now proposed for G-08 review
+only. The bundle is unmounted and neither operation has runtime authority.
 
 ## Control state
 
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-13 1e0146b44b19a5afcef267132d71d36d24a952e4; locked NO-GO; not deployed
+CURRENT RC: RC-14 0b0965c650f4d06a057acbbb1a7ed9d7b933478b; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Vision closed; V3-01-22 ASR timestamp remediation; source-only G-08 pending
+CURRENT SAFE PHASE: Vision closed; RC-14 ASR governance rebind; G-08 pending
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #47 APPROVED/MERGED; V3-01-22 SOURCE PR REQUIRES A NEW G-08
-G-01/G-02/G-03-ASR: RC-13 OPERATION-1 SCOPE CONSUMED; NO FURTHER OPERATION AUTHORITY
+G-08: PR #48 APPROVED/MERGED; RC-14 GOVERNANCE PR REQUIRES A NEW G-08
+G-01/G-02/G-03-ASR: REBOUND TO RC-14 PROPOSAL; NO RUNTIME AUTHORITY
+RC-14 ASR OPERATION 1: NOT APPROVED; NOT EXECUTED
+RC-14 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
 RC-13 ASR OPERATION 1: HTTP 200; FAILED RESPONSE VALIDATION; REVIEW_REQUIRED; CONSUMED; NO RETRY
 RC-13 ASR OPERATION 2: NOT APPROVED; LOCKED; RETIRED; NOT EXECUTED
 RC-11 ASR OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; 0 CALLS/READS/VND; AUTHORITY RETIRED
@@ -214,7 +220,8 @@ Current repository checkpoint after the bounded merge sequence:
 | RC-12 ASR governance rebind and bounded operation | PR #45 merged governance-only as `f765f216f90b0d05071cc7c873a2edb6d5bdcec4`; governance-main CI `33894628759` passed; fresh operations `v3-01-rc12-openai-transcription-asr-call-01/02`; unchanged exact WAV/transcript/RightsRecord hashes; records `V3-01-APP-048` through `051`; raw bundle SHA `218e06d245f43733a2659aff35f4ea0e7e73dcd17258f663d351b198aebf3db1`; scope SHA `6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4`; separately authorized Operation 1 reached a response once, failed strict validation and is consumed/`REVIEW_REQUIRED`; actual cost unknown; Operation 2 retired/locked |
 | PR #46 / RC-13 and ASR rebind proposal | PR #46 exact head `7169cc4db55931ee4fc145411e1e04651c004785`; merged as `1e0146b44b19a5afcef267132d71d36d24a952e4`; exact-head CI `33974602125` and exact-main CI `33976046393` passed 5/5; annotated `vf-v3-01-rc13` peels to the merge; fresh operations `v3-01-rc13-openai-transcription-asr-call-01/02`; raw bundle SHA `236262caf3ae4a10c8c3fa760e9caf134837e4327b860b2d4693e08c7031f1b8`; scope SHA `179624fe3a365e415c41b760e49297da0cd23227cf9b49a634e7fbcaaf90b47e`; bundle unmounted and both operations unauthorized |
 | PR #47 / RC-13 bounded ASR operation | PR #47 merged governance-only as `b41ed673bc343e33092a3d91253045729b663c7c`; separately authorized Operation 1 reached HTTP 200 once, returned 17 segments/412 words and rejected 27 word objects under strict timestamp mapping; consumed/`REVIEW_REQUIRED`; actual cost unknown; 500 VND safety charge; Operation 2 locked/retired |
-| V3-01-22 source remediation | exact source commit `392ce0ecfb45d9f4699c1c56b6bde388ffc64a25`; zero provider calls/credential reads/VND; draft G-08 pending; after merge requires exact-main regression and RC-14 |
+| PR #48 / V3-01-22 / RC-14 | PR #48 exact head `4f36133399e37683704f1a6605423bc6428159c3`; merged as `0b0965c650f4d06a057acbbb1a7ed9d7b933478b`; exact-head CI `34041347519` and exact-main CI `34042079905` passed 5/5; annotated `vf-v3-01-rc14` peels to the merge; zero provider calls/credential reads/VND |
+| RC-14 ASR governance proposal | fresh operations `v3-01-rc14-openai-transcription-asr-call-01/02`; raw bundle SHA `351f1cac3dd90df7ffc8a0b8b70e3c3c9a92480b91d258b012426f570cc410dd`; scope SHA `03c2ad3bf2173a890344db0b011ab932fac35a96e98df0f8e501ba7261b7b852`; bundle unmounted and both operations unauthorized |
 | Deployment/ingress/publish action | none |
 
 No `AGENTS.md` file exists in the repository. Repository instructions are therefore the checked-in

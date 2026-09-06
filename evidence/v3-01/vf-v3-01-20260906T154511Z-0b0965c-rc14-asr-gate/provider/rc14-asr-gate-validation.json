@@ -1,0 +1,129 @@
+{
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED",
+    "real_provider_tested": "NOT_TESTED"
+  },
+  "approvals": [
+    {
+      "canonical_sha256": "9bac81b21e0a63b5b3f0f2049097695107148ca888731b5f8680c59c252f58f4",
+      "gate": "G-01-ASR",
+      "id": "V3-01-APP-057",
+      "runtime_authority": false
+    },
+    {
+      "canonical_sha256": "ad309166db4f45fdaa4d0fab9a9f14d3f0f503b4bfc3516be6859d505f975766",
+      "gate": "G-02-ASR",
+      "id": "V3-01-APP-058",
+      "runtime_authority": false
+    },
+    {
+      "canonical_sha256": "dd221a73c5deb11c11a649f15d00b12c6fc4e45fad55aa67c2ff408a6455f1f8",
+      "gate": "G-03-ASR",
+      "id": "V3-01-APP-059",
+      "runtime_authority": false
+    }
+  ],
+  "assets": [
+    {
+      "bytes": 5800940,
+      "duration_seconds": 120.852,
+      "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+      "sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "slot": 1,
+      "transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e"
+    },
+    {
+      "bytes": 6460396,
+      "duration_seconds": 134.590667,
+      "rights_record_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323",
+      "sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "slot": 2,
+      "transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef"
+    }
+  ],
+  "budget": {
+    "acceptance_window_limit_vnd": "1250",
+    "actual_vnd": "0",
+    "attempts": 1,
+    "automatic_retry": false,
+    "concurrency": 1,
+    "controller_hard_timeout_seconds": 120,
+    "currency": "VND",
+    "model_fallback": false,
+    "per_operation_limit_vnd": "500",
+    "provider_http_timeout_seconds": 90,
+    "reserved_vnd": "0",
+    "vnd_per_minute": "162"
+  },
+  "evidence_id": "EV-V3-RC14-ASR-GATE-001",
+  "gate": {
+    "budget_sha256": "b26045d15d88a20e64592c0ada73c6fb6064f21952f6ab21935fcf84f3e0bae9",
+    "bundle_path": "docs/acceptance/v3-01/V3-01-GATE-RC14-OPENAI-ASR-A.json",
+    "bundle_sha256": "351f1cac3dd90df7ffc8a0b8b70e3c3c9a92480b91d258b012426f570cc410dd",
+    "execution_scope_sha256": "03c2ad3bf2173a890344db0b011ab932fac35a96e98df0f8e501ba7261b7b852",
+    "expires_at_utc": "2026-09-07T18:00:00Z",
+    "mounted": false,
+    "provider_scope_sha256": "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "valid_from_utc": "2026-09-07T14:00:00Z"
+  },
+  "governance": {
+    "draft_pr": "PENDING",
+    "dual_ci_provenance": "PENDING_POST_MERGE",
+    "executable_tree_equality": "PASS_PRE_PR",
+    "executable_tree_sha256": "a10dca84ec8a6ae7a1538e467fe72dcefa7fe89e2f0cf7ba2603df50878b3279",
+    "governance_head": null,
+    "governance_main_ci_run_id": null,
+    "governance_main_commit": null
+  },
+  "operations": [
+    {
+      "authority": "NOT_APPROVED",
+      "executed": false,
+      "id": "v3-01-rc14-openai-transcription-asr-call-01"
+    },
+    {
+      "authority": "NOT_APPROVED_LOCKED",
+      "executed": false,
+      "id": "v3-01-rc14-openai-transcription-asr-call-02"
+    }
+  ],
+  "production_verdict": "NO-GO",
+  "provider": {
+    "capability": "asr",
+    "credential_alias": "secret://openai/codex-video",
+    "credential_reads": 0,
+    "key": "openai-transcription",
+    "language": "vi",
+    "model": "whisper-1",
+    "provider_calls": 0
+  },
+  "rc": {
+    "ci_status": "completed_success",
+    "commit": "0b0965c650f4d06a057acbbb1a7ed9d7b933478b",
+    "exact_main_ci_run_id": 34042079905,
+    "remediation_exact_head": "4f36133399e37683704f1a6605423bc6428159c3",
+    "remediation_exact_head_ci_run_id": 34041347519,
+    "remediation_pr": 48,
+    "tag": "vf-v3-01-rc14",
+    "tag_object": "d4ee474e02de5146c4a4dd7eea20ac96011abce5"
+  },
+  "schema_version": 1,
+  "validation": {
+    "approval_hashes": "PASS",
+    "asset_hashes": "PASS",
+    "audio_headers_and_durations": "PASS",
+    "bundle_loader": "PASS",
+    "durable_nondurable_parity": "PASS",
+    "fail_closed_defaults": "PASS",
+    "focused_tests": "7 passed",
+    "historical_rc13_evidence_unchanged": "PASS",
+    "multi_asset_rights_binding": "PASS",
+    "reference_transcript_hashes": "PASS",
+    "secret_scan": "PASS",
+    "strict_response_schema_unchanged": "PASS",
+    "timestamp_canonicalization_contract": "PASS"
+  }
+}
