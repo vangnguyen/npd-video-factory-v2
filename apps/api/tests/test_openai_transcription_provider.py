@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from decimal import Decimal
 from pathlib import Path
 
@@ -441,6 +442,180 @@ async def test_mapping_validation_records_exact_safe_contract_path(tmp_path: Pat
     assert evidence.response_metadata is not None
     assert evidence.response_metadata.segment_count == 2
     assert evidence.response_metadata.word_count == 7
+
+
+@pytest.mark.parametrize(
+    ("mutator", "classification", "reason"),
+    [
+        (
+            lambda payload: payload["words"][1].update(start=0.4, end=0.4),
+            "start_equals_end",
+            "zero_duration_window_not_invented",
+        ),
+        (
+            lambda payload: payload["words"][1].update(start=0.6, end=0.4),
+            "end_before_start",
+            "inverted_window_not_swapped",
+        ),
+        (
+            lambda payload: payload["words"][1].pop("start"),
+            "missing",
+            "missing_start",
+        ),
+        (
+            lambda payload: payload["words"][1].update(start="not-a-number"),
+            "non_numeric",
+            "non_numeric_start",
+        ),
+        (
+            lambda payload: payload["words"][1].update(end=6.2),
+            "out_of_range",
+            "window_outside_media_duration",
+        ),
+        (
+            lambda payload: payload["words"][1].update(start=0.3),
+            "overlap",
+            "ordered_window_overlap_not_rewritten",
+        ),
+        (
+            lambda payload: payload["words"][2].update(end=1.9),
+            "word_outside_segment",
+            "word_window_outside_provider_segment",
+        ),
+        (
+            lambda payload: payload["words"][1].update(
+                start=0.40000041,
+                end=0.40000049,
+            ),
+            "precision_rounding",
+            "six_decimal_rounding_collapsed_window",
+        ),
+    ],
+)
+@pytest.mark.asyncio
+async def test_timestamp_failures_are_classified_without_relaxing_validation(
+    tmp_path: Path,
+    mutator,
+    classification: str,
+    reason: str,
+) -> None:
+    payload = response_payload()
+    mutator(payload)
+    adapter, _ = provider(transport=mock_transport(payload))
+    source = tmp_path / "timestamp-invalid.mp3"
+    source.write_bytes(b"offline")
+
+    with pytest.raises(OpenAITranscriptionResponseError) as captured:
+        await transcribe(adapter, source)
+
+    evidence = captured.value.error_evidence
+    assert evidence.code == "OPENAI_TRANSCRIPTION_RESPONSE_INVALID"
+    assert evidence.timestamp_summary is not None
+    assert evidence.timestamp_summary.word_count_received == 7
+    assert evidence.timestamp_summary.rejected_count == 1
+    assert evidence.timestamp_summary.classification_counts == {classification: 1}
+    assert len(evidence.timestamp_diagnostics) == 1
+    diagnostic = evidence.timestamp_diagnostics[0]
+    assert diagnostic.path in {"$.words[1]", "$.words[2]"}
+    assert diagnostic.classification == classification
+    assert diagnostic.action == "rejected"
+    assert diagnostic.reason == reason
+    assert captured.value.error_evidence.secret_recorded is False
+
+
+@pytest.mark.asyncio
+async def test_timestamp_classifier_collects_all_rejections_before_failing_closed(
+    tmp_path: Path,
+) -> None:
+    payload = response_payload()
+    payload["words"][1].update(start=0.4, end=0.4)
+    payload["words"][3].update(start=2.5, end=2.4)
+    payload["words"][5].pop("end")
+    adapter, _ = provider(transport=mock_transport(payload))
+    source = tmp_path / "multiple-timestamp-errors.mp3"
+    source.write_bytes(b"offline")
+
+    with pytest.raises(OpenAITranscriptionResponseError) as captured:
+        await transcribe(adapter, source)
+
+    evidence = captured.value.error_evidence
+    assert evidence.timestamp_summary is not None
+    assert evidence.timestamp_summary.transformed_count == 0
+    assert evidence.timestamp_summary.rejected_count == 3
+    assert evidence.timestamp_summary.classification_counts == {
+        "start_equals_end": 1,
+        "end_before_start": 1,
+        "missing": 1,
+    }
+    assert [item.path for item in evidence.timestamp_diagnostics] == [
+        "$.words[1]",
+        "$.words[3]",
+        "$.words[5]",
+    ]
+
+
+@pytest.mark.asyncio
+async def test_safe_precision_canonicalization_preserves_raw_hash_text_and_provenance(
+    tmp_path: Path,
+) -> None:
+    payload = response_payload()
+    payload["words"][0].update(start=-0.0, end=0.4000000001)
+    response_bytes = json.dumps(
+        payload,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    adapter, _ = provider(transport=mock_transport(response_bytes))
+    source = tmp_path / "canonical.mp3"
+    source.write_bytes(b"offline")
+
+    result = await transcribe(adapter, source)
+
+    assert result.provenance["response_sha256"] == hashlib.sha256(response_bytes).hexdigest()
+    assert [segment.text for segment in result.segments] == [
+        "Ngọc Phương Đông.",
+        "Vị trí rất đẹp.",
+    ]
+    timestamp = result.provenance["timestamp_canonicalization"]
+    assert timestamp["transformed_count"] == 1
+    assert timestamp["rejected_count"] == 0
+    assert timestamp["classification_counts"] == {"precision_rounding": 1}
+    transformation = timestamp["transformations"][0]
+    assert transformation["path"] == "$.words[0]"
+    assert transformation["raw_start_seconds"] == 0
+    assert math.copysign(1.0, transformation["raw_start_seconds"]) < 0
+    assert transformation["raw_end_seconds"] == 0.4000000001
+    assert transformation["canonical_start_seconds"] == 0
+    assert math.copysign(1.0, transformation["canonical_start_seconds"]) > 0
+    assert transformation["canonical_end_seconds"] == 0.4
+    assert result.segments[0].words[0].start_seconds == 0
+    assert result.segments[0].words[0].end_seconds == 0.4
+
+
+def test_rc13_redacted_fixture_does_not_invent_missing_timestamp_values() -> None:
+    fixture_path = (
+        Path(__file__).parent
+        / "fixtures/openai_transcription/rc13-operation-1-redacted-timestamp-diagnostic.json"
+    )
+    fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+
+    assert fixture["source_evidence_sha256"] == (
+        "a16ba9737b2dd0bdc942470857c7a7296ed56e4a7cfd3655367bc48168a9696e"
+    )
+    assert fixture["response_sha256"] == (
+        "1e1113e087236772540d50557ddd6efb8f30e120c3bbd26940978eef9096c06d"
+    )
+    assert fixture["segment_count"] == 17
+    assert fixture["word_count"] == 412
+    assert fixture["invalid_word_count"] == 27
+    assert len(fixture["validation_paths"]) == 27
+    assert fixture["proven_classification"] == "end_less_than_or_equal_start"
+    assert fixture["exact_subclassification"] == "UNKNOWN_NOT_RETAINED"
+    assert fixture["raw_timestamp_values_retained"] is False
+    assert fixture["response_reconstructed"] is False
+    assert not any(
+        key.startswith("raw_") and key.endswith("seconds") for key in fixture
+    )
 
 
 @pytest.mark.asyncio

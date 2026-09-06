@@ -71,6 +71,18 @@ ProviderValidationIssueKind = Literal[
     "mapping",
     "invalid",
 ]
+ProviderTimestampDiagnosticKind = Literal[
+    "start_equals_end",
+    "end_before_start",
+    "word_outside_segment",
+    "overlap",
+    "precision_rounding",
+    "missing",
+    "non_numeric",
+    "out_of_range",
+]
+ProviderTimestampDiagnosticAction = Literal["transformed", "rejected"]
+ProviderTimestampItemKind = Literal["segment", "word"]
 ProviderJsonShapeType = Literal[
     "object",
     "array",
@@ -543,6 +555,64 @@ class ProviderValidationIssue(StrictModel):
     kind: ProviderValidationIssueKind
 
 
+class ProviderTimestampDiagnostic(StrictModel):
+    """Secret-safe raw/canonical timestamp evidence for one provider item."""
+
+    path: str = Field(
+        min_length=1,
+        max_length=240,
+        pattern=r"^\$(?:(?:\.[A-Za-z_][A-Za-z0-9_-]{0,79})|(?:\[[0-9]{1,8}\]))*$",
+    )
+    item_kind: ProviderTimestampItemKind
+    index: int = Field(ge=0, le=10_000_000)
+    classification: ProviderTimestampDiagnosticKind
+    action: ProviderTimestampDiagnosticAction
+    raw_start_seconds: float | None = Field(default=None, allow_inf_nan=False)
+    raw_end_seconds: float | None = Field(default=None, allow_inf_nan=False)
+    canonical_start_seconds: float | None = Field(default=None, allow_inf_nan=False)
+    canonical_end_seconds: float | None = Field(default=None, allow_inf_nan=False)
+    reason: str = Field(
+        min_length=1,
+        max_length=160,
+        pattern=r"^[a-z][a-z0-9_]{0,159}$",
+    )
+
+    @model_validator(mode="after")
+    def validate_action(self) -> "ProviderTimestampDiagnostic":
+        canonical = (self.canonical_start_seconds, self.canonical_end_seconds)
+        if self.action == "transformed":
+            if self.classification != "precision_rounding" or any(
+                value is None for value in canonical
+            ):
+                raise ValueError(
+                    "timestamp transformations require canonical precision evidence"
+                )
+        return self
+
+
+class ProviderTimestampSummary(StrictModel):
+    """Bounded counts for timestamp classification without transcript values."""
+
+    segment_count_received: int | None = Field(default=None, ge=0)
+    word_count_received: int | None = Field(default=None, ge=0)
+    transformed_count: int = Field(default=0, ge=0)
+    rejected_count: int = Field(default=0, ge=0)
+    classification_counts: dict[ProviderTimestampDiagnosticKind, int] = Field(
+        default_factory=dict,
+        max_length=8,
+    )
+
+    @field_validator("classification_counts")
+    @classmethod
+    def validate_classification_counts(
+        cls,
+        value: dict[ProviderTimestampDiagnosticKind, int],
+    ) -> dict[ProviderTimestampDiagnosticKind, int]:
+        if any(count <= 0 for count in value.values()):
+            raise ValueError("timestamp classification counts must be positive")
+        return value
+
+
 class ProviderResponseMetadata(StrictModel):
     """Allowlisted response shape only; provider values are never retained."""
 
@@ -590,6 +660,11 @@ class ProviderErrorEvidence(StrictModel):
         default=(),
         max_length=32,
     )
+    timestamp_diagnostics: tuple[ProviderTimestampDiagnostic, ...] = Field(
+        default=(),
+        max_length=4096,
+    )
+    timestamp_summary: ProviderTimestampSummary | None = None
     response_metadata: ProviderResponseMetadata | None = None
     timeout_phase: ProviderTimeoutPhase | None = None
     timeout_kind: ProviderTimeoutKind | None = None
@@ -635,6 +710,28 @@ class ProviderErrorEvidence(StrictModel):
                 provider_http_timeout_seconds=self.provider_http_timeout_seconds,
                 controller_hard_timeout_seconds=self.controller_hard_timeout_seconds,
             )
+        if self.timestamp_diagnostics:
+            if self.timestamp_summary is None:
+                raise ValueError("timestamp diagnostics require a summary")
+            transformed = sum(
+                item.action == "transformed" for item in self.timestamp_diagnostics
+            )
+            rejected = sum(item.action == "rejected" for item in self.timestamp_diagnostics)
+            counts: dict[ProviderTimestampDiagnosticKind, int] = {}
+            for item in self.timestamp_diagnostics:
+                counts[item.classification] = counts.get(item.classification, 0) + 1
+            if (
+                self.timestamp_summary.transformed_count != transformed
+                or self.timestamp_summary.rejected_count != rejected
+                or self.timestamp_summary.classification_counts != counts
+            ):
+                raise ValueError("timestamp diagnostic summary does not match its details")
+        elif self.timestamp_summary is not None and (
+            self.timestamp_summary.transformed_count
+            or self.timestamp_summary.rejected_count
+            or self.timestamp_summary.classification_counts
+        ):
+            raise ValueError("timestamp summary cannot claim changes without diagnostics")
         return self
 
 
