@@ -73,6 +73,15 @@ proposal revalidates the same two WAVs, transcripts and RightsRecords under fres
 scope hash and window, but remains unmounted and has no operation authority. See
 [52_V3_01_RC13_OPENAI_ASR_GATE.md](52_V3_01_RC13_OPENAI_ASR_GATE.md).
 
+PR #47 merged that governance scope as `b41ed673bc343e33092a3d91253045729b663c7c`. Under a separate
+bounded authority, RC-13 ASR Operation 1 reached OpenAI once and received HTTP 200 with 17 segments
+and 412 words. Twenty-seven word objects failed the strict RC-13 `end <= start` model rule. The
+operation is consumed/`REVIEW_REQUIRED`, actual cost is unknown and Operation 2 is locked/retired.
+V3-01-22 adds deterministic pre-mapping classification and representation-preserving timestamp
+canonicalization for future responses. Historical values were not retained, so their exact split is
+left unknown and no accepted transcript is reconstructed. See
+[53_V3_01_22_ASR_TIMESTAMP_CANONICALIZATION.md](53_V3_01_22_ASR_TIMESTAMP_CANONICALIZATION.md).
+
 ## Foundation
 
 | Capability | Primary code | Existing tests/evidence | Audit result |
@@ -101,7 +110,7 @@ scope hash and window, but remains unmounted and has no operation authority. See
 | Capability | Primary code | Existing tests/evidence | Audit result |
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
-| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `openai_transcription_provider.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py`, `provider_safety.py`, `provider_safety_durable.py` | Auto Edit suite, measured two-run fixture evidence, `EV-V3-OPENAI-ASR-ADAPTER-001`, RC-11/RC-12/RC-13 gate validation, `EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001` and `EV-V3-ASR-RESPONSE-DIAGNOSTICS-001` | OpenAI ASR is implemented/mock-tested behind fail-closed safety. RC-12 Operation 1 proved preflight and provider-response reachability, then failed strict response validation and remains consumed/`REVIEW_REQUIRED`; RC-13 adds future value-free diagnostics and an unmounted fresh gate, but no accepted transcript or real-provider PASS |
+| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `openai_transcription_provider.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py`, `provider_safety.py`, `provider_safety_durable.py` | Auto Edit suite, measured two-run fixture evidence, `EV-V3-OPENAI-ASR-ADAPTER-001`, RC-11/RC-12/RC-13 gate validation, `EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001`, `EV-V3-ASR-RESPONSE-DIAGNOSTICS-001` and `EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001` | OpenAI ASR is implemented/mock-tested behind fail-closed safety. RC-13 Operation 1 proved exact preflight and HTTP 200 provider reach with 17 segments/412 words, then rejected 27 word timestamps and remains consumed/`REVIEW_REQUIRED`; V3-01-22 classifies and safely canonicalizes future values without reconstructing the historical response, so no accepted transcript or real-provider PASS exists |
 | Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema, exact-main CI, canonical evidence, split-timeout, dual-CI and two accepted RC-10 operations | Vision structured analysis is 2/2 consecutive real-provider PASS on immutable RC-10; real subject-tracking/reframe accuracy, production path and human quality remain untested |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |

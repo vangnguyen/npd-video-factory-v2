@@ -54,20 +54,23 @@ PR #46 then merged V3-01-21 as locked RC-13
 `1e0146b44b19a5afcef267132d71d36d24a952e4`; exact-main CI `33976046393` passed 5/5 and its
 source G-08 is recorded as `V3-01-APP-052`. Fresh records `V3-01-APP-053` through
 `V3-01-APP-055` rebind provider, budget and unchanged rights to new RC-13 operation IDs and a
-proposed window. This governance bundle is unmounted, neither operation is approved or executed,
-and its draft PR requires a new G-08 before merge.
+proposed window. PR #47 merged that governance scope as
+`b41ed673bc343e33092a3d91253045729b663c7c`. A separate owner decision authorized Operation 1
+only; it reached HTTP 200 once, failed timestamp validation and is consumed/`REVIEW_REQUIRED`.
+Operation 2 is locked/retired. That authority cannot be reused. V3-01-22 is a new zero-call source
+remediation and its draft PR requires a new G-08 before merge.
 
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
 | G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
-| G-01 | real-provider credential aliases/scopes | RC-13 ASR `V3-01-APP-053` binds only `openai-transcription / whisper-1 / asr / vi` and the credential alias; it grants no credential read or call | governance merge, dual-CI/equality proof and a separate exact Operation 1 authority are still required |
-| G-02 | VND provider budgets and cost controls | RC-13 ASR `V3-01-APP-054` proposes 500 VND/op and 1,250 VND/window with checked-in budget 0; no reservation/spend occurred | any scope/window mutation invalidates the rebind; a separate operation decision remains mandatory |
-| G-03 | owned inputs, rights and provenance policy | RC-13 ASR `V3-01-APP-055` revalidates both unchanged WAV/transcript/RightsRecord hashes without extending publishing/training/resale rights | broader final-output rights remain open; this record is not runtime authority |
+| G-01 | real-provider credential aliases/scopes | RC-13 ASR `V3-01-APP-053` was consumed only by the exact separately authorized Operation 1; no further credential read or call is authorized | a future RC-14 must use a fresh exact rebind and separate operation authority |
+| G-02 | VND provider budgets and cost controls | RC-13 Operation 1 committed a 500 VND safety charge after response validation failed; actual provider cost is unknown and reserved VND reconciled to zero | V3-01-22 costs 0 VND; any future RC-14 scope/window requires a fresh budget rebind |
+| G-03 | owned inputs, rights and provenance policy | RC-13 Operation 1 passed the exact asset-01 RightsRecord boundary; rights remained ASR-acceptance-only and are not extended by V3-01-22 | a future RC-14 may rebind unchanged assets only after exact hash/permission/expiry revalidation |
 | G-04 | production-like staging execution | PENDING | locked commit/images, isolated topology and rollback plan |
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation/evidence PR merge | PR #46 source decision is consumed and recorded as `V3-01-APP-052`; the RC-13 governance rebind is a separate draft PR | a new explicit G-08 decision is required before merging the RC-13 gate; it grants no runtime authority |
+| G-08 | remediation/evidence PR merge | decisions through PR #47 are consumed; V3-01-22 is a new source/evidence draft | a new explicit G-08 decision is required before merge and grants no runtime authority |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING; schema, 27-check template and full-watch/listen checklist prepared offline | exact final video and dependent artifact hashes, named reviewer, UTC timestamps, desktop/mobile full watch, headphone/phone-speaker full listen and all checks PASS |
@@ -80,8 +83,8 @@ IDs, expiry and decision. Changing commit, artifact, provider, platform target, 
 time window invalidates or narrows the approval.
 
 The current allowed scope is repository inspection, LOCAL/CI validation, redacted evidence and a
-draft zero-call RC-13 ASR governance PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
-#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37/#38/#39/#40/#41/#42/#43/#44/#45/#46 merges are complete and their G-08 decisions cannot be
+draft zero-call V3-01-22 source PR. The PR #12/#13 sequence and PR #14/#15/#16/#17/
+#18/#19/#20/#22/#23/#24/#25/#26/#27/#28/#29/#30/#31/#32/#33/#34/#35/#36/#37/#38/#39/#40/#41/#42/#43/#44/#45/#46/#47 merges are complete and their G-08 decisions cannot be
 reused. RC-3 IDs are locked, RC-4 remains blocker evidence, and RC-5 operation 1 is consumed/
 `REVIEW_REQUIRED`; RC-5 operation 2 is locked. RC-6 operation 1 is blocked pre-call/not consumed,
 its failed-window authority is retired, and operation 2 is locked. RC-7 operation 1 is consumed after
@@ -92,7 +95,7 @@ acceptance and has no operation authority. RC-9 operation 1 is blocked pre-call/
   are consumed. The runner stopped and bundle was unmounted after each execution. No further Vision
   operation is required or authorized. Runtime defaults remain disabled.
 RC-12 ASR Operation 1 remains consumed/failed/`REVIEW_REQUIRED`; RC-12 Operation 2 is retired and
-locked. RC-13 Operation 1 is not approved/not executed and Operation 2 is not approved/locked.
+locked. RC-13 Operation 1 is consumed/failed/`REVIEW_REQUIRED`; RC-13 Operation 2 is retired/locked.
 This package includes no authority for a merge, ASR operation, credential-value read, provider call,
 deployment, public route, publishing, analytics collection or production write. Records:
 [`V3-01-APP-001`](approvals/V3-01-APP-001.json) and

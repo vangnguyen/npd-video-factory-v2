@@ -25,6 +25,8 @@
 | RC-12 ASR governance rebind | VND | checked-in runtime budget 0; proposed conditional 1,250 window / 500 operation | 0 | 0 | 0 |
 | RC-12 ASR Operation 1 response-validation failure | VND | 500 operation / 1,250 window | 500 safety charge; 0 reserved after reconciliation | unknown | 1 provider call; safety charge is not actual provider cost |
 | V3-01-21 response-diagnostics remediation | VND | 0 | 0 | 0 | 0 calls; 0 credential reads |
+| RC-13 ASR Operation 1 timestamp-validation failure | VND | 500 operation / 1,250 window | 500 safety charge; 0 reserved after reconciliation | unknown | 1 provider call; HTTP 200; no usage/cost receipt accepted |
+| V3-01-22 timestamp remediation | VND | 0 | 0 | 0 | 0 calls; 0 credential reads |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence.
 
@@ -149,10 +151,11 @@ current actual cost is 0 VND.
 For RC-13, `EV-V3-RC13-ASR-GATE-001` rebinds the same fixed 162 VND/minute accounting rule to
 budget day `2026-09-06`, exact execution scope
 `179624fe3a365e415c41b760e49297da0cd23227cf9b49a634e7fbcaaf90b47e` and two fresh RC-derived
-operation IDs. The proposed limits remain 500 VND per operation and 1,250 VND per window. The
-bundle is unmounted, neither operation is approved, and this governance package performs zero
-reservation, zero provider call and zero spend. RC-12's 500 VND safety charge remains historical
-and is not treated as actual provider cost.
+operation IDs. A separately authorized Operation 1 reached HTTP 200 once but failed timestamp
+validation before an accepted usage/cost receipt existed. Its actual provider cost is unknown; the
+500 VND ledger amount is a conservative safety charge only and reserved VND reconciled to zero.
+Operation 2 is locked/retired. V3-01-22 performs zero reservation, zero provider call, zero
+credential read and zero spend, and it does not infer billing from the historical response.
 
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit
