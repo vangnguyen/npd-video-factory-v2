@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: locked RC-14 plus zero-call ASR governance rebind; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
+SCOPE: locked RC-14 plus zero-call ASR timestamp-semantics remediation; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
 RELEASE CANDIDATE: RC-14 0b0965c650f4d06a057acbbb1a7ed9d7b933478b LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-RC14-ASR-GATE-001; governance/offline only; 0 calls/0 credential reads/0 reservation/0 VND
-DATE: 2026-09-06
-OWNER DECISION: DECISIONS THROUGH PR #48 CONSUMED; RC-14 GOVERNANCE DRAFT REQUIRES NEW G-08; OPERATIONS 1/2 NOT APPROVED
+LATEST EVIDENCE: EV-V3-ASR-ZERO-DURATION-SEMANTICS-001; source/forensic only; 0 calls/0 credential reads/0 reservation/0 VND
+DATE: 2026-09-07
+OWNER DECISION: DECISIONS THROUGH PR #49 AND RC-14 OPERATION 1 CONSUMED; SEMANTICS DRAFT REQUIRES NEW G-08; OPERATION 2 LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -24,16 +24,16 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Real-provider-tested axis | 1 PASS, 35 NOT_TESTED, 24 N/A |
 | Production-path-tested axis | 60 NOT_TESTED |
 | Quality-accepted axis | 36 NOT_TESTED, 24 N/A |
-| Flow A | BLOCKED overall; Vision real-provider 2/2 PASS and ASR safety/HTTP 200/timestamp-shape reach proven, but RC-13 Operation 1 rejected 27/412 word timestamps and is consumed; RC-14 gate readiness passes offline while both operations remain unauthorized; ASR/reframe real-provider, production and quality axes remain blocked |
+| Flow A | BLOCKED overall; Vision real-provider 2/2 PASS and ASR safety/HTTP 200/timestamp-shape reach proven, but RC-14 Operation 1 rejected 27/413 exact equality points and is consumed/`REVIEW_REQUIRED`; the source-only semantics split is mock-tested but ASR/reframe real-provider, production and quality axes remain blocked |
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR Op1 cost 0 VND; RC-12 and RC-13 ASR Op1 actual costs are unknown and each 500 VND amount is a conservative safety charge, not an actual-cost receipt; V3-01-22 costs 0 VND |
+| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR Op1 cost 0 VND; RC-12, RC-13 and RC-14 ASR Op1 actual costs are unknown and each 500 VND amount is a conservative safety charge, not an actual-cost receipt; the source remediation costs 0 VND |
 | Rights/provenance | exact Vision asset passed twice; two exact unchanged WAVs, voices, owner-verified transcripts and RightsRecords are rebound to RC-14 only for bounded ASR acceptance; broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
-| Allowed scope | LOCAL/CI zero-call RC-14 gate validation, redacted evidence and a draft governance PR |
+| Allowed scope | LOCAL/CI zero-call timestamp forensics/source validation, redacted evidence and a draft G-08 PR |
 | Disabled scope | further provider calls, credential-value access, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
@@ -394,11 +394,31 @@ derived operation IDs, execution-scope SHA
 transcripts and RightsRecords, and the unchanged 500/1,250 VND and 90/120-second envelopes. The
 proposed window is `2026-09-07T14:00:00Z` through `2026-09-07T18:00:00Z`.
 
-This checkpoint is governance/offline only. The bundle is unmounted, credential reads/provider
-calls/reservations/spend are zero, Operation 1 is not approved or executed, and Operation 2 is not
-approved/locked. A G-08 merge decision, post-merge governance-main CI, executable-tree equality and
-a separate owner authority for Operation 1 remain mandatory. RC-14 is diagnostic-capable and is not
-presumed to pass; unsafe timestamp intervals remain fail-closed.
+PR #49 merged this governance scope as
+`46937d9fe4804c7c7190995afb2c48377c70f70e`. A later separate authority permitted Operation 1
+once. It received HTTP 200 in 10,479.579 ms and retained 20 segment/413 word timing diagnostics,
+then strict validation rejected 27 exact `start == end` word records. The operation is consumed/
+failed/`REVIEW_REQUIRED`; it cannot be retried or reused. Actual cost remains unknown and 500 VND
+is only a conservative safety charge. Operation 2 remains not approved/locked.
+
+## V3-01-22 zero-duration semantics follow-up
+
+Evidence `EV-V3-ASR-ZERO-DURATION-SEMANTICS-001` accounts for all 413 retained word timestamps.
+The 27 equality records are all bounded, monotonic, inside one selected segment, non-overlapping and
+equal to the following word start. Three duplicate timestamp groups contain six consecutive zero
+records. The historical receipt did not retain provider text or punctuation, so lexical/punctuation
+classification and transcript coverage remain unknown and are not reconstructed.
+
+The source contract now allows an exact equality point only as explicitly marked provider evidence
+when it touches an adjacent word boundary. It never adds epsilon, fabricates duration, swaps
+endpoints or drops a word. Segments remain positive-duration. Edit, subtitle, reframe and database
+consumers require the separate `PositiveDurationTranscript` proof and remain blocked when a point
+exists. Inverted, negative, non-numeric, missing, out-of-source, out-of-segment, overlapping and
+ambiguous points all remain fail-closed.
+
+This work makes zero provider calls, reads zero credentials, reserves/spends zero VND and does not
+change the historical RC-14 verdict. It is a new executable source draft that stops at G-08. It
+does not merge, create RC-15, create a live operation or grant any authority.
 
 ## Decision rule
 

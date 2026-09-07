@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-22",
+  "source_commit": "2d11b1dbf9460975698e24c938a21da8c265c231",
+  "mode": "SOURCE_ONLY_ZERO_CALL",
+  "forensic": {
+    "source_receipt_sha256": "2d65b3e4c1ec1afc5f6b262a1ea294c811be5dba9718a06992da9fe3a8d2b1bd",
+    "forensic_file_sha256": "ef98e46d523529b4a252fc8eb256ddd38cf5a7183a5fe723763b4cb687b2e569",
+    "forensic_canonical_payload_sha256": "395accab6c716cca1a6ad47da36e5da7e0cc0818f9bdf359ad9b1c29edbea34f",
+    "segments": 20,
+    "words": 413,
+    "positive_duration_words": 386,
+    "zero_duration_words": 27,
+    "all_zero_points_bounded_monotonic_and_next_start_anchored": true,
+    "word_text_retained": false,
+    "punctuation_retained": false,
+    "transcript_coverage_retained": false
+  },
+  "contract": {
+    "provider_word_interval": "start_less_than_or_equal_end",
+    "provider_boundary_point_requires_adjacent_anchor": true,
+    "segment_interval": "start_strictly_less_than_end",
+    "unsafe_semantics_fail_closed": true,
+    "duration_fabricated": false,
+    "epsilon_added": false,
+    "word_dropped": false,
+    "timestamp_swapped": false,
+    "downstream_positive_duration_gate": true
+  },
+  "historical_rc14": {
+    "operation": "v3-01-rc14-openai-transcription-asr-call-01",
+    "provider_http_status": 200,
+    "acceptance": "REVIEW_REQUIRED",
+    "consumed": true,
+    "actual_cost_vnd": null,
+    "safety_charge_vnd": 500,
+    "operation_2": "NOT_APPROVED_LOCKED",
+    "retroactively_promoted": false
+  },
+  "safety": {
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "reservation_vnd": 0,
+    "spend_vnd": 0,
+    "production_verdict": "NO-GO"
+  }
+}

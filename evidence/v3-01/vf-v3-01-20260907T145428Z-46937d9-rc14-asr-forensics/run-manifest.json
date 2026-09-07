@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260907T145428Z-46937d9-rc14-asr-forensics",
+  "started_at_utc": "2026-09-07T14:54:28Z",
+  "completed_at_utc": "2026-09-07T15:20:48Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "2d11b1dbf9460975698e24c938a21da8c265c231",
+  "base_sha": "46937d9fe4804c7c7190995afb2c48377c70f70e",
+  "release_candidate": "NOT_ESTABLISHED-v3-01-22-remediation",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0013_v3_01_18_nullable_transcript_confidence",
+  "config_fingerprint_redacted": "fixture-defaults-zero-budget-kill-switch-engaged-no-credential-read-no-provider-call",
+  "providers": [
+    {
+      "capability": "asr-timestamp-semantics",
+      "provider": "retained-rc14-diagnostics-and-mock-transport-only",
+      "model_or_workflow": "whisper-1 zero-duration word boundary semantics",
+      "region": "not-applicable",
+      "credential_alias": "NOT_USED",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "ASR-01",
+    "OPS-01",
+    "OPS-09",
+    "V3-01-22-ASR-ZERO-DURATION-WORD-SEMANTICS"
+  ],
+  "artifact_manifest": [
+    "manifest.json",
+    "rc14-asr-operation-1-word-timestamp-forensics.json",
+    "matrix/evidence-EV-V3-ASR-ZERO-DURATION-SEMANTICS-001.json",
+    "provider/zero-duration-semantics-status.json",
+    "final/status.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [],
+  "result": "PASS"
+}

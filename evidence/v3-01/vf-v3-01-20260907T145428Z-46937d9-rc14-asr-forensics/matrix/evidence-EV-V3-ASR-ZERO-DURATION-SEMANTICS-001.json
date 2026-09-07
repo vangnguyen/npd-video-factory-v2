@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-ASR-ZERO-DURATION-SEMANTICS-001",
+  "test_case_id": "ASR-01+OPS-01+OPS-09",
+  "matrix_rows": [
+    "ASR-01",
+    "OPS-01",
+    "OPS-09"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "2d11b1dbf9460975698e24c938a21da8c265c231",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-transcription",
+    "model_or_workflow": "whisper-1 retained RC-14 timestamp diagnostics plus offline fixtures",
+    "credential_alias": "NOT_USED",
+    "secret_recorded": false
+  },
+  "request_hash": "16d078104908239ee4446823c66b87f418db4bd6b0b5c423c374fdbc8e331914",
+  "response_or_artifact_hash": "ef98e46d523529b4a252fc8eb256ddd38cf5a7183a5fe723763b4cb687b2e569",
+  "started_at_utc": "2026-09-07T14:54:28Z",
+  "completed_at_utc": "2026-09-07T15:20:48Z",
+  "duration_seconds": 1580,
+  "result": "PASS",
+  "assertion": "All 413 retained RC-14 word timing diagnostics were classified without reconstructing text: 386 positive intervals and 27 bounded monotonic provider boundary points. The source-only contract preserves anchored word equality at the provider-evidence layer while explicit positive-duration downstream consumers remain fail closed.",
+  "correlation_id": "v3-01-22-rc14-asr-zero-duration-forensics",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": "V3-01-RIGHTS-ASR-001",
+  "reviewer": "Codex local timestamp semantics reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On source commit 2d11b1dbf9460975698e24c938a21da8c265c231, verify the retained source SHA, regenerate the forensic report offline, validate the report schema/hash, and run the focused timestamp/provider/evaluator/durable parity suite. Do not resolve a credential or call a provider."
+}

@@ -90,6 +90,18 @@ window. It remains unmounted, performs no credential read/provider call/reservat
 promote ASR real-provider acceptance. See
 [54_V3_01_RC14_OPENAI_ASR_GATE.md](54_V3_01_RC14_OPENAI_ASR_GATE.md).
 
+PR #49 then merged that governance scope as
+`46937d9fe4804c7c7190995afb2c48377c70f70e`. Under separate authority, RC-14 Operation 1
+received OpenAI HTTP 200 once in 10,479.579 ms with 20 segments/413 words. Exactly 27 words were
+`start == end`; the strict adapter rejected the response, so the operation is consumed/
+`REVIEW_REQUIRED`, actual cost is unknown, 500 VND is only the safety charge and Operation 2
+remains locked. The exhaustive follow-up report proves all 27 points are bounded, monotonic,
+inside one selected segment and anchored to the following word start. Provider text/punctuation
+were not retained and remain unknown. The revised source contract preserves only such anchored
+word boundary points at the provider-evidence layer and requires an explicit positive-duration
+proof before scene, silence and persistence consumers. See
+[55_V3_01_22_ASR_ZERO_DURATION_WORD_SEMANTICS.md](55_V3_01_22_ASR_ZERO_DURATION_WORD_SEMANTICS.md).
+
 ## Foundation
 
 | Capability | Primary code | Existing tests/evidence | Audit result |
@@ -118,7 +130,7 @@ promote ASR real-provider acceptance. See
 | Capability | Primary code | Existing tests/evidence | Audit result |
 |---|---|---|---|
 | Resumable upload/validation | `auto_edit_*`, `media_validation.py`, `media_security.py` | upload, quarantine, EICAR/archive and E2E tests | Local/mock PASS; production scanner and ingress untested |
-| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `openai_transcription_provider.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py`, `provider_safety.py`, `provider_safety_durable.py` | Auto Edit suite, measured two-run fixture evidence, `EV-V3-OPENAI-ASR-ADAPTER-001`, RC-11/RC-12/RC-13/RC-14 gate validation, `EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001`, `EV-V3-ASR-RESPONSE-DIAGNOSTICS-001` and `EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001` | OpenAI ASR is implemented/mock-tested behind fail-closed safety. RC-13 Operation 1 proved exact preflight and HTTP 200 provider reach with 17 segments/412 words, then rejected 27 word timestamps and remains consumed/`REVIEW_REQUIRED`; V3-01-22 classifies and safely canonicalizes future values without reconstructing the historical response. RC-14 is locked and its gate validates offline, but no RC-14 operation is authorized, so no accepted transcript or real-provider PASS exists |
+| Transcript/scene/silence/highlight | `auto_edit_providers.py`, `openai_transcription_provider.py`, `auto_edit_logic.py`, `auto_edit_service.py`, `flow_a_acceptance.py`, `provider_safety.py`, `provider_safety_durable.py` | Auto Edit suite, measured two-run fixture evidence, `EV-V3-OPENAI-ASR-ADAPTER-001`, RC-11/RC-12/RC-13/RC-14 gate validation, `EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001`, `EV-V3-ASR-RESPONSE-DIAGNOSTICS-001`, `EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001` and `EV-V3-ASR-ZERO-DURATION-SEMANTICS-001` | OpenAI ASR is implemented/mock-tested behind fail-closed safety. RC-14 Operation 1 proved exact preflight, HTTP 200 provider reach and a 20-segment/413-word response; 27 exact equality points were rejected and the consumed operation remains `REVIEW_REQUIRED`. The forensic follow-up preserves only bounded adjacent word boundary points in provider evidence, while positive-duration edit/subtitle/persistence consumers remain explicitly blocked. No ASR real-provider PASS, production-path or quality evidence exists |
 | Vision/reframe | `vision_*`, `openai_vision_provider.py`, `evidence_serialization.py`, `flow_a_acceptance.py` | fixture/E2E plus strict Responses-schema, exact-main CI, canonical evidence, split-timeout, dual-CI and two accepted RC-10 operations | Vision structured analysis is 2/2 consecutive real-provider PASS on immutable RC-10; real subject-tracking/reframe accuracy, production path and human quality remain untested |
 | Media/B-roll planning | `media_intelligence_*` | `test_media_intelligence.py`, E2E | Implemented/mock-tested |
 | Stock/image/video | provider protocols and deterministic fixtures | provider failure/rights tests | No real provider adapter accepted |

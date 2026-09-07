@@ -51,6 +51,16 @@ mismatch remain unknown, and Operation 2 is retired/locked. V3-01-21 adds zero-c
 diagnostics and fixes credential-reference scan semantics. This still does not promote `ASR-01`
 real-provider-tested above `NOT_TESTED`.
 
+PR #48 then merged timestamp diagnostics as RC-14 and PR #49 merged its governance scope. A
+separately authorized RC-14 Operation 1 reached OpenAI HTTP 200 in 10,479.579 ms and retained 20
+segment/413 word timing diagnostics. Exactly 27 words were `start == end`; strict RC-14 mapping
+rejected them, so the operation is consumed/`REVIEW_REQUIRED`, actual cost remains unknown and
+Operation 2 remains locked. `EV-V3-ASR-ZERO-DURATION-SEMANTICS-001` accounts for all 413 records
+without reconstructing missing text: every equality point is bounded, monotonic, inside one segment
+and anchored to the following word start. The new source/mock contract preserves only those points
+as provider evidence and blocks positive-duration downstream consumers. This does not promote
+`ASR-01` real-provider-tested.
+
 The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTANCE_MATRIX.csv).
 
 | ID | Capability | I | M | R | P | Q | Evidence | Gaps |
@@ -75,7 +85,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | SCR-01 | Script generation and versioning | FAIL | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-002 |
 | SCR-02 | Storyboard and media plan | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-004 |
 | UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-002-PARTIAL | GAP-007; GAP-011 |
-| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; EV-V3-RC12-ASR-GATE-001; EV-V3-ASR-RESPONSE-DIAGNOSTICS-001; EV-V3-RC13-ASR-GATE-001; EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001; EV-V3-RC14-ASR-GATE-001 | GAP-003 |
+| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; EV-V3-RC12-ASR-GATE-001; EV-V3-ASR-RESPONSE-DIAGNOSTICS-001; EV-V3-RC13-ASR-GATE-001; EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001; EV-V3-RC14-ASR-GATE-001; EV-V3-ASR-ZERO-DURATION-SEMANTICS-001 | GAP-003 |
 | EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
 | EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
@@ -131,11 +141,12 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
   later owner decisions select `whisper-1` and exact gate inputs but still perform no credential
   read, provider call or spend; gate readiness does not promote the real-provider axis.
 - RC-13 Operation 1 reached OpenAI and received 17 segments/412 words, but 27 word timestamp
-  objects failed strict mapping. V3-01-22 classifies and safely canonicalizes future values offline;
-  neither the operation nor this remediation promotes ASR real-provider-tested above `NOT_TESTED`.
-- PR #48 merged V3-01-22 as locked RC-14 after exact-head and exact-main CI passed 5/5. The fresh
-  RC-14 bundle and both immutable inputs validate offline, but Operation 1 remains separately
-  owner-gated and Operation 2 remains locked; no provider call occurred in this governance work.
+  objects failed strict mapping. The first V3-01-22 remediation added future diagnostics; neither
+  the operation nor that remediation promoted ASR real-provider-tested.
+- RC-14 Operation 1 later reached HTTP 200 with 20 segments/413 words. Its 27 equality points are
+  now forensically proven bounded and ordered, but the historical operation remains consumed/
+  `REVIEW_REQUIRED`. The follow-up source contract separates provider boundary-point evidence from
+  positive-duration downstream readiness and still leaves ASR real-provider-tested `NOT_TESTED`.
 - `N/A` is used only where the master matrix defines an axis as structurally inapplicable; it does
   not remove the need for G-00 scope approval.
 - Current decision remains `NO-GO` because P0 gaps and mandatory gates are open.

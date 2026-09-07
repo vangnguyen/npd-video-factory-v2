@@ -42,6 +42,15 @@ ASR real-provider PASS evidence remains absent. PR #48 subsequently merged that 
 exact-main CI `34042079905` passed 5/5 and annotated `vf-v3-01-rc14` was locked. The RC-14 gate
 proposal uses new operation IDs and an unmounted bundle; both operations remain unauthorized.
 
+PR #49 subsequently merged the RC-14 governance scope. A separately authorized Operation 1
+received OpenAI HTTP 200 with 20 segments/413 words in 10,479.579 ms, then failed strict mapping on
+27 exact `start == end` word timestamps. It is consumed/`REVIEW_REQUIRED`; actual cost remains
+unknown, 500 VND is only the safety charge and Operation 2 is locked. The exhaustive forensic
+report proves every equality record is bounded, monotonic, inside one selected segment and anchored
+to the following word start. Provider text/punctuation were not retained. The new source-only
+semantics split preserves anchored provider boundary points while keeping downstream
+positive-duration consumers fail closed; it does not promote ASR or create new authority.
+
 | Severity | Open | In progress | Remediated, gate pending | Total | Production effect |
 |---|---:|---:|---:|---:|---|
 | P0 | 1 | 8 | 1 | 10 | all unverified P0 work still blocks release-candidate GO |
@@ -54,10 +63,11 @@ through PR #13. V3-01-02 through V3-01-08 are merged through PR #14 through PR #
 GAP-003, GAP-004, GAP-005, GAP-006, GAP-008, GAP-009, GAP-010, GAP-011, GAP-013 and GAP-016 remain
 `IN_PROGRESS`. RC-10 Vision is 2/2 consecutive real-provider PASS, while ASR/reframe,
 production-like safety and broader rights coverage remain open. The bounded G-08 decisions through
-PR #48 are consumed. RC-12 Operation 1 is consumed/failed/`REVIEW_REQUIRED`; Operation 2 is retired
+PR #49 are consumed. RC-12 Operation 1 is consumed/failed/`REVIEW_REQUIRED`; Operation 2 is retired
 and locked. RC-13 Operation 1 is also consumed/`REVIEW_REQUIRED` after the bounded HTTP 200 response
-failed timestamp validation, and Operation 2 is locked/retired. RC-14 is locked and its gate proposal
-validates offline, but the governance PR requires its own G-08 and grants no operation authority.
+failed timestamp validation, and Operation 2 is locked/retired. RC-14 Operation 1 is also
+consumed/`REVIEW_REQUIRED` after HTTP 200 and equality rejection; Operation 2 remains locked. The
+source-only timestamp-semantics draft requires its own G-08 and grants no operation authority.
 Historical RC-3 and RC-5 operation
 1 IDs are consumed and permanently locked; RC-5 operation 2 is also locked. RC-6 operation 1 is
 not consumed, but its failed-window authority is retired; operation 2 is locked. RC-7 operation 1 is
@@ -73,7 +83,7 @@ Production remains undeployed and unverified.
 | Gap | Short description | Containment |
 |---|---|---|
 | V3-01-GAP-002 | research/originality/claim-linked script incomplete | measured fixture contract only; no production-ready claim |
-| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; RC-13 Operation 1 reached HTTP 200 with 17 segments/412 words but rejected 27 word timestamps and remains consumed/`REVIEW_REQUIRED`; V3-01-22 remediates future classification/canonicalization offline and RC-14 gate readiness is offline PASS, but no accepted real ASR/reframe result exists |
+| V3-01-GAP-003 | aggregate real ASR/reframe acceptance incomplete; Vision sub-scope complete | RC-10 Vision is officially 2/2 consecutive real-provider PASS; RC-14 Operation 1 reached HTTP 200 with 20 segments/413 words but rejected 27 exact equality points and remains consumed/`REVIEW_REQUIRED`; forensic evidence now separates anchored provider boundary points from strict downstream intervals, but no accepted real ASR/reframe result exists |
 | V3-01-GAP-004 | no real stock/AI media/ComfyUI evidence | receipt/decode/relevance fixture contract only; external execution false |
 | V3-01-GAP-005 | no accepted Vietnamese voice/music mix | measured fixture audio contract only; eSpeak remains dev/CI |
 | V3-01-GAP-006 | no official publish/analytics/Flow C | measured fixture acceptance only; all external actions remain gated |
