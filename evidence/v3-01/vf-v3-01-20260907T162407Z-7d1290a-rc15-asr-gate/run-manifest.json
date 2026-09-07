@@ -1,0 +1,54 @@
+{
+  "artifact_manifest": [
+    "final/status.json",
+    "governance/executable-rc-ci.json",
+    "matrix/evidence-EV-V3-RC15-ASR-GATE-001.json",
+    "provider/rc15-asr-gate-validation.json",
+    "provider/test-summary.json"
+  ],
+  "base_sha": "7d1290aacac61df98a51544731243e5e322a8644",
+  "commit_sha": "7d1290aacac61df98a51544731243e5e322a8644",
+  "completed_at_utc": "2026-09-07T16:30:45Z",
+  "config_fingerprint_redacted": "fixture-default-rc15-asr-gate-unmounted-zero-budget-kill-switch-engaged-no-credential-read",
+  "container_images": [],
+  "cost_summary": {
+    "actual": 0,
+    "approved_conditional_window": 1250,
+    "currency": "VND",
+    "external_calls": 0,
+    "reserved": 0
+  },
+  "database_migration_version": "0013_v3_01_18_nullable_transcript_confidence",
+  "environment": "LOCAL",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-01",
+    "G-02",
+    "G-03"
+  ],
+  "providers": [
+    {
+      "capability": "asr",
+      "credential_alias": "secret://openai/codex-video",
+      "model_or_workflow": "whisper-1 / no provider execution",
+      "provider": "openai-transcription-gate-validation-only",
+      "region": "not-applicable",
+      "secret_recorded": false
+    }
+  ],
+  "release_candidate": "vf-v3-01-rc15",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "result": "PASS",
+  "run_id": "vf-v3-01-20260907T162407Z-7d1290a-rc15-asr-gate",
+  "schema_version": 1,
+  "started_at_utc": "2026-09-07T16:24:07Z",
+  "test_cases": [
+    "ASR-01",
+    "PRO-006",
+    "RC15-ASR-GATE-FOCUSED-REGRESSION"
+  ]
+}

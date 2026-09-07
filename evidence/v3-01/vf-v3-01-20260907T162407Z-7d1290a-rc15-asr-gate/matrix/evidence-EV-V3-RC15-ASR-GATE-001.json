@@ -1,0 +1,38 @@
+{
+  "assertion": "The RC-15 ASR gate validates offline with fresh RC-derived IDs, exact assets/transcripts/RightsRecords, canonical G01/G02/G03 rebind records and unchanged 500/1250 VND 90/120s envelope. Provider boundary points do not satisfy PositiveDurationTranscript. Bundle remains unmounted, both operations unauthorized, ASR NOT_TESTED/0-of-2 and Production NO-GO.",
+  "axis": "cross-cutting",
+  "commit_sha": "7d1290aacac61df98a51544731243e5e322a8644",
+  "completed_at_utc": "2026-09-07T16:30:45Z",
+  "correlation_id": "v3-01-rc15-asr-gate-7d1290a",
+  "cost": {
+    "actual": 0,
+    "currency": "VND",
+    "status": "ZERO"
+  },
+  "duration_seconds": 398.0,
+  "environment": "LOCAL",
+  "evidence_id": "EV-V3-RC15-ASR-GATE-001",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "provider": {
+    "credential_alias": "secret://openai/codex-video",
+    "model_or_workflow": "whisper-1 / selected-but-not-executed",
+    "name": "openai-transcription-gate-validation-only",
+    "secret_recorded": false
+  },
+  "reproduce": "On the governance branch based on exact RC-15, run python -m pytest apps/api/tests/test_rc15_asr_gate_bundle.py -q with fixture defaults; verify bundle/approval/scope/assets, historical checksums and source-tree equality. No live ledger/credential/provider is required.",
+  "request_hash": null,
+  "response_or_artifact_hash": "d1075d9c22c9a6fb3f608ffcd5bf2de09d81895a2b17680fc981a3680249a966",
+  "result": "PASS",
+  "reviewer": "Codex local ASR gate reviewer",
+  "rights_record_id": "V3-01-RIGHTS-ASR-001;V3-01-RIGHTS-ASR-002",
+  "schema_version": 1,
+  "started_at_utc": "2026-09-07T16:24:07Z",
+  "test_case_id": "ASR-01+PRO-006"
+}

@@ -1,0 +1,27 @@
+{
+  "approval_id": "V3-01-APP-060",
+  "approved_at_utc": "2026-09-07T16:18:42Z",
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "artifact_or_commit_hashes": [
+    "46937d9fe4804c7c7190995afb2c48377c70f70e",
+    "7fb783291159ab895654c8ea517f2d9eec4cc8fe",
+    "7d1290aacac61df98a51544731243e5e322a8644"
+  ],
+  "decision": "APPROVED",
+  "expires_at_utc": null,
+  "gate_id": "G-08",
+  "limits": [
+    "Merge exact PR #50 head 7fb783291159ab895654c8ea517f2d9eec4cc8fe only",
+    "Lock vf-v3-01-rc15 only after exact-main full regression PASS",
+    "Keep provider evidence semantics separate from PositiveDurationTranscript downstream requirements",
+    "No epsilon, fabricated duration, endpoint swap or dropped word",
+    "Preserve RC-14 Op1 REVIEW_REQUIRED/CONSUMED and unknown actual cost; 500 VND is safety charge only",
+    "No reuse of RC-14 operation IDs, bundle, window or authority",
+    "Fresh governance proposal requires its own G-08 and later separate Operation 1 decision",
+    "No credential read, provider call, reservation, spend, deploy, publish or public ingress",
+    "ASR consecutive PASS remains 0/2; Production NO-GO"
+  ],
+  "notes": "Owner approval recorded at the merge checkpoint, not an inferred new runtime approval. PR #50 exact-head CI 34140738281 and exact-main CI 34142662132 passed all 5 jobs. Tag object 53e3560d0c4f77a9e53c98f1dd89ca45aa42674c peels to 7d1290aacac61df98a51544731243e5e322a8644. The following governance PR still needs its own G-08.",
+  "scope": "Authorize merge of exact PR #50 V3-01-22 ASR zero-duration word timestamp semantics remediation, exact-main regression and annotated RC-15 lock, followed by governance-only rebind preparation; no runtime authority.",
+  "target_account_or_environment": "GitHub main and local/CI regression only; no production or provider execution"
+}

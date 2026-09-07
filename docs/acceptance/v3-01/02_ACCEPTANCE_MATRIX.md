@@ -1,7 +1,12 @@
 # V3-01 acceptance matrix
 
 Baseline captured at `2026-08-27T12:02:08Z`; the latest executable acceptance candidate is locked
-NO-GO RC-12 `ca5483c889742c27af3368b9b487350d7daa217d`. Historical RC-3 operation 1 failed and remains
+NO-GO RC-15 `7d1290aacac61df98a51544731243e5e322a8644` after PR #50 and exact-main CI `34142662132` (5/5 PASS).
+The fresh RC-15 governance proposal `EV-V3-RC15-ASR-GATE-001` is offline/unmounted and awaits
+its own G-08, governance-main CI and separate operation authority; ASR stays 0/2 `NOT_TESTED`.
+See [56_V3_01_RC15_OPENAI_ASR_GATE.md](56_V3_01_RC15_OPENAI_ASR_GATE.md).
+
+Historical RC-3 operation 1 failed and remains
 locked. RC-5 operation 1 later completed provider execution once, but its post-call evidence
 serialization failed; it is consumed and permanently `REVIEW_REQUIRED`, and operation 2 is not
 approved. V3-01-13 remediates only that serialization path offline. RC-6 operation 1 then stopped

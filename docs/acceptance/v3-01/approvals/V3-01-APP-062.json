@@ -1,0 +1,28 @@
+{
+  "approval_id": "V3-01-APP-062",
+  "approved_at_utc": "2026-09-07T16:18:42Z",
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "artifact_or_commit_hashes": [
+    "7d1290aacac61df98a51544731243e5e322a8644",
+    "eff5a407da6892a4f3d78afaf84b947210d39c598def1dd2813929a934eaa594",
+    "fee7086afeac45fa38c225365ceeae293f1a80aea1eba73bb261ce34aca350aa"
+  ],
+  "decision": "APPROVED",
+  "expires_at_utc": "2026-09-08T18:00:00Z",
+  "gate_id": "G-02",
+  "limits": [
+    "500 VND atomic reservation per operation",
+    "1250 VND maximum for the whole acceptance window",
+    "162 VND per minute accounting rate derived from 0.006 USD/minute at fixed 27000 VND/USD",
+    "One file per operation, minimum acceptance duration 90 seconds and hard duration cap 180 seconds",
+    "File size no greater than 25000000 bytes",
+    "Language vi, verbose_json, native segment and word timestamps",
+    "Provider HTTP timeout 90 seconds and controller hard envelope 120 seconds",
+    "One attempt, concurrency 1, no automatic retry and no fallback",
+    "Window 2026-09-08T14:00:00Z through 2026-09-08T18:00:00Z only",
+    "No provider call until a separate owner decision authorizes RC-15 Operation 1"
+  ],
+  "notes": "The owner instructed a fresh RC-15 rebind while preserving the previously approved 500/1250 VND envelope. The new budget-day and execution-scope hashes are exact. This record does not enable checked-in budget or authorize an API call; any bundle, scope or window mutation requires another review and rebind. Recorded at the PR #50 merge checkpoint under the owner instruction to prepare a fresh rebind. This dated window is a proposal for separate governance G-08 review, not execution authority. RC-14 authority and both RC-14 operation IDs are retired; no credential read, reservation or call is permitted by this record. Provider boundary-point validation is separate from positive-duration downstream readiness.",
+  "scope": "Rebind G-02-ASR v1.1 to the dated RC-15 duration, file-size, native-timestamp, VND and split-timeout envelope for at most two fresh derived whisper-1 acceptance operations.",
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; checked-in and production budgets remain zero"
+}

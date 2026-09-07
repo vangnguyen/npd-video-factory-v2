@@ -1,0 +1,31 @@
+{
+  "approval_id": "V3-01-APP-063",
+  "approved_at_utc": "2026-09-07T16:18:42Z",
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "artifact_or_commit_hashes": [
+    "7d1290aacac61df98a51544731243e5e322a8644",
+    "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+    "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+    "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+    "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef",
+    "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+    "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323",
+    "0d7aef962dcb5e34ed5786fadd2e9cfd156cbfb8784d498092262d33b76de7c0",
+    "fee7086afeac45fa38c225365ceeae293f1a80aea1eba73bb261ce34aca350aa"
+  ],
+  "decision": "APPROVED",
+  "expires_at_utc": "2026-09-08T18:00:00Z",
+  "gate_id": "G-03",
+  "limits": [
+    "Exact WAV SHA-256 fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef for slot 1",
+    "Exact WAV SHA-256 dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b for slot 2",
+    "Owner-verified transcript and critical-term manifest for each unchanged WAV",
+    "OpenAI ASR acceptance processing only",
+    "Speaker voice-processing consent applies only to this bounded acceptance",
+    "No publishing, training, resale or other use",
+    "No provider call until a separate owner decision authorizes RC-15 Operation 1"
+  ],
+  "notes": "The owner permitted the two WAVs, owner-verified transcripts and RightsRecords to be rebound to RC-15 if exact hashes, rights and expiry remained valid. Offline revalidation confirms unchanged hashes, APPROVED rights, no expiry and no scope expansion. This record grants no publishing, training, resale, credential read or live-call authority. Recorded at the PR #50 merge checkpoint under the owner instruction to prepare a fresh rebind. This dated window is a proposal for separate governance G-08 review, not execution authority. RC-14 authority and both RC-14 operation IDs are retired; no credential read, reservation or call is permitted by this record. Provider boundary-point validation is separate from positive-duration downstream readiness.",
+  "scope": "Rebind G-03-ASR to exactly the two unchanged NPD-owned or authorized Vietnamese WAV inputs and their owner-verified reference transcripts for bounded OpenAI ASR acceptance on vf-v3-01-rc15.",
+  "target_account_or_environment": "Isolated owner-gated OpenAI ASR acceptance runner only"
+}

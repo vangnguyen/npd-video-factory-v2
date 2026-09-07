@@ -103,4 +103,16 @@ asset-specific durable/non-durable rights selection offline for both new operati
 remains unmounted, Operation 1 has no runtime authority and Operation 2 is locked; this package makes
 no media upload, credential read or provider call and does not close broader rights acceptance.
 
+## Current RC-15 rebind
+
+PR #50 merged as executable RC-15 `7d1290aacac61df98a51544731243e5e322a8644`.
+`EV-V3-RC15-ASR-GATE-001` revalidates the same two WAVs, transcripts, owner manifest and
+canonical RightsRecords without changing content, expiry or use. Both RightsRecords remain
+approved with no expiry; publishing, training and resale stay forbidden. Record `V3-01-APP-063`
+binds these immutable inputs to the fresh RC-15 scope only. The bundle is unmounted and neither
+operation is authorized. RC-14 Operation 1 remains consumed/`REVIEW_REQUIRED`; both old
+operation IDs are retired. No media is uploaded by this governance proposal.
+
+See [56_V3_01_RC15_OPENAI_ASR_GATE.md](56_V3_01_RC15_OPENAI_ASR_GATE.md).
+
 Open gap: `V3-01-GAP-013`.

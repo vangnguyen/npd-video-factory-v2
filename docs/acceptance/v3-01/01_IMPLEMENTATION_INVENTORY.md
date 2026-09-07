@@ -1,5 +1,32 @@
 # V3-01 implementation inventory
 
+## Current RC-15 governance checkpoint
+
+PR #50 merged the source-only timestamp-semantics remediation as `7d1290aacac61df98a51544731243e5e322a8644`.
+Exact-head CI `34140738281` and exact-main CI `34142662132` completed successfully, 5/5 jobs.
+Annotated `vf-v3-01-rc15` locks that exact executable commit; executable-tree SHA-256 is
+`9fab766b285eb2db580032b914eb2ccdf474d18b3958fd218a73a22fb75701e8`.
+
+Evidence `EV-V3-RC15-ASR-GATE-001` covers only offline revalidation of the fresh RC-15
+operation IDs, unchanged two-input rights/transcript hashes and proposed 08 September 2026
+14:00-18:00 UTC window. Bundle and runtime remain unmounted/disabled. The proposed governance
+merge and its governance-main CI do not yet exist; dual-CI provenance remains
+`PENDING_POST_MERGE`. The executable-RC CI cannot substitute for that second CI role.
+
+RC-14 Operation 1 remains consumed/`REVIEW_REQUIRED`, actual cost unknown, with only a
+500 VND conservative safety charge. Both RC-14 operation IDs and the old authority/window
+are retired for live execution. RC-15 Operation 1 is `NOT APPROVED / NOT EXECUTED`;
+Operation 2 is `NOT APPROVED / LOCKED`. No credential read, reservation, provider call or
+spend is authorized by this proposal. Vision remains 2/2 PASS; ASR remains 0/2 and
+real-provider `NOT_TESTED`; production remains `NO-GO`.
+
+The source contract preserves only adjacent-anchored provider boundary points. It does not
+fabricate duration or pass those points to interval consumers: `PositiveDurationTranscript`
+continues to fail with `POSITIVE_DURATION_TRANSCRIPT_REQUIRED` when a point is present.
+Provider evidence validity therefore does not establish downstream Flow A readiness.
+
+See [56_V3_01_RC15_OPENAI_ASR_GATE.md](56_V3_01_RC15_OPENAI_ASR_GATE.md).
+
 This inventory is a static and deterministic-test audit on base commit
 `cae40eda871d0f9c7fc315229361a40032d48967`. It does not establish real-provider,
 production-path or human-quality acceptance.

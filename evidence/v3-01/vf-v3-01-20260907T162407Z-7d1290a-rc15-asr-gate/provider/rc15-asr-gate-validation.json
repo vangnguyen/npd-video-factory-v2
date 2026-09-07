@@ -1,0 +1,153 @@
+{
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED",
+    "real_provider_tested": "NOT_TESTED"
+  },
+  "approvals": [
+    {
+      "canonical_sha256": "852e920c4a8ac06681d55bc0062b85f6e43bdcd6d49ceb48546810734149381c",
+      "gate": "G-01-ASR",
+      "id": "V3-01-APP-061",
+      "runtime_authority": false
+    },
+    {
+      "canonical_sha256": "eb559b549a82885da40e5dddd8189ab10bfdc4362ead99835474fa21e6c67340",
+      "gate": "G-02-ASR",
+      "id": "V3-01-APP-062",
+      "runtime_authority": false
+    },
+    {
+      "canonical_sha256": "aca0b3ef0ea6cca3f1adadcea264787caa2c5ef84009027639b6f434f33da8f3",
+      "gate": "G-03-ASR",
+      "id": "V3-01-APP-063",
+      "runtime_authority": false
+    }
+  ],
+  "assets": [
+    {
+      "bytes": 5800940,
+      "duration_seconds": 120.852,
+      "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+      "sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "slot": 1,
+      "transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e"
+    },
+    {
+      "bytes": 6460396,
+      "duration_seconds": 134.590667,
+      "rights_record_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323",
+      "sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "slot": 2,
+      "transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef"
+    }
+  ],
+  "budget": {
+    "acceptance_window_limit_vnd": "1250",
+    "actual_vnd": "0",
+    "attempts": 1,
+    "automatic_retry": false,
+    "concurrency": 1,
+    "controller_hard_timeout_seconds": 120,
+    "currency": "VND",
+    "model_fallback": false,
+    "per_operation_limit_vnd": "500",
+    "provider_http_timeout_seconds": 90,
+    "reserved_vnd": "0",
+    "vnd_per_minute": "162"
+  },
+  "evidence_id": "EV-V3-RC15-ASR-GATE-001",
+  "gate": {
+    "budget_sha256": "eff5a407da6892a4f3d78afaf84b947210d39c598def1dd2813929a934eaa594",
+    "bundle_path": "docs/acceptance/v3-01/V3-01-GATE-RC15-OPENAI-ASR-A.json",
+    "bundle_sha256": "d1075d9c22c9a6fb3f608ffcd5bf2de09d81895a2b17680fc981a3680249a966",
+    "execution_scope_sha256": "fee7086afeac45fa38c225365ceeae293f1a80aea1eba73bb261ce34aca350aa",
+    "expires_at_utc": "2026-09-08T18:00:00Z",
+    "mounted": false,
+    "provider_scope_sha256": "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "valid_from_utc": "2026-09-08T14:00:00Z",
+    "window_status": "PROPOSED_REQUIRES_G08_AND_SEPARATE_OPERATION_AUTHORITY"
+  },
+  "governance": {
+    "draft_pr": "PENDING",
+    "dual_ci_provenance": "PENDING_POST_MERGE",
+    "executable_tree_equality": "PASS_PRE_PR",
+    "executable_tree_sha256": "9fab766b285eb2db580032b914eb2ccdf474d18b3958fd218a73a22fb75701e8",
+    "governance_head": null,
+    "governance_main_ci_run_id": null,
+    "governance_main_commit": null
+  },
+  "historical_rc14": {
+    "acceptance_verdict": "REVIEW_REQUIRED",
+    "actual_cost_vnd": null,
+    "authority": "RETIRED",
+    "consumed": true,
+    "forensic_report_sha256": "ef98e46d523529b4a252fc8eb256ddd38cf5a7183a5fe723763b4cb687b2e569",
+    "operation_2": "RETIRED_LOCKED",
+    "operation_id": "v3-01-rc14-openai-transcription-asr-call-01",
+    "provider_execution": "SUCCESS",
+    "provider_http_status": 200,
+    "receipt_sha256": "2d65b3e4c1ec1afc5f6b262a1ea294c811be5dba9718a06992da9fe3a8d2b1bd",
+    "reconstructed_missing_evidence": false,
+    "safety_charge_is_actual_cost": false,
+    "safety_charge_vnd": "500"
+  },
+  "live_ledger_inspected": false,
+  "live_ledger_note": "No live acceptance process, database or secret mechanism was opened. Fresh scope testing used disposable synthetic SQLite state only. Live unconsumed status must be verified again at authorized execution.",
+  "operations": [
+    {
+      "authority": "NOT_APPROVED",
+      "executed": false,
+      "id": "v3-01-rc15-openai-transcription-asr-call-01"
+    },
+    {
+      "authority": "NOT_APPROVED_LOCKED",
+      "executed": false,
+      "id": "v3-01-rc15-openai-transcription-asr-call-02"
+    }
+  ],
+  "production_verdict": "NO-GO",
+  "provider": {
+    "capability": "asr",
+    "credential_alias": "secret://openai/codex-video",
+    "credential_reads": 0,
+    "key": "openai-transcription",
+    "language": "vi",
+    "model": "whisper-1",
+    "provider_calls": 0
+  },
+  "rc": {
+    "ci_status": "completed_success",
+    "commit": "7d1290aacac61df98a51544731243e5e322a8644",
+    "exact_main_ci_run_id": 34142662132,
+    "remediation_exact_head": "7fb783291159ab895654c8ea517f2d9eec4cc8fe",
+    "remediation_exact_head_ci_run_id": 34140738281,
+    "remediation_pr": 50,
+    "tag": "vf-v3-01-rc15",
+    "tag_object": "53e3560d0c4f77a9e53c98f1dd89ca45aa42674c"
+  },
+  "schema_version": 1,
+  "timestamp_semantics": {
+    "aggregate_asr_consecutive_passes": 0,
+    "downstream": "PositiveDurationTranscript required; provider boundary points fail POSITIVE_DURATION_TRANSCRIPT_REQUIRED",
+    "presumed_pass": false,
+    "provider_evidence": "Adjacent-boundary-anchored zero-duration points are preserved; no invented intervals",
+    "required_consecutive_passes": 2
+  },
+  "validation": {
+    "approval_hashes": "PASS",
+    "asset_hashes": "PASS",
+    "audio_headers_and_durations": "PASS",
+    "bundle_loader": "PASS",
+    "durable_nondurable_parity": "PASS",
+    "executable_unchanged_relative_to_rc15": "PASS",
+    "fail_closed_defaults": "PASS",
+    "focused_tests": "18 passed",
+    "governance_main_ci": "PENDING_POST_MERGE",
+    "historical_rc14_evidence_unchanged": "PASS",
+    "multi_asset_rights_binding": "PASS",
+    "reference_transcript_hashes": "PASS"
+  }
+}

@@ -1,5 +1,32 @@
 # V3-01 provider audit
 
+## Current RC-15 governance checkpoint
+
+PR #50 merged the source-only timestamp-semantics remediation as `7d1290aacac61df98a51544731243e5e322a8644`.
+Exact-head CI `34140738281` and exact-main CI `34142662132` completed successfully, 5/5 jobs.
+Annotated `vf-v3-01-rc15` locks that exact executable commit; executable-tree SHA-256 is
+`9fab766b285eb2db580032b914eb2ccdf474d18b3958fd218a73a22fb75701e8`.
+
+Evidence `EV-V3-RC15-ASR-GATE-001` covers only offline revalidation of the fresh RC-15
+operation IDs, unchanged two-input rights/transcript hashes and proposed 08 September 2026
+14:00-18:00 UTC window. Bundle and runtime remain unmounted/disabled. The proposed governance
+merge and its governance-main CI do not yet exist; dual-CI provenance remains
+`PENDING_POST_MERGE`. The executable-RC CI cannot substitute for that second CI role.
+
+RC-14 Operation 1 remains consumed/`REVIEW_REQUIRED`, actual cost unknown, with only a
+500 VND conservative safety charge. Both RC-14 operation IDs and the old authority/window
+are retired for live execution. RC-15 Operation 1 is `NOT APPROVED / NOT EXECUTED`;
+Operation 2 is `NOT APPROVED / LOCKED`. No credential read, reservation, provider call or
+spend is authorized by this proposal. Vision remains 2/2 PASS; ASR remains 0/2 and
+real-provider `NOT_TESTED`; production remains `NO-GO`.
+
+The source contract preserves only adjacent-anchored provider boundary points. It does not
+fabricate duration or pass those points to interval consumers: `PositiveDurationTranscript`
+continues to fail with `POSITIVE_DURATION_TRANSCRIPT_REQUIRED` when a point is present.
+Provider evidence validity therefore does not establish downstream Flow A readiness.
+
+See [56_V3_01_RC15_OPENAI_ASR_GATE.md](56_V3_01_RC15_OPENAI_ASR_GATE.md).
+
 The historical owner-authorized RC-3 OpenAI Vision operation failed non-retryably and remains
 locked. RC-5 operation 1 later executed exactly once: provider execution and the durable
 operation/usage/cost ledger succeeded, but post-call evidence serialization failed before the
@@ -131,7 +158,7 @@ distinct response hash. The runner stopped and the bundle was unmounted after ea
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
-| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, immutable RC-12/RC-13/RC-14 failure evidence, V3-01-21/V3-01-22 diagnostics, `EV-V3-RC14-ASR-GATE-001` and `EV-V3-ASR-ZERO-DURATION-SEMANTICS-001` | implemented/mock-tested `PASS`; RC-14 Operation 1 reached HTTP 200 with 20 segments/413 words but rejected 27 exact equality points and remains consumed/`REVIEW_REQUIRED`; the forensic source/mock contract now preserves only anchored provider boundary points while downstream positive-duration consumers stay blocked; real-provider remains `NOT_TESTED` | new G-08 for the source-only semantics PR; if merged, exact-main regression and a new RC/gate/authority would be required; PRO-006 |
+| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, immutable RC-12/RC-13/RC-14 failure evidence, V3-01-21/V3-01-22 diagnostics, `EV-V3-RC14-ASR-GATE-001` and `EV-V3-ASR-ZERO-DURATION-SEMANTICS-001` | implemented/mock-tested `PASS`; RC-14 Operation 1 reached HTTP 200 with 20 segments/413 words but rejected 27 exact equality points and remains consumed/`REVIEW_REQUIRED`; the forensic source/mock contract now preserves only anchored provider boundary points while downstream positive-duration consumers stay blocked; real-provider remains `NOT_TESTED` | PR #50 merged and RC-15 locked; fresh governance rebind requires its own G-08, post-merge dual-CI/equality and separate Operation 1 authority; PRO-006 |
 | Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS; PR #39 and exact-main CI complete | real-provider `PASS`; production path and quality remain `BLOCKED` | standalone Vision acceptance closed; no Operation 3; PRO-001 real-provider sub-scope complete |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |

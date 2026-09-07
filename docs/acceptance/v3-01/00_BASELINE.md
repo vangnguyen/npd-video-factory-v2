@@ -63,21 +63,29 @@ start; three duplicate groups contain six consecutive equality records. Text/tok
 were not retained and remain explicitly unknown. The source-only contract now preserves only these
 anchored word boundary points at the provider-evidence layer and separately blocks every
 positive-duration edit/subtitle/reframe consumer. It performs zero provider calls, zero credential
-reads and zero VND spend and stops at a new G-08 without creating RC-15 or a new operation.
+reads and zero VND spend. The owner subsequently approved G-08 for PR #50; it merged as
+`7d1290aacac61df98a51544731243e5e322a8644` and exact-main CI `34142662132` passed 5/5.
+Annotated `vf-v3-01-rc15` now locks that executable commit. Fresh governance evidence
+`EV-V3-RC15-ASR-GATE-001` rebinds the unchanged inputs without executing either operation.
+The new proposed window is 08 September 2026 14:00-18:00 UTC; governance-main CI and dual-CI
+provenance remain pending the separate governance PR merge. See
+[56_V3_01_RC15_OPENAI_ASR_GATE.md](56_V3_01_RC15_OPENAI_ASR_GATE.md).
 
 ## Control state
 
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-14 0b0965c650f4d06a057acbbb1a7ed9d7b933478b; locked NO-GO; not deployed
+CURRENT RC: RC-15 7d1290aacac61df98a51544731243e5e322a8644; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Vision closed; V3-01-22 zero-duration timestamp semantics draft; G-08 pending
+CURRENT SAFE PHASE: Vision closed; PR #50 source remediation merged; fresh RC-15 ASR governance draft; G-08 pending
 G-00: APPROVED by V3-01-APP-001
-G-08: DECISIONS THROUGH PR #49 CONSUMED; V3-01-22 SEMANTICS DRAFT REQUIRES A NEW G-08
-G-01/G-02/G-03-ASR: RC-14 OPERATION-1 AUTHORITY CONSUMED; NO FURTHER RUNTIME AUTHORITY
+G-08: DECISIONS THROUGH PR #50 CONSUMED; RC-15 GOVERNANCE DRAFT REQUIRES A NEW G-08
+G-01/G-02/G-03-ASR: RC-15 REBIND RECORDS APP-061/062/063; NO RUNTIME AUTHORITY
+RC-15 ASR OPERATION 1: NOT APPROVED; NOT EXECUTED
+RC-15 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
 RC-14 ASR OPERATION 1: HTTP 200; FAILED RESPONSE VALIDATION; REVIEW_REQUIRED; CONSUMED; NO RETRY
-RC-14 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
+RC-14 ASR OPERATION 2: NOT APPROVED; LOCKED; RETIRED; NOT EXECUTED
 RC-13 ASR OPERATION 1: HTTP 200; FAILED RESPONSE VALIDATION; REVIEW_REQUIRED; CONSUMED; NO RETRY
 RC-13 ASR OPERATION 2: NOT APPROVED; LOCKED; RETIRED; NOT EXECUTED
 RC-11 ASR OPERATION 1: BLOCKED PRE-CALL; NOT CONSUMED; 0 CALLS/READS/VND; AUTHORITY RETIRED

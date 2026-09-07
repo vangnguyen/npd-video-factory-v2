@@ -1,0 +1,25 @@
+{
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED",
+    "real_provider_tested": "NOT_TESTED"
+  },
+  "actual_cost_vnd": "0",
+  "asr_consecutive_passes": 0,
+  "bundle_mounted": false,
+  "checkpoint": "RC-15 OpenAI ASR governance gate",
+  "credential_reads": 0,
+  "downstream_boundary": "POSITIVE_DURATION_TRANSCRIPT_REQUIRED when transcript contains provider boundary points",
+  "gate_readiness": "PASS_PENDING_G08",
+  "governance_main_ci": "PENDING_POST_MERGE",
+  "operation_1": "NOT_APPROVED_NOT_EXECUTED",
+  "operation_2": "NOT_APPROVED_LOCKED_NOT_EXECUTED",
+  "production_verdict": "NO_GO",
+  "provider_calls": 0,
+  "required_consecutive_passes": 2,
+  "reservation_vnd": "0",
+  "schema_version": 1,
+  "vision_consecutive_passes": 2
+}

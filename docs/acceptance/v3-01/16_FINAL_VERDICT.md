@@ -4,11 +4,11 @@
 
 ```text
 VERDICT: NO-GO
-SCOPE: locked RC-14 plus zero-call ASR timestamp-semantics remediation; Vision 2/2 real-provider PASS; ASR real-provider NOT_TESTED
-RELEASE CANDIDATE: RC-14 0b0965c650f4d06a057acbbb1a7ed9d7b933478b LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-ASR-ZERO-DURATION-SEMANTICS-001; source/forensic only; 0 calls/0 credential reads/0 reservation/0 VND
+SCOPE: locked RC-15 plus fresh zero-call ASR governance rebind; Vision 2/2 real-provider PASS; ASR 0/2 real-provider NOT_TESTED
+RELEASE CANDIDATE: RC-15 7d1290aacac61df98a51544731243e5e322a8644 LOCKED NO-GO; NOT DEPLOYED
+LATEST EVIDENCE: EV-V3-RC15-ASR-GATE-001; governance/offline only; 0 calls/0 credential reads/0 reservation/0 VND
 DATE: 2026-09-07
-OWNER DECISION: DECISIONS THROUGH PR #49 AND RC-14 OPERATION 1 CONSUMED; SEMANTICS DRAFT REQUIRES NEW G-08; OPERATION 2 LOCKED
+OWNER DECISION: DECISIONS THROUGH PR #50 CONSUMED; RC-15 GOVERNANCE DRAFT REQUIRES G-08; RC-15 OP1 NOT APPROVED; OP2 LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -29,11 +29,11 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
 | Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR Op1 cost 0 VND; RC-12, RC-13 and RC-14 ASR Op1 actual costs are unknown and each 500 VND amount is a conservative safety charge, not an actual-cost receipt; the source remediation costs 0 VND |
-| Rights/provenance | exact Vision asset passed twice; two exact unchanged WAVs, voices, owner-verified transcripts and RightsRecords are rebound to RC-14 only for bounded ASR acceptance; broader real/final-asset coverage absent |
+| Rights/provenance | exact Vision asset passed twice; two exact unchanged WAVs, voices, owner-verified transcripts and RightsRecords are revalidated and rebound to RC-15 only for bounded ASR acceptance; no operation authority and broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
-| Allowed scope | LOCAL/CI zero-call timestamp forensics/source validation, redacted evidence and a draft G-08 PR |
+| Allowed scope | LOCAL/CI zero-call RC-15 governance validation, redacted evidence and a draft G-08 PR; executable unchanged from locked RC-15 |
 | Disabled scope | further provider calls, credential-value access, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
@@ -271,9 +271,9 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
 
 ## Allowed actions
 
-- **Merge:** decisions through PR #48 and both RC-10 operation authorities are consumed. The RC-14
+- **Merge:** decisions through PR #50 and both RC-10 operation authorities are consumed. The RC-15
   governance rebind requires a new G-08.
-- **Deploy:** no; RC-14 is locked NO-GO, not deployed and G-09 is pending.
+- **Deploy:** no; RC-15 is locked NO-GO, not deployed and G-09 is pending.
 - **Providers/platforms enabled:** none now. RC-10 Operations 1 and 2 each used the bounded
   process-local scope, which was disabled/unmounted after each successful attempt.
 - **Volume/concurrency/budget:** RC-5 operation 1 consumed exactly one attempt with no retry/fallback
@@ -289,9 +289,10 @@ The lossless owner/impact/containment/test/rollback/PR mapping is in
   conservative safety accounting, and its authority is retired. RC-12 Operation 2 is retired/locked.
   RC-13 Operation 1 is consumed/`REVIEW_REQUIRED` after HTTP 200 and timestamp validation failure;
   its actual cost is unknown and its 500 VND amount is only a safety charge. RC-13 Operation 2 is
-  retired/locked. RC-14 Operations 1 and 2 have no ledger rows: Operation 1 is not approved/not
-  executed and Operation 2 is not approved/locked. The proposed bundle is unmounted and no
-  reservation exists.
+  retired/locked. RC-14 Operation 1 is consumed/`REVIEW_REQUIRED`, actual cost unknown and safety
+  charge 500 VND; its authority and both RC-14 IDs are retired. Fresh RC-15 Operation 1 is not
+  approved/not executed and Operation 2 is not approved/locked. The proposed bundle remains
+  unmounted; this proposal creates no runtime reservation.
 - **Publish visibility/channel:** none; no remote publication.
 - **Still prohibited by this package:** any ASR operation or provider call, credential-value read, production-path writes, public route, publish,
   delete/takedown, customer contact and representing mock evidence as real-provider evidence.
@@ -416,9 +417,36 @@ consumers require the separate `PositiveDurationTranscript` proof and remain blo
 exists. Inverted, negative, non-numeric, missing, out-of-source, out-of-segment, overlapping and
 ambiguous points all remain fail-closed.
 
-This work makes zero provider calls, reads zero credentials, reserves/spends zero VND and does not
-change the historical RC-14 verdict. It is a new executable source draft that stops at G-08. It
-does not merge, create RC-15, create a live operation or grant any authority.
+This source work made zero provider calls, read zero credentials, reserved/spent zero VND and did
+not change the historical RC-14 verdict. PR #50 subsequently merged under its separate G-08 and
+exact-main CI passed before RC-15 was locked. No live operation or runtime authority followed.
+
+## Current RC-15 governance checkpoint
+
+PR #50 merged the source-only timestamp-semantics remediation as `7d1290aacac61df98a51544731243e5e322a8644`.
+Exact-head CI `34140738281` and exact-main CI `34142662132` completed successfully, 5/5 jobs.
+Annotated `vf-v3-01-rc15` locks that exact executable commit; executable-tree SHA-256 is
+`9fab766b285eb2db580032b914eb2ccdf474d18b3958fd218a73a22fb75701e8`.
+
+Evidence `EV-V3-RC15-ASR-GATE-001` covers only offline revalidation of the fresh RC-15
+operation IDs, unchanged two-input rights/transcript hashes and proposed 08 September 2026
+14:00-18:00 UTC window. Bundle and runtime remain unmounted/disabled. The proposed governance
+merge and its governance-main CI do not yet exist; dual-CI provenance remains
+`PENDING_POST_MERGE`. The executable-RC CI cannot substitute for that second CI role.
+
+RC-14 Operation 1 remains consumed/`REVIEW_REQUIRED`, actual cost unknown, with only a
+500 VND conservative safety charge. Both RC-14 operation IDs and the old authority/window
+are retired for live execution. RC-15 Operation 1 is `NOT APPROVED / NOT EXECUTED`;
+Operation 2 is `NOT APPROVED / LOCKED`. No credential read, reservation, provider call or
+spend is authorized by this proposal. Vision remains 2/2 PASS; ASR remains 0/2 and
+real-provider `NOT_TESTED`; production remains `NO-GO`.
+
+The source contract preserves only adjacent-anchored provider boundary points. It does not
+fabricate duration or pass those points to interval consumers: `PositiveDurationTranscript`
+continues to fail with `POSITIVE_DURATION_TRANSCRIPT_REQUIRED` when a point is present.
+Provider evidence validity therefore does not establish downstream Flow A readiness.
+
+See [56_V3_01_RC15_OPENAI_ASR_GATE.md](56_V3_01_RC15_OPENAI_ASR_GATE.md).
 
 ## Decision rule
 
