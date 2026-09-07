@@ -1,0 +1,11 @@
+{
+  "commit_sha": "7d1290aacac61df98a51544731243e5e322a8644",
+  "completed_at_utc": "2026-09-07T16:24:00Z",
+  "conclusion": "success",
+  "jobs_succeeded": 5,
+  "jobs_total": 5,
+  "role": "executable_rc",
+  "run_id": 34142662132,
+  "status": "completed",
+  "workflow_name": "Video Factory V2 CI"
+}

@@ -1,0 +1,25 @@
+{
+  "approval_id": "V3-01-APP-061",
+  "approved_at_utc": "2026-09-07T16:18:42Z",
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "artifact_or_commit_hashes": [
+    "7d1290aacac61df98a51544731243e5e322a8644",
+    "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "fee7086afeac45fa38c225365ceeae293f1a80aea1eba73bb261ce34aca350aa"
+  ],
+  "decision": "APPROVED",
+  "expires_at_utc": "2026-09-08T18:00:00Z",
+  "gate_id": "G-01",
+  "limits": [
+    "Provider openai-transcription only",
+    "Model whisper-1 only",
+    "Capability asr and language vi only",
+    "Credential alias secret://openai/codex-video only",
+    "No fallback model or provider",
+    "No credential read or provider call until a separate RC-15 operation authority is granted",
+    "No deployment, public ingress, publishing or production analytics"
+  ],
+  "notes": "The owner instructed a fresh RC-15 G-01/G-02/G-03 rebind after V3-01-22 merged and exact-main regression passed. This secret-free record binds only the proposed scope; a separate G-08 for the governance PR and a separate Operation 1 decision remain mandatory. It grants no credential read or API-call authority. Recorded at the PR #50 merge checkpoint under the owner instruction to prepare a fresh rebind. This dated window is a proposal for separate governance G-08 review, not execution authority. RC-14 authority and both RC-14 operation IDs are retired; no credential read, reservation or call is permitted by this record. Provider boundary-point validation is separate from positive-duration downstream readiness.",
+  "scope": "Rebind G-01-ASR to exactly openai-transcription / whisper-1 / asr / vi on vf-v3-01-rc15 using only credential alias secret://openai/codex-video for the proposed dated acceptance window.",
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; credential value remains in the external secret mechanism"
+}
