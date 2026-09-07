@@ -46,12 +46,24 @@ OpenAI returned HTTP 200 with 17 segments and 412 words in about 11.4 seconds. S
 mapping rejected 27 word objects under the RC-13 `end <= start` rule, so no accepted
 `ProviderTranscript` was produced. The operation is consumed and `REVIEW_REQUIRED`; actual cost is
 unknown and 500 VND remains a conservative safety charge only. Operation 2 is locked and retired.
-V3-01-22 now adds source/mock-only timestamp classification and narrowly bounded canonicalization.
-It performs zero provider calls, zero credential reads and zero VND spend. PR #48 merged the
-remediation as `0b0965c650f4d06a057acbbb1a7ed9d7b933478b`; exact-head CI `34041347519` and
-exact-main CI `34042079905` passed 5/5, and annotated `vf-v3-01-rc14` peels to that merge. The fresh
-RC-14 G-01/G-02/G-03 rebind and two new RC-derived operation IDs are now proposed for G-08 review
-only. The bundle is unmounted and neither operation has runtime authority.
+The first V3-01-22 remediation added value-safe timestamp diagnostics and PR #48 merged it as exact
+RC-14 `0b0965c650f4d06a057acbbb1a7ed9d7b933478b`; exact-head CI `34041347519` and exact-main CI
+`34042079905` passed 5/5.
+
+After a separate RC-14 authority, Operation 1 passed full preflight and received OpenAI HTTP 200
+once in 10,479.579 ms. The retained response metadata reports 20 segments and 413 words. Exactly
+27 words had `start == end`; all other word and segment timing diagnostics were retained. The
+adapter rejected those 27 equality cases, so the durable operation is consumed/failed and
+acceptance remains `REVIEW_REQUIRED`. Actual cost is unknown and the committed 500 VND remains a
+conservative safety charge, not actual billing. Operation 2 is not approved/locked.
+
+This V3-01-22 forensic follow-up accounts for all 413 timing records. All 27 equality cases are
+bounded, monotonic, inside one selected segment, non-overlapping and equal to the following word's
+start; three duplicate groups contain six consecutive equality records. Text/token and punctuation
+were not retained and remain explicitly unknown. The source-only contract now preserves only these
+anchored word boundary points at the provider-evidence layer and separately blocks every
+positive-duration edit/subtitle/reframe consumer. It performs zero provider calls, zero credential
+reads and zero VND spend and stops at a new G-08 without creating RC-15 or a new operation.
 
 ## Control state
 
@@ -60,11 +72,11 @@ FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
 CURRENT RC: RC-14 0b0965c650f4d06a057acbbb1a7ed9d7b933478b; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Vision closed; RC-14 ASR governance rebind; G-08 pending
+CURRENT SAFE PHASE: Vision closed; V3-01-22 zero-duration timestamp semantics draft; G-08 pending
 G-00: APPROVED by V3-01-APP-001
-G-08: PR #48 APPROVED/MERGED; RC-14 GOVERNANCE PR REQUIRES A NEW G-08
-G-01/G-02/G-03-ASR: REBOUND TO RC-14 PROPOSAL; NO RUNTIME AUTHORITY
-RC-14 ASR OPERATION 1: NOT APPROVED; NOT EXECUTED
+G-08: DECISIONS THROUGH PR #49 CONSUMED; V3-01-22 SEMANTICS DRAFT REQUIRES A NEW G-08
+G-01/G-02/G-03-ASR: RC-14 OPERATION-1 AUTHORITY CONSUMED; NO FURTHER RUNTIME AUTHORITY
+RC-14 ASR OPERATION 1: HTTP 200; FAILED RESPONSE VALIDATION; REVIEW_REQUIRED; CONSUMED; NO RETRY
 RC-14 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
 RC-13 ASR OPERATION 1: HTTP 200; FAILED RESPONSE VALIDATION; REVIEW_REQUIRED; CONSUMED; NO RETRY
 RC-13 ASR OPERATION 2: NOT APPROVED; LOCKED; RETIRED; NOT EXECUTED

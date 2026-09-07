@@ -21,7 +21,13 @@ from .auto_edit_models import (
     UploadPartRead,
     UploadRead,
 )
-from .auto_edit_providers import MediaProbe, MediaSignalProvider, ProviderNotConfigured, TranscriptionProvider
+from .auto_edit_providers import (
+    MediaProbe,
+    MediaSignalProvider,
+    ProviderNotConfigured,
+    TranscriptionProvider,
+    require_positive_duration_transcript,
+)
 from .auto_edit_repository import AutoEditRepository
 from .media_security import (
     ArchiveContainerRejected,
@@ -529,12 +535,17 @@ class AutoEditAnalysisService:
                 },
                 actual_cost_vnd=transcription_result.value.actual_cost_vnd,
             )
+            downstream_transcript = require_positive_duration_transcript(transcript)
             scenes = build_scenes(
                 duration=float(source_media.duration_seconds),
                 signals=signals,
-                transcript=transcript,
+                transcript=downstream_transcript,
             )
-            silence = build_silence_decisions(signals=signals, transcript=transcript, config=payload)
+            silence = build_silence_decisions(
+                signals=signals,
+                transcript=downstream_transcript,
+                config=payload,
+            )
             highlights = build_highlights(scenes=scenes, top_k=payload.top_highlights)
             await self.platform.record_provider_operation(
                 workspace_id=asset.workspace_id,
@@ -574,7 +585,7 @@ class AutoEditAnalysisService:
                 analysis_id=analysis_id,
                 asset_id=asset.asset_id,
                 provider_key=self.transcription_provider.key,
-                transcript=transcript,
+                transcript=downstream_transcript,
                 scenes=scenes,
                 silence_decisions=silence,
                 highlights=highlights,

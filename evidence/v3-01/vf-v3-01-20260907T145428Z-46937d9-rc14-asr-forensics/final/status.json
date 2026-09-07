@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-22",
+  "result": "PASS_FOR_SOURCE_AND_MOCK_SEMANTICS_ONLY",
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "real_provider_tested": "NOT_TESTED",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED"
+  },
+  "rc14_asr_operation_1": {
+    "provider_http_status": 200,
+    "words_received": 413,
+    "zero_duration_words": 27,
+    "acceptance": "REVIEW_REQUIRED",
+    "consumed": true,
+    "actual_cost_vnd": null,
+    "safety_charge_vnd": 500,
+    "historical_record_changed": false
+  },
+  "rc14_asr_operation_2": "NOT_APPROVED_LOCKED",
+  "repository_verdict": "NO_GO",
+  "release_candidate_created": false,
+  "merge_authorized": false,
+  "provider_calls_in_remediation": 0,
+  "credential_reads_in_remediation": 0,
+  "spend_vnd_in_remediation": 0,
+  "next_gate": "Owner G-08 review of the V3-01-22 draft PR",
+  "secret_recorded": false
+}

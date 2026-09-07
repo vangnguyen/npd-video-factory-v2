@@ -28,6 +28,8 @@
 | RC-13 ASR Operation 1 timestamp-validation failure | VND | 500 operation / 1,250 window | 500 safety charge; 0 reserved after reconciliation | unknown | 1 provider call; HTTP 200; no usage/cost receipt accepted |
 | V3-01-22 timestamp remediation | VND | 0 | 0 | 0 | 0 calls; 0 credential reads |
 | RC-14 ASR governance rebind | VND | checked-in runtime budget 0; proposed conditional 1,250 window / 500 operation | 0 | 0 | 0 calls; 0 credential reads |
+| RC-14 ASR Operation 1 timestamp-validation failure | VND | 500 operation / 1,250 window | 500 safety charge; 0 reserved after reconciliation | unknown | 1 provider call; HTTP 200; no accepted usage/cost receipt |
+| V3-01-22 zero-duration semantics forensic/remediation | VND | 0 | 0 | 0 | 0 calls; 0 credential reads |
 
 The baseline and remediation audits used repository, GitHub CI and local static/mock evidence.
 
@@ -39,9 +41,12 @@ PR #44 merged that remediation as RC-12. The fresh RC-12 bundle remains unmounte
 operation is approved, so this governance rebind also reads no credential, reserves nothing, makes
 no provider call and costs `0 VND`.
 
-PR #48 and exact-main CI locked RC-14 after the zero-call timestamp remediation. Its proposed
-500/1,250 VND envelope remains inactive: the bundle is unmounted, both operations lack runtime
-authority, and this governance package reserves `0 VND`, spends `0 VND` and reads no credential.
+PR #48 and exact-main CI locked RC-14 after the first zero-call timestamp remediation. PR #49
+merged its governance scope, after which separately authorized Operation 1 made one provider call.
+It received HTTP 200 but failed timestamp validation before an accepted usage/cost receipt existed.
+Its actual provider cost is therefore unknown; 500 VND is only the conservative safety charge and
+reserved VND reconciled to zero. Operation 2 remains locked. The zero-duration forensic/semantics
+follow-up makes no provider call, credential read or reservation and costs `0 VND`.
 
 The later RC-3 operation-1 gate authorized one bounded OpenAI Vision attempt. It failed without a usage
 receipt, so its actual provider billing cannot be asserted; the ledger committed the 500 VND
@@ -161,6 +166,12 @@ validation before an accepted usage/cost receipt existed. Its actual provider co
 500 VND ledger amount is a conservative safety charge only and reserved VND reconciled to zero.
 Operation 2 is locked/retired. V3-01-22 performs zero reservation, zero provider call, zero
 credential read and zero spend, and it does not infer billing from the historical response.
+
+For RC-14, the separately authorized first operation received HTTP 200 once but failed on 27 exact
+zero-duration word records. Actual cost remains unknown; no amount is inferred from latency,
+duration or the 500 VND safety charge. `EV-V3-ASR-ZERO-DURATION-SEMANTICS-001` is an offline
+forensic/source record with zero calls/reads/reservations/spend and grants no budget or operation
+authority.
 
 Gap `V3-01-GAP-010`: `IN_PROGRESS`, supported by `EV-V3-PROVIDER-SAFETY-001` and
 `EV-V3-DURABLE-SAFETY-001` on locked commit

@@ -61,6 +61,9 @@ class CriticalTermResult:
 class TimestampResult:
     segment_count: int
     word_count: int
+    positive_duration_words: int
+    zero_duration_words: int
+    unanchored_boundary_points: int
     invalid_windows: int
     non_monotonic_windows: int
     abnormal_overlaps: int
@@ -68,6 +71,8 @@ class TimestampResult:
     words_outside_segment: int
     timestamps_outside_source: int
     timestamp_token_coverage: float
+    provider_evidence_semantics: str
+    downstream_positive_duration_ready: bool
     passed: bool
 
 
@@ -173,10 +178,17 @@ def _evaluate_timestamps(
     words_outside_segment = 0
     timed_tokens: list[str] = []
     all_word_count = 0
+    positive_duration_words = 0
+    zero_duration_words = 0
     previous_segment_end = -1.0
     previous_word_end = -1.0
 
     segments = transcript.get("segments") or []
+    flattened_words = [
+        word
+        for segment in segments
+        for word in (segment.get("words") or [])
+    ]
     for segment in segments:
         start = _as_float(segment["start_seconds"])
         end = _as_float(segment["end_seconds"])
@@ -197,8 +209,12 @@ def _evaluate_timestamps(
             all_word_count += 1
             word_start = _as_float(word["start_seconds"])
             word_end = _as_float(word["end_seconds"])
-            if word_start < 0 or word_end <= word_start:
+            if word_start < 0 or word_end < word_start:
                 invalid += 1
+            elif word_end == word_start:
+                zero_duration_words += 1
+            else:
+                positive_duration_words += 1
             if word_start < previous_word_end:
                 overlap = previous_word_end - word_start
                 max_overlap = max(max_overlap, overlap)
@@ -216,6 +232,28 @@ def _evaluate_timestamps(
             previous_word_end = max(previous_word_end, word_end)
             timed_tokens.extend(normalized_tokens(str(word["text"])))
 
+    unanchored_boundary_points = 0
+    for index, word in enumerate(flattened_words):
+        word_start = _as_float(word["start_seconds"])
+        word_end = _as_float(word["end_seconds"])
+        if word_start != word_end:
+            continue
+        previous_end = (
+            _as_float(flattened_words[index - 1]["end_seconds"])
+            if index > 0
+            else None
+        )
+        next_start = (
+            _as_float(flattened_words[index + 1]["start_seconds"])
+            if index + 1 < len(flattened_words)
+            else None
+        )
+        if not (
+            (previous_end is not None and abs(previous_end - word_start) <= 0.000001)
+            or (next_start is not None and abs(next_start - word_end) <= 0.000001)
+        ):
+            unanchored_boundary_points += 1
+
     transcript_tokens = normalized_tokens(str(transcript.get("text") or ""))
     coverage = _sequence_coverage(transcript_tokens, timed_tokens)
     passed = all(
@@ -227,12 +265,16 @@ def _evaluate_timestamps(
             abnormal_overlaps == 0,
             words_outside_segment == 0,
             outside_source == 0,
+            unanchored_boundary_points == 0,
             coverage >= policy.minimum_timestamp_token_coverage,
         )
     )
     return TimestampResult(
         segment_count=len(segments),
         word_count=all_word_count,
+        positive_duration_words=positive_duration_words,
+        zero_duration_words=zero_duration_words,
+        unanchored_boundary_points=unanchored_boundary_points,
         invalid_windows=invalid,
         non_monotonic_windows=non_monotonic,
         abnormal_overlaps=abnormal_overlaps,
@@ -240,6 +282,8 @@ def _evaluate_timestamps(
         words_outside_segment=words_outside_segment,
         timestamps_outside_source=outside_source,
         timestamp_token_coverage=round(coverage, 6),
+        provider_evidence_semantics="closed_interval_or_boundary_point",
+        downstream_positive_duration_ready=passed and zero_duration_words == 0,
         passed=passed,
     )
 

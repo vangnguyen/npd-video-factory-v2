@@ -43,6 +43,16 @@ PR #48 merged that remediation as locked RC-14
 bundle validates offline with unchanged assets and rights, but remains unmounted; both new operations
 are unauthorized and no provider call, credential read, reservation or spend occurred.
 
+PR #49 later merged the RC-14 governance scope as
+`46937d9fe4804c7c7190995afb2c48377c70f70e`. Separately authorized Operation 1 reached OpenAI
+HTTP 200 once in 10,479.579 ms and retained timing diagnostics for 20 segments/413 words. Exactly
+27 words were `start == end`; strict mapping rejected the response. The operation is consumed/
+`REVIEW_REQUIRED`, actual cost remains unknown, the 500 VND entry is only a conservative safety
+charge and Operation 2 remains locked. The exhaustive forensic report establishes that all 27
+values are bounded monotonic boundary points anchored to the following word start. It cannot
+identify their text or punctuation because those values were not retained. This follow-up preserves
+only anchored equality points at the provider-evidence layer and keeps interval consumers strict.
+
 V3-01-02 adds a central fail-closed provider safety contract on code commit
 `062959287497a5999999adccb65602b88c04947e`. It is exercised only with deterministic fixtures and
 mock callables. Media resolution and OpenAI TTS entry points now consult the global external,
@@ -121,7 +131,7 @@ distinct response hash. The runner stopped and the bundle was unmounted after ea
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
-| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, RC-12/RC-13 immutable failure evidence, V3-01-21/V3-01-22 diagnostics and `EV-V3-RC14-ASR-GATE-001` | implemented/mock-tested `PASS`; RC-13 Operation 1 reached HTTP 200 but rejected 27/412 word timestamps and remains consumed/`REVIEW_REQUIRED`; RC-14 gate readiness is offline PASS, while real-provider remains `NOT_TESTED` | G-08 for the RC-14 governance proposal, governance-main CI and executable-tree equality, then a separate owner decision for RC-14 Operation 1; PRO-006 |
+| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, immutable RC-12/RC-13/RC-14 failure evidence, V3-01-21/V3-01-22 diagnostics, `EV-V3-RC14-ASR-GATE-001` and `EV-V3-ASR-ZERO-DURATION-SEMANTICS-001` | implemented/mock-tested `PASS`; RC-14 Operation 1 reached HTTP 200 with 20 segments/413 words but rejected 27 exact equality points and remains consumed/`REVIEW_REQUIRED`; the forensic source/mock contract now preserves only anchored provider boundary points while downstream positive-duration consumers stay blocked; real-provider remains `NOT_TESTED` | new G-08 for the source-only semantics PR; if merged, exact-main regression and a new RC/gate/authority would be required; PRO-006 |
 | Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS; PR #39 and exact-main CI complete | real-provider `PASS`; production path and quality remain `BLOCKED` | standalone Vision acceptance closed; no Operation 3; PRO-001 real-provider sub-scope complete |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |
@@ -208,3 +218,8 @@ PR #48 and exact-main CI then locked `vf-v3-01-rc14`; `EV-V3-RC14-ASR-GATE-001` 
 fresh unmounted gate proposal and grants neither operation authority. See
 [44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md](44_V3_01_18_OPENAI_ASR_COMPATIBILITY_ADAPTER.md)
 and [54_V3_01_RC14_OPENAI_ASR_GATE.md](54_V3_01_RC14_OPENAI_ASR_GATE.md).
+
+After the later bounded RC-14 call, `EV-V3-ASR-ZERO-DURATION-SEMANTICS-001` proves the forensic
+population and source/mock semantics split only. It does not upgrade the consumed RC-14 result,
+reconstruct text/usage/cost or authorize a new operation. See
+[55_V3_01_22_ASR_ZERO_DURATION_WORD_SEMANTICS.md](55_V3_01_22_ASR_ZERO_DURATION_WORD_SEMANTICS.md).

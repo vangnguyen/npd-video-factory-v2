@@ -91,10 +91,13 @@
     },
     "timestamps": {
       "type": "object", "additionalProperties": false,
-      "required": ["segment_count", "word_count", "invalid_windows", "non_monotonic_windows", "abnormal_overlaps", "maximum_overlap_seconds", "words_outside_segment", "timestamps_outside_source", "timestamp_token_coverage", "passed"],
+      "required": ["segment_count", "word_count", "positive_duration_words", "zero_duration_words", "unanchored_boundary_points", "invalid_windows", "non_monotonic_windows", "abnormal_overlaps", "maximum_overlap_seconds", "words_outside_segment", "timestamps_outside_source", "timestamp_token_coverage", "provider_evidence_semantics", "downstream_positive_duration_ready", "passed"],
       "properties": {
         "segment_count": {"type": "integer", "minimum": 0},
         "word_count": {"type": "integer", "minimum": 0},
+        "positive_duration_words": {"type": "integer", "minimum": 0},
+        "zero_duration_words": {"type": "integer", "minimum": 0},
+        "unanchored_boundary_points": {"type": "integer", "minimum": 0},
         "invalid_windows": {"type": "integer", "minimum": 0},
         "non_monotonic_windows": {"type": "integer", "minimum": 0},
         "abnormal_overlaps": {"type": "integer", "minimum": 0},
@@ -102,6 +105,8 @@
         "words_outside_segment": {"type": "integer", "minimum": 0},
         "timestamps_outside_source": {"type": "integer", "minimum": 0},
         "timestamp_token_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+        "provider_evidence_semantics": {"const": "closed_interval_or_boundary_point"},
+        "downstream_positive_duration_ready": {"type": "boolean"},
         "passed": {"type": "boolean"}
       }
     },

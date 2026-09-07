@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "record_kind": "v3_01_22_forensic_evidence_manifest",
+  "status": "SOURCE_ONLY_ZERO_CALL",
+  "base_commit": "46937d9fe4804c7c7190995afb2c48377c70f70e",
+  "historical_operation": "v3-01-rc14-openai-transcription-asr-call-01",
+  "historical_source_sha256": "2d65b3e4c1ec1afc5f6b262a1ea294c811be5dba9718a06992da9fe3a8d2b1bd",
+  "source_receipt_copied_or_modified": false,
+  "files": [
+    {
+      "path": "evidence/v3-01/vf-v3-01-20260907T145428Z-46937d9-rc14-asr-forensics/rc14-asr-operation-1-word-timestamp-forensics.json",
+      "sha256": "ef98e46d523529b4a252fc8eb256ddd38cf5a7183a5fe723763b4cb687b2e569",
+      "canonical_payload_sha256": "395accab6c716cca1a6ad47da36e5da7e0cc0818f9bdf359ad9b1c29edbea34f"
+    }
+  ],
+  "safety": {
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "reservation_vnd": "0",
+    "spend_vnd": "0",
+    "rc14_operation_1_reused": false,
+    "rc14_operation_2_executed": false,
+    "production_verdict": "NO-GO"
+  }
+}

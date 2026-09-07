@@ -30,6 +30,7 @@ from app.auto_edit_providers import (
     ProviderSegment,
     ProviderTranscript,
     ProviderWord,
+    require_positive_duration_transcript,
 )
 from app.auto_edit_repository import AutoEditRepository
 from app.auto_edit_service import (
@@ -309,7 +310,7 @@ def test_spoken_word_conflict_disables_cut_and_top_five_is_supported() -> None:
             silence_intervals=((0.5, 2.5, -50),),
             provenance={},
         ),
-        transcript=transcript,
+        transcript=require_positive_duration_transcript(transcript),
         config=AutoEditAnalysisRequest(
             asset_id="ast_fixture1234",
             top_highlights=5,

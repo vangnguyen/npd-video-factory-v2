@@ -10,6 +10,10 @@ import httpx
 import pytest
 
 from app.auto_edit_models import AutoEditAnalysisRequest, MediaMetadata
+from app.auto_edit_providers import (
+    PositiveDurationTranscriptRequired,
+    require_positive_duration_transcript,
+)
 from app.openai_transcription_provider import (
     OpenAITranscriptionProvider,
     OpenAITranscriptionResponseError,
@@ -448,11 +452,6 @@ async def test_mapping_validation_records_exact_safe_contract_path(tmp_path: Pat
     ("mutator", "classification", "reason"),
     [
         (
-            lambda payload: payload["words"][1].update(start=0.4, end=0.4),
-            "start_equals_end",
-            "zero_duration_window_not_invented",
-        ),
-        (
             lambda payload: payload["words"][1].update(start=0.6, end=0.4),
             "end_before_start",
             "inverted_window_not_swapped",
@@ -541,7 +540,8 @@ async def test_timestamp_classifier_collects_all_rejections_before_failing_close
     evidence = captured.value.error_evidence
     assert evidence.timestamp_summary is not None
     assert evidence.timestamp_summary.transformed_count == 0
-    assert evidence.timestamp_summary.rejected_count == 3
+    assert evidence.timestamp_summary.preserved_count == 1
+    assert evidence.timestamp_summary.rejected_count == 2
     assert evidence.timestamp_summary.classification_counts == {
         "start_equals_end": 1,
         "end_before_start": 1,
@@ -552,6 +552,152 @@ async def test_timestamp_classifier_collects_all_rejections_before_failing_close
         "$.words[3]",
         "$.words[5]",
     ]
+
+
+@pytest.mark.asyncio
+async def test_zero_duration_word_is_preserved_as_provider_boundary_evidence(
+    tmp_path: Path,
+) -> None:
+    payload = response_payload()
+    payload["words"][1].update(start=0.4, end=0.4)
+    adapter, _ = provider(transport=mock_transport(payload))
+    source = tmp_path / "provider-boundary-word.mp3"
+    source.write_bytes(b"offline")
+
+    result = await transcribe(adapter, source)
+
+    word = result.segments[0].words[1]
+    assert word.start_seconds == word.end_seconds == 0.4
+    assert word.timing_semantics == "provider_boundary_point"
+    timestamp = result.provenance["timestamp_canonicalization"]
+    assert timestamp["preserved_count"] == 1
+    assert timestamp["transformed_count"] == 0
+    assert timestamp["rejected_count"] == 0
+    assert timestamp["classification_counts"] == {"start_equals_end": 1}
+    assert timestamp["provider_boundary_points"] == [
+        {
+            "path": "$.words[1]",
+            "item_kind": "word",
+            "index": 1,
+            "classification": "start_equals_end",
+            "action": "preserved",
+            "raw_start_seconds": 0.4,
+            "raw_end_seconds": 0.4,
+            "canonical_start_seconds": 0.4,
+            "canonical_end_seconds": 0.4,
+            "reason": "provider_boundary_point_preserved_without_duration_fabrication",
+        }
+    ]
+    with pytest.raises(PositiveDurationTranscriptRequired) as captured:
+        require_positive_duration_transcript(result)
+    assert captured.value.blocked_word_paths == ("$.segments[0].words[1]",)
+
+
+@pytest.mark.parametrize(
+    ("mutator", "expected_boundary_count"),
+    [
+        (
+            lambda payload: (
+                payload["words"][1].update(start=0.4, end=0.4),
+                payload["words"][2].update(start=0.4, end=0.4),
+            ),
+            2,
+        ),
+        (
+            lambda payload: (
+                payload["words"][0].update(start=0.0, end=0.0),
+                payload["words"][1].update(start=0.0),
+            ),
+            1,
+        ),
+        (
+            lambda payload: (
+                payload["words"][1].update(end=1.8),
+                payload["words"][2].update(start=1.8, end=1.8),
+            ),
+            1,
+        ),
+    ],
+)
+@pytest.mark.asyncio
+async def test_boundary_words_cover_consecutive_segment_start_and_segment_end_cases(
+    tmp_path: Path,
+    mutator,
+    expected_boundary_count: int,
+) -> None:
+    payload = response_payload()
+    mutator(payload)
+    adapter, _ = provider(transport=mock_transport(payload))
+    source = tmp_path / "boundary-shapes.mp3"
+    source.write_bytes(b"offline")
+
+    result = await transcribe(adapter, source)
+
+    boundary_words = [
+        word
+        for segment in result.segments
+        for word in segment.words
+        if word.timing_semantics == "provider_boundary_point"
+    ]
+    assert len(boundary_words) == expected_boundary_count
+    assert all(word.start_seconds == word.end_seconds for word in boundary_words)
+    assert sum(len(segment.words) for segment in result.segments) == 7
+
+
+@pytest.mark.asyncio
+async def test_duplicate_segment_boundary_point_has_deterministic_half_open_owner(
+    tmp_path: Path,
+) -> None:
+    payload = response_payload()
+    payload["segments"][0]["end"] = 2.0
+    payload["words"][2].update(start=2.0, end=2.0)
+    adapter, _ = provider(transport=mock_transport(payload))
+    source = tmp_path / "shared-boundary.mp3"
+    source.write_bytes(b"offline")
+
+    result = await transcribe(adapter, source)
+
+    assert [word.text for word in result.segments[0].words] == ["Ngọc", "Phương"]
+    assert result.segments[1].words[0].text == "Đông."
+    assert result.segments[1].words[0].timing_semantics == "provider_boundary_point"
+
+
+@pytest.mark.asyncio
+async def test_isolated_zero_duration_word_in_a_gap_remains_invalid(tmp_path: Path) -> None:
+    payload = response_payload()
+    payload["words"][1].update(start=0.6, end=0.6)
+    adapter, _ = provider(transport=mock_transport(payload))
+    source = tmp_path / "isolated-point.mp3"
+    source.write_bytes(b"offline")
+
+    with pytest.raises(OpenAITranscriptionResponseError) as captured:
+        await transcribe(adapter, source)
+
+    diagnostic = next(
+        item
+        for item in captured.value.error_evidence.timestamp_diagnostics
+        if item.path == "$.words[1]"
+    )
+    assert diagnostic.action == "rejected"
+    assert diagnostic.reason == "zero_duration_word_not_on_adjacent_boundary"
+
+
+@pytest.mark.asyncio
+async def test_zero_duration_segment_remains_invalid(tmp_path: Path) -> None:
+    payload = response_payload()
+    payload["segments"][0].update(start=0.0, end=0.0)
+    adapter, _ = provider(transport=mock_transport(payload))
+    source = tmp_path / "zero-segment.mp3"
+    source.write_bytes(b"offline")
+
+    with pytest.raises(OpenAITranscriptionResponseError) as captured:
+        await transcribe(adapter, source)
+
+    evidence = captured.value.error_evidence
+    assert evidence.timestamp_summary is not None
+    assert evidence.timestamp_summary.preserved_count == 0
+    assert evidence.timestamp_summary.rejected_count == 1
+    assert evidence.timestamp_diagnostics[0].reason == "zero_duration_segment_not_permitted"
 
 
 @pytest.mark.asyncio

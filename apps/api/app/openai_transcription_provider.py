@@ -264,6 +264,7 @@ class _TimestampCanonicalizationReport(BaseModel):
         return ProviderTimestampSummary(
             segment_count_received=self.segment_count_received,
             word_count_received=self.word_count_received,
+            preserved_count=sum(item.action == "preserved" for item in self.diagnostics),
             transformed_count=sum(item.action == "transformed" for item in self.diagnostics),
             rejected_count=sum(item.action == "rejected" for item in self.diagnostics),
             classification_counts=counts,
@@ -308,6 +309,31 @@ def _canonical_timestamp(value: float) -> float:
 
 def _timestamp_changed(raw: float, canonical: float) -> bool:
     return raw != canonical or _negative_zero(raw) != _negative_zero(canonical)
+
+
+def _word_point_touches_adjacent_boundary(
+    raw_items: list[object], *, index: int, point: float
+) -> bool:
+    """Return whether an exact point is anchored to a neighbouring word.
+
+    A standalone point in an arbitrary gap is not accepted merely because it is
+    numerically ordered. RC-14 retained evidence shows every zero-duration word
+    at the start of its following word; previous-end anchoring is also an
+    equivalent provider boundary shape. No timestamp is changed here.
+    """
+
+    adjacent: list[tuple[object, Literal["start", "end"]]] = []
+    if index > 0:
+        adjacent.append((raw_items[index - 1], "end"))
+    if index + 1 < len(raw_items):
+        adjacent.append((raw_items[index + 1], "start"))
+    for item, field in adjacent:
+        if not isinstance(item, dict):
+            continue
+        value = _timestamp_number(item.get(field))
+        if value is not None and abs(value - point) <= 0.000001:
+            return True
+    return False
 
 
 def _timestamp_issue(
@@ -388,21 +414,6 @@ def _canonicalize_timestamp_collection(
             canonical_items.append(canonical_item)
             continue
         assert raw_start is not None and raw_end is not None
-        if raw_end == raw_start:
-            diagnostics.append(
-                ProviderTimestampDiagnostic(
-                    path=path,
-                    item_kind=item_kind,
-                    index=index,
-                    classification="start_equals_end",
-                    action="rejected",
-                    raw_start_seconds=raw_start,
-                    raw_end_seconds=raw_end,
-                    reason="zero_duration_window_not_invented",
-                )
-            )
-            canonical_items.append(canonical_item)
-            continue
         if raw_end < raw_start:
             diagnostics.append(
                 ProviderTimestampDiagnostic(
@@ -441,6 +452,48 @@ def _canonicalize_timestamp_collection(
 
         canonical_start = _canonical_timestamp(raw_start)
         canonical_end = _canonical_timestamp(raw_end)
+        if raw_end == raw_start:
+            if item_kind == "word" and _word_point_touches_adjacent_boundary(
+                raw_items, index=index, point=raw_start
+            ):
+                diagnostics.append(
+                    ProviderTimestampDiagnostic(
+                        path=path,
+                        item_kind=item_kind,
+                        index=index,
+                        classification="start_equals_end",
+                        action="preserved",
+                        raw_start_seconds=raw_start,
+                        raw_end_seconds=raw_end,
+                        canonical_start_seconds=canonical_start,
+                        canonical_end_seconds=canonical_end,
+                        reason="provider_boundary_point_preserved_without_duration_fabrication",
+                    )
+                )
+                canonical_item["start"] = canonical_start
+                canonical_item["end"] = canonical_end
+            else:
+                reason = (
+                    "zero_duration_word_not_on_adjacent_boundary"
+                    if item_kind == "word"
+                    else "zero_duration_segment_not_permitted"
+                )
+                diagnostics.append(
+                    ProviderTimestampDiagnostic(
+                        path=path,
+                        item_kind=item_kind,
+                        index=index,
+                        classification="start_equals_end",
+                        action="rejected",
+                        raw_start_seconds=raw_start,
+                        raw_end_seconds=raw_end,
+                        canonical_start_seconds=canonical_start,
+                        canonical_end_seconds=canonical_end,
+                        reason=reason,
+                    )
+                )
+            canonical_items.append(canonical_item)
+            continue
         if canonical_end <= canonical_start:
             diagnostics.append(
                 ProviderTimestampDiagnostic(
@@ -739,12 +792,12 @@ class _ProviderWord(BaseModel):
 
     word: str = Field(min_length=1, max_length=240)
     start: float = Field(ge=0)
-    end: float = Field(gt=0)
+    end: float = Field(ge=0)
 
     @model_validator(mode="after")
     def validate_window(self) -> "_ProviderWord":
-        if self.end <= self.start:
-            raise ValueError("provider word end must follow start")
+        if self.end < self.start:
+            raise ValueError("provider word end cannot precede start")
         return self
 
 
@@ -786,6 +839,7 @@ def _validate_ordered_windows(
     label: str,
     media_duration_seconds: float,
     timestamp_report: _TimestampCanonicalizationReport,
+    allow_boundary_points: bool = False,
 ) -> None:
     previous_end = -1.0
     item_kind: Literal["segment", "word"] = (
@@ -793,7 +847,7 @@ def _validate_ordered_windows(
     )
     for index, (start, end) in enumerate(windows):
         path = f"$.{label}[{index}]"
-        if end <= start:
+        if end < start or (end == start and not allow_boundary_points):
             classification = (
                 "start_equals_end" if end == start else "end_before_start"
             )
@@ -812,7 +866,7 @@ def _validate_ordered_windows(
                     canonical_start_seconds=start,
                     canonical_end_seconds=end,
                     reason=(
-                        "zero_duration_window_not_invented"
+                        "zero_duration_segment_not_permitted"
                         if end == start
                         else "inverted_window_not_swapped"
                     ),
@@ -851,6 +905,76 @@ def _validate_ordered_windows(
                 ),
             )
         previous_end = end
+
+
+def _segment_index_for_word(
+    word: _ProviderWord,
+    segments: list[_ProviderSegment],
+    *,
+    word_index: int,
+    timestamp_report: _TimestampCanonicalizationReport,
+) -> int:
+    """Map one word without changing provider timestamps.
+
+    Boundary points use half-open segment ownership: an exact segment start wins
+    over the preceding segment end. Ambiguous tolerance-only matches fail closed.
+    """
+
+    tolerance = 0.05
+    point = word.start if word.start == word.end else None
+    candidates = [
+        index
+        for index, segment in enumerate(segments)
+        if word.start >= segment.start - tolerance
+        and word.end <= segment.end + tolerance
+        and segment.start - tolerance <= (word.start + word.end) / 2 <= segment.end + tolerance
+    ]
+    if not candidates:
+        raise _ResponseContractViolation(
+            path=f"$.words[{word_index}]",
+            code="word_outside_segment",
+            kind="mapping",
+            timestamp_diagnostic=_semantic_timestamp_diagnostic(
+                timestamp_report,
+                path=f"$.words[{word_index}]",
+                item_kind="word",
+                index=word_index,
+                classification="word_outside_segment",
+                start=word.start,
+                end=word.end,
+                reason="word_window_outside_provider_segment",
+            ),
+        )
+    if point is not None:
+        exact_starts = [
+            index
+            for index in candidates
+            if abs(point - segments[index].start) <= 1e-6
+        ]
+        if len(exact_starts) == 1:
+            return exact_starts[0]
+        half_open = [
+            index
+            for index in candidates
+            if segments[index].start <= point < segments[index].end
+        ]
+        if len(half_open) == 1:
+            return half_open[0]
+        if (
+            len(candidates) == 1
+            or (
+                point == segments[-1].end
+                and candidates[-1] == len(segments) - 1
+            )
+        ):
+            return candidates[-1]
+    elif len(candidates) == 1:
+        return candidates[0]
+    raise _ResponseContractViolation(
+        path=f"$.words[{word_index}]",
+        code="word_maps_to_multiple_segments",
+        kind="mapping",
+    )
 
 
 class OpenAITranscriptionProvider:
@@ -1267,21 +1391,23 @@ class OpenAITranscriptionProvider:
             label="words",
             media_duration_seconds=media_duration_seconds,
             timestamp_report=timestamp_report,
+            allow_boundary_points=True,
         )
 
-        assigned_word_indexes: set[int] = set()
+        word_segment_indexes = [
+            _segment_index_for_word(
+                word,
+                payload.segments,
+                word_index=index,
+                timestamp_report=timestamp_report,
+            )
+            for index, word in enumerate(payload.words)
+        ]
         segments: list[ProviderSegment] = []
         for segment_index, segment in enumerate(payload.segments):
             mapped_words: list[ProviderWord] = []
             for index, word in enumerate(payload.words):
-                midpoint = (word.start + word.end) / 2
-                if segment.start - 0.05 <= midpoint <= segment.end + 0.05:
-                    if index in assigned_word_indexes:
-                        raise _ResponseContractViolation(
-                            path=f"$.words[{index}]",
-                            code="word_maps_to_multiple_segments",
-                            kind="mapping",
-                        )
+                if word_segment_indexes[index] == segment_index:
                     if word.start < segment.start - 0.05 or word.end > segment.end + 0.05:
                         raise _ResponseContractViolation(
                             path=f"$.words[{index}]",
@@ -1298,13 +1424,17 @@ class OpenAITranscriptionProvider:
                                 reason="word_window_outside_provider_segment",
                             ),
                         )
-                    assigned_word_indexes.add(index)
                     mapped_words.append(
                         ProviderWord(
                             start_seconds=round(word.start, 6),
                             end_seconds=round(word.end, 6),
                             text=word.word.strip(),
                             confidence=None,
+                            timing_semantics=(
+                                "provider_boundary_point"
+                                if word.start == word.end
+                                else "positive_interval"
+                            ),
                         )
                     )
             if not mapped_words:
@@ -1323,13 +1453,6 @@ class OpenAITranscriptionProvider:
                     words=tuple(mapped_words),
                 )
             )
-        if len(assigned_word_indexes) != len(payload.words):
-            raise _ResponseContractViolation(
-                path="$.words",
-                code="unbound_word_timestamps",
-                kind="mapping",
-            )
-
         duration_minutes = Decimal(str(payload.duration)) / Decimal("60")
         actual_cost = (duration_minutes * self._vnd_per_minute).quantize(
             Decimal("0.000001"),
@@ -1370,9 +1493,15 @@ class OpenAITranscriptionProvider:
                 "timestamp_canonicalization": {
                     "segment_count_received": timestamp_report.segment_count_received,
                     "word_count_received": timestamp_report.word_count_received,
+                    "preserved_count": timestamp_summary.preserved_count,
                     "transformed_count": timestamp_summary.transformed_count,
                     "rejected_count": timestamp_summary.rejected_count,
                     "classification_counts": timestamp_summary.classification_counts,
+                    "provider_boundary_points": [
+                        item.model_dump(mode="json")
+                        for item in timestamp_report.diagnostics
+                        if item.action == "preserved"
+                    ],
                     "transformations": [
                         item.model_dump(mode="json")
                         for item in timestamp_report.diagnostics
