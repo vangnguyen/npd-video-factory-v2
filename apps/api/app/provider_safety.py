@@ -81,7 +81,7 @@ ProviderTimestampDiagnosticKind = Literal[
     "non_numeric",
     "out_of_range",
 ]
-ProviderTimestampDiagnosticAction = Literal["transformed", "rejected"]
+ProviderTimestampDiagnosticAction = Literal["preserved", "transformed", "rejected"]
 ProviderTimestampItemKind = Literal["segment", "word"]
 ProviderJsonShapeType = Literal[
     "object",
@@ -587,6 +587,20 @@ class ProviderTimestampDiagnostic(StrictModel):
                 raise ValueError(
                     "timestamp transformations require canonical precision evidence"
                 )
+        elif self.action == "preserved":
+            if (
+                self.classification != "start_equals_end"
+                or self.item_kind != "word"
+                or self.raw_start_seconds is None
+                or self.raw_end_seconds is None
+                or self.canonical_start_seconds is None
+                or self.canonical_end_seconds is None
+                or self.raw_start_seconds != self.raw_end_seconds
+                or self.canonical_start_seconds != self.canonical_end_seconds
+            ):
+                raise ValueError(
+                    "preserved timestamps require one exact word boundary point"
+                )
         return self
 
 
@@ -595,6 +609,7 @@ class ProviderTimestampSummary(StrictModel):
 
     segment_count_received: int | None = Field(default=None, ge=0)
     word_count_received: int | None = Field(default=None, ge=0)
+    preserved_count: int = Field(default=0, ge=0)
     transformed_count: int = Field(default=0, ge=0)
     rejected_count: int = Field(default=0, ge=0)
     classification_counts: dict[ProviderTimestampDiagnosticKind, int] = Field(
@@ -713,6 +728,7 @@ class ProviderErrorEvidence(StrictModel):
         if self.timestamp_diagnostics:
             if self.timestamp_summary is None:
                 raise ValueError("timestamp diagnostics require a summary")
+            preserved = sum(item.action == "preserved" for item in self.timestamp_diagnostics)
             transformed = sum(
                 item.action == "transformed" for item in self.timestamp_diagnostics
             )
@@ -721,13 +737,15 @@ class ProviderErrorEvidence(StrictModel):
             for item in self.timestamp_diagnostics:
                 counts[item.classification] = counts.get(item.classification, 0) + 1
             if (
-                self.timestamp_summary.transformed_count != transformed
+                self.timestamp_summary.preserved_count != preserved
+                or self.timestamp_summary.transformed_count != transformed
                 or self.timestamp_summary.rejected_count != rejected
                 or self.timestamp_summary.classification_counts != counts
             ):
                 raise ValueError("timestamp diagnostic summary does not match its details")
         elif self.timestamp_summary is not None and (
-            self.timestamp_summary.transformed_count
+            self.timestamp_summary.preserved_count
+            or self.timestamp_summary.transformed_count
             or self.timestamp_summary.rejected_count
             or self.timestamp_summary.classification_counts
         ):

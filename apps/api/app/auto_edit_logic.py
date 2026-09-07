@@ -4,7 +4,7 @@ import re
 from typing import Any
 
 from .auto_edit_models import AutoEditAnalysisRequest
-from .auto_edit_providers import MediaSignals, ProviderTranscript
+from .auto_edit_providers import MediaSignals, PositiveDurationTranscript
 
 
 _HOOK_WORDS = {
@@ -27,8 +27,9 @@ def _clamp(value: float) -> float:
 
 
 def build_scenes(
-    *, duration: float, signals: MediaSignals, transcript: ProviderTranscript
+    *, duration: float, signals: MediaSignals, transcript: PositiveDurationTranscript
 ) -> list[dict[str, Any]]:
+    provider_transcript = transcript.value
     boundary_values = sorted(
         {round(float(timestamp), 6) for timestamp, _ in signals.shot_boundaries if 0 < timestamp < duration}
     )
@@ -39,7 +40,7 @@ def build_scenes(
             continue
         matching = [
             segment
-            for segment in transcript.segments
+            for segment in provider_transcript.segments
             if _overlap(start, end, segment.start_seconds, segment.end_seconds) > 0
         ]
         text = " ".join(segment.text for segment in matching).strip()
@@ -77,9 +78,12 @@ def build_scenes(
 
 
 def build_silence_decisions(
-    *, signals: MediaSignals, transcript: ProviderTranscript, config: AutoEditAnalysisRequest
+    *,
+    signals: MediaSignals,
+    transcript: PositiveDurationTranscript,
+    config: AutoEditAnalysisRequest,
 ) -> list[dict[str, Any]]:
-    words = [word for segment in transcript.segments for word in segment.words]
+    words = [word for segment in transcript.value.segments for word in segment.words]
     decisions: list[dict[str, Any]] = []
     for raw_start, raw_end, measured_db in signals.silence_intervals:
         start = round(raw_start + config.padding_before, 6)

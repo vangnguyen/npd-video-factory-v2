@@ -797,6 +797,7 @@ async def test_durable_attempt_persists_secret_free_timestamp_validation_diagnos
     assert row.error_evidence["timestamp_summary"] == {
         "segment_count_received": 17,
         "word_count_received": 412,
+        "preserved_count": 0,
         "transformed_count": 0,
         "rejected_count": 1,
         "classification_counts": {"start_equals_end": 1},

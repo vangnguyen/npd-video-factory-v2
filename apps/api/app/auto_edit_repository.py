@@ -31,7 +31,7 @@ from .auto_edit_models import (
     UploadPartRead,
     UploadRead,
 )
-from .auto_edit_providers import ProviderTranscript
+from .auto_edit_providers import PositiveDurationTranscript
 from .db import AssetORM, ProjectVersionORM, VideoProjectORM, utc_now
 from .media_security import MediaScanResult
 from .platform_models import AssetRead
@@ -371,7 +371,7 @@ class AutoEditRepository:
         analysis_id: str,
         asset_id: str,
         provider_key: str,
-        transcript: ProviderTranscript,
+        transcript: PositiveDurationTranscript,
         scenes: list[dict[str, Any]],
         silence_decisions: list[dict[str, Any]],
         highlights: list[dict[str, Any]],
@@ -387,6 +387,7 @@ class AutoEditRepository:
                     raise KeyError(analysis_id)
                 if analysis.status == "succeeded":
                     return
+                provider_transcript = transcript.value
                 transcript_id = _new_id("trn")
                 session.add(
                     TranscriptORM(
@@ -396,13 +397,13 @@ class AutoEditRepository:
                         version=1,
                         is_original_evidence=True,
                         provider_key=provider_key,
-                        language=transcript.language,
-                        confidence=transcript.confidence,
-                        provenance_json=transcript.provenance,
+                        language=provider_transcript.language,
+                        confidence=provider_transcript.confidence,
+                        provenance_json=provider_transcript.provenance,
                     )
                 )
                 word_ordinal = 0
-                for segment_ordinal, segment in enumerate(transcript.segments):
+                for segment_ordinal, segment in enumerate(provider_transcript.segments):
                     segment_id = _new_id("seg")
                     session.add(
                         TranscriptSegmentORM(

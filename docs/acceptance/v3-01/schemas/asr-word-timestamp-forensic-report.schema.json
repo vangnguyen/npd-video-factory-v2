@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npd.local/schemas/v3-01/asr-word-timestamp-forensic-report.schema.json",
+  "title": "V3-01-22 ASR word timestamp forensic report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "record_kind", "forensic_id", "generated_at_utc", "source",
+    "historical_operation", "population", "aggregate", "segments", "words",
+    "conclusions", "safety", "report_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_kind": {"const": "asr_word_timestamp_forensic_report"},
+    "forensic_id": {"const": "V3-01-22-RC14-ASR-OP1-TIMESTAMPS"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label", "sha256", "operation_id", "provider_request_id", "request_sha256",
+        "response_sha256", "raw_provider_response_retained", "transcript_text_retained",
+        "word_text_retained"
+      ],
+      "properties": {
+        "label": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "operation_id": {"const": "v3-01-rc14-openai-transcription-asr-call-01"},
+        "provider_request_id": {"type": "string", "minLength": 1},
+        "request_sha256": {"$ref": "#/$defs/sha256"},
+        "response_sha256": {"$ref": "#/$defs/sha256"},
+        "raw_provider_response_retained": {"const": false},
+        "transcript_text_retained": {"const": false},
+        "word_text_retained": {"const": false}
+      }
+    },
+    "historical_operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider_http_status", "provider_execution", "acceptance", "operation_consumed",
+        "actual_provider_cost_vnd", "safety_charge_vnd", "safety_charge_is_actual_cost",
+        "operation_2_status", "production_verdict"
+      ],
+      "properties": {
+        "provider_http_status": {"const": 200},
+        "provider_execution": {"const": "SUCCESS_AT_HTTP_TRANSPORT_LEVEL"},
+        "acceptance": {"const": "REVIEW_REQUIRED"},
+        "operation_consumed": {"const": true},
+        "actual_provider_cost_vnd": {"type": "null"},
+        "safety_charge_vnd": {"const": "500"},
+        "safety_charge_is_actual_cost": {"const": false},
+        "operation_2_status": {"const": "NOT_APPROVED_LOCKED"},
+        "production_verdict": {"const": "NO-GO"}
+      }
+    },
+    "population": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_duration_seconds", "segment_count", "word_count", "positive_duration_word_count",
+        "zero_duration_word_count", "zero_duration_percent", "all_diagnostic_words_accounted_for"
+      ],
+      "properties": {
+        "source_duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "segment_count": {"const": 20},
+        "word_count": {"const": 413},
+        "positive_duration_word_count": {"const": 386},
+        "zero_duration_word_count": {"const": 27},
+        "zero_duration_percent": {"type": "number", "minimum": 0, "maximum": 100},
+        "all_diagnostic_words_accounted_for": {"const": true}
+      }
+    },
+    "aggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "zero_duration_indexes", "zero_duration_category_counts", "duplicate_zero_timestamp_groups",
+        "zero_duration_outside_source", "zero_duration_outside_segment", "zero_duration_non_monotonic",
+        "zero_duration_overlaps_previous", "all_zero_duration_points_match_next_word_start",
+        "all_zero_duration_points_are_bounded_monotonic_boundaries", "all_word_intervals_inside_source",
+        "all_words_map_to_one_selected_segment", "transcript_coverage", "transcript_coverage_status"
+      ],
+      "properties": {
+        "zero_duration_indexes": {
+          "type": "array", "minItems": 27, "maxItems": 27, "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 0, "maximum": 412}
+        },
+        "zero_duration_category_counts": {
+          "type": "object", "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "duplicate_zero_timestamp_groups": {
+          "type": "array",
+          "items": {
+            "type": "array", "minItems": 2, "uniqueItems": true,
+            "items": {"type": "integer", "minimum": 0, "maximum": 412}
+          }
+        },
+        "zero_duration_outside_source": {"const": 0},
+        "zero_duration_outside_segment": {"const": 0},
+        "zero_duration_non_monotonic": {"const": 0},
+        "zero_duration_overlaps_previous": {"const": 0},
+        "all_zero_duration_points_match_next_word_start": {"const": true},
+        "all_zero_duration_points_are_bounded_monotonic_boundaries": {"const": true},
+        "all_word_intervals_inside_source": {"const": true},
+        "all_words_map_to_one_selected_segment": {"const": true},
+        "transcript_coverage": {"type": "null"},
+        "transcript_coverage_status": {"const": "UNKNOWN_NOT_RETAINED"}
+      }
+    },
+    "segments": {
+      "type": "array", "minItems": 20, "maxItems": 20,
+      "items": {"$ref": "#/$defs/segment"}
+    },
+    "words": {
+      "type": "array", "minItems": 413, "maxItems": 413,
+      "items": {"$ref": "#/$defs/word"}
+    },
+    "conclusions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observed_shape", "evidence_supports_provider_boundary_artifact_semantics",
+        "provider_documentation_proves_zero_duration_semantics", "word_or_punctuation_identity_known",
+        "no_provider_timestamp_was_modified", "no_word_was_dropped", "no_duration_was_fabricated",
+        "historical_rc14_verdict_changed"
+      ],
+      "properties": {
+        "observed_shape": {"const": "provider_emitted_ordered_zero_duration_word_boundary_points"},
+        "evidence_supports_provider_boundary_artifact_semantics": {"const": true},
+        "provider_documentation_proves_zero_duration_semantics": {"const": false},
+        "word_or_punctuation_identity_known": {"const": false},
+        "no_provider_timestamp_was_modified": {"const": true},
+        "no_word_was_dropped": {"const": true},
+        "no_duration_was_fabricated": {"const": true},
+        "historical_rc14_verdict_changed": {"const": false}
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider_calls", "credential_reads", "reservation_vnd", "spend_vnd", "operation_1_reused",
+        "operation_2_executed", "production_verdict"
+      ],
+      "properties": {
+        "provider_calls": {"const": 0},
+        "credential_reads": {"const": 0},
+        "reservation_vnd": {"const": "0"},
+        "spend_vnd": {"const": "0"},
+        "operation_1_reused": {"const": false},
+        "operation_2_executed": {"const": false},
+        "production_verdict": {"const": "NO-GO"}
+      }
+    },
+    "report_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "nullableNumber": {"type": ["number", "null"]},
+    "segment": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "segment_index", "path", "raw_start_seconds", "raw_end_seconds", "raw_duration_seconds",
+        "canonical_start_seconds", "canonical_end_seconds", "historical_classification",
+        "historical_action", "valid_positive_interval"
+      ],
+      "properties": {
+        "segment_index": {"type": "integer", "minimum": 0},
+        "path": {"type": "string", "pattern": "^\\$\\.segments\\[[0-9]+\\]$"},
+        "raw_start_seconds": {"type": "number"},
+        "raw_end_seconds": {"type": "number"},
+        "raw_duration_seconds": {"type": "number"},
+        "canonical_start_seconds": {"$ref": "#/$defs/nullableNumber"},
+        "canonical_end_seconds": {"$ref": "#/$defs/nullableNumber"},
+        "historical_classification": {"type": "string"},
+        "historical_action": {"type": "string"},
+        "valid_positive_interval": {"const": true}
+      }
+    },
+    "neighbor": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["word_index", "raw_start_seconds", "raw_end_seconds"],
+      "properties": {
+        "word_index": {"type": "integer", "minimum": 0},
+        "raw_start_seconds": {"type": "number"},
+        "raw_end_seconds": {"type": "number"},
+        "end_matches_current_start": {"type": "boolean"},
+        "start_matches_current_end": {"type": "boolean"}
+      }
+    },
+    "word": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "word_index", "path", "token_text", "token_text_availability", "punctuation_characteristics",
+        "punctuation_availability", "raw_start_seconds", "raw_end_seconds", "raw_duration_seconds",
+        "canonical_start_seconds_in_historical_receipt", "canonical_end_seconds_in_historical_receipt",
+        "historical_classification", "historical_action", "containing_segment_candidates",
+        "selected_segment_index", "position_in_selected_segment", "selected_segment_boundary_position",
+        "previous_word", "next_word", "duplicate_interval_peer_indexes", "monotonic",
+        "overlaps_previous_word", "inside_source_duration", "inside_selected_segment", "zero_duration",
+        "zero_duration_categories", "transcript_coverage_contribution"
+      ],
+      "properties": {
+        "word_index": {"type": "integer", "minimum": 0, "maximum": 412},
+        "path": {"type": "string", "pattern": "^\\$\\.words\\[[0-9]+\\]$"},
+        "token_text": {"type": "null"},
+        "token_text_availability": {"const": "UNKNOWN_NOT_RETAINED"},
+        "punctuation_characteristics": {"type": "null"},
+        "punctuation_availability": {"const": "UNKNOWN_NOT_RETAINED"},
+        "raw_start_seconds": {"type": "number"},
+        "raw_end_seconds": {"type": "number"},
+        "raw_duration_seconds": {"type": "number"},
+        "canonical_start_seconds_in_historical_receipt": {"$ref": "#/$defs/nullableNumber"},
+        "canonical_end_seconds_in_historical_receipt": {"$ref": "#/$defs/nullableNumber"},
+        "historical_classification": {"enum": ["precision_rounding", "start_equals_end"]},
+        "historical_action": {"enum": ["transformed", "rejected"]},
+        "containing_segment_candidates": {
+          "type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 0, "maximum": 19}
+        },
+        "selected_segment_index": {"type": "integer", "minimum": 0, "maximum": 19},
+        "position_in_selected_segment": {"type": "integer", "minimum": 0},
+        "selected_segment_boundary_position": {"enum": ["segment_start", "segment_end", "segment_interior"]},
+        "previous_word": {"$ref": "#/$defs/neighbor"},
+        "next_word": {"$ref": "#/$defs/neighbor"},
+        "duplicate_interval_peer_indexes": {
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 0, "maximum": 412}
+        },
+        "monotonic": {"type": "boolean"},
+        "overlaps_previous_word": {"type": "boolean"},
+        "inside_source_duration": {"type": "boolean"},
+        "inside_selected_segment": {"type": "boolean"},
+        "zero_duration": {"type": "boolean"},
+        "zero_duration_categories": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "transcript_coverage_contribution": {"const": "UNKNOWN_NOT_RETAINED"}
+      }
+    }
+  }
+}

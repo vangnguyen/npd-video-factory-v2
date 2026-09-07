@@ -7,7 +7,7 @@ import shutil
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
-from typing import Protocol
+from typing import Literal, Protocol
 
 from .auto_edit_models import MediaMetadata
 from .provider_safety import ProviderExecutionTrace
@@ -27,6 +27,20 @@ class ProviderWord:
     end_seconds: float
     text: str
     confidence: float | None
+    timing_semantics: Literal["positive_interval", "provider_boundary_point"] = (
+        "positive_interval"
+    )
+
+    def __post_init__(self) -> None:
+        if self.start_seconds < 0 or self.end_seconds < self.start_seconds:
+            raise ValueError("provider word timestamps must be nonnegative and ordered")
+        expected = (
+            "provider_boundary_point"
+            if self.end_seconds == self.start_seconds
+            else "positive_interval"
+        )
+        if self.timing_semantics != expected:
+            raise ValueError("provider word timing semantics do not match its timestamps")
 
 
 @dataclass(frozen=True)
@@ -46,6 +60,61 @@ class ProviderTranscript:
     segments: tuple[ProviderSegment, ...]
     provenance: dict[str, object]
     actual_cost_vnd: Decimal | None = None
+
+
+class PositiveDurationTranscriptRequired(ValueError):
+    """A provider transcript cannot safely enter interval-based edit consumers."""
+
+    code = "POSITIVE_DURATION_TRANSCRIPT_REQUIRED"
+
+    def __init__(self, *, blocked_word_paths: tuple[str, ...]) -> None:
+        super().__init__(self.code)
+        self.blocked_word_paths = blocked_word_paths
+
+
+@dataclass(frozen=True)
+class PositiveDurationTranscript:
+    """Explicit, no-rewrite projection for subtitle/reframe/edit consumers.
+
+    The wrapper proves that every provider word already has a positive interval.
+    It never adds epsilon, drops words, or rewrites provider timestamps.
+    """
+
+    value: ProviderTranscript
+    transformation_applied: Literal[False] = False
+    provenance: Literal["provider_timestamps_validated_without_rewrite"] = (
+        "provider_timestamps_validated_without_rewrite"
+    )
+
+
+def require_positive_duration_transcript(
+    transcript: ProviderTranscript,
+) -> PositiveDurationTranscript:
+    blocked: list[str] = []
+    for segment_index, segment in enumerate(transcript.segments):
+        if segment.start_seconds < 0 or segment.end_seconds <= segment.start_seconds:
+            raise PositiveDurationTranscriptRequired(
+                blocked_word_paths=(f"$.segments[{segment_index}]",)
+            )
+        previous_end = segment.start_seconds
+        for word_index, word in enumerate(segment.words):
+            path = f"$.segments[{segment_index}].words[{word_index}]"
+            if (
+                word.timing_semantics != "positive_interval"
+                or word.end_seconds <= word.start_seconds
+            ):
+                blocked.append(path)
+                continue
+            if (
+                word.start_seconds < segment.start_seconds - 0.05
+                or word.end_seconds > segment.end_seconds + 0.05
+                or word.start_seconds < previous_end - 1e-6
+            ):
+                blocked.append(path)
+            previous_end = max(previous_end, word.end_seconds)
+    if blocked:
+        raise PositiveDurationTranscriptRequired(blocked_word_paths=tuple(blocked))
+    return PositiveDurationTranscript(value=transcript)
 
 
 @dataclass(frozen=True)
