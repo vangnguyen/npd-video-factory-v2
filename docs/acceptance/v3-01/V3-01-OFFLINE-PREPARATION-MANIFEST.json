@@ -15,7 +15,7 @@
     {"path": "docs/acceptance/v3-01/01_IMPLEMENTATION_INVENTORY.md", "sha256": "bd2df75a58d2144da64d31da3c10a6cbb5e6941cc85b3a06b5cde6ef8401bb6e"},
     {"path": "docs/acceptance/v3-01/14_REMEDIATION_PR_PLAN.md", "sha256": "a6c6a1741fb9561d3ce16bf678783b0b2013c42347dda27ffb3653894e699b66"},
     {"path": "docs/acceptance/v3-01/15_OWNER_GATES.md", "sha256": "e9a2ca17aade7767561e10953c907d208676347231938aebf74b58ce4d78241d"},
-    {"path": "docs/acceptance/v3-01/16_FINAL_VERDICT.md", "sha256": "f793e2e0cba25887bdddf01803802edae9afdb1f6019060a1dd36346441f25e4"},
+    {"path": "docs/acceptance/v3-01/16_FINAL_VERDICT.md", "sha256": "e2dd56919e06db872bc8de2d051e3c91c1870ddcc37e5c1a00bb5f9ceb5e0789"},
     {"path": "docs/acceptance/v3-01/46_V3_01_ASR_POST_RUN_AND_FLOW_A_PREPARATION.md", "sha256": "1ddab3312705b0d4c7cfbf6f984f8d8b9952266b357ab9e3c85af1d7716ebe62"},
     {"path": "docs/acceptance/v3-01/47_V3_01_19_VIETNAMESE_TTS_PRODUCTION_GATE.md", "sha256": "b8456dc3fb80b54fdd0ce90a716d4f531c8a5b5b1ed7dd0d3997510dd88ac041"},
     {"path": "docs/acceptance/v3-01/48_V3_01_G11_HUMAN_QUALITY_GATE.md", "sha256": "547a64da1a3052cd4c5e0504801a19d765f1681c9eca52e2c3c3c69160df7d8c"},

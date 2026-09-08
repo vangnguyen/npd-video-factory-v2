@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "record_kind": "OFFLINE_STRATEGY_INVENTORY_NOT_ACCEPTANCE_OR_AUTHORITY",
+  "checkpoint": "V3-01-24",
+  "base_main": "5a8c96da6816ad6f424eaaa3952947738d4c49d5",
+  "raw_sha256_algorithm": "SHA-256_OF_FILE_BYTES_LF",
+  "files": [
+    {
+      "path": "docs/acceptance/v3-01/16_FINAL_VERDICT.md",
+      "sha256": "e2dd56919e06db872bc8de2d051e3c91c1870ddcc37e5c1a00bb5f9ceb5e0789"
+    },
+    {
+      "path": "docs/acceptance/v3-01/V3-01-OFFLINE-PREPARATION-MANIFEST.json",
+      "sha256": "fd0d2ef446f580ca4270ddd518e1aeacef7a862fbd04f9d23e6262c664a90706"
+    },
+    {
+      "path": "apps/api/tests/test_v3_01_24_quality_strategy.py",
+      "sha256": "edb97176a9f3d30a93cbaaf9e813432bb26b445edb2a57de267fe5f21a896449"
+    },
+    {
+      "path": "docs/acceptance/v3-01/58_V3_01_24_ASR_QUALITY_STRATEGY.md",
+      "sha256": "6a9a491f2d5f6f1d4ed7ae6bf28867a3c3a03eaa077d26cccdf50e488f6b512f"
+    },
+    {
+      "path": "docs/acceptance/v3-01/59_V3_01_24_ASR_COMPATIBILITY_MATRIX.md",
+      "sha256": "fd5163a9e8d041159b0a01eecf287c40fcc249145b5e21d6945912f1f208d81d"
+    },
+    {
+      "path": "docs/acceptance/v3-01/60_V3_01_24_ALIGNMENT_ARCHITECTURE_OPTIONS.md",
+      "sha256": "07d2ed3a798bc3730cdd75ddec564cb52e7d47425b2ee3c650eeb233b957164f"
+    },
+    {
+      "path": "docs/acceptance/v3-01/contracts/V3-01-24-ASR-QUALITY-STRATEGY.v1.json",
+      "sha256": "8e2643c340d7066e2be2523f574f7cffb64ac7b863282bf4c08c04202c961371"
+    },
+    {
+      "path": "docs/acceptance/v3-01/evidence/v3-01-24-quality-strategy/post-pr52-ci-provenance.json",
+      "sha256": "e5f70097214db36fd1c68ac9f724022cf23e87377ca08fa40b4a9629d1083326"
+    }
+  ],
+  "checks": {
+    "local_markdown_links": 19,
+    "rolling_manifest_hashes": 32,
+    "historical_original_receipts": 3,
+    "historical_derived_receipts": 3,
+    "focused_strategy_tests": 17,
+    "review": "INDEPENDENT_READ_ONLY_REVIEW_NO_REMAINING_BLOCKER",
+    "ci_binding": "USE_DRAFT_PR_EXACT_HEAD_CI_NOT_THIS_INVENTORY"
+  },
+  "safety": {
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "live_reservations": 0,
+    "spend_vnd": "0",
+    "runtime_authority": false,
+    "new_rc": false,
+    "production_verdict": "NO-GO"
+  }
+}

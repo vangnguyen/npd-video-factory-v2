@@ -1,0 +1,294 @@
+{
+  "version": 1,
+  "work_package": "V3-01-24",
+  "status": "PROPOSED_NOT_APPROVED",
+  "reference_date": "2026-09-08",
+  "base_main": "5a8c96da6816ad6f424eaaa3952947738d4c49d5",
+  "executable_rc": {
+    "tag": "vf-v3-01-rc15",
+    "commit": "7d1290aacac61df98a51544731243e5e322a8644",
+    "tree_sha256": "9fab766b285eb2db580032b914eb2ccdf474d18b3958fd218a73a22fb75701e8"
+  },
+  "post_merge_review": {
+    "pr": 52,
+    "approved_head": "c092827223406f0489ad1e57a414e073f371c3df",
+    "main_ci_run_id": 34241909331,
+    "main_ci_conclusion": "success",
+    "main_ci_jobs": "5/5",
+    "local_python_tests_passed": 642,
+    "canonical_runtime_tree_changed": false,
+    "offline_evaluator_source_changed": true,
+    "offline_evaluator_schema_changed": true,
+    "all_executable_source_unchanged": false,
+    "rc_creation_requirement": "PENDING_STRATEGY_DECISION",
+    "strategy_pr_requires_new_rc": false,
+    "new_rc_created": false,
+    "provenance_path": "docs/acceptance/v3-01/evidence/v3-01-24-quality-strategy/post-pr52-ci-provenance.json"
+  },
+  "safety": {
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "live_reservations": 0,
+    "spend_vnd": "0",
+    "external_execution": false,
+    "paid_execution": false,
+    "runtime_budget_vnd": "0",
+    "kill_switch_engaged": true,
+    "bundle_mounted": false,
+    "live_authority": false,
+    "new_operations": [],
+    "new_automations": [],
+    "deploy": false,
+    "publish": false,
+    "public_ingress": false
+  },
+  "historical": {
+    "operation_id": "v3-01-rc15-openai-transcription-asr-call-01",
+    "provider": "SUCCESS",
+    "structured_transcript": "PASS",
+    "timestamp_validation": "PASS",
+    "acceptance": "FAIL",
+    "consumed": true,
+    "wer_percent": "9.6618",
+    "critical_terms_passed": 5,
+    "critical_terms_required": 8,
+    "words": 412,
+    "boundary_points": 27,
+    "actual_cost_vnd": "326.294996",
+    "operation_2": "NOT_APPROVED_LOCKED",
+    "asr_consecutive_pass": "0/2",
+    "vision_consecutive_pass": "2/2",
+    "production": "NO-GO",
+    "retrospective_pass": false
+  },
+  "evaluation": {
+    "wer_max_percent": "15",
+    "critical_terms_required_per_asset": 8,
+    "critical_terms_total_per_asset": 8,
+    "matching": "EXACT_CONTIGUOUS_NORMALIZED_TOKENS",
+    "normalization": [
+      "NFKC",
+      "casefold",
+      "punctuation_symbol_boundaries",
+      "canonical_whitespace"
+    ],
+    "preserve_vietnamese_diacritics": true,
+    "fuzzy": false,
+    "synonyms": false,
+    "semantic_matching": false,
+    "partial_phrase": false,
+    "post_correction": false,
+    "reference_rewrite": false,
+    "provider_transcript_mutation": false,
+    "no_hallucinated_insertion_required": true,
+    "transcript_completeness_required": true,
+    "timestamp_validation_required": true,
+    "cost_receipt_required": true,
+    "positive_duration_wrapper_unchanged": true,
+    "downstream_boundary_points": "POSITIVE_DURATION_TRANSCRIPT_REQUIRED",
+    "same_assets_and_references": true
+  },
+  "assets_manifest": {
+    "path": "docs/acceptance/v3-01/assets/V3-01-RC11-ASR-ASSET-MANIFEST.json",
+    "sha256": "0d7aef962dcb5e34ed5786fadd2e9cfd156cbfb8784d498092262d33b76de7c0",
+    "rights_revalidation_required_before_future_execution": true
+  },
+  "candidates": [
+    {
+      "id": "W0",
+      "role": "BASELINE_RECORDED_NO_REPLAY",
+      "model": "whisper-1",
+      "language": "vi",
+      "response_format": "verbose_json",
+      "timestamp_granularities": [
+        "segment",
+        "word"
+      ],
+      "prompt": null,
+      "temperature": null,
+      "temperature_policy": "OMITTED",
+      "runtime_wired": true,
+      "new_execution_authorized": false,
+      "quality_evidence": "RC15_OP1_FAIL_5_OF_8",
+      "estimated_8_of_8_probability": null
+    },
+    {
+      "id": "W1",
+      "role": "RECOMMENDED_NEXT_PROPOSAL",
+      "model": "whisper-1",
+      "language": "vi",
+      "response_format": "verbose_json",
+      "timestamp_granularities": [
+        "segment",
+        "word"
+      ],
+      "prompt": "Ngọc Phương Đông, Vinhomes Green Paradise, Cần Giờ, tham quan sa bàn, chính sách bán hàng.",
+      "temperature": null,
+      "temperature_policy": "OMITTED",
+      "same_prompt_for_both_assets": true,
+      "prompt_status": "PROPOSED_NOT_APPROVED",
+      "runtime_wired": false,
+      "new_execution_authorized": false,
+      "quality_evidence": "NOT_TESTED",
+      "estimated_8_of_8_probability": null,
+      "requires_source_remediation": true,
+      "requires_new_executable_rc_before_live": true
+    },
+    {
+      "id": "W2",
+      "role": "FALLBACK_PROPOSAL_NOT_AUTOMATIC",
+      "model": "whisper-1",
+      "language": "vi",
+      "response_format": "verbose_json",
+      "timestamp_granularities": [
+        "segment",
+        "word"
+      ],
+      "prompt": "Tư vấn bất động sản của Ngọc Phương Đông: Vinhomes Green Paradise tại Cần Giờ, tham quan sa bàn và chính sách bán hàng.",
+      "temperature": null,
+      "temperature_policy": "OMITTED",
+      "same_prompt_for_both_assets": true,
+      "prompt_status": "PROPOSED_NOT_APPROVED",
+      "runtime_wired": false,
+      "new_execution_authorized": false,
+      "quality_evidence": "NOT_TESTED",
+      "estimated_8_of_8_probability": null,
+      "requires_source_remediation": true,
+      "requires_new_executable_rc_before_live": true
+    }
+  ],
+  "prompt_contract_proposal": {
+    "documented_whisper_limit_tokens": 224,
+    "proposed_utf8_byte_cap": 224,
+    "tokenizer_exact_count": "NOT_COMPUTED",
+    "tokenizer_requirement": "PIN_WHISPER_MULTILINGUAL_TOKENIZER_AND_VERIFY_BEFORE_FUTURE_GATING",
+    "truncate": false,
+    "reference_transcript_as_prompt": false,
+    "customer_data": false,
+    "pii": false,
+    "keywords": [
+      "Ngọc Phương Đông",
+      "Vinhomes Green Paradise",
+      "Cần Giờ",
+      "tham quan sa bàn",
+      "chính sách bán hàng"
+    ],
+    "binding_required": [
+      "profile_id",
+      "exact_utf8_sha256",
+      "byte_length",
+      "token_count_and_tokenizer_identity",
+      "language",
+      "response_format",
+      "timestamp_granularities",
+      "temperature_omission_policy",
+      "model",
+      "rc_commit",
+      "scope_hash"
+    ],
+    "authority_model": "ASR_REQUEST_PROFILE_IN_SCOPE_NOT_MONEY_LIMITS"
+  },
+  "negative_insertion_control": {
+    "same_prompt_for_both_assets": true,
+    "asset_02_reference_lacks_all_five_prompt_terms": true,
+    "design_status": "REFERENCE_INSPECTION_ONLY_NOT_EXECUTED",
+    "require_compare_occurrence_counts_and_human_audio_review": true,
+    "broader_generalization": "UNKNOWN",
+    "additional_assets_require_owner_rights": true
+  },
+  "models": [
+    {
+      "model": "whisper-1",
+      "native_word_timing": "DOCUMENTED_AND_RC15_OBSERVED",
+      "native_segment_timing": "DOCUMENTED_AND_RC15_OBSERVED",
+      "strict_flow_a": "EVIDENCE_LAYER_COMPATIBLE_DOWNSTREAM_POSITIVE_DURATION_GATED",
+      "context": [
+        "prompt",
+        "language"
+      ],
+      "new_quality": "UNKNOWN",
+      "pricing_usd_per_minute": "0.006",
+      "pricing_type": "DURATION",
+      "npd_latency_evidence_ms": "12170.13",
+      "new_latency_guarantee": null
+    },
+    {
+      "model": "gpt-transcribe",
+      "native_word_timing": "NOT_PROVEN",
+      "native_segment_timing": "NOT_PROVEN",
+      "strict_flow_a": "STRICT_FLOW_A_INCOMPATIBLE",
+      "context": [
+        "prompt",
+        "keywords",
+        "languages"
+      ],
+      "new_quality": "UNKNOWN",
+      "pricing_usd_per_minute": "0.0045",
+      "pricing_type": "DURATION",
+      "npd_latency_evidence_ms": null,
+      "new_latency_guarantee": null
+    },
+    {
+      "model": "gpt-4o-transcribe",
+      "native_word_timing": "NOT_PROVEN",
+      "native_segment_timing": "NOT_PROVEN",
+      "strict_flow_a": "STRICT_FLOW_A_INCOMPATIBLE",
+      "context": [
+        "prompt",
+        "language"
+      ],
+      "new_quality": "UNKNOWN",
+      "pricing_usd_per_minute": "0.006",
+      "pricing_type": "ESTIMATE_TOKEN_BILLED_NOT_HARD_BOUND",
+      "npd_latency_evidence_ms": null,
+      "new_latency_guarantee": null
+    }
+  ],
+  "architecture_options": [
+    "A_WHISPER_NATIVE_TIMING",
+    "B_GPT_TRANSCRIPT_LOCAL_ALIGNMENT",
+    "C_DUAL_PASS_CROSS_CONSISTENCY"
+  ],
+  "recommendation": {
+    "next": "W1",
+    "fallback": "W2",
+    "deferred": "B_GPT_TRANSCRIPT_LOCAL_ALIGNMENT",
+    "dual_pass": "DEFERRED_UNTIL_ALIGNMENT_AND_CONSISTENCY_ACCEPTED",
+    "ranking_basis": "LOWEST_INCREMENTAL_COMPLEXITY_WITH_NATIVE_TIMING_NOT_MEASURED_QUALITY_SUPERIORITY",
+    "owner_decision": "PENDING",
+    "g01": "REBIND_MODEL_RC_REQUEST_PROFILE_SCOPE",
+    "g02": "REBIND_COST_TIMEOUT_SCOPE_NO_AUTOMATIC_INCREASE",
+    "g03": "REVALIDATE_SAME_ASSET_REFERENCE_RIGHTS_AND_CONTEXT_SCOPE",
+    "fresh_operation_ids_and_window_required": true
+  },
+  "sources": [
+    {
+      "id": "O1",
+      "url": "https://developers.openai.com/api/docs/guides/speech-to-text"
+    },
+    {
+      "id": "O2",
+      "url": "https://developers.openai.com/api/reference/python/resources/audio/subresources/transcriptions/methods/create"
+    },
+    {
+      "id": "O3",
+      "url": "https://developers.openai.com/api/docs/models/whisper-1"
+    },
+    {
+      "id": "O4",
+      "url": "https://developers.openai.com/api/docs/models/gpt-transcribe"
+    },
+    {
+      "id": "O5",
+      "url": "https://developers.openai.com/api/docs/models/gpt-4o-transcribe"
+    },
+    {
+      "id": "O6",
+      "url": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "O7",
+      "url": "https://developers.openai.com/api/reference/overview"
+    }
+  ]
+}
