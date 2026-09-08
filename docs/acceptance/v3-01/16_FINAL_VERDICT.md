@@ -1,5 +1,26 @@
 # V3-01 consolidation checkpoint verdict
 
+## Current checkpoint — 2026-09-08, after PR #52
+
+PR #52 merged at `5a8c96da6816ad6f424eaaa3952947738d4c49d5`; exact-main CI
+`34241909331` PASS 5/5. RC-15 Op1 remains **FAIL / CONSUMED**, despite provider,
+structured transcript, timing and WER passing: critical terms remain **5/8**, actual cost
+**326.294996 VND**. Op2 remains **NOT APPROVED / LOCKED**. ASR **0/2**, Vision **2/2**.
+Production **NO-GO**; historical receipts and reference transcripts are immutable.
+
+[V3-01-24 quality strategy](58_V3_01_24_ASR_QUALITY_STRATEGY.md) is a **draft recommendation**,
+not a candidate selection, approval or runtime gate. Canonical runtime-tree equals RC-15;
+offline evaluator source/schema changed in #52 and must be bound separately in future evidence.
+RC creation requirement is **PENDING_STRATEGY_DECISION**; no new RC is created.
+This review performs 0 provider calls, 0 credential reads, 0 live reservations and 0 VND spend.
+Stop at a separate Owner G-08 and candidate decision; no retry, Op2, operation, automation,
+deploy, publishing or public ingress.
+
+## Earlier stage-specific consolidation snapshots
+
+The earlier snapshot and appended checkpoint notes below are retained for lineage.
+Their pre-call authority/status wording is historical, not permission to execute now.
+
 ## Executive verdict
 
 ```text
