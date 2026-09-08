@@ -2,9 +2,10 @@ from decimal import Decimal
 from pathlib import Path
 from urllib.parse import urlparse
 
-from pydantic import model_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from .asr_prompt_profile import profile_for_id, prompt_profile_sha256
 from .provider_safety import ProviderTimeoutEnvelope
 
 
@@ -36,12 +37,14 @@ class Settings(BaseSettings):
     auto_edit_fixture_enabled: bool = True
     transcription_provider: str = "fixture"
     openai_transcription_model: str = ""
+    openai_transcription_prompt_profile_id: str = ""
     openai_transcription_credential_alias: str = "secret://openai/codex-video"
     openai_transcription_language: str = "vi"
     openai_transcription_max_file_bytes: int = 25_000_000
     openai_transcription_max_duration_seconds: float = 600.0
     openai_transcription_estimated_cost_vnd: Decimal = Decimal("0")
     openai_transcription_vnd_per_minute: Decimal = Decimal("0")
+
     auto_edit_signal_provider: str = "fixture"
     ffprobe_path: str = "ffprobe"
     ffmpeg_path: str = "ffmpeg"
@@ -173,6 +176,14 @@ class Settings(BaseSettings):
     operations_evidence_retention_days: int = 400
     operations_log_retention_days: int = 30
     operations_external_notifications_enabled: bool = False
+
+    @field_validator("openai_transcription_prompt_profile_id", mode="before")
+    @classmethod
+    def validate_asr_prompt_profile_id(cls, value: object) -> str:
+        if not isinstance(value, str):
+            raise ValueError("ASR prompt profile ID must be a canonical string")
+        profile_for_id(value)
+        return value
 
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
@@ -556,6 +567,9 @@ class Settings(BaseSettings):
                     "max_duration_seconds": self.openai_transcription_max_duration_seconds,
                     "estimated_cost_vnd": self.openai_transcription_estimated_cost_vnd,
                     "vnd_per_minute": self.openai_transcription_vnd_per_minute,
+                    "asr_prompt_profile_sha256": prompt_profile_sha256(
+                        profile_for_id(self.openai_transcription_prompt_profile_id)
+                    ),
                     "per_operation_limit_vnd": self.provider_per_operation_limit_vnd,
                     "acceptance_window_limit_vnd": self.provider_daily_limit_vnd,
                     "retry_max_attempts": self.provider_retry_max_attempts,
@@ -574,6 +588,7 @@ class Settings(BaseSettings):
                     "max_duration_seconds": scope.max_duration_seconds,
                     "estimated_cost_vnd": scope.per_operation_limit_vnd,
                     "vnd_per_minute": scope.vnd_per_minute,
+                    "asr_prompt_profile_sha256": prompt_profile_sha256(scope.asr_prompt_profile),
                     "per_operation_limit_vnd": scope.per_operation_limit_vnd,
                     "acceptance_window_limit_vnd": scope.acceptance_window_limit_vnd,
                     "retry_max_attempts": scope.max_attempts,

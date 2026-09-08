@@ -10,6 +10,7 @@ from collections.abc import AsyncIterable
 from decimal import Decimal
 from pathlib import Path
 
+from .asr_prompt_profile import prompt_profile_sha256, validate_prompt_profile
 from .auto_edit_logic import build_highlights, build_scenes, build_silence_decisions
 from .auto_edit_models import (
     AutoEditAnalysisRead,
@@ -391,14 +392,31 @@ class AutoEditAnalysisService:
         source_media = MediaMetadata.model_validate(metadata_payload)
         if not source_media.duration_seconds or source_media.duration_seconds <= 0:
             raise ValueError("source video duration is unavailable")
+        # Freeze before cache lookup as well as execution: W1 cannot reuse an
+        # otherwise-identical W0 analysis, nor drift between context and dispatch.
+        transcription_provider = self.transcription_provider
+        asr_prompt_profile = validate_prompt_profile(
+            getattr(transcription_provider, "asr_prompt_profile", None)
+        )
+        profile_binding = (
+            {"asr_prompt_profile_sha256": prompt_profile_sha256(asr_prompt_profile)}
+            if asr_prompt_profile is not None
+            else {}
+        )
+        profile_kwargs = (
+            {"expected_asr_prompt_profile": asr_prompt_profile}
+            if hasattr(transcription_provider, "asr_prompt_profile")
+            else {}
+        )
         fingerprint = hashlib.sha256(
             json.dumps(
                 {
                     "asset_checksum": asset.checksum_sha256,
                     "configuration": payload.model_dump(mode="json"),
-                    "transcription_provider": self.transcription_provider.key,
+                    "transcription_provider": transcription_provider.key,
                     "signal_provider": self.signal_provider.key,
                     "algorithm_version": self.algorithm_version,
+                    **profile_binding,
                 },
                 sort_keys=True,
                 separators=(",", ":"),
@@ -417,6 +435,7 @@ class AutoEditAnalysisService:
                 "publish_requested": False,
                 "paid_external_call": False,
                 "vision_analysis": "deferred-to-v2-05",
+                **profile_binding,
             },
         )
         if not created:
@@ -432,12 +451,12 @@ class AutoEditAnalysisService:
             execution_trace = ProviderExecutionTrace()
             operation_key = (
                 payload.acceptance_operation_id
-                if self.transcription_provider.external_call
+                if transcription_provider.external_call
                 and payload.acceptance_operation_id is not None
                 else f"{analysis_id}:transcription"
             )
             transcription_capability = getattr(
-                self.transcription_provider,
+                transcription_provider,
                 "capability",
                 "transcription",
             )
@@ -446,61 +465,63 @@ class AutoEditAnalysisService:
                     operation_key=operation_key,
                     workspace_id=asset.workspace_id,
                     project_id=asset.project_id,
-                    provider_key=self.transcription_provider.key,
-                    model=self.transcription_provider.model,
+                    provider_key=transcription_provider.key,
+                    model=transcription_provider.model,
                     capability=transcription_capability,
                     operation=(
                         "flow_a_asr"
-                        if self.transcription_provider.external_call
+                        if transcription_provider.external_call
                         else "auto_edit_transcription"
                     ),
-                    external_call=self.transcription_provider.external_call,
-                    paid=self.transcription_provider.paid,
-                    estimated_cost_vnd=self.transcription_provider.estimated_cost_vnd,
-                    credential_alias=self.transcription_provider.credential_alias,
+                    external_call=transcription_provider.external_call,
+                    paid=transcription_provider.paid,
+                    estimated_cost_vnd=transcription_provider.estimated_cost_vnd,
+                    credential_alias=transcription_provider.credential_alias,
                     asset_id=asset.asset_id,
                     asset_hash=asset.checksum_sha256,
                     input_media_kind=(
                         source_media.media_kind
-                        if self.transcription_provider.external_call
+                        if transcription_provider.external_call
                         and source_media.media_kind in {"audio", "video"}
                         else None
                     ),
                     input_file_bytes=(
                         local_path.stat().st_size
-                        if self.transcription_provider.external_call
+                        if transcription_provider.external_call
                         else None
                     ),
                     input_duration_seconds=(
                         source_media.duration_seconds
-                        if self.transcription_provider.external_call
+                        if transcription_provider.external_call
                         else None
                     ),
                     requested_language=(
-                        getattr(self.transcription_provider, "language", None)
-                        if self.transcription_provider.external_call
+                        getattr(transcription_provider, "language", None)
+                        if transcription_provider.external_call
                         else None
                     ),
                     response_format=(
-                        getattr(self.transcription_provider, "response_format", None)
-                        if self.transcription_provider.external_call
+                        getattr(transcription_provider, "response_format", None)
+                        if transcription_provider.external_call
                         else None
                     ),
                     timestamp_granularities=(
-                        getattr(self.transcription_provider, "timestamp_granularities", ())
-                        if self.transcription_provider.external_call
+                        getattr(transcription_provider, "timestamp_granularities", ())
+                        if transcription_provider.external_call
                         else ()
                     ),
+                    asr_prompt_profile=asr_prompt_profile,
                     # A real Flow A run must supply the separate G-03 rights record. Basic upload
                     # labels are not silently promoted into approved provider-rights evidence.
-                    rights_required=self.transcription_provider.external_call,
+                    rights_required=transcription_provider.external_call,
                     rights=[],
                 ),
-                lambda: self.transcription_provider.transcribe(
+                lambda: transcription_provider.transcribe(
                     local_path,
                     metadata=source_media,
                     checksum_sha256=asset.checksum_sha256,
                     execution_trace=execution_trace,
+                    **profile_kwargs,
                 ),
                 actual_cost=lambda result: result.actual_cost_vnd,
                 timeout_evidence_factory=lambda timeout_envelope, error: (
@@ -551,14 +572,14 @@ class AutoEditAnalysisService:
                 workspace_id=asset.workspace_id,
                 project_id=asset.project_id,
                 job_id=None,
-                provider_key=self.transcription_provider.key,
+                provider_key=transcription_provider.key,
                 capability=transcription_capability,
                 operation=f"auto-edit-transcript:{analysis_id}",
-                model=self.transcription_provider.model,
+                model=transcription_provider.model,
                 units=Decimal(str(source_media.duration_seconds)) / Decimal("60"),
                 unit_name="audio_minute",
                 estimated_cost=(
-                    self.transcription_provider.estimated_cost_vnd or Decimal("0")
+                    transcription_provider.estimated_cost_vnd or Decimal("0")
                 ),
                 actual_cost=transcription_result.receipt.charged_cost_vnd,
                 metadata={
@@ -568,6 +589,7 @@ class AutoEditAnalysisService:
                     "cost_receipt_recorded": bool(
                         transcript.provenance.get("cost_receipt")
                     ),
+                    **profile_binding,
                 },
             )
             await self.platform.record_provider_operation(
@@ -584,7 +606,7 @@ class AutoEditAnalysisService:
             await self.repository.save_analysis_results(
                 analysis_id=analysis_id,
                 asset_id=asset.asset_id,
-                provider_key=self.transcription_provider.key,
+                provider_key=transcription_provider.key,
                 transcript=downstream_transcript,
                 scenes=scenes,
                 silence_decisions=silence,

@@ -15,6 +15,7 @@ from typing import Literal
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
+from .asr_prompt_profile import AsrPromptProfile, prompt_profile_sha256, validate_prompt_profile
 from .auto_edit_models import MediaMetadata
 from .auto_edit_providers import (
     ProviderNotConfigured,
@@ -1007,7 +1008,9 @@ class OpenAITranscriptionProvider:
         transport: httpx.AsyncBaseTransport | None = None,
         allow_zero_cost_contract_test: bool = False,
         monotonic_clock: Callable[[], float] = time.perf_counter,
+        asr_prompt_profile: AsrPromptProfile | dict[str, object] | None = None,
     ) -> None:
+        self.asr_prompt_profile = validate_prompt_profile(asr_prompt_profile)
         if model not in compatible_openai_asr_models():
             raise ValueError(
                 "OpenAI ASR model is not compatible with the strict native timestamp contract"
@@ -1055,10 +1058,32 @@ class OpenAITranscriptionProvider:
         metadata: MediaMetadata,
         checksum_sha256: str,
         execution_trace: ProviderExecutionTrace | None = None,
+        expected_asr_prompt_profile: AsrPromptProfile | dict[str, object] | None = None,
     ) -> ProviderTranscript:
         trace = execution_trace or ProviderExecutionTrace(monotonic=self._monotonic_clock)
         trace.begin()
         trace.mark("request_build")
+        # Freeze the exact public request profile selected by the controller.
+        # Revalidation catches model_copy/model_construct or adapter mutation;
+        # only this local snapshot is used after credential resolution/awaits.
+        profile = validate_prompt_profile(self.asr_prompt_profile)
+        expected_profile = validate_prompt_profile(expected_asr_prompt_profile)
+        if profile != expected_profile:
+            raise ValueError("ASR_PROMPT_PROFILE_BINDING_MISMATCH")
+        # Snapshot the verified hash before credentials/dispatch. Evidence must
+        # not reread tokenizer artifacts after a successful provider response.
+        profile_sha256 = prompt_profile_sha256(profile)
+        request_model = self.model
+        request_language = self.language
+        request_response_format = self.response_format
+        request_timestamp_granularities = tuple(self.timestamp_granularities)
+        if profile is not None and (
+            request_model != profile.model
+            or request_language != profile.language
+            or request_response_format != profile.response_format
+            or request_timestamp_granularities != tuple(profile.timestamp_granularities)
+        ):
+            raise ValueError("ASR_PROMPT_PROFILE_REQUEST_MISMATCH")
         if metadata.media_kind not in _SUPPORTED_MEDIA_KINDS:
             raise ValueError("OpenAI transcription accepts only trusted audio or video media")
         duration = float(metadata.duration_seconds or 0)
@@ -1093,16 +1118,19 @@ class OpenAITranscriptionProvider:
 
         request_manifest = {
             "endpoint": "/v1/audio/transcriptions",
-            "model": self.model,
-            "language": self.language,
-            "response_format": self.response_format,
-            "timestamp_granularities": list(self.timestamp_granularities),
+            "model": request_model,
+            "language": request_language,
+            "response_format": request_response_format,
+            "timestamp_granularities": list(request_timestamp_granularities),
             "source_sha256": actual_source_hash,
             "source_bytes": file_size,
             "source_duration_seconds": duration,
             "source_file_suffix": source_suffix,
             "content_type": metadata.detected_content_type,
         }
+        if profile is not None:
+            request_manifest["asr_prompt_profile"] = profile.model_dump(mode="json")
+            request_manifest["asr_prompt_profile_sha256"] = profile_sha256
         request_sha256 = hashlib.sha256(_canonical_json(request_manifest)).hexdigest()
         client_request_id = "vf-" + uuid.uuid4().hex
         trace.mark(
@@ -1127,10 +1155,11 @@ class OpenAITranscriptionProvider:
                     "POST",
                     "/v1/audio/transcriptions",
                     data={
-                        "model": self.model,
-                        "language": self.language,
-                        "response_format": "verbose_json",
-                        "timestamp_granularities[]": ["segment", "word"],
+                        "model": request_model,
+                        "language": request_language,
+                        "response_format": request_response_format,
+                        "timestamp_granularities[]": list(request_timestamp_granularities),
+                        **({"prompt": profile.prompt} if profile is not None else {}),
                     },
                     files={
                         "file": (
@@ -1323,6 +1352,8 @@ class OpenAITranscriptionProvider:
                 latency_ms=latency_ms,
                 credential_alias=alias,
                 timestamp_report=timestamp_report,
+                asr_prompt_profile=profile,
+                asr_prompt_profile_sha256=profile_sha256,
             )
         except (ValidationError, ValueError) as exc:
             timestamp_report = _timestamp_report_for_error(exc, timestamp_report)
@@ -1363,9 +1394,11 @@ class OpenAITranscriptionProvider:
         latency_ms: float,
         credential_alias: str,
         timestamp_report: _TimestampCanonicalizationReport,
+        asr_prompt_profile: AsrPromptProfile | None,
+        asr_prompt_profile_sha256: str | None,
     ) -> ProviderTranscript:
         language = _normalize_language(payload.language)
-        if language != self.language:
+        if language != (asr_prompt_profile.language if asr_prompt_profile else self.language):
             raise _ResponseContractViolation(
                 path="$.language",
                 code="language_mismatch",
@@ -1476,8 +1509,16 @@ class OpenAITranscriptionProvider:
                 "external_call": True,
                 "paid_call": True,
                 "provider": self.key,
-                "model": self.model,
+                "model": asr_prompt_profile.model if asr_prompt_profile else self.model,
                 "source_checksum": source_checksum,
+                **(
+                    {
+                        "asr_prompt_profile": asr_prompt_profile.model_dump(mode="json"),
+                        "asr_prompt_profile_sha256": asr_prompt_profile_sha256,
+                    }
+                    if asr_prompt_profile is not None
+                    else {}
+                ),
                 "request_sha256": request_sha256,
                 "response_sha256": response_sha256,
                 "provider_request_id": provider_request_id,

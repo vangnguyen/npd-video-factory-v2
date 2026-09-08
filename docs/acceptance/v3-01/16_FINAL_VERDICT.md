@@ -1,6 +1,20 @@
 # V3-01 consolidation checkpoint verdict
 
-## Current checkpoint — 2026-09-08, after PR #52
+## Current checkpoint — 2026-09-08, after PR #53; V3-01-25 draft
+
+PR #53 merged at `b9dbb8fd8f1abcbcc920f0df9fb5a343586b7b0e`; exact-main CI
+`34246957872` PASS 5/5. Owner selected **W1 for source remediation, NOT live use**.
+[V3-01-25](61_V3_01_25_W1_PROMPT_PROFILE_REMEDIATION.md) binds the same immutable,
+hashable vocabulary profile through scope/controller/request/evidence and adds asset-02
+negative-insertion checks. It changes executable source; a new RC is required only after
+separate G-08, merge and exact-main regression. No RC/tag or live authority is created now.
+
+RC-15 Op1 remains **FAIL / CONSUMED**, critical terms **5/8**, actual cost **326.294996 VND**.
+Op2 **NOT APPROVED / LOCKED**; ASR **0/2 PASS**, Vision **2/2 PASS**, Production **NO-GO**.
+This remediation: **0 provider calls / 0 credential reads / 0 live reservations / 0 VND**.
+Stop at Owner G-08; no retry, operation, automation, deployment, publishing or ingress.
+
+## Prior checkpoint — after PR #52, before W1 selection
 
 PR #52 merged at `5a8c96da6816ad6f424eaaa3952947738d4c49d5`; exact-main CI
 `34241909331` PASS 5/5. RC-15 Op1 remains **FAIL / CONSUMED**, despite provider,

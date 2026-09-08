@@ -11,6 +11,11 @@ from typing import Literal
 
 from pydantic import Field, ValidationError, field_validator, model_validator
 
+from .asr_prompt_profile import (
+    AsrPromptProfile,
+    prompt_profile_sha256,
+    validate_prompt_profile,
+)
 from .models import StrictModel
 from .provider_safety import (
     ProviderAllowedOperation,
@@ -55,6 +60,7 @@ def execution_scope_sha256(
     allowed_operations: tuple[ProviderAllowedOperation, ProviderAllowedOperation],
     rights_record_sha256: str | None = None,
     rights_record_sha256s: tuple[str, ...] = (),
+    asr_prompt_profile: AsrPromptProfile | dict[str, object] | None = None,
 ) -> str:
     """Hash every mutable field that an owner must approve for one live window."""
 
@@ -80,6 +86,16 @@ def execution_scope_sha256(
         payload["rights_record_sha256"] = rights_record_sha256
     else:
         payload["rights_record_sha256s"] = list(rights_record_sha256s)
+    profile = validate_prompt_profile(asr_prompt_profile)
+    if profile is not None:
+        if (provider_key, model, capability) != (
+            "openai-transcription", "whisper-1", "asr"
+        ):
+            raise ValueError("ASR prompt profile requires the exact whisper-1 ASR scope")
+        # Absence remains the historical W0 representation: no new null fields
+        # enter any previously approved execution-scope hash.
+        payload["asr_prompt_profile"] = profile.model_dump(mode="json")
+        payload["asr_prompt_profile_sha256"] = prompt_profile_sha256(profile)
     return canonical_sha256(payload)
 
 
@@ -546,6 +562,12 @@ class OpenAIAsrGateBundle(StrictModel):
     rights_approval: HashedApprovalRecord
     rights_records: tuple[HashedRightsRecord, HashedRightsRecord]
     allowed_operations: tuple[ProviderAllowedOperation, ProviderAllowedOperation]
+    asr_prompt_profile: AsrPromptProfile | None = None
+
+    @field_validator("asr_prompt_profile", mode="before")
+    @classmethod
+    def validate_prompt_binding(cls, value: object) -> AsrPromptProfile | None:
+        return validate_prompt_profile(value)
 
     @field_validator("credential_alias")
     @classmethod
@@ -668,6 +690,7 @@ class OpenAIAsrGateBundle(StrictModel):
             budget=self.budget,
             rights_record_sha256s=rights_hashes,
             allowed_operations=self.allowed_operations,
+            asr_prompt_profile=self.asr_prompt_profile,
         )
         if any(
             scope_hash not in record.artifact_or_commit_hashes
@@ -675,6 +698,47 @@ class OpenAIAsrGateBundle(StrictModel):
         ):
             raise ValueError("every ASR owner approval must bind the exact execution scope hash")
         return self
+
+
+def asr_execution_scope_sha256(scope: ProviderExecutionGateScope) -> str:
+    """Re-derive the approved ASR hash without trusting a copied profile marker.
+
+    All ASR budget fields survive the loader projection, so reuse its canonical
+    model and scope hasher rather than introduce a second JSON contract. This
+    also detects removal of both W1 profile fields back to a claimed W0 scope.
+    """
+    if scope.capability != "asr":
+        raise ValueError("ASR scope derivation requires the ASR capability")
+    budget = OpenAIAsrGateBudgetEnvelope(
+        per_operation_limit_vnd=scope.per_operation_limit_vnd,
+        acceptance_window_limit_vnd=scope.acceptance_window_limit_vnd,
+        vnd_per_minute=scope.vnd_per_minute,
+        budget_day_utc=scope.budget_day_utc,
+        max_file_bytes=scope.max_file_bytes,
+        max_duration_seconds=scope.max_duration_seconds,
+        requested_language=scope.requested_language,
+        response_format=scope.response_format,
+        timestamp_granularities=scope.timestamp_granularities,
+        provider_http_timeout_seconds=scope.provider_http_timeout_seconds,
+        controller_hard_timeout_seconds=scope.controller_hard_timeout_seconds,
+        max_attempts=scope.max_attempts,
+        max_concurrent_calls=scope.max_concurrent_calls,
+    )
+    return execution_scope_sha256(
+        rc_tag=scope.rc_tag,
+        rc_commit=scope.rc_commit,
+        provider_key=scope.provider_key,
+        model=scope.model,
+        capability=scope.capability,
+        credential_alias=scope.credential_alias,
+        valid_from_utc=scope.valid_from_utc,
+        expires_at_utc=scope.expires_at_utc,
+        budget=budget,
+        rights_record_sha256=scope.rights_record_sha256,
+        rights_record_sha256s=scope.rights_record_sha256s,
+        allowed_operations=scope.allowed_operations,
+        asr_prompt_profile=scope.asr_prompt_profile,
+    )
 
 
 def load_verified_provider_gate_bundle(
@@ -784,6 +848,7 @@ def load_verified_provider_gate_bundle(
         budget=bundle.budget,
         rights_record_sha256s=rights_hashes,
         allowed_operations=bundle.allowed_operations,
+        asr_prompt_profile=bundle.asr_prompt_profile,
     )
     return ProviderExecutionGateScope(
         **common,
@@ -793,6 +858,8 @@ def load_verified_provider_gate_bundle(
         requested_language=bundle.budget.requested_language,
         response_format=bundle.budget.response_format,
         timestamp_granularities=bundle.budget.timestamp_granularities,
+        asr_prompt_profile=bundle.asr_prompt_profile,
+        asr_prompt_profile_sha256=prompt_profile_sha256(bundle.asr_prompt_profile),
         rights_record_sha256s=rights_hashes,
         execution_scope_sha256=scope_hash,
         rights_records=tuple(item.record for item in bundle.rights_records),

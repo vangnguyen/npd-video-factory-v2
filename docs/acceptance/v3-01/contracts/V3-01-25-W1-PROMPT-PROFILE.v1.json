@@ -1,0 +1,22 @@
+{
+  "profile_id": "asr-whisper-vi-w1-v1",
+  "prompt": "Ngọc Phương Đông, Vinhomes Green Paradise, Cần Giờ, tham quan sa bàn, chính sách bán hàng.",
+  "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+  "prompt_utf8_bytes": 105,
+  "model": "whisper-1",
+  "language": "vi",
+  "response_format": "verbose_json",
+  "timestamp_granularities": [
+    "segment",
+    "word"
+  ],
+  "temperature_policy": "omitted",
+  "tokenizer_id": "openai-whisper-multilingual-ordinary-text-v1",
+  "tokenizer_version": "0.12.0",
+  "tokenizer_upstream_commit": "86098128c0b4f24f0e2aa2994de830614b474227",
+  "tokenizer_ranks_sha256": "b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126",
+  "tokenizer_raw_token_count": 34,
+  "tokenizer_context_token_count": 33,
+  "tokenizer_context_policy": "prepend_space_after_strip",
+  "tokenizer_context_sha256": "7cf8e972dc834af0022b139a1ba123bcefe6fea34f9d8112fc9eee074c5ad035"
+}

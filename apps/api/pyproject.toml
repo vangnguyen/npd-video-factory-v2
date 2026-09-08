@@ -15,6 +15,7 @@ dependencies = [
   "asyncpg>=0.30,<1",
   "alembic>=1.14,<2",
   "boto3>=1.35,<2",
+  "tiktoken==0.12.0",
 ]
 
 [project.optional-dependencies]
@@ -31,6 +32,9 @@ pythonpath = ["."]
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["data/whisper/*"]
 
 [build-system]
 requires = ["setuptools>=75"]

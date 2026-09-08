@@ -15,6 +15,7 @@ from app.config import Settings
 from app.db import Base, create_engine, create_session_factory
 from app.provider_gate_loader import (
     OpenAIAsrGateBundle,
+    asr_execution_scope_sha256,
     ProviderApprovalRecord,
     canonical_sha256,
     load_verified_provider_gate_bundle,
@@ -417,6 +418,11 @@ async def test_durable_verified_rights_keeps_legacy_single_record_compatibility(
             "rights_record_sha256": scope.rights_record_sha256s[0],
             "rights_record_sha256s": (),
         }
+    )
+    # This is a synthetic legacy-shape component fixture, not the original
+    # approved RC11 bundle. Its changed rights representation needs its own hash.
+    legacy_scope = legacy_scope.model_copy(
+        update={"execution_scope_sha256": asr_execution_scope_sha256(legacy_scope)}
     )
     legacy_policy = policy.model_copy(update={"execution_gate": legacy_scope})
 

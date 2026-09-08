@@ -1,0 +1,3 @@
+# These upstream bytes have a mandatory checksum on every platform.
+multilingual.tiktoken -text
+LICENSE -text

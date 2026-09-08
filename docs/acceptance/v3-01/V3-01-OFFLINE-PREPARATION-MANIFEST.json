@@ -15,7 +15,7 @@
     {"path": "docs/acceptance/v3-01/01_IMPLEMENTATION_INVENTORY.md", "sha256": "bd2df75a58d2144da64d31da3c10a6cbb5e6941cc85b3a06b5cde6ef8401bb6e"},
     {"path": "docs/acceptance/v3-01/14_REMEDIATION_PR_PLAN.md", "sha256": "a6c6a1741fb9561d3ce16bf678783b0b2013c42347dda27ffb3653894e699b66"},
     {"path": "docs/acceptance/v3-01/15_OWNER_GATES.md", "sha256": "e9a2ca17aade7767561e10953c907d208676347231938aebf74b58ce4d78241d"},
-    {"path": "docs/acceptance/v3-01/16_FINAL_VERDICT.md", "sha256": "e2dd56919e06db872bc8de2d051e3c91c1870ddcc37e5c1a00bb5f9ceb5e0789"},
+    {"path": "docs/acceptance/v3-01/16_FINAL_VERDICT.md", "sha256": "1cad96728f63dc987031f3b607138855cbd906be4477845675e1ff54d677be99"},
     {"path": "docs/acceptance/v3-01/46_V3_01_ASR_POST_RUN_AND_FLOW_A_PREPARATION.md", "sha256": "1ddab3312705b0d4c7cfbf6f984f8d8b9952266b357ab9e3c85af1d7716ebe62"},
     {"path": "docs/acceptance/v3-01/47_V3_01_19_VIETNAMESE_TTS_PRODUCTION_GATE.md", "sha256": "b8456dc3fb80b54fdd0ce90a716d4f531c8a5b5b1ed7dd0d3997510dd88ac041"},
     {"path": "docs/acceptance/v3-01/48_V3_01_G11_HUMAN_QUALITY_GATE.md", "sha256": "547a64da1a3052cd4c5e0504801a19d765f1681c9eca52e2c3c3c69160df7d8c"},
@@ -25,8 +25,8 @@
     {"path": "docs/acceptance/v3-01/fixtures/asr-post-run/pass.json", "sha256": "695524b62f2cb4cb534f8cab782e8825be803b543d5bfdfe9330d608c314e418"},
     {"path": "docs/acceptance/v3-01/fixtures/asr-post-run/reference-pass.txt", "sha256": "acbf26ba6f7b02cbdd46aa48818250c85198c7182cc323e18463546b1384e5c5"},
     {"path": "docs/acceptance/v3-01/fixtures/asr-post-run/review-required.json", "sha256": "a36935f377af6436b235cf05ef3b87c89d42f9e0cdd5d6df2e12e7216ca046f4"},
-    {"path": "docs/acceptance/v3-01/schemas/asr-post-run-evaluation.schema.json", "sha256": "4bd2bd5ae56ae7c7591e15b7251fcbbefb556baf66c94084e61086637b6c168d"},
-    {"path": "docs/acceptance/v3-01/schemas/asr-post-run-input.schema.json", "sha256": "5e88d2b40414a6f083b1aef44693cd19f31310786107666910b000312ff01844"},
+    {"path": "docs/acceptance/v3-01/schemas/asr-post-run-evaluation.schema.json", "sha256": "2463372c16c7eb3b2a1db3df49658b77aaf9833d11246fd5b2c277f8c9136157"},
+    {"path": "docs/acceptance/v3-01/schemas/asr-post-run-input.schema.json", "sha256": "54b8012700a5a949625e9018657d944bd3ed3c9f457d181dc8888a217bd671f3"},
     {"path": "docs/acceptance/v3-01/schemas/flow-a-real-media-acceptance.schema.json", "sha256": "d626a536ac02e50a24b5aecdf2652f177e6f41271410913f52b24b9c103d1e77"},
     {"path": "docs/acceptance/v3-01/schemas/flow-a-real-media-run-reference.schema.json", "sha256": "00bee58bcad7c010cdd5e517e068dc026f14fb298aca835a22ba3a75f86ba74a"},
     {"path": "docs/acceptance/v3-01/schemas/human-quality-review.schema.json", "sha256": "dba61a1cca85cfc00583387fd0b026f61df008f160905d340a543cf1d72562dd"},
@@ -42,9 +42,10 @@
     {"path": "docs/acceptance/v3-01/templates/V3_01_FLOW_A_REAL_MEDIA_CONSECUTIVE_REVIEW.md", "sha256": "0cd98fbdb1979551d8d6ee3dccb542fcf5c9b7becf03d60708e867cdf0b8cb10"},
     {"path": "docs/acceptance/v3-01/templates/V3_01_FLOW_A_REAL_MEDIA_RUN_REVIEW.md", "sha256": "5dc794cbe1ebf2bd3eb4dc3dcea5d0eea8296274df220f144eec74bf5912eb20"},
     {"path": "docs/acceptance/v3-01/templates/V3_01_G11_HUMAN_QUALITY_CHECKLIST.md", "sha256": "ffe36c3182df1e912d8cc1f884c3847b89052e26bb53e126e6a5a51a889d665f"},
-    {"path": "docs/acceptance/v3-01/tools/v3_01_asr_post_run_evaluator.py", "sha256": "82c3871a6650cc2c473b614c275f91c27a8eff148141e97f757dff82e907cbdc"}
+    {"path": "docs/acceptance/v3-01/tools/v3_01_25_w1_quality_guard.py", "sha256": "5706aa98a0c6c007f54e601b722d047b68c4882baf3c7a7565d0909e7781d0e2"},
+    {"path": "docs/acceptance/v3-01/tools/v3_01_asr_post_run_evaluator.py", "sha256": "03084b0880595517c9d3b950a9eaf9474d4f887c65b8cbbc28c3c4ff89be4690"}
   ],
-  "file_count": 32,
+  "file_count": 33,
   "safety": {
     "provider_calls": 0,
     "credential_reads": 0,

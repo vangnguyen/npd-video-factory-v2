@@ -70,6 +70,12 @@ class DurableProviderSafetyController(ProviderSafetyController):
 
         now = self._clock()
         rights_records = context.rights
+        prompt_denial = self._prompt_profile_denial(context)
+        if prompt_denial is not None:
+            rights = self.evaluate_rights(
+                rights_records, required=context.rights_required, now=now
+            )
+            return self._denied(context, prompt_denial, rights)
         if self.policy.verified_gate_required:
             scope = self.policy.execution_gate
             if scope is None:

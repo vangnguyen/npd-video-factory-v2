@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "record_kind": "zero_call_source_remediation_review",
+  "work_package": "V3-01-25",
+  "status": "DRAFT_OWNER_G08_REQUIRED",
+  "candidate": "W1_SELECTED_FOR_REMEDIATION_NOT_LIVE_USE",
+  "base_main": "b9dbb8fd8f1abcbcc920f0df9fb5a343586b7b0e",
+  "pr53": {
+    "approved_head": "874482bd65df24c6d05fdb3bbbc0e1950664235f",
+    "merge_commit": "b9dbb8fd8f1abcbcc920f0df9fb5a343586b7b0e",
+    "exact_main_ci": 34246957872,
+    "ci_conclusion": "success",
+    "jobs_succeeded": 5,
+    "local_python_passed": 659
+  },
+  "branch": "remediation/v3-01-25-w1-prompt-profile",
+  "tree": {
+    "rc15_commit": "7d1290aacac61df98a51544731243e5e322a8644",
+    "rc15_and_base_runtime_sha256": "9fab766b285eb2db580032b914eb2ccdf474d18b3958fd218a73a22fb75701e8",
+    "new_runtime_sha256": "5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd",
+    "runtime_changed": true,
+    "offline_evaluator_changed": true,
+    "rc_required_after_approved_merge": true,
+    "new_rc_created": false
+  },
+  "profile": {
+    "path": "docs/acceptance/v3-01/contracts/V3-01-25-W1-PROMPT-PROFILE.v1.json",
+    "profile_id": "asr-whisper-vi-w1-v1",
+    "canonical_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "utf8_bytes": 105,
+    "raw_ordinary_tokens": 34,
+    "upstream_context_ordinary_tokens": 33,
+    "tokenization_evidence": "PINNED_LOCAL_SOURCE_DERIVED_NOT_HOSTED_TELEMETRY",
+    "same_for_both_assets": true,
+    "temperature_policy": "omitted"
+  },
+  "reference_control": {
+    "manifest_sha256": "0d7aef962dcb5e34ed5786fadd2e9cfd156cbfb8784d498092262d33b76de7c0",
+    "asset01_reference_phrase_counts": [
+      3,
+      2,
+      2,
+      2,
+      2
+    ],
+    "asset02_reference_phrase_counts": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "any_excess_occurrence": "FAIL",
+    "wer_maximum": 0.15,
+    "critical_terms_required": 8,
+    "matching": "EXACT_CONTIGUOUS_NORMALIZED_TOKENS_DIACRITICS_PRESERVED",
+    "trusted_expected_profile_required": true,
+    "human_audio_review_performed": false
+  },
+  "validation": {
+    "python_api_worker_bridge_passed": 895,
+    "new_tests": {
+      "profile": 129,
+      "gate_safety": 45,
+      "provider_path": 28,
+      "quality_guard": 34
+    },
+    "studio_passed": 14,
+    "renderer_passed": 14,
+    "renderer_typecheck": "PASS",
+    "renderer_bundle": "PASS",
+    "migration_upgrade_downgrade_replay": "PASS_0013",
+    "acceptance_register": "PASS_60_ROWS_16_GAPS_35_RUNS",
+    "historical_rc15_integrity": "PASS",
+    "w0_evaluator_hash_parity": "PASS",
+    "flow_a_b_c_dr": "EXPECTED_BLOCKED_PRESERVED",
+    "json_schema_checksum_links": "PASS",
+    "secret_pattern_findings": 0,
+    "diff_check": "PASS",
+    "docker_e2e": "EXACT_HEAD_CI_REQUIRED_SEE_PR_RUN",
+    "renderer_existing_audit": {
+      "high": 1,
+      "moderate": 1,
+      "lockfile_changed": false
+    },
+    "new_dependency": "tiktoken==0.12.0_PINNED_OFFLINE_COUNTER",
+    "wheel_packaging": "PASS_MODULE_RANKS_LICENSE_PROVENANCE"
+  },
+  "historical": {
+    "operation": "v3-01-rc15-openai-transcription-asr-call-01",
+    "provider_execution": "SUCCESS",
+    "acceptance": "FAIL",
+    "consumed": true,
+    "actual_cost_vnd": "326.294996",
+    "critical_terms": "5/8",
+    "operation2": "NOT_APPROVED_LOCKED",
+    "original_receipts_modified": false,
+    "retrospective_pass": false,
+    "asr_consecutive": "0/2_PASS",
+    "vision_consecutive": "2/2_PASS"
+  },
+  "safety": {
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "live_reservations": 0,
+    "spend_vnd": "0",
+    "bundle_mounted": false,
+    "external_execution": false,
+    "paid_execution": false,
+    "checked_in_budget_vnd": "0",
+    "kill_switch_engaged": true,
+    "new_operations": [],
+    "new_automations": [],
+    "authority_granted": false,
+    "deploy": false,
+    "publish": false,
+    "public_ingress": false
+  },
+  "next_gate": "OWNER_G08_SOURCE_PR_NO_MERGE_NO_RC_NO_RUNTIME_AUTHORITY",
+  "production_verdict": "NO-GO"
+}
