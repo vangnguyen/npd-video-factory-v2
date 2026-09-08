@@ -1,5 +1,15 @@
 # Gap register
 
+## V3-01-23 current diagnostic update — no gap closure
+
+RC-15 ASR Op1 passed provider/transcript/timestamp/WER checks but failed 3/8 critical terms.
+Retained text differs from the owner-confirmed reference at six occurrences; matcher remains
+unchanged. Numeric reconciliation removes only a false string-zero warning, not historical
+FAIL. GAP-003/GAP-010/GAP-013 remain IN_PROGRESS; ASR aggregate real-provider NOT_TESTED,
+0/2 consecutive PASS; Vision remains 2/2 PASS. No production-path/human-quality promotion.
+See [forensic and numeric review](57_V3_01_23_ASR_CRITICAL_TERM_EVALUATOR.md). G-08 pending;
+Op2 locked; 0 calls/credential reads/live reservations/spend in remediation; production NO-GO.
+
 ## Current RC-15 governance checkpoint
 
 PR #50 merged the source-only timestamp-semantics remediation as `7d1290aacac61df98a51544731243e5e322a8644`.

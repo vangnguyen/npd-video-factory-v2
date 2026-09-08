@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "path": "operation-1-result.json",
+      "role": "original_immutable",
+      "sha256": "ef06ffc48495e207ae7e827207ff67ee7b345b3323c702c1852b39a27a2d5099"
+    },
+    {
+      "path": "operation-1-evaluator-input.json",
+      "role": "original_immutable",
+      "sha256": "80dfdbe7b8afe38eda7086d452e393d8893fdcca2c562174c055abe91a889474"
+    },
+    {
+      "path": "operation-1-post-run-evaluation.json",
+      "role": "original_immutable",
+      "sha256": "08d71d294dc602e219d09d824c9d66e834a6c713f36f4a94368f5034598ffda9"
+    },
+    {
+      "path": "critical-term-forensic.json",
+      "role": "derived_diagnostic_only",
+      "sha256": "cb5ae5d076f08dcab5946b7931dc25ec44b97ab08bc73776c0ef5747f4f3784d"
+    },
+    {
+      "path": "diagnostic-evaluator-comparison.json",
+      "role": "derived_diagnostic_only",
+      "sha256": "0829ae85b4fdb6cae09f3e213bf51bb6724e7f43a74c6e03058c40ead3cfad27"
+    }
+  ],
+  "hash_semantics": "SHA-256 over exact file bytes; canonical internal hashes are separate fields",
+  "official_acceptance": "FAIL",
+  "originals_immutable": true,
+  "record_kind": "v3_01_23_local_evidence_checksum_manifest",
+  "schema_version": 1
+}

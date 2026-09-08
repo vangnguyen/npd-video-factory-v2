@@ -25,6 +25,7 @@
     "language": {"$ref": "#/$defs/language"},
     "duration_parity": {"$ref": "#/$defs/duration_parity"},
     "provider_transcript_mapping": {"$ref": "#/$defs/provider_transcript_mapping"},
+    "numeric_reconciliation": {"$ref": "#/$defs/numeric_reconciliation"},
     "evidence_completeness": {"$ref": "#/$defs/evidence_completeness"},
     "safety": {
       "type": "object", "additionalProperties": false,
@@ -41,6 +42,43 @@
     "evaluation_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
   },
   "$defs": {
+    "numeric_reconciliation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["currency", "comparison_semantics", "canonical_amounts", "per_operation_limit_vnd", "acceptance_window_limit_vnd", "checks", "invalid_amount_fields", "missing_amount_fields", "passed", "acceptance_window_aggregate_status", "acceptance_window_aggregate_checked", "acceptance_window_aggregate_note"],
+      "properties": {
+        "currency": {"const": "VND"},
+        "comparison_semantics": {"const": "exact_decimal_value"},
+        "canonical_amounts": {
+          "type": "object", "additionalProperties": false,
+          "required": ["reservation_vnd", "post_reconciliation_reserved_vnd", "actual_cost_vnd"],
+          "properties": {
+            "reservation_vnd": {"type": ["string", "null"], "pattern": "^[0-9]+(?:\\.[0-9]{1,6})?$"},
+            "post_reconciliation_reserved_vnd": {"type": ["string", "null"], "pattern": "^[0-9]+(?:\\.[0-9]{1,6})?$"},
+            "actual_cost_vnd": {"type": ["string", "null"], "pattern": "^[0-9]+(?:\\.[0-9]{1,6})?$"}
+          }
+        },
+        "per_operation_limit_vnd": {"const": "500"},
+        "acceptance_window_limit_vnd": {"const": "1250"},
+        "checks": {
+          "type": "object", "additionalProperties": false,
+          "required": ["amounts_valid", "cost_receipt_valid", "reservation_within_per_operation_limit", "operation_amounts_within_window_ceiling", "actual_cost_within_reservation", "reservation_reconciled"],
+          "properties": {
+            "amounts_valid": {"type": "boolean"},
+            "cost_receipt_valid": {"type": "boolean"},
+            "reservation_within_per_operation_limit": {"type": "boolean"},
+            "operation_amounts_within_window_ceiling": {"type": "boolean"},
+            "actual_cost_within_reservation": {"type": "boolean"},
+            "reservation_reconciled": {"type": "boolean"}
+          }
+        },
+        "invalid_amount_fields": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "missing_amount_fields": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "passed": {"type": "boolean"},
+        "acceptance_window_aggregate_status": {"const": "NOT_PROVIDED"},
+        "acceptance_window_aggregate_checked": {"const": false},
+        "acceptance_window_aggregate_note": {"type": "string", "minLength": 1}
+      }
+    },
     "normalization": {
       "type": "object", "additionalProperties": false,
       "required": ["unicode", "case", "punctuation_and_symbols", "whitespace", "vietnamese_diacritics"],
@@ -184,6 +222,30 @@
           "language": {"properties": {"passed": {"const": true}}},
           "duration_parity": {"properties": {"passed": {"const": true}}},
           "provider_transcript_mapping": {"properties": {"complete": {"const": true}}},
+          "numeric_reconciliation": {
+            "properties": {
+              "passed": {"const": true},
+              "invalid_amount_fields": {"maxItems": 0},
+              "missing_amount_fields": {"maxItems": 0},
+              "canonical_amounts": {
+                "properties": {
+                  "reservation_vnd": {"type": "string"},
+                  "post_reconciliation_reserved_vnd": {"type": "string"},
+                  "actual_cost_vnd": {"type": "string"}
+                }
+              },
+              "checks": {
+                "properties": {
+                  "amounts_valid": {"const": true},
+                  "cost_receipt_valid": {"const": true},
+                  "reservation_within_per_operation_limit": {"const": true},
+                  "operation_amounts_within_window_ceiling": {"const": true},
+                  "actual_cost_within_reservation": {"const": true},
+                  "reservation_reconciled": {"const": true}
+                }
+              }
+            }
+          },
           "evidence_completeness": {"properties": {"passed": {"const": true}}}
         }
       }

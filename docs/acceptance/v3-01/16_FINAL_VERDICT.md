@@ -421,7 +421,7 @@ This source work made zero provider calls, read zero credentials, reserved/spent
 not change the historical RC-14 verdict. PR #50 subsequently merged under its separate G-08 and
 exact-main CI passed before RC-15 was locked. No live operation or runtime authority followed.
 
-## Current RC-15 governance checkpoint
+## Historical RC-15 pre-PR51 governance checkpoint
 
 PR #50 merged the source-only timestamp-semantics remediation as `7d1290aacac61df98a51544731243e5e322a8644`.
 Exact-head CI `34140738281` and exact-main CI `34142662132` completed successfully, 5/5 jobs.
@@ -447,6 +447,19 @@ continues to fail with `POSITIVE_DURATION_TRANSCRIPT_REQUIRED` when a point is p
 Provider evidence validity therefore does not establish downstream Flow A readiness.
 
 See [56_V3_01_RC15_OPENAI_ASR_GATE.md](56_V3_01_RC15_OPENAI_ASR_GATE.md).
+
+## Current V3-01-23 source-only checkpoint
+
+RC-15 ASR Operation 1 subsequently executed once: provider/transcript/timestamps PASS,
+WER 9.6618% PASS, critical terms 5/8 FAIL; consumed/succeeded with actual cost 326.294996 VND.
+Its original acceptance FAIL and evidence hashes remain immutable. Offline reconciliation
+now treats `"0.0000"` as numeric zero; the diagnostic overall verdict still FAILs. Matcher,
+transcript and PositiveDurationTranscript boundaries are unchanged.
+See [V3-01-23 review](57_V3_01_23_ASR_CRITICAL_TERM_EVALUATOR.md).
+
+Remediation G-08 is pending. No merge/new RC/authority/provider call/credential read/live
+reservation/spend in this PR. Op2 is NOT_APPROVED/LOCKED; Vision 2/2, ASR 0/2 and production
+NO-GO remain unchanged. Critical-term accuracy remains unresolved.
 
 ## Decision rule
 

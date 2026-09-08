@@ -1,0 +1,277 @@
+{
+  "checkpoint": "V3-01-23",
+  "comparison_sha256": "7e6193d281fab92e61c7a4c54a3327cbfec2207b22260d297d3d93379b6f5df6",
+  "interpretation": {
+    "actual_cost_vnd": "326.294996",
+    "asr_consecutive": "0/2 PASS",
+    "critical_term_failures": "Content differences against owner-confirmed reference; matcher unchanged; no new acoustic review.",
+    "downstream_positive_duration_ready": false,
+    "ledger_numeric_20_4_vnd": "326.2950",
+    "numeric_bug": "Decimal equality replaces raw-string zero comparison; receipt and retained ledger reconcile.",
+    "operation_1": "CONSUMED_SUCCEEDED_ACCEPTANCE_FAIL",
+    "operation_2": "NOT_APPROVED_LOCKED",
+    "rounding_policy": "Only the explicit storage projection rounds; original provider cost is not rewritten.",
+    "vision_consecutive": "2/2 PASS"
+  },
+  "new_evaluator": {
+    "critical_terms": {
+      "critical_terms_included_in_wer": true,
+      "exact_recall": 0.5,
+      "normalized_recall": 0.625,
+      "precision": null,
+      "precision_note": "not_applicable_for_closed_expected_term_set",
+      "terms": [
+        {
+          "exact_match": true,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "Ngọc Phương Đông"
+        },
+        {
+          "exact_match": false,
+          "normalized_match": false,
+          "passed": false,
+          "present_in_reference": true,
+          "term": "Vinhomes Green Paradise"
+        },
+        {
+          "exact_match": false,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "Cần Giờ"
+        },
+        {
+          "exact_match": true,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "đăng ký tư vấn"
+        },
+        {
+          "exact_match": false,
+          "normalized_match": false,
+          "passed": false,
+          "present_in_reference": true,
+          "term": "tham quan sa bàn"
+        },
+        {
+          "exact_match": true,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "ngân sách dự kiến"
+        },
+        {
+          "exact_match": false,
+          "normalized_match": false,
+          "passed": false,
+          "present_in_reference": true,
+          "term": "chính sách bán hàng"
+        },
+        {
+          "exact_match": true,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "đồng Việt Nam"
+        }
+      ]
+    },
+    "duration_parity": {
+      "absolute_delta_seconds": 0.002002,
+      "delta_percent": 0.001656,
+      "passed": true,
+      "provider_duration_seconds": 120.8499984741211,
+      "source_duration_seconds": 120.852
+    },
+    "evaluation_sha256": "a25ba8c7879814d30d8f3829ea6fedb4d524bc450c9ade01df1ac10bad9692ac",
+    "evidence_completeness": {
+      "checks": {
+        "circuit": true,
+        "cost_receipt": true,
+        "duplicate_protection": true,
+        "evidence_sha256": true,
+        "latency": true,
+        "ledger": true,
+        "original_provenance": true,
+        "provider_request_id": true,
+        "request_sha256": true,
+        "reservation_reconciled": true,
+        "response_sha256": true,
+        "secret_scan": true,
+        "single_attempt": true,
+        "usage_or_duration_receipt": true
+      },
+      "passed": true
+    },
+    "language": {
+      "actual": "vi",
+      "expected": "vi",
+      "passed": true
+    },
+    "normalization": {
+      "case": "casefold",
+      "punctuation_and_symbols": "replace_with_space",
+      "unicode": "NFKC",
+      "vietnamese_diacritics": "preserved",
+      "whitespace": "collapse_by_tokenization"
+    },
+    "numeric_reconciliation": {
+      "acceptance_window_aggregate_checked": false,
+      "acceptance_window_aggregate_note": "Operation-local checks only; full window reservation and committed totals are not in this receipt contract.",
+      "acceptance_window_aggregate_status": "NOT_PROVIDED",
+      "acceptance_window_limit_vnd": "1250",
+      "canonical_amounts": {
+        "actual_cost_vnd": "326.294996",
+        "post_reconciliation_reserved_vnd": "0",
+        "reservation_vnd": "500"
+      },
+      "checks": {
+        "actual_cost_within_reservation": true,
+        "amounts_valid": true,
+        "cost_receipt_valid": true,
+        "operation_amounts_within_window_ceiling": true,
+        "reservation_reconciled": true,
+        "reservation_within_per_operation_limit": true
+      },
+      "comparison_semantics": "exact_decimal_value",
+      "currency": "VND",
+      "invalid_amount_fields": [],
+      "missing_amount_fields": [],
+      "passed": true,
+      "per_operation_limit_vnd": "500"
+    },
+    "operation_id": "v3-01-rc15-openai-transcription-asr-call-01",
+    "provider_transcript_mapping": {
+      "actual_cost": true,
+      "complete": true,
+      "language": true,
+      "nullable_confidence_preserved": true,
+      "provenance": true,
+      "request_id": true,
+      "segments": true,
+      "text": true,
+      "words": true
+    },
+    "reasons": {
+      "fail": [
+        "CRITICAL_TERM_RECALL_BELOW_1_0"
+      ],
+      "review_required": []
+    },
+    "record_kind": "asr_post_run_evaluation",
+    "safety": {
+      "budget_reserved_vnd_by_evaluator": "0",
+      "credential_reads_performed_by_evaluator": 0,
+      "production_verdict": "NO-GO",
+      "provider_calls_performed_by_evaluator": 0,
+      "runtime_authority_granted": false,
+      "spend_vnd_by_evaluator": "0"
+    },
+    "schema_version": 1,
+    "timestamps": {
+      "abnormal_overlaps": 0,
+      "downstream_positive_duration_ready": false,
+      "invalid_windows": 0,
+      "maximum_overlap_seconds": 0.0,
+      "non_monotonic_windows": 0,
+      "passed": true,
+      "positive_duration_words": 385,
+      "provider_evidence_semantics": "closed_interval_or_boundary_point",
+      "segment_count": 17,
+      "timestamp_token_coverage": 1.0,
+      "timestamps_outside_source": 0,
+      "unanchored_boundary_points": 0,
+      "word_count": 412,
+      "words_outside_segment": 0,
+      "zero_duration_words": 27
+    },
+    "verdict": "FAIL",
+    "wer": {
+      "edit_errors": 40,
+      "hypothesis_words": 412,
+      "passed": true,
+      "reference_words": 414,
+      "threshold": 0.15,
+      "wer": 0.096618
+    }
+  },
+  "official_historical_verdict": "FAIL",
+  "official_historical_verdict_immutable": true,
+  "old_evaluator": {
+    "evaluation_sha256": "421520feca7d56ffe105e478fe97de47cc2a5e91c3d5f255527468995dd63ee1",
+    "evidence_completeness": {
+      "checks": {
+        "circuit": true,
+        "cost_receipt": true,
+        "duplicate_protection": true,
+        "evidence_sha256": true,
+        "latency": true,
+        "ledger": true,
+        "original_provenance": true,
+        "provider_request_id": true,
+        "request_sha256": true,
+        "reservation_reconciled": false,
+        "response_sha256": true,
+        "secret_scan": true,
+        "single_attempt": true,
+        "usage_or_duration_receipt": true
+      },
+      "passed": false
+    },
+    "reasons": {
+      "fail": [
+        "CRITICAL_TERM_RECALL_BELOW_1_0"
+      ],
+      "review_required": [
+        "EVIDENCE_MISSING_OR_INVALID:RESERVATION_RECONCILED"
+      ]
+    },
+    "reservation_comparison": "\"0.0000\" == \"0\" is false",
+    "source_commit": "07e276f2ec69b2e0247899077537374f3d94f4b4",
+    "verdict": "FAIL"
+  },
+  "operation_id": "v3-01-rc15-openai-transcription-asr-call-01",
+  "record_kind": "diagnostic_evaluator_comparison_not_historical_reassessment",
+  "retained_ledger_diagnostic_reconciliation": {
+    "aggregate_checked": true,
+    "checks": {
+      "actual_cost_within_reservation": true,
+      "aggregate_within_budget": true,
+      "budget_day_binding": true,
+      "committed_matches_single_operation": true,
+      "consumed_succeeded": true,
+      "currency": true,
+      "exact_window_limit": true,
+      "historical_reservation_binding": true,
+      "operation_identity": true,
+      "operation_reservation_ceiling": true,
+      "outstanding_reservation_reconciled": true,
+      "single_attempt": true,
+      "storage_cost_projection": true
+    },
+    "numeric_20_4_projected_actual_cost_vnd": "326.2950",
+    "provider_actual_cost_vnd": "326.294996",
+    "reasons": [],
+    "reservation_semantics": "operation_1.reserved_vnd is historical; budget.reserved_vnd is outstanding",
+    "scope": "single_retained_operation_only",
+    "storage_projection": "PostgreSQL NUMERIC(20,4); nonnegative ROUND_HALF_UP; exact projected equality, no tolerance",
+    "verdict": "PASS"
+  },
+  "safety": {
+    "authority_granted": false,
+    "credential_reads": 0,
+    "live_reservations": 0,
+    "production_verdict": "NO-GO",
+    "provider_calls": 0,
+    "spend_vnd": "0"
+  },
+  "schema_version": 1,
+  "source_receipt_raw_sha256": {
+    "operation-1-evaluator-input.json": "80dfdbe7b8afe38eda7086d452e393d8893fdcca2c562174c055abe91a889474",
+    "operation-1-post-run-evaluation.json": "08d71d294dc602e219d09d824c9d66e834a6c713f36f4a94368f5034598ffda9",
+    "operation-1-result.json": "ef06ffc48495e207ae7e827207ff67ee7b345b3323c702c1852b39a27a2d5099"
+  }
+}
