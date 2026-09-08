@@ -1,5 +1,14 @@
 # Owner gate register
 
+## V3-01-23 checkpoint (no new approval record)
+
+Historical RC-15 ASR Op1 is consumed/succeeded with acceptance FAIL (5/8 critical terms),
+not reusable. Op2 remains NOT_APPROVED/LOCKED. The owner authorized source-only forensic
+and numeric evaluator remediation, not another call or a reference/matcher relaxation.
+This draft requires a separate G-08 before merge. No new RC/window/bundle/operation/authority
+is created; Vision 2/2, ASR 0/2 and production NO-GO stay unchanged.
+See [V3-01-23 review](57_V3_01_23_ASR_CRITICAL_TERM_EVALUATOR.md).
+
 G-00 and the completed bounded G-08 actions through PR #50 have approval records or recorded owner
 decisions. RC-4 remains
 evidence of a fail-closed executable-contract blocker. RC-5 operation 1 consumed its exact G-01-A,

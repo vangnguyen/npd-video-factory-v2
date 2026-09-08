@@ -1,0 +1,839 @@
+{
+  "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+  "checkpoint": "V3-01-23",
+  "findings": [
+    {
+      "classification": "PROVIDER_MISRECOGNITION",
+      "classification_basis": "recorded provider text differs from exact pre-call owner-confirmed reference; not a new acoustic finding",
+      "critical_term_accepted": false,
+      "expected_normalized_tokens": [
+        "vinhomes",
+        "green",
+        "paradise"
+      ],
+      "expected_phrase": "Vinhomes Green Paradise",
+      "normalization_policy_unchanged": true,
+      "not_normalization_only": true,
+      "observed_occurrences": [
+        {
+          "diagnostic_edit_distance_used_for_acceptance": false,
+          "diagnostic_token_edit_distance": 2,
+          "end_seconds": 20.32,
+          "global_word_indexes": [
+            76,
+            77,
+            78
+          ],
+          "next_word": {
+            "confidence": null,
+            "end_seconds": 20.559999,
+            "global_word_index": 79,
+            "normalized_tokens": [
+              "tại"
+            ],
+            "segment_index": 2,
+            "segment_word_index": 20,
+            "start_seconds": 20.32,
+            "text": "tại"
+          },
+          "normalized_tokens": [
+            "vinhome",
+            "bring",
+            "paradise"
+          ],
+          "observed_phrase": "Vinhome Bring Paradise",
+          "previous_word": {
+            "confidence": null,
+            "end_seconds": 18.700001,
+            "global_word_index": 75,
+            "normalized_tokens": [
+              "án"
+            ],
+            "segment_index": 2,
+            "segment_word_index": 16,
+            "start_seconds": 18.5,
+            "text": "án"
+          },
+          "segment_indexes": [
+            2
+          ],
+          "segments": [
+            {
+              "confidence": null,
+              "end_seconds": 21.120001,
+              "segment_index": 2,
+              "start_seconds": 15.5,
+              "text": "Ngọc Phương Đông đã xây dựng một quy trình nội dung có kiểm soát cho dự án Vinhome Bring Paradise tại cần giờ."
+            }
+          ],
+          "start_seconds": 18.700001,
+          "timestamp_provenance": "verbatim recorded ProviderTranscript values; raw response evidence is not rewritten",
+          "words": [
+            {
+              "confidence": null,
+              "end_seconds": 19.52,
+              "global_word_index": 76,
+              "normalized_tokens": [
+                "vinhome"
+              ],
+              "segment_index": 2,
+              "segment_word_index": 17,
+              "start_seconds": 18.700001,
+              "text": "Vinhome"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 19.879999,
+              "global_word_index": 77,
+              "normalized_tokens": [
+                "bring"
+              ],
+              "segment_index": 2,
+              "segment_word_index": 18,
+              "start_seconds": 19.52,
+              "text": "Bring"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 20.32,
+              "global_word_index": 78,
+              "normalized_tokens": [
+                "paradise"
+              ],
+              "segment_index": 2,
+              "segment_word_index": 19,
+              "start_seconds": 19.879999,
+              "text": "Paradise"
+            }
+          ]
+        },
+        {
+          "diagnostic_edit_distance_used_for_acceptance": false,
+          "diagnostic_token_edit_distance": 3,
+          "end_seconds": 80.480003,
+          "global_word_indexes": [
+            280,
+            281,
+            282,
+            283
+          ],
+          "next_word": {
+            "confidence": null,
+            "end_seconds": 81.360001,
+            "global_word_index": 284,
+            "normalized_tokens": [
+              "cần"
+            ],
+            "segment_index": 10,
+            "segment_word_index": 4,
+            "start_seconds": 81.199997,
+            "text": "cần"
+          },
+          "normalized_tokens": [
+            "ping",
+            "home",
+            "ring",
+            "paradise"
+          ],
+          "observed_phrase": "ping home ring paradise",
+          "previous_word": {
+            "confidence": null,
+            "end_seconds": 78.440002,
+            "global_word_index": 279,
+            "normalized_tokens": [
+              "đông"
+            ],
+            "segment_index": 9,
+            "segment_word_index": 26,
+            "start_seconds": 78.099998,
+            "text": "Đông"
+          },
+          "segment_indexes": [
+            10
+          ],
+          "segments": [
+            {
+              "confidence": null,
+              "end_seconds": 86.879997,
+              "segment_index": 10,
+              "start_seconds": 79.040001,
+              "text": "ping home ring paradise, cần giờ, đăng ký tư vấn, thăm quan xa bàn, ngân sách dự kiến và chính xác bán hàng."
+            }
+          ],
+          "start_seconds": 79.040001,
+          "timestamp_provenance": "verbatim recorded ProviderTranscript values; raw response evidence is not rewritten",
+          "words": [
+            {
+              "confidence": null,
+              "end_seconds": 79.260002,
+              "global_word_index": 280,
+              "normalized_tokens": [
+                "ping"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 0,
+              "start_seconds": 79.040001,
+              "text": "ping"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 79.480003,
+              "global_word_index": 281,
+              "normalized_tokens": [
+                "home"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 1,
+              "start_seconds": 79.260002,
+              "text": "home"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 79.839996,
+              "global_word_index": 282,
+              "normalized_tokens": [
+                "ring"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 2,
+              "start_seconds": 79.480003,
+              "text": "ring"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 80.480003,
+              "global_word_index": 283,
+              "normalized_tokens": [
+                "paradise"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 3,
+              "start_seconds": 79.839996,
+              "text": "paradise"
+            }
+          ]
+        }
+      ],
+      "provider_exact_normalized_occurrence_count": 0,
+      "reference_occurrence_count": 2,
+      "reference_token_start_indexes": [
+        77,
+        283
+      ],
+      "severity": "HIGH"
+    },
+    {
+      "classification": "PROVIDER_MISRECOGNITION",
+      "classification_basis": "recorded provider text differs from exact pre-call owner-confirmed reference; not a new acoustic finding",
+      "critical_term_accepted": false,
+      "expected_normalized_tokens": [
+        "tham",
+        "quan",
+        "sa",
+        "bàn"
+      ],
+      "expected_phrase": "tham quan sa bàn",
+      "normalization_policy_unchanged": true,
+      "not_normalization_only": true,
+      "observed_occurrences": [
+        {
+          "diagnostic_edit_distance_used_for_acceptance": false,
+          "diagnostic_token_edit_distance": 2,
+          "end_seconds": 46.02,
+          "global_word_indexes": [
+            159,
+            160,
+            161,
+            162
+          ],
+          "next_word": {
+            "confidence": null,
+            "end_seconds": 46.66,
+            "global_word_index": 163,
+            "normalized_tokens": [
+              "và"
+            ],
+            "segment_index": 6,
+            "segment_word_index": 0,
+            "start_seconds": 46.02,
+            "text": "Và"
+          },
+          "normalized_tokens": [
+            "thăm",
+            "quan",
+            "xa",
+            "bàn"
+          ],
+          "observed_phrase": "thăm quan xa bàn",
+          "previous_word": {
+            "confidence": null,
+            "end_seconds": 45.139999,
+            "global_word_index": 158,
+            "normalized_tokens": [
+              "lệch"
+            ],
+            "segment_index": 5,
+            "segment_word_index": 12,
+            "start_seconds": 44.939999,
+            "text": "lệch"
+          },
+          "segment_indexes": [
+            5
+          ],
+          "segments": [
+            {
+              "confidence": null,
+              "end_seconds": 46.02,
+              "segment_index": 5,
+              "start_seconds": 42.34,
+              "text": "Một khách hàng giả định có thể đăng ký tư vấn, chọn lệch thăm quan xa bàn."
+            }
+          ],
+          "start_seconds": 45.139999,
+          "timestamp_provenance": "verbatim recorded ProviderTranscript values; raw response evidence is not rewritten",
+          "words": [
+            {
+              "confidence": null,
+              "end_seconds": 45.360001,
+              "global_word_index": 159,
+              "normalized_tokens": [
+                "thăm"
+              ],
+              "segment_index": 5,
+              "segment_word_index": 13,
+              "start_seconds": 45.139999,
+              "text": "thăm"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 45.48,
+              "global_word_index": 160,
+              "normalized_tokens": [
+                "quan"
+              ],
+              "segment_index": 5,
+              "segment_word_index": 14,
+              "start_seconds": 45.360001,
+              "text": "quan"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 45.82,
+              "global_word_index": 161,
+              "normalized_tokens": [
+                "xa"
+              ],
+              "segment_index": 5,
+              "segment_word_index": 15,
+              "start_seconds": 45.48,
+              "text": "xa"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 46.02,
+              "global_word_index": 162,
+              "normalized_tokens": [
+                "bàn"
+              ],
+              "segment_index": 5,
+              "segment_word_index": 16,
+              "start_seconds": 45.82,
+              "text": "bàn"
+            }
+          ]
+        },
+        {
+          "diagnostic_edit_distance_used_for_acceptance": false,
+          "diagnostic_token_edit_distance": 2,
+          "end_seconds": 84.279999,
+          "global_word_indexes": [
+            290,
+            291,
+            292,
+            293
+          ],
+          "next_word": {
+            "confidence": null,
+            "end_seconds": 85.059998,
+            "global_word_index": 294,
+            "normalized_tokens": [
+              "ngân"
+            ],
+            "segment_index": 10,
+            "segment_word_index": 14,
+            "start_seconds": 85.059998,
+            "text": "ngân"
+          },
+          "normalized_tokens": [
+            "thăm",
+            "quan",
+            "xa",
+            "bàn"
+          ],
+          "observed_phrase": "thăm quan xa bàn",
+          "previous_word": {
+            "confidence": null,
+            "end_seconds": 83.0,
+            "global_word_index": 289,
+            "normalized_tokens": [
+              "vấn"
+            ],
+            "segment_index": 10,
+            "segment_word_index": 9,
+            "start_seconds": 82.860001,
+            "text": "vấn"
+          },
+          "segment_indexes": [
+            10
+          ],
+          "segments": [
+            {
+              "confidence": null,
+              "end_seconds": 86.879997,
+              "segment_index": 10,
+              "start_seconds": 79.040001,
+              "text": "ping home ring paradise, cần giờ, đăng ký tư vấn, thăm quan xa bàn, ngân sách dự kiến và chính xác bán hàng."
+            }
+          ],
+          "start_seconds": 83.519997,
+          "timestamp_provenance": "verbatim recorded ProviderTranscript values; raw response evidence is not rewritten",
+          "words": [
+            {
+              "confidence": null,
+              "end_seconds": 83.559998,
+              "global_word_index": 290,
+              "normalized_tokens": [
+                "thăm"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 10,
+              "start_seconds": 83.519997,
+              "text": "thăm"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 83.639999,
+              "global_word_index": 291,
+              "normalized_tokens": [
+                "quan"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 11,
+              "start_seconds": 83.559998,
+              "text": "quan"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 84.059998,
+              "global_word_index": 292,
+              "normalized_tokens": [
+                "xa"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 12,
+              "start_seconds": 83.639999,
+              "text": "xa"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 84.279999,
+              "global_word_index": 293,
+              "normalized_tokens": [
+                "bàn"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 13,
+              "start_seconds": 84.059998,
+              "text": "bàn"
+            }
+          ]
+        }
+      ],
+      "provider_exact_normalized_occurrence_count": 0,
+      "reference_occurrence_count": 2,
+      "reference_token_start_indexes": [
+        161,
+        292
+      ],
+      "severity": "HIGH"
+    },
+    {
+      "classification": "PROVIDER_MISRECOGNITION",
+      "classification_basis": "recorded provider text differs from exact pre-call owner-confirmed reference; not a new acoustic finding",
+      "critical_term_accepted": false,
+      "expected_normalized_tokens": [
+        "chính",
+        "sách",
+        "bán",
+        "hàng"
+      ],
+      "expected_phrase": "chính sách bán hàng",
+      "normalization_policy_unchanged": true,
+      "not_normalization_only": true,
+      "observed_occurrences": [
+        {
+          "diagnostic_edit_distance_used_for_acceptance": false,
+          "diagnostic_token_edit_distance": 1,
+          "end_seconds": 53.84,
+          "global_word_indexes": [
+            185,
+            186,
+            187,
+            188
+          ],
+          "next_word": {
+            "confidence": null,
+            "end_seconds": 54.139999,
+            "global_word_index": 189,
+            "normalized_tokens": [
+              "hoặc"
+            ],
+            "segment_index": 6,
+            "segment_word_index": 26,
+            "start_seconds": 53.84,
+            "text": "hoặc"
+          },
+          "normalized_tokens": [
+            "chính",
+            "xác",
+            "bán",
+            "hàng"
+          ],
+          "observed_phrase": "chính xác bán hàng",
+          "previous_word": {
+            "confidence": null,
+            "end_seconds": 52.540001,
+            "global_word_index": 184,
+            "normalized_tokens": [
+              "bán"
+            ],
+            "segment_index": 6,
+            "segment_word_index": 21,
+            "start_seconds": 52.220001,
+            "text": "bán"
+          },
+          "segment_indexes": [
+            6
+          ],
+          "segments": [
+            {
+              "confidence": null,
+              "end_seconds": 55.02,
+              "segment_index": 6,
+              "start_seconds": 46.02,
+              "text": "Và nếu ngân sách dự kiến, nhân viên cần ghi nhận đúng nhu cầu nhưng không được tự xây dựng giá bán, chính xác bán hàng hoặc thời điểm mở bán."
+            }
+          ],
+          "start_seconds": 53.18,
+          "timestamp_provenance": "verbatim recorded ProviderTranscript values; raw response evidence is not rewritten",
+          "words": [
+            {
+              "confidence": null,
+              "end_seconds": 53.18,
+              "global_word_index": 185,
+              "normalized_tokens": [
+                "chính"
+              ],
+              "segment_index": 6,
+              "segment_word_index": 22,
+              "start_seconds": 53.18,
+              "text": "chính"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 53.299999,
+              "global_word_index": 186,
+              "normalized_tokens": [
+                "xác"
+              ],
+              "segment_index": 6,
+              "segment_word_index": 23,
+              "start_seconds": 53.18,
+              "text": "xác"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 53.599998,
+              "global_word_index": 187,
+              "normalized_tokens": [
+                "bán"
+              ],
+              "segment_index": 6,
+              "segment_word_index": 24,
+              "start_seconds": 53.299999,
+              "text": "bán"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 53.84,
+              "global_word_index": 188,
+              "normalized_tokens": [
+                "hàng"
+              ],
+              "segment_index": 6,
+              "segment_word_index": 25,
+              "start_seconds": 53.599998,
+              "text": "hàng"
+            }
+          ]
+        },
+        {
+          "diagnostic_edit_distance_used_for_acceptance": false,
+          "diagnostic_token_edit_distance": 1,
+          "end_seconds": 86.879997,
+          "global_word_indexes": [
+            299,
+            300,
+            301,
+            302
+          ],
+          "next_word": {
+            "confidence": null,
+            "end_seconds": 87.480003,
+            "global_word_index": 303,
+            "normalized_tokens": [
+              "các"
+            ],
+            "segment_index": 11,
+            "segment_word_index": 0,
+            "start_seconds": 87.480003,
+            "text": "Các"
+          },
+          "normalized_tokens": [
+            "chính",
+            "xác",
+            "bán",
+            "hàng"
+          ],
+          "observed_phrase": "chính xác bán hàng",
+          "previous_word": {
+            "confidence": null,
+            "end_seconds": 86.080002,
+            "global_word_index": 298,
+            "normalized_tokens": [
+              "và"
+            ],
+            "segment_index": 10,
+            "segment_word_index": 18,
+            "start_seconds": 85.739998,
+            "text": "và"
+          },
+          "segment_indexes": [
+            10
+          ],
+          "segments": [
+            {
+              "confidence": null,
+              "end_seconds": 86.879997,
+              "segment_index": 10,
+              "start_seconds": 79.040001,
+              "text": "ping home ring paradise, cần giờ, đăng ký tư vấn, thăm quan xa bàn, ngân sách dự kiến và chính xác bán hàng."
+            }
+          ],
+          "start_seconds": 86.080002,
+          "timestamp_provenance": "verbatim recorded ProviderTranscript values; raw response evidence is not rewritten",
+          "words": [
+            {
+              "confidence": null,
+              "end_seconds": 86.160004,
+              "global_word_index": 299,
+              "normalized_tokens": [
+                "chính"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 19,
+              "start_seconds": 86.080002,
+              "text": "chính"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 86.260002,
+              "global_word_index": 300,
+              "normalized_tokens": [
+                "xác"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 20,
+              "start_seconds": 86.160004,
+              "text": "xác"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 86.580002,
+              "global_word_index": 301,
+              "normalized_tokens": [
+                "bán"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 21,
+              "start_seconds": 86.260002,
+              "text": "bán"
+            },
+            {
+              "confidence": null,
+              "end_seconds": 86.879997,
+              "global_word_index": 302,
+              "normalized_tokens": [
+                "hàng"
+              ],
+              "segment_index": 10,
+              "segment_word_index": 22,
+              "start_seconds": 86.580002,
+              "text": "hàng"
+            }
+          ]
+        }
+      ],
+      "provider_exact_normalized_occurrence_count": 0,
+      "reference_occurrence_count": 2,
+      "reference_token_start_indexes": [
+        187,
+        301
+      ],
+      "severity": "HIGH"
+    }
+  ],
+  "grain": {
+    "critical_terms": 8,
+    "failed_critical_terms": 3,
+    "provider_normalized_tokens": 412,
+    "provider_word_objects": 412,
+    "reference_normalized_tokens": 414,
+    "segments": 17
+  },
+  "index_base": 0,
+  "invariants": {
+    "all_failed_term_occurrences_accounted_for": true,
+    "critical_term_threshold_changed": false,
+    "fuzzy_acceptance": false,
+    "historical_verdict_changed": false,
+    "nullable_confidence_preserved": true,
+    "provider_transcript_preserved": true,
+    "reference_preserved": true,
+    "timestamps_preserved": true
+  },
+  "normalization": {
+    "case": "casefold",
+    "punctuation_and_symbols": "replace_with_space",
+    "unicode": "NFKC",
+    "vietnamese_diacritics": "preserved",
+    "whitespace": "collapse_by_tokenization"
+  },
+  "operation_id": "v3-01-rc15-openai-transcription-asr-call-01",
+  "owner_manifest_sha256": "0d7aef962dcb5e34ed5786fadd2e9cfd156cbfb8784d498092262d33b76de7c0",
+  "provider_provenance": {
+    "provider_request_id": "req_e906d855a5ec4af7adb94696aee69b79",
+    "request_sha256": "16d078104908239ee4446823c66b87f418db4bd6b0b5c423c374fdbc8e331914",
+    "response_sha256": "1e1113e087236772540d50557ddd6efb8f30e120c3bbd26940978eef9096c06d"
+  },
+  "record_kind": "asr_critical_term_forensic",
+  "reference_basis": {
+    "caveat": "PROVIDER_MISRECOGNITION is relative to the exact owner-confirmed reference. The assistant did not newly listen to the WAV; this does not independently prove what was pronounced.",
+    "independent_acoustic_ground_truth": "NOT_REVERIFIED",
+    "new_acoustic_listening_performed": false,
+    "owner_confirmation": {
+      "content_matches_reference_transcript": true,
+      "decision": "APPROVED",
+      "publishing_allowed": false,
+      "recorded_at_utc": "2026-09-03T07:05:17Z",
+      "resale_allowed": false,
+      "training_allowed": false,
+      "voice_processing_consent": true
+    },
+    "recorded_input_representation": "source final LF omitted; all other characters identical"
+  },
+  "reference_transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+  "report_sha256": "ed6214df7ff58bf06596116d1d45fbc01a53fdf383d8d1f36f65fc570d26e303",
+  "safety": {
+    "credential_reads": 0,
+    "operation_2": "NOT_APPROVED_LOCKED",
+    "production_verdict": "NO-GO",
+    "provider_calls": 0,
+    "reservation_vnd": "0",
+    "runtime_authority": false,
+    "spend_vnd": "0"
+  },
+  "schema_version": 1,
+  "scope": "offline diagnosis only; never fuzzy acceptance or transcript correction",
+  "source_sha256": {
+    "operation-1-evaluator-input.json": "80dfdbe7b8afe38eda7086d452e393d8893fdcca2c562174c055abe91a889474",
+    "operation-1-post-run-evaluation.json": "08d71d294dc602e219d09d824c9d66e834a6c713f36f4a94368f5034598ffda9",
+    "operation-1-result.json": "ef06ffc48495e207ae7e827207ff67ee7b345b3323c702c1852b39a27a2d5099"
+  },
+  "strict_evaluator_snapshot": {
+    "critical_terms": {
+      "critical_terms_included_in_wer": true,
+      "exact_recall": 0.5,
+      "normalized_recall": 0.625,
+      "precision": null,
+      "precision_note": "not_applicable_for_closed_expected_term_set",
+      "terms": [
+        {
+          "exact_match": true,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "Ngọc Phương Đông"
+        },
+        {
+          "exact_match": false,
+          "normalized_match": false,
+          "passed": false,
+          "present_in_reference": true,
+          "term": "Vinhomes Green Paradise"
+        },
+        {
+          "exact_match": false,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "Cần Giờ"
+        },
+        {
+          "exact_match": true,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "đăng ký tư vấn"
+        },
+        {
+          "exact_match": false,
+          "normalized_match": false,
+          "passed": false,
+          "present_in_reference": true,
+          "term": "tham quan sa bàn"
+        },
+        {
+          "exact_match": true,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "ngân sách dự kiến"
+        },
+        {
+          "exact_match": false,
+          "normalized_match": false,
+          "passed": false,
+          "present_in_reference": true,
+          "term": "chính sách bán hàng"
+        },
+        {
+          "exact_match": true,
+          "normalized_match": true,
+          "passed": true,
+          "present_in_reference": true,
+          "term": "đồng Việt Nam"
+        }
+      ]
+    },
+    "verdict": "FAIL",
+    "wer": {
+      "edit_errors": 40,
+      "hypothesis_words": 412,
+      "passed": true,
+      "reference_words": 414,
+      "threshold": 0.15,
+      "wer": 0.096618
+    }
+  }
+}
