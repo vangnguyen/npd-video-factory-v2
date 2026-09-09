@@ -1,0 +1,27 @@
+{
+  "approval_id": "V3-01-APP-064",
+  "gate_id": "G-08",
+  "decision": "APPROVED",
+  "scope": "Authorize merge of exact PR #54 V3-01-25 W1 Prompt Profile Remediation, exact-main regression, annotated RC-16 lock and preparation of a governance-only W1 rebind; no runtime authority.",
+  "artifact_or_commit_hashes": [
+    "b9dbb8fd8f1abcbcc920f0df9fb5a343586b7b0e",
+    "f2760e52f98336f17f67fabcf7f93edc94d88b38",
+    "55b22f773dc108f6c51a1b52db825b1caa8e8a51",
+    "5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd",
+    "f18659863bc818c307b4679eec8bc3ec8bc5439a"
+  ],
+  "target_account_or_environment": "GitHub main and local/CI regression only; no production or provider execution",
+  "limits": [
+    "Merge exact PR #54 head f2760e52f98336f17f67fabcf7f93edc94d88b38 only",
+    "Lock vf-v3-01-rc16 only after exact-main full regression PASS",
+    "Use the exact immutable W1 profile and its canonical hashes for both future ASR slots",
+    "Do not reuse RC-15 operation IDs, bundle, window or authority",
+    "Fresh governance proposal requires its own G-08 and a later separate Operation 1 decision",
+    "No credential read, provider call, live reservation, spend, deploy, publish or public ingress",
+    "ASR consecutive PASS remains 0/2; Vision remains 2/2 PASS; Production NO-GO"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-09T02:21:26Z",
+  "expires_at_utc": null,
+  "notes": "Owner approval is recorded at the post-merge checkpoint, not inferred as runtime approval. PR #54 exact-head CI 34250208121 and exact-main CI 34302351310 passed all 5 jobs. Annotated tag object f18659863bc818c307b4679eec8bc3ec8bc5439a peels to 55b22f773dc108f6c51a1b52db825b1caa8e8a51. The following governance PR and any later operation still require separate owner decisions."
+}

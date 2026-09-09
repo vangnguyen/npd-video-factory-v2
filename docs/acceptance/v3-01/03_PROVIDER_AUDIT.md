@@ -1,6 +1,15 @@
 # V3-01 provider audit
 
-## Current RC-15 governance checkpoint
+## Current RC-16 W1 checkpoint
+
+Executable RC-16 `55b22f773dc108f6c51a1b52db825b1caa8e8a51` contains the immutable W1 request
+profile and passed exact-main CI `34302351310` (5/5). The new bundle binds the same profile to both
+assets and changes its scope hash, so W0 approvals cannot activate W1. It remains unmounted with
+external/paid execution false, checked-in budget 0 and kill switch engaged. No provider call,
+credential read or live reservation occurred. Historical RC-15 Op1 remains FAIL/CONSUMED; ASR is
+0/2. See [62_V3_01_RC16_OPENAI_ASR_W1_GATE.md](62_V3_01_RC16_OPENAI_ASR_W1_GATE.md).
+
+## Earlier RC-15 governance checkpoint (historical)
 
 PR #50 merged the source-only timestamp-semantics remediation as `7d1290aacac61df98a51544731243e5e322a8644`.
 Exact-head CI `34140738281` and exact-main CI `34142662132` completed successfully, 5/5 jobs.

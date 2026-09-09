@@ -1,5 +1,15 @@
 # V3-01 remediation PR plan
 
+## Step 38 — RC-16 OpenAI ASR W1 governance rebind
+
+PR #54 merged V3-01-25 as exact RC-16 and exact-main CI passed 5/5. This follow-up is limited to
+governance/evidence/tests: fresh RC-derived ASR IDs, exact W1 profile/scope hashes, unchanged
+WAV/reference/RightsRecord hashes, unchanged budget/timeouts and a proposed four-hour window.
+It stops at Owner G-08. After any approved merge, require exact governance-main CI, dual-CI
+provenance, executable-tree equality and a separate RC-16 Operation 1 decision. Operation 2 stays
+locked; no provider call, credential read, reservation, automation or deployment is part of this
+step.
+
 Feature freeze remains active. This plan closes only V3-01 production-acceptance gaps; it is not a
 V2-12 feature roadmap. Every PR is small, draft-first, rebased on latest `main`, independently
 reversible and prohibited from merge/deploy until its owner gate is recorded.
@@ -43,6 +53,8 @@ reversible and prohibited from merge/deploy until its owner gate is recorded.
 | 34 | RC-14 OpenAI ASR governance rebind | PR #48 merged as locked RC-14 `0b0965c`; exact-head CI `34041347519` and exact-main CI `34042079905` PASS 5/5; this branch is governance/evidence/tests only | bind fresh RC-derived IDs, unchanged WAV/transcript/RightsRecord hashes, canonical G-01/G-02/G-03 records, 90/120-second timeouts and 500/1,250 VND proposed window; keep the bundle unmounted and timestamp validation strict | gate-readiness evidence only; ASR real-provider remains `NOT_TESTED`; 003/010/013 stay in progress | draft PR stops at G-08; after merge require governance-main CI, dual-CI/equality proof and separate Operation 1 authority; Operation 2 locked |
 | 35 | V3-01-22 ASR zero-duration word timestamp semantics | PR #50 exact head `7fb7832` merged as RC-15 `7d1290a`; exact-head CI `34140738281` and exact-main CI `34142662132` PASS 5/5; annotated `vf-v3-01-rc15` locked | preserve adjacent-anchored provider boundary points without fabricating duration; positive-duration proof wrapper protects all interval consumers | implemented/mock-tested only; historical RC-14 remains consumed/`REVIEW_REQUIRED`, ASR remains 0/2 `NOT_TESTED`; 003/010/013 stay in progress | repository merge/tag complete; no runtime authority and both RC-14 IDs retired |
 | 36 | RC-15 OpenAI ASR governance rebind | new governance/evidence/tests-only proposal on exact RC-15 `7d1290a`; executable tree unchanged | fresh RC-derived IDs, unchanged WAV/transcript/RightsRecord hashes, APP-061/062/063, 500/1,250 VND and 90/120 seconds; proposed 08 September 14:00-18:00 UTC window; bundle unmounted | `EV-V3-RC15-ASR-GATE-001` proves offline readiness only; no acceptance-axis promotion | STOP at G-08; after merge require governance-main CI, dual-CI/equality and separate Operation 1 authority; Operation 2 locked |
+| 37 | V3-01-25 W1 Prompt Profile Remediation | PR #54 exact head `f2760e5` merged as RC-16 `55b22f7`; exact-head CI `34250208121` and exact-main CI `34302351310` PASS 5/5; annotated `vf-v3-01-rc16` locked | immutable/hashable W1 vocabulary profile through settings, gate, controllers, adapter, request/evidence/cache plus asset-02 negative-insertion guard; quality remains WER ≤15% and 8/8 critical terms | implemented/mock-tested only; historical RC-15 remains FAIL/CONSUMED; ASR remains 0/2 `NOT_TESTED`; 003/010/013 stay in progress | repository merge/tag complete; no W1 live authority, credential read, provider call or spend |
+| 38 | RC-16 OpenAI ASR W1 governance rebind | governance/evidence/tests-only proposal on exact RC-16 `55b22f7`; executable tree unchanged | fresh RC-derived IDs, exact W1 profile/scope hash, unchanged WAV/transcript/RightsRecord hashes, APP-065/066/067, 500/1,250 VND and 90/120 seconds; proposed 10 September 14:00-18:00 UTC window; bundle unmounted | `EV-V3-RC16-ASR-W1-GATE-001` proves offline readiness only; no acceptance-axis promotion | STOP at G-08; after merge require governance-main CI, dual-CI/equality and separate Operation 1 authority; Operation 2 locked |
 
 ## Governance prerequisite
 

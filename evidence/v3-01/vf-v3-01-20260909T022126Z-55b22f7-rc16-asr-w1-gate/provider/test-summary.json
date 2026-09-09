@@ -1,0 +1,55 @@
+{
+  "checkpoint": "RC-16 OpenAI ASR W1 governance gate",
+  "commit_sha": "55b22f773dc108f6c51a1b52db825b1caa8e8a51",
+  "credential_reads": 0,
+  "executable_rc_regression": {
+    "acceptance_evidence_flow_a_b_c_dr": "PASS",
+    "commit": "55b22f773dc108f6c51a1b52db825b1caa8e8a51",
+    "docker_deterministic_e2e": "PASS",
+    "jobs_failed": 0,
+    "jobs_passed": 5,
+    "migration_upgrade_downgrade_replay": "PASS",
+    "python_tests_passed": 895,
+    "renderer_bundle": "PASS",
+    "renderer_tests_passed": 14,
+    "renderer_typecheck": "PASS",
+    "run_id": 34302351310,
+    "safety_and_compose": "PASS",
+    "studio_tests_passed": 14
+  },
+  "focused_gate_regression": {
+    "command": "python -m pytest apps/api/tests/test_rc16_asr_w1_gate_bundle.py -q",
+    "failed": 0,
+    "passed": 19,
+    "result": "PASS"
+  },
+  "governance_branch_full_python": {
+    "failed": 0,
+    "passed": 914,
+    "result": "PASS"
+  },
+  "governance_branch_regression": {
+    "acceptance_register": "PASS_60_ROWS_16_GAPS_13_SCHEMAS_67_APPROVALS_3_RIGHTS_36_RUNS",
+    "asr_compatibility": "PASS_OFFLINE",
+    "compose_config": "PASS_WITH_PUBLIC_ENV_EXAMPLE_ONLY",
+    "flow_a_b_c_dr": "EXPECTED_BLOCKED_PRESERVED",
+    "migration_upgrade_downgrade_replay": "PASS_0013",
+    "renderer_bundle": "PASS",
+    "renderer_tests_passed": 14,
+    "renderer_typecheck": "PASS",
+    "studio_tests_passed": 14,
+    "studio_syntax": "PASS"
+  },
+  "governance_exact_head_ci": "PENDING_DRAFT_PR",
+  "governance_main_ci": "PENDING_POST_MERGE",
+  "live_reservation_vnd": "0",
+  "local_exact_main_python": {
+    "failed": 0,
+    "passed": 895
+  },
+  "provider_calls": 0,
+  "result": "PASS",
+  "schema_version": 1,
+  "scope": "Offline W1 profile/bundle/contract validation; exact-main regression is separately identified",
+  "spend_vnd": "0"
+}

@@ -1,0 +1,38 @@
+{
+  "assertion": "The RC-16 ASR W1 gate validates offline with fresh RC-derived IDs, the exact immutable prompt profile, exact assets/transcripts/RightsRecords, canonical G01/G02/G03 rebind records and unchanged 500/1250 VND 90/120s envelope. The bundle remains unmounted, both operations unauthorized, ASR NOT_TESTED/0-of-2 and Production NO-GO.",
+  "axis": "cross-cutting",
+  "commit_sha": "55b22f773dc108f6c51a1b52db825b1caa8e8a51",
+  "completed_at_utc": "2026-09-09T03:06:14Z",
+  "correlation_id": "v3-01-rc16-asr-w1-gate-55b22f7",
+  "cost": {
+    "actual": 0,
+    "currency": "VND",
+    "status": "ZERO"
+  },
+  "duration_seconds": 2688.0,
+  "environment": "LOCAL",
+  "evidence_id": "EV-V3-RC16-ASR-W1-GATE-001",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "provider": {
+    "credential_alias": "secret://openai/codex-video",
+    "model_or_workflow": "whisper-1 / immutable W1 / selected-but-not-executed",
+    "name": "openai-transcription-gate-validation-only",
+    "secret_recorded": false
+  },
+  "reproduce": "On the governance branch based on exact RC-16, run python -m pytest apps/api/tests/test_rc16_asr_w1_gate_bundle.py -q with fixture defaults; verify profile/bundle/approval/scope/assets, historical RC-15 state and executable-tree equality. No live ledger, credential or provider is required.",
+  "request_hash": null,
+  "response_or_artifact_hash": "2362943a9535a1fbea7f4c45dfd15520635a8eb406b9d4097ece72277bb41a0d",
+  "result": "PASS",
+  "reviewer": "Codex local ASR W1 gate reviewer",
+  "rights_record_id": "V3-01-RIGHTS-ASR-001;V3-01-RIGHTS-ASR-002",
+  "schema_version": 1,
+  "started_at_utc": "2026-09-09T02:21:26Z",
+  "test_case_id": "ASR-01+PRO-006"
+}

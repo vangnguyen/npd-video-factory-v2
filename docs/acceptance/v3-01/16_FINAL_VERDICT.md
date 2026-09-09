@@ -1,5 +1,14 @@
 # V3-01 consolidation checkpoint verdict
 
+## Current checkpoint — 2026-09-09, RC-16 W1 governance draft
+
+PR #54 merged as exact executable RC-16 `55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main
+CI `34302351310` passed 5/5 and annotated `vf-v3-01-rc16` locks it. The governance-only W1
+bundle is unmounted and has no operation authority. Historical RC-15 Op1 remains FAIL/CONSUMED
+at 5/8 critical terms; RC-15 Op2 is locked. ASR stays 0/2 and real-provider `NOT_TESTED`; Vision
+stays 2/2 PASS; production-path and human-quality remain NOT_TESTED. Production verdict remains
+**NO-GO**. Stop at Owner G-08 for the fresh governance PR.
+
 ## Current checkpoint — 2026-09-08, after PR #53; V3-01-25 draft
 
 PR #53 merged at `b9dbb8fd8f1abcbcc920f0df9fb5a343586b7b0e`; exact-main CI
@@ -39,11 +48,11 @@ Their pre-call authority/status wording is historical, not permission to execute
 
 ```text
 VERDICT: NO-GO
-SCOPE: locked RC-15 plus fresh zero-call ASR governance rebind; Vision 2/2 real-provider PASS; ASR 0/2 real-provider NOT_TESTED
-RELEASE CANDIDATE: RC-15 7d1290aacac61df98a51544731243e5e322a8644 LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-RC15-ASR-GATE-001; governance/offline only; 0 calls/0 credential reads/0 reservation/0 VND
-DATE: 2026-09-07
-OWNER DECISION: DECISIONS THROUGH PR #50 CONSUMED; RC-15 GOVERNANCE DRAFT REQUIRES G-08; RC-15 OP1 NOT APPROVED; OP2 LOCKED
+SCOPE: locked RC-16 plus fresh zero-call W1 ASR governance rebind; Vision 2/2 real-provider PASS; ASR 0/2 real-provider NOT_TESTED
+RELEASE CANDIDATE: RC-16 55b22f773dc108f6c51a1b52db825b1caa8e8a51 LOCKED NO-GO; NOT DEPLOYED
+LATEST EVIDENCE: EV-V3-RC16-ASR-W1-GATE-001; governance/offline only; 0 calls/0 credential reads/0 reservation/0 VND
+DATE: 2026-09-09
+OWNER DECISION: DECISIONS THROUGH PR #54 CONSUMED; RC-16 GOVERNANCE DRAFT REQUIRES G-08; RC-16 OP1 NOT APPROVED; OP2 LOCKED
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong
@@ -59,16 +68,16 @@ fail-closed publishing/provider boundaries, but it is not production-accepted.
 | Real-provider-tested axis | 1 PASS, 35 NOT_TESTED, 24 N/A |
 | Production-path-tested axis | 60 NOT_TESTED |
 | Quality-accepted axis | 36 NOT_TESTED, 24 N/A |
-| Flow A | BLOCKED overall; Vision real-provider 2/2 PASS and ASR safety/HTTP 200/timestamp-shape reach proven, but RC-14 Operation 1 rejected 27/413 exact equality points and is consumed/`REVIEW_REQUIRED`; the source-only semantics split is mock-tested but ASR/reframe real-provider, production and quality axes remain blocked |
+| Flow A | BLOCKED overall; Vision real-provider 2/2 PASS. RC-15 ASR Op1 passed transport, structured transcript, timestamps and WER but failed 5/8 critical-term recall; it is consumed and official acceptance remains FAIL. W1 is source/mock-tested only; ASR/reframe real-provider, production and quality axes remain blocked |
 | Flow B | BLOCKED overall; measured two-run contract/mock PASS, real/provider/production/quality axes blocked |
 | Flow C | BLOCKED overall; measured two-run contract/mock PASS, real-provider/production/quality axes blocked |
 | Security | identity/RBAC/isolation local PASS; public/production ingress remains NO-GO |
-| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-11 ASR Op1 cost 0 VND; RC-12, RC-13 and RC-14 ASR Op1 actual costs are unknown and each 500 VND amount is a conservative safety charge, not an actual-cost receipt; the source remediation costs 0 VND |
-| Rights/provenance | exact Vision asset passed twice; two exact unchanged WAVs, voices, owner-verified transcripts and RightsRecords are revalidated and rebound to RC-15 only for bounded ASR acceptance; no operation authority and broader real/final-asset coverage absent |
+| Cost | RC-10 Vision recorded `284.343280 VND` actual; RC-15 ASR Op1 recorded `326.294996 VND` actual; the RC-16 governance package costs 0 VND and preserves the 500/1,250 VND proposed envelope without activating it |
+| Rights/provenance | exact Vision asset passed twice; two exact unchanged WAVs, voices, owner-verified transcripts and RightsRecords are revalidated and rebound to RC-16 only for bounded W1 ASR acceptance; no operation authority and broader real/final-asset coverage absent |
 | Backup/restore | local disposable drill PASS with 9/9 hashes, RPO 0s and RTO 33s; production-like DR and accepted RPO/RTO remain blocked |
 | Observability/soak | authenticated local snapshot, correlation and seven alert previews PASS; no monitoring backend, alert delivery or 48-hour run |
 | Gaps | 4 OPEN, 11 IN_PROGRESS, 1 REMEDIATED; P0=10, P1=5, P2=1 total |
-| Allowed scope | LOCAL/CI zero-call RC-15 governance validation, redacted evidence and a draft G-08 PR; executable unchanged from locked RC-15 |
+| Allowed scope | LOCAL/CI zero-call RC-16 W1 governance validation, redacted evidence and a draft G-08 PR; executable unchanged from locked RC-16 |
 | Disabled scope | further provider calls, credential-value access, deploy, public ingress, publish, production analytics, external notifications |
 
 ## Critical failures
