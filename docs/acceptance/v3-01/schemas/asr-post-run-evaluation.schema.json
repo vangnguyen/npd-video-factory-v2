@@ -26,6 +26,7 @@
     "duration_parity": {"$ref": "#/$defs/duration_parity"},
     "provider_transcript_mapping": {"$ref": "#/$defs/provider_transcript_mapping"},
     "numeric_reconciliation": {"$ref": "#/$defs/numeric_reconciliation"},
+    "w1_prompt_quality": {"$ref": "#/$defs/w1_prompt_quality"},
     "evidence_completeness": {"$ref": "#/$defs/evidence_completeness"},
     "safety": {
       "type": "object", "additionalProperties": false,
@@ -42,6 +43,34 @@
     "evaluation_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
   },
   "$defs": {
+    "w1_prompt_quality": {
+      "type": "object", "additionalProperties": false,
+      "required": ["profile_sha256", "asset_slot", "reference_sha256", "hypothesis_sha256", "terms", "negative_control", "profile_binding_valid", "reference_binding_valid", "quality_thresholds_unchanged", "insertion_guard_passed", "expected_profile_id", "human_audio_review", "transcript_modified"],
+      "properties": {
+        "profile_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "asset_slot": {"enum": [1, 2, null]},
+        "reference_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "hypothesis_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "terms": {"type": "array", "maxItems": 5, "items": {
+          "type": "object", "additionalProperties": false,
+          "required": ["term", "reference_count", "hypothesis_count", "excess_count"],
+          "properties": {
+            "term": {"type": "string"},
+            "reference_count": {"type": "integer", "minimum": 0},
+            "hypothesis_count": {"type": "integer", "minimum": 0},
+            "excess_count": {"type": "integer", "minimum": 0}
+          }
+        }},
+        "negative_control": {"type": "boolean"},
+        "profile_binding_valid": {"type": "boolean"},
+        "reference_binding_valid": {"type": "boolean"},
+        "quality_thresholds_unchanged": {"type": "boolean"},
+        "insertion_guard_passed": {"type": "boolean"},
+        "expected_profile_id": {"type": ["string", "null"]},
+        "human_audio_review": {"const": "NOT_PERFORMED_BY_MACHINE_GUARD"},
+        "transcript_modified": {"const": false}
+      }
+    },
     "numeric_reconciliation": {
       "type": "object", "additionalProperties": false,
       "required": ["currency", "comparison_semantics", "canonical_amounts", "per_operation_limit_vnd", "acceptance_window_limit_vnd", "checks", "invalid_amount_fields", "missing_amount_fields", "passed", "acceptance_window_aggregate_status", "acceptance_window_aggregate_checked", "acceptance_window_aggregate_note"],

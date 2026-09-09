@@ -11,6 +11,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from redis.asyncio import Redis
 
+from .asr_prompt_profile import profile_for_id
 from .bridge_auth import ServiceAuthVerifier, SigningKeyring
 from .bridge_repository import BridgeRepository
 from .bridge_routes import router as bridge_router
@@ -233,6 +234,7 @@ async def lifespan(app: FastAPI):
             max_duration_seconds=settings.openai_transcription_max_duration_seconds,
             estimated_cost_vnd=settings.openai_transcription_estimated_cost_vnd,
             vnd_per_minute=settings.openai_transcription_vnd_per_minute,
+            asr_prompt_profile=profile_for_id(settings.openai_transcription_prompt_profile_id),
         )
     else:
         transcription_provider = ContractOnlyTranscriptionProvider()

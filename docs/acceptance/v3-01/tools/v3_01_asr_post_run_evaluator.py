@@ -573,7 +573,10 @@ def _evidence_completeness(payload: dict[str, Any], money: dict[str, Any]) -> tu
     return checks, review_reasons, fail_reasons
 
 
-def evaluate(payload: dict[str, Any], policy: AsrEvaluationPolicy | None = None) -> dict[str, Any]:
+def evaluate(
+    payload: dict[str, Any], policy: AsrEvaluationPolicy | None = None, *,
+    expected_asr_prompt_profile_id: str | None = None,
+) -> dict[str, Any]:
     policy = policy or AsrEvaluationPolicy()
     fail_reasons: list[str] = []
     review_reasons: list[str] = []
@@ -705,6 +708,24 @@ def evaluate(payload: dict[str, Any], policy: AsrEvaluationPolicy | None = None)
         if not mapping_checks["complete"]:
             review_reasons.append("PROVIDER_TRANSCRIPT_MAPPING_INCOMPLETE")
 
+    # Conditional W1 extension: legacy unprofiled inputs/results remain byte-identical.
+    import importlib.util
+    guard_path = Path(__file__).with_name("v3_01_25_w1_quality_guard.py")
+    guard_spec = importlib.util.spec_from_file_location("v3_01_25_w1_quality_guard", guard_path)
+    assert guard_spec and guard_spec.loader
+    guard = importlib.util.module_from_spec(guard_spec)
+    guard_spec.loader.exec_module(guard)
+    w1_quality = None
+    if expected_asr_prompt_profile_id is not None or guard.active(payload):
+        w1_quality, w1_fail, w1_review = guard.check(
+            payload, normalize=normalized_tokens,
+            maximum_wer=policy.maximum_wer,
+            minimum_critical_recall=policy.minimum_critical_term_recall,
+            expected_profile_id=expected_asr_prompt_profile_id,
+        )
+        fail_reasons.extend(w1_fail)
+        review_reasons.extend(w1_review)
+
     fail_reasons = sorted(set(fail_reasons))
     review_reasons = sorted(set(review_reasons) - set(fail_reasons))
     verdict: Verdict
@@ -762,6 +783,8 @@ def evaluate(payload: dict[str, Any], policy: AsrEvaluationPolicy | None = None)
             "production_verdict": "NO-GO",
         },
     }
+    if w1_quality is not None:
+        result["w1_prompt_quality"] = w1_quality
     result["evaluation_sha256"] = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
     return result
 
@@ -789,6 +812,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", type=Path, help="optional evaluation JSON path")
     parser.add_argument("--expect-verdict", choices=("PASS", "REVIEW_REQUIRED", "FAIL"))
     parser.add_argument(
+        "--expected-asr-prompt-profile-id",
+        help="Expected profile selected from the verified gate, NOT inferred from a provider receipt",
+    )
+    parser.add_argument(
         "--schema",
         type=Path,
         default=Path(__file__).resolve().parents[1] / "schemas" / "asr-post-run-input.schema.json",
@@ -801,7 +828,7 @@ def main() -> int:
     try:
         payload = _load_json(args.input)
         _validate_input(payload, args.schema)
-        result = evaluate(payload)
+        result = evaluate(payload, expected_asr_prompt_profile_id=args.expected_asr_prompt_profile_id)
     except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
         print(json.dumps({"verdict": "FAIL", "error": type(exc).__name__}, sort_keys=True), file=sys.stderr)
         return 2

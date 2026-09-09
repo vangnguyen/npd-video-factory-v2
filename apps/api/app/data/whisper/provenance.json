@@ -1,0 +1,23 @@
+{
+  "artifact_kind": "TOKENIZER_RANK_DATA_NOT_MODEL_WEIGHTS",
+  "upstream_repository": "https://github.com/openai/whisper",
+  "upstream_commit": "86098128c0b4f24f0e2aa2994de830614b474227",
+  "upstream_path": "whisper/assets/multilingual.tiktoken",
+  "rank_file_sha256": "b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126",
+  "rank_file_bytes": 816730,
+  "rank_count": 50257,
+  "all_256_byte_tokens_required": true,
+  "tokenizer_source_sha256": "3b48e361a7e95b4ec0356ca6d72bba635778aa10269153136ee7bc34cae30b85",
+  "decoding_source_sha256": "94084fedc5af74cabf8e1883a85552700057081f00ea669ad49435ecb29039db",
+  "license": "MIT",
+  "license_upstream_sha256": "b5d65a59060e68c4ff940e1eddfa6f94b2d68fdf58ed7f4dd57721c997e35e9d",
+  "tiktoken_version": "0.12.0",
+  "tiktoken_upstream_commit": "97e49cbadd500b5cc9dbb51a486f0b42e6701bee",
+  "tiktoken_license": "MIT",
+  "counter": "DIRECT_ENCODING_LOCAL_RANKS_UPSTREAM_REGEX_ORDINARY_TEXT",
+  "hosted_tokenizer_equivalence_claimed": false,
+  "runtime_network_required": false,
+  "model_weights": false,
+  "model_inference": false,
+  "provider_authority": false
+}

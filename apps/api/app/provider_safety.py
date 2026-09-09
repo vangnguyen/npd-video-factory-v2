@@ -14,6 +14,11 @@ from typing import Any, Generic, Literal, TypeVar
 
 from pydantic import Field, field_validator, model_validator
 
+from .asr_prompt_profile import (
+    AsrPromptProfile,
+    prompt_profile_sha256,
+    validate_prompt_profile,
+)
 from .models import StrictModel
 
 
@@ -287,6 +292,8 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
     requested_language: str | None = Field(default=None, min_length=2, max_length=16)
     response_format: Literal["verbose_json"] | None = None
     timestamp_granularities: tuple[Literal["segment", "word"], ...] = ()
+    asr_prompt_profile: AsrPromptProfile | None = None
+    asr_prompt_profile_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     max_attempts: Literal[1] = 1
     max_concurrent_calls: Literal[1] = 1
     credential_approval_id: str = Field(pattern=r"^V3-01-APP-[0-9]{3,}$")
@@ -299,6 +306,11 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
     allowed_operations: tuple[ProviderAllowedOperation, ProviderAllowedOperation]
     rights_record: ProviderRightsEvidence | None = None
     rights_records: tuple[ProviderRightsEvidence, ...] = ()
+
+    @field_validator("asr_prompt_profile", mode="before")
+    @classmethod
+    def validate_prompt_binding(cls, value: object) -> AsrPromptProfile | None:
+        return validate_prompt_profile(value)
 
     @field_validator("credential_alias")
     @classmethod
@@ -318,6 +330,7 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
 
     @model_validator(mode="after")
     def validate_window_and_operations(self) -> "ProviderExecutionGateScope":
+        _validate_prompt_capability(self)
         start = self.valid_from_utc
         expiry = self.expires_at_utc
         if start.tzinfo is None or expiry.tzinfo is None:
@@ -510,8 +523,14 @@ class ProviderCallContext(StrictModel):
     requested_language: str | None = Field(default=None, min_length=2, max_length=16)
     response_format: Literal["verbose_json"] | None = None
     timestamp_granularities: tuple[Literal["segment", "word"], ...] = ()
+    asr_prompt_profile: AsrPromptProfile | None = None
     rights_required: bool = False
     rights: list[ProviderRightsEvidence] = Field(default_factory=list, max_length=100)
+
+    @field_validator("asr_prompt_profile", mode="before")
+    @classmethod
+    def validate_prompt_binding(cls, value: object) -> AsrPromptProfile | None:
+        return validate_prompt_profile(value)
 
     @field_validator("credential_alias")
     @classmethod
@@ -524,9 +543,34 @@ class ProviderCallContext(StrictModel):
 
     @model_validator(mode="after")
     def validate_call_class(self) -> "ProviderCallContext":
+        _validate_prompt_capability(self)
         if self.paid and not self.external_call:
             raise ValueError("a paid provider call must be classified as external")
         return self
+
+
+def _validate_prompt_capability(
+    binding: ProviderExecutionGateScope | ProviderCallContext,
+) -> AsrPromptProfile | None:
+    """Revalidate even frozen models copied/constructed without validation."""
+    profile = validate_prompt_profile(binding.asr_prompt_profile)
+    if isinstance(binding, ProviderExecutionGateScope) and (
+        binding.asr_prompt_profile_sha256 != prompt_profile_sha256(profile)
+    ):
+        raise ValueError("ASR prompt profile and verified hash must be present together and exact")
+    if profile is not None and (
+        binding.provider_key,
+        binding.model,
+        binding.capability,
+        binding.requested_language,
+        binding.response_format,
+        binding.timestamp_granularities,
+    ) != (
+        "openai-transcription", "whisper-1", "asr", "vi", "verbose_json",
+        ("segment", "word"),
+    ):
+        raise ValueError("ASR prompt profile requires exact native Vietnamese ASR binding")
+    return profile
 
 
 class ProviderSafetyDecision(StrictModel):
@@ -1072,6 +1116,12 @@ class ProviderSafetyController:
     async def preflight(self, context: ProviderCallContext) -> ProviderSafetyDecision:
         now = self._clock()
         rights_records: Sequence[ProviderRightsEvidence] = context.rights
+        prompt_denial = self._prompt_profile_denial(context)
+        if prompt_denial is not None:
+            rights = self.evaluate_rights(
+                rights_records, required=context.rights_required, now=now
+            )
+            return self._denied(context, prompt_denial, rights)
         if context.external_call and self.policy.verified_gate_required:
             scope = self.policy.execution_gate
             if scope is None:
@@ -1166,6 +1216,30 @@ class ProviderSafetyController:
                 circuit_state=circuit.state,
                 rights=rights,
             )
+
+    def _prompt_profile_denial(self, context: ProviderCallContext) -> str | None:
+        # This runs before both in-memory and durable reservation paths, including
+        # otherwise-unverified policies. W1 is never an unbound runtime option.
+        scope = self.policy.execution_gate
+        try:
+            context_profile = _validate_prompt_capability(context)
+            scope_profile = _validate_prompt_capability(scope) if scope is not None else None
+            if scope is not None and scope.capability == "asr":
+                # Late import avoids the canonical loader/model dependency cycle.
+                # Verify W0 too: dropping both W1 fields cannot evade this check.
+                from .provider_gate_loader import asr_execution_scope_sha256
+
+                if asr_execution_scope_sha256(scope) != scope.execution_scope_sha256:
+                    return "ASR_PROMPT_EXECUTION_SCOPE_MISMATCH"
+        except (ValueError, TypeError, AttributeError):
+            return "ASR_PROMPT_PROFILE_INVALID"
+        if context_profile is None and scope_profile is None:
+            return None
+        if not context.external_call or not self.policy.verified_gate_required or scope is None:
+            return "ASR_PROMPT_VERIFIED_GATE_REQUIRED"
+        if prompt_profile_sha256(context_profile) != prompt_profile_sha256(scope_profile):
+            return "ASR_PROMPT_PROFILE_SCOPE_MISMATCH"
+        return None
 
     @staticmethod
     def _verified_rights_records(
