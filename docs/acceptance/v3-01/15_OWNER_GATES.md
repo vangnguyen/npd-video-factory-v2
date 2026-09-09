@@ -1,5 +1,15 @@
 # Owner gate register
 
+## RC-16 W1 rebind checkpoint
+
+Owner G-08 for PR #54 is recorded as `V3-01-APP-064`. PR #54 merged as RC-16
+`55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main CI `34302351310` passed 5/5 and
+annotated `vf-v3-01-rc16` locks it. Records `V3-01-APP-065` through `067` bind G-01/G-02/G-03
+to the immutable W1 profile, unchanged 500/1,250 VND and 90/120-second envelope, two unchanged
+owner-approved inputs and fresh RC-16 IDs. These records are not execution authority. The bundle
+is unmounted, Operation 1 is not approved and Operation 2 is locked. The governance PR requires a
+new G-08; after merge, any Operation 1 still requires its own owner decision.
+
 ## V3-01-23 checkpoint (no new approval record)
 
 Historical RC-15 ASR Op1 is consumed/succeeded with acceptance FAIL (5/8 critical terms),

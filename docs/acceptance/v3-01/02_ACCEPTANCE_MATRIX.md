@@ -1,6 +1,16 @@
 # V3-01 acceptance matrix
 
-Baseline captured at `2026-08-27T12:02:08Z`; the latest executable acceptance candidate is locked
+## Current RC-16 W1 checkpoint
+
+PR #54 merged as executable RC-16 `55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main CI
+`34302351310` passed 5/5. The W1 governance proposal
+`EV-V3-RC16-ASR-W1-GATE-001` is offline/unmounted and does not promote `ASR-01`: real-provider
+remains `NOT_TESTED`, consecutive acceptance remains 0/2, and both RC-16 operations remain
+unauthorized. Historical RC-15 Op1 remains FAIL/CONSUMED at 5/8 critical terms. Vision stays 2/2
+PASS; production-path/human-quality remain NOT_TESTED; Production stays NO-GO. See
+[62_V3_01_RC16_OPENAI_ASR_W1_GATE.md](62_V3_01_RC16_OPENAI_ASR_W1_GATE.md).
+
+Earlier checkpoint: baseline captured at `2026-08-27T12:02:08Z`; the then-current executable acceptance candidate was locked
 NO-GO RC-15 `7d1290aacac61df98a51544731243e5e322a8644` after PR #50 and exact-main CI `34142662132` (5/5 PASS).
 The fresh RC-15 governance proposal `EV-V3-RC15-ASR-GATE-001` is offline/unmounted and awaits
 its own G-08, governance-main CI and separate operation authority; ASR stays 0/2 `NOT_TESTED`.

@@ -1,5 +1,19 @@
 # V3-01 baseline
 
+## Current RC-16 W1 governance checkpoint — 2026-09-09
+
+Owner-approved PR #54 merged as exact executable RC-16
+`55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main CI `34302351310` passed 5/5 and
+annotated `vf-v3-01-rc16` peels to that commit. Executable-tree SHA-256 is
+`5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd`.
+
+The fresh W1 scope `EV-V3-RC16-ASR-W1-GATE-001` binds the exact immutable profile, two new
+RC-derived operation IDs, unchanged assets/references/RightsRecords and proposed 10 September
+14:00–18:00 UTC window. The bundle is disabled/unmounted and both operations lack authority.
+Historical RC-15 Op1 remains FAIL/CONSUMED at 5/8 critical terms and 326.294996 VND actual cost;
+Op2 is locked. ASR remains 0/2, Vision 2/2 and Production NO-GO. See
+[62_V3_01_RC16_OPENAI_ASR_W1_GATE.md](62_V3_01_RC16_OPENAI_ASR_W1_GATE.md).
+
 Captured at `2026-08-27T12:02:08Z` (`2026-08-27 19:02:08 Asia/Ho_Chi_Minh`).
 Governance state updated after bounded G-00 approval at `2026-08-27T13:29:26Z`.
 Current checkpoint status updated after evidence-only PR #39 merged as
@@ -76,14 +90,16 @@ provenance remain pending the separate governance PR merge. See
 ```text
 FEATURE FREEZE: ACTIVE
 DEFAULT VERDICT: NO-GO UNTIL PROVEN
-CURRENT RC: RC-15 7d1290aacac61df98a51544731243e5e322a8644; locked NO-GO; not deployed
+CURRENT RC: RC-16 55b22f773dc108f6c51a1b52db825b1caa8e8a51; locked NO-GO; not deployed
 AUDIT BASE SHA: cae40eda871d0f9c7fc315229361a40032d48967
-CURRENT SAFE PHASE: Vision closed; PR #50 source remediation merged; fresh RC-15 ASR governance draft; G-08 pending
+CURRENT SAFE PHASE: Vision closed; PR #54 W1 source remediation merged; fresh RC-16 ASR W1 governance draft; G-08 pending
 G-00: APPROVED by V3-01-APP-001
-G-08: DECISIONS THROUGH PR #50 CONSUMED; RC-15 GOVERNANCE DRAFT REQUIRES A NEW G-08
-G-01/G-02/G-03-ASR: RC-15 REBIND RECORDS APP-061/062/063; NO RUNTIME AUTHORITY
-RC-15 ASR OPERATION 1: NOT APPROVED; NOT EXECUTED
-RC-15 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
+G-08: DECISIONS THROUGH PR #54 CONSUMED; RC-16 GOVERNANCE DRAFT REQUIRES A NEW G-08
+G-01/G-02/G-03-ASR: RC-16 W1 REBIND RECORDS APP-065/066/067; NO RUNTIME AUTHORITY
+RC-16 ASR OPERATION 1: NOT APPROVED; NOT EXECUTED
+RC-16 ASR OPERATION 2: NOT APPROVED; LOCKED; NOT EXECUTED
+RC-15 ASR OPERATION 1: FAIL; CONSUMED; CRITICAL TERMS 5/8; ACTUAL COST 326.294996 VND; NO RETRY
+RC-15 ASR OPERATION 2: NOT APPROVED; LOCKED; RETIRED; NOT EXECUTED
 RC-14 ASR OPERATION 1: HTTP 200; FAILED RESPONSE VALIDATION; REVIEW_REQUIRED; CONSUMED; NO RETRY
 RC-14 ASR OPERATION 2: NOT APPROVED; LOCKED; RETIRED; NOT EXECUTED
 RC-13 ASR OPERATION 1: HTTP 200; FAILED RESPONSE VALIDATION; REVIEW_REQUIRED; CONSUMED; NO RETRY

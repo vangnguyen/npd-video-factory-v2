@@ -1,6 +1,20 @@
 # V3-01 implementation inventory
 
-## Current RC-15 governance checkpoint
+## Current RC-16 W1 governance checkpoint
+
+PR #54 merged the executable W1 profile path as RC-16
+`55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main CI `34302351310` passed 5/5.
+Annotated `vf-v3-01-rc16` peels to that commit and the canonical executable tree hashes to
+`5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd`.
+
+The new governance proposal binds the exact W1 profile SHA
+`9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1`, fresh RC-16 IDs,
+unchanged approved inputs and the unchanged 500/1,250 VND, 90/120-second envelope. It changes no
+executable file. Bundle and runtime remain disabled; both operations are unauthorized. Historical
+RC-15 remains immutable. See
+[62_V3_01_RC16_OPENAI_ASR_W1_GATE.md](62_V3_01_RC16_OPENAI_ASR_W1_GATE.md).
+
+## Earlier RC-15 governance checkpoint (historical)
 
 PR #50 merged the source-only timestamp-semantics remediation as `7d1290aacac61df98a51544731243e5e322a8644`.
 Exact-head CI `34140738281` and exact-main CI `34142662132` completed successfully, 5/5 jobs.

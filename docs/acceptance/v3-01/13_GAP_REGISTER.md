@@ -1,5 +1,14 @@
 # Gap register
 
+## RC-16 W1 gate update — no gap closure
+
+V3-01-25 merged as RC-16 after exact-main CI 5/5. The offline W1 gate binds a fresh scope and
+same-profile two-slot experiment while preserving 8/8 critical-term and WER ≤15% quality gates.
+It does not provide a real-provider result. GAP-003/GAP-010/GAP-013 stay IN_PROGRESS; ASR remains
+0/2 and `NOT_TESTED`, Vision stays 2/2 PASS, and Production stays NO-GO. The bundle is unmounted,
+Operation 1 is not approved and Operation 2 is locked. See
+[RC-16 gate](62_V3_01_RC16_OPENAI_ASR_W1_GATE.md).
+
 ## V3-01-23 current diagnostic update — no gap closure
 
 RC-15 ASR Op1 passed provider/transcript/timestamp/WER checks but failed 3/8 critical terms.
@@ -10,7 +19,7 @@ FAIL. GAP-003/GAP-010/GAP-013 remain IN_PROGRESS; ASR aggregate real-provider NO
 See [forensic and numeric review](57_V3_01_23_ASR_CRITICAL_TERM_EVALUATOR.md). G-08 pending;
 Op2 locked; 0 calls/credential reads/live reservations/spend in remediation; production NO-GO.
 
-## Current RC-15 governance checkpoint
+## Earlier RC-15 governance checkpoint (historical)
 
 PR #50 merged the source-only timestamp-semantics remediation as `7d1290aacac61df98a51544731243e5e322a8644`.
 Exact-head CI `34140738281` and exact-main CI `34142662132` completed successfully, 5/5 jobs.

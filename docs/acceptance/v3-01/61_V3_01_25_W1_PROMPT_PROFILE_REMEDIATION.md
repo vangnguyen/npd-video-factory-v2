@@ -1,5 +1,19 @@
 # V3-01-25 — W1 Prompt Profile Remediation
 
+## Post-merge closure — 2026-09-09
+
+Owner G-08 approved exact PR #54 head `f2760e52f98336f17f67fabcf7f93edc94d88b38`.
+PR #54 merged as `55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main CI
+[`34302351310`](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34302351310)
+passed 5/5, and annotated `vf-v3-01-rc16` (tag object
+`f18659863bc818c307b4679eec8bc3ec8bc5439a`) peels to that exact merge. Canonical executable-tree
+SHA-256 is `5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd`.
+
+This closes only the source remediation/RC lock. It does not authorize W1 live use. The fresh
+[RC-16 governance rebind](62_V3_01_RC16_OPENAI_ASR_W1_GATE.md) remains unmounted and requires a
+separate G-08, post-merge governance CI and later separate Operation 1 decision. No provider call,
+credential read, live reservation or spend occurred during merge/lock.
+
 ## Decision and boundary
 
 **DRAFT / OWNER G-08 REQUIRED. W1 selected for remediation, not live use. Production NO-GO.**

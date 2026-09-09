@@ -1,0 +1,29 @@
+{
+  "approval_id": "V3-01-APP-065",
+  "gate_id": "G-01",
+  "decision": "APPROVED",
+  "scope": "Rebind G-01-ASR to exactly openai-transcription / whisper-1 / asr / vi and the immutable W1 prompt profile on vf-v3-01-rc16 using only credential alias secret://openai/codex-video for the proposed dated acceptance window.",
+  "artifact_or_commit_hashes": [
+    "55b22f773dc108f6c51a1b52db825b1caa8e8a51",
+    "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "c40b2f6a055dcdae7391c997b255c72fd85960899eabb7e7559e0e8ff623c93c"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; credential value remains in the external secret mechanism",
+  "limits": [
+    "Provider openai-transcription only",
+    "Model whisper-1 only",
+    "Capability asr and language vi only",
+    "Credential alias secret://openai/codex-video only",
+    "Exact W1 profile asr-whisper-vi-w1-v1 with prompt SHA-256 6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "The same immutable W1 profile must be used for both asset slots",
+    "No fallback model or provider",
+    "No credential read or provider call until a separate RC-16 Operation 1 authority is granted",
+    "No deployment, public ingress, publishing or production analytics"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-09T02:21:26Z",
+  "expires_at_utc": "2026-09-10T18:00:00Z",
+  "notes": "The owner authorized a fresh RC-16 G-01/G-02/G-03 rebind after PR #54 merged, exact-main regression passed and RC-16 was locked. This secret-free record binds only the proposed W1 scope; a separate G-08 for the governance PR and a separate Operation 1 decision remain mandatory. It is not execution authority, grants no credential read or API call, and cannot reuse RC-15 authority. The window is a proposal for review, not a schedule or runtime activation."
+}

@@ -1,0 +1,155 @@
+{
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED",
+    "real_provider_tested": "NOT_TESTED"
+  },
+  "approvals": [
+    {
+      "canonical_sha256": "1d43b0ab7aa16fdba2957415033935fc0533b9f66c11289fd7e308b0389da47f",
+      "gate": "G-01-ASR",
+      "id": "V3-01-APP-065",
+      "runtime_authority": false
+    },
+    {
+      "canonical_sha256": "4e7264df710d334596a9a9d6fa559922ed3b5007773f8d10d4c15787c642a1aa",
+      "gate": "G-02-ASR",
+      "id": "V3-01-APP-066",
+      "runtime_authority": false
+    },
+    {
+      "canonical_sha256": "0cb99f777daade871cdad570f0736a0df3e49e46c8bbcd4e32ef347c3b549c03",
+      "gate": "G-03-ASR",
+      "id": "V3-01-APP-067",
+      "runtime_authority": false
+    }
+  ],
+  "assets": [
+    {
+      "bytes": 5800940,
+      "duration_seconds": 120.852,
+      "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+      "sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "slot": 1,
+      "transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e"
+    },
+    {
+      "bytes": 6460396,
+      "duration_seconds": 134.590667,
+      "negative_insertion_control": true,
+      "rights_record_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323",
+      "sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "slot": 2,
+      "transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef"
+    }
+  ],
+  "budget": {
+    "acceptance_window_limit_vnd": "1250",
+    "actual_vnd": "0",
+    "attempts": 1,
+    "automatic_retry": false,
+    "concurrency": 1,
+    "controller_hard_timeout_seconds": 120,
+    "currency": "VND",
+    "model_fallback": false,
+    "per_operation_limit_vnd": "500",
+    "provider_http_timeout_seconds": 90,
+    "reserved_vnd": "0",
+    "vnd_per_minute": "162"
+  },
+  "evidence_id": "EV-V3-RC16-ASR-W1-GATE-001",
+  "gate": {
+    "budget_sha256": "a8193d044551999cc03983f0bed860ac14011cf21c65b03453d7c2bd53c5379e",
+    "bundle_path": "docs/acceptance/v3-01/V3-01-GATE-RC16-OPENAI-ASR-W1-A.json",
+    "bundle_sha256": "2362943a9535a1fbea7f4c45dfd15520635a8eb406b9d4097ece72277bb41a0d",
+    "execution_scope_sha256": "c40b2f6a055dcdae7391c997b255c72fd85960899eabb7e7559e0e8ff623c93c",
+    "expires_at_utc": "2026-09-10T18:00:00Z",
+    "mounted": false,
+    "provider_scope_sha256": "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "valid_from_utc": "2026-09-10T14:00:00Z",
+    "window_status": "PROPOSED_REQUIRES_G08_AND_SEPARATE_OPERATION_AUTHORITY"
+  },
+  "governance": {
+    "draft_pr": "PENDING",
+    "dual_ci_provenance": "PENDING_POST_MERGE",
+    "executable_tree_equality": "PASS_PRE_PR",
+    "executable_tree_sha256": "5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd",
+    "governance_head": null,
+    "governance_main_ci_run_id": null,
+    "governance_main_commit": null
+  },
+  "historical_rc15": {
+    "acceptance_verdict": "FAIL",
+    "actual_cost_vnd": "326.294996",
+    "authority": "RETIRED",
+    "consumed": true,
+    "critical_term_recall": "5/8",
+    "operation_2": "RETIRED_LOCKED",
+    "operation_id": "v3-01-rc15-openai-transcription-asr-call-01",
+    "provider_execution": "SUCCESS",
+    "reconstructed_or_rewritten": false,
+    "structured_transcript": "PASS",
+    "timestamp_validation": "PASS",
+    "wer_percent": "9.6618"
+  },
+  "live_ledger_inspected": false,
+  "live_ledger_note": "No live acceptance process, database or secret mechanism was opened. Scope tests used disposable synthetic SQLite state only. Live unconsumed status must be verified again after a separate operation authority.",
+  "operations": [
+    {
+      "authority": "NOT_APPROVED",
+      "executed": false,
+      "id": "v3-01-rc16-openai-transcription-asr-call-01"
+    },
+    {
+      "authority": "NOT_APPROVED_LOCKED",
+      "executed": false,
+      "id": "v3-01-rc16-openai-transcription-asr-call-02"
+    }
+  ],
+  "production_verdict": "NO-GO",
+  "provider": {
+    "capability": "asr",
+    "credential_alias": "secret://openai/codex-video",
+    "credential_reads": 0,
+    "key": "openai-transcription",
+    "language": "vi",
+    "model": "whisper-1",
+    "provider_calls": 0
+  },
+  "rc": {
+    "ci_status": "completed_success",
+    "commit": "55b22f773dc108f6c51a1b52db825b1caa8e8a51",
+    "exact_main_ci_run_id": 34302351310,
+    "remediation_exact_head": "f2760e52f98336f17f67fabcf7f93edc94d88b38",
+    "remediation_exact_head_ci_run_id": 34250208121,
+    "remediation_pr": 54,
+    "tag": "vf-v3-01-rc16",
+    "tag_object": "f18659863bc818c307b4679eec8bc3ec8bc5439a"
+  },
+  "schema_version": 1,
+  "validation": {
+    "approval_hashes": "PASS",
+    "asset_hashes": "PASS",
+    "audio_headers_and_durations": "PASS",
+    "bundle_loader": "PASS",
+    "durable_nondurable_parity": "PASS",
+    "executable_unchanged_relative_to_rc16": "PASS",
+    "fail_closed_defaults": "PASS",
+    "focused_tests": "19 passed",
+    "governance_main_ci": "PENDING_POST_MERGE",
+    "historical_rc15_state_unchanged": "PASS",
+    "multi_asset_rights_binding": "PASS",
+    "negative_insertion_reference_control": "PASS",
+    "reference_transcript_hashes": "PASS",
+    "w1_profile_and_scope_hashes": "PASS"
+  },
+  "w1_profile": {
+    "canonical_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "profile_id": "asr-whisper-vi-w1-v1",
+    "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "same_profile_both_slots": true,
+    "temperature_policy": "omitted"
+  }
+}
