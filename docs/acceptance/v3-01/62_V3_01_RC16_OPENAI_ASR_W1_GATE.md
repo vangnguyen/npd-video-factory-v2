@@ -1,5 +1,15 @@
 # RC-16 OpenAI ASR W1 acceptance gate rebind
 
+## Post-execution status — 2026-09-10
+
+The decision boundary below is the immutable pre-operation proposal. PR #55 later merged it as
+governance main `5ba7107ba414893467f5e0236ca8a965bdbb8f91`, and a separate owner decision authorized
+Operation 1 only. That operation passed preflight, dispatched once and received HTTP 429
+`credit_balance_exhausted`; it is now consumed/failed with acceptance `REVIEW_REQUIRED`.
+Operation 2 remains not approved/locked. See
+[V3-01-26 quota evidence](63_V3_01_26_RC16_ASR_W1_QUOTA_EVIDENCE.md). Nothing in this historical
+proposal authorizes another call.
+
 ## Decision boundary
 
 This is a governance/evidence/tests-only proposal after the owner-approved merge of PR #54.

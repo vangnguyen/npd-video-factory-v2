@@ -1,17 +1,28 @@
 # V3-01 implementation inventory
 
-## Current RC-16 W1 governance checkpoint
+## Current RC-16 W1 quota checkpoint
+
+The executable inventory is unchanged at RC-16
+`55b22f773dc108f6c51a1b52db825b1caa8e8a51` and tree SHA-256
+`5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd`. Separately authorized
+Operation 1 passed preflight, reached OpenAI once and received HTTP 429
+`credit_balance_exhausted`. The operation is consumed/failed and `REVIEW_REQUIRED`; no transcript
+or W1 quality result exists. Operation 2 remains not approved/locked. The owner's subsequent credit
+replenishment report does not create runtime authority. See
+[V3-01-26](63_V3_01_26_RC16_ASR_W1_QUOTA_EVIDENCE.md).
+
+## Prior RC-16 W1 governance checkpoint
 
 PR #54 merged the executable W1 profile path as RC-16
 `55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main CI `34302351310` passed 5/5.
 Annotated `vf-v3-01-rc16` peels to that commit and the canonical executable tree hashes to
 `5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd`.
 
-The new governance proposal binds the exact W1 profile SHA
+At that checkpoint, the governance proposal bound the exact W1 profile SHA
 `9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1`, fresh RC-16 IDs,
 unchanged approved inputs and the unchanged 500/1,250 VND, 90/120-second envelope. It changes no
-executable file. Bundle and runtime remain disabled; both operations are unauthorized. Historical
-RC-15 remains immutable. See
+executable file. Bundle and runtime were disabled; both operations were unauthorized. Historical
+RC-15 remained immutable. See
 [62_V3_01_RC16_OPENAI_ASR_W1_GATE.md](62_V3_01_RC16_OPENAI_ASR_W1_GATE.md).
 
 ## Earlier RC-15 governance checkpoint (historical)

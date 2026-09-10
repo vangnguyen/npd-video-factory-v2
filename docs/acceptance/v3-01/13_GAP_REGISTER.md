@@ -1,5 +1,14 @@
 # Gap register
 
+## RC-16 W1 quota result — no gap closure
+
+Operation 1 passed safety preflight but received HTTP 429 `credit_balance_exhausted` before a
+transcript or usage receipt. It is consumed/failed and `REVIEW_REQUIRED`; 500 VND remains only a
+safety charge, not actual cost. The result neither proves nor disproves W1 quality. The owner later
+reported credit replenishment, but no authority or provider verification follows from that report.
+Operation 2 stays locked; GAP-003/GAP-010/GAP-013 remain IN_PROGRESS, ASR remains 0/2, Vision 2/2
+and Production NO-GO. See [V3-01-26](63_V3_01_26_RC16_ASR_W1_QUOTA_EVIDENCE.md).
+
 ## RC-16 W1 gate update — no gap closure
 
 V3-01-25 merged as RC-16 after exact-main CI 5/5. The offline W1 gate binds a fresh scope and

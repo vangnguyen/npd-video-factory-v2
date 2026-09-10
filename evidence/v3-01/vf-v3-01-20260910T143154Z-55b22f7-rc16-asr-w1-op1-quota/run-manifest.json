@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260910T143154Z-55b22f7-rc16-asr-w1-op1-quota",
+  "started_at_utc": "2026-09-10T14:31:54.595669Z",
+  "completed_at_utc": "2026-09-10T14:31:58.632182Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "55b22f773dc108f6c51a1b52db825b1caa8e8a51",
+  "base_sha": "5ba7107ba414893467f5e0236ca8a965bdbb8f91",
+  "release_candidate": "vf-v3-01-rc16",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0013_v3_01_18_nullable_transcript_confidence",
+  "config_fingerprint_redacted": "rc16-w1-op1-quota-failure-secret-free-projection-owner-credit-not-live-verified",
+  "providers": [
+    {
+      "capability": "asr",
+      "provider": "openai-transcription",
+      "model_or_workflow": "whisper-1 / immutable W1 profile",
+      "region": "provider-managed",
+      "credential_alias": "secret://openai/codex-video",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "ASR-01",
+    "RC16-ASR-W1-OP1-QUOTA-FAILURE"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "matrix/evidence-EV-V3-RC16-ASR-W1-OP1-QUOTA-001.json",
+    "provider/rc16-asr-w1-operation-1-quota-review.json"
+  ],
+  "cost_summary": {
+    "actual": null,
+    "actual_status": "UNKNOWN",
+    "acceptance_window_limit": 1250,
+    "currency": "VND",
+    "external_calls_in_original_operation": 1,
+    "provider_calls_in_evidence_package": 0,
+    "reserved_after_reconciliation": 0,
+    "safety_charge": 500,
+    "safety_charge_is_actual_provider_cost": false,
+    "spend_in_evidence_package": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-01",
+    "G-02",
+    "G-03"
+  ],
+  "result": "FAIL"
+}

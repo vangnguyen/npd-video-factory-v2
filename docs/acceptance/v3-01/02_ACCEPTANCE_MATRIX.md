@@ -1,6 +1,17 @@
 # V3-01 acceptance matrix
 
-## Current RC-16 W1 checkpoint
+## Current RC-16 W1 quota checkpoint
+
+Separately authorized RC-16 Operation 1 passed all preflight checks, made one provider request and
+received HTTP 429 `credit_balance_exhausted`. It is consumed/failed with acceptance
+`REVIEW_REQUIRED`. This is billing/quota evidence, not ASR recognition-quality evidence: transcript,
+WER, critical terms and negative-insertion checks were not run. `ASR-01` therefore remains
+real-provider `NOT_TESTED` and consecutive acceptance remains 0/2. Operation 2 is not
+approved/locked. The owner's later credit-replenishment report does not revive an operation or
+authorize a call. Vision remains 2/2 PASS; Production remains NO-GO. See
+[EV-V3-RC16-ASR-W1-OP1-QUOTA-001](evidence/rc16-asr-w1-operation-1/operation-1-quota-review.json).
+
+## Prior RC-16 W1 checkpoint (before Operation 1)
 
 PR #54 merged as executable RC-16 `55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main CI
 `34302351310` passed 5/5. The W1 governance proposal
@@ -100,7 +111,7 @@ The lossless machine-readable register is [02_ACCEPTANCE_MATRIX.csv](02_ACCEPTAN
 | SCR-01 | Script generation and versioning | FAIL | FAIL | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-002 |
 | SCR-02 | Storyboard and media plan | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-B-CONTRACT-001 | GAP-004 |
 | UPL-01 | Resumable upload / validation | PASS | PASS | N/A | NOT_TESTED | N/A | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-SEC-002-PARTIAL | GAP-007; GAP-011 |
-| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; EV-V3-RC12-ASR-GATE-001; EV-V3-ASR-RESPONSE-DIAGNOSTICS-001; EV-V3-RC13-ASR-GATE-001; EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001; EV-V3-RC14-ASR-GATE-001; EV-V3-ASR-ZERO-DURATION-SEMANTICS-001 | GAP-003 |
+| ASR-01 | Real transcription provider | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001; EV-V3-OPENAI-ASR-ADAPTER-001; EV-V3-RC11-ASR-GATE-001; EV-V3-DURABLE-MULTI-ASSET-RIGHTS-001; EV-V3-RC12-ASR-GATE-001; EV-V3-ASR-RESPONSE-DIAGNOSTICS-001; EV-V3-RC13-ASR-GATE-001; EV-V3-ASR-TIMESTAMP-CANONICALIZATION-001; EV-V3-RC14-ASR-GATE-001; EV-V3-ASR-ZERO-DURATION-SEMANTICS-001; EV-V3-RC16-ASR-W1-OP1-QUOTA-001 | GAP-003 |
 | EDT-01 | Scene/shot detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |
 | EDT-02 | Silence detection/removal decisions | PASS | PASS | N/A | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001 | GAP-016 |
 | EDT-03 | Highlight detection | PASS | PASS | NOT_TESTED | NOT_TESTED | NOT_TESTED | EV-V3-STATIC-001; EV-V3-CI-001; EV-V3-FLOW-A-CONTRACT-001 | GAP-003 |

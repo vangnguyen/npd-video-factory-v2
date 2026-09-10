@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "record_kind": "v3_01_rc16_asr_w1_quota_evidence_manifest",
+  "evidence_id": "EV-V3-RC16-ASR-W1-OP1-QUOTA-001",
+  "files": [
+    {
+      "path": "operation-1-quota-review.json",
+      "sha256": "173e8c37b144491610a3c58651fd0fb35c0f722eadb494b9ef26f4a3fb05da49",
+      "role": "secret_free_evidence_projection"
+    }
+  ],
+  "source_receipts_retained_outside_repository": true,
+  "source_receipts_rewritten": false,
+  "provider_calls_for_package": 0,
+  "credential_reads_for_package": 0,
+  "live_reservations_for_package": 0,
+  "spend_for_package_vnd": "0",
+  "production_verdict": "NO-GO"
+}

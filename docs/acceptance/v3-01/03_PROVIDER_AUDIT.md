@@ -1,6 +1,20 @@
 # V3-01 provider audit
 
-## Current RC-16 W1 checkpoint
+## RC-16 W1 Operation 1 quota result
+
+RC-16 Operation 1 passed exact-RC/dual-CI/tree, profile/prompt, scope/bundle,
+asset/RightsRecord, time and budget preflight, then dispatched exactly once. OpenAI returned HTTP
+429 with provider type `insufficient_quota` and code `credit_balance_exhausted` after response
+headers. Request ID and request/response hashes were retained; no transcript or usage/cost receipt
+was produced. Provider execution is FAILED and acceptance is `REVIEW_REQUIRED`.
+
+This proves the fail-closed billing/error path, durable one-attempt ledger, reservation
+reconciliation, circuit update, duplicate block and secret containment. It does not test W1 ASR
+quality. Operation 1 is consumed; Operation 2 remains locked. The owner-reported credit replenishment
+does not authorize another call. See
+[V3-01-26](63_V3_01_26_RC16_ASR_W1_QUOTA_EVIDENCE.md).
+
+## Prior RC-16 W1 checkpoint (before Operation 1)
 
 Executable RC-16 `55b22f773dc108f6c51a1b52db825b1caa8e8a51` contains the immutable W1 request
 profile and passed exact-main CI `34302351310` (5/5). The new bundle binds the same profile to both
@@ -167,7 +181,7 @@ distinct response hash. The runner stopped and the bundle was unmounted after ea
 | Capability | Current implementation | Current evidence | Real state | Required next gate/test |
 |---|---|---|---|---|
 | Trend sources | deterministic fixture plus contract-only YouTube/TikTok/Meta/RSS definitions | CI fixture normalization/clustering | `BLOCKED` | G-00/G-01; permitted source and real snapshot |
-| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` remains disabled | recorded/mock mapping, compatibility matrix, multi-asset rights parity, immutable RC-12/RC-13/RC-14 failure evidence, V3-01-21/V3-01-22 diagnostics, `EV-V3-RC14-ASR-GATE-001` and `EV-V3-ASR-ZERO-DURATION-SEMANTICS-001` | implemented/mock-tested `PASS`; RC-14 Operation 1 reached HTTP 200 with 20 segments/413 words but rejected 27 exact equality points and remains consumed/`REVIEW_REQUIRED`; the forensic source/mock contract now preserves only anchored provider boundary points while downstream positive-duration consumers stay blocked; real-provider remains `NOT_TESTED` | PR #50 merged and RC-15 locked; fresh governance rebind requires its own G-08, post-merge dual-CI/equality and separate Operation 1 authority; PRO-006 |
+| ASR | fixture default plus fail-closed OpenAI transcription adapter; owner-selected `whisper-1` and W1 profile remain disabled by default | recorded/mock mapping, compatibility matrix, multi-asset rights parity, timestamp/quality remediation, RC-16 gate evidence and `EV-V3-RC16-ASR-W1-OP1-QUOTA-001` | implemented/mock-tested `PASS`; RC-16 Operation 1 passed preflight but received HTTP 429 before transcript/quality evidence, is consumed/`REVIEW_REQUIRED`, and real-provider remains `NOT_TESTED` | evidence-only G-08, then explicit fresh two-slot lineage decision; Operation 2 remains locked; PRO-006 |
 | Vision | structured fixture plus fail-closed OpenAI `gpt-5-mini` Responses adapter | RC-10 operations 1 and 2 PASS with complete evidence; one attempt each, no retry/fallback; 2/2 consecutive PASS; PR #39 and exact-main CI complete | real-provider `PASS`; production path and quality remain `BLOCKED` | standalone Vision acceptance closed; no Operation 3; PRO-001 real-provider sub-scope complete |
 | Stock | provider protocol and synthetic fixture | rights rejection/ranking tests | `BLOCKED` | G-01/G-02/G-03; PRO-005 |
 | AI image | contract/fixture media resolver | mock artifact/provenance tests | `BLOCKED` | G-01/G-02/G-03; PRO-003 |

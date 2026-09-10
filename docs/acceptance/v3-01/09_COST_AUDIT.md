@@ -31,6 +31,8 @@
 | RC-14 ASR Operation 1 timestamp-validation failure | VND | 500 operation / 1,250 window | 500 safety charge; 0 reserved after reconciliation | unknown | 1 provider call; HTTP 200; no accepted usage/cost receipt |
 | V3-01-22 zero-duration semantics forensic/remediation | VND | 0 | 0 | 0 | 0 calls; 0 credential reads |
 | RC-15 ASR governance rebind | VND | checked-in runtime budget 0; proposed conditional 1,250 window / 500 operation | 0 | 0 | 0 calls; 0 credential reads |
+| RC-16 ASR W1 Operation 1 quota failure | VND | 500 operation / 1,250 window | 500 safety charge; 0 reserved after reconciliation | unknown | 1 provider request; HTTP 429; no usage/cost receipt |
+| V3-01-26 quota evidence package | VND | 0 | 0 | 0 | 0 calls; 0 credential reads |
 
 RC-15 scope `fee7086afeac45fa38c225365ceeae293f1a80aea1eba73bb261ce34aca350aa`
 rebinds the unchanged 162 VND/minute accounting rate and 500/1,250 VND limits to the proposed
