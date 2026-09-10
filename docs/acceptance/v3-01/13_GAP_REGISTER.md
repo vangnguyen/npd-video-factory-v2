@@ -1,5 +1,19 @@
 # Gap register
 
+## V3-01-27 acceptance-lineage remediation — no gap closure
+
+PR #56 is merged at governance `main` `c0f051c866d329544486e5e757349f0543ace980`; RC-16's
+executable tree remains unchanged and its quota-failed W1 lineage is retired. V3-01-27 replaces the
+single-lineage-per-RC identity assumption with versioned, canonical lineage binding while preserving
+historical v1 evidence byte-for-byte. New v2 bundles reject missing, tampered, stale, cross-scope
+or old-lineage identities before reservation and persist the lineage in operation/attempt evidence.
+
+This is source/mock remediation only. It closes no acceptance axis, creates no RC or operation
+authority and makes 0 provider calls, 0 credential reads, 0 live reservations and 0 VND spend.
+GAP-003/GAP-010/GAP-013 remain IN_PROGRESS; ASR remains 0/2 PASS, Vision remains 2/2 PASS and
+Production remains NO-GO. See
+[V3-01-27](64_V3_01_27_ACCEPTANCE_LINEAGE_IDENTITY_CONTRACT.md); Owner G-08 is pending.
+
 ## RC-16 W1 quota result — no gap closure
 
 Operation 1 passed safety preflight but received HTTP 429 `credit_balance_exhausted` before a

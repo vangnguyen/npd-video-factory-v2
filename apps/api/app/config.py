@@ -152,6 +152,7 @@ class Settings(BaseSettings):
     provider_verified_gate_bundle_sha256: str = ""
     provider_gate_expected_rc_commit: str = ""
     provider_gate_expected_rc_tag: str = ""
+    provider_gate_expected_acceptance_lineage_id: str = ""
     provider_budget_currency: str = "VND"
     provider_per_operation_limit_vnd: Decimal = Decimal("0")
     provider_daily_limit_vnd: Decimal = Decimal("0")
@@ -556,6 +557,9 @@ class Settings(BaseSettings):
                     expected_bundle_sha256=self.provider_verified_gate_bundle_sha256,
                     expected_rc_commit=self.provider_gate_expected_rc_commit,
                     expected_rc_tag=self.provider_gate_expected_rc_tag,
+                    expected_acceptance_lineage_id=(
+                        self.provider_gate_expected_acceptance_lineage_id or None
+                    ),
                 )
                 acceptance_limits = {
                     "provider_key": "openai-transcription",

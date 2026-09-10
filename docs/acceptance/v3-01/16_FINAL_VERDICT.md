@@ -1,5 +1,22 @@
 # V3-01 consolidation checkpoint verdict
 
+## Current checkpoint — 2026-09-11, V3-01-27 source remediation
+
+PR #56 merged as governance `main` `c0f051c866d329544486e5e757349f0543ace980`; exact-main CI
+`34500843723` passed 5/5 and the executable tree remained RC-16. RC-16's original W1 lineage is
+retired: Operation 1 remains consumed/failed/`REVIEW_REQUIRED`, Operation 2 remains locked and the
+owner-reported credit replenishment grants no runtime authority.
+
+V3-01-27 adds a versioned, canonical acceptance-lineage identity so a future RC can host multiple
+independent two-slot lineages without reusing an old operation. Historical v1 evidence remains
+unchanged; new v2 bundles bind lineage into scope, operations, context and durable evidence and fail
+closed before reservation on any mismatch. This source draft creates no RC, bundle/window or live
+authority and performs 0 provider calls, 0 credential reads, 0 reservations and 0 VND spend.
+
+ASR remains **0/2 PASS**, Vision remains **2/2 PASS**, production-path and human-quality remain
+`NOT_TESTED`, and Production remains **NO-GO**. The next boundary is Owner G-08 for the draft PR;
+only after an approved merge plus exact-main regression may a new RC be locked.
+
 ## Current checkpoint — 2026-09-10, RC-16 W1 quota evidence
 
 RC-16 Operation 1 passed full preflight and made one OpenAI request, but HTTP 429
@@ -61,11 +78,11 @@ Their pre-call authority/status wording is historical, not permission to execute
 
 ```text
 VERDICT: NO-GO
-SCOPE: locked RC-16 plus fresh zero-call W1 ASR governance rebind; Vision 2/2 real-provider PASS; ASR 0/2 real-provider NOT_TESTED
-RELEASE CANDIDATE: RC-16 55b22f773dc108f6c51a1b52db825b1caa8e8a51 LOCKED NO-GO; NOT DEPLOYED
-LATEST EVIDENCE: EV-V3-RC16-ASR-W1-GATE-001; governance/offline only; 0 calls/0 credential reads/0 reservation/0 VND
-DATE: 2026-09-09
-OWNER DECISION: DECISIONS THROUGH PR #54 CONSUMED; RC-16 GOVERNANCE DRAFT REQUIRES G-08; RC-16 OP1 NOT APPROVED; OP2 LOCKED
+SCOPE: V3-01-27 source-only acceptance-lineage remediation; Vision 2/2 real-provider PASS; ASR 0/2 real-provider NOT_TESTED
+RELEASE CANDIDATE: RC-16 55b22f773dc108f6c51a1b52db825b1caa8e8a51 remains historical/retired for further W1 execution; NOT DEPLOYED
+LATEST EVIDENCE: V3-01-27 contract/mock validation only; 0 calls/0 credential reads/0 reservation/0 VND
+DATE: 2026-09-11
+OWNER DECISION: DECISIONS THROUGH PR #56 CONSUMED; V3-01-27 DRAFT REQUIRES A NEW G-08; NO RC OR OPERATION AUTHORITY
 ```
 
 Feature freeze is active. The V2-11 baseline is healthy in deterministic CI and has strong

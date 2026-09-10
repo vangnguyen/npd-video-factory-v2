@@ -12,7 +12,7 @@ from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Any, Generic, Literal, TypeVar
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, StrictInt, field_validator, model_validator
 
 from .asr_prompt_profile import (
     AsrPromptProfile,
@@ -103,7 +103,115 @@ _SECRET_EVIDENCE_PATTERN = re.compile(
     r"(?i)(?:sk-[A-Za-z0-9_-]{8,}|bearer\s+\S+|(?:api[_-]?key|token|password|secret)\s*[:=]\s*\S+)"
 )
 _V3_RC_TAG_PATTERN = re.compile(r"^vf-v3-01-(rc[1-9][0-9]*)$")
+_ACCEPTANCE_LINEAGE_ID_PATTERN = re.compile(
+    r"^al-(?P<sequence>[0-9]{4})-(?P<digest>[a-f0-9]{64})$"
+)
 RC_BOUND_OPERATION_SLOTS = (1, 2)
+
+
+def derive_acceptance_lineage_id(
+    *,
+    rc_tag: str,
+    rc_commit: str,
+    provider_key: str,
+    model: str,
+    capability: str,
+    sequence: int,
+) -> str:
+    """Derive a canonical lineage identity without accepting a free-form nonce."""
+
+    if _V3_RC_TAG_PATTERN.fullmatch(rc_tag) is None:
+        raise ValueError("acceptance lineage requires an exact V3-01 RC tag")
+    if re.fullmatch(r"[a-f0-9]{40}", rc_commit) is None:
+        raise ValueError("acceptance lineage requires an exact lowercase RC commit")
+    if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{1,119}", provider_key):
+        raise ValueError("acceptance lineage requires a canonical provider key")
+    if not model or len(model) > 160:
+        raise ValueError("acceptance lineage requires a bounded model identifier")
+    if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{1,119}", capability):
+        raise ValueError("acceptance lineage requires a canonical capability")
+    if (
+        isinstance(sequence, bool)
+        or not isinstance(sequence, int)
+        or not 1 <= sequence <= 9999
+    ):
+        raise ValueError("acceptance lineage sequence must be an integer from 1 through 9999")
+    payload = {
+        "contract": "v3-01-acceptance-lineage-v1",
+        "rc_tag": rc_tag,
+        "rc_commit": rc_commit,
+        "provider_key": provider_key,
+        "model": model,
+        "capability": capability,
+        "sequence": sequence,
+    }
+    encoded = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return f"al-{sequence:04d}-{hashlib.sha256(encoded).hexdigest()}"
+
+
+def validate_acceptance_lineage_id(
+    acceptance_lineage_id: str,
+    *,
+    rc_tag: str,
+    rc_commit: str,
+    provider_key: str,
+    model: str,
+    capability: str,
+    sequence: int,
+) -> str:
+    """Reject malformed, tampered, stale or cross-scope lineage identities."""
+
+    match = _ACCEPTANCE_LINEAGE_ID_PATTERN.fullmatch(acceptance_lineage_id)
+    if match is None or int(match.group("sequence")) != sequence:
+        raise ValueError("acceptance lineage ID is not canonical for its sequence")
+    expected = derive_acceptance_lineage_id(
+        rc_tag=rc_tag,
+        rc_commit=rc_commit,
+        provider_key=provider_key,
+        model=model,
+        capability=capability,
+        sequence=sequence,
+    )
+    if not hmac.compare_digest(acceptance_lineage_id, expected):
+        raise ValueError("acceptance lineage ID does not match the exact execution scope")
+    return acceptance_lineage_id
+
+
+def validate_acceptance_lineage_contract(
+    *,
+    bundle_version: int,
+    acceptance_lineage_sequence: int | None,
+    acceptance_lineage_id: str | None,
+    rc_tag: str,
+    rc_commit: str,
+    provider_key: str,
+    model: str,
+    capability: str,
+) -> str | None:
+    """Version the lineage contract while preserving immutable v1 evidence."""
+
+    if bundle_version == 1:
+        if acceptance_lineage_sequence is not None or acceptance_lineage_id is not None:
+            raise ValueError("historical v1 gates cannot claim an acceptance lineage")
+        return None
+    if bundle_version != 2:
+        raise ValueError("acceptance lineage requires a supported gate-bundle version")
+    if acceptance_lineage_sequence is None or acceptance_lineage_id is None:
+        raise ValueError("v2 gates require a canonical acceptance lineage")
+    return validate_acceptance_lineage_id(
+        acceptance_lineage_id,
+        rc_tag=rc_tag,
+        rc_commit=rc_commit,
+        provider_key=provider_key,
+        model=model,
+        capability=capability,
+        sequence=acceptance_lineage_sequence,
+    )
 
 
 def derive_rc_bound_operation_key(
@@ -112,6 +220,7 @@ def derive_rc_bound_operation_key(
     provider_key: str,
     capability: str,
     slot: int,
+    acceptance_lineage_id: str | None = None,
 ) -> str:
     """Derive one immutable acceptance operation ID from its exact RC scope."""
 
@@ -124,13 +233,27 @@ def derive_rc_bound_operation_key(
         raise ValueError("operation ID requires a canonical provider key")
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,119}", capability):
         raise ValueError("operation ID requires a canonical capability")
+    if (
+        acceptance_lineage_id is not None
+        and _ACCEPTANCE_LINEAGE_ID_PATTERN.fullmatch(acceptance_lineage_id) is None
+    ):
+        raise ValueError("operation ID requires a canonical acceptance lineage ID")
 
     provider_capability = (
         provider_key
         if provider_key.endswith(f"-{capability}")
         else f"{provider_key}-{capability}"
     )
-    return f"v3-01-{rc_match.group(1)}-{provider_capability}-call-{slot:02d}"
+    lineage_segment = (
+        f"-{acceptance_lineage_id}" if acceptance_lineage_id is not None else ""
+    )
+    operation_key = (
+        f"v3-01-{rc_match.group(1)}-{provider_capability}"
+        f"{lineage_segment}-call-{slot:02d}"
+    )
+    if len(operation_key) > 199:
+        raise ValueError("derived operation ID exceeds the durable contract limit")
+    return operation_key
 
 
 def utc_now() -> datetime:
@@ -265,6 +388,7 @@ class ProviderAllowedOperation(StrictModel):
 
 
 class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
+    gate_bundle_version: Literal[1, 2] = 1
     bundle_id: str = Field(pattern=r"^V3-01-GATE-[A-Za-z0-9._-]{3,120}$")
     bundle_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     rc_tag: str = Field(pattern=r"^vf-v3-01-rc[0-9]+$")
@@ -272,6 +396,11 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
     provider_key: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{1,119}$")
     model: str = Field(min_length=1, max_length=160)
     capability: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{1,119}$")
+    acceptance_lineage_sequence: StrictInt | None = Field(default=None, ge=1, le=9999)
+    acceptance_lineage_id: str | None = Field(
+        default=None,
+        pattern=r"^al-[0-9]{4}-[a-f0-9]{64}$",
+    )
     credential_alias: str = Field(min_length=1, max_length=240)
     valid_from_utc: datetime
     expires_at_utc: datetime
@@ -331,6 +460,16 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
     @model_validator(mode="after")
     def validate_window_and_operations(self) -> "ProviderExecutionGateScope":
         _validate_prompt_capability(self)
+        validate_acceptance_lineage_contract(
+            bundle_version=self.gate_bundle_version,
+            acceptance_lineage_sequence=self.acceptance_lineage_sequence,
+            acceptance_lineage_id=self.acceptance_lineage_id,
+            rc_tag=self.rc_tag,
+            rc_commit=self.rc_commit,
+            provider_key=self.provider_key,
+            model=self.model,
+            capability=self.capability,
+        )
         start = self.valid_from_utc
         expiry = self.expires_at_utc
         if start.tzinfo is None or expiry.tzinfo is None:
@@ -353,6 +492,7 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
                 provider_key=self.provider_key,
                 capability=self.capability,
                 slot=slot,
+                acceptance_lineage_id=self.acceptance_lineage_id,
             )
             for slot in RC_BOUND_OPERATION_SLOTS
         )
@@ -498,6 +638,10 @@ class ProviderRightsDecision(StrictModel):
 
 class ProviderCallContext(StrictModel):
     operation_key: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:/-]{2,199}$")
+    acceptance_lineage_id: str | None = Field(
+        default=None,
+        pattern=r"^al-[0-9]{4}-[a-f0-9]{64}$",
+    )
     workspace_id: str = Field(min_length=3, max_length=80)
     project_id: str | None = Field(default=None, max_length=80)
     job_id: str | None = Field(default=None, max_length=80)
@@ -886,6 +1030,10 @@ class ProviderExecutionTrace:
 class ProviderAttemptRecord(StrictModel):
     usage_id: str
     operation_key: str
+    acceptance_lineage_id: str | None = Field(
+        default=None,
+        pattern=r"^al-[0-9]{4}-[a-f0-9]{64}$",
+    )
     provider_key: str
     capability: str
     attempt: int = Field(ge=1)
@@ -922,6 +1070,10 @@ class ProviderArtifactEvidence(StrictModel):
 
 class ProviderExecutionReceipt(StrictModel):
     operation_key: str
+    acceptance_lineage_id: str | None = Field(
+        default=None,
+        pattern=r"^al-[0-9]{4}-[a-f0-9]{64}$",
+    )
     provider_key: str
     capability: str
     status: Literal["succeeded", "failed"]
@@ -1271,6 +1423,8 @@ class ProviderSafetyController:
             return "MODEL_NOT_AUTHORIZED"
         if context.capability != scope.capability:
             return "CAPABILITY_NOT_AUTHORIZED"
+        if context.acceptance_lineage_id != scope.acceptance_lineage_id:
+            return "ACCEPTANCE_LINEAGE_MISMATCH"
         if context.credential_alias != scope.credential_alias:
             return "CREDENTIAL_ALIAS_NOT_AUTHORIZED"
         operation = scope.operation_for(context.operation_key)
@@ -1343,6 +1497,7 @@ class ProviderSafetyController:
                 value=value,
                 receipt=ProviderExecutionReceipt(
                     operation_key=context.operation_key,
+                    acceptance_lineage_id=context.acceptance_lineage_id,
                     provider_key=context.provider_key,
                     capability=context.capability,
                     status="succeeded",
@@ -1629,6 +1784,7 @@ class ProviderSafetyController:
         return ProviderAttemptRecord(
             usage_id=usage_id,
             operation_key=context.operation_key,
+            acceptance_lineage_id=context.acceptance_lineage_id,
             provider_key=context.provider_key,
             capability=context.capability,
             attempt=attempt,
@@ -1713,6 +1869,7 @@ class ProviderSafetyController:
             alerts = self._budget_alerts(budget_day)
             return ProviderExecutionReceipt(
                 operation_key=context.operation_key,
+                acceptance_lineage_id=context.acceptance_lineage_id,
                 provider_key=context.provider_key,
                 capability=context.capability,
                 status="succeeded" if succeeded else "failed",
@@ -1999,6 +2156,14 @@ def provider_safety_policy_from_settings(settings: Any) -> ProviderSafetyPolicy:
             expected_bundle_sha256=settings.provider_verified_gate_bundle_sha256,
             expected_rc_commit=settings.provider_gate_expected_rc_commit,
             expected_rc_tag=settings.provider_gate_expected_rc_tag,
+            expected_acceptance_lineage_id=(
+                getattr(
+                    settings,
+                    "provider_gate_expected_acceptance_lineage_id",
+                    "",
+                )
+                or None
+            ),
         )
     gate_loaded = execution_gate is not None
 

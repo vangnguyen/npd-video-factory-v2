@@ -1,0 +1,84 @@
+{
+  "contract_id": "V3-01-27-ACCEPTANCE-LINEAGE-IDENTITY",
+  "contract_version": 2,
+  "status": "SOURCE_ONLY_G08_PENDING",
+  "identity": {
+    "field": "acceptance_lineage_id",
+    "sequence_field": "acceptance_lineage_sequence",
+    "pattern": "^al-[0-9]{4}-[a-f0-9]{64}$",
+    "sequence_minimum": 1,
+    "sequence_maximum": 9999,
+    "derivation_contract": "v3-01-acceptance-lineage-v1",
+    "canonical_json": {
+      "encoding": "UTF-8",
+      "ensure_ascii": false,
+      "sort_keys": true,
+      "separators": [",", ":"]
+    },
+    "digest": "SHA-256",
+    "digest_inputs": [
+      "contract",
+      "rc_tag",
+      "rc_commit",
+      "provider_key",
+      "model",
+      "capability",
+      "sequence"
+    ],
+    "representation": "al-{sequence:04d}-{sha256(canonical_identity_payload)}"
+  },
+  "operation_identity": {
+    "slots": [1, 2],
+    "v2_representation": "v3-01-{rc}-{provider_capability}-{acceptance_lineage_id}-call-{slot:02d}",
+    "maximum_length": 199,
+    "same_rc_multiple_lineages": true,
+    "cross_lineage_reuse": false
+  },
+  "bindings": [
+    "gate_bundle",
+    "execution_scope_sha256",
+    "allowed_operation_id",
+    "provider_call_context",
+    "provider_attempt_receipt",
+    "provider_execution_receipt",
+    "durable_operation_ledger",
+    "durable_attempt_ledger"
+  ],
+  "runtime_pin": "PROVIDER_GATE_EXPECTED_ACCEPTANCE_LINEAGE_ID",
+  "fail_closed": [
+    "missing_lineage",
+    "tampered_lineage",
+    "stale_lineage",
+    "wrong_rc_tag",
+    "wrong_rc_commit",
+    "wrong_provider",
+    "wrong_model",
+    "wrong_capability",
+    "wrong_sequence",
+    "wrong_operation_slot",
+    "old_lineage_operation_reuse",
+    "scope_hash_mismatch"
+  ],
+  "historical_compatibility": {
+    "bundle_version_1": "lineage fields absent; historical IDs and scope hashes remain byte-compatible",
+    "bundle_version_2": "lineage sequence and canonical lineage ID are mandatory",
+    "historical_receipts_mutated": false,
+    "historical_operation_ids_mutated": false,
+    "legacy_ledger_lineage_value": null
+  },
+  "unchanged_controls": {
+    "budget": true,
+    "timeouts": true,
+    "rights": true,
+    "w1_prompt_profile": true,
+    "quality_thresholds": true
+  },
+  "safety": {
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "live_reservations": 0,
+    "spend_vnd": "0",
+    "runtime_authority_granted": false,
+    "production_verdict": "NO-GO"
+  }
+}

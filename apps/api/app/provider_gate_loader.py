@@ -9,7 +9,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, ValidationError, field_validator, model_validator
+from pydantic import Field, StrictInt, ValidationError, field_validator, model_validator
 
 from .asr_prompt_profile import (
     AsrPromptProfile,
@@ -24,6 +24,8 @@ from .provider_safety import (
     ProviderTimeoutEnvelope,
     RC_BOUND_OPERATION_SLOTS,
     derive_rc_bound_operation_key,
+    validate_acceptance_lineage_contract,
+    validate_acceptance_lineage_id,
 )
 
 
@@ -61,6 +63,8 @@ def execution_scope_sha256(
     rights_record_sha256: str | None = None,
     rights_record_sha256s: tuple[str, ...] = (),
     asr_prompt_profile: AsrPromptProfile | dict[str, object] | None = None,
+    acceptance_lineage_sequence: int | None = None,
+    acceptance_lineage_id: str | None = None,
 ) -> str:
     """Hash every mutable field that an owner must approve for one live window."""
 
@@ -68,6 +72,8 @@ def execution_scope_sha256(
         raise ValueError(
             "execution scope requires exactly one single- or multi-rights hash binding"
         )
+    if (acceptance_lineage_sequence is None) != (acceptance_lineage_id is None):
+        raise ValueError("execution scope requires both lineage sequence and lineage ID")
     payload: dict[str, object] = {
         "rc_tag": rc_tag,
         "rc_commit": rc_commit,
@@ -86,6 +92,22 @@ def execution_scope_sha256(
         payload["rights_record_sha256"] = rights_record_sha256
     else:
         payload["rights_record_sha256s"] = list(rights_record_sha256s)
+    if acceptance_lineage_id is not None:
+        assert acceptance_lineage_sequence is not None
+        validate_acceptance_lineage_id(
+            acceptance_lineage_id,
+            rc_tag=rc_tag,
+            rc_commit=rc_commit,
+            provider_key=provider_key,
+            model=model,
+            capability=capability,
+            sequence=acceptance_lineage_sequence,
+        )
+        payload["acceptance_lineage"] = {
+            "contract_version": 1,
+            "sequence": acceptance_lineage_sequence,
+            "acceptance_lineage_id": acceptance_lineage_id,
+        }
     profile = validate_prompt_profile(asr_prompt_profile)
     if profile is not None:
         if (provider_key, model, capability) != (
@@ -420,13 +442,18 @@ def validate_operation_authority_limits(
 
 
 class ProviderGateBundle(StrictModel):
-    version: Literal[1] = 1
+    version: Literal[1, 2] = 1
     bundle_id: str = Field(pattern=r"^V3-01-GATE-[A-Za-z0-9._-]{3,120}$")
     rc_tag: str = Field(pattern=r"^vf-v3-01-rc[0-9]+$")
     rc_commit: str = Field(pattern=r"^[a-f0-9]{40}$")
     provider_key: Literal["openai-vision"]
     model: Literal["gpt-5-mini"]
     capability: Literal["vision"]
+    acceptance_lineage_sequence: StrictInt | None = Field(default=None, ge=1, le=9999)
+    acceptance_lineage_id: str | None = Field(
+        default=None,
+        pattern=r"^al-[0-9]{4}-[a-f0-9]{64}$",
+    )
     credential_alias: Literal["secret://openai/codex-video"]
     valid_from_utc: datetime
     expires_at_utc: datetime
@@ -446,6 +473,16 @@ class ProviderGateBundle(StrictModel):
 
     @model_validator(mode="after")
     def validate_approval_scope(self) -> "ProviderGateBundle":
+        validate_acceptance_lineage_contract(
+            bundle_version=self.version,
+            acceptance_lineage_sequence=self.acceptance_lineage_sequence,
+            acceptance_lineage_id=self.acceptance_lineage_id,
+            rc_tag=self.rc_tag,
+            rc_commit=self.rc_commit,
+            provider_key=self.provider_key,
+            model=self.model,
+            capability=self.capability,
+        )
         approvals = {
             "G-01": self.credential_approval.record,
             "G-02": self.budget_approval.record,
@@ -511,6 +548,7 @@ class ProviderGateBundle(StrictModel):
                 provider_key=self.provider_key,
                 capability=self.capability,
                 slot=slot,
+                acceptance_lineage_id=self.acceptance_lineage_id,
             )
             for slot in RC_BOUND_OPERATION_SLOTS
         )
@@ -534,6 +572,8 @@ class ProviderGateBundle(StrictModel):
             budget=self.budget,
             rights_record_sha256=self.rights_record.record_sha256,
             allowed_operations=self.allowed_operations,
+            acceptance_lineage_sequence=self.acceptance_lineage_sequence,
+            acceptance_lineage_id=self.acceptance_lineage_id,
         )
         if any(
             scope_hash not in record.artifact_or_commit_hashes
@@ -546,13 +586,18 @@ class ProviderGateBundle(StrictModel):
 class OpenAIAsrGateBundle(StrictModel):
     """Strict two-input ASR gate shape, with no checked-in instance or authority."""
 
-    version: Literal[1] = 1
+    version: Literal[1, 2] = 1
     bundle_id: str = Field(pattern=r"^V3-01-GATE-[A-Za-z0-9._-]{3,120}$")
     rc_tag: str = Field(pattern=r"^vf-v3-01-rc[0-9]+$")
     rc_commit: str = Field(pattern=r"^[a-f0-9]{40}$")
     provider_key: Literal["openai-transcription"]
     model: Literal["whisper-1", "gpt-transcribe", "gpt-4o-transcribe"]
     capability: Literal["asr"]
+    acceptance_lineage_sequence: StrictInt | None = Field(default=None, ge=1, le=9999)
+    acceptance_lineage_id: str | None = Field(
+        default=None,
+        pattern=r"^al-[0-9]{4}-[a-f0-9]{64}$",
+    )
     credential_alias: str = Field(min_length=1, max_length=240)
     valid_from_utc: datetime
     expires_at_utc: datetime
@@ -585,6 +630,16 @@ class OpenAIAsrGateBundle(StrictModel):
 
     @model_validator(mode="after")
     def validate_asr_scope(self) -> "OpenAIAsrGateBundle":
+        validate_acceptance_lineage_contract(
+            bundle_version=self.version,
+            acceptance_lineage_sequence=self.acceptance_lineage_sequence,
+            acceptance_lineage_id=self.acceptance_lineage_id,
+            rc_tag=self.rc_tag,
+            rc_commit=self.rc_commit,
+            provider_key=self.provider_key,
+            model=self.model,
+            capability=self.capability,
+        )
         # Capability evidence currently qualifies whisper-1, but this is not a
         # model approval: an exact G-01 record is still mandatory below.
         if self.model != "whisper-1":
@@ -666,6 +721,7 @@ class OpenAIAsrGateBundle(StrictModel):
                 provider_key=self.provider_key,
                 capability=self.capability,
                 slot=slot,
+                acceptance_lineage_id=self.acceptance_lineage_id,
             )
             for slot in RC_BOUND_OPERATION_SLOTS
         )
@@ -691,6 +747,8 @@ class OpenAIAsrGateBundle(StrictModel):
             rights_record_sha256s=rights_hashes,
             allowed_operations=self.allowed_operations,
             asr_prompt_profile=self.asr_prompt_profile,
+            acceptance_lineage_sequence=self.acceptance_lineage_sequence,
+            acceptance_lineage_id=self.acceptance_lineage_id,
         )
         if any(
             scope_hash not in record.artifact_or_commit_hashes
@@ -738,6 +796,8 @@ def asr_execution_scope_sha256(scope: ProviderExecutionGateScope) -> str:
         rights_record_sha256s=scope.rights_record_sha256s,
         allowed_operations=scope.allowed_operations,
         asr_prompt_profile=scope.asr_prompt_profile,
+        acceptance_lineage_sequence=scope.acceptance_lineage_sequence,
+        acceptance_lineage_id=scope.acceptance_lineage_id,
     )
 
 
@@ -747,6 +807,7 @@ def load_verified_provider_gate_bundle(
     expected_bundle_sha256: str,
     expected_rc_commit: str,
     expected_rc_tag: str,
+    expected_acceptance_lineage_id: str | None = None,
 ) -> ProviderExecutionGateScope:
     if not expected_bundle_sha256 or len(expected_bundle_sha256) != 64:
         raise ProviderGateBundleError("a lowercase expected gate-bundle SHA-256 is required")
@@ -773,6 +834,38 @@ def load_verified_provider_gate_bundle(
         raise ProviderGateBundleError("verified provider gate bundle is invalid") from exc
     if bundle.rc_commit != expected_rc_commit or bundle.rc_tag != expected_rc_tag:
         raise ProviderGateBundleError("verified provider gate bundle does not match the exact RC")
+    if bundle.version == 2:
+        if not expected_acceptance_lineage_id:
+            raise ProviderGateBundleError(
+                "a v2 provider gate requires an expected acceptance lineage ID"
+            )
+        assert bundle.acceptance_lineage_id is not None
+        assert bundle.acceptance_lineage_sequence is not None
+        try:
+            validate_acceptance_lineage_id(
+                expected_acceptance_lineage_id,
+                rc_tag=bundle.rc_tag,
+                rc_commit=bundle.rc_commit,
+                provider_key=bundle.provider_key,
+                model=bundle.model,
+                capability=bundle.capability,
+                sequence=bundle.acceptance_lineage_sequence,
+            )
+        except ValueError as exc:
+            raise ProviderGateBundleError(
+                "expected acceptance lineage is invalid for the exact execution scope"
+            ) from exc
+        if not _constant_time_hash_equal(
+            expected_acceptance_lineage_id,
+            bundle.acceptance_lineage_id,
+        ):
+            raise ProviderGateBundleError(
+                "verified provider gate bundle does not match the expected acceptance lineage"
+            )
+    elif expected_acceptance_lineage_id:
+        raise ProviderGateBundleError(
+            "historical v1 provider gates cannot satisfy a lineage-bound runtime"
+        )
 
     approval_hashes = {
         "G-01": bundle.credential_approval.record_sha256,
@@ -780,6 +873,7 @@ def load_verified_provider_gate_bundle(
         "G-03": bundle.rights_approval.record_sha256,
     }
     common = {
+        "gate_bundle_version": bundle.version,
         "bundle_id": bundle.bundle_id,
         "bundle_sha256": actual_bundle_sha256,
         "rc_tag": bundle.rc_tag,
@@ -787,6 +881,8 @@ def load_verified_provider_gate_bundle(
         "provider_key": bundle.provider_key,
         "model": bundle.model,
         "capability": bundle.capability,
+        "acceptance_lineage_sequence": bundle.acceptance_lineage_sequence,
+        "acceptance_lineage_id": bundle.acceptance_lineage_id,
         "credential_alias": bundle.credential_alias,
         "valid_from_utc": bundle.valid_from_utc,
         "expires_at_utc": bundle.expires_at_utc,
@@ -816,6 +912,8 @@ def load_verified_provider_gate_bundle(
             budget=bundle.budget,
             rights_record_sha256=bundle.rights_record.record_sha256,
             allowed_operations=bundle.allowed_operations,
+            acceptance_lineage_sequence=bundle.acceptance_lineage_sequence,
+            acceptance_lineage_id=bundle.acceptance_lineage_id,
         )
         authority_limits = ProviderOperationAuthorityLimits.from_gate_budget(bundle.budget)
         return ProviderExecutionGateScope(
@@ -849,6 +947,8 @@ def load_verified_provider_gate_bundle(
         rights_record_sha256s=rights_hashes,
         allowed_operations=bundle.allowed_operations,
         asr_prompt_profile=bundle.asr_prompt_profile,
+        acceptance_lineage_sequence=bundle.acceptance_lineage_sequence,
+        acceptance_lineage_id=bundle.acceptance_lineage_id,
     )
     return ProviderExecutionGateScope(
         **common,

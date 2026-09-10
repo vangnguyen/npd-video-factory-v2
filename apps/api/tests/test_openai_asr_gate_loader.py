@@ -7,8 +7,10 @@ from decimal import Decimal
 
 import pytest
 from pydantic import ValidationError
+from sqlalchemy import func, select
 
 from app.config import Settings
+from app.db import Base, create_engine, create_session_factory
 from app.provider_gate_loader import (
     HashedApprovalRecord,
     HashedRightsRecord,
@@ -24,9 +26,15 @@ from app.provider_safety import (
     ProviderCallContext,
     ProviderRightsEvidence,
     ProviderSafetyController,
+    derive_acceptance_lineage_id,
     derive_rc_bound_operation_key,
     provider_safety_policy_from_settings,
+    validate_acceptance_lineage_id,
 )
+from app.provider_safety_db import ProviderSafetyAttemptORM, ProviderSafetyOperationORM
+from app.provider_safety_durable import DurableProviderSafetyController
+from app.provider_safety_repository import ProviderSafetyRepository
+import app.provider_safety_db  # noqa: F401
 
 
 RC_COMMIT = "b" * 40
@@ -380,3 +388,350 @@ def test_asr_loader_rejects_hash_and_exact_rc_drift(tmp_path) -> None:
             expected_rc_commit="d" * 40,
             expected_rc_tag=RC_TAG,
         )
+
+
+def _lineage_bundle(sequence: int = 2) -> OpenAIAsrGateBundle:
+    budget = _budget()
+    rights = tuple(
+        _rights(slot, asset_id, asset_hash)
+        for slot, (asset_id, asset_hash) in enumerate(ASSET_BINDINGS, start=1)
+    )
+    hashed_rights = tuple(
+        HashedRightsRecord(record_sha256=canonical_sha256(record), record=record)
+        for record in rights
+    )
+    lineage_id = derive_acceptance_lineage_id(
+        rc_tag=RC_TAG,
+        rc_commit=RC_COMMIT,
+        provider_key="openai-transcription",
+        model="whisper-1",
+        capability="asr",
+        sequence=sequence,
+    )
+    operations = tuple(
+        ProviderAllowedOperation(
+            operation_key=derive_rc_bound_operation_key(
+                rc_tag=RC_TAG,
+                provider_key="openai-transcription",
+                capability="asr",
+                slot=slot,
+                acceptance_lineage_id=lineage_id,
+            ),
+            slot=slot,
+            operation="flow_a_asr",
+            asset_id=asset_id,
+            asset_hash=asset_hash,
+        )
+        for slot, (asset_id, asset_hash) in enumerate(ASSET_BINDINGS, start=1)
+    )
+    provider_hash = canonical_sha256(
+        {
+            "provider_key": "openai-transcription",
+            "model": "whisper-1",
+            "capability": "asr",
+            "credential_alias": "secret://openai/codex-video",
+        }
+    )
+    rights_hashes = tuple(item.record_sha256 for item in hashed_rights)
+    scope_hash = execution_scope_sha256(
+        rc_tag=RC_TAG,
+        rc_commit=RC_COMMIT,
+        provider_key="openai-transcription",
+        model="whisper-1",
+        capability="asr",
+        credential_alias="secret://openai/codex-video",
+        valid_from_utc=ACTIVATES_AT,
+        expires_at_utc=EXPIRES_AT,
+        budget=budget,
+        rights_record_sha256s=rights_hashes,
+        allowed_operations=operations,
+        acceptance_lineage_sequence=sequence,
+        acceptance_lineage_id=lineage_id,
+    )
+    return OpenAIAsrGateBundle(
+        version=2,
+        bundle_id="V3-01-GATE-RC11-OPENAI-ASR-LINEAGE-002",
+        rc_tag=RC_TAG,
+        rc_commit=RC_COMMIT,
+        provider_key="openai-transcription",
+        model="whisper-1",
+        capability="asr",
+        acceptance_lineage_sequence=sequence,
+        acceptance_lineage_id=lineage_id,
+        credential_alias="secret://openai/codex-video",
+        valid_from_utc=ACTIVATES_AT,
+        expires_at_utc=EXPIRES_AT,
+        budget=budget,
+        credential_approval=_approval(
+            "V3-01-APP-211", "G-01", [RC_COMMIT, provider_hash, scope_hash]
+        ),
+        budget_approval=_approval(
+            "V3-01-APP-212", "G-02", [RC_COMMIT, canonical_sha256(budget), scope_hash]
+        ),
+        rights_approval=_approval(
+            "V3-01-APP-213", "G-03", [RC_COMMIT, *rights_hashes, scope_hash]
+        ),
+        rights_records=hashed_rights,
+        allowed_operations=operations,
+    )
+
+
+def _write_lineage_bundle(tmp_path, bundle: OpenAIAsrGateBundle | None = None):
+    value = bundle or _lineage_bundle()
+    raw = json.dumps(
+        value.model_dump(mode="json"),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    path = tmp_path / "asr-provider-gate-lineage-v2.json"
+    path.write_bytes(raw)
+    return path, hashlib.sha256(raw).hexdigest(), value
+
+
+def _lineage_context(bundle: OpenAIAsrGateBundle, slot: int, **updates: object):
+    lineage_id = bundle.acceptance_lineage_id
+    assert lineage_id is not None
+    values: dict[str, object] = {
+        "operation_key": bundle.allowed_operations[slot - 1].operation_key,
+        "acceptance_lineage_id": lineage_id,
+    }
+    values.update(updates)
+    return _context(slot, **values)
+
+
+def test_lineage_id_and_operation_ids_are_canonical_and_rc_bound() -> None:
+    first = _lineage_bundle(1)
+    second = _lineage_bundle(2)
+    assert first.acceptance_lineage_id != second.acceptance_lineage_id
+    assert first.allowed_operations[0].operation_key != second.allowed_operations[0].operation_key
+    assert (
+        first.credential_approval.record.artifact_or_commit_hashes[-1]
+        != second.credential_approval.record.artifact_or_commit_hashes[-1]
+    )
+    assert derive_rc_bound_operation_key(
+        rc_tag=RC_TAG,
+        provider_key="openai-transcription",
+        capability="asr",
+        slot=1,
+    ) == "v3-01-rc11-openai-transcription-asr-call-01"
+    with pytest.raises(ValueError, match="exact execution scope"):
+        validate_acceptance_lineage_id(
+            second.acceptance_lineage_id or "",
+            rc_tag=RC_TAG,
+            rc_commit="c" * 40,
+            provider_key="openai-transcription",
+            model="whisper-1",
+            capability="asr",
+            sequence=2,
+        )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "missing_id",
+        "missing_sequence",
+        "tampered",
+        "wrong_sequence",
+        "wrong_type",
+        "legacy_with_lineage",
+        "old_operation",
+    ],
+)
+def test_lineage_bundle_rejects_missing_tampered_and_legacy_claims(mutation: str) -> None:
+    payload = _lineage_bundle().model_dump(mode="json")
+    if mutation == "missing_id":
+        payload.pop("acceptance_lineage_id")
+    elif mutation == "missing_sequence":
+        payload.pop("acceptance_lineage_sequence")
+    elif mutation == "tampered":
+        payload["acceptance_lineage_id"] = "al-0002-" + "0" * 64
+    elif mutation == "wrong_sequence":
+        payload["acceptance_lineage_sequence"] = 3
+    elif mutation == "wrong_type":
+        payload["acceptance_lineage_sequence"] = "2"
+    elif mutation == "old_operation":
+        payload["allowed_operations"][0]["operation_key"] = (
+            "v3-01-rc11-openai-transcription-asr-call-01"
+        )
+    else:
+        payload["version"] = 1
+    with pytest.raises(ValidationError):
+        OpenAIAsrGateBundle.model_validate(payload)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("rc_commit", "c" * 40),
+        ("rc_tag", "vf-v3-01-rc12"),
+        ("provider_key", "other-provider"),
+        ("model", "gpt-transcribe"),
+        ("capability", "vision"),
+    ],
+)
+def test_lineage_identity_rejects_cross_scope_reuse(field: str, value: str) -> None:
+    lineage_id = _lineage_bundle().acceptance_lineage_id
+    assert lineage_id is not None
+    scope: dict[str, object] = {
+        "rc_tag": RC_TAG,
+        "rc_commit": RC_COMMIT,
+        "provider_key": "openai-transcription",
+        "model": "whisper-1",
+        "capability": "asr",
+        "sequence": 2,
+    }
+    scope[field] = value
+    with pytest.raises(ValueError, match="exact execution scope"):
+        validate_acceptance_lineage_id(lineage_id, **scope)
+
+
+def test_lineage_loader_requires_exact_expected_identity(tmp_path) -> None:
+    path, bundle_sha, bundle = _write_lineage_bundle(tmp_path)
+    lineage_id = bundle.acceptance_lineage_id
+    assert lineage_id is not None
+    scope = load_verified_provider_gate_bundle(
+        path,
+        expected_bundle_sha256=bundle_sha,
+        expected_rc_commit=RC_COMMIT,
+        expected_rc_tag=RC_TAG,
+        expected_acceptance_lineage_id=lineage_id,
+    )
+    assert scope.gate_bundle_version == 2
+    assert scope.acceptance_lineage_id == lineage_id
+    assert scope.acceptance_lineage_sequence == 2
+    assert scope.execution_scope_sha256 == execution_scope_sha256(
+        rc_tag=scope.rc_tag,
+        rc_commit=scope.rc_commit,
+        provider_key=scope.provider_key,
+        model=scope.model,
+        capability=scope.capability,
+        credential_alias=scope.credential_alias,
+        valid_from_utc=scope.valid_from_utc,
+        expires_at_utc=scope.expires_at_utc,
+        budget=bundle.budget,
+        rights_record_sha256s=scope.rights_record_sha256s,
+        allowed_operations=scope.allowed_operations,
+        acceptance_lineage_sequence=2,
+        acceptance_lineage_id=lineage_id,
+    )
+    with pytest.raises(ValueError, match="requires an expected acceptance lineage"):
+        load_verified_provider_gate_bundle(
+            path,
+            expected_bundle_sha256=bundle_sha,
+            expected_rc_commit=RC_COMMIT,
+            expected_rc_tag=RC_TAG,
+        )
+    stale = _lineage_bundle(1).acceptance_lineage_id
+    with pytest.raises(ValueError, match="expected acceptance lineage"):
+        load_verified_provider_gate_bundle(
+            path,
+            expected_bundle_sha256=bundle_sha,
+            expected_rc_commit=RC_COMMIT,
+            expected_rc_tag=RC_TAG,
+            expected_acceptance_lineage_id=stale,
+        )
+
+
+@pytest.mark.asyncio
+async def test_lineage_preflight_rejects_old_and_wrong_lineage_before_reservation(
+    tmp_path,
+) -> None:
+    path, bundle_sha, bundle = _write_lineage_bundle(tmp_path)
+    lineage_id = bundle.acceptance_lineage_id
+    assert lineage_id is not None
+    settings = _settings(
+        path,
+        bundle_sha,
+        provider_gate_expected_acceptance_lineage_id=lineage_id,
+        provider_external_execution_enabled=True,
+        provider_paid_execution_enabled=True,
+        provider_global_kill_switch_engaged=False,
+    )
+    policy = provider_safety_policy_from_settings(settings)
+    engine = create_engine(f"sqlite+aiosqlite:///{(tmp_path / 'lineage.db').as_posix()}")
+    async with engine.begin() as connection:
+        await connection.run_sync(Base.metadata.create_all)
+    sessions = create_session_factory(engine)
+    repository = ProviderSafetyRepository(sessions)
+    await repository.ensure_state()
+    controller = DurableProviderSafetyController(
+        policy,
+        repository=repository,
+        clock=lambda: ACTIVATES_AT + timedelta(minutes=5),
+    )
+
+    wrong_lineage = _lineage_bundle(1).acceptance_lineage_id
+    decision = await controller.preflight(
+        _lineage_context(bundle, 1, acceptance_lineage_id=wrong_lineage)
+    )
+    assert decision.code == "ACCEPTANCE_LINEAGE_MISMATCH"
+    decision = await controller.preflight(
+        _lineage_context(bundle, 1, acceptance_lineage_id=None)
+    )
+    assert decision.code == "ACCEPTANCE_LINEAGE_MISMATCH"
+    old_operation = derive_rc_bound_operation_key(
+        rc_tag=RC_TAG,
+        provider_key="openai-transcription",
+        capability="asr",
+        slot=1,
+    )
+    decision = await controller.preflight(
+        _lineage_context(bundle, 1, operation_key=old_operation)
+    )
+    assert decision.code == "OPERATION_NOT_ALLOWLISTED"
+    async with sessions() as session:
+        assert int(
+            await session.scalar(select(func.count()).select_from(ProviderSafetyOperationORM))
+            or 0
+        ) == 0
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_lineage_is_preserved_in_durable_operation_attempt_and_receipt(tmp_path) -> None:
+    path, bundle_sha, bundle = _write_lineage_bundle(tmp_path)
+    lineage_id = bundle.acceptance_lineage_id
+    assert lineage_id is not None
+    settings = _settings(
+        path,
+        bundle_sha,
+        provider_gate_expected_acceptance_lineage_id=lineage_id,
+        provider_external_execution_enabled=True,
+        provider_paid_execution_enabled=True,
+        provider_global_kill_switch_engaged=False,
+    )
+    engine = create_engine(f"sqlite+aiosqlite:///{(tmp_path / 'lineage-evidence.db').as_posix()}")
+    async with engine.begin() as connection:
+        await connection.run_sync(Base.metadata.create_all)
+    sessions = create_session_factory(engine)
+    repository = ProviderSafetyRepository(sessions)
+    await repository.ensure_state()
+    controller = DurableProviderSafetyController(
+        provider_safety_policy_from_settings(settings),
+        repository=repository,
+        clock=lambda: ACTIVATES_AT + timedelta(minutes=5),
+    )
+
+    async def completed() -> Decimal:
+        return Decimal("100")
+
+    result = await controller.execute(
+        _lineage_context(bundle, 1),
+        completed,
+        actual_cost=lambda value: value,
+    )
+    assert result.receipt.acceptance_lineage_id == lineage_id
+    async with sessions() as session:
+        operation = await session.get(
+            ProviderSafetyOperationORM,
+            bundle.allowed_operations[0].operation_key,
+        )
+        attempt = await session.scalar(select(ProviderSafetyAttemptORM))
+        assert operation is not None and operation.acceptance_lineage_id == lineage_id
+        assert attempt is not None and attempt.acceptance_lineage_id == lineage_id
+    assert (await controller.preflight(_lineage_context(bundle, 1))).code == (
+        "DUPLICATE_OPERATION_BLOCKED"
+    )
+    await engine.dispose()
