@@ -52,6 +52,13 @@ while both runs inside one lineage share an immutable identity and differ only b
 The machine-readable contract is
 [V3-01-27-ACCEPTANCE-LINEAGE-IDENTITY.v2.json](contracts/V3-01-27-ACCEPTANCE-LINEAGE-IDENTITY.v2.json).
 
+The zero-call implementation evidence is preserved in
+[the V3-01-27 acceptance-lineage run](../../../evidence/v3-01/vf-v3-01-20260910T174456Z-8c40d2c-v3-01-27-lineage/run-manifest.json).
+It binds implementation commit `8c40d2c58f1272b09748b1a51e924b9f37045c23`, executable-tree
+SHA-256 `ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40`, the
+full `934/934` Python regression and the deterministic Docker E2E result. It is not provider,
+production-path or human-quality evidence.
+
 ## Binding and fail-closed boundary
 
 The lineage is independently bound into:
