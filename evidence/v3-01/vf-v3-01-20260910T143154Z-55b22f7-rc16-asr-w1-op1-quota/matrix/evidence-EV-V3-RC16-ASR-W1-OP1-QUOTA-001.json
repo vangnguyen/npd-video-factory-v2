@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-RC16-ASR-W1-OP1-QUOTA-001",
+  "test_case_id": "ASR-01",
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "axis": "real-provider-tested",
+  "commit_sha": "55b22f773dc108f6c51a1b52db825b1caa8e8a51",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "openai-transcription",
+    "model_or_workflow": "whisper-1 / immutable W1 profile",
+    "credential_alias": "secret://openai/codex-video",
+    "secret_recorded": false
+  },
+  "request_hash": "80c4b6c283bc17fabb97a2bbe63f21cea6564ee8e6db1d31be4c99b911c2129a",
+  "response_or_artifact_hash": "23e8ca3925c70e8ae7d69cdbbf0d418ced372632868df81515bfece393f5b639",
+  "started_at_utc": "2026-09-10T14:31:54.595669Z",
+  "completed_at_utc": "2026-09-10T14:31:58.632182Z",
+  "duration_seconds": 4.036513,
+  "result": "FAIL",
+  "assertion": "RC-16 ASR W1 Operation 1 reached OpenAI exactly once and received HTTP 429 insufficient_quota/credit_balance_exhausted before transcript, usage, or actual-cost evidence existed. The operation is consumed and failed, ASR remains 0-of-2, and Operation 2 remains unauthorized and locked. The later owner report that API credit was replenished is not live verification and creates no execution authority.",
+  "correlation_id": "v3-01-rc16-openai-transcription-asr-call-01",
+  "cost": {
+    "currency": "VND",
+    "actual": null,
+    "status": "PENDING"
+  },
+  "rights_record_id": "V3-01-RIGHTS-ASR-001",
+  "reviewer": "Codex secret-free RC-16 quota evidence review",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "Offline only: verify the retained source receipt hashes against the secret-free review projection, then run python -m pytest apps/api/tests/test_rc16_asr_w1_quota_evidence.py -q and python scripts/v3_01_acceptance.py validate-repo. Do not call the provider or read a credential."
+}

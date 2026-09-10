@@ -1,14 +1,24 @@
 # Owner gate register
 
-## RC-16 W1 rebind checkpoint
+## RC-16 W1 quota-result checkpoint
+
+The separately authorized RC-16 Operation 1 passed preflight, dispatched once and received HTTP
+429 `credit_balance_exhausted`. It is consumed/failed with acceptance `REVIEW_REQUIRED`; actual
+provider cost is unknown and the 500 VND ledger charge is conservative only. Operation 2 remains
+not approved/locked. The owner subsequently reported that API credit had been replenished. That
+statement is not a runtime gate: it does not revive Operation 1, authorize Operation 2 or create a
+fresh scope/window. This evidence-only draft requires its own G-08 and stops there. See
+[V3-01-26](63_V3_01_26_RC16_ASR_W1_QUOTA_EVIDENCE.md).
+
+## Prior RC-16 W1 rebind checkpoint
 
 Owner G-08 for PR #54 is recorded as `V3-01-APP-064`. PR #54 merged as RC-16
 `55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main CI `34302351310` passed 5/5 and
 annotated `vf-v3-01-rc16` locks it. Records `V3-01-APP-065` through `067` bind G-01/G-02/G-03
 to the immutable W1 profile, unchanged 500/1,250 VND and 90/120-second envelope, two unchanged
 owner-approved inputs and fresh RC-16 IDs. These records are not execution authority. The bundle
-is unmounted, Operation 1 is not approved and Operation 2 is locked. The governance PR requires a
-new G-08; after merge, any Operation 1 still requires its own owner decision.
+was unmounted, Operation 1 was not approved and Operation 2 was locked. The governance PR required
+a new G-08; the later Operation 1 used its own separate owner decision.
 
 ## V3-01-23 checkpoint (no new approval record)
 
@@ -97,14 +107,14 @@ provider, VND/timeout envelope and rights to fresh RC-15 IDs and the proposed 08
 | Gate | Decision | Current state | Minimum evidence/decision |
 |---|---|---|---|
 | G-00 | production acceptance scope and remediation sequence | APPROVED — `V3-01-APP-001` | local/CI remediation and draft PRs only; no merge/deploy/provider/publish authority |
-| G-01 | real-provider credential aliases/scopes | RC-15 rebind `V3-01-APP-061`; no runtime authority | exact governance merge/dual-CI/equality checks and separate RC-15 operation decision required |
-| G-02 | VND provider budgets and cost controls | RC-15 rebind `V3-01-APP-062`; conditional 500/1,250 VND and 90/120 seconds; checked-in budget 0 VND | proposed window only; no reservation/spend without separate RC-15 operation authority |
-| G-03 | owned inputs, rights and provenance policy | RC-15 rebind `V3-01-APP-063`; unchanged assets/transcripts/RightsRecords; publishing/training/resale forbidden | separate operation authority still required; rights scope does not authorize a provider call |
+| G-01 | real-provider credential aliases/scopes | RC-16 W1 rebind `V3-01-APP-065`; Operation 1 consumed; no remaining runtime authority | fresh two-slot lineage plus separate owner authority required before another call |
+| G-02 | VND provider budgets and cost controls | RC-16 rebind `V3-01-APP-066`; Operation 1 committed 500 VND safety charge, actual cost unknown, outstanding reservation zero | a new scope/window must be separately rebound; credit replenishment does not extend the consumed gate |
+| G-03 | owned inputs, rights and provenance policy | RC-16 rebind `V3-01-APP-067`; unchanged assets/transcripts/RightsRecords; publishing/training/resale forbidden | rights may be proposed for rebind, but do not authorize a provider call |
 | G-04 | production-like staging execution | PENDING | locked commit/images, isolated topology and rollback plan |
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation/evidence PR merge | decisions through PR #50 consumed; current RC-15 governance/evidence draft awaits review | new explicit G-08 required before governance merge; does not grant runtime authority |
+| G-08 | remediation/evidence PR merge | decisions through PR #55 consumed; current V3-01-26 evidence draft awaits review | new explicit G-08 required before merge; does not grant RC/operation/runtime authority |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING; schema, 27-check template and full-watch/listen checklist prepared offline | exact final video and dependent artifact hashes, named reviewer, UTC timestamps, desktop/mobile full watch, headphone/phone-speaker full listen and all checks PASS |

@@ -1,6 +1,19 @@
 # V3-01 consolidation checkpoint verdict
 
-## Current checkpoint — 2026-09-09, RC-16 W1 governance draft
+## Current checkpoint — 2026-09-10, RC-16 W1 quota evidence
+
+RC-16 Operation 1 passed full preflight and made one OpenAI request, but HTTP 429
+`credit_balance_exhausted` prevented transcript, usage/cost and quality evidence. It is
+**CONSUMED / FAILED / REVIEW_REQUIRED**. Actual cost is **UNKNOWN**; 500 VND is a safety charge and
+outstanding reservation is zero. Operation 2 is **NOT APPROVED / LOCKED**. The owner's later report
+that credit was replenished does not itself authorize or verify another call.
+
+ASR stays **0/2 PASS** and real-provider `NOT_TESTED`; Vision stays **2/2 PASS**. Executable RC-16
+and its tree are unchanged. Production-path and human-quality remain `NOT_TESTED`; Production stays
+**NO-GO**. [V3-01-26](63_V3_01_26_RC16_ASR_W1_QUOTA_EVIDENCE.md) is evidence-only and stops at
+Owner G-08 with no fresh RC, bundle/window or operation authority.
+
+## Prior checkpoint — 2026-09-09, RC-16 W1 governance draft
 
 PR #54 merged as exact executable RC-16 `55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main
 CI `34302351310` passed 5/5 and annotated `vf-v3-01-rc16` locks it. The governance-only W1

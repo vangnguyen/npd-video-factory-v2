@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "record_kind": "rc16_asr_w1_operation_1_quota_failure_secret_free_projection",
+  "operation_id": "v3-01-rc16-openai-transcription-asr-call-01",
+  "runtime_binding": {
+    "rc_tag": "vf-v3-01-rc16",
+    "rc_commit": "55b22f773dc108f6c51a1b52db825b1caa8e8a51",
+    "governance_main_commit": "5ba7107ba414893467f5e0236ca8a965bdbb8f91",
+    "executable_rc_ci_run_id": 34302351310,
+    "governance_main_ci_run_id": 34315374990,
+    "dual_ci_provenance_sha256": "87caeeeb88069882d0290d61ca0dc68f5c5f8c2979994b9a62148c468bfb2e3a",
+    "executable_tree_sha256": "5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd"
+  },
+  "authority_binding": {
+    "provider": "openai-transcription",
+    "model": "whisper-1",
+    "capability": "asr",
+    "language": "vi",
+    "profile_id": "asr-whisper-vi-w1-v1",
+    "profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "scope_sha256": "c40b2f6a055dcdae7391c997b255c72fd85960899eabb7e7559e0e8ff623c93c",
+    "bundle_sha256": "2362943a9535a1fbea7f4c45dfd15520635a8eb406b9d4097ece72277bb41a0d",
+    "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+    "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091"
+  },
+  "provider_result": {
+    "attempts": 1,
+    "retry_count": 0,
+    "fallback_count": 0,
+    "provider_execution": "FAILED",
+    "http_status": 429,
+    "provider_error_type": "insufficient_quota",
+    "provider_error_code": "credit_balance_exhausted",
+    "provider_request_id": "req_5665217b25ae455aa9dafc5ec5903c1b",
+    "client_request_id": "vf-b46b17944efd4badb4188102b20fe8f7",
+    "request_sha256": "80c4b6c283bc17fabb97a2bbe63f21cea6564ee8e6db1d31be4c99b911c2129a",
+    "response_sha256": "23e8ca3925c70e8ae7d69cdbbf0d418ced372632868df81515bfece393f5b639",
+    "latency_ms": 3955.547,
+    "structured_transcript": null,
+    "usage_receipt": null,
+    "actual_provider_cost_vnd": null,
+    "actual_provider_cost_status": "UNKNOWN",
+    "acceptance_verdict": "REVIEW_REQUIRED",
+    "operation_consumed": true,
+    "operation_status": "FAILED"
+  },
+  "durable_state": {
+    "operations": 1,
+    "attempts": 1,
+    "budget_days": 1,
+    "circuits": 1,
+    "safety_charge_vnd": "500.0000",
+    "safety_charge_is_actual_provider_cost": false,
+    "reserved_vnd_after_reconciliation": "0.0000",
+    "circuit_state": "closed",
+    "consecutive_failures": 1,
+    "duplicate_operation_blocked": true
+  },
+  "source_receipts": [
+    {
+      "path": "operation-1-result.json",
+      "sha256": "2778757191b29c6e35a6d238449a1b40bfa4622df99e81b6820a8e6798d19751",
+      "retained_outside_repository": true
+    },
+    {
+      "path": "operation-1-evaluator-input.json",
+      "sha256": "6b754d7d28226ae09d76334f162d357875a58a1e6bd1ca46860a1ace74426664",
+      "retained_outside_repository": true
+    },
+    {
+      "path": "operation-1-post-run-evaluation.json",
+      "sha256": "79d7acfe84b9e98010a49f13bab40b81297b4ba5dde8218e813e9ab64baa11be",
+      "retained_outside_repository": true
+    },
+    {
+      "path": "post-run-verification.json",
+      "sha256": "618cd79440b65b1c27cd140aff7754a62ac1b182d57612f01c6b964c837e36bd",
+      "retained_outside_repository": true
+    }
+  ],
+  "owner_follow_up": {
+    "statement": "OpenAI API credit has been replenished.",
+    "classification": "OWNER_REPORTED_NOT_LIVE_VERIFIED",
+    "revives_consumed_operation": false,
+    "grants_operation_2_authority": false,
+    "grants_new_operation_authority": false
+  },
+  "package_boundary": {
+    "historical_receipts_rewritten": false,
+    "provider_success_inferred": false,
+    "actual_cost_inferred": false,
+    "w1_quality_inferred": false,
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "live_reservations": 0,
+    "spend_vnd": "0",
+    "production_verdict": "NO-GO"
+  }
+}

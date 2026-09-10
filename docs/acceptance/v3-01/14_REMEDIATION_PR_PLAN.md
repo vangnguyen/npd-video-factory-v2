@@ -1,6 +1,14 @@
 # V3-01 remediation PR plan
 
-## Step 38 — RC-16 OpenAI ASR W1 governance rebind
+## Step 39 — RC-16 ASR W1 quota evidence and fresh-lineage decision
+
+Operation 1 passed preflight and made exactly one provider request, then received HTTP 429
+`credit_balance_exhausted`. It is consumed/failed and `REVIEW_REQUIRED`; Operation 2 remains locked.
+This evidence-only package preserves the source hashes, records the owner's later unverified credit
+replenishment statement and makes no provider call. A separate owner decision is required before
+creating any fresh two-slot lineage; no RC or authority is created here.
+
+## Prior Step 38 — RC-16 OpenAI ASR W1 governance rebind
 
 PR #54 merged V3-01-25 as exact RC-16 and exact-main CI passed 5/5. This follow-up is limited to
 governance/evidence/tests: fresh RC-derived ASR IDs, exact W1 profile/scope hashes, unchanged
@@ -55,6 +63,7 @@ reversible and prohibited from merge/deploy until its owner gate is recorded.
 | 36 | RC-15 OpenAI ASR governance rebind | new governance/evidence/tests-only proposal on exact RC-15 `7d1290a`; executable tree unchanged | fresh RC-derived IDs, unchanged WAV/transcript/RightsRecord hashes, APP-061/062/063, 500/1,250 VND and 90/120 seconds; proposed 08 September 14:00-18:00 UTC window; bundle unmounted | `EV-V3-RC15-ASR-GATE-001` proves offline readiness only; no acceptance-axis promotion | STOP at G-08; after merge require governance-main CI, dual-CI/equality and separate Operation 1 authority; Operation 2 locked |
 | 37 | V3-01-25 W1 Prompt Profile Remediation | PR #54 exact head `f2760e5` merged as RC-16 `55b22f7`; exact-head CI `34250208121` and exact-main CI `34302351310` PASS 5/5; annotated `vf-v3-01-rc16` locked | immutable/hashable W1 vocabulary profile through settings, gate, controllers, adapter, request/evidence/cache plus asset-02 negative-insertion guard; quality remains WER ≤15% and 8/8 critical terms | implemented/mock-tested only; historical RC-15 remains FAIL/CONSUMED; ASR remains 0/2 `NOT_TESTED`; 003/010/013 stay in progress | repository merge/tag complete; no W1 live authority, credential read, provider call or spend |
 | 38 | RC-16 OpenAI ASR W1 governance rebind | governance/evidence/tests-only proposal on exact RC-16 `55b22f7`; executable tree unchanged | fresh RC-derived IDs, exact W1 profile/scope hash, unchanged WAV/transcript/RightsRecord hashes, APP-065/066/067, 500/1,250 VND and 90/120 seconds; proposed 10 September 14:00-18:00 UTC window; bundle unmounted | `EV-V3-RC16-ASR-W1-GATE-001` proves offline readiness only; no acceptance-axis promotion | STOP at G-08; after merge require governance-main CI, dual-CI/equality and separate Operation 1 authority; Operation 2 locked |
+| 39 | V3-01-26 RC-16 ASR W1 quota evidence | draft evidence/governance/tests-only package; executable RC-16 unchanged | preserve quota-failure request/response IDs and hashes, unknown actual cost, 500 VND safety charge, durable ledger, secret scan and owner-reported credit follow-up | no gap or acceptance-axis promotion; ASR remains 0/2 `NOT_TESTED` | STOP at G-08; Operation 1 consumed, Operation 2 locked, fresh two-slot lineage requires a separate owner decision |
 
 ## Governance prerequisite
 

@@ -1,15 +1,31 @@
 # V3-01 baseline
 
-## Current RC-16 W1 governance checkpoint — 2026-09-09
+## Current RC-16 W1 Operation 1 quota checkpoint — 2026-09-10
+
+PR #55 merged governance-only as `5ba7107ba414893467f5e0236ca8a965bdbb8f91`; executable
+RC-16 remains `55b22f773dc108f6c51a1b52db825b1caa8e8a51` with executable-tree SHA-256
+`5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd`. Under a separate
+one-attempt authority, Operation 1 passed preflight and reached OpenAI once, then received HTTP 429
+`insufficient_quota / credit_balance_exhausted`. It is consumed/failed and acceptance is
+`REVIEW_REQUIRED`; no transcript, usage receipt or W1 quality result exists. Actual provider cost
+is unknown; 500 VND is only the conservative safety charge and outstanding reservation is zero.
+
+The owner subsequently reported that API credit was replenished, but that statement creates no
+runtime authority and was not verified by another call. Operation 2 remains not approved/locked;
+ASR remains 0/2, Vision 2/2 and Production NO-GO. See
+[V3-01-26 quota review](63_V3_01_26_RC16_ASR_W1_QUOTA_EVIDENCE.md).
+
+## Prior RC-16 W1 governance checkpoint — 2026-09-09
 
 Owner-approved PR #54 merged as exact executable RC-16
 `55b22f773dc108f6c51a1b52db825b1caa8e8a51`; exact-main CI `34302351310` passed 5/5 and
 annotated `vf-v3-01-rc16` peels to that commit. Executable-tree SHA-256 is
 `5025279241fb0b55e6fa26cc850c82a1fd5e4dc9fc4e15c43f716f50441e6ecd`.
 
-The fresh W1 scope `EV-V3-RC16-ASR-W1-GATE-001` binds the exact immutable profile, two new
-RC-derived operation IDs, unchanged assets/references/RightsRecords and proposed 10 September
-14:00–18:00 UTC window. The bundle is disabled/unmounted and both operations lack authority.
+At that checkpoint, the fresh W1 scope `EV-V3-RC16-ASR-W1-GATE-001` bound the exact immutable
+profile, two new RC-derived operation IDs, unchanged assets/references/RightsRecords and proposed
+10 September 14:00–18:00 UTC window. The bundle was disabled/unmounted and both operations lacked
+authority.
 Historical RC-15 Op1 remains FAIL/CONSUMED at 5/8 critical terms and 326.294996 VND actual cost;
 Op2 is locked. ASR remains 0/2, Vision 2/2 and Production NO-GO. See
 [62_V3_01_RC16_OPENAI_ASR_W1_GATE.md](62_V3_01_RC16_OPENAI_ASR_W1_GATE.md).
@@ -251,7 +267,7 @@ Current repository checkpoint after the bounded merge sequence:
 | RC-10 consecutive Vision closure | PR #39 merged evidence-only as `fd0db431d2e3786b6b07dcb4b47b7bc74cfa7aed`; `V3-01-APP-041` consumed; exact-main CI `33703619599` passed 5/5; dual-CI provenance PASS; executable tree remained `f1f75f632ca3b1380985c5a532c9f4c601e39d45276135666f335cc3d041125c`; source receipt SHA values remained `11fd1f7c...` and `deed47e5...` |
 | PR #41 / RC-11 | PR #41 exact head `8ebb1cffe8563e49ccf4847ef37209d9644a4e70`; merged as `207ff9fee5557eb0976f575c9263b61d995b20a0`; exact-head CI `33711738092` and exact-main CI `33712762815` passed; annotated `vf-v3-01-rc11` peels to the merge; `V3-01-APP-043` records G-08 |
 | RC-11 ASR governance proposal | `whisper-1`; two exact owner-approved WAVs/RightsRecords; G-01/G-02/G-03 records `V3-01-APP-044` through `046`; raw bundle SHA `4f8edd02ec62182404976de16e8d75b39ddbbbbe96c0d78efd46e3a97d6ace46`; scope SHA `7368b506b8971b190a1828ecab588dfe6b46a7e354d00c4d7cf2f35c1cc2c39a`; bundle unmounted; operations not approved |
-| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is officially 2/2 consecutive real-provider PASS; no Operation 3 is required or authorized; RC-11 ASR Operation 1 blocked pre-call/not consumed; RC-12 ASR Operation 1 reached a provider response but failed strict mapping/validation; RC-13 ASR Operation 1 reached HTTP 200 with 17 segments/412 words but rejected 27 word timestamps and is consumed/`REVIEW_REQUIRED`; ASR real-provider remains `NOT_TESTED` |
+| Provider acceptance action | RC-3 operation 1 failed and is locked; RC-5 operation 1 completed provider execution once but evidence serialization was incomplete; RC-6 operation 1 blocked pre-call with 0 calls/0 VND; RC-7 operation 1 timed out once and is consumed/`REVIEW_REQUIRED`; RC-9 operation 1 blocked pre-call on CI-provenance ambiguity with 0 calls/0 VND and is not consumed, but its authority is retired; RC-10 Operations 1 and 2 each completed one attempt with complete structured/usage/cost evidence and are consumed/succeeded; Vision is officially 2/2 consecutive real-provider PASS; no Operation 3 is required or authorized; RC-11 ASR Operation 1 blocked pre-call/not consumed; RC-12 ASR Operation 1 reached a provider response but failed strict mapping/validation; RC-13/RC-14 operations reached HTTP 200 but failed timestamp validation; RC-15 Operation 1 passed transcript/timestamp/WER but failed critical terms; RC-16 W1 Operation 1 passed preflight then received HTTP 429 `credit_balance_exhausted`, is consumed/failed/`REVIEW_REQUIRED`, and Operation 2 remains locked; ASR real-provider remains `NOT_TESTED` |
 | PR #44 / RC-12 | PR #44 exact head `a5666703fe7d0c0fe9a78deadc7eefd5bd848e61`; merged as `ca5483c889742c27af3368b9b487350d7daa217d`; exact-head CI `33888514088` and exact-main CI `33889772222` passed 5/5; annotated `vf-v3-01-rc12` peels to the merge; `V3-01-APP-047` records G-08 |
 | RC-12 ASR governance rebind and bounded operation | PR #45 merged governance-only as `f765f216f90b0d05071cc7c873a2edb6d5bdcec4`; governance-main CI `33894628759` passed; fresh operations `v3-01-rc12-openai-transcription-asr-call-01/02`; unchanged exact WAV/transcript/RightsRecord hashes; records `V3-01-APP-048` through `051`; raw bundle SHA `218e06d245f43733a2659aff35f4ea0e7e73dcd17258f663d351b198aebf3db1`; scope SHA `6f0aecf227df30d493566a8d089a6097f83c454993b6ce25eb00eeb887fb9cc4`; separately authorized Operation 1 reached a response once, failed strict validation and is consumed/`REVIEW_REQUIRED`; actual cost unknown; Operation 2 retired/locked |
 | PR #46 / RC-13 and ASR rebind proposal | PR #46 exact head `7169cc4db55931ee4fc145411e1e04651c004785`; merged as `1e0146b44b19a5afcef267132d71d36d24a952e4`; exact-head CI `33974602125` and exact-main CI `33976046393` passed 5/5; annotated `vf-v3-01-rc13` peels to the merge; fresh operations `v3-01-rc13-openai-transcription-asr-call-01/02`; raw bundle SHA `236262caf3ae4a10c8c3fa760e9caf134837e4327b860b2d4693e08c7031f1b8`; scope SHA `179624fe3a365e415c41b760e49297da0cd23227cf9b49a634e7fbcaaf90b47e`; bundle unmounted and both operations unauthorized |
