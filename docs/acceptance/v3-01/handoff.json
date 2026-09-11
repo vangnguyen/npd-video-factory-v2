@@ -1,26 +1,42 @@
 {
   "schema_version": 1,
   "workstream": "NPD Video Factory V3-01",
-  "task": "RC-17 OpenAI ASR W1 lineage Operation 1 preflight",
-  "verdict": "BLOCKED_PRE_CALL",
+  "task_id": "VF-V0C",
+  "task": "PR #59 governance-only handoff path and diff-hygiene repair",
+  "status": "READY_FOR_OWNER_G08_REVIEW",
   "repository": "vangnguyen/npd-video-factory-v2",
   "branch": "handoff/rc17-asr-w1-op1-blocked-20260911",
   "source_main_sha": "cfe93b52a0de067066f707e5c7eab0f6e8392863",
-  "recorded_at_utc": "2026-09-11T14:02:43.2084774Z",
-  "recorded_at_ict": "2026-09-11T21:02:43.2021518+07:00",
+  "recorded_at_utc": "2026-09-11T16:54:22.9171737Z",
+  "recorded_at_ict": "2026-09-11T23:54:22.9171737+07:00",
+  "canonical_paths": {
+    "human": "docs/acceptance/v3-01/HANDOFF.md",
+    "machine": "docs/acceptance/v3-01/handoff.json",
+    "root_duplicates_present": false,
+    "existing_governance_allowlist_reused": true
+  },
   "immutable_anchors": {
     "rc_tag": "vf-v3-01-rc17",
     "rc_commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
-    "governance_main_commit": "cfe93b52a0de067066f707e5c7eab0f6e8392863",
+    "governance_main_baseline_commit": "cfe93b52a0de067066f707e5c7eab0f6e8392863",
     "executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
     "rc_ci_run_id": 34550127181,
-    "governance_main_ci_run_id": 34554458518,
-    "dual_ci_provenance_sha256": "bd6d687a4cab9df2151f91317b8faa3ea23df3c1b5ef6c7c21b741e6a09e6bf5",
+    "baseline_governance_main_ci_run_id": 34554458518,
     "acceptance_lineage_id": "al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329",
     "execution_scope_sha256": "6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7",
     "gate_bundle_sha256": "39867efb2a95d22bf5d4be64e041671cf10517a118d02bece010778ab587a76f",
     "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
     "w1_prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48"
+  },
+  "governance_repair": {
+    "executable_or_runtime_files_changed": false,
+    "executable_tree_changed": false,
+    "rc17_lineage_changed": false,
+    "authority_semantics_changed": false,
+    "allowlist_contract_changed": false,
+    "git_diff_check_expected": "PASS",
+    "exact_head_ci_required_before_g08": true,
+    "post_merge_governance_ci_required_before_execution_authority": true
   },
   "proposed_window": {
     "status": "PROPOSAL_NOT_AUTHORITY",
@@ -29,30 +45,31 @@
     "start_ict": "2026-09-12T21:00:00+07:00",
     "end_ict": "2026-09-13T01:00:00+07:00"
   },
-  "preflight": {
-    "current_time_inside_proposed_window": false,
-    "separate_operation_1_authority_present": false,
-    "credential_alias_value_read": false,
-    "budget_reserved_vnd": "0",
-    "provider_calls": 0,
-    "actual_cost_vnd": "0",
-    "scope_drift": false,
-    "blockers": [
-      "CURRENT_TIME_BEFORE_PROPOSED_WINDOW",
-      "RC17_OPERATION_1_AUTHORITY_NOT_GRANTED"
-    ]
-  },
   "operations": {
     "operation_1": {
       "operation_id": "v3-01-rc17-openai-transcription-asr-al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329-call-01",
-      "status": "NOT_APPROVED_NOT_EXECUTED",
+      "status": "PREPARED_NOT_AUTHORIZED",
+      "executed": false,
       "consumed": false
     },
     "operation_2": {
       "operation_id": "v3-01-rc17-openai-transcription-asr-al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329-call-02",
       "status": "NOT_APPROVED_LOCKED_NOT_EXECUTED",
+      "executed": false,
       "consumed": false
     }
+  },
+  "safety_state": {
+    "kill_switch": "ENGAGED",
+    "gate_bundle_mounted": false,
+    "external_execution_enabled": false,
+    "paid_execution_enabled": false,
+    "checked_in_budget_vnd": "0",
+    "credential_reads": 0,
+    "budget_reservation_vnd": "0",
+    "provider_calls": 0,
+    "actual_cost_vnd": "0",
+    "production_writes": 0
   },
   "acceptance_status": {
     "asr_consecutive_passes": 0,
@@ -60,11 +77,7 @@
     "vision_consecutive_passes": 2,
     "production_verdict": "NO-GO"
   },
-  "production_writes": 0,
-  "real_provider_calls": 0,
-  "actual_cost_vnd": "0",
   "evidence_pointer": "evidence/v3-01/vf-v3-01-20260911T140243Z-cfe93b5-rc17-asr-w1-op1-blocked-prewindow/preflight.json",
   "scope_drift": "PASS",
-  "next_safe_action": "After a separate owner authority decision, rerun complete fail-closed preflight inside the exact approved window; do not execute until assigned."
+  "next_safe_action": "Owner G-08 reviews the final exact PR head; stop before credential access, reservation or provider execution unless a separate exact Operation 1 authority task is issued."
 }
-
