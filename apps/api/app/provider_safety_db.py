@@ -89,9 +89,11 @@ class ProviderSafetyOperationORM(Base):
         CheckConstraint("charged_vnd >= 0", name="ck_provider_safety_charged_nonnegative"),
         Index("ix_provider_safety_operation_status_updated", "status", "updated_at"),
         Index("ix_provider_safety_operation_provider_created", "provider_key", "capability", "created_at"),
+        Index("ix_provider_safety_operation_lineage", "acceptance_lineage_id"),
     )
 
     operation_key: Mapped[str] = mapped_column(String(200), primary_key=True)
+    acceptance_lineage_id: Mapped[str | None] = mapped_column(String(80), nullable=True)
     provider_key: Mapped[str] = mapped_column(String(120), nullable=False)
     capability: Mapped[str] = mapped_column(String(120), nullable=False)
     workspace_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
@@ -135,6 +137,7 @@ class ProviderSafetyAttemptORM(Base):
         ForeignKey("provider_safety_operations.operation_key", ondelete="CASCADE"),
         nullable=False,
     )
+    acceptance_lineage_id: Mapped[str | None] = mapped_column(String(80), nullable=True)
     attempt: Mapped[int] = mapped_column(Integer, nullable=False)
     status: Mapped[str] = mapped_column(String(24), nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False, default="VND")

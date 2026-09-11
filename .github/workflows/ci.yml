@@ -460,6 +460,22 @@ jobs:
           grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
           grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
           grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
+      - name: Verify V3-01-27 acceptance-lineage identity boundary
+        run: |
+          grep -Fq 'def derive_acceptance_lineage_id(' apps/api/app/provider_safety.py
+          grep -Fq 'def validate_acceptance_lineage_contract(' apps/api/app/provider_safety.py
+          grep -Fq 'a v2 provider gate requires an expected acceptance lineage ID' apps/api/app/provider_gate_loader.py
+          grep -Fq 'ACCEPTANCE_LINEAGE_MISMATCH' apps/api/app/provider_safety.py
+          grep -Fq 'acceptance_lineage_id=context.acceptance_lineage_id' apps/api/app/provider_safety_repository.py
+          grep -q '0014_v3_01_27' apps/api/migrations/versions/0014_v3_01_27_acceptance_lineage_identity.py
+          grep -qx 'PROVIDER_GATE_EXPECTED_ACCEPTANCE_LINEAGE_ID=' .env.example
+          python -c 'import json; from pathlib import Path; d=json.loads(Path("docs/acceptance/v3-01/contracts/V3-01-27-ACCEPTANCE-LINEAGE-IDENTITY.v2.json").read_text()); assert d["contract_version"] == 2; assert d["operation_identity"]["slots"] == [1, 2]; assert d["operation_identity"]["cross_lineage_reuse"] is False; assert d["historical_compatibility"]["historical_receipts_mutated"] is False; assert d["safety"] == {"provider_calls": 0, "credential_reads": 0, "live_reservations": 0, "spend_vnd": "0", "runtime_authority_granted": False, "production_verdict": "NO-GO"}'
+          grep -qx 'PROVIDER_VERIFIED_GATE_BUNDLE_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_EXTERNAL_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_PAID_EXECUTION_ENABLED=false' .env.example
+          grep -qx 'PROVIDER_GLOBAL_KILL_SWITCH_ENGAGED=true' .env.example
+          grep -qx 'PROVIDER_PER_OPERATION_LIMIT_VND=0' .env.example
+          grep -qx 'PROVIDER_DAILY_LIMIT_VND=0' .env.example
       - name: Validate V2-11 deployment bundle
         env:
           VIDEO_FACTORY_AGENT_HUB_KEYS_FILE: ${{ runner.temp }}/video-factory-agent-hub.json

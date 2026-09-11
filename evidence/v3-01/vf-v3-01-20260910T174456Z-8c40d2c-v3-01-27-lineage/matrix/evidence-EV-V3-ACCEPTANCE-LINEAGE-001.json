@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_id": "EV-V3-ACCEPTANCE-LINEAGE-001",
+  "test_case_id": "V3-01-27-CANONICAL-ACCEPTANCE-LINEAGE-IDENTITY",
+  "matrix_rows": [
+    "OPS-01",
+    "OPS-03",
+    "OPS-07"
+  ],
+  "axis": "cross-cutting",
+  "commit_sha": "8c40d2c58f1272b09748b1a51e924b9f37045c23",
+  "environment": "LOCAL",
+  "provider": {
+    "name": "offline-contract-validator",
+    "model_or_workflow": "versioned provider acceptance gate lineage",
+    "credential_alias": "not-read",
+    "secret_recorded": false
+  },
+  "request_hash": null,
+  "response_or_artifact_hash": "1feae26d370baaca09df87168c4b1f007fa47ac810ee0cdba46c30ab9545fdfc",
+  "started_at_utc": "2026-09-10T17:44:56Z",
+  "completed_at_utc": "2026-09-10T17:45:29Z",
+  "duration_seconds": 33.0,
+  "result": "PASS",
+  "assertion": "Bundle v2 requires a canonical lineage identity derived from exact RC, provider, model, capability and bounded sequence. The identity is bound into the scope hash, both operation IDs, trusted context, receipts and durable operation/attempt rows. Missing, tampered, stale, cross-scope and historical-lineage reuse paths fail before reservation. Bundle v1 IDs, scope hashes, receipts and nullable ledger rows remain immutable. This is implementation and mock evidence only: no provider was called, no credential was read, no reservation occurred and cost was 0 VND.",
+  "correlation_id": "v3-01-27-lineage-8c40d2c",
+  "cost": {
+    "currency": "VND",
+    "actual": 0,
+    "status": "ZERO"
+  },
+  "rights_record_id": null,
+  "reviewer": "Codex offline acceptance-lineage reviewer",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "reproduce": "On implementation commit 8c40d2c58f1272b09748b1a51e924b9f37045c23 run python -m pytest apps/api/tests/test_provider_gate_loader.py apps/api/tests/test_openai_asr_gate_loader.py -q, then the full API/worker/bridge suite, migration replay, acceptance validators and scripts/e2e-smoke.sh with checked-in external and paid execution disabled, budget 0 VND and the kill switch engaged."
+}

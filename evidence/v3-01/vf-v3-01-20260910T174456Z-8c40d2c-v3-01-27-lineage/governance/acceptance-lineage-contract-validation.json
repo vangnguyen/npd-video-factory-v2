@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "checkpoint": "V3-01-27",
+  "base_commit": "c0f051c866d329544486e5e757349f0543ace980",
+  "implementation_commit": "8c40d2c58f1272b09748b1a51e924b9f37045c23",
+  "contract_artifact": "docs/acceptance/v3-01/contracts/V3-01-27-ACCEPTANCE-LINEAGE-IDENTITY.v2.json",
+  "contract_artifact_sha256": "1feae26d370baaca09df87168c4b1f007fa47ac810ee0cdba46c30ab9545fdfc",
+  "canonical_identity": {
+    "derivation_contract": "v3-01-acceptance-lineage-v1",
+    "sequence_range": [
+      1,
+      9999
+    ],
+    "digest": "SHA-256",
+    "free_form_discriminator_allowed": false,
+    "exact_scope_fields": [
+      "rc_tag",
+      "rc_commit",
+      "provider_key",
+      "model",
+      "capability",
+      "sequence"
+    ]
+  },
+  "bindings_verified": [
+    "gate_bundle",
+    "execution_scope_sha256",
+    "allowed_operation_id",
+    "provider_call_context",
+    "provider_attempt_receipt",
+    "provider_execution_receipt",
+    "durable_operation_ledger",
+    "durable_attempt_ledger",
+    "runtime_expected_lineage_pin"
+  ],
+  "fail_closed_cases_verified": [
+    "missing_lineage_id",
+    "missing_lineage_sequence",
+    "tampered_lineage_digest",
+    "stale_runtime_lineage_pin",
+    "wrong_rc_commit",
+    "wrong_rc_tag",
+    "wrong_provider",
+    "wrong_model",
+    "wrong_capability",
+    "wrong_sequence_type",
+    "wrong_operation_slot",
+    "historical_operation_in_new_lineage",
+    "duplicate_consumed_operation",
+    "call_context_lineage_mismatch"
+  ],
+  "historical_compatibility": {
+    "bundle_v1_loads_without_lineage": true,
+    "legacy_operation_ids_unchanged": true,
+    "legacy_execution_scope_hashes_unchanged": true,
+    "historical_receipts_rewritten": false,
+    "historical_operation_ids_rewritten": false,
+    "historical_ledger_rows_nullable": true
+  },
+  "durable_contract": {
+    "migration": "0014_v3_01_27",
+    "operation_lineage_persisted": true,
+    "attempt_lineage_persisted": true,
+    "attempt_operation_lineage_mismatch_rejected": true,
+    "completion_operation_lineage_mismatch_rejected": true,
+    "upgrade_downgrade_upgrade": "PASS"
+  },
+  "validation": {
+    "focused_provider_gate_tests": "55 PASS",
+    "full_python_api_worker_bridge": "934 PASS",
+    "studio": "14 PASS",
+    "renderer": "14 PASS",
+    "renderer_typecheck": "PASS",
+    "renderer_bundle": "PASS",
+    "acceptance_repository": "PASS",
+    "flow_a_b_c_and_dr_contracts": "PASS_EXPECTED_BLOCKED",
+    "docker_deterministic_e2e_and_dr": "PASS",
+    "json_parse": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "unchanged_controls": {
+    "w1_profile": true,
+    "quality_thresholds": true,
+    "rights": true,
+    "provider_timeout_seconds": 90,
+    "controller_timeout_seconds": 120,
+    "per_operation_limit_vnd": 500,
+    "acceptance_window_limit_vnd": 1250,
+    "max_attempts": 1,
+    "max_concurrency": 1,
+    "retry": false,
+    "fallback": false
+  },
+  "safety": {
+    "provider_calls": 0,
+    "credential_reads": 0,
+    "live_reservations": 0,
+    "spend_vnd": "0",
+    "new_rc_created": false,
+    "runtime_authority_granted": false,
+    "production_verdict": "NO-GO"
+  }
+}

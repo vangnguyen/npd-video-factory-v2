@@ -1,5 +1,20 @@
 # V3-01 remediation PR plan
 
+## Step 40 — V3-01-27 acceptance-lineage identity contract
+
+PR #56 merged the RC-16 quota evidence at exact governance `main`
+`c0f051c866d329544486e5e757349f0543ace980`; exact-main CI `34500843723` passed 5/5 and the
+executable tree remained RC-16. The original W1 lineage is retired. This source-only step adds a
+canonical, hash-derived lineage discriminator so multiple independently governed two-slot lineages
+can exist under one executable RC without recycling an old operation or minting a procedural RC.
+
+Bundle v1 remains historical and unchanged. Bundle v2 requires lineage identity in the bundle,
+scope, operation IDs, trusted call context and durable evidence; missing/tampered/stale/wrong
+lineage fails closed before reservation. This step stops at Owner G-08 with 0 calls/credentials/
+reservation/spend. If approved and merged, exact-main regression must pass before a new executable
+RC is locked; only a later governance package may create a fresh W1 lineage and request operation
+authority.
+
 ## Step 39 — RC-16 ASR W1 quota evidence and fresh-lineage decision
 
 Operation 1 passed preflight and made exactly one provider request, then received HTTP 429
@@ -64,6 +79,7 @@ reversible and prohibited from merge/deploy until its owner gate is recorded.
 | 37 | V3-01-25 W1 Prompt Profile Remediation | PR #54 exact head `f2760e5` merged as RC-16 `55b22f7`; exact-head CI `34250208121` and exact-main CI `34302351310` PASS 5/5; annotated `vf-v3-01-rc16` locked | immutable/hashable W1 vocabulary profile through settings, gate, controllers, adapter, request/evidence/cache plus asset-02 negative-insertion guard; quality remains WER ≤15% and 8/8 critical terms | implemented/mock-tested only; historical RC-15 remains FAIL/CONSUMED; ASR remains 0/2 `NOT_TESTED`; 003/010/013 stay in progress | repository merge/tag complete; no W1 live authority, credential read, provider call or spend |
 | 38 | RC-16 OpenAI ASR W1 governance rebind | governance/evidence/tests-only proposal on exact RC-16 `55b22f7`; executable tree unchanged | fresh RC-derived IDs, exact W1 profile/scope hash, unchanged WAV/transcript/RightsRecord hashes, APP-065/066/067, 500/1,250 VND and 90/120 seconds; proposed 10 September 14:00-18:00 UTC window; bundle unmounted | `EV-V3-RC16-ASR-W1-GATE-001` proves offline readiness only; no acceptance-axis promotion | STOP at G-08; after merge require governance-main CI, dual-CI/equality and separate Operation 1 authority; Operation 2 locked |
 | 39 | V3-01-26 RC-16 ASR W1 quota evidence | draft evidence/governance/tests-only package; executable RC-16 unchanged | preserve quota-failure request/response IDs and hashes, unknown actual cost, 500 VND safety charge, durable ledger, secret scan and owner-reported credit follow-up | no gap or acceptance-axis promotion; ASR remains 0/2 `NOT_TESTED` | STOP at G-08; Operation 1 consumed, Operation 2 locked, fresh two-slot lineage requires a separate owner decision |
+| 40 | V3-01-27 acceptance-lineage identity contract | source-only draft on exact post-PR#56 main; G-08 pending | canonical/hash-derived `acceptance_lineage_id`; v2 bundle/scope/operation/context/receipt/ledger binding; immutable v1 compatibility | no acceptance-axis promotion; 003/010/013 remain in progress | STOP at G-08; no merge/RC/live operation; after approved merge require exact-main regression and a new RC before fresh governance |
 
 ## Governance prerequisite
 

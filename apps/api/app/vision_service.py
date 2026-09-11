@@ -131,9 +131,19 @@ class VisionAnalysisService:
                     execution_trace=execution_trace,
                 )
 
+            execution_gate = getattr(
+                getattr(self.provider_safety, "policy", None),
+                "execution_gate",
+                None,
+            )
             execution = await self.provider_safety.execute(
                 ProviderCallContext(
                     operation_key=operation_key,
+                    acceptance_lineage_id=(
+                        execution_gate.acceptance_lineage_id
+                        if self.provider.external_call and execution_gate is not None
+                        else None
+                    ),
                     workspace_id=asset.workspace_id,
                     project_id=asset.project_id,
                     provider_key=self.provider.key,

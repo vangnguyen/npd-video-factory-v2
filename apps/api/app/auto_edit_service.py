@@ -460,9 +460,20 @@ class AutoEditAnalysisService:
                 "capability",
                 "transcription",
             )
+            execution_gate = getattr(
+                getattr(self.provider_safety, "policy", None),
+                "execution_gate",
+                None,
+            )
             transcription = self.provider_safety.execute(
                 ProviderCallContext(
                     operation_key=operation_key,
+                    acceptance_lineage_id=(
+                        execution_gate.acceptance_lineage_id
+                        if transcription_provider.external_call
+                        and execution_gate is not None
+                        else None
+                    ),
                     workspace_id=asset.workspace_id,
                     project_id=asset.project_id,
                     provider_key=transcription_provider.key,

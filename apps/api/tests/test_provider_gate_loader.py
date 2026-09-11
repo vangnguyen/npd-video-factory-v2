@@ -28,6 +28,7 @@ from app.provider_safety import (
     ProviderRightsEvidence,
     RC_BOUND_OPERATION_SLOTS,
     ProviderSafetyController,
+    derive_acceptance_lineage_id,
     derive_rc_bound_operation_key,
     provider_safety_policy_from_settings,
 )
@@ -178,10 +179,23 @@ def _valid_bundle(
     *,
     rc_commit: str = RC_COMMIT,
     rc_tag: str = RC_TAG,
+    lineage_sequence: int | None = None,
 ) -> ProviderGateBundle:
     budget = _budget()
     rights = _rights_record()
     rights_hash = canonical_sha256(rights)
+    lineage_id = (
+        derive_acceptance_lineage_id(
+            rc_tag=rc_tag,
+            rc_commit=rc_commit,
+            provider_key="openai-vision",
+            model="gpt-5-mini",
+            capability="vision",
+            sequence=lineage_sequence,
+        )
+        if lineage_sequence is not None
+        else None
+    )
     provider_scope_hash = canonical_sha256(
         {
             "provider_key": "openai-vision",
@@ -197,6 +211,7 @@ def _valid_bundle(
                 provider_key="openai-vision",
                 capability="vision",
                 slot=slot,
+                acceptance_lineage_id=lineage_id,
             ),
             slot=slot,
             operation="vision_analysis",
@@ -217,14 +232,19 @@ def _valid_bundle(
         budget=budget,
         rights_record_sha256=rights_hash,
         allowed_operations=allowed_operations,
+        acceptance_lineage_sequence=lineage_sequence,
+        acceptance_lineage_id=lineage_id,
     )
     return ProviderGateBundle(
+        version=2 if lineage_sequence is not None else 1,
         bundle_id=f"V3-01-GATE-{rc_tag.removeprefix('vf-v3-01-').upper()}-OPENAI-VISION-A",
         rc_tag=rc_tag,
         rc_commit=rc_commit,
         provider_key="openai-vision",
         model="gpt-5-mini",
         capability="vision",
+        acceptance_lineage_sequence=lineage_sequence,
+        acceptance_lineage_id=lineage_id,
         credential_alias="secret://openai/codex-video",
         valid_from_utc=ACTIVATES_AT,
         expires_at_utc=EXPIRES_AT,
@@ -343,6 +363,34 @@ def test_rc_bound_operation_ids_derive_from_rc_provider_capability_and_slot() ->
             provider_key="openai-vision",
             capability="vision",
             slot=3,
+        )
+
+
+def test_vision_v2_bundle_binds_lineage_and_requires_exact_runtime_pin(tmp_path) -> None:
+    bundle = _valid_bundle(lineage_sequence=2)
+    lineage_id = bundle.acceptance_lineage_id
+    assert lineage_id is not None
+    path, bundle_sha256 = _write_bundle(
+        tmp_path,
+        payload=bundle.model_dump(mode="json"),
+    )
+    scope = load_verified_provider_gate_bundle(
+        path,
+        expected_bundle_sha256=bundle_sha256,
+        expected_rc_commit=RC_COMMIT,
+        expected_rc_tag=RC_TAG,
+        expected_acceptance_lineage_id=lineage_id,
+    )
+    assert scope.gate_bundle_version == 2
+    assert scope.acceptance_lineage_sequence == 2
+    assert scope.acceptance_lineage_id == lineage_id
+    assert all(lineage_id in operation.operation_key for operation in scope.allowed_operations)
+    with pytest.raises(ProviderGateBundleError, match="requires an expected acceptance lineage"):
+        load_verified_provider_gate_bundle(
+            path,
+            expected_bundle_sha256=bundle_sha256,
+            expected_rc_commit=RC_COMMIT,
+            expected_rc_tag=RC_TAG,
         )
 
 

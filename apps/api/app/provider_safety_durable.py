@@ -198,6 +198,7 @@ class DurableProviderSafetyController(ProviderSafetyController):
         )
         return ProviderExecutionReceipt(
             operation_key=context.operation_key,
+            acceptance_lineage_id=context.acceptance_lineage_id,
             provider_key=context.provider_key,
             capability=context.capability,
             status="succeeded" if succeeded else "failed",

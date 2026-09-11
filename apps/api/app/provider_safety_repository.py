@@ -189,6 +189,7 @@ class ProviderSafetyRepository:
                 session.add(
                     ProviderSafetyOperationORM(
                         operation_key=context.operation_key,
+                        acceptance_lineage_id=context.acceptance_lineage_id,
                         provider_key=context.provider_key,
                         capability=context.capability,
                         workspace_id=context.workspace_id,
@@ -228,6 +229,8 @@ class ProviderSafetyRepository:
                 )
                 if operation is None:
                     raise RuntimeError("provider safety operation reservation is missing")
+                if operation.acceptance_lineage_id != record.acceptance_lineage_id:
+                    raise RuntimeError("provider safety attempt lineage does not match its operation")
                 existing = await session.scalar(
                     select(ProviderSafetyAttemptORM).where(
                         ProviderSafetyAttemptORM.operation_key == record.operation_key,
@@ -240,6 +243,7 @@ class ProviderSafetyRepository:
                     ProviderSafetyAttemptORM(
                         usage_id=record.usage_id,
                         operation_key=record.operation_key,
+                        acceptance_lineage_id=record.acceptance_lineage_id,
                         attempt=record.attempt,
                         status=record.status,
                         currency="VND",
@@ -283,6 +287,8 @@ class ProviderSafetyRepository:
                 )
                 if operation is None:
                     raise RuntimeError("provider safety operation reservation is missing")
+                if operation.acceptance_lineage_id != context.acceptance_lineage_id:
+                    raise RuntimeError("provider safety completion lineage does not match its operation")
                 if operation.status != "reserved":
                     alerts = await self._existing_alerts(session, operation.budget_day)
                     circuit = await session.get(

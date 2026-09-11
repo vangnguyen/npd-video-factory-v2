@@ -1,5 +1,25 @@
 # V3-01 implementation inventory
 
+## Current V3-01-27 acceptance-lineage checkpoint
+
+PR #56 merged evidence-only as exact governance `main`
+`c0f051c866d329544486e5e757349f0543ace980`; exact-main CI `34500843723` passed 5/5 and
+the executable tree remained RC-16
+`55b22f773dc108f6c51a1b52db825b1caa8e8a51`. The original RC-16 W1 lineage is retired:
+Operation 1 remains consumed/failed/`REVIEW_REQUIRED` and Operation 2 remains locked.
+
+[V3-01-27](64_V3_01_27_ACCEPTANCE_LINEAGE_IDENTITY_CONTRACT.md) is a source-only remediation
+that versions the gate contract. Historical v1 bundles, operation IDs, scope hashes, receipts and
+nullable ledger rows remain unchanged. New v2 gates require a canonical, hash-derived
+`acceptance_lineage_id` bound to the exact RC/provider/model/capability/sequence, both operation
+slots, execution-scope hash, trusted call context and durable evidence. Missing, tampered, stale or
+cross-lineage identities fail before reservation.
+
+This draft changes executable contract code and therefore requires a new RC only after separate
+Owner G-08, merge and exact-main regression. It creates no RC, bundle instance, acceptance window
+or runtime authority and performs 0 provider calls, 0 credential reads, 0 live reservations and
+0 VND spend. ASR remains 0/2 PASS, Vision remains 2/2 PASS and Production remains `NO-GO`.
+
 ## Current RC-16 W1 quota checkpoint
 
 The executable inventory is unchanged at RC-16

@@ -1,5 +1,19 @@
 # Owner gate register
 
+## V3-01-27 source-remediation checkpoint
+
+Owner G-08 for PR #56 is consumed by merge commit
+`c0f051c866d329544486e5e757349f0543ace980`; exact-main CI `34500843723` passed 5/5. RC-16's
+original W1 lineage remains retired, with Operation 1 consumed/failed/`REVIEW_REQUIRED` and
+Operation 2 locked. The owner's direction authorizes implementation of V3-01-27 only: a source-only,
+zero-call canonical lineage contract and a Draft PR stopping at a new G-08.
+
+No approval record in this branch grants merge, a new RC, a gate bundle, an acceptance window,
+credential access, reservation or provider execution. Because executable contract code changes, an
+approved merge must be followed by exact-main regression and a newly locked RC before a fresh W1
+governance package may be proposed. See
+[V3-01-27](64_V3_01_27_ACCEPTANCE_LINEAGE_IDENTITY_CONTRACT.md).
+
 ## RC-16 W1 quota-result checkpoint
 
 The separately authorized RC-16 Operation 1 passed preflight, dispatched once and received HTTP
@@ -29,7 +43,7 @@ This draft requires a separate G-08 before merge. No new RC/window/bundle/operat
 is created; Vision 2/2, ASR 0/2 and production NO-GO stay unchanged.
 See [V3-01-23 review](57_V3_01_23_ASR_CRITICAL_TERM_EVALUATOR.md).
 
-G-00 and the completed bounded G-08 actions through PR #50 have approval records or recorded owner
+G-00 and the completed bounded G-08 actions through PR #56 have approval records or recorded owner
 decisions. RC-4 remains
 evidence of a fail-closed executable-contract blocker. RC-5 operation 1 consumed its exact G-01-A,
 G-02-A, G-03-A and separate operation authority; provider execution succeeded but acceptance
@@ -114,7 +128,7 @@ provider, VND/timeout envelope and rights to fresh RC-15 IDs and the proposed 08
 | G-05 | exact final video/caption/thumbnail | PENDING | exact artifact hashes and completed quality report |
 | G-06 | one official external publication | PENDING | target, visibility, time, idempotency and takedown plan |
 | G-07 | takedown/delete if needed | PENDING | remote ID, reason and impact; otherwise no deletion |
-| G-08 | remediation/evidence PR merge | decisions through PR #55 consumed; current V3-01-26 evidence draft awaits review | new explicit G-08 required before merge; does not grant RC/operation/runtime authority |
+| G-08 | remediation/evidence PR merge | decisions through PR #56 consumed; V3-01-27 source-remediation draft awaits review | new explicit G-08 required before merge; does not grant RC/operation/runtime authority |
 | G-09 | deploy locked RC | PENDING | image digest, migrations, backup and rollback |
 | G-10 | accept backup/restore/RPO/RTO | PENDING | completed isolated restore report and measured result |
 | G-11 | accept final quality | PENDING; schema, 27-check template and full-watch/listen checklist prepared offline | exact final video and dependent artifact hashes, named reviewer, UTC timestamps, desktop/mobile full watch, headphone/phone-speaker full listen and all checks PASS |

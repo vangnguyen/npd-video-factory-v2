@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "run_id": "vf-v3-01-20260910T174456Z-8c40d2c-v3-01-27-lineage",
+  "started_at_utc": "2026-09-10T17:44:56Z",
+  "completed_at_utc": "2026-09-10T17:45:29Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "commit_sha": "8c40d2c58f1272b09748b1a51e924b9f37045c23",
+  "base_sha": "c0f051c866d329544486e5e757349f0543ace980",
+  "release_candidate": "RC-16 historical lineage retired; V3-01-27 source remediation; no new RC locked",
+  "environment": "LOCAL",
+  "container_images": [],
+  "database_migration_version": "0014_v3_01_27",
+  "config_fingerprint_redacted": "v3-01-27-lineage-v2-external-false-paid-false-zero-vnd-kill-switch-engaged",
+  "providers": [
+    {
+      "capability": "acceptance-lineage-contract",
+      "provider": "offline-contract-validator",
+      "model_or_workflow": "versioned Vision and ASR gate identity",
+      "region": "not-applicable-offline",
+      "credential_alias": "not-read",
+      "secret_recorded": false
+    }
+  ],
+  "test_cases": [
+    "CANONICAL-LINEAGE-DERIVATION",
+    "MULTIPLE-TWO-SLOT-LINEAGES-UNDER-ONE-RC",
+    "BUNDLE-SCOPE-OPERATION-CONTEXT-EVIDENCE-BINDING",
+    "MISSING-TAMPERED-STALE-WRONG-LINEAGE-FAIL-CLOSED",
+    "HISTORICAL-OPERATION-REUSE-BLOCKED",
+    "BUNDLE-V1-BACKWARD-COMPATIBILITY",
+    "DURABLE-OPERATION-ATTEMPT-LINEAGE-PERSISTENCE",
+    "MIGRATION-0014-UPGRADE-DOWNGRADE-UPGRADE-PASS",
+    "FOCUSED-PYTEST-55-PASS",
+    "FULL-PYTEST-934-PASS",
+    "PYTHON-COMPILEALL-PASS",
+    "STUDIO-TESTS-14-PASS",
+    "RENDERER-TESTS-14-PASS",
+    "RENDERER-TYPECHECK-PASS",
+    "RENDERER-BUNDLE-PASS",
+    "ACCEPTANCE-REGISTER-PASS",
+    "FLOW-A-B-C-AND-DR-CONTRACTS-PASS-EXPECTED-BLOCKED",
+    "DOCKER-DETERMINISTIC-E2E-DR-PASS",
+    "JSON-PARSE-PASS",
+    "SECRET-PATTERN-SCAN-PASS",
+    "GIT-DIFF-CHECK-PASS"
+  ],
+  "artifact_manifest": [
+    "final/status.json",
+    "governance/acceptance-lineage-contract-validation.json",
+    "matrix/evidence-EV-V3-ACCEPTANCE-LINEAGE-001.json"
+  ],
+  "cost_summary": {
+    "currency": "VND",
+    "approved": 0,
+    "actual": 0,
+    "external_calls": 0,
+    "credential_reads": 0,
+    "live_reservations": 0
+  },
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-08"
+  ],
+  "result": "BLOCKED"
+}
