@@ -540,3 +540,20 @@ NO-GO remain unchanged. Critical-term accuracy remains unresolved.
 Every real-provider, production-path and human-quality axis lacking evidence remains `NOT_TESTED`,
 `BLOCKED` or `FAIL`, never inferred as PASS. Final GO requires G-12 after all critical axes pass on
 one locked RC and every P0 is verified or covered by an explicit unexpired owner exception.
+
+## Current RC-17 fresh-lineage checkpoint
+
+PR #57 merged the executable lineage identity contract as
+`d08ffc005d7f3ad517d355977b0bc3cc8d686906`; exact-main CI `34550127181` passed 5/5 and annotated
+`vf-v3-01-rc17` locks that commit. The current governance-only package proposes canonical lineage
+`al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329`, two fresh
+lineage-bound W1 ASR slots, scope SHA
+`6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7` and raw bundle SHA
+`39867efb2a95d22bf5d4be64e041671cf10517a118d02bece010778ab587a76f`.
+
+The package makes zero provider calls, reads zero credentials, creates zero live reservations and
+spends zero VND. It does not authorize either operation, and the proposed window is not a schedule.
+RC-16 historical evidence remains immutable and its lineage stays retired. ASR remains 0/2
+consecutive PASS, Vision remains 2/2, production-path/human-quality remain `NOT_TESTED`, and the
+overall production verdict remains **NO-GO**. The next decision is Owner G-08 for this governance
+package; no operation authority is implied.

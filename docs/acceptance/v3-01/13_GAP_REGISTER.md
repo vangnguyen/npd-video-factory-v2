@@ -315,3 +315,12 @@ unchanged owner-approved WAVs/transcripts/RightsRecords, 500/1,250 VND envelope,
 timeouts and new dated scope offline. The bundle is unmounted; Operation 1 is not approved or
 executed and Operation 2 is not approved/locked. GAP-003, GAP-010 and GAP-013 remain `IN_PROGRESS`,
 ASR real-provider remains `NOT_TESTED`, and Production remains `NO-GO`.
+
+## RC-17 fresh-lineage governance update
+
+PR #57 merged the V3-01-27 source contract as executable RC-17 after exact-main regression and CI
+passed. The follow-up `EV-V3-RC17-ASR-W1-LINEAGE-001` binds a canonical lineage v2 identity,
+two fresh operation slots, immutable W1 profile, exact inputs/rights and unchanged VND/timeout
+controls in an unmounted bundle. It makes zero provider calls and changes no acceptance axis.
+GAP-003, GAP-010 and GAP-013 remain `IN_PROGRESS`; ASR remains 0/2, Vision remains 2/2 and
+Production remains `NO-GO`.

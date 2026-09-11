@@ -224,3 +224,18 @@ authorities are retained in
 [`operation-1-authority.json`](../../../evidence/v3-01/vf-v3-01-20260902T143651Z-c2b1aec-op1/governance/operation-1-authority.json)
 and
 [`operation-2-authority.json`](../../../evidence/v3-01/vf-v3-01-20260902T162324Z-c2b1aec-op2/governance/operation-2-authority.json).
+
+## RC-17 fresh W1 lineage v2 governance checkpoint
+
+Owner G-08 for PR #57 is recorded as [V3-01-APP-068](approvals/V3-01-APP-068.json). Exact-main
+regression and CI passed before `vf-v3-01-rc17` was locked. The fresh governance proposal binds:
+
+- G-01 [V3-01-APP-069](approvals/V3-01-APP-069.json),
+- G-02 [V3-01-APP-070](approvals/V3-01-APP-070.json), and
+- G-03 [V3-01-APP-071](approvals/V3-01-APP-071.json).
+
+All three records bind the exact RC-17 canonical lineage and scope but are not operation authority.
+The bundle remains unmounted; fresh Operation 1 is not approved/not executed and Operation 2 is
+not approved/locked. RC-16 lineage authority is retired and cannot be reused. Provider calls,
+credential reads, live reservations and spend in this package are all zero. See
+[65_V3_01_RC17_OPENAI_ASR_W1_LINEAGE_GATE.md](65_V3_01_RC17_OPENAI_ASR_W1_LINEAGE_GATE.md).

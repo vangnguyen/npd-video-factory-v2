@@ -1,0 +1,55 @@
+{
+  "artifact_manifest": [
+    "final/status.json",
+    "governance/executable-rc-ci.json",
+    "matrix/evidence-EV-V3-RC17-ASR-W1-LINEAGE-001.json",
+    "provider/rc17-asr-w1-lineage-validation.json",
+    "provider/test-summary.json"
+  ],
+  "base_sha": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+  "commit_sha": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+  "completed_at_utc": "2026-09-11T01:56:27Z",
+  "config_fingerprint_redacted": "fixture-default-rc17-asr-w1-lineage-v2-gate-unmounted-zero-budget-kill-switch-engaged-no-credential-read",
+  "container_images": [],
+  "cost_summary": {
+    "actual": 0,
+    "approved_conditional_window": 1250,
+    "currency": "VND",
+    "external_calls": 0,
+    "reserved": 0
+  },
+  "database_migration_version": "0014_v3_01_27_acceptance_lineage_identity",
+  "environment": "LOCAL",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "owner_gate_ids": [
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-08"
+  ],
+  "providers": [
+    {
+      "capability": "asr",
+      "credential_alias": "secret://openai/codex-video",
+      "model_or_workflow": "whisper-1 / immutable W1 / fresh lineage v2 / no provider execution",
+      "provider": "openai-transcription-gate-validation-only",
+      "region": "not-applicable",
+      "secret_recorded": false
+    }
+  ],
+  "release_candidate": "vf-v3-01-rc17",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "result": "PASS",
+  "run_id": "vf-v3-01-20260911T013115Z-d08ffc0-rc17-asr-w1-lineage-v2",
+  "schema_version": 1,
+  "started_at_utc": "2026-09-11T01:31:15Z",
+  "test_cases": [
+    "ASR-01",
+    "PRO-006",
+    "RC17-ASR-W1-LINEAGE-V2-GATE-FOCUSED-REGRESSION"
+  ]
+}

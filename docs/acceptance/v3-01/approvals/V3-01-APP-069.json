@@ -1,0 +1,31 @@
+{
+  "approval_id": "V3-01-APP-069",
+  "gate_id": "G-01",
+  "decision": "APPROVED",
+  "scope": "Rebind G-01-ASR to exactly openai-transcription / whisper-1 / asr / vi, the immutable W1 prompt profile and fresh canonical lineage al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329 on vf-v3-01-rc17 using only credential alias secret://openai/codex-video for the proposed dated acceptance window.",
+  "artifact_or_commit_hashes": [
+    "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+    "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329",
+    "6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; credential value remains in the external secret mechanism",
+  "limits": [
+    "Provider openai-transcription only",
+    "Model whisper-1 only",
+    "Capability asr and language vi only",
+    "Credential alias secret://openai/codex-video only",
+    "Exact W1 profile asr-whisper-vi-w1-v1 with prompt SHA-256 6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "Canonical lineage sequence 1 and ID al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329 only",
+    "The same immutable W1 profile and lineage must be used for both asset slots",
+    "No fallback model or provider",
+    "No credential read or provider call until a separate RC-17 lineage Operation 1 authority is granted",
+    "No deployment, public ingress, publishing or production analytics"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-11T01:31:15Z",
+  "expires_at_utc": "2026-09-12T18:00:00Z",
+  "notes": "The owner authorized a fresh W1 two-slot acceptance lineage after PR #57 merged, exact-main regression passed and RC-17 was locked. This secret-free record binds only the proposed lineage scope; a separate G-08 for the governance PR and a separate Operation 1 decision remain mandatory. It is not execution authority, grants no credential read or API call, and cannot reuse the retired RC-16 lineage. The window is a proposal for review, not a schedule or runtime activation."
+}

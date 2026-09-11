@@ -1,0 +1,31 @@
+{
+  "approval_id": "V3-01-APP-070",
+  "gate_id": "G-02",
+  "decision": "APPROVED",
+  "scope": "Rebind G-02-ASR v1.1 to the dated RC-17 W1 lineage v2 duration, file-size, native-timestamp, VND and split-timeout envelope for at most two fresh derived whisper-1 acceptance operations.",
+  "artifact_or_commit_hashes": [
+    "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+    "fc53ff176baa1d0e6428459b47ef39c22a93d7752af69444fa3248eb3d6f680b",
+    "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329",
+    "6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7"
+  ],
+  "target_account_or_environment": "Isolated owner-gated acceptance runner; checked-in and production budgets remain zero",
+  "limits": [
+    "500 VND atomic reservation per operation",
+    "1250 VND maximum for the whole acceptance window",
+    "162 VND per minute accounting rate derived from 0.006 USD/minute at fixed 27000 VND/USD",
+    "One file per operation, minimum acceptance duration 90 seconds and hard duration cap 180 seconds",
+    "File size no greater than 25000000 bytes",
+    "Language vi, verbose_json, native segment and word timestamps",
+    "Provider HTTP timeout 90 seconds and controller hard envelope 120 seconds",
+    "One attempt, concurrency 1, no automatic retry and no fallback",
+    "Canonical lineage sequence 1 and ID al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329 only",
+    "Window 2026-09-12T14:00:00Z through 2026-09-12T18:00:00Z only",
+    "No provider call until a separate owner decision authorizes RC-17 lineage Operation 1"
+  ],
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "approved_at_utc": "2026-09-11T01:31:15Z",
+  "expires_at_utc": "2026-09-12T18:00:00Z",
+  "notes": "The approved 500/1250 VND and 90/120 second envelope is unchanged; only the fresh RC-17 W1 lineage, UTC budget day and operation identities are rebound. This record does not enable checked-in budget or authorize an API call. Any profile, lineage, bundle, scope or window mutation requires another review and rebind. It is not execution authority and grants no credential read, reservation or provider call."
+}
