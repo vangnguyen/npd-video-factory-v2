@@ -251,3 +251,16 @@ proof before scene, silence and persistence consumers. See
 The Compose project contains only V2-owned PostgreSQL, Redis, MinIO, API, Studio, renderer and
 worker. The optional ComfyUI bridge is off by default. No Agent Hub, n8n, Caddy, CRM or shared
 Redis/database service is defined. This boundary must be preserved by every remediation PR.
+
+## RC-17 fresh W1 lineage v2 checkpoint
+
+PR #57 merged V3-01-27 as exact executable RC-17
+`d08ffc005d7f3ad517d355977b0bc3cc8d686906`; exact-main CI `34550127181` passed 5/5 and
+annotated tag `vf-v3-01-rc17` peels to that commit. The executable-tree SHA-256 is
+`ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40`.
+
+The governance package in [65_V3_01_RC17_OPENAI_ASR_W1_LINEAGE_GATE.md](65_V3_01_RC17_OPENAI_ASR_W1_LINEAGE_GATE.md)
+binds one canonical lineage ID and two fresh operation IDs to the unchanged W1 profile, exact
+assets/transcripts/RightsRecords and unchanged safety envelope. It is offline only: bundle
+unmounted, both operations unauthorized, provider calls/credential reads/reservations/spend zero.
+ASR remains 0/2 real-provider PASS, Vision remains 2/2 and Production remains `NO-GO`.

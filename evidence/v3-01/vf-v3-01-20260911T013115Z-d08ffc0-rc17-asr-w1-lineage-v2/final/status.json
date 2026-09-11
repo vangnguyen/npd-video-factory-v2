@@ -1,0 +1,29 @@
+{
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED",
+    "real_provider_tested": "NOT_TESTED"
+  },
+  "acceptance_lineage_id": "al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329",
+  "actual_cost_vnd": "0",
+  "asr_consecutive_passes": 0,
+  "bundle_mounted": false,
+  "checkpoint": "RC-17 OpenAI ASR W1 fresh lineage v2 governance gate",
+  "credential_reads": 0,
+  "gate_readiness": "PASS_PENDING_G08",
+  "governance_main_ci": "PENDING_POST_MERGE",
+  "historical_rc16_operation_1": "FAILED_CONSUMED_HTTP_429_CREDIT_BALANCE_EXHAUSTED",
+  "historical_rc16_operation_2": "RETIRED_LOCKED_NOT_EXECUTED",
+  "operation_1": "NOT_APPROVED_NOT_EXECUTED",
+  "operation_2": "NOT_APPROVED_LOCKED_NOT_EXECUTED",
+  "production_verdict": "NO_GO",
+  "provider_calls": 0,
+  "required_consecutive_passes": 2,
+  "reservation_vnd": "0",
+  "schema_version": 1,
+  "vision_consecutive_passes": 2,
+  "w1_profile_id": "asr-whisper-vi-w1-v1",
+  "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1"
+}

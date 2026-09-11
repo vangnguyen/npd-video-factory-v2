@@ -1,0 +1,38 @@
+{
+  "assertion": "The RC-17 ASR W1 lineage-v2 gate validates offline with a canonical RC-bound lineage, two fresh lineage-bound slots, immutable W1 prompt profile, exact assets/transcripts/RightsRecords, G01/G02/G03 rebind records and unchanged 500/1250 VND 90/120s envelope. The bundle remains unmounted, both operations unauthorized, ASR NOT_TESTED/0-of-2 and Production NO-GO.",
+  "axis": "cross-cutting",
+  "commit_sha": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+  "completed_at_utc": "2026-09-11T01:56:27Z",
+  "correlation_id": "v3-01-rc17-asr-w1-lineage-v2-d08ffc0",
+  "cost": {
+    "actual": 0,
+    "currency": "VND",
+    "status": "ZERO"
+  },
+  "duration_seconds": 1512.0,
+  "environment": "LOCAL",
+  "evidence_id": "EV-V3-RC17-ASR-W1-LINEAGE-001",
+  "gap_ids": [
+    "V3-01-GAP-003",
+    "V3-01-GAP-010",
+    "V3-01-GAP-013"
+  ],
+  "matrix_rows": [
+    "ASR-01"
+  ],
+  "provider": {
+    "credential_alias": "secret://openai/codex-video",
+    "model_or_workflow": "whisper-1 / immutable W1 / fresh lineage v2 / selected-but-not-executed",
+    "name": "openai-transcription-gate-validation-only",
+    "secret_recorded": false
+  },
+  "reproduce": "On the governance branch based on exact RC-17, run python -m pytest apps/api/tests/test_rc17_asr_w1_lineage_gate_bundle.py -q with fixture defaults; verify canonical lineage, profile, bundle, approvals, scope, assets, retired RC-16 state and executable-tree equality. No live ledger, credential or provider is required.",
+  "request_hash": null,
+  "response_or_artifact_hash": "39867efb2a95d22bf5d4be64e041671cf10517a118d02bece010778ab587a76f",
+  "result": "PASS",
+  "reviewer": "Codex local ASR W1 lineage gate reviewer",
+  "rights_record_id": "V3-01-RIGHTS-ASR-001;V3-01-RIGHTS-ASR-002",
+  "schema_version": 1,
+  "started_at_utc": "2026-09-11T01:31:15Z",
+  "test_case_id": "ASR-01+PRO-006"
+}

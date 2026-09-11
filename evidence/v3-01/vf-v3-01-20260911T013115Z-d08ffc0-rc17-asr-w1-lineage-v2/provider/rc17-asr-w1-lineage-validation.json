@@ -1,0 +1,158 @@
+{
+  "acceptance": {
+    "implemented": "PASS",
+    "mock_tested": "PASS",
+    "production_path_tested": "NOT_TESTED",
+    "quality_accepted": "NOT_TESTED",
+    "real_provider_tested": "NOT_TESTED"
+  },
+  "approvals": [
+    {
+      "canonical_sha256": "47c91edf1dd388afe0214d1dddc85161c77b1390b0685fbe5fc5c34590b305bf",
+      "gate": "G-01-ASR",
+      "id": "V3-01-APP-069",
+      "runtime_authority": false
+    },
+    {
+      "canonical_sha256": "148b8e244c09e9a0bea1c227e7b68530d2fa327a7b53746b86a77af941afa1d2",
+      "gate": "G-02-ASR",
+      "id": "V3-01-APP-070",
+      "runtime_authority": false
+    },
+    {
+      "canonical_sha256": "098a01741532d9f9204cdc2a43a42f26b70a75dcd67563f738715f120fde7124",
+      "gate": "G-03-ASR",
+      "id": "V3-01-APP-071",
+      "runtime_authority": false
+    }
+  ],
+  "assets": [
+    {
+      "bytes": 5800940,
+      "duration_seconds": 120.852,
+      "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+      "sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "slot": 1,
+      "transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e"
+    },
+    {
+      "bytes": 6460396,
+      "duration_seconds": 134.590667,
+      "negative_insertion_control": true,
+      "rights_record_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323",
+      "sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "slot": 2,
+      "transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef"
+    }
+  ],
+  "budget": {
+    "acceptance_window_limit_vnd": "1250",
+    "actual_vnd": "0",
+    "attempts": 1,
+    "automatic_retry": false,
+    "concurrency": 1,
+    "controller_hard_timeout_seconds": 120,
+    "currency": "VND",
+    "model_fallback": false,
+    "per_operation_limit_vnd": "500",
+    "provider_http_timeout_seconds": 90,
+    "reserved_vnd": "0",
+    "vnd_per_minute": "162"
+  },
+  "evidence_id": "EV-V3-RC17-ASR-W1-LINEAGE-001",
+  "gate": {
+    "acceptance_lineage_id": "al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329",
+    "acceptance_lineage_sequence": 1,
+    "budget_sha256": "fc53ff176baa1d0e6428459b47ef39c22a93d7752af69444fa3248eb3d6f680b",
+    "bundle_path": "docs/acceptance/v3-01/V3-01-GATE-RC17-OPENAI-ASR-W1-LINEAGE-A.json",
+    "bundle_sha256": "39867efb2a95d22bf5d4be64e041671cf10517a118d02bece010778ab587a76f",
+    "execution_scope_sha256": "6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7",
+    "expires_at_utc": "2026-09-12T18:00:00Z",
+    "mounted": false,
+    "provider_scope_sha256": "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "valid_from_utc": "2026-09-12T14:00:00Z",
+    "window_status": "PROPOSED_REQUIRES_G08_AND_SEPARATE_OPERATION_AUTHORITY"
+  },
+  "governance": {
+    "draft_pr": "PENDING",
+    "dual_ci_provenance": "PENDING_POST_MERGE",
+    "executable_tree_equality": "PASS_PRE_PR",
+    "executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
+    "governance_head": null,
+    "governance_main_ci_run_id": null,
+    "governance_main_commit": null
+  },
+  "historical_rc16": {
+    "acceptance_verdict": "REVIEW_REQUIRED",
+    "actual_cost_vnd": null,
+    "authority": "RETIRED",
+    "consumed": true,
+    "operation_2": "RETIRED_LOCKED",
+    "operation_id": "v3-01-rc16-openai-transcription-asr-call-01",
+    "provider_execution": "FAILED_HTTP_429_CREDIT_BALANCE_EXHAUSTED",
+    "reconstructed_or_rewritten": false,
+    "safety_charge_vnd": "500",
+    "structured_transcript": "NOT_AVAILABLE"
+  },
+  "live_ledger_inspected": false,
+  "live_ledger_note": "No live acceptance process, database or secret mechanism was opened. Scope tests used disposable synthetic SQLite state only. Live operation status must be verified again after a separate operation authority.",
+  "operations": [
+    {
+      "authority": "NOT_APPROVED",
+      "executed": false,
+      "id": "v3-01-rc17-openai-transcription-asr-al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329-call-01",
+      "slot": 1
+    },
+    {
+      "authority": "NOT_APPROVED_LOCKED",
+      "executed": false,
+      "id": "v3-01-rc17-openai-transcription-asr-al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329-call-02",
+      "slot": 2
+    }
+  ],
+  "production_verdict": "NO-GO",
+  "provider": {
+    "capability": "asr",
+    "credential_alias": "secret://openai/codex-video",
+    "credential_reads": 0,
+    "key": "openai-transcription",
+    "language": "vi",
+    "model": "whisper-1",
+    "provider_calls": 0
+  },
+  "rc": {
+    "ci_status": "completed_success",
+    "commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+    "exact_main_ci_run_id": 34550127181,
+    "remediation_exact_head": "8171c764bfb59432e69ea7cf8c98639d6f0b4e68",
+    "remediation_exact_head_ci_run_id": 34510687446,
+    "remediation_pr": 57,
+    "tag": "vf-v3-01-rc17",
+    "tag_object": "ea67843635dddf94ee25d38111fc06782ad9fd74"
+  },
+  "schema_version": 1,
+  "validation": {
+    "approval_hashes": "PASS",
+    "asset_hashes": "PASS",
+    "audio_headers_and_durations": "PASS",
+    "bundle_loader": "PASS",
+    "durable_nondurable_parity": "PASS",
+    "executable_unchanged_relative_to_rc17": "PASS",
+    "fail_closed_defaults": "PASS",
+    "focused_tests": "16 passed",
+    "governance_main_ci": "PENDING_POST_MERGE",
+    "historical_rc16_state_unchanged": "PASS",
+    "lineage_derivation_and_operation_identity": "PASS",
+    "multi_asset_rights_binding": "PASS",
+    "negative_insertion_reference_control": "PASS",
+    "reference_transcript_hashes": "PASS",
+    "w1_profile_and_scope_hashes": "PASS"
+  },
+  "w1_profile": {
+    "canonical_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "profile_id": "asr-whisper-vi-w1-v1",
+    "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "same_profile_both_slots": true,
+    "temperature_policy": "omitted"
+  }
+}
