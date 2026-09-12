@@ -1,0 +1,90 @@
+{
+  "task_id": "VF-V0F",
+  "scope": "Local zero-call checks on the candidate; no production-path or paid-provider acceptance claim",
+  "python": {
+    "verdict": "PASS",
+    "passed": 958,
+    "failed": 0,
+    "seconds": 224.36,
+    "rerun_after_fixture_restoration": true,
+    "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+    "python_version": "3.12.3"
+  },
+  "focused": {
+    "passed": 32,
+    "failed": 0,
+    "seconds": 9.67,
+    "minio_contract_tests": 8,
+    "ci_provenance_tests": 23,
+    "restored_fixture_safety_regression_tests": 1
+  },
+  "studio": {
+    "passed": 14,
+    "syntax_checks": "PASS"
+  },
+  "renderer": {
+    "passed": 14,
+    "typecheck": "PASS",
+    "bundle": "PASS",
+    "node_version": "24.19.0",
+    "ci_node_version": "22",
+    "existing_lockfile_audit_warning": "5 vulnerabilities (3 moderate, 2 high); no dependency upgrade/autofix in scope"
+  },
+  "safety": {
+    "verdict": "PASS",
+    "steps_passed": 36,
+    "provider_calls": 0,
+    "owned_credentials_read": 0,
+    "source": "Exact safety job shell steps from .github/workflows/ci.yml on patched worktree; no step skipped"
+  },
+  "acceptance": {
+    "existing_registers_and_redacted_evidence": "PASS",
+    "asr_compatibility_evidence": "PASS",
+    "flow_a_fixture_boundary": "BLOCKED_AS_EXPECTED",
+    "flow_b_fixture_boundary": "BLOCKED_AS_EXPECTED",
+    "flow_c_fixture_boundary": "BLOCKED_AS_EXPECTED",
+    "dr_observability_fixture_boundary": "BLOCKED_AS_EXPECTED",
+    "acceptance_thresholds_changed": false
+  },
+  "migration": {
+    "upgrade_head": "PASS",
+    "downgrade_base": "PASS",
+    "replay_head": "PASS",
+    "head": "0014_v3_01_27"
+  },
+  "docker_e2e": {
+    "verdict": "PASS",
+    "exit_code": 0,
+    "command": "bash scripts/e2e-smoke.sh",
+    "compose_project": "npd-video-factory-v3-dr-v0f-e2e",
+    "minio_artifact_recovery": "PASS",
+    "disposable_dr": "PASS",
+    "final_video_qc": "PASS",
+    "services_removed_after_run": true,
+    "env_fixture_restored": true,
+    "e2e_script_changed": false
+  },
+  "checks": {
+    "git_diff_check": "PASS",
+    "real_key_pattern_matches": 0,
+    "owned_credential_access": 0,
+    "provider_calls": 0,
+    "live_reservations": 0,
+    "provider_spend_vnd": "0",
+    "production_writes": 0
+  },
+  "environment_notes": {
+    "initial_python_run": {
+      "exit_code": 1,
+      "passed": 957,
+      "failed": 1,
+      "seconds": 463.37,
+      "failure": "test_capabilities_report_no_agent_hub_or_publishing_runtime",
+      "detail": "agent_hub_bridge_enabled was true while E2E fixture activation overlapped; rerun after .env restoration required"
+    },
+    "resolution": "E2E temporarily activated the Agent Hub fixture in ignored .env. After exact template restoration, both focused safety regression and all 958 tests passed without product-code changes.",
+    "integration_harness": "Initial restart check kept Docker's old ephemeral host binding. Task-local helper now rediscovers the new binding after restart; old/new cross-reference object persistence and final restart/shutdown/cleanup passed.",
+    "safety_harness": "Full safety steps passed on the installed worktree and a separate clean Git worktree. A plain archive without Git metadata was unsuitable for git grep/diff checks and was not accepted as validation.",
+    "host_adapters": "Task-local Windows Docker CLI and Windows Git shim support WSL; no repository scripts were changed."
+  }
+}

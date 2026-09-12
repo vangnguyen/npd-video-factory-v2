@@ -1,0 +1,87 @@
+{
+  "backup_integrity_verified": true,
+  "completed_at_utc": "2026-09-12T08:10:02Z",
+  "cost_vnd": 0,
+  "duplicate_external_actions": 0,
+  "environment": "LOCAL_DISPOSABLE_DOCKER",
+  "external_notifications": 0,
+  "health_and_readiness_verified": true,
+  "job_id_correlated": true,
+  "measured_rpo_seconds": 0,
+  "measured_rto_seconds": 38,
+  "migration_head_after": "0014_v3_01_27",
+  "migration_head_before": "0014_v3_01_27",
+  "no_duplicate_external_action": true,
+  "object_storage_restore_verified": true,
+  "pending_analytics_sync_recovered": "ans_e4562b15d1d44ec198a8",
+  "pending_work_resumed": true,
+  "postgres_restore_verified": true,
+  "production_writes": 0,
+  "project_id_correlated": true,
+  "recovery_targets": [
+    {
+      "backup_sha256": "a12049537c85de5513d24b22cd5d605db2c9507b263c42130d1b88f96b3f9b90",
+      "restored_sha256": "a12049537c85de5513d24b22cd5d605db2c9507b263c42130d1b88f96b3f9b90",
+      "target": "postgresql",
+      "verified": true
+    },
+    {
+      "backup_sha256": "8ce672ab213def88d1894cdc62e0cf6d2293f5f241dc11378ab93d81951dffdb",
+      "restored_sha256": "8ce672ab213def88d1894cdc62e0cf6d2293f5f241dc11378ab93d81951dffdb",
+      "target": "object_storage",
+      "verified": true
+    },
+    {
+      "backup_sha256": "f88c0e8236fed601612291e9494f284ae963398b372bc82913a2d6cf6cc1bbcd",
+      "restored_sha256": "f88c0e8236fed601612291e9494f284ae963398b372bc82913a2d6cf6cc1bbcd",
+      "target": "provider_safety_state",
+      "verified": true
+    },
+    {
+      "backup_sha256": "fc135eeca49b67d4501df876e2f8887469eb9c2024a6fa24c90c49f334bd9bd8",
+      "restored_sha256": "fc135eeca49b67d4501df876e2f8887469eb9c2024a6fa24c90c49f334bd9bd8",
+      "target": "worker_pending_work",
+      "verified": true
+    },
+    {
+      "backup_sha256": "ffd475c83d0bd440ec2ce6b981f5d419cf7d418ba36645f3dec0545340f2c290",
+      "restored_sha256": "ffd475c83d0bd440ec2ce6b981f5d419cf7d418ba36645f3dec0545340f2c290",
+      "target": "render_state",
+      "verified": true
+    },
+    {
+      "backup_sha256": "1e0da25bacc573b30a514cc61a8aae661da34e2e897fe65651dc2e7ff10742b1",
+      "restored_sha256": "1e0da25bacc573b30a514cc61a8aae661da34e2e897fe65651dc2e7ff10742b1",
+      "target": "publication_retry_state",
+      "verified": true
+    },
+    {
+      "backup_sha256": "08818cb92e030183e9e617296357fca4e34f8ae5cafdee80157f908904af4ada",
+      "restored_sha256": "08818cb92e030183e9e617296357fca4e34f8ae5cafdee80157f908904af4ada",
+      "target": "webhook_retry_state",
+      "verified": true
+    },
+    {
+      "backup_sha256": "036b2c62f3c44091432854221c702e5b29d9bedb711e3babf14d471f81ef52b2",
+      "restored_sha256": "036b2c62f3c44091432854221c702e5b29d9bedb711e3babf14d471f81ef52b2",
+      "target": "analytics_snapshot_state",
+      "verified": true
+    },
+    {
+      "backup_sha256": "a0ddc977b12f8dd7a9e018eb9ec3f9d9c310e77eb89f3f5b3d4fb46326e52fad",
+      "restored_sha256": "a0ddc977b12f8dd7a9e018eb9ec3f9d9c310e77eb89f3f5b3d4fb46326e52fad",
+      "target": "audit_evidence",
+      "verified": true
+    }
+  ],
+  "redis_queue_rebuilt": true,
+  "redis_recovery_mode": "rebuild_from_postgresql",
+  "request_id_propagated": true,
+  "schema_version": 1,
+  "secret_recorded": false,
+  "services_ready_after_restore": true,
+  "source_and_restore_targets_isolated": true,
+  "started_at_utc": "2026-09-12T08:09:24Z",
+  "structured_logs_verified": true,
+  "worker_restart_verified": true
+}

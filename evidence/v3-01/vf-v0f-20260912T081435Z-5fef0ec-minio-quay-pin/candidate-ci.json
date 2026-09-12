@@ -1,0 +1,53 @@
+{
+  "conclusion": "success",
+  "createdAt": "2026-09-12T08:18:27Z",
+  "databaseId": 34682929005,
+  "headBranch": "remediation/vf-v0f-minio-quay-digest",
+  "headSha": "ed976c0e222ef2d732bd5bf6b822ba845b2a56de",
+  "jobs": [
+    {
+      "completedAt": "2026-09-12T08:18:44Z",
+      "conclusion": "success",
+      "databaseId": 103524772910,
+      "name": "Safety and compose contract",
+      "startedAt": "2026-09-12T08:18:30Z",
+      "status": "completed"
+    },
+    {
+      "completedAt": "2026-09-12T08:20:06Z",
+      "conclusion": "success",
+      "databaseId": 103524772971,
+      "name": "Python unit and contract tests",
+      "startedAt": "2026-09-12T08:18:30Z",
+      "status": "completed"
+    },
+    {
+      "completedAt": "2026-09-12T08:23:29Z",
+      "conclusion": "success",
+      "databaseId": 103524773017,
+      "name": "Docker deterministic E2E",
+      "startedAt": "2026-09-12T08:18:30Z",
+      "status": "completed"
+    },
+    {
+      "completedAt": "2026-09-12T08:18:37Z",
+      "conclusion": "success",
+      "databaseId": 103524773022,
+      "name": "Studio tests",
+      "startedAt": "2026-09-12T08:18:30Z",
+      "status": "completed"
+    },
+    {
+      "completedAt": "2026-09-12T08:18:51Z",
+      "conclusion": "success",
+      "databaseId": 103524773069,
+      "name": "Renderer tests and bundle",
+      "startedAt": "2026-09-12T08:18:30Z",
+      "status": "completed"
+    }
+  ],
+  "name": "Video Factory V2 CI",
+  "status": "completed",
+  "updatedAt": "2026-09-12T08:23:29Z",
+  "url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34682929005"
+}

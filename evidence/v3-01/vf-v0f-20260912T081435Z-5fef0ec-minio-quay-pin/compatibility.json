@@ -1,0 +1,45 @@
+{
+  "task_id": "VF-V0F",
+  "status": "PASS",
+  "source": "Second local run of outputs/vf-v0f-20260912-minio-quay-pin/run-minio-compatibility.py; copied allowlisted fields from captured tool output",
+  "full_cached_image_identity": "PASS",
+  "old_reference": "minio/minio:RELEASE.2025-09-07T16-13-09Z",
+  "new_reference": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+  "shared_image_id": "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+  "architecture": "linux/amd64",
+  "release": "RELEASE.2025-09-07T16-13-09Z",
+  "source_commit": "07c3a429bfed433e49018cb0f78a52145d4bedeb",
+  "old_capabilities": {
+    "server_start": "PASS",
+    "health": 200,
+    "console": 200,
+    "create_put_head_get_list": "PASS"
+  },
+  "new_capabilities": {
+    "server_start": "PASS",
+    "health": 200,
+    "console": 200,
+    "get_list_delete": "PASS",
+    "restart_persistence": "PASS",
+    "clean_shutdown": "PASS"
+  },
+  "same_volume_cross_reference_persistence": "PASS",
+  "fixture_sha256": "54922eb1eda7d5fb5cf3dab66ca259575be34ae38b8de957cbb97835ca116b96",
+  "host_api_endpoint_before_restart": "http://127.0.0.1:64575",
+  "host_api_endpoint_after_restart": "http://127.0.0.1:64584",
+  "startup_arguments": [
+    "server",
+    "/data",
+    "--console-address",
+    ":9001"
+  ],
+  "ports": {
+    "api": 9000,
+    "console": 9001,
+    "host_bind": "127.0.0.1 ephemeral"
+  },
+  "cleanup": "OWNED_FIXTURE_CONTAINERS_AND_VOLUME_REMOVED",
+  "provider_calls": 0,
+  "owned_credentials_read": 0,
+  "production_writes": 0
+}

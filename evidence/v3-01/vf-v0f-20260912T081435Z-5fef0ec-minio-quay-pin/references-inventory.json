@@ -1,0 +1,43 @@
+{
+  "business_logic_changed": false,
+  "credential_config_semantics_changed": false,
+  "entire_compose_only_one_image_reference_substitution": true,
+  "healthcheck_changed": false,
+  "minio_configuration_changed": false,
+  "new_compose_git_blob": "5cd87fd46f9c764fcf4b8fa94375261a3dd25838",
+  "new_image": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+  "old_compose_git_blob": "849ad7eeb03e21a93052089af1a85d2f5cb373ed",
+  "old_image": "minio/minio:RELEASE.2025-09-07T16-13-09Z",
+  "operative_minio_image_references": [
+    {
+      "image": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+      "line": 32,
+      "path": "docker-compose.yml"
+    }
+  ],
+  "ports_changed": false,
+  "production_overlay_inherits_base": true,
+  "startup_arguments_changed": false,
+  "storage_topology_changed": false,
+  "task_id": "VF-V0F",
+  "inventory_snapshot_commit": "ed976c0e222ef2d732bd5bf6b822ba845b2a56de",
+  "inventory_scope": "All source/CI/config/test references at the executable candidate snapshot before adding this engineering bundle. Later handoff/evidence image strings are documentary, not operative image overrides.",
+  "all_repository_matches": [
+    {
+      "path": "docker-compose.yml",
+      "line": 32,
+      "reference": "image: quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e"
+    },
+    {
+      "path": "apps\\api\\tests\\test_minio_quay_digest_contract.py",
+      "line": 10,
+      "reference": "\"quay.io/minio/minio@\""
+    },
+    {
+      "path": "apps\\api\\tests\\test_minio_quay_digest_contract.py",
+      "line": 23,
+      "reference": "assert \"minio/minio:RELEASE\" not in _minio_block()"
+    }
+  ],
+  "historical_evidence_and_release_references_rewritten": false
+}

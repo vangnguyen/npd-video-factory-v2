@@ -1,0 +1,15 @@
+{
+  "duration_seconds": 30.059,
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "video_codec": "h264",
+  "audio_codec": "aac",
+  "visual_sample_count": 30,
+  "dark_visual_sample_ratio": 0,
+  "visual_luma_min": 110.444,
+  "visual_luma_max": 127.35,
+  "audio_mean_db": -22.7,
+  "audio_peak_db": -3,
+  "size_bytes": 3398725
+}

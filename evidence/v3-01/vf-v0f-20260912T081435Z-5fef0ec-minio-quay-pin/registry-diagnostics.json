@@ -1,0 +1,22 @@
+{
+  "authentication": "anonymous HTTPS; no owned credential",
+  "digest_verified": true,
+  "header_digest": "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+  "platforms": [
+    {
+      "architecture": "arm64",
+      "os": "linux"
+    },
+    {
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "architecture": "ppc64le",
+      "os": "linux"
+    }
+  ],
+  "raw_sha256": "14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+  "status": 200,
+  "url": "https://quay.io/v2/minio/minio/manifests/sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e"
+}
