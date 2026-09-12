@@ -1,0 +1,6 @@
+7782d84052dc3e580cc000d5ed89b73b74466ce05f823a71804adbb0d8884764  docs/acceptance/v3-01/handoff.json
+6628c699c00b5da1b960ad0d33d5f13785d45113d9175388e1dbca3317f6e62e  docs/acceptance/v3-01/HANDOFF.md
+e2c1315d002f4bbb6f44fd57aadd43caf94226c622f9424445461ce8fd3b228a  evidence/v3-01/vf-v0d-20260912T032807Z-5fef0ec-pr59-postmerge/premerge.json
+591c8b15cd66b1098a029f4859f79bd3f54d058e5d6c0ed02baab24cfcbc0f59  evidence/v3-01/vf-v0d-20260912T032807Z-5fef0ec-pr59-postmerge/postmerge-observations.json
+f0b351a2834f45066c4a6d81dd9e7df4b381e4588743aa2f0d0445c6c223534e  evidence/v3-01/vf-v0d-20260912T032807Z-5fef0ec-pr59-postmerge/provenance-validation.json
+c61dd9460bdb180d6173705c48b045de5ed79744c44076a9a2daa4e55612ba1b  evidence/v3-01/vf-v0d-20260912T032807Z-5fef0ec-pr59-postmerge/ci-pull-failure.json
