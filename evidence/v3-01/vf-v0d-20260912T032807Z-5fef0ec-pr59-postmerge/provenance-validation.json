@@ -1,0 +1,15 @@
+{
+  "code": "CI_PROVENANCE_INVALID",
+  "credential_reads": 0,
+  "production_verdict": "NO-GO",
+  "provider_calls": 0,
+  "reservation_vnd": "0",
+  "verdict": "BLOCKED_0_CALL",
+  "task": "VF-V0D",
+  "executable_rc_ci_run_id": 34550127181,
+  "governance_main_ci_run_id": 34670260472,
+  "executable_rc_commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+  "governance_main_commit": "5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045",
+  "trusted_provenance_sha256": null,
+  "reason": "Exact-main CI completed/failure with 4/5 jobs; canonical contract requires success for every job. Candidate success is not substituted."
+}

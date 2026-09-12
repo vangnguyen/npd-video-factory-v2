@@ -1,0 +1,26 @@
+{
+  "task": "VF-V0D",
+  "main_commit": "5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045",
+  "run_id": 34670260472,
+  "run_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34670260472",
+  "attempts": [
+    {
+      "attempt": 1,
+      "job_id": 103490178466,
+      "job_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34670260472/job/103490178466"
+    },
+    {
+      "attempt": 2,
+      "job_id": 103490454612,
+      "job_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34670260472/job/103490454612"
+    }
+  ],
+  "failed_job": "Docker deterministic E2E",
+  "failure_phase": "image_pull_before_acceptance",
+  "image": "minio/minio",
+  "observed_error": "pull access denied for minio/minio, repository does not exist or may require 'docker login': denied: requested access to the resource is denied",
+  "root_cause_beyond_observed_registry_denial": "UNKNOWN_NOT_INVESTIGATED_OUTSIDE_TASK",
+  "runtime_remediation_performed": false,
+  "provider_retry_performed": false,
+  "production_verdict": "NO-GO"
+}

@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "workstream": "NPD Video Factory V3-01",
-  "task_id": "VF-V0C",
-  "task": "PR #59 governance-only handoff path and diff-hygiene repair",
-  "status": "READY_FOR_OWNER_G08_REVIEW",
+  "task_id": "VF-V0D",
+  "task": "PR #59 exact-head governance merge and blocked exact-main verification",
+  "status": "BLOCKED_POST_MERGE_CI",
   "repository": "vangnguyen/npd-video-factory-v2",
-  "branch": "handoff/rc17-asr-w1-op1-blocked-20260911",
-  "source_main_sha": "cfe93b52a0de067066f707e5c7eab0f6e8392863",
-  "recorded_at_utc": "2026-09-11T16:54:22.9171737Z",
-  "recorded_at_ict": "2026-09-11T23:54:22.9171737+07:00",
+  "branch": "handoff/vf-v0d-pr59-postmerge",
+  "source_main_sha": "5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045",
+  "recorded_at_utc": "2026-09-12T03:28:07.338078+00:00",
+  "recorded_at_ict": "2026-09-12T10:28:07.338078+07:00",
   "canonical_paths": {
     "human": "docs/acceptance/v3-01/HANDOFF.md",
     "machine": "docs/acceptance/v3-01/handoff.json",
@@ -18,10 +18,10 @@
   "immutable_anchors": {
     "rc_tag": "vf-v3-01-rc17",
     "rc_commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
-    "governance_main_baseline_commit": "cfe93b52a0de067066f707e5c7eab0f6e8392863",
+    "governance_main_baseline_commit": "5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045",
     "executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
     "rc_ci_run_id": 34550127181,
-    "baseline_governance_main_ci_run_id": 34554458518,
+    "baseline_governance_main_ci_run_id": 34670260472,
     "acceptance_lineage_id": "al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329",
     "execution_scope_sha256": "6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7",
     "gate_bundle_sha256": "39867efb2a95d22bf5d4be64e041671cf10517a118d02bece010778ab587a76f",
@@ -36,7 +36,8 @@
     "allowlist_contract_changed": false,
     "git_diff_check_expected": "PASS",
     "exact_head_ci_required_before_g08": true,
-    "post_merge_governance_ci_required_before_execution_authority": true
+    "post_merge_governance_ci_required_before_execution_authority": true,
+    "origin_task": "VF-V0C"
   },
   "proposed_window": {
     "status": "PROPOSAL_NOT_AUTHORITY",
@@ -77,7 +78,62 @@
     "vision_consecutive_passes": 2,
     "production_verdict": "NO-GO"
   },
-  "evidence_pointer": "evidence/v3-01/vf-v3-01-20260911T140243Z-cfe93b5-rc17-asr-w1-op1-blocked-prewindow/preflight.json",
+  "evidence_pointer": "evidence/v3-01/vf-v0d-20260912T032807Z-5fef0ec-pr59-postmerge/postmerge-observations.json",
   "scope_drift": "PASS",
-  "next_safe_action": "Owner G-08 reviews the final exact PR head; stop before credential access, reservation or provider execution unless a separate exact Operation 1 authority task is issued."
+  "next_safe_action": "Owner reviews the CI image-pull blocker and the governance-only handoff follow-up. Assign a separate CI diagnosis/remediation task; require exact-main CI and canonical provenance PASS before any separate Operation 1 authority decision. Stop before credential access, reservation, bundle mounting or provider execution.",
+  "merge_verification": {
+    "merged_pr": 59,
+    "approved_head": "45eda7c12a7fa79ab76a80ad1c742fae60e65b38",
+    "merge_commit": "5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045",
+    "previous_main_commit": "cfe93b52a0de067066f707e5c7eab0f6e8392863",
+    "merge_parent_binding": "PASS",
+    "merge_tree_matches_approved_head": true,
+    "premerge_git_diff_check": "PASS",
+    "premerge_candidate_ci_run_id": 34624829162,
+    "premerge_candidate_provenance_sha256": "d830b096b06a0aa74ec8b2e67a695cc6e8e1c26948ebfd3d212af3bc8f1f24e8",
+    "exact_main_ci_run_id": 34670260472,
+    "exact_main_ci_attempt": 2,
+    "exact_main_ci_status": "completed",
+    "exact_main_ci_conclusion": "failure",
+    "exact_main_ci_jobs_succeeded": 4,
+    "exact_main_ci_jobs_total": 5,
+    "exact_main_provenance": "BLOCKED_0_CALL",
+    "exact_main_provenance_error": "CI_PROVENANCE_INVALID",
+    "trusted_post_merge_provenance_sha256": null,
+    "executable_tree_changed": false,
+    "rc17_lineage_changed": false,
+    "new_rc_created": false,
+    "authority_activated": false,
+    "operation_state_mutation": false,
+    "ledger_access_performed": false,
+    "operation_state_basis": "Prepared governance state unchanged; no acceptance ledger or runtime was accessed or started by VF-V0D.",
+    "task_zero_activity": {
+      "actual_cost_vnd": "0",
+      "credential_reads": 0,
+      "live_reservations": 0,
+      "production_writes": 0,
+      "provider_calls": 0,
+      "reservation_vnd": "0"
+    },
+    "blocker": "Exact-main CI failed Docker deterministic E2E: minio/minio pull access denied on both attempts; canonical dual-CI contract rejects failed CI"
+  },
+  "tests": {
+    "acceptance_evidence_validation": "PASS",
+    "docker_deterministic_e2e": "FAIL_MINIO_IMAGE_PULL_DENIED",
+    "flow_a_b_c_fixture_boundary": "PASS_EXPECTED_BLOCKED",
+    "local_dual_ci_focused_tests_passed": 23,
+    "local_full_bundle_test_collection": "BLOCKED_MISSING_TIKTOKEN_GLOBAL_PYTHON_ENV",
+    "main_python_api_worker_bridge_passed": 950,
+    "main_python_elapsed_seconds": "63.76",
+    "main_renderer": "PASS",
+    "main_studio_tests_passed": 14,
+    "migration_replay": "PASS"
+  },
+  "historical_evidence_pointer": "evidence/v3-01/vf-v3-01-20260911T140243Z-cfe93b5-rc17-asr-w1-op1-blocked-prewindow/preflight.json",
+  "evidence_index": "evidence/v3-01/vf-v0d-20260912T032807Z-5fef0ec-pr59-postmerge/SHA256SUMS.txt",
+  "handoff_delivery": {
+    "status": "FOLLOW_UP_GOVERNANCE_BRANCH_NOT_MERGED",
+    "reason": "The exact approved PR #59 head was merged unchanged. Fresh post-merge handoff/evidence is a separate reviewable commit, not a direct write to main and not a second merge.",
+    "owner_g08_required_for_follow_up_merge": true
+  }
 }

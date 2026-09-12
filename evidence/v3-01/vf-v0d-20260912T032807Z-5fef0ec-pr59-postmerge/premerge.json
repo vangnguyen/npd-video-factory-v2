@@ -1,0 +1,84 @@
+{
+  "annotated_tag_object": "ea67843635dddf94ee25d38111fc06782ad9fd74",
+  "approved_head": "45eda7c12a7fa79ab76a80ad1c742fae60e65b38",
+  "base_main": "cfe93b52a0de067066f707e5c7eab0f6e8392863",
+  "candidate_provenance": {
+    "contract": {
+      "executable_rc_ci": {
+        "commit_sha": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+        "completed_at_utc": "2026-09-11T01:23:12Z",
+        "conclusion": "success",
+        "jobs_succeeded": 5,
+        "jobs_total": 5,
+        "role": "executable_rc",
+        "run_id": 34550127181,
+        "status": "completed",
+        "workflow_name": "Video Factory V2 CI"
+      },
+      "executable_rc_commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+      "executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
+      "governance_changed_paths": [
+        "apps/api/tests/test_rc17_asr_w1_lineage_gate_bundle.py",
+        "docs/acceptance/v3-01/01_IMPLEMENTATION_INVENTORY.md",
+        "docs/acceptance/v3-01/13_GAP_REGISTER.md",
+        "docs/acceptance/v3-01/14_REMEDIATION_PR_PLAN.md",
+        "docs/acceptance/v3-01/15_OWNER_GATES.md",
+        "docs/acceptance/v3-01/16_FINAL_VERDICT.md",
+        "docs/acceptance/v3-01/65_V3_01_RC17_OPENAI_ASR_W1_LINEAGE_GATE.md",
+        "docs/acceptance/v3-01/HANDOFF.md",
+        "docs/acceptance/v3-01/V3-01-GATE-RC17-OPENAI-ASR-W1-LINEAGE-A.json",
+        "docs/acceptance/v3-01/V3-01-OFFLINE-PREPARATION-MANIFEST.json",
+        "docs/acceptance/v3-01/approvals/V3-01-APP-068.json",
+        "docs/acceptance/v3-01/approvals/V3-01-APP-069.json",
+        "docs/acceptance/v3-01/approvals/V3-01-APP-070.json",
+        "docs/acceptance/v3-01/approvals/V3-01-APP-071.json",
+        "docs/acceptance/v3-01/handoff.json",
+        "evidence/v3-01/vf-v3-01-20260911T013115Z-d08ffc0-rc17-asr-w1-lineage-v2/SHA256SUMS.txt",
+        "evidence/v3-01/vf-v3-01-20260911T013115Z-d08ffc0-rc17-asr-w1-lineage-v2/final/status.json",
+        "evidence/v3-01/vf-v3-01-20260911T013115Z-d08ffc0-rc17-asr-w1-lineage-v2/governance/executable-rc-ci.json",
+        "evidence/v3-01/vf-v3-01-20260911T013115Z-d08ffc0-rc17-asr-w1-lineage-v2/matrix/evidence-EV-V3-RC17-ASR-W1-LINEAGE-001.json",
+        "evidence/v3-01/vf-v3-01-20260911T013115Z-d08ffc0-rc17-asr-w1-lineage-v2/provider/rc17-asr-w1-lineage-validation.json",
+        "evidence/v3-01/vf-v3-01-20260911T013115Z-d08ffc0-rc17-asr-w1-lineage-v2/provider/test-summary.json",
+        "evidence/v3-01/vf-v3-01-20260911T013115Z-d08ffc0-rc17-asr-w1-lineage-v2/run-manifest.json",
+        "evidence/v3-01/vf-v3-01-20260911T140243Z-cfe93b5-rc17-asr-w1-op1-blocked-prewindow/preflight.json"
+      ],
+      "governance_executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
+      "governance_main_ci": {
+        "commit_sha": "45eda7c12a7fa79ab76a80ad1c742fae60e65b38",
+        "completed_at_utc": "2026-09-11T17:01:22Z",
+        "conclusion": "success",
+        "jobs_succeeded": 5,
+        "jobs_total": 5,
+        "role": "governance_main",
+        "run_id": 34624829162,
+        "status": "completed",
+        "workflow_name": "Video Factory V2 CI"
+      },
+      "governance_main_commit": "45eda7c12a7fa79ab76a80ad1c742fae60e65b38",
+      "version": 1
+    },
+    "credential_reads": 0,
+    "production_verdict": "NO-GO",
+    "provenance_sha256": "d830b096b06a0aa74ec8b2e67a695cc6e8e1c26948ebfd3d212af3bc8f1f24e8",
+    "provider_calls": 0,
+    "reservation_vnd": "0",
+    "verdict": "PASS"
+  },
+  "changed_paths": [
+    "docs/acceptance/v3-01/HANDOFF.md",
+    "docs/acceptance/v3-01/handoff.json",
+    "evidence/v3-01/vf-v3-01-20260911T140243Z-cfe93b5-rc17-asr-w1-op1-blocked-prewindow/preflight.json"
+  ],
+  "credential_reads": 0,
+  "executable_trees": {
+    "approved_head": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
+    "base": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
+    "rc17": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40"
+  },
+  "git_diff_check": "PASS",
+  "premerge_verdict": "PASS",
+  "production_writes": 0,
+  "provider_calls": 0,
+  "reservation_vnd": "0",
+  "task": "VF-V0D"
+}
