@@ -1,115 +1,88 @@
 # NPD Video Factory Handoff
 
 Canonical machine record: [handoff.json](handoff.json).
-These are the only current handoff source-of-truth paths; there are no root
-duplicates.
+Only these canonical acceptance-governance handoff paths are current sources
+of truth; no root duplicates.
 
 ## Current checkpoint
 
-- Task: **VF-V0F**, same-release MinIO Quay immutable-digest remediation candidate.
-- Verdict: **REVIEW_REQUIRED — Case B: executable-tree hash changed**.
-- Draft [PR #61](https://github.com/vangnguyen/npd-video-factory-v2/pull/61),
-  branch `remediation/vf-v0f-minio-quay-digest`; **not merged**.
-- Exact source main: `5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045`.
-- Source main CI `34670260472` remains failed (4/5; Docker Hub MinIO pull).
-  Candidate PR CI must not be presented as exact-main CI.
-- [PR #60](https://github.com/vangnguyen/npd-video-factory-v2/pull/60) remains
-  separate, open/draft and unchanged. Its handoff-only changes were not imported.
-- ASR: **0/2 PASS**. Vision: **2/2 PASS**. Production: **NO-GO**.
-- Task production writes / owned credential reads / paid-provider calls /
-  live reservations / provider cost: **0 / 0 / 0 / 0 / 0 VND**.
+- Task: **VF-V0G — controlled merge PR #61 + exact-main verification**.
+- Verdict: **PASS**. **NEW_RC_REQUIRED = YES**.
+- [PR #61](https://github.com/vangnguyen/npd-video-factory-v2/pull/61) merged
+  approved exact head `d7852b682b3042caebe6dfe280fc89591d4874df`.
+- Merge / verified main: `03e18c1f0c56fff8a13f167af74f34894c2db811`.
+- [Exact-main CI 34691861788](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788):
+  **completed/success, 5/5 jobs**.
+- Main executable-tree SHA-256:
+  `ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5`.
+- The merge's full tree matches the approved head; only the intended Compose
+  image-reference edit changes a hashed path from old main.
+- ASR **0/2 PASS**. Vision **2/2 PASS**. Production **NO-GO**.
 
-## Immutable executable and acceptance anchors
+## Immutable RC-17 / provenance boundary
 
-- RC-17: `vf-v3-01-rc17` →
-  `d08ffc005d7f3ad517d355977b0bc3cc8d686906`.
-- RC-17 executable-tree SHA-256:
-  `ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40`.
-- RC CI: `34550127181`, completed/success, 5/5.
-- Lineage:
-  `al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329`.
-- Scope SHA-256:
-  `6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7`.
-- Bundle SHA-256:
-  `39867efb2a95d22bf5d4be64e041671cf10517a118d02bece010778ab587a76f`.
-- W1 profile SHA-256:
-  `9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1`.
-- Prompt SHA-256:
-  `6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48`.
+`vf-v3-01-rc17` remains tag object
+`ea67843635dddf94ee25d38111fc06782ad9fd74` → commit
+`d08ffc005d7f3ad517d355977b0bc3cc8d686906`.
 
-## Candidate / lineage impact
+RC-17 executable SHA-256 remains
+`ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40`.
+RC-17 is NOT retagged and current main is NOT RC-17.
 
-Old MinIO reference:
-`minio/minio:RELEASE.2025-09-07T16-13-09Z`.
+Exact-main merge provenance PASS verifies both exact-head/main CI identities,
+parent/full-tree match and candidate-to-main executable equality. Structural
+dual-CI from source candidate C1 to main also PASSes through the unchanged
+canonical validator; C1 is not a locked RC and that proof grants no authority.
 
-New same-release reference:
-`quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e`.
+RC-17 → current main operation provenance remains intentionally
+`BLOCKED_0_CALL / CI_PROVENANCE_INVALID`. No old package/authority may be
+reused. New RC is required under the current contract, but **no new RC is
+created or authorized in VF-V0G**. VF-V0H must be assigned separately.
 
-Initial executable candidate commit:
-`ed976c0e222ef2d732bd5bf6b822ba845b2a56de`, **not a tagged RC**.
+Existing bundle, scope, W1 profile/prompt and 80 existing asset/approval/
+contract files remain exact. Historical provider receipts/verdicts/costs are
+untouched; no retrospective acceptance update.
 
-Candidate executable-tree SHA-256:
+## Validation / evidence
+
+Local exact-main Python/API/worker/bridge **958 PASS**, Studio **14 PASS**,
+Renderer **14 PASS**, typecheck/bundle PASS. Migration replay,
+acceptance/evidence, ASR compatibility and Flow A–C/DR fixture boundaries
+passed. Exact-main CI independently passed all five jobs, including
+**36 safety/Compose steps** and the unchanged **Docker deterministic E2E**
+with MinIO artifact recovery, disposable DR/Redis recovery and final QC.
+
+[Post-merge engineering evidence](../../../evidence/v3-01/vf-v0g-20260912T115120Z-03e18c1-pr61-postmerge/README.md)
+retains exact review, CI, merge/tree and regression provenance.
+Prior pull failure and candidate compatibility evidence remain immutable.
+Fixture/local DR is not production-path or human-quality acceptance.
+
+Canonical handoff JSON raw SHA-256:
+`39d93f86822e820487926d86021bc36fbca184a7e6f02232f3afa96bfc69f408`.
+
+## Authority / zero activity
+
+Operation 1: **PREPARED_NOT_AUTHORIZED**, reference-only package unusable on
+current/new RC. Operation 2: **NOT_APPROVED / LOCKED**.
+No live provider ledger is accessed or changed by this task.
+
+Kill switch **ENGAGED**; gate **UNMOUNTED**; checked-in external/paid
+execution **false**, budget **0 VND**. Old Sep 12 window remains historical
+proposal only, never a schedule or fresh authority.
+
+Credential reads **0**; live budget reserved **0 VND**; real provider calls
+**0**; provider cost **0 VND**; production writes **0**.
+
+## Handoff branch / stop
+
+This fresh handoff/evidence is persisted on
+`handoff/vf-v0g-pr61-postmerge` from verified merge main.
+It receives independent draft-PR checks; no additional merge is authorized.
+[PR #60](https://github.com/vangnguyen/npd-video-factory-v2/pull/60) is separate,
+open/draft/untouched; its older overlapping handoff needs Owner coordination.
+
+**STOP. Await separately assigned VF-V0H** to materialize a fresh RC from
+exact main `03e18c1f0c56fff8a13f167af74f34894c2db811` and executable SHA
 `ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5`.
-
-Only `docker-compose.yml` changes a canonical hashed path. Its sole edit is
-the image source/digest pin; MinIO configuration, ports, health checks,
-credentials, CLI arguments, storage and business logic stay unchanged.
-Tests/docs/evidence are outside the executable hash.
-
-RC-17 is not retagged and its lineage remains unchanged. This patched branch
-must not be called RC-17. A new executable candidate/RC is required under the
-existing contract **after separate authorized merge and exact-main regression**.
-No new RC is created by VF-V0F.
-
-RC-17 dual-CI provenance cannot PASS for this runtime-changing candidate.
-Candidate CI success does not authorize Operation 1 or repair main until an
-Owner-approved merge receives its own exact-main CI/provenance.
-
-## Validation and current evidence
-
-Local checks: **958 Python/API/worker/bridge tests; 32 focused tests; 14 Studio
-tests; 14 Renderer tests; typecheck/bundle; 36 safety/Compose steps; MinIO
-integration; Docker deterministic E2E; migration replay; existing acceptance
-and Flow A–C boundary validation — PASS**.
-
-The original cached Hub image and Quay digest have identical observed image
-ID/rootfs layers. Linux/amd64, bucket/object operations, cross-reference
-persistence, restart and shutdown were tested. Local E2E also passed MinIO
-artifact recovery and disposable DR; these are not production-path evidence.
-
-Environmental test-harness failures and clean reruns are documented in the
-[engineering evidence bundle](../../../evidence/v3-01/vf-v0f-20260912T081435Z-5fef0ec-minio-quay-pin/README.md).
-Historical provider receipts, transcripts, costs and acceptance verdicts
-remain untouched.
-
-Initial candidate CI: `34682929005` on the executable candidate commit,
-**completed/success, 5/5 jobs**; observed metadata and E2E excerpt are retained
-in the engineering bundle. The final docs/evidence head must pass its exact-head
-PR checks; its live run/head binding is reported in the task HANDOFF RECEIPT.
-Do not substitute the initial CI for a changed final head.
-
-Canonical handoff JSON SHA-256:
-`c9218e693deb5df97bd32a8b53fe9698589b4fd97cbc54bad0b36089119de7ca`.
-The final head/CI observation is provided by PR #61's exact required checks and
-the task receipt, keeping commit/self-hash and CI self-reference separate.
-
-## Authority state — not activated
-
-Operation 1 remains `PREPARED_NOT_AUTHORIZED`.
-Operation 2 remains `NOT_APPROVED / LOCKED / NOT EXECUTED`.
-The existing two operation IDs, lineage, scope, bundle, W1 profile, rights and
-quality thresholds are not changed by this patch.
-
-Kill switch: **ENGAGED**. Bundle: **UNMOUNTED**.
-External/paid execution: **false**. Checked-in provider budget: **0 VND**.
-No credentials are resolved and no live provider ledger/reservation is touched.
-
-The Sep 12 21:00 → Sep 13 01:00 ICT window remains
-**PROPOSAL_NOT_AUTHORITY**, not a schedule, countdown or permission to execute.
-
-## Next safe action / stop
-
-Owner reviews Draft PR #61's final exact head, compatibility evidence and
-Case B executable-tree impact under G-08. **Stop before merge, RC creation,
-credential access, budget reservation, provider call or Operation 1 authority.**
-Do not execute the next action automatically.
+Do not create an RC/operation/authority, resolve credentials, reserve funds,
+call a provider or execute this next action automatically.
