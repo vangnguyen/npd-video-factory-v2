@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "evidence_class": "paid-provider preflight blocked before credential boundary",
+  "operation_id": "v3-01-rc17-openai-transcription-asr-al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329-call-01",
+  "verdict": "BLOCKED_PRE_CALL",
+  "observed_at_utc": "2026-09-11T14:02:43.2084774Z",
+  "observed_at_ict": "2026-09-11T21:02:43.2021518+07:00",
+  "window": {
+    "status": "PROPOSAL_NOT_AUTHORITY",
+    "start_utc": "2026-09-12T14:00:00Z",
+    "end_utc": "2026-09-12T18:00:00Z",
+    "inside_window": false
+  },
+  "authority": {
+    "governance_pr_58_merged": true,
+    "g08_merge_approved": true,
+    "separate_operation_1_execution_authority": false,
+    "operation_2_execution_authority": false
+  },
+  "verified_bindings": {
+    "rc_tag": "vf-v3-01-rc17",
+    "rc_commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+    "governance_main_commit": "cfe93b52a0de067066f707e5c7eab0f6e8392863",
+    "rc_ci_run_id": 34550127181,
+    "governance_main_ci_run_id": 34554458518,
+    "dual_ci_provenance": "PASS",
+    "dual_ci_provenance_sha256": "bd6d687a4cab9df2151f91317b8faa3ea23df3c1b5ef6c7c21b741e6a09e6bf5",
+    "executable_tree_equality": "PASS",
+    "executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
+    "acceptance_lineage_id": "al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329",
+    "execution_scope_sha256": "6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7",
+    "gate_bundle_sha256": "39867efb2a95d22bf5d4be64e041671cf10517a118d02bece010778ab587a76f"
+  },
+  "effects": {
+    "credential_reads": 0,
+    "budget_reservation_vnd": "0",
+    "provider_calls": 0,
+    "actual_cost_vnd": "0",
+    "production_writes": 0,
+    "deployments": 0,
+    "publishes": 0
+  },
+  "operation_state": {
+    "operation_1_consumed": false,
+    "operation_2_locked": true
+  },
+  "blockers": [
+    "CURRENT_TIME_BEFORE_PROPOSED_WINDOW",
+    "RC17_OPERATION_1_AUTHORITY_NOT_GRANTED"
+  ],
+  "production_verdict": "NO-GO"
+}
