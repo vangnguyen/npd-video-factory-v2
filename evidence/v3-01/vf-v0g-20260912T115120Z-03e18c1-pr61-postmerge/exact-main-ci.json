@@ -1,0 +1,497 @@
+{
+  "run_id": 34691861788,
+  "head_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "status": "completed",
+  "conclusion": "success",
+  "workflow": "Video Factory V2 CI",
+  "url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788",
+  "updated_at_utc": "2026-09-12T11:50:09Z",
+  "job_count": 5,
+  "jobs": [
+    {
+      "id": 103548411049,
+      "name": "Python unit and contract tests",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411049",
+      "completed_at_utc": "2026-09-12T11:46:49Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install -e \"apps/api[dev]\" -e \"services/worker[dev]\" -e \"services/comfyui-bridge[dev]\"",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m compileall -q apps/api/app services/worker/npd_worker services/comfyui-bridge/npd_comfyui_bridge",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Validate V3-01 acceptance register and redacted evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-18 OpenAI ASR compatibility evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Evaluate V3-01-04 Flow A fixture boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Evaluate V3-01-05 Flow B fixture boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Evaluate V3-01-06 Flow C fixture boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Evaluate V3-01-07 local DR and observability boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Alembic upgrade, downgrade and replay",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 103548411111,
+      "name": "Studio tests",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411111",
+      "completed_at_utc": "2026-09-12T11:45:24Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node --check app.js",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node --check auth.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node --check trend-utils.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node --check studio.js",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node --check studio-utils.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 103548411160,
+      "name": "Docker deterministic E2E",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411160",
+      "completed_at_utc": "2026-09-12T11:50:09Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run bash scripts/e2e-smoke.sh",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload acceptance artifacts",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 103548411164,
+      "name": "Safety and compose contract",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411164",
+      "completed_at_utc": "2026-09-12T11:45:29Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cp .env.example .env",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run docker compose config --quiet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify independent runtime boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify fail-closed defaults",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-owned durable services and VND-only ledger",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-03 research-only trend boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-04 non-destructive Auto Edit boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-05 structured Vision and non-destructive reframe boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-06 media rights, cost and execution boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-07 timeline and proxy-preview boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-08 audio, subtitle, approval and render-QC boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-09 publishing dry-run and external-action boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-10 analytics, nullable metrics and recommendation-only boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V2-11 Agent Hub bridge and production hardening boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-01 human identity and ingress boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-02 provider safety boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-03 ingress media and durable safety boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-04 Flow A acceptance boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-05 Flow B acceptance boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-06 Flow C acceptance boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-07 DR and observability boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-09 OpenAI Vision adapter boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-10 bounded provider gate-loader boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-11 Structured Outputs and error-evidence boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-12 RC-bound operation allowlist boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-13 evidence serialization boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-14 operation authority limits boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-15 provider timeout evidence boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-16 split timeout envelope boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-17 dual-CI provenance boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-18 OpenAI ASR compatibility and adapter boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-21 ASR response-diagnostics boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify V3-01-27 acceptance-lineage identity boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Validate V2-11 deployment bundle",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Secret pattern scan",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run git diff --check",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 103548411175,
+      "name": "Renderer tests and bundle",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411175",
+      "completed_at_utc": "2026-09-12T11:45:39Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run typecheck",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run bundle:check",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}

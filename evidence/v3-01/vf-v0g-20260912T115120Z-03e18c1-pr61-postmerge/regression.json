@@ -1,0 +1,94 @@
+{
+  "task_id": "VF-V0G",
+  "source_main": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "scope": "Exact-main zero-provider-call regression; CI Docker E2E uses disposable fixtures only, not production-path acceptance",
+  "python_local": {
+    "passed": 958,
+    "failed": 0,
+    "seconds": 241.79,
+    "python_version": "3.12.3",
+    "imports_verified_from_exact_main_worktree": true,
+    "source": "C:\\Users\\VANG NGUYEN\\Documents\\Codex\\2026-08-20\\referenced-chatgpt-conversation-this-is-an\\work\\npd-video-factory-v2-vf-v0g-postmerge",
+    "command": "python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q"
+  },
+  "python_ci": {
+    "passed": 958,
+    "failed": 0,
+    "seconds": 63.61,
+    "ci_run_id": 34691861788,
+    "job_id": 103548411049
+  },
+  "studio": {
+    "passed": 14,
+    "failed": 0,
+    "syntax_checks": "PASS",
+    "local_and_exact_main_ci": "PASS"
+  },
+  "renderer": {
+    "passed": 14,
+    "failed": 0,
+    "typecheck": "PASS",
+    "bundle": "PASS",
+    "local_and_exact_main_ci": "PASS"
+  },
+  "safety_and_compose": {
+    "verdict": "PASS",
+    "source": "All unchanged exact-main safety workflow steps",
+    "ci_run_id": 34691861788,
+    "job_id": 103548411164,
+    "run_steps_passed": 36
+  },
+  "migration_replay": {
+    "upgrade_head": "PASS",
+    "downgrade_base": "PASS",
+    "replay_head": "PASS",
+    "head": "0014_v3_01_27",
+    "local_and_exact_main_ci": "PASS"
+  },
+  "acceptance": {
+    "repo_validation": "PASS",
+    "matrix_rows": 60,
+    "gaps": 16,
+    "schemas": 13,
+    "approvals": 71,
+    "rights": 3,
+    "evidence_runs": 39,
+    "asr_compatibility_evidence": "PASS",
+    "flow_a_boundary": "BLOCKED_AS_EXPECTED",
+    "flow_b_boundary": "BLOCKED_AS_EXPECTED",
+    "flow_c_boundary": "BLOCKED_AS_EXPECTED",
+    "dr_observability_boundary": "BLOCKED_AS_EXPECTED",
+    "local_and_exact_main_ci": "PASS",
+    "acceptance_thresholds_changed": false
+  },
+  "docker_e2e": {
+    "verdict": "PASS",
+    "ci_run_id": 34691861788,
+    "job_id": 103548411160,
+    "script": "scripts/e2e-smoke.sh",
+    "unchanged_script": true,
+    "minio_pull": "PASS",
+    "minio_artifact_recovery": "PASS",
+    "disposable_dr_and_redis_queue_recovery": "PASS",
+    "final_qc_and_fail_closed_publishing_dry_run": "PASS",
+    "external_provider_calls": 0,
+    "production_write": false
+  },
+  "checks": {
+    "git_diff_check": "PASS",
+    "prior_engineering_bundle_committed_checksums": "PASS_12_FILES",
+    "prior_handoff_cross_hash": "PASS",
+    "prior_json_and_markdown_links": "PASS",
+    "exact_merge_tree_equal_approved_head": "PASS"
+  },
+  "existing_non_blocking_notes": [
+    "Unchanged renderer lockfile audit warning: 5 vulnerabilities (3 moderate, 2 high); no dependency update in scope",
+    "Existing GitHub Actions runtime deprecation annotations; CI jobs still completed/success"
+  ],
+  "credential_reads": 0,
+  "real_provider_calls": 0,
+  "live_budget_reserved_vnd": "0",
+  "actual_cost_vnd": "0",
+  "production_writes": 0,
+  "production_verdict": "NO-GO"
+}
