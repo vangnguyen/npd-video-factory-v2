@@ -1,0 +1,24 @@
+{
+  "base": "5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045",
+  "case": "B_REVIEW_REQUIRED",
+  "executable_tree_changed": true,
+  "files_causing_change": [
+    {
+      "new_git_object": "5cd87fd46f9c764fcf4b8fa94375261a3dd25838",
+      "old_git_object": "849ad7eeb03e21a93052089af1a85d2f5cb373ed",
+      "path": "docker-compose.yml"
+    }
+  ],
+  "new_executable_candidate_rc_required_under_current_contract": true,
+  "new_executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+  "new_rc_created": false,
+  "old_executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
+  "rc17": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+  "rc17_tag_retargeted": false,
+  "task_id": "VF-V0F",
+  "operation_1_status": "PREPARED_NOT_AUTHORIZED",
+  "operation_2_status": "NOT_APPROVED_LOCKED_NOT_EXECUTED",
+  "rc17_executable_artifact_changed": false,
+  "candidate_is_rc17": false,
+  "scope_drift": "PASS_INTENDED_SINGLE_COMPOSE_REFERENCE_CHANGE"
+}

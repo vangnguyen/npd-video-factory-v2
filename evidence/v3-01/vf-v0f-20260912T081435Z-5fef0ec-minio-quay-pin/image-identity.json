@@ -1,0 +1,55 @@
+{
+  "task_id": "VF-V0F",
+  "source": "Docker Desktop local image inspect; original Docker Hub release cache and anonymously pulled Quay digest",
+  "images": [
+    {
+      "Id": "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+      "RepoDigests": [
+        "minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+        "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e"
+      ],
+      "Architecture": "amd64",
+      "Os": "linux",
+      "RootFS": {
+        "Type": "layers",
+        "Layers": [
+          "sha256:702bea3dc94887d2fcf1aa0d56565c57d5ca6d24659c8d0b6cbde5c58d6c182f",
+          "sha256:88e53e46c4d2bed466a6b02167ef9d8cef2c9392c4ee9fb64f7a0e7c38c31858",
+          "sha256:d37092179ddccad1ee0b97d96b129b58f41d5acc765698bf3b972896347f3d84",
+          "sha256:65df1de0fc5d5ed3b009724450521360e9cac82bb7a18c2565705224e5d966be",
+          "sha256:d9e4fbf4fcf5a2a873b09a4f801d1576be6ef9acfc4d712e4bb010fe323a98bc",
+          "sha256:6e4622138e7123a662eb8da39c3da85d1605d7a9a0749b8939b3b22b3d14a1d5",
+          "sha256:c4f9743e910169563769da2e07bf10a78fb4c9b0c489a2ee2c1f8bb25dc5bac6",
+          "sha256:469babe0725a8ef9ea8ee85eed6e55dc33682ff9ba4fc4b61e4434e0ac1e447b",
+          "sha256:48a0959ec57746c5b54d3f0ee68ba154defefab5c979c49d4afa78e2a183303f"
+        ]
+      }
+    },
+    {
+      "Id": "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+      "RepoDigests": [
+        "minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+        "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e"
+      ],
+      "Architecture": "amd64",
+      "Os": "linux",
+      "RootFS": {
+        "Type": "layers",
+        "Layers": [
+          "sha256:702bea3dc94887d2fcf1aa0d56565c57d5ca6d24659c8d0b6cbde5c58d6c182f",
+          "sha256:88e53e46c4d2bed466a6b02167ef9d8cef2c9392c4ee9fb64f7a0e7c38c31858",
+          "sha256:d37092179ddccad1ee0b97d96b129b58f41d5acc765698bf3b972896347f3d84",
+          "sha256:65df1de0fc5d5ed3b009724450521360e9cac82bb7a18c2565705224e5d966be",
+          "sha256:d9e4fbf4fcf5a2a873b09a4f801d1576be6ef9acfc4d712e4bb010fe323a98bc",
+          "sha256:6e4622138e7123a662eb8da39c3da85d1605d7a9a0749b8939b3b22b3d14a1d5",
+          "sha256:c4f9743e910169563769da2e07bf10a78fb4c9b0c489a2ee2c1f8bb25dc5bac6",
+          "sha256:469babe0725a8ef9ea8ee85eed6e55dc33682ff9ba4fc4b61e4434e0ac1e447b",
+          "sha256:48a0959ec57746c5b54d3f0ee68ba154defefab5c979c49d4afa78e2a183303f"
+        ]
+      }
+    }
+  ],
+  "identical_image_id": true,
+  "identical_rootfs_layers": true,
+  "scope": "Consumed MinIO capabilities only; no claim about future registry availability or all MinIO features"
+}

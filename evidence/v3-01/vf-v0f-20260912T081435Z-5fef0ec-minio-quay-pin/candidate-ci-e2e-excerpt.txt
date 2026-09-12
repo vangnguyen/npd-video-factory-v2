@@ -1,0 +1,5 @@
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-12T08:18:40.3859110Z  minio Pulled
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-12T08:22:39.6869233Z [e2e] MinIO artifact recovery verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-12T08:23:10.9180444Z [e2e] V3-01-07 disposable DR and PostgreSQL-backed Redis queue recovery verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-12T08:23:12.3732303Z [e2e] QC verified {"duration_seconds": 30.059, "width": 1080, "height": 1920, "fps": 30.0, "video_codec": "h264", "audio_codec": "aac", "visual_sample_count": 30, "dark_visual_sample_ratio": 0.0, "visual_luma_min": 110.413, "visual_luma_max": 127.353, "audio_mean_db": -22.7, "audio_peak_db": -3.0, "size_bytes": 3383236}
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-12T08:23:12.3764722Z [e2e] V2-07 Auto Edit Studio passed
