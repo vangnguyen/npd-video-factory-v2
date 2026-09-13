@@ -1,0 +1,25 @@
+{
+  "task_id": "VF-V0J",
+  "prior_evidence_commit": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
+  "prior_bundle": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization",
+  "manifest_sha256": "cabdc29fe4b40d87342cf60508d41b6640478de18df88e5f0eed8df89a58398e",
+  "entries_verified": 13,
+  "historical_handoff_hashes": {
+    "commit": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
+    "machine": "65362119af0fd59e53dcceb9e6cdd913c93daa107abde4618dfc7fc6c60f8ed6",
+    "human": "c081362b4cad3eb7fb68aa1999fe838a82e5578cc8fd414f95ee6779e3df1437"
+  },
+  "current_handoff_will_have_new_hashes": true,
+  "old_handoff_checksum_records_refer_to_git_version_at_prior_evidence_commit": true,
+  "original_same_commit_dual_ci_block_retained": true,
+  "historical_rc17_and_provider_receipts_rewritten": false,
+  "pr62": {
+    "canonical_handoff_superseded": true,
+    "draft": true,
+    "head": "d435f06a0ae74fa8e51e77b589f81d845b95179c",
+    "mutated": false,
+    "recommendation": "Keep historical draft; preserve its unique VF-V0G engineering bundle through a separately reviewed import before Owner decides whether to close without merge. Do not allow stale canonical handoff to overwrite RC18.",
+    "state": "open",
+    "unique_vf_v0g_evidence_retained": true
+  }
+}

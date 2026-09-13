@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "algorithm": "apps/api/app/provider_ci_provenance.py::executable_tree_sha256",
+  "collector": "scripts/v3_01_ci_provenance.py::_git_object_map",
+  "exact_paths": [
+    ".env.example",
+    ".github/workflows/ci.yml",
+    "apps/api/app",
+    "apps/api/pyproject.toml",
+    "apps/studio-web",
+    "deploy",
+    "docker-compose.yml",
+    "packages",
+    "renderer",
+    "scripts",
+    "services",
+    "workflows"
+  ],
+  "canonicalization": {
+    "sort_keys": true,
+    "json_separators": [
+      ",",
+      ":"
+    ],
+    "encoding": "UTF-8",
+    "bom": false,
+    "final_newline": false
+  },
+  "excluded": "All paths outside the exact 12 selected executable paths; governance docs/API tests/evidence are excluded.",
+  "rc18_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "main_commit": "553be01336e41ad1b145a5e1806ec565a658c6d7",
+  "rc18_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+  "main_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+  "rc18_object_map": {
+    ".env.example": "b0848b375acd9498d9f99f3a9d3440a50c5064ac",
+    ".github/workflows/ci.yml": "fec7dc81a6688a25774b2fca7936bd404b53eadf",
+    "apps/api/app": "f5690b471a8ae38a7780a8c81b0a21c9e2f82f4f",
+    "apps/api/pyproject.toml": "99ee33d6b26e6250040ad5b2f7b5f58ef0259cb8",
+    "apps/studio-web": "003370542fe8131f07b3b16f0d9d050e8e4ba56a",
+    "deploy": "05fdda827b098d6325dd4c7f982df97a6f5c6965",
+    "docker-compose.yml": "5cd87fd46f9c764fcf4b8fa94375261a3dd25838",
+    "packages": "fedecefa37fd6e43bd12a7c6c2a92f85a82bea6e",
+    "renderer": "18c4569f004f7e1225d61c57298fd836315152f6",
+    "scripts": "8e5f7b0a3c9cd3e459d85e8515cacd8851a0224d",
+    "services": "a1d39b3df32f92ab49855f92e441ec8e299582ec",
+    "workflows": "cb5be4eb46d714672a599daaec4f755e8c716ee7"
+  },
+  "main_object_map": {
+    ".env.example": "b0848b375acd9498d9f99f3a9d3440a50c5064ac",
+    ".github/workflows/ci.yml": "fec7dc81a6688a25774b2fca7936bd404b53eadf",
+    "apps/api/app": "f5690b471a8ae38a7780a8c81b0a21c9e2f82f4f",
+    "apps/api/pyproject.toml": "99ee33d6b26e6250040ad5b2f7b5f58ef0259cb8",
+    "apps/studio-web": "003370542fe8131f07b3b16f0d9d050e8e4ba56a",
+    "deploy": "05fdda827b098d6325dd4c7f982df97a6f5c6965",
+    "docker-compose.yml": "5cd87fd46f9c764fcf4b8fa94375261a3dd25838",
+    "packages": "fedecefa37fd6e43bd12a7c6c2a92f85a82bea6e",
+    "renderer": "18c4569f004f7e1225d61c57298fd836315152f6",
+    "scripts": "8e5f7b0a3c9cd3e459d85e8515cacd8851a0224d",
+    "services": "a1d39b3df32f92ab49855f92e441ec8e299582ec",
+    "workflows": "cb5be4eb46d714672a599daaec4f755e8c716ee7"
+  },
+  "tree_equality": "PASS",
+  "rc17_commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+  "rc17_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
+  "no_algorithm_or_validator_change": true
+}

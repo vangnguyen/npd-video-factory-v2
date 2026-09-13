@@ -1,0 +1,46 @@
+{
+  "full_python": {
+    "verdict": "PASS",
+    "passed": 958,
+    "duration_seconds": 232.85,
+    "command": "python -B -m pytest -q -p no:cacheprovider apps/api/tests services/worker/tests services/comfyui-bridge/tests",
+    "head": "553be01336e41ad1b145a5e1806ec565a658c6d7"
+  },
+  "focused": {
+    "verdict": "PASS",
+    "passed": 168,
+    "duration_seconds": 3.89,
+    "head": "553be01336e41ad1b145a5e1806ec565a658c6d7"
+  },
+  "acceptance": {
+    "verdict": "PASS",
+    "matrix_rows": 60,
+    "gaps": 16,
+    "schemas": 13,
+    "approvals": 71,
+    "rights": 3,
+    "evidence_runs": 39
+  },
+  "harness_notes": [
+    "Initial local full-test invocation used nonexistent services/bridge/tests. No tests ran. Corrected command uses existing services/comfyui-bridge/tests; 958 passed. No source mutation.",
+    "Initial large pre-merge metadata output was truncated by terminal output budget. External report compacted and rerun; successful complete proof sealed without changing repository sources.",
+    "External CI excerpt helper was corrected for Windows stdout UTF-8 and ANSI-formatted Vitest summary selection. Complete successful excerpt collected; canonical repository tooling and source were not changed."
+  ],
+  "ci": {
+    "run_id": 34747898704,
+    "head": "553be01336e41ad1b145a5e1806ec565a658c6d7",
+    "status": "completed/success",
+    "jobs_succeeded": 5,
+    "jobs_total": 5,
+    "python_passed": 958,
+    "studio_passed": 14,
+    "renderer_passed": 14,
+    "migration_replay": "PASS_HEAD_0014_v3_01_27",
+    "renderer_typecheck_bundle": "PASS",
+    "safety_compose": "PASS",
+    "docker_deterministic_e2e": "PASS",
+    "flow_a_b_c_dr_fixture_boundaries": "BLOCKED_AS_EXPECTED",
+    "asr_offline_compatibility": "PASS",
+    "secret_scan": "PASS"
+  }
+}
