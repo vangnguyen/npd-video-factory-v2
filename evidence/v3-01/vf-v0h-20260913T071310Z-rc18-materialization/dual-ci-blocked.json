@@ -1,0 +1,15 @@
+{
+  "candidate_is_not_merged_main": true,
+  "code": "CI_PROVENANCE_INVALID",
+  "credential_reads": 0,
+  "current_actual_main_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "current_main_ci_run_id": 34691861788,
+  "executable_rc_ci_run_id": 34744690232,
+  "executable_rc_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "governance_changed_paths": [],
+  "provider_calls": 0,
+  "reason": "Current actual main equals executable RC commit. Canonical contract requires distinct commits and a nonempty allowlisted governance diff.",
+  "required_next_gate": "Separate Owner G-08 for governance-only handoff PR; then exact merged-main CI and new canonical dual-CI observation.",
+  "reservation_vnd": "0",
+  "verdict": "BLOCKED_0_CALL"
+}

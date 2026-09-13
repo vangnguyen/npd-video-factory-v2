@@ -1,0 +1,12 @@
+{
+  "task_id": "VF-V0H",
+  "source_main": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "source_rc": "vf-v3-01-rc18",
+  "hash_basis": "Raw final local bytes, not Git blob IDs or a recursive self-hash",
+  "canonical_handoffs": {
+    "docs/acceptance/v3-01/HANDOFF.md": "c081362b4cad3eb7fb68aa1999fe838a82e5578cc8fd414f95ee6779e3df1437",
+    "docs/acceptance/v3-01/handoff.json": "65362119af0fd59e53dcceb9e6cdd913c93daa107abde4618dfc7fc6c60f8ed6"
+  },
+  "candidate_branch": "handoff/vf-v0h-rc18-materialization",
+  "post_rc_governance_main": "NOT_MERGED_PENDING_OWNER_G08"
+}

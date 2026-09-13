@@ -1,0 +1,70 @@
+{
+  "task_id": "VF-V0H",
+  "rc": "vf-v3-01-rc18",
+  "commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "observed_at_utc": "2026-09-13T07:18:49.604857+00:00",
+  "local_focused": {
+    "verdict": "PASS",
+    "passed": 168,
+    "command": "python -B -m pytest -q -p no:cacheprovider apps/api/tests/test_provider_ci_provenance.py apps/api/tests/test_asr_prompt_profile.py apps/api/tests/test_rc17_asr_w1_lineage_gate_bundle.py",
+    "provider_calls": 0,
+    "credential_reads": 0
+  },
+  "local_acceptance_validation": {
+    "verdict": "PASS",
+    "matrix_rows": 60,
+    "gaps": 16,
+    "schemas": 13,
+    "approvals": 71,
+    "rights": 3,
+    "evidence_runs": 39
+  },
+  "historical_evidence_integrity": {
+    "vf_v0f_checksums": 12,
+    "vf_v0g_checksums": 6,
+    "verdict": "PASS",
+    "history_rewritten": false,
+    "vf_v0g_source_main": "03e18c1f0c56fff8a13f167af74f34894c2db811"
+  },
+  "tag_bound_full_ci": {
+    "run_id": 34744690232,
+    "commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "ref": "vf-v3-01-rc18",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs_total": 5,
+    "jobs_succeeded": 5,
+    "python_passed": 958,
+    "studio_passed": 14,
+    "renderer_passed": 14,
+    "renderer_typecheck_bundle": "PASS",
+    "safety_compose": "PASS",
+    "migration_replay": "PASS_HEAD_0014_v3_01_27",
+    "flow_a_b_c_dr_fixture_boundaries": "BLOCKED_AS_EXPECTED",
+    "acceptance_redacted_evidence": "PASS",
+    "asr_offline_compatibility": "PASS",
+    "docker_deterministic_e2e": "PASS",
+    "production_path_evidence": false
+  },
+  "local_handoff_validation": "Detailed final scope/checksum/secret/link observation is recorded separately after this governance diff.",
+  "post_materialization_actual_main_dual_ci": {
+    "verdict": "BLOCKED_0_CALL",
+    "code": "CI_PROVENANCE_INVALID",
+    "executable_rc_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "current_actual_main_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "reason": "Canonical contract requires a distinct governance commit and a nonempty allowlisted diff. Two CI run IDs on this one commit cannot satisfy it."
+  },
+  "tooling_notes": [
+    "Windows Python initially lacked pinned tiktoken==0.12.0; public cached dependency installed outside source worktrees. Canonical source unchanged.",
+    "An initial external post-tag diagnostic import used the collector instead of the canonical module for the allowlist constant; corrected only outside repo and rerun. No source or tag changed.",
+    "Existing renderer lockfile audit and GitHub action-runtime warnings remain unchanged; no runtime upgrade in this task."
+  ],
+  "activity": {
+    "credential_reads": 0,
+    "live_budget_reservation_vnd": "0",
+    "real_provider_calls": 0,
+    "production_writes": 0,
+    "actual_cost_vnd": "0"
+  }
+}

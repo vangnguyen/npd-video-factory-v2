@@ -1,14 +1,13 @@
 {
   "schema_version": 1,
   "workstream": "NPD Video Factory V3-01",
-  "task_id": "VF-V0F",
-  "task": "Same-release MinIO Quay immutable-digest CI/infra remediation candidate",
-  "status": "REVIEW_REQUIRED_EXECUTABLE_TREE_CHANGED",
+  "task_id": "VF-V0H",
+  "task": "Owner-authorized exact-main RC-18 materialization; post-merge governance provenance stop",
+  "status": "REVIEW_REQUIRED_POST_MERGE_DUAL_CI_PENDING",
   "repository": "vangnguyen/npd-video-factory-v2",
-  "branch": "remediation/vf-v0f-minio-quay-digest",
-  "source_main_sha": "5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045",
-  "recorded_at_utc": "2026-09-12T08:26:53Z",
-  "recorded_at_ict": "2026-09-12T15:26:53.000+07:00",
+  "branch": "handoff/vf-v0h-rc18-materialization",
+  "source_main_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "recorded_at_utc": "2026-09-13T07:18:49.604857+00:00",
   "canonical_paths": {
     "human": "docs/acceptance/v3-01/HANDOFF.md",
     "machine": "docs/acceptance/v3-01/handoff.json",
@@ -16,114 +15,120 @@
     "existing_governance_allowlist_reused": true
   },
   "immutable_anchors": {
-    "rc_tag": "vf-v3-01-rc17",
-    "rc_commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
-    "governance_main_baseline_commit": "5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045",
-    "executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
-    "rc_ci_run_id": 34550127181,
-    "baseline_governance_main_ci_run_id": 34670260472,
-    "acceptance_lineage_id": "al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329",
-    "execution_scope_sha256": "6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7",
-    "gate_bundle_sha256": "39867efb2a95d22bf5d4be64e041671cf10517a118d02bece010778ab587a76f",
+    "rc_tag": "vf-v3-01-rc18",
+    "rc_tag_object": "30ca09c4201cd6aea5e733c26ba4dfa1f30d5021",
+    "rc_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+    "rc_ci_run_id": 34744690232,
+    "rc_ci_ref": "vf-v3-01-rc18",
+    "rc_ci_status": "completed/success; 5/5",
+    "baseline_actual_main_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "baseline_actual_main_ci_run_id": 34691861788,
+    "post_rc_governance_main_commit": null,
+    "post_rc_governance_main_ci_run_id": null,
+    "minio_image": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+    "w1_profile_id": "asr-whisper-vi-w1-v1",
     "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
-    "w1_prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
-    "baseline_governance_main_ci_status": "completed/failure; 4/5 jobs; MinIO Docker Hub pull unavailable"
+    "w1_prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48"
   },
-  "proposed_window": {
-    "status": "PROPOSAL_NOT_AUTHORITY",
-    "start_utc": "2026-09-12T14:00:00Z",
-    "end_utc": "2026-09-12T18:00:00Z",
-    "start_ict": "2026-09-12T21:00:00+07:00",
-    "end_ict": "2026-09-13T01:00:00+07:00"
+  "provenance": {
+    "tag_commit_binding": "PASS",
+    "tag_tree_binding": "PASS",
+    "canonical_recompute_deterministic": true,
+    "source_tree_changed": false,
+    "actual_main_post_materialization_dual_ci": "BLOCKED_0_CALL / CI_PROVENANCE_INVALID",
+    "reason": "Current main equals RC-18 commit; existing canonical contract requires a distinct successful post-governance main and nonempty complete allowlisted diff.",
+    "candidate_is_not_merged_main": true,
+    "governance_handoff_pr": "Separate draft governance-only branch; any exact-head candidate CI/provenance is reported externally and must not be called post-merge main.",
+    "full_rc_validation": "PENDING_POST_MERGE_DUAL_CI"
+  },
+  "historical_rc17": {
+    "tag": "vf-v3-01-rc17",
+    "tag_object": "ea67843635dddf94ee25d38111fc06782ad9fd74",
+    "commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+    "executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
+    "immutable": true,
+    "operation_1_package_status": "HISTORICAL_REFERENCE_ONLY / INVALID_FOR_RC18",
+    "operation_2_status": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
+    "authority_reused": false,
+    "operation_ids_scope_bundle_window_reservation_transferred": false
   },
   "operations": {
     "operation_1": {
-      "operation_id": "v3-01-rc17-openai-transcription-asr-al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329-call-01",
-      "status": "PREPARED_NOT_AUTHORIZED",
+      "operation_id": null,
+      "authority_status": "NOT_CREATED",
+      "rebind_required": true,
+      "rebind_inventory_status": "DEFERRED_PENDING_POST_MERGE_DUAL_CI",
       "executed": false,
       "consumed": false
     },
     "operation_2": {
-      "operation_id": "v3-01-rc17-openai-transcription-asr-al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329-call-02",
-      "status": "NOT_APPROVED_LOCKED_NOT_EXECUTED",
+      "operation_id": null,
+      "status": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
       "executed": false,
       "consumed": false
     }
   },
+  "future_rebind_requirements": [
+    "RC18-bound lineage v2 plus slot 1/2 IDs",
+    "Exact RC commit/executable tree",
+    "Execution scope, scope SHA and bundle SHA",
+    "Exact asset/reference transcript and asset-specific RightsRecord binding",
+    "Immutable W1 profile/prompt and provider/model/capability/language",
+    "Separately approved fresh window plus budget and timeout envelope",
+    "Kill-switch binding and separately issued Owner operation authority"
+  ],
+  "new_acceptance_window": null,
+  "new_lineage_id": null,
+  "new_scope_sha256": null,
+  "new_bundle_sha256": null,
+  "new_approval_records_created": false,
   "safety_state": {
     "kill_switch": "ENGAGED",
     "gate_bundle_mounted": false,
     "external_execution_enabled": false,
     "paid_execution_enabled": false,
+    "transcription_provider": "fixture",
+    "transcription_model": "",
     "checked_in_budget_vnd": "0",
     "credential_reads": 0,
     "budget_reservation_vnd": "0",
     "provider_calls": 0,
     "actual_cost_vnd": "0",
-    "production_writes": 0
+    "production_writes": 0,
+    "live_provider_ledger_accessed": false
   },
   "acceptance_status": {
     "asr_consecutive_passes": 0,
     "asr_required_consecutive_passes": 2,
     "vision_consecutive_passes": 2,
-    "production_verdict": "NO-GO"
-  },
-  "evidence_pointer": "evidence/v3-01/vf-v0f-20260912T081435Z-5fef0ec-minio-quay-pin/README.md",
-  "scope_drift": "PASS",
-  "next_safe_action": "Owner reviews Draft PR #61 exact final head and Case B executable-tree impact under G-08. Stop before merge, new RC, credential access, budget reservation, provider call or Operation 1 authority.",
-  "candidate": {
-    "pr_number": 61,
-    "pr_url": "https://github.com/vangnguyen/npd-video-factory-v2/pull/61",
-    "pr_status": "OPEN_DRAFT_NOT_MERGED",
-    "executable_candidate_commit": "ed976c0e222ef2d732bd5bf6b822ba845b2a56de",
-    "candidate_is_rc17": false,
-    "old_image": "minio/minio:RELEASE.2025-09-07T16-13-09Z",
-    "new_image": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
-    "old_executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
-    "new_executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
-    "executable_tree_changed": true,
-    "hashed_paths_changed": [
-      "docker-compose.yml"
-    ],
-    "rc17_tag_or_lineage_changed": false,
-    "new_rc_created": false,
-    "new_rc_required_under_current_contract": true,
-    "new_rc_requirement_scope": "Only after separate Owner G-08 / authorized merge / exact-main regression; no RC creation in VF-V0F",
-    "initial_candidate_ci": {
-      "run_id": 34682929005,
-      "commit": "ed976c0e222ef2d732bd5bf6b822ba845b2a56de",
-      "status": "completed",
-      "conclusion": "success",
-      "jobs_succeeded": 5,
-      "jobs_total": 5,
-      "evidence": "evidence/v3-01/vf-v0f-20260912T081435Z-5fef0ec-minio-quay-pin/candidate-ci.json"
-    },
-    "final_exact_head_ci_reference": "Required checks on PR #61, bound to its exact final head. Final observation is reported in the task HANDOFF RECEIPT; do not reuse an earlier run for a changed head.",
-    "rc17_dual_ci_provenance": "NOT_PASS: candidate is runtime-changing and source main CI remains failed. Candidate CI does not grant RC-17 operation authority.",
-    "scope": "One operative Compose image reference plus focused tests, evidence and canonical handoff; no config/business-logic change"
+    "production_verdict": "NO-GO",
+    "historical_provider_verdicts_modified": false
   },
   "validation": {
-    "python_passed": 958,
-    "focused_passed": 32,
-    "studio_passed": 14,
-    "renderer_passed": 14,
-    "renderer_typecheck_and_bundle": "PASS",
-    "safety_steps_passed": 36,
-    "compose": "PASS",
-    "minio_compatibility": "PASS",
-    "docker_e2e": "PASS",
-    "migration_replay": "PASS",
-    "acceptance_evidence_and_flow_boundary_validation": "PASS",
-    "git_diff_check": "PASS",
-    "real_key_pattern_matches": 0
+    "local_focused_passed": 168,
+    "rc_bound_python_passed": 958,
+    "rc_bound_studio_passed": 14,
+    "rc_bound_renderer_passed": 14,
+    "rc_bound_docker_e2e": "PASS",
+    "migration_replay": "PASS_HEAD_0014_v3_01_27",
+    "acceptance_and_fixture_boundary_checks": "PASS",
+    "prior_vf_v0f_vf_v0g_checksum_entries_valid": 18
   },
-  "pr60": {
-    "number": 60,
-    "status": "OPEN_DRAFT_UNCHANGED_SEPARATE",
-    "head_sha": "c3c08f8a9a0733986f887224b65aca0cfab4b3f6",
-    "merged": false,
-    "changes_imported": false,
+  "pr62": {
+    "number": 62,
+    "status": "OPEN_DRAFT_HISTORICAL_VF_V0G_UNCHANGED",
+    "head_sha": "d435f06a0ae74fa8e51e77b589f81d845b95179c",
+    "base_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "merged_modified_closed_by_this_task": false,
+    "evidence_deleted_or_imported_into_new_lineage": false,
     "canonical_handoff_paths_overlap": true,
-    "coordination_required": "Keep PR60 separate; Owner must review/rebase its older handoff snapshot before any later merge so it cannot overwrite fresher candidate/main state."
-  }
+    "coordination": "Owner must preserve historical VF-V0G engineering evidence and coordinate older handoff before later merge so it cannot overwrite RC18 state."
+  },
+  "evidence_pointer": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/README.md",
+  "scope_drift": "PASS",
+  "blockers": [
+    "Distinct post-RC governance main / exact merged-main CI / canonical dual-CI not yet available. Draft branch is not main; no automatic merge authorized."
+  ],
+  "next_safe_action": "Owner G-08 exact-head review of separate RC18 governance-only handoff draft PR. After separately authorized merge, collect actual exact-main CI and fresh dual-CI before any future rebind task. Stop before Operation 1 authority creation/activation, credentials, budget reservation or provider execution."
 }
