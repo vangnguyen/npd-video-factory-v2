@@ -1,0 +1,55 @@
+{
+  "contract": {
+    "executable_rc_ci": {
+      "commit_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+      "completed_at_utc": "2026-09-13T07:18:18Z",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "role": "executable_rc",
+      "run_id": 34744690232,
+      "status": "completed",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    "executable_rc_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+    "governance_changed_paths": [
+      "docs/acceptance/v3-01/HANDOFF.md",
+      "docs/acceptance/v3-01/handoff.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/G08_REVIEW.md",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/README.md",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/SHA256SUMS.txt",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/baseline-main-ci.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/dual-ci-blocked.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/executable-tree-manifest.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/handoff-checksums.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/local-governance-validation.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/materialization.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/pre-tag-preflight.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/rc-ci-excerpt.txt",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/rc-ci.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/tag-annotation.json",
+      "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/validation.json"
+    ],
+    "governance_executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+    "governance_main_ci": {
+      "commit_sha": "553be01336e41ad1b145a5e1806ec565a658c6d7",
+      "completed_at_utc": "2026-09-13T08:36:00Z",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "role": "governance_main",
+      "run_id": 34747898704,
+      "status": "completed",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    "governance_main_commit": "553be01336e41ad1b145a5e1806ec565a658c6d7",
+    "version": 1
+  },
+  "credential_reads": 0,
+  "production_verdict": "NO-GO",
+  "provenance_sha256": "68f6f583fc16bdeb3dcffdd85b983e8ad0ab229f51f4e4c13579b305a9697811",
+  "provider_calls": 0,
+  "reservation_vnd": "0",
+  "verdict": "PASS"
+}

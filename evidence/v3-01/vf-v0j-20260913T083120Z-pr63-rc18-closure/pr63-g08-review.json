@@ -1,0 +1,151 @@
+{
+  "task_id": "VF-V0J",
+  "verdict": "PASS",
+  "approved_head": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
+  "source_main": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "pr": 63,
+  "reviewed_at_utc": "2026-09-13T08:30:50.523407+00:00",
+  "exact_changed_files": [
+    {
+      "classification": "handoff",
+      "path": "docs/acceptance/v3-01/HANDOFF.md"
+    },
+    {
+      "classification": "handoff",
+      "path": "docs/acceptance/v3-01/handoff.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/G08_REVIEW.md"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/README.md"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/SHA256SUMS.txt"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/baseline-main-ci.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/dual-ci-blocked.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/executable-tree-manifest.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/handoff-checksums.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/local-governance-validation.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/materialization.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/pre-tag-preflight.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/rc-ci-excerpt.txt"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/rc-ci.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/tag-annotation.json"
+    },
+    {
+      "classification": "evidence/governance",
+      "path": "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/validation.json"
+    }
+  ],
+  "git_diff_check": "PASS",
+  "secret_scan": "PASS",
+  "historical_bundle_checksum_entries_verified": 13,
+  "unresolved_review_threads": 0,
+  "executable_tree_changed": false,
+  "executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+  "rc18_tag_unchanged": true,
+  "rc17_immutable": true,
+  "candidate_ci_run_id": 34745133909,
+  "candidate_ci": "PASS_5_OF_5",
+  "candidate_dual_ci_structural_not_actual_main": {
+    "contract": {
+      "executable_rc_ci": {
+        "commit_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+        "completed_at_utc": "2026-09-13T07:18:18Z",
+        "conclusion": "success",
+        "jobs_succeeded": 5,
+        "jobs_total": 5,
+        "role": "executable_rc",
+        "run_id": 34744690232,
+        "status": "completed",
+        "workflow_name": "Video Factory V2 CI"
+      },
+      "executable_rc_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+      "executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+      "governance_changed_paths": [
+        "docs/acceptance/v3-01/HANDOFF.md",
+        "docs/acceptance/v3-01/handoff.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/G08_REVIEW.md",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/README.md",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/SHA256SUMS.txt",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/baseline-main-ci.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/dual-ci-blocked.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/executable-tree-manifest.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/handoff-checksums.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/local-governance-validation.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/materialization.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/pre-tag-preflight.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/rc-ci-excerpt.txt",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/rc-ci.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/tag-annotation.json",
+        "evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/validation.json"
+      ],
+      "governance_executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+      "governance_main_ci": {
+        "commit_sha": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
+        "completed_at_utc": "2026-09-13T07:28:45Z",
+        "conclusion": "success",
+        "jobs_succeeded": 5,
+        "jobs_total": 5,
+        "role": "governance_main",
+        "run_id": 34745133909,
+        "status": "completed",
+        "workflow_name": "Video Factory V2 CI"
+      },
+      "governance_main_commit": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
+      "version": 1
+    },
+    "credential_reads": 0,
+    "production_verdict": "NO-GO",
+    "provenance_sha256": "5b34e62f94072bdf84e46558be5d8b4b46394a5fd5aa7d21baa9536e952b742d",
+    "provider_calls": 0,
+    "reservation_vnd": "0",
+    "verdict": "PASS"
+  },
+  "owner_authorization": "VF-V0J explicitly authorizes controlled merge only after exact-head G08 and existing RC18 origin PASS.",
+  "controlled_merge_head": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
+  "merge_commit": "553be01336e41ad1b145a5e1806ec565a658c6d7",
+  "no_new_rc": true,
+  "no_authority_activation": true,
+  "activity": {
+    "credential_reads": 0,
+    "provider_calls": 0,
+    "live_budget_reserved_vnd": "0",
+    "production_writes": 0,
+    "actual_cost_vnd": "0"
+  }
+}

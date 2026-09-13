@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task_id": "VF-V0J",
+  "source_main_sha": "553be01336e41ad1b145a5e1806ec565a658c6d7",
+  "branch": "handoff/vf-v0j-rc18-provenance-closure",
+  "canonical_handoffs": {
+    "docs/acceptance/v3-01/HANDOFF.md": "222d3413fe3771c61576de972f3cec99c05e9d5c3a58cb63df3ab602d9797b96",
+    "docs/acceptance/v3-01/handoff.json": "5d0af7ec54e4f4e17b0ef309861bb97d7e9f7615d11c6dcfc0dacededcf2601c"
+  },
+  "historical_handoff_version": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
+  "historical_handoff_checksum_records_rewritten": false,
+  "publication_status": "SEPARATE_GOVERNANCE_DRAFT_NOT_MERGED_MAIN",
+  "authority_status": "NONE_NOT_CREATED"
+}

@@ -1,0 +1,21 @@
+{
+  "task_id": "VF-V0J",
+  "ci_run_id": 34747898704,
+  "head_sha": "553be01336e41ad1b145a5e1806ec565a658c6d7",
+  "excerpt_kind": "ALLOWLISTED_LOG_LINES_NOT_FULL_RAW_LOG",
+  "lines": [
+    "Docker deterministic E2E\tRun bash scripts/e2e-smoke.sh\t2026-09-13T08:33:03.1690106Z  Container npd-video-factory-v3-dr-e2e-minio-1  Healthy",
+    "Docker deterministic E2E\tRun bash scripts/e2e-smoke.sh\t2026-09-13T08:33:03.1697288Z  Container npd-video-factory-v3-dr-e2e-minio-1  Healthy",
+    "Docker deterministic E2E\tRun bash scripts/e2e-smoke.sh\t2026-09-13T08:35:37.5804363Z  Container npd-video-factory-v3-dr-e2e-minio-1  Healthy",
+    "Docker deterministic E2E\tRun bash scripts/e2e-smoke.sh\t2026-09-13T08:35:37.5804976Z  Container npd-video-factory-v3-dr-e2e-minio-1  Healthy",
+    "Docker deterministic E2E\tRun bash scripts/e2e-smoke.sh\t2026-09-13T08:35:42.2949429Z [e2e] V3-01-07 disposable DR and PostgreSQL-backed Redis queue recovery verified",
+    "Docker deterministic E2E\tRun bash scripts/e2e-smoke.sh\t2026-09-13T08:35:43.4241448Z [e2e] V2-07 Auto Edit Studio passed",
+    "Studio tests\tRun npm test\t2026-09-13T08:31:32.0064139Z # tests 14",
+    "Studio tests\tRun npm test\t2026-09-13T08:31:32.0077027Z # pass 14",
+    "Python unit and contract tests\tRun python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q\t2026-09-13T08:32:44.3129445Z 958 passed in 59.42s",
+    "Python unit and contract tests\tValidate V3-01 acceptance register and redacted evidence\t2026-09-13T08:32:46.0384852Z v3-01 validation=PASS matrix_rows=60 gaps=16 schemas=13 approvals=71 rights=3 evidence_runs=39",
+    "Python unit and contract tests\tAlembic upgrade, downgrade and replay\t2026-09-13T08:32:47.9768298Z INFO  [alembic.runtime.migration] Running upgrade 0013_v3_01_18 -> 0014_v3_01_27, bind provider safety ledger rows to an acceptance lineage",
+    "Python unit and contract tests\tAlembic upgrade, downgrade and replay\t2026-09-13T08:32:50.2708923Z INFO  [alembic.runtime.migration] Running upgrade 0013_v3_01_18 -> 0014_v3_01_27, bind provider safety ledger rows to an acceptance lineage",
+    "Renderer tests and bundle\tRun npm test\t2026-09-13T08:31:37.6573122Z ^[[2m      Tests ^[[22m ^[[1m^[[32m14 passed^[[39m^[[22m^[[90m (14)^[[39m"
+  ]
+}

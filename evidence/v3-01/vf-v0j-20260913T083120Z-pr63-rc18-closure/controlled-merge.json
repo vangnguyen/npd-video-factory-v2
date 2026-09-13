@@ -1,0 +1,19 @@
+{
+  "task_id": "VF-V0J",
+  "approved_head": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
+  "pr": 63,
+  "pr_url": "https://github.com/vangnguyen/npd-video-factory-v2/pull/63",
+  "ready_result": "",
+  "merge_command_result": "",
+  "merged_at": "2026-09-13T08:31:20Z",
+  "merge_commit": "553be01336e41ad1b145a5e1806ec565a658c6d7",
+  "main_sha": "553be01336e41ad1b145a5e1806ec565a658c6d7",
+  "state": "MERGED",
+  "no_new_rc": true,
+  "operation_1_authority": "NOT_CREATED",
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "budget_reserved_vnd": "0",
+  "production_writes": 0,
+  "actual_cost_vnd": "0"
+}
