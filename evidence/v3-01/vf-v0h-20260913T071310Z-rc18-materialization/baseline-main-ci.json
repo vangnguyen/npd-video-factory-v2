@@ -1,0 +1,1067 @@
+{
+  "observation_type": "BASELINE_ACTUAL_MAIN_CI_NOT_POST_RC_GOVERNANCE_CI",
+  "observed_at_utc": "2026-09-13T07:18:49.604857+00:00",
+  "commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "run": {
+    "actor": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/12069573?v=4",
+      "events_url": "https://api.github.com/users/vangnguyen/events{/privacy}",
+      "followers_url": "https://api.github.com/users/vangnguyen/followers",
+      "following_url": "https://api.github.com/users/vangnguyen/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vangnguyen/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/vangnguyen",
+      "id": 12069573,
+      "login": "vangnguyen",
+      "node_id": "MDQ6VXNlcjEyMDY5NTcz",
+      "organizations_url": "https://api.github.com/users/vangnguyen/orgs",
+      "received_events_url": "https://api.github.com/users/vangnguyen/received_events",
+      "repos_url": "https://api.github.com/users/vangnguyen/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/vangnguyen/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vangnguyen/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/vangnguyen",
+      "user_view_type": "public"
+    },
+    "artifacts_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/artifacts",
+    "cancel_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/cancel",
+    "check_suite_id": 93972174943,
+    "check_suite_node_id": "CS_kwDOUE4GTM8AAAAV4S2YXw",
+    "check_suite_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/check-suites/93972174943",
+    "conclusion": "success",
+    "created_at": "2026-09-12T11:45:12Z",
+    "display_title": "Merge pull request #61 from vangnguyen/remediation/vf-v0f-minio-quay-�",
+    "event": "push",
+    "head_branch": "main",
+    "head_commit": {
+      "author": {
+        "email": "vangnguyen@users.noreply.github.com",
+        "name": "vangnguyen"
+      },
+      "committer": {
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "id": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+      "message": "Merge pull request #61 from vangnguyen/remediation/vf-v0f-minio-quay-digest\n\nfix(ci): restore MinIO E2E with same-release Quay digest pin",
+      "timestamp": "2026-09-12T11:45:10Z",
+      "tree_id": "fdf51b103d6b0d14628d47d29bd6252ab0ec1dfe"
+    },
+    "head_repository": {
+      "archive_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/{archive_format}{/ref}",
+      "assignees_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/assignees{/user}",
+      "blobs_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/blobs{/sha}",
+      "branches_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/branches{/branch}",
+      "collaborators_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/collaborators{/collaborator}",
+      "comments_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/comments{/number}",
+      "commits_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/commits{/sha}",
+      "compare_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/compare/{base}...{head}",
+      "contents_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/contents/{+path}",
+      "contributors_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/contributors",
+      "deployments_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/deployments",
+      "description": "Independent NPD AI-native content opportunity, video production, publishing and learning platform",
+      "downloads_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/downloads",
+      "events_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/events",
+      "fork": false,
+      "forks_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/forks",
+      "full_name": "vangnguyen/npd-video-factory-v2",
+      "git_commits_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/commits{/sha}",
+      "git_refs_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/refs{/sha}",
+      "git_tags_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/tags{/sha}",
+      "hooks_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/hooks",
+      "html_url": "https://github.com/vangnguyen/npd-video-factory-v2",
+      "id": 1347290700,
+      "issue_comment_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/issues/comments{/number}",
+      "issue_events_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/issues/events{/number}",
+      "issues_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/issues{/number}",
+      "keys_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/keys{/key_id}",
+      "labels_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/labels{/name}",
+      "languages_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/languages",
+      "merges_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/merges",
+      "milestones_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/milestones{/number}",
+      "name": "npd-video-factory-v2",
+      "node_id": "R_kgDOUE4GTA",
+      "notifications_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/notifications{?since,all,participating}",
+      "owner": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/12069573?v=4",
+        "events_url": "https://api.github.com/users/vangnguyen/events{/privacy}",
+        "followers_url": "https://api.github.com/users/vangnguyen/followers",
+        "following_url": "https://api.github.com/users/vangnguyen/following{/other_user}",
+        "gists_url": "https://api.github.com/users/vangnguyen/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/vangnguyen",
+        "id": 12069573,
+        "login": "vangnguyen",
+        "node_id": "MDQ6VXNlcjEyMDY5NTcz",
+        "organizations_url": "https://api.github.com/users/vangnguyen/orgs",
+        "received_events_url": "https://api.github.com/users/vangnguyen/received_events",
+        "repos_url": "https://api.github.com/users/vangnguyen/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/vangnguyen/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/vangnguyen/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/vangnguyen",
+        "user_view_type": "public"
+      },
+      "private": false,
+      "pulls_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/pulls{/number}",
+      "releases_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/releases{/id}",
+      "stargazers_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/stargazers",
+      "statuses_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/statuses/{sha}",
+      "subscribers_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/subscribers",
+      "subscription_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/subscription",
+      "tags_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/tags",
+      "teams_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/teams",
+      "trees_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/trees{/sha}",
+      "url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2"
+    },
+    "head_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "html_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788",
+    "id": 34691861788,
+    "jobs_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/jobs",
+    "logs_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/logs",
+    "name": "Video Factory V2 CI",
+    "node_id": "WFR_kwLOUE4GTM8AAAAIE8vNHA",
+    "path": ".github/workflows/ci.yml",
+    "previous_attempt_url": null,
+    "pull_requests": [],
+    "referenced_workflows": [],
+    "repository": {
+      "archive_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/{archive_format}{/ref}",
+      "assignees_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/assignees{/user}",
+      "blobs_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/blobs{/sha}",
+      "branches_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/branches{/branch}",
+      "collaborators_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/collaborators{/collaborator}",
+      "comments_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/comments{/number}",
+      "commits_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/commits{/sha}",
+      "compare_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/compare/{base}...{head}",
+      "contents_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/contents/{+path}",
+      "contributors_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/contributors",
+      "deployments_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/deployments",
+      "description": "Independent NPD AI-native content opportunity, video production, publishing and learning platform",
+      "downloads_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/downloads",
+      "events_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/events",
+      "fork": false,
+      "forks_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/forks",
+      "full_name": "vangnguyen/npd-video-factory-v2",
+      "git_commits_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/commits{/sha}",
+      "git_refs_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/refs{/sha}",
+      "git_tags_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/tags{/sha}",
+      "hooks_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/hooks",
+      "html_url": "https://github.com/vangnguyen/npd-video-factory-v2",
+      "id": 1347290700,
+      "issue_comment_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/issues/comments{/number}",
+      "issue_events_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/issues/events{/number}",
+      "issues_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/issues{/number}",
+      "keys_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/keys{/key_id}",
+      "labels_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/labels{/name}",
+      "languages_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/languages",
+      "merges_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/merges",
+      "milestones_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/milestones{/number}",
+      "name": "npd-video-factory-v2",
+      "node_id": "R_kgDOUE4GTA",
+      "notifications_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/notifications{?since,all,participating}",
+      "owner": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/12069573?v=4",
+        "events_url": "https://api.github.com/users/vangnguyen/events{/privacy}",
+        "followers_url": "https://api.github.com/users/vangnguyen/followers",
+        "following_url": "https://api.github.com/users/vangnguyen/following{/other_user}",
+        "gists_url": "https://api.github.com/users/vangnguyen/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/vangnguyen",
+        "id": 12069573,
+        "login": "vangnguyen",
+        "node_id": "MDQ6VXNlcjEyMDY5NTcz",
+        "organizations_url": "https://api.github.com/users/vangnguyen/orgs",
+        "received_events_url": "https://api.github.com/users/vangnguyen/received_events",
+        "repos_url": "https://api.github.com/users/vangnguyen/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/vangnguyen/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/vangnguyen/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/vangnguyen",
+        "user_view_type": "public"
+      },
+      "private": false,
+      "pulls_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/pulls{/number}",
+      "releases_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/releases{/id}",
+      "stargazers_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/stargazers",
+      "statuses_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/statuses/{sha}",
+      "subscribers_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/subscribers",
+      "subscription_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/subscription",
+      "tags_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/tags",
+      "teams_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/teams",
+      "trees_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/git/trees{/sha}",
+      "url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2"
+    },
+    "rerun_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/rerun",
+    "run_attempt": 1,
+    "run_number": 143,
+    "run_started_at": "2026-09-12T11:45:12Z",
+    "status": "completed",
+    "triggering_actor": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/12069573?v=4",
+      "events_url": "https://api.github.com/users/vangnguyen/events{/privacy}",
+      "followers_url": "https://api.github.com/users/vangnguyen/followers",
+      "following_url": "https://api.github.com/users/vangnguyen/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vangnguyen/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/vangnguyen",
+      "id": 12069573,
+      "login": "vangnguyen",
+      "node_id": "MDQ6VXNlcjEyMDY5NTcz",
+      "organizations_url": "https://api.github.com/users/vangnguyen/orgs",
+      "received_events_url": "https://api.github.com/users/vangnguyen/received_events",
+      "repos_url": "https://api.github.com/users/vangnguyen/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/vangnguyen/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vangnguyen/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/vangnguyen",
+      "user_view_type": "public"
+    },
+    "updated_at": "2026-09-12T11:50:09Z",
+    "url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788",
+    "workflow_id": 342910222,
+    "workflow_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/workflows/342910222"
+  },
+  "jobs": [
+    {
+      "check_run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/check-runs/103548411049",
+      "completed_at": "2026-09-12T11:46:49Z",
+      "conclusion": "success",
+      "created_at": "2026-09-12T11:45:13Z",
+      "head_branch": "main",
+      "head_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+      "html_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411049",
+      "id": 103548411049,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Python unit and contract tests",
+      "node_id": "CR_kwDOUE4GTM8AAAAYG_dcqQ",
+      "run_attempt": 1,
+      "run_id": 34691861788,
+      "run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000002326,
+      "runner_name": "GitHub Actions 1000002326",
+      "started_at": "2026-09-12T11:45:14Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-09-12T11:45:16Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-09-12T11:45:15Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:17Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "started_at": "2026-09-12T11:45:16Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:18Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5",
+          "number": 3,
+          "started_at": "2026-09-12T11:45:17Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:35Z",
+          "conclusion": "success",
+          "name": "Run python -m pip install -e \"apps/api[dev]\" -e \"services/worker[dev]\" -e \"services/comfyui-bridge[dev]\"",
+          "number": 4,
+          "started_at": "2026-09-12T11:45:18Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:35Z",
+          "conclusion": "success",
+          "name": "Run python -m compileall -q apps/api/app services/worker/npd_worker services/comfyui-bridge/npd_comfyui_bridge",
+          "number": 5,
+          "started_at": "2026-09-12T11:45:35Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:41Z",
+          "conclusion": "success",
+          "name": "Run python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+          "number": 6,
+          "started_at": "2026-09-12T11:45:35Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:42Z",
+          "conclusion": "success",
+          "name": "Validate V3-01 acceptance register and redacted evidence",
+          "number": 7,
+          "started_at": "2026-09-12T11:46:41Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:43Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-18 OpenAI ASR compatibility evidence",
+          "number": 8,
+          "started_at": "2026-09-12T11:46:42Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:43Z",
+          "conclusion": "success",
+          "name": "Evaluate V3-01-04 Flow A fixture boundary",
+          "number": 9,
+          "started_at": "2026-09-12T11:46:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:43Z",
+          "conclusion": "success",
+          "name": "Evaluate V3-01-05 Flow B fixture boundary",
+          "number": 10,
+          "started_at": "2026-09-12T11:46:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:43Z",
+          "conclusion": "success",
+          "name": "Evaluate V3-01-06 Flow C fixture boundary",
+          "number": 11,
+          "started_at": "2026-09-12T11:46:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:44Z",
+          "conclusion": "success",
+          "name": "Evaluate V3-01-07 local DR and observability boundary",
+          "number": 12,
+          "started_at": "2026-09-12T11:46:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:47Z",
+          "conclusion": "success",
+          "name": "Alembic upgrade, downgrade and replay",
+          "number": 13,
+          "started_at": "2026-09-12T11:46:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:48Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5",
+          "number": 25,
+          "started_at": "2026-09-12T11:46:47Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:48Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 26,
+          "started_at": "2026-09-12T11:46:48Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:46:48Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "started_at": "2026-09-12T11:46:48Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/jobs/103548411049",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/check-runs/103548411111",
+      "completed_at": "2026-09-12T11:45:24Z",
+      "conclusion": "success",
+      "created_at": "2026-09-12T11:45:13Z",
+      "head_branch": "main",
+      "head_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+      "html_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411111",
+      "id": 103548411111,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Studio tests",
+      "node_id": "CR_kwDOUE4GTM8AAAAYG_dc5w",
+      "run_attempt": 1,
+      "run_id": 34691861788,
+      "run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000002325,
+      "runner_name": "GitHub Actions 1000002325",
+      "started_at": "2026-09-12T11:45:15Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-09-12T11:45:16Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-09-12T11:45:15Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:18Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "started_at": "2026-09-12T11:45:16Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4",
+          "number": 3,
+          "started_at": "2026-09-12T11:45:18Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Run npm ci",
+          "number": 4,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Run npm test",
+          "number": 5,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Run node --check app.js",
+          "number": 6,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Run node --check auth.mjs",
+          "number": 7,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Run node --check trend-utils.mjs",
+          "number": 8,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Run node --check studio.js",
+          "number": 9,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Run node --check studio-utils.mjs",
+          "number": 10,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v4",
+          "number": 19,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 20,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/jobs/103548411111",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/check-runs/103548411160",
+      "completed_at": "2026-09-12T11:50:09Z",
+      "conclusion": "success",
+      "created_at": "2026-09-12T11:45:13Z",
+      "head_branch": "main",
+      "head_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+      "html_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411160",
+      "id": 103548411160,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Docker deterministic E2E",
+      "node_id": "CR_kwDOUE4GTM8AAAAYG_ddGA",
+      "run_attempt": 1,
+      "run_id": 34691861788,
+      "run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000002329,
+      "runner_name": "GitHub Actions 1000002329",
+      "started_at": "2026-09-12T11:45:15Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-09-12T11:45:16Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-09-12T11:45:15Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:17Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "started_at": "2026-09-12T11:45:16Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:17Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5",
+          "number": 3,
+          "started_at": "2026-09-12T11:45:17Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:50:05Z",
+          "conclusion": "success",
+          "name": "Run bash scripts/e2e-smoke.sh",
+          "number": 4,
+          "started_at": "2026-09-12T11:45:17Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:50:07Z",
+          "conclusion": "success",
+          "name": "Upload acceptance artifacts",
+          "number": 5,
+          "started_at": "2026-09-12T11:50:05Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:50:07Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5",
+          "number": 9,
+          "started_at": "2026-09-12T11:50:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:50:08Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 10,
+          "started_at": "2026-09-12T11:50:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:50:08Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "started_at": "2026-09-12T11:50:08Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/jobs/103548411160",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/check-runs/103548411164",
+      "completed_at": "2026-09-12T11:45:29Z",
+      "conclusion": "success",
+      "created_at": "2026-09-12T11:45:13Z",
+      "head_branch": "main",
+      "head_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+      "html_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411164",
+      "id": 103548411164,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Safety and compose contract",
+      "node_id": "CR_kwDOUE4GTM8AAAAYG_ddHA",
+      "run_attempt": 1,
+      "run_id": 34691861788,
+      "run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000002328,
+      "runner_name": "GitHub Actions 1000002328",
+      "started_at": "2026-09-12T11:45:15Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-09-12T11:45:16Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-09-12T11:45:16Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "started_at": "2026-09-12T11:45:16Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Run cp .env.example .env",
+          "number": 3,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Run docker compose config --quiet",
+          "number": 4,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Verify independent runtime boundary",
+          "number": 5,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Verify fail-closed defaults",
+          "number": 6,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Verify V2-owned durable services and VND-only ledger",
+          "number": 7,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Verify V2-03 research-only trend boundary",
+          "number": 8,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Verify V2-04 non-destructive Auto Edit boundary",
+          "number": 9,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Verify V2-05 structured Vision and non-destructive reframe boundary",
+          "number": 10,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Verify V2-06 media rights, cost and execution boundary",
+          "number": 11,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Verify V2-07 timeline and proxy-preview boundary",
+          "number": 12,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:19Z",
+          "conclusion": "success",
+          "name": "Verify V2-08 audio, subtitle, approval and render-QC boundary",
+          "number": 13,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V2-09 publishing dry-run and external-action boundary",
+          "number": 14,
+          "started_at": "2026-09-12T11:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V2-10 analytics, nullable metrics and recommendation-only boundary",
+          "number": 15,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V2-11 Agent Hub bridge and production hardening boundary",
+          "number": 16,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-01 human identity and ingress boundary",
+          "number": 17,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-02 provider safety boundary",
+          "number": 18,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-03 ingress media and durable safety boundary",
+          "number": 19,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-04 Flow A acceptance boundary",
+          "number": 20,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-05 Flow B acceptance boundary",
+          "number": 21,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-06 Flow C acceptance boundary",
+          "number": 22,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-07 DR and observability boundary",
+          "number": 23,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-09 OpenAI Vision adapter boundary",
+          "number": 24,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-10 bounded provider gate-loader boundary",
+          "number": 25,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-11 Structured Outputs and error-evidence boundary",
+          "number": 26,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-12 RC-bound operation allowlist boundary",
+          "number": 27,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-13 evidence serialization boundary",
+          "number": 28,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-14 operation authority limits boundary",
+          "number": 29,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-15 provider timeout evidence boundary",
+          "number": 30,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-16 split timeout envelope boundary",
+          "number": 31,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-17 dual-CI provenance boundary",
+          "number": 32,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-18 OpenAI ASR compatibility and adapter boundary",
+          "number": 33,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-21 ASR response-diagnostics boundary",
+          "number": 34,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:20Z",
+          "conclusion": "success",
+          "name": "Verify V3-01-27 acceptance-lineage identity boundary",
+          "number": 35,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Validate V2-11 deployment bundle",
+          "number": 36,
+          "started_at": "2026-09-12T11:45:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Secret pattern scan",
+          "number": 37,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Run git diff --check",
+          "number": 38,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 76,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 77,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/jobs/103548411164",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    {
+      "check_run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/check-runs/103548411175",
+      "completed_at": "2026-09-12T11:45:39Z",
+      "conclusion": "success",
+      "created_at": "2026-09-12T11:45:13Z",
+      "head_branch": "main",
+      "head_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+      "html_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788/job/103548411175",
+      "id": 103548411175,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Renderer tests and bundle",
+      "node_id": "CR_kwDOUE4GTM8AAAAYG_ddJw",
+      "run_attempt": 1,
+      "run_id": 34691861788,
+      "run_url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/runs/34691861788",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "runner_id": 1000002327,
+      "runner_name": "GitHub Actions 1000002327",
+      "started_at": "2026-09-12T11:45:15Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completed_at": "2026-09-12T11:45:16Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "started_at": "2026-09-12T11:45:16Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:18Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "started_at": "2026-09-12T11:45:16Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:21Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4",
+          "number": 3,
+          "started_at": "2026-09-12T11:45:18Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:26Z",
+          "conclusion": "success",
+          "name": "Run npm ci",
+          "number": 4,
+          "started_at": "2026-09-12T11:45:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:28Z",
+          "conclusion": "success",
+          "name": "Run npm test",
+          "number": 5,
+          "started_at": "2026-09-12T11:45:26Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:31Z",
+          "conclusion": "success",
+          "name": "Run npm run typecheck",
+          "number": 6,
+          "started_at": "2026-09-12T11:45:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:36Z",
+          "conclusion": "success",
+          "name": "Run npm run bundle:check",
+          "number": 7,
+          "started_at": "2026-09-12T11:45:31Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:36Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v4",
+          "number": 13,
+          "started_at": "2026-09-12T11:45:36Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:36Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 14,
+          "started_at": "2026-09-12T11:45:36Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-09-12T11:45:37Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "started_at": "2026-09-12T11:45:36Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://api.github.com/repos/vangnguyen/npd-video-factory-v2/actions/jobs/103548411175",
+      "workflow_name": "Video Factory V2 CI"
+    }
+  ]
+}

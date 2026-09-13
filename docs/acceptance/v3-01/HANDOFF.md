@@ -1,115 +1,141 @@
 # NPD Video Factory Handoff
 
 Canonical machine record: [handoff.json](handoff.json).
-These are the only current handoff source-of-truth paths; there are no root
-duplicates.
+These are the only current handoff paths; there are no root duplicates.
+This update supersedes only the current checkpoint view, not historical
+provider receipts or the separate historical VF-V0G engineering draft.
 
-## Current checkpoint
+## Current checkpoint — VF-V0H
 
-- Task: **VF-V0F**, same-release MinIO Quay immutable-digest remediation candidate.
-- Verdict: **REVIEW_REQUIRED — Case B: executable-tree hash changed**.
-- Draft [PR #61](https://github.com/vangnguyen/npd-video-factory-v2/pull/61),
-  branch `remediation/vf-v0f-minio-quay-digest`; **not merged**.
-- Exact source main: `5fef0ecf4dde0c99ec1b220ffd1dc36dcfee6045`.
-- Source main CI `34670260472` remains failed (4/5; Docker Hub MinIO pull).
-  Candidate PR CI must not be presented as exact-main CI.
-- [PR #60](https://github.com/vangnguyen/npd-video-factory-v2/pull/60) remains
-  separate, open/draft and unchanged. Its handoff-only changes were not imported.
-- ASR: **0/2 PASS**. Vision: **2/2 PASS**. Production: **NO-GO**.
-- Task production writes / owned credential reads / paid-provider calls /
-  live reservations / provider cost: **0 / 0 / 0 / 0 / 0 VND**.
+**REVIEW_REQUIRED — RC-18 materialized; actual post-merge dual-CI still gated.**
 
-## Immutable executable and acceptance anchors
+- Annotated executable tag: `vf-v3-01-rc18`.
+- Exact executable commit / verified actual main:
+  `03e18c1f0c56fff8a13f167af74f34894c2db811`.
+- Annotated tag object: `30ca09c4201cd6aea5e733c26ba4dfa1f30d5021`.
+- Canonical executable-tree SHA-256:
+  `ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5`.
+- Fresh [RC-bound CI 34744690232](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34744690232):
+  `workflow_dispatch` on `vf-v3-01-rc18`, completed/success, **5/5**.
+- Independently observed [baseline main CI 34691861788](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34691861788):
+  completed/success, **5/5**. It is not substituted for RC-bound CI.
+- Separate governance handoff branch: `handoff/vf-v0h-rc18-materialization`.
+  Any draft-head checks/provenance are **candidate observations**, not merged main.
+- ASR **0/2 PASS**, Vision **2/2 PASS**, production **NO-GO**.
+- New Operation 1 authority: **NOT_CREATED**.
 
-- RC-17: `vf-v3-01-rc17` →
-  `d08ffc005d7f3ad517d355977b0bc3cc8d686906`.
-- RC-17 executable-tree SHA-256:
-  `ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40`.
-- RC CI: `34550127181`, completed/success, 5/5.
-- Lineage:
-  `al-0001-b82fc34d364bd33a73c9f7eb9d99a8108d77be25449ab5e35a4df7f1ec380329`.
-- Scope SHA-256:
-  `6b1d5f25684d0b276c06c4b80b5d636f7845a36fdedc24e88adbd5bae7930fc7`.
-- Bundle SHA-256:
-  `39867efb2a95d22bf5d4be64e041671cf10517a118d02bece010778ab587a76f`.
-- W1 profile SHA-256:
-  `9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1`.
-- Prompt SHA-256:
-  `6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48`.
+## Materialization proof
 
-## Candidate / lineage impact
+Live preflight verified exact unchanged remote main, two matching canonical
+hash recomputations, successful baseline CI, sealed VF-V0G regression evidence,
+RC-17 immutability, the existing canonical RC name pattern, sequential RC-1
+through RC-17, and absence of RC-18 immediately before creation.
 
-Old MinIO reference:
-`minio/minio:RELEASE.2025-09-07T16-13-09Z`.
+Only an annotated tag was created on that exact commit; no amended, rebased,
+cherry-picked or new executable commit was produced. Fresh tag-bound CI was
+explicitly dispatched because the unchanged workflow does not auto-run tag
+pushes. Tag-to-commit, tag-to-selected-tree, all annotation-bound blobs and
+the clean detached executable worktree were independently checked afterward.
 
-New same-release reference:
+The annotation pins the current provider safety plane, canonical provenance/
+lineage/acceptance rules, W1 profile, asset-specific rights/media/reference
+artifacts and the existing same-release immutable MinIO image. It grants no
+provider, budget, credential, deployment or operation authority.
+
+MinIO:
 `quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e`.
 
-Initial executable candidate commit:
-`ed976c0e222ef2d732bd5bf6b822ba845b2a56de`, **not a tagged RC**.
+W1: `asr-whisper-vi-w1-v1`.
+Profile SHA-256:
+`9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1`.
+Prompt SHA-256:
+`6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48`.
 
-Candidate executable-tree SHA-256:
-`ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5`.
+## Gate still missing — no provenance workaround
 
-Only `docker-compose.yml` changes a canonical hashed path. Its sole edit is
-the image source/digest pin; MinIO configuration, ports, health checks,
-credentials, CLI arguments, storage and business logic stay unchanged.
-Tests/docs/evidence are outside the executable hash.
+The unchanged canonical `ProviderAcceptanceCiProvenance` requires distinct
+executable-RC and governance-main commits, distinct successful CI run IDs,
+a nonempty complete allowlisted governance diff and equal selected executable
+trees. Actual main currently equals RC-18's commit.
 
-RC-17 is not retagged and its lineage remains unchanged. This patched branch
-must not be called RC-17. A new executable candidate/RC is required under the
-existing contract **after separate authorized merge and exact-main regression**.
-No new RC is created by VF-V0F.
+Canonical collection on RC-18 CI plus current main CI therefore returns
+**BLOCKED_0_CALL / CI_PROVENANCE_INVALID**. Two successful runs on this same
+commit cannot satisfy post-governance dual-CI. No validator, allowlist,
+workflow or hash algorithm is changed to bypass this requirement.
 
-RC-17 dual-CI provenance cannot PASS for this runtime-changing candidate.
-Candidate CI success does not authorize Operation 1 or repair main until an
-Owner-approved merge receives its own exact-main CI/provenance.
+A separate governance-only **draft** handoff PR must receive Owner G-08 before
+merge; this task does not merge it. After an explicitly authorized merge, a
+separately assigned verification must observe the actual new main commit,
+its successful exact-main CI and fresh canonical dual-CI. A candidate branch
+is never presented as actual main.
 
-## Validation and current evidence
+## RC-17 and historical authority
 
-Local checks: **958 Python/API/worker/bridge tests; 32 focused tests; 14 Studio
-tests; 14 Renderer tests; typecheck/bundle; 36 safety/Compose steps; MinIO
-integration; Docker deterministic E2E; migration replay; existing acceptance
-and Flow A–C boundary validation — PASS**.
+RC-17 stays immutable:
+`vf-v3-01-rc17` →
+`d08ffc005d7f3ad517d355977b0bc3cc8d686906`.
+Its tag object remains
+`ea67843635dddf94ee25d38111fc06782ad9fd74`;
+old executable-tree SHA is
+`ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40`.
 
-The original cached Hub image and Quay digest have identical observed image
-ID/rootfs layers. Linux/amd64, bucket/object operations, cross-reference
-persistence, restart and shutdown were tested. Local E2E also passed MinIO
-artifact recovery and disposable DR; these are not production-path evidence.
+- Old Operation 1 package:
+  **HISTORICAL_REFERENCE_ONLY / INVALID_FOR_RC18**.
+- Operation 2:
+  **NOT_APPROVED / LOCKED / NOT_TRANSFERRED**.
+- Old operation IDs, scope/bundle hashes, authority receipts, window and
+  reservation state are not copied into a new executable package.
+- No historical provider outcome, transcript, timing, usage or actual cost is
+  rewritten or reconstructed.
 
-Environmental test-harness failures and clean reruns are documented in the
-[engineering evidence bundle](../../../evidence/v3-01/vf-v0f-20260912T081435Z-5fef0ec-minio-quay-pin/README.md).
-Historical provider receipts, transcripts, costs and acceptance verdicts
-remain untouched.
+[Draft PR #62](https://github.com/vangnguyen/npd-video-factory-v2/pull/62)
+remains a separate historical VF-V0G handoff/evidence record, unchanged.
+Owner must coordinate its older overlapping handoff paths before any later
+merge, preserving historical engineering evidence and preventing stale
+handoff overwrite. It is not imported as RC-18 provenance or silently deleted.
 
-Initial candidate CI: `34682929005` on the executable candidate commit,
-**completed/success, 5/5 jobs**; observed metadata and E2E excerpt are retained
-in the engineering bundle. The final docs/evidence head must pass its exact-head
-PR checks; its live run/head binding is reported in the task HANDOFF RECEIPT.
-Do not substitute the initial CI for a changed final head.
+## Validation and authority state
+
+New local focused canonical provenance/W1/lineage tests: **168 PASS**.
+Fresh tag-bound regression: **958 Python/API/worker/bridge, 14 Studio and
+14 Renderer tests PASS**, typecheck/bundle PASS, safety/Compose PASS,
+migration upgrade/down/replay through `0014_v3_01_27` PASS,
+offline ASR compatibility and acceptance/evidence validation PASS,
+Flow A/B/C/DR fixture boundaries remain **BLOCKED_AS_EXPECTED**,
+and Docker deterministic E2E PASS. Existing VF-V0F/VF-V0G checksum
+entries: **18 verified**, history unchanged.
+
+New full operation rebind inventory is deferred until actual post-merge
+dual-CI PASS. A future task must regenerate RC-18 lineage/slot identities,
+exact commit/tree, execution scope/scope/bundle, asset/reference/rights and
+W1/profile bindings, separately approved window/budget/timeout, kill-switch
+binding and separate Owner operation authority.
+No new IDs, scope, bundle, window or approval records are created here.
+
+Kill switch **ENGAGED**. Bundle **UNMOUNTED**.
+Checked-in external/paid execution **false**, transcription provider **fixture**,
+model **blank**, provider budget **0 VND**.
+No live provider ledger is accessed.
+Task credential reads / reservations / provider calls / production writes /
+actual provider cost: **0 / 0 / 0 / 0 / 0 VND**.
+
+## Evidence and stop
+
+[RC-18 engineering evidence](../../../evidence/v3-01/vf-v0h-20260913T071310Z-rc18-materialization/README.md)
+contains the pre-tag preflight, exact annotation and blob bindings, canonical
+Git-object manifest, independently observed RC/main CI, blocked actual-main
+dual-CI receipt and validation. Final raw handoff hashes are sealed separately;
+head/CI self-reference is reported in the task receipt, not fabricated inside
+the commit.
 
 Canonical handoff JSON SHA-256:
-`c9218e693deb5df97bd32a8b53fe9698589b4fd97cbc54bad0b36089119de7ca`.
-The final head/CI observation is provided by PR #61's exact required checks and
-the task receipt, keeping commit/self-hash and CI self-reference separate.
+`65362119af0fd59e53dcceb9e6cdd913c93daa107abde4618dfc7fc6c60f8ed6`.
 
-## Authority state — not activated
+**NEXT_SAFE_ACTION:** Owner G-08 exact-head review of the separate governance-only
+RC-18 handoff draft PR. After separately authorized merge, collect actual
+exact-main CI and canonical dual-CI before assigning an operation rebind task.
 
-Operation 1 remains `PREPARED_NOT_AUTHORIZED`.
-Operation 2 remains `NOT_APPROVED / LOCKED / NOT EXECUTED`.
-The existing two operation IDs, lineage, scope, bundle, W1 profile, rights and
-quality thresholds are not changed by this patch.
-
-Kill switch: **ENGAGED**. Bundle: **UNMOUNTED**.
-External/paid execution: **false**. Checked-in provider budget: **0 VND**.
-No credentials are resolved and no live provider ledger/reservation is touched.
-
-The Sep 12 21:00 → Sep 13 01:00 ICT window remains
-**PROPOSAL_NOT_AUTHORITY**, not a schedule, countdown or permission to execute.
-
-## Next safe action / stop
-
-Owner reviews Draft PR #61's final exact head, compatibility evidence and
-Case B executable-tree impact under G-08. **Stop before merge, RC creation,
-credential access, budget reservation, provider call or Operation 1 authority.**
-Do not execute the next action automatically.
+**STOP before any new Operation 1 authority creation or activation, credential
+access, reservation or provider execution.** No retag, RC-19, Operation 2,
+deployment, publishing, public ingress or analytics. Do not execute the next
+safe action automatically.

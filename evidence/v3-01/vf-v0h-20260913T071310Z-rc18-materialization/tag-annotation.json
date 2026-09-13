@@ -1,0 +1,98 @@
+{
+  "acceptance_lineage_contract_version": 2,
+  "acceptance_schema": "Current V3-01 acceptance rules pinned by exact commit and bindings",
+  "budget_reservation_authorized": false,
+  "bundle_mounted": false,
+  "commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+  "credential_access_authorized": false,
+  "current_safety_rights_evidence_bindings": {
+    "apps/api/app/asr_prompt_profile.py": {
+      "git_object": "ececba58e4ca4a5e878b09cbb47351d8e1951f56",
+      "raw_sha256": "5faa6d704dcf885fe3b30cd757d774473a170429b9f06aa1f029d4efec7efc1d"
+    },
+    "apps/api/app/evidence_serialization.py": {
+      "git_object": "4b52ca6882c750ac5909881bb6fc7c6d70f16a1a",
+      "raw_sha256": "1af393e978139079a7e9e4391352b0956cfa38f56fc14f5073c02cf53085c88a"
+    },
+    "apps/api/app/openai_transcription_provider.py": {
+      "git_object": "d2920ac8cdcd5b0799071968b686fc2c781b20bc",
+      "raw_sha256": "0b9f177110f58f983b755e941c54f20dcdc523a359e0f5921736ae9eb900240a"
+    },
+    "apps/api/app/provider_ci_provenance.py": {
+      "git_object": "2a1a1f116a0c0c9c65e742c52f9cc58c72b5f21a",
+      "raw_sha256": "857676a157b86e31adb9a5fcc4527c470d9b4c39209931a389f84972cb76e56d"
+    },
+    "apps/api/app/provider_gate_loader.py": {
+      "git_object": "c95f3d668ac77b61e5fc026c2b7db2cf2303ecc9",
+      "raw_sha256": "899e655b0ed7e86d90d3d9bc1e3b99f66bce2c69b468532d8e80b7e9a3260186"
+    },
+    "apps/api/app/provider_safety.py": {
+      "git_object": "382b636f69c6f12cf15dd0ab4d78463f5411f298",
+      "raw_sha256": "7802fe3ed264e42bdb6697618e6a5deef597babc9eea208710d956621f9b8897"
+    },
+    "apps/api/app/provider_safety_durable.py": {
+      "git_object": "a5511a27fb38daf76387d1459ce50780ce0a7ffc",
+      "raw_sha256": "8e948776bc43e7e0065d82e18ffdd9a2716cb00f7a37911938feeb3e623e51ea"
+    },
+    "apps/api/app/provider_safety_repository.py": {
+      "git_object": "a425863514c52310258652ea31d28ec5b660d946",
+      "raw_sha256": "2183e310700f49689ed5e693faf2e67cf9bb2437223401119c72f9de9c39f0b3"
+    },
+    "docker-compose.yml": {
+      "git_object": "5cd87fd46f9c764fcf4b8fa94375261a3dd25838",
+      "raw_sha256": "23224c2c8406a410ffa64256fd9980f625e59e8d3859ddaf74d18325723ddd88"
+    },
+    "docs/acceptance/v3-01/assets/g03-asr-vi-owned-01.wav": {
+      "git_object": "14733456745e6209c64a826eea3ae827b7108914",
+      "raw_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef"
+    },
+    "docs/acceptance/v3-01/assets/g03-asr-vi-owned-02.wav": {
+      "git_object": "9d791f5a9dc3ccaac279da3550772946465e3f49",
+      "raw_sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b"
+    },
+    "docs/acceptance/v3-01/contracts/V3-01-25-W1-PROMPT-PROFILE.v1.json": {
+      "git_object": "b0f97a0e65ba6999ee08bdc395ff923a03802d89",
+      "raw_sha256": "6f10a3f058a3d30bab690693a820672df62c9e6e9b0e006545cddf3ee61149a6"
+    },
+    "docs/acceptance/v3-01/contracts/V3-01-27-ACCEPTANCE-LINEAGE-IDENTITY.v2.json": {
+      "git_object": "821bd6e51d289a7ed7bcc6ec3a318c020b97676b",
+      "raw_sha256": "1feae26d370baaca09df87168c4b1f007fa47ac810ee0cdba46c30ab9545fdfc"
+    },
+    "docs/acceptance/v3-01/rights/V3-01-RIGHTS-ASR-001.json": {
+      "git_object": "cd0045d171cd760351fb27c9695c3f4938b16cce",
+      "raw_sha256": "befe2950889a536f71611266d893276cbbddb240e01213c0065feb13d9f0d86a"
+    },
+    "docs/acceptance/v3-01/rights/V3-01-RIGHTS-ASR-002.json": {
+      "git_object": "5b9a651101721c027229ea0bce129ead9ee5cb74",
+      "raw_sha256": "a5cdd1bbd592da0a8d1a92dd97df4080829f8df49c3570e954951020d0f71d10"
+    },
+    "docs/acceptance/v3-01/transcripts/g03-asr-vi-owned-01.txt": {
+      "git_object": "6882d9a361d5ddb899f78fee2eaf09d15111662f",
+      "raw_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e"
+    },
+    "docs/acceptance/v3-01/transcripts/g03-asr-vi-owned-02.txt": {
+      "git_object": "e2bbdba81660672af3c66ffe46ea17e28f7299d7",
+      "raw_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef"
+    },
+    "scripts/v3_01_acceptance.py": {
+      "git_object": "bca5de64c8f78512ff74b919b88e31d0a6fa0d7c",
+      "raw_sha256": "4cd976a76c11045fd8945783f457e3be052491c12831d30b85da8392c19a1372"
+    }
+  },
+  "executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+  "kill_switch": "ENGAGED",
+  "minio_image": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+  "notes": "Executable RC materialization only. No deployment, publish, ingress, analytics, new provider, live operation, retry or fallback authority.",
+  "old_authority_transferred": false,
+  "old_rc17_operation_1": "HISTORICAL_REFERENCE_ONLY_INVALID_FOR_RC18",
+  "operation_1_authority": "NOT_CREATED",
+  "operation_2": "NOT_APPROVED_LOCKED_NOT_TRANSFERRED",
+  "production_verdict": "NO-GO",
+  "provenance_schema_version": 1,
+  "provider_execution_authorized": false,
+  "tag": "vf-v3-01-rc18",
+  "task_id": "VF-V0H",
+  "w1_profile_id": "asr-whisper-vi-w1-v1",
+  "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+  "w1_prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48"
+}
