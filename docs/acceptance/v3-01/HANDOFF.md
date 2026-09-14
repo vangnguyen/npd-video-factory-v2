@@ -3,7 +3,7 @@
 Canonical machine handoff: [handoff.json](handoff.json). No root duplicates.
 Historical handoffs and receipts remain immutable in their original commits.
 
-VERDICT: REVIEW_REQUIRED — exact-head candidate CI pending.
+VERDICT: PASS — observed exact source-candidate CI snapshot; Owner G-08 stop.
 Base main: 4507fa593fd8cf5484eb1245f788e9ee54eede39.
 Branch: remediation/vf-v0s-b3-runtime-ledger-bootstrap.
 Candidate executable-tree SHA: 432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502.
@@ -39,8 +39,17 @@ Identical historical cases: native Git 2/2 PASS (6.52s), correct mapped WSL meta
 2/2 PASS (13.49s). No historical validator, receipt or canonical hash relaxed.
 Full candidate suite ran independently, not a claim that B2's failed sweep was clean.
 
-Docker E2E: PASS on pre-hardening source snapshot; final source CI must independently
-pass full E2E. Candidate CI: PENDING_DRAFT_PR_AND_EXACT_HEAD_VERIFICATION.
+Docker E2E and candidate CI: 5/5 PASS on exact source head
+853b9bd2cd0de7cfeebabde7003ce978f6f4d034, run 34865777130.
+Remote canonical objects match local tree 432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502.
+The local pre-hardening E2E result remains a separate historical test snapshot.
+
+PR: [Draft #65](https://github.com/vangnguyen/npd-video-factory-v2/pull/65).
+This handoff records the actual completed source-head CI, not a fabricated result
+for its own receipt-closing commit. That governance-only final tip must independently
+pass [current PR checks](https://github.com/vangnguyen/npd-video-factory-v2/pull/65/checks).
+The final exact tip/run are recorded in the task receipt and external final
+provenance, avoiding an endless self-referential handoff/CI commit cycle.
 Historical main/RC18 CI are baseline evidence ONLY, not candidate CI substitutes.
 
 ## Authority and write boundary
@@ -63,6 +72,7 @@ Historical provider verdicts/costs/receipts and quality thresholds remain unchan
 [WSL RCA](reviews/vf-v0s-b3/WSL_GIT_RCA.md).
 [Local validation environment RCA](reviews/vf-v0s-b3/LOCAL_VALIDATION_RCA.md).
 
-Scope drift: PASS. G-08 scope PASS, conditional on exact final-head CI and Owner review.
+Scope drift: PASS. Source G-08 and observed exact source-head CI PASS.
+Owner merge authorization is NOT granted by this review; final tip CI must be verified.
 NEXT_SAFE_ACTION: Owner review exact candidate head after CI; STOP before merge,
 new RC creation, operation rebind, authority, bundle mount, credentials, reserve or dispatch.

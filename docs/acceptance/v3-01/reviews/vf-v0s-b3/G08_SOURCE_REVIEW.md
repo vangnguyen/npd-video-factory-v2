@@ -82,3 +82,18 @@ No ASR/provider/model/quality change. WER <=15%, critical terms 8/8, W1/profile/
 prompt/assets/reference/RightsRecords and PositiveDurationTranscript are unchanged.
 ASR 0/2 PASS; Vision 2/2 PASS; Operation 2 locked; Production NO-GO.
 ZERO provider credential reads, live reservations, provider calls or production business writes.
+
+## Completed exact source-head review and CI
+
+Reviewed exact source head: 853b9bd2cd0de7cfeebabde7003ce978f6f4d034; base 4507fa593fd8cf5484eb1245f788e9ee54eede39.
+Candidate CI 34865777130: all five canonical jobs completed/success, including
+full Docker E2E after peer-password hardening. GitHub's 12 object identities
+match the local deterministic canonical tree 432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502.
+Actual frozen RC18 rejects this module before database/credential/authority access.
+[Machine snapshot](../../../../../evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/candidate-ci-snapshot.json).
+
+Technical source G-08: PASS. This is not an Owner approval/authority receipt and
+NO merge is authorized here. The handoff-closing commit changes governance only;
+its exact final tip must independently pass CI and exact-diff review before any
+future Owner merge task. The final tip/run are observed outside the commit itself
+and returned in the task receipt; no future CI result is preclaimed.

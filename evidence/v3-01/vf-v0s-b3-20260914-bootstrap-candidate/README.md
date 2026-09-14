@@ -11,7 +11,9 @@ preserves both original failures and successful native/translated-metadata runs.
 [PostgreSQL tests](postgres-candidate-tests.json), [test writes](test-write-boundary.json),
 [tests](tests.json), [peer fallback proof](peer-password-fallback-proof.json),
 [local environment RCA](../../../docs/acceptance/v3-01/reviews/vf-v0s-b3/LOCAL_VALIDATION_RCA.md)
-and SHA256SUMS.txt allow independent review.
+[exact source-head CI snapshot](candidate-ci-snapshot.json) and SHA256SUMS.txt
+allow independent review. Final PR-tip CI is verified again and returned in the
+task receipt/external final provenance; no future result is preclaimed.
 
 B2 history is retained in local commit 1c3eb35b52337bc9aeda0fad93ec3b3bd00d089d,
 not imported as authority for this source candidate. RC17/18 tags and original

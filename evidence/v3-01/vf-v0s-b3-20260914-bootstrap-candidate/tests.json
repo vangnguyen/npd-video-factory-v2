@@ -40,7 +40,7 @@
     "result": "PASS_PRE_HARDENING_SOURCE_SNAPSHOT",
     "source_commit": "a366409d27f7c98074861745e3398a9c6602ff40",
     "executable_tree_sha256": "d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832",
-    "final_source_coverage": "EXACT_HEAD_CANDIDATE_CI_REQUIRED",
+    "final_source_coverage": "PASS_EXACT_SOURCE_HEAD_CANDIDATE_CI",
     "disposable_project": "npd-video-factory-v3-dr-vf-v0s-b3",
     "verified": [
       "render_and_QC",
@@ -56,9 +56,78 @@
       "Linux Docker CLI lacked Compose plugin; used existing DOCKER_BIN hook and empty task-owned Docker config",
       "DR drill plain Linux Git could not resolve Windows-absolute worktree metadata; reran entire E2E with exact GIT_DIR and GIT_WORK_TREE"
     ],
-    "source_workflow_compose_changes_for_environment": 0
+    "source_workflow_compose_changes_for_environment": 0,
+    "pre_hardening_local_result_preserved": true,
+    "exact_source_head_candidate_ci": {
+      "head": "853b9bd2cd0de7cfeebabde7003ce978f6f4d034",
+      "run_id": 34865777130,
+      "result": "PASS",
+      "canonical_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502"
+    }
   },
-  "candidate_ci": "NOT_YET_CREATED",
+  "candidate_ci": {
+    "observed_exact_source_head": "853b9bd2cd0de7cfeebabde7003ce978f6f4d034",
+    "run_id": 34865777130,
+    "result": "5/5 PASS",
+    "all_expected_jobs": [
+      {
+        "completed_at": "2026-09-14T16:00:07Z",
+        "conclusion": "success",
+        "id": 104049144120,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Safety and compose contract",
+        "started_at": "2026-09-14T15:59:48Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-09-14T16:02:00Z",
+        "conclusion": "success",
+        "id": 104049144424,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Python unit and contract tests",
+        "started_at": "2026-09-14T15:59:48Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-09-14T16:05:21Z",
+        "conclusion": "success",
+        "id": 104049144474,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Docker deterministic E2E",
+        "started_at": "2026-09-14T15:59:49Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-09-14T16:00:14Z",
+        "conclusion": "success",
+        "id": 104049144478,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Renderer tests and bundle",
+        "started_at": "2026-09-14T15:59:48Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-09-14T15:59:55Z",
+        "conclusion": "success",
+        "id": 104049144586,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Studio tests",
+        "started_at": "2026-09-14T15:59:48Z",
+        "status": "completed"
+      }
+    ],
+    "final_pr_tip_rule": "CI of any governance-only closing commit must independently pass"
+  },
   "numeric_budget_reserved": "0",
   "provider_calls": 0,
   "provider_credential_reads": 0,
@@ -103,5 +172,10 @@
     "exit_code": 1,
     "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________ test_capabilities_report_no_agent_hub_or_publishing_runtime __________\napps/api/tests/test_safety_config.py:353: in test_capabilities_report_no_agent_hub_or_publishing_runtime\n    assert result[\"agent_hub_bridge_enabled\"] is False\nE   assert True is False\n=========================== short test summary info ============================\nFAILED apps/api/tests/test_safety_config.py::test_capabilities_report_no_agent_hub_or_publishing_runtime\n1 failed in 2.10s\n",
     "clean_control": "91 PASS including the same case and 90 bootstrap tests"
+  },
+  "actual_frozen_rc18_source_guard": {
+    "result": "PASS_ACTUAL_FROZEN_RC18_DENIES_CANDIDATE_BEFORE_DB_CREDENTIALS_OR_AUTHORITY",
+    "exit_code": 0,
+    "ledger_access": 0
   }
 }
