@@ -1,78 +1,79 @@
-# Video Factory V3-01 — VF-V0S-B3
+# Video Factory V3-01 — Canonical handoff
 
-Canonical machine handoff: [handoff.json](handoff.json). No root duplicates.
-Historical handoffs and receipts remain immutable in their original commits.
+WORKSTREAM: Video Factory V3-01
+TASK: VF-V0S-B5
+VERDICT: REVIEW_REQUIRED
+REPO: vangnguyen/npd-video-factory-v2
 
-VERDICT: PASS — observed exact source-candidate CI snapshot; Owner G-08 stop.
-Base main: 4507fa593fd8cf5484eb1245f788e9ee54eede39.
-Branch: remediation/vf-v0s-b3-runtime-ledger-bootstrap.
-Candidate executable-tree SHA: 432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502.
-Historical RC18 tree: ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5.
+## Verified source and RC
 
-## Scope and lineage
+- Main: `dc8ff55322267dfe54674fa6c4003a899bf235ab`; main CI `34869652973`: 5/5 PASS; main provenance: PASS.
+- Canonical executable-tree SHA: `432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502`.
+- RC sequencing: PASS, tags 1–18 existed and RC-19 was absent immediately before creation.
+- New annotated `vf-v3-01-rc19` → `dc8ff55322267dfe54674fa6c4003a899bf235ab`, tag object `09a9a51628ab2e33d4ee85a1620f7afca692d18e`.
+- Tagger date: `2026-09-14T17:33:21Z`; tag/commit, tag/tree, main/RC tree equality: PASS.
+- RC CI `34875483864`: attempt 1, workflow_dispatch on exact tag, completed/success, 5/5 PASS.
+- Bootstrap entrypoint: `python -m app.provider_runtime_bootstrap`, present in exact RC source.
+- Source mutation: NONE. Runtime ledger qualification: NOT_PERFORMED.
 
-Only runtime addition is apps/api/app/provider_runtime_bootstrap.py.
-Entrypoint: python -m app.provider_runtime_bootstrap.
-Zero-call custody phase only; no dispatch mode, key/settings import or live reservation.
-Database derives from RC tag plus full canonical lineage, independently pinned to
-peer socket/system/database/role/schema/version. No RC18 hardcode or fallback.
+## Unclosed gate
 
-B2 local history is sealed at 1c3eb35b52337bc9aeda0fad93ec3b3bd00d089d.
-Its unmerged I/T/U/S/B1 receipts/authority are not imported into the new source PR.
-Historical RC18-era database is not a final future lineage binding and is untouched.
-RC17 and RC18 tag objects/commits remain immutable. Candidate is NOT RC18.
-New RC is required only after a later Owner merge and exact-main regression.
+Main/RC dual-CI: **BLOCKED_DISTINCT_GOVERNANCE_MAIN_REQUIRED**.
+The real canonical collector exited 2 / `CI_PROVENANCE_INVALID`. Both CI runs passed independently,
+but RC and current main are the same commit; the actual governance diff is empty. The existing schema
+requires distinct commits and a nonempty allowlisted diff. No fake path, substituted CI, validator change
+or false dual-CI PASS was used. RC-19 is materialized; authoritative governance closure remains pending.
 
-## Tests and CI
+## Execution safety
 
-Pre-hardening Python/API/worker/bridge: 1047 PASS, 0 failed, 286.55 seconds.
-Post-hardening serial Python/API/worker/bridge: 1048/1048 PASS, 190.99 seconds.
-The overlapped E2E/pytest environment failure is retained and reproduced separately;
-its clean isolated rerun passed. No test or CI gate was skipped or relaxed.
-Bootstrap: 90 PASS. Focused bootstrap/repository/provenance: 135 PASS after hardening.
-Studio: 14/14 PASS. Renderer: 14/14 PASS, typecheck and bundle PASS.
-PostgreSQL: two isolated test databases, full 0001..0014 replay PASS,
-identical repeat reads and nine wrong custody/cross-RC denials.
-
-WSL Git: reproduced 2/2 original failures (Windows-absolute .git worktree pointer).
-Identical historical cases: native Git 2/2 PASS (6.52s), correct mapped WSL metadata
-2/2 PASS (13.49s). No historical validator, receipt or canonical hash relaxed.
-Full candidate suite ran independently, not a claim that B2's failed sweep was clean.
-
-Docker E2E and candidate CI: 5/5 PASS on exact source head
-853b9bd2cd0de7cfeebabde7003ce978f6f4d034, run 34865777130.
-Remote canonical objects match local tree 432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502.
-The local pre-hardening E2E result remains a separate historical test snapshot.
-
-PR: [Draft #65](https://github.com/vangnguyen/npd-video-factory-v2/pull/65).
-This handoff records the actual completed source-head CI, not a fabricated result
-for its own receipt-closing commit. That governance-only final tip must independently
-pass [current PR checks](https://github.com/vangnguyen/npd-video-factory-v2/pull/65/checks).
-The final exact tip/run are recorded in the task receipt and external final
-provenance, avoiding an endless self-referential handoff/CI commit cycle.
-Historical main/RC18 CI are baseline evidence ONLY, not candidate CI substitutes.
-
-## Authority and write boundary
-
-RC18 historical authority: GRANTED_NOT_CONSUMED / INVALID_FOR_NEW_CANDIDATE.
-Candidate authority: NOT_CREATED. No rebind, scope/bundle/window/token/authority generated.
+Operation 1 ID: NOT_GENERATED. Operation 1 authority: NOT_CREATED.
+Fresh ledger binding, Operation 1 rebind, fresh authority and fresh execution window: REQUIRED.
 Operation 2: NOT_APPROVED / LOCKED / NOT_TRANSFERRED.
-Kill switch: ENGAGED. Bundle: UNMOUNTED. External/paid execution: FALSE.
-Provider credential reads: 0. Live reservations: 0 VND.
+Kill switch: ENGAGED. Bundle: UNMOUNTED. External/paid execution: false.
+Runtime ledger writes: 0. Provider credential reads: 0. Budget reserved: 0 VND.
 Real provider calls: 0. Production business writes: 0. Actual cost: 0 VND.
-Isolated test catalog/schema/control writes and fixture writes are reported separately.
+Tests/CI used only isolated disposable fixtures, not a real RC-19 execution ledger.
+
+RC-18 remains IMMUTABLE / HISTORICAL at `03e18c1f0c56fff8a13f167af74f34894c2db811`,
+tag object `30ca09c4201cd6aea5e733c26ba4dfa1f30d5021`, old tree
+`ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5`.
+RC-18 material remains HISTORICAL_REFERENCE_ONLY / INVALID_FOR_CURRENT_MAIN and is not transferred.
+RC-17 is unchanged. No old operation ID, scope, bundle, approval, receipt, token binding, window,
+ledger namespace or reservation was reused.
+
+## Future ledger naming preview
+
+Assuming sequence 1 for W1/openai-transcription/whisper-1/asr under exact RC-19:
+`vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed`.
+
+Status: PLAN_ONLY_NOT_CREATED_OR_APPROVED. Formula: `vf_` + RC tag with hyphens replaced by underscores +
+`_` + first 32 hex characters of SHA-256(UTF-8(RC tag + LF + full canonical acceptance lineage ID)).
+Actual instance/socket/system ID/database OID/peer role/port/public schema must be pinned in a later task.
+No database connection, namespace creation, durable registration, reservation or fresh Operation ID
+generation occurred. Do not reuse historical RC18 custody or B3 synthetic RC19/RC20 test databases.
+
+## Validation and acceptance
+
+Focused bootstrap/provenance/lineage/W1/loader: 284 PASS, 6.40 s.
+RC CI Python/API/worker/bridge: 1048 PASS, 55.33 s. Studio: 14 PASS. Renderer: 14 PASS + typecheck/bundle.
+Safety/Compose, Docker deterministic E2E, migration replay, acceptance/evidence and expected-blocked
+Flow A/B/C/DR boundaries: PASS. Canonical hash independently reproduced in two clean source worktrees
+and matched all 12 GitHub objects.
 
 ASR: 0/2 PASS. Vision: 2/2 PASS. Production: NO-GO.
-Historical provider verdicts/costs/receipts and quality thresholds remain unchanged.
 
-## Evidence and stop
+## Evidence and historical draft
 
-[Evidence bundle](../../../evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/README.md).
-[Source G-08](reviews/vf-v0s-b3/G08_SOURCE_REVIEW.md).
-[WSL RCA](reviews/vf-v0s-b3/WSL_GIT_RCA.md).
-[Local validation environment RCA](reviews/vf-v0s-b3/LOCAL_VALIDATION_RCA.md).
+- [B5 evidence/reproduction](../../../evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/README.md)
+- [Machine-readable handoff](handoff.json)
+- [PR #66](https://github.com/vangnguyen/npd-video-factory-v2/pull/66): OPEN / DRAFT / NOT_MERGED,
+  exact head `71609bdb691ceabb9cc1b4ee3175260a28132395`, CI `34871006869` 5/5 PASS; unchanged.
+- B4 provenance is imported verbatim by original SHA; full original pack remains on PR #66.
+- Previous canonical handoff/checksums remain in exact-main Git history. No historical receipt was rewritten.
 
-Scope drift: PASS. Source G-08 and observed exact source-head CI PASS.
-Owner merge authorization is NOT granted by this review; final tip CI must be verified.
-NEXT_SAFE_ACTION: Owner review exact candidate head after CI; STOP before merge,
-new RC creation, operation rebind, authority, bundle mount, credentials, reserve or dispatch.
+## Next safe action — recommendation only
+
+Owner G-08 review of the separate B5 governance-only draft; a later controlled merge, fresh exact-main CI
+and RC-19/main dual-CI closure are required. Do not merge automatically.
+STOP before ledger creation, Operation 1 rebind, authority/window creation, bundle mount,
+credential access, reservation or provider dispatch. This handoff does not preclaim its own future commit CI.

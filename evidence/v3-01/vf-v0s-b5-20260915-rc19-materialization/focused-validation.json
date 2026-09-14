@@ -1,0 +1,27 @@
+{
+  "task_id": "VF-V0S-B5",
+  "rc_tag": "vf-v3-01-rc19",
+  "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+  "verdict": "PASS",
+  "tests_passed": 284,
+  "seconds": 6.4,
+  "suites": [
+    "provider_runtime_bootstrap",
+    "provider_ci_provenance",
+    "rc17_asr_w1_lineage_gate_bundle",
+    "asr_prompt_profile",
+    "provider_gate_loader"
+  ],
+  "bootstrap_help": "PASS_EXIT_BEFORE_ANY_BINDING_OR_DATABASE_ACCESS",
+  "stdout": "........................................................................ [ 25%]\n........................................................................ [ 50%]\n........................................................................ [ 76%]\n....................................................................     [100%]\n284 passed in 6.40s\nusage: provider_runtime_bootstrap.py [-h] --binding BINDING\n                                     --expected-binding-sha256\n                                     EXPECTED_BINDING_SHA256 --rc-source\n                                     RC_SOURCE [--initialize-control]\n                                     [--require-virgin-namespace]\n\nZero-call bootstrap/custody only; never dispatches\n\noptions:\n  -h, --help            show this help message and exit\n  --binding BINDING\n  --expected-binding-sha256 EXPECTED_BINDING_SHA256\n  --rc-source RC_SOURCE\n  --initialize-control\n  --require-virgin-namespace\n",
+  "side_effects": {
+    "provider_calls": 0,
+    "provider_credential_reads": 0,
+    "runtime_ledger_writes": 0,
+    "new_rc19_database_created": false,
+    "fresh_operation_id_generated": false,
+    "live_budget_reservations": 0,
+    "production_business_writes": 0
+  },
+  "isolated_test_metadata": "Only existing suite-created disposable fixture state; no real runtime custody/ledger access"
+}
