@@ -1,0 +1,25 @@
+{
+  "historical_commit": "8aba0b2f2d79ee5688f9d651f5f5bb93f9a0794d",
+  "original_wsl": {
+    "chunk_id": "86c3a6",
+    "wall_time_seconds": 3.4968255,
+    "exit_code": 1,
+    "original_token_count": 688,
+    "output": "fatal: not a git repository: /mnt/c/Users/VANG NGUYEN/Documents/Codex/2026-08-20/referenced-chatgpt-conversation-this-is-an/work/npd-video-factory-v2-vf-v0s-b1-custody/C:/Users/VANG NGUYEN/Documents/Codex/2026-08-20/referenced-chatgpt-conversation-this-is-an/work/npd-video-factory-v2/.git/worktrees/npd-video-factory-v2-vf-v0s-b1-custody\nFF                                                                       [100%]\n=================================== FAILURES ===================================\n________________________ test_complete_read_only_review ________________________\napps/api/tests/test_vf_v0t_final_gate_preparation.py:40: in test_complete_read_only_review\n    result = REVIEW.validate_all()\n             ^^^^^^^^^^^^^^^^^^^^^\ndocs/acceptance/v3-01/prepared/vf-v0t-rc18-asr-w1-final-gate-review/reproduce_and_validate.py:248: in validate_all\n    trees = [executable_tree_sha256(_git_object_map(REPO, ref)) for ref in (MAIN, MAIN, RC, \"HEAD\")]\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^\nscripts/v3_01_ci_provenance.py:57: in _git_object_map\n    path: _run([\"git\", \"rev-parse\", f\"{commit}:{path}\"], cwd=repo)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nscripts/v3_01_ci_provenance.py:49: in _run\n    raise CiProvenanceCollectionError(\nE   v3_01_ci_provenance.CiProvenanceCollectionError: command failed without trusted provenance: git\n__________________ test_full_offline_gate_owner_binding_audit __________________\napps/api/tests/test_vf_v0u_owner_gate_binding.py:31: in test_full_offline_gate_owner_binding_audit\n    result = review.validate_all()\n             ^^^^^^^^^^^^^^^^^^^^^\ndocs/acceptance/v3-01/authority/vf-v0u-rc18-asr-w1-op1/reproduce_and_validate.py:121: in validate_all\n    t = historical.validate_all()\n        ^^^^^^^^^^^^^^^^^^^^^^^^^\ndocs/acceptance/v3-01/prepared/vf-v0t-rc18-asr-w1-final-gate-review/reproduce_and_validate.py:248: in validate_all\n    trees = [executable_tree_sha256(_git_object_map(REPO, ref)) for ref in (MAIN, MAIN, RC, \"HEAD\")]\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^\nscripts/v3_01_ci_provenance.py:57: in _git_object_map\n    path: _run([\"git\", \"rev-parse\", f\"{commit}:{path}\"], cwd=repo)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nscripts/v3_01_ci_provenance.py:49: in _run\n    raise CiProvenanceCollectionError(\nE   v3_01_ci_provenance.CiProvenanceCollectionError: command failed without trusted provenance: git\n=========================== short test summary info ============================\nFAILED apps/api/tests/test_vf_v0t_final_gate_preparation.py::test_complete_read_only_review\nFAILED apps/api/tests/test_vf_v0u_owner_gate_binding.py::test_full_offline_gate_owner_binding_audit\n2 failed in 2.36s\n"
+  },
+  "native_git": {
+    "chunk_id": "390289",
+    "wall_time_seconds": 7.3017471,
+    "exit_code": 0,
+    "original_token_count": 36,
+    "output": "8aba0b2f2d79ee5688f9d651f5f5bb93f9a0794d\n..                                                                       [100%]\r\n2 passed in 6.52s\r\n"
+  },
+  "same_wsl_correct_metadata": {
+    "exit_code": 0,
+    "output": "8aba0b2f2d79ee5688f9d651f5f5bb93f9a0794d\n2 passed in 13.49s\n",
+    "mechanism": "GIT_DIR and GIT_WORK_TREE mapped to exact Windows-created metadata; no source/config edit"
+  },
+  "classification": "A_ENVIRONMENT_WINDOWS_ABSOLUTE_WORKTREE_POINTER",
+  "historical_source_modified": false,
+  "validator_relaxed": false
+}

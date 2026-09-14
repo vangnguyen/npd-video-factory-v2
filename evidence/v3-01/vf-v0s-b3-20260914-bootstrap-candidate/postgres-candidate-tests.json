@@ -1,0 +1,88 @@
+{
+  "final_execution_custody": "DEFERRED_UNTIL_NEW_RC_AND_FRESH_LINEAGE",
+  "full_source_qualification": "NOT_CLAIMED_UNTAGGED_CANDIDATE",
+  "historical_rc18_database_accessed_or_mutated": false,
+  "live_reservations": 0,
+  "metadata_writes_only": true,
+  "production_business_writes": 0,
+  "provider_calls": 0,
+  "provider_credential_reads": 0,
+  "result": "PASS",
+  "test_bootstrap_ledger_writes": [
+    {
+      "database": "vf_vf_v3_01_rc19_c6da26ba2a8795793f7d36051a816b7d",
+      "kind": "ISOLATED_TEST_CATALOG_CREATE"
+    },
+    {
+      "database": "vf_vf_v3_01_rc19_c6da26ba2a8795793f7d36051a816b7d",
+      "kind": "EXISTING_MIGRATION_REPLAY_AND_CONTROL_SEED"
+    },
+    {
+      "database": "vf_vf_v3_01_rc20_20b9045ce79c76077018d74956d89b9a",
+      "kind": "ISOLATED_TEST_CATALOG_CREATE"
+    },
+    {
+      "database": "vf_vf_v3_01_rc20_20b9045ce79c76077018d74956d89b9a",
+      "kind": "EXISTING_MIGRATION_REPLAY_AND_CONTROL_SEED"
+    }
+  ],
+  "tests": [
+    {
+      "control_revision": 0,
+      "control_rows": 1,
+      "counts": {
+        "attempts": 0,
+        "budget_alerts": 0,
+        "budget_days": 0,
+        "circuits": 0,
+        "operations": 0
+      },
+      "database": "vf_vf_v3_01_rc19_c6da26ba2a8795793f7d36051a816b7d",
+      "database_oid": 17842,
+      "ensure_state": "IDEMPOTENT_NO_ADDITIONAL_CONTROL_ROW",
+      "migration_replay": "0001..0014 upgrade/downgrade/base/upgrade PASS",
+      "negative_cases": [
+        "database_oid",
+        "system_identifier",
+        "database_role",
+        "schema_name"
+      ],
+      "numeric_reserved_vnd": "0",
+      "postgres_major": 16,
+      "repeat_reads_identical": true,
+      "schema": "public",
+      "scope": "ISOLATED_SYNTHETIC_TEST_ONLY_NOT_A_FUTURE_RC_BINDING",
+      "synthetic_test_rc_label": "vf-v3-01-rc19",
+      "system_identifier": "7685407204168180413"
+    },
+    {
+      "control_revision": 0,
+      "control_rows": 1,
+      "counts": {
+        "attempts": 0,
+        "budget_alerts": 0,
+        "budget_days": 0,
+        "circuits": 0,
+        "operations": 0
+      },
+      "database": "vf_vf_v3_01_rc20_20b9045ce79c76077018d74956d89b9a",
+      "database_oid": 20739,
+      "ensure_state": "IDEMPOTENT_NO_ADDITIONAL_CONTROL_ROW",
+      "migration_replay": "0001..0014 upgrade/downgrade/base/upgrade PASS",
+      "negative_cases": [
+        "database_oid",
+        "system_identifier",
+        "database_role",
+        "schema_name",
+        "cross_rc_database"
+      ],
+      "numeric_reserved_vnd": "0",
+      "postgres_major": 16,
+      "repeat_reads_identical": true,
+      "schema": "public",
+      "scope": "ISOLATED_SYNTHETIC_TEST_ONLY_NOT_A_FUTURE_RC_BINDING",
+      "synthetic_test_rc_label": "vf-v3-01-rc20",
+      "system_identifier": "7685407204168180413"
+    }
+  ]
+}

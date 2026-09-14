@@ -1,162 +1,127 @@
 {
-  "schema_version": 1,
-  "workstream": "NPD Video Factory V3-01",
-  "task_id": "VF-V0J",
-  "task": "Exact-head PR63 G08 controlled merge and existing RC18 post-merge provenance closure",
-  "status": "PASS_RC18_PROVENANCE_CLOSED_NO_EXECUTION_AUTHORITY",
-  "repository": "vangnguyen/npd-video-factory-v2",
-  "branch": "handoff/vf-v0j-rc18-provenance-closure",
-  "source_main_sha": "553be01336e41ad1b145a5e1806ec565a658c6d7",
-  "recorded_at_utc": "2026-09-13T08:36:34.774643+00:00",
-  "canonical_paths": {
-    "human": "docs/acceptance/v3-01/HANDOFF.md",
-    "machine": "docs/acceptance/v3-01/handoff.json",
-    "root_duplicates_present": false,
-    "existing_governance_allowlist_reused": true
+  "workstream": "Video Factory V3-01",
+  "task_id": "VF-V0S-B3",
+  "mode": "SOURCE_CANDIDATE_G08_CANDIDATE_CI_ONLY",
+  "verdict": "REVIEW_REQUIRED_PENDING_EXACT_HEAD_CANDIDATE_CI",
+  "repo": "vangnguyen/npd-video-factory-v2",
+  "branch": "remediation/vf-v0s-b3-runtime-ledger-bootstrap",
+  "baseline": {
+    "main_sha": "4507fa593fd8cf5484eb1245f788e9ee54eede39",
+    "canonical_executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+    "main_provenance": "PASS_HISTORICAL_BASELINE_ONLY",
+    "dual_ci_provenance": "PASS_HISTORICAL_BASELINE_ONLY",
+    "main_ci": 34759714142,
+    "rc_ci": 34744690232,
+    "remote_main_drift": "NONE",
+    "rc18_tag": "vf-v3-01-rc18",
+    "rc18_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "rc18_tag_object": "30ca09c4201cd6aea5e733c26ba4dfa1f30d5021",
+    "rc17_tag": "vf-v3-01-rc17",
+    "rc17_commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+    "rc17_tag_object": "ea67843635dddf94ee25d38111fc06782ad9fd74",
+    "rc17_rc18_status": "IMMUTABLE"
   },
-  "immutable_anchors": {
-    "rc_tag": "vf-v3-01-rc18",
-    "rc_tag_object": "30ca09c4201cd6aea5e733c26ba4dfa1f30d5021",
-    "rc_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
-    "executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
-    "rc_ci_run_id": 34744690232,
-    "rc_ci_ref": "vf-v3-01-rc18",
-    "rc_ci_status": "completed/success; 5/5",
-    "baseline_actual_main_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
-    "baseline_actual_main_ci_run_id": 34691861788,
-    "post_rc_governance_main_commit": "553be01336e41ad1b145a5e1806ec565a658c6d7",
-    "post_rc_governance_main_ci_run_id": 34747898704,
-    "minio_image": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
-    "w1_profile_id": "asr-whisper-vi-w1-v1",
-    "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
-    "w1_prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
-    "post_rc_governance_main_ci_status": "completed/success; 5/5",
-    "rc_tag_type": "ANNOTATED_UNSIGNED"
+  "candidate": {
+    "executable_tree_sha256": "d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832",
+    "executable_tree_changed": true,
+    "only_runtime_addition": "apps/api/app/provider_runtime_bootstrap.py",
+    "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap",
+    "bootstrap_mode": "ZERO_CALL_CUSTODY_ONLY_NOT_PROVIDER_DISPATCH",
+    "candidate_is_rc18": false,
+    "new_rc_required_after_merge": true,
+    "new_rc_created": false,
+    "rc18_hardcode_in_runtime": false,
+    "ledger_binding": "RC tag + full canonical lineage -> deterministic database name; peer socket/system ID/database OID/role/schema/PG16 independently pinned",
+    "future_execution_namespace": "NOT_CREATED_REQUIRES_FRESH_RC_AND_LINEAGE"
   },
-  "provenance": {
-    "tag_commit_binding": "PASS",
-    "tag_tree_binding": "PASS",
-    "canonical_recompute_deterministic": true,
-    "source_tree_changed": false,
-    "actual_main_post_materialization_dual_ci": "PASS",
-    "canonical_dual_ci_sha256": "68f6f583fc16bdeb3dcffdd85b983e8ad0ab229f51f4e4c13579b305a9697811",
-    "rc_ci_run_id": 34744690232,
-    "governance_main_ci_run_id": 34747898704,
-    "governance_main_commit": "553be01336e41ad1b145a5e1806ec565a658c6d7",
-    "full_rc_validation": "PASS",
-    "rc18_lineage_status": "AUTHORITATIVE_EXECUTABLE_CANDIDATE_NO_EXECUTION_AUTHORITY",
-    "origin": "ESTABLISHED_PRIOR_OWNER_BOUNDED_VF_V0H",
-    "origin_signature": "UNSIGNED_NOT_CRYPTOGRAPHICALLY_ATTESTED",
-    "complete_allowlisted_governance_diff": true,
-    "executable_tree_equality": "PASS",
-    "source_mutation_during_this_task": false,
-    "new_rc_created_by_this_task": false,
-    "evidence_publication": "Refreshed handoff/evidence on separate governance-only draft branch, not merged main; separate Owner G08 required. Provenance binds actual already-merged PR63 main, not this draft."
+  "history": {
+    "b2_local_commit": "1c3eb35b52337bc9aeda0fad93ec3b3bd00d089d",
+    "b1_local_commit": "8aba0b2f2d79ee5688f9d651f5f5bb93f9a0794d",
+    "historical_governance_not_imported_as_candidate_authority": true,
+    "historical_rc18_custody_database": "vf_vf_v3_01_rc18_466d54d9ede1b6f7f3179ddd52b7e251",
+    "historical_custody_database_mutated": false,
+    "previous_main_handoff_preserved_in_commit": "4507fa593fd8cf5484eb1245f788e9ee54eede39",
+    "receipt_history_rewritten": false
   },
-  "historical_rc17": {
-    "tag": "vf-v3-01-rc17",
-    "tag_object": "ea67843635dddf94ee25d38111fc06782ad9fd74",
-    "commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
-    "executable_tree_sha256": "ee9831c59bba0df9a8fe975d8f539028d218cc0279b5fcf4acc72724b0910b40",
-    "immutable": true,
-    "operation_1_package_status": "HISTORICAL_REFERENCE_ONLY / INVALID_FOR_RC18",
-    "operation_2_status": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
-    "authority_reused": false,
-    "operation_ids_scope_bundle_window_reservation_transferred": false
-  },
-  "operations": {
-    "operation_1": {
-      "operation_id": null,
-      "authority_status": "NOT_CREATED",
-      "rebind_required": true,
-      "rebind_inventory_status": "NOT_PREPARED_THIS_TASK_STOP_BEFORE_REBIND",
-      "executed": false,
-      "consumed": false
-    },
-    "operation_2": {
-      "operation_id": null,
-      "status": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
-      "executed": false,
-      "consumed": false
-    }
-  },
-  "future_rebind_requirements": [
-    "RC18-bound lineage v2 plus slot 1/2 IDs",
-    "Exact RC commit/executable tree",
-    "Execution scope, scope SHA and bundle SHA",
-    "Exact asset/reference transcript and asset-specific RightsRecord binding",
-    "Immutable W1 profile/prompt and provider/model/capability/language",
-    "Separately approved fresh window plus budget and timeout envelope",
-    "Kill-switch binding and separately issued Owner operation authority"
-  ],
-  "new_acceptance_window": null,
-  "new_lineage_id": null,
-  "new_scope_sha256": null,
-  "new_bundle_sha256": null,
-  "new_approval_records_created": false,
-  "safety_state": {
+  "authority": {
+    "rc18_historical_status": "GRANTED_NOT_CONSUMED",
+    "rc18_candidate_validity": "INVALID_FOR_NEW_CANDIDATE_HISTORICAL_REFERENCE_ONLY",
+    "candidate_authority": "NOT_CREATED",
+    "operation_1_consumed_by_this_task": false,
+    "operation_2": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
+    "old_authority_reused": false,
+    "new_scope_bundle_window_or_rebind_created": false,
+    "bundle_mounted": false,
     "kill_switch": "ENGAGED",
-    "gate_bundle_mounted": false,
-    "external_execution_enabled": false,
-    "paid_execution_enabled": false,
-    "transcription_provider": "fixture",
-    "transcription_model": "",
-    "checked_in_budget_vnd": "0",
-    "credential_reads": 0,
-    "budget_reservation_vnd": "0",
-    "provider_calls": 0,
-    "actual_cost_vnd": "0",
-    "production_writes": 0,
-    "live_provider_ledger_accessed": false
+    "external_execution": false,
+    "paid_execution": false,
+    "live_budget_reserved_vnd": "0"
   },
-  "acceptance_status": {
-    "asr_consecutive_passes": 0,
-    "asr_required_consecutive_passes": 2,
-    "vision_consecutive_passes": 2,
-    "production_verdict": "NO-GO",
-    "historical_provider_verdicts_modified": false
+  "tests": {
+    "python_api_worker_bridge": {
+      "pass": 1047,
+      "fail": 0,
+      "seconds": 286.55
+    },
+    "bootstrap": {
+      "pass": 89,
+      "fail": 0
+    },
+    "focused_bootstrap_repository_provenance": {
+      "pass": 134,
+      "fail": 0
+    },
+    "studio": {
+      "pass": 14,
+      "fail": 0
+    },
+    "renderer": {
+      "pass": 14,
+      "fail": 0,
+      "typecheck": "PASS",
+      "bundle": "PASS"
+    },
+    "postgres": "2 isolated test databases; 0001..0014 replay PASS; repeat reads identical; 9 negative identity/cross-RC cases blocked",
+    "wsl_original_historical_cases": "2 failures reproduced from Windows-absolute .git pointer",
+    "native_git_same_historical_cases": "2/2 PASS, 6.52s",
+    "wsl_correct_metadata_same_historical_cases": "2/2 PASS, 13.49s",
+    "wsl_primary_class": "A_ENVIRONMENT_PATH_NOT_SOURCE_REGRESSION",
+    "docker_e2e": "RUNNING_NOT_YET_CLAIMED"
   },
-  "validation": {
-    "local_focused_passed": 168,
-    "exact_main_local_python_passed": 958,
-    "exact_main_ci_python_passed": 958,
-    "exact_main_ci_studio_passed": 14,
-    "exact_main_ci_renderer_passed": 14,
-    "exact_main_ci_run_id": 34747898704,
-    "exact_main_ci": "PASS_5_OF_5",
-    "docker_deterministic_e2e": "PASS",
-    "renderer_typecheck_bundle": "PASS",
-    "migration_replay": "PASS_HEAD_0014_v3_01_27",
-    "safety_compose": "PASS",
-    "acceptance_evidence_validation": "PASS",
-    "asr_offline_compatibility": "PASS",
-    "flow_a_b_c_dr_fixture_boundaries": "BLOCKED_AS_EXPECTED",
-    "secret_scan": "PASS",
-    "git_diff_check": "PASS",
-    "prior_vf_v0h_bundle_checksum_entries_valid": 13,
-    "prior_handoff_version_for_historical_checksums": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
-    "historical_receipts_rewritten": false
+  "ci": {
+    "status": "NOT_CREATED",
+    "expected_canonical_jobs": 5,
+    "candidate_provenance": "NOT_YET_CLAIMED",
+    "historical_main_rc_ci_substitution_allowed": false
   },
-  "pr62": {
-    "number": 62,
-    "status": "OPEN_DRAFT_HISTORICAL_VF_V0G_RETAINED",
-    "head_sha": "d435f06a0ae74fa8e51e77b589f81d845b95179c",
-    "base_sha": "03e18c1f0c56fff8a13f167af74f34894c2db811",
-    "merged_modified_closed_by_this_task": false,
-    "evidence_deleted_or_imported_into_new_lineage": false,
-    "canonical_handoff_paths_overlap": true,
-    "coordination": "Keep historical draft; preserve its unique VF-V0G engineering bundle through a separately reviewed import before Owner decides whether to close without merge. Do not allow stale canonical handoff to overwrite RC18.",
-    "canonical_handoff_superseded": true
+  "safety": {
+    "provider_credential_reads": 0,
+    "real_provider_calls": 0,
+    "live_budget_reservations": 0,
+    "production_business_writes": 0,
+    "actual_provider_cost_vnd": "0",
+    "test_bootstrap_ledger_writes_pointer": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/test-write-boundary.json",
+    "test_write_classification": "ISOLATED_TEST_CANDIDATE_METADATA_AND_FIXTURE_WRITES_ONLY"
   },
-  "evidence_pointer": "evidence/v3-01/vf-v0j-20260913T083120Z-pr63-rc18-closure/README.md",
+  "acceptance": {
+    "asr_consecutive_pass": 0,
+    "asr_required": 2,
+    "vision_consecutive_pass": 2,
+    "vision_required": 2,
+    "production": "NO-GO",
+    "historical_provider_verdicts_unchanged": true,
+    "quality_thresholds_unchanged": true
+  },
+  "g08": {
+    "source_scope": "PASS_SUBJECT_TO_EXACT_FINAL_HEAD_CANDIDATE_CI_AND_OWNER",
+    "merge_authorized": false,
+    "required_stop": "OWNER_G08_NO_MERGE_NO_NEW_RC_NO_AUTHORITY"
+  },
+  "evidence_pointer": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/README.md",
   "scope_drift": "PASS",
-  "blockers": [],
-  "next_safe_action": "Owner review of separate governance-only VF-V0J handoff/evidence update before merge. Any future RC18 ASR rebind requires a separately assigned task; do not create or activate operation authority, access credentials, reserve budget or execute providers here.",
-  "merged_pr": {
-    "number": 63,
-    "approved_head": "b9988d968feafcea04bf3e0e78d540bcb8eb5fe9",
-    "merge_commit": "553be01336e41ad1b145a5e1806ec565a658c6d7",
-    "merged_at_utc": "2026-09-13T08:31:20Z"
-  },
-  "rc18_authority": "NONE"
+  "blockers": [
+    "EXACT_HEAD_CANDIDATE_CI_PENDING",
+    "DOCKER_E2E_LOCAL_PENDING"
+  ],
+  "next_safe_action": "Owner review exact candidate head after complete CI; do not merge/create RC/rebind/authorize in this task"
 }

@@ -1,0 +1,153 @@
+{
+  "historical_local_commit": "1c3eb35b52337bc9aeda0fad93ec3b3bd00d089d",
+  "historical_local_parent": "8aba0b2f2d79ee5688f9d651f5f5bb93f9a0794d",
+  "source_changes": [
+    {
+      "status": "A",
+      "path": "apps/api/app/provider_runtime_bootstrap.py",
+      "class": "bootstrap/runtime",
+      "candidate_import": "COPIED_SOURCE_TEST_WITH_ADDITIONAL_TESTS"
+    },
+    {
+      "status": "A",
+      "path": "apps/api/tests/test_provider_runtime_bootstrap.py",
+      "class": "tests",
+      "candidate_import": "COPIED_SOURCE_TEST_WITH_ADDITIONAL_TESTS"
+    },
+    {
+      "status": "M",
+      "path": "docs/acceptance/v3-01/HANDOFF.md",
+      "class": "handoff",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "M",
+      "path": "docs/acceptance/v3-01/handoff.json",
+      "class": "handoff",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/README.md",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/SHA256SUMS.txt",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/acceptance-validation.txt",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/baseline-observation.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/bootstrap-contract.md",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/checksum-verification.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/custody-verification.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/executable-tree-manifest.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/final-time-check.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/gate-loader-validation.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/handoff-checksums.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/historical-handoff-integrity.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/ledger-binding.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/migration-replay.txt",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/postgres-custody.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/postgres-integration-tests.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/postgres-runtime-status.txt",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/tests.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/tooling-reconciliation.md",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    },
+    {
+      "status": "A",
+      "path": "evidence/v3-01/vf-v0s-b2-20260914T144857Z-bootstrap-custody/validation.json",
+      "class": "governance/evidence",
+      "candidate_import": "PRESERVED_HISTORICAL_COMMIT_NOT_IMPORTED"
+    }
+  ],
+  "config_changed": false,
+  "migrations_changed": false,
+  "provider_logic_changed": false
+}
