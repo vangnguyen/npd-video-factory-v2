@@ -1,0 +1,62 @@
+{
+  "future_execution_custody": "NOT_CREATED_REQUIRES_FRESH_RC_AND_LINEAGE",
+  "historical_rc18_execution_database_accessed": false,
+  "live_budget_reserved_vnd": "0",
+  "new_database_or_namespace_created": false,
+  "password_file_reads": 0,
+  "postgres_writes": 0,
+  "production_business_writes": 0,
+  "provider_calls": 0,
+  "provider_credential_reads": 0,
+  "result": "PASS",
+  "task": "VF-V0S-B4",
+  "tests": [
+    {
+      "control_revision": 0,
+      "control_rows": 1,
+      "counts": {
+        "attempts": 0,
+        "budget_alerts": 0,
+        "budget_days": 0,
+        "circuits": 0,
+        "operations": 0
+      },
+      "database": "vf_vf_v3_01_rc19_c6da26ba2a8795793f7d36051a816b7d",
+      "database_oid": 17842,
+      "migration_head": "0014_v3_01_27",
+      "negative_identity_cases": [
+        "database_oid",
+        "system_identifier",
+        "database_role",
+        "schema_name"
+      ],
+      "repeat_reads_identical": true,
+      "reserved_vnd": "0",
+      "scope": "EXISTING_B3_SYNTHETIC_TEST_DATABASE_ONLY_NOT_FUTURE_EXECUTION_LINEAGE"
+    },
+    {
+      "control_revision": 0,
+      "control_rows": 1,
+      "counts": {
+        "attempts": 0,
+        "budget_alerts": 0,
+        "budget_days": 0,
+        "circuits": 0,
+        "operations": 0
+      },
+      "database": "vf_vf_v3_01_rc20_20b9045ce79c76077018d74956d89b9a",
+      "database_oid": 20739,
+      "migration_head": "0014_v3_01_27",
+      "negative_identity_cases": [
+        "database_oid",
+        "system_identifier",
+        "database_role",
+        "schema_name",
+        "cross_rc_database"
+      ],
+      "repeat_reads_identical": true,
+      "reserved_vnd": "0",
+      "scope": "EXISTING_B3_SYNTHETIC_TEST_DATABASE_ONLY_NOT_FUTURE_EXECUTION_LINEAGE"
+    }
+  ]
+}

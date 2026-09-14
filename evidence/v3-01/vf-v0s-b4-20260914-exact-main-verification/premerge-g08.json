@@ -1,0 +1,819 @@
+{
+  "task": "VF-V0S-B4",
+  "kind": "G08_EXACT_HEAD_PREMERGE_OBSERVATION_NOT_EXECUTION_AUTHORITY",
+  "observed_at": "2026-09-14 16:36:12 UTC",
+  "repo": "vangnguyen/npd-video-factory-v2",
+  "pr": 65,
+  "approved_head": "40d8de37e8fb4294a478422ed4f5f546e815ef55",
+  "base_main": "4507fa593fd8cf5484eb1245f788e9ee54eede39",
+  "g08": "PASS",
+  "candidate_ci": {
+    "check_suite_id": 94417096411,
+    "conclusion": "success",
+    "created_at": "2026-09-14T16:09:23Z",
+    "event": "pull_request",
+    "head_branch": "remediation/vf-v0s-b3-runtime-ledger-bootstrap",
+    "head_sha": "40d8de37e8fb4294a478422ed4f5f546e815ef55",
+    "html_url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34866823280",
+    "id": 34866823280,
+    "name": "Video Factory V2 CI",
+    "path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "run_started_at": "2026-09-14T16:09:23Z",
+    "status": "completed",
+    "updated_at": "2026-09-14T16:14:26Z"
+  },
+  "jobs": [
+    {
+      "completed_at": "2026-09-14T16:09:32Z",
+      "conclusion": "success",
+      "id": 104052621499,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Studio tests",
+      "started_at": "2026-09-14T16:09:25Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm ci",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm test",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run node --check app.js",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run node --check auth.mjs",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run node --check trend-utils.mjs",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run node --check studio.js",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run node --check studio-utils.mjs",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "completed_at": "2026-09-14T16:11:01Z",
+      "conclusion": "success",
+      "id": 104052621797,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Python unit and contract tests",
+      "started_at": "2026-09-14T16:09:26Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m pip install -e \"apps/api[dev]\" -e \"services/worker[dev]\" -e \"services/comfyui-bridge[dev]\"",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m compileall -q apps/api/app services/worker/npd_worker services/comfyui-bridge/npd_comfyui_bridge",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Validate V3-01 acceptance register and redacted evidence",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-18 OpenAI ASR compatibility evidence",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Evaluate V3-01-04 Flow A fixture boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Evaluate V3-01-05 Flow B fixture boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Evaluate V3-01-06 Flow C fixture boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Evaluate V3-01-07 local DR and observability boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Alembic upgrade, downgrade and replay",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "completed_at": "2026-09-14T16:14:25Z",
+      "conclusion": "success",
+      "id": 104052621841,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Docker deterministic E2E",
+      "started_at": "2026-09-14T16:09:26Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run bash scripts/e2e-smoke.sh",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Upload acceptance artifacts",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "completed_at": "2026-09-14T16:09:38Z",
+      "conclusion": "success",
+      "id": 104052622025,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Safety and compose contract",
+      "started_at": "2026-09-14T16:09:26Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run cp .env.example .env",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run docker compose config --quiet",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify independent runtime boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify fail-closed defaults",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-owned durable services and VND-only ledger",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-03 research-only trend boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-04 non-destructive Auto Edit boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-05 structured Vision and non-destructive reframe boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-06 media rights, cost and execution boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-07 timeline and proxy-preview boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-08 audio, subtitle, approval and render-QC boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-09 publishing dry-run and external-action boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-10 analytics, nullable metrics and recommendation-only boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V2-11 Agent Hub bridge and production hardening boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-01 human identity and ingress boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-02 provider safety boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-03 ingress media and durable safety boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-04 Flow A acceptance boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-05 Flow B acceptance boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-06 Flow C acceptance boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-07 DR and observability boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-09 OpenAI Vision adapter boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-10 bounded provider gate-loader boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-11 Structured Outputs and error-evidence boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-12 RC-bound operation allowlist boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-13 evidence serialization boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-14 operation authority limits boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-15 provider timeout evidence boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-16 split timeout envelope boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-17 dual-CI provenance boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-18 OpenAI ASR compatibility and adapter boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-21 ASR response-diagnostics boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify V3-01-27 acceptance-lineage identity boundary",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Validate V2-11 deployment bundle",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Secret pattern scan",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run git diff --check",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "completed_at": "2026-09-14T16:09:56Z",
+      "conclusion": "success",
+      "id": 104052622072,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "name": "Renderer tests and bundle",
+      "started_at": "2026-09-14T16:09:26Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm ci",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm test",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm run typecheck",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm run bundle:check",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    }
+  ],
+  "canonical_audit": {
+    "base_main": "4507fa593fd8cf5484eb1245f788e9ee54eede39",
+    "candidate_authority": "NOT_CREATED",
+    "canonical_input": {
+      ".env.example": "b0848b375acd9498d9f99f3a9d3440a50c5064ac",
+      ".github/workflows/ci.yml": "fec7dc81a6688a25774b2fca7936bd404b53eadf",
+      "apps/api/app": "a313c341bddc3d634f9d259983513684ba0d074e",
+      "apps/api/pyproject.toml": "99ee33d6b26e6250040ad5b2f7b5f58ef0259cb8",
+      "apps/studio-web": "003370542fe8131f07b3b16f0d9d050e8e4ba56a",
+      "deploy": "05fdda827b098d6325dd4c7f982df97a6f5c6965",
+      "docker-compose.yml": "5cd87fd46f9c764fcf4b8fa94375261a3dd25838",
+      "packages": "fedecefa37fd6e43bd12a7c6c2a92f85a82bea6e",
+      "renderer": "18c4569f004f7e1225d61c57298fd836315152f6",
+      "scripts": "8e5f7b0a3c9cd3e459d85e8515cacd8851a0224d",
+      "services": "a1d39b3df32f92ab49855f92e441ec8e299582ec",
+      "workflows": "cb5be4eb46d714672a599daaec4f755e8c716ee7"
+    },
+    "changed_executable_components": [
+      "apps/api/app"
+    ],
+    "checksums_verified": 19,
+    "diff_check": "PASS",
+    "files": [
+      {
+        "class": "bootstrap/runtime",
+        "path": "apps/api/app/provider_runtime_bootstrap.py"
+      },
+      {
+        "class": "tests",
+        "path": "apps/api/tests/test_provider_runtime_bootstrap.py"
+      },
+      {
+        "class": "handoff",
+        "path": "docs/acceptance/v3-01/HANDOFF.md"
+      },
+      {
+        "class": "handoff",
+        "path": "docs/acceptance/v3-01/handoff.json"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/G08_SOURCE_REVIEW.md"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/LOCAL_VALIDATION_RCA.md"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/README.md"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/WSL_GIT_RCA.md"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/postgres_candidate_check.py"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/validate_candidate.py"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/README.md"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/SHA256SUMS.txt"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/b2-source-inventory.json"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/candidate-ci-snapshot.json"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/executable-tree-manifest.json"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/peer-password-fallback-proof.json"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/postgres-candidate-tests.json"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/test-write-boundary.json"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/tests.json"
+      },
+      {
+        "class": "governance/evidence",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/wsl-git-reproduction.json"
+      }
+    ],
+    "handoff_md_json_parity": "PASS",
+    "json_files": 9,
+    "live_reservations": 0,
+    "markdown_links": 25,
+    "new_rc_created": false,
+    "old_tree": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+    "provider_calls": 0,
+    "provider_credential_reads": 0,
+    "rc17_rc18": "IMMUTABLE",
+    "recompute_1": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "recompute_2": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "result": "PASS",
+    "secret_scan": "PASS_ZERO_MATCHES",
+    "tree_ref": "HEAD"
+  },
+  "remote_canonical_input": {
+    ".env.example": "b0848b375acd9498d9f99f3a9d3440a50c5064ac",
+    ".github/workflows/ci.yml": "fec7dc81a6688a25774b2fca7936bd404b53eadf",
+    "apps/api/app": "a313c341bddc3d634f9d259983513684ba0d074e",
+    "apps/api/pyproject.toml": "99ee33d6b26e6250040ad5b2f7b5f58ef0259cb8",
+    "apps/studio-web": "003370542fe8131f07b3b16f0d9d050e8e4ba56a",
+    "deploy": "05fdda827b098d6325dd4c7f982df97a6f5c6965",
+    "docker-compose.yml": "5cd87fd46f9c764fcf4b8fa94375261a3dd25838",
+    "packages": "fedecefa37fd6e43bd12a7c6c2a92f85a82bea6e",
+    "renderer": "18c4569f004f7e1225d61c57298fd836315152f6",
+    "scripts": "8e5f7b0a3c9cd3e459d85e8515cacd8851a0224d",
+    "services": "a1d39b3df32f92ab49855f92e441ec8e299582ec",
+    "workflows": "cb5be4eb46d714672a599daaec4f755e8c716ee7"
+  },
+  "file_blob_binding": "20/20_REMOTE_LOCAL_MATCH",
+  "file_proof": {
+    "files": [
+      {
+        "git_blob": "ebcc65d1f23491a42d3894547a8fb1f16e6608d6",
+        "path": "apps/api/app/provider_runtime_bootstrap.py",
+        "raw_sha256": "ee4f4b37aefcdb9409a0672e1d3e9f892c4501e67a723dfc9d05d6f10916fbe0"
+      },
+      {
+        "git_blob": "31007ff02038f181df1de54f0c5a47d67d40497a",
+        "path": "apps/api/tests/test_provider_runtime_bootstrap.py",
+        "raw_sha256": "6680efe3273b7d57064ca535b49dfe56706ef488e88f6724d4d30946012aeb81"
+      },
+      {
+        "git_blob": "4259d5b5c55a19511769a8511688448ee95259fe",
+        "path": "docs/acceptance/v3-01/HANDOFF.md",
+        "raw_sha256": "765465a93d26392d037109b70b80a27737ac57e2253ae5fababd5039bb0dc556"
+      },
+      {
+        "git_blob": "fbc273b3b27e3785f68e655bf6dff572de5acfcf",
+        "path": "docs/acceptance/v3-01/handoff.json",
+        "raw_sha256": "bcab0cafcf7520f119eb0e9b4b54dc8d07f0a4a219dca4d2211986da1c2280dc"
+      },
+      {
+        "git_blob": "87fac1db3c105b9ac121f3179b1e0534090a3dc4",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/G08_SOURCE_REVIEW.md",
+        "raw_sha256": "52f21896a8bfaa500c8c360c947bdcacdd533f808adb1ae3d4c5dbc4a7c32238"
+      },
+      {
+        "git_blob": "b007c65320479c0e286fa868fda5257a2694c965",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/LOCAL_VALIDATION_RCA.md",
+        "raw_sha256": "c37e777667cda2b044e4dcdfd173d210e0e46adce2447f8190400d83fd4366fc"
+      },
+      {
+        "git_blob": "9459d7b809a3f0941edd6ef64e50519dcaf3c107",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/README.md",
+        "raw_sha256": "eb54d3ab1ab3c1b8492248fc6949133df2dd8db06eddcd0d20925e60a2239bca"
+      },
+      {
+        "git_blob": "b0abcbc190aa77afd4751f6afaa10186a925bd4a",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/WSL_GIT_RCA.md",
+        "raw_sha256": "ed322e6a3605348010446aa85072d6f6f111254e1b30380881851e855d2490fd"
+      },
+      {
+        "git_blob": "943d2c5d47a75a5a6a80deb768c54e428e44dbe8",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/postgres_candidate_check.py",
+        "raw_sha256": "d314d57b0f2563d58063aa8f35b27646d139289083ee66ee4231a777e9f674f5"
+      },
+      {
+        "git_blob": "f29fa257e8cf62ea93cf7ce0882818f47b32703d",
+        "path": "docs/acceptance/v3-01/reviews/vf-v0s-b3/validate_candidate.py",
+        "raw_sha256": "6f463ccca8e28200c97119ed80bee01b9fe236b36dff7e0276b7425e556d5a75"
+      },
+      {
+        "git_blob": "1ffa3243b20e31fa9f871932b85c0a30b9369c3c",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/README.md",
+        "raw_sha256": "74ca6c97fd3ff2c60a81cb7a133f7bd5906b09bb71924cfc9883014f9ee4eb0d"
+      },
+      {
+        "git_blob": "5b080d19d493cf67fa76c32337250828e7fbefea",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/SHA256SUMS.txt",
+        "raw_sha256": "41651a3616ddaf23e5d86d9b1fb85baeb616ed15ff89268aa5ac24014ccd2e10"
+      },
+      {
+        "git_blob": "5fccad66faade96b115217b409171375e5bb3829",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/b2-source-inventory.json",
+        "raw_sha256": "1713fa2c5cfbe08cdb8b7caeb94eaf812a6fd207dfbe5ddd93dfb57bfd3e1066"
+      },
+      {
+        "git_blob": "4c21fcf6db5adb2500588dd305de493ecdc3ce0b",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/candidate-ci-snapshot.json",
+        "raw_sha256": "c18245c7324d5ddc68bb7ad004155dadcdb93faff12a6a88350438905a68c623"
+      },
+      {
+        "git_blob": "3201d336164105fe5854b67965f17ebfe2d0e814",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/executable-tree-manifest.json",
+        "raw_sha256": "ba1cadd18cae93b5bd50695dfe6c0000a47e06017e084d910f5282b5e63334f5"
+      },
+      {
+        "git_blob": "47c379a4f7cef82e68bb1ecd30fdbe9fcce179d6",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/peer-password-fallback-proof.json",
+        "raw_sha256": "e956b72ce4c75380259afe1bcc19e5b080bb7c5bf1742a53a2830cac478deffe"
+      },
+      {
+        "git_blob": "59008316e948405663620b097c5d3f08caaaa6f3",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/postgres-candidate-tests.json",
+        "raw_sha256": "3b2bad8702d0b5823a2432d9ca1741508f5d9c8f207492418478ea078e17011e"
+      },
+      {
+        "git_blob": "950a86fc9cb30c59e64255f242d08c4e558d96d1",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/test-write-boundary.json",
+        "raw_sha256": "cf3de572e4f652ce7af9bf5dadb24af011b23ae9339ded679599a66663b038b6"
+      },
+      {
+        "git_blob": "3f43f7ad4bcfa9040c53bbf3c59b9a7268f86f33",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/tests.json",
+        "raw_sha256": "11d64eeecf95ae1aaaf397decf5296e4fc27ec70e0cdec401b4e31e42722cb67"
+      },
+      {
+        "git_blob": "0b8edd34b55a6e21da3cbb5098dd549c3b396eaf",
+        "path": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/wsl-git-reproduction.json",
+        "raw_sha256": "a9ed99312270c64dbc27266423f42d026c7cb87e5c9192e5edbd14ae309071d3"
+      }
+    ],
+    "head": "40d8de37e8fb4294a478422ed4f5f546e815ef55",
+    "b3_proof_hash": "b0b6c2f30001276e69bbf87c523f67833c09c78b71981749627cc58d9128773b",
+    "optional_artifact_download": null,
+    "patch_fingerprint_sha256": "544a9f4d3bf8f65ccdfc14f1627f156b615024dd0e0793de898cb3c98a83b768",
+    "b3_proof_keys": [
+      "kind",
+      "task",
+      "verdict",
+      "repo",
+      "branch",
+      "base_main",
+      "head_sha",
+      "pr",
+      "g08",
+      "candidate_ci",
+      "jobs",
+      "expected_jobs",
+      "remote_verified_refs",
+      "candidate_provenance",
+      "old_executable_tree_sha256",
+      "final_candidate_executable_tree_sha256",
+      "deterministic_recompute_2",
+      "canonical_input_local",
+      "canonical_input_github",
+      "local_remote_object_identity",
+      "offline_audit",
+      "tests",
+      "wsl_git_rca",
+      "source_qualification",
+      "test_bootstrap_ledger_writes",
+      "handoff",
+      "artifact",
+      "artifact_local_copy",
+      "transport_note",
+      "safety",
+      "scope_drift",
+      "blockers",
+      "merge_recommendation",
+      "next_safe_action",
+      "optional_artifact_retention_note"
+    ],
+    "source_clean": true,
+    "base": "4507fa593fd8cf5484eb1245f788e9ee54eede39",
+    "diff_check": "PASS"
+  },
+  "authority": "NO_NEW_RC_OPERATION_SCOPE_BUNDLE_WINDOW_OR_AUTHORITY_CREATED",
+  "safety": {
+    "provider_credential_reads": 0,
+    "real_provider_calls": 0,
+    "live_budget_reserved_vnd": "0",
+    "production_business_writes": 0,
+    "actual_cost_vnd": "0"
+  },
+  "next_boundary": "CONTROLLED_MERGE_PR65_ONLY_THEN_EXACT_MAIN_CI_NO_RC_CREATION"
+}

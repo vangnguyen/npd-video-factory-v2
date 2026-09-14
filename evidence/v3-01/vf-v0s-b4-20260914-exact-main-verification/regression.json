@@ -1,0 +1,191 @@
+{
+  "task": "VF-V0S-B4",
+  "source_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+  "result": "PASS",
+  "python_local": {
+    "result": "PASS",
+    "passed": 1048,
+    "failed": 0,
+    "seconds": 203.88,
+    "command": "python -B -m pytest -q -p no:cacheprovider apps/api/tests services/worker/tests services/comfyui-bridge/tests --tb=short",
+    "source_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "isolated_test_only": true
+  },
+  "python_ci": {
+    "passed": 1048,
+    "failed": 0,
+    "seconds": 64.46,
+    "run_id": 34869652973,
+    "job_id": 104062105140
+  },
+  "focused_premerge": {
+    "passed": 135,
+    "failed": 0,
+    "bootstrap_subset": 90,
+    "source_commit": "40d8de37e8fb4294a478422ed4f5f546e815ef55"
+  },
+  "studio_ci": {
+    "passed": 14,
+    "failed": 0,
+    "job_id": 104062105418
+  },
+  "renderer_ci": {
+    "passed": 14,
+    "failed": 0,
+    "job_id": 104062104904,
+    "typecheck": "PASS",
+    "bundle": "PASS"
+  },
+  "postgres_readonly": {
+    "future_execution_custody": "NOT_CREATED_REQUIRES_FRESH_RC_AND_LINEAGE",
+    "historical_rc18_execution_database_accessed": false,
+    "live_budget_reserved_vnd": "0",
+    "new_database_or_namespace_created": false,
+    "password_file_reads": 0,
+    "postgres_writes": 0,
+    "production_business_writes": 0,
+    "provider_calls": 0,
+    "provider_credential_reads": 0,
+    "result": "PASS",
+    "task": "VF-V0S-B4",
+    "tests": [
+      {
+        "control_revision": 0,
+        "control_rows": 1,
+        "counts": {
+          "attempts": 0,
+          "budget_alerts": 0,
+          "budget_days": 0,
+          "circuits": 0,
+          "operations": 0
+        },
+        "database": "vf_vf_v3_01_rc19_c6da26ba2a8795793f7d36051a816b7d",
+        "database_oid": 17842,
+        "migration_head": "0014_v3_01_27",
+        "negative_identity_cases": [
+          "database_oid",
+          "system_identifier",
+          "database_role",
+          "schema_name"
+        ],
+        "repeat_reads_identical": true,
+        "reserved_vnd": "0",
+        "scope": "EXISTING_B3_SYNTHETIC_TEST_DATABASE_ONLY_NOT_FUTURE_EXECUTION_LINEAGE"
+      },
+      {
+        "control_revision": 0,
+        "control_rows": 1,
+        "counts": {
+          "attempts": 0,
+          "budget_alerts": 0,
+          "budget_days": 0,
+          "circuits": 0,
+          "operations": 0
+        },
+        "database": "vf_vf_v3_01_rc20_20b9045ce79c76077018d74956d89b9a",
+        "database_oid": 20739,
+        "migration_head": "0014_v3_01_27",
+        "negative_identity_cases": [
+          "database_oid",
+          "system_identifier",
+          "database_role",
+          "schema_name",
+          "cross_rc_database"
+        ],
+        "repeat_reads_identical": true,
+        "reserved_vnd": "0",
+        "scope": "EXISTING_B3_SYNTHETIC_TEST_DATABASE_ONLY_NOT_FUTURE_EXECUTION_LINEAGE"
+      }
+    ]
+  },
+  "migration_replay": {
+    "result": "PASS",
+    "range": "0001..0014 upgrade / downgrade base / upgrade",
+    "local_backend": "isolated SQLite test database",
+    "ci_backend": "SQLite replay and disposable Docker PostgreSQL fixture migrations",
+    "new_migration": false
+  },
+  "bootstrap_repository_namespace_idempotency_reservation_kill_switch": "PASS_INCLUDED_IN_EXACT_MAIN_FULL_PYTHON_SUITE_AND_PREMERGE_FOCUSED_TESTS",
+  "gate_loader_offline": "PASS_INCLUDED_IN_EXACT_MAIN_FULL_PYTHON_SUITE",
+  "docker_e2e": {
+    "result": "PASS",
+    "mode": "CANONICAL_EXACT_MAIN_CI_DISPOSABLE_FIXTURE_ONLY",
+    "run_id": 34869652973,
+    "job_id": 104062105304,
+    "postgres_minio_recovery": "PASS",
+    "dr_restore_queue_recovery": "PASS",
+    "publishing": "DRY_RUN_ONLY",
+    "artifact": {
+      "artifacts": [
+        {
+          "created_at": "2026-09-14T16:41:24Z",
+          "digest": "sha256:390469a7ba1f8723960270d559eb3acb9a2e38b59280a594d583a4199d24a4ec",
+          "expired": false,
+          "expires_at": "2026-09-21T16:41:22Z",
+          "id": 10358243763,
+          "name": "v2-11-agent-hub-bridge-e2e",
+          "size_in_bytes": 30945345,
+          "workflow_run": {
+            "head_branch": "main",
+            "head_repository_id": 1347290700,
+            "head_sha": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+            "id": 34869652973,
+            "repository_id": 1347290700
+          }
+        }
+      ],
+      "total_count": 1
+    }
+  },
+  "safety_compose": "PASS_EXACT_MAIN_CI_JOB_104062105229",
+  "compileall": "PASS_LOCAL_AND_EXACT_MAIN_CI",
+  "acceptance_evidence_validation": {
+    "result": "PASS",
+    "matrix_rows": 60,
+    "gaps": 16,
+    "schemas": 13,
+    "approvals": 71,
+    "rights": 3,
+    "evidence_runs": 39
+  },
+  "asr_compatibility": "PASS_OFFLINE_RECORDED_CONTRACT_VERIFICATION_NO_MODEL_CHANGE",
+  "flow_a_b_c_dr_boundaries": "PASS_EXPECTED_BLOCKED_VERDICTS_NOT_REAL_PROVIDER_OR_PRODUCTION_ACCEPTANCE",
+  "json_secret": {
+    "parser": "PowerShell ConvertFrom-Json -AsHashtable -ErrorAction Stop",
+    "json_parse": "PASS",
+    "git_status": [],
+    "tracked_json_files": 434,
+    "fail_closed_defaults": "PASS",
+    "credential_material_read": false,
+    "secret_pattern_scan": "PASS_ZERO_MATCHES",
+    "object_parser_empty_key_limitations": [
+      "apps/studio-web/package-lock.json",
+      "renderer/package-lock.json"
+    ]
+  },
+  "source_audit": {
+    "diff_check": "PASS",
+    "json_files": 9,
+    "markdown_links": 25,
+    "checksums": 19,
+    "handoff_parity": "PASS_PREMERGE_BASELINE_HANDOFF_SNAPSHOT"
+  },
+  "test_write_boundary": {
+    "postgres_custody_writes": 0,
+    "new_future_execution_database_or_namespace_created": false,
+    "local_sqlite_and_python_tests": "ISOLATED_TEST_FIXTURE_METADATA_ONLY",
+    "ci_docker": "DISPOSABLE_LOCAL_TEST_SERVICES_ONLY",
+    "live_provider_reservations": 0,
+    "production_business_writes": 0,
+    "operation_consumption": 0
+  },
+  "historical_b3_validation_notes_preserved": true,
+  "initial_native_json_parser_issue": {
+    "cause": "PowerShell object conversion cannot represent empty property keys in valid npm package-lock JSON",
+    "files": [
+      "apps/studio-web/package-lock.json",
+      "renderer/package-lock.json"
+    ],
+    "repair": "Read-only parser switched to ConvertFrom-Json -AsHashtable with ErrorAction Stop; all 434 parse successfully; no source change"
+  }
+}

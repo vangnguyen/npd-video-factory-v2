@@ -1,0 +1,11 @@
+76a00319a4bc0df2edc2012ab01f8741e9b16b031d69109aade170d6379a4075  docs/acceptance/v3-01/HANDOFF.md
+0785fa80787102e59f3d07384a2bd7d074173f035e92de92343227eaaea38185  docs/acceptance/v3-01/handoff.json
+c6f671e3e7e45bb3605af7d2a66692dd38a12d520a4d5bf1848f618430eca100  docs/acceptance/v3-01/reviews/vf-v0s-b4/postgres_readonly_check.py
+90e6f66c3ac74d7e85c29877e7c3c55872f8f82b2f0dbaba80f17d4d442f0cfc  docs/acceptance/v3-01/reviews/vf-v0s-b4/verify_postmerge.py
+b1868bf2bfad759f58c7789167fd322de758853b7ee2b1ff83d4045977862582  evidence/v3-01/vf-v0s-b4-20260914-exact-main-verification/README.md
+0da21db342f7c758ddbd0361273be1e7e9b272d73f59a669ac45c4789afb83d6  evidence/v3-01/vf-v0s-b4-20260914-exact-main-verification/b3-optional-artifact-timeout.json
+331805f90e5464c6fdba3a4524884b34c6b0b38151c0101c3713d76c8250188a  evidence/v3-01/vf-v0s-b4-20260914-exact-main-verification/ci-log-excerpts.log
+0c92cb935715ea5a301b171fece50aa568ed0bea8a4aacbd5c76cc32a0f0252c  evidence/v3-01/vf-v0s-b4-20260914-exact-main-verification/postgres-readonly-result.json
+f08e979daba7d4049d5840a71c2aa99d7f3c9f165dc3b60df9e83ee61ddc6246  evidence/v3-01/vf-v0s-b4-20260914-exact-main-verification/postmerge-provenance.json
+78b9621e643681f9a10cfc353ce9897a447f80dc3a830036b6dd6b9118013aca  evidence/v3-01/vf-v0s-b4-20260914-exact-main-verification/premerge-g08.json
+535d586384278330dbdf33181f31518682e2d0eb8a549cd09033752eb3c262a2  evidence/v3-01/vf-v0s-b4-20260914-exact-main-verification/regression.json

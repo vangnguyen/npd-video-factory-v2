@@ -1,0 +1,38 @@
+{
+  "transport_note": "A final native Git ls-remote read hit transient DNS resolution failure. GitHub Git Ref/annotated-tag APIs then independently revalidated main/branch/RC17/RC18; no test, gate or source was bypassed.",
+  "artifact": [
+    {
+      "created_at": "2026-09-14T16:14:22Z",
+      "digest": "sha256:422cf8a4e3bfd7fdab77b2b066c0786ed48ac78e79aca6719f4c4c29fd0c71e4",
+      "expired": false,
+      "expires_at": "2026-09-21T16:14:21Z",
+      "id": 10357880905,
+      "name": "v2-11-agent-hub-bridge-e2e",
+      "size_in_bytes": 30930375,
+      "workflow_run": {
+        "head_branch": "remediation/vf-v0s-b3-runtime-ledger-bootstrap",
+        "head_repository_id": 1347290700,
+        "head_sha": "40d8de37e8fb4294a478422ed4f5f546e815ef55",
+        "id": 34866823280,
+        "repository_id": 1347290700
+      }
+    }
+  ],
+  "optional_artifact_retention_note": "Final exact-head run, all job results, remote artifact ID/digest and relevant log excerpts are preserved. The source-identical pre-closing-CI artifact is cached locally. Optional final archive download exited with a network read timeout; no GitHub run was cancelled and no local process required termination. This does not substitute for or bypass the independently successful final-head CI.",
+  "artifact_local_copy": {
+    "path": "C:/Users/VANG NGUYEN/Documents/Codex/2026-08-20/referenced-chatgpt-conversation-this-is-an/outputs/vf-v0s-b3-20260914/ci-final-head-34866823280",
+    "status": "FINAL_ARCHIVE_COPY_FAILED_NETWORK_CONNECTION_TIMEOUT",
+    "download_exit_code": 1,
+    "github_run_cancelled": false,
+    "local_process_stopped": false,
+    "metadata_digest_preserved": true,
+    "source_snapshot_archive_retained_at": "C:/Users/VANG NGUYEN/Documents/Codex/2026-08-20/referenced-chatgpt-conversation-this-is-an/outputs/vf-v0s-b3-20260914/ci-source-snapshot-34865777130"
+  },
+  "source_qualification": {
+    "frozen_rc18_denial": "PASS_ACTUAL_FROZEN_RC18_DENIES_CANDIDATE_BEFORE_DB_CREDENTIALS_OR_AUTHORITY",
+    "candidate_not_rc18": true,
+    "new_rc_required_after_separate_merge": true,
+    "transitive_import_audit": "Repository/safety/db/models/provenance/profile modules declare models/functions; no Settings/.env/credential resolver/global connection initialization on import",
+    "peer_password_file_lookup": 0
+  }
+}
