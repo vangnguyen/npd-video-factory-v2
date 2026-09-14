@@ -1,0 +1,55 @@
+Python unit and contract tests	Run python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q	2026-09-14T16:37:58.0237962Z 1048 passed in 64.46s (0:01:04)
+Python unit and contract tests	Validate V3-01 acceptance register and redacted evidence	2026-09-14T16:37:59.8931067Z v3-01 validation=PASS matrix_rows=60 gaps=16 schemas=13 approvals=71 rights=3 evidence_runs=39
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:36:33.0769222Z [e2e] building and starting stack
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:23.5092883Z [e2e] waiting for API readiness
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:27.6775360Z [e2e] verifying V3-01 human auth boundary
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:27.7121198Z [e2e] human auth and secret-safe session contract verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:27.7152462Z [e2e] exercising V2-11 signed Agent Hub bridge
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:28.9429392Z [e2e] V2-11 service auth, draft boundary and signed webhook verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:29.1017330Z [e2e] creating 30-second video job
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:29.1580493Z [e2e] job_id=vid_1789403909123_cbef0cf5f7
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:29.2203070Z [e2e] poll=1 status=running stage=storyboarding progress=20
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:34.2771740Z [e2e] poll=2 status=running stage=rendering progress=70
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:39.3514106Z [e2e] poll=3 status=running stage=rendering progress=70
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:44.3962443Z [e2e] poll=4 status=running stage=rendering progress=70
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:49.4339495Z [e2e] poll=5 status=running stage=rendering progress=70
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:54.4793031Z [e2e] poll=6 status=running stage=rendering progress=70
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:38:59.6987645Z [e2e] poll=7 status=running stage=rendering progress=70
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:39:04.8070640Z [e2e] poll=8 status=running stage=rendering progress=70
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:39:09.8830303Z [e2e] poll=9 status=running stage=rendering progress=70
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:39:14.9185156Z [e2e] poll=10 status=awaiting_review stage=awaiting_review progress=100
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:39:15.0913885Z [e2e] uploading rendered fixture through resumable V2-04 upload contract
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:39:15.9760783Z [e2e] building V2-06 media plan and resolving fixture media asynchronously
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:39:17.4717998Z [e2e] creating the V2-07 editable timeline and version-bound 540p preview
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:39:55.0840623Z [e2e] V2-07 timeline, version conflict, 540p preview and invalidation verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:39:55.0873144Z [e2e] exercising V2-08 subtitle, audio, approval and final-render workflow
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:39:55.0875047Z [e2e] generating a short encoded A/V fixture for bounded production-render acceptance
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:20.2354920Z [e2e] exercising V2-09 rights/platform gates and idempotent publishing dry-run
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:20.4379952Z [e2e] V2-08 final QC and V2-09 fail-closed publishing dry-run verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:20.4411770Z [e2e] exercising V2-10 normalized analytics, winner detection and learning feedback
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:21.7449205Z [e2e] restarting worker before a second analytics snapshot
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:34.4303867Z [e2e] V2-10 mock snapshots, null semantics, worker restart and learning verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:34.4746315Z [e2e] durable project metadata, VND ledger and audit verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:34.4782194Z [e2e] collecting deterministic trend evidence and building draft opportunities
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:34.8210212Z [e2e] V2-03 trend, idea, queue and Studio contracts verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:34.8492539Z [e2e] V2-04 plus V2-05 structured Vision and Smart Reframe contracts verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:34.8733058Z [e2e] V2-06 B-roll, media provider, rights and asynchronous resolution contracts verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:34.8763208Z [e2e] restarting API to verify PostgreSQL recovery
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:38.1144785Z [e2e] V2-11 bridge PostgreSQL recovery verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:38.4380863Z [e2e] PostgreSQL jobs, V2-08 production, V2-09 publication and V2-10 analytics recovery verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:38.6659262Z [e2e] MinIO artifact recovery verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:40:38.6702520Z [e2e] running V3-01-07 disposable backup, failure, restore and queue-recovery drill
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:41:09.1669336Z [e2e] V3-01-07 disposable DR and PostgreSQL-backed Redis queue recovery verified
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:41:10.3836543Z [e2e] QC verified {"duration_seconds": 30.059, "width": 1080, "height": 1920, "fps": 30.0, "video_codec": "h264", "audio_codec": "aac", "visual_sample_count": 30, "dark_visual_sample_ratio": 0.0, "visual_luma_min": 110.406, "visual_luma_max": 127.356, "audio_mean_db": -22.7, "audio_peak_db": -3.0, "size_bytes": 3382266}
+Docker deterministic E2E	Run bash scripts/e2e-smoke.sh	2026-09-14T16:41:10.3865151Z [e2e] V2-07 Auto Edit Studio passed
+Studio tests	Run npm test	2026-09-14T16:36:34.1509919Z # tests 14
+Studio tests	Run npm test	2026-09-14T16:36:34.1510437Z # pass 14
+Renderer tests and bundle	Run npm test	2026-09-14T16:36:41.3373637Z  ^[[32m✓^[[39m src/contract.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 21^[[2mms^[[22m^[[39m
+Renderer tests and bundle	Run npm test	2026-09-14T16:36:41.3459502Z  ^[[32m✓^[[39m src/RealEstateShort.test.tsx ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 30^[[2mms^[[22m^[[39m
+Renderer tests and bundle	Run npm test	2026-09-14T16:36:41.5655847Z  ^[[32m✓^[[39m src/app.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 127^[[2mms^[[22m^[[39m
+Renderer tests and bundle	Run npm test	2026-09-14T16:36:41.6886851Z  ^[[32m✓^[[39m src/TimelineRender.test.tsx ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 12^[[2mms^[[22m^[[39m
+Renderer tests and bundle	Run npm test	2026-09-14T16:36:41.7079534Z ^[[2m Test Files ^[[22m ^[[1m^[[32m4 passed^[[39m^[[22m^[[90m (4)^[[39m
+Renderer tests and bundle	Run npm test	2026-09-14T16:36:41.7104175Z ^[[2m      Tests ^[[22m ^[[1m^[[32m14 passed^[[39m^[[22m^[[90m (14)^[[39m
+Renderer tests and bundle	Run npm test	2026-09-14T16:36:41.7120218Z ^[[2m   Duration ^[[22m 992ms^[[2m (transform 372ms, setup 0ms, collect 983ms, tests 190ms, environment 1ms, prepare 484ms)^[[22m
+Renderer tests and bundle	Run npm run typecheck	2026-09-14T16:36:41.9634496Z > tsc --noEmit
+Renderer tests and bundle	Run npm run bundle:check	2026-09-14T16:36:50.6340513Z renderer bundle created: /tmp/remotion-webpack-bundle-4fCVhd
