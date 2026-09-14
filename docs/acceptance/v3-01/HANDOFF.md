@@ -3,10 +3,10 @@
 Canonical machine handoff: [handoff.json](handoff.json). No root duplicates.
 Historical handoffs and receipts remain immutable in their original commits.
 
-VERDICT: REVIEW_REQUIRED — candidate CI and local Docker E2E pending.
+VERDICT: REVIEW_REQUIRED — exact-head candidate CI pending.
 Base main: 4507fa593fd8cf5484eb1245f788e9ee54eede39.
 Branch: remediation/vf-v0s-b3-runtime-ledger-bootstrap.
-Candidate executable-tree SHA: d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832.
+Candidate executable-tree SHA: 432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502.
 Historical RC18 tree: ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5.
 
 ## Scope and lineage
@@ -25,8 +25,11 @@ New RC is required only after a later Owner merge and exact-main regression.
 
 ## Tests and CI
 
-Python/API/worker/bridge: 1047 PASS, 0 failed, 286.55 seconds.
-Bootstrap: 89 PASS. Focused bootstrap/repository/provenance: 134 PASS.
+Pre-hardening Python/API/worker/bridge: 1047 PASS, 0 failed, 286.55 seconds.
+Post-hardening serial Python/API/worker/bridge: 1048/1048 PASS, 190.99 seconds.
+The overlapped E2E/pytest environment failure is retained and reproduced separately;
+its clean isolated rerun passed. No test or CI gate was skipped or relaxed.
+Bootstrap: 90 PASS. Focused bootstrap/repository/provenance: 135 PASS after hardening.
 Studio: 14/14 PASS. Renderer: 14/14 PASS, typecheck and bundle PASS.
 PostgreSQL: two isolated test databases, full 0001..0014 replay PASS,
 identical repeat reads and nine wrong custody/cross-RC denials.
@@ -36,7 +39,8 @@ Identical historical cases: native Git 2/2 PASS (6.52s), correct mapped WSL meta
 2/2 PASS (13.49s). No historical validator, receipt or canonical hash relaxed.
 Full candidate suite ran independently, not a claim that B2's failed sweep was clean.
 
-Docker E2E: RUNNING, not yet claimed. Candidate CI: NOT_CREATED.
+Docker E2E: PASS on pre-hardening source snapshot; final source CI must independently
+pass full E2E. Candidate CI: PENDING_DRAFT_PR_AND_EXACT_HEAD_VERIFICATION.
 Historical main/RC18 CI are baseline evidence ONLY, not candidate CI substitutes.
 
 ## Authority and write boundary
@@ -57,6 +61,7 @@ Historical provider verdicts/costs/receipts and quality thresholds remain unchan
 [Evidence bundle](../../../evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/README.md).
 [Source G-08](reviews/vf-v0s-b3/G08_SOURCE_REVIEW.md).
 [WSL RCA](reviews/vf-v0s-b3/WSL_GIT_RCA.md).
+[Local validation environment RCA](reviews/vf-v0s-b3/LOCAL_VALIDATION_RCA.md).
 
 Scope drift: PASS. G-08 scope PASS, conditional on exact final-head CI and Owner review.
 NEXT_SAFE_ACTION: Owner review exact candidate head after CI; STOP before merge,

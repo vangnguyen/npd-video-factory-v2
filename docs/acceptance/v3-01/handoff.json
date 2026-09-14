@@ -22,7 +22,7 @@
     "rc17_rc18_status": "IMMUTABLE"
   },
   "candidate": {
-    "executable_tree_sha256": "d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832",
+    "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
     "executable_tree_changed": true,
     "only_runtime_addition": "apps/api/app/provider_runtime_bootstrap.py",
     "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap",
@@ -32,7 +32,8 @@
     "new_rc_created": false,
     "rc18_hardcode_in_runtime": false,
     "ledger_binding": "RC tag + full canonical lineage -> deterministic database name; peer socket/system ID/database OID/role/schema/PG16 independently pinned",
-    "future_execution_namespace": "NOT_CREATED_REQUIRES_FRESH_RC_AND_LINEAGE"
+    "future_execution_namespace": "NOT_CREATED_REQUIRES_FRESH_RC_AND_LINEAGE",
+    "pre_hardening_executable_tree_sha256": "d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832"
   },
   "history": {
     "b2_local_commit": "1c3eb35b52337bc9aeda0fad93ec3b3bd00d089d",
@@ -59,16 +60,18 @@
   },
   "tests": {
     "python_api_worker_bridge": {
-      "pass": 1047,
+      "pass": 1048,
       "fail": 0,
-      "seconds": 286.55
+      "seconds": 190.99,
+      "mode": "SERIAL_AFTER_E2E_CLEANUP_POST_PEER_PASSWORD_HARDENING"
     },
     "bootstrap": {
-      "pass": 89,
-      "fail": 0
+      "pass": 90,
+      "fail": 0,
+      "post_hardening": true
     },
     "focused_bootstrap_repository_provenance": {
-      "pass": 134,
+      "pass": 135,
       "fail": 0
     },
     "studio": {
@@ -86,10 +89,11 @@
     "native_git_same_historical_cases": "2/2 PASS, 6.52s",
     "wsl_correct_metadata_same_historical_cases": "2/2 PASS, 13.49s",
     "wsl_primary_class": "A_ENVIRONMENT_PATH_NOT_SOURCE_REGRESSION",
-    "docker_e2e": "RUNNING_NOT_YET_CLAIMED"
+    "docker_e2e": "PASS_PRE_HARDENING_SOURCE_SNAPSHOT_FINAL_SOURCE_CANDIDATE_CI_REQUIRED",
+    "environment_overlap": "1 failure retained/classified; exact flag reproduced; clean serial full sweep PASS"
   },
   "ci": {
-    "status": "NOT_CREATED",
+    "status": "PENDING_DRAFT_PR_CREATION_AND_EXACT_HEAD_CI",
     "expected_canonical_jobs": 5,
     "candidate_provenance": "NOT_YET_CLAIMED",
     "historical_main_rc_ci_substitution_allowed": false
@@ -120,8 +124,7 @@
   "evidence_pointer": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/README.md",
   "scope_drift": "PASS",
   "blockers": [
-    "EXACT_HEAD_CANDIDATE_CI_PENDING",
-    "DOCKER_E2E_LOCAL_PENDING"
+    "EXACT_HEAD_CANDIDATE_CI_PENDING"
   ],
   "next_safe_action": "Owner review exact candidate head after complete CI; do not merge/create RC/rebind/authorize in this task"
 }

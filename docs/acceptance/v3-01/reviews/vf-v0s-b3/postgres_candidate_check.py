@@ -25,7 +25,7 @@ from app.provider_safety_repository import ProviderSafetyRepository
 async def check(repo: Path, socket: str, port: int, role: str, sequence: int) -> dict:
     fixture = runpy.run_path(str(repo / "apps/api/tests/test_provider_runtime_bootstrap.py"))
     data = fixture["binding_data"].__wrapped__()
-    admin = await asyncpg.connect(host=socket, port=port, user=role, database="postgres")
+    admin = await asyncpg.connect(host=socket, port=port, user=role, database="postgres", password="")
     instance = str(await admin.fetchval("SELECT (pg_control_system()).system_identifier"))
     results = []
     writes = []
@@ -71,7 +71,7 @@ async def check(repo: Path, socket: str, port: int, role: str, sequence: int) ->
                 # The connection has no password; still never dump exception payloads.
                 raise AssertionError("ISOLATED_MIGRATION_REPLAY_FAILED")
             writes.append({"database": database, "kind": "EXISTING_MIGRATION_REPLAY_AND_CONTROL_SEED"})
-            engine = create_async_engine(url, echo=False)
+            engine = create_async_engine(url, echo=False, connect_args={"password": ""})
             factory = async_sessionmaker(engine, expire_on_commit=False)
             try:
                 first = await bootstrap.read_custody(factory, binding, require_virgin_namespace=True)

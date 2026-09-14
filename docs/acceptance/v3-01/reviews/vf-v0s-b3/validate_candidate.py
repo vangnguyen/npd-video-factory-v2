@@ -16,7 +16,7 @@ from app.provider_runtime_bootstrap import _git_argv
 
 BASE = "4507fa593fd8cf5484eb1245f788e9ee54eede39"
 OLD_TREE = "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5"
-NEW_TREE = "d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832"
+NEW_TREE = "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502"
 EVIDENCE = "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate"
 DOCS = "docs/acceptance/v3-01/reviews/vf-v0s-b3"
 

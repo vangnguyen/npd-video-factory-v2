@@ -388,3 +388,21 @@ def test_bootstrap_does_not_import_credential_settings_or_dispatch_code():
     calls = [node.func.attr for node in ast.walk(tree) if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)]
     assert "reserve_operation" not in calls and "execute" in calls
     assert "ensure_state" in calls
+
+
+def test_peer_engine_explicitly_disables_password_env_and_file_fallback(monkeypatch, binding_data):
+    binding = bootstrap.BootstrapLedgerBinding(**binding_data)
+    observed = {}
+    engine = SimpleNamespace(dispose=AsyncMock())
+    def create(url, **kwargs):
+        observed.update(kwargs)
+        assert url.password is None
+        return engine
+    monkeypatch.setattr(bootstrap, "verify_bound_source", lambda *args: None)
+    monkeypatch.setattr(bootstrap, "verify_socket_custody", lambda *args: None)
+    monkeypatch.setattr(bootstrap, "create_async_engine", create)
+    monkeypatch.setattr(bootstrap, "async_sessionmaker", lambda *args, **kwargs: object())
+    read = {"control_present": True, "control_revision": 0, "counts": {"operations": 0}}
+    monkeypatch.setattr(bootstrap, "read_custody", AsyncMock(side_effect=[read, read]))
+    asyncio.run(bootstrap.bootstrap_custody(Path("."), binding))
+    assert observed["connect_args"] == {"password": ""}

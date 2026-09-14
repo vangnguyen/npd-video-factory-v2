@@ -5,6 +5,8 @@ No merge or RC creation is performed.
 
 - [Source review](G08_SOURCE_REVIEW.md)
 - [WSL Git RCA](WSL_GIT_RCA.md)
+- [Local validation environment RCA](LOCAL_VALIDATION_RCA.md)
+- [Read-only evidence audit](validate_candidate.py)
 - [Isolated PostgreSQL check](postgres_candidate_check.py)
 - [Evidence bundle](../../../../../evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/README.md)
 

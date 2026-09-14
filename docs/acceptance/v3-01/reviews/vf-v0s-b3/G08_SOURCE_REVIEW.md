@@ -40,6 +40,12 @@ Operation key binds lineage and slot. Role/system ID/database OID/private socket
 are independently pinned; no fallback endpoint or namespace is allowed.
 There is no RC18-specific database name in reusable source.
 
+The peer engine passes an explicit empty database password. Inspection of the
+installed asyncpg parser proves password=None otherwise consults PGPASSWORD/
+PGPASSFILE. The explicit empty value bypasses that fallback without reading a
+credential. No password/secret value is added to URL, handoff or evidence. The
+isolated test helper uses the same empty peer password; no registry/provider login.
+
 SELECT-only custody checks run in REPEATABLE READ, READ ONLY transactions. They deny
 exact operation/attempt reuse, cross-lineage/null historical state, active
 reservations, nonfinite/nonzero reserved totals and nonvirgin namespaces when

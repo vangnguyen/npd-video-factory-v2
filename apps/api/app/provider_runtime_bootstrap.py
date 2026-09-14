@@ -276,7 +276,12 @@ async def bootstrap_custody(
     # Source qualification occurs before any database access or metadata write.
     verify_bound_source(repo, binding)
     verify_socket_custody(binding)
-    engine = create_async_engine(ledger_url(binding), echo=False, pool_pre_ping=True)
+    # An explicit empty database password prevents asyncpg from consulting
+    # PGPASSWORD or a password file. This endpoint is private peer-auth only.
+    engine = create_async_engine(
+        ledger_url(binding), echo=False, pool_pre_ping=True,
+        connect_args={"password": ""},
+    )
     factory = async_sessionmaker(engine, expire_on_commit=False)
     try:
         before = await read_custody(factory, binding, require_virgin_namespace=require_virgin_namespace)

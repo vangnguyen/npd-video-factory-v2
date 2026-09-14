@@ -1,42 +1,107 @@
 {
   "task": "VF-V0S-B3",
   "full_python_api_worker_bridge": {
-    "passed": 1047,
+    "passed": 1048,
     "failed": 0,
-    "seconds": 286.55,
-    "output": "........................................................................ [  6%]\n........................................................................ [ 13%]\n........................................................................ [ 20%]\n........................................................................ [ 27%]\n........................................................................ [ 34%]\n........................................................................ [ 41%]\n........................................................................ [ 48%]\n........................................................................ [ 55%]\n........................................................................ [ 61%]\n........................................................................ [ 68%]\n........................................................................ [ 75%]\n........................................................................ [ 82%]\n........................................................................ [ 89%]\n........................................................................ [ 96%]\n.......................................                                  [100%]\n1047 passed in 286.55s (0:04:46)\n"
+    "seconds": 190.99,
+    "result": "PASS",
+    "mode": "SERIAL_AFTER_E2E_CLEANUP_POST_HARDENING",
+    "output": "........................................................................ [  6%]\n........................................................................ [ 13%]\n........................................................................ [ 20%]\n........................................................................ [ 27%]\n........................................................................ [ 34%]\n........................................................................ [ 41%]\n........................................................................ [ 48%]\n........................................................................ [ 54%]\n........................................................................ [ 61%]\n........................................................................ [ 68%]\n........................................................................ [ 75%]\n........................................................................ [ 82%]\n........................................................................ [ 89%]\n........................................................................ [ 96%]\n........................................                                 [100%]\n1048 passed in 190.99s (0:03:10)\n"
   },
   "bootstrap": {
-    "passed": 89,
+    "passed": 90,
     "failed": 0,
-    "seconds": 1.04,
-    "output": "........................................................................ [ 80%]\n.................                                                        [100%]\n89 passed in 1.04s\n"
+    "independent_with_safety_case": {
+      "passed": 91,
+      "failed": 0,
+      "seconds": 6.35
+    },
+    "post_hardening": true
   },
   "focused_bootstrap_repository_provenance": {
-    "passed": 134,
+    "passed": 135,
     "failed": 0,
-    "seconds": 16.34,
-    "output": "..............................           [100%]\n134 passed in 16.34s\n"
+    "seconds": 3.99
   },
   "studio": {
-    "passed": 14,
-    "output": "\nup to date, audited 1 package in 8s\n\nfound 0 vulnerabilities\n\n> npd-video-factory-studio@0.12.0 test\n> node --test tests/*.test.mjs\n\n✔ human session header is attached without mutating caller headers (1.4197ms)\n✔ missing human session fails closed (0.433ms)\n✔ formats editor timecodes and zoom deterministically (2.0627ms)\n✔ labels version-bound approval and production render states (0.9942ms)\n✔ labels publishing dry-run truthfully and flattens gate evidence (0.3198ms)\n✔ snaps pointer placement to quarter seconds (0.2166ms)\n✔ computes timeline clip placement and respects track compatibility (0.2814ms)\n✔ labels ready, stale and running previews without overstating readiness (0.1703ms)\n✔ renders analytics truth states and never turns missing metrics into zero (15.2965ms)\n✔ builds a stable V2-10 metric panel from normalized nullable metrics (0.279ms)\n✔ declares all eight required radar views (0.771ms)\n✔ radar view rules remain deterministic and explainable (0.2614ms)\n✔ filters by view, platform and search while sorting by estimate (2.2158ms)\n✔ formats scores, VND and Vietnamese lifecycle labels (14.4584ms)\nℹ tests 14\nℹ suites 0\nℹ pass 14\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.8166\n"
+    "passed": 14
   },
   "renderer": {
     "passed": 14,
     "typecheck": "PASS",
-    "bundle": "PASS",
-    "output": "\nadded 392 packages, and audited 393 packages in 24s\n\n91 packages are looking for funding\n  run `npm fund` for details\n\n5 vulnerabilities (3 moderate, 2 high)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\nnpm warn allow-scripts 1 package has install scripts not yet covered by allowScripts:\nnpm warn allow-scripts   esbuild@0.28.1 (postinstall: node install.js)\nnpm warn allow-scripts\nnpm warn allow-scripts Run `npm approve-scripts --allow-scripts-pending` to review, or `npm approve-scripts <pkg>` to allow.\n\n> npd-video-renderer@0.12.0 test\n> vitest run\n\n\n RUN  v3.2.7 C:/Users/VANG NGUYEN/Documents/Codex/2026-08-20/referenced-chatgpt-conversation-this-is-an/work/npd-video-factory-v2-vf-v0s-b3-candidate/renderer\n\n ✓ src/TimelineRender.test.tsx (2 tests) 6ms\n ✓ src/RealEstateShort.test.tsx (2 tests) 6ms\n ✓ src/contract.test.ts (5 tests) 9ms\nstdout | src/app.test.ts > renderer HTTP service > completes a render with metadata and 70-95 progress mapping\n{\"event\":\"render_progress\",\"job_id\":\"vid_12345678\",\"progress\":0,\"overall_progress\":70}\n{\"event\":\"render_progress\",\"job_id\":\"vid_12345678\",\"progress\":0.5,\"overall_progress\":83}\n{\"event\":\"render_progress\",\"job_id\":\"vid_12345678\",\"progress\":1,\"overall_progress\":95}\n\nstderr | src/app.test.ts > renderer HTTP service > does not expose renderer exception text\n{\"event\":\"render_failed\",\"job_id\":\"vid_12345678\",\"detail\":\"secret internal path\"}\n\n ✓ src/app.test.ts (5 tests) 198ms\n\n Test Files  4 passed (4)\n      Tests  14 passed (14)\n   Start at  22:31:25\n   Duration  5.03s (transform 523ms, setup 0ms, collect 5.78s, tests 220ms, environment 1ms, prepare 2.84s)\n\n\n> npd-video-renderer@0.12.0 typecheck\n> tsc --noEmit\n\n\n> npd-video-renderer@0.12.0 bundle:check\n> tsx src/smoke-bundle.ts\n\nrenderer bundle created: C:\\Users\\VANGNG~1\\AppData\\Local\\Temp\\remotion-webpack-bundle-qkJanY\n"
+    "bundle": "PASS"
   },
   "flow_a": "EXPECTED_BLOCKED_PASS",
   "flow_b": "EXPECTED_BLOCKED_PASS",
   "flow_c": "EXPECTED_BLOCKED_PASS",
   "dr": "EXPECTED_BLOCKED_PASS",
   "postgres": "SEE_POSTGRES_CANDIDATE_TESTS",
-  "docker_e2e": "RUNNING_NOT_YET_CLAIMED",
+  "docker_e2e": {
+    "result": "PASS_PRE_HARDENING_SOURCE_SNAPSHOT",
+    "source_commit": "a366409d27f7c98074861745e3398a9c6602ff40",
+    "executable_tree_sha256": "d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832",
+    "final_source_coverage": "EXACT_HEAD_CANDIDATE_CI_REQUIRED",
+    "disposable_project": "npd-video-factory-v3-dr-vf-v0s-b3",
+    "verified": [
+      "render_and_QC",
+      "MinIO_objects_and_recovery",
+      "PostgreSQL_restart_recovery",
+      "worker_restart",
+      "existing_migration_chain",
+      "Flow_A_fixture_boundary",
+      "backup_restore_queue_recovery",
+      "dry_run_only_publication_analytics"
+    ],
+    "environment_errors": [
+      "Linux Docker CLI lacked Compose plugin; used existing DOCKER_BIN hook and empty task-owned Docker config",
+      "DR drill plain Linux Git could not resolve Windows-absolute worktree metadata; reran entire E2E with exact GIT_DIR and GIT_WORK_TREE"
+    ],
+    "source_workflow_compose_changes_for_environment": 0
+  },
   "candidate_ci": "NOT_YET_CREATED",
   "numeric_budget_reserved": "0",
   "provider_calls": 0,
   "provider_credential_reads": 0,
-  "live_reservations": 0
+  "live_reservations": 0,
+  "full_python_api_worker_bridge_pre_hardening": {
+    "passed": 1047,
+    "failed": 0,
+    "seconds": 286.55
+  },
+  "runtime_versions": {
+    "local_python": "WSL Python 3.12.3",
+    "local_node": "24.19.0",
+    "canonical_ci_python": "3.12",
+    "canonical_ci_node": "22"
+  },
+  "overlapped_sweep": {
+    "passed": 1047,
+    "failed": 1,
+    "seconds": 257.01,
+    "failed_case": "apps/api/tests/test_safety_config.py::test_capabilities_report_no_agent_hub_or_publishing_runtime",
+    "assertion": "agent_hub_bridge_enabled was True instead of False",
+    "classification": "SHARED_WORKTREE_E2E_FIXTURE_ENV_INTERFERENCE",
+    "serial_rerun_required": true
+  },
+  "post_hardening_peer_password_lookup": {
+    "control_rows": 1,
+    "counts": {
+      "attempts": 0,
+      "budget_alerts": 0,
+      "budget_days": 0,
+      "circuits": 0,
+      "operations": 0
+    },
+    "password_file_lookup": 0,
+    "provider_calls": 0,
+    "provider_credential_reads": 0,
+    "reserved_vnd": "0",
+    "result": "PASS_READ_ONLY_CUSTODY_WITH_PASSWORD_FILE_FUNCTION_DENIED"
+  },
+  "environment_flag_controlled_reproduction": {
+    "purpose": "CAUSAL_ENVIRONMENT_NEGATIVE_NOT_A_CLEAN_SOURCE_SWEEP",
+    "exit_code": 1,
+    "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________ test_capabilities_report_no_agent_hub_or_publishing_runtime __________\napps/api/tests/test_safety_config.py:353: in test_capabilities_report_no_agent_hub_or_publishing_runtime\n    assert result[\"agent_hub_bridge_enabled\"] is False\nE   assert True is False\n=========================== short test summary info ============================\nFAILED apps/api/tests/test_safety_config.py::test_capabilities_report_no_agent_hub_or_publishing_runtime\n1 failed in 2.10s\n",
+    "clean_control": "91 PASS including the same case and 90 bootstrap tests"
+  }
 }

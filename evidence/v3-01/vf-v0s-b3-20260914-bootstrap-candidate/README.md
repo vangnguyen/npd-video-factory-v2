@@ -9,7 +9,9 @@ preserves both original failures and successful native/translated-metadata runs.
 
 [B2 inventory](b2-source-inventory.json), [tree manifest](executable-tree-manifest.json),
 [PostgreSQL tests](postgres-candidate-tests.json), [test writes](test-write-boundary.json),
-[tests](tests.json) and SHA256SUMS.txt allow independent review.
+[tests](tests.json), [peer fallback proof](peer-password-fallback-proof.json),
+[local environment RCA](../../../docs/acceptance/v3-01/reviews/vf-v0s-b3/LOCAL_VALIDATION_RCA.md)
+and SHA256SUMS.txt allow independent review.
 
 B2 history is retained in local commit 1c3eb35b52337bc9aeda0fad93ec3b3bd00d089d,
 not imported as authority for this source candidate. RC17/18 tags and original
