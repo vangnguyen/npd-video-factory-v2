@@ -1,0 +1,31 @@
+{
+  "algorithm": "V3-01 canonical executable_tree_sha256; sorted compact UTF-8 JSON path -> Git object ID",
+  "algorithm_changed": false,
+  "excluded_paths": [
+    "apps/api/tests/",
+    "docs/acceptance/v3-01/",
+    "evidence/v3-01/"
+  ],
+  "base_main": "4507fa593fd8cf5484eb1245f788e9ee54eede39",
+  "old_executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+  "git_index_tree": "7357c6b798b63d89ce9afa646b67c5335fa9267f",
+  "canonical_input": {
+    ".env.example": "b0848b375acd9498d9f99f3a9d3440a50c5064ac",
+    ".github/workflows/ci.yml": "fec7dc81a6688a25774b2fca7936bd404b53eadf",
+    "apps/api/app": "a313c341bddc3d634f9d259983513684ba0d074e",
+    "apps/api/pyproject.toml": "99ee33d6b26e6250040ad5b2f7b5f58ef0259cb8",
+    "apps/studio-web": "003370542fe8131f07b3b16f0d9d050e8e4ba56a",
+    "deploy": "05fdda827b098d6325dd4c7f982df97a6f5c6965",
+    "docker-compose.yml": "5cd87fd46f9c764fcf4b8fa94375261a3dd25838",
+    "packages": "fedecefa37fd6e43bd12a7c6c2a92f85a82bea6e",
+    "renderer": "18c4569f004f7e1225d61c57298fd836315152f6",
+    "scripts": "8e5f7b0a3c9cd3e459d85e8515cacd8851a0224d",
+    "services": "a1d39b3df32f92ab49855f92e441ec8e299582ec",
+    "workflows": "cb5be4eb46d714672a599daaec4f755e8c716ee7"
+  },
+  "recompute_1": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+  "recompute_2": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+  "result": "PASS_DETERMINISTIC_SOURCE_CANDIDATE_NOT_RC18",
+  "pre_hardening_candidate_tree": "d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832",
+  "credential_fallback_hardening": "Explicit empty peer database password; disables asyncpg PGPASSWORD/password-file fallback; not a provider credential"
+}

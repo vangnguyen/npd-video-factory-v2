@@ -1,0 +1,181 @@
+{
+  "task": "VF-V0S-B3",
+  "full_python_api_worker_bridge": {
+    "passed": 1048,
+    "failed": 0,
+    "seconds": 190.99,
+    "result": "PASS",
+    "mode": "SERIAL_AFTER_E2E_CLEANUP_POST_HARDENING",
+    "output": "........................................................................ [  6%]\n........................................................................ [ 13%]\n........................................................................ [ 20%]\n........................................................................ [ 27%]\n........................................................................ [ 34%]\n........................................................................ [ 41%]\n........................................................................ [ 48%]\n........................................................................ [ 54%]\n........................................................................ [ 61%]\n........................................................................ [ 68%]\n........................................................................ [ 75%]\n........................................................................ [ 82%]\n........................................................................ [ 89%]\n........................................................................ [ 96%]\n........................................                                 [100%]\n1048 passed in 190.99s (0:03:10)\n"
+  },
+  "bootstrap": {
+    "passed": 90,
+    "failed": 0,
+    "independent_with_safety_case": {
+      "passed": 91,
+      "failed": 0,
+      "seconds": 6.35
+    },
+    "post_hardening": true
+  },
+  "focused_bootstrap_repository_provenance": {
+    "passed": 135,
+    "failed": 0,
+    "seconds": 3.99
+  },
+  "studio": {
+    "passed": 14
+  },
+  "renderer": {
+    "passed": 14,
+    "typecheck": "PASS",
+    "bundle": "PASS"
+  },
+  "flow_a": "EXPECTED_BLOCKED_PASS",
+  "flow_b": "EXPECTED_BLOCKED_PASS",
+  "flow_c": "EXPECTED_BLOCKED_PASS",
+  "dr": "EXPECTED_BLOCKED_PASS",
+  "postgres": "SEE_POSTGRES_CANDIDATE_TESTS",
+  "docker_e2e": {
+    "result": "PASS_PRE_HARDENING_SOURCE_SNAPSHOT",
+    "source_commit": "a366409d27f7c98074861745e3398a9c6602ff40",
+    "executable_tree_sha256": "d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832",
+    "final_source_coverage": "PASS_EXACT_SOURCE_HEAD_CANDIDATE_CI",
+    "disposable_project": "npd-video-factory-v3-dr-vf-v0s-b3",
+    "verified": [
+      "render_and_QC",
+      "MinIO_objects_and_recovery",
+      "PostgreSQL_restart_recovery",
+      "worker_restart",
+      "existing_migration_chain",
+      "Flow_A_fixture_boundary",
+      "backup_restore_queue_recovery",
+      "dry_run_only_publication_analytics"
+    ],
+    "environment_errors": [
+      "Linux Docker CLI lacked Compose plugin; used existing DOCKER_BIN hook and empty task-owned Docker config",
+      "DR drill plain Linux Git could not resolve Windows-absolute worktree metadata; reran entire E2E with exact GIT_DIR and GIT_WORK_TREE"
+    ],
+    "source_workflow_compose_changes_for_environment": 0,
+    "pre_hardening_local_result_preserved": true,
+    "exact_source_head_candidate_ci": {
+      "head": "853b9bd2cd0de7cfeebabde7003ce978f6f4d034",
+      "run_id": 34865777130,
+      "result": "PASS",
+      "canonical_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502"
+    }
+  },
+  "candidate_ci": {
+    "observed_exact_source_head": "853b9bd2cd0de7cfeebabde7003ce978f6f4d034",
+    "run_id": 34865777130,
+    "result": "5/5 PASS",
+    "all_expected_jobs": [
+      {
+        "completed_at": "2026-09-14T16:00:07Z",
+        "conclusion": "success",
+        "id": 104049144120,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Safety and compose contract",
+        "started_at": "2026-09-14T15:59:48Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-09-14T16:02:00Z",
+        "conclusion": "success",
+        "id": 104049144424,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Python unit and contract tests",
+        "started_at": "2026-09-14T15:59:48Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-09-14T16:05:21Z",
+        "conclusion": "success",
+        "id": 104049144474,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Docker deterministic E2E",
+        "started_at": "2026-09-14T15:59:49Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-09-14T16:00:14Z",
+        "conclusion": "success",
+        "id": 104049144478,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Renderer tests and bundle",
+        "started_at": "2026-09-14T15:59:48Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-09-14T15:59:55Z",
+        "conclusion": "success",
+        "id": 104049144586,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "name": "Studio tests",
+        "started_at": "2026-09-14T15:59:48Z",
+        "status": "completed"
+      }
+    ],
+    "final_pr_tip_rule": "CI of any governance-only closing commit must independently pass"
+  },
+  "numeric_budget_reserved": "0",
+  "provider_calls": 0,
+  "provider_credential_reads": 0,
+  "live_reservations": 0,
+  "full_python_api_worker_bridge_pre_hardening": {
+    "passed": 1047,
+    "failed": 0,
+    "seconds": 286.55
+  },
+  "runtime_versions": {
+    "local_python": "WSL Python 3.12.3",
+    "local_node": "24.19.0",
+    "canonical_ci_python": "3.12",
+    "canonical_ci_node": "22"
+  },
+  "overlapped_sweep": {
+    "passed": 1047,
+    "failed": 1,
+    "seconds": 257.01,
+    "failed_case": "apps/api/tests/test_safety_config.py::test_capabilities_report_no_agent_hub_or_publishing_runtime",
+    "assertion": "agent_hub_bridge_enabled was True instead of False",
+    "classification": "SHARED_WORKTREE_E2E_FIXTURE_ENV_INTERFERENCE",
+    "serial_rerun_required": true
+  },
+  "post_hardening_peer_password_lookup": {
+    "control_rows": 1,
+    "counts": {
+      "attempts": 0,
+      "budget_alerts": 0,
+      "budget_days": 0,
+      "circuits": 0,
+      "operations": 0
+    },
+    "password_file_lookup": 0,
+    "provider_calls": 0,
+    "provider_credential_reads": 0,
+    "reserved_vnd": "0",
+    "result": "PASS_READ_ONLY_CUSTODY_WITH_PASSWORD_FILE_FUNCTION_DENIED"
+  },
+  "environment_flag_controlled_reproduction": {
+    "purpose": "CAUSAL_ENVIRONMENT_NEGATIVE_NOT_A_CLEAN_SOURCE_SWEEP",
+    "exit_code": 1,
+    "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________ test_capabilities_report_no_agent_hub_or_publishing_runtime __________\napps/api/tests/test_safety_config.py:353: in test_capabilities_report_no_agent_hub_or_publishing_runtime\n    assert result[\"agent_hub_bridge_enabled\"] is False\nE   assert True is False\n=========================== short test summary info ============================\nFAILED apps/api/tests/test_safety_config.py::test_capabilities_report_no_agent_hub_or_publishing_runtime\n1 failed in 2.10s\n",
+    "clean_control": "91 PASS including the same case and 90 bootstrap tests"
+  },
+  "actual_frozen_rc18_source_guard": {
+    "result": "PASS_ACTUAL_FROZEN_RC18_DENIES_CANDIDATE_BEFORE_DB_CREDENTIALS_OR_AUTHORITY",
+    "exit_code": 0,
+    "ledger_access": 0
+  }
+}

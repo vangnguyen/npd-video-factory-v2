@@ -1,0 +1,38 @@
+{
+  "task": "VF-V0S-B3",
+  "classification": "ISOLATED_TEST_CANDIDATE_METADATA_AND_FIXTURE_STATE_ONLY",
+  "new_peer_test_databases": [
+    {
+      "database": "vf_vf_v3_01_rc19_c6da26ba2a8795793f7d36051a816b7d",
+      "kind": "ISOLATED_TEST_CATALOG_CREATE"
+    },
+    {
+      "database": "vf_vf_v3_01_rc19_c6da26ba2a8795793f7d36051a816b7d",
+      "kind": "EXISTING_MIGRATION_REPLAY_AND_CONTROL_SEED"
+    },
+    {
+      "database": "vf_vf_v3_01_rc20_20b9045ce79c76077018d74956d89b9a",
+      "kind": "ISOLATED_TEST_CATALOG_CREATE"
+    },
+    {
+      "database": "vf_vf_v3_01_rc20_20b9045ce79c76077018d74956d89b9a",
+      "kind": "EXISTING_MIGRATION_REPLAY_AND_CONTROL_SEED"
+    }
+  ],
+  "failed_helper_database": {
+    "database": "vf_vf_v3_01_rc19_bc7edc172ce290a91061f99c509545df",
+    "database_oid": 17841,
+    "state": "CATALOG_CREATED_BEFORE_CONFIGPARSER_ERROR_PRESERVED_NOT_PROMOTED",
+    "source_or_migration_bug": false
+  },
+  "historical_rc18_database_mutated": false,
+  "existing_rc18_authority_reused": false,
+  "sqlite_mock_tests": "Existing repository lifecycle tests simulate reservation/idempotency/circuits on disposable fixtures, not live reservations",
+  "docker_e2e": "Independent disposable npd-video-factory-v3-dr-vf-v0s-b3 fixture project; no business production execution",
+  "production_business_writes": 0,
+  "live_provider_dispatches": 0,
+  "live_budget_reservation_vnd": "0",
+  "actual_provider_cost_vnd": "0",
+  "new_rc_tags_created": 0,
+  "authority_bundle_window_created_or_mounted": false
+}
