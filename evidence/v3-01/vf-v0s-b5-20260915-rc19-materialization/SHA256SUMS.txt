@@ -2,7 +2,7 @@ d9511cc67f4a6d395f550cdd5b4b612f0645d8affe3ace6ef4b6a00826b23d92  docs/acceptanc
 057de613a726e46abe5af8b7165ad3a59ca0ed041e96ff7db95970092eee3aa7  docs/acceptance/v3-01/handoff.json
 ca6abbf59124e3424ce7c165029378448a34ccb9eba2fa5a83fe0050e4e2d789  docs/acceptance/v3-01/reviews/vf-v0s-b5/audit_evidence.py
 9d410d96ce689e724442c629e11dfc439b59e1f33af510ece11ca404ae2e7de0  docs/acceptance/v3-01/reviews/vf-v0s-b5/verify_rc19.py
-baa4c6dc4090c28effead06aaad2629dd37abf405e1f0e8d061727d494e96da2  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/README.md
+a544cde24d117da30d9ba484a7c3f04d408150dcda353b2b8880e5738498cd7f  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/README.md
 f08e979daba7d4049d5840a71c2aa99d7f3c9f165dc3b60df9e83ee61ddc6246  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/b4-main-provenance-source.json
 389d2800ff4340d515f6c0b6b9ed8516e232f107d477f4fdd13771b91b173cec  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/ci-log-excerpts.log
 a94501594bcb1b7dff2b70a3730f512f2e915db066305782126cf0c8486059ad  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/dual-ci-blocked.json

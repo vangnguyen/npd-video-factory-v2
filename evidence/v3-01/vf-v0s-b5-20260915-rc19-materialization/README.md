@@ -29,12 +29,12 @@ using unchanged `app.provider_ci_provenance.executable_tree_sha256`. Exact input
 independent clean-worktree recomputations and GitHub equality are retained.
 
 ```text
-PYTHONPATH=apps/api python -B docs/acceptance/v3-01/reviews/vf-v0s-b5/verify_rc19.py \
+PYTHONPATH=<clean-RC19-source>/apps/api python -B <governance-worktree>/docs/acceptance/v3-01/reviews/vf-v0s-b5/verify_rc19.py \
   --repo <clean-RC19-source> --second-clean-repo <clean-dc8ff553-source> \
   --metadata <pack>/post-tag-live-metadata.json --b4proof <pack>/b4-main-provenance-source.json --after-tag
-PYTHONPATH=apps/api python -B docs/acceptance/v3-01/reviews/vf-v0s-b5/audit_evidence.py \
+PYTHONPATH=<governance-worktree>/apps/api python -B <governance-worktree>/docs/acceptance/v3-01/reviews/vf-v0s-b5/audit_evidence.py \
   --repo <governance-worktree> --verify-manifest
-python -B scripts/v3_01_ci_provenance.py --repo <clean-RC19-source> \
+python -B <clean-RC19-source>/scripts/v3_01_ci_provenance.py --repo <clean-RC19-source> \
   --executable-rc-commit dc8ff55322267dfe54674fa6c4003a899bf235ab \
   --governance-main-commit dc8ff55322267dfe54674fa6c4003a899bf235ab \
   --executable-rc-ci-run-id 34875483864 --governance-main-ci-run-id 34869652973
