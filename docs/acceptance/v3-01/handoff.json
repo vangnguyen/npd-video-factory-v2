@@ -104,6 +104,11 @@
   },
   "evidence_pointer": "evidence/v3-01/vf-v0s-b6g-20260915-rc19-custody-governance-closure/README.md",
   "handoff_branch": "governance/vf-v0s-b6g-rc19-custody-closure",
+  "handoff_draft_pr": {
+    "number": 70,
+    "url": "https://github.com/vangnguyen/npd-video-factory-v2/pull/70",
+    "status": "OPEN / DRAFT / NOT_MERGED"
+  },
   "scope_drift": "PASS",
   "blockers": [],
   "next_safe_action": "Owner review and assign VF-V0S-B7 to prepare a fresh RC-19 ASR W1 Operation 1 rebind as PREPARED_NOT_AUTHORIZED. STOP before authority/window, bundle mount, credentials, reservation or provider dispatch."

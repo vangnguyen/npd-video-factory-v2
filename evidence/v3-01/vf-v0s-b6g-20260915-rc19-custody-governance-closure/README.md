@@ -21,3 +21,5 @@ state and RC-18/RC-19 isolation. VF-V0S-B6G performed no ledger mutation.
 
 This closure creates no Operation 1 identity, bundle, authority or window. Operation 1 rebind remains
 required, Operation 2 remains locked, the kill switch remains engaged, and Production remains NO-GO.
+
+The canonical handoff update is preserved in Draft PR #70 and is not merged by this task.

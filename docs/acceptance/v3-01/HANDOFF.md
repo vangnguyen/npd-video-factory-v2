@@ -62,6 +62,8 @@ and RC-18/RC-19 custody isolation PASS. VF-V0S-B6G made no ledger mutation.
 - [VF-V0S-B6 custody evidence](../../../evidence/v3-01/vf-v0s-b6-20260915-rc19-ledger-custody/README.md)
 - [Machine-readable handoff](handoff.json)
 - Handoff branch: `governance/vf-v0s-b6g-rc19-custody-closure`.
+- [Draft PR #70](https://github.com/vangnguyen/npd-video-factory-v2/pull/70):
+  OPEN / DRAFT / NOT_MERGED; requires a separate exact-head G-08 decision.
 - Historical evidence remains in Git history; nothing was silently removed.
 
 ## Next safe action — recommendation only
