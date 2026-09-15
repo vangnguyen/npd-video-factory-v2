@@ -1,60 +1,61 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B6",
-  "mode": "ZERO_CALL_DURABLE_LEDGER_CUSTODY_BOOTSTRAP_QUALIFICATION",
-  "verdict": "REVIEW_REQUIRED",
+  "task_id": "VF-V0S-B6G",
+  "mode": "GOVERNANCE_MERGE_EXACT_MAIN_CLOSURE",
+  "verdict": "PASS",
   "repo": "vangnguyen/npd-video-factory-v2",
-  "branch": "governance/vf-v0s-b6-rc19-ledger-custody",
-  "draft_pr": {
-    "number": 69,
-    "url": "https://github.com/vangnguyen/npd-video-factory-v2/pull/69",
-    "status": "OPEN / DRAFT / NOT_MERGED"
+  "governance_merge": {
+    "pr": 69,
+    "approved_head": "1c29cde030516b82f3fbc030deaaf0c7f25b202a",
+    "pre_merge_base": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
+    "merge_commit": "7ad25cb039c712d450486778d2981d9ef8175385",
+    "governance_main_sha": "7ad25cb039c712d450486778d2981d9ef8175385",
+    "g08": "PASS",
+    "changed_files": 11,
+    "scope": "HANDOFF_GOVERNANCE_EVIDENCE_ONLY",
+    "executable_runtime_files_changed": false
   },
-  "baseline": {
-    "governance_main_sha": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
-    "main_ci": 34916352282,
+  "provenance": {
+    "main_ci": 34946537685,
     "main_ci_result": "PASS_5_OF_5",
+    "main_ci_head_sha": "7ad25cb039c712d450486778d2981d9ef8175385",
     "main_provenance": "PASS",
+    "rc_ci": 34875483864,
+    "rc_ci_result": "PASS_5_OF_5",
     "dual_ci_provenance": "PASS",
-    "provenance_sha256": "12128084c7fff1397b2476e5360b45e13232eef0bbf161f962c3c6de38d43228",
+    "dual_ci_provenance_sha256": "77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171",
+    "previous_dual_ci_provenance_sha256": "12128084c7fff1397b2476e5360b45e13232eef0bbf161f962c3c6de38d43228",
+    "previous_provenance_status": "HISTORICAL_VALID_FOR_PRE_MERGE_MAIN",
     "source_drift": "NONE"
   },
   "rc": {
     "tag": "vf-v3-01-rc19",
     "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
     "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
-    "ci": 34875483864,
-    "ci_result": "PASS_5_OF_5",
-    "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap",
-    "bootstrap_module_blob": "ebcc65d1f23491a42d3894547a8fb1f16e6608d6"
+    "governance_main_executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "tree_equality": "PASS",
+    "status": "IMMUTABLE / GOVERNANCE_LINEAGE_CLOSED",
+    "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap"
   },
   "ledger": {
-    "expected_identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
-    "derived_identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
-    "identity_match": true,
-    "acceptance_lineage_id": "al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd",
+    "identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
     "backend": "PostgreSQL 16 / ProviderSafetyRepository",
-    "instance_root": "/home/vang_nguyen/.local/share/npd-vf-rc19-ledger-d86a01b1a8c5",
     "system_identifier": "7685665008963764889",
     "server_version": "16.15",
-    "database": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
     "database_oid": 16384,
     "schema": "public",
     "role": "vang_nguyen",
-    "socket": "/home/vang_nguyen/.local/share/npd-vf-rc19-ledger-d86a01b1a8c5/socket",
-    "socket_mode": "0700",
     "port": 55439,
     "transport": "LOCAL_UNIX_SOCKET_PEER_NO_PASSWORD",
-    "tcp_listener": false,
     "migration_head": "0014_v3_01_27",
-    "normalized_schema_sha256": "0b3e6ef5d39a70d31be53e6e1c15f6d0690c9e6e7e0a882ef4c014a54a36892b",
     "control_seed": "global/revision=0",
-    "custody": "VERIFIED",
+    "normalized_schema_sha256": "0b3e6ef5d39a70d31be53e6e1c15f6d0690c9e6e7e0a882ef4c014a54a36892b",
+    "custody": "VERIFIED / CANONICAL",
     "virgin_state": "VIRGIN_READY_FOR_OPERATION_REBIND",
     "provider_request_receipt_exists": false,
     "active_reservation": false,
     "duplicate_or_idempotency_collision": false,
-    "reserved_vnd": "0",
+    "operation_1_consumed": false,
     "row_counts": {
       "provider_safety_operations": 0,
       "provider_safety_attempts": 0,
@@ -64,15 +65,12 @@
       "provider_usage": 0,
       "cost_records": 0,
       "idempotency_keys": 0
-    }
+    },
+    "rc18_rc19_isolation": "PASS",
+    "mutations_in_vf_v0s_b6g": 0
   },
   "bootstrap": {
-    "source_guard": "PASS",
-    "lineage_derivation": "PASS",
-    "database_naming": "PASS",
-    "socket_custody": "PASS",
-    "repository_read_only_custody": "PASS",
-    "overall": "PARTIAL_REVIEW_REQUIRED",
+    "lineage_and_custody_primitives": "VERIFIED",
     "operation_bound_invocation": "DEFERRED_REQUIRES_OPERATION_REBIND",
     "operation_specific_required_fields": [
       "operation_key",
@@ -83,51 +81,17 @@
     ],
     "provider_execution_path_entered": false
   },
-  "isolation": {
-    "result": "PASS",
-    "rc18_database": "vf_vf_v3_01_rc18_466d54d9ede1b6f7f3179ddd52b7e251",
-    "rc18_database_present_in_rc19_cluster": false,
-    "rc18_system_identifier": "7685407204168180413",
-    "rc19_system_identifier": "7685665008963764889",
-    "system_identifiers_distinct": true,
-    "shared_operation_or_reservation_keys": false,
-    "rc18_state_reused": false
-  },
   "authority": {
     "operation_1_id": "NOT_CREATED",
     "operation_1_rebind_required": true,
-    "fresh_authority_required": true,
+    "operation_1_authority": "NOT_CREATED",
     "fresh_execution_window_required": true,
     "operation_2": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
-    "bundle_created": false,
     "bundle_mounted": false,
-    "kill_switch": "ENGAGED",
-    "external_execution": false,
-    "paid_execution": false
-  },
-  "ledger_bootstrap_writes": {
-    "allowed_and_completed": [
-      "PRIVATE_POSTGRES_CLUSTER_CREATE",
-      "RC19_DATABASE_CREATE",
-      "CANONICAL_MIGRATIONS_0001_TO_0014",
-      "EXISTING_CONTROL_SEED_GLOBAL_REVISION_0"
-    ],
-    "disposable_validation": "TEMP_DATABASE_HEAD_BASE_HEAD_THEN_REMOVED",
-    "operation_rows_created": 0,
-    "provider_execution": false,
-    "production_business_writes": 0
-  },
-  "validation": {
-    "focused_bootstrap_provenance_lineage_w1_loader": "PASS_284",
-    "provider_safety_repository_idempotency_reservation_kill_switch": "PASS_139",
-    "actual_custody_audit": "PASS_2_IDENTICAL_RECOMPUTES",
-    "audit_sha256": "cf03434382323582081fb36bbc1133d5a66d4af4f66f906f671fcf01c12c4f70",
-    "migration_replay": "PASS_0014_BASE_0014",
-    "postgres_connectivity": "PASS",
-    "json_links_checksums_secret_diff": "PENDING_FINAL_PACK_VALIDATION"
+    "kill_switch": "ENGAGED"
   },
   "safety": {
-    "provider_credential_reads": 0,
+    "credential_reads": 0,
     "budget_reserved_vnd": "0",
     "production_business_writes": 0,
     "real_provider_calls": 0,
@@ -138,10 +102,9 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "evidence/v3-01/vf-v0s-b6-20260915-rc19-ledger-custody/README.md",
+  "evidence_pointer": "evidence/v3-01/vf-v0s-b6g-20260915-rc19-custody-governance-closure/README.md",
+  "handoff_branch": "governance/vf-v0s-b6g-rc19-custody-closure",
   "scope_drift": "PASS",
-  "blockers": [
-    "The current BootstrapLedgerBinding requires fresh Operation 1 identity and authority/bundle/scope hashes, while VF-V0S-B6 explicitly prohibits creating them. Full operation-bound RC-19 bootstrap cannot be invoked without violating task scope."
-  ],
-  "next_safe_action": "Owner review of ordering. If approved, prepare VF-V0S-B7 as PREPARED_NOT_AUTHORIZED only, then perform a separate zero-call operation-bound bootstrap qualification against this existing virgin custody. STOP before authority/window, bundle mount, credentials, reservation or provider dispatch."
+  "blockers": [],
+  "next_safe_action": "Owner review and assign VF-V0S-B7 to prepare a fresh RC-19 ASR W1 Operation 1 rebind as PREPARED_NOT_AUTHORIZED. STOP before authority/window, bundle mount, credentials, reservation or provider dispatch."
 }
