@@ -1,0 +1,19 @@
+{
+  "acceptance_lineage_id": "al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd",
+  "authority_receipt_sha256": null,
+  "authority_status": "NOT_CREATED",
+  "bundle_final_runtime_sha256": null,
+  "bundle_preparation_template_sha256": "30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f",
+  "current_bootstrap_model_blocker": "AWAITING_OWNER_AUTHORITY_AND_FINAL_RUNTIME_BUNDLE",
+  "current_bootstrap_model_valid": false,
+  "database_identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+  "execution_scope_sha256": "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
+  "operation_key": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+  "operation_preparation_package_sha256": "ce062210c497ced70df4229998563534c7301e0c08cdb4c0606516c6954aa408",
+  "rc_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+  "rc_tag": "vf-v3-01-rc19",
+  "schema": "vf-v0s-b7-operation-bound-bootstrap-plan-v1",
+  "scope_sha256": "eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49",
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "zero_call_b8_inputs_ready": true
+}

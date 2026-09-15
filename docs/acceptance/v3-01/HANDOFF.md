@@ -1,97 +1,107 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B6
-VERDICT: REVIEW_REQUIRED
+TASK: VF-V0S-B7
+VERDICT: PASS
 REPO: vangnguyen/npd-video-factory-v2
 
 ## Authoritative lineage
 
-- Governance main: `d13c57bf480ed3b6b8b56f46370fef58b291810b`.
-- Main CI `34916352282`: 5/5 PASS; main provenance: PASS.
+- Governance main: `7ad25cb039c712d450486778d2981d9ef8175385`.
+- Main CI `34946537685`: 5/5 PASS; main provenance: PASS.
 - RC `vf-v3-01-rc19` → `dc8ff55322267dfe54674fa6c4003a899bf235ab`.
 - RC CI `34875483864`: 5/5 PASS.
 - RC executable-tree SHA: `432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502`.
 - RC/main dual-CI provenance: PASS; provenance SHA-256
-  `12128084c7fff1397b2476e5360b45e13232eef0bbf161f962c3c6de38d43228`.
-- Bootstrap entrypoint: `python -m app.provider_runtime_bootstrap`; exact RC source/blob guard: PASS.
+  `77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171`.
+- Bootstrap entrypoint: `python -m app.provider_runtime_bootstrap`.
 
-## RC-19 durable custody
+## Canonical ledger and virgin state
 
-The lineage-aware algorithm independently re-derived
-`vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed`; it exactly matches the
-approved plan. A fresh private PostgreSQL custody environment now exists:
+- Ledger: `vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed`.
+- PostgreSQL `16.15`, system identifier `7685665008963764889`, database OID
+  `16384`, schema `public`, peer role `vang_nguyen`.
+- Migration head `0014_v3_01_27`; control seed `global/revision=0`.
+- State before rebind: `VIRGIN_READY_FOR_OPERATION_REBIND`.
+- Exact fresh operation rows/attempts: 0/0; no consumed state, request receipt,
+  active reservation or duplicate/idempotency collision.
+- RC-18/RC-19 custody and operation identities remain isolated: PASS.
+- No prepared-operation metadata write was required.
 
-- PostgreSQL `16.15`, system identifier `7685665008963764889`;
-- database OID `16384`, schema `public`, peer role `vang_nguyen`;
-- private Unix socket
-  `/home/vang_nguyen/.local/share/npd-vf-rc19-ledger-d86a01b1a8c5/socket`,
-  port `55439`, owner-only mode `0700`, no TCP listener;
-- canonical migration head `0014_v3_01_27`;
-- canonical control seed `global`, revision 0;
-- normalized schema SHA-256
-  `0b3e6ef5d39a70d31be53e6e1c15f6d0690c9e6e7e0a882ef4c014a54a36892b`
-  reproduced 2/2.
+## Fresh RC-19 Operation 1 preparation
 
-The only durable writes were the fresh cluster/database, migrations and existing
-control seed. A disposable migration-replay database completed `0014 → base →
-0014` and was removed. These are `LEDGER_BOOTSTRAP_WRITES`, not provider or
-production-business execution.
+- Acceptance lineage:
+  `al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd`.
+- Operation 1:
+  `v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01`.
+- Ledger operation key: exact Operation 1 identity above.
+- Ledger operation binding SHA:
+  `867ec5d9eb6b3b4756d74a051941ca3104a7c4a370832df263dea261828bcf63`.
+- Execution-scope SHA:
+  `7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85`.
+- Scope SHA:
+  `eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49`.
+- Operation-manifest SHA:
+  `d24e29259fd2cea90f539fc2e60b213f7b9522a515de18defda606607a0673ca`.
+- Preparation bundle/template SHA:
+  `30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f`.
 
-## Virgin state and isolation
+The package status is **PREPARED_NOT_AUTHORIZED**. The gate template is
+deliberately not loader-valid because G-01/G-02/G-03, Owner authority receipt,
+confirmation-token binding and final runtime-bundle identity do not exist. The
+preparation hash must never be substituted for a runtime authority bundle.
 
-State is `VIRGIN_READY_FOR_OPERATION_REBIND`: operations, attempts, budget days,
-circuits, budget alerts, provider usage, cost records and idempotency keys are
-all 0; reserved VND is numeric 0. There is no provider-request receipt, active
-reservation, duplicate or consumed operation.
+## Immutable ASR binding
 
-RC-18 and RC-19 use different cluster roots, system identifiers and databases.
-The historical RC-18 database is absent from the RC-19 cluster. No RC-18
-operation, reservation, authority, bundle or window was inherited.
+- Provider/model/capability/language:
+  `openai-transcription / whisper-1 / asr / vi`.
+- W1 profile SHA:
+  `9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1`.
+- Prompt SHA:
+  `6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48`.
+- Asset 01 SHA:
+  `fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef`.
+- Reference transcript SHA:
+  `585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e`.
+- RightsRecord canonical SHA:
+  `5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091`.
 
-## Fail-closed bootstrap finding
+All values were recomputed from repository material; no RC-18
+operation-specific identity, scope, bundle, authority, reservation or window
+was inherited.
 
-Custody, source, lineage derivation, namespace selection and read-only repository
-primitives are VERIFIED. The overall task remains `REVIEW_REQUIRED`: the current
-`BootstrapLedgerBinding` also requires a fresh operation key, authority receipt,
-runtime bundle hash, execution-scope hash and scope hash. VF-V0S-B6 explicitly
-forbids creating Operation 1 rebind material. Therefore the real operation-bound
-bootstrap entrypoint cannot be invoked honestly yet.
+## Proposal and safety state
 
-No placeholder, synthetic Operation 1 identity or RC-18 value was used to force
-`RC19_EXECUTION_BOOTSTRAP = VERIFIED`. Owner must approve an ordering change:
-first prepare the fresh RC-19 Operation 1 rebind without authority, then rerun a
-separate zero-call operation-bound bootstrap qualification against this existing
-virgin custody.
-
-## Safety and validation
-
-- Focused bootstrap/provenance/lineage/W1/loader: 284 PASS.
-- ProviderSafetyRepository, idempotency, reservation and kill-switch: 139 PASS.
-- Actual custody read audit: 2/2 identical.
-- Migration replay, PostgreSQL connectivity, JSON, links, checksums, secret scan
-  and diff hygiene: PASS.
+- Proposed window: `2026-09-16 21:00` → `2026-09-17 01:00` ICT
+  (`2026-09-16 14:00` → `18:00` UTC), `PROPOSED_NOT_AUTHORIZED`.
+- Modeled cost: `326.3004 VND`; proposed ceilings: `500 VND` per operation and
+  `1,250 VND` per window.
+- One attempt, concurrency one, 90s/120s provider/controller timeout,
+  retry/fallback 0/0.
 - Kill switch: ENGAGED. Bundle: UNMOUNTED.
-- Operation 1 ID/rebind: NOT_CREATED / REQUIRED.
-- Fresh authority/window: NOT_CREATED / REQUIRED.
+- Operation 1: PREPARED_NOT_AUTHORIZED / NOT_CONSUMED.
 - Operation 2: NOT_APPROVED / LOCKED / NOT_TRANSFERRED.
-- Credential reads: 0; budget reserved: 0 VND; real provider calls: 0;
-  production business writes: 0; actual cost: 0 VND.
+- Credential reads: 0; budget reserved: 0 VND; provider calls: 0; production
+  business writes: 0; actual cost: 0 VND.
 - ASR: 0/2 PASS. Vision: 2/2 PASS. Production: NO-GO.
 
-## Evidence
+## Validation and evidence
 
-- [B6 custody evidence](../../../evidence/v3-01/vf-v0s-b6-20260915-rc19-ledger-custody/README.md)
-- [Machine-readable handoff](handoff.json)
-- Review branch: `governance/vf-v0s-b6-rc19-ledger-custody`.
-- [Draft PR #69](https://github.com/vangnguyen/npd-video-factory-v2/pull/69):
-  OPEN / DRAFT / NOT_MERGED; never merge automatically.
+- Focused Linux bootstrap/gate/W1/safety suite: 473 PASS.
+- Full Python/API/worker/bridge: 1,052 PASS.
+- Studio: 14 PASS. Renderer: 14 PASS plus typecheck/bundle check.
+- Migration replay, acceptance validation, deterministic package reproduction,
+  Compose contract, JSON/checksum/secret/diff validation: PASS.
+- [B7 evidence pack](../../../evidence/v3-01/vf-v0s-b7-20260915-rc19-asr-w1-prepared/README.md).
+- [Machine-readable handoff](handoff.json).
+- Review branch: `governance/vf-v0s-b7-rc19-asr-w1-prepared`.
+- Draft PR: pending creation; never merge automatically.
 - Historical handoff/evidence remains in Git history; nothing was silently removed.
 
 ## Next safe action — recommendation only
 
-Owner review of the bootstrap/rebind ordering. If approved, assign VF-V0S-B7 as
-`PREPARED_NOT_AUTHORIZED`, then assign a separate zero-call bootstrap
-qualification using the newly bound Operation 1 identity. Stop before fresh
-authority/window, runtime bundle mount, provider credential access, budget
-reservation, kill-switch transition or provider dispatch.
+Owner assignment of **VF-V0S-B8 — zero-call operation-bound bootstrap
+qualification** using this exact prepared identity and the existing virgin RC-19
+custody. Stop before G-01/G-02/G-03, Owner authority/window activation, final
+runtime bundle mount, credential access, budget reservation, kill-switch
+transition or provider dispatch.

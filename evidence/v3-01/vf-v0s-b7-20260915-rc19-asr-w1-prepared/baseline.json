@@ -1,0 +1,35 @@
+{
+  "task_id": "VF-V0S-B7",
+  "verified_at_utc": "2026-09-15T09:14:26Z",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "governance_main": {
+    "expected": "7ad25cb039c712d450486778d2981d9ef8175385",
+    "local": "7ad25cb039c712d450486778d2981d9ef8175385",
+    "remote": "7ad25cb039c712d450486778d2981d9ef8175385",
+    "drift": false,
+    "ci_run_id": 34946537685,
+    "ci_result": "PASS_5_OF_5",
+    "provenance": "PASS"
+  },
+  "rc": {
+    "tag": "vf-v3-01-rc19",
+    "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "ci_run_id": 34875483864,
+    "ci_result": "PASS_5_OF_5"
+  },
+  "dual_ci_provenance": {
+    "result": "PASS",
+    "sha256": "77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171",
+    "tree_equality": "PASS"
+  },
+  "runtime_defaults": {
+    "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap",
+    "kill_switch": "ENGAGED",
+    "external_execution": false,
+    "paid_execution": false,
+    "checked_in_per_operation_budget_vnd": "0",
+    "checked_in_daily_budget_vnd": "0"
+  },
+  "scope_drift": "PASS"
+}

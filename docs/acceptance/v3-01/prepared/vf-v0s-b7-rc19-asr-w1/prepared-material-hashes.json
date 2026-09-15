@@ -1,0 +1,27 @@
+{
+  "acceptance_lineage_id": "al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd",
+  "canonicalization": "UTF-8, Unicode retained, sorted keys, compact separators for canonical SHA; artifact hashes cover exact pretty UTF-8 LF bytes.",
+  "execution_scope_sha256": "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
+  "files_sha256": {
+    "bootstrap-binding-plan.json": "19a62379538bb036408fc75b337fd4c09d43b2a8180e9f2106cccb4c2fe549c0",
+    "future-evidence-contract.json": "ba6a8896fa77b8ca1d4fccfcdf22ef745dd538c0fbbc96523632ded8bd61d68c",
+    "gate-template.json": "30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f",
+    "historical-package-invalidation.json": "46e118a302aae253537193ded4000ab92ba21e753bc9e187dbf4a67c620ab815",
+    "immutable-input-validation.json": "bde32cf9898df740e4a03cda812c262661e6deb39bca90153222732e7f0f6a05",
+    "ledger-readiness.json": "93b86a7e62efb50bc43e834f23e5a2cf742401b06add99f5c43615dc15097850",
+    "operation-1-manifest.json": "4c9cf0f5af3ed3ba0bb1e67261b528a015a0bd31101b0145263b6b31f1b54167",
+    "operation-preparation-package.json": "02683c0023a1caea9e65cb7bc92fc6355dd7df9567536e35b8e6b54f270a946c",
+    "pricing-basis.json": "5f988e2df47320605140d099c5a5b4ab6c48bbe68877bb00b7e65f541c8f305c",
+    "scope-candidate.json": "695888cdfc85eb5f31ac14b6ff5d4d2759dde473bc51b70b65638d17e8dd4b12"
+  },
+  "ledger_operation_binding_sha256": "867ec5d9eb6b3b4756d74a051941ca3104a7c4a370832df263dea261828bcf63",
+  "operation_id": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+  "operation_manifest_canonical_sha256": "d24e29259fd2cea90f539fc2e60b213f7b9522a515de18defda606607a0673ca",
+  "operation_preparation_package_canonical_sha256": "ce062210c497ced70df4229998563534c7301e0c08cdb4c0606516c6954aa408",
+  "preparation_bundle_template_sha256": "30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f",
+  "prompt_utf8_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+  "schema": "vf-v0s-b7-prepared-hashes-v1",
+  "scope_canonical_sha256": "eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49",
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "w1_profile_canonical_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1"
+}
