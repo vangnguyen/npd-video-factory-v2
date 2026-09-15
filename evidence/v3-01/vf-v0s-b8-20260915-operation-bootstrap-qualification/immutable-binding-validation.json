@@ -1,0 +1,19 @@
+{
+  "task_id": "VF-V0S-B8",
+  "prepared_material_reproduction": "PASS_12_FILES",
+  "provider": "openai-transcription",
+  "model": "whisper-1",
+  "capability": "asr",
+  "language": "vi",
+  "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+  "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+  "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+  "reference_transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+  "rights_record_canonical_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+  "execution_scope_sha256": "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
+  "scope_sha256": "eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49",
+  "operation_manifest_sha256": "d24e29259fd2cea90f539fc2e60b213f7b9522a515de18defda606607a0673ca",
+  "preparation_template_sha256": "30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f",
+  "all_expected_values_match": true,
+  "scope_drift": "PASS"
+}

@@ -1,0 +1,45 @@
+{
+  "task_id": "VF-V0S-B8",
+  "dual_ci_provenance": {
+    "status": "PASS",
+    "sha256": "77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171",
+    "rc_ci": "34875483864 PASS_5_OF_5",
+    "governance_main_ci": "34946537685 PASS_5_OF_5"
+  },
+  "executable_tree": {
+    "rc19": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "governance_main": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "review_head": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "equality": "PASS"
+  },
+  "prepared_package_reproduction": "PASS_12_FILES",
+  "linux_focused_bootstrap_b7_b8": {
+    "status": "PASS",
+    "tests": 99,
+    "duration_seconds": 3.10
+  },
+  "full_linux_python_api_worker_bridge": {
+    "status": "PASS",
+    "tests": 1013,
+    "duration_seconds": 181.66
+  },
+  "native_windows_observation": {
+    "status": "NON_CANONICAL_HOST_PATH_FAILURE",
+    "passed": 50,
+    "failed": 49,
+    "root_cause": "The historical fixture uses a POSIX Unix-socket path, which WindowsPath correctly does not accept as absolute.",
+    "disposition": "Canonical Linux/CI execution is authoritative and passed; no runtime or test source was modified in B8."
+  },
+  "acceptance_repository": "PASS",
+  "evidence_manifest": "PASS",
+  "json_validation": "PASS",
+  "local_markdown_links": "PASS",
+  "secret_scan": "PASS",
+  "git_diff_check": "PASS",
+  "actual_ledger_readonly_audit": "PASS_ZERO_WRITE",
+  "actual_bootstrap_invocation": "FAIL_CLOSED_BOOTSTRAP_BINDING_INVALID",
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "budget_reserved_vnd": "0",
+  "actual_cost_vnd": "0"
+}

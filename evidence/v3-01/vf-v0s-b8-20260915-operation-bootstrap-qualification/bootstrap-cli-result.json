@@ -1,0 +1,26 @@
+{
+  "task_id": "VF-V0S-B8",
+  "entrypoint": "python -m app.provider_runtime_bootstrap",
+  "module_source": "vf-v3-01-rc19 exact detached worktree",
+  "mode_requested": "ZERO_CALL_CUSTODY_ONLY",
+  "binding_path": "docs/acceptance/v3-01/reviews/vf-v0s-b8/pre-authority-bootstrap-binding.json",
+  "binding_sha256": "ced7e0fd8be694386b3242dc56ca8161b988e7f20dbeebffc10ac43e92123e9d",
+  "result": "BLOCKED",
+  "code": "BOOTSTRAP_BINDING_INVALID",
+  "exit_code": 2,
+  "validation_error_fields": [
+    "authority_receipt_sha256",
+    "bundle_sha256"
+  ],
+  "validation_error_types": {
+    "authority_receipt_sha256": "string_type",
+    "bundle_sha256": "string_type"
+  },
+  "reached_source_validation": false,
+  "reached_ledger_validation": false,
+  "reason": "The verified schema requires both non-null runtime authority receipt and final runtime bundle hashes before bootstrap_custody is called.",
+  "placeholder_or_historical_authority_used": false,
+  "preparation_template_substituted_as_runtime_bundle": false,
+  "provider_calls": 0,
+  "credential_reads": 0
+}
