@@ -1,0 +1,156 @@
+{
+  "acceptance_lineage_id": "al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd",
+  "acceptance_lineage_sequence": 1,
+  "allowed_operations_planning_only": [
+    {
+      "asset_hash": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "asset_id": "asset-g03-asr-vi-owned-01",
+      "operation": "flow_a_asr",
+      "operation_key": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+      "slot": 1
+    },
+    {
+      "asset_hash": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "asset_id": "asset-g03-asr-vi-owned-02",
+      "operation": "flow_a_asr",
+      "operation_key": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-02",
+      "slot": 2
+    }
+  ],
+  "anchors": {
+    "dual_ci_provenance": "PASS",
+    "dual_ci_provenance_sha256": "77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171",
+    "executable_rc_ci_run_id": 34875483864,
+    "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "governance_main_ci_run_id": 34946537685,
+    "governance_main_commit": "7ad25cb039c712d450486778d2981d9ef8175385",
+    "main_provenance": "PASS",
+    "rc_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "rc_tag": "vf-v3-01-rc19",
+    "repository": "vangnguyen/npd-video-factory-v2"
+  },
+  "budget": {
+    "acceptance_window_limit_vnd": "1250",
+    "automatic_retry": false,
+    "budget_day_utc": "2026-09-16",
+    "controller_hard_timeout_seconds": 120.0,
+    "currency": "VND",
+    "files_per_operation": 1,
+    "max_attempts": 1,
+    "max_concurrent_calls": 1,
+    "max_duration_seconds": 180.0,
+    "max_file_bytes": 25000000,
+    "model_fallback": false,
+    "per_operation_limit_vnd": "500",
+    "provider_http_timeout_seconds": 90.0,
+    "requested_language": "vi",
+    "response_format": "verbose_json",
+    "timestamp_granularities": [
+      "segment",
+      "word"
+    ],
+    "vnd_per_minute": "162"
+  },
+  "budget_canonical_sha256": "10403dc5ce372e2421bae36ab28ae5ec864acafe85253b07c210c5c29053814b",
+  "capability": "asr",
+  "credential_alias_reference_only": "secret://openai/codex-video",
+  "execution_scope_sha256": "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
+  "immutable_inputs": [
+    {
+      "asset_id": "asset-g03-asr-vi-owned-01",
+      "asset_path": "docs/acceptance/v3-01/assets/g03-asr-vi-owned-01.wav",
+      "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "channels": 1,
+      "duration_seconds_exact": "120.852",
+      "frame_count": 2900448,
+      "modeled_cost_vnd": "326.3004",
+      "new_execution_rights_or_approval_created": false,
+      "reference_transcript_path": "docs/acceptance/v3-01/transcripts/g03-asr-vi-owned-01.txt",
+      "reference_transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+      "rights_record_canonical_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+      "rights_record_file_sha256": "befe2950889a536f71611266d893276cbbddb240e01213c0065feb13d9f0d86a",
+      "rights_record_id": "V3-01-RIGHTS-ASR-001",
+      "rights_record_path": "docs/acceptance/v3-01/rights/V3-01-RIGHTS-ASR-001.json",
+      "role": "OPERATION_1_INPUT",
+      "sample_rate_hz": 24000,
+      "sample_width_bytes": 2,
+      "size_bytes": 5800940,
+      "slot": 1
+    },
+    {
+      "asset_id": "asset-g03-asr-vi-owned-02",
+      "asset_path": "docs/acceptance/v3-01/assets/g03-asr-vi-owned-02.wav",
+      "asset_sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "channels": 1,
+      "duration_seconds_exact": "134.5906666666666666666666667",
+      "frame_count": 3230176,
+      "modeled_cost_vnd": "363.3948",
+      "new_execution_rights_or_approval_created": false,
+      "reference_transcript_path": "docs/acceptance/v3-01/transcripts/g03-asr-vi-owned-02.txt",
+      "reference_transcript_sha256": "0bff8c2b403cee452fac00f71b84759988ea515027fda6bd49be76ae382c1fef",
+      "rights_record_canonical_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323",
+      "rights_record_file_sha256": "a5cdd1bbd592da0a8d1a92dd97df4080829f8df49c3570e954951020d0f71d10",
+      "rights_record_id": "V3-01-RIGHTS-ASR-002",
+      "rights_record_path": "docs/acceptance/v3-01/rights/V3-01-RIGHTS-ASR-002.json",
+      "role": "FUTURE_SLOT_2_NEGATIVE_INSERTION_GUARD_ONLY_LOCKED",
+      "sample_rate_hz": 24000,
+      "sample_width_bytes": 2,
+      "size_bytes": 6460396,
+      "slot": 2
+    }
+  ],
+  "language": "vi",
+  "ledger": {
+    "custody": "VERIFIED",
+    "identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+    "operation_binding_sha256": "867ec5d9eb6b3b4756d74a051941ca3104a7c4a370832df263dea261828bcf63",
+    "operation_key": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+    "state": "VIRGIN_NOT_REGISTERED / NOT_CONSUMED"
+  },
+  "model": "whisper-1",
+  "operation_2_status": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
+  "owner_approval_slots": {
+    "G-01": {
+      "record_sha256": null,
+      "status": "NOT_CREATED"
+    },
+    "G-02": {
+      "record_sha256": null,
+      "status": "NOT_CREATED"
+    },
+    "G-03": {
+      "record_sha256": null,
+      "status": "NOT_CREATED"
+    }
+  },
+  "owner_manifest_path": "docs/acceptance/v3-01/assets/V3-01-RC11-ASR-ASSET-MANIFEST.json",
+  "owner_manifest_sha256": "0d7aef962dcb5e34ed5786fadd2e9cfd156cbfb8784d498092262d33b76de7c0",
+  "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+  "proposed_window": {
+    "budget_day_utc": "2026-09-16",
+    "end_ict": "2026-09-17T01:00:00+07:00",
+    "end_utc": "2026-09-16T18:00:00+00:00",
+    "scheduler_or_countdown_created": false,
+    "start_ict": "2026-09-16T21:00:00+07:00",
+    "start_utc": "2026-09-16T14:00:00+00:00",
+    "status": "PROPOSED_NOT_AUTHORIZED",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  "provider_capability_scope_sha256": "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+  "provider_key": "openai-transcription",
+  "safety_state": {
+    "actual_cost_vnd": "0",
+    "budget_reserved_vnd": "0",
+    "bundle_mounted": false,
+    "credential_reads": 0,
+    "external_execution": false,
+    "kill_switch": "ENGAGED",
+    "paid_execution": false,
+    "prepared_operation_metadata_write": false,
+    "production_business_writes": 0,
+    "real_provider_calls": 0
+  },
+  "schema": "vf-v0s-b7-prepared-scope-v1",
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1"
+}

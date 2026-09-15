@@ -1,0 +1,21 @@
+{
+  "accounting_fx_not_market_fx": true,
+  "actual_provider_cost_new_task_vnd": "0",
+  "asset_01_modeled_vnd": "326.3004",
+  "asset_02_planning_modeled_vnd": "363.3948",
+  "calculation": "duration_seconds / 60 * 0.006 USD/minute * 27000 fixed accounting VND/USD",
+  "fixed_accounting_vnd_per_usd": "27000",
+  "hard_180_seconds_modeled_vnd": "486",
+  "model": "whisper-1",
+  "observed_at_utc": "2026-09-15T08:54:13Z",
+  "official_source": "https://developers.openai.com/api/docs/models/whisper-1",
+  "per_operation_ceiling_vnd": "500",
+  "price_or_fx_drift_policy": "FAIL_CLOSED_OWNER_REBIND_REQUIRED",
+  "price_usd_per_minute": "0.006",
+  "reservation_performed": false,
+  "status": "CURRENT_PUBLIC_PRICE_REVALIDATED; RC19 BUDGET NOT_AUTHORIZED",
+  "task_id": "VF-V0S-B7",
+  "two_asset_planning_modeled_vnd": "689.6952",
+  "vnd_per_minute": "162",
+  "window_ceiling_vnd": "1250"
+}

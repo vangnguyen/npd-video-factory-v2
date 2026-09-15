@@ -1,0 +1,12 @@
+{
+  "historical_authority_receipt_sha256": "9a2750d2f6f8db6e5a130726f56e216873c202b59e5408bcca42a4607c87e397",
+  "historical_bundle_sha256": "bb0f588c1465386e2be4caadf578dc10bb23020061a01c82ff4beab8b6fc2743",
+  "historical_execution_scope_sha256": "64d69549493743774e035f04efb99d890f86799b79a9bbef06a7ee26c8b5cf77",
+  "historical_files_modified": false,
+  "historical_operation_id": "v3-01-rc18-openai-transcription-asr-al-0001-0e0aa1417c53feb79da3656eaa0d228b059db841496243f533b48607312c8518-call-01",
+  "historical_rc": "vf-v3-01-rc18",
+  "historical_scope_sha256": "bf23f78f972f319eba224b7ca4d988dfe5edf0f7bbaa1381cc80e916dfd814d5",
+  "operation_identity_authority_scope_bundle_window_reservation_transferred": false,
+  "schema": "vf-v0s-b7-historical-package-invalidation-v1",
+  "status": "HISTORICAL_REFERENCE_ONLY / INVALID_FOR_RC19"
+}

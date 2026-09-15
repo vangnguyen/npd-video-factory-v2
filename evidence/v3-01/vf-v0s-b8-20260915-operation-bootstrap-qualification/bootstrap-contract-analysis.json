@@ -1,0 +1,32 @@
+{
+  "task_id": "VF-V0S-B8",
+  "implementation": "apps/api/app/provider_runtime_bootstrap.py",
+  "implementation_git_blob": "ebcc65d1f23491a42d3894547a8fb1f16e6608d6",
+  "supported_mode": "ZERO_CALL_CUSTODY_ONLY",
+  "cli_switches": [
+    "--binding",
+    "--expected-binding-sha256",
+    "--rc-source",
+    "--initialize-control",
+    "--require-virgin-namespace"
+  ],
+  "preauthority_qualification_switch": null,
+  "preauthority_ready_state": null,
+  "required_before_source_or_ledger_validation": [
+    "authority_receipt_sha256",
+    "bundle_sha256",
+    "execution_scope_sha256",
+    "scope_sha256"
+  ],
+  "authority_receipt_nullable": false,
+  "runtime_bundle_sha_nullable": false,
+  "preparation_template_field_supported": false,
+  "active_window_field_supported": false,
+  "successful_result_label": "CUSTODY_VERIFIED_NOT_EXECUTION_AUTHORIZED",
+  "classification": "PRE_AUTHORITY_QUALIFICATION_STATE_NOT_REPRESENTABLE",
+  "operation_binding_mismatch_observed": false,
+  "ledger_binding_mismatch_observed": false,
+  "scope_or_template_hash_mismatch_observed": false,
+  "technical_blocker": "The real entrypoint cannot validate a deliberately authority-absent preparation package without a placeholder or historical authority hash.",
+  "safe_decision": "REVIEW_REQUIRED"
+}

@@ -1,0 +1,33 @@
+{
+  "task_id": "VF-V0S-B8",
+  "observed_at_utc": "2026-09-15T09:49:28Z",
+  "transaction": "REPEATABLE_READ_READ_ONLY",
+  "credential_fallback": "DISABLED / PRIVATE_UNIX_SOCKET_PEER",
+  "database": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+  "database_role": "vang_nguyen",
+  "schema": "public",
+  "server_version": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "system_identifier": "7685665008963764889",
+  "database_oid": 16384,
+  "control_seed": "global/revision=0",
+  "operation_id": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+  "operation_record_exists": false,
+  "operation_consumed": false,
+  "provider_request_receipt": "NONE",
+  "active_reservation": false,
+  "duplicate_or_idempotency_collision": false,
+  "reserved_vnd": "0",
+  "row_counts": {
+    "provider_safety_operations": 0,
+    "provider_safety_attempts": 0,
+    "provider_safety_budget_days": 0,
+    "provider_safety_circuits": 0,
+    "provider_safety_budget_alerts": 0,
+    "provider_usage": 0,
+    "cost_records": 0,
+    "idempotency_keys": 0
+  },
+  "ledger_mutations": 0,
+  "state_after": "VIRGIN_NOT_REGISTERED / NOT_CONSUMED",
+  "custody": "VERIFIED"
+}

@@ -1,0 +1,8 @@
+{
+  "task_id": "VF-V0S-B7",
+  "canonical_handoff": {
+    "docs/acceptance/v3-01/HANDOFF.md": "c55fb5e8375ea6dc513266a904f0f22d15d2d75f640a7c3cdee8b54ee04d7e92",
+    "docs/acceptance/v3-01/handoff.json": "20c43655be26fcc9031ea0282dfd227660fcecb9ce153c59afddfe496072ff30"
+  },
+  "algorithm": "SHA-256"
+}

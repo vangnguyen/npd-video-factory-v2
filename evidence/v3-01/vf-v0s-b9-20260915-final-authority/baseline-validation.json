@@ -1,0 +1,19 @@
+{
+  "dual_ci_provenance": "PASS",
+  "dual_ci_provenance_sha256": "77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171",
+  "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+  "governance_main_ci": 34946537685,
+  "governance_main_sha": "7ad25cb039c712d450486778d2981d9ef8175385",
+  "immutable_inputs": "PASS",
+  "kill_switch": "ENGAGED",
+  "ledger_custody": "VERIFIED / CANONICAL",
+  "ledger_identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+  "main_provenance": "PASS",
+  "observed_at_utc": "2026-09-15T10:49:19Z",
+  "rc": "vf-v3-01-rc19",
+  "rc_ci": 34875483864,
+  "rc_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+  "scope_drift": "PASS",
+  "source_drift": "NONE",
+  "task_id": "VF-V0S-B9"
+}

@@ -1,0 +1,53 @@
+{
+  "approval_records": {
+    "G-01": {
+      "approval_id": "V3-01-APP-075",
+      "canonical_record_sha256": "f6f85619d9ed44fd9a2227b7fb17eb1a5104bc98f1fed5de30e1d583a9657b8c",
+      "record_path": "docs/acceptance/v3-01/approvals/V3-01-APP-075.json"
+    },
+    "G-02": {
+      "approval_id": "V3-01-APP-076",
+      "canonical_record_sha256": "a0c19efa2d18b9f2889271f5578ab2fdafde02d3e7811d137c053d31d3b99055",
+      "record_path": "docs/acceptance/v3-01/approvals/V3-01-APP-076.json"
+    },
+    "G-03": {
+      "approval_id": "V3-01-APP-077",
+      "canonical_record_sha256": "9fc098b30e82f5b592cd243dc9235e6934c6ad8576a8c9e8106719eaba7af995",
+      "record_path": "docs/acceptance/v3-01/approvals/V3-01-APP-077.json"
+    }
+  },
+  "authority_path": "docs/acceptance/v3-01/authority/vf-v0s-b9-rc19-asr-w1-op1/operation-1-authority.json",
+  "authority_receipt_raw_sha256": "2f4a322a5d3e97861a08412336ccbf0a0fdcc0e0e4c75b75901ec0c38d3bf8e0",
+  "bundle_mounted": false,
+  "credential_reads": 0,
+  "evidence_pointer": "evidence/v3-01/vf-v0s-b9-20260915-final-authority/README.md",
+  "execution_scope_sha256": "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
+  "final_bundle_path": "docs/acceptance/v3-01/V3-01-GATE-RC19-OPENAI-ASR-W1-LINEAGE-A.json",
+  "final_runtime_bundle_sha256": "9dc8b99a8c10fbb1e8e2ba1a6f4a908b8322bca45c6a09d34d14f32a15cf5cdc",
+  "final_scope_sha256": "10df8f6da5418c74511692368aaa27084950379e6695b9a4f92aefe0358313b1",
+  "hash_dependency_order": [
+    "immutable B7 template/inputs and current Owner decision",
+    "G-01/G-02/G-03 bind template and execution scope, not final bundle hash",
+    "completed bundle embeds canonical hashed approvals",
+    "real loader validation yields loaded scope hash",
+    "outer Op1 authority binds final raw bundle/scope/approval/ledger hashes",
+    "bootstrap binding and governance checksums seal the result"
+  ],
+  "kill_switch": "ENGAGED",
+  "ledger_identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+  "ledger_mutations_by_materialization": 0,
+  "operation_1_consumed": false,
+  "operation_2": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
+  "owner_decision_canonical_sha256": "2ec7beeee5683cb82ba1cc8e03f0ab4ed6d0b6344318c147ffea7fb7249088c8",
+  "preparation_template_sha256": "30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f",
+  "prepared_scope_sha256": "eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49",
+  "production_business_writes": 0,
+  "provider_calls": 0,
+  "record_role": "GOVERNANCE_INTEGRITY_MANIFEST_NOT_RUNTIME_SCHEMA",
+  "serialization": {
+    "canonical_models": "model_dump(mode=json), sorted compact UTF-8 JSON, no trailing LF",
+    "raw_artifacts": "UTF-8 without BOM; sorted keys; indent2; ensure_ascii=False; integral numbers normalized; one LF"
+  },
+  "status": "GRANTED_NOT_CONSUMED",
+  "task_id": "VF-V0S-B9"
+}

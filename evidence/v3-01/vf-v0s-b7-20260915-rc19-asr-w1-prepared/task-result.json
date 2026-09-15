@@ -1,0 +1,46 @@
+{
+  "task_id": "VF-V0S-B7",
+  "verdict": "PASS",
+  "package_status": "PREPARED_NOT_AUTHORIZED",
+  "new_operation_1_id": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+  "ledger_operation_key": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+  "hashes": {
+    "execution_scope_sha256": "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
+    "scope_sha256": "eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49",
+    "operation_manifest_sha256": "d24e29259fd2cea90f539fc2e60b213f7b9522a515de18defda606607a0673ca",
+    "preparation_bundle_template_sha256": "30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f"
+  },
+  "proposal": {
+    "modeled_cost_vnd": "326.3004",
+    "per_operation_ceiling_vnd": "500",
+    "window_ceiling_vnd": "1250",
+    "window_ict": "2026-09-16T21:00:00+07:00/2026-09-17T01:00:00+07:00",
+    "status": "PROPOSED_NOT_AUTHORIZED"
+  },
+  "authority": {
+    "g01": "NOT_CREATED",
+    "g02": "NOT_CREATED",
+    "g03": "NOT_CREATED",
+    "owner_authority": "NOT_CREATED",
+    "authority_receipt": null,
+    "confirmation_token": null,
+    "active_execution_window": false
+  },
+  "safety": {
+    "kill_switch": "ENGAGED",
+    "bundle_mounted": false,
+    "operation_1_consumed": false,
+    "operation_2": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
+    "credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "production_business_writes": 0,
+    "real_provider_calls": 0,
+    "actual_cost_vnd": "0"
+  },
+  "acceptance": {
+    "asr_consecutive": "0/2 PASS",
+    "vision_consecutive": "2/2 PASS",
+    "production": "NO-GO"
+  },
+  "next_safe_action": "VF-V0S-B8 — zero-call operation-bound bootstrap qualification"
+}

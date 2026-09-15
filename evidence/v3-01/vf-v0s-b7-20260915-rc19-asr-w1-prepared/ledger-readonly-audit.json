@@ -1,0 +1,46 @@
+{
+  "task_id": "VF-V0S-B7",
+  "verified_at_utc": "2026-09-15T08:54:13Z",
+  "transaction": "REPEATABLE_READ_READ_ONLY",
+  "backend": "PostgreSQL 16 / ProviderSafetyRepository",
+  "postgres": {
+    "system_identifier": "7685665008963764889",
+    "version": "16.15",
+    "database": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+    "database_oid": 16384,
+    "schema": "public",
+    "role": "vang_nguyen",
+    "transport": "PRIVATE_UNIX_SOCKET_PEER_NO_PASSWORD",
+    "migration_head": "0014_v3_01_27",
+    "control_seed": "global/revision=0"
+  },
+  "lineage": {
+    "acceptance_lineage_id": "al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd",
+    "operation_id": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+    "operation_binding_sha256": "867ec5d9eb6b3b4756d74a051941ca3104a7c4a370832df263dea261828bcf63"
+  },
+  "state": {
+    "before": "VIRGIN_READY_FOR_OPERATION_REBIND",
+    "operation": "VIRGIN_NOT_REGISTERED / NOT_CONSUMED",
+    "exact_operation_records": 0,
+    "exact_attempt_records": 0,
+    "operation_consumed": false,
+    "provider_request_receipt_exists": false,
+    "active_reservation": false,
+    "reserved_vnd": "0",
+    "duplicate_or_idempotency_collision": false,
+    "prepared_operation_metadata_write": false
+  },
+  "table_counts": {
+    "provider_safety_operations": 0,
+    "provider_safety_attempts": 0,
+    "provider_safety_budget_days": 0,
+    "provider_safety_circuits": 0,
+    "provider_safety_budget_alerts": 0,
+    "provider_usage": 0,
+    "cost_records": 0,
+    "idempotency_keys": 0
+  },
+  "rc18_rc19_isolation": "PASS",
+  "custody": "VERIFIED"
+}

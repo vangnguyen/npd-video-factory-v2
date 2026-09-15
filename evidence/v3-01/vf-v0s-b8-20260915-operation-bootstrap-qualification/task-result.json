@@ -1,0 +1,41 @@
+{
+  "task_id": "VF-V0S-B8",
+  "verdict": "REVIEW_REQUIRED",
+  "package_status": "PREPARED_NOT_AUTHORIZED",
+  "bootstrap_result": "BOOTSTRAP_BINDING_INVALID",
+  "rc19_operation_bound_bootstrap": "NOT_VERIFIED",
+  "authority_state": "NOT_CREATED",
+  "window_state": "PROPOSED_NOT_AUTHORIZED",
+  "expected_rejection_reason": "AUTHORITY_AND_FINAL_RUNTIME_BUNDLE_ABSENT_BY_DESIGN",
+  "actual_rejection_reason": "BOOTSTRAP_BINDING_INVALID",
+  "binding_validation_errors": [
+    "authority_receipt_sha256: string_type",
+    "bundle_sha256: string_type"
+  ],
+  "technical_bindings_revalidated_separately": {
+    "rc_main_tree_provenance": "PASS",
+    "operation_identity_and_key": "PASS",
+    "execution_scope_and_prepared_scope": "PASS",
+    "preparation_template_reproduction": "PASS",
+    "immutable_inputs": "PASS",
+    "ledger_custody": "PASS",
+    "ledger_virgin_state": "PASS",
+    "kill_switch": "ENGAGED"
+  },
+  "operation_record_exists": false,
+  "operation_consumed": false,
+  "provider_request_receipt": null,
+  "active_reservation": false,
+  "duplicate_or_idempotency_collision": false,
+  "bundle_mounted": false,
+  "credential_reads": 0,
+  "budget_reserved_vnd": "0",
+  "production_business_writes": 0,
+  "real_provider_calls": 0,
+  "actual_cost_vnd": "0",
+  "blockers": [
+    "PRE_AUTHORITY_QUALIFICATION_MODE_UNAVAILABLE",
+    "BOOTSTRAP_SCHEMA_REQUIRES_NON_NULL_AUTHORITY_AND_FINAL_RUNTIME_BUNDLE"
+  ],
+  "next_safe_action": "Owner review must choose either an authority-before-bootstrap governance ordering or a separately bounded source remediation for a strict pre-authority qualification mode. Do not proceed to B9 automatically."
+}

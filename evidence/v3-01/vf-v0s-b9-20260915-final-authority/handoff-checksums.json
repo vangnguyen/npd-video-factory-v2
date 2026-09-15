@@ -1,0 +1,9 @@
+{
+  "algorithm": "SHA-256",
+  "hashes": {
+    "docs/acceptance/v3-01/HANDOFF.md": "3984aec942e118fef7497d7c8017b9117f315233b57c3aada024a2fa7cbafcf0",
+    "docs/acceptance/v3-01/handoff.json": "abe47bc0ccb140b1fcf9de5dfed29b9e517acc0e5c87e95f288e0f551220d04d"
+  },
+  "semantic_parity": "PASS",
+  "task_id": "VF-V0S-B9"
+}

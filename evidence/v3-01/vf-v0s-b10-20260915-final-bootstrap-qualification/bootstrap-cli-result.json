@@ -1,0 +1,63 @@
+{
+  "binding_path": "docs/acceptance/v3-01/authority/vf-v0s-b9-rc19-asr-w1-op1/bootstrap-binding.json",
+  "binding_sha256": "0387f6a8c432e609b01b398fea739438160c3b8ccb975afe59c643fc39760779",
+  "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap",
+  "bootstrap_mode": "ZERO_CALL_CUSTODY_ONLY / --require-virgin-namespace",
+  "command_constraints": {
+    "initialize_control_flag_present": false,
+    "rc_source": "exact detached vf-v3-01-rc19 worktree",
+    "require_virgin_namespace": true
+  },
+  "contract_classification": {
+    "bootstrap_result": "BOOTSTRAP_BINDING_VALID",
+    "provider_dispatch_ready": false,
+    "rc19_operation_bound_bootstrap": "VERIFIED",
+    "ready_state": "READY_FOR_EXECUTION_PREFLIGHT"
+  },
+  "exit_code": 0,
+  "output": {
+    "active_operations": 0,
+    "active_reservation": "NONE_IN_THIS_BOUND_NAMESPACE",
+    "authority_created_or_changed": false,
+    "bundle_mounted": false,
+    "control_present": true,
+    "control_revision": 0,
+    "control_rows": 1,
+    "counts": {
+      "attempts": 0,
+      "budget_alerts": 0,
+      "budget_days": 0,
+      "circuits": 0,
+      "operations": 0
+    },
+    "credential_reads": 0,
+    "dispatch_entrypoint": null,
+    "exact_operation_attempts": 0,
+    "external_execution": false,
+    "foreign_attempts": 0,
+    "foreign_operations": 0,
+    "identity": {
+      "database_name": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+      "database_oid": 16384,
+      "database_role": "vang_nguyen",
+      "schema_name": "public",
+      "system_identifier": "7685665008963764889",
+      "version": "160015"
+    },
+    "kill_switch": "ENGAGED",
+    "ledger_bootstrap_write": {
+      "ensure_state_invoked": false,
+      "observed_control_presence_change": 0,
+      "operation_rows": 0,
+      "reservation_vnd": "0"
+    },
+    "operation_state": "VIRGIN_NOT_REGISTERED / NOT_CONSUMED",
+    "paid_execution": false,
+    "provider_calls": 0,
+    "provider_request_receipt_mapping": "NO_OPERATION_OR_ATTEMPT_IN_THIS_BOUND_NAMESPACE",
+    "reserved_vnd": "0",
+    "result": "CUSTODY_VERIFIED_NOT_EXECUTION_AUTHORIZED"
+  },
+  "task_id": "VF-V0S-B10",
+  "transaction": "REPEATABLE READ / READ ONLY"
+}

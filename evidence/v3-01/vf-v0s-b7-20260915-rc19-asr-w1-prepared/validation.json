@@ -1,0 +1,28 @@
+{
+  "task_id": "VF-V0S-B7",
+  "local_validation": {
+    "focused_linux_tests": "PASS_473",
+    "full_python_api_worker_bridge": "PASS_1052",
+    "studio": "PASS_14",
+    "renderer": "PASS_14",
+    "renderer_typecheck": "PASS",
+    "renderer_bundle_check": "PASS",
+    "python_compileall": "PASS",
+    "migration_replay": "PASS_0014_BASE_0014",
+    "acceptance_repository_validation": "PASS",
+    "prepared_material_reproduction": "PASS_12_FILES",
+    "compose_contract": "PASS",
+    "json_validation": "PASS",
+    "secret_scan": "PASS",
+    "diff_check": "PASS"
+  },
+  "package_validation_ci": {
+    "run_id": 34952188572,
+    "head_sha": "bdae53560c48bf0a820a3a2a0f5d32be02abc8ee",
+    "result": "PASS_5_OF_5"
+  },
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "budget_reserved_vnd": "0",
+  "actual_cost_vnd": "0"
+}

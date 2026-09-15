@@ -1,0 +1,156 @@
+{
+  "bundle_mounted": false,
+  "gate_loader": "PASS / VALID_IN_MEMORY_NOT_MOUNTED",
+  "scope": {
+    "acceptance_lineage_id": "al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd",
+    "acceptance_lineage_sequence": 1,
+    "acceptance_window_limit_vnd": "1250",
+    "allowed_operations": [
+      {
+        "asset_hash": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+        "asset_id": "asset-g03-asr-vi-owned-01",
+        "operation": "flow_a_asr",
+        "operation_key": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+        "slot": 1
+      },
+      {
+        "asset_hash": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+        "asset_id": "asset-g03-asr-vi-owned-02",
+        "operation": "flow_a_asr",
+        "operation_key": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-02",
+        "slot": 2
+      }
+    ],
+    "approval_record_sha256": {
+      "G-01": "f6f85619d9ed44fd9a2227b7fb17eb1a5104bc98f1fed5de30e1d583a9657b8c",
+      "G-02": "a0c19efa2d18b9f2889271f5578ab2fdafde02d3e7811d137c053d31d3b99055",
+      "G-03": "9fc098b30e82f5b592cd243dc9235e6934c6ad8576a8c9e8106719eaba7af995"
+    },
+    "asr_prompt_profile": {
+      "language": "vi",
+      "model": "whisper-1",
+      "profile_id": "asr-whisper-vi-w1-v1",
+      "prompt": "Ngọc Phương Đông, Vinhomes Green Paradise, Cần Giờ, tham quan sa bàn, chính sách bán hàng.",
+      "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+      "prompt_utf8_bytes": 105,
+      "response_format": "verbose_json",
+      "temperature_policy": "omitted",
+      "timestamp_granularities": [
+        "segment",
+        "word"
+      ],
+      "tokenizer_context_policy": "prepend_space_after_strip",
+      "tokenizer_context_sha256": "7cf8e972dc834af0022b139a1ba123bcefe6fea34f9d8112fc9eee074c5ad035",
+      "tokenizer_context_token_count": 33,
+      "tokenizer_id": "openai-whisper-multilingual-ordinary-text-v1",
+      "tokenizer_ranks_sha256": "b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126",
+      "tokenizer_raw_token_count": 34,
+      "tokenizer_upstream_commit": "86098128c0b4f24f0e2aa2994de830614b474227",
+      "tokenizer_version": "0.12.0"
+    },
+    "asr_prompt_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "budget_approval_id": "V3-01-APP-076",
+    "budget_day_utc": "2026-09-16",
+    "bundle_id": "V3-01-GATE-RC19-OPENAI-ASR-W1-LINEAGE-A",
+    "bundle_sha256": "9dc8b99a8c10fbb1e8e2ba1a6f4a908b8322bca45c6a09d34d14f32a15cf5cdc",
+    "cached_input_vnd_per_million_tokens": null,
+    "capability": "asr",
+    "controller_hard_timeout_seconds": 120,
+    "credential_alias": "secret://openai/codex-video",
+    "credential_approval_id": "V3-01-APP-075",
+    "execution_scope_sha256": "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
+    "expires_at_utc": "2026-09-16T18:00:00Z",
+    "gate_bundle_version": 2,
+    "image_detail": null,
+    "input_token_ceiling": null,
+    "input_vnd_per_million_tokens": null,
+    "max_attempts": 1,
+    "max_concurrent_calls": 1,
+    "max_dimension_pixels": null,
+    "max_duration_seconds": 180,
+    "max_file_bytes": 25000000,
+    "max_frames": null,
+    "max_output_tokens": null,
+    "model": "whisper-1",
+    "output_vnd_per_million_tokens": null,
+    "per_operation_limit_vnd": "500",
+    "provider_http_timeout_seconds": 90,
+    "provider_key": "openai-transcription",
+    "rc_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "rc_tag": "vf-v3-01-rc19",
+    "requested_language": "vi",
+    "response_format": "verbose_json",
+    "rights_approval_id": "V3-01-APP-077",
+    "rights_record": null,
+    "rights_record_sha256": null,
+    "rights_record_sha256s": [
+      "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+      "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323"
+    ],
+    "rights_records": [
+      {
+        "acquired_at_utc": "2026-09-03T06:56:00Z",
+        "asset_hash": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+        "asset_id": "asset-g03-asr-vi-owned-01",
+        "attribution_required": false,
+        "attribution_text": "",
+        "commercial_use": true,
+        "decision": "APPROVED",
+        "derivative_use": true,
+        "evidence_reference": "repo://docs/acceptance/v3-01/45_V3_01_RC11_OPENAI_ASR_GATE.md#owner-g-03-asr-decision",
+        "expiry": null,
+        "license_name": "NPD owner-approved OpenAI ASR acceptance only; no publishing, training, resale or other use",
+        "license_version_or_terms_date": "2026-09-03",
+        "model_or_voice_rights": "NPD owns or is authorized to use this recording and the recorded voice for this bounded OpenAI ASR acceptance.",
+        "person_likeness_consent": "The speaker consents to processing this recording through OpenAI ASR solely for the bounded acceptance scope.",
+        "provider": "Ngoc Phuong Dong",
+        "provider_asset_or_job_id": "g03-asr-vi-owned-01",
+        "reviewer": "Owner (GitHub: vangnguyen)",
+        "rights_record_id": "V3-01-RIGHTS-ASR-001",
+        "secret_recorded": false,
+        "social_platform_use": [],
+        "source_type": "user_owned",
+        "source_url_or_reference": "repo://docs/acceptance/v3-01/assets/g03-asr-vi-owned-01.wav",
+        "territory": [
+          "VN"
+        ],
+        "trademark_review": "Internal acceptance references only; no publication or trademark claim is authorized."
+      },
+      {
+        "acquired_at_utc": "2026-09-03T06:56:02Z",
+        "asset_hash": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+        "asset_id": "asset-g03-asr-vi-owned-02",
+        "attribution_required": false,
+        "attribution_text": "",
+        "commercial_use": true,
+        "decision": "APPROVED",
+        "derivative_use": true,
+        "evidence_reference": "repo://docs/acceptance/v3-01/45_V3_01_RC11_OPENAI_ASR_GATE.md#owner-g-03-asr-decision",
+        "expiry": null,
+        "license_name": "NPD owner-approved OpenAI ASR acceptance only; no publishing, training, resale or other use",
+        "license_version_or_terms_date": "2026-09-03",
+        "model_or_voice_rights": "NPD owns or is authorized to use this recording and the recorded voice for this bounded OpenAI ASR acceptance.",
+        "person_likeness_consent": "The speaker consents to processing this recording through OpenAI ASR solely for the bounded acceptance scope.",
+        "provider": "Ngoc Phuong Dong",
+        "provider_asset_or_job_id": "g03-asr-vi-owned-02",
+        "reviewer": "Owner (GitHub: vangnguyen)",
+        "rights_record_id": "V3-01-RIGHTS-ASR-002",
+        "secret_recorded": false,
+        "social_platform_use": [],
+        "source_type": "user_owned",
+        "source_url_or_reference": "repo://docs/acceptance/v3-01/assets/g03-asr-vi-owned-02.wav",
+        "territory": [
+          "VN"
+        ],
+        "trademark_review": "Internal acceptance references only; no publication or trademark claim is authorized."
+      }
+    ],
+    "timestamp_granularities": [
+      "segment",
+      "word"
+    ],
+    "valid_from_utc": "2026-09-16T14:00:00Z",
+    "vnd_per_minute": "162"
+  },
+  "scope_canonical_sha256": "10df8f6da5418c74511692368aaa27084950379e6695b9a4f92aefe0358313b1"
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "VF-V0S-B8",
+  "handoff_md": {
+    "path": "docs/acceptance/v3-01/HANDOFF.md",
+    "sha256": "08b12adef64ffe1cc97dbe6725687e5b09398d0a4d6b5424472d6927960646bb"
+  },
+  "handoff_json": {
+    "path": "docs/acceptance/v3-01/handoff.json",
+    "sha256": "716d678fb3b30856fb751d4613d5fbf80486d19fc7c36128a3b612f0fa62eeca"
+  }
+}
