@@ -1,0 +1,33 @@
+{
+  "actual_cost_vnd": "0",
+  "budget_reserved_vnd": "0",
+  "database": "vf_v0s_b6_replay_5a72b3be",
+  "database_removed_after_test": true,
+  "ledger_bootstrap_writes": [
+    "TEMP_DATABASE_CREATE",
+    "CANONICAL_MIGRATIONS_0001_TO_0014",
+    "DOWNGRADE_BASE",
+    "CANONICAL_MIGRATIONS_0001_TO_0014_REPLAY",
+    "TEMP_DATABASE_DROP"
+  ],
+  "production_business_writes": 0,
+  "provider_credential_reads": 0,
+  "real_provider_calls": 0,
+  "result": "PASS",
+  "scope": "DISPOSABLE_MIGRATION_REPLAY_ONLY",
+  "steps": [
+    {
+      "action": "upgrade_head",
+      "revision": ["0014_v3_01_27"]
+    },
+    {
+      "action": "downgrade_base",
+      "revision": []
+    },
+    {
+      "action": "upgrade_head_again",
+      "revision": ["0014_v3_01_27"]
+    }
+  ],
+  "task_id": "VF-V0S-B6"
+}

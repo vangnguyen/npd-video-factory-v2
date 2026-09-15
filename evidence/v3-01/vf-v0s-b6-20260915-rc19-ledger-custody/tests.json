@@ -1,0 +1,56 @@
+{
+  "task_id": "VF-V0S-B6",
+  "result": "PASS_WITH_BOOTSTRAP_ORDERING_BLOCKER",
+  "local": {
+    "bootstrap_provenance_lineage_w1_loader": {
+      "result": "PASS",
+      "tests": 284,
+      "seconds": 7.26
+    },
+    "provider_safety_repository_idempotency_reservation_kill_switch": {
+      "result": "PASS",
+      "tests": 139,
+      "seconds": 67.68
+    },
+    "actual_postgres_custody_audit": {
+      "result": "PASS",
+      "recomputes": 2,
+      "identical": true
+    },
+    "migration_replay": "PASS_0014_BASE_0014_AND_TEMP_DATABASE_REMOVED",
+    "postgres_connectivity": "PASS_ACCEPTING_CONNECTIONS_PRIVATE_SOCKET",
+    "gate_loader": "PASS_OFFLINE_TESTS_ONLY",
+    "bootstrap_cli_help": "PASS_NO_DATABASE_ACCESS"
+  },
+  "authoritative_ci": {
+    "rc19": {
+      "run": 34875483864,
+      "head": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+      "result": "PASS_5_OF_5"
+    },
+    "governance_main": {
+      "run": 34916352282,
+      "head": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
+      "result": "PASS_5_OF_5"
+    },
+    "canonical_jobs": [
+      "Python unit and contract tests",
+      "Renderer tests and bundle",
+      "Studio tests",
+      "Safety and compose contract",
+      "Docker deterministic E2E"
+    ]
+  },
+  "document_validation": {
+    "json_parse": "PASS_6_FILES_BEFORE_MANIFEST",
+    "markdown_links": "PASS_2_LOCAL_LINKS",
+    "secret_scan": "PASS_ZERO_MATCHES",
+    "git_diff_check": "PASS",
+    "sha256_manifest": "PASS_AFTER_FINAL_GENERATION"
+  },
+  "provider_credential_reads": 0,
+  "real_provider_calls": 0,
+  "budget_reserved_vnd": "0",
+  "production_business_writes": 0,
+  "actual_cost_vnd": "0"
+}
