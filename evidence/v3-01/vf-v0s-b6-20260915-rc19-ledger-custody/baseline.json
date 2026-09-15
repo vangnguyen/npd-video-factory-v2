@@ -1,0 +1,39 @@
+{
+  "task_id": "VF-V0S-B6",
+  "governance_main": {
+    "sha": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
+    "remote_match_before_write": true,
+    "remote_match_after_qualification": true,
+    "ci_run": 34916352282,
+    "ci_result": "PASS_5_OF_5",
+    "provenance": "PASS"
+  },
+  "rc": {
+    "tag": "vf-v3-01-rc19",
+    "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "remote_tag_commit_match": true,
+    "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "ci_run": 34875483864,
+    "ci_result": "PASS_5_OF_5"
+  },
+  "dual_ci_provenance": {
+    "result": "PASS",
+    "sha256": "12128084c7fff1397b2476e5360b45e13232eef0bbf161f962c3c6de38d43228"
+  },
+  "bootstrap": {
+    "entrypoint": "python -m app.provider_runtime_bootstrap",
+    "module_git_blob": "ebcc65d1f23491a42d3894547a8fb1f16e6608d6",
+    "source_checkout_clean": true
+  },
+  "expected_database_name": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+  "safety": {
+    "operation_1_id_generated": false,
+    "authority_created": false,
+    "bundle_mounted": false,
+    "credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "real_provider_calls": 0,
+    "production_business_writes": 0,
+    "actual_cost_vnd": "0"
+  }
+}

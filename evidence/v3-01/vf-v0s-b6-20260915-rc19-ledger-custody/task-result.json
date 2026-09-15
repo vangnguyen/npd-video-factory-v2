@@ -1,0 +1,42 @@
+{
+  "workstream": "Video Factory V3-01",
+  "task_id": "VF-V0S-B6",
+  "mode": "ZERO_CALL_DURABLE_LEDGER_CUSTODY_BOOTSTRAP_QUALIFICATION",
+  "verdict": "REVIEW_REQUIRED",
+  "ledger": {
+    "expected_identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+    "derived_identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+    "identity_match": true,
+    "custody": "VERIFIED",
+    "bootstrap_writes": "CLUSTER_DATABASE_MIGRATIONS_CONTROL_SEED_ONLY",
+    "virgin_state": "VIRGIN_READY_FOR_OPERATION_REBIND",
+    "rc18_rc19_isolation": "PASS"
+  },
+  "bootstrap": {
+    "entrypoint": "python -m app.provider_runtime_bootstrap",
+    "source_and_lineage_qualification": "PASS",
+    "operation_bound_qualification": "DEFERRED_REQUIRES_OPERATION_REBIND",
+    "overall": "PARTIAL_REVIEW_REQUIRED"
+  },
+  "authority": {
+    "operation_1_id": "NOT_CREATED",
+    "operation_1_rebind_required": true,
+    "fresh_authority_required": true,
+    "fresh_execution_window_required": true,
+    "operation_2": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED"
+  },
+  "safety": {
+    "kill_switch": "ENGAGED",
+    "bundle_mounted": false,
+    "provider_credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "production_business_writes": 0,
+    "real_provider_calls": 0,
+    "actual_cost_vnd": "0"
+  },
+  "scope_drift": "PASS",
+  "blockers": [
+    "The current BootstrapLedgerBinding requires a fresh operation key plus authority receipt, bundle, execution-scope and scope hashes. VF-V0S-B6 forbids creating those operation-specific materials, so the real operation-bound entrypoint cannot be invoked honestly yet."
+  ],
+  "next_safe_action": "Owner review of ordering. If approved, perform VF-V0S-B7 as PREPARED_NOT_AUTHORIZED only, then run a separate zero-call RC-19 operation-bound bootstrap qualification against this existing virgin custody. STOP before authority/window, bundle mount, credentials, reservation or provider dispatch."
+}
