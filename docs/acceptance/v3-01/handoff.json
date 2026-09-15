@@ -110,7 +110,11 @@
     "prepared_material_reproduction": "PASS_12_FILES",
     "compose_contract": "PASS",
     "json_checksums_links_secret_diff": "PASS",
-    "candidate_ci": "PENDING_DRAFT_PR"
+    "package_validation_ci": {
+      "run_id": 34952188572,
+      "head_sha": "bdae53560c48bf0a820a3a2a0f5d32be02abc8ee",
+      "result": "PASS_5_OF_5"
+    }
   },
   "safety": {
     "kill_switch": "ENGAGED",

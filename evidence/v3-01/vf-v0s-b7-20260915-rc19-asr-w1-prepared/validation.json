@@ -16,7 +16,11 @@
     "secret_scan": "PASS",
     "diff_check": "PASS"
   },
-  "candidate_ci": "PENDING_DRAFT_PR",
+  "package_validation_ci": {
+    "run_id": 34952188572,
+    "head_sha": "bdae53560c48bf0a820a3a2a0f5d32be02abc8ee",
+    "result": "PASS_5_OF_5"
+  },
   "provider_calls": 0,
   "credential_reads": 0,
   "budget_reserved_vnd": "0",

@@ -92,6 +92,8 @@ was inherited.
 - Studio: 14 PASS. Renderer: 14 PASS plus typecheck/bundle check.
 - Migration replay, acceptance validation, deterministic package reproduction,
   Compose contract, JSON/checksum/secret/diff validation: PASS.
+- Package-validation CI `34952188572` on head `bdae53560c48bf0a820a3a2a0f5d32be02abc8ee`:
+  5/5 PASS, including Docker deterministic E2E.
 - [B7 evidence pack](../../../evidence/v3-01/vf-v0s-b7-20260915-rc19-asr-w1-prepared/README.md).
 - [Machine-readable handoff](handoff.json).
 - Review branch: `governance/vf-v0s-b7-rc19-asr-w1-prepared`.

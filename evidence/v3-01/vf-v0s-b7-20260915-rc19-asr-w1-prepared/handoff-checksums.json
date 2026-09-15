@@ -1,8 +1,8 @@
 {
   "task_id": "VF-V0S-B7",
   "canonical_handoff": {
-    "docs/acceptance/v3-01/HANDOFF.md": "4f64fa61cdf1db500188f192374398ceac5a2a9fb094f5a36578470d300e9ed4",
-    "docs/acceptance/v3-01/handoff.json": "4816837ce775b398c79402118a0a21872b02b1c2dbcc2723f7695152ded1eff2"
+    "docs/acceptance/v3-01/HANDOFF.md": "c55fb5e8375ea6dc513266a904f0f22d15d2d75f640a7c3cdee8b54ee04d7e92",
+    "docs/acceptance/v3-01/handoff.json": "20c43655be26fcc9031ea0282dfd227660fcecb9ce153c59afddfe496072ff30"
   },
   "algorithm": "SHA-256"
 }
