@@ -1,0 +1,20 @@
+{
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "workflow": "Video Factory V2 CI",
+  "run_id": 34946537685,
+  "event": "push",
+  "head_branch": "main",
+  "head_sha": "7ad25cb039c712d450486778d2981d9ef8175385",
+  "status": "completed",
+  "conclusion": "success",
+  "completed_at_utc": "2026-09-15T08:26:48Z",
+  "jobs_total": 5,
+  "jobs_succeeded": 5,
+  "jobs": [
+    "Python unit and contract tests",
+    "Renderer tests and bundle",
+    "Studio tests",
+    "Safety and compose contract",
+    "Docker deterministic E2E"
+  ]
+}

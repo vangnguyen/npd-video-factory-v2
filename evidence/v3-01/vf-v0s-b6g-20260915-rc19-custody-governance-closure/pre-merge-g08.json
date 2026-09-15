@@ -1,0 +1,21 @@
+{
+  "task_id": "VF-V0S-B6G",
+  "repo": "vangnguyen/npd-video-factory-v2",
+  "pr": 69,
+  "approved_head": "1c29cde030516b82f3fbc030deaaf0c7f25b202a",
+  "observed_base": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
+  "state_before_merge": "OPEN / DRAFT / MERGEABLE",
+  "candidate_ci": 34945345420,
+  "candidate_ci_result": "PASS_5_OF_5",
+  "candidate_ci_head_sha": "1c29cde030516b82f3fbc030deaaf0c7f25b202a",
+  "changed_files": 11,
+  "changed_file_classification": "HANDOFF_GOVERNANCE_EVIDENCE_ONLY",
+  "executable_runtime_files_changed": false,
+  "git_diff_check": "PASS",
+  "candidate_executable_tree_sha256_recompute_1": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+  "candidate_executable_tree_sha256_recompute_2": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+  "rc19_executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+  "rc19_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+  "g08": "PASS",
+  "scope_drift": "PASS"
+}
