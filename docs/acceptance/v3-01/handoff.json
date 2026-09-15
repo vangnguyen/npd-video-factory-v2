@@ -1,141 +1,149 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B3",
-  "mode": "SOURCE_CANDIDATE_G08_CANDIDATE_CI_ONLY",
-  "verdict": "PASS_OBSERVED_SOURCE_CANDIDATE_CI_SNAPSHOT",
+  "task_id": "VF-V0S-B5",
+  "mode": "FRESH_RC_MATERIALIZATION_GOVERNANCE_ONLY",
+  "verdict": "REVIEW_REQUIRED",
   "repo": "vangnguyen/npd-video-factory-v2",
-  "branch": "remediation/vf-v0s-b3-runtime-ledger-bootstrap",
+  "branch": "governance/vf-v0s-b5-rc19-materialization",
   "baseline": {
-    "main_sha": "4507fa593fd8cf5484eb1245f788e9ee54eede39",
-    "canonical_executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
-    "main_provenance": "PASS_HISTORICAL_BASELINE_ONLY",
-    "dual_ci_provenance": "PASS_HISTORICAL_BASELINE_ONLY",
-    "main_ci": 34759714142,
-    "rc_ci": 34744690232,
-    "remote_main_drift": "NONE",
-    "rc18_tag": "vf-v3-01-rc18",
-    "rc18_commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
-    "rc18_tag_object": "30ca09c4201cd6aea5e733c26ba4dfa1f30d5021",
-    "rc17_tag": "vf-v3-01-rc17",
-    "rc17_commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
-    "rc17_tag_object": "ea67843635dddf94ee25d38111fc06782ad9fd74",
-    "rc17_rc18_status": "IMMUTABLE"
+    "main_sha": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "canonical_executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "main_ci": 34869652973,
+    "main_ci_result": "5/5 PASS",
+    "main_provenance": "PASS",
+    "source_drift": "NONE",
+    "main_provenance_source_sha256": "f08e979daba7d4049d5840a71c2aa99d7f3c9f165dc3b60df9e83ee61ddc6246"
   },
-  "candidate": {
+  "rc": {
+    "tag": "vf-v3-01-rc19",
+    "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "tag_object": "09a9a51628ab2e33d4ee85a1620f7afca692d18e",
+    "type": "annotated",
+    "created_by_task": "VF-V0S-B5",
+    "tagger": {
+      "date": "2026-09-14T17:33:21Z",
+      "email": "vangnguyen@users.noreply.github.com",
+      "name": "vangnguyen"
+    },
     "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
-    "executable_tree_changed": true,
-    "only_runtime_addition": "apps/api/app/provider_runtime_bootstrap.py",
+    "sequencing": "PASS_MAX_EXISTING_18_PLUS_1",
+    "tag_commit_binding": "PASS",
+    "tag_tree_binding": "PASS",
+    "tree_equality": "PASS",
+    "source_mutation": "NONE",
+    "rc_ci": 34875483864,
+    "ci_event": "workflow_dispatch",
+    "ci_ref": "vf-v3-01-rc19",
+    "ci_result": "5/5 PASS",
+    "ci_completed_at": "2026-09-14T17:38:35Z",
+    "dual_ci": "BLOCKED_DISTINCT_GOVERNANCE_MAIN_REQUIRED",
+    "lineage_status": "MATERIALIZED_RC_CI_PASS / GOVERNANCE_CLOSURE_PENDING",
     "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap",
-    "bootstrap_mode": "ZERO_CALL_CUSTODY_ONLY_NOT_PROVIDER_DISPATCH",
-    "candidate_is_rc18": false,
-    "new_rc_required_after_merge": true,
-    "new_rc_created": false,
-    "rc18_hardcode_in_runtime": false,
-    "ledger_binding": "RC tag + full canonical lineage -> deterministic database name; peer socket/system ID/database OID/role/schema/PG16 independently pinned",
-    "future_execution_namespace": "NOT_CREATED_REQUIRES_FRESH_RC_AND_LINEAGE",
-    "pre_hardening_executable_tree_sha256": "d77b9507680ad56b9f220db75c7fb3a835809a58ed6469e1d7066b6aaa1e0832",
-    "reviewed_source_head": "853b9bd2cd0de7cfeebabde7003ce978f6f4d034",
-    "pr": 65,
-    "pr_url": "https://github.com/vangnguyen/npd-video-factory-v2/pull/65"
+    "bootstrap_present": true,
+    "runtime_ledger_qualified": false
   },
   "history": {
-    "b2_local_commit": "1c3eb35b52337bc9aeda0fad93ec3b3bd00d089d",
-    "b1_local_commit": "8aba0b2f2d79ee5688f9d651f5f5bb93f9a0794d",
-    "historical_governance_not_imported_as_candidate_authority": true,
-    "historical_rc18_custody_database": "vf_vf_v3_01_rc18_466d54d9ede1b6f7f3179ddd52b7e251",
-    "historical_custody_database_mutated": false,
-    "previous_main_handoff_preserved_in_commit": "4507fa593fd8cf5484eb1245f788e9ee54eede39",
-    "receipt_history_rewritten": false
+    "rc18": {
+      "tag": "vf-v3-01-rc18",
+      "commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+      "tag_object": "30ca09c4201cd6aea5e733c26ba4dfa1f30d5021",
+      "executable_tree_sha256": "ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5",
+      "status": "IMMUTABLE / HISTORICAL",
+      "authority": "HISTORICAL_REFERENCE_ONLY / INVALID_FOR_CURRENT_MAIN"
+    },
+    "rc17": "IMMUTABLE / HISTORICAL",
+    "historical_evidence_rewritten": false,
+    "prior_canonical_handoff_preserved_in_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "pr66": {
+      "status": "OPEN / DRAFT / NOT_MERGED",
+      "head": "71609bdb691ceabb9cc1b4ee3175260a28132395",
+      "ci": 34871006869,
+      "ci_result": "5/5 PASS",
+      "disposition": "Unchanged historical VF-V0S-B4 draft; retained. B5 supersedes current checkpoint only; no merge/close/delete performed."
+    },
+    "b4_provenance_import": "Verbatim source bytes with original SHA, from PR66 exact head; original full pack retained"
   },
   "authority": {
-    "rc18_historical_status": "GRANTED_NOT_CONSUMED",
-    "rc18_candidate_validity": "INVALID_FOR_NEW_CANDIDATE_HISTORICAL_REFERENCE_ONLY",
-    "candidate_authority": "NOT_CREATED",
-    "operation_1_consumed_by_this_task": false,
+    "rc18_material_reused": false,
+    "operation_1_id": "NOT_GENERATED",
+    "operation_1_authority": "NOT_CREATED",
+    "operation_1_rebind_required": true,
     "operation_2": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
-    "old_authority_reused": false,
-    "new_scope_bundle_window_or_rebind_created": false,
+    "fresh_authority_required": true,
+    "fresh_window_required": true,
+    "window": "NOT_CREATED / OLD_RC18_WINDOW_NOT_INHERITED",
+    "bundle_created": false,
     "bundle_mounted": false,
     "kill_switch": "ENGAGED",
     "external_execution": false,
-    "paid_execution": false,
-    "live_budget_reserved_vnd": "0",
-    "execution_window_reauth_required": true
+    "paid_execution": false
   },
-  "tests": {
-    "python_api_worker_bridge": {
-      "pass": 1048,
-      "fail": 0,
-      "seconds": 190.99,
-      "mode": "SERIAL_AFTER_E2E_CLEANUP_POST_PEER_PASSWORD_HARDENING"
-    },
-    "bootstrap": {
-      "pass": 90,
-      "fail": 0,
-      "post_hardening": true
-    },
-    "focused_bootstrap_repository_provenance": {
-      "pass": 135,
-      "fail": 0
-    },
-    "studio": {
-      "pass": 14,
-      "fail": 0
-    },
-    "renderer": {
-      "pass": 14,
-      "fail": 0,
-      "typecheck": "PASS",
-      "bundle": "PASS"
-    },
-    "postgres": "2 isolated test databases; 0001..0014 replay PASS; repeat reads identical; 9 negative identity/cross-RC cases blocked",
-    "wsl_original_historical_cases": "2 failures reproduced from Windows-absolute .git pointer",
-    "native_git_same_historical_cases": "2/2 PASS, 6.52s",
-    "wsl_correct_metadata_same_historical_cases": "2/2 PASS, 13.49s",
-    "wsl_primary_class": "A_ENVIRONMENT_PATH_NOT_SOURCE_REGRESSION",
-    "docker_e2e": "PASS_EXACT_SOURCE_HEAD_CANDIDATE_CI_34865777130",
-    "environment_overlap": "1 failure retained/classified; exact flag reproduced; clean serial full sweep PASS"
+  "ledger_naming_plan": {
+    "acceptance_lineage_id_preview": "al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd",
+    "actual_instance_binding": "NOT_CREATED",
+    "expected_database_name": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+    "namespace": "database-isolated/public schema; instance/socket/system ID/OID/role must be pinned later",
+    "operation_id_generated": false,
+    "sequence_assumption": 1,
+    "status": "PLAN_ONLY_NOT_CREATED_OR_APPROVED",
+    "fresh_ledger_binding_required": true,
+    "formula": "vf_ + rc_tag.replace('-', '_') + '_' + SHA256_UTF8(rc_tag + LF + full_acceptance_lineage_id)[:32]",
+    "actual_endpoint_pins": "NOT_CREATED; future task must pin instance/socket/system ID/database OID/peer role/port/public schema",
+    "names_not_to_reuse": [
+      "vf_vf_v3_01_rc18_466d54d9ede1b6f7f3179ddd52b7e251",
+      "vf_vf_v3_01_rc19_c6da26ba2a8795793f7d36051a816b7d",
+      "vf_vf_v3_01_rc20_20b9045ce79c76077018d74956d89b9a"
+    ]
   },
-  "ci": {
-    "status": "PASS_OBSERVED_SOURCE_HEAD_FINAL_PR_TIP_RECHECK_REQUIRED",
-    "observed_exact_head": "853b9bd2cd0de7cfeebabde7003ce978f6f4d034",
-    "run_id": 34865777130,
-    "result": "5/5 PASS",
-    "head_binding": "PASS",
-    "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
-    "workflow_object": "fec7dc81a6688a25774b2fca7936bd404b53eadf",
-    "snapshot": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/candidate-ci-snapshot.json",
-    "current_pr_head_and_checks": "https://github.com/vangnguyen/npd-video-factory-v2/pull/65/checks",
-    "final_tip_policy": "The governance-only receipt-closing commit must independently pass CI; record final tip/run in the task receipt and external final provenance to avoid a self-referential commit loop",
-    "expected_canonical_jobs": 5,
-    "historical_main_rc_ci_substitution_allowed": false
+  "immutable_source": {
+    "w1_profile_id": "asr-whisper-vi-w1-v1",
+    "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "minio_image": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+    "acceptance_lineage_contract_version": 2,
+    "provenance_schema_version": 1,
+    "asset_reference_rights": "Exact source Git blobs pinned in annotation; not rebound/newly approved",
+    "quality_thresholds": "UNCHANGED: WER <=15%, critical terms 8/8, insertion guards, timestamps, PositiveDurationTranscript"
+  },
+  "validation": {
+    "focused_tests": 284,
+    "focused_seconds": 6.4,
+    "python_rc_ci": 1048,
+    "python_rc_ci_seconds": 55.33,
+    "studio_rc_ci": 14,
+    "renderer_rc_ci": 14,
+    "renderer_typecheck_bundle": "PASS",
+    "safety_compose": "PASS",
+    "docker_e2e": "PASS",
+    "migration_replay": "PASS_0001_0014_BASE_0014",
+    "acceptance_evidence": "PASS",
+    "flow_a_b_c_dr": "PASS_EXPECTED_BLOCKED_NOT_ACCEPTANCE_UPGRADE",
+    "canonical_recompute_1": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "canonical_recompute_2": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "bootstrap_help": "PASS_BEFORE_LEDGER_ACCESS",
+    "real_dual_ci": "EXPECTED_REJECTION_NOT_PASS",
+    "json_secret_links_checksum_diff": "PASS_11_JSON_16_LINKS_17_CHECKSUMS_SECRET_SCAN_ZERO_MATCHES_DIFF_CHECK"
   },
   "safety": {
+    "ledger_runtime_writes": 0,
     "provider_credential_reads": 0,
     "real_provider_calls": 0,
     "live_budget_reservations": 0,
     "production_business_writes": 0,
     "actual_provider_cost_vnd": "0",
-    "test_bootstrap_ledger_writes_pointer": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/test-write-boundary.json",
-    "test_write_classification": "ISOLATED_TEST_CANDIDATE_METADATA_AND_FIXTURE_WRITES_ONLY"
+    "new_runtime_ledger_created": false,
+    "test_write_classification": "Existing isolated disposable unit/CI fixture state only; no real runtime custody access or new execution database"
   },
   "acceptance": {
-    "asr_consecutive_pass": 0,
-    "asr_required": 2,
-    "vision_consecutive_pass": 2,
-    "vision_required": 2,
-    "production": "NO-GO",
-    "historical_provider_verdicts_unchanged": true,
-    "quality_thresholds_unchanged": true
+    "asr_consecutive": "0/2 PASS",
+    "vision_consecutive": "2/2 PASS",
+    "production": "NO-GO"
   },
-  "g08": {
-    "source_scope": "PASS_OBSERVED_EXACT_SOURCE_HEAD_WITH_5_CANONICAL_CI_JOBS",
-    "merge_authorized": false,
-    "required_stop": "OWNER_G08_NO_MERGE_NO_NEW_RC_NO_AUTHORITY",
-    "reviewed_source_head": "853b9bd2cd0de7cfeebabde7003ce978f6f4d034"
-  },
-  "evidence_pointer": "evidence/v3-01/vf-v0s-b3-20260914-bootstrap-candidate/README.md",
+  "evidence_pointer": "evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/README.md",
   "scope_drift": "PASS",
-  "blockers": [],
-  "next_safe_action": "Owner exact-final-PR-head G-08 review and separate bounded merge task after final tip CI verification; STOP before merge/new RC/rebind/authority/provider"
+  "blockers": [
+    "Actual RC commit equals current main, with empty governance diff. Existing dual-CI loader requires distinct governance-main commit and nonempty allowlisted paths; real collector exit 2 CI_PROVENANCE_INVALID."
+  ],
+  "next_safe_action": "Owner G-08 review of separate B5 governance-only draft; later controlled merge + successful fresh exact-main CI + RC19/main dual-CI closure. STOP before ledger creation, Operation 1 rebind, authority/window, bundle mount, credentials/reservation/provider.",
+  "handoff_publication": "SEPARATE_GOVERNANCE_ONLY_DRAFT_NOT_MERGED; binds observed source/RC CI, not its own future closing-commit CI"
 }

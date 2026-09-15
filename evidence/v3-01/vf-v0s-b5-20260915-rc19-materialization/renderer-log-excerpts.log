@@ -1,0 +1,19 @@
+Renderer tests and bundle	Run npm test	2026-09-14T17:33:52.8635289Z ^[[2m Test Files ^[[22m ^[[1m^[[32m4 passed^[[39m^[[22m^[[90m (4)^[[39m
+Renderer tests and bundle	Run npm test	2026-09-14T17:33:52.8686030Z ^[[2m      Tests ^[[22m ^[[1m^[[32m14 passed^[[39m^[[22m^[[90m (14)^[[39m
+Renderer tests and bundle	Run npm run typecheck	﻿2026-09-14T17:33:52.9942894Z ##[group]Run npm run typecheck
+Renderer tests and bundle	Run npm run typecheck	2026-09-14T17:33:52.9943230Z ^[[36;1mnpm run typecheck^[[0m
+Renderer tests and bundle	Run npm run typecheck	2026-09-14T17:33:52.9979838Z shell: /usr/bin/bash -e {0}
+Renderer tests and bundle	Run npm run typecheck	2026-09-14T17:33:52.9980100Z ##[endgroup]
+Renderer tests and bundle	Run npm run typecheck	2026-09-14T17:33:53.0928504Z
+Renderer tests and bundle	Run npm run typecheck	2026-09-14T17:33:53.0929352Z > npd-video-renderer@0.12.0 typecheck
+Renderer tests and bundle	Run npm run typecheck	2026-09-14T17:33:53.0929997Z > tsc --noEmit
+Renderer tests and bundle	Run npm run typecheck	2026-09-14T17:33:53.0930247Z
+Renderer tests and bundle	Run npm run bundle:check	﻿2026-09-14T17:33:55.9667611Z ##[group]Run npm run bundle:check
+Renderer tests and bundle	Run npm run bundle:check	2026-09-14T17:33:55.9667960Z ^[[36;1mnpm run bundle:check^[[0m
+Renderer tests and bundle	Run npm run bundle:check	2026-09-14T17:33:55.9704903Z shell: /usr/bin/bash -e {0}
+Renderer tests and bundle	Run npm run bundle:check	2026-09-14T17:33:55.9705182Z ##[endgroup]
+Renderer tests and bundle	Run npm run bundle:check	2026-09-14T17:33:56.0670733Z
+Renderer tests and bundle	Run npm run bundle:check	2026-09-14T17:33:56.0671461Z > npd-video-renderer@0.12.0 bundle:check
+Renderer tests and bundle	Run npm run bundle:check	2026-09-14T17:33:56.0671995Z > tsx src/smoke-bundle.ts
+Renderer tests and bundle	Run npm run bundle:check	2026-09-14T17:33:56.0672214Z
+Renderer tests and bundle	Run npm run bundle:check	2026-09-14T17:34:01.5285173Z renderer bundle created: /tmp/remotion-webpack-bundle-xHQtaD

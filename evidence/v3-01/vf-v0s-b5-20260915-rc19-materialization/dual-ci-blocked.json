@@ -1,0 +1,67 @@
+{
+  "attempted_contract": {
+    "executable_rc_ci": {
+      "commit_sha": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+      "completed_at_utc": "2026-09-14T17:38:35Z",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "role": "executable_rc",
+      "run_id": 34875483864,
+      "status": "completed",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    "executable_rc_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "governance_changed_paths": [],
+    "governance_executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "governance_main_ci": {
+      "commit_sha": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+      "completed_at_utc": "2026-09-14T16:41:28Z",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "role": "governance_main",
+      "run_id": 34869652973,
+      "status": "completed",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    "governance_main_commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "version": 1
+  },
+  "budget_reserved_vnd": "0",
+  "canonical_collector": "scripts/v3_01_ci_provenance.py",
+  "ledger_writes": 0,
+  "model_validation_errors": [
+    {
+      "ctx": {
+        "actual_length": 0,
+        "field_type": "Tuple",
+        "min_length": 1
+      },
+      "loc": [
+        "governance_changed_paths"
+      ],
+      "msg": "Tuple should have at least 1 item after validation, not 0",
+      "type": "too_short"
+    }
+  ],
+  "production_business_writes": 0,
+  "provider_calls": 0,
+  "provider_credential_reads": 0,
+  "reason": "Actual RC and current main are the same commit; actual governance diff is empty. Existing canonical schema requires distinct commits and nonempty allowlisted governance paths.",
+  "required_next_gate": "Separate Owner G-08 controlled governance-only merge; successful fresh exact merged-main CI; re-observe RC19/main dual-CI. Do not merge automatically.",
+  "source_or_validator_changed": false,
+  "task_id": "VF-V0S-B5",
+  "validator_source": "apps/api/app/provider_ci_provenance.py",
+  "verdict": "BLOCKED_0_CALL",
+  "collector_exit_code": 2,
+  "collector_output": {
+    "code": "CI_PROVENANCE_INVALID",
+    "credential_reads": 0,
+    "production_verdict": "NO-GO",
+    "provider_calls": 0,
+    "reservation_vnd": "0",
+    "verdict": "BLOCKED_0_CALL"
+  }
+}

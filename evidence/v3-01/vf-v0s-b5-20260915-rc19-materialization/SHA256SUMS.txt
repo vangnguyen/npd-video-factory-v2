@@ -1,0 +1,17 @@
+d9511cc67f4a6d395f550cdd5b4b612f0645d8affe3ace6ef4b6a00826b23d92  docs/acceptance/v3-01/HANDOFF.md
+057de613a726e46abe5af8b7165ad3a59ca0ed041e96ff7db95970092eee3aa7  docs/acceptance/v3-01/handoff.json
+ca6abbf59124e3424ce7c165029378448a34ccb9eba2fa5a83fe0050e4e2d789  docs/acceptance/v3-01/reviews/vf-v0s-b5/audit_evidence.py
+9d410d96ce689e724442c629e11dfc439b59e1f33af510ece11ca404ae2e7de0  docs/acceptance/v3-01/reviews/vf-v0s-b5/verify_rc19.py
+a544cde24d117da30d9ba484a7c3f04d408150dcda353b2b8880e5738498cd7f  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/README.md
+f08e979daba7d4049d5840a71c2aa99d7f3c9f165dc3b60df9e83ee61ddc6246  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/b4-main-provenance-source.json
+389d2800ff4340d515f6c0b6b9ed8516e232f107d477f4fdd13771b91b173cec  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/ci-log-excerpts.log
+a94501594bcb1b7dff2b70a3730f512f2e915db066305782126cf0c8486059ad  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/dual-ci-blocked.json
+91c063999fe58abb52cc36e07225c8848292df4008897be7530e635b35745ff6  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/focused-validation.json
+1336e799b84425a6fd2b0dd56a111497f3053d9c9381b66a6bc9db39175fadd3  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/post-tag-live-metadata.json
+5ae170c2ed10f0ceeda7d6cdbb96512849ae7afc986cd5f02a4a92d2ec266a5d  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/post-tag-source-verification.json
+81decdd96417e4226a1bf616a09cdf305c3b691dce614862122d94f3d3b49a98  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/pre-tag-live-metadata.json
+9ea84a3d8c1599d9e3d56e5df1e76e7537f1718349e11181c9ed763b50b05dd8  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/pre-tag-preflight.json
+94919ab2545d19b2d0af5e905c1ea80091fd920b1c99416d26f72ba8980ff5ae  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/rc-ci.json
+9245d8f80785b721217f4658f76151dcf361b477297b774bcc0b201c74abc021  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/renderer-log-excerpts.log
+0e5f3c59ce13afa8718f0c295ce14727a0ffe1a0a4b0b522d7a37a0e7ca5d55a  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/tag-annotation.json
+196cec3ec713fdae342ec4c054b77cc0fe7df84174d28c408664765d2a5f831d  evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/tag-origin.json
