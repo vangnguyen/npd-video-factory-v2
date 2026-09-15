@@ -1,8 +1,8 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B8
-VERDICT: REVIEW_REQUIRED
+TASK: VF-V0S-B9
+VERDICT: PASS
 REPO: vangnguyen/npd-video-factory-v2
 
 ## Authoritative lineage
@@ -11,64 +11,64 @@ REPO: vangnguyen/npd-video-factory-v2
 - Main CI `34946537685`: 5/5 PASS; main provenance: PASS.
 - RC `vf-v3-01-rc19` → `dc8ff55322267dfe54674fa6c4003a899bf235ab`.
 - RC CI `34875483864`: 5/5 PASS.
-- RC/main executable-tree SHA:
+- Executable-tree SHA:
   `432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502`.
 - RC/main dual-CI provenance: PASS; SHA-256
   `77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171`.
-- Exact RC, governance main and current review head all reproduce the same
-  executable tree.
+- Source drift: NONE; scope drift: PASS.
 
-## Prepared RC-19 Operation 1
+## RC-19 Operation 1 authority
 
 - Operation:
   `v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01`.
-- Ledger operation key: exact Operation identity above.
 - Execution-scope SHA:
   `7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85`.
 - Prepared scope SHA:
   `eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49`.
 - Operation-manifest SHA:
   `d24e29259fd2cea90f539fc2e60b213f7b9522a515de18defda606607a0673ca`.
-- Preparation template SHA:
+- Preparation-template SHA:
   `30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f`.
-- Status: **PREPARED_NOT_AUTHORIZED**; G-01/G-02/G-03 and Owner authority
-  remain NOT_CREATED. The proposed 2026-09-16 21:00 → 2026-09-17 01:00 ICT
-  window remains PROPOSED_NOT_AUTHORIZED.
+- G-01 `V3-01-APP-075`: PASS,
+  `f6f85619d9ed44fd9a2227b7fb17eb1a5104bc98f1fed5de30e1d583a9657b8c`.
+- G-02 `V3-01-APP-076`: PASS,
+  `a0c19efa2d18b9f2889271f5578ab2fdafde02d3e7811d137c053d31d3b99055`.
+- G-03 `V3-01-APP-077`: PASS,
+  `9fc098b30e82f5b592cd243dc9235e6934c6ad8576a8c9e8106719eaba7af995`.
+- Final runtime bundle SHA:
+  `9dc8b99a8c10fbb1e8e2ba1a6f4a908b8322bca45c6a09d34d14f32a15cf5cdc`.
+- Loaded runtime scope SHA:
+  `10df8f6da5418c74511692368aaa27084950379e6695b9a4f92aefe0358313b1`.
+- Authority receipt SHA:
+  `2f4a322a5d3e97861a08412336ccbf0a0fdcc0e0e4c75b75901ec0c38d3bf8e0`.
+- Authority: **GRANTED_NOT_CONSUMED**; confirmation token not required by the
+  verified ASR contract.
 
-## B8 bootstrap qualification result
+The final bundle reproduced twice with identical bytes and the real gate loader
+returned `PASS / VALID` in memory. The bundle is **UNMOUNTED**; loader validation
+is not runtime activation.
 
-Bootstrap entrypoint: `python -m app.provider_runtime_bootstrap` from the exact
-RC-19 detached source.
+## Exact window and budget
 
-The real entrypoint returned `BOOTSTRAP_BINDING_INVALID` (exit 2) before source
-or ledger access. Exact model diagnostics show only two invalid fields:
+- Authorized window: 2026-09-16 21:00 → 2026-09-17 01:00 ICT;
+  2026-09-16 14:00 → 18:00 UTC; start inclusive, end exclusive.
+- 500 VND per Operation 1; 1,250 VND total window ceiling; modeled cost
+  326.3004 VND.
+- Attempts/concurrency: 1/1; retry/fallback: 0/0; provider/controller timeout:
+  90/120 seconds.
+- No budget was reserved by B9.
 
-- `authority_receipt_sha256`: null is not accepted;
-- `bundle_sha256`: null is not accepted.
-
-The current bootstrap contract supports only `ZERO_CALL_CUSTODY_ONLY`. It has no
-verified pre-authority qualification mode and no result equivalent to
-`AUTHORITY_REQUIRED` or `READY_FOR_AUTHORITY_MATERIALIZATION`. Therefore
-`RC19_OPERATION_BOUND_BOOTSTRAP = NOT_VERIFIED` and B8 cannot honestly PASS.
-
-No placeholder receipt, RC-18 authority hash, self-signed approval or
-preparation-template-as-runtime-bundle substitution was used. This is a
-contract-ordering blocker, not an observed operation/ledger/scope hash mismatch.
-
-## Durable ledger state after qualification attempt
+## Durable state after authority materialization
 
 - Canonical ledger: `vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed`.
 - PostgreSQL `16.15`, system identifier `7685665008963764889`, database OID
   `16384`, schema `public`, peer role `vang_nguyen`.
-- Independent `REPEATABLE READ, READ ONLY` audit: control
-  `global/revision=0`; operation, attempt, budget, circuit, usage, cost and
-  idempotency counts all zero.
-- Operation record: absent; consumed: NO; provider request receipt: NONE;
-  active reservation: NO; duplicate/idempotency collision: NONE;
-  reserved amount: `0 VND`.
-- Ledger mutations during B8: 0.
+- A fresh `REPEATABLE READ, READ ONLY` transaction found all execution tables
+  empty: Operation 1 row absent and not consumed; provider request receipt NONE;
+  reservation NONE; reserved amount `0`; duplicate/idempotency collision NONE.
+- Ledger mutations by B9: 0.
 
-## Immutable inputs and safety state
+## Immutable inputs and safety
 
 - Provider/model/capability/language:
   `openai-transcription / whisper-1 / asr / vi`.
@@ -80,28 +80,21 @@ contract-ordering blocker, not an observed operation/ledger/scope hash mismatch.
   `fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef`.
 - Reference transcript SHA:
   `585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e`.
-- RightsRecord canonical SHA:
+- RightsRecord SHA:
   `5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091`.
-- Kill switch: ENGAGED; executable authority bundle: UNMOUNTED.
-- Credential reads: 0; budget reserved: 0 VND; provider calls: 0; production
+- Kill switch: ENGAGED; credential reads: 0; provider calls: 0; production
   business writes: 0; actual cost: 0 VND.
 - Operation 2: NOT_APPROVED / LOCKED / NOT_TRANSFERRED.
 - ASR: 0/2 PASS; Vision: 2/2 PASS; Production: NO-GO.
 
 ## Validation and evidence
 
-- Dual-CI provenance revalidation: PASS with exact expected SHA.
-- RC/main/review executable-tree equality: PASS.
-- B7 deterministic prepared package: PASS, 12 files.
-- Linux focused bootstrap/B7/B8 contract suite: 99 PASS.
-- Full Linux Python/API/worker/bridge suite: 1,013 PASS.
-- Native Windows rerun exposed the existing POSIX socket-fixture path mismatch;
-  canonical Linux execution above is clean and no source was changed to hide it.
-- Actual durable ledger read-only audit: PASS; no write.
-- Actual bootstrap negative qualification: fail-closed as documented.
-- JSON/checksum/secret/diff and broader focused safety results are recorded in
-  the B8 evidence pack.
-- [B8 evidence pack](../../../evidence/v3-01/vf-v0s-b8-20260915-operation-bootstrap-qualification/README.md).
+- Deterministic materializer and real loader: PASS.
+- Focused B9 fail-closed suite: 76 PASS.
+- Post-materialization durable readback: PASS / READ ONLY.
+- Candidate CI for the current review head will be recorded after the branch is
+  pushed; it does not authorize B10 or execution.
+- [B9 evidence pack](../../../evidence/v3-01/vf-v0s-b9-20260915-final-authority/README.md).
 - [Machine-readable handoff](handoff.json).
 - Review branch: `governance/vf-v0s-b7-rc19-asr-w1-prepared`.
 - [Draft PR #71](https://github.com/vangnguyen/npd-video-factory-v2/pull/71):
@@ -109,10 +102,7 @@ contract-ordering blocker, not an observed operation/ledger/scope hash mismatch.
 
 ## Next safe action — recommendation only
 
-Owner review of the contract-ordering blocker. Choose either a separately
-authorized authority-before-bootstrap ordering using the existing contract, or
-a separately bounded source remediation that adds a strict authority-absent
-qualification mode. The latter changes the executable tree and would require a
-fresh RC, custody rebind and operation rebind. Do not proceed to B9, create
-authority, mount a bundle, access credentials, reserve budget or dispatch a
-provider automatically.
+**VF-V0S-B10 — zero-call operation-bound bootstrap qualification using the
+exact final authority and final bundle.** Do not mount the bundle, read provider
+credentials, reserve budget, disengage the kill switch, or dispatch a provider
+in B10.

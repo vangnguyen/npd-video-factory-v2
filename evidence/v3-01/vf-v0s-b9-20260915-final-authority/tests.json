@@ -1,0 +1,70 @@
+{
+  "task_id": "VF-V0S-B9",
+  "result": "PASS_PENDING_CANDIDATE_CI",
+  "offline_materialization": {
+    "command": "python docs/acceptance/v3-01/authority/vf-v0s-b9-rc19-asr-w1-op1/materialize_and_validate.py --write; then --check",
+    "result": "PASS",
+    "checked_files": 11,
+    "bundle_reproducibility": "PASS_IDENTICAL_BYTES_TWICE",
+    "gate_loader": "PASS_VALID_IN_MEMORY_NOT_MOUNTED"
+  },
+  "focused_b9": {
+    "command": "python -m pytest -q apps/api/tests/test_vf_v0s_b9_final_authority.py",
+    "passed": 76,
+    "failed": 0,
+    "seconds": 4.27,
+    "result": "PASS"
+  },
+  "focused_gate_authority_safety": {
+    "command": "python -m pytest -q apps/api/tests/test_rc19_asr_w1_prepared_rebind.py apps/api/tests/test_vf_v0s_b8_operation_bootstrap_qualification.py apps/api/tests/test_vf_v0s_b9_final_authority.py apps/api/tests/test_provider_gate_loader.py apps/api/tests/test_openai_asr_gate_loader.py apps/api/tests/test_provider_safety.py",
+    "passed": 162,
+    "failed": 0,
+    "seconds": 9.77,
+    "result": "PASS"
+  },
+  "windows_cross_platform_bootstrap_observation": {
+    "command": "python -m pytest -q apps/api/tests/test_rc19_asr_w1_prepared_rebind.py apps/api/tests/test_vf_v0s_b8_operation_bootstrap_qualification.py apps/api/tests/test_vf_v0s_b9_final_authority.py apps/api/tests/test_provider_gate_loader.py apps/api/tests/test_openai_asr_gate_loader.py apps/api/tests/test_provider_runtime_bootstrap.py apps/api/tests/test_provider_safety.py",
+    "passed": 203,
+    "failed": 49,
+    "seconds": 12.0,
+    "classification": "KNOWN_HOST_PLATFORM_PATH_SEMANTICS",
+    "detail": "All 49 failures occur before the tested bootstrap behavior because Windows pathlib rejects the deliberately POSIX Unix-socket fixture as non-absolute. The current bootstrap is Linux/WSL runtime code; the source was not changed to weaken this check.",
+    "canonical_resolution": "Exact-head ubuntu-latest CI is required and not substituted by this Windows observation."
+  },
+  "wsl_local_attempt": {
+    "result": "NOT_RUN_DEPENDENCY_UNAVAILABLE",
+    "detail": "WSL Python 3.12.3 is present but pytest is not installed in the current WSL environment; no dependency installation or environment mutation was performed."
+  },
+  "acceptance_repository_validation": {
+    "command": "python scripts/v3_01_acceptance.py validate-repo",
+    "result": "PASS",
+    "matrix_rows": 60,
+    "gaps": 16,
+    "schemas": 13,
+    "approvals_before_b9_untracked_records": 74,
+    "evidence_runs": 39
+  },
+  "governance_validation": {
+    "command": "python docs/acceptance/v3-01/authority/vf-v0s-b9-rc19-asr-w1-op1/validate_governance.py",
+    "result": "PASS",
+    "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "executable_tree_changed": false,
+    "secret_scan": "PASS",
+    "handoff_md_json_semantic_parity": "PASS",
+    "json_files_parsed": 14,
+    "links_checked": 2
+  },
+  "git_diff_check": "PASS",
+  "ledger_readback": "PASS_REPEATABLE_READ_READ_ONLY",
+  "candidate_ci": {
+    "status": "PENDING_CURRENT_HEAD",
+    "required_jobs": 5
+  },
+  "execution_effects": {
+    "credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "provider_calls": 0,
+    "production_business_writes": 0,
+    "actual_cost_vnd": "0"
+  }
+}

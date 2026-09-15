@@ -1,0 +1,42 @@
+{
+  "approval_id": "V3-01-APP-075",
+  "approved_at_utc": "2026-09-15T10:49:19Z",
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "artifact_or_commit_hashes": [
+    "2ec7beeee5683cb82ba1cc8e03f0ab4ed6d0b6344318c147ffea7fb7249088c8",
+    "30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f",
+    "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349",
+    "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+    "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+    "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171",
+    "7ad25cb039c712d450486778d2981d9ef8175385",
+    "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
+    "867ec5d9eb6b3b4756d74a051941ca3104a7c4a370832df263dea261828bcf63",
+    "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "d24e29259fd2cea90f539fc2e60b213f7b9522a515de18defda606607a0673ca",
+    "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49",
+    "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef"
+  ],
+  "decision": "APPROVED",
+  "expires_at_utc": "2026-09-16T18:00:00Z",
+  "gate_id": "G-01",
+  "limits": [
+    "Only Operation 1: v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+    "Exact vf-v3-01-rc19 commit dc8ff55322267dfe54674fa6c4003a899bf235ab; lineage al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd; canonical ledger vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+    "Window 2026-09-16T14:00:00Z <= dispatch time < 2026-09-16T18:00:00Z; Asia/Ho_Chi_Minh; UTC budget day 2026-09-16",
+    "One attempt, concurrency 1, retry 0, fallback 0; provider HTTP 90 seconds < controller hard envelope 120 seconds",
+    "Operation 2 NOT_APPROVED / LOCKED / NOT_TRANSFERRED; no second call or automatic unlock",
+    "VF-V0S-B9 creates authority artifacts only: no mount, credential read, reservation, kill-switch disengagement or provider dispatch",
+    "A separate future execution task and fresh full preflight are mandatory; authority alone bypasses no gate",
+    "No deployment, public ingress, publishing, training, resale or production analytics",
+    "openai-transcription / whisper-1 / asr / vi only; external credential alias reference only",
+    "W1 profile asr-whisper-vi-w1-v1 and exact profile/prompt hashes required",
+    "No transcript correction, fuzzy rescue or reference rewrite; WER <=15 percent and critical terms 8/8 unchanged"
+  ],
+  "notes": "Materialized from the explicit current Owner decision VF-V0S-B9, not backdated or inherited from RC-18. The structured Owner decision binds RC-19/main/tree/provenance/ledger/input constraints. The preparation template is included; the completed raw bundle is bound by the outer Op1 authority receipt to avoid a self-referential hash cycle. Loader validity is not activation.",
+  "scope": "Exact RC-19 ASR W1 Operation-1-only exact execution/binding approval for v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01. Owner source: VF-V0S-B9.",
+  "target_account_or_environment": "Isolated future Owner-gated RC-19 acceptance runtime using canonical ledger vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed; no production execution"
+}

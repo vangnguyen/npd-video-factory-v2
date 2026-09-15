@@ -1,0 +1,19 @@
+{
+  "actual_cost_vnd": "0",
+  "authority_status": "GRANTED_NOT_CONSUMED",
+  "blockers": [],
+  "budget_reserved_vnd": "0",
+  "bundle_mounted": false,
+  "credential_reads": 0,
+  "final_runtime_bundle_sha256": "9dc8b99a8c10fbb1e8e2ba1a6f4a908b8322bca45c6a09d34d14f32a15cf5cdc",
+  "gate_loader": "PASS / VALID",
+  "kill_switch": "ENGAGED",
+  "next_safe_action": "VF-V0S-B10 — zero-call operation-bound bootstrap qualification with final authority/bundle; stop before execution",
+  "operation_1_consumed": false,
+  "operation_2": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
+  "production_business_writes": 0,
+  "provider_calls": 0,
+  "scope_drift": "PASS",
+  "task_id": "VF-V0S-B9",
+  "verdict": "PASS"
+}
