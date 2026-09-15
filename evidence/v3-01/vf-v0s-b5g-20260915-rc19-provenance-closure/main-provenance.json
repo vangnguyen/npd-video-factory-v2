@@ -1,0 +1,48 @@
+{
+  "kind": "EXACT_GOVERNANCE_MAIN_CI_PROVENANCE",
+  "version": 1,
+  "task_id": "VF-V0S-B5G",
+  "verdict": "PASS",
+  "main_sha": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
+  "full_git_tree": "cc19633d745b5570c3cd47f3855368237f5d47d0",
+  "executable_tree_sha256": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+  "executable_git_objects": {
+    ".env.example": "b0848b375acd9498d9f99f3a9d3440a50c5064ac",
+    ".github/workflows/ci.yml": "fec7dc81a6688a25774b2fca7936bd404b53eadf",
+    "apps/api/app": "a313c341bddc3d634f9d259983513684ba0d074e",
+    "apps/api/pyproject.toml": "99ee33d6b26e6250040ad5b2f7b5f58ef0259cb8",
+    "apps/studio-web": "003370542fe8131f07b3b16f0d9d050e8e4ba56a",
+    "deploy": "05fdda827b098d6325dd4c7f982df97a6f5c6965",
+    "docker-compose.yml": "5cd87fd46f9c764fcf4b8fa94375261a3dd25838",
+    "packages": "fedecefa37fd6e43bd12a7c6c2a92f85a82bea6e",
+    "renderer": "18c4569f004f7e1225d61c57298fd836315152f6",
+    "scripts": "8e5f7b0a3c9cd3e459d85e8515cacd8851a0224d",
+    "services": "a1d39b3df32f92ab49855f92e441ec8e299582ec",
+    "workflows": "cb5be4eb46d714672a599daaec4f755e8c716ee7"
+  },
+  "ci": {
+    "role": "governance_main",
+    "workflow_name": "Video Factory V2 CI",
+    "run_id": 34916352282,
+    "commit_sha": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs_total": 5,
+    "jobs_succeeded": 5,
+    "completed_at_utc": "2026-09-15T01:17:14Z"
+  },
+  "merge_binding": {
+    "pr": 67,
+    "approved_head": "cd866a03445eff1df0f489b2b6050f22939a363f",
+    "base": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "parents_verified": true,
+    "reviewed_tree_verified": true
+  },
+  "source_drift": "NONE",
+  "scope_drift": "PASS",
+  "credential_reads": 0,
+  "provider_calls": 0,
+  "budget_reserved_vnd": "0",
+  "production_business_writes": 0,
+  "actual_cost_vnd": "0"
+}

@@ -1,79 +1,67 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B5
-VERDICT: REVIEW_REQUIRED
+TASK: VF-V0S-B5G
+VERDICT: PASS
 REPO: vangnguyen/npd-video-factory-v2
 
-## Verified source and RC
+## RC-19 governance closure
 
-- Main: `dc8ff55322267dfe54674fa6c4003a899bf235ab`; main CI `34869652973`: 5/5 PASS; main provenance: PASS.
-- Canonical executable-tree SHA: `432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502`.
-- RC sequencing: PASS, tags 1–18 existed and RC-19 was absent immediately before creation.
-- New annotated `vf-v3-01-rc19` → `dc8ff55322267dfe54674fa6c4003a899bf235ab`, tag object `09a9a51628ab2e33d4ee85a1620f7afca692d18e`.
-- Tagger date: `2026-09-14T17:33:21Z`; tag/commit, tag/tree, main/RC tree equality: PASS.
-- RC CI `34875483864`: attempt 1, workflow_dispatch on exact tag, completed/success, 5/5 PASS.
-- Bootstrap entrypoint: `python -m app.provider_runtime_bootstrap`, present in exact RC source.
-- Source mutation: NONE. Runtime ledger qualification: NOT_PERFORMED.
+- G-08 reviewed PR #67 at exact head `cd866a03445eff1df0f489b2b6050f22939a363f`: PASS.
+- The 18 changed files were limited to `docs/acceptance/v3-01/` and `evidence/v3-01/`.
+- PR #67 merged as `d13c57bf480ed3b6b8b56f46370fef58b291810b`; its parents are the exact source baseline
+  `dc8ff55322267dfe54674fa6c4003a899bf235ab` and the exact reviewed head. The merge tree equals the reviewed PR tree.
+- Exact governance-main CI `34916352282`: completed/success, attempt 1, 5/5 canonical jobs PASS.
+- Main provenance: PASS. Canonical RC-19/main dual-CI provenance: PASS,
+  SHA-256 `12128084c7fff1397b2476e5360b45e13232eef0bbf161f962c3c6de38d43228`.
+- Canonical executable-tree SHA on RC-19 and governance main:
+  `432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502`; equality PASS.
+- `vf-v3-01-rc19` remains the same annotated tag at
+  `dc8ff55322267dfe54674fa6c4003a899bf235ab`; RC CI `34875483864` remains PASS 5/5.
+- RC19_GOVERNANCE_LINEAGE: CLOSED / PASS. The previous `CI_PROVENANCE_INVALID` blocker is resolved by the
+  distinct allowlisted governance merge and its fresh exact-main CI; no validator or executable source was changed.
 
-## Unclosed gate
+The merge was observed after an exact-head pre-merge guard saw the PR state transition to `MERGED`; the local guarded
+merge command did not run. GitHub records `vangnguyen` as merge actor, a valid GitHub signature, and the exact authorized
+base/head parents. This race is retained explicitly in the evidence rather than rewritten as a local merge action.
 
-Main/RC dual-CI: **BLOCKED_DISTINCT_GOVERNANCE_MAIN_REQUIRED**.
-The real canonical collector exited 2 / `CI_PROVENANCE_INVALID`. Both CI runs passed independently,
-but RC and current main are the same commit; the actual governance diff is empty. The existing schema
-requires distinct commits and a nonempty allowlisted diff. No fake path, substituted CI, validator change
-or false dual-CI PASS was used. RC-19 is materialized; authoritative governance closure remains pending.
+## Execution boundary
 
-## Execution safety
-
-Operation 1 ID: NOT_GENERATED. Operation 1 authority: NOT_CREATED.
-Fresh ledger binding, Operation 1 rebind, fresh authority and fresh execution window: REQUIRED.
-Operation 2: NOT_APPROVED / LOCKED / NOT_TRANSFERRED.
-Kill switch: ENGAGED. Bundle: UNMOUNTED. External/paid execution: false.
-Runtime ledger writes: 0. Provider credential reads: 0. Budget reserved: 0 VND.
-Real provider calls: 0. Production business writes: 0. Actual cost: 0 VND.
-Tests/CI used only isolated disposable fixtures, not a real RC-19 execution ledger.
-
-RC-18 remains IMMUTABLE / HISTORICAL at `03e18c1f0c56fff8a13f167af74f34894c2db811`,
-tag object `30ca09c4201cd6aea5e733c26ba4dfa1f30d5021`, old tree
-`ffddebe0b657f62360ca3930f1329c9e877024f373d22b9487fe30723e2deae5`.
-RC-18 material remains HISTORICAL_REFERENCE_ONLY / INVALID_FOR_CURRENT_MAIN and is not transferred.
-RC-17 is unchanged. No old operation ID, scope, bundle, approval, receipt, token binding, window,
-ledger namespace or reservation was reused.
-
-## Future ledger naming preview
-
-Assuming sequence 1 for W1/openai-transcription/whisper-1/asr under exact RC-19:
+Future ledger identity remains plan-only:
 `vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed`.
+No database, namespace, operation identity, bundle, approval, authority, window or reservation was created.
 
-Status: PLAN_ONLY_NOT_CREATED_OR_APPROVED. Formula: `vf_` + RC tag with hyphens replaced by underscores +
-`_` + first 32 hex characters of SHA-256(UTF-8(RC tag + LF + full canonical acceptance lineage ID)).
-Actual instance/socket/system ID/database OID/peer role/port/public schema must be pinned in a later task.
-No database connection, namespace creation, durable registration, reservation or fresh Operation ID
-generation occurred. Do not reuse historical RC18 custody or B3 synthetic RC19/RC20 test databases.
+- Fresh ledger binding: REQUIRED.
+- Operation 1 rebind: REQUIRED; no Operation 1 ID exists for RC-19.
+- Fresh authority: REQUIRED.
+- Fresh execution window: REQUIRED.
+- Operation 2: NOT_APPROVED / LOCKED / NOT_TRANSFERRED.
+- Kill switch: ENGAGED. Bundle: UNMOUNTED. External/paid execution: false.
+- Credential reads: 0. Budget reserved: 0 VND. Real provider calls: 0.
+- Production business writes: 0. Actual cost: 0 VND. Production: NO-GO.
+
+RC-18 and RC-17 remain immutable historical lineages. Their operation IDs, scopes, bundles, approvals, receipts,
+windows, ledger namespaces and reservation state were not transferred or reused.
 
 ## Validation and acceptance
 
-Focused bootstrap/provenance/lineage/W1/loader: 284 PASS, 6.40 s.
-RC CI Python/API/worker/bridge: 1048 PASS, 55.33 s. Studio: 14 PASS. Renderer: 14 PASS + typecheck/bundle.
-Safety/Compose, Docker deterministic E2E, migration replay, acceptance/evidence and expected-blocked
-Flow A/B/C/DR boundaries: PASS. Canonical hash independently reproduced in two clean source worktrees
-and matched all 12 GitHub objects.
+- PR #67 candidate CI `34877142919`: 5/5 PASS.
+- Exact-main CI `34916352282`: Python/API/worker/bridge, Studio, Renderer, Safety/Compose and Docker E2E all PASS.
+- G-08 audit, JSON, Markdown links, checksums, secret scan and `git diff --check`: PASS.
+- Main/RC executable-tree equality and canonical dual-CI collector: PASS.
+- ASR: 0/2 PASS. Vision: 2/2 PASS. Production: NO-GO.
 
-ASR: 0/2 PASS. Vision: 2/2 PASS. Production: NO-GO.
+## Evidence and historical drafts
 
-## Evidence and historical draft
-
-- [B5 evidence/reproduction](../../../evidence/v3-01/vf-v0s-b5-20260915-rc19-materialization/README.md)
+- [B5G closure evidence](../../../evidence/v3-01/vf-v0s-b5g-20260915-rc19-provenance-closure/README.md)
 - [Machine-readable handoff](handoff.json)
-- [PR #66](https://github.com/vangnguyen/npd-video-factory-v2/pull/66): OPEN / DRAFT / NOT_MERGED,
-  exact head `71609bdb691ceabb9cc1b4ee3175260a28132395`, CI `34871006869` 5/5 PASS; unchanged.
-- B4 provenance is imported verbatim by original SHA; full original pack remains on PR #66.
-- Previous canonical handoff/checksums remain in exact-main Git history. No historical receipt was rewritten.
+- [PR #67](https://github.com/vangnguyen/npd-video-factory-v2/pull/67): MERGED exact reviewed head.
+- [Exact-main CI](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34916352282): PASS 5/5.
+- PR #66 remains OPEN/DRAFT and is classified `SUPERSEDED_HISTORICAL_DRAFT`; it was not merged, closed or deleted.
+- B5 and older evidence remain in Git history without silent rewrite.
 
 ## Next safe action — recommendation only
 
-Owner G-08 review of the separate B5 governance-only draft; a later controlled merge, fresh exact-main CI
-and RC-19/main dual-CI closure are required. Do not merge automatically.
-STOP before ledger creation, Operation 1 rebind, authority/window creation, bundle mount,
-credential access, reservation or provider dispatch. This handoff does not preclaim its own future commit CI.
+Owner may assign `VF-V0S-B6 — RC-19 fresh durable ledger custody/bootstrap qualification` against the exact closed
+governance baseline. Stop before ledger creation until that separate task is issued, and continue to stop before
+Operation 1 rebind, authority/window, credential access, reservation or provider dispatch.
