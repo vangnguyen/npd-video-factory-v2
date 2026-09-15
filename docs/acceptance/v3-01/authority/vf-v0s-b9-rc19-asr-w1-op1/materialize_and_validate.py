@@ -12,6 +12,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
 import socket
 import subprocess
 import sys
@@ -126,16 +127,75 @@ def git(*args: str) -> str:
     return result.stdout.strip()
 
 
+def git_optional(*args: str) -> str | None:
+    result = subprocess.run(
+        ["git", *args], cwd=REPO, check=False, capture_output=True, text=True
+    )
+    return result.stdout.strip() if result.returncode == 0 else None
+
+
+def github_pull_request_base_attests_main() -> bool:
+    """Accept an exact GitHub event anchor when checkout is intentionally shallow.
+
+    actions/checkout does not guarantee origin/main or tag refs for pull_request
+    jobs. The signed event payload still binds the repository, base ref and exact
+    base SHA; any missing or malformed field fails closed.
+    """
+
+    if (
+        os.environ.get("GITHUB_ACTIONS") != "true"
+        or os.environ.get("GITHUB_EVENT_NAME") != "pull_request"
+        or os.environ.get("GITHUB_REPOSITORY") != REPOSITORY
+        or os.environ.get("GITHUB_BASE_REF") != "main"
+    ):
+        return False
+    event_path = os.environ.get("GITHUB_EVENT_PATH")
+    if not event_path:
+        return False
+    try:
+        payload = read_json(Path(event_path))
+        pull_request = payload["pull_request"]
+        return (
+            pull_request["base"]["ref"] == "main"
+            and pull_request["base"]["sha"] == MAIN
+            and pull_request["base"]["repo"]["full_name"] == REPOSITORY
+        )
+    except (KeyError, OSError, TypeError, ValueError):
+        return False
+
+
 def no_network(*args: object, **kwargs: object) -> None:
     raise AssertionError("VF_V0S_B9_OFFLINE_MATERIALIZATION_FORBIDS_NETWORK")
 
 
 def validate_baseline() -> None:
-    if git("rev-parse", "origin/main") != MAIN:
+    ci_main_attested = github_pull_request_base_attests_main()
+    remote_main = git_optional(
+        "rev-parse", "--verify", "refs/remotes/origin/main^{commit}"
+    )
+    if remote_main is None:
+        if not ci_main_attested:
+            raise ValueError("GOVERNANCE_MAIN_REF_UNAVAILABLE")
+    elif remote_main != MAIN:
         raise ValueError("GOVERNANCE_MAIN_DRIFT")
-    if git("rev-parse", RC_TAG + "^{}") != RC_COMMIT:
+
+    tag_commit = git_optional("rev-parse", "--verify", RC_TAG + "^{}")
+    if tag_commit is None:
+        if not ci_main_attested:
+            raise ValueError("RC19_TAG_UNAVAILABLE")
+    elif tag_commit != RC_COMMIT:
         raise ValueError("RC19_TAG_DRIFT")
-    for ref in (MAIN, RC_COMMIT, "HEAD"):
+
+    refs = ["HEAD"]
+    for ref, unavailable_code in (
+        (MAIN, "GOVERNANCE_MAIN_OBJECT_UNAVAILABLE"),
+        (RC_COMMIT, "RC19_COMMIT_OBJECT_UNAVAILABLE"),
+    ):
+        if git_optional("rev-parse", "--verify", ref + "^{commit}") is not None:
+            refs.append(ref)
+        elif not ci_main_attested:
+            raise ValueError(unavailable_code)
+    for ref in refs:
         objects = _git_object_map(REPO, ref)
         if executable_tree_sha256(objects) != TREE:
             raise ValueError("EXECUTABLE_TREE_DRIFT:" + ref)

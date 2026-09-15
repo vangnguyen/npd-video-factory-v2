@@ -10,16 +10,16 @@
   },
   "focused_b9": {
     "command": "python -m pytest -q apps/api/tests/test_vf_v0s_b9_final_authority.py",
-    "passed": 76,
+    "passed": 77,
     "failed": 0,
-    "seconds": 4.27,
+    "seconds": 4.53,
     "result": "PASS"
   },
   "focused_gate_authority_safety": {
     "command": "python -m pytest -q apps/api/tests/test_rc19_asr_w1_prepared_rebind.py apps/api/tests/test_vf_v0s_b8_operation_bootstrap_qualification.py apps/api/tests/test_vf_v0s_b9_final_authority.py apps/api/tests/test_provider_gate_loader.py apps/api/tests/test_openai_asr_gate_loader.py apps/api/tests/test_provider_safety.py",
-    "passed": 162,
+    "passed": 163,
     "failed": 0,
-    "seconds": 9.77,
+    "seconds": 10.45,
     "result": "PASS"
   },
   "windows_cross_platform_bootstrap_observation": {
@@ -59,6 +59,19 @@
   "candidate_ci": {
     "status": "PENDING_CURRENT_HEAD",
     "required_jobs": 5
+  },
+  "initial_candidate_ci": {
+    "run_id": 34962147128,
+    "head_sha": "e9d1b1edeea6095886bdb73d759c0d395e133592",
+    "result": "FAIL_4_OF_5",
+    "python_result": "2 failed, 1131 passed",
+    "root_cause": "B9 offline reproducer required origin/main, but actions/checkout pull_request shallow checkout did not materialize that remote-tracking ref.",
+    "remediation": "Validate exact repository/main/base SHA through the signed GitHub pull_request event when refs are intentionally absent; retain strict direct ref checks in a full clone and fail closed on any event mismatch.",
+    "runtime_or_execution_contract_changed": false,
+    "docker_e2e": "PASS",
+    "safety_compose": "PASS",
+    "studio": "PASS",
+    "renderer": "PASS"
   },
   "execution_effects": {
     "credential_reads": 0,

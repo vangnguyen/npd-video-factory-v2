@@ -51,6 +51,37 @@ def test_full_b9_offline_materialization_audit() -> None:
     assert result["budget_reserved_vnd"] == result["actual_cost_vnd"] == "0"
 
 
+def test_github_shallow_checkout_requires_exact_signed_base_event(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    event = tmp_path / "event.json"
+    event.write_text(
+        json.dumps(
+            {
+                "pull_request": {
+                    "base": {
+                        "ref": "main",
+                        "sha": review.MAIN,
+                        "repo": {"full_name": review.REPOSITORY},
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+    monkeypatch.setenv("GITHUB_REPOSITORY", review.REPOSITORY)
+    monkeypatch.setenv("GITHUB_BASE_REF", "main")
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    assert review.github_pull_request_base_attests_main() is True
+
+    payload = json.loads(event.read_text(encoding="utf-8"))
+    payload["pull_request"]["base"]["sha"] = "0" * 40
+    event.write_text(json.dumps(payload), encoding="utf-8")
+    assert review.github_pull_request_base_attests_main() is False
+
+
 def test_final_bundle_reproduces_twice_and_real_loader_passes() -> None:
     one = review.build_materials()[review.BUNDLE_PATH]
     two = review.build_materials()[review.BUNDLE_PATH]
