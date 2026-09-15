@@ -90,10 +90,11 @@ is not runtime activation.
 ## Validation and evidence
 
 - Deterministic materializer and real loader: PASS.
-- Focused B9 fail-closed suite: 76 PASS.
+- Focused B9 fail-closed suite: 77 PASS.
 - Post-materialization durable readback: PASS / READ ONLY.
-- Candidate CI for the current review head will be recorded after the branch is
-  pushed; it does not authorize B10 or execution.
+- Exact materialization-head candidate CI `34962924047`: 5/5 PASS, including
+  1,134 Python/API/worker/bridge tests and Docker deterministic E2E. This CI
+  does not authorize B10 or execution.
 - [B9 evidence pack](../../../evidence/v3-01/vf-v0s-b9-20260915-final-authority/README.md).
 - [Machine-readable handoff](handoff.json).
 - Review branch: `governance/vf-v0s-b7-rc19-asr-w1-prepared`.

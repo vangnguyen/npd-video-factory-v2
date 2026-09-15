@@ -1,6 +1,6 @@
 {
   "task_id": "VF-V0S-B9",
-  "result": "PASS_PENDING_CANDIDATE_CI",
+  "result": "PASS",
   "offline_materialization": {
     "command": "python docs/acceptance/v3-01/authority/vf-v0s-b9-rc19-asr-w1-op1/materialize_and_validate.py --write; then --check",
     "result": "PASS",
@@ -57,8 +57,17 @@
   "git_diff_check": "PASS",
   "ledger_readback": "PASS_REPEATABLE_READ_READ_ONLY",
   "candidate_ci": {
-    "status": "PENDING_CURRENT_HEAD",
-    "required_jobs": 5
+    "run_id": 34962924047,
+    "head_sha": "01b7b12af6a27bd2dd4a4994327d6d23641d9544",
+    "status": "PASS_5_OF_5",
+    "required_jobs": 5,
+    "completed_jobs": 5,
+    "python_result": "1134 passed",
+    "docker_e2e": "PASS",
+    "safety_compose": "PASS",
+    "studio": "PASS",
+    "renderer": "PASS",
+    "url": "https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34962924047"
   },
   "initial_candidate_ci": {
     "run_id": 34962147128,

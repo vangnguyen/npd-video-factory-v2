@@ -110,8 +110,8 @@
   "scope_drift": "PASS",
   "task_id": "VF-V0S-B9",
   "validation": {
-    "candidate_ci": "PENDING_CURRENT_HEAD",
-    "focused_b9_tests": "PASS_76",
+    "candidate_ci": "PASS_5_OF_5_34962924047",
+    "focused_b9_tests": "PASS_77",
     "materializer_reproduction": "PASS",
     "post_materialization_ledger_readback": "PASS_READ_ONLY",
     "real_gate_loader": "PASS"

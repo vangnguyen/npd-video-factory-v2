@@ -52,5 +52,10 @@ crossed. Operation 2 remains locked.
 - `task-result.json` — terminal task state.
 - `SHA256SUMS.txt` — evidence-pack integrity manifest.
 
+Exact materialization-head candidate CI
+[`34962924047`](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/34962924047)
+completed 5/5 PASS, including 1,134 Python/API/worker/bridge tests and Docker
+deterministic E2E.
+
 NEXT_SAFE_ACTION: **VF-V0S-B10 — zero-call operation-bound bootstrap
 qualification with the exact final authority/bundle. Stop before execution.**
