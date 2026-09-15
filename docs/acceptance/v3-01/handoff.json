@@ -5,7 +5,11 @@
   "verdict": "REVIEW_REQUIRED",
   "repo": "vangnguyen/npd-video-factory-v2",
   "branch": "governance/vf-v0s-b6-rc19-ledger-custody",
-  "draft_pr": "PENDING_PUBLICATION",
+  "draft_pr": {
+    "number": 69,
+    "url": "https://github.com/vangnguyen/npd-video-factory-v2/pull/69",
+    "status": "OPEN / DRAFT / NOT_MERGED"
+  },
   "baseline": {
     "governance_main_sha": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
     "main_ci": 34916352282,

@@ -84,7 +84,8 @@ virgin custody.
 - [B6 custody evidence](../../../evidence/v3-01/vf-v0s-b6-20260915-rc19-ledger-custody/README.md)
 - [Machine-readable handoff](handoff.json)
 - Review branch: `governance/vf-v0s-b6-rc19-ledger-custody`.
-- Draft PR: pending publication; never merge automatically.
+- [Draft PR #69](https://github.com/vangnguyen/npd-video-factory-v2/pull/69):
+  OPEN / DRAFT / NOT_MERGED; never merge automatically.
 - Historical handoff/evidence remains in Git history; nothing was silently removed.
 
 ## Next safe action — recommendation only
