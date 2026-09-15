@@ -1,0 +1,21 @@
+{
+  "task_id": "VF-V0S-B5G",
+  "pr": 67,
+  "approved_head": "cd866a03445eff1df0f489b2b6050f22939a363f",
+  "approved_base": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+  "merge_commit": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
+  "merge_commit_parents": [
+    "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "cd866a03445eff1df0f489b2b6050f22939a363f"
+  ],
+  "merge_full_git_tree": "cc19633d745b5570c3cd47f3855368237f5d47d0",
+  "reviewed_head_full_git_tree": "cc19633d745b5570c3cd47f3855368237f5d47d0",
+  "tree_equality": "PASS",
+  "merged_at_utc": "2026-09-15T01:12:36Z",
+  "merge_actor": "vangnguyen",
+  "commit_signature": "VALID_GITHUB_VERIFIED",
+  "local_merge_command_issued": false,
+  "observation": "The guarded local merge path stopped when its final pre-merge check observed a concurrent transition to MERGED. The already-completed Owner merge was then verified against exact approved base/head/tree/signature.",
+  "approved_exact_head_merged": true,
+  "source_mutation_outside_reviewed_pr": false
+}

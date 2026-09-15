@@ -1,0 +1,45 @@
+{
+  "task_id": "VF-V0S-B5G",
+  "observed_after_exact_main_ci": true,
+  "remote_main": "d13c57bf480ed3b6b8b56f46370fef58b291810b",
+  "rc19": {
+    "tag_object": "09a9a51628ab2e33d4ee85a1620f7afca692d18e",
+    "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "status": "IMMUTABLE / GOVERNANCE LINEAGE CLOSED / PASS"
+  },
+  "rc18": {
+    "tag_object": "30ca09c4201cd6aea5e733c26ba4dfa1f30d5021",
+    "commit": "03e18c1f0c56fff8a13f167af74f34894c2db811",
+    "status": "IMMUTABLE / HISTORICAL"
+  },
+  "rc17": {
+    "tag_object": "ea67843635dddf94ee25d38111fc06782ad9fd74",
+    "commit": "d08ffc005d7f3ad517d355977b0bc3cc8d686906",
+    "status": "IMMUTABLE / HISTORICAL"
+  },
+  "pr66": {
+    "state": "OPEN",
+    "draft": true,
+    "head": "71609bdb691ceabb9cc1b4ee3175260a28132395",
+    "mergeability": "CONFLICTING",
+    "disposition": "SUPERSEDED_HISTORICAL_DRAFT",
+    "mutated_by_task": false
+  },
+  "expected_fresh_ledger_identity": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+  "ledger_identity_status": "PLAN_ONLY_NOT_CREATED",
+  "ledger_created": false,
+  "ledger_runtime_writes": 0,
+  "operation_1_id_generated": false,
+  "operation_1_rebind_required": true,
+  "fresh_authority_required": true,
+  "fresh_execution_window_required": true,
+  "operation_2": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
+  "kill_switch": "ENGAGED",
+  "bundle_mounted": false,
+  "credential_reads": 0,
+  "budget_reserved_vnd": "0",
+  "real_provider_calls": 0,
+  "production_business_writes": 0,
+  "actual_cost_vnd": "0",
+  "scope_drift": "PASS"
+}
