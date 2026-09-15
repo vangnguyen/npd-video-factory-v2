@@ -1,0 +1,35 @@
+{
+  "dual_ci_provenance": "PASS",
+  "dual_ci_provenance_sha256": "77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171",
+  "executable_tree_sha256": {
+    "expected": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "governance_candidate_observed": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502",
+    "match": true,
+    "rc19_observed": "432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502"
+  },
+  "governance_main": {
+    "expected": "7ad25cb039c712d450486778d2981d9ef8175385",
+    "observed_origin_main": "7ad25cb039c712d450486778d2981d9ef8175385",
+    "unchanged": true
+  },
+  "ledger": {
+    "custody": "VERIFIED / CANONICAL",
+    "database_name": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+    "database_oid": 16384,
+    "database_role": "vang_nguyen",
+    "postgres_version": "16.15",
+    "schema_name": "public",
+    "system_identifier": "7685665008963764889"
+  },
+  "qualification_source_head_before_evidence_seal": "7b4b00c8020dfdacef4553f18dec634491668f66",
+  "rc": {
+    "commit_expected": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "commit_observed": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "tag": "vf-v3-01-rc19",
+    "unchanged": true
+  },
+  "repo": "vangnguyen/npd-video-factory-v2",
+  "source_drift": "NONE",
+  "task_id": "VF-V0S-B10",
+  "verified_at_utc": "2026-09-15T12:23:24Z"
+}

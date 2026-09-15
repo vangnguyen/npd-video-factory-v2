@@ -1,0 +1,56 @@
+{
+  "approvals": {
+    "G-01": {
+      "approval_id": "V3-01-APP-075",
+      "record_sha256": "f6f85619d9ed44fd9a2227b7fb17eb1a5104bc98f1fed5de30e1d583a9657b8c",
+      "status": "PASS"
+    },
+    "G-02": {
+      "approval_id": "V3-01-APP-076",
+      "record_sha256": "a0c19efa2d18b9f2889271f5578ab2fdafde02d3e7811d137c053d31d3b99055",
+      "status": "PASS"
+    },
+    "G-03": {
+      "approval_id": "V3-01-APP-077",
+      "record_sha256": "9fc098b30e82f5b592cd243dc9235e6934c6ad8576a8c9e8106719eaba7af995",
+      "status": "PASS"
+    }
+  },
+  "authority_receipt_sha256": "2f4a322a5d3e97861a08412336ccbf0a0fdcc0e0e4c75b75901ec0c38d3bf8e0",
+  "authority_status": "GRANTED_NOT_CONSUMED",
+  "budget_policy": {
+    "modeled_cost_vnd": "326.3004",
+    "per_operation_ceiling_vnd": "500",
+    "reserved_vnd": "0",
+    "window_ceiling_vnd": "1250"
+  },
+  "bundle_mounted": false,
+  "bundle_path": "docs/acceptance/v3-01/V3-01-GATE-RC19-OPENAI-ASR-W1-LINEAGE-A.json",
+  "bundle_reproducibility": "PASS / IDENTICAL_BYTES_TWICE",
+  "final_loaded_scope_sha256": "10df8f6da5418c74511692368aaa27084950379e6695b9a4f92aefe0358313b1",
+  "final_runtime_bundle_sha256": "9dc8b99a8c10fbb1e8e2ba1a6f4a908b8322bca45c6a09d34d14f32a15cf5cdc",
+  "gate_loader": "PASS / VALID_IN_MEMORY_NOT_MOUNTED",
+  "immutable_inputs": {
+    "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+    "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "reference_transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+    "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+    "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1"
+  },
+  "operation": {
+    "execution_scope_sha256": "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
+    "id": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
+    "operation_manifest_sha256": "d24e29259fd2cea90f539fc2e60b213f7b9522a515de18defda606607a0673ca",
+    "prepared_scope_sha256": "eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49"
+  },
+  "provider_binding": "openai-transcription / whisper-1 / asr / vi",
+  "result": "PASS",
+  "task_id": "VF-V0S-B10",
+  "window_policy": {
+    "end_ict": "2026-09-17T01:00:00+07:00",
+    "end_utc": "2026-09-16T18:00:00Z",
+    "status": "BOUND_NOT_EVALUATED_FOR_DISPATCH",
+    "start_ict": "2026-09-16T21:00:00+07:00",
+    "start_utc": "2026-09-16T14:00:00Z"
+  }
+}

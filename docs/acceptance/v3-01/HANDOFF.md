@@ -1,7 +1,7 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B9
+TASK: VF-V0S-B10
 VERDICT: PASS
 REPO: vangnguyen/npd-video-factory-v2
 
@@ -17,7 +17,7 @@ REPO: vangnguyen/npd-video-factory-v2
   `77445b206e8712f4b24ddc0910ef18b41264154b26189748c60c1fdc4f632171`.
 - Source drift: NONE; scope drift: PASS.
 
-## RC-19 Operation 1 authority
+## Final authority and gate material
 
 - Operation:
   `v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01`.
@@ -27,8 +27,6 @@ REPO: vangnguyen/npd-video-factory-v2
   `eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49`.
 - Operation-manifest SHA:
   `d24e29259fd2cea90f539fc2e60b213f7b9522a515de18defda606607a0673ca`.
-- Preparation-template SHA:
-  `30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f`.
 - G-01 `V3-01-APP-075`: PASS,
   `f6f85619d9ed44fd9a2227b7fb17eb1a5104bc98f1fed5de30e1d583a9657b8c`.
 - G-02 `V3-01-APP-076`: PASS,
@@ -41,61 +39,63 @@ REPO: vangnguyen/npd-video-factory-v2
   `10df8f6da5418c74511692368aaa27084950379e6695b9a4f92aefe0358313b1`.
 - Authority receipt SHA:
   `2f4a322a5d3e97861a08412336ccbf0a0fdcc0e0e4c75b75901ec0c38d3bf8e0`.
-- Authority: **GRANTED_NOT_CONSUMED**; confirmation token not required by the
-  verified ASR contract.
+- Authority: **GRANTED_NOT_CONSUMED**.
 
-The final bundle reproduced twice with identical bytes and the real gate loader
-returned `PASS / VALID` in memory. The bundle is **UNMOUNTED**; loader validation
-is not runtime activation.
+The bundle reproduced twice with identical bytes and the real gate loader
+returned `PASS / VALID_IN_MEMORY_NOT_MOUNTED`. It was loaded only in memory for
+validation and was never mounted for execution.
 
-## Exact window and budget
+## RC-19 final-authority bootstrap qualification
 
-- Authorized window: 2026-09-16 21:00 → 2026-09-17 01:00 ICT;
-  2026-09-16 14:00 → 18:00 UTC; start inclusive, end exclusive.
-- 500 VND per Operation 1; 1,250 VND total window ceiling; modeled cost
-  326.3004 VND.
-- Attempts/concurrency: 1/1; retry/fallback: 0/0; provider/controller timeout:
-  90/120 seconds.
-- No budget was reserved by B9.
+- Entrypoint: `python -m app.provider_runtime_bootstrap` from the exact detached
+  `vf-v3-01-rc19` source.
+- Binding SHA:
+  `0387f6a8c432e609b01b398fea739438160c3b8ccb975afe59c643fc39760779`.
+- Mode: `ZERO_CALL_CUSTODY_ONLY / --require-virgin-namespace`.
+- `--initialize-control` was not supplied; transaction isolation was
+  `REPEATABLE READ, READ ONLY`.
+- Real bootstrap exit: 0; low-level result:
+  `CUSTODY_VERIFIED_NOT_EXECUTION_AUTHORIZED`.
+- Contract classification: `BOOTSTRAP_BINDING_VALID`.
+- `RC19_OPERATION_BOUND_BOOTSTRAP = VERIFIED`.
+- Ready state: `READY_FOR_EXECUTION_PREFLIGHT`.
+- Provider-dispatch ready: **NO**.
 
-## Durable state after authority materialization
+This task structurally verified the already-approved window and budget. It did
+not evaluate the clock for execution, check credentials, reserve funds, mount
+the bundle, transition the kill switch or enter a dispatch path.
+
+## Durable ledger after qualification
 
 - Canonical ledger: `vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed`.
 - PostgreSQL `16.15`, system identifier `7685665008963764889`, database OID
   `16384`, schema `public`, peer role `vang_nguyen`.
-- A fresh `REPEATABLE READ, READ ONLY` transaction found all execution tables
-  empty: Operation 1 row absent and not consumed; provider request receipt NONE;
-  reservation NONE; reserved amount `0`; duplicate/idempotency collision NONE.
-- Ledger mutations by B9: 0.
+- Operation state: `VIRGIN_NOT_REGISTERED / NOT_CONSUMED`.
+- Operations/attempts/budget-days/circuits/budget-alerts: 0/0/0/0/0.
+- Provider request receipt: NONE; active reservation: NONE; duplicate or
+  idempotency collision: NONE; reserved VND: `0`.
+- Bootstrap/ledger mutations by B10: 0.
 
-## Immutable inputs and safety
+## Window, budget and safety
 
-- Provider/model/capability/language:
-  `openai-transcription / whisper-1 / asr / vi`.
-- W1 profile SHA:
-  `9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1`.
-- Prompt SHA:
-  `6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48`.
-- Asset SHA:
-  `fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef`.
-- Reference transcript SHA:
-  `585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e`.
-- RightsRecord SHA:
-  `5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091`.
-- Kill switch: ENGAGED; credential reads: 0; provider calls: 0; production
-  business writes: 0; actual cost: 0 VND.
-- Operation 2: NOT_APPROVED / LOCKED / NOT_TRANSFERRED.
+- Bound window: 2026-09-16 21:00 → 2026-09-17 01:00 ICT;
+  2026-09-16 14:00 → 18:00 UTC; start inclusive, end exclusive.
+- 500 VND per Operation 1; 1,250 VND window ceiling; modeled cost 326.3004 VND.
+- Attempts/concurrency: 1/1; retry/fallback: 0/0; timeouts: 90/120 seconds.
+- Kill switch: ENGAGED; bundle mounted: NO; credentials read: 0; budget
+  reserved: 0 VND; provider calls: 0; production business writes: 0; actual
+  cost: 0 VND.
+- Operation 1: NOT_CONSUMED. Operation 2: NOT_APPROVED / LOCKED /
+  NOT_TRANSFERRED.
 - ASR: 0/2 PASS; Vision: 2/2 PASS; Production: NO-GO.
 
 ## Validation and evidence
 
+- Exact RC-19 bootstrap invocation: PASS / exit 0.
+- Linux bootstrap contract suite against exact RC-19 source: 90 PASS.
 - Deterministic materializer and real loader: PASS.
-- Focused B9 fail-closed suite: 77 PASS.
-- Post-materialization durable readback: PASS / READ ONLY.
-- Exact materialization-head candidate CI `34962924047`: 5/5 PASS, including
-  1,134 Python/API/worker/bridge tests and Docker deterministic E2E. This CI
-  does not authorize B10 or execution.
-- [B9 evidence pack](../../../evidence/v3-01/vf-v0s-b9-20260915-final-authority/README.md).
+- [B10 evidence pack](../../../evidence/v3-01/vf-v0s-b10-20260915-final-bootstrap-qualification/README.md).
+- [Historical B9 authority evidence](../../../evidence/v3-01/vf-v0s-b9-20260915-final-authority/README.md).
 - [Machine-readable handoff](handoff.json).
 - Review branch: `governance/vf-v0s-b7-rc19-asr-w1-prepared`.
 - [Draft PR #71](https://github.com/vangnguyen/npd-video-factory-v2/pull/71):
@@ -103,7 +103,6 @@ is not runtime activation.
 
 ## Next safe action — recommendation only
 
-**VF-V0S-B10 — zero-call operation-bound bootstrap qualification using the
-exact final authority and final bundle.** Do not mount the bundle, read provider
-credentials, reserve budget, disengage the kill switch, or dispatch a provider
-in B10.
+**VF-V0S-B11 — fresh in-window execution preflight on 16/09/2026.** This is a
+future Owner-assigned task only. B10 grants no dispatch and performs no part of
+B11.

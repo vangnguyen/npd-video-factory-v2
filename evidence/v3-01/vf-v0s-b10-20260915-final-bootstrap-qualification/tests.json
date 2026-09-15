@@ -1,0 +1,23 @@
+{
+  "bootstrap_exact_rc19_cli": {
+    "exit_code": 0,
+    "result": "PASS / CUSTODY_VERIFIED_NOT_EXECUTION_AUTHORIZED"
+  },
+  "bootstrap_linux_contract_tests": {
+    "command": "python -m pytest -q tests/test_provider_runtime_bootstrap.py",
+    "result": "PASS / 90 passed",
+    "runtime": "WSL Linux isolated temporary venv against exact detached RC-19 source"
+  },
+  "final_bundle_materializer": {
+    "command": "python materialize_and_validate.py --check",
+    "result": "PASS / 11 files / real loader valid"
+  },
+  "full_local_linux_diagnostic": {
+    "classification": "HOST_WORKTREE_GITDIR_NOT_PORTABLE_TO_WSL",
+    "result": "1095 passed / 3 setup failures at GOVERNANCE_MAIN_REF_UNAVAILABLE",
+    "source_behavior_implication": "NONE; all three failures occurred before bundle logic because the Windows linked-worktree .git file contains a Windows absolute path"
+  },
+  "full_candidate_ci": "PENDING_EXACT_HEAD_AFTER_EVIDENCE_SEAL",
+  "network_provider_checks": 0,
+  "task_id": "VF-V0S-B10"
+}

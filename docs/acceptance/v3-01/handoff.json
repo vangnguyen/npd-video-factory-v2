@@ -27,6 +27,18 @@
     "source_drift": "NONE",
     "tree_equality": "PASS"
   },
+  "bootstrap": {
+    "binding_sha256": "0387f6a8c432e609b01b398fea739438160c3b8ccb975afe59c643fc39760779",
+    "entrypoint": "python -m app.provider_runtime_bootstrap",
+    "initialize_control": false,
+    "low_level_result": "CUSTODY_VERIFIED_NOT_EXECUTION_AUTHORIZED",
+    "mode": "ZERO_CALL_CUSTODY_ONLY / --require-virgin-namespace",
+    "provider_dispatch_ready": false,
+    "rc19_operation_bound_bootstrap": "VERIFIED",
+    "result": "BOOTSTRAP_BINDING_VALID",
+    "runtime_source": "exact detached vf-v3-01-rc19",
+    "ready_state": "READY_FOR_EXECUTION_PREFLIGHT"
+  },
   "branch": "governance/vf-v0s-b7-rc19-asr-w1-prepared",
   "draft_pr": {
     "number": 71,
@@ -87,14 +99,13 @@
     "transaction": "REPEATABLE_READ_READ_ONLY",
     "version": "16.15"
   },
-  "mode": "FINAL_AUTHORITY_RUNTIME_BUNDLE_MATERIALIZATION_NO_EXECUTION",
-  "next_safe_action": "VF-V0S-B10 — zero-call operation-bound bootstrap qualification with final authority/bundle; stop before execution",
+  "mode": "ZERO_CALL_OPERATION_BOUND_BOOTSTRAP_QUALIFICATION_WITH_FINAL_AUTHORITY_BUNDLE",
+  "next_safe_action": "VF-V0S-B11 — fresh in-window execution preflight on 16/09/2026; requires a separate Owner task",
   "operation": {
     "execution_scope_sha256": "7d51c74c2b7c9efe3a12f99d1849997e682bdc028850e8af90db8f5497879a85",
     "id": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
     "ledger_operation_key": "v3-01-rc19-openai-transcription-asr-al-0001-d86a01b1a8c5a312d1f17f48afd182e73df255e2b2777f0fee4c0ba131153afd-call-01",
     "operation_manifest_sha256": "d24e29259fd2cea90f539fc2e60b213f7b9522a515de18defda606607a0673ca",
-    "preparation_template_sha256": "30979114a9ee55fc4bec60433b565ae1473bbbc17ecaf2c2bddbb3b57195ce0f",
     "prepared_scope_sha256": "eeac77edc3e88309d1d3b3a883ae5b7c5618fb6a5907f7c13eb3595829fbde49"
   },
   "repo": "vangnguyen/npd-video-factory-v2",
@@ -108,12 +119,12 @@
     "real_provider_calls": 0
   },
   "scope_drift": "PASS",
-  "task_id": "VF-V0S-B9",
+  "task_id": "VF-V0S-B10",
   "validation": {
-    "candidate_ci": "PASS_5_OF_5_34962924047",
-    "focused_b9_tests": "PASS_77",
-    "materializer_reproduction": "PASS",
-    "post_materialization_ledger_readback": "PASS_READ_ONLY",
+    "bootstrap_exact_rc19_cli": "PASS / EXIT_0",
+    "bootstrap_linux_contract_tests": "PASS_90",
+    "candidate_ci": "PENDING_EXACT_HEAD_AFTER_EVIDENCE_SEAL",
+    "final_bundle_materializer": "PASS",
     "real_gate_loader": "PASS"
   },
   "verdict": "PASS",
@@ -130,7 +141,8 @@
     "retry": 0,
     "start_ict": "2026-09-16T21:00:00+07:00",
     "start_utc": "2026-09-16T14:00:00Z",
-    "window_ceiling_vnd": "1250"
+    "window_ceiling_vnd": "1250",
+    "window_validation_mode": "STRUCTURAL_ONLY_NOT_DISPATCH"
   },
   "workstream": "Video Factory V3-01"
 }

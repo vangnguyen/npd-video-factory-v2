@@ -1,0 +1,32 @@
+{
+  "active_reservation": false,
+  "authority_created_or_changed": false,
+  "bootstrap_metadata_write": false,
+  "budget_reserved_vnd": "0",
+  "control_revision": 0,
+  "control_rows": 1,
+  "duplicate_or_idempotency_collision": false,
+  "execution_table_counts": {
+    "attempts": 0,
+    "budget_alerts": 0,
+    "budget_days": 0,
+    "circuits": 0,
+    "operations": 0
+  },
+  "foreign_attempts": 0,
+  "foreign_operations": 0,
+  "identity": {
+    "database_name": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+    "database_oid": 16384,
+    "database_role": "vang_nguyen",
+    "postgres_version_num": "160015",
+    "schema_name": "public",
+    "system_identifier": "7685665008963764889"
+  },
+  "operation_consumed": false,
+  "operation_record_exists": false,
+  "operation_state": "VIRGIN_NOT_REGISTERED / NOT_CONSUMED",
+  "provider_request_receipt": "NONE",
+  "readback_result": "PASS / VIRGIN / READ_ONLY",
+  "transaction": "REPEATABLE READ / READ ONLY"
+}
