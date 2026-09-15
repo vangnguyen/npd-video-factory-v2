@@ -95,7 +95,8 @@ was inherited.
 - [B7 evidence pack](../../../evidence/v3-01/vf-v0s-b7-20260915-rc19-asr-w1-prepared/README.md).
 - [Machine-readable handoff](handoff.json).
 - Review branch: `governance/vf-v0s-b7-rc19-asr-w1-prepared`.
-- Draft PR: pending creation; never merge automatically.
+- [Draft PR #71](https://github.com/vangnguyen/npd-video-factory-v2/pull/71):
+  OPEN / DRAFT / NOT_MERGED; never merge automatically.
 - Historical handoff/evidence remains in Git history; nothing was silently removed.
 
 ## Next safe action — recommendation only

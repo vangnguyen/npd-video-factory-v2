@@ -6,9 +6,9 @@
   "repo": "vangnguyen/npd-video-factory-v2",
   "branch": "governance/vf-v0s-b7-rc19-asr-w1-prepared",
   "draft_pr": {
-    "number": null,
-    "url": null,
-    "status": "PENDING_CREATION"
+    "number": 71,
+    "url": "https://github.com/vangnguyen/npd-video-factory-v2/pull/71",
+    "status": "OPEN / DRAFT / NOT_MERGED"
   },
   "baseline": {
     "governance_main_sha": "7ad25cb039c712d450486778d2981d9ef8175385",
