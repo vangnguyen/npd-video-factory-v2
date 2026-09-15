@@ -123,7 +123,7 @@
   "validation": {
     "bootstrap_exact_rc19_cli": "PASS / EXIT_0",
     "bootstrap_linux_contract_tests": "PASS_90",
-    "candidate_ci": "PENDING_EXACT_HEAD_AFTER_EVIDENCE_SEAL",
+    "candidate_ci": "PASS_5_OF_5_34970455978_HEAD_2bd78bc55beb51763d5d9971c46cd5c445b9bf45",
     "final_bundle_materializer": "PASS",
     "real_gate_loader": "PASS"
   },

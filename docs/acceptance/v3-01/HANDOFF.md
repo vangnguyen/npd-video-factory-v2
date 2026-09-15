@@ -94,6 +94,9 @@ the bundle, transition the kill switch or enter a dispatch path.
 - Exact RC-19 bootstrap invocation: PASS / exit 0.
 - Linux bootstrap contract suite against exact RC-19 source: 90 PASS.
 - Deterministic materializer and real loader: PASS.
+- B10 qualification-head candidate CI `34970455978` at
+  `2bd78bc55beb51763d5d9971c46cd5c445b9bf45`: 5/5 PASS, including 1,142
+  Python/API/worker/bridge tests and Docker deterministic E2E.
 - [B10 evidence pack](../../../evidence/v3-01/vf-v0s-b10-20260915-final-bootstrap-qualification/README.md).
 - [Historical B9 authority evidence](../../../evidence/v3-01/vf-v0s-b9-20260915-final-authority/README.md).
 - [Machine-readable handoff](handoff.json).
