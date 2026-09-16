@@ -1,9 +1,17 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B12G
-VERDICT: PASS — controlled source merge and exact-main verification
+TASK: VF-V0S-B12H
+VERDICT: PASS — governance handoff merge and exact-main closure
 REPO: vangnguyen/npd-video-factory-v2
+
+PR #73 contained only B12G handoff/evidence. G-08 reviewed exact head
+`b9e7db84925eecd1155c7ecdba0c75517703cdec`; it merged as governance
+main `694f8ac8e98dbb2b47406f1c1fbb2511808a8970`. Exact-main push CI
+`35121062274` passed all 5 canonical jobs, including Docker E2E. Remote
+main, CI head, clean checkout and canonical Git-object tree match. Main-only
+provenance is PASS; this does not claim dual-CI equivalence to RC-19. See the
+[B12H governance closure](reviews/vf-v0s-b12h/README.md).
 
 Owner-approved PR #72 head
 `412c377123dc92b55eec3bf6b559da05e7388bbb` was merged as
@@ -15,7 +23,7 @@ push CI `35119072381` passed 5/5 on the merge commit, including Docker E2E.
 Main-only provenance is PASS for that exact commit, run and canonical job set.
 See the [B12G exact-main review](reviews/vf-v0s-b12g/README.md).
 
-The canonical executable-tree SHA-256 on exact main is
+The canonical executable-tree SHA-256 on governance main is
 `611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630`,
 matching the approved candidate. Historical `vf-v3-01-rc19` remains immutable
 at `dc8ff55322267dfe54674fa6c4003a899bf235ab`, with executable-tree SHA
@@ -27,12 +35,13 @@ or mutate that evidence or ledger.
 
 Next lineage requires a fresh RC, fresh deterministic ledger custody, fresh
 Operation 1 rebind, fresh authority and fresh execution window. None was
-created in B12G. Operation 2 remains locked. Bundle unmounted; checked-in kill
+created in B12G or B12H. Operation 2 remains locked. Bundle unmounted; checked-in kill
 switch engaged. This task performed zero provider credential reads, live budget
 reservations, real provider calls, production business writes and actual spend.
 ASR remains `0/2 PASS`; Vision `2/2 PASS`; Production `NO-GO`.
 
 The next safe action is Owner assignment of VF-V0S-B13 to materialize a fresh
-RC from exact verified main. This handoff/evidence update is governance-only
-and must receive its own review before any later merge. Do not perform B13,
-ledger creation, operation rebind or authority work under B12G.
+RC from exact verified governance main. This B12H handoff/evidence update is
+governance-only and must receive separate review before any later merge. Do
+not perform B13, ledger creation, operation rebind or authority work under
+B12H.
