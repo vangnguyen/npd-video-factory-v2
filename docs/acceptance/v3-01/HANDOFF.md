@@ -1,11 +1,46 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B13
-VERDICT: REVIEW_REQUIRED — RC-20 materialized and RC CI passed; dual-CI governance closure pending
+TASK: VF-V0S-B13G
+VERDICT: PASS — RC-20 governance lineage closed; no execution authority
 REPO: vangnguyen/npd-video-factory-v2
 
-Exact governance main remains `93b5441d44347c9c40b745bdfed0969880853f68`.
+Owner-approved PR #75 head
+`c9d2c0ba13e34b060a0bc971a26bb9f5a68b78c8` passed exact-head G-08:
+its four changed paths were handoff/evidence only. It merged as
+`551379a916b9b574288fda754c0732009d23d288`, with exact parents
+`93b5441d44347c9c40b745bdfed0969880853f68` and the approved head.
+Fresh exact-main push CI
+[35126544056](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/35126544056)
+passed all five canonical jobs on that merge commit. The unmodified canonical
+validator returned main/RC dual-CI provenance `PASS`, SHA-256
+`330006ae336f12a809a5d7611d250d5e096f8b44c74ab8a02187771cf238d21f`.
+See the [B13G closure evidence](reviews/vf-v0s-b13g/README.md).
+
+Annotated `vf-v3-01-rc20` remains immutable at
+`93b5441d44347c9c40b745bdfed0969880853f68` (tag object
+`9fe8d77a6c58a31beccf38bc2cc72b71a8dac240`); independent RC CI
+[35124578033](https://github.com/vangnguyen/npd-video-factory-v2/actions/runs/35124578033)
+passed 5/5. Governance main and RC-20 share canonical executable-tree SHA-256
+`611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630`.
+RC-20 governance lineage is `CLOSED / PASS`; no new RC was created.
+
+The fresh RC-20 ledger identity re-derived as
+`vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d` and remains
+`PLAN_ONLY / NOT_CREATED`. Fresh ledger custody, Operation 1 rebind, authority
+and execution window are each required in separately assigned tasks. RC-19
+remains immutable/historical and none of its execution material transfers.
+The checked-in kill-switch default remains engaged. Operation 2 remains locked;
+ASR is `0/2 PASS`, Vision `2/2 PASS`, Production `NO-GO`. B13G made zero
+credential reads, budget reservations, provider calls, production business
+writes and actual spend.
+
+Next safe action: Owner review and assign VF-V0S-B14 for fresh RC-20 durable
+ledger custody/bootstrap qualification. Do not execute B14 automatically.
+
+## Previous B13 snapshot (historical at its task boundary)
+
+Exact governance main at B13 remained `93b5441d44347c9c40b745bdfed0969880853f68`.
 Exact-main CI `35123204511` passed all five canonical jobs and main-only
 provenance passed. The canonical executable tree recomputed twice to
 `611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630`.
@@ -21,7 +56,7 @@ passed 5/5, including Docker deterministic E2E. RC-only provenance is PASS:
 remote tag, peeled commit, Git tree, canonical executable-tree hash and all
 five job head SHAs agree. No source commit was created while tagging.
 
-**RC-20 dual-CI provenance is not PASS.** The canonical validator returned
+**At the B13 task boundary, RC-20 dual-CI provenance was not PASS.** The canonical validator returned
 `CI_PROVENANCE_INVALID` because RC-20 and current main are the *same commit*
 and the governance diff is empty. Its contract requires a distinct,
 governance-only main commit and a separate successful exact-main CI. No
@@ -38,7 +73,7 @@ locked, and production remains `NO-GO` (ASR `0/2 PASS`, Vision `2/2 PASS`).
 This task made zero credential reads, budget reservations, provider calls,
 production business writes and actual spend.
 
-Next safe action: Owner G-08 review of the B13 governance-only handoff Draft
+Historical next safe action: Owner G-08 review of the B13 governance-only handoff Draft
 PR, then separately authorized controlled merge, fresh exact-main CI and
 RC-20/main dual-CI provenance closure. Stop before ledger custody/B14,
 Operation 1 rebind or authority.
