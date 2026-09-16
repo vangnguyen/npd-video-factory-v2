@@ -1,7 +1,7 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B12H",
-  "verdict": "PASS_GOVERNANCE_MAIN_VERIFIED",
+  "task_id": "VF-V0S-B13",
+  "verdict": "REVIEW_REQUIRED_DISTINCT_GOVERNANCE_MAIN_FOR_DUAL_CI",
   "repo": "vangnguyen/npd-video-factory-v2",
   "pr": {
     "number": 72,
@@ -20,21 +20,45 @@
     "approved_candidate_tree_match": true
   },
   "governance_pr": {
-    "number": 73,
-    "approved_head_sha": "b9e7db84925eecd1155c7ecdba0c75517703cdec",
-    "base_sha": "3bb0bdc0bb55bd0f5d24b12d92c092376989c2c7",
-    "merge_commit_sha": "694f8ac8e98dbb2b47406f1c1fbb2511808a8970",
+    "number": 74,
+    "approved_head_sha": "cfc0b99a7a9efdf18b1b6b04fa92a4246715e968",
+    "base_sha": "694f8ac8e98dbb2b47406f1c1fbb2511808a8970",
+    "merge_commit_sha": "93b5441d44347c9c40b745bdfed0969880853f68",
     "g08": "PASS_GOVERNANCE_ONLY"
   },
   "governance_main": {
-    "sha": "694f8ac8e98dbb2b47406f1c1fbb2511808a8970",
-    "ci_run_id": 35121062274,
+    "sha": "93b5441d44347c9c40b745bdfed0969880853f68",
+    "ci_run_id": 35123204511,
     "ci_jobs_passed": 5,
     "ci_jobs_total": 5,
     "provenance": "PASS_MAIN_ONLY",
     "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
     "tree_changed_from_source_main": false,
     "rc19_current_main_eligibility": "BLOCKED_EXPECTED"
+  },
+  "fresh_rc": {
+    "tag": "vf-v3-01-rc20",
+    "annotated_tag_object": "9fe8d77a6c58a31beccf38bc2cc72b71a8dac240",
+    "commit": "93b5441d44347c9c40b745bdfed0969880853f68",
+    "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "rc_ci_run_id": 35124578033,
+    "rc_ci_jobs_passed": 5,
+    "rc_ci_jobs_total": 5,
+    "rc_provenance": "PASS_RC_ONLY",
+    "main_rc_tree_equality": "PASS",
+    "dual_ci_provenance": "BLOCKED_DISTINCT_GOVERNANCE_MAIN_REQUIRED",
+    "dual_ci_validator_code": "CI_PROVENANCE_INVALID",
+    "single_dispatch_entrypoint": "app.provider_single_dispatch.run_single_dispatch",
+    "single_dispatch_present": true,
+    "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap",
+    "bootstrap_present": true,
+    "ledger_lineage_preview": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
+    "expected_ledger_identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "ledger_identity_status": "PLAN_ONLY_NOT_CREATED_PENDING_DUAL_CI",
+    "operation_1_id_generated": false,
+    "bundle_created": false,
+    "authority_created": false,
+    "execution_window_created": false
   },
   "historical_rc": {
     "tag": "vf-v3-01-rc19",
@@ -45,12 +69,13 @@
     "old_window_for_current_main": "INVALID"
   },
   "required_next_lineage": {
-    "fresh_rc": true,
+    "fresh_rc": false,
     "fresh_ledger": true,
     "fresh_operation_rebind": true,
     "fresh_authority": true,
     "fresh_execution_window": true,
-    "created_in_this_task": false
+    "rc_created_in_this_task": true,
+    "ledger_created_in_this_task": false
   },
   "operation_2": "NOT_APPROVED_LOCKED",
   "bundle_mounted": false,
@@ -67,6 +92,6 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b12h/README.md",
-  "next_safe_action": "Owner assignment of VF-V0S-B13 to materialize a fresh RC from exact verified governance main; stop before that task in VF-V0S-B12H."
+  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b13/README.md",
+  "next_safe_action": "Owner G-08 review of B13 governance-only handoff Draft PR; separately authorize merge, fresh exact-main CI and RC20/main dual-CI closure. Stop before B14 ledger custody, Operation 1 rebind or authority."
 }
