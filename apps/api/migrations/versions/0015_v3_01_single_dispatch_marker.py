@@ -33,7 +33,8 @@ def upgrade() -> None:
             "ck_provider_safety_dispatch_marker_complete",
             "(dispatch_started_at IS NULL AND dispatch_request_sha256 IS NULL "
             "AND dispatch_client_request_id IS NULL) OR "
-            "(dispatch_protocol_version = 1 AND dispatch_started_at IS NOT NULL "
+            "(dispatch_protocol_version IS NOT NULL AND dispatch_protocol_version = 1 "
+            "AND dispatch_started_at IS NOT NULL "
             "AND dispatch_request_sha256 IS NOT NULL "
             "AND dispatch_client_request_id IS NOT NULL)",
         )

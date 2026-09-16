@@ -11,7 +11,7 @@ The exact source baseline is governance main
 `dc8ff55322267dfe54674fa6c4003a899bf235ab`, with executable-tree SHA
 `432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502`.
 This source candidate changes the executable tree to
-`25829c155f00c3e9aded66b7c57695c9b364aa2d237e4a8c9bbb0ef6247b68ef`.
+`611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630`.
 It is **not** RC-19 and cannot reuse its Operation 1 authority, bundle,
 scope, window or ledger schema. A fresh RC is required only after a separately
 approved merge and exact-main verification. No RC or authority was created in

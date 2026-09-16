@@ -6,7 +6,7 @@ bundle or window. Baseline main is `7ad25cb039c712d450486778d2981d9ef8175385`;
 the baseline executable-tree SHA-256 is
 `432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502`.
 The candidate executable-tree SHA-256, computed from the staged canonical Git
-tree paths, is `25829c155f00c3e9aded66b7c57695c9b364aa2d237e4a8c9bbb0ef6247b68ef`.
+tree paths, is `611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630`.
 
 ## Execution contract
 

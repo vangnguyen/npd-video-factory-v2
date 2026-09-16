@@ -10,7 +10,8 @@ from decimal import Decimal
 from unittest.mock import AsyncMock
 
 import pytest
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
+from sqlalchemy.exc import IntegrityError
 
 from app.auto_edit_providers import ProviderTranscript
 from app.db import Base, create_engine, create_session_factory
@@ -59,6 +60,20 @@ def test_operation_scoped_kill_switch_is_single_use_and_reengages():
     assert switch.engaged
     with pytest.raises(Exception, match="KILL_SWITCH_DISPATCH_DENIED"):
         switch.allow_one_dispatch("synthetic-op-1")
+
+
+def test_evidence_manifest_is_deterministic_and_secret_scan_fails_closed(tmp_path):
+    digests = []
+    for name in ("one", "two"):
+        evidence = _EvidenceRecorder(tmp_path / name, "synthetic-op-1")
+        evidence.arm(reserved_vnd=Decimal("500"), ledger_before="VIRGIN_NOT_CONSUMED")
+        evidence.mark_dispatch(request_sha256=REQUEST_SHA, client_request_id="vf-synthetic-request")
+        digests.append(evidence.seal({"code": "QUALITY_REVIEW_REQUIRED", "provider_call_state": "POSSIBLY_SENT"}))
+    assert digests[0] == digests[1]
+    unsafe = _EvidenceRecorder(tmp_path / "unsafe", "synthetic-op-2")
+    with pytest.raises(Exception, match="EVIDENCE_SECRET_SCAN_FAILED"):
+        unsafe.seal({"unsafe": "Bearer synthetic-secret"})
+    assert not (unsafe.folder / "terminal.json").exists()
 
 
 class FakeAdapter(OpenAITranscriptionProvider):
@@ -294,6 +309,39 @@ async def test_marker_is_single_use_and_blocks_pre_call_release(tmp_path):
         operation, attempts, budget = await _counts(sessions, context.operation_key)
         assert operation.status == "reserved" and attempts == 0
         assert budget.reserved_vnd == Decimal("500")
+    finally:
+        await engine.dispose()
+
+
+async def test_database_rejects_marker_on_historical_protocol_row(tmp_path):
+    scope = _active_policy().execution_gate
+    assert scope is not None
+    context = _asr_context(1)
+    engine, sessions, repository = await _setup(tmp_path)
+    try:
+        reservation = await repository.reserve_operation(
+            context, now=NOW, max_attempts=1, max_concurrent_calls=1,
+            per_operation_limit_vnd=scope.per_operation_limit_vnd,
+            daily_limit_vnd=scope.acceptance_window_limit_vnd,
+            circuit_failure_threshold=3, circuit_cooldown_seconds=60,
+            retention_days=400,
+        )
+        assert reservation.allowed
+        with pytest.raises(IntegrityError):
+            async with sessions() as session, session.begin():
+                await session.execute(text(
+                    "UPDATE provider_safety_operations SET "
+                    "dispatch_started_at=:started, dispatch_request_sha256=:request_sha, "
+                    "dispatch_client_request_id=:client_id WHERE operation_key=:operation_key"
+                ), {
+                    "started": NOW.isoformat(), "request_sha": REQUEST_SHA,
+                    "client_id": "vf-synthetic-request",
+                    "operation_key": context.operation_key,
+                })
+        operation, attempts, _ = await _counts(sessions, context.operation_key)
+        assert operation.dispatch_protocol_version is None
+        assert operation.dispatch_started_at is None
+        assert attempts == 0
     finally:
         await engine.dispose()
 

@@ -164,6 +164,8 @@ class _EvidenceRecorder:
     def mark_dispatch(self, *, request_sha256: str, client_request_id: str) -> None:
         if not self.armed:
             raise SingleDispatchBlocked("EVIDENCE_NOT_ARMED")
+        if self.root.is_symlink() or self.folder.is_symlink():
+            raise SingleDispatchBlocked("EVIDENCE_PATH_SYMLINK_BLOCKED")
         event = {
             "state": "DISPATCH_INTENT", "request_sha256": request_sha256,
             "client_request_id": client_request_id,
@@ -175,6 +177,8 @@ class _EvidenceRecorder:
         self.events.append(event)
 
     def seal(self, payload: dict[str, object]) -> str:
+        if self.root.is_symlink() or self.folder.is_symlink():
+            raise SingleDispatchBlocked("EVIDENCE_PATH_SYMLINK_BLOCKED")
         event = {"state": "EVIDENCE_SEALED"}
         _write_once(self.folder / "terminal.json", {
             "operation_key": self.operation_key,
