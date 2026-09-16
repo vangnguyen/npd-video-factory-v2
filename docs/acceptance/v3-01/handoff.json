@@ -1,16 +1,22 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B13",
-  "verdict": "REVIEW_REQUIRED_DISTINCT_GOVERNANCE_MAIN_FOR_DUAL_CI",
+  "task_id": "VF-V0S-B13G",
+  "verdict": "PASS_RC20_GOVERNANCE_LINEAGE_CLOSED",
   "repo": "vangnguyen/npd-video-factory-v2",
   "pr": {
-    "number": 72,
-    "approved_head_sha": "412c377123dc92b55eec3bf6b559da05e7388bbb",
-    "base_sha": "7ad25cb039c712d450486778d2981d9ef8175385",
-    "merge_commit_sha": "3bb0bdc0bb55bd0f5d24b12d92c092376989c2c7",
-    "g08": "PASS_EXACT_HEAD_AND_DIFF"
+    "number": 75,
+    "approved_head_sha": "c9d2c0ba13e34b060a0bc971a26bb9f5a68b78c8",
+    "base_sha": "93b5441d44347c9c40b745bdfed0969880853f68",
+    "merge_commit_sha": "551379a916b9b574288fda754c0732009d23d288",
+    "g08": "PASS_EXACT_HEAD_GOVERNANCE_ONLY",
+    "changed_paths": [
+      "docs/acceptance/v3-01/HANDOFF.md",
+      "docs/acceptance/v3-01/handoff.json",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b13/README.md",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b13/rc20-lineage.json"
+    ]
   },
-  "exact_main": {
+  "previous_executable_main": {
     "sha": "3bb0bdc0bb55bd0f5d24b12d92c092376989c2c7",
     "ci_run_id": 35119072381,
     "ci_jobs_passed": 5,
@@ -19,7 +25,7 @@
     "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
     "approved_candidate_tree_match": true
   },
-  "governance_pr": {
+  "previous_governance_pr": {
     "number": 74,
     "approved_head_sha": "cfc0b99a7a9efdf18b1b6b04fa92a4246715e968",
     "base_sha": "694f8ac8e98dbb2b47406f1c1fbb2511808a8970",
@@ -27,14 +33,26 @@
     "g08": "PASS_GOVERNANCE_ONLY"
   },
   "governance_main": {
-    "sha": "93b5441d44347c9c40b745bdfed0969880853f68",
-    "ci_run_id": 35123204511,
+    "sha": "551379a916b9b574288fda754c0732009d23d288",
+    "ci_run_id": 35126544056,
     "ci_jobs_passed": 5,
     "ci_jobs_total": 5,
-    "provenance": "PASS_MAIN_ONLY",
+    "provenance": "PASS",
     "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
     "tree_changed_from_source_main": false,
-    "rc19_current_main_eligibility": "BLOCKED_EXPECTED"
+    "rc19_current_main_eligibility": "BLOCKED_EXPECTED",
+    "rc20_tree_equality": "PASS"
+  },
+  "b13g_provenance_closure": {
+    "validator": "scripts/v3_01_ci_provenance.py",
+    "verdict": "PASS",
+    "provenance_sha256": "330006ae336f12a809a5d7611d250d5e096f8b44c74ab8a02187771cf238d21f",
+    "rc_ci_run_id": 35124578033,
+    "governance_main_ci_run_id": 35126544056,
+    "rc20_governance_lineage": "CLOSED_PASS",
+    "distinct_governance_main": true,
+    "executable_tree_equality": true,
+    "historical_b13_dual_ci_status": "BLOCKED_DISTINCT_GOVERNANCE_MAIN_REQUIRED_AT_B13_BOUNDARY"
   },
   "fresh_rc": {
     "tag": "vf-v3-01-rc20",
@@ -46,15 +64,16 @@
     "rc_ci_jobs_total": 5,
     "rc_provenance": "PASS_RC_ONLY",
     "main_rc_tree_equality": "PASS",
-    "dual_ci_provenance": "BLOCKED_DISTINCT_GOVERNANCE_MAIN_REQUIRED",
-    "dual_ci_validator_code": "CI_PROVENANCE_INVALID",
+    "dual_ci_provenance": "PASS",
+    "dual_ci_provenance_sha256": "330006ae336f12a809a5d7611d250d5e096f8b44c74ab8a02187771cf238d21f",
+    "governance_lineage": "CLOSED_PASS",
     "single_dispatch_entrypoint": "app.provider_single_dispatch.run_single_dispatch",
     "single_dispatch_present": true,
     "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap",
     "bootstrap_present": true,
     "ledger_lineage_preview": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
     "expected_ledger_identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
-    "ledger_identity_status": "PLAN_ONLY_NOT_CREATED_PENDING_DUAL_CI",
+    "ledger_identity_status": "PLAN_ONLY_NOT_CREATED",
     "operation_1_id_generated": false,
     "bundle_created": false,
     "authority_created": false,
@@ -74,7 +93,7 @@
     "fresh_operation_rebind": true,
     "fresh_authority": true,
     "fresh_execution_window": true,
-    "rc_created_in_this_task": true,
+    "rc_created_in_this_task": false,
     "ledger_created_in_this_task": false
   },
   "operation_2": "NOT_APPROVED_LOCKED",
@@ -92,6 +111,6 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b13/README.md",
-  "next_safe_action": "Owner G-08 review of B13 governance-only handoff Draft PR; separately authorize merge, fresh exact-main CI and RC20/main dual-CI closure. Stop before B14 ledger custody, Operation 1 rebind or authority."
+  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b13g/README.md",
+  "next_safe_action": "Owner review and assign VF-V0S-B14 for fresh RC-20 durable ledger custody/bootstrap qualification. Do not execute B14 automatically."
 }
