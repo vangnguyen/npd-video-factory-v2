@@ -330,6 +330,7 @@ async def test_stale_marked_protocol_is_terminal_with_unknown_actual_cost(tmp_pa
 @pytest.mark.parametrize("failure_point,consumed", [
     ("arm", False),
     ("dispatch_evidence", False),
+    ("dispatch_marker", False),
     ("attempt_record", True),
     ("finish_once", True),
 ])
@@ -344,6 +345,8 @@ async def test_exception_boundaries_reconcile_and_keep_single_call(tmp_path, mon
         monkeypatch.setattr(evidence, "arm", lambda **kwargs: (_ for _ in ()).throw(RuntimeError("synthetic arm failure")))
     elif failure_point == "dispatch_evidence":
         monkeypatch.setattr(evidence, "mark_dispatch", lambda **kwargs: (_ for _ in ()).throw(RuntimeError("synthetic dispatch evidence failure")))
+    elif failure_point == "dispatch_marker":
+        monkeypatch.setattr(repository, "mark_dispatch_started", AsyncMock(side_effect=RuntimeError("synthetic marker failure")))
     elif failure_point == "attempt_record":
         monkeypatch.setattr(repository, "record_attempt", AsyncMock(side_effect=RuntimeError("synthetic attempt write failure")))
     else:
