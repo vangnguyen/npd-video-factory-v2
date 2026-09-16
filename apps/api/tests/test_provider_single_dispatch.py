@@ -164,7 +164,11 @@ async def test_single_dispatch_boundaries_and_evidence(tmp_path, behavior, termi
         assert terminal_evidence["kill_switch_after"] == "ENGAGED"
         assert terminal_evidence["operation_2"] == "LOCKED"
         assert terminal_evidence["secret_recorded"] is False
-        assert hashlib.sha256((evidence.folder / "terminal.json").read_bytes()).hexdigest() == result.evidence_sha256
+        manifest = json.loads((evidence.folder / "manifest.json").read_bytes())
+        assert hashlib.sha256((evidence.folder / "manifest.json").read_bytes()).hexdigest() == result.evidence_sha256
+        assert manifest["files"]["terminal.json"] == hashlib.sha256(
+            (evidence.folder / "terminal.json").read_bytes()
+        ).hexdigest()
         if consumed:
             assert (evidence.folder / "dispatch-intent.json").is_file()
         else:

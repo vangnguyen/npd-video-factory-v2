@@ -176,14 +176,27 @@ class _EvidenceRecorder:
 
     def seal(self, payload: dict[str, object]) -> str:
         event = {"state": "EVIDENCE_SEALED"}
-        digest = _write_once(self.folder / "terminal.json", {
+        _write_once(self.folder / "terminal.json", {
             "operation_key": self.operation_key,
             "events": [*self.events, event],
             **payload,
             "secret_recorded": False,
         })
         self.events.append(event)
-        return digest
+        allowed = {"armed.json", "dispatch-intent.json", "terminal.json"}
+        names = {path.name for path in self.folder.iterdir()}
+        if not names.issubset(allowed) or "terminal.json" not in names:
+            raise SingleDispatchBlocked("EVIDENCE_ARTIFACT_SET_INVALID")
+        files = {
+            name: _sha256_file(self.folder / name)
+            for name in sorted(names)
+        }
+        return _write_once(self.folder / "manifest.json", {
+            "version": 1,
+            "operation_key": self.operation_key,
+            "algorithm": "SHA-256",
+            "files": files,
+        })
 
 
 def _exact(value: object, expected: object, code: str) -> None:

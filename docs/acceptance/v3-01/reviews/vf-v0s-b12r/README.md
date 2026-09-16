@@ -6,7 +6,7 @@ bundle or window. Baseline main is `7ad25cb039c712d450486778d2981d9ef8175385`;
 the baseline executable-tree SHA-256 is
 `432979205a0ece93c2351e109c1028b639c5c2da958b29ab6c789342c795f502`.
 The candidate executable-tree SHA-256, computed from the staged canonical Git
-tree paths, is `4cd897f8dbe2b9356885708701a4cf2b6ad5799f8208c59bad13fcd589702949`.
+tree paths, is `25829c155f00c3e9aded66b7c57695c9b364aa2d237e4a8c9bbb0ef6247b68ef`.
 
 ## Execution contract
 
@@ -35,6 +35,7 @@ response consumes the operation. This does not claim that HTTP bytes were
 observed or that a safety charge is actual provider cost. A separate terminal
 evidence record captures request/response hashes where available, transcript,
 provenance, ledger/budget state, RightsRecord binding, and secret-scan result.
+An exclusive `manifest.json` SHA-256-binds every retained event/terminal file.
 
 The operation-scoped kill switch permits a single bounded transition after
 reservation and evidence arming, and re-engages in `finally`. The global

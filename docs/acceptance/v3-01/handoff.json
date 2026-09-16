@@ -13,7 +13,7 @@
   "candidate": {
     "branch": "remediation/v3-01-single-dispatch-runner",
     "dispatch_entrypoint": "app.provider_single_dispatch.run_single_dispatch",
-    "executable_tree_sha256": "4cd897f8dbe2b9356885708701a4cf2b6ad5799f8208c59bad13fcd589702949",
+    "executable_tree_sha256": "25829c155f00c3e9aded66b7c57695c9b364aa2d237e4a8c9bbb0ef6247b68ef",
     "executable_tree_changed": true,
     "new_rc_required_after_merge_and_exact_main_verification": true,
     "merge_performed": false,
