@@ -1,0 +1,76 @@
+{
+  "task_id": "VF-V0S-B13",
+  "verdict": "REVIEW_REQUIRED_DISTINCT_GOVERNANCE_MAIN_FOR_DUAL_CI",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "governance_main": {
+    "commit": "93b5441d44347c9c40b745bdfed0969880853f68",
+    "ci_run_id": 35123204511,
+    "ci_jobs_passed": 5,
+    "ci_jobs_total": 5,
+    "provenance": "PASS_MAIN_ONLY"
+  },
+  "rc": {
+    "tag": "vf-v3-01-rc20",
+    "tag_type": "annotated",
+    "tag_object": "9fe8d77a6c58a31beccf38bc2cc72b71a8dac240",
+    "peeled_commit": "93b5441d44347c9c40b745bdfed0969880853f68",
+    "full_git_tree_object": "e01d009650ae4e9b249d75d4d416053cdfacdfc4",
+    "canonical_executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "canonical_executable_tree_recompute_1": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "canonical_executable_tree_recompute_2": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "ci_run_id": 35124578033,
+    "ci_event": "workflow_dispatch",
+    "ci_ref": "vf-v3-01-rc20",
+    "ci_head_sha": "93b5441d44347c9c40b745bdfed0969880853f68",
+    "ci_jobs": {
+      "Docker deterministic E2E": "success",
+      "Renderer tests and bundle": "success",
+      "Studio tests": "success",
+      "Python unit and contract tests": "success",
+      "Safety and compose contract": "success"
+    },
+    "rc_only_provenance": "PASS"
+  },
+  "bound_source": {
+    "single_dispatch_entrypoint": "app.provider_single_dispatch.run_single_dispatch",
+    "single_dispatch_git_object": "a61a035d7b8e60be61581ce5d9d59028e2715688",
+    "single_dispatch_marker_protocol_version": 1,
+    "bootstrap_entrypoint": "python -m app.provider_runtime_bootstrap",
+    "bootstrap_git_object": "ebcc65d1f23491a42d3894547a8fb1f16e6608d6",
+    "provider_safety_git_object": "382b636f69c6f12cf15dd0ab4d78463f5411f298",
+    "provider_safety_repository_git_object": "64544d8bcd5b0097ec3351228618e8a42b684695",
+    "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "w1_prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "minio_image": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e"
+  },
+  "dual_ci": {
+    "status": "BLOCKED_DISTINCT_GOVERNANCE_MAIN_REQUIRED",
+    "validator_code": "CI_PROVENANCE_INVALID",
+    "rc_commit_equals_current_main": true,
+    "governance_changed_paths": [],
+    "required_next_proof": "Owner-controlled distinct governance-only main merge and fresh exact-main CI"
+  },
+  "historical_rc19": {
+    "tag_object": "09a9a51628ab2e33d4ee85a1620f7afca692d18e",
+    "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
+    "execution_material_reused": false
+  },
+  "ledger_preview": {
+    "status": "PLAN_ONLY_NOT_CREATED_PENDING_DUAL_CI",
+    "lineage_id": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
+    "database_name": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "database_created": false
+  },
+  "safety": {
+    "kill_switch_checked_in_default": "ENGAGED",
+    "credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "production_business_writes": 0,
+    "real_provider_calls": 0,
+    "actual_cost_vnd": "0",
+    "operation_1_id_generated": false,
+    "authority_created": false,
+    "operation_2": "LOCKED",
+    "production": "NO-GO"
+  }
+}
