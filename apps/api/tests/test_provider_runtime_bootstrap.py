@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import os
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
@@ -42,7 +43,10 @@ def binding_data():
         "system_identifier": "7000000000000000001", "database_oid": 16384,
         "database_name": bootstrap.ledger_database_name(pins["rc_tag"], lineage),
         "database_role": "vang_nguyen", "schema_name": "public", "postgres_major": 16,
-        "socket_directory": "/nonexistent/private/socket", "port": 55438,
+        # POSIX is the production custody contract. Windows unit fixtures use
+        # a Windows-absolute path so model validation tests remain portable;
+        # no Windows socket is ever treated as production custody.
+        "socket_directory": "C:/nonexistent/private/socket" if os.name == "nt" else "/nonexistent/private/socket", "port": 55438,
         "kill_switch_engaged": True, "external_execution_enabled": False,
         "paid_execution_enabled": False, "budget_reserved_vnd": "0",
     }
@@ -272,6 +276,7 @@ def test_other_completed_slot_same_lineage_does_not_alias_current_operation(bind
     assert result["counts"]["operations"] == 1
 
 
+@pytest.mark.skipif(os.name == "nt", reason="POSIX Unix-socket custody; Windows symlink privilege is not authoritative")
 def test_socket_symlink_rejected(tmp_path, binding_data):
     original = tmp_path / "original"
     original.mkdir(mode=0o700)

@@ -3,8 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
+import re
 
-from sqlalchemy import delete, func, select, update
+from sqlalchemy import delete, func, or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -33,6 +34,15 @@ class DurableFinish:
     charged_vnd: Decimal
     alerts: tuple[int, ...]
     circuit_state: str
+
+
+@dataclass(frozen=True)
+class DurableDispatchState:
+    status: str | None
+    protocol_version: int | None
+    started: bool
+    request_sha256: str | None
+    client_request_id: str | None
 
 
 @dataclass(frozen=True)
@@ -107,6 +117,7 @@ class ProviderSafetyRepository:
         circuit_failure_threshold: int,
         circuit_cooldown_seconds: int,
         retention_days: int,
+        single_dispatch_protocol: bool = False,
     ) -> DurableReservation:
         del circuit_failure_threshold  # threshold is applied when an operation is finished
         budget_day = now.date()
@@ -205,6 +216,10 @@ class ProviderSafetyRepository:
                         charged_vnd=Decimal("0"),
                         budget_day=budget_day,
                         attempt_count=0,
+                        dispatch_protocol_version=1 if single_dispatch_protocol else None,
+                        dispatch_started_at=None,
+                        dispatch_request_sha256=None,
+                        dispatch_client_request_id=None,
                         failure_code=None,
                         created_at=now,
                         updated_at=now,
@@ -219,6 +234,100 @@ class ProviderSafetyRepository:
                 circuit_state=circuit.state,
             )
 
+    async def dispatch_state(self, context: ProviderCallContext) -> DurableDispatchState:
+        """Read the durable boundary; callers must fail closed if the read fails."""
+        async with self.session_factory() as session:
+            operation = await session.get(ProviderSafetyOperationORM, context.operation_key)
+            if operation is None:
+                return DurableDispatchState(None, None, False, None, None)
+            if operation.acceptance_lineage_id != context.acceptance_lineage_id:
+                raise RuntimeError("provider safety dispatch lineage mismatch")
+            return DurableDispatchState(
+                operation.status,
+                operation.dispatch_protocol_version,
+                operation.dispatch_started_at is not None,
+                operation.dispatch_request_sha256,
+                operation.dispatch_client_request_id,
+            )
+
+    async def mark_dispatch_started(
+        self,
+        context: ProviderCallContext,
+        *,
+        now: datetime,
+        request_sha256: str,
+        client_request_id: str,
+    ) -> None:
+        """Commit once immediately before send. A committed marker is never retryable."""
+        if not re.fullmatch(r"[a-f0-9]{64}", request_sha256):
+            raise ValueError("single-dispatch request SHA-256 is invalid")
+        if not re.fullmatch(r"[A-Za-z0-9._:-]{1,200}", client_request_id):
+            raise ValueError("single-dispatch client request ID is invalid")
+        async with self.session_factory() as session:
+            async with session.begin():
+                await self._lock_control(session, now=now)
+                operation = await session.get(
+                    ProviderSafetyOperationORM, context.operation_key, with_for_update=True,
+                )
+                if (
+                    operation is None
+                    or operation.acceptance_lineage_id != context.acceptance_lineage_id
+                    or operation.status != "reserved"
+                    or operation.dispatch_protocol_version != 1
+                    or operation.dispatch_started_at is not None
+                    or operation.attempt_count != 0
+                ):
+                    raise RuntimeError("single-dispatch operation is not virgin and reserved")
+                operation.dispatch_started_at = now
+                operation.dispatch_request_sha256 = request_sha256
+                operation.dispatch_client_request_id = client_request_id
+                operation.updated_at = now
+
+    async def release_pre_dispatch(self, context: ProviderCallContext, *, now: datetime) -> bool:
+        """Release only an unstarted v1 reservation; historical rows are untouched."""
+        async with self.session_factory() as session:
+            async with session.begin():
+                await self._lock_control(session, now=now)
+                operation = await session.get(
+                    ProviderSafetyOperationORM, context.operation_key, with_for_update=True,
+                )
+                if operation is None:
+                    return False
+                if (
+                    operation.acceptance_lineage_id != context.acceptance_lineage_id
+                    or operation.status != "reserved"
+                    or operation.dispatch_protocol_version != 1
+                    or operation.dispatch_started_at is not None
+                    or operation.attempt_count != 0
+                ):
+                    return False
+                attempts = await session.scalar(
+                    select(func.count()).select_from(ProviderSafetyAttemptORM).where(
+                        ProviderSafetyAttemptORM.operation_key == context.operation_key,
+                    )
+                )
+                if attempts:
+                    return False
+                budget = await session.get(
+                    ProviderSafetyBudgetDayORM, operation.budget_day, with_for_update=True,
+                )
+                circuit = await session.get(
+                    ProviderSafetyCircuitORM,
+                    (operation.provider_key, operation.capability),
+                    with_for_update=True,
+                )
+                if budget is None or circuit is None:
+                    raise RuntimeError("single-dispatch reservation state is incomplete")
+                if _decimal(budget.reserved_vnd) < _decimal(operation.reserved_vnd):
+                    raise RuntimeError("single-dispatch budget reservation underflow")
+                budget.reserved_vnd = _decimal(budget.reserved_vnd) - _decimal(operation.reserved_vnd)
+                budget.updated_at = now
+                if circuit.half_open_operation_key == context.operation_key:
+                    circuit.half_open_operation_key = None
+                    circuit.updated_at = now
+                await session.delete(operation)
+                return True
+
     async def record_attempt(self, record: ProviderAttemptRecord) -> None:
         async with self.session_factory() as session:
             async with session.begin():
@@ -231,6 +340,10 @@ class ProviderSafetyRepository:
                     raise RuntimeError("provider safety operation reservation is missing")
                 if operation.acceptance_lineage_id != record.acceptance_lineage_id:
                     raise RuntimeError("provider safety attempt lineage does not match its operation")
+                if operation.dispatch_protocol_version == 1 and (
+                    operation.status != "reserved" or operation.dispatch_started_at is None
+                ):
+                    raise RuntimeError("single-dispatch attempt requires a committed dispatch marker")
                 existing = await session.scalar(
                     select(ProviderSafetyAttemptORM).where(
                         ProviderSafetyAttemptORM.operation_key == record.operation_key,
@@ -289,6 +402,8 @@ class ProviderSafetyRepository:
                     raise RuntimeError("provider safety operation reservation is missing")
                 if operation.acceptance_lineage_id != context.acceptance_lineage_id:
                     raise RuntimeError("provider safety completion lineage does not match its operation")
+                if operation.dispatch_protocol_version == 1 and operation.dispatch_started_at is None:
+                    raise RuntimeError("single-dispatch operation cannot finish before dispatch")
                 if operation.status != "reserved":
                     alerts = await self._existing_alerts(session, operation.budget_day)
                     circuit = await session.get(
@@ -401,6 +516,34 @@ class ProviderSafetyRepository:
                     )
                 )
                 for operation in rows:
+                    if operation.dispatch_protocol_version == 1 and operation.dispatch_started_at is None:
+                        attempt_rows = int(await session.scalar(
+                            select(func.count()).select_from(ProviderSafetyAttemptORM).where(
+                                ProviderSafetyAttemptORM.operation_key == operation.operation_key,
+                            )
+                        ) or 0)
+                        if attempt_rows:
+                            raise RuntimeError("unstarted single-dispatch operation has attempts")
+                        budget = await session.get(
+                            ProviderSafetyBudgetDayORM, operation.budget_day, with_for_update=True,
+                        )
+                        circuit = await session.get(
+                            ProviderSafetyCircuitORM,
+                            (operation.provider_key, operation.capability),
+                            with_for_update=True,
+                        )
+                        if budget is None or circuit is None:
+                            raise RuntimeError("stale single-dispatch reservation state is incomplete")
+                        if _decimal(budget.reserved_vnd) < _decimal(operation.reserved_vnd):
+                            raise RuntimeError("stale single-dispatch budget reservation underflow")
+                        budget.reserved_vnd = _decimal(budget.reserved_vnd) - _decimal(operation.reserved_vnd)
+                        budget.updated_at = now
+                        if circuit.half_open_operation_key == operation.operation_key:
+                            circuit.half_open_operation_key = None
+                            circuit.updated_at = now
+                        recovered.append(operation.operation_key)
+                        await session.delete(operation)
+                        continue
                     charged_vnd = _decimal(
                         await session.scalar(
                             select(func.sum(ProviderSafetyAttemptORM.charged_cost_vnd)).where(
@@ -416,6 +559,10 @@ class ProviderSafetyRepository:
                         )
                         or 0
                     )
+                    if operation.dispatch_protocol_version == 1:
+                        # The request may have been sent before a crash. This is
+                        # a safety charge, never a claim of actual provider cost.
+                        charged_vnd = max(charged_vnd, _decimal(operation.reserved_vnd))
                     budget = await session.get(
                         ProviderSafetyBudgetDayORM,
                         operation.budget_day,
@@ -461,7 +608,11 @@ class ProviderSafetyRepository:
                     operation.status = "recovered"
                     operation.charged_vnd = charged_vnd
                     operation.attempt_count = attempt_count
-                    operation.failure_code = "STALE_RESERVATION_RECOVERED"
+                    operation.failure_code = (
+                        "STALE_DISPATCH_RECOVERED_COST_UNKNOWN"
+                        if operation.dispatch_protocol_version == 1
+                        else "STALE_RESERVATION_RECOVERED"
+                    )
                     operation.updated_at = now
                     operation.completed_at = now
                     recovered.append(operation.operation_key)
@@ -526,10 +677,24 @@ class ProviderSafetyRepository:
                 await session.scalar(
                     select(func.count())
                     .select_from(ProviderSafetyOperationORM)
-                    .where(ProviderSafetyOperationORM.paid.is_(True))
+                    .where(
+                        ProviderSafetyOperationORM.paid.is_(True),
+                        or_(
+                            ProviderSafetyOperationORM.dispatch_protocol_version.is_(None),
+                            ProviderSafetyOperationORM.dispatch_started_at.is_not(None),
+                        ),
+                    )
                 )
                 or 0
             )
+            external_calls = int(await session.scalar(
+                select(func.count()).select_from(ProviderSafetyOperationORM).where(
+                    or_(
+                        ProviderSafetyOperationORM.dispatch_protocol_version.is_(None),
+                        ProviderSafetyOperationORM.dispatch_started_at.is_not(None),
+                    ),
+                )
+            ) or 0)
             attempts = int(
                 await session.scalar(select(func.count()).select_from(ProviderSafetyAttemptORM)) or 0
             )
@@ -557,7 +722,7 @@ class ProviderSafetyRepository:
                 operations_total=operations_total,
                 active_operations=active_operations,
                 recovered_operations=recovered_operations,
-                external_calls_recorded=operations_total,
+                external_calls_recorded=external_calls,
                 paid_calls_recorded=paid_calls,
                 attempts_recorded=attempts,
                 stale_active_operations=stale_active,
