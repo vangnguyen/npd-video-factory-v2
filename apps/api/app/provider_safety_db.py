@@ -87,6 +87,18 @@ class ProviderSafetyOperationORM(Base):
         CheckConstraint("currency = 'VND'", name="ck_provider_safety_operation_vnd_only"),
         CheckConstraint("reserved_vnd >= 0", name="ck_provider_safety_reserved_cost_nonnegative"),
         CheckConstraint("charged_vnd >= 0", name="ck_provider_safety_charged_nonnegative"),
+        CheckConstraint(
+            "dispatch_protocol_version IS NULL OR dispatch_protocol_version = 1",
+            name="ck_provider_safety_dispatch_protocol",
+        ),
+        CheckConstraint(
+            "(dispatch_started_at IS NULL AND dispatch_request_sha256 IS NULL "
+            "AND dispatch_client_request_id IS NULL) OR "
+            "(dispatch_protocol_version = 1 AND dispatch_started_at IS NOT NULL "
+            "AND dispatch_request_sha256 IS NOT NULL "
+            "AND dispatch_client_request_id IS NOT NULL)",
+            name="ck_provider_safety_dispatch_marker_complete",
+        ),
         Index("ix_provider_safety_operation_status_updated", "status", "updated_at"),
         Index("ix_provider_safety_operation_provider_created", "provider_key", "capability", "created_at"),
         Index("ix_provider_safety_operation_lineage", "acceptance_lineage_id"),
@@ -109,6 +121,13 @@ class ProviderSafetyOperationORM(Base):
     charged_vnd: Mapped[Decimal] = mapped_column(Numeric(20, 4), nullable=False, default=0)
     budget_day: Mapped[date] = mapped_column(Date, nullable=False)
     attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # Nullable preserves historical operations. Version 1 is opt-in for the
+    # single-dispatch runner; its durable marker separates reservation from
+    # the point immediately before HTTP dispatch.
+    dispatch_protocol_version: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    dispatch_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    dispatch_request_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    dispatch_client_request_id: Mapped[str | None] = mapped_column(String(200), nullable=True)
     failure_code: Mapped[str | None] = mapped_column(String(120), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(

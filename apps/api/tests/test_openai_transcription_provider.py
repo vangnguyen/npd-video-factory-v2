@@ -92,6 +92,53 @@ def mock_transport(
     return httpx.MockTransport(handler)
 
 
+async def test_single_dispatch_callback_failure_prevents_transport_send(tmp_path: Path) -> None:
+    source = tmp_path / "callback.mp3"
+    source.write_bytes(b"offline-owned-audio-fixture")
+    calls: list[httpx.Request] = []
+    adapter, _ = provider(transport=mock_transport(response_payload(), calls=calls))
+    observed: list[tuple[str, str]] = []
+
+    async def reject_before_send(request_sha256: str, client_request_id: str) -> None:
+        observed.append((request_sha256, client_request_id))
+        raise RuntimeError("synthetic durable marker rejected")
+
+    with pytest.raises(RuntimeError, match="synthetic durable marker rejected"):
+        await adapter.transcribe(
+            source, metadata=media_metadata(),
+            checksum_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+            on_http_dispatch=reject_before_send,
+        )
+    assert len(observed) == 1
+    assert len(observed[0][0]) == 64
+    assert observed[0][1].startswith("vf-")
+    assert calls == []
+
+
+async def test_single_dispatch_callback_is_immediately_before_one_send(tmp_path: Path) -> None:
+    source = tmp_path / "callback.mp3"
+    source.write_bytes(b"offline-owned-audio-fixture")
+    order: list[str] = []
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        order.append("transport_send")
+        return httpx.Response(200, json=response_payload(), headers={"x-request-id": "req_synthetic"})
+
+    adapter, _ = provider(transport=httpx.MockTransport(handler))
+
+    async def durable_marker(request_sha256: str, client_request_id: str) -> None:
+        assert len(request_sha256) == 64 and client_request_id.startswith("vf-")
+        order.append("durable_marker")
+
+    transcript = await adapter.transcribe(
+        source, metadata=media_metadata(),
+        checksum_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+        on_http_dispatch=durable_marker,
+    )
+    assert order == ["durable_marker", "transport_send"]
+    assert transcript.provenance["provider_request_id"] == "req_synthetic"
+
+
 def provider(
     *,
     transport: httpx.AsyncBaseTransport,

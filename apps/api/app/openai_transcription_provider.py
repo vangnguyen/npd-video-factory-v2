@@ -6,7 +6,7 @@ import math
 import re
 import time
 import uuid
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from datetime import date
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
@@ -1059,6 +1059,7 @@ class OpenAITranscriptionProvider:
         checksum_sha256: str,
         execution_trace: ProviderExecutionTrace | None = None,
         expected_asr_prompt_profile: AsrPromptProfile | dict[str, object] | None = None,
+        on_http_dispatch: Callable[[str, str], Awaitable[None]] | None = None,
     ) -> ProviderTranscript:
         trace = execution_trace or ProviderExecutionTrace(monotonic=self._monotonic_clock)
         trace.begin()
@@ -1133,11 +1134,6 @@ class OpenAITranscriptionProvider:
             request_manifest["asr_prompt_profile_sha256"] = profile_sha256
         request_sha256 = hashlib.sha256(_canonical_json(request_manifest)).hexdigest()
         client_request_id = "vf-" + uuid.uuid4().hex
-        trace.mark(
-            "http_request_dispatch",
-            dispatch_state="possibly_sent",
-            client_request_id=client_request_id,
-        )
         timeout = httpx.Timeout(
             self.provider_http_timeout_seconds,
             connect=min(15.0, self.provider_http_timeout_seconds),
@@ -1172,6 +1168,16 @@ class OpenAITranscriptionProvider:
                         "Authorization": f"Bearer {api_key}",
                         "X-Client-Request-Id": client_request_id,
                     },
+                )
+                # The opt-in single-dispatch runner durably marks this exact
+                # operation before the first transport send. A failed callback
+                # cannot enter HTTP; existing callers keep their prior API.
+                if on_http_dispatch is not None:
+                    await on_http_dispatch(request_sha256, client_request_id)
+                trace.mark(
+                    "http_request_dispatch",
+                    dispatch_state="possibly_sent",
+                    client_request_id=client_request_id,
                 )
                 response = await client.send(request, stream=True)
                 provider_request_id = _safe_request_id(response.headers.get("x-request-id"))
