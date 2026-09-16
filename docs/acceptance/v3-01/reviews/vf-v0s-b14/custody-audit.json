@@ -1,0 +1,85 @@
+{
+  "task_id": "VF-V0S-B14",
+  "result": "RC20_CUSTODY_VERIFIED_NOT_EXECUTION_AUTHORIZED",
+  "postgres": {
+    "version": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "system_identifier": "7686186223531422166",
+    "database": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "database_oid": 16384,
+    "schema": "public",
+    "role": "vang_nguyen",
+    "root": "/home/vang_nguyen/.local/share/npd-vf-rc20-ledger-9722891b4ae6",
+    "socket": "/home/vang_nguyen/.local/share/npd-vf-rc20-ledger-9722891b4ae6/socket",
+    "port": 55440,
+    "owner_uid": 1000,
+    "root_socket_data_mode": "0700",
+    "transport": "PRIVATE_UNIX_SOCKET_PEER_NO_PASSWORD",
+    "listen_addresses": "",
+    "host_auth": "REJECT"
+  },
+  "migrations": {
+    "sequence": "0001-0015",
+    "head": "0015_v3_01_dispatch",
+    "control_seed": "global/revision=0",
+    "control_seed_created_by": "0011_v3_01_03",
+    "normalized_schema_sha256": "ae4b86420608b7078850c86f1872dc5667d963316b21bc92db20be57153955da",
+    "schema_hash_recompute": "MATCH_2_OF_2"
+  },
+  "virgin_state": {
+    "classification": "VIRGIN_READY_FOR_OPERATION_REBIND",
+    "provider_safety_operations": 0,
+    "provider_safety_attempts": 0,
+    "provider_safety_budget_days": 0,
+    "provider_safety_circuits": 0,
+    "provider_safety_budget_alerts": 0,
+    "provider_usage": 0,
+    "idempotency_keys": 0,
+    "cost_records": 0,
+    "reserved_vnd": "0",
+    "operation_record_exists": false,
+    "provider_request_receipt_exists": false,
+    "active_reservation": false,
+    "duplicate_or_idempotency_collision": false
+  },
+  "isolation": {
+    "rc19_database": "vf_vf_v3_01_rc19_5a72b3be5266c9801013f579e75662ed",
+    "rc19_system_identifier": "7685665008963764889",
+    "rc20_system_identifier": "7686186223531422166",
+    "distinct_clusters": true,
+    "distinct_databases_and_sockets": true,
+    "rc19_database_absent_from_rc20_cluster": true,
+    "rc20_operation_reservation_idempotency_tables_empty": true,
+    "result": "PASS"
+  },
+  "bootstrap": {
+    "entrypoint": "python -m app.provider_runtime_bootstrap",
+    "source_guard": "PASS",
+    "socket_guard": "PASS",
+    "operation_bound_invocation": "DEFERRED_REQUIRED_FIELDS_ABSENT_BY_SCOPE",
+    "required_fields": [
+      "operation_key",
+      "authority_receipt_sha256",
+      "bundle_sha256",
+      "execution_scope_sha256",
+      "scope_sha256"
+    ],
+    "overall": "PARTIAL_NOT_VERIFIED_OPERATION_BOUND"
+  },
+  "single_dispatch": {
+    "entrypoint": "app.provider_single_dispatch.run_single_dispatch",
+    "source_blob": "a61a035d7b8e60be61581ce5d9d59028e2715688",
+    "present_in_rc20": true,
+    "executed": false
+  },
+  "safety": {
+    "kill_switch_checked_in_default": "ENGAGED",
+    "operation_1_created": false,
+    "authority_created": false,
+    "bundle_mounted": false,
+    "credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "real_provider_calls": 0,
+    "production_business_writes": 0,
+    "actual_cost_vnd": "0"
+  }
+}

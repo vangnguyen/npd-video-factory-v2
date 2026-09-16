@@ -1,0 +1,8 @@
+6ecd16d7b57f0e3a29b503e4d367dc9c357e0fa924a667ba9c1c4c29277a6b11  docs/acceptance/v3-01/HANDOFF.md
+d8e34d2d7bae4820b82f7841ac94f64e162006b0a07a823049e80b65bc151c54  docs/acceptance/v3-01/handoff.json
+5cb3325adb0dd49f94f277f057bf541bc36e6ad107fe11967c20bb5d740a9301  docs/acceptance/v3-01/reviews/vf-v0s-b14/README.md
+5129c0884532b6f21a216349244c0fe74a587dd02ae5e838d4bb4df4ea8ca698  docs/acceptance/v3-01/reviews/vf-v0s-b14/baseline.json
+5a18a6ec458a76c5b57cde284792e567d4c3b0c2feb5d1117b543be38f6c12e8  docs/acceptance/v3-01/reviews/vf-v0s-b14/custody-audit.json
+1ac98ba8d9f36c83c69523b399350b15f869ac8011b976093b601f954ace2665  docs/acceptance/v3-01/reviews/vf-v0s-b14/tests.json
+dbbc62873b2fbca168fd4f1ec08f8f2b277f48178eeb54edbe7746087ababd9c  docs/acceptance/v3-01/reviews/vf-v0s-b14/task-result.json
+6b0960981bb9612cf421b269fee0f3c613b63ccc2cb95840fe4068037f406b4d  docs/acceptance/v3-01/reviews/vf-v0s-b14/audit_custody.py

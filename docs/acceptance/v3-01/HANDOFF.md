@@ -1,11 +1,56 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B13
-VERDICT: REVIEW_REQUIRED — RC-20 materialized and RC CI passed; dual-CI governance closure pending
+TASK: VF-V0S-B14
+VERDICT: REVIEW_REQUIRED — RC-20 custody verified; operation-bound bootstrap cannot run before rebind/authority
 REPO: vangnguyen/npd-video-factory-v2
 
-Exact governance main remains `93b5441d44347c9c40b745bdfed0969880853f68`.
+Exact governance main is `551379a916b9b574288fda754c0732009d23d288`
+after Owner-approved PR #75 head
+`c9d2c0ba13e34b060a0bc971a26bb9f5a68b78c8` merged. Fresh exact-main
+CI `35126544056` and RC-20 CI `35124578033` both passed 5/5. Canonical
+main/RC dual-CI provenance is `PASS`, SHA-256
+`330006ae336f12a809a5d7611d250d5e096f8b44c74ab8a02187771cf238d21f`.
+RC-20 remains `vf-v3-01-rc20` at
+`93b5441d44347c9c40b745bdfed0969880853f68`; RC and main share canonical
+executable-tree SHA-256
+`611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630`.
+RC-19 remains immutable and historical.
+
+B14 re-derived fresh ledger database
+`vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d` exactly and created
+a separate private PostgreSQL 16.15 custody cluster (system identifier
+`7686186223531422166`, Unix socket/peer auth only). Canonical migrations
+`0001`–`0015` reached `0015_v3_01_dispatch`; migration `0011` seeded
+`global/revision 0`. The ledger is `VIRGIN_READY_FOR_OPERATION_REBIND`: no
+operation, attempt, provider receipt, active reservation, duplicate key or
+provider usage. RC-19/RC-20 isolation passed. The exact RC-20 source and
+socket guards passed, and the canonical single-dispatch runner is present.
+Focused RC-source tests passed 131/131. See the
+[B14 custody evidence](reviews/vf-v0s-b14/README.md).
+
+**Full RC-20 operation-bound bootstrap is not VERIFIED.** The existing
+`python -m app.provider_runtime_bootstrap` CLI requires a binding containing
+`operation_key`, authority receipt, bundle, execution-scope and scope hashes.
+B14 forbids creating Operation 1 or those materials. No placeholder, RC-19
+identity or fabricated authority was used. This prevents a B14 PASS;
+source-level guards and durable custody are verified. A later task must
+rebind Operation 1 and qualify the actual operation-bound CLI with legitimate
+bindings. Operation 1 authority is `NOT_CREATED`, fresh window is required,
+Operation 2 remains locked. The checked-in kill-switch default is engaged;
+no runtime transition occurred. ASR remains `0/2 PASS`, Vision `2/2 PASS`,
+Production `NO-GO`. Credential reads, budget reservations, provider calls,
+production business writes and actual spend were all zero.
+
+Draft PR #76 remains `OPEN / DRAFT` as historical B13G handoff; it was not
+merged or deleted in B14. The B14 handoff/evidence update is separate and
+newer, and requires its own G-08 before any merge. Next safe action is Owner
+review of the bootstrap ordering and a separately assigned RC-20 Operation 1
+`PREPARED_NOT_AUTHORIZED` rebind. Do not execute B15 automatically.
+
+## Previous B13 snapshot (historical at its task boundary)
+
+Exact governance main at B13 remained `93b5441d44347c9c40b745bdfed0969880853f68`.
 Exact-main CI `35123204511` passed all five canonical jobs and main-only
 provenance passed. The canonical executable tree recomputed twice to
 `611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630`.
@@ -21,7 +66,7 @@ passed 5/5, including Docker deterministic E2E. RC-only provenance is PASS:
 remote tag, peeled commit, Git tree, canonical executable-tree hash and all
 five job head SHAs agree. No source commit was created while tagging.
 
-**RC-20 dual-CI provenance is not PASS.** The canonical validator returned
+**At the B13 task boundary, RC-20 dual-CI provenance was not PASS.** The canonical validator returned
 `CI_PROVENANCE_INVALID` because RC-20 and current main are the *same commit*
 and the governance diff is empty. Its contract requires a distinct,
 governance-only main commit and a separate successful exact-main CI. No
@@ -38,7 +83,7 @@ locked, and production remains `NO-GO` (ASR `0/2 PASS`, Vision `2/2 PASS`).
 This task made zero credential reads, budget reservations, provider calls,
 production business writes and actual spend.
 
-Next safe action: Owner G-08 review of the B13 governance-only handoff Draft
+Historical next safe action: Owner G-08 review of the B13 governance-only handoff Draft
 PR, then separately authorized controlled merge, fresh exact-main CI and
 RC-20/main dual-CI provenance closure. Stop before ledger custody/B14,
 Operation 1 rebind or authority.

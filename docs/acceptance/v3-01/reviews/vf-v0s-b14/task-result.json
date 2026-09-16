@@ -1,0 +1,41 @@
+{
+  "workstream": "Video Factory V3-01",
+  "task_id": "VF-V0S-B14",
+  "verdict": "REVIEW_REQUIRED",
+  "ledger": {
+    "expected_identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "derived_identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "custody": "VERIFIED",
+    "virgin_state": "VIRGIN_READY_FOR_OPERATION_REBIND",
+    "rc19_rc20_isolation": "PASS",
+    "bootstrap_writes": "NEW_PRIVATE_CLUSTER_DATABASE_AND_CANONICAL_MIGRATIONS_0001_TO_0015_WITH_CONTROL_SEED"
+  },
+  "bootstrap": {
+    "entrypoint": "python -m app.provider_runtime_bootstrap",
+    "source_and_socket_guards": "PASS",
+    "operation_bound_invocation": "DEFERRED_REQUIRED_OPERATION_AND_AUTHORITY_BINDINGS_FORBIDDEN_BY_B14",
+    "overall": "PARTIAL_NOT_VERIFIED"
+  },
+  "single_dispatch": {
+    "entrypoint": "app.provider_single_dispatch.run_single_dispatch",
+    "present_in_rc20": true,
+    "focused_contract_tests": "PASS_131",
+    "executed": false
+  },
+  "operation_1_rebind_required": true,
+  "operation_1_authority": "NOT_CREATED",
+  "fresh_execution_window_required": true,
+  "operation_2": "NOT_APPROVED_LOCKED",
+  "kill_switch": "ENGAGED_CHECKED_IN_DEFAULT_NO_TRANSITION",
+  "safety": {
+    "credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "production_business_writes": 0,
+    "real_provider_calls": 0,
+    "actual_cost_vnd": "0"
+  },
+  "scope_drift": "PASS",
+  "blocker": "BOOTSTRAP_CLI_REQUIRES_OPERATION_KEY_AUTHORITY_RECEIPT_BUNDLE_AND_SCOPE_HASHES_BUT_B14_FORBIDS_THEM",
+  "pr76": "OPEN_DRAFT_HISTORICAL_B13G_HANDOFF_NOT_MERGED",
+  "next_safe_action": "Owner review ordering; separately assign RC-20 PREPARED_NOT_AUTHORIZED Operation 1 rebind, then qualify operation-bound bootstrap after legitimate required bindings exist. No B15 action was performed."
+}
