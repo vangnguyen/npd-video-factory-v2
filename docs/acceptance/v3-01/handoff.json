@@ -1,7 +1,7 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B12G",
-  "verdict": "PASS_EXACT_MAIN_VERIFIED",
+  "task_id": "VF-V0S-B12H",
+  "verdict": "PASS_GOVERNANCE_MAIN_VERIFIED",
   "repo": "vangnguyen/npd-video-factory-v2",
   "pr": {
     "number": 72,
@@ -18,6 +18,23 @@
     "provenance": "PASS_MAIN_ONLY",
     "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
     "approved_candidate_tree_match": true
+  },
+  "governance_pr": {
+    "number": 73,
+    "approved_head_sha": "b9e7db84925eecd1155c7ecdba0c75517703cdec",
+    "base_sha": "3bb0bdc0bb55bd0f5d24b12d92c092376989c2c7",
+    "merge_commit_sha": "694f8ac8e98dbb2b47406f1c1fbb2511808a8970",
+    "g08": "PASS_GOVERNANCE_ONLY"
+  },
+  "governance_main": {
+    "sha": "694f8ac8e98dbb2b47406f1c1fbb2511808a8970",
+    "ci_run_id": 35121062274,
+    "ci_jobs_passed": 5,
+    "ci_jobs_total": 5,
+    "provenance": "PASS_MAIN_ONLY",
+    "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "tree_changed_from_source_main": false,
+    "rc19_current_main_eligibility": "BLOCKED_EXPECTED"
   },
   "historical_rc": {
     "tag": "vf-v3-01-rc19",
@@ -50,6 +67,6 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b12g/README.md",
-  "next_safe_action": "Owner assignment of VF-V0S-B13 to materialize a fresh RC from exact verified main; stop before that task in VF-V0S-B12G."
+  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b12h/README.md",
+  "next_safe_action": "Owner assignment of VF-V0S-B13 to materialize a fresh RC from exact verified governance main; stop before that task in VF-V0S-B12H."
 }
