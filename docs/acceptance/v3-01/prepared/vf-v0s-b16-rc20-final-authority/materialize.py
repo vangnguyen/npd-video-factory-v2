@@ -1,4 +1,4 @@
-"""Reproduce VF-V0S-B16 owner records, gate bundle and authority offline.
+"""Reproduce VF-V0S-B16R's correction of B16 authority CI-run bindings offline.
 
 No database connection, credential resolver, reservation, mount or provider
 client is constructed here. This script only reads canonical source material.
@@ -21,7 +21,12 @@ B15 = REPO / "docs/acceptance/v3-01/prepared/vf-v0s-b15-rc20-asr-w1"
 sys.path.insert(0, str(REPO / "apps/api"))
 
 from app.asr_prompt_profile import prompt_profile_sha256, validate_prompt_profile  # noqa: E402
-from app.provider_ci_provenance import EXECUTABLE_TREE_PATHS, executable_tree_sha256  # noqa: E402
+from app.provider_ci_provenance import (  # noqa: E402
+    EXECUTABLE_TREE_PATHS,
+    executable_tree_sha256,
+    provider_ci_provenance_sha256,
+    validate_provider_acceptance_ci_provenance,
+)
 from app.provider_gate_loader import (  # noqa: E402
     OpenAIAsrGateBundle,
     ProviderApprovalRecord,
@@ -29,7 +34,7 @@ from app.provider_gate_loader import (  # noqa: E402
     load_verified_provider_gate_bundle,
 )
 from app.provider_runtime_bootstrap import BootstrapLedgerBinding, ledger_database_name  # noqa: E402
-from app.provider_single_dispatch import _verify_authority  # noqa: E402
+from app.provider_single_dispatch import _load_authority, _verify_authority  # noqa: E402
 from app.provider_safety import derive_acceptance_lineage_id, derive_rc_bound_operation_key  # noqa: E402
 
 
@@ -38,6 +43,8 @@ RC_TAG = "vf-v3-01-rc20"
 RC_COMMIT = "93b5441d44347c9c40b745bdfed0969880853f68"
 TREE = "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630"
 PROVENANCE = "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86"
+RC_CI_RUN = 35124578033
+MAIN_CI_RUN = 35172654970
 LEDGER = "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d"
 OPERATION = (
     "v3-01-rc20-openai-transcription-asr-al-0001-"
@@ -59,6 +66,7 @@ RUNNER_PATH = "apps/api/app/provider_single_dispatch.py"
 RUNNER_BLOB = "a61a035d7b8e60be61581ce5d9d59028e2715688"
 APPROVAL_IDS = {"G-01": "V3-01-APP-078", "G-02": "V3-01-APP-079", "G-03": "V3-01-APP-080"}
 REL = "docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority"
+BASELINE_PROVENANCE = REPO / "docs/acceptance/v3-01/reviews/vf-v0s-b16r/baseline-dual-ci-provenance.json"
 
 
 def _sha(raw: bytes) -> str:
@@ -90,7 +98,7 @@ def _binding(payload: dict) -> BootstrapLedgerBinding:
 
 
 def _check_inputs() -> tuple[dict, dict, dict, dict]:
-    # PR #79 is a preparation-only parent, so HEAD is intentionally not MAIN.
+    # This candidate is branched directly from MAIN and carries the B15 package.
     assert _git("ls-remote", "--heads", "origin", "main").split()[0] == MAIN
     assert _git("rev-parse", RC_TAG + "^{}") == RC_COMMIT
     objects = {path: _git("rev-parse", f"{MAIN}:{path}") for path in EXECUTABLE_TREE_PATHS}
@@ -243,11 +251,14 @@ def build() -> dict[str, bytes]:
         "budget_reserved_vnd": "0",
     })
     authority = {
-        "schema": "vf-v0s-b16-rc20-op1-authority-v1", "authority_source": "VF-V0S-B16 explicit Owner instruction",
+        "schema": "vf-v0s-b16r-rc20-op1-authority-v1", "authority_source": "VF-V0S-B16 explicit Owner instruction; VF-V0S-B16R CI-run binding correction",
         "approved_at_utc": APPROVED_AT, "decision": "APPROVED", "status": "GRANTED_NOT_CONSUMED",
         "main_provenance": "PASS", "rc_tag": RC_TAG, "rc_commit": RC_COMMIT,
         "governance_main_commit": MAIN, "executable_tree_sha256": TREE,
-        "dual_ci_provenance_sha256": PROVENANCE, "operation_key": OPERATION,
+        "dual_ci_provenance_sha256": PROVENANCE,
+        "executable_rc_ci_run_id": RC_CI_RUN,
+        "governance_main_ci_run_id": MAIN_CI_RUN,
+        "operation_key": OPERATION,
         "acceptance_lineage_id": template["acceptance_lineage_id"],
         "execution_scope_sha256": EXECUTION_SHA, "prepared_scope_sha256": PREPARED_SCOPE_SHA,
         "loaded_runtime_scope_sha256": loaded_scope_sha, "gate_bundle_sha256": bundle_sha,
@@ -277,6 +288,8 @@ def build() -> dict[str, bytes]:
         "no_execution_in_this_task": True,
     }
     _verify_authority(authority, binding, scope, provenance_sha256=PROVENANCE, operation_manifest_sha256=MANIFEST_SHA)
+    assert authority["executable_rc_ci_run_id"] == RC_CI_RUN
+    assert authority["governance_main_ci_run_id"] == MAIN_CI_RUN
     authority_bytes = _json_bytes(authority)
     authority_sha = _sha(authority_bytes)
     binding_payload = binding.model_dump(mode="json")
@@ -284,15 +297,18 @@ def build() -> dict[str, bytes]:
     binding = _binding(binding_payload)
     _verify_authority(authority, binding, scope, provenance_sha256=PROVENANCE, operation_manifest_sha256=MANIFEST_SHA)
     final = {
-        "schema": "vf-v0s-b16-final-material-hashes-v1", "task_id": "VF-V0S-B16",
+        "schema": "vf-v0s-b16r-final-material-hashes-v1", "task_id": "VF-V0S-B16R",
         "owner_approval_source": "VF-V0S-B16", "status": "GRANTED_NOT_CONSUMED",
         "governance_main_commit": MAIN, "rc_tag": RC_TAG, "rc_commit": RC_COMMIT,
         "executable_tree_sha256": TREE, "dual_ci_provenance_sha256": PROVENANCE,
+        "executable_rc_ci_run_id": RC_CI_RUN,
+        "governance_main_ci_run_id": MAIN_CI_RUN,
         "ledger_identity": LEDGER, "operation_key": OPERATION,
         "execution_scope_sha256": EXECUTION_SHA, "prepared_scope_sha256": PREPARED_SCOPE_SHA,
         "operation_manifest_sha256": MANIFEST_SHA, "preparation_template_sha256": TEMPLATE_SHA,
         "approval_record_sha256": record_hashes, "final_loaded_scope_sha256": loaded_scope_sha,
         "final_runtime_bundle_sha256": bundle_sha, "authority_receipt_sha256": authority_sha,
+        "historical_b16_authority_receipt_sha256": "694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c",
         "bootstrap_binding_sha256": _sha(_json_bytes(binding_payload)),
         "window": {"start_utc": START, "end_utc": END,
                    "start_ict": "2026-09-21T21:00:00+07:00", "end_ict": "2026-09-22T01:00:00+07:00"},
@@ -377,6 +393,15 @@ def check(outputs: dict[str, bytes]) -> None:
     authority = _load(HERE / "operation-1-authority.json")
     binding = _binding(_load(HERE / "bootstrap-binding-for-b17.json"))
     assert _sha((HERE / "operation-1-authority.json").read_bytes()) == binding.authority_receipt_sha256
+    assert _load_authority(HERE / "operation-1-authority.json", binding.authority_receipt_sha256) == authority
+    provenance = validate_provider_acceptance_ci_provenance(
+        _load(BASELINE_PROVENANCE),
+        expected_executable_rc_commit=binding.rc_commit,
+        expected_governance_main_commit=binding.governance_main_commit,
+        expected_executable_rc_ci_run_id=authority["executable_rc_ci_run_id"],
+        expected_governance_main_ci_run_id=authority["governance_main_ci_run_id"],
+    )
+    assert provider_ci_provenance_sha256(provenance) == PROVENANCE
     _verify_authority(authority, binding, scope, provenance_sha256=PROVENANCE, operation_manifest_sha256=MANIFEST_SHA)
     for relative, raw in outputs.items():
         assert (REPO / relative).read_bytes() == raw, relative
@@ -413,7 +438,7 @@ def main() -> None:
         sys.stdout.buffer.write(outputs[args.print_file])
     elif args.check:
         check(outputs)
-        print("B16_FINAL_MATERIALS_PASS REAL_GATE_LOADER_PASS AUTHORITY_BINDING_PASS DETERMINISTIC_BYTES_PASS")
+        print("B16R_FINAL_MATERIALS_PASS REAL_GATE_LOADER_PASS AUTHORITY_CI_BINDINGS_PASS DETERMINISTIC_BYTES_PASS")
     elif args.summary:
         sys.stdout.buffer.write(outputs[f"{REL}/final-material-hashes.json"])
     else:

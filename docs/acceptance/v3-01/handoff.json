@@ -1,7 +1,7 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B16",
-  "verdict": "PASS_GRANTED_NOT_CONSUMED_NO_EXECUTION",
+  "task_id": "VF-V0S-B16R",
+  "verdict": "REVIEW_REQUIRED_POST_MERGE_AUTHORITY_REBIND",
   "repo": "vangnguyen/npd-video-factory-v2",
   "pr": {
     "number": 77,
@@ -173,7 +173,40 @@
     "operation_2": "NOT_APPROVED_LOCKED_NOT_TRANSFERRED",
     "pr78": "OPEN_DRAFT_HISTORICAL_UNMERGED",
     "pr79": "OPEN_DRAFT_B15_PREPARATION_UNMERGED",
-    "package_pointer": "docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/README.md"
+    "historical_pr": 80,
+    "package_pointer": "https://github.com/vangnguyen/npd-video-factory-v2/blob/071c650766162b54817447da14f0253c57f70285/docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/README.md"
+  },
+  "b16r_clean_candidate": {
+    "branch": "governance/vf-v0s-b16r-rc20-main-based",
+    "base_main_sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+    "base_directly_on_main": true,
+    "historical_prs": [78, 79, 80],
+    "historical_prs_unmerged": true,
+    "operation_id": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+    "executable_rc_ci_run_id": 35124578033,
+    "governance_main_ci_run_id": 35172654970,
+    "dual_ci_provenance_sha256": "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+    "approval_ids_unchanged": ["V3-01-APP-078", "V3-01-APP-079", "V3-01-APP-080"],
+    "old_authority_receipt_sha256": "694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c",
+    "corrected_authority_receipt_sha256": "074c91cf7efff23bd7763bb698905dfe8de9e0d50ed72dea358354a4930e8dce",
+    "final_runtime_bundle_sha256": "a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019",
+    "final_loaded_scope_sha256": "2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de",
+    "current_baseline_authority_status": "GRANTED_NOT_CONSUMED",
+    "post_merge_authority_status": "REVALIDATION_REQUIRED",
+    "post_merge_window_reauth_required": true,
+    "post_merge_blocker": "Runner requires remote main and exact-main CI/provenance to match the authority's current-main binding",
+    "runner_check_only_entrypoint": "NOT_AVAILABLE",
+    "ledger_readback": "READ_ONLY_EIGHT_EXECUTION_TABLES_ZERO_RESERVED_VND_ZERO",
+    "operation_record_exists": false,
+    "provider_request_receipt_exists": false,
+    "active_reservation": false,
+    "duplicate_or_idempotency_collision": false,
+    "bundle_mounted": false,
+    "kill_switch": "ENGAGED",
+    "credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "real_provider_calls": 0,
+    "actual_cost_vnd": "0"
   },
   "historical_rc": {
     "tag": "vf-v3-01-rc19",
@@ -208,5 +241,5 @@
     "production": "NO-GO"
   },
   "evidence_pointer": "docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/README.md",
-  "next_safe_action": "Owner review and separately assign VF-V0S-B17 zero-call RC-20 operation-bound bootstrap and single-dispatch qualification. Stop before B17."
+  "next_safe_action": "Owner review of the main-based candidate and post-merge authority-binding lifecycle. Do not merge as final execution authority or run B17 until the new main/CI/provenance binding is resolved."
 }

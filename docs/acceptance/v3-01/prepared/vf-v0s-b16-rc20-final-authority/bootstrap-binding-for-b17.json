@@ -1,7 +1,7 @@
 {
   "acceptance_lineage_id": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
   "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
-  "authority_receipt_sha256": "694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c",
+  "authority_receipt_sha256": "074c91cf7efff23bd7763bb698905dfe8de9e0d50ed72dea358354a4930e8dce",
   "budget_reserved_vnd": "0",
   "bundle_sha256": "a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019",
   "capability": "asr",

@@ -1,11 +1,45 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B16
-VERDICT: PASS — RC-20 Operation 1 authority granted, not consumed
+TASK: VF-V0S-B16R
+VERDICT: REVIEW_REQUIRED — main-based authority correction is not post-merge execution authority
 REPO: vangnguyen/npd-video-factory-v2
 
-## Current B16 authority state — no execution
+## B16R clean governance candidate — no merge or execution
+
+The B16R branch starts directly from canonical main
+`4ac4880d5627c2800eb918d24c59da5f8e047091` and ports unchanged B15
+preparation plus corrected B16 authority evidence. It is not stacked on PR
+#79/#80; prior PRs #78/#79/#80 remain historical and unmerged. Canonical RC CI
+`35124578033` and exact-main CI `35172654970` both passed 5/5, and their
+dual-CI provenance SHA is
+`5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86`.
+The runner reads `executable_rc_ci_run_id` and `governance_main_ci_run_id`
+from the authority receipt; B16 omitted them. The corrected receipt binds
+these exact runs, with new SHA-256
+`074c91cf7efff23bd7763bb698905dfe8de9e0d50ed72dea358354a4930e8dce`.
+G-01/G-02/G-03 records `V3-01-APP-078/079/080` remain byte-identical:
+their exact provenance SHA already binds the two runs. The strict bundle and
+loaded scope schemas have no CI-run fields, so their hashes remain
+`a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019`
+and `2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de`.
+The old B16 receipt `694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c`
+remains historical in Draft PR #80.
+
+The corrected authority binds the **current** main. The runner requires
+remote main to equal that exact SHA; merging any governance PR advances main
+and creates a fresh exact-main CI/provenance identity. Therefore this
+candidate is not post-merge B17 readiness or dispatch authority. The runner
+has no side-effect-free top-level check-only mode; B16R validates its
+authority loader, verifier and dual-CI validator offline. The bundle remains
+unmounted, kill switch engaged, and a fresh read-only RC-20 ledger query found
+zero rows in all eight execution tables and zero reserved VND. No credential read,
+reservation, provider call or
+production business write occurred in B16R. Owner review of a post-merge
+authority-binding procedure and renewed window approval are required before B17
+if main changes.
+
+## Historical B16 authority state — no execution
 
 The explicit Owner decision in VF-V0S-B16 materialized fresh G-01/G-02/G-03
 records `V3-01-APP-078/079/080` for the exact RC-20 Operation 1 below. The
@@ -14,10 +48,10 @@ existing strict gate loader validates the completed bundle. Its raw SHA-256 is
 the final loaded scope's canonical SHA-256 is
 `2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de`.
 These are distinct from B15's prepared scope and preparation template. The
-Operation-1-only authority receipt SHA-256 is
+Historical Operation-1-only authority receipt SHA-256 was
 `694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c`
-and status is `GRANTED_NOT_CONSUMED`. Approval records, bundle, scope,
-authority and reproducibility checks are in the
+and recorded status was `GRANTED_NOT_CONSUMED`. Corrected candidate approval
+records, bundle, scope, authority and reproducibility checks are in the
 [B16 final package](prepared/vf-v0s-b16-rc20-final-authority/README.md).
 
 The authorized window is **2026-09-21 21:00 → 2026-09-22 01:00 ICT**
@@ -31,10 +65,8 @@ receipt, reservation or duplicate. Credential reads, real provider calls,
 production business writes and actual spend remain zero. Operation 2 stays
 `NOT_APPROVED / LOCKED / NOT_TRANSFERRED`; Production is `NO-GO`.
 
-Draft PRs #78 and #79 remain open and unmerged as historical handoff and B15
-preparation evidence. B16 does not treat either PR as executable lineage.
-The operation-bound bootstrap is `READY_FOR_B17_NOT_RUN`; the next safe action
-is a separately assigned B17 zero-call qualification. Stop before B17.
+Draft PRs #78/#79/#80 remain open and unmerged as historical evidence. B16R
+does not treat them as executable lineage. B17 has not run; stop before B17.
 
 ## Historical B15 preparation snapshot
 

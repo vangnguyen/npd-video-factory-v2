@@ -1,11 +1,11 @@
-# VF-V0S-B16 — RC-20 Operation 1 final authority, no execution
+# VF-V0S-B16R — RC-20 Operation 1 authority CI-binding correction, no execution
 
 The explicit Owner VF-V0S-B16 decision approved G-01/G-02/G-03 for **only**
 the RC-20 ASR W1 Operation 1 identified by the B15 preparation package. This
-directory is an immutable-review candidate, not an execution mount. Draft PR
-#79 supplies the B15 preparation source at exact head
-`10707d3ce3d35918ad46b6534f8e08616abd7b2c`; it is not executable
-lineage and was not merged here. Draft PR #78 is also preserved and unmerged.
+directory is a governance candidate, not an execution mount. The clean branch
+starts directly from governance main `4ac4880d5627c2800eb918d24c59da5f8e047091`
+and ports B15 preparation and B16 evidence without changing executable source.
+Draft PRs #78, #79 and #80 remain historical and unmerged.
 
 ## Binding and hashes
 
@@ -29,13 +29,16 @@ and [G-03](../../approvals/V3-01-APP-080.json)
 G-03 binds both RightsRecords because the established loader requires two
 slots, but only slot 1 has authority; slot 2 remains locked.
 
-The [final bundle](final-runtime-bundle.json) raw SHA-256 is
+The [final bundle](final-runtime-bundle.json) raw SHA-256 remains
 `a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019`.
-Its [loaded scope](final-loaded-scope.json) has canonical SHA-256
+Its [loaded scope](final-loaded-scope.json) likewise remains at canonical SHA-256
 `2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de`.
-The [Op1-only authority](operation-1-authority.json) raw receipt SHA-256 is
-`694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c`,
-status `GRANTED_NOT_CONSUMED`. A [B17 binding candidate](bootstrap-binding-for-b17.json)
+The [corrected Op1-only authority](operation-1-authority.json) raw receipt SHA-256 is
+`074c91cf7efff23bd7763bb698905dfe8de9e0d50ed72dea358354a4930e8dce`,
+status `GRANTED_NOT_CONSUMED` only for the still-current `4ac4880d...` baseline.
+The historical B16 receipt `694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c`
+is preserved by Draft PR #80, not silently represented as this candidate's receipt.
+A [B17 binding candidate](bootstrap-binding-for-b17.json)
 is schema-valid under Linux but has **not** been used to run bootstrap. The
 [hash manifest](final-material-hashes.json) binds all key identities. Raw
 file hashes are in [SHA256SUMS.txt](SHA256SUMS.txt).
@@ -43,7 +46,27 @@ file hashes are in [SHA256SUMS.txt](SHA256SUMS.txt).
 The strict loader schema has no arbitrary main/provenance/ledger/operation
 fields at the bundle top level. Those additional exact bindings live in the
 approval records and authority receipt; no new runtime schema was invented.
+The runner specifically reads `executable_rc_ci_run_id = 35124578033` and
+`governance_main_ci_run_id = 35172654970` from the authority receipt. Both
+canonical runs are 5/5 PASS and the exact [baseline provenance snapshot](../../reviews/vf-v0s-b16r/baseline-dual-ci-provenance.json)
+hashes to `5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86`.
+The three Owner records already bind this provenance SHA and exact main/RC;
+their signed content does not change. The bundle/scope schema has no CI-run
+fields, so adding the IDs there would be an unverified schema change.
 No null approval slot or unbound extra field remains in the final bundle.
+
+## Merge boundary requiring Owner review
+
+The exact-current-main runner checks remote `main` against the binding before
+custody access. A governance merge of this branch will necessarily advance
+`main` away from `4ac4880d...`, and the exact-main CI/provenance run ID will
+also change. Thus this corrected authority is valid for the present baseline
+but **cannot be carried forward unchanged as execution authority after merge**.
+Do not present this Draft PR as post-merge B17 readiness or dispatch authority.
+The existing runner exposes no side-effect-free top-level dispatch mode;
+offline validation exercises the same authority loader, authority verifier
+and provenance validator, not the dispatch function. A separately reviewed
+post-merge authority-binding procedure is required before B17.
 
 ## Window, budget and safety
 
@@ -67,22 +90,24 @@ actual cost are all zero. Production remains `NO-GO`.
 
 `materialize.py --check` independently rebuilds identical bytes twice,
 checks the checked-in outputs, invokes the real gate loader, validates the
-final loaded scope and uses the current single-dispatch authority verifier
-without entering dispatch. Linux validation additionally checks the actual
-Unix-socket binding schema. Negative controls reject a changed G-02 ceiling,
+final loaded scope and uses the current single-dispatch authority loader,
+verifier and dual-CI validator without entering dispatch. The historical B16
+Linux evidence checked the Unix-socket binding schema; B16R's read-only
+ledger query independently checked the exact custody identity. Negative
+controls reject a changed G-02 ceiling,
 consumed authority, Operation 2 authorization and a shifted window. The
 focused gate/single-dispatch/W1/safety suite passed `141/141`; Linux bootstrap
 tests passed `90/90`. The canonical RC-20 custody audit passed after artifact
 creation. No bundle was mounted.
 
 B15's own `prepare_materials.py --check` assumes `HEAD ==` the historical
-governance main, so it does not run unmodified on Draft PR #79 or this stacked
-B16 branch. This is a checker working-tree guard, not a hash mismatch: B16
+governance main, so it does not run unmodified on this clean candidate branch.
+This is a checker working-tree guard, not a hash mismatch: B16R
 independently checked the exact B15 raw files, canonical scope/manifest
 hashes, immutable inputs, remote main, RC tag, tree and provenance. B15
 history was not changed.
 
-Next safe action, after Owner review: separately assign VF-V0S-B17 for
-**zero-call** operation-bound bootstrap and single-dispatch qualification.
-Do not infer permission to mount, inspect credentials, reserve funds or call
-the provider from this package alone.
+Next safe action is Owner review of the main-binding/approval lifecycle and
+the clean PR. Do not merge it as final execution authority without resolving
+the post-merge main/provenance drift. Do not infer permission to run B17, mount,
+inspect credentials, reserve funds or call the provider from this package.
