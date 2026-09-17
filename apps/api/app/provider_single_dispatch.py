@@ -126,6 +126,8 @@ class _ValidatedDispatch:
     metadata: MediaMetadata
     authority: dict[str, object]
     operation_manifest_sha256: str
+    binding_sha256: str
+    provenance_sha256: str
 
 
 @dataclass
@@ -476,6 +478,7 @@ def _validate_non_secret_bindings(
     return _ValidatedDispatch(
         binding=binding, scope=scope, context=context, metadata=metadata,
         authority=authority, operation_manifest_sha256=operation_manifest_sha256,
+        binding_sha256=paths.binding_sha256, provenance_sha256=paths.provenance_sha256,
     )
 
 
@@ -546,13 +549,18 @@ def _qualification_result(
         binding, scope, authority = validated.binding, validated.scope, validated.authority
         checked = {
             "rc_tag": binding.rc_tag, "rc_commit": binding.rc_commit,
+            "binding_sha256": validated.binding_sha256,
             "executable_tree_sha256": binding.executable_tree_sha256,
             "governance_main_commit": binding.governance_main_commit,
             "ledger_identity": binding.database_name,
+            "ledger_system_identifier": binding.system_identifier,
+            "ledger_database_oid": binding.database_oid,
             "operation_key": binding.operation_key,
+            "slot": binding.slot,
+            "acceptance_lineage_id": binding.acceptance_lineage_id,
             "executable_rc_ci_run_id": authority["executable_rc_ci_run_id"],
             "governance_main_ci_run_id": authority["governance_main_ci_run_id"],
-            "dual_ci_provenance_sha256": authority["dual_ci_provenance_sha256"],
+            "dual_ci_provenance_sha256": validated.provenance_sha256,
             "authority_receipt_sha256": binding.authority_receipt_sha256,
             "approval_record_sha256": scope.approval_record_sha256,
             "bundle_sha256": binding.bundle_sha256,
@@ -565,13 +573,19 @@ def _qualification_result(
             "reference_transcript_sha256": binding.reference_transcript_sha256,
             "rights_record_sha256": binding.rights_record_sha256,
             "provider_key": scope.provider_key, "model": scope.model,
-            "capability": scope.capability,
+            "capability": scope.capability, "language": scope.requested_language,
+            "response_format": scope.response_format,
+            "timestamp_granularities": scope.timestamp_granularities,
             "valid_from_utc": scope.valid_from_utc.isoformat(),
             "expires_at_utc": scope.expires_at_utc.isoformat(),
+            "budget_day_utc": scope.budget_day_utc.isoformat(),
+            "vnd_per_minute": str(scope.vnd_per_minute),
             "per_operation_limit_vnd": str(scope.per_operation_limit_vnd),
             "window_limit_vnd": str(scope.acceptance_window_limit_vnd),
             "max_attempts": 1, "max_concurrent_calls": 1,
             "retry": 0, "fallback": 0,
+            "provider_http_timeout_seconds": scope.provider_http_timeout_seconds,
+            "controller_hard_timeout_seconds": scope.controller_hard_timeout_seconds,
         }
     evidence: dict[str, object] = {
         "version": 1, "mode": "CHECK_ONLY", "code": code,
