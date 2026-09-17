@@ -1,11 +1,48 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B16R-G1
-VERDICT: GOVERNANCE_CLOSURE_CANDIDATE — exact-head G-08, PR CI, merge and exact-main closure required
+TASK: VF-V0S-B19G
+VERDICT: RC-21 GOVERNANCE-ONLY DELTA — exact-head G-08, PR CI, merge and exact-main/dual-CI closure required
 REPO: vangnguyen/npd-video-factory-v2
 
-## B16R-G1 governance closure — final authority not created
+## RC-21 governance lineage — no execution authority
+
+VF-V0S-B19 materialized the next sequential annotated tag
+`vf-v3-01-rc21` (tag object
+`9a270642024cc6e0dff7881c2c4befb62e7efb59`) on exact source main
+`6dcf144a4e3830e27fd617e52bc8eeab0952126e`. Tag → commit and
+tag → canonical executable-tree SHA-256
+`e75e284a8cebb9864ed441c93cafea17717f247729fe0f3635e1a4f106795bd0`
+passed. Exact-main CI `35193731609` and independently dispatched RC CI
+`35194969154` both passed 5/5, including Docker E2E. RC provenance is
+`PASS_RC_ONLY`. The check-only
+`app.provider_single_dispatch.validate_single_dispatch` and real
+`app.provider_single_dispatch.run_single_dispatch` entrypoints both exist
+in the tagged source. The check-only safety claim is source/mock-tested,
+not a live RC-21 ledger qualification.
+
+At the B19 boundary, canonical dual-CI returned
+`CI_PROVENANCE_INVALID` solely because RC-21 and main were the same commit
+with an empty governance diff. This governance-only evidence update is the
+candidate for a distinct main. Its exact post-merge SHA, CI run and dual-CI
+result must be verified after controlled merge; the PR's candidate CI cannot
+substitute. See the [RC-21 lineage review](reviews/vf-v0s-b19g/README.md).
+No executable/runtime path changes in this delta.
+
+The deterministically derived first-lineage ledger identity is
+`vf_vf_v3_01_rc21_5dc91b550ffa095ca105e68b6a495a33`, strictly
+`PLAN_ONLY / NOT_CREATED`. Fresh ledger custody, Operation 1 rebind,
+authority and execution window remain required. RC-20 and its operation,
+bundle, approvals, authority, window and ledger are historical; none transfers
+to RC-21. Operation 2 remains locked, checked-in kill-switch default engaged,
+bundle unmounted, ASR `0/2 PASS`, Vision `2/2 PASS`, Production `NO-GO`.
+Credential reads, budget reservation, provider calls, production business
+writes and actual cost in B19/B19G governance preparation are all zero.
+
+The sections below are historical RC-20 and earlier snapshots, preserved as
+evidence rather than current RC-21 execution authority.
+
+## Historical B16R-G1 governance closure — final authority not created
 
 PR #81 is based directly on pre-merge governance main
 `4ac4880d5627c2800eb918d24c59da5f8e047091`. Its only role is to

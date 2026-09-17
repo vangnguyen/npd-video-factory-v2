@@ -1,9 +1,39 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B16R-G1",
-  "verdict": "GOVERNANCE_CLOSURE_CANDIDATE_PENDING_EXACT_HEAD_REVIEW_AND_MERGE",
+  "task_id": "VF-V0S-B19G",
+  "verdict": "RC21_GOVERNANCE_ONLY_CANDIDATE_PENDING_EXACT_HEAD_REVIEW_MERGE_AND_DUAL_CI",
   "repo": "vangnguyen/npd-video-factory-v2",
-  "pr": {
+  "current_rc21_governance_candidate": {
+    "pre_merge_main_sha": "6dcf144a4e3830e27fd617e52bc8eeab0952126e",
+    "pre_merge_main_ci_run_id": 35193731609,
+    "pre_merge_main_provenance": "PASS_MAIN_ONLY",
+    "rc_tag": "vf-v3-01-rc21",
+    "rc_tag_object": "9a270642024cc6e0dff7881c2c4befb62e7efb59",
+    "rc_commit": "6dcf144a4e3830e27fd617e52bc8eeab0952126e",
+    "rc_executable_tree_sha256": "e75e284a8cebb9864ed441c93cafea17717f247729fe0f3635e1a4f106795bd0",
+    "rc_ci_run_id": 35194969154,
+    "rc_ci_jobs_passed": 5,
+    "rc_ci_jobs_total": 5,
+    "rc_provenance": "PASS_RC_ONLY",
+    "pre_merge_dual_ci": "BLOCKED_DISTINCT_GOVERNANCE_MAIN_REQUIRED_CI_PROVENANCE_INVALID",
+    "post_merge_dual_ci": "REQUIRES_FRESH_EXACT_MAIN_CI_AND_VALIDATOR",
+    "check_only_entrypoint": "app.provider_single_dispatch.validate_single_dispatch",
+    "real_dispatch_entrypoint": "app.provider_single_dispatch.run_single_dispatch",
+    "expected_fresh_ledger_identity": "vf_vf_v3_01_rc21_5dc91b550ffa095ca105e68b6a495a33",
+    "ledger_identity_status": "PLAN_ONLY_NOT_CREATED",
+    "fresh_ledger_required": true,
+    "operation_1_rebind_required": true,
+    "fresh_authority_required": true,
+    "fresh_execution_window_required": true,
+    "rc20_execution_material_reused": false,
+    "credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "real_provider_calls": 0,
+    "production_business_writes": 0,
+    "actual_cost_vnd": "0",
+    "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b19g/README.md"
+  },
+  "historical_pr77": {
     "number": 77,
     "approved_head_sha": "cdf61d6c145f9b869d9f9df2f9a262bde0b3edeb",
     "base_sha": "551379a916b9b574288fda754c0732009d23d288",
@@ -26,7 +56,7 @@
     "merge_commit_sha": "93b5441d44347c9c40b745bdfed0969880853f68",
     "g08": "PASS_GOVERNANCE_ONLY"
   },
-  "governance_main": {
+  "historical_b14g_governance_main": {
     "sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
     "role": "PRE_MERGE_BASELINE_ONLY",
     "ci_run_id": 35172654970,
@@ -46,7 +76,7 @@
     "governance_main_ci_run_id": 35126544056,
     "rc20_governance_lineage": "CLOSED_PASS"
   },
-  "fresh_rc": {
+  "historical_rc20": {
     "tag": "vf-v3-01-rc20",
     "annotated_tag_object": "9fe8d77a6c58a31beccf38bc2cc72b71a8dac240",
     "commit": "93b5441d44347c9c40b745bdfed0969880853f68",
@@ -249,8 +279,8 @@
   },
   "required_next_lineage": {
     "fresh_rc": false,
-    "fresh_ledger": false,
-    "fresh_operation_rebind": false,
+    "fresh_ledger": true,
+    "fresh_operation_rebind": true,
     "fresh_authority": true,
     "fresh_execution_window": true,
     "rc_created_in_this_task": false,
@@ -271,6 +301,6 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b16r-g1/README.md",
-  "next_safe_action": "After exact-head G-08, controlled merge, exact-main CI and dual-CI provenance PASS, assign VF-V0S-B16R-G2 to regenerate final authority and window binding. Do not run G2 or B17 in G1."
+  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b19g/README.md",
+  "next_safe_action": "After exact-head G-08, governance-only merge, fresh exact-main CI and RC-21 dual-CI provenance PASS, report this exact governance baseline for the Master Parallel Execution Directive. Do not create the fresh ledger in B19G."
 }
