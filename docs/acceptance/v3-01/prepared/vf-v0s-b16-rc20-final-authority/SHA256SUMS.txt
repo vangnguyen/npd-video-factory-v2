@@ -1,0 +1,12 @@
+1a5b0f6e4ff64fe59682fb4fed13c47306e9702df94eeaad2e13c1895a50d80f  docs/acceptance/v3-01/HANDOFF.md
+3697581912aab708be124756fa9f32dd9f12ef2e3578c28a3ca1b6d124a44ac3  docs/acceptance/v3-01/handoff.json
+1a38f5ddcb6d0c9624cc2a695aee0c8d6c5609c3eee9b88243d865869e4e0636  docs/acceptance/v3-01/approvals/V3-01-APP-078.json
+be977be42971694bf0bd030614a2b2a6da0e3b33404b79353453f427e0bcbb5c  docs/acceptance/v3-01/approvals/V3-01-APP-079.json
+60fc57c6611da2412bdcc9fdc2345c122d7f74a52e1a278549d89bddcf503744  docs/acceptance/v3-01/approvals/V3-01-APP-080.json
+f0e8cbdc2a16a8327ed3d3be0de7f5a9a70c620ecb9ffef198ac352f663a534f  docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/README.md
+01f8b3f5d046501177baf16a430195e2082ca104ea24eb8cfef1a2cc9db69f82  docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/materialize.py
+a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019  docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/final-runtime-bundle.json
+d7a983dd58d51081c896be925c2053a129dbc007d784c237405b30f458c6ead3  docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/final-loaded-scope.json
+694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c  docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/operation-1-authority.json
+5a43f1f624ddeb5ac83d23d13589d3bd672a2c0f4e143d32bc227844df82ab6b  docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/bootstrap-binding-for-b17.json
+da08c93ee66c9fb7b5baaa4f2f99b9b5364cef827a05da585ca7788f4fee1e51  docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/final-material-hashes.json

@@ -1,0 +1,258 @@
+{
+  "acceptance_lineage_id": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
+  "acceptance_lineage_sequence": 1,
+  "allowed_operations": [
+    {
+      "asset_hash": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+      "asset_id": "asset-g03-asr-vi-owned-01",
+      "operation": "flow_a_asr",
+      "operation_key": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+      "slot": 1
+    },
+    {
+      "asset_hash": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+      "asset_id": "asset-g03-asr-vi-owned-02",
+      "operation": "flow_a_asr",
+      "operation_key": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-02",
+      "slot": 2
+    }
+  ],
+  "asr_prompt_profile": {
+    "language": "vi",
+    "model": "whisper-1",
+    "profile_id": "asr-whisper-vi-w1-v1",
+    "prompt": "Ngọc Phương Đông, Vinhomes Green Paradise, Cần Giờ, tham quan sa bàn, chính sách bán hàng.",
+    "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "prompt_utf8_bytes": 105,
+    "response_format": "verbose_json",
+    "temperature_policy": "omitted",
+    "timestamp_granularities": [
+      "segment",
+      "word"
+    ],
+    "tokenizer_context_policy": "prepend_space_after_strip",
+    "tokenizer_context_sha256": "7cf8e972dc834af0022b139a1ba123bcefe6fea34f9d8112fc9eee074c5ad035",
+    "tokenizer_context_token_count": 33,
+    "tokenizer_id": "openai-whisper-multilingual-ordinary-text-v1",
+    "tokenizer_ranks_sha256": "b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126",
+    "tokenizer_raw_token_count": 34,
+    "tokenizer_upstream_commit": "86098128c0b4f24f0e2aa2994de830614b474227",
+    "tokenizer_version": "0.12.0"
+  },
+  "budget": {
+    "acceptance_window_limit_vnd": "1250",
+    "automatic_retry": false,
+    "budget_day_utc": "2026-09-21",
+    "controller_hard_timeout_seconds": 120.0,
+    "currency": "VND",
+    "files_per_operation": 1,
+    "max_attempts": 1,
+    "max_concurrent_calls": 1,
+    "max_duration_seconds": 180.0,
+    "max_file_bytes": 25000000,
+    "model_fallback": false,
+    "per_operation_limit_vnd": "500",
+    "provider_http_timeout_seconds": 90.0,
+    "requested_language": "vi",
+    "response_format": "verbose_json",
+    "timestamp_granularities": [
+      "segment",
+      "word"
+    ],
+    "vnd_per_minute": "162"
+  },
+  "budget_approval": {
+    "record": {
+      "approval_id": "V3-01-APP-079",
+      "approved_at_utc": "2026-09-17T02:56:22Z",
+      "approved_by": "Owner (GitHub: vangnguyen)",
+      "artifact_or_commit_hashes": [
+        "93b5441d44347c9c40b745bdfed0969880853f68",
+        "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+        "4ac4880d5627c2800eb918d24c59da5f8e047091",
+        "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+        "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+        "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+        "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+        "a16fb870af5572e57081a3de7f8d90c789393445efa5dcaa5186bc562b13d4d2",
+        "a61a035d7b8e60be61581ce5d9d59028e2715688",
+        "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+        "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+        "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+        "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+        "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+        "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+        "14d735056296d18d3132f8e6d8dd62ae2f2faadf4663856becde59df60739980",
+        "a47851c10b045627dc2dafa295196026ce823c69d1a12d16abae8297b8cc4553"
+      ],
+      "decision": "APPROVED",
+      "expires_at_utc": "2026-09-21T18:00:00Z",
+      "gate_id": "G-02",
+      "limits": [
+        "Modeled 326.3004 VND",
+        "500 VND per-operation maximum",
+        "1250 VND window maximum",
+        "One attempt and one concurrent call; retry 0; fallback 0",
+        "90s provider and 120s controller timeouts",
+        "Reserve only during future fresh execution preflight; release before dispatch or reconcile after dispatch"
+      ],
+      "notes": "Authority source: explicit Owner VF-V0S-B16 instruction. No B16 execution, credential access, reservation, mount, kill-switch transition or provider call.",
+      "scope": "VF-V0S-B16 Owner approval: one RC-20 Operation 1 budget envelope only; no reservation in B16.",
+      "target_account_or_environment": "RC-20 isolated acceptance ledger vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d"
+    },
+    "record_sha256": "5dce4a03aee485212a2b30558d4704d497d16aa48eff2e762bfe0ba18bfa58a0"
+  },
+  "bundle_id": "V3-01-GATE-RC20-OPENAI-ASR-W1-LINEAGE-A",
+  "capability": "asr",
+  "credential_alias": "secret://openai/codex-video",
+  "credential_approval": {
+    "record": {
+      "approval_id": "V3-01-APP-078",
+      "approved_at_utc": "2026-09-17T02:56:22Z",
+      "approved_by": "Owner (GitHub: vangnguyen)",
+      "artifact_or_commit_hashes": [
+        "93b5441d44347c9c40b745bdfed0969880853f68",
+        "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+        "4ac4880d5627c2800eb918d24c59da5f8e047091",
+        "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+        "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+        "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+        "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+        "a16fb870af5572e57081a3de7f8d90c789393445efa5dcaa5186bc562b13d4d2",
+        "a61a035d7b8e60be61581ce5d9d59028e2715688",
+        "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+        "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+        "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+        "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+        "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+        "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+        "14d735056296d18d3132f8e6d8dd62ae2f2faadf4663856becde59df60739980",
+        "4d88c5c59c9b5ca9e8c126f0798356eb6ef82a8db2fe16045434af1d69048349"
+      ],
+      "decision": "APPROVED",
+      "expires_at_utc": "2026-09-21T18:00:00Z",
+      "gate_id": "G-01",
+      "limits": [
+        "Operation 1 only; Operation 2 remains locked",
+        "openai-transcription / whisper-1 / asr / vi only",
+        "Single-dispatch runner and exact lineage-bound ledger only",
+        "Credential alias is a reference, never a plaintext secret"
+      ],
+      "notes": "Authority source: explicit Owner VF-V0S-B16 instruction. No B16 execution, credential access, reservation, mount, kill-switch transition or provider call.",
+      "scope": "VF-V0S-B16 Owner approval: exact RC-20 ASR W1 Operation 1 execution binding only.",
+      "target_account_or_environment": "RC-20 isolated acceptance ledger vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d"
+    },
+    "record_sha256": "600d8f11333a012fe2b301c3ed4ba9e9359655c35de73c7711a6acb83da7f2bd"
+  },
+  "expires_at_utc": "2026-09-21T18:00:00+00:00",
+  "model": "whisper-1",
+  "provider_key": "openai-transcription",
+  "rc_commit": "93b5441d44347c9c40b745bdfed0969880853f68",
+  "rc_tag": "vf-v3-01-rc20",
+  "rights_approval": {
+    "record": {
+      "approval_id": "V3-01-APP-080",
+      "approved_at_utc": "2026-09-17T02:56:22Z",
+      "approved_by": "Owner (GitHub: vangnguyen)",
+      "artifact_or_commit_hashes": [
+        "93b5441d44347c9c40b745bdfed0969880853f68",
+        "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+        "4ac4880d5627c2800eb918d24c59da5f8e047091",
+        "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+        "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+        "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+        "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+        "a16fb870af5572e57081a3de7f8d90c789393445efa5dcaa5186bc562b13d4d2",
+        "a61a035d7b8e60be61581ce5d9d59028e2715688",
+        "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+        "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+        "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+        "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+        "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+        "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+        "14d735056296d18d3132f8e6d8dd62ae2f2faadf4663856becde59df60739980",
+        "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323"
+      ],
+      "decision": "APPROVED",
+      "expires_at_utc": "2026-09-21T18:00:00Z",
+      "gate_id": "G-03",
+      "limits": [
+        "Operation 1 asset and RightsRecord 001 only",
+        "Window 2026-09-21T14:00:00Z to 2026-09-21T18:00:00Z exclusively",
+        "ICT 2026-09-21 21:00 to 2026-09-22 01:00",
+        "Expires at window end; no extension or inherited RC-19 window",
+        "RightsRecord 002 is bound only because the two-slot gate schema requires it; Operation 2 is not approved"
+      ],
+      "notes": "Authority source: explicit Owner VF-V0S-B16 instruction. No B16 execution, credential access, reservation, mount, kill-switch transition or provider call.",
+      "scope": "VF-V0S-B16 Owner approval: exact RC-20 Operation 1 asset, rights and 2026-09-21 UTC window only.",
+      "target_account_or_environment": "RC-20 isolated acceptance ledger vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d"
+    },
+    "record_sha256": "063fcb3c1af4e0801c7cd055765fea38549163e95fd3848897b5e4e3ecb768e4"
+  },
+  "rights_records": [
+    {
+      "record": {
+        "acquired_at_utc": "2026-09-03T06:56:00Z",
+        "asset_hash": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+        "asset_id": "asset-g03-asr-vi-owned-01",
+        "attribution_required": false,
+        "attribution_text": "",
+        "commercial_use": true,
+        "decision": "APPROVED",
+        "derivative_use": true,
+        "evidence_reference": "repo://docs/acceptance/v3-01/45_V3_01_RC11_OPENAI_ASR_GATE.md#owner-g-03-asr-decision",
+        "expiry": null,
+        "license_name": "NPD owner-approved OpenAI ASR acceptance only; no publishing, training, resale or other use",
+        "license_version_or_terms_date": "2026-09-03",
+        "model_or_voice_rights": "NPD owns or is authorized to use this recording and the recorded voice for this bounded OpenAI ASR acceptance.",
+        "person_likeness_consent": "The speaker consents to processing this recording through OpenAI ASR solely for the bounded acceptance scope.",
+        "provider": "Ngoc Phuong Dong",
+        "provider_asset_or_job_id": "g03-asr-vi-owned-01",
+        "reviewer": "Owner (GitHub: vangnguyen)",
+        "rights_record_id": "V3-01-RIGHTS-ASR-001",
+        "secret_recorded": false,
+        "social_platform_use": [],
+        "source_type": "user_owned",
+        "source_url_or_reference": "repo://docs/acceptance/v3-01/assets/g03-asr-vi-owned-01.wav",
+        "territory": [
+          "VN"
+        ],
+        "trademark_review": "Internal acceptance references only; no publication or trademark claim is authorized."
+      },
+      "record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091"
+    },
+    {
+      "record": {
+        "acquired_at_utc": "2026-09-03T06:56:02Z",
+        "asset_hash": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+        "asset_id": "asset-g03-asr-vi-owned-02",
+        "attribution_required": false,
+        "attribution_text": "",
+        "commercial_use": true,
+        "decision": "APPROVED",
+        "derivative_use": true,
+        "evidence_reference": "repo://docs/acceptance/v3-01/45_V3_01_RC11_OPENAI_ASR_GATE.md#owner-g-03-asr-decision",
+        "expiry": null,
+        "license_name": "NPD owner-approved OpenAI ASR acceptance only; no publishing, training, resale or other use",
+        "license_version_or_terms_date": "2026-09-03",
+        "model_or_voice_rights": "NPD owns or is authorized to use this recording and the recorded voice for this bounded OpenAI ASR acceptance.",
+        "person_likeness_consent": "The speaker consents to processing this recording through OpenAI ASR solely for the bounded acceptance scope.",
+        "provider": "Ngoc Phuong Dong",
+        "provider_asset_or_job_id": "g03-asr-vi-owned-02",
+        "reviewer": "Owner (GitHub: vangnguyen)",
+        "rights_record_id": "V3-01-RIGHTS-ASR-002",
+        "secret_recorded": false,
+        "social_platform_use": [],
+        "source_type": "user_owned",
+        "source_url_or_reference": "repo://docs/acceptance/v3-01/assets/g03-asr-vi-owned-02.wav",
+        "territory": [
+          "VN"
+        ],
+        "trademark_review": "Internal acceptance references only; no publication or trademark claim is authorized."
+      },
+      "record_sha256": "972dcc752b6bc606a655f272472128a8e6c47fa7858f2bd0cc8e9b9f8c4e4323"
+    }
+  ],
+  "valid_from_utc": "2026-09-21T14:00:00+00:00",
+  "version": 2
+}
