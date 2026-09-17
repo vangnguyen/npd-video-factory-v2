@@ -1,0 +1,31 @@
+{
+  "task_id": "VF-V0S-B14",
+  "governance_main_sha": "551379a916b9b574288fda754c0732009d23d288",
+  "main_ci": {"run_id": 35126544056, "result": "PASS_5_OF_5"},
+  "main_provenance": "PASS",
+  "rc": {
+    "tag": "vf-v3-01-rc20",
+    "annotated_tag_object": "9fe8d77a6c58a31beccf38bc2cc72b71a8dac240",
+    "commit": "93b5441d44347c9c40b745bdfed0969880853f68",
+    "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "ci_run_id": 35124578033,
+    "ci_result": "PASS_5_OF_5"
+  },
+  "dual_ci_provenance": {
+    "result": "PASS",
+    "sha256": "330006ae336f12a809a5d7611d250d5e096f8b44c74ab8a02187771cf238d21f"
+  },
+  "lineage": {
+    "sequence": 1,
+    "id": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
+    "expected_database": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "derived_database": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "identity_match": true
+  },
+  "bootstrap_source_blob": "ebcc65d1f23491a42d3894547a8fb1f16e6608d6",
+  "single_dispatch_source_blob": "a61a035d7b8e60be61581ce5d9d59028e2715688",
+  "prewrite_remote_main_match": true,
+  "prewrite_rc_tag_commit_match": true,
+  "prewrite_executable_tree_match": true,
+  "prewrite_checkout_clean": true
+}

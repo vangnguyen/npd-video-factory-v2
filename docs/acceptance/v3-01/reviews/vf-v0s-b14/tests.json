@@ -1,0 +1,34 @@
+{
+  "task_id": "VF-V0S-B14",
+  "focused_rc20_source_tests": {
+    "command": "pytest -q tests/test_provider_runtime_bootstrap.py tests/test_provider_single_dispatch.py tests/test_provider_safety.py",
+    "result": "PASS",
+    "passed": 131,
+    "failed": 0,
+    "environment": "Ubuntu WSL / exact RC-20 source / mocks and fixtures only"
+  },
+  "postgres_custody_audit": "PASS",
+  "custody_audit_recompute": {
+    "first_sha256": "9d6bdef928f7cb7c21f4be15316eeacf016c0e1e7efa8c068bc725928502039b",
+    "second_sha256": "9d6bdef928f7cb7c21f4be15316eeacf016c0e1e7efa8c068bc725928502039b",
+    "identical": true
+  },
+  "namespace_derivation": "PASS_EXACT",
+  "rc19_rc20_isolation": "PASS",
+  "migration_replay": {
+    "database": "vf_v0s_b14_replay_5ff19bf4",
+    "upgrade_head": "PASS_0015_v3_01_dispatch",
+    "downgrade_base": "PASS",
+    "upgrade_head_again": "PASS_0015_v3_01_dispatch",
+    "database_removed": true,
+    "provider_data_inserted": false
+  },
+  "normalized_schema_sha256": "ae4b86420608b7078850c86f1872dc5667d963316b21bc92db20be57153955da",
+  "schema_hash_recompute": "MATCH_2_OF_2",
+  "bootstrap_cli_help": "PASS_NO_LINEAGE_ONLY_MODE",
+  "bootstrap_full_operation_bound_invocation": "NOT_RUN_REQUIRED_OPERATION_AND_AUTHORITY_FIELDS_FORBIDDEN_BY_B14",
+  "provider_credential_reads": 0,
+  "real_provider_calls": 0,
+  "budget_reserved_vnd": "0",
+  "actual_cost_vnd": "0"
+}
