@@ -21,6 +21,7 @@ from app.dr_g11_offline import (
     validate_g11_review,
     verify_review_artifacts,
 )
+from app.dr_observability_acceptance import REQUIRED_RECOVERY_TARGETS
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -148,6 +149,41 @@ def test_disposable_rpo_rto_checked_without_production_claim() -> None:
     report["measured_rto_seconds"] = 1
     with pytest.raises(ValueError, match="outage-to-recovery"):
         measure_disposable_drill(report)
+
+
+def test_fresh_disposable_report_verifies_target_hashes_and_cost_alias() -> None:
+    report = {
+        "environment": "LOCAL_DISPOSABLE_DOCKER",
+        "started_at_utc": "2026-09-17T08:39:55Z",
+        "outage_started_at_utc": "2026-09-17T08:40:13Z",
+        "recovery_completed_at_utc": "2026-09-17T08:40:37Z",
+        "completed_at_utc": "2026-09-17T08:40:37Z",
+        "total_drill_elapsed_seconds": 42,
+        "measured_rpo_seconds": 0,
+        "measured_rto_seconds": 24,
+        "measured_rpo_basis": "all_nine_recovery_target_hashes_and_pending_work_recovered_without_post_backup_writes",
+        "recovery_targets": [
+            {"target": name, "backup_sha256": "a" * 64, "restored_sha256": "a" * 64, "verified": True}
+            for name in REQUIRED_RECOVERY_TARGETS
+        ],
+        "duplicate_external_actions": 0,
+        "external_notifications": 0,
+        "production_writes": 0,
+        "cost_vnd": 0,
+    }
+    assert measure_disposable_drill(report)["outage_to_recovery_rto_seconds"] == 24
+    tampered = deepcopy(report)
+    tampered["recovery_targets"][0]["restored_sha256"] = "b" * 64
+    with pytest.raises(ValueError, match="hash or verification mismatch"):
+        measure_disposable_drill(tampered)
+    missing = deepcopy(report)
+    missing["recovery_targets"].pop()
+    with pytest.raises(ValueError, match="nine recovery targets"):
+        measure_disposable_drill(missing)
+    spent = deepcopy(report)
+    spent["cost_vnd"] = 1
+    with pytest.raises(ValueError, match="external or production boundary"):
+        measure_disposable_drill(spent)
 
 
 def test_disposable_drill_script_records_actual_outage_window() -> None:
