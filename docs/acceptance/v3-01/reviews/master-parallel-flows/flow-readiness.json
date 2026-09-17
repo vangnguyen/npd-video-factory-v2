@@ -1,0 +1,77 @@
+{
+  "workstream": "Video Factory V3-01",
+  "lane": "C",
+  "milestone": "master_parallel_flow_offline_readiness",
+  "verdict": "PASS_OFFLINE_READINESS_REAL_FLOWS_BLOCKED",
+  "governance_main_sha": "6a0b7a52400458e4e91691251b0a42d827b4aa48",
+  "rc_tag": "vf-v3-01-rc21",
+  "rc_commit_sha": "6dcf144a4e3830e27fd617e52bc8eeab0952126e",
+  "executable_tree_sha256": "e75e284a8cebb9864ed441c93cafea17717f247729fe0f3635e1a4f106795bd0",
+  "main_ci": {"run_id": 35197139061, "result": "PASS_5_OF_5"},
+  "rc_ci": {"run_id": 35194969154, "result": "PASS_5_OF_5"},
+  "dual_ci_provenance": {
+    "result": "PASS",
+    "sha256": "f57b4d2e6e7ea7b369b3cf1b6d63935725024723572d82fb173de19f50b81d5a"
+  },
+  "flow_a": {
+    "policy_sha256": "f5444e2f382b775960391b86d2a707d9fd93ae645626215ca35db21b5ec0bb09",
+    "historical_fixture_sha256": "5a2e375d6da149ff92d04051f305bc93709818e03ca4ff188df2b13d3c07ad2f",
+    "fixture_runs_technical_pass": 2,
+    "implemented_axis": "PASS",
+    "mock_axis": "PASS",
+    "overall_verdict": "BLOCKED",
+    "real_asr_accepted_runs": 0,
+    "real_provider_axis": "BLOCKED",
+    "production_path_axis": "BLOCKED",
+    "human_quality_axis": "BLOCKED",
+    "pending_gates": ["G-01", "G-02", "G-03", "G-04", "G-11"]
+  },
+  "flow_b": {
+    "policy_sha256": "db6bf4b9fbdf3d555a03b753c68e0afd4da6903eb11de22c376baff78e5de50d",
+    "historical_fixture_sha256": "d6cb7fb94032d964a32f52276efe7ba4374ec1ae9da4c50820761cda89c04c81",
+    "fixture_runs_technical_pass": 2,
+    "implemented_axis": "PASS",
+    "mock_axis": "PASS",
+    "overall_verdict": "BLOCKED",
+    "real_source_and_provider_axis": "BLOCKED",
+    "production_path_axis": "BLOCKED",
+    "human_quality_axis": "BLOCKED",
+    "pending_gates": ["G-01", "G-02", "G-03", "G-04", "G-11"]
+  },
+  "flow_c": {
+    "policy_sha256": "2db1dd175d846143777d77ef995934b3e9e119e58d7d0ee8724ca69e8db71d0e",
+    "historical_fixture_sha256": "bf39f1688a496f27f854ca823c66db66c71075dcb02b6ae39c563bcac653b2cc",
+    "fixture_runs_technical_pass": 2,
+    "implemented_axis": "PASS",
+    "mock_axis": "PASS",
+    "overall_verdict": "BLOCKED",
+    "real_provider_axis": "BLOCKED",
+    "production_path_axis": "BLOCKED",
+    "human_quality_axis": "BLOCKED",
+    "rollback": "NO_AUTOMATIC_EXTERNAL_ROLLBACK_OWNER_GATED_REMOTE_MUTATION",
+    "attribution": "TREND_TO_LEARNING_LINEAGE_MOCK_PASS_CROSS_PLATFORM_REVENUE_NOT_IMPLEMENTED",
+    "pending_gates": ["G-01", "G-02", "G-03", "G-04", "G-05", "G-06", "G-11"]
+  },
+  "tests": {
+    "flow_contract_focused": "45/45_PASS",
+    "related_python_api_worker_bridge": "83/83_PASS",
+    "studio": "14/14_PASS",
+    "renderer": "14/14_PASS",
+    "renderer_typecheck": "PASS",
+    "renderer_bundle": "PASS",
+    "v3_01_repository_validation": "PASS_60_MATRIX_ROWS_16_GAPS_13_SCHEMAS_74_APPROVALS_39_HISTORICAL_EVIDENCE_RUNS",
+    "local_docker_e2e": "NOT_RERUN_COVERED_BY_EXACT_MAIN_AND_RC_CI"
+  },
+  "safety": {
+    "rc20_authority_reused": false,
+    "rc21_authority_created": false,
+    "ledger_accessed": false,
+    "bundle_mounted": false,
+    "credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "real_provider_calls": 0,
+    "external_publish_actions": 0,
+    "production_business_writes": 0,
+    "actual_cost_vnd": "0"
+  }
+}
