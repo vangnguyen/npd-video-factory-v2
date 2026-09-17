@@ -1,9 +1,43 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
+TASK: VF-V0S-B14G
+VERDICT: PASS — PR #77 governance closure and RC-20/main dual-CI provenance
+REPO: vangnguyen/npd-video-factory-v2
+
+Owner-approved PR #77 merged exact reviewed head
+`cdf61d6c145f9b869d9f9df2f9a262bde0b3edeb` as
+`4ac4880d5627c2800eb918d24c59da5f8e047091`. Its nine changed files
+were handoff/governance/custody evidence only; G-08 and PR CI `35129776607`
+passed (5/5). Fresh exact-main CI `35172654970` passed 5/5. Canonical
+main/RC-20 dual-CI provenance is `PASS`, SHA-256
+`5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86`.
+Main and immutable RC-20 share executable-tree SHA-256
+`611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630`.
+
+The read-only post-merge custody audit confirmed the RC-20 database
+`vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d` remains
+`VIRGIN_READY_FOR_OPERATION_REBIND`, with migration head
+`0015_v3_01_dispatch`, no operation record, provider receipt or reservation,
+and RC-19 isolation intact. Operation-bound bootstrap is intentionally
+deferred until a legitimate operation package and authority exist:
+`OPERATION_BOUND_BOOTSTRAP_DEFERRED_UNTIL_OPERATION_PACKAGE_AND_AUTHORITY_EXIST`.
+No bootstrap schema or runtime source was changed. PR #76 remains an open,
+unmerged `SUPERSEDED_HISTORICAL_DRAFT`; its evidence is preserved. See the
+[B14G closure evidence](reviews/vf-v0s-b14g/README.md).
+
+Operation 1 rebind is ready for a separate task, not performed here. Authority
+is `NOT_CREATED`; a fresh execution window is required; Operation 2 is locked;
+the checked-in kill-switch default is engaged; no bundle is mounted. ASR is
+`0/2 PASS`, Vision `2/2 PASS`, Production `NO-GO`. Credential reads, budget
+reservations, provider calls, production business writes and actual cost
+remain zero. Next safe action: Owner review and assign VF-V0S-B15 — RC-20 ASR
+W1 Operation 1 `PREPARED_NOT_AUTHORIZED` rebind. Stop before B15.
+
+## Previous B14 snapshot (historical at its task boundary)
+
 TASK: VF-V0S-B14
 VERDICT: REVIEW_REQUIRED — RC-20 custody verified; operation-bound bootstrap cannot run before rebind/authority
-REPO: vangnguyen/npd-video-factory-v2
 
 Exact governance main is `551379a916b9b574288fda754c0732009d23d288`
 after Owner-approved PR #75 head

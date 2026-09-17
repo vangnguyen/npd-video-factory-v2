@@ -1,0 +1,50 @@
+{
+  "contract": {
+    "executable_rc_ci": {
+      "commit_sha": "93b5441d44347c9c40b745bdfed0969880853f68",
+      "completed_at_utc": "2026-09-16T16:56:46Z",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "role": "executable_rc",
+      "run_id": 35124578033,
+      "status": "completed",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    "executable_rc_commit": "93b5441d44347c9c40b745bdfed0969880853f68",
+    "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "governance_changed_paths": [
+      "docs/acceptance/v3-01/HANDOFF.md",
+      "docs/acceptance/v3-01/handoff.json",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b13/README.md",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b13/rc20-lineage.json",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b14/README.md",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b14/SHA256SUMS.txt",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b14/audit_custody.py",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b14/baseline.json",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b14/custody-audit.json",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b14/task-result.json",
+      "docs/acceptance/v3-01/reviews/vf-v0s-b14/tests.json"
+    ],
+    "governance_executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "governance_main_ci": {
+      "commit_sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+      "completed_at_utc": "2026-09-17T02:04:15Z",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "role": "governance_main",
+      "run_id": 35172654970,
+      "status": "completed",
+      "workflow_name": "Video Factory V2 CI"
+    },
+    "governance_main_commit": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+    "version": 1
+  },
+  "credential_reads": 0,
+  "production_verdict": "NO-GO",
+  "provenance_sha256": "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+  "provider_calls": 0,
+  "reservation_vnd": "0",
+  "verdict": "PASS"
+}

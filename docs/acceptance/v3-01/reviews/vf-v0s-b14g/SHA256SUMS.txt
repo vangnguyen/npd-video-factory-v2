@@ -1,0 +1,4 @@
+475ae37a93a9992502bea6fd2e00d3bed0a227161247064366cc63794f645973  docs/acceptance/v3-01/HANDOFF.md
+910eadc5460e47892e0f7ee4cda325cec8a3613be8b3a5fb95e25459452344a9  docs/acceptance/v3-01/handoff.json
+64938e8b1bd899a0593cbcaa3fe69bde6aed0e6141ae99accc313663a8f474a7  docs/acceptance/v3-01/reviews/vf-v0s-b14g/README.md
+b523bc82ce52f036967b9b49e0effeae89c234805957a2736fb282ef730eded1  docs/acceptance/v3-01/reviews/vf-v0s-b14g/dual-ci-provenance.json
