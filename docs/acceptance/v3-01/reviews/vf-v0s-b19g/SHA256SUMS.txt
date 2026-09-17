@@ -1,0 +1,4 @@
+d759a289e1dd53b9d43793841d6c0c2efa79e5209eee7a2d46556217285ca4d3  docs/acceptance/v3-01/HANDOFF.md
+1972071dfdbd8718ac3be2e9efe3f8116db7a68486d5dff4086409badfe0b0b9  docs/acceptance/v3-01/handoff.json
+c0baedc2ee73c43677d66a1eb1edd655483b6b263c0713c7697b770b8e843f21  docs/acceptance/v3-01/reviews/vf-v0s-b19g/README.md
+937afde25fc4ba85ad5f1cabb35d89e004055047da635b22961f35659629051c  docs/acceptance/v3-01/reviews/vf-v0s-b19g/rc21-lineage.json
