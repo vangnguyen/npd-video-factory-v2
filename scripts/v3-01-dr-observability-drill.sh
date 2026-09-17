@@ -99,6 +99,8 @@ audit_before="$(pg_dump_digest -t job_events -t production_events -t publication
 backup_dir="$(DOCKER_BIN="$DOCKER_CLI" VIDEO_FACTORY_BACKUP_ROOT="$BACKUP_ROOT" VIDEO_FACTORY_COMPOSE_PROJECT="$PROJECT" "$ROOT_DIR/scripts/v2-11-backup.sh")"
 printf '%s\n' "$backup_dir" >"$REPORT_ROOT/backup-path.txt"
 
+outage_started_epoch="$(date -u +%s)"
+outage_started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 "$DOCKER_CLI" compose -p "$PROJECT" -f "$COMPOSE_FILE" stop api renderer studio-web minio >/dev/null
 "$DOCKER_CLI" compose -p "$PROJECT" -f "$COMPOSE_FILE" exec -T redis redis-cli FLUSHDB >/dev/null
 "$DOCKER_CLI" compose -p "$PROJECT" -f "$COMPOSE_FILE" exec -T postgres \
@@ -246,9 +248,11 @@ grep -Fq '"correlation_id": "v3-01-07-dr-correlation"' "$REPORT_ROOT/structured-
 grep -Fq "\"project_id\": \"$PROJECT_ID\"" "$REPORT_ROOT/structured-api-log.txt"
 grep -Fq "\"job_id\": \"$JOB_ID\"" "$REPORT_ROOT/structured-api-log.txt"
 
+recovery_completed_epoch="$(date -u +%s)"
+recovery_completed_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 completed_epoch="$(date -u +%s)"
 completed_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-"$PYTHON_BIN" - "$REPORT_ROOT" "$started_at" "$completed_at" "$((completed_epoch - started_epoch))" "$pending_sync_id" <<'PY'
+"$PYTHON_BIN" - "$REPORT_ROOT" "$started_at" "$completed_at" "$((recovery_completed_epoch - outage_started_epoch))" "$pending_sync_id" "$outage_started_at" "$recovery_completed_at" "$((completed_epoch - started_epoch))" <<'PY'
 import hashlib
 import json
 import sys
@@ -271,8 +275,12 @@ report = {
     "backup_integrity_verified": True,
     "started_at_utc": sys.argv[2],
     "completed_at_utc": sys.argv[3],
+    "outage_started_at_utc": sys.argv[6],
+    "recovery_completed_at_utc": sys.argv[7],
+    "total_drill_elapsed_seconds": int(sys.argv[8]),
     "measured_rto_seconds": int(sys.argv[4]),
     "measured_rpo_seconds": 0,
+    "measured_rpo_basis": "all_nine_recovery_target_hashes_and_pending_work_recovered_without_post_backup_writes",
     "postgres_restore_verified": True,
     "object_storage_restore_verified": True,
     "migration_head_before": (backup_path / "migration-head.txt").read_text(encoding="utf-8").strip(),
