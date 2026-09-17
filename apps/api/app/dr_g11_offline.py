@@ -21,6 +21,8 @@ from typing import Any, Iterator, Mapping
 
 from jsonschema import Draft202012Validator, FormatChecker
 
+from .dr_observability_acceptance import REQUIRED_RECOVERY_TARGETS
+
 
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 GIT_SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -152,9 +154,35 @@ def measure_disposable_drill(report: Mapping[str, Any]) -> dict[str, Any]:
     rpo = int(report["measured_rpo_seconds"])
     if rpo < 0 or rpo > 60:
         raise ValueError("local RPO policy exceeded")
-    if int(report.get("recovery_targets_verified", 0)) != 9:
+    targets = report.get("recovery_targets")
+    if targets is not None:
+        if not isinstance(targets, list) or len(targets) != len(REQUIRED_RECOVERY_TARGETS):
+            raise ValueError("nine recovery targets required")
+        target_names: list[str] = []
+        for target in targets:
+            if not isinstance(target, dict):
+                raise ValueError("invalid recovery target")
+            name = target.get("target")
+            before = target.get("backup_sha256")
+            after = target.get("restored_sha256")
+            if (
+                not isinstance(name, str)
+                or not isinstance(before, str)
+                or not isinstance(after, str)
+                or SHA256.fullmatch(before) is None
+                or before != after
+                or target.get("verified") is not True
+            ):
+                raise ValueError("recovery target hash or verification mismatch")
+            target_names.append(name)
+        if set(target_names) != set(REQUIRED_RECOVERY_TARGETS) or len(set(target_names)) != len(target_names):
+            raise ValueError("required recovery target names mismatch")
+    elif int(report.get("recovery_targets_verified", 0)) != len(REQUIRED_RECOVERY_TARGETS):
         raise ValueError("nine recovery targets required")
-    if any(int(report.get(key, -1)) != 0 for key in ("duplicate_external_actions", "external_notifications", "production_writes", "cost_total_vnd")):
+    cost_keys = [key for key in ("cost_vnd", "cost_total_vnd") if key in report]
+    if not cost_keys:
+        raise ValueError("disposable drill cost field missing")
+    if any(int(report.get(key, -1)) != 0 for key in (*cost_keys, "duplicate_external_actions", "external_notifications", "production_writes")):
         raise ValueError("disposable drill crossed external or production boundary")
     outage_at = report.get("outage_started_at_utc")
     recovered_at = report.get("recovery_completed_at_utc")
