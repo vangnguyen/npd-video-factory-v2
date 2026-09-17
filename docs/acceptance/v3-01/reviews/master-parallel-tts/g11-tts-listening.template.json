@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "record_kind": "v3_01_g11_tts_listening_review_preparation",
+  "status": "NOT_REVIEWED",
+  "decision": "REVIEW_REQUIRED",
+  "provider": null,
+  "model": null,
+  "voice": null,
+  "voice_configuration_sha256": null,
+  "target_profile": "female_perceived_25_30_soft_warm_professional",
+  "input_bindings": {
+    "script_01_sha256": "57049c34389e2b6f582df2735baf2479edd20cd0e6ed270429d64404a1b91be5",
+    "script_02_sha256": "71d4a882588918c18efb72b612b3b2c181fb8c63257aec9dd97cdba56ad4a530",
+    "pronunciation_set_sha256": "8b4d892ddf70050706727612ecfc55aaf63af2c5b028f5f2249640863a42f36d"
+  },
+  "outputs": [
+    {
+      "slot": 1,
+      "real_audio_sha256": null,
+      "provider_receipt_sha256": null,
+      "cost_receipt_sha256": null,
+      "rights_record_sha256": null,
+      "headphones_full_listen": false,
+      "phone_speaker_full_listen": false,
+      "naturalness_1_to_5": null,
+      "pronunciation_1_to_5": null,
+      "prosody_1_to_5": null,
+      "artifact_freedom_1_to_5": null,
+      "critical_terms": [
+        {"text": "Ngọc Phương Đông", "result": "NOT_REVIEWED"},
+        {"text": "Vinhomes Green Paradise", "result": "NOT_REVIEWED"},
+        {"text": "Cần Giờ", "result": "NOT_REVIEWED"},
+        {"text": "đăng ký tư vấn", "result": "NOT_REVIEWED"},
+        {"text": "tham quan sa bàn", "result": "NOT_REVIEWED"},
+        {"text": "chính sách bán hàng", "result": "NOT_REVIEWED"},
+        {"text": "đồng Việt Nam", "result": "NOT_REVIEWED"}
+      ],
+      "foreign_accent_absent": null,
+      "robotic_cadence_absent": null,
+      "swallowed_syllables_absent": null,
+      "duration_loudness_peak_clipping_qc_sha256": null
+    },
+    {
+      "slot": 2,
+      "real_audio_sha256": null,
+      "provider_receipt_sha256": null,
+      "cost_receipt_sha256": null,
+      "rights_record_sha256": null,
+      "headphones_full_listen": false,
+      "phone_speaker_full_listen": false,
+      "naturalness_1_to_5": null,
+      "pronunciation_1_to_5": null,
+      "prosody_1_to_5": null,
+      "artifact_freedom_1_to_5": null,
+      "critical_terms": [
+        {"text": "Ngọc Phương Đông", "result": "NOT_REVIEWED"},
+        {"text": "Vinhomes Green Paradise", "result": "NOT_REVIEWED"},
+        {"text": "Vinhomes Grand Park", "result": "NOT_REVIEWED"}
+      ],
+      "foreign_accent_absent": null,
+      "robotic_cadence_absent": null,
+      "swallowed_syllables_absent": null,
+      "duration_loudness_peak_clipping_qc_sha256": null
+    }
+  ],
+  "reviewer": {"name": null, "started_at_utc": null, "completed_at_utc": null},
+  "final_full_video_g11": "SEPARATE_27_CHECK_GATE_REQUIRED",
+  "human_voice_accepted": false,
+  "provider_calls": 0,
+  "credential_reads": 0,
+  "budget_reserved_vnd": 0,
+  "actual_cost_vnd": 0
+}
