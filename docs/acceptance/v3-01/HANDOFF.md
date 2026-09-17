@@ -1,11 +1,43 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B16R
-VERDICT: REVIEW_REQUIRED — main-based authority correction is not post-merge execution authority
+TASK: VF-V0S-B16R-G1
+VERDICT: GOVERNANCE_CLOSURE_CANDIDATE — exact-head G-08, PR CI, merge and exact-main closure required
 REPO: vangnguyen/npd-video-factory-v2
 
-## B16R clean governance candidate — no merge or execution
+## B16R-G1 governance closure — final authority not created
+
+PR #81 is based directly on pre-merge governance main
+`4ac4880d5627c2800eb918d24c59da5f8e047091`. Its only role is to
+canonicalize B15/B16/B16R handoff and historical evidence under G-08. The
+post-merge main SHA and exact-main CI run ID do not exist until the controlled
+merge and CI complete. Therefore **FINAL_EXECUTION_AUTHORITY = NOT_CREATED**
+for the new governance main; Operation 1 is prepared and unconsumed, not
+authorized for dispatch. A separate VF-V0S-B16R-G2 must regenerate and review
+the final authority/bundle/window binding against that exact new main and CI.
+Do not run B17, mount the bundle, reserve budget or call the provider in G1.
+
+Both the B16 historical receipt
+`694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c`
+and the B16R corrected pre-merge receipt
+`074c91cf7efff23bd7763bb698905dfe8de9e0d50ed72dea358354a4930e8dce`
+are `HISTORICAL_PRE_MERGE_BINDING / INVALID_AFTER_GOVERNANCE_MERGE`.
+Their recorded `GRANTED_NOT_CONSUMED` status describes only the old-main
+binding; neither is live execution authority for the new main. Historical
+approval, bundle, scope and receipt bytes are preserved as evidence.
+
+The single-dispatch runner requires `executable_rc_ci_run_id` and
+`governance_main_ci_run_id` in the authority receipt. RC-20's run
+`35124578033` remains stable while its tag is unchanged; the required new
+governance-main run ID is unknowable until after G1 merges and exact-main CI
+passes. G2, not G1, must bind the new main SHA, run ID and provenance.
+The proposed 21/09→22/09 window is not carried forward as active authority:
+`WINDOW_REAUTH_REQUIRED = YES`, even if Owner later selects the same dates.
+The RC-20 ledger remains read-only in G1; Operation 2 stays locked, kill
+switch engaged, bundle unmounted, and Production `NO-GO`. See the
+[G1 closure review](reviews/vf-v0s-b16r-g1/README.md).
+
+## Historical B16R clean candidate — no execution
 
 The B16R branch starts directly from canonical main
 `4ac4880d5627c2800eb918d24c59da5f8e047091` and ports unchanged B15
@@ -26,7 +58,7 @@ and `2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de`.
 The old B16 receipt `694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c`
 remains historical in Draft PR #80.
 
-The corrected authority binds the **current** main. The runner requires
+The corrected authority binds the **pre-merge** main. The runner requires
 remote main to equal that exact SHA; merging any governance PR advances main
 and creates a fresh exact-main CI/provenance identity. Therefore this
 candidate is not post-merge B17 readiness or dispatch authority. The runner
@@ -37,7 +69,7 @@ zero rows in all eight execution tables and zero reserved VND. No credential rea
 reservation, provider call or
 production business write occurred in B16R. Owner review of a post-merge
 authority-binding procedure and renewed window approval are required before B17
-if main changes.
+after main changes. G1 does not create this authority.
 
 ## Historical B16 authority state — no execution
 
@@ -54,11 +86,11 @@ and recorded status was `GRANTED_NOT_CONSUMED`. Corrected candidate approval
 records, bundle, scope, authority and reproducibility checks are in the
 [B16 final package](prepared/vf-v0s-b16-rc20-final-authority/README.md).
 
-The authorized window is **2026-09-21 21:00 → 2026-09-22 01:00 ICT**
+The historical B16 authorized window was **2026-09-21 21:00 → 2026-09-22 01:00 ICT**
 (2026-09-21 14:00 → 18:00 UTC), limited to one call, one concurrent operation,
 500 VND per operation and 1,250 VND total window exposure. Modeled cost is
 326.3004 VND; retry and fallback are zero; provider/controller timeouts are
-90/120 seconds. This authority does not itself dispatch or bypass future
+90/120 seconds. That historical authority does not dispatch or bypass future
 fresh preflight. The final bundle is unmounted, kill switch engaged, and the
 private RC-20 ledger was read back virgin: no operation record, provider
 receipt, reservation or duplicate. Credential reads, real provider calls,

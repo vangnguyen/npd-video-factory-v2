@@ -1,7 +1,7 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B16R",
-  "verdict": "REVIEW_REQUIRED_POST_MERGE_AUTHORITY_REBIND",
+  "task_id": "VF-V0S-B16R-G1",
+  "verdict": "GOVERNANCE_CLOSURE_CANDIDATE_PENDING_EXACT_HEAD_REVIEW_AND_MERGE",
   "repo": "vangnguyen/npd-video-factory-v2",
   "pr": {
     "number": 77,
@@ -28,6 +28,7 @@
   },
   "governance_main": {
     "sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+    "role": "PRE_MERGE_BASELINE_ONLY",
     "ci_run_id": 35172654970,
     "ci_jobs_passed": 5,
     "ci_jobs_total": 5,
@@ -137,6 +138,8 @@
   },
   "b16_final_authority": {
     "status": "GRANTED_NOT_CONSUMED",
+    "status_scope": "HISTORICAL_PRE_MERGE_BINDING_INVALID_AFTER_GOVERNANCE_MERGE",
+    "post_merge_execution_eligibility": "NOT_EXECUTABLE_FOR_NEW_GOVERNANCE_MAIN",
     "authority_source": "Explicit Owner VF-V0S-B16 decision",
     "operation_id": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
     "ledger_identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
@@ -191,8 +194,9 @@
     "corrected_authority_receipt_sha256": "074c91cf7efff23bd7763bb698905dfe8de9e0d50ed72dea358354a4930e8dce",
     "final_runtime_bundle_sha256": "a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019",
     "final_loaded_scope_sha256": "2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de",
-    "current_baseline_authority_status": "GRANTED_NOT_CONSUMED",
-    "post_merge_authority_status": "REVALIDATION_REQUIRED",
+    "current_baseline_authority_status": "GRANTED_NOT_CONSUMED_HISTORICAL_PRE_MERGE_BINDING",
+    "post_merge_authority_status": "NOT_CREATED_FOR_NEW_MAIN",
+    "post_merge_execution_eligibility": "NOT_EXECUTABLE_FOR_NEW_GOVERNANCE_MAIN",
     "post_merge_window_reauth_required": true,
     "post_merge_blocker": "Runner requires remote main and exact-main CI/provenance to match the authority's current-main binding",
     "runner_check_only_entrypoint": "NOT_AVAILABLE",
@@ -208,6 +212,33 @@
     "real_provider_calls": 0,
     "actual_cost_vnd": "0"
   },
+  "b16r_g1_governance_closure": {
+    "pr": 81,
+    "role": "GOVERNANCE_HANDOFF_EVIDENCE_CLOSURE_ONLY",
+    "pre_merge_main_sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+    "historical_b16_receipt_sha256": "694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c",
+    "historical_b16r_receipt_sha256": "074c91cf7efff23bd7763bb698905dfe8de9e0d50ed72dea358354a4930e8dce",
+    "historical_receipt_status": "HISTORICAL_PRE_MERGE_BINDING_INVALID_AFTER_GOVERNANCE_MERGE",
+    "historical_receipts_executable_for_new_main": false,
+    "runner_required_ci_fields": ["executable_rc_ci_run_id", "governance_main_ci_run_id"],
+    "stable_rc_ci_run_id": 35124578033,
+    "new_governance_main_ci_run_id": "PENDING_POST_MERGE_EXACT_MAIN_CI",
+    "final_execution_authority": "NOT_CREATED_FOR_NEW_MAIN",
+    "fresh_authority_rebind_required": true,
+    "window_reauth_required": true,
+    "operation_1_state": "PREPARED_UNCONSUMED",
+    "bundle_mounted": false,
+    "kill_switch": "ENGAGED",
+    "operation_2": "NOT_APPROVED_LOCKED",
+    "b17_run": false,
+    "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b16r-g1/README.md"
+  },
+  "final_execution_authority": {
+    "status_for_post_merge_main": "NOT_CREATED",
+    "old_b16_and_b16r_receipts": "HISTORICAL_PRE_MERGE_BINDING_INVALID_AFTER_GOVERNANCE_MERGE",
+    "fresh_authority_rebind_required": true,
+    "window_reauth_required": true
+  },
   "historical_rc": {
     "tag": "vf-v3-01-rc19",
     "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
@@ -220,8 +251,8 @@
     "fresh_rc": false,
     "fresh_ledger": false,
     "fresh_operation_rebind": false,
-    "fresh_authority": false,
-    "fresh_execution_window": false,
+    "fresh_authority": true,
+    "fresh_execution_window": true,
     "rc_created_in_this_task": false,
     "ledger_created_in_this_task": false
   },
@@ -240,6 +271,6 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/README.md",
-  "next_safe_action": "Owner review of the main-based candidate and post-merge authority-binding lifecycle. Do not merge as final execution authority or run B17 until the new main/CI/provenance binding is resolved."
+  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b16r-g1/README.md",
+  "next_safe_action": "After exact-head G-08, controlled merge, exact-main CI and dual-CI provenance PASS, assign VF-V0S-B16R-G2 to regenerate final authority and window binding. Do not run G2 or B17 in G1."
 }

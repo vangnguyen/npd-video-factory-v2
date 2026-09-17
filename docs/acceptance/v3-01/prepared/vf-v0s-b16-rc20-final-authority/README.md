@@ -1,8 +1,9 @@
-# VF-V0S-B16R — RC-20 Operation 1 authority CI-binding correction, no execution
+# VF-V0S-B16R — historical pre-merge RC-20 authority binding, no execution
 
 The explicit Owner VF-V0S-B16 decision approved G-01/G-02/G-03 for **only**
 the RC-20 ASR W1 Operation 1 identified by the B15 preparation package. This
-directory is a governance candidate, not an execution mount. The clean branch
+directory preserves pre-merge approval and bundle evidence; it is not a
+post-merge execution mount or live authority. The clean branch
 starts directly from governance main `4ac4880d5627c2800eb918d24c59da5f8e047091`
 and ports B15 preparation and B16 evidence without changing executable source.
 Draft PRs #78, #79 and #80 remain historical and unmerged.
@@ -35,7 +36,12 @@ Its [loaded scope](final-loaded-scope.json) likewise remains at canonical SHA-25
 `2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de`.
 The [corrected Op1-only authority](operation-1-authority.json) raw receipt SHA-256 is
 `074c91cf7efff23bd7763bb698905dfe8de9e0d50ed72dea358354a4930e8dce`,
-status `GRANTED_NOT_CONSUMED` only for the still-current `4ac4880d...` baseline.
+recorded status `GRANTED_NOT_CONSUMED` only for pre-merge main `4ac4880d...`.
+After PR #81 governance merge this receipt is
+`HISTORICAL_PRE_MERGE_BINDING / INVALID_AFTER_GOVERNANCE_MERGE`, not executable
+authority for the new main. The B16 historical receipt has the same
+post-merge classification. Final execution authority for the new main is
+`NOT_CREATED` until a separate G2 review/materialization.
 The historical B16 receipt `694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c`
 is preserved by Draft PR #80, not silently represented as this candidate's receipt.
 A [B17 binding candidate](bootstrap-binding-for-b17.json)
@@ -55,14 +61,19 @@ their signed content does not change. The bundle/scope schema has no CI-run
 fields, so adding the IDs there would be an unverified schema change.
 No null approval slot or unbound extra field remains in the final bundle.
 
-## Merge boundary requiring Owner review
+## Governance merge and new-authority boundary
 
 The exact-current-main runner checks remote `main` against the binding before
 custody access. A governance merge of this branch will necessarily advance
 `main` away from `4ac4880d...`, and the exact-main CI/provenance run ID will
-also change. Thus this corrected authority is valid for the present baseline
-but **cannot be carried forward unchanged as execution authority after merge**.
-Do not present this Draft PR as post-merge B17 readiness or dispatch authority.
+also change. Thus this corrected authority is only historical pre-merge
+evidence after PR #81 merges; it **cannot be carried forward as execution
+authority**. PR #81 is governance/handoff/evidence closure only, not
+post-merge B17 readiness or dispatch authority. The runner requires both
+`executable_rc_ci_run_id` and `governance_main_ci_run_id`; RC CI `35124578033`
+remains stable, while the new governance-main CI run ID can only be known
+after merge and exact-main CI. G2 must bind the new main, run and provenance
+and obtain a fresh window authorization.
 The existing runner exposes no side-effect-free top-level dispatch mode;
 offline validation exercises the same authority loader, authority verifier
 and provenance validator, not the dispatch function. A separately reviewed
@@ -107,7 +118,6 @@ independently checked the exact B15 raw files, canonical scope/manifest
 hashes, immutable inputs, remote main, RC tag, tree and provenance. B15
 history was not changed.
 
-Next safe action is Owner review of the main-binding/approval lifecycle and
-the clean PR. Do not merge it as final execution authority without resolving
-the post-merge main/provenance drift. Do not infer permission to run B17, mount,
-inspect credentials, reserve funds or call the provider from this package.
+Next safe action after G1 closure is a separate G2 final authority and window
+rebinding decision. Do not infer permission to run B17, mount, inspect
+credentials, reserve funds or call the provider from this package.

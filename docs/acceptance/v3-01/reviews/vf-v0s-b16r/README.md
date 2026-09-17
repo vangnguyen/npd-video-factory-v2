@@ -1,4 +1,4 @@
-# VF-V0S-B16R — main-based authority CI-binding repair
+# VF-V0S-B16R — historical main-based authority CI-binding repair
 
 This review concerns a Draft PR based directly on governance main
 `4ac4880d5627c2800eb918d24c59da5f8e047091`. It ports the byte-identical
@@ -28,11 +28,15 @@ set. These records, the gate bundle and the loaded scope remain byte-identical;
 the strict bundle schema has no CI-run fields. New approval IDs or a new
 window are therefore not asserted for the *unchanged current-main baseline*.
 
-The corrected authority receipt is
+The corrected pre-merge authority receipt is
 `074c91cf7efff23bd7763bb698905dfe8de9e0d50ed72dea358354a4930e8dce`;
 historical B16 receipt
 `694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c`
-remains available in Draft PR #80. Final bundle SHA stays
+remains available in Draft PR #80. Both receipts are
+`HISTORICAL_PRE_MERGE_BINDING / INVALID_AFTER_GOVERNANCE_MERGE`; neither is
+executable for the new governance main. Final execution authority is
+`NOT_CREATED` until G2 independently binds the new main/CI/provenance and
+obtains a renewed window decision. Final bundle SHA stays
 `a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019`;
 loaded scope SHA stays
 `2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de`.
@@ -59,7 +63,10 @@ occurred in B16R.
 Although the branch topology and missing fields are repaired, a governance
 merge advances `main` away from the exact SHA in this authority and changes
 the required exact-main CI/provenance identity. The runner fails closed on
-`GOVERNANCE_MAIN_DRIFT` before custody access. Thus the candidate must not be
-merged as if it were post-merge execution authority. Owner review is needed
-for a separate post-merge binding and window reauthorization procedure; do not perform B17 or provider
-preflight from this branch.
+`GOVERNANCE_MAIN_DRIFT` before custody access. Thus PR #81 may close
+governance/evidence only and must not be treated as post-merge execution
+authority. RC CI `35124578033` stays stable while RC-20 is unchanged; the new
+governance-main CI run ID cannot exist before merge. The runner requires both
+`executable_rc_ci_run_id` and `governance_main_ci_run_id`, so G2 must create a
+fresh exact binding and window reauthorization. Do not perform B17 or
+provider preflight from this branch.
