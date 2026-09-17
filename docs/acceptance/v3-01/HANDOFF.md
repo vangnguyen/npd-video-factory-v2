@@ -1,9 +1,43 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B14
-VERDICT: REVIEW_REQUIRED — RC-20 custody verified; operation-bound bootstrap cannot run before rebind/authority
+TASK: VF-V0S-B15
+VERDICT: PASS — fresh RC-20 Operation 1 prepared, not authorized
 REPO: vangnguyen/npd-video-factory-v2
+
+Exact governance main is `4ac4880d5627c2800eb918d24c59da5f8e047091`
+after PR #77; exact-main CI `35172654970` and RC-20 CI `35124578033`
+passed 5/5. Fresh dual-CI provenance is `PASS`, SHA-256
+`5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86`.
+RC-20 remains `vf-v3-01-rc20` at
+`93b5441d44347c9c40b745bdfed0969880853f68`; main and RC share
+executable-tree SHA-256
+`611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630`.
+
+B15 read-only revalidated the private RC-20 PostgreSQL 16.15 custody
+(`vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d`, system ID
+`7686186223531422166`, migration `0015_v3_01_dispatch`). All execution
+state tables remain empty; no operation, receipt, reservation or duplicate
+exists. The fresh derived Operation 1 ID/ledger key is
+`v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01`.
+All W1, prompt, asset, reference transcript and RightsRecord hashes match.
+The [B15 preparation package](prepared/vf-v0s-b15-rc20-asr-w1/README.md)
+is `PREPARED_NOT_AUTHORIZED`; its template is intentionally not loader-valid.
+Its execution-scope, prepared-scope, manifest and template hashes are recorded
+in `prepared-material-hashes.json` and reproduce exactly. The proposed
+21/09 21:00 → 22/09 01:00 ICT window and 500/1,250 VND ceilings grant no
+execution permission. Operation-bound bootstrap is `DEFERRED_BY_CONTRACT`
+until B16 produces legitimate approvals, final bundle and authority; B17 is
+the later zero-call qualification. No metadata registration or other ledger
+write occurred. Kill switch remains engaged; Operation 2 stays locked;
+credential reads, budget reservation, provider calls, production business
+writes and actual cost are zero. Production is `NO-GO`.
+
+Draft PR #78 remains open and unchanged as B14G historical handoff/evidence.
+Next safe action is a separately assigned B16 final G-01/G-02/G-03, runtime
+bundle and authority materialization. Stop before B16.
+
+## Historical B14 snapshot (superseded as current task state)
 
 Exact governance main is `551379a916b9b574288fda754c0732009d23d288`
 after Owner-approved PR #75 head

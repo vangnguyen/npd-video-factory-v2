@@ -1,0 +1,157 @@
+{
+  "acceptance_lineage_id": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
+  "anchors": {
+    "dual_ci_provenance": "PASS",
+    "dual_ci_provenance_sha256": "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+    "executable_rc_ci_run_id": 35124578033,
+    "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "governance_main_ci_run_id": 35172654970,
+    "governance_main_commit": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+    "main_provenance": "PASS",
+    "rc_commit": "93b5441d44347c9c40b745bdfed0969880853f68",
+    "rc_tag": "vf-v3-01-rc20",
+    "repository": "vangnguyen/npd-video-factory-v2"
+  },
+  "approvals": {
+    "G-01": {
+      "record_sha256": null,
+      "status": "NOT_CREATED"
+    },
+    "G-02": {
+      "record_sha256": null,
+      "status": "NOT_CREATED"
+    },
+    "G-03": {
+      "record_sha256": null,
+      "status": "NOT_CREATED"
+    }
+  },
+  "authority_receipt_sha256": null,
+  "authority_status": "NOT_CREATED",
+  "budget": {
+    "accounting_source": "https://developers.openai.com/api/docs/models/whisper-1",
+    "duration_seconds": "120.852",
+    "fixed_accounting_vnd_per_usd": "27000",
+    "modeled_cost_vnd": "326.3004",
+    "proposed_per_operation_ceiling_vnd": "500",
+    "proposed_window_ceiling_vnd": "1250",
+    "reserved_vnd": "0",
+    "status": "PROPOSED_NOT_AUTHORIZED",
+    "usd_per_minute": "0.006",
+    "vnd_per_minute": "162"
+  },
+  "bundle_mounted": false,
+  "capability": "asr",
+  "execution_scope_sha256": "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+  "final_runtime_bundle_sha256": null,
+  "future_evidence_required": [
+    "request_hash",
+    "dispatch_marker",
+    "provider_request_id",
+    "response_hash",
+    "transcript",
+    "timestamps",
+    "w1_profile_and_prompt",
+    "usage_and_cost",
+    "latency_and_timeout_phase",
+    "reservation_and_reconciliation",
+    "ledger_and_circuit",
+    "idempotency",
+    "rights_record",
+    "secret_scan",
+    "wer_critical_terms_and_insertion_guard",
+    "evidence_manifest_sha256"
+  ],
+  "historical_rc19_operation_id_reused": false,
+  "immutable_input": {
+    "asset_id": "asset-g03-asr-vi-owned-01",
+    "asset_path": "docs/acceptance/v3-01/assets/g03-asr-vi-owned-01.wav",
+    "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+    "channels": 1,
+    "duration_seconds": "120.852",
+    "frame_count": 2900448,
+    "reference_transcript_path": "docs/acceptance/v3-01/transcripts/g03-asr-vi-owned-01.txt",
+    "reference_transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+    "rights_record_canonical_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+    "rights_record_id": "V3-01-RIGHTS-ASR-001",
+    "rights_record_path": "docs/acceptance/v3-01/rights/V3-01-RIGHTS-ASR-001.json",
+    "sample_rate_hz": 24000,
+    "sample_width_bytes": 2,
+    "size_bytes": 5800940,
+    "slot": 1
+  },
+  "language": "vi",
+  "ledger": {
+    "active_reservation": false,
+    "custody": "VERIFIED",
+    "duplicate_or_idempotency_collision": false,
+    "identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "migration_head": "0015_v3_01_dispatch",
+    "operation_record_exists": false,
+    "operation_state": "VIRGIN_NOT_REGISTERED / NOT_CONSUMED",
+    "postgres_version": "16.15",
+    "prepared_operation_metadata_write": false,
+    "provider_request_receipt_exists": false,
+    "system_identifier": "7686186223531422166"
+  },
+  "ledger_operation_binding_sha256": "0b0bc628b0c91c7d14a714bcf9f98884934814cf49c87b752a75a143dd7d2bff",
+  "ledger_operation_key": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+  "model": "whisper-1",
+  "operation_2_status": "NOT_APPROVED / LOCKED / NOT_TRANSFERRED",
+  "operation_bound_bootstrap": "DEFERRED_BY_CONTRACT",
+  "operation_id": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+  "operation_manifest_sha256": "a16fb870af5572e57081a3de7f8d90c789393445efa5dcaa5186bc562b13d4d2",
+  "preparation_template_sha256": "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+  "prepared_scope_sha256": "667c88a949feec343e6b37934ba4705edbb0c616ba92217124227045ad5a4be4",
+  "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+  "proposed_window": {
+    "active": false,
+    "budget_day_utc": "2026-09-21",
+    "end_ict": "2026-09-22T01:00:00+07:00",
+    "end_utc": "2026-09-21T18:00:00+00:00",
+    "start_ict": "2026-09-21T21:00:00+07:00",
+    "start_utc": "2026-09-21T14:00:00+00:00",
+    "status": "PROPOSED_NOT_AUTHORIZED",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  "provider_key": "openai-transcription",
+  "quality_gate": {
+    "asset_02_negative_insertion_guard": true,
+    "critical_terms_required": 8,
+    "critical_terms_total": 8,
+    "reference_transcript_mutation": false,
+    "transcript_post_correction": false,
+    "wer_max_percent": "15"
+  },
+  "required_order": [
+    "B15_PREPARATION",
+    "B16_FINAL_APPROVALS_AUTHORITY_BUNDLE",
+    "B17_ZERO_CALL_BOOTSTRAP"
+  ],
+  "runner_contract": {
+    "attempts": 1,
+    "concurrency": 1,
+    "controller_timeout_seconds": 120,
+    "entrypoint": "app.provider_single_dispatch.run_single_dispatch",
+    "evidence": "arm before dispatch marker; seal pre-call or post-dispatch terminal evidence",
+    "fallback": 0,
+    "git_blob": "a61a035d7b8e60be61581ce5d9d59028e2715688",
+    "kill_switch": "ENGAGED until bounded one-call transition; always re-engage",
+    "post_dispatch": "Durable dispatch marker: terminal/possibly-sent, no second call, reconcile reservation",
+    "pre_dispatch": "No durable dispatch marker: release reservation, NOT_CONSUMED, zero provider calls",
+    "provider_timeout_seconds": 90,
+    "retry": 0
+  },
+  "safety": {
+    "actual_cost_vnd": "0",
+    "budget_reserved_vnd": "0",
+    "credential_reads": 0,
+    "kill_switch": "ENGAGED",
+    "production_business_writes": 0,
+    "real_provider_calls": 0
+  },
+  "schema": "vf-v0s-b15-operation-preparation-package-v1",
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "task_id": "VF-V0S-B15",
+  "w1_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1"
+}

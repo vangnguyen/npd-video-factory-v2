@@ -1,13 +1,13 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B14",
-  "verdict": "REVIEW_REQUIRED_OPERATION_BOUND_BOOTSTRAP_BINDING_ABSENT",
+  "task_id": "VF-V0S-B15",
+  "verdict": "PASS_PREPARED_NOT_AUTHORIZED",
   "repo": "vangnguyen/npd-video-factory-v2",
   "pr": {
-    "number": 75,
-    "approved_head_sha": "c9d2c0ba13e34b060a0bc971a26bb9f5a68b78c8",
-    "base_sha": "93b5441d44347c9c40b745bdfed0969880853f68",
-    "merge_commit_sha": "551379a916b9b574288fda754c0732009d23d288",
+    "number": 77,
+    "approved_head_sha": "cdf61d6c145f9b869d9f9df2f9a262bde0b3edeb",
+    "base_sha": "551379a916b9b574288fda754c0732009d23d288",
+    "merge_commit_sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
     "g08": "PASS_EXACT_HEAD_GOVERNANCE_ONLY"
   },
   "previous_executable_main": {
@@ -27,8 +27,8 @@
     "g08": "PASS_GOVERNANCE_ONLY"
   },
   "governance_main": {
-    "sha": "551379a916b9b574288fda754c0732009d23d288",
-    "ci_run_id": 35126544056,
+    "sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+    "ci_run_id": 35172654970,
     "ci_jobs_passed": 5,
     "ci_jobs_total": 5,
     "provenance": "PASS",
@@ -56,7 +56,7 @@
     "rc_provenance": "PASS_RC_ONLY",
     "main_rc_tree_equality": "PASS",
     "dual_ci_provenance": "PASS",
-    "dual_ci_provenance_sha256": "330006ae336f12a809a5d7611d250d5e096f8b44c74ab8a02187771cf238d21f",
+    "dual_ci_provenance_sha256": "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
     "governance_lineage": "CLOSED_PASS",
     "single_dispatch_entrypoint": "app.provider_single_dispatch.run_single_dispatch",
     "single_dispatch_present": true,
@@ -65,7 +65,7 @@
     "ledger_lineage_preview": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
     "expected_ledger_identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
     "ledger_identity_status": "CREATED_VERIFIED_VIRGIN_B14",
-    "operation_1_id_generated": false,
+    "operation_1_id_generated": true,
     "bundle_created": false,
     "authority_created": false,
     "execution_window_created": false
@@ -98,6 +98,43 @@
     "focused_rc20_tests_passed": 131,
     "pr76": "OPEN_DRAFT_HISTORICAL_B13G_HANDOFF_UNMERGED"
   },
+  "b14g_closure": {
+    "pr": 77,
+    "merge_commit_sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+    "main_ci_run_id": 35172654970,
+    "main_ci": "PASS_5_OF_5",
+    "main_provenance": "PASS",
+    "dual_ci_provenance": "PASS",
+    "dual_ci_provenance_sha256": "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+    "pr78": "OPEN_DRAFT_HISTORICAL_B14G_HANDOFF_UNCHANGED"
+  },
+  "b15_preparation": {
+    "status": "PREPARED_NOT_AUTHORIZED",
+    "operation_id": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+    "ledger_operation_key": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+    "execution_scope_sha256": "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+    "prepared_scope_sha256": "667c88a949feec343e6b37934ba4705edbb0c616ba92217124227045ad5a4be4",
+    "operation_manifest_sha256": "a16fb870af5572e57081a3de7f8d90c789393445efa5dcaa5186bc562b13d4d2",
+    "preparation_template_sha256": "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+    "ledger_operation_binding_sha256": "0b0bc628b0c91c7d14a714bcf9f98884934814cf49c87b752a75a143dd7d2bff",
+    "operation_record_exists": false,
+    "operation_consumed": false,
+    "provider_request_receipt_exists": false,
+    "active_reservation": false,
+    "duplicate_or_idempotency_collision": false,
+    "prepared_operation_metadata_write": false,
+    "provider_model": "openai-transcription / whisper-1",
+    "runner_entrypoint": "app.provider_single_dispatch.run_single_dispatch",
+    "proposed_window_ict": "2026-09-21T21:00:00+07:00/2026-09-22T01:00:00+07:00",
+    "proposed_window_utc": "2026-09-21T14:00:00+00:00/2026-09-21T18:00:00+00:00",
+    "proposed_window_status": "PROPOSED_NOT_AUTHORIZED",
+    "modeled_cost_vnd": "326.3004",
+    "proposed_per_operation_ceiling_vnd": "500",
+    "proposed_window_ceiling_vnd": "1250",
+    "operation_bound_bootstrap": "DEFERRED_BY_CONTRACT",
+    "authority_status": "NOT_CREATED",
+    "package_pointer": "docs/acceptance/v3-01/prepared/vf-v0s-b15-rc20-asr-w1/README.md"
+  },
   "historical_rc": {
     "tag": "vf-v3-01-rc19",
     "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
@@ -109,11 +146,11 @@
   "required_next_lineage": {
     "fresh_rc": false,
     "fresh_ledger": false,
-    "fresh_operation_rebind": true,
+    "fresh_operation_rebind": false,
     "fresh_authority": true,
     "fresh_execution_window": true,
     "rc_created_in_this_task": false,
-    "ledger_created_in_this_task": true
+    "ledger_created_in_this_task": false
   },
   "operation_2": "NOT_APPROVED_LOCKED",
   "bundle_mounted": false,
@@ -130,6 +167,6 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b14/README.md",
-  "next_safe_action": "Owner review bootstrap ordering and separately assign RC-20 Operation 1 PREPARED_NOT_AUTHORIZED rebind, followed by operation-bound bootstrap qualification when required bindings legitimately exist. Stop before B15."
+  "evidence_pointer": "docs/acceptance/v3-01/prepared/vf-v0s-b15-rc20-asr-w1/README.md",
+  "next_safe_action": "Owner review and separately assign VF-V0S-B16 final G-01/G-02/G-03, runtime bundle and authority materialization. Stop before B16."
 }
