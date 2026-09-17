@@ -1,9 +1,42 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B15
-VERDICT: PASS — fresh RC-20 Operation 1 prepared, not authorized
+TASK: VF-V0S-B16
+VERDICT: PASS — RC-20 Operation 1 authority granted, not consumed
 REPO: vangnguyen/npd-video-factory-v2
+
+## Current B16 authority state — no execution
+
+The explicit Owner decision in VF-V0S-B16 materialized fresh G-01/G-02/G-03
+records `V3-01-APP-078/079/080` for the exact RC-20 Operation 1 below. The
+existing strict gate loader validates the completed bundle. Its raw SHA-256 is
+`a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019`;
+the final loaded scope's canonical SHA-256 is
+`2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de`.
+These are distinct from B15's prepared scope and preparation template. The
+Operation-1-only authority receipt SHA-256 is
+`694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c`
+and status is `GRANTED_NOT_CONSUMED`. Approval records, bundle, scope,
+authority and reproducibility checks are in the
+[B16 final package](prepared/vf-v0s-b16-rc20-final-authority/README.md).
+
+The authorized window is **2026-09-21 21:00 → 2026-09-22 01:00 ICT**
+(2026-09-21 14:00 → 18:00 UTC), limited to one call, one concurrent operation,
+500 VND per operation and 1,250 VND total window exposure. Modeled cost is
+326.3004 VND; retry and fallback are zero; provider/controller timeouts are
+90/120 seconds. This authority does not itself dispatch or bypass future
+fresh preflight. The final bundle is unmounted, kill switch engaged, and the
+private RC-20 ledger was read back virgin: no operation record, provider
+receipt, reservation or duplicate. Credential reads, real provider calls,
+production business writes and actual spend remain zero. Operation 2 stays
+`NOT_APPROVED / LOCKED / NOT_TRANSFERRED`; Production is `NO-GO`.
+
+Draft PRs #78 and #79 remain open and unmerged as historical handoff and B15
+preparation evidence. B16 does not treat either PR as executable lineage.
+The operation-bound bootstrap is `READY_FOR_B17_NOT_RUN`; the next safe action
+is a separately assigned B17 zero-call qualification. Stop before B17.
+
+## Historical B15 preparation snapshot
 
 Exact governance main is `4ac4880d5627c2800eb918d24c59da5f8e047091`
 after PR #77; exact-main CI `35172654970` and RC-20 CI `35124578033`
@@ -34,8 +67,8 @@ credential reads, budget reservation, provider calls, production business
 writes and actual cost are zero. Production is `NO-GO`.
 
 Draft PR #78 remains open and unchanged as B14G historical handoff/evidence.
-Next safe action is a separately assigned B16 final G-01/G-02/G-03, runtime
-bundle and authority materialization. Stop before B16.
+At the B15 boundary, the next action was separately assigned B16 final
+G-01/G-02/G-03, runtime bundle and authority materialization.
 
 ## Historical B14 snapshot (superseded as current task state)
 

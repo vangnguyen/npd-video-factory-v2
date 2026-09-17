@@ -1,0 +1,38 @@
+{
+  "approval_id": "V3-01-APP-079",
+  "approved_at_utc": "2026-09-17T02:56:22Z",
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "artifact_or_commit_hashes": [
+    "93b5441d44347c9c40b745bdfed0969880853f68",
+    "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+    "4ac4880d5627c2800eb918d24c59da5f8e047091",
+    "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+    "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+    "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+    "a16fb870af5572e57081a3de7f8d90c789393445efa5dcaa5186bc562b13d4d2",
+    "a61a035d7b8e60be61581ce5d9d59028e2715688",
+    "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+    "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+    "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+    "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+    "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+    "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+    "14d735056296d18d3132f8e6d8dd62ae2f2faadf4663856becde59df60739980",
+    "a47851c10b045627dc2dafa295196026ce823c69d1a12d16abae8297b8cc4553"
+  ],
+  "decision": "APPROVED",
+  "expires_at_utc": "2026-09-21T18:00:00Z",
+  "gate_id": "G-02",
+  "limits": [
+    "Modeled 326.3004 VND",
+    "500 VND per-operation maximum",
+    "1250 VND window maximum",
+    "One attempt and one concurrent call; retry 0; fallback 0",
+    "90s provider and 120s controller timeouts",
+    "Reserve only during future fresh execution preflight; release before dispatch or reconcile after dispatch"
+  ],
+  "notes": "Authority source: explicit Owner VF-V0S-B16 instruction. No B16 execution, credential access, reservation, mount, kill-switch transition or provider call.",
+  "scope": "VF-V0S-B16 Owner approval: one RC-20 Operation 1 budget envelope only; no reservation in B16.",
+  "target_account_or_environment": "RC-20 isolated acceptance ledger vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d"
+}

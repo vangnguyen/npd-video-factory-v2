@@ -1,0 +1,42 @@
+{
+  "approval_record_sha256": {
+    "G-01": "600d8f11333a012fe2b301c3ed4ba9e9359655c35de73c7711a6acb83da7f2bd",
+    "G-02": "5dce4a03aee485212a2b30558d4704d497d16aa48eff2e762bfe0ba18bfa58a0",
+    "G-03": "063fcb3c1af4e0801c7cd055765fea38549163e95fd3848897b5e4e3ecb768e4"
+  },
+  "authority_receipt_sha256": "694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c",
+  "bootstrap_binding_sha256": "5a43f1f624ddeb5ac83d23d13589d3bd672a2c0f4e143d32bc227844df82ab6b",
+  "dual_ci_provenance_sha256": "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+  "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+  "execution_scope_sha256": "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+  "final_loaded_scope_sha256": "2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de",
+  "final_runtime_bundle_sha256": "a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019",
+  "governance_main_commit": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+  "ledger_identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+  "operation_bound_bootstrap": "READY_FOR_B17_NOT_RUN",
+  "operation_key": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+  "operation_manifest_sha256": "a16fb870af5572e57081a3de7f8d90c789393445efa5dcaa5186bc562b13d4d2",
+  "owner_approval_source": "VF-V0S-B16",
+  "preparation_template_sha256": "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+  "prepared_scope_sha256": "667c88a949feec343e6b37934ba4705edbb0c616ba92217124227045ad5a4be4",
+  "rc_commit": "93b5441d44347c9c40b745bdfed0969880853f68",
+  "rc_tag": "vf-v3-01-rc20",
+  "safety": {
+    "actual_cost_vnd": "0",
+    "budget_reserved_vnd": "0",
+    "bundle_mounted": false,
+    "credential_reads": 0,
+    "kill_switch": "ENGAGED",
+    "production_business_writes": 0,
+    "real_provider_calls": 0
+  },
+  "schema": "vf-v0s-b16-final-material-hashes-v1",
+  "status": "GRANTED_NOT_CONSUMED",
+  "task_id": "VF-V0S-B16",
+  "window": {
+    "end_ict": "2026-09-22T01:00:00+07:00",
+    "end_utc": "2026-09-21T18:00:00Z",
+    "start_ict": "2026-09-21T21:00:00+07:00",
+    "start_utc": "2026-09-21T14:00:00Z"
+  }
+}

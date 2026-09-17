@@ -1,7 +1,7 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B15",
-  "verdict": "PASS_PREPARED_NOT_AUTHORIZED",
+  "task_id": "VF-V0S-B16",
+  "verdict": "PASS_GRANTED_NOT_CONSUMED_NO_EXECUTION",
   "repo": "vangnguyen/npd-video-factory-v2",
   "pr": {
     "number": 77,
@@ -66,9 +66,9 @@
     "expected_ledger_identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
     "ledger_identity_status": "CREATED_VERIFIED_VIRGIN_B14",
     "operation_1_id_generated": true,
-    "bundle_created": false,
-    "authority_created": false,
-    "execution_window_created": false
+    "bundle_created": true,
+    "authority_created": true,
+    "execution_window_created": true
   },
   "b14_custody": {
     "verdict": "REVIEW_REQUIRED",
@@ -135,6 +135,46 @@
     "authority_status": "NOT_CREATED",
     "package_pointer": "docs/acceptance/v3-01/prepared/vf-v0s-b15-rc20-asr-w1/README.md"
   },
+  "b16_final_authority": {
+    "status": "GRANTED_NOT_CONSUMED",
+    "authority_source": "Explicit Owner VF-V0S-B16 decision",
+    "operation_id": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+    "ledger_identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "g01": {"approval_id": "V3-01-APP-078", "record_sha256": "600d8f11333a012fe2b301c3ed4ba9e9359655c35de73c7711a6acb83da7f2bd"},
+    "g02": {"approval_id": "V3-01-APP-079", "record_sha256": "5dce4a03aee485212a2b30558d4704d497d16aa48eff2e762bfe0ba18bfa58a0"},
+    "g03": {"approval_id": "V3-01-APP-080", "record_sha256": "063fcb3c1af4e0801c7cd055765fea38549163e95fd3848897b5e4e3ecb768e4"},
+    "execution_scope_sha256": "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+    "prepared_scope_sha256": "667c88a949feec343e6b37934ba4705edbb0c616ba92217124227045ad5a4be4",
+    "final_loaded_scope_sha256": "2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de",
+    "final_runtime_bundle_sha256": "a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019",
+    "authority_receipt_sha256": "694693ca50001c93d5264418661bc8a25179a3791d6437e077f67653c2a3140c",
+    "bundle_reproducibility": "IDENTICAL_BYTES_IDENTICAL_SHA_TWICE",
+    "real_gate_loader": "PASS_VALID",
+    "authority_binding": "PASS_OPERATION_1_ONLY",
+    "window_ict": "2026-09-21T21:00:00+07:00/2026-09-22T01:00:00+07:00",
+    "window_utc": "2026-09-21T14:00:00Z/2026-09-21T18:00:00Z",
+    "modeled_cost_vnd": "326.3004",
+    "per_operation_ceiling_vnd": "500",
+    "window_ceiling_vnd": "1250",
+    "attempts": 1,
+    "concurrency": 1,
+    "retry": 0,
+    "fallback": 0,
+    "provider_timeout_seconds": 90,
+    "controller_timeout_seconds": 120,
+    "ledger_state_after": "VIRGIN_NOT_REGISTERED_NOT_CONSUMED",
+    "operation_record_exists": false,
+    "provider_request_receipt_exists": false,
+    "active_reservation": false,
+    "duplicate_or_idempotency_collision": false,
+    "operation_bound_bootstrap": "READY_FOR_B17_NOT_RUN",
+    "bundle_mounted": false,
+    "kill_switch": "ENGAGED",
+    "operation_2": "NOT_APPROVED_LOCKED_NOT_TRANSFERRED",
+    "pr78": "OPEN_DRAFT_HISTORICAL_UNMERGED",
+    "pr79": "OPEN_DRAFT_B15_PREPARATION_UNMERGED",
+    "package_pointer": "docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/README.md"
+  },
   "historical_rc": {
     "tag": "vf-v3-01-rc19",
     "commit": "dc8ff55322267dfe54674fa6c4003a899bf235ab",
@@ -147,8 +187,8 @@
     "fresh_rc": false,
     "fresh_ledger": false,
     "fresh_operation_rebind": false,
-    "fresh_authority": true,
-    "fresh_execution_window": true,
+    "fresh_authority": false,
+    "fresh_execution_window": false,
     "rc_created_in_this_task": false,
     "ledger_created_in_this_task": false
   },
@@ -167,6 +207,6 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "docs/acceptance/v3-01/prepared/vf-v0s-b15-rc20-asr-w1/README.md",
-  "next_safe_action": "Owner review and separately assign VF-V0S-B16 final G-01/G-02/G-03, runtime bundle and authority materialization. Stop before B16."
+  "evidence_pointer": "docs/acceptance/v3-01/prepared/vf-v0s-b16-rc20-final-authority/README.md",
+  "next_safe_action": "Owner review and separately assign VF-V0S-B17 zero-call RC-20 operation-bound bootstrap and single-dispatch qualification. Stop before B17."
 }
