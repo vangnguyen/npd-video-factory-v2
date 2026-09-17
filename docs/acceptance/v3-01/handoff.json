@@ -1,13 +1,13 @@
 {
   "workstream": "Video Factory V3-01",
-  "task_id": "VF-V0S-B14",
-  "verdict": "REVIEW_REQUIRED_OPERATION_BOUND_BOOTSTRAP_BINDING_ABSENT",
+  "task_id": "VF-V0S-B14G",
+  "verdict": "PASS_GOVERNANCE_CLOSURE_RC20_DUAL_CI",
   "repo": "vangnguyen/npd-video-factory-v2",
   "pr": {
-    "number": 75,
-    "approved_head_sha": "c9d2c0ba13e34b060a0bc971a26bb9f5a68b78c8",
-    "base_sha": "93b5441d44347c9c40b745bdfed0969880853f68",
-    "merge_commit_sha": "551379a916b9b574288fda754c0732009d23d288",
+    "number": 77,
+    "approved_head_sha": "cdf61d6c145f9b869d9f9df2f9a262bde0b3edeb",
+    "base_sha": "551379a916b9b574288fda754c0732009d23d288",
+    "merge_commit_sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
     "g08": "PASS_EXACT_HEAD_GOVERNANCE_ONLY"
   },
   "previous_executable_main": {
@@ -27,8 +27,8 @@
     "g08": "PASS_GOVERNANCE_ONLY"
   },
   "governance_main": {
-    "sha": "551379a916b9b574288fda754c0732009d23d288",
-    "ci_run_id": 35126544056,
+    "sha": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+    "ci_run_id": 35172654970,
     "ci_jobs_passed": 5,
     "ci_jobs_total": 5,
     "provenance": "PASS",
@@ -45,6 +45,24 @@
     "governance_main_ci_run_id": 35126544056,
     "rc20_governance_lineage": "CLOSED_PASS"
   },
+  "b14g_closure": {
+    "pr_ci_run_id": 35129776607,
+    "pr_ci_jobs_passed": 5,
+    "pr_ci_jobs_total": 5,
+    "g08_changed_files": 9,
+    "g08_executable_runtime_files": 0,
+    "validator": "scripts/v3_01_ci_provenance.py",
+    "main_provenance": "PASS",
+    "dual_ci_provenance": "PASS",
+    "provenance_sha256": "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+    "rc_ci_run_id": 35124578033,
+    "governance_main_ci_run_id": 35172654970,
+    "rc20_main_tree_equality": "PASS",
+    "custody_readback": "VIRGIN_READY_FOR_OPERATION_REBIND",
+    "bootstrap_ordering": "OPERATION_BOUND_BOOTSTRAP_DEFERRED_UNTIL_OPERATION_PACKAGE_AND_AUTHORITY_EXIST",
+    "pr76": "OPEN_DRAFT_SUPERSEDED_HISTORICAL_UNMERGED",
+    "operation_1_rebind_ready": true
+  },
   "fresh_rc": {
     "tag": "vf-v3-01-rc20",
     "annotated_tag_object": "9fe8d77a6c58a31beccf38bc2cc72b71a8dac240",
@@ -56,7 +74,7 @@
     "rc_provenance": "PASS_RC_ONLY",
     "main_rc_tree_equality": "PASS",
     "dual_ci_provenance": "PASS",
-    "dual_ci_provenance_sha256": "330006ae336f12a809a5d7611d250d5e096f8b44c74ab8a02187771cf238d21f",
+    "dual_ci_provenance_sha256": "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
     "governance_lineage": "CLOSED_PASS",
     "single_dispatch_entrypoint": "app.provider_single_dispatch.run_single_dispatch",
     "single_dispatch_present": true,
@@ -113,7 +131,7 @@
     "fresh_authority": true,
     "fresh_execution_window": true,
     "rc_created_in_this_task": false,
-    "ledger_created_in_this_task": true
+    "ledger_created_in_this_task": false
   },
   "operation_2": "NOT_APPROVED_LOCKED",
   "bundle_mounted": false,
@@ -130,6 +148,6 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b14/README.md",
-  "next_safe_action": "Owner review bootstrap ordering and separately assign RC-20 Operation 1 PREPARED_NOT_AUTHORIZED rebind, followed by operation-bound bootstrap qualification when required bindings legitimately exist. Stop before B15."
+  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b14g/README.md",
+  "next_safe_action": "Owner review and assign VF-V0S-B15 — RC-20 ASR W1 Operation 1 PREPARED_NOT_AUTHORIZED rebind. Stop before B15."
 }
