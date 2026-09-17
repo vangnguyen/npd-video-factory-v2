@@ -1,0 +1,74 @@
+{
+  "acceptance_lineage_id": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
+  "approval_records": {
+    "G-01": {
+      "approval_id": "V3-01-APP-078",
+      "record_sha256": "600d8f11333a012fe2b301c3ed4ba9e9359655c35de73c7711a6acb83da7f2bd"
+    },
+    "G-02": {
+      "approval_id": "V3-01-APP-079",
+      "record_sha256": "5dce4a03aee485212a2b30558d4704d497d16aa48eff2e762bfe0ba18bfa58a0"
+    },
+    "G-03": {
+      "approval_id": "V3-01-APP-080",
+      "record_sha256": "063fcb3c1af4e0801c7cd055765fea38549163e95fd3848897b5e4e3ecb768e4"
+    }
+  },
+  "approved_at_utc": "2026-09-17T02:56:22Z",
+  "asr_prompt_profile_sha256": "9c4a7609db9f08c191af297a41d7a21b58bfe539ac5e100ea534196d17776ab1",
+  "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+  "authority_source": "VF-V0S-B16 explicit Owner instruction",
+  "budget_reserved_vnd": "0",
+  "bundle_mounted": false,
+  "capability": "asr",
+  "decision": "APPROVED",
+  "dispatch_requires_separate_execution_task": true,
+  "dual_ci_provenance_sha256": "5caca534d1cfa6a4e3d9b4f9f9b6b1c33b024ec65afdfc36cf875c673bc1eb86",
+  "executable_tree_sha256": "611450db8b70b67c39090dc245a86465cc9a5bdb542f732b9bde0c7e289e1630",
+  "execution_scope_sha256": "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+  "expires_at_utc": "2026-09-21T18:00:00Z",
+  "gate_bundle_sha256": "a98a78884d020138c858b608b5462df5a762ebcac9024ce0ff6257e1bdd10019",
+  "governance_main_commit": "4ac4880d5627c2800eb918d24c59da5f8e047091",
+  "kill_switch": "ENGAGED",
+  "language": "vi",
+  "ledger": {
+    "database_oid": 16384,
+    "identity": "vf_vf_v3_01_rc20_5ff19bf478b41d3580e486bb6e37279d",
+    "migration_head": "0015_v3_01_dispatch",
+    "operation_state": "VIRGIN_NOT_REGISTERED / NOT_CONSUMED",
+    "system_identifier": "7686186223531422166"
+  },
+  "limits": {
+    "acceptance_window_limit_vnd": "1250",
+    "automatic_retry": false,
+    "controller_hard_timeout_seconds": 120.0,
+    "max_attempts": 1,
+    "max_concurrent_calls": 1,
+    "model_fallback": false,
+    "modeled_cost_vnd": "326.3004",
+    "per_operation_limit_vnd": "500",
+    "provider_http_timeout_seconds": 90.0
+  },
+  "loaded_runtime_scope_sha256": "2e049bfe8b2dede3ca8cb3ffdb27fd95bc96dd1d72c8e18cb4dca1788282b5de",
+  "main_provenance": "PASS",
+  "model": "whisper-1",
+  "no_execution_in_this_task": true,
+  "operation_1_consumed": false,
+  "operation_2_authorized": false,
+  "operation_key": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+  "operation_manifest_sha256": "a16fb870af5572e57081a3de7f8d90c789393445efa5dcaa5186bc562b13d4d2",
+  "preparation_template_sha256": "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+  "prepared_scope_sha256": "667c88a949feec343e6b37934ba4705edbb0c616ba92217124227045ad5a4be4",
+  "prompt_sha256": "6985c297816ea6dc9be2d46b538495704f524ab7ed751f95f9575841c5bd6b48",
+  "provider_key": "openai-transcription",
+  "rc_commit": "93b5441d44347c9c40b745bdfed0969880853f68",
+  "rc_tag": "vf-v3-01-rc20",
+  "reference_transcript_sha256": "585b460291f11f1eb54c2b9a728bca26953ccce98719859e16ab15c7af9ff36e",
+  "rights_record_sha256": "5fb56c9817595693abea89176362e0efebbcab54867788d427e9f4a76d0a8091",
+  "schema": "vf-v0s-b16-rc20-op1-authority-v1",
+  "single_dispatch_entrypoint": "app.provider_single_dispatch.run_single_dispatch",
+  "single_dispatch_runner_git_blob": "a61a035d7b8e60be61581ce5d9d59028e2715688",
+  "slot": 1,
+  "status": "GRANTED_NOT_CONSUMED",
+  "valid_from_utc": "2026-09-21T14:00:00Z"
+}
