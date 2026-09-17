@@ -134,12 +134,27 @@ def test_disposable_rpo_rto_checked_without_production_claim() -> None:
     path = ROOT / "evidence/v3-01/vf-v3-01-20260828T073400Z-527fd1f/operations/dr-observability/drill-summary.json"
     report = json.loads(path.read_text(encoding="utf-8"))
     result = measure_disposable_drill(report)
-    assert result["measured_rpo_seconds"] == 0
-    assert result["measured_rto_seconds"] == 33
+    assert result["observed_local_rpo_seconds"] == 0
+    assert result["drill_elapsed_seconds"] == 33
+    assert result["outage_to_recovery_rto_seconds"] is None
+    assert result["status"] == "HISTORICAL_DRILL_ELAPSED_ONLY_RTO_NOT_VERIFIED"
     assert result["production_path_tested"] is False
+    report["outage_started_at_utc"] = "2026-08-28T07:34:05Z"
+    report["recovery_completed_at_utc"] = "2026-08-28T07:34:30Z"
+    report["total_drill_elapsed_seconds"] = 33
+    report["measured_rto_seconds"] = 25
+    report["measured_rpo_basis"] = "all_nine_recovery_target_hashes_and_pending_work_recovered_without_post_backup_writes"
+    assert measure_disposable_drill(report)["outage_to_recovery_rto_seconds"] == 25
     report["measured_rto_seconds"] = 1
-    with pytest.raises(ValueError, match="wall-clock"):
+    with pytest.raises(ValueError, match="outage-to-recovery"):
         measure_disposable_drill(report)
+
+
+def test_disposable_drill_script_records_actual_outage_window() -> None:
+    script = (ROOT / "scripts/v3-01-dr-observability-drill.sh").read_text(encoding="utf-8")
+    assert 'outage_started_epoch="$(date -u +%s)"' in script
+    assert 'recovery_completed_epoch="$(date -u +%s)"' in script
+    assert '"total_drill_elapsed_seconds": int(sys.argv[8])' in script
 
 
 def test_local_rpo_rto_thresholds_match_existing_v3_policy() -> None:
@@ -201,6 +216,19 @@ def test_review_rejects_missing_or_duplicate_check(tmp_path: Path) -> None:
     review = prepare_g11_review(lock, template)
     review["checks"][-1] = deepcopy(review["checks"][0])
     with pytest.raises(ValueError, match="27 distinct"):
+        validate_g11_review(review, schema, template, lock)
+
+
+def test_review_rejects_rewritten_requirements_and_invalidation(tmp_path: Path) -> None:
+    lock = lock_review_artifacts(rc_commit=RC, artifacts=artifacts(tmp_path))
+    template, schema = g11_files()
+    review = prepare_g11_review(lock, template)
+    review["checks"][0]["requirement"] = "Everything looks fine."
+    with pytest.raises(ValueError, match="check contract changed"):
+        validate_g11_review(review, schema, template, lock)
+    review = prepare_g11_review(lock, template)
+    review["invalidation"] = review["invalidation"][:-1]
+    with pytest.raises(ValueError, match="invalidation rules changed"):
         validate_g11_review(review, schema, template, lock)
 
 

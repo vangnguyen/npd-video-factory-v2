@@ -141,25 +141,51 @@ def audit_backup(backup_dir: Path, expected_commit: str) -> dict[str, Any]:
 
 
 def measure_disposable_drill(report: Mapping[str, Any]) -> dict[str, Any]:
-    """Check measured local RPO/RTO without promoting it to production evidence."""
+    """Separate total drill duration from outage-to-recovery RTO."""
     if report.get("environment") != "LOCAL_DISPOSABLE_DOCKER":
         raise ValueError("only local disposable DR may be measured here")
     start = utc_datetime(str(report["started_at_utc"]))
     end = utc_datetime(str(report["completed_at_utc"]))
     duration = int((end - start).total_seconds())
-    if duration < 0 or abs(duration - int(report["measured_rto_seconds"])) > 1:
-        raise ValueError("RTO does not match wall-clock drill duration")
+    if duration < 0:
+        raise ValueError("drill completion precedes start")
     rpo = int(report["measured_rpo_seconds"])
-    if rpo < 0 or rpo > 60 or duration > 900:
-        raise ValueError("local RPO/RTO policy exceeded")
+    if rpo < 0 or rpo > 60:
+        raise ValueError("local RPO policy exceeded")
     if int(report.get("recovery_targets_verified", 0)) != 9:
         raise ValueError("nine recovery targets required")
     if any(int(report.get(key, -1)) != 0 for key in ("duplicate_external_actions", "external_notifications", "production_writes", "cost_total_vnd")):
         raise ValueError("disposable drill crossed external or production boundary")
+    outage_at = report.get("outage_started_at_utc")
+    recovered_at = report.get("recovery_completed_at_utc")
+    if (outage_at is None) != (recovered_at is None):
+        raise ValueError("incomplete outage/recovery timestamp pair")
+    if outage_at is None:
+        return {
+            "status": "HISTORICAL_DRILL_ELAPSED_ONLY_RTO_NOT_VERIFIED",
+            "observed_local_rpo_seconds": rpo,
+            "drill_elapsed_seconds": duration,
+            "historical_reported_rto_seconds": int(report["measured_rto_seconds"]),
+            "outage_to_recovery_rto_seconds": None,
+            "production_path_tested": False,
+            "production_rpo_rto_accepted": False,
+        }
+    outage = utc_datetime(str(outage_at))
+    recovered = utc_datetime(str(recovered_at))
+    rto = int((recovered - outage).total_seconds())
+    if not start <= outage < recovered <= end or rto < 0 or rto > 900:
+        raise ValueError("local outage/recovery bounds invalid")
+    if abs(rto - int(report["measured_rto_seconds"])) > 1:
+        raise ValueError("reported RTO does not match outage-to-recovery timestamps")
+    if abs(duration - int(report["total_drill_elapsed_seconds"])) > 1:
+        raise ValueError("reported drill duration does not match timestamps")
+    if report.get("measured_rpo_basis") != "all_nine_recovery_target_hashes_and_pending_work_recovered_without_post_backup_writes":
+        raise ValueError("local RPO basis missing")
     return {
-        "status": "PASS_LOCAL_DISPOSABLE_ONLY",
-        "measured_rpo_seconds": rpo,
-        "measured_rto_seconds": duration,
+        "status": "PASS_LOCAL_DISPOSABLE_RTO_MEASURED",
+        "observed_local_rpo_seconds": rpo,
+        "outage_to_recovery_rto_seconds": rto,
+        "drill_elapsed_seconds": duration,
         "production_path_tested": False,
         "production_rpo_rto_accepted": False,
     }
@@ -427,6 +453,15 @@ def validate_g11_review(review: Mapping[str, Any], schema: Mapping[str, Any], te
     ids = [item["check_id"] for item in review["checks"]]
     if len(required) != 27 or len(ids) != 27 or set(ids) != required or len(set(ids)) != 27:
         raise ValueError("G-11 requires exactly the canonical 27 distinct checks")
+    canonical_checks = {item["check_id"]: item for item in template["checks"]}
+    for item in review["checks"]:
+        expected = canonical_checks[item["check_id"]]
+        if item["category"] != expected["category"] or item["requirement"] != expected["requirement"]:
+            raise ValueError(f"G-11 check contract changed: {item['check_id']}")
+        if item["result"] in {"FAIL", "REVIEW_REQUIRED"} and not item["notes"]:
+            raise ValueError(f"G-11 non-pass result requires a note: {item['check_id']}")
+    if set(review["invalidation"]) != set(template["invalidation"]):
+        raise ValueError("G-11 artifact invalidation rules changed")
     if lock is not None:
         if lock["release_candidate_commit"] != review["artifact_bindings"]["release_candidate_commit"]:
             raise ValueError("G-11 RC differs from artifact lock")
