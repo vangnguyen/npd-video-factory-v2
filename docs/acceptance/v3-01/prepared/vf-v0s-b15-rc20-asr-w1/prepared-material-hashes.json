@@ -1,0 +1,19 @@
+{
+  "acceptance_lineage_id": "al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624",
+  "canonicalization": "UTF-8 JSON, sorted keys, compact separators; file hashes cover exact pretty UTF-8 LF bytes",
+  "execution_scope_sha256": "cc68432affb13d290860cb7ca71feb3efb46f0e82541c6d0d2a54fff60d00093",
+  "files_sha256": {
+    "gate-template.json": "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+    "operation-1-manifest.json": "8d1cb3f357adbe39d3eab8d617998a4198976c991d0267e9aae3a0c0acbc974c",
+    "operation-preparation-package.json": "5d6b1be90a3714b19cd874eb730e521a4988008b28ad41a8a5d54975e720affe",
+    "scope-candidate.json": "47ee11b86f85c4b10f0ba4e3e959f8d452edff4ae916f6450a465c3edf054531"
+  },
+  "ledger_operation_binding_sha256": "0b0bc628b0c91c7d14a714bcf9f98884934814cf49c87b752a75a143dd7d2bff",
+  "operation_id": "v3-01-rc20-openai-transcription-asr-al-0001-9722891b4ae68168375adea9fc53cc6ad89c20fa8f3c5d8535f056173f428624-call-01",
+  "operation_manifest_sha256": "a16fb870af5572e57081a3de7f8d90c789393445efa5dcaa5186bc562b13d4d2",
+  "package_canonical_sha256": "f4f463601cfc815bd375fc6a31ae36d827f2b1c2a63d871c21b87a7cce30b144",
+  "preparation_template_sha256": "6c3efc700df2c3c2163c0ff9f7ea8f71af728e5f1eec5b1c55c1ef92301057c0",
+  "prepared_scope_sha256": "667c88a949feec343e6b37934ba4705edbb0c616ba92217124227045ad5a4be4",
+  "schema": "vf-v0s-b15-prepared-hashes-v1",
+  "status": "PREPARED_NOT_AUTHORIZED"
+}
