@@ -35,6 +35,7 @@ from .provider_gate_loader import (
     load_verified_provider_gate_bundle,
 )
 from .provider_runtime_bootstrap import (
+    BootstrapBlocked,
     BootstrapLedgerBinding,
     _git,
     bootstrap_custody,
@@ -91,6 +92,40 @@ class SingleDispatchOutcome:
     actual_cost_vnd: Decimal | None
     evidence_sha256: str | None
     transitions: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class SingleDispatchQualification:
+    """Read-only attestation, never authority to cross the provider boundary."""
+
+    code: str
+    binding_valid: bool
+    authority_valid: bool
+    bundle_valid: bool
+    ledger_valid: bool
+    window_policy_valid: bool
+    budget_policy_valid: bool
+    kill_switch_valid: bool
+    duplicate_check_valid: bool
+    operation_unconsumed: bool
+    provider_receipt_absent: bool
+    reservation_absent: bool
+    credential_read_performed: bool
+    provider_call_performed: bool
+    ready_for_execution_preflight: bool
+    ready_for_provider_dispatch: bool
+    evidence: dict[str, object]
+    evidence_manifest_sha256: str
+
+
+@dataclass(frozen=True)
+class _ValidatedDispatch:
+    binding: BootstrapLedgerBinding
+    scope: ProviderExecutionGateScope
+    context: ProviderCallContext
+    metadata: MediaMetadata
+    authority: dict[str, object]
+    operation_manifest_sha256: str
 
 
 @dataclass
@@ -348,15 +383,14 @@ def _context(binding: BootstrapLedgerBinding, scope: ProviderExecutionGateScope,
     )
 
 
-async def run_single_dispatch(
+def _validate_non_secret_bindings(
     paths: SingleDispatchPaths,
     *,
     runtime_policy: ProviderSafetyPolicy,
-    credential_resolver: Callable[[str], str],
-    clock: Callable[[], datetime] = utc_now,
-) -> SingleDispatchOutcome:
-    """Canonical future execution entrypoint. Never valid for an older RC tree."""
-    now = clock().astimezone(timezone.utc)
+    now: datetime,
+    require_active_window: bool,
+) -> _ValidatedDispatch:
+    """One source of truth for both qualification and live pre-secret checks."""
     binding = load_binding(paths.binding, paths.binding_sha256)
     if binding.slot != 1:
         raise SingleDispatchBlocked("OPERATION_2_NOT_AUTHORIZED")
@@ -374,13 +408,19 @@ async def run_single_dispatch(
     actual_blob = _git(paths.rc_source, "hash-object", "--path", MODULE_PATH, str(Path(__file__).resolve()))
     if expected_blob != actual_blob or Path(__file__).resolve() != (paths.rc_source / MODULE_PATH).resolve():
         raise SingleDispatchBlocked("DISPATCH_IMPLEMENTATION_NOT_IN_BOUND_RC")
-    scope = load_verified_provider_gate_bundle(
-        paths.bundle, expected_bundle_sha256=binding.bundle_sha256,
-        expected_rc_commit=binding.rc_commit, expected_rc_tag=binding.rc_tag,
-        expected_acceptance_lineage_id=binding.acceptance_lineage_id,
-    )
-    if not scope.active(now):
-        raise SingleDispatchBlocked("BLOCKED_OUTSIDE_WINDOW")
+    try:
+        scope = load_verified_provider_gate_bundle(
+            paths.bundle, expected_bundle_sha256=binding.bundle_sha256,
+            expected_rc_commit=binding.rc_commit, expected_rc_tag=binding.rc_tag,
+            expected_acceptance_lineage_id=binding.acceptance_lineage_id,
+        )
+    except Exception:
+        raise SingleDispatchBlocked("BUNDLE_VALIDATION_FAILED") from None
+    if require_active_window:
+        if not scope.active(now):
+            raise SingleDispatchBlocked("BLOCKED_OUTSIDE_WINDOW")
+    elif now >= scope.expires_at_utc:
+        raise SingleDispatchBlocked("WINDOW_EXPIRED")
     if scope.execution_scope_sha256 != binding.execution_scope_sha256 or asr_execution_scope_sha256(scope) != binding.execution_scope_sha256:
         raise SingleDispatchBlocked("EXECUTION_SCOPE_MISMATCH")
     if canonical_sha256(scope) != binding.scope_sha256:
@@ -397,13 +437,16 @@ async def run_single_dispatch(
         raise SingleDispatchBlocked("RIGHTS_RECORD_HASH_MISMATCH")
     provenance_raw = json.loads(paths.provenance.read_bytes())
     authority = _load_authority(paths.authority, paths.authority_sha256)
-    provenance = validate_provider_acceptance_ci_provenance(
-        provenance_raw,
-        expected_executable_rc_commit=binding.rc_commit,
-        expected_governance_main_commit=binding.governance_main_commit,
-        expected_executable_rc_ci_run_id=authority["executable_rc_ci_run_id"],
-        expected_governance_main_ci_run_id=authority["governance_main_ci_run_id"],
-    )
+    try:
+        provenance = validate_provider_acceptance_ci_provenance(
+            provenance_raw,
+            expected_executable_rc_commit=binding.rc_commit,
+            expected_governance_main_commit=binding.governance_main_commit,
+            expected_executable_rc_ci_run_id=authority["executable_rc_ci_run_id"],
+            expected_governance_main_ci_run_id=authority["governance_main_ci_run_id"],
+        )
+    except Exception:
+        raise SingleDispatchBlocked("DUAL_CI_PROVENANCE_INVALID") from None
     if provider_ci_provenance_sha256(provenance) != paths.provenance_sha256:
         raise SingleDispatchBlocked("DUAL_CI_PROVENANCE_MISMATCH")
     operation_manifest = json.loads(paths.operation_manifest.read_bytes())
@@ -420,19 +463,220 @@ async def run_single_dispatch(
         "slot": 1,
     }.items():
         _exact(operation_manifest.get(key), expected, "OPERATION_MANIFEST_BINDING_MISMATCH")
+    operation_manifest_sha256 = canonical_sha256(operation_manifest)
     _verify_authority(
         authority, binding, scope, provenance_sha256=paths.provenance_sha256,
-        operation_manifest_sha256=canonical_sha256(operation_manifest),
+        operation_manifest_sha256=operation_manifest_sha256,
     )
     metadata = _wav_metadata(paths.asset)
     asset_bytes = paths.asset.stat().st_size
     if asset_bytes != authority.get("asset_bytes") or abs(float(metadata.duration_seconds or 0) - float(authority.get("asset_duration_seconds", -1))) > 0.001:
         raise SingleDispatchBlocked("ASR_MEDIA_METADATA_MISMATCH")
     context = _context(binding, scope, metadata, asset_bytes)
+    return _ValidatedDispatch(
+        binding=binding, scope=scope, context=context, metadata=metadata,
+        authority=authority, operation_manifest_sha256=operation_manifest_sha256,
+    )
+
+
+def _verify_pre_dispatch_contract(
+    *, scope: ProviderExecutionGateScope, policy: ProviderSafetyPolicy,
+    context: ProviderCallContext, now: datetime, require_active_window: bool,
+) -> None:
+    """Shared safety preconditions; qualification evaluates a future window at its start."""
+    _verify_runtime_policy(policy, scope)
+    if require_active_window:
+        if not scope.active(now) or not policy.budget.active(now):
+            raise SingleDispatchBlocked("BLOCKED_OUTSIDE_WINDOW")
+        evaluation_time = now
+    else:
+        if now >= scope.expires_at_utc:
+            raise SingleDispatchBlocked("WINDOW_EXPIRED")
+        evaluation_time = max(now, scope.valid_from_utc)
+        if not scope.active(evaluation_time) or not policy.budget.active(evaluation_time):
+            raise SingleDispatchBlocked("WINDOW_POLICY_INVALID")
+    if not policy.global_kill_switch_engaged:
+        raise SingleDispatchBlocked("KILL_SWITCH_NOT_ENGAGED")
+    if policy.retry.max_attempts != 1 or policy.retry.max_concurrent_calls != 1:
+        raise SingleDispatchBlocked("SINGLE_CALL_POLICY_MISMATCH")
+    controller = ProviderSafetyController(policy, clock=lambda: evaluation_time)
+    prompt_denial = controller._prompt_profile_denial(context)
+    scope_denial = controller._verified_scope_denial(scope, context=context, now=evaluation_time)
+    rights_records = controller._verified_rights_records(scope, context=context)
+    rights = controller.evaluate_rights(rights_records, required=True, now=evaluation_time)
+    if prompt_denial or scope_denial or not rights.allowed:
+        raise SingleDispatchBlocked(prompt_denial or scope_denial or rights.code)
+
+
+def _verify_virgin_custody(custody: dict[str, object]) -> None:
+    """Require an exact virgin namespace, never infer absence from a missing row alone."""
+    counts = custody.get("counts")
+    bootstrap_write = custody.get("ledger_bootstrap_write")
+    try:
+        reserved_vnd = Decimal(str(custody.get("reserved_vnd")))
+    except Exception:
+        raise SingleDispatchBlocked("LEDGER_RESERVED_AMOUNT_INVALID") from None
+    if (
+        custody.get("result") != "CUSTODY_VERIFIED_NOT_EXECUTION_AUTHORIZED"
+        or custody.get("operation_state") != "VIRGIN_NOT_REGISTERED / NOT_CONSUMED"
+        or custody.get("control_present") is not True
+        or type(custody.get("active_operations")) is not int
+        or custody.get("active_operations") != 0
+        or type(custody.get("exact_operation_attempts")) is not int
+        or custody.get("exact_operation_attempts") != 0
+        or not reserved_vnd.is_finite() or reserved_vnd != 0
+        or not isinstance(counts, dict)
+        or set(counts) != {"operations", "attempts", "budget_days", "circuits", "budget_alerts"}
+        or any(type(value) is not int or value != 0 for value in counts.values())
+        or custody.get("provider_request_receipt_mapping") != "NO_OPERATION_OR_ATTEMPT_IN_THIS_BOUND_NAMESPACE"
+        or custody.get("active_reservation") != "NONE_IN_THIS_BOUND_NAMESPACE"
+        or not isinstance(bootstrap_write, dict)
+        or bootstrap_write.get("ensure_state_invoked") is not False
+    ):
+        raise SingleDispatchBlocked("CHECK_ONLY_LEDGER_NOT_VIRGIN")
+
+
+def _qualification_result(
+    *, code: str, now: datetime, validated: _ValidatedDispatch | None = None,
+    custody: dict[str, object] | None = None,
+) -> SingleDispatchQualification:
+    passed = code == "READY_FOR_EXECUTION_PREFLIGHT"
+    checked: dict[str, object] = {}
+    if validated is not None:
+        binding, scope, authority = validated.binding, validated.scope, validated.authority
+        checked = {
+            "rc_tag": binding.rc_tag, "rc_commit": binding.rc_commit,
+            "executable_tree_sha256": binding.executable_tree_sha256,
+            "governance_main_commit": binding.governance_main_commit,
+            "ledger_identity": binding.database_name,
+            "operation_key": binding.operation_key,
+            "executable_rc_ci_run_id": authority["executable_rc_ci_run_id"],
+            "governance_main_ci_run_id": authority["governance_main_ci_run_id"],
+            "dual_ci_provenance_sha256": authority["dual_ci_provenance_sha256"],
+            "authority_receipt_sha256": binding.authority_receipt_sha256,
+            "approval_record_sha256": scope.approval_record_sha256,
+            "bundle_sha256": binding.bundle_sha256,
+            "execution_scope_sha256": binding.execution_scope_sha256,
+            "loaded_scope_sha256": binding.scope_sha256,
+            "operation_manifest_sha256": validated.operation_manifest_sha256,
+            "w1_profile_sha256": binding.w1_profile_sha256,
+            "prompt_sha256": binding.prompt_sha256,
+            "asset_sha256": binding.asset_sha256,
+            "reference_transcript_sha256": binding.reference_transcript_sha256,
+            "rights_record_sha256": binding.rights_record_sha256,
+            "provider_key": scope.provider_key, "model": scope.model,
+            "capability": scope.capability,
+            "valid_from_utc": scope.valid_from_utc.isoformat(),
+            "expires_at_utc": scope.expires_at_utc.isoformat(),
+            "per_operation_limit_vnd": str(scope.per_operation_limit_vnd),
+            "window_limit_vnd": str(scope.acceptance_window_limit_vnd),
+            "max_attempts": 1, "max_concurrent_calls": 1,
+            "retry": 0, "fallback": 0,
+        }
+    evidence: dict[str, object] = {
+        "version": 1, "mode": "CHECK_ONLY", "code": code,
+        "checked_at_utc": now.isoformat(), "checked_bindings": checked,
+        "ledger_readback": None if custody is None else {
+            "operation_state": custody.get("operation_state"),
+            "exact_operation_attempts": custody.get("exact_operation_attempts"),
+            "active_operations": custody.get("active_operations"),
+            "reserved_vnd": custody.get("reserved_vnd"),
+            "counts": custody.get("counts"),
+        },
+        "credential_read_performed": False, "reservation_invoked": False,
+        "provider_adapter_invoked": False, "provider_call_performed": False,
+        "dispatch_marker_written": False, "bundle_mounted": False,
+        "operation_consumed_by_check_only": False,
+        "kill_switch_transitioned": False,
+        "ready_for_execution_preflight": passed,
+        "ready_for_provider_dispatch": False,
+    }
+    return SingleDispatchQualification(
+        code=code, binding_valid=passed, authority_valid=passed,
+        bundle_valid=passed, ledger_valid=passed,
+        window_policy_valid=passed, budget_policy_valid=passed,
+        kill_switch_valid=passed, duplicate_check_valid=passed,
+        operation_unconsumed=passed, provider_receipt_absent=passed,
+        reservation_absent=passed, credential_read_performed=False,
+        provider_call_performed=False, ready_for_execution_preflight=passed,
+        ready_for_provider_dispatch=False, evidence=evidence,
+        evidence_manifest_sha256=hashlib.sha256(_canonical_bytes(evidence)).hexdigest(),
+    )
+
+
+async def validate_single_dispatch(
+    paths: SingleDispatchPaths, *, runtime_policy: ProviderSafetyPolicy,
+    clock: Callable[[], datetime] = utc_now,
+) -> SingleDispatchQualification:
+    """Read-only check of the real runner's bindings; never dispatch authority.
+
+    The candidate implementation cannot qualify a historical RC: the shared
+    source-blob check requires this module to be part of the bound RC tree.
+    """
+    now = clock().astimezone(timezone.utc)
+    validated: _ValidatedDispatch | None = None
+    custody: dict[str, object] | None = None
+    try:
+        validated = _validate_non_secret_bindings(
+            paths, runtime_policy=runtime_policy, now=now,
+            require_active_window=False,
+        )
+        _verify_pre_dispatch_contract(
+            scope=validated.scope, policy=runtime_policy,
+            context=validated.context, now=now, require_active_window=False,
+        )
+        if _EvidenceRecorder(paths.evidence_directory, validated.context.operation_key).folder.exists():
+            raise SingleDispatchBlocked("EVIDENCE_PATH_ALREADY_EXISTS")
+        custody = await bootstrap_custody(
+            paths.rc_source, validated.binding, require_virgin_namespace=True,
+        )
+        _verify_virgin_custody(custody)
+        return _qualification_result(
+            code="READY_FOR_EXECUTION_PREFLIGHT", now=now,
+            validated=validated, custody=custody,
+        )
+    except (SingleDispatchBlocked, BootstrapBlocked) as exc:
+        code = exc.code if isinstance(exc, SingleDispatchBlocked) else str(exc)
+        if not re.fullmatch(r"[A-Z][A-Z0-9_]*(?::[A-Za-z0-9_]+)?", code):
+            code = "CHECK_ONLY_VALIDATION_FAILED"
+        return _qualification_result(
+            code=code, now=now, validated=validated,
+        )
+    except Exception:
+        # Never serialize exception text: it may contain paths or sensitive data.
+        return _qualification_result(
+            code="CHECK_ONLY_VALIDATION_FAILED", now=now,
+            validated=validated,
+        )
+
+
+async def run_single_dispatch(
+    paths: SingleDispatchPaths,
+    *,
+    runtime_policy: ProviderSafetyPolicy,
+    credential_resolver: Callable[[str], str],
+    clock: Callable[[], datetime] = utc_now,
+) -> SingleDispatchOutcome:
+    """Canonical future execution entrypoint. Never valid for an older RC tree."""
+    now = clock().astimezone(timezone.utc)
+    validated = _validate_non_secret_bindings(
+        paths, runtime_policy=runtime_policy, now=now,
+        require_active_window=True,
+    )
+    binding, scope, context, metadata = (
+        validated.binding, validated.scope, validated.context, validated.metadata,
+    )
+    _verify_pre_dispatch_contract(
+        scope=scope, policy=runtime_policy, context=context, now=now,
+        require_active_window=True,
+    )
+    custody = await bootstrap_custody(
+        paths.rc_source, binding, require_virgin_namespace=True,
+    )
+    _verify_virgin_custody(custody)
     # Only a future, explicitly authorized execution invokes this callable.
     # Resolve once after every public/non-secret binding and custody check,
     # before reserving; the value is never serialized or logged.
-    await bootstrap_custody(paths.rc_source, binding)
     try:
         resolved_credential = credential_resolver(scope.credential_alias).strip()
     except Exception:
@@ -501,20 +745,13 @@ async def _run_protocol(
     attempt_recorded = False
     consumed: bool | None = False
     now = clock().astimezone(timezone.utc)
-    _verify_runtime_policy(policy, scope)
+    _verify_pre_dispatch_contract(
+        scope=scope, policy=policy, context=context, now=now,
+        require_active_window=True,
+    )
     controller = ProviderSafetyController(policy, clock=clock)
-    if not scope.active(now) or not policy.budget.active(now):
-        raise SingleDispatchBlocked("BLOCKED_OUTSIDE_WINDOW")
-    if not switch.engaged or not policy.global_kill_switch_engaged:
+    if not switch.engaged:
         raise SingleDispatchBlocked("KILL_SWITCH_NOT_ENGAGED")
-    if policy.retry.max_attempts != 1 or policy.retry.max_concurrent_calls != 1:
-        raise SingleDispatchBlocked("SINGLE_CALL_POLICY_MISMATCH")
-    prompt_denial = controller._prompt_profile_denial(context)
-    scope_denial = controller._verified_scope_denial(scope, context=context, now=now)
-    rights_records = controller._verified_rights_records(scope, context=context)
-    rights = controller.evaluate_rights(rights_records, required=True, now=now)
-    if prompt_denial or scope_denial or not rights.allowed:
-        raise SingleDispatchBlocked(prompt_denial or scope_denial or rights.code)
     if (provider.key, provider.model, provider.capability) != (scope.provider_key, scope.model, scope.capability):
         raise SingleDispatchBlocked("PROVIDER_ADAPTER_MISMATCH")
     if (
