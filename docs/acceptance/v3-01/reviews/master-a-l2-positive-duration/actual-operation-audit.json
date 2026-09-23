@@ -1,0 +1,89 @@
+{
+  "acoustic_alignment_claimed_by_derivation": false,
+  "additional_cost_vnd": "0",
+  "algorithm_comparison": {
+    "adjacent_successor_partition_v1": {
+      "reason": "partitions only the existing positive interval of the immediate provider successor; never fills a gap or crosses a segment",
+      "status": "SELECTED"
+    },
+    "constrained_minimum_duration_expansion": {
+      "reason": "requires an arbitrary epsilon and can cross interval bounds",
+      "status": "REJECTED"
+    },
+    "midpoint_redistribution": {
+      "reason": "would recompute unrelated positive provider intervals",
+      "status": "REJECTED"
+    },
+    "neighbor_bound_interpolation": {
+      "preceding_gap_total_seconds": 6.079997,
+      "reason": "would assign speech into provider-native gaps",
+      "runs_entering_preceding_gap": 11,
+      "status": "REJECTED"
+    },
+    "segment_proportional_allocation": {
+      "reason": "lexical-length weighting is not acoustic evidence",
+      "status": "REJECTED"
+    }
+  },
+  "all_derived_words_positive": true,
+  "boundary_run_count": 25,
+  "budget_reserved_vnd": "0",
+  "changed_word_count": 52,
+  "credential_reads": 0,
+  "derived_transcript_sha256": "17b2b98864096e14c9436058c2bab404e52dccf6893915ad075c43ea8d7c9db2",
+  "historical_quality_verdict": "FAIL_UNCHANGED",
+  "maximum_boundary_duration_seconds": 0.21,
+  "maximum_successor_start_shift_seconds": 0.226666,
+  "minimum_boundary_duration_seconds": 0.02,
+  "operation_2": "LOCKED",
+  "partitioned_boundary_point_count": 27,
+  "preceding_gap_max_seconds": 0.779999,
+  "preceding_gap_total_seconds": 6.079997,
+  "provider_calls": 0,
+  "raw_provider_timing_claimed_by_derivation": false,
+  "raw_transcript_hash_after": "698b802c1f0e165a788b2033f59715b9a9ec8a294f4dd08ed8ac82e24818cc0c",
+  "raw_transcript_sha256": "698b802c1f0e165a788b2033f59715b9a9ec8a294f4dd08ed8ac82e24818cc0c",
+  "raw_transcript_unchanged": true,
+  "raw_zero_duration_global_indexes": [
+    5,
+    7,
+    10,
+    17,
+    25,
+    38,
+    59,
+    64,
+    86,
+    87,
+    114,
+    135,
+    139,
+    140,
+    146,
+    169,
+    185,
+    194,
+    197,
+    226,
+    230,
+    265,
+    271,
+    294,
+    303,
+    344,
+    372
+  ],
+  "raw_zero_duration_word_count": 27,
+  "repartitioned_successor_count": 25,
+  "runs_with_preceding_gap": 11,
+  "selected_algorithm": "adjacent_successor_partition_v1",
+  "source_operation": "v3-01-rc21-openai-transcription-asr-al-0001-9753fc22463162401f1548bafbd0688620a4efb6239fcbbcff6fe3e87655fa0e-call-01",
+  "source_terminal_bytes_unchanged": true,
+  "source_terminal_hash_after": "4fd23531dee1bdcc7920d7f090059f72dcac3961eb4aff762d46de8d822852c9",
+  "source_terminal_hash_before": "4fd23531dee1bdcc7920d7f090059f72dcac3961eb4aff762d46de8d822852c9",
+  "source_terminal_sha256": "4fd23531dee1bdcc7920d7f090059f72dcac3961eb4aff762d46de8d822852c9",
+  "terminal_operation_consumed": true,
+  "verdict": "PASS_OFFLINE_DERIVATION_CANDIDATE",
+  "word_count": 412,
+  "word_timing_manifest_sha256": "539781ddedaced50298747bb7f50b7ee36b0ab50c9222e172dbadb2762b4a298"
+}

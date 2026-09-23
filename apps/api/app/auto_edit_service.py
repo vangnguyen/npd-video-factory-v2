@@ -11,6 +11,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from .asr_prompt_profile import prompt_profile_sha256, validate_prompt_profile
+from .asr_derived_timing import derive_positive_duration_transcript
 from .auto_edit_logic import build_highlights, build_scenes, build_silence_decisions
 from .auto_edit_models import (
     AutoEditAnalysisRead,
@@ -369,6 +370,7 @@ class AutoEditAnalysisService:
         signal_provider: MediaSignalProvider,
         staging_root: Path,
         provider_safety: ProviderSafetyController | None = None,
+        derived_timing_enabled: bool = False,
     ):
         self.repository = repository
         self.platform = platform
@@ -377,10 +379,16 @@ class AutoEditAnalysisService:
         self.signal_provider = signal_provider
         self.staging_root = staging_root.resolve()
         self.provider_safety = provider_safety or ProviderSafetyController.fail_closed()
+        self.derived_timing_enabled = derived_timing_enabled
 
     async def analyze(
         self, project_id: str, payload: AutoEditAnalysisRequest
     ) -> AutoEditAnalysisRead:
+        if (
+            payload.word_timing_policy != "strict_provider_intervals"
+            and not self.derived_timing_enabled
+        ):
+            raise ValueError("DERIVED_TIMING_POLICY_NOT_ENABLED")
         asset = await self.repository.get_asset(payload.asset_id)
         if asset is None or asset.project_id != project_id:
             raise KeyError(payload.asset_id)
@@ -567,7 +575,14 @@ class AutoEditAnalysisService:
                 },
                 actual_cost_vnd=transcription_result.value.actual_cost_vnd,
             )
-            downstream_transcript = require_positive_duration_transcript(transcript)
+            downstream_transcript = (
+                require_positive_duration_transcript(transcript)
+                if payload.word_timing_policy == "strict_provider_intervals"
+                else derive_positive_duration_transcript(
+                    transcript,
+                    algorithm=payload.word_timing_policy,
+                )
+            )
             scenes = build_scenes(
                 duration=float(source_media.duration_seconds),
                 signals=signals,

@@ -27,19 +27,22 @@ class ProviderWord:
     end_seconds: float
     text: str
     confidence: float | None
-    timing_semantics: Literal["positive_interval", "provider_boundary_point"] = (
+    timing_semantics: Literal[
+        "positive_interval",
+        "provider_boundary_point",
+        "derived_positive_interval",
+    ] = (
         "positive_interval"
     )
 
     def __post_init__(self) -> None:
         if self.start_seconds < 0 or self.end_seconds < self.start_seconds:
             raise ValueError("provider word timestamps must be nonnegative and ordered")
-        expected = (
-            "provider_boundary_point"
-            if self.end_seconds == self.start_seconds
-            else "positive_interval"
-        )
-        if self.timing_semantics != expected:
+        if self.end_seconds == self.start_seconds:
+            valid_semantics = {"provider_boundary_point"}
+        else:
+            valid_semantics = {"positive_interval", "derived_positive_interval"}
+        if self.timing_semantics not in valid_semantics:
             raise ValueError("provider word timing semantics do not match its timestamps")
 
 

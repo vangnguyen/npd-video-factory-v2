@@ -195,6 +195,10 @@ class AutoEditAnalysisRequest(StrictModel):
     minimum_silence_duration: float = Field(default=0.5, ge=0.1, le=10)
     padding_before: float = Field(default=0.08, ge=0, le=2)
     padding_after: float = Field(default=0.08, ge=0, le=2)
+    word_timing_policy: Literal[
+        "strict_provider_intervals",
+        "adjacent_successor_partition_v1",
+    ] = "strict_provider_intervals"
 
 
 class AutoEditAnalysisRead(StrictModel):
