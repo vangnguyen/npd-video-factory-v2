@@ -1,8 +1,9 @@
 # Master Lane B — Vietnamese TTS readiness (B1–B7)
 
-This is an offline source candidate based on governance main
-`6a0b7a52400458e4e91691251b0a42d827b4aa48` and the unchanged RC-21 tag
-`vf-v3-01-rc21` (`6dcf144a4e3830e27fd617e52bc8eeab0952126e`).
+This offline source candidate was reconciled on 2026-09-23 onto exact
+post-PR #87 governance main
+`56fc2c4ddcc0b220510051a5148d9ba913965357`. The RC-21 tag remains immutable
+at `vf-v3-01-rc21` (`6dcf144a4e3830e27fd617e52bc8eeab0952126e`).
 It is **not** RC-21 executable authority. Any executable-tree-changing merge
 requires Owner Gate O1 and fresh lineage. The mock artifacts are non-speech
 tones; they cannot satisfy a real voice or G-11 human acceptance decision.
