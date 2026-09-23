@@ -1,9 +1,49 @@
 # Video Factory V3-01 — Canonical handoff
 
 WORKSTREAM: Video Factory V3-01
-TASK: VF-V0S-B19G
-VERDICT: RC-21 GOVERNANCE-ONLY DELTA — exact-head G-08, PR CI, merge and exact-main/dual-CI closure required
+TASK: MASTER-LANE-A-RC22-GOVERNANCE
+VERDICT: RC-22 GOVERNANCE-ONLY DELTA — exact-head G-08, PR CI, merge and exact-main/dual-CI closure required
 REPO: vangnguyen/npd-video-factory-v2
+
+## RC-22 governance lineage — no execution authority
+
+The Master Parallel Continuation directive materialized the next sequential
+annotated tag `vf-v3-01-rc22` (tag object
+`2cb4ba02ba7a7bd9803740d48736bac77be35244`) on exact source main
+`281bde0bc5f9c0acca237cc33c86ff8b99c82c08`. Tag → commit and tag →
+canonical executable-tree SHA-256
+`e89157befd3905d66ac195a46fdc0b87b7d5abe6f5ceb6c61df1311d5d629b52`
+passed. Exact-main CI `35893028270` and independently dispatched RC CI
+`35928812166` both passed 5/5. RC provenance is `PASS_RC_ONLY`.
+
+The tagged source contains both
+`app.provider_single_dispatch.validate_single_dispatch` and
+`app.provider_single_dispatch.run_single_dispatch`. The check-only safety
+claim remains source/mock-tested until the fresh RC-22 ledger, operation,
+bundle and authority exist; this governance delta creates none of them.
+
+Canonical dual-CI currently returns `CI_PROVENANCE_INVALID` solely because
+RC-22 and main are still the same commit with no governance diff. This
+governance/evidence-only delta is the distinct-main candidate. Its exact
+post-merge main SHA, exact-main CI and dual-CI result must be verified after
+merge; candidate CI cannot substitute. See the
+[RC-22 lineage review](reviews/master-rc22-lineage/README.md). This delta
+changes zero executable/runtime paths.
+
+The deterministically derived first-lineage identity is
+`al-0001-58d0f85a2bd722a22b7bb60dadd97c22e8c2a4cbf1ae627a0e47b76ccec23800`;
+its future private ledger identity is
+`vf_vf_v3_01_rc22_0d09fd22d9bc2936353f366b06bfefad`, strictly
+`PLAN_ONLY / NOT_CREATED`. Fresh custody, Operation 1 rebind, bundle,
+G-01/G-02/G-03 authority and execution window remain required. RC-21 and its
+ledger, operation, bundle, approvals, authority, window and terminal ASR
+evidence remain immutable historical evidence; none transfers to RC-22.
+Operation 2 stays locked, kill switch engaged, bundle unmounted and
+Production `NO-GO`. Credential reads, budget reservation, provider calls,
+production business writes and added cost are zero.
+
+The sections below are historical RC-21 and earlier snapshots, preserved as
+evidence rather than current RC-22 execution authority.
 
 ## RC-21 governance lineage — no execution authority
 
