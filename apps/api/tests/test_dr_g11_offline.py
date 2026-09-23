@@ -131,6 +131,30 @@ def test_backup_audit_checks_all_files_and_lineage(tmp_path: Path) -> None:
         audit_backup(root, RC)
 
 
+def test_backup_audit_supports_relocated_ci_manifest_without_trusting_paths(tmp_path: Path) -> None:
+    root = tmp_path / "downloaded-backup"
+    root.mkdir()
+    hashes = {}
+    for name in BACKUP_FILES:
+        value = RC if name == "git-sha.txt" else "redis-recovery=rebuild-from-postgresql" if name == "redis-recovery-policy.txt" else "0015_v3_01_dispatch" if name == "migration-head.txt" else "synthetic"
+        (root / name).write_text(value, encoding="utf-8")
+        import hashlib
+        hashes[name] = hashlib.sha256((root / name).read_bytes()).hexdigest()
+    source = "/home/runner/work/project/e2e-artifacts/v3-01-drill/backups/locked"
+    (root / "SHA256SUMS").write_text(
+        "".join(f"{digest}  {source}/{name}\n" for name, digest in sorted(hashes.items())),
+        encoding="utf-8",
+    )
+    result = audit_backup(root, RC)
+    assert result["status"] == "PASS_LOCAL_BACKUP_INTEGRITY_ONLY"
+    assert set(result["files"]) == BACKUP_FILES
+    lines = (root / "SHA256SUMS").read_text(encoding="utf-8").splitlines()
+    lines[-1] = lines[-1].replace(source, "/different/source")
+    (root / "SHA256SUMS").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="share one source directory"):
+        audit_backup(root, RC)
+
+
 def test_disposable_rpo_rto_checked_without_production_claim() -> None:
     path = ROOT / "evidence/v3-01/vf-v3-01-20260828T073400Z-527fd1f/operations/dr-observability/drill-summary.json"
     report = json.loads(path.read_text(encoding="utf-8"))

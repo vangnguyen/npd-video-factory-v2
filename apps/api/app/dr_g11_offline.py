@@ -16,7 +16,7 @@ import math
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from decimal import Decimal
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Iterator, Mapping
 
 from jsonschema import Draft202012Validator, FormatChecker
@@ -110,12 +110,26 @@ def audit_backup(backup_dir: Path, expected_commit: str) -> dict[str, Any]:
     if sums.is_symlink() or not sums.is_file():
         raise ValueError("SHA256SUMS missing or symbolic link")
     observed: dict[str, str] = {}
+    absolute_manifest_parent: PurePosixPath | None = None
     for line in sums.read_text(encoding="utf-8").splitlines():
         match = re.fullmatch(r"([0-9a-f]{64})  (.+)", line)
         if match is None:
             raise ValueError("invalid checksum line")
-        named = Path(match.group(2))
-        target = named if named.is_absolute() else root / named
+        label = match.group(2)
+        posix_name = PurePosixPath(label)
+        if posix_name.is_absolute():
+            if ".." in posix_name.parts:
+                raise ValueError("absolute checksum label may not traverse")
+            if absolute_manifest_parent is None:
+                absolute_manifest_parent = posix_name.parent
+            elif posix_name.parent != absolute_manifest_parent:
+                raise ValueError("absolute checksum labels must share one source directory")
+            name = posix_name.name
+        else:
+            if "/" in label or "\\" in label or label in {"", ".", ".."}:
+                raise ValueError("relative checksum label must be a basename")
+            name = label
+        target = root / name
         if target.is_symlink():
             raise ValueError("backup checksum target is a symbolic link")
         resolved = target.resolve(strict=True)

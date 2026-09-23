@@ -2,7 +2,7 @@
 
 ## Binding and decision
 
-- Starting governance main: `6a0b7a52400458e4e91691251b0a42d827b4aa48`.
+- Exact Draft PR base governance main after the governance-only PR #84 merge: `83b68f28120421fb62967e47ece8290592cc4f78`.
 - Historical current executable RC: `vf-v3-01-rc21` at `6dcf144a4e3830e27fd617e52bc8eeab0952126e`.
 - Starting executable-tree SHA: `e75e284a8cebb9864ed441c93cafea17717f247729fe0f3635e1a4f106795bd0`.
 - This branch changes executable tooling. It is a **candidate**, not an RC-21 execution package. Merge is O1-gated; if merged, revalidate the tree and create fresh lineage before any authority.
