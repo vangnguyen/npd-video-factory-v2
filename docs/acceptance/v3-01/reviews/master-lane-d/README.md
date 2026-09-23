@@ -2,9 +2,9 @@
 
 ## Binding and decision
 
-- Exact Draft PR base after the approved PR #87 positive-duration timing merge and exact-main closure: `56fc2c4ddcc0b220510051a5148d9ba913965357`.
+- Exact Draft PR base after the approved PR #87 positive-duration timing merge, PR #85 TTS-readiness merge, and their exact-main closures: `3dc50a8e77959944e3f60499be19f6bdf5e1dcd4`.
 - Historical current executable RC: `vf-v3-01-rc21` at `6dcf144a4e3830e27fd617e52bc8eeab0952126e`.
-- Starting executable-tree SHA: `f19a721d00e802fa5e6156a26d4bfb76ecf71036e701ee416af7997a064bf502`.
+- Starting executable-tree SHA: `40a78764dd09d1d58a29ea6cd1416b973a4856bfaba7ebf06325f0902172c443`.
 - This branch changes executable tooling. It is a **candidate**, not an RC-21 execution package. Merge is O1-gated; if merged, revalidate the tree and create fresh lineage before any authority.
 - Production remains `NO-GO`; no provider credential, real provider call, budget reservation, external alert, deploy, publish, production backup or restore is authorized here.
 
@@ -15,6 +15,12 @@ truth. G-11 locks the exact timeline, subtitle and automated-QC bytes used for
 review; their derivation/provenance remains part of those bound artifacts, and
 neither an artifact hash match nor structural validation attests human
 acceptance.
+
+PR #85 adds mock/offline TTS readiness only. This candidate does not convert
+that preparation into credential, provider-call, spend, or voice-acceptance
+authority. Real TTS evaluation remains O2-gated and final voice/listening
+acceptance remains O5-gated. G-11 structural validation and artifact hashes do
+not satisfy either gate.
 
 ## D1–D10 evidence boundary
 
