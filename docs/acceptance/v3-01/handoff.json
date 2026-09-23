@@ -334,6 +334,6 @@
     "vision_consecutive": "2/2 PASS",
     "production": "NO-GO"
   },
-  "evidence_pointer": "docs/acceptance/v3-01/reviews/vf-v0s-b19g/README.md",
-  "next_safe_action": "After exact-head G-08, governance-only merge, fresh exact-main CI and RC-21 dual-CI provenance PASS, report this exact governance baseline for the Master Parallel Execution Directive. Do not create the fresh ledger in B19G."
+  "evidence_pointer": "docs/acceptance/v3-01/reviews/master-rc22-lineage/README.md",
+  "next_safe_action": "After this governance-only parity correction, require fresh exact-main CI and RC-22 dual-CI provenance PASS before creating and qualifying the fresh RC-22 durable ledger custody. Stop before Operation 1 rebind until custody passes."
 }
