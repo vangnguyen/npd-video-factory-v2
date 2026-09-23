@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; media-src blob:; connect-src 'none'; form-action 'none'">
+  <title>V3-01 G-11 offline review preparation</title>
+  <style>
+    body { color:#f4f5f7; background:#111827; font:16px/1.5 system-ui,sans-serif; margin:0 auto; max-width:1000px; padding:1rem; }
+    h1,h2 { line-height:1.2; } section { border:1px solid #64748b; border-radius:.7rem; margin:1rem 0; padding:1rem; }
+    label { display:block; margin:.7rem 0; } input { display:block; width:100%; margin:.2rem 0; }
+    video,audio { display:block; width:100%; max-height:75vh; margin:1rem 0; }
+    output { display:block; white-space:pre-wrap; overflow-wrap:anywhere; border:1px solid #64748b; padding:.7rem; min-height:2rem; }
+    .warning { color:#ffcf7f; } .ok { color:#a7f3d0; }
+  </style>
+</head>
+<body>
+  <h1>G-11 — offline desktop/mobile watch &amp; headphone/phone-speaker listen</h1>
+  <p class="warning">Preparation tool only. This page never uploads media, marks a check PASS, or grants production/publish authority. Reopen the exact locked video on both desktop and phone. Listen all the way through with headphones and again on a phone speaker. Record the human decision in the canonical 27-check template.</p>
+  <section>
+    <h2>Exact artifact lock</h2>
+    <label>Lock manifest JSON<input id="lock" type="file" accept=".json,application/json"></label>
+    <div id="inputs"></div>
+    <output id="verification" aria-live="polite">Select the lock manifest and all seven bound files. No artifact is verified yet.</output>
+  </section>
+  <section>
+    <h2>Full video watch</h2>
+    <video id="video" controls playsinline preload="metadata"></video>
+    <p>Desktop/large-screen and mobile-screen reviews are separate human contexts. Playback controls do not prove a full watch; record start/end and any defect timestamps manually.</p>
+  </section>
+  <section>
+    <h2>Complete audio listening</h2>
+    <audio id="voice" controls preload="metadata"></audio>
+    <audio id="music" controls preload="metadata"></audio>
+    <p>Use the final video audio for voice/music balance. The isolated tracks above help identify defects but do not substitute for a full listen to the final mix with headphones and through a phone speaker.</p>
+  </section>
+  <section>
+    <h2>Human G-11 record</h2>
+    <p>Complete all 27 checks in <code>V3-01-G11-HUMAN-QUALITY-REVIEW.template.json</code>. Bind the reviewer, UTC start/end, exact RC and seven hashes. Use <code>python -m app.dr_g11_offline validate-review</code> for structural validation. An automated result cannot attest the human watch/listen.</p>
+  </section>
+  <script>
+    'use strict';
+    const names = ['final_video','timeline','subtitle','voice','music','rights_manifest','automated_qc'];
+    const label = {final_video:'Final video',timeline:'Timeline',subtitle:'Subtitle',voice:'Voice track',music:'Music track',rights_manifest:'Rights manifest',automated_qc:'Automated QC receipt'};
+    const selection = document.querySelector('#inputs');
+    const display = document.querySelector('#verification');
+    const urls = new Map();
+    let lock = null;
+    const hex = buffer => Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, '0')).join('');
+    function canonical(value) {
+      if (Array.isArray(value)) return value.map(canonical);
+      if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]));
+      return value;
+    }
+    for (const name of names) {
+      const row = document.createElement('label');
+      row.textContent = label[name];
+      const input = document.createElement('input');
+      input.type = 'file'; input.id = name;
+      if (name === 'final_video') input.accept = 'video/*';
+      if (name === 'voice' || name === 'music') input.accept = 'audio/*';
+      input.addEventListener('change', verify);
+      row.append(input); selection.append(row);
+    }
+    document.querySelector('#lock').addEventListener('change', async event => {
+      lock = null;
+      try {
+        const file = event.target.files[0];
+        if (!file) throw new Error('No manifest selected');
+        const parsed = JSON.parse(await file.text());
+        if (parsed.status !== 'LOCKED_FOR_REVIEW_NOT_ACCEPTED' || !parsed.artifact_sha256 || names.some(name => !/^[a-f0-9]{64}$/.test(parsed.artifact_sha256[name] || ''))) throw new Error('Invalid or incomplete artifact lock');
+        const unsigned = {...parsed}; delete unsigned.manifest_sha256;
+        const expected = hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(canonical(unsigned)))));
+        if (expected !== parsed.manifest_sha256) throw new Error('Artifact lock SHA mismatch');
+        lock = parsed;
+        await verify();
+      } catch (error) { display.textContent = String(error); display.className = 'warning'; }
+    });
+    async function verify() {
+      if (!lock) { display.textContent = 'Artifact lock not loaded.'; display.className = 'warning'; return; }
+      const messages = [`RC commit: ${lock.release_candidate_commit}`, `Lock SHA: ${lock.manifest_sha256}`];
+      let allVerified = true;
+      for (const name of names) {
+        const file = document.getElementById(name).files[0];
+        if (!file) { messages.push(`${label[name]}: MISSING`); allVerified = false; continue; }
+        const actual = hex(await crypto.subtle.digest('SHA-256', await file.arrayBuffer()));
+        const match = actual === lock.artifact_sha256[name];
+        messages.push(`${label[name]}: ${match ? 'HASH MATCH' : 'HASH MISMATCH'}`);
+        allVerified &&= match;
+        if (name === 'final_video' || name === 'voice' || name === 'music') {
+          if (urls.has(name)) URL.revokeObjectURL(urls.get(name));
+          const url = URL.createObjectURL(file); urls.set(name, url);
+          const player = document.getElementById(name === 'final_video' ? 'video' : name);
+          player.src = match ? url : '';
+        }
+      }
+      messages.push(allVerified ? 'All seven hashes match. HUMAN REVIEW STILL REQUIRED.' : 'Not ready for human review.');
+      display.textContent = messages.join('\n'); display.className = allVerified ? 'ok' : 'warning';
+    }
+  </script>
+</body>
+</html>
