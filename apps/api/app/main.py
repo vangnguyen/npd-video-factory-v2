@@ -262,6 +262,7 @@ async def lifespan(app: FastAPI):
         signal_provider=signal_provider,
         staging_root=settings.analysis_staging_root,
         provider_safety=app.state.provider_safety_controller,
+        derived_timing_enabled=settings.auto_edit_derived_timing_enabled,
     )
     if settings.vision_provider == "fixture":
         vision_provider = DeterministicVisionProvider()

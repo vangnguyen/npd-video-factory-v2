@@ -3,8 +3,9 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from .asr_derived_timing import DownstreamTranscript
 from .auto_edit_models import AutoEditAnalysisRequest
-from .auto_edit_providers import MediaSignals, PositiveDurationTranscript
+from .auto_edit_providers import MediaSignals
 
 
 _HOOK_WORDS = {
@@ -27,7 +28,7 @@ def _clamp(value: float) -> float:
 
 
 def build_scenes(
-    *, duration: float, signals: MediaSignals, transcript: PositiveDurationTranscript
+    *, duration: float, signals: MediaSignals, transcript: DownstreamTranscript
 ) -> list[dict[str, Any]]:
     provider_transcript = transcript.value
     boundary_values = sorted(
@@ -80,7 +81,7 @@ def build_scenes(
 def build_silence_decisions(
     *,
     signals: MediaSignals,
-    transcript: PositiveDurationTranscript,
+    transcript: DownstreamTranscript,
     config: AutoEditAnalysisRequest,
 ) -> list[dict[str, Any]]:
     words = [word for segment in transcript.value.segments for word in segment.words]

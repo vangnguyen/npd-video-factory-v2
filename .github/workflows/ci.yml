@@ -107,6 +107,7 @@ jobs:
           grep -qx 'HUMAN_WRITE_ENABLED=true' .env.example
           grep -qx 'TREND_FIXTURE_ENABLED=true' .env.example
           grep -qx 'AUTO_EDIT_FIXTURE_ENABLED=true' .env.example
+          grep -qx 'AUTO_EDIT_DERIVED_TIMING_ENABLED=false' .env.example
           grep -qx 'VISION_FIXTURE_ENABLED=true' .env.example
           grep -qx 'VISION_PROVIDER=fixture' .env.example
           grep -qx 'MEDIA_FIXTURE_ENABLED=true' .env.example
@@ -150,6 +151,7 @@ jobs:
           grep -Fq 'publish_requested: Literal[False] = False' apps/api/app/auto_edit_models.py
           grep -Fq '"paid_external_call": False' apps/api/app/auto_edit_service.py
           grep -Fq 'original_evidence": True' apps/api/app/auto_edit_providers.py
+          grep -Fq 'AUTO_EDIT_DERIVED_TIMING_ENABLED: "false"' deploy/production/docker-compose.production.yml
           grep -q '0003_v2_04' apps/api/migrations/versions/0003_v2_04_auto_edit_analysis.py
           grep -q 'ffmpeg' apps/api/Dockerfile
       - name: Verify V2-05 structured Vision and non-destructive reframe boundary

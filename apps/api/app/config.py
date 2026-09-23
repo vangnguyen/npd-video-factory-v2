@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     trend_fixture_enabled: bool = True
     trend_fixture_path: Path = Path(__file__).resolve().parent / "fixtures" / "trend-signals.json"
     auto_edit_fixture_enabled: bool = True
+    auto_edit_derived_timing_enabled: bool = False
     transcription_provider: str = "fixture"
     openai_transcription_model: str = ""
     openai_transcription_prompt_profile_id: str = ""

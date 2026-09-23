@@ -24,6 +24,7 @@ services:
       HUMAN_RATE_LIMIT_PER_MINUTE: "120"
       TREND_FIXTURE_ENABLED: "false"
       AUTO_EDIT_FIXTURE_ENABLED: "false"
+      AUTO_EDIT_DERIVED_TIMING_ENABLED: "false"
       VISION_FIXTURE_ENABLED: "false"
       MEDIA_FIXTURE_ENABLED: "false"
       ANALYTICS_FIXTURE_ENABLED: "false"
@@ -77,6 +78,7 @@ services:
       APP_ENV: production
       TREND_FIXTURE_ENABLED: "false"
       AUTO_EDIT_FIXTURE_ENABLED: "false"
+      AUTO_EDIT_DERIVED_TIMING_ENABLED: "false"
       VISION_FIXTURE_ENABLED: "false"
       MEDIA_FIXTURE_ENABLED: "false"
       ANALYTICS_FIXTURE_ENABLED: "false"

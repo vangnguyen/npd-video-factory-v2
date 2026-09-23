@@ -31,7 +31,8 @@ from .auto_edit_models import (
     UploadPartRead,
     UploadRead,
 )
-from .auto_edit_providers import PositiveDurationTranscript
+from .asr_derived_timing import DerivedPositiveDurationTranscript, DownstreamTranscript
+from .auto_edit_providers import ProviderTranscript
 from .db import AssetORM, ProjectVersionORM, VideoProjectORM, utc_now
 from .media_security import MediaScanResult
 from .platform_models import AssetRead
@@ -371,7 +372,7 @@ class AutoEditRepository:
         analysis_id: str,
         asset_id: str,
         provider_key: str,
-        transcript: PositiveDurationTranscript,
+        transcript: DownstreamTranscript,
         scenes: list[dict[str, Any]],
         silence_decisions: list[dict[str, Any]],
         highlights: list[dict[str, Any]],
@@ -387,50 +388,75 @@ class AutoEditRepository:
                     raise KeyError(analysis_id)
                 if analysis.status == "succeeded":
                     return
-                provider_transcript = transcript.value
-                transcript_id = _new_id("trn")
-                session.add(
-                    TranscriptORM(
-                        transcript_id=transcript_id,
-                        analysis_id=analysis_id,
-                        asset_id=asset_id,
-                        version=1,
-                        is_original_evidence=True,
-                        provider_key=provider_key,
-                        language=provider_transcript.language,
-                        confidence=provider_transcript.confidence,
-                        provenance_json=provider_transcript.provenance,
-                    )
-                )
-                word_ordinal = 0
-                for segment_ordinal, segment in enumerate(provider_transcript.segments):
-                    segment_id = _new_id("seg")
+                def add_transcript_version(
+                    provider_transcript: ProviderTranscript,
+                    *,
+                    version: int,
+                    is_original_evidence: bool,
+                ) -> None:
+                    transcript_id = _new_id("trn")
                     session.add(
-                        TranscriptSegmentORM(
-                            segment_id=segment_id,
+                        TranscriptORM(
                             transcript_id=transcript_id,
-                            ordinal=segment_ordinal,
-                            start_seconds=segment.start_seconds,
-                            end_seconds=segment.end_seconds,
-                            text=segment.text,
-                            speaker=segment.speaker,
-                            confidence=segment.confidence,
+                            analysis_id=analysis_id,
+                            asset_id=asset_id,
+                            version=version,
+                            is_original_evidence=is_original_evidence,
+                            provider_key=provider_key,
+                            language=provider_transcript.language,
+                            confidence=provider_transcript.confidence,
+                            provenance_json=provider_transcript.provenance,
                         )
                     )
-                    for word in segment.words:
+                    word_ordinal = 0
+                    for segment_ordinal, segment in enumerate(
+                        provider_transcript.segments
+                    ):
+                        segment_id = _new_id("seg")
                         session.add(
-                            TranscriptWordORM(
-                                word_id=_new_id("wrd"),
-                                transcript_id=transcript_id,
+                            TranscriptSegmentORM(
                                 segment_id=segment_id,
-                                ordinal=word_ordinal,
-                                start_seconds=word.start_seconds,
-                                end_seconds=word.end_seconds,
-                                text=word.text,
-                                confidence=word.confidence,
+                                transcript_id=transcript_id,
+                                ordinal=segment_ordinal,
+                                start_seconds=segment.start_seconds,
+                                end_seconds=segment.end_seconds,
+                                text=segment.text,
+                                speaker=segment.speaker,
+                                confidence=segment.confidence,
                             )
                         )
-                        word_ordinal += 1
+                        for word in segment.words:
+                            session.add(
+                                TranscriptWordORM(
+                                    word_id=_new_id("wrd"),
+                                    transcript_id=transcript_id,
+                                    segment_id=segment_id,
+                                    ordinal=word_ordinal,
+                                    start_seconds=word.start_seconds,
+                                    end_seconds=word.end_seconds,
+                                    text=word.text,
+                                    confidence=word.confidence,
+                                )
+                            )
+                            word_ordinal += 1
+
+                if isinstance(transcript, DerivedPositiveDurationTranscript):
+                    add_transcript_version(
+                        transcript.raw_value,
+                        version=1,
+                        is_original_evidence=True,
+                    )
+                    add_transcript_version(
+                        transcript.value,
+                        version=2,
+                        is_original_evidence=False,
+                    )
+                else:
+                    add_transcript_version(
+                        transcript.value,
+                        version=1,
+                        is_original_evidence=True,
+                    )
                 scene_ids: dict[int, str] = {}
                 for item in scenes:
                     scene_id = _new_id("scn")

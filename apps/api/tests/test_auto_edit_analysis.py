@@ -90,6 +90,51 @@ class UnsafeExternalTranscriptionProvider(DeterministicTranscriptionProvider):
         return await super().transcribe(*args, **kwargs)
 
 
+class BoundaryPointTranscriptionProvider(DeterministicTranscriptionProvider):
+    def __init__(self) -> None:
+        self.call_count = 0
+
+    async def transcribe(self, *args, **kwargs) -> ProviderTranscript:
+        del args, kwargs
+        self.call_count += 1
+        return ProviderTranscript(
+            language="vi",
+            confidence=None,
+            segments=(
+                ProviderSegment(
+                    start_seconds=1.0,
+                    end_seconds=2.0,
+                    text="Nội dung kiểm thử",
+                    speaker=None,
+                    confidence=None,
+                    words=(
+                        ProviderWord(
+                            start_seconds=1.0,
+                            end_seconds=1.0,
+                            text="Nội",
+                            confidence=None,
+                            timing_semantics="provider_boundary_point",
+                        ),
+                        ProviderWord(
+                            start_seconds=1.0,
+                            end_seconds=1.4,
+                            text="dung",
+                            confidence=None,
+                        ),
+                        ProviderWord(
+                            start_seconds=1.4,
+                            end_seconds=2.0,
+                            text="kiểm thử",
+                            confidence=None,
+                        ),
+                    ),
+                ),
+            ),
+            provenance={"fixture": True, "original_evidence": True},
+            actual_cost_vnd=Decimal("0"),
+        )
+
+
 async def bytes_stream(payload: bytes) -> AsyncIterator[bytes]:
     midpoint = max(1, len(payload) // 2)
     yield payload[:midpoint]
@@ -485,6 +530,106 @@ async def test_analysis_persists_original_transcript_scenes_safe_silence_and_hig
     restarted = AutoEditRepository(session_factory)
     recovered = await restarted.get_analysis(analysis.analysis_id)
     assert recovered == analysis
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_derived_timing_policy_persists_raw_and_derived_transcript_versions(
+    tmp_path: Path,
+) -> None:
+    engine, session_factory, platform, repository, upload_service, _, project, version = (
+        await setup_services(tmp_path)
+    )
+    completed = await upload_fixture(upload_service, project, version, synthetic_mp4())
+    service = AutoEditAnalysisService(
+        repository=repository,
+        platform=platform,
+        object_storage=upload_service.object_storage,
+        transcription_provider=BoundaryPointTranscriptionProvider(),
+        signal_provider=DeterministicMediaSignalProvider(),
+        staging_root=tmp_path / "analysis-derived-timing",
+        derived_timing_enabled=True,
+    )
+
+    analysis = await service.analyze(
+        project.project_id,
+        AutoEditAnalysisRequest(
+            asset_id=completed.asset_id,
+            word_timing_policy="adjacent_successor_partition_v1",
+        ),
+    )
+
+    assert analysis.status == "succeeded"
+    assert analysis.transcript is not None
+    assert analysis.transcript.version == 2
+    assert analysis.transcript.is_original_evidence is False
+    assert analysis.transcript.provenance["timing_derivation"][
+        "raw_provider_evidence_mutated"
+    ] is False
+    assert analysis.transcript.provenance["timing_derivation"][
+        "partitioned_boundary_point_count"
+    ] == 1
+    assert all(
+        word.end_seconds > word.start_seconds
+        for segment in analysis.transcript.segments
+        for word in segment.words
+    )
+
+    async with session_factory() as session:
+        rows = (
+            await session.execute(
+                text(
+                    "SELECT version, is_original_evidence FROM transcripts "
+                    "WHERE analysis_id = :analysis_id ORDER BY version"
+                ),
+                {"analysis_id": analysis.analysis_id},
+            )
+        ).all()
+        raw_zero_count = await session.scalar(
+            text(
+                "SELECT COUNT(*) FROM transcript_words AS words "
+                "JOIN transcripts AS transcripts "
+                "ON transcripts.transcript_id = words.transcript_id "
+                "WHERE transcripts.analysis_id = :analysis_id "
+                "AND transcripts.version = 1 "
+                "AND words.start_seconds = words.end_seconds"
+            ),
+            {"analysis_id": analysis.analysis_id},
+        )
+    assert rows == [(1, 1), (2, 0)]
+    assert raw_zero_count == 1
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_derived_timing_policy_is_fail_closed_before_provider_boundary(
+    tmp_path: Path,
+) -> None:
+    engine, _, platform, repository, upload_service, _, project, version = (
+        await setup_services(tmp_path)
+    )
+    completed = await upload_fixture(upload_service, project, version, synthetic_mp4())
+    provider = BoundaryPointTranscriptionProvider()
+    service = AutoEditAnalysisService(
+        repository=repository,
+        platform=platform,
+        object_storage=upload_service.object_storage,
+        transcription_provider=provider,
+        signal_provider=DeterministicMediaSignalProvider(),
+        staging_root=tmp_path / "analysis-derived-timing-disabled",
+    )
+
+    with pytest.raises(ValueError, match="DERIVED_TIMING_POLICY_NOT_ENABLED"):
+        await service.analyze(
+            project.project_id,
+            AutoEditAnalysisRequest(
+                asset_id=completed.asset_id,
+                word_timing_policy="adjacent_successor_partition_v1",
+            ),
+        )
+
+    assert provider.call_count == 0
+    assert await service.list(project.project_id) == []
     await engine.dispose()
 
 
