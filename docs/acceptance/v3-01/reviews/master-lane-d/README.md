@@ -2,11 +2,19 @@
 
 ## Binding and decision
 
-- Exact Draft PR base governance main after the governance-only PR #84 merge: `83b68f28120421fb62967e47ece8290592cc4f78`.
+- Exact Draft PR base after the approved PR #87 positive-duration timing merge and exact-main closure: `56fc2c4ddcc0b220510051a5148d9ba913965357`.
 - Historical current executable RC: `vf-v3-01-rc21` at `6dcf144a4e3830e27fd617e52bc8eeab0952126e`.
-- Starting executable-tree SHA: `e75e284a8cebb9864ed441c93cafea17717f247729fe0f3635e1a4f106795bd0`.
+- Starting executable-tree SHA: `f19a721d00e802fa5e6156a26d4bfb76ecf71036e701ee416af7997a064bf502`.
 - This branch changes executable tooling. It is a **candidate**, not an RC-21 execution package. Merge is O1-gated; if merged, revalidate the tree and create fresh lineage before any authority.
 - Production remains `NO-GO`; no provider credential, real provider call, budget reservation, external alert, deploy, publish, production backup or restore is authorized here.
+
+PR #87 preserves raw provider timing evidence and adds only a separately
+provenanced, opt-in positive-duration representation whose checked-in defaults
+remain disabled. This candidate does not classify derived timing as raw/provider
+truth. G-11 locks the exact timeline, subtitle and automated-QC bytes used for
+review; their derivation/provenance remains part of those bound artifacts, and
+neither an artifact hash match nor structural validation attests human
+acceptance.
 
 ## D1–D10 evidence boundary
 
