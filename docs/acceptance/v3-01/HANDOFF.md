@@ -1,5 +1,26 @@
 # Video Factory V3-01 — Canonical handoff
 
+## VF-EXECUTOR-01 current workstream checkpoint — NOT QUALIFIED
+
+The execution-plane candidate is on `codex/vf-executor-01`, based on
+`7c023307d6a1e56a732a6ca96235a7ab3b32a253`. Repository-scoped runner
+`npd-vf-vangnguyen-ubuntu` (ID 21) is registered on `VANGNGUYEN` / Ubuntu WSL2
+as `vf-executor`, **OFFLINE / QUARANTINED**, without a service or provider
+credential/custody grants. E1–E10 and the actual qualification workflow remain
+NOT TESTED. The source candidate adds zero-call probes and strictly structured,
+unconditionally blocked execution requests, not a completed dispatch plane.
+
+Provider calls, provider credential reads, budget reservation, operation
+consumption, production business writes and provider cost are all zero in this
+workstream. A short-lived GitHub runner registration token was handled in
+memory without logging. RC-22 and its closed window are unchanged. No O2 is
+requested. Executable changes require Draft PR, candidate CI, completed G-08
+and Mandatory Owner Gate O1 before merge; no automatic merge is authorized.
+
+See [host inventory, probes, security blockers and startup boundary](reviews/vf-executor-01/README.md)
+and [G-08 technical review](reviews/vf-executor-01/G08_SOURCE_REVIEW.md).
+The earlier RC-22 and prior-workstream handoff sections below are preserved.
+
 WORKSTREAM: Video Factory V3-01
 TASK: MASTER-LANE-A-RC22-GOVERNANCE
 VERDICT: RC-22 GOVERNANCE-ONLY DELTA — exact-head G-08, PR CI, merge and exact-main/dual-CI closure required
