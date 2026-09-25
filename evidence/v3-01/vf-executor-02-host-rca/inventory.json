@@ -1,0 +1,83 @@
+{
+  "kind": "PROVISIONING_RCA_ONLY",
+  "host": "VANGNGUYEN",
+  "kernel": "6.6.87.2-microsoft-standard-WSL2",
+  "install": "/var/lib/npd-vf-runner/runner",
+  "systemd": "systemd",
+  "runner_user": "uid=997(vf-executor) gid=989(vf-executor) groups=989(vf-executor)",
+  "service_binding": {
+    "present": false
+  },
+  "registration": {
+    "agentId": 21,
+    "agentName": "npd-vf-vangnguyen-ubuntu",
+    "poolId": 1,
+    "poolName": "Default",
+    "workFolder": "_work",
+    "gitHubUrl": "https://github.com/vangnguyen/npd-video-factory-v2"
+  },
+  "version": "2.337.0",
+  "listener_count": 0,
+  "worker_count": 0,
+  "service_units": "",
+  "journal": {
+    "available": false,
+    "reason": "NO_SERVICE_BINDING"
+  },
+  "diagnostics": [
+    {
+      "name": "Runner_20260925-155250-utc.log",
+      "bytes": 4991,
+      "configuration_completed": false,
+      "listening_for_jobs": false,
+      "error_lines": 0,
+      "connectivity_check": false
+    },
+    {
+      "name": "Runner_20260925-155427-utc.log",
+      "bytes": 18528,
+      "configuration_completed": false,
+      "listening_for_jobs": false,
+      "error_lines": 0,
+      "connectivity_check": false
+    },
+    {
+      "name": "Runner_20260925-160250-utc.log",
+      "bytes": 4991,
+      "configuration_completed": false,
+      "listening_for_jobs": false,
+      "error_lines": 0,
+      "connectivity_check": false
+    }
+  ],
+  "admission_policy": {
+    "present": true,
+    "uid": 0,
+    "mode": "0o644"
+  },
+  "approved_workflow_commit_count": 0,
+  "job-started.sh": {
+    "present": true,
+    "uid": 0,
+    "mode": "0o755"
+  },
+  "job-started.py": {
+    "present": true,
+    "uid": 0,
+    "mode": "0o755"
+  },
+  "kill-switch": {
+    "present": true,
+    "uid": 0,
+    "mode": "0o644"
+  },
+  "executor.json": {
+    "present": false
+  },
+  "execution-catalog.json": {
+    "present": false
+  },
+  "runtime_root": {
+    "present": false
+  }
+}

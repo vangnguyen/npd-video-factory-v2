@@ -150,7 +150,7 @@ def test_concurrent_attempt_blocks_and_lock_inode_survives(tmp_path):
 
 def test_bundle_fixture_cleanup_and_rejection(tmp_path):
     result = q.fixture_mount(tmp_path)
-    assert result["loader_probe"] == "INVALID_FIXTURE_REJECTED"
+    assert result["loader_probe"] == "VALID_EXPIRED_SYNTHETIC_FIXTURE_LOADED"
     assert list(tmp_path.iterdir()) == []
 
 

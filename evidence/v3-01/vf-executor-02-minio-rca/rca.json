@@ -1,0 +1,61 @@
+{
+  "task": "VF-EXECUTOR-02",
+  "track": "E1",
+  "verdict": "BLOCKED_REGISTRY_ACCESS",
+  "candidate_head": "86d934638ba7ee9c24319f4dc9626e9d3299fb73",
+  "ci_run": 36155628327,
+  "ci_job": 108139352406,
+  "step": "Run bash scripts/e2e-smoke.sh",
+  "image": "quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+  "release": "RELEASE.2025-09-07T16-13-09Z",
+  "failure": "unauthorized: access to the requested resource is not authorized",
+  "environment": {
+    "actions_runner": "2.337.0",
+    "runner": "GitHub-hosted Ubuntu24.04.5",
+    "published_compose": "2.38.2",
+    "image": "20260920.314.1",
+    "actual_engine_version": "NOT_EMITTED",
+    "published_docker_engine": "28.0.4"
+  },
+  "registry_checks": {
+    "dockerhub_same_digest_anonymous_bearer": 401,
+    "tls_verification": true,
+    "dockerhub_release_tag_api": 404,
+    "quay_anonymous_bearer_digest": 401,
+    "quay_repo_api": 401,
+    "owned_credentials_used": false,
+    "quay_anonymous_digest": 401
+  },
+  "classification": "D: Quay public image authorization/availability. Exact upstream administrative reason cannot be inferred from401. Direct HTTPS rules out Docker-only helper problem. Not an observed architecture mismatch or invalid digest response.",
+  "history": {
+    "amd64_and_rootfs_identity": "VERIFIED_THEN",
+    "fix_commit": "ed976c0e222ef2d732bd5bf6b822ba845b2a56de",
+    "pr": 61,
+    "docs_commit": "d7852b682b3042caebe6dfe280fc89591d4874df",
+    "historical_pass_not_current": true,
+    "previous_http": 200,
+    "evidence": "evidence/v3-01/vf-v0f-20260912T081435Z-5fef0ec-minio-quay-pin"
+  },
+  "inventory": {
+    "overlay": "No override",
+    "scripts_workflows_fixtures": "Consume compose; no additional operative reference",
+    "test": "apps/api/tests/test_minio_quay_digest_contract.py",
+    "operative": "docker-compose.yml:32"
+  },
+  "local": {
+    "full_e2e": "NOT_RUN",
+    "cached_image": "NOT_RUN",
+    "engine": "UNAVAILABLE",
+    "startup_health_crud_persistence_restart_shutdown": "NOT_RUN",
+    "contract_tests": "8 passed",
+    "desktop_failure": "sailor-ingest.sock cannot be renamed to .stale; Windows error1920",
+    "recovery": "Supported desktop status/stop hung; failed Desktop/backend processes stopped; stale socket rename failed; hidden restart attempted. No factory reset or volume deletion.",
+    "docker_client": "29.7.2 windows/amd64"
+  },
+  "runtime_changed": false,
+  "provider_calls": 0,
+  "budget_reserved_vnd": 0,
+  "operation_consumption": 0,
+  "actual_cost_vnd": 0,
+  "next_safe_action": "Restore authorized registry access or approved identical same-release immutable mirror; repair Desktop startup for cache verification; run fresh pull, compatibility and full E2E. No upgrade or floating reference."
+}

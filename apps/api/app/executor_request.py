@@ -1,12 +1,9 @@
-"""Strict requests and an unconditional VF-EXECUTOR-01 no-call latch.
-
-Connecting run_single_dispatch requires a later reviewed source change. No
-workflow input, repository variable or authority JSON can lift this latch.
-"""
+"""Strict structured requests; authority and dispatch stay host controlled."""
 from __future__ import annotations
 import json
 import os
 import re
+import asyncio
 from .executor_qualification import ZERO, Blocked, require
 
 FIELDS = {
@@ -30,9 +27,12 @@ def validate_request(value: object) -> dict[str, str]:
     return value
 
 def main() -> int:
-    code = "EXECUTOR_NOT_QUALIFIED_DISPATCH_DISABLED"
     try:
-        validate_request(json.loads(os.environ.get("VF_REQUEST_JSON", "null")))
+        value = validate_request(json.loads(os.environ.get("VF_REQUEST_JSON", "null")))
+        from .executor_execution import execute
+        result = asyncio.run(execute(value))
+        print(json.dumps(result))
+        return 0 if result["state"] == "QUALITY_REVIEW_REQUIRED" else 2
     except Blocked as exc:
         code = str(exc)
     except Exception:

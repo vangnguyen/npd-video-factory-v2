@@ -23,6 +23,7 @@ import subprocess
 import sys
 import tempfile
 import uuid
+from datetime import datetime, timezone
 
 REPOSITORY = "vangnguyen/npd-video-factory-v2"
 LABELS = frozenset({"self-hosted", "linux", "npd-video-factory", "provider-execution"})
@@ -54,6 +55,10 @@ def private_path(path: Path, *, directory: bool = False, root_owned: bool = Fals
     require(path.is_absolute(), "PATH_NOT_ABSOLUTE")
     for part in (path, *path.parents):
         require(not part.is_symlink(), "SYMLINK_BLOCKED")
+        if root_owned:
+            ancestor = part.stat()
+            require(ancestor.st_uid == 0 and not stat.S_IMODE(ancestor.st_mode) & 0o022,
+                    "TRUSTED_PATH_ANCESTOR_WRITABLE")
     info = path.stat()
     require(stat.S_ISDIR(info.st_mode) if directory else stat.S_ISREG(info.st_mode), "PATH_TYPE_INVALID")
     require(info.st_uid == (0 if root_owned else os.getuid()), "PATH_OWNER_INVALID")
@@ -75,6 +80,7 @@ class Host:
     migration_head: str
     secret_source: str
     kill_switch: str
+    executor_executable_tree_sha256: str = ""
 
     @classmethod
     def load(cls, path: Path = CONFIG) -> "Host":
@@ -87,6 +93,8 @@ class Host:
         require(LABELS <= {label.lower() for label in host.labels}, "RUNNER_LABELS_INVALID")
         require(bool(re.fullmatch(r"[a-f0-9]{40}", host.source_commit)), "SOURCE_COMMIT_INVALID")
         require(bool(re.fullmatch(r"[a-f0-9]{64}", host.binding_sha256)), "BINDING_HASH_INVALID")
+        require(bool(re.fullmatch(r"[a-f0-9]{64}", host.executor_executable_tree_sha256)),
+                "EXECUTOR_TREE_HASH_INVALID")
         return host
 
 
@@ -149,6 +157,10 @@ def runtime(host: Host) -> dict:
                               capture_output=True, text=True, timeout=30).stdout.strip()
     require(git("rev-parse", "HEAD") == host.source_commit, "RUNTIME_COMMIT_MISMATCH")
     require(not git("status", "--porcelain"), "RUNTIME_SOURCE_DIRTY")
+    from .executor_provenance import collect_executor_tree
+    tree = collect_executor_tree(source, host.source_commit)
+    require(tree["executor_executable_tree_sha256"] == host.executor_executable_tree_sha256,
+            "EXECUTOR_TREE_HASH_MISMATCH")
     with tempfile.TemporaryDirectory(prefix="vf-socket-") as directory:
         with socket.socket(socket.AF_UNIX) as server:
             server.bind(str(Path(directory) / "probe.sock"))
@@ -158,7 +170,8 @@ def runtime(host: Host) -> dict:
                 client.connect(str(Path(directory) / "probe.sock"))
                 connection, _ = server.accept()
                 connection.close()
-    return {"WSL_RUNTIME": "VERIFIED", "python": platform.python_version(), "distro": host.distro}
+    return {"WSL_RUNTIME": "VERIFIED", "python": platform.python_version(), "distro": host.distro,
+            "executor_executable_tree_sha256": tree["executor_executable_tree_sha256"]}
 
 
 async def custody(host: Host) -> dict:
@@ -220,23 +233,22 @@ def secret_presence(host: Host) -> dict:
 
 
 def fixture_mount(root: Path) -> dict:
-    from .provider_gate_loader import load_verified_provider_gate_bundle, ProviderGateBundleError
+    from .provider_gate_loader import load_verified_provider_gate_bundle
     # Runtime bundle mounts are private staged files, not privileged OS mounts.
     # This fixture cannot contain an Owner approval or an active operation.
     with tempfile.TemporaryDirectory(prefix="fixture-mount-", dir=root) as directory:
         mount = Path(directory)
-        raw = b'{"mode":"QUALIFICATION_ONLY","dispatch_enabled":false}'
+        raw = (Path(__file__).parent / "data/executor/expired-loader-fixture.json").read_bytes()
+        require(sha(raw) == "58d7298b2e69f63494070e30c7dba235f83c1337001af2ea8a839a47cf654e02",
+                "FIXTURE_HASH_MISMATCH")
         fixture = mount / "bundle.json"
         fixture.write_bytes(raw)
-        try:
-            load_verified_provider_gate_bundle(fixture, expected_bundle_sha256=sha(raw),
-                expected_rc_commit="0" * 40, expected_rc_tag="fixture-only")
-        except ProviderGateBundleError:
-            pass
-        else:
-            raise Blocked("FIXTURE_UNEXPECTEDLY_AUTHORIZED")
+        scope = load_verified_provider_gate_bundle(fixture, expected_bundle_sha256=sha(raw),
+            expected_rc_commit="f" * 40, expected_rc_tag="vf-v3-01-rc999999")
+        require(scope.expires_at_utc < datetime(2026, 9, 1, tzinfo=timezone.utc)
+                and not scope.active(datetime.now(timezone.utc)), "FIXTURE_MUST_BE_EXPIRED")
     require(not mount.exists(), "BUNDLE_CLEANUP_FAILED")
-    return {"BUNDLE_MOUNT_CAPABILITY": "VERIFIED", "loader_probe": "INVALID_FIXTURE_REJECTED",
+    return {"BUNDLE_MOUNT_CAPABILITY": "VERIFIED", "loader_probe": "VALID_EXPIRED_SYNTHETIC_FIXTURE_LOADED",
             "active_bundle_mounted": False, "cleanup": "VERIFIED"}
 
 
@@ -267,6 +279,7 @@ async def check_only(host: Host, root: Path) -> dict:
 
 async def qualify(host: Host, root: Path) -> dict:
     results = {gate: {"status": "NOT_TESTED"} for gate in GATES}
+    ledger = None
     async def gate(name, action):
         try:
             data = action()
@@ -299,9 +312,18 @@ async def qualify(host: Host, root: Path) -> dict:
         await gate("E7", lambda: secret_presence(host))
         await gate("E9", lambda: fixture_mount(root))
         await gate("E10", lambda: check_only(host, root))
-    report = {"task": "VF-EXECUTOR-01", "gates": results, **ZERO,
+        if ledger is not None and results["E10"]["status"] == "PASS":
+            try:
+                require(await custody(host) == ledger, "LEDGER_CHANGED_DURING_QUALIFICATION")
+                results["E10"]["ledger_unchanged"] = True
+            except Exception:
+                results["E10"] = {"status": "BLOCKED", "code": "LEDGER_RECHECK_FAILED"}
+    report = {"task": "VF-EXECUTOR-02", "gates": results, **ZERO,
         "verdict": "CAPABILITY_PROBES_PASS" if all(v["status"] == "PASS" for v in results.values()) else "BLOCKED",
         "execution_plane_qualified": False,
+        "source_commit": host.source_commit, "runner_name": host.runner_name,
+        "runner_id": 21,
+        "executor_executable_tree_sha256": host.executor_executable_tree_sha256,
         "security_and_dispatch_integration": "SEPARATE_REVIEW_REQUIRED"}
     if results["E10"]["status"] == "PASS":
         results["E10"]["EVIDENCE_RECORDER"] = "VERIFIED"
@@ -314,13 +336,13 @@ async def qualify(host: Host, root: Path) -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="VF-EXECUTOR-01 zero-call qualification")
+    parser = argparse.ArgumentParser(description="Video Factory zero-call executor qualification")
     parser.parse_args()  # No user-selected paths, commands or configuration.
     try:
         host = Host.load()
         private_path(Path(host.evidence_root), directory=True)
         with plane_lock(Path(host.lock_path)):
-            root = Path(host.evidence_root) / ("vf-executor-01-" + uuid.uuid4().hex)
+            root = Path(host.evidence_root) / ("vf-executor-02-" + uuid.uuid4().hex)
             root.mkdir(mode=0o700)
             report = asyncio.run(qualify(host, root))
         print(json.dumps({"verdict": report["verdict"], "gates": report["gates"], **ZERO}, sort_keys=True))

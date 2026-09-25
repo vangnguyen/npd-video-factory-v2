@@ -1,5 +1,23 @@
 # Video Factory V3-01 — Canonical handoff
 
+## VF-EXECUTOR-02 current checkpoint — BLOCKED / NOT QUALIFIED
+
+PR #90 remediation adds the canonical single-dispatch host adapter, promotion
+bindings, valid expired loader fixture, ledger immutability check and complete
+workflow-tree provenance. No host dispatch catalog is enabled. Runner 21 remains
+OFFLINE under deliberate local quarantine; supported GitHub connectivity checks
+pass, but no service is installed and enforced hostile-job admission is not
+qualified. The accepted immutable MinIO Quay pin now returns 401; no version or
+registry fallback was substituted. Canonical resource references remain unbound.
+
+E1–E10 live qualification is NOT RUN. G-08 and O1 remain blocked; no O1 or O2
+approval is requested. Provider calls, provider credential reads, reservation,
+consumption, business writes and provider cost remain zero. RC22 is unchanged.
+See [VF-EXECUTOR-02 RCA and lifecycle](reviews/vf-executor-02/README.md),
+[security review](reviews/vf-executor-02/SECURITY_DESIGN.md) and
+[G-08](reviews/vf-executor-02/G08_SOURCE_REVIEW.md). The VF-EXECUTOR-01 checkpoint
+below is historical and superseded, including its former unconditional latch.
+
 ## VF-EXECUTOR-01 current workstream checkpoint — NOT QUALIFIED
 
 The execution-plane candidate is on `codex/vf-executor-01`, based on

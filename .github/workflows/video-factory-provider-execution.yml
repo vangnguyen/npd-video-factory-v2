@@ -1,4 +1,4 @@
-name: Video Factory governed provider execution (VF-EXECUTOR-01 blocked)
+name: Video Factory governed provider execution
 
 on:
   workflow_dispatch:
@@ -53,7 +53,7 @@ jobs:
     if: github.repository == 'vangnguyen/npd-video-factory-v2' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, linux, npd-video-factory, provider-execution]
     steps:
-      - name: Validate structured request and enforce zero-call latch
+      - name: Invoke host-controlled canonical entrypoint (disabled until qualified)
         env:
           VF_REQUEST_JSON: ${{ toJSON(inputs) }}
         run: /opt/npd-video-factory/runtime/venv/bin/python -I /opt/npd-video-factory/runtime/request.py
