@@ -66,9 +66,9 @@ def test_valid_shaped_request_never_means_authority(request_payload, monkeypatch
 
 
 def test_request_logs_do_not_echo_secrets(monkeypatch, capsys):
-    monkeypatch.setenv("VF_REQUEST_JSON", '{"secret":"sk-this-is-a-fake-secret"}')
+    monkeypatch.setenv("VF_REQUEST_JSON", '{"secret":"sk-fake-fixture"}')
     assert request.main() == 2
-    assert "sk-this" not in capsys.readouterr().out
+    assert "sk-fake" not in capsys.readouterr().out
 
 
 @pytest.fixture
