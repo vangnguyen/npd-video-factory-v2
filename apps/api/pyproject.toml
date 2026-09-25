@@ -34,7 +34,7 @@ where = ["."]
 include = ["app*"]
 
 [tool.setuptools.package-data]
-app = ["data/whisper/*"]
+app = ["data/whisper/*", "data/executor/*"]
 
 [build-system]
 requires = ["setuptools>=75"]
