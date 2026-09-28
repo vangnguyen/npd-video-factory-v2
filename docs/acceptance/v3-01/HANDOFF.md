@@ -1,5 +1,80 @@
 # Video Factory V3-01 — Canonical handoff
 
+## VF-EXECUTOR-05A current checkpoint — SOURCE_READY_FOR_LIVE_QUALIFICATION
+
+Draft PR #91 source remediation starts from
+`e607463060c062b512bf43ac2b32ea3443b18045`. The executor qualification and
+runtime contract no longer embeds runner ID 21 and does not replace it with an
+embedded runner ID 6. The expected runner identity is loaded from the immutable,
+root-owned `/etc/npd-video-factory/executor.json` host binding and is matched as
+one exact seven-field value across the hash-pinned qualification promotion,
+probe receipt and independent security review: runner ID/name, execution
+organization, runner group/repository, source commit and executor executable-tree
+SHA-256. Caller requests cannot supply or override these identity fields.
+
+The deployment binding expected for a later, separately authorized live
+qualification is runner ID 6, `npd-vf-executor-ubuntu-02`, organization `npd-ai`,
+group `vf-provider-execution`, repository
+`npd-ai/npd-video-factory-executor`. ID 6 is an operator-side deployment
+expectation, not a production source constant. Negative source tests reject old
+ID 21, wrong or missing identity, caller identity input, cross-runner promotion,
+probe or security evidence, and executable-tree mismatch. Existing gates and
+zero-call controls remain enforced.
+
+G-08 is PASS for this bounded source change; overall execution readiness remains
+`BLOCKED_LIVE_QUALIFICATION_NOT_RUN`. The new runner remains OFFLINE, listener
+STOPPED, service NOT_INSTALLED, kill switch ENGAGED and live allowlist EMPTY.
+No `/opt` install, host configuration, qualification artifacts, live E1–E10 or
+self-hosted workflow were created or run. No O1/O2 request, provider credential
+read, reservation, provider call, operation consumption or cost occurred.
+
+The final PR head, executable-tree SHA-256 and true exact-head CI run/checkout
+identity are recorded in the external VF-EXECUTOR-05A handoff after the final
+commit and CI complete, avoiding a self-referential evidence commit. See the
+[source-remediation review](reviews/vf-executor-05a/README.md) and
+[G-08 source review](reviews/vf-executor-05a/G08_SOURCE_REVIEW.md). The
+VF-EXECUTOR-02 checkpoint below is historical and superseded for source state;
+its host/evidence history is not rewritten.
+
+## VF-EXECUTOR-02 current checkpoint — BLOCKED / NOT QUALIFIED
+
+PR #90 remediation adds the canonical single-dispatch host adapter, promotion
+bindings, valid expired loader fixture, ledger immutability check and complete
+workflow-tree provenance. No host dispatch catalog is enabled. Runner 21 remains
+OFFLINE under deliberate local quarantine; supported GitHub connectivity checks
+pass, but no service is installed and enforced hostile-job admission is not
+qualified. The accepted immutable MinIO Quay pin now returns 401; no version or
+registry fallback was substituted. Canonical resource references remain unbound.
+
+E1–E10 live qualification is NOT RUN. G-08 and O1 remain blocked; no O1 or O2
+approval is requested. Provider calls, provider credential reads, reservation,
+consumption, business writes and provider cost remain zero. RC22 is unchanged.
+See [VF-EXECUTOR-02 RCA and lifecycle](reviews/vf-executor-02/README.md),
+[security review](reviews/vf-executor-02/SECURITY_DESIGN.md) and
+[G-08](reviews/vf-executor-02/G08_SOURCE_REVIEW.md). The VF-EXECUTOR-01 checkpoint
+below is historical and superseded, including its former unconditional latch.
+
+## VF-EXECUTOR-01 current workstream checkpoint — NOT QUALIFIED
+
+The execution-plane candidate is on `codex/vf-executor-01`, based on
+`7c023307d6a1e56a732a6ca96235a7ab3b32a253`. Repository-scoped runner
+`npd-vf-vangnguyen-ubuntu` (ID 21) is registered on `VANGNGUYEN` / Ubuntu WSL2
+as `vf-executor`, **OFFLINE / QUARANTINED**, without a service or provider
+credential/custody grants. E1–E10 and the actual qualification workflow remain
+NOT TESTED. The source candidate adds zero-call probes and strictly structured,
+unconditionally blocked execution requests, not a completed dispatch plane.
+
+Provider calls, provider credential reads, budget reservation, operation
+consumption, production business writes and provider cost are all zero in this
+workstream. A short-lived GitHub runner registration token was handled in
+memory without logging. RC-22 and its closed window are unchanged. No O2 is
+requested. Executable changes require Draft PR, candidate CI, completed G-08
+and Mandatory Owner Gate O1 before merge; no automatic merge is authorized.
+
+See [host inventory, probes, security blockers and startup boundary](reviews/vf-executor-01/README.md)
+and [G-08 technical review](reviews/vf-executor-01/G08_SOURCE_REVIEW.md).
+The earlier RC-22 and prior-workstream handoff sections below are preserved.
+
 WORKSTREAM: Video Factory V3-01
 TASK: MASTER-LANE-A-RC22-GOVERNANCE
 VERDICT: RC-22 GOVERNANCE-ONLY DELTA — exact-head G-08, PR CI, merge and exact-main/dual-CI closure required

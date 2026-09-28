@@ -29,7 +29,7 @@ services:
       retries: 10
 
   minio:
-    image: quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e
+    image: ghcr.io/npd-ai/npd-minio@sha256:d37f79cb57ba531f92eeaf2a1a0e5f827dea982a429bb5a2903043c57ed04528
     restart: unless-stopped
     command: ["server", "/data", "--console-address", ":9001"]
     environment:
