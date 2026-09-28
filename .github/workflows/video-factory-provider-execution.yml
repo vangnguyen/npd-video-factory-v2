@@ -41,8 +41,7 @@ on:
         options: [asr]
         required: true
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
   group: npd-video-factory-execution-plane
@@ -50,10 +49,14 @@ concurrency:
 
 jobs:
   blocked-pre-call:
-    if: github.repository == 'vangnguyen/npd-video-factory-v2' && github.ref == 'refs/heads/main'
-    runs-on: [self-hosted, linux, npd-video-factory, provider-execution]
+    if: github.repository == 'npd-ai/npd-video-factory-executor' && github.ref == 'refs/heads/main'
+    runs-on:
+      group: vf-provider-execution
+      labels: [self-hosted, linux, x64, npd-video-factory, provider-execution]
+    timeout-minutes: 10
     steps:
-      - name: Invoke host-controlled canonical entrypoint (disabled until qualified)
+      # The host runtime remains fail-closed until qualification and activation.
+      - name: Invoke host-controlled canonical entrypoint
         env:
           VF_REQUEST_JSON: ${{ toJSON(inputs) }}
         run: /opt/npd-video-factory/runtime/venv/bin/python -I /opt/npd-video-factory/runtime/request.py

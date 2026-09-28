@@ -42,8 +42,9 @@ cd "$runner_root"
 # Runner CLI consumes ACTIONS_RUNNER_INPUT_TOKEN; no secret in argv or logs.
 # Configuration diagnostics remain private in the runner home, not evidence.
 if ! runuser -u "$runner_user" -- env ACTIONS_RUNNER_INPUT_TOKEN="$registration_token" \
-  ./config.sh --unattended --url https://github.com/vangnguyen/npd-video-factory-v2 \
-  --name npd-vf-vangnguyen-ubuntu --labels npd-video-factory,provider-execution \
+  ./config.sh --unattended --url https://github.com/npd-ai \
+  --runnergroup vf-provider-execution --name npd-vf-executor-ubuntu-02 \
+  --labels npd-video-factory,provider-execution \
   --work _work > "$runner_home/config-private.log" 2>&1; then
   unset registration_token
   echo 'BLOCKED: runner configuration failed; private host diagnostic retained'

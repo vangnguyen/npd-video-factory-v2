@@ -11,7 +11,7 @@ import stat
 import sys
 
 def allowed(environ, manifest):
-    repo = "vangnguyen/npd-video-factory-v2"
+    repo = "npd-ai/npd-video-factory-executor"
     workflows = {"video-factory-executor-qualification.yml", "video-factory-provider-execution.yml"}
     return (
         environ.get("GITHUB_REPOSITORY") == repo

@@ -239,7 +239,9 @@ def test_workflow_boundary_and_shared_concurrency():
     for workflow in workflows:
         triggers = workflow.get("on", workflow.get(True))
         assert set(triggers) == {"workflow_dispatch"}
+        assert workflow["permissions"] == {}
         for job in workflow["jobs"].values():
-            assert set(job["runs-on"]) == q.LABELS
+            assert job["runs-on"]["group"] == "vf-provider-execution"
+            assert set(job["runs-on"]["labels"]) == q.LABELS
             assert "refs/heads/main" in job["if"]
             assert all("uses" not in step for step in job["steps"])

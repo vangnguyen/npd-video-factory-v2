@@ -25,8 +25,8 @@ import tempfile
 import uuid
 from datetime import datetime, timezone
 
-REPOSITORY = "vangnguyen/npd-video-factory-v2"
-LABELS = frozenset({"self-hosted", "linux", "npd-video-factory", "provider-execution"})
+REPOSITORY = "npd-ai/npd-video-factory-executor"
+LABELS = frozenset({"self-hosted", "linux", "x64", "npd-video-factory", "provider-execution"})
 CONFIG = Path("/etc/npd-video-factory/executor.json")
 GATES = tuple(f"E{i}" for i in range(1, 11))
 ZERO = {"provider_calls": 0, "credential_reads": 0, "budget_reserved_vnd": "0",
