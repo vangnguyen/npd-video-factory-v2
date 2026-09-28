@@ -42,6 +42,12 @@ ADMISSION_MANIFEST_FIELDS = {
     "version", "mode", "approved_qualification_workflows",
     "approved_execution_workflows",
 }
+EXECUTION_PROVENANCE_FIELDS = {
+    "version", "source", "execution_organization", "execution_repository",
+    "runner_group", "repository_access", "selected_repositories",
+    "selected_workflows", "public_repositories_allowed",
+    "execution_workflow_commit",
+}
 GATES = tuple(f"E{i}" for i in range(1, 11))
 RUNNER_IDENTITY_FIELDS = (
     "runner_id", "runner_name", "execution_organization", "runner_group",
@@ -104,6 +110,7 @@ class Host:
     secret_source: str
     kill_switch: str
     executor_executable_tree_sha256: str = ""
+    execution_provenance: str = "/etc/npd-video-factory/execution-workflow-provenance.json"
 
     @classmethod
     def load(cls, path: Path = CONFIG) -> "Host":
@@ -126,6 +133,9 @@ class Host:
         require(isinstance(host.labels, list) and all(isinstance(label, str) for label in host.labels)
                 and LABELS <= {label.lower() for label in host.labels}, "RUNNER_LABELS_INVALID")
         require(bool(re.fullmatch(r"[a-f0-9]{64}", host.binding_sha256)), "BINDING_HASH_INVALID")
+        require(isinstance(host.execution_provenance, str)
+                and Path(host.execution_provenance).is_absolute(),
+                "EXECUTION_PROVENANCE_PATH_INVALID")
         return host
 
 
@@ -314,14 +324,37 @@ async def custody(host: Host) -> dict:
 
 
 def github(host: Host) -> dict:
-    result = subprocess.run(["git", "ls-remote", "--exit-code",
-        "https://github.com/" + host.execution_repository + ".git", "refs/heads/main"],
-        capture_output=True, text=True, timeout=30, check=True)
-    require(bool(re.fullmatch(r"[a-f0-9]{40}\s+refs/heads/main\s*", result.stdout)), "GITHUB_PROVENANCE_UNAVAILABLE")
-    observed = result.stdout.split()[0]
-    require(observed == host.execution_workflow_commit, "EXECUTION_WORKFLOW_PROVENANCE_MISMATCH")
-    return {"GITHUB_ACCESS": "VERIFIED", "observed_main": observed,
-            "execution_workflow_commit": host.execution_workflow_commit}
+    # The execution repository is private. Qualification receives no GitHub
+    # credential, so operator-observed topology is sealed into this root-owned
+    # artifact rather than weakening isolation or reusing runner registration.
+    path = Path(host.execution_provenance)
+    private_path(path, root_owned=True)
+    raw = path.read_bytes()
+    secret_scan(raw)
+    try:
+        value = json.loads(raw)
+    except (TypeError, ValueError):
+        raise Blocked("GITHUB_PROVENANCE_INVALID") from None
+    require(type(value) is dict and set(value) == EXECUTION_PROVENANCE_FIELDS
+            and value.get("version") == 1
+            and value.get("source") == "GITHUB_OPERATOR_VERIFIED"
+            and value.get("execution_organization") == host.execution_organization
+            and value.get("execution_repository") == host.execution_repository
+            and value.get("runner_group") == host.runner_group
+            and value.get("repository_access") == "SELECTED_REPOSITORIES"
+            and value.get("selected_repositories") == [host.execution_repository]
+            and value.get("selected_workflows") == [
+                QUALIFICATION_WORKFLOW_REF, EXECUTION_WORKFLOW_REF,
+            ]
+            and value.get("public_repositories_allowed") is False,
+            "GITHUB_PROVENANCE_INVALID")
+    observed = value.get("execution_workflow_commit")
+    require(observed == host.execution_workflow_commit,
+            "EXECUTION_WORKFLOW_PROVENANCE_MISMATCH")
+    return {"GITHUB_ACCESS": "VERIFIED_BY_ROOT_OWNED_OPERATOR_EVIDENCE",
+            "observed_main": observed,
+            "execution_workflow_commit": host.execution_workflow_commit,
+            "operator_provenance_sha256": sha(raw)}
 
 
 def provider_network() -> dict:

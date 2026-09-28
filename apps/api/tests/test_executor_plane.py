@@ -247,6 +247,50 @@ def test_missing_secret_source_does_not_read_plaintext(host, monkeypatch):
         q.secret_presence(host)
 
 
+def test_private_execution_repo_uses_root_owned_operator_provenance(
+    host, tmp_path, monkeypatch,
+):
+    monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    monkeypatch.setattr(q.subprocess, "run", lambda *a, **k: pytest.fail("network git"))
+    path = tmp_path / "execution-provenance.json"
+    bound = replace(host, execution_provenance=str(path))
+    path.write_text(json.dumps({
+        "version": 1,
+        "source": "GITHUB_OPERATOR_VERIFIED",
+        "execution_organization": host.execution_organization,
+        "execution_repository": host.execution_repository,
+        "runner_group": host.runner_group,
+        "repository_access": "SELECTED_REPOSITORIES",
+        "selected_repositories": [host.execution_repository],
+        "selected_workflows": [q.QUALIFICATION_WORKFLOW_REF, q.EXECUTION_WORKFLOW_REF],
+        "public_repositories_allowed": False,
+        "execution_workflow_commit": host.execution_workflow_commit,
+    }))
+    result = q.github(bound)
+    assert result["observed_main"] == host.execution_workflow_commit
+    assert result["GITHUB_ACCESS"] == "VERIFIED_BY_ROOT_OWNED_OPERATOR_EVIDENCE"
+
+
+def test_operator_provenance_mismatch_fails_closed(host, tmp_path, monkeypatch):
+    monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    path = tmp_path / "execution-provenance.json"
+    bound = replace(host, execution_provenance=str(path))
+    path.write_text(json.dumps({
+        "version": 1,
+        "source": "GITHUB_OPERATOR_VERIFIED",
+        "execution_organization": host.execution_organization,
+        "execution_repository": host.execution_repository,
+        "runner_group": host.runner_group,
+        "repository_access": "SELECTED_REPOSITORIES",
+        "selected_repositories": [host.execution_repository],
+        "selected_workflows": [q.QUALIFICATION_WORKFLOW_REF, q.EXECUTION_WORKFLOW_REF],
+        "public_repositories_allowed": False,
+        "execution_workflow_commit": "0" * 40,
+    }))
+    with pytest.raises(q.Blocked, match="EXECUTION_WORKFLOW_PROVENANCE_MISMATCH"):
+        q.github(bound)
+
+
 @pytest.mark.skipif(os.name != "posix", reason="requires real Unix ownership/fsync/flock")
 def test_evidence_persists_and_manifest_is_immutable(tmp_path):
     tmp_path.chmod(0o700)

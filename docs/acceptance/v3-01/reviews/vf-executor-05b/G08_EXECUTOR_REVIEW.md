@@ -10,6 +10,9 @@ Status: `SOURCE-SIDE PASS / LIVE QUALIFICATION PENDING`
   runner ID 6.
 - Qualification admission requires the private execution repository, main ref,
   exact workflow path and exact execution-repository workflow commit.
+- Private-repository E5 provenance is supplied by a root-owned operator artifact
+  bound to the observed runner-group repository/workflow restrictions and exact
+  execution-repository main commit; the runner receives no GitHub read token.
 - Qualification mode requires an empty paid/provider execution allowlist.
 - The kill switch must be `ENGAGED`.
 - Qualification reads custody in a read-only transaction and does not create a
@@ -28,8 +31,8 @@ attempt.
 
 ## Source validation
 
-- Focused executor tests: `250 passed, 1 skipped`.
-- Full regression: `1386 passed, 1 skipped`.
+- Focused executor tests: `252 passed, 1 skipped`.
+- Full regression: `1388 passed, 1 skipped`.
 - Migration head: `0015_v3_01_dispatch`.
 - Local Docker E2E: unavailable because no Docker CLI/daemon is installed; the
   canonical GitHub-hosted `Docker deterministic E2E` job is required before the
