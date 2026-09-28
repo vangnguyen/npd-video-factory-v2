@@ -1,0 +1,59 @@
+name: Video Factory governed provider execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation_id:
+        description: Exact approved operation identifier
+        type: string
+        required: true
+      bundle_id:
+        description: Host allowlist identifier (never a caller-selected path)
+        type: string
+        required: true
+      bundle_sha256:
+        description: Expected approved bundle SHA-256
+        type: string
+        required: true
+      loaded_scope_sha256:
+        description: Expected loaded scope SHA-256
+        type: string
+        required: true
+      authority_receipt_sha256:
+        description: Expected separate Owner O2 authority receipt SHA-256
+        type: string
+        required: true
+      rc_tag:
+        description: Approved immutable RC tag (RC-22 is closed)
+        type: string
+        required: true
+      rc_commit:
+        description: Expected RC commit
+        type: string
+        required: true
+      governance_main_sha:
+        description: Exact approved governance main SHA
+        type: string
+        required: true
+      provider_capability:
+        description: Approved capability
+        type: choice
+        options: [asr]
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npd-video-factory-execution-plane
+  cancel-in-progress: false
+
+jobs:
+  blocked-pre-call:
+    if: github.repository == 'vangnguyen/npd-video-factory-v2' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, npd-video-factory, provider-execution]
+    steps:
+      - name: Invoke host-controlled canonical entrypoint (disabled until qualified)
+        env:
+          VF_REQUEST_JSON: ${{ toJSON(inputs) }}
+        run: /opt/npd-video-factory/runtime/venv/bin/python -I /opt/npd-video-factory/runtime/request.py

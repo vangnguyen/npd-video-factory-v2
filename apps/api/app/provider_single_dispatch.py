@@ -86,7 +86,7 @@ class SingleDispatchPaths:
 class SingleDispatchOutcome:
     state: str
     code: str
-    dispatch_started: bool
+    dispatch_started: bool | None
     operation_consumed: bool | None
     charged_vnd: Decimal | None
     actual_cost_vnd: Decimal | None
@@ -163,6 +163,12 @@ def _write_once(path: Path, payload: dict[str, object]) -> str:
             stream.write(raw)
             stream.flush()
             os.fsync(stream.fileno())
+        if hasattr(os, "O_DIRECTORY"):
+            directory_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
     except BaseException:
         path.unlink(missing_ok=True)
         raise
@@ -670,9 +676,51 @@ async def run_single_dispatch(
     runtime_policy: ProviderSafetyPolicy,
     credential_resolver: Callable[[str], str],
     clock: Callable[[], datetime] = utc_now,
+    transition: Callable[[str], None] = lambda state: None,
+    final_preflight: Callable[[], None] = lambda: None,
+) -> SingleDispatchOutcome:
+    """Canonical entrypoint, including evidence for failures before reservation.
+
+    A transport-intent artifact makes an interrupted result ambiguous, never
+    proof of zero calls. Ledger reconciliation remains exclusively canonical.
+    """
+    try:
+        return await _run_single_dispatch(
+            paths, runtime_policy=runtime_policy, credential_resolver=credential_resolver,
+            clock=clock, transition=transition, final_preflight=final_preflight,
+        )
+    except BaseException:
+        try:
+            binding = load_binding(paths.binding, paths.binding_sha256)
+            recorder = _EvidenceRecorder(paths.evidence_directory, binding.operation_key)
+            if not (recorder.folder / "terminal.json").exists():
+                ambiguous = (recorder.folder / "dispatch-intent.json").exists()
+                recorder.seal({
+                    "code": "DISPATCH_REVIEW_REQUIRED" if ambiguous else "BLOCKED_PRE_CALL",
+                    "provider_call_state": "UNKNOWN" if ambiguous else "NOT_SENT",
+                    "operation_consumed": None if ambiguous else False,
+                    "kill_switch_after": "ENGAGED",
+                    "reservation_reconciled": None,
+                })
+        except Exception:
+            # Original error remains authoritative; wrapper also persists its
+            # independent terminal receipt. A failed seal is never a PASS.
+            pass
+        raise
+
+
+async def _run_single_dispatch(
+    paths: SingleDispatchPaths,
+    *,
+    runtime_policy: ProviderSafetyPolicy,
+    credential_resolver: Callable[[str], str],
+    clock: Callable[[], datetime] = utc_now,
+    transition: Callable[[str], None] = lambda state: None,
+    final_preflight: Callable[[], None] = lambda: None,
 ) -> SingleDispatchOutcome:
     """Canonical future execution entrypoint. Never valid for an older RC tree."""
     now = clock().astimezone(timezone.utc)
+    transition("BINDING_PREFLIGHT")
     validated = _validate_non_secret_bindings(
         paths, runtime_policy=runtime_policy, now=now,
         require_active_window=True,
@@ -684,10 +732,15 @@ async def run_single_dispatch(
         scope=scope, policy=runtime_policy, context=context, now=now,
         require_active_window=True,
     )
+    transition("LEDGER_PREFLIGHT")
     custody = await bootstrap_custody(
         paths.rc_source, binding, require_virgin_namespace=True,
     )
     _verify_virgin_custody(custody)
+    transition("BUNDLE_VALIDATED")
+    evidence = _EvidenceRecorder(paths.evidence_directory, context.operation_key)
+    evidence.arm(reserved_vnd=Decimal("0"), ledger_before="VIRGIN_NOT_CONSUMED")
+    transition("EVIDENCE_ARMED")
     # Only a future, explicitly authorized execution invokes this callable.
     # Resolve once after every public/non-secret binding and custody check,
     # before reserving; the value is never serialized or logged.
@@ -697,6 +750,7 @@ async def run_single_dispatch(
         raise SingleDispatchBlocked("CREDENTIAL_UNAVAILABLE") from None
     if not resolved_credential:
         raise SingleDispatchBlocked("CREDENTIAL_UNAVAILABLE")
+    transition("SECRET_AVAILABLE")
 
     def frozen_credential(alias: str) -> str:
         if alias != scope.credential_alias:
@@ -726,8 +780,8 @@ async def run_single_dispatch(
             scope=scope, context=context, repository=repository, provider=provider,
             policy=runtime_policy,
             asset=paths.asset, metadata=metadata,
-            evidence=_EvidenceRecorder(paths.evidence_directory, context.operation_key),
-            clock=clock,
+            evidence=evidence,
+            clock=clock, transition=transition, final_preflight=final_preflight,
         )
     finally:
         await engine.dispose()
@@ -744,6 +798,8 @@ async def _run_protocol(
     metadata: MediaMetadata,
     evidence: _EvidenceRecorder,
     clock: Callable[[], datetime],
+    transition: Callable[[str], None] = lambda state: None,
+    final_preflight: Callable[[], None] = lambda: None,
 ) -> SingleDispatchOutcome:
     """Testable state machine. Only run_single_dispatch establishes live trust."""
     states = ["INIT"]
@@ -784,27 +840,70 @@ async def _run_protocol(
         raise SingleDispatchBlocked("PROVIDER_REQUEST_ENVELOPE_MISMATCH")
     states.append("PREFLIGHT_VALIDATED")
     # The evidence destination must be fresh before creating a reservation.
-    if evidence.folder.exists():
+    if evidence.folder.exists() and not evidence.armed:
         raise SingleDispatchBlocked("EVIDENCE_PATH_ALREADY_EXISTS")
     before = await repository.dispatch_state(context)
     if before.status is not None:
         raise SingleDispatchBlocked("DUPLICATE_OPERATION_BLOCKED")
-    reservation = await repository.reserve_operation(
-        context, now=now, max_attempts=1, max_concurrent_calls=1,
-        per_operation_limit_vnd=scope.per_operation_limit_vnd,
-        daily_limit_vnd=scope.acceptance_window_limit_vnd,
-        circuit_failure_threshold=policy.circuit.failure_threshold,
-        circuit_cooldown_seconds=policy.circuit.cooldown_seconds,
-        retention_days=400, single_dispatch_protocol=True,
-    )
+    try:
+        reservation = await repository.reserve_operation(
+            context, now=now, max_attempts=1, max_concurrent_calls=1,
+            per_operation_limit_vnd=scope.per_operation_limit_vnd,
+            daily_limit_vnd=scope.acceptance_window_limit_vnd,
+            circuit_failure_threshold=policy.circuit.failure_threshold,
+            circuit_cooldown_seconds=policy.circuit.cooldown_seconds,
+            retention_days=400, single_dispatch_protocol=True,
+        )
+    except (Exception, asyncio.CancelledError):
+        # A lost acknowledgement can hide a committed reservation. Never retry
+        # reserve. One custody read and (only if proven pre-send) one release
+        # reconcile this attempt; unavailable/ambiguous custody stays unknown.
+        reconciled = False
+        try:
+            marker = await repository.dispatch_state(context)
+            if marker.status is None:
+                reconciled = True
+            elif marker.protocol_version == 1 and marker.status == "reserved" and not marker.started:
+                reconciled = await repository.release_pre_dispatch(context, now=clock().astimezone(timezone.utc))
+        except Exception:
+            pass
+        failure_state = "BLOCKED_PRE_CALL" if reconciled else "REVIEW_REQUIRED"
+        failure_code = "RESERVATION_FAILED_RELEASED" if reconciled else "RESERVATION_CUSTODY_UNKNOWN"
+        states.append(failure_state)
+        digest = None
+        try:
+            digest = evidence.seal({
+                "code": failure_code, "transitions": states,
+                "provider_call_state": "NOT_SENT",
+                "operation_consumed": False if reconciled else None,
+                "reservation_reconciled": reconciled,
+                "reservation_active": False if reconciled else None,
+                "kill_switch_after": "ENGAGED",
+            })
+        except Exception:
+            failure_state, failure_code = "REVIEW_REQUIRED", "EVIDENCE_SEAL_REVIEW_REQUIRED"
+        return SingleDispatchOutcome(
+            state=failure_state, code=failure_code, dispatch_started=False if reconciled else None,
+            operation_consumed=False if reconciled else None,
+            charged_vnd=Decimal("0") if reconciled else None,
+            actual_cost_vnd=Decimal("0") if reconciled else None,
+            evidence_sha256=digest, transitions=tuple(states),
+        )
     if not reservation.allowed:
         raise SingleDispatchBlocked(reservation.code)
     reserved = True
     states.append("RESERVED")
     started_at = clock().astimezone(timezone.utc)
     try:
-        evidence.arm(reserved_vnd=reservation.reserved_vnd, ledger_before="VIRGIN_NOT_CONSUMED")
+        if not evidence.armed:
+            evidence.arm(reserved_vnd=reservation.reserved_vnd, ledger_before="VIRGIN_NOT_CONSUMED")
         states.append("EVIDENCE_ARMED")
+        transition("BUDGET_RESERVED")
+        transition("FINAL_TIME_CHECK")
+        final_preflight()
+        if not scope.active(clock().astimezone(timezone.utc)):
+            raise SingleDispatchBlocked("BLOCKED_OUTSIDE_WINDOW")
+        transition("READY_TO_DISPATCH")
         states.append("READY_TO_DISPATCH")
 
         async def before_send(request_sha256: str, client_request_id: str) -> None:
@@ -816,6 +915,9 @@ async def _run_protocol(
             # Once that marker commits the adapter enters transport send with
             # no intervening file operation.
             evidence.mark_dispatch(request_sha256=request_sha256, client_request_id=client_request_id)
+            # SINGLE_DISPATCH denotes the single transport intent. This callback
+            # may fail, so it MUST precede the durable consumption marker.
+            transition("SINGLE_DISPATCH")
             await repository.mark_dispatch_started(
                 context, now=clock().astimezone(timezone.utc),
                 request_sha256=request_sha256, client_request_id=client_request_id,

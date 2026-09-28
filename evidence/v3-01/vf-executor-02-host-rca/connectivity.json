@@ -1,0 +1,26 @@
+{
+  "kind": "PROVISIONING_RCA_NOT_EXECUTOR_QUALIFICATION",
+  "tool": "config.sh --check",
+  "checks": [
+    {
+      "check": "Internet Connection",
+      "status": "PASS"
+    },
+    {
+      "check": "GitHub Actions Connection",
+      "status": "PASS"
+    },
+    {
+      "check": "Git Certificate/Proxy Validation",
+      "status": "PASS"
+    },
+    {
+      "check": "Node.js Certificate/Proxy Validation",
+      "status": "PASS"
+    }
+  ],
+  "verdict": "PASS",
+  "provider_calls": 0,
+  "provider_credential_reads": 0,
+  "tls_verification_disabled": false
+}
