@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+env:
+  EXPECTED_HEAD_SHA: ${{ github.sha }}
+  HEAD_IDENTITY: ${{ github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/') && 'EXACT_HEAD_CANDIDATE' || 'NOT_EXACT_HEAD_EVENT_SHA' }}
+
 concurrency:
   group: video-factory-v2-ci-${{ github.ref }}
   cancel-in-progress: true
@@ -19,6 +23,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Verify checked-out event SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHECKED_OUT_SHA="$(git rev-parse HEAD)"
+          printf 'EVENT_NAME=%s\n' "$GITHUB_EVENT_NAME"
+          printf 'GITHUB_REF=%s\n' "$GITHUB_REF"
+          printf 'HEAD_IDENTITY=%s\n' "$HEAD_IDENTITY"
+          printf 'EXPECTED_HEAD_SHA=%s\n' "$EXPECTED_HEAD_SHA"
+          printf 'CHECKED_OUT_SHA=%s\n' "$CHECKED_OUT_SHA"
+          test "$CHECKED_OUT_SHA" = "$EXPECTED_HEAD_SHA"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -55,6 +72,19 @@ jobs:
         working-directory: renderer
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Verify checked-out event SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHECKED_OUT_SHA="$(git rev-parse HEAD)"
+          printf 'EVENT_NAME=%s\n' "$GITHUB_EVENT_NAME"
+          printf 'GITHUB_REF=%s\n' "$GITHUB_REF"
+          printf 'HEAD_IDENTITY=%s\n' "$HEAD_IDENTITY"
+          printf 'EXPECTED_HEAD_SHA=%s\n' "$EXPECTED_HEAD_SHA"
+          printf 'CHECKED_OUT_SHA=%s\n' "$CHECKED_OUT_SHA"
+          test "$CHECKED_OUT_SHA" = "$EXPECTED_HEAD_SHA"
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -73,6 +103,19 @@ jobs:
         working-directory: apps/studio-web
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Verify checked-out event SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHECKED_OUT_SHA="$(git rev-parse HEAD)"
+          printf 'EVENT_NAME=%s\n' "$GITHUB_EVENT_NAME"
+          printf 'GITHUB_REF=%s\n' "$GITHUB_REF"
+          printf 'HEAD_IDENTITY=%s\n' "$HEAD_IDENTITY"
+          printf 'EXPECTED_HEAD_SHA=%s\n' "$EXPECTED_HEAD_SHA"
+          printf 'CHECKED_OUT_SHA=%s\n' "$CHECKED_OUT_SHA"
+          test "$CHECKED_OUT_SHA" = "$EXPECTED_HEAD_SHA"
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -91,6 +134,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Verify checked-out event SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHECKED_OUT_SHA="$(git rev-parse HEAD)"
+          printf 'EVENT_NAME=%s\n' "$GITHUB_EVENT_NAME"
+          printf 'GITHUB_REF=%s\n' "$GITHUB_REF"
+          printf 'HEAD_IDENTITY=%s\n' "$HEAD_IDENTITY"
+          printf 'EXPECTED_HEAD_SHA=%s\n' "$EXPECTED_HEAD_SHA"
+          printf 'CHECKED_OUT_SHA=%s\n' "$CHECKED_OUT_SHA"
+          test "$CHECKED_OUT_SHA" = "$EXPECTED_HEAD_SHA"
       - run: cp .env.example .env
       - run: docker compose config --quiet
       - name: Verify independent runtime boundary
@@ -501,9 +557,31 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Verify checked-out event SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHECKED_OUT_SHA="$(git rev-parse HEAD)"
+          printf 'EVENT_NAME=%s\n' "$GITHUB_EVENT_NAME"
+          printf 'GITHUB_REF=%s\n' "$GITHUB_REF"
+          printf 'HEAD_IDENTITY=%s\n' "$HEAD_IDENTITY"
+          printf 'EXPECTED_HEAD_SHA=%s\n' "$EXPECTED_HEAD_SHA"
+          printf 'CHECKED_OUT_SHA=%s\n' "$CHECKED_OUT_SHA"
+          test "$CHECKED_OUT_SHA" = "$EXPECTED_HEAD_SHA"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install MinIO compatibility dependency
+        run: python -m pip install "boto3>=1.35,<2"
+      - name: Verify immutable public MinIO mirror compatibility
+        run: |
+          python scripts/minio-ghcr-compatibility.py \
+            --image "ghcr.io/npd-ai/npd-minio@sha256:d37f79cb57ba531f92eeaf2a1a0e5f827dea982a429bb5a2903043c57ed04528" \
+            --expected-release "RELEASE.2025-09-07T16-13-09Z" \
+            --expected-binary-sha256 "7c5bd8512c6e966455b1d198209358b2d191c77a83ab377c4073281065fb855f" \
+            --artifact e2e-artifacts/minio-ghcr-compatibility.json
       - run: bash scripts/e2e-smoke.sh
       - name: Upload acceptance artifacts
         if: always()
