@@ -1,5 +1,41 @@
 # Video Factory V3-01 — Canonical handoff
 
+## VF-EXECUTOR-05A current checkpoint — SOURCE_READY_FOR_LIVE_QUALIFICATION
+
+Draft PR #91 source remediation starts from
+`e607463060c062b512bf43ac2b32ea3443b18045`. The executor qualification and
+runtime contract no longer embeds runner ID 21 and does not replace it with an
+embedded runner ID 6. The expected runner identity is loaded from the immutable,
+root-owned `/etc/npd-video-factory/executor.json` host binding and is matched as
+one exact seven-field value across the hash-pinned qualification promotion,
+probe receipt and independent security review: runner ID/name, execution
+organization, runner group/repository, source commit and executor executable-tree
+SHA-256. Caller requests cannot supply or override these identity fields.
+
+The deployment binding expected for a later, separately authorized live
+qualification is runner ID 6, `npd-vf-executor-ubuntu-02`, organization `npd-ai`,
+group `vf-provider-execution`, repository
+`npd-ai/npd-video-factory-executor`. ID 6 is an operator-side deployment
+expectation, not a production source constant. Negative source tests reject old
+ID 21, wrong or missing identity, caller identity input, cross-runner promotion,
+probe or security evidence, and executable-tree mismatch. Existing gates and
+zero-call controls remain enforced.
+
+G-08 is PASS for this bounded source change; overall execution readiness remains
+`BLOCKED_LIVE_QUALIFICATION_NOT_RUN`. The new runner remains OFFLINE, listener
+STOPPED, service NOT_INSTALLED, kill switch ENGAGED and live allowlist EMPTY.
+No `/opt` install, host configuration, qualification artifacts, live E1–E10 or
+self-hosted workflow were created or run. No O1/O2 request, provider credential
+read, reservation, provider call, operation consumption or cost occurred.
+
+The final PR head, executable-tree SHA-256 and true exact-head CI run/checkout
+identity are recorded in the external VF-EXECUTOR-05A handoff after the final
+commit and CI complete, avoiding a self-referential evidence commit. See the
+[source-remediation review](reviews/vf-executor-05a/README.md) and
+[G-08 source review](reviews/vf-executor-05a/G08_SOURCE_REVIEW.md). The
+VF-EXECUTOR-02 checkpoint below is historical and superseded for source state;
+its host/evidence history is not rewritten.
+
 ## VF-EXECUTOR-02 current checkpoint — BLOCKED / NOT QUALIFIED
 
 PR #90 remediation adds the canonical single-dispatch host adapter, promotion

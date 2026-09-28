@@ -19,9 +19,25 @@ spec.loader.exec_module(hook)
 
 @pytest.fixture
 def host(tmp_path):
-    return q.Host(q.REPOSITORY, "dedicated", sorted(q.LABELS), "Ubuntu", str(REPO), "a" * 40,
-        str(tmp_path), str(tmp_path / "lock"), str(tmp_path / "binding"), "b" * 64,
-        "0015", str(tmp_path / "secret"), str(tmp_path / "kill-switch"))
+    return q.Host(
+        runner_id=6,
+        runner_name="npd-vf-executor-ubuntu-02",
+        execution_organization=q.EXECUTION_ORGANIZATION,
+        runner_group=q.RUNNER_GROUP,
+        execution_repository=q.REPOSITORY,
+        labels=sorted(q.LABELS),
+        distro="Ubuntu",
+        source=str(REPO),
+        source_commit="a" * 40,
+        evidence_root=str(tmp_path),
+        lock_path=str(tmp_path / "lock"),
+        binding=str(tmp_path / "binding"),
+        binding_sha256="b" * 64,
+        migration_head="0015",
+        secret_source=str(tmp_path / "secret"),
+        kill_switch=str(tmp_path / "kill-switch"),
+        executor_executable_tree_sha256="c" * 64,
+    )
 
 
 @pytest.fixture
@@ -32,7 +48,10 @@ def request_payload():
         "rc_commit": "d" * 40, "governance_main_sha": "e" * 40, "provider_capability": "asr"}
 
 
-@pytest.mark.parametrize("field", ["command", "shell", "script", "endpoint", "secret", "retry", "fallback"])
+@pytest.mark.parametrize("field", [
+    "command", "shell", "script", "endpoint", "secret", "retry", "fallback",
+    *q.RUNNER_IDENTITY_FIELDS, "runner_identity",
+])
 def test_arbitrary_inputs_rejected(request_payload, field):
     with pytest.raises(q.Blocked, match="INPUT_FIELDS_INVALID"):
         request.validate_request({**request_payload, field: "anything"})
@@ -102,9 +121,68 @@ def test_wrong_runner_labels(host, tmp_path, monkeypatch):
         q.Host.load(path)
 
 
+@pytest.mark.parametrize("runner_id", [None, True, 6.0, "6", 0, -1])
+def test_root_host_binding_requires_positive_integer_runner_id(host, tmp_path, monkeypatch, runner_id):
+    from dataclasses import asdict
+    monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    path = tmp_path / "config.json"
+    path.write_text(json.dumps({**asdict(host), "runner_id": runner_id}))
+    with pytest.raises(q.Blocked, match="RUNNER_ID_INVALID"):
+        q.Host.load(path)
+
+
+def test_root_host_binding_requires_complete_identity(host, tmp_path, monkeypatch):
+    from dataclasses import asdict
+    monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    path = tmp_path / "config.json"
+    value = asdict(host)
+    del value["runner_group"]
+    path.write_text(json.dumps(value))
+    with pytest.raises(q.Blocked, match="HOST_CONFIG_SCHEMA_INVALID"):
+        q.Host.load(path)
+
+
+@pytest.mark.parametrize("field,value,code", [
+    ("runner_name", "", "RUNNER_NAME_INVALID"),
+    ("execution_organization", "wrong-org", "EXECUTION_ORGANIZATION_INVALID"),
+    ("runner_group", "Default", "RUNNER_GROUP_INVALID"),
+    ("execution_repository", "wrong-org/wrong-repo", "REPOSITORY_SCOPE_INVALID"),
+    ("source_commit", "wrong", "SOURCE_COMMIT_INVALID"),
+    ("executor_executable_tree_sha256", "0" * 63, "EXECUTOR_TREE_HASH_INVALID"),
+])
+def test_root_host_binding_rejects_wrong_identity_values(host, tmp_path, monkeypatch, field, value, code):
+    from dataclasses import asdict
+    monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    path = tmp_path / "config.json"
+    path.write_text(json.dumps({**asdict(host), field: value}))
+    with pytest.raises(q.Blocked, match=code):
+        q.Host.load(path)
+
+
 def test_runtime_unavailable(host, monkeypatch):
     monkeypatch.setattr(q.platform, "release", lambda: "generic-linux")
     with pytest.raises(q.Blocked, match="WSL_RUNTIME_UNAVAILABLE"):
+        q.runtime(host)
+
+
+@pytest.mark.parametrize("key,value,code", [
+    ("RUNNER_NAME", "wrong-runner", "RUNNER_NAME_MISMATCH"),
+    ("GITHUB_REPOSITORY_OWNER", "wrong-org", "EXECUTION_ORGANIZATION_MISMATCH"),
+    ("GITHUB_REPOSITORY", "wrong-org/wrong-repo", "REPOSITORY_SCOPE_INVALID"),
+])
+def test_runtime_observation_cannot_replace_root_identity(host, monkeypatch, key, value, code):
+    monkeypatch.setattr(q.sys, "platform", "linux")
+    monkeypatch.setattr(q.platform, "release", lambda: "microsoft-standard-WSL2")
+    trusted = {
+        "WSL_DISTRO_NAME": host.distro,
+        "RUNNER_NAME": host.runner_name,
+        "GITHUB_REPOSITORY_OWNER": host.execution_organization,
+        "GITHUB_REPOSITORY": host.execution_repository,
+    }
+    for name, observed in trusted.items():
+        monkeypatch.setenv(name, observed)
+    monkeypatch.setenv(key, value)
+    with pytest.raises(q.Blocked, match=code):
         q.runtime(host)
 
 
@@ -239,9 +317,15 @@ def test_workflow_boundary_and_shared_concurrency():
     for workflow in workflows:
         triggers = workflow.get("on", workflow.get(True))
         assert set(triggers) == {"workflow_dispatch"}
+        dispatch = triggers["workflow_dispatch"] or {}
+        inputs = set(dispatch.get("inputs", {}))
+        assert not inputs.intersection({*q.RUNNER_IDENTITY_FIELDS, "runner_identity"})
         assert workflow["permissions"] == {}
         for job in workflow["jobs"].values():
-            assert job["runs-on"]["group"] == "vf-provider-execution"
+            assert job["runs-on"]["group"] == q.RUNNER_GROUP
             assert set(job["runs-on"]["labels"]) == q.LABELS
-            assert "refs/heads/main" in job["if"]
+            assert job["if"] == (
+                "github.repository == 'npd-ai/npd-video-factory-executor' && "
+                "github.ref == 'refs/heads/main'"
+            )
             assert all("uses" not in step for step in job["steps"])

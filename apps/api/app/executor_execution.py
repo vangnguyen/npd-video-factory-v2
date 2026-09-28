@@ -58,26 +58,19 @@ def verify_qualification(catalog: dict, host: q.Host) -> None:
     receipt = _trusted_json(Path(catalog["qualification_receipt"]), catalog["qualification_sha256"])
     q.require(receipt.get("status") == "SELF_HOSTED_EXECUTION_PLANE_QUALIFIED",
               "EXECUTOR_NOT_QUALIFIED_DISPATCH_DISABLED")
-    q.require(receipt.get("source_commit") == host.source_commit
-              and receipt.get("runner_id") == 21
-              and receipt.get("runner_name") == host.runner_name,
-              "QUALIFICATION_IDENTITY_MISMATCH")
+    q.require_runner_identity(receipt, host, "QUALIFICATION_IDENTITY_MISMATCH")
     q.require(receipt.get("gates") == {gate: "PASS" for gate in q.GATES}, "QUALIFICATION_GATES_FAILED")
     q.require(all(receipt.get(name) == value for name, value in q.ZERO.items()),
               "QUALIFICATION_ZERO_INVARIANTS_FAILED")
     q.require(receipt.get("kill_switch") == "ENGAGED", "QUALIFICATION_KILL_SWITCH_INVALID")
-    q.require(receipt.get("executor_executable_tree_sha256") == getattr(host, "executor_executable_tree_sha256", "")
-              and bool(getattr(host, "executor_executable_tree_sha256", "")), "QUALIFICATION_TREE_MISMATCH")
     probes = _trusted_json(Path(receipt["probe_receipt"]), receipt["probe_receipt_sha256"])
     manifest = _trusted_json(Path(receipt["probe_manifest"]), receipt["probe_manifest_sha256"])
     q.require(manifest.get("qualification.json") == receipt["probe_receipt_sha256"],
               "QUALIFICATION_MANIFEST_MISMATCH")
     q.require(probes.get("verdict") == "CAPABILITY_PROBES_PASS"
-              and probes.get("execution_plane_qualified") is False
-              and probes.get("source_commit") == host.source_commit
-              and probes.get("runner_id") == 21 and probes.get("runner_name") == host.runner_name
-              and probes.get("executor_executable_tree_sha256") == host.executor_executable_tree_sha256,
+              and probes.get("execution_plane_qualified") is False,
               "QUALIFICATION_PROBE_IDENTITY_MISMATCH")
+    q.require_runner_identity(probes, host, "QUALIFICATION_PROBE_IDENTITY_MISMATCH")
     q.require(all(probes.get("gates", {}).get(gate, {}).get("status") == "PASS" for gate in q.GATES)
               and all(probes.get(name) == value for name, value in q.ZERO.items())
               and probes["gates"]["E10"].get("KILL_SWITCH") == "ENGAGED"
@@ -85,11 +78,9 @@ def verify_qualification(catalog: dict, host: q.Host) -> None:
               "QUALIFICATION_PROBES_FAILED")
     security = _trusted_json(Path(receipt["security_review"]), receipt["security_review_sha256"])
     q.require(security.get("status") == "RUNNER_SECURITY_PASS"
-              and security.get("source_commit") == host.source_commit
-              and security.get("runner_id") == 21
-              and security.get("executor_executable_tree_sha256") == host.executor_executable_tree_sha256
               and security.get("quarantine") == "CLEARED_BY_VALIDATED_POLICY",
               "QUALIFICATION_SECURITY_REVIEW_FAILED")
+    q.require_runner_identity(security, host, "QUALIFICATION_SECURITY_IDENTITY_MISMATCH")
     threats = ("malicious_pr", "modified_workflow", "command_injection", "secret_exfiltration",
                "concurrent_job", "stale_rc", "altered_authority", "admission_launch_failure")
     q.require(all(security.get("hostile_job_tests", {}).get(threat) == "PASS" for threat in threats),
@@ -97,6 +88,8 @@ def verify_qualification(catalog: dict, host: q.Host) -> None:
 
 
 def bind_request(request: dict, entry: dict, host: q.Host) -> tuple[canonical.SingleDispatchPaths, ProviderSafetyPolicy]:
+    caller_identity_fields = {*q.RUNNER_IDENTITY_FIELDS, "runner_identity"}
+    q.require(not caller_identity_fields.intersection(request), "CALLER_RUNNER_IDENTITY_FORBIDDEN")
     q.require(entry.get("request") == request, "REQUEST_NOT_EXACTLY_APPROVED")
     data = entry["paths"]
     paths = canonical.SingleDispatchPaths(**{

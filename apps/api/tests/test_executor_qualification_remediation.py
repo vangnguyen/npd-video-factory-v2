@@ -1,4 +1,4 @@
-"""VF-EXECUTOR-02 probes remain offline tests, not live-host attestation."""
+"""VF-EXECUTOR-05A probes remain offline tests, not live-host attestation."""
 from dataclasses import replace
 import json
 from pathlib import Path
@@ -50,7 +50,8 @@ async def test_ledger_change_during_qualification_blocks(host, tmp_path, mock_pr
 async def test_mock_probe_success_is_never_plane_qualification(host, tmp_path, mock_probes):
     result = await q.qualify(host, tmp_path)
     assert result["verdict"] == "CAPABILITY_PROBES_PASS"
+    assert result["task"] == "VF-EXECUTOR-05A"
     assert result["execution_plane_qualified"] is False
     assert result["gates"]["E10"]["ledger_unchanged"] is True
     assert all(result[key] == value for key, value in q.ZERO.items())
-    assert result["source_commit"] == host.source_commit
+    assert result["runner_identity"] == q.expected_runner_identity(host)

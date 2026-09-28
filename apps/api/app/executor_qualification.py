@@ -26,9 +26,15 @@ import uuid
 from datetime import datetime, timezone
 
 REPOSITORY = "npd-ai/npd-video-factory-executor"
+EXECUTION_ORGANIZATION = "npd-ai"
+RUNNER_GROUP = "vf-provider-execution"
 LABELS = frozenset({"self-hosted", "linux", "x64", "npd-video-factory", "provider-execution"})
 CONFIG = Path("/etc/npd-video-factory/executor.json")
 GATES = tuple(f"E{i}" for i in range(1, 11))
+RUNNER_IDENTITY_FIELDS = (
+    "runner_id", "runner_name", "execution_organization", "runner_group",
+    "execution_repository", "source_commit", "executor_executable_tree_sha256",
+)
 ZERO = {"provider_calls": 0, "credential_reads": 0, "budget_reserved_vnd": "0",
         "operation_consumption": 0, "production_business_writes": 0, "actual_cost_vnd": "0"}
 
@@ -67,8 +73,11 @@ def private_path(path: Path, *, directory: bool = False, root_owned: bool = Fals
 
 @dataclass(frozen=True)
 class Host:
-    repository: str
+    runner_id: int
     runner_name: str
+    execution_organization: str
+    runner_group: str
+    execution_repository: str
     labels: list[str]
     distro: str
     source: str
@@ -88,14 +97,64 @@ class Host:
         private_path(path.parent, directory=True, root_owned=True)
         raw = path.read_bytes()
         secret_scan(raw)
-        host = cls(**json.loads(raw))
-        require(host.repository == REPOSITORY, "REPOSITORY_SCOPE_INVALID")
-        require(LABELS <= {label.lower() for label in host.labels}, "RUNNER_LABELS_INVALID")
-        require(bool(re.fullmatch(r"[a-f0-9]{40}", host.source_commit)), "SOURCE_COMMIT_INVALID")
+        try:
+            value = json.loads(raw)
+            require(isinstance(value, dict), "HOST_CONFIG_SCHEMA_INVALID")
+            host = cls(**value)
+        except Blocked:
+            raise
+        except (TypeError, ValueError):
+            raise Blocked("HOST_CONFIG_SCHEMA_INVALID") from None
+        expected_runner_identity(host)
+        require(isinstance(host.labels, list) and all(isinstance(label, str) for label in host.labels)
+                and LABELS <= {label.lower() for label in host.labels}, "RUNNER_LABELS_INVALID")
         require(bool(re.fullmatch(r"[a-f0-9]{64}", host.binding_sha256)), "BINDING_HASH_INVALID")
-        require(bool(re.fullmatch(r"[a-f0-9]{64}", host.executor_executable_tree_sha256)),
-                "EXECUTOR_TREE_HASH_INVALID")
         return host
+
+
+def expected_runner_identity(host: Host) -> dict[str, int | str]:
+    """Canonical identity sourced only from the root-owned host binding."""
+    runner_id = getattr(host, "runner_id", None)
+    runner_name = getattr(host, "runner_name", None)
+    organization = getattr(host, "execution_organization", None)
+    runner_group = getattr(host, "runner_group", None)
+    repository = getattr(host, "execution_repository", None)
+    source_commit = getattr(host, "source_commit", None)
+    executable_tree = getattr(host, "executor_executable_tree_sha256", None)
+    require(type(runner_id) is int and runner_id > 0, "RUNNER_ID_INVALID")
+    require(isinstance(runner_name, str)
+            and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,99}", runner_name) is not None,
+            "RUNNER_NAME_INVALID")
+    require(organization == EXECUTION_ORGANIZATION, "EXECUTION_ORGANIZATION_INVALID")
+    require(runner_group == RUNNER_GROUP, "RUNNER_GROUP_INVALID")
+    require(repository == REPOSITORY and repository.split("/", 1)[0] == organization,
+            "REPOSITORY_SCOPE_INVALID")
+    require(isinstance(source_commit, str)
+            and re.fullmatch(r"[a-f0-9]{40}", source_commit) is not None,
+            "SOURCE_COMMIT_INVALID")
+    require(isinstance(executable_tree, str)
+            and re.fullmatch(r"[a-f0-9]{64}", executable_tree) is not None,
+            "EXECUTOR_TREE_HASH_INVALID")
+    return {
+        "runner_id": runner_id,
+        "runner_name": runner_name,
+        "execution_organization": organization,
+        "runner_group": runner_group,
+        "execution_repository": repository,
+        "source_commit": source_commit,
+        "executor_executable_tree_sha256": executable_tree,
+    }
+
+
+def require_runner_identity(document: dict, host: Host, code: str) -> None:
+    """Reject missing, partial, extended, or cross-runner identity evidence."""
+    expected = expected_runner_identity(host)
+    actual = document.get("runner_identity") if isinstance(document, dict) else None
+    require(isinstance(actual, dict)
+            and not set(RUNNER_IDENTITY_FIELDS).intersection(document)
+            and set(actual) == set(expected)
+            and all(type(actual[field]) is type(value) and actual[field] == value
+                    for field, value in expected.items()), code)
 
 
 @contextmanager
@@ -144,7 +203,10 @@ def runtime(host: Host) -> dict:
     require(os.environ.get("WSL_DISTRO_NAME") == host.distro, "WSL_DISTRO_MISMATCH")
     require(sys.version_info >= (3, 12), "PYTHON_VERSION_INVALID")
     require(os.environ.get("RUNNER_NAME") == host.runner_name, "RUNNER_NAME_MISMATCH")
-    require(os.environ.get("GITHUB_REPOSITORY") == REPOSITORY, "REPOSITORY_SCOPE_INVALID")
+    require(os.environ.get("GITHUB_REPOSITORY_OWNER") == host.execution_organization,
+            "EXECUTION_ORGANIZATION_MISMATCH")
+    require(os.environ.get("GITHUB_REPOSITORY") == host.execution_repository,
+            "REPOSITORY_SCOPE_INVALID")
     require(os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch", "UNTRUSTED_EVENT")
     require(os.environ.get("GITHUB_REF") == "refs/heads/main", "UNTRUSTED_REF")
     require(LABELS <= {label.lower() for label in host.labels}, "RUNNER_LABELS_INVALID")
@@ -210,7 +272,7 @@ async def custody(host: Host) -> dict:
 
 def github(host: Host) -> dict:
     result = subprocess.run(["git", "ls-remote", "--exit-code",
-        "https://github.com/" + REPOSITORY + ".git", "refs/heads/main"],
+        "https://github.com/" + host.execution_repository + ".git", "refs/heads/main"],
         capture_output=True, text=True, timeout=30, check=True)
     require(bool(re.fullmatch(r"[a-f0-9]{40}\s+refs/heads/main\s*", result.stdout)), "GITHUB_PROVENANCE_UNAVAILABLE")
     return {"GITHUB_ACCESS": "VERIFIED", "observed_main": result.stdout.split()[0]}
@@ -318,12 +380,10 @@ async def qualify(host: Host, root: Path) -> dict:
                 results["E10"]["ledger_unchanged"] = True
             except Exception:
                 results["E10"] = {"status": "BLOCKED", "code": "LEDGER_RECHECK_FAILED"}
-    report = {"task": "VF-EXECUTOR-02", "gates": results, **ZERO,
+    report = {"task": "VF-EXECUTOR-05A", "gates": results, **ZERO,
         "verdict": "CAPABILITY_PROBES_PASS" if all(v["status"] == "PASS" for v in results.values()) else "BLOCKED",
         "execution_plane_qualified": False,
-        "source_commit": host.source_commit, "runner_name": host.runner_name,
-        "runner_id": 21,
-        "executor_executable_tree_sha256": host.executor_executable_tree_sha256,
+        "runner_identity": expected_runner_identity(host),
         "security_and_dispatch_integration": "SEPARATE_REVIEW_REQUIRED"}
     if results["E10"]["status"] == "PASS":
         results["E10"]["EVIDENCE_RECORDER"] = "VERIFIED"
@@ -342,7 +402,7 @@ def main() -> int:
         host = Host.load()
         private_path(Path(host.evidence_root), directory=True)
         with plane_lock(Path(host.lock_path)):
-            root = Path(host.evidence_root) / ("vf-executor-02-" + uuid.uuid4().hex)
+            root = Path(host.evidence_root) / ("vf-executor-05a-" + uuid.uuid4().hex)
             root.mkdir(mode=0o700)
             report = asyncio.run(qualify(host, root))
         print(json.dumps({"verdict": report["verdict"], "gates": report["gates"], **ZERO}, sort_keys=True))

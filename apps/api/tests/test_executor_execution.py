@@ -24,18 +24,29 @@ def test_catalog_is_separate_from_authority_and_disabled_by_default(tmp_path, mo
         executor.load_catalog()
 
 
-@pytest.mark.parametrize("change", [
-    {"source_commit": "wrong"}, {"runner_id": 22}, {"runner_name": "untrusted"},
-    {"status": "CI_PASS"}, {"gates": {"E1": "PASS"}}, {"provider_calls": 1},
-    {"budget_reserved_vnd": "1"}, {"operation_consumption": 1}, {"kill_switch": "DISENGAGED"},
+@pytest.mark.parametrize("change,code", [
+    ({"status": "CI_PASS"}, "EXECUTOR_NOT_QUALIFIED_DISPATCH_DISABLED"),
+    ({"gates": {"E1": "PASS"}}, "QUALIFICATION_GATES_FAILED"),
+    ({"provider_calls": 1}, "QUALIFICATION_ZERO_INVARIANTS_FAILED"),
+    ({"budget_reserved_vnd": "1"}, "QUALIFICATION_ZERO_INVARIANTS_FAILED"),
+    ({"operation_consumption": 1}, "QUALIFICATION_ZERO_INVARIANTS_FAILED"),
+    ({"kill_switch": "DISENGAGED"}, "QUALIFICATION_KILL_SWITCH_INVALID"),
 ])
-def test_o2_cannot_replace_independent_qualification(monkeypatch, change):
-    host = SimpleNamespace(source_commit="a" * 40, runner_name="dedicated")
-    receipt = {"status": "SELF_HOSTED_EXECUTION_PLANE_QUALIFIED", "source_commit": host.source_commit,
-               "runner_id": 21, "runner_name": host.runner_name,
+def test_o2_cannot_replace_independent_qualification(monkeypatch, change, code):
+    host = SimpleNamespace(
+        runner_id=6,
+        runner_name="npd-vf-executor-ubuntu-02",
+        execution_organization=q.EXECUTION_ORGANIZATION,
+        runner_group=q.RUNNER_GROUP,
+        execution_repository=q.REPOSITORY,
+        source_commit="a" * 40,
+        executor_executable_tree_sha256="f" * 64,
+    )
+    receipt = {"status": "SELF_HOSTED_EXECUTION_PLANE_QUALIFIED",
+               "runner_identity": q.expected_runner_identity(host),
                "gates": {gate: "PASS" for gate in q.GATES}, **q.ZERO, "kill_switch": "ENGAGED"}
     monkeypatch.setattr(executor, "_trusted_json", lambda *a: {**receipt, **change})
-    with pytest.raises(q.Blocked):
+    with pytest.raises(q.Blocked, match=code):
         executor.verify_qualification({"qualification_receipt": "/fake", "qualification_sha256": "a" * 64}, host)
 
 
@@ -43,6 +54,13 @@ def test_o2_cannot_replace_independent_qualification(monkeypatch, change):
 def test_request_cannot_select_other_approved_operation(field):
     with pytest.raises(q.Blocked, match="REQUEST_NOT_EXACTLY_APPROVED"):
         executor.bind_request({field: "changed"}, {"request": {field: "approved"}}, None)
+
+
+@pytest.mark.parametrize("field", [*q.RUNNER_IDENTITY_FIELDS, "runner_identity"])
+def test_caller_cannot_supply_runner_identity(field):
+    request = {field: "caller-controlled"}
+    with pytest.raises(q.Blocked, match="CALLER_RUNNER_IDENTITY_FORBIDDEN"):
+        executor.bind_request(request, {"request": request}, None)
 
 
 async def _canonical_setup(tmp_path, monkeypatch):
