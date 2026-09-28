@@ -1,6 +1,6 @@
 # VF-EXECUTOR-05B G-08 executor review
 
-Status: `SOURCE-SIDE PASS / LIVE QUALIFICATION PENDING`
+Status: `SOURCE-SIDE PASS / LIVE QUALIFICATION BLOCKED_E7 / NOT READY FOR O1`
 
 ## Fixed boundaries
 
@@ -38,13 +38,33 @@ attempt.
   canonical GitHub-hosted `Docker deterministic E2E` job is required before the
   final verdict.
 
-## Pending before final PASS
+## Candidate and live evidence
 
-- Immutable source commit and executable-tree SHA.
-- Exact-head GitHub-hosted CI and Docker E2E.
-- Exact candidate installation in the protected host root.
-- Live E1-E10, hostile-job security review, independent promotion, safe runner
-  shutdown, and sealed evidence hashes.
+- Executable source commit:
+  `cf55b47e5b33de183ef9c3f76993fbb65d63a6e9`.
+- Executor executable-tree SHA-256:
+  `b35b71396c295339f47803426bf608f7e6af60df5bd303baa03d635d12f41248`.
+- Exact-head CI `36436731347`: PASS, including Docker deterministic E2E.
+- `EXPECTED_HEAD_SHA == CHECKED_OUT_SHA == cf55b47e5b33de183ef9c3f76993fbb65d63a6e9`.
+- Hostile-job security review: PASS; SHA-256
+  `ac528669fa139f9598e30f0f4bea60107b5957bd1bb02892f268089fc9f4bd03`.
+- Live runner qualification `36437615585`: E1-E6 and E8-E10 PASS; E7
+  BLOCKED because no approved provider secret source exists on the host.
+- Qualification receipt SHA-256:
+  `0548b04beeef9041d497cbe925f8e9a942cf54b2007098adcf9b6aa2b8c09de4`.
+- Probe manifest SHA-256:
+  `355aa5a4238c770eba211e2d1e0ed1f6dee2f116603e2fcf1aa21f086d3db588`.
+- Qualification promotion: NOT CREATED.
+- Runner after the bounded run: Offline; listener stopped; service not
+  installed; kill switch engaged.
+
+## Final blocker
+
+E7 must be rerun only after the Owner identifies an already-approved provider
+secret source or separately authorizes creation of the intended binding. A
+runner registration credential, synthetic placeholder, empty file, or custody
+backup key is not an acceptable substitute. The qualification implementation
+will stat the source but will not open or read credential plaintext.
 
 This review does not grant provider authority, O2, budget, operation
 consumption, or RC-22 mutation.
