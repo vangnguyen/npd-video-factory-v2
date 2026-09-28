@@ -28,8 +28,8 @@ attempt.
 
 ## Source validation
 
-- Focused executor tests: `249 passed, 1 skipped`.
-- Full regression: `1385 passed, 1 skipped`.
+- Focused executor tests: `250 passed, 1 skipped`.
+- Full regression: `1386 passed, 1 skipped`.
 - Migration head: `0015_v3_01_dispatch`.
 - Local Docker E2E: unavailable because no Docker CLI/daemon is installed; the
   canonical GitHub-hosted `Docker deterministic E2E` job is required before the

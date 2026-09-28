@@ -271,7 +271,8 @@ def runtime(host: Host, workflow_kind: str = "qualification") -> dict:
     private_path(Path(__file__).resolve(), root_owned=True)
     require(Path(__file__).resolve() == source / "apps/api/app/executor_qualification.py", "RUNTIME_SOURCE_MISMATCH")
     def git(*args):
-        return subprocess.run(["git", "-C", str(source), *args], check=True,
+        return subprocess.run(["git", "-c", f"safe.directory={source}",
+                               "-C", str(source), *args], check=True,
                               capture_output=True, text=True, timeout=30).stdout.strip()
     require(git("rev-parse", "HEAD") == host.source_commit, "RUNTIME_COMMIT_MISMATCH")
     require(not git("status", "--porcelain"), "RUNTIME_SOURCE_DIRTY")

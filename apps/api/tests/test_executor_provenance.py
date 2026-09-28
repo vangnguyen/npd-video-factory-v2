@@ -1,5 +1,8 @@
+from types import SimpleNamespace
+
 import pytest
-from app.executor_provenance import executor_tree_sha256
+from app import executor_provenance
+from app.executor_provenance import collect_executor_tree, executor_tree_sha256
 
 
 def test_workflow_changes_invalidate_executor_hash_without_mutating_old_contract():
@@ -14,3 +17,21 @@ def test_workflow_changes_invalidate_executor_hash_without_mutating_old_contract
 def test_invalid_object_pins_block(canonical, workflow):
     with pytest.raises(ValueError, match="EXECUTOR_TREE_OBJECT_INVALID"):
         executor_tree_sha256(canonical, workflow)
+
+
+def test_collector_trusts_only_the_bound_root_owned_source(monkeypatch, tmp_path):
+    calls = []
+
+    def fake_run(command, **kwargs):
+        calls.append(command)
+        return SimpleNamespace(stdout="a" * 40 + "\n")
+
+    monkeypatch.setattr(executor_provenance.subprocess, "run", fake_run)
+    collect_executor_tree(tmp_path, "b" * 40)
+    assert calls
+    assert all(
+        command[:5] == [
+            "git", "-c", f"safe.directory={tmp_path}", "-C", str(tmp_path),
+        ]
+        for command in calls
+    )
