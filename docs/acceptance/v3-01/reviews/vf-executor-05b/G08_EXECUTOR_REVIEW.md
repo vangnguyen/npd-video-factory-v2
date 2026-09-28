@@ -71,8 +71,8 @@ The 05C candidate source commit is
 `2a6ef461463d6a4a5815810774d0c64acd192f41`; its executor executable-tree
 SHA-256 is
 `1e86f2da55d6bb7b675e0ab8699776c737ddaeb9d46c4e136f954b3485df8152`.
-Focused source tests passed (`122 passed, 1 skipped`) and full regression
-passed (`1394 passed, 1 skipped`). Exact-head CI for the final evidence head is
+Focused source tests passed (`122 passed, 1 skipped`) and the final Linux
+non-root full regression passed (`1395 passed`). Exact-head CI for the final evidence head is
 required before the 05C handoff is sealed.
 
 This review does not grant provider authority, O2, budget, operation

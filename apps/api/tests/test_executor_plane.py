@@ -5,7 +5,9 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import stat
 import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -282,6 +284,16 @@ def _bound_secret_host(host, tmp_path, monkeypatch, value):
     return replace(host, secret_binding=str(binding))
 
 
+def _synthetic_root_source_stat(monkeypatch, source, *, size):
+    """Model root-only source metadata; never usable by Host.load as live evidence."""
+    original = Path.stat
+    monkeypatch.setattr(Path, "stat", lambda path: (
+        SimpleNamespace(st_uid=0, st_gid=0, st_mode=stat.S_IFREG | 0o400,
+                        st_size=size)
+        if path == source else original(path)
+    ))
+
+
 def test_unbound_metadata_is_present_but_e7_stays_blocked(host, tmp_path, monkeypatch):
     bound = _bound_secret_host(host, tmp_path, monkeypatch, _secret_binding())
     with pytest.raises(q.ProbeBlocked, match="BLOCKED_SECRET_SOURCE_NOT_INSTALLED") as exc:
@@ -308,6 +320,7 @@ def test_bound_source_presence_never_reads_plaintext(host, tmp_path, monkeypatch
         state="BOUND_SOURCE_INSTALLED", secret_source_present=True,
     )
     bound = _bound_secret_host(host, tmp_path, monkeypatch, value)
+    _synthetic_root_source_stat(monkeypatch, source, size=len(b"opaque-synthetic-fixture"))
     original = Path.read_bytes
     def guarded_read(path):
         if path == source:
@@ -327,6 +340,7 @@ def test_empty_secret_source_is_not_presence(host, tmp_path, monkeypatch):
         source_type="ROOT_FILE", source_locator=str(source),
         state="BOUND_SOURCE_INSTALLED", secret_source_present=True,
     ))
+    _synthetic_root_source_stat(monkeypatch, source, size=0)
     with pytest.raises(q.Blocked, match="SECRET_SOURCE_EMPTY_OR_PLACEHOLDER"):
         q.secret_presence(bound)
 

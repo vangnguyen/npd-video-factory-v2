@@ -19,7 +19,10 @@ Verdict: `PENDING_FINAL_EXACT_HEAD_CI`.
   `65bb34bced19acd9c9a97a5d9790ba384003cfc3290f66df88127a3556ab264c`.
 - Installed metadata: `root:root`, mode `0644`, regular file, canonical path.
 - Focused tests: `122 passed, 1 skipped`.
-- Full regression: `1394 passed, 1 skipped`.
+- Final Linux non-root full regression: `1395 passed`.
+- Exact-head run `36441921114` was fail-closed and superseded after its two
+  synthetic source fixtures were corrected to model root ownership without
+  weakening the production ownership check.
 - Qualification promotion: not created.
 - Runner 6: Offline/Safe; listener stopped; service not installed.
 - Kill switch: engaged.
