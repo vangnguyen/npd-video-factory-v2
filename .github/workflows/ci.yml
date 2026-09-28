@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+env:
+  EXPECTED_HEAD_SHA: ${{ github.sha }}
+  HEAD_IDENTITY: ${{ github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/') && 'EXACT_HEAD_CANDIDATE' || 'NOT_EXACT_HEAD_EVENT_SHA' }}
+
 concurrency:
   group: video-factory-v2-ci-${{ github.ref }}
   cancel-in-progress: true
@@ -19,6 +23,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Verify checked-out event SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHECKED_OUT_SHA="$(git rev-parse HEAD)"
+          printf 'EVENT_NAME=%s\n' "$GITHUB_EVENT_NAME"
+          printf 'GITHUB_REF=%s\n' "$GITHUB_REF"
+          printf 'HEAD_IDENTITY=%s\n' "$HEAD_IDENTITY"
+          printf 'EXPECTED_HEAD_SHA=%s\n' "$EXPECTED_HEAD_SHA"
+          printf 'CHECKED_OUT_SHA=%s\n' "$CHECKED_OUT_SHA"
+          test "$CHECKED_OUT_SHA" = "$EXPECTED_HEAD_SHA"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -501,6 +518,19 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Verify checked-out event SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHECKED_OUT_SHA="$(git rev-parse HEAD)"
+          printf 'EVENT_NAME=%s\n' "$GITHUB_EVENT_NAME"
+          printf 'GITHUB_REF=%s\n' "$GITHUB_REF"
+          printf 'HEAD_IDENTITY=%s\n' "$HEAD_IDENTITY"
+          printf 'EXPECTED_HEAD_SHA=%s\n' "$EXPECTED_HEAD_SHA"
+          printf 'CHECKED_OUT_SHA=%s\n' "$CHECKED_OUT_SHA"
+          test "$CHECKED_OUT_SHA" = "$EXPECTED_HEAD_SHA"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"

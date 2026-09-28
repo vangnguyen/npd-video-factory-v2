@@ -7,20 +7,26 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
 EXPECTED_IMAGE = (
-    "quay.io/minio/minio@"
-    "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e"
+    "ghcr.io/npd-ai/npd-minio@"
+    "sha256:d37f79cb57ba531f92eeaf2a1a0e5f827dea982a429bb5a2903043c57ed04528"
 )
 
 
+def _compose_source() -> str:
+    return (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
+
+
 def _minio_block() -> str:
-    source = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
-    return source.split("\n  minio:\n", 1)[1].split("\n  migrate:\n", 1)[0]
+    return _compose_source().split("\n  minio:\n", 1)[1].split("\n  migrate:\n", 1)[0]
 
 
-def test_minio_reference_is_the_verified_immutable_quay_index() -> None:
-    assert f"    image: {EXPECTED_IMAGE}\n" in _minio_block()
-    assert ":latest" not in _minio_block()
-    assert "minio/minio:RELEASE" not in _minio_block()
+def test_minio_reference_is_the_verified_immutable_ghcr_digest() -> None:
+    block = _minio_block()
+    assert f"    image: {EXPECTED_IMAGE}\n" in block
+    assert "quay.io/minio/minio" not in _compose_source()
+    assert ":latest" not in block
+    assert "ghcr.io/npd-ai/npd-minio:" not in block
+    assert "minio/minio:RELEASE" not in block
 
 
 @pytest.mark.parametrize(
