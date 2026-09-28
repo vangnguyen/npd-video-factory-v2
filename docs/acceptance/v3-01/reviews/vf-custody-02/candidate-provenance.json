@@ -1,0 +1,31 @@
+{
+  "authority_granted": false,
+  "canonical_executable_tree_sha256": "0e2a445ea20e3c5def287d537682bcacfcb29f2d3c65319f59860305e428f6fc",
+  "custody_binding_sha256": "c8d2761e3a5f6f835d6562665aac3eb175b5387bacc9e9e2daa5433c36b00e27",
+  "database_name": "vf_provider_custody_v3_01",
+  "database_oid": 16386,
+  "executor_executable_tree_sha256": "c39b1baef8fa610accc883dd6409a6e2c844098c422258c955c4128c3d0cb23e",
+  "full_regression": {
+    "passed": 1338,
+    "skipped": 4,
+    "status": "PASS"
+  },
+  "migration_head": "0015_v3_01_dispatch",
+  "o1_required": true,
+  "o2": false,
+  "postgres_package": "16.15-1.pgdg24.04+2",
+  "provider_calls": 0,
+  "provider_credential_reads": 0,
+  "rc22_operations_imported": 0,
+  "source_commit": "9853ac271973f70e72e8bf2d6865ca359a3bad60",
+  "system_identifier": "7690544205041130268",
+  "task": "VF-CUSTODY-02",
+  "version": 1,
+  "zero_invariants": {
+    "actual_cost_vnd": "0",
+    "budget_reserved_vnd": "0",
+    "operation_consumption": 0,
+    "provider_calls": 0,
+    "provider_credential_reads": 0
+  }
+}
