@@ -60,11 +60,20 @@ attempt.
 
 ## Final blocker
 
-E7 must be rerun only after the Owner identifies an already-approved provider
-secret source or separately authorizes creation of the intended binding. A
-runner registration credential, synthetic placeholder, empty file, or custody
-backup key is not an acceptable substitute. The qualification implementation
-will stat the source but will not open or read credential plaintext.
+VF-EXECUTOR-05C installed only the approved non-secret binding metadata. The
+canonical alias is bound to `UNBOUND_APPROVED_SLOT`, so E7 remains exactly
+`BLOCKED_SECRET_SOURCE_NOT_INSTALLED`. A runner registration credential,
+synthetic placeholder, empty file, or custody backup key is not an acceptable
+substitute. Qualification will stat a future approved source but will not open
+or read credential plaintext.
+
+The 05C candidate source commit is
+`2a6ef461463d6a4a5815810774d0c64acd192f41`; its executor executable-tree
+SHA-256 is
+`1e86f2da55d6bb7b675e0ab8699776c737ddaeb9d46c4e136f954b3485df8152`.
+Focused source tests passed (`122 passed, 1 skipped`) and full regression
+passed (`1394 passed, 1 skipped`). Exact-head CI for the final evidence head is
+required before the 05C handoff is sealed.
 
 This review does not grant provider authority, O2, budget, operation
 consumption, or RC-22 mutation.
