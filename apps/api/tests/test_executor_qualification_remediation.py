@@ -38,8 +38,8 @@ async def test_ledger_change_during_qualification_blocks(host, tmp_path, mock_pr
     calls = []
     async def changing_custody(host):
         calls.append(1)
-        return {"identity": {}, "migration_head": "0015", "operation_state": "VIRGIN",
-                "reserved_vnd": "0", "reservation_privileges": True, "control_revision": len(calls)}
+        return {"identity": {}, "migration_head": "0015", "counts": {"control_revision": len(calls)},
+                "qualification_access": "SELECT_ONLY"}
     monkeypatch.setattr(q, "custody", changing_custody)
     result = await q.qualify(host, tmp_path)
     assert len(calls) == 2

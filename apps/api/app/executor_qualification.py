@@ -237,34 +237,18 @@ def runtime(host: Host) -> dict:
 
 
 async def custody(host: Host) -> dict:
-    from sqlalchemy import text
     from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-    from .provider_runtime_bootstrap import load_binding, verify_socket_custody, ledger_url, read_custody
-    binding = load_binding(Path(host.binding), host.binding_sha256)
+    from .provider_custody import (
+        custody_url, load_custody_binding, read_custody, verify_socket_custody,
+    )
+    binding = load_custody_binding(Path(host.binding), host.binding_sha256)
     verify_socket_custody(binding)
-    engine = create_async_engine(ledger_url(binding), echo=False,
+    engine = create_async_engine(custody_url(binding), echo=False,
         connect_args={"password": "", "server_settings": {"default_transaction_read_only": "on"}})
     try:
         factory = async_sessionmaker(engine, expire_on_commit=False)
-        result = await read_custody(factory, binding, require_virgin_namespace=True)
-        require(result["control_present"], "CONTROL_NOT_INITIALIZED")
-        async with factory() as session, session.begin():
-            await session.execute(text("SET TRANSACTION READ ONLY"))
-            migration = (await session.execute(text("SELECT version_num FROM alembic_version"))).scalars().all()
-            require(migration == [host.migration_head], "MIGRATION_HEAD_MISMATCH")
-            # Read the dispatch-marker and request-receipt columns as well as
-            # the canonical custody helper's operation/reservation snapshot.
-            await session.execute(text("SELECT dispatch_started_at, dispatch_request_sha256, dispatch_client_request_id FROM provider_safety_operations LIMIT 0"))
-            await session.execute(text("SELECT error_evidence FROM provider_safety_attempts LIMIT 0"))
-            tables = ("provider_safety_control", "provider_safety_operations", "provider_safety_attempts",
-                      "provider_safety_budget_days", "provider_safety_circuits", "provider_safety_budget_alerts")
-            privileges = []
-            for table in tables:
-                for privilege in ("SELECT", "INSERT", "UPDATE", "DELETE"):
-                    privileges.append(await session.scalar(text("SELECT has_table_privilege(current_user, :table, :privilege)"),
-                        {"table": "public." + table, "privilege": privilege}))
-            result["reservation_privileges"] = all(privileges)
-        result["migration_head"] = migration[0]
+        result = await read_custody(factory, binding)
+        require(result["migration_head"] == host.migration_head, "MIGRATION_HEAD_MISMATCH")
         return result
     finally:
         await engine.dispose()
@@ -364,11 +348,11 @@ async def qualify(host: Host, root: Path) -> dict:
             results["E3"] = {"status": "PASS", "POSTGRES_CUSTODY": "VERIFIED",
                 "identity": ledger["identity"], "migration_head": ledger["migration_head"]}
             results["E4"] = {"status": "PASS", "LEDGER_READ_CAPABILITY": "VERIFIED",
-                "operation_state": ledger["operation_state"], "reserved_vnd": ledger["reserved_vnd"]}
-            results["E8"] = ({"status": "PASS", "RESERVATION_CAPABILITY": "VERIFIED",
-                "probe": "READ_ONLY_BACKEND_AND_PRIVILEGES_NOT_RESERVATION", "BUDGET_RESERVED": "0"}
-                if ledger["reservation_privileges"] else
-                {"status": "BLOCKED", "code": "RESERVATION_BACKEND_PRIVILEGES_MISSING", "BUDGET_RESERVED": "0"})
+                "baseline_counts": ledger["counts"], "reserved_vnd": "0"}
+            results["E8"] = ({"status": "PASS", "QUALIFICATION_ACCESS": "SELECT_ONLY",
+                "probe": "REPEATABLE_READ_READ_ONLY_WITH_WRITE_REJECTION", "BUDGET_RESERVED": "0"}
+                if ledger["qualification_access"] == "SELECT_ONLY" else
+                {"status": "BLOCKED", "code": "QUALIFICATION_ACCESS_NOT_SELECT_ONLY", "BUDGET_RESERVED": "0"})
         await gate("E5", lambda: github(host))
         await gate("E6", provider_network)
         await gate("E7", lambda: secret_presence(host))

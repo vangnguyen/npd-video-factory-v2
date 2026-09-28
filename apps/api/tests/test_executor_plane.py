@@ -256,8 +256,8 @@ def mock_probes(host, monkeypatch):
     monkeypatch.setattr(q, "persist", lambda root, name, data: writes.setdefault(name, data) and "a" * 64)
     monkeypatch.setattr(q, "runtime", lambda h: {"WSL_RUNTIME": "VERIFIED"})
     async def custody(h):
-        return {"identity": {}, "migration_head": "0015", "operation_state": "VIRGIN",
-                "reserved_vnd": "0", "reservation_privileges": True}
+        return {"identity": {}, "migration_head": "0015", "counts": {},
+                "qualification_access": "SELECT_ONLY"}
     monkeypatch.setattr(q, "custody", custody)
     monkeypatch.setattr(q, "github", lambda h: {"GITHUB_ACCESS": "VERIFIED"})
     monkeypatch.setattr(q, "provider_network", lambda: {"PROVIDER_NETWORK": "VERIFIED"})
@@ -285,10 +285,10 @@ async def test_unavailable_capability_fails_closed(host, tmp_path, mock_probes, 
     assert all(result[k] == v for k, v in q.ZERO.items())
 
 
-async def test_reservation_backend_unavailable(host, tmp_path, mock_probes, monkeypatch):
+async def test_non_select_only_qualification_access_blocks(host, tmp_path, mock_probes, monkeypatch):
     async def custody(h):
-        return {"identity": {}, "migration_head": "0015", "operation_state": "VIRGIN",
-                "reserved_vnd": "0", "reservation_privileges": False}
+        return {"identity": {}, "migration_head": "0015", "counts": {},
+                "qualification_access": "MUTATING"}
     monkeypatch.setattr(q, "custody", custody)
     result = await q.qualify(host, tmp_path)
     assert result["gates"]["E8"]["status"] == "BLOCKED"
