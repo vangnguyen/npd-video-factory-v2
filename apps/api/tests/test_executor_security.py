@@ -13,7 +13,7 @@ def test_hostile_review_requires_all_denials(tmp_path, monkeypatch):
         distro="Ubuntu", source=str(tmp_path), source_commit="b" * 40,
         evidence_root=str(tmp_path), lock_path=str(tmp_path / "lock"),
         binding=str(tmp_path / "binding"), binding_sha256="c" * 64,
-        migration_head="0015_v3_01_dispatch", secret_source=str(tmp_path / "secret"),
+        migration_head="0015_v3_01_dispatch", secret_binding=str(q.PROVIDER_SECRET_BINDING),
         kill_switch=str(tmp_path / "kill"), executor_executable_tree_sha256="d" * 64,
     )
     manifest = {"version": 1, "mode": "ZERO_CALL_QUALIFICATION",

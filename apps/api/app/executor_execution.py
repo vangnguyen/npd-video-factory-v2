@@ -197,14 +197,16 @@ async def execute(request: dict) -> dict:
                 mounted_paths = replace(paths, bundle=mounted)
 
                 def resolve_credential(alias: str) -> str:
-                    nonlocal credential_reads
                     q.require(credential_reads == 0 and policy.execution_gate is not None
                               and alias == policy.execution_gate.credential_alias,
                               "CREDENTIAL_ALIAS_OR_REENTRY_BLOCKED")
-                    secret = Path(host.secret_source)
-                    q.private_path(secret)
-                    credential_reads += 1
-                    return secret.read_text(encoding="utf-8").strip()
+                    q.require(alias == q.CANONICAL_CREDENTIAL_ALIAS,
+                              "CREDENTIAL_ALIAS_OR_REENTRY_BLOCKED")
+                    # The executor is deliberately not a plaintext resolver. A later
+                    # Owner-approved task must install a privileged resolver for the
+                    # selected backend. Until then this remains pre-call fail-closed.
+                    q.secret_presence(host)
+                    raise q.Blocked("PRIVILEGED_SECRET_RESOLVER_NOT_INSTALLED")
 
                 def final_preflight() -> None:
                     read_kill_switch(host)

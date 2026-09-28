@@ -18,6 +18,8 @@ runner-21 bindings, or the obsolete personal-repository admission topology.
 - `apps/api/app/executor_promotion.py` — independent zero-call qualification
   promotion verifier; it cannot grant provider authority.
 - `apps/api/app/executor_qualification.py` — E1-E10 check-only qualification.
+  VF-EXECUTOR-05C extends E7 with the strict, non-plaintext provider-secret
+  binding contract and exact unbound-source result.
 - `apps/api/app/executor_request.py` — immutable request-envelope validation.
 - `apps/api/app/provider_single_dispatch.py` — minimum canonical dispatch
   integration needed for exact executor state transitions, final preflight,
@@ -50,6 +52,10 @@ runner-21 bindings, or the obsolete personal-repository admission topology.
 - `apps/api/tests/test_executor_qualification_promotion.py`
 - `apps/api/tests/test_executor_qualification_remediation.py`
 - `apps/api/tests/test_executor_security.py`
+- `docs/acceptance/v3-01/reviews/vf-executor-05b/provider-secret-binding.unbound.json`
+  — promotability-safe metadata template with no secret source.
+- `docs/acceptance/v3-01/reviews/vf-executor-05b/SECRET_BINDING_CONTRACT.md`
+  — backend comparison and no-authority contract.
 
 ### D. REQUIRED_EXECUTOR_WORKFLOW
 

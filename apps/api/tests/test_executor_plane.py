@@ -36,7 +36,7 @@ def host(tmp_path):
         binding=str(tmp_path / "binding"),
         binding_sha256="b" * 64,
         migration_head="0015",
-        secret_source=str(tmp_path / "secret"),
+        secret_binding=str(q.PROVIDER_SECRET_BINDING),
         kill_switch=str(tmp_path / "kill-switch"),
         executor_executable_tree_sha256="c" * 64,
     )
@@ -188,6 +188,19 @@ def test_root_host_binding_requires_complete_identity(host, tmp_path, monkeypatc
         q.Host.load(path)
 
 
+def test_root_host_binding_requires_canonical_secret_binding_path(
+    host, tmp_path, monkeypatch,
+):
+    from dataclasses import asdict
+    monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    path = tmp_path / "config.json"
+    path.write_text(json.dumps({
+        **asdict(host), "secret_binding": str(tmp_path / "caller-selected.json"),
+    }))
+    with pytest.raises(q.Blocked, match="SECRET_BINDING_PATH_INVALID"):
+        q.Host.load(path)
+
+
 @pytest.mark.parametrize("field,value,code", [
     ("runner_name", "", "RUNNER_NAME_INVALID"),
     ("execution_organization", "wrong-org", "EXECUTION_ORGANIZATION_INVALID"),
@@ -241,10 +254,100 @@ def test_runtime_observation_cannot_replace_root_identity(host, monkeypatch, key
         q.runtime(host)
 
 
-def test_missing_secret_source_does_not_read_plaintext(host, monkeypatch):
-    monkeypatch.setattr(Path, "read_bytes", lambda self: pytest.fail("secret plaintext read"))
-    with pytest.raises((FileNotFoundError, q.Blocked)):
-        q.secret_presence(host)
+def _secret_binding(**changes):
+    value = {
+        "version": 1,
+        "credential_alias": q.CANONICAL_CREDENTIAL_ALIAS,
+        "provider": "openai",
+        "capability_scope": ["asr"],
+        "source_type": "UNBOUND",
+        "source_locator": None,
+        "owner": "root",
+        "expected_owner_uid": 0,
+        "expected_owner_gid": 0,
+        "expected_mode": "0400",
+        "state": "UNBOUND_APPROVED_SLOT",
+        "created_for": "VF-EXECUTOR-05C",
+        "authority_granted": False,
+        "secret_source_present": False,
+    }
+    value.update(changes)
+    return value
+
+
+def _bound_secret_host(host, tmp_path, monkeypatch, value):
+    binding = tmp_path / "provider-secret-binding.json"
+    binding.write_text(json.dumps(value), encoding="utf-8")
+    monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    return replace(host, secret_binding=str(binding))
+
+
+def test_unbound_metadata_is_present_but_e7_stays_blocked(host, tmp_path, monkeypatch):
+    bound = _bound_secret_host(host, tmp_path, monkeypatch, _secret_binding())
+    with pytest.raises(q.ProbeBlocked, match="BLOCKED_SECRET_SOURCE_NOT_INSTALLED") as exc:
+        q.secret_presence(bound)
+    assert exc.value.evidence["SECRET_BINDING_METADATA_PRESENT"] is True
+    assert exc.value.evidence["SECRET_SOURCE_PRESENT"] is False
+    assert exc.value.evidence["PROVIDER_CREDENTIAL_READS"] == 0
+
+
+def test_secret_binding_rejects_extra_fields(host, tmp_path, monkeypatch):
+    bound = _bound_secret_host(
+        host, tmp_path, monkeypatch, _secret_binding(api_key="forbidden"),
+    )
+    with pytest.raises(q.Blocked, match="SECRET_BINDING_SCHEMA_INVALID"):
+        q.secret_presence(bound)
+
+
+def test_bound_source_presence_never_reads_plaintext(host, tmp_path, monkeypatch):
+    source = tmp_path / "credential"
+    source.write_bytes(b"opaque-synthetic-fixture")
+    source.chmod(0o400)
+    value = _secret_binding(
+        source_type="ROOT_FILE", source_locator=str(source),
+        state="BOUND_SOURCE_INSTALLED", secret_source_present=True,
+    )
+    bound = _bound_secret_host(host, tmp_path, monkeypatch, value)
+    original = Path.read_bytes
+    def guarded_read(path):
+        if path == source:
+            pytest.fail("provider credential plaintext read")
+        return original(path)
+    monkeypatch.setattr(Path, "read_bytes", guarded_read)
+    result = q.secret_presence(bound)
+    assert result["SECRET_SOURCE_PRESENT"] is True
+    assert result["PROVIDER_CREDENTIAL_READS"] == 0
+
+
+def test_empty_secret_source_is_not_presence(host, tmp_path, monkeypatch):
+    source = tmp_path / "credential"
+    source.write_bytes(b"")
+    source.chmod(0o400)
+    bound = _bound_secret_host(host, tmp_path, monkeypatch, _secret_binding(
+        source_type="ROOT_FILE", source_locator=str(source),
+        state="BOUND_SOURCE_INSTALLED", secret_source_present=True,
+    ))
+    with pytest.raises(q.Blocked, match="SECRET_SOURCE_EMPTY_OR_PLACEHOLDER"):
+        q.secret_presence(bound)
+
+
+def test_secret_source_requires_root_owned_non_symlink_policy(host, tmp_path, monkeypatch):
+    source = tmp_path / "credential"
+    source.write_bytes(b"opaque-synthetic-fixture")
+    bound = replace(host, secret_binding=str(tmp_path / "provider-secret-binding.json"))
+    Path(bound.secret_binding).write_text(json.dumps(_secret_binding(
+        source_type="ROOT_FILE", source_locator=str(source),
+        state="BOUND_SOURCE_INSTALLED", secret_source_present=True,
+    )), encoding="utf-8")
+    calls = []
+    def policy(path, **kwargs):
+        calls.append((path, kwargs))
+        if path == source:
+            raise q.Blocked("SYMLINK_BLOCKED")
+    monkeypatch.setattr(q, "private_path", policy)
+    with pytest.raises(q.Blocked, match="SYMLINK_BLOCKED"):
+        q.secret_presence(bound)
+    assert calls[-1] == (source, {"root_owned": True})
 
 
 def test_private_execution_repo_uses_root_owned_operator_provenance(
@@ -382,6 +485,27 @@ async def test_unavailable_capability_fails_closed(host, tmp_path, mock_probes, 
     assert result["gates"][gate]["status"] == "BLOCKED"
     assert "must-not-log" not in json.dumps(result)
     assert all(result[k] == v for k, v in q.ZERO.items())
+
+
+async def test_e7_preserves_non_secret_unbound_evidence(
+    host, tmp_path, mock_probes, monkeypatch,
+):
+    def unbound(_host):
+        raise q.ProbeBlocked("BLOCKED_SECRET_SOURCE_NOT_INSTALLED", {
+            "SECRET_BINDING_METADATA_PRESENT": True,
+            "SECRET_SOURCE_PRESENT": False,
+            "PROVIDER_CREDENTIAL_READS": 0,
+        })
+    monkeypatch.setattr(q, "secret_presence", unbound)
+    result = await q.qualify(host, tmp_path)
+    assert result["gates"]["E7"] == {
+        "status": "BLOCKED",
+        "code": "BLOCKED_SECRET_SOURCE_NOT_INSTALLED",
+        "SECRET_BINDING_METADATA_PRESENT": True,
+        "SECRET_SOURCE_PRESENT": False,
+        "PROVIDER_CREDENTIAL_READS": 0,
+    }
+    assert result["credential_reads"] == 0
 
 
 async def test_non_select_only_qualification_access_blocks(host, tmp_path, mock_probes, monkeypatch):

@@ -38,6 +38,15 @@ EXECUTION_WORKFLOW_REF = (
 )
 LABELS = frozenset({"self-hosted", "linux", "x64", "npd-video-factory", "provider-execution"})
 CONFIG = Path("/etc/npd-video-factory/executor.json")
+PROVIDER_SECRET_BINDING = Path("/etc/npd-video-factory/provider-secret-binding.json")
+CANONICAL_CREDENTIAL_ALIAS = "secret://openai/codex-video"
+SECRET_BINDING_FIELDS = {
+    "version", "credential_alias", "provider", "capability_scope",
+    "source_type", "source_locator", "owner", "expected_owner_uid",
+    "expected_owner_gid", "expected_mode", "state", "created_for",
+    "authority_granted", "secret_source_present",
+}
+SECRET_SOURCE_TYPES = frozenset({"ROOT_FILE", "SYSTEMD_CREDENTIAL_ENCRYPTED"})
 ADMISSION_MANIFEST_FIELDS = {
     "version", "mode", "approved_qualification_workflows",
     "approved_execution_workflows",
@@ -59,6 +68,14 @@ ZERO = {"provider_calls": 0, "credential_reads": 0, "budget_reserved_vnd": "0",
 
 class Blocked(RuntimeError):
     """Only fixed, value-free codes may cross the log boundary."""
+
+
+class ProbeBlocked(Blocked):
+    """A blocked probe with an explicitly non-secret evidence payload."""
+
+    def __init__(self, code: str, evidence: dict | None = None) -> None:
+        super().__init__(code)
+        self.evidence = evidence or {}
 
 
 def require(condition: bool, code: str) -> None:
@@ -107,7 +124,7 @@ class Host:
     binding: str
     binding_sha256: str
     migration_head: str
-    secret_source: str
+    secret_binding: str
     kill_switch: str
     executor_executable_tree_sha256: str = ""
     execution_provenance: str = "/etc/npd-video-factory/execution-workflow-provenance.json"
@@ -136,6 +153,8 @@ class Host:
         require(isinstance(host.execution_provenance, str)
                 and Path(host.execution_provenance).is_absolute(),
                 "EXECUTION_PROVENANCE_PATH_INVALID")
+        require(host.secret_binding == str(PROVIDER_SECRET_BINDING),
+                "SECRET_BINDING_PATH_INVALID")
         return host
 
 
@@ -365,12 +384,82 @@ def provider_network() -> dict:
     return {"PROVIDER_NETWORK": "VERIFIED", "probe": "TLS_HANDSHAKE_ONLY", "http_requests": 0}
 
 
+def load_secret_binding(host: Host) -> tuple[dict, bytes]:
+    """Load strict non-secret metadata; never touch provider credential bytes."""
+    path = Path(host.secret_binding)
+    private_path(path, root_owned=True)
+    raw = path.read_bytes()
+    secret_scan(raw)
+    try:
+        value = json.loads(raw)
+    except (TypeError, ValueError):
+        raise Blocked("SECRET_BINDING_SCHEMA_INVALID") from None
+    require(type(value) is dict and set(value) == SECRET_BINDING_FIELDS,
+            "SECRET_BINDING_SCHEMA_INVALID")
+    require(value.get("version") == 1
+            and value.get("credential_alias") == CANONICAL_CREDENTIAL_ALIAS
+            and value.get("provider") == "openai"
+            and value.get("capability_scope") == ["asr"]
+            and value.get("owner") == "root"
+            and type(value.get("expected_owner_uid")) is int
+            and value.get("expected_owner_uid") == 0
+            and type(value.get("expected_owner_gid")) is int
+            and value.get("expected_owner_gid") == 0
+            and value.get("expected_mode") == "0400"
+            and value.get("created_for") == "VF-EXECUTOR-05C"
+            and value.get("authority_granted") is False,
+            "SECRET_BINDING_POLICY_INVALID")
+    state = value.get("state")
+    if state == "UNBOUND_APPROVED_SLOT":
+        require(value.get("source_type") == "UNBOUND"
+                and value.get("source_locator") is None
+                and value.get("secret_source_present") is False,
+                "SECRET_BINDING_UNBOUND_STATE_INVALID")
+    elif state == "BOUND_SOURCE_INSTALLED":
+        locator = value.get("source_locator")
+        require(value.get("source_type") in SECRET_SOURCE_TYPES
+                and isinstance(locator, str) and Path(locator).is_absolute()
+                and ".." not in Path(locator).parts
+                and value.get("secret_source_present") is True,
+                "SECRET_BINDING_BOUND_STATE_INVALID")
+    else:
+        raise Blocked("SECRET_BINDING_STATE_INVALID")
+    return value, raw
+
+
 def secret_presence(host: Host) -> dict:
-    path = Path(host.secret_source)
-    private_path(path)
-    require(path.stat().st_size > 0 and os.access(path, os.R_OK), "SECRET_SOURCE_MISSING")
-    # Never open/read the file, even for redaction setup.
-    return {"SECRET_SOURCE": "PRESENT", "plaintext_read": False}
+    binding, raw = load_secret_binding(host)
+    common = {
+        "SECRET_BINDING_METADATA_PRESENT": True,
+        "credential_alias": CANONICAL_CREDENTIAL_ALIAS,
+        "binding_sha256": sha(raw),
+        "PROVIDER_CREDENTIAL_READS": 0,
+        "plaintext_read": False,
+    }
+    if binding["state"] == "UNBOUND_APPROVED_SLOT":
+        raise ProbeBlocked("BLOCKED_SECRET_SOURCE_NOT_INSTALLED", {
+            **common,
+            "SECRET_BINDING_STATE": "UNBOUND_APPROVED_SLOT",
+            "SECRET_SOURCE_PRESENT": False,
+        })
+
+    # Presence verification is metadata-only: lstat/stat/ownership/mode/size.
+    # The credential bytes are never opened by qualification.
+    source = Path(binding["source_locator"])
+    private_path(source, root_owned=True)
+    info = source.stat()
+    require(info.st_uid == binding["expected_owner_uid"]
+            and info.st_gid == binding["expected_owner_gid"]
+            and stat.S_IMODE(info.st_mode) == int(binding["expected_mode"], 8),
+            "SECRET_SOURCE_POLICY_INVALID")
+    require(info.st_size > 0, "SECRET_SOURCE_EMPTY_OR_PLACEHOLDER")
+    return {
+        **common,
+        "SECRET_BINDING_STATE": "BOUND_SOURCE_INSTALLED",
+        "SECRET_SOURCE_PRESENT": True,
+        "source_type": binding["source_type"],
+        "future_privileged_resolver_reachable": True,
+    }
 
 
 def fixture_mount(root: Path) -> dict:
@@ -428,6 +517,10 @@ async def qualify(host: Host, root: Path) -> dict:
                 data = await data
             results[name] = {"status": "PASS", **data}
             return data
+        except ProbeBlocked as exc:
+            # ProbeBlocked carries only a fixed code and explicit non-secret metadata.
+            results[name] = {"status": "BLOCKED", "code": str(exc), **exc.evidence}
+            return None
         except Exception:
             # No exception text, path, connection URL, credential or provider body.
             results[name] = {"status": "BLOCKED", "code": name + "_PROBE_FAILED"}
