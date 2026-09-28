@@ -1,0 +1,44 @@
+{
+  "authority_granted": false,
+  "base_main_sha": "7c023307d6a1e56a732a6ca96235a7ab3b32a253",
+  "custody_binding_sha256": "c8d2761e3a5f6f835d6562665aac3eb175b5387bacc9e9e2daa5433c36b00e27",
+  "database_name": "vf_provider_custody_v3_01",
+  "database_oid": 16386,
+  "docker_e2e": {
+    "anonymous_immutable_minio_pull": true,
+    "image": "ghcr.io/npd-ai/npd-minio@sha256:d37f79cb57ba531f92eeaf2a1a0e5f827dea982a429bb5a2903043c57ed04528",
+    "pre_seal_run_id": 36424025792,
+    "status": "PASS"
+  },
+  "executable_source_commit": "46027ef75d070030fcd8f545ee3b3c43a11fadc6",
+  "executable_tree_sha256": "451b1656ff9ce7b8df613c8a798ec3883e05185d8e3f97becd8595117a98d396",
+  "full_regression": {
+    "passed": 1136,
+    "status": "PASS"
+  },
+  "migration_head": "0015_v3_01_dispatch",
+  "o1_required": true,
+  "o2": false,
+  "postgres_package": "16.15-1.pgdg24.04+2",
+  "postgres_version": "16.15",
+  "pr": 92,
+  "pre_seal_exact_head_ci": {
+    "checked_out_sha": "46027ef75d070030fcd8f545ee3b3c43a11fadc6",
+    "expected_head_sha": "46027ef75d070030fcd8f545ee3b3c43a11fadc6",
+    "run_id": 36424025792,
+    "status": "PASS"
+  },
+  "rc22_mutation": "NONE",
+  "source_custody_commit": "9853ac271973f70e72e8bf2d6865ca359a3bad60",
+  "system_identifier": "7690544205041130268",
+  "task": "VF-CUSTODY-02G",
+  "version": 1,
+  "zero_invariants": {
+    "actual_cost_vnd": "0",
+    "budget_reserved_vnd": "0",
+    "operation_consumption": 0,
+    "provider_calls": 0,
+    "provider_credential_reads": 0,
+    "runner_activation": false
+  }
+}
