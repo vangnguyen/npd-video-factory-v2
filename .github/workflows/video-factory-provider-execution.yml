@@ -1,0 +1,62 @@
+name: Video Factory governed provider execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation_id:
+        description: Exact approved operation identifier
+        type: string
+        required: true
+      bundle_id:
+        description: Host allowlist identifier (never a caller-selected path)
+        type: string
+        required: true
+      bundle_sha256:
+        description: Expected approved bundle SHA-256
+        type: string
+        required: true
+      loaded_scope_sha256:
+        description: Expected loaded scope SHA-256
+        type: string
+        required: true
+      authority_receipt_sha256:
+        description: Expected separate Owner O2 authority receipt SHA-256
+        type: string
+        required: true
+      rc_tag:
+        description: Approved immutable RC tag (RC-22 is closed)
+        type: string
+        required: true
+      rc_commit:
+        description: Expected RC commit
+        type: string
+        required: true
+      governance_main_sha:
+        description: Exact approved governance main SHA
+        type: string
+        required: true
+      provider_capability:
+        description: Approved capability
+        type: choice
+        options: [asr]
+        required: true
+
+permissions: {}
+
+concurrency:
+  group: npd-video-factory-execution-plane
+  cancel-in-progress: false
+
+jobs:
+  blocked-pre-call:
+    if: github.repository == 'npd-ai/npd-video-factory-executor' && github.ref == 'refs/heads/main'
+    runs-on:
+      group: vf-provider-execution
+      labels: [self-hosted, linux, x64, npd-video-factory, provider-execution]
+    timeout-minutes: 10
+    steps:
+      # The host runtime remains fail-closed until qualification and activation.
+      - name: Invoke host-controlled canonical entrypoint
+        env:
+          VF_REQUEST_JSON: ${{ toJSON(inputs) }}
+        run: /opt/npd-video-factory/runtime/venv/bin/python -I /opt/npd-video-factory/runtime/request.py

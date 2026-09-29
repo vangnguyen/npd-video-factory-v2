@@ -1,29 +1,15 @@
-name: Manual paid-provider smoke
+name: Retired paid-provider smoke (blocked)
 
 on:
   workflow_dispatch:
-    inputs:
-      confirm_paid_call:
-        description: "Type APPROVED to authorize one paid OpenAI TTS smoke call"
-        required: true
-        type: string
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
-  openai-tts:
-    if: inputs.confirm_paid_call == 'APPROVED'
+  retired:
     runs-on: ubuntu-latest
-    environment: manual-paid-provider
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: python -m pip install -e "apps/api[dev]"
-      - name: Run one bounded provider smoke
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          RUN_EXTERNAL_TTS_SMOKE: "1"
-        run: python scripts/production-tts-smoke.py
+      - name: Fail closed - paid execution belongs to the dedicated plane
+        run: |
+          echo 'BLOCKED_PRE_CALL: legacy hosted provider smoke retired; provider calls=0'
+          exit 1

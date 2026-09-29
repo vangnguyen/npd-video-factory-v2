@@ -1,0 +1,23 @@
+name: Video Factory executor zero-call qualification
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: npd-video-factory-execution-plane
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    if: github.repository == 'npd-ai/npd-video-factory-executor' && github.ref == 'refs/heads/main'
+    runs-on:
+      group: vf-provider-execution
+      labels: [self-hosted, linux, x64, npd-video-factory, provider-execution]
+    timeout-minutes: 10
+    steps:
+      # No checkout, downloaded actions, package installs, or caller-selected commands.
+      # Host admission rejects an unapproved workflow SHA, ref, event, or repository.
+      - name: Run installed qualification probes
+        run: /opt/npd-video-factory/runtime/venv/bin/python -I /opt/npd-video-factory/runtime/qualify.py
