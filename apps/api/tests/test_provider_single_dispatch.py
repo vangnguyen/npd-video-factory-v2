@@ -19,6 +19,7 @@ from app.openai_transcription_provider import OpenAITranscriptionProvider
 from app.provider_safety_db import (
     ProviderSafetyAttemptORM,
     ProviderSafetyBudgetDayORM,
+    ProviderSafetyControlORM,
     ProviderSafetyOperationORM,
 )
 from app.provider_safety_repository import ProviderSafetyRepository
@@ -66,7 +67,10 @@ def test_evidence_manifest_is_deterministic_and_secret_scan_fails_closed(tmp_pat
     digests = []
     for name in ("one", "two"):
         evidence = _EvidenceRecorder(tmp_path / name, "synthetic-op-1")
-        evidence.arm(reserved_vnd=Decimal("500"), ledger_before="VIRGIN_NOT_CONSUMED")
+        evidence.arm(
+            reserved_vnd=Decimal("500"),
+            ledger_before="FRESH_OPERATION_NOT_REGISTERED_NOT_CONSUMED",
+        )
         evidence.mark_dispatch(request_sha256=REQUEST_SHA, client_request_id="vf-synthetic-request")
         digests.append(evidence.seal({"code": "QUALITY_REVIEW_REQUIRED", "provider_call_state": "POSSIBLY_SENT"}))
     assert digests[0] == digests[1]
@@ -309,6 +313,87 @@ async def test_marker_is_single_use_and_blocks_pre_call_release(tmp_path):
         operation, attempts, budget = await _counts(sessions, context.operation_key)
         assert operation.status == "reserved" and attempts == 0
         assert budget.reserved_vnd == Decimal("500")
+    finally:
+        await engine.dispose()
+
+
+async def test_client_request_id_collision_is_rejected_globally_without_mutation(tmp_path):
+    scope = _active_policy().execution_gate
+    assert scope is not None
+    first = _asr_context(1)
+    second = _asr_context(2, acceptance_lineage_id=f"al-9999-{'f' * 64}")
+    engine, sessions, repository = await _setup(tmp_path)
+    try:
+        first_reservation = await repository.reserve_operation(
+            first, now=NOW, max_attempts=1, max_concurrent_calls=1,
+            per_operation_limit_vnd=scope.per_operation_limit_vnd,
+            daily_limit_vnd=scope.acceptance_window_limit_vnd,
+            circuit_failure_threshold=3, circuit_cooldown_seconds=60,
+            retention_days=400, single_dispatch_protocol=True,
+        )
+        assert first_reservation.allowed
+        await repository.mark_dispatch_started(
+            first, now=NOW, request_sha256=REQUEST_SHA,
+            client_request_id="vf-global-idempotency-key",
+        )
+        first_attempt = ProviderSafetyController(
+            _active_policy().model_copy(update={"global_kill_switch_engaged": True}),
+            clock=lambda: NOW,
+        )._build_attempt_record(
+            first, attempt=1, status="succeeded", retryable=False,
+            error_code=None, error_evidence=None,
+            actual_cost_vnd=Decimal("100"), charged_cost_vnd=Decimal("100"),
+            started_at=NOW,
+        )
+        await repository.record_attempt(first_attempt)
+        await repository.finish_operation(
+            first, now=NOW, attempts=1, charged_vnd=Decimal("100"),
+            succeeded=True, failure_code=None, circuit_failure_threshold=3,
+            warning_thresholds=(50, 80, 100),
+        )
+
+        second_reservation = await repository.reserve_operation(
+            second, now=NOW + timedelta(seconds=1), max_attempts=1,
+            max_concurrent_calls=1,
+            per_operation_limit_vnd=scope.per_operation_limit_vnd,
+            daily_limit_vnd=scope.acceptance_window_limit_vnd,
+            circuit_failure_threshold=3, circuit_cooldown_seconds=60,
+            retention_days=400, single_dispatch_protocol=True,
+        )
+        assert second_reservation.allowed
+        async with sessions() as session:
+            control_before = await session.get(ProviderSafetyControlORM, repository.CONTROL_KEY)
+            budget_before = await session.get(ProviderSafetyBudgetDayORM, NOW.date())
+            assert control_before is not None and budget_before is not None
+            revision_before = control_before.revision
+            budget_before_values = (budget_before.committed_vnd, budget_before.reserved_vnd)
+
+        with pytest.raises(RuntimeError, match="client request ID collision"):
+            await repository.mark_dispatch_started(
+                second, now=NOW + timedelta(seconds=2), request_sha256="b" * 64,
+                client_request_id="vf-global-idempotency-key",
+            )
+
+        async with sessions() as session:
+            first_row = await session.get(ProviderSafetyOperationORM, first.operation_key)
+            second_row = await session.get(ProviderSafetyOperationORM, second.operation_key)
+            control_after = await session.get(ProviderSafetyControlORM, repository.CONTROL_KEY)
+            budget_after = await session.get(ProviderSafetyBudgetDayORM, NOW.date())
+            attempt_count = int(
+                await session.scalar(select(func.count()).select_from(ProviderSafetyAttemptORM)) or 0
+            )
+            assert first_row is not None and second_row is not None
+            assert first_row.status == "succeeded"
+            assert first_row.dispatch_client_request_id == "vf-global-idempotency-key"
+            assert second_row.status == "reserved"
+            assert second_row.dispatch_started_at is None
+            assert second_row.dispatch_request_sha256 is None
+            assert second_row.dispatch_client_request_id is None
+            assert second_row.attempt_count == 0
+            assert control_after is not None and control_after.revision == revision_before
+            assert budget_after is not None
+            assert (budget_after.committed_vnd, budget_after.reserved_vnd) == budget_before_values
+            assert attempt_count == 1
     finally:
         await engine.dispose()
 

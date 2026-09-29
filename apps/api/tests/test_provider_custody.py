@@ -90,6 +90,35 @@ def test_binding_hash_and_no_password(binding_data, tmp_path):
     assert url.username == custody.QUALIFICATION_ROLE
     with pytest.raises(custody.CustodyBlocked, match="CUSTODY_BINDING_HASH_MISMATCH"):
         custody.load_custody_binding(path, "0" * 64)
+    with pytest.raises(custody.CustodyBlocked, match="CUSTODY_BINDING_NOT_CANONICAL"):
+        custody.load_canonical_custody_binding(path, hashlib.sha256(raw).hexdigest())
+
+
+def test_terminal_history_is_allowed_only_when_shared_custody_is_quiescent():
+    control = [{"control_key": "global", "revision": 17}]
+    assert custody._validate_quiescent_shared_custody(
+        control,
+        active_operations=0,
+        reserved_vnd="0",
+    ) == 0
+    with pytest.raises(
+        custody.CustodyBlocked,
+        match="CUSTODY_ACTIVE_RESERVATION_STATE_INVALID",
+    ):
+        custody._validate_quiescent_shared_custody(
+            control,
+            active_operations=1,
+            reserved_vnd="500",
+        )
+    with pytest.raises(
+        custody.CustodyBlocked,
+        match="CUSTODY_ACTIVE_RESERVATION_STATE_INVALID",
+    ):
+        custody._validate_quiescent_shared_custody(
+            control,
+            active_operations=0,
+            reserved_vnd="1",
+        )
 
 
 def _socket_path(monkeypatch, directory_uid=111, directory_mode=0o2750, socket_uid=111, socket_mode=0o770):
@@ -109,26 +138,90 @@ def _socket_path(monkeypatch, directory_uid=111, directory_mode=0o2750, socket_u
     monkeypatch.setattr(custody, "_require_canonical_path", lambda path: None)
 
 
+def _host_identities(
+    monkeypatch, *, service_uid=111, service_gid=112, socket_group_gid=113,
+):
+    monkeypatch.setattr(
+        custody,
+        "pwd",
+        SimpleNamespace(getpwnam=lambda _name: SimpleNamespace(
+            pw_uid=service_uid,
+            pw_gid=service_gid,
+        )),
+    )
+    monkeypatch.setattr(
+        custody,
+        "grp",
+        SimpleNamespace(getgrnam=lambda _name: SimpleNamespace(
+            gr_gid=socket_group_gid,
+        )),
+    )
+
+
 def test_dedicated_postgres_service_identity_is_accepted(binding_data, monkeypatch):
+    _host_identities(monkeypatch)
     _socket_path(monkeypatch)
     custody.verify_socket_custody(custody.CustodyBinding.model_validate(binding_data))
 
 
 def test_runner_owned_socket_is_rejected(binding_data, monkeypatch):
+    _host_identities(monkeypatch)
     _socket_path(monkeypatch, directory_uid=999, socket_uid=999)
     with pytest.raises(custody.CustodyBlocked, match="CUSTODY_SOCKET_DIRECTORY_IDENTITY_INVALID"):
         custody.verify_socket_custody(custody.CustodyBinding.model_validate(binding_data))
 
 
 def test_world_writable_socket_is_rejected(binding_data, monkeypatch):
+    _host_identities(monkeypatch)
     _socket_path(monkeypatch, socket_mode=0o777)
     with pytest.raises(custody.CustodyBlocked, match="CUSTODY_SOCKET_IDENTITY_INVALID"):
         custody.verify_socket_custody(custody.CustodyBinding.model_validate(binding_data))
 
 
 def test_symlink_or_path_substitution_is_rejected(binding_data, monkeypatch):
+    _host_identities(monkeypatch)
     monkeypatch.setattr(custody, "_require_canonical_path", lambda path: (_ for _ in ()).throw(custody.CustodyBlocked("CUSTODY_SOCKET_PATH_SUBSTITUTION")))
     with pytest.raises(custody.CustodyBlocked, match="CUSTODY_SOCKET_PATH_SUBSTITUTION"):
+        custody.verify_socket_custody(custody.CustodyBinding.model_validate(binding_data))
+
+
+def test_real_symlink_path_substitution_is_rejected(tmp_path):
+    target = tmp_path / "real-socket-directory"
+    target.mkdir()
+    link = tmp_path / "substituted-socket-directory"
+    link.symlink_to(target, target_is_directory=True)
+    with pytest.raises(
+        custody.CustodyBlocked,
+        match="CUSTODY_SOCKET_PATH_SUBSTITUTION",
+    ):
+        custody._require_canonical_path(link)
+
+
+@pytest.mark.parametrize(("service_uid", "service_gid"), [
+    (999, 112),
+    (111, 999),
+])
+def test_wrong_named_postgres_service_uid_or_gid_is_rejected(
+    binding_data, monkeypatch, service_uid, service_gid,
+):
+    _host_identities(
+        monkeypatch,
+        service_uid=service_uid,
+        service_gid=service_gid,
+    )
+    with pytest.raises(
+        custody.CustodyBlocked,
+        match="CUSTODY_POSTGRES_SERVICE_IDENTITY_INVALID",
+    ):
+        custody.verify_socket_custody(custody.CustodyBinding.model_validate(binding_data))
+
+
+def test_wrong_named_socket_group_gid_is_rejected(binding_data, monkeypatch):
+    _host_identities(monkeypatch, socket_group_gid=999)
+    with pytest.raises(
+        custody.CustodyBlocked,
+        match="CUSTODY_SOCKET_GROUP_IDENTITY_INVALID",
+    ):
         custody.verify_socket_custody(custody.CustodyBinding.model_validate(binding_data))
 
 

@@ -53,14 +53,148 @@ def test_o2_cannot_replace_independent_qualification(monkeypatch, change, code):
 @pytest.mark.parametrize("field", ["operation_id", "bundle_sha256", "loaded_scope_sha256", "authority_receipt_sha256"])
 def test_request_cannot_select_other_approved_operation(field):
     with pytest.raises(q.Blocked, match="REQUEST_NOT_EXACTLY_APPROVED"):
-        executor.bind_request({field: "changed"}, {"request": {field: "approved"}}, None)
+        executor.bind_request(
+            {field: "changed"}, {"request": {field: "approved"}}, None,
+            qualification_sha256="a" * 64,
+        )
 
 
 @pytest.mark.parametrize("field", [*q.RUNNER_IDENTITY_FIELDS, "runner_identity"])
 def test_caller_cannot_supply_runner_identity(field):
     request = {field: "caller-controlled"}
     with pytest.raises(q.Blocked, match="CALLER_RUNNER_IDENTITY_FORBIDDEN"):
-        executor.bind_request(request, {"request": request}, None)
+        executor.bind_request(
+            request, {"request": request}, None,
+            qualification_sha256="a" * 64,
+        )
+
+
+@pytest.mark.parametrize("field", ["custody_binding", "custody_binding_sha256"])
+def test_operation_catalog_cannot_override_host_custody(field):
+    request = {"bundle_id": "fixture"}
+    entry = {"request": request, "paths": {field: "caller-controlled"}}
+    with pytest.raises(q.Blocked, match="OPERATION_CUSTODY_OVERRIDE_FORBIDDEN"):
+        executor.bind_request(
+            request, entry, None, qualification_sha256="a" * 64,
+        )
+
+
+def _bind_request_fixture(tmp_path, monkeypatch):
+    source = tmp_path / "source"
+    evidence_root = tmp_path / "evidence"
+    custody_path = tmp_path / "custody-binding.json"
+    custody_sha256 = canonical.CANONICAL_CUSTODY_BINDING_SHA256
+    executor_tree = "e" * 64
+    promotion_sha256 = "p" * 64
+    operation = SimpleNamespace(
+        operation_key="vf-v3-01-rc23:openai-transcription:asr:slot-1:fixture",
+        bundle_sha256="b" * 64,
+        loaded_scope_sha256="l" * 64,
+        authority_receipt_sha256="a" * 64,
+        rc_tag="vf-v3-01-rc23",
+        rc_commit="c" * 40,
+        governance_main_commit="d" * 40,
+        capability="asr",
+        executor_executable_tree_sha256=executor_tree,
+        execution_plane_promotion_sha256=promotion_sha256,
+    )
+    custody = SimpleNamespace(database_name="vf_provider_custody_v3_01")
+    host = SimpleNamespace(
+        source=str(source),
+        source_commit=operation.rc_commit,
+        evidence_root=str(evidence_root),
+        binding=str(custody_path),
+        binding_sha256=custody_sha256,
+        executor_executable_tree_sha256=executor_tree,
+    )
+    request = {
+        "bundle_id": "fixture",
+        "operation_id": operation.operation_key,
+        "bundle_sha256": operation.bundle_sha256,
+        "loaded_scope_sha256": operation.loaded_scope_sha256,
+        "authority_receipt_sha256": operation.authority_receipt_sha256,
+        "rc_tag": operation.rc_tag,
+        "rc_commit": operation.rc_commit,
+        "governance_main_sha": operation.governance_main_commit,
+        "provider_capability": operation.capability,
+    }
+    paths = {
+        "rc_source": str(source),
+        "operation_binding": str(tmp_path / "operation-binding.json"),
+        "operation_binding_sha256": "o" * 64,
+        "bundle": str(tmp_path / "bundle.json"),
+        "authority": str(tmp_path / "authority.json"),
+        "authority_sha256": operation.authority_receipt_sha256,
+        "provenance": str(tmp_path / "provenance.json"),
+        "provenance_sha256": "v" * 64,
+        "operation_manifest": str(tmp_path / "operation-manifest.json"),
+        "asset": str(tmp_path / "asset.wav"),
+        "reference_transcript": str(tmp_path / "reference.json"),
+        "rights_record": str(tmp_path / "rights.json"),
+        "evidence_directory": str(evidence_root / "operations"),
+    }
+    entry = {
+        "request": request,
+        "paths": paths,
+        "runtime_policy": str(tmp_path / "policy.json"),
+        "runtime_policy_sha256": "r" * 64,
+    }
+    monkeypatch.setattr(q, "private_path", lambda *args, **kwargs: None)
+    monkeypatch.setattr(executor, "load_operation_binding", lambda *args: operation)
+    monkeypatch.setattr(executor, "load_custody_binding", lambda *args: custody)
+    monkeypatch.setattr(executor, "_trusted_json", lambda *args: {})
+    monkeypatch.setattr(
+        executor,
+        "ProviderSafetyPolicy",
+        SimpleNamespace(model_validate=lambda value: "synthetic-policy"),
+    )
+    return request, entry, host, operation, custody, promotion_sha256
+
+
+@pytest.mark.parametrize(
+    "field,changed,code",
+    [
+        ("executor_executable_tree_sha256", "f" * 64, "EXECUTOR_TREE_MISMATCH"),
+        ("execution_plane_promotion_sha256", "q" * 64, "EXECUTION_PLANE_PROMOTION_MISMATCH"),
+    ],
+)
+def test_stale_operation_identity_is_rejected(
+    tmp_path, monkeypatch, field, changed, code,
+):
+    request, entry, host, operation, custody, promotion_sha256 = _bind_request_fixture(
+        tmp_path, monkeypatch,
+    )
+    setattr(operation, field, changed)
+    with pytest.raises(q.Blocked, match=code):
+        executor.bind_request(
+            request, entry, host, qualification_sha256=promotion_sha256,
+        )
+
+
+def test_host_custody_binding_must_be_canonical(tmp_path, monkeypatch):
+    request, entry, host, operation, custody, promotion_sha256 = _bind_request_fixture(
+        tmp_path, monkeypatch,
+    )
+    host.binding_sha256 = "f" * 64
+    with pytest.raises(q.Blocked, match="CUSTODY_BINDING_NOT_CANONICAL"):
+        executor.bind_request(
+            request, entry, host, qualification_sha256=promotion_sha256,
+        )
+
+
+def test_canonical_host_custody_and_current_operation_identity_are_bound(
+    tmp_path, monkeypatch,
+):
+    request, entry, host, operation, custody, promotion_sha256 = _bind_request_fixture(
+        tmp_path, monkeypatch,
+    )
+    paths, policy = executor.bind_request(
+        request, entry, host, qualification_sha256=promotion_sha256,
+    )
+    assert paths.custody_binding == Path(host.binding)
+    assert paths.custody_binding_sha256 == host.binding_sha256
+    assert paths.operation_binding == Path(entry["paths"]["operation_binding"])
+    assert policy == "synthetic-policy"
 
 
 async def _canonical_setup(tmp_path, monkeypatch):
@@ -70,21 +204,26 @@ async def _canonical_setup(tmp_path, monkeypatch):
     context = _asr_context(1)
     provider = FakeAdapter(scope, "success")
     paths = canonical.SingleDispatchPaths(
-        rc_source=tmp_path / "rc", binding=tmp_path / "binding", binding_sha256="a" * 64,
+        rc_source=tmp_path / "rc",
+        operation_binding=tmp_path / "operation-binding",
+        operation_binding_sha256="a" * 64,
+        custody_binding=tmp_path / "custody-binding",
+        custody_binding_sha256=canonical.CANONICAL_CUSTODY_BINDING_SHA256,
         bundle=tmp_path / "bundle", authority=tmp_path / "authority", authority_sha256="b" * 64,
         provenance=tmp_path / "provenance", provenance_sha256="c" * 64,
         operation_manifest=tmp_path / "operation", asset=tmp_path / "asset",
         reference_transcript=tmp_path / "reference", rights_record=tmp_path / "rights",
         evidence_directory=tmp_path / "evidence")
-    binding = SimpleNamespace(operation_key=context.operation_key)
+    operation = SimpleNamespace(operation_key=context.operation_key)
+    custody_binding = SimpleNamespace(database_name="vf_provider_custody_v3_01")
     monkeypatch.setattr(canonical, "_validate_non_secret_bindings", lambda *a, **k: SimpleNamespace(
-        binding=binding, scope=scope, context=context, metadata=None))
-    monkeypatch.setattr(canonical, "load_binding", lambda *a: binding)
+        operation=operation, custody=custody_binding, scope=scope, context=context, metadata=None))
+    monkeypatch.setattr(canonical, "load_operation_binding", lambda *a: operation)
     async def custody(*a, **k):
         return {"safe": True}
-    monkeypatch.setattr(canonical, "bootstrap_custody", custody)
-    monkeypatch.setattr(canonical, "_verify_virgin_custody", lambda *a: None)
-    monkeypatch.setattr(canonical, "ledger_url", lambda *a: "fixture")
+    monkeypatch.setattr(canonical, "inspect_operation_custody", custody)
+    monkeypatch.setattr(canonical, "_verify_operation_custody", lambda *a, **k: None)
+    monkeypatch.setattr(canonical, "runtime_ledger_url", lambda *a: "fixture")
     monkeypatch.setattr(canonical, "create_async_engine", lambda *a, **k: engine)
     monkeypatch.setattr(canonical, "ProviderSafetyRepository", lambda *a: repository)
     monkeypatch.setattr(canonical, "OpenAITranscriptionProvider", lambda **k: provider)
@@ -217,11 +356,28 @@ async def test_host_delegates_once_unmounts_and_seals_under_exclusive_lock(tmp_p
     raw = b'{"synthetic":true}'
     bundle = tmp_path / "source-bundle.json"
     bundle.write_bytes(raw)
-    paths = canonical.SingleDispatchPaths(source, tmp_path / "binding", "a" * 64, bundle,
-        tmp_path / "authority", "b" * 64, tmp_path / "provenance", "c" * 64,
-        tmp_path / "operation", tmp_path / "asset", tmp_path / "reference", tmp_path / "rights",
-        tmp_path / "operations")
-    monkeypatch.setattr(executor, "load_catalog", lambda: {"operations": {"fixture": {}}})
+    paths = canonical.SingleDispatchPaths(
+        rc_source=source,
+        operation_binding=tmp_path / "operation-binding",
+        operation_binding_sha256="a" * 64,
+        custody_binding=tmp_path / "custody-binding",
+        custody_binding_sha256=canonical.CANONICAL_CUSTODY_BINDING_SHA256,
+        bundle=bundle,
+        authority=tmp_path / "authority",
+        authority_sha256="b" * 64,
+        provenance=tmp_path / "provenance",
+        provenance_sha256="c" * 64,
+        operation_manifest=tmp_path / "operation",
+        asset=tmp_path / "asset",
+        reference_transcript=tmp_path / "reference",
+        rights_record=tmp_path / "rights",
+        evidence_directory=tmp_path / "operations",
+    )
+    monkeypatch.setattr(
+        executor,
+        "load_catalog",
+        lambda: {"qualification_sha256": "q" * 64, "operations": {"fixture": {}}},
+    )
     monkeypatch.setattr(q.Host, "load", lambda: host)
     monkeypatch.setattr(q, "runtime", lambda *a, **k: None)
     monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
@@ -239,7 +395,7 @@ async def test_host_delegates_once_unmounts_and_seals_under_exclusive_lock(tmp_p
             yield str(folder)
             raise RuntimeError("synthetic bundle cleanup failure")
         monkeypatch.setattr(executor.tempfile, "TemporaryDirectory", cleanup_fails)
-    monkeypatch.setattr(executor, "bind_request", lambda *a: (paths, None))
+    monkeypatch.setattr(executor, "bind_request", lambda *a, **k: (paths, None))
     lock = []
     @contextmanager
     def locked(*a):

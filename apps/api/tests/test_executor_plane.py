@@ -534,6 +534,13 @@ async def test_kill_switch_disengaged_blocks(host, tmp_path, monkeypatch):
         await q.check_only(host, tmp_path)
 
 
+async def test_e3_rejects_noncanonical_custody_hash_before_database_access(host):
+    from app.provider_custody import CustodyBlocked
+
+    with pytest.raises(CustodyBlocked, match="CUSTODY_BINDING_NOT_CANONICAL"):
+        await q.custody(host)
+
+
 async def test_check_only_calls_canonical_validator_without_dispatch(host, tmp_path, monkeypatch):
     from app import provider_single_dispatch as dispatch
     monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
@@ -552,6 +559,7 @@ def mock_probes(host, monkeypatch):
     monkeypatch.setattr(q, "runtime", lambda h: {"WSL_RUNTIME": "VERIFIED"})
     async def custody(h):
         return {"identity": {}, "migration_head": "0015", "counts": {},
+                "active_operations": 0, "reserved_vnd": "0",
                 "qualification_access": "SELECT_ONLY"}
     monkeypatch.setattr(q, "custody", custody)
     monkeypatch.setattr(q, "github", lambda h: {"GITHUB_ACCESS": "VERIFIED"})
@@ -604,11 +612,36 @@ async def test_e7_preserves_non_secret_unbound_evidence(
 async def test_non_select_only_qualification_access_blocks(host, tmp_path, mock_probes, monkeypatch):
     async def custody(h):
         return {"identity": {}, "migration_head": "0015", "counts": {},
+                "active_operations": 0, "reserved_vnd": "0",
                 "qualification_access": "MUTATING"}
     monkeypatch.setattr(q, "custody", custody)
     result = await q.qualify(host, tmp_path)
     assert result["gates"]["E8"]["status"] == "BLOCKED"
     assert result["budget_reserved_vnd"] == "0"
+
+
+async def test_active_or_reserved_custody_cannot_be_qualified(
+    host, tmp_path, mock_probes, monkeypatch,
+):
+    async def active_custody(_host):
+        return {
+            "identity": {},
+            "migration_head": "0015",
+            "counts": {"provider_safety_operations": 1},
+            "active_operations": 1,
+            "reserved_vnd": "500",
+            "qualification_access": "SELECT_ONLY",
+        }
+
+    monkeypatch.setattr(q, "custody", active_custody)
+    result = await q.qualify(host, tmp_path)
+    assert result["verdict"] == "BLOCKED"
+    assert result["gates"]["E3"] == {
+        "status": "BLOCKED",
+        "code": "CUSTODY_ACTIVE_RESERVATION_STATE_INVALID",
+    }
+    assert result["gates"]["E4"]["status"] == "BLOCKED"
+    assert result["gates"]["E8"]["status"] == "BLOCKED"
 
 
 async def test_evidence_failure_cannot_return_success(host, tmp_path, mock_probes, monkeypatch):

@@ -278,6 +278,16 @@ class ProviderSafetyRepository:
                     or operation.attempt_count != 0
                 ):
                     raise RuntimeError("single-dispatch operation is not virgin and reserved")
+                conflicting_operation_key = await session.scalar(
+                    select(ProviderSafetyOperationORM.operation_key)
+                    .where(
+                        ProviderSafetyOperationORM.dispatch_client_request_id == client_request_id,
+                        ProviderSafetyOperationORM.operation_key != context.operation_key,
+                    )
+                    .limit(1)
+                )
+                if conflicting_operation_key is not None:
+                    raise RuntimeError("single-dispatch client request ID collision")
                 operation.dispatch_started_at = now
                 operation.dispatch_request_sha256 = request_sha256
                 operation.dispatch_client_request_id = client_request_id

@@ -85,6 +85,22 @@ def test_dual_ci_provenance_binds_both_successful_runs_and_stable_hash() -> None
     )
 
 
+def test_same_rc_and_governance_commit_fails_closed() -> None:
+    payload = _payload()
+    payload["governance_main_commit"] = RC_COMMIT
+    payload["governance_main_ci"]["commit_sha"] = RC_COMMIT
+
+    with pytest.raises(ProviderCiProvenanceError) as error:
+        validate_provider_acceptance_ci_provenance(
+            payload,
+            expected_executable_rc_commit=RC_COMMIT,
+            expected_governance_main_commit=RC_COMMIT,
+            expected_executable_rc_ci_run_id=RC_CI_RUN_ID,
+            expected_governance_main_ci_run_id=GOVERNANCE_CI_RUN_ID,
+        )
+    assert error.value.code == "CI_PROVENANCE_INVALID"
+
+
 def test_swapped_ci_ids_fail_closed() -> None:
     payload = _payload()
     payload["executable_rc_ci"]["run_id"] = GOVERNANCE_CI_RUN_ID

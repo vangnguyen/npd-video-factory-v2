@@ -15,7 +15,7 @@ import os
 import re
 import wave
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from pathlib import Path
 from typing import Callable, Literal
@@ -34,13 +34,20 @@ from .provider_gate_loader import (
     canonical_sha256,
     load_verified_provider_gate_bundle,
 )
+from .provider_custody import (
+    CANONICAL_CUSTODY_BINDING_SHA256,
+    CustodyBinding,
+    CustodyBlocked,
+    load_custody_binding,
+)
 from .provider_runtime_bootstrap import (
     BootstrapBlocked,
-    BootstrapLedgerBinding,
+    OperationBinding,
     _git,
-    bootstrap_custody,
-    ledger_url,
-    load_binding,
+    inspect_operation_custody,
+    load_operation_binding,
+    runtime_ledger_url,
+    verify_bound_source,
 )
 from .provider_safety import (
     ProviderCallContext,
@@ -57,6 +64,40 @@ from .openai_transcription_provider import OpenAITranscriptionProvider
 
 MODULE_PATH = "apps/api/app/provider_single_dispatch.py"
 _SECRET_PATTERN = re.compile(r"(?i)(?:sk-[A-Za-z0-9_-]{8,}|Bearer\s+\S+|OPENAI_API_KEY\s*[:=])")
+_CUSTODY_IDENTITY_KEYS = (
+    set(CustodyBinding.model_fields) - {"version", "mode", "authority_granted"}
+) | {
+    "ledger",
+    "ledger_identity",
+    "database_role",
+}
+_AUTHORITY_FIELDS = {
+    "decision", "status", "main_provenance", "rc_tag", "rc_commit",
+    "governance_main_commit", "executable_tree_sha256",
+    "executor_executable_tree_sha256", "execution_plane_promotion_sha256",
+    "dual_ci_provenance_sha256", "executable_rc_ci_run_id",
+    "governance_main_ci_run_id", "operation_key", "acceptance_lineage_id",
+    "prepared_scope_sha256", "execution_scope_sha256",
+    "loaded_runtime_scope_sha256", "gate_bundle_sha256",
+    "operation_manifest_sha256", "custody_binding_sha256", "asset_sha256",
+    "reference_transcript_sha256", "rights_record_sha256",
+    "asr_prompt_profile_sha256", "prompt_sha256", "provider_key", "model",
+    "capability", "language", "slot", "operation_1_consumed",
+    "operation_2_authorized", "budget_reserved_vnd", "bundle_mounted",
+    "dispatch_requires_separate_execution_task", "approval_records", "limits",
+    "valid_from_utc", "expires_at_utc", "asset_bytes",
+    "asset_duration_seconds",
+}
+_OPERATION_MANIFEST_FIELDS = {
+    "operation_id", "ledger_operation_key", "custody_binding_sha256",
+    "acceptance_lineage_id", "prepared_scope_sha256", "execution_scope_sha256",
+    "prompt_sha256", "w1_profile_sha256", "slot",
+}
+_AUTHORITY_LIMIT_FIELDS = {
+    "per_operation_limit_vnd", "acceptance_window_limit_vnd", "max_attempts",
+    "max_concurrent_calls", "automatic_retry", "model_fallback",
+    "provider_http_timeout_seconds", "controller_hard_timeout_seconds",
+}
 
 
 class SingleDispatchBlocked(RuntimeError):
@@ -68,8 +109,10 @@ class SingleDispatchBlocked(RuntimeError):
 @dataclass(frozen=True)
 class SingleDispatchPaths:
     rc_source: Path
-    binding: Path
-    binding_sha256: str
+    operation_binding: Path
+    operation_binding_sha256: str
+    custody_binding: Path
+    custody_binding_sha256: str
     bundle: Path
     authority: Path
     authority_sha256: str
@@ -120,13 +163,15 @@ class SingleDispatchQualification:
 
 @dataclass(frozen=True)
 class _ValidatedDispatch:
-    binding: BootstrapLedgerBinding
+    operation: OperationBinding
+    custody: CustodyBinding
     scope: ProviderExecutionGateScope
     context: ProviderCallContext
     metadata: MediaMetadata
     authority: dict[str, object]
     operation_manifest_sha256: str
-    binding_sha256: str
+    operation_binding_sha256: str
+    custody_binding_sha256: str
     provenance_sha256: str
 
 
@@ -247,12 +292,24 @@ class _EvidenceRecorder:
 
 
 def _exact(value: object, expected: object, code: str) -> None:
-    if value != expected:
+    if type(value) is not type(expected) or value != expected:
         raise SingleDispatchBlocked(code)
 
 
 def _sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _reject_embedded_custody_identity(payload: object, code: str) -> None:
+    """Only the exact custody-binding SHA may cross into operation artifacts."""
+    if isinstance(payload, dict):
+        if _CUSTODY_IDENTITY_KEYS.intersection(payload):
+            raise SingleDispatchBlocked(code)
+        for value in payload.values():
+            _reject_embedded_custody_identity(value, code)
+    elif isinstance(payload, list):
+        for value in payload:
+            _reject_embedded_custody_identity(value, code)
 
 
 def _load_authority(path: Path, expected_sha256: str) -> dict[str, object]:
@@ -261,35 +318,46 @@ def _load_authority(path: Path, expected_sha256: str) -> dict[str, object]:
     payload = json.loads(path.read_bytes())
     if not isinstance(payload, dict):
         raise SingleDispatchBlocked("AUTHORITY_RECEIPT_INVALID")
+    _reject_embedded_custody_identity(
+        payload,
+        "AUTHORITY_CUSTODY_IDENTITY_FORBIDDEN",
+    )
+    if set(payload) != _AUTHORITY_FIELDS:
+        raise SingleDispatchBlocked("AUTHORITY_RECEIPT_FIELDS_INVALID")
     return payload
 
 
 def _verify_authority(
     authority: dict[str, object],
-    binding: BootstrapLedgerBinding,
+    operation: OperationBinding,
     scope: ProviderExecutionGateScope,
     *,
     provenance_sha256: str,
     operation_manifest_sha256: str,
+    custody_binding_sha256: str,
 ) -> None:
     values = {
         "decision": "APPROVED", "status": "GRANTED_NOT_CONSUMED",
         "main_provenance": "PASS",
-        "rc_tag": binding.rc_tag, "rc_commit": binding.rc_commit,
-        "governance_main_commit": binding.governance_main_commit,
-        "executable_tree_sha256": binding.executable_tree_sha256,
+        "rc_tag": operation.rc_tag, "rc_commit": operation.rc_commit,
+        "governance_main_commit": operation.governance_main_commit,
+        "executable_tree_sha256": operation.executable_tree_sha256,
+        "executor_executable_tree_sha256": operation.executor_executable_tree_sha256,
+        "execution_plane_promotion_sha256": operation.execution_plane_promotion_sha256,
         "dual_ci_provenance_sha256": provenance_sha256,
-        "operation_key": binding.operation_key,
-        "acceptance_lineage_id": binding.acceptance_lineage_id,
-        "execution_scope_sha256": binding.execution_scope_sha256,
-        "loaded_runtime_scope_sha256": binding.scope_sha256,
-        "gate_bundle_sha256": binding.bundle_sha256,
+        "operation_key": operation.operation_key,
+        "acceptance_lineage_id": operation.acceptance_lineage_id,
+        "prepared_scope_sha256": operation.prepared_scope_sha256,
+        "execution_scope_sha256": operation.execution_scope_sha256,
+        "loaded_runtime_scope_sha256": operation.loaded_scope_sha256,
+        "gate_bundle_sha256": operation.bundle_sha256,
         "operation_manifest_sha256": operation_manifest_sha256,
-        "asset_sha256": binding.asset_sha256,
-        "reference_transcript_sha256": binding.reference_transcript_sha256,
-        "rights_record_sha256": binding.rights_record_sha256,
-        "asr_prompt_profile_sha256": binding.w1_profile_sha256,
-        "prompt_sha256": binding.prompt_sha256,
+        "asset_sha256": operation.asset_sha256,
+        "reference_transcript_sha256": operation.reference_transcript_sha256,
+        "rights_record_sha256": operation.rights_record_sha256,
+        "asr_prompt_profile_sha256": operation.w1_profile_sha256,
+        "prompt_sha256": operation.prompt_sha256,
+        "custody_binding_sha256": custody_binding_sha256,
         "provider_key": "openai-transcription", "model": "whisper-1",
         "capability": "asr", "language": "vi", "slot": 1,
         "operation_1_consumed": False, "operation_2_authorized": False,
@@ -298,22 +366,16 @@ def _verify_authority(
     }
     for key, expected in values.items():
         _exact(authority.get(key), expected, "AUTHORITY_" + key.upper() + "_MISMATCH")
-    ledger = authority.get("ledger")
-    if not isinstance(ledger, dict):
-        raise SingleDispatchBlocked("AUTHORITY_LEDGER_MISSING")
-    _exact(ledger.get("identity"), binding.database_name, "AUTHORITY_LEDGER_MISMATCH")
-    _exact(ledger.get("system_identifier"), binding.system_identifier, "AUTHORITY_LEDGER_INSTANCE_MISMATCH")
-    _exact(ledger.get("database_oid"), binding.database_oid, "AUTHORITY_LEDGER_OID_MISMATCH")
     approvals = authority.get("approval_records")
     if not isinstance(approvals, dict) or set(approvals) != {"G-01", "G-02", "G-03"}:
         raise SingleDispatchBlocked("AUTHORITY_APPROVAL_SET_MISMATCH")
     for gate, expected_hash in scope.approval_record_sha256.items():
         item = approvals[gate]
-        if not isinstance(item, dict):
+        if not isinstance(item, dict) or set(item) != {"record_sha256"}:
             raise SingleDispatchBlocked("AUTHORITY_APPROVAL_INVALID")
         _exact(item.get("record_sha256"), expected_hash, "AUTHORITY_APPROVAL_HASH_MISMATCH")
     limits = authority.get("limits")
-    if not isinstance(limits, dict):
+    if not isinstance(limits, dict) or set(limits) != _AUTHORITY_LIMIT_FIELDS:
         raise SingleDispatchBlocked("AUTHORITY_LIMITS_MISSING")
     expected_limits = {
         "per_operation_limit_vnd": scope.per_operation_limit_vnd,
@@ -368,18 +430,18 @@ def _verify_runtime_policy(policy: ProviderSafetyPolicy, scope: ProviderExecutio
         raise SingleDispatchBlocked("RUNTIME_SAFETY_POLICY_SCOPE_MISMATCH")
 
 
-def _context(binding: BootstrapLedgerBinding, scope: ProviderExecutionGateScope, metadata: MediaMetadata, asset_bytes: int) -> ProviderCallContext:
-    operation = scope.operation_for(binding.operation_key)
-    if operation is None or operation.slot != 1:
+def _context(binding: OperationBinding, scope: ProviderExecutionGateScope, metadata: MediaMetadata, asset_bytes: int) -> ProviderCallContext:
+    allowed_operation = scope.operation_for(binding.operation_key)
+    if allowed_operation is None or allowed_operation.slot != 1:
         raise SingleDispatchBlocked("OPERATION_1_NOT_ALLOWLISTED")
     return ProviderCallContext(
         operation_key=binding.operation_key, acceptance_lineage_id=binding.acceptance_lineage_id,
         workspace_id="wsp_" + binding.acceptance_lineage_id[-32:],
         provider_key=scope.provider_key, model=scope.model, capability=scope.capability,
-        operation=operation.operation, external_call=True, paid=True,
+        operation=allowed_operation.operation, external_call=True, paid=True,
         estimated_cost_vnd=scope.per_operation_limit_vnd,
         credential_alias=scope.credential_alias,
-        asset_id=operation.asset_id, asset_hash=binding.asset_sha256,
+        asset_id=allowed_operation.asset_id, asset_hash=binding.asset_sha256,
         input_media_kind="audio", input_file_bytes=asset_bytes,
         input_duration_seconds=metadata.duration_seconds,
         requested_language=scope.requested_language,
@@ -399,28 +461,36 @@ def _validate_non_secret_bindings(
     require_active_window: bool,
 ) -> _ValidatedDispatch:
     """One source of truth for both qualification and live pre-secret checks."""
-    binding = load_binding(paths.binding, paths.binding_sha256)
-    if binding.slot != 1:
+    operation = load_operation_binding(
+        paths.operation_binding,
+        paths.operation_binding_sha256,
+    )
+    custody = load_custody_binding(
+        paths.custody_binding,
+        paths.custody_binding_sha256,
+    )
+    if paths.custody_binding_sha256 != CANONICAL_CUSTODY_BINDING_SHA256:
+        raise SingleDispatchBlocked("CUSTODY_BINDING_NOT_CANONICAL")
+    if operation.slot != 1:
         raise SingleDispatchBlocked("OPERATION_2_NOT_AUTHORIZED")
     if paths.evidence_directory.resolve().is_relative_to(paths.rc_source.resolve()):
         raise SingleDispatchBlocked("EVIDENCE_MUST_BE_OUTSIDE_RC_SOURCE")
-    if paths.authority_sha256 != binding.authority_receipt_sha256:
+    if paths.authority_sha256 != operation.authority_receipt_sha256:
         raise SingleDispatchBlocked("AUTHORITY_BOOTSTRAP_HASH_MISMATCH")
     # Source check is first, before custody access, reservation or adapter use.
-    from .provider_runtime_bootstrap import verify_bound_source
-    verify_bound_source(paths.rc_source, binding)
+    verify_bound_source(paths.rc_source, operation)
     remote_main = _git(paths.rc_source, "ls-remote", "--heads", "origin", "main").split()
-    if len(remote_main) != 2 or remote_main[0] != binding.governance_main_commit:
+    if len(remote_main) != 2 or remote_main[0] != operation.governance_main_commit:
         raise SingleDispatchBlocked("GOVERNANCE_MAIN_DRIFT")
-    expected_blob = _git(paths.rc_source, "rev-parse", binding.rc_commit + ":" + MODULE_PATH)
+    expected_blob = _git(paths.rc_source, "rev-parse", operation.rc_commit + ":" + MODULE_PATH)
     actual_blob = _git(paths.rc_source, "hash-object", "--path", MODULE_PATH, str(Path(__file__).resolve()))
     if expected_blob != actual_blob or Path(__file__).resolve() != (paths.rc_source / MODULE_PATH).resolve():
         raise SingleDispatchBlocked("DISPATCH_IMPLEMENTATION_NOT_IN_BOUND_RC")
     try:
         scope = load_verified_provider_gate_bundle(
-            paths.bundle, expected_bundle_sha256=binding.bundle_sha256,
-            expected_rc_commit=binding.rc_commit, expected_rc_tag=binding.rc_tag,
-            expected_acceptance_lineage_id=binding.acceptance_lineage_id,
+            paths.bundle, expected_bundle_sha256=operation.bundle_sha256,
+            expected_rc_commit=operation.rc_commit, expected_rc_tag=operation.rc_tag,
+            expected_acceptance_lineage_id=operation.acceptance_lineage_id,
         )
     except Exception:
         raise SingleDispatchBlocked("BUNDLE_VALIDATION_FAILED") from None
@@ -429,27 +499,29 @@ def _validate_non_secret_bindings(
             raise SingleDispatchBlocked("BLOCKED_OUTSIDE_WINDOW")
     elif now >= scope.expires_at_utc:
         raise SingleDispatchBlocked("WINDOW_EXPIRED")
-    if scope.execution_scope_sha256 != binding.execution_scope_sha256 or asr_execution_scope_sha256(scope) != binding.execution_scope_sha256:
+    if scope.execution_scope_sha256 != operation.execution_scope_sha256 or asr_execution_scope_sha256(scope) != operation.execution_scope_sha256:
         raise SingleDispatchBlocked("EXECUTION_SCOPE_MISMATCH")
-    if canonical_sha256(scope) != binding.scope_sha256:
+    if canonical_sha256(scope) != operation.loaded_scope_sha256:
         raise SingleDispatchBlocked("LOADED_SCOPE_MISMATCH")
     _verify_runtime_policy(runtime_policy, scope)
-    if scope.asr_prompt_profile_sha256 != binding.w1_profile_sha256 or prompt_profile_sha256(scope.asr_prompt_profile) != binding.w1_profile_sha256:
+    if scope.credential_alias != operation.credential_alias:
+        raise SingleDispatchBlocked("CREDENTIAL_ALIAS_MISMATCH")
+    if scope.asr_prompt_profile_sha256 != operation.w1_profile_sha256 or prompt_profile_sha256(scope.asr_prompt_profile) != operation.w1_profile_sha256:
         raise SingleDispatchBlocked("PROMPT_PROFILE_MISMATCH")
-    if scope.asr_prompt_profile is None or scope.asr_prompt_profile.prompt_sha256 != binding.prompt_sha256:
+    if scope.asr_prompt_profile is None or scope.asr_prompt_profile.prompt_sha256 != operation.prompt_sha256:
         raise SingleDispatchBlocked("PROMPT_MISMATCH")
-    if _sha256_file(paths.asset) != binding.asset_sha256 or _sha256_file(paths.reference_transcript) != binding.reference_transcript_sha256:
+    if _sha256_file(paths.asset) != operation.asset_sha256 or _sha256_file(paths.reference_transcript) != operation.reference_transcript_sha256:
         raise SingleDispatchBlocked("ASR_INPUT_HASH_MISMATCH")
     rights = json.loads(paths.rights_record.read_bytes())
-    if canonical_sha256(rights) != binding.rights_record_sha256:
+    if canonical_sha256(rights) != operation.rights_record_sha256:
         raise SingleDispatchBlocked("RIGHTS_RECORD_HASH_MISMATCH")
     provenance_raw = json.loads(paths.provenance.read_bytes())
     authority = _load_authority(paths.authority, paths.authority_sha256)
     try:
         provenance = validate_provider_acceptance_ci_provenance(
             provenance_raw,
-            expected_executable_rc_commit=binding.rc_commit,
-            expected_governance_main_commit=binding.governance_main_commit,
+            expected_executable_rc_commit=operation.rc_commit,
+            expected_governance_main_commit=operation.governance_main_commit,
             expected_executable_rc_ci_run_id=authority["executable_rc_ci_run_id"],
             expected_governance_main_ci_run_id=authority["governance_main_ci_run_id"],
         )
@@ -460,31 +532,41 @@ def _validate_non_secret_bindings(
     operation_manifest = json.loads(paths.operation_manifest.read_bytes())
     if not isinstance(operation_manifest, dict):
         raise SingleDispatchBlocked("OPERATION_MANIFEST_INVALID")
+    _reject_embedded_custody_identity(
+        operation_manifest,
+        "OPERATION_MANIFEST_CUSTODY_IDENTITY_FORBIDDEN",
+    )
+    if set(operation_manifest) != _OPERATION_MANIFEST_FIELDS:
+        raise SingleDispatchBlocked("OPERATION_MANIFEST_FIELDS_INVALID")
     for key, expected in {
-        "operation_id": binding.operation_key,
-        "ledger_operation_key": binding.operation_key,
-        "ledger_identity": binding.database_name,
-        "acceptance_lineage_id": binding.acceptance_lineage_id,
-        "execution_scope_sha256": binding.execution_scope_sha256,
-        "prompt_sha256": binding.prompt_sha256,
-        "w1_profile_sha256": binding.w1_profile_sha256,
+        "operation_id": operation.operation_key,
+        "ledger_operation_key": operation.operation_key,
+        "custody_binding_sha256": paths.custody_binding_sha256,
+        "acceptance_lineage_id": operation.acceptance_lineage_id,
+        "prepared_scope_sha256": operation.prepared_scope_sha256,
+        "execution_scope_sha256": operation.execution_scope_sha256,
+        "prompt_sha256": operation.prompt_sha256,
+        "w1_profile_sha256": operation.w1_profile_sha256,
         "slot": 1,
     }.items():
         _exact(operation_manifest.get(key), expected, "OPERATION_MANIFEST_BINDING_MISMATCH")
     operation_manifest_sha256 = canonical_sha256(operation_manifest)
     _verify_authority(
-        authority, binding, scope, provenance_sha256=paths.provenance_sha256,
+        authority, operation, scope, provenance_sha256=paths.provenance_sha256,
         operation_manifest_sha256=operation_manifest_sha256,
+        custody_binding_sha256=paths.custody_binding_sha256,
     )
     metadata = _wav_metadata(paths.asset)
     asset_bytes = paths.asset.stat().st_size
     if asset_bytes != authority.get("asset_bytes") or abs(float(metadata.duration_seconds or 0) - float(authority.get("asset_duration_seconds", -1))) > 0.001:
         raise SingleDispatchBlocked("ASR_MEDIA_METADATA_MISMATCH")
-    context = _context(binding, scope, metadata, asset_bytes)
+    context = _context(operation, scope, metadata, asset_bytes)
     return _ValidatedDispatch(
-        binding=binding, scope=scope, context=context, metadata=metadata,
+        operation=operation, custody=custody, scope=scope, context=context, metadata=metadata,
         authority=authority, operation_manifest_sha256=operation_manifest_sha256,
-        binding_sha256=paths.binding_sha256, provenance_sha256=paths.provenance_sha256,
+        operation_binding_sha256=paths.operation_binding_sha256,
+        custody_binding_sha256=paths.custody_binding_sha256,
+        provenance_sha256=paths.provenance_sha256,
     )
 
 
@@ -517,32 +599,57 @@ def _verify_pre_dispatch_contract(
         raise SingleDispatchBlocked(prompt_denial or scope_denial or rights.code)
 
 
-def _verify_virgin_custody(custody: dict[str, object]) -> None:
-    """Require an exact virgin namespace, never infer absence from a missing row alone."""
+def _verify_operation_custody(
+    custody: dict[str, object],
+    *,
+    now: datetime,
+    circuit_cooldown_seconds: int,
+) -> None:
+    """Require a fresh exact operation while allowing valid terminal history."""
     counts = custody.get("counts")
-    bootstrap_write = custody.get("ledger_bootstrap_write")
+    target_circuit = custody.get("target_circuit")
     try:
         reserved_vnd = Decimal(str(custody.get("reserved_vnd")))
     except Exception:
         raise SingleDispatchBlocked("LEDGER_RESERVED_AMOUNT_INVALID") from None
     if (
-        custody.get("result") != "CUSTODY_VERIFIED_NOT_EXECUTION_AUTHORIZED"
-        or custody.get("operation_state") != "VIRGIN_NOT_REGISTERED / NOT_CONSUMED"
-        or custody.get("control_present") is not True
-        or type(custody.get("active_operations")) is not int
-        or custody.get("active_operations") != 0
+        custody.get("result") != "OPERATION_CUSTODY_VERIFIED_NOT_EXECUTION_AUTHORIZED"
+        or custody.get("operation_state") != "FRESH_OPERATION_NOT_REGISTERED / NOT_CONSUMED"
+        or custody.get("active_operations") != []
         or type(custody.get("exact_operation_attempts")) is not int
         or custody.get("exact_operation_attempts") != 0
         or not reserved_vnd.is_finite() or reserved_vnd != 0
         or not isinstance(counts, dict)
         or set(counts) != {"operations", "attempts", "budget_days", "circuits", "budget_alerts"}
-        or any(type(value) is not int or value != 0 for value in counts.values())
-        or custody.get("provider_request_receipt_mapping") != "NO_OPERATION_OR_ATTEMPT_IN_THIS_BOUND_NAMESPACE"
-        or custody.get("active_reservation") != "NONE_IN_THIS_BOUND_NAMESPACE"
-        or not isinstance(bootstrap_write, dict)
-        or bootstrap_write.get("ensure_state_invoked") is not False
+        or any(type(value) is not int or value < 0 for value in counts.values())
+        or custody.get("provider_request_receipt") != "ABSENT_FOR_EXACT_OPERATION"
+        or custody.get("idempotency_collision") is not False
+        or custody.get("active_reservation") != "NONE"
+        or custody.get("authority_granted") is not False
+        or not isinstance(target_circuit, dict)
     ):
-        raise SingleDispatchBlocked("CHECK_ONLY_LEDGER_NOT_VIRGIN")
+        raise SingleDispatchBlocked("CHECK_ONLY_OPERATION_CUSTODY_INVALID")
+    circuit_state = target_circuit.get("state")
+    if circuit_state == "open":
+        opened_at = target_circuit.get("opened_at")
+        if not isinstance(opened_at, datetime) or opened_at.tzinfo is None:
+            raise SingleDispatchBlocked("CHECK_ONLY_OPERATION_CUSTODY_INVALID")
+        if now < opened_at.astimezone(timezone.utc) + timedelta(
+            seconds=circuit_cooldown_seconds,
+        ):
+            raise SingleDispatchBlocked("CIRCUIT_OPEN")
+    elif circuit_state == "half_open":
+        if target_circuit.get("half_open_operation_key") is not None:
+            raise SingleDispatchBlocked("CIRCUIT_HALF_OPEN_BUSY")
+        opened_at = target_circuit.get("opened_at")
+        if not isinstance(opened_at, datetime) or opened_at.tzinfo is None:
+            raise SingleDispatchBlocked("CHECK_ONLY_OPERATION_CUSTODY_INVALID")
+        if now < opened_at.astimezone(timezone.utc) + timedelta(
+            seconds=circuit_cooldown_seconds,
+        ):
+            raise SingleDispatchBlocked("CIRCUIT_HALF_OPEN_NOT_READY")
+    elif circuit_state != "closed":
+        raise SingleDispatchBlocked("CHECK_ONLY_OPERATION_CUSTODY_INVALID")
 
 
 def _qualification_result(
@@ -552,32 +659,39 @@ def _qualification_result(
     passed = code == "READY_FOR_EXECUTION_PREFLIGHT"
     checked: dict[str, object] = {}
     if validated is not None:
-        binding, scope, authority = validated.binding, validated.scope, validated.authority
+        operation, custody_binding, scope, authority = (
+            validated.operation, validated.custody, validated.scope, validated.authority,
+        )
         checked = {
-            "rc_tag": binding.rc_tag, "rc_commit": binding.rc_commit,
-            "binding_sha256": validated.binding_sha256,
-            "executable_tree_sha256": binding.executable_tree_sha256,
-            "governance_main_commit": binding.governance_main_commit,
-            "ledger_identity": binding.database_name,
-            "ledger_system_identifier": binding.system_identifier,
-            "ledger_database_oid": binding.database_oid,
-            "operation_key": binding.operation_key,
-            "slot": binding.slot,
-            "acceptance_lineage_id": binding.acceptance_lineage_id,
+            "rc_tag": operation.rc_tag, "rc_commit": operation.rc_commit,
+            "operation_binding_sha256": validated.operation_binding_sha256,
+            "custody_binding_sha256": validated.custody_binding_sha256,
+            "executable_tree_sha256": operation.executable_tree_sha256,
+            "executor_executable_tree_sha256": operation.executor_executable_tree_sha256,
+            "execution_plane_promotion_sha256": operation.execution_plane_promotion_sha256,
+            "governance_main_commit": operation.governance_main_commit,
+            "ledger_identity": custody_binding.database_name,
+            "ledger_system_identifier": custody_binding.system_identifier,
+            "ledger_database_oid": custody_binding.database_oid,
+            "ledger_socket": custody_binding.socket_directory,
+            "operation_key": operation.operation_key,
+            "slot": operation.slot,
+            "acceptance_lineage_id": operation.acceptance_lineage_id,
             "executable_rc_ci_run_id": authority["executable_rc_ci_run_id"],
             "governance_main_ci_run_id": authority["governance_main_ci_run_id"],
             "dual_ci_provenance_sha256": validated.provenance_sha256,
-            "authority_receipt_sha256": binding.authority_receipt_sha256,
+            "authority_receipt_sha256": operation.authority_receipt_sha256,
             "approval_record_sha256": scope.approval_record_sha256,
-            "bundle_sha256": binding.bundle_sha256,
-            "execution_scope_sha256": binding.execution_scope_sha256,
-            "loaded_scope_sha256": binding.scope_sha256,
+            "bundle_sha256": operation.bundle_sha256,
+            "prepared_scope_sha256": operation.prepared_scope_sha256,
+            "execution_scope_sha256": operation.execution_scope_sha256,
+            "loaded_scope_sha256": operation.loaded_scope_sha256,
             "operation_manifest_sha256": validated.operation_manifest_sha256,
-            "w1_profile_sha256": binding.w1_profile_sha256,
-            "prompt_sha256": binding.prompt_sha256,
-            "asset_sha256": binding.asset_sha256,
-            "reference_transcript_sha256": binding.reference_transcript_sha256,
-            "rights_record_sha256": binding.rights_record_sha256,
+            "w1_profile_sha256": operation.w1_profile_sha256,
+            "prompt_sha256": operation.prompt_sha256,
+            "asset_sha256": operation.asset_sha256,
+            "reference_transcript_sha256": operation.reference_transcript_sha256,
+            "rights_record_sha256": operation.rights_record_sha256,
             "provider_key": scope.provider_key, "model": scope.model,
             "capability": scope.capability, "language": scope.requested_language,
             "response_format": scope.response_format,
@@ -647,15 +761,22 @@ async def validate_single_dispatch(
         )
         if _EvidenceRecorder(paths.evidence_directory, validated.context.operation_key).folder.exists():
             raise SingleDispatchBlocked("EVIDENCE_PATH_ALREADY_EXISTS")
-        custody = await bootstrap_custody(
-            paths.rc_source, validated.binding, require_virgin_namespace=True,
+        custody = await inspect_operation_custody(
+            paths.rc_source,
+            validated.operation,
+            validated.custody,
+            role="qualification",
         )
-        _verify_virgin_custody(custody)
+        _verify_operation_custody(
+            custody,
+            now=max(now, validated.scope.valid_from_utc),
+            circuit_cooldown_seconds=runtime_policy.circuit.cooldown_seconds,
+        )
         return _qualification_result(
             code="READY_FOR_EXECUTION_PREFLIGHT", now=now,
             validated=validated, custody=custody,
         )
-    except (SingleDispatchBlocked, BootstrapBlocked) as exc:
+    except (SingleDispatchBlocked, BootstrapBlocked, CustodyBlocked) as exc:
         code = exc.code if isinstance(exc, SingleDispatchBlocked) else str(exc)
         if not re.fullmatch(r"[A-Z][A-Z0-9_]*(?::[A-Za-z0-9_]+)?", code):
             code = "CHECK_ONLY_VALIDATION_FAILED"
@@ -691,8 +812,11 @@ async def run_single_dispatch(
         )
     except BaseException:
         try:
-            binding = load_binding(paths.binding, paths.binding_sha256)
-            recorder = _EvidenceRecorder(paths.evidence_directory, binding.operation_key)
+            operation = load_operation_binding(
+                paths.operation_binding,
+                paths.operation_binding_sha256,
+            )
+            recorder = _EvidenceRecorder(paths.evidence_directory, operation.operation_key)
             if not (recorder.folder / "terminal.json").exists():
                 ambiguous = (recorder.folder / "dispatch-intent.json").exists()
                 recorder.seal({
@@ -725,21 +849,35 @@ async def _run_single_dispatch(
         paths, runtime_policy=runtime_policy, now=now,
         require_active_window=True,
     )
-    binding, scope, context, metadata = (
-        validated.binding, validated.scope, validated.context, validated.metadata,
+    operation, custody_binding, scope, context, metadata = (
+        validated.operation,
+        validated.custody,
+        validated.scope,
+        validated.context,
+        validated.metadata,
     )
     _verify_pre_dispatch_contract(
         scope=scope, policy=runtime_policy, context=context, now=now,
         require_active_window=True,
     )
     transition("LEDGER_PREFLIGHT")
-    custody = await bootstrap_custody(
-        paths.rc_source, binding, require_virgin_namespace=True,
+    custody = await inspect_operation_custody(
+        paths.rc_source,
+        operation,
+        custody_binding,
+        role="runtime",
     )
-    _verify_virgin_custody(custody)
+    _verify_operation_custody(
+        custody,
+        now=now,
+        circuit_cooldown_seconds=runtime_policy.circuit.cooldown_seconds,
+    )
     transition("BUNDLE_VALIDATED")
     evidence = _EvidenceRecorder(paths.evidence_directory, context.operation_key)
-    evidence.arm(reserved_vnd=Decimal("0"), ledger_before="VIRGIN_NOT_CONSUMED")
+    evidence.arm(
+        reserved_vnd=Decimal("0"),
+        ledger_before="FRESH_OPERATION_NOT_REGISTERED_NOT_CONSUMED",
+    )
     transition("EVIDENCE_ARMED")
     # Only a future, explicitly authorized execution invokes this callable.
     # Resolve once after every public/non-secret binding and custody check,
@@ -771,7 +909,7 @@ async def _run_single_dispatch(
     # Bootstrap above verified private peer-auth custody before the secret
     # boundary. This engine uses the same pinned database and no password.
     engine = create_async_engine(
-        ledger_url(binding), echo=False, pool_pre_ping=True,
+        runtime_ledger_url(custody_binding), echo=False, pool_pre_ping=True,
         connect_args={"password": ""},
     )
     try:
@@ -896,7 +1034,10 @@ async def _run_protocol(
     started_at = clock().astimezone(timezone.utc)
     try:
         if not evidence.armed:
-            evidence.arm(reserved_vnd=reservation.reserved_vnd, ledger_before="VIRGIN_NOT_CONSUMED")
+            evidence.arm(
+                reserved_vnd=reservation.reserved_vnd,
+                ledger_before="FRESH_OPERATION_NOT_REGISTERED_NOT_CONSUMED",
+            )
         states.append("EVIDENCE_ARMED")
         transition("BUDGET_RESERVED")
         transition("FINAL_TIME_CHECK")
