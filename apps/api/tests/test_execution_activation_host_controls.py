@@ -1,0 +1,57 @@
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[3]
+
+
+def read(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+
+def test_resolver_units_have_fixed_identity_socket_and_encrypted_credential():
+    socket = read("deploy/executor/npd-vf-secret-resolver.socket")
+    service = read("deploy/executor/npd-vf-secret-resolver.service")
+    assert "ListenStream=/run/npd-video-factory/provider-secret-resolver.sock" in socket
+    assert "SocketUser=root" in socket and "SocketGroup=vf-executor" in socket
+    assert "SocketMode=0660" in socket and "Accept=no" in socket
+    assert "User=root" in service and "Group=root" in service
+    assert (
+        "LoadCredentialEncrypted=openai-codex-video:"
+        "/etc/credstore.encrypted/openai-codex-video"
+    ) in service
+    assert "RestrictAddressFamilies=AF_UNIX" in service
+    assert "ConditionPathExists=/etc/npd-video-factory/provider-secret-resolver-policy.json" in service
+    assert "ConditionPathExists=/etc/npd-video-factory/provider-secret-resolver-policy.sha256" in service
+    assert "Environment=OPENAI_API_KEY" not in service
+    assert "systemd-creds decrypt" not in service
+
+
+def test_root_wrapper_has_unconditional_cleanup_and_fixed_child():
+    wrapper = read("scripts/provider-execution-wrapper.sh")
+    assert "trap 'cleanup || true' EXIT" in wrapper
+    assert '"$python" -I "$activation" deactivate' in wrapper
+    assert "NPD_RUNTIME_DEACTIVATION_GUARD=ENFORCED" in wrapper
+    assert '"$python" -I "$request"' in wrapper
+    assert "eval " not in wrapper and "bash -c" not in wrapper
+    sudoers = read("deploy/executor/npd-vf-provider-execution.sudoers")
+    assert sudoers.rstrip().endswith(
+        "vf-executor ALL=(root) NOPASSWD: /usr/local/sbin/npd-vf-provider-execution"
+    )
+
+
+def test_expiry_timer_and_exact_peer_map_provisioning_are_mandatory():
+    timer = read("deploy/executor/npd-vf-runtime-role-failsafe.timer")
+    provision = read("scripts/provision-execution-activation.sh")
+    assert "OnUnitActiveSec=15s" in timer and "Persistent=true" in timer
+    assert "disable --now npd-vf-secret-resolver.socket" in provision
+    assert "vf_executor_runtime_map vf-executor vf_executor_runtime" in provision
+    assert "peer map=vf_executor_runtime_map" in provision
+    assert "safe.directory \"$source_root\"" in provision
+    assert "safe.directory=*" not in provision
+    assert "ALTER ROLE" not in provision  # lifecycle code owns the fixed SQL.
+
+
+def test_execution_workflow_cannot_bypass_root_cleanup_wrapper():
+    workflow = read(".github/workflows/video-factory-provider-execution.yml")
+    assert "run: /usr/bin/sudo -n /usr/local/sbin/npd-vf-provider-execution" in workflow
+    assert "/opt/npd-video-factory/runtime/request.py" not in workflow

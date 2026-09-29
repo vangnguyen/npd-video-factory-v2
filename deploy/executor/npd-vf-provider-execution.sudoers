@@ -1,0 +1,2 @@
+Defaults!/usr/local/sbin/npd-vf-provider-execution env_keep += "WSL_DISTRO_NAME RUNNER_NAME GITHUB_REPOSITORY_OWNER GITHUB_REPOSITORY GITHUB_EVENT_NAME GITHUB_REF GITHUB_WORKFLOW_REF GITHUB_WORKFLOW_SHA VF_REQUEST_JSON"
+vf-executor ALL=(root) NOPASSWD: /usr/local/sbin/npd-vf-provider-execution

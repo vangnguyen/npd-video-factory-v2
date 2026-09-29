@@ -47,6 +47,7 @@ from .provider_runtime_bootstrap import (
     inspect_operation_custody,
     load_operation_binding,
     runtime_ledger_url,
+    verify_runtime_role_security,
     verify_bound_source,
 )
 from .provider_safety import (
@@ -872,6 +873,13 @@ async def _run_single_dispatch(
         now=now,
         circuit_cooldown_seconds=runtime_policy.circuit.cooldown_seconds,
     )
+    # This is the last non-secret gate.  A successful connection alone is not
+    # sufficient: LOGIN, peer identity, and the exact least-privilege matrix
+    # must all be live before the resolver can hand off credential bytes.
+    try:
+        verify_runtime_role_security(custody)
+    except BootstrapBlocked as exc:
+        raise SingleDispatchBlocked(str(exc)) from None
     transition("BUNDLE_VALIDATED")
     evidence = _EvidenceRecorder(paths.evidence_directory, context.operation_key)
     evidence.arm(
