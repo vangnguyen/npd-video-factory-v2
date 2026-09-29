@@ -1,0 +1,65 @@
+{
+  "authority_granted": false,
+  "base_main_sha": "10a0384f18a0d6148ac3ba73d47589cfef7d8f4a",
+  "canonical_executable_tree_sha256": "f92bd2acbb2c2bcfb98fbb737567d20b6551724e1c03c0574dfaa4f3733dce9a",
+  "custody_binding_sha256": "c8d2761e3a5f6f835d6562665aac3eb175b5387bacc9e9e2daa5433c36b00e27",
+  "custody_database": "vf_provider_custody_v3_01",
+  "docker_e2e": {
+    "run_id": 36562480374,
+    "status": "PASS"
+  },
+  "dual_ci_contract": "DISTINCT_COMMITS_IDENTICAL_EXECUTABLE_TREE_DISTINCT_SUCCESSFUL_RUNS",
+  "executable_source_commit": "0b0e481481fd31fea404755e06a9530aaf465d06",
+  "executor_executable_tree_sha256": "574bda3d7e5183287db486fa6e1075e7c49f472a95ad3898a79a71bfd7134092",
+  "existing_execution_plane_promotion": {
+    "sha256": "5bb03bde3fc00b85b0dbfa9c44c3fc15153d7b8fed81f84765c18016edbf0ae6",
+    "validity": "VALID_FOR_PREVIOUS_EXECUTABLE_TREE_ONLY"
+  },
+  "final_exact_head_ci": {
+    "recording": "PR_CONVERSATION_AND_TASK_HANDOFF_AFTER_THIS_NON_EXECUTABLE_EVIDENCE_COMMIT",
+    "status": "REQUIRED"
+  },
+  "focused_tests": {
+    "passed": 453,
+    "skipped": 1,
+    "status": "PASS"
+  },
+  "full_regression": {
+    "passed": 1427,
+    "skipped": 1,
+    "status": "PASS"
+  },
+  "github_workflows_tree_object": "e2048a15188852df9f6c43ecd1ae982ee56b4588",
+  "g08_source_review": "PASS_SOURCE_SIDE_FINAL_EXACT_HEAD_CI_REQUIRED",
+  "migration_head": "0015_v3_01_dispatch",
+  "migration_replay": "PASS_UPGRADE_DOWNGRADE_REUPGRADE",
+  "o1_required": true,
+  "o2": false,
+  "operation_custody_bindings_separated": true,
+  "pr": 94,
+  "pre_seal_exact_head_ci": {
+    "checked_out_sha": "0b0e481481fd31fea404755e06a9530aaf465d06",
+    "event": "workflow_dispatch",
+    "expected_head_sha": "0b0e481481fd31fea404755e06a9530aaf465d06",
+    "head_identity": "EXACT_HEAD_CANDIDATE",
+    "jobs_succeeded": 5,
+    "jobs_total": 5,
+    "run_id": 36562480374,
+    "status": "PASS"
+  },
+  "production": "NO_GO",
+  "rc22_mutation": "NONE",
+  "rc23_created": false,
+  "secret_scan": "PASS_NO_MATCHES",
+  "task": "VF-ASR-SR-01",
+  "version": 1,
+  "zero_invariants": {
+    "actual_cost_vnd": "0",
+    "budget_reserved_vnd": "0",
+    "bundle_mounted": false,
+    "kill_switch": "ENGAGED",
+    "operation_consumption": 0,
+    "provider_calls": 0,
+    "provider_credential_reads": 0
+  }
+}

@@ -17,7 +17,8 @@ import uuid
 
 from . import executor_qualification as q
 from . import provider_single_dispatch as canonical
-from .provider_runtime_bootstrap import load_binding
+from .provider_custody import CANONICAL_CUSTODY_BINDING_SHA256, load_custody_binding
+from .provider_runtime_bootstrap import load_operation_binding
 from .provider_safety import ProviderSafetyPolicy
 
 CATALOG = Path("/etc/npd-video-factory/execution-catalog.json")
@@ -116,11 +117,23 @@ def verify_qualification(catalog: dict, host: q.Host) -> None:
               }, "QUALIFICATION_EVIDENCE_MANIFEST_INVALID")
 
 
-def bind_request(request: dict, entry: dict, host: q.Host) -> tuple[canonical.SingleDispatchPaths, ProviderSafetyPolicy]:
+def bind_request(
+    request: dict,
+    entry: dict,
+    host: q.Host,
+    *,
+    qualification_sha256: str,
+) -> tuple[canonical.SingleDispatchPaths, ProviderSafetyPolicy]:
     caller_identity_fields = {*q.RUNNER_IDENTITY_FIELDS, "runner_identity"}
     q.require(not caller_identity_fields.intersection(request), "CALLER_RUNNER_IDENTITY_FORBIDDEN")
     q.require(entry.get("request") == request, "REQUEST_NOT_EXACTLY_APPROVED")
-    data = entry["paths"]
+    data = dict(entry["paths"])
+    q.require(not {"custody_binding", "custody_binding_sha256"}.intersection(data),
+              "OPERATION_CUSTODY_OVERRIDE_FORBIDDEN")
+    data.update(
+        custody_binding=host.binding,
+        custody_binding_sha256=host.binding_sha256,
+    )
     paths = canonical.SingleDispatchPaths(**{
         name: value if name.endswith("sha256") else Path(value)
         for name, value in data.items()
@@ -129,17 +142,36 @@ def bind_request(request: dict, entry: dict, host: q.Host) -> tuple[canonical.Si
               "EXECUTABLE_SOURCE_MISMATCH")
     q.require(paths.evidence_directory == Path(host.evidence_root) / "operations",
               "EVIDENCE_ROOT_MISMATCH")
-    for name in ("binding", "bundle", "authority", "provenance", "operation_manifest",
-                 "asset", "reference_transcript", "rights_record"):
+    for name in ("operation_binding", "custody_binding", "bundle", "authority",
+                 "provenance", "operation_manifest", "asset", "reference_transcript",
+                 "rights_record"):
         q.private_path(getattr(paths, name), root_owned=True)
-    binding = load_binding(paths.binding, paths.binding_sha256)
+    operation = load_operation_binding(
+        paths.operation_binding,
+        paths.operation_binding_sha256,
+    )
+    custody = load_custody_binding(
+        paths.custody_binding,
+        paths.custody_binding_sha256,
+    )
+    q.require(paths.custody_binding_sha256 == host.binding_sha256,
+              "CUSTODY_BINDING_MISMATCH")
+    q.require(host.binding_sha256 == CANONICAL_CUSTODY_BINDING_SHA256,
+              "CUSTODY_BINDING_NOT_CANONICAL")
+    q.require(operation.executor_executable_tree_sha256
+              == host.executor_executable_tree_sha256,
+              "EXECUTOR_TREE_MISMATCH")
+    q.require(operation.execution_plane_promotion_sha256 == qualification_sha256,
+              "EXECUTION_PLANE_PROMOTION_MISMATCH")
+    q.require(custody.database_name == "vf_provider_custody_v3_01",
+              "CUSTODY_DATABASE_MISMATCH")
     expected = {
-        "operation_id": binding.operation_key, "bundle_sha256": binding.bundle_sha256,
-        "loaded_scope_sha256": binding.scope_sha256,
-        "authority_receipt_sha256": binding.authority_receipt_sha256,
-        "rc_tag": binding.rc_tag, "rc_commit": binding.rc_commit,
-        "governance_main_sha": binding.governance_main_commit,
-        "provider_capability": binding.capability,
+        "operation_id": operation.operation_key, "bundle_sha256": operation.bundle_sha256,
+        "loaded_scope_sha256": operation.loaded_scope_sha256,
+        "authority_receipt_sha256": operation.authority_receipt_sha256,
+        "rc_tag": operation.rc_tag, "rc_commit": operation.rc_commit,
+        "governance_main_sha": operation.governance_main_commit,
+        "provider_capability": operation.capability,
     }
     q.require(all(request[key] == value for key, value in expected.items()), "REQUEST_BINDING_MISMATCH")
     policy = ProviderSafetyPolicy.model_validate(
@@ -189,7 +221,12 @@ async def execute(request: dict) -> dict:
             read_kill_switch(host)
             entry = catalog["operations"].get(request["bundle_id"])
             q.require(isinstance(entry, dict), "OPERATION_NOT_ALLOWLISTED")
-            paths, policy = bind_request(request, entry, host)
+            paths, policy = bind_request(
+                request,
+                entry,
+                host,
+                qualification_sha256=catalog["qualification_sha256"],
+            )
             checked = await canonical.validate_single_dispatch(paths, runtime_policy=policy)
             q.require(checked.ready_for_execution_preflight and not checked.ready_for_provider_dispatch
                       and not checked.credential_read_performed and not checked.provider_call_performed,

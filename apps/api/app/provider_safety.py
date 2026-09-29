@@ -256,6 +256,17 @@ def derive_rc_bound_operation_key(
     return operation_key
 
 
+def derive_provider_attempt_usage_id(operation_key: str, attempt: int) -> str:
+    """Derive the repository's globally unique attempt identity."""
+    if not operation_key or len(operation_key) > 200:
+        raise ValueError("attempt usage ID requires a bounded operation key")
+    if type(attempt) is not int or attempt < 1:
+        raise ValueError("attempt usage ID requires a positive integer attempt")
+    return "pus_" + hashlib.sha256(
+        f"{operation_key}|{attempt}".encode("utf-8")
+    ).hexdigest()[:24]
+
+
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -1778,9 +1789,7 @@ class ProviderSafetyController:
         charged_cost_vnd: Decimal,
         started_at: datetime,
     ) -> ProviderAttemptRecord:
-        usage_id = "pus_" + hashlib.sha256(
-            f"{context.operation_key}|{attempt}".encode("utf-8")
-        ).hexdigest()[:24]
+        usage_id = derive_provider_attempt_usage_id(context.operation_key, attempt)
         return ProviderAttemptRecord(
             usage_id=usage_id,
             operation_key=context.operation_key,

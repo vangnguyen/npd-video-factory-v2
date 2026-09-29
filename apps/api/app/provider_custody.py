@@ -8,6 +8,13 @@ from __future__ import annotations
 
 import hashlib
 import os
+try:
+    import grp
+    import pwd
+except ImportError:  # pragma: no cover - canonical custody is POSIX/WSL only.
+    grp = None
+    pwd = None
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 import re
 import stat
@@ -20,6 +27,7 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 DATABASE_NAME = "vf_provider_custody_v3_01"
+CANONICAL_CUSTODY_BINDING_SHA256 = "c8d2761e3a5f6f835d6562665aac3eb175b5387bacc9e9e2daa5433c36b00e27"
 MIGRATION_HEAD = "0015_v3_01_dispatch"
 SOCKET_DIRECTORY = "/run/npd-video-factory/provider-custody/postgresql"
 DATA_ROOT = "/var/lib/npd-video-factory/provider-custody/postgresql/16/data"
@@ -142,6 +150,13 @@ def load_custody_binding(path: Path, expected_sha256: str) -> CustodyBinding:
         raise CustodyBlocked("CUSTODY_BINDING_INVALID") from None
 
 
+def load_canonical_custody_binding(path: Path, expected_sha256: str) -> CustodyBinding:
+    """Load only the exact Owner-qualified canonical custody receipt."""
+    if expected_sha256 != CANONICAL_CUSTODY_BINDING_SHA256:
+        raise CustodyBlocked("CUSTODY_BINDING_NOT_CANONICAL")
+    return load_custody_binding(path, expected_sha256)
+
+
 def custody_url(binding: CustodyBinding) -> URL:
     return URL.create(
         "postgresql+asyncpg",
@@ -170,8 +185,30 @@ def _require_canonical_path(path: Path) -> None:
         raise CustodyBlocked("CUSTODY_SOCKET_PATH_INVALID") from None
 
 
+def _verify_named_host_identities(binding: CustodyBinding) -> None:
+    """Resolve sealed account names to their exact host UID/GID identities."""
+    if pwd is None or grp is None:
+        raise CustodyBlocked("CUSTODY_HOST_IDENTITY_UNSUPPORTED")
+    try:
+        service = pwd.getpwnam(binding.postgres_service_user)
+    except KeyError:
+        raise CustodyBlocked("CUSTODY_POSTGRES_SERVICE_IDENTITY_INVALID") from None
+    if (
+        service.pw_uid != binding.postgres_service_uid
+        or service.pw_gid != binding.postgres_service_gid
+    ):
+        raise CustodyBlocked("CUSTODY_POSTGRES_SERVICE_IDENTITY_INVALID")
+    try:
+        socket_group = grp.getgrnam(binding.socket_group)
+    except KeyError:
+        raise CustodyBlocked("CUSTODY_SOCKET_GROUP_IDENTITY_INVALID") from None
+    if socket_group.gr_gid != binding.socket_group_gid:
+        raise CustodyBlocked("CUSTODY_SOCKET_GROUP_IDENTITY_INVALID")
+
+
 def verify_socket_custody(binding: CustodyBinding) -> None:
     """Bind the endpoint to the dedicated PostgreSQL service and socket group."""
+    _verify_named_host_identities(binding)
     directory = Path(binding.socket_directory)
     _require_canonical_path(directory)
     directory_info = directory.stat()
@@ -212,6 +249,33 @@ async def _negative_write_probe(session, statement: str) -> None:
     if str(await session.scalar(text("SHOW transaction_read_only"))).lower() != "on":
         raise CustodyBlocked("CUSTODY_TRANSACTION_NOT_READ_ONLY")
     await session.scalar(text("SELECT count(*) FROM provider_safety_control"))
+
+
+def _validate_quiescent_shared_custody(
+    control: list[object],
+    *,
+    active_operations: object,
+    reserved_vnd: object,
+) -> Decimal:
+    """Allow terminal history, but never qualify active/reserved execution state."""
+    if (
+        len(control) != 1
+        or control[0]["control_key"] != "global"
+        or type(control[0]["revision"]) is not int
+        or control[0]["revision"] < 0
+    ):
+        raise CustodyBlocked("CUSTODY_CONTROL_STATE_INVALID")
+    if type(active_operations) is not int or active_operations < 0:
+        raise CustodyBlocked("CUSTODY_ACTIVE_RESERVATION_STATE_INVALID")
+    try:
+        reserved = Decimal(str(reserved_vnd))
+    except (InvalidOperation, ValueError):
+        raise CustodyBlocked("CUSTODY_ACTIVE_RESERVATION_STATE_INVALID") from None
+    if not reserved.is_finite() or reserved < 0:
+        raise CustodyBlocked("CUSTODY_ACTIVE_RESERVATION_STATE_INVALID")
+    if active_operations != 0 or reserved != 0:
+        raise CustodyBlocked("CUSTODY_ACTIVE_RESERVATION_STATE_INVALID")
+    return reserved
 
 
 async def read_custody(session_factory: async_sessionmaker, binding: CustodyBinding) -> dict:
@@ -278,11 +342,19 @@ async def read_custody(session_factory: async_sessionmaker, binding: CustodyBind
         }
         if database_privileges != {"CONNECT": True, "CREATE": False, "TEMP": False}:
             raise CustodyBlocked("CUSTODY_DATABASE_PRIVILEGE_MISMATCH")
-        control = (await session.execute(text("SELECT control_key, revision FROM provider_safety_control"))).mappings().all()
-        if len(control) != 1 or control[0]["control_key"] != "global" or control[0]["revision"] != 0:
-            raise CustodyBlocked("CUSTODY_BASELINE_CONTROL_INVALID")
-        if any(counts[table] for table in binding.custody_tables if table != "provider_safety_control"):
-            raise CustodyBlocked("CUSTODY_BASELINE_NOT_EMPTY")
+        control = list((await session.execute(text(
+            "SELECT control_key, revision FROM provider_safety_control"
+        ))).mappings().all())
+        active_operations = int(await session.scalar(text(
+            "SELECT count(*) FROM provider_safety_operations WHERE status = 'reserved'"
+        )) or 0)
+        reserved_vnd = _validate_quiescent_shared_custody(
+            control,
+            active_operations=active_operations,
+            reserved_vnd=await session.scalar(text(
+                "SELECT COALESCE(sum(reserved_vnd), 0) FROM provider_safety_budget_days"
+            )),
+        )
         for statement in (
             "INSERT INTO provider_safety_control (control_key, revision, updated_at) VALUES ('qualification-probe', 0, now())",
             "UPDATE provider_safety_control SET revision = revision WHERE control_key = 'global'",
@@ -294,6 +366,13 @@ async def read_custody(session_factory: async_sessionmaker, binding: CustodyBind
             "identity": dict(identity),
             "migration_head": migration[0],
             "counts": counts,
+            "active_operations": active_operations,
+            "reserved_vnd": "0" if reserved_vnd == 0 else str(reserved_vnd),
+            "history_state": (
+                "CLEAN_BOOTSTRAP"
+                if all(counts[table] == 0 for table in binding.custody_tables if table != "provider_safety_control")
+                else "DURABLE_HISTORY_PRESENT"
+            ),
             "qualification_access": "SELECT_ONLY",
             "qualification_privileges": privileges,
             "qualification_migration_privileges": migration_privileges,

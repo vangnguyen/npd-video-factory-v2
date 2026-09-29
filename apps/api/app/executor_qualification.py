@@ -349,9 +349,10 @@ def runtime(host: Host, workflow_kind: str = "qualification") -> dict:
 async def custody(host: Host) -> dict:
     from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
     from .provider_custody import (
-        custody_url, load_custody_binding, read_custody, verify_socket_custody,
+        custody_url, load_canonical_custody_binding, read_custody,
+        verify_socket_custody,
     )
-    binding = load_custody_binding(Path(host.binding), host.binding_sha256)
+    binding = load_canonical_custody_binding(Path(host.binding), host.binding_sha256)
     verify_socket_custody(binding)
     engine = create_async_engine(custody_url(binding), echo=False,
         connect_args={"password": "", "server_settings": {"default_transaction_read_only": "on"}})
@@ -574,8 +575,9 @@ async def check_only(host: Host, root: Path) -> dict:
     # without mounting an operation package or requiring/creating O2 authority.
     absent = root / "not-an-operation"
     require(not absent.exists(), "CHECK_ONLY_FIXTURE_COLLISION")
-    paths = SingleDispatchPaths(rc_source=Path(host.source), binding=absent,
-        binding_sha256="0" * 64, bundle=absent, authority=absent,
+    paths = SingleDispatchPaths(rc_source=Path(host.source), operation_binding=absent,
+        operation_binding_sha256="0" * 64, custody_binding=absent,
+        custody_binding_sha256="0" * 64, bundle=absent, authority=absent,
         authority_sha256="0" * 64, provenance=absent, provenance_sha256="0" * 64,
         operation_manifest=absent, asset=absent, reference_transcript=absent,
         rights_record=absent, evidence_directory=root)
@@ -615,14 +617,36 @@ async def qualify(host: Host, root: Path) -> dict:
     if environment is not None:
         ledger = await gate("E3", lambda: custody(host))
         if ledger is not None:
-            results["E3"] = {"status": "PASS", "POSTGRES_CUSTODY": "VERIFIED",
-                "identity": ledger["identity"], "migration_head": ledger["migration_head"]}
-            results["E4"] = {"status": "PASS", "LEDGER_READ_CAPABILITY": "VERIFIED",
-                "baseline_counts": ledger["counts"], "reserved_vnd": "0"}
-            results["E8"] = ({"status": "PASS", "QUALIFICATION_ACCESS": "SELECT_ONLY",
-                "probe": "REPEATABLE_READ_READ_ONLY_WITH_WRITE_REJECTION", "BUDGET_RESERVED": "0"}
-                if ledger["qualification_access"] == "SELECT_ONLY" else
-                {"status": "BLOCKED", "code": "QUALIFICATION_ACCESS_NOT_SELECT_ONLY", "BUDGET_RESERVED": "0"})
+            if (
+                ledger.get("active_operations") != 0
+                or ledger.get("reserved_vnd") != "0"
+            ):
+                results["E3"] = {
+                    "status": "BLOCKED",
+                    "code": "CUSTODY_ACTIVE_RESERVATION_STATE_INVALID",
+                }
+                results["E4"] = {
+                    "status": "BLOCKED",
+                    "code": "LEDGER_NOT_QUIESCENT",
+                }
+                results["E8"] = {
+                    "status": "BLOCKED",
+                    "code": "RESERVATION_CAPABILITY_STATE_NOT_QUIESCENT",
+                    "BUDGET_RESERVED": ledger.get("reserved_vnd"),
+                }
+                ledger = None
+            else:
+                results["E3"] = {"status": "PASS", "POSTGRES_CUSTODY": "VERIFIED",
+                    "identity": ledger["identity"], "migration_head": ledger["migration_head"]}
+                results["E4"] = {"status": "PASS", "LEDGER_READ_CAPABILITY": "VERIFIED",
+                    "baseline_counts": ledger["counts"], "active_operations": 0,
+                    "reserved_vnd": ledger["reserved_vnd"]}
+                results["E8"] = ({"status": "PASS", "QUALIFICATION_ACCESS": "SELECT_ONLY",
+                    "probe": "REPEATABLE_READ_READ_ONLY_WITH_WRITE_REJECTION",
+                    "BUDGET_RESERVED": ledger["reserved_vnd"]}
+                    if ledger["qualification_access"] == "SELECT_ONLY" else
+                    {"status": "BLOCKED", "code": "QUALIFICATION_ACCESS_NOT_SELECT_ONLY",
+                     "BUDGET_RESERVED": ledger["reserved_vnd"]})
         await gate("E5", lambda: github(host))
         await gate("E6", provider_network)
         await gate("E7", lambda: secret_presence(host))
