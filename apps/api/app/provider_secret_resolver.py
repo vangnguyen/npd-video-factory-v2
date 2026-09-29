@@ -173,8 +173,7 @@ def _validate_context(
         raise ResolverBlocked("RESOLVER_WINDOW_INACTIVE")
 
 
-def _claim_once(policy: ResolverPolicy, request: ResolverRequest) -> Path:
-    marker_root = Path(policy.spent_marker_directory)
+def _verify_spent_marker_root(marker_root: Path) -> None:
     try:
         root_info = marker_root.lstat()
         if (
@@ -188,6 +187,11 @@ def _claim_once(policy: ResolverPolicy, request: ResolverRequest) -> Path:
         raise
     except OSError:
         raise ResolverBlocked("RESOLVER_SPENT_MARKER_CUSTODY_INVALID") from None
+
+
+def _claim_once(policy: ResolverPolicy, request: ResolverRequest) -> Path:
+    marker_root = Path(policy.spent_marker_directory)
+    _verify_spent_marker_root(marker_root)
     context = request.model_dump_json().encode("utf-8")
     marker = marker_root / (hashlib.sha256(context).hexdigest() + ".spent")
     try:

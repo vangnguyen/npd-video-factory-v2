@@ -57,6 +57,10 @@ def serve(tmp_path, monkeypatch, request=None, peer=(123, 999, 989)):
     activation = RuntimeActivationBinding.model_validate(binding_data())
     monkeypatch.setattr(resolver, "_peer_credentials", lambda connection: peer)
     monkeypatch.setattr(resolver, "_verify_root_artifact", lambda *args: None)
+    # The real service runs as root and validates a root-owned 0700 directory.
+    # CI deliberately runs as an unprivileged hosted-runner identity; bypass
+    # only the directory-custody probe while retaining the real O_EXCL marker.
+    monkeypatch.setattr(resolver, "_verify_spent_marker_root", lambda *args: None)
     monkeypatch.setattr(resolver, "load_runtime_activation_binding", lambda *args: activation)
     document = request or resolver.ResolverRequest.model_validate(request_data())
     client.sendall(document.model_dump_json().encode() + b"\n")
@@ -163,6 +167,20 @@ def test_activation_artifact_symlink_substitution_is_rejected(tmp_path):
     link.symlink_to(target)
     with pytest.raises(resolver.ResolverBlocked, match="RESOLVER_ACTIVATION_CUSTODY_INVALID"):
         resolver._verify_root_artifact(link, "RESOLVER_ACTIVATION_CUSTODY_INVALID")
+
+
+def test_spent_marker_symlink_and_world_writable_directory_are_rejected(tmp_path):
+    writable = tmp_path / "writable"
+    writable.mkdir(mode=0o777)
+    writable.chmod(0o777)
+    with pytest.raises(resolver.ResolverBlocked, match="RESOLVER_SPENT_MARKER_CUSTODY_INVALID"):
+        resolver._verify_spent_marker_root(writable)
+    target = tmp_path / "target"
+    target.mkdir()
+    link = tmp_path / "spent-link"
+    link.symlink_to(target, target_is_directory=True)
+    with pytest.raises(resolver.ResolverBlocked, match="RESOLVER_SPENT_MARKER_CUSTODY_INVALID"):
+        resolver._verify_spent_marker_root(link)
 
 
 def test_lost_response_after_request_never_claims_zero_reads(tmp_path, monkeypatch):
