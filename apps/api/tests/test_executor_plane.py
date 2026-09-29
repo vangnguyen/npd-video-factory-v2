@@ -6,9 +6,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
-import stat
 import sys
-from types import SimpleNamespace
 
 import pytest
 
@@ -282,44 +280,43 @@ def _secret_binding(**changes):
     return value
 
 
-def _bound_secret_host(host, tmp_path, monkeypatch, value):
+def _bound_secret_host(host, tmp_path, monkeypatch, value, *, receipt_changes=None):
     if value.get("state") == "BOUND_ENCRYPTED_SOURCE_PRESENT":
         receipt = {
             "version": 1, "task": "VF-SECRET-01", "status": "PASS",
             "systemd_version": "255 (255.4-1ubuntu8.17)",
             "host_key_present": True, "host_key_owner": "root:root",
-            "host_key_mode": "0400", "credential_mechanism": "LoadCredentialEncrypted",
+            "host_key_mode": "0400", "host_key_regular_file": True,
+            "host_key_symlink": False, "runner_host_key_read": False,
+            "runner_host_key_write": False,
+            "credential_mechanism": "LoadCredentialEncrypted",
             "systemd_credential_id": q.SYSTEMD_CREDENTIAL_ID,
             "encryption_key_type": "HOST", "synthetic_encrypt": "PASS",
             "name_binding": "PASS", "controlled_service_receive": "PASS",
             "access_isolation": "PASS", "cleanup": "PASS",
             "actual_provider_credential_decrypted": False,
             "provider_runtime_reads": 0, "provider_calls": 0,
+            "encrypted_source_path": str(q.SYSTEMD_ENCRYPTED_SOURCE),
+            "encrypted_source_present": True,
+            "encrypted_source_owner": "root:root",
+            "encrypted_source_mode": "0400",
+            "encrypted_source_regular_file": True,
+            "encrypted_source_symlink": False,
+            "encrypted_source_nonempty": True,
+            "credstore_owner": "root:root", "credstore_mode": "0700",
+            "runner_source_read": False, "runner_source_write": False,
+            "runner_credstore_list": False,
         }
+        receipt.update(receipt_changes or {})
         receipt_path = tmp_path / "systemd-backend-receipt.json"
         receipt_raw = json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode()
         receipt_path.write_bytes(receipt_raw)
-        host_key = tmp_path / "credential.secret"
-        host_key.write_bytes(b"synthetic-host-key-fixture")
-        host_key.chmod(0o400)
         value["backend_qualification_receipt_sha256"] = hashlib.sha256(receipt_raw).hexdigest()
         monkeypatch.setattr(q, "SYSTEMD_BACKEND_RECEIPT", receipt_path)
-        monkeypatch.setattr(q, "SYSTEMD_HOST_KEY", host_key)
-        monkeypatch.setattr(q, "SYSTEMD_ENCRYPTED_SOURCE", Path(value["source_locator"]))
     binding = tmp_path / "provider-secret-binding.json"
     binding.write_text(json.dumps(value), encoding="utf-8")
     monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
     return replace(host, secret_binding=str(binding))
-
-
-def _synthetic_root_source_stat(monkeypatch, source, *, size):
-    """Model root-only source metadata; never usable by Host.load as live evidence."""
-    original = Path.stat
-    monkeypatch.setattr(Path, "stat", lambda path: (
-        SimpleNamespace(st_uid=0, st_gid=0, st_mode=stat.S_IFREG | 0o400,
-                        st_size=(size if path == source else 32))
-        if path in {source, q.SYSTEMD_HOST_KEY} else original(path)
-    ))
 
 
 def test_unbound_metadata_is_present_but_e7_stays_blocked(host, tmp_path, monkeypatch):
@@ -340,20 +337,17 @@ def test_secret_binding_rejects_extra_fields(host, tmp_path, monkeypatch):
 
 
 def test_bound_source_presence_never_reads_plaintext(host, tmp_path, monkeypatch):
-    source = tmp_path / "credential"
-    source.write_bytes(b"opaque-synthetic-fixture")
-    source.chmod(0o400)
     value = _secret_binding(
-        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL", source_locator=str(source),
+        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL",
+        source_locator=str(q.SYSTEMD_ENCRYPTED_SOURCE),
         state="BOUND_ENCRYPTED_SOURCE_PRESENT", secret_source_present=True,
         systemd_credential_id=q.SYSTEMD_CREDENTIAL_ID,
         encryption_key_type="HOST", created_for="VF-SECRET-01",
     )
     bound = _bound_secret_host(host, tmp_path, monkeypatch, value)
-    _synthetic_root_source_stat(monkeypatch, source, size=len(b"opaque-synthetic-fixture"))
     original = Path.read_bytes
     def guarded_read(path):
-        if path == source:
+        if path in {q.SYSTEMD_ENCRYPTED_SOURCE, q.SYSTEMD_HOST_KEY}:
             pytest.fail("provider credential plaintext read")
         return original(path)
     monkeypatch.setattr(Path, "read_bytes", guarded_read)
@@ -363,18 +357,31 @@ def test_bound_source_presence_never_reads_plaintext(host, tmp_path, monkeypatch
     assert result["result"] == "PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED"
 
 
-def test_empty_secret_source_is_not_presence(host, tmp_path, monkeypatch):
-    source = tmp_path / "credential"
-    source.write_bytes(b"")
-    source.chmod(0o400)
+@pytest.mark.parametrize("receipt_changes", [
+    {"encrypted_source_nonempty": False},
+    {"encrypted_source_owner": "vf-executor:vf-executor"},
+    {"encrypted_source_mode": "0644"},
+    {"encrypted_source_symlink": True},
+    {"credstore_mode": "0711"},
+    {"runner_source_read": True},
+    {"runner_source_write": True},
+    {"runner_credstore_list": True},
+    {"host_key_owner": "vf-executor:vf-executor"},
+    {"host_key_mode": "0600"},
+    {"host_key_symlink": True},
+    {"runner_host_key_read": True},
+])
+def test_root_receipt_rejects_invalid_custody_metadata(
+    host, tmp_path, monkeypatch, receipt_changes,
+):
     bound = _bound_secret_host(host, tmp_path, monkeypatch, _secret_binding(
-        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL", source_locator=str(source),
+        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL",
+        source_locator=str(q.SYSTEMD_ENCRYPTED_SOURCE),
         state="BOUND_ENCRYPTED_SOURCE_PRESENT", secret_source_present=True,
         systemd_credential_id=q.SYSTEMD_CREDENTIAL_ID,
         encryption_key_type="HOST", created_for="VF-SECRET-01",
-    ))
-    _synthetic_root_source_stat(monkeypatch, source, size=0)
-    with pytest.raises(q.Blocked, match="SECRET_SOURCE_EMPTY_OR_PLACEHOLDER"):
+    ), receipt_changes=receipt_changes)
+    with pytest.raises(q.Blocked, match="SYSTEMD_BACKEND_RECEIPT_INVALID"):
         q.secret_presence(bound)
 
 
@@ -403,42 +410,37 @@ def test_bound_systemd_metadata_is_exact(host, tmp_path, monkeypatch, field, val
 
 
 def test_backend_receipt_hash_is_bound(host, tmp_path, monkeypatch):
-    source = tmp_path / "credential"
-    source.write_bytes(b"opaque-synthetic-fixture")
-    source.chmod(0o400)
     bound = _bound_secret_host(host, tmp_path, monkeypatch, _secret_binding(
-        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL", source_locator=str(source),
+        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL",
+        source_locator=str(q.SYSTEMD_ENCRYPTED_SOURCE),
         state="BOUND_ENCRYPTED_SOURCE_PRESENT", secret_source_present=True,
         systemd_credential_id=q.SYSTEMD_CREDENTIAL_ID,
         encryption_key_type="HOST", created_for="VF-SECRET-01",
     ))
-    _synthetic_root_source_stat(monkeypatch, source, size=16)
     q.SYSTEMD_BACKEND_RECEIPT.write_text("{}", encoding="utf-8")
     with pytest.raises(q.Blocked, match="SYSTEMD_BACKEND_RECEIPT_HASH_MISMATCH"):
         q.secret_presence(bound)
 
 
-def test_secret_source_requires_root_owned_non_symlink_policy(host, tmp_path, monkeypatch):
-    source = tmp_path / "credential"
-    source.write_bytes(b"opaque-synthetic-fixture")
-    monkeypatch.setattr(q, "SYSTEMD_ENCRYPTED_SOURCE", source)
-    bound = replace(host, secret_binding=str(tmp_path / "provider-secret-binding.json"))
-    Path(bound.secret_binding).write_text(json.dumps(_secret_binding(
-        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL", source_locator=str(source),
+def test_backend_receipt_requires_root_owned_non_symlink_policy(
+    host, tmp_path, monkeypatch,
+):
+    bound = _bound_secret_host(host, tmp_path, monkeypatch, _secret_binding(
+        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL",
+        source_locator=str(q.SYSTEMD_ENCRYPTED_SOURCE),
         state="BOUND_ENCRYPTED_SOURCE_PRESENT", secret_source_present=True,
         systemd_credential_id=q.SYSTEMD_CREDENTIAL_ID,
         encryption_key_type="HOST", created_for="VF-SECRET-01",
-        backend_qualification_receipt_sha256="1" * 64,
-    )), encoding="utf-8")
+    ))
     calls = []
     def policy(path, **kwargs):
         calls.append((path, kwargs))
-        if path == source:
+        if path == q.SYSTEMD_BACKEND_RECEIPT:
             raise q.Blocked("SYMLINK_BLOCKED")
     monkeypatch.setattr(q, "private_path", policy)
     with pytest.raises(q.Blocked, match="SYMLINK_BLOCKED"):
         q.secret_presence(bound)
-    assert calls[-1] == (source, {"root_owned": True})
+    assert calls[-1] == (q.SYSTEMD_BACKEND_RECEIPT, {"root_owned": True})
 
 
 def test_private_execution_repo_uses_root_owned_operator_provenance(

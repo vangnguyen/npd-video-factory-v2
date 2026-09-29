@@ -56,11 +56,18 @@ SECRET_BINDING_FIELDS = {
 }
 SYSTEMD_BACKEND_RECEIPT_FIELDS = {
     "version", "task", "status", "systemd_version", "host_key_present",
-    "host_key_owner", "host_key_mode", "credential_mechanism",
+    "host_key_owner", "host_key_mode", "host_key_regular_file",
+    "host_key_symlink", "runner_host_key_read", "runner_host_key_write",
+    "credential_mechanism",
     "systemd_credential_id", "encryption_key_type", "synthetic_encrypt",
     "name_binding", "controlled_service_receive", "access_isolation",
     "cleanup", "actual_provider_credential_decrypted",
-    "provider_runtime_reads", "provider_calls",
+    "provider_runtime_reads", "provider_calls", "encrypted_source_path",
+    "encrypted_source_present", "encrypted_source_owner",
+    "encrypted_source_mode", "encrypted_source_regular_file",
+    "encrypted_source_symlink", "encrypted_source_nonempty",
+    "credstore_owner", "credstore_mode", "runner_source_read",
+    "runner_source_write", "runner_credstore_list",
 }
 ADMISSION_MANIFEST_FIELDS = {
     "version", "mode", "approved_qualification_workflows",
@@ -472,6 +479,10 @@ def load_systemd_backend_receipt(expected_sha256: str) -> dict:
         "host_key_present": True,
         "host_key_owner": "root:root",
         "host_key_mode": "0400",
+        "host_key_regular_file": True,
+        "host_key_symlink": False,
+        "runner_host_key_read": False,
+        "runner_host_key_write": False,
         "credential_mechanism": "LoadCredentialEncrypted",
         "systemd_credential_id": SYSTEMD_CREDENTIAL_ID,
         "encryption_key_type": "HOST",
@@ -483,6 +494,18 @@ def load_systemd_backend_receipt(expected_sha256: str) -> dict:
         "actual_provider_credential_decrypted": False,
         "provider_runtime_reads": 0,
         "provider_calls": 0,
+        "encrypted_source_path": str(SYSTEMD_ENCRYPTED_SOURCE),
+        "encrypted_source_present": True,
+        "encrypted_source_owner": "root:root",
+        "encrypted_source_mode": "0400",
+        "encrypted_source_regular_file": True,
+        "encrypted_source_symlink": False,
+        "encrypted_source_nonempty": True,
+        "credstore_owner": "root:root",
+        "credstore_mode": "0700",
+        "runner_source_read": False,
+        "runner_source_write": False,
+        "runner_credstore_list": False,
     }, "SYSTEMD_BACKEND_RECEIPT_INVALID")
     return value
 
@@ -503,22 +526,9 @@ def secret_presence(host: Host) -> dict:
             "SECRET_SOURCE_PRESENT": False,
         })
 
-    # Presence verification is metadata-only: lstat/stat/ownership/mode/size.
-    # The credential bytes are never opened by qualification.
-    source = Path(binding["source_locator"])
-    private_path(source, root_owned=True)
-    info = source.stat()
-    require(info.st_uid == binding["expected_owner_uid"]
-            and info.st_gid == binding["expected_owner_gid"]
-            and stat.S_IMODE(info.st_mode) == int(binding["expected_mode"], 8),
-            "SECRET_SOURCE_POLICY_INVALID")
-    require(info.st_size > 0, "SECRET_SOURCE_EMPTY_OR_PLACEHOLDER")
-    private_path(SYSTEMD_HOST_KEY, root_owned=True)
-    key_info = SYSTEMD_HOST_KEY.stat()
-    require(key_info.st_uid == 0 and key_info.st_gid == 0
-            and stat.S_IMODE(key_info.st_mode) == 0o400
-            and key_info.st_size > 0,
-            "SYSTEMD_HOST_KEY_CUSTODY_INVALID")
+    # The runner cannot traverse systemd's root-only credential store. Root
+    # verifies source/key metadata and seals it into the strict receipt pinned
+    # by the binding. Qualification never opens either protected artifact.
     load_systemd_backend_receipt(binding["backend_qualification_receipt_sha256"])
     return {
         **common,

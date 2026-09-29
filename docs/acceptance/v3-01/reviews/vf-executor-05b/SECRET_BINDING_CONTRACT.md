@@ -18,19 +18,23 @@ secret-source presence and cannot produce qualification promotion.
 VF-SECRET-01 approves exactly one installed backend:
 `SYSTEMD_ENCRYPTED_CREDENTIAL`, credential ID `openai-codex-video`, encrypted
 source `/etc/credstore.encrypted/openai-codex-video`, and host-key encryption.
-The bound state is `BOUND_ENCRYPTED_SOURCE_PRESENT`. Qualification verifies
-the source by canonical path, regular-file type, symlink rejection, root
-ownership, exact `0400` mode, and non-zero size. It verifies the host key only
-by presence, root ownership, mode `0400`, and non-zero size. It never opens the
-encrypted provider source or host-key bytes.
+The bound state is `BOUND_ENCRYPTED_SOURCE_PRESENT`. Root verifies the source
+by canonical path, regular-file type, symlink rejection, root ownership, exact
+`0400` mode, and non-zero size. It verifies the host key by presence,
+regular-file type, symlink rejection, root ownership, and exact `0400` mode.
+It also proves the runner cannot read or modify either artifact and cannot
+list or traverse the `root:root` mode `0700` credential store. No check opens
+the encrypted provider source or host-key bytes.
 
 E7 additionally requires a sealed, strict-schema synthetic backend receipt at
 `/etc/npd-video-factory/systemd-credential-backend-qualification.json`. The
-receipt proves host-key encryption, exact name binding, delivery through
+receipt proves the root-only source/key metadata checks, runner denials,
+host-key encryption, exact name binding, delivery through
 `LoadCredentialEncrypted=`, controlled-service receipt, access isolation, and
 cleanup using non-provider synthetic content. The binding pins the receipt
-SHA-256. E7 reports `PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED` only when the
-binding, source metadata, host-key custody, and synthetic receipt all pass.
+SHA-256. The runner reads only this non-secret root-owned receipt. E7 reports
+`PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED` only when the binding, source
+metadata, host-key custody, runner isolation, and synthetic receipt all pass.
 
 ## Backend decision proposal
 
