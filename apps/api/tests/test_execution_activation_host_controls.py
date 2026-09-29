@@ -20,6 +20,9 @@ def test_resolver_units_have_fixed_identity_socket_and_encrypted_credential():
         "/etc/credstore.encrypted/openai-codex-video"
     ) in service
     assert "RestrictAddressFamilies=AF_UNIX" in service
+    # /run/npd-video-factory is shared with the custody PostgreSQL socket.
+    # The resolver must not let systemd own/remove that shared parent.
+    assert "RuntimeDirectory=npd-video-factory" not in service
     assert "ConditionPathExists=/etc/npd-video-factory/provider-secret-resolver-policy.json" in service
     assert "ConditionPathExists=/etc/npd-video-factory/provider-secret-resolver-policy.sha256" in service
     assert "Environment=OPENAI_API_KEY" not in service
