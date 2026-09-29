@@ -1,6 +1,7 @@
 """Offline controls are not evidence of a qualified self-hosted host."""
 import asyncio
 from dataclasses import replace
+import hashlib
 import importlib.util
 import json
 import os
@@ -272,12 +273,39 @@ def _secret_binding(**changes):
         "created_for": "VF-EXECUTOR-05C",
         "authority_granted": False,
         "secret_source_present": False,
+        "systemd_credential_id": None,
+        "encryption_key_type": None,
+        "provider_runtime_reads": 0,
+        "backend_qualification_receipt_sha256": None,
     }
     value.update(changes)
     return value
 
 
 def _bound_secret_host(host, tmp_path, monkeypatch, value):
+    if value.get("state") == "BOUND_ENCRYPTED_SOURCE_PRESENT":
+        receipt = {
+            "version": 1, "task": "VF-SECRET-01", "status": "PASS",
+            "systemd_version": "255 (255.4-1ubuntu8.17)",
+            "host_key_present": True, "host_key_owner": "root:root",
+            "host_key_mode": "0400", "credential_mechanism": "LoadCredentialEncrypted",
+            "systemd_credential_id": q.SYSTEMD_CREDENTIAL_ID,
+            "encryption_key_type": "HOST", "synthetic_encrypt": "PASS",
+            "name_binding": "PASS", "controlled_service_receive": "PASS",
+            "access_isolation": "PASS", "cleanup": "PASS",
+            "actual_provider_credential_decrypted": False,
+            "provider_runtime_reads": 0, "provider_calls": 0,
+        }
+        receipt_path = tmp_path / "systemd-backend-receipt.json"
+        receipt_raw = json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode()
+        receipt_path.write_bytes(receipt_raw)
+        host_key = tmp_path / "credential.secret"
+        host_key.write_bytes(b"synthetic-host-key-fixture")
+        host_key.chmod(0o400)
+        value["backend_qualification_receipt_sha256"] = hashlib.sha256(receipt_raw).hexdigest()
+        monkeypatch.setattr(q, "SYSTEMD_BACKEND_RECEIPT", receipt_path)
+        monkeypatch.setattr(q, "SYSTEMD_HOST_KEY", host_key)
+        monkeypatch.setattr(q, "SYSTEMD_ENCRYPTED_SOURCE", Path(value["source_locator"]))
     binding = tmp_path / "provider-secret-binding.json"
     binding.write_text(json.dumps(value), encoding="utf-8")
     monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
@@ -289,8 +317,8 @@ def _synthetic_root_source_stat(monkeypatch, source, *, size):
     original = Path.stat
     monkeypatch.setattr(Path, "stat", lambda path: (
         SimpleNamespace(st_uid=0, st_gid=0, st_mode=stat.S_IFREG | 0o400,
-                        st_size=size)
-        if path == source else original(path)
+                        st_size=(size if path == source else 32))
+        if path in {source, q.SYSTEMD_HOST_KEY} else original(path)
     ))
 
 
@@ -316,8 +344,10 @@ def test_bound_source_presence_never_reads_plaintext(host, tmp_path, monkeypatch
     source.write_bytes(b"opaque-synthetic-fixture")
     source.chmod(0o400)
     value = _secret_binding(
-        source_type="ROOT_FILE", source_locator=str(source),
-        state="BOUND_SOURCE_INSTALLED", secret_source_present=True,
+        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL", source_locator=str(source),
+        state="BOUND_ENCRYPTED_SOURCE_PRESENT", secret_source_present=True,
+        systemd_credential_id=q.SYSTEMD_CREDENTIAL_ID,
+        encryption_key_type="HOST", created_for="VF-SECRET-01",
     )
     bound = _bound_secret_host(host, tmp_path, monkeypatch, value)
     _synthetic_root_source_stat(monkeypatch, source, size=len(b"opaque-synthetic-fixture"))
@@ -330,6 +360,7 @@ def test_bound_source_presence_never_reads_plaintext(host, tmp_path, monkeypatch
     result = q.secret_presence(bound)
     assert result["SECRET_SOURCE_PRESENT"] is True
     assert result["PROVIDER_CREDENTIAL_READS"] == 0
+    assert result["result"] == "PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED"
 
 
 def test_empty_secret_source_is_not_presence(host, tmp_path, monkeypatch):
@@ -337,21 +368,67 @@ def test_empty_secret_source_is_not_presence(host, tmp_path, monkeypatch):
     source.write_bytes(b"")
     source.chmod(0o400)
     bound = _bound_secret_host(host, tmp_path, monkeypatch, _secret_binding(
-        source_type="ROOT_FILE", source_locator=str(source),
-        state="BOUND_SOURCE_INSTALLED", secret_source_present=True,
+        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL", source_locator=str(source),
+        state="BOUND_ENCRYPTED_SOURCE_PRESENT", secret_source_present=True,
+        systemd_credential_id=q.SYSTEMD_CREDENTIAL_ID,
+        encryption_key_type="HOST", created_for="VF-SECRET-01",
     ))
     _synthetic_root_source_stat(monkeypatch, source, size=0)
     with pytest.raises(q.Blocked, match="SECRET_SOURCE_EMPTY_OR_PLACEHOLDER"):
         q.secret_presence(bound)
 
 
+@pytest.mark.parametrize("field,value,code", [
+    ("source_locator", "/wrong/provider-source", "SECRET_BINDING_BOUND_STATE_INVALID"),
+    ("systemd_credential_id", "wrong-id", "SECRET_BINDING_BOUND_STATE_INVALID"),
+    ("encryption_key_type", "NULL", "SECRET_BINDING_BOUND_STATE_INVALID"),
+    ("source_type", "ROOT_FILE", "SECRET_BINDING_BOUND_STATE_INVALID"),
+    ("state", "BOUND_SOURCE_INSTALLED", "SECRET_BINDING_STATE_INVALID"),
+])
+def test_bound_systemd_metadata_is_exact(host, tmp_path, monkeypatch, field, value, code):
+    binding = tmp_path / "provider-secret-binding.json"
+    payload = _secret_binding(
+        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL",
+        source_locator=str(q.SYSTEMD_ENCRYPTED_SOURCE),
+        state="BOUND_ENCRYPTED_SOURCE_PRESENT", secret_source_present=True,
+        systemd_credential_id=q.SYSTEMD_CREDENTIAL_ID,
+        encryption_key_type="HOST", created_for="VF-SECRET-01",
+        backend_qualification_receipt_sha256="1" * 64,
+    )
+    payload[field] = value
+    binding.write_text(json.dumps(payload), encoding="utf-8")
+    monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    with pytest.raises(q.Blocked, match=code):
+        q.load_secret_binding(replace(host, secret_binding=str(binding)))
+
+
+def test_backend_receipt_hash_is_bound(host, tmp_path, monkeypatch):
+    source = tmp_path / "credential"
+    source.write_bytes(b"opaque-synthetic-fixture")
+    source.chmod(0o400)
+    bound = _bound_secret_host(host, tmp_path, monkeypatch, _secret_binding(
+        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL", source_locator=str(source),
+        state="BOUND_ENCRYPTED_SOURCE_PRESENT", secret_source_present=True,
+        systemd_credential_id=q.SYSTEMD_CREDENTIAL_ID,
+        encryption_key_type="HOST", created_for="VF-SECRET-01",
+    ))
+    _synthetic_root_source_stat(monkeypatch, source, size=16)
+    q.SYSTEMD_BACKEND_RECEIPT.write_text("{}", encoding="utf-8")
+    with pytest.raises(q.Blocked, match="SYSTEMD_BACKEND_RECEIPT_HASH_MISMATCH"):
+        q.secret_presence(bound)
+
+
 def test_secret_source_requires_root_owned_non_symlink_policy(host, tmp_path, monkeypatch):
     source = tmp_path / "credential"
     source.write_bytes(b"opaque-synthetic-fixture")
+    monkeypatch.setattr(q, "SYSTEMD_ENCRYPTED_SOURCE", source)
     bound = replace(host, secret_binding=str(tmp_path / "provider-secret-binding.json"))
     Path(bound.secret_binding).write_text(json.dumps(_secret_binding(
-        source_type="ROOT_FILE", source_locator=str(source),
-        state="BOUND_SOURCE_INSTALLED", secret_source_present=True,
+        source_type="SYSTEMD_ENCRYPTED_CREDENTIAL", source_locator=str(source),
+        state="BOUND_ENCRYPTED_SOURCE_PRESENT", secret_source_present=True,
+        systemd_credential_id=q.SYSTEMD_CREDENTIAL_ID,
+        encryption_key_type="HOST", created_for="VF-SECRET-01",
+        backend_qualification_receipt_sha256="1" * 64,
     )), encoding="utf-8")
     calls = []
     def policy(path, **kwargs):

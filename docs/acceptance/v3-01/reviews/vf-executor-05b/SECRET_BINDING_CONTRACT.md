@@ -15,12 +15,22 @@ null `source_locator`, and `secret_source_present` false. Consequently E7 must
 report `BLOCKED_SECRET_SOURCE_NOT_INSTALLED`; metadata presence alone is not
 secret-source presence and cannot produce qualification promotion.
 
-For a future `BOUND_SOURCE_INSTALLED` artifact, qualification permits only
-`ROOT_FILE` or `SYSTEMD_CREDENTIAL_ENCRYPTED`. It verifies the source by path,
-regular-file type, symlink rejection, root ownership, exact `0400` mode, and
-non-zero size. It does not open or read source bytes. The executor also no
-longer reads a path directly: provider execution remains blocked until a
-separately approved privileged resolver is installed.
+VF-SECRET-01 approves exactly one installed backend:
+`SYSTEMD_ENCRYPTED_CREDENTIAL`, credential ID `openai-codex-video`, encrypted
+source `/etc/credstore.encrypted/openai-codex-video`, and host-key encryption.
+The bound state is `BOUND_ENCRYPTED_SOURCE_PRESENT`. Qualification verifies
+the source by canonical path, regular-file type, symlink rejection, root
+ownership, exact `0400` mode, and non-zero size. It verifies the host key only
+by presence, root ownership, mode `0400`, and non-zero size. It never opens the
+encrypted provider source or host-key bytes.
+
+E7 additionally requires a sealed, strict-schema synthetic backend receipt at
+`/etc/npd-video-factory/systemd-credential-backend-qualification.json`. The
+receipt proves host-key encryption, exact name binding, delivery through
+`LoadCredentialEncrypted=`, controlled-service receipt, access isolation, and
+cleanup using non-provider synthetic content. The binding pins the receipt
+SHA-256. E7 reports `PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED` only when the
+binding, source metadata, host-key custody, and synthetic receipt all pass.
 
 ## Backend decision proposal
 
@@ -35,12 +45,12 @@ separately approved privileged resolver is installed.
    TPM2 report is only partial, so enrollment and recovery behavior require a
    separate Owner-approved installation and restore exercise.
 
-Recommendation: use `systemd` `LoadCredentialEncrypted=` backed by the systemd
-host key, with a root-owned one-shot/daemon resolver, because systemd is already
-the active init on this WSL host and can scope decrypted plaintext to the
-resolver service. Do not create the host key, encrypted credential, resolver,
-or provider credential during VF-EXECUTOR-05C.
+Approved implementation: `systemd` `LoadCredentialEncrypted=` backed by the
+systemd host key. VF-SECRET-01 installs only the encrypted source; it does not
+install or start a provider resolver. Recovery is host-loss rotation: revoke
+or rotate the provider API key, create a new host key, then install a newly
+encrypted credential. The host key is not copied off-host.
 
-Current invariants remain provider calls 0, credential reads 0, budget reserved
+Current invariants remain provider calls 0, runtime credential reads 0, budget reserved
 0 VND, operation consumption 0, actual cost 0 VND, RC-22 mutation none, O1 no,
 O2 no, runner Offline/Safe, and kill switch engaged.

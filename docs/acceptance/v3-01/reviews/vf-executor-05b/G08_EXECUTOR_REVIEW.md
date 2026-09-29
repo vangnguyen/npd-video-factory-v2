@@ -1,6 +1,6 @@
 # VF-EXECUTOR-05B G-08 executor review
 
-Status: `SOURCE-SIDE PASS / LIVE QUALIFICATION BLOCKED_E7 / NOT READY FOR O1`
+Status: `SOURCE-SIDE PASS / VF-SECRET-01 LIVE QUALIFICATION PENDING / NOT READY FOR O1`
 
 ## Fixed boundaries
 
@@ -58,22 +58,29 @@ attempt.
 - Runner after the bounded run: Offline; listener stopped; service not
   installed; kill switch engaged.
 
-## Final blocker
+## VF-SECRET-01 source review
 
-VF-EXECUTOR-05C installed only the approved non-secret binding metadata. The
-canonical alias is bound to `UNBOUND_APPROVED_SLOT`, so E7 remains exactly
-`BLOCKED_SECRET_SOURCE_NOT_INSTALLED`. A runner registration credential,
-synthetic placeholder, empty file, or custody backup key is not an acceptable
-substitute. Qualification will stat a future approved source but will not open
-or read credential plaintext.
+The approved systemd encrypted-source contract keeps binding metadata, the
+encrypted provider source, host key, and synthetic backend receipt in separate
+artifacts. E7 accepts only the canonical alias, exact systemd credential ID,
+exact encrypted source path, host-key encryption, root ownership, mode `0400`,
+sealed synthetic backend PASS receipt, zero provider runtime reads, and
+`AUTHORITY_GRANTED = false`. Qualification never opens or decrypts the provider
+source or host key.
+
+Promotion now independently binds the E7 secret-binding SHA alongside the
+runner identity, executable tree, custody binding, hostile-job review, kill
+switch, evidence manifest, and zero invariants. Provider execution remains
+blocked because no resolver, execution catalog, operation authority, active
+bundle, O2, or disengaged kill switch is installed.
 
 The 05C candidate source commit is
 `2a6ef461463d6a4a5815810774d0c64acd192f41`; its executor executable-tree
 SHA-256 is
 `1e86f2da55d6bb7b675e0ab8699776c737ddaeb9d46c4e136f954b3485df8152`.
-Focused source tests passed (`122 passed, 1 skipped`) and the final Linux
-non-root full regression passed (`1395 passed`). Exact-head CI for the final evidence head is
-required before the 05C handoff is sealed.
+The prior 05C results remain historical. VF-SECRET-01 requires a new exact-head
+CI, Docker E2E, fresh E1-E10 runner qualification, fresh hostile-job review,
+and independent promotion before final G-08 can become PASS.
 
 This review does not grant provider authority, O2, budget, operation
 consumption, or RC-22 mutation.

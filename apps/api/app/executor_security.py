@@ -94,7 +94,7 @@ def review(host: q.Host, root: Path, *, hook=None) -> dict:
     q.private_path(kill, root_owned=True)
     q.require(kill.read_bytes() == b"ENGAGED\n", "KILL_SWITCH_NOT_ENGAGED")
     report = {
-        "task": "VF-EXECUTOR-05B",
+        "task": "VF-SECRET-01",
         "status": "RUNNER_SECURITY_PASS",
         "quarantine": "CLEARED_BY_VALIDATED_POLICY",
         "runner_identity": q.expected_runner_identity(host),
@@ -114,7 +114,7 @@ def main() -> int:
         host = q.Host.load()
         evidence = Path(host.evidence_root)
         q.private_path(evidence, directory=True)
-        root = evidence / ("vf-executor-05b-security-" + uuid.uuid4().hex)
+        root = evidence / ("vf-secret-01-security-" + uuid.uuid4().hex)
         root.mkdir(mode=0o700)
         result = review(host, root)
         print(json.dumps({"status": result["report"]["status"],

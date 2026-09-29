@@ -65,6 +65,13 @@ def verify_qualification(catalog: dict, host: q.Host) -> None:
     q.require(receipt.get("kill_switch") == "ENGAGED", "QUALIFICATION_KILL_SWITCH_INVALID")
     q.require(receipt.get("custody_binding_sha256") == host.binding_sha256,
               "QUALIFICATION_CUSTODY_BINDING_MISMATCH")
+    secret_binding = q.secret_presence(host)
+    q.require(receipt.get("secret_binding_sha256")
+              == secret_binding.get("binding_sha256")
+              and secret_binding.get("result")
+              == "PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED"
+              and secret_binding.get("PROVIDER_CREDENTIAL_READS") == 0,
+              "QUALIFICATION_SECRET_BINDING_MISMATCH")
     q.require(receipt.get("execution_workflow_commit") == host.execution_workflow_commit,
               "QUALIFICATION_WORKFLOW_PROVENANCE_MISMATCH")
     probes = _trusted_json(Path(receipt["probe_receipt"]), receipt["probe_receipt_sha256"])
@@ -97,6 +104,8 @@ def verify_qualification(catalog: dict, host: q.Host) -> None:
                              receipt["evidence_manifest_sha256"])
     q.require_runner_identity(evidence, host, "QUALIFICATION_EVIDENCE_IDENTITY_MISMATCH")
     q.require(evidence.get("custody_binding_sha256") == host.binding_sha256
+              and evidence.get("secret_binding_sha256")
+              == secret_binding.get("binding_sha256")
               and evidence.get("execution_workflow_commit") == host.execution_workflow_commit
               and evidence.get("kill_switch") == "ENGAGED"
               and all(evidence.get(name) == value for name, value in q.ZERO.items())

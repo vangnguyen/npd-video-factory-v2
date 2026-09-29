@@ -59,6 +59,15 @@ def promote(host: q.Host, config: dict) -> dict:
               and probe["gates"]["E10"].get("KILL_SWITCH") == "ENGAGED"
               and probe["gates"]["E10"].get("ledger_unchanged") is True,
               "QUALIFICATION_PROBES_FAILED")
+    current_secret = q.secret_presence(host)
+    q.require(probe["gates"]["E7"].get("result")
+              == "PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED"
+              and probe["gates"]["E7"].get("binding_sha256")
+              == current_secret["binding_sha256"]
+              and probe["gates"]["E7"].get("PROVIDER_CREDENTIAL_READS") == 0
+              and current_secret.get("PROVIDER_CREDENTIAL_READS") == 0,
+              "QUALIFICATION_SECRET_BINDING_FAILED")
+    secret_binding_sha256 = current_secret["binding_sha256"]
     q.require(manifest.get("qualification.json") == config["probe_receipt_sha256"],
               "QUALIFICATION_MANIFEST_MISMATCH")
     q.require(security.get("status") == "RUNNER_SECURITY_PASS"
@@ -78,10 +87,11 @@ def promote(host: q.Host, config: dict) -> dict:
     q.private_path(root, directory=True, root_owned=True)
     evidence_manifest = {
         "version": 1,
-        "task": "VF-EXECUTOR-05B",
+        "task": "VF-SECRET-01",
         "runner_identity": q.expected_runner_identity(host),
         "execution_workflow_commit": host.execution_workflow_commit,
         "custody_binding_sha256": host.binding_sha256,
+        "secret_binding_sha256": secret_binding_sha256,
         "artifacts": {
             "probe_receipt": config["probe_receipt_sha256"],
             "probe_manifest": config["probe_manifest_sha256"],
@@ -93,10 +103,11 @@ def promote(host: q.Host, config: dict) -> dict:
     evidence_manifest_sha256 = q.persist(root, "evidence-manifest.json", evidence_manifest)
     receipt = {
         "status": "SELF_HOSTED_EXECUTION_PLANE_QUALIFIED",
-        "task": "VF-EXECUTOR-05B",
+        "task": "VF-SECRET-01",
         "runner_identity": q.expected_runner_identity(host),
         "execution_workflow_commit": host.execution_workflow_commit,
         "custody_binding_sha256": host.binding_sha256,
+        "secret_binding_sha256": secret_binding_sha256,
         "gates": {gate: "PASS" for gate in q.GATES},
         "kill_switch": "ENGAGED",
         "probe_receipt": config["probe_receipt"],

@@ -40,13 +40,28 @@ LABELS = frozenset({"self-hosted", "linux", "x64", "npd-video-factory", "provide
 CONFIG = Path("/etc/npd-video-factory/executor.json")
 PROVIDER_SECRET_BINDING = Path("/etc/npd-video-factory/provider-secret-binding.json")
 CANONICAL_CREDENTIAL_ALIAS = "secret://openai/codex-video"
+SYSTEMD_CREDENTIAL_ID = "openai-codex-video"
+SYSTEMD_ENCRYPTED_SOURCE = Path("/etc/credstore.encrypted/openai-codex-video")
+SYSTEMD_HOST_KEY = Path("/var/lib/systemd/credential.secret")
+SYSTEMD_BACKEND_RECEIPT = Path(
+    "/etc/npd-video-factory/systemd-credential-backend-qualification.json"
+)
 SECRET_BINDING_FIELDS = {
     "version", "credential_alias", "provider", "capability_scope",
     "source_type", "source_locator", "owner", "expected_owner_uid",
     "expected_owner_gid", "expected_mode", "state", "created_for",
-    "authority_granted", "secret_source_present",
+    "authority_granted", "secret_source_present", "systemd_credential_id",
+    "encryption_key_type", "provider_runtime_reads",
+    "backend_qualification_receipt_sha256",
 }
-SECRET_SOURCE_TYPES = frozenset({"ROOT_FILE", "SYSTEMD_CREDENTIAL_ENCRYPTED"})
+SYSTEMD_BACKEND_RECEIPT_FIELDS = {
+    "version", "task", "status", "systemd_version", "host_key_present",
+    "host_key_owner", "host_key_mode", "credential_mechanism",
+    "systemd_credential_id", "encryption_key_type", "synthetic_encrypt",
+    "name_binding", "controlled_service_receive", "access_isolation",
+    "cleanup", "actual_provider_credential_decrypted",
+    "provider_runtime_reads", "provider_calls",
+}
 ADMISSION_MANIFEST_FIELDS = {
     "version", "mode", "approved_qualification_workflows",
     "approved_execution_workflows",
@@ -406,25 +421,70 @@ def load_secret_binding(host: Host) -> tuple[dict, bytes]:
             and type(value.get("expected_owner_gid")) is int
             and value.get("expected_owner_gid") == 0
             and value.get("expected_mode") == "0400"
-            and value.get("created_for") == "VF-EXECUTOR-05C"
-            and value.get("authority_granted") is False,
+            and value.get("authority_granted") is False
+            and value.get("provider_runtime_reads") == 0,
             "SECRET_BINDING_POLICY_INVALID")
     state = value.get("state")
     if state == "UNBOUND_APPROVED_SLOT":
         require(value.get("source_type") == "UNBOUND"
                 and value.get("source_locator") is None
-                and value.get("secret_source_present") is False,
+                and value.get("secret_source_present") is False
+                and value.get("systemd_credential_id") is None
+                and value.get("encryption_key_type") is None
+                and value.get("backend_qualification_receipt_sha256") is None
+                and value.get("created_for") == "VF-EXECUTOR-05C",
                 "SECRET_BINDING_UNBOUND_STATE_INVALID")
-    elif state == "BOUND_SOURCE_INSTALLED":
+    elif state == "BOUND_ENCRYPTED_SOURCE_PRESENT":
         locator = value.get("source_locator")
-        require(value.get("source_type") in SECRET_SOURCE_TYPES
-                and isinstance(locator, str) and Path(locator).is_absolute()
-                and ".." not in Path(locator).parts
-                and value.get("secret_source_present") is True,
+        require(value.get("source_type") == "SYSTEMD_ENCRYPTED_CREDENTIAL"
+                and locator == str(SYSTEMD_ENCRYPTED_SOURCE)
+                and Path(locator).is_absolute() and ".." not in Path(locator).parts
+                and value.get("systemd_credential_id") == SYSTEMD_CREDENTIAL_ID
+                and value.get("encryption_key_type") == "HOST"
+                and value.get("secret_source_present") is True
+                and value.get("created_for") == "VF-SECRET-01"
+                and isinstance(value.get("backend_qualification_receipt_sha256"), str)
+                and re.fullmatch(r"[a-f0-9]{64}",
+                                 value["backend_qualification_receipt_sha256"]) is not None,
                 "SECRET_BINDING_BOUND_STATE_INVALID")
     else:
         raise Blocked("SECRET_BINDING_STATE_INVALID")
     return value, raw
+
+
+def load_systemd_backend_receipt(expected_sha256: str) -> dict:
+    """Validate sealed synthetic backend evidence without touching provider bytes."""
+    private_path(SYSTEMD_BACKEND_RECEIPT, root_owned=True)
+    raw = SYSTEMD_BACKEND_RECEIPT.read_bytes()
+    secret_scan(raw)
+    require(sha(raw) == expected_sha256, "SYSTEMD_BACKEND_RECEIPT_HASH_MISMATCH")
+    try:
+        value = json.loads(raw)
+    except (TypeError, ValueError):
+        raise Blocked("SYSTEMD_BACKEND_RECEIPT_INVALID") from None
+    require(type(value) is dict and set(value) == SYSTEMD_BACKEND_RECEIPT_FIELDS,
+            "SYSTEMD_BACKEND_RECEIPT_INVALID")
+    require(value == {
+        "version": 1,
+        "task": "VF-SECRET-01",
+        "status": "PASS",
+        "systemd_version": "255 (255.4-1ubuntu8.17)",
+        "host_key_present": True,
+        "host_key_owner": "root:root",
+        "host_key_mode": "0400",
+        "credential_mechanism": "LoadCredentialEncrypted",
+        "systemd_credential_id": SYSTEMD_CREDENTIAL_ID,
+        "encryption_key_type": "HOST",
+        "synthetic_encrypt": "PASS",
+        "name_binding": "PASS",
+        "controlled_service_receive": "PASS",
+        "access_isolation": "PASS",
+        "cleanup": "PASS",
+        "actual_provider_credential_decrypted": False,
+        "provider_runtime_reads": 0,
+        "provider_calls": 0,
+    }, "SYSTEMD_BACKEND_RECEIPT_INVALID")
+    return value
 
 
 def secret_presence(host: Host) -> dict:
@@ -453,11 +513,23 @@ def secret_presence(host: Host) -> dict:
             and stat.S_IMODE(info.st_mode) == int(binding["expected_mode"], 8),
             "SECRET_SOURCE_POLICY_INVALID")
     require(info.st_size > 0, "SECRET_SOURCE_EMPTY_OR_PLACEHOLDER")
+    private_path(SYSTEMD_HOST_KEY, root_owned=True)
+    key_info = SYSTEMD_HOST_KEY.stat()
+    require(key_info.st_uid == 0 and key_info.st_gid == 0
+            and stat.S_IMODE(key_info.st_mode) == 0o400
+            and key_info.st_size > 0,
+            "SYSTEMD_HOST_KEY_CUSTODY_INVALID")
+    load_systemd_backend_receipt(binding["backend_qualification_receipt_sha256"])
     return {
         **common,
-        "SECRET_BINDING_STATE": "BOUND_SOURCE_INSTALLED",
+        "result": "PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED",
+        "SECRET_BINDING_STATE": "BOUND_ENCRYPTED_SOURCE_PRESENT",
         "SECRET_SOURCE_PRESENT": True,
         "source_type": binding["source_type"],
+        "systemd_credential_id": SYSTEMD_CREDENTIAL_ID,
+        "encryption_key_type": "HOST",
+        "host_key_custody": "PASS",
+        "synthetic_backend_test": "PASS",
         "future_privileged_resolver_reachable": True,
     }
 
@@ -552,7 +624,7 @@ async def qualify(host: Host, root: Path) -> dict:
                 results["E10"]["ledger_unchanged"] = True
             except Exception:
                 results["E10"] = {"status": "BLOCKED", "code": "LEDGER_RECHECK_FAILED"}
-    report = {"task": "VF-EXECUTOR-05B", "gates": results, **ZERO,
+    report = {"task": "VF-SECRET-01", "gates": results, **ZERO,
         "verdict": "CAPABILITY_PROBES_PASS" if all(v["status"] == "PASS" for v in results.values()) else "BLOCKED",
         "execution_plane_qualified": False,
         "runner_identity": expected_runner_identity(host),
@@ -574,7 +646,7 @@ def main() -> int:
         host = Host.load()
         private_path(Path(host.evidence_root), directory=True)
         with plane_lock(Path(host.lock_path)):
-            root = Path(host.evidence_root) / ("vf-executor-05b-" + uuid.uuid4().hex)
+            root = Path(host.evidence_root) / ("vf-secret-01-" + uuid.uuid4().hex)
             root.mkdir(mode=0o700)
             report = asyncio.run(qualify(host, root))
         print(json.dumps({"verdict": report["verdict"], "gates": report["gates"],

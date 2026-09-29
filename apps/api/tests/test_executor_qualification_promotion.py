@@ -7,6 +7,7 @@ from app import executor_execution as execution, executor_qualification as q, ex
 
 @pytest.fixture
 def artifacts(monkeypatch):
+    secret_binding_sha256 = "2" * 64
     host = SimpleNamespace(
         runner_id=6,
         runner_name="npd-vf-executor-ubuntu-02",
@@ -34,6 +35,7 @@ def artifacts(monkeypatch):
         "evidence_manifest_sha256": "1" * 64,
         "execution_workflow_commit": host.execution_workflow_commit,
         "custody_binding_sha256": host.binding_sha256,
+        "secret_binding_sha256": secret_binding_sha256,
         **q.ZERO,
     }
     probe = {
@@ -44,6 +46,11 @@ def artifacts(monkeypatch):
         **q.ZERO,
     }
     probe["gates"]["E10"].update(KILL_SWITCH="ENGAGED", ledger_unchanged=True)
+    probe["gates"]["E7"].update(
+        result="PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED",
+        binding_sha256=secret_binding_sha256,
+        PROVIDER_CREDENTIAL_READS=0,
+    )
     security = {
         "status": "RUNNER_SECURITY_PASS",
         "runner_identity": dict(identity),
@@ -57,6 +64,7 @@ def artifacts(monkeypatch):
     evidence = {
         "runner_identity": dict(identity),
         "custody_binding_sha256": host.binding_sha256,
+        "secret_binding_sha256": secret_binding_sha256,
         "execution_workflow_commit": host.execution_workflow_commit,
         "kill_switch": "ENGAGED",
         "artifacts": {"probe_receipt": "b" * 64, "probe_manifest": "c" * 64,
@@ -83,6 +91,11 @@ def artifacts(monkeypatch):
         return files[path.as_posix()]
 
     monkeypatch.setattr(execution, "_trusted_json", trusted)
+    monkeypatch.setattr(q, "secret_presence", lambda *a: {
+        "result": "PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED",
+        "binding_sha256": secret_binding_sha256,
+        "PROVIDER_CREDENTIAL_READS": 0,
+    })
     return host, files, {"qualification_receipt": "/promotion", "qualification_sha256": "e" * 64}
 
 
@@ -94,7 +107,7 @@ def test_explicit_promotion_binds_actual_report_shape(artifacts):
     assert files["/probe"]["runner_identity"] == files["/security"]["runner_identity"]
 
 
-@pytest.mark.parametrize("change", ["probe", "manifest", "security", "gate", "hostile", "ledger", "calls", "evidence"])
+@pytest.mark.parametrize("change", ["probe", "manifest", "security", "gate", "hostile", "ledger", "calls", "evidence", "secret"])
 def test_promotion_cannot_skip_prerequisites(artifacts, change):
     host, files, catalog = artifacts
     if change == "probe":
@@ -113,6 +126,8 @@ def test_promotion_cannot_skip_prerequisites(artifacts, change):
         files["/probe"]["provider_calls"] = 1
     elif change == "evidence":
         files["/evidence"]["custody_binding_sha256"] = "0" * 64
+    elif change == "secret":
+        files["/promotion"]["secret_binding_sha256"] = "0" * 64
     with pytest.raises(q.Blocked):
         execution.verify_qualification(catalog, host)
 
