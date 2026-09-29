@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "task": "VF-ASR-RC23-01",
+  "status": "PASS_RC_ONLY",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "rc_tag": "vf-v3-01-rc23",
+  "rc_tag_type": "annotated",
+  "rc_tag_object_sha": "820657795fe17a6048259c7bf8ad59e55375e6a0",
+  "rc_commit": "ff19b812d6062baa4a0a284333a06a7722f61757",
+  "rc_ci": {
+    "role": "executable_rc",
+    "workflow_name": "Video Factory V2 CI",
+    "run_id": 36573791015,
+    "ref": "refs/tags/vf-v3-01-rc23",
+    "expected_head_sha": "ff19b812d6062baa4a0a284333a06a7722f61757",
+    "checked_out_sha": "ff19b812d6062baa4a0a284333a06a7722f61757",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs_succeeded": 5,
+    "jobs_total": 5,
+    "completed_at_utc": "2026-09-29T13:20:46Z"
+  },
+  "source_identity": {
+    "canonical_executable_tree_sha256": "f92bd2acbb2c2bcfb98fbb737567d20b6551724e1c03c0574dfaa4f3733dce9a",
+    "github_workflows_tree_object": "e2048a15188852df9f6c43ecd1ae982ee56b4588",
+    "executor_composite_tree_sha256": "574bda3d7e5183287db486fa6e1075e7c49f472a95ad3898a79a71bfd7134092"
+  },
+  "execution_plane": {
+    "status": "SELF_HOSTED_EXECUTION_PLANE_QUALIFIED",
+    "promotion_sha256": "6d538d87d50024dcf4d549d3e2be9f5ff33cf341914f7f92cbac7c077b50def6",
+    "qualification_evidence_manifest_sha256": "0b33ca50dd3361315c610915e2f3ab435c49270be6453dbed49bc517eb61c338",
+    "exact_main_qualification_binding_sha256": "32ee5ac5a96573ab2a4392340bef992222ad16d973ce646f25c23aa64ab57ddb",
+    "runner_id": 6,
+    "runner_name": "npd-vf-executor-ubuntu-02",
+    "runner_state": "OFFLINE_SAFE",
+    "kill_switch": "ENGAGED"
+  },
+  "custody": {
+    "database": "vf_provider_custody_v3_01",
+    "binding_sha256": "c8d2761e3a5f6f835d6562665aac3eb175b5387bacc9e9e2daa5433c36b00e27"
+  },
+  "dual_ci": {
+    "status": "DUAL_CI_NOT_FINAL_PRE_GOVERNANCE_MERGE",
+    "governance_main_commit": null,
+    "governance_main_ci_run_id": null,
+    "final_provenance": "NOT_CREATED"
+  },
+  "materialization_boundaries": {
+    "asr_lineage_created": false,
+    "operation_1_created": false,
+    "operation_2_created": false,
+    "bundle_created": false,
+    "loaded_execution_scope_created": false,
+    "authority_created": false,
+    "o2": "NO",
+    "execution_window_created": false
+  },
+  "zero_call_invariants": {
+    "real_provider_calls": 0,
+    "provider_credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "operation_consumption": 0,
+    "actual_cost_vnd": "0",
+    "bundle_mounted": false,
+    "production": "NO-GO",
+    "rc_22_mutation": "NONE",
+    "authority_granted": false
+  },
+  "next_lifecycle_requirement": "OWNER_APPROVED_GOVERNANCE_ONLY_MERGE_THEN_EXACT_GOVERNANCE_MAIN_CI_AND_FINAL_DUAL_CI_PROVENANCE"
+}
