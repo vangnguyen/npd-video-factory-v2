@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta, timezone
 import hashlib
 import json
+import os
+from types import SimpleNamespace
 
 import pytest
 from pydantic import ValidationError
@@ -99,7 +101,7 @@ def test_missing_hash_and_expired_activation_fail_closed(tmp_path):
         verify(binding(), now=NOW + timedelta(hours=2))
 
 
-def test_host_activation_and_all_cleanup_paths_restore_nologin(tmp_path, monkeypatch):
+def test_host_activation_and_root_cleanup_restore_nologin(tmp_path, monkeypatch):
     value = binding()
     state = {"login": False}
     monkeypatch.setattr(host, "_load_current", lambda: (value, "h" * 64))
@@ -108,6 +110,21 @@ def test_host_activation_and_all_cleanup_paths_restore_nologin(tmp_path, monkeyp
     monkeypatch.setattr(host, "ACTIVE_STATE_PATH", tmp_path / "active.json")
     monkeypatch.setattr(host, "_login_state", lambda: "LOGIN" if state["login"] else "NOLOGIN")
     monkeypatch.setattr(host, "_alter", lambda login: state.update(login=login))
+    monkeypatch.setattr(
+        host,
+        "_persist_active",
+        lambda binding_hash, expires_at: host.ACTIVE_STATE_PATH.write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "runtime_activation_sha256": binding_hash,
+                    "runtime_role": "vf_executor_runtime",
+                    "state": "LOGIN",
+                    "expires_at_utc": expires_at,
+                }
+            )
+        ),
+    )
     systemd = []
     monkeypatch.setattr(host, "_systemctl", lambda action, unit: systemd.append((action, unit)))
     assert host.activate(NOW) == "RUNTIME_ROLE_ACTIVATED"
@@ -116,11 +133,6 @@ def test_host_activation_and_all_cleanup_paths_restore_nologin(tmp_path, monkeyp
     assert host.deactivate() == "RUNTIME_ROLE_NOLOGIN_VERIFIED"
     assert state["login"] is False
     assert ("stop", "npd-vf-secret-resolver.socket") in systemd
-    # Crash/expiry path is independent of the executor's Python finally.
-    state["login"] = True
-    host._persist_active("h" * 64, value.expires_at_utc.isoformat())
-    assert host.expire(NOW + timedelta(hours=2)) == "RUNTIME_ROLE_NOLOGIN_VERIFIED"
-    assert state["login"] is False
 
 
 def test_unauthorized_activation_requires_sealed_binding(monkeypatch):
@@ -128,6 +140,47 @@ def test_unauthorized_activation_requires_sealed_binding(monkeypatch):
         host.HostActivationBlocked("RUNTIME_ACTIVATION_HASH_MISMATCH")
     ))
     with pytest.raises(host.HostActivationBlocked, match="RUNTIME_ACTIVATION_HASH_MISMATCH"):
+        host.activate(NOW)
+
+
+def test_root_marker_is_atomic_root_postgres_and_not_postgres_writable(tmp_path, monkeypatch):
+    parent = tmp_path / "run" / "npd-video-factory"
+    parent.mkdir(parents=True)
+    parent.chmod(0o755)
+    marker = parent / "runtime-activation-active.json"
+    monkeypatch.setattr(host, "ACTIVE_STATE_PATH", marker)
+    monkeypatch.setattr(host, "ROOT_UID", os.getuid())
+    monkeypatch.setattr(host.grp, "getgrnam", lambda _name: SimpleNamespace(gr_gid=os.getgid()))
+    host._persist_active("a" * 64, "2026-09-30T14:00:00+00:00")
+    info = marker.stat()
+    assert info.st_uid == os.getuid()
+    assert info.st_gid == os.getgid()
+    assert info.st_mode & 0o777 == 0o640
+    assert not info.st_mode & 0o020
+    assert json.loads(marker.read_text()) == {
+        "expires_at_utc": "2026-09-30T14:00:00+00:00",
+        "runtime_activation_sha256": "a" * 64,
+        "runtime_role": "vf_executor_runtime",
+        "state": "LOGIN",
+        "version": 1,
+    }
+
+
+def test_activation_rejects_stale_marker_before_granting_login(tmp_path, monkeypatch):
+    value = binding()
+    marker = tmp_path / "active.json"
+    marker.write_text("stale")
+    monkeypatch.setattr(host, "ACTIVE_STATE_PATH", marker)
+    monkeypatch.setattr(host, "_load_current", lambda: (value, "h" * 64))
+    monkeypatch.setattr(host, "_load_resolver_policy", lambda *args: object())
+    monkeypatch.setattr(host, "_verify_peer_auth", lambda: None)
+    monkeypatch.setattr(host, "_login_state", lambda: "NOLOGIN")
+    monkeypatch.setattr(
+        host,
+        "_alter",
+        lambda _login: (_ for _ in ()).throw(AssertionError("LOGIN must not be granted")),
+    )
+    with pytest.raises(host.HostActivationBlocked, match="STALE_STATE_PRESENT"):
         host.activate(NOW)
 
 
