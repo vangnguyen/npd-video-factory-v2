@@ -13,7 +13,10 @@ trap 'cleanup || true' EXIT
 trap 'exit 129' HUP
 trap 'exit 130' INT
 trap 'exit 143' TERM
-"$python" -I "$activation" expire >/dev/null || exit 2
+if ! /usr/bin/systemctl start npd-vf-runtime-role-failsafe.service >/dev/null; then
+  echo RUNTIME_FAILSAFE_PREFLIGHT_FAILED
+  exit 2
+fi
 test "$("$python" -I "$activation" verify-nologin 2>/dev/null)" != RUNTIME_ROLE_NOLOGIN_VERIFIED || {
   echo RUNTIME_ACTIVATION_REQUIRED
   exit 2
