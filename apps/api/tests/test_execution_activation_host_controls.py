@@ -44,14 +44,32 @@ def test_root_wrapper_has_unconditional_cleanup_and_fixed_child():
 
 def test_expiry_timer_and_exact_peer_map_provisioning_are_mandatory():
     timer = read("deploy/executor/npd-vf-runtime-role-failsafe.timer")
+    service = read("deploy/executor/npd-vf-runtime-role-failsafe.service")
     provision = read("scripts/provision-execution-activation.sh")
     assert "OnUnitActiveSec=15s" in timer and "Persistent=true" in timer
+    assert "User=postgres" in service and "Group=postgres" in service
+    assert "runtime-role-failsafe.py expire" in service
+    assert "runtime-activation.py expire" not in service
+    assert "runuser" not in service and "sudo" not in service and " su " not in service
+    assert "NoNewPrivileges=true" in service
+    assert "ProtectSystem=strict" in service
+    assert "RestrictAddressFamilies=AF_UNIX" in service
+    assert "ReadWritePaths=" not in service
+    assert "/etc/credstore.encrypted" in service
+    assert "/var/lib/systemd/credential.secret" in service
     assert "disable --now npd-vf-secret-resolver.socket" in provision
     assert "vf_executor_runtime_map vf-executor vf_executor_runtime" in provision
     assert "peer map=vf_executor_runtime_map" in provision
     assert "safe.directory \"$source_root\"" in provision
     assert "safe.directory=*" not in provision
     assert "ALTER ROLE" not in provision  # lifecycle code owns the fixed SQL.
+    assert (
+        'install -o root -g root -m 0755 "$source_root/apps/api/app/runtime_role_failsafe.py" '
+        '"$runtime_root/runtime-role-failsafe.py"'
+    ) in provision
+    root_activation = read("apps/api/app/runtime_activation_host.py")
+    assert 'choices=("activate", "deactivate", "verify-nologin")' in root_activation
+    assert "def expire(" not in root_activation
 
 
 def test_execution_workflow_cannot_bypass_root_cleanup_wrapper():

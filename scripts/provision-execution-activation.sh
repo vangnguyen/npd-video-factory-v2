@@ -18,6 +18,8 @@ test "$(stat -c %U "$source_root")" = root
 test -z "$(find "$source_root" -xdev \( -perm -0020 -o -perm -0002 \) -print -quit)"
 getent passwd vf-executor >/dev/null
 getent group vf-executor >/dev/null
+getent passwd postgres >/dev/null
+getent group postgres >/dev/null
 test -f "$hba"
 test -f "$ident"
 
@@ -25,6 +27,7 @@ install -d -o root -g root -m 0755 /run/npd-video-factory
 install -d -o root -g root -m 0700 /var/lib/npd-video-factory/executor/secret-resolution
 install -o root -g root -m 0755 "$script_source/provider-secret-resolver-installed.py" "$runtime_root/provider-secret-resolver.py"
 install -o root -g root -m 0755 "$script_source/runtime-activation-installed.py" "$runtime_root/runtime-activation.py"
+install -o root -g root -m 0755 "$source_root/apps/api/app/runtime_role_failsafe.py" "$runtime_root/runtime-role-failsafe.py"
 install -o root -g root -m 0755 "$script_source/provider-execution-wrapper.sh" /usr/local/sbin/npd-vf-provider-execution
 install -o root -g root -m 0440 "$unit_source/npd-vf-provider-execution.sudoers" /etc/sudoers.d/npd-vf-provider-execution
 visudo -cf /etc/sudoers.d/npd-vf-provider-execution >/dev/null

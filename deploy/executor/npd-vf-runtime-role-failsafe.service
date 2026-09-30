@@ -4,13 +4,30 @@ After=npd-vf-provider-custody-postgresql.service
 
 [Service]
 Type=oneshot
-User=root
-Group=root
-ExecStart=/opt/npd-video-factory/runtime/venv/bin/python -I /opt/npd-video-factory/runtime/runtime-activation.py expire
+User=postgres
+Group=postgres
+ExecStart=/opt/npd-video-factory/runtime/venv/bin/python -I /opt/npd-video-factory/runtime/runtime-role-failsafe.py expire
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=strict
-ReadOnlyPaths=/etc/npd-video-factory /opt/npd-video-factory/runtime
-ReadWritePaths=/run/npd-video-factory
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+UMask=0077
+Environment=PYTHONDONTWRITEBYTECODE=1
+ReadOnlyPaths=/opt/npd-video-factory/runtime
+ReadOnlyPaths=-/run/npd-video-factory/runtime-activation-active.json
+ReadOnlyPaths=/run/npd-video-factory/provider-custody/postgresql
+InaccessiblePaths=-/etc/credstore.encrypted
+InaccessiblePaths=-/var/lib/systemd/credential.secret
+InaccessiblePaths=-/var/lib/npd-video-factory/executor/authority
+InaccessiblePaths=-/etc/npd-video-factory/execution-catalog.json
+InaccessiblePaths=-/etc/npd-video-factory/runtime-activation.json
+InaccessiblePaths=-/etc/npd-video-factory/provider-secret-resolver-policy.json
 RestrictAddressFamilies=AF_UNIX

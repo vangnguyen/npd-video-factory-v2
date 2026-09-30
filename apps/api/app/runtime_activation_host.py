@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
+import grp
 import hashlib
 import json
 import os
@@ -39,6 +40,7 @@ RUNUSER = "/usr/sbin/runuser"
 SYSTEMCTL = "/usr/bin/systemctl"
 HBA_PATH = Path("/etc/npd-video-factory/provider-custody/postgresql-16/pg_hba.conf")
 IDENT_PATH = Path("/etc/npd-video-factory/provider-custody/postgresql-16/pg_ident.conf")
+ROOT_UID = 0
 
 
 class HostActivationBlocked(RuntimeError):
@@ -204,16 +206,47 @@ def _persist_active(binding_hash: str, expires_at: str) -> None:
         sort_keys=True,
         separators=(",", ":"),
     ).encode() + b"\n"
+    try:
+        parent = ACTIVE_STATE_PATH.parent.lstat()
+        postgres_gid = grp.getgrnam("postgres").gr_gid
+    except (KeyError, OSError):
+        raise HostActivationBlocked("RUNTIME_ACTIVATION_MARKER_CUSTODY_INVALID") from None
+    if (
+        not stat.S_ISDIR(parent.st_mode)
+        or stat.S_ISLNK(parent.st_mode)
+        or parent.st_uid != ROOT_UID
+        or stat.S_IMODE(parent.st_mode) & 0o022
+    ):
+        raise HostActivationBlocked("RUNTIME_ACTIVATION_MARKER_CUSTODY_INVALID")
+    temporary = ACTIVE_STATE_PATH.with_name(
+        f".{ACTIVE_STATE_PATH.name}.tmp.{os.getpid()}"
+    )
     descriptor = os.open(
-        ACTIVE_STATE_PATH,
-        os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_NOFOLLOW,
-        0o600,
+        temporary,
+        os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+        0o640,
     )
     try:
-        os.write(descriptor, payload)
-        os.fsync(descriptor)
-    finally:
-        os.close(descriptor)
+        try:
+            os.fchown(descriptor, ROOT_UID, postgres_gid)
+            os.fchmod(descriptor, 0o640)
+            os.write(descriptor, payload)
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+    except Exception:
+        temporary.unlink(missing_ok=True)
+        raise
+    try:
+        os.replace(temporary, ACTIVE_STATE_PATH)
+        directory = os.open(ACTIVE_STATE_PATH.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    except Exception:
+        temporary.unlink(missing_ok=True)
+        raise
 
 
 def activate(now: datetime) -> str:
@@ -229,6 +262,8 @@ def activate(now: datetime) -> str:
         raise HostActivationBlocked("RUNTIME_ACTIVATION_OUTSIDE_WINDOW")
     if _login_state() != "NOLOGIN":
         raise HostActivationBlocked("RUNTIME_ROLE_BASELINE_NOT_NOLOGIN")
+    if os.path.lexists(ACTIVE_STATE_PATH):
+        raise HostActivationBlocked("RUNTIME_ACTIVATION_STALE_STATE_PRESENT")
     _alter(True)
     try:
         _persist_active(binding_hash, binding.expires_at_utc.astimezone(timezone.utc).isoformat())
@@ -258,33 +293,9 @@ def deactivate() -> str:
     return "RUNTIME_ROLE_NOLOGIN_VERIFIED"
 
 
-def expire(now: datetime) -> str:
-    """Periodic crash failsafe; an unsealed LOGIN state is deactivated too."""
-    try:
-        state = _login_state()
-        if state == "NOLOGIN":
-            ACTIVE_STATE_PATH.unlink(missing_ok=True)
-            return "RUNTIME_ROLE_NOLOGIN_VERIFIED"
-        binding, binding_hash = _load_current()
-        raw_state = _root_file(ACTIVE_STATE_PATH)
-        document = json.loads(raw_state)
-        expected = {
-            "version": 1,
-            "runtime_activation_sha256": binding_hash,
-            "runtime_role": CANONICAL_RUNTIME_ROLE,
-            "state": "LOGIN",
-            "expires_at_utc": binding.expires_at_utc.astimezone(timezone.utc).isoformat(),
-        }
-        if document == expected and now.astimezone(timezone.utc) < binding.expires_at_utc.astimezone(timezone.utc):
-            return "RUNTIME_ROLE_ACTIVE_WITHIN_WINDOW"
-    except Exception:
-        pass
-    return deactivate()
-
-
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=("activate", "deactivate", "expire", "verify-nologin"))
+    parser.add_argument("action", choices=("activate", "deactivate", "verify-nologin"))
     args = parser.parse_args()
     if os.geteuid() != 0:
         print("HOST_ACTIVATION_ROOT_REQUIRED")
@@ -294,8 +305,6 @@ def main() -> int:
             code = activate(datetime.now(timezone.utc))
         elif args.action == "deactivate":
             code = deactivate()
-        elif args.action == "expire":
-            code = expire(datetime.now(timezone.utc))
         else:
             if _login_state() != "NOLOGIN":
                 raise HostActivationBlocked("RUNTIME_ROLE_STILL_ACTIVE")
