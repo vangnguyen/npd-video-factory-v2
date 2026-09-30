@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "task": "VF-ASR-RC24-01",
+  "status": "PASS_RC_ONLY",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "pre_materialization_main": "aaaaf3d09f433efe3499d6447d2715f00e4f9f17",
+  "pre_materialization_main_ci_run_id": 36650898059,
+  "latest_prior_rc": "vf-v3-01-rc23",
+  "rc_tag": "vf-v3-01-rc24",
+  "rc_tag_type": "annotated",
+  "rc_tag_object_sha": "d897213308ed746d39009f9803421a78f6d18194",
+  "rc_commit": "aaaaf3d09f433efe3499d6447d2715f00e4f9f17",
+  "rc_ci": {
+    "role": "executable_rc",
+    "workflow_name": "Video Factory V2 CI",
+    "run_id": 36664650929,
+    "ref": "refs/tags/vf-v3-01-rc24",
+    "expected_head_sha": "aaaaf3d09f433efe3499d6447d2715f00e4f9f17",
+    "checked_out_sha": "aaaaf3d09f433efe3499d6447d2715f00e4f9f17",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs_succeeded": 5,
+    "jobs_total": 5,
+    "completed_at_utc": "2026-09-30T03:34:42Z"
+  },
+  "source_identity": {
+    "canonical_executable_tree_sha256": "db2741d231a3589f65e394920e88b2b361a209eaa6c0df3de59448e60fbacc4b",
+    "github_workflows_tree_object": "a7acb6b4574314f2a603fff276ddb03ce95e41e4",
+    "executor_composite_tree_sha256": "e0e8d9d7e8f35bb24cc3281561f48cb2818fb52b17f153c8f79eacbc465e70f2"
+  },
+  "execution_plane": {
+    "status": "SELF_HOSTED_EXECUTION_PLANE_QUALIFIED",
+    "promotion_sha256": "625d45edb0f2c05f9646b36cdf1583cc8832c5ec961cb5a81fe2c7cf326fa617",
+    "qualification_evidence_manifest_sha256": "0851737647d80c1193a9c0656825c437adc6d6cafce0bc742e9dfa39b3dc95d5",
+    "exact_main_qualification_binding_sha256": "a3f1e3be0da52957d676cce2487dbded80c33f717f85e4e013f6b82c19bfe3f6",
+    "activation_security_receipt_sha256": "d6e8ce969c87e24c750692e85537e5f772059a3d8a3c781063171fba4ec20b6a",
+    "runner_id": 6,
+    "runner_name": "npd-vf-executor-ubuntu-02",
+    "runner_state": "OFFLINE_SAFE",
+    "kill_switch": "ENGAGED"
+  },
+  "custody": {
+    "database": "vf_provider_custody_v3_01",
+    "binding_sha256": "c8d2761e3a5f6f835d6562665aac3eb175b5387bacc9e9e2daa5433c36b00e27"
+  },
+  "secret_binding": {
+    "credential_alias": "secret://openai/codex-video",
+    "source_state": "PRESENT_NOT_RESOLVED",
+    "real_provider_credential_reads": 0
+  },
+  "runtime_activation": {
+    "real_runtime_activation_binding": "NOT_CREATED",
+    "postgres_runtime_role": "vf_executor_runtime",
+    "postgres_runtime_role_state": "NOLOGIN",
+    "resolver_state": "INACTIVE",
+    "expiry_failsafe": "ACTIVE",
+    "execution_catalog": "EMPTY_ABSENT"
+  },
+  "rc23_history": {
+    "o2_status": "CANCELLED_NO_DISPATCH",
+    "operation_1_consumed": false,
+    "provider_calls": 0,
+    "artifacts": "HISTORICAL_NON_TRANSFERABLE",
+    "mutation": "NONE"
+  },
+  "dual_ci": {
+    "status": "DUAL_CI_NOT_FINAL_PRE_GOVERNANCE_MERGE",
+    "governance_main_commit": null,
+    "governance_main_ci_run_id": null,
+    "final_provenance": "NOT_CREATED"
+  },
+  "materialization_boundaries": {
+    "asr_lineage_created": false,
+    "operation_1_created": false,
+    "operation_2_created": false,
+    "bundle_created": false,
+    "loaded_execution_scope_created": false,
+    "runtime_activation_binding_created": false,
+    "authority_created": false,
+    "o2": "NO",
+    "execution_window_created": false
+  },
+  "zero_call_invariants": {
+    "real_provider_calls": 0,
+    "provider_credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "ledger_writes": 0,
+    "operation_consumption": 0,
+    "actual_cost_vnd": "0",
+    "bundle_mounted": false,
+    "production": "NO-GO",
+    "rc_23_mutation": "NONE",
+    "authority_granted": false
+  },
+  "next_lifecycle_requirement": "OWNER_APPROVED_GOVERNANCE_ONLY_MERGE_THEN_EXACT_GOVERNANCE_MAIN_CI_AND_FINAL_DUAL_CI_PROVENANCE"
+}
