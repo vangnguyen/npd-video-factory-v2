@@ -803,3 +803,56 @@ def test_cli_has_no_execution_switch(monkeypatch):
     monkeypatch.setattr("sys.argv", ["bootstrap", "--dispatch"])
     with pytest.raises(SystemExit):
         bootstrap.main()
+
+def _runtime_security_snapshot():
+    columns = {
+        "SELECT": "can_select", "INSERT": "can_insert", "UPDATE": "can_update",
+        "DELETE": "can_delete", "TRUNCATE": "can_truncate",
+        "REFERENCES": "can_references", "TRIGGER": "can_trigger",
+    }
+    tables = []
+    for name, grants in bootstrap.RUNTIME_TABLE_PRIVILEGES.items():
+        tables.append({
+            "table_name": name,
+            **{key: privilege in grants for privilege, key in columns.items()},
+        })
+    return {
+        "runtime_security": {
+            "role": {
+                "rolcanlogin": True, "rolsuper": False, "rolcreatedb": False,
+                "rolcreaterole": False, "rolreplication": False, "rolbypassrls": False,
+            },
+            "memberships": [], "database_connect": True,
+            "database_create": False, "database_temporary": False, "schema_usage": True,
+            "schema_create": False, "tables": tables, "sequences": [],
+        }
+    }
+
+
+def test_runtime_role_exact_least_privilege_matrix_passes():
+    bootstrap.verify_runtime_role_security(_runtime_security_snapshot())
+
+
+@pytest.mark.parametrize("mutation", ["nologin", "superuser", "schema_create", "extra_table", "sequence"])
+def test_runtime_role_missing_or_excess_privilege_fails_closed(mutation):
+    snapshot = _runtime_security_snapshot()
+    security = snapshot["runtime_security"]
+    if mutation == "nologin":
+        security["role"]["rolcanlogin"] = False
+    elif mutation == "superuser":
+        security["role"]["rolsuper"] = True
+    elif mutation == "schema_create":
+        security["schema_create"] = True
+    elif mutation == "extra_table":
+        security["tables"].append({
+            "table_name": "unrelated", "can_select": True, "can_insert": False,
+            "can_update": False, "can_delete": False, "can_truncate": False,
+            "can_references": False, "can_trigger": False,
+        })
+    else:
+        security["sequences"] = [{
+            "sequence_name": "unrelated", "can_usage": True,
+            "can_select": False, "can_update": False,
+        }]
+    with pytest.raises(bootstrap.BootstrapBlocked):
+        bootstrap.verify_runtime_role_security(snapshot)

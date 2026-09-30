@@ -197,6 +197,33 @@ def test_canonical_host_custody_and_current_operation_identity_are_bound(
     assert policy == "synthetic-policy"
 
 
+def test_missing_runtime_activation_binding_fails_closed(tmp_path):
+    paths = SimpleNamespace()
+    with pytest.raises(q.Blocked, match="RUNTIME_ACTIVATION_MISSING"):
+        executor.bind_runtime_activation(
+            {}, SimpleNamespace(), paths, qualification_sha256="a" * 64,
+        )
+
+
+def test_runtime_activation_hash_failure_fails_closed(tmp_path, monkeypatch):
+    entry = {
+        "runtime_activation": str(tmp_path / "activation.json"),
+        "runtime_activation_sha256": "a" * 64,
+        "resolver_policy": str(tmp_path / "resolver.json"),
+        "resolver_policy_sha256": "b" * 64,
+    }
+    monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    monkeypatch.setattr(
+        executor,
+        "load_runtime_activation_binding",
+        lambda *a: (_ for _ in ()).throw(ValueError("sensitive host detail")),
+    )
+    with pytest.raises(q.Blocked, match="RUNTIME_ACTIVATION_INVALID"):
+        executor.bind_runtime_activation(
+            entry, SimpleNamespace(), SimpleNamespace(), qualification_sha256="c" * 64,
+        )
+
+
 async def _canonical_setup(tmp_path, monkeypatch):
     engine, sessions, repository = await _setup(tmp_path)
     policy = _active_policy().model_copy(update={"global_kill_switch_engaged": True})
@@ -223,6 +250,7 @@ async def _canonical_setup(tmp_path, monkeypatch):
         return {"safe": True}
     monkeypatch.setattr(canonical, "inspect_operation_custody", custody)
     monkeypatch.setattr(canonical, "_verify_operation_custody", lambda *a, **k: None)
+    monkeypatch.setattr(canonical, "verify_runtime_role_security", lambda *a, **k: None)
     monkeypatch.setattr(canonical, "runtime_ledger_url", lambda *a: "fixture")
     monkeypatch.setattr(canonical, "create_async_engine", lambda *a, **k: engine)
     monkeypatch.setattr(canonical, "ProviderSafetyRepository", lambda *a: repository)
@@ -380,6 +408,7 @@ async def test_host_delegates_once_unmounts_and_seals_under_exclusive_lock(tmp_p
     )
     monkeypatch.setattr(q.Host, "load", lambda: host)
     monkeypatch.setattr(q, "runtime", lambda *a, **k: None)
+    monkeypatch.setenv("NPD_RUNTIME_DEACTIVATION_GUARD", "ENFORCED")
     monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
     monkeypatch.setattr(executor, "verify_qualification", lambda *a: None)
     finished = [False]
@@ -395,7 +424,33 @@ async def test_host_delegates_once_unmounts_and_seals_under_exclusive_lock(tmp_p
             yield str(folder)
             raise RuntimeError("synthetic bundle cleanup failure")
         monkeypatch.setattr(executor.tempfile, "TemporaryDirectory", cleanup_fails)
-    monkeypatch.setattr(executor, "bind_request", lambda *a, **k: (paths, None))
+    runtime_policy = SimpleNamespace(
+        execution_gate=SimpleNamespace(credential_alias=q.CANONICAL_CREDENTIAL_ALIAS)
+    )
+    monkeypatch.setattr(executor, "bind_request", lambda *a, **k: (paths, runtime_policy))
+    activation = SimpleNamespace(
+        operation_id="fixture-operation",
+        authority_receipt_sha256="a" * 64,
+        final_bundle_sha256=hashlib.sha256(raw).hexdigest(),
+        execution_scope_sha256="b" * 64,
+        execution_plane_promotion_sha256="c" * 64,
+        o2_activation_receipt_sha256="d" * 64,
+    )
+    monkeypatch.setattr(executor, "bind_runtime_activation", lambda *a, **k: (activation, object()))
+    class SyntheticResolver:
+        def __init__(self, *args):
+            self.reads = 0
+        def resolve(self, alias):
+            if self.reads:
+                raise RuntimeError("one shot")
+            assert alias == q.CANONICAL_CREDENTIAL_ALIAS
+            self.reads = 1
+            return "synthetic-non-provider-credential"
+    monkeypatch.setattr(executor, "SecretResolverClient", SyntheticResolver)
+    monkeypatch.setattr(q, "secret_presence", lambda *a: {
+        "result": "PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED",
+        "PROVIDER_CREDENTIAL_READS": 0,
+    })
     lock = []
     @contextmanager
     def locked(*a):
@@ -423,6 +478,10 @@ async def test_host_delegates_once_unmounts_and_seals_under_exclusive_lock(tmp_p
             raise RuntimeError("sensitive details must not reach output")
         for state in executor.STATES[2:-1]:
             kwargs["transition"](state)
+            if state == "EVIDENCE_ARMED":
+                assert kwargs["credential_resolver"](q.CANONICAL_CREDENTIAL_ALIAS)
+                with pytest.raises(q.Blocked, match="CREDENTIAL_ALIAS_OR_REENTRY_BLOCKED"):
+                    kwargs["credential_resolver"](q.CANONICAL_CREDENTIAL_ALIAS)
         finished[0] = True
         return canonical.SingleDispatchOutcome("QUALITY_REVIEW_REQUIRED", "QUALITY_REVIEW_REQUIRED",
             True, True, Decimal("1"), Decimal("1"), "e" * 64, ())
@@ -432,7 +491,7 @@ async def test_host_delegates_once_unmounts_and_seals_under_exclusive_lock(tmp_p
     assert not lock and result["bundle_mounted"] is (interrupted == "cleanup")
     if interrupted != "kill":
         assert result["wrapper_evidence_sha256"] == "d" * 64
-    assert result["credential_reads"] == 0
+    assert result["credential_reads"] == (0 if interrupted in {"pre", "post"} else 1)
     assert "sensitive" not in json.dumps(result)
     assert result["provider_calls"] == (None if interrupted == "post" else 0 if interrupted == "pre" else 1)
     if interrupted == "pre":

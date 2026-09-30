@@ -56,7 +56,7 @@ jobs:
     timeout-minutes: 10
     steps:
       # The host runtime remains fail-closed until qualification and activation.
-      - name: Invoke host-controlled canonical entrypoint
+      - name: Invoke root-guarded canonical entrypoint
         env:
           VF_REQUEST_JSON: ${{ toJSON(inputs) }}
-        run: /opt/npd-video-factory/runtime/venv/bin/python -I /opt/npd-video-factory/runtime/request.py
+        run: /usr/bin/sudo -n /usr/local/sbin/npd-vf-provider-execution

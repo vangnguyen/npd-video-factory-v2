@@ -27,6 +27,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from .provider_ci_provenance import EXECUTABLE_TREE_PATHS, executable_tree_sha256
 from .provider_custody import (
+    CUSTODY_TABLES,
     CustodyBinding,
     CustodyBlocked,
     load_canonical_custody_binding,
@@ -48,6 +49,15 @@ from .provider_safety_db import (
 
 
 MODULE_PATH = "apps/api/app/provider_runtime_bootstrap.py"
+
+RUNTIME_TABLE_PRIVILEGES = {
+    "provider_safety_control": frozenset({"SELECT", "INSERT", "UPDATE"}),
+    "provider_safety_budget_days": frozenset({"SELECT", "INSERT", "UPDATE"}),
+    "provider_safety_circuits": frozenset({"SELECT", "INSERT", "UPDATE"}),
+    "provider_safety_operations": frozenset({"SELECT", "INSERT", "UPDATE", "DELETE"}),
+    "provider_safety_attempts": frozenset({"SELECT", "INSERT", "DELETE"}),
+    "provider_safety_budget_alerts": frozenset({"SELECT", "INSERT"}),
+}
 
 
 class BootstrapBlocked(ValueError):
@@ -412,7 +422,69 @@ async def read_operation_custody(
             "(SELECT oid::int FROM pg_database WHERE datname=current_database()) AS database_oid, "
             "(pg_control_system()).system_identifier::text AS system_identifier"
         ))).mappings().one()
-        migration = (await session.execute(text("SELECT version_num FROM alembic_version"))).scalars().all()
+        # The runtime role is intentionally confined to the six custody
+        # tables.  Migration-table inspection belongs to the SELECT-only
+        # qualification role and the independently sealed CustodyBinding.
+        migration = (
+            [custody.migration_head]
+            if expected_role == custody.runtime_role
+            else (await session.execute(text(
+                "SELECT version_num FROM alembic_version"
+            ))).scalars().all()
+        )
+        runtime_security = None
+        if expected_role == custody.runtime_role:
+            role = (await session.execute(text(
+                "SELECT rolcanlogin, rolsuper, rolcreatedb, rolcreaterole, "
+                "rolreplication, rolbypassrls FROM pg_roles WHERE rolname=current_user"
+            ))).mappings().one()
+            memberships = (await session.execute(text(
+                "SELECT parent.rolname FROM pg_auth_members m "
+                "JOIN pg_roles parent ON parent.oid=m.roleid "
+                "JOIN pg_roles member ON member.oid=m.member "
+                "WHERE member.rolname=current_user ORDER BY parent.rolname"
+            ))).scalars().all()
+            table_rows = (await session.execute(text(
+                "SELECT c.relname AS table_name, "
+                "has_table_privilege(current_user,c.oid,'SELECT') AS can_select, "
+                "has_table_privilege(current_user,c.oid,'INSERT') AS can_insert, "
+                "has_table_privilege(current_user,c.oid,'UPDATE') AS can_update, "
+                "has_table_privilege(current_user,c.oid,'DELETE') AS can_delete, "
+                "has_table_privilege(current_user,c.oid,'TRUNCATE') AS can_truncate, "
+                "has_table_privilege(current_user,c.oid,'REFERENCES') AS can_references, "
+                "has_table_privilege(current_user,c.oid,'TRIGGER') AS can_trigger "
+                "FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace "
+                "WHERE n.nspname='public' AND c.relkind='r' ORDER BY c.relname"
+            ))).mappings().all()
+            sequences = (await session.execute(text(
+                "SELECT c.relname AS sequence_name, "
+                "has_sequence_privilege(current_user,c.oid,'USAGE') AS can_usage, "
+                "has_sequence_privilege(current_user,c.oid,'SELECT') AS can_select, "
+                "has_sequence_privilege(current_user,c.oid,'UPDATE') AS can_update "
+                "FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace "
+                "WHERE n.nspname='public' AND c.relkind='S' ORDER BY c.relname"
+            ))).mappings().all()
+            runtime_security = {
+                "role": dict(role),
+                "memberships": list(memberships),
+                "database_connect": bool(await session.scalar(text(
+                    "SELECT has_database_privilege(current_user,current_database(),'CONNECT')"
+                ))),
+                "database_create": bool(await session.scalar(text(
+                    "SELECT has_database_privilege(current_user,current_database(),'CREATE')"
+                ))),
+                "database_temporary": bool(await session.scalar(text(
+                    "SELECT has_database_privilege(current_user,current_database(),'TEMP')"
+                ))),
+                "schema_usage": bool(await session.scalar(text(
+                    "SELECT has_schema_privilege(current_user,current_schema(),'USAGE')"
+                ))),
+                "schema_create": bool(await session.scalar(text(
+                    "SELECT has_schema_privilege(current_user,current_schema(),'CREATE')"
+                ))),
+                "tables": [dict(row) for row in table_rows],
+                "sequences": [dict(row) for row in sequences],
+            }
         control_rows = (await session.execute(
             select(ProviderSafetyControlORM.control_key, ProviderSafetyControlORM.revision)
         )).mappings().all()
@@ -504,8 +576,63 @@ async def read_operation_custody(
             "budget_rows": [dict(row) for row in budget_rows],
             "circuit_rows": [dict(row) for row in circuit_rows],
             "counts": counts,
+            "runtime_security": runtime_security,
         }
         return _validate_operation_snapshot(snapshot, operation, custody)
+
+
+def verify_runtime_role_security(snapshot: dict[str, object]) -> None:
+    """Reject inherited, excessive, or incomplete live runtime privileges."""
+    security = snapshot.get("runtime_security")
+    if not isinstance(security, dict):
+        raise BootstrapBlocked("RUNTIME_ROLE_SECURITY_MISSING")
+    role = security.get("role")
+    if not isinstance(role, dict) or role != {
+        "rolcanlogin": True,
+        "rolsuper": False,
+        "rolcreatedb": False,
+        "rolcreaterole": False,
+        "rolreplication": False,
+        "rolbypassrls": False,
+    }:
+        raise BootstrapBlocked("RUNTIME_ROLE_ATTRIBUTES_INVALID")
+    if security.get("memberships") != []:
+        raise BootstrapBlocked("RUNTIME_ROLE_MEMBERSHIP_FORBIDDEN")
+    if (
+        security.get("database_connect") is not True
+        or security.get("database_create") is not False
+        or security.get("database_temporary") is not False
+        or security.get("schema_usage") is not True
+        or security.get("schema_create") is not False
+    ):
+        raise BootstrapBlocked("RUNTIME_ROLE_DATABASE_PRIVILEGES_INVALID")
+    tables = security.get("tables")
+    if not isinstance(tables, list):
+        raise BootstrapBlocked("RUNTIME_ROLE_TABLE_PRIVILEGES_INVALID")
+    seen: set[str] = set()
+    columns = {
+        "SELECT": "can_select", "INSERT": "can_insert", "UPDATE": "can_update",
+        "DELETE": "can_delete", "TRUNCATE": "can_truncate",
+        "REFERENCES": "can_references", "TRIGGER": "can_trigger",
+    }
+    for row in tables:
+        if not isinstance(row, dict) or not isinstance(row.get("table_name"), str):
+            raise BootstrapBlocked("RUNTIME_ROLE_TABLE_PRIVILEGES_INVALID")
+        name = row["table_name"]
+        allowed = RUNTIME_TABLE_PRIVILEGES.get(name, frozenset())
+        actual = frozenset(privilege for privilege, key in columns.items() if row.get(key) is True)
+        if actual != allowed:
+            raise BootstrapBlocked("RUNTIME_ROLE_TABLE_PRIVILEGES_INVALID")
+        seen |= {name}
+    if not set(CUSTODY_TABLES) <= seen:
+        raise BootstrapBlocked("RUNTIME_ROLE_TABLE_PRIVILEGES_INVALID")
+    sequences = security.get("sequences")
+    if not isinstance(sequences, list) or any(
+        not isinstance(row, dict)
+        or any(row.get(key) is not False for key in ("can_usage", "can_select", "can_update"))
+        for row in sequences
+    ):
+        raise BootstrapBlocked("RUNTIME_ROLE_SEQUENCE_PRIVILEGES_INVALID")
 
 
 async def inspect_operation_custody(

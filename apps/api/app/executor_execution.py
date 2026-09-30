@@ -8,8 +8,10 @@ from __future__ import annotations
 
 from dataclasses import replace
 from contextlib import ExitStack, nullcontext
+from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import tempfile
@@ -20,6 +22,16 @@ from . import provider_single_dispatch as canonical
 from .provider_custody import CANONICAL_CUSTODY_BINDING_SHA256, load_custody_binding
 from .provider_runtime_bootstrap import load_operation_binding
 from .provider_safety import ProviderSafetyPolicy
+from .provider_secret_resolver import (
+    ResolverPolicy,
+    ResolverRequest,
+    SecretResolverClient,
+)
+from .runtime_activation import (
+    RuntimeActivationBinding,
+    load_runtime_activation_binding,
+    verify_runtime_activation,
+)
 
 CATALOG = Path("/etc/npd-video-factory/execution-catalog.json")
 STATES = (
@@ -179,6 +191,82 @@ def bind_request(
     return paths, policy
 
 
+def bind_runtime_activation(
+    entry: dict,
+    host: q.Host,
+    paths: canonical.SingleDispatchPaths,
+    *,
+    qualification_sha256: str,
+    now: datetime | None = None,
+) -> tuple[RuntimeActivationBinding, ResolverPolicy]:
+    """Bind root-owned live DB activation and resolver policy to one operation."""
+    required = {
+        "runtime_activation", "runtime_activation_sha256",
+        "resolver_policy", "resolver_policy_sha256",
+    }
+    q.require(required <= set(entry), "RUNTIME_ACTIVATION_MISSING")
+    activation_path = Path(entry["runtime_activation"])
+    resolver_policy_path = Path(entry["resolver_policy"])
+    q.private_path(activation_path, root_owned=True)
+    q.private_path(resolver_policy_path, root_owned=True)
+    try:
+        activation = load_runtime_activation_binding(
+            activation_path,
+            entry["runtime_activation_sha256"],
+        )
+        resolver_policy = ResolverPolicy.model_validate_json(json.dumps(
+            _trusted_json(resolver_policy_path, entry["resolver_policy_sha256"]),
+            sort_keys=True,
+            separators=(",", ":"),
+        ))
+    except Exception:
+        raise q.Blocked("RUNTIME_ACTIVATION_INVALID") from None
+    operation = load_operation_binding(
+        paths.operation_binding,
+        paths.operation_binding_sha256,
+    )
+    try:
+        verify_runtime_activation(
+            activation,
+            now=now or datetime.now(timezone.utc),
+            custody_binding_sha256=host.binding_sha256,
+            execution_plane_promotion_sha256=qualification_sha256,
+            source_commit=host.source_commit,
+            executor_executable_tree_sha256=host.executor_executable_tree_sha256,
+            operation_id=operation.operation_key,
+            authority_receipt_sha256=operation.authority_receipt_sha256,
+            final_bundle_sha256=operation.bundle_sha256,
+            execution_scope_sha256=operation.execution_scope_sha256,
+        )
+    except Exception as exc:
+        code = str(exc)
+        raise q.Blocked(code if re.fullmatch(r"[A-Z][A-Z0-9_]*", code) else "RUNTIME_ACTIVATION_INVALID") from None
+    expected_policy = {
+        "credential_alias": operation.credential_alias,
+        "operation_id": operation.operation_key,
+        "authority_receipt_sha256": operation.authority_receipt_sha256,
+        "final_bundle_sha256": operation.bundle_sha256,
+        "execution_scope_sha256": operation.execution_scope_sha256,
+        "execution_plane_promotion_sha256": qualification_sha256,
+        "o2_activation_receipt_sha256": activation.o2_activation_receipt_sha256,
+        "runtime_activation_binding": str(activation_path),
+        "runtime_activation_binding_sha256": entry["runtime_activation_sha256"],
+    }
+    q.require(all(getattr(resolver_policy, key) == value for key, value in expected_policy.items()),
+              "RESOLVER_POLICY_BINDING_MISMATCH")
+    q.require(
+        resolver_policy.expected_peer_uid == os.getuid()
+        and resolver_policy.expected_peer_gid == os.getgid(),
+        "RESOLVER_CALLER_IDENTITY_MISMATCH",
+    )
+    q.require(
+        resolver_policy.valid_from_utc == activation.o2_valid_from_utc
+        and resolver_policy.expires_at_utc == activation.expires_at_utc,
+        "RESOLVER_POLICY_WINDOW_MISMATCH",
+    )
+    return activation, resolver_policy
+
+
 def read_kill_switch(host: q.Host) -> None:
     path = Path(host.kill_switch)
     q.private_path(path, root_owned=True)
@@ -197,7 +285,7 @@ async def execute(request: dict) -> dict:
     host = None
     outcome = None
     invoked = False
-    credential_reads = 0
+    credential_reads: int | None = 0
     mounted_folder = None
     lifetime = ExitStack()
     locked = False
@@ -215,6 +303,8 @@ async def execute(request: dict) -> dict:
         with nullcontext():
             transition("ENVIRONMENT_PREFLIGHT")
             q.runtime(host, workflow_kind="execution")
+            q.require(os.environ.get("NPD_RUNTIME_DEACTIVATION_GUARD") == "ENFORCED",
+                      "RUNTIME_DEACTIVATION_GUARD_MISSING")
             q.require(Path(__file__).resolve() == Path(host.source) / "apps/api/app/executor_execution.py",
                       "EXECUTION_ADAPTER_SOURCE_MISMATCH")
             verify_qualification(catalog, host)
@@ -225,6 +315,12 @@ async def execute(request: dict) -> dict:
                 request,
                 entry,
                 host,
+                qualification_sha256=catalog["qualification_sha256"],
+            )
+            activation, resolver_policy = bind_runtime_activation(
+                entry,
+                host,
+                paths,
                 qualification_sha256=catalog["qualification_sha256"],
             )
             checked = await canonical.validate_single_dispatch(paths, runtime_policy=policy)
@@ -242,17 +338,36 @@ async def execute(request: dict) -> dict:
                 mounted.chmod(0o600)
                 mounted_paths = replace(paths, bundle=mounted)
 
+                resolver = SecretResolverClient(
+                    resolver_policy,
+                    ResolverRequest(
+                        version=1,
+                        credential_alias=q.CANONICAL_CREDENTIAL_ALIAS,
+                        operation_id=activation.operation_id,
+                        authority_receipt_sha256=activation.authority_receipt_sha256,
+                        final_bundle_sha256=activation.final_bundle_sha256,
+                        execution_scope_sha256=activation.execution_scope_sha256,
+                        execution_plane_promotion_sha256=activation.execution_plane_promotion_sha256,
+                        o2_activation_receipt_sha256=activation.o2_activation_receipt_sha256,
+                    ),
+                )
+
                 def resolve_credential(alias: str) -> str:
+                    nonlocal credential_reads
                     q.require(credential_reads == 0 and policy.execution_gate is not None
                               and alias == policy.execution_gate.credential_alias,
                               "CREDENTIAL_ALIAS_OR_REENTRY_BLOCKED")
                     q.require(alias == q.CANONICAL_CREDENTIAL_ALIAS,
                               "CREDENTIAL_ALIAS_OR_REENTRY_BLOCKED")
-                    # The executor is deliberately not a plaintext resolver. A later
-                    # Owner-approved task must install a privileged resolver for the
-                    # selected backend. Until then this remains pre-call fail-closed.
                     q.secret_presence(host)
-                    raise q.Blocked("PRIVILEGED_SECRET_RESOLVER_NOT_INSTALLED")
+                    try:
+                        value = resolver.resolve(alias)
+                    except Exception:
+                        credential_reads = resolver.reads
+                        raise q.Blocked("PRIVILEGED_SECRET_RESOLUTION_FAILED") from None
+                    credential_reads = resolver.reads
+                    q.require(credential_reads == 1, "CREDENTIAL_READ_ACCOUNTING_INVALID")
+                    return value
 
                 def final_preflight() -> None:
                     read_kill_switch(host)
@@ -260,6 +375,12 @@ async def execute(request: dict) -> dict:
                     # immediately before the canonical provider boundary.
                     q.require(load_catalog() == catalog, "HOST_EXECUTION_POLICY_CHANGED")
                     verify_qualification(catalog, host)
+                    bind_runtime_activation(
+                        entry,
+                        host,
+                        paths,
+                        qualification_sha256=catalog["qualification_sha256"],
+                    )
 
                 invoked = True
                 outcome = await canonical.run_single_dispatch(

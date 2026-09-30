@@ -21,8 +21,7 @@ def collect_executor_tree(source: Path, commit: str) -> dict:
     if re.fullmatch(r"[a-f0-9]{40}", commit) is None:
         raise ValueError("EXECUTOR_COMMIT_INVALID")
     def object_id(path):
-        result = subprocess.run(["git", "-c", f"safe.directory={source}",
-                                 "-C", str(source), "rev-parse", commit + ":" + path],
+        result = subprocess.run(["git", "-C", str(source), "rev-parse", commit + ":" + path],
                                 check=True, capture_output=True, text=True, timeout=20)
         return result.stdout.strip()
     objects = {path: object_id(path) for path in EXECUTABLE_TREE_PATHS}
@@ -31,3 +30,16 @@ def collect_executor_tree(source: Path, commit: str) -> dict:
     return {"version": 1, "commit": commit, "canonical_executable_tree_sha256": canonical,
             "github_workflows_tree_object": workflow,
             "executor_executable_tree_sha256": executor_tree_sha256(canonical, workflow)}
+
+
+def verify_system_safe_directory(source: Path) -> None:
+    """Require one persistent system trust entry for the immutable checkout."""
+    if not source.is_absolute():
+        raise ValueError("GIT_SAFE_DIRECTORY_SOURCE_NOT_ABSOLUTE")
+    result = subprocess.run(
+        ["git", "config", "--system", "--get-all", "safe.directory"],
+        check=False, capture_output=True, text=True, timeout=20,
+    )
+    values = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+    if result.returncode or "*" in values or values.count(str(source)) != 1:
+        raise ValueError("GIT_SAFE_DIRECTORY_NOT_EXACT")
