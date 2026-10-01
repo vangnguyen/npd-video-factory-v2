@@ -45,6 +45,7 @@ class Settings(BaseSettings):
     openai_transcription_max_duration_seconds: float = 600.0
     openai_transcription_estimated_cost_vnd: Decimal = Decimal("0")
     openai_transcription_vnd_per_minute: Decimal = Decimal("0")
+    gpt_alignment_live_execution_enabled: bool = False
 
     auto_edit_signal_provider: str = "fixture"
     ffprobe_path: str = "ffprobe"
@@ -189,6 +190,10 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def enforce_v2_safety_boundary(self) -> "Settings":
+        if self.gpt_alignment_live_execution_enabled:
+            raise ValueError(
+                "GPT_ALIGNMENT_LIVE_EXECUTION_DISABLED_SOURCE_PROTOTYPE_ONLY"
+            )
         if not self.human_approval_required:
             raise ValueError("human approval must remain required")
         if not 900 <= self.human_auth_max_token_ttl_seconds <= 86_400:

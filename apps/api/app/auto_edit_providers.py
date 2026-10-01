@@ -90,6 +90,46 @@ class PositiveDurationTranscript:
     )
 
 
+@dataclass(frozen=True)
+class DerivedLocalAlignmentPositiveDurationTranscript:
+    """Positive-duration projection whose timings are explicitly local-derived.
+
+    This is intentionally distinct from provider-native timestamp evidence. It
+    accepts only the immutable provider token sequence with positive,
+    non-overlapping intervals and never rewrites text.
+    """
+
+    value: ProviderTranscript
+    provider_transcript_sha256: str
+    alignment_result_sha256: str
+    transformation_applied: Literal[False] = False
+    timing_source: Literal["derived_local_alignment"] = "derived_local_alignment"
+
+    def __post_init__(self) -> None:
+        if re.fullmatch(r"[a-f0-9]{64}", self.provider_transcript_sha256) is None:
+            raise ValueError("derived alignment requires provider transcript SHA-256")
+        if re.fullmatch(r"[a-f0-9]{64}", self.alignment_result_sha256) is None:
+            raise ValueError("derived alignment requires alignment result SHA-256")
+        previous_end = 0.0
+        token_count = 0
+        for segment in self.value.segments:
+            if segment.start_seconds < 0 or segment.end_seconds <= segment.start_seconds:
+                raise ValueError("derived alignment segment must have positive duration")
+            for word in segment.words:
+                token_count += 1
+                if (
+                    word.timing_semantics != "derived_positive_interval"
+                    or word.end_seconds <= word.start_seconds
+                    or word.start_seconds < previous_end
+                    or word.start_seconds < segment.start_seconds
+                    or word.end_seconds > segment.end_seconds
+                ):
+                    raise ValueError("derived alignment word timing contract failed")
+                previous_end = word.end_seconds
+        if token_count == 0:
+            raise ValueError("derived alignment projection requires timed words")
+
+
 def require_positive_duration_transcript(
     transcript: ProviderTranscript,
 ) -> PositiveDurationTranscript:

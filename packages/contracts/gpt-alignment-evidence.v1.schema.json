@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npd.local/contracts/gpt-alignment-evidence.v1.schema.json",
+  "title": "GPT Transcribe plus local alignment evidence separation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "provider_request_response_text_sha256",
+    "alignment_input_sha256",
+    "alignment_implementation_model_config_sha256",
+    "alignment_result_sha256",
+    "text_quality_evaluation_sha256",
+    "alignment_quality_evaluation_sha256",
+    "flow_a_compatibility_projection_sha256",
+    "fixture_classification",
+    "provider_calls",
+    "credential_reads"
+  ],
+  "properties": {
+    "contract": {
+      "const": "gpt-alignment-evidence-separation-v1"
+    },
+    "provider_request_response_text_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "alignment_input_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "alignment_implementation_model_config_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "alignment_result_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "text_quality_evaluation_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "alignment_quality_evaluation_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "flow_a_compatibility_projection_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "fixture_classification": {
+      "const": "SYNTHETIC_OFFLINE_FIXTURE"
+    },
+    "provider_calls": {
+      "const": 0
+    },
+    "credential_reads": {
+      "const": 0
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}
