@@ -32,6 +32,9 @@ def test_resolver_units_have_fixed_identity_socket_and_encrypted_credential():
 def test_root_wrapper_has_unconditional_cleanup_and_fixed_child():
     wrapper = read("scripts/provider-execution-wrapper.sh")
     assert "trap 'cleanup || true' EXIT" in wrapper
+    assert "trap 'exit 129' HUP" in wrapper
+    assert "trap 'exit 130' INT" in wrapper
+    assert "trap 'exit 143' TERM" in wrapper
     assert '"$python" -I "$activation" deactivate' in wrapper
     assert "NPD_RUNTIME_DEACTIVATION_GUARD=ENFORCED" in wrapper
     assert '"$python" -I "$request"' in wrapper
@@ -39,6 +42,30 @@ def test_root_wrapper_has_unconditional_cleanup_and_fixed_child():
     sudoers = read("deploy/executor/npd-vf-provider-execution.sudoers")
     assert sudoers.rstrip().endswith(
         "vf-executor ALL=(root) NOPASSWD: /usr/local/sbin/npd-vf-provider-execution"
+    )
+
+
+def test_root_wrapper_uses_fixed_postgres_failsafe_preflight():
+    wrapper = read("scripts/provider-execution-wrapper.sh")
+    exact = "/usr/bin/systemctl start npd-vf-runtime-role-failsafe.service"
+    assert exact in wrapper
+    assert "RUNTIME_FAILSAFE_PREFLIGHT_FAILED" in wrapper
+    assert '"$python" -I "$activation" expire' not in wrapper
+    assert "$SYSTEMCTL" not in wrapper
+    assert "${SYSTEMCTL" not in wrapper
+    assert "${FAILSAFE_UNIT" not in wrapper
+    assert wrapper.index(exact) < wrapper.index('"$python" -I "$activation" verify-nologin')
+    assert wrapper.index('"$python" -I "$activation" verify-nologin') < wrapper.index(
+        "runuser -u vf-executor"
+    )
+
+
+def test_root_wrapper_keeps_role_state_gate_separate_from_service_success():
+    wrapper = read("scripts/provider-execution-wrapper.sh")
+    assert "RUNTIME_ROLE_NOLOGIN_VERIFIED" in wrapper
+    assert "RUNTIME_ACTIVATION_REQUIRED" in wrapper
+    assert wrapper.index("RUNTIME_FAILSAFE_PREFLIGHT_FAILED") < wrapper.index(
+        "RUNTIME_ACTIVATION_REQUIRED"
     )
 
 
