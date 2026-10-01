@@ -1,4 +1,4 @@
-"""Offline W1 identity/count and strict immutable request-profile regression."""
+"""Offline W1/W2 identity/count and strict immutable request-profile regression."""
 
 from __future__ import annotations
 
@@ -22,10 +22,12 @@ from app.asr_prompt_profile import (
     AsrPromptProfile,
     W1_PROFILE_ID,
     W1_PROMPT,
+    W2_PROFILE_ID,
     profile_for_id,
     prompt_profile_sha256,
     validate_prompt_profile,
     w1_prompt_profile,
+    w2_prompt_profile,
 )
 
 
@@ -111,11 +113,12 @@ def test_no_profile_remains_legacy_w0_without_tokenizer_use(value, monkeypatch):
     assert prompt_profile_sha256(None) is None
 
 
-def test_only_exact_w1_id_resolves_to_profile():
+def test_only_exact_allowlisted_ids_resolve_to_profiles():
     assert profile_for_id(W1_PROFILE_ID) == w1_prompt_profile()
+    assert profile_for_id(W2_PROFILE_ID) == w2_prompt_profile()
 
 
-@pytest.mark.parametrize("value", ["w1", "W1", "asr-whisper-vi-w2-v1", " ", W1_PROFILE_ID + " ", 1, True, [], {}])
+@pytest.mark.parametrize("value", ["w1", "W1", "w2", "W2", " ", W1_PROFILE_ID + " ", W2_PROFILE_ID + " ", 1, True, [], {}])
 def test_unknown_or_non_string_profile_id_rejected(value):
     with pytest.raises(ValueError):
         profile_for_id(value)
