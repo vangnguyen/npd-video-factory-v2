@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "task": "VF-ASR-W2-HUMAN-CLOSE-MERGE-RC26-01",
+  "status": "RC26_SOURCE_LOCKED_GOVERNANCE_CLOSURE_CANDIDATE",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "source_merge": {
+    "pull_request": 101,
+    "base_main": "d42cb40753c9491cb24bf4177d47f7db63e4adb4",
+    "original_reviewed_head": "35d812ebec76640d37bfcedf3078d1eb7fd715f5",
+    "human_gate_closure_head": "bc04072f9d7d4185cf595a9e41095163909b58c7",
+    "human_gate_changed_paths": [
+      "docs/acceptance/v3-01/reviews/vf-asr-w2-source-remediation-01/HUMAN_AUDIO_REVIEW.md",
+      "docs/acceptance/v3-01/reviews/vf-asr-w2-source-remediation-01/README.md"
+    ],
+    "merge_method": "merge_commit",
+    "merge_commit": "93fe6c119d86e2a489db796407fe0fd20bf1fb11",
+    "merge_parents": [
+      "d42cb40753c9491cb24bf4177d47f7db63e4adb4",
+      "bc04072f9d7d4185cf595a9e41095163909b58c7"
+    ],
+    "merged_at_utc": "2026-10-01T10:42:50Z"
+  },
+  "human_review": {
+    "decision": "CONFIRMED_REFERENCE",
+    "owner_decision_utc": "2026-10-01T10:31:42Z",
+    "original_wav_targets": [
+      "51.180000s -> 55.840000s",
+      "84.080002s -> 88.879997s"
+    ],
+    "confirmed_phrase": "chính sách bán hàng",
+    "automated_acoustic_review_claimed": false
+  },
+  "source_identity": {
+    "canonical_executable_tree_sha256": "46fd1be23872c39bd8d88f63837a9c3a304884e2e8fa08529286a44f89690112",
+    "github_workflows_tree_object": "a7acb6b4574314f2a603fff276ddb03ce95e41e4",
+    "executor_executable_tree_sha256": "930c391121b8453ffbfbb33ab1d929c08d7de863c9fc285818d24b4348c5c230",
+    "w2_profile_id": "asr-whisper-vi-w2-v1",
+    "w2_profile_sha256": "ff2063a761247b5d59edbefd2c155c00dff917177fd03f8851805b8ff9d01446",
+    "w2_prompt_sha256": "25137205335eb4e5717e2d2c38c2e7a89208e55061a63c03fd20b6eb7faec578"
+  },
+  "ci": {
+    "human_gate_exact_head": {
+      "run_id": 36850249835,
+      "event": "workflow_dispatch",
+      "expected_head_sha": "bc04072f9d7d4185cf595a9e41095163909b58c7",
+      "checked_out_sha": "bc04072f9d7d4185cf595a9e41095163909b58c7",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "regression": "1528 passed"
+    },
+    "exact_main": {
+      "run_id": 36850911327,
+      "event": "workflow_dispatch",
+      "expected_head_sha": "93fe6c119d86e2a489db796407fe0fd20bf1fb11",
+      "checked_out_sha": "93fe6c119d86e2a489db796407fe0fd20bf1fb11",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "regression": "1528 passed",
+      "completed_at_utc": "2026-10-01T10:48:54Z"
+    },
+    "executable_rc": {
+      "run_id": 36851519955,
+      "event": "workflow_dispatch",
+      "ref": "refs/tags/vf-v3-01-rc26",
+      "expected_head_sha": "93fe6c119d86e2a489db796407fe0fd20bf1fb11",
+      "checked_out_sha": "93fe6c119d86e2a489db796407fe0fd20bf1fb11",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "regression": "1528 passed",
+      "completed_at_utc": "2026-10-01T10:54:22Z"
+    }
+  },
+  "rc26": {
+    "tag": "vf-v3-01-rc26",
+    "tag_type": "annotated",
+    "tag_object_sha": "7c63d2dfc657452b22ae2c4cd79dd40f454e2ea7",
+    "commit": "93fe6c119d86e2a489db796407fe0fd20bf1fb11"
+  },
+  "approval_registry": {
+    "roots_scanned": [
+      "/var/lib/npd-video-factory/executor/authority",
+      "/var/lib/npd-video-factory/executor/evidence"
+    ],
+    "highest_allocated_id_before": "V3-01-APP-104",
+    "V3-01-APP-105_absent_before_allocation": true,
+    "allocated_id": "V3-01-APP-105",
+    "gate": "G-08",
+    "record_sha256": "9f95defb3def3741420c15d2a3675fa7a45b03480a0209b9b26c62e954e77a09"
+  },
+  "historical_boundary": {
+    "rc25": "HISTORICAL_IMMUTABLE",
+    "rc25_operation_1": "FAIL_CONSUMED",
+    "rc25_operation_2": "LOCKED_NOT_AUTHORIZED",
+    "authority_transfer": "NONE"
+  },
+  "zero_use_invariants": {
+    "provider_calls": 0,
+    "provider_credential_reads": 0,
+    "budget_reserved_vnd": "0",
+    "actual_spend_vnd": "0",
+    "new_asr_operations": 0,
+    "o2": 0,
+    "runtime_activation": 0,
+    "production": "NO-GO"
+  },
+  "governance_closure": {
+    "status": "CANDIDATE_NOT_MERGED",
+    "executable_tree_drift": false,
+    "final_dual_ci_provenance": "NOT_CREATED",
+    "next_lifecycle_requirement": "OWNER_APPROVED_GOVERNANCE_ONLY_MERGE_THEN_EXACT_GOVERNANCE_MAIN_CI_AND_FINAL_DUAL_CI_PROVENANCE"
+  }
+}

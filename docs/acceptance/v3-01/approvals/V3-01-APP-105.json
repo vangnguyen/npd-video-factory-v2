@@ -1,0 +1,35 @@
+{
+  "approval_id": "V3-01-APP-105",
+  "approved_at_utc": "2026-10-01T10:31:42Z",
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "artifact_or_commit_hashes": [
+    "d42cb40753c9491cb24bf4177d47f7db63e4adb4",
+    "bc04072f9d7d4185cf595a9e41095163909b58c7",
+    "93fe6c119d86e2a489db796407fe0fd20bf1fb11",
+    "46fd1be23872c39bd8d88f63837a9c3a304884e2e8fa08529286a44f89690112",
+    "7c63d2dfc657452b22ae2c4cd79dd40f454e2ea7",
+    "ff2063a761247b5d59edbefd2c155c00dff917177fd03f8851805b8ff9d01446",
+    "CONFIRMED_REFERENCE",
+    "36850249835",
+    "36850911327",
+    "36851519955"
+  ],
+  "decision": "APPROVED",
+  "expires_at_utc": null,
+  "gate_id": "G-08",
+  "limits": [
+    "Exact W2 source merge commit 93fe6c119d86e2a489db796407fe0fd20bf1fb11 only",
+    "Exact annotated RC tag vf-v3-01-rc26 and tag object 7c63d2dfc657452b22ae2c4cd79dd40f454e2ea7 only",
+    "No provider call",
+    "No provider credential read",
+    "No budget reservation or spend",
+    "No runtime authority",
+    "No operation authority or operation creation",
+    "No O2, runtime activation, resolver policy, catalog, or provider window",
+    "No production approval",
+    "A fresh W2 lifecycle is required after governance closure"
+  ],
+  "notes": "Owner confirmed the original-WAV reference phrase after listening to both authorized ranges. This G-08 record authorizes only the exact W2 source merge, exact-main regression, and immutable RC26 source lock already completed under VF-ASR-W2-HUMAN-CLOSE-MERGE-RC26-01.",
+  "scope": "Exact ASR W2 source review closure for base d42cb40753c9491cb24bf4177d47f7db63e4adb4, human-gate head bc04072f9d7d4185cf595a9e41095163909b58c7, merge commit 93fe6c119d86e2a489db796407fe0fd20bf1fb11, executable tree 46fd1be23872c39bd8d88f63837a9c3a304884e2e8fa08529286a44f89690112, and annotated RC26 tag object 7c63d2dfc657452b22ae2c4cd79dd40f454e2ea7 only.",
+  "target_account_or_environment": "vangnguyen/npd-video-factory-v2 source governance / vf-v3-01-rc26"
+}
