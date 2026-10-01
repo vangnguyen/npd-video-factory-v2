@@ -14,10 +14,11 @@ from typing import Any, Generic, Literal, TypeVar
 
 from pydantic import Field, StrictInt, field_validator, model_validator
 
-from .asr_prompt_profile import (
-    AsrPromptProfile,
-    prompt_profile_sha256,
-    validate_prompt_profile,
+from .assemblyai_asr_profile import AssemblyAIAsrProfile
+from .asr_profile_binding import (
+    AsrRequestProfile,
+    asr_request_profile_sha256,
+    validate_asr_request_profile,
 )
 from .models import StrictModel
 
@@ -199,10 +200,10 @@ def validate_acceptance_lineage_contract(
         if acceptance_lineage_sequence is not None or acceptance_lineage_id is not None:
             raise ValueError("historical v1 gates cannot claim an acceptance lineage")
         return None
-    if bundle_version != 2:
+    if bundle_version not in {2, 3}:
         raise ValueError("acceptance lineage requires a supported gate-bundle version")
     if acceptance_lineage_sequence is None or acceptance_lineage_id is None:
-        raise ValueError("v2 gates require a canonical acceptance lineage")
+        raise ValueError("lineage-bound gates require a canonical acceptance lineage")
     return validate_acceptance_lineage_id(
         acceptance_lineage_id,
         rc_tag=rc_tag,
@@ -399,7 +400,7 @@ class ProviderAllowedOperation(StrictModel):
 
 
 class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
-    gate_bundle_version: Literal[1, 2] = 1
+    gate_bundle_version: Literal[1, 2, 3] = 1
     bundle_id: str = Field(pattern=r"^V3-01-GATE-[A-Za-z0-9._-]{3,120}$")
     bundle_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     rc_tag: str = Field(pattern=r"^vf-v3-01-rc[0-9]+$")
@@ -430,9 +431,9 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
     max_file_bytes: int | None = Field(default=None, ge=1, le=25_000_000)
     max_duration_seconds: float | None = Field(default=None, gt=0, le=3_600)
     requested_language: str | None = Field(default=None, min_length=2, max_length=16)
-    response_format: Literal["verbose_json"] | None = None
+    response_format: Literal["verbose_json", "json"] | None = None
     timestamp_granularities: tuple[Literal["segment", "word"], ...] = ()
-    asr_prompt_profile: AsrPromptProfile | None = None
+    asr_prompt_profile: AsrRequestProfile | None = None
     asr_prompt_profile_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     max_attempts: Literal[1] = 1
     max_concurrent_calls: Literal[1] = 1
@@ -449,8 +450,8 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
 
     @field_validator("asr_prompt_profile", mode="before")
     @classmethod
-    def validate_prompt_binding(cls, value: object) -> AsrPromptProfile | None:
-        return validate_prompt_profile(value)
+    def validate_prompt_binding(cls, value: object) -> AsrRequestProfile | None:
+        return validate_asr_request_profile(value)
 
     @field_validator("credential_alias")
     @classmethod
@@ -556,8 +557,13 @@ class ProviderExecutionGateScope(ProviderTimeoutEnvelope):
             )
             if any(value is None for value in asr_values):
                 raise ValueError("ASR gate scope requires its complete audio/duration envelope")
-            if self.timestamp_granularities != ("segment", "word"):
-                raise ValueError("ASR gate scope requires native segment and word timestamps")
+            expected_timestamps = (
+                ("word",)
+                if self.provider_key == "assemblyai-transcription"
+                else ("segment", "word")
+            )
+            if self.timestamp_granularities != expected_timestamps:
+                raise ValueError("ASR gate scope timestamp contract does not match its provider")
             if any(
                 value is not None
                 for value in (
@@ -676,16 +682,16 @@ class ProviderCallContext(StrictModel):
     input_file_bytes: int | None = Field(default=None, ge=1, le=25_000_000)
     input_duration_seconds: float | None = Field(default=None, gt=0, le=3_600)
     requested_language: str | None = Field(default=None, min_length=2, max_length=16)
-    response_format: Literal["verbose_json"] | None = None
+    response_format: Literal["verbose_json", "json"] | None = None
     timestamp_granularities: tuple[Literal["segment", "word"], ...] = ()
-    asr_prompt_profile: AsrPromptProfile | None = None
+    asr_prompt_profile: AsrRequestProfile | None = None
     rights_required: bool = False
     rights: list[ProviderRightsEvidence] = Field(default_factory=list, max_length=100)
 
     @field_validator("asr_prompt_profile", mode="before")
     @classmethod
-    def validate_prompt_binding(cls, value: object) -> AsrPromptProfile | None:
-        return validate_prompt_profile(value)
+    def validate_prompt_binding(cls, value: object) -> AsrRequestProfile | None:
+        return validate_asr_request_profile(value)
 
     @field_validator("credential_alias")
     @classmethod
@@ -706,25 +712,26 @@ class ProviderCallContext(StrictModel):
 
 def _validate_prompt_capability(
     binding: ProviderExecutionGateScope | ProviderCallContext,
-) -> AsrPromptProfile | None:
+) -> AsrRequestProfile | None:
     """Revalidate even frozen models copied/constructed without validation."""
-    profile = validate_prompt_profile(binding.asr_prompt_profile)
+    profile = validate_asr_request_profile(binding.asr_prompt_profile)
     if isinstance(binding, ProviderExecutionGateScope) and (
-        binding.asr_prompt_profile_sha256 != prompt_profile_sha256(profile)
+        binding.asr_prompt_profile_sha256 != asr_request_profile_sha256(profile)
     ):
         raise ValueError("ASR prompt profile and verified hash must be present together and exact")
-    if profile is not None and (
-        binding.provider_key,
-        binding.model,
-        binding.capability,
-        binding.requested_language,
-        binding.response_format,
-        binding.timestamp_granularities,
-    ) != (
-        "openai-transcription", "whisper-1", "asr", "vi", "verbose_json",
-        ("segment", "word"),
-    ):
-        raise ValueError("ASR prompt profile requires exact native Vietnamese ASR binding")
+    if profile is not None:
+        expected = (
+            ("assemblyai-transcription", "universal-3-5-pro", "asr", "vi", "json", ("word",))
+            if type(profile) is AssemblyAIAsrProfile
+            else ("openai-transcription", "whisper-1", "asr", "vi", "verbose_json", ("segment", "word"))
+        )
+        actual = (
+            binding.provider_key, binding.model, binding.capability,
+            binding.requested_language, binding.response_format,
+            binding.timestamp_granularities,
+        )
+        if actual != expected:
+            raise ValueError("ASR prompt profile requires exact provider-native ASR binding")
     return profile
 
 
@@ -1400,7 +1407,7 @@ class ProviderSafetyController:
             return None
         if not context.external_call or not self.policy.verified_gate_required or scope is None:
             return "ASR_PROMPT_VERIFIED_GATE_REQUIRED"
-        if prompt_profile_sha256(context_profile) != prompt_profile_sha256(scope_profile):
+        if asr_request_profile_sha256(context_profile) != asr_request_profile_sha256(scope_profile):
             return "ASR_PROMPT_PROFILE_SCOPE_MISMATCH"
         return None
 

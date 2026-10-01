@@ -46,6 +46,7 @@ from .provider_safety_db import (
     ProviderSafetyControlORM,
     ProviderSafetyOperationORM,
 )
+from .provider_credentials import verify_provider_credential_binding
 
 
 MODULE_PATH = "apps/api/app/provider_runtime_bootstrap.py"
@@ -80,11 +81,14 @@ class OperationBinding(BaseModel):
     execution_plane_promotion_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     acceptance_lineage_id: str = Field(pattern=r"^al-[0-9]{4}-[a-f0-9]{64}$")
     sequence: int = Field(ge=1, le=9999)
-    provider_key: Literal["openai-transcription"]
-    model: Literal["whisper-1"]
+    provider_key: Literal["openai-transcription", "assemblyai-transcription"]
+    model: Literal["whisper-1", "universal-3-5-pro"]
     capability: Literal["asr"]
     language: Literal["vi"]
-    credential_alias: Literal["secret://openai/codex-video"]
+    credential_alias: Literal[
+        "secret://openai/codex-video",
+        "secret://assemblyai/stt-video-factory-benchmark",
+    ]
     slot: Literal[1, 2]
     operation_key: str = Field(min_length=1, max_length=200)
     authority_receipt_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
@@ -107,6 +111,18 @@ class OperationBinding(BaseModel):
 
     @model_validator(mode="after")
     def exact_identity(self) -> "OperationBinding":
+        try:
+            verify_provider_credential_binding(
+                provider_key=self.provider_key,
+                credential_alias=self.credential_alias,
+            )
+        except ValueError:
+            raise ValueError("OPERATION_BINDING_CREDENTIAL_MISMATCH") from None
+        if (self.provider_key, self.model) not in {
+            ("openai-transcription", "whisper-1"),
+            ("assemblyai-transcription", "universal-3-5-pro"),
+        }:
+            raise ValueError("OPERATION_BINDING_PROVIDER_MODEL_MISMATCH")
         lineage = derive_acceptance_lineage_id(
             rc_tag=self.rc_tag,
             rc_commit=self.rc_commit,

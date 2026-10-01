@@ -242,6 +242,7 @@ def bind_runtime_activation(
         code = str(exc)
         raise q.Blocked(code if re.fullmatch(r"[A-Z][A-Z0-9_]*", code) else "RUNTIME_ACTIVATION_INVALID") from None
     expected_policy = {
+        "provider_key": operation.provider_key,
         "credential_alias": operation.credential_alias,
         "operation_id": operation.operation_key,
         "authority_receipt_sha256": operation.authority_receipt_sha256,
@@ -327,6 +328,8 @@ async def execute(request: dict) -> dict:
             q.require(checked.ready_for_execution_preflight and not checked.ready_for_provider_dispatch
                       and not checked.credential_read_performed and not checked.provider_call_performed,
                       "CANONICAL_CHECK_ONLY_BLOCKED")
+            provider_key = getattr(policy.execution_gate, "provider_key", "openai-transcription")
+            credential_alias = policy.execution_gate.credential_alias
             root = Path(host.evidence_root)
             q.private_path(root, directory=True)
             with tempfile.TemporaryDirectory(prefix="runtime-bundle-", dir=root) as folder:
@@ -341,8 +344,9 @@ async def execute(request: dict) -> dict:
                 resolver = SecretResolverClient(
                     resolver_policy,
                     ResolverRequest(
-                        version=1,
-                        credential_alias=q.CANONICAL_CREDENTIAL_ALIAS,
+                        version=(2 if provider_key == "assemblyai-transcription" else 1),
+                        provider_key=provider_key,
+                        credential_alias=credential_alias,
                         operation_id=activation.operation_id,
                         authority_receipt_sha256=activation.authority_receipt_sha256,
                         final_bundle_sha256=activation.final_bundle_sha256,
@@ -357,7 +361,7 @@ async def execute(request: dict) -> dict:
                     q.require(credential_reads == 0 and policy.execution_gate is not None
                               and alias == policy.execution_gate.credential_alias,
                               "CREDENTIAL_ALIAS_OR_REENTRY_BLOCKED")
-                    q.require(alias == q.CANONICAL_CREDENTIAL_ALIAS,
+                    q.require(alias == credential_alias,
                               "CREDENTIAL_ALIAS_OR_REENTRY_BLOCKED")
                     q.secret_presence(host)
                     try:

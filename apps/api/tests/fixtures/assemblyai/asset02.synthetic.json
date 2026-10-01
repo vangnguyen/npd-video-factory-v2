@@ -1,0 +1,238 @@
+{
+  "fixture_classification": "SYNTHETIC_OFFLINE_FIXTURE",
+  "id": "synthetic-asset02",
+  "status": "completed",
+  "language_code": "vi",
+  "speech_model": "universal-3-5-pro",
+  "text": "Mã chiến dịch, nguồn liên hệ và cơ hội bán hàng nằm trong phạm vi được cấp quyền. Nhận dạng giọng nói không tự động gửi tin nhắn, không tự xuất bản và không thay đổi giá bán.",
+  "words": [
+    {
+      "text": "Mã",
+      "start": 10,
+      "end": 50,
+      "confidence": 0.99
+    },
+    {
+      "text": "chiến",
+      "start": 60,
+      "end": 100,
+      "confidence": 0.99
+    },
+    {
+      "text": "dịch",
+      "start": 110,
+      "end": 150,
+      "confidence": 0.99
+    },
+    {
+      "text": "nguồn",
+      "start": 160,
+      "end": 200,
+      "confidence": 0.99
+    },
+    {
+      "text": "liên",
+      "start": 210,
+      "end": 250,
+      "confidence": 0.99
+    },
+    {
+      "text": "hệ",
+      "start": 260,
+      "end": 300,
+      "confidence": 0.99
+    },
+    {
+      "text": "và",
+      "start": 310,
+      "end": 350,
+      "confidence": 0.99
+    },
+    {
+      "text": "cơ",
+      "start": 360,
+      "end": 400,
+      "confidence": 0.99
+    },
+    {
+      "text": "hội",
+      "start": 410,
+      "end": 450,
+      "confidence": 0.99
+    },
+    {
+      "text": "bán",
+      "start": 460,
+      "end": 500,
+      "confidence": 0.99
+    },
+    {
+      "text": "hàng",
+      "start": 510,
+      "end": 550,
+      "confidence": 0.99
+    },
+    {
+      "text": "nằm",
+      "start": 560,
+      "end": 600,
+      "confidence": 0.99
+    },
+    {
+      "text": "trong",
+      "start": 610,
+      "end": 650,
+      "confidence": 0.99
+    },
+    {
+      "text": "phạm",
+      "start": 660,
+      "end": 700,
+      "confidence": 0.99
+    },
+    {
+      "text": "vi",
+      "start": 710,
+      "end": 750,
+      "confidence": 0.99
+    },
+    {
+      "text": "được",
+      "start": 760,
+      "end": 800,
+      "confidence": 0.99
+    },
+    {
+      "text": "cấp",
+      "start": 810,
+      "end": 850,
+      "confidence": 0.99
+    },
+    {
+      "text": "quyền",
+      "start": 860,
+      "end": 900,
+      "confidence": 0.99
+    },
+    {
+      "text": "Nhận",
+      "start": 910,
+      "end": 950,
+      "confidence": 0.99
+    },
+    {
+      "text": "dạng",
+      "start": 960,
+      "end": 1000,
+      "confidence": 0.99
+    },
+    {
+      "text": "giọng",
+      "start": 1010,
+      "end": 1050,
+      "confidence": 0.99
+    },
+    {
+      "text": "nói",
+      "start": 1060,
+      "end": 1100,
+      "confidence": 0.99
+    },
+    {
+      "text": "không",
+      "start": 1110,
+      "end": 1150,
+      "confidence": 0.99
+    },
+    {
+      "text": "tự",
+      "start": 1160,
+      "end": 1200,
+      "confidence": 0.99
+    },
+    {
+      "text": "động",
+      "start": 1210,
+      "end": 1250,
+      "confidence": 0.99
+    },
+    {
+      "text": "gửi",
+      "start": 1260,
+      "end": 1300,
+      "confidence": 0.99
+    },
+    {
+      "text": "tin",
+      "start": 1310,
+      "end": 1350,
+      "confidence": 0.99
+    },
+    {
+      "text": "nhắn",
+      "start": 1360,
+      "end": 1400,
+      "confidence": 0.99
+    },
+    {
+      "text": "không",
+      "start": 1410,
+      "end": 1450,
+      "confidence": 0.99
+    },
+    {
+      "text": "tự",
+      "start": 1460,
+      "end": 1500,
+      "confidence": 0.99
+    },
+    {
+      "text": "xuất",
+      "start": 1510,
+      "end": 1550,
+      "confidence": 0.99
+    },
+    {
+      "text": "bản",
+      "start": 1560,
+      "end": 1600,
+      "confidence": 0.99
+    },
+    {
+      "text": "và",
+      "start": 1610,
+      "end": 1650,
+      "confidence": 0.99
+    },
+    {
+      "text": "không",
+      "start": 1660,
+      "end": 1700,
+      "confidence": 0.99
+    },
+    {
+      "text": "thay",
+      "start": 1710,
+      "end": 1750,
+      "confidence": 0.99
+    },
+    {
+      "text": "đổi",
+      "start": 1760,
+      "end": 1800,
+      "confidence": 0.99
+    },
+    {
+      "text": "giá",
+      "start": 1810,
+      "end": 1850,
+      "confidence": 0.99
+    },
+    {
+      "text": "bán",
+      "start": 1860,
+      "end": 1900,
+      "confidence": 0.99
+    }
+  ]
+}

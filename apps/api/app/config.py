@@ -6,6 +6,14 @@ from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from .asr_prompt_profile import profile_for_id, prompt_profile_sha256
+from .assemblyai_asr_profile import (
+    ASSEMBLYAI_CREDENTIAL_ALIAS,
+    ASSEMBLYAI_LANGUAGE,
+    ASSEMBLYAI_MODEL,
+    ASSEMBLYAI_PROFILE_ID,
+    assemblyai_asr_profile,
+)
+from .asr_profile_binding import asr_request_profile_sha256
 from .provider_safety import ProviderTimeoutEnvelope
 
 
@@ -45,6 +53,15 @@ class Settings(BaseSettings):
     openai_transcription_max_duration_seconds: float = 600.0
     openai_transcription_estimated_cost_vnd: Decimal = Decimal("0")
     openai_transcription_vnd_per_minute: Decimal = Decimal("0")
+    assemblyai_asr_live_execution_enabled: bool = False
+    assemblyai_transcription_model: str = ASSEMBLYAI_MODEL
+    assemblyai_transcription_language: str = ASSEMBLYAI_LANGUAGE
+    assemblyai_transcription_profile_id: str = ASSEMBLYAI_PROFILE_ID
+    assemblyai_transcription_credential_alias: str = ASSEMBLYAI_CREDENTIAL_ALIAS
+    assemblyai_transcription_max_file_bytes: int = 25_000_000
+    assemblyai_transcription_max_duration_seconds: float = 600.0
+    assemblyai_transcription_estimated_cost_vnd: Decimal = Decimal("0")
+    assemblyai_transcription_vnd_per_minute: Decimal = Decimal("139.5")
 
     auto_edit_signal_provider: str = "fixture"
     ffprobe_path: str = "ffprobe"
@@ -289,8 +306,8 @@ class Settings(BaseSettings):
             raise ValueError("deterministic media fixtures must be disabled in production")
         if self.app_env == "production" and self.analytics_fixture_enabled:
             raise ValueError("deterministic analytics fixtures must be disabled in production")
-        if self.transcription_provider not in {"fixture", "contract", "openai"}:
-            raise ValueError("TRANSCRIPTION_PROVIDER must be fixture, contract or openai")
+        if self.transcription_provider not in {"fixture", "contract", "openai", "assemblyai"}:
+            raise ValueError("TRANSCRIPTION_PROVIDER must be fixture, contract, openai or assemblyai")
         if self.auto_edit_signal_provider not in {"fixture", "ffmpeg"}:
             raise ValueError("AUTO_EDIT_SIGNAL_PROVIDER must be fixture or ffmpeg")
         if self.vision_provider not in {"fixture", "contract", "openai"}:
@@ -326,6 +343,31 @@ class Settings(BaseSettings):
                 or self.openai_transcription_vnd_per_minute < 0
             ):
                 raise ValueError("OpenAI transcription VND values cannot be negative")
+        if self.transcription_provider == "assemblyai":
+            if not self.assemblyai_asr_live_execution_enabled:
+                raise ValueError("ASSEMBLYAI_ASR_LIVE_EXECUTION_ENABLED must be explicit")
+            if (
+                self.assemblyai_transcription_model != ASSEMBLYAI_MODEL
+                or self.assemblyai_transcription_language != ASSEMBLYAI_LANGUAGE
+                or self.assemblyai_transcription_profile_id != ASSEMBLYAI_PROFILE_ID
+                or self.assemblyai_transcription_credential_alias != ASSEMBLYAI_CREDENTIAL_ALIAS
+            ):
+                raise ValueError("AssemblyAI transcription configuration is not allowlisted")
+            if not 1 <= self.assemblyai_transcription_max_file_bytes <= 25_000_000:
+                raise ValueError("AssemblyAI transcription file bound is invalid")
+            if not 1 <= self.assemblyai_transcription_max_duration_seconds <= 3_600:
+                raise ValueError("AssemblyAI transcription duration bound is invalid")
+            if (
+                self.assemblyai_transcription_estimated_cost_vnd < 0
+                or self.assemblyai_transcription_vnd_per_minute <= 0
+            ):
+                raise ValueError("AssemblyAI transcription VND values are invalid")
+            if not (
+                self.provider_external_execution_enabled
+                and self.provider_paid_execution_enabled
+                and self.provider_verified_gate_bundle_enabled
+            ):
+                raise ValueError("AssemblyAI live selection requires every external paid verified gate")
         if self.auto_edit_signal_provider == "fixture" and not self.auto_edit_fixture_enabled:
             raise ValueError("fixture media signals require AUTO_EDIT_FIXTURE_ENABLED=true")
         if self.vision_provider == "fixture" and not self.vision_fixture_enabled:
@@ -488,13 +530,13 @@ class Settings(BaseSettings):
                 for capability, selected
                 in (
                     ("vision", self.vision_provider == "openai"),
-                    ("asr", self.transcription_provider == "openai"),
+                    ("asr", self.transcription_provider in {"openai", "assemblyai"}),
                 )
                 if selected
             )
             if len(selected_capabilities) != 1:
                 raise ValueError(
-                    "a verified provider gate must select exactly one OpenAI capability"
+                    "a verified provider gate must select exactly one allowlisted capability"
                 )
             if selected_capabilities[0] == "vision":
                 acceptance_limits = {
@@ -562,19 +604,23 @@ class Settings(BaseSettings):
                         self.provider_gate_expected_acceptance_lineage_id or None
                     ),
                 )
+                assemblyai = self.transcription_provider == "assemblyai"
+                profile = assemblyai_asr_profile() if assemblyai else profile_for_id(
+                    self.openai_transcription_prompt_profile_id
+                )
                 acceptance_limits = {
-                    "provider_key": "openai-transcription",
-                    "capability": "asr",
-                    "model": self.openai_transcription_model,
-                    "credential_alias": self.openai_transcription_credential_alias,
-                    "language": self.openai_transcription_language,
-                    "max_file_bytes": self.openai_transcription_max_file_bytes,
-                    "max_duration_seconds": self.openai_transcription_max_duration_seconds,
-                    "estimated_cost_vnd": self.openai_transcription_estimated_cost_vnd,
-                    "vnd_per_minute": self.openai_transcription_vnd_per_minute,
-                    "asr_prompt_profile_sha256": prompt_profile_sha256(
-                        profile_for_id(self.openai_transcription_prompt_profile_id)
+                    "provider_key": (
+                        "assemblyai-transcription" if assemblyai else "openai-transcription"
                     ),
+                    "capability": "asr",
+                    "model": (self.assemblyai_transcription_model if assemblyai else self.openai_transcription_model),
+                    "credential_alias": (self.assemblyai_transcription_credential_alias if assemblyai else self.openai_transcription_credential_alias),
+                    "language": (self.assemblyai_transcription_language if assemblyai else self.openai_transcription_language),
+                    "max_file_bytes": (self.assemblyai_transcription_max_file_bytes if assemblyai else self.openai_transcription_max_file_bytes),
+                    "max_duration_seconds": (self.assemblyai_transcription_max_duration_seconds if assemblyai else self.openai_transcription_max_duration_seconds),
+                    "estimated_cost_vnd": (self.assemblyai_transcription_estimated_cost_vnd if assemblyai else self.openai_transcription_estimated_cost_vnd),
+                    "vnd_per_minute": (self.assemblyai_transcription_vnd_per_minute if assemblyai else self.openai_transcription_vnd_per_minute),
+                    "asr_prompt_profile_sha256": asr_request_profile_sha256(profile),
                     "per_operation_limit_vnd": self.provider_per_operation_limit_vnd,
                     "acceptance_window_limit_vnd": self.provider_daily_limit_vnd,
                     "retry_max_attempts": self.provider_retry_max_attempts,
@@ -593,7 +639,7 @@ class Settings(BaseSettings):
                     "max_duration_seconds": scope.max_duration_seconds,
                     "estimated_cost_vnd": scope.per_operation_limit_vnd,
                     "vnd_per_minute": scope.vnd_per_minute,
-                    "asr_prompt_profile_sha256": prompt_profile_sha256(scope.asr_prompt_profile),
+                    "asr_prompt_profile_sha256": asr_request_profile_sha256(scope.asr_prompt_profile),
                     "per_operation_limit_vnd": scope.per_operation_limit_vnd,
                     "acceptance_window_limit_vnd": scope.acceptance_window_limit_vnd,
                     "retry_max_attempts": scope.max_attempts,
@@ -611,15 +657,15 @@ class Settings(BaseSettings):
         if self.provider_external_execution_enabled:
             if not self.provider_verified_gate_bundle_enabled:
                 raise ValueError("real provider execution requires a verified owner-gate bundle")
-            selected_openai_adapters = sum(
+            selected_paid_adapters = sum(
                 (
                     self.vision_provider == "openai",
-                    self.transcription_provider == "openai",
+                    self.transcription_provider in {"openai", "assemblyai"},
                 )
             )
-            if selected_openai_adapters != 1 or not self.provider_paid_execution_enabled:
+            if selected_paid_adapters != 1 or not self.provider_paid_execution_enabled:
                 raise ValueError(
-                    "gated execution is limited to one paid OpenAI provider capability"
+                    "gated execution is limited to one paid allowlisted provider capability"
                 )
         if not self.provider_global_kill_switch_engaged and not self.provider_external_execution_enabled:
             raise ValueError(

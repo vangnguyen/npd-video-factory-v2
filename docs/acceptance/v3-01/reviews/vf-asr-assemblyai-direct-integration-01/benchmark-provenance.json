@@ -1,0 +1,36 @@
+{
+  "classification": "PROVIDER_SELECTION_BENCHMARK",
+  "production_acceptance": false,
+  "overall_verdict": "ASSEMBLYAI_TWO_ASSET_BENCHMARK_PASS",
+  "asset_01": {
+    "asset_sha256": "fce31015644960a5f69640d7f5b90a7da078887b15c9d17dc227530d26b875ef",
+    "evidence_manifest_sha256": "9339e76145c05c81ba6eed47c04d5423e50cfe5bea2f6d87a7446a5473b43b80",
+    "transcript_id": "149b4d8f-04cc-4c09-aaa6-56cb52336482",
+    "raw_response_sha256": "b7c48c4635748e5c73613fa7a076c8c3fcce47c17e4869bd88f9ecd6601e9557",
+    "transcript_sha256": "295e1c3796ea5d48ad50e652c4a9dbe987074a046993d87ba0b14f040c534b58",
+    "words_sha256": "f2303e2f5de97d7f1e507f29cbf72846639c6d4c9565414c5a4ebd15e400c84a",
+    "wer": "0.036231884",
+    "critical_term_recall": "8/8",
+    "positive_duration_words": "295/295",
+    "zero_duration_words": 0,
+    "timing_coverage": "1.0",
+    "verdict": "PASS / DIRECT_FLOW_A_ASR_CANDIDATE"
+  },
+  "asset_02": {
+    "asset_sha256": "dce36c5246c17e0385842006dcb0088a8c97a79d3009796815c2564c075cf20b",
+    "evidence_manifest_sha256": "f1e49ebdc360aeae72ffed706c3d8199a1ce1c7044dac04f8bbcf5f4e2139aa2",
+    "transcript_id": "685c2b93-b254-4ed9-b199-f832638464df",
+    "raw_response_sha256": "954c21b82367e5591bdb89dd27f98ba4adf79bfecda16c565d861863834aeb55",
+    "transcript_sha256": "eded3d30e22619af4e749660bf028b06202d39a3878e22b63d30e04ea1904665",
+    "words_sha256": "4a3574e0b0d12c483a71b06f226f857ac04478f50c3894f64297287acede8e13",
+    "wer": "0.120728929",
+    "critical_term_recall": "8/8",
+    "positive_duration_words": "329/329",
+    "zero_duration_words": 0,
+    "timing_coverage": "1.0",
+    "negative_insertion": "PASS",
+    "verdict": "PASS"
+  },
+  "source_decision": "VF-ASR-ASSEMBLYAI-DIRECT-INTEGRATION-01",
+  "secret_material_included": false
+}

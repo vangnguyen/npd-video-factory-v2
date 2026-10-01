@@ -22,7 +22,6 @@ from typing import Callable, Literal
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from .asr_prompt_profile import prompt_profile_sha256
 from .auto_edit_models import MediaMetadata
 from .auto_edit_providers import ProviderTranscript
 from .provider_ci_provenance import (
@@ -61,6 +60,9 @@ from .provider_safety import (
 )
 from .provider_safety_repository import ProviderSafetyRepository
 from .openai_transcription_provider import OpenAITranscriptionProvider
+from .assemblyai_transcription_provider import AssemblyAITranscriptionProvider
+from .asr_profile_binding import asr_request_profile_sha256
+from .transcription_provider_factory import create_verified_transcription_provider
 
 
 MODULE_PATH = "apps/api/app/provider_single_dispatch.py"
@@ -359,8 +361,9 @@ def _verify_authority(
         "asr_prompt_profile_sha256": operation.w1_profile_sha256,
         "prompt_sha256": operation.prompt_sha256,
         "custody_binding_sha256": custody_binding_sha256,
-        "provider_key": "openai-transcription", "model": "whisper-1",
-        "capability": "asr", "language": "vi", "slot": 1,
+        "provider_key": scope.provider_key, "model": scope.model,
+        "capability": scope.capability, "language": scope.requested_language,
+        "slot": operation.slot,
         "operation_1_consumed": False, "operation_2_authorized": False,
         "budget_reserved_vnd": "0", "bundle_mounted": False,
         "dispatch_requires_separate_execution_task": True,
@@ -507,7 +510,7 @@ def _validate_non_secret_bindings(
     _verify_runtime_policy(runtime_policy, scope)
     if scope.credential_alias != operation.credential_alias:
         raise SingleDispatchBlocked("CREDENTIAL_ALIAS_MISMATCH")
-    if scope.asr_prompt_profile_sha256 != operation.w1_profile_sha256 or prompt_profile_sha256(scope.asr_prompt_profile) != operation.w1_profile_sha256:
+    if scope.asr_prompt_profile_sha256 != operation.w1_profile_sha256 or asr_request_profile_sha256(scope.asr_prompt_profile) != operation.w1_profile_sha256:
         raise SingleDispatchBlocked("PROMPT_PROFILE_MISMATCH")
     if scope.asr_prompt_profile is None or scope.asr_prompt_profile.prompt_sha256 != operation.prompt_sha256:
         raise SingleDispatchBlocked("PROMPT_MISMATCH")
@@ -887,6 +890,8 @@ async def _run_single_dispatch(
         ledger_before="FRESH_OPERATION_NOT_REGISTERED_NOT_CONSUMED",
     )
     transition("EVIDENCE_ARMED")
+    if scope.provider_key not in {"openai-transcription", "assemblyai-transcription"}:
+        raise SingleDispatchBlocked("PROVIDER_IMPLEMENTATION_NOT_ALLOWLISTED")
     # Only a future, explicitly authorized execution invokes this callable.
     # Resolve once after every public/non-secret binding and custody check,
     # before reserving; the value is never serialized or logged.
@@ -903,17 +908,15 @@ async def _run_single_dispatch(
             raise SingleDispatchBlocked("CREDENTIAL_ALIAS_MISMATCH")
         return resolved_credential
 
-    provider = OpenAITranscriptionProvider(
-        model="whisper-1", credential_alias=scope.credential_alias,
-        credential_resolver=frozen_credential,
-        language="vi", provider_http_timeout_seconds=scope.provider_http_timeout_seconds,
-        controller_hard_timeout_seconds=scope.controller_hard_timeout_seconds,
-        max_file_bytes=scope.max_file_bytes or 0,
-        max_duration_seconds=scope.max_duration_seconds or 0,
-        estimated_cost_vnd=scope.per_operation_limit_vnd,
-        vnd_per_minute=scope.vnd_per_minute or Decimal("0"),
-        asr_prompt_profile=scope.asr_prompt_profile,
-    )
+    try:
+        provider = create_verified_transcription_provider(
+            scope,
+            frozen_credential,
+            openai_provider_type=OpenAITranscriptionProvider,
+            assemblyai_provider_type=AssemblyAITranscriptionProvider,
+        )
+    except ValueError as exc:
+        raise SingleDispatchBlocked(str(exc)) from None
     # Bootstrap above verified private peer-auth custody before the secret
     # boundary. This engine uses the same pinned database and no password.
     engine = create_async_engine(
@@ -939,7 +942,7 @@ async def _run_protocol(
     policy: ProviderSafetyPolicy,
     context: ProviderCallContext,
     repository: ProviderSafetyRepository,
-    provider: OpenAITranscriptionProvider,
+    provider: OpenAITranscriptionProvider | AssemblyAITranscriptionProvider,
     asset: Path,
     metadata: MediaMetadata,
     evidence: _EvidenceRecorder,

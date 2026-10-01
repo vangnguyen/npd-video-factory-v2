@@ -1,0 +1,196 @@
+{
+  "fixture_classification": "SYNTHETIC_OFFLINE_FIXTURE",
+  "id": "synthetic-asset01",
+  "status": "completed",
+  "language_code": "vi",
+  "speech_model": "universal-3-5-pro",
+  "text": "Ngọc Phương Đông. Vinhomes Green Paradise. Cần Giờ. đăng ký tư vấn. tham quan sa bàn. ngân sách dự kiến. chính sách bán hàng. đồng Việt Nam. chính sách bán hàng.",
+  "words": [
+    {
+      "text": "Ngọc",
+      "start": 10,
+      "end": 50,
+      "confidence": 0.99
+    },
+    {
+      "text": "Phương",
+      "start": 60,
+      "end": 100,
+      "confidence": 0.99
+    },
+    {
+      "text": "Đông",
+      "start": 110,
+      "end": 150,
+      "confidence": 0.99
+    },
+    {
+      "text": "Vinhomes",
+      "start": 160,
+      "end": 200,
+      "confidence": 0.99
+    },
+    {
+      "text": "Green",
+      "start": 210,
+      "end": 250,
+      "confidence": 0.99
+    },
+    {
+      "text": "Paradise",
+      "start": 260,
+      "end": 300,
+      "confidence": 0.99
+    },
+    {
+      "text": "Cần",
+      "start": 310,
+      "end": 350,
+      "confidence": 0.99
+    },
+    {
+      "text": "Giờ",
+      "start": 360,
+      "end": 400,
+      "confidence": 0.99
+    },
+    {
+      "text": "đăng",
+      "start": 410,
+      "end": 450,
+      "confidence": 0.99
+    },
+    {
+      "text": "ký",
+      "start": 460,
+      "end": 500,
+      "confidence": 0.99
+    },
+    {
+      "text": "tư",
+      "start": 510,
+      "end": 550,
+      "confidence": 0.99
+    },
+    {
+      "text": "vấn",
+      "start": 560,
+      "end": 600,
+      "confidence": 0.99
+    },
+    {
+      "text": "tham",
+      "start": 610,
+      "end": 650,
+      "confidence": 0.99
+    },
+    {
+      "text": "quan",
+      "start": 660,
+      "end": 700,
+      "confidence": 0.99
+    },
+    {
+      "text": "sa",
+      "start": 710,
+      "end": 750,
+      "confidence": 0.99
+    },
+    {
+      "text": "bàn",
+      "start": 760,
+      "end": 800,
+      "confidence": 0.99
+    },
+    {
+      "text": "ngân",
+      "start": 810,
+      "end": 850,
+      "confidence": 0.99
+    },
+    {
+      "text": "sách",
+      "start": 860,
+      "end": 900,
+      "confidence": 0.99
+    },
+    {
+      "text": "dự",
+      "start": 910,
+      "end": 950,
+      "confidence": 0.99
+    },
+    {
+      "text": "kiến",
+      "start": 960,
+      "end": 1000,
+      "confidence": 0.99
+    },
+    {
+      "text": "chính",
+      "start": 1010,
+      "end": 1050,
+      "confidence": 0.99
+    },
+    {
+      "text": "sách",
+      "start": 1060,
+      "end": 1100,
+      "confidence": 0.99
+    },
+    {
+      "text": "bán",
+      "start": 1110,
+      "end": 1150,
+      "confidence": 0.99
+    },
+    {
+      "text": "hàng",
+      "start": 1160,
+      "end": 1200,
+      "confidence": 0.99
+    },
+    {
+      "text": "đồng",
+      "start": 1210,
+      "end": 1250,
+      "confidence": 0.99
+    },
+    {
+      "text": "Việt",
+      "start": 1260,
+      "end": 1300,
+      "confidence": 0.99
+    },
+    {
+      "text": "Nam",
+      "start": 1310,
+      "end": 1350,
+      "confidence": 0.99
+    },
+    {
+      "text": "chính",
+      "start": 1360,
+      "end": 1400,
+      "confidence": 0.99
+    },
+    {
+      "text": "sách",
+      "start": 1410,
+      "end": 1450,
+      "confidence": 0.99
+    },
+    {
+      "text": "bán",
+      "start": 1460,
+      "end": 1500,
+      "confidence": 0.99
+    },
+    {
+      "text": "hàng",
+      "start": 1510,
+      "end": 1550,
+      "confidence": 0.99
+    }
+  ]
+}
