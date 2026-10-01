@@ -1,4 +1,8 @@
-"""Read-only W1 context-insertion guard. This is not runtime authority or quality evidence."""
+"""Read-only allowlisted-profile insertion guard; not authority or quality evidence.
+
+The historical output field and reason-code prefix remain ``w1``/``W1`` so
+replaying W0/W1 evidence stays byte- and semantics-compatible.
+"""
 from __future__ import annotations
 
 import hashlib
@@ -20,7 +24,8 @@ PROFILE_KEYS = ("asr_prompt_profile", "asr_prompt_profile_sha256")
 def active(payload: dict[str, Any]) -> bool:
     binding = payload.get("binding") or {}
     provenance = (payload.get("provider_transcript") or {}).get("provenance") or {}
-    # Presence (even null) means a W1 claim. Missing both keys on both sides is W0.
+    # Presence (even null) means an allowlisted-profile claim. Missing both keys
+    # on both sides is the historical W0 path.
     return any(key in source for source in (binding, provenance) for key in PROFILE_KEYS)
 
 

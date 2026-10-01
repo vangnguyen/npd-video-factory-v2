@@ -1,4 +1,4 @@
-"""Synthetic/offline W1 gate checks; no credentials, transport or live ledger."""
+"""Synthetic/offline W1/W2 gate checks; no credentials, transport or live ledger."""
 
 from __future__ import annotations
 
@@ -12,7 +12,13 @@ import pytest
 from pydantic import ValidationError
 from sqlalchemy import func, select
 
-from app.asr_prompt_profile import W1_PROFILE_ID, prompt_profile_sha256, w1_prompt_profile
+from app.asr_prompt_profile import (
+    W1_PROFILE_ID,
+    W2_PROFILE_ID,
+    prompt_profile_sha256,
+    w1_prompt_profile,
+    w2_prompt_profile,
+)
 from app.config import Settings
 from app.db import Base, create_engine, create_session_factory
 from app.provider_gate_loader import (
@@ -50,12 +56,12 @@ def _scope_hash(bundle, profile=None, **changes):
     return execution_scope_sha256(**fields)
 
 
-def _w1_bundle_payload():
+def _profile_bundle_payload(profile):
     original = _bundle()
     old_scope = _scope_hash(original)
-    new_scope = _scope_hash(original, w1_prompt_profile())
+    new_scope = _scope_hash(original, profile)
     payload = original.model_dump(mode="json")
-    payload["asr_prompt_profile"] = w1_prompt_profile().model_dump(mode="json")
+    payload["asr_prompt_profile"] = profile.model_dump(mode="json")
     for key in ("credential_approval", "budget_approval", "rights_approval"):
         record = payload[key]["record"]
         record["artifact_or_commit_hashes"] = [
@@ -64,6 +70,14 @@ def _w1_bundle_payload():
         ]
         payload[key]["record_sha256"] = canonical_sha256(record)
     return payload
+
+
+def _w1_bundle_payload():
+    return _profile_bundle_payload(w1_prompt_profile())
+
+
+def _w2_bundle_payload():
+    return _profile_bundle_payload(w2_prompt_profile())
 
 
 def _policy(tmp_path, *, prompted=True):
@@ -91,6 +105,47 @@ def test_w1_changes_scope_not_budget_and_requires_all_three_approval_rebinds():
         stale[key] = original.model_dump(mode="json")[key]
         with pytest.raises(ValidationError, match="execution scope hash"):
             OpenAIAsrGateBundle.model_validate(stale)
+
+
+def test_w1_and_w2_have_distinct_scope_hashes_and_cannot_be_relabelled():
+    w1_payload = _w1_bundle_payload()
+    w2_payload = _w2_bundle_payload()
+    w1 = OpenAIAsrGateBundle.model_validate(w1_payload)
+    w2 = OpenAIAsrGateBundle.model_validate(w2_payload)
+    assert _scope_hash(w1, w1.asr_prompt_profile) != _scope_hash(w2, w2.asr_prompt_profile)
+    assert prompt_profile_sha256(w1.asr_prompt_profile) != prompt_profile_sha256(w2.asr_prompt_profile)
+    relabelled = copy.deepcopy(w1_payload)
+    relabelled["asr_prompt_profile"] = w2_prompt_profile().model_dump(mode="json")
+    with pytest.raises(ValidationError, match="execution scope hash"):
+        OpenAIAsrGateBundle.model_validate(relabelled)
+
+
+def test_w2_settings_require_exact_w2_gate_and_hash(tmp_path):
+    payload = _w2_bundle_payload()
+    path, digest = _write_bundle(tmp_path, payload)
+    settings = _settings(path, digest, openai_transcription_prompt_profile_id=W2_PROFILE_ID)
+    assert settings.openai_transcription_prompt_profile_id == W2_PROFILE_ID
+    assert provider_safety_policy_from_settings(settings).execution_gate.asr_prompt_profile == w2_prompt_profile()
+    with pytest.raises(ValidationError, match="verified G-02-ASR envelope"):
+        _settings(path, digest, openai_transcription_prompt_profile_id=W1_PROFILE_ID)
+
+
+@pytest.mark.asyncio
+async def test_exact_w2_gate_flows_to_operation_context_offline(tmp_path):
+    path, digest = _write_bundle(tmp_path, _w2_bundle_payload())
+    settings = _settings(
+        path, digest, openai_transcription_prompt_profile_id=W2_PROFILE_ID,
+        provider_external_execution_enabled=True,
+        provider_paid_execution_enabled=True,
+        provider_global_kill_switch_engaged=False,
+    )
+    policy = provider_safety_policy_from_settings(settings)
+    context = _context(1, asr_prompt_profile=w2_prompt_profile())
+    assert policy.execution_gate.asr_prompt_profile == context.asr_prompt_profile
+    assert policy.execution_gate.asr_prompt_profile_sha256 == prompt_profile_sha256(w2_prompt_profile())
+    controller = ProviderSafetyController(policy, clock=lambda: ACTIVATES_AT + timedelta(minutes=5))
+    decision = await controller.preflight(context)
+    assert decision.allowed and decision.reserved_vnd == 400
 
 
 @pytest.mark.parametrize("mutation", ["w2", "hash", "type", "temperature", "missing"])

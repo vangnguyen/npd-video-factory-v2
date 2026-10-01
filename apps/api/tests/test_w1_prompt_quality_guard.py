@@ -12,7 +12,13 @@ from types import SimpleNamespace
 import pytest
 from jsonschema import Draft202012Validator
 
-from app.asr_prompt_profile import prompt_profile_sha256, w1_prompt_profile
+from app.asr_prompt_profile import (
+    W1_PROFILE_ID,
+    W2_PROFILE_ID,
+    prompt_profile_sha256,
+    w1_prompt_profile,
+    w2_prompt_profile,
+)
 
 REPO = Path(__file__).resolve().parents[3]
 DOCS = REPO / "docs/acceptance/v3-01"
@@ -31,14 +37,14 @@ def evaluator():
     return SimpleNamespace(evaluate=bound_evaluate, AsrEvaluationPolicy=module.AsrEvaluationPolicy)
 
 
-def synthetic_payload(slot=2):
+def synthetic_payload(slot=2, profile_id=W1_PROFILE_ID):
     """Synthetic success envelope for OFFLINE tests; never an acceptance operation receipt."""
     payload = json.loads((DOCS / "fixtures/asr-post-run/pass.json").read_text(encoding="utf-8"))
     manifest = json.loads((DOCS / "assets/V3-01-RC11-ASR-ASSET-MANIFEST.json").read_text(encoding="utf-8"))
     row = manifest["assets"][slot - 1]
     reference = (REPO / row["reference_transcript_path"]).read_text(encoding="utf-8")
     payload["operation"]["operation_id"] = f"synthetic-w1-quality-unit-slot-{slot}"
-    profile = w1_prompt_profile()
+    profile = w1_prompt_profile() if profile_id == W1_PROFILE_ID else w2_prompt_profile()
     payload["binding"].update(
         provider="openai-transcription", model="whisper-1", capability="asr", language="vi",
         asset_sha256=row["sha256"], asset_duration_seconds=row["duration_seconds"],
@@ -81,6 +87,59 @@ def test_same_canonical_profile_and_exact_reference_offline_pass(evaluator, slot
     assert guard["human_audio_review"] == "NOT_PERFORMED_BY_MACHINE_GUARD"
     assert payload == before
     Draft202012Validator(json.loads((DOCS / "schemas/asr-post-run-evaluation.schema.json").read_text())).validate(result)
+
+
+@pytest.mark.parametrize("slot", [1, 2])
+def test_w2_exact_profile_and_eight_of_eight_pass_offline(evaluator, slot):
+    payload = synthetic_payload(slot, W2_PROFILE_ID)
+    schema = json.loads((DOCS / "schemas/asr-post-run-input.schema.json").read_text(encoding="utf-8"))
+    Draft202012Validator(schema).validate(payload)
+    result = evaluator.evaluate(payload, expected_asr_prompt_profile_id=W2_PROFILE_ID)
+    assert result["verdict"] == "PASS", result["reasons"]
+    assert result["critical_terms"]["normalized_recall"] == 1.0
+    assert len(result["critical_terms"]["terms"]) == 8
+    assert result["w1_prompt_quality"]["expected_profile_id"] == W2_PROFILE_ID
+
+
+@pytest.mark.parametrize("term", TERMS)
+def test_asset02_w2_prompt_keyword_insertion_fails_offline(evaluator, term):
+    payload = synthetic_payload(2, W2_PROFILE_ID)
+    payload["provider_transcript"]["text"] += " " + unicodedata.normalize("NFD", term.upper())
+    result = evaluator.evaluate(payload, expected_asr_prompt_profile_id=W2_PROFILE_ID)
+    assert result["verdict"] == "FAIL"
+    assert "W1_PROMPT_TERM_INSERTION" in result["reasons"]["fail"]
+    assert any(row["excess_count"] == 1 for row in result["w1_prompt_quality"]["terms"])
+
+
+def test_w2_seven_of_eight_still_fails_without_fuzzy_rescue(evaluator):
+    payload = synthetic_payload(1, W2_PROFILE_ID)
+    payload["provider_transcript"]["text"] = payload["provider_transcript"]["text"].replace(
+        "chính sách bán hàng", "chính xác bán hàng"
+    )
+    result = evaluator.evaluate(payload, expected_asr_prompt_profile_id=W2_PROFILE_ID)
+    assert result["critical_terms"]["normalized_recall"] == 0.875
+    assert result["verdict"] == "FAIL"
+    assert "CRITICAL_TERM_RECALL_BELOW_1_0" in result["reasons"]["fail"]
+
+
+def test_w2_normalization_preserves_vietnamese_diacritics(evaluator):
+    payload = synthetic_payload(1, W2_PROFILE_ID)
+    payload["provider_transcript"]["text"] = payload["provider_transcript"]["text"].replace(
+        "Cần Giờ", "Can Gio"
+    )
+    result = evaluator.evaluate(payload, expected_asr_prompt_profile_id=W2_PROFILE_ID)
+    assert result["verdict"] == "FAIL"
+    assert result["normalization"]["vietnamese_diacritics"] == "preserved"
+    term = next(row for row in result["critical_terms"]["terms"] if row["term"] == "Cần Giờ")
+    assert term["normalized_match"] is False
+
+
+def test_w2_evidence_cannot_claim_w1_expected_profile(evaluator):
+    result = evaluator.evaluate(
+        synthetic_payload(1, W2_PROFILE_ID), expected_asr_prompt_profile_id=W1_PROFILE_ID
+    )
+    assert result["verdict"] == "FAIL"
+    assert "W1_PROFILE_BINDING_INVALID" in result["reasons"]["fail"]
 
 
 @pytest.mark.parametrize("term", TERMS)
@@ -156,6 +215,7 @@ def test_missing_receipt_still_review_and_secret_failure_still_fail(evaluator):
 def test_input_schema_profile_constant_tracks_canonical_model():
     schema = json.loads((DOCS / "schemas/asr-post-run-input.schema.json").read_text(encoding="utf-8"))
     assert schema["$defs"]["w1_profile"]["const"] == w1_prompt_profile().model_dump(mode="json")
+    assert schema["$defs"]["w2_profile"]["const"] == w2_prompt_profile().model_dump(mode="json")
 
 
 def test_historical_rc15_w0_is_never_reclassified_or_rewritten(evaluator):

@@ -1,4 +1,4 @@
-"""W1 request/provenance tests use synthetic files and mock transport only."""
+"""W1/W2 request/provenance tests use synthetic files and mock transport only."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ import httpx
 import pytest
 
 import app.asr_prompt_profile as profiles
-from app.asr_prompt_profile import prompt_profile_sha256, w1_prompt_profile
+from app.asr_prompt_profile import prompt_profile_sha256, w1_prompt_profile, w2_prompt_profile
 from app.auto_edit_models import AutoEditAnalysisRequest, MediaMetadata
 from app.auto_edit_providers import (
     PositiveDurationTranscriptRequired,
@@ -60,7 +60,7 @@ def response_payload() -> dict:
     }
 
 
-def make_adapter(*, w1=True, payload=None, status=200):
+def make_adapter(*, w1=True, profile=None, payload=None, status=200):
     requests: list[httpx.Request] = []
     responses: list[httpx.Response] = []
     resolver = SyntheticResolver()
@@ -79,7 +79,7 @@ def make_adapter(*, w1=True, payload=None, status=200):
         credential_resolver=resolver, transport=httpx.MockTransport(handler),
         max_duration_seconds=10, estimated_cost_vnd=Decimal("10"),
         vnd_per_minute=Decimal("60"), allow_zero_cost_contract_test=True,
-        asr_prompt_profile=w1_prompt_profile() if w1 else None,
+        asr_prompt_profile=(profile if profile is not None else (w1_prompt_profile() if w1 else None)),
     )
     return adapter, resolver, requests, responses
 
@@ -141,6 +141,33 @@ async def test_exact_w1_multipart_request_hash_and_result_provenance(tmp_path):
     ]
     assert result.actual_cost_vnd == Decimal("4.000000")
     assert "synthetic-contract-key" not in json.dumps(result.provenance)
+
+
+@pytest.mark.asyncio
+async def test_exact_w2_multipart_manifest_provenance_and_no_hidden_answer(tmp_path):
+    profile = w2_prompt_profile()
+    adapter, resolver, requests, responses = make_adapter(profile=profile)
+    path = source_file(tmp_path)
+    result = await run(adapter, path, expected=profile)
+    body = requests[0].content
+    assert len(requests) == resolver.calls == 1
+    assert body.count(b'name="prompt"') == 1
+    assert f'name="prompt"\r\n\r\n{profile.prompt}\r\n'.encode() in body
+    for forbidden in (b'name="temperature"', b'name="reference"', b'name="expected_answer"', b'name="dictionary"'):
+        assert forbidden not in body
+    assert result.segments[0].text == response_payload()["text"]
+    assert result.provenance["request_sha256"] == request_hash(path, profile=profile)
+    assert result.provenance["response_sha256"] == hashlib.sha256(responses[0].content).hexdigest()
+    assert result.provenance["asr_prompt_profile"] == profile.model_dump(mode="json")
+    assert result.provenance["asr_prompt_profile_sha256"] == prompt_profile_sha256(profile)
+
+
+@pytest.mark.asyncio
+async def test_w1_w2_binding_substitution_fails_before_resolver_or_transport(tmp_path):
+    adapter, resolver, requests, _ = make_adapter(profile=w2_prompt_profile())
+    with pytest.raises(ValueError, match="ASR_PROMPT_PROFILE_BINDING_MISMATCH"):
+        await run(adapter, source_file(tmp_path), expected=w1_prompt_profile())
+    assert resolver.calls == 0 and requests == []
 
 
 @pytest.mark.asyncio
@@ -347,16 +374,16 @@ def service_fixture(tmp_path, adapter, *, cached=False):
 
 
 @pytest.mark.asyncio
-async def test_w1_cache_fingerprint_is_distinct_while_w0_fingerprint_is_exact_legacy(tmp_path):
+async def test_w0_w1_w2_cache_fingerprints_are_distinct_and_w0_is_exact_legacy(tmp_path):
     payload = AutoEditAnalysisRequest(asset_id="ast_owned_test01")
     fingerprints = []
-    for w1 in (False, True):
-        adapter, resolver, requests, _ = make_adapter(w1=w1)
+    for profile in (None, w1_prompt_profile(), w2_prompt_profile()):
+        adapter, resolver, requests, _ = make_adapter(w1=False, profile=profile)
         service, repository, safety, asset = service_fixture(tmp_path, adapter, cached=True)
         assert (await service.analyze(asset.project_id, payload)).cached is True
         kwargs = repository.create_analysis.call_args.kwargs
         fingerprints.append(kwargs["fingerprint"])
-        if not w1:
+        if profile is None:
             legacy = {
                 "asset_checksum": asset.checksum_sha256, "configuration": payload.model_dump(mode="json"),
                 "transcription_provider": adapter.key, "signal_provider": "offline-signals",
@@ -367,10 +394,10 @@ async def test_w1_cache_fingerprint_is_distinct_while_w0_fingerprint_is_exact_le
             ).encode()).hexdigest()
             assert "asr_prompt_profile_sha256" not in kwargs["provenance"]
         else:
-            assert kwargs["provenance"]["asr_prompt_profile_sha256"] == prompt_profile_sha256(w1_prompt_profile())
+            assert kwargs["provenance"]["asr_prompt_profile_sha256"] == prompt_profile_sha256(profile)
         assert resolver.calls == 0 and requests == []
         safety.execute.assert_not_called()
-    assert fingerprints[0] != fingerprints[1]
+    assert len(set(fingerprints)) == 3
 
 
 @pytest.mark.asyncio
