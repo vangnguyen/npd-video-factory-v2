@@ -21,4 +21,6 @@ preserved. Asset 02 remains an offline negative-insertion control only; no real
 provider safety claim is made.
 
 Human review is tracked in [HUMAN_AUDIO_REVIEW.md](HUMAN_AUDIO_REVIEW.md) and is
-currently `PENDING`. Therefore `MERGE_ELIGIBLE = FALSE` even if source CI passes.
+`CONFIRMED_REFERENCE` as of `2026-10-01T10:31:42Z`; the Owner listened to both
+exact original-WAV ranges. Therefore `MERGE_ELIGIBLE = TRUE`, subject to fresh
+exact-head CI on this human-gate closure commit.

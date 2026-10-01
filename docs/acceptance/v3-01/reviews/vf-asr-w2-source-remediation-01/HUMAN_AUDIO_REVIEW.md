@@ -1,10 +1,10 @@
 # RC25 Asset 01 human-listening review
 
-Status: **PENDING**
+Status: **CONFIRMED_REFERENCE**
 
-This review is a human-only governance gate. Source preparation may proceed,
-but the W2 candidate is not merge-eligible and no live W2 gate may be created
-until the Owner records `CONFIRMED_REFERENCE`.
+This review is a human-only governance gate. The Owner has now recorded
+`CONFIRMED_REFERENCE`; merge eligibility remains subject to fresh exact-head CI
+and the controlled-merge checks. This decision does not create a live W2 gate.
 
 ## Immutable input
 
@@ -27,7 +27,13 @@ Choose exactly one:
 - `REFERENCE_AUDIO_CONTRADICTION`
 - `UNRESOLVED`
 
-Current decision: `PENDING`
+Current decision: `CONFIRMED_REFERENCE`
+
+Owner decision UTC: `2026-10-01T10:31:42Z`
+
+The Owner listened to both exact original-WAV ranges listed above and confirmed
+that the reference phrase is `chính sách bán hàng`. This is a human listening
+decision; no automated acoustic review was used to reach it.
 
 If the result is `REFERENCE_AUDIO_CONTRADICTION`, stop W2 acceptance and resolve
 asset/reference governance. If it is `UNRESOLVED`, merge and live W2 execution
