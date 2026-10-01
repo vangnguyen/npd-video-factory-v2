@@ -7,6 +7,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from typing import Literal, TypeAlias
 
 from .auto_edit_providers import (
+    DerivedLocalAlignmentPositiveDurationTranscript,
     PositiveDurationTranscript,
     ProviderSegment,
     ProviderTranscript,
@@ -79,7 +80,9 @@ class DerivedPositiveDurationTranscript:
 
 
 DownstreamTranscript: TypeAlias = (
-    PositiveDurationTranscript | DerivedPositiveDurationTranscript
+    PositiveDurationTranscript
+    | DerivedPositiveDurationTranscript
+    | DerivedLocalAlignmentPositiveDurationTranscript
 )
 
 
