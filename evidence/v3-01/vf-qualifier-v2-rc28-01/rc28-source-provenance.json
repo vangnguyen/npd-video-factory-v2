@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "task": "VF-ASR-QUALIFIER-V2-G08-MERGE-RC28-01",
+  "status": "RC28_SOURCE_LOCKED_GOVERNANCE_CLOSURE_CANDIDATE",
+  "repository": "vangnguyen/npd-video-factory-v2",
+  "source_merge": {
+    "pull_request": 106,
+    "base_main": "993d44d238c95e1f22d5a0f83229a0f66c9cdbdf",
+    "reviewed_head": "4ddd6571f13344b4b94718507519592d648a4151",
+    "changed_files": 8,
+    "additions": 761,
+    "deletions": 37,
+    "merge_method": "merge_commit",
+    "merge_commit": "96a2d15beeb74abce72faede78ae7591719d2c83",
+    "merge_parents": [
+      "993d44d238c95e1f22d5a0f83229a0f66c9cdbdf",
+      "4ddd6571f13344b4b94718507519592d648a4151"
+    ],
+    "merged_at_utc": "2026-10-02T05:00:55Z"
+  },
+  "source_identity": {
+    "canonical_executable_tree_sha256": "9e5a37e5118dd6e49c6ea0e1becd30f45d5bc8aca2a9a7a9c8d6bb4818dc095d",
+    "executor_executable_tree_sha256": "88e55b06b053f2467c99f11b50b1fdfc9b4cd6459acd54b44ff4890ded9ae3f3",
+    "github_workflows_tree_object": "a7acb6b4574314f2a603fff276ddb03ce95e41e4"
+  },
+  "qualification_source_contract": {
+    "task": "VF-EXECUTOR-QUALIFICATION-V2",
+    "version": 2,
+    "provider_allowlist": [
+      "openai-transcription",
+      "assemblyai-transcription"
+    ],
+    "historical_openai_v1_compatibility": "PASS_UNCHANGED",
+    "historical_w0_w1_w2_regression": "PASS_UNCHANGED",
+    "live_host_qualification_performed": false,
+    "live_authority": false,
+    "provider_identities": [
+      {
+        "provider_key": "openai-transcription",
+        "credential_alias": "secret://openai/codex-video",
+        "systemd_credential_id": "openai-codex-video",
+        "encrypted_source_locator": "/etc/credstore.encrypted/openai-codex-video",
+        "network_hostname": "api.openai.com",
+        "network_port": 443
+      },
+      {
+        "provider_key": "assemblyai-transcription",
+        "credential_alias": "secret://assemblyai/stt-video-factory-benchmark",
+        "systemd_credential_id": "assemblyai-stt-video-factory-benchmark",
+        "encrypted_source_locator": "/etc/credstore.encrypted/assemblyai-stt-video-factory-benchmark",
+        "network_hostname": "api.assemblyai.com",
+        "network_port": 443
+      }
+    ],
+    "network_probe_contract": "TLS_HANDSHAKE_ONLY_NO_HTTP_NO_CREDENTIAL",
+    "source_tests": "SYNTHETIC_OFFLINE_NO_PROVIDER_NETWORK",
+    "real_network_probes_performed": 0,
+    "cross_provider_receipt_replay": "REJECTED",
+    "v1_v2_confusion": "REJECTED",
+    "e6_e7_identity_mismatch": "REJECTED",
+    "unknown_provider": "FAIL_CLOSED"
+  },
+  "ci": {
+    "reviewed_exact_head": {
+      "run_id": 36963320478,
+      "event": "workflow_dispatch",
+      "ref": "refs/heads/codex/vf-qualifier-provider-neutral-v2",
+      "expected_head_sha": "4ddd6571f13344b4b94718507519592d648a4151",
+      "checked_out_sha": "4ddd6571f13344b4b94718507519592d648a4151",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "regression": "1672 passed",
+      "completed_at_utc": "2026-10-02T04:14:26Z",
+      "jobs": [
+        {
+          "job_id": 110701564146,
+          "name": "Docker deterministic E2E",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110701564328,
+          "name": "Safety and compose contract",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110701564343,
+          "name": "Renderer tests and bundle",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110701564349,
+          "name": "Python unit and contract tests",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110701564374,
+          "name": "Studio tests",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "exact_main": {
+      "run_id": 36967058083,
+      "event": "push",
+      "ref": "refs/heads/main",
+      "expected_head_sha": "96a2d15beeb74abce72faede78ae7591719d2c83",
+      "checked_out_sha": "96a2d15beeb74abce72faede78ae7591719d2c83",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "regression": "1672 passed",
+      "completed_at_utc": "2026-10-02T05:06:10Z",
+      "jobs": [
+        {
+          "job_id": 110712986314,
+          "name": "Safety and compose contract",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110712986442,
+          "name": "Python unit and contract tests",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110712986504,
+          "name": "Docker deterministic E2E",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110712986506,
+          "name": "Studio tests",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110712986508,
+          "name": "Renderer tests and bundle",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "executable_rc": {
+      "run_id": 36967501986,
+      "event": "workflow_dispatch",
+      "ref": "refs/tags/vf-v3-01-rc28",
+      "expected_head_sha": "96a2d15beeb74abce72faede78ae7591719d2c83",
+      "checked_out_sha": "96a2d15beeb74abce72faede78ae7591719d2c83",
+      "conclusion": "success",
+      "jobs_succeeded": 5,
+      "jobs_total": 5,
+      "regression": "1672 passed",
+      "completed_at_utc": "2026-10-02T05:12:05Z",
+      "jobs": [
+        {
+          "job_id": 110714326184,
+          "name": "Safety and compose contract",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110714326251,
+          "name": "Docker deterministic E2E",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110714326253,
+          "name": "Python unit and contract tests",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110714326356,
+          "name": "Studio tests",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 110714326394,
+          "name": "Renderer tests and bundle",
+          "conclusion": "success"
+        }
+      ]
+    }
+  },
+  "rc28": {
+    "tag": "vf-v3-01-rc28",
+    "tag_type": "annotated",
+    "tag_object_sha": "ab53af42f2d4c1e0a80e421c6c2d6844a5702212",
+    "commit": "96a2d15beeb74abce72faede78ae7591719d2c83"
+  },
+  "approval_registry": {
+    "rescan_task": "VF-ASR-QUALIFIER-V2-APPROVAL-REGISTRY-RESCAN-01",
+    "rescan_evidence_sha256": "43641400d7bf9355afc4087e1ebf33a51bc5aba61baa1ec891222600d66bbbd4",
+    "canonical_stores_scanned": 5,
+    "canonical_stores_required": 5,
+    "highest_allocated_id_before": "V3-01-APP-109",
+    "APP110_absent_unallocated_unreserved_before": true,
+    "allocated_id": "V3-01-APP-110",
+    "gate": "G-08",
+    "record_sha256": "7b1cddbf7039233274325e4b9fb893f28ec9a2d1d5f99221aea833ac366cd367",
+    "allocation_approved_by_owner_continuation": true
+  },
+  "historical_boundary": {
+    "rc27_tag_object": "e335e627c5b635b426f9a0e749d7c305b10d0649",
+    "rc27_commit": "76add7193926780add892128dbe373312fb54c56",
+    "rc27": "IMMUTABLE_NO_AUTHORITY_TRANSFER",
+    "pr103_state": "OPEN_DRAFT_FROZEN_FALLBACK",
+    "pr103_head": "827c53cb2c022f48b056c48d8c6951e26d0fcf1e",
+    "pr103_mutated": false
+  },
+  "zero_use_invariants": {
+    "host_mutation": "NONE",
+    "host_deployment": 0,
+    "live_qualification": "NOT_RUN",
+    "promotion": 0,
+    "provider_credential_reads": 0,
+    "provider_api_calls": 0,
+    "audio_uploads": 0,
+    "transcript_jobs": 0,
+    "budget_reserved_vnd": "0",
+    "actual_spend_vnd": "0",
+    "new_asr_lineages": 0,
+    "g01_g02_g03": 0,
+    "o2": 0,
+    "runtime_activation": 0,
+    "execution_catalog_created": 0,
+    "production": "NO_GO"
+  },
+  "governance_closure": {
+    "status": "CANDIDATE_NOT_MERGED",
+    "executable_tree_drift": false,
+    "executor_tree_drift": false,
+    "final_dual_ci_provenance": "NOT_CREATED",
+    "next_requirement": "OWNER_CONTROLLED_GOVERNANCE_ONLY_MERGE_THEN_FRESH_EXACT_GOVERNANCE_MAIN_CI_AND_FINAL_DUAL_CI_PROVENANCE"
+  }
+}
