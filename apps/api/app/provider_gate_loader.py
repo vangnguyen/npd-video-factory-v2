@@ -11,10 +11,11 @@ from typing import Literal
 
 from pydantic import Field, StrictInt, ValidationError, field_validator, model_validator
 
-from .asr_prompt_profile import (
-    AsrPromptProfile,
-    prompt_profile_sha256,
-    validate_prompt_profile,
+from .assemblyai_asr_profile import AssemblyAIAsrProfile
+from .asr_profile_binding import (
+    AsrRequestProfile,
+    asr_request_profile_sha256,
+    validate_asr_request_profile,
 )
 from .models import StrictModel
 from .provider_safety import (
@@ -62,7 +63,7 @@ def execution_scope_sha256(
     allowed_operations: tuple[ProviderAllowedOperation, ProviderAllowedOperation],
     rights_record_sha256: str | None = None,
     rights_record_sha256s: tuple[str, ...] = (),
-    asr_prompt_profile: AsrPromptProfile | dict[str, object] | None = None,
+    asr_prompt_profile: AsrRequestProfile | dict[str, object] | None = None,
     acceptance_lineage_sequence: int | None = None,
     acceptance_lineage_id: str | None = None,
 ) -> str:
@@ -108,16 +109,21 @@ def execution_scope_sha256(
             "sequence": acceptance_lineage_sequence,
             "acceptance_lineage_id": acceptance_lineage_id,
         }
-    profile = validate_prompt_profile(asr_prompt_profile)
+    profile = validate_asr_request_profile(asr_prompt_profile)
     if profile is not None:
-        if (provider_key, model, capability) != (
-            "openai-transcription", "whisper-1", "asr"
-        ):
+        expected = (
+            ("assemblyai-transcription", "universal-3-5-pro", "asr")
+            if type(profile) is AssemblyAIAsrProfile
+            else ("openai-transcription", "whisper-1", "asr")
+        )
+        if (provider_key, model, capability) != expected:
+            if type(profile) is AssemblyAIAsrProfile:
+                raise ValueError("AssemblyAI profile requires its exact provider/model ASR scope")
             raise ValueError("ASR prompt profile requires the exact whisper-1 ASR scope")
         # Absence remains the historical W0 representation: no new null fields
         # enter any previously approved execution-scope hash.
         payload["asr_prompt_profile"] = profile.model_dump(mode="json")
-        payload["asr_prompt_profile_sha256"] = prompt_profile_sha256(profile)
+        payload["asr_prompt_profile_sha256"] = asr_request_profile_sha256(profile)
     return canonical_sha256(payload)
 
 
@@ -243,7 +249,7 @@ class OpenAIAsrGateBudgetEnvelope(ProviderTimeoutEnvelope):
     max_file_bytes: int = Field(ge=1, le=25_000_000)
     max_duration_seconds: float = Field(gt=0, le=3_600)
     requested_language: Literal["vi"] = "vi"
-    response_format: Literal["verbose_json"] = "verbose_json"
+    response_format: Literal["verbose_json", "json"] = "verbose_json"
     timestamp_granularities: tuple[Literal["segment", "word"], ...]
     max_attempts: Literal[1] = 1
     max_concurrent_calls: Literal[1] = 1
@@ -302,8 +308,8 @@ class OpenAIAsrGateBudgetEnvelope(ProviderTimeoutEnvelope):
     def validate_asr_envelope(self) -> "OpenAIAsrGateBudgetEnvelope":
         if self.acceptance_window_limit_vnd < self.per_operation_limit_vnd * 2:
             raise ValueError("ASR acceptance window must cover both allowlisted operations")
-        if self.timestamp_granularities != ("segment", "word"):
-            raise ValueError("ASR gate requires native segment and word timestamps")
+        if self.timestamp_granularities not in {("segment", "word"), ("word",)}:
+            raise ValueError("ASR gate requires an allowlisted native timestamp contract")
         return self
 
 
@@ -584,14 +590,14 @@ class ProviderGateBundle(StrictModel):
 
 
 class OpenAIAsrGateBundle(StrictModel):
-    """Strict two-input ASR gate shape, with no checked-in instance or authority."""
+    """Strict versioned ASR gate; historical v1/v2 bytes remain unchanged."""
 
-    version: Literal[1, 2] = 1
+    version: Literal[1, 2, 3] = 1
     bundle_id: str = Field(pattern=r"^V3-01-GATE-[A-Za-z0-9._-]{3,120}$")
     rc_tag: str = Field(pattern=r"^vf-v3-01-rc[0-9]+$")
     rc_commit: str = Field(pattern=r"^[a-f0-9]{40}$")
-    provider_key: Literal["openai-transcription"]
-    model: Literal["whisper-1", "gpt-transcribe", "gpt-4o-transcribe"]
+    provider_key: Literal["openai-transcription", "assemblyai-transcription"]
+    model: Literal["whisper-1", "gpt-transcribe", "gpt-4o-transcribe", "universal-3-5-pro"]
     capability: Literal["asr"]
     acceptance_lineage_sequence: StrictInt | None = Field(default=None, ge=1, le=9999)
     acceptance_lineage_id: str | None = Field(
@@ -607,12 +613,12 @@ class OpenAIAsrGateBundle(StrictModel):
     rights_approval: HashedApprovalRecord
     rights_records: tuple[HashedRightsRecord, HashedRightsRecord]
     allowed_operations: tuple[ProviderAllowedOperation, ProviderAllowedOperation]
-    asr_prompt_profile: AsrPromptProfile | None = None
+    asr_prompt_profile: AsrRequestProfile | None = None
 
     @field_validator("asr_prompt_profile", mode="before")
     @classmethod
-    def validate_prompt_binding(cls, value: object) -> AsrPromptProfile | None:
-        return validate_prompt_profile(value)
+    def validate_prompt_binding(cls, value: object) -> AsrRequestProfile | None:
+        return validate_asr_request_profile(value)
 
     @field_validator("credential_alias")
     @classmethod
@@ -640,13 +646,24 @@ class OpenAIAsrGateBundle(StrictModel):
             model=self.model,
             capability=self.capability,
         )
-        # Capability evidence currently qualifies whisper-1, but this is not a
-        # model approval: an exact G-01 record is still mandatory below.
-        if self.model != "whisper-1":
-            raise ValueError(
-                "ASR model is not currently compatibility-qualified for the strict native "
-                "timestamp contract"
-            )
+        if self.provider_key == "openai-transcription":
+            if self.model != "whisper-1":
+                raise ValueError("ASR model is not currently compatibility-qualified for the strict native timestamp contract")
+            if self.version not in {1, 2}:
+                raise ValueError("historical OpenAI ASR gates require v1/v2")
+            if self.credential_alias != "secret://openai/codex-video":
+                raise ValueError("historical OpenAI ASR credential alias mismatch")
+            if self.budget.response_format != "verbose_json" or self.budget.timestamp_granularities != ("segment", "word"):
+                raise ValueError("historical OpenAI ASR timestamp contract mismatch")
+        else:
+            if self.version != 3 or self.model != "universal-3-5-pro":
+                raise ValueError("AssemblyAI direct ASR requires gate v3 and universal-3-5-pro")
+            if self.credential_alias != "secret://assemblyai/stt-video-factory-benchmark":
+                raise ValueError("AssemblyAI ASR credential alias mismatch")
+            if type(self.asr_prompt_profile) is not AssemblyAIAsrProfile:
+                raise ValueError("AssemblyAI ASR gate requires the sealed AssemblyAI profile")
+            if self.budget.response_format != "json" or self.budget.timestamp_granularities != ("word",):
+                raise ValueError("AssemblyAI ASR requires native word timestamps only")
         approvals = {
             "G-01": self.credential_approval.record,
             "G-02": self.budget_approval.record,
@@ -758,6 +775,16 @@ class OpenAIAsrGateBundle(StrictModel):
         return self
 
 
+class AssemblyAIAsrGateBundle(OpenAIAsrGateBundle):
+    """AssemblyAI-only v3 spelling of the provider-neutral ASR gate contract."""
+
+    version: Literal[3] = 3
+    provider_key: Literal["assemblyai-transcription"]
+    model: Literal["universal-3-5-pro"]
+    credential_alias: Literal["secret://assemblyai/stt-video-factory-benchmark"]
+    asr_prompt_profile: AssemblyAIAsrProfile
+
+
 def asr_execution_scope_sha256(scope: ProviderExecutionGateScope) -> str:
     """Re-derive the approved ASR hash without trusting a copied profile marker.
 
@@ -827,14 +854,18 @@ def load_verified_provider_gate_bundle(
                 ProviderGateBundle.model_validate(payload)
             )
         elif capability == "asr":
-            bundle = OpenAIAsrGateBundle.model_validate(payload)
+            bundle = (
+                AssemblyAIAsrGateBundle.model_validate(payload)
+                if payload.get("provider_key") == "assemblyai-transcription"
+                else OpenAIAsrGateBundle.model_validate(payload)
+            )
         else:
             raise ValueError("gate bundle capability is not supported")
     except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
         raise ProviderGateBundleError("verified provider gate bundle is invalid") from exc
     if bundle.rc_commit != expected_rc_commit or bundle.rc_tag != expected_rc_tag:
         raise ProviderGateBundleError("verified provider gate bundle does not match the exact RC")
-    if bundle.version == 2:
+    if bundle.version in {2, 3}:
         if not expected_acceptance_lineage_id:
             raise ProviderGateBundleError(
                 "a v2 provider gate requires an expected acceptance lineage ID"
@@ -959,7 +990,7 @@ def load_verified_provider_gate_bundle(
         response_format=bundle.budget.response_format,
         timestamp_granularities=bundle.budget.timestamp_granularities,
         asr_prompt_profile=bundle.asr_prompt_profile,
-        asr_prompt_profile_sha256=prompt_profile_sha256(bundle.asr_prompt_profile),
+        asr_prompt_profile_sha256=asr_request_profile_sha256(bundle.asr_prompt_profile),
         rights_record_sha256s=rights_hashes,
         execution_scope_sha256=scope_hash,
         rights_records=tuple(item.record for item in bundle.rights_records),

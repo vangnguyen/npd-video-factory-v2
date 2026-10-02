@@ -23,6 +23,10 @@ from .runtime_activation import (
     RuntimeActivationBinding,
     load_runtime_activation_binding,
 )
+from .provider_credentials import (
+    provider_credential_binding,
+    verify_provider_credential_binding,
+)
 
 
 CANONICAL_ALIAS = "secret://openai/codex-video"
@@ -40,8 +44,12 @@ class ResolverBlocked(RuntimeError):
 class ResolverRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True, frozen=True)
 
-    version: Literal[1]
-    credential_alias: Literal["secret://openai/codex-video"]
+    version: Literal[1, 2]
+    provider_key: Literal["openai-transcription", "assemblyai-transcription"] = "openai-transcription"
+    credential_alias: Literal[
+        "secret://openai/codex-video",
+        "secret://assemblyai/stt-video-factory-benchmark",
+    ]
     operation_id: str = Field(min_length=1, max_length=200)
     authority_receipt_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     final_bundle_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
@@ -49,14 +57,34 @@ class ResolverRequest(BaseModel):
     execution_plane_promotion_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     o2_activation_receipt_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
 
+    @model_validator(mode="after")
+    def provider_alias(self) -> "ResolverRequest":
+        try:
+            verify_provider_credential_binding(
+                provider_key=self.provider_key,
+                credential_alias=self.credential_alias,
+            )
+        except ValueError:
+            raise ValueError("RESOLVER_REQUEST_PROVIDER_CREDENTIAL_MISMATCH") from None
+        if self.provider_key == "assemblyai-transcription" and self.version != 2:
+            raise ValueError("ASSEMBLYAI_RESOLVER_REQUEST_VERSION_INVALID")
+        return self
+
 
 class ResolverPolicy(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True, frozen=True)
 
-    version: Literal[1]
+    version: Literal[1, 2]
     mode: Literal["ONE_SHOT_PROVIDER_SECRET_RESOLUTION"]
-    credential_alias: Literal["secret://openai/codex-video"]
-    systemd_credential_id: Literal["openai-codex-video"]
+    provider_key: Literal["openai-transcription", "assemblyai-transcription"] = "openai-transcription"
+    credential_alias: Literal[
+        "secret://openai/codex-video",
+        "secret://assemblyai/stt-video-factory-benchmark",
+    ]
+    systemd_credential_id: Literal[
+        "openai-codex-video",
+        "assemblyai-stt-video-factory-benchmark",
+    ]
     socket_path: Literal["/run/npd-video-factory/provider-secret-resolver.sock"]
     expected_peer_uid: int = Field(ge=1)
     expected_peer_gid: int = Field(ge=1)
@@ -76,6 +104,16 @@ class ResolverPolicy(BaseModel):
 
     @model_validator(mode="after")
     def window(self) -> "ResolverPolicy":
+        try:
+            verify_provider_credential_binding(
+                provider_key=self.provider_key,
+                credential_alias=self.credential_alias,
+                systemd_credential_id=self.systemd_credential_id,
+            )
+        except ValueError:
+            raise ValueError("RESOLVER_PROVIDER_CREDENTIAL_BINDING_INVALID") from None
+        if self.provider_key == "assemblyai-transcription" and self.version != 2:
+            raise ValueError("ASSEMBLYAI_RESOLVER_POLICY_VERSION_INVALID")
         if self.valid_from_utc.tzinfo is None or self.expires_at_utc.tzinfo is None:
             raise ValueError("RESOLVER_TIMEZONE_REQUIRED")
         if self.valid_from_utc >= self.expires_at_utc:
@@ -84,6 +122,7 @@ class ResolverPolicy(BaseModel):
 
 
 _REQUEST_FIELDS = (
+    "provider_key",
     "credential_alias",
     "operation_id",
     "authority_receipt_sha256",
@@ -160,7 +199,7 @@ def _validate_context(
 ) -> None:
     if any(getattr(request, field) != getattr(policy, field) for field in _REQUEST_FIELDS):
         raise ResolverBlocked("RESOLVER_CONTEXT_MISMATCH")
-    if any(getattr(request, field) != getattr(activation, field) for field in _REQUEST_FIELDS[1:]):
+    if any(getattr(request, field) != getattr(activation, field) for field in _REQUEST_FIELDS[2:]):
         raise ResolverBlocked("RESOLVER_ACTIVATION_MISMATCH")
     current = now.astimezone(timezone.utc)
     policy_start = policy.valid_from_utc.astimezone(timezone.utc)
@@ -261,7 +300,15 @@ class SecretResolverClient:
         self.reads: int | None = 0
 
     def resolve(self, alias: str) -> str:
-        if alias != CANONICAL_ALIAS or alias != self.request.credential_alias or self.reads != 0:
+        try:
+            verify_provider_credential_binding(
+                provider_key=self.request.provider_key,
+                credential_alias=alias,
+                systemd_credential_id=self.policy.systemd_credential_id,
+            )
+        except ValueError:
+            raise ResolverBlocked("RESOLVER_ALIAS_OR_REENTRY_REJECTED") from None
+        if alias != self.request.credential_alias or self.reads != 0:
             raise ResolverBlocked("RESOLVER_ALIAS_OR_REENTRY_REJECTED")
         _verify_socket(Path(self.policy.socket_path), self.policy.expected_peer_gid)
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
@@ -302,11 +349,16 @@ def _recv_exact(connection: socket.socket, size: int) -> bytes:
     return bytes(value)
 
 
-def systemd_credential_loader() -> bytes:
+def systemd_credential_loader(policy: ResolverPolicy | None = None) -> bytes:
     directory = os.environ.get("CREDENTIALS_DIRECTORY")
     if not directory:
         raise ResolverBlocked("SYSTEMD_CREDENTIAL_DIRECTORY_MISSING")
-    path = Path(directory) / SYSTEMD_CREDENTIAL_ID
+    credential_id = (
+        SYSTEMD_CREDENTIAL_ID
+        if policy is None
+        else provider_credential_binding(policy.provider_key).systemd_credential_id
+    )
+    path = Path(directory) / credential_id
     try:
         info = path.lstat()
         if not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or stat.S_IMODE(info.st_mode) & 0o077:
@@ -333,7 +385,7 @@ def service_main() -> int:
             serve_connection(
                 connection,
                 policy=policy,
-                credential_loader=systemd_credential_loader,
+                credential_loader=lambda: systemd_credential_loader(policy),
             )
         return 0
     except ResolverBlocked as exc:

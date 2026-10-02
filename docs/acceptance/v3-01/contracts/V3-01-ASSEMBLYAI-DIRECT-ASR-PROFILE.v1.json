@@ -1,0 +1,20 @@
+{
+  "automatic_retry": false,
+  "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+  "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+  "keyterms": [
+    "Ngọc Phương Đông",
+    "Vinhomes Green Paradise",
+    "Cần Giờ",
+    "tham quan sa bàn",
+    "chính sách bán hàng"
+  ],
+  "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+  "language": "vi",
+  "mode": "async_pre_recorded",
+  "model": "universal-3-5-pro",
+  "model_fallback": false,
+  "native_word_timestamps": true,
+  "profile_id": "asr-assemblyai-vi-direct-v1",
+  "provider_key": "assemblyai-transcription"
+}
