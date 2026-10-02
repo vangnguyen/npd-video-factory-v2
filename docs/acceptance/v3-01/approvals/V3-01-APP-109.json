@@ -1,0 +1,39 @@
+{
+  "approval_id": "V3-01-APP-109",
+  "approved_at_utc": "2026-10-02T02:00:44Z",
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "artifact_or_commit_hashes": [
+    "996ccb7b6aced3e3b41bc673eef124a9a8d9b454",
+    "4cf1b49e4eea34fed515ed44c25a5445e147bbda",
+    "72b56baeb25fc12b0b4917324b8f3793708442b77fd37a8d72bf918f200ec79c",
+    "36952325138",
+    "assemblyai-transcription",
+    "universal-3-5-pro",
+    "vi",
+    "asr-assemblyai-vi-direct-v1",
+    "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+    "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+    "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+    "9339e76145c05c81ba6eed47c04d5423e50cfe5bea2f6d87a7446a5473b43b80",
+    "f1e49ebdc360aeae72ffed706c3d8199a1ce1c7044dac04f8bbcf5f4e2139aa2",
+    "1ca36fc2575b58571562de97a05fe15819702dde062d21fe75024a3a2fc17bb9"
+  ],
+  "decision": "APPROVED",
+  "expires_at_utc": null,
+  "gate_id": "G-08",
+  "limits": [
+    "Exact PR #104 source head 4cf1b49e4eea34fed515ed44c25a5445e147bbda only",
+    "Merge commit method only; squash and rebase prohibited",
+    "RC27 source lock permitted only after fresh exact-main CI PASS",
+    "Source merge and immutable RC lock only",
+    "No provider authority",
+    "No provider credential authority or credential read",
+    "No executor deployment, qualification, or promotion",
+    "No ASR lineage, operation, G-01, G-02, G-03, O2, runtime activation, resolver policy, catalog, or provider window",
+    "No provider call, upload, transcript job, reservation, or spend",
+    "No production approval"
+  ],
+  "notes": "Owner approved only the exact AssemblyAI direct-ASR source merge and RC27 lock. The two benchmark manifests remain PROVIDER_SELECTION_BENCHMARK evidence and are not production acceptance.",
+  "scope": "Exact AssemblyAI direct-ASR source review closure for base 996ccb7b6aced3e3b41bc673eef124a9a8d9b454, PR #104 head 4cf1b49e4eea34fed515ed44c25a5445e147bbda, executable-tree candidate 72b56baeb25fc12b0b4917324b8f3793708442b77fd37a8d72bf918f200ec79c, and exact-head CI 36952325138 only.",
+  "target_account_or_environment": "vangnguyen/npd-video-factory-v2 source governance / prospective vf-v3-01-rc27"
+}
