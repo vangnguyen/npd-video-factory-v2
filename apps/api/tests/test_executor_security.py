@@ -21,6 +21,7 @@ def test_hostile_review_requires_all_denials(tmp_path, monkeypatch):
             "workflow_sha": host.execution_workflow_commit}], "approved_execution_workflows": []}
     monkeypatch.setattr(q, "admission_manifest", lambda *a: manifest)
     monkeypatch.setattr(q, "private_path", lambda *a, **k: None)
+    monkeypatch.setattr(q, "load_secret_binding", lambda *a: ({"version": 1}, b"synthetic-metadata"))
     (tmp_path / "kill").write_bytes(b"ENGAGED\n")
     tmp_path.chmod(0o700)
 

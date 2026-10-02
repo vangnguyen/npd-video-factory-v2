@@ -563,8 +563,11 @@ def mock_probes(host, monkeypatch):
                 "qualification_access": "SELECT_ONLY"}
     monkeypatch.setattr(q, "custody", custody)
     monkeypatch.setattr(q, "github", lambda h: {"GITHUB_ACCESS": "VERIFIED"})
-    monkeypatch.setattr(q, "provider_network", lambda: {"PROVIDER_NETWORK": "VERIFIED"})
-    monkeypatch.setattr(q, "secret_presence", lambda h: {"SECRET_SOURCE": "PRESENT"})
+    monkeypatch.setattr(q, "load_secret_binding", lambda h: (_secret_binding(), b"synthetic-metadata"))
+    monkeypatch.setattr(q, "provider_network", lambda *a: {"PROVIDER_NETWORK": "VERIFIED"})
+    monkeypatch.setattr(q, "secret_presence", lambda h: {
+        "SECRET_SOURCE": "PRESENT", "binding_sha256": q.sha(b"synthetic-metadata"),
+    })
     monkeypatch.setattr(q, "fixture_mount", lambda r: {"BUNDLE_MOUNT_CAPABILITY": "VERIFIED"})
     async def check(h, r):
         return {"KILL_SWITCH": "ENGAGED", "CHECK_ONLY_RUNNER": "VERIFIED"}
