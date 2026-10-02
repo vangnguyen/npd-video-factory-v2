@@ -627,7 +627,7 @@ def _provider_definitions() -> list[dict[str, object]]:
             "capability": "asr",
             "adapter": "app.assemblyai_transcription_provider.AssemblyAITranscriptionProvider",
             "routing_mode": "disabled",
-            "status": "source_ready_live_disabled",
+            "status": "not_configured",
             "enabled": False,
             "supports_dry_run": True,
             "config_ref": "env:ASSEMBLYAI_TRANSCRIPTION_*",

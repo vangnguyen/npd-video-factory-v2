@@ -23,6 +23,7 @@ from app.asr_quality_guards import evaluate_direct_asr_quality, evaluate_prompt_
 from app.auto_edit_models import MediaMetadata
 from app.auto_edit_providers import require_positive_duration_transcript
 from app.config import Settings
+from app.main import _provider_definitions
 from app.provider_gate_loader import AssemblyAIAsrGateBundle, canonical_sha256, execution_scope_sha256
 from app.provider_credentials import verify_provider_credential_binding
 from app.transcription_provider_factory import create_verified_transcription_provider
@@ -85,6 +86,25 @@ def _provider(transport: FakeTransport) -> AssemblyAITranscriptionProvider:
         poll_interval_seconds=0,
         estimated_cost_vnd=Decimal("300"),
     )
+
+
+def test_assemblyai_registry_definition_remains_public_schema_compatible() -> None:
+    definition = next(
+        item
+        for item in _provider_definitions()
+        if item["provider_key"] == "assemblyai-transcription"
+    )
+
+    assert definition["status"] == "not_configured"
+    assert definition["routing_mode"] == "disabled"
+    assert definition["enabled"] is False
+    assert definition["metadata"] == {
+        "adapter_implemented": True,
+        "provider_selection_benchmark": "PASS_TWO_ASSETS",
+        "production_accepted": False,
+        "paid": True,
+        "external_execution_enabled": False,
+    }
 
 
 def test_profile_is_exact_and_immutable() -> None:
