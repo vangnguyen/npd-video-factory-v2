@@ -1,0 +1,33 @@
+{
+  "approval_id": "V3-01-APP-110",
+  "approved_at_utc": "2026-10-02T04:57:54Z",
+  "approved_by": "Owner (GitHub: vangnguyen)",
+  "artifact_or_commit_hashes": [
+    "993d44d238c95e1f22d5a0f83229a0f66c9cdbdf",
+    "4ddd6571f13344b4b94718507519592d648a4151",
+    "PR106",
+    "36963320478",
+    "9e5a37e5118dd6e49c6ea0e1becd30f45d5bc8aca2a9a7a9c8d6bb4818dc095d",
+    "88e55b06b053f2467c99f11b50b1fdfc9b4cd6459acd54b44ff4890ded9ae3f3",
+    "a7acb6b4574314f2a603fff276ddb03ce95e41e4",
+    "VF-EXECUTOR-QUALIFICATION-V2",
+    "43641400d7bf9355afc4087e1ebf33a51bc5aba61baa1ec891222600d66bbbd4"
+  ],
+  "decision": "APPROVED",
+  "expires_at_utc": null,
+  "gate_id": "G-08",
+  "limits": [
+    "Exact PR #106 head 4ddd6571f13344b4b94718507519592d648a4151 into base 993d44d238c95e1f22d5a0f83229a0f66c9cdbdf only",
+    "Merge commit only; squash and rebase prohibited",
+    "Fresh exact-main CI and annotated RC28 lock permitted only after exact-main CI PASS 5/5 and full regression PASS",
+    "Fresh RC28 CI, immutable source provenance, and governance-only Draft closure candidate permitted",
+    "Governance closure PR must remain unmerged; final dual-CI provenance requires a separate Owner gate",
+    "No host mutation, executor deployment, execution-plane qualification, or promotion",
+    "No execution catalog, fresh ASR lineage, G-01, G-02, G-03, O2, runtime activation, resolver activation, or provider window",
+    "No provider credential authority, credential resolution, provider API call, upload, transcript job, reservation, or spend",
+    "No production approval; preserve RC27 and frozen PR #103"
+  ],
+  "notes": "Materialized at the recorded UTC under Owner continuation RESUME_APPROVED_FROM_G08_APPROVAL_ALLOCATION. The sealed five-store registry rescan proves APP-109 is the global highest and APP-110 was unallocated and unreserved. This G-08 grants source/release-governance authority only, not execution authority.",
+  "scope": "Provider-neutral qualifier V2 source review closure for exact PR #106, reviewed head 4ddd6571f13344b4b94718507519592d648a4151, exact base 993d44d238c95e1f22d5a0f83229a0f66c9cdbdf, exact-head CI 36963320478, and the three bound source trees only.",
+  "target_account_or_environment": "vangnguyen/npd-video-factory-v2 source governance / prospective vf-v3-01-rc28"
+}
