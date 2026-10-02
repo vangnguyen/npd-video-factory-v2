@@ -68,6 +68,8 @@ def promote(host: q.Host, config: dict) -> dict:
               and current_secret.get("PROVIDER_CREDENTIAL_READS") == 0,
               "QUALIFICATION_SECRET_BINDING_FAILED")
     secret_binding_sha256 = current_secret["binding_sha256"]
+    q.verify_qualification_provider_identity(probe, current_secret, probes=True)
+    q.verify_qualification_provider_identity(security, current_secret)
     q.require(manifest.get("qualification.json") == config["probe_receipt_sha256"],
               "QUALIFICATION_MANIFEST_MISMATCH")
     q.require(security.get("status") == "RUNNER_SECURITY_PASS"
@@ -100,6 +102,11 @@ def promote(host: q.Host, config: dict) -> dict:
         "kill_switch": "ENGAGED",
         **q.ZERO,
     }
+    versioned_identity = {}
+    if current_secret.get("binding_version") == 2:
+        versioned_identity = {"version": 2, "task": q.QUALIFICATION_V2_TASK,
+                              "provider_identity": q.qualification_provider_identity(current_secret)}
+        evidence_manifest.update(versioned_identity)
     evidence_manifest_sha256 = q.persist(root, "evidence-manifest.json", evidence_manifest)
     receipt = {
         "status": "SELF_HOSTED_EXECUTION_PLANE_QUALIFIED",
@@ -122,6 +129,7 @@ def promote(host: q.Host, config: dict) -> dict:
         "o2": "NO",
         **q.ZERO,
     }
+    receipt.update(versioned_identity)
     promotion_sha256 = q.persist(root, "qualification-promotion.json", receipt)
     return {"receipt": receipt, "promotion_sha256": promotion_sha256,
             "evidence_manifest_sha256": evidence_manifest_sha256}

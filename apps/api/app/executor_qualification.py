@@ -13,7 +13,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import platform
 import re
 import socket
@@ -24,6 +24,9 @@ import sys
 import tempfile
 import uuid
 from datetime import datetime, timezone
+from types import MappingProxyType
+
+from .provider_credentials import ProviderCredentialBinding, provider_credential_binding
 
 REPOSITORY = "npd-ai/npd-video-factory-executor"
 EXECUTION_ORGANIZATION = "npd-ai"
@@ -39,9 +42,16 @@ EXECUTION_WORKFLOW_REF = (
 LABELS = frozenset({"self-hosted", "linux", "x64", "npd-video-factory", "provider-execution"})
 CONFIG = Path("/etc/npd-video-factory/executor.json")
 PROVIDER_SECRET_BINDING = Path("/etc/npd-video-factory/provider-secret-binding.json")
-CANONICAL_CREDENTIAL_ALIAS = "secret://openai/codex-video"
-SYSTEMD_CREDENTIAL_ID = "openai-codex-video"
-SYSTEMD_ENCRYPTED_SOURCE = Path("/etc/credstore.encrypted/openai-codex-video")
+# Historical public names remain import-compatible, but identity has one source.
+_OPENAI_CREDENTIAL = provider_credential_binding("openai-transcription")
+CANONICAL_CREDENTIAL_ALIAS = _OPENAI_CREDENTIAL.credential_alias
+SYSTEMD_CREDENTIAL_ID = _OPENAI_CREDENTIAL.systemd_credential_id
+SYSTEMD_ENCRYPTED_SOURCE = Path("/etc/credstore.encrypted") / SYSTEMD_CREDENTIAL_ID
+QUALIFICATION_V2_TASK = "VF-EXECUTOR-QUALIFICATION-V2"
+PROVIDER_NETWORK_ENDPOINTS = MappingProxyType({
+    "openai-transcription": ("api.openai.com", 443),
+    "assemblyai-transcription": ("api.assemblyai.com", 443),
+})
 SYSTEMD_HOST_KEY = Path("/var/lib/systemd/credential.secret")
 SYSTEMD_BACKEND_RECEIPT = Path(
     "/etc/npd-video-factory/systemd-credential-backend-qualification.json"
@@ -54,6 +64,7 @@ SECRET_BINDING_FIELDS = {
     "encryption_key_type", "provider_runtime_reads",
     "backend_qualification_receipt_sha256",
 }
+SECRET_BINDING_V2_FIELDS = (SECRET_BINDING_FIELDS - {"provider"}) | {"provider_key"}
 SYSTEMD_BACKEND_RECEIPT_FIELDS = {
     "version", "task", "status", "systemd_version", "host_key_present",
     "host_key_owner", "host_key_mode", "host_key_regular_file",
@@ -68,6 +79,9 @@ SYSTEMD_BACKEND_RECEIPT_FIELDS = {
     "encrypted_source_symlink", "encrypted_source_nonempty",
     "credstore_owner", "credstore_mode", "runner_source_read",
     "runner_source_write", "runner_credstore_list",
+}
+SYSTEMD_BACKEND_RECEIPT_V2_FIELDS = SYSTEMD_BACKEND_RECEIPT_FIELDS | {
+    "provider_key", "credential_alias",
 }
 ADMISSION_MANIFEST_FIELDS = {
     "version", "mode", "approved_qualification_workflows",
@@ -110,7 +124,9 @@ def sha(raw: bytes) -> str:
 
 
 def secret_scan(raw: bytes) -> None:
-    require(not re.search(rb"(?i)(sk-[a-z0-9_-]{8,}|bearer\s+\S+|-----BEGIN .*PRIVATE KEY|OPENAI_API_KEY\s*[:=])", raw),
+    require(not re.search(rb'(?i)(sk-[a-z0-9_-]{8,}|bearer\s+\S+|-----BEGIN .*PRIVATE KEY|'
+                          rb'(?:OPENAI|ASSEMBLYAI)_API_KEY["\x27]?\s*[:=]|'
+                          rb'authorization["\x27]?\s*[:=])', raw),
             "SECRET_SCAN_FAILED")
 
 
@@ -404,12 +420,34 @@ def github(host: Host) -> dict:
             "operator_provenance_sha256": sha(raw)}
 
 
-def provider_network() -> dict:
+def qualification_credential(binding: dict) -> ProviderCredentialBinding:
+    """Only validated metadata selects an allowlisted public credential identity."""
+    if binding.get("version") == 1:
+        require(binding.get("provider") == "openai", "SECRET_BINDING_POLICY_INVALID")
+        key = "openai-transcription"
+    else:
+        require(type(binding.get("version")) is int and binding["version"] == 2,
+                "SECRET_BINDING_SCHEMA_INVALID")
+        key = binding.get("provider_key")
+    try:
+        require(isinstance(key, str) and key in PROVIDER_NETWORK_ENDPOINTS,
+                "SECRET_BINDING_POLICY_INVALID")
+        return provider_credential_binding(key)
+    except (ValueError, TypeError):
+        raise Blocked("SECRET_BINDING_POLICY_INVALID") from None
+
+
+def provider_network(provider_key: str = "openai-transcription") -> dict:
     # TLS handshake only. No HTTP request, authorization header or model API.
-    with socket.create_connection(("api.openai.com", 443), timeout=10) as tcp:
-        with ssl.create_default_context().wrap_socket(tcp, server_hostname="api.openai.com") as tls:
+    require(isinstance(provider_key, str) and provider_key in PROVIDER_NETWORK_ENDPOINTS,
+            "PROVIDER_NETWORK_NOT_ALLOWLISTED")
+    hostname, port = PROVIDER_NETWORK_ENDPOINTS[provider_key]
+    with socket.create_connection((hostname, port), timeout=10) as tcp:
+        with ssl.create_default_context().wrap_socket(tcp, server_hostname=hostname) as tls:
             require(bool(tls.getpeercert()), "PROVIDER_TLS_UNVERIFIED")
-    return {"PROVIDER_NETWORK": "VERIFIED", "probe": "TLS_HANDSHAKE_ONLY", "http_requests": 0}
+    return {"PROVIDER_NETWORK": "VERIFIED", "provider_key": provider_key,
+            "hostname": hostname, "port": port, "probe": "TLS_HANDSHAKE_ONLY",
+            "tls_certificate_present": True, "http_requests": 0, "credential_reads": 0}
 
 
 def load_secret_binding(host: Host) -> tuple[dict, bytes]:
@@ -422,11 +460,14 @@ def load_secret_binding(host: Host) -> tuple[dict, bytes]:
         value = json.loads(raw)
     except (TypeError, ValueError):
         raise Blocked("SECRET_BINDING_SCHEMA_INVALID") from None
-    require(type(value) is dict and set(value) == SECRET_BINDING_FIELDS,
+    require(type(value) is dict and type(value.get("version")) is int
+            and value["version"] in (1, 2), "SECRET_BINDING_SCHEMA_INVALID")
+    fields = SECRET_BINDING_FIELDS if value["version"] == 1 else SECRET_BINDING_V2_FIELDS
+    require(set(value) == fields,
             "SECRET_BINDING_SCHEMA_INVALID")
-    require(value.get("version") == 1
-            and value.get("credential_alias") == CANONICAL_CREDENTIAL_ALIAS
-            and value.get("provider") == "openai"
+    credential = qualification_credential(value)
+    source = (Path if value["version"] == 1 else PurePosixPath)("/etc/credstore.encrypted") / credential.systemd_credential_id
+    require(value.get("credential_alias") == credential.credential_alias
             and value.get("capability_scope") == ["asr"]
             and value.get("owner") == "root"
             and type(value.get("expected_owner_uid")) is int
@@ -435,7 +476,8 @@ def load_secret_binding(host: Host) -> tuple[dict, bytes]:
             and value.get("expected_owner_gid") == 0
             and value.get("expected_mode") == "0400"
             and value.get("authority_granted") is False
-            and value.get("provider_runtime_reads") == 0,
+            and value.get("provider_runtime_reads") == 0
+            and (value["version"] == 1 or type(value["provider_runtime_reads"]) is int),
             "SECRET_BINDING_POLICY_INVALID")
     state = value.get("state")
     if state == "UNBOUND_APPROVED_SLOT":
@@ -445,17 +487,19 @@ def load_secret_binding(host: Host) -> tuple[dict, bytes]:
                 and value.get("systemd_credential_id") is None
                 and value.get("encryption_key_type") is None
                 and value.get("backend_qualification_receipt_sha256") is None
-                and value.get("created_for") == "VF-EXECUTOR-05C",
+                and value.get("created_for") == (
+                    "VF-EXECUTOR-05C" if value["version"] == 1 else QUALIFICATION_V2_TASK),
                 "SECRET_BINDING_UNBOUND_STATE_INVALID")
     elif state == "BOUND_ENCRYPTED_SOURCE_PRESENT":
         locator = value.get("source_locator")
         require(value.get("source_type") == "SYSTEMD_ENCRYPTED_CREDENTIAL"
-                and locator == str(SYSTEMD_ENCRYPTED_SOURCE)
-                and Path(locator).is_absolute() and ".." not in Path(locator).parts
-                and value.get("systemd_credential_id") == SYSTEMD_CREDENTIAL_ID
+                and locator == str(source)
+                and source.is_absolute() and ".." not in source.parts
+                and value.get("systemd_credential_id") == credential.systemd_credential_id
                 and value.get("encryption_key_type") == "HOST"
                 and value.get("secret_source_present") is True
-                and value.get("created_for") == "VF-SECRET-01"
+                and value.get("created_for") == (
+                    "VF-SECRET-01" if value["version"] == 1 else QUALIFICATION_V2_TASK)
                 and isinstance(value.get("backend_qualification_receipt_sha256"), str)
                 and re.fullmatch(r"[a-f0-9]{64}",
                                  value["backend_qualification_receipt_sha256"]) is not None,
@@ -465,7 +509,7 @@ def load_secret_binding(host: Host) -> tuple[dict, bytes]:
     return value, raw
 
 
-def load_systemd_backend_receipt(expected_sha256: str) -> dict:
+def load_systemd_backend_receipt(expected_sha256: str, *, binding: dict | None = None) -> dict:
     """Validate sealed synthetic backend evidence without touching provider bytes."""
     private_path(SYSTEMD_BACKEND_RECEIPT, root_owned=True)
     raw = SYSTEMD_BACKEND_RECEIPT.read_bytes()
@@ -475,13 +519,20 @@ def load_systemd_backend_receipt(expected_sha256: str) -> dict:
         value = json.loads(raw)
     except (TypeError, ValueError):
         raise Blocked("SYSTEMD_BACKEND_RECEIPT_INVALID") from None
-    require(type(value) is dict and set(value) == SYSTEMD_BACKEND_RECEIPT_FIELDS,
+    version = 1 if binding is None else binding["version"]
+    credential = _OPENAI_CREDENTIAL if binding is None else qualification_credential(binding)
+    fields = SYSTEMD_BACKEND_RECEIPT_FIELDS if version == 1 else SYSTEMD_BACKEND_RECEIPT_V2_FIELDS
+    require(type(value) is dict and set(value) == fields,
             "SYSTEMD_BACKEND_RECEIPT_INVALID")
-    require(value == {
-        "version": 1,
-        "task": "VF-SECRET-01",
+    systemd_version = "255 (255.4-1ubuntu8.17)" if version == 1 else value.get("systemd_version")
+    require(isinstance(systemd_version, str)
+            and re.fullmatch(r"[0-9]{3}(?: \([^\r\n]{1,100}\))?", systemd_version) is not None,
+            "SYSTEMD_BACKEND_RECEIPT_INVALID")
+    expected = {
+        "version": version,
+        "task": "VF-SECRET-01" if version == 1 else QUALIFICATION_V2_TASK,
         "status": "PASS",
-        "systemd_version": "255 (255.4-1ubuntu8.17)",
+        "systemd_version": systemd_version,
         "host_key_present": True,
         "host_key_owner": "root:root",
         "host_key_mode": "0400",
@@ -490,7 +541,7 @@ def load_systemd_backend_receipt(expected_sha256: str) -> dict:
         "runner_host_key_read": False,
         "runner_host_key_write": False,
         "credential_mechanism": "LoadCredentialEncrypted",
-        "systemd_credential_id": SYSTEMD_CREDENTIAL_ID,
+        "systemd_credential_id": credential.systemd_credential_id,
         "encryption_key_type": "HOST",
         "synthetic_encrypt": "PASS",
         "name_binding": "PASS",
@@ -500,7 +551,8 @@ def load_systemd_backend_receipt(expected_sha256: str) -> dict:
         "actual_provider_credential_decrypted": False,
         "provider_runtime_reads": 0,
         "provider_calls": 0,
-        "encrypted_source_path": str(SYSTEMD_ENCRYPTED_SOURCE),
+        "encrypted_source_path": str((Path if version == 1 else PurePosixPath)(
+            "/etc/credstore.encrypted") / credential.systemd_credential_id),
         "encrypted_source_present": True,
         "encrypted_source_owner": "root:root",
         "encrypted_source_mode": "0400",
@@ -512,19 +564,28 @@ def load_systemd_backend_receipt(expected_sha256: str) -> dict:
         "runner_source_read": False,
         "runner_source_write": False,
         "runner_credstore_list": False,
-    }, "SYSTEMD_BACKEND_RECEIPT_INVALID")
+    }
+    if version == 2:
+        expected.update(provider_key=credential.provider_key, credential_alias=credential.credential_alias)
+    require(value == expected and (version == 1 or all(
+        type(value[key]) is type(item) for key, item in expected.items()
+    )), "SYSTEMD_BACKEND_RECEIPT_INVALID")
     return value
 
 
 def secret_presence(host: Host) -> dict:
     binding, raw = load_secret_binding(host)
+    credential = qualification_credential(binding)
     common = {
         "SECRET_BINDING_METADATA_PRESENT": True,
-        "credential_alias": CANONICAL_CREDENTIAL_ALIAS,
+        "credential_alias": credential.credential_alias,
         "binding_sha256": sha(raw),
         "PROVIDER_CREDENTIAL_READS": 0,
         "plaintext_read": False,
     }
+    if binding["version"] == 2:
+        common.update(binding_version=2, provider_key=credential.provider_key,
+                      backend_qualification_receipt_sha256=binding["backend_qualification_receipt_sha256"])
     if binding["state"] == "UNBOUND_APPROVED_SLOT":
         raise ProbeBlocked("BLOCKED_SECRET_SOURCE_NOT_INSTALLED", {
             **common,
@@ -535,19 +596,76 @@ def secret_presence(host: Host) -> dict:
     # The runner cannot traverse systemd's root-only credential store. Root
     # verifies source/key metadata and seals it into the strict receipt pinned
     # by the binding. Qualification never opens either protected artifact.
-    load_systemd_backend_receipt(binding["backend_qualification_receipt_sha256"])
+    load_systemd_backend_receipt(binding["backend_qualification_receipt_sha256"], binding=binding)
     return {
         **common,
         "result": "PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED",
         "SECRET_BINDING_STATE": "BOUND_ENCRYPTED_SOURCE_PRESENT",
         "SECRET_SOURCE_PRESENT": True,
         "source_type": binding["source_type"],
-        "systemd_credential_id": SYSTEMD_CREDENTIAL_ID,
+        "systemd_credential_id": credential.systemd_credential_id,
         "encryption_key_type": "HOST",
         "host_key_custody": "PASS",
         "synthetic_backend_test": "PASS",
         "future_privileged_resolver_reachable": True,
     }
+
+
+def qualification_provider_identity(secret: dict) -> dict:
+    """Exact V2 public identity carried by probes, review and promotion.
+
+    This validates evidence identifiers only; it never reads a credential.
+    """
+    require(type(secret.get("binding_version")) is int and secret["binding_version"] == 2,
+            "QUALIFICATION_PROVIDER_IDENTITY_MISMATCH")
+    credential = qualification_credential({"version": 2, "provider_key": secret.get("provider_key")})
+    require(secret.get("credential_alias") == credential.credential_alias
+            and secret.get("systemd_credential_id") == credential.systemd_credential_id
+            and secret.get("result") == "PASS_SECRET_SOURCE_PRESENT_NOT_RESOLVED"
+            and secret.get("plaintext_read") is False
+            and type(secret.get("PROVIDER_CREDENTIAL_READS")) is int
+            and secret["PROVIDER_CREDENTIAL_READS"] == 0,
+            "QUALIFICATION_PROVIDER_IDENTITY_MISMATCH")
+    for field in ("binding_sha256", "backend_qualification_receipt_sha256"):
+        require(isinstance(secret.get(field), str)
+                and re.fullmatch(r"[a-f0-9]{64}", secret[field]) is not None,
+                "QUALIFICATION_PROVIDER_IDENTITY_MISMATCH")
+    hostname, port = PROVIDER_NETWORK_ENDPOINTS[credential.provider_key]
+    return {
+        "provider_key": credential.provider_key,
+        "credential_alias": credential.credential_alias,
+        "systemd_credential_id": credential.systemd_credential_id,
+        "secret_binding_sha256": secret["binding_sha256"],
+        "backend_qualification_receipt_sha256": secret["backend_qualification_receipt_sha256"],
+        "hostname": hostname, "port": port,
+    }
+
+
+def verify_qualification_provider_identity(document: dict, secret: dict, *, probes: bool = False) -> None:
+    """No downgrade, relabeling, or cross-provider promotion of V2 evidence."""
+    if secret.get("binding_version", 1) == 1:
+        require(document.get("version", 1) == 1 and "provider_identity" not in document,
+                "QUALIFICATION_PROVIDER_IDENTITY_MISMATCH")
+        return  # Existing historical V1 artifact checks are performed by callers.
+    expected = qualification_provider_identity(secret)
+    actual = document.get("provider_identity")
+    require(type(document.get("version")) is int and document["version"] == 2
+            and document.get("task") == QUALIFICATION_V2_TASK
+            and type(actual) is dict and set(actual) == set(expected)
+            and all(type(actual[key]) is type(value) and actual[key] == value
+                    for key, value in expected.items()),
+            "QUALIFICATION_PROVIDER_IDENTITY_MISMATCH")
+    if probes:
+        gates = document.get("gates", {})
+        network, presence = gates.get("E6", {}), gates.get("E7", {})
+        require(all(network.get(key) == expected[key] for key in ("provider_key", "hostname", "port"))
+                and type(network.get("port")) is int
+                and network.get("probe") == "TLS_HANDSHAKE_ONLY"
+                and network.get("tls_certificate_present") is True
+                and type(network.get("http_requests")) is int and network["http_requests"] == 0
+                and type(network.get("credential_reads")) is int and network["credential_reads"] == 0
+                and qualification_provider_identity(presence) == expected,
+                "QUALIFICATION_PROVIDER_IDENTITY_MISMATCH")
 
 
 def fixture_mount(root: Path) -> dict:
@@ -599,6 +717,7 @@ async def check_only(host: Host, root: Path) -> dict:
 async def qualify(host: Host, root: Path) -> dict:
     results = {gate: {"status": "NOT_TESTED"} for gate in GATES}
     ledger = None
+    provider_metadata = None
     async def gate(name, action):
         try:
             data = action()
@@ -653,8 +772,21 @@ async def qualify(host: Host, root: Path) -> dict:
                     {"status": "BLOCKED", "code": "QUALIFICATION_ACCESS_NOT_SELECT_ONLY",
                      "BUDGET_RESERVED": ledger["reserved_vnd"]})
         await gate("E5", lambda: github(host))
-        await gate("E6", provider_network)
-        await gate("E7", lambda: secret_presence(host))
+        # One sealed metadata identity determines both network and presence.
+        # Metadata read is non-secret; failures occur before any TLS connection.
+        try:
+            provider_metadata = load_secret_binding(host)
+        except Exception:
+            results["E6"] = {"status": "BLOCKED", "code": "PROVIDER_BINDING_NOT_VERIFIED"}
+        if provider_metadata is not None:
+            binding, binding_raw = provider_metadata
+            credential = qualification_credential(binding)
+            await gate("E6", lambda: provider_network(credential.provider_key))
+            presence = await gate("E7", lambda: secret_presence(host))
+            if presence is not None and presence.get("binding_sha256") != sha(binding_raw):
+                results["E7"] = {"status": "BLOCKED", "code": "SECRET_BINDING_CHANGED_DURING_QUALIFICATION"}
+        else:
+            results["E7"] = {"status": "BLOCKED", "code": "PROVIDER_BINDING_NOT_VERIFIED"}
         await gate("E9", lambda: fixture_mount(root))
         await gate("E10", lambda: check_only(host, root))
         if ledger is not None and results["E10"]["status"] == "PASS":
@@ -668,6 +800,17 @@ async def qualify(host: Host, root: Path) -> dict:
         "execution_plane_qualified": False,
         "runner_identity": expected_runner_identity(host),
         "security_and_dispatch_integration": "SEPARATE_REVIEW_REQUIRED"}
+    if provider_metadata is not None and provider_metadata[0]["version"] == 2:
+        report.update(version=2, task=QUALIFICATION_V2_TASK)
+        if results["E7"]["status"] == "PASS":
+            try:
+                report["provider_identity"] = qualification_provider_identity(results["E7"])
+                if results["E6"]["status"] == "PASS":
+                    verify_qualification_provider_identity(report, results["E7"], probes=True)
+            except Blocked:
+                results["E7"] = {"status": "BLOCKED", "code": "QUALIFICATION_PROVIDER_IDENTITY_MISMATCH"}
+                report["verdict"] = "BLOCKED"
+                report.pop("provider_identity", None)
     if results["E10"]["status"] == "PASS":
         results["E10"]["EVIDENCE_RECORDER"] = "VERIFIED"
     digest = persist(root, "qualification.json", report)
@@ -685,10 +828,15 @@ def main() -> int:
         host = Host.load()
         private_path(Path(host.evidence_root), directory=True)
         with plane_lock(Path(host.lock_path)):
-            root = Path(host.evidence_root) / ("vf-secret-01-" + uuid.uuid4().hex)
+            binding, _ = load_secret_binding(host)
+            prefix = "vf-secret-01-" if binding["version"] == 1 else "vf-executor-qualification-v2-"
+            root = Path(host.evidence_root) / (prefix + uuid.uuid4().hex)
             root.mkdir(mode=0o700)
             report = asyncio.run(qualify(host, root))
-        print(json.dumps({"verdict": report["verdict"], "gates": report["gates"],
+        identity = {key: report[key] for key in ("version", "task", "provider_identity") if key in report}
+        if report.get("version") != 2:
+            identity = {}  # Preserve the historical CLI output shape.
+        print(json.dumps({**identity, "verdict": report["verdict"], "gates": report["gates"],
             "evidence_directory": root.name,
             "qualification_sha256": sha((root / "qualification.json").read_bytes()),
             "manifest_sha256": sha((root / "manifest.json").read_bytes()), **ZERO}, sort_keys=True))

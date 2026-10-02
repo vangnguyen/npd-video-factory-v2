@@ -127,6 +127,11 @@ def verify_qualification(catalog: dict, host: q.Host) -> None:
                   "probe_manifest": receipt["probe_manifest_sha256"],
                   "security_review": receipt["security_review_sha256"],
               }, "QUALIFICATION_EVIDENCE_MANIFEST_INVALID")
+    # V2 identity must survive every qualification/promotion evidence boundary.
+    # No change to transport, resolver, O2 or runtime activation semantics.
+    for document in (receipt, security, evidence):
+        q.verify_qualification_provider_identity(document, secret_binding)
+    q.verify_qualification_provider_identity(probes, secret_binding, probes=True)
 
 
 def bind_request(

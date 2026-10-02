@@ -104,6 +104,13 @@ def review(host: q.Host, root: Path, *, hook=None) -> dict:
         "provider_execution_allowlist": "EMPTY",
         **q.ZERO,
     }
+    binding, binding_raw = q.load_secret_binding(host)
+    if binding["version"] == 2:
+        secret = q.secret_presence(host)
+        q.require(secret.get("binding_sha256") == q.sha(binding_raw),
+                  "SECRET_BINDING_CHANGED_DURING_SECURITY_REVIEW")
+        report.update(version=2, task=q.QUALIFICATION_V2_TASK,
+                      provider_identity=q.qualification_provider_identity(secret))
     digest = q.persist(root, "security-review.json", report)
     return {"report": report, "security_review_sha256": digest}
 
