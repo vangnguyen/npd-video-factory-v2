@@ -154,6 +154,11 @@ class RenderCreateRequest(StrictModel):
     actor_ref: str = Field(default="studio-user", min_length=1, max_length=160)
 
 
+class NarrationReflowRequest(StrictModel):
+    expected_timeline_version: int = Field(ge=1)
+    review_render_id: str = Field(pattern=r"^rnd_[A-Za-z0-9_-]{4,60}$")
+
+
 class FinalRenderCreateRequest(RenderCreateRequest):
     profile: Literal["vertical-1080x1920", "landscape-1920x1080", "square-1080x1080"] = (
         "vertical-1080x1920"

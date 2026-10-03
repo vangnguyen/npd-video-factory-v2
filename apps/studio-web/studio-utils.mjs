@@ -109,6 +109,10 @@ export function describeProductionRender(render) {
   }
   if (render.status === "stale") return { label: "Render đã cũ", tone: "warning", terminal: true };
   if (render.status === "cancelled") return { label: "Render đã hủy", tone: "muted", terminal: true };
+  if (render.error_code === "SUBTITLE_LAYOUT_OVERFLOW") return {
+    label: "Phụ đề tràn khung · chia cue hoặc chỉnh cỡ chữ/safe margin rồi render review lại",
+    tone: "danger", terminal: true,
+  };
   return { label: `Render lỗi · ${render.error_code ?? "UNKNOWN"}`, tone: "danger", terminal: true };
 }
 

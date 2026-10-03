@@ -4,6 +4,7 @@
   "title": "NPD Video Factory V2 Timeline",
   "type": "object",
   "additionalProperties": false,
+  "allOf": [{"if":{"properties":{"schema_version":{"const":"1.0"}}},"then":{"properties":{"tracks":{"items":{"properties":{"clips":{"items":{"properties":{"kind":{"not":{"const":"image"}}}}}}}}}}}],
   "required": [
     "schema_version",
     "width",
@@ -17,7 +18,7 @@
     "publish_requested"
   ],
   "properties": {
-    "schema_version": { "const": "1.0" },
+    "schema_version": { "enum": ["1.0", "1.1"] },
     "width": { "type": "integer", "minimum": 16, "maximum": 7680 },
     "height": { "type": "integer", "minimum": 16, "maximum": 7680 },
     "fps": { "type": "number", "exclusiveMinimum": 0, "maximum": 120 },
@@ -92,6 +93,7 @@
         "clip_id": { "type": "string", "pattern": "^clip_[A-Za-z0-9_-]{4,60}$" },
         "kind": {
           "enum": [
+            "image",
             "source",
             "broll",
             "overlay",
@@ -112,7 +114,7 @@
           ]
         },
         "source_start": { "type": "number", "minimum": 0 },
-        "source_end": { "type": "number", "exclusiveMinimum": 0 },
+        "source_end": { "type": ["number", "null"], "exclusiveMinimum": 0 },
         "timeline_start": { "type": "number", "minimum": 0 },
         "duration": { "type": "number", "exclusiveMinimum": 0 },
         "speed": { "type": "number", "exclusiveMinimum": 0, "maximum": 8 },

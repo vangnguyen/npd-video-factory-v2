@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   AbsoluteFill,
   Audio,
@@ -8,6 +8,10 @@ import {
   interpolate,
   useCurrentFrame,
   useVideoConfig,
+  delayRender,
+  continueRender,
+  cancelRender,
+  Freeze,
 } from "remotion";
 
 import type {TimelineRenderManifest, TimelineRendererInputProps} from "./types";
@@ -29,11 +33,24 @@ export const activeSubtitleWordIndex = (
   (word) => seconds >= word.start_seconds && seconds < word.end_seconds,
 );
 
+export const assertSubtitleFits = (fullHeight: number, lineHeight: number, padding: number, maxLines: number): void => {
+  if (![fullHeight, lineHeight, padding, maxLines].every(Number.isFinite)
+      || lineHeight <= 0 || maxLines < 1 || padding < 0
+      || fullHeight > lineHeight * maxLines + padding + 2) {
+    // Never include user narration or private inputs in render exceptions.
+    throw new Error("SUBTITLE_LAYOUT_OVERFLOW: split the cue or adjust its approved style");
+  }
+};
+
 const VisualLayer: React.FC<{
   clip: TimelineRenderManifest["visual_clips"][number];
 }> = ({clip}) => {
   const {fps} = useVideoConfig();
-  const playbackRate = Math.max(0.05, (clip.source_end - clip.source_start) / clip.duration);
+  const frame = useCurrentFrame();
+  const fade = ["fade","crossfade"].includes(clip.transition_in?.kind ?? "") && (clip.transition_in?.duration_seconds ?? 0) > 0
+    ? interpolate(frame, [0, Math.max(1, Math.round(fps*(clip.transition_in?.duration_seconds ?? 0)))], [0,1], {extrapolateLeft:"clamp",extrapolateRight:"clamp"}) : 1;
+  const playbackRate = clip.type === "video" && clip.source_end !== null
+    ? Math.max(0.05, (clip.source_end - clip.source_start) / clip.duration) : 1;
   const mediaStyle: React.CSSProperties = {
     position: "absolute",
     width: `${100 / clip.crop.width}%`,
@@ -43,7 +60,7 @@ const VisualLayer: React.FC<{
     objectFit: clip.fit,
     transform: `translate(${clip.transform.x * 100}%, ${clip.transform.y * 100}%) scale(${clip.transform.scale}) rotate(${clip.transform.rotation_degrees}deg)`,
     transformOrigin: "center",
-    opacity: clip.opacity,
+    opacity: clip.opacity * fade,
   };
   return (
     <AbsoluteFill style={{overflow: "hidden"}}>
@@ -52,7 +69,7 @@ const VisualLayer: React.FC<{
           src={clip.uri}
           muted
           startFrom={Math.round(clip.source_start * fps)}
-          endAt={Math.round(clip.source_end * fps)}
+          endAt={Math.round((clip.source_end ?? 0) * fps)}
           playbackRate={playbackRate}
           style={mediaStyle}
         />
@@ -69,6 +86,25 @@ const SubtitleLayer: React.FC<{
 }> = ({cue, style}) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();
+  const subtitle = useRef<HTMLDivElement>(null);
+  const [layoutHandle] = useState(() => delayRender("Verify full subtitle layout"));
+  useEffect(() => {
+    let cancelled = false;
+    const verify = async () => {
+      await document.fonts.ready;
+      if (cancelled) return;
+      const element = subtitle.current;
+      if (!element) throw new Error("SUBTITLE_LAYOUT_UNAVAILABLE");
+      const measured = getComputedStyle(element);
+      assertSubtitleFits(element.scrollHeight, Number.parseFloat(measured.lineHeight),
+        Number.parseFloat(measured.paddingTop) + Number.parseFloat(measured.paddingBottom), style.max_lines);
+      continueRender(layoutHandle);
+    };
+    void verify().catch((error: unknown) => {
+      if (!cancelled) cancelRender(error instanceof Error ? error : new Error("SUBTITLE_LAYOUT_UNAVAILABLE"));
+    });
+    return () => {cancelled = true;};
+  }, [layoutHandle, cue, style, width, height]);
   const now = cue.start_seconds + frame / fps;
   const activeWord = activeSubtitleWordIndex(cue, now);
   const scale = Math.min(width / 1080, height / 1920);
@@ -91,6 +127,8 @@ const SubtitleLayer: React.FC<{
   }];
   return (
     <div
+      ref={subtitle}
+      data-subtitle-cue={cue.cue_id}
       style={{
         position: "absolute",
         left: `${style.safe_margin_percent}%`,
@@ -110,10 +148,8 @@ const SubtitleLayer: React.FC<{
           ? `translateY(-50%) scale(${animationScale})`
           : `scale(${animationScale})`,
         transformOrigin: "center",
-        overflow: "hidden",
-        display: "-webkit-box",
-        WebkitBoxOrient: "vertical",
-        WebkitLineClamp: style.max_lines,
+        // Measure the complete cue after fonts load. Do not silently line-clamp
+        // or ellipsize words while the audio continues to read them.
         overflowWrap: "anywhere",
         textShadow: "0 2px 8px rgba(0,0,0,0.95)",
       }}
@@ -142,13 +178,13 @@ export const TimelineRender: React.FC<TimelineRendererInputProps> = ({manifest})
     <AbsoluteFill style={{backgroundColor: "#05080d"}}>
       {[...manifest.visual_clips]
         .sort((left, right) => left.track_order - right.track_order)
-        .map((clip) => (
+        .map((clip, index, clips) => (
           <Sequence
             key={clip.clip_id}
             from={Math.round(clip.timeline_start * fps)}
-            durationInFrames={Math.max(1, Math.round(clip.duration * fps))}
+            durationInFrames={Math.max(1, Math.round((clip.duration + crossfadeTail(clip, clips[index+1])) * fps))}
           >
-            <VisualLayer clip={clip} />
+            <HeldVisual clip={clip} hold={crossfadeTail(clip, clips[index+1]) > 0} />
           </Sequence>
         ))}
 
@@ -176,4 +212,19 @@ export const TimelineRender: React.FC<TimelineRendererInputProps> = ({manifest})
       />
     </AbsoluteFill>
   );
+};
+
+const HeldVisual: React.FC<{clip: TimelineRenderManifest["visual_clips"][number]; hold:boolean}> = ({clip,hold}) => {
+  const frame=useCurrentFrame(); const {fps}=useVideoConfig();
+  const end=Math.max(1,Math.round(clip.duration*fps));
+  // Do not read extra source-video frames beyond the validated source window.
+  return hold && frame>=end ? <Freeze frame={end-1}><VisualLayer clip={clip}/></Freeze> : <VisualLayer clip={clip}/>;
+};
+
+export const crossfadeTail = (clip: TimelineRenderManifest["visual_clips"][number], next?: TimelineRenderManifest["visual_clips"][number]): number => {
+  // Keep only contiguous same-track predecessor visible under the incoming
+  // crossfade. Explicit historical fade still means fade-through-background.
+  if (!next || next.track_order !== clip.track_order || next.transition_in?.kind !== "crossfade"
+      || Math.abs(next.timeline_start-clip.timeline_start-clip.duration)>0.001) return 0;
+  return Math.min(next.duration, next.transition_in.duration_seconds);
 };

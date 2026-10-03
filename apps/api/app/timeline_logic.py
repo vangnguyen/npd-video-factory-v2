@@ -89,7 +89,8 @@ def build_initial_timeline(
                 metadata=metadata,
             )
         )
-        audio_clips.append(
+        if analysis.source_media.audio_codec:
+            audio_clips.append(
             TimelineClip(
                 clip_id=_new_id("clip"),
                 kind="original_audio",
@@ -131,6 +132,14 @@ def build_initial_timeline(
                             "language": analysis.transcript.language,
                             "confidence": segment.confidence,
                             "editable_in": "V2-08",
+                            # Retain measured provider intervals only. Partial words at a
+                            # cut are omitted, never stretched/repartitioned to fill a cue.
+                            "timing_source": "provider_native_word_intervals",
+                            "measured_source_words": [{"text": word.text,
+                                "start_seconds": word.start_seconds,
+                                "end_seconds": word.end_seconds}
+                                for word in segment.words
+                                if overlap_start <= word.start_seconds < word.end_seconds <= overlap_end],
                         },
                     )
                 )
@@ -158,16 +167,17 @@ def build_initial_timeline(
             source_end = min(float(media_evidence.duration_seconds or duration), duration)
             if source_end <= 0:
                 source_end = duration
+            is_image = asset.content_type.startswith("image/")
             broll_clips.append(
                 TimelineClip(
                     clip_id=_new_id("clip"),
-                    kind=("generated" if media_evidence.source_type.startswith("ai_") else "broll"),
+                    kind="image" if is_image else ("generated" if media_evidence.source_type.startswith("ai_") else "broll"),
                     label=item.broll.search_query[:120],
                     asset_id=asset.asset_id,
                     source_start=0,
-                    source_end=round(source_end, 6),
+                    source_end=None if is_image else round(source_end, 6),
                     timeline_start=round(start, 6),
-                    duration=round(source_end, 6),
+                    duration=round(duration if is_image else source_end, 6),
                     metadata={
                         "media_plan_id": media_plan.media_plan_id,
                         "media_plan_item_id": item.media_plan_item_id,
@@ -226,6 +236,7 @@ def build_initial_timeline(
         ),
     ]
     return TimelineSnapshot(
+        schema_version="1.1" if any(clip.kind == "image" for clip in broll_clips) else "1.0",
         duration_seconds=main_duration,
         tracks=tracks,
         metadata={
@@ -276,6 +287,8 @@ def apply_operations(
                 track["clips"].pop(clip_index)
                 target["clips"].append(clip)
         elif operation.type == "trim":
+            if clip["kind"] == "image":
+                raise TimelineEditError("images use display duration; edit the storyboard duration")
             source_start = operation.source_start if operation.source_start is not None else clip["source_start"]
             source_end = operation.source_end if operation.source_end is not None else clip["source_end"]
             if source_end <= source_start:
@@ -296,10 +309,10 @@ def apply_operations(
             right = copy.deepcopy(clip)
             right["clip_id"] = _new_id("clip")
             right["label"] = f"{clip['label']} · phần 2"
-            right["source_start"] = round(source_split, 6)
+            right["source_start"] = 0 if clip["kind"] == "image" else round(source_split, 6)
             right["timeline_start"] = round(split_at, 6)
             right["duration"] = round(end - split_at, 6)
-            clip["source_end"] = round(source_split, 6)
+            clip["source_end"] = None if clip["kind"] == "image" else round(source_split, 6)
             clip["duration"] = round(left_duration, 6)
             track["clips"].insert(clip_index + 1, right)
         elif operation.type == "delete":
@@ -335,6 +348,8 @@ def apply_operations(
             if operation.transform is not None:
                 clip["transform"] = operation.transform.model_dump(mode="json")
             if operation.speed is not None:
+                if clip["kind"] == "image":
+                    raise TimelineEditError("images have no source playback speed")
                 clip["speed"] = operation.speed
                 clip["duration"] = round(
                     (float(clip["source_end"]) - float(clip["source_start"])) / operation.speed,

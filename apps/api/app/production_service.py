@@ -80,6 +80,10 @@ class RenderCancelledError(RuntimeError):
     pass
 
 
+class SubtitleLayoutError(RuntimeError):
+    """Stable renderer diagnosis with no user text or internal browser details."""
+
+
 class RemotionTimelineRenderEngine:
     def __init__(self, *, renderer_url: str, timeout_seconds: float):
         self.renderer_url = renderer_url.rstrip("/")
@@ -113,6 +117,8 @@ class RemotionTimelineRenderEngine:
                 body = response.json()
             except ValueError:
                 body = {}
+            if body.get("error_code") == "SUBTITLE_LAYOUT_OVERFLOW":
+                raise SubtitleLayoutError("Split the subtitle cue or adjust its approved style before rendering.")
             message = str(body.get("message") or body.get("error", {}).get("message") or f"HTTP {response.status_code}")
             raise RuntimeError(f"Remotion timeline render failed: {message}")
         result = response.json()
@@ -163,6 +169,7 @@ class ProductionPackageService:
         timeline = await self.timeline_repository.get_timeline(project_id)
         if timeline is None:
             raise KeyError("timeline")
+        await self._require_current_content(timeline)
         if payload.expected_timeline_version is not None and payload.expected_timeline_version != timeline.current_version:
             from .production_repository import ProductionConflictError
 
@@ -175,7 +182,7 @@ class ProductionPackageService:
         package, _created = await self.repository.create_or_refresh_package(
             timeline=timeline,
             cues=cues,
-            style=SubtitleStyle(),
+            style=SubtitleStyle(animation="none") if timeline.source_content_version_id else SubtitleStyle(),
             mix_config=MixConfig(),
             provider_status=audio_provider_status(self.settings),
             actor_ref=payload.actor_ref,
@@ -184,6 +191,14 @@ class ProductionPackageService:
 
     async def get(self, project_id: str) -> ProductionPackageRead | None:
         return await self.repository.get_package(project_id)
+
+    async def _require_current_content(self, timeline):
+        if timeline and timeline.source_content_version_id:
+            from .content_service import ContentService
+            from .repositories import PlatformRepository
+            content = await ContentService(PlatformRepository(self.repository.session_factory)).latest(timeline.project_id)
+            if content is None or content.project_version_id != timeline.source_content_version_id:
+                raise ProductionContractError("CONTENT_VERSION_STALE: rebuild timeline before rendering")
 
     async def replace_subtitles(
         self, project_id: str, payload: SubtitleReplaceRequest
@@ -194,6 +209,8 @@ class ProductionPackageService:
         timeline = await self.timeline_repository.get_timeline(project_id)
         if timeline is None:
             raise KeyError("timeline")
+        if timeline.source_content_version_id and payload.style.animation == "word_highlight" and any(not c.words for c in payload.cues):
+            raise ProductionContractError("WORD_ALIGNMENT_UNAVAILABLE: select segment captions; word highlight requires measured words")
         validate_subtitles(payload.cues, payload.style, timeline.snapshot.duration_seconds)
         return await self.repository.replace_subtitles(
             project_id=project_id,
@@ -213,7 +230,9 @@ class ProductionPackageService:
             if asset is None or asset.project_id != project_id:
                 raise ProductionContractError("configured music asset was not found in this project")
             validate_music_rights(asset)
-        if not payload.config.voice.enabled and payload.config.music.asset_id is None:
+        timeline = await self.timeline_repository.get_timeline(project_id)
+        has_original = timeline and any(t.kind == "original_audio" and not t.muted and not t.disabled and t.clips for t in timeline.snapshot.tracks)
+        if not payload.config.voice.enabled and payload.config.music.asset_id is None and not has_original:
             raise ProductionContractError("audio mix must enable narration or configure a licensed music asset")
         return await self.repository.replace_audio_mix(
             project_id=project_id,
@@ -226,6 +245,7 @@ class ProductionPackageService:
         )
 
     async def enqueue_review(self, project_id: str, payload: RenderCreateRequest) -> RenderJobRead:
+        await self._require_current_content(await self.timeline_repository.get_timeline(project_id))
         if payload.profile != "review-540x960":
             raise ProductionContractError("review render must use the review-540x960 profile")
         render = await self.repository.create_render(
@@ -243,6 +263,7 @@ class ProductionPackageService:
     async def enqueue_final(
         self, project_id: str, payload: FinalRenderCreateRequest
     ) -> RenderJobRead:
+        await self._require_current_content(await self.timeline_repository.get_timeline(project_id))
         render = await self.repository.create_render(
             project_id=project_id,
             expected_timeline_version=payload.expected_timeline_version,
@@ -259,6 +280,26 @@ class ProductionPackageService:
     async def get_render(self, project_id: str, render_id: str) -> RenderJobRead | None:
         render = await self.repository.get_render(render_id)
         return render if render and render.project_id == project_id else None
+
+    async def reflow_narration(self, project_id, payload, *, actor_ref):
+        from .narration_pacing import reflow_snapshot
+        from .production_repository import ProductionConflictError
+        timeline = await self.timeline_repository.get_timeline(project_id)
+        render = await self.get_render(project_id, payload.review_render_id)
+        package = await self.repository.get_package(project_id)
+        if not timeline or not render or not package:
+            raise KeyError("review-render")
+        await self._require_current_content(timeline)
+        if (timeline.current_version != payload.expected_timeline_version or render.timeline_version != timeline.current_version
+            or render.subtitle_version != package.subtitle.version or render.audio_version != package.audio_mix.version):
+            raise ProductionConflictError(entity="reflow-source",expected=payload.expected_timeline_version,actual=timeline.current_version)
+        if render.render_kind != "review" or render.status != "awaiting_review" or render.qc_status != "passed":
+            raise ProductionContractError("MEASURED_REVIEW_REQUIRED")
+        snapshot = reflow_snapshot(timeline.snapshot, render.manifest.get("narration", {}))
+        return await self.timeline_repository.commit_mutation(project_id=project_id,
+            expected_version=payload.expected_timeline_version, snapshot=snapshot,
+            mutation={"type":"measured-narration-reflow", "review_render_id":render.render_id,
+                "approval_required":True,"word_alignment":"NOT_AVAILABLE"}, actor_ref=actor_ref)
 
     async def cancel_render(self, project_id: str, render_id: str, actor_ref: str) -> RenderJobRead | None:
         return await self.repository.cancel_render(project_id, render_id, actor_ref)
@@ -340,7 +381,7 @@ class ProductionRenderProcessor:
             asset_ids = {
                 clip.asset_id
                 for track in snapshot.tracks
-                if track.type == "video" and not track.disabled
+                if (track.type == "video" or (track.kind == "original_audio" and not track.muted)) and not track.disabled
                 for clip in track.clips
                 if not clip.disabled and clip.asset_id
             }
@@ -355,6 +396,9 @@ class ProductionRenderProcessor:
                 suffix = Path(asset.filename).suffix[:12] or ".bin"
                 path = workdir / f"{asset.asset_id}{suffix}"
                 await self.object_storage.download_file(object_key=asset.object_key, destination=path)
+                from .object_storage import sha256_file
+                if sha256_file(path) != asset.checksum_sha256:
+                    raise ProductionContractError("render asset bytes changed after registration")
                 asset_paths[asset.asset_id] = (asset, path)
             timeline_qc = validate_timeline_renderability(
                 snapshot, available_asset_ids=set(asset_paths)
@@ -369,15 +413,38 @@ class ProductionRenderProcessor:
 
             await self.repository.set_render_progress(render_id, 25)
             narration_path = workdir / "narration.wav"
-            narration_manifest = await self.audio_engine.synthesize_narration(
+            plan = snapshot.metadata.get("narration_plan")
+            synthesis = self.audio_engine.synthesize_narration
+            extra = {}
+            if plan and hasattr(self.audio_engine, "synthesize_planned_narration"):
+                synthesis = self.audio_engine.synthesize_planned_narration
+                extra["plan"] = plan
+            narration_manifest = await synthesis(
                 self.tts_provider,
                 cues=subtitles.cues,
                 config=audio_mix.config,
                 duration_seconds=snapshot.duration_seconds,
                 output_path=narration_path,
                 workdir=workdir,
+                **extra,
             )
+            if narration_manifest.get("caption_schedule"):
+                from .production_models import SubtitleCue
+                # Render the explicitly labeled estimated segment schedule; do
+                # not change stored words/text or invent an alignment capability.
+                subtitles = subtitles.model_copy(update={"cues":[SubtitleCue.model_validate(c)
+                    for c in narration_manifest["caption_schedule"]]})
+                subtitle_qc = validate_subtitles(subtitles.cues, subtitles.style, snapshot.duration_seconds)
             await self._check_cancelled(render_id)
+            originals = [(clip, asset_paths[clip.asset_id][1])
+                for track in snapshot.tracks if track.kind == "original_audio" and not track.muted and not track.disabled
+                for clip in track.clips if not clip.disabled and clip.asset_id in asset_paths]
+            if originals:
+                combined = workdir / "narration-and-original.wav"
+                narration_manifest["original_audio"] = await self.audio_engine.mix_original(
+                    narration_path=narration_path, clips=originals, duration_seconds=snapshot.duration_seconds,
+                    gain_db=audio_mix.config.original_audio_gain_db or 0, output_path=combined)
+                narration_path = combined
             mixed_audio_path = workdir / "audio-mix.wav"
             mix_manifest = await self.audio_engine.mix(
                 narration_path=narration_path,
@@ -439,6 +506,7 @@ class ProductionRenderProcessor:
             await self.repository.set_render_progress(render_id, 94)
             supporting_assets: dict[str, str] = {}
             for path, asset_class, kind, content_type in (
+                (workdir / "narration.wav", "render", "narration-track", "audio/wav"),
                 (mixed_audio_path, "render", "audio-mix", "audio/wav"),
                 (subtitle_path, "metadata", "subtitle-srt", "application/x-subrip"),
                 (qc_path, "metadata", "full-qc-report", "application/json"),
@@ -491,6 +559,11 @@ class ProductionRenderProcessor:
             return failed
         except TTSNotConfiguredError as exc:
             failed = await self.repository.fail_render(render_id, code="TTS_NOT_CONFIGURED", reason=str(exc))
+            if failed is None:
+                raise
+            return failed
+        except SubtitleLayoutError as exc:
+            failed = await self.repository.fail_render(render_id, code="SUBTITLE_LAYOUT_OVERFLOW", reason=str(exc))
             if failed is None:
                 raise
             return failed

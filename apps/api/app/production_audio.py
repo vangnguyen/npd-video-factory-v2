@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import math
 import struct
 import sys
@@ -98,8 +99,83 @@ class DeterministicWaveTTSProvider:
 
 
 class AudioMixEngine:
+    async def synthesize_planned_narration(self, provider, *, cues, config, duration_seconds,
+                                         output_path, workdir, plan):
+        """Sentence-level TTS, separately scheduled captions. No automatic fit speedup."""
+        from .content_service import canonical_bytes
+        from .production_logic import ProductionContractError
+        sample_rate = config.sample_rate
+        master = array("h", [0]) * int(round(duration_seconds*sample_rate))
+        if not config.voice.enabled:
+            _write_pcm16(output_path, master, sample_rate)
+            return {"provider":"disabled", "timing":[], "cue_count":0}
+        # Cue order must still represent the exact plan, not an edited/stale script.
+        expected = " ".join(" ".join(u["text"].split()) for u in plan["units"])
+        actual = " ".join(" ".join(c.text.split()) for c in cues)
+        if expected != actual or len(cues) != sum(len(u["scene_indices"]) for u in plan["units"]):
+            raise ProductionContractError("NARRATION_PLAN_CHANGED: rebuild storyboard after caption text/order edit")
+        timing, captions, cue_offset, identity = [], [], 0, {}
+        for index, unit in enumerate(plan["units"]):
+            raw, normalized = workdir/f"unit-{index:03d}-raw.wav", workdir/f"unit-{index:03d}-normalized.wav"
+            voice = await provider.synthesize(text=unit["text"], language=config.voice.language, output_path=raw)
+            await self._normalize_chunk(raw, normalized, speed=config.voice.speed)
+            samples, rate = _read_pcm16(normalized)
+            if rate != sample_rate:
+                raise ProductionContractError("PCM_SAMPLE_RATE_MISMATCH")
+            samples = _trim_activity(samples)
+            duration = len(samples)/rate
+            if duration <= 0:
+                raise ProductionContractError("NARRATION_PCM_EMPTY")
+            group = cues[cue_offset:cue_offset+len(unit["scene_indices"])]
+            cue_offset += len(group)
+            start, slot_end = group[0].start_seconds, group[-1].end_seconds
+            if start+duration > slot_end+0.002 or start+duration > duration_seconds+0.002:
+                raise ProductionContractError("NARRATION_DURATION_ADJUSTMENT_REQUIRED: audio longer than editorial slot; no truncation/speedup")
+            first_frame = int(round(start*rate))
+            if first_frame+len(samples) > len(master):
+                raise ProductionContractError("NARRATION_OUT_OF_AUDIO_BOUNDS")
+            for offset, sample in enumerate(samples):
+                master[first_frame+offset] = max(-32768,min(32767,master[first_frame+offset]+sample))
+            timing.append({"unit_id":unit["unit_id"], "cue_ids":[c.cue_id for c in group],
+                "start_seconds":start, "end_seconds":start+duration, "slot_end_seconds":slot_end,
+                "rendered_audio_duration_seconds":duration, "source_audio_duration_seconds":voice.duration_seconds,
+                "text_sha256":unit["text_sha256"], "applied_timing_speedup":1,
+                "audio_duration_source":"decoded_pcm_sample_count", "placement_source":"editorial_unit_schedule",
+                "word_alignment":"NOT_AVAILABLE", "measured_word_timestamps":False, "audible":True})
+            # Segment-cue estimates only. Never expose these as word timestamps.
+            total = sum(len(c.text.split()) for c in group)
+            cursor = start
+            for cue in group:
+                end = cursor+duration*len(cue.text.split())/total
+                captions.append({**cue.model_dump(mode="json"), "start_seconds":cursor,
+                    "end_seconds":end,"words":[]})
+                cursor = end
+            identity = {"provider":voice.provider, "voice":voice.voice,"model":getattr(provider,"model",None),
+                "adapter":type(provider).__name__,"configured_rate":getattr(provider,"rate",None),
+                "configured_speed":config.voice.speed,"human_quality_accepted":False}
+        _write_pcm16(output_path, master, sample_rate)
+        if not any(abs(s)>=PCM_ACTIVITY_THRESHOLD for s in master):
+            raise ProductionContractError("NARRATION_PCM_NOT_AUDIBLE")
+        return {**identity, "plan_sha256":hashlib.sha256(canonical_bytes(plan)).hexdigest(),
+            "cue_count":len(cues),"unit_count":len(timing),"duration_seconds":len(master)/sample_rate,
+            "timing":timing,"caption_schedule":captions,
+            "caption_timing_source":"estimated_editorial_segment_schedule_NOT_word_alignment"}
+
     def __init__(self, *, ffmpeg_path: str = "ffmpeg"):
         self.ffmpeg_path = ffmpeg_path
+
+    async def mix_original(self, *, narration_path, clips, duration_seconds, gain_db, output_path):
+        command = [self.ffmpeg_path, "-hide_banner", "-loglevel", "error", "-y", "-i", str(narration_path)]
+        filters, labels = [], ["[0:a]"]
+        for index, (clip, path) in enumerate(clips, 1):
+            command += ["-ss", str(clip.source_start), "-t", str(clip.source_end-clip.source_start), "-i", str(path)]
+            delay = round(clip.timeline_start*1000)
+            filters.append(f"[{index}:a]atempo={clip.speed},volume={gain_db}dB,volume={clip.volume},adelay={delay}|{delay}[orig{index}]")
+            labels.append(f"[orig{index}]")
+        filters.append("".join(labels)+f"amix=inputs={len(labels)}:normalize=0,apad,atrim=0:{duration_seconds}[out]")
+        command += ["-filter_complex", ";".join(filters), "-map", "[out]", "-ac", "1", "-ar", "48000", "-c:a", "pcm_s16le", str(output_path)]
+        await _run(command, "original audio mix")
+        return {"source": "validated_original_video_audio", "clip_count": len(clips), "gain_db": gain_db}
 
     async def synthesize_narration(
         self,
@@ -115,6 +191,14 @@ class AudioMixEngine:
         total_frames = int(round(duration_seconds * sample_rate))
         master = array("h", [0]) * total_frames
         timing: list[dict[str, Any]] = []
+        provider_identity: dict[str, Any] = {}
+        previous_end = 0.0
+        if len({cue.cue_id for cue in cues}) != len(cues):
+            raise ValueError("duplicate narration cue identity")
+        for cue in cues:
+            if cue.start_seconds < previous_end or cue.end_seconds > duration_seconds or cue.start_seconds >= cue.end_seconds:
+                raise ValueError("narration cues must be ordered, positive and timeline bounded")
+            previous_end = cue.end_seconds
         if not config.voice.enabled:
             _write_pcm16(output_path, master, sample_rate)
             return {
@@ -128,11 +212,15 @@ class AudioMixEngine:
         for index, cue in enumerate(cues):
             raw = workdir / f"voice-{index:03d}-raw.wav"
             normalized = workdir / f"voice-{index:03d}-normalized.wav"
-            await provider.synthesize(
+            voice_result = await provider.synthesize(
                 text=cue.text,
                 language=config.voice.language,
                 output_path=raw,
             )
+            provider_identity = {"provider": voice_result.provider, "voice": voice_result.voice,
+                "model": getattr(provider, "model", None), "adapter": type(provider).__name__,
+                "configured_rate": getattr(provider, "rate", None), "configured_speed": config.voice.speed,
+                "human_quality_accepted": False}
             await self._normalize_chunk(raw, normalized, speed=config.voice.speed)
             samples, rate = _read_pcm16(normalized)
             if rate != sample_rate:
@@ -140,6 +228,7 @@ class AudioMixEngine:
             samples = _trim_activity(samples)
             slot_seconds = cue.end_seconds - cue.start_seconds
             chunk_seconds = len(samples) / sample_rate
+            speedup = 1.0
             if chunk_seconds > slot_seconds:
                 speedup = chunk_seconds / max(0.08, slot_seconds - 0.02)
                 if speedup > config.voice.max_timing_adjustment:
@@ -167,6 +256,14 @@ class AudioMixEngine:
                     "end_seconds": round(cue.start_seconds + chunk_seconds, 3),
                     "slot_end_seconds": cue.end_seconds,
                     "audible": True,
+                    "text_sha256": hashlib.sha256(cue.text.encode("utf-8")).hexdigest(),
+                    "source_audio_duration_seconds": voice_result.duration_seconds,
+                    "rendered_audio_duration_seconds": chunk_seconds,
+                    "applied_timing_speedup": speedup,
+                    "audio_duration_source": "decoded_pcm_sample_count",
+                    "placement_source": "user_timeline_scene_cue",
+                    "word_alignment": "NOT_AVAILABLE",
+                    "measured_word_timestamps": False,
                 }
             )
 
@@ -174,8 +271,7 @@ class AudioMixEngine:
         if not any(abs(sample) >= PCM_ACTIVITY_THRESHOLD for sample in master):
             raise ValueError("narration output contains no audible samples")
         return {
-            "provider": getattr(provider, "voice", provider.__class__.__name__),
-            "voice": config.voice.voice,
+            **provider_identity,
             "cue_count": len(timing),
             "duration_seconds": round(len(master) / sample_rate, 3),
             "timing": timing,
@@ -321,10 +417,12 @@ def _read_pcm16(path: Path, *, allow_stereo: bool = False) -> tuple[array, int]:
 
 
 def _trim_activity(samples: array) -> array:
-    active = [index for index, sample in enumerate(samples) if abs(sample) >= PCM_ACTIVITY_THRESHOLD]
-    if not active:
+    if not any(abs(sample) >= PCM_ACTIVITY_THRESHOLD for sample in samples):
         raise ValueError("TTS chunk contains no audible samples")
-    return samples[max(0, active[0] - 480) : min(len(samples), active[-1] + 481)]
+    # Preserve quiet leading/trailing phonemes. Only exact digital silence is
+    # removed; no amplitude threshold may cut a spoken word to fit a scene.
+    nonzero = [index for index, sample in enumerate(samples) if sample]
+    return samples[max(0, nonzero[0] - 480) : min(len(samples), nonzero[-1] + 481)]
 
 
 def _write_pcm16(path: Path, samples: array, sample_rate: int) -> None:

@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     app_env: str = "development"
+    content_generation_provider: str = "contract"
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     database_url: str = "postgresql+asyncpg://video_factory:development-only@postgres:5432/video_factory"
@@ -308,6 +309,10 @@ class Settings(BaseSettings):
             raise ValueError("deterministic analytics fixtures must be disabled in production")
         if self.transcription_provider not in {"fixture", "contract", "openai", "assemblyai"}:
             raise ValueError("TRANSCRIPTION_PROVIDER must be fixture, contract, openai or assemblyai")
+        if self.content_generation_provider not in {"fixture", "contract"}:
+            raise ValueError("CONTENT_GENERATION_PROVIDER must be contract or offline fixture")
+        if self.app_env.lower() == "production" and self.content_generation_provider == "fixture":
+            raise ValueError("content generation fixture must be disabled in production")
         if self.auto_edit_signal_provider not in {"fixture", "ffmpeg"}:
             raise ValueError("AUTO_EDIT_SIGNAL_PROVIDER must be fixture or ffmpeg")
         if self.vision_provider not in {"fixture", "contract", "openai"}:

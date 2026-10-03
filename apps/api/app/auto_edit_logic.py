@@ -28,9 +28,9 @@ def _clamp(value: float) -> float:
 
 
 def build_scenes(
-    *, duration: float, signals: MediaSignals, transcript: DownstreamTranscript
+    *, duration: float, signals: MediaSignals, transcript: DownstreamTranscript | None
 ) -> list[dict[str, Any]]:
-    provider_transcript = transcript.value
+    segments = transcript.value.segments if transcript is not None else ()
     boundary_values = sorted(
         {round(float(timestamp), 6) for timestamp, _ in signals.shot_boundaries if 0 < timestamp < duration}
     )
@@ -41,7 +41,7 @@ def build_scenes(
             continue
         matching = [
             segment
-            for segment in provider_transcript.segments
+            for segment in segments
             if _overlap(start, end, segment.start_seconds, segment.end_seconds) > 0
         ]
         text = " ".join(segment.text for segment in matching).strip()

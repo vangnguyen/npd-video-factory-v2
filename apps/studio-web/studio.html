@@ -48,6 +48,38 @@
           </div>
         </header>
 
+        <section id="multi-input-workbench" class="timeline-panel">
+          <h2>Project đa đầu vào · MVP-1 dev</h2>
+          <p>Ảnh/phối cảnh, video và idea/prompt/script dùng chung project. Provider thật chưa được cấp quyền. Template nội bộ không phải AI video.</p>
+          <form id="mvp-project-form"><label>Tên project <input id="mvp-project-name" required maxlength="240"></label><button type="submit">Tạo project</button></form>
+          <label><input id="mvp-rights" type="checkbox"> Tôi có quyền sử dụng media cho project này.</label>
+          <label>Thêm video/ảnh/audio <input id="mvp-upload" type="file" multiple accept="image/jpeg,image/png,video/mp4,audio/wav,audio/mpeg"></label>
+          <label>Video cần phân tích <select id="mvp-video-analysis"></select></label>
+          <button id="mvp-analyze-video" type="button">Phân tích video (ASR nếu có audio)</button>
+          <button id="mvp-from-media" type="button">Draft caption từ media (nội bộ, không AI)</button>
+          <label>Loại nội dung <select id="mvp-kind"><option value="script">Kịch bản</option><option value="idea">Ý tưởng</option><option value="prompt">Prompt / chỉ dẫn sáng tạo</option></select></label>
+          <label>Nội dung gốc (được lưu nguyên văn)<textarea id="mvp-original" rows="4" maxlength="20000"></textarea></label>
+          <label>Script có thể sửa (prompt không tự thành narration)<textarea id="mvp-script" rows="4" maxlength="20000"></textarea></label>
+          <label>Thông tin người dùng cung cấp (chưa xác minh, mỗi dòng một mục)<textarea id="mvp-facts" rows="2" maxlength="20000"></textarea></label>
+          <button id="mvp-draft" type="button">Chia cảnh từ script (không AI)</button>
+          <label>Cụm từ cần giữ nguyên (mỗi dòng một cụm có trong script)<textarea id="mvp-protected" maxlength="4000"></textarea></label>
+          <p>Giới hạn: 180 ký tự/cảnh, 40 cảnh, 180 giây. Bộ chia còn tuân thủ vùng phụ đề an toàn. Thời lượng gợi ý là ước lượng; TTS đo audio và từ chối nếu không vừa.</p>
+          <button id="mvp-generate" type="button">Tạo đề xuất script/storyboard</button>
+          <button id="mvp-generation-cancel" type="button">Hủy đề xuất/job</button>
+          <p id="mvp-provider-status"></p><p id="mvp-generation-status" aria-live="polite"></p>
+          <details open><summary>Đề xuất riêng — xem diff trước khi sử dụng</summary><pre id="mvp-proposal"></pre></details>
+          <button id="mvp-generation-apply" type="button">Dùng đề xuất làm draft mới (chưa duyệt)</button>
+          <button id="mvp-add-scene" type="button">Thêm cảnh</button>
+          <div id="mvp-scenes"></div>
+          <button id="mvp-save" type="button">Lưu phiên bản</button>
+          <button id="mvp-approve" type="button">Duyệt script/storyboard</button>
+          <button id="mvp-timeline" type="button">Tạo/cập nhật timeline</button>
+          <button id="mvp-reflow" type="button">Tạo draft nhịp cảnh từ audio review đã đo</button>
+          <p>Auto chỉ thay đổi khi bấm tạo draft nhịp cảnh. Cảnh khóa giữ thời lượng; khoảng nghỉ được giữ theo lựa chọn. Reflow vô hiệu hóa approval/final cũ và cần A/V review + duyệt lại. Caption theo đoạn ước lượng, không highlight từ khi chưa có alignment.</p>
+          <p id="mvp-status"></p><details><summary>Media plan</summary><pre id="mvp-plan"></pre></details>
+          <details><summary>Diff phiên bản script</summary><pre id="mvp-script-diff"></pre></details>
+          <p>Ảnh không có source duration. Timing cảnh là lịch biên tập, không phải measured word timestamps. Video có lời nói vẫn cần ASR hợp lệ. A/V review và duyệt final ở workbench bên dưới.</p>
+        </section>
         <section id="empty-state" class="studio-empty" hidden>
           <div class="empty-illustration">✂</div>
           <p class="eyebrow">Bắt đầu Auto Edit</p>
@@ -213,6 +245,7 @@
                   <span id="audio-version" class="pill muted">v—</span>
                 </div>
                 <p id="audio-provider-status" class="compact-note">TTS: —</p>
+                <p class="compact-note">Voice offline/CI chỉ minh chứng kỹ thuật; giọng Việt chuyên nghiệp cần provider được duyệt và human review. Cue theo cảnh không phải measured word alignment.</p>
                 <div class="audio-controls">
                   <label class="toggle-line"><input id="voice-enabled" type="checkbox" /> Voice narration</label>
                   <label>Tốc độ voice<input id="voice-speed" type="range" min="0.75" max="1.35" step="0.05" /><output id="voice-speed-output">1.00×</output></label>
@@ -241,6 +274,7 @@
                 <div class="final-render-row">
                   <label>Final profile<select id="final-profile"><option value="vertical-1080x1920">Dọc 1080×1920</option><option value="landscape-1920x1080">Ngang 1920×1080</option><option value="square-1080x1080">Vuông 1080×1080</option></select></label>
                   <button id="final-render-button" class="primary-button" disabled>Render final đã duyệt</button>
+                  <button id="download-final-button" class="secondary-button" disabled>Tải final MP4</button>
                 </div>
                 <p class="hard-boundary">Final sẵn sàng chỉ được chuyển sang rights/platform validation. Mọi publish thật vẫn bị khóa.</p>
               </article>

@@ -54,16 +54,13 @@ def derive_subtitle_cues(snapshot: TimelineSnapshot) -> list[SubtitleCue]:
         end = round(min(snapshot.duration_seconds, clip.timeline_start + clip.duration), 3)
         if end - start < 0.05:
             continue
-        words = clip.label.split()
-        slot = (end - start) / max(1, len(words))
-        word_items = [
-            {
-                "text": word,
-                "start_seconds": round(start + index * slot, 3),
-                "end_seconds": round(start + (index + 1) * slot, 3),
-            }
-            for index, word in enumerate(words)
-        ]
+        # Scene/segment timing is not measured word alignment.
+        word_items = [{"text": word["text"],
+            "start_seconds": round(clip.timeline_start + (word["start_seconds"]-clip.source_start)/clip.speed, 6),
+            "end_seconds": round(clip.timeline_start + (word["end_seconds"]-clip.source_start)/clip.speed, 6)}
+            for word in clip.metadata.get("measured_source_words", [])
+            if clip.source_start <= word["start_seconds"] < word["end_seconds"] <= clip.source_end
+            and clip.timeline_start + (word["end_seconds"]-clip.source_start)/clip.speed <= end+0.001]
         cues.append(
             SubtitleCue(
                 cue_id=_new_id("sub"),
@@ -85,7 +82,7 @@ def validate_subtitles(
     previous_end = 0.0
     identifiers: set[str] = set()
     estimated_line_limit = max(12, int((100 - 2 * style.safe_margin_percent) * 10.8 / (style.font_size * 0.56)))
-    maximum_characters = estimated_line_limit * style.max_lines
+    maximum_characters = subtitle_character_capacity(style)
     for cue in cues:
         if cue.cue_id in identifiers:
             raise ProductionContractError("subtitle cue ids must be unique")
@@ -108,6 +105,12 @@ def validate_subtitles(
         "font_family": style.font_family,
         "vietnamese_font_supported": style.font_family.startswith("Noto Sans"),
     }
+
+
+def subtitle_character_capacity(style: SubtitleStyle) -> int:
+    """Same existing safe-area limit for both planning and final validation."""
+    estimated_line_limit = max(12, int((100 - 2 * style.safe_margin_percent) * 10.8 / (style.font_size * 0.56)))
+    return estimated_line_limit * style.max_lines
 
 
 def validate_music_rights(asset: Any) -> None:
@@ -178,6 +181,8 @@ def validate_timeline_renderability(
     return {
         "status": "passed",
         "visual_clip_count": len(visual_clips),
+        "intentional_still_intervals": [{"start": clip.timeline_start, "end": clip.timeline_start+clip.duration}
+            for clip in visual_clips if clip.kind == "image"],
         "timeline_duration_seconds": snapshot.duration_seconds,
         "missing_assets": [],
         "scene_gaps": [],
@@ -219,14 +224,15 @@ def build_timeline_render_manifest(
                     "duration": clip.duration,
                     "source_start": clip.source_start,
                     "source_end": clip.source_end,
-                    "fit": "cover",
+                    "fit": clip.metadata.get("fit", "cover"),
                     "crop": clip.crop.model_dump(mode="json"),
                     "transform": clip.transform.model_dump(mode="json"),
                     "opacity": clip.opacity,
+                    **({"transition_in": clip.transition_in.model_dump(mode="json")} if snapshot.schema_version == "1.1" else {}),
                 }
             )
     return {
-        "version": "2.0",
+        "version": "2.1" if snapshot.schema_version == "1.1" else "2.0",
         "metadata": {
             "title": f"{project_name} final edit",
             "project": project_slug,
@@ -268,6 +274,13 @@ class TimelineRenderContractValidator:
         self.validator = Draft202012Validator(schema)
 
     def validate(self, manifest: dict[str, Any]) -> None:
+        for clip in manifest["visual_clips"]:
+            if manifest["version"] == "2.0" and (clip["source_end"] is None or "transition_in" in clip):
+                raise ProductionContractError("historical v2.0 source contract unchanged")
+            if clip["type"] == "video" and (clip["source_end"] is None or clip["source_end"] <= clip["source_start"]):
+                raise ProductionContractError("video render requires a positive source window")
+            if manifest["version"] == "2.1" and clip["type"] == "image" and (clip["source_end"] is not None or clip["source_start"] != 0):
+                raise ProductionContractError("still image render must not fabricate a source duration")
         errors = sorted(self.validator.iter_errors(manifest), key=lambda item: list(item.path))
         if errors:
             first = errors[0]

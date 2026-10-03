@@ -76,8 +76,11 @@ def test_rc22_is_closed(request_payload):
         request.validate_request({**request_payload, "rc_tag": "vf-v3-01-rc22"})
 
 
-def test_valid_shaped_request_never_means_authority(request_payload, monkeypatch, capsys):
-    from app import provider_single_dispatch
+def test_valid_shaped_request_never_means_authority(request_payload, monkeypatch, capsys, tmp_path):
+    from app import provider_single_dispatch, executor_execution
+    # Offline unit tests must not inspect a pre-existing installed executor catalog.
+    # An absent test catalog proves the same fail-closed boundary without live host access.
+    monkeypatch.setattr(executor_execution, "CATALOG", tmp_path / "absent-catalog.json")
     monkeypatch.setattr(provider_single_dispatch, "run_single_dispatch", lambda *a, **k: pytest.fail("dispatch"))
     monkeypatch.setenv("VF_REQUEST_JSON", json.dumps(request_payload))
     assert request.main() == 2

@@ -21,6 +21,19 @@ def stable_id(prefix: str, *parts: object) -> str:
     return f"{prefix}_{hashlib.sha256(payload).hexdigest()[:24]}"
 
 
+def plan_storyboard_media(content: dict) -> list[dict]:
+    """Separate storyboard source: no fake video analysis and no provider side effects."""
+    from .content_models import ContentDocument
+    document = ContentDocument.model_validate(content)
+    return [{"scene_id": scene.scene_id, "strategy": scene.media_strategy,
+             "asset_id": scene.asset_id, "visual_brief": scene.visual_brief,
+             "display_duration_seconds": scene.duration_seconds, "fit": scene.fit,
+             "architectural_render": scene.architectural_render,
+             "capability": "image_to_video" if scene.media_strategy == "ai_video" else "montage",
+             "status": "provider_not_configured" if scene.media_strategy in {"ai_image", "ai_video"} else "locally_plannable"}
+            for scene in document.scenes]
+
+
 def platform_orientation(platform: str) -> str:
     if platform in {"youtube_shorts", "tiktok", "facebook_reels", "instagram_reels"}:
         return "portrait"

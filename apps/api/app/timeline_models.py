@@ -22,6 +22,7 @@ TrackKind = Literal[
     "metadata",
 ]
 ClipKind = Literal[
+    "image",
     "source",
     "broll",
     "overlay",
@@ -78,7 +79,7 @@ class TimelineClip(StrictModel):
     label: str = Field(min_length=1, max_length=240)
     asset_id: str | None = Field(default=None, pattern=r"^ast_[A-Za-z0-9_-]{4,60}$")
     source_start: float = Field(default=0, ge=0)
-    source_end: float = Field(gt=0)
+    source_end: float | None = Field(default=None, gt=0)
     timeline_start: float = Field(ge=0)
     duration: float = Field(gt=0)
     speed: float = Field(default=1, gt=0, le=8)
@@ -94,6 +95,12 @@ class TimelineClip(StrictModel):
 
     @model_validator(mode="after")
     def validate_source_window(self) -> "TimelineClip":
+        if self.kind == "image":
+            if self.source_start != 0 or self.source_end is not None or self.speed != 1:
+                raise ValueError("still images have display duration, not a source time window")
+            return self
+        if self.source_end is None:
+            raise ValueError("temporal clips require source_end")
         if self.source_end <= self.source_start:
             raise ValueError("clip source_end must be after source_start")
         source_duration = (self.source_end - self.source_start) / self.speed
@@ -115,7 +122,7 @@ class TimelineTrack(StrictModel):
 
 
 class TimelineSnapshot(StrictModel):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.0", "1.1"] = "1.0"
     width: int = Field(default=1080, ge=16, le=7680)
     height: int = Field(default=1920, ge=16, le=7680)
     fps: float = Field(default=30, gt=0, le=120)
@@ -132,6 +139,8 @@ class TimelineSnapshot(StrictModel):
         if len(track_ids) != len(set(track_ids)):
             raise ValueError("timeline track ids must be unique")
         clip_ids = [clip.clip_id for track in self.tracks for clip in track.clips]
+        if self.schema_version == "1.0" and any(clip.kind == "image" for track in self.tracks for clip in track.clips):
+            raise ValueError("still-image clips require timeline schema 1.1")
         if len(clip_ids) != len(set(clip_ids)):
             raise ValueError("timeline clip ids must be unique")
         if any(track.order != index for index, track in enumerate(sorted(self.tracks, key=lambda item: item.order))):
@@ -151,9 +160,21 @@ class TimelineSnapshot(StrictModel):
 
 
 class TimelineCreateRequest(StrictModel):
-    analysis_id: str = Field(pattern=r"^ana_[A-Za-z0-9_-]{4,60}$")
+    source_kind: Literal["video_analysis", "storyboard_media", "mixed"] = "video_analysis"
+    analysis_id: str | None = Field(default=None, pattern=r"^ana_[A-Za-z0-9_-]{4,60}$")
+    content_version_id: str | None = Field(default=None, pattern=r"^pver_[A-Za-z0-9_-]{4,60}$")
+    expected_timeline_version: int | None = Field(default=None, ge=1)
     media_plan_id: str | None = Field(default=None, pattern=r"^mpl_[A-Za-z0-9_-]{4,60}$")
     actor_ref: str = Field(default="studio-user", min_length=1, max_length=160)
+
+    @model_validator(mode="after")
+    def source_contract(self):
+        if self.source_kind == "video_analysis":
+            if not self.analysis_id or self.content_version_id:
+                raise ValueError("video_analysis requires analysis_id and no storyboard")
+        elif not self.content_version_id or self.analysis_id or self.media_plan_id:
+            raise ValueError("storyboard/mixed requires its own content version, not an analysis surrogate")
+        return self
 
 
 class TimelineOperation(StrictModel):
@@ -234,7 +255,9 @@ class TimelineRead(StrictModel):
     workspace_id: str
     project_id: str
     project_version_id: str | None
-    source_analysis_id: str
+    source_analysis_id: str | None
+    source_content_version_id: str | None = None
+    source_kind: Literal["video_analysis", "storyboard_media", "mixed"] = "video_analysis"
     source_media_plan_id: str | None
     current_version_id: str
     current_version: int = Field(ge=1)

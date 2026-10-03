@@ -277,3 +277,10 @@
   .analytics-heading-actions { align-items: stretch; flex-direction: column; }
   .analytics-metrics { grid-template-columns: 1fr; }
 }
+/* Multi-input authoring remains inside the existing Studio. */
+#multi-input-workbench { margin: 16px 0; padding: 24px; }
+#multi-input-workbench label { display: block; margin: 10px 0; }
+#multi-input-workbench textarea { width: 100%; padding: 10px; }
+#multi-input-workbench input, #multi-input-workbench select { padding: 8px; }
+#multi-input-workbench button { margin: 4px; padding: 8px 14px; }
+.mvp-scene { border: 1px solid #40506c; padding: 16px; margin: 12px 0; border-radius: 12px; }

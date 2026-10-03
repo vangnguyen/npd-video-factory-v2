@@ -21,6 +21,17 @@ jobs:
   python:
     name: Python unit and contract tests
     runs-on: ubuntu-latest
+    services:
+      mvp1-postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: mvp1_dev
+          POSTGRES_PASSWORD: synthetic_fixture_only
+          POSTGRES_DB: mvp1_devtests
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U mvp1_dev -d mvp1_devtests"
+          --health-interval 5s --health-timeout 5s --health-retries 12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,6 +54,18 @@ jobs:
       - run: python -m pip install -e "apps/api[dev]" -e "services/worker[dev]" -e "services/comfyui-bridge[dev]"
       - run: python -m compileall -q apps/api/app services/worker/npd_worker services/comfyui-bridge/npd_comfyui_bridge
       - run: python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q
+      - name: MVP1 PostgreSQL transactions, versions and proposal/render races (offline fixtures only)
+        env:
+          MVP1_TEST_PG_URL: postgresql+asyncpg://mvp1_dev:synthetic_fixture_only@127.0.0.1:5432/mvp1_devtests
+        run: python -m pytest apps/api/tests/test_mvp1_multi_input.py apps/api/tests/test_mvp1_content_generation.py apps/api/tests/test_mvp1_narration_pacing.py -q
+      - name: MVP1 actual PostgreSQL migration up down replay (disposable CI database)
+        working-directory: apps/api
+        env:
+          DATABASE_URL: postgresql+asyncpg://mvp1_dev:synthetic_fixture_only@127.0.0.1:5432/mvp1_devtests
+        run: |
+          alembic upgrade head
+          alembic downgrade base
+          alembic upgrade head
       - name: Validate V3-01 acceptance register and redacted evidence
         run: python scripts/v3_01_acceptance.py validate-repo
       - name: Verify V3-01-18 OpenAI ASR compatibility evidence

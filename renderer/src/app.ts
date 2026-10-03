@@ -21,7 +21,7 @@ export type RendererAppOptions = {
   storageRoot: string;
 };
 
-type ErrorCode = "REQUEST_INVALID" | "MANIFEST_VALIDATION_FAILED" | "RENDER_ASSET_MISSING" | "RENDER_FAILED";
+type ErrorCode = "REQUEST_INVALID" | "MANIFEST_VALIDATION_FAILED" | "RENDER_ASSET_MISSING" | "RENDER_FAILED" | "SUBTITLE_LAYOUT_OVERFLOW";
 
 const failed = (code: ErrorCode, message: string, retryable = false, details: unknown[] = []) => ({
   status: "failed" as const,
@@ -182,8 +182,16 @@ export const createRendererApp = ({engine, port, storageRoot}: RendererAppOption
         codec: "h264",
       });
     } catch (error) {
-      const detail = error instanceof Error ? error.message : "unknown failure";
-      console.error(JSON.stringify({event: "render_failed", job_id: jobId, detail}));
+      const code: ErrorCode = error instanceof Error && error.message.includes("SUBTITLE_LAYOUT_OVERFLOW:")
+        ? "SUBTITLE_LAYOUT_OVERFLOW"
+        : "RENDER_FAILED";
+      // Engine/browser exceptions may contain narration, signed URLs or local paths.
+      // Classify first; the existing structured logger receives only allowlisted facts.
+      console.error(JSON.stringify({event: "render_failed", job_id: jobId, error_code: code}));
+      if (code === "SUBTITLE_LAYOUT_OVERFLOW") {
+        // Return an allowlisted diagnosis, never narration or browser exception details.
+        return res.status(422).json(failed("SUBTITLE_LAYOUT_OVERFLOW", "Split the subtitle cue or adjust its approved style before rendering."));
+      }
       return res.status(500).json(failed("RENDER_FAILED", "Remotion render failed."));
     }
   });

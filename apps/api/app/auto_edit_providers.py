@@ -215,10 +215,17 @@ class FFprobeMediaProbe:
         audio = next((item for item in streams if item.get("codec_type") == "audio"), None)
         if media_kind == "video" and video is None:
             raise MediaProbeError("video stream is missing")
+        if media_kind == "video" and video.get("codec_name") not in {"h264", "hevc", "vp8", "vp9", "av1"}:
+            raise MediaProbeError("video codec is not allowlisted")
+        if media_kind in {"image", "logo"}:
+            if video is None or not video.get("width") or not video.get("height"):
+                raise MediaProbeError("image is not decodable")
+            if int(video["width"])*int(video["height"]) > 40_000_000:
+                raise MediaProbeError("image dimensions exceed the bounded decoder limit")
         if media_kind in {"audio", "music"} and audio is None:
             raise MediaProbeError("audio stream is missing")
         duration_value = payload.get("format", {}).get("duration")
-        duration = float(duration_value) if duration_value not in {None, "N/A"} else None
+        duration = float(duration_value) if duration_value not in {None, "N/A"} and media_kind not in {"image", "logo"} else None
         return MediaMetadata(
             media_kind=media_kind,
             detected_content_type=detected_content_type,

@@ -57,6 +57,7 @@ from .human_auth import (
     principal_from,
 )
 from .models import JobCreateResponse, JobRecord, VideoJobCreate
+from .content_generation import ContentGenerationService, content_provider_definition
 from .object_storage import create_object_storage, sha256_file
 from .openai_transcription_provider import (
     OpenAITranscriptionProvider,
@@ -88,6 +89,8 @@ from .trend_repository import TrendRepository
 from .trend_routes import router as trend_router
 from .trend_service import TrendIntelligenceService
 from .timeline_repository import TimelineRepository
+from .content_service import ContentService
+from .content_routes import router as content_router
 from .timeline_routes import router as timeline_router
 from .timeline_service import (
     FFmpegProxyRenderer,
@@ -216,6 +219,8 @@ async def lifespan(app: FastAPI):
         platform=platform,
         object_storage=object_storage,
     )
+    app.state.content_generation_service = ContentGenerationService(platform=platform,
+        store=app.state.job_store, queue=redis, mode=settings.content_generation_provider)
     media_probe = FFprobeMediaProbe(settings.ffprobe_path)
     if settings.transcription_provider == "fixture":
         transcription_provider = DeterministicTranscriptionProvider()
@@ -351,12 +356,14 @@ async def lifespan(app: FastAPI):
         allow_paid_execution=settings.media_paid_execution_enabled,
         provider_safety=app.state.provider_safety_controller,
     )
+    app.state.content_service = ContentService(platform)
     app.state.timeline_service = TimelineService(
         repository=timeline_repository,
         platform=platform,
         auto_edit_repository=auto_edit_repository,
         media_repository=media_intelligence_repository,
         validator=TimelineContractValidator(settings.contracts_root / "timeline.schema.json"),
+        object_storage=object_storage,
     )
     app.state.preview_service = PreviewService(
         repository=timeline_repository,
@@ -444,6 +451,7 @@ app.include_router(auto_edit_router, dependencies=_human_route_dependencies)
 app.include_router(vision_router, dependencies=_human_route_dependencies)
 app.include_router(media_intelligence_router, dependencies=_human_route_dependencies)
 app.include_router(timeline_router, dependencies=_human_route_dependencies)
+app.include_router(content_router, dependencies=_human_route_dependencies)
 app.include_router(production_router, dependencies=_human_route_dependencies)
 app.include_router(publishing_router, dependencies=_human_route_dependencies)
 app.include_router(analytics_router, dependencies=_human_route_dependencies)
@@ -511,6 +519,7 @@ def _provider_definitions() -> list[dict[str, object]]:
     # fail-closed AUDIO_TTS_PROVIDER contract exposed by the production package.
     selected_tts = settings.tts_provider.lower()
     return [
+        content_provider_definition(settings.content_generation_provider),
         {
             "provider_key": "deterministic-content",
             "display_name": "Deterministic Content Fixture",

@@ -4,6 +4,26 @@ import {renderRequestSchema, timelineRenderManifestSchema, videoManifestSchema} 
 import {makeManifest, makeTimelineManifest} from "./test-fixtures";
 
 describe("renderer contracts", () => {
+  it("accepts image display duration only in v2.1, without invented source time", () => {
+    const manifest=makeTimelineManifest("data:image/png;base64,AA==");
+    manifest.version="2.1";
+    manifest.visual_clips[0].source_end=null;
+    manifest.visual_clips[0].transition_in={kind:"fade",duration_seconds:0.25};
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(true);
+    manifest.version="2.0";
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);
+  });
+
+  it("rejects video with null source bounds and image with fabricated source time", () => {
+    const manifest=makeTimelineManifest("data:image/png;base64,AA==");
+    manifest.version="2.1";
+    manifest.visual_clips[0].source_end=null;
+    manifest.visual_clips[0].type="video";
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);
+    manifest.visual_clips[0].type="image";
+    manifest.visual_clips[0].source_start=1;
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);
+  });
   it("accepts the current manifest and two-field render request", () => {
     expect(videoManifestSchema.parse(makeManifest("data:image/png;base64,AA==")).metadata).toMatchObject({
       template: "vertical-short-v1",

@@ -63,22 +63,44 @@ class TimelineService:
         auto_edit_repository: AutoEditRepository,
         media_repository: MediaIntelligenceRepository,
         validator: TimelineContractValidator,
+        object_storage: ObjectStorageProvider | None = None,
     ):
         self.repository = repository
         self.platform = platform
         self.auto_edit_repository = auto_edit_repository
         self.media_repository = media_repository
         self.validator = validator
+        self.object_storage = object_storage
 
     async def create(self, project_id: str, payload: TimelineCreateRequest) -> TimelineRead:
         project = await self.platform.get_project(project_id)
         if project is None:
             raise KeyError(project_id)
+        if payload.source_kind != "video_analysis":
+            from .storyboard_timeline import build_storyboard
+            snapshot = await build_storyboard(self, project, payload)
+            self.validator.validate(snapshot)
+            existing = await self.repository.get_timeline(project_id)
+            if existing:
+                if existing.snapshot == snapshot:
+                    return existing
+                if payload.expected_timeline_version is None:
+                    raise TimelineEditError("expected_timeline_version required to rebuild existing timeline")
+                return await self.repository.commit_mutation(project_id=project_id,
+                    expected_version=payload.expected_timeline_version, snapshot=snapshot,
+                    mutation={"type": "storyboard-rebuild", "content_version_id": payload.content_version_id},
+                    actor_ref=payload.actor_ref)
+            timeline, _ = await self.repository.create_timeline(project_id=project_id,
+                source_analysis_id=None, source_media_plan_id=None, source_content_version_id=payload.content_version_id,
+                snapshot=snapshot, actor_ref=payload.actor_ref)
+            return timeline
         analysis = await self.auto_edit_repository.get_analysis(payload.analysis_id)
         if analysis is None or analysis.project_id != project_id:
             raise KeyError(payload.analysis_id)
         if analysis.status != "succeeded":
             raise TimelineEditError("Auto Edit analysis is not ready")
+        if analysis.source_media.audio_codec and (analysis.transcript is None or not analysis.transcript.segments):
+            raise TimelineEditError("SPOKEN_VIDEO_ASR_REQUIRED")
         source_asset = await self.auto_edit_repository.get_asset(analysis.asset_id)
         if source_asset is None or source_asset.project_id != project_id:
             raise KeyError(analysis.asset_id)
