@@ -35,8 +35,9 @@ def sha(path):
 
 
 async def run(args):
-    commit=subprocess.check_output(["git","rev-parse","HEAD"],cwd=REPO,text=True).strip()
-    if subprocess.check_output(["git","status","--porcelain"],cwd=REPO,text=True).strip():
+    git=(shutil.which("git.exe") if str(REPO).startswith("/mnt/") else None) or "git"
+    commit=subprocess.check_output([git,"rev-parse","HEAD"],cwd=REPO,text=True).strip()
+    if subprocess.check_output([git,"status","--porcelain"],cwd=REPO,text=True).strip():
         raise ValueError("clean committed source required for audition")
     if args.output.exists():raise ValueError("fresh audition directory required")
     args.output.mkdir(parents=True,mode=0o700)

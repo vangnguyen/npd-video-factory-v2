@@ -13,6 +13,7 @@ import inspect
 import io
 import json
 from pathlib import Path
+import shutil
 import socket
 import sys
 import threading
@@ -70,9 +71,12 @@ def run(args):
     verify_files(args.codec, {"README.md": CODEC_CARD_SHA})
     # Source installation must be the reviewed SDK, not merely a same-version wheel.
     import subprocess
-    sdk_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=args.sdk_source, text=True).strip()
+    # Windows-created worktrees retain Windows Git indirection/CRLF filters.
+    # Use that installed Git under WSL, not a different checkout interpretation.
+    git = (shutil.which("git.exe") if str(args.sdk_source.resolve()).startswith("/mnt/") else None) or "git"
+    sdk_commit = subprocess.check_output([git, "rev-parse", "HEAD"], cwd=args.sdk_source, text=True).strip()
     from app.vieneu_contracts import SDK_COMMIT, SDK_LICENSE_SHA
-    if sdk_commit != SDK_COMMIT or subprocess.check_output(["git", "status", "--porcelain"], cwd=args.sdk_source, text=True).strip():
+    if sdk_commit != SDK_COMMIT or subprocess.check_output([git, "status", "--porcelain"], cwd=args.sdk_source, text=True).strip():
         raise ValueError("VIENEU_SDK_SOURCE_MISMATCH")
     verify_files(args.sdk_source, {"LICENSE": SDK_LICENSE_SHA})
     source_tree = args.sdk_source / "src"
