@@ -10,6 +10,7 @@ import {makeManifest, makeTimelineManifest} from "./test-fixtures";
 const roots: string[] = [];
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await Promise.all(roots.splice(0).map((root) => rm(root, {recursive: true, force: true})));
 });
 
@@ -113,20 +114,46 @@ describe("renderer HTTP service", () => {
     expect(response.body).toMatchObject({status: "failed", error_code: "MANIFEST_VALIDATION_FAILED"});
   });
 
-  it("does not expose renderer exception text", async () => {
+  it.each([
+    {prefix: "generic render failure:", status: 500, code: "RENDER_FAILED"},
+    {prefix: "SUBTITLE_LAYOUT_OVERFLOW:", status: 422, code: "SUBTITLE_LAYOUT_OVERFLOW"},
+  ])("redacts $code exceptions in both HTTP and structured stdout/stderr logging", async ({prefix, status, code}) => {
     const {manifestPath, root} = await fixture();
-    const engine: RenderEngine = {render: vi.fn(async () => { throw new Error("secret internal path"); })};
+    const sentinels = [
+      "PRIVATE_NARRATION_SENTINEL_03",
+      "https://assets.invalid/image.png?token=SYNTHETIC_TOKEN_SENTINEL_03",
+      "Authorization: Bearer SYNTHETIC_AUTH_SENTINEL_03",
+      "/private/SYNTHETIC_PATH_SENTINEL_03",
+      "PRIVATE_STACK_SENTINEL_03",
+    ];
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const progressLog = vi.spyOn(console, "log").mockImplementation(() => undefined);
+    const engine: RenderEngine = {render: vi.fn(async ({onProgress}) => {
+      onProgress(0.5);
+      const error = new Error(`${prefix} ${sentinels.slice(0, 4).join(" ")}`);
+      error.stack = sentinels[4];
+      throw error;
+    })};
     const response = await request(createRendererApp({engine, port: 3001, storageRoot: root}))
       .post("/render")
       .send({job_id: "vid_12345678", manifest_path: manifestPath});
 
-    expect(response.status).toBe(500);
-    expect(response.body).toMatchObject({status: "failed", error_code: "RENDER_FAILED"});
-    expect(JSON.stringify(response.body)).not.toContain("secret internal path");
+    expect(response.status).toBe(status);
+    expect(response.body).toMatchObject({status: "failed", error_code: code, retryable: false});
+    expect(errorLog).toHaveBeenCalledOnce();
+    expect(JSON.parse(errorLog.mock.calls[0][0])).toEqual({
+      event: "render_failed", job_id: "vid_12345678", error_code: code,
+    });
+    expect(progressLog).toHaveBeenCalledWith(JSON.stringify({
+      event: "render_progress", job_id: "vid_12345678", progress: 0.5, overall_progress: 83,
+    }));
+    const outputs = JSON.stringify({body: response.body, stdout: progressLog.mock.calls, stderr: errorLog.mock.calls});
+    for (const sentinel of sentinels) expect(outputs).not.toContain(sentinel);
   });
 
   it("returns actionable allowlisted layout failure without user text", async () => {
     const {manifestPath, root} = await fixture();
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => undefined);
     const engine: RenderEngine = {render: vi.fn(async () => { throw new Error("SUBTITLE_LAYOUT_OVERFLOW: private cue content"); })};
     const response = await request(createRendererApp({engine, port: 3001, storageRoot: root}))
       .post("/render").send({job_id: "vid_12345678", manifest_path: manifestPath});
@@ -134,5 +161,37 @@ describe("renderer HTTP service", () => {
     expect(response.body).toMatchObject({error_code: "SUBTITLE_LAYOUT_OVERFLOW", retryable: false});
     expect(response.body.message).toContain("Split the subtitle cue");
     expect(JSON.stringify(response.body)).not.toContain("private cue content");
+    expect(JSON.stringify(errorLog.mock.calls)).not.toContain("private cue content");
+    expect(errorLog).toHaveBeenCalledWith(JSON.stringify({
+      event: "render_failed", job_id: "vid_12345678", error_code: "SUBTITLE_LAYOUT_OVERFLOW",
+    }));
+  });
+
+  it("does not echo non-Error throws in response or logs", async () => {
+    const {manifestPath, root} = await fixture();
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const engine: RenderEngine = {render: vi.fn(async () => { throw "SYNTHETIC_THROW_SENTINEL_03"; })};
+    const response = await request(createRendererApp({engine, port: 3001, storageRoot: root}))
+      .post("/render").send({job_id: "vid_12345678", manifest_path: manifestPath});
+    expect(response.status).toBe(500);
+    expect(response.body.error_code).toBe("RENDER_FAILED");
+    expect(JSON.parse(errorLog.mock.calls[0][0])).toEqual({
+      event: "render_failed", job_id: "vid_12345678", error_code: "RENDER_FAILED",
+    });
+    expect(JSON.stringify([response.body, errorLog.mock.calls])).not.toContain("SYNTHETIC_THROW_SENTINEL_03");
+  });
+
+  it("rejects invalid correlation IDs before render logging", async () => {
+    const {manifestPath, root} = await fixture();
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const progressLog = vi.spyOn(console, "log").mockImplementation(() => undefined);
+    const engine: RenderEngine = {render: vi.fn(async () => undefined)};
+    const response = await request(createRendererApp({engine, port: 3001, storageRoot: root}))
+      .post("/render").send({job_id: "vid_123\nPRIVATE_CORRELATION_SENTINEL_03", manifest_path: manifestPath});
+    expect(response.status).toBe(422);
+    expect(engine.render).not.toHaveBeenCalled();
+    expect(errorLog).not.toHaveBeenCalled();
+    expect(progressLog).not.toHaveBeenCalled();
+    expect(JSON.stringify(response.body)).not.toContain("PRIVATE_CORRELATION_SENTINEL_03");
   });
 });

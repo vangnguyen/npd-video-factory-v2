@@ -49,3 +49,39 @@ RC28/spent context/authority/systemd/old evidence/proofs: untouched.
 No merge/deploy/provider credential read/real provider request/publication/RC.
 Task-local zero-use is distinct from host-lifetime state (NOT_VERIFIED).
 MVP1 acceptance remains OPEN. Stop at the final report, not its next action.
+
+## Closeout continuation from 0d03a3a (same task, not a new acceptance gate)
+
+Renderer `/render` failures classify an allowlisted error code before structured
+logging. The failure record contains only event, schema-validated job ID and
+stable code; raw exception message/stack, narration, signed URL, authorization
+material and local paths are excluded. `SUBTITLE_LAYOUT_OVERFLOW` retains its
+actionable HTTP/UI diagnosis. Generic and non-Error failures remain failures.
+Synthetic regression checks both HTTP bodies and the existing console logger;
+invalid correlation IDs are rejected before engine invocation/logging.
+
+R01/R02/R03 visual/audio behavior is unchanged by this logging-only patch.
+The byte-identical prior review ZIP and its MP4s remain valid baseline evidence,
+not newly rendered/accepted output. Closeout results, exact head, test commands,
+skip reconciliation and updated existing dependency matrix are recorded outside
+the repository under `work/vf-mvp1-integration-03-closeout-20261003/`.
+
+Full-stack evidence is not replaced with another PostgreSQL-only run. The local
+Windows/WSL environment currently lacks Docker CLI/socket; context, daemon,
+Compose resources and full Redis/worker/MinIO/PostgreSQL UI lifecycle cannot be
+verified here. No daemon installation, production host substitution or global
+cleanup is authorized. Existing `docker-compose.yml` and `scripts/e2e-smoke.sh`
+must only run in a separately verified disposable checkout/project: the harness
+changes `.env` and performs project-scoped `down -v`.
+
+Prior full-suite and real-PG results retain their original head and commands.
+Targeted closeout reruns overlap that suite and must not be added as unique tests.
+The root DAC skip and the three real-PG barrier cases are reported individually;
+non-root proof only covers the matching DAC node, not PostgreSQL contention.
+
+Remote PR/CI is subject to actual access and action-time browser confirmation.
+A prepared form is not a PR; PR merge-event SHA is not exact branch head CI.
+No old run is relabeled as current. Provider generation/model selection, voice
+quality/alignment and spoken ASR authority remain the existing dependencies.
+No live-provider call, credential access, RC28/spent/systemd/authority mutation,
+merge, deployment, publication or new RC is permitted by this continuation.
