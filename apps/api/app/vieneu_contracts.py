@@ -15,6 +15,9 @@ CODEC_CARD_SHA = "3c7b9e9ef1c8c5e5c829a077a1d32c1f7aea1668f2bf17ead318ff04bf1e6f
 SDK_LICENSE_SHA = "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6"
 LOCAL_ENDPOINT = "http://127.0.0.1:18083"
 VOICE_IDS = ("Mai Anh", "Thùy Dung", "Ngọc Huyền")
+SELECTED_VOICE = "Thùy Dung"
+SELECTED_PROFILE_SHA = "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3"
+AUDITION_SOURCE_COMMIT = "f642e487e89bc8ecf86045c67682a8ec087cd6d2"
 
 
 class VieNeuLicenseProvenance(StrictModel):
@@ -74,6 +77,37 @@ class VieNeuTTSProfile(StrictModel):
     alignment_capability: Literal["none"] = "none"
     max_audio_seconds: int = Field(default=180, ge=1, le=180)
     timeout_seconds: int = Field(default=600, ge=1, le=600)
+
+    @property
+    def sha256(self):
+        return hashlib.sha256(canonical_bytes(self.model_dump(mode="json"))).hexdigest()
+
+
+def selected_vieneu_profile() -> VieNeuTTSProfile:
+    """Exact audition bytes/config; selection does not rewrite license evidence."""
+    profile = VieNeuTTSProfile(voice_id=SELECTED_VOICE, rights=VieNeuLicenseProvenance())
+    if profile.sha256 != SELECTED_PROFILE_SHA:
+        raise ValueError("VIENEU_SELECTED_PROFILE_DRIFT")
+    return profile
+
+
+class VieNeuVoiceSelection(StrictModel):
+    """Owner selection sidecar, separate from synthesis and output acceptance."""
+    model_config = {"frozen": True}
+    schema_id: Literal["vf-mvp1-vieneu-voice-selection-v1"] = "vf-mvp1-vieneu-voice-selection-v1"
+    task: Literal["VF-MVP1-VIENEU-THUY-DUNG-SELECTION-02"] = "VF-MVP1-VIENEU-THUY-DUNG-SELECTION-02"
+    audition_source_commit: Literal[AUDITION_SOURCE_COMMIT] = AUDITION_SOURCE_COMMIT
+    profile_sha256: Literal[SELECTED_PROFILE_SHA] = SELECTED_PROFILE_SHA
+    provider: Literal["vieneu-tts"] = "vieneu-tts"
+    model: Literal["vieneu-v3-turbo"] = "vieneu-v3-turbo"
+    voice: Literal[SELECTED_VOICE] = SELECTED_VOICE
+    owner_audition_decision: Literal["PASS_AS_SELECTED_PRODUCTION_TTS_CANDIDATE"] = "PASS_AS_SELECTED_PRODUCTION_TTS_CANDIDATE"
+    historical_audition_voices: tuple[Literal["Mai Anh"], Literal["Ngọc Huyền"]] = ("Mai Anh", "Ngọc Huyền")
+    timing_source: Literal["ESTIMATED_SEGMENT"] = "ESTIMATED_SEGMENT"
+    word_alignment: Literal["WORD_ALIGNMENT_OPEN"] = "WORD_ALIGNMENT_OPEN"
+    real_input_output_review: Literal["PENDING"] = "PENDING"
+    human_quality_accepted: Literal[False] = False
+    deployment_authorized: Literal[False] = False
 
     @property
     def sha256(self):

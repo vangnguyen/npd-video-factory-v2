@@ -132,7 +132,7 @@ class Settings(BaseSettings):
     audio_tts_voice: str = "vi"
     audio_tts_rate: int = 145
     vieneu_local_execution_enabled: bool = False
-    vieneu_voice_id: str = "Mai Anh"  # audition candidate, not a production selection
+    vieneu_voice_id: str = "Thùy Dung"  # Owner-selected candidate; not production acceptance
     openai_tts_model: str = "gpt-4o-mini-tts"
     openai_tts_voice: str = "marin"
     openai_tts_instructions: str = ""

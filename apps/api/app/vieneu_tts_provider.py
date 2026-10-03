@@ -11,12 +11,16 @@ import httpx
 from .content_service import canonical_bytes
 from .providers import TTSNotConfiguredError, VoiceResult
 from .tts_evidence import SpeechTimingEvidence, TTSArtifactEvidence
-from .vieneu_contracts import VieNeuTTSProfile
+from .vieneu_contracts import VieNeuTTSProfile, SELECTED_VOICE, SELECTED_PROFILE_SHA
 
 
 class VieNeuTTSProvider:
-    def __init__(self, profile: VieNeuTTSProfile, *, local_execution_enabled=False, transport=None):
+    def __init__(self, profile: VieNeuTTSProfile, *, local_execution_enabled=False, transport=None,
+                 selected_voice_only=False):
         self.profile = VieNeuTTSProfile.model_validate(profile.model_dump(mode="json"))
+        self.selected_voice_only = selected_voice_only
+        if selected_voice_only and self.profile.sha256 != SELECTED_PROFILE_SHA:
+            raise TTSNotConfiguredError("VIENEU_SELECTED_PROFILE_MISMATCH")
         self.model, self.voice = profile.model, profile.voice_id
         self.enabled, self.transport = local_execution_enabled, transport
         self._guard = None
@@ -41,10 +45,13 @@ class VieNeuTTSProvider:
         # Historical generic 'vi' means the explicitly configured audition
         # preset. A named UI choice is validated, not aliased to another voice.
         voice = self.voice if config.voice == "vi" else config.voice
+        if self.selected_voice_only and voice != SELECTED_VOICE:
+            raise TTSNotConfiguredError("VIENEU_SELECTED_VOICE_CHANGE_REQUIRES_OWNER_REVIEW")
         selected = self.profile.model_dump(mode="json")
         selected["voice_id"] = voice
         return type(self)(VieNeuTTSProfile.model_validate(selected),
-            local_execution_enabled=self.enabled, transport=self.transport)
+            local_execution_enabled=self.enabled, transport=self.transport,
+            selected_voice_only=self.selected_voice_only)
 
     async def synthesize(self, *, text: str, language: str, output_path: Path) -> VoiceResult:
         if not self.enabled:
