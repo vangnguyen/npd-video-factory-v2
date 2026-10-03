@@ -65,7 +65,8 @@ async def image(env, project=None, rights="owned"):
 
 async def author(env, scenes=None, kind="script", original="Đây là ảnh được phép sử dụng."):
     from app.content_service import prepare_document
-    document=prepare_document(ContentDocument(input_kind=kind,original_text=original,scenes=scenes or []))
+    document=prepare_document(ContentDocument(input_kind=kind,original_text=original,
+        script=original if kind=="idea" else "",scenes=scenes or []))  # explicit manual narration, not idea generation
     return await env.content.save(env.project.project_id,ContentSaveRequest(document=document.model_copy(update={"approved":True})))
 
 async def timeline(env, version, kind="storyboard_media", expected=None):
@@ -155,7 +156,8 @@ async def test_spoken_video_cannot_bypass_analysis(env):
 
 async def test_stale_content_and_versions_rejected(env):
     old=await author(env); built=await timeline(env,old)
-    changed=ContentDocument.model_validate(old.snapshot["content"]).model_copy(update={"script":"Nội dung mới"})
+    changed=ContentDocument.model_validate(old.snapshot["content"]).model_copy(update={"script":"Nội dung mới",
+        "scenes":[StoryboardScene(scene_id="scene_new", narration="Nội dung mới")]})
     new=await env.content.save(env.project.project_id,ContentSaveRequest(expected_content_version_id=old.project_version_id,document=changed))
     with pytest.raises(TimelineEditError,match="STALE"):await timeline(env,old)
     with pytest.raises(ProductionContractError,match="STALE"):await env.package.create_or_refresh(env.project.project_id,ProductionPackageCreateRequest())
@@ -180,7 +182,7 @@ async def test_review_final_approval_invalidates_on_edit_and_queue_idempotency(e
     final=await env.package.enqueue_final(env.project.project_id,final_request)
     assert (await processor.process(final.render_id)).status=="ready"
     document=ContentDocument.model_validate(version.snapshot["content"])
-    edited=document.model_copy(update={"scenes":[document.scenes[0].model_copy(update={"narration":"Nội dung đã sửa."})]})
+    edited=document.model_copy(update={"scenes":[document.scenes[0].model_copy(update={"narration":"Nội dung đã sửa.", "script_start":None, "script_end":None})]})
     await env.content.save(env.project.project_id,ContentSaveRequest(expected_content_version_id=version.project_version_id,document=edited))
     assert (await env.package.get_render(env.project.project_id,final.render_id)).status=="stale"
     with pytest.raises(ProductionContractError,match="STALE"):await env.package.enqueue_final(env.project.project_id,final_request)

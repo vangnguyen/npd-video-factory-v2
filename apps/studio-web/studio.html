@@ -60,13 +60,21 @@
           <label>Loại nội dung <select id="mvp-kind"><option value="script">Kịch bản</option><option value="idea">Ý tưởng</option><option value="prompt">Prompt / chỉ dẫn sáng tạo</option></select></label>
           <label>Nội dung gốc (được lưu nguyên văn)<textarea id="mvp-original" rows="4" maxlength="20000"></textarea></label>
           <label>Script có thể sửa (prompt không tự thành narration)<textarea id="mvp-script" rows="4" maxlength="20000"></textarea></label>
-          <button id="mvp-draft" type="button">Chia cảnh deterministic</button>
+          <label>Thông tin người dùng cung cấp (chưa xác minh, mỗi dòng một mục)<textarea id="mvp-facts" rows="2" maxlength="20000"></textarea></label>
+          <button id="mvp-draft" type="button">Chia cảnh từ script (không AI)</button>
+          <p>Giới hạn: 180 ký tự/cảnh, 40 cảnh, 180 giây. Thời lượng gợi ý là ước lượng; TTS đo audio và từ chối nếu không vừa.</p>
+          <button id="mvp-generate" type="button">Tạo đề xuất script/storyboard</button>
+          <button id="mvp-generation-cancel" type="button">Hủy đề xuất/job</button>
+          <p id="mvp-provider-status"></p><p id="mvp-generation-status" aria-live="polite"></p>
+          <details open><summary>Đề xuất riêng — xem diff trước khi sử dụng</summary><pre id="mvp-proposal"></pre></details>
+          <button id="mvp-generation-apply" type="button">Dùng đề xuất làm draft mới (chưa duyệt)</button>
           <button id="mvp-add-scene" type="button">Thêm cảnh</button>
           <div id="mvp-scenes"></div>
           <button id="mvp-save" type="button">Lưu phiên bản</button>
           <button id="mvp-approve" type="button">Duyệt script/storyboard</button>
           <button id="mvp-timeline" type="button">Tạo/cập nhật timeline</button>
           <p id="mvp-status"></p><details><summary>Media plan</summary><pre id="mvp-plan"></pre></details>
+          <details><summary>Diff phiên bản script</summary><pre id="mvp-script-diff"></pre></details>
           <p>Ảnh không có source duration. Timing cảnh là lịch biên tập, không phải measured word timestamps. Video có lời nói vẫn cần ASR hợp lệ. A/V review và duyệt final ở workbench bên dưới.</p>
         </section>
         <section id="empty-state" class="studio-empty" hidden>

@@ -4,6 +4,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import {pathToFileURL} from "node:url";
 import {createHash} from "node:crypto";
+import {execFileSync} from "node:child_process";
+const repository=path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(?:([A-Za-z]):)/,"$1:")),"..");
+const sourceCommit=execFileSync("git",["rev-parse","HEAD"],{cwd:repository,encoding:"utf8"}).trim();
+if(execFileSync("git",["status","--porcelain"],{cwd:repository,encoding:"utf8"}).trim())throw new Error("proof requires clean committed source");
 const [root, playwrightPath, scenario="image-script"] = process.argv.slice(2);
 if (!root || !playwrightPath) throw new Error("root and local Playwright module path required");
 const {chromium} = await import(pathToFileURL(playwrightPath).href);
@@ -30,7 +34,7 @@ await context.addInitScript(t=>sessionStorage.setItem("npd-video-factory-human-s
 const page=await context.newPage();
 const errors=[];
 page.on("pageerror",e=>errors.push(e.message));
-const log={scenario,classification:"ISOLATED_UI_E2E_SYNTHETIC_MEDIA_OFFLINE_VOICE",
+const log={scenario,source_commit:sourceCommit,classification:"ISOLATED_UI_E2E_SYNTHETIC_MEDIA_OFFLINE_VOICE",
   started_at_utc:new Date().toISOString(), external_provider_calls:0,provider_credential_reads:0,
   human_quality_accepted:false,production_path_accepted:false,steps:[]};
 let projectId;
@@ -68,7 +72,7 @@ try {
   projectId=await page.evaluate(()=>localStorage.getItem("npd-studio-project"));
   await page.waitForFunction(()=>document.querySelector("#project-select").value===localStorage.getItem("npd-studio-project"));
   await page.waitForFunction(()=>document.querySelector("#multi-input-workbench").dataset.loading==="false");
-  if(scenario==="spoken-blocked") {
+  if(["spoken-blocked","mixed-audio-blocked"].includes(scenario)) {
     await page.locator("#mvp-rights").check();
     await page.locator("#mvp-upload").setInputFiles(path.join(root,"fixtures-spoken","owned-spoken-video.mp4"));
     await page.waitForFunction(()=>document.querySelector("#mvp-video-analysis").options.length>0);
@@ -80,6 +84,24 @@ try {
     if(analyses.some(a=>a.status==="succeeded"||a.transcript))throw new Error("speech ASR was fabricated");
     await fs.writeFile(path.join(output,"speech-analysis-blocked.json"),JSON.stringify({response:await response.json(),analyses},null,2));
     log.steps.push({step:"T01_speech_ASR_stage_blocked",http_status:503,fake_transcript:false});
+    if(scenario==="mixed-audio-blocked") {
+      await page.locator("#mvp-upload").setInputFiles(path.join(root,"fixtures","owned-photo.png"));
+      await waitValue(()=>api(`/api/v1/projects/${projectId}/assets`),a=>a.length>=2,"mixed audio assets");
+      await page.waitForFunction(()=>document.querySelector("#mvp-upload").value==="");
+      await page.locator("#mvp-original").fill("Đây là nội dung thử nghiệm.");
+      await page.locator("#mvp-draft").click();
+      await waitValue(storedContent,v=>!!v?.snapshot.content.scenes.length,"spoken mixed draft");
+      const assets=await api(`/api/v1/projects/${projectId}/assets`);
+      await page.locator(".mvp-scene").first().locator("[data-field=media]").selectOption(assets.find(a=>a.filename==="owned-spoken-video.mp4").asset_id);
+      await page.locator(".mvp-scene").first().locator("[data-field=audio]").selectOption("mute");
+      await page.locator("#mvp-approve").click();
+      await waitValue(storedContent,v=>v.snapshot.content.approved,"mixed audio draft approved");
+      const wait=page.waitForResponse(r=>r.url().endsWith(`/projects/${projectId}/timeline`)&&r.request().method()==="POST");
+      await page.locator("#mvp-timeline").click();const blocked=await wait;
+      if(blocked.status()!==422)throw new Error("muting audio bypassed ASR");
+      await fs.writeFile(path.join(output,"mixed-audio-timeline-blocked.json"),JSON.stringify(await blocked.json(),null,2));
+      log.steps.push({step:"T07_audio_mute_does_not_bypass_ASR",http_status:422});
+    }
     log.verdict="UI_SPEECH_ASR_CORRECTLY_BLOCKED_DEV_PASS";
   } else {
   if(["image-script","mixed","image-only"].includes(scenario)) {
@@ -100,21 +122,35 @@ try {
     }
   }
   const kind=scenario==="idea"?"idea":scenario==="prompt"?"prompt":"script";
-  const script=scenario==="mixed"?"Đây là video thử nghiệm nội bộ.\nĐây là ảnh do nhóm tạo.\nPhối cảnh minh họa, không phải thiết kế chính thức.":"Đây là ảnh do nhóm tạo.\nNội dung chỉ dùng để thử nghiệm.";
+  const script=scenario==="mixed"?"Đây là video thử nghiệm nội bộ.\nĐây là ảnh do nhóm tạo.\nPhối cảnh minh họa, không phải thiết kế chính thức.":scenario==="script-long"?
+    "Đoạn kịch bản thử nghiệm này giữ nguyên tên Ngọc Phương Đông và Cần Giờ, cùng dấu tiếng Việt, nhằm kiểm tra chia cảnh tại biên từ mà không mất hoặc lặp lời đọc trong toàn bộ nội dung được cung cấp bởi nhóm phát triển, không công bố thông tin về dự án, giá bán hay chính sách và chỉ phục vụ kiểm tra kỹ thuật nội bộ.":"Đây là ảnh do nhóm tạo.\nNội dung chỉ dùng để thử nghiệm.";
   if(scenario==="image-only") {
     await page.waitForFunction(()=>document.querySelector("#mvp-status").textContent.includes("không bắt buộc video"));
     await page.locator("#mvp-from-media").click();
   } else {
   await page.locator("#mvp-kind").selectOption(kind);
-  await page.locator("#mvp-original").fill(kind==="prompt"?`Dựng video giới thiệu nội bộ. Không thêm giá hay chính sách.\nLời đọc:\n${script}`:script);
-  await page.locator("#mvp-draft").click();
+  await page.locator("#mvp-original").fill(kind==="prompt"?"Dựng góc rộng và nhịp chậm về không gian xanh, không thêm giá hay chính sách.":kind==="idea"?"Một video giới thiệu cách kiểm chứng thông tin.":script);
+  if(["idea","prompt"].includes(kind)) {
+    await page.locator("#mvp-save").click();
+    const source=await waitValue(storedContent,v=>!!v,"input saved without narration");
+    if(source.snapshot.content.script||source.snapshot.content.scenes.length)throw new Error("input became narration on Save");
+    const jobResponse=page.waitForResponse(r=>r.url().endsWith(`/projects/${projectId}/content-generation`)&&r.request().method()==="POST");
+    await page.locator("#mvp-generate").click();const generated=await jobResponse;
+    if(generated.status()!==202)throw new Error("fixture generation not queued");
+    const proposal=await waitValue(()=>api(`/api/v1/projects/${projectId}/content-generation`),g=>g?.job.status==="awaiting_review","fixture proposal");
+    await fs.writeFile(path.join(output,"generation-proposal.json"),JSON.stringify(proposal,null,2));
+    await page.waitForFunction(()=>document.querySelector("#mvp-proposal").textContent.includes("pver_"));
+    await page.locator("#mvp-generation-apply").click();
+    log.steps.push({step:"explicit_fixture_proposal_not_real_AI",job_id:proposal.job.job_id,provider:"fixture-storyboard-content",real_provider_accepted:false});
+  } else await page.locator("#mvp-draft").click();
   }
   await waitValue(storedContent,v=>!!v?.snapshot.content.scenes.length,"draft saved");
   await page.locator(".mvp-scene").first().waitFor();
   const assets=await api(`/api/v1/projects/${projectId}/assets`);
   const scenes=page.locator(".mvp-scene");
   for(let i=0;i<await scenes.count();i++) {
-    const row=scenes.nth(i);await row.locator("[data-field=duration]").fill("6");
+    const row=scenes.nth(i);
+    if(scenario!=="script-long")await row.locator("[data-field=duration]").fill(["idea","prompt"].includes(kind)?"9":"6");
     await row.locator("[data-field=transition]").selectOption(i?"fade":"cut");
     if(scenario==="image-script"||scenario==="mixed") {
       const filename=scenario==="mixed"?["owned-silent-video.mp4","owned-photo.png","synthetic-architecture.png"][i]:["owned-photo.png","synthetic-architecture.png"][i];

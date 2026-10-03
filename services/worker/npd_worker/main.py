@@ -45,6 +45,7 @@ from app.production_service import (
     RemotionTimelineRenderEngine,
 )
 from app.repositories import PlatformRepository, PostgresJobStore
+from app.content_generation import ContentGenerationService, CONTENT_QUEUE
 from app.state import QUEUE_KEY
 from app.timeline_repository import TimelineRepository
 from app.trend_repository import TrendRepository
@@ -287,6 +288,13 @@ async def run_webhook_queue(redis: Redis, processor: WebhookDeliveryProcessor) -
             await redis.lrem(WEBHOOK_PROCESSING_KEY, 1, delivery_id)
 
 
+async def run_content_generation_queue(redis, service):
+    while True:
+        item = await redis.blpop(CONTENT_QUEUE, timeout=5)
+        if item:
+            await service.process(item[1])
+
+
 async def main() -> None:
     redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
     redis = Redis.from_url(redis_url, decode_responses=True)
@@ -310,6 +318,9 @@ async def main() -> None:
         object_storage=object_storage,
     )
     config = WorkerConfig.from_env()
+    content_generation = ContentGenerationService(platform=platform, store=store, queue=redis,
+        mode=settings.content_generation_provider)
+    await content_generation.recover()
     await recover_inflight(redis)
     providers = create_media_provider_bundle(settings)
     media_resolution_service = MediaResolutionService(
@@ -382,6 +393,7 @@ async def main() -> None:
     try:
         tasks = [
             run_video_queue(redis, store, config=config),
+            run_content_generation_queue(redis, content_generation),
             run_media_resolution_queue(redis, media_resolution_service),
             run_preview_queue(redis, preview_service),
             run_production_render_queue(redis, production_render_service),

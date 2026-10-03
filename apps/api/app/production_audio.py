@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import math
 import struct
 import sys
@@ -128,6 +129,14 @@ class AudioMixEngine:
         total_frames = int(round(duration_seconds * sample_rate))
         master = array("h", [0]) * total_frames
         timing: list[dict[str, Any]] = []
+        provider_identity: dict[str, Any] = {}
+        previous_end = 0.0
+        if len({cue.cue_id for cue in cues}) != len(cues):
+            raise ValueError("duplicate narration cue identity")
+        for cue in cues:
+            if cue.start_seconds < previous_end or cue.end_seconds > duration_seconds or cue.start_seconds >= cue.end_seconds:
+                raise ValueError("narration cues must be ordered, positive and timeline bounded")
+            previous_end = cue.end_seconds
         if not config.voice.enabled:
             _write_pcm16(output_path, master, sample_rate)
             return {
@@ -141,11 +150,15 @@ class AudioMixEngine:
         for index, cue in enumerate(cues):
             raw = workdir / f"voice-{index:03d}-raw.wav"
             normalized = workdir / f"voice-{index:03d}-normalized.wav"
-            await provider.synthesize(
+            voice_result = await provider.synthesize(
                 text=cue.text,
                 language=config.voice.language,
                 output_path=raw,
             )
+            provider_identity = {"provider": voice_result.provider, "voice": voice_result.voice,
+                "model": getattr(provider, "model", None), "adapter": type(provider).__name__,
+                "configured_rate": getattr(provider, "rate", None), "configured_speed": config.voice.speed,
+                "human_quality_accepted": False}
             await self._normalize_chunk(raw, normalized, speed=config.voice.speed)
             samples, rate = _read_pcm16(normalized)
             if rate != sample_rate:
@@ -153,6 +166,7 @@ class AudioMixEngine:
             samples = _trim_activity(samples)
             slot_seconds = cue.end_seconds - cue.start_seconds
             chunk_seconds = len(samples) / sample_rate
+            speedup = 1.0
             if chunk_seconds > slot_seconds:
                 speedup = chunk_seconds / max(0.08, slot_seconds - 0.02)
                 if speedup > config.voice.max_timing_adjustment:
@@ -180,6 +194,14 @@ class AudioMixEngine:
                     "end_seconds": round(cue.start_seconds + chunk_seconds, 3),
                     "slot_end_seconds": cue.end_seconds,
                     "audible": True,
+                    "text_sha256": hashlib.sha256(cue.text.encode("utf-8")).hexdigest(),
+                    "source_audio_duration_seconds": voice_result.duration_seconds,
+                    "rendered_audio_duration_seconds": chunk_seconds,
+                    "applied_timing_speedup": speedup,
+                    "audio_duration_source": "decoded_pcm_sample_count",
+                    "placement_source": "user_timeline_scene_cue",
+                    "word_alignment": "NOT_AVAILABLE",
+                    "measured_word_timestamps": False,
                 }
             )
 
@@ -187,8 +209,7 @@ class AudioMixEngine:
         if not any(abs(sample) >= PCM_ACTIVITY_THRESHOLD for sample in master):
             raise ValueError("narration output contains no audible samples")
         return {
-            "provider": getattr(provider, "voice", provider.__class__.__name__),
-            "voice": config.voice.voice,
+            **provider_identity,
             "cue_count": len(timing),
             "duration_seconds": round(len(master) / sample_rate, 3),
             "timing": timing,
@@ -334,10 +355,12 @@ def _read_pcm16(path: Path, *, allow_stereo: bool = False) -> tuple[array, int]:
 
 
 def _trim_activity(samples: array) -> array:
-    active = [index for index, sample in enumerate(samples) if abs(sample) >= PCM_ACTIVITY_THRESHOLD]
-    if not active:
+    if not any(abs(sample) >= PCM_ACTIVITY_THRESHOLD for sample in samples):
         raise ValueError("TTS chunk contains no audible samples")
-    return samples[max(0, active[0] - 480) : min(len(samples), active[-1] + 481)]
+    # Preserve quiet leading/trailing phonemes. Only exact digital silence is
+    # removed; no amplitude threshold may cut a spoken word to fit a scene.
+    nonzero = [index for index, sample in enumerate(samples) if sample]
+    return samples[max(0, nonzero[0] - 480) : min(len(samples), nonzero[-1] + 481)]
 
 
 def _write_pcm16(path: Path, samples: array, sample_rate: int) -> None:

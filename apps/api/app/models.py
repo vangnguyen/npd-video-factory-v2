@@ -71,6 +71,7 @@ class JobStatus(StrEnum):
     RUNNING = "running"
     AWAITING_REVIEW = "awaiting_review"
     FAILED = "failed"
+    CANCELLED = "cancelled"
 
 
 class JobStage(StrEnum):
@@ -134,6 +135,13 @@ class JobError(StrictModel):
     details: list[dict] = Field(default_factory=list)
 
 
+class ContentGenerationJobInput(StrictModel):
+    kind: Literal["content_generation"] = "content_generation"
+    content_version_id: str = Field(pattern=r"^pver_[A-Za-z0-9_-]{4,60}$")
+    provider_key: Literal["fixture-storyboard-content"] = "fixture-storyboard-content"
+    actor_ref: str = Field(min_length=1, max_length=160)
+
+
 class JobRecord(StrictModel):
     job_id: str
     workspace_id: str | None = None
@@ -142,7 +150,7 @@ class JobRecord(StrictModel):
     status: JobStatus
     stage: JobStage
     progress: int = Field(ge=0, le=100)
-    request: VideoJobCreate
+    request: VideoJobCreate | ContentGenerationJobInput
     artifacts: list[Artifact] = Field(default_factory=list)
     error: JobError | None = None
     created_at: datetime

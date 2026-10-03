@@ -4,11 +4,18 @@ export function sceneSourceKind(scenes, assets) {
     ? "mixed" : "storyboard_media";
 }
 
+export function generationInputsChanged(document, input) {
+  return !document || document.original_text !== input.original || document.script !== input.script ||
+    document.input_kind !== input.kind || (document.supplied_facts ?? []).join("\n") !== input.facts;
+}
+
 export function initializeMultiInput({api, getState, refresh, refreshProjects, toast, uploadFetch}) {
   const $ = id => document.getElementById(id);
   const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let version = null;
   let scenes = [];
+  let generation = null;
+  let generationTimer = null;
   let busy = 1; // Initial project/session bootstrap must finish before editing.
   function syncControls() {
     $("multi-input-workbench").dataset.loading = busy ? "true" : "false";
@@ -23,6 +30,8 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
       const asset = getState().assets.find(a => a.asset_id === choice);
       const analysis = asset && getState().analyses.find(a => a.asset_id === asset.asset_id && a.status === "succeeded");
       return {...old, narration: row.querySelector("[data-field=narration]").value,
+        script_start: old.narration === row.querySelector("[data-field=narration]").value ? old.script_start ?? null : null,
+        script_end: old.narration === row.querySelector("[data-field=narration]").value ? old.script_end ?? null : null,
         visual_brief: row.querySelector("[data-field=visual]").value,
         duration_seconds: Number(row.querySelector("[data-field=duration]").value),
         fit: row.querySelector("[data-field=fit]").value,
@@ -68,11 +77,18 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     $("mvp-kind").value = doc?.input_kind ?? "script";
     $("mvp-original").value = doc?.original_text ?? "";
     $("mvp-script").value = doc?.script ?? "";
+    $("mvp-facts").value = (doc?.supplied_facts ?? []).join("\n");
     scenes = structuredClone(doc?.scenes ?? []);
     renderScenes();
     $("mvp-video-analysis").innerHTML = state.assets.filter(a => a.content_type.startsWith("video/")).map(a => `<option value="${escape(a.asset_id)}">${escape(a.filename)}</option>`).join("");
     $("mvp-status").textContent = doc ? `${doc.input_kind === "prompt" && !doc.scenes.length ? "Prompt đã lưu; cần lời đọc/script. AI content chưa được cấu hình." : doc.approved ? "Đã duyệt nội dung" : "Draft deterministic cần duyệt"} · ${version.project_version_id} · Không phải kết quả AI` : "Nhập ảnh, video hoặc text; không bắt buộc video.";
     $("mvp-plan").textContent = doc ? JSON.stringify((await api(`/api/v1/projects/${state.projectId}/storyboard-media-plan`)).items.map(s => ({scene:s.scene_id,media:s.strategy,status:s.status})), null, 2) : "";
+    $("mvp-script-diff").textContent = (version?.provenance.script_diff ?? []).join("\n");
+    if (state.projectId) {
+      const provider = await api(`/api/v1/projects/${state.projectId}/content-provider`);
+      $("mvp-provider-status").textContent = provider.status === "FIXTURE_ONLY" ? "Fixture offline — không phải AI thật; chưa nghiệm thu nội dung." : "CONTENT_PROVIDER_NOT_CONFIGURED — có thể nhập script thủ công; không gọi provider.";
+      await reloadGeneration(state.projectId);
+    }
   }
   async function save(approved = false) {
     captureScenes();
@@ -82,10 +98,24 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     const kind = $("mvp-kind").value;
     const document = {input_kind:kind, original_text:original, script:$("mvp-script").value,
       creative_instructions:kind === "prompt" ? original : "", scenes,
-      approved, facts_needing_source:kind === "script" ? [] : ["Cần nguồn cho dữ kiện trong idea/prompt."], generator:"deterministic-user-draft"};
+      supplied_facts:$("mvp-facts").value.split("\n").filter(line=>line.trim()),
+      approved, facts_needing_source:version?.snapshot.content.facts_needing_source ?? (kind === "script" ? [] : ["Cần nguồn cho dữ kiện trong idea/prompt."]), generator:version?.snapshot.content.generator ?? "deterministic-user-draft"};
     version = await api(`/api/v1/projects/${state.projectId}/content`, {method:"PUT",body:JSON.stringify({expected_content_version_id:version?.project_version_id ?? null, document})});
     await refresh();
     toast(approved ? "Đã duyệt script/storyboard, chưa duyệt video final." : "Đã lưu phiên bản nội dung; approval cũ bị vô hiệu hóa.");
+  }
+  async function reloadGeneration(projectId) {
+    clearTimeout(generationTimer);
+    const response = await api(`/api/v1/projects/${projectId}/content-generation`);
+    if (getState().projectId !== projectId) return;
+    generation = response;
+    const job = response?.job;
+    $("mvp-generation-status").textContent = job ? `${job.job_id} · ${job.status} · ${job.error?.code ?? "FIXTURE_ONLY"}` : "Chưa có job. Save/Refresh không sinh nội dung.";
+    $("mvp-proposal").textContent = response?.proposal ? JSON.stringify({version:response.proposal.project_version_id,
+      base:response.proposal.provenance.base_content_version_id, script:response.proposal.snapshot.content.script,
+      diff:response.proposal.provenance.script_diff, facts_needing_source:response.proposal.snapshot.content.facts_needing_source,
+      scenes:response.proposal.snapshot.content.scenes, fixture:true},null,2) : "";
+    if (["queued","running"].includes(job?.status)) generationTimer = setTimeout(()=>reloadGeneration(projectId).catch(error=>toast(error.message,true)),700);
   }
   const guarded = fn => async event => {
     event?.preventDefault();setBusy(true);
@@ -120,6 +150,28 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     toast("Đã lưu media qua quarantine/validation hiện có.");
   }));
   $("mvp-draft").addEventListener("click",guarded(async () => {scenes=[];$("mvp-scenes").innerHTML=""; await save(false);}));
+  $("mvp-generate").addEventListener("click",guarded(async () => {
+    const doc=version?.snapshot.content;
+    if (generationInputsChanged(doc,{original:$("mvp-original").value,script:$("mvp-script").value,kind:$("mvp-kind").value,facts:$("mvp-facts").value}))
+      throw new Error("Lưu input/script hiện tại trước khi tạo đề xuất; bản đề xuất không ghi đè nội dung đang sửa.");
+    await api(`/api/v1/projects/${getState().projectId}/content-generation`,{method:"POST",body:JSON.stringify({
+      expected_content_version_id:version.project_version_id,idempotency_key:crypto.randomUUID()})});
+    await reloadGeneration(getState().projectId);
+  }));
+  $("mvp-generation-cancel").addEventListener("click",guarded(async () => {
+    if(!generation?.job)throw new Error("Chưa có job để hủy.");
+    await api(`/api/v1/projects/${getState().projectId}/content-generation/${generation.job.job_id}/cancel`,{method:"POST",body:"{}"});
+    await reloadGeneration(getState().projectId);
+  }));
+  $("mvp-generation-apply").addEventListener("click",guarded(async () => {
+    if(generation?.job.status!=="awaiting_review")throw new Error("Chưa có đề xuất còn hiệu lực để sử dụng.");
+    captureScenes();
+    const doc=version.snapshot.content;
+    if(generationInputsChanged(doc,{original:$("mvp-original").value,script:$("mvp-script").value,kind:$("mvp-kind").value,facts:$("mvp-facts").value}) ||
+       JSON.stringify(scenes)!==JSON.stringify(doc.scenes))throw new Error("Lưu thay đổi cục bộ trước; không ghi đè script/cảnh đang sửa.");
+    await api(`/api/v1/projects/${getState().projectId}/content-generation/${generation.job.job_id}/apply`,{method:"POST",body:JSON.stringify({expected_content_version_id:version.project_version_id})});
+    await refresh();toast("Đã tạo draft phiên bản mới từ fixture; cần sửa/duyệt, chưa phải AI acceptance.");
+  }));
   $("mvp-from-media").addEventListener("click",guarded(async () => {
     const media = getState().assets.filter(a => a.asset_class === "source" && /^(image|video)\//.test(a.content_type));
     if (!media.length) throw new Error("Upload media trước. Draft này là caption nội bộ, không phải nội dung AI.");

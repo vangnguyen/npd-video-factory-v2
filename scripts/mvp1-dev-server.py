@@ -48,6 +48,8 @@ from app.auto_edit_repository import AutoEditRepository
 from app.auto_edit_providers import FFprobeMediaProbe, FFmpegMediaSignalProvider, ContractOnlyTranscriptionProvider, ProviderNotConfigured
 from app.auto_edit_service import AutoEditAnalysisService, UploadService
 from app.content_service import ContentService
+from app.content_generation import ContentGenerationService, content_provider_definition
+from app.repositories import PostgresJobStore
 from app.object_storage import LocalObjectStorageProvider
 from app.media_security import DeterministicMediaMalwareScanner
 from app.media_intelligence_repository import MediaIntelligenceRepository
@@ -107,6 +109,7 @@ async def lifespan(_app):
         "adapter":"isolated-dev","routing_mode":"primary","status":"healthy","enabled":True,
         "supports_dry_run":True,"metadata":{"paid":False,"dev_only":True}}
         for key,cap in [("espeak","tts"),("remotion","rendering")]])
+    await platform.seed_providers([content_provider_definition("fixture")])
     storage = LocalObjectStorageProvider(root / "objects")
     await storage.ensure_ready()
     ff = tools / "ffmpeg-master-latest-linux64-gpl/bin"
@@ -121,6 +124,7 @@ async def lifespan(_app):
         provider_global_kill_switch_engaged=True)
     timelines, production, media = TimelineRepository(factory), ProductionRepository(factory), MediaIntelligenceRepository(factory)
     queue = LocalQueue()
+    generation_queue = LocalQueue()
     app.state.platform_repository = platform
     app.state.auto_edit_repository = assets
     app.state.object_storage = storage
@@ -131,6 +135,9 @@ async def lifespan(_app):
     app.state.timeline_repository = timelines
     app.state.production_repository = production
     app.state.content_service = ContentService(platform)
+    app.state.content_generation_service = ContentGenerationService(platform=platform,
+        store=PostgresJobStore(factory, generation_queue, platform=platform), queue=generation_queue, mode="fixture")
+    generation_queue.processor = app.state.content_generation_service
     app.state.upload_service = UploadService(repository=assets,platform=platform,object_storage=storage,
         media_probe=FFprobeMediaProbe(str(ff / "ffprobe")),malware_scanner=DeterministicMediaMalwareScanner(),
         staging_root=root / "uploads",default_part_size_bytes=1024*1024,max_part_size_bytes=32*1024*1024,max_upload_size_bytes=25000000)
@@ -161,11 +168,14 @@ async def lifespan(_app):
     token_file.write_text(TEST_HUMAN_TOKEN)
     token_file.chmod(0o600)
     task = asyncio.create_task(queue.work())
+    generation_task = asyncio.create_task(generation_queue.work())
+    await generation_queue.processor.recover()
     await queue.processor.recover_incomplete(queue)
     try:
         yield
     finally:
         task.cancel()
+        generation_task.cancel()
         token_file.unlink(missing_ok=True)
         await engine.dispose()
 
