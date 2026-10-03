@@ -68,6 +68,8 @@ def create_audio_tts_provider(settings: Any, *, controller=None, credential_reso
 def create_available_audio_tts_provider(settings: Any, **bindings):
     # An unapproved TTS lane blocks synthesis, not the shared worker/content/ASR
     # lifecycle. Preserve the specific safe failure without loading a credential.
+    if bindings.pop("admission_error", None):
+        return UnconfiguredVietnameseTTSProvider("MVP1_LANE_ADMISSION_BLOCKED")
     try:
         return create_audio_tts_provider(settings, **bindings)
     except TTSNotConfiguredError as exc:

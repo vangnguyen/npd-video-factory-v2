@@ -421,8 +421,19 @@ class ProductionRenderProcessor:
             if plan and hasattr(self.audio_engine, "synthesize_planned_narration"):
                 synthesis = self.audio_engine.synthesize_planned_narration
                 extra["plan"] = plan
+            tts_provider = self.tts_provider
+            if hasattr(tts_provider, "bind_render_scope") and audio_mix.config.voice.enabled:
+                async def before_unit():
+                    await self._check_cancelled(render_id)
+                    from .content_service import ContentService
+                    current = await ContentService(self.platform).latest(render.project_id)
+                    if current is None or current.project_version_id != snapshot.metadata.get("content_version_id"):
+                        raise RenderCancelledError("TTS_CONTENT_VERSION_STALE")
+                tts_provider = tts_provider.bind_render_scope(workspace_id=project.workspace_id,
+                    project_id=render.project_id, content_version_id=snapshot.metadata.get("content_version_id"),
+                    render_id=render_id, before_unit=before_unit)
             narration_manifest = await synthesis(
-                self.tts_provider,
+                tts_provider,
                 cues=subtitles.cues,
                 config=audio_mix.config,
                 duration_seconds=snapshot.duration_seconds,

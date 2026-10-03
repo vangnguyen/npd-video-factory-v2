@@ -109,8 +109,13 @@ class ResponsesStoryboardContentProvider:
         # be used as zero-call readiness. Actual execute() remains the boundary.
         if self.controller is None or self.credential_resolver is None:
             return "AUTHORITY_REQUIRED"
+        if getattr(self.credential_resolver, "backend_admitted", True) is False:
+            return "AUTHORITY_REQUIRED"
         policy = self.controller.policy
         scope = policy.execution_gate
+        from .mvp1_provider_admission import Mvp1AdmissionScope
+        if isinstance(scope, Mvp1AdmissionScope) and scope.profile_sha256 != self.profile.sha256:
+            return "AUTHORITY_REQUIRED"
         if (not policy.verified_gate_required or scope is None
                 or scope.provider_key != self.key or scope.capability != "content_generation"
                 or scope.model != self.model or scope.credential_alias != self.profile.credential_alias
@@ -142,8 +147,30 @@ class ResponsesStoryboardContentProvider:
             asset_hash=input_sha256, input_media_kind="document", requested_language="vi",
             max_output_tokens=self.profile.max_output_tokens, rights_required=True)
         result = await self.controller.execute(context,
-            lambda: self._request(document, input_sha256, payload))
+            lambda: self._request(document, input_sha256, payload, context))
         return result.value
+
+    def prepare_zero_call(self, document, **bindings):
+        from datetime import datetime, timezone
+        from .mvp1_provider_admission import Mvp1AdmissionScope
+        actual = hashlib.sha256(canonical_bytes(document.model_dump(mode="json"))).hexdigest()
+        scope = self.controller.policy.execution_gate if self.controller else None
+        if not isinstance(scope, Mvp1AdmissionScope) or scope.profile_sha256 != self.profile.sha256:
+            raise ProviderEnablementError("AUTH", "CONTENT_ADMISSION_SCOPE_REQUIRED")
+        if actual != bindings["input_sha256"]:
+            raise ProviderEnablementError("MAPPING", "CONTENT_INPUT_BINDING_MISMATCH")
+        context = ProviderCallContext(operation_key=bindings["operation_key"], workspace_id=bindings["workspace_id"],
+            project_id=bindings["project_id"], job_id=bindings["job_id"], provider_key=self.key, model=self.model,
+            capability="content_generation", operation="storyboard-proposal", external_call=True, paid=True,
+            estimated_cost_vnd=self.profile.estimated_cost_vnd, credential_alias=self.profile.credential_alias,
+            asset_id=bindings["source_version_id"], asset_hash=actual, input_media_kind="document",
+            requested_language="vi", max_output_tokens=self.profile.max_output_tokens, rights_required=True)
+        denial = scope.denial_for(context, datetime.now(timezone.utc), require_execution=False)
+        if denial: raise ProviderEnablementError("AUTH", denial)
+        payload = self._request_payload(document)
+        return {"status": "PUBLIC_ADMISSION_PASS_NOT_LIVE_AUTHORITY", "request_sha256": hashlib.sha256(canonical_bytes(payload)).hexdigest(),
+            "input_sha256": actual, "profile_sha256": self.profile.sha256, "provider_call_performed": False,
+            "credential_read_performed": False, "budget_reserved_vnd": 0, "full_preflight": "NOT_RUN"}
 
     def _request_payload(self, document):
         payload = {"model": self.model, "store": False, "stream": False, "tools": [],
@@ -165,12 +192,14 @@ class ResponsesStoryboardContentProvider:
             raise ProviderEnablementError("CONFIG", "CONTENT_COST_ENVELOPE_TOO_SMALL")
         return payload
 
-    async def _request(self, document, input_sha256, payload):
+    async def _request(self, document, input_sha256, payload, context):
         request_sha = hashlib.sha256(canonical_bytes(payload)).hexdigest()
         started = time.perf_counter()
         # Called ONLY within the verified durable execute() operation.
         try:
-            key = self.credential_resolver(self.profile.credential_alias)
+            from .mvp1_provider_admission import ProtectedResolverReference
+            key = (self.credential_resolver.resolve_for_context(context)
+                if isinstance(self.credential_resolver, ProtectedResolverReference) else self.credential_resolver(self.profile.credential_alias))
         except Exception:
             raise ProviderEnablementError("AUTH", "CONTENT_CREDENTIAL_UNAVAILABLE") from None
         if not isinstance(key, str) or not key.strip():
@@ -228,9 +257,11 @@ class ResponsesStoryboardContentProvider:
             latency_seconds=time.perf_counter()-started)
 
 
-def create_storyboard_content_provider(settings, *, controller=None, credential_resolver=None, transport=None):
+def create_storyboard_content_provider(settings, *, controller=None, credential_resolver=None, transport=None, admission_error=None):
     if settings.content_generation_provider != "responses":
         return None  # Service retains the historical fixture/contract path.
+    if admission_error:
+        return BlockedStoryboardProvider("MVP1_LANE_ADMISSION_BLOCKED")
     try:
         profile = ContentProviderProfile(model=settings.content_generation_model,
             credential_alias=settings.content_generation_credential_alias,
@@ -239,8 +270,8 @@ def create_storyboard_content_provider(settings, *, controller=None, credential_
             estimated_cost_vnd=settings.content_generation_estimated_cost_vnd,
             max_output_tokens=settings.content_generation_max_output_tokens)
     except ValueError:
-        return BlockedStoryboardProvider()
+        return BlockedStoryboardProvider("MODEL_SELECTION_REQUIRED" if not settings.content_generation_model else "CONTENT_PROVIDER_NOT_CONFIGURED")
     if not settings.content_external_execution_enabled:
-        return ResponsesStoryboardContentProvider(profile)  # Explicit AUTHORITY_REQUIRED, no secret callback.
+        return ResponsesStoryboardContentProvider(profile, controller=controller, credential_resolver=credential_resolver, transport=transport)
     return ResponsesStoryboardContentProvider(profile, controller=controller,
         credential_resolver=credential_resolver, transport=transport)

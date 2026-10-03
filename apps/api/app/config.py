@@ -29,6 +29,13 @@ class Settings(BaseSettings):
     content_generation_output_vnd_per_million_tokens: Decimal = Decimal("0")
     content_generation_estimated_cost_vnd: Decimal = Decimal("0")
     content_generation_max_output_tokens: int = 4096
+    content_admission_enabled: bool = False
+    content_admission_file: Path = Path("/run/secrets/video-factory-content-admission.json")
+    content_admission_sha256: str = ""
+    tts_admission_enabled: bool = False
+    tts_admission_file: Path = Path("/run/secrets/video-factory-tts-admission.json")
+    tts_admission_sha256: str = ""
+    mvp1_provider_source_commit: str = ""
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     database_url: str = "postgresql+asyncpg://video_factory:development-only@postgres:5432/video_factory"
@@ -689,10 +696,31 @@ class Settings(BaseSettings):
                     raise ValueError(
                         "provider settings do not match the verified G-02-ASR envelope"
                     )
-        elif self.provider_external_execution_enabled:
+        elif self.provider_external_execution_enabled and not (self.content_admission_enabled or self.tts_admission_enabled):
             raise ValueError("real provider execution requires a verified owner-gate bundle")
         if self.provider_external_execution_enabled:
-            if not self.provider_verified_gate_bundle_enabled:
+            mvp1_lanes = self.content_admission_enabled or self.tts_admission_enabled
+            if mvp1_lanes:
+                if self.provider_verified_gate_bundle_enabled or self.vision_provider == "openai" or self.transcription_provider in {"openai", "assemblyai"}:
+                    raise ValueError("MVP1 lanes cannot transfer authority to historical ASR/Vision")
+                if not self.provider_paid_execution_enabled:
+                    raise ValueError("MVP1 external execution requires its paid gate")
+                if not ((self.content_generation_provider == "responses" and self.content_external_execution_enabled)
+                    or (self.audio_tts_provider == "openai" and self.audio_external_execution_enabled)):
+                    raise ValueError("MVP1_SELECTED_EXECUTABLE_LANE_REQUIRED")
+                from .mvp1_provider_admission import load_mvp1_admission
+                for prefix, capability, selected in (("content", "content_generation", self.content_generation_provider == "responses" and self.content_external_execution_enabled),
+                    ("tts", "tts", self.audio_tts_provider == "openai" and self.audio_external_execution_enabled)):
+                    if not selected:
+                        continue
+                    if not getattr(self, prefix + "_admission_enabled"):
+                        raise ValueError("MVP1_LANE_ADMISSION_REQUIRED")
+                    scope = load_mvp1_admission(getattr(self, prefix + "_admission_file"),
+                        expected_sha256=getattr(self, prefix + "_admission_sha256"),
+                        expected_source_commit=self.mvp1_provider_source_commit, capability=capability)
+                    if not scope.execution_authorized:
+                        raise ValueError("MVP1_EXECUTION_AUTHORITY_REQUIRED")
+            elif not self.provider_verified_gate_bundle_enabled:
                 raise ValueError("real provider execution requires a verified owner-gate bundle")
             selected_paid_adapters = sum(
                 (
@@ -700,7 +728,7 @@ class Settings(BaseSettings):
                     self.transcription_provider in {"openai", "assemblyai"},
                 )
             )
-            if selected_paid_adapters != 1 or not self.provider_paid_execution_enabled:
+            if not mvp1_lanes and (selected_paid_adapters != 1 or not self.provider_paid_execution_enabled):
                 raise ValueError(
                     "gated execution is limited to one paid allowlisted provider capability"
                 )

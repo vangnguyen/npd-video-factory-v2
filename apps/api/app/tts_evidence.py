@@ -44,7 +44,7 @@ def _tokens(text):
 
 
 class SpeechTimingEvidence(StrictModel):
-    source: Literal["NONE", "MEASURED_PROVIDER", "FORCED_ALIGNMENT", "ESTIMATED_SEGMENT"] = "NONE"
+    source: Literal["NONE", "PROVIDER_MEASURED", "MEASURED_PROVIDER", "FORCED_ALIGNMENT", "ESTIMATED_SEGMENT"] = "NONE"
     reference_text: str = Field(default="", max_length=20000)
     audio_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     duration_seconds: float = Field(gt=0, allow_inf_nan=False)
@@ -57,7 +57,9 @@ class SpeechTimingEvidence(StrictModel):
             raise ValueError("estimated/absent timing cannot claim word alignment")
         if self.source == "NONE" and self.segments:
             raise ValueError("absent timing cannot carry intervals")
-        if self.source in {"MEASURED_PROVIDER", "FORCED_ALIGNMENT"}:
+        # MEASURED_PROVIDER is a loadable source-candidate legacy spelling,
+        # not a second timing source; new evidence should use PROVIDER_MEASURED.
+        if self.source in {"PROVIDER_MEASURED", "MEASURED_PROVIDER", "FORCED_ALIGNMENT"}:
             if not self.audio_sha256 or not self.words or not self.reference_text:
                 raise ValueError("word alignment requires audio/input identity and complete words")
             if _tokens(self.reference_text) != _tokens(" ".join(w.text for w in self.words)):

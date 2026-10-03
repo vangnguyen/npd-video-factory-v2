@@ -322,11 +322,13 @@ async def main() -> None:
         object_storage=object_storage,
     )
     config = WorkerConfig.from_env()
-    content_safety = DurableProviderSafetyController(provider_safety_policy_from_settings(settings),
-        repository=ProviderSafetyRepository(session_factory))
+    from app.mvp1_provider_admission import create_mvp1_lane_bindings
+    lane_repository = ProviderSafetyRepository(session_factory)
+    content_bindings = create_mvp1_lane_bindings(settings, capability="content_generation", repository=lane_repository)
+    tts_bindings = create_mvp1_lane_bindings(settings, capability="tts", repository=lane_repository)
     content_generation = ContentGenerationService(platform=platform, store=store, queue=redis,
         mode=settings.content_generation_provider,
-        provider=create_storyboard_content_provider(settings, controller=content_safety))
+        provider=create_storyboard_content_provider(settings, controller=content_bindings["controller"], credential_resolver=content_bindings["credential_resolver"], admission_error=content_bindings.get("admission_error")))
     await content_generation.recover()
     await recover_inflight(redis)
     providers = create_media_provider_bundle(settings)
@@ -363,7 +365,7 @@ async def main() -> None:
             ffprobe_path=settings.ffprobe_path,
             ffmpeg_path=settings.ffmpeg_path,
         ),
-        tts_provider=create_available_audio_tts_provider(settings),
+        tts_provider=create_available_audio_tts_provider(settings, **tts_bindings),
         audio_engine=AudioMixEngine(ffmpeg_path=settings.ffmpeg_path),
         manifest_validator=TimelineRenderContractValidator(
             settings.contracts_root / "timeline-render.schema.json"

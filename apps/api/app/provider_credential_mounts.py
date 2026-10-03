@@ -47,3 +47,24 @@ def validate_provider_systemd_mount(*, provider_key: str, credential_alias: str,
         "systemd_credential_id": binding.systemd_credential_id, "encrypted_source": source,
         "verdict": "SOURCE_MAPPING_PASS", "credential_bytes_read": False,
         "live_load_validation": "NOT_RUN", "execution_authority": False}
+
+
+def validate_additive_assemblyai_mount(*, unit_name: str, unit_text: str, dropin_text: str):
+    if unit_name != "npd-vf-secret-resolver.service":
+        raise ValueError("ASSEMBLYAI_RESOLVER_UNIT_MISMATCH")
+    before = effective_encrypted_mounts(unit_text)
+    expected_existing = {"openai-codex-video": "/etc/credstore.encrypted/openai-codex-video"}
+    if before != expected_existing:
+        raise ValueError("ASSEMBLYAI_BASE_MOUNT_PROVENANCE_MISMATCH")
+    meaningful = [line.strip() for line in dropin_text.splitlines() if line.strip() and not line.strip().startswith(("#", ";"))]
+    exact = "LoadCredentialEncrypted=assemblyai-stt-video-factory-benchmark:/etc/credstore.encrypted/assemblyai-stt-video-factory-benchmark"
+    if meaningful != ["[Service]", exact]:
+        raise ValueError("ASSEMBLYAI_DROPIN_SCOPE_OR_SYNTAX_MISMATCH")
+    after = effective_encrypted_mounts(unit_text, (dropin_text,))
+    if after != {**before, "assemblyai-stt-video-factory-benchmark": "/etc/credstore.encrypted/assemblyai-stt-video-factory-benchmark"}:
+        raise ValueError("ASSEMBLYAI_ADDITIVE_MAPPING_MISMATCH")
+    return {"verdict": "HOST_REMEDIATION_PACKAGE_READY", "unit": unit_name,
+        "existing_mounts_preserved": True, "systemd_credential_id": "assemblyai-stt-video-factory-benchmark",
+        "install_path": "/etc/systemd/system/npd-vf-secret-resolver.service.d/20-assemblyai-credential.conf",
+        "expected_owner": "root:root", "expected_mode": "0644", "symlink_allowed": False,
+        "credential_bytes_read": False, "installed": False, "runtime_validation": "NOT_RUN"}

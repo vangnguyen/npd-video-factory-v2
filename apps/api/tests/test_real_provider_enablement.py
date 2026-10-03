@@ -21,7 +21,7 @@ from app.config import Settings
 from app.content_generation import ContentProviderUnavailable
 from app.content_models import ContentDocument, ContentGenerateRequest, ContentSaveRequest
 from app.content_service import ContentConflictError, canonical_bytes
-from app.provider_credential_mounts import validate_provider_systemd_mount
+from app.provider_credential_mounts import validate_provider_systemd_mount, validate_additive_assemblyai_mount
 from app.provider_safety import ProviderCallContext
 from app.providers import OpenAIVietnameseTTSProvider, TTSNotConfiguredError
 from app.production_audio import audio_provider_status, create_audio_tts_provider, create_available_audio_tts_provider, AudioMixEngine
@@ -117,7 +117,7 @@ def test_schema_all_required_and_defaults_live_disabled_without_secret_access():
     assert set(schema["required"]) == set(schema["properties"])
     settings = Settings(_env_file=None, content_generation_provider="responses")
     assert not settings.content_external_execution_enabled
-    assert create_storyboard_content_provider(settings).readiness() == "CONTENT_PROVIDER_NOT_CONFIGURED"
+    assert create_storyboard_content_provider(settings).readiness() == "MODEL_SELECTION_REQUIRED"
     assert not Settings(_env_file=None).audio_external_execution_enabled
     # No construction/readiness metadata check is a durable reservation or load.
     candidate = ResponsesStoryboardContentProvider(profile())
@@ -416,11 +416,11 @@ def mounts(unit, dropins=()):
 
 def test_actual_source_mount_blocker_and_candidate_no_secret_load():
     base = (ROOT/"deploy/executor/npd-vf-secret-resolver.service").read_text()
-    candidate = (ROOT/"deploy/executor/assemblyai-secret-resolver.service.d/20-provider-credential.conf").read_text()
+    candidate = (ROOT/"deploy/executor/npd-vf-secret-resolver.service.d/20-assemblyai-credential.conf").read_text()
     with pytest.raises(ValueError, match="MOUNT_MISMATCH"): mounts(base)
-    result = mounts(base, (candidate,))
-    assert result["verdict"] == "SOURCE_MAPPING_PASS" and not result["credential_bytes_read"]
-    assert result["live_load_validation"] == "NOT_RUN" and not result["execution_authority"]
+    result = validate_additive_assemblyai_mount(unit_name="npd-vf-secret-resolver.service", unit_text=base, dropin_text=candidate)
+    assert result["verdict"] == "HOST_REMEDIATION_PACKAGE_READY" and not result["credential_bytes_read"]
+    assert result["runtime_validation"] == "NOT_RUN" and not result["installed"] and result["existing_mounts_preserved"]
     # Historical OpenAI unit remains valid without the candidate override.
     assert validate_provider_systemd_mount(provider_key="openai-transcription", credential_alias="secret://openai/codex-video",
         unit_text=base)["systemd_credential_id"] == "openai-codex-video"
