@@ -49,7 +49,7 @@ class ContentDocument(StrictModel):
     scenes: list[StoryboardScene] = Field(default_factory=list, max_length=40)
     facts_needing_source: list[Annotated[str, Field(min_length=1, max_length=500)]] = Field(default_factory=list, max_length=40)
     approved: bool = False
-    generator: Literal["deterministic-user-draft", "fixture-storyboard-v1"] = "deterministic-user-draft"
+    generator: Literal["deterministic-user-draft", "fixture-storyboard-v1", "provider-storyboard-v1"] = "deterministic-user-draft"
     supplied_facts: list[Annotated[str, Field(min_length=1, max_length=500)]] = Field(default_factory=list, max_length=40)
     protected_terms: list[Annotated[str, Field(min_length=1, max_length=100)]] = Field(default_factory=list, max_length=40)
 

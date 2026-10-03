@@ -92,7 +92,9 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     $("mvp-script-diff").textContent = (version?.provenance.script_diff ?? []).join("\n");
     if (state.projectId) {
       const provider = await api(`/api/v1/projects/${state.projectId}/content-provider`);
-      $("mvp-provider-status").textContent = provider.status === "FIXTURE_ONLY" ? "Fixture offline — không phải AI thật; chưa nghiệm thu nội dung." : "CONTENT_PROVIDER_NOT_CONFIGURED — có thể nhập script thủ công; không gọi provider.";
+      $("mvp-provider-status").textContent = provider.status === "FIXTURE_ONLY"
+        ? "Fixture offline — không phải AI thật; chưa nghiệm thu nội dung."
+        : `${provider.provider_key ?? "Content"} · ${provider.status} — chưa nghiệm thu; có thể nhập script thủ công.`;
       await reloadGeneration(state.projectId);
     }
   }
@@ -117,11 +119,13 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     if (getState().projectId !== projectId) return;
     generation = response;
     const job = response?.job;
-    $("mvp-generation-status").textContent = job ? `${job.job_id} · ${job.status} · ${job.error?.code ?? "FIXTURE_ONLY"}` : "Chưa có job. Save/Refresh không sinh nội dung.";
+    $("mvp-generation-status").textContent = job ? `${job.job_id} · ${job.status} · ${job.error?.code ?? response.provider_status}` : "Chưa có job. Save/Refresh không sinh nội dung.";
     $("mvp-proposal").textContent = response?.proposal ? JSON.stringify({version:response.proposal.project_version_id,
       base:response.proposal.provenance.base_content_version_id, script:response.proposal.snapshot.content.script,
       diff:response.proposal.provenance.script_diff, facts_needing_source:response.proposal.snapshot.content.facts_needing_source,
-      scenes:response.proposal.snapshot.content.scenes, fixture:true},null,2) : "";
+      scenes:response.proposal.snapshot.content.scenes, fixture:response.proposal.provenance.fixture,
+      provider:response.proposal.provenance.provider, model:response.proposal.provenance.model,
+      usage:response.proposal.provenance.usage, facts_verified:false},null,2) : "";
     if (["queued","running"].includes(job?.status)) generationTimer = setTimeout(()=>reloadGeneration(projectId).catch(error=>toast(error.message,true)),700);
   }
   const guarded = fn => async event => {

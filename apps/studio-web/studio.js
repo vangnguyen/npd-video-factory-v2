@@ -452,7 +452,9 @@ function renderProduction() {
 
   const mix = packageState.audio_mix.config;
   $("#audio-version").textContent = `v${packageState.audio_mix.version}`;
-  $("#audio-provider-status").textContent = `TTS: ${packageState.audio_mix.provider_status === "configured" ? "đã cấu hình" : "chưa cấu hình"} · 48 kHz · limiter ${mix.limiter_peak_db} dB`;
+  const audioStatus = {configured:"đã cấu hình", model_voice_selection_required:"cần chọn model/giọng",
+    tts_authority_required:"cần authority TTS riêng", disabled:"đã tắt", not_configured:"chưa cấu hình"};
+  $("#audio-provider-status").textContent = `TTS: ${audioStatus[packageState.audio_mix.provider_status] ?? "chưa xác minh"} · 48 kHz · limiter ${mix.limiter_peak_db} dB`;
   $("#voice-enabled").checked = mix.voice.enabled;
   $("#voice-speed").value = mix.voice.speed;
   $("#voice-speed-output").textContent = `${Number(mix.voice.speed).toFixed(2)}×`;

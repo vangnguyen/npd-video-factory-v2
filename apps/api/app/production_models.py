@@ -136,7 +136,7 @@ class AudioMixVersionRead(StrictModel):
     timeline_version: int = Field(ge=1)
     version: int = Field(ge=1)
     config: MixConfig
-    provider_status: Literal["configured", "not_configured", "disabled"]
+    provider_status: Literal["configured", "not_configured", "disabled", "model_voice_selection_required", "tts_authority_required"]
     actor_ref: str
     created_at: datetime
 

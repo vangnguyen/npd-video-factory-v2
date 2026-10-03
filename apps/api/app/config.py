@@ -2,7 +2,7 @@ from decimal import Decimal
 from pathlib import Path
 from urllib.parse import urlparse
 
-from pydantic import field_validator, model_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from .asr_prompt_profile import profile_for_id, prompt_profile_sha256
@@ -22,6 +22,13 @@ class Settings(BaseSettings):
 
     app_env: str = "development"
     content_generation_provider: str = "contract"
+    content_generation_model: str = ""
+    content_generation_credential_alias: str = "secret://openai/video-factory-content-generation"
+    content_external_execution_enabled: bool = False
+    content_generation_input_vnd_per_million_tokens: Decimal = Decimal("0")
+    content_generation_output_vnd_per_million_tokens: Decimal = Decimal("0")
+    content_generation_estimated_cost_vnd: Decimal = Decimal("0")
+    content_generation_max_output_tokens: int = 4096
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     database_url: str = "postgresql+asyncpg://video_factory:development-only@postgres:5432/video_factory"
@@ -118,6 +125,12 @@ class Settings(BaseSettings):
     openai_tts_model: str = "gpt-4o-mini-tts"
     openai_tts_voice: str = "marin"
     openai_tts_instructions: str = ""
+    # Separate candidate configuration; historical model/voice defaults are not
+    # an Owner production voice selection or per-capability execution authority.
+    production_tts_model: str = ""
+    production_tts_voice_id: str = ""
+    production_tts_style: str = ""
+    production_tts_speed: float = Field(default=1, ge=0.25, le=4, allow_inf_nan=False)
     openai_base_url: str = "https://api.openai.com"
     renderer_timeout_seconds: float = 600.0
     public_base_url: str = "http://localhost:8000"
@@ -309,8 +322,27 @@ class Settings(BaseSettings):
             raise ValueError("deterministic analytics fixtures must be disabled in production")
         if self.transcription_provider not in {"fixture", "contract", "openai", "assemblyai"}:
             raise ValueError("TRANSCRIPTION_PROVIDER must be fixture, contract, openai or assemblyai")
-        if self.content_generation_provider not in {"fixture", "contract"}:
-            raise ValueError("CONTENT_GENERATION_PROVIDER must be contract or offline fixture")
+        if self.content_generation_provider not in {"fixture", "contract", "responses"}:
+            raise ValueError("CONTENT_GENERATION_PROVIDER must be contract, offline fixture or responses")
+        if self.content_generation_credential_alias != "secret://openai/video-factory-content-generation":
+            raise ValueError("content generation credential alias is capability-specific")
+        if self.content_external_execution_enabled and (
+            self.content_generation_provider != "responses"
+            or self.app_env.lower() in {"ci", "test"}
+            or not self.provider_external_execution_enabled
+            or not self.provider_paid_execution_enabled
+            or not self.provider_verified_gate_bundle_enabled
+            or self.provider_global_kill_switch_engaged
+        ):
+            raise ValueError("content live execution requires a separate verified capability scope")
+        if not 256 <= self.content_generation_max_output_tokens <= 16000:
+            raise ValueError("content output token bound invalid")
+        if any(not value.is_finite() or value < 0 for value in (
+            self.content_generation_input_vnd_per_million_tokens,
+            self.content_generation_output_vnd_per_million_tokens,
+            self.content_generation_estimated_cost_vnd,
+        )):
+            raise ValueError("content pricing must be finite and nonnegative")
         if self.app_env.lower() == "production" and self.content_generation_provider == "fixture":
             raise ValueError("content generation fixture must be disabled in production")
         if self.auto_edit_signal_provider not in {"fixture", "ffmpeg"}:
@@ -450,8 +482,8 @@ class Settings(BaseSettings):
             raise ValueError("production must use S3-compatible object storage")
         if self.audio_tts_provider not in {"espeak", "contract", "openai"}:
             raise ValueError("AUDIO_TTS_PROVIDER must be espeak, contract or openai")
-        if self.audio_tts_provider == "openai" and not self.audio_external_execution_enabled:
-            raise ValueError("OpenAI audio TTS requires the external audio execution owner gate")
+        if len(self.production_tts_style) > 500:
+            raise ValueError("production TTS style must be bounded")
         if self.audio_external_execution_enabled and self.audio_tts_provider != "openai":
             raise ValueError("external audio execution is only valid for the owner-gated OpenAI adapter")
         if self.audio_tts_rate < 80 or self.audio_tts_rate > 260:

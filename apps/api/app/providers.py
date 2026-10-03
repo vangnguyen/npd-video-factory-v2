@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import time
 import wave
 from pathlib import Path
 from typing import Protocol
@@ -10,6 +12,9 @@ from pydantic import BaseModel, Field
 
 from .models import VideoJobCreate
 from .profiles import get_niche_profile
+from .tts_evidence import ProductionTTSProfile, SpeechTimingEvidence, TTSArtifactEvidence
+from .content_service import canonical_bytes
+from .storyboard_content_provider import ProviderEnablementError, http_failure
 
 
 class ScriptResult(BaseModel):
@@ -44,6 +49,7 @@ class VoiceResult(BaseModel):
     duration_seconds: float = Field(gt=0)
     provider: str
     voice: str
+    evidence: TTSArtifactEvidence | None = None
 
 
 class ContentProvider(Protocol):
@@ -103,10 +109,13 @@ class TTSNotConfiguredError(RuntimeError):
 
 
 class UnconfiguredVietnameseTTSProvider:
+    def __init__(self, reason="Vietnamese TTS provider is not configured"):
+        self.reason = reason
+
     async def synthesize(self, *, text: str, language: str, output_path: Path) -> VoiceResult:
         if language != "vi":
             raise ValueError("Only Vietnamese TTS is configured for this pipeline")
-        raise TTSNotConfiguredError("Vietnamese TTS provider is not configured")
+        raise TTSNotConfiguredError(self.reason)
 
 
 class EspeakVietnameseTTSProvider:
@@ -175,6 +184,7 @@ class OpenAIVietnameseTTSProvider:
         model: str = "gpt-4o-mini-tts",
         voice: str = "marin",
         instructions: str = "",
+        speed: float = 1,
         base_url: str = "https://api.openai.com",
         timeout_seconds: float = 120.0,
         transport: httpx.AsyncBaseTransport | None = None,
@@ -184,7 +194,13 @@ class OpenAIVietnameseTTSProvider:
         self.api_key = api_key
         self.model = model
         self.voice = voice
-        self.instructions = instructions.strip()
+        self.instructions = instructions
+        self.profile = ProductionTTSProfile(provider_key="openai-tts", model=model,
+            voice_id=voice, speed=speed, style_instructions=self.instructions,
+            alignment_capability="none")
+        self.speed = speed
+        if base_url.rstrip("/") != "https://api.openai.com":
+            raise TTSNotConfiguredError("TTS provider endpoint is not allowlisted")
         self.base_url = base_url.rstrip("/")
         self.timeout_seconds = timeout_seconds
         self.transport = transport
@@ -203,6 +219,7 @@ class OpenAIVietnameseTTSProvider:
             "voice": self.voice,
             "input": text,
             "response_format": "wav",
+            "speed": self.speed,
         }
         if self.instructions:
             payload["instructions"] = self.instructions
@@ -212,43 +229,53 @@ class OpenAIVietnameseTTSProvider:
             "Content-Type": "application/json",
         }
         timeout = httpx.Timeout(self.timeout_seconds, connect=15.0)
+        started = time.perf_counter()
         async with httpx.AsyncClient(
             base_url=self.base_url,
             timeout=timeout,
             transport=self.transport,
+            follow_redirects=False,
+            trust_env=False,
         ) as client:
             try:
                 response = await client.post("/v1/audio/speech", headers=headers, json=payload)
-            except httpx.RequestError as exc:
-                raise RuntimeError(f"OpenAI TTS request failed: {exc}") from exc
+            except httpx.RequestError:
+                raise ProviderEnablementError("TRANSPORT", "TTS_TRANSPORT_UNCERTAIN") from None
 
-        if response.status_code >= 400:
-            message = f"HTTP {response.status_code}"
-            try:
-                body = response.json()
-                api_message = (body.get("error") or {}).get("message")
-                if api_message:
-                    message = f"{message}: {api_message}"
-            except ValueError:
-                pass
-            raise RuntimeError(f"OpenAI TTS failed: {message}")
+        if response.status_code != 200:
+            failure = http_failure(response.status_code)
+            # Preserve the historical safe HTTP status diagnostic, never body.
+            raise ProviderEnablementError(failure.category, f"HTTP {response.status_code}")
 
         if not response.content:
-            raise RuntimeError("OpenAI TTS returned an empty audio body")
+            raise ProviderEnablementError("MAPPING", "TTS_AUDIO_EMPTY")
+        if len(response.content) > 32_000_000:
+            raise ProviderEnablementError("MAPPING", "TTS_AUDIO_TOO_LARGE")
+        if self.api_key.encode() in response.content:
+            raise ProviderEnablementError("AUTH", "TTS_SECRET_ECHO_REJECTED")
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         temp_path = output_path.with_suffix(output_path.suffix + ".tmp")
+        if temp_path.is_symlink() or output_path.is_symlink():
+            raise ProviderEnablementError("MAPPING", "TTS_OUTPUT_SYMLINK_REJECTED")
         temp_path.write_bytes(response.content)
         try:
             duration = _wav_duration(temp_path)
             temp_path.replace(output_path)
         except Exception:
             temp_path.unlink(missing_ok=True)
-            raise
+            raise ProviderEnablementError("MAPPING", "TTS_WAV_INVALID") from None
 
         return VoiceResult(
             path=output_path,
             duration_seconds=duration,
             provider="openai",
             voice=self.voice,
+            evidence=TTSArtifactEvidence(profile=self.profile, profile_sha256=self.profile.sha256,
+                text_sha256=hashlib.sha256(text.encode()).hexdigest(),
+                audio_sha256=hashlib.sha256(response.content).hexdigest(),
+                request_sha256=hashlib.sha256(canonical_bytes(payload)).hexdigest(),
+                decoded_duration_seconds=duration, latency_seconds=time.perf_counter()-started,
+                timing=SpeechTimingEvidence(source="NONE", duration_seconds=duration),
+                usage={"submitted_characters": len(text), "provider_usage": "NOT_RETURNED_BY_WAV_RESPONSE"}),
         )
