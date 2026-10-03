@@ -372,7 +372,7 @@ class AutoEditRepository:
         analysis_id: str,
         asset_id: str,
         provider_key: str,
-        transcript: DownstreamTranscript,
+        transcript: DownstreamTranscript | None,
         scenes: list[dict[str, Any]],
         silence_decisions: list[dict[str, Any]],
         highlights: list[dict[str, Any]],
@@ -388,6 +388,12 @@ class AutoEditRepository:
                     raise KeyError(analysis_id)
                 if analysis.status == "succeeded":
                     return
+                if transcript is None:
+                    if analysis.source_media_json.get("audio_codec") is not None:
+                        raise ValueError("audio-bearing video requires a real transcript")
+                    analysis.provenance_json = {**analysis.provenance_json,
+                        "analysis_mode": "visual_signals_only", "asr_state": "no_audio_stream",
+                        "transcript_created": False}
                 def add_transcript_version(
                     provider_transcript: ProviderTranscript,
                     *,
@@ -451,7 +457,7 @@ class AutoEditRepository:
                         version=2,
                         is_original_evidence=False,
                     )
-                else:
+                elif transcript is not None:
                     add_transcript_version(
                         transcript.value,
                         version=1,

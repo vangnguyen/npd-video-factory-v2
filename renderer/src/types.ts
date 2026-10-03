@@ -63,7 +63,7 @@ export type RendererInputProps = {
 };
 
 export type TimelineRenderManifest = {
-  version: "2.0";
+  version: "2.0" | "2.1";
   metadata: {
     title: string;
     project: string;
@@ -94,8 +94,9 @@ export type TimelineRenderManifest = {
     timeline_start: number;
     duration: number;
     source_start: number;
-    source_end: number;
+    source_end: number | null;
     fit: "cover" | "contain";
+    transition_in?: {kind: "cut" | "fade" | "dissolve"; duration_seconds: number};
     crop: {x: number; y: number; width: number; height: number};
     transform: {x: number; y: number; scale: number; rotation_degrees: number};
     opacity: number;

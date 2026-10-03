@@ -101,6 +101,19 @@ class AudioMixEngine:
     def __init__(self, *, ffmpeg_path: str = "ffmpeg"):
         self.ffmpeg_path = ffmpeg_path
 
+    async def mix_original(self, *, narration_path, clips, duration_seconds, gain_db, output_path):
+        command = [self.ffmpeg_path, "-hide_banner", "-loglevel", "error", "-y", "-i", str(narration_path)]
+        filters, labels = [], ["[0:a]"]
+        for index, (clip, path) in enumerate(clips, 1):
+            command += ["-ss", str(clip.source_start), "-t", str(clip.source_end-clip.source_start), "-i", str(path)]
+            delay = round(clip.timeline_start*1000)
+            filters.append(f"[{index}:a]atempo={clip.speed},volume={gain_db}dB,volume={clip.volume},adelay={delay}|{delay}[orig{index}]")
+            labels.append(f"[orig{index}]")
+        filters.append("".join(labels)+f"amix=inputs={len(labels)}:normalize=0,apad,atrim=0:{duration_seconds}[out]")
+        command += ["-filter_complex", ";".join(filters), "-map", "[out]", "-ac", "1", "-ar", "48000", "-c:a", "pcm_s16le", str(output_path)]
+        await _run(command, "original audio mix")
+        return {"source": "validated_original_video_audio", "clip_count": len(clips), "gain_db": gain_db}
+
     async def synthesize_narration(
         self,
         provider: Any,

@@ -132,7 +132,25 @@ class FullProductionQC:
         )
         if black["black_frame_ratio"] > 0.10:
             failures.append("black-frame ratio exceeds 10 percent")
-        if freeze["freeze_frame_ratio"] > 0.15:
+        # Only discount measured freeze time inside explicitly planned image holds.
+        # Video freezes remain failures; this is not a blanket slideshow exemption.
+        expected_stills = timeline_qc.get("intentional_still_intervals", [])
+        # Union intersections so overlapping image layers cannot double-discount
+        # real freeze time elsewhere in the timeline.
+        intersections = sorted((max(start,item["start"]),min(end,item["end"]))
+            for start,end in freeze.get("freeze_intervals", []) for item in expected_stills
+            if min(end,item["end"]) > max(start,item["start"]))
+        merged = []
+        for start,end in intersections:
+            if merged and start <= merged[-1][1]:
+                merged[-1] = (merged[-1][0], max(end,merged[-1][1]))
+            else:
+                merged.append((start,end))
+        intentional = sum(end-start for start,end in merged)
+        unexplained = max(0, freeze["freeze_frame_seconds"]-intentional)
+        freeze["intentional_still_seconds"] = round(intentional, 3)
+        freeze["unexplained_freeze_ratio"] = round(unexplained/max(duration,0.001), 4)
+        if freeze["unexplained_freeze_ratio"] > 0.15:
             failures.append("freeze-frame ratio exceeds 15 percent")
         if volume["audio_peak_db"] < -35:
             failures.append("audio is effectively silent")
@@ -198,8 +216,13 @@ class FullProductionQC:
             [self.ffmpeg_path, "-hide_banner", "-i", str(path), "-vf", "freezedetect=n=0.003:d=0.5", "-an", "-f", "null", "-"],
             "freeze-frame inspection",
         )
-        total = sum(float(item) for item in re.findall(r"freeze_duration:\s*([0-9.]+)", stderr))
-        return {"freeze_frame_seconds": round(total, 3), "freeze_frame_ratio": round(total / max(duration, 0.001), 4)}
+        starts = [float(item) for item in re.findall(r"freeze_start:\s*([0-9.]+)", stderr)]
+        ends = [float(item) for item in re.findall(r"freeze_end:\s*([0-9.]+)", stderr)]
+        if len(starts)>len(ends): ends.append(duration)
+        intervals = list(zip(starts,ends))
+        total = sum(max(0,end-start) for start,end in intervals)
+        return {"freeze_frame_seconds": round(total, 3), "freeze_frame_ratio": round(total / max(duration, 0.001), 4),
+                "freeze_intervals": intervals}
 
     async def _volume(self, path: Path) -> dict[str, Any]:
         _stdout, stderr = await _run(

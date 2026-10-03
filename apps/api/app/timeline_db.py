@@ -14,6 +14,7 @@ class TimelineORM(Base):
     __table_args__ = (
         UniqueConstraint("project_id", name="uq_timeline_project"),
         CheckConstraint("current_version >= 1", name="ck_timeline_current_version"),
+        CheckConstraint("(source_analysis_id IS NOT NULL AND source_content_version_id IS NULL) OR (source_analysis_id IS NULL AND source_content_version_id IS NOT NULL)", name="ck_timeline_source_identity"),
         Index("ix_timeline_workspace_updated", "workspace_id", "updated_at"),
     )
 
@@ -27,8 +28,11 @@ class TimelineORM(Base):
     project_version_id: Mapped[str | None] = mapped_column(
         String(64), ForeignKey("project_versions.project_version_id", ondelete="SET NULL"), nullable=True
     )
-    source_analysis_id: Mapped[str] = mapped_column(
-        String(64), ForeignKey("auto_edit_analyses.analysis_id", ondelete="RESTRICT"), nullable=False
+    source_analysis_id: Mapped[str | None] = mapped_column(
+        String(64), ForeignKey("auto_edit_analyses.analysis_id", ondelete="RESTRICT"), nullable=True
+    )
+    source_content_version_id: Mapped[str | None] = mapped_column(
+        String(64), ForeignKey("project_versions.project_version_id", ondelete="RESTRICT"), nullable=True
     )
     source_media_plan_id: Mapped[str | None] = mapped_column(
         String(64), ForeignKey("media_plans.media_plan_id", ondelete="SET NULL"), nullable=True

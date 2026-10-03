@@ -301,6 +301,18 @@ class ProductionRepository:
                 package = await self._locked_package(session, project_id)
                 await self._assert_current_timeline(session, package, expected_timeline_version)
                 self._assert_package_versions(package, expected_subtitle_version, expected_audio_version)
+                existing = await session.scalar(select(ProductionRenderJobORM).where(
+                    ProductionRenderJobORM.package_id == package.package_id,
+                    ProductionRenderJobORM.timeline_version == expected_timeline_version,
+                    ProductionRenderJobORM.subtitle_version == expected_subtitle_version,
+                    ProductionRenderJobORM.audio_version == expected_audio_version,
+                    ProductionRenderJobORM.render_kind == render_kind,
+                    ProductionRenderJobORM.profile == profile,
+                    ProductionRenderJobORM.approval_id == approval_id,
+                    ProductionRenderJobORM.status.in_(["queued", "running", "awaiting_review", "ready"]),
+                ).order_by(ProductionRenderJobORM.version.desc()).limit(1))
+                if existing:
+                    return _render_read(existing)
                 if render_kind == "final":
                     approval = await session.get(ProductionApprovalORM, approval_id)
                     if approval is None or approval.package_id != package.package_id:

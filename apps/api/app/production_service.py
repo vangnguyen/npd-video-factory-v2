@@ -163,6 +163,7 @@ class ProductionPackageService:
         timeline = await self.timeline_repository.get_timeline(project_id)
         if timeline is None:
             raise KeyError("timeline")
+        await self._require_current_content(timeline)
         if payload.expected_timeline_version is not None and payload.expected_timeline_version != timeline.current_version:
             from .production_repository import ProductionConflictError
 
@@ -184,6 +185,14 @@ class ProductionPackageService:
 
     async def get(self, project_id: str) -> ProductionPackageRead | None:
         return await self.repository.get_package(project_id)
+
+    async def _require_current_content(self, timeline):
+        if timeline and timeline.source_content_version_id:
+            from .content_service import ContentService
+            from .repositories import PlatformRepository
+            content = await ContentService(PlatformRepository(self.repository.session_factory)).latest(timeline.project_id)
+            if content is None or content.project_version_id != timeline.source_content_version_id:
+                raise ProductionContractError("CONTENT_VERSION_STALE: rebuild timeline before rendering")
 
     async def replace_subtitles(
         self, project_id: str, payload: SubtitleReplaceRequest
@@ -213,7 +222,9 @@ class ProductionPackageService:
             if asset is None or asset.project_id != project_id:
                 raise ProductionContractError("configured music asset was not found in this project")
             validate_music_rights(asset)
-        if not payload.config.voice.enabled and payload.config.music.asset_id is None:
+        timeline = await self.timeline_repository.get_timeline(project_id)
+        has_original = timeline and any(t.kind == "original_audio" and not t.muted and not t.disabled and t.clips for t in timeline.snapshot.tracks)
+        if not payload.config.voice.enabled and payload.config.music.asset_id is None and not has_original:
             raise ProductionContractError("audio mix must enable narration or configure a licensed music asset")
         return await self.repository.replace_audio_mix(
             project_id=project_id,
@@ -226,6 +237,7 @@ class ProductionPackageService:
         )
 
     async def enqueue_review(self, project_id: str, payload: RenderCreateRequest) -> RenderJobRead:
+        await self._require_current_content(await self.timeline_repository.get_timeline(project_id))
         if payload.profile != "review-540x960":
             raise ProductionContractError("review render must use the review-540x960 profile")
         render = await self.repository.create_render(
@@ -243,6 +255,7 @@ class ProductionPackageService:
     async def enqueue_final(
         self, project_id: str, payload: FinalRenderCreateRequest
     ) -> RenderJobRead:
+        await self._require_current_content(await self.timeline_repository.get_timeline(project_id))
         render = await self.repository.create_render(
             project_id=project_id,
             expected_timeline_version=payload.expected_timeline_version,
@@ -340,7 +353,7 @@ class ProductionRenderProcessor:
             asset_ids = {
                 clip.asset_id
                 for track in snapshot.tracks
-                if track.type == "video" and not track.disabled
+                if (track.type == "video" or (track.kind == "original_audio" and not track.muted)) and not track.disabled
                 for clip in track.clips
                 if not clip.disabled and clip.asset_id
             }
@@ -355,6 +368,9 @@ class ProductionRenderProcessor:
                 suffix = Path(asset.filename).suffix[:12] or ".bin"
                 path = workdir / f"{asset.asset_id}{suffix}"
                 await self.object_storage.download_file(object_key=asset.object_key, destination=path)
+                from .object_storage import sha256_file
+                if sha256_file(path) != asset.checksum_sha256:
+                    raise ProductionContractError("render asset bytes changed after registration")
                 asset_paths[asset.asset_id] = (asset, path)
             timeline_qc = validate_timeline_renderability(
                 snapshot, available_asset_ids=set(asset_paths)
@@ -378,6 +394,15 @@ class ProductionRenderProcessor:
                 workdir=workdir,
             )
             await self._check_cancelled(render_id)
+            originals = [(clip, asset_paths[clip.asset_id][1])
+                for track in snapshot.tracks if track.kind == "original_audio" and not track.muted and not track.disabled
+                for clip in track.clips if not clip.disabled and clip.asset_id in asset_paths]
+            if originals:
+                combined = workdir / "narration-and-original.wav"
+                narration_manifest["original_audio"] = await self.audio_engine.mix_original(
+                    narration_path=narration_path, clips=originals, duration_seconds=snapshot.duration_seconds,
+                    gain_db=audio_mix.config.original_audio_gain_db or 0, output_path=combined)
+                narration_path = combined
             mixed_audio_path = workdir / "audio-mix.wav"
             mix_manifest = await self.audio_engine.mix(
                 narration_path=narration_path,

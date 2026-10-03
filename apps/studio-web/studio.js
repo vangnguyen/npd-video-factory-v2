@@ -15,6 +15,7 @@ import {
   timelinePositionFromPointer,
 } from "/studio-utils.mjs?v=0.12.0";
 import { authenticatedFetch, ensureAuthenticatedSession } from "/auth.mjs";
+import { initializeMultiInput } from "/multi-input.mjs";
 
 const state = {
   workspaceId: null,
@@ -50,6 +51,8 @@ const state = {
 };
 
 const $ = (selector) => document.querySelector(selector);
+const multiInput = initializeMultiInput({api, getState: () => state, refresh: () => loadProject(),
+  refreshProjects: () => loadProjectList(), toast, uploadFetch: authenticatedFetch});
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 
 class ApiError extends Error {
@@ -103,6 +106,8 @@ function selectedClip() {
 }
 
 async function loadProjectList() {
+  multiInput.setBusy(true);
+  try {
   const workspaces = await api("/api/v1/workspaces");
   state.workspaceId = workspaces[0]?.workspace_id ?? null;
   if (!state.workspaceId) {
@@ -124,10 +129,12 @@ async function loadProjectList() {
     return;
   }
   await loadProject();
+  } finally {multiInput.setBusy(false);}
 }
 
 async function loadProject({ quiet = false } = {}) {
   if (!state.projectId) return;
+  multiInput.setBusy(true);
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();
@@ -179,6 +186,7 @@ async function loadProject({ quiet = false } = {}) {
         ?? null;
     }
     state.playhead = Math.min(state.playhead, timeline?.snapshot?.duration_seconds ?? 0);
+    await multiInput.reload();
     render();
     if (["queued", "running"].includes(state.preview?.status)) startPreviewPolling();
     if (["queued", "running"].includes(state.activeProductionRender?.status)) startProductionPolling();
@@ -187,6 +195,8 @@ async function loadProject({ quiet = false } = {}) {
   } catch (error) {
     setSaveStatus("Lỗi tải", "danger");
     toast(error.message, true);
+  } finally {
+    multiInput.setBusy(false);
   }
 }
 
@@ -202,10 +212,10 @@ function render() {
   if (!state.timeline) {
     const analysis = activeAnalysis();
     renderNoProject(
-      analysis ? "Kết quả phân tích đã sẵn sàng." : "Project chưa có phân tích Auto Edit.",
+      analysis ? "Kết quả phân tích đã sẵn sàng." : "Tạo storyboard từ ảnh/text ở workbench đa đầu vào.",
       analysis
         ? "Khởi tạo timeline từ scene, transcript, khoảng lặng và B-roll đã lưu."
-        : "Hoàn thành upload và Auto Edit analysis ở luồng V2-04 trước khi dựng.",
+        : "Chọn media, sửa và duyệt script/storyboard; video có lời nói cần analysis/ASR hợp lệ.",
     );
     $("#create-timeline-button").hidden = !analysis;
     return;
@@ -345,13 +355,36 @@ function renderInspector() {
     "#clip-crop-x", "#clip-crop-y", "#clip-crop-width", "#clip-crop-height",
     "#clip-transform-x", "#clip-transform-y", "#clip-transform-scale", "#clip-transform-rotation",
   ].forEach((selector) => {
-    $(selector).disabled = track.locked;
+    $(selector).disabled = track.locked || (clip.kind === "image" && ["#clip-source-start", "#clip-source-end", "#clip-speed"].includes(selector));
   });
   $("#clip-inspector button[type=submit]").disabled = track.locked;
   const clipIndex = track.clips.findIndex((item) => item.clip_id === clip.clip_id);
   $("#reorder-up-button").disabled = track.locked || clipIndex <= 0;
   $("#reorder-down-button").disabled = track.locked || clipIndex < 0 || clipIndex >= track.clips.length - 1;
   $("#toggle-clip-button").textContent = clip.disabled ? "Hiện clip" : "Ẩn clip";
+}
+
+function clearAuthenticatedMedia(video) {
+  video.dataset.playbackPath = "";
+  if (video.dataset.blobUrl) URL.revokeObjectURL(video.dataset.blobUrl);
+  video.dataset.blobUrl = "";
+}
+
+async function attachAuthenticatedMedia(video, path) {
+  if (video.dataset.playbackPath === path) return;
+  clearAuthenticatedMedia(video);
+  video.dataset.playbackPath = path;
+  try {
+    const response = await authenticatedFetch(path);
+    if (!response.ok) throw new Error(`Không tải được review A/V (${response.status}).`);
+    const blob = await response.blob();
+    if (video.dataset.playbackPath !== path) return;
+    video.dataset.blobUrl = URL.createObjectURL(blob);
+    video.src = video.dataset.blobUrl;
+  } catch(error) {
+    if (video.dataset.playbackPath === path) clearAuthenticatedMedia(video);
+    toast(error.message, true);
+  }
 }
 
 function renderPreview() {
@@ -365,7 +398,7 @@ function renderPreview() {
   const playable = state.preview?.playback_url && ["ready", "stale"].includes(state.preview.status) && state.preview.manifest?.playable !== false;
   if (playable) {
     const nextSource = `${state.preview.playback_url}?version=${state.preview.timeline_version}`;
-    if (!video.src.endsWith(nextSource)) video.src = nextSource;
+    attachAuthenticatedMedia(video, nextSource);
     video.hidden = false;
     placeholder.hidden = true;
   } else {
@@ -444,10 +477,11 @@ function renderProduction() {
     : renderState.label;
   const productionVideo = $("#production-video");
   if (render?.playback_url && ["awaiting_review", "ready"].includes(render.status)) {
-    productionVideo.src = `${render.playback_url}?render=${encodeURIComponent(render.render_id)}`;
+    attachAuthenticatedMedia(productionVideo, `${render.playback_url}?render=${encodeURIComponent(render.render_id)}`);
     productionVideo.hidden = false;
   } else {
     productionVideo.hidden = true;
+    clearAuthenticatedMedia(productionVideo);
     productionVideo.removeAttribute("src");
   }
   $("#qc-summary").innerHTML = qcItems(render?.qc_report).map(([label, value]) => `
@@ -466,6 +500,7 @@ function renderProduction() {
   $("#approve-button").disabled = !awaitingDecision;
   $("#changes-button").disabled = !awaitingDecision;
   $("#final-render-button").disabled = busy || !approved;
+  $("#download-final-button").disabled = !approved || packageState.latest_final_render?.status !== "ready" || !packageState.current_for_timeline;
   $("#final-render-button").textContent = busy && render?.render_kind === "final"
     ? `Đang render ${render.progress}%`
     : "Render final đã duyệt";
@@ -732,16 +767,6 @@ async function createPublishingDryRun(event) {
   }
 }
 
-function timedWords(text, start, end) {
-  const words = String(text).trim().split(/\s+/u).filter(Boolean);
-  const slot = (end - start) / Math.max(1, words.length);
-  return words.map((word, index) => ({
-    text: word,
-    start_seconds: Number((start + index * slot).toFixed(3)),
-    end_seconds: Number((start + (index + 1) * slot).toFixed(3)),
-  }));
-}
-
 async function createOrRefreshProductionPackage() {
   if (!state.timeline) return;
   try {
@@ -773,7 +798,7 @@ async function saveSubtitles() {
       start_seconds: start,
       end_seconds: end,
       text,
-      words: timedWords(text, start, end),
+      words: [], // Manual cue timing is not measured word alignment.
     };
   });
   try {
@@ -1117,6 +1142,17 @@ $("#request-approval-button").addEventListener("click", requestProductionApprova
 $("#approve-button").addEventListener("click", () => decideProductionApproval("approved"));
 $("#changes-button").addEventListener("click", () => decideProductionApproval("changes_requested"));
 $("#final-render-button").addEventListener("click", () => createProductionRender("final"));
+$("#download-final-button").addEventListener("click", async () => {
+  const render = state.productionPackage?.latest_final_render;
+  if (render?.status !== "ready" || state.productionPackage?.approval?.status !== "approved") return;
+  try {
+    const response = await authenticatedFetch(render.playback_url);
+    if (!response.ok) throw new Error("Export không còn hợp lệ.");
+    const url = URL.createObjectURL(await response.blob());
+    const anchor = document.createElement("a"); anchor.href = url; anchor.download = `${state.projectId}-final.mp4`;
+    anchor.click(); window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch(error) { toast(error.message, true); }
+});
 $("#publishing-form").addEventListener("submit", createPublishingDryRun);
 $("#analytics-sync-button").addEventListener("click", createAnalyticsFixtureSync);
 $("#publishing-platform").addEventListener("change", () => {
@@ -1222,16 +1258,15 @@ $("#clip-inspector").addEventListener("submit", async (event) => {
   if (!selection) return;
   await mutate([
     {
-      type: "trim",
+      type: selection.clip.kind === "image" ? "move" : "trim",
       clip_id: selection.clip.clip_id,
-      source_start: Number($("#clip-source-start").value),
-      source_end: Number($("#clip-source-end").value),
+      ...(selection.clip.kind === "image" ? {} : {source_start: Number($("#clip-source-start").value), source_end: Number($("#clip-source-end").value)}),
       timeline_start: Number($("#clip-timeline-start").value),
     },
     {
       type: "set_clip_properties",
       clip_id: selection.clip.clip_id,
-      speed: Number($("#clip-speed").value),
+      ...(selection.clip.kind === "image" ? {} : {speed: Number($("#clip-speed").value)}),
       opacity: Number($("#clip-opacity").value),
       volume: Number($("#clip-volume").value),
       crop: {
@@ -1308,4 +1343,5 @@ window.addEventListener("beforeunload", () => {
 });
 ensureAuthenticatedSession()
   .then(() => loadProjectList())
-  .catch((error) => { renderNoProject("Không tải được Studio.", error.message); toast(error.message, true); });
+  .catch((error) => { renderNoProject("Không tải được Studio.", error.message); toast(error.message, true); })
+  .finally(() => multiInput.setBusy(false));

@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["version", "metadata", "brand", "audio", "visual_clips", "subtitles", "subtitle_style", "safety"],
   "properties": {
-    "version": {"const": "2.0"},
+    "version": {"enum": ["2.0", "2.1"]},
     "metadata": {
       "type": "object",
       "additionalProperties": false,
@@ -104,8 +104,9 @@
         "timeline_start": {"type": "number", "minimum": 0},
         "duration": {"type": "number", "exclusiveMinimum": 0},
         "source_start": {"type": "number", "minimum": 0},
-        "source_end": {"type": "number", "exclusiveMinimum": 0},
+        "source_end": {"type": ["number", "null"], "exclusiveMinimum": 0},
         "fit": {"enum": ["cover", "contain"]},
+        "transition_in": {"type":"object","additionalProperties":false,"required":["kind","duration_seconds"],"properties":{"kind":{"enum":["cut","fade","dissolve"]},"duration_seconds":{"type":"number","minimum":0,"maximum":3}}},
         "crop": {"$ref": "#/$defs/crop"},
         "transform": {"$ref": "#/$defs/transform"},
         "opacity": {"type": "number", "minimum": 0, "maximum": 1}

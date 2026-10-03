@@ -456,6 +456,23 @@ class AutoEditAnalysisService:
         local_path = self.staging_root / f"{analysis_id}-{asset.filename}"
         try:
             await self.object_storage.download_file(object_key=asset.object_key, destination=local_path)
+            if hashlib.sha256(local_path.read_bytes()).hexdigest() != asset.checksum_sha256:
+                raise ValueError("source checksum changed")
+            if source_media.audio_codec is None:
+                # A validated video with NO audio stream needs visual analysis, not fabricated ASR.
+                signals = await self.signal_provider.analyze(local_path, metadata=source_media,
+                    silence_threshold_db=payload.silence_threshold_db,
+                    minimum_silence_duration=payload.minimum_silence_duration)
+                scenes = build_scenes(duration=float(source_media.duration_seconds),
+                    signals=signals, transcript=None)
+                await self.repository.save_analysis_results(analysis_id=analysis_id,
+                    asset_id=asset.asset_id, provider_key=self.signal_provider.key, transcript=None,
+                    scenes=scenes, silence_decisions=[],
+                    highlights=build_highlights(scenes=scenes, top_k=payload.top_highlights))
+                result = await self.repository.get_analysis(analysis_id)
+                if result is None:
+                    raise RuntimeError("visual analysis was not persisted")
+                return result
             execution_trace = ProviderExecutionTrace()
             operation_key = (
                 payload.acceptance_operation_id

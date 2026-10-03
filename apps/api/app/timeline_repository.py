@@ -37,10 +37,11 @@ class TimelineRepository:
         self,
         *,
         project_id: str,
-        source_analysis_id: str,
+        source_analysis_id: str | None,
         source_media_plan_id: str | None,
         snapshot: TimelineSnapshot,
         actor_ref: str,
+        source_content_version_id: str | None = None,
     ) -> tuple[TimelineRead, bool]:
         async with self.session_factory() as session:
             project = await session.get(VideoProjectORM, project_id)
@@ -59,6 +60,7 @@ class TimelineRepository:
                 project_id=project_id,
                 project_version_id=project.current_version_id,
                 source_analysis_id=source_analysis_id,
+                source_content_version_id=source_content_version_id,
                 source_media_plan_id=source_media_plan_id,
                 current_version_id=version_id,
                 current_version=1,
@@ -232,6 +234,9 @@ class TimelineRepository:
                 timeline.approval_status = "draft"
                 timeline.approved_timeline_version = None
                 timeline.latest_preview_id = None
+                if mutation.get("type") == "storyboard-rebuild":
+                    timeline.source_content_version_id = mutation["content_version_id"]
+                    timeline.source_analysis_id = None
                 timeline.updated_at = now
             return await self._timeline_read(session, timeline)
 
@@ -479,6 +484,8 @@ class TimelineRepository:
             project_id=row.project_id,
             project_version_id=row.project_version_id,
             source_analysis_id=row.source_analysis_id,
+            source_content_version_id=row.source_content_version_id,
+            source_kind=version.snapshot_json.get("metadata", {}).get("source_kind", "video_analysis"),
             source_media_plan_id=row.source_media_plan_id,
             current_version_id=row.current_version_id,
             current_version=row.current_version,

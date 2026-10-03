@@ -140,7 +140,7 @@ const timelineSubtitleSchema = strictObject({
 });
 
 export const timelineRenderManifestSchema = strictObject({
-  version: z.literal("2.0"),
+  version: z.enum(["2.0", "2.1"]),
   metadata: strictObject({
     title: z.string().min(1),
     project: z.string().min(1),
@@ -171,8 +171,9 @@ export const timelineRenderManifestSchema = strictObject({
     timeline_start: z.number().nonnegative(),
     duration: z.number().positive(),
     source_start: z.number().nonnegative(),
-    source_end: z.number().positive(),
+    source_end: z.number().positive().nullable(),
     fit: z.enum(["cover", "contain"]),
+    transition_in: strictObject({kind:z.enum(["cut", "fade", "dissolve"]), duration_seconds:z.number().nonnegative().max(3)}).optional(),
     crop: timelineCropSchema,
     transform: timelineTransformSchema,
     opacity: z.number().min(0).max(1),
@@ -213,7 +214,12 @@ export const timelineRenderManifestSchema = strictObject({
   }
   for (let index = 0; index < manifest.visual_clips.length; index += 1) {
     const clip = manifest.visual_clips[index];
-    if (clip.source_end <= clip.source_start) {
+    if (manifest.version === "2.0" && clip.transition_in !== undefined) {
+      context.addIssue({code:z.ZodIssueCode.custom,path:["visual_clips",index,"transition_in"],message:"transition extension requires v2.1"});
+    }
+    if ((clip.type === "video" && (clip.source_end === null || clip.source_end <= clip.source_start)) ||
+        (manifest.version === "2.0" && clip.source_end === null) ||
+        (clip.type === "image" && manifest.version === "2.1" && (clip.source_end !== null || clip.source_start !== 0))) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["visual_clips", index, "source_end"],

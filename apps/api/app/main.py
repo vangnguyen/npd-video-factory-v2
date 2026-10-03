@@ -88,6 +88,8 @@ from .trend_repository import TrendRepository
 from .trend_routes import router as trend_router
 from .trend_service import TrendIntelligenceService
 from .timeline_repository import TimelineRepository
+from .content_service import ContentService
+from .content_routes import router as content_router
 from .timeline_routes import router as timeline_router
 from .timeline_service import (
     FFmpegProxyRenderer,
@@ -351,12 +353,14 @@ async def lifespan(app: FastAPI):
         allow_paid_execution=settings.media_paid_execution_enabled,
         provider_safety=app.state.provider_safety_controller,
     )
+    app.state.content_service = ContentService(platform)
     app.state.timeline_service = TimelineService(
         repository=timeline_repository,
         platform=platform,
         auto_edit_repository=auto_edit_repository,
         media_repository=media_intelligence_repository,
         validator=TimelineContractValidator(settings.contracts_root / "timeline.schema.json"),
+        object_storage=object_storage,
     )
     app.state.preview_service = PreviewService(
         repository=timeline_repository,
@@ -444,6 +448,7 @@ app.include_router(auto_edit_router, dependencies=_human_route_dependencies)
 app.include_router(vision_router, dependencies=_human_route_dependencies)
 app.include_router(media_intelligence_router, dependencies=_human_route_dependencies)
 app.include_router(timeline_router, dependencies=_human_route_dependencies)
+app.include_router(content_router, dependencies=_human_route_dependencies)
 app.include_router(production_router, dependencies=_human_route_dependencies)
 app.include_router(publishing_router, dependencies=_human_route_dependencies)
 app.include_router(analytics_router, dependencies=_human_route_dependencies)

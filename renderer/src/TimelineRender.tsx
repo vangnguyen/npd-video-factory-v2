@@ -33,7 +33,11 @@ const VisualLayer: React.FC<{
   clip: TimelineRenderManifest["visual_clips"][number];
 }> = ({clip}) => {
   const {fps} = useVideoConfig();
-  const playbackRate = Math.max(0.05, (clip.source_end - clip.source_start) / clip.duration);
+  const frame = useCurrentFrame();
+  const fade = clip.transition_in?.kind === "fade" && clip.transition_in.duration_seconds > 0
+    ? interpolate(frame, [0, Math.max(1, Math.round(fps*clip.transition_in.duration_seconds))], [0,1], {extrapolateLeft:"clamp",extrapolateRight:"clamp"}) : 1;
+  const playbackRate = clip.type === "video" && clip.source_end !== null
+    ? Math.max(0.05, (clip.source_end - clip.source_start) / clip.duration) : 1;
   const mediaStyle: React.CSSProperties = {
     position: "absolute",
     width: `${100 / clip.crop.width}%`,
@@ -43,7 +47,7 @@ const VisualLayer: React.FC<{
     objectFit: clip.fit,
     transform: `translate(${clip.transform.x * 100}%, ${clip.transform.y * 100}%) scale(${clip.transform.scale}) rotate(${clip.transform.rotation_degrees}deg)`,
     transformOrigin: "center",
-    opacity: clip.opacity,
+    opacity: clip.opacity * fade,
   };
   return (
     <AbsoluteFill style={{overflow: "hidden"}}>
@@ -52,7 +56,7 @@ const VisualLayer: React.FC<{
           src={clip.uri}
           muted
           startFrom={Math.round(clip.source_start * fps)}
-          endAt={Math.round(clip.source_end * fps)}
+          endAt={Math.round((clip.source_end ?? 0) * fps)}
           playbackRate={playbackRate}
           style={mediaStyle}
         />
