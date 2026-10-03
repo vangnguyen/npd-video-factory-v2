@@ -14,10 +14,13 @@ vi.mock("remotion", async () => {
     interpolate: () => 1,
     useCurrentFrame: () => 15,
     useVideoConfig: () => ({fps: 30, width: 1080, height: 1920, durationInFrames: 30}),
+    delayRender: () => 1,
+    continueRender: vi.fn(),
+    cancelRender: vi.fn(),
   };
 });
 
-import {TimelineRender, activeSubtitleWordIndex} from "./TimelineRender";
+import {TimelineRender, activeSubtitleWordIndex, assertSubtitleFits} from "./TimelineRender";
 import {makeTimelineManifest} from "./test-fixtures";
 
 describe("timeline-render-v1 composition", () => {
@@ -30,6 +33,7 @@ describe("timeline-render-v1 composition", () => {
     expect(html).toContain("Noto Sans");
     expect(html).toContain("linear-gradient");
     expect(html).not.toContain("publish");
+    expect(html).not.toContain("-webkit-line-clamp");
   });
 
   it("selects the active word from deterministic global timings", () => {
@@ -37,5 +41,17 @@ describe("timeline-render-v1 composition", () => {
     expect(activeSubtitleWordIndex(cue, 0.1)).toBe(0);
     expect(activeSubtitleWordIndex(cue, 0.6)).toBe(2);
     expect(activeSubtitleWordIndex(cue, 1.1)).toBe(-1);
+  });
+
+  it("admits a measured complete cue within its approved line count", () => {
+    expect(() => assertSubtitleFits(200, 58.56, 24, 3)).not.toThrow();
+  });
+
+  it("rejects glyph overflow instead of hiding words behind an ellipsis", () => {
+    expect(() => assertSubtitleFits(259, 58.56, 24, 3)).toThrow("SUBTITLE_LAYOUT_OVERFLOW");
+  });
+
+  it.each([NaN, Infinity, -1])("rejects unavailable or invalid layout measurements %s", (lineHeight) => {
+    expect(() => assertSubtitleFits(200, lineHeight, 24, 3)).toThrow("SUBTITLE_LAYOUT_OVERFLOW");
   });
 });

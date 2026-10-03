@@ -29,7 +29,13 @@ def script_scenes(text: str) -> list[StoryboardScene]:
     """Lossless non-whitespace coverage with exact source offsets; durations are estimates."""
     scenes = []
     cursor = 0
-    character_limit = min(180, subtitle_character_capacity(SubtitleStyle()))
+    style = SubtitleStyle()
+    # The existing QC capacity is an average-glyph estimate, not browser layout.
+    # Reserve one estimated line for whole-word wrapping/padding. Actual glyph
+    # overflow must still fail in the renderer, never become hidden narration.
+    capacity = subtitle_character_capacity(style)
+    wrapping_reserve = capacity // style.max_lines if style.max_lines > 1 else 0
+    character_limit = min(180, capacity - wrapping_reserve)
     while cursor < len(text):
         while cursor < len(text) and text[cursor].isspace():
             cursor += 1

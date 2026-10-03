@@ -28,6 +28,11 @@ archive SHA and actual PR/CI state without a self-referential commit hash here.
 - Long narration is split at whole-word/sentence boundaries with exact source
   offsets, bounded by both the existing 180-character scene limit and unchanged
   subtitle safe-area capacity, preserving source text/token order.
+  Planning reserves one estimated line for whole-word wrapping. The renderer
+  independently measures the complete cue after fonts load and fails on real
+  overflow; it no longer silently line-clamps/ellipsizes words. This was prompted
+  by visual inspection finding clipping despite estimated-QC PASS at head4fb8709;
+  those prior MP4s remain historical dev evidence, not accepted subtitles.
   Existing 40-scene/180-second limits fail explicitly, never truncate. Suggested
   scene durations are planning estimates, not measured speech timestamps.
 - Synthetic tests exercise actor/workspace scoping, duplicate delivery, CAS,

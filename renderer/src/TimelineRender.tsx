@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   AbsoluteFill,
   Audio,
@@ -8,6 +8,9 @@ import {
   interpolate,
   useCurrentFrame,
   useVideoConfig,
+  delayRender,
+  continueRender,
+  cancelRender,
 } from "remotion";
 
 import type {TimelineRenderManifest, TimelineRendererInputProps} from "./types";
@@ -28,6 +31,15 @@ export const activeSubtitleWordIndex = (
 ): number => cue.words.findIndex(
   (word) => seconds >= word.start_seconds && seconds < word.end_seconds,
 );
+
+export const assertSubtitleFits = (fullHeight: number, lineHeight: number, padding: number, maxLines: number): void => {
+  if (![fullHeight, lineHeight, padding, maxLines].every(Number.isFinite)
+      || lineHeight <= 0 || maxLines < 1 || padding < 0
+      || fullHeight > lineHeight * maxLines + padding + 2) {
+    // Never include user narration or private inputs in render exceptions.
+    throw new Error("SUBTITLE_LAYOUT_OVERFLOW: split the cue or adjust its approved style");
+  }
+};
 
 const VisualLayer: React.FC<{
   clip: TimelineRenderManifest["visual_clips"][number];
@@ -73,6 +85,25 @@ const SubtitleLayer: React.FC<{
 }> = ({cue, style}) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();
+  const subtitle = useRef<HTMLDivElement>(null);
+  const [layoutHandle] = useState(() => delayRender("Verify full subtitle layout"));
+  useEffect(() => {
+    let cancelled = false;
+    const verify = async () => {
+      await document.fonts.ready;
+      if (cancelled) return;
+      const element = subtitle.current;
+      if (!element) throw new Error("SUBTITLE_LAYOUT_UNAVAILABLE");
+      const measured = getComputedStyle(element);
+      assertSubtitleFits(element.scrollHeight, Number.parseFloat(measured.lineHeight),
+        Number.parseFloat(measured.paddingTop) + Number.parseFloat(measured.paddingBottom), style.max_lines);
+      continueRender(layoutHandle);
+    };
+    void verify().catch((error: unknown) => {
+      if (!cancelled) cancelRender(error instanceof Error ? error : new Error("SUBTITLE_LAYOUT_UNAVAILABLE"));
+    });
+    return () => {cancelled = true;};
+  }, [layoutHandle, cue, style, width, height]);
   const now = cue.start_seconds + frame / fps;
   const activeWord = activeSubtitleWordIndex(cue, now);
   const scale = Math.min(width / 1080, height / 1920);
@@ -95,6 +126,8 @@ const SubtitleLayer: React.FC<{
   }];
   return (
     <div
+      ref={subtitle}
+      data-subtitle-cue={cue.cue_id}
       style={{
         position: "absolute",
         left: `${style.safe_margin_percent}%`,
@@ -114,10 +147,8 @@ const SubtitleLayer: React.FC<{
           ? `translateY(-50%) scale(${animationScale})`
           : `scale(${animationScale})`,
         transformOrigin: "center",
-        overflow: "hidden",
-        display: "-webkit-box",
-        WebkitBoxOrient: "vertical",
-        WebkitLineClamp: style.max_lines,
+        // Measure the complete cue after fonts load. Do not silently line-clamp
+        // or ellipsize words while the audio continues to read them.
         overflowWrap: "anywhere",
         textShadow: "0 2px 8px rgba(0,0,0,0.95)",
       }}
