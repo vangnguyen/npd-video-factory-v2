@@ -131,6 +131,8 @@ class Settings(BaseSettings):
     audio_external_execution_enabled: bool = False
     audio_tts_voice: str = "vi"
     audio_tts_rate: int = 145
+    vieneu_local_execution_enabled: bool = False
+    vieneu_voice_id: str = "Mai Anh"  # audition candidate, not a production selection
     openai_tts_model: str = "gpt-4o-mini-tts"
     openai_tts_voice: str = "marin"
     openai_tts_instructions: str = ""
@@ -489,8 +491,12 @@ class Settings(BaseSettings):
             raise ValueError("S3 object storage credentials must be configured outside source control")
         if self.app_env == "production" and self.object_storage_provider == "local":
             raise ValueError("production must use S3-compatible object storage")
-        if self.audio_tts_provider not in {"espeak", "contract", "openai"}:
-            raise ValueError("AUDIO_TTS_PROVIDER must be espeak, contract or openai")
+        if self.audio_tts_provider not in {"espeak", "contract", "openai", "vieneu"}:
+            raise ValueError("AUDIO_TTS_PROVIDER must be espeak, contract, openai or vieneu")
+        if self.vieneu_voice_id not in {"Mai Anh", "Thùy Dung", "Ngọc Huyền"}:
+            raise ValueError("VIENEU_PRESET_VOICE_INVALID")
+        if self.vieneu_local_execution_enabled and (self.app_env == "production" or self.audio_tts_provider != "vieneu"):
+            raise ValueError("VIENEU_LOCAL_AUDITION_ONLY")
         if len(self.production_tts_style) > 500:
             raise ValueError("production TTS style must be bounded")
         if self.audio_external_execution_enabled and self.audio_tts_provider != "openai":

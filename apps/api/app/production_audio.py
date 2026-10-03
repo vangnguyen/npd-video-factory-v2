@@ -26,6 +26,8 @@ def audio_provider_status(settings: Any) -> str:
     provider = settings.audio_tts_provider
     if provider == "contract":
         return "not_configured"
+    if provider == "vieneu":
+        return "configured" if getattr(settings, "vieneu_local_execution_enabled", False) else "not_configured"
     if provider == "openai":
         if not getattr(settings, "production_tts_model", "") or not getattr(settings, "production_tts_voice_id", ""):
             return "model_voice_selection_required"
@@ -36,6 +38,13 @@ def audio_provider_status(settings: Any) -> str:
 def create_audio_tts_provider(settings: Any, *, controller=None, credential_resolver=None,
                               approved_units=None, transport=None):
     provider = settings.audio_tts_provider
+    if provider == "vieneu":
+        from .vieneu_contracts import VieNeuTTSProfile, VieNeuLicenseProvenance
+        from .vieneu_tts_provider import VieNeuTTSProvider
+        if not getattr(settings, "vieneu_local_execution_enabled", False):
+            raise TTSNotConfiguredError("VIENEU_LOCAL_EXECUTION_DISABLED")
+        return VieNeuTTSProvider(VieNeuTTSProfile(voice_id=settings.vieneu_voice_id,
+            rights=VieNeuLicenseProvenance()), local_execution_enabled=True, transport=transport)
     if provider == "espeak":
         return EspeakVietnameseTTSProvider(
             voice=settings.audio_tts_voice,

@@ -10,6 +10,7 @@ from typing import Annotated, Literal
 from pydantic import Field, model_validator
 from .content_service import canonical_bytes
 from .models import StrictModel
+from .vieneu_contracts import VieNeuTTSProfile
 
 
 class ProductionTTSProfile(StrictModel):
@@ -100,8 +101,8 @@ class SpeechTimingEvidence(StrictModel):
 
 
 class TTSArtifactEvidence(StrictModel):
-    version: Literal[1, 2] = 1
-    profile: Annotated[ProductionTTSProfile | RealtimeTTSProfile, Field(discriminator="version")]
+    version: Literal[1, 2, 3] = 1
+    profile: Annotated[ProductionTTSProfile | RealtimeTTSProfile | VieNeuTTSProfile, Field(discriminator="version")]
     profile_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     text_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     audio_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")

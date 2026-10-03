@@ -422,6 +422,8 @@ class ProductionRenderProcessor:
                 synthesis = self.audio_engine.synthesize_planned_narration
                 extra["plan"] = plan
             tts_provider = self.tts_provider
+            if hasattr(tts_provider, "for_render_voice") and audio_mix.config.voice.enabled:
+                tts_provider = tts_provider.for_render_voice(audio_mix.config.voice)
             if hasattr(tts_provider, "bind_render_scope") and audio_mix.config.voice.enabled:
                 async def before_unit():
                     await self._check_cancelled(render_id)
