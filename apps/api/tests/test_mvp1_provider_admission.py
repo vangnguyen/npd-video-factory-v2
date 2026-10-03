@@ -284,3 +284,34 @@ def test_nonroot_cannot_admit_self_owned_public_authority(tmp_path):
     path, sha = write_fixture(tmp_path, scope)
     with pytest.raises(ValueError, match="ROOT_CUSTODY_REQUIRED"):
         load_mvp1_admission(path, expected_sha256=sha, expected_source_commit=scope.source_commit, capability=scope.capability)
+
+
+@pytest.mark.parametrize("capability", ["content_generation", "tts"])
+def test_synthetic_lane_config_does_not_require_or_transfer_historical_asr_gate(tmp_path, capability, synthetic_public_file_custody):
+    scope, selected, _ = synthetic_scope(capability)
+    # Synthetic contract only: no actual Owner allocation or live execution.
+    scope = Mvp1AdmissionScope.model_validate(scope.model_dump() | {"execution_authorized":True})
+    path, sha = write_fixture(tmp_path, scope)
+    prefix = "content" if capability == "content_generation" else "tts"
+    values = {prefix+"_admission_enabled":True, prefix+"_admission_file":path,
+        prefix+"_admission_sha256":sha, "mvp1_provider_source_commit":scope.source_commit,
+        "provider_external_execution_enabled":True, "provider_paid_execution_enabled":True,
+        "provider_global_kill_switch_engaged":False}
+    if capability == "content_generation":
+        values |= dict(content_generation_provider="responses", content_external_execution_enabled=True,
+            content_generation_model=selected.model, content_generation_input_vnd_per_million_tokens=selected.input_vnd_per_million_tokens,
+            content_generation_output_vnd_per_million_tokens=selected.output_vnd_per_million_tokens,
+            content_generation_estimated_cost_vnd=selected.estimated_cost_vnd)
+    else:
+        values |= dict(audio_tts_provider="openai", audio_external_execution_enabled=True,
+            production_tts_model=selected.model, production_tts_voice_id=selected.voice_id)
+    settings = Settings(_env_file=None, **values)
+    assert not settings.provider_verified_gate_bundle_enabled
+    bindings = create_mvp1_lane_bindings(settings, capability=capability, repository=None)
+    assert bindings["credential_resolver"].backend_admitted is False  # Still no runtime backend/credential.
+    wrong = dict(values)
+    wrong["content_generation_model" if capability == "content_generation" else "production_tts_voice_id"] = "other-selection"
+    with pytest.raises(ValidationError, match="CONFIG_PROFILE_SCOPE_MISMATCH"):
+        Settings(_env_file=None, **wrong)
+    with pytest.raises(ValidationError, match="ASSEMBLYAI_ASR_LIVE_EXECUTION_ENABLED"):
+        Settings(_env_file=None, **(values | {"transcription_provider":"assemblyai"}))

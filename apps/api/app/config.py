@@ -338,7 +338,7 @@ class Settings(BaseSettings):
             or self.app_env.lower() in {"ci", "test"}
             or not self.provider_external_execution_enabled
             or not self.provider_paid_execution_enabled
-            or not self.provider_verified_gate_bundle_enabled
+            or not (self.provider_verified_gate_bundle_enabled or self.content_admission_enabled)
             or self.provider_global_kill_switch_engaged
         ):
             raise ValueError("content live execution requires a separate verified capability scope")
@@ -720,6 +720,21 @@ class Settings(BaseSettings):
                         expected_source_commit=self.mvp1_provider_source_commit, capability=capability)
                     if not scope.execution_authorized:
                         raise ValueError("MVP1_EXECUTION_AUTHORITY_REQUIRED")
+                    if capability == "content_generation":
+                        from .storyboard_content_provider import ContentProviderProfile
+                        configured_profile = ContentProviderProfile(model=self.content_generation_model,
+                            credential_alias=self.content_generation_credential_alias,
+                            input_vnd_per_million_tokens=self.content_generation_input_vnd_per_million_tokens,
+                            output_vnd_per_million_tokens=self.content_generation_output_vnd_per_million_tokens,
+                            estimated_cost_vnd=self.content_generation_estimated_cost_vnd,
+                            max_output_tokens=self.content_generation_max_output_tokens)
+                    else:
+                        from .tts_evidence import ProductionTTSProfile
+                        configured_profile = ProductionTTSProfile(provider_key="openai-tts", model=self.production_tts_model,
+                            voice_id=self.production_tts_voice_id, style_instructions=self.production_tts_style,
+                            speed=self.production_tts_speed)
+                    if configured_profile.sha256 != scope.profile_sha256:
+                        raise ValueError("MVP1_CONFIG_PROFILE_SCOPE_MISMATCH")
             elif not self.provider_verified_gate_bundle_enabled:
                 raise ValueError("real provider execution requires a verified owner-gate bundle")
             selected_paid_adapters = sum(
