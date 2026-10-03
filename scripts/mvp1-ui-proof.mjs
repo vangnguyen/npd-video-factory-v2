@@ -54,10 +54,24 @@ async function render(kind, suffix="") {
   const done=await waitValue(()=>api(`/api/v1/projects/${projectId}/renders/${id}`),r=>!["queued","running"].includes(r.status),`${kind} terminal`,600000);
   await fs.writeFile(path.join(output,`${kind}${suffix}-render.json`),JSON.stringify(done,null,2));
   if(!["awaiting_review","ready"].includes(done.status))throw new Error(`${kind}: ${done.status}: ${done.failure_reason}`);
+  await fs.writeFile(path.join(output,`${kind}${suffix}-timeline.json`),JSON.stringify(await api(`/api/v1/projects/${projectId}/timeline`),null,2));
   const r=await fetch(origin+done.playback_url,{headers:{Authorization:`Bearer ${token}`}});localRequests++;
   if(!r.ok)throw new Error("MP4 download failed");
   const bytes=Buffer.from(await r.arrayBuffer());
   await fs.writeFile(path.join(output,`${kind}${suffix}.mp4`),bytes);
+  // Preserve separate decoded narration and mix for review. These are synthetic
+  // dev assets, never credentials or restricted benchmark recordings.
+  for (const assetKind of ["narration-track", "audio-mix"]) {
+    const assetId=done.manifest.supporting_asset_ids?.[assetKind];
+    if (!assetId) throw new Error(`missing ${assetKind} evidence`);
+    const asset=(await api(`/api/v1/projects/${projectId}/assets`)).find(a=>a.asset_id===assetId);
+    if(!asset || asset.project_id!==projectId)throw new Error("audio evidence project mismatch");
+    const store=path.resolve(root,"objects"), source=path.resolve(store,asset.object_key);
+    if(!source.startsWith(store+path.sep)||(await fs.lstat(source)).isSymbolicLink())throw new Error("unsafe dev object path");
+    const audio=await fs.readFile(source);
+    if(createHash("sha256").update(audio).digest("hex")!==asset.checksum_sha256)throw new Error("audio evidence hash mismatch");
+    await fs.writeFile(path.join(output,`${kind}${suffix}-${assetKind}.wav`),audio);
+  }
   log.steps.push({step:`${kind}${suffix}_render`,render_id:id,status:done.status,qc:done.qc_status,
     mp4_sha256:createHash("sha256").update(bytes).digest("hex")});
   await page.locator("#production-video").waitFor({state:"visible",timeout:15000});

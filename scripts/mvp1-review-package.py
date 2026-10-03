@@ -54,7 +54,7 @@ for folder in sorted(root.glob("ui-*")):
     if report["verdict"]=="DEV_PROOF_BLOCKED":continue  # preserved separately, not mislabeled as successful review
     destination=output/"cases"/folder.name
     for file in sorted(folder.iterdir()):
-        if file.suffix in {".json",".png",".mp4"}:copy(file,destination/file.name)
+        if file.suffix in {".json",".png",".mp4",".wav"}:copy(file,destination/file.name)
     for movie in sorted(folder.glob("*.mp4")):
         render=json.loads((folder/(movie.stem+"-render.json")).read_text())
         if render["qc_status"]!="passed" or render["status"] not in {"ready","awaiting_review"}:
@@ -75,7 +75,8 @@ for folder in sorted(root.glob("ui-*")):
                 if not group or any(c["words"] for c in group):raise ValueError("segment cues cannot claim word alignment")
                 # Original script bytes/source offsets live in storyboard; unit
                 # text may contain original newlines. Hash that exact source.
-                snapshot=json.loads((folder/("timeline-after-edit.json" if "after-edit" in movie.stem else "timeline.json")).read_text())
+                pinned=folder/(movie.stem+"-timeline.json")
+                snapshot=json.loads((pinned if pinned.is_file() else folder/("timeline-after-edit.json" if "edit" in movie.stem else "timeline.json")).read_text())
                 plan=snapshot["snapshot"]["metadata"]["narration_plan"]
                 planned=next(u for u in plan["units"] if u["unit_id"]==unit["unit_id"])
                 if hashlib.sha256(planned["text"].encode()).hexdigest()!=unit["text_sha256"]:raise ValueError("unit text hash mismatch")

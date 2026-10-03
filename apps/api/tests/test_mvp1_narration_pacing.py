@@ -6,7 +6,7 @@ from unittest.mock import Mock
 import pytest
 from sqlalchemy import event, select
 from app.content_models import ContentDocument, ContentSaveRequest
-from app.content_service import script_scenes, prepare_document, ContentConflictError
+from app.content_service import script_scenes, prepare_document, ContentConflictError, canonical_bytes
 from app.narration_pacing import narration_plan, reflow_snapshot
 from app.production_audio import AudioMixEngine, DeterministicWaveTTSProvider
 from app.production_models import MixConfig, SubtitleStyle, SubtitleReplaceRequest
@@ -94,6 +94,32 @@ async def test_word_highlight_without_words_is_explicitly_rejected(env):
     with pytest.raises(ProductionContractError,match="WORD_ALIGNMENT_UNAVAILABLE"):
         await env.package.replace_subtitles(env.project.project_id,SubtitleReplaceRequest(
             expected_timeline_version=1,expected_subtitle_version=1,cues=package.subtitle.cues,style=SubtitleStyle()))
+
+
+async def test_measured_reflow_during_render_cannot_revive_old_review(env):
+    from app.production_models import ProductionPackageCreateRequest, RenderCreateRequest
+    from app.production_repository import ProductionConflictError
+    from app.production_models import ApprovalRequest
+    built=await timeline(env,await author(env))
+    await env.package.create_or_refresh(env.project.project_id,ProductionPackageCreateRequest())
+    review=await env.package.enqueue_review(env.project.project_id,RenderCreateRequest(
+        expected_timeline_version=1,expected_subtitle_version=1,expected_audio_version=1))
+    assert (await env.production.start_render(review.render_id)).status=="running"
+    plan=built.snapshot.metadata["narration_plan"]
+    # Synthetic PCM observation tests transactional invalidation only. Actual
+    # eSpeak/FFmpeg measurement is exercised independently in the UI proofs.
+    observation={"plan_sha256":hashlib.sha256(canonical_bytes(plan)).hexdigest(),
+        "timing":[{"text_sha256":u["text_sha256"],"audio_duration_source":"decoded_pcm_sample_count",
+            "applied_timing_speedup":1,"rendered_audio_duration_seconds":1.0} for u in plan["units"]]}
+    changed=await env.timeline.commit_mutation(project_id=env.project.project_id,expected_version=1,
+        snapshot=reflow_snapshot(built.snapshot,observation),mutation={"type":"measured-narration-reflow"},actor_ref="synthetic-editor")
+    assert changed.current_version==2
+    # Completion of a worker holding the OLD snapshot is not current authority.
+    late=await env.production.complete_render(review.render_id,output_asset_id="ast_synthetic_unused",
+        qc_report={"status":"passed","fixture":True},manifest={"fixture":True})
+    assert late.status=="stale" and late.output_asset_id is None
+    with pytest.raises(ProductionConflictError, match="timeline version conflict"):
+        await env.package.request_approval(env.project.project_id,ApprovalRequest(review_render_id=review.render_id))
 
 
 async def test_postgres_two_saves_contend_real_row_lock_no_lost_update(env):
