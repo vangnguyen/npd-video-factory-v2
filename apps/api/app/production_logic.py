@@ -82,7 +82,7 @@ def validate_subtitles(
     previous_end = 0.0
     identifiers: set[str] = set()
     estimated_line_limit = max(12, int((100 - 2 * style.safe_margin_percent) * 10.8 / (style.font_size * 0.56)))
-    maximum_characters = estimated_line_limit * style.max_lines
+    maximum_characters = subtitle_character_capacity(style)
     for cue in cues:
         if cue.cue_id in identifiers:
             raise ProductionContractError("subtitle cue ids must be unique")
@@ -105,6 +105,12 @@ def validate_subtitles(
         "font_family": style.font_family,
         "vietnamese_font_supported": style.font_family.startswith("Noto Sans"),
     }
+
+
+def subtitle_character_capacity(style: SubtitleStyle) -> int:
+    """Same existing safe-area limit for both planning and final validation."""
+    estimated_line_limit = max(12, int((100 - 2 * style.safe_margin_percent) * 10.8 / (style.font_size * 0.56)))
+    return estimated_line_limit * style.max_lines
 
 
 def validate_music_rights(asset: Any) -> None:

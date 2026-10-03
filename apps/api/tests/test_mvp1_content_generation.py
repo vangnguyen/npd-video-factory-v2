@@ -158,10 +158,13 @@ async def test_concurrent_duplicate_delivery_claims_only_once(env):
 @pytest.mark.parametrize("script", ["Lời ngắn.", "Ngọc Phương Đông, Cần Giờ!\nTên riêng và dấu câu được giữ nguyên.",
     "Đây là đoạn kịch bản dài, giữ nguyên tên Ngọc Phương Đông và Cần Giờ cùng dấu tiếng Việt, "*9])
 def test_long_narration_lossless_source_mapping(script):
+    from app.production_logic import subtitle_character_capacity
+    from app.production_models import SubtitleStyle
     doc=prepare_document(ContentDocument(input_kind="script",original_text=script))
     assert doc.script==doc.original_text==script
     assert " ".join(script.split())==" ".join(" ".join(s.narration.split()) for s in doc.scenes)
     assert all(script[s.script_start:s.script_end]==s.narration and 0<len(s.narration)<=180 for s in doc.scenes)
+    assert all(len(s.narration)<=subtitle_character_capacity(SubtitleStyle()) for s in doc.scenes)
     assert all(a.script_end<=b.script_start for a,b in zip(doc.scenes,doc.scenes[1:]))
 
 

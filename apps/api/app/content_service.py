@@ -11,6 +11,8 @@ from .content_models import ContentDocument, ContentSaveRequest, StoryboardScene
 from .db import JobORM, ProjectVersionORM, VideoProjectORM, utc_now
 from .platform_models import ProjectVersionRead
 from .production_db import ProductionApprovalORM, ProductionPackageORM, ProductionRenderJobORM
+from .production_logic import subtitle_character_capacity
+from .production_models import SubtitleStyle
 from .repositories import _version_read
 from .timeline_db import TimelineORM
 
@@ -27,12 +29,13 @@ def script_scenes(text: str) -> list[StoryboardScene]:
     """Lossless non-whitespace coverage with exact source offsets; durations are estimates."""
     scenes = []
     cursor = 0
+    character_limit = min(180, subtitle_character_capacity(SubtitleStyle()))
     while cursor < len(text):
         while cursor < len(text) and text[cursor].isspace():
             cursor += 1
         if cursor == len(text):
             break
-        limit = min(len(text), cursor + 180)
+        limit = min(len(text), cursor + character_limit)
         # Prefer semantic sentence/paragraph boundaries, then a whole-word boundary.
         boundaries = [m.end() for m in re.finditer(r"[.!?…](?=\s)|(?<=\S)(?=\n)", text[cursor:limit])]
         if boundaries:
@@ -42,7 +45,7 @@ def script_scenes(text: str) -> list[StoryboardScene]:
         else:
             breaks = [m.start() for m in re.finditer(r"\s+", text[cursor:limit+1])]
             if not breaks:
-                raise ValueError("NARRATION_WORD_TOO_LONG: a token exceeds 180 characters; edit explicitly")
+                raise ValueError(f"NARRATION_WORD_TOO_LONG: a token exceeds subtitle capacity {character_limit} (scene maximum 180); edit explicitly")
             end = cursor + breaks[-1]
         while end > cursor and text[end-1].isspace():
             end -= 1

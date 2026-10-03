@@ -26,7 +26,8 @@ archive SHA and actual PR/CI state without a self-referential commit hash here.
 - Generation input facts remain unverified. Arbitrary instructions, URLs and
   supposed property facts are not executed or copied into fixture narration.
 - Long narration is split at whole-word/sentence boundaries with exact source
-  offsets, <=180 characters per scene, preserving source text/token order.
+  offsets, bounded by both the existing 180-character scene limit and unchanged
+  subtitle safe-area capacity, preserving source text/token order.
   Existing 40-scene/180-second limits fail explicitly, never truncate. Suggested
   scene durations are planning estimates, not measured speech timestamps.
 - Synthetic tests exercise actor/workspace scoping, duplicate delivery, CAS,

@@ -66,6 +66,13 @@ for folder in sorted(root.glob("ui-*")):
         is_final=movie.stem.startswith("final")
         if is_final and (video["width"],video["height"])!=(1080,1920):raise ValueError("final profile mismatch")
         narration=render["manifest"]["narration"]
+        subtitles=render["manifest"]["subtitles"]
+        if len(narration["timing"])!=len(subtitles):raise ValueError("narration/subtitle coverage mismatch")
+        for cue,subtitle in zip(narration["timing"],subtitles):
+            if cue["cue_id"]!=subtitle["cue_id"] or cue["text_sha256"]!=hashlib.sha256(subtitle["text"].encode("utf8")).hexdigest():
+                raise ValueError("narration text lost/duplicated or subtitle identity mismatch")
+            if cue["start_seconds"]!=subtitle["start_seconds"] or cue["slot_end_seconds"]!=subtitle["end_seconds"]:
+                raise ValueError("editorial A/V cue placement mismatch")
         for cue in narration["timing"]:
             if not (0<=cue["start_seconds"]<cue["end_seconds"]<=cue["slot_end_seconds"]+0.001):raise ValueError("bad measured cue interval")
         # Extract representative frames for visual inspection; not a human full-watch assertion.
@@ -81,6 +88,7 @@ for folder in sorted(root.glob("ui-*")):
             "width":video["width"],"height":video["height"],"video_codec":video["codec_name"],
             "audio_codec":audio["codec_name"],"audio_sample_rate":audio["sample_rate"],"duration_seconds":duration,
             "full_decode_exit_code":decode.returncode,"qc":render["qc_report"],"narration_provenance":narration,
+            "narration_subtitle_identity_and_editorial_placement":"PASS",
             "human_full_watch_listen":"NOT_PERFORMED","professional_voice_acceptance":False})
     cases.append({"scenario":report["scenario"],"folder":str(destination.relative_to(output)).replace("\\","/"),"verdict":report["verdict"]})
 
