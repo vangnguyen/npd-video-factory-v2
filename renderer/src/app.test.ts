@@ -124,4 +124,15 @@ describe("renderer HTTP service", () => {
     expect(response.body).toMatchObject({status: "failed", error_code: "RENDER_FAILED"});
     expect(JSON.stringify(response.body)).not.toContain("secret internal path");
   });
+
+  it("returns actionable allowlisted layout failure without user text", async () => {
+    const {manifestPath, root} = await fixture();
+    const engine: RenderEngine = {render: vi.fn(async () => { throw new Error("SUBTITLE_LAYOUT_OVERFLOW: private cue content"); })};
+    const response = await request(createRendererApp({engine, port: 3001, storageRoot: root}))
+      .post("/render").send({job_id: "vid_12345678", manifest_path: manifestPath});
+    expect(response.status).toBe(422);
+    expect(response.body).toMatchObject({error_code: "SUBTITLE_LAYOUT_OVERFLOW", retryable: false});
+    expect(response.body.message).toContain("Split the subtitle cue");
+    expect(JSON.stringify(response.body)).not.toContain("private cue content");
+  });
 });

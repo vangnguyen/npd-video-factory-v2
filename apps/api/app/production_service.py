@@ -80,6 +80,10 @@ class RenderCancelledError(RuntimeError):
     pass
 
 
+class SubtitleLayoutError(RuntimeError):
+    """Stable renderer diagnosis with no user text or internal browser details."""
+
+
 class RemotionTimelineRenderEngine:
     def __init__(self, *, renderer_url: str, timeout_seconds: float):
         self.renderer_url = renderer_url.rstrip("/")
@@ -113,6 +117,8 @@ class RemotionTimelineRenderEngine:
                 body = response.json()
             except ValueError:
                 body = {}
+            if body.get("error_code") == "SUBTITLE_LAYOUT_OVERFLOW":
+                raise SubtitleLayoutError("Split the subtitle cue or adjust its approved style before rendering.")
             message = str(body.get("message") or body.get("error", {}).get("message") or f"HTTP {response.status_code}")
             raise RuntimeError(f"Remotion timeline render failed: {message}")
         result = response.json()
@@ -553,6 +559,11 @@ class ProductionRenderProcessor:
             return failed
         except TTSNotConfiguredError as exc:
             failed = await self.repository.fail_render(render_id, code="TTS_NOT_CONFIGURED", reason=str(exc))
+            if failed is None:
+                raise
+            return failed
+        except SubtitleLayoutError as exc:
+            failed = await self.repository.fail_render(render_id, code="SUBTITLE_LAYOUT_OVERFLOW", reason=str(exc))
             if failed is None:
                 raise
             return failed

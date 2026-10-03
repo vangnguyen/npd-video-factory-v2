@@ -77,6 +77,13 @@ test("labels publishing dry-run truthfully and flattens gate evidence", () => {
   assert.equal(gates[2].passed, false);
 });
 
+test("layout failure offers an editing remedy, not a hidden text clamp", () => {
+  const state = describeProductionRender({status: "failed", error_code: "SUBTITLE_LAYOUT_OVERFLOW"});
+  assert.equal(state.terminal, true);
+  assert.match(state.label, /chia cue/);
+  assert.match(state.label, /render review lại/);
+});
+
 test("snaps pointer placement to quarter seconds", () => {
   assert.equal(snapTime(1.12, true), 1);
   assert.equal(snapTime(1.14, false), 1.14);

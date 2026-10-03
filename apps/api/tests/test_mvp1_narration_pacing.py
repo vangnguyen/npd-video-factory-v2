@@ -16,6 +16,20 @@ from test_mvp1_multi_input import env, author, timeline
 from app.db import JobORM
 
 
+async def test_real_renderer_layout_code_is_preserved_without_private_message(monkeypatch, tmp_path):
+    import httpx
+    from app.production_service import RemotionTimelineRenderEngine, SubtitleLayoutError
+    async def post(_self, *_args, **_kwargs):
+        return httpx.Response(422, json={"error_code": "SUBTITLE_LAYOUT_OVERFLOW", "message": "private narration"})
+    monkeypatch.setattr(httpx.AsyncClient, "post", post)
+    async def not_cancelled():
+        return False
+    with pytest.raises(SubtitleLayoutError, match="Split the subtitle cue") as error:
+        await RemotionTimelineRenderEngine(renderer_url="http://127.0.0.1:3018", timeout_seconds=90).render(
+            render_id="synthetic", manifest_path=tmp_path/"manifest.json", output_path=tmp_path/"output.mp4", is_cancelled=not_cancelled)
+    assert "private narration" not in str(error.value)
+
+
 @pytest.mark.parametrize("phrase",["Cần Giờ","Ngọc Phương Đông","chính sách","chính sách bán hàng","Trung tâm Văn hóa Biển Xanh"])
 @pytest.mark.parametrize("punctuation",["",", "])
 def test_phrase_is_not_split_and_source_is_lossless(phrase,punctuation):
