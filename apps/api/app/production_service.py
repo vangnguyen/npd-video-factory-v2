@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
+import re
 import shutil
 from decimal import Decimal
 from pathlib import Path
@@ -419,8 +421,19 @@ class ProductionRenderProcessor:
             if plan and hasattr(self.audio_engine, "synthesize_planned_narration"):
                 synthesis = self.audio_engine.synthesize_planned_narration
                 extra["plan"] = plan
+            tts_provider = self.tts_provider
+            if hasattr(tts_provider, "bind_render_scope") and audio_mix.config.voice.enabled:
+                async def before_unit():
+                    await self._check_cancelled(render_id)
+                    from .content_service import ContentService
+                    current = await ContentService(self.platform).latest(render.project_id)
+                    if current is None or current.project_version_id != snapshot.metadata.get("content_version_id"):
+                        raise RenderCancelledError("TTS_CONTENT_VERSION_STALE")
+                tts_provider = tts_provider.bind_render_scope(workspace_id=project.workspace_id,
+                    project_id=render.project_id, content_version_id=snapshot.metadata.get("content_version_id"),
+                    render_id=render_id, before_unit=before_unit)
             narration_manifest = await synthesis(
-                self.tts_provider,
+                tts_provider,
                 cues=subtitles.cues,
                 config=audio_mix.config,
                 duration_seconds=snapshot.duration_seconds,
@@ -494,6 +507,22 @@ class ProductionRenderProcessor:
             )
             qc_path = workdir / "qc.json"
             qc_path.write_text(json.dumps(qc_report, ensure_ascii=False, indent=2), encoding="utf-8")
+            # Keep exact provider WAV payloads as distinct assets. Their hashes
+            # and alignment (if available) are not identities of the mixed WAV.
+            for unit in narration_manifest.get("timing", []):
+                source_evidence = unit.get("provider_evidence")
+                if source_evidence is None:
+                    continue
+                name = unit.get("provider_audio_file", "")
+                if not re.fullmatch(r"(?:unit|voice)-[0-9]{3}-raw\.wav", name):
+                    raise ProductionContractError("TTS_SOURCE_AUDIO_PATH_INVALID")
+                path = workdir / name
+                if path.is_symlink() or hashlib.sha256(path.read_bytes()).hexdigest() != source_evidence["audio_sha256"]:
+                    raise ProductionContractError("TTS_SOURCE_AUDIO_IDENTITY_MISMATCH")
+                registered = await self._persist_asset(render,
+                    project_version_id=project.current_version_id, path=path,
+                    asset_class="render", kind="tts-provider-source", content_type="audio/wav")
+                unit["provider_audio_asset_id"] = registered.asset_id
             evidence_manifest = _evidence_manifest(
                 manifest,
                 narration=narration_manifest,
@@ -540,7 +569,7 @@ class ProductionRenderProcessor:
             )
             if completed is None:
                 raise RuntimeError("render completion record disappeared")
-            await self._record_costs(render)
+            await self._record_costs(render, narration=narration_manifest)
             return completed
         except RenderCancelledError as exc:
             failed = await self.repository.fail_render(render_id, code="RENDER_CANCELLED", reason=str(exc))
@@ -633,9 +662,16 @@ class ProductionRenderProcessor:
             job_id=None,
         )
 
-    async def _record_costs(self, render: RenderJobRead) -> None:
-        tts_key = "openai-tts" if self.tts_provider.__class__.__name__.startswith("OpenAI") else "espeak"
-        zero = Decimal("0") if tts_key == "espeak" else None
+    async def _record_costs(self, render: RenderJobRead, *, narration=None) -> None:
+        narration = narration or {}
+        sources = [unit["provider_evidence"] for unit in narration.get("timing", []) if unit.get("provider_evidence")]
+        native_provider = narration.get("provider", "tts-unreported")
+        # Preserve the historical local accounting channel for explicit fixtures,
+        # with the actual fixture identity retained in evidence. Unknown/external
+        # implementations must never be classified as zero-cost eSpeak by class name.
+        local = native_provider in {"espeak-ng", "espeak", "deterministic-wave", "fixture-vi", "disabled"}
+        tts_key = sources[0]["profile"]["provider_key"] if sources else ("espeak" if local else native_provider)
+        zero = Decimal("0") if local and not sources else None
         await self.platform.record_provider_operation(
             workspace_id=render.workspace_id,
             project_id=render.project_id,
@@ -643,9 +679,13 @@ class ProductionRenderProcessor:
             provider_key=tts_key,
             capability="tts",
             operation=f"tts.v2-08.{render.render_id}",
+            model=sources[0]["profile"]["model"] if sources else None,
             estimated_cost=zero,
             actual_cost=zero,
-            metadata={"render_id": render.render_id, "scene_aligned": True, "currency": "VND"},
+            metadata={"render_id": render.render_id, "scene_aligned": True, "currency": "VND",
+                "provider_evidence": sources, "billing_status": "UNKNOWN" if zero is None else "LOCAL_ZERO_COST",
+                "native_provider": native_provider,
+                "human_quality_accepted": False},
         )
         await self.platform.record_provider_operation(
             workspace_id=render.workspace_id,

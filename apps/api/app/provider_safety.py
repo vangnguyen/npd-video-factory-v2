@@ -21,6 +21,7 @@ from .asr_profile_binding import (
     validate_asr_request_profile,
 )
 from .models import StrictModel
+from .mvp1_provider_admission import Mvp1AdmissionScope
 
 
 CircuitState = Literal["closed", "open", "half_open"]
@@ -628,7 +629,7 @@ class ProviderSafetyPolicy(StrictModel):
     credential_gate_approved: bool = False
     rights_gate_approved: bool = False
     verified_gate_required: bool = False
-    execution_gate: ProviderExecutionGateScope | None = None
+    execution_gate: ProviderExecutionGateScope | Mvp1AdmissionScope | None = None
     budget: ProviderBudgetPolicy = Field(default_factory=ProviderBudgetPolicy)
     retry: ProviderRetryPolicy = Field(default_factory=ProviderRetryPolicy)
     circuit: ProviderCircuitPolicy = Field(default_factory=ProviderCircuitPolicy)
@@ -1427,6 +1428,8 @@ class ProviderSafetyController:
         context: ProviderCallContext,
         now: datetime,
     ) -> str | None:
+        if isinstance(scope, Mvp1AdmissionScope):
+            return scope.denial_for(context, now)
         current = now if now.tzinfo is not None else now.replace(tzinfo=timezone.utc)
         current = current.astimezone(timezone.utc)
         if current < scope.valid_from_utc.astimezone(timezone.utc):
@@ -2184,8 +2187,12 @@ def provider_safety_policy_from_settings(settings: Any) -> ProviderSafetyPolicy:
     gate_loaded = execution_gate is not None
 
     return ProviderSafetyPolicy(
-        external_execution_enabled=bool(settings.provider_external_execution_enabled),
-        paid_execution_enabled=bool(settings.provider_paid_execution_enabled),
+        # New lanes have independent controllers; flags never transfer their
+        # approval to the historical Vision/ASR controller.
+        external_execution_enabled=bool(settings.provider_external_execution_enabled and (
+            gate_loaded or not (getattr(settings, "content_admission_enabled", False) or getattr(settings, "tts_admission_enabled", False)))),
+        paid_execution_enabled=bool(settings.provider_paid_execution_enabled and (
+            gate_loaded or not (getattr(settings, "content_admission_enabled", False) or getattr(settings, "tts_admission_enabled", False)))),
         global_kill_switch_engaged=bool(settings.provider_global_kill_switch_engaged),
         credential_gate_approved=gate_loaded,
         rights_gate_approved=gate_loaded,

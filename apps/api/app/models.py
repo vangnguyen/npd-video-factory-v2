@@ -139,7 +139,10 @@ class JobError(StrictModel):
 class ContentGenerationJobInput(StrictModel):
     kind: Literal["content_generation"] = "content_generation"
     content_version_id: str = Field(pattern=r"^pver_[A-Za-z0-9_-]{4,60}$")
-    provider_key: Literal["fixture-storyboard-content"] = "fixture-storyboard-content"
+    provider_key: Literal["fixture-storyboard-content", "openai-storyboard-content"] = "fixture-storyboard-content"
+    provider_profile_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    input_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    provider_operation_key: str | None = Field(default=None, max_length=199)
     actor_ref: str = Field(min_length=1, max_length=160)
 
 

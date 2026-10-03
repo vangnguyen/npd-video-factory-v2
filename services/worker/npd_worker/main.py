@@ -33,7 +33,7 @@ from app.media_intelligence_service import (
     create_media_provider_bundle,
 )
 from app.object_storage import create_object_storage
-from app.production_audio import AudioMixEngine, create_audio_tts_provider
+from app.production_audio import AudioMixEngine, create_available_audio_tts_provider
 from app.production_logic import TimelineRenderContractValidator
 from app.production_qc import FullProductionQC
 from app.production_repository import ProductionRepository
@@ -46,6 +46,10 @@ from app.production_service import (
 )
 from app.repositories import PlatformRepository, PostgresJobStore
 from app.content_generation import ContentGenerationService, CONTENT_QUEUE
+from app.storyboard_content_provider import create_storyboard_content_provider
+from app.provider_safety import provider_safety_policy_from_settings
+from app.provider_safety_durable import DurableProviderSafetyController
+from app.provider_safety_repository import ProviderSafetyRepository
 from app.state import QUEUE_KEY
 from app.timeline_repository import TimelineRepository
 from app.trend_repository import TrendRepository
@@ -318,8 +322,13 @@ async def main() -> None:
         object_storage=object_storage,
     )
     config = WorkerConfig.from_env()
+    from app.mvp1_provider_admission import create_mvp1_lane_bindings
+    lane_repository = ProviderSafetyRepository(session_factory)
+    content_bindings = create_mvp1_lane_bindings(settings, capability="content_generation", repository=lane_repository)
+    tts_bindings = create_mvp1_lane_bindings(settings, capability="tts", repository=lane_repository)
     content_generation = ContentGenerationService(platform=platform, store=store, queue=redis,
-        mode=settings.content_generation_provider)
+        mode=settings.content_generation_provider,
+        provider=create_storyboard_content_provider(settings, controller=content_bindings["controller"], credential_resolver=content_bindings["credential_resolver"], admission_error=content_bindings.get("admission_error")))
     await content_generation.recover()
     await recover_inflight(redis)
     providers = create_media_provider_bundle(settings)
@@ -356,7 +365,7 @@ async def main() -> None:
             ffprobe_path=settings.ffprobe_path,
             ffmpeg_path=settings.ffmpeg_path,
         ),
-        tts_provider=create_audio_tts_provider(settings),
+        tts_provider=create_available_audio_tts_provider(settings, **tts_bindings),
         audio_engine=AudioMixEngine(ffmpeg_path=settings.ffmpeg_path),
         manifest_validator=TimelineRenderContractValidator(
             settings.contracts_root / "timeline-render.schema.json"

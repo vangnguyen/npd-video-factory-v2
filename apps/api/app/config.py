@@ -1,8 +1,9 @@
 from decimal import Decimal
 from pathlib import Path
+from typing import Literal
 from urllib.parse import urlparse
 
-from pydantic import field_validator, model_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from .asr_prompt_profile import profile_for_id, prompt_profile_sha256
@@ -22,6 +23,21 @@ class Settings(BaseSettings):
 
     app_env: str = "development"
     content_generation_provider: str = "contract"
+    content_generation_model: str = ""
+    content_generation_reasoning_effort: Literal["none", "low", "medium", "high", "xhigh", "max"] | None = None
+    content_generation_credential_alias: str = "secret://openai/video-factory-content-generation"
+    content_external_execution_enabled: bool = False
+    content_generation_input_vnd_per_million_tokens: Decimal = Decimal("0")
+    content_generation_output_vnd_per_million_tokens: Decimal = Decimal("0")
+    content_generation_estimated_cost_vnd: Decimal = Decimal("0")
+    content_generation_max_output_tokens: int = 4096
+    content_admission_enabled: bool = False
+    content_admission_file: Path = Path("/run/secrets/video-factory-content-admission.json")
+    content_admission_sha256: str = ""
+    tts_admission_enabled: bool = False
+    tts_admission_file: Path = Path("/run/secrets/video-factory-tts-admission.json")
+    tts_admission_sha256: str = ""
+    mvp1_provider_source_commit: str = ""
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     database_url: str = "postgresql+asyncpg://video_factory:development-only@postgres:5432/video_factory"
@@ -118,6 +134,12 @@ class Settings(BaseSettings):
     openai_tts_model: str = "gpt-4o-mini-tts"
     openai_tts_voice: str = "marin"
     openai_tts_instructions: str = ""
+    # Separate candidate configuration; historical model/voice defaults are not
+    # an Owner production voice selection or per-capability execution authority.
+    production_tts_model: str = ""
+    production_tts_voice_id: str = ""
+    production_tts_style: str = ""
+    production_tts_speed: float = Field(default=1, ge=0.25, le=4, allow_inf_nan=False)
     openai_base_url: str = "https://api.openai.com"
     renderer_timeout_seconds: float = 600.0
     public_base_url: str = "http://localhost:8000"
@@ -309,8 +331,27 @@ class Settings(BaseSettings):
             raise ValueError("deterministic analytics fixtures must be disabled in production")
         if self.transcription_provider not in {"fixture", "contract", "openai", "assemblyai"}:
             raise ValueError("TRANSCRIPTION_PROVIDER must be fixture, contract, openai or assemblyai")
-        if self.content_generation_provider not in {"fixture", "contract"}:
-            raise ValueError("CONTENT_GENERATION_PROVIDER must be contract or offline fixture")
+        if self.content_generation_provider not in {"fixture", "contract", "responses"}:
+            raise ValueError("CONTENT_GENERATION_PROVIDER must be contract, offline fixture or responses")
+        if self.content_generation_credential_alias != "secret://openai/video-factory-content-generation":
+            raise ValueError("content generation credential alias is capability-specific")
+        if self.content_external_execution_enabled and (
+            self.content_generation_provider != "responses"
+            or self.app_env.lower() in {"ci", "test"}
+            or not self.provider_external_execution_enabled
+            or not self.provider_paid_execution_enabled
+            or not (self.provider_verified_gate_bundle_enabled or self.content_admission_enabled)
+            or self.provider_global_kill_switch_engaged
+        ):
+            raise ValueError("content live execution requires a separate verified capability scope")
+        if not 256 <= self.content_generation_max_output_tokens <= 16000:
+            raise ValueError("content output token bound invalid")
+        if any(not value.is_finite() or value < 0 for value in (
+            self.content_generation_input_vnd_per_million_tokens,
+            self.content_generation_output_vnd_per_million_tokens,
+            self.content_generation_estimated_cost_vnd,
+        )):
+            raise ValueError("content pricing must be finite and nonnegative")
         if self.app_env.lower() == "production" and self.content_generation_provider == "fixture":
             raise ValueError("content generation fixture must be disabled in production")
         if self.auto_edit_signal_provider not in {"fixture", "ffmpeg"}:
@@ -450,8 +491,8 @@ class Settings(BaseSettings):
             raise ValueError("production must use S3-compatible object storage")
         if self.audio_tts_provider not in {"espeak", "contract", "openai"}:
             raise ValueError("AUDIO_TTS_PROVIDER must be espeak, contract or openai")
-        if self.audio_tts_provider == "openai" and not self.audio_external_execution_enabled:
-            raise ValueError("OpenAI audio TTS requires the external audio execution owner gate")
+        if len(self.production_tts_style) > 500:
+            raise ValueError("production TTS style must be bounded")
         if self.audio_external_execution_enabled and self.audio_tts_provider != "openai":
             raise ValueError("external audio execution is only valid for the owner-gated OpenAI adapter")
         if self.audio_tts_rate < 80 or self.audio_tts_rate > 260:
@@ -657,10 +698,48 @@ class Settings(BaseSettings):
                     raise ValueError(
                         "provider settings do not match the verified G-02-ASR envelope"
                     )
-        elif self.provider_external_execution_enabled:
+        elif self.provider_external_execution_enabled and not (self.content_admission_enabled or self.tts_admission_enabled):
             raise ValueError("real provider execution requires a verified owner-gate bundle")
         if self.provider_external_execution_enabled:
-            if not self.provider_verified_gate_bundle_enabled:
+            mvp1_lanes = self.content_admission_enabled or self.tts_admission_enabled
+            if mvp1_lanes:
+                if self.provider_verified_gate_bundle_enabled or self.vision_provider == "openai" or self.transcription_provider in {"openai", "assemblyai"}:
+                    raise ValueError("MVP1 lanes cannot transfer authority to historical ASR/Vision")
+                if not self.provider_paid_execution_enabled:
+                    raise ValueError("MVP1 external execution requires its paid gate")
+                if not ((self.content_generation_provider == "responses" and self.content_external_execution_enabled)
+                    or (self.audio_tts_provider == "openai" and self.audio_external_execution_enabled)):
+                    raise ValueError("MVP1_SELECTED_EXECUTABLE_LANE_REQUIRED")
+                from .mvp1_provider_admission import load_mvp1_admission
+                for prefix, capability, selected in (("content", "content_generation", self.content_generation_provider == "responses" and self.content_external_execution_enabled),
+                    ("tts", "tts", self.audio_tts_provider == "openai" and self.audio_external_execution_enabled)):
+                    if not selected:
+                        continue
+                    if not getattr(self, prefix + "_admission_enabled"):
+                        raise ValueError("MVP1_LANE_ADMISSION_REQUIRED")
+                    scope = load_mvp1_admission(getattr(self, prefix + "_admission_file"),
+                        expected_sha256=getattr(self, prefix + "_admission_sha256"),
+                        expected_source_commit=self.mvp1_provider_source_commit, capability=capability)
+                    if not scope.execution_authorized:
+                        raise ValueError("MVP1_EXECUTION_AUTHORITY_REQUIRED")
+                    if capability == "content_generation":
+                        from .storyboard_content_provider import ContentProviderProfile
+                        configured_profile = ContentProviderProfile(model=self.content_generation_model,
+                            version=2 if self.content_generation_reasoning_effort is not None else 1,
+                            reasoning_effort=self.content_generation_reasoning_effort,
+                            credential_alias=self.content_generation_credential_alias,
+                            input_vnd_per_million_tokens=self.content_generation_input_vnd_per_million_tokens,
+                            output_vnd_per_million_tokens=self.content_generation_output_vnd_per_million_tokens,
+                            estimated_cost_vnd=self.content_generation_estimated_cost_vnd,
+                            max_output_tokens=self.content_generation_max_output_tokens)
+                    else:
+                        from .tts_evidence import ProductionTTSProfile
+                        configured_profile = ProductionTTSProfile(provider_key="openai-tts", model=self.production_tts_model,
+                            voice_id=self.production_tts_voice_id, style_instructions=self.production_tts_style,
+                            speed=self.production_tts_speed)
+                    if configured_profile.sha256 != scope.profile_sha256:
+                        raise ValueError("MVP1_CONFIG_PROFILE_SCOPE_MISMATCH")
+            elif not self.provider_verified_gate_bundle_enabled:
                 raise ValueError("real provider execution requires a verified owner-gate bundle")
             selected_paid_adapters = sum(
                 (
@@ -668,7 +747,7 @@ class Settings(BaseSettings):
                     self.transcription_provider in {"openai", "assemblyai"},
                 )
             )
-            if selected_paid_adapters != 1 or not self.provider_paid_execution_enabled:
+            if not mvp1_lanes and (selected_paid_adapters != 1 or not self.provider_paid_execution_enabled):
                 raise ValueError(
                     "gated execution is limited to one paid allowlisted provider capability"
                 )

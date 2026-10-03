@@ -51,7 +51,7 @@ async def generate_content(project_id: str, payload: ContentGenerateRequest, req
     try:
         return await generation_from(request).create(project_id, payload, actor_ref=principal_from(request).subject)
     except ContentProviderUnavailable as exc:
-        raise HTTPException(503, detail={"code": "CONTENT_PROVIDER_NOT_CONFIGURED", "message": str(exc)}) from exc
+        raise HTTPException(503, detail={"code": exc.code, "message": str(exc)}) from exc
     except ContentConflictError as exc:
         raise HTTPException(409, detail={"code": "CONTENT_VERSION_CONFLICT", "message": str(exc)}) from exc
 

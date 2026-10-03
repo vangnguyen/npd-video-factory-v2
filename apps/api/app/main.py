@@ -58,6 +58,7 @@ from .human_auth import (
 )
 from .models import JobCreateResponse, JobRecord, VideoJobCreate
 from .content_generation import ContentGenerationService, content_provider_definition
+from .storyboard_content_provider import create_storyboard_content_provider
 from .object_storage import create_object_storage, sha256_file
 from .openai_transcription_provider import (
     OpenAITranscriptionProvider,
@@ -219,8 +220,13 @@ async def lifespan(app: FastAPI):
         platform=platform,
         object_storage=object_storage,
     )
+    from .mvp1_provider_admission import create_mvp1_lane_bindings
+    content_bindings = create_mvp1_lane_bindings(settings, capability="content_generation", repository=provider_safety_repository)
     app.state.content_generation_service = ContentGenerationService(platform=platform,
-        store=app.state.job_store, queue=redis, mode=settings.content_generation_provider)
+        store=app.state.job_store, queue=redis, mode=settings.content_generation_provider,
+        provider=create_storyboard_content_provider(settings, controller=content_bindings["controller"], credential_resolver=content_bindings["credential_resolver"], admission_error=content_bindings.get("admission_error")))
+    # No substitution of the historical ASR key for the content alias. The
+    # separate capability resolver/admission must be configured under fresh authority.
     media_probe = FFprobeMediaProbe(settings.ffprobe_path)
     if settings.transcription_provider == "fixture":
         transcription_provider = DeterministicTranscriptionProvider()

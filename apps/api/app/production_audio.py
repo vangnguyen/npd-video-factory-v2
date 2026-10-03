@@ -13,7 +13,6 @@ from typing import Any
 from .production_models import MixConfig, SubtitleCue
 from .providers import (
     EspeakVietnameseTTSProvider,
-    OpenAIVietnameseTTSProvider,
     TTSNotConfiguredError,
     UnconfiguredVietnameseTTSProvider,
     VoiceResult,
@@ -28,22 +27,14 @@ def audio_provider_status(settings: Any) -> str:
     if provider == "contract":
         return "not_configured"
     if provider == "openai":
-        globally_allowed = bool(
-            getattr(settings, "provider_external_execution_enabled", False)
-            and getattr(settings, "provider_paid_execution_enabled", False)
-            and not getattr(settings, "provider_global_kill_switch_engaged", True)
-        )
-        return (
-            "configured"
-            if globally_allowed
-            and settings.audio_external_execution_enabled
-            and settings.openai_api_key.strip()
-            else "not_configured"
-        )
+        if not getattr(settings, "production_tts_model", "") or not getattr(settings, "production_tts_voice_id", ""):
+            return "model_voice_selection_required"
+        return "tts_authority_required"  # Pure metadata: never inspect credential bytes.
     return "configured"
 
 
-def create_audio_tts_provider(settings: Any):
+def create_audio_tts_provider(settings: Any, *, controller=None, credential_resolver=None,
+                              approved_units=None, transport=None):
     provider = settings.audio_tts_provider
     if provider == "espeak":
         return EspeakVietnameseTTSProvider(
@@ -51,6 +42,8 @@ def create_audio_tts_provider(settings: Any):
             rate=settings.audio_tts_rate,
         )
     if provider == "openai":
+        from .tts_evidence import ProductionTTSProfile
+        from .tts_provider_execution import GovernedVietnameseTTSProvider
         if (
             getattr(settings, "provider_global_kill_switch_engaged", True)
             or not getattr(settings, "provider_external_execution_enabled", False)
@@ -59,15 +52,28 @@ def create_audio_tts_provider(settings: Any):
             raise TTSNotConfiguredError("external audio TTS is blocked by the global provider safety gate")
         if not settings.audio_external_execution_enabled:
             raise TTSNotConfiguredError("external audio TTS execution is disabled")
-        return OpenAIVietnameseTTSProvider(
-            api_key=settings.openai_api_key,
-            model=settings.openai_tts_model,
-            voice=settings.openai_tts_voice,
-            instructions=settings.openai_tts_instructions,
-            base_url=settings.openai_base_url,
-            timeout_seconds=120,
-        )
+        if not settings.production_tts_model or not settings.production_tts_voice_id:
+            raise TTSNotConfiguredError("TTS_MODEL_VOICE_SELECTION_REQUIRED")
+        profile = ProductionTTSProfile(provider_key="openai-tts", model=settings.production_tts_model,
+            voice_id=settings.production_tts_voice_id, style_instructions=settings.production_tts_style,
+            speed=settings.production_tts_speed)
+        candidate = GovernedVietnameseTTSProvider(profile, controller=controller,
+            credential_resolver=credential_resolver, approved_units=approved_units or {}, transport=transport)
+        if candidate.readiness() != "CONFIG_AND_SCOPE_PRESENT":
+            raise TTSNotConfiguredError("TTS_CAPABILITY_INPUT_AUTHORITY_REQUIRED")
+        return candidate
     return UnconfiguredVietnameseTTSProvider()
+
+
+def create_available_audio_tts_provider(settings: Any, **bindings):
+    # An unapproved TTS lane blocks synthesis, not the shared worker/content/ASR
+    # lifecycle. Preserve the specific safe failure without loading a credential.
+    if bindings.pop("admission_error", None):
+        return UnconfiguredVietnameseTTSProvider("MVP1_LANE_ADMISSION_BLOCKED")
+    try:
+        return create_audio_tts_provider(settings, **bindings)
+    except TTSNotConfiguredError as exc:
+        return UnconfiguredVietnameseTTSProvider(str(exc))
 
 
 class DeterministicWaveTTSProvider:
@@ -142,6 +148,14 @@ class AudioMixEngine:
                 "text_sha256":unit["text_sha256"], "applied_timing_speedup":1,
                 "audio_duration_source":"decoded_pcm_sample_count", "placement_source":"editorial_unit_schedule",
                 "word_alignment":"NOT_AVAILABLE", "measured_word_timestamps":False, "audible":True})
+            if voice.evidence is not None:
+                timing[-1]["provider_evidence"] = voice.evidence.model_dump(mode="json")
+                timing[-1]["provider_audio_file"] = raw.name
+                timing[-1]["alignment_source_audio_only"] = voice.evidence.timing.source
+                # Normalization/trimming/placement is not forced alignment.
+                # Preserve provider evidence separately; do not silently reuse
+                # raw-audio boundaries as mixed-timeline word timestamps.
+                timing[-1]["transformed_audio_requires_alignment_mapping"] = bool(voice.evidence.timing.words)
             # Segment-cue estimates only. Never expose these as word timestamps.
             total = sum(len(c.text.split()) for c in group)
             cursor = start
@@ -266,6 +280,11 @@ class AudioMixEngine:
                     "measured_word_timestamps": False,
                 }
             )
+            if voice_result.evidence is not None:
+                timing[-1]["provider_evidence"] = voice_result.evidence.model_dump(mode="json")
+                timing[-1]["provider_audio_file"] = raw.name
+                timing[-1]["alignment_source_audio_only"] = voice_result.evidence.timing.source
+                timing[-1]["transformed_audio_requires_alignment_mapping"] = bool(voice_result.evidence.timing.words)
 
         _write_pcm16(output_path, master, sample_rate)
         if not any(abs(sample) >= PCM_ACTIVITY_THRESHOLD for sample in master):
