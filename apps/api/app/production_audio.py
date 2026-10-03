@@ -99,6 +99,68 @@ class DeterministicWaveTTSProvider:
 
 
 class AudioMixEngine:
+    async def synthesize_planned_narration(self, provider, *, cues, config, duration_seconds,
+                                         output_path, workdir, plan):
+        """Sentence-level TTS, separately scheduled captions. No automatic fit speedup."""
+        from .content_service import canonical_bytes
+        from .production_logic import ProductionContractError
+        sample_rate = config.sample_rate
+        master = array("h", [0]) * int(round(duration_seconds*sample_rate))
+        if not config.voice.enabled:
+            _write_pcm16(output_path, master, sample_rate)
+            return {"provider":"disabled", "timing":[], "cue_count":0}
+        # Cue order must still represent the exact plan, not an edited/stale script.
+        expected = " ".join(" ".join(u["text"].split()) for u in plan["units"])
+        actual = " ".join(" ".join(c.text.split()) for c in cues)
+        if expected != actual or len(cues) != sum(len(u["scene_indices"]) for u in plan["units"]):
+            raise ProductionContractError("NARRATION_PLAN_CHANGED: rebuild storyboard after caption text/order edit")
+        timing, captions, cue_offset, identity = [], [], 0, {}
+        for index, unit in enumerate(plan["units"]):
+            raw, normalized = workdir/f"unit-{index:03d}-raw.wav", workdir/f"unit-{index:03d}-normalized.wav"
+            voice = await provider.synthesize(text=unit["text"], language=config.voice.language, output_path=raw)
+            await self._normalize_chunk(raw, normalized, speed=config.voice.speed)
+            samples, rate = _read_pcm16(normalized)
+            if rate != sample_rate:
+                raise ProductionContractError("PCM_SAMPLE_RATE_MISMATCH")
+            samples = _trim_activity(samples)
+            duration = len(samples)/rate
+            if duration <= 0:
+                raise ProductionContractError("NARRATION_PCM_EMPTY")
+            group = cues[cue_offset:cue_offset+len(unit["scene_indices"])]
+            cue_offset += len(group)
+            start, slot_end = group[0].start_seconds, group[-1].end_seconds
+            if start+duration > slot_end+0.002 or start+duration > duration_seconds+0.002:
+                raise ProductionContractError("NARRATION_DURATION_ADJUSTMENT_REQUIRED: audio longer than editorial slot; no truncation/speedup")
+            first_frame = int(round(start*rate))
+            if first_frame+len(samples) > len(master):
+                raise ProductionContractError("NARRATION_OUT_OF_AUDIO_BOUNDS")
+            for offset, sample in enumerate(samples):
+                master[first_frame+offset] = max(-32768,min(32767,master[first_frame+offset]+sample))
+            timing.append({"unit_id":unit["unit_id"], "cue_ids":[c.cue_id for c in group],
+                "start_seconds":start, "end_seconds":start+duration, "slot_end_seconds":slot_end,
+                "rendered_audio_duration_seconds":duration, "source_audio_duration_seconds":voice.duration_seconds,
+                "text_sha256":unit["text_sha256"], "applied_timing_speedup":1,
+                "audio_duration_source":"decoded_pcm_sample_count", "placement_source":"editorial_unit_schedule",
+                "word_alignment":"NOT_AVAILABLE", "measured_word_timestamps":False, "audible":True})
+            # Segment-cue estimates only. Never expose these as word timestamps.
+            total = sum(len(c.text.split()) for c in group)
+            cursor = start
+            for cue in group:
+                end = cursor+duration*len(cue.text.split())/total
+                captions.append({**cue.model_dump(mode="json"), "start_seconds":cursor,
+                    "end_seconds":end,"words":[]})
+                cursor = end
+            identity = {"provider":voice.provider, "voice":voice.voice,"model":getattr(provider,"model",None),
+                "adapter":type(provider).__name__,"configured_rate":getattr(provider,"rate",None),
+                "configured_speed":config.voice.speed,"human_quality_accepted":False}
+        _write_pcm16(output_path, master, sample_rate)
+        if not any(abs(s)>=PCM_ACTIVITY_THRESHOLD for s in master):
+            raise ProductionContractError("NARRATION_PCM_NOT_AUDIBLE")
+        return {**identity, "plan_sha256":hashlib.sha256(canonical_bytes(plan)).hexdigest(),
+            "cue_count":len(cues),"unit_count":len(timing),"duration_seconds":len(master)/sample_rate,
+            "timing":timing,"caption_schedule":captions,
+            "caption_timing_source":"estimated_editorial_segment_schedule_NOT_word_alignment"}
+
     def __init__(self, *, ffmpeg_path: str = "ffmpeg"):
         self.ffmpeg_path = ffmpeg_path
 

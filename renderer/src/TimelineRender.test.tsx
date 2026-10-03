@@ -20,10 +20,18 @@ vi.mock("remotion", async () => {
   };
 });
 
-import {TimelineRender, activeSubtitleWordIndex, assertSubtitleFits} from "./TimelineRender";
+import {TimelineRender, activeSubtitleWordIndex, assertSubtitleFits, crossfadeTail} from "./TimelineRender";
 import {makeTimelineManifest} from "./test-fixtures";
 
 describe("timeline-render-v1 composition", () => {
+  it("retains the predecessor only for explicit contiguous crossfade, not dark fade", () => {
+    const clip=makeTimelineManifest("data:image/png;base64,AA==").visual_clips[0];
+    const next={...clip,timeline_start:clip.timeline_start+clip.duration,transition_in:{kind:"crossfade" as const,duration_seconds:0.25}};
+    expect(crossfadeTail(clip,next)).toBe(0.25);
+    expect(crossfadeTail(clip,{...next,transition_in:{kind:"fade",duration_seconds:0.25}})).toBe(0);
+    expect(crossfadeTail(clip,{...next,track_order:clip.track_order+1})).toBe(0);
+    expect(crossfadeTail(clip,{...next,timeline_start:next.timeline_start+1})).toBe(0);
+  });
   it("renders layered media, mixed audio, Vietnamese subtitles, and brand styling", () => {
     const manifest = makeTimelineManifest("data:image/png;base64,AA==");
     const html = renderToStaticMarkup(<TimelineRender manifest={manifest} />);

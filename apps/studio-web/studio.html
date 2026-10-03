@@ -62,6 +62,7 @@
           <label>Script có thể sửa (prompt không tự thành narration)<textarea id="mvp-script" rows="4" maxlength="20000"></textarea></label>
           <label>Thông tin người dùng cung cấp (chưa xác minh, mỗi dòng một mục)<textarea id="mvp-facts" rows="2" maxlength="20000"></textarea></label>
           <button id="mvp-draft" type="button">Chia cảnh từ script (không AI)</button>
+          <label>Cụm từ cần giữ nguyên (mỗi dòng một cụm có trong script)<textarea id="mvp-protected" maxlength="4000"></textarea></label>
           <p>Giới hạn: 180 ký tự/cảnh, 40 cảnh, 180 giây. Bộ chia còn tuân thủ vùng phụ đề an toàn. Thời lượng gợi ý là ước lượng; TTS đo audio và từ chối nếu không vừa.</p>
           <button id="mvp-generate" type="button">Tạo đề xuất script/storyboard</button>
           <button id="mvp-generation-cancel" type="button">Hủy đề xuất/job</button>
@@ -73,6 +74,8 @@
           <button id="mvp-save" type="button">Lưu phiên bản</button>
           <button id="mvp-approve" type="button">Duyệt script/storyboard</button>
           <button id="mvp-timeline" type="button">Tạo/cập nhật timeline</button>
+          <button id="mvp-reflow" type="button">Tạo draft nhịp cảnh từ audio review đã đo</button>
+          <p>Auto chỉ thay đổi khi bấm tạo draft nhịp cảnh. Cảnh khóa giữ thời lượng; khoảng nghỉ được giữ theo lựa chọn. Reflow vô hiệu hóa approval/final cũ và cần A/V review + duyệt lại. Caption theo đoạn ước lượng, không highlight từ khi chưa có alignment.</p>
           <p id="mvp-status"></p><details><summary>Media plan</summary><pre id="mvp-plan"></pre></details>
           <details><summary>Diff phiên bản script</summary><pre id="mvp-script-diff"></pre></details>
           <p>Ảnh không có source duration. Timing cảnh là lịch biên tập, không phải measured word timestamps. Video có lời nói vẫn cần ASR hợp lệ. A/V review và duyệt final ở workbench bên dưới.</p>

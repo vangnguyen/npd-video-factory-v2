@@ -1,5 +1,7 @@
 """Synthetic contract tests. No provider result is production acceptance."""
 from pathlib import Path
+import os
+import uuid
 from types import SimpleNamespace
 from unittest.mock import Mock
 import pytest
@@ -34,7 +36,22 @@ class Queue:
 
 @pytest.fixture
 async def env(tmp_path):
-    engine = create_engine(f"sqlite+aiosqlite:///{tmp_path}/dev.db")
+    pg = os.getenv("MVP1_TEST_PG_URL")
+    schema = None
+    if pg:
+        from urllib.parse import urlparse
+        identity=urlparse(pg.replace("postgresql+asyncpg","postgresql"))
+        assert identity.hostname=="127.0.0.1" and identity.username=="mvp1_dev" and identity.path=="/mvp1_devtests"
+        assert identity.password in {None,"synthetic_fixture_only"}  # disposable CI, never real custody
+        from sqlalchemy.ext.asyncio import create_async_engine
+        from sqlalchemy import text
+        schema = "mvp1_"+uuid.uuid4().hex
+        control = create_engine(pg)
+        async with control.begin() as conn:
+            await conn.execute(text(f'CREATE SCHEMA "{schema}"'))
+        engine = create_async_engine(pg,connect_args={"server_settings":{"search_path":schema}})
+    else:
+        engine = create_engine(f"sqlite+aiosqlite:///{tmp_path}/dev.db")
     async with engine.begin() as connection: await connection.run_sync(Base.metadata.create_all)
     factory=create_session_factory(engine)
     platform=PlatformRepository(factory)
@@ -56,6 +73,10 @@ async def env(tmp_path):
         storage=storage,assets=assets,timeline=timeline,service=service,content=content,production=production,
         package=package,queue=queue,tmp=tmp_path)
     await engine.dispose()
+    if schema:
+        async with control.begin() as conn:
+            await conn.execute(text(f'DROP SCHEMA "{schema}" CASCADE'))
+        await control.dispose()
 
 async def image(env, project=None, rights="owned"):
     project=project or env.project

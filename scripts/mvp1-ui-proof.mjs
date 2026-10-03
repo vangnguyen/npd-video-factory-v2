@@ -128,6 +128,7 @@ try {
     await page.waitForFunction(()=>document.querySelector("#mvp-status").textContent.includes("không bắt buộc video"));
     await page.locator("#mvp-from-media").click();
   } else {
+  if(scenario==="script-long") await page.locator("#mvp-protected").fill("Ngọc Phương Đông\nCần Giờ\nchính sách");
   await page.locator("#mvp-kind").selectOption(kind);
   await page.locator("#mvp-original").fill(kind==="prompt"?"Dựng góc rộng và nhịp chậm về không gian xanh, không thêm giá hay chính sách.":kind==="idea"?"Một video giới thiệu cách kiểm chứng thông tin.":script);
   if(["idea","prompt"].includes(kind)) {
@@ -151,7 +152,7 @@ try {
   for(let i=0;i<await scenes.count();i++) {
     const row=scenes.nth(i);
     if(scenario!=="script-long")await row.locator("[data-field=duration]").fill(["idea","prompt"].includes(kind)?"9":"6");
-    await row.locator("[data-field=transition]").selectOption(i?"fade":"cut");
+    await row.locator("[data-field=transition]").selectOption(i?"crossfade":"cut");
     if(scenario==="image-script"||scenario==="mixed") {
       const filename=scenario==="mixed"?["owned-silent-video.mp4","owned-photo.png","synthetic-architecture.png"][i]:["owned-photo.png","synthetic-architecture.png"][i];
       await row.locator("[data-field=media]").selectOption(assets.find(a=>a.filename===filename).asset_id);
@@ -162,12 +163,26 @@ try {
   await waitValue(storedContent,v=>v.snapshot.content.approved,"content approval");
   await page.waitForTimeout(800);
   await page.locator("#mvp-timeline").click();
-  const timeline=await waitValue(()=>api(`/api/v1/projects/${projectId}/timeline`).catch(()=>null),v=>!!v,"timeline");
+  let timeline=await waitValue(()=>api(`/api/v1/projects/${projectId}/timeline`).catch(()=>null),v=>!!v,"timeline");
   await page.reload(); // real refresh verifies durable project/content/timeline, not browser-only state.
   await page.locator("#studio-workspace").waitFor({state:"visible"});
   if(await page.locator(".mvp-scene").count()!==timeline.snapshot.tracks[0].clips.length)throw new Error("storyboard lost on refresh");
+  if(["idea","prompt"].includes(kind) && process.env.MVP1_UI_PROPOSAL_ONLY==="1") {
+    await fs.writeFile(path.join(output,"timeline.json"),JSON.stringify(timeline,null,2));
+    await fs.writeFile(path.join(output,"storyboard.json"),JSON.stringify(await storedContent(),null,2));
+    await page.screenshot({path:path.join(output,"studio-proposal.png"),fullPage:true});
+    log.verdict="UI_PROPOSAL_APPLY_TIMELINE_FIXTURE_ONLY_PASS";
+  } else {
   await page.locator("#production-package-button").click();
   await page.locator("#production-content").waitFor({state:"visible"});
+  await render("review","-before-reflow");
+  const oldVersion=timeline.current_version;
+  await page.locator("#mvp-reflow").click();
+  timeline=await waitValue(()=>api(`/api/v1/projects/${projectId}/timeline`),v=>v.current_version>oldVersion,"PCM reflow draft");
+  await fs.writeFile(path.join(output,"reflow-timeline.json"),JSON.stringify(timeline,null,2));
+  await page.waitForTimeout(700);
+  await page.locator("#production-package-button").click();
+  await page.waitForTimeout(700);
   const review=await render("review");
   await page.locator("#request-approval-button").waitFor({state:"visible"});
   await page.waitForFunction(()=>!document.querySelector("#request-approval-button").disabled);
@@ -197,6 +212,13 @@ try {
     await page.waitForTimeout(800);
     await page.locator("#production-package-button").click();
     await page.waitForTimeout(800);
+    await render("review","-edited-before-reflow");
+    const edited=await api(`/api/v1/projects/${projectId}/timeline`);
+    await page.locator("#mvp-reflow").click();
+    await waitValue(()=>api(`/api/v1/projects/${projectId}/timeline`),v=>v.current_version>edited.current_version,"edited PCM reflow");
+    await page.waitForTimeout(700);
+    await page.locator("#production-package-button").click();
+    await page.waitForTimeout(700);
     await render("review","-after-edit");
     await page.waitForFunction(()=>!document.querySelector("#request-approval-button").disabled);
     await page.locator("#request-approval-button").click();
@@ -215,6 +237,7 @@ try {
   }
   if(errors.length)throw new Error(`page errors: ${errors.join("; ")}`);
   log.verdict="UI_AV_REVIEW_FINAL_MP4_DEV_PASS";
+  }
   }
 } catch(error) {
   log.verdict="DEV_PROOF_BLOCKED";log.error=error.message;

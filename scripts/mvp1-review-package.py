@@ -18,6 +18,7 @@ parser.add_argument("--output",type=Path,required=True)
 parser.add_argument("--ffmpeg",required=True)
 parser.add_argument("--ffprobe",required=True)
 parser.add_argument("--test-report",type=Path,required=True)
+parser.add_argument("--integration03",action="store_true",help="affected-case review only; never count extra movies as acceptance")
 args=parser.parse_args()
 repo=Path(__file__).resolve().parents[1]
 commit=subprocess.check_output(["git","rev-parse","HEAD"],cwd=repo,text=True).strip()
@@ -67,12 +68,27 @@ for folder in sorted(root.glob("ui-*")):
         if is_final and (video["width"],video["height"])!=(1080,1920):raise ValueError("final profile mismatch")
         narration=render["manifest"]["narration"]
         subtitles=render["manifest"]["subtitles"]
-        if len(narration["timing"])!=len(subtitles):raise ValueError("narration/subtitle coverage mismatch")
-        for cue,subtitle in zip(narration["timing"],subtitles):
-            if cue["cue_id"]!=subtitle["cue_id"] or cue["text_sha256"]!=hashlib.sha256(subtitle["text"].encode("utf8")).hexdigest():
-                raise ValueError("narration text lost/duplicated or subtitle identity mismatch")
-            if cue["start_seconds"]!=subtitle["start_seconds"] or cue["slot_end_seconds"]!=subtitle["end_seconds"]:
-                raise ValueError("editorial A/V cue placement mismatch")
+        if narration.get("unit_count"):
+            observed=[]
+            for unit in narration["timing"]:
+                group=[next(c for c in subtitles if c["cue_id"]==identifier) for identifier in unit["cue_ids"]]
+                if not group or any(c["words"] for c in group):raise ValueError("segment cues cannot claim word alignment")
+                # Original script bytes/source offsets live in storyboard; unit
+                # text may contain original newlines. Hash that exact source.
+                snapshot=json.loads((folder/("timeline-after-edit.json" if "after-edit" in movie.stem else "timeline.json")).read_text())
+                plan=snapshot["snapshot"]["metadata"]["narration_plan"]
+                planned=next(u for u in plan["units"] if u["unit_id"]==unit["unit_id"])
+                if hashlib.sha256(planned["text"].encode()).hexdigest()!=unit["text_sha256"]:raise ValueError("unit text hash mismatch")
+                if " ".join(planned["text"].split())!=" ".join(" ".join(c["text"].split()) for c in group):raise ValueError("caption text coverage mismatch")
+                observed.extend(unit["cue_ids"])
+            if observed!=[c["cue_id"] for c in subtitles]:raise ValueError("duplicate/missing/out-of-order captions")
+        else:
+            if len(narration["timing"])!=len(subtitles):raise ValueError("narration/subtitle coverage mismatch")
+            for cue,subtitle in zip(narration["timing"],subtitles):
+                if cue["cue_id"]!=subtitle["cue_id"] or cue["text_sha256"]!=hashlib.sha256(subtitle["text"].encode("utf8")).hexdigest():
+                    raise ValueError("narration text lost/duplicated or subtitle identity mismatch")
+                if cue["start_seconds"]!=subtitle["start_seconds"] or cue["slot_end_seconds"]!=subtitle["end_seconds"]:
+                    raise ValueError("editorial A/V cue placement mismatch")
         for cue in narration["timing"]:
             if not (0<=cue["start_seconds"]<cue["end_seconds"]<=cue["slot_end_seconds"]+0.001):raise ValueError("bad measured cue interval")
         # Extract representative frames for visual inspection; not a human full-watch assertion.
@@ -92,7 +108,7 @@ for folder in sorted(root.glob("ui-*")):
             "human_full_watch_listen":"NOT_PERFORMED","professional_voice_acceptance":False})
     cases.append({"scenario":report["scenario"],"folder":str(destination.relative_to(output)).replace("\\","/"),"verdict":report["verdict"]})
 
-required={"image-script","mixed","script","idea","prompt","image-only","mixed-audio-blocked","script-long"}
+required={"image-script","mixed","script","script-long"} if args.integration03 else {"image-script","mixed","script","idea","prompt","image-only","mixed-audio-blocked","script-long"}
 if not required.issubset({case["scenario"] for case in cases}):raise ValueError("review case missing")
 for fixture in ("fixtures","fixtures-spoken"):
     manifest=json.loads((root/fixture/"source-rights-manifest.json").read_text())
@@ -102,7 +118,7 @@ for fixture in ("fixtures","fixtures-spoken"):
         if file.suffix in {".json",".png",".mp4",".wav"}:copy(file,output/"inputs"/fixture/file.name)
 copy(args.test_report,output/"TEST_REPORT.md")
 for junit in args.test_report.parent.glob("*final*.xml"):copy(junit,output/"tests"/junit.name)
-metadata={"task":"VF-MVP1-MULTI-INPUT-IMPLEMENT-02","source_commit":commit,"classification":"DEV_FIXTURE_REVIEW_NOT_ACCEPTANCE",
+metadata={"task":"VF-MVP1-MULTI-INPUT-INTEGRATION-03" if args.integration03 else "VF-MVP1-MULTI-INPUT-IMPLEMENT-02","source_commit":commit,"classification":"DEV_FIXTURE_REVIEW_NOT_ACCEPTANCE",
     "cases":cases,"media":media,"external_ai_provider_calls_task":0,"provider_credential_reads_task":0,
     "provider_spend_vnd_task":0,"host_lifetime_counters":"NOT_VERIFIED",
     "generation_provider":"offline fixture, not creative AI",

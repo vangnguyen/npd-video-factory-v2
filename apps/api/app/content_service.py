@@ -25,7 +25,7 @@ def canonical_bytes(value) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
 
 
-def script_scenes(text: str) -> list[StoryboardScene]:
+def script_scenes(text: str, protected_terms: list[str] | None = None) -> list[StoryboardScene]:
     """Lossless non-whitespace coverage with exact source offsets; durations are estimates."""
     scenes = []
     cursor = 0
@@ -36,6 +36,13 @@ def script_scenes(text: str) -> list[StoryboardScene]:
     capacity = subtitle_character_capacity(style)
     wrapping_reserve = capacity // style.max_lines if style.max_lines > 1 else 0
     character_limit = min(180, capacity - wrapping_reserve)
+    # Input-supplied terms plus capitalized multi-word names. These are boundary
+    # constraints, not factual verification or additions to the narration.
+    terms = set(protected_terms or [])
+    terms.update(m.group() for m in re.finditer(r"\b[A-ZĐ][^\W\d_]+(?:[ \t]+[A-ZĐ][^\W\d_]+)+", text))
+    spans = [(m.start(), m.end()) for term in terms for m in re.finditer(re.escape(term), text)]
+    if any(end-start > character_limit for start, end in spans):
+        raise ValueError("PROTECTED_PHRASE_STYLE_ADJUSTMENT_REQUIRED: phrase exceeds caption capacity; nothing truncated")
     while cursor < len(text):
         while cursor < len(text) and text[cursor].isspace():
             cursor += 1
@@ -52,7 +59,12 @@ def script_scenes(text: str) -> list[StoryboardScene]:
             breaks = [m.start() for m in re.finditer(r"\s+", text[cursor:limit+1])]
             if not breaks:
                 raise ValueError(f"NARRATION_WORD_TOO_LONG: a token exceeds subtitle capacity {character_limit} (scene maximum 180); edit explicitly")
-            end = cursor + breaks[-1]
+            choices = [cursor+b for b in breaks if not any(a < cursor+b < z for a,z in spans)]
+            if not choices:
+                raise ValueError("PROTECTED_PHRASE_STYLE_ADJUSTMENT_REQUIRED")
+            end = choices[-1]
+        if any(a < end < z for a,z in spans):
+            end = min(a for a,z in spans if a < end < z)
         while end > cursor and text[end-1].isspace():
             end -= 1
         narration = text[cursor:end]
@@ -83,7 +95,7 @@ def prepare_document(document: ContentDocument) -> ContentDocument:
     if document.scenes:
         return ContentDocument.model_validate(payload)
     text = payload["script"]
-    payload["scenes"] = [scene.model_dump() for scene in script_scenes(text)]
+    payload["scenes"] = [scene.model_dump() for scene in script_scenes(text, document.protected_terms)]
     if document.input_kind != "script":
         payload["facts_needing_source"] = ["User idea/prompt is not factual evidence; review narration and supply sources."]
     return ContentDocument.model_validate(payload)
@@ -137,6 +149,12 @@ class ContentService:
                         "supplied_facts_verified": False})
                 session.add(row)
                 await session.flush()
+                if source_job_id:
+                    # Linearize apply against cancellation under the same job
+                    # lock. A later cancel cannot relabel an already applied job.
+                    job.status = "succeeded"
+                    job.completed_at = utc_now()
+                    job.updated_at = utc_now()
                 project.current_version_id = row.project_version_id
                 project.version += 1
                 project.updated_at = utc_now()

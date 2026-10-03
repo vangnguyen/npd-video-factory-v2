@@ -11,12 +11,14 @@ class StoryboardScene(StrictModel):
     narration: str = Field(default="", max_length=180)
     visual_brief: str = Field(default="", max_length=500)
     duration_seconds: float = Field(default=4, ge=0.5, le=30)
+    duration_mode: Literal["auto", "locked"] = "auto"
+    pause_after_seconds: float = Field(default=0.18, ge=0, le=5)
     media_strategy: Literal["user_asset", "motion_graphic", "ai_image", "ai_video"] = "motion_graphic"
     asset_id: str | None = Field(default=None, pattern=r"^ast_[A-Za-z0-9_-]{4,60}$")
     analysis_id: str | None = Field(default=None, pattern=r"^ana_[A-Za-z0-9_-]{4,60}$")
     source_start: float = Field(default=0, ge=0)
     fit: Literal["cover", "contain"] = "contain"
-    transition: Literal["cut", "fade"] = "cut"
+    transition: Literal["cut", "fade", "crossfade"] = "cut"
     architectural_render: bool = False
     official_render: bool = False
     original_audio: Literal["keep", "mute"] = "mute"
@@ -49,11 +51,14 @@ class ContentDocument(StrictModel):
     approved: bool = False
     generator: Literal["deterministic-user-draft", "fixture-storyboard-v1"] = "deterministic-user-draft"
     supplied_facts: list[Annotated[str, Field(min_length=1, max_length=500)]] = Field(default_factory=list, max_length=40)
+    protected_terms: list[Annotated[str, Field(min_length=1, max_length=100)]] = Field(default_factory=list, max_length=40)
 
     @model_validator(mode="after")
     def bounds(self):
         if not self.original_text.strip():
             raise ValueError("input text must not be blank")
+        if any(term not in (self.script or self.original_text) for term in self.protected_terms):
+            raise ValueError("protected terms must occur exactly in the supplied script/input")
         ids = [s.scene_id for s in self.scenes]
         if len(set(ids)) != len(ids):
             raise ValueError("scene identities must be unique")

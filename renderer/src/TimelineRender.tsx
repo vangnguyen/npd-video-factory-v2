@@ -11,6 +11,7 @@ import {
   delayRender,
   continueRender,
   cancelRender,
+  Freeze,
 } from "remotion";
 
 import type {TimelineRenderManifest, TimelineRendererInputProps} from "./types";
@@ -46,8 +47,8 @@ const VisualLayer: React.FC<{
 }> = ({clip}) => {
   const {fps} = useVideoConfig();
   const frame = useCurrentFrame();
-  const fade = clip.transition_in?.kind === "fade" && clip.transition_in.duration_seconds > 0
-    ? interpolate(frame, [0, Math.max(1, Math.round(fps*clip.transition_in.duration_seconds))], [0,1], {extrapolateLeft:"clamp",extrapolateRight:"clamp"}) : 1;
+  const fade = ["fade","crossfade"].includes(clip.transition_in?.kind ?? "") && (clip.transition_in?.duration_seconds ?? 0) > 0
+    ? interpolate(frame, [0, Math.max(1, Math.round(fps*(clip.transition_in?.duration_seconds ?? 0)))], [0,1], {extrapolateLeft:"clamp",extrapolateRight:"clamp"}) : 1;
   const playbackRate = clip.type === "video" && clip.source_end !== null
     ? Math.max(0.05, (clip.source_end - clip.source_start) / clip.duration) : 1;
   const mediaStyle: React.CSSProperties = {
@@ -177,13 +178,13 @@ export const TimelineRender: React.FC<TimelineRendererInputProps> = ({manifest})
     <AbsoluteFill style={{backgroundColor: "#05080d"}}>
       {[...manifest.visual_clips]
         .sort((left, right) => left.track_order - right.track_order)
-        .map((clip) => (
+        .map((clip, index, clips) => (
           <Sequence
             key={clip.clip_id}
             from={Math.round(clip.timeline_start * fps)}
-            durationInFrames={Math.max(1, Math.round(clip.duration * fps))}
+            durationInFrames={Math.max(1, Math.round((clip.duration + crossfadeTail(clip, clips[index+1])) * fps))}
           >
-            <VisualLayer clip={clip} />
+            <HeldVisual clip={clip} hold={crossfadeTail(clip, clips[index+1]) > 0} />
           </Sequence>
         ))}
 
@@ -211,4 +212,19 @@ export const TimelineRender: React.FC<TimelineRendererInputProps> = ({manifest})
       />
     </AbsoluteFill>
   );
+};
+
+const HeldVisual: React.FC<{clip: TimelineRenderManifest["visual_clips"][number]; hold:boolean}> = ({clip,hold}) => {
+  const frame=useCurrentFrame(); const {fps}=useVideoConfig();
+  const end=Math.max(1,Math.round(clip.duration*fps));
+  // Do not read extra source-video frames beyond the validated source window.
+  return hold && frame>=end ? <Freeze frame={end-1}><VisualLayer clip={clip}/></Freeze> : <VisualLayer clip={clip}/>;
+};
+
+export const crossfadeTail = (clip: TimelineRenderManifest["visual_clips"][number], next?: TimelineRenderManifest["visual_clips"][number]): number => {
+  // Keep only contiguous same-track predecessor visible under the incoming
+  // crossfade. Explicit historical fade still means fade-through-background.
+  if (!next || next.track_order !== clip.track_order || next.transition_in?.kind !== "crossfade"
+      || Math.abs(next.timeline_start-clip.timeline_start-clip.duration)>0.001) return 0;
+  return Math.min(next.duration, next.transition_in.duration_seconds);
 };

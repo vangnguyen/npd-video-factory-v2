@@ -21,7 +21,14 @@ parser.add_argument("--tools", type=Path, required=True)
 parser.add_argument("--port", type=int, default=8017)
 parser.add_argument("--renderer-port", type=int, default=3017)
 parser.add_argument("--resume", action="store_true", help="reload this harness's persisted dev DB without resetting it")
+parser.add_argument("--database-url", default="", help="task-owned loopback PostgreSQL, never runtime custody DB")
 args = parser.parse_args()
+if args.database_url:
+    from urllib.parse import urlparse
+    db = urlparse(args.database_url.replace("postgresql+asyncpg", "postgresql"))
+    if (db.hostname != "127.0.0.1" or db.port in {5432,55432} or db.username != "mvp1_dev"
+        or db.password or not db.path.startswith("/mvp1_dev")):
+        parser.error("only isolated synthetic mvp1_dev loopback database supported")
 root, tools = args.root.resolve(), args.tools.resolve()
 marker = root / ".isolated-mvp1-dev"
 if root.exists() and (not args.resume or not marker.is_file() or marker.read_text().strip() != "ZERO_EXTERNAL_PROVIDER_DEV_ONLY"):
@@ -101,7 +108,7 @@ class LocalQueue:
 
 @asynccontextmanager
 async def lifespan(_app):
-    engine = create_engine(f"sqlite+aiosqlite:///{root / 'dev.db'}")
+    engine = create_engine(args.database_url or f"sqlite+aiosqlite:///{root / 'dev.db'}")
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
     factory = create_session_factory(engine)

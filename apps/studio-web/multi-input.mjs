@@ -34,6 +34,8 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
         script_end: old.narration === row.querySelector("[data-field=narration]").value ? old.script_end ?? null : null,
         visual_brief: row.querySelector("[data-field=visual]").value,
         duration_seconds: Number(row.querySelector("[data-field=duration]").value),
+        duration_mode: row.querySelector("[data-field=duration-mode]").value,
+        pause_after_seconds: Number(row.querySelector("[data-field=pause]").value),
         fit: row.querySelector("[data-field=fit]").value,
         transition: row.querySelector("[data-field=transition]").value,
         architectural_render: row.querySelector("[data-field=render]").checked,
@@ -55,8 +57,10 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
           ${getState().assets.filter(a => a.content_type.startsWith("image/") || a.content_type.startsWith("video/")).map(a => `<option value="${escape(a.asset_id)}">${escape(a.filename)}</option>`).join("")}
         </select></label>
         <label>Hiển thị (giây)<input data-field="duration" type="number" min="0.5" max="30" step="0.1" value="${scene.duration_seconds}"></label>
+        <label>Nhịp cảnh<select data-field="duration-mode"><option value="auto">Auto — reflow sau đo audio</option><option value="locked">Khóa thời lượng — có thể có khoảng nghỉ dài</option></select></label>
+        <label>Nghỉ sau cảnh (giây)<input data-field="pause" type="number" min="0" max="5" step="0.01" value="${scene.pause_after_seconds ?? 0.18}"></label>
         <label>Khung hình<select data-field="fit"><option value="contain">Giữ toàn ảnh</option><option value="cover">Lấp khung/crop</option></select></label>
-        <label>Chuyển cảnh<select data-field="transition"><option value="cut">Cut</option><option value="fade">Fade</option></select></label>
+        <label>Chuyển cảnh<select data-field="transition"><option value="cut">Cut</option><option value="crossfade">Crossfade liên tục</option><option value="fade">Fade qua nền tối (có chủ đích)</option></select></label>
         <label><input data-field="render" type="checkbox" ${scene.architectural_render ? "checked" : ""}> Phối cảnh/kiến trúc (không tự xác nhận chính thức)</label>
         <label>Âm thanh video<select data-field="audio"><option value="mute">Tắt</option><option value="keep">Giữ âm thanh gốc</option></select></label>
         <button type="button" data-up="${index}">↑</button><button type="button" data-down="${index}">↓</button><button type="button" data-remove="${index}">Xóa cảnh</button>
@@ -67,6 +71,7 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
       row.querySelector("[data-field=fit]").value = scene.fit;
       row.querySelector("[data-field=transition]").value = scene.transition;
       row.querySelector("[data-field=audio]").value = scene.original_audio;
+      row.querySelector("[data-field=duration-mode]").value = scene.duration_mode ?? "auto";
     });
     syncControls();
   }
@@ -78,6 +83,7 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     $("mvp-original").value = doc?.original_text ?? "";
     $("mvp-script").value = doc?.script ?? "";
     $("mvp-facts").value = (doc?.supplied_facts ?? []).join("\n");
+    $("mvp-protected").value = (doc?.protected_terms ?? []).join("\n");
     scenes = structuredClone(doc?.scenes ?? []);
     renderScenes();
     $("mvp-video-analysis").innerHTML = state.assets.filter(a => a.content_type.startsWith("video/")).map(a => `<option value="${escape(a.asset_id)}">${escape(a.filename)}</option>`).join("");
@@ -99,6 +105,7 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     const document = {input_kind:kind, original_text:original, script:$("mvp-script").value,
       creative_instructions:kind === "prompt" ? original : "", scenes,
       supplied_facts:$("mvp-facts").value.split("\n").filter(line=>line.trim()),
+      protected_terms:$("mvp-protected").value.split("\n").filter(line=>line.trim()),
       approved, facts_needing_source:version?.snapshot.content.facts_needing_source ?? (kind === "script" ? [] : ["Cần nguồn cho dữ kiện trong idea/prompt."]), generator:version?.snapshot.content.generator ?? "deterministic-user-draft"};
     version = await api(`/api/v1/projects/${state.projectId}/content`, {method:"PUT",body:JSON.stringify({expected_content_version_id:version?.project_version_id ?? null, document})});
     await refresh();
@@ -207,6 +214,15 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     const state=getState();
     await api(`/api/v1/projects/${state.projectId}/timeline`,{method:"POST",body:JSON.stringify({source_kind:sceneSourceKind(version.snapshot.content.scenes,state.assets),content_version_id:version.project_version_id,expected_timeline_version:state.timeline?.current_version ?? null})});
     await refresh();toast("Timeline đã lưu. Tạo A/V review ở Production Workbench.");
+  }));
+  $("mvp-reflow").addEventListener("click",guarded(async () => {
+    const state = getState();
+    const packageData = await api(`/api/v1/projects/${state.projectId}/production-package`);
+    const review = packageData.latest_review_render;
+    if (!review || review.status !== "awaiting_review") throw new Error("Cần A/V review đã hoàn tất để đo PCM. Không lấy thời lượng ước tính làm đo thực.");
+    await api(`/api/v1/projects/${state.projectId}/narration-reflow`, {method:"POST", body:JSON.stringify({
+      expected_timeline_version:state.timeline.current_version, review_render_id:review.render_id})});
+    await refresh(); toast("Draft nhịp cảnh mới từ PCM; cảnh khóa giữ nguyên. Tạo package/review và duyệt lại. Caption chưa có word alignment.");
   }));
   return {reload,setBusy};
 }

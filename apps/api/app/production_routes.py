@@ -21,12 +21,27 @@ from .production_models import (
     RenderCreateRequest,
     RenderJobRead,
     SubtitleReplaceRequest,
+    NarrationReflowRequest,
 )
 from .production_repository import ApprovalBoundaryError, ProductionConflictError
 from .production_service import ProductionPackageService
 
 
 router = APIRouter(prefix="/api/v1", tags=["audio-subtitle-render-qc"])
+
+
+@router.post("/projects/{project_id}/narration-reflow")
+async def reflow_narration(project_id: str, payload: NarrationReflowRequest, request: Request):
+    from .human_auth import authorize_project
+    principal = await authorize_project(request, project_id, "editor")
+    try:
+        return await service(request).reflow_narration(project_id, payload, actor_ref=principal.subject)
+    except KeyError as exc:
+        raise missing(str(exc.args[0])) from exc
+    except ProductionConflictError as exc:
+        raise conflict(exc) from exc
+    except ProductionContractError as exc:
+        raise invalid(exc) from exc
 
 
 def service(request: Request) -> ProductionPackageService:

@@ -70,6 +70,7 @@ class JobStatus(StrEnum):
     QUEUED = "queued"
     RUNNING = "running"
     AWAITING_REVIEW = "awaiting_review"
+    SUCCEEDED = "succeeded"  # explicit content proposal applied; not human/video acceptance
     FAILED = "failed"
     CANCELLED = "cancelled"
 

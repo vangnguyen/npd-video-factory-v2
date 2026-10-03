@@ -173,7 +173,7 @@ export const timelineRenderManifestSchema = strictObject({
     source_start: z.number().nonnegative(),
     source_end: z.number().positive().nullable(),
     fit: z.enum(["cover", "contain"]),
-    transition_in: strictObject({kind:z.enum(["cut", "fade", "dissolve"]), duration_seconds:z.number().nonnegative().max(3)}).optional(),
+    transition_in: strictObject({kind:z.enum(["cut", "fade", "dissolve", "crossfade"]), duration_seconds:z.number().nonnegative().max(3)}).optional(),
     crop: timelineCropSchema,
     transform: timelineTransformSchema,
     opacity: z.number().min(0).max(1),

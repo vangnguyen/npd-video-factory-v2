@@ -444,6 +444,9 @@ function renderProduction() {
   `).join("");
   $("#subtitle-position").value = packageState.subtitle.style.position;
   $("#subtitle-animation").value = packageState.subtitle.style.animation;
+  const wordOption = $("#subtitle-animation").querySelector('option[value="word_highlight"]');
+  wordOption.disabled = packageState.subtitle.cues.some(cue => !cue.words.length);
+  wordOption.textContent = wordOption.disabled ? "Highlight từ — chưa có measured alignment" : "Highlight từng từ";
   $("#subtitle-font-size").value = packageState.subtitle.style.font_size;
   $("#subtitle-safe-margin").value = packageState.subtitle.style.safe_margin_percent;
 

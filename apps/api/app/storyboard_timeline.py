@@ -95,7 +95,7 @@ async def build_storyboard(service, project, payload):
             source_start=scene.source_start if is_video else 0,
             source_end=scene.source_start+scene.duration_seconds if is_video else None,
             timeline_start=cursor, duration=scene.duration_seconds,
-            transition_in=TransitionSpec(kind=scene.transition, duration_seconds=0.25 if scene.transition=="fade" else 0),
+            transition_in=TransitionSpec(kind=scene.transition, duration_seconds=0.25 if scene.transition in {"fade","crossfade"} else 0),
             metadata=metadata)
         visuals.append(clip)
         if is_video and scene.original_audio == "keep" and source.audio_codec:
@@ -103,7 +103,7 @@ async def build_storyboard(service, project, payload):
         if scene.narration.strip():
             subtitles.append(TimelineClip(clip_id=f"clip_text_{index:04d}", kind="subtitle", label=scene.narration,
                 source_start=0, source_end=scene.duration_seconds, timeline_start=cursor, duration=scene.duration_seconds,
-                metadata={"timing_source": "user_scene_cue", "measured_word_timestamps": False}))
+                metadata={"timing_source": "user_scene_cue", "scene_index": index, "measured_word_timestamps": False}))
         plan.append({"scene_id": scene.scene_id, "strategy": scene.media_strategy, "asset_id": asset.asset_id,
                      "asset_sha256": asset.checksum_sha256, "duration_seconds": scene.duration_seconds,
                      "status": "resolved", "ai_video": False, "rights_status": asset.provenance.get("rights_status")})
@@ -111,6 +111,7 @@ async def build_storyboard(service, project, payload):
     actual_kind = "mixed" if video_count else "storyboard_media"
     if payload.source_kind != actual_kind:
         raise TimelineEditError("TIMELINE_SOURCE_KIND_MISMATCH")
+    from .narration_pacing import narration_plan
     return TimelineSnapshot(schema_version="1.1", duration_seconds=cursor, tracks=[
         TimelineTrack(track_id="trk_storyboard", type="video", kind="source", label="Storyboard", order=0, clips=visuals),
         TimelineTrack(track_id="trk_storytext", type="text", kind="subtitles", label="Narration cues (scene timing)", order=1, clips=subtitles),
@@ -118,4 +119,5 @@ async def build_storyboard(service, project, payload):
         metadata={"source_kind": actual_kind, "content_version_id": version.project_version_id,
             "content_sha256": version.provenance["content_sha256"], "media_plan": plan,
             "media_plan_sha256": hashlib.sha256(canonical_bytes(plan)).hexdigest(),
+            "narration_plan": narration_plan(document),
             "narration_timing": "scene_cue_schedule_not_measured_word_alignment", "ai_generated": False})
