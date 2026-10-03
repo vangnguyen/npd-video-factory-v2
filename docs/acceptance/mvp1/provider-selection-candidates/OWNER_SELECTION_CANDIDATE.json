@@ -1,0 +1,54 @@
+{
+  "schema": "mvp1-provider-selection-candidate-v1",
+  "status": "DRAFT_NOT_APPROVED_NOT_EXECUTION_AUTHORITY",
+  "content": {
+    "provider": "openai-storyboard-content",
+    "api": "Responses",
+    "candidate_model": "gpt-6-luna",
+    "reasoning_effort": "none",
+    "profile_version": 2,
+    "full_profile_sha256": null,
+    "full_profile_status": "OWNER_TOKEN_RATES_AND_BUDGET_REQUIRED_BEFORE_FINAL_PROFILE",
+    "selection_final": false,
+    "facts_verified": false
+  },
+  "tts": {
+    "provider": "openai-tts",
+    "api": "Realtime WebSocket",
+    "candidate_model": "gpt-realtime-2.1-mini",
+    "voice_candidates": ["marin", "cedar"],
+    "candidate_profile_sha256": {
+      "marin": "d0cff28b3439ed8a872834b96c2fa951643427c595c8aee8a4ee1c7b572e1747",
+      "cedar": "34458a0b7b5e4fab7dbb8ff64fba6c5f98f759157b9b4d7fba460502574df7e2"
+    },
+    "candidate_profile_defaults": {
+      "version": 2,
+      "locale": "vi-VN",
+      "audio_format": "audio/pcm",
+      "sample_rate": 24000,
+      "channels": 1,
+      "sample_width_bytes": 2,
+      "style_instructions": "",
+      "alignment_capability": "none",
+      "max_output_tokens": 4096,
+      "max_audio_seconds": 120,
+      "timeout_seconds": 90
+    },
+    "word_alignment": "WORD_ALIGNMENT_OPEN",
+    "selection_final": false,
+    "vietnamese_human_quality_accepted": false,
+    "live_admission": "BLOCKED_TOKEN_BUDGET_SCOPE_AND_PROTECTED_BACKEND_REQUIRED"
+  },
+  "asr": {
+    "status": "HOST_REMEDIATION_REQUIRED",
+    "package_status": "HOST_REMEDIATION_PACKAGE_READY_SOURCE_ONLY",
+    "installed": false,
+    "spent_context_reused": false
+  },
+  "separate_owner_decisions_required": [
+    "content_model_profile_bounded_inputs_budget",
+    "tts_model_voice_audition_inputs_token_budget",
+    "asr_host_remediation_and_zero_call_credential_load_validation"
+  ],
+  "external_execution_authorized": false
+}

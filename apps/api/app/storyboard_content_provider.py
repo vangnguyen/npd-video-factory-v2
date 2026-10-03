@@ -13,7 +13,7 @@ from decimal import Decimal
 from typing import Annotated, Callable, Literal
 
 import httpx
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from .content_models import ContentDocument, ContentGenerationResult
 from .content_service import canonical_bytes, script_scenes
@@ -36,20 +36,65 @@ def http_failure(status: int) -> ProviderEnablementError:
 
 class ContentProviderProfile(StrictModel):
     model_config = {"frozen": True}
-    version: Literal[1] = 1
+    version: Literal[1, 2] = 1
     provider_key: Literal["openai-storyboard-content"] = CONTENT_REAL_KEY
     model: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{1,159}$")
     credential_alias: Literal["secret://openai/video-factory-content-generation"] = "secret://openai/video-factory-content-generation"
     language: Literal["vi"] = "vi"
+    reasoning_effort: Literal["none", "low", "medium", "high", "xhigh", "max"] | None = None
     max_output_tokens: int = Field(default=4096, ge=256, le=16000)
     timeout_seconds: float = Field(default=90, gt=0, le=90)
     input_vnd_per_million_tokens: Decimal = Field(gt=0, allow_inf_nan=False)
     output_vnd_per_million_tokens: Decimal = Field(gt=0, allow_inf_nan=False)
     estimated_cost_vnd: Decimal = Field(gt=0, allow_inf_nan=False)
 
+    @model_validator(mode="after")
+    def reasoning_contract(self):
+        if (self.version == 2) != (self.reasoning_effort is not None):
+            raise ValueError("reasoning configuration requires profile version 2")
+        if self.model == "gpt-6-luna" and self.reasoning_effort is None:
+            raise ValueError("gpt-6-luna requires an explicit reasoning effort")
+        return self
+
     @property
     def sha256(self):
-        return hashlib.sha256(canonical_bytes(self.model_dump(mode="json"))).hexdigest()
+        data = self.model_dump(mode="json")
+        if self.version == 1:
+            data.pop("reasoning_effort")  # Preserve the historical v1 profile representation.
+        return hashlib.sha256(canonical_bytes(data)).hexdigest()
+
+
+def single_structured_output_text(output):
+    """Reasoning is metadata, never the draft. Tools/refusals/ambiguity are denied."""
+    if not isinstance(output, list) or not output:
+        raise ValueError("missing output")
+    messages = []
+    for item in output:
+        if not isinstance(item, dict):
+            raise ValueError("invalid output item")
+        if item.get("type") == "reasoning":
+            if (set(item) - {"type", "id", "summary", "status", "encrypted_content"}
+                    or not isinstance(item.get("id"), str) or not item["id"]
+                    or item.get("status", "completed") != "completed"
+                    or not isinstance(item.get("summary"), list)):
+                raise ValueError("invalid reasoning metadata")
+            for summary in item["summary"]:
+                if (not isinstance(summary, dict) or set(summary) != {"type", "text"}
+                        or summary["type"] != "summary_text" or not isinstance(summary["text"], str)):
+                    raise ValueError("invalid reasoning summary")
+        elif item.get("type") == "message":
+            if item.get("role", "assistant") != "assistant" or item.get("status", "completed") != "completed":
+                raise ValueError("incomplete/non-assistant message")
+            messages.append(item)
+        else:
+            raise ValueError("unrequested tool/non-message output")
+    if len(messages) != 1:
+        raise ValueError("missing/ambiguous message")
+    content = messages[0].get("content")
+    if (not isinstance(content, list) or len(content) != 1 or not isinstance(content[0], dict)
+            or content[0].get("type") != "output_text" or not isinstance(content[0].get("text"), str)):
+        raise ValueError("refusal/missing/ambiguous output")
+    return content[0]["text"]
 
 
 class ContentGenerationEnvelope(StrictModel):
@@ -184,6 +229,8 @@ class ResponsesStoryboardContentProvider:
                 "facts_status": "USER_SUPPLIED_NOT_INDEPENDENTLY_VERIFIED"}).decode("utf-8"),
             "text": {"format": {"type": "json_schema", "name": "mvp1_storyboard_draft",
                 "strict": True, "schema": structured_draft_schema()}}}
+        if self.profile.reasoning_effort is not None:
+            payload["reasoning"] = {"effort": self.profile.reasoning_effort}
         # UTF-8 byte count is a conservative input-token planning upper bound.
         # It is not measured usage. Refuse before resolving any credential.
         planned = (Decimal(len(canonical_bytes(payload))) * self.profile.input_vnd_per_million_tokens
@@ -231,13 +278,7 @@ class ResponsesStoryboardContentProvider:
                 raise ValueError("invalid usage")
             if usage["output_tokens"] > self.profile.max_output_tokens:
                 raise ValueError("output exceeded configured ceiling")
-            if not raw["output"] or any(msg.get("type") != "message" for msg in raw["output"]):
-                raise ValueError("unrequested tool/non-message output")
-            outputs = [item for msg in raw["output"] if msg.get("type") == "message"
-                for item in msg["content"]]
-            if any(item.get("type") != "output_text" for item in outputs) or len(outputs) != 1:
-                raise ValueError("refusal/missing/ambiguous output")
-            draft = _GeneratedDraft.model_validate_json(outputs[0]["text"])
+            draft = _GeneratedDraft.model_validate_json(single_structured_output_text(raw["output"]))
             if any(term not in draft.script for term in document.protected_terms):
                 raise ValueError("protected names omitted")
             scenes = script_scenes(draft.script, document.protected_terms)
@@ -264,6 +305,8 @@ def create_storyboard_content_provider(settings, *, controller=None, credential_
         return BlockedStoryboardProvider("MVP1_LANE_ADMISSION_BLOCKED")
     try:
         profile = ContentProviderProfile(model=settings.content_generation_model,
+            version=2 if settings.content_generation_reasoning_effort is not None else 1,
+            reasoning_effort=settings.content_generation_reasoning_effort,
             credential_alias=settings.content_generation_credential_alias,
             input_vnd_per_million_tokens=settings.content_generation_input_vnd_per_million_tokens,
             output_vnd_per_million_tokens=settings.content_generation_output_vnd_per_million_tokens,

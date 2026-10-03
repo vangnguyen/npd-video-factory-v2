@@ -1,5 +1,6 @@
 from decimal import Decimal
 from pathlib import Path
+from typing import Literal
 from urllib.parse import urlparse
 
 from pydantic import Field, field_validator, model_validator
@@ -23,6 +24,7 @@ class Settings(BaseSettings):
     app_env: str = "development"
     content_generation_provider: str = "contract"
     content_generation_model: str = ""
+    content_generation_reasoning_effort: Literal["none", "low", "medium", "high", "xhigh", "max"] | None = None
     content_generation_credential_alias: str = "secret://openai/video-factory-content-generation"
     content_external_execution_enabled: bool = False
     content_generation_input_vnd_per_million_tokens: Decimal = Decimal("0")
@@ -723,6 +725,8 @@ class Settings(BaseSettings):
                     if capability == "content_generation":
                         from .storyboard_content_provider import ContentProviderProfile
                         configured_profile = ContentProviderProfile(model=self.content_generation_model,
+                            version=2 if self.content_generation_reasoning_effort is not None else 1,
+                            reasoning_effort=self.content_generation_reasoning_effort,
                             credential_alias=self.content_generation_credential_alias,
                             input_vnd_per_million_tokens=self.content_generation_input_vnd_per_million_tokens,
                             output_vnd_per_million_tokens=self.content_generation_output_vnd_per_million_tokens,

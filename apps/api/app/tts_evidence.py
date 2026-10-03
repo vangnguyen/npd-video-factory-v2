@@ -5,7 +5,7 @@ import hashlib
 import re
 import unicodedata
 from decimal import Decimal
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import Field, model_validator
 from .content_service import canonical_bytes
@@ -22,6 +22,30 @@ class ProductionTTSProfile(StrictModel):
     speed: float = Field(default=1, ge=0.25, le=4, allow_inf_nan=False)
     style_instructions: str = Field(default="", max_length=500)
     alignment_capability: Literal["none", "provider_word", "forced_alignment"] = "none"
+
+    @property
+    def sha256(self):
+        return hashlib.sha256(canonical_bytes(self.model_dump(mode="json"))).hexdigest()
+
+
+class RealtimeTTSProfile(StrictModel):
+    """Unapproved migration profile; no audio/speech rates or voice selection inherited."""
+    model_config = {"frozen": True}
+    version: Literal[2] = 2
+    provider_key: Literal["openai-tts"] = "openai-tts"
+    api: Literal["realtime"] = "realtime"
+    model: Literal["gpt-realtime-2.1-mini"] = "gpt-realtime-2.1-mini"
+    voice_id: Literal["marin", "cedar"]
+    locale: Literal["vi-VN"] = "vi-VN"
+    audio_format: Literal["audio/pcm"] = "audio/pcm"
+    sample_rate: Literal[24000] = 24000
+    channels: Literal[1] = 1
+    sample_width_bytes: Literal[2] = 2
+    style_instructions: str = Field(default="", max_length=500)
+    alignment_capability: Literal["none"] = "none"
+    max_output_tokens: int = Field(default=4096, ge=256, le=4096)
+    max_audio_seconds: int = Field(default=120, ge=1, le=120)
+    timeout_seconds: int = Field(default=90, ge=1, le=90)
 
     @property
     def sha256(self):
@@ -76,8 +100,8 @@ class SpeechTimingEvidence(StrictModel):
 
 
 class TTSArtifactEvidence(StrictModel):
-    version: Literal[1] = 1
-    profile: ProductionTTSProfile
+    version: Literal[1, 2] = 1
+    profile: Annotated[ProductionTTSProfile | RealtimeTTSProfile, Field(discriminator="version")]
     profile_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     text_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     audio_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
@@ -93,6 +117,8 @@ class TTSArtifactEvidence(StrictModel):
     human_quality_accepted: Literal[False] = False
     @model_validator(mode="after")
     def identities(self):
+        if self.version != self.profile.version:
+            raise ValueError("TTS evidence/profile version mismatch")
         if self.profile_sha256 != self.profile.sha256:
             raise ValueError("TTS profile digest mismatch")
         if self.timing.duration_seconds != self.decoded_duration_seconds:
