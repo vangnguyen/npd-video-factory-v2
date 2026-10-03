@@ -48,7 +48,7 @@ from app.auto_edit_repository import AutoEditRepository
 from app.auto_edit_providers import FFprobeMediaProbe, FFmpegMediaSignalProvider, ContractOnlyTranscriptionProvider, ProviderNotConfigured
 from app.auto_edit_service import AutoEditAnalysisService, UploadService
 from app.content_service import ContentService
-from app.content_generation import ContentGenerationService, content_provider_definition
+from app.content_generation import ContentGenerationService, content_provider_definition, CONTENT_QUEUE
 from app.repositories import PostgresJobStore
 from app.object_storage import LocalObjectStorageProvider
 from app.media_security import DeterministicMediaMalwareScanner
@@ -78,12 +78,13 @@ class NoProviderBoundary:
 
 class LocalQueue:
     """Test queue replaces Redis transport ONLY. Production repository/worker unchanged."""
-    def __init__(self):
+    def __init__(self, key=PRODUCTION_RENDER_QUEUE_KEY):
         self.queue = asyncio.Queue()
         self.pending = set()
         self.processor = None
+        self.key = key
     async def rpush(self, key, value):
-        if key != PRODUCTION_RENDER_QUEUE_KEY:
+        if key != self.key:
             raise RuntimeError("unsupported job in isolated harness")
         if value not in self.pending:
             self.pending.add(value)
@@ -124,7 +125,7 @@ async def lifespan(_app):
         provider_global_kill_switch_engaged=True)
     timelines, production, media = TimelineRepository(factory), ProductionRepository(factory), MediaIntelligenceRepository(factory)
     queue = LocalQueue()
-    generation_queue = LocalQueue()
+    generation_queue = LocalQueue(CONTENT_QUEUE)
     app.state.platform_repository = platform
     app.state.auto_edit_repository = assets
     app.state.object_storage = storage
