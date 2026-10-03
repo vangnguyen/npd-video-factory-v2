@@ -18,6 +18,8 @@ import socket
 import sys
 import threading
 import wave
+from fastapi import FastAPI, Request
+from fastapi.responses import Response
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "apps/api"))
@@ -57,8 +59,6 @@ def run(args):
     from vieneu._v3_turbo_engine.onnx_runtime_lite import OnnxV3LiteEngine
     from vieneu_utils.phonemize_text import normalize_to_chunks_v3_with_gaps, phonemize_text_with_emotions
     from vieneu_utils.core_utils import join_audio_chunks, gaps_to_silence
-    from fastapi import FastAPI, Request
-    from fastapi.responses import Response
     import uvicorn
     expected_versions = {"vieneu": "3.8.3", "onnxruntime": "1.30.0", "numpy": "2.5.3", "sea-g2p": "0.9.1"}
     if any(importlib.metadata.version(k) != v for k, v in expected_versions.items()):
@@ -100,6 +100,17 @@ def run(args):
         raise ValueError("VIENEU_CACHE_CUSTODY_INVALID")
     args.cache.mkdir(parents=True, mode=0o700, exist_ok=True)
     service_sha = sha(Path(__file__))
+    app = build_app(engine, presets, args.cache, service_sha, expected_versions)
+    print("PINNED_PRESET_LOCAL_SERVICE_LISTENING 127.0.0.1:18083", flush=True)
+    uvicorn.run(app, host="127.0.0.1", port=18083, access_log=False)
+
+
+def build_app(engine, presets, cache, service_sha, expected_versions):
+    """Register the actual route separately so transport validation is testable.
+
+    Request must be module-visible: FastAPI resolves postponed annotations in
+    module globals, not the enclosing startup function's local namespace.
+    """
     lock = threading.Lock()
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -123,7 +134,7 @@ def run(args):
         except Exception:
             return Response(status_code=422)  # no prompt/body/exception echo
         key = hashlib.sha256(canonical_bytes(body)).hexdigest()
-        audio_path, meta_path, intent = (args.cache / (key + ext) for ext in (".wav", ".json", ".intent"))
+        audio_path, meta_path, intent = (cache / (key + ext) for ext in (".wav", ".json", ".intent"))
         try:
             with lock:
                 if audio_path.is_symlink() or meta_path.is_symlink() or intent.is_symlink():
@@ -136,6 +147,9 @@ def run(args):
                     # An interrupted synthesis is not retried, even after restart.
                     with intent.open("xb") as dst:
                         dst.write(canonical_bytes({"request_sha256": key, "state": "LOCAL_SYNTHESIS_STARTED"}))
+                    import numpy as np
+                    from vieneu_utils.phonemize_text import normalize_to_chunks_v3_with_gaps, phonemize_text_with_emotions
+                    from vieneu_utils.core_utils import join_audio_chunks, gaps_to_silence
                     chunks, gaps = normalize_to_chunks_v3_with_gaps(text, max_chars=profile.parameters.max_chars)
                     if not chunks:
                         raise ValueError()
@@ -171,8 +185,7 @@ def run(args):
                     "x-vieneu-normalization-sha256": hashlib.sha256(canonical_bytes(record["normalization"])).hexdigest()})
         except Exception:
             return Response(status_code=503)
-    print("PINNED_PRESET_LOCAL_SERVICE_LISTENING 127.0.0.1:18083", flush=True)
-    uvicorn.run(app, host="127.0.0.1", port=18083, access_log=False)
+    return app
 
 
 if __name__ == "__main__":

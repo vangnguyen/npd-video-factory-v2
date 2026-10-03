@@ -131,6 +131,32 @@ def test_missing_or_changed_local_artifact_fail_closed(tmp_path):
         module["verify_files"](tmp_path,{"missing.onnx":"0"*64})
 
 
+async def test_actual_local_route_reads_body_not_query_and_replays_synthetic_cache(tmp_path):
+    """Transport regression only; synthetic cached WAV is not local audition evidence."""
+    import runpy
+    from app.content_service import canonical_bytes
+    server=Path(__file__).resolve().parents[3]/"scripts/vieneu-local-server.py"
+    module=runpy.run_path(str(server),run_name="transport_test_not_server_start")
+    class NeverInfer:
+        def infer(self, **_kwargs):raise AssertionError("no inference allowed in transport test")
+    body={"profile":profile().model_dump(mode="json"),"text":"Synthetic transport test.","scope":None,"format":"wav"}
+    key=hashlib.sha256(canonical_bytes(body)).hexdigest()
+    audio=wav()
+    (tmp_path/(key+".wav")).write_bytes(audio)
+    (tmp_path/(key+".json")).write_bytes(canonical_bytes({"audio_sha256":hashlib.sha256(audio).hexdigest(),
+        "normalization":{"fixture":True}}))
+    app=module["build_app"](NeverInfer(),{},tmp_path,"a"*64,{})
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url="http://local.invalid") as client:
+        invalid=await client.post("/v1/audio/speech",json={})
+        assert invalid.status_code==422 and invalid.content==b""  # no query/request/prompt echo
+        result=await client.post("/v1/audio/speech",json=body)
+        assert result.status_code==200 and result.content==audio
+        assert result.headers["x-vieneu-profile-sha256"]==profile().sha256
+        oversized=await client.post("/v1/audio/speech",content=b"x"*40001)
+        assert oversized.status_code==413
+    assert not list(tmp_path.glob("*.intent"))
+
+
 @pytest.mark.parametrize("late",[False,True])
 async def test_stale_and_late_completion_cannot_write_audio(tmp_path,late):
     checks=[];calls=[]
