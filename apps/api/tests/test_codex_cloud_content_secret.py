@@ -24,7 +24,11 @@ SPEC.loader.exec_module(candidate)
 
 
 @pytest.fixture
-def records():
+def records(monkeypatch):
+    monkeypatch.setenv("HTTPS_PROXY", "http://offline-proxy.invalid:8080")
+    monkeypatch.setenv("https_proxy", "http://offline-proxy.invalid:8080")
+    monkeypatch.setenv("NO_PROXY", "")
+    monkeypatch.setenv("no_proxy", "")
     return candidate.build_records("a" * 40)
 
 

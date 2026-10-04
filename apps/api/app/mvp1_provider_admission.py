@@ -220,6 +220,39 @@ class ProtectedResolverReference:
             "project_id": context.project_id, "job_id": context.job_id, "input_sha256": context.asset_hash,
             "profile_sha256": self.scope.profile_sha256, "max_resolutions": 1})
 
+    def resolve_for_auth_probe(self, approval):
+        from .codex_cloud_content_http import ContentAuthProbeApproval
+        from .codex_cloud_content_secret import CodexCloudContentSecretTransport
+        if type(approval) is not ContentAuthProbeApproval or type(self.transport) is not CodexCloudContentSecretTransport:
+            raise RuntimeError("CONTENT_AUTH_PROBE_OWNER_AUTHORITY_REQUIRED")
+        approval.validate_binding(self.scope, self.raw_file_sha256)
+        claim = "auth-probe:" + approval.owner_decision_id
+        if claim in self._claimed:
+            raise RuntimeError("MVP1_RESOLVER_HANDOFF_ALREADY_CLAIMED")
+        self._claimed.add(claim)
+        return self.transport.resolve_for_auth_probe({
+            "schema": "codex-cloud-content-auth-probe-binding-v1",
+            "approval": approval.model_dump(mode="json"),
+            "scope_sha256": digest(self.scope.model_dump(mode="json")),
+            "scope_raw_file_sha256": self.raw_file_sha256})
+
+    def diagnose_placeholder_identity(self, context):
+        """Metadata-only comparison; no credential leaves this method and no claim is consumed."""
+        from .codex_cloud_content_secret import CodexCloudContentSecretTransport, NETWORK_SECRET_VARIABLE
+        if type(self.transport) is not CodexCloudContentSecretTransport:
+            raise RuntimeError("CONTENT_CLOUD_PROTECTED_BACKEND_REQUIRED")
+        # Disabled/expired scope metadata can be checked without execution authority.
+        denial = self.scope.denial_for(context, self.scope.valid_from_utc, require_execution=False)
+        if denial:
+            raise RuntimeError("CONTENT_CLOUD_REFERENCE_REJECTED")
+        returned = self.transport({"schema": "mvp1-protected-resolver-reference-v1", "provider_key": self.scope.provider_key,
+            "credential_alias": self.scope.credential_alias, "scope_sha256": digest(self.scope.model_dump(mode="json")),
+            "scope_raw_file_sha256": self.raw_file_sha256, "operation_key": context.operation_key,
+            "workspace_id": self.scope.workspace_id, "project_id": self.scope.project_id,
+            "job_id": context.job_id, "input_sha256": context.asset_hash,
+            "profile_sha256": self.scope.profile_sha256, "max_resolutions": 1})
+        return returned == os.environ[NETWORK_SECRET_VARIABLE]  # Equality only; never encode/hash/log.
+
 
 def create_mvp1_lane_bindings(settings, *, capability, repository, resolver_transport=None):
     from .provider_safety import ProviderSafetyPolicy, ProviderBudgetPolicy, ProviderRetryPolicy

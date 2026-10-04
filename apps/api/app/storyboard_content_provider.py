@@ -259,21 +259,30 @@ class ResponsesStoryboardContentProvider:
         request_sha = hashlib.sha256(canonical_bytes(payload)).hexdigest()
         started = time.perf_counter()
         # Called ONLY within the verified durable execute() operation.
-        try:
-            from .mvp1_provider_admission import ProtectedResolverReference
-            key = (self.credential_resolver.resolve_for_context(context)
-                if isinstance(self.credential_resolver, ProtectedResolverReference) else self.credential_resolver(self.profile.credential_alias))
-        except Exception:
-            raise ProviderEnablementError("AUTH", "CONTENT_CREDENTIAL_UNAVAILABLE") from None
-        from .codex_cloud_content_secret import uses_codex_cloud_content_proxy
+        from .codex_cloud_content_secret import CodexCloudContentSecretTransport, uses_codex_cloud_content_proxy
+        from .codex_cloud_content_http import CodexCloudContentHTTPClient, ContentHTTPPathError
         cloud_proxy = uses_codex_cloud_content_proxy(self.credential_resolver)
-        if not isinstance(key, str) or not key or (not cloud_proxy and not key.strip()):
-            raise ProviderEnablementError("AUTH", "CONTENT_CREDENTIAL_UNAVAILABLE")
+        key = None
         try:
-            async with httpx.AsyncClient(base_url="https://api.openai.com", transport=self.transport,
-                    timeout=self.profile.timeout_seconds, follow_redirects=False, trust_env=cloud_proxy) as client:
-                response = await client.post("/v1/responses",
-                    headers={"Authorization": f"Bearer {key}"}, json=payload)
+            if cloud_proxy or isinstance(getattr(self.credential_resolver, "transport", None), CodexCloudContentSecretTransport):
+                client = CodexCloudContentHTTPClient(self.credential_resolver,
+                    timeout_seconds=self.profile.timeout_seconds, transport=self.transport)
+                response = await client.responses(payload, context=context)
+            else:
+                try:
+                    from .mvp1_provider_admission import ProtectedResolverReference
+                    key = (self.credential_resolver.resolve_for_context(context)
+                        if isinstance(self.credential_resolver, ProtectedResolverReference) else self.credential_resolver(self.profile.credential_alias))
+                except Exception:
+                    raise ProviderEnablementError("AUTH", "CONTENT_CREDENTIAL_UNAVAILABLE") from None
+                if not isinstance(key, str) or not key or not key.strip():
+                    raise ProviderEnablementError("AUTH", "CONTENT_CREDENTIAL_UNAVAILABLE")
+                async with httpx.AsyncClient(base_url="https://api.openai.com", transport=self.transport,
+                        timeout=self.profile.timeout_seconds, follow_redirects=False, trust_env=False) as client:
+                    response = await client.post("/v1/responses",
+                        headers={"Authorization": f"Bearer {key}"}, json=payload)
+        except ContentHTTPPathError as exc:
+            raise ProviderEnablementError("AUTH", str(exc)) from None
         except httpx.RequestError:
             raise ProviderEnablementError("TRANSPORT", "CONTENT_TRANSPORT_UNCERTAIN") from None
         if not cloud_proxy and key.encode() in response.content:
