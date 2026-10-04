@@ -60,7 +60,7 @@ jobs:
       - name: MVP1 PostgreSQL transactions, versions and proposal/render races (offline fixtures only)
         env:
           MVP1_TEST_PG_URL: postgresql+asyncpg://mvp1_dev:synthetic_fixture_only@127.0.0.1:5432/mvp1_devtests
-        run: python -m pytest apps/api/tests/test_mvp1_multi_input.py apps/api/tests/test_mvp1_content_generation.py apps/api/tests/test_mvp1_narration_pacing.py -q
+        run: python -m pytest apps/api/tests/test_mvp1_multi_input.py apps/api/tests/test_mvp1_content_generation.py apps/api/tests/test_mvp1_narration_pacing.py apps/api/tests/test_provider_budget_epoch.py -q
       - name: MVP1 actual PostgreSQL migration up down replay (disposable CI database)
         working-directory: apps/api
         env:

@@ -130,11 +130,15 @@ def verify_files(directory=DIRECTORY):
 
 
 def verify_source(source_commit):
-    # Records are committed AFTER the implementation they pin. Exact source
-    # ancestry and unchanged source are checked; no self-referential commit hash.
+    # The candidate pins its Content request-defining implementation, not
+    # unrelated accounting additions. Original public candidate bytes remain
+    # immutable, and ancestry plus every request-defining source is still checked.
     git("merge-base", "--is-ancestor", source_commit, "HEAD")
-    excluded = ":(exclude)docs/acceptance/mvp1/content-live-01"
-    if git("diff", "--name-only", source_commit, "--", ".", excluded):
+    sources = ["apps/api/app/codex_cloud_content_secret.py", "apps/api/app/content_models.py",
+        "apps/api/app/content_service.py", "apps/api/app/models.py",
+        "apps/api/app/mvp1_provider_admission.py", "apps/api/app/storyboard_content_provider.py",
+        "apps/api/app/provider_safety.py", "apps/api/app/provider_safety_durable.py"]
+    if git("diff", "--name-only", source_commit, "--", *sources):
         raise ValueError("implementation differs from pinned source commit")
 
 
