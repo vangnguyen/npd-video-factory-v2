@@ -214,6 +214,8 @@ class CodexCloudContentHTTPClient:
             if type(approval) is not ContentResponsesCanaryApproval:
                 raise ContentHTTPPathError("CONTENT_CANARY_OWNER_AUTHORITY_REQUIRED")
             validate_canary_payload(payload)
+            # Never retain caller-owned mutable text across the async client entry.
+            payload = canary_request_payload()
             approval.validate_binding(self._resolver.scope, self._resolver.raw_file_sha256)
         self._check_binding(self._resolver)
         if not cloud_proxy_context()["API_OPENAI_COM_PROXY_ROUTE_ENABLED"]:

@@ -151,6 +151,27 @@ async def test_canary_public_method_accepts_no_caller_auth_or_routing_options(bi
     assert resolver._claimed == set()
 
 
+async def test_canary_snapshots_trusted_payload_before_async_entry(binding,monkeypatch):
+    scope,raw_sha=binding
+    caller_owned=canary_request_payload()
+    sent=[]
+    class OfflineClient:
+        def __init__(self,**kwargs): pass
+        async def __aenter__(self):
+            caller_owned['input']='unapproved business text during await'
+            caller_owned['reasoning']['effort']='low'
+            return self
+        async def __aexit__(self,*args): pass
+        async def post(self,path,*,headers,json):
+            assert path=='/v1/responses'
+            sent.append(json)
+            return httpx.Response(200)
+    monkeypatch.setattr(httpx,'AsyncClient',OfflineClient)
+    await CodexCloudContentHTTPClient(resolver_for(scope,raw_sha),timeout_seconds=90).responses_canary(
+        caller_owned,approved(scope,raw_sha))
+    assert sent==[canary_request_payload()]
+
+
 def test_actual_source_head_checks_tracked_state_and_repository(monkeypatch):
     calls=[]
     def check_call(command,**kwargs):
