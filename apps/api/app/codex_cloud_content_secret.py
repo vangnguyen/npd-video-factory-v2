@@ -83,6 +83,20 @@ class CodexCloudContentSecretTransport:
             raise RuntimeError("CONTENT_CLOUD_PLACEHOLDER_UNAVAILABLE")
         return self._placeholder_handoff()
 
+    def resolve_for_responses_canary(self, reference):
+        from .codex_cloud_content_http import ContentResponsesCanaryApproval
+        if (not isinstance(reference, dict) or set(reference) != {
+                "schema", "approval", "scope_sha256", "scope_raw_file_sha256"}
+                or reference["schema"] != "codex-cloud-content-responses-canary-binding-v1"
+                or reference["scope_sha256"] != digest(self._scope.model_dump(mode="json"))
+                or reference["scope_raw_file_sha256"] != self._raw_file_sha256):
+            raise RuntimeError("CONTENT_CLOUD_REFERENCE_REJECTED")
+        approval = ContentResponsesCanaryApproval.model_validate(reference["approval"])
+        approval.validate_binding(self._scope, self._raw_file_sha256)
+        if self.readiness()["credential_delivery"] != "PLACEHOLDER_AVAILABLE":
+            raise RuntimeError("CONTENT_CLOUD_PLACEHOLDER_UNAVAILABLE")
+        return self._placeholder_handoff()
+
 
 def uses_codex_cloud_content_proxy(resolver):
     return (isinstance(resolver, ProtectedResolverReference)

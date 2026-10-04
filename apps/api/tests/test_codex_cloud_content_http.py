@@ -11,7 +11,8 @@ import httpx
 import pytest
 
 from app.codex_cloud_content_http import (
-    CodexCloudContentHTTPClient, ContentAuthProbeApproval, ContentHTTPPathError, cloud_proxy_context,
+    CodexCloudContentHTTPClient, ContentAuthProbeApproval, ContentResponsesCanaryApproval,
+    ContentHTTPPathError, cloud_proxy_context, canary_request_payload,
 )
 from app.codex_cloud_content_secret import (
     CodexCloudContentSecretTransport, NETWORK_SECRET_VARIABLE, CONTENT_ALIAS, BACKEND_ID,
@@ -49,6 +50,7 @@ def binding(records, monkeypatch):
 async def test_auth_and_responses_share_constructor_backend_handoff_tls_and_proxy(binding, monkeypatch, capsys, caplog):
     manifest, disabled, document = binding
     raw_sha = manifest["admission_raw_file_sha256"]
+    monkeypatch.setattr("app.codex_cloud_content_http.current_source_head", lambda: "a"*40)
     live = active_scope(disabled)  # Synthetic in-memory approval; no repository/real provider.
     configs, calls, handoffs = [], [], []
     original_handoff = CodexCloudContentSecretTransport._placeholder_handoff
@@ -74,12 +76,17 @@ async def test_auth_and_responses_share_constructor_backend_handoff_tls_and_prox
     probe_resolver = resolver_for(disabled, raw_sha)
     response = await CodexCloudContentHTTPClient(probe_resolver, timeout_seconds=90).auth_probe(approval_for(disabled, raw_sha))
     assert response.status_code == 200
+    approval = ContentResponsesCanaryApproval.model_validate(
+        approval_for(disabled, raw_sha).model_dump(exclude={"schema_name", "auth_probe_authorized", "method", "path"})
+        | {"responses_canary_authorized": True})
+    await CodexCloudContentHTTPClient(resolver_for(disabled, raw_sha), timeout_seconds=90).responses_canary(
+        canary_request_payload(), approval)
     provider = ResponsesStoryboardContentProvider(ContentProviderProfile.model_validate(live.profile), credential_resolver=resolver_for(live, raw_sha))
     with pytest.raises(ProviderEnablementError, match="PROVIDER_HTTP_401"):
         await provider._request(document, live.allowed_operations[0].asset_hash, provider._request_payload(document), candidate.context_for(live))
-    assert calls == ["GET", "POST"]
-    assert configs[0] == configs[1] == dict(base_url="https://api.openai.com", timeout=90, follow_redirects=False, trust_env=True, verify=True)
-    assert len(handoffs) == 2 and handoffs[0] == handoffs[1] == (
+    assert calls == ["GET", "POST", "POST"]
+    assert configs[0] == configs[1] == configs[2] == dict(base_url="https://api.openai.com", timeout=90, follow_redirects=False, trust_env=True, verify=True)
+    assert len(handoffs) == 3 and handoffs[0] == handoffs[1] == handoffs[2] == (
         "CodexCloudContentSecretTransport", BACKEND_ID, CONTENT_ALIAS, NETWORK_SECRET_VARIABLE, "api.openai.com")
     captured = capsys.readouterr(); assert captured.out == captured.err == ""
     assert "synthetic-value-never-to-be-logged" not in caplog.text

@@ -1,0 +1,9 @@
+{
+  "input": "Return exactly OK.",
+  "max_output_tokens": 16,
+  "model": "gpt-6-luna",
+  "reasoning": {
+    "effort": "none"
+  },
+  "store": false
+}
