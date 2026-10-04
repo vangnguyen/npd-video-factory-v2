@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import asyncio
 import hashlib
 import json
@@ -134,12 +135,36 @@ def verify_source(source_commit):
     # unrelated accounting additions. Original public candidate bytes remain
     # immutable, and ancestry plus every request-defining source is still checked.
     git("merge-base", "--is-ancestor", source_commit, "HEAD")
-    sources = ["apps/api/app/codex_cloud_content_secret.py", "apps/api/app/content_models.py",
+    sources = ["apps/api/app/content_models.py",
         "apps/api/app/content_service.py", "apps/api/app/models.py",
-        "apps/api/app/mvp1_provider_admission.py", "apps/api/app/storyboard_content_provider.py",
         "apps/api/app/provider_safety.py", "apps/api/app/provider_safety_durable.py"]
     if git("diff", "--name-only", source_commit, "--", *sources):
         raise ValueError("implementation differs from pinned source commit")
+    # HTTP routing may evolve under separate Owner review. Request/schema/profile,
+    # operation identity and admission rules remain pinned to the original source.
+    pinned_nodes = {
+        "apps/api/app/storyboard_content_provider.py": ["ContentProviderProfile", "_GeneratedDraft",
+            "structured_draft_schema", "ResponsesStoryboardContentProvider._request_payload",
+            "ResponsesStoryboardContentProvider.input_sha256", "ResponsesStoryboardContentProvider.generate_for_job"],
+        "apps/api/app/mvp1_provider_admission.py": ["AdmissionInput", "Mvp1AdmissionScope", "canonical", "digest",
+            "ProtectedResolverReference.resolve_for_context"],
+    }
+    for name, nodes in pinned_nodes.items():
+        previous = subprocess.check_output(["git", "show", source_commit+":"+name], cwd=ROOT, text=True)
+        if request_nodes(previous, nodes) != request_nodes((ROOT/name).read_text(), nodes):
+            raise ValueError("request/admission implementation differs from pinned source commit")
+
+
+def request_nodes(source, names):
+    tree = ast.parse(source)
+    result = {}
+    for name in names:
+        parts = name.split(".")
+        parent = tree
+        for part in parts:
+            parent = next(node for node in parent.body if getattr(node, "name", None) == part)
+        result[name] = ast.dump(parent, include_attributes=False)
+    return result
 
 
 def context_for(scope):

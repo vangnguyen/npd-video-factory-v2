@@ -63,7 +63,25 @@ class CodexCloudContentSecretTransport:
             raise RuntimeError("CONTENT_CLOUD_REFERENCE_REJECTED")
         if self.readiness()["credential_delivery"] != "PLACEHOLDER_AVAILABLE":
             raise RuntimeError("CONTENT_CLOUD_PLACEHOLDER_UNAVAILABLE")
+        return self._placeholder_handoff()
+
+    def _placeholder_handoff(self):
+        # One unchanged opaque handoff for both GET auth and POST Content paths.
         return os.environ[NETWORK_SECRET_VARIABLE]  # Unchanged, never persisted.
+
+    def resolve_for_auth_probe(self, reference):
+        from .codex_cloud_content_http import ContentAuthProbeApproval
+        if (not isinstance(reference, dict) or set(reference) != {
+                "schema", "approval", "scope_sha256", "scope_raw_file_sha256"}
+                or reference["schema"] != "codex-cloud-content-auth-probe-binding-v1"
+                or reference["scope_sha256"] != digest(self._scope.model_dump(mode="json"))
+                or reference["scope_raw_file_sha256"] != self._raw_file_sha256):
+            raise RuntimeError("CONTENT_CLOUD_REFERENCE_REJECTED")
+        approval = ContentAuthProbeApproval.model_validate(reference["approval"])
+        approval.validate_binding(self._scope, self._raw_file_sha256)
+        if self.readiness()["credential_delivery"] != "PLACEHOLDER_AVAILABLE":
+            raise RuntimeError("CONTENT_CLOUD_PLACEHOLDER_UNAVAILABLE")
+        return self._placeholder_handoff()
 
 
 def uses_codex_cloud_content_proxy(resolver):
