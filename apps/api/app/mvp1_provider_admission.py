@@ -236,6 +236,22 @@ class ProtectedResolverReference:
             "scope_sha256": digest(self.scope.model_dump(mode="json")),
             "scope_raw_file_sha256": self.raw_file_sha256})
 
+    def resolve_for_responses_canary(self, approval):
+        from .codex_cloud_content_http import ContentResponsesCanaryApproval
+        from .codex_cloud_content_secret import CodexCloudContentSecretTransport
+        if type(approval) is not ContentResponsesCanaryApproval or type(self.transport) is not CodexCloudContentSecretTransport:
+            raise RuntimeError("CONTENT_CANARY_OWNER_AUTHORITY_REQUIRED")
+        approval.validate_binding(self.scope, self.raw_file_sha256)
+        claim = "responses-canary:" + approval.owner_decision_id
+        if claim in self._claimed:
+            raise RuntimeError("MVP1_RESOLVER_HANDOFF_ALREADY_CLAIMED")
+        self._claimed.add(claim)
+        return self.transport.resolve_for_responses_canary({
+            "schema": "codex-cloud-content-responses-canary-binding-v1",
+            "approval": approval.model_dump(mode="json"),
+            "scope_sha256": digest(self.scope.model_dump(mode="json")),
+            "scope_raw_file_sha256": self.raw_file_sha256})
+
     def diagnose_placeholder_identity(self, context):
         """Metadata-only comparison; no credential leaves this method and no claim is consumed."""
         from .codex_cloud_content_secret import CodexCloudContentSecretTransport, NETWORK_SECRET_VARIABLE

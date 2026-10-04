@@ -1,0 +1,141 @@
+{
+  "additionalProperties": false,
+  "description": "Independent POST-only authority, without Content execution or budget.",
+  "properties": {
+    "approved_by": {
+      "const": "Owner (GitHub: vangnguyen)",
+      "title": "Approved By",
+      "type": "string"
+    },
+    "automatic_retry": {
+      "const": false,
+      "default": false,
+      "title": "Automatic Retry",
+      "type": "boolean"
+    },
+    "backend_id": {
+      "const": "codex-cloud-network-secret-content-v1",
+      "default": "codex-cloud-network-secret-content-v1",
+      "title": "Backend Id",
+      "type": "string"
+    },
+    "canary_request_sha256": {
+      "const": "2cceb20e2a9a9e6c0fff264f0aed51142060b411edaa843dad8ad12f9b8b8aef",
+      "default": "2cceb20e2a9a9e6c0fff264f0aed51142060b411edaa843dad8ad12f9b8b8aef",
+      "title": "Canary Request Sha256",
+      "type": "string"
+    },
+    "content_budget_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Content Budget Authorized",
+      "type": "boolean"
+    },
+    "content_execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Content Execution Authorized",
+      "type": "boolean"
+    },
+    "content_scope_raw_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Content Scope Raw Sha256",
+      "type": "string"
+    },
+    "content_scope_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Content Scope Sha256",
+      "type": "string"
+    },
+    "credential_alias": {
+      "const": "secret://openai/video-factory-content-generation",
+      "default": "secret://openai/video-factory-content-generation",
+      "title": "Credential Alias",
+      "type": "string"
+    },
+    "credential_host": {
+      "const": "api.openai.com",
+      "default": "api.openai.com",
+      "title": "Credential Host",
+      "type": "string"
+    },
+    "expires_at_utc": {
+      "format": "date-time",
+      "title": "Expires At Utc",
+      "type": "string"
+    },
+    "max_attempts": {
+      "const": 1,
+      "default": 1,
+      "title": "Max Attempts",
+      "type": "integer"
+    },
+    "method": {
+      "const": "POST",
+      "default": "POST",
+      "title": "Method",
+      "type": "string"
+    },
+    "model": {
+      "const": "gpt-6-luna",
+      "default": "gpt-6-luna",
+      "title": "Model",
+      "type": "string"
+    },
+    "network_secret_variable": {
+      "const": "NPD_VF_CONTENT_API_KEY",
+      "default": "NPD_VF_CONTENT_API_KEY",
+      "title": "Network Secret Variable",
+      "type": "string"
+    },
+    "owner_decision_id": {
+      "pattern": "^VF-MVP1-[A-Z0-9-]{3,120}$",
+      "title": "Owner Decision Id",
+      "type": "string"
+    },
+    "path": {
+      "const": "/v1/responses",
+      "default": "/v1/responses",
+      "title": "Path",
+      "type": "string"
+    },
+    "provider": {
+      "const": "openai-storyboard-content",
+      "default": "openai-storyboard-content",
+      "title": "Provider",
+      "type": "string"
+    },
+    "responses_canary_authorized": {
+      "default": false,
+      "title": "Responses Canary Authorized",
+      "type": "boolean"
+    },
+    "schema_name": {
+      "const": "codex-cloud-content-responses-canary-v1",
+      "default": "codex-cloud-content-responses-canary-v1",
+      "title": "Schema Name",
+      "type": "string"
+    },
+    "source_head": {
+      "pattern": "^[a-f0-9]{40}$",
+      "title": "Source Head",
+      "type": "string"
+    },
+    "valid_from_utc": {
+      "format": "date-time",
+      "title": "Valid From Utc",
+      "type": "string"
+    }
+  },
+  "required": [
+    "owner_decision_id",
+    "approved_by",
+    "source_head",
+    "content_scope_sha256",
+    "content_scope_raw_sha256",
+    "valid_from_utc",
+    "expires_at_utc"
+  ],
+  "title": "ContentResponsesCanaryApproval",
+  "type": "object"
+}

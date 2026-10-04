@@ -3,7 +3,7 @@ name: Video Factory V2 CI
 on:
   pull_request:
   push:
-    branches: [main, codex/vf-mvp1-content-cloud-backend-01, codex/vf-mvp1-content-proxy-path-01]
+    branches: [main, codex/vf-mvp1-content-cloud-backend-01, codex/vf-mvp1-content-proxy-path-01, codex/vf-mvp1-content-responses-canary-01]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
 
 env:
   EXPECTED_HEAD_SHA: ${{ github.sha }}
-  HEAD_IDENTITY: ${{ (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(fromJSON('["refs/heads/codex/vf-mvp1-content-cloud-backend-01", "refs/heads/codex/vf-mvp1-content-proxy-path-01"]'), github.ref))) && 'EXACT_HEAD_CANDIDATE' || 'NOT_EXACT_HEAD_EVENT_SHA' }}
+  HEAD_IDENTITY: ${{ (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(fromJSON('["refs/heads/codex/vf-mvp1-content-cloud-backend-01", "refs/heads/codex/vf-mvp1-content-proxy-path-01", "refs/heads/codex/vf-mvp1-content-responses-canary-01"]'), github.ref))) && 'EXACT_HEAD_CANDIDATE' || 'NOT_EXACT_HEAD_EVENT_SHA' }}
 
 concurrency:
   group: video-factory-v2-ci-${{ github.ref }}
