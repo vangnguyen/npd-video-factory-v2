@@ -1,0 +1,9 @@
+tests/
+scripts/
+*.egg-info/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env*
+*api_key*
+*broker_token*

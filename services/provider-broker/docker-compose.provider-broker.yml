@@ -1,0 +1,33 @@
+name: npd-provider-broker
+services:
+  provider-broker:
+    image: npd-provider-broker:${BROKER_SOURCE_HEAD:?Exact broker source HEAD required}
+    build:
+      context: .
+      args:
+        BROKER_SOURCE_HEAD: ${BROKER_SOURCE_HEAD:?Exact broker source HEAD required}
+    network_mode: host
+    user: "0:0"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    tmpfs: [/tmp:rw,noexec,nosuid,size=16m]
+    volumes:
+      - type: bind
+        source: /etc/npd-video-factory/provider-broker/openai_api_key
+        target: /run/secrets/openai_api_key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /etc/npd-video-factory/provider-broker/broker_token
+        target: /run/secrets/broker_token
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /var/lib/npd-provider-broker
+        target: /var/lib/npd-provider-broker
+        bind: {create_host_path: false}
+    logging:
+      driver: json-file
+      options: {max-size: "5m", max-file: "2"}
