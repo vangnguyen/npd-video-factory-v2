@@ -1,0 +1,13 @@
+{
+  "credential_alias": "secret://openai/video-factory-content-generation",
+  "estimated_cost_vnd": "5000",
+  "input_vnd_per_million_tokens": "3000",
+  "language": "vi",
+  "max_output_tokens": 2048,
+  "model": "gpt-6-luna",
+  "output_vnd_per_million_tokens": "15000",
+  "provider_key": "openai-storyboard-content",
+  "reasoning_effort": "none",
+  "timeout_seconds": 90.0,
+  "version": 2
+}

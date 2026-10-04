@@ -15,7 +15,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, model_serializer, model_validator
 from .models import StrictModel
 
 
@@ -41,6 +41,16 @@ class AdmissionInput(StrictModel):
     narration: str | None = Field(default=None, min_length=1, max_length=4096)
     rights_record: dict[str, Any]
     rights_record_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    # Optional exact UTF-8 prompt asset mode. Pin the entire request document too,
+    # so a raw-text hash never permits altered instructions/facts/protected terms.
+    prompt_document_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+
+    @model_serializer(mode="wrap")
+    def preserve_legacy_representation(self, handler):
+        data = handler(self)
+        if self.prompt_document_sha256 is None:
+            data.pop("prompt_document_sha256", None)
+        return data
 
 
 class Mvp1AdmissionScope(StrictModel):
@@ -105,6 +115,8 @@ class Mvp1AdmissionScope(StrictModel):
         if len({i.operation_key for i in self.allowed_operations}) != len(self.allowed_operations) or len({(i.asset_id, i.asset_hash) for i in self.allowed_operations}) != len(self.allowed_operations):
             raise ValueError("MVP1_DUPLICATE_INPUT_OPERATION")
         for item in self.allowed_operations:
+            if item.prompt_document_sha256 is not None and self.capability != "content_generation":
+                raise ValueError("MVP1_PROMPT_ASSET_CONTENT_ONLY")
             expected_key = "mvp1-" + self.capability + "-" + digest({"source_commit": self.source_commit, "profile_sha256": self.profile_sha256, "workspace_id": self.workspace_id, "project_id": self.project_id, "asset_id": item.asset_id, "asset_hash": item.asset_hash})
             if item.operation_key != expected_key or item.operation != operation:
                 raise ValueError("MVP1_OPERATION_IDENTITY_MISMATCH")

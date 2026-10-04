@@ -1,0 +1,51 @@
+{
+  "admission_raw_file_sha256": "bd7862312d37a1225e863cd0a9324ba8c6d73b7bda6cfbc3bc94e47bb5800b50",
+  "backend_id": "codex-cloud-network-secret-content-v1",
+  "canonical_scope_sha256": "5eb381f6845a8733df5414377bd5764ae8c36e4705e73f7032400b0345274aa6",
+  "credential_destination": "api.openai.com",
+  "day_ceiling_vnd": 20000,
+  "execution_authorized": false,
+  "input_document": {
+    "approved": false,
+    "creative_instructions": "",
+    "facts_needing_source": [],
+    "generator": "deterministic-user-draft",
+    "input_kind": "prompt",
+    "original_text": "Viết một kịch bản video tiếng Việt dài khoảng 25–45 giây giới thiệu Vinhomes Green Paradise Cần Giờ cho khách hàng quan tâm bất động sản cao cấp.\n\nĐây chỉ là bản nháp đề xuất để con người kiểm tra và phê duyệt.\n\nKhông được tự suy đoán hoặc bịa giá bán, chính sách bán hàng, tiến độ, ưu đãi, pháp lý, thông số quy hoạch hoặc tiện ích chưa có trong dữ liệu đầu vào.\n\nGiữ nguyên chính xác tên “Vinhomes Green Paradise Cần Giờ”.\n\nTách rõ nội dung lời đọc và định hướng hình ảnh. Mọi thông tin cần nguồn xác minh phải được đưa vào facts_needing_source.\n\nKhông tự phê duyệt nội dung và không tự xuất bản.",
+    "protected_terms": [
+      "Vinhomes Green Paradise Cần Giờ"
+    ],
+    "scenes": [],
+    "schema_version": "mvp1-content-v1",
+    "script": "",
+    "supplied_facts": []
+  },
+  "input_document_sha256": "7777e6ec545863774ab3d60ebf460f12a019c1f14f8e78e55fbb31e377bdd32c",
+  "input_sha256": "385c14fab304cbe5629e3746c063a313f13e5dfb0b282410259676f438ca326f",
+  "logical_alias": "secret://openai/video-factory-content-generation",
+  "network_secret_variable": "NPD_VF_CONTENT_API_KEY",
+  "operation_ceiling_vnd": 5000,
+  "operation_key": "mvp1-content_generation-dd60bf2bde4fd8a99673003fd1106ae2606e05e95a77d5fec9365e719d941d5a",
+  "owner_execution_approval": "PENDING",
+  "planning_prices": {
+    "fx_vnd_per_usd": 30000,
+    "input_usd_per_million_tokens": "0.10",
+    "output_usd_per_million_tokens": "0.50",
+    "pricing_tier": "Standard short-context",
+    "source": "Owner task pricing inputs"
+  },
+  "production_writes": 0,
+  "profile_sha256": "b9a12674ab19a68ae6f9fb14cf756a876fe789b74ec6b83d08bf3295884da0d5",
+  "prompt_encoding": "UTF-8; LF paragraph breaks; no BOM; no terminal newline",
+  "prompt_sha256": "385c14fab304cbe5629e3746c063a313f13e5dfb0b282410259676f438ca326f",
+  "provider_calls": 0,
+  "raw_credential_reads": 0,
+  "request_sha256": "24eacfa976bac52f15bb51de72727770ecec11d9586f5388118b46ff86e96be0",
+  "rights_sha256": "35004cfe716148e61c1cfd843c39edeeeffc375d3dea600daef7016cf14035fc",
+  "schema": "mvp1-content-cloud-disabled-candidate-v1",
+  "scope_approval_fields": "Schema-required candidate markers; Owner execution approval PENDING; not allocated authority",
+  "source_commit": "1694cbb0ecf0bba4b97fc080865027a04e66c49a",
+  "spend_vnd": 0,
+  "status": "CONTENT_CLOUD_BACKEND_SOURCE_READY / OWNER_CANDIDATE_APPROVAL_REQUIRED",
+  "window_status": "FUTURE_METADATA_ONLY_NOT_EXECUTION_AUTHORITY"
+}

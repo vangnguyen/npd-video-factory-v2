@@ -1,0 +1,11 @@
+Viết một kịch bản video tiếng Việt dài khoảng 25–45 giây giới thiệu Vinhomes Green Paradise Cần Giờ cho khách hàng quan tâm bất động sản cao cấp.
+
+Đây chỉ là bản nháp đề xuất để con người kiểm tra và phê duyệt.
+
+Không được tự suy đoán hoặc bịa giá bán, chính sách bán hàng, tiến độ, ưu đãi, pháp lý, thông số quy hoạch hoặc tiện ích chưa có trong dữ liệu đầu vào.
+
+Giữ nguyên chính xác tên “Vinhomes Green Paradise Cần Giờ”.
+
+Tách rõ nội dung lời đọc và định hướng hình ảnh. Mọi thông tin cần nguồn xác minh phải được đưa vào facts_needing_source.
+
+Không tự phê duyệt nội dung và không tự xuất bản.

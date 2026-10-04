@@ -52,6 +52,31 @@ class ProviderSafetyBudgetDayORM(Base):
     )
 
 
+class ProviderSafetyAccountingEpochORM(Base):
+    """Owner opening balance provenance, never a provider operation or usage record."""
+
+    __tablename__ = "provider_safety_accounting_epochs"
+    __table_args__ = (
+        CheckConstraint("classification = 'OWNER_CARRY_FORWARD_CONSERVATIVE_CHARGE'",
+                        name="ck_provider_safety_epoch_classification"),
+        CheckConstraint("opening_committed_vnd >= 0 AND opening_reserved_vnd = 0",
+                        name="ck_provider_safety_epoch_opening"),
+    )
+
+    epoch_id: Mapped[str] = mapped_column(String(120), primary_key=True)
+    budget_day: Mapped[date] = mapped_column(
+        Date, ForeignKey("provider_safety_budget_days.budget_day", ondelete="RESTRICT"),
+        nullable=False, unique=True,
+    )
+    classification: Mapped[str] = mapped_column(String(80), nullable=False)
+    owner_decision_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    opening_committed_vnd: Mapped[Decimal] = mapped_column(Numeric(20, 4), nullable=False)
+    opening_reserved_vnd: Mapped[Decimal] = mapped_column(Numeric(20, 4), nullable=False)
+    artifact_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    artifact_json: Mapped[dict[str, object]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
 class ProviderSafetyCircuitORM(Base):
     __tablename__ = "provider_safety_circuits"
     __table_args__ = (
