@@ -99,6 +99,7 @@ class ContentGenerationService:
         operation_key = None
         identity = [project_id, current.project_version_id, self.provider.key, payload.idempotency_key]
         if self.mode == "responses":
+            input_sha = self.provider.input_sha256(document, current.project_version_id)
             profile_sha = self.provider.profile.sha256
             identity.append(profile_sha)
             scope = self.provider.controller.policy.execution_gate
@@ -160,6 +161,8 @@ class ContentGenerationService:
                 raise ContentProviderUnavailable("CONTENT_PROVIDER_NOT_CONFIGURED")
             document = ContentDocument.model_validate(source.snapshot["content"])
             input_sha = hashlib.sha256(canonical_bytes(document.model_dump(mode="json"))).hexdigest()
+            if job_input.provider_key != FIXTURE_KEY:
+                input_sha = self.provider.input_sha256(document, source_id)
             if job_input.input_sha256 and input_sha != job_input.input_sha256:
                 raise ProviderEnablementError("MAPPING", "CONTENT_INPUT_CHANGED")
             # Do not start a call for a cancelled/edited input. Edits during a

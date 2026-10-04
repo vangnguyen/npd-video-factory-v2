@@ -3,7 +3,7 @@ name: Video Factory V2 CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, codex/vf-mvp1-content-cloud-backend-01]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
 
 env:
   EXPECTED_HEAD_SHA: ${{ github.sha }}
-  HEAD_IDENTITY: ${{ github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/') && 'EXACT_HEAD_CANDIDATE' || 'NOT_EXACT_HEAD_EVENT_SHA' }}
+  HEAD_IDENTITY: ${{ (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/codex/vf-mvp1-content-cloud-backend-01')) && 'EXACT_HEAD_CANDIDATE' || 'NOT_EXACT_HEAD_EVENT_SHA' }}
 
 concurrency:
   group: video-factory-v2-ci-${{ github.ref }}
@@ -36,6 +36,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
       - name: Verify checked-out event SHA
         shell: bash
         run: |
@@ -53,6 +54,8 @@ jobs:
           cache: pip
       - run: python -m pip install -e "apps/api[dev]" -e "services/worker[dev]" -e "services/comfyui-bridge[dev]"
       - run: python -m compileall -q apps/api/app services/worker/npd_worker services/comfyui-bridge/npd_comfyui_bridge
+      - name: Verify reproducible disabled Content Cloud candidate (no credential required)
+        run: python scripts/materialize-content-cloud-candidate.py verify
       - run: python -m pytest apps/api/tests services/worker/tests services/comfyui-bridge/tests -q
       - name: MVP1 PostgreSQL transactions, versions and proposal/render races (offline fixtures only)
         env:

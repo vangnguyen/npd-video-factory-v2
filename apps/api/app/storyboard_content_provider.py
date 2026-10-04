@@ -176,11 +176,23 @@ class ResponsesStoryboardContentProvider:
     async def generate(self, document):
         raise ProviderEnablementError("AUTH", "CONTENT_JOB_BINDING_REQUIRED")
 
+    def input_sha256(self, document, source_version_id):
+        actual_document = hashlib.sha256(canonical_bytes(document.model_dump(mode="json"))).hexdigest()
+        scope = self.controller.policy.execution_gate if self.controller else None
+        from .mvp1_provider_admission import Mvp1AdmissionScope
+        if isinstance(scope, Mvp1AdmissionScope):
+            item = next((i for i in scope.allowed_operations if i.asset_id == source_version_id), None)
+            if item is not None and item.prompt_document_sha256 is not None:
+                if document.input_kind != "prompt" or actual_document != item.prompt_document_sha256:
+                    raise ProviderEnablementError("MAPPING", "CONTENT_PROMPT_DOCUMENT_MISMATCH")
+                return hashlib.sha256(document.original_text.encode("utf-8")).hexdigest()
+        return actual_document  # Historical canonical-document inputs unchanged.
+
     async def generate_for_job(self, document: ContentDocument, *, workspace_id, project_id,
                                job_id, source_version_id, input_sha256, operation_key):
         if self.readiness() != "CONFIG_AND_SCOPE_PRESENT":
             raise ProviderEnablementError("AUTH", "CONTENT_AUTHORITY_REQUIRED")
-        actual_sha = hashlib.sha256(canonical_bytes(document.model_dump(mode="json"))).hexdigest()
+        actual_sha = self.input_sha256(document, source_version_id)
         if input_sha256 != actual_sha or not source_version_id.startswith("pver_"):
             raise ProviderEnablementError("MAPPING", "CONTENT_INPUT_BINDING_MISMATCH")
         payload = self._request_payload(document)  # Public cost checks before durable reservation.
@@ -195,10 +207,10 @@ class ResponsesStoryboardContentProvider:
             lambda: self._request(document, input_sha256, payload, context))
         return result.value
 
-    def prepare_zero_call(self, document, **bindings):
+    def prepare_zero_call(self, document, *, check_time=None, **bindings):
         from datetime import datetime, timezone
         from .mvp1_provider_admission import Mvp1AdmissionScope
-        actual = hashlib.sha256(canonical_bytes(document.model_dump(mode="json"))).hexdigest()
+        actual = self.input_sha256(document, bindings["source_version_id"])
         scope = self.controller.policy.execution_gate if self.controller else None
         if not isinstance(scope, Mvp1AdmissionScope) or scope.profile_sha256 != self.profile.sha256:
             raise ProviderEnablementError("AUTH", "CONTENT_ADMISSION_SCOPE_REQUIRED")
@@ -210,7 +222,11 @@ class ResponsesStoryboardContentProvider:
             estimated_cost_vnd=self.profile.estimated_cost_vnd, credential_alias=self.profile.credential_alias,
             asset_id=bindings["source_version_id"], asset_hash=actual, input_media_kind="document",
             requested_language="vi", max_output_tokens=self.profile.max_output_tokens, rights_required=True)
-        denial = scope.denial_for(context, datetime.now(timezone.utc), require_execution=False)
+        # An explicit metadata time permits reproducible disabled future windows.
+        # It cannot override a live scope's execution clock.
+        if check_time is not None and scope.execution_authorized:
+            raise ProviderEnablementError("AUTH", "CONTENT_DISABLED_METADATA_TIME_ONLY")
+        denial = scope.denial_for(context, check_time or datetime.now(timezone.utc), require_execution=False)
         if denial: raise ProviderEnablementError("AUTH", denial)
         payload = self._request_payload(document)
         return {"status": "PUBLIC_ADMISSION_PASS_NOT_LIVE_AUTHORITY", "request_sha256": hashlib.sha256(canonical_bytes(payload)).hexdigest(),
@@ -249,16 +265,18 @@ class ResponsesStoryboardContentProvider:
                 if isinstance(self.credential_resolver, ProtectedResolverReference) else self.credential_resolver(self.profile.credential_alias))
         except Exception:
             raise ProviderEnablementError("AUTH", "CONTENT_CREDENTIAL_UNAVAILABLE") from None
-        if not isinstance(key, str) or not key.strip():
+        from .codex_cloud_content_secret import uses_codex_cloud_content_proxy
+        cloud_proxy = uses_codex_cloud_content_proxy(self.credential_resolver)
+        if not isinstance(key, str) or not key or (not cloud_proxy and not key.strip()):
             raise ProviderEnablementError("AUTH", "CONTENT_CREDENTIAL_UNAVAILABLE")
         try:
             async with httpx.AsyncClient(base_url="https://api.openai.com", transport=self.transport,
-                    timeout=self.profile.timeout_seconds, follow_redirects=False, trust_env=False) as client:
+                    timeout=self.profile.timeout_seconds, follow_redirects=False, trust_env=cloud_proxy) as client:
                 response = await client.post("/v1/responses",
                     headers={"Authorization": f"Bearer {key}"}, json=payload)
         except httpx.RequestError:
             raise ProviderEnablementError("TRANSPORT", "CONTENT_TRANSPORT_UNCERTAIN") from None
-        if key.encode() in response.content:
+        if not cloud_proxy and key.encode() in response.content:
             raise ProviderEnablementError("AUTH", "PROVIDER_SECRET_ECHO_REJECTED")
         if response.status_code != 200:
             raise http_failure(response.status_code)
