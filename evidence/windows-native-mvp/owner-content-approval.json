@@ -1,0 +1,10 @@
+{
+  "task": "VF-MVP1-WINDOWS-NATIVE-FASTPATH-26",
+  "owner_message": "Duyệt",
+  "scope": "Content proposal and exact narration approved for locked Thuy Dung TTS and native MP4 rendering",
+  "recorded_at": "2026-10-05T08:37:07.221253+00:00",
+  "proposal_sha256": "91bb3ef2f759233fbba07542102d5c08588a4b8d04de39a139f87ff797f953bb",
+  "narration_file_sha256": "3d8e610a0254772607daf2f0faddb39cbe2f291b4037ba4dbd3573f05c8a3135",
+  "final_video_acceptance": "OWNER_ACCEPTED",
+  "final_video_approval_file": "C:\\NPD-Video-Factory\\outputs\\MVP1\\owner-final-video-approval.json"
+}

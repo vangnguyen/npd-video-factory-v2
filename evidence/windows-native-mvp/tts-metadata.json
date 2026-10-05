@@ -1,0 +1,108 @@
+{
+  "profile": {
+    "alignment_capability": "none",
+    "credential_mode": "none/local_service",
+    "endpoint": "http://127.0.0.1:18083",
+    "locale": "vi-VN",
+    "max_audio_seconds": 180,
+    "model": "vieneu-v3-turbo",
+    "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+    "parameters": {
+      "babble_retries": 0,
+      "max_chars": 256,
+      "max_new_frames": 300,
+      "normalization_layer": "vieneu-3.8.3/sea-g2p-0.9.1-punc_norm-v1",
+      "repetition_penalty": 1.2,
+      "temperature": 0.8,
+      "top_k": 25,
+      "top_p": 0.95,
+      "watermark": "NOT_INSTALLED_LOCAL_AUDITION"
+    },
+    "provider_key": "vieneu-tts",
+    "rights": {
+      "codec_card_sha256": "3c7b9e9ef1c8c5e5c829a077a1d32c1f7aea1668f2bf17ead318ff04bf1e6fe4",
+      "codec_repository": "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano-ONNX",
+      "codec_revision": "ceff0d0749bfb3fa2d61149794ec6feef0d1e1ae",
+      "human_quality_accepted": false,
+      "license_identifier": "Apache-2.0",
+      "model_card_sha256": "5d5bb2de661fabc0e073b3b844dc131696fac3dddd5ea882d10fd9a849108eb7",
+      "model_repository": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "preset_asset_sha256": "e1f13cd2c2e0d29fdab5e15bfd7a30f3d7b768e6132bb43dd2b853f8efefdce9",
+      "purpose": "local preset voice audition; human selection pending",
+      "schema_version": 1,
+      "sdk_commit": "85344322b7258b4e25479b692e8e3396baf9db34",
+      "sdk_license_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6",
+      "voice_cloning_enabled": false
+    },
+    "runtime_version": "onnxruntime-1.30.0/cpu/numpy-2.5.3/sea-g2p-0.9.1",
+    "sample_rate": 48000,
+    "sdk_commit": "85344322b7258b4e25479b692e8e3396baf9db34",
+    "sdk_version": "3.8.3",
+    "server_image": "NOT_CONTAINERIZED",
+    "server_version": "vf-vieneu-preset-local-v1",
+    "timeout_seconds": 600,
+    "version": 3,
+    "voice_id": "Thùy Dung"
+  },
+  "profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+  "voice_selection": "OWNER_SELECTED_THUY_DUNG",
+  "content_owner_approved": true,
+  "human_final_quality_accepted": true,
+  "audio_sha256": "2b5f57c31c2514683a6465e408b2cbe20e949cc9e3921a84f68c28ab983a73e5",
+  "decoded_duration_seconds": 20.86,
+  "sample_rate": 48000,
+  "channels": 1,
+  "speed": 1,
+  "runtime_versions": {
+    "vieneu": "3.8.3",
+    "onnxruntime": "1.30.0",
+    "numpy": "2.5.3",
+    "sea-g2p": "0.9.1"
+  },
+  "inference_requests": 4,
+  "engine_infer_calls": 4,
+  "automatic_retry": false,
+  "provider_api_calls": 0,
+  "network_blocked_during_inference": true,
+  "timing_source": "ESTIMATED_SEGMENT_WITH_MEASURED_SENTENCE_AUDIO",
+  "word_alignment": "WORD_ALIGNMENT_OPEN",
+  "words": [],
+  "units": [
+    {
+      "index": 0,
+      "text": "Với khách hàng quan tâm đến bất động sản cao cấp, Vinhomes Green Paradise Cần Giờ là cái tên đáng để tìm hiểu.",
+      "start_seconds": 0.0,
+      "end_seconds": 5.44,
+      "activity_start_seconds": 0.09,
+      "activity_end_seconds": 5.31
+    },
+    {
+      "index": 1,
+      "text": "Trước khi đưa ra quyết định, hãy xem xét kỹ hồ sơ pháp lý, thông tin quy hoạch, sản phẩm, giá bán và tiến độ từ các tài liệu chính thức.",
+      "start_seconds": 5.71,
+      "end_seconds": 12.03,
+      "activity_start_seconds": 5.81,
+      "activity_end_seconds": 11.86
+    },
+    {
+      "index": 2,
+      "text": "Đối chiếu nguồn tin, đặt câu hỏi với đơn vị phụ trách và cân nhắc mức độ phù hợp với nhu cầu của bạn.",
+      "start_seconds": 12.27,
+      "end_seconds": 17.15,
+      "activity_start_seconds": 12.36,
+      "activity_end_seconds": 17.02
+    },
+    {
+      "index": 3,
+      "text": "Đây là nội dung giới thiệu sơ bộ; hãy kiểm chứng thông tin trước khi giao dịch.",
+      "start_seconds": 17.42,
+      "end_seconds": 20.86,
+      "activity_start_seconds": 17.52,
+      "activity_end_seconds": 20.75
+    }
+  ],
+  "normalization_plan": "tts-plan.json",
+  "owner_final_video_accepted_at": "2026-10-05T08:53:42.566299+00:00",
+  "owner_final_video_approval_file": "C:\\NPD-Video-Factory\\outputs\\MVP1\\owner-final-video-approval.json"
+}

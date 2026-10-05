@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "evidence_type": "existing_real_accepted_mvp",
+  "source_task": "VF-MVP1-WINDOWS-NATIVE-FASTPATH-26",
+  "records": [
+    {
+      "file": "generated_script.json",
+      "sha256": "91bb3ef2f759233fbba07542102d5c08588a4b8d04de39a139f87ff797f953bb",
+      "bytes": 3014,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\content-proposal.json"
+    },
+    {
+      "file": "tts.wav",
+      "sha256": "2b5f57c31c2514683a6465e408b2cbe20e949cc9e3921a84f68c28ab983a73e5",
+      "bytes": 2002604,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\voice.wav"
+    },
+    {
+      "file": "final.mp4",
+      "sha256": "c0bbcf029554cfd2e7c29e05d595379abb6d894babc78154a16537f7fba1a47a",
+      "bytes": 11467955,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\final.mp4"
+    },
+    {
+      "file": "owner-content-approval.json",
+      "sha256": "381d052bd6bb981b73b3bb3d06e9d7adbdfc4559352ecfed26bd45226d6e0f1d",
+      "bytes": 586,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\owner-content-approval.json"
+    },
+    {
+      "file": "owner-final-video-approval.json",
+      "sha256": "93018456300f351c2bb8f366187d81c469ac5ac23ad036349e895effcd03b276",
+      "bytes": 746,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\owner-final-video-approval.json"
+    },
+    {
+      "file": "qc-report.json",
+      "sha256": "ffcbdd92d057d475f3450b1fb0e054ffb9281dc8662d35892a31a825aab11291",
+      "bytes": 2472,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\qc-report.json"
+    },
+    {
+      "file": "tts-metadata.json",
+      "sha256": "e2e98802926d3f44a2edad1f9d948ef38e459f0c9f13b7677be0b128ebaf65c1",
+      "bytes": 4402,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\voice.wav.vieneu.json"
+    },
+    {
+      "file": "render-manifest.json",
+      "sha256": "f25c533ad02af7338fe61ba78723c3c3929593a3e4e8b9b3a185f09a7b2caef9",
+      "bytes": 5540,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\render-manifest.json"
+    },
+    {
+      "file": "input.json",
+      "sha256": "378e8a74305800e90e0a48912f7a4141a3533322a70f61b0ec3d4821bb5067a6",
+      "bytes": 5270,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\content-request.json"
+    },
+    {
+      "file": "approved_script.json",
+      "sha256": "f4e8e8a6914a2c3750769da3eacad7c499b89e34c8492dd5c9d82fe95c9cba4a",
+      "bytes": 4460,
+      "source": "C:\\NPD-Video-Factory\\outputs\\MVP1\\owner-content-approval.json"
+    },
+    {
+      "file": "ffprobe.json",
+      "sha256": "d970b7d88a251e15a5e09c2bc53304e619a83071f67bc2fe2b3b11c2fde6112a",
+      "bytes": 4687,
+      "source": "read-only ffprobe of exact accepted MP4 copy"
+    }
+  ],
+  "provider_calls_this_capture": 0,
+  "tts_calls_this_capture": 0,
+  "does_not_approve_current_ui_project": true
+}

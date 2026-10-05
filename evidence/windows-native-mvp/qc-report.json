@@ -1,0 +1,61 @@
+{
+  "task": "VF-MVP1-WINDOWS-NATIVE-FASTPATH-26",
+  "generated_at": "2026-10-05T08:47:45.439967+00:00",
+  "status": "QC_PASS_OWNER_ACCEPTED",
+  "native_windows": true,
+  "final_file": "C:\\NPD-Video-Factory\\outputs\\MVP1\\final.mp4",
+  "final_sha256": "c0bbcf029554cfd2e7c29e05d595379abb6d894babc78154a16537f7fba1a47a",
+  "final_bytes": 11467955,
+  "video_duration_seconds": 25.0,
+  "video_frames": 750,
+  "checks": {
+    "container_open": true,
+    "h264": true,
+    "aac": true,
+    "portrait_1080x1920": true,
+    "yuv420p": true,
+    "fps_30": true,
+    "audio_48khz": true,
+    "duration_25_to_45_seconds": true,
+    "full_audio_video_decode": true,
+    "no_unwanted_black_intervals": true,
+    "audible_speech_signal": true,
+    "finite_audio_and_no_hard_clipping": true,
+    "subtitles_cover_approved_narration_exactly": true,
+    "locked_voice_identity_preserved": true,
+    "all_four_utterances_reached_eos": true
+  },
+  "black_intervals": [],
+  "audio": {
+    "decoded_duration_seconds": 25.0,
+    "speech_rms_dbfs": -18.96138211279679,
+    "peak_dbfs": -1.9239305699727751,
+    "nonfinite_samples": 0,
+    "near_full_scale_samples": 0,
+    "voice_start_offset_seconds": 1.1,
+    "speech_quality_review": "OWNER_ACCEPTED_FINAL_VIDEO"
+  },
+  "visual_review": {
+    "status": "PASS_AGENT_FRAME_INSPECTION",
+    "contact_sheet": "C:\\NPD-Video-Factory\\outputs\\MVP1\\video-contact-sheet.jpg",
+    "reviewed_frames": "Nine samples spanning opening, all four scenes, and ending; additional project-name subtitle frame at 3.9s",
+    "findings": "Readable Vietnamese; complete project name in one subtitle line; no clipped text, overlapping layers, or black transitions",
+    "reviewed_at": "2026-10-05T08:50:06.861498+00:00"
+  },
+  "subtitles": {
+    "phrase_count": 12,
+    "timing": "ESTIMATED_SEGMENT",
+    "word_alignment": "WORD_ALIGNMENT_OPEN",
+    "semantic_boundaries": "Manual clause/phrase breaks; no separated project name; maximum two lines",
+    "human_sync_review": "OWNER_ACCEPTED_FINAL_VIDEO"
+  },
+  "owner_content_approved": true,
+  "owner_final_video_accepted": true,
+  "published": false,
+  "openai_provider_call_attempts": 3,
+  "openai_retries": 0,
+  "local_tts_infer_calls": 4,
+  "local_tts_retries": 0,
+  "owner_final_video_accepted_at": "2026-10-05T08:53:42.566299+00:00",
+  "owner_final_video_approval_file": "C:\\NPD-Video-Factory\\outputs\\MVP1\\owner-final-video-approval.json"
+}

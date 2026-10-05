@@ -1,0 +1,85 @@
+{
+  "verification": "existing accepted artifacts; not a fresh provider/TTS run",
+  "source_generation": {
+    "task": "VF-MVP1-WINDOWS-NATIVE-FASTPATH-26",
+    "model": "gpt-6-luna",
+    "status": "AWAITING_OWNER_REVIEW",
+    "prompt_sha256": "385c14fab304cbe5629e3746c063a313f13e5dfb0b282410259676f438ca326f",
+    "content_generation_call_attempts": 1,
+    "retries": 0,
+    "compatibility_call_attempts": 2,
+    "total_task_provider_call_attempts": 3,
+    "owner_approved": false,
+    "tts_inferences": 0,
+    "render_calls": 0,
+    "http_status": 200,
+    "response_id": "resp_004762c771ea37fc016ac35f375afc87d0a708b0db87322c92",
+    "returned_model": "gpt-6-luna",
+    "response_status": "completed",
+    "request_id": "req_96906680d6154bb489324bd87c92e12b",
+    "usage": {
+      "input_tokens": 559,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 590,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1149
+    },
+    "verdict": "CONTENT_REAL_PROPOSAL_REVIEW_READY",
+    "narration_word_count": 95,
+    "scene_count": 3,
+    "facts_verified": false,
+    "tts_blocked_pending_owner_review": true,
+    "latency_ms": 10797
+  },
+  "content_approval": {
+    "task": "VF-MVP1-WINDOWS-NATIVE-FASTPATH-26",
+    "owner_message": "Duyệt",
+    "scope": "Content proposal and exact narration approved for locked Thuy Dung TTS and native MP4 rendering",
+    "recorded_at": "2026-10-05T08:37:07.221253+00:00",
+    "proposal_sha256": "91bb3ef2f759233fbba07542102d5c08588a4b8d04de39a139f87ff797f953bb",
+    "narration_file_sha256": "3d8e610a0254772607daf2f0faddb39cbe2f291b4037ba4dbd3573f05c8a3135",
+    "final_video_acceptance": "OWNER_ACCEPTED",
+    "final_video_approval_file": "C:\\NPD-Video-Factory\\outputs\\MVP1\\owner-final-video-approval.json"
+  },
+  "original_tts_inferences": 4,
+  "original_provider_attempts": 3,
+  "technical_qc": {
+    "container_open": true,
+    "h264": true,
+    "aac": true,
+    "portrait_1080x1920": true,
+    "yuv420p": true,
+    "fps_30": true,
+    "audio_48khz": true,
+    "duration_25_to_45_seconds": true,
+    "full_audio_video_decode": true,
+    "no_unwanted_black_intervals": true,
+    "audible_speech_signal": true,
+    "finite_audio_and_no_hard_clipping": true,
+    "subtitles_cover_approved_narration_exactly": true,
+    "locked_voice_identity_preserved": true,
+    "all_four_utterances_reached_eos": true
+  },
+  "final_approval": {
+    "task": "VF-MVP1-WINDOWS-NATIVE-FASTPATH-26",
+    "owner_message": "Duyệt",
+    "context": "Owner reply to the delivered final 25-second MP4 and final-video review request",
+    "recorded_at": "2026-10-05T08:53:42.566299+00:00",
+    "decision": "OWNER_FINAL_VIDEO_ACCEPTED",
+    "final_video": "C:\\NPD-Video-Factory\\outputs\\MVP1\\final.mp4",
+    "final_video_sha256": "c0bbcf029554cfd2e7c29e05d595379abb6d894babc78154a16537f7fba1a47a",
+    "voice_sha256": "2b5f57c31c2514683a6465e408b2cbe20e949cc9e3921a84f68c28ab983a73e5",
+    "voice_profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+    "subtitle_timing": "ESTIMATED_SEGMENT",
+    "word_alignment": "WORD_ALIGNMENT_OPEN",
+    "publication_authorized": false
+  },
+  "current_provider_calls": 0,
+  "current_tts_calls": 0,
+  "restart_fault_tests": "services/windows_native/tests/test_mvp_acceptance.py"
+}

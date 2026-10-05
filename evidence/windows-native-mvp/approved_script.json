@@ -1,0 +1,46 @@
+{
+  "proposal": {
+    "narration": "Với khách hàng quan tâm đến bất động sản cao cấp, Vinhomes Green Paradise Cần Giờ là cái tên đáng để tìm hiểu. Trước khi đưa ra quyết định, hãy xem xét kỹ hồ sơ pháp lý, thông tin quy hoạch, sản phẩm, giá bán và tiến độ từ các tài liệu chính thức. Đối chiếu nguồn tin, đặt câu hỏi với đơn vị phụ trách và cân nhắc mức độ phù hợp với nhu cầu của bạn. Đây là nội dung giới thiệu sơ bộ; hãy kiểm chứng thông tin trước khi giao dịch.",
+    "visual_brief": [
+      {
+        "scene": 1,
+        "visual": "Dùng hình ảnh hoặc phối cảnh Cần Giờ có sẵn, phù hợp với bối cảnh địa phương; không ghép thêm tiện ích hay công trình chưa được xác minh.",
+        "on_screen_text": "Vinhomes Green Paradise Cần Giờ",
+        "narration_excerpt": "Với khách hàng quan tâm đến bất động sản cao cấp, Vinhomes Green Paradise Cần Giờ là cái tên đáng để tìm hiểu."
+      },
+      {
+        "scene": 2,
+        "visual": "Hiển thị tư liệu dự án có sẵn và đã được Owner kiểm tra. Nếu dùng phối cảnh, ghi rõ đây là hình ảnh minh họa.",
+        "on_screen_text": "Tìm hiểu từ tài liệu chính thức",
+        "narration_excerpt": "Trước khi đưa ra quyết định, hãy xem xét kỹ hồ sơ pháp lý, thông tin quy hoạch, sản phẩm, giá bán và tiến độ từ các tài liệu chính thức."
+      },
+      {
+        "scene": 3,
+        "visual": "Cảnh người xem đối chiếu tài liệu hoặc trao đổi với đơn vị phụ trách; tránh thể hiện giấy tờ hay thông tin dự án cụ thể chưa được xác minh.",
+        "on_screen_text": "Kiểm chứng trước khi giao dịch",
+        "narration_excerpt": "Đối chiếu nguồn tin, đặt câu hỏi với đơn vị phụ trách và cân nhắc mức độ phù hợp với nhu cầu của bạn. Đây là nội dung giới thiệu sơ bộ; hãy kiểm chứng thông tin trước khi giao dịch."
+      }
+    ],
+    "facts_needing_source": [
+      "Hồ sơ pháp lý và tình trạng pháp lý của dự án: cần tài liệu chính thức để kiểm chứng trước khi công bố.",
+      "Thông tin quy hoạch: cần văn bản hoặc hồ sơ quy hoạch chính thức, được phép công bố.",
+      "Danh mục, loại hình và đặc điểm sản phẩm: cần tài liệu dự án đã được xác nhận.",
+      "Giá bán và chính sách bán hàng hiện hành: cần bảng giá, chính sách có nguồn và thời điểm hiệu lực rõ ràng.",
+      "Tiến độ dự án: cần thông tin cập nhật được Owner xác minh; không suy diễn dự án đã hoàn thành.",
+      "Tư cách và thông tin của đơn vị phụ trách bán hàng hoặc tư vấn: cần xác nhận trước khi đưa vào nội dung."
+    ]
+  },
+  "script_version": "sha256:91bb3ef2f759233fbba07542102d5c08588a4b8d04de39a139f87ff797f953bb",
+  "generated_script_sha256": "91bb3ef2f759233fbba07542102d5c08588a4b8d04de39a139f87ff797f953bb",
+  "narration": "Với khách hàng quan tâm đến bất động sản cao cấp, Vinhomes Green Paradise Cần Giờ là cái tên đáng để tìm hiểu. Trước khi đưa ra quyết định, hãy xem xét kỹ hồ sơ pháp lý, thông tin quy hoạch, sản phẩm, giá bán và tiến độ từ các tài liệu chính thức. Đối chiếu nguồn tin, đặt câu hỏi với đơn vị phụ trách và cân nhắc mức độ phù hợp với nhu cầu của bạn. Đây là nội dung giới thiệu sơ bộ; hãy kiểm chứng thông tin trước khi giao dịch.\n",
+  "human_approval": {
+    "task": "VF-MVP1-WINDOWS-NATIVE-FASTPATH-26",
+    "owner_message": "Duyệt",
+    "scope": "Content proposal and exact narration approved for locked Thuy Dung TTS and native MP4 rendering",
+    "recorded_at": "2026-10-05T08:37:07.221253+00:00",
+    "proposal_sha256": "91bb3ef2f759233fbba07542102d5c08588a4b8d04de39a139f87ff797f953bb",
+    "narration_file_sha256": "3d8e610a0254772607daf2f0faddb39cbe2f291b4037ba4dbd3573f05c8a3135",
+    "final_video_acceptance": "OWNER_ACCEPTED",
+    "final_video_approval_file": "C:\\NPD-Video-Factory\\outputs\\MVP1\\owner-final-video-approval.json"
+  }
+}

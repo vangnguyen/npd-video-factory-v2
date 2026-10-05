@@ -1,0 +1,170 @@
+{
+  "source_asset": "C:\\Users\\PC\\Downloads\\B-VIEW 02-Fix jpg.jpg",
+  "source_asset_sha256": "f00a8d17edfe22d9d01be07c84a0a42ef434faaf71b779ba7b46ed1b58d09ac4",
+  "asset_type": "PREEXISTING_CAN_GIO_PROJECT_RENDER",
+  "render_label": "Phối cảnh minh họa",
+  "portrait_crop": [
+    1340,
+    0,
+    3770,
+    4320
+  ],
+  "source_changes": "Crop and slow zoom only",
+  "scene3_binding": "Existing project render plus approved document-review/verification text; no people footage supplied",
+  "voice_sha256": "2b5f57c31c2514683a6465e408b2cbe20e949cc9e3921a84f68c28ab983a73e5",
+  "voice_profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+  "duration_seconds": 25.0,
+  "intro_seconds": 1.1,
+  "voice_speed": 1,
+  "audio_constant_gain": 1.0219107192473897,
+  "voice_rms_dbfs": -19.188259093431224,
+  "voice_peak_dbfs": -2.105268126052181,
+  "subtitle_timing": "Estimated phrase allocation inside measured sentence activity boundaries; no ASR or word aligner",
+  "subtitle_exact_narration_coverage": true,
+  "scenes": [
+    {
+      "start": 0,
+      "end": 6.8100000000000005,
+      "label": "01  /  TÌM HIỂU DỰ ÁN",
+      "title": "Một cái tên\nđáng tìm hiểu"
+    },
+    {
+      "start": 6.8100000000000005,
+      "end": 13.37,
+      "label": "02  /  TÀI LIỆU CHÍNH THỨC",
+      "title": "Xem xét thông tin\ntrước khi quyết định"
+    },
+    {
+      "start": 13.37,
+      "end": 18.520000000000003,
+      "label": "03  /  ĐỐI CHIẾU NGUỒN TIN",
+      "title": "Đặt câu hỏi\nvà cân nhắc nhu cầu"
+    },
+    {
+      "start": 18.520000000000003,
+      "end": 25.0,
+      "label": "04  /  KIỂM CHỨNG THÔNG TIN",
+      "title": "Kiểm chứng\ntrước khi giao dịch"
+    }
+  ],
+  "captions": [
+    {
+      "start": 1.1900000000000002,
+      "end": 3.5583333333333336,
+      "text": "Với khách hàng quan tâm đến\nbất động sản cao cấp,",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 3.5583333333333336,
+      "end": 5.056666666666667,
+      "text": "Vinhomes Green Paradise Cần Giờ",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 5.056666666666667,
+      "end": 6.41,
+      "text": "là cái tên đáng để tìm hiểu.",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 6.91,
+      "end": 8.183684210526316,
+      "text": "Trước khi đưa ra quyết định,",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 8.183684210526316,
+      "end": 9.502857142857142,
+      "text": "hãy xem xét kỹ hồ sơ pháp lý,",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 9.502857142857142,
+      "end": 10.86751879699248,
+      "text": "thông tin quy hoạch, sản phẩm,",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 10.86751879699248,
+      "end": 12.959999999999997,
+      "text": "giá bán và tiến độ\ntừ các tài liệu chính thức.",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 13.459999999999999,
+      "end": 14.401414141414142,
+      "text": "Đối chiếu nguồn tin,",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 14.401414141414142,
+      "end": 15.907676767676769,
+      "text": "đặt câu hỏi với đơn vị phụ trách",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 15.907676767676769,
+      "end": 18.12,
+      "text": "và cân nhắc mức độ phù hợp\nvới nhu cầu của bạn.",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 18.62,
+      "end": 19.986538461538462,
+      "text": "Đây là nội dung giới thiệu sơ bộ;",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    },
+    {
+      "start": 19.986538461538462,
+      "end": 21.85,
+      "text": "hãy kiểm chứng thông tin\ntrước khi giao dịch.",
+      "source": "ESTIMATED_WITH_MEASURED_SENTENCE_BOUNDARIES"
+    }
+  ],
+  "native_ffmpeg_command": [
+    "C:\\Users\\PC\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.exe",
+    "-hide_banner",
+    "-y",
+    "-i",
+    "portrait-source.jpg",
+    "-i",
+    "layout-overlay.png",
+    "-i",
+    "voice.wav",
+    "-filter_complex",
+    "[0:v]zoompan=z='1+0.05*on/749':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d=750:s=1080x1920:fps=30,format=yuv420p[bg];[bg][1:v]overlay=0:0,ass=subtitles.ass,scale=in_range=pc:out_range=tv:out_color_matrix=bt709,setparams=range=limited:color_primaries=bt709:color_trc=bt709:colorspace=bt709,format=yuv420p[v];[2:a]volume=1.02191072,adelay=1100,apad,atrim=duration=25[a]",
+    "-map",
+    "[v]",
+    "-map",
+    "[a]",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "veryfast",
+    "-crf",
+    "20",
+    "-pix_fmt",
+    "yuv420p",
+    "-color_range",
+    "tv",
+    "-colorspace",
+    "bt709",
+    "-color_primaries",
+    "bt709",
+    "-color_trc",
+    "bt709",
+    "-r",
+    "30",
+    "-c:a",
+    "aac",
+    "-b:a",
+    "192k",
+    "-ar",
+    "48000",
+    "-movflags",
+    "+faststart",
+    "-t",
+    "25",
+    "final.mp4"
+  ]
+}
