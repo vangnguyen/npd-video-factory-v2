@@ -20,6 +20,7 @@ from .pipeline import Config, LOCKS, Pipeline, REPO, verify_runtime
 from .store import Store
 from .hardening import failure
 from .ingestion import DOCUMENT_TYPES, DOCUMENT_MAX_BYTES, ingest_document
+from . import assemblyai_connection
 from .media import CONTENT_TYPES, IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, discard_media, ingest_media, media_path, project_assets
 
 
@@ -99,6 +100,7 @@ class LocalServer(ThreadingHTTPServer):
         self.config, self.store = config, Store(config.data_root)
         self.session = secrets.token_urlsafe(32)
         self.csrf = secrets.token_urlsafe(32)
+        self.connection_lock = threading.Lock()
         self.runner = Runner(self.store, pipeline or Pipeline(config))
         if start_worker:
             self.runner.start()
@@ -196,6 +198,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({"prompt": (LOCKS / "accepted-prompt.txt").read_text(encoding="utf-8")})
         if path == "/api/projects":
             return self.reply(self.server.store.list())
+        if path == "/api/connections/assemblyai":
+            return self.reply(assemblyai_connection.status(self.server.config))
         versions = re.fullmatch(r"/api/projects/([0-9a-f]{32})/versions", path)
         if versions:
             return self.reply(self.server.store.versions(versions[1]))
@@ -229,17 +233,18 @@ class Handler(BaseHTTPRequestHandler):
             if job["status"] != "succeeded" or job["revision"] != project["revision"] or not project["approval"]:
                 raise WorkflowError("VIDEO_STALE_OR_NOT_READY")
             return self.file(self.server.config.data_root / "jobs" / job["id"] / "final.mp4", video=True)
-        static = {"/": "native.html", "/native.html": "native.html", "/native.css": "native.css", "/native.mjs": "native.mjs"}
+        static = {"/": "native.html", "/native.html": "native.html", "/native.css": "native.css", "/native.mjs": "native.mjs",
+                  "/settings/assemblyai": "assemblyai.html", "/assemblyai.mjs": "assemblyai.mjs"}
         if path in static:
             return self.file(REPO / "apps/studio-web" / static[path])
         raise WorkflowError("ROUTE_NOT_FOUND", 404)
 
-    def read_body(self):
+    def read_body(self, max_bytes=22 * 1024 * 1024):
         try:
             length = int(self.headers.get("Content-Length", "0"))
         except ValueError:
             raise WorkflowError("INVALID_BODY_LENGTH", 400) from None
-        if not 1 <= length <= 22 * 1024 * 1024 or self.headers.get("Content-Type", "").split(";")[0] != "application/json":
+        if not 1 <= length <= max_bytes or self.headers.get("Transfer-Encoding") or self.headers.get("Content-Type", "").split(";")[0] != "application/json":
             raise WorkflowError("JSON_BODY_REQUIRED_MAX_22MB", 400)
         try:
             body = json.loads(self.rfile.read(length))
@@ -251,6 +256,17 @@ class Handler(BaseHTTPRequestHandler):
 
     def dispatch_post(self):
         self.boundary(write=True)
+        if self.path == "/api/connections/assemblyai":
+            body = self.read_body(max_bytes=2048)
+            if set(body) not in ({"key"}, {"verify_saved"}) or ("verify_saved" in body and body["verify_saved"] is not True):
+                raise WorkflowError("ASSEMBLYAI_CONNECTION_BODY_INVALID", 400)
+            if "key" in body and not isinstance(body["key"], str):
+                raise WorkflowError("ASSEMBLYAI_KEY_FORMAT_INVALID", 400)
+            with self.server.connection_lock:
+                with self.server.store.transaction() as con:
+                    if con.execute("SELECT count(*) FROM jobs WHERE status IN ('queued','running','retrying')").fetchone()[0]:
+                        raise WorkflowError("ASSEMBLYAI_CONNECTION_WAIT_FOR_JOBS", 409)
+                return self.reply(assemblyai_connection.connect(self.server.config, body.get("key")))
         upload_match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/media", self.path)
         if upload_match:
             return self.upload_media(upload_match[1])

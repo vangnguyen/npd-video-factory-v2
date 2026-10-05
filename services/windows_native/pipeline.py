@@ -26,6 +26,7 @@ LOCKS = Path(__file__).resolve().parent / "locks"
 class Config:
     runtime_root: Path = Path(r"C:\NPD-Video-Factory\runtime")
     secret_file: Path = Path(r"C:\NPD-Video-Factory\secrets\openai.env")
+    assemblyai_secret_file: Path = Path(r"C:\NPD-Video-Factory\secrets\assemblyai.dpapi")
     data_root: Path = Path(r"C:\NPD-Video-Factory\phase2")
     sdk_source: Path = Path(r"C:\NPD-Video-Factory\runtime\sdk\vieneu-85344322")
     git: Path = Path(r"C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd\git.exe")
@@ -45,7 +46,7 @@ class Config:
 
     def validate_data_root(self):
         root = self.data_root.resolve()
-        protected = [Path(r"C:\NPD-Video-Factory\outputs\MVP1"), self.runtime_root, self.secret_file.parent, REPO]
+        protected = [Path(r"C:\NPD-Video-Factory\outputs\MVP1"), self.runtime_root, self.secret_file.parent, self.assemblyai_secret_file.parent, REPO]
         if "sources" in {part.lower() for part in root.parts} or any(root == p.resolve() or p.resolve() in root.parents for p in protected):
             raise WorkflowError("DATA_ROOT_MUST_NOT_TOUCH_ACCEPTED_MVP1_RUNTIME_SECRETS_OR_SOURCE")
 

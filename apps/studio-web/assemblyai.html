@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kết nối AssemblyAI · Video Factory</title>
+  <link rel="stylesheet" href="/native.css">
+  <script type="module" src="/assemblyai.mjs"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a href="/" class="brand"><span class="brand-mark">V</span><span>VIDEO FACTORY<small>Windows Native Studio</small></span></a>
+    <a class="nav" href="/">← Trở về dự án</a>
+    <div class="runtime-card">AssemblyAI<p>Nhận diện lời nói tiếng Việt<br>Giữ thời gian từng từ</p></div>
+  </aside>
+  <main>
+    <header><div><p class="eyebrow">KẾT NỐI DỊCH VỤ</p><h1>AssemblyAI</h1></div><span class="badge">TRÊN PC CỦA BẠN</span></header>
+    <div class="steps"><div><b>01</b> Nhập khóa</div><div><b>02</b> Kiểm tra xác thực</div><div><b>03</b> Lưu kết nối</div></div>
+    <section class="card">
+      <div class="card-heading"><h2>Khóa truy cập AssemblyAI</h2><span class="version" id="connection-state">Đang kiểm tra trạng thái…</span></div>
+      <p class="hint">Lấy khóa trong tài khoản AssemblyAI của bạn và nhập trực tiếp tại đây. Khóa được mã hóa theo tài khoản Windows, lưu riêng ngoài mã nguồn và không hiển thị lại.</p>
+      <form id="connection-form" autocomplete="off">
+        <label for="assemblyai-key">API key</label>
+        <input id="assemblyai-key" name="assemblyai-key" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="512" required>
+        <p class="hint">Nút bên dưới gửi khóa đến AssemblyAI để kiểm tra xác thực, sau đó lưu trên PC. Bước này không gửi audio hoặc tạo transcript. Khi chạy ASR sau đó, audio sẽ được gửi đến AssemblyAI và có thể phát sinh phí.</p>
+        <div class="actions"><button class="primary" id="connect" type="submit" disabled>Kiểm tra & lưu kết nối</button><a class="secondary" href="https://www.assemblyai.com/dashboard" target="_blank" rel="noopener noreferrer">Mở tài khoản AssemblyAI ↗</a></div>
+      </form>
+      <button class="secondary" id="verify-saved" hidden>Kiểm tra khóa đã lưu</button>
+      <p class="message" id="connection-message" role="status" aria-live="polite" hidden></p>
+      <p class="hint" id="acceptance-note">Kết nối tài khoản là bước chuẩn bị. Phase 4 còn cần kiểm chứng ASR trên video có lời nói thật.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-05",
+  "environment": "isolated native server at 127.0.0.1:8030",
+  "input": "short (explicit invalid-format fixture, not a credential)",
+  "initial_state": "missing credential",
+  "invalid_format_error_visible": true,
+  "password_field_cleared_after_submit": true,
+  "password_input_type": "password",
+  "autocomplete": "off",
+  "reload_state": "missing credential",
+  "real_credential_entered": false,
+  "credential_saved": false,
+  "verification_http_calls": 0,
+  "transcription_calls": 0,
+  "audio_uploaded": false,
+  "status": "PASS for local form and invalid-input behavior; real connection NOT VERIFIED"
+}

@@ -2,7 +2,7 @@
 
 Updated: 2026-10-05, Asia/Saigon. Repo: `C:\NPD-Video-Factory\source`. Branch: `codex/vf-post-mvp-roadmap-execution-01`. Implementation HEAD: `177ea75606b6f9ced09b2810979c415a07ec2186`. Subsequent evidence/report commits do not change application behavior.
 
-**INTERNAL_PRODUCTION_READY = NO.** Phases 0–3 have evidence for the supported Windows Native scope. Phase 4 is stopped at the Owner credential/provider decision. Phases 5–8 have not been implemented or certified by this task. This is a progress report, not an internal production release certificate.
+**INTERNAL_PRODUCTION_READY = NO.** Phases 0–3 have evidence for the supported Windows Native scope. The Owner has now selected AssemblyAI for Phase 4; its local connection page is implemented and tested, but real verification awaits the Owner-entered credential. Phases 5–8 have not been implemented or certified by this task. This is a progress report, not an internal production release certificate.
 
 Windows Native Studio is running at <http://127.0.0.1:8026> with the new implementation. The original project remains revision 9 with approval null. Projects/jobs/events match their pre-upgrade row hash; SQLite integrity is `ok`. Existing accepted MVP video/audio bytes are unchanged. A consistent backup was made before the upgrade at `C:\NPD-Video-Factory\post-mvp-validation\owner-before-roadmap-upgrade-20261005.sqlite3`. Evidence: `evidence/post-mvp-roadmap/phase-3/live-upgrade-before.json` and `live-upgrade-after.json`.
 
@@ -117,6 +117,8 @@ BLOCKERS: Existing selected AssemblyAI profile has no Windows credential. Existi
 NEXT ACTION: Owner chooses OpenAI ASR with the existing saved key, or securely connects AssemblyAI. Reuse the chosen existing adapter and complete real speech extraction/transcription/timestamp/persistence/restart/failure evidence before PASS.
 
 The pause follows the task's explicit STOP CONDITIONS: “cần secret/credential chưa có” and “cần trả phí provider mới”. The asynchronous Owner question is pending. No answer or elapsed time is treated as approval.
+
+Update after Owner reply “Kết nối AssemblyAI”: the provider decision is resolved. `evidence/post-mvp-roadmap/phase-4/connection-acceptance.md` records the implemented local key-entry/authentication/encrypted-storage flow, nine new security checks and the actual isolated browser check. Latest supported tests: **66/66 native, 24/24 Studio PASS**. No real AssemblyAI credential has been entered, authentication request sent, audio uploaded or transcript created by this task. The remaining required Owner action is credential entry at <http://127.0.0.1:8026/settings/assemblyai>. Phase 4 still awaits real connection and speech-video acceptance.
 
 ## Remaining phases and release blockers
 
