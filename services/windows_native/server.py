@@ -7,13 +7,14 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import io
 import json
 import mimetypes
+import os
 from pathlib import Path
 import re
 import secrets
 import threading
 import time
 import uuid
-from urllib.parse import unquote
+from urllib.parse import unquote, parse_qs
 
 from .contracts import WorkflowError, file_sha
 from .pipeline import Config, LOCKS, Pipeline, REPO, verify_runtime
@@ -198,7 +199,11 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/defaults":
             return self.reply({"prompt": (LOCKS / "accepted-prompt.txt").read_text(encoding="utf-8")})
         if path == "/api/projects":
-            return self.reply(self.server.store.list())
+            return self.reply(self.server.store.list(include_archived=parse_qs(self.path.partition("?")[2]).get("archived")==["include"]))
+        if path == "/api/runtime-status":
+            ready=verify_runtime(self.server.config,full=False)
+            return self.reply({"tts":ready,"ffmpeg_available":True,"openai_key_saved":self.server.config.secret_file.is_file(),
+                              "openai_live_check_performed":False,"assemblyai":assemblyai_connection.status(self.server.config)})
         if path == "/api/connections/assemblyai":
             return self.reply(assemblyai_connection.status(self.server.config))
         versions = re.fullmatch(r"/api/projects/([0-9a-f]{32})/versions", path)
@@ -227,12 +232,21 @@ class Handler(BaseHTTPRequestHandler):
                     raise WorkflowError("IMAGE_NOT_FOUND", 404)
                 return self.file(self.server.config.data_root / "assets" / asset["id"])
             return self.reply(project)
-        match = re.fullmatch(r"/api/jobs/([0-9a-f]{32})/video", path)
+        artifact = re.fullmatch(r"/api/jobs/([0-9a-f]{32})/artifacts", path)
+        if artifact:
+            from .hardening import Artifacts
+            job=self.server.store.get_job(artifact[1])
+            checkpoint=Artifacts(self.server.config.data_root/"jobs"/job["id"],job).load("render")
+            if not checkpoint: raise WorkflowError("RENDER_ARTIFACTS_NOT_READY",404)
+            return self.reply({"job_id":job["id"],"project_id":job["project_id"],"revision":job["revision"],"artifacts":checkpoint["artifacts"],
+                              "qc":job["result"]["qc"],"final_review":job["final_review"],"output_directory":str(self.server.config.data_root/"jobs"/job["id"])})
+        match = re.fullmatch(r"/api/jobs/([0-9a-f]{32})/(video|final)", path)
         if match:
-            job = self.server.store.get_job(match[1])
-            project = self.server.store.get(job["project_id"])
-            if job["status"] != "succeeded" or job["revision"] != project["revision"] or not project["approval"]:
-                raise WorkflowError("VIDEO_STALE_OR_NOT_READY")
+            if match[2]=="final":
+                job=self.server.store.final_video(match[1])
+            else:
+                with self.server.store.transaction() as con:
+                    job,_=self.server.store.verified_render(match[1],con)
             return self.file(self.server.config.data_root / "jobs" / job["id"] / "final.mp4", video=True)
         static = {"/": "native.html", "/native.html": "native.html", "/native.css": "native.css", "/native.mjs": "native.mjs",
                   "/settings/assemblyai": "assemblyai.html", "/assemblyai.mjs": "assemblyai.mjs"}
@@ -283,9 +297,23 @@ class Handler(BaseHTTPRequestHandler):
             result = self.server.store.resume(resume[1])
             self.server.runner.wake.set()
             return self.reply(result)
+        final_review=re.fullmatch(r"/api/jobs/([0-9a-f]{32})/review",self.path)
+        if final_review:
+            if type(body.get("revision")) is not int: raise WorkflowError("REVISION_REQUIRED",400)
+            return self.reply(self.server.store.review_render(final_review[1],body["revision"],body.get("reviewer"),body.get("acknowledged"),body.get("decision"),body.get("note","")))
+        output_folder=re.fullmatch(r"/api/jobs/([0-9a-f]{32})/open-folder",self.path)
+        if output_folder:
+            if body: raise WorkflowError("OUTPUT_FOLDER_BODY_MUST_BE_EMPTY",400)
+            with self.server.store.transaction() as con:
+                job,_=self.server.store.verified_render(output_folder[1],con)
+            out=(self.server.config.data_root/"jobs"/job["id"]).resolve()
+            if self.server.config.data_root.resolve() not in out.parents:
+                raise WorkflowError("ARTIFACT_PATH_INVALID")
+            os.startfile(str(out))
+            return self.reply({"opened":True,"job_id":job["id"]})
         if self.path == "/api/projects":
             return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt")), 201)
-        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|jobs|auto-plan)", self.path)
+        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive)", self.path)
         if not match:
             raise WorkflowError("ROUTE_NOT_FOUND", 404)
         identifier, action = match[1], match[2]
@@ -296,6 +324,12 @@ class Handler(BaseHTTPRequestHandler):
             result = self.server.store.save(identifier, revision, prompt=body.get("prompt"), proposal=body.get("proposal"), scene_media=body.get("scene_media"), input_kind=body.get("input_kind"),scene_options=body.get("scene_options"),music_enabled=body.get("music_enabled"))
         elif action == "auto-plan":
             result = self.server.store.auto_plan(identifier,revision)
+        elif action == "duplicate":
+            result = self.server.store.duplicate(identifier,revision)
+        elif action == "archive":
+            result = self.server.store.archive(identifier,revision,body.get("archived"))
+        elif action == "reject":
+            result = self.server.store.reject_content(identifier,revision,body.get("reviewer"),body.get("note"))
         elif action == "image":
             asset = save_image(self.server.config, body)
             try:

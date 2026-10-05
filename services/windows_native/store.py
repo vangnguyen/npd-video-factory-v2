@@ -7,9 +7,9 @@ from pathlib import Path
 import sqlite3
 import uuid
 
-from .contracts import Proposal, WorkflowError, digest
+from .contracts import Proposal, WorkflowError, digest, file_sha
 from .media import MAX_ASSETS, project_assets, scene_bindings, selected_media, validate_bindings
-from .hardening import LIFECYCLE, failure, resume_boundary, version_components
+from .hardening import LIFECYCLE, Artifacts, failure, resume_boundary, version_components
 from .ingestion import project_input, validate_text
 
 
@@ -45,6 +45,15 @@ class Store:
                 CREATE TABLE IF NOT EXISTS job_runtime (
                     job_id TEXT PRIMARY KEY, retry_count INTEGER NOT NULL DEFAULT 0,
                     resume_count INTEGER NOT NULL DEFAULT 0);
+                CREATE TABLE IF NOT EXISTS project_dashboard (
+                    project_id TEXT PRIMARY KEY, archived INTEGER NOT NULL DEFAULT 0,
+                    updated_at TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS render_reviews (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, job_id TEXT NOT NULL,
+                    project_id TEXT NOT NULL, revision INTEGER NOT NULL,
+                    artifact_sha256 TEXT NOT NULL, snapshot_sha256 TEXT NOT NULL,
+                    decision TEXT NOT NULL, reviewer TEXT NOT NULL, note TEXT NOT NULL,
+                    created_at TEXT NOT NULL);
             """)
             # Additive history starts with the current preserved document, never invented past versions.
             for row in con.execute("SELECT * FROM projects").fetchall():
@@ -90,6 +99,8 @@ class Store:
         last = con.execute("SELECT payload FROM events WHERE action='job_step' AND project_id=? AND json_extract(payload,'$.job_id')=? ORDER BY id DESC LIMIT 1", (result["project_id"], result["id"])).fetchone() if con and result["error"] else None
         step = json.loads(last[0])["step"] if last else result["stage"]
         result["failure"] = failure(result["error"]["code"], result["error"].get("last_stage", step), result["error"].get("http_status")) if result["error"] else None
+        review=con.execute("SELECT * FROM render_reviews WHERE job_id=? ORDER BY id DESC LIMIT 1",(row["id"],)).fetchone() if con else None
+        result["final_review"]=dict(review) if review else None
         return result
 
     def version(self, con, identifier):
@@ -131,22 +142,101 @@ class Store:
     def get(self, identifier):
         with self.transaction() as con:
             project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (identifier,)).fetchone())
+            state=con.execute("SELECT archived FROM project_dashboard WHERE project_id=?",(identifier,)).fetchone()
+            project["archived"]=bool(state[0]) if state else False
             project["jobs"] = [self.job(r, con) for r in con.execute(
                 "SELECT * FROM jobs WHERE project_id=? ORDER BY created_at DESC", (identifier,))]
             return project
 
-    def list(self):
+    def list(self, include_archived=False):
         with self.transaction() as con:
-            return [self.project(row) for row in con.execute("SELECT * FROM projects ORDER BY updated_at DESC")]
+            return [{**self.project(row),"archived":bool(row["archived"])} for row in con.execute(
+                "SELECT p.*,coalesce(d.archived,0) archived FROM projects p LEFT JOIN project_dashboard d ON p.id=d.project_id WHERE ? OR coalesce(d.archived,0)=0 ORDER BY p.updated_at DESC",(bool(include_archived),))]
 
     def editable(self, con, identifier, revision):
         project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (identifier,)).fetchone())
         if project["revision"] != revision:
             raise WorkflowError("STALE_VERSION_RELOAD")
+        state=con.execute("SELECT archived FROM project_dashboard WHERE project_id=?",(identifier,)).fetchone()
+        if state and state[0]:
+            raise WorkflowError("PROJECT_ARCHIVED_RESTORE_FIRST")
         if con.execute("SELECT 1 FROM jobs WHERE project_id=? AND status IN ('queued','running','retrying')",
                        (identifier,)).fetchone():
             raise WorkflowError("PROJECT_BUSY")
         return project
+
+    def duplicate(self, identifier, revision):
+        with self.transaction() as con:
+            project=self.editable(con,identifier,revision); doc=project["document"]
+            stamp=now(); copy_id=uuid.uuid4().hex
+            doc["duplication"]={"project_id":identifier,"revision":revision,"document_sha256":digest(doc),"created_at":stamp}
+            doc["name"]=doc["name"][:139]+" — bản sao"
+            con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",(copy_id,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
+            self.version(con,copy_id)
+            self.event(con,copy_id,"project_duplicated_unapproved",{"source_project":identifier,"source_revision":revision})
+        return self.get(copy_id)
+
+    def archive(self, identifier, revision, archived):
+        if type(archived) is not bool:
+            raise WorkflowError("ARCHIVE_BOOLEAN_REQUIRED",400)
+        with self.transaction() as con:
+            project=self.project(con.execute("SELECT * FROM projects WHERE id=?",(identifier,)).fetchone())
+            if project["revision"]!=revision: raise WorkflowError("STALE_VERSION_RELOAD")
+            if con.execute("SELECT 1 FROM jobs WHERE project_id=? AND status IN ('queued','running','retrying')",(identifier,)).fetchone():
+                raise WorkflowError("PROJECT_BUSY")
+            con.execute("INSERT INTO project_dashboard VALUES(?,?,?) ON CONFLICT(project_id) DO UPDATE SET archived=excluded.archived,updated_at=excluded.updated_at",(identifier,int(archived),now()))
+            self.event(con,identifier,"project_archived" if archived else "project_restored",{"revision":revision,"recoverable":True})
+        return self.get(identifier)
+
+    def reject_content(self, identifier, revision, reviewer, note):
+        if not isinstance(reviewer,str) or not 1<=len(reviewer.strip())<=100 or not isinstance(note,str) or not 1<=len(note.strip())<=2000:
+            raise WorkflowError("REJECTION_NAME_REASON_REQUIRED",400)
+        with self.transaction() as con:
+            self.editable(con,identifier,revision)
+            con.execute("UPDATE projects SET revision=?,approval=NULL,updated_at=? WHERE id=?",(revision+1,now(),identifier))
+            self.version(con,identifier)
+            self.event(con,identifier,"human_content_rejected",{"revision":revision,"reviewer":reviewer.strip(),"note":note.strip()})
+        return self.get(identifier)
+
+    def verified_render(self, identifier, con):
+        job=self.job(con.execute("SELECT * FROM jobs WHERE id=?",(identifier,)).fetchone(),con)
+        project=self.editable(con,job["project_id"],job["revision"])
+        if job["kind"]!="render" or job["status"]!="succeeded" or not project["approval"] or digest(job["snapshot"]["document"])!=digest(project["document"]) or digest(job["snapshot"]["approval"])!=digest(project["approval"]):
+            raise WorkflowError("VIDEO_STALE_OR_NOT_READY")
+        checkpoint=Artifacts(self.root/"jobs"/identifier,job).load("render")
+        if not checkpoint or checkpoint["result"]!=job["result"] or not job["result"]["qc"]["passed"]:
+            raise WorkflowError("RENDER_CHECKPOINT_OR_QC_REQUIRED")
+        actual=file_sha(self.root/"jobs"/identifier/"final.mp4")
+        if actual!=job["result"]["qc"]["final_sha256"]:
+            raise WorkflowError("RENDER_ARTIFACT_CHANGED")
+        return job, actual
+
+    def review_render(self, identifier, revision, reviewer, acknowledged, decision, note=""):
+        if (decision=="approve" and acknowledged is not True) or not isinstance(reviewer,str) or not 1<=len(reviewer.strip())<=100:
+            raise WorkflowError("HUMAN_FINAL_WATCH_LISTEN_REVIEW_REQUIRED",400)
+        if not isinstance(decision,str) or decision not in {"approve","reject"} or not isinstance(note,str) or len(note)>2000 or (decision=="reject" and not note.strip()):
+            raise WorkflowError("FINAL_REVIEW_DECISION_REASON_INVALID",400)
+        with self.transaction() as con:
+            job, actual=self.verified_render(identifier,con)
+            if revision!=job["revision"]: raise WorkflowError("STALE_VERSION_RELOAD")
+            values={"job_id":identifier,"project_id":job["project_id"],"revision":revision,"artifact_sha256":actual,
+                    "snapshot_sha256":digest(job["snapshot"]),"decision":decision,"reviewer":reviewer.strip(),"note":note.strip()}
+            previous=job["final_review"]
+            if not previous or any(previous[k]!=v for k,v in values.items()):
+                con.execute("INSERT INTO render_reviews(job_id,project_id,revision,artifact_sha256,snapshot_sha256,decision,reviewer,note,created_at) VALUES(?,?,?,?,?,?,?,?,?)",tuple(values.values())+(now(),))
+                self.event(con,job["project_id"],"human_final_video_"+decision,values)
+            if decision=="reject":
+                con.execute("UPDATE projects SET revision=?,approval=NULL,updated_at=? WHERE id=?",(revision+1,now(),job["project_id"]))
+                self.version(con,job["project_id"])
+        return self.get(job["project_id"])
+
+    def final_video(self, identifier):
+        with self.transaction() as con:
+            job, actual=self.verified_render(identifier,con)
+            review=job["final_review"]
+            if not review or review["decision"]!="approve" or review["artifact_sha256"]!=actual or review["snapshot_sha256"]!=digest(job["snapshot"]):
+                raise WorkflowError("HUMAN_FINAL_VIDEO_APPROVAL_REQUIRED")
+        return job
 
     def save(self, identifier, revision, *, prompt=None, proposal=None, asset=None, scene_media=None, input_kind=None, scene_options=None, music_enabled=None):
         if prompt is not None and input_kind != "media" and (not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 20000):
@@ -240,11 +330,13 @@ class Store:
             from .editor import validate_plan
             validate_plan(doc)
             selected_media(doc)
-            approval = {"revision": revision, "snapshot_sha256": digest(doc),
-                        "reviewer": reviewer.strip(), "approved_at": now(), "source": "local_ui_human_review"}
-            con.execute("UPDATE projects SET approval=?,updated_at=? WHERE id=?",
-                        (json.dumps(approval, ensure_ascii=False), now(), identifier))
-            self.event(con, identifier, "human_content_approved", approval)
+            previous=project["approval"]
+            if not previous or previous["revision"]!=revision or previous["snapshot_sha256"]!=digest(doc):
+                approval = {"revision": revision, "snapshot_sha256": digest(doc),
+                            "reviewer": reviewer.strip(), "approved_at": now(), "source": "local_ui_human_review"}
+                con.execute("UPDATE projects SET approval=?,updated_at=? WHERE id=?",
+                            (json.dumps(approval, ensure_ascii=False), now(), identifier))
+                self.event(con, identifier, "human_content_approved", approval)
         return self.get(identifier)
 
     def enqueue(self, identifier, revision, kind, request_key):
@@ -311,6 +403,7 @@ class Store:
                 doc = project["document"]
                 doc["proposal"] = Proposal.model_validate(result["proposal"]).model_dump()
                 doc["scene_media"] = []  # New proposal requires deliberate source choices.
+                doc.pop("edit_plan",None)
                 con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                             (project["revision"] + 1, json.dumps(doc, ensure_ascii=False), now(), project["id"]))
                 self.version(con, project["id"])

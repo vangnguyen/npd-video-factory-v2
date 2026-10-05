@@ -311,8 +311,11 @@ class HttpTests(unittest.TestCase):
         p=self.server.store.save(p["id"],1,proposal=proposal(),asset={"id":"image"})
         p=self.server.store.approve(p["id"],2,"Owner",True)
         job=self.server.store.enqueue(p["id"],2,"render",uuid.uuid4().hex)
-        self.server.store.claim();self.server.store.finish(job,result={"qc":{"passed":True}})
         path=self.server.config.data_root/"jobs"/job["id"];path.mkdir(parents=True);(path/"final.mp4").write_bytes(b"0123456789")
+        from services.windows_native.hardening import Artifacts
+        result={"qc":{"passed":True,"final_sha256":file_sha(path/"final.mp4")},"explicit_transport_fixture":True}
+        Artifacts(path,job).commit("render",[path/"final.mp4"],result)
+        self.server.store.claim();self.server.store.finish(job,result=result)
         url=f"/api/jobs/{job['id']}/video"
         status,raw=self.request("GET",url,headers={"Range":"bytes=2-5"})
         self.assertEqual((status,raw),(206,b"2345"))

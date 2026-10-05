@@ -1,0 +1,107 @@
+{
+  "status": "PASS",
+  "scope": "non-CLI technical workflow; explicit isolated fixture approvals, not Owner release acceptance",
+  "data_root": "C:\\NPD-Video-Factory\\post-mvp-validation\\phase6-dashboard-20261005",
+  "restart_tables_unchanged": {
+    "projects": true,
+    "jobs": true,
+    "events": true,
+    "project_versions": true,
+    "project_dashboard": true,
+    "render_reviews": true
+  },
+  "sqlite_integrity": "ok",
+  "ui_steps": [
+    "create existing-script project",
+    "prepare deterministic draft",
+    "upload five files",
+    "auto-plan",
+    "reorder and save",
+    "restore order and edit title",
+    "view ten history versions",
+    "upload music",
+    "fixture content approval",
+    "actual preview render/play",
+    "missing watch/listen confirmation refused",
+    "explicit fixture final decision and exact-hash download",
+    "reject/revise selected source/reapprove/rerender",
+    "duplicate unapproved",
+    "archive readonly/restore",
+    "actual server restart and play same current candidate"
+  ],
+  "outputs": [
+    {
+      "job_id": "86427a2bbd3c4fe69ce6fcdbc4bdfac4",
+      "revision": 12,
+      "final_mp4": "C:\\NPD-Video-Factory\\post-mvp-validation\\phase6-dashboard-20261005\\jobs\\86427a2bbd3c4fe69ce6fcdbc4bdfac4\\final.mp4",
+      "qc": {
+        "checks": {
+          "portrait_1080x1920": true,
+          "h264_aac": true,
+          "fps_30": true,
+          "yuv420p": true,
+          "audio_48khz": true,
+          "full_decode": true,
+          "duration_complete": true,
+          "av_duration_match": true,
+          "finite_audible_audio": true,
+          "no_hard_clipping": true,
+          "no_black_intervals": true
+        },
+        "passed": true,
+        "final_sha256": "b07d7f11e25bf597f7e7c0e391b7daa2c28be7fdf3fa00b74e5559b0822499c5",
+        "duration_seconds": 25.0,
+        "final_bytes": 4360160,
+        "human_final_video_accepted": false,
+        "published": false
+      },
+      "final_review": {
+        "id": 2,
+        "job_id": "86427a2bbd3c4fe69ce6fcdbc4bdfac4",
+        "project_id": "c00a78f8a4504a03a2d43f443a11d0e9",
+        "revision": 12,
+        "artifact_sha256": "b07d7f11e25bf597f7e7c0e391b7daa2c28be7fdf3fa00b74e5559b0822499c5",
+        "snapshot_sha256": "70220ba24089cc0283c72c704af9b3065708e9bcdf28b58e5950f441f5dc5bb7",
+        "decision": "reject",
+        "reviewer": "INTEGRATION FIXTURE — NOT OWNER ACCEPTANCE",
+        "note": "INTEGRATION FIXTURE: đổi nguồn cảnh 2 và tạo bản xem trước mới.",
+        "created_at": "2026-10-05T14:39:42.309288+00:00"
+      },
+      "new_tts_inferences": 0
+    },
+    {
+      "job_id": "5cdf34d0bd3943ca8ea281a121f1a80f",
+      "revision": 14,
+      "final_mp4": "C:\\NPD-Video-Factory\\post-mvp-validation\\phase6-dashboard-20261005\\jobs\\5cdf34d0bd3943ca8ea281a121f1a80f\\final.mp4",
+      "qc": {
+        "checks": {
+          "portrait_1080x1920": true,
+          "h264_aac": true,
+          "fps_30": true,
+          "yuv420p": true,
+          "audio_48khz": true,
+          "full_decode": true,
+          "duration_complete": true,
+          "av_duration_match": true,
+          "finite_audible_audio": true,
+          "no_hard_clipping": true,
+          "no_black_intervals": true
+        },
+        "passed": true,
+        "final_sha256": "73def68dca14c6d778e70d80b472d2854b134ad0650ac5e611f0a5ecccf51f7b",
+        "duration_seconds": 25.0,
+        "final_bytes": 4808118,
+        "human_final_video_accepted": false,
+        "published": false
+      },
+      "final_review": {},
+      "new_tts_inferences": 0
+    }
+  ],
+  "download_sha256_matches": true,
+  "new_provider_calls": 0,
+  "new_tts_inferences": 0,
+  "human_owner_final_acceptance": false,
+  "fixture_voice_provenance": "unchanged accepted WAV and sentence activity; scene IDs projected explicitly to same ordered sentences; original metadata unchanged",
+  "current_candidate_final_approval": null
+}

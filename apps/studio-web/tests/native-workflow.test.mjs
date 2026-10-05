@@ -1,12 +1,13 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending,defaultSceneOptions,musicType} from '../native.mjs';
+import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending,defaultSceneOptions,musicType,finalApproved} from '../native.mjs';
 
 test('Render UI requires current approval, saved edits and idle job',()=>{
   const p={revision:3,approval:{revision:3},jobs:[]};
   assert.equal(canRender(p,false,false),true);
   for(const value of [null,{...p,approval:null},{...p,approval:{revision:2}},{...p,jobs:[{status:'running'}]},{...p,jobs:[{status:'queued'}]}])assert.equal(canRender(value,false,false),false);
   assert.equal(canRender(p,true,false),false);assert.equal(canRender(p,false,true),false);
+  assert.equal(canRender({...p,archived:true},false,false),false);
 });
 test('Each scene requires one source from its project library',()=>{
   const doc={assets:[{id:'photo',kind:'image'},{id:'clip',kind:'video'}],proposal:{visual_brief:[{scene:1},{scene:2},{scene:3}]},scene_media:[{scene:1,asset_id:'photo'},{scene:2,asset_id:'clip'},{scene:3,asset_id:'photo'}]};
@@ -55,4 +56,9 @@ test('Video/image changes reset incompatible motion and source time',()=>{
   assert.equal(defaultSceneOptions(1,{kind:'image'},old).source_start,0);
   assert.equal(defaultSceneOptions(1,{kind:'image'},null).motion,'none');
   assert.equal(musicType({name:'MUSIC.WAV'}),'audio/wav');assert.equal(musicType({name:'music.MP3'}),'audio/mpeg');assert.equal(musicType({name:'bad.mp4'}),'');
+});
+test('Final download requires a review of the same video hash and revision',()=>{
+  const job={revision:3,result:{qc:{final_sha256:'bytes-a'}},final_review:{decision:'approve',revision:3,artifact_sha256:'bytes-a'}};
+  assert.equal(finalApproved(job),true);
+  for(const review of [null,{...job.final_review,decision:'reject'},{...job.final_review,revision:2},{...job.final_review,artifact_sha256:'other'}])assert.equal(finalApproved({...job,final_review:review}),false);
 });

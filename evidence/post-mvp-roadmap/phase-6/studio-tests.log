@@ -1,0 +1,35 @@
+✔ human session header is attached without mutating caller headers (1.7123ms)
+✔ missing human session fails closed (0.5076ms)
+✔ formats editor timecodes and zoom deterministically (1.5904ms)
+✔ labels version-bound approval and production render states (3.4982ms)
+✔ labels publishing dry-run truthfully and flattens gate evidence (0.5397ms)
+✔ layout failure offers an editing remedy, not a hidden text clamp (0.35ms)
+✔ snaps pointer placement to quarter seconds (0.3082ms)
+✔ computes timeline clip placement and respects track compatibility (0.3806ms)
+✔ labels ready, stale and running previews without overstating readiness (0.3354ms)
+✔ renders analytics truth states and never turns missing metrics into zero (28.3548ms)
+✔ builds a stable V2-10 metric panel from normalized nullable metrics (0.6861ms)
+✔ storyboard source identity is explicit and never a fake analysis (1.2394ms)
+✔ proposal cannot overwrite unsaved kind/script/original/facts (0.36ms)
+✔ Render UI requires current approval, saved edits and idle job (1.3275ms)
+✔ Each scene requires one source from its project library (0.3428ms)
+✔ Legacy image projects retain all scene choices without rewriting snapshot (0.1878ms)
+✔ Local multi-file selection accepts only supported image and video extensions (0.2025ms)
+✔ Only successful video bound to current approved version is visible (0.2076ms)
+✔ Retrying job blocks editing and another render until its receipt completes (0.1263ms)
+✔ Document chooser passes declared MIME while server must validate actual content (0.3666ms)
+✔ Changed source needs new analysis while existing source keeps its result (0.2246ms)
+✔ Video/image changes reset incompatible motion and source time (0.9847ms)
+✔ Final download requires a review of the same video hash and revision (0.3529ms)
+✔ declares all eight required radar views (1.3944ms)
+✔ radar view rules remain deterministic and explainable (0.3921ms)
+✔ filters by view, platform and search while sorting by estimate (2.1576ms)
+✔ formats scores, VND and Vietnamese lifecycle labels (25.8029ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 211.4356
