@@ -2,7 +2,7 @@
 
 Updated: 2026-10-05, Asia/Saigon. Repo: `C:\NPD-Video-Factory\source`. Branch: `codex/vf-post-mvp-roadmap-execution-01`. Implementation HEAD: `6e0c7f6db1eadaa68c880b597e36da64a6f0b018`. Subsequent evidence/report commits do not change application behavior.
 
-**INTERNAL_PRODUCTION_READY = NO.** Phases 0–4 have technical evidence for the supported Windows Native scope. AssemblyAI is connected, and a real speech video produced a persisted transcript with valid native word timestamps. Its separately prepared editorial draft is unapproved and needs human accuracy checking. Phases 5–8 remain open; this is a progress report, not an internal production release certificate.
+**INTERNAL_PRODUCTION_READY = NO.** Phases 0–7 have technical evidence for the supported Windows Native scope. AssemblyAI is connected, and a real speech video produced a persisted transcript with valid native word timestamps. The editor, approval dashboard and frozen brand/template choices are implemented. Phase 8 remains open for production-flow coverage and at least ten actual human-reviewed final videos; technical fixtures do not satisfy that gate.
 
 Windows Native Studio is running at <http://127.0.0.1:8026> with the new implementation. The original project remains revision 9 with approval null. Projects/jobs/events match their pre-upgrade row hash; SQLite integrity is `ok`. Existing accepted MVP video/audio bytes are unchanged. A consistent backup was made before the upgrade at `C:\NPD-Video-Factory\post-mvp-validation\owner-before-roadmap-upgrade-20261005.sqlite3`. Evidence: `evidence/post-mvp-roadmap/phase-3/live-upgrade-before.json` and `live-upgrade-after.json`.
 
@@ -164,19 +164,40 @@ BLOCKERS / LIMITS: These test-operator decisions explicitly say `INTEGRATION FIX
 
 NEXT ACTION: Phase 7 configurable brand profiles/templates, then prepare concrete human-review candidates and close Phase 8 when its actual acceptance records exist.
 
+## Phase 7
+
+PHASE: 7 — Brand / Template System
+
+STATUS: PASS supported native technical scope; seed brand assets are explicit references.
+
+HEAD SHA: `9c3e9e9`.
+
+FILES CHANGED: Frozen BrandProfile/VideoTemplate models and JSON catalog, configured native editor/renderer/store/server, Studio selection controls, seven brand regressions, bounded early-refusal transport fix/regression, four-real-render script and Phase 7 evidence.
+
+TESTS: 103/103 native, 27/27 Studio PASS. Four real FFmpeg renders cover property/news/personal/event purposes and actual 30/45/60-second outputs, all QC PASS. Actual browser NPD/property30 → Vang/personal45 → reload → persisted selection/approval invalidation PASS.
+
+EVIDENCE: `evidence/post-mvp-roadmap/phase-7/acceptance.md`, `brand-real-render.json`, `ui-verification.json`, `studio-brand.png`, extracted render frames and test logs. Real outputs at `C:\NPD-Video-Factory\post-mvp-validation\phase7-brand-20261005`.
+
+CAPABILITIES ADDED: Two named reference brands plus generic profile, twelve portrait templates, validated configurable logo/font/palette/subtitle/CTA/intro/outro/music/safe-margin/disclaimer settings, frozen snapshot hashes, locked voice, exact-duration hold/refuse policy and pre-TTS asset checks. Later catalog edits cannot alter selected snapshots. Style changes preserve source/options/music and invalidate approval; legacy stored documents remain unchanged.
+
+REGRESSIONS: Supported suites PASS. Initial early header rejections exposed Windows TCP resets; the server now flushes/half-closes and drains bounded unread bytes/time, with a 288 KiB regression and original full-audio security tests retained. Main Studio was backed up/restarted; all seven original tables and accepted MP4/WAV match their pre-upgrade values, SQLite integrity `ok`, original Owner revision 9/unapproved. Original browser draft untouched. `live-upgrade.json` records this check.
+
+BLOCKERS / LIMITS: No official logos/assets are fabricated; fonts/palettes/margins are references. Long target holds (8.04/23.04/38.04 seconds after this short reference voice) require pacing review and do not certify useful production content. Four isolated renders use exact accepted WAV with explicit fixture approvals and zero new provider/TTS calls. Ten real human final reviews remain open.
+
+NEXT ACTION: Prepare ten concrete unapproved production review drafts, then actual human script/source review, fresh TTS/render and human watch/listen approval. Keep release readiness NO until the complete Phase 8 matrix is evidenced.
+
 ## Remaining phases and release blockers
 
 | Phase | Status in this task | Required next acceptance |
 | --- | --- | --- |
 | 5 — Scene Intelligence / Auto Editor | PASS technical native scope | Final human viewing and platform/device overlay review remain release requirements |
 | 6 — Approval Dashboard | PASS technical native scope | New production content and final decisions remain actual-human steps |
-| 7 — Brand / Templates | NOT STARTED | Configurable NPD/Vang Nguyễn profiles and templates; reference configs where official assets are missing |
+| 7 — Brand / Templates | PASS technical native scope | Official assets absent; reference margins and production pacing require human review |
 | 8 — Internal Production Release | NOT RUN | Full input/flow matrix, automated checks, restart recovery, hashes and at least ten final videos with human watch/listen approval |
 
 | Severity | Blocker | Closing evidence |
 | --- | --- | --- |
 | P0 | None observed in the supported native work; no release certificate is issued | Existing data/artifact integrity remains verified |
-| P1 | Brand/Template gate unfinished | Phase 7 implementation, tests and reference profiles |
 | P1 | Ten final human-reviewed production videos and full release matrix absent | Phase 8 acceptance records; twenty fixture jobs do not substitute |
 | P1 | Legacy Windows test baseline: 46 failures, 24 errors after excluding POSIX collection blockers | Fix relevant compatibility gaps or document an explicitly accepted supported release scope; never label this suite PASS |
 | P2 | Subtitle word alignment and historical original-upload provenance gaps | Real timing/alignment evidence; retain explicit provenance limits for historical media |
