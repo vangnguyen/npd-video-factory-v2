@@ -33,6 +33,7 @@ def validate_text(kind, text):
 
 
 def project_input(doc, version):
+    from .asr import analysis_for_asset
     kind = doc.get("input_kind", "prompt")
     text = doc.get("prompt", "")
     texts = [] if not text else [{"kind": kind, "text": text, "source": "user",
@@ -46,18 +47,23 @@ def project_input(doc, version):
         workflow = "REVIEW_EXISTING_SCRIPT"
     elif texts or result["document_assets"]:
         workflow = "GENERATE_CONTENT_WITH_HUMAN_REVIEW"
-    elif any(a.get("has_audio") or a.get("audio_present") for a in result["video_assets"]):
+    elif any((a.get("has_audio") or a.get("audio_present")) and not (analysis_for_asset(doc, a) or {}).get("transcript") for a in result["video_assets"]):
         workflow = "ASR_REQUIRED"
+    elif any((analysis_for_asset(doc, a) or {}).get("transcript") for a in result["video_assets"]):
+        workflow = "REVIEW_TRANSCRIPT"
     else:
         workflow = "MEDIA_REQUIRES_BRIEF"
     result["metadata"] = {"workflow": workflow, "mixed": sum(bool(result[k]) for k in
                 ("text_inputs", "image_assets", "video_assets", "document_assets")) > 1,
-                "untranscribed_video_audio": any(a.get("has_audio") or a.get("audio_present") for a in result["video_assets"])}
+                "untranscribed_video_audio": any((a.get("has_audio") or a.get("audio_present")) and not (analysis_for_asset(doc, a) or {}).get("transcript") for a in result["video_assets"]),
+                "media_analysis": [{"asset_id": a["id"], "analysis_sha256": r["analysis_sha256"], "transcript_linked": bool(r.get("transcript"))}
+                                   for a in assets if (r := analysis_for_asset(doc, a))]}
     result["hash"] = digest(result)
     return result
 
 
 def provider_context(doc):
+    from .asr import analysis_for_asset
     inputs = project_input(doc, 0)
     workflow = inputs["metadata"]["workflow"]
     if workflow == "ASR_REQUIRED":
@@ -67,14 +73,34 @@ def provider_context(doc):
     parts = [doc.get("prompt", "")]
     for document in inputs["document_assets"]:
         parts.append("Tài liệu người dùng, chưa xác minh:\n" + document["extracted_text"])
+    for asset in inputs["video_assets"]:
+        record = analysis_for_asset(doc, asset)
+        if record and record.get("transcript"):
+            parts.append("Lời nói từ video nguồn do AssemblyAI nhận diện, có thể sai và chưa xác minh dữ kiện:\n" +
+                         " ".join(s["text"] for s in record["transcript"]["segments"]))
     if inputs["image_assets"] or inputs["video_assets"]:
-        parts.append("Media nguồn chỉ đã được kiểm tra kỹ thuật. Chưa có nhận diện nội dung ảnh/video hoặc transcript; không suy đoán từ tên file.")
+        parts.append("Media chỉ có mô tả kỹ thuật và transcript được nêu rõ nếu đã nhận diện. Không suy đoán nội dung từ tên file hoặc thông số ảnh/video.")
         parts.append(json.dumps([{k: a[k] for k in ("id", "kind", "width", "height", "duration_seconds") if k in a}
                       for a in inputs["image_assets"] + inputs["video_assets"]], ensure_ascii=False))
     text = "\n\n".join(p for p in parts if p)
     if len(text) > 20000:
         raise WorkflowError("INPUT_CONTEXT_EXCEEDS_20000_EDIT_EXPLICITLY", 400)
     return text
+
+
+def transcript_script(doc):
+    """Exact provider text is prepared for review without a generation call."""
+    if doc.get("input_kind") != "media" or doc.get("prompt") or doc.get("documents"):
+        return None
+    from .asr import analysis_for_asset, pending_speech
+    if pending_speech(doc):
+        return None
+    values = []
+    for asset in project_assets(doc):
+        record = analysis_for_asset(doc, asset)
+        if record and record.get("transcript"):
+            values.extend(s["text"] for s in record["transcript"]["segments"])
+    return " ".join(values) if values else None
 
 
 def existing_script(doc):

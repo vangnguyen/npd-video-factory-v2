@@ -9,6 +9,7 @@ export const mediaReady = doc => {
 };
 export const mediaType = file => ({jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",mp4:"video/mp4",mov:"video/quicktime"})[file.name.split(".").pop().toLowerCase()] ?? "";
 export const documentType = file => ({txt:"text/plain",md:"text/markdown",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})[file.name.split(".").pop().toLowerCase()] ?? "";
+export const mediaAnalysisPending = doc => mediaLibrary(doc).some(a=>!(doc?.media_analysis??[]).some(r=>r.asset_id===a.id&&r.source_sha256===a.sha256));
 
 const errors = {
   HUMAN_APPROVAL_REQUIRED_BEFORE_TTS:"Cần duyệt đúng phiên bản nội dung trước khi tạo giọng đọc.",
@@ -39,9 +40,13 @@ const errors = {
   OPENAI_TIMEOUT_OUTCOME_UNKNOWN_NO_RETRY:"OpenAI hết thời gian chờ. Không tự gọi lại; lần gọi trước có thể đã xử lý.",
   AuthenticationError:"Key OpenAI bị từ chối.", RateLimitError:"OpenAI từ chối do giới hạn sử dụng. Job đã dừng.",
   TTS_CHILD_FAILED:"Tạo giọng đọc thất bại. Job đã dừng.", MEDIA_QC_FAILED:"Video chưa vượt qua kiểm tra chất lượng.",
+  ASR_PROVIDER_UNAVAILABLE_NO_TRANSCRIPT:"Phân tích video có lời nói trước khi tạo nội dung. Nếu chưa kết nối, mở Kết nối AssemblyAI. Chưa có transcript để dùng.",
+  ASR_NO_UNANALYZED_MEDIA:"Các nguồn đã được phân tích hoặc chưa có nguồn để phân tích.",
+  ASR_EXISTING_JOB_RESUME_REQUIRED:"Nguồn này đã có job nhận diện. Dùng Tiếp tục từ bước đã lưu; không tạo yêu cầu nhận diện trùng.",
+  ASR_OUTCOME_UNKNOWN_NO_REPLAY:"Yêu cầu AssemblyAI chưa rõ kết quả. Hệ thống dừng để tránh tính phí lần nữa; cần kiểm tra job trong tài khoản.",
 };
 const statusNames = {queued:"Đang chờ",running:"Đang chạy",retrying:"Đang thử lại có giới hạn",awaiting_review:"Đề xuất sẵn sàng · cần bạn duyệt",succeeded:"Video đã render · hãy xem lại",failed:"Job đã dừng do lỗi",interrupted:"Job bị ngắt · chưa chạy lại"};
-const stageNames = {starting:"Bắt đầu",prepare_existing_script:"Đang chuẩn bị kịch bản đã nhập",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video"};
+const stageNames = {starting:"Bắt đầu",prepare_existing_script:"Đang chuẩn bị kịch bản đã nhập",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video",asr_local_media_analysis:"Đang phân tích cảnh nguồn",asr_extract_audio:"Đang tách âm thanh",asr_upload:"Đang gửi âm thanh đến AssemblyAI",asr_create_transcript:"Đang nhận diện lời nói",asr_observe_known_transcript:"Đang chờ kết quả nhận diện",resuming_verified_asr:"Đang khôi phục kết quả đã lưu"};
 
 if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
@@ -62,10 +67,11 @@ if (typeof document !== "undefined") {
     $("new-project").disabled=busy||dirty;
     $("project-name").disabled=Boolean(project)||busy;
     $("generate").disabled=!project||blocked||dirty;
-    $("generate").textContent=project?.document.input_kind==="script"?"Chuẩn bị kịch bản để bạn duyệt":"Tạo đề xuất nội dung ↗";
+    $("generate").textContent=project?.document.input_kind==="script"||project?.input?.metadata.workflow==="REVIEW_TRANSCRIPT"?"Chuẩn bị kịch bản để bạn duyệt":"Tạo đề xuất nội dung ↗";
     $("upload-documents").disabled=!project||blocked||dirty;
     $("approve").disabled=!mediaReady(project?.document)||blocked||dirty||Boolean(project.approval);
     $("upload-media").disabled=!project||blocked||dirty;
+    $("analyze-media").disabled=!project||blocked||dirty||!mediaAnalysisPending(project.document);
     $("render").disabled=!canRender(project,dirty,busy);
     $("save-prompt").textContent=project?"Lưu yêu cầu":"Tạo dự án";
     $("save-proposal").disabled=!project?.document.proposal||blocked;
@@ -102,6 +108,11 @@ if (typeof document !== "undefined") {
     const assets=mediaLibrary(project?.document),bindings=mediaBindings(project?.document);
     $("media-count").textContent=`${assets.length} nguồn`;
     $("media-library").innerHTML=assets.map(a=>`<figure class="media-tile"><img src="${thumbnail(a)}" alt="${esc(a.filename)}" loading="lazy"><figcaption><span>${a.kind==="video"?"▷ VIDEO":"ẢNH"}</span><strong>${esc(a.filename)}</strong>${a.kind==="video"?`<small>${Number(a.duration_seconds).toFixed(1)} giây · âm thanh gốc tắt</small>`:""}<small>${a.illustration?"Phối cảnh minh họa":"Nguồn của bạn"}</small></figcaption></figure>`).join("")||'<p class="hint">Chưa có nguồn. Chọn ảnh/video để thêm vào thư viện.</p>';
+    $("media-analysis").innerHTML=(project?.document.media_analysis??[]).map(r=>{
+      const asset=assets.find(a=>a.id===r.asset_id&&a.sha256===r.source_sha256);if(!asset)return "";
+      const words=(r.transcript?.segments??[]).flatMap(s=>s.words);
+      return `<article><h4>${esc(asset.filename)}</h4><p class="hint">${r.media.width} × ${r.media.height}${r.media.duration_seconds?` · ${Number(r.media.duration_seconds).toFixed(1)} giây · ${r.media.shots.length} cảnh nguồn`:""}. Mô tả dựa trên thông số hình ảnh; nội dung hình ảnh cần bạn kiểm tra.</p>${r.transcript?`<p>${esc(r.transcript.segments.map(s=>s.text).join(" "))}</p><details><summary>Thời gian từng từ · ${words.length} từ</summary><p>${words.map(w=>`${esc(w.text)} (${w.start_seconds.toFixed(2)}–${w.end_seconds.toFixed(2)}s)`).join(" · ")}</p></details><p class="hint">AssemblyAI · tiếng Việt · thời gian từng từ từ provider. Đây là lời nói nhận diện, chưa phải nội dung đã duyệt.</p>`:'<p class="hint">Nguồn này không có transcript lời nói.</p>'}</article>`;
+    }).join("");
     if(proposal&&reset) {
       $("scenes").innerHTML=proposal.visual_brief.map((scene,i)=>`<article class="scene"><strong>CẢNH ${i+1}</strong><div class="scene-source"><img data-preview hidden alt="Nguồn của cảnh"><div><label>Nguồn cho cảnh ${i+1}<select data-media aria-label="Nguồn cho cảnh ${i+1}"><option value="">Chọn một ảnh hoặc video…</option>${assets.map(a=>`<option value="${esc(a.id)}" ${bindings.some(b=>b.scene===scene.scene&&b.asset_id===a.id)?"selected":""}>${esc(sourceLabel(a))}</option>`).join("")}</select></label><p data-media-note class="hint"></p></div></div><label>Lời đọc<textarea data-narration rows="3" maxlength="1500">${esc(scene.narration_excerpt)}</textarea></label><div class="scene-grid"><label>Chữ trên video<input data-title maxlength="150" value="${esc(scene.on_screen_text)}"></label><label>Định hướng hình ảnh<textarea data-visual rows="2" maxlength="1200">${esc(scene.visual)}</textarea></label></div></article>`).join("");
       document.querySelectorAll(".scene").forEach(scenePreview);
@@ -111,11 +122,11 @@ if (typeof document !== "undefined") {
     $("approval-state").textContent=project?.approval?"Đã duyệt phiên bản này":"Chờ bạn duyệt";
     const jobs=project?.jobs??[];
     $("job-empty").hidden=Boolean(jobs.length);
-    $("jobs").innerHTML=jobs.slice(0,6).map(job=>`<div class="job ${job.error?"error":""}"><strong>${job.kind==="content"?"Nội dung":"Giọng đọc & video"}</strong><small>${new Date(job.created_at).toLocaleString("vi-VN")} · v${job.revision}</small>${esc(statusNames[job.status]??job.status)}${["running","retrying"].includes(job.status)?`<small>${esc(stageNames[job.stage]??job.stage)}</small>`:""}${job.error?`<small>${esc(errors[job.error.code]??job.failure?.action??job.error.code)}${job.error.http_status?` · HTTP ${job.error.http_status}`:""}</small>`:""}${["failed","interrupted"].includes(job.status)&&job.revision===project.revision?`<button data-resume="${esc(job.id)}">Tiếp tục từ bước đã lưu</button>`:""}</div>`).join("");
+    $("jobs").innerHTML=jobs.slice(0,6).map(job=>`<div class="job ${job.error?"error":""}"><strong>${job.kind==="asr"?"Phân tích nguồn & lời nói":job.kind==="content"?"Nội dung":"Giọng đọc & video"}</strong><small>${new Date(job.created_at).toLocaleString("vi-VN")} · v${job.revision}</small>${esc(job.kind==="asr"&&job.status==="succeeded"?"Kết quả phân tích sẵn sàng · hãy kiểm tra":statusNames[job.status]??job.status)}${["running","retrying"].includes(job.status)?`<small>${esc(stageNames[job.stage]??job.stage)}</small>`:""}${job.error?`<small>${esc(errors[job.error.code]??job.failure?.action??job.error.code)}${job.error.http_status?` · HTTP ${job.error.http_status}`:""}</small>`:""}${["failed","interrupted"].includes(job.status)&&job.revision===project.revision?`<button data-resume="${esc(job.id)}">Tiếp tục từ bước đã lưu</button>`:""}</div>`).join("");
     const video=currentVideo(project);
     $("video").hidden=!video;$("video-placeholder").hidden=Boolean(video);$("download").hidden=!video;
     if(video){if($("video").getAttribute("src")!==video.result.video_url)$("video").src=video.result.video_url;$("download").href=video.result.video_url;$("qc-note").textContent=`Đã qua kiểm tra video và âm thanh · ${video.result.qc.duration_seconds.toFixed(1)} giây. Bạn cần xem lại video cuối.`;}else{$("video").removeAttribute("src");$("download").removeAttribute("href");$("qc-note").textContent="";}
-    const failed=jobs[0]&&["failed","interrupted"].includes(jobs[0].status);
+    const failed=jobs[0]&&jobs[0].kind!=="asr"&&["failed","interrupted"].includes(jobs[0].status);
     $("retry").hidden=!failed;$("retry-note").hidden=!failed;
     controls();
   }
@@ -149,9 +160,10 @@ if (typeof document !== "undefined") {
     let requestKey=sessionStorage.getItem(key);
     if(!requestKey||fresh){requestKey=crypto.randomUUID();sessionStorage.setItem(key,requestKey);}
     await api(`/api/projects/${project.id}/jobs`,{revision:project.revision,kind,request_key:requestKey});
-    await reload(false);message(kind==="content"?"Đã gửi job tạo đề xuất. Bước tiếp theo cần bạn kiểm tra và duyệt.":"Đã gửi job tạo giọng đọc và render video.");
+    await reload(false);message(kind==="asr"?"Đã gửi job phân tích nguồn và nhận diện lời nói. Hãy kiểm tra transcript khi hoàn tất.":kind==="content"?"Đã gửi job tạo đề xuất. Bước tiếp theo cần bạn kiểm tra và duyệt.":"Đã gửi job tạo giọng đọc và render video.");
   }
   $("generate").addEventListener("click",guarded(()=>enqueue("content")));
+  $("analyze-media").addEventListener("click",guarded(()=>enqueue("asr")));
   $("render").addEventListener("click",guarded(()=>enqueue("render")));
   $("retry").addEventListener("click",guarded(()=>enqueue(project.jobs[0].kind,true)));
   $("save-proposal").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,proposal:readProposal(),scene_media:readBindings()});renderProject(true);message("Đã lưu nội dung và nguồn từng cảnh. Phiên bản mới cần duyệt lại.");}));

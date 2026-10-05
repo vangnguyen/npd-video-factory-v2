@@ -1,0 +1,499 @@
+{
+  "language": "vi",
+  "confidence": null,
+  "segments": [
+    {
+      "start_seconds": 0.83,
+      "end_seconds": 22.15,
+      "text": "Với khách hàng quan tâm đến bất động sản cao cấp, Vinhomes Green Paradise Cần Giờ là cái kênh đáng để tìm hiểu. Trước khi đưa ra quyết định, hãy xem xét kỹ hồ sơ pháp lý, thông tin quy hoạch, sản phẩm, giá bán và tiến độ từ các tài liệu chính thức. Đối chiếu nguồn tin, đặt câu hỏi với đơn vị phụ trách và cân nhắc mức độ phù hợp với nhu cầu của bạn. Đây là nội dung giới thiệu sơ bộ, hãy kiểm chứng thông tin trước khi giao dịch.",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "start_seconds": 0.83,
+          "end_seconds": 1.28,
+          "text": "Với",
+          "confidence": 0.6549192,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 1.28,
+          "end_seconds": 1.64,
+          "text": "khách hàng",
+          "confidence": 0.9996071,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 1.64,
+          "end_seconds": 1.96,
+          "text": "quan tâm",
+          "confidence": 0.9999989,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 1.96,
+          "end_seconds": 2.18,
+          "text": "đến",
+          "confidence": 0.99997795,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 2.18,
+          "end_seconds": 2.6,
+          "text": "bất động sản",
+          "confidence": 0.9985449,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 2.6,
+          "end_seconds": 3.18,
+          "text": "cao cấp,",
+          "confidence": 0.9823693,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 3.18,
+          "end_seconds": 3.92,
+          "text": "Vinhomes Green",
+          "confidence": 0.9473897,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 3.92,
+          "end_seconds": 4.5,
+          "text": "Paradise",
+          "confidence": 0.9771887,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 4.5,
+          "end_seconds": 5.04,
+          "text": "Cần Giờ",
+          "confidence": 0.95891917,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 5.04,
+          "end_seconds": 5.3,
+          "text": "là",
+          "confidence": 0.9999448,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 5.3,
+          "end_seconds": 5.48,
+          "text": "cái",
+          "confidence": 0.9443466,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 5.48,
+          "end_seconds": 5.6,
+          "text": "kênh",
+          "confidence": 0.808487,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 5.6,
+          "end_seconds": 5.84,
+          "text": "đáng",
+          "confidence": 0.999723,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 5.84,
+          "end_seconds": 6.0,
+          "text": "để",
+          "confidence": 0.8783018,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 6.0,
+          "end_seconds": 6.77,
+          "text": "tìm hiểu.",
+          "confidence": 0.9985262,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 6.98,
+          "end_seconds": 7.04,
+          "text": "Trước",
+          "confidence": 0.99991554,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 7.04,
+          "end_seconds": 7.22,
+          "text": "khi",
+          "confidence": 0.99999785,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 7.22,
+          "end_seconds": 7.42,
+          "text": "đưa",
+          "confidence": 0.9877578,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 7.42,
+          "end_seconds": 7.64,
+          "text": "ra",
+          "confidence": 0.9999764,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 7.64,
+          "end_seconds": 8.24,
+          "text": "quyết định,",
+          "confidence": 0.98720694,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 8.24,
+          "end_seconds": 8.32,
+          "text": "hãy",
+          "confidence": 0.99987876,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 8.32,
+          "end_seconds": 8.66,
+          "text": "xem xét",
+          "confidence": 0.9999707,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 8.66,
+          "end_seconds": 8.8,
+          "text": "kỹ",
+          "confidence": 0.9992694,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 8.8,
+          "end_seconds": 9.16,
+          "text": "hồ sơ",
+          "confidence": 0.9999898,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 9.16,
+          "end_seconds": 9.88,
+          "text": "pháp lý,",
+          "confidence": 0.9995448,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 9.88,
+          "end_seconds": 10.1,
+          "text": "thông tin",
+          "confidence": 0.99998754,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 10.1,
+          "end_seconds": 10.7,
+          "text": "quy hoạch,",
+          "confidence": 0.99351305,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 10.7,
+          "end_seconds": 11.26,
+          "text": "sản phẩm,",
+          "confidence": 0.9941709,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 11.26,
+          "end_seconds": 11.38,
+          "text": "giá",
+          "confidence": 0.9999721,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 11.38,
+          "end_seconds": 11.58,
+          "text": "bán",
+          "confidence": 0.9999989,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 11.58,
+          "end_seconds": 11.82,
+          "text": "và",
+          "confidence": 0.9999918,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 11.82,
+          "end_seconds": 12.1,
+          "text": "tiến độ",
+          "confidence": 0.99994,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 12.1,
+          "end_seconds": 12.28,
+          "text": "từ",
+          "confidence": 0.9998739,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 12.28,
+          "end_seconds": 12.48,
+          "text": "các",
+          "confidence": 0.9999943,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 12.48,
+          "end_seconds": 12.62,
+          "text": "tài liệu",
+          "confidence": 0.9999259,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 12.62,
+          "end_seconds": 13.29,
+          "text": "chính thức.",
+          "confidence": 0.9922916,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 13.56,
+          "end_seconds": 13.74,
+          "text": "Đối chiếu",
+          "confidence": 0.8023295,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 13.74,
+          "end_seconds": 13.94,
+          "text": "nguồn",
+          "confidence": 0.99994123,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 13.94,
+          "end_seconds": 14.56,
+          "text": "tin, đặt",
+          "confidence": 0.9771,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 14.56,
+          "end_seconds": 14.74,
+          "text": "câu",
+          "confidence": 0.99998796,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 14.74,
+          "end_seconds": 14.88,
+          "text": "hỏi",
+          "confidence": 0.999998,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 14.88,
+          "end_seconds": 15.06,
+          "text": "với",
+          "confidence": 0.99997807,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 15.06,
+          "end_seconds": 15.4,
+          "text": "đơn vị",
+          "confidence": 0.9998591,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 15.4,
+          "end_seconds": 15.82,
+          "text": "phụ trách",
+          "confidence": 0.9999888,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 15.82,
+          "end_seconds": 16.12,
+          "text": "và",
+          "confidence": 0.9997055,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 16.12,
+          "end_seconds": 16.44,
+          "text": "cân nhắc",
+          "confidence": 0.9999256,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 16.44,
+          "end_seconds": 16.84,
+          "text": "mức độ",
+          "confidence": 0.99995726,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 16.84,
+          "end_seconds": 17.2,
+          "text": "phù hợp",
+          "confidence": 0.99999845,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 17.2,
+          "end_seconds": 17.4,
+          "text": "với",
+          "confidence": 0.9999982,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 17.4,
+          "end_seconds": 17.7,
+          "text": "nhu cầu",
+          "confidence": 0.9995065,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 17.7,
+          "end_seconds": 18.0,
+          "text": "của",
+          "confidence": 0.9999989,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 18.0,
+          "end_seconds": 18.5,
+          "text": "bạn.",
+          "confidence": 0.99910116,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 18.58,
+          "end_seconds": 18.76,
+          "text": "Đây",
+          "confidence": 0.97224855,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 18.76,
+          "end_seconds": 19.02,
+          "text": "là",
+          "confidence": 0.99999905,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 19.02,
+          "end_seconds": 19.3,
+          "text": "nội dung",
+          "confidence": 0.9999959,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 19.3,
+          "end_seconds": 19.62,
+          "text": "giới thiệu",
+          "confidence": 0.9999995,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 19.62,
+          "end_seconds": 20.29,
+          "text": "sơ bộ,",
+          "confidence": 0.956105,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 20.34,
+          "end_seconds": 20.48,
+          "text": "hãy",
+          "confidence": 0.9997408,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 20.48,
+          "end_seconds": 20.8,
+          "text": "kiểm chứng",
+          "confidence": 0.9998959,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 20.8,
+          "end_seconds": 21.2,
+          "text": "thông tin",
+          "confidence": 0.99998343,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 21.2,
+          "end_seconds": 21.4,
+          "text": "trước",
+          "confidence": 0.9999982,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 21.4,
+          "end_seconds": 21.58,
+          "text": "khi",
+          "confidence": 0.99999833,
+          "timing_semantics": "positive_interval"
+        },
+        {
+          "start_seconds": 21.58,
+          "end_seconds": 22.15,
+          "text": "giao dịch.",
+          "confidence": 0.9998525,
+          "timing_semantics": "positive_interval"
+        }
+      ]
+    }
+  ],
+  "provenance": {
+    "provider": "assemblyai-transcription",
+    "model": "universal-3-5-pro",
+    "profile_id": "asr-assemblyai-vi-direct-v1",
+    "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+    "request_sha256": "12c8f0bb0e3019ab57d2d9655d1057d301192a73351078a16b405edae1e22584",
+    "transcript_id": "418cf650-4a3d-4479-bea4-6caba1bacf47",
+    "provider_request_id": "418cf650-4a3d-4479-bea4-6caba1bacf47",
+    "raw_response_sha256": "3a10ad556db9aa81de3c3fa89101476ecb28e509a7e47a9fd655bfccd65f39f0",
+    "response_sha256": "3a10ad556db9aa81de3c3fa89101476ecb28e509a7e47a9fd655bfccd65f39f0",
+    "transcript_sha256": "bad5432cfaccb77dfb19ada6539e134a54ce5d8c68bda1fb9334f2ec4c126922",
+    "words_sha256": "2edea98b24a128f1acf97604fd18d9d00935042c9cfe02af69b9baa4f9d86e6b",
+    "upload_identity_sha256": "9b67331fc48b1ddef9cfa46a102fb901f074a32893145b62fe35a1c81cbc2fd9",
+    "word_timing_source": "provider_native_word_timestamps",
+    "timestamp_source": "provider_native_word_timestamps",
+    "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+    "provider_transcript_immutable": true,
+    "asr_prompt_profile": {
+      "profile_id": "asr-assemblyai-vi-direct-v1",
+      "provider_key": "assemblyai-transcription",
+      "model": "universal-3-5-pro",
+      "language": "vi",
+      "mode": "async_pre_recorded",
+      "keyterms": [
+        "Ngọc Phương Đông",
+        "Vinhomes Green Paradise",
+        "Cần Giờ",
+        "tham quan sa bàn",
+        "chính sách bán hàng"
+      ],
+      "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+      "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+      "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+      "native_word_timestamps": true,
+      "automatic_retry": false,
+      "model_fallback": false
+    },
+    "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+    "original_evidence": true,
+    "secret_recorded": false,
+    "provider_credit_debit": null,
+    "latency_ms": 7159.252
+  }
+}

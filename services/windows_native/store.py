@@ -111,7 +111,7 @@ class Store:
         with self.transaction() as con:
             runtime = con.execute("SELECT retry_count FROM job_runtime WHERE job_id=?", (job["id"],)).fetchone()
             self.event(con, job["project_id"], "job_step", {"job_id": job["id"], "project_id": job["project_id"],
-                "step": step, "provider": provider or ("openai" if "content" in step else "local_vieneu" if "tts" in step else "ffmpeg" if "render" in step else "local_io"),
+                "step": step, "provider": provider or ("assemblyai" if step in {"asr_upload", "asr_create_transcript", "asr_observe_known_transcript"} else "ffmpeg" if step in {"asr_local_media_analysis", "asr_extract_audio"} else "openai" if "content" in step else "local_vieneu" if "tts" in step else "ffmpeg" if "render" in step else "local_io"),
                 "duration": round(duration, 6), "retry_count": runtime[0] if runtime else 0, "error_code": error_code})
 
     def create(self, name, prompt, input_kind="prompt"):
@@ -213,7 +213,7 @@ class Store:
         return self.get(identifier)
 
     def enqueue(self, identifier, revision, kind, request_key):
-        if kind not in {"content", "render"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
+        if kind not in {"content", "render", "asr"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
             raise WorkflowError("INVALID_JOB_REQUEST", 400)
         identity = digest({"project_id": identifier, "revision": revision, "kind": kind})
         with self.transaction() as con:
@@ -224,6 +224,13 @@ class Store:
                 return self.job(existing, con)
             project = self.editable(con, identifier, revision)
             doc, approval = project["document"], project["approval"]
+            if kind == "asr":
+                from .asr import pending_assets
+                if not pending_assets(doc):
+                    raise WorkflowError("ASR_NO_UNANALYZED_MEDIA", 400)
+                if con.execute("SELECT 1 FROM jobs WHERE project_id=? AND revision=? AND kind='asr'",
+                               (identifier, revision)).fetchone():
+                    raise WorkflowError("ASR_EXISTING_JOB_RESUME_REQUIRED")
             if kind == "render" and (not approval or approval["revision"] != revision
                                      or approval["snapshot_sha256"] != digest(doc)):
                 raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
@@ -272,6 +279,25 @@ class Store:
                 con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                             (project["revision"] + 1, json.dumps(doc, ensure_ascii=False), now(), project["id"]))
                 self.version(con, project["id"])
+            if result and job["kind"] == "asr":
+                from .asr import analysis_for_asset
+                project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (job["project_id"],)).fetchone())
+                if project["revision"] != job["revision"] or digest(project["document"]) != digest(job["snapshot"]["document"]):
+                    raise WorkflowError("ASR_STALE_RESULT")
+                doc = project["document"]
+                incoming = result["media_analysis"]
+                assets = {a["id"]: a for a in project_assets(doc)}
+                if len({r["asset_id"] for r in incoming}) != len(incoming):
+                    raise WorkflowError("ASR_DUPLICATE_RESULT")
+                for record in incoming:
+                    if record["asset_id"] not in assets or not analysis_for_asset({"media_analysis": [record]}, assets[record["asset_id"]]):
+                        raise WorkflowError("ASR_RESULT_SOURCE_BINDING_MISMATCH")
+                replaced = {r["asset_id"] for r in incoming}
+                doc["media_analysis"] = [r for r in doc.get("media_analysis", []) if r["asset_id"] not in replaced] + incoming
+                con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
+                            (project["revision"]+1, json.dumps(doc, ensure_ascii=False), now(), project["id"]))
+                self.version(con, project["id"])
+                self.event(con, project["id"], "media_analyzed_approval_invalidated", {"job_id": job["id"], "assets": sorted(replaced)})
             con.execute("UPDATE jobs SET status=?,stage=?,error=?,result=?,updated_at=? WHERE id=?",
                         (status, status, json.dumps(error) if error else None,
                          json.dumps(result, ensure_ascii=False) if result else None, now(), job["id"]))

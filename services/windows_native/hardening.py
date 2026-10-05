@@ -17,12 +17,12 @@ LIFECYCLE = {"queued": "CREATED", "running": "RUNNING", "retrying": "RETRYING",
 def failure(code, step="", http_status=None):
     """Only known identifiers enter logs, never exception text/provider bodies/secrets."""
     value = (str(code) + " " + step).upper()
-    if any(s in value for s in ("OPENAI", "PROVIDER", "RATELIMIT", "AUTHENTICATION", "CONTENT_REQUEST")):
+    if "ASR" in value or "TRANSCRIPT" in value:
+        category, action = "ASR_ERROR", "Kiểm tra kết nối và job nhận diện lời nói. Chỉ tiếp tục quan sát job đã biết; yêu cầu chưa rõ kết quả không được gửi lại."
+    elif any(s in value for s in ("OPENAI", "PROVIDER", "RATELIMIT", "AUTHENTICATION", "CONTENT_REQUEST")):
         category, action = "PROVIDER_ERROR", "Kiểm tra kết nối, hạn mức và quyền truy cập provider. Kết quả chưa rõ sẽ không tự chạy lại."
     elif any(s in value for s in ("TTS", "SYNTHESIS", "VOICE", "THUY_DUNG")):
         category, action = "TTS_ERROR", "Kiểm tra runtime giọng đọc và log TTS. Không đổi preset hoặc tự lặp inference lỗi."
-    elif "ASR" in value or "TRANSCRIPT" in value:
-        category, action = "ASR_ERROR", "Kiểm tra cấu hình ASR; hệ thống không tạo transcript thay thế."
     elif any(s in value for s in ("FFMPEG", "RENDER", "QC")):
         category, action = "RENDER_ERROR", "Kiểm tra FFmpeg, dung lượng đĩa và log render; có thể tiếp tục từ audio đã kiểm chứng."
     elif any(s in value for s in ("STORAGE", "ARTIFACT", "CHECKPOINT", "OSERROR", "PERMISSION", "SQLITE", "FILEEXISTS")):
@@ -115,8 +115,11 @@ class Artifacts:
 def resume_boundary(root, job):
     out = Path(root) / "jobs" / job["id"]
     artifacts = Artifacts(out, job)
-    for step in ("content", "tts", "render"):
+    for step in ("content", "tts", "render", "asr"):
         artifacts.load(step)  # Refuse changed checkpoint bytes before enqueueing.
+    if job["kind"] == "asr":
+        from .asr import validate_resume
+        validate_resume(root, job)
     if job["kind"] == "content" and not artifacts.load("content"):
         for intent in out.glob("content*.intent.json"):
             receipt = intent.with_name(intent.name.replace(".intent.json", ".rejected.json"))

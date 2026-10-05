@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType} from '../native.mjs';
+import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending} from '../native.mjs';
 
 test('Render UI requires current approval, saved edits and idle job',()=>{
   const p={revision:3,approval:{revision:3},jobs:[]};
@@ -41,4 +41,11 @@ test('Document chooser passes declared MIME while server must validate actual co
   for(const name of ['brief.TXT','notes.md','source.docx'])assert.ok(documentType({name}));
   assert.equal(documentType({name:'binary.exe'}),'');
   assert.equal(documentType({name:'source.pdf'}),'');
+});
+test('Changed source needs new analysis while existing source keeps its result',()=>{
+  const doc={assets:[{id:'clip',kind:'video',sha256:'source-a'}],media_analysis:[{asset_id:'clip',source_sha256:'source-a'}]};
+  assert.equal(mediaAnalysisPending(doc),false);
+  assert.equal(mediaAnalysisPending({...doc,assets:[{id:'clip',kind:'video',sha256:'source-b'}]}),true);
+  assert.equal(mediaAnalysisPending({...doc,media_analysis:[]}),true);
+  assert.equal(mediaAnalysisPending(null),false);
 });

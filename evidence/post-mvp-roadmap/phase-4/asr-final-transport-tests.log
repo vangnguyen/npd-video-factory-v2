@@ -1,0 +1,16 @@
+test_bad_word_timing_no_fake_result_and_complete_receipt_not_reposted (services.windows_native.tests.test_asr.AsrTests.test_bad_word_timing_no_fake_result_and_complete_receipt_not_reposted) ... ok
+test_changed_source_and_audio_checkpoint_refuse_before_external_dispatch (services.windows_native.tests.test_asr.AsrTests.test_changed_source_and_audio_checkpoint_refuse_before_external_dispatch) ... ok
+test_complete_checkpoint_corruption_rejected_before_any_additional_calls (services.windows_native.tests.test_asr.AsrTests.test_complete_checkpoint_corruption_rejected_before_any_additional_calls) ... ok
+test_extract_persist_timestamps_lineage_restart_and_script_without_generation (services.windows_native.tests.test_asr.AsrTests.test_extract_persist_timestamps_lineage_restart_and_script_without_generation) ... ok
+test_images_local_only_and_measured_descriptors_no_filename_guess (services.windows_native.tests.test_asr.AsrTests.test_images_local_only_and_measured_descriptors_no_filename_guess) ... ok
+test_known_job_observation_resume_never_uploads_or_creates_twice (services.windows_native.tests.test_asr.AsrTests.test_known_job_observation_resume_never_uploads_or_creates_twice) ... ok
+test_no_duplicate_job_same_request_and_preserved_voice_runtime (services.windows_native.tests.test_asr.AsrTests.test_no_duplicate_job_same_request_and_preserved_voice_runtime) ... ok
+test_unavailable_credential_explicit_error_zero_uploads (services.windows_native.tests.test_asr.AsrTests.test_unavailable_credential_explicit_error_zero_uploads) ... ok
+test_unknown_upload_blocks_resume_and_leaves_original_project_unchanged (services.windows_native.tests.test_asr.AsrTests.test_unknown_upload_blocks_resume_and_leaves_original_project_unchanged) ... ok
+test_fixed_tls_origin_no_redirect_proxy_or_body_secret_retention (services.windows_native.tests.test_asr.TransportBoundaryTests.test_fixed_tls_origin_no_redirect_proxy_or_body_secret_retention) ... ok
+test_language_model_and_id_mismatch_rejected_without_completed_receipt (services.windows_native.tests.test_asr.TransportBoundaryTests.test_language_model_and_id_mismatch_rejected_without_completed_receipt) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 6.535s
+
+OK

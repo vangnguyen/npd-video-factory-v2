@@ -16,7 +16,7 @@ import wave
 from .contracts import MODEL, PROFILE_SHA, RUNTIME_VERSIONS, Proposal, WorkflowError, canonical, digest, file_sha, normalize, write_json
 from .media import media_path, verify_selected_files
 from .hardening import Artifacts, durable_json, retry_io
-from .ingestion import existing_script, provider_context
+from .ingestion import existing_script, provider_context, transcript_script
 
 REPO = Path(__file__).resolve().parents[2]
 LOCKS = Path(__file__).resolve().parent / "locks"
@@ -505,15 +505,26 @@ class Pipeline:
                 raise WorkflowError("CHECKPOINT_INPUT_CHANGED")
         else:
             retry_io(lambda: durable_json(out / "input.json", job["snapshot"]), stage, "storage_input")
+        if job["kind"] == "asr":
+            from .asr import analyze
+            checkpoint = artifacts.load("asr")
+            if checkpoint:
+                stage("resuming_verified_asr")
+                return checkpoint["result"]
+            return analyze(self.config, job, out, stage)
         if job["kind"] == "content":
             checkpoint = artifacts.load("content")
             if checkpoint:
                 stage("resuming_verified_content")
                 return checkpoint["result"]
-            if job["snapshot"]["document"].get("input_kind") == "script":
+            doc = job["snapshot"]["document"]
+            if doc.get("input_kind") == "script" or transcript_script(doc) is not None:
                 stage("prepare_existing_script")
-                result = {"proposal": existing_script(job["snapshot"]["document"]), "source": "existing_user_script",
+                source = "existing_user_script" if doc.get("input_kind") == "script" else "immutable_provider_transcript_for_human_review"
+                result = {"proposal": existing_script(doc if source == "existing_user_script" else {"prompt": transcript_script(doc)}), "source": source,
                           "provider_calls": 0, "retries": 0, "facts_verified": False, "human_review_required": True}
+                if source == "immutable_provider_transcript_for_human_review":
+                    result["proposal"]["facts_needing_source"] = ["Lời nói do AssemblyAI nhận diện có thể sai. Kiểm tra video nguồn, sửa bản nháp nếu cần và xác minh dữ kiện trước khi duyệt; transcript gốc được giữ nguyên."]
                 durable_json(out / "content-result.json", result)
                 durable_json(out / "content-request.json", {"workflow": "existing_script", "provider_dispatch": False})
             else:

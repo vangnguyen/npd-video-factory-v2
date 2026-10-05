@@ -9,7 +9,7 @@
 </head>
 <body>
   <aside class="sidebar">
-    <a href="/" class="brand"><span class="brand-mark">V</span><span>VIDEO FACTORY<small>Windows Native · Phase 2</small></span></a>
+    <a href="/" class="brand"><span class="brand-mark">V</span><span>VIDEO FACTORY<small>Windows Native Studio</small></span></a>
     <div class="side-label">KHÔNG GIAN LÀM VIỆC</div>
     <button class="nav active" id="new-project">＋ Tạo video mới</button>
     <label class="side-label" for="project-picker">DỰ ÁN ĐÃ LƯU</label>
@@ -42,6 +42,7 @@
           <p id="upload-progress" class="hint" role="status" aria-live="polite"></p>
           <p class="hint">Ảnh JPEG/PNG ≤ 15 MB; video MP4/MOV ≤ 250 MB, tối đa 10 phút. Lưu tối đa 50 nguồn trong một dự án. Sau khi tải lên, chọn một nguồn cho mỗi cảnh bên dưới.</p>
           <div id="media-library" class="media-library"></div>
+          <div class="facts"><h3>Lời nói & thông tin nguồn</h3><p class="hint">Phân tích ảnh/video để xem thông tin cảnh. Video có âm thanh sẽ được gửi đến AssemblyAI để nhận diện tiếng Việt và có thể phát sinh phí. Lời nói nhận diện cần bạn kiểm tra trước khi dùng.</p><button id="analyze-media" class="secondary">Phân tích ảnh/video & lời nói</button><div id="media-analysis"></div></div>
         </section>
         <section class="card" id="proposal-card" hidden>
           <div class="card-heading"><div><p class="eyebrow">02 / KIỂM TRA & DUYỆT</p><h2>Đề xuất dành cho bạn</h2></div><span id="approval-state" class="version">Chờ duyệt</span></div>

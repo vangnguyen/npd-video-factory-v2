@@ -300,6 +300,11 @@ class Handler(BaseHTTPRequestHandler):
         elif action == "approve":
             result = self.server.store.approve(identifier, revision, body.get("reviewer"), body.get("acknowledged"))
         else:
+            if body.get("kind") == "asr":
+                from .asr import pending_speech
+                doc = self.server.store.get(identifier)["document"]
+                if pending_speech(doc) and not assemblyai_connection.status(self.server.config)["connected"]:
+                    raise WorkflowError("ASR_PROVIDER_UNAVAILABLE_NO_TRANSCRIPT", 503)
             result = self.server.store.enqueue(identifier, revision, body.get("kind"), body.get("request_key"))
             self.server.runner.wake.set()
         return self.reply(result)
