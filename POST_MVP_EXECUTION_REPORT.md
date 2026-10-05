@@ -1,8 +1,8 @@
 # VF-POST-MVP-ROADMAP-EXECUTION-01 — execution status
 
-Updated: 2026-10-05, Asia/Saigon. Repo: `C:\NPD-Video-Factory\source`. Branch: `codex/vf-post-mvp-roadmap-execution-01`. Implementation HEAD: `6e0c7f6db1eadaa68c880b597e36da64a6f0b018`. Subsequent evidence/report commits do not change application behavior.
+Updated: 2026-10-05, Asia/Saigon. Repo: `C:\NPD-Video-Factory\source`. Branch: `codex/vf-post-mvp-roadmap-execution-01`. Implementation HEAD: `9c3e9e9dfa61fe29f76380f6811f4db1b0a26257`. Subsequent evidence/report commits do not change application behavior.
 
-**INTERNAL_PRODUCTION_READY = NO.** Phases 0–7 have technical evidence for the supported Windows Native scope. AssemblyAI is connected, and a real speech video produced a persisted transcript with valid native word timestamps. The editor, approval dashboard and frozen brand/template choices are implemented. Phase 8 remains open for production-flow coverage and at least ten actual human-reviewed final videos; technical fixtures do not satisfy that gate.
+**INTERNAL_PRODUCTION_READY = NO.** Phases 0–7 have technical evidence for the supported Windows Native scope. AssemblyAI is connected, and a real speech video produced a persisted transcript with valid native word timestamps. The editor, approval dashboard and frozen brand/template choices are implemented. Phase 8 has ten actual production candidates with human-approved scripts, fresh voice synthesis, passing MP4/QC and actual restart persistence. Actual human watch/listen final decisions and explicit Windows Native internal release scope acceptance remain pending.
 
 Windows Native Studio is running at <http://127.0.0.1:8026> with the new implementation. The original project remains revision 9 with approval null. Projects/jobs/events match their pre-upgrade row hash; SQLite integrity is `ok`. Existing accepted MVP video/audio bytes are unchanged. A consistent backup was made before the upgrade at `C:\NPD-Video-Factory\post-mvp-validation\owner-before-roadmap-upgrade-20261005.sqlite3`. Evidence: `evidence/post-mvp-roadmap/phase-3/live-upgrade-before.json` and `live-upgrade-after.json`.
 
@@ -186,6 +186,28 @@ BLOCKERS / LIMITS: No official logos/assets are fabricated; fonts/palettes/margi
 
 NEXT ACTION: Prepare ten concrete unapproved production review drafts, then actual human script/source review, fresh TTS/render and human watch/listen approval. Keep release readiness NO until the complete Phase 8 matrix is evidenced.
 
+## Phase 8 — technical acceptance complete; human final review pending
+
+PHASE: 8 — Internal Production Release
+
+STATUS: WAITING_ACTUAL_HUMAN_FINAL_REVIEW. Ten real TTS/render/QC and restart checks PASS; actual final-video decisions are 0/10. INTERNAL_PRODUCTION_READY = NO.
+
+HEAD SHA: `c65b275` — actual ten-candidate technical evidence commit. Production behavior remains `9c3e9e9`; this evidence commit does not grant human final acceptance.
+
+FILES CHANGED: Append-only production review projects, four preparation/dispatch/capture/certification scripts, Phase 8 input lineage, human script authorization, integrity/live run/restart receipts, exact final review bundle/manifest, scoped Git attributes preserving review bytes and execution report.
+
+TESTS: Current implementation's 103/103 native and 27/27 Studio suites PASS. All ten actual candidate jobs SUCCEEDED with 54 new local locked-voice inference calls, zero inference retries and no reused fixture audio. Every MP4 is 30 seconds, 1080×1920, 30 fps, H.264/AAC/yuv420p with 48 kHz audio; ffprobe/decode/audio/no-black/clipping/duration checks PASS. Exact source/document/voice/output/checkpoint hashes and actual production restart persistence PASS. All seven relevant tables match the pre-restart backup, accepted MVP MP4/WAV are unchanged and SQLite integrity is `ok`. Four evidence helpers compile and execute against the actual stored records; the certifier correctly reports NO while human gates are absent. Twelve staged receipt/review blobs and a fresh artifact checkout retain the exact original bytes and review hashes.
+
+EVIDENCE: `evidence/post-mvp-roadmap/phase-8/acceptance.md`, immutable `review-bundle.md`/`owner-script-authorization.json`, `review-drafts.json`, `real-candidates.json`/`.log`, `real-release-restart.json`, `live-state-integrity.json`, `fresh-process-reopen.json`, immutable `final-review-bundle.md`/`final-review-manifest.json`, `release-gate.json`, `release-certification.json`, ten extracted frames and actual browser screenshots. Real video files remain under `C:\NPD-Video-Factory\phase2\jobs\<job-id>\final.mp4`.
+
+CAPABILITIES ADDED / EXERCISED: Ten concrete review projects cover prompt, idea, existing script, image, multiple images, silent video, speech video, mixed media, document and multiple videos. Eight actual content-provider attempts produced seven validated responses; one `CONTENT_AMBIGUOUS_RESPONSE` was explicitly refused, preserved and never replayed. Its replacement is an explicitly labeled local editorial draft, not a provider result. The real ASR record is imported unchanged for its byte-identical source with original project/job/hash lineage; zero fresh ASR requests for the import.
+
+REGRESSIONS: No production architecture or persisted schema change in this release exercise. Actual user answer “duyệt” to the presented ten-draft review question authorizes those exact recorded snapshots for TTS/candidate rendering. The authorized decisions were applied through Studio and bind the document hashes. No final-video approval is inferred from script approval, and no fixture audio is used for these new renders.
+
+BLOCKERS: P1 — actual human watch/listen final decisions for the ten exact videos and explicit Windows Native internal production scope acceptance are pending. The broad legacy Windows baseline remains 46 failures/24 errors and is NOT PASS. P2 — reference branding/platform margins, phrase subtitle timing, historical upload provenance gaps, transcript wording in case 07 and practical sample pacing remain disclosed for human judgment. The eight actual provider attempts include one preserved ambiguous failure; its disclosed local editorial alternative is not a provider output. No hidden fallback or paid replay occurred.
+
+NEXT ACTION: Human watches/listens to the exact ten files in `final-review-bundle.md` and accepts or requests revisions, including the proposed native-only scope. Record only actual decisions against those file/snapshot hashes, then rerun the certifier and report YES/NO. Script approval cannot substitute for this separate final-video gate.
+
 ## Remaining phases and release blockers
 
 | Phase | Status in this task | Required next acceptance |
@@ -193,13 +215,13 @@ NEXT ACTION: Prepare ten concrete unapproved production review drafts, then actu
 | 5 — Scene Intelligence / Auto Editor | PASS technical native scope | Final human viewing and platform/device overlay review remain release requirements |
 | 6 — Approval Dashboard | PASS technical native scope | New production content and final decisions remain actual-human steps |
 | 7 — Brand / Templates | PASS technical native scope | Official assets absent; reference margins and production pacing require human review |
-| 8 — Internal Production Release | NOT RUN | Full input/flow matrix, automated checks, restart recovery, hashes and at least ten final videos with human watch/listen approval |
+| 8 — Internal Production Release | Ten scripts approved; ten real MP4/QC/restart PASS | Actual human watch/listen final approval and explicit Windows Native internal scope acceptance |
 
 | Severity | Blocker | Closing evidence |
 | --- | --- | --- |
 | P0 | None observed in the supported native work; no release certificate is issued | Existing data/artifact integrity remains verified |
-| P1 | Ten final human-reviewed production videos and full release matrix absent | Phase 8 acceptance records; twenty fixture jobs do not substitute |
+| P1 | Actual final human decisions for ten exact production videos pending | Human watch/listen approval bound to the Phase 8 final file/snapshot hashes; technical MP4/QC/restart matrix is complete |
 | P1 | Legacy Windows test baseline: 46 failures, 24 errors after excluding POSIX collection blockers | Fix relevant compatibility gaps or document an explicitly accepted supported release scope; never label this suite PASS |
 | P2 | Subtitle word alignment and historical original-upload provenance gaps | Real timing/alignment evidence; retain explicit provenance limits for historical media |
 
-This task has created **one real AssemblyAI transcript job and zero new real TTS inferences**, plus one authentication GET, one upload and three transcript-observation GETs. Prior actual provider/TTS receipts remain attributed to the accepted MVP. Provider doubles/faults in unit tests and fixture approvals are never Owner acceptance. No publishing, analytics, autonomous loop, broker, distributed workers or multi-agent orchestration was implemented.
+Phases 0–7 created **one real AssemblyAI transcript job and zero new real TTS inferences**, plus one authentication GET, one upload and three transcript-observation GETs. Phase 8 adds **eight actual content-provider attempts** (seven validated responses, one explicitly refused ambiguity), **54 fresh local Thùy Dung inference calls** and **ten real production MP4 candidates** after actual human script approval. Importing the byte-identical speech source reuses its unchanged actual ASR result with zero fresh ASR requests. Counts and exact output hashes are in `phase-8/real-candidates.json`. Prior actual provider/TTS receipts remain attributed to the accepted MVP. Provider doubles/faults in unit tests and isolated fixture approvals are never Owner acceptance. No publishing, analytics, autonomous loop, broker, distributed workers or multi-agent orchestration was implemented.
