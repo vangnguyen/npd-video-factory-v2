@@ -2,7 +2,7 @@
 
 Updated: 2026-10-05, Asia/Saigon. Repo: `C:\NPD-Video-Factory\source`. Branch: `codex/vf-post-mvp-roadmap-execution-01`. Implementation HEAD: `4420a9247ac4a1bd533fa740e0c90435b7f3e7d8`. Subsequent evidence/report commits do not change application behavior.
 
-**INTERNAL_PRODUCTION_READY = NO.** Phases 0–3 have evidence for the supported Windows Native scope. The Owner has now selected AssemblyAI for Phase 4; its local connection page is implemented and tested, but real verification awaits the Owner-entered credential. Phases 5–8 have not been implemented or certified by this task. This is a progress report, not an internal production release certificate.
+**INTERNAL_PRODUCTION_READY = NO.** Phases 0–3 have evidence for the supported Windows Native scope. The Owner has now selected AssemblyAI for Phase 4; its local connection page is implemented and tested, and real account authentication has succeeded using the existing benchmark key retrieved from Chrome under the Owner’s explicit authorization. Phases 5–8 have not been implemented or certified by this task. This is a progress report, not an internal production release certificate.
 
 Windows Native Studio is running at <http://127.0.0.1:8026> with the new implementation. The original project remains revision 9 with approval null. Projects/jobs/events match their pre-upgrade row hash; SQLite integrity is `ok`. Existing accepted MVP video/audio bytes are unchanged. A consistent backup was made before the upgrade at `C:\NPD-Video-Factory\post-mvp-validation\owner-before-roadmap-upgrade-20261005.sqlite3`. Evidence: `evidence/post-mvp-roadmap/phase-3/live-upgrade-before.json` and `live-upgrade-after.json`.
 
@@ -98,13 +98,13 @@ NEXT ACTION: Phase 4 readiness, then real ASR integration after the Owner provid
 
 PHASE: 4 — ASR + Media Understanding
 
-STATUS: AWAITING OWNER CREDENTIAL — AssemblyAI selected and local connection setup implemented; actual speech-video acceptance NOT RUN.
+STATUS: CONNECTION VERIFIED — real AssemblyAI account authentication and encrypted local storage PASS; native ASR integration and actual speech-video acceptance remain pending.
 
 HEAD SHA: `4420a9247ac4a1bd533fa740e0c90435b7f3e7d8` (connection implementation). Original readiness check was at `177ea75606b6f9ced09b2810979c415a07ec2186`.
 
 FILES CHANGED: Local AssemblyAI connection module/routes, optional encrypted-secret Config path, key-entry page/navigation, security tests and Phase 4 connection/readiness evidence. No project schema, selected profile or voice preset change.
 
-TESTS: 66/66 native, 24/24 Studio PASS; actual isolated browser invalid-input/cleared-password/refresh check PASS. Real Windows DPAPI and ACL checks pass with explicit fixture keys. Live update preserves original project/job/event rows and SQLite integrity. No actual account-authentication request, ASR transcript or timestamp acceptance occurred.
+TESTS: 66/66 native, 24/24 Studio PASS; actual isolated browser invalid-input/cleared-password/refresh check PASS. Real Windows DPAPI and ACL checks pass with explicit fixture keys. Live update preserves original project/job/event rows and SQLite integrity. One actual read-only account-authentication request succeeded after the Owner authorized computer retrieval. ASR transcript and timestamp acceptance are not yet run.
 
 EVIDENCE: Phase 4 `provider-readiness.json`, initial `acceptance.md`, latest `connection-acceptance.md`, regression logs, UI verification, `connection-live-before.json`, `connection-live-after.json`, `assemblyai-owner-connection.png`.
 
@@ -112,15 +112,15 @@ CAPABILITIES ADDED: Non-CLI Owner-entered AssemblyAI authentication and encrypte
 
 REGRESSIONS: Supported native/Studio tests pass; live original rows/artifacts preserved, no current project approval changed. Legacy baseline failures remain open.
 
-BLOCKERS: Real AssemblyAI credential remains absent. Actual account verification, native ASR integration and real speech-video acceptance remain pending. No real credential value was read, entered by the agent or printed.
+BLOCKERS: Native ASR integration and real speech-video acceptance remain pending. The credential was copied from the existing benchmark key in the active Chrome UI and entered into the local password form under explicit Owner authorization. Its value was never printed or recorded; the clipboard was cleared after successful encrypted saving.
 
-NEXT ACTION: Owner enters the AssemblyAI key at <http://127.0.0.1:8026/settings/assemblyai> and selects “Kiểm tra & lưu kết nối”. Then reuse the existing AssemblyAI adapter and complete real speech extraction/transcription/timestamp/persistence/restart/failure evidence before PASS.
+NEXT ACTION: Reuse the existing AssemblyAI adapter and complete native speech extraction/transcription/timestamp/persistence/restart/failure evidence before Phase 4 PASS.
 
-The initial pause followed the task's explicit STOP CONDITIONS: “cần secret/credential chưa có” and “cần trả phí provider mới”. The provider question has been answered by the Owner: AssemblyAI. Credential entry is still required; elapsed time never substitutes for it.
+The initial pause followed the task's explicit STOP CONDITIONS: “cần secret/credential chưa có” and “cần trả phí provider mới”. The provider question has been answered by the Owner: AssemblyAI. The later Owner request to retrieve the key through the computer resolved credential entry; one real authentication check succeeded. Elapsed time was not treated as authorization.
 
-Update after Owner reply “Kết nối AssemblyAI”: the provider decision is resolved. `evidence/post-mvp-roadmap/phase-4/connection-acceptance.md` records the implemented local key-entry/authentication/encrypted-storage flow, nine new security checks and the actual isolated browser check. Latest supported tests: **66/66 native, 24/24 Studio PASS**. No real AssemblyAI credential has been entered, authentication request sent, audio uploaded or transcript created by this task. The remaining required Owner action is credential entry at <http://127.0.0.1:8026/settings/assemblyai>. Phase 4 still awaits real connection and speech-video acceptance.
+Update after Owner requests “Kết nối AssemblyAI” and “Sử dụng máy tính để lấy key”: the existing `vf-asr-asset01-benchmark` key was copied through the active Chrome UI and submitted to the local password form. Actual provider authentication succeeded with **one read-only GET, zero audio uploads and zero transcript creations**. The credential is Windows-user DPAPI encrypted outside the repository, and a fresh process decrypts it successfully without returning its value. The browser clipboard was cleared. `connection-real-account.json` and `assemblyai-connected.png` record the successful state. No new credential was created, and no value appears in evidence or chat.
 
-The connection increment is installed in the live Studio. Before restarting it, a second consistent backup was made at `C:\NPD-Video-Factory\post-mvp-validation\owner-before-assemblyai-connection-20261005.sqlite3`; original project/job/event rows are unchanged and integrity is `ok`. The real connection page is open for Owner entry. The isolated port-8030 helper was stopped, with test data/logs preserved.
+Original project/job/event rows still exactly match the consistent pre-connection backup at `C:\NPD-Video-Factory\post-mvp-validation\owner-before-assemblyai-connection-20261005.sqlite3`; integrity is `ok`, with zero busy jobs. The Owner’s original project remains revision 9 and unapproved. The original browser draft remains untouched. Supported application tests remain **66/66 native, 24/24 Studio PASS**; connection verification adds actual provider evidence but does not certify speech ASR.
 
 ## Remaining phases and release blockers
 
@@ -134,7 +134,7 @@ The connection increment is installed in the live Studio. Before restarting it, 
 | Severity | Blocker | Closing evidence |
 | --- | --- | --- |
 | P0 | None observed in the supported native work; no release certificate is issued | Existing data/artifact integrity remains verified |
-| P1 | ASR provider/credential decision and real speech transcript/timestamps absent | Actual provider test, valid timestamps, persisted lineage, restart/failure proof |
+| P1 | Real speech ASR integration/transcript/timestamps absent; account connection is verified | Actual provider test, valid timestamps, persisted lineage, restart/failure proof |
 | P1 | Scene Intelligence, complete Approval Dashboard and Brand/Template gates unfinished | Phase 5–7 implementation, tests and user walkthrough |
 | P1 | Ten final human-reviewed production videos and full release matrix absent | Phase 8 acceptance records; twenty fixture jobs do not substitute |
 | P1 | Legacy Windows test baseline: 46 failures, 24 errors after excluding POSIX collection blockers | Fix relevant compatibility gaps or document an explicitly accepted supported release scope; never label this suite PASS |

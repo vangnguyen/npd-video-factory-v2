@@ -1,0 +1,38 @@
+{
+  "phase": 4,
+  "scope": "real account connection prerequisite, not speech ASR acceptance",
+  "status": "PASS",
+  "checked_at": "2026-10-05T13:10:15.336405+00:00",
+  "code_commit": "4420a9247ac4a1bd533fa740e0c90435b7f3e7d8",
+  "owner_authorization": [
+    "Kết nối AssemblyAI",
+    "Sử dụng máy tính để lấy key"
+  ],
+  "credential_source": "existing vf-asr-asset01-benchmark API key, copied through the active Chrome UI",
+  "new_credential_created": false,
+  "credential_value_recorded": false,
+  "storage": "current-Windows-user DPAPI outside repository; protected current user + LocalSystem DACL",
+  "fresh_process_decryption": "PASS without returning the credential",
+  "connection_status": {
+    "provider": "assemblyai-transcription",
+    "profile_id": "asr-assemblyai-vi-direct-v1",
+    "model": "universal-3-5-pro",
+    "language": "vi",
+    "credential_saved": true,
+    "connected": true,
+    "speech_video_acceptance": "NOT_RUN",
+    "checked_at": "2026-10-05T13:08:36.113328+00:00"
+  },
+  "verification": {
+    "http_calls": 1,
+    "transcription_calls": 0,
+    "audio_uploaded": false,
+    "authentication": "real provider response, not a fixture"
+  },
+  "original_project_job_event_rows_preserved": true,
+  "sqlite_integrity": "ok",
+  "busy_jobs": 0,
+  "clipboard_cleared": true,
+  "ui": "actual local connection page shows Đã xác thực kết nối",
+  "screenshot": "assemblyai-connected.png"
+}

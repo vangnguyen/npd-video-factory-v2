@@ -2,7 +2,7 @@
 
 PHASE: 4 — connection prerequisite, not speech ASR certification.
 
-STATUS: Local connection implementation PASS; real account connection AWAITING OWNER CREDENTIAL. The Owner selected AssemblyAI on 2026-10-05. The previous provider-choice blocker is resolved; no real key was supplied or discovered.
+STATUS: Local connection implementation and actual AssemblyAI account authentication PASS. The Owner selected AssemblyAI and explicitly authorized computer retrieval of its existing benchmark key on 2026-10-05. Credential setup is complete; speech ASR certification remains pending.
 
 HEAD SHA: `4420a9247ac4a1bd533fa740e0c90435b7f3e7d8` (connection implementation).
 
@@ -16,8 +16,10 @@ CAPABILITIES ADDED: Local non-CLI connection page at `/settings/assemblyai`. Own
 
 REGRESSIONS: Supported native/Studio tests pass. Initial connection tests exposed a verification-script dependency on a Windows PowerShell module that could not load under the inherited module path; the independent ACL check now uses the built-in .NET file-security API and passes. This was test tooling, not a failed key-encryption or ACL operation. No provider adapter/profile duplication, dependency upgrades or real TTS call occurred.
 
-BLOCKERS: The real AssemblyAI key is still absent. Connection verification and actual speech-video transcript/timestamp/restart/failure acceptance are NOT RUN. The existing strict AssemblyAI profile/adapter remains selected for the forthcoming transcription integration; credential setup alone does not enable or certify native ASR.
+BLOCKERS: Actual speech-video transcript/timestamp/restart/failure acceptance is NOT RUN. Real account connection verification is now PASS. The existing strict AssemblyAI profile/adapter remains selected for the forthcoming transcription integration; credential setup alone does not enable or certify native ASR.
 
-NEXT ACTION: Owner opens the local connection page, enters their AssemblyAI key and selects “Kiểm tra & lưu kết nối”. Once real verification succeeds, continue native extraction/transcription integration by reusing the existing adapter and run the required real speech-video evidence. Do not ask for a key in chat, record it in evidence, or treat fixture verification as a live connection.
+NEXT ACTION: Continue native extraction/transcription integration by reusing the existing adapter and run the required real speech-video evidence. Do not ask for a key in chat, record it in evidence, or treat fixture verification as a live connection.
 
 Source verification: [AssemblyAI list-transcripts reference](https://www.assemblyai.com/docs/pre-recorded-audio/api-reference/transcripts/list), [supported languages](https://www.assemblyai.com/docs/pre-recorded-audio/supported-languages). The selected profile/model/language remain `asr-assemblyai-vi-direct-v1` / `universal-3-5-pro` / `vi`; no model fallback was enabled.
+
+Actual account update: `connection-real-account.json` records one real authentication GET with zero audio uploads/transcript creations. `assemblyai-connected.png` shows the local success message. Existing benchmark key retrieved through active Chrome UI under explicit Owner authorization; no new key created, no value printed/logged/persisted in plaintext. Browser clipboard cleared after encrypted saving. Fresh-process decryption succeeds; original projects/jobs/events match the backup exactly and SQLite integrity is `ok`. Historical missing-key receipts remain preserved as earlier checkpoints.
