@@ -1,0 +1,9 @@
+test_history_optimistic_edits_and_separate_process_restart (services.windows_native.tests.test_intelligence_models.IntelligenceModelTests.test_history_optimistic_edits_and_separate_process_restart) ... ok
+test_initialization_does_not_open_production_database (services.windows_native.tests.test_intelligence_models.IntelligenceModelTests.test_initialization_does_not_open_production_database) ... ok
+test_record_rejects_empty_provenance_and_naive_time (services.windows_native.tests.test_intelligence_models.IntelligenceModelTests.test_record_rejects_empty_provenance_and_naive_time) ... ok
+test_source_reported_claim_requires_exact_attributed_quote (services.windows_native.tests.test_intelligence_models.IntelligenceModelTests.test_source_reported_claim_requires_exact_attributed_quote) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.385s
+
+OK
