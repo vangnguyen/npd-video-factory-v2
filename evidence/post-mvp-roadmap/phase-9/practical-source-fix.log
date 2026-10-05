@@ -1,0 +1,12 @@
+{"number": 1, "preserved_status": "IDEAS", "no_replay": true}
+{"number": 2, "preserved_status": "IDEAS", "no_replay": true}
+{"number": 3, "preserved_status": "IDEAS", "no_replay": true}
+{"number": 4, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 4, "action": "ideas", "status": "FAILED", "sources": 1, "findings": 4, "ideas": 0, "error": {"automatic_replay": false, "code": "IDEA_EVIDENCE_REFERENCE_UNKNOWN_OR_UNSOURCED"}}
+{"number": 5, "preserved_status": "IDEAS", "no_replay": true}
+{"number": 6, "preserved_status": "FAILED", "no_replay": true}
+{"number": 7, "preserved_status": "IDEAS", "no_replay": true}
+{"number": 8, "preserved_status": "IDEAS", "no_replay": true}
+{"number": 9, "preserved_status": "IDEAS", "no_replay": true}
+{"number": 10, "preserved_status": "FAILED", "no_replay": true}
+{"cases": 10, "five_candidate_cases": 7, "human_acceptance": "PENDING", "production_dispatches": 0}

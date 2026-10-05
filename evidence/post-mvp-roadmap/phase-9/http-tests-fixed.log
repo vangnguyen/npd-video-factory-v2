@@ -1,0 +1,8 @@
+test_http_workflow_links_approved_brief_to_existing_unapproved_project (services.windows_native.tests.test_intelligence_http.IntelligenceHTTPTests.test_http_workflow_links_approved_brief_to_existing_unapproved_project) ... ok
+test_intelligence_routes_keep_session_csrf_and_origin_guards (services.windows_native.tests.test_intelligence_http.IntelligenceHTTPTests.test_intelligence_routes_keep_session_csrf_and_origin_guards) ... ok
+test_malformed_or_unknown_profile_never_dispatches (services.windows_native.tests.test_intelligence_http.IntelligenceHTTPTests.test_malformed_or_unknown_profile_never_dispatches) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.960s
+
+OK

@@ -7,4 +7,4 @@ evidence/post-mvp-roadmap/phase-8/*.json -text whitespace=cr-at-eol
 evidence/post-mvp-roadmap/phase-8/review-bundle.md -text whitespace=cr-at-eol
 evidence/post-mvp-roadmap/phase-8/final-review-bundle.md -text whitespace=cr-at-eol
 evidence/post-mvp-roadmap/phase-9/*.json -text whitespace=cr-at-eol
-evidence/post-mvp-roadmap/phase-9/*review*.md -text whitespace=cr-at-eol
+evidence/post-mvp-roadmap/phase-9/*review*.md -text whitespace=cr-at-eol,-blank-at-eof

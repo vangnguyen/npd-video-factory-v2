@@ -1,0 +1,15 @@
+{
+  "implementation_head_sha": "fc986b00ddab0dd4ab7003da4b4f48c2d57b4db8",
+  "stopped_wrapper": 29400,
+  "stopped_listener": 10984,
+  "new_wrapper": 20608,
+  "new_listener": 8436,
+  "verified_command_line": "\"C:\\Users\\PC\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\" -m services.windows_native.server --port 8026",
+  "stdout": "C:\\NPD-Video-Factory\\phase2\\server-phase9-final-20261006-010920.stdout.log",
+  "stderr": "C:\\NPD-Video-Factory\\phase2\\server-phase9-final-20261006-010920.stderr.log",
+  "host": "127.0.0.1",
+  "port": 8026,
+  "no_provider_dispatch": true,
+  "no_human_approvals": true,
+  "restarted_at": "2026-10-05T18:09:22.2423110Z"
+}

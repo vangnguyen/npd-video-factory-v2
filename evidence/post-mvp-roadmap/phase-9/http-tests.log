@@ -1,0 +1,16 @@
+test_http_workflow_links_approved_brief_to_existing_unapproved_project (services.windows_native.tests.test_intelligence_http.IntelligenceHTTPTests.test_http_workflow_links_approved_brief_to_existing_unapproved_project) ... ok
+test_intelligence_routes_keep_session_csrf_and_origin_guards (services.windows_native.tests.test_intelligence_http.IntelligenceHTTPTests.test_intelligence_routes_keep_session_csrf_and_origin_guards) ... FAIL
+test_malformed_or_unknown_profile_never_dispatches (services.windows_native.tests.test_intelligence_http.IntelligenceHTTPTests.test_malformed_or_unknown_profile_never_dispatches) ... ok
+
+======================================================================
+FAIL: test_intelligence_routes_keep_session_csrf_and_origin_guards (services.windows_native.tests.test_intelligence_http.IntelligenceHTTPTests.test_intelligence_routes_keep_session_csrf_and_origin_guards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\NPD-Video-Factory\source\services\windows_native\tests\test_intelligence_http.py", line 36, in test_intelligence_routes_keep_session_csrf_and_origin_guards
+    self.assertEqual(self.request('GET','/api/intelligence/config',authenticated=False)[0],403)
+AssertionError: 401 != 403
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.842s
+
+FAILED (failures=1)

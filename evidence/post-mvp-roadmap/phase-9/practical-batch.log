@@ -1,0 +1,19 @@
+{"number": 1, "preserved_status": "IDEAS", "no_replay": true}
+{"number": 2, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 2, "action": "ideas", "status": "IDEAS", "sources": 1, "findings": 4, "ideas": 5, "error": null}
+{"number": 3, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 3, "action": "ideas", "status": "IDEAS", "sources": 1, "findings": 4, "ideas": 5, "error": null}
+{"number": 4, "action": "research", "status": "FAILED", "sources": 0, "findings": 0, "ideas": 0, "error": {"automatic_replay": false, "code": "RESEARCH_SOURCE_SIZE_LIMIT"}}
+{"number": 5, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 5, "action": "ideas", "status": "IDEAS", "sources": 1, "findings": 4, "ideas": 5, "error": null}
+{"number": 6, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 6, "action": "ideas", "status": "FAILED", "sources": 1, "findings": 4, "ideas": 0, "error": {"automatic_replay": false, "code": "RESEARCH_PERSISTED_SOURCE_CHANGED"}}
+{"number": 7, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 7, "action": "ideas", "status": "FAILED", "sources": 1, "findings": 4, "ideas": 0, "error": {"automatic_replay": false, "code": "RESEARCH_PERSISTED_SOURCE_CHANGED"}}
+{"number": 8, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 8, "action": "ideas", "status": "FAILED", "sources": 1, "findings": 4, "ideas": 0, "error": {"automatic_replay": false, "code": "RESEARCH_PERSISTED_SOURCE_CHANGED"}}
+{"number": 9, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 9, "action": "ideas", "status": "FAILED", "sources": 1, "findings": 4, "ideas": 0, "error": {"automatic_replay": false, "code": "RESEARCH_PERSISTED_SOURCE_CHANGED"}}
+{"number": 10, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 10, "action": "ideas", "status": "FAILED", "sources": 1, "findings": 4, "ideas": 0, "error": {"automatic_replay": false, "code": "RESEARCH_PERSISTED_SOURCE_CHANGED"}}
+{"cases": 10, "five_candidate_cases": 4, "human_acceptance": "PENDING", "production_dispatches": 0}

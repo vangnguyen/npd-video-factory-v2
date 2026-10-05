@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "C:\NPD-Video-Factory\source\scripts\native-intelligence-render-contract.py", line 55, in <module>
+    p=production.save(p['id'],p['revision'],scene_media=[{'scene':s['scene'],'asset_id':asset['id']} for s in proposal['visual_brief']])
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\NPD-Video-Factory\source\services\windows_native\store.py", line 292, in save
+    validate_bindings(doc)
+  File "C:\NPD-Video-Factory\source\services\windows_native\media.py", line 54, in validate_bindings
+    raise WorkflowError("INVALID_SCENE_MEDIA", 400)
+services.windows_native.contracts.WorkflowError: INVALID_SCENE_MEDIA
