@@ -1,0 +1,381 @@
+{
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "24",
+      "failures": "46",
+      "skipped": "12",
+      "tests": "1899",
+      "time": "305.913",
+      "timestamp": "2026-10-05T18:05:10.325693+07:00",
+      "hostname": "DESKTOP-S5UVMA3"
+    }
+  ],
+  "failures_and_errors": [
+    {
+      "test": "tests.test_executor_plane.test_root_host_binding_requires_canonical_secret_binding_path",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SECRET_BINDING_PATH_INVALID'\n Input: 'EXECUTION_PROVENANCE_PATH_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_bound_source_presence_never_reads_plaintext",
+      "kind": "failure",
+      "message": "app.executor_qualification.Blocked: SECRET_BINDING_BOUND_STATE_INVALID"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes0]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes1]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes2]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes3]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes4]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes5]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes6]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes7]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes8]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes9]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes10]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_root_receipt_rejects_invalid_custody_metadata[receipt_changes11]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_INVALID'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_backend_receipt_hash_is_bound",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYSTEMD_BACKEND_RECEIPT_HASH_MISMATCH'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_plane.test_backend_receipt_requires_root_owned_non_symlink_policy",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'SYMLINK_BLOCKED'\n Input: 'SECRET_BINDING_BOUND_STATE_INVALID'"
+    },
+    {
+      "test": "tests.test_executor_promotion.test_promotion_is_separate_non_authority_artifact",
+      "kind": "failure",
+      "message": "AttributeError: module 'os' has no attribute 'O_NOFOLLOW'"
+    },
+    {
+      "test": "tests.test_executor_provenance.test_system_safe_directory_mismatch_fails_closed[*\\n-0]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'GIT_SAFE_DIRECTORY_NOT_EXACT'\n Input: 'GIT_SAFE_DIRECTORY_SOURCE_NOT_ABSOLUTE'"
+    },
+    {
+      "test": "tests.test_executor_provenance.test_system_safe_directory_mismatch_fails_closed[/different/path\\n-0]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'GIT_SAFE_DIRECTORY_NOT_EXACT'\n Input: 'GIT_SAFE_DIRECTORY_SOURCE_NOT_ABSOLUTE'"
+    },
+    {
+      "test": "tests.test_executor_provenance.test_system_safe_directory_mismatch_fails_closed[/protected/source\\n/protected/source\\n-0]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'GIT_SAFE_DIRECTORY_NOT_EXACT'\n Input: 'GIT_SAFE_DIRECTORY_SOURCE_NOT_ABSOLUTE'"
+    },
+    {
+      "test": "tests.test_executor_provenance.test_system_safe_directory_mismatch_fails_closed[-1]",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n Regex: 'GIT_SAFE_DIRECTORY_NOT_EXACT'\n Input: 'GIT_SAFE_DIRECTORY_SOURCE_NOT_ABSOLUTE'"
+    },
+    {
+      "test": "tests.test_executor_provenance.test_system_safe_directory_accepts_one_exact_entry",
+      "kind": "failure",
+      "message": "ValueError: GIT_SAFE_DIRECTORY_SOURCE_NOT_ABSOLUTE"
+    },
+    {
+      "test": "tests.test_executor_security.test_hostile_review_requires_all_denials",
+      "kind": "failure",
+      "message": "app.executor_qualification.Blocked: HOSTILE_JOB_SECURITY_FAILED"
+    },
+    {
+      "test": "tests.test_media_intelligence.test_media_plan_broll_resolution_rights_cost_and_restart",
+      "kind": "failure",
+      "message": "assert False\n +  where False = all(<generator object test_media_plan_broll_resolution_rights_cost_and_restart.<locals>.<genexpr> at 0x0000021E202A0AD0>)"
+    },
+    {
+      "test": "tests.test_mvp1_content_generation.test_explicit_generation_proposal_diff_apply_approval_and_zero_asr[idea]",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_explicit_generation_propo0\\\\objects\\\\workspaces\\\\wsp_9747e1f5b0ba4a999a47292b\\\\projects\\\\prj_9d877e8d3e"
+    },
+    {
+      "test": "tests.test_mvp1_content_generation.test_explicit_generation_proposal_diff_apply_approval_and_zero_asr[prompt]",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_explicit_generation_propo1\\\\objects\\\\workspaces\\\\wsp_e4dff0fe1e2f4751bf6b1405\\\\projects\\\\prj_983305350e"
+    },
+    {
+      "test": "tests.test_mvp1_content_generation.test_edit_during_inflight_render_cannot_restore_ready_or_approval[content]",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_edit_during_inflight_rend0\\\\objects\\\\workspaces\\\\wsp_c93393eabba34e268553ebcf\\\\projects\\\\prj_3ad069d801"
+    },
+    {
+      "test": "tests.test_mvp1_content_generation.test_edit_during_inflight_render_cannot_restore_ready_or_approval[subtitle]",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_edit_during_inflight_rend1\\\\objects\\\\workspaces\\\\wsp_ef74f7c599664a83a9dc445f\\\\projects\\\\prj_f4626ef1cb"
+    },
+    {
+      "test": "tests.test_mvp1_content_generation.test_edit_during_inflight_render_cannot_restore_ready_or_approval[audio]",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_edit_during_inflight_rend2\\\\objects\\\\workspaces\\\\wsp_f62b83fd98ec450c96675d20\\\\projects\\\\prj_ab4b51a94d"
+    },
+    {
+      "test": "tests.test_mvp1_multi_input.test_text_only_persists_restart_and_timeline_without_asr[script]",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_text_only_persists_restar0\\\\objects\\\\workspaces\\\\wsp_39cab80b00964fe2b458202b\\\\projects\\\\prj_3c2f13966f"
+    },
+    {
+      "test": "tests.test_mvp1_multi_input.test_text_only_persists_restart_and_timeline_without_asr[idea]",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_text_only_persists_restar1\\\\objects\\\\workspaces\\\\wsp_41047e61fbc447239ab03e44\\\\projects\\\\prj_e7d7257ad8"
+    },
+    {
+      "test": "tests.test_mvp1_multi_input.test_prompt_with_explicit_narration_is_text_only_not_llm",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_prompt_with_explicit_narr0\\\\objects\\\\workspaces\\\\wsp_ddb5952db9a049d4a13cd02c\\\\projects\\\\prj_ab119324b7"
+    },
+    {
+      "test": "tests.test_mvp1_multi_input.test_stale_content_and_versions_rejected",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_stale_content_and_version0\\\\objects\\\\workspaces\\\\wsp_d17765f56c75496fbf0fc456\\\\projects\\\\prj_d0c0907cb4"
+    },
+    {
+      "test": "tests.test_mvp1_multi_input.test_review_final_approval_invalidates_on_edit_and_queue_idempotency",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_review_final_approval_inv0\\\\objects\\\\workspaces\\\\wsp_5a276fc132af42dd9fbe6b83\\\\projects\\\\prj_f31bb1d49b"
+    },
+    {
+      "test": "tests.test_mvp1_multi_input.test_cancelled_review_and_worker_replay_do_not_produce_duplicate_asset",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_cancelled_review_and_work0\\\\objects\\\\workspaces\\\\wsp_38f1330a1d2c4660a5a38763\\\\projects\\\\prj_8ffa15450a"
+    },
+    {
+      "test": "tests.test_mvp1_narration_pacing.test_measured_sentence_reflow_auto_and_locked_pause",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_measured_sentence_reflow_0\\\\objects\\\\workspaces\\\\wsp_ed905063c6a84c6baf20c211\\\\projects\\\\prj_52d8f33c3d"
+    },
+    {
+      "test": "tests.test_mvp1_narration_pacing.test_audio_longer_than_slot_fails_no_speedup",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_audio_longer_than_slot_fa0\\\\objects\\\\workspaces\\\\wsp_5fa3798006a44445be39e246\\\\projects\\\\prj_7403175c19"
+    },
+    {
+      "test": "tests.test_mvp1_narration_pacing.test_word_highlight_without_words_is_explicitly_rejected",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_word_highlight_without_wo0\\\\objects\\\\workspaces\\\\wsp_789b2591d5504475a7cca3d1\\\\projects\\\\prj_22ef9d9f6e"
+    },
+    {
+      "test": "tests.test_mvp1_narration_pacing.test_measured_reflow_during_render_cannot_revive_old_review",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_measured_reflow_during_re0\\\\objects\\\\workspaces\\\\wsp_17d0471df5424e588bd9f9ea\\\\projects\\\\prj_20a849fde8"
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_exact_public_admission_zero_network_zero_secret_zero_reservation[content_generation]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_exact_public_admission_zero_network_zero_secret_zero_reservation[tts]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_loader_custody_and_raw_identity[raw_hash]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_loader_custody_and_raw_identity[source]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_loader_custody_and_raw_identity[lane]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_loader_custody_and_raw_identity[world_write]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_loader_custody_and_raw_identity[symlink]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_admission_only_bundle_cannot_reserve_or_execute",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_tts_version_binding_cancellation_and_no_credential",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_public_context_drift_never_reaches_secret_budget_or_provider[workspace_id-other_workspace]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_public_context_drift_never_reaches_secret_budget_or_provider[project_id-other_project]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_public_context_drift_never_reaches_secret_budget_or_provider[asset_id-pver_other_version]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_public_context_drift_never_reaches_secret_budget_or_provider[asset_hash-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_public_context_drift_never_reaches_secret_budget_or_provider[credential_alias-secret://openai/codex-video]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_one_invalid_public_lane_does_not_abort_other_lane",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_nonroot_cannot_admit_self_owned_public_authority",
+      "kind": "failure",
+      "message": "AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?"
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_synthetic_lane_config_does_not_require_or_transfer_historical_asr_gate[content_generation]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_mvp1_provider_admission.test_synthetic_lane_config_does_not_require_or_transfer_historical_asr_gate[tts]",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_provider_custody.test_real_symlink_path_substitution_is_rejected",
+      "kind": "failure",
+      "message": "OSError: [WinError 1314] A required privilege is not held by the client: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_real_symlink_path_substit0\\\\real-socket-directory' -> 'C:\\\\NPD-Video-Factory\\\\runtime\\"
+    },
+    {
+      "test": "tests.test_provider_selection_candidates.test_luna_zero_call_public_admission_uses_durable_lane_no_key_or_reservation",
+      "kind": "error",
+      "message": "failed on setup with \"AttributeError: module 'os' has no attribute 'getuid'. Did you mean: 'getpid'?\""
+    },
+    {
+      "test": "tests.test_provider_selection_candidates.test_realtime_input_custody_and_size_limits[symlink]",
+      "kind": "failure",
+      "message": "OSError: [WinError 1314] A required privilege is not held by the client: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_realtime_input_custody_an4\\\\original.wav' -> 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-run"
+    },
+    {
+      "test": "tests.test_provider_selection_candidates.test_realtime_input_custody_and_size_limits[parent_symlink]",
+      "kind": "failure",
+      "message": "OSError: [WinError 1314] A required privilege is not held by the client: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_realtime_input_custody_an5\\\\folder' -> 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\bas"
+    },
+    {
+      "test": "tests.test_publishing.test_rights_platform_and_live_boundaries_fail_closed",
+      "kind": "failure",
+      "message": "app.production_repository.ApprovalBoundaryError: approval requires a current review render with passing QC"
+    },
+    {
+      "test": "tests.test_real_provider_enablement.test_provider_audio_provenance_survives_pcm_reflow_without_fake_words",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_provider_audio_provenance0\\\\objects\\\\workspaces\\\\wsp_20e21e3d75a0461abf7ad105\\\\projects\\\\prj_71ee6fce13"
+    },
+    {
+      "test": "tests.test_vieneu_tts.test_bad_empty_or_truncated_audio_fail_closed[RIFF\\xe4]\\x00\\x00WAVEfmt \\x10\\x00\\x00\\x00\\x01\\x00\\x01\\x00\\xc0]\\x00\\x00\\x80\\xbb\\x00\\x00\\x02\\x00\\x10\\x00data\\xc0]\\x00\\x00\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\",
+      "kind": "error",
+      "message": "failed on setup with \"ValueError: the environment variable is longer than 32767 characters\""
+    },
+    {
+      "test": "tests.test_vieneu_tts.test_bad_empty_or_truncated_audio_fail_closed[RIFF$w\\x01\\x00WAVEfmt \\x10\\x00\\x00\\x00\\x01\\x00\\x02\\x00\\x80\\xbb\\x00\\x00\\x00\\xee\\x02\\x00\\x04\\x00\\x10\\x00data\\x00w\\x01\\x00\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\",
+      "kind": "error",
+      "message": "failed on setup with \"ValueError: the environment variable is longer than 32767 characters\""
+    },
+    {
+      "test": "tests.test_vieneu_tts.test_bad_empty_or_truncated_audio_fail_closed[RIFF\\xa4\\xbb\\x00\\x00WAVEfmt \\x10\\x00\\x00\\x00\\x01\\x00\\x01\\x00\\x80\\xbb\\x00\\x00\\x00w\\x01\\x00\\x02\\x00\\x10\\x00data\\x80\\xbb\\x00\\x00\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x00\\x10\\x0",
+      "kind": "error",
+      "message": "failed on setup with \"ValueError: the environment variable is longer than 32767 characters\""
+    },
+    {
+      "test": "tests.test_vieneu_tts.test_pipeline_estimates_reflow_and_voice_edit_invalidates_approval",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\NPD-Video-Factory\\\\runtime\\\\test-runs\\\\baseline-current-20261005-1820\\\\test_pipeline_estimates_reflow0\\\\objects\\\\workspaces\\\\wsp_dd5f58bce9774d49b0bc0743\\\\projects\\\\prj_c9af736fd1"
+    }
+  ],
+  "full_collection": "3 POSIX grp import errors; portable run excluded test_provider_secret_resolver.py, test_runtime_activation.py, test_runtime_role_failsafe.py",
+  "network": "external socket connect blocked; loopback permitted",
+  "native": {
+    "tests": 34,
+    "passed": 34
+  },
+  "studio": {
+    "tests": 22,
+    "passed": 22
+  },
+  "renderer": {
+    "tests": 26,
+    "passed": 26,
+    "tested_checkout": "legacy-reference",
+    "unchanged_tree": "f06cefe1a5c5bf47d7bbea542a90632d9f39f50a"
+  },
+  "raw_reports": [
+    {
+      "path": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-0\\python-current-portable-tests.log",
+      "bytes": 2776752,
+      "sha256": "215622a1a16df979a1a3a074caa7e0515c81ad0c102c039b20cd992850066004",
+      "modified_at": "2026-10-05T11:10:17.446784+00:00"
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-0\\python-current-portable-tests.xml",
+      "bytes": 1062270,
+      "sha256": "53d591d93f92a2ef977400a560e72f0dbd0a14482b1efd0857f45a90125625bb",
+      "modified_at": "2026-10-05T11:10:16.249353+00:00"
+    }
+  ]
+}

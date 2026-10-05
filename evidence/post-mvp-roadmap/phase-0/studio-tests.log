@@ -1,0 +1,30 @@
+✔ human session header is attached without mutating caller headers (2.4697ms)
+✔ missing human session fails closed (0.8072ms)
+✔ formats editor timecodes and zoom deterministically (1.6213ms)
+✔ labels version-bound approval and production render states (2.8869ms)
+✔ labels publishing dry-run truthfully and flattens gate evidence (0.5612ms)
+✔ layout failure offers an editing remedy, not a hidden text clamp (0.3455ms)
+✔ snaps pointer placement to quarter seconds (0.3177ms)
+✔ computes timeline clip placement and respects track compatibility (0.3017ms)
+✔ labels ready, stale and running previews without overstating readiness (0.2279ms)
+✔ renders analytics truth states and never turns missing metrics into zero (26.5479ms)
+✔ builds a stable V2-10 metric panel from normalized nullable metrics (0.7996ms)
+✔ storyboard source identity is explicit and never a fake analysis (1.3024ms)
+✔ proposal cannot overwrite unsaved kind/script/original/facts (0.3672ms)
+✔ Render UI requires current approval, saved edits and idle job (0.9725ms)
+✔ Each scene requires one source from its project library (0.526ms)
+✔ Legacy image projects retain all scene choices without rewriting snapshot (0.3689ms)
+✔ Local multi-file selection accepts only supported image and video extensions (0.3376ms)
+✔ Only successful video bound to current approved version is visible (0.2641ms)
+✔ declares all eight required radar views (1.1813ms)
+✔ radar view rules remain deterministic and explainable (0.299ms)
+✔ filters by view, platform and search while sorting by estimate (1.4686ms)
+✔ formats scores, VND and Vietnamese lifecycle labels (21.2495ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 214.0515

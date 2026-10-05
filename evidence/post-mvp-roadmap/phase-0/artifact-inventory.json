@@ -1,0 +1,44 @@
+[
+  {
+    "path": "C:\\NPD-Video-Factory\\outputs\\MVP1\\final.mp4",
+    "bytes": 11467955,
+    "sha256": "c0bbcf029554cfd2e7c29e05d595379abb6d894babc78154a16537f7fba1a47a",
+    "modified_at": "2026-10-05T08:47:40.042597+00:00"
+  },
+  {
+    "path": "C:\\NPD-Video-Factory\\outputs\\MVP1\\voice.wav",
+    "bytes": 2002604,
+    "sha256": "2b5f57c31c2514683a6465e408b2cbe20e949cc9e3921a84f68c28ab983a73e5",
+    "modified_at": "2026-10-05T08:40:48.432821+00:00"
+  },
+  {
+    "path": "C:\\NPD-Video-Factory\\outputs\\MVP1\\owner-final-video-approval.json",
+    "bytes": 746,
+    "sha256": "93018456300f351c2bb8f366187d81c469ac5ac23ad036349e895effcd03b276",
+    "modified_at": "2026-10-05T08:53:42.566299+00:00"
+  },
+  {
+    "path": "C:\\NPD-Video-Factory\\phase2-validation\\render-02\\final.mp4",
+    "bytes": 1184726,
+    "sha256": "8459021937428f099051b0a57d69316d513514b0163e223b95b9925843feee78",
+    "modified_at": "2026-10-05T09:26:33.066780+00:00"
+  },
+  {
+    "path": "C:\\NPD-Video-Factory\\phase2-validation\\single-media-regression\\final.mp4",
+    "bytes": 1149331,
+    "sha256": "730409c3844186f7b4a9552a2a1884516ac3e787f58d0dfa6377bc3d23e3341a",
+    "modified_at": "2026-10-05T10:00:41.692295+00:00"
+  },
+  {
+    "path": "C:\\NPD-Video-Factory\\phase2-validation\\mixed-media-regression\\final.mp4",
+    "bytes": 2125820,
+    "sha256": "aeca2c096f0a8731e23357894ff7cdc7ba3e2ca165476abdaa675503f8a5b053",
+    "modified_at": "2026-10-05T10:05:08.173843+00:00"
+  },
+  {
+    "path": "C:\\NPD-Video-Factory\\phase2-validation\\MULTI_MEDIA_RESULTS.json",
+    "bytes": 2570,
+    "sha256": "854aa0c8ca17fe55eedf34b9bbfb532bd94e2a819130c8d0e39499b8f7a22437",
+    "modified_at": "2026-10-05T10:16:49.597623+00:00"
+  }
+]

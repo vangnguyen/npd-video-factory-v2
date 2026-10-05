@@ -1,0 +1,12 @@
+{
+  "voice": "Thùy Dung",
+  "profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+  "model": "gpt-6-luna",
+  "resolution": "1080x1920",
+  "native_windows": true,
+  "provider_calls": 0,
+  "status": "PASS",
+  "command": "runtime/venv/Scripts/python.exe -m services.windows_native.server --preflight",
+  "credential_file_present": true,
+  "credential_value_read_during_discovery": false
+}

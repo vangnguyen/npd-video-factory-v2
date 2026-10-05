@@ -1,0 +1,49 @@
+{
+  "read_only": true,
+  "integrity": "ok",
+  "projects": [
+    {
+      "id": "3a9a98846f14467fba72a6da18ca6276",
+      "name": "Vinhomes Green Paradise Cần Giờ",
+      "revision": 9,
+      "document_sha256": "fb586ed87ab0eadd0c1114429e49501649062ba3c56318f1502700487e88bfac",
+      "has_proposal": true,
+      "asset_count": 2,
+      "scene_media": [],
+      "has_approval": false,
+      "updated_at": "2026-10-05T10:42:34.030478+00:00"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "3620e53e06bb4e8aa5e195a95a5d9a60",
+      "project_id": "3a9a98846f14467fba72a6da18ca6276",
+      "revision": 1,
+      "kind": "content",
+      "status": "awaiting_review",
+      "stage": "awaiting_review",
+      "created_at": "2026-10-05T09:22:59.351260+00:00",
+      "updated_at": "2026-10-05T09:23:08.481007+00:00"
+    },
+    {
+      "id": "cae5a3087e934ddca70db3f206caeac6",
+      "project_id": "3a9a98846f14467fba72a6da18ca6276",
+      "revision": 5,
+      "kind": "content",
+      "status": "awaiting_review",
+      "stage": "awaiting_review",
+      "created_at": "2026-10-05T10:30:22.723406+00:00",
+      "updated_at": "2026-10-05T10:30:30.991735+00:00"
+    },
+    {
+      "id": "9a78bf3f843b451a95c350c0cea9d55b",
+      "project_id": "3a9a98846f14467fba72a6da18ca6276",
+      "revision": 7,
+      "kind": "content",
+      "status": "awaiting_review",
+      "stage": "awaiting_review",
+      "created_at": "2026-10-05T10:32:44.458764+00:00",
+      "updated_at": "2026-10-05T10:32:49.960393+00:00"
+    }
+  ]
+}

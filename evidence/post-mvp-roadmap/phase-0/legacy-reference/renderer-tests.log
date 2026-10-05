@@ -1,0 +1,18 @@
+
+ RUN  v3.2.7 C:/Users/PC/Documents/Codex/2026-09-28/ti-p-t-c-vf-executor/work/vf-mvp1-real-provider-enablement-01/renderer
+
+ ✓ src/RealEstateShort.test.tsx (2 tests) 10ms
+ ✓ src/TimelineRender.test.tsx (8 tests) 13ms
+ ✓ src/contract.test.ts (7 tests) 18ms
+stdout | src/app.test.ts > renderer HTTP service > completes a render with metadata and 70-95 progress mapping
+{"event":"render_progress","job_id":"vid_12345678","progress":0,"overall_progress":70}
+{"event":"render_progress","job_id":"vid_12345678","progress":0.5,"overall_progress":83}
+{"event":"render_progress","job_id":"vid_12345678","progress":1,"overall_progress":95}
+
+ ✓ src/app.test.ts (9 tests) 608ms
+   ✓ renderer HTTP service > completes a render with metadata and 70-95 progress mapping  415ms
+
+ Test Files  4 passed (4)
+      Tests  26 passed (26)
+   Start at  17:53:53
+   Duration  5.90s (transform 1.16s, setup 0ms, collect 7.12s, tests 649ms, environment 1ms, prepare 2.52s)

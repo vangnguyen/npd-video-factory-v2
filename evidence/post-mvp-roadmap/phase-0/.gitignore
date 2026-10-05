@@ -1,0 +1,4 @@
+legacy-reference/python-*.log
+legacy-reference/python-*.xml
+python-current-portable-tests.log
+python-current-portable-tests.xml
