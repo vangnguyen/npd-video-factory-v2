@@ -1,0 +1,93 @@
+{
+  "files": [
+    {
+      "repository": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "file": "README.md",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\vieneu-v3-turbo\\README.md",
+      "sha256": "5d5bb2de661fabc0e073b3b844dc131696fac3dddd5ea882d10fd9a849108eb7",
+      "bytes": 15458
+    },
+    {
+      "repository": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "file": "onnx_update/config.json",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\vieneu-v3-turbo\\onnx_update\\config.json",
+      "sha256": "17d89d414ee302a82db7b330bf57b4cdf8541569392119c81f552178cafcb79b",
+      "bytes": 2152
+    },
+    {
+      "repository": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "file": "onnx_update/tokenizer.json",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\vieneu-v3-turbo\\onnx_update\\tokenizer.json",
+      "sha256": "6cc6bcbe380b8c37bd9f2514e37c5dfa3e00e122c6e3125dae5c4afe48e39158",
+      "bytes": 22320
+    },
+    {
+      "repository": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "file": "onnx_update/vieneu_prefill.onnx",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\vieneu-v3-turbo\\onnx_update\\vieneu_prefill.onnx",
+      "sha256": "27f8b064f6b57b5448e95d095f1959588c005d614678045c2b97ecccf3b7a0f7",
+      "bytes": 324499
+    },
+    {
+      "repository": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "file": "onnx_update/vieneu_decode_step.onnx",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\vieneu-v3-turbo\\onnx_update\\vieneu_decode_step.onnx",
+      "sha256": "bedc379cea61ea5d616312750d95ad3924e055856662d19187a889a5edc24ceb",
+      "bytes": 306134
+    },
+    {
+      "repository": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "file": "onnx_update/vieneu_acoustic_cached.onnx",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\vieneu-v3-turbo\\onnx_update\\vieneu_acoustic_cached.onnx",
+      "sha256": "f631e3387c788c3d8b9a5ac5df94952af5bc4c4d1049ff8a751e76a246fff2d4",
+      "bytes": 7207223
+    },
+    {
+      "repository": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "file": "onnx_update/vieneu_backbone_shared.data",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\vieneu-v3-turbo\\onnx_update\\vieneu_backbone_shared.data",
+      "sha256": "c7c072193db33d0542457e2612c7272c44c4279d1cafaf0aa4c379964911db2f",
+      "bytes": 415319040
+    },
+    {
+      "repository": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "file": "onnx_update/vieneu_v3_heads.npz",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\vieneu-v3-turbo\\onnx_update\\vieneu_v3_heads.npz",
+      "sha256": "fb22484baa424bbb775133a6e5f0d00d6299b2b256fbe3312a864b85b9aed01e",
+      "bytes": 52219622
+    },
+    {
+      "repository": "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano-ONNX",
+      "revision": "ceff0d0749bfb3fa2d61149794ec6feef0d1e1ae",
+      "file": "README.md",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\moss-codec\\README.md",
+      "sha256": "3c7b9e9ef1c8c5e5c829a077a1d32c1f7aea1668f2bf17ead318ff04bf1e6fe4",
+      "bytes": 4892
+    },
+    {
+      "repository": "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano-ONNX",
+      "revision": "ceff0d0749bfb3fa2d61149794ec6feef0d1e1ae",
+      "file": "moss_audio_tokenizer_decode_full.onnx",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\moss-codec\\moss_audio_tokenizer_decode_full.onnx",
+      "sha256": "0fbbafe3fd4afa2a019af5c5ced204af6e2d1db044fa40f021525d2aee95b4ac",
+      "bytes": 681902
+    },
+    {
+      "repository": "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano-ONNX",
+      "revision": "ceff0d0749bfb3fa2d61149794ec6feef0d1e1ae",
+      "file": "moss_audio_tokenizer_decode_shared.data",
+      "path": "C:\\NPD-Video-Factory\\runtime\\models\\moss-codec\\moss_audio_tokenizer_decode_shared.data",
+      "sha256": "e69d52e0f4e84ca27850557ee54face46632d3a5a16c89bd246c7c408466dcad",
+      "bytes": 44198912
+    }
+  ],
+  "profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3"
+}

@@ -1,5 +1,11 @@
 # NPD Video Factory V2
 
+**Phase 2 Windows Native UI** is available in `services/windows_native` and the existing Studio web
+source. Start `scripts/start-windows-native.cmd` on the MVP1 PC and open <http://127.0.0.1:8026>.
+It reuses the accepted local runtime with gpt-6-luna Content, mandatory human review, locked
+Thùy Dung TTS and 1080×1920 FFmpeg rendering. See [local workflow and validation](docs/WINDOWS_NATIVE_PHASE2.md).
+The historical V2/V3 stack and audit status below are separate from this local native increment.
+
 > **V3-01 production acceptance is in feature freeze.** The current checkpoint is a
 > read-only/static/mock audit with verdict **NO-GO** and no release candidate. Start with the
 > [V3-01 baseline](docs/acceptance/v3-01/00_BASELINE.md),

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Video Factory — tạo và duyệt video trên PC Windows">
+  <title>Video Factory · Windows Native</title>
+  <link rel="stylesheet" href="/native.css">
+  <script type="module" src="/native.mjs"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a href="/" class="brand"><span class="brand-mark">V</span><span>VIDEO FACTORY<small>Windows Native · Phase 2</small></span></a>
+    <div class="side-label">KHÔNG GIAN LÀM VIỆC</div>
+    <button class="nav active" id="new-project">＋ Tạo video mới</button>
+    <label class="side-label" for="project-picker">DỰ ÁN ĐÃ LƯU</label>
+    <select id="project-picker"><option value="">Chọn dự án…</option></select>
+    <div class="runtime-card"><span class="dot"></span> Chạy trên PC của bạn<p>Nội dung · gpt-6-luna<br>Giọng đọc · Thùy Dung<br>Video · 1080 × 1920</p></div>
+    <small class="side-footer">MVP1 đã nghiệm thu<br>Prompt → duyệt → giọng đọc → video</small>
+  </aside>
+  <main>
+    <header><div><p class="eyebrow">TỪ Ý TƯỞNG ĐẾN VIDEO</p><h1>Một workflow, từng bước rõ ràng.</h1></div><span class="badge">LOCAL STUDIO</span></header>
+    <div class="steps" aria-label="Quy trình"><div><b>01</b> Đề xuất nội dung</div><div><b>02</b> Bạn kiểm tra & duyệt</div><div><b>03</b> Giọng Thùy Dung</div><div><b>04</b> Video hoàn chỉnh</div></div>
+    <p id="message" class="message" role="status" aria-live="polite" hidden></p>
+    <div class="workspace">
+      <div class="editor">
+        <section class="card" id="brief-card">
+          <div class="card-heading"><div><p class="eyebrow">01 / NỘI DUNG</p><h2 id="project-heading">Bắt đầu một video mới</h2></div><span id="version" class="version">Bản nháp</span></div>
+          <label>Tên dự án<input id="project-name" maxlength="150" value="Vinhomes Green Paradise Cần Giờ"></label>
+          <label>Yêu cầu nội dung<textarea id="prompt" rows="7" maxlength="20000" placeholder="Bạn muốn giới thiệu điều gì? Đối tượng xem là ai?"></textarea></label>
+          <div class="actions"><button id="save-prompt" class="secondary">Lưu dự án</button><button id="generate" class="primary" disabled>Tạo đề xuất nội dung <span>↗</span></button></div>
+          <p id="save-note" class="hint">Lưu yêu cầu trước khi tạo đề xuất.</p>
+        </section>
+        <section class="card" id="image-card" hidden>
+          <div class="card-heading"><div><p class="eyebrow">HÌNH ẢNH</p><h2>Ảnh cho video</h2></div></div>
+          <div class="image-layout"><div class="image-preview"><img id="source-image" alt="Ảnh dự án" hidden><span id="image-empty">Ảnh dự án của bạn<br><small>JPEG / PNG · tối đa 15 MB</small></span></div><div>
+            <label>Chọn ảnh<input id="image-file" type="file" accept="image/jpeg,image/png"></label>
+            <label class="check"><input id="image-rights" type="checkbox"> Tôi có quyền sử dụng ảnh này.</label>
+            <label class="check"><input id="image-illustration" type="checkbox" checked> Đây là phối cảnh minh họa.</label>
+            <button id="upload-image" class="secondary">Lưu ảnh</button>
+            <p class="hint">Ảnh dùng cho các cảnh, giữ toàn ảnh trong khung dọc.</p>
+          </div></div>
+        </section>
+        <section class="card" id="proposal-card" hidden>
+          <div class="card-heading"><div><p class="eyebrow">02 / KIỂM TRA & DUYỆT</p><h2>Đề xuất dành cho bạn</h2></div><span id="approval-state" class="version">Chờ duyệt</span></div>
+          <p class="hint">Sửa lời đọc theo từng cảnh. Lời đọc hoàn chỉnh ghép các cảnh theo thứ tự.</p>
+          <div id="scenes"></div>
+          <details class="narration-detail"><summary>Lời đọc hoàn chỉnh</summary><p id="narration"></p></details>
+          <div class="facts"><strong>Thông tin cần nguồn xác minh</strong><ul id="facts"></ul><p class="hint">Đề xuất chưa xác minh các dữ kiện. Kiểm tra trước khi duyệt.</p></div>
+          <button id="save-proposal" class="secondary">Lưu bản chỉnh sửa</button>
+          <div class="review"><label>Người duyệt<input id="reviewer" maxlength="100" placeholder="Tên của bạn"></label><label class="check"><input id="review-check" type="checkbox"> Tôi đã kiểm tra lời đọc, thông tin cần nguồn và quyền dùng ảnh. Tôi duyệt phiên bản này để tạo giọng đọc và video.</label><button id="approve" class="primary">Duyệt nội dung này</button></div>
+        </section>
+      </div>
+      <aside class="right-column">
+        <section class="card output-card"><p class="eyebrow">03 → 04 / ĐẦU RA</p><h2>Video của bạn</h2><div class="video-placeholder" id="video-placeholder"><span>▷</span><p>Video sẽ xuất hiện ở đây<br>sau khi bạn duyệt nội dung.</p></div><video id="video" controls playsinline preload="metadata" hidden></video><a id="download" class="download" hidden download="video-factory.mp4">Tải video MP4 ↓</a><button id="render" class="primary full" disabled>Tạo giọng đọc & video</button><p class="hint">Giọng Thùy Dung đã khóa. Phụ đề theo đoạn, dựa trên thời lượng audio đo được.</p><p id="qc-note" class="hint"></p></section>
+        <section class="card job-card"><div class="card-heading"><h2>Tiến trình</h2><button id="refresh" class="text-button">Làm mới ↻</button></div><p id="job-empty" class="hint">Chưa có job.</p><div id="jobs" aria-live="polite"></div><button id="retry" class="secondary full" hidden>Thử lại bằng job mới</button><p id="retry-note" class="hint" hidden>Job mới sẽ chạy lại bước đã lỗi. Có thể phát sinh thêm chi phí tạo nội dung.</p></section>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
