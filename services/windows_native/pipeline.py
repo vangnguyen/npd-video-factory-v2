@@ -331,12 +331,19 @@ def wrap_text(text, font, width):
     return lines
 
 
+def music_filters(filters, duration):
+    return filters.replace("[a]","[narration]",1)+f";[narration]asplit=2[sidechain][voiceout];[2:a]volume=0.12,apad,atrim=duration={duration:.4f},afade=t=out:st={max(duration-1,0):.4f}:d=1[bed];[bed][sidechain]sidechaincompress=threshold=0.015:ratio=8:attack=20:release=250[ducked];[voiceout][ducked]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95:level=false[a]"
+
+
 def render(config, snapshot, out):
     from PIL import Image, ImageDraw, ImageFont
     import numpy as np
 
     doc = snapshot["document"]
     proposal = Proposal.model_validate(doc["proposal"])
+    from .editor import validate_plan, timeline
+    edit_plan=validate_plan(doc)
+    edit_options={s["scene"]:s for s in edit_plan["scenes"]} if edit_plan else {}
     meta = json.loads((out / "voice.json").read_bytes())
     if meta["profile_sha256"] != PROFILE_SHA or file_sha(out / "voice.wav") != meta["audio_sha256"]:
         raise WorkflowError("VOICE_ARTIFACT_BINDING_MISMATCH")
@@ -355,6 +362,8 @@ def render(config, snapshot, out):
     captions, frames = [], []
     for i, (scene, units) in enumerate(zip(proposal.visual_brief, grouped)):
         asset = chosen[scene.scene]
+        options=edit_options.get(scene.scene,{})
+        plane_height=830 if edit_plan else 1000
         source = media_path(config, asset["id"])
         start = 0 if i == 0 else intro + units[0]["start_seconds"]
         end = duration if i == len(grouped) - 1 else intro + grouped[i + 1][0]["start_seconds"]
@@ -363,27 +372,51 @@ def render(config, snapshot, out):
             raise WorkflowError("SCENE_TOO_SHORT_FOR_VIDEO")
         frame = Image.new("RGBA", (1080, 1920), (9, 33, 31, 255))
         draw = ImageDraw.Draw(frame)
-        if asset["kind"] == "image":
+        if asset["kind"] == "image" and not edit_plan:
             with Image.open(source) as original:
                 image = original.convert("RGB")
             image.thumbnail((1080, 1000), Image.Resampling.LANCZOS)
             frame.paste(image, ((1080 - image.width) // 2, 390 + (1000 - image.height) // 2))
         else:
-            draw.rectangle((0, 390, 1079, 1389), fill=(0, 0, 0, 0))
-        draw.text((70, 90), f"VIDEO FACTORY   /   {i+1:02}", font=label_font, fill="#e2cb9c")
-        lines = wrap_text(scene.on_screen_text, title_font, 940)
-        if len(lines) > 3:
+            draw.rectangle((0, 390, 1079, 390+plane_height-1), fill=(0, 0, 0, 0))
+        text_x=90 if edit_plan else 70
+        draw.text((text_x, 160 if edit_plan else 90), f"VIDEO FACTORY   /   {i+1:02}", font=label_font, fill="#e2cb9c")
+        lines = wrap_text(scene.on_screen_text, title_font, 810 if edit_plan else 940)
+        if len(lines) > (2 if edit_plan else 3):
             raise WorkflowError("SCENE_HEADING_TOO_LONG")
-        draw.multiline_text((70, 155), "\n".join(lines), font=title_font, spacing=12, fill="#fcf9f1")
+        draw.multiline_text((text_x, 225 if edit_plan else 155), "\n".join(lines), font=title_font, spacing=12, fill="#fcf9f1")
         if asset["illustration"]:
-            draw.text((70, 1390), "Phối cảnh minh họa", font=label_font, fill="#e2cb9c")
-        draw.rounded_rectangle((58, 1485, 1022, 1740), radius=18, fill="#071918", outline="#5d6653", width=2)
-        draw.text((70, 1800), "Thông tin cần được kiểm chứng trước khi giao dịch", font=label_font, fill="#bed3cc")
+            draw.text((text_x, 1215 if edit_plan else 1390), "Phối cảnh minh họa", font=label_font, fill="#e2cb9c")
+        if edit_plan:
+            draw.rounded_rectangle((80,1320,910,1550),radius=18,fill="#071918",outline="#5d6653",width=2)
+            footer=edit_plan["cta"] if options.get("cta_marker") else "Thông tin cần được kiểm chứng trước khi giao dịch"
+            draw.multiline_text((90,1250),"\n".join(wrap_text(footer,label_font,810)),font=label_font,spacing=4,fill="#bed3cc")
+        else:
+            draw.rounded_rectangle((58,1485,1022,1740),radius=18,fill="#071918",outline="#5d6653",width=2)
+            draw.text((70,1800),"Thông tin cần được kiểm chứng trước khi giao dịch",font=label_font,fill="#bed3cc")
         filename = f"scene-{i:02}.png"
         frame.save(out / filename)
         segment = f"scene-{i:02}.mp4"
         command = [str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-nostdin", "-n"]
-        if asset["kind"] == "image":
+        if edit_plan:
+            if asset["kind"]=="image":
+                command += ["-loop","1","-framerate","30","-i",str(source)]
+            else:
+                command += ["-stream_loop","-1","-ss",str(options["source_start"]),"-protocol_whitelist","file,pipe","-i",str(source)]
+            command += ["-loop","1","-framerate","30","-i",filename,"-f","lavfi","-i","color=c=0x09211f:s=1080x1920:r=30"]
+            index=0 if asset["kind"]=="image" else asset.get("video_stream_index",0)
+            fit=(f"scale=1080:{plane_height}:force_original_aspect_ratio=increase:force_divisible_by=2,crop=1080:{plane_height}" if options["crop_strategy"]=="cover" else
+                 f"scale=1080:{plane_height}:force_original_aspect_ratio=decrease:force_divisible_by=2,pad=1080:{plane_height}:(ow-iw)/2:(oh-ih)/2:color=0x09211f")
+            motion=""
+            if asset["kind"]=="image" and options["motion"]!="none":
+                zoom="min(1+on*0.0003,1.08)" if options["motion"]=="zoom_in" else "1.06"
+                progress=f"min(on/{max(count-1,1)},1)"
+                x="iw/2-iw/zoom/2" if options["motion"]=="zoom_in" else f"(iw-iw/zoom)*({('1-' if options['motion']=='pan_left' else '')}{progress})"
+                motion=f",zoompan=z='{zoom}':x='{x}':y='ih/2-ih/zoom/2':d=1:s=1080x{plane_height}:fps=30"
+            fade=f",format=rgba,fade=t=in:st=0:d=0.15:alpha=1,fade=t=out:st={max(count/30-.15,0):.5f}:d=0.15:alpha=1" if options["transition"]=="fade" else ",format=rgba"
+            filters=f"[0:{index}]fps=30,setpts=PTS-STARTPTS,{fit}{motion},setsar=1{fade}[media];[2:v][media]overlay=0:390:shortest=1[base];[base][1:v]overlay=0:0:shortest=1,format=yuv420p[v]"
+            command += ["-filter_complex",filters,"-map","[v]"]
+        elif asset["kind"] == "image":
             command += ["-loop", "1", "-framerate", "30", "-i", filename]
         else:
             command += ["-stream_loop", "-1", "-protocol_whitelist", "file,pipe", "-i", str(source),
@@ -401,10 +434,11 @@ def render(config, snapshot, out):
         frames.append({"scene": scene.scene, "file": segment, "start": round(start * 30) / 30,
                        "end": round(end * 30) / 30, "frames": count, "asset_id": asset["id"],
                        "kind": asset["kind"], "source_sha256": asset["sha256"], "filename": asset["filename"],
-                       "short_video_policy": "loop_from_start" if asset["kind"] == "video" else None,
+                       "short_video_policy": "selected_start_first_pass_then_wrap_source" if edit_plan and asset["kind"]=="video" else "loop_from_start" if asset["kind"]=="video" else None,
+                       "source_start":options.get("source_start",0),"crop_strategy":options.get("crop_strategy","contain"),"motion":options.get("motion","none"),
                        "source_audio": "muted" if asset["kind"] == "video" else None})
         for unit in units:
-            lines = wrap_text(unit["text"], sub_font, 900)
+            lines = wrap_text(unit["text"], sub_font, 790 if edit_plan else 900)
             phrases = ["\n".join(lines[j:j+2]) for j in range(0, len(lines), 2)]
             weights = [len(normalize(p)) for p in phrases]
             t = intro + unit["activity_start_seconds"]
@@ -432,7 +466,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     events = []
     for cue in captions:
         text = "\\N".join(ass_escape(line) for line in cue["text"].splitlines())
-        events.append(f"Dialogue: 0,{ass_time(cue['start'])},{ass_time(cue['end'])},Subtitle,,0,0,0,,{{\\pos(540,1610)}}{text}")
+        events.append(f"Dialogue: 0,{ass_time(cue['start'])},{ass_time(cue['end'])},Subtitle,,0,0,0,,{{\\pos({495 if edit_plan else 540},{1435 if edit_plan else 1610})}}{text}")
     (out / "subtitles.ass").write_text(header + "\n".join(events) + "\n", encoding="utf-8")
     concat = "ffconcat version 1.0\n" + "".join(f"file {f['file']}\n" for f in frames)
     (out / "frames.txt").write_text(concat, encoding="ascii")
@@ -445,17 +479,28 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     filters = (f"[0:v]fps=30,ass=subtitles.ass,format=yuv420p[v];"
                f"[1:a]volume={gain:.8f},adelay=1100,apad,atrim=duration={duration:.4f}[a]")
     cmd = [str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-nostdin", "-n", "-f", "concat", "-safe", "1", "-i", "frames.txt",
-           "-i", "voice.wav", "-filter_complex", filters, "-map", "[v]", "-map", "[a]", "-c:v", "libx264",
+           "-i", "voice.wav"]
+    music=doc.get("music") if doc.get("music_enabled",True) else None
+    if music:
+        music_source=media_path(config,music["id"])
+        if music.get("rights_confirmed") is not True or not music_source.is_file() or file_sha(music_source)!=music["sha256"]:
+            raise WorkflowError("MUSIC_ARTIFACT_CHANGED_OR_RIGHTS_MISSING")
+        cmd += ["-stream_loop","-1","-i",str(music_source)]
+        filters=music_filters(filters,duration)
+    cmd += ["-filter_complex", filters, "-map", "[v]", "-map", "[a]", "-c:v", "libx264",
            "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
            "-ar", "48000", "-movflags", "+faststart", "-t", f"{duration:.4f}", "final.mp4"]
     with (out / "render.log").open("w", encoding="utf-8") as log:
         result = subprocess.run(cmd, cwd=out, stdout=log, stderr=subprocess.STDOUT, timeout=600)
     if result.returncode:
         raise WorkflowError("FFMPEG_RENDER_FAILED")
+    write_json(out / "timeline.json",timeline(doc,frames,captions,meta))
     write_json(out / "render-manifest.json", {"duration_seconds": duration, "captions": captions, "scenes": frames,
         "voice_sha256": meta["audio_sha256"], "scene_source_policy": "exactly_one_image_or_video",
         "profile_sha256": PROFILE_SHA, "subtitle_timing": "ESTIMATED_WITH_MEASURED_SCENE_AUDIO",
-        "word_alignment": "none", "approval": snapshot["approval"], "voice_speed": 1})
+        "word_alignment": "none", "approval": snapshot["approval"], "voice_speed": 1,
+        "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
+        "music":{"sha256":music["sha256"],"nominal_gain":.12,"ducking":"voice_sidechaincompress"} if music else None})
     return qc(config, out, duration)
 
 
@@ -537,6 +582,11 @@ class Pipeline:
             raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
         stage("checking_scene_media")
         verify_selected_files(self.config, job["snapshot"]["document"])
+        from .editor import validate_plan
+        validate_plan(job["snapshot"]["document"])
+        music=job["snapshot"]["document"].get("music") if job["snapshot"]["document"].get("music_enabled",True) else None
+        if music and (music.get("rights_confirmed") is not True or not media_path(self.config,music["id"]).is_file() or file_sha(media_path(self.config,music["id"]))!=music["sha256"]):
+            raise WorkflowError("MUSIC_ARTIFACT_CHANGED_OR_RIGHTS_MISSING")
         checkpoint = artifacts.load("render")
         if checkpoint:
             stage("resuming_verified_render")
@@ -588,7 +638,7 @@ class Pipeline:
                   "output_directory": str(out), "review_required": True,
                   "render_version": digest({"snapshot": job["snapshot"], "job_id": job["id"], "final_sha256": report["final_sha256"]})}
         paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in
-                        ("final.mp4", "qc-report.json", "ffprobe.json", "render-manifest.json", "subtitles.ass")], stage, "storage_render_publish")
+                        ("final.mp4", "qc-report.json", "ffprobe.json", "render-manifest.json", "subtitles.ass", "timeline.json")], stage, "storage_render_publish")
         retry_io(lambda: artifacts.commit("render", paths, result), stage, "storage_render_checkpoint")
         return result
 

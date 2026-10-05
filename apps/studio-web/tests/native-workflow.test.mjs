@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending} from '../native.mjs';
+import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending,defaultSceneOptions,musicType} from '../native.mjs';
 
 test('Render UI requires current approval, saved edits and idle job',()=>{
   const p={revision:3,approval:{revision:3},jobs:[]};
@@ -48,4 +48,11 @@ test('Changed source needs new analysis while existing source keeps its result',
   assert.equal(mediaAnalysisPending({...doc,assets:[{id:'clip',kind:'video',sha256:'source-b'}]}),true);
   assert.equal(mediaAnalysisPending({...doc,media_analysis:[]}),true);
   assert.equal(mediaAnalysisPending(null),false);
+});
+test('Video/image changes reset incompatible motion and source time',()=>{
+  const old={motion:'pan_left',source_start:1.5,crop_strategy:'cover',transition:'fade'};
+  assert.deepEqual(defaultSceneOptions(2,{kind:'video'},old),{scene:2,motion:'none',source_start:1.5,crop_strategy:'cover',transition:'fade'});
+  assert.equal(defaultSceneOptions(1,{kind:'image'},old).source_start,0);
+  assert.equal(defaultSceneOptions(1,{kind:'image'},null).motion,'none');
+  assert.equal(musicType({name:'MUSIC.WAV'}),'audio/wav');assert.equal(musicType({name:'music.MP3'}),'audio/mpeg');assert.equal(musicType({name:'bad.mp4'}),'');
 });

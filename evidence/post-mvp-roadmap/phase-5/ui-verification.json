@@ -1,0 +1,14 @@
+{
+  "project_id": "ea61e12275614826bf654cfdfafd5550",
+  "revision": 13,
+  "source_start_seconds": 1.25,
+  "selected_asset": "289bcc59cc094efdb85c43b21cdf3a19.mp4",
+  "approval": null,
+  "render_disabled_after_revision": true,
+  "actual_browser_video_played": {
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 25
+  },
+  "owner_project_untouched": true
+}

@@ -148,7 +148,7 @@ class Store:
             raise WorkflowError("PROJECT_BUSY")
         return project
 
-    def save(self, identifier, revision, *, prompt=None, proposal=None, asset=None, scene_media=None, input_kind=None):
+    def save(self, identifier, revision, *, prompt=None, proposal=None, asset=None, scene_media=None, input_kind=None, scene_options=None, music_enabled=None):
         if prompt is not None and input_kind != "media" and (not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 20000):
             raise WorkflowError("PROMPT_REQUIRED_MAX_20000", 400)
         if proposal is not None:
@@ -176,10 +176,43 @@ class Store:
             if scene_media is not None:
                 doc["scene_media"] = scene_media
             validate_bindings(doc)
+            if music_enabled is not None:
+                if type(music_enabled) is not bool:
+                    raise WorkflowError("MUSIC_ENABLED_MUST_BE_BOOLEAN",400)
+                doc["music_enabled"]=music_enabled
+            if scene_options is not None:
+                from .editor import build_plan
+                doc["edit_plan"]=build_plan(doc,scene_options)
+            elif any(v is not None for v in (prompt,proposal,asset,scene_media,input_kind,music_enabled)):
+                doc.pop("edit_plan",None)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                         (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
             self.event(con, identifier, "draft_saved_approval_invalidated", {"revision": revision + 1})
             self.version(con, identifier)
+        return self.get(identifier)
+
+    def auto_plan(self, identifier, revision):
+        from .editor import build_plan
+        with self.transaction() as con:
+            project=self.editable(con,identifier,revision); doc=project["document"]
+            plan=build_plan(doc,auto_select=True)
+            doc["edit_plan"]=plan
+            doc["scene_media"]=[{"scene":s["scene"],"asset_id":s["selected_asset"]} for s in plan["scenes"]]
+            validate_bindings(doc)
+            con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
+                        (revision+1,json.dumps(doc,ensure_ascii=False),now(),identifier))
+            self.version(con,identifier)
+            self.event(con,identifier,"editor_plan_saved_review_required",{"revision":revision+1,"plan_sha256":digest(plan)})
+        return self.get(identifier)
+
+    def set_music(self, identifier, revision, music):
+        with self.transaction() as con:
+            project=self.editable(con,identifier,revision); doc=project["document"]
+            doc["music"]=music; doc["music_enabled"]=True; doc.pop("edit_plan",None)
+            con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
+                        (revision+1,json.dumps(doc,ensure_ascii=False),now(),identifier))
+            self.version(con,identifier)
+            self.event(con,identifier,"music_saved_review_required",{"revision":revision+1,"music_id":music["id"],"source_sha256":music["source_sha256"]})
         return self.get(identifier)
 
     def append_document(self, identifier, revision, document):
@@ -204,6 +237,8 @@ class Store:
             doc = project["document"]
             if not doc["proposal"]:
                 raise WorkflowError("CONTENT_AND_IMAGE_REQUIRED")
+            from .editor import validate_plan
+            validate_plan(doc)
             selected_media(doc)
             approval = {"revision": revision, "snapshot_sha256": digest(doc),
                         "reviewer": reviewer.strip(), "approved_at": now(), "source": "local_ui_human_review"}
@@ -294,6 +329,7 @@ class Store:
                         raise WorkflowError("ASR_RESULT_SOURCE_BINDING_MISMATCH")
                 replaced = {r["asset_id"] for r in incoming}
                 doc["media_analysis"] = [r for r in doc.get("media_analysis", []) if r["asset_id"] not in replaced] + incoming
+                doc.pop("edit_plan",None)
                 con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                             (project["revision"]+1, json.dumps(doc, ensure_ascii=False), now(), project["id"]))
                 self.version(con, project["id"])
@@ -344,6 +380,7 @@ class Store:
                 raise WorkflowError("PROJECT_MEDIA_LIMIT_50", 400)
             doc["scene_media"] = scene_bindings(doc)
             doc["assets"] = library + [asset]
+            doc.pop("edit_plan",None)
             validate_bindings(doc)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                 (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))

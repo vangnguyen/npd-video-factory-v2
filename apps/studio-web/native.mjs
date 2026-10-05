@@ -10,6 +10,8 @@ export const mediaReady = doc => {
 export const mediaType = file => ({jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",mp4:"video/mp4",mov:"video/quicktime"})[file.name.split(".").pop().toLowerCase()] ?? "";
 export const documentType = file => ({txt:"text/plain",md:"text/markdown",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})[file.name.split(".").pop().toLowerCase()] ?? "";
 export const mediaAnalysisPending = doc => mediaLibrary(doc).some(a=>!(doc?.media_analysis??[]).some(r=>r.asset_id===a.id&&r.source_sha256===a.sha256));
+export const musicType = file => ({wav:"audio/wav",mp3:"audio/mpeg"})[file.name.split(".").pop().toLowerCase()] ?? "";
+export const defaultSceneOptions = (scene, asset, plan) => ({scene,crop_strategy:plan?.crop_strategy??"contain",motion:asset?.kind==="video"?"none":plan?.motion??"none",source_start:asset?.kind==="video"?plan?.source_start??0:0,transition:plan?.transition??"cut"});
 
 const errors = {
   HUMAN_APPROVAL_REQUIRED_BEFORE_TTS:"Cần duyệt đúng phiên bản nội dung trước khi tạo giọng đọc.",
@@ -44,6 +46,12 @@ const errors = {
   ASR_NO_UNANALYZED_MEDIA:"Các nguồn đã được phân tích hoặc chưa có nguồn để phân tích.",
   ASR_EXISTING_JOB_RESUME_REQUIRED:"Nguồn này đã có job nhận diện. Dùng Tiếp tục từ bước đã lưu; không tạo yêu cầu nhận diện trùng.",
   ASR_OUTCOME_UNKNOWN_NO_REPLAY:"Yêu cầu AssemblyAI chưa rõ kết quả. Hệ thống dừng để tránh tính phí lần nữa; cần kiểm tra job trong tài khoản.",
+  EDITOR_VIDEO_TRIM_OR_MOTION_INVALID:"Thời điểm bắt đầu phải nằm trong video. Chuyển động pan/zoom chỉ dùng cho ảnh.",
+  EDITOR_OPTIONS_INVALID:"Kiểm tra cách cắt khung, chuyển động và thời điểm của từng cảnh.",
+  EDITOR_PLAN_CHANGED_OR_STALE:"Kế hoạch cảnh đã thay đổi. Lưu và duyệt lại trước khi tạo video.",
+  MUSIC_RIGHTS_TYPE_SIZE_REQUIRED_MAX_25MB:"Xác nhận quyền dùng nhạc WAV/MP3, tối đa 25 MB.",
+  MUSIC_AUDIO_INVALID_WAV_MP3_MAX_10_MINUTES:"Chọn bản nhạc WAV/MP3 hợp lệ, tối đa 10 phút.",
+  MUSIC_ARTIFACT_CHANGED_OR_RIGHTS_MISSING:"Bản nhạc bị thay đổi hoặc thiếu quyền sử dụng. Lưu và duyệt lại.",
 };
 const statusNames = {queued:"Đang chờ",running:"Đang chạy",retrying:"Đang thử lại có giới hạn",awaiting_review:"Đề xuất sẵn sàng · cần bạn duyệt",succeeded:"Video đã render · hãy xem lại",failed:"Job đã dừng do lỗi",interrupted:"Job bị ngắt · chưa chạy lại"};
 const stageNames = {starting:"Bắt đầu",prepare_existing_script:"Đang chuẩn bị kịch bản đã nhập",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video",asr_local_media_analysis:"Đang phân tích cảnh nguồn",asr_extract_audio:"Đang tách âm thanh",asr_upload:"Đang gửi âm thanh đến AssemblyAI",asr_create_transcript:"Đang nhận diện lời nói",asr_observe_known_transcript:"Đang chờ kết quả nhận diện",resuming_verified_asr:"Đang khôi phục kết quả đã lưu"};
@@ -72,6 +80,10 @@ if (typeof document !== "undefined") {
     $("approve").disabled=!mediaReady(project?.document)||blocked||dirty||Boolean(project.approval);
     $("upload-media").disabled=!project||blocked||dirty;
     $("analyze-media").disabled=!project||blocked||dirty||!mediaAnalysisPending(project.document);
+    $("auto-plan").disabled=!project?.document.proposal||!mediaLibrary(project?.document).length||blocked||dirty;
+    $("upload-music").disabled=!project||blocked||dirty;
+    $("music-enabled").disabled=!project?.document.music||!project.document.proposal||blocked||dirtyPart==="prompt";
+    document.querySelectorAll(".scene").forEach(row=>{const asset=mediaLibrary(project?.document).find(a=>a.id===row.querySelector("[data-media]").value);row.querySelector("[data-start]").disabled=blocked||dirtyPart==="prompt"||asset?.kind!=="video";row.querySelector("[data-motion]").disabled=blocked||dirtyPart==="prompt"||asset?.kind!=="image";});
     $("render").disabled=!canRender(project,dirty,busy);
     $("save-prompt").textContent=project?"Lưu yêu cầu":"Tạo dự án";
     $("save-proposal").disabled=!project?.document.proposal||blocked;
@@ -88,13 +100,22 @@ if (typeof document !== "undefined") {
   function readBindings() {
     return [...document.querySelectorAll(".scene")].flatMap((row,i)=>row.querySelector("[data-media]").value?[{scene:i+1,asset_id:row.querySelector("[data-media]").value}]:[]);
   }
+  function readOptions() {return [...document.querySelectorAll(".scene")].map((row,i)=>({scene:i+1,crop_strategy:row.querySelector("[data-crop]").value,motion:row.querySelector("[data-motion]").value,source_start:Number(row.querySelector("[data-start]").value),transition:row.querySelector("[data-transition]").value}));}
+  function editorControls(scene) {
+    const asset=mediaLibrary(project.document).find(a=>a.id===mediaBindings(project.document).find(b=>b.scene===scene.scene)?.asset_id);
+    const plan=project.document.edit_plan?.scenes.find(s=>s.scene===scene.scene);
+    const option=defaultSceneOptions(scene.scene,asset,plan);
+    const select=(attribute,label,choices,value)=>`<label>${label}<select ${attribute}>${choices.map(([v,t])=>`<option value="${v}" ${v===value?"selected":""}>${t}</option>`).join("")}</select></label>`;
+    return `<details class="scene-edit"><summary>Cách dựng cảnh</summary><div class="scene-grid">${select("data-crop","Khung hình",[["contain","Giữ toàn ảnh/video"],["cover","Lấp đầy khung hình"]],option.crop_strategy)}${select("data-motion","Chuyển động ảnh",[["none","Giữ yên"],["zoom_in","Zoom chậm"],["pan_left","Pan sang trái"],["pan_right","Pan sang phải"]],option.motion)}<label>Video bắt đầu từ giây<input data-start type="number" min="0" step="0.01" max="${asset?.duration_seconds??600}" value="${option.source_start}"></label>${select("data-transition","Chuyển cảnh",[["cut","Cắt thẳng"],["fade","Mờ nhẹ"]],option.transition)}</div><p class="hint">Video ngắn sẽ lặp sau lượt phát đầu. Thời lượng cảnh chốt theo giọng đọc; phụ đề theo đoạn. Chữ chừa khoảng cho giao diện mạng xã hội, cần xem lại trên nền tảng.</p>${plan?`<p class="hint">${plan.asset_candidates.find(c=>c.asset_id===plan.selected_asset)?.reason==="transcript_token_overlap"?"Nguồn được gợi ý theo lời nói nhận diện.":"Nguồn được gợi ý theo thứ tự thư viện; cần kiểm tra hình."}</p>`:""}</details>`;
+  }
   const thumbnail = asset => `/api/projects/${project.id}/media/${asset.id}/thumbnail`;
   const sourceLabel = asset => `${asset.kind==="video"?"Video":"Ảnh"} · ${asset.filename}${asset.kind==="video"?` · ${Number(asset.duration_seconds).toFixed(1)} giây`:""}`;
   function scenePreview(row) {
     const asset=mediaLibrary(project.document).find(a=>a.id===row.querySelector("[data-media]").value);
     const img=row.querySelector("[data-preview]");img.hidden=!asset;
     if(asset){img.src=thumbnail(asset);img.alt=asset.filename;}else img.removeAttribute("src");
-    row.querySelector("[data-media-note]").textContent=asset?.kind==="video"?"Giữ chuyển động · tắt âm thanh gốc · clip ngắn lặp cho đủ thời lượng cảnh.":asset?"Giữ toàn ảnh trong khung dọc.":"Chọn một nguồn cho cảnh này trước khi duyệt.";
+    const fit=row.querySelector("[data-crop]")?.value==="cover"?"Lấp đầy khung hình":"Giữ toàn ảnh/video";
+    row.querySelector("[data-media-note]").textContent=asset?.kind==="video"?`${fit} · tắt âm thanh gốc · clip ngắn lặp sau lượt phát đầu.`:asset?`${fit} · kiểm tra bố cục trong bản xem trước.`:"Chọn một nguồn cho cảnh này trước khi duyệt.";
   }
   function renderProject(reset=true) {
     $("image-card").hidden=!project;
@@ -106,6 +127,8 @@ if (typeof document !== "undefined") {
     $("document-list").innerHTML=(project?.document.documents??[]).map(d=>`<p><strong>${esc(d.filename)}</strong> · ${d.extracted_text.length.toLocaleString("vi-VN")} ký tự</p>`).join("")||'<p class="hint">Chưa có tài liệu nguồn.</p>';
     if(reset)$("review-check").checked=false;
     const assets=mediaLibrary(project?.document),bindings=mediaBindings(project?.document);
+    $("music-note").textContent=project?.document.music?`${project.document.music.filename} · ${project.document.music.duration_seconds.toFixed(1)} giây · tự hạ nhạc khi có lời đọc`:"Chưa có nhạc nền.";
+    if(reset)$("music-enabled").checked=Boolean(project?.document.music)&&project.document.music_enabled!==false;
     $("media-count").textContent=`${assets.length} nguồn`;
     $("media-library").innerHTML=assets.map(a=>`<figure class="media-tile"><img src="${thumbnail(a)}" alt="${esc(a.filename)}" loading="lazy"><figcaption><span>${a.kind==="video"?"▷ VIDEO":"ẢNH"}</span><strong>${esc(a.filename)}</strong>${a.kind==="video"?`<small>${Number(a.duration_seconds).toFixed(1)} giây · âm thanh gốc tắt</small>`:""}<small>${a.illustration?"Phối cảnh minh họa":"Nguồn của bạn"}</small></figcaption></figure>`).join("")||'<p class="hint">Chưa có nguồn. Chọn ảnh/video để thêm vào thư viện.</p>';
     $("media-analysis").innerHTML=(project?.document.media_analysis??[]).map(r=>{
@@ -115,7 +138,7 @@ if (typeof document !== "undefined") {
     }).join("");
     if(proposal&&reset) {
       $("scenes").innerHTML=proposal.visual_brief.map((scene,i)=>`<article class="scene"><strong>CẢNH ${i+1}</strong><div class="scene-source"><img data-preview hidden alt="Nguồn của cảnh"><div><label>Nguồn cho cảnh ${i+1}<select data-media aria-label="Nguồn cho cảnh ${i+1}"><option value="">Chọn một ảnh hoặc video…</option>${assets.map(a=>`<option value="${esc(a.id)}" ${bindings.some(b=>b.scene===scene.scene&&b.asset_id===a.id)?"selected":""}>${esc(sourceLabel(a))}</option>`).join("")}</select></label><p data-media-note class="hint"></p></div></div><label>Lời đọc<textarea data-narration rows="3" maxlength="1500">${esc(scene.narration_excerpt)}</textarea></label><div class="scene-grid"><label>Chữ trên video<input data-title maxlength="150" value="${esc(scene.on_screen_text)}"></label><label>Định hướng hình ảnh<textarea data-visual rows="2" maxlength="1200">${esc(scene.visual)}</textarea></label></div></article>`).join("");
-      document.querySelectorAll(".scene").forEach(scenePreview);
+      document.querySelectorAll(".scene").forEach((row,i)=>{row.insertAdjacentHTML("beforeend",editorControls(proposal.visual_brief[i]));scenePreview(row);});
       $("narration").textContent=proposal.narration;
       $("facts").innerHTML=proposal.facts_needing_source.map(f=>`<li>${esc(f)}</li>`).join("")||"<li>Đề xuất không liệt kê thêm nguồn. Bạn vẫn cần kiểm tra nội dung.</li>";
     }
@@ -166,7 +189,10 @@ if (typeof document !== "undefined") {
   $("analyze-media").addEventListener("click",guarded(()=>enqueue("asr")));
   $("render").addEventListener("click",guarded(()=>enqueue("render")));
   $("retry").addEventListener("click",guarded(()=>enqueue(project.jobs[0].kind,true)));
-  $("save-proposal").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,proposal:readProposal(),scene_media:readBindings()});renderProject(true);message("Đã lưu nội dung và nguồn từng cảnh. Phiên bản mới cần duyệt lại.");}));
+  $("save-proposal").addEventListener("click",guarded(async()=>{const proposal=readProposal(),bindings=readBindings();project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,proposal,scene_media:bindings,scene_options:mediaReady({...project.document,proposal,scene_media:bindings})?readOptions():undefined,music_enabled:$("music-enabled").checked});renderProject(true);message("Đã lưu nội dung và cách dựng từng cảnh. Phiên bản mới cần duyệt lại.");}));
+  $("auto-plan").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/auto-plan`,{revision:project.revision});renderProject(true);message("Đã đề xuất nguồn và cách dựng. Kiểm tra từng cảnh, đổi nguồn nếu cần rồi duyệt.");}));
+  $("upload-music").addEventListener("click",guarded(async()=>{const file=$("music-file").files[0];if(!file||!musicType(file)||!file.size||file.size>25*1024*1024||!$("music-rights").checked)throw new Error(errors.MUSIC_RIGHTS_TYPE_SIZE_REQUIRED_MAX_25MB);const response=await fetch(`/api/projects/${project.id}/music`,{method:"POST",credentials:"same-origin",headers:{"Content-Type":musicType(file),"X-VF-CSRF":csrf,"X-VF-Revision":String(project.revision),"X-VF-Rights":"confirmed","X-VF-Filename":encodeURIComponent(file.name)},body:file});const result=await response.json();if(!response.ok)throw new Error(errors[result.code]??result.code);project=result;$("music-file").value="";renderProject(true);message("Đã lưu nhạc nền. Kiểm tra và duyệt lại trước khi render.");}));
+  $("music-enabled").addEventListener("change",()=>markDirty("proposal"));
   $("approve").addEventListener("click",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi duyệt.");project=await api(`/api/projects/${project.id}/approve`,{revision:project.revision,reviewer:$("reviewer").value,acknowledged:$("review-check").checked});renderProject(true);message("Đã ghi nhận bạn duyệt phiên bản này. Có thể tạo giọng đọc và video.");}));
   $("upload-media").addEventListener("click",guarded(async()=>{
     if(dirty)throw new Error("Lưu chỉnh sửa trước khi tải nguồn.");
@@ -192,7 +218,7 @@ if (typeof document !== "undefined") {
   $("input-kind").addEventListener("change",()=>{if($("input-kind").value==="media")$("prompt").value="";markDirty("prompt");});
   $("upload-documents").addEventListener("click",guarded(async()=>{const files=[...$("document-files").files];if(!project||dirty||!files.length)throw new Error("Lưu dự án và chọn tài liệu trước khi tải lên.");for(const file of files){const type=documentType(file);if(!type||file.size>5*1024*1024)throw new Error("Chọn TXT, Markdown hoặc DOCX không quá 5 MB.");const response=await fetch(`/api/projects/${project.id}/documents`,{method:"POST",credentials:"same-origin",headers:{"Content-Type":type,"X-VF-CSRF":csrf,"X-VF-Revision":String(project.revision),"X-VF-Filename":encodeURIComponent(file.name)},body:file});const result=await response.json();if(!response.ok)throw new Error(result.failure?.action??result.code);project=result;renderProject(true);}await projects();$("document-files").value="";message("Đã lưu file gốc và nội dung trích xuất. Hãy kiểm tra tài liệu trước khi duyệt.");}));
   $("scenes").addEventListener("input",()=>{markDirty("proposal");$("narration").textContent=readProposal().narration;});
-  $("scenes").addEventListener("change",event=>{if(event.target.matches("[data-media]")){markDirty("proposal");scenePreview(event.target.closest(".scene"));}});
+  $("scenes").addEventListener("change",event=>{if(event.target.matches("input,select,textarea")){const row=event.target.closest(".scene");if(event.target.matches("[data-media]")){row.querySelector("[data-motion]").value="none";row.querySelector("[data-start]").value="0";}scenePreview(row);markDirty("proposal");}});
   window.addEventListener("beforeunload",event=>{if(dirty){event.preventDefault();event.returnValue="";}});
   (async()=>{busy=true;controls();try{csrf=(await api("/api/session")).csrf;$("prompt").value=(await api("/api/defaults")).prompt;await projects();const saved=localStorage.getItem("vf-native-project");if(saved&&[...$("project-picker").options].some(o=>o.value===saved))project=await api(`/api/projects/${saved}`);renderProject(true);await projects();schedule();}catch(error){message(error.message,true);}finally{busy=false;controls();}})();
 }

@@ -27,9 +27,9 @@ def failure(code, step="", http_status=None):
         category, action = "RENDER_ERROR", "Kiểm tra FFmpeg, dung lượng đĩa và log render; có thể tiếp tục từ audio đã kiểm chứng."
     elif any(s in value for s in ("STORAGE", "ARTIFACT", "CHECKPOINT", "OSERROR", "PERMISSION", "SQLITE", "FILEEXISTS")):
         category, action = "STORAGE_ERROR", "Kiểm tra quyền truy cập, dung lượng đĩa và hash artifact trước khi tiếp tục."
-    elif any(s in value for s in ("MEDIA", "IMAGE", "VIDEO")):
+    elif any(s in value for s in ("MEDIA", "IMAGE", "VIDEO", "MUSIC")):
         category, action = "MEDIA_ERROR", "Kiểm tra file nguồn, định dạng và lựa chọn media từng cảnh."
-    elif any(s in value for s in ("REQUIRED", "INVALID", "STALE", "APPROVAL", "PROJECT", "INPUT", "PROPOSAL")):
+    elif any(s in value for s in ("REQUIRED", "INVALID", "STALE", "APPROVAL", "PROJECT", "INPUT", "PROPOSAL", "EDITOR")):
         category, action = "USER_INPUT_ERROR", "Mở lại dự án, kiểm tra nội dung/nguồn và lưu đúng phiên bản trước khi duyệt."
     else:
         category, action = "INTERNAL_ERROR", "Giữ nguyên dự án và xem log của job để xử lý lỗi."
@@ -133,4 +133,5 @@ def version_components(doc):
                                      "assets": doc.get("assets", doc.get("asset"))}),
             "script_version": digest(doc.get("proposal")),
             "storyboard_version": digest({"scenes": (doc.get("proposal") or {}).get("visual_brief"),
-                                          "scene_media": doc.get("scene_media")})}
+                                          "scene_media": doc.get("scene_media"), "edit_plan": doc.get("edit_plan"),
+                                          "music": doc.get("music"), "music_enabled": doc.get("music_enabled", True)})}

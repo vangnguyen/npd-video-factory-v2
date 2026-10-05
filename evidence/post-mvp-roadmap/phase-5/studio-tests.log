@@ -1,0 +1,34 @@
+✔ human session header is attached without mutating caller headers (1.5393ms)
+✔ missing human session fails closed (0.4375ms)
+✔ formats editor timecodes and zoom deterministically (1.6322ms)
+✔ labels version-bound approval and production render states (3.7219ms)
+✔ labels publishing dry-run truthfully and flattens gate evidence (0.4464ms)
+✔ layout failure offers an editing remedy, not a hidden text clamp (0.2878ms)
+✔ snaps pointer placement to quarter seconds (0.2845ms)
+✔ computes timeline clip placement and respects track compatibility (0.3401ms)
+✔ labels ready, stale and running previews without overstating readiness (0.23ms)
+✔ renders analytics truth states and never turns missing metrics into zero (31.9885ms)
+✔ builds a stable V2-10 metric panel from normalized nullable metrics (0.4525ms)
+✔ storyboard source identity is explicit and never a fake analysis (0.9666ms)
+✔ proposal cannot overwrite unsaved kind/script/original/facts (0.238ms)
+✔ Render UI requires current approval, saved edits and idle job (2.3851ms)
+✔ Each scene requires one source from its project library (0.3723ms)
+✔ Legacy image projects retain all scene choices without rewriting snapshot (0.2178ms)
+✔ Local multi-file selection accepts only supported image and video extensions (0.1987ms)
+✔ Only successful video bound to current approved version is visible (0.1928ms)
+✔ Retrying job blocks editing and another render until its receipt completes (0.1385ms)
+✔ Document chooser passes declared MIME while server must validate actual content (0.2429ms)
+✔ Changed source needs new analysis while existing source keeps its result (0.2045ms)
+✔ Video/image changes reset incompatible motion and source time (1.2246ms)
+✔ declares all eight required radar views (1.366ms)
+✔ radar view rules remain deterministic and explainable (0.3649ms)
+✔ filters by view, platform and search while sorting by estimate (1.4088ms)
+✔ formats scores, VND and Vietnamese lifecycle labels (20.515ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 212.9824
