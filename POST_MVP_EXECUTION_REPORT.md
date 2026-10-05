@@ -142,19 +142,41 @@ BLOCKERS / LIMITS: Human visual matching and final watch/listen review are still
 
 NEXT ACTION: Complete Phase 6 project management/history/scene reorder/final render approval and non-CLI walkthrough, then Brand/Templates and the human release gate.
 
+## Phase 6
+
+PHASE: 6 — Approval Dashboard
+
+STATUS: PASS supported native dashboard technical scope. Current production revisions still require actual human content/final approval.
+
+HEAD SHA: `69faa0a`.
+
+FILES CHANGED: Additive dashboard/review tables and guarded native store/server operations, Studio management/history/reorder/final-review/status/download/artifact/folder controls, eight dashboard regressions and explicit isolated browser-fixture harness/evidence.
+
+TESTS: 95/95 native, 27/27 Studio PASS. Actual non-CLI script → five uploads/music → prepare/edit/reorder/history/auto-plan → explicit fixture review → actual render/play → final acknowledgment guard → explicit fixture final decision/exact-hash download → reject/revise/reapprove/rerender → duplicate/archive/restore → actual restart/play PASS. Two real renders pass FFmpeg/QC. Folder opening is tested with an exact derived-path OS-call double; actual browser MP4 download is verified.
+
+EVIDENCE: `evidence/post-mvp-roadmap/phase-6/acceptance.md`, `ui-restart-real-render.json`, three screenshots and regression logs. Actual fixtures/database/outputs at `C:\NPD-Video-Factory\post-mvp-validation\phase6-dashboard-20261005`. All six relevant tables exactly match their pre-restart backup.
+
+CAPABILITIES ADDED: Unapproved duplication with lineage, reversible archive/restore, immutable script history, source/narration edits and scene reorder, content rejection, current preview/errors/status, artifact metadata/download/scoped folder opening and separate final watch/listen approval. Decisions bind exact project/job/revision/snapshot/MP4 SHA. Idempotent unchanged approval avoids invalidating a verified render; rejection advances the revision and cannot transfer acceptance. Final download promotes byte-identical verified candidate output.
+
+REGRESSIONS: Supported suites PASS; stronger playback integrity requires a render checkpoint and actual file hash. Additive tables preserve old project/job/document/approval/version data. Production has no fixture fallback. Two isolated real renders reuse accepted speech and measured sentence activity with explicit scene-ID projection; zero new providers or TTS inference.
+
+BLOCKERS / LIMITS: These test-operator decisions explicitly say `INTEGRATION FIXTURE — NOT OWNER ACCEPTANCE`; they are not human release acceptance. Current revised fixture candidate is final-unapproved. Brand/Templates, full production matrix and ten human-reviewed final videos remain open.
+
+NEXT ACTION: Phase 7 configurable brand profiles/templates, then prepare concrete human-review candidates and close Phase 8 when its actual acceptance records exist.
+
 ## Remaining phases and release blockers
 
 | Phase | Status in this task | Required next acceptance |
 | --- | --- | --- |
 | 5 — Scene Intelligence / Auto Editor | PASS technical native scope | Final human viewing and platform/device overlay review remain release requirements |
-| 6 — Approval Dashboard | PARTIAL existing UI; full phase NOT CERTIFIED | Duplicate/archive/history/storyboard reorder and final approval; complete non-CLI user walkthrough |
+| 6 — Approval Dashboard | PASS technical native scope | New production content and final decisions remain actual-human steps |
 | 7 — Brand / Templates | NOT STARTED | Configurable NPD/Vang Nguyễn profiles and templates; reference configs where official assets are missing |
 | 8 — Internal Production Release | NOT RUN | Full input/flow matrix, automated checks, restart recovery, hashes and at least ten final videos with human watch/listen approval |
 
 | Severity | Blocker | Closing evidence |
 | --- | --- | --- |
 | P0 | None observed in the supported native work; no release certificate is issued | Existing data/artifact integrity remains verified |
-| P1 | Complete Approval Dashboard and Brand/Template gates unfinished | Phase 6–7 implementation, tests and user walkthrough |
+| P1 | Brand/Template gate unfinished | Phase 7 implementation, tests and reference profiles |
 | P1 | Ten final human-reviewed production videos and full release matrix absent | Phase 8 acceptance records; twenty fixture jobs do not substitute |
 | P1 | Legacy Windows test baseline: 46 failures, 24 errors after excluding POSIX collection blockers | Fix relevant compatibility gaps or document an explicitly accepted supported release scope; never label this suite PASS |
 | P2 | Subtitle word alignment and historical original-upload provenance gaps | Real timing/alignment evidence; retain explicit provenance limits for historical media |

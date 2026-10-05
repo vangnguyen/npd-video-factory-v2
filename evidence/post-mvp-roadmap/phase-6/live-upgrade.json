@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "checks": {
+    "projects": true,
+    "jobs": true,
+    "events": true,
+    "project_versions": true,
+    "sqlite_integrity": true,
+    "accepted_mp4_unchanged": true,
+    "accepted_wav_unchanged": true,
+    "studio_http": true
+  },
+  "owner_original_browser_draft_reloaded": false
+}
