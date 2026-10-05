@@ -1,0 +1,10 @@
+{"number": 1, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 1}
+{"number": 2, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 1}
+{"number": 3, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 0}
+{"number": 4, "state": "CONTENT_FAILED_NEEDS_EXPLICIT_REVIEW", "error_code": "CONTENT_AMBIGUOUS_RESPONSE", "automatic_paid_replay": false}
+{"number": 5, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 1}
+{"number": 6, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 1}
+{"number": 7, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 0}
+{"number": 8, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 1}
+{"number": 9, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 1}
+{"number": 10, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 1}

@@ -1,0 +1,11 @@
+{"number": 1, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 1}
+{"number": 2, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 1}
+{"number": 3, "state": "WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW", "provider_calls": 0}
+Traceback (most recent call last):
+  File "C:\NPD-Video-Factory\source\scripts\prepare-windows-native-release-review.py", line 130, in <module>
+    if __name__=='__main__': main()
+                             ^^^^^^
+  File "C:\NPD-Video-Factory\source\scripts\prepare-windows-native-release-review.py", line 120, in main
+    assert job['status']=='awaiting_review', {'number':index,'status':job['status'],'error_code':(job.get('error') or {}).get('code')}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'number': 4, 'status': 'failed', 'error_code': 'CONTENT_AMBIGUOUS_RESPONSE'}

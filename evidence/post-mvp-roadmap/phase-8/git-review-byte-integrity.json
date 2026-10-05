@@ -1,0 +1,79 @@
+{
+  "checks": [
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/final-review-manifest.json",
+      "sha256": "7b0cb9c3b003591bf6397305eab9519feb651a266a073a3619a5c707d5ce7b1d",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/fresh-process-reopen.json",
+      "sha256": "adc58e6498092ae1752b2c675eaa1d2861f2f362c663a4406e75f1e55a7aa9bb",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/live-state-integrity.json",
+      "sha256": "baab12ce252d4cbbf8bdd213174737b05ce1a7d9d286a58f9b26d61b36a7197a",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/owner-script-authorization.json",
+      "sha256": "918c77f8824bb1e366367762f8fb533407312b5225da96561c0e89f9487967ad",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/real-candidates.json",
+      "sha256": "97d0aef8ce61558eab6525e90f60b5af450a7b2e868eed866170e732a94a574e",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/real-release-restart.json",
+      "sha256": "ab0acc82733dcc0a49e68b7a176003b878b144daa4846445ebea0f8f3e6e497c",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/release-certification.json",
+      "sha256": "ba13121eef729b94af5d93f2e7a95d2318209ddc21b71966f7ba9524f1f5e6f6",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/release-gate.json",
+      "sha256": "4ed32a6831525eab2dd5a2332e5f5d2812fef323efe01d2ecc99fe094ea49321",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/review-drafts.json",
+      "sha256": "4180b10dbdeb4c1265567bbbb0dbd1d37178daa330a4eca8dd65c5487a68c3d2",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/technical-gate-verification.json",
+      "sha256": "f9735132d84a0a2c798af839078400f3a9d6275b036d5d43735d33937cddbf05",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/review-bundle.md",
+      "sha256": "511816cafbaa55cb9e79da0531fff6ba18697ac166d16c01171d854f80bb670d",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    },
+    {
+      "file": "evidence/post-mvp-roadmap/phase-8/final-review-bundle.md",
+      "sha256": "6dc69c829bdb713cfe0429220548e2f368cf13fb22a7e890580235a83a5ed927",
+      "staged_bytes_identical": true,
+      "checkout_bytes_identical": true
+    }
+  ],
+  "all_exact": true,
+  "fresh_checkout_root": "C:\\NPD-Video-Factory\\post-mvp-validation\\phase8-review-byte-check-7x4wu2i4",
+  "initial_scan": "Refused stale normalized staging of technical-gate-verification.json. Scoped restaging reapplied the exact-byte attributes; original review files were never modified."
+}

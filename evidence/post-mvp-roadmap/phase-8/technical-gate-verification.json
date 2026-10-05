@@ -1,0 +1,19 @@
+{
+  "four_helpers_compiled": true,
+  "capture_and_certifier_executed_exit_code": 0,
+  "certificate_reads_actual_outputs_snapshots_checkpoints": true,
+  "ten_real_mp4_qc_restart_pass": true,
+  "human_script_decisions": 10,
+  "human_final_decisions": 0,
+  "native_scope_acceptance_pending": true,
+  "missing_human_gates_correctly_refuse_readiness": true,
+  "technical_matrix_not_reported_pending": true,
+  "credential_pattern_scan": {
+    "files_scanned": 19,
+    "findings": []
+  },
+  "review_bundle_sha256": "511816cafbaa55cb9e79da0531fff6ba18697ac166d16c01171d854f80bb670d",
+  "final_review_bundle_sha256": "6dc69c829bdb713cfe0429220548e2f368cf13fb22a7e890580235a83a5ed927",
+  "application_behavior_commit": "9c3e9e9dfa61fe29f76380f6811f4db1b0a26257",
+  "limitations": "Content approval is real user authorization; no final watch/listen decision is inferred."
+}
