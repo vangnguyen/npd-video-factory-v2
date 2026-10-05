@@ -1,0 +1,3 @@
+{"number": 1, "action": "research", "status": "FINDINGS", "sources": 1, "findings": 4, "ideas": 0, "error": null}
+{"number": 1, "action": "ideas", "status": "IDEAS", "sources": 1, "findings": 4, "ideas": 5, "error": null}
+{"cases": 1, "five_candidate_cases": 1, "human_acceptance": "PENDING", "production_dispatches": 0}

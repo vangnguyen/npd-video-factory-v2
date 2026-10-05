@@ -1,0 +1,175 @@
+{
+  "schema_version": "content-intelligence-config-v1",
+  "scoring": {
+    "weights": {
+      "relevance": 1.2,
+      "freshness": 1,
+      "audience_fit": 1.2,
+      "product_fit": 1,
+      "hook_strength": 0.8,
+      "evidence_strength": 1.5,
+      "production_feasibility": 1,
+      "lead_potential": 0.6,
+      "novelty": 0.7,
+      "risk": 1.5
+    },
+    "freshness_window_days": 180,
+    "unknown_publication_score": 0,
+    "contextual_fit_score": 60,
+    "hook_min_chars": 20,
+    "hook_max_chars": 120,
+    "hook_length_score": 75,
+    "hook_other_score": 40,
+    "points_per_finding": 35,
+    "unmatched_format_score": 40,
+    "configured_cta_score": 70,
+    "unmatched_cta_score": 35,
+    "unknown_date_risk": 40,
+    "risk_per_marker": 20,
+    "risk_markers": [
+      "cam kết lợi nhuận",
+      "chắc chắn tăng giá",
+      "pháp lý hoàn chỉnh",
+      "đã hoàn thành",
+      "mới nhất"
+    ]
+  },
+  "profiles": [
+    {
+      "id": "green-paradise",
+      "name": "Vinhomes Green Paradise Cần Giờ",
+      "related_project": "Vinhomes Green Paradise Cần Giờ",
+      "target_audience": "Người tìm hiểu nhà ở và bất động sản Cần Giờ",
+      "preferred_formats": [
+        "Giải thích ngắn",
+        "Checklist",
+        "Đối chiếu nguồn"
+      ],
+      "channel": "Short video nội bộ",
+      "cta_types": [
+        "Nhận checklist",
+        "Gửi câu hỏi"
+      ],
+      "cta_keywords": [
+        "checklist",
+        "câu hỏi"
+      ],
+      "tone": "Rõ ràng, thận trọng, có nguồn",
+      "duration_seconds": [
+        30,
+        45,
+        60
+      ],
+      "keywords": [
+        "Cần Giờ",
+        "Green Paradise",
+        "nguồn chính thức"
+      ],
+      "project_references": [
+        "https://market.vinhomes.vn/blog/vinhomes-green-paradise-va-ihg-hotels-resorts-hop-tac"
+      ]
+    },
+    {
+      "id": "saigon-park",
+      "name": "Vinhomes Saigon Park",
+      "related_project": "Vinhomes Saigon Park",
+      "target_audience": "Người tìm hiểu Vinhomes Saigon Park tại TP HCM",
+      "preferred_formats": [
+        "Giải thích ngắn",
+        "Checklist",
+        "Đối chiếu nguồn"
+      ],
+      "channel": "Short video nội bộ",
+      "cta_types": [
+        "Nhận checklist",
+        "Gửi câu hỏi"
+      ],
+      "cta_keywords": [
+        "checklist",
+        "câu hỏi"
+      ],
+      "tone": "Phân biệt công bố và thông tin chưa được xác nhận",
+      "duration_seconds": [
+        30,
+        45,
+        60
+      ],
+      "keywords": [
+        "Saigon Park",
+        "Vinhomes",
+        "thông báo"
+      ],
+      "project_references": [
+        "https://market.vinhomes.vn/du-an/vinhomes-sai-gon-park"
+      ]
+    },
+    {
+      "id": "vang-nguyen",
+      "name": "Vang Nguyễn personal brand",
+      "related_project": null,
+      "target_audience": "Người mua nhà muốn học cách kiểm tra thông tin bất động sản",
+      "preferred_formats": [
+        "Giải thích ngắn",
+        "Checklist",
+        "Hỏi đáp"
+      ],
+      "channel": "Short video nội bộ",
+      "cta_types": [
+        "Gửi câu hỏi",
+        "Nhận checklist"
+      ],
+      "cta_keywords": [
+        "câu hỏi",
+        "checklist"
+      ],
+      "tone": "Gần gũi, minh bạch, không tự nhận chuyên môn hay thành tích chưa có chứng cứ",
+      "duration_seconds": [
+        30,
+        45,
+        60
+      ],
+      "keywords": [
+        "kiểm tra nguồn",
+        "người mua nhà",
+        "thông tin"
+      ],
+      "project_references": [
+        "https://baochinhphu.vn/thi-truong-bat-dong-san.html"
+      ]
+    },
+    {
+      "id": "vietnam-property",
+      "name": "Vietnam real-estate news/content",
+      "related_project": null,
+      "target_audience": "Người theo dõi thị trường nhà ở Việt Nam",
+      "preferred_formats": [
+        "Giải thích ngắn",
+        "Đối chiếu nguồn",
+        "Checklist"
+      ],
+      "channel": "Short video nội bộ",
+      "cta_types": [
+        "Đọc nguồn",
+        "Gửi câu hỏi"
+      ],
+      "cta_keywords": [
+        "nguồn",
+        "câu hỏi"
+      ],
+      "tone": "Tin có thời điểm, phân biệt báo cáo, dự thảo và quy định có hiệu lực",
+      "duration_seconds": [
+        30,
+        45,
+        60
+      ],
+      "keywords": [
+        "nhà ở",
+        "thị trường",
+        "bất động sản"
+      ],
+      "project_references": [
+        "https://baochinhphu.vn/thi-truong-bat-dong-san.html"
+      ]
+    }
+  ]
+}
