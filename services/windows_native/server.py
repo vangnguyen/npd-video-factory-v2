@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import socket
 import threading
 import time
 import uuid
@@ -151,6 +152,8 @@ class Handler(BaseHTTPRequestHandler):
     def common(self, content_type, size, headers=None):
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(size))
+        if self.close_connection:
+            self.send_header("Connection", "close")
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "no-referrer")
@@ -204,6 +207,9 @@ class Handler(BaseHTTPRequestHandler):
             ready=verify_runtime(self.server.config,full=False)
             return self.reply({"tts":ready,"ffmpeg_available":True,"openai_key_saved":self.server.config.secret_file.is_file(),
                               "openai_live_check_performed":False,"assemblyai":assemblyai_connection.status(self.server.config)})
+        if path == "/api/brand-templates":
+            from .branding import catalog
+            return self.reply(catalog())
         if path == "/api/connections/assemblyai":
             return self.reply(assemblyai_connection.status(self.server.config))
         versions = re.fullmatch(r"/api/projects/([0-9a-f]{32})/versions", path)
@@ -313,7 +319,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({"opened":True,"job_id":job["id"]})
         if self.path == "/api/projects":
             return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt")), 201)
-        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive)", self.path)
+        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive|brand-template)", self.path)
         if not match:
             raise WorkflowError("ROUTE_NOT_FOUND", 404)
         identifier, action = match[1], match[2]
@@ -326,6 +332,8 @@ class Handler(BaseHTTPRequestHandler):
             result = self.server.store.auto_plan(identifier,revision)
         elif action == "duplicate":
             result = self.server.store.duplicate(identifier,revision)
+        elif action == "brand-template":
+            result = self.server.store.set_brand(identifier,revision,body.get("brand_id"),body.get("template_id"))
         elif action == "archive":
             result = self.server.store.archive(identifier,revision,body.get("archived"))
         elif action == "reject":
@@ -445,6 +453,26 @@ class Handler(BaseHTTPRequestHandler):
         finally:
             source.unlink(missing_ok=True)
 
+    def refuse(self, value, status):
+        self.close_connection = True
+        self.reply(value, status)
+        self.wfile.flush()
+        # Send the complete error before closing. On Windows, closing a socket
+        # with unread upload bytes can reset it and hide the JSON response.
+        # Discard only bounded bytes/time; never parse, persist or dispatch them.
+        try:
+            self.connection.shutdown(socket.SHUT_WR)
+            deadline = time.monotonic() + .25
+            remaining = 1024 * 1024
+            while remaining and time.monotonic() < deadline:
+                self.connection.settimeout(max(.001, deadline - time.monotonic()))
+                chunk = self.connection.recv(min(65536, remaining))
+                if not chunk:
+                    break
+                remaining -= len(chunk)
+        except OSError:
+            pass
+
     def handle_request(self, method):
         try:
             self.connection.settimeout(30)
@@ -453,13 +481,11 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 self.dispatch_post()
         except WorkflowError as error:
-            self.close_connection = True
-            self.reply({"code": error.code, "failure": failure(error.code, http_status=error.http_status)}, error.status)
+            self.refuse({"code": error.code, "failure": failure(error.code, http_status=error.http_status)}, error.status)
         except (BrokenPipeError, ConnectionResetError):
             self.close_connection = True
         except Exception:
-            self.close_connection = True
-            self.reply({"code": "LOCAL_REQUEST_FAILED"}, 500)
+            self.refuse({"code": "LOCAL_REQUEST_FAILED"}, 500)
 
     def do_GET(self):
         self.handle_request("GET")

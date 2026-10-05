@@ -1,0 +1,35 @@
+✔ human session header is attached without mutating caller headers (3.1573ms)
+✔ missing human session fails closed (0.8355ms)
+✔ formats editor timecodes and zoom deterministically (1.8532ms)
+✔ labels version-bound approval and production render states (3.3689ms)
+✔ labels publishing dry-run truthfully and flattens gate evidence (0.6393ms)
+✔ layout failure offers an editing remedy, not a hidden text clamp (0.48ms)
+✔ snaps pointer placement to quarter seconds (0.3392ms)
+✔ computes timeline clip placement and respects track compatibility (0.5501ms)
+✔ labels ready, stale and running previews without overstating readiness (0.9164ms)
+✔ renders analytics truth states and never turns missing metrics into zero (53.196ms)
+✔ builds a stable V2-10 metric panel from normalized nullable metrics (1.1329ms)
+✔ storyboard source identity is explicit and never a fake analysis (2.2299ms)
+✔ proposal cannot overwrite unsaved kind/script/original/facts (0.5804ms)
+✔ Render UI requires current approval, saved edits and idle job (2.3942ms)
+✔ Each scene requires one source from its project library (0.5463ms)
+✔ Legacy image projects retain all scene choices without rewriting snapshot (0.2821ms)
+✔ Local multi-file selection accepts only supported image and video extensions (0.3069ms)
+✔ Only successful video bound to current approved version is visible (0.3324ms)
+✔ Retrying job blocks editing and another render until its receipt completes (0.2053ms)
+✔ Document chooser passes declared MIME while server must validate actual content (0.433ms)
+✔ Changed source needs new analysis while existing source keeps its result (0.3424ms)
+✔ Video/image changes reset incompatible motion and source time (1.643ms)
+✔ Final download requires a review of the same video hash and revision (0.4589ms)
+✔ declares all eight required radar views (1.5456ms)
+✔ radar view rules remain deterministic and explainable (0.4613ms)
+✔ filters by view, platform and search while sorting by estimate (2.434ms)
+✔ formats scores, VND and Vietnamese lifecycle labels (45.7172ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 413.7148

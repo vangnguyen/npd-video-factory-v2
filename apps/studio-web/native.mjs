@@ -58,6 +58,11 @@ const errors = {
   FINAL_REVIEW_DECISION_REASON_INVALID:"Nhập lý do trả video để sửa (tối đa 2.000 ký tự).",
   REJECTION_NAME_REASON_REQUIRED:"Nhập tên người duyệt và lý do yêu cầu sửa.",
   HUMAN_FINAL_VIDEO_APPROVAL_REQUIRED:"Video này cần được xem, nghe và duyệt làm bản cuối.",
+  BRAND_TEMPLATE_CHOICE_REQUIRED:"Chọn thương hiệu và mẫu 30/45/60 giây trước khi áp dụng.",
+  BRAND_TEMPLATE_SNAPSHOT_CHANGED_OR_INVALID:"Cấu hình thương hiệu/mẫu đã thay đổi. Áp dụng, lưu và duyệt lại.",
+  BRANDED_RENDER_SCENE_PLAN_REQUIRED:"Đề xuất hoặc lưu cách dựng từng cảnh trước khi duyệt mẫu thương hiệu.",
+  TEMPLATE_NARRATION_TOO_LONG_CHOOSE_LONGER_OR_EDIT:"Lời đọc dài hơn mẫu đã chọn. Chọn mẫu dài hơn hoặc rút gọn kịch bản; hệ thống giữ nguyên tốc độ giọng.",
+  BRAND_HEADING_EXCEEDS_SAFE_AREA:"Tiêu đề vượt vùng chữ an toàn. Rút ngắn chữ trên cảnh này và duyệt lại.",
 };
 const statusNames = {queued:"Đang chờ",running:"Đang chạy",retrying:"Đang thử lại có giới hạn",awaiting_review:"Đề xuất sẵn sàng · cần bạn duyệt",succeeded:"Video đã render · hãy xem lại",failed:"Job đã dừng do lỗi",interrupted:"Job bị ngắt · chưa chạy lại"};
 const stageNames = {starting:"Bắt đầu",prepare_existing_script:"Đang chuẩn bị kịch bản đã nhập",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video",asr_local_media_analysis:"Đang phân tích cảnh nguồn",asr_extract_audio:"Đang tách âm thanh",asr_upload:"Đang gửi âm thanh đến AssemblyAI",asr_create_transcript:"Đang nhận diện lời nói",asr_observe_known_transcript:"Đang chờ kết quả nhận diện",resuming_verified_asr:"Đang khôi phục kết quả đã lưu"};
@@ -84,6 +89,9 @@ if (typeof document !== "undefined") {
     $("archive-project").disabled=!project||busy||active||dirty;
     $("archive-project").textContent=project?.archived?"Khôi phục":"Lưu trữ";
     $("load-history").disabled=!project||busy;
+    $("apply-brand").disabled=!project||blocked||dirty;
+    $("brand-select").disabled=!project||blocked||dirty;
+    $("template-select").disabled=!project||blocked||dirty;
     $("project-name").disabled=Boolean(project)||busy;
     $("generate").disabled=!project||blocked||dirty;
     $("generate").textContent=project?.document.input_kind==="script"||project?.input?.metadata.workflow==="REVIEW_TRANSCRIPT"?"Chuẩn bị kịch bản để bạn duyệt":"Tạo đề xuất nội dung ↗";
@@ -143,6 +151,8 @@ if (typeof document !== "undefined") {
     $("project-heading").textContent=project?.document.name??"Bắt đầu một video mới";
     $("version").textContent=project?`Phiên bản ${project.revision}`:"Bản nháp";
     if(reset){dirty=false;dirtyPart=null;if(project){$("project-name").value=project.document.name;$("prompt").value=project.document.prompt;$("input-kind").value=project.document.input_kind??"prompt";}}
+    if(reset){$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";}
+    $("brand-note").textContent=project?.document.brand_template?`${project.document.brand_template.brand.name} · ${project.document.brand_template.template.name}. Thay đổi cần duyệt lại.`:"Đang dùng bố cục MVP đã có. Chọn và áp dụng mẫu để thay đổi.";
     $("document-list").innerHTML=(project?.document.documents??[]).map(d=>`<p><strong>${esc(d.filename)}</strong> · ${d.extracted_text.length.toLocaleString("vi-VN")} ký tự</p>`).join("")||'<p class="hint">Chưa có tài liệu nguồn.</p>';
     if(reset){$("review-check").checked=false;$("final-watch").checked=false;$("history-list").textContent="";$("artifact-list").textContent="";}
     const assets=mediaLibrary(project?.document),bindings=mediaBindings(project?.document);
@@ -213,6 +223,7 @@ if (typeof document !== "undefined") {
   $("retry").addEventListener("click",guarded(()=>enqueue(project.jobs[0].kind,true)));
   $("save-proposal").addEventListener("click",guarded(async()=>{const proposal=readProposal(),bindings=readBindings();project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,proposal,scene_media:bindings,scene_options:mediaReady({...project.document,proposal,scene_media:bindings})?readOptions():undefined,music_enabled:$("music-enabled").checked});renderProject(true);message("Đã lưu nội dung và cách dựng từng cảnh. Phiên bản mới cần duyệt lại.");}));
   $("auto-plan").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/auto-plan`,{revision:project.revision});renderProject(true);message("Đã đề xuất nguồn và cách dựng. Kiểm tra từng cảnh, đổi nguồn nếu cần rồi duyệt.");}));
+  $("apply-brand").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:$("brand-select").value,template_id:$("template-select").value});renderProject(true);message("Đã lưu cấu hình thương hiệu và mẫu vào phiên bản này. Kiểm tra cách dựng, nội dung và duyệt lại trước khi tạo video.");}));
   $("duplicate-project").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/duplicate`,{revision:project.revision});localStorage.setItem("vf-native-project",project.id);renderProject(true);await projects();message("Đã tạo bản sao chưa duyệt; giữ nguyên nội dung và nguồn, cần kiểm tra và duyệt lại.");}));
   $("archive-project").addEventListener("click",guarded(async()=>{const archived=!project.archived;project=await api(`/api/projects/${project.id}/archive`,{revision:project.revision,archived});$("show-archived").checked=archived||$("show-archived").checked;renderProject(true);await projects();message(archived?"Đã lưu trữ dự án. Có thể khôi phục; tệp và lịch sử được giữ nguyên.":"Đã khôi phục dự án.");}));
   $("show-archived").addEventListener("change",guarded(projects));
@@ -254,5 +265,6 @@ if (typeof document !== "undefined") {
   $("scenes").addEventListener("change",event=>{if(event.target.matches("input,select,textarea")){const row=event.target.closest(".scene");if(event.target.matches("[data-media]")){row.querySelector("[data-motion]").value="none";row.querySelector("[data-start]").value="0";}scenePreview(row);markDirty("proposal");}});
   window.addEventListener("beforeunload",event=>{if(dirty){event.preventDefault();event.returnValue="";}});
   async function runtimeStatus(){const status=await api("/api/runtime-status");$("runtime-status").textContent=`Nội dung: ${status.openai_key_saved?"key đã lưu; chưa kiểm tra bằng yêu cầu mới":"chưa có key"}. Giọng Thùy Dung: sẵn sàng. FFmpeg: sẵn sàng. AssemblyAI: ${status.assemblyai.connected?"đã xác minh kết nối":"chưa kết nối"}.`;}
-  (async()=>{busy=true;controls();try{csrf=(await api("/api/session")).csrf;runtimeStatus().catch(()=>{$("runtime-status").textContent="Chưa đọc được trạng thái. Làm mới Studio để kiểm tra.";});$("prompt").value=(await api("/api/defaults")).prompt;await projects();const saved=localStorage.getItem("vf-native-project");if(saved&&[...$("project-picker").options].some(o=>o.value===saved))project=await api(`/api/projects/${saved}`);renderProject(true);await projects();schedule();}catch(error){message(error.message,true);}finally{busy=false;controls();}})();
+  async function loadBrandCatalog(){const values=await api("/api/brand-templates");$("brand-select").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("");$("template-select").innerHTML='<option value="">Bố cục MVP hiện có</option>'+values.templates.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join("");$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";}
+  (async()=>{busy=true;controls();try{csrf=(await api("/api/session")).csrf;runtimeStatus().catch(()=>{$("runtime-status").textContent="Chưa đọc được trạng thái. Làm mới Studio để kiểm tra.";});$("prompt").value=(await api("/api/defaults")).prompt;await projects();const saved=localStorage.getItem("vf-native-project");if(saved&&[...$("project-picker").options].some(o=>o.value===saved))project=await api(`/api/projects/${saved}`);await loadBrandCatalog();renderProject(true);await projects();schedule();}catch(error){message(error.message,true);}finally{busy=false;controls();}})();
 }

@@ -306,6 +306,15 @@ class HttpTests(unittest.TestCase):
         self.assertEqual(self.request("GET","/../secrets/openai.env")[0],404)
         self.assertEqual(self.request("GET","/native.html")[0],200)
 
+    def test_early_rejection_returns_json_with_unread_upload_bytes(self):
+        conn=http.client.HTTPConnection("127.0.0.1",self.port,timeout=10)
+        conn.request("POST","/api/projects",b"untrusted" * 32768,headers={
+            "Cookie":self.cookie,"X-VF-CSRF":"wrong","Content-Type":"application/json"})
+        response=conn.getresponse(); body=json.loads(response.read()); conn.close()
+        self.assertEqual(response.status,403)
+        self.assertEqual(body["code"],"CSRF_TOKEN_REQUIRED")
+        self.assertEqual(self.server.store.list(),[])
+
     def test_range_playback_and_old_video_invalidation(self):
         p=self.server.store.create("Test","Prompt")
         p=self.server.store.save(p["id"],1,proposal=proposal(),asset={"id":"image"})

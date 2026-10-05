@@ -1,0 +1,50 @@
+======================================================================
+ERROR: test_busy_stale_archive_and_foreign_origin_refuse (test_dashboard.DashboardTests.test_busy_stale_archive_and_foreign_origin_refuse)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\NPD-Video-Factory\source\services\windows_native\tests\test_dashboard.py", line 65, in test_busy_stale_archive_and_foreign_origin_refuse
+    self.assertEqual(self.request("POST",f"/api/projects/{self.p['id']}/duplicate",{"revision":2},{"X-VF-CSRF":"wrong"})[0],403)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\NPD-Video-Factory\source\services\windows_native\tests\test_dashboard.py", line 35, in request
+    response=con.getresponse(); raw=response.read(); con.close(); return response.status,raw
+             ^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 1478, in getresponse
+    response.begin()
+  File "C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 343, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 304, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+
+======================================================================
+ERROR: test_loopback_host_origin_and_csrf (test_workflow.HttpTests.test_loopback_host_origin_and_csrf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\NPD-Video-Factory\source\services\windows_native\tests\test_workflow.py", line 297, in test_loopback_host_origin_and_csrf
+    self.assertEqual(self.request("POST","/api/projects",body,headers)[0],403)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\NPD-Video-Factory\source\services\windows_native\tests\test_workflow.py", line 291, in request
+    response=conn.getresponse();data=response.read();conn.close()
+             ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 1478, in getresponse
+    response.begin()
+  File "C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 343, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 304, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+
+----------------------------------------------------------------------
+Ran 102 tests in 58.336s
+
+FAILED (errors=2)

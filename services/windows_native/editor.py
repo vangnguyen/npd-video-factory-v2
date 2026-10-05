@@ -62,6 +62,8 @@ def candidates(doc, scene, index):
 
 
 def build_plan(doc, options=None, *, auto_select=False):
+    from .branding import resolve
+    brand,template=resolve(doc)
     if not doc.get("proposal"):
         raise WorkflowError("EDITOR_SCRIPT_REQUIRED", 400)
     proposal = Proposal.model_validate(doc["proposal"])
@@ -77,7 +79,7 @@ def build_plan(doc, options=None, *, auto_select=False):
     selected = {b["scene"]: b["asset_id"] for b in scene_bindings(doc)}
     old = {s["scene"]: s for s in (doc.get("edit_plan") or {}).get("scenes", [])}
     overrides = {o.scene: o for o in parsed}
-    total = max(25., len(proposal.narration.split())/2.5 + 2.)
+    total = float(template.duration_seconds) if template else max(25., len(proposal.narration.split())/2.5 + 2.)
     weights = [len(s.narration_excerpt) for s in proposal.visual_brief]
     cursor, scenes = 0., []
     for index, scene in enumerate(proposal.visual_brief):
@@ -105,13 +107,14 @@ def build_plan(doc, options=None, *, auto_select=False):
         cursor=end
     return {"schema_version":"native-editor-v1", "proposal_sha256":digest(doc["proposal"]), "scenes":scenes,
             "timing_source":"text_estimate_replaced_by_measured_voice_before_render", "human_visual_review_required":True,
-            "safe_area":{"top":160,"bottom":360,"left":90,"right":180,"source":"configurable_reference_margins"},
-            "cta":"Liên hệ để nhận thông tin và kiểm chứng trước khi quyết định."}
+            "safe_area":brand.safe_areas.model_dump(), "cta":brand.primary_cta,
+            **({"brand_template_sha256":digest(doc["brand_template"])} if doc.get("brand_template") else {})}
 
 
 def validate_plan(doc):
     plan = doc.get("edit_plan")
     if not plan:
+        if doc.get("brand_template"): raise WorkflowError("BRANDED_RENDER_SCENE_PLAN_REQUIRED")
         return None
     if plan.get("schema_version") != "native-editor-v1" or plan.get("proposal_sha256") != digest(doc["proposal"]):
         raise WorkflowError("EDITOR_PLAN_STALE")
@@ -125,6 +128,8 @@ def timeline(doc, frames, captions, voice=None):
     """Reuse canonical timeline DTOs, with explicit native media identifier mapping."""
     visual, text = [], []
     plan = validate_plan(doc)
+    from .branding import resolve
+    brand,template=resolve(doc)
     by_scene = {s["scene"]:s for s in plan["scenes"]} if plan else {}
     assets = {a["id"]: a for a in project_assets(doc)}
     for frame in frames:
@@ -151,14 +156,14 @@ def timeline(doc, frames, captions, voice=None):
     if voice:
         tracks.append(TimelineTrack(track_id="trk_native_voice",type="audio",kind="voice",label="Thùy Dung",order=len(tracks),clips=[
             TimelineClip(clip_id="clip_native_voice",kind="voice",label="Giọng đọc đã đo",source_end=voice["duration_seconds"],
-                timeline_start=1.1,duration=voice["duration_seconds"],metadata={"sha256":voice["audio_sha256"],"profile_sha256":voice["profile_sha256"],"speed":1})]))
+                timeline_start=brand.intro_seconds,duration=voice["duration_seconds"],metadata={"sha256":voice["audio_sha256"],"profile_sha256":voice["profile_sha256"],"speed":1})]))
     music=doc.get("music") if doc.get("music_enabled",True) else None
     if music:
         clips=[]; start=0.; total=frames[-1]["end"]
         while start<total-1e-7:
             length=min(music["duration_seconds"],total-start)
             clips.append(TimelineClip(clip_id=f"clip_native_music_{len(clips):04}",kind="music",label="Nhạc nền",timeline_start=start,source_end=length,duration=length,
-                volume=.12,asset_id="ast_"+digest(music["id"])[:32],metadata={"native_asset_id":music["id"],"sha256":music["sha256"],"ducking":"voice_sidechaincompress"}))
+                volume=brand.music_profile.nominal_gain,asset_id="ast_"+digest(music["id"])[:32],metadata={"native_asset_id":music["id"],"sha256":music["sha256"],"ducking":brand.music_profile.ducking}))
             start+=length
         tracks.append(TimelineTrack(track_id="trk_native_music",type="audio",kind="music",label="Nhạc nền",order=len(tracks),clips=clips))
     return TimelineSnapshot(schema_version="1.1",duration_seconds=frames[-1]["end"],tracks=tracks,

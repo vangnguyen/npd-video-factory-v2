@@ -134,4 +134,5 @@ def version_components(doc):
             "script_version": digest(doc.get("proposal")),
             "storyboard_version": digest({"scenes": (doc.get("proposal") or {}).get("visual_brief"),
                                           "scene_media": doc.get("scene_media"), "edit_plan": doc.get("edit_plan"),
-                                          "music": doc.get("music"), "music_enabled": doc.get("music_enabled", True)})}
+                                          "music": doc.get("music"), "music_enabled": doc.get("music_enabled", True),
+                                          "brand_template": doc.get("brand_template")})}

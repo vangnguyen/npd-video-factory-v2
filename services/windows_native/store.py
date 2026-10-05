@@ -298,11 +298,36 @@ class Store:
     def set_music(self, identifier, revision, music):
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
-            doc["music"]=music; doc["music_enabled"]=True; doc.pop("edit_plan",None)
+            previous=doc.get("edit_plan"); doc["music"]=music; doc["music_enabled"]=True
+            if previous:
+                from .editor import build_plan, SceneOptions
+                doc["edit_plan"]=build_plan(doc,[{k:s[k] for k in SceneOptions.model_fields} for s in previous["scenes"]])
+            else: doc.pop("edit_plan",None)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                         (revision+1,json.dumps(doc,ensure_ascii=False),now(),identifier))
             self.version(con,identifier)
             self.event(con,identifier,"music_saved_review_required",{"revision":revision+1,"music_id":music["id"],"source_sha256":music["source_sha256"]})
+        return self.get(identifier)
+
+    def set_brand(self, identifier, revision, brand_id, template_id):
+        from .branding import choose
+        from .editor import build_plan, SceneOptions
+        selection=choose(brand_id,template_id)
+        with self.transaction() as con:
+            project=self.editable(con,identifier,revision); doc=project["document"]
+            previous=doc.get("edit_plan"); doc["brand_template"]=selection
+            try:
+                validate_bindings(doc,complete=True)
+                complete=bool(doc.get("proposal"))
+            except WorkflowError:
+                complete=False
+            if complete:
+                options=[{k:s[k] for k in SceneOptions.model_fields} for s in previous["scenes"]] if previous else None
+                doc["edit_plan"]=build_plan(doc,options)
+            else: doc.pop("edit_plan",None)
+            con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",(revision+1,json.dumps(doc,ensure_ascii=False),now(),identifier))
+            self.version(con,identifier)
+            self.event(con,identifier,"brand_template_saved_review_required",{"revision":revision+1,"brand_id":brand_id,"template_id":template_id,"selection_sha256":digest(selection)})
         return self.get(identifier)
 
     def append_document(self, identifier, revision, document):
