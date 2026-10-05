@@ -143,8 +143,8 @@ class PublicWebResearchProvider(ResearchProvider):
             source=source_from_receipt(receipt)
             directory=self.receipts/source.id; directory.mkdir(parents=True,exist_ok=False)
             (directory/'retrieval.json').write_bytes(canonical({k:v for k,v in receipt.items() if k!='html'}))
-            (directory/'source.html').write_text(receipt['html'],encoding='utf-8')
-            (directory/'source-text.txt').write_text(source.text,encoding='utf-8')
+            (directory/'source.html').write_bytes(receipt['html'].encode('utf-8'))
+            (directory/'source-text.txt').write_bytes(source.text.encode('utf-8'))
             sources.append(source)
             ranked=[]
             for paragraph in source.text.split('\n'):

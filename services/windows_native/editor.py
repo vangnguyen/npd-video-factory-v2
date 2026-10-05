@@ -166,5 +166,10 @@ def timeline(doc, frames, captions, voice=None):
                 volume=brand.music_profile.nominal_gain,asset_id="ast_"+digest(music["id"])[:32],metadata={"native_asset_id":music["id"],"sha256":music["sha256"],"ducking":brand.music_profile.ducking}))
             start+=length
         tracks.append(TimelineTrack(track_id="trk_native_music",type="audio",kind="music",label="Nhạc nền",order=len(tracks),clips=clips))
+    lineage={}
+    if doc.get("content_intelligence"):
+        from .intelligence_lineage import projection
+        lineage={"content_intelligence":projection(doc)}
     return TimelineSnapshot(schema_version="1.1",duration_seconds=frames[-1]["end"],tracks=tracks,
-        metadata={"timing_source":"measured_narration_audio", "edit_plan_sha256":digest(plan), "human_review_required":True}).model_dump(mode="json")
+        metadata={"timing_source":"measured_narration_audio", "edit_plan_sha256":digest(plan), "human_review_required":True,
+                  **lineage}).model_dump(mode="json")

@@ -165,6 +165,30 @@ class Store:
             raise WorkflowError("PROJECT_BUSY")
         return project
 
+    def create_from_brief(self, name, lineage):
+        from .intelligence_lineage import validate
+        validate(lineage)
+        identifier=uuid.uuid5(uuid.NAMESPACE_URL,'video-factory/approved-brief/'+lineage['brief']['id']+'/'+lineage['sha256']).hex
+        brief=lineage['brief']
+        lines=['Tạo kịch bản tiếng Việt để con người kiểm tra từ brief đã duyệt. Dữ kiện là lời nguồn đã nói, chưa xác minh độc lập. Không thêm số liệu hay cam kết ngoài nguồn.',
+               'Chủ đề: '+name,'Mục tiêu: '+brief['objective'],'Người xem: '+brief['audience'],'Góc nhìn: '+brief['angle'],'Hook: '+brief['hook'],
+               'Các ý chính đề xuất:']+['- '+p for p in brief['talking_points']]+['CTA: '+brief['cta'],'Dữ kiện nguyên văn cần quy nguồn:']+['- '+p for p in brief['key_facts']]+['Nguồn:']
+        lines += [s['title']+' — '+s['reference']+' — ngày công bố: '+(s['timestamp'] or 'chưa rõ') for s in lineage['sources'] if s['id'] in brief['source_references']]
+        lines += ['Giới hạn:']+['- '+p for p in brief['constraints']]
+        prompt=validate_text('idea','\n'.join(lines))
+        doc={'name':name[:150],'prompt':prompt,'input_kind':'idea','proposal':None,'asset':None,'assets':[],'scene_media':[],'documents':[],'content_intelligence':lineage}
+        stamp=now()
+        with self.transaction() as con:
+            existing=con.execute('SELECT * FROM projects WHERE id=?',(identifier,)).fetchone()
+            if existing:
+                previous=json.loads(existing['document']).get('content_intelligence')
+                if previous!=lineage: raise WorkflowError('CONTENT_INTELLIGENCE_BRIDGE_CONFLICT')
+            else:
+                con.execute('INSERT INTO projects VALUES(?,?,?,?,?,?)',(identifier,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
+                self.event(con,identifier,'approved_brief_imported_for_script_review',{'brief_id':lineage['brief']['id'],'idea_id':lineage['idea']['id'],'lineage_sha256':lineage['sha256'],'automatic_production':False})
+                self.version(con,identifier)
+        return self.get(identifier)
+
     def duplicate(self, identifier, revision):
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
@@ -376,6 +400,9 @@ class Store:
                 return self.job(existing, con)
             project = self.editable(con, identifier, revision)
             doc, approval = project["document"], project["approval"]
+            if doc.get("content_intelligence"):
+                from .intelligence_lineage import projection
+                projection(doc)
             if kind == "asr":
                 from .asr import pending_assets
                 if not pending_assets(doc):

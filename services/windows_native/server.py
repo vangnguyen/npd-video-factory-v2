@@ -105,12 +105,19 @@ class LocalServer(ThreadingHTTPServer):
         self.csrf = secrets.token_urlsafe(32)
         self.connection_lock = threading.Lock()
         self.runner = Runner(self.store, pipeline or Pipeline(config))
+        from .intelligence_service import IntelligenceService
+        self.intelligence = IntelligenceService(config,self.store)
         if start_worker:
             self.runner.start()
+            self.intelligence.start()
 
     def server_close(self):
         self.runner.stop.set()
         self.runner.wake.set()
+        self.intelligence.stop.set()
+        self.intelligence.wake.set()
+        if self.intelligence.thread.is_alive():
+            self.intelligence.thread.join(timeout=2)
         super().server_close()
 
 
@@ -195,6 +202,9 @@ class Handler(BaseHTTPRequestHandler):
     def dispatch_get(self):
         path = self.path.split("?", 1)[0]
         self.boundary(session=path.startswith("/api/") and path not in {"/api/session", "/api/health"})
+        if path.startswith("/api/intelligence/"):
+            from .intelligence_routes import get
+            return self.reply(get(self,path))
         if path == "/api/session":
             return self.reply({"csrf": self.server.csrf}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
         if path == "/api/health":
@@ -255,6 +265,7 @@ class Handler(BaseHTTPRequestHandler):
                     job,_=self.server.store.verified_render(match[1],con)
             return self.file(self.server.config.data_root / "jobs" / job["id"] / "final.mp4", video=True)
         static = {"/": "native.html", "/native.html": "native.html", "/native.css": "native.css", "/native.mjs": "native.mjs",
+                  "/intelligence":"intelligence.html", "/intelligence.mjs":"intelligence.mjs",
                   "/settings/assemblyai": "assemblyai.html", "/assemblyai.mjs": "assemblyai.mjs"}
         if path in static:
             return self.file(REPO / "apps/studio-web" / static[path])
@@ -277,6 +288,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def dispatch_post(self):
         self.boundary(write=True)
+        if self.path.startswith("/api/intelligence/"):
+            from .intelligence_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
         if self.path == "/api/connections/assemblyai":
             body = self.read_body(max_bytes=2048)
             if set(body) not in ({"key"}, {"verify_saved"}) or ("verify_saved" in body and body["verify_saved"] is not True):

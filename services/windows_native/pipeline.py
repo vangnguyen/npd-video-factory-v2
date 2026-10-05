@@ -562,6 +562,9 @@ class Pipeline:
         self.config = config
 
     def run(self, job, stage):
+        if job["snapshot"]["document"].get("content_intelligence"):
+            from .intelligence_lineage import projection
+            projection(job["snapshot"]["document"])
         out = self.config.data_root / "jobs" / job["id"]
         if self.config.data_root.resolve() not in out.resolve().parents:
             raise WorkflowError("ARTIFACT_PATH_INVALID")
