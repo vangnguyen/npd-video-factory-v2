@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "data_root": "C:/NPD-Video-Factory/post-mvp-validation/phase3-ui-20261005",
+  "browser": "Codex in-app browser; 127.0.0.1:8030",
+  "project_id": "d7b0eebef76144bdaa4738c8a768a7b2",
+  "revision": 3,
+  "input_kind": "script",
+  "script_text_exact": true,
+  "document_filename": "phase3-ui-document.txt",
+  "document_sha256": "8e0cce2c2be5a00f9dc59588514da7041995d7fe786ad40bb311175b9c5b7985",
+  "document_bytes": 69,
+  "document_original_preserved": true,
+  "reload_persistence": true,
+  "provider_calls": 0,
+  "tts_calls": 0,
+  "human_approval_created": false,
+  "render_before_review_disabled": true,
+  "screenshot": "ui-script-document.jpg",
+  "job_id": "3b4f15c738994fcb8a36b033087df003",
+  "job_status": "awaiting_review"
+}

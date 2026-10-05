@@ -16,6 +16,7 @@ import wave
 from .contracts import MODEL, PROFILE_SHA, RUNTIME_VERSIONS, Proposal, WorkflowError, canonical, digest, file_sha, normalize, write_json
 from .media import media_path, verify_selected_files
 from .hardening import Artifacts, durable_json, retry_io
+from .ingestion import existing_script, provider_context
 
 REPO = Path(__file__).resolve().parents[2]
 LOCKS = Path(__file__).resolve().parent / "locks"
@@ -132,6 +133,7 @@ def provider_request(client, request, job, out, stage, openai):
 
 
 def generate(config, job, out, stage=lambda _: None):
+    context = provider_context(job["snapshot"]["document"])
     import httpx2
     import openai
     from openai import OpenAI
@@ -140,11 +142,13 @@ def generate(config, job, out, stage=lambda _: None):
     logging.getLogger("httpx2").disabled = True
     os.environ.pop("OPENAI_LOG", None)
     timeout = httpx2.Timeout(90.0, connect=15.0)
+    provider_schema = Proposal.model_json_schema()
+    provider_schema["properties"]["visual_brief"]["minItems"] = 3
     client = OpenAI(api_key=load_key(config.secret_file), max_retries=0, timeout=timeout,
                     base_url="https://api.openai.com/v1",
                     http_client=httpx2.Client(trust_env=False, timeout=timeout, follow_redirects=False))
     request = {"model": MODEL, "reasoning": {"effort": "none"}, "max_output_tokens": 2048, "store": False,
-               "input": job["snapshot"]["document"]["prompt"],
+               "input": context,
                "instructions": (
                    "Trả JSON đúng schema, bằng tiếng Việt, narration cho video khoảng 25–45 giây. "
                    "visual_brief gồm 3–5 cảnh đánh số liên tiếp, on_screen_text ngắn gọn tối đa 150 ký tự. "
@@ -156,7 +160,7 @@ def generate(config, job, out, stage=lambda _: None):
                    "Không giả định dự án đã hoàn thành, không đề nghị AI/stock không liên quan. "
                    "Không tự duyệt, không tự xuất bản. Đây là bản đề xuất cho con người review."),
                "text": {"format": {"type": "json_schema", "name": "native_content_proposal", "strict": True,
-                                    "schema": Proposal.model_json_schema()}}}
+                                    "schema": provider_schema}}}
     try:
         retry_io(lambda: durable_json(out / "content-request.json", request), stage, "storage_content_request")
         response, attempts = provider_request(client, request, job, out, stage, openai)
@@ -505,8 +509,15 @@ class Pipeline:
             if checkpoint:
                 stage("resuming_verified_content")
                 return checkpoint["result"]
-            stage("content_request")
-            result = generate(self.config, job, out, stage)
+            if job["snapshot"]["document"].get("input_kind") == "script":
+                stage("prepare_existing_script")
+                result = {"proposal": existing_script(job["snapshot"]["document"]), "source": "existing_user_script",
+                          "provider_calls": 0, "retries": 0, "facts_verified": False, "human_review_required": True}
+                durable_json(out / "content-result.json", result)
+                durable_json(out / "content-request.json", {"workflow": "existing_script", "provider_dispatch": False})
+            else:
+                stage("content_request")
+                result = generate(self.config, job, out, stage)
             retry_io(lambda: artifacts.commit("content", [out / "content-result.json", out / "content-request.json"], result), stage, "storage_content_checkpoint")
             return result
         approval = job["snapshot"]["approval"]

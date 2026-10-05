@@ -46,7 +46,7 @@ class Scene(BaseModel):
 class Proposal(BaseModel):
     model_config = ConfigDict(extra="forbid")
     narration: str = Field(min_length=1, max_length=4000)
-    visual_brief: list[Scene] = Field(min_length=3, max_length=5)
+    visual_brief: list[Scene] = Field(min_length=1, max_length=5)
     facts_needing_source: list[str] = Field(max_length=40)
 
     @model_validator(mode="after")

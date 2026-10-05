@@ -8,6 +8,7 @@ export const mediaReady = doc => {
   return scenes.length>0 && bindings.length===scenes.length && scenes.every(s=>bindings.filter(b=>b.scene===s.scene).length===1 && assets.some(a=>a.id===bindings.find(b=>b.scene===s.scene)?.asset_id));
 };
 export const mediaType = file => ({jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",mp4:"video/mp4",mov:"video/quicktime"})[file.name.split(".").pop().toLowerCase()] ?? "";
+export const documentType = file => ({txt:"text/plain",md:"text/markdown",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})[file.name.split(".").pop().toLowerCase()] ?? "";
 
 const errors = {
   HUMAN_APPROVAL_REQUIRED_BEFORE_TTS:"Cần duyệt đúng phiên bản nội dung trước khi tạo giọng đọc.",
@@ -40,7 +41,7 @@ const errors = {
   TTS_CHILD_FAILED:"Tạo giọng đọc thất bại. Job đã dừng.", MEDIA_QC_FAILED:"Video chưa vượt qua kiểm tra chất lượng.",
 };
 const statusNames = {queued:"Đang chờ",running:"Đang chạy",retrying:"Đang thử lại có giới hạn",awaiting_review:"Đề xuất sẵn sàng · cần bạn duyệt",succeeded:"Video đã render · hãy xem lại",failed:"Job đã dừng do lỗi",interrupted:"Job bị ngắt · chưa chạy lại"};
-const stageNames = {starting:"Bắt đầu",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video"};
+const stageNames = {starting:"Bắt đầu",prepare_existing_script:"Đang chuẩn bị kịch bản đã nhập",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video"};
 
 if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
@@ -61,6 +62,8 @@ if (typeof document !== "undefined") {
     $("new-project").disabled=busy||dirty;
     $("project-name").disabled=Boolean(project)||busy;
     $("generate").disabled=!project||blocked||dirty;
+    $("generate").textContent=project?.document.input_kind==="script"?"Chuẩn bị kịch bản để bạn duyệt":"Tạo đề xuất nội dung ↗";
+    $("upload-documents").disabled=!project||blocked||dirty;
     $("approve").disabled=!mediaReady(project?.document)||blocked||dirty||Boolean(project.approval);
     $("upload-media").disabled=!project||blocked||dirty;
     $("render").disabled=!canRender(project,dirty,busy);
@@ -93,7 +96,8 @@ if (typeof document !== "undefined") {
     $("proposal-card").hidden=!proposal;
     $("project-heading").textContent=project?.document.name??"Bắt đầu một video mới";
     $("version").textContent=project?`Phiên bản ${project.revision}`:"Bản nháp";
-    if(reset){dirty=false;dirtyPart=null;if(project){$("project-name").value=project.document.name;$("prompt").value=project.document.prompt;}}
+    if(reset){dirty=false;dirtyPart=null;if(project){$("project-name").value=project.document.name;$("prompt").value=project.document.prompt;$("input-kind").value=project.document.input_kind??"prompt";}}
+    $("document-list").innerHTML=(project?.document.documents??[]).map(d=>`<p><strong>${esc(d.filename)}</strong> · ${d.extracted_text.length.toLocaleString("vi-VN")} ký tự</p>`).join("")||'<p class="hint">Chưa có tài liệu nguồn.</p>';
     if(reset)$("review-check").checked=false;
     const assets=mediaLibrary(project?.document),bindings=mediaBindings(project?.document);
     $("media-count").textContent=`${assets.length} nguồn`;
@@ -135,8 +139,8 @@ if (typeof document !== "undefined") {
   }
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   $("save-prompt").addEventListener("click",guarded(async()=>{
-    if(!project)project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value});
-    else project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,prompt:$("prompt").value});
+    if(!project)project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value,input_kind:$("input-kind").value});
+    else project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,prompt:$("prompt").value,input_kind:$("input-kind").value});
     localStorage.setItem("vf-native-project",project.id);renderProject(true);await projects();message("Đã lưu dự án.");
   }));
   async function enqueue(kind,fresh=false) {
@@ -169,10 +173,12 @@ if (typeof document !== "undefined") {
     } catch(error) {$("upload-progress").textContent=`Đã lưu ${saved}/${files.length} nguồn. Khi thử lại, chỉ chọn các tệp chưa lưu.`;throw error;}
   }));
   $("project-picker").addEventListener("change",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi đổi dự án.");clearTimeout(timer);project=$("project-picker").value?await api(`/api/projects/${$("project-picker").value}`):null;if(project)localStorage.setItem("vf-native-project",project.id);renderProject(true);schedule();}));
-  $("new-project").addEventListener("click",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi tạo dự án mới.");clearTimeout(timer);project=null;localStorage.removeItem("vf-native-project");$("prompt").value=(await api("/api/defaults")).prompt;$("project-name").value="Vinhomes Green Paradise Cần Giờ";$("project-picker").value="";renderProject(true);}));
+  $("new-project").addEventListener("click",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi tạo dự án mới.");clearTimeout(timer);project=null;localStorage.removeItem("vf-native-project");$("input-kind").value="prompt";$("prompt").value=(await api("/api/defaults")).prompt;$("project-name").value="Vinhomes Green Paradise Cần Giờ";$("project-picker").value="";renderProject(true);}));
   $("refresh").addEventListener("click",guarded(()=>reload(!dirty)));
   $("jobs").addEventListener("click",guarded(async event=>{const button=event.target.closest("[data-resume]");if(!button)return;if(dirty)throw new Error("Lưu chỉnh sửa trước khi tiếp tục.");await api(`/api/jobs/${button.dataset.resume}/resume`,{});await reload(true);schedule();message("Đang tiếp tục job từ bước đã kiểm chứng.");}));
   $("prompt").addEventListener("input",()=>markDirty("prompt"));
+  $("input-kind").addEventListener("change",()=>{if($("input-kind").value==="media")$("prompt").value="";markDirty("prompt");});
+  $("upload-documents").addEventListener("click",guarded(async()=>{const files=[...$("document-files").files];if(!project||dirty||!files.length)throw new Error("Lưu dự án và chọn tài liệu trước khi tải lên.");for(const file of files){const type=documentType(file);if(!type||file.size>5*1024*1024)throw new Error("Chọn TXT, Markdown hoặc DOCX không quá 5 MB.");const response=await fetch(`/api/projects/${project.id}/documents`,{method:"POST",credentials:"same-origin",headers:{"Content-Type":type,"X-VF-CSRF":csrf,"X-VF-Revision":String(project.revision),"X-VF-Filename":encodeURIComponent(file.name)},body:file});const result=await response.json();if(!response.ok)throw new Error(result.failure?.action??result.code);project=result;renderProject(true);}await projects();$("document-files").value="";message("Đã lưu file gốc và nội dung trích xuất. Hãy kiểm tra tài liệu trước khi duyệt.");}));
   $("scenes").addEventListener("input",()=>{markDirty("proposal");$("narration").textContent=readProposal().narration;});
   $("scenes").addEventListener("change",event=>{if(event.target.matches("[data-media]")){markDirty("proposal");scenePreview(event.target.closest(".scene"));}});
   window.addEventListener("beforeunload",event=>{if(dirty){event.preventDefault();event.returnValue="";}});

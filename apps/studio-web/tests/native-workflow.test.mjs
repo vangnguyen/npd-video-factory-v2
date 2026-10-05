@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType} from '../native.mjs';
+import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType} from '../native.mjs';
 
 test('Render UI requires current approval, saved edits and idle job',()=>{
   const p={revision:3,approval:{revision:3},jobs:[]};
@@ -36,4 +36,9 @@ test('Retrying job blocks editing and another render until its receipt completes
   const p={revision:3,approval:{revision:3},jobs:[{status:'retrying'}]};
   assert.equal(jobActive(p),true);
   assert.equal(canRender(p,false,false),false);
+});
+test('Document chooser passes declared MIME while server must validate actual content',()=>{
+  for(const name of ['brief.TXT','notes.md','source.docx'])assert.ok(documentType({name}));
+  assert.equal(documentType({name:'binary.exe'}),'');
+  assert.equal(documentType({name:'source.pdf'}),'');
 });

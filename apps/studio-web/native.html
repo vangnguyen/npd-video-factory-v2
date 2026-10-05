@@ -26,10 +26,12 @@
         <section class="card" id="brief-card">
           <div class="card-heading"><div><p class="eyebrow">01 / NỘI DUNG</p><h2 id="project-heading">Bắt đầu một video mới</h2></div><span id="version" class="version">Bản nháp</span></div>
           <label>Tên dự án<input id="project-name" maxlength="150" value="Vinhomes Green Paradise Cần Giờ"></label>
+          <label>Loại đầu vào<select id="input-kind"><option value="prompt">Yêu cầu nội dung</option><option value="idea">Ý tưởng</option><option value="script">Kịch bản có sẵn</option><option value="media">Ảnh/video/tài liệu trước</option></select></label>
           <label>Yêu cầu nội dung<textarea id="prompt" rows="7" maxlength="20000" placeholder="Bạn muốn giới thiệu điều gì? Đối tượng xem là ai?"></textarea></label>
           <div class="actions"><button id="save-prompt" class="secondary">Lưu dự án</button><button id="generate" class="primary" disabled>Tạo đề xuất nội dung <span>↗</span></button></div>
           <p id="save-note" class="hint">Lưu yêu cầu trước khi tạo đề xuất.</p>
         </section>
+        <section class="card"><h2>Tài liệu nguồn</h2><label>Chọn tài liệu<input id="document-files" type="file" multiple accept=".txt,.md,.docx,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></label><button id="upload-documents" class="secondary">Tải tài liệu đã chọn</button><p class="hint">TXT/Markdown UTF-8 hoặc Word DOCX ≤ 5 MB, tối đa 20.000 ký tự. File gốc được giữ nguyên; nội dung chưa được xác minh.</p><div id="document-list"></div></section>
         <section class="card" id="image-card" hidden>
           <div class="card-heading"><div><p class="eyebrow">THƯ VIỆN NGUỒN</p><h2>Ảnh & video của dự án</h2></div><span id="media-count" class="version">0 nguồn</span></div>
           <label>Chọn nhiều ảnh/video<input id="media-files" type="file" multiple accept="image/jpeg,image/png,video/mp4,video/quicktime,.mov"></label>

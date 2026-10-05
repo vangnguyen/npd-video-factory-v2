@@ -126,6 +126,7 @@ def resume_boundary(root, job):
 
 def version_components(doc):
     return {"input_version": digest({"prompt": doc.get("prompt"), "inputs": doc.get("inputs"),
+                                     "input_kind": doc.get("input_kind", "prompt"), "documents": doc.get("documents", []),
                                      "assets": doc.get("assets", doc.get("asset"))}),
             "script_version": digest(doc.get("proposal")),
             "storyboard_version": digest({"scenes": (doc.get("proposal") or {}).get("visual_brief"),

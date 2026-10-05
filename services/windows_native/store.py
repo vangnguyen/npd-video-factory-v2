@@ -10,6 +10,7 @@ import uuid
 from .contracts import Proposal, WorkflowError, digest
 from .media import MAX_ASSETS, project_assets, scene_bindings, selected_media, validate_bindings
 from .hardening import LIFECYCLE, failure, resume_boundary, version_components
+from .ingestion import project_input, validate_text
 
 
 def now():
@@ -73,7 +74,8 @@ class Store:
     def project(row):
         if row is None:
             raise WorkflowError("PROJECT_NOT_FOUND", 404)
-        return {**dict(row), "document": json.loads(row["document"]),
+        doc = json.loads(row["document"])
+        return {**dict(row), "document": doc, "input": project_input(doc, row["revision"]),
                 "approval": json.loads(row["approval"]) if row["approval"] else None}
 
     def job(self, row, con=None):
@@ -112,13 +114,12 @@ class Store:
                 "step": step, "provider": provider or ("openai" if "content" in step else "local_vieneu" if "tts" in step else "ffmpeg" if "render" in step else "local_io"),
                 "duration": round(duration, 6), "retry_count": runtime[0] if runtime else 0, "error_code": error_code})
 
-    def create(self, name, prompt):
+    def create(self, name, prompt, input_kind="prompt"):
         if not isinstance(name, str) or not 1 <= len(name.strip()) <= 150:
             raise WorkflowError("PROJECT_NAME_REQUIRED", 400)
-        if not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 20000:
-            raise WorkflowError("PROMPT_REQUIRED_MAX_20000", 400)
+        prompt = validate_text(input_kind, prompt)
         identifier = uuid.uuid4().hex
-        doc = {"name": name.strip(), "prompt": prompt, "proposal": None, "asset": None, "assets": [], "scene_media": []}
+        doc = {"name": name.strip(), "prompt": prompt, "input_kind": input_kind, "proposal": None, "asset": None, "assets": [], "scene_media": [], "documents": []}
         stamp = now()
         with self.transaction() as con:
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",
@@ -147,8 +148,8 @@ class Store:
             raise WorkflowError("PROJECT_BUSY")
         return project
 
-    def save(self, identifier, revision, *, prompt=None, proposal=None, asset=None, scene_media=None):
-        if prompt is not None and (not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 20000):
+    def save(self, identifier, revision, *, prompt=None, proposal=None, asset=None, scene_media=None, input_kind=None):
+        if prompt is not None and input_kind != "media" and (not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 20000):
             raise WorkflowError("PROMPT_REQUIRED_MAX_20000", 400)
         if proposal is not None:
             try:
@@ -158,6 +159,11 @@ class Store:
         with self.transaction() as con:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
+            if input_kind is not None:
+                validate_text(input_kind, prompt if prompt is not None else doc["prompt"])
+                if input_kind != doc.get("input_kind", "prompt"):
+                    doc["proposal"], doc["scene_media"] = None, []
+                doc["input_kind"] = input_kind
             if prompt is not None and prompt != doc["prompt"]:
                 doc["prompt"], doc["proposal"] = prompt, None
                 doc["scene_media"] = []
@@ -174,6 +180,20 @@ class Store:
                         (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
             self.event(con, identifier, "draft_saved_approval_invalidated", {"revision": revision + 1})
             self.version(con, identifier)
+        return self.get(identifier)
+
+    def append_document(self, identifier, revision, document):
+        with self.transaction() as con:
+            project = self.editable(con, identifier, revision)
+            doc = project["document"]
+            documents = doc.get("documents", [])
+            if len(documents) >= 20:
+                raise WorkflowError("DOCUMENT_LIMIT_20", 400)
+            doc["documents"] = documents + [document]
+            con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
+                (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
+            self.version(con, identifier)
+            self.event(con, identifier, "document_uploaded_approval_invalidated", {"revision": revision+1, "document_id": document["id"], "sha256": document["sha256"]})
         return self.get(identifier)
 
     def approve(self, identifier, revision, reviewer, acknowledged):

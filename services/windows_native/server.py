@@ -19,6 +19,7 @@ from .contracts import WorkflowError, file_sha
 from .pipeline import Config, LOCKS, Pipeline, REPO, verify_runtime
 from .store import Store
 from .hardening import failure
+from .ingestion import DOCUMENT_TYPES, DOCUMENT_MAX_BYTES, ingest_document
 from .media import CONTENT_TYPES, IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, discard_media, ingest_media, media_path, project_assets
 
 
@@ -253,6 +254,9 @@ class Handler(BaseHTTPRequestHandler):
         upload_match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/media", self.path)
         if upload_match:
             return self.upload_media(upload_match[1])
+        document_match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/documents", self.path)
+        if document_match:
+            return self.upload_document(document_match[1])
         body = self.read_body()
         resume = re.fullmatch(r"/api/jobs/([0-9a-f]{32})/resume", self.path)
         if resume:
@@ -260,7 +264,7 @@ class Handler(BaseHTTPRequestHandler):
             self.server.runner.wake.set()
             return self.reply(result)
         if self.path == "/api/projects":
-            return self.reply(self.server.store.create(body.get("name"), body.get("prompt")), 201)
+            return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt")), 201)
         match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|jobs)", self.path)
         if not match:
             raise WorkflowError("ROUTE_NOT_FOUND", 404)
@@ -269,7 +273,7 @@ class Handler(BaseHTTPRequestHandler):
         if not isinstance(revision, int) or isinstance(revision, bool):
             raise WorkflowError("REVISION_REQUIRED", 400)
         if action == "draft":
-            result = self.server.store.save(identifier, revision, prompt=body.get("prompt"), proposal=body.get("proposal"), scene_media=body.get("scene_media"))
+            result = self.server.store.save(identifier, revision, prompt=body.get("prompt"), proposal=body.get("proposal"), scene_media=body.get("scene_media"), input_kind=body.get("input_kind"))
         elif action == "image":
             asset = save_image(self.server.config, body)
             try:
@@ -319,6 +323,34 @@ class Handler(BaseHTTPRequestHandler):
                 result = self.server.store.append_media(identifier, revision, asset)
             except Exception:
                 discard_media(self.server.config, asset)
+                raise
+            return self.reply(result, 201)
+        finally:
+            source.unlink(missing_ok=True)
+
+    def upload_document(self, identifier):
+        content_type = self.headers.get("Content-Type", "").split(";")[0]
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            revision = int(self.headers.get("X-VF-Revision", "0"))
+        except ValueError:
+            raise WorkflowError("DOCUMENT_HEADERS_INVALID", 400) from None
+        if content_type not in DOCUMENT_TYPES or not 0 < length <= DOCUMENT_MAX_BYTES or self.headers.get("Transfer-Encoding"):
+            raise WorkflowError("DOCUMENT_TYPE_OR_SIZE_INVALID_MAX_5MB", 400)
+        with self.server.store.transaction() as con:
+            self.server.store.editable(con, identifier, revision)
+        directory = self.server.config.data_root / "uploads"; directory.mkdir(parents=True, exist_ok=True)
+        source = directory / (uuid.uuid4().hex + ".part")
+        try:
+            raw = self.rfile.read(length)
+            if len(raw) != length:
+                raise WorkflowError("DOCUMENT_UPLOAD_INCOMPLETE", 400)
+            with source.open("xb") as handle: handle.write(raw)
+            asset = ingest_document(self.server.config, source, content_type, unquote(self.headers.get("X-VF-Filename", "Document")))
+            try:
+                result = self.server.store.append_document(identifier, revision, asset)
+            except Exception:
+                (self.server.config.data_root / "documents" / asset["id"]).unlink(missing_ok=True)
                 raise
             return self.reply(result, 201)
         finally:

@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import shutil
+from fractions import Fraction
 import uuid
 
 from .contracts import WorkflowError, file_sha
@@ -92,6 +94,8 @@ def discard_media(config, asset):
     for key in ("id", "thumbnail_id"):
         if asset.get(key):
             media_path(config, asset[key]).unlink(missing_ok=True)
+    if asset.get("original_id"):
+        (config.data_root / "originals" / asset["original_id"]).unlink(missing_ok=True)
 
 
 def ingest_media(config, source, content_type, filename, *, rights_confirmed, illustration):
@@ -140,13 +144,16 @@ def ingest_media(config, source, content_type, filename, *, rights_confirmed, il
                 capture_output=True, timeout=30)
             if thumb.returncode or not thumbnail.is_file():
                 raise WorkflowError("VIDEO_THUMBNAIL_FAILED", 400)
-            source.replace(dest)
-            asset.update(width=width, height=height, duration_seconds=duration, video_stream_index=stream["index"], original_audio="muted")
+            shutil.copyfile(source, dest)
+            frame_rate = stream.get("avg_frame_rate", "0/0")
+            asset.update(width=width, height=height, duration_seconds=duration, video_stream_index=stream["index"], original_audio="muted",
+                         has_audio=any(s["codec_type"] == "audio" for s in probe["streams"]),
+                         fps=float(Fraction(frame_rate)) if frame_rate != "0/0" else None)
         else:
             try:
                 Image.MAX_IMAGE_PIXELS = 40_000_000
                 with Image.open(source) as original:
-                    if original.format not in {"JPEG", "PNG"} or original.width * original.height > 40_000_000:
+                    if original.format != {"image/jpeg": "JPEG", "image/png": "PNG"}[content_type] or original.width * original.height > 40_000_000:
                         raise ValueError()
                     original.load()
                     image = ImageOps.exif_transpose(original).convert("RGB")
@@ -160,6 +167,13 @@ def ingest_media(config, source, content_type, filename, *, rights_confirmed, il
                 raise WorkflowError("INVALID_IMAGE_JPEG_PNG_MAX_15MB_40MP_MIN_240PX", 400) from None
         asset["sha256"] = file_sha(dest)
         asset["bytes"] = dest.stat().st_size
+        original = config.data_root / "originals"
+        original.mkdir(parents=True, exist_ok=True)
+        extension = {"image/jpeg": ".jpg", "image/png": ".png", "video/mp4": ".mp4", "video/quicktime": ".mov"}[content_type]
+        asset["original_id"] = identifier + extension
+        shutil.copyfile(source, original / asset["original_id"])
+        asset.update(source_sha256=file_sha(source), source_bytes=size, source_mime=content_type,
+                     source="immutable_user_upload", version=1)
         return asset
     except subprocess.TimeoutExpired:
         discard_media(config, asset)
