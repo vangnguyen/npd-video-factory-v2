@@ -188,7 +188,13 @@ class IntelligenceService:
                 receipt=json.loads((directory/'retrieval.json').read_bytes())
                 text=(directory/'source-text.txt').read_bytes().decode('utf-8')
                 html=(directory/'source.html').read_bytes().decode('utf-8')
-                if digest(text)!=source['content_sha256'] or receipt!=source['raw_provenance'] or digest(html)!=receipt['retained_html_sha256']: raise WorkflowError('RESEARCH_PERSISTED_SOURCE_CHANGED')
+                def matches(value,expected):
+                    if digest(value)==expected: return True
+                    # Early Phase 9 files used Windows text-mode writes. Reconstruct exactly
+                    # that LF->CRLF conversion only when the original recorded hash proves it.
+                    # Never rewrite their original files or provenance; v2 sources require exact bytes.
+                    return 'storage_format' not in receipt and digest(value.replace('\r\n','\n'))==expected
+                if not matches(text,source['content_sha256']) or receipt!=source['raw_provenance'] or not matches(html,receipt['retained_html_sha256']): raise WorkflowError('RESEARCH_PERSISTED_SOURCE_CHANGED')
 
     def human(self,reviewer,ack=True,note=''):
         if not isinstance(reviewer,str) or not 1<=len(reviewer.strip())<=100 or ack is not True: raise WorkflowError('INTELLIGENCE_HUMAN_REVIEW_REQUIRED',400)

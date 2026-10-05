@@ -93,6 +93,17 @@ class IntelligenceWorkflowTests(unittest.TestCase):
         self.assertEqual((self.root/'research-sources'/source['id']/'source.html').read_bytes(),raw['html'].encode('utf-8'))
         self.service.verify_sources(b['sources'],b['findings'])
 
+    def test_early_text_mode_sources_require_hash_proven_line_ending_reconstruction(self):
+        b=self.candidates();source=b['sources'][0]; directory=self.root/'research-sources'/source['id']
+        source['raw_provenance'].pop('storage_format')
+        from services.windows_native.contracts import canonical
+        (directory/'retrieval.json').write_bytes(canonical(source['raw_provenance']))
+        for filename in ('source.html','source-text.txt'):
+            raw=(directory/filename).read_bytes();(directory/filename).write_bytes(raw.replace(b'\n',b'\r\n'))
+        self.service.verify_sources([source],b['findings'])
+        (directory/'source-text.txt').write_bytes(b'Invented source text')
+        with self.assertRaisesRegex(WorkflowError,'SOURCE_CHANGED'):self.service.verify_sources([source],b['findings'])
+
     def test_failed_research_has_explicit_error_and_no_fabricated_results(self):
         def fail(url): raise WorkflowError('RESEARCH_HTTP_ERROR',http_status=403)
         self.service.research_provider.fetch=fail

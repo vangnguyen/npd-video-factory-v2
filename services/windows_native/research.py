@@ -140,6 +140,7 @@ class PublicWebResearchProvider(ResearchProvider):
         for url in urls:
             receipt=self.fetch(url)
             receipt['retained_html_sha256']=digest(receipt['html'])
+            receipt['storage_format']='utf8-exact-bytes-v2'
             source=source_from_receipt(receipt)
             directory=self.receipts/source.id; directory.mkdir(parents=True,exist_ok=False)
             (directory/'retrieval.json').write_bytes(canonical({k:v for k,v in receipt.items() if k!='html'}))
