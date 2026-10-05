@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "code_commit": "4420a9247ac4a1bd533fa740e0c90435b7f3e7d8",
+  "original_rows_preserved": true,
+  "sqlite_integrity": "ok",
+  "connection_page_url": "http://127.0.0.1:8026/settings/assemblyai",
+  "connection_status": {
+    "provider": "assemblyai-transcription",
+    "profile_id": "asr-assemblyai-vi-direct-v1",
+    "model": "universal-3-5-pro",
+    "language": "vi",
+    "credential_saved": false,
+    "connected": false,
+    "speech_video_acceptance": "NOT_RUN"
+  },
+  "provider_calls": 0,
+  "transcription_calls": 0,
+  "owner_credential_required": true
+}

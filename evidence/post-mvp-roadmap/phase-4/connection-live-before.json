@@ -1,0 +1,13 @@
+{
+  "code_commit": "4420a9247ac4a1bd533fa740e0c90435b7f3e7d8",
+  "backup": "C:\\NPD-Video-Factory\\post-mvp-validation\\owner-before-assemblyai-connection-20261005.sqlite3",
+  "busy_jobs_before": 0,
+  "original_table_counts": {
+    "projects": 1,
+    "jobs": 3,
+    "events": 12
+  },
+  "original_rows_sha256": "6dfe9de1fd9460227e122b7d7a6187998e79ba24945373d3b9317eaef6b31716",
+  "provider_calls": 0,
+  "transcription_calls": 0
+}

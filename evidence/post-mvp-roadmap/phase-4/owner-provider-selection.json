@@ -1,0 +1,11 @@
+{
+  "recorded_date": "2026-10-05",
+  "source": "direct human user message in this chat",
+  "owner_message": "Kết nối AssemblyAI",
+  "selected_provider": "assemblyai-transcription",
+  "profile_id": "asr-assemblyai-vi-direct-v1",
+  "credential_supplied": false,
+  "provider_choice_resolved": true,
+  "real_account_verification": "NOT_RUN",
+  "speech_video_acceptance": "NOT_RUN"
+}

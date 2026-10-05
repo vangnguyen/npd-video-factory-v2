@@ -4,13 +4,13 @@ PHASE: 4 — connection prerequisite, not speech ASR certification.
 
 STATUS: Local connection implementation PASS; real account connection AWAITING OWNER CREDENTIAL. The Owner selected AssemblyAI on 2026-10-05. The previous provider-choice blocker is resolved; no real key was supplied or discovered.
 
-HEAD SHA: Parent `9b47e8a80a57977ce3d4080ab67c2100b4ca6827`; implementation is in the subsequent connection commit.
+HEAD SHA: `4420a9247ac4a1bd533fa740e0c90435b7f3e7d8` (connection implementation).
 
 FILES CHANGED: `assemblyai_connection.py`, compatible optional Config secret path, local server connection routes, `assemblyai.html`/`assemblyai.mjs`, Studio navigation and connection security tests/evidence. No project schema or voice preset changed.
 
 TESTS: 66/66 native and 24/24 Studio PASS. Nine connection cases exercise real Windows user-scope DPAPI encryption/decryption, protected ACL, restart-safe receipt binding, no plaintext fallback, no credential overwrite, cipher tamper detection, failed-verification invalidation, one read-only verification request, sanitized auth/network/redirect/rate-limit failures, HTTP session/origin/CSRF/body limits and busy-job refusal. HTTP provider responses and credentials in these unit tests are explicitly fixtures; no test makes a real AssemblyAI request. An actual isolated browser test verifies missing-key state, invalid-format rejection, clearing the password field, disabled autocomplete and refresh persistence.
 
-EVIDENCE: `connection-native-tests.log`, `connection-studio-tests.log`, `connection-ui-verification.json`; Owner handoff screenshot and live-upgrade receipt are recorded after installing the verified increment.
+EVIDENCE: `connection-native-tests.log`, `connection-studio-tests.log`, `connection-ui-verification.json`, `connection-live-before.json`, `connection-live-after.json`, `assemblyai-owner-connection.png`. Main Studio has the verified increment; original project/job/event rows are identical to the pre-restart backup, SQLite integrity is `ok`, and the account remains honestly marked missing-key/disconnected. The isolated helper was stopped and its data retained.
 
 CAPABILITIES ADDED: Local non-CLI connection page at `/settings/assemblyai`. Owner enters the key directly; a single bounded `GET https://api.assemblyai.com/v2/transcript?limit=1` verifies authentication without uploading audio, creating a transcript or decoding/persisting account transcript bodies. No automatic retry, redirect, proxy-env forwarding or response-body logging. On success the credential is encrypted with Windows DPAPI for the current user, stored at `C:\NPD-Video-Factory\secrets\assemblyai.dpapi` outside Git, with file access restricted to that user and LocalSystem. Only a cipher-bound verification receipt/status is exposed. Existing saved credentials can be rechecked without re-entering or returning the value. Failed rechecks revoke verified status and preserve the ciphertext.
 
