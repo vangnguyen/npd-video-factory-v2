@@ -1,0 +1,8 @@
+{
+  "status": "STOPPED_IDLE_SERVICE_WITH_PRESERVED_BACKUP",
+  "stopped_pid": 15376,
+  "original_rows_sha256": "5aa17c9d9ad7028212d8f7ff7607170fb846a5427a5523a8545b8a3e519ed0ef",
+  "backup": "C:\\NPD-Video-Factory\\post-mvp-validation\\owner-before-roadmap-upgrade-20261005.sqlite3",
+  "backup_sha256": "5aa17c9d9ad7028212d8f7ff7607170fb846a5427a5523a8545b8a3e519ed0ef",
+  "active_jobs": 0
+}

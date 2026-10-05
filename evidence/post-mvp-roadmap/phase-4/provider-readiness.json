@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-05",
+  "preferred_existing_provider": "assemblyai-transcription",
+  "profile": "asr-assemblyai-vi-direct-v1",
+  "model": "universal-3-5-pro",
+  "legacy_alias": "secret://assemblyai/stt-video-factory-benchmark",
+  "native_asr_configured": false,
+  "windows_assemblyai_key_present": false,
+  "windows_assemblyai_env_file_present": false,
+  "existing_openai_key_file_present": true,
+  "credential_values_read_or_printed": false,
+  "provider_calls": 0,
+  "transcript_generated": false,
+  "speech_video_acceptance": "NOT_RUN",
+  "status": "OWNER_DECISION_REQUIRED",
+  "reason": "Missing native AssemblyAI credential; existing OpenAI ASR adapter is proposed, not selected for this native runtime",
+  "stop_condition": "need secret/credential not already available OR selection of a different paid ASR provider"
+}
