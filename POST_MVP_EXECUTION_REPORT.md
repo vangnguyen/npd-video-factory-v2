@@ -120,11 +120,33 @@ NEXT ACTION: Continue Phase 5 scene intelligence/auto-editor with measured media
 
 Main Studio at <http://127.0.0.1:8026> now runs the verified ASR increment, and the real connection remains verified. No runtime/audio/credential value is copied into Git. Historical missing-key/readiness receipts remain preserved as earlier checkpoints.
 
+## Phase 5
+
+PHASE: 5 — Scene Intelligence / Auto Editor
+
+STATUS: PASS for supported native technical acceptance; final editorial approval remains human-owned.
+
+HEAD SHA: `c95d0a3`.
+
+FILES CHANGED: Native editor/music extensions, compatible store/pipeline/server/hardening, Studio scene/music controls, ten native safety/lineage tests, Studio regression, real-render acceptance script and Phase 5 evidence.
+
+TESTS: 87/87 native, 26/26 Studio PASS. Two real FFmpeg 1080×1920/30 fps renders with five assets, both pan directions/zoom, video start trim/loop, contain/cover, fade/cut, captions, CTA and no-black/audio/decode QC PASS. Exact production ducking filter measured voiced/quiet music amplitude ratio 0.17545. Browser play, auto-plan, source change/save/reload and approval invalidation PASS.
+
+EVIDENCE: `evidence/post-mvp-roadmap/phase-5/acceptance.md`, `editor-real-render.json`, `ui-verification.json`, screenshots and test logs. Actual video/database/original reference inputs remain at `C:\NPD-Video-Factory\post-mvp-validation\phase5-editor-20261005`.
+
+CAPABILITIES ADDED: Rich native planned scenes extend the current scene contract and export reused canonical timeline schema 1.1, including explicit source-loop windows and voice/music tracks. Deterministic hash-verified transcript matching/library rotation, manual fit/motion/trim/transition choices, measured phrase captions, rights-confirmed immutable WAV/MP3 music and measured ducking. Changes invalidate approval before synthesis/render.
+
+REGRESSIONS: Supported native/Studio suites PASS. Existing accepted speech/voice lock and original Owner data are preserved. Generated technical fixtures and exact reused accepted WAV cause zero provider calls or new voice inference; their explicit fixture approvals are not human acceptance.
+
+BLOCKERS / LIMITS: Human visual matching and final watch/listen review are still required. Semantic Vision and new-voice word alignment remain unavailable. Safe areas are internal reference text margins requiring actual platform/device preview, not official TikTok/Reels certification. These two reference videos do not satisfy Phase 8's ten human-reviewed production videos.
+
+NEXT ACTION: Complete Phase 6 project management/history/scene reorder/final render approval and non-CLI walkthrough, then Brand/Templates and the human release gate.
+
 ## Remaining phases and release blockers
 
 | Phase | Status in this task | Required next acceptance |
 | --- | --- | --- |
-| 5 — Scene Intelligence / Auto Editor | NOT STARTED | At least five assets, deterministic matching/timeline/motion/trim/subtitles/transitions/music ducking/CTA/safe-area, editable selection and actual QC-passing render |
+| 5 — Scene Intelligence / Auto Editor | PASS technical native scope | Final human viewing and platform/device overlay review remain release requirements |
 | 6 — Approval Dashboard | PARTIAL existing UI; full phase NOT CERTIFIED | Duplicate/archive/history/storyboard reorder and final approval; complete non-CLI user walkthrough |
 | 7 — Brand / Templates | NOT STARTED | Configurable NPD/Vang Nguyễn profiles and templates; reference configs where official assets are missing |
 | 8 — Internal Production Release | NOT RUN | Full input/flow matrix, automated checks, restart recovery, hashes and at least ten final videos with human watch/listen approval |
@@ -132,7 +154,7 @@ Main Studio at <http://127.0.0.1:8026> now runs the verified ASR increment, and 
 | Severity | Blocker | Closing evidence |
 | --- | --- | --- |
 | P0 | None observed in the supported native work; no release certificate is issued | Existing data/artifact integrity remains verified |
-| P1 | Scene Intelligence, complete Approval Dashboard and Brand/Template gates unfinished | Phase 5–7 implementation, tests and user walkthrough |
+| P1 | Complete Approval Dashboard and Brand/Template gates unfinished | Phase 6–7 implementation, tests and user walkthrough |
 | P1 | Ten final human-reviewed production videos and full release matrix absent | Phase 8 acceptance records; twenty fixture jobs do not substitute |
 | P1 | Legacy Windows test baseline: 46 failures, 24 errors after excluding POSIX collection blockers | Fix relevant compatibility gaps or document an explicitly accepted supported release scope; never label this suite PASS |
 | P2 | Subtitle word alignment and historical original-upload provenance gaps | Real timing/alignment evidence; retain explicit provenance limits for historical media |
