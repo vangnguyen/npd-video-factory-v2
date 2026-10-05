@@ -11,7 +11,7 @@ from services.windows_native.editor import validate_plan
 from services.windows_native.pipeline import Config,verify_runtime
 from services.windows_native.store import Store
 
-def main():
+def main(*, emit=True):
     directory=REPO/'evidence/post-mvp-roadmap/phase-8'; config=Config(); store=Store(config.data_root)
     real=json.loads((directory/'real-candidates.json').read_bytes()); final=json.loads((directory/'final-review-manifest.json').read_bytes())
     authorization_path=directory/'owner-final-authorization.json'
@@ -62,7 +62,10 @@ def main():
     checks['accepted_mvp_wav_unchanged']=file_sha(Path(r'C:\NPD-Video-Factory\outputs\MVP1\voice.wav'))=='2b5f57c31c2514683a6465e408b2cbe20e949cc9e3921a84f68c28ab983a73e5'
     ready=all(checks.values())
     report={'INTERNAL_PRODUCTION_READY':'YES' if ready else 'NO','scope':'Windows Native internal production only; legacy stack not certified','status':'PASS' if ready else 'WAITING_ACTUAL_HUMAN_FINAL_REVIEW','checks':checks,'acceptance_matrix':matrix,'actual_human_final_decisions':decisions,'real_final_videos':10,'human_approved_final_videos':len(decisions),'new_local_tts_inference_calls':sum(e['voice.json']['inference_calls'] for e in real['jobs']),'new_content_provider_attempts':8,'valid_content_provider_results':7,'explicit_provider_failure_preserved':1,'automatic_paid_replays':0,'new_asr_calls_for_import':0,'legacy_windows_baseline':'NOT PASS: 46 failures / 24 errors; not certified; native-only scope acceptance '+('recorded' if checks['explicit_native_internal_scope'] else 'pending'),'limits':['Reference branding; no official logo/assets claim','Phrase subtitle estimates for new voice; no word alignment claim','Historical original-upload provenance gap disclosed and retained','No background music in this ten-video batch; real music/ducking acceptance belongs to Phase 5','Publishing, analytics and autonomy not implemented']}
+    report['human_final_authorization_sha256']=file_sha(authorization_path) if authorization else None
+    report['release_review_manifest_sha256']=file_sha(directory/'final-review-manifest.json')
     write_json(directory/'release-certification.json',report)
-    print(json.dumps({'INTERNAL_PRODUCTION_READY':report['INTERNAL_PRODUCTION_READY'],'real_videos':10,'human_final_reviews':len(decisions),'scope':report['scope']}))
+    if emit: print(json.dumps({'INTERNAL_PRODUCTION_READY':report['INTERNAL_PRODUCTION_READY'],'real_videos':10,'human_final_reviews':len(decisions),'scope':report['scope']}))
+    return report
 
 if __name__=='__main__': main()

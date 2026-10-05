@@ -1,0 +1,65 @@
+{
+  "source": "Actual Owner watch/listen approval applied through Studio UI",
+  "decisions": [
+    {
+      "number": 1,
+      "job_id": "bd289973201a483ead1ee133173ad84a",
+      "visible_final_link": "/api/jobs/bd289973201a483ead1ee133173ad84a/final",
+      "actual_owner_decision_applied": true
+    },
+    {
+      "number": 2,
+      "job_id": "ce85ef66f7c14fec8baced448b97e446",
+      "visible_final_link": "/api/jobs/ce85ef66f7c14fec8baced448b97e446/final",
+      "actual_owner_decision_applied": true
+    },
+    {
+      "number": 3,
+      "job_id": "ada99f2de3aa4b2c9f6b07ff8ee48512",
+      "visible_final_link": "/api/jobs/ada99f2de3aa4b2c9f6b07ff8ee48512/final",
+      "actual_owner_decision_applied": true
+    },
+    {
+      "number": 4,
+      "job_id": "512d5c15781644fe8bcf5548ba50f523",
+      "visible_final_link": "/api/jobs/512d5c15781644fe8bcf5548ba50f523/final",
+      "actual_owner_decision_applied": true
+    },
+    {
+      "number": 5,
+      "job_id": "d965046cfe6540159c07a81db41ae8ee",
+      "visible_final_link": "/api/jobs/d965046cfe6540159c07a81db41ae8ee/final",
+      "actual_owner_decision_applied": true
+    },
+    {
+      "number": 6,
+      "job_id": "6e8311ed16c44f8bbcd028a6ceaad2fc",
+      "visible_final_link": "/api/jobs/6e8311ed16c44f8bbcd028a6ceaad2fc/final",
+      "actual_owner_decision_applied": true
+    },
+    {
+      "number": 7,
+      "job_id": "07a70e2df1cc4406a5411e7383913628",
+      "visible_final_link": "/api/jobs/07a70e2df1cc4406a5411e7383913628/final",
+      "actual_owner_decision_applied": true
+    },
+    {
+      "number": 8,
+      "job_id": "375bb70b35c941c4a47a757afd895f0d",
+      "visible_final_link": "/api/jobs/375bb70b35c941c4a47a757afd895f0d/final",
+      "actual_owner_decision_applied": true
+    },
+    {
+      "number": 9,
+      "job_id": "3fccd54c2ac74e1885315272eb8a0556",
+      "visible_final_link": "/api/jobs/3fccd54c2ac74e1885315272eb8a0556/final",
+      "actual_owner_decision_applied": true
+    },
+    {
+      "number": 10,
+      "job_id": "383fa919e288472ebc7d3e2352bd92b1",
+      "visible_final_link": "/api/jobs/383fa919e288472ebc7d3e2352bd92b1/final",
+      "actual_owner_decision_applied": true
+    }
+  ]
+}

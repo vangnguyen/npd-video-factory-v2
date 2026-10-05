@@ -47,18 +47,29 @@ def main():
     completed=sum(r['human_final_approved'] for r in rows)
     real=json.loads((directory/'real-candidates.json').read_bytes()) if (directory/'real-candidates.json').exists() else {}
     rendered=real.get('successful_jobs')==10 and real.get('failed_jobs')==0
+    certification=None
+    if rendered:
+        # Reuse the full certifier on current files/state, never trust a stale
+        # cached certificate or infer final acceptance from script approval.
+        from importlib.util import module_from_spec, spec_from_file_location
+        spec=spec_from_file_location('native_release_certifier',REPO/'scripts/certify-windows-native-release.py')
+        certifier=module_from_spec(spec); spec.loader.exec_module(certifier)
+        certification=certifier.main(emit=False)
+    certified=bool(certification and certification['INTERNAL_PRODUCTION_READY']=='YES')
     blockers=[]
     if completed<10: blockers.append({'severity':'P1','code':'TEN_HUMAN_FINAL_VIDEO_REVIEWS_REQUIRED'})
     if not rendered: blockers.append({'severity':'P1','code':'FULL_RELEASE_TTS_RENDER_FINAL_MATRIX_PENDING'})
-    blockers += [{'severity':'P1','code':'LEGACY_WINDOWS_BASELINE_NOT_PASS_SCOPE_DECISION_REQUIRED'},{'severity':'P2','code':'PROVIDER_AMBIGUOUS_RESPONSE_PRESERVED_EXPLICIT_LOCAL_EDITORIAL_DRAFT'},{'severity':'P2','code':'TRANSCRIPT_ACCURACY_PACING_PLATFORM_AND_REFERENCE_ASSETS_REVIEW'}]
+    if not certification or not certification['checks']['explicit_native_internal_scope']:
+        blockers.append({'severity':'P1','code':'LEGACY_WINDOWS_BASELINE_NOT_PASS_SCOPE_DECISION_REQUIRED'})
+    if certification and not certified and completed==10:
+        blockers.append({'severity':'P1','code':'RELEASE_CERTIFICATION_CHECKS_REQUIRED','failed_checks':[k for k,v in certification['checks'].items() if not v]})
+    blockers += [{'severity':'P2','code':'PROVIDER_AMBIGUOUS_RESPONSE_PRESERVED_EXPLICIT_LOCAL_EDITORIAL_DRAFT'},{'severity':'P2','code':'REFERENCE_ASSETS_SUBTITLE_AND_HISTORICAL_PROVENANCE_LIMITS'}]
     status='WAITING_ACTUAL_HUMAN_SCRIPT_REVIEW' if approved<10 else 'WAITING_ACTUAL_HUMAN_WATCH_LISTEN_REVIEW' if rendered and completed<10 else 'AWAITING_RELEASE_CERTIFICATION' if rendered else real.get('status','WAITING_CANDIDATE_RENDER')
-    # This draft capture never issues a certificate. The separate certifier reads
-    # the real outputs, checkpoints, decisions and scope authorization afresh.
-    report={'INTERNAL_PRODUCTION_READY':'NO','status':status,'certification_report':'release-certification.json','technical_draft_preparation':'PASS','technical_render_matrix':'PASS' if rendered else 'PENDING','required_inputs_present':ready_inputs,'cases':rows,'checks':checks,'new_content_provider_attempts':sum(e['provider_calls'] for e in state['cases']),'valid_new_content_provider_results':sum(bool(e.get('provider_response_id')) for e in state['cases']),'failed_provider_attempts':sum(bool(e.get('error_code')) for e in state['cases']),'automatic_paid_replays':0,'new_tts_inferences':real.get('new_real_tts_inference_calls',0),'new_release_final_videos':real.get('successful_jobs',0),'actual_human_script_reviews':approved,'actual_human_final_reviews':completed,'blockers':blockers}
+    report={'INTERNAL_PRODUCTION_READY':'YES' if certified else 'NO','status':'PASS' if certified else status,'scope':'Windows Native internal production only; legacy stack not certified','certification_report':'release-certification.json','technical_draft_preparation':'PASS','technical_render_matrix':'PASS' if rendered else 'PENDING','required_inputs_present':ready_inputs,'cases':rows,'checks':checks,'new_content_provider_attempts':sum(e['provider_calls'] for e in state['cases']),'valid_new_content_provider_results':sum(bool(e.get('provider_response_id')) for e in state['cases']),'failed_provider_attempts':sum(bool(e.get('error_code')) for e in state['cases']),'automatic_paid_replays':0,'new_tts_inferences':real.get('new_real_tts_inference_calls',0),'new_release_final_videos':real.get('successful_jobs',0),'actual_human_script_reviews':approved,'actual_human_final_reviews':completed,'blockers':blockers,'legacy_windows_baseline':'NOT PASS: 46 failures / 24 errors; outside the accepted native-only certificate' if certified else 'NOT PASS: 46 failures / 24 errors; scope acceptance pending'}
     # Preserve exactly what the human approved; never rewrite that review bundle.
     if not (directory/'owner-script-authorization.json').exists(): (directory/'review-bundle.md').write_text('\n'.join(text)+'\n',encoding='utf-8')
     report['review_bundle_sha256']=file_sha(directory/'review-bundle.md'); write_json(directory/'release-gate.json',report)
     state['status']=report['status']; state['new_content_provider_calls']=report['new_content_provider_attempts']; write_json(directory/'review-drafts.json',state)
-    print(json.dumps({'drafts':len(rows),'provider_attempts':report['new_content_provider_attempts'],'valid_results':report['valid_new_content_provider_results'],'human_script_approvals':approved,'human_final_approvals':completed,'release_ready':'NO'}))
+    print(json.dumps({'drafts':len(rows),'provider_attempts':report['new_content_provider_attempts'],'valid_results':report['valid_new_content_provider_results'],'human_script_approvals':approved,'human_final_approvals':completed,'release_ready':report['INTERNAL_PRODUCTION_READY']}))
 
 if __name__=='__main__': main()
