@@ -9,6 +9,7 @@ import uuid
 
 from .contracts import Proposal, WorkflowError, digest
 from .media import MAX_ASSETS, project_assets, scene_bindings, selected_media, validate_bindings
+from .hardening import LIFECYCLE, failure, resume_boundary, version_components
 
 
 def now():
@@ -36,7 +37,17 @@ class Store:
                 CREATE TABLE IF NOT EXISTS events (
                     id INTEGER PRIMARY KEY AUTOINCREMENT, project_id TEXT,
                     action TEXT NOT NULL, payload TEXT NOT NULL, created_at TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS project_versions (
+                    project_id TEXT NOT NULL, revision INTEGER NOT NULL, document TEXT NOT NULL,
+                    components TEXT NOT NULL, created_at TEXT NOT NULL,
+                    PRIMARY KEY(project_id,revision));
+                CREATE TABLE IF NOT EXISTS job_runtime (
+                    job_id TEXT PRIMARY KEY, retry_count INTEGER NOT NULL DEFAULT 0,
+                    resume_count INTEGER NOT NULL DEFAULT 0);
             """)
+            # Additive history starts with the current preserved document, never invented past versions.
+            for row in con.execute("SELECT * FROM projects").fetchall():
+                self.version(con, row["id"])
 
     @contextmanager
     def transaction(self):
@@ -65,14 +76,41 @@ class Store:
         return {**dict(row), "document": json.loads(row["document"]),
                 "approval": json.loads(row["approval"]) if row["approval"] else None}
 
-    @staticmethod
-    def job(row):
+    def job(self, row, con=None):
         if row is None:
             raise WorkflowError("JOB_NOT_FOUND", 404)
         result = dict(row)
         for key in ("snapshot", "error", "result"):
             result[key] = json.loads(row[key]) if row[key] else None
+        result["lifecycle"] = LIFECYCLE[result["status"]]
+        runtime = con.execute("SELECT retry_count,resume_count FROM job_runtime WHERE job_id=?", (row["id"],)).fetchone() if con else None
+        result.update(dict(runtime) if runtime else {"retry_count": 0, "resume_count": 0})
+        last = con.execute("SELECT payload FROM events WHERE action='job_step' AND project_id=? AND json_extract(payload,'$.job_id')=? ORDER BY id DESC LIMIT 1", (result["project_id"], result["id"])).fetchone() if con and result["error"] else None
+        step = json.loads(last[0])["step"] if last else result["stage"]
+        result["failure"] = failure(result["error"]["code"], result["error"].get("last_stage", step), result["error"].get("http_status")) if result["error"] else None
         return result
+
+    def version(self, con, identifier):
+        project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (identifier,)).fetchone())
+        existing = con.execute("SELECT document FROM project_versions WHERE project_id=? AND revision=?", (identifier, project["revision"])).fetchone()
+        if existing and digest(json.loads(existing[0])) != digest(project["document"]):
+            raise WorkflowError("IMMUTABLE_VERSION_CONFLICT")
+        con.execute("INSERT OR IGNORE INTO project_versions VALUES(?,?,?,?,?)",
+                    (identifier, project["revision"], json.dumps(project["document"], ensure_ascii=False),
+                     json.dumps(version_components(project["document"])), now()))
+
+    def versions(self, identifier):
+        with self.transaction() as con:
+            self.project(con.execute("SELECT * FROM projects WHERE id=?", (identifier,)).fetchone())
+            return [{**dict(r), "document": json.loads(r["document"]), "components": json.loads(r["components"])}
+                    for r in con.execute("SELECT * FROM project_versions WHERE project_id=? ORDER BY revision DESC", (identifier,))]
+
+    def log_step(self, job, step, duration, error_code=None, provider=None):
+        with self.transaction() as con:
+            runtime = con.execute("SELECT retry_count FROM job_runtime WHERE job_id=?", (job["id"],)).fetchone()
+            self.event(con, job["project_id"], "job_step", {"job_id": job["id"], "project_id": job["project_id"],
+                "step": step, "provider": provider or ("openai" if "content" in step else "local_vieneu" if "tts" in step else "ffmpeg" if "render" in step else "local_io"),
+                "duration": round(duration, 6), "retry_count": runtime[0] if runtime else 0, "error_code": error_code})
 
     def create(self, name, prompt):
         if not isinstance(name, str) or not 1 <= len(name.strip()) <= 150:
@@ -86,12 +124,13 @@ class Store:
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",
                         (identifier, 1, json.dumps(doc, ensure_ascii=False), None, stamp, stamp))
             self.event(con, identifier, "project_created", {"revision": 1})
+            self.version(con, identifier)
         return self.get(identifier)
 
     def get(self, identifier):
         with self.transaction() as con:
             project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (identifier,)).fetchone())
-            project["jobs"] = [self.job(r) for r in con.execute(
+            project["jobs"] = [self.job(r, con) for r in con.execute(
                 "SELECT * FROM jobs WHERE project_id=? ORDER BY created_at DESC", (identifier,))]
             return project
 
@@ -103,7 +142,7 @@ class Store:
         project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (identifier,)).fetchone())
         if project["revision"] != revision:
             raise WorkflowError("STALE_VERSION_RELOAD")
-        if con.execute("SELECT 1 FROM jobs WHERE project_id=? AND status IN ('queued','running')",
+        if con.execute("SELECT 1 FROM jobs WHERE project_id=? AND status IN ('queued','running','retrying')",
                        (identifier,)).fetchone():
             raise WorkflowError("PROJECT_BUSY")
         return project
@@ -134,6 +173,7 @@ class Store:
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                         (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
             self.event(con, identifier, "draft_saved_approval_invalidated", {"revision": revision + 1})
+            self.version(con, identifier)
         return self.get(identifier)
 
     def approve(self, identifier, revision, reviewer, acknowledged):
@@ -161,7 +201,7 @@ class Store:
             if existing:
                 if existing["request_sha"] != identity:
                     raise WorkflowError("IDEMPOTENCY_KEY_CONFLICT")
-                return self.job(existing)
+                return self.job(existing, con)
             project = self.editable(con, identifier, revision)
             doc, approval = project["document"], project["approval"]
             if kind == "render" and (not approval or approval["revision"] != revision
@@ -175,7 +215,8 @@ class Store:
                         (identifier_job, identifier, revision, kind, "queued", "queued", request_key, identity,
                          json.dumps(snapshot, ensure_ascii=False), None, None, stamp, stamp))
             self.event(con, identifier, "job_queued", {"job_id": identifier_job, "kind": kind, "revision": revision})
-            return self.job(con.execute("SELECT * FROM jobs WHERE id=?", (identifier_job,)).fetchone())
+            con.execute("INSERT INTO job_runtime(job_id) VALUES(?)", (identifier_job,))
+            return self.job(con.execute("SELECT * FROM jobs WHERE id=?", (identifier_job,)).fetchone(), con)
 
     def claim(self):
         with self.transaction() as con:
@@ -183,16 +224,22 @@ class Store:
             if row is None:
                 return None
             con.execute("UPDATE jobs SET status='running',stage='starting',updated_at=? WHERE id=?", (now(), row["id"]))
-            return self.job(con.execute("SELECT * FROM jobs WHERE id=?", (row["id"],)).fetchone())
+            return self.job(con.execute("SELECT * FROM jobs WHERE id=?", (row["id"],)).fetchone(), con)
 
     def stage(self, identifier, stage):
         with self.transaction() as con:
-            con.execute("UPDATE jobs SET stage=?,updated_at=? WHERE id=? AND status='running'", (stage, now(), identifier))
+            retry = stage.startswith("retrying:")
+            step = stage.split(":", 1)[1] if retry else stage
+            con.execute("UPDATE jobs SET status=?,stage=?,updated_at=? WHERE id=? AND status IN ('running','retrying')",
+                        ("retrying" if retry else "running", step, now(), identifier))
+            if retry:
+                con.execute("INSERT OR IGNORE INTO job_runtime(job_id) VALUES(?)", (identifier,))
+                con.execute("UPDATE job_runtime SET retry_count=retry_count+1 WHERE job_id=?", (identifier,))
 
     def finish(self, job, result=None, error=None):
         with self.transaction() as con:
             row = con.execute("SELECT status FROM jobs WHERE id=?", (job["id"],)).fetchone()
-            if row is None or row["status"] != "running":
+            if row is None or row["status"] not in {"running", "retrying"}:
                 raise WorkflowError("JOB_STATE_CONFLICT")
             status = "failed" if error else ("awaiting_review" if job["kind"] == "content" else "succeeded")
             if result and job["kind"] == "content":
@@ -204,6 +251,7 @@ class Store:
                 doc["scene_media"] = []  # New proposal requires deliberate source choices.
                 con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                             (project["revision"] + 1, json.dumps(doc, ensure_ascii=False), now(), project["id"]))
+                self.version(con, project["id"])
             con.execute("UPDATE jobs SET status=?,stage=?,error=?,result=?,updated_at=? WHERE id=?",
                         (status, status, json.dumps(error) if error else None,
                          json.dumps(result, ensure_ascii=False) if result else None, now(), job["id"]))
@@ -212,7 +260,7 @@ class Store:
     def recover(self):
         # Unstarted jobs are safe to drain. Dispatched/ambiguous work is NEVER replayed.
         with self.transaction() as con:
-            for row in con.execute("SELECT * FROM jobs WHERE status='running'").fetchall():
+            for row in con.execute("SELECT * FROM jobs WHERE status IN ('running','retrying')").fetchall():
                 error = {"code": "INTERRUPTED_NO_AUTOMATIC_REPLAY", "last_stage": row["stage"]}
                 con.execute("UPDATE jobs SET status='interrupted',stage='interrupted',error=?,updated_at=? WHERE id=?",
                             (json.dumps(error), now(), row["id"]))
@@ -220,7 +268,26 @@ class Store:
 
     def get_job(self, identifier):
         with self.transaction() as con:
-            return self.job(con.execute("SELECT * FROM jobs WHERE id=?", (identifier,)).fetchone())
+            return self.job(con.execute("SELECT * FROM jobs WHERE id=?", (identifier,)).fetchone(), con)
+
+    def resume(self, identifier):
+        with self.transaction() as con:
+            job = self.job(con.execute("SELECT * FROM jobs WHERE id=?", (identifier,)).fetchone(), con)
+            if job["status"] in {"queued", "running", "retrying"} and job["resume_count"]:
+                return job  # Double-click/repeated resume keeps one job/output receipt.
+            if job["status"] not in {"failed", "interrupted"}:
+                raise WorkflowError("JOB_NOT_RESUMABLE")
+            project = self.editable(con, job["project_id"], job["revision"])
+            if digest({"document": project["document"], "approval": project["approval"]}) != digest(job["snapshot"]):
+                raise WorkflowError("STALE_RESUME_SNAPSHOT")
+            if job["resume_count"] >= 3:
+                raise WorkflowError("RESUME_LIMIT_REACHED")
+            resume_boundary(self.root, job)
+            con.execute("INSERT OR IGNORE INTO job_runtime(job_id) VALUES(?)", (identifier,))
+            con.execute("UPDATE job_runtime SET resume_count=resume_count+1 WHERE job_id=?", (identifier,))
+            con.execute("UPDATE jobs SET status='queued',stage='resume_queued',error=NULL,result=NULL,updated_at=? WHERE id=?", (now(), identifier))
+            self.event(con, job["project_id"], "job_resume_requested", {"job_id": identifier, "previous_error": job["error"]})
+            return self.job(con.execute("SELECT * FROM jobs WHERE id=?", (identifier,)).fetchone(), con)
 
     def append_media(self, identifier, revision, asset):
         with self.transaction() as con:
@@ -235,4 +302,5 @@ class Store:
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                 (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
             self.event(con, identifier, "media_uploaded_approval_invalidated", {"revision": revision + 1, "asset_id": asset["id"], "kind": asset["kind"]})
+            self.version(con, identifier)
         return self.get(identifier)

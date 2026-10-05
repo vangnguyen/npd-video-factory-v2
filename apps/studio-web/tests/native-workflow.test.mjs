@@ -32,3 +32,8 @@ test('Only successful video bound to current approved version is visible',()=>{
   assert.equal(currentVideo({...p,approval:null}),null);
   assert.equal(jobActive({...p,jobs:[{status:'failed'}]}),false);
 });
+test('Retrying job blocks editing and another render until its receipt completes',()=>{
+  const p={revision:3,approval:{revision:3},jobs:[{status:'retrying'}]};
+  assert.equal(jobActive(p),true);
+  assert.equal(canRender(p,false,false),false);
+});

@@ -1,4 +1,4 @@
-export const jobActive = project => project?.jobs?.some(j => ["queued", "running"].includes(j.status)) ?? false;
+export const jobActive = project => project?.jobs?.some(j => ["queued", "running", "retrying"].includes(j.status)) ?? false;
 export const currentVideo = project => project?.approval ? project.jobs.find(j => j.kind === "render" && j.status === "succeeded" && j.revision === project.revision) : null;
 export const canRender = (project, dirty, busy) => Boolean(project?.approval && project.approval.revision === project.revision && !dirty && !busy && !jobActive(project));
 export const mediaLibrary = doc => (doc?.assets ?? (doc?.asset ? [doc.asset] : [])).map(a=>({...a,kind:a.kind??"image",filename:a.filename??"Ảnh đã lưu"}));
@@ -39,7 +39,7 @@ const errors = {
   AuthenticationError:"Key OpenAI bị từ chối.", RateLimitError:"OpenAI từ chối do giới hạn sử dụng. Job đã dừng.",
   TTS_CHILD_FAILED:"Tạo giọng đọc thất bại. Job đã dừng.", MEDIA_QC_FAILED:"Video chưa vượt qua kiểm tra chất lượng.",
 };
-const statusNames = {queued:"Đang chờ",running:"Đang chạy",awaiting_review:"Đề xuất sẵn sàng · cần bạn duyệt",succeeded:"Video đã render · hãy xem lại",failed:"Job đã dừng do lỗi",interrupted:"Job bị ngắt · chưa chạy lại"};
+const statusNames = {queued:"Đang chờ",running:"Đang chạy",retrying:"Đang thử lại có giới hạn",awaiting_review:"Đề xuất sẵn sàng · cần bạn duyệt",succeeded:"Video đã render · hãy xem lại",failed:"Job đã dừng do lỗi",interrupted:"Job bị ngắt · chưa chạy lại"};
 const stageNames = {starting:"Bắt đầu",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video"};
 
 if (typeof document !== "undefined") {
@@ -50,7 +50,7 @@ if (typeof document !== "undefined") {
   async function api(path, body) {
     const response = await fetch(path,{method:body?"POST":"GET",credentials:"same-origin",headers:body?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:body?JSON.stringify(body):undefined});
     const result=await response.json();
-    if(!response.ok)throw new Error(`${errors[result.code] ?? result.code} (HTTP ${response.status})`);
+    if(!response.ok)throw new Error(`${errors[result.code] ?? result.failure?.action ?? result.code} (HTTP ${response.status})`);
     return result;
   }
   function controls() {
@@ -107,7 +107,7 @@ if (typeof document !== "undefined") {
     $("approval-state").textContent=project?.approval?"Đã duyệt phiên bản này":"Chờ bạn duyệt";
     const jobs=project?.jobs??[];
     $("job-empty").hidden=Boolean(jobs.length);
-    $("jobs").innerHTML=jobs.slice(0,6).map(job=>`<div class="job ${job.error?"error":""}"><strong>${job.kind==="content"?"Nội dung":"Giọng đọc & video"}</strong><small>${new Date(job.created_at).toLocaleString("vi-VN")} · v${job.revision}</small>${esc(statusNames[job.status]??job.status)}${job.status==="running"?`<small>${esc(stageNames[job.stage]??job.stage)}</small>`:""}${job.error?`<small>${esc(errors[job.error.code]??job.error.code)}${job.error.http_status?` · HTTP ${job.error.http_status}`:""}</small>`:""}</div>`).join("");
+    $("jobs").innerHTML=jobs.slice(0,6).map(job=>`<div class="job ${job.error?"error":""}"><strong>${job.kind==="content"?"Nội dung":"Giọng đọc & video"}</strong><small>${new Date(job.created_at).toLocaleString("vi-VN")} · v${job.revision}</small>${esc(statusNames[job.status]??job.status)}${["running","retrying"].includes(job.status)?`<small>${esc(stageNames[job.stage]??job.stage)}</small>`:""}${job.error?`<small>${esc(errors[job.error.code]??job.failure?.action??job.error.code)}${job.error.http_status?` · HTTP ${job.error.http_status}`:""}</small>`:""}${["failed","interrupted"].includes(job.status)&&job.revision===project.revision?`<button data-resume="${esc(job.id)}">Tiếp tục từ bước đã lưu</button>`:""}</div>`).join("");
     const video=currentVideo(project);
     $("video").hidden=!video;$("video-placeholder").hidden=Boolean(video);$("download").hidden=!video;
     if(video){if($("video").getAttribute("src")!==video.result.video_url)$("video").src=video.result.video_url;$("download").href=video.result.video_url;$("qc-note").textContent=`Đã qua kiểm tra video và âm thanh · ${video.result.qc.duration_seconds.toFixed(1)} giây. Bạn cần xem lại video cuối.`;}else{$("video").removeAttribute("src");$("download").removeAttribute("href");$("qc-note").textContent="";}
@@ -133,7 +133,7 @@ if (typeof document !== "undefined") {
       catch(error){pollFailures++;message(`Không đọc được trạng thái: ${error.message}. Job không được tự gửi lại.`,true);if(pollFailures<3)schedule();}
     },1500);
   }
-  const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn();}catch(error){message(error.message,true);}finally{busy=false;controls();}};
+  const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   $("save-prompt").addEventListener("click",guarded(async()=>{
     if(!project)project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value});
     else project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,prompt:$("prompt").value});
@@ -171,6 +171,7 @@ if (typeof document !== "undefined") {
   $("project-picker").addEventListener("change",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi đổi dự án.");clearTimeout(timer);project=$("project-picker").value?await api(`/api/projects/${$("project-picker").value}`):null;if(project)localStorage.setItem("vf-native-project",project.id);renderProject(true);schedule();}));
   $("new-project").addEventListener("click",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi tạo dự án mới.");clearTimeout(timer);project=null;localStorage.removeItem("vf-native-project");$("prompt").value=(await api("/api/defaults")).prompt;$("project-name").value="Vinhomes Green Paradise Cần Giờ";$("project-picker").value="";renderProject(true);}));
   $("refresh").addEventListener("click",guarded(()=>reload(!dirty)));
+  $("jobs").addEventListener("click",guarded(async event=>{const button=event.target.closest("[data-resume]");if(!button)return;if(dirty)throw new Error("Lưu chỉnh sửa trước khi tiếp tục.");await api(`/api/jobs/${button.dataset.resume}/resume`,{});await reload(true);schedule();message("Đang tiếp tục job từ bước đã kiểm chứng.");}));
   $("prompt").addEventListener("input",()=>markDirty("prompt"));
   $("scenes").addEventListener("input",()=>{markDirty("proposal");$("narration").textContent=readProposal().narration;});
   $("scenes").addEventListener("change",event=>{if(event.target.matches("[data-media]")){markDirty("proposal");scenePreview(event.target.closest(".scene"));}});

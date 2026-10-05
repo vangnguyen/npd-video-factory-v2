@@ -10,10 +10,12 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import time
 import wave
 
 from .contracts import MODEL, PROFILE_SHA, RUNTIME_VERSIONS, Proposal, WorkflowError, canonical, digest, file_sha, normalize, write_json
 from .media import media_path, verify_selected_files
+from .hardening import Artifacts, durable_json, retry_io
 
 REPO = Path(__file__).resolve().parents[2]
 LOCKS = Path(__file__).resolve().parent / "locks"
@@ -102,7 +104,34 @@ def verify_runtime(config, full=True):
             "resolution": "1080x1920", "native_windows": os.name == "nt", "provider_calls": 0}
 
 
-def generate(config, job, out):
+def provider_request(client, request, job, out, stage, openai):
+    """Only a recorded 429 rejection is eligible for one bounded retry."""
+    for attempt in range(2):
+        name = "content" if attempt == 0 else "content-1"
+        intent, rejected = out / (name + ".intent.json"), out / (name + ".rejected.json")
+        if intent.exists():
+            if rejected.exists() and json.loads(rejected.read_bytes()).get("http_status") == 429:
+                continue
+            raise WorkflowError("OPENAI_OUTCOME_UNKNOWN_NO_REPLAY")
+        with intent.open("xb") as handle:
+            handle.write(canonical({"model": MODEL, "max_attempts": 2, "job_id": job["id"],
+                                    "snapshot_sha256": digest(job["snapshot"]), "attempt": attempt + 1}))
+            handle.flush(); os.fsync(handle.fileno())
+        try:
+            return client.responses.create(**request), attempt + 1
+        except openai.APIStatusError as error:
+            if error.status_code != 429:
+                raise
+            durable_json(rejected, {"http_status": 429, "safe_rejection": True, "attempt": attempt + 1})
+            if attempt == 1:
+                raise WorkflowError("OPENAI_RATE_LIMIT_RETRY_EXHAUSTED", http_status=429) from None
+            stage("retrying:content_request")
+            time.sleep(1)
+            stage("content_request")
+    raise WorkflowError("OPENAI_RATE_LIMIT_RETRY_EXHAUSTED", http_status=429)
+
+
+def generate(config, job, out, stage=lambda _: None):
     import httpx2
     import openai
     from openai import OpenAI
@@ -128,14 +157,9 @@ def generate(config, job, out):
                    "Không tự duyệt, không tự xuất bản. Đây là bản đề xuất cho con người review."),
                "text": {"format": {"type": "json_schema", "name": "native_content_proposal", "strict": True,
                                     "schema": Proposal.model_json_schema()}}}
-    write_json(out / "content-request.json", request)
-    # Exclusive, flushed intent before the only paid dispatch; no retries, including recovery.
-    with (out / "content.intent.json").open("xb") as handle:
-        handle.write(canonical({"model": MODEL, "max_attempts": 1, "job_id": job["id"]}))
-        handle.flush()
-        os.fsync(handle.fileno())
     try:
-        response = client.responses.create(**request)
+        retry_io(lambda: durable_json(out / "content-request.json", request), stage, "storage_content_request")
+        response, attempts = provider_request(client, request, job, out, stage, openai)
         if response.status != "completed" or response.model != MODEL or response.usage is None:
             raise WorkflowError("CONTENT_RESPONSE_INCOMPLETE_OR_MODEL_MISMATCH")
         texts = []
@@ -155,7 +179,7 @@ def generate(config, job, out):
         except ValueError:
             raise WorkflowError("CONTENT_SCHEMA_OR_COVERAGE_INVALID") from None
         result = {"proposal": proposal, "model": response.model, "response_id": response.id,
-                  "usage": response.usage.model_dump(), "provider_calls": 1, "retries": 0,
+                  "usage": response.usage.model_dump(), "provider_calls": attempts, "retries": attempts - 1,
                   "facts_verified": False, "human_review_required": True}
         write_json(out / "content-result.json", result)
         return result
@@ -467,27 +491,105 @@ class Pipeline:
 
     def run(self, job, stage):
         out = self.config.data_root / "jobs" / job["id"]
-        out.mkdir(parents=True, exist_ok=False)
-        write_json(out / "input.json", job["snapshot"])
+        if self.config.data_root.resolve() not in out.resolve().parents:
+            raise WorkflowError("ARTIFACT_PATH_INVALID")
+        retry_io(lambda: out.mkdir(parents=True, exist_ok=True), stage, "storage_prepare")
+        artifacts = Artifacts(out, job)
+        if (out / "input.json").exists():
+            if json.loads((out / "input.json").read_bytes()) != job["snapshot"]:
+                raise WorkflowError("CHECKPOINT_INPUT_CHANGED")
+        else:
+            retry_io(lambda: durable_json(out / "input.json", job["snapshot"]), stage, "storage_input")
         if job["kind"] == "content":
+            checkpoint = artifacts.load("content")
+            if checkpoint:
+                stage("resuming_verified_content")
+                return checkpoint["result"]
             stage("content_request")
-            return generate(self.config, job, out)
+            result = generate(self.config, job, out, stage)
+            retry_io(lambda: artifacts.commit("content", [out / "content-result.json", out / "content-request.json"], result), stage, "storage_content_checkpoint")
+            return result
         approval = job["snapshot"]["approval"]
         if not approval or approval["revision"] != job["revision"] or approval["snapshot_sha256"] != digest(job["snapshot"]["document"]):
             raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
         stage("checking_scene_media")
         verify_selected_files(self.config, job["snapshot"]["document"])
-        stage("locked_thuy_dung_tts")
-        write_json(out / "runtime-config.json", self.config.dump())
-        # Terminate the child on server interruption; never leave an orphan inference.
-        cmd = [sys.executable, "-m", "services.windows_native.tts_child", str(out)]
-        with (out / "tts.log").open("w", encoding="utf-8") as log:
-            child = subprocess.run(cmd, cwd=REPO, stdout=log, stderr=log, timeout=600)
-        if child.returncode:
-            status = out / "tts-status.json"
-            error = json.loads(status.read_bytes()).get("code", "TTS_CHILD_FAILED") if status.exists() else "TTS_CHILD_FAILED"
-            raise WorkflowError(error)
-        stage("ffmpeg_render_and_qc")
-        report = render(self.config, job["snapshot"], out)
-        return {"video_url": f"/api/jobs/{job['id']}/video", "qc": report,
-                "output_directory": str(out), "review_required": True}
+        checkpoint = artifacts.load("render")
+        if checkpoint:
+            stage("resuming_verified_render")
+            return checkpoint["result"]
+        if artifacts.load("tts"):
+            stage("resuming_verified_tts")
+        else:
+            stage("locked_thuy_dung_tts")
+            def tts_attempt():
+                attempt = self.attempt(out, "tts")
+                retry_io(lambda: durable_json(attempt / "input.json", job["snapshot"]), stage, "storage_tts_input")
+                retry_io(lambda: durable_json(attempt / "runtime-config.json", self.config.dump()), stage, "storage_tts_config")
+                cmd = [sys.executable, "-m", "services.windows_native.tts_child", str(attempt)]
+                try:
+                    with (attempt / "tts.log").open("w", encoding="utf-8") as log:
+                        child = retry_io(lambda: subprocess.run(cmd, cwd=REPO, stdout=log, stderr=log, timeout=600), stage, "locked_thuy_dung_tts")
+                except subprocess.TimeoutExpired:
+                    raise WorkflowError("TTS_TIMEOUT_NO_AUTOMATIC_INFERENCE_RETRY") from None
+                if child.returncode:
+                    status = attempt / "tts-status.json"
+                    code = json.loads(status.read_bytes()).get("code", "TTS_CHILD_FAILED") if status.exists() else "TTS_CHILD_FAILED"
+                    raise WorkflowError(code)
+                self.publish_voice(artifacts, attempt, job, stage)
+            # Recover a complete child output if the parent stopped before publishing its checkpoint.
+            completed = [p for p in sorted((out / "attempts").glob("tts-*"), reverse=True)
+                         if (p / "voice.json").is_file() and (p / "voice.wav").is_file() and (p / "tts-plan.json").is_file()]
+            if completed:
+                self.publish_voice(artifacts, completed[0], job, stage)
+            else:
+                if (out / "voice.wav").exists():
+                    raise WorkflowError("TTS_UNCHECKPOINTED_OUTPUT_REVIEW_REQUIRED")
+                tts_attempt()
+        report = None
+        for attempt_number in range(2):
+            stage("ffmpeg_render_and_qc")
+            def render_attempt():
+                attempt = self.attempt(out, "render")
+                for name in ("voice.wav", "voice.json"):
+                    Artifacts(attempt, job).publish(out / name, name)
+                return render(self.config, job["snapshot"], attempt), attempt
+            try:
+                report, attempt = retry_io(render_attempt, stage, "ffmpeg_render_and_qc")
+                break
+            except subprocess.TimeoutExpired:
+                if attempt_number:
+                    raise WorkflowError("FFMPEG_RENDER_TIMEOUT_RETRY_EXHAUSTED") from None
+                stage("retrying:ffmpeg_render_and_qc")
+        result = {"video_url": f"/api/jobs/{job['id']}/video", "qc": report,
+                  "output_directory": str(out), "review_required": True,
+                  "render_version": digest({"snapshot": job["snapshot"], "job_id": job["id"], "final_sha256": report["final_sha256"]})}
+        paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in
+                        ("final.mp4", "qc-report.json", "ffprobe.json", "render-manifest.json", "subtitles.ass")], stage, "storage_render_publish")
+        retry_io(lambda: artifacts.commit("render", paths, result), stage, "storage_render_checkpoint")
+        return result
+
+    @staticmethod
+    def publish_voice(artifacts, attempt, job, stage):
+        if json.loads((attempt / "input.json").read_bytes()) != job["snapshot"]:
+            raise WorkflowError("TTS_RECOVERY_SNAPSHOT_MISMATCH")
+        meta = json.loads((attempt / "voice.json").read_bytes())
+        proposal = Proposal.model_validate(job["snapshot"]["document"]["proposal"])
+        if meta["profile_sha256"] != PROFILE_SHA or meta["audio_sha256"] != file_sha(attempt / "voice.wav"):
+            raise WorkflowError("VOICE_ARTIFACT_BINDING_MISMATCH")
+        if normalize(" ".join(u["text"] for u in meta["units"])) != normalize(proposal.narration):
+            raise WorkflowError("VOICE_NARRATION_BINDING_MISMATCH")
+        measured_scene_units(proposal, meta)
+        paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in ("voice.wav", "voice.json", "tts-plan.json")], stage, "storage_tts_publish")
+        retry_io(lambda: artifacts.commit("tts", paths), stage, "storage_tts_checkpoint")
+
+    @staticmethod
+    def attempt(out, kind):
+        for number in range(100):
+            path = out / "attempts" / f"{kind}-{number:03}"
+            try:
+                path.mkdir(parents=True, exist_ok=False)
+                return path
+            except FileExistsError:
+                continue
+        raise WorkflowError("LOCAL_ATTEMPT_LIMIT_REACHED")

@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "scope": "read-only consistent backup upgraded on isolated copy, not live data",
+  "source": "C:/NPD-Video-Factory/phase2/workflow.sqlite3",
+  "copy": "C:\\NPD-Video-Factory\\post-mvp-validation\\phase2-owner-data-upgrade-copy-20261005\\workflow.sqlite3",
+  "original_rows_sha256": "5aa17c9d9ad7028212d8f7ff7607170fb846a5427a5523a8545b8a3e519ed0ef",
+  "after_upgrade_original_rows_sha256": "5aa17c9d9ad7028212d8f7ff7607170fb846a5427a5523a8545b8a3e519ed0ef",
+  "projects": 1,
+  "jobs": 3,
+  "events": 12,
+  "sqlite_integrity": "ok",
+  "history_backfill_revisions": [
+    9
+  ]
+}

@@ -11,12 +11,14 @@ from pathlib import Path
 import re
 import secrets
 import threading
+import time
 import uuid
 from urllib.parse import unquote
 
 from .contracts import WorkflowError, file_sha
 from .pipeline import Config, LOCKS, Pipeline, REPO, verify_runtime
 from .store import Store
+from .hardening import failure
 from .media import CONTENT_TYPES, IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, discard_media, ingest_media, media_path, project_assets
 
 
@@ -35,13 +37,21 @@ class Runner:
         job = self.store.claim()
         if not job:
             return False
+        step, started = "starting", time.monotonic()
+        def stage(value):
+            nonlocal step, started
+            self.store.log_step(job, step, time.monotonic() - started)
+            self.store.stage(job["id"], value)
+            step, started = value, time.monotonic()
         try:
-            result = self.pipeline.run(job, lambda stage: self.store.stage(job["id"], stage))
+            result = self.pipeline.run(job, stage)
+            self.store.log_step(job, step, time.monotonic() - started)
             self.store.finish(job, result=result)
         except Exception as error:
             safe = {"code": error.code if isinstance(error, WorkflowError) else type(error).__name__, "automatic_retry": False}
             if isinstance(error, WorkflowError) and error.http_status:
                 safe["http_status"] = error.http_status
+            self.store.log_step(job, step, time.monotonic() - started, safe["code"])
             self.store.finish(job, error=safe)
         return True
 
@@ -185,6 +195,15 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({"prompt": (LOCKS / "accepted-prompt.txt").read_text(encoding="utf-8")})
         if path == "/api/projects":
             return self.reply(self.server.store.list())
+        versions = re.fullmatch(r"/api/projects/([0-9a-f]{32})/versions", path)
+        if versions:
+            return self.reply(self.server.store.versions(versions[1]))
+        logs = re.fullmatch(r"/api/jobs/([0-9a-f]{32})/logs", path)
+        if logs:
+            job = self.server.store.get_job(logs[1])
+            with self.server.store.transaction() as con:
+                rows = con.execute("SELECT payload,created_at FROM events WHERE action='job_step' AND project_id=? AND json_extract(payload,'$.job_id')=? ORDER BY id", (job["project_id"], job["id"]))
+                return self.reply([{**json.loads(r["payload"]), "created_at": r["created_at"]} for r in rows])
         match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/media/([0-9a-f]{32}\.(?:jpg|mp4))(/thumbnail)?", path)
         if match:
             project = self.server.store.get(match[1])
@@ -235,6 +254,11 @@ class Handler(BaseHTTPRequestHandler):
         if upload_match:
             return self.upload_media(upload_match[1])
         body = self.read_body()
+        resume = re.fullmatch(r"/api/jobs/([0-9a-f]{32})/resume", self.path)
+        if resume:
+            result = self.server.store.resume(resume[1])
+            self.server.runner.wake.set()
+            return self.reply(result)
         if self.path == "/api/projects":
             return self.reply(self.server.store.create(body.get("name"), body.get("prompt")), 201)
         match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|jobs)", self.path)
@@ -309,7 +333,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.dispatch_post()
         except WorkflowError as error:
             self.close_connection = True
-            self.reply({"code": error.code}, error.status)
+            self.reply({"code": error.code, "failure": failure(error.code, http_status=error.http_status)}, error.status)
         except (BrokenPipeError, ConnectionResetError):
             self.close_connection = True
         except Exception:
