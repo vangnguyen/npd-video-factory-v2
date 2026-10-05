@@ -13,6 +13,7 @@ import sys
 import wave
 
 from .contracts import MODEL, PROFILE_SHA, RUNTIME_VERSIONS, Proposal, WorkflowError, canonical, digest, file_sha, normalize, write_json
+from .media import media_path, verify_selected_files
 
 REPO = Path(__file__).resolve().parents[2]
 LOCKS = Path(__file__).resolve().parent / "locks"
@@ -313,9 +314,7 @@ def render(config, snapshot, out):
     if normalize(" ".join(u["text"] for u in meta["units"])) != normalize(proposal.narration):
         raise WorkflowError("VOICE_NARRATION_BINDING_MISMATCH")
     grouped = measured_scene_units(proposal, meta)
-    asset = config.data_root / "assets" / doc["asset"]["id"]
-    if file_sha(asset) != doc["asset"]["sha256"]:
-        raise WorkflowError("SOURCE_IMAGE_CHANGED")
+    chosen = verify_selected_files(config, doc)
     intro = 1.1
     duration = max(25.0, intro + meta["duration_seconds"] + 1.0)
     if duration > 180:
@@ -324,27 +323,57 @@ def render(config, snapshot, out):
     title_font = ImageFont.truetype(str(fonts / "seguisb.ttf"), 60)
     sub_font = ImageFont.truetype(str(fonts / "segoeui.ttf"), 46)
     label_font = ImageFont.truetype(str(fonts / "segoeui.ttf"), 28)
-    image = Image.open(asset).convert("RGB")
-    image.thumbnail((1080, 1000), Image.Resampling.LANCZOS)
     captions, frames = [], []
     for i, (scene, units) in enumerate(zip(proposal.visual_brief, grouped)):
+        asset = chosen[scene.scene]
+        source = media_path(config, asset["id"])
         start = 0 if i == 0 else intro + units[0]["start_seconds"]
         end = duration if i == len(grouped) - 1 else intro + grouped[i + 1][0]["start_seconds"]
-        frame = Image.new("RGB", (1080, 1920), (9, 33, 31))
-        frame.paste(image, ((1080 - image.width) // 2, 390 + (1000 - image.height) // 2))
+        count = round(end * 30) - round(start * 30)
+        if count <= 0:
+            raise WorkflowError("SCENE_TOO_SHORT_FOR_VIDEO")
+        frame = Image.new("RGBA", (1080, 1920), (9, 33, 31, 255))
         draw = ImageDraw.Draw(frame)
+        if asset["kind"] == "image":
+            with Image.open(source) as original:
+                image = original.convert("RGB")
+            image.thumbnail((1080, 1000), Image.Resampling.LANCZOS)
+            frame.paste(image, ((1080 - image.width) // 2, 390 + (1000 - image.height) // 2))
+        else:
+            draw.rectangle((0, 390, 1079, 1389), fill=(0, 0, 0, 0))
         draw.text((70, 90), f"VIDEO FACTORY   /   {i+1:02}", font=label_font, fill="#e2cb9c")
         lines = wrap_text(scene.on_screen_text, title_font, 940)
         if len(lines) > 3:
             raise WorkflowError("SCENE_HEADING_TOO_LONG")
         draw.multiline_text((70, 155), "\n".join(lines), font=title_font, spacing=12, fill="#fcf9f1")
-        if doc["asset"]["illustration"]:
+        if asset["illustration"]:
             draw.text((70, 1390), "Phối cảnh minh họa", font=label_font, fill="#e2cb9c")
         draw.rounded_rectangle((58, 1485, 1022, 1740), radius=18, fill="#071918", outline="#5d6653", width=2)
         draw.text((70, 1800), "Thông tin cần được kiểm chứng trước khi giao dịch", font=label_font, fill="#bed3cc")
         filename = f"scene-{i:02}.png"
         frame.save(out / filename)
-        frames.append({"file": filename, "start": start, "end": end})
+        segment = f"scene-{i:02}.mp4"
+        command = [str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-nostdin", "-n"]
+        if asset["kind"] == "image":
+            command += ["-loop", "1", "-framerate", "30", "-i", filename]
+        else:
+            command += ["-stream_loop", "-1", "-protocol_whitelist", "file,pipe", "-i", str(source),
+                        "-loop", "1", "-framerate", "30", "-i", filename, "-filter_complex",
+                        f"[0:{asset.get('video_stream_index', 0)}]fps=30,setpts=PTS-STARTPTS,scale=1080:1000:force_original_aspect_ratio=decrease:force_divisible_by=2,"
+                        "pad=1080:1000:(ow-iw)/2:(oh-ih)/2:color=0x09211f,setsar=1,"
+                        "pad=1080:1920:0:390:color=0x09211f[media];[media][1:v]overlay=0:0:shortest=1,format=yuv420p[v]",
+                        "-map", "[v]"]
+        command += ["-frames:v", str(count), "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+                    "-pix_fmt", "yuv420p", "-r", "30", "-video_track_timescale", "15360", segment]
+        with (out / f"scene-{i:02}.log").open("w", encoding="utf-8") as log:
+            result = subprocess.run(command, cwd=out, stdout=log, stderr=subprocess.STDOUT, timeout=600)
+        if result.returncode:
+            raise WorkflowError("FFMPEG_SCENE_RENDER_FAILED")
+        frames.append({"scene": scene.scene, "file": segment, "start": round(start * 30) / 30,
+                       "end": round(end * 30) / 30, "frames": count, "asset_id": asset["id"],
+                       "kind": asset["kind"], "source_sha256": asset["sha256"], "filename": asset["filename"],
+                       "short_video_policy": "loop_from_start" if asset["kind"] == "video" else None,
+                       "source_audio": "muted" if asset["kind"] == "video" else None})
         for unit in units:
             lines = wrap_text(unit["text"], sub_font, 900)
             phrases = ["\n".join(lines[j:j+2]) for j in range(0, len(lines), 2)]
@@ -376,8 +405,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         text = "\\N".join(ass_escape(line) for line in cue["text"].splitlines())
         events.append(f"Dialogue: 0,{ass_time(cue['start'])},{ass_time(cue['end'])},Subtitle,,0,0,0,,{{\\pos(540,1610)}}{text}")
     (out / "subtitles.ass").write_text(header + "\n".join(events) + "\n", encoding="utf-8")
-    concat = "ffconcat version 1.0\n" + "".join(f"file {f['file']}\nduration {f['end']-f['start']:.8f}\n" for f in frames)
-    (out / "frames.txt").write_text(concat + f"file {frames[-1]['file']}\n", encoding="ascii")
+    concat = "ffconcat version 1.0\n" + "".join(f"file {f['file']}\n" for f in frames)
+    (out / "frames.txt").write_text(concat, encoding="ascii")
     with wave.open(str(out / "voice.wav"), "rb") as wav:
         audio = np.frombuffer(wav.readframes(wav.getnframes()), dtype="<i2").astype(np.float64) / 32768
     rms, peak = np.sqrt(np.mean(audio ** 2)), np.max(np.abs(audio))
@@ -395,7 +424,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     if result.returncode:
         raise WorkflowError("FFMPEG_RENDER_FAILED")
     write_json(out / "render-manifest.json", {"duration_seconds": duration, "captions": captions, "scenes": frames,
-        "source_image_sha256": doc["asset"]["sha256"], "voice_sha256": meta["audio_sha256"],
+        "voice_sha256": meta["audio_sha256"], "scene_source_policy": "exactly_one_image_or_video",
         "profile_sha256": PROFILE_SHA, "subtitle_timing": "ESTIMATED_WITH_MEASURED_SCENE_AUDIO",
         "word_alignment": "none", "approval": snapshot["approval"], "voice_speed": 1})
     return qc(config, out, duration)
@@ -446,6 +475,8 @@ class Pipeline:
         approval = job["snapshot"]["approval"]
         if not approval or approval["revision"] != job["revision"] or approval["snapshot_sha256"] != digest(job["snapshot"]["document"]):
             raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
+        stage("checking_scene_media")
+        verify_selected_files(self.config, job["snapshot"]["document"])
         stage("locked_thuy_dung_tts")
         write_json(out / "runtime-config.json", self.config.dump())
         # Terminate the child on server interruption; never leave an orphan inference.

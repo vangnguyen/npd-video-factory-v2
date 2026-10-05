@@ -31,23 +31,23 @@
           <p id="save-note" class="hint">Lưu yêu cầu trước khi tạo đề xuất.</p>
         </section>
         <section class="card" id="image-card" hidden>
-          <div class="card-heading"><div><p class="eyebrow">HÌNH ẢNH</p><h2>Ảnh cho video</h2></div></div>
-          <div class="image-layout"><div class="image-preview"><img id="source-image" alt="Ảnh dự án" hidden><span id="image-empty">Ảnh dự án của bạn<br><small>JPEG / PNG · tối đa 15 MB</small></span></div><div>
-            <label>Chọn ảnh<input id="image-file" type="file" accept="image/jpeg,image/png"></label>
-            <label class="check"><input id="image-rights" type="checkbox"> Tôi có quyền sử dụng ảnh này.</label>
-            <label class="check"><input id="image-illustration" type="checkbox" checked> Đây là phối cảnh minh họa.</label>
-            <button id="upload-image" class="secondary">Lưu ảnh</button>
-            <p class="hint">Ảnh dùng cho các cảnh, giữ toàn ảnh trong khung dọc.</p>
-          </div></div>
+          <div class="card-heading"><div><p class="eyebrow">THƯ VIỆN NGUỒN</p><h2>Ảnh & video của dự án</h2></div><span id="media-count" class="version">0 nguồn</span></div>
+          <label>Chọn nhiều ảnh/video<input id="media-files" type="file" multiple accept="image/jpeg,image/png,video/mp4,video/quicktime,.mov"></label>
+          <label class="check"><input id="media-rights" type="checkbox"> Tôi có quyền sử dụng các ảnh/video đã chọn.</label>
+          <label class="check"><input id="media-illustration" type="checkbox" checked> Các nguồn đã chọn là phối cảnh minh họa.</label>
+          <button id="upload-media" class="secondary">Tải các nguồn đã chọn</button>
+          <p id="upload-progress" class="hint" role="status" aria-live="polite"></p>
+          <p class="hint">Ảnh JPEG/PNG ≤ 15 MB; video MP4/MOV ≤ 250 MB, tối đa 10 phút. Lưu tối đa 50 nguồn trong một dự án. Sau khi tải lên, chọn một nguồn cho mỗi cảnh bên dưới.</p>
+          <div id="media-library" class="media-library"></div>
         </section>
         <section class="card" id="proposal-card" hidden>
           <div class="card-heading"><div><p class="eyebrow">02 / KIỂM TRA & DUYỆT</p><h2>Đề xuất dành cho bạn</h2></div><span id="approval-state" class="version">Chờ duyệt</span></div>
-          <p class="hint">Sửa lời đọc theo từng cảnh. Lời đọc hoàn chỉnh ghép các cảnh theo thứ tự.</p>
+          <p class="hint">Mỗi cảnh dùng một ảnh hoặc một video. Chọn nguồn rồi sửa lời đọc, chữ trên video theo từng cảnh.</p>
           <div id="scenes"></div>
           <details class="narration-detail"><summary>Lời đọc hoàn chỉnh</summary><p id="narration"></p></details>
           <div class="facts"><strong>Thông tin cần nguồn xác minh</strong><ul id="facts"></ul><p class="hint">Đề xuất chưa xác minh các dữ kiện. Kiểm tra trước khi duyệt.</p></div>
           <button id="save-proposal" class="secondary">Lưu bản chỉnh sửa</button>
-          <div class="review"><label>Người duyệt<input id="reviewer" maxlength="100" placeholder="Tên của bạn"></label><label class="check"><input id="review-check" type="checkbox"> Tôi đã kiểm tra lời đọc, thông tin cần nguồn và quyền dùng ảnh. Tôi duyệt phiên bản này để tạo giọng đọc và video.</label><button id="approve" class="primary">Duyệt nội dung này</button></div>
+          <div class="review"><label>Người duyệt<input id="reviewer" maxlength="100" placeholder="Tên của bạn"></label><label class="check"><input id="review-check" type="checkbox"> Tôi đã kiểm tra lời đọc, thông tin cần nguồn, ảnh/video từng cảnh và quyền sử dụng. Tôi duyệt phiên bản này để tạo giọng đọc và video.</label><button id="approve" class="primary">Duyệt nội dung này</button></div>
         </section>
       </div>
       <aside class="right-column">

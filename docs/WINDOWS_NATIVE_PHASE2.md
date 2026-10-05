@@ -44,12 +44,15 @@ Preflight sends no provider request. It does not replace an owner review or a li
 2. Click **Tạo đề xuất nội dung**. Exactly one `gpt-6-luna` Responses request creates a structured
    narration, 3–5 scenes and source notes. The SDK has `max_retries=0`, a 90-second timeout,
    15-second connect timeout, explicit key/base URL and `store=false`.
-3. Add a JPEG/PNG image, confirm its usage rights and select whether it is an architectural rendering.
-   The image is validated and saved under an immutable generated name. Client paths are never accepted.
-4. Read source notes and review/edit narration, scene headings and visual directions; save changes.
+3. Select multiple JPEG/PNG images and MP4/MOV videos together, confirm usage rights and select
+   whether this batch contains architectural renderings. Upload the batch to the project library.
+   Upload different batches for different illustration labels. Files are validated and saved under
+   immutable generated names. Original filenames are display labels; client paths are never accepted.
+4. Choose **one image or one video for each scene** using **Nguồn cho cảnh…**. Then read source
+   notes and review/edit narration, scene headings and visual directions; save changes.
    The narration is assembled from scene excerpts, preserving exact coverage.
 5. Enter the reviewer's name, check the human review acknowledgement and click **Duyệt nội dung này**.
-   Approval binds the full project snapshot, revision, image hash, reviewer and time.
+   Approval binds the full project snapshot, revision, library hashes, scene selections, reviewer and time.
 6. Click **Tạo giọng đọc & video**. Thùy Dung uses the exact accepted profile, model/codec revisions,
    SDK, CPU runtime and synthesis parameters. Inference networking is blocked; there is no audition,
    fallback voice, speech-speed adjustment or babble retry. Exact sentence boundaries feed the
@@ -76,7 +79,7 @@ Neither factual accuracy nor media rights can be verified automatically by this 
   prevents two processes from consuming the same queue.
 - Provider failures preserve error category and HTTP status, without raw error messages or secrets.
   Timeout outcome is explicitly unknown. A fresh job requires a deliberate retry button.
-- Editing prompt, narration, scene headings/directions or image invalidates approval and the current
+- Editing prompt, narration, scene headings/directions, source selections or library invalidates approval and the current
   output link. Stale revisions and edits during active jobs are rejected by the server.
 - Historical outputs stay on disk as evidence but are unavailable as the current video after an edit.
 
@@ -86,10 +89,27 @@ It is intentionally not a remote deployment or a replacement for the existing V2
 
 ## Current media scope
 
-One user-supplied image is retained in full inside a portrait composition and reused across scenes.
-Scene headings and narration change per scene. Visual directions are review notes; the UI clearly
-states the common-image behavior. This first native increment does not resolve footage from those
-directions or provide a timeline/media editor. Captions use estimated phrase timing inside measured
+The project library accepts up to 50 sources: JPEG/PNG images up to 15 MB, 40 MP, at least 240 px
+per dimension; MP4/MOV videos up to 250 MB, 10 minutes, 40 MP, at least 64 px per dimension.
+Uploads stream to a temporary local file, then validate, generate a thumbnail and append atomically
+with a revision check. Failed/stale uploads clean up their generated files. Previously successful
+files remain saved if a later upload in the batch fails; the UI reports how many were saved.
+
+Each scene selects exactly one source from its own project library. A source may be reused across
+scenes. Missing choices, duplicate scene bindings and foreign project sources prevent approval.
+Selections persist after reload/restart. Existing single-image projects still open without changing
+their stored snapshot or approval digest; the legacy image is selected for all existing scenes.
+A newly generated proposal clears scene choices and requires deliberate selection before review.
+
+Images retain the full image inside the portrait composition. Video retains motion in the same
+viewport, starts at the beginning, loops when shorter than the scene and stops at the scene boundary.
+Original video audio is always muted; the output audio comes only from the locked Thùy Dung track.
+Scene timing comes from the measured narration units, rounded to 30 fps frame boundaries.
+Hash checks before TTS and again before render bind the actual files to the approved snapshot.
+Render manifests record each scene's source identity/hash, frame count and loop/audio policy.
+
+Visual directions are review notes; sources are chosen explicitly, without automated footage lookup
+or a trim/timeline editor. Captions use estimated phrase timing inside measured
 sentence audio, with no word timestamps or ASR. Long text/layout or audio limits produce an explicit
 failure rather than silently truncating narration.
 
@@ -105,7 +125,8 @@ node --test apps/studio-web/tests/*.test.mjs
 The tests use temporary roots and injected provider/engine fixtures, with zero paid calls and zero
 real model inference. They cover review gates, exact text/scene mapping, invalidation, concurrent
 idempotency, recovery without replay, SDK request settings, TTS parameters/frame cap/network block,
-HTTP origin/session/CSRF, image validation, video ranges, source path traversal, single-server lock
+HTTP origin/session/CSRF, multi-source intake/thumbnail/ranges, per-scene review gates and invalidation,
+source path traversal, single-server lock
 and forced-parent-exit child cleanup. Existing Studio tests remain in the JavaScript suite.
 
 Offline real-FFmpeg regression can reuse the already accepted MVP1 WAV without generating new
@@ -117,6 +138,14 @@ C:\NPD-Video-Factory\runtime\venv\Scripts\python.exe scripts/windows-native-rend
 
 Its report explicitly says `OFFLINE_RENDER_REGRESSION_ONLY`, zero provider calls, zero TTS inference,
 and no new human approval. The fresh UI proposal must be reviewed separately before real TTS.
+
+A mixed-media regression creates synthetic red image / moving clip with a test tone / blue image.
+It verifies scene order, visible motion after looping and bit-identical output AAC against the
+single-image reference, proving that original video audio was not mixed:
+
+```powershell
+C:\NPD-Video-Factory\runtime\venv\Scripts\python.exe scripts/windows-native-render-smoke.py --output C:\NPD-Video-Factory\phase2-validation\mixed-next --mixed-media --audio-reference C:\NPD-Video-Factory\phase2-validation\single-media-regression\final.mp4
+```
 
 ## Configuration and backup
 

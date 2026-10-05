@@ -8,6 +8,7 @@ import sqlite3
 import uuid
 
 from .contracts import Proposal, WorkflowError, digest
+from .media import MAX_ASSETS, project_assets, scene_bindings, selected_media, validate_bindings
 
 
 def now():
@@ -79,7 +80,7 @@ class Store:
         if not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 20000:
             raise WorkflowError("PROMPT_REQUIRED_MAX_20000", 400)
         identifier = uuid.uuid4().hex
-        doc = {"name": name.strip(), "prompt": prompt, "proposal": None, "asset": None}
+        doc = {"name": name.strip(), "prompt": prompt, "proposal": None, "asset": None, "assets": [], "scene_media": []}
         stamp = now()
         with self.transaction() as con:
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",
@@ -107,7 +108,7 @@ class Store:
             raise WorkflowError("PROJECT_BUSY")
         return project
 
-    def save(self, identifier, revision, *, prompt=None, proposal=None, asset=None):
+    def save(self, identifier, revision, *, prompt=None, proposal=None, asset=None, scene_media=None):
         if prompt is not None and (not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 20000):
             raise WorkflowError("PROMPT_REQUIRED_MAX_20000", 400)
         if proposal is not None:
@@ -120,10 +121,16 @@ class Store:
             doc = project["document"]
             if prompt is not None and prompt != doc["prompt"]:
                 doc["prompt"], doc["proposal"] = prompt, None
+                doc["scene_media"] = []
             if proposal is not None:
                 doc["proposal"] = proposal
             if asset is not None:
                 doc["asset"] = asset
+                doc["assets"] = [asset]
+                doc.pop("scene_media", None)  # Legacy single-image write remains compatible.
+            if scene_media is not None:
+                doc["scene_media"] = scene_media
+            validate_bindings(doc)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                         (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
             self.event(con, identifier, "draft_saved_approval_invalidated", {"revision": revision + 1})
@@ -135,8 +142,9 @@ class Store:
         with self.transaction() as con:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
-            if not doc["proposal"] or not doc["asset"]:
+            if not doc["proposal"]:
                 raise WorkflowError("CONTENT_AND_IMAGE_REQUIRED")
+            selected_media(doc)
             approval = {"revision": revision, "snapshot_sha256": digest(doc),
                         "reviewer": reviewer.strip(), "approved_at": now(), "source": "local_ui_human_review"}
             con.execute("UPDATE projects SET approval=?,updated_at=? WHERE id=?",
@@ -159,6 +167,8 @@ class Store:
             if kind == "render" and (not approval or approval["revision"] != revision
                                      or approval["snapshot_sha256"] != digest(doc)):
                 raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
+            if kind == "render":
+                selected_media(doc)
             identifier_job, stamp = uuid.uuid4().hex, now()
             snapshot = {"document": doc, "approval": approval}
             con.execute("INSERT INTO jobs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -191,6 +201,7 @@ class Store:
                     raise WorkflowError("STALE_CONTENT_RESULT")
                 doc = project["document"]
                 doc["proposal"] = Proposal.model_validate(result["proposal"]).model_dump()
+                doc["scene_media"] = []  # New proposal requires deliberate source choices.
                 con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                             (project["revision"] + 1, json.dumps(doc, ensure_ascii=False), now(), project["id"]))
             con.execute("UPDATE jobs SET status=?,stage=?,error=?,result=?,updated_at=? WHERE id=?",
@@ -210,3 +221,18 @@ class Store:
     def get_job(self, identifier):
         with self.transaction() as con:
             return self.job(con.execute("SELECT * FROM jobs WHERE id=?", (identifier,)).fetchone())
+
+    def append_media(self, identifier, revision, asset):
+        with self.transaction() as con:
+            project = self.editable(con, identifier, revision)
+            doc = project["document"]
+            library = project_assets(doc)
+            if len(library) >= MAX_ASSETS:
+                raise WorkflowError("PROJECT_MEDIA_LIMIT_50", 400)
+            doc["scene_media"] = scene_bindings(doc)
+            doc["assets"] = library + [asset]
+            validate_bindings(doc)
+            con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
+                (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
+            self.event(con, identifier, "media_uploaded_approval_invalidated", {"revision": revision + 1, "asset_id": asset["id"], "kind": asset["kind"]})
+        return self.get(identifier)

@@ -12,10 +12,12 @@ import re
 import secrets
 import threading
 import uuid
+from urllib.parse import unquote
 
 from .contracts import WorkflowError, file_sha
 from .pipeline import Config, LOCKS, Pipeline, REPO, verify_runtime
 from .store import Store
+from .media import CONTENT_TYPES, IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, discard_media, ingest_media, media_path, project_assets
 
 
 class Runner:
@@ -183,6 +185,14 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({"prompt": (LOCKS / "accepted-prompt.txt").read_text(encoding="utf-8")})
         if path == "/api/projects":
             return self.reply(self.server.store.list())
+        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/media/([0-9a-f]{32}\.(?:jpg|mp4))(/thumbnail)?", path)
+        if match:
+            project = self.server.store.get(match[1])
+            asset = next((a for a in project_assets(project["document"]) if a["id"] == match[2]), None)
+            if asset is None:
+                raise WorkflowError("MEDIA_NOT_IN_PROJECT", 404)
+            identifier = asset.get("thumbnail_id", asset["id"]) if match[3] else asset["id"]
+            return self.file(media_path(self.server.config, identifier), video=not match[3] and asset["kind"] == "video")
         match = re.fullmatch(r"/api/projects/([0-9a-f]{32})(/image)?", path)
         if match:
             project = self.server.store.get(match[1])
@@ -221,6 +231,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def dispatch_post(self):
         self.boundary(write=True)
+        upload_match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/media", self.path)
+        if upload_match:
+            return self.upload_media(upload_match[1])
         body = self.read_body()
         if self.path == "/api/projects":
             return self.reply(self.server.store.create(body.get("name"), body.get("prompt")), 201)
@@ -232,7 +245,7 @@ class Handler(BaseHTTPRequestHandler):
         if not isinstance(revision, int) or isinstance(revision, bool):
             raise WorkflowError("REVISION_REQUIRED", 400)
         if action == "draft":
-            result = self.server.store.save(identifier, revision, prompt=body.get("prompt"), proposal=body.get("proposal"))
+            result = self.server.store.save(identifier, revision, prompt=body.get("prompt"), proposal=body.get("proposal"), scene_media=body.get("scene_media"))
         elif action == "image":
             asset = save_image(self.server.config, body)
             try:
@@ -246,6 +259,46 @@ class Handler(BaseHTTPRequestHandler):
             result = self.server.store.enqueue(identifier, revision, body.get("kind"), body.get("request_key"))
             self.server.runner.wake.set()
         return self.reply(result)
+
+    def upload_media(self, identifier):
+        content_type = self.headers.get("Content-Type", "").split(";")[0]
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            revision = int(self.headers.get("X-VF-Revision", "0"))
+        except ValueError:
+            raise WorkflowError("INVALID_MEDIA_UPLOAD_HEADERS", 400) from None
+        limit = VIDEO_MAX_BYTES if content_type.startswith("video/") else IMAGE_MAX_BYTES
+        if content_type not in CONTENT_TYPES or not 0 < length <= limit or self.headers.get("Transfer-Encoding"):
+            raise WorkflowError("MEDIA_FILE_TOO_LARGE_OR_TYPE_UNSUPPORTED", 400)
+        rights = self.headers.get("X-VF-Rights") == "confirmed"
+        illustration_value = self.headers.get("X-VF-Illustration")
+        if not rights or illustration_value not in {"true", "false"}:
+            raise WorkflowError("MEDIA_RIGHTS_CONFIRMATION_REQUIRED", 400)
+        # Early optimistic check, then recheck in the append transaction after validation.
+        with self.server.store.transaction() as con:
+            self.server.store.editable(con, identifier, revision)
+        directory = self.server.config.data_root / "uploads"
+        directory.mkdir(parents=True, exist_ok=True)
+        source = directory / (uuid.uuid4().hex + ".part")
+        try:
+            remaining = length
+            with source.open("xb") as dest:
+                while remaining:
+                    chunk = self.rfile.read(min(1024 * 1024, remaining))
+                    if not chunk:
+                        raise WorkflowError("MEDIA_UPLOAD_INCOMPLETE", 400)
+                    dest.write(chunk)
+                    remaining -= len(chunk)
+            asset = ingest_media(self.server.config, source, content_type, unquote(self.headers.get("X-VF-Filename", "Media")),
+                                 rights_confirmed=True, illustration=illustration_value == "true")
+            try:
+                result = self.server.store.append_media(identifier, revision, asset)
+            except Exception:
+                discard_media(self.server.config, asset)
+                raise
+            return self.reply(result, 201)
+        finally:
+            source.unlink(missing_ok=True)
 
     def handle_request(self, method):
         try:
