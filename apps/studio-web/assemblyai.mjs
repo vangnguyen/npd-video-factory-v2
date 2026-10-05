@@ -42,7 +42,7 @@ if (typeof document !== "undefined") {
       const value = await response.json();
       if (!response.ok) throw new Error(connectionMessage(value.code));
       apply(value);
-      show("Đã xác thực và lưu kết nối AssemblyAI. Chưa gửi audio hoặc tạo job ASR.");
+      show("Đã xác thực và lưu kết nối AssemblyAI. Bước kiểm tra này không gửi audio hoặc tạo job ASR.");
     } catch (error) {
       $("connection-state").textContent = "Chưa xác nhận kết nối";
       show(error instanceof TypeError ? "Không kết nối được Studio. Làm mới trang và thử lại." : error.message, true);

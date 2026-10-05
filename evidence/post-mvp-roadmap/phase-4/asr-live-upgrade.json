@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "code_commit": "6e0c7f6",
+  "original_rows_preserved": true,
+  "sqlite_integrity": "ok",
+  "backup": "C:\\NPD-Video-Factory\\post-mvp-validation\\owner-before-phase4-asr-upgrade-20261005.sqlite3",
+  "connection": {
+    "provider": "assemblyai-transcription",
+    "profile_id": "asr-assemblyai-vi-direct-v1",
+    "model": "universal-3-5-pro",
+    "language": "vi",
+    "credential_saved": true,
+    "connected": true,
+    "speech_video_acceptance": "NOT_RUN",
+    "checked_at": "2026-10-05T13:08:36.113328+00:00"
+  },
+  "health": {
+    "status": "ready",
+    "model": "gpt-6-luna",
+    "voice": "Thùy Dung",
+    "resolution": "1080x1920",
+    "human_review_required": true
+  },
+  "locked_voice_runtime": {
+    "voice": "Thùy Dung",
+    "profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+    "model": "gpt-6-luna",
+    "resolution": "1080x1920",
+    "native_windows": true,
+    "provider_calls": 0
+  },
+  "accepted_mp4_sha256": "c0bbcf029554cfd2e7c29e05d595379abb6d894babc78154a16537f7fba1a47a",
+  "original_owner_browser_draft": "not reloaded, edited or approved"
+}

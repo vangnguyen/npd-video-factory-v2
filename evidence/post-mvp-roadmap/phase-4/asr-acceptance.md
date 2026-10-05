@@ -4,11 +4,11 @@ PHASE: 4 — ASR + Media Understanding.
 
 STATUS: PASS for the supported native path: a real speech video is extracted, transcribed by the selected AssemblyAI model, validated and persisted. This is technical acceptance; the resulting editorial draft is unapproved and needs human checking.
 
-HEAD SHA: Implementation commit is recorded in the execution report after the commit is created.
+HEAD SHA: `6e0c7f6db1eadaa68c880b597e36da64a6f0b018`.
 
 FILES CHANGED: `services/windows_native/asr.py`, native pipeline/store/ingestion/server/hardening integration, Studio analysis controls/transcript display, additive `requirements-asr.txt`, ASR safety tests and Phase 4 evidence. Existing strict AssemblyAI profile/adapter is reused unchanged. The new job kind and optional `media_analysis` document field are additive; prior project documents/approvals are not rewritten.
 
-TESTS: 77/77 native, 25/25 Studio, 26/26 shared AssemblyAI adapter PASS. Fixtures are expressly labeled and never counted as real ASR. Tests cover actual local FFmpeg extraction/scene analysis, valid/invalid provider word intervals, failure preservation, unknown-outcome refusal, restart-safe known-job GET observation, no duplicate upload/create on resume, checkpoint corruption, missing credential, source lineage, protected-origin/no-proxy/no-redirect HTTP and credential echo rejection. The first shared-adapter run hit an inaccessible Windows temporary folder (18 passed, eight setup errors); rerunning in a fresh explicitly named validation folder passes 26/26. Both logs are retained.
+TESTS: 77/77 native, 25/25 Studio, 26/26 shared AssemblyAI adapter PASS; final ASR transport/model/secret guards 11/11 PASS. Fixtures are expressly labeled and never counted as real ASR. Tests cover actual local FFmpeg extraction/scene analysis, valid/invalid provider word intervals, failure preservation, unknown-outcome refusal, restart-safe known-job GET observation, no duplicate upload/create on resume, checkpoint corruption, missing credential, source lineage, protected-origin/no-proxy/no-redirect HTTP and credential echo rejection. The first shared-adapter run hit an inaccessible Windows temporary folder (18 passed, eight setup errors); rerunning in a fresh explicitly named validation folder passes 26/26. Both logs are retained.
 
 EVIDENCE: `connection-real-account.json`, `real-speech-video.json`, `real-transcript.json`, `asr-real-transcript.png`, test logs. Actual isolated data remains at `C:\NPD-Video-Factory\post-mvp-validation\phase4-real-asr-20261005-2025`. Full provider receipts and extracted WAV remain there; no upload URL or credential value is copied into Git evidence. Accepted source MP4 SHA256 remains `c0bbcf029554cfd2e7c29e05d595379abb6d894babc78154a16537f7fba1a47a`.
 
