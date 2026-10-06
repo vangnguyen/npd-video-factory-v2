@@ -1,0 +1,11 @@
+{
+  "previous_port_listener_count": 0,
+  "previous_python_process_count": 0,
+  "action": "START_EXISTING_NATIVE_SERVICE_FROM_OBSERVED_OFFLINE_STATE",
+  "process_id": 22112,
+  "stopped_or_killed_existing_process": false,
+  "application_head": "0b0555f827d4a48c92679d2ed266def063e7f6b1",
+  "stdout_path": "C:\\NPD-Video-Factory\\post-mvp-validation\\phase9k-final-native-start.stdout.log",
+  "stderr_path": "C:\\NPD-Video-Factory\\post-mvp-validation\\phase9k-final-native-start.stderr.log",
+  "published": false
+}
