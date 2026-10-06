@@ -1,0 +1,44 @@
+{
+  "schema_version": "phase9k-static-graphics-v1",
+  "style": {"background":"#09211f","panel":"#10332e","text":"#fcf9f1","accent":"#e2cb9c","muted":"#bed3cc"},
+  "asset_dimensions": [1080,830],
+  "production_options": {"crop_strategy":"contain","motion":"none","source_start":0,"transition":"fade"},
+  "music": "NONE_PROPOSED",
+  "cases": [
+    {"number":1,"title":"IHG × Green Paradise","duration_target":"30–45 giây","cards":[
+      {"heading":"IHG × Green Paradise","kind":"statement","tag":"HIỂU Ý NGHĨA THỎA THUẬN","items":["Một thỏa thuận mở ra điều gì?","Hướng phát triển lưu trú tại dự án"]},
+      {"heading":"23/04/2026 · Thỏa thuận hợp tác","kind":"date","tag":"MỐC THỎA THUẬN","items":["23/04/2026","Chủ đầu tư dự án × IHG","Theo Vinhomes Market"]},
+      {"heading":"Bốn thương hiệu trong kế hoạch","kind":"list","tag":"KẾ HOẠCH HỢP TÁC","items":["InterContinental","Crowne Plaza","Holiday Inn Express","Garner"]},
+      {"heading":"Hợp tác phát triển · Theo dõi triển khai","kind":"compare","tag":"PHÂN BIỆT THÔNG TIN","items":["Thỏa thuận hợp tác","Thông tin khách sạn khai trương"],"note":"Thỏa thuận chưa phải thông tin khai trương"},
+      {"heading":"Bạn quan tâm thương hiệu nào?","kind":"statement","tag":"CÂU HỎI CỦA BẠN","items":["Bạn muốn tìm hiểu thương hiệu nào?","Để lại câu hỏi"]}
+    ]},
+    {"number":2,"title":"Green Paradise · Đô thị thông minh","duration_target":"45–60 giây","cards":[
+      {"heading":"Green Paradise & đô thị thông minh","kind":"statement","tag":"HÀNH TRÌNH THEO ĐUỔI TIÊU CHUẨN","items":["Đi tới tiêu chuẩn quốc tế như thế nào?","Theo dõi quá trình và kết quả đánh giá"]},
+      {"heading":"03/03/2026 · Khởi động chứng nhận","kind":"date","tag":"MỐC KHỞI ĐỘNG","items":["03/03/2026","Khởi động chương trình chứng nhận","Theo Vinhomes Market"]},
+      {"heading":"KMAC · WCCD · SUM","kind":"list","tag":"TÊN GỌI ĐƯỢC BÀI NGUỒN NÊU","items":["KMAC · Công ty tư vấn","WCCD · Hội đồng Thế giới về Dữ liệu Đô thị","SUM · Chỉ số Đô thị Tiêu chuẩn hóa"]},
+      {"heading":"Khởi động ≠ đã cấp chứng nhận","kind":"compare","tag":"HAI MỐC KHÁC NHAU","items":["Khởi động quá trình","Kết quả đánh giá được công bố"],"note":"Mốc khởi động chưa xác nhận đã được cấp chứng nhận"},
+      {"heading":"Bạn quan tâm tiêu chí nào?","kind":"list","tag":"ĐIỀU BẠN MUỐN TÌM HIỂU","items":["Giao thông?","Năng lượng?","Môi trường?"],"note":"Để lại câu hỏi"}
+    ]},
+    {"number":4,"title":"Saigon Park · Góc nhìn người mua","duration_target":"45 giây","cards":[
+      {"heading":"3 điều cần xem khi đánh giá dự án","kind":"statement","tag":"GÓC NHÌN NGƯỜI MUA","items":["3 câu hỏi trước khi đánh giá một dự án mới","Vinhomes Saigon Park là ví dụ"]},
+      {"heading":"1 · Sự kiện hay tiến độ?","kind":"compare","tag":"ĐỌC ĐÚNG NHÓM THÔNG TIN","items":["Bài Kick-Off: thông tin sự kiện","Tiến độ: cần tài liệu riêng"],"note":"Sự sôi động của lễ giới thiệu chưa trả lời được tiến độ"},
+      {"heading":"2 · Tách lời giới thiệu khỏi dữ kiện","kind":"compare","tag":"TIẾP THỊ VÀ DỮ KIỆN","items":["Lời giới thiệu về cơ hội đầu tư","Dữ kiện có thể đối chiếu"],"note":"Lời giới thiệu không phải lời hứa giá sẽ tăng"},
+      {"heading":"3 · Đúng tài liệu, đúng thời điểm","kind":"list","tag":"HỎI ĐÚNG TÀI LIỆU","items":["Giá ở thời điểm nào?","Tiến độ ghi nhận khi nào?","Hồ sơ pháp lý nào có thể đối chiếu?"],"note":"Câu hỏi tìm hiểu, chưa phải kết luận về dự án"},
+      {"heading":"Bạn muốn làm rõ nhóm tài liệu nào?","kind":"statement","tag":"CÂU HỎI CỦA BẠN","items":["Bạn muốn làm rõ nhóm tài liệu nào trước?","Để lại câu hỏi"]}
+    ]},
+    {"number":6,"title":"Vang Nguyễn · Đọc tin theo thời điểm","duration_target":"45 giây","cards":[
+      {"heading":"Bản tin nói về thời điểm nào?","kind":"statement","tag":"VANG NGUYỄN · GÓC NHÌN THÔNG TIN","items":["Đúng lúc đăng, chưa chắc phản ánh hiện tại","Đọc bản tin trong bối cảnh thời gian"]},
+      {"heading":"Ngày đăng · Kỳ dữ liệu · Ngày xem","kind":"list","tag":"ĐẶT BA MỐC CẠNH NHAU","items":["Ngày bài được đăng","Giai đoạn dữ liệu đề cập","Ngày bạn đang đọc bài"]},
+      {"heading":"24/04/2026 · Dữ liệu quý I/2026","kind":"compare","tag":"VÍ DỤ TỪ BÁO ĐIỆN TỬ CHÍNH PHỦ","items":["Ngày đăng: 24/04/2026","Kỳ nhận định: quý I/2026"],"note":"Ngày đăng khác với kỳ dữ liệu"},
+      {"heading":"06/10/2026 · Bối cảnh hiện tại","kind":"compare","tag":"ĐẶT VÀO NGÀY 06/10/2026","items":["Quý I/2026: lát cắt quá khứ","Tháng 10: cần thêm bối cảnh"],"note":"Dữ liệu quý I chưa đủ mô tả thị trường tháng 10"},
+      {"heading":"Gửi câu hỏi cho Vang Nguyễn","kind":"list","tag":"TRƯỚC KHI ÁP DỤNG MỘT NHẬN ĐỊNH","items":["Bài đăng lúc nào?","Nói về giai đoạn nào?","Có thông tin mới hơn chưa?"],"note":"Bạn đang vướng ở bản tin nào?"}
+    ]},
+    {"number":8,"title":"Thị trường Việt Nam · Quý II/2026","duration_target":"45–60 giây","cards":[
+      {"heading":"Nhìn lại thị trường quý II/2026","kind":"statement","tag":"DỮ LIỆU KỲ BÁO CÁO","items":["Nguồn cung tăng, giao dịch giảm","Đọc thị trường thế nào cho đúng?"]},
+      {"heading":"Nguồn cung · Giao dịch · Tồn kho","kind":"list","tag":"QUÝ II/2026 · BÀI ĐĂNG 21/08/2026","items":["Nguồn cung ↑","Giao dịch ↓","Tồn kho có xu hướng ↑ nhẹ"]},
+      {"heading":"100.005 · Các tỷ lệ so sánh","kind":"metrics","tag":"QUÝ II/2026 · SỐ LIỆU BÀI DẪN","items":["100.005","Khoảng trên 100.005 giao dịch thành công"],"comparison_rows":[{"label":"Quý I/2026 = 100%","value":0.715,"display":"71,5%"},{"label":"Cùng kỳ 2025 = 100%","value":0.637,"display":"63,7%"}]},
+      {"heading":"Tỷ lệ so sánh ≠ phần trăm giảm","kind":"compare","tag":"CHÚ Ý CHỮ “BẰNG”","items":["71,5% so với quý I/2026","63,7% so với cùng kỳ 2025"],"note":"Đọc cùng nguồn cung và tồn kho"},
+      {"heading":"Bạn muốn đối chiếu chỉ số nào?","kind":"statement","tag":"DỮ LIỆU LỊCH SỬ QUÝ II/2026","items":["Bạn muốn đối chiếu địa bàn hay chỉ số nào?","Để lại câu hỏi"]}
+    ]}
+  ]
+}

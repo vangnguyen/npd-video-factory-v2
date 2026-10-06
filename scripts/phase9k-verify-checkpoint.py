@@ -62,11 +62,66 @@ def http_reader():
     return get
 
 
+def verify_media_review(approval):
+    """Check the actual proposed files; never treat previews as generated videos."""
+    from PIL import Image
+    gallery=EVIDENCE/'storyboard-media-review'
+    media=read(gallery/'review-manifest.json')
+    assert file_sha(EVIDENCE/'script-approval-manifest.json')==media['owner_script_approval_sha256']
+    assert file_sha(EVIDENCE/'storyboard-graphic-directions.json')==media['graphic_directions_sha256']
+    assert file_sha(gallery/'index.html')==media['review_html_sha256']
+    assert file_sha(EVIDENCE/'storyboard-media-review-bundle.md')==media['review_bundle_sha256']
+    assert media['asset_count']==25 and len(media['cases'])==5
+    assert all(media[name]==0 for name in ['native_media_imports','human_media_approvals','tts_runs','render_dispatches','new_video_count'])
+    decisions={item['case']:item for item in approval['cases']}
+    for item in media['cases']:
+        folder=EVIDENCE/f"case-{item['case']:02}"
+        script=read(folder/'script-v2.json');board=read(folder/'storyboard.json')
+        candidate=read(folder/'proposed-production-proposal.json')
+        Proposal.model_validate(candidate)
+        assert candidate['narration']==script['proposal']['narration']
+        assert digest(candidate)==item['proposed_proposal_sha256']==board['proposed_proposal_sha256']
+        assert file_sha(folder/'storyboard.json')==item['storyboard_sha256']
+        assert file_sha(folder/'asset-lineage.json')==item['asset_lineage_sha256']
+        assert file_sha(item['contact_sheet_path'])==item['contact_sheet_sha256']
+        assert item['script_review_id']==decisions[item['case']]['review_id']==board['script_review_id']
+        assert item['script_sha256']==script['script_sha256']==board['script_sha256']
+        assert not board['human_approved'] and not board['production_dispatched'] and not board['timing_measured']
+        assert item['human_media_review']==item['human_storyboard_review']=='PENDING'
+        assert len(item['assets'])==len(board['scenes'])==5
+        for asset,scene,original in zip(item['assets'],board['scenes'],script['proposal']['visual_brief']):
+            path=Path(asset['path']);preview=Path(asset['preview_path'])
+            assert gallery.resolve() in path.resolve().parents and gallery.resolve() in preview.resolve().parents
+            assert file_sha(path)==asset['sha256']==scene['asset_sha256']
+            assert file_sha(preview)==asset['preview_sha256']
+            with Image.open(path) as picture: assert picture.size==(1080,830)
+            with Image.open(preview) as picture: assert picture.size==(1080,1920)
+            assert asset['native_asset_id'] is None and not asset['uploaded_to_native'] and not asset['media_approved']
+            assert asset['rights_review']=='PENDING_OWNER' and not asset['photo_or_official_logo_used']
+            assert asset['script_sha256']==script['script_sha256'] and digest(asset['recipe'])==asset['recipe_sha256']
+            assert scene['narration_excerpt']==original['narration_excerpt'] and not scene['human_approved']
+            assert {s['id']:s['content_sha256'] for s in asset['research_source_references']}=={s['id']:s['content_sha256'] for s in script['research_lineage']['source_references']}
+    return {'asset_count':25,'files_and_dimensions':'PASS','unchanged_approved_narration':'PASS',
+            'source_references':'PASS','media_approval':'PENDING','native_imports':0}
+
+
 def verify(stage):
     config=Config();production=Store(config.data_root);service=IntelligenceService(config,production)
     baseline=read(EVIDENCE.parent/'release-baseline.json')
     authorization=read(EVIDENCE/'owner-authorization.json')
     manifest=read(EVIDENCE/'script-review-manifest.json')
+    approved_path=EVIDENCE/'script-approval-manifest.json'
+    approved=read(approved_path) if approved_path.exists() else None
+    media_review=None
+    if approved:
+        owner=read(EVIDENCE/'owner-script-authorization-v2.json')
+        assert file_sha(EVIDENCE/'owner-script-authorization-v2.json')==approved['owner_authorization_sha256']
+        assert file_sha(EVIDENCE/'owner-script-decision-v2.txt')==owner['owner_message_sha256']
+        assert owner['owner_message']=='Duyệt v2: 01, 02, 04, 06, 08' and owner['scope']=='SCRIPT_ONLY'
+        assert owner['review_manifest_sha256']==file_sha(EVIDENCE/'script-review-manifest.json')
+        assert owner['review_bundle_sha256']==file_sha(EVIDENCE/'script-review-bundle.md')
+        assert approved['human_script_approvals']==len(approved['cases'])==5
+        media_review=verify_media_review(approved)
     assert file_sha(EVIDENCE/'script-review-bundle.md')==manifest['review_bundle_sha256']
     assert file_sha(EVIDENCE.parent/'idea-brief-review-bundle.md')==authorization['review_bundle_sha256']
     assert file_sha(EVIDENCE.parent/'idea-brief-review-manifest.json')==authorization['original_review_manifest_sha256']
@@ -107,14 +162,28 @@ def verify(stage):
         assert bundle['brief']['id']==item['brief_id'] and bundle['brief']['status']=='APPROVED'
         api=get('/api/projects/'+project['id'])
         assert api['revision']==project['revision'] and api['document']==project['document'] and api['approval'] is None
+        human_review='PENDING';review_id=None
+        if approved:
+            decision=next(d for d in approved['cases'] if d['case']==number)
+            receipt=read(folder/'script-review.json');review=project['script_review']
+            assert review==receipt['native_review'] and review['current'] and review['scope']=='SCRIPT_ONLY'
+            assert decision['review_id']==review['review_id'] and decision['script_sha256']==script['script_sha256']
+            assert review['review_reference']['authorization_sha256']==approved['owner_authorization_sha256']
+            assert review['lineage_sha256']==digest(projection(project['document']))
+            assert not review['production_approved'] and not review['media_approved'] and not review['render_dispatched']
+            if stage=='after-restart': assert api['script_review']==review
+            human_review='OWNER_APPROVED';review_id=review['review_id']
         jobs=[j['id'] for j in project['jobs']]
         cases.append({'case':number,'project_id':project['id'],'revision':project['revision'],
             'project_document_sha256':digest(project['document']),'script_version':2,'script_sha256':script['script_sha256'],
             'source_integrity':'PASS','lineage':'PASS','fresh_process_reopen':'PASS','live_studio_api_reopen':'PASS',
-            'script_jobs':jobs,'human_script_review':'PENDING','render_jobs':0,'tts_runs':0,'new_video_generated':False})
+            'script_jobs':jobs,'human_script_review':human_review,
+            'render_jobs':0,'tts_runs':0,'new_video_generated':False})
+        if approved: cases[-1]['script_review_id']=review_id
     tables={name:table_snapshot(config.data_root/name) for name in ['workflow.sqlite3','intelligence.sqlite3']}
+    prefix='storyboard-media-' if approved else 'script-review-'
     if stage=='after-restart':
-        previous=read(EVIDENCE/'script-review-before-restart.json')
+        previous=read(EVIDENCE/(prefix+'before-restart.json'))
         assert tables==previous['tables'],'Restart changed persisted rows'
         assert cases==previous['cases'],'Restart changed script state'
     result={'captured_at':datetime.now(timezone.utc).isoformat(),'stage':stage,'health':health,
@@ -123,12 +192,15 @@ def verify(stage):
         'accepted_release_rows_preserved':preserved_baseline,'pre_task_owner_production_rows_preserved':preserved_owner,
         'pre_task_intelligence_history_preserved':history,'pre_task_owner_case01_records_preserved':owner_case01,
         'script_bundle_sha256':manifest['review_bundle_sha256'],'script_bundle_integrity':'PASS',
-        'actual_restart_verified':stage=='after-restart','human_script_approvals':0,'render_dispatches':0,
-        'new_video_count':0,'PHASE9K':'SCRIPT_REVIEW_REQUIRED','INTERNAL_PRODUCTION_READY':'YES','CONTENT_INTELLIGENCE_READY':'NO'}
-    write_json(EVIDENCE/('script-review-'+stage+'.json'),result)
+        'actual_restart_verified':stage=='after-restart','human_script_approvals':5 if approved else 0,'render_dispatches':0,
+        'live_script_receipts_verified':bool(approved) and stage=='after-restart','proposed_media_verification':media_review,
+        'new_video_count':0,'PHASE9K':'STORYBOARD_MEDIA_REVIEW_REQUIRED' if approved else 'SCRIPT_REVIEW_REQUIRED',
+        'INTERNAL_PRODUCTION_READY':'YES','CONTENT_INTELLIGENCE_READY':'NO'}
+    write_json(EVIDENCE/(prefix+stage+'.json'),result)
     print(json.dumps({'stage':stage,'sources_and_lineage':'5/5 PASS','script_state_reopened':'5/5 PASS',
         'accepted_phase8_videos_unchanged':'10/10','owner_existing_case01_preserved':True,
-        'actual_restart_verified':result['actual_restart_verified'],'render_dispatches':0,'new_videos':0}),flush=True)
+        'actual_restart_verified':result['actual_restart_verified'],'human_script_approvals':result['human_script_approvals'],
+        'proposed_media_verification':media_review,'render_dispatches':0,'new_videos':0}),flush=True)
 
 
 if __name__=='__main__':
