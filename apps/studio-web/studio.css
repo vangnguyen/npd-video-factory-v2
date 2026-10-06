@@ -122,7 +122,7 @@
 .production-workbench { margin-top: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg, #fff, #f8fafb); box-shadow: 0 5px 18px rgba(25, 47, 67, .035); }
 .production-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
 .production-heading h2 { margin: 4px 0; font-size: 18px; }
-.production-heading p { max-width: 760px; margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.production-heading p { max-width: 760px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .production-heading-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .production-heading-actions button { padding: 9px 12px; font-size: 10px; }
 .production-empty { margin-top: 13px; padding: 22px; border: 1px dashed #c9d5dd; border-radius: 11px; color: var(--muted); text-align: center; font-size: 10px; background: white; }
@@ -131,15 +131,17 @@
 .production-card { min-width: 0; padding: 13px; border: 1px solid #e1e7ec; border-radius: 11px; background: white; }
 .production-card-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid #edf1f3; }
 .production-card-title > div { display: flex; align-items: center; gap: 8px; }
-.production-card-title strong { font-size: 11px; }
+.production-card-title strong { font-size: 14px; }
 .card-icon { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 8px; color: #087681; background: #e7f7f8; font-size: 9px; font-weight: 900; }
 .subtitle-list { max-height: 270px; margin: 10px 0; overflow: auto; display: grid; gap: 7px; scrollbar-width: thin; }
-.subtitle-row { padding: 8px; display: grid; grid-template-columns: 52px 52px minmax(130px, 1fr); gap: 6px; border: 1px solid #e8edf0; border-radius: 8px; background: #fbfcfd; }
-.subtitle-row label, .subtitle-style-grid label, .audio-controls label, .final-render-row label { color: var(--muted); font-size: 8px; font-weight: 800; }
+.subtitle-row { padding: 10px; display: grid; grid-template-columns: 80px 80px minmax(0, 1fr); gap: 8px; border: 1px solid #e8edf0; border-radius: 8px; background: #fbfcfd; }
+.subtitle-row label, .subtitle-style-grid label, .audio-controls label, .final-render-row label { color: var(--muted); font-size: 12px; font-weight: 700; min-width: 0; }
 .subtitle-row input, .subtitle-row textarea, .subtitle-style-grid input, .subtitle-style-grid select, .audio-controls input:not([type="checkbox"]):not([type="range"]), .audio-controls select, .final-render-row select { width: 100%; margin-top: 4px; padding: 7px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: white; font: inherit; }
-.subtitle-row textarea { min-height: 48px; resize: vertical; line-height: 1.35; }
+.subtitle-row textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
+.production-workbench input, .production-workbench textarea, .production-workbench select { font-size: 14px; min-width: 0; }
+.production-workbench input:not([type="checkbox"]):not([type="range"]), .production-workbench select { min-height: 36px; }
 .subtitle-style-grid { margin-bottom: 9px; display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-.production-card > button { width: 100%; font-size: 9px; }
+.production-card > button { width: 100%; font-size: 13px; min-height: 38px; }
 .compact-note { margin: 9px 0; padding: 7px 8px; border-radius: 7px; color: #4c6370; background: #f0f5f7; font-size: 9px; }
 .audio-controls { display: grid; gap: 8px; }
 .audio-controls label { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 7px; }
@@ -306,3 +308,12 @@
 #multi-input-workbench input, #multi-input-workbench select { padding: 8px; }
 #multi-input-workbench button { margin: 4px; padding: 8px 14px; }
 .mvp-scene { border: 1px solid #40506c; padding: 16px; margin: 12px 0; border-radius: 12px; }
+.production-workbench .compact-note, .production-workbench .render-summary, .production-workbench .hard-boundary { font-size: 12px; line-height: 1.6; }
+.production-workbench .approval-actions button, .production-workbench .final-render-row button { font-size: 13px; min-height: 38px; }
+@media(max-width:1500px) {
+  .production-grid { grid-template-columns: minmax(0,1.2fr) minmax(0,1fr); }
+  .production-grid .review-card { grid-column: 1 / -1; }
+}
+@media(max-width:900px) {
+  .production-grid { grid-template-columns: minmax(0,1fr); }
+}

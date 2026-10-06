@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import math
+import re
+import unicodedata
 import uuid
 from pathlib import Path
 from typing import Any
@@ -10,6 +12,7 @@ from jsonschema import Draft202012Validator
 
 from .production_models import MixConfig, SubtitleCue, SubtitleStyle, SubtitleVersionRead
 from .timeline_models import TimelineSnapshot
+from .subtitle_templates import extended_subtitle_style, render_subtitle_style, EXTENDED_MODES
 
 
 class ProductionContractError(ValueError):
@@ -103,11 +106,24 @@ def derive_subtitle_cues(snapshot: TimelineSnapshot) -> list[SubtitleCue]:
 def validate_subtitles(
     cues: list[SubtitleCue], style: SubtitleStyle, duration_seconds: float
 ) -> dict[str, Any]:
+    if style.animation in {"word_by_word", "karaoke"} and any(not cue.words for cue in cues):
+        raise ProductionContractError("WORD_ALIGNMENT_UNAVAILABLE: timed effects require measured words")
     previous_end = 0.0
     identifiers: set[str] = set()
     estimated_line_limit = max(12, int((100 - 2 * style.safe_margin_percent) * 10.8 / (style.font_size * 0.56)))
     maximum_characters = subtitle_character_capacity(style)
     for cue in cues:
+        if style.animation == 'word_by_word':
+            tokens=lambda text:re.findall(r'[^\W_]+',unicodedata.normalize('NFC',text).casefold())
+            if tokens(cue.text)!=tokens(' '.join(word.text for word in cue.words)):
+                raise ProductionContractError('WORD_ALIGNMENT_TEXT_MISMATCH: select sentence captions')
+        if style.animation == 'karaoke':
+            cursor=0;text=unicodedata.normalize('NFC',cue.text).lower()
+            for word in cue.words:
+                value=unicodedata.normalize('NFC',word.text).lower()
+                start=text.find(value,cursor)
+                if start<0:raise ProductionContractError('WORD_ALIGNMENT_TEXT_MISMATCH: select sentence captions')
+                cursor=start+len(value)
         if cue.cue_id in identifiers:
             raise ProductionContractError("subtitle cue ids must be unique")
         identifiers.add(cue.cue_id)
@@ -115,7 +131,8 @@ def validate_subtitles(
             raise ProductionContractError("subtitle cues must be monotonic and non-overlapping")
         if cue.end_seconds > duration_seconds + 0.034:
             raise ProductionContractError("subtitle cue exceeds timeline duration")
-        if len(cue.text) > maximum_characters:
+        displayed_length = max((len(word.text) for word in cue.words), default=0) if style.animation == 'word_by_word' else len(cue.text)
+        if displayed_length > maximum_characters:
             raise ProductionContractError(
                 f"subtitle cue {cue.cue_id} exceeds the estimated {style.max_lines}-line safe area"
             )
@@ -233,6 +250,7 @@ def build_timeline_render_manifest(
     extended_reframe = profile in {'portrait-1080x1350','review-960x540','review-540x540','review-432x540'} or any(
         clip.metadata.get('reframe') for track in snapshot.tracks for clip in track.clips
         if track.type == 'video' and not track.disabled and not clip.disabled)
+    version = "2.3" if extended_subtitle_style(subtitles.style) else ("2.2" if extended_reframe else ("2.1" if snapshot.schema_version == "1.1" else "2.0"))
     visual_clips: list[dict[str, Any]] = []
     for track in sorted(snapshot.tracks, key=lambda item: item.order):
         if track.type != "video" or track.disabled:
@@ -250,8 +268,8 @@ def build_timeline_render_manifest(
                     "uri": str(path),
                     "timeline_start": clip.timeline_start,
                     "duration": clip.duration,
-                    "source_start": 0 if extended_reframe and media_type == 'image' else clip.source_start,
-                    "source_end": None if extended_reframe and media_type == 'image' else clip.source_end,
+                    "source_start": 0 if version != '2.0' and media_type == 'image' else clip.source_start,
+                    "source_end": None if version != '2.0' and media_type == 'image' else clip.source_end,
                     "fit": clip.metadata.get("fit", "cover"),
                     "crop": clip.crop.model_dump(mode="json"),
                     **({"crop_keyframes":clip.metadata['reframe']['keyframes']} if clip.metadata.get('reframe') else {}),
@@ -261,7 +279,7 @@ def build_timeline_render_manifest(
                 }
             )
     return {
-        "version": "2.2" if extended_reframe else ("2.1" if snapshot.schema_version == "1.1" else "2.0"),
+        "version": version,
         "metadata": {
             "title": f"{project_name} final edit",
             "project": project_slug,
@@ -286,7 +304,7 @@ def build_timeline_render_manifest(
         },
         "visual_clips": visual_clips,
         "subtitles": [item.model_dump(mode="json") for item in subtitles.cues],
-        "subtitle_style": subtitles.style.model_dump(mode="json"),
+        "subtitle_style": render_subtitle_style(subtitles.style),
         "safety": {
             "human_approval_required": True,
             "publishing_allowed": False,
@@ -309,6 +327,11 @@ class TimelineRenderContractValidator:
         self.validator = Draft202012Validator(schema)
 
     def validate(self, manifest: dict[str, Any]) -> None:
+        style = manifest.get('subtitle_style', {})
+        if manifest.get('version') != '2.3' and (style.get('animation') in EXTENDED_MODES or 'template_ref' in style or 'keywords' in style):
+            raise ProductionContractError('extended subtitles require render contract v2.3')
+        if style.get('animation') in {'word_by_word', 'karaoke'} and any(not cue.get('words') for cue in manifest.get('subtitles', [])):
+            raise ProductionContractError('WORD_ALIGNMENT_UNAVAILABLE: timed effects require measured words')
         for clip in manifest["visual_clips"]:
             if manifest["version"] == "2.0" and (clip["source_end"] is None or "transition_in" in clip):
                 raise ProductionContractError("historical v2.0 source contract unchanged")
@@ -317,7 +340,7 @@ class TimelineRenderContractValidator:
             if manifest["version"] != "2.0" and clip["type"] == "image" and (clip["source_end"] is not None or clip["source_start"] != 0):
                 raise ProductionContractError("still image render must not fabricate a source duration")
             if "crop_keyframes" in clip:
-                if manifest["version"] != "2.2":
+                if manifest["version"] not in {"2.2", "2.3"}:
                     raise ProductionContractError("crop paths require render contract v2.2")
                 previous = -1.0
                 for point in clip["crop_keyframes"]:
@@ -329,6 +352,9 @@ class TimelineRenderContractValidator:
             first = errors[0]
             location = ".".join(str(item) for item in first.path) or "$"
             raise ProductionContractError(f"timeline render manifest invalid at {location}: {first.message}")
+        if manifest['version'] == '2.3':
+            validate_subtitles([SubtitleCue.model_validate(cue) for cue in manifest['subtitles']],
+                SubtitleStyle.model_validate(manifest['subtitle_style']),manifest['metadata']['duration_seconds'])
 
 
 def amplitude_from_db(db: float) -> float:

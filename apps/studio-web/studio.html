@@ -6,7 +6,7 @@
     <meta name="description" content="NPD Video Factory V2 Studio — auto edit, publishing dry run and read-only analytics learning" />
     <title>NPD Studio · Auto Edit</title>
     <link rel="stylesheet" href="/styles.css" />
-    <link rel="stylesheet" href="/studio.css?v=north-star-scene-1" />
+    <link rel="stylesheet" href="/studio.css?v=north-star-subtitle-1" />
   </head>
   <body>
     <div class="app-shell studio-shell">
@@ -256,11 +256,14 @@
                 </div>
                 <div id="subtitle-list" class="subtitle-list"></div>
                 <div class="subtitle-style-grid">
+                  <label>Mẫu phụ đề<select id="subtitle-template"><option value="">Tùy chỉnh</option></select></label>
                   <label>Vị trí<select id="subtitle-position"><option value="bottom">Dưới</option><option value="center">Giữa</option><option value="top">Trên</option></select></label>
-                  <label>Hiệu ứng<select id="subtitle-animation"><option value="word_highlight">Highlight từng từ</option><option value="fade">Fade</option><option value="pop">Pop</option><option value="none">Không</option></select></label>
+                  <label>Hiệu ứng<select id="subtitle-animation"><option value="word_highlight">Highlight từng từ</option><option value="word_by_word">Từng từ</option><option value="karaoke">Karaoke</option><option value="keyword_highlight">Nhấn từ khóa</option><option value="fade">Hiện dần</option><option value="pop">Chữ bật</option><option value="none">Theo câu</option></select></label>
                   <label>Cỡ chữ<input id="subtitle-font-size" type="number" min="28" max="84" /></label>
                   <label>Safe margin %<input id="subtitle-safe-margin" type="number" min="3" max="15" step="0.5" /></label>
+                  <label>Từ khóa nhấn mạnh<input id="subtitle-keywords" type="text" maxlength="1900" placeholder="Ví dụ: trí tuệ nhân tạo, Cần Giờ" /></label>
                 </div>
+                <p id="subtitle-alignment-note" class="compact-note"></p>
                 <button id="save-subtitles-button" class="secondary-button">Lưu phiên bản phụ đề</button>
               </article>
 

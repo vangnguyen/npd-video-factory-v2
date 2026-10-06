@@ -28,9 +28,14 @@ from app.timeline_repository import TimelineRepository
 from app.timeline_service import TimelineService, TimelineContractValidator
 from app.timeline_models import TimelineCreateRequest
 from app.human_auth import authorize_human_request, principal_from
+from app.production_routes import router as production_router
+from app.production_repository import ProductionRepository
+from app.production_service import ProductionPackageService
+from app.production_models import ProductionPackageCreateRequest
+from types import SimpleNamespace
 
 
-def create_harness(data_dir: Path):
+def create_harness(data_dir: Path, subtitle_editor: bool = False):
     @asynccontextmanager
     async def lifespan(app):
         engine,sessions,platform,repo,uploads,analyses,project,version = await setup_services(data_dir)
@@ -57,6 +62,13 @@ def create_harness(data_dir: Path):
         app.state.fixture = {'platform':platform,'project':project,'analyses':analyses,'repo':repo}
         timeline = await app.state.timeline_service.create(project.project_id,TimelineCreateRequest(analysis_id=result.analysis_id,
                                                            silence_decision_ids=[],actor_ref='offline-fixture'))
+        if subtitle_editor:
+            class NoDispatch:
+                async def rpush(self, *_args):raise RuntimeError('fixture dispatch disabled')
+            app.state.production_package_service=ProductionPackageService(repository=ProductionRepository(sessions),
+                timeline_repository=timelines,asset_repository=repo,queue=NoDispatch(),
+                settings=SimpleNamespace(audio_tts_provider='contract'))
+            await app.state.production_package_service.create_or_refresh(project.project_id,ProductionPackageCreateRequest())
         (data_dir/'fixture-session.json').write_text(json.dumps({'token':TEST_HUMAN_TOKEN,'project_id':project.project_id,
             'url':'loopback only','fixture_asr':True,'measured_media':True,'real_provider_acceptance':False}),encoding='utf-8')
         (data_dir/'analysis.json').write_text(result.model_dump_json(indent=2),encoding='utf-8')
@@ -67,6 +79,12 @@ def create_harness(data_dir: Path):
     deps = [Depends(authorize_human_request)]
     app.include_router(timeline_router, dependencies=deps)
     app.include_router(auto_edit_router, dependencies=deps)
+    if subtitle_editor:
+        from fastapi import APIRouter
+        safe_router=APIRouter()
+        safe_router.routes.extend(route for route in production_router.routes if route.path.endswith(
+            ('/production-package','/subtitles','/subtitle-templates')))
+        app.include_router(safe_router,dependencies=deps)
 
     @app.get('/api/v1/auth/session', dependencies=deps)
     async def session(request: Request):
@@ -95,8 +113,9 @@ def create_harness(data_dir: Path):
     async def provider(project_id: str):return {'status':'NOT_CONFIGURED'}
     @app.get('/api/v1/projects/{project_id}/content-generation', dependencies=deps)
     async def generation(project_id: str):return {'job':None,'proposal':None,'provider_status':'NOT_CONFIGURED'}
-    @app.get('/api/v1/projects/{project_id}/production-package', dependencies=deps)
-    async def package(project_id: str):raise HTTPException(404, detail={'message':'Fixture: production dispatch disabled'})
+    if not subtitle_editor:
+        @app.get('/api/v1/projects/{project_id}/production-package', dependencies=deps)
+        async def package(project_id: str):raise HTTPException(404, detail={'message':'Fixture: production dispatch disabled'})
     @app.get('/')
     async def studio():return FileResponse(ROOT/'apps/studio-web/studio.html')
     app.mount('/',StaticFiles(directory=ROOT/'apps/studio-web'))
@@ -107,6 +126,7 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--data-dir',type=Path,required=True)
     parser.add_argument('--port',type=int,default=18031)
+    parser.add_argument('--subtitle-editor',action='store_true')
     args=parser.parse_args()
     args.data_dir.mkdir(parents=True,exist_ok=False)
-    uvicorn.run(create_harness(args.data_dir),host='127.0.0.1',port=args.port,log_level='warning')
+    uvicorn.run(create_harness(args.data_dir,subtitle_editor=args.subtitle_editor),host='127.0.0.1',port=args.port,log_level='warning')

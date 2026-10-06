@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {assertTimedCaptionText} from './subtitles';
 
 const strictObject = <T extends z.ZodRawShape>(shape: T) => z.object(shape).strict();
 
@@ -140,7 +141,7 @@ const timelineSubtitleSchema = strictObject({
 });
 
 export const timelineRenderManifestSchema = strictObject({
-  version: z.enum(["2.0", "2.1", "2.2"]),
+  version: z.enum(["2.0", "2.1", "2.2", "2.3"]),
   metadata: strictObject({
     title: z.string().min(1),
     project: z.string().min(1),
@@ -189,7 +190,9 @@ export const timelineRenderManifestSchema = strictObject({
     background_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
     background_opacity: z.number().min(0).max(1),
     position: z.enum(["top", "center", "bottom"]),
-    animation: z.enum(["none", "fade", "pop", "word_highlight"]),
+    animation: z.enum(["none", "fade", "pop", "word_highlight", "word_by_word", "karaoke", "keyword_highlight"]),
+    template_ref: z.string().regex(/^[a-z][a-z0-9-]{2,60}@v[1-9][0-9]*$/).nullable().optional(),
+    keywords: z.array(z.string().min(1).max(80)).max(24).optional(),
     max_lines: z.number().int().min(1).max(3),
     safe_margin_percent: z.number().min(3).max(15),
   }),
@@ -200,6 +203,13 @@ export const timelineRenderManifestSchema = strictObject({
     source_media_mutated: z.literal(false),
   }),
 }).superRefine((manifest, context) => {
+  if (manifest.version !== '2.3' && (['word_by_word','karaoke','keyword_highlight'].includes(manifest.subtitle_style.animation)
+      || manifest.subtitle_style.template_ref !== undefined || manifest.subtitle_style.keywords !== undefined)) {
+    context.addIssue({code:z.ZodIssueCode.custom,path:['subtitle_style'],message:'extended subtitles require v2.3'});
+  }
+  if (['word_by_word','karaoke'].includes(manifest.subtitle_style.animation) && manifest.subtitles.some(cue=>!cue.words.length)) {
+    context.addIssue({code:z.ZodIssueCode.custom,path:['subtitles'],message:'WORD_ALIGNMENT_UNAVAILABLE'});
+  }
   const validSize = [
     [540, 960],
     [1080, 1920],
@@ -217,14 +227,14 @@ export const timelineRenderManifestSchema = strictObject({
       message: "unsupported render profile dimensions",
     });
   }
-  if (manifest.version !== "2.2" && ![[540,960],[1080,1920],[1920,1080],[1080,1080]].some(
+  if (!["2.2","2.3"].includes(manifest.version) && ![[540,960],[1080,1920],[1920,1080],[1080,1080]].some(
     ([width,height])=>width===manifest.metadata.width && height===manifest.metadata.height)) {
     context.addIssue({code:z.ZodIssueCode.custom,path:["metadata"],message:"additional aspect profiles require v2.2"});
   }
   for (let index = 0; index < manifest.visual_clips.length; index += 1) {
     const clip = manifest.visual_clips[index];
     if (clip.crop_keyframes !== undefined) {
-      if (manifest.version !== "2.2") context.addIssue({code:z.ZodIssueCode.custom,path:["visual_clips",index,"crop_keyframes"],message:"crop paths require v2.2"});
+      if (!["2.2","2.3"].includes(manifest.version)) context.addIssue({code:z.ZodIssueCode.custom,path:["visual_clips",index,"crop_keyframes"],message:"crop paths require v2.2"});
       let previous=-1;
       for (const keyframe of clip.crop_keyframes) {
         if (keyframe.time<=previous || keyframe.x+keyframe.width>1.000001 || keyframe.y+keyframe.height>1.000001) {
@@ -256,6 +266,9 @@ export const timelineRenderManifestSchema = strictObject({
   let previousSubtitleEnd = 0;
   for (let index = 0; index < manifest.subtitles.length; index += 1) {
     const cue = manifest.subtitles[index];
+    try {assertTimedCaptionText(cue, manifest.subtitle_style);} catch {
+      context.addIssue({code:z.ZodIssueCode.custom,path:['subtitles',index],message:'WORD_ALIGNMENT_TEXT_MISMATCH'});
+    }
     if (cue.end_seconds <= cue.start_seconds || cue.start_seconds < previousSubtitleEnd - 1 / manifest.metadata.fps) {
       context.addIssue({
         code: z.ZodIssueCode.custom,

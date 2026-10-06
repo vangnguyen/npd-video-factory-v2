@@ -63,7 +63,7 @@ export type RendererInputProps = {
 };
 
 export type TimelineRenderManifest = {
-  version: "2.0" | "2.1" | "2.2";
+  version: "2.0" | "2.1" | "2.2" | "2.3";
   metadata: {
     title: string;
     project: string;
@@ -118,7 +118,9 @@ export type TimelineRenderManifest = {
     background_color: string;
     background_opacity: number;
     position: "top" | "center" | "bottom";
-    animation: "none" | "fade" | "pop" | "word_highlight";
+    animation: "none" | "fade" | "pop" | "word_highlight" | "word_by_word" | "karaoke" | "keyword_highlight";
+    template_ref?: string | null;
+    keywords?: string[];
     max_lines: number;
     safe_margin_percent: number;
   };

@@ -1,0 +1,94 @@
+{
+  "test": "isolated Studio real SQLite / fixture ASR",
+  "owner_uat": false,
+  "real_provider_acceptance": false,
+  "external_provider_dispatches": 0,
+  "fixture_asr_executions": 1,
+  "timeline": {
+    "current_version": 1,
+    "current_version_id": "tlv_c9876f55e2ff4e71922c"
+  },
+  "versions": [
+    {
+      "version": 1,
+      "style": {
+        "font_family": "Noto Sans",
+        "font_size": 48,
+        "font_weight": 800,
+        "text_color": "#FFFFFF",
+        "highlight_color": "#F5C451",
+        "background_color": "#000000",
+        "background_opacity": 0.58,
+        "position": "bottom",
+        "animation": "word_highlight",
+        "template_ref": null,
+        "keywords": [],
+        "max_lines": 3,
+        "safe_margin_percent": 7.0
+      },
+      "actor_ref": "studio-user",
+      "word_counts": [
+        13,
+        15,
+        15,
+        12
+      ]
+    },
+    {
+      "version": 2,
+      "style": {
+        "font_family": "Noto Sans",
+        "font_size": 48,
+        "font_weight": 800,
+        "text_color": "#FFFFFF",
+        "highlight_color": "#F5C451",
+        "background_color": "#000000",
+        "background_opacity": 0.58,
+        "position": "bottom",
+        "animation": "karaoke",
+        "template_ref": "karaoke-gold@v1",
+        "keywords": [],
+        "max_lines": 3,
+        "safe_margin_percent": 7.0
+      },
+      "actor_ref": "usr:test-owner",
+      "word_counts": [
+        13,
+        15,
+        15,
+        12
+      ]
+    },
+    {
+      "version": 3,
+      "style": {
+        "font_family": "Noto Sans",
+        "font_size": 48,
+        "font_weight": 800,
+        "text_color": "#FFFFFF",
+        "highlight_color": "#17B9A6",
+        "background_color": "#000000",
+        "background_opacity": 0.58,
+        "position": "bottom",
+        "animation": "keyword_highlight",
+        "template_ref": "keyword-accent@v1",
+        "keywords": [
+          "Cần Giờ",
+          "kiểm chứng"
+        ],
+        "max_lines": 3,
+        "safe_margin_percent": 7.0
+      },
+      "actor_ref": "usr:test-owner",
+      "word_counts": [
+        0,
+        15,
+        15,
+        12
+      ]
+    }
+  ],
+  "style_only_alignment_preserved": true,
+  "edited_cue_alignment_cleared": true,
+  "unmodified_cues_preserved": true
+}

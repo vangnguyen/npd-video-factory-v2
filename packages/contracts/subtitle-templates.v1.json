@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "templates": [
+    {"template_ref":"sentence-clean@v1","name":"Theo câu","style":{"template_ref":"sentence-clean@v1","animation":"none","font_size":48}},
+    {"template_ref":"word-focus@v1","name":"Từng từ","style":{"template_ref":"word-focus@v1","animation":"word_by_word","font_size":64,"max_lines":2}},
+    {"template_ref":"karaoke-gold@v1","name":"Karaoke","style":{"template_ref":"karaoke-gold@v1","animation":"karaoke","highlight_color":"#F5C451","font_size":48}},
+    {"template_ref":"keyword-accent@v1","name":"Nhấn từ khóa","style":{"template_ref":"keyword-accent@v1","animation":"keyword_highlight","highlight_color":"#17B9A6","font_size":48}},
+    {"template_ref":"animated-pop@v1","name":"Chữ bật","style":{"template_ref":"animated-pop@v1","animation":"pop","font_size":52}},
+    {"template_ref":"animated-fade@v1","name":"Chữ hiện dần","style":{"template_ref":"animated-fade@v1","animation":"fade","font_size":48}},
+    {"template_ref":"aligned-highlight@v1","name":"Highlight từng từ","style":{"template_ref":"aligned-highlight@v1","animation":"word_highlight","font_size":48}}
+  ]
+}

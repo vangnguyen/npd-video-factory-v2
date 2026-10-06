@@ -194,6 +194,9 @@ class ProductionRepository:
                         expected=expected_subtitle_version,
                         actual=package.current_subtitle_version,
                     )
+                previous = await session.get(SubtitleVersionORM, package.current_subtitle_version_id)
+                from .subtitle_templates import validate_preserved_alignment
+                validate_preserved_alignment(previous.cues_json if previous else [], cues)
                 version = package.current_subtitle_version + 1
                 version_id = _new_id("stv")
                 now = utc_now()

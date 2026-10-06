@@ -3,7 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_validator
+import unicodedata
 
 from .models import StrictModel
 
@@ -65,9 +66,23 @@ class SubtitleStyle(StrictModel):
     background_color: str = Field(default="#000000", pattern=r"^#[0-9A-Fa-f]{6}$")
     background_opacity: float = Field(default=0.58, ge=0, le=1)
     position: Literal["top", "center", "bottom"] = "bottom"
-    animation: Literal["none", "fade", "pop", "word_highlight"] = "word_highlight"
+    animation: Literal["none", "fade", "pop", "word_highlight", "word_by_word", "karaoke", "keyword_highlight"] = "word_highlight"
+    template_ref: str | None = Field(default=None, pattern=r"^[a-z][a-z0-9-]{2,60}@v[1-9][0-9]*$")
+    keywords: list[str] = Field(default_factory=list, max_length=24)
     max_lines: int = Field(default=3, ge=1, le=3)
     safe_margin_percent: float = Field(default=7, ge=3, le=15)
+
+    @field_validator("keywords")
+    @classmethod
+    def normalize_keywords(cls, values: list[str]) -> list[str]:
+        result: list[str] = []
+        for value in values:
+            value = unicodedata.normalize("NFC", value).strip()
+            if not value or len(value) > 80:
+                raise ValueError("subtitle keyword must have 1 to 80 characters")
+            if value.casefold() not in {item.casefold() for item in result}:
+                result.append(value)
+        return result
 
 
 class SubtitleReplaceRequest(StrictModel):

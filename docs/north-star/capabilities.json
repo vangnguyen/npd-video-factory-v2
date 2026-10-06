@@ -381,10 +381,15 @@
     "source": [
       "apps/api/app/production_logic.py",
       "renderer/src/TimelineRender.tsx",
-      "apps/studio-web/studio.js"
+      "apps/studio-web/studio.js",
+      "apps/api/app/subtitle_templates.py",
+      "packages/contracts/subtitle-templates.v1.json",
+      "renderer/src/subtitles.ts",
+      "apps/studio-web/subtitle-editor.mjs",
+      "apps/api/tests/test_subtitle_templates.py"
     ],
-    "behavior": "Sentence/word highlight paths, styles and editor exist.",
-    "gap": "Karaoke/keyword/animated modes and Native template UI with real word alignment.",
+    "behavior": "API Studio persists versioned sentence, word-by-word, karaoke, keyword, fade, pop and aligned-highlight templates. Style-only saves preserve exact measured words; text/time edits clear stale alignment, and server CAS rejects invented/reused timestamps. New render contract v2.3 preserves historical v2.0–2.2 shape. Unicode keyword phrases and measured karaoke/word gaps render without fabricated timing. Local synthetic six-mode encodes and browser HTTP/SQLite saves are verified; captions/controls are 14px with no horizontal overflow at 1366/1920/2560.",
+    "gap": "Native template bridge and genuine ASR-aligned spoken-media E2E remain; synthetic timing/tone evidence is not real-provider acceptance or Owner UAT.",
     "severity": "P1",
     "dependency": "transcript/timeline",
     "wave": "3/6",

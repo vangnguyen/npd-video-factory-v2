@@ -21,6 +21,7 @@ import { timelineHistory,timelineTranscriptId } from "/timeline-history.mjs";
 import { silenceSelection,canonicalShotClips,compatibleSceneAssessments,sceneScore } from "/analysis-review.mjs";
 import { waveformPath } from "/waveform.mjs";
 import {reframeProfiles,matchingVision,needsProductionReview} from "/reframe.mjs";
+import {subtitleCueEdit,compatibleSubtitleTemplates,subtitleSaveStyle,timedSubtitleModes} from '/subtitle-editor.mjs';
 
 const state = {
   workspaceId: null,
@@ -33,6 +34,7 @@ const state = {
   versions: [],
   preview: null,
   productionPackage: null,
+  subtitleCatalog: null,
   publications: [],
   publishingPlatforms: [],
   activePublication: null,
@@ -191,6 +193,9 @@ async function loadProject({ quiet = false } = {}) {
     state.versions = timeline ? await api(`/api/v1/projects/${state.projectId}/timeline/versions`) : [];
     state.visionAnalyses=await api(`/api/v1/projects/${state.projectId}/vision-analyses`).catch(error=>{
       if(error.status===404)return [];throw error;
+    });
+    state.subtitleCatalog=await api(`/api/v1/projects/${state.projectId}/subtitle-templates`).catch(error=>{
+      if(error.status===404)return null;throw error;
     });
     state.sceneIntelligenceSupported=true;
     state.sceneAssessments=await api(`/api/v1/projects/${state.projectId}/scene-intelligence`).catch(error=>{
@@ -521,16 +526,19 @@ function renderProduction() {
   $("#subtitle-version").textContent = `v${packageState.subtitle.version}`;
   $("#subtitle-list").innerHTML = packageState.subtitle.cues.map((cue) => `
     <div class="subtitle-row" data-cue-id="${escapeHtml(cue.cue_id)}">
-      <label>Bắt đầu<input data-cue-field="start" type="number" min="0" step="0.01" value="${Number(cue.start_seconds).toFixed(2)}" /></label>
-      <label>Kết thúc<input data-cue-field="end" type="number" min="0.05" step="0.01" value="${Number(cue.end_seconds).toFixed(2)}" /></label>
+      <label>Bắt đầu<input data-cue-field="start" type="number" min="0" step="0.000001" value="${cue.start_seconds}" /></label>
+      <label>Kết thúc<input data-cue-field="end" type="number" min="0.05" step="0.000001" value="${cue.end_seconds}" /></label>
       <label>Nội dung<textarea data-cue-field="text" maxlength="180">${escapeHtml(cue.text)}</textarea></label>
     </div>
   `).join("");
   $("#subtitle-position").value = packageState.subtitle.style.position;
   $("#subtitle-animation").value = packageState.subtitle.style.animation;
-  const wordOption = $("#subtitle-animation").querySelector('option[value="word_highlight"]');
-  wordOption.disabled = packageState.subtitle.cues.some(cue => !cue.words.length);
-  wordOption.textContent = wordOption.disabled ? "Highlight từ — chưa có measured alignment" : "Highlight từng từ";
+  $('#subtitle-template').innerHTML='<option value="">Tùy chỉnh</option>'+compatibleSubtitleTemplates(state.subtitleCatalog,packageState.subtitle.cues)
+    .map(template=>`<option value="${escapeHtml(template.template_ref)}" ${template.disabled?'disabled':''}>${escapeHtml(template.name)}${template.disabled?' · cần thời gian từng từ':''}</option>`).join('');
+  $('#subtitle-template').value=packageState.subtitle.style.template_ref??'';
+  $('#subtitle-keywords').value=(packageState.subtitle.style.keywords??[]).join(', ');
+  $('#subtitle-keywords').disabled=!state.subtitleCatalog;
+  updateSubtitleAlignment();
   $("#subtitle-font-size").value = packageState.subtitle.style.font_size;
   $("#subtitle-safe-margin").value = packageState.subtitle.style.safe_margin_percent;
 
@@ -875,35 +883,50 @@ async function createOrRefreshProductionPackage() {
   }
 }
 
+function editedSubtitleCues() {
+  return [...document.querySelectorAll('.subtitle-row')].map(row=>subtitleCueEdit(
+    state.productionPackage?.subtitle.cues.find(cue=>cue.cue_id===row.dataset.cueId),{
+      cue_id:row.dataset.cueId,start_seconds:Number(row.querySelector('[data-cue-field="start"]').value),
+      end_seconds:Number(row.querySelector('[data-cue-field="end"]').value),text:row.querySelector('[data-cue-field="text"]').value,
+    }));
+}
+
+function updateSubtitleAlignment() {
+  const cues=editedSubtitleCues();
+  const aligned=cues.length>0&&cues.every(cue=>cue.words.length);
+  for(const option of $('#subtitle-animation').options){
+    option.disabled=(timedSubtitleModes.includes(option.value)&&!aligned)||
+      (!state.subtitleCatalog&&['word_by_word','karaoke','keyword_highlight'].includes(option.value));
+  }
+  for(const template of compatibleSubtitleTemplates(state.subtitleCatalog,cues)){
+    const option=[...$('#subtitle-template').options].find(item=>item.value===template.template_ref);
+    if(option)option.disabled=template.disabled;
+  }
+  $('#subtitle-alignment-note').textContent=aligned?'Có thời gian từng từ từ bản phân tích. Đổi nội dung hoặc thời gian sẽ bỏ căn chỉnh cũ.':
+    'Chưa có thời gian từng từ phù hợp. Có thể chọn mẫu theo câu, từ khóa hoặc chữ chuyển động.';
+}
+
 async function saveSubtitles() {
   const packageState = state.productionPackage;
   if (!packageState) return;
-  const cues = [...document.querySelectorAll(".subtitle-row")].map((row) => {
-    const start = Number(row.querySelector('[data-cue-field="start"]').value);
-    const end = Number(row.querySelector('[data-cue-field="end"]').value);
-    const text = row.querySelector('[data-cue-field="text"]').value.trim();
-    return {
-      cue_id: row.dataset.cueId,
-      start_seconds: start,
-      end_seconds: end,
-      text,
-      words: [], // Manual cue timing is not measured word alignment.
-    };
-  });
+  const cues = editedSubtitleCues();
   try {
+    const template=state.subtitleCatalog?.templates.find(item=>item.template_ref===$('#subtitle-template').value);
+    const style=subtitleSaveStyle(packageState.subtitle.style,template,{
+      position:$('#subtitle-position').value,animation:$('#subtitle-animation').value,
+      font_size:Number($('#subtitle-font-size').value),safe_margin_percent:Number($('#subtitle-safe-margin').value),
+      ...(state.subtitleCatalog?{template_ref:template?.template_ref??null,
+        keywords:$('#subtitle-keywords').value.split(',').map(value=>value.trim()).filter(Boolean)}:{}),
+    });
+    if(timedSubtitleModes.includes(style.animation)&&cues.some(cue=>!cue.words.length))
+      throw new Error('Nội dung hoặc thời gian đã đổi. Chọn phụ đề theo câu hoặc tạo lại thời gian từng từ.');
     state.productionPackage = await api(`/api/v1/projects/${state.projectId}/subtitles`, {
       method: "PUT",
       body: JSON.stringify({
         expected_timeline_version: packageState.timeline_version,
         expected_subtitle_version: packageState.subtitle.version,
         cues,
-        style: {
-          ...packageState.subtitle.style,
-          position: $("#subtitle-position").value,
-          animation: $("#subtitle-animation").value,
-          font_size: Number($("#subtitle-font-size").value),
-          safe_margin_percent: Number($("#subtitle-safe-margin").value),
-        },
+        style,
         actor_ref: "studio-user",
         reason: "subtitle-editor",
       }),
@@ -1239,6 +1262,16 @@ $('#apply-reframe').addEventListener('click',async()=>{
 $("#cancel-preview-button").addEventListener("click", cancelPreview);
 $("#production-package-button").addEventListener("click", createOrRefreshProductionPackage);
 $("#save-subtitles-button").addEventListener("click", saveSubtitles);
+$('#subtitle-list').addEventListener('input',updateSubtitleAlignment);
+$('#subtitle-template').addEventListener('change',()=>{
+  const template=state.subtitleCatalog?.templates.find(item=>item.template_ref===$('#subtitle-template').value);
+  if(!template)return;
+  $('#subtitle-animation').value=template.style.animation;
+  $('#subtitle-position').value=template.style.position;
+  $('#subtitle-font-size').value=template.style.font_size;
+  $('#subtitle-safe-margin').value=template.style.safe_margin_percent;
+  updateSubtitleAlignment();
+});
 $("#save-audio-button").addEventListener("click", saveAudioMix);
 $("#review-render-button").addEventListener("click", () => createProductionRender("review"));
 $("#request-approval-button").addEventListener("click", requestProductionApproval);

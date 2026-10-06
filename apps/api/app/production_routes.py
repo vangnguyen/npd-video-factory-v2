@@ -30,6 +30,14 @@ from .production_service import ProductionPackageService
 router = APIRouter(prefix="/api/v1", tags=["audio-subtitle-render-qc"])
 
 
+@router.get("/projects/{project_id}/subtitle-templates")
+async def get_subtitle_templates(project_id: str, request: Request):
+    from .human_auth import authorize_project
+    from .subtitle_templates import template_catalog
+    await authorize_project(request, project_id, "viewer")
+    return template_catalog()
+
+
 @router.post("/projects/{project_id}/narration-reflow")
 async def reflow_narration(project_id: str, payload: NarrationReflowRequest, request: Request):
     from .human_auth import authorize_project
@@ -109,6 +117,9 @@ async def replace_subtitles(
     payload: SubtitleReplaceRequest,
     request: Request,
 ) -> ProductionPackageRead:
+    from .human_auth import authorize_project
+    principal = await authorize_project(request, project_id, "editor")
+    payload = payload.model_copy(update={"actor_ref": principal.subject})
     try:
         return await service(request).replace_subtitles(project_id, payload)
     except KeyError as exc:

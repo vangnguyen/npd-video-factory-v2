@@ -1,0 +1,42 @@
+{
+  "fixture_asr": true,
+  "real_provider_acceptance": false,
+  "owner_uat": false,
+  "checks": [
+    {
+      "captionFont": "14px",
+      "effect": "keyword_highlight",
+      "height": 768,
+      "keywords": "Cần Giờ, kiểm chứng",
+      "overflow": false,
+      "template": "keyword-accent@v1",
+      "templateFont": "14px",
+      "version": "v3",
+      "width": 1366
+    },
+    {
+      "captionFont": "14px",
+      "effect": "keyword_highlight",
+      "height": 1080,
+      "keywords": "Cần Giờ, kiểm chứng",
+      "overflow": false,
+      "template": "keyword-accent@v1",
+      "templateFont": "14px",
+      "version": "v3",
+      "width": 1920
+    },
+    {
+      "captionFont": "14px",
+      "effect": "keyword_highlight",
+      "height": 1440,
+      "keywords": "Cần Giờ, kiểm chứng",
+      "overflow": false,
+      "template": "keyword-accent@v1",
+      "templateFont": "14px",
+      "version": "v3",
+      "width": 2560
+    }
+  ],
+  "external_provider_dispatches": 0,
+  "fixture_asr_executions": 1
+}

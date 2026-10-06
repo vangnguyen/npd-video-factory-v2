@@ -184,7 +184,7 @@ class ProductionPackageService:
         package, _created = await self.repository.create_or_refresh_package(
             timeline=timeline,
             cues=cues,
-            style=SubtitleStyle(animation="none") if timeline.source_content_version_id or (timeline.snapshot.metadata.get('transcript_revision') or {}).get('human_edited') else SubtitleStyle(),
+            style=SubtitleStyle(animation="none") if timeline.source_content_version_id or any(not cue.words for cue in cues) else SubtitleStyle(),
             mix_config=MixConfig(),
             provider_status=audio_provider_status(self.settings),
             actor_ref=payload.actor_ref,
@@ -211,8 +211,13 @@ class ProductionPackageService:
         timeline = await self.timeline_repository.get_timeline(project_id)
         if timeline is None:
             raise KeyError("timeline")
-        if timeline.source_content_version_id and payload.style.animation == "word_highlight" and any(not c.words for c in payload.cues):
-            raise ProductionContractError("WORD_ALIGNMENT_UNAVAILABLE: select segment captions; word highlight requires measured words")
+        from .subtitle_templates import WORD_TIMED_MODES, validate_template_ref
+        if payload.style.animation in WORD_TIMED_MODES and any(not cue.words for cue in payload.cues):
+            raise ProductionContractError("WORD_ALIGNMENT_UNAVAILABLE: select sentence captions; timed effects require measured words")
+        try:
+            validate_template_ref(payload.style)
+        except ValueError as exc:
+            raise ProductionContractError(str(exc)) from exc
         validate_subtitles(payload.cues, payload.style, timeline.snapshot.duration_seconds)
         return await self.repository.replace_subtitles(
             project_id=project_id,

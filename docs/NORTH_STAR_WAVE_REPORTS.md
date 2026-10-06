@@ -217,3 +217,28 @@ REGRESSIONS: focused prior upload/analysis/transcript/silence/highlight/reframe/
 EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Owner Phase 10 UAT remain separate limitations; safe work continues.
 
 OWNER ACTION REQUIRED: none for continued implementation. NEXT WAVE: finish dynamic subtitle/B-roll/Native integration and continue the remaining safe waves.
+
+
+## Wave 3 — versioned dynamic subtitle templates
+
+WAVE: 3
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. API Studio caption behavior is implemented and locally tested; the Native bridge and genuine spoken-source acceptance remain.
+
+HEAD SHA: parent `e99cba6c462c350b23585c1fe152f0e40f3b4f3d`; the dynamic-subtitle capability commit records this increment. Parent source is pushed and preserved in a verified complete-history bundle.
+
+CAPABILITIES COMPLETED: seven immutable versioned template starters support sentence, word-by-word, karaoke, keyword highlight, pop, fade and historical aligned highlight. Full selected style/keywords/template identity persist with subtitle versions. Render contract v2.3 carries the extensions while old v2.0–2.2 manifests retain their original shape; newer still-image contracts use no fabricated source duration. NFC Unicode keywords use whole-word/phrase matches with Vietnamese accents. Karaoke progresses against measured intervals and retains punctuation; word-by-word leaves real timestamp gaps empty. Timed effects require saved word alignment, and mismatched text is rejected. Style-only Studio saves preserve exact timestamps; editing text/time clears stale words. Server-side CAS/history rejects invented or stale retained timestamps, independently of the UI. HTTP writes bind the authenticated editor identity. Old APIs without the catalog keep the existing sentence/animated paths available. Browser review found legacy 8px caption controls; they now use 14px input text with a two-column workbench at 1366px.
+
+CAPABILITIES PARTIAL: accepted Native Studio template/render bridge; genuine spoken-video alignment and final Mode B E2E; caption edit/timeline integration and wider downstream work remain subject to the canonical timeline acceptance. No provider or Owner acceptance is inferred from fixtures.
+
+TESTS: **68 focused API PASS / 3 SKIP**, 100.84 s (`subtitle-api-final.log`); **93/93 Studio PASS**, 419.31 ms, and final JavaScript syntax check; **33/33 renderer PASS**, 1.48 s, TypeScript and actual webpack bundle checks pass. Tests cover missing/mismatched alignment, forged words, CAS, immutable stored versions, authorized HTTP roles/workspace scope/actor binding, Unicode keyword boundaries, real timing gaps and historical version gates. The final extended-manifest/still-image contract check passes **6/6**, 7.10 s (`subtitle-api-contract-final.log`), after the last validation change. Three API skips are explicit infrastructure-dependent checks. Certified-runtime Native regression **264/264 PASS**, 134.690 s (`native-subtitle-regression.log`).
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: six actual Remotion/Chrome/FFmpeg H.264/AAC encodes, each 540×960 and 2.0s video / 2.048s AAC container; browser HTTP/SQLite saves and reload. MOCK TESTS: explicit ASR fixture and synthetic word timing/tone audio; no speech-recognition quality claim.
+
+EVIDENCE: `subtitle-render-evidence.json` contains six output hashes, exact recovery paths, receipts and FFprobe data; runner `renderer/src/north-star-subtitle-smoke.ts` requires a fresh output directory and closes its server. Four decoded caption/gap frames are retained. `subtitle-persistence-evidence.json` verifies three stored versions: v2 style change preserves all words, v3 edited text clears only its stale alignment, and master timeline remains v1. `studio-wave3-visual/subtitle-evidence.json` and three screenshots show 14px caption controls, preserved Unicode keyword configuration and no horizontal overflow at 1366/1920/2560. Browser console has no errors/warnings. Fixture tab closed, viewport reset, exactly the two verified fixture Python processes stopped; `C:\vf-ui-fixture-c1` retained. First local render run is retained separately; the second adds crisp karaoke text and hides empty-gap caption background. An evidence-copy script initially hit Windows default text decoding; rerun explicitly used UTF-8 without replacing source or accepted media.
+
+REGRESSIONS: focused existing production/approval/content/transcript/reframe paths pass; full Linux checkpoint remains the separately recorded 1,922/6 result at cc94900 until the next committed-source run. Original live source remains clean at `2ced7bc81f9402368fb22c9e7aca242e740531af`; live data/configuration and accepted media are untouched. No main merge, paid provider dispatch, external publication or production deployment.
+
+EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Owner Phase 10 UAT are separate limitations; none blocks continued safe implementation.
+
+OWNER ACTION REQUIRED: none for continued safe work. NEXT WAVE: continue B-roll/media resolver and Native integration, then all remaining safe waves.

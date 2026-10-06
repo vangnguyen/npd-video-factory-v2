@@ -16,6 +16,7 @@ import {
 
 import type {TimelineRenderManifest, TimelineRendererInputProps} from "./types";
 import {sourceCropAt} from "./reframe";
+import {captionParts} from './subtitles';
 
 const dbToAmplitude = (db: number): number => Math.pow(10, db / 20);
 
@@ -98,6 +99,19 @@ const SubtitleLayer: React.FC<{
       const element = subtitle.current;
       if (!element) throw new Error("SUBTITLE_LAYOUT_UNAVAILABLE");
       const measured = getComputedStyle(element);
+      if (style.animation === 'word_by_word') {
+        const probe = element.cloneNode(false) as HTMLDivElement;
+        Object.assign(probe.style, {position:'absolute', visibility:'hidden', width:`${element.getBoundingClientRect().width}px`,
+          boxSizing:'border-box', left:'0', right:'auto', top:'0', bottom:'auto', transform:'none'});
+        element.parentElement!.appendChild(probe);
+        try {
+          for (const word of cue.words) {
+            probe.textContent = word.text;
+            assertSubtitleFits(probe.scrollHeight, Number.parseFloat(measured.lineHeight),
+              Number.parseFloat(measured.paddingTop) + Number.parseFloat(measured.paddingBottom), style.max_lines);
+          }
+        } finally {probe.remove();}
+      }
       assertSubtitleFits(element.scrollHeight, Number.parseFloat(measured.lineHeight),
         Number.parseFloat(measured.paddingTop) + Number.parseFloat(measured.paddingBottom), style.max_lines);
       continueRender(layoutHandle);
@@ -108,7 +122,6 @@ const SubtitleLayer: React.FC<{
     return () => {cancelled = true;};
   }, [layoutHandle, cue, style, width, height]);
   const now = cue.start_seconds + frame / fps;
-  const activeWord = activeSubtitleWordIndex(cue, now);
   const scale = Math.min(width / 1080, height / 1920);
   const fade = interpolate(frame, [0, Math.max(1, Math.round(fps * 0.16))], [0, 1], {
     extrapolateLeft: "clamp",
@@ -122,11 +135,7 @@ const SubtitleLayer: React.FC<{
     : style.position === "center"
       ? {top: "50%", transform: `translateY(-50%) scale(${animationScale})`}
       : {bottom: `${style.safe_margin_percent + 5}%`};
-  const words = cue.words.length > 0 ? cue.words : [{
-    text: cue.text,
-    start_seconds: cue.start_seconds,
-    end_seconds: cue.end_seconds,
-  }];
+  const parts = captionParts(cue, style, now);
   return (
     <div
       ref={subtitle}
@@ -145,7 +154,8 @@ const SubtitleLayer: React.FC<{
         fontWeight: style.font_weight,
         lineHeight: 1.22,
         textAlign: "center",
-        opacity: style.animation === "fade" || style.animation === "pop" ? fade : 1,
+        opacity: style.animation === 'word_by_word' && !parts.length ? 0
+          : style.animation === "fade" || style.animation === "pop" ? fade : 1,
         transform: style.position === "center"
           ? `translateY(-50%) scale(${animationScale})`
           : `scale(${animationScale})`,
@@ -156,17 +166,18 @@ const SubtitleLayer: React.FC<{
         textShadow: "0 2px 8px rgba(0,0,0,0.95)",
       }}
     >
-      {words.map((word, index) => (
+      {parts.map((part, index) => (
         <React.Fragment key={`${cue.cue_id}-${index}`}>
-          {index > 0 ? " " : null}
           <span
             style={{
-              color: style.animation === "word_highlight" && index === activeWord
-                ? style.highlight_color
-                : style.text_color,
+              color: part.highlighted ? style.highlight_color : style.text_color,
+              ...(style.animation === 'karaoke' && part.wordIndex !== null ? {
+                backgroundImage: `linear-gradient(90deg, ${style.highlight_color} ${part.progress * 100}%, ${style.text_color} ${part.progress * 100}%)`,
+                backgroundClip: 'text', WebkitBackgroundClip: 'text', color: 'transparent', textShadow:'none',
+              } : {}),
             }}
           >
-            {word.text}
+            {part.text}
           </span>
         </React.Fragment>
       ))}
