@@ -318,14 +318,19 @@ def apply_operations(
                 target["clips"].append(clip)
         elif operation.type == "trim":
             if clip["kind"] == "image":
-                raise TimelineEditError("images use display duration; edit the storyboard duration")
-            source_start = operation.source_start if operation.source_start is not None else clip["source_start"]
-            source_end = operation.source_end if operation.source_end is not None else clip["source_end"]
-            if source_end <= source_start:
-                raise TimelineEditError("trim must preserve a positive source window")
-            clip["source_start"] = source_start
-            clip["source_end"] = source_end
-            clip["duration"] = round((source_end - source_start) / clip["speed"], 6)
+                if operation.source_start is not None or operation.source_end is not None or operation.duration is None:
+                    raise TimelineEditError("images use display duration without a source time window")
+                clip["duration"] = operation.duration
+            else:
+                if operation.duration is not None:
+                    raise TimelineEditError("temporal clips use source trim and playback speed")
+                source_start = operation.source_start if operation.source_start is not None else clip["source_start"]
+                source_end = operation.source_end if operation.source_end is not None else clip["source_end"]
+                if source_end <= source_start:
+                    raise TimelineEditError("trim must preserve a positive source window")
+                clip["source_start"] = source_start
+                clip["source_end"] = source_end
+                clip["duration"] = round((source_end - source_start) / clip["speed"], 6)
             if operation.timeline_start is not None:
                 clip["timeline_start"] = operation.timeline_start
         elif operation.type == "split":
@@ -369,6 +374,10 @@ def apply_operations(
                     raise TimelineEditError("duplicate target track is not editable or compatible")
             target["clips"].append(duplicate)
         elif operation.type == "set_clip_properties":
+            if operation.duration is not None:
+                if clip["kind"] != "image":
+                    raise TimelineEditError("display duration edits require a still image")
+                clip["duration"] = operation.duration
             if operation.opacity is not None:
                 clip["opacity"] = operation.opacity
             if operation.volume is not None:

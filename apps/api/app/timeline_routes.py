@@ -73,8 +73,7 @@ async def create_timeline(
     request: Request,
 ) -> TimelineRead:
     try:
-        if payload.silence_decision_ids is not None:
-            payload = payload.model_copy(update={"actor_ref": principal_from(request).subject})
+        payload = payload.model_copy(update={"actor_ref": principal_from(request).subject})
         return await timeline_service(request).create(project_id, payload)
     except KeyError as exc:
         raise missing(str(exc.args[0])) from exc
@@ -101,6 +100,7 @@ async def update_timeline(
     request: Request,
 ) -> TimelineRead:
     try:
+        payload = payload.model_copy(update={"actor_ref": principal_from(request).subject})
         return await timeline_service(request).mutate(project_id, payload)
     except KeyError as exc:
         raise missing(str(exc.args[0])) from exc
@@ -125,6 +125,7 @@ async def restore_timeline(
     request: Request,
 ) -> TimelineRead:
     try:
+        payload = payload.model_copy(update={"actor_ref": principal_from(request).subject})
         return await timeline_service(request).restore(project_id, payload)
     except KeyError as exc:
         raise missing(str(exc.args[0])) from exc
@@ -159,6 +160,7 @@ async def create_preview(
     request: Request,
 ) -> PreviewRead:
     try:
+        payload = payload.model_copy(update={"actor_ref": principal_from(request).subject})
         return await preview_service(request).enqueue(project_id, payload)
     except KeyError as exc:
         raise missing(str(exc.args[0])) from exc

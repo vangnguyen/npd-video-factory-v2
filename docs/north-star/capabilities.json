@@ -330,8 +330,8 @@
       "apps/api/tests/test_visual_scene_signals.py",
       "apps/api/app/scene_intelligence.py"
     ],
-    "behavior": "API Studio Top 3/Top 5/Auto Shorts save separate immutable, fingerprint-idempotent canonical drafts. Scores recompute from the selected transcript, preserve physical observations, expose heuristic factors, protect word/segment boundaries and enforce duration bounds without fabricating missing candidates. Applying requires editor identity, transcript binding, locks and timeline CAS; master history remains and approval invalidates. Additive draft-table migration tested locally; no live migration performed. Top 3/5/Auto Shorts drafts now explain weighted speech coverage, keywords, information density, measured pixel-change, local exposure, pixel repetition and audio energy. Missing multimodal factors remain null, are omitted from weighted scoring and reduce confidence; no semantic model call is invented. Immutable combined-scene assessments now bind selected transcript, source hash, local measurement and saved structured Vision frames/model/confidence/reference. Missing scores stay null; assessment selection feeds highlight drafts without altering original analyses or the active timeline.",
-    "gap": "Real spoken-media/highlight acceptance and Native workflow remain incomplete; selected immutable scene assessments now bind saved Vision and measured factors. Placeholder descriptions are excluded from text scoring, unavailable semantic factors remain null and saved transcript/Vision descriptions retain explicit evidence basis.",
+    "behavior": "API Studio Top 3/Top 5/Auto Shorts save separate immutable, fingerprint-idempotent canonical drafts. Scores recompute from the selected transcript, preserve physical observations, expose heuristic factors, protect word/segment boundaries and enforce duration bounds without fabricating missing candidates. Applying requires editor identity, transcript binding, locks and timeline CAS; master history remains and approval invalidates. Additive draft-table migration tested locally; no live migration performed. Top 3/5/Auto Shorts drafts now explain weighted speech coverage, keywords, information density, measured pixel-change, local exposure, pixel repetition and audio energy. Missing multimodal factors remain null, are omitted from weighted scoring and reduce confidence; no semantic model call is invented. Immutable combined-scene assessments now bind selected transcript, source hash, local measurement and saved structured Vision frames/model/confidence/reference. Missing scores stay null; assessment selection feeds highlight drafts without altering original analyses or the active timeline. Placeholder descriptions are excluded from text scoring, unavailable semantic factors remain null and saved transcript/Vision descriptions retain explicit evidence basis.",
+    "gap": "Real spoken-media/highlight acceptance and Native workflow remain incomplete; selected immutable scene assessments now bind saved Vision and measured factors.",
     "severity": "P1",
     "dependency": "analysis/timeline",
     "wave": "3",
@@ -406,9 +406,11 @@
       "apps/api/app/broll_planner.py",
       "apps/api/tests/test_broll_planner.py",
       "apps/studio-web/broll-planner.mjs",
-      "scripts/north_star_broll_evidence.py"
+      "scripts/north_star_broll_evidence.py",
+      "apps/api/tests/test_still_image_timing.py",
+      "scripts/north_star_still_timing_evidence.py"
     ],
-    "behavior": "Supporting B-roll plans exclude primary footage, restricted assets and videos without measured duration. Saved filename/description/tag overlap is explicitly a lexical score with semantic confidence null. Priority supports uploaded assets, licensed stock, an explicitly registered licensed internal-library tier and configured generation; unavailable tiers preserve original footage. Studio creates/selects immutable transcript-bound plans, picks registered media, waits for async resolution and explicitly applies chosen items to the same canonical timeline with CAS, history and approval/preview invalidation. Placement follows source trim, move, cut and speed; images use display duration and video is bounded to measured duration, with original audio/captions preserved. Unknown rights remain publishing-blocked. Local browser/SQLite and playable FFmpeg visual-proxy evidence are separate from mock speech/provider acceptance.",
+    "behavior": "Supporting B-roll plans exclude primary footage, restricted assets and videos without measured duration. Saved filename/description/tag overlap is explicitly a lexical score with semantic confidence null. Priority supports uploaded assets, licensed stock, an explicitly registered licensed internal-library tier and configured generation; unavailable tiers preserve original footage. Studio creates/selects immutable transcript-bound plans, picks registered media, waits for async resolution and explicitly applies chosen items to the same canonical timeline with CAS, history and approval/preview invalidation. Placement follows source trim, move, cut and speed; images use display duration and video is bounded to measured duration, with original audio/captions preserved. Unknown rights remain publishing-blocked. Local browser/SQLite and playable FFmpeg visual-proxy evidence are separate from mock speech/provider acceptance. Still-image duration and placement edit the same canonical timeline without invented source timestamps or speed. Immutable undo/redo and reload preserve exact 4.25-second image timing; authenticated identities replace client actor claims for timeline create/edit/restore and preview enqueue.",
     "gap": "Native integration, genuine structured Vision relevance/reranking, official stock/generated adapters and full A/V/final spoken-source acceptance remain. Supporting duration/placement controls and provider fallback after runtime outages need completion; proxy contain/letterbox behavior is distinct from final A/V compositing.",
     "severity": "P1",
     "dependency": "media/rights/Vision",
@@ -587,9 +589,11 @@
       "apps/studio-web/tests/timeline-history.test.mjs",
       "apps/api/app/audio_waveform.py",
       "apps/studio-web/waveform.mjs",
-      "docs/north-star/studio-wave3-visual/evidence.json"
+      "docs/north-star/studio-wave3-visual/evidence.json",
+      "apps/api/tests/test_still_image_timing.py",
+      "scripts/north_star_still_timing_evidence.py"
     ],
-    "behavior": "API Studio defaults to shot cards; its collapsed advanced view edits the same canonical IDs. Source-relative FFmpeg peak/RMS waveforms follow trim/split/move; absent measurements have no decorative amplitude substitute. Existing trim/split/duplicate/move/lock/mute/zoom/snapping remain. Browser Unicode transcript save, undo/redo and silence rebuild passed on fresh persisted fixtures at 1366/1920/2560 with no horizontal overflow or console errors.",
+    "behavior": "API Studio defaults to shot cards; its collapsed advanced view edits the same canonical IDs. Source-relative FFmpeg peak/RMS waveforms follow trim/split/move; absent measurements have no decorative amplitude substitute. Existing trim/split/duplicate/move/lock/mute/zoom/snapping remain. Browser Unicode transcript save, undo/redo and silence rebuild passed on fresh persisted fixtures at 1366/1920/2560 with no horizontal overflow or console errors. Still-image duration and placement edit the same canonical timeline without invented source timestamps or speed. Immutable undo/redo and reload preserve exact 4.25-second image timing; authenticated identities replace client actor claims for timeline create/edit/restore and preview enqueue.",
     "gap": "Native advanced editor bridge remains; fresh real-media full Mode B acceptance and Owner usability UAT are still required.",
     "severity": "P1",
     "dependency": "canonical adapter",
@@ -602,9 +606,11 @@
     "status": "PARTIAL",
     "source": [
       "services/windows_native/shot_preview.py",
-      "apps/api/app/timeline_service.py"
+      "apps/api/app/timeline_service.py",
+      "apps/api/tests/test_still_image_timing.py",
+      "scripts/north_star_still_timing_evidence.py"
     ],
-    "behavior": "Version-bound proxy jobs and invalidation; Native preview path exists.",
+    "behavior": "Version-bound proxy jobs and invalidation; Native preview path exists. Still-image duration and placement edit the same canonical timeline without invented source timestamps or speed. Immutable undo/redo and reload preserve exact 4.25-second image timing; authenticated identities replace client actor claims for timeline create/edit/restore and preview enqueue.",
     "gap": "Audio-complete preview parity, cancel/progress/cache across both production paths.",
     "severity": "P1",
     "dependency": "timeline/audio",

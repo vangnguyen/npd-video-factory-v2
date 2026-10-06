@@ -1,0 +1,34 @@
+{
+  "local_real_encoding": true,
+  "fixture_asr": true,
+  "real_provider_tested": false,
+  "human_approval_claimed": false,
+  "production_deployed": false,
+  "timeline_version": 5,
+  "saved_image_duration_seconds": 4.25,
+  "timeline_start_seconds": 2,
+  "immutable_undo_redo_verified": true,
+  "authenticated_actor_verified": true,
+  "source_time_not_fabricated": true,
+  "primary_audio_subtitle_tracks_preserved": true,
+  "decoded_rgb": {
+    "before": [
+      51,
+      52,
+      62
+    ],
+    "during": [
+      11,
+      9,
+      115
+    ],
+    "after": [
+      51,
+      53,
+      59
+    ]
+  },
+  "render_sha256": "2cdaf5b7daa160744b6829993c992a4d58d051444ab1c685186cec808c39242a",
+  "audio_included": false,
+  "output_directory": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\still-timing-render-r1"
+}

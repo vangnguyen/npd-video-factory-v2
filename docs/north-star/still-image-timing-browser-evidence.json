@@ -1,0 +1,43 @@
+{
+  "fixture_asr": true,
+  "real_provider_acceptance": false,
+  "external_provider_dispatches": 0,
+  "viewports": [
+    {
+      "duration": "4.25",
+      "height": 1000,
+      "pageWidth": 1351,
+      "sourceDisabled": true,
+      "sourceEnd": "",
+      "timelineStart": "2",
+      "version": "Timeline v5",
+      "width": 1366
+    },
+    {
+      "duration": "4.25",
+      "height": 1080,
+      "pageWidth": 1905,
+      "sourceDisabled": true,
+      "sourceEnd": "",
+      "timelineStart": "2",
+      "version": "Timeline v5",
+      "width": 1920
+    },
+    {
+      "duration": "4.25",
+      "height": 1440,
+      "pageWidth": 2545,
+      "sourceDisabled": true,
+      "sourceEnd": "",
+      "timelineStart": "2",
+      "version": "Timeline v5",
+      "width": 2560
+    }
+  ],
+  "edit_version": 3,
+  "undo_version": 4,
+  "redo_version": 5,
+  "reload_preserves_duration": true,
+  "console_errors_warnings": [],
+  "retained_fixture": "C:/vf-ui-fixture-b4"
+}

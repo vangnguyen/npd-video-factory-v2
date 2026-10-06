@@ -305,3 +305,25 @@ CAPABILITIES PARTIAL: real spoken-source/provider and Native/final acceptance re
 EVIDENCE: scoring evidence includes `text_evidence_available`, its basis, missing factors and available weight; `test_visual_scene_signals.py` covers null placeholder/observed-text behavior. The full clean Linux B-roll checkpoint `94a7e3d` is running separately and is not attributed to this later correction.
 
 REGRESSIONS: focused earlier highlight/scene contracts pass; accepted source/artifacts/live data untouched. EXTERNAL BLOCKERS: none for continued safe work. OWNER ACTION REQUIRED: none. NEXT WAVE: canonical still-image timing controls, remaining Mode B/Native integration and subsequent safe waves.
+
+## Wave 3 — editable still-image duration and actor-bound timeline history
+
+WAVE: 3
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. This increment completes supporting-image placement/duration control in API Studio; Native and complete spoken-source/final acceptance remain.
+
+HEAD SHA: parent `521fcd290134338c1f388266e8da63b7dccb9b7b`; the image timing capability commit records this increment. Parent is pushed to the completion branch.
+
+CAPABILITIES COMPLETED: image trim/property operations change display duration without source timestamps or playback speed. Temporal clips retain source-window/speed-derived timing. Duration is finite, positive and bounded; misplaced duration fields, fabricated image source windows and locked edits reject. The inspector shows an image-specific duration field. Create/edit/restore/preview HTTP writes record the authenticated principal rather than a caller-supplied actor. CAS, immutable history and preview/approval invalidation reuse the canonical repository. Browser image placement at 2s and display duration 4.25s survive undo, redo and reload.
+
+CAPABILITIES PARTIAL: Native advanced/editor bridge, audio-complete preview parity, genuine ASR/Vision/provider acceptance and full Mode B A/V/final E2E. The rendered local proxy remains visual-only and does not certify Owner UAT.
+
+TESTS: **47/47 focused API PASS**, 89.29s (`still-image-api-r1.log`); **94/94 Studio PASS**, 466.61ms (`still-image-studio-r1.log`) and syntax check. New contracts cover image split/source invariants, temporal misuse, NaN/infinite/invalid bounds, locks, CAS, immutable restoration, stale previews, checksum preservation, HTTP authentication/viewer denial and forged actor rejection. Full clean Linux checkpoint `94a7e3d` is still running and is not attributed to later changes.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual browser HTTP/SQLite edits and reload at 1366/1920/2560; real FFmpeg H.264 visual proxy and decoded samples before/during/after the supporting image. MOCK TESTS: explicitly labeled synthetic ASR and tone/video fixture; zero external provider dispatches.
+
+EVIDENCE: `still-image-timing-browser-evidence.json`, three viewport screenshots and `still-image-timing-render-evidence.json`. The five immutable versions verify apply v2, edit v3, undo v4 equals v2 and redo v5 equals v3. Primary/audio/subtitle tracks and 16s master duration compare unchanged; original asset hashes are verified. Decoded blue-image mean RGB during placement is [11,9,115], while source frames before/after differ. Actual proxy hash is `2cdaf5b7daa160744b6829993c992a4d58d051444ab1c685186cec808c39242a`; complete exports remain in recovery `still-timing-render-r1`. Runner `scripts/north_star_still_timing_evidence.py` verifies only the explicit synthetic fixture history and never calls a provider. No horizontal overflow or browser warning/error occurred. Test tab closed and viewport reset; only the two exact verified fixture Python processes were stopped; `C:\vf-ui-fixture-b4` is retained outside Git.
+
+REGRESSIONS: focused previous content/timeline/B-roll/approval contracts pass. Original live source, data/configuration and accepted artifacts are untouched; previous Native/renderer/full-Linux results remain separately identified. No main merge, production deployment or external publication.
+
+EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Phase 10 Owner UAT remain separate limitations. OWNER ACTION REQUIRED: none for continued safe implementation. NEXT WAVE: remaining Mode B/Native integration, structured media intelligence and subsequent safe waves.

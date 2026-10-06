@@ -191,6 +191,7 @@ class TimelineOperation(StrictModel):
     timeline_start: float | None = Field(default=None, ge=0)
     source_start: float | None = Field(default=None, ge=0)
     source_end: float | None = Field(default=None, gt=0)
+    duration: float | None = Field(default=None, gt=0, le=86400)
     at_seconds: float | None = Field(default=None, ge=0)
     disabled: bool | None = None
     locked: bool | None = None
@@ -203,6 +204,8 @@ class TimelineOperation(StrictModel):
 
     @model_validator(mode="after")
     def require_operation_arguments(self) -> "TimelineOperation":
+        if self.duration is not None and self.type not in {"trim", "set_clip_properties"}:
+            raise ValueError("display duration is only valid for trim or set_clip_properties")
         clip_operations = {
             "move", "trim", "split", "delete", "reorder", "disable", "duplicate", "set_clip_properties"
         }
@@ -210,8 +213,8 @@ class TimelineOperation(StrictModel):
             raise ValueError(f"{self.type} requires clip_id")
         if self.type == "move" and self.timeline_start is None and self.target_track_id is None:
             raise ValueError("move requires timeline_start or target_track_id")
-        if self.type == "trim" and self.source_start is None and self.source_end is None:
-            raise ValueError("trim requires source_start or source_end")
+        if self.type == "trim" and self.source_start is None and self.source_end is None and self.duration is None:
+            raise ValueError("trim requires source_start/source_end or image display duration")
         if self.type == "split" and self.at_seconds is None:
             raise ValueError("split requires at_seconds")
         if self.type == "reorder" and self.target_index is None:
@@ -225,7 +228,7 @@ class TimelineOperation(StrictModel):
                 raise ValueError("set_track_state requires locked, muted or disabled")
         if self.type == "set_clip_properties" and all(
             value is None
-            for value in (self.opacity, self.volume, self.speed, self.crop, self.transform)
+            for value in (self.opacity, self.volume, self.speed, self.crop, self.transform, self.duration)
         ):
             raise ValueError("set_clip_properties requires at least one property")
         return self

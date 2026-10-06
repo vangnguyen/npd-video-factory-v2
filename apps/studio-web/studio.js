@@ -458,6 +458,9 @@ function renderInspector() {
   $("#clip-source-start").value = clip.source_start;
   $("#clip-source-end").value = clip.source_end;
   $("#clip-timeline-start").value = clip.timeline_start;
+  $('#clip-display-duration-label').hidden=clip.kind!=='image';
+  $('#clip-display-duration').value=clip.duration;
+  $('#clip-display-duration').disabled=track.locked||clip.kind!=='image';
   $("#clip-speed").value = clip.speed;
   $("#clip-opacity").value = clip.opacity;
   $("#clip-volume").value = clip.volume;
@@ -1527,9 +1530,9 @@ $("#clip-inspector").addEventListener("submit", async (event) => {
   if (!selection) return;
   await mutate([
     {
-      type: selection.clip.kind === "image" ? "move" : "trim",
+      type: "trim",
       clip_id: selection.clip.clip_id,
-      ...(selection.clip.kind === "image" ? {} : {source_start: Number($("#clip-source-start").value), source_end: Number($("#clip-source-end").value)}),
+      ...(selection.clip.kind === "image" ? {duration:Number($('#clip-display-duration').value)} : {source_start: Number($("#clip-source-start").value), source_end: Number($("#clip-source-end").value)}),
       timeline_start: Number($("#clip-timeline-start").value),
     },
     {
