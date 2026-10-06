@@ -3,11 +3,16 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
 class Element {
-  constructor(id){this.id=id;this.value='';this.checked=false;this.disabled=false;this.hidden=false;this.options=[];this.dataset={};this.listeners={};this.attributes={};this.classList={add(){},toggle(){}};}
+  constructor(id){this.id=id;this.value='';this.checked=false;this.disabled=false;this.hidden=false;this.options=[];this.dataset={};this.listeners={};this.attributes={};this.classList={add(){},toggle(){},remove(){}};}
   set innerHTML(value){this.html=value;const options=[...value.matchAll(/<option value="([^"]*)"/g)].map(m=>({value:m[1]}));if(options.length){this.options=options;if(!options.some(o=>o.value===this.value))this.value=options[0].value;}}
   get innerHTML(){return this.html||'';}
   addEventListener(name,callback){this.listeners[name]=callback;}
   setAttribute(name,value){this.attributes[name]=value;}
+  getAttribute(name){return this.attributes[name];}
+  removeAttribute(name){delete this.attributes[name];}
+  closest(){return {hidden:false};}
+  matches(){return false;}
+  querySelectorAll(){return [];}
 }
 async function withRuntime(page,setup,assertions){
   const html=await readFile(new URL('../'+page+'.html',import.meta.url),'utf8');
@@ -15,12 +20,12 @@ async function withRuntime(page,setup,assertions){
   const globals=['document','window','fetch','location','sessionStorage','localStorage','history'];
   const originals=new Map(globals.map(k=>[k,Object.getOwnPropertyDescriptor(globalThis,k)]));
   const calls=[],stored=new Map(),context={nodes,calls,html};
-  globalThis.document={getElementById:id=>{assert.ok(nodes.has(id),'Missing actual control '+id);return nodes.get(id);},querySelector:()=>null,querySelectorAll:selector=>selector==='button'?[...nodes.values()]:[]};
+  globalThis.document={body:new Element('body'),getElementById:id=>{assert.ok(nodes.has(id),'Missing actual control '+id);return nodes.get(id);},querySelector:()=>null,querySelectorAll:selector=>selector==='button'?[...nodes.values()]:[]};
   globalThis.window={addEventListener(){}};
   globalThis.sessionStorage={getItem:key=>stored.get(key)??null,setItem:(key,value)=>stored.set(key,value),removeItem:key=>stored.delete(key)};
   globalThis.localStorage=globalThis.sessionStorage;globalThis.history={replaceState(){}};globalThis.location={search:''};
   const handler=setup(context);
-  globalThis.fetch=async(path,options={})=>{calls.push({path,method:options.method??'GET',body:options.body?JSON.parse(options.body):null});const result=await handler(path,options);return {ok:result.status===undefined||result.status===200,status:result.status??200,json:async()=>structuredClone(result.value)};};
+  globalThis.fetch=async(path,options={})=>{calls.push({path,method:options.method??'GET',headers:options.headers??{},body:options.body?JSON.parse(options.body):null});const result=await handler(path,options);return {ok:result.status===undefined||result.status===200,status:result.status??200,json:async()=>structuredClone(result.value)};};
   try{
     await import('../'+page+'.mjs?secondary-runtime='+Date.now()+'-'+Math.random());
     await assertions(context);
@@ -78,6 +83,57 @@ test('Unknown connection state keeps credential submissions disabled until a suc
     assert.equal(calls.every(c=>c.method==='GET'),true);
   });
 });
+
+for(const page of ['production','native','intelligence','assemblyai']){
+  test('Explicit '+page+' Refresh recovers a rotated local session with GET only and keeps write intent explicit',async()=>{
+    await withRuntime(page,context=>{
+      let valid=false,generation=1;
+      context.restart=()=>{valid=false;generation++;};
+      return (path,options)=>{
+        if(path==='/api/session'){valid=true;return {value:{csrf:'session-fixture-'+generation}};}
+        if(!valid)return {status:401,value:{code:'LOCAL_SESSION_REQUIRED'}};
+        if(path==='/api/production/profiles')return {value:catalog()};
+        if(path==='/api/production/queue')return {value:{items:[{...queueRow(),title:'Queue generation '+generation}]}};
+        if(path==='/api/projects'){
+          if(options.method==='POST')return {value:{id:'p'.repeat(32),revision:1,document:{name:'Explicit fixture',prompt:'Retained unsaved prompt',input_kind:'prompt',proposal:null,assets:[],documents:[],scene_media:[]},jobs:[],approval:null}};
+          return {value:[]};
+        }
+        if(path==='/api/defaults')return {value:{prompt:'Startup fixture prompt'}};
+        if(path==='/api/runtime-status')return {value:{openai_key_saved:false,assemblyai:{connected:false}}};
+        if(path==='/api/brand-templates')return {value:{brands:[],templates:[]}};
+        if(path==='/api/intelligence/config')return {value:{profiles:[{id:'fixture',name:'Fixture',project_references:[]}],scoring:{weights:{relevance:1}}}};
+        if(path==='/api/intelligence/runs'||path==='/api/intelligence/queue')return {value:[]};
+        if(path==='/api/connections/assemblyai')return {value:{credential_saved:false,connected:generation===2}};
+        return {status:404,value:{code:'FIXTURE_ROUTE_NOT_FOUND'}};
+      };
+    },async({nodes,calls,restart})=>{
+      const refresh=nodes.get(page==='intelligence'?'ci-refresh':page==='assemblyai'?'connection-refresh':'refresh');
+      const dataPath=page==='production'?'/api/production/queue':page==='native'?'/api/brand-templates':page==='intelligence'?'/api/intelligence/queue':'/api/connections/assemblyai';
+      await settle(()=>calls.some(c=>c.path===dataPath)&&!refresh.disabled);
+      assert.equal(calls.filter(c=>c.path==='/api/session').length,1);
+      if(page==='native'){nodes.get('prompt').value='Retained unsaved prompt';nodes.get('prompt').listeners.input();}
+      const before=calls.length;restart();
+      await (refresh.onclick??refresh.listeners.click)();
+      await settle(()=>calls.length>before+1&&!refresh.disabled);
+      const recovered=calls.slice(before);
+      assert.equal(recovered[0].path,'/api/session');
+      assert.ok(recovered.length>=2);assert.equal(recovered.every(c=>c.method==='GET'),true,'Refresh must not replay a write/provider/render');
+      assert.equal(calls.filter(c=>c.path==='/api/session').length,2);
+      if(page==='production')assert.match(nodes.get('queue-list').innerHTML,/Queue generation 2/);
+      if(page==='assemblyai')assert.equal(nodes.get('connection-state').textContent,'Đã xác thực kết nối');
+      if(page!=='assemblyai')assert.equal(nodes.get(page==='intelligence'?'ci-message':'message').textContent,'Đã làm mới dữ liệu.');
+      if(page==='native'){
+        assert.equal(nodes.get('prompt').value,'Retained unsaved prompt');
+        assert.equal(nodes.get('save-note').textContent,'Có chỉnh sửa chưa lưu. Lưu trước khi tạo nội dung hoặc duyệt.');
+        nodes.get('project-name').value='Explicit fixture';
+        await nodes.get('save-prompt').listeners.click();
+        const explicit=calls.find(c=>c.method==='POST');
+        assert.equal(explicit.path,'/api/projects');assert.equal(explicit.headers['X-VF-CSRF'],'session-fixture-2');
+        assert.equal(calls.filter(c=>c.method==='POST').length,1,'Only subsequent explicit user action may write');
+      }
+    });
+  });
+}
 
 
 

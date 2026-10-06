@@ -61,7 +61,7 @@ if(typeof document!=='undefined'){
   $('ci-ideas').oninput=()=>{dirty=true;controls();};
   $('ci-queue').onclick=guarded(async event=>{const button=event.target.closest('[data-open-run]');if(button){if(dirty)throw new Error('Lưu chỉnh sửa trước khi đổi nghiên cứu.');await load(button.dataset.openRun);}});
   $('ci-runs').onchange=guarded(async()=>{if($('ci-runs').value)await load($('ci-runs').value);});
-  $('ci-refresh').onclick=guarded(async()=>{if(dirty)throw new Error('Lưu chỉnh sửa trước khi làm mới.');if(bundle)await load(bundle.run.id);else await queue();});
+  $('ci-refresh').onclick=guarded(async()=>{if(dirty)throw new Error('Lưu chỉnh sửa trước khi làm mới.');const session=await api('/api/session');csrf=session.csrf;if(bundle)await load(bundle.run.id);else await queue();message('Đã làm mới dữ liệu.');});
   $('ci-filter').onchange=guarded(queue);
   function profile(){const value=catalog.profiles.find(p=>p.id===$('ci-profile').value);$('ci-urls').value=value.project_references.join('\n');}
   $('ci-profile').onchange=profile;

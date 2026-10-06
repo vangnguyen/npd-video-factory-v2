@@ -305,7 +305,7 @@ if (typeof document !== "undefined") {
   }));
   $("project-picker").addEventListener("change",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi đổi dự án.");clearTimeout(timer);project=$("project-picker").value?await api(`/api/projects/${$("project-picker").value}`):null;if(project)localStorage.setItem("vf-native-project",project.id);renderProject(true);schedule();}));
   $("new-project").addEventListener("click",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi tạo dự án mới.");if(workspaceUI){location.assign('/?new=1');return;}clearTimeout(timer);project=null;localStorage.removeItem("vf-native-project");$("input-kind").value="prompt";$("prompt").value=(await api("/api/defaults")).prompt;$("project-name").value="Vinhomes Green Paradise Cần Giờ";$("project-picker").value="";$("new-video-format").value='9:16';$("new-duration-mode").value='fit_narration_preserve_voice_speed';creationTemplates();renderProject(true);}));
-  $("refresh").addEventListener("click",guarded(()=>reload(!dirty)));
+  $("refresh").addEventListener("click",guarded(async()=>{const session=await api("/api/session");csrf=session.csrf;await reload(!dirty);message("Đã làm mới dữ liệu.");}));
   $("jobs").addEventListener("click",guarded(async event=>{const button=event.target.closest("[data-resume]");if(!button)return;if(dirty)throw new Error("Lưu chỉnh sửa trước khi tiếp tục.");await api(`/api/jobs/${button.dataset.resume}/resume`,{});await reload(true);schedule();message("Đang tiếp tục job từ bước đã kiểm chứng.");}));
   $("prompt").addEventListener("input",()=>markDirty("prompt"));
   $("input-kind").addEventListener("change",()=>{if($("input-kind").value==="media")$("prompt").value="";markDirty("prompt");});
