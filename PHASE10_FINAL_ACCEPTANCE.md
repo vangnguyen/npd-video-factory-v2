@@ -1,5 +1,7 @@
 # Phase 10 final UAT — awaiting Owner watch/listen decisions
 
+**Superseded by Owner UAT on 2026-10-06:** all five new videos received request-changes feedback, and Studio UX needs standardization. The technical proof below is retained as the prior baseline, not final human certification. Current authority is [the Studio UX remediation report](C:/NPD-Video-Factory/source/PHASE10_STUDIO_UX_REMEDIATION_REPORT.md): PRODUCTION_INTELLIGENCE_READY = YES; DRAMAGIC_STUDIO_READY = NO; PHASE10_READY = NO. Both repaired video acceptance and Studio UX Owner acceptance remain required.
+
 All required technical campaign, shot-edit, persistence, visual and regression checks have passed. Five new real NPD campaign videos are ready for personal review. None is counted as human accepted. Final Phase 10 certification remains **NO** until five explicit current-video decisions are ACCEPTED.
 
 Baseline implementation: `82578d84dd762ccf6d6594f5d59bcde04d9907f6`. Implementation and final regression verification HEAD: `9772e146da727152d816f3fe757c6bbb7e1488f8`. Evidence/report commits follow this implementation commit; their exact identifiers are recorded in Git history and the final task response. No certified history or Phase 8/9 evidence was rewritten.
@@ -33,10 +35,10 @@ PHASE 8 REGRESSION: PASS
 PHASE 9 REGRESSION: PASS
 
 PRODUCTION_INTELLIGENCE_READY = YES
-DRAMAGIC_STUDIO_READY = YES
+DRAMAGIC_STUDIO_READY = NO
 PHASE10_READY = NO
 
-BLOCKERS: five explicit Owner watch/listen decisions for these current videos
+BLOCKERS: five repaired-video Owner decisions and Studio UX Owner acceptance
 P0: none unresolved
 P1: none unresolved
 P2: no confirmed visual defect; bounded limitations documented below
@@ -98,6 +100,6 @@ Next action: Owner watches/listens to all five current videos and records ACCEPT
 
 PRODUCTION_INTELLIGENCE_READY = YES
 
-DRAMAGIC_STUDIO_READY = YES
+DRAMAGIC_STUDIO_READY = NO
 
 PHASE10_READY = NO

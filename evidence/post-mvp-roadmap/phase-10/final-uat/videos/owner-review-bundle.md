@@ -1,5 +1,7 @@
 # Bộ xem duyệt 5 video Phase 10
 
+**Bộ này là bản lịch sử đã bị Owner yêu cầu sửa ngày 06/10/2026.** Chưa có video nào được ACCEPTED. Xem [hồ sơ sửa Studio và video](C:/NPD-Video-Factory/source/PHASE10_STUDIO_UX_REMEDIATION_REPORT.md) để theo dõi các bản thay thế. Các tệp và thông số dưới đây giữ nguyên để đối chiếu.
+
 Bản hiện tại ghi nhận lúc 2026-10-06T13:08:28.908445+00:00. Cả năm MP4 mới đã qua kiểm tra kỹ thuật và giữ đúng nguồn, ý tưởng, lời đọc, phiên bản shot. Chưa có bản nào được ghi nhận Owner đã xem/nghe và nghiệm thu.
 
 Mở [Studio kiểm thử](http://127.0.0.1:8030/native.html), chọn đúng tên dự án dưới đây. Liên kết video cần phiên Studio; bản MP4 lưu tại máy cũng được ghi rõ. Đây là video chờ duyệt, chưa xuất bản.
