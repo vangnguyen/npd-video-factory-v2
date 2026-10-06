@@ -14,3 +14,7 @@ evidence/post-mvp-roadmap/phase-9/9k/** -text whitespace=cr-at-eol,-blank-at-eof
 evidence/post-mvp-roadmap/phase-10/final-uat/** -text whitespace=cr-at-eol,-blank-at-eof
 # FFmpeg's captured progress lines include padding; retain their original bytes.
 evidence/post-mvp-roadmap/phase-10/final-uat/**/*.log -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+
+# UX remediation captures are append-only receipts with exact raw hashes.
+evidence/post-mvp-roadmap/phase-10/studio-ux-02/** -text whitespace=cr-at-eol,-blank-at-eof
+evidence/post-mvp-roadmap/phase-10/studio-ux-02/**/*.log -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
