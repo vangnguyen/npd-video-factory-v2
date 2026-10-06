@@ -110,6 +110,3 @@ PHASE10_READY = NO.
 OWNER_UAT_REQUIRED = YES.
 
 The parent capture campaign is complete for the bounded technical matrix. Explicit Owner acceptance of both the repaired five videos and the redesigned Studio flow remains pending. No frontend fixture or technical screenshot substitutes for that Owner UAT.
-
-
-
