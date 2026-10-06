@@ -1,24 +1,24 @@
 # Phase 9K — Real handoff matrix
 
-PHASE: 9K — Content Intelligence practical acceptance, five actual audio revisions
+PHASE: 9K — actual warm-B repair and practical acceptance
 
-STATUS: REPAIRED_VIDEOS_AWAIT_OWNER_LISTENING; original previews have actual Owner audio-revision decisions; new audio/final acceptance 0/5
+STATUS: WARM_B_VIDEOS_AWAIT_FULL_OWNER_REVIEW; eight B onset samples Owner accepted, five full new audio/final video approvals 0/5. Phase9K has not passed.
 
-HEAD SHA: `235e90664dbddd6a820ad751e32e09d7b8ca84a8` for actual repaired MP4/WAV/evidence checkpoint. Tested TTS child application: `ce21b4ae8f62c65955209abfc87c5beb395b2169`. Main Studio parent remains `9ce137afa8ac62fdb8ce5b35fbba997013adfef3`, with unchanged render function. The following report-only commit is recorded separately in Git history.
+HEAD SHA: 7a18ab22c71a92fde3466483252628245099d36f, actual B MP4/WAV/portable source/receipt/failure evidence; metadata commit f9a9411261eaeb1873bb1dc53caf0845520ce5a4. Tested implementation ebef5131e50641b93e3f7cf3b424dd151ce26d95; preview helper 738de15. Parent Studio 9ce137afa8ac62fdb8ce5b35fbba997013adfef3 retains unchanged renderer. Following verification/report-only commit is recorded in Git history. Release f61d8de6545653ea46f8ab5f91e6c0c0c167b7af / annotated internal-production-v1 remains unchanged.
 
-FILES CHANGED: optional scene-context policy/revision setter and five tests; signal/trial/repair/codec verification helpers; actual Owner feedback and original-video rejection receipts/backups, five new real MP4/WAV/snapshots/QC/timelines/manifests, 25 new sampled frames, Studio screenshot and current reports. Original graphics/media approval evidence and original MP4/WAVs remain intact.
+FILES CHANGED: opt-in warm policy, isolated TTS coordinator/cache/timing/trim guards and 20 additional Native tests since 139-test checkpoint; Owner B receipt/read-only backups, eight reviewed raw sources and actual provider receipts; ordinary production/recovery/integrity/export/preview helpers; five B MP4/WAV/snapshots/QC/timelines/manifests, nine TTS attempts, 25 sampled frames/contact sheets and current reports. Original and repair01/02 evidence remains immutable.
 
-TESTS: 139/139 Native and 32/32 Studio PASS; Studio source unchanged. Five actual repaired jobs have 11/11 QC, artifact/source/lineage integrity and fresh-process persistence PASS. Five live MP4/range-seek/final guards PASS. Actual decoded AAC waveform matches raw voice with correlation >0.99999; no hard clipping or scene-join sample jumps. This is not human audio acceptance. No post-render main-service restart PASS is claimed.
+TESTS: 159/159 Native PASS at ebef513; 32/32 Studio historical PASS, UI unchanged and no rerun claimed. Five actual B jobs: 11/11 QC each, canonical plan/approval/raw source/provider/cut/artifact/lineage integrity, decoded AAC/raw correlation >0.9999947, byte-exact preview/range/final guards and actual fresh-process persistence PASS. All 25 source-to-trim PCM units are sample-exact; eight reviewed target comparisons differ at most 1 LSB. Independent 25-frame sheet-scale inspection PASS. No full auditory acceptance or main-service restart PASS is claimed.
 
-EVIDENCE: frozen brief/script/storyboard/original-video bundles remain unchanged. Current [audio repair checkpoint](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-01/checkpoint.md), [exact new videos](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-01/review-bundle.md), manifest, owner-feedback/approval receipts, jobs/actual-verification/audio-and-preview-checks/fresh-process-persistence, screenshot and five new version directories.
+EVIDENCE: [B repair checkpoint](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-03/checkpoint.md), [five exact B MP4/WAVs](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-03/review-bundle.md), [Owner B approval/backups/frozen hashes](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-03/owner-B-approval.json), [actual verification/counts/attempts](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-03/actual-verification.json), [PCM/preview guards](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-03/audio-and-preview-checks.json), [fresh-process persistence](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-03/fresh-process-persistence.json), per-case tts-attempt-manifest/portable raw sources/provider receipts and all nine actual attempts. Original and onset rejection evidence stays archived.
 
-NEW CAPABILITIES: explicit scene-context-v1 for the five audio repairs; legacy sentence default/locked voice sampling stay unchanged. Policy selection revises the project and invalidates approval without dispatch. Actual Owner negative feedback binds original hashes; repair approval cites the approved words/media and does not accept the new audio/final video. Existing worker generates 27 fresh local calls, network blocked, speed 1, zero retries; trace research → idea → brief → script → assets → render stays intact.
+NEW CAPABILITIES: warm-scene-context-v1 prefixes the last approved sentence of the preceding scene, uses one bounded normalized context/seed 604 per scene and unchanged locked Thùy Dung/model/preset/sampling/speed. Existing AssemblyAI native word intervals and jointly anchored measured silence remove only the prefix; first scene has none. Original sentence default, earlier policy and renderer are unchanged. Owner accepted eight B excerpts, not full videos. Existing authority permits internal repair using exact approved words/media. Current projects are v13 for 01/02/04 and v12 for 06/08. 25 resolved scene sources comprise eight reviewed B reused plus 17 actual new local inferences. Four boundary attempts failed explicitly and resumed the same jobs after correction, keeping all sources/known paid outcomes. Whole repair: 12 new uploads/creates + 27 observations. Passing attempts only:two fresh / 23 reused local sources and five uploads/creates + 12 observations. Complete source history: 20 uploads/creates + 43 observations, including earlier B experiments; this is not newly billed work. No new provider/credential, pitch/speed/EQ/denoiser or second pipeline.
 
-REGRESSIONS: no verified change to accepted Phase 8 Windows Native scope; ten accepted videos/evidence/tag/dependencies and earlier IHG history preserved. All previous job/event/version/review rows and twelve other current projects are unchanged. The Phase 9K original voice quality was rejected by actual Owner feedback; repaired audio remains unaccepted. Estimated phrase subtitles can have short cues and require review.
+REGRESSIONS: no verified change to accepted Phase8 scope. Ten accepted videos/evidence/tag/dependencies and 1,034 frozen historical files preserved. Pre-B backup 38 jobs/335 events/117 project versions/18 review rows and 12 other current projects remain intact; 264 intelligence records/389 versions/62 decisions/35 operations and old IHG history unchanged. Original five MP4s rejected. Repair01 01/02/04 retain onset rejections;06/08 remain previously pending. Four failed B attempts and real recovery evidence remain visible. Full B video quality is pending.
 
-BLOCKERS: remaining perceived roughness/stability needs Owner listening; five final decisions for exact repaired MP4s are missing. Revised 02/04/06 are still below targets; Owner accepts measured durations or requests another revision. No credentials/provider blocker. Earlier service restart was rejected before execution; actual fresh-process persistence PASS remains separate.
+BLOCKERS: Owner must watch/listen to five exact full B MP4s, including complete words/timbre/cadence, and approve final results. “Giọng B đạt” covers eight onsets only. 02/04/06 are below targets and need duration acceptance or revision. ASR disagreements about CTA/international names/tách-dữ kiện/numbers/abbreviations remain recorded, not word-accuracy PASS or proof of TTS error. Earlier main-service stop/restart was rejected before execution (“blocked by policy”), not retried; actual fresh-process persistence PASS is separate. No credentials/provider/data-loss/migration/major-architecture blocker.
 
-NEXT ACTION: return the five repaired MP4s and raw WAVs for Owner listening/watch. Record actual decisions before final-download/queue PRODUCED/readiness. No publishing.
+NEXT ACTION: present full B videos/raw WAVs; Owner accepts exact artifacts and disclosed duration exceptions or identifies remaining issues. Record genuine final decisions, then verify final download/PRODUCED queue/readiness. Queue remains IN_PRODUCTION. No publishing.
 
 ## Production candidates
 
@@ -26,11 +26,11 @@ All rows are actual projects in `C:\NPD-Video-Factory\phase2\workflow.sqlite3`, 
 
 | Case | Brief decision | Score after approved idea edits | Handoff | Script | Owner script approval | TTS/render | New MP4 |
 |---|---|---:|---|---|---|---|---|
-| 01 — IHG × Green Paradise | APPROVE_WITH_EDIT | 53.330 | REAL_NATIVE_PROJECT | v2, native revision 11 | OWNER_APPROVED | REAL_REPAIR_SUCCEEDED | 34.43s |
-| 02 — Smart-city certification | APPROVE_WITH_EDIT | 54.389 | REAL_NATIVE_PROJECT | v2, native revision 11 | OWNER_APPROVED | REAL_REPAIR_SUCCEEDED | 39.97s; below 45–60s target |
-| 04 — Saigon Park buyer education | APPROVE_WITH_EDIT | 53.256 | REAL_NATIVE_PROJECT | v2, native revision 11 | OWNER_APPROVED | REAL_REPAIR_SUCCEEDED | 34.30s; below 45s target |
-| 06 — Vang Nguyễn/date context | APPROVE | 64.971 | REAL_NATIVE_PROJECT | v2, native revision 11 | OWNER_APPROVED | REAL_REPAIR_SUCCEEDED | 35.38s; below 45s target |
-| 08 — Vietnam Q2/2026 | APPROVE | 83.996 | REAL_NATIVE_PROJECT | v2, native revision 11 | OWNER_APPROVED | REAL_REPAIR_SUCCEEDED | 46.97s |
+| 01 — IHG × Green Paradise | APPROVE_WITH_EDIT | 53.330 | REAL_NATIVE_PROJECT | v2, native revision 13 | OWNER_APPROVED | REAL_WARM_B_SUCCEEDED | 33.715s |
+| 02 — Smart-city certification | APPROVE_WITH_EDIT | 54.389 | REAL_NATIVE_PROJECT | v2, native revision 13 | OWNER_APPROVED | REAL_WARM_B_SUCCEEDED | 39.605s; below 45–60s target |
+| 04 — Saigon Park buyer education | APPROVE_WITH_EDIT | 53.256 | REAL_NATIVE_PROJECT | v2, native revision 13 | OWNER_APPROVED | REAL_WARM_B_SUCCEEDED | 34.615s; below 45s target |
+| 06 — Vang Nguyễn/date context | APPROVE | 64.971 | REAL_NATIVE_PROJECT | v2, native revision 12 | OWNER_APPROVED | REAL_WARM_B_SUCCEEDED | 35.475s; below 45s target |
+| 08 — Vietnam Q2/2026 | APPROVE | 83.996 | REAL_NATIVE_PROJECT | v2, native revision 12 | OWNER_APPROVED | REAL_WARM_B_SUCCEEDED | 46.866667s |
 
 Scores are **HEURISTIC_SCORING**, with all components, configured weights and rationales in `idea.json`. Rank #1 selection happened before the requested editorial changes/rescoring; these scores are not performance predictions.
 
@@ -56,13 +56,13 @@ Full source/finding references, score, versions and provenance are in `research.
 
 | Case | Actual render job ID | Actual final MP4 SHA256 |
 |---|---|---|
-| 01 | `40428232bdb940b8abdabb00e5043c95` | `80487edb9974693f7e0fc82914a89ac52612fcebc56de95c236f03188ebc9ca8` |
-| 02 | `137c27de531a467d9cb3ab43bdc57e2c` | `59658c669232513fe4ea9b5db68d631877f0ae9054100f84ac6be9f02e39efe1` |
-| 04 | `220a1c0d2b7747b9963df4313145b261` | `df06fff49361cae8c5704d81e058ef530c73fe11a8ecab510aa846da5d181ffc` |
-| 06 | `90b42651c5594fe6963ca2b21eec17b5` | `fad84cc515acf0f334800003cfeb03f8db45b73b048200508c1315c50da80e55` |
-| 08 | `11ee15b3a01543bdabc9d1dd38c16d5d` | `f1fbec029e97df29e941415e37bf702d338e5a376be3421a144a906da1a01905` |
+| 01 | `ffcde63a120f4fbd96cc6a2d0ac60471` | `d8370c38a7edee3a4aeab2d1e000e726802daaa694974f178acdca7fa1e5aa07` |
+| 02 | `c097b4bab5de4fb98f4a6a1e38b7fa20` | `f2931fe23c45d1ad2c3e85ddbb8f51dfcfe00fcdff6c3a787d0ec8c7ec1ff58e` |
+| 04 | `2973305d4b5e49679dc442589f1fcb01` | `1fa30d2f7737727a97d7f21c4532277b06362de30ab4cf89a7accc860a9ff599` |
+| 06 | `393e8485b8b9420290b7fe100da89882` | `75d908cf65e9ca7afd72bd2ac9be99d2c18bb0fea0d0865ef5cc512e81e6a542` |
+| 08 | `d82fe11dc6764fd1aa495fdd472dcf4c` | `c6e4f5377a95c61d91b3053f641712bba6773a801916619bc7a94cd765575029` |
 
-The five new jobs have no final human approval. Their five original jobs retain actual Owner audio-revision decisions and original artifacts. Opportunity Queue remains IN_PRODUCTION. Phase 8/fixture videos contribute zero products to this table. F0 diagnostics are descriptive and boundaries differ; case 08 range increases, so all audible defects are not declared fixed.
+The table binds the five new full B jobs, each without final human approval. Original five jobs retain actual Owner audio-revision decisions and artifacts. Repair01 jobs remain separate history: 01/02/04 have later onset rejections, 06/08 remain pending. Owner accepts the eight short B onsets only. Four boundary failures and same-job recoveries are archived with actual sources/receipts. Opportunity Queue remains IN_PRODUCTION; Phase8/fixture videos contribute zero products. No full auditory or word-accuracy PASS is claimed.
 
 ## Case 01 preservation and rank resolution
 
@@ -78,7 +78,7 @@ Review manifest SHA256: `061cc4579a89419217f5d1b9bbfd241039cb99c2f9a2470fe425070
 
 The original Phase 9 idea/brief and script review bundles/manifests remain byte-identical. Owner's reply `Duyệt v2: 01, 02, 04, 06, 08` identifies these exact five v2 scripts. Current decisions are stored separately in native event receipts and `script-approval-manifest.json`; frozen old snapshots retain their earlier pending state. Media/production/publishing are not authorized by that script-only reply.
 
-The later actual Owner reply `Duyệt storyboard/media: 01, 02, 04, 06, 08` authorizes the exact 25 reviewed graphics, scene options, rights and internal production. Original approval/evidence remain intact. After `Giọng nói giữa các câu không giữ được độ cao âm, bị rè, âm giọng bị xuống thấp` and `Nhiều/cả 5 video — kiểm tra toàn bộ`, the existing Native review operation records five audio-revision decisions without claiming full watch/listen. New repair approval reuses these exact approved words/media, cites the original receipts and negative feedback, and expressly excludes new audio/final acceptance. [Current repair checkpoint](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-01/checkpoint.md).
+The later actual Owner reply `Duyệt storyboard/media: 01, 02, 04, 06, 08` authorizes the exact 25 reviewed graphics, scene options, rights and internal production. Original approval/evidence remain intact. After `Giọng nói giữa các câu không giữ được độ cao âm, bị rè, âm giọng bị xuống thấp` and `Nhiều/cả 5 video — kiểm tra toàn bộ`, the existing Native review operation records five audio-revision decisions without claiming full watch/listen. New repair approval reuses these exact approved words/media, cites the original receipts and negative feedback, and expressly excludes new audio/final acceptance. [Historical first repair checkpoint](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-01/checkpoint.md). Later specific onset complaints persist as three repair01 rejections. Exact reply “Giọng B đạt” is recorded in [sample-only B approval](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-03/owner-B-approval.json); new approvals reuse unchanged scripts/media for internal repair but exclude full new audio/final video approval. [Current full B videos](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-03/review-bundle.md). ASR disagreements about CTA, names, tách/dữ kiện, numbers and abbreviations remain raw evidence, not fabricated corrected transcripts or word-accuracy PASS.
 
 INTERNAL_PRODUCTION_READY = YES
 
