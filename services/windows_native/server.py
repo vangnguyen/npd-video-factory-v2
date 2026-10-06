@@ -322,7 +322,7 @@ class Handler(BaseHTTPRequestHandler):
                        '/production':'production.html','/production.mjs':'production.mjs','/production.css':'production.css'})
         static.update({name:name[1:] for name in ('/asset-picker.mjs','/video-preview.mjs','/studio-workspace.css','/studio-shell.mjs','/studio-shell.css','/native-auto-edit.mjs','/native-auto-edit.css')})
         static.update({name:name[1:] for name in ('/native-source-editor.mjs','/native-source-editor.css',
-            '/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
+            '/native-source-broll.mjs','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
         if path in static:
             return self.file(REPO / "apps/studio-web" / static[path])
         raise WorkflowError("ROUTE_NOT_FOUND", 404)
@@ -351,6 +351,14 @@ class Handler(BaseHTTPRequestHandler):
             from .production_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', self.path)
+        broll_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/broll', self.path)
+        if broll_route:
+            from . import source_broll
+            body = self.read_body(max_bytes=100000)
+            if set(body) != {'revision','action','payload'} or type(body.get('revision')) is not int or body.get('action') not in {'create','select','apply'}:
+                raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400)
+            action = {'create':source_broll.create,'select':source_broll.select,'apply':source_broll.apply}[body['action']]
+            return self.reply(action(self.server.store,self.server.config,broll_route[1],body['revision'],body['payload']))
         if source_timeline_route:
             from .auto_edit_timeline import create, edit, restore
             from .source_linked_edit import edit as linked_edit
@@ -540,6 +548,8 @@ class Handler(BaseHTTPRequestHandler):
             except Exception:
                 discard_media(self.server.config, asset)
                 raise
+            from .auto_edit_timeline import is_auto_edit
+            if is_auto_edit(result['document']):result=self.server.store.shot_view(identifier)
             return self.reply(result, 201)
         finally:
             source.unlink(missing_ok=True)

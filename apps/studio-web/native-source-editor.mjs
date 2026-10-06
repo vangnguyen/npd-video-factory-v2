@@ -1,6 +1,7 @@
 import {getClip,clipStyle,snapTime,pixelsPerSecond} from './studio-utils.mjs';
 import {waveformPath} from './waveform.mjs';
 import {timelineHistory} from './timeline-history.mjs';
+import {sourceBrollRequest,sourceBrollMarkup} from './native-source-broll.mjs';
 
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 export const sourceState=p=>isSourceProject(p)?p.document.canonical_timeline:null;
@@ -70,6 +71,12 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
     $('advanced-tracks').querySelectorAll('[data-source-track]').forEach(el=>el.disabled=blocked()||dirty);
     if(!selected())host.querySelectorAll('[data-source-action]').forEach(el=>el.disabled=true);
     const captionButton=host.querySelector('[data-source-config="caption"]');if(captionButton&&!catalog)captionButton.disabled=true;
+    host.querySelectorAll('[data-source-broll="apply"]').forEach(el=>{
+      const itemId=el.closest('[data-broll-item]').dataset.brollItem;
+      const planId=el.closest('[data-broll-plan]').dataset.brollPlan;
+      const record=(getProject()?.document.source_broll_plans??[]).filter(r=>r.plan.media_plan_id===planId).at(-1);
+      if(record?.plan.items.find(i=>i.media_plan_item_id===itemId)?.status!=='resolved')el.disabled=true;
+    });
   }
   function renderAdvanced(){
     toolbar.hidden=!isSourceProject(getProject());
@@ -103,6 +110,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
       <details><summary>Xử lý âm thanh nguồn & nhạc</summary>${[['normalize_original_audio','Cân mức âm thanh nguồn'],['normalize_music','Cân mức nhạc trước âm lượng clip'],['duck_music','Hạ nhạc theo năng lượng âm thanh nguồn']].map(([key,label])=>`<label class="check"><input type="checkbox" data-source-audio="${key}" ${state().snapshot.metadata.source_audio_processing?.[key]?'checked':''}> ${label}</label>`).join('')}<div class="scene-grid"><label>Mức nguồn (LUFS)<input type="number" data-source-audio="original_target_lufs" min="-24" max="-12" value="${state().snapshot.metadata.source_audio_processing?.original_target_lufs??-16}"></label><label>Mức nhạc (LUFS)<input type="number" data-source-audio="music_target_lufs" min="-35" max="-16" value="${state().snapshot.metadata.source_audio_processing?.music_target_lufs??-24}"></label></div><button type="button" data-source-config="audio">Lưu xử lý âm thanh</button><p class="hint">Âm lượng clip vẫn được giữ sau cân mức. Ducking theo tín hiệu nguồn, chưa nhận diện riêng giọng nói. Tạo preview mới và nghe lại sau khi đổi.</p></details>
       <details><summary>Khung hình & phụ đề</summary><label>Định dạng<select data-source-format>${['9:16','16:9','1:1','4:5'].map(r=>`<option ${r===state().snapshot.aspect_ratio?'selected':''}>${r}</option>`).join('')}</select></label><button type="button" data-source-config="format">Lưu định dạng</button>
       <label>Mẫu phụ đề<select data-source-caption>${(catalog?.templates??[]).map(t=>`<option value="${esc(t.template_ref)}" ${t.template_ref===state().snapshot.metadata.subtitle_style?.template_ref?'selected':''}>${esc(t.name??t.label??t.template_ref)}${t.requires_word_timestamps?' · cần thời gian từng từ':''}</option>`).join('')}</select></label><label>Từ khóa nổi bật (phân cách bằng dấu phẩy)<input data-source-keywords value="${esc((state().snapshot.metadata.subtitle_style?.keywords??[]).join(', '))}" maxlength="1000"></label><button type="button" data-source-config="caption" ${catalog?'':'disabled'}>Lưu mẫu phụ đề</button><p class="hint">Sửa lời nói tại Assets. Đoạn đã sửa cần dùng phụ đề theo câu khi không còn căn chỉnh từng từ. Bản dựng nguồn hiện dùng âm thanh gốc; nhạc nền cần được thêm vào timeline riêng.</p></details>`;
+    host.insertAdjacentHTML('beforeend',sourceBrollMarkup(p));
     void history();renderAdvanced();controls();
   }
   async function run(fn,{allowDirty=false}={}){
@@ -121,6 +129,16 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
     await send(sourceClipAction(p,clip.clip_id,'trim',clip.kind==='image'?{duration:Number(host.querySelector('[data-source-duration]').value)}:{source_start:Number(host.querySelector('[data-source-start]').value),source_end:Number(host.querySelector('[data-source-end]').value)}));
   },{allowDirty:true});});
   host.addEventListener('click',event=>{
+    const broll=event.target.closest('[data-source-broll]');
+    if(broll){void run(async()=>{
+      const p=getProject(),item=broll.closest('[data-broll-item]');
+      const body=sourceBrollRequest(p,broll.dataset.sourceBroll,{
+        planId:item?.dataset.brollPlan,itemId:item?.dataset.brollItem,
+        assetId:item?.querySelector('[data-broll-asset]').value,replace:item?.querySelector('[data-broll-replace]').checked});
+      const value=await api(`/api/projects/${p.id}/auto-edit/broll`,body);
+      dirty=false;onDirty(false);shownKey=null;historyKey=null;onProject(value,true);
+      onMessage(body.action==='apply'?'Đã đặt B-roll vào bản dựng mới. Tạo preview và kiểm tra crop, âm thanh, điểm cắt.':'Đã lưu kế hoạch/lựa chọn. Timeline chỉ đổi sau khi đặt B-roll.');renderSelected(true);
+    });return;}
     const discard=event.target.closest('[data-source-discard]');if(discard){dirty=false;onDirty(false);renderSelected(true);return;}
     const action=event.target.closest('[data-source-action]'),config=event.target.closest('[data-source-config]');
     if(!action&&!config)return;

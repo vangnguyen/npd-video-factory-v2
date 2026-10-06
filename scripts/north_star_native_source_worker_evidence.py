@@ -31,6 +31,7 @@ def main():
     parser.add_argument('--edited-timeline',action='store_true')
     parser.add_argument('--music',action='store_true')
     parser.add_argument('--audio-processing',action='store_true')
+    parser.add_argument('--broll',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
         raise ValueError('Fresh isolated synthetic Native root required')
@@ -81,6 +82,29 @@ def main():
         project=configure(store,project['id'],project['revision'],{
             'expected_version':project['shot_timeline']['version'],
             'audio_processing':{'normalize_original_audio':True,'normalize_music':True,'duck_music':True}})
+    if args.broll:
+        from PIL import Image,ImageDraw
+        from services.windows_native import source_broll
+        image_path=root/'synthetic-broll.png'
+        image=Image.new('RGB',(1080,1350),(16,43,98));draw=ImageDraw.Draw(image)
+        draw.rounded_rectangle((160,260,920,1090),radius=65,fill=(35,130,170))
+        draw.rectangle((230,390,850,480),fill=(210,220,235))
+        draw.rectangle((230,550,690,610),fill=(145,195,220))
+        draw.ellipse((680,750,820,890),fill=(235,190,55));image.save(image_path)
+        supporting=ingest_media(config,image_path,'image/png','Xin chào synthetic supporting.png',rights_confirmed=True,illustration=True)
+        supporting['explicit_fixture']=True
+        project=store.append_media(project['id'],project['revision'],supporting)
+        project=auto_edit_timeline.view(store,project['id'])
+        project=source_broll.create(store,config,project['id'],project['revision'],{'expected_version':project['shot_timeline']['version']})
+        plan=project['document']['source_broll_plans'][-1]['plan'];item=plan['items'][0]
+        project=source_broll.select(store,config,project['id'],project['revision'],{
+            'expected_version':project['shot_timeline']['version'],'media_plan_id':plan['media_plan_id'],
+            'expected_plan_version':plan['version'],'item_id':item['media_plan_item_id'],
+            'asset_id':auto_edit_analysis.asset_reference(supporting)})
+        plan=project['document']['source_broll_plans'][-1]['plan']
+        project=source_broll.apply(store,config,project['id'],project['revision'],{
+            'expected_version':project['shot_timeline']['version'],'media_plan_id':plan['media_plan_id'],
+            'expected_plan_version':plan['version'],'item_ids':[item['media_plan_item_id']]})
     source_hashes={item.name:file_sha(item) for directory in ('assets','originals')
         for item in (root/directory).iterdir() if item.is_file()}
     manager=PreviewManager(config,store)
@@ -118,6 +142,8 @@ def main():
         durable_json(out/'scene-analysis.json',analysis['scenes'])
         durable_json(out/'highlight-analysis.json',analysis['highlights'])
         durable_json(out/'silence-decisions.json',analysis['silence_decisions'])
+        if args.broll:
+            durable_json(out/'media-plan.json',project['document']['source_broll_plans'][-1])
         from services.windows_native.source_assets import canonical_assets
         durable_json(out/'asset-provenance.json',{'explicit_fixture':True,'assets':canonical_assets(project['document']),
             'source_kind':'generated synthetic testsrc + tone','speech_recognition':'saved ASR fixture; no inference'})
@@ -132,6 +158,7 @@ def main():
             'linked_source_edits_and_karaoke':args.edited_timeline,
             'canonical_music_added':args.music,
             'canonical_audio_processing_requested':args.audio_processing,
+            'canonical_supporting_broll_added':args.broll,
             'saved_asr_fixture':True,'pre_render_human_review':'AUTOMATED MOCK — NOT OWNER UAT',
             'project_id':project['id'],'job_id':render['id'],'local_real_worker':True,'local_real_full_qc':True,
             'timeline_sha256':project['document']['canonical_timeline']['sha256'],

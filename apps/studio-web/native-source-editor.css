@@ -13,3 +13,5 @@
 .source-timeline-clip[aria-pressed=true] {outline:3px solid #17212d;outline-offset:-3px}
 .source-timeline-clip span {display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .source-timeline-clip svg {display:block;width:100%;height:25px;stroke:white;stroke-width:0.5}
+[data-broll-item] {padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:8px;min-width:0;overflow-wrap:anywhere}
+[data-broll-item] button {margin:4px 0}

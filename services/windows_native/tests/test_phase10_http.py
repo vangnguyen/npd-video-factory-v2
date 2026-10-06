@@ -187,6 +187,9 @@ class Phase10HTTPTests(unittest.TestCase):
         asset = {'id': uuid.uuid4().hex+'.mp4', 'kind': 'video', 'filename': 'Explicit HTTP source fixture',
             'sha256': 'a'*64, 'rights_confirmed': True, 'illustration': False,
             'duration_seconds': 3., 'width': 320, 'height': 240, 'has_audio': True}
+        source_path=self.config.data_root/'assets'/asset['id']
+        source_path.write_bytes(b'Explicit nonplayable HTTP source fixture; no decode or render')
+        asset['sha256']=file_sha(source_path)
         self.project = self.server.store.append_media(self.project['id'], self.project['revision'], asset)
         job = self.server.store.enqueue(self.project['id'], self.project['revision'], 'asr', uuid.uuid4().hex)
         job = self.server.store.claim()
@@ -278,6 +281,25 @@ class Phase10HTTPTests(unittest.TestCase):
         self.assertEqual(choice['shot_timeline']['snapshot']['metadata']['subtitle_style']['animation'],'karaoke')
         self.assertEqual((choice['shot_timeline']['snapshot']['width'],choice['shot_timeline']['snapshot']['height']),(1080,1350))
         self.assertEqual(choice['document']['source_timeline_mutations'][-1]['version'],4)
+        broll_path='/api/projects/'+source_project['id']+'/auto-edit/broll'
+        body={'revision':choice['revision'],'action':'create','payload':{'expected_version':4}}
+        before=self.database_state()
+        for headers,expected in [({'Cookie':''},401),({'X-VF-CSRF':'bad'},403),({'Origin':'https://foreign.invalid'},403)]:
+            self.assertEqual(self.api('POST',broll_path,body,headers)[0],expected)
+        self.assertEqual(self.api('POST',broll_path,{**body,'provider':'forged'})[0],400)
+        self.assertEqual(self.database_state(),before)
+        status,planned=self.api('POST',broll_path,body);self.assertEqual(status,200)
+        self.assertEqual(planned['document']['canonical_timeline'],choice['document']['canonical_timeline'])
+        self.assertEqual(self.api('POST',broll_path,body)[0],409)
+        self.assertEqual(self.api('GET','/native-source-broll.mjs')[0],200)
+        connection=http.client.HTTPConnection('127.0.0.1',self.server.server_port,timeout=15)
+        connection.request('POST','/api/projects/'+source_project['id']+'/media',body=(self.config.data_root/'assets'/self.asset['id']).read_bytes(),headers={
+            'Content-Type':'image/jpeg','Cookie':'vf_native_session='+self.server.session,'X-VF-CSRF':self.server.csrf,
+            'X-VF-Revision':str(planned['revision']),'X-VF-Rights':'confirmed','X-VF-Illustration':'true','X-VF-Filename':'Supporting fixture.jpg'})
+        response=connection.getresponse();uploaded=json.loads(response.read());connection.close()
+        self.assertEqual(response.status,201,uploaded)
+        self.assertEqual(uploaded['shot_timeline']['version'],4)
+        self.assertEqual(uploaded['document']['canonical_timeline'],choice['document']['canonical_timeline'])
 
     def test_voice_quality_catalog_session_and_write_guards_preserve_accepted_default(self):
         before = self.database_state()
