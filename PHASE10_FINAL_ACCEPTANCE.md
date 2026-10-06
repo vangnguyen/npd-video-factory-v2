@@ -56,6 +56,8 @@ P2: no confirmed visual defect; bounded limitations documented below
 
 Actual ffprobe, H.264/AAC, dimensions, measured audio/video durations, artifact hashes, full source PCM checks, manifests, script/brief/research lineage and current project revision bindings passed for all five. [Five-video technical aggregation](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-10/final-uat/videos/20261006T130319361436Z-execution-90231700/five-current-video-technical-verification.json) binds the individual byte-exact verification receipts. Output copies remain locally preserved with committed hash/manifest evidence; MP4/WAV files retain the repository's existing media-ignore convention.
 
+[Committed-byte verification](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-10/final-uat/regression/git-evidence-byte-integrity-repaired.json) passes for all 2,522 UAT evidence files tracked at its verification commit. An earlier probe found Git newline normalization in two test logs; that failed receipt is preserved, and the raw UAT files were reindexed under the exact-byte attributes before this complete passing check. Project data and MP4 files were not changed by this correction.
+
 The last actual isolated Studio restart preserves all five final documents, canonical versions, stable IDs, history, approvals and jobs exactly. All five current MP4s remain authenticated HTTP 200 accessible with matching full hashes and HTTP 206 range bytes. Queue state persists as **VIDEO_REVIEW** for five items and **PRODUCED** for zero new items. [Final restart receipt](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/restart-persistence-v2.json) records this separation.
 
 ## Campaign and editing proof
