@@ -7,5 +7,19 @@
     "sampling_overrides": {},
     "audio_processing": "none",
     "human_listening_required": true
+  },
+  "warm-scene-context-v1": {
+    "id": "warm-scene-context-v1",
+    "version": 1,
+    "unit_grouping": "warm_scene",
+    "random_seed": 604,
+    "seed_scope": "per_scene",
+    "context": "previous_scene_last_approved_sentence",
+    "normalization_max_chars": 4096,
+    "combined_text_character_limit": 512,
+    "sampling_overrides": {},
+    "audio_processing": "verified_context_prefix_trim_only",
+    "timing_provider": "existing_assemblyai",
+    "human_listening_required": true
   }
 }

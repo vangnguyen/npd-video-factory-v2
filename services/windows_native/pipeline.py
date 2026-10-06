@@ -264,6 +264,9 @@ def synthesize(config, snapshot, out):
     proposal = Proposal.model_validate(doc["proposal"])
     quality = resolve_policy(doc)
     verify_runtime(config)
+    if quality and quality.get("unit_grouping") == "warm_scene":
+        from .warm_voice import synthesize_warm
+        return synthesize_warm(config, snapshot, out, quality)
     import numpy as np
     import socket
     import vieneu
