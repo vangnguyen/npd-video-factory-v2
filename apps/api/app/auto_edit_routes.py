@@ -23,10 +23,35 @@ from .highlight_drafts import (HighlightDraftRequest,HighlightDraftRead,Highligh
     HighlightDraftConflict,create_drafts,list_drafts,apply_draft)
 from .timeline_models import TimelineRead
 from .timeline_repository import TimelineConflictError
+from .scene_intelligence import (SceneIntelligenceRequest,SceneIntelligenceRead,SceneIntelligenceConflict,
+    create_assessment,list_assessments,get_assessment)
 
 
 router = APIRouter(prefix="/api/v1")
 _SHA256 = re.compile(r"^[a-f0-9]{64}$")
+
+
+@router.get('/projects/{project_id}/scene-intelligence',response_model=list[SceneIntelligenceRead])
+async def saved_scene_intelligence(project_id:str,request:Request):
+    await authorize_project(request,project_id,'viewer')
+    return await list_assessments(analysis_service_from(request).repository,project_id)
+
+
+@router.get('/projects/{project_id}/scene-intelligence/{assessment_id}',response_model=SceneIntelligenceRead)
+async def scene_intelligence_detail(project_id:str,assessment_id:str,request:Request):
+    await authorize_project(request,project_id,'viewer')
+    try:return await get_assessment(analysis_service_from(request).repository,project_id,assessment_id)
+    except KeyError as exc:raise missing('Scene assessment') from exc
+
+
+@router.post('/projects/{project_id}/scene-intelligence',response_model=SceneIntelligenceRead)
+async def assess_scene_intelligence(project_id:str,payload:SceneIntelligenceRequest,request:Request):
+    principal=await authorize_project(request,project_id,'editor')
+    vision_service=getattr(request.app.state,'vision_analysis_service',None)
+    try:return await create_assessment(analysis_service_from(request).repository,getattr(vision_service,'repository',None),
+        project_id,payload,principal.subject)
+    except KeyError as exc:raise missing('Source analysis/transcript/Vision') from exc
+    except SceneIntelligenceConflict as exc:raise error(409,'SCENE_INTELLIGENCE_CONFLICT',str(exc)) from exc
 
 
 @router.get('/projects/{project_id}/highlight-drafts',response_model=list[HighlightDraftRead])

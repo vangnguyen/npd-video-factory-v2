@@ -193,3 +193,27 @@ REGRESSIONS: focused existing suites pass. No accepted artifact replacement, liv
 EXTERNAL BLOCKERS: none to continued safe work; semantic provider acceptance and Docker remain separate limitations.
 
 OWNER ACTION REQUIRED: none for this increment. NEXT WAVE: continue saved Vision/scene fusion and all subsequent safe waves.
+
+## Wave 3/4 — immutable combined-scene review
+
+WAVE: 3/4
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO; MEDIA_INTELLIGENCE_READY = NO. Saved semantic Vision is integrated without waiving real-provider/Native/final acceptance.
+
+HEAD SHA: parent `468b88f`; the combined-scene capability commit records this increment. `468b88f` and prior reframe checkpoint are pushed to the completion branch.
+
+CAPABILITIES COMPLETED: immutable scene assessments combine the exact selected transcript, original shot intervals, audio boundaries/energy, bounded measured pixel/exposure/duplicate signals and an optional already-saved structured Vision analysis. Source/project/analysis/checksum binding is enforced. Actual subject observations retain category, box, frame timestamp, provider, model, confidence and frame reference. Quality and motion stay null where measurements are absent. Legacy numeric heuristics are not promoted into measured data. Provider confidence is labeled as evidence confidence rather than calibrated fusion probability. Stale edited-text semantics, missing Vision, unsafe crop, black frames and low quality/confidence require attention. Repeated inputs reuse one fingerprinted immutable row. Transcript edits create new assessments while prior rows remain readable. Studio selects/reviews a saved assessment and Top 3/5/Auto Shorts bind its identity/fingerprint; stale transcript/source assessments cannot be used. Original analyses and the active master timeline remain unchanged until explicit draft application. Migration adds one table only; no live migration ran, and destructive downgrade is refused.
+
+CAPABILITIES PARTIAL: Native bridge, genuine subject/scene Vision acceptance, semantic-boundary proposals, full dynamic subtitles/B-roll and final real-spoken-media E2E. Frame references point to already-saved provider evidence; this increment does not dispatch a provider or fabricate semantic subjects.
+
+TESTS: **63/63 focused API PASS**, 73.70 s (`scene-intelligence-api-final.log`); **91/91 Studio PASS**, 437.77 ms, plus JavaScript syntax check. Four new tests cover idempotency, immutable history/original rows, nullable missing measurements, edited transcript binding, saved fixture Vision/model/frame provenance, foreign/stale evidence rejection, authenticated HTTP roles/project scope and additive migration preservation. The initial run found SQLite's naive reload timestamp differed from the UTC creation response; UTC normalization fixed it and the broad suite passes. The complete isolated Linux regression at **`cc949003953d3a3c0904cacbd02ed8c52d881e88` passed 1,922 tests / 6 skips** in 539.02 s (`api-linux-cc94900-final.log`). That result includes all POSIX modules, the cache regression fix and reframe integration; later measured/fusion changes retain their separately listed focused evidence.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: real FFmpeg sampling, actual HTTP/SQLite assessment generation and highlight binding through the browser. MOCK TESTS: explicitly labeled ASR and saved structured Vision fixture; no real semantic-provider acceptance.
+
+EVIDENCE: `scene-intelligence-persistence-evidence.json` verifies one saved assessment and its bound highlight draft with zero provider dispatches; `studio-wave3-visual/scene-evidence.json` and three screenshots verify no horizontal overflow at 1366/1920/2560, 32 locally measured image samples, absent semantic Vision, fixture ASR and master timeline v1 after draft creation. The UI distinguishes exposure heuristics from semantic Vision quality. Test tab closed, viewport reset and only the verified fixture Python processes stopped; data retained under `C:\vf-ui-fixture-s1`.
+
+REGRESSIONS: focused prior upload/analysis/transcript/silence/highlight/reframe/media tests pass. Full reframe checkpoint Linux is green as recorded. Latest Native regression remains the separate Wave 2 264/264 run. Accepted media, original live worktree/data/configuration remain untouched. No main merge, production deployment or external publishing.
+
+EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Owner Phase 10 UAT remain separate limitations; safe work continues.
+
+OWNER ACTION REQUIRED: none for continued implementation. NEXT WAVE: finish dynamic subtitle/B-roll/Native integration and continue the remaining safe waves.

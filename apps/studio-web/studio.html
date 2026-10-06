@@ -6,7 +6,7 @@
     <meta name="description" content="NPD Video Factory V2 Studio — auto edit, publishing dry run and read-only analytics learning" />
     <title>NPD Studio · Auto Edit</title>
     <link rel="stylesheet" href="/styles.css" />
-    <link rel="stylesheet" href="/studio.css?v=north-star-reframe-1" />
+    <link rel="stylesheet" href="/studio.css?v=north-star-scene-1" />
   </head>
   <body>
     <div class="app-shell studio-shell">
@@ -85,7 +85,11 @@
         <section id="analysis-review" class="timeline-panel" hidden>
           <h2>Kiểm tra phân tích nguồn</h2><p id="analysis-review-summary"></p>
           <details><summary>Lời nhận diện · xem và sửa trước khi dựng</summary><div id="analysis-transcript-list"></div></details>
-          <details><summary>Cảnh đã phân tích</summary><div id="analysis-scene-list"></div></details>
+          <details><summary>Cảnh đã phân tích</summary>
+            <label>Kết quả hiểu hình ảnh đã lưu<select id="scene-vision"><option value="">Chỉ dùng transcript và đo tại máy</option></select></label>
+            <button id="assess-scenes" type="button">Kết hợp kết quả đã lưu</button>
+            <label>Bản đánh giá cảnh<select id="scene-assessment"><option value="">Phân tích nguồn ban đầu</option></select></label>
+            <p id="scene-assessment-status"></p><div id="analysis-scene-list"></div></details>
           <details open><summary>Khoảng lặng · quyết định cắt có thể hoàn tác</summary><div id="silence-review-list"></div>
           <p>Chỉ cắt các khoảng đã chọn. Áp dụng sẽ dựng lại timeline từ nguồn và giữ các phiên bản cũ để hoàn tác; cần cập nhật preview và duyệt lại.</p>
           <button id="apply-silence-review" type="button">Dựng timeline với khoảng cắt đã chọn</button></details>

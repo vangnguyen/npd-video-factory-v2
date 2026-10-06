@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {silenceSelection,canonicalShotClips} from '../analysis-review.mjs';
+import {silenceSelection,canonicalShotClips,compatibleSceneAssessments,sceneScore} from '../analysis-review.mjs';
+
+test('scene evidence selection follows the active historical transcript and keeps missing scores visible',()=>{
+  const active={analysis_id:'analysis',transcript:{transcript_id:'historical'}},saved={analysis_id:'analysis',transcript_id:'historical'};
+  assert.deepEqual(compatibleSceneAssessments([saved,{...saved,transcript_id:'new'},{...saved,analysis_id:'foreign'}],active),[saved]);
+  assert.equal(sceneScore(null),'Chưa có dữ liệu');assert.equal(sceneScore(0),'0/100');
+});
 test('Silence review permits keeping all footage and rejects unsafe or foreign cuts',()=>{
   const analysis={status:'succeeded',silence_decisions:[{decision_id:'safe',enabled:true,conflicts_with_speech:false},
     {decision_id:'speech',enabled:true,conflicts_with_speech:true},{decision_id:'short',enabled:false}]};

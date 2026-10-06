@@ -174,7 +174,7 @@ def build_highlights(
             local.get('local_quality_score') if local is not None else None)
         audio=local.get('audio_energy_score') if local is not None else None
         novelty=1-local['duplicate_frame_ratio'] if local is not None and local.get('duplicate_frame_ratio') is not None else None
-        factors={'speech_coverage':float(scene['speech_score']),'motion':motion,'information_density':information_density,
+        factors={'speech_coverage':float(scene['speech_score']) if scene.get('speech_score') is not None else None,'motion':motion,'information_density':information_density,
             'hook_keywords':hook_score,'quality':quality,'pixel_novelty':novelty,'audio_energy':audio}
         weights={'speech_coverage':.25,'motion':.15,'information_density':.2,'hook_keywords':.15,
             'quality':.1,'pixel_novelty':.05,'audio_energy':.1}
@@ -208,7 +208,7 @@ def build_highlights(
                     "vision_used": bool(observed.get('vision_used')),
                     "factors":factors,"weights":weights,"available_weight":total,"contributions":contributions,
                     "missing_factors":[key for key,value in factors.items() if value is None],
-                    "confidence":_clamp(float(scene.get('confidence',0))*total),
+                    "confidence":_clamp(float(scene.get('confidence') or 0)*total),
                 },
             }
         )

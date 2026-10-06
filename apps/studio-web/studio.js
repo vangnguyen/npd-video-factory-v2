@@ -18,7 +18,7 @@ import { authenticatedFetch, ensureAuthenticatedSession } from "/auth.mjs";
 import { initializeMultiInput } from "/multi-input.mjs";
 import { transcriptEditPayload } from "/transcript-editor.mjs";
 import { timelineHistory,timelineTranscriptId } from "/timeline-history.mjs";
-import { silenceSelection,canonicalShotClips } from "/analysis-review.mjs";
+import { silenceSelection,canonicalShotClips,compatibleSceneAssessments,sceneScore } from "/analysis-review.mjs";
 import { waveformPath } from "/waveform.mjs";
 import {reframeProfiles,matchingVision,needsProductionReview} from "/reframe.mjs";
 
@@ -54,6 +54,9 @@ const state = {
   highlightDrafts: [],
   highlightSupported: false,
   visionAnalyses: [],
+  sceneAssessments: [],
+  selectedSceneAssessmentId: '',
+  sceneIntelligenceSupported: false,
   draggingClipId: null,
   pollTimer: null,
   productionPollTimer: null,
@@ -189,6 +192,10 @@ async function loadProject({ quiet = false } = {}) {
     state.visionAnalyses=await api(`/api/v1/projects/${state.projectId}/vision-analyses`).catch(error=>{
       if(error.status===404)return [];throw error;
     });
+    state.sceneIntelligenceSupported=true;
+    state.sceneAssessments=await api(`/api/v1/projects/${state.projectId}/scene-intelligence`).catch(error=>{
+      if(error.status===404){state.sceneIntelligenceSupported=false;return [];}throw error;
+    });
     await syncTimelineTranscript();
     state.highlightSupported=true;
     state.highlightDrafts=await api(`/api/v1/projects/${state.projectId}/highlight-drafts`).catch(error=>{
@@ -285,7 +292,17 @@ function renderAnalysisReview(){
   const preserved=new Map($("#silence-review-list").dataset.binding===binding?previous.map(input=>[input.dataset.silenceId,input.checked]):[]);
   $("#silence-review-list").dataset.binding=binding;
   $("#analysis-transcript-list").innerHTML=(analysis.transcript?.segments??[]).map(item=>transcriptReviewForm(item,analysis)).join('')||'<p>Chưa có lời nhận diện.</p>';
-  $("#analysis-scene-list").innerHTML=analysis.scenes.map(scene=>`<article><strong>Cảnh ${scene.ordinal+1} · ${formatTime(scene.start_seconds)} → ${formatTime(scene.end_seconds)}</strong><p>${escapeHtml(scene.semantic_label)} · ${escapeHtml(scene.description)}</p><small>Độ tin cậy ${scene.confidence==null?'chưa đo':`${Math.round(scene.confidence*100)}%`}</small></article>`).join('');
+  const compatible=compatibleSceneAssessments(state.sceneAssessments,analysis);
+  const assessment=compatible.find(item=>item.assessment_id===state.selectedSceneAssessmentId)??null;
+  if(!assessment)state.selectedSceneAssessmentId='';
+  $('#scene-assessment').innerHTML='<option value="">Phân tích nguồn ban đầu</option>'+compatible.map(item=>`<option value="${escapeHtml(item.assessment_id)}">${item.vision_analysis_id?'Có hiểu hình ảnh':'Transcript và đo tại máy'} · ${escapeHtml(new Date(item.created_at).toLocaleString('vi-VN'))}</option>`).join('');
+  $('#scene-assessment').value=state.selectedSceneAssessmentId;
+  const selectedVision=$('#scene-vision').value;
+  $('#scene-vision').innerHTML='<option value="">Chỉ dùng transcript và đo tại máy</option>'+matchingVision(state.visionAnalyses,analysis).map(item=>`<option value="${escapeHtml(item.vision_analysis_id)}">${escapeHtml(item.provider_key)} · ${escapeHtml(item.model)} · ${item.frames.length} khung hình</option>`).join('');
+  if(matchingVision(state.visionAnalyses,analysis).some(item=>item.vision_analysis_id===selectedVision))$('#scene-vision').value=selectedVision;
+  $('#assess-scenes').disabled=!state.sceneIntelligenceSupported;
+  $('#scene-assessment-status').textContent=assessment?`${assessment.scenes.length} cảnh · ${assessment.provenance.fixture_asr?'Transcript mô phỏng · ':''}${assessment.vision_analysis_id?'Hiểu hình ảnh đã lưu':'Chưa có hiểu hình ảnh'} · Highlight dùng bản đánh giá đang chọn. Tư liệu gốc được giữ nguyên.`:'Chọn bản đánh giá để dùng các chỉ số có bằng chứng cho highlight. Chưa có dữ liệu sẽ hiển thị rõ.';
+  $("#analysis-scene-list").innerHTML=(assessment?.scenes??analysis.scenes).map(scene=>`<article><strong>Cảnh ${scene.ordinal+1} · ${formatTime(scene.start_seconds)} → ${formatTime(scene.end_seconds)}</strong><p>${escapeHtml(scene.semantic_label)} · ${escapeHtml(scene.description)}</p><small>${assessment?`${scene.evidence.vision_used?'Chất lượng từ hiểu hình ảnh':'Phơi sáng tại máy (heuristic)'}: ${sceneScore(scene.quality_score)} · Chuyển động pixel: ${sceneScore(scene.motion_score)} · Lời nói: ${sceneScore(scene.speech_score)} · ${scene.needs_attention?'Cần kiểm tra':''}`:`Độ tin cậy theo heuristic: ${sceneScore(scene.confidence)}`}</small>${assessment?`<p>${scene.subjects.length} phát hiện chủ thể từ hình ảnh · ${scene.evidence.frame_evidence.length} khung hình Vision · ${scene.evidence.local_metrics.sample_count} mẫu hình ảnh đo tại máy</p>`:''}</article>`).join('');
   $("#silence-review-list").innerHTML=analysis.silence_decisions.map(d=>`<label><input type="checkbox" data-silence-id="${escapeHtml(d.decision_id)}" ${(preserved.get(d.decision_id)??selected.has(d.decision_id))?'checked':''} ${d.enabled&&!d.conflicts_with_speech?'':'disabled'}>${formatTime(d.start_seconds)} → ${formatTime(d.end_seconds)} · ${d.conflicts_with_speech?'Giữ lại để bảo vệ lời nói':d.enabled?'Có thể đề xuất cắt':'Giữ lại'}</label>`).join('')||'<p>Không có khoảng lặng đủ điều kiện cắt.</p>';
   $("#highlight-review-list").innerHTML=analysis.highlights.map(h=>`<article><strong>Đề xuất ${h.rank} · ${(h.highlight_score*100).toFixed(0)}/100</strong><p>${formatTime(h.recommended_start)} → ${formatTime(h.recommended_end)}</p><p>${escapeHtml(h.reason)}</p></article>`).join('')||'<p>Chưa có đoạn nổi bật.</p>';
   $("#highlight-draft-list").innerHTML=state.highlightDrafts.filter(d=>d.analysis_id===analysis.analysis_id).map(d=>`<article><strong>Draft · ${d.snapshot.duration_seconds.toFixed(1)} giây · ${(d.evidence.score*100).toFixed(0)}/100</strong><p>${escapeHtml(d.evidence.reason)}</p><small>${d.evidence.fixture_asr?'Transcript mô phỏng · chưa nghiệm thu ASR':'Dựa trên transcript đã lưu'} · Giữ nguyên nguồn</small><button type="button" data-apply-highlight="${escapeHtml(d.draft_id)}">Chọn draft này cho timeline</button></article>`).join('')||'<p>Chưa tạo draft nổi bật.</p>';
@@ -1293,6 +1310,7 @@ $("#analysis-review").addEventListener('click',async event=>{
       if(!analysis)throw new Error('Chờ phân tích hoàn tất.');
       const drafts=await api(`/api/v1/projects/${state.projectId}/highlight-drafts`,{method:'POST',body:JSON.stringify({
         analysis_id:analysis.analysis_id,transcript_id:analysis.transcript?.transcript_id??null,
+        ...(state.selectedSceneAssessmentId?{scene_intelligence_id:state.selectedSceneAssessmentId}:{}),
         count:Number(button.dataset.highlightCount??3),mode:button.dataset.highlightMode??'top_highlights',maximum_duration_seconds:60})});
       state.highlightDrafts=await api(`/api/v1/projects/${state.projectId}/highlight-drafts`);renderAnalysisReview();
       toast(`Đã lưu ${drafts.length} draft phù hợp. Timeline hiện tại được giữ nguyên.`);
@@ -1300,6 +1318,19 @@ $("#analysis-review").addEventListener('click',async event=>{
   }catch(error){toast(error.message,true);}finally{button.disabled=false;}
 });
 function captureTranscriptInput(event){const input=event.target.closest('[data-transcript-text]');if(input)state.transcriptDrafts.set(input.dataset.transcriptText,input.value);}
+$('#scene-assessment').addEventListener('change',event=>{state.selectedSceneAssessmentId=event.target.value;renderAnalysisReview();});
+$('#assess-scenes').addEventListener('click',async()=>{
+  const analysis=activeAnalysis();if(!analysis)return;
+  const button=$('#assess-scenes');button.disabled=true;
+  try{
+    const assessment=await api(`/api/v1/projects/${state.projectId}/scene-intelligence`,{method:'POST',body:JSON.stringify({
+      analysis_id:analysis.analysis_id,transcript_id:analysis.transcript?.transcript_id??null,
+      vision_analysis_id:$('#scene-vision').value||null})});
+    state.selectedSceneAssessmentId=assessment.assessment_id;
+    state.sceneAssessments=await api(`/api/v1/projects/${state.projectId}/scene-intelligence`);
+    renderAnalysisReview();toast('Đã lưu bản đánh giá cảnh. Highlight sẽ dùng bản đang chọn.');
+  }catch(error){toast(error.message,true);}finally{button.disabled=!state.sceneIntelligenceSupported;}
+});
 async function saveTranscriptReview(event){
   const form=event.target.closest('[data-transcript-edit]');if(!form)return;event.preventDefault();
   const analysis=activeAnalysis(),button=form.querySelector('button[type="submit"]');button.disabled=true;

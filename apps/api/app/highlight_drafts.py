@@ -22,6 +22,7 @@ class HighlightDraftConflict(ValueError):pass
 class HighlightDraftRequest(StrictModel):
     analysis_id: str = Field(pattern=r'^ana_[A-Za-z0-9_-]{4,60}$')
     transcript_id: str | None = Field(default=None, pattern=r'^trn_[A-Za-z0-9_-]{4,60}$')
+    scene_intelligence_id: str | None = Field(default=None,pattern=r'^sci_[A-Za-z0-9_-]{4,60}$')
     count: Literal[3,5] = 3
     mode: Literal['top_highlights','auto_shorts'] = 'top_highlights'
     maximum_duration_seconds: float = Field(default=60,ge=3,le=180)
@@ -66,9 +67,9 @@ def protected_window(start,end,transcript,duration):
     return max(0.,start),min(duration,end)
 
 
-def build_drafts(analysis,asset,payload):
+def build_drafts(analysis,asset,payload,assessment=None):
     if analysis.status!='succeeded':raise HighlightDraftConflict('analysis is not ready')
-    scenes=[scene.model_dump(mode='json') for scene in analysis.scenes]
+    scenes=[scene.model_dump(mode='json') for scene in (assessment.scenes if assessment else analysis.scenes)]
     # Re-score against the exact selected transcript, including human text edits;
     # saved physical scene observations and provider evidence remain unchanged.
     for scene in scenes:
@@ -89,6 +90,8 @@ def build_drafts(analysis,asset,payload):
         evidence={'algorithm':'highlight-draft-v2','source_start':start,'source_end':end,
             'score':item['highlight_score'],'reason':item['reason'],'factors':item['evidence'],
             'source_asset_sha256':asset.checksum_sha256,'scoring_transcript_id':analysis.transcript.transcript_id if analysis.transcript else None,
+            'scene_intelligence_id':assessment.assessment_id if assessment else None,
+            'scene_intelligence_fingerprint':assessment.fingerprint if assessment else None,
             'mode':payload.mode,'maximum_duration_seconds':payload.maximum_duration_seconds,
             'speech_protection':'whole_segment_when_no_words','human_approval_required':True,'provider_dispatches':0,
             'fixture_asr':bool(analysis.transcript and analysis.transcript.provenance.get('fixture'))}
@@ -111,7 +114,14 @@ async def create_drafts(repository,project_id,payload,actor_ref):
     if analysis is None or analysis.project_id!=project_id:raise KeyError(payload.analysis_id)
     asset=await repository.get_asset(analysis.asset_id)
     if asset is None or asset.project_id!=project_id:raise KeyError(analysis.asset_id)
-    prepared=build_drafts(analysis,asset,payload)
+    assessment=None
+    if payload.scene_intelligence_id:
+        from .scene_intelligence import get_assessment
+        assessment=await get_assessment(repository,project_id,payload.scene_intelligence_id)
+        if (assessment.analysis_id!=analysis.analysis_id or assessment.source_asset_sha256!=asset.checksum_sha256
+            or assessment.transcript_id!=(analysis.transcript.transcript_id if analysis.transcript else None)):
+            raise HighlightDraftConflict('scene assessment differs from selected source/transcript')
+    prepared=build_drafts(analysis,asset,payload,assessment)
     if not prepared:raise HighlightDraftConflict('no complete-speech highlight fits the requested duration')
     fingerprints=[item[0] for item in prepared]
     for attempt in range(3):

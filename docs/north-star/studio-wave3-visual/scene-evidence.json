@@ -1,0 +1,40 @@
+{
+  "fixture": true,
+  "real_provider": false,
+  "owner_uat": false,
+  "checks": [
+    {
+      "documentWidth": 1351,
+      "drafts": "Draft · 16.0 giây · 76/100transcript coverage and keyword heuristics; information density; measured pixel-change proxy; measured audio energy; measured exposure heuristic; hook keywords: bằng chứng, quyết định, thử nghiệm, điểm nổi bậtTranscript mô phỏng · chưa nghiệm thu ASR · Giữ nguyên nguồnChọn draft này cho timeline",
+      "scenes": "Cảnh 1 · 00:00.0 → 00:16.0Ba giây đầu tiên quyết định người xem · Ba giây đầu tiên quyết định người xem có tiếp tục hay không. Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra. Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói. Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.Phơi sáng tại máy (heuristic): 100/100 · Chuyển động pixel: 19/100 · Lời nói: 80/100 · Cần kiểm tra0 phát hiện chủ thể từ hình ảnh · 0 khung hình Vision · 32 mẫu hình ảnh đo tại máy",
+      "status": "1 cảnh · Transcript mô phỏng · Chưa có hiểu hình ảnh · Highlight dùng bản đánh giá đang chọn. Tư liệu gốc được giữ nguyên.",
+      "version": "v1",
+      "viewport": [
+        1366,
+        768
+      ]
+    },
+    {
+      "documentWidth": 1905,
+      "drafts": "Draft · 16.0 giây · 76/100transcript coverage and keyword heuristics; information density; measured pixel-change proxy; measured audio energy; measured exposure heuristic; hook keywords: bằng chứng, quyết định, thử nghiệm, điểm nổi bậtTranscript mô phỏng · chưa nghiệm thu ASR · Giữ nguyên nguồnChọn draft này cho timeline",
+      "scenes": "Cảnh 1 · 00:00.0 → 00:16.0Ba giây đầu tiên quyết định người xem · Ba giây đầu tiên quyết định người xem có tiếp tục hay không. Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra. Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói. Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.Phơi sáng tại máy (heuristic): 100/100 · Chuyển động pixel: 19/100 · Lời nói: 80/100 · Cần kiểm tra0 phát hiện chủ thể từ hình ảnh · 0 khung hình Vision · 32 mẫu hình ảnh đo tại máy",
+      "status": "1 cảnh · Transcript mô phỏng · Chưa có hiểu hình ảnh · Highlight dùng bản đánh giá đang chọn. Tư liệu gốc được giữ nguyên.",
+      "version": "v1",
+      "viewport": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "documentWidth": 2545,
+      "drafts": "Draft · 16.0 giây · 76/100transcript coverage and keyword heuristics; information density; measured pixel-change proxy; measured audio energy; measured exposure heuristic; hook keywords: bằng chứng, quyết định, thử nghiệm, điểm nổi bậtTranscript mô phỏng · chưa nghiệm thu ASR · Giữ nguyên nguồnChọn draft này cho timeline",
+      "scenes": "Cảnh 1 · 00:00.0 → 00:16.0Ba giây đầu tiên quyết định người xem · Ba giây đầu tiên quyết định người xem có tiếp tục hay không. Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra. Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói. Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.Phơi sáng tại máy (heuristic): 100/100 · Chuyển động pixel: 19/100 · Lời nói: 80/100 · Cần kiểm tra0 phát hiện chủ thể từ hình ảnh · 0 khung hình Vision · 32 mẫu hình ảnh đo tại máy",
+      "status": "1 cảnh · Transcript mô phỏng · Chưa có hiểu hình ảnh · Highlight dùng bản đánh giá đang chọn. Tư liệu gốc được giữ nguyên.",
+      "version": "v1",
+      "viewport": [
+        2560,
+        1440
+      ]
+    }
+  ]
+}

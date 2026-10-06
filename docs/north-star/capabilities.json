@@ -287,10 +287,13 @@
       "apps/api/app/auto_edit_logic.py",
       "apps/api/app/auto_edit_providers.py",
       "services/windows_native/asr.py",
-      "apps/api/app/visual_signals.py"
+      "apps/api/app/visual_signals.py",
+      "apps/api/app/scene_intelligence.py",
+      "apps/api/tests/test_scene_intelligence.py",
+      "apps/api/migrations/versions/0018_north_star_scene_intelligence.py"
     ],
-    "behavior": "Real FFmpeg shot/silence boundaries and typed scene heuristics; current motion/quality scores are heuristics, not measured motion or Vision quality. Local FFmpeg scene scores are now parsed from actual detector output, with bounded grayscale sampling, pixel-change/exposure/duplicate evidence and transcript/audio-boundary observations persisted. Scene subjects stay empty until semantic Vision evidence exists; transcript keywords are separate. Legacy quality/motion values carry explicit heuristic provenance.",
-    "gap": "Fusion of saved semantic Vision, reviewable assessment versions and Native bridge remain required.",
+    "behavior": "Real FFmpeg shot/silence boundaries and typed scene heuristics; current motion/quality scores are heuristics, not measured motion or Vision quality. Local FFmpeg scene scores are now parsed from actual detector output, with bounded grayscale sampling, pixel-change/exposure/duplicate evidence and transcript/audio-boundary observations persisted. Scene subjects stay empty until semantic Vision evidence exists; transcript keywords are separate. Legacy quality/motion values carry explicit heuristic provenance. Immutable combined-scene assessments now bind selected transcript, source hash, local measurement and saved structured Vision frames/model/confidence/reference. Missing scores stay null; assessment selection feeds highlight drafts without altering original analyses or the active timeline.",
+    "gap": "Native bridge, real subject/scene provider acceptance and complete uploaded-spoken-footage E2E remain. Fusion reuses existing shot boundaries and records audio/transcript/Vision observations; future semantic boundary proposals must remain reviewable.",
     "severity": "P1",
     "dependency": "Vision",
     "wave": "3/4",
@@ -324,10 +327,11 @@
       "apps/api/app/highlight_drafts.py",
       "apps/api/tests/test_highlight_drafts.py",
       "apps/api/migrations/versions/0017_north_star_highlight_drafts.py",
-      "apps/api/tests/test_visual_scene_signals.py"
+      "apps/api/tests/test_visual_scene_signals.py",
+      "apps/api/app/scene_intelligence.py"
     ],
-    "behavior": "API Studio Top 3/Top 5/Auto Shorts save separate immutable, fingerprint-idempotent canonical drafts. Scores recompute from the selected transcript, preserve physical observations, expose heuristic factors, protect word/segment boundaries and enforce duration bounds without fabricating missing candidates. Applying requires editor identity, transcript binding, locks and timeline CAS; master history remains and approval invalidates. Additive draft-table migration tested locally; no live migration performed. Top 3/5/Auto Shorts drafts now explain weighted speech coverage, keywords, information density, measured pixel-change, local exposure, pixel repetition and audio energy. Missing multimodal factors remain null, are omitted from weighted scoring and reduce confidence; no semantic model call is invented.",
-    "gap": "Saved Vision and multimodal assessment binding, full real spoken-media acceptance and Native workflow remain incomplete.",
+    "behavior": "API Studio Top 3/Top 5/Auto Shorts save separate immutable, fingerprint-idempotent canonical drafts. Scores recompute from the selected transcript, preserve physical observations, expose heuristic factors, protect word/segment boundaries and enforce duration bounds without fabricating missing candidates. Applying requires editor identity, transcript binding, locks and timeline CAS; master history remains and approval invalidates. Additive draft-table migration tested locally; no live migration performed. Top 3/5/Auto Shorts drafts now explain weighted speech coverage, keywords, information density, measured pixel-change, local exposure, pixel repetition and audio energy. Missing multimodal factors remain null, are omitted from weighted scoring and reduce confidence; no semantic model call is invented. Immutable combined-scene assessments now bind selected transcript, source hash, local measurement and saved structured Vision frames/model/confidence/reference. Missing scores stay null; assessment selection feeds highlight drafts without altering original analyses or the active timeline.",
+    "gap": "Real spoken-media/highlight acceptance and Native workflow remain incomplete; selected immutable scene assessments now bind saved Vision and measured factors.",
     "severity": "P1",
     "dependency": "analysis/timeline",
     "wave": "3",
@@ -340,9 +344,10 @@
     "source": [
       "apps/api/app/openai_vision_provider.py",
       "apps/api/app/vision_models.py",
-      "apps/api/app/vision_logic.py"
+      "apps/api/app/vision_logic.py",
+      "apps/api/app/scene_intelligence.py"
     ],
-    "behavior": "Real structured adapter plus full object/OCR/composition/quality contracts.",
+    "behavior": "Real structured adapter plus full object/OCR/composition/quality contracts. Immutable combined-scene assessments now bind selected transcript, source hash, local measurement and saved structured Vision frames/model/confidence/reference. Missing scores stay null; assessment selection feeds highlight drafts without altering original analyses or the active timeline.",
     "gap": "Attach results to accepted Native asset/scene/B-roll/QC rankings; broaden real acceptance.",
     "severity": "P1",
     "dependency": "provider config/analysis",
@@ -1007,7 +1012,7 @@
   },
   {
     "id": 64,
-    "name": "E2E flows AÃ¢â‚¬â€œE",
+    "name": "E2E flows AÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“E",
     "status": "PARTIAL",
     "source": [
       "scripts/e2e-smoke.sh",

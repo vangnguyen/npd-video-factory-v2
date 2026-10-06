@@ -9,3 +9,8 @@ export function canonicalShotClips(snapshot){
     .flatMap(t=>t.clips.map(c=>({...c,track_id:t.track_id,track_locked:t.locked})))
     .sort((a,b)=>a.timeline_start-b.timeline_start)??[];
 }
+export function compatibleSceneAssessments(items,analysis){
+  return (items??[]).filter(item=>item.analysis_id===analysis?.analysis_id&&
+    item.transcript_id===(analysis?.transcript?.transcript_id??null));
+}
+export function sceneScore(value){return value==null?'Chưa có dữ liệu':`${Math.round(value*100)}/100`;}

@@ -9,6 +9,20 @@ from sqlalchemy.orm import Mapped, mapped_column
 from .db import Base, utc_now
 
 
+class SceneIntelligenceORM(Base):
+    __tablename__ = 'auto_edit_scene_intelligence'
+    __table_args__ = (UniqueConstraint('project_id','fingerprint',name='uq_scene_intelligence_fingerprint'),)
+    assessment_id: Mapped[str] = mapped_column(String(64),primary_key=True)
+    project_id: Mapped[str] = mapped_column(String(64),ForeignKey('video_projects.project_id',ondelete='CASCADE'),nullable=False)
+    analysis_id: Mapped[str] = mapped_column(String(64),ForeignKey('auto_edit_analyses.analysis_id',ondelete='RESTRICT'),nullable=False)
+    transcript_id: Mapped[str | None] = mapped_column(String(64),ForeignKey('transcripts.transcript_id',ondelete='RESTRICT'),nullable=True)
+    vision_analysis_id: Mapped[str | None] = mapped_column(String(64),ForeignKey('vision_analyses.vision_analysis_id',ondelete='RESTRICT'),nullable=True)
+    fingerprint: Mapped[str] = mapped_column(String(64),nullable=False)
+    snapshot_json: Mapped[dict[str,Any]] = mapped_column(JSON,nullable=False)
+    actor_ref: Mapped[str] = mapped_column(String(160),nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),nullable=False,default=utc_now)
+
+
 class HighlightDraftORM(Base):
     __tablename__ = "auto_edit_highlight_drafts"
     __table_args__ = (UniqueConstraint("project_id", "fingerprint", name="uq_highlight_draft_fingerprint"),)
