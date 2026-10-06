@@ -149,6 +149,7 @@ class MediaPlanningService:
         if vision and vision.provenance.get('source_asset_checksum') != source_asset.checksum_sha256:
             raise ValueError('saved Vision checksum differs from the source asset')
         provider_status = self._provider_status()
+        supporting_assets = await self.platform.list_assets(project_id) if payload.purpose == 'supporting_broll' else []
         fingerprint = hashlib.sha256(
             json.dumps(
                 {
@@ -160,6 +161,8 @@ class MediaPlanningService:
                     "configuration": payload.model_dump(mode="json"),
                     "providers": provider_status,
                     "algorithm": "priority-media-planner-v1",
+                    **({'supporting_assets':[(asset.asset_id,asset.checksum_sha256,asset.provenance,asset.filename)
+                        for asset in supporting_assets]} if payload.purpose=='supporting_broll' else {}),
                 },
                 sort_keys=True,
                 separators=(",", ":"),
@@ -176,6 +179,7 @@ class MediaPlanningService:
                 "algorithm": "priority-media-planner-v1",
                 "selection_policy":payload.selection_policy,
                 "transcript_id":analysis.transcript.transcript_id if analysis.transcript else None,
+                "source_asset_sha256":source_asset.checksum_sha256,
                 "mock_tested": True,
                 "real_provider_tested": False,
                 "source_analysis_id": analysis.analysis_id,
@@ -228,6 +232,10 @@ class MediaPlanningService:
                     video_available=video_available,
                     has_source_asset=True,
                 )
+                if payload.purpose == 'supporting_broll':
+                    from .broll_planner import supporting_candidates,choose_supporting_strategy
+                    strategy,_ = choose_supporting_strategy(payload,supporting_candidates(supporting_assets,analysis,broll.search_query),
+                        stock=stock_available,image=image_available,video=video_available,preferred_type=broll.preferred_media_type)
                 if strategy not in {"stock_image", "stock_video"}:
                     continue
                 if strategy == "stock_video":
@@ -258,6 +266,7 @@ class MediaPlanningService:
                 video_available=video_available,
                 image_cost_vnd=image_cost,
                 video_cost_vnd=video_cost,
+                supporting_assets=supporting_assets,
             )
             projected = sum(
                 (item.estimated_cost_vnd for item in items if item.strategy in {"ai_image", "ai_video"}),
@@ -389,7 +398,7 @@ class MediaResolutionService:
             await self._resolution_contract(plan, item, payload)
         )
         selected_candidate_id = payload.candidate_id
-        if item.strategy in {"stock_image", "stock_video"}:
+        if capability == 'stock_media':
             if not selected_candidate_id and item.candidates:
                 selected_candidate_id = item.candidates[0].candidate_id
             if not selected_candidate_id or selected_candidate_id not in {
@@ -428,7 +437,7 @@ class MediaResolutionService:
             provenance={
                 "algorithm": "media-resolution-v2-06.1",
                 "asynchronous": True,
-                "fixture": not external,
+                "fixture": not external and capability != 'internal_media',
                 "request": request_payload,
                 "source_media_mutated": False,
                 "publish_requested": False,
@@ -446,7 +455,8 @@ class MediaResolutionService:
         staging_path: Path | None = None
         artifact_evidence = None
         try:
-            self._ensure_provider_configured(item)
+            if job.capability != 'internal_media':
+                self._ensure_provider_configured(item)
             provider_context = ProviderCallContext(
                 operation_key=f"media-resolution:{resolution_job_id}",
                 workspace_id=plan.workspace_id,
@@ -601,6 +611,7 @@ class MediaResolutionService:
                     "provider_artifact_storage_verified": bool(
                         artifact_evidence and artifact_evidence.storage_receipt_verified
                     ),
+                    "asset_checksum_sha256":asset.checksum_sha256,
                     "full_rights_record_required_for_production": True,
                 },
             )
@@ -642,18 +653,36 @@ class MediaResolutionService:
     async def _resolution_contract(self, plan, item, payload):
         aspect = platform_aspect_ratio(plan.configuration.platform)
         seed = int(hashlib.sha256(item.media_plan_item_id.encode()).hexdigest()[:8], 16) % 2_147_483_648
-        if item.strategy == "user_asset":
+        if item.strategy == "user_asset" or payload.asset_id:
+            if payload.candidate_id:
+                raise ValueError('registered asset reuse does not accept a stock candidate')
+            selected_asset_id = payload.asset_id or item.source_asset_id
+            if plan.configuration.purpose == 'supporting_broll':
+                selected = next((candidate for candidate in item.provenance.get('supporting_candidates',[])
+                    if candidate['asset_id']==selected_asset_id),None)
+                if selected is None:
+                    raise ValueError('select a registered supporting asset from this plan')
+                source = await self.auto_edit_repository.get_asset(selected_asset_id)
+                if source is None or source.project_id != plan.project_id or source.workspace_id != plan.workspace_id:
+                    raise KeyError(selected_asset_id)
+                if source.checksum_sha256 != selected['checksum_sha256']:
+                    raise ValueError('selected supporting asset checksum is stale')
+            elif payload.asset_id:
+                raise ValueError('asset picker requires a supporting B-roll plan')
             return (
                 "internal-media",
                 "internal_media",
                 "reuse-user-asset",
-                {"source_asset_id": item.source_asset_id},
+                {"source_asset_id": selected_asset_id,
+                    **({'checksum_sha256':selected['checksum_sha256']} if plan.configuration.purpose=='supporting_broll' else {})},
                 Decimal("0"),
                 False,
                 False,
                 False,
             )
         if item.strategy in {"stock_image", "stock_video"}:
+            if payload.asset_id:
+                raise ValueError('select a stock candidate for the stock strategy')
             return (
                 self.providers.stock.key,
                 "stock_media",
@@ -665,6 +694,8 @@ class MediaResolutionService:
                 self.providers.stock.real_provider_tested,
             )
         if item.strategy in {"ai_image", "motion_graphic"}:
+            if payload.asset_id or payload.candidate_id:
+                raise ValueError('generation does not accept an asset/candidate override')
             request = ImageGenerationInput(
                 prompt=item.broll.generation_prompt,
                 negative_prompt="logos, watermarks, copied creator composition",
@@ -684,6 +715,8 @@ class MediaResolutionService:
                 self.providers.image.paid,
                 self.providers.image.real_provider_tested,
             )
+        if payload.asset_id or payload.candidate_id:
+            raise ValueError('generation does not accept an asset/candidate override')
         request = VideoGenerationInput(
             prompt=item.broll.generation_prompt,
             negative_prompt="logos, watermarks, copied creator composition",
@@ -704,26 +737,34 @@ class MediaResolutionService:
         )
 
     async def _materialize(self, job, plan, item) -> tuple[ProviderMaterializedMedia, AssetRead | None]:
-        self._ensure_provider_configured(item)
+        if job.capability != 'internal_media':
+            self._ensure_provider_configured(item)
         if job.external_call and not self.allow_external_execution:
             raise RuntimeError("external media execution is disabled in V2-06")
         if job.paid and not self.allow_paid_execution:
             raise RuntimeError("paid media execution is disabled in V2-06")
-        if item.strategy == "user_asset":
-            if not item.source_asset_id:
+        if job.capability == 'internal_media':
+            selected_id = job.provenance.get('request',{}).get('source_asset_id') or item.source_asset_id
+            if not selected_id:
                 raise RuntimeError("user-asset plan item is missing its source asset")
-            asset = await self.auto_edit_repository.get_asset(item.source_asset_id)
-            if asset is None or asset.project_id != plan.project_id:
-                raise KeyError(item.source_asset_id)
+            asset = await self.auto_edit_repository.get_asset(selected_id)
+            if asset is None or asset.project_id != plan.project_id or asset.workspace_id != plan.workspace_id:
+                raise KeyError(selected_id)
+            expected = job.provenance.get('request',{}).get('checksum_sha256')
+            if expected and expected != asset.checksum_sha256:
+                raise ValueError('selected supporting asset checksum changed before resolution')
             rights = str(asset.provenance.get("rights_status", "unknown"))
             license_name = str(asset.provenance.get("license", "unknown"))
+            if rights == 'restricted':
+                raise ValueError('restricted supporting media cannot be reused')
+            measured = asset.provenance.get('media_metadata') or {}
             return (
                 ProviderMaterializedMedia(
                     filename=asset.filename,
                     content_type=asset.content_type,
                     payload=b"",
                     provider_job_id=None,
-                    source_type="user_upload",
+                    source_type="internal_library" if asset.provenance.get('source_type')=='internal_library' else "user_upload",
                     rights_status=rights,
                     license=license_name,
                     license_url=asset.provenance.get("license_url"),
@@ -731,11 +772,11 @@ class MediaResolutionService:
                     creator=None,
                     source_reference=f"asset://{asset.asset_id}",
                     attribution_requirement=None,
-                    width=job.provenance.get("width"),
-                    height=job.provenance.get("height"),
-                    duration_seconds=job.provenance.get("duration_seconds"),
+                    width=measured.get("width"),
+                    height=measured.get("height"),
+                    duration_seconds=measured.get("duration_seconds"),
                     orientation="unknown",
-                    production_eligible=rights in {"owned", "licensed"},
+                    production_eligible=rights in {"owned", "licensed", "verified"} and not asset.provenance.get('fixture'),
                     estimated_cost_vnd=Decimal("0"),
                     actual_cost_vnd=Decimal("0"),
                     external_call=False,

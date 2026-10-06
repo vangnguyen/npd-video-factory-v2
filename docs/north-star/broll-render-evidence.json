@@ -1,0 +1,198 @@
+{
+  "fixture_asr": true,
+  "local_real_media_encoding": true,
+  "real_provider_tested": false,
+  "human_approval_claimed": false,
+  "provider_dispatches": 0,
+  "production_deployed": false,
+  "timeline_version": 2,
+  "non_broll_tracks_preserved": true,
+  "timeline_duration_preserved": true,
+  "inputs": [
+    {
+      "asset_id": "ast_90575d2ffdc542b0baabd4c4",
+      "filename": "Video-thu-nghiem.MP4",
+      "sha256": "7fb1d7761675d204e7fe257bfac4f1c06178efd3688dee0b64601fb1563f6fad",
+      "rights_status": "owned",
+      "provenance": {
+        "source_type": "user_upload",
+        "rights_status": "owned",
+        "license": "user-provided",
+        "source_reference": "upl_df15c2eeafb949dfaeff59f5",
+        "generation_provenance": null,
+        "media_metadata": {
+          "media_kind": "video",
+          "detected_content_type": "video/mp4",
+          "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+          "duration_seconds": 16.0,
+          "width": 320,
+          "height": 240,
+          "fps": 30.0,
+          "video_codec": "h264",
+          "audio_codec": "aac",
+          "audio_channels": 1,
+          "audio_sample_rate": 48000
+        },
+        "client_filename_retained_as_evidence": "../Video thử nghiệm.MP4"
+      }
+    },
+    {
+      "asset_id": "ast_b03ea3a324ed44f99689cbca",
+      "filename": "supporting-blue.png",
+      "sha256": "0f0657c26c63d99423d36bb869ff3921bee6d2529e86ad94281659988defbaae",
+      "rights_status": "owned",
+      "provenance": {
+        "source_type": "user_upload",
+        "rights_status": "owned",
+        "license": "original synthetic test graphic",
+        "source_reference": "upl_a3c46d26a58d432aa0ed9b74",
+        "generation_provenance": null,
+        "media_metadata": {
+          "media_kind": "image",
+          "detected_content_type": "image/png",
+          "format_name": "png_pipe",
+          "duration_seconds": null,
+          "width": 640,
+          "height": 360,
+          "fps": 25.0,
+          "video_codec": "png",
+          "audio_codec": null,
+          "audio_channels": null,
+          "audio_sample_rate": null
+        },
+        "client_filename_retained_as_evidence": "supporting-blue.png"
+      }
+    },
+    {
+      "asset_id": "ast_c5f7b78b397743c08a7fd458",
+      "filename": "supporting-green.png",
+      "sha256": "c452aad9cf9f09b5738e84cfbed0ac3dd83d2e0150d45d36f5fe7ff3336c083c",
+      "rights_status": "owned",
+      "provenance": {
+        "source_type": "user_upload",
+        "rights_status": "owned",
+        "license": "original synthetic test graphic",
+        "source_reference": "upl_a18425bfe3e843feb2731d4c",
+        "generation_provenance": null,
+        "media_metadata": {
+          "media_kind": "image",
+          "detected_content_type": "image/png",
+          "format_name": "png_pipe",
+          "duration_seconds": null,
+          "width": 640,
+          "height": 360,
+          "fps": 25.0,
+          "video_codec": "png",
+          "audio_codec": null,
+          "audio_channels": null,
+          "audio_sample_rate": null
+        },
+        "client_filename_retained_as_evidence": "supporting-green.png"
+      }
+    }
+  ],
+  "render": {
+    "renderer": "ffmpeg-proxy-v1",
+    "playable": true,
+    "fixture": false,
+    "audio_included": false,
+    "rendered_clip_ids": [
+      "clip_c5c73f2348184784b6d1",
+      "clip_b13aa31c8ef64cf88720"
+    ],
+    "ignored_clip_ids": []
+  },
+  "preview_sha256": "c2eb7b4a6c66185b2f0f8b8bf5ca65338934b50096c0b30c9441c76f6030431a",
+  "probe": {
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+        "profile": "Constrained Baseline",
+        "codec_type": "video",
+        "codec_tag_string": "avc1",
+        "codec_tag": "0x31637661",
+        "mime_codec_string": "avc1.42c01f",
+        "width": 540,
+        "height": 960,
+        "coded_width": 540,
+        "coded_height": 960,
+        "has_b_frames": 0,
+        "sample_aspect_ratio": "1:1",
+        "display_aspect_ratio": "9:16",
+        "pix_fmt": "yuv420p",
+        "level": 31,
+        "chroma_location": "left",
+        "field_order": "progressive",
+        "is_avc": "true",
+        "nal_length_size": "4",
+        "id": "0x1",
+        "r_frame_rate": "30/1",
+        "avg_frame_rate": "30/1",
+        "time_base": "1/15360",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 245760,
+        "duration": "16.000000",
+        "bit_rate": "166848",
+        "bits_per_raw_sample": "8",
+        "nb_frames": "480",
+        "extradata_size": 40,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "language": "und",
+          "handler_name": "VideoHandler",
+          "encoder": "Lavc63.1.102 libx264"
+        }
+      }
+    ],
+    "format": {
+      "filename": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-render-r2\\preview.mp4",
+      "nb_streams": 1,
+      "nb_programs": 0,
+      "nb_stream_groups": 0,
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "format_long_name": "QuickTime / MOV",
+      "start_time": "0.000000",
+      "duration": "16.000000",
+      "size": "336473",
+      "bit_rate": "168236",
+      "probe_score": 100,
+      "tags": {
+        "major_brand": "isom",
+        "minor_version": "512",
+        "compatible_brands": "isomiso2avc1mp41",
+        "encoder": "Lavf63.1.102"
+      }
+    }
+  },
+  "decoded_mean_pixel_rgb_at_half_second": [
+    10,
+    9,
+    115
+  ],
+  "frame_sha256": "a4ef9526ddb4982eeb7bed831ef1cccfddeac8738fd57f41d1a4aec3ddc0343e",
+  "original_media_mutated": false,
+  "output_directory": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-render-r2"
+}

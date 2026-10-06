@@ -93,6 +93,7 @@ class VideoGenerationInput(StrictModel):
 
 
 class MediaPlanRequest(StrictModel):
+    purpose: Literal["scene_media", "supporting_broll"] = "scene_media"
     analysis_id: str = Field(pattern=r"^ana_[A-Za-z0-9_-]{4,60}$")
     transcript_id: str | None = Field(default=None, pattern=r"^trn_[A-Za-z0-9_-]{4,60}$")
     vision_analysis_id: str | None = Field(default=None, pattern=r"^vis_[A-Za-z0-9_-]{4,60}$")
@@ -181,6 +182,13 @@ class MediaPlanItemRead(StrictModel):
 
 class MediaResolutionRequest(StrictModel):
     candidate_id: str | None = Field(default=None, max_length=120)
+    asset_id: str | None = Field(default=None, pattern=r"^ast_[A-Za-z0-9_-]{4,60}$")
+
+    @model_validator(mode="after")
+    def exclusive_selection(self):
+        if self.candidate_id and self.asset_id:
+            raise ValueError("select either a stock candidate or a registered asset")
+        return self
 
 
 class MediaResolutionJobRead(StrictModel):

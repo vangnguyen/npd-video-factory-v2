@@ -11,9 +11,23 @@ from .media_intelligence_models import (
 )
 from .media_intelligence_providers import MediaProviderNotConfigured
 from .media_intelligence_service import MediaPlanningService, MediaResolutionService
+from .human_auth import authorize_project
+from .broll_planner import BrollApplyRequest, apply_broll
+from .timeline_models import TimelineRead
+from .timeline_logic import TimelineEditError
+from .timeline_repository import TimelineConflictError
 
 
 router = APIRouter(prefix="/api/v1")
+
+
+@router.post('/projects/{project_id}/media-plans/{media_plan_id}/apply-broll',response_model=TimelineRead)
+async def apply_supporting_broll(project_id: str,media_plan_id: str,payload: BrollApplyRequest,request: Request):
+    principal=await authorize_project(request,project_id,'editor')
+    try:
+        return await apply_broll(request.app.state.timeline_service,project_id,media_plan_id,payload,principal.subject)
+    except KeyError as exc:raise missing('Supporting media plan, timeline or selected asset') from exc
+    except (TimelineEditError,TimelineConflictError) as exc:raise error(409,'BROLL_TIMELINE_CONFLICT',str(exc)) from exc
 
 
 def planning_service(request: Request) -> MediaPlanningService:

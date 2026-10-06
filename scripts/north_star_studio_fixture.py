@@ -5,6 +5,7 @@ render/publish/provider dispatch is unavailable, and existing installations are 
 """
 from __future__ import annotations
 import argparse
+import asyncio
 from contextlib import asynccontextmanager
 import json
 from pathlib import Path
@@ -32,10 +33,15 @@ from app.production_routes import router as production_router
 from app.production_repository import ProductionRepository
 from app.production_service import ProductionPackageService
 from app.production_models import ProductionPackageCreateRequest
+from app.media_intelligence_repository import MediaIntelligenceRepository
+from app.media_intelligence_service import MediaPlanningService,MediaResolutionService,MediaProviderBundle
+from app.media_intelligence_providers import ContractOnlyStockMediaProvider,ContractOnlyImageGenerationProvider,ContractOnlyVideoGenerationProvider
+from app.media_intelligence_routes import router as media_router
+from app.auto_edit_models import UploadInitRequest,UploadCompleteRequest
 from types import SimpleNamespace
 
 
-def create_harness(data_dir: Path, subtitle_editor: bool = False):
+def create_harness(data_dir: Path, subtitle_editor: bool = False, broll_editor: bool = False):
     @asynccontextmanager
     async def lifespan(app):
         engine,sessions,platform,repo,uploads,analyses,project,version = await setup_services(data_dir)
@@ -54,14 +60,41 @@ def create_harness(data_dir: Path, subtitle_editor: bool = False):
         upload = await upload_fixture(uploads,project,version,media.read_bytes())
         result = await analyses.analyze(project.project_id,AutoEditAnalysisRequest(asset_id=upload.asset_id,top_highlights=5))
         timelines = TimelineRepository(sessions)
+        media_repo=MediaIntelligenceRepository(sessions) if broll_editor else None
         app.state.timeline_service = TimelineService(repository=timelines, platform=platform, auto_edit_repository=repo,
-            media_repository=None, validator=TimelineContractValidator(ROOT/'packages/contracts/timeline.schema.json'))
+            media_repository=media_repo, validator=TimelineContractValidator(ROOT/'packages/contracts/timeline.schema.json'))
         app.state.auto_edit_analysis_service = analyses
         app.state.upload_service = uploads
         install_test_human_auth(app, platform_repository=platform)
         app.state.fixture = {'platform':platform,'project':project,'analyses':analyses,'repo':repo}
         timeline = await app.state.timeline_service.create(project.project_id,TimelineCreateRequest(analysis_id=result.analysis_id,
                                                            silence_decision_ids=[],actor_ref='offline-fixture'))
+        tasks=set()
+        if broll_editor:
+            import hashlib
+            from test_auto_edit_analysis import bytes_stream
+            await platform.seed_providers([{'provider_key':'internal-media','display_name':'Local registered media reuse',
+                'capability':'internal_media','adapter':'app.media_intelligence_service.MediaResolutionService',
+                'routing_mode':'primary','status':'healthy','enabled':True,'supports_dry_run':True}])
+            providers=MediaProviderBundle(stock=ContractOnlyStockMediaProvider(),image=ContractOnlyImageGenerationProvider(),video=ContractOnlyVideoGenerationProvider())
+            class LocalOnlyQueue:
+                async def rpush(self,_key,job_id):
+                    task=asyncio.create_task(app.state.media_resolution_service.process(job_id));tasks.add(task)
+                    task.add_done_callback(tasks.discard)
+            app.state.media_planning_service=MediaPlanningService(repository=media_repo,auto_edit_repository=repo,
+                vision_repository=None,platform=platform,providers=providers,allow_external_execution=False,allow_paid_execution=False)
+            app.state.media_resolution_service=MediaResolutionService(repository=media_repo,platform=platform,auto_edit_repository=repo,
+                object_storage=uploads.object_storage,providers=providers,queue=LocalOnlyQueue(),staging_root=data_dir/'broll-local',
+                allow_external_execution=False,allow_paid_execution=False)
+            for name,color in [('supporting-blue.png','blue'),('supporting-green.png','green')]:
+                image_path=data_dir/name
+                subprocess.run([ffmpeg,'-v','error','-nostdin','-f','lavfi','-i',f'color=c={color}:s=640x360',
+                    '-frames:v','1',str(image_path)],check=True,timeout=30)
+                payload=image_path.read_bytes();checksum=hashlib.sha256(payload).hexdigest()
+                session=await uploads.initialize(UploadInitRequest(project_id=project.project_id,filename=name,media_kind='image',
+                    content_type='image/png',size_bytes=len(payload),checksum_sha256=checksum,rights_status='owned',license='original synthetic test graphic'))
+                await uploads.store_part(session.upload_id,1,bytes_stream(payload),expected_part_sha256=checksum)
+                await uploads.complete(session.upload_id,UploadCompleteRequest(checksum_sha256=checksum))
         if subtitle_editor:
             class NoDispatch:
                 async def rpush(self, *_args):raise RuntimeError('fixture dispatch disabled')
@@ -74,11 +107,15 @@ def create_harness(data_dir: Path, subtitle_editor: bool = False):
         (data_dir/'analysis.json').write_text(result.model_dump_json(indent=2),encoding='utf-8')
         (data_dir/'timeline.json').write_text(timeline.model_dump_json(indent=2),encoding='utf-8')
         try:yield
-        finally:await engine.dispose()
+        finally:
+            for task in tasks:task.cancel()
+            await asyncio.gather(*tasks,return_exceptions=True)
+            await engine.dispose()
     app = FastAPI(lifespan=lifespan)
     deps = [Depends(authorize_human_request)]
     app.include_router(timeline_router, dependencies=deps)
     app.include_router(auto_edit_router, dependencies=deps)
+    if broll_editor:app.include_router(media_router,dependencies=deps)
     if subtitle_editor:
         from fastapi import APIRouter
         safe_router=APIRouter()
@@ -97,8 +134,9 @@ def create_harness(data_dir: Path, subtitle_editor: bool = False):
     async def projects(workspace_id: str):return await app.state.fixture['platform'].list_projects(workspace_id)
     @app.get('/api/v1/projects/{project_id}/assets', dependencies=deps)
     async def assets(project_id: str):return await app.state.fixture['platform'].list_assets(project_id)
-    @app.get('/api/v1/projects/{project_id}/media-plans', dependencies=deps)
-    async def plans(project_id: str):return []
+    if not broll_editor:
+        @app.get('/api/v1/projects/{project_id}/media-plans', dependencies=deps)
+        async def plans(project_id: str):return []
     @app.get('/api/v1/projects/{project_id}/publications', dependencies=deps)
     async def publications(project_id: str):return []
     @app.get('/api/v1/publishing-platforms', dependencies=deps)
@@ -127,6 +165,7 @@ if __name__=='__main__':
     parser.add_argument('--data-dir',type=Path,required=True)
     parser.add_argument('--port',type=int,default=18031)
     parser.add_argument('--subtitle-editor',action='store_true')
+    parser.add_argument('--broll-editor',action='store_true')
     args=parser.parse_args()
     args.data_dir.mkdir(parents=True,exist_ok=False)
-    uvicorn.run(create_harness(args.data_dir,subtitle_editor=args.subtitle_editor),host='127.0.0.1',port=args.port,log_level='warning')
+    uvicorn.run(create_harness(args.data_dir,subtitle_editor=args.subtitle_editor,broll_editor=args.broll_editor),host='127.0.0.1',port=args.port,log_level='warning')

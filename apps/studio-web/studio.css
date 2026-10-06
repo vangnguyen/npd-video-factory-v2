@@ -300,6 +300,11 @@
 #analysis-review textarea, .transcript-item textarea { width: 100%; min-height: 75px; padding: 10px; font: inherit; }
 #analysis-review label { display: block; margin: 10px 0; }
 #analysis-review select { padding: 9px 12px; margin: 6px 10px; border: 1px solid var(--line); border-radius: 8px; font: inherit; max-width: 100%; }
+.broll-tools, .broll-card { overflow-wrap: anywhere; }
+.broll-tools p, .broll-card small { font-size: 12px; line-height: 1.6; }
+.broll-tools label, .broll-card label { display: block; margin: 10px 0; }
+.broll-tools select, .broll-card select { display: block; width: 100%; min-width: 0; max-width: 100%; padding: 8px; margin: 6px 0; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+.broll-tools button, .broll-card button { padding: 8px 12px; font: inherit; min-height: 38px; }
 .transcript-item small { display: block; margin-top: 8px; line-height: 1.5; }
 #multi-input-workbench { margin: 16px 0; padding: 24px; }
 #multi-input-workbench > summary { cursor: pointer; font-weight: 700; }

@@ -267,3 +267,27 @@ REGRESSIONS: accepted Native/source artifacts remain untouched. Previous Native 
 EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Owner Phase 10 UAT remain separate; none blocks continued safe work.
 
 OWNER ACTION REQUIRED: none. NEXT WAVE: dedicated B-roll suggestions/application and Native workflow integration, followed by remaining safe waves.
+
+## Wave 3 — supporting B-roll picker and canonical application
+
+WAVE: 3
+
+STATUS: IN PROGRESS. AUTO_EDIT_MODE_READY = NO. Supporting B-roll selection/application is implemented in API Studio; Native and final spoken-media acceptance remain outstanding.
+
+HEAD SHA: parent `bab4e2454babe206493b3d666db90e13d538acfc`; this supporting B-roll capability commit records the increment. Parent is pushed and preserved in verified `north-star-bab4e24.bundle`.
+
+CAPABILITIES COMPLETED: transcript-bound supporting plans exclude primary footage, restricted media and videos without measured duration. Ranking uses saved filename/description/tags and labels lexical overlap; semantic confidence remains null. Explicitly registered licensed internal-library assets participate in priority. Unavailable generation preserves the original footage. Studio creates/selects plans, uses an asset picker, waits for async local resolution and explicitly applies selected resolved items. CAS creates a new version of the existing canonical timeline; source, captions and original audio tracks are preserved, history remains immutable and previews/approval are invalidated. Placement follows source trims, cuts, moves and speed; video clips are bounded to measured duration and image clips retain display-duration semantics. Locks, overlaps, duplicate application, foreign selections, transcript/source/checksum mismatches fail before mutation. Replacing clips from the same plan requires an explicit selection. Rights stay attached; unknown-rights review media cannot pass publishing. Reused registered-media provenance is readable in subsequent plan versions. Browser reload retains the actual selected filename.
+
+CAPABILITIES PARTIAL: Native bridge, genuine semantic Vision ranking, official stock/generated-provider paths, supporting placement/duration controls and runtime-outage fallbacks, complete original-audio A/V/final E2E. The local visual proxy uses its existing contain/letterbox compositor; final A/V behavior still requires separate evidence. No fixture speech/provider acceptance or Owner UAT is inferred.
+
+TESTS: final focused API **43/43 PASS**, 68.58 s (`broll-api-final-r2.log`), including previous media/rights/cost/restart, transcript, reframe and scene tests. Earlier focused run passed 41; expanded B-roll contracts passed 5/5 before final attention-state refinement. Studio **94/94 PASS**, 472.72 ms (`broll-studio-final-r3.log`) and syntax check. Tests cover preserved tracks/history, review-only unknown rights, cache/source scope, measured temporal bounds, move/trim/speed mapping, track lock, CAS, HTTP viewer/editor/workspace/actor enforcement and reused provenance. Complete isolated Linux regression at clean **`bab4e24` passed 1,938 tests / 7 skips**, 591.90 s (`api-linux-bab4e24.log`). That checkpoint precedes this B-roll increment; its full-run result is not attributed to later code.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual PNG/video uploads with FFprobe, HTTP/SQLite UI selection and application, a playable FFmpeg H.264 540×960 visual proxy and decoded frame. MOCK TESTS: explicitly labeled synthetic ASR, tone footage and provider fixtures. No external/paid provider execution or publication.
+
+EVIDENCE: `broll-render-evidence.json` contains source hashes, raw probe, rendered clip receipt, frame hash and exact recovery paths. Original non-B-roll tracks and 16s duration compare equal to timeline v1; only v2 B-roll was added. Actual videos, exports and cost records remain in recovery `broll-render-r1/r2`; runner `scripts/north_star_broll_evidence.py` requires a fresh output folder and refuses unlabeled fixtures. `studio-wave3-visual/broll-evidence.json` plus screenshots at 1366/1920/2560 show no horizontal overflow, persisted blue image, v2 Draft and no console warnings/errors. Fixture `b1` retains the initial missing internal-media registration failure; `b2` retains an intermediate picker check. Final `b3` uses only local registered-media processing and contract-only unavailable providers. Browser viewport reset and tab closed; only the two verified fixture Python processes were stopped. Data/ephemeral auth files remain outside Git. The initial Node directory-style invocation failed on Windows; corrected explicit test-file expansion passes.
+
+REGRESSIONS: previous accepted videos/live source/data/configuration remain untouched; Native 264/264, subtitle renderer 33/33 and six local-real caption encodes remain separately recorded earlier evidence. Full latest pre-B-roll Linux checkpoint is green. No main merge, live database migration/restart, production deployment or external publishing.
+
+EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Phase 10 Owner UAT remain separate limitations; none blocks continued safe implementation.
+
+OWNER ACTION REQUIRED: none. NEXT WAVE: complete remaining Mode B controls/Native integration and continue media intelligence plus subsequent safe waves.

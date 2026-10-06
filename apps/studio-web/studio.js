@@ -22,6 +22,7 @@ import { silenceSelection,canonicalShotClips,compatibleSceneAssessments,sceneSco
 import { waveformPath } from "/waveform.mjs";
 import {reframeProfiles,matchingVision,needsProductionReview} from "/reframe.mjs";
 import {subtitleCueEdit,compatibleSubtitleTemplates,subtitleSaveStyle,timedSubtitleModes} from '/subtitle-editor.mjs';
+import {compatibleBrollPlans,selectedBrollAsset,brollApplyPayload} from '/broll-planner.mjs';
 
 const state = {
   workspaceId: null,
@@ -30,6 +31,7 @@ const state = {
   assets: [],
   analyses: [],
   mediaPlans: [],
+  selectedBrollPlanId: '',
   timeline: null,
   versions: [],
   preview: null,
@@ -358,11 +360,39 @@ function renderBrowser() {
       <article class="scene-item" data-seek="${item.start_seconds}"><time>Cảnh ${item.ordinal + 1} · ${formatTime(item.start_seconds)}</time><p><strong>${escapeHtml(item.semantic_label)}</strong><br>${escapeHtml(item.description)}</p></article>
     `).join("") : browserEmpty("Chưa có scene AI phù hợp.");
   } else {
-    const items = (activeMediaPlan()?.items ?? []).filter((item) => matches(`${item.broll?.search_query} ${item.strategy}`));
-    panel.innerHTML = items.length ? items.map((item) => `
-      <article class="scene-item" data-seek="${item.broll.placement_start_seconds}"><time>${formatTime(item.broll.placement_start_seconds)} · ${escapeHtml(item.status)}</time><p><strong>${escapeHtml(item.strategy)}</strong><br>${escapeHtml(item.broll.search_query)}</p></article>
-    `).join("") : browserEmpty("Chưa có media plan/B-roll. Timeline vẫn dùng video gốc.");
+    renderBrollBrowser(panel,analysis,matches);
   }
+}
+
+function selectedBrollPlan(){
+  const plans=compatibleBrollPlans(state.mediaPlans,activeAnalysis());
+  return plans.find(item=>item.media_plan_id===state.selectedBrollPlanId)??plans[0]??null;
+}
+
+function renderBrollBrowser(panel,analysis,matches){
+  const plans=compatibleBrollPlans(state.mediaPlans,analysis),plan=selectedBrollPlan();
+  state.selectedBrollPlanId=plan?.media_plan_id??'';
+  panel.innerHTML=`<div class="broll-tools"><button type="button" data-broll-create ${analysis?'':'disabled'}>Tạo đề xuất B-roll</button>
+    <p>Chọn tư liệu bổ trợ cho cảnh. Giữ lời nói và tệp gốc; xem preview và duyệt lại sau khi áp dụng.</p>
+    ${plans.length?`<label>Bản đề xuất<select data-broll-plan>${plans.map(item=>`<option value="${escapeHtml(item.media_plan_id)}" ${item===plan?'selected':''}>${escapeHtml(new Date(item.created_at).toLocaleString('vi-VN'))} · ${item.items.length} cảnh</option>`).join('')}</select></label>`:''}</div>`;
+  if(!plan){panel.innerHTML+=browserEmpty('Chưa có đề xuất phù hợp với transcript đang chọn.');return;}
+  const items=plan.items.filter(item=>matches(`${item.broll.search_query} ${item.strategy}`));
+  panel.innerHTML+=items.map(item=>{
+    const candidates=item.provenance?.supporting_candidates??[],stock=item.candidates??[];
+    const ready=item.status==='resolved';
+    const resolvedAsset=plan.media_assets.find(asset=>asset.media_asset_id===item.selected_media_asset_id);
+    const selectedAssetId=resolvedAsset?.asset_id??item.source_asset_id;
+    return `<article class="scene-item broll-card"><button type="button" data-seek="${item.broll.placement_start_seconds}">Cảnh ${item.ordinal+1} · ${formatTime(item.broll.placement_start_seconds)}</button>
+      <p><strong>${escapeHtml(item.broll.broll_intent)}</strong><br>${escapeHtml(item.broll.search_query)}</p>
+      <p>${item.broll.duration_seconds.toFixed(1)} giây · ${escapeHtml(item.status)}${item.needs_attention?' · Cần kiểm tra':''}</p>
+      ${resolvedAsset?`<p>Đã chọn: ${escapeHtml(state.assets.find(asset=>asset.asset_id===resolvedAsset.asset_id)?.filename??resolvedAsset.asset_id)} · ${escapeHtml(resolvedAsset.rights_status)}</p>`:''}
+      <small>${item.broll.provenance?.vision_analysis_id?'Có bằng chứng hình ảnh đã lưu':'Chưa có hiểu hình ảnh; điểm liên quan dựa trên tên, mô tả và nhãn đã lưu.'}</small>
+      ${candidates.length?`<form data-broll-select="${escapeHtml(item.media_plan_item_id)}"><label>Tư liệu bổ trợ<select data-broll-asset>${candidates.map(candidate=>`<option value="${escapeHtml(candidate.asset_id)}" ${candidate.asset_id===selectedAssetId?'selected':''}>${escapeHtml(candidate.filename)} · ${escapeHtml(candidate.rights_status)} · ${(candidate.relevance_score*100).toFixed(0)}% khớp từ khóa</option>`).join('')}</select></label><button type="submit">Chọn tư liệu</button></form>`:'<p>Chưa có tư liệu tải lên phù hợp. Thêm ảnh/video tại mục Media.</p>'}
+      ${stock.length?`<form data-broll-stock="${escapeHtml(item.media_plan_item_id)}"><label>Stock đã tìm được<select data-broll-candidate>${stock.map(candidate=>`<option value="${escapeHtml(candidate.candidate_id)}">${escapeHtml(candidate.provider)} · ${escapeHtml(candidate.creator)} · ${escapeHtml(candidate.rights_status)}</option>`).join('')}</select></label><button type="submit">Đưa stock vào hàng đợi</button></form>`:''}
+      ${ready?`<label><input type="checkbox" data-broll-apply-item="${escapeHtml(item.media_plan_item_id)}"> Áp dụng cảnh này vào timeline</label>`:''}
+    </article>`;
+  }).join('');
+  panel.innerHTML+=`<div class="broll-tools"><label><input type="checkbox" data-broll-replace> Thay các clip đã áp dụng từ cùng đề xuất</label><button type="button" data-broll-apply ${state.timeline?'':'disabled'}>Áp dụng lựa chọn</button><p>Tư liệu chưa rõ quyền có thể xem trong bản dựng; đăng bài vẫn bị chặn.</p></div>`;
 }
 
 function browserEmpty(message) {
@@ -1318,6 +1348,49 @@ $("#browser-search").addEventListener("input", (event) => { state.query = event.
 $("#browser-content").addEventListener("click", (event) => {
   const seek = event.target.closest("[data-seek]");
   if (seek) setPlayhead(Number(seek.dataset.seek));
+});
+$('#browser-content').addEventListener('change',event=>{
+  if(event.target.matches('[data-broll-plan]')){state.selectedBrollPlanId=event.target.value;renderBrowser();}
+});
+$('#browser-content').addEventListener('click',async event=>{
+  const button=event.target.closest('[data-broll-create],[data-broll-apply]');if(!button)return;
+  button.disabled=true;
+  try{
+    if(button.hasAttribute('data-broll-create')){
+      const analysis=activeAnalysis();if(!analysis)throw new Error('Chờ phân tích video hoàn tất.');
+      const plan=await api(`/api/v1/projects/${state.projectId}/media-plans`,{method:'POST',body:JSON.stringify({
+        purpose:'supporting_broll',analysis_id:analysis.analysis_id,transcript_id:analysis.transcript?.transcript_id??null,
+        allow_stock:false,allow_ai_image:false,allow_ai_video:false})});
+      state.selectedBrollPlanId=plan.media_plan_id;state.mediaPlans=await api(`/api/v1/projects/${state.projectId}/media-plans`);
+      renderBrowser();toast('Đã lưu đề xuất. Chọn tư liệu bổ trợ cho từng cảnh.');
+    }else{
+      const ids=[...$('#browser-content').querySelectorAll('[data-broll-apply-item]:checked')].map(input=>input.dataset.brollApplyItem);
+      const plan=selectedBrollPlan(),body=brollApplyPayload(state.timeline,plan,ids,$('[data-broll-replace]').checked);
+      await api(`/api/v1/projects/${state.projectId}/media-plans/${plan.media_plan_id}/apply-broll`,{method:'POST',body:JSON.stringify(body)});
+      await loadProject();toast('B-roll đã lưu vào timeline. Xem preview và duyệt lại.');
+    }
+  }catch(error){toast(error.message,true);}finally{button.disabled=false;}
+});
+$('#browser-content').addEventListener('submit',async event=>{
+  const form=event.target.closest('[data-broll-select],[data-broll-stock]');if(!form)return;event.preventDefault();
+  const button=form.querySelector('button[type="submit"]');button.disabled=true;
+  const projectId=state.projectId;
+  try{
+    const plan=selectedBrollPlan(),id=form.dataset.brollSelect??form.dataset.brollStock;
+    const item=plan.items.find(item=>item.media_plan_item_id===id);
+    const body=form.dataset.brollSelect?selectedBrollAsset(item,form.querySelector('[data-broll-asset]').value):
+      {candidate_id:form.querySelector('[data-broll-candidate]').value};
+    let job=await api(`/api/v1/projects/${projectId}/media-plans/${plan.media_plan_id}/items/${id}/resolve`,{method:'POST',body:JSON.stringify(body)});
+    toast('Tư liệu đã vào hàng đợi. Timeline sẽ đổi khi bạn chọn áp dụng.');
+    for(let count=0;['queued','running'].includes(job.status)&&count<60;count++){
+      await new Promise(resolve=>setTimeout(resolve,1000));
+      if(state.projectId!==projectId)return;
+      job=await api(`/api/v1/projects/${projectId}/media-resolution-jobs/${job.resolution_job_id}`);
+    }
+    if(state.projectId!==projectId)return;
+    state.mediaPlans=await api(`/api/v1/projects/${projectId}/media-plans`);renderBrowser();
+    toast(job.status==='succeeded'?'Tư liệu đã sẵn sàng. Chọn cảnh và áp dụng vào timeline.':job.status==='needs_approval'?'Tư liệu cần phê duyệt chi phí.':job.failure_reason??'Hàng đợi đang xử lý; làm mới để xem trạng thái.',job.status==='failed');
+  }catch(error){toast(error.message,true);}finally{button.disabled=false;}
 });
 $("#canonical-shot-list").addEventListener('click',event=>{const card=event.target.closest('[data-canonical-shot]');if(!card)return;state.selectedClipId=card.dataset.canonicalShot;render();});
 $("#apply-silence-review").addEventListener('click',async event=>{

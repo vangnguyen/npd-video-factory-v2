@@ -4,7 +4,7 @@ import uuid
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -176,7 +176,9 @@ class MediaIntelligenceRepository:
             asset_rows = (
                 await session.scalars(
                     select(MediaAssetProvenanceORM)
-                    .where(MediaAssetProvenanceORM.media_plan_id == media_plan_id)
+                    .where(MediaAssetProvenanceORM.project_id == plan.project_id,
+                        or_(MediaAssetProvenanceORM.media_plan_id == media_plan_id,
+                            MediaAssetProvenanceORM.media_asset_id.in_([row.selected_media_asset_id for row in item_rows if row.selected_media_asset_id])))
                     .order_by(MediaAssetProvenanceORM.created_at)
                 )
             ).all()
@@ -268,7 +270,7 @@ class MediaIntelligenceRepository:
                 project_version_id=plan.project_version_id,
                 media_plan_id=media_plan_id,
                 media_plan_item_id=media_plan_item_id,
-                status="needs_approval" if item.needs_approval else "queued",
+                status="needs_approval" if item.needs_approval and capability != 'internal_media' else "queued",
                 progress=0,
                 provider_key=provider_key,
                 capability=capability,
@@ -282,7 +284,7 @@ class MediaIntelligenceRepository:
                 provenance_json=provenance,
             )
             session.add(row)
-            if item.needs_approval:
+            if item.needs_approval and capability != 'internal_media':
                 item.status = "needs_approval"
                 item.needs_attention = True
             else:
@@ -447,7 +449,9 @@ class MediaIntelligenceRepository:
                 job.updated_at = utc_now()
                 item.selected_media_asset_id = selected_media_asset_id
                 item.status = "resolved"
-                item.needs_attention = not publishing_allowed
+                item.needs_attention = not publishing_allowed or (item.provenance_json.get('purpose')=='supporting_broll' and (
+                    not item.broll_json.get('provenance',{}).get('vision_analysis_id')
+                    or item.broll_json.get('provenance',{}).get('semantic_refresh_required',False)))
                 item.updated_at = utc_now()
 
     async def get_resolution_job(self, resolution_job_id: str) -> MediaResolutionJobRead | None:

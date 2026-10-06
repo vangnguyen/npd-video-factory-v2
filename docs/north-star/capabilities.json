@@ -402,10 +402,14 @@
     "source": [
       "apps/api/app/media_intelligence_logic.py",
       "apps/api/app/media_intelligence_service.py",
-      "apps/api/tests/test_media_planning_policy.py"
+      "apps/api/tests/test_media_planning_policy.py",
+      "apps/api/app/broll_planner.py",
+      "apps/api/tests/test_broll_planner.py",
+      "apps/studio-web/broll-planner.mjs",
+      "scripts/north_star_broll_evidence.py"
     ],
-    "behavior": "B-roll decisions carry intent/query/prompt/source-time placement and saved analysis/transcript/Vision/frame provenance. Absent Vision uses an explicitly capped scene heuristic, not invented provider confidence. Media resolver now honors configured priority on every scene; legacy variety is explicitly selectable/readable. Empty or unknown-rights stock results fall back. Transcript identity/version binds cache reuse and stale source/Vision checksums are rejected before planning.",
-    "gap": "Dedicated supporting-asset ranking/picker and selected suggestion application; Native integration; internal-library tier; genuine Vision relevance and stock/generated providers remain.",
+    "behavior": "Supporting B-roll plans exclude primary footage, restricted assets and videos without measured duration. Saved filename/description/tag overlap is explicitly a lexical score with semantic confidence null. Priority supports uploaded assets, licensed stock, an explicitly registered licensed internal-library tier and configured generation; unavailable tiers preserve original footage. Studio creates/selects immutable transcript-bound plans, picks registered media, waits for async resolution and explicitly applies chosen items to the same canonical timeline with CAS, history and approval/preview invalidation. Placement follows source trim, move, cut and speed; images use display duration and video is bounded to measured duration, with original audio/captions preserved. Unknown rights remain publishing-blocked. Local browser/SQLite and playable FFmpeg visual-proxy evidence are separate from mock speech/provider acceptance.",
+    "gap": "Native integration, genuine structured Vision relevance/reranking, official stock/generated adapters and full A/V/final spoken-source acceptance remain. Supporting duration/placement controls and provider fallback after runtime outages need completion; proxy contain/letterbox behavior is distinct from final A/V compositing.",
     "severity": "P1",
     "dependency": "media/rights/Vision",
     "wave": "3/5",

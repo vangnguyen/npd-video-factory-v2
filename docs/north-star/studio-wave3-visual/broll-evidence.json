@@ -1,0 +1,40 @@
+{
+  "fixture_asr": true,
+  "real_provider_acceptance": false,
+  "external_provider_dispatches": 0,
+  "viewports": [
+    {
+      "approval": "Draft",
+      "height": 768,
+      "pageWidth": 1351,
+      "selectedAsset": "supporting-blue.png · owned · 0% khớp từ khóa",
+      "selectedFilename": "supporting-blue.png",
+      "timelineVersion": "v2",
+      "width": 1366
+    },
+    {
+      "approval": "Draft",
+      "height": 1080,
+      "pageWidth": 1905,
+      "selectedAsset": "supporting-blue.png · owned · 0% khớp từ khóa",
+      "selectedFilename": "supporting-blue.png",
+      "timelineVersion": "v2",
+      "width": 1920
+    },
+    {
+      "approval": "Draft",
+      "height": 1440,
+      "pageWidth": 2545,
+      "selectedAsset": "supporting-blue.png · owned · 0% khớp từ khóa",
+      "selectedFilename": "supporting-blue.png",
+      "timelineVersion": "v2",
+      "width": 2560
+    }
+  ],
+  "selected_media": "supporting-blue.png",
+  "timeline_version_after_apply": 2,
+  "approval": "Draft",
+  "reload_preserves_selection": true,
+  "console_errors_warnings": [],
+  "retained_fixture": "C:/vf-ui-fixture-b3"
+}

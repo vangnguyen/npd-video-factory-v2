@@ -181,6 +181,7 @@ def build_plan_items(
     video_available: bool,
     image_cost_vnd: Decimal | None,
     video_cost_vnd: Decimal | None,
+    supporting_assets: list[AssetRead] | None = None,
 ) -> list[MediaPlanItemRead]:
     items: list[MediaPlanItemRead] = []
     for scene in analysis.scenes:
@@ -194,15 +195,19 @@ def build_plan_items(
         stock_searched = scene.scene_id in stock_candidates
         eligible_candidates = [candidate for candidate in raw_candidates if candidate.rights_status in {'licensed','owned','verified'}]
         effective_stock = stock_available and (bool(eligible_candidates) if payload.selection_policy == 'priority' and stock_searched else True)
-        strategy = select_strategy(
-            ordinal=scene.ordinal,
-            payload=payload,
-            preferred_media_type=broll.preferred_media_type,
-            stock_available=effective_stock,
-            image_available=image_available,
-            video_available=video_available,
-            has_source_asset=source_asset is not None,
-        )
+        supporting = []
+        selected_support = None
+        if payload.purpose == 'supporting_broll':
+            from .broll_planner import supporting_candidates, choose_supporting_strategy
+            supporting = supporting_candidates(supporting_assets or [], analysis, broll.search_query)
+            strategy, selected_support = choose_supporting_strategy(payload, supporting,
+                stock=effective_stock, image=image_available, video=video_available,
+                preferred_type=broll.preferred_media_type)
+        else:
+            strategy = select_strategy(
+                ordinal=scene.ordinal, payload=payload, preferred_media_type=broll.preferred_media_type,
+                stock_available=effective_stock, image_available=image_available, video_available=video_available,
+                has_source_asset=source_asset is not None)
         vision_scene = next(
             (item for item in (vision.scenes if vision else []) if item.scene_id == scene.scene_id),
             None,
@@ -239,11 +244,11 @@ def build_plan_items(
                 fallback=fallbacks,
                 broll=broll,
                 candidates=ranked if strategy in {"stock_video", "stock_image"} else [],
-                source_asset_id=source_asset.asset_id if strategy == "user_asset" and source_asset else None,
+                source_asset_id=(selected_support['asset_id'] if selected_support else None) if payload.purpose == 'supporting_broll' else (source_asset.asset_id if strategy == "user_asset" and source_asset else None),
                 selected_media_asset_id=None,
                 estimated_cost_vnd=estimated_value,
                 needs_approval=needs_approval,
-                needs_attention=needs_approval or strategy == "motion_graphic" or bool(broll.provenance['semantic_refresh_required']),
+                needs_attention=needs_approval or strategy == "motion_graphic" or bool(broll.provenance['semantic_refresh_required']) or (payload.purpose == 'supporting_broll' and (not selected_support or selected_support['needs_attention'])),
                 status="needs_approval" if needs_approval else "planned",
                 provenance={
                     "algorithm": "priority-media-planner-v1",
@@ -259,6 +264,8 @@ def build_plan_items(
                     "originality_guardrail": True,
                     "social_media_downloaded": False,
                     "strategy_estimated": True,
+                    **({'supporting_candidates':supporting,'purpose':'supporting_broll',
+                        'fallback_keeps_original_footage':selected_support is None and strategy=='user_asset'} if payload.purpose=='supporting_broll' else {}),
                 },
             )
         )
