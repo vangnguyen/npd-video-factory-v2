@@ -40,16 +40,22 @@ def main():
         out=config.data_root/'jobs'/job['id']; meta=read(out/'voice.json'); raw=pcm(out/'voice.wav')
         work=Path('C:/NPD-Video-Factory/post-mvp-validation/phase9k-warm-B-03')/job['id']; work.mkdir(parents=True,exist_ok=True)
         decoded_path=work/'mp4-decoded.wav'
+        decode_receipt=work/'mp4-decoded-source.json'
+        final_sha256=file_sha(out/'final.mp4')
         if not decoded_path.exists():
             subprocess.run([str(config.ffmpeg_bin/'ffmpeg.exe'),'-hide_banner','-loglevel','error','-nostdin','-n',
                 '-i',str(out/'final.mp4'),'-map','0:a:0','-ac','1','-ar','48000','-c:a','pcm_s16le',str(decoded_path)],
                 check=True,capture_output=True,timeout=30)
+            write_json(decode_receipt,{'source_MP4_sha256':final_sha256,'decoded_WAV_sha256':file_sha(decoded_path)})
+        binding=read(decode_receipt)
+        assert binding=={'source_MP4_sha256':final_sha256,'decoded_WAV_sha256':file_sha(decoded_path)},'Decoded cache is not bound to this exact MP4'
         decoded=pcm(decoded_path).astype(np.float64)/32768
         part=decoded[52800:52800+len(raw)]
         assert len(part)==len(raw)
         correlation=float(np.corrcoef(raw.astype(np.float64)/32768,part)[0,1]); assert correlation>.98
         assert np.isfinite(decoded).all() and np.abs(decoded).max()<.99
         units=[]
+        assert len(meta['units'])==len(meta['sources'])==5
         for unit,source in zip(meta['units'],meta['sources']):
             source_pcm=pcm(Path(source['source_wave_path']))
             assert file_sha(source['source_wave_path'])==source['source_wave_sha256']
@@ -84,6 +90,7 @@ def main():
             denied=json.loads(error.read()); assert error.code==409 and 'HUMAN_FINAL_VIDEO_APPROVAL_REQUIRED' in json.dumps(denied)
         results.append({'case':item['case'],'job_id':job['id'],'final_sha256':served,'units':units,
                         'wav_AAC_correlation':correlation,'decoded_peak':float(np.abs(decoded).max()),
+                        'decoded_cache_binding':binding,
                         'preview_byte_exact':True,'range_seek':'PASS','final_approval_guard':'PASS',
                         'full_new_audio_quality':'OWNER_LISTENING_PENDING','human_final_video_approved':False})
         print(json.dumps({'case':item['case'],'actual_MP4_checked':True,'wav_AAC_correlation':correlation}),flush=True)
