@@ -17,7 +17,7 @@ test('empty or missing Native evidence remains visibly unavailable',()=>{
   const markup=analysisMarkup({analyses:[{filename:'<script>fixture</script>',analysis:{analysis_id:'ana_a',transcript:null,source_media:{duration_seconds:3},silence_decisions:[]},scenes:[],highlights:[],transcript_history:[]}]});
   assert.ok(!markup.includes('<script>fixture'));
   assert.match(markup,/Chưa có lời nói nhận diện/);
-  assert.match(markup,/chưa áp dụng vào timeline/);
+  assert.match(markup,/chưa được chọn cho bản dựng hiện tại/);
 });
 test('edited transcript discloses missing word alignment and renders immutable history',()=>{
   const transcript={version:2,language:'vi',segments:[{segment_id:'seg_a',start_seconds:0,end_seconds:1,text:'Cần Giờ <img onerror=x>',words:[]}]};

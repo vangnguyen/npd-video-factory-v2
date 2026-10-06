@@ -151,7 +151,8 @@ class Phase10HTTPTests(unittest.TestCase):
         status, session, headers = self.request('GET', '/api/session', headers={'Cookie': '', 'X-VF-CSRF': ''})
         self.assertEqual(status, 200)
         self.assertEqual(session['capabilities'], {'native_shot_studio': True, 'production_intelligence': True, 'voice_quality_selection': True,
-            'native_studio_ux': True, 'asset_library': True, 'north_star_quality': True, 'native_auto_edit_analysis': True})
+            'native_studio_ux': True, 'asset_library': True, 'north_star_quality': True, 'native_auto_edit_analysis': True,
+            'native_source_timeline':True})
         for name in ('native_shot_studio', 'production_intelligence', 'voice_quality_selection', 'native_studio_ux', 'asset_library'):
             self.assertIs(type(session['capabilities'][name]), bool)
         self.assertEqual(session['csrf'], self.server.csrf)
@@ -256,6 +257,27 @@ class Phase10HTTPTests(unittest.TestCase):
         forged=deepcopy(mutation); forged['revision']=edited['revision']; forged['payload']['expected_version']=2
         forged['payload']['actor_ref']='foreign-owner'
         self.assertEqual(self.api('POST',timeline_path,forged)[0],400)
+
+        # These are authenticated local editing/catalog/static contracts, not a
+        # real browser/media/provider or Owner acceptance test.
+        self.assertEqual(self.api('GET','/api/auto-edit/subtitle-templates',headers={'Cookie':''})[0],401)
+        status,catalog=self.api('GET','/api/auto-edit/subtitle-templates');self.assertEqual(status,200)
+        self.assertEqual(len(catalog['templates']),7)
+        for path in ('/native-source-editor.mjs','/native-source-editor.css','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs'):
+            self.assertEqual(self.api('GET',path)[0],200)
+        source=next(clip for track in edited['shot_timeline']['snapshot']['tracks'] if track['kind']=='source' for clip in track['clips'])
+        linked={'revision':edited['revision'],'action':'linked_edit','payload':{'expected_version':2,
+            'operation':{'type':'trim','clip_id':source['clip_id'],'source_start':.3,'source_end':1.1}}}
+        self.assertEqual(self.api('POST',timeline_path,linked,{'X-VF-CSRF':'bad'})[0],403)
+        status,synchronized=self.api('POST',timeline_path,linked);self.assertEqual(status,200)
+        self.assertAlmostEqual(synchronized['shot_timeline']['snapshot']['duration_seconds'],1.)
+        self.assertEqual(self.api('POST',timeline_path,linked)[0],409)
+        configured={'revision':synchronized['revision'],'action':'configure','payload':{'expected_version':3,
+            'aspect_ratio':'4:5','subtitle_template_ref':'karaoke-gold@v1'}}
+        status,choice=self.api('POST',timeline_path,configured);self.assertEqual(status,200)
+        self.assertEqual(choice['shot_timeline']['snapshot']['metadata']['subtitle_style']['animation'],'karaoke')
+        self.assertEqual((choice['shot_timeline']['snapshot']['width'],choice['shot_timeline']['snapshot']['height']),(1080,1350))
+        self.assertEqual(choice['document']['source_timeline_mutations'][-1]['version'],4)
 
     def test_voice_quality_catalog_session_and_write_guards_preserve_accepted_default(self):
         before = self.database_state()

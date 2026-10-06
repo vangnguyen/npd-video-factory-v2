@@ -1,7 +1,8 @@
 /** The frame follows the saved project, and measured media once loaded. */
 export function videoFormat(project, measured = null) {
   const template=project?.document?.brand_template?.template;
-  const width=Number(measured?.width??template?.width??1080),height=Number(measured?.height??template?.height??1920);
+  const snapshot=project?.document?.canonical_timeline?.snapshot;
+  const width=Number(measured?.width??snapshot?.width??template?.width??1080),height=Number(measured?.height??snapshot?.height??template?.height??1920);
   const safe=Number.isFinite(width)&&Number.isFinite(height)&&width>0&&height>0;
   const w=safe?width:1080,h=safe?height:1920;
   const gcd=(a,b)=>b?gcd(b,a%b):a,divisor=gcd(w,h);
@@ -20,6 +21,7 @@ export function applyVideoFormat(canvas, project, measured=null) {
 
 export function nextProjectStage(project) {
   if(!project)return 'script';
+  if(project.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1')return 'video';
   if(!project.document?.proposal)return project.document?.input_kind==='media'?'assets':'script';
   if(project.jobs?.some(j=>j.kind==='render'&&j.status==='succeeded'&&j.revision===project.revision))return 'video';
   if(!project.script_review?.current&&!project.approval)return 'script';

@@ -121,13 +121,17 @@ def validate_document(document):
     return state
 
 
-def _save(store, con, project, snapshot, action):
+def _save(store, con, project, snapshot, action, *, restored_from_version=None):
     from .store import now
     previous = project['document'].get('canonical_timeline')
     document = copy.deepcopy(project['document'])
     snapshot.metadata['native_auto_edit_schema'] = SCHEMA
     document['canonical_timeline'] = {'version': (previous['version'] if previous else 0) + 1,
         'snapshot': snapshot.model_dump(mode='json'), 'sha256': digest(snapshot.model_dump(mode='json'))}
+    document['source_timeline_mutations']=document.get('source_timeline_mutations',[])+[{
+        'version':document['canonical_timeline']['version'],'mutation':{
+            'type':'restore' if restored_from_version is not None else 'edit',
+            **({'restored_from_version':restored_from_version} if restored_from_version is not None else {})}}]
     validate_document(document)
     con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',
         (project['revision']+1, json.dumps(document, ensure_ascii=False), now(), project['id']))
@@ -211,7 +215,8 @@ def restore(store, project_id, revision, body):
         prior = json.loads(row[0])
         if not is_auto_edit(prior):raise WorkflowError('AUTO_EDIT_TIMELINE_RESTORE_SCHEMA_INVALID', 400)
         validate_document(prior)
-        _save(store, con, project, TimelineSnapshot.model_validate(prior['canonical_timeline']['snapshot']), 'auto_edit_canonical_timeline_restored')
+        _save(store, con, project, TimelineSnapshot.model_validate(prior['canonical_timeline']['snapshot']),
+            'auto_edit_canonical_timeline_restored',restored_from_version=prior['canonical_timeline']['version'])
     return view(store, project_id)
 
 
@@ -264,4 +269,6 @@ def sync_transcript(document, base, derived):
         'version':derived.version, 'human_edited':True, 'review_required':True, 'scene_highlight_semantics_stale':True}
     TimelineSnapshot.model_validate(snapshot)
     document['canonical_timeline'] = {'version':state['version']+1, 'snapshot':snapshot, 'sha256':digest(snapshot)}
+    document['source_timeline_mutations']=document.get('source_timeline_mutations',[])+[{
+        'version':state['version']+1,'mutation':{'type':'edit'}}]
     validate_document(document)

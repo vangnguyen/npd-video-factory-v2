@@ -1,0 +1,15 @@
+#native-source-inspector {min-width:0;overflow-wrap:anywhere}
+#native-source-inspector input,#native-source-inspector select {max-width:100%;box-sizing:border-box}
+#source-review-home {padding:16px;border:1px solid #ddd;border-radius:12px;margin:12px 0}
+.source-timeline-toolbar {display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.source-timeline-toolbar label {max-width:180px;font-size:12px}
+.source-timeline-toolbar input {max-width:140px}
+#advanced-tracks {max-width:100%;overflow-x:auto;min-width:0}
+.source-track {margin:10px 0;min-width:0}
+.source-track-heading {display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.source-track-heading button {font-size:11px;padding:5px 8px}
+.source-lane {height:68px;position:relative;background:#eef1f5;margin-top:6px}
+.source-timeline-clip {position:absolute;top:4px;height:58px;overflow:hidden;color:white;padding:4px;font-size:11px;border:1px solid #ffffff70}
+.source-timeline-clip[aria-pressed=true] {outline:3px solid #17212d;outline-offset:-3px}
+.source-timeline-clip span {display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.source-timeline-clip svg {display:block;width:100%;height:25px;stroke:white;stroke-width:0.5}

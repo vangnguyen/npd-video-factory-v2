@@ -28,6 +28,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--data-root',type=Path,required=True)
     parser.add_argument('--evidence-dir',type=Path,required=True)
+    parser.add_argument('--edited-timeline',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
         raise ValueError('Fresh isolated synthetic Native root required')
@@ -55,6 +56,16 @@ def main():
     bundle=auto_edit_analysis.view(store,project['id']);analysis=bundle['analyses'][0]['analysis']
     project=auto_edit_timeline.create(store,project['id'],bundle['revision'],{
         'analysis_id':analysis['analysis_id'],'transcript_id':analysis['transcript']['transcript_id'],'aspect_ratio':'4:5'})
+    if args.edited_timeline:
+        from services.windows_native.source_linked_edit import edit as linked_edit
+        from services.windows_native.source_settings import configure
+        clip=project['shot_timeline']['shots'][0]['shot_id']
+        project=linked_edit(store,project['id'],project['revision'],{'expected_version':1,
+            'operation':{'type':'trim','clip_id':clip,'source_start':.3,'source_end':2.5}})
+        project=linked_edit(store,project['id'],project['revision'],{'expected_version':2,
+            'operation':{'type':'split','clip_id':clip,'at_seconds':1.1}})
+        project=configure(store,project['id'],project['revision'],{'expected_version':3,
+            'aspect_ratio':'4:5','subtitle_template_ref':'karaoke-gold@v1'})
     source_hashes={item.name:file_sha(item) for directory in ('assets','originals')
         for item in (root/directory).iterdir() if item.is_file()}
     manager=PreviewManager(config,store)
@@ -102,6 +113,7 @@ def main():
             for item in (root/directory).iterdir():
                 if item.is_file() and file_sha(item)!=source_hashes[item.name]:raise AssertionError('Immutable source changed')
         receipt={'schema':'native-source-worker-evidence-v1','explicit_fixture':True,'synthetic_media':True,
+            'linked_source_edits_and_karaoke':args.edited_timeline,
             'saved_asr_fixture':True,'pre_render_human_review':'AUTOMATED MOCK — NOT OWNER UAT',
             'project_id':project['id'],'job_id':render['id'],'local_real_worker':True,'local_real_full_qc':True,
             'timeline_sha256':project['document']['canonical_timeline']['sha256'],
