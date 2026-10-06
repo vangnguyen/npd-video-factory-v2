@@ -1,0 +1,25 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.20,0:00:04.53,Subtitle,,0,0,0,,{\pos(495,1435)}Vinhomes Green Paradise đang đi tới\Ntiêu chuẩn đô thị thông minh quốc tế
+Dialogue: 0,0:00:04.53,0:00:05.08,Subtitle,,0,0,0,,{\pos(495,1435)}như thế nào?
+Dialogue: 0,0:00:05.58,0:00:10.23,Subtitle,,0,0,0,,{\pos(495,1435)}Theo Vinhomes Market, ngày 3 tháng\N3 năm 2026, dự án khởi động chương
+Dialogue: 0,0:00:10.23,0:00:12.92,Subtitle,,0,0,0,,{\pos(495,1435)}trình chứng nhận, với KMAC, WCCD và\NSUM.
+Dialogue: 0,0:00:13.42,0:00:17.27,Subtitle,,0,0,0,,{\pos(495,1435)}KMAC được giới thiệu là công ty tư\Nvấn; WCCD là Hội đồng Thế giới về Dữ
+Dialogue: 0,0:00:17.27,0:00:19.92,Subtitle,,0,0,0,,{\pos(495,1435)}liệu Đô thị; SUM là Chỉ số Đô thị Tiêu\Nchuẩn hóa.
+Dialogue: 0,0:00:20.42,0:00:22.89,Subtitle,,0,0,0,,{\pos(495,1435)}Bài viết nêu mục tiêu hướng tới chứng\Nchỉ xanh quốc tế.
+Dialogue: 0,0:00:23.39,0:00:26.81,Subtitle,,0,0,0,,{\pos(495,1435)}Điều đáng theo dõi là mục tiêu ấy\Nđược triển khai ra sao và kết quả đánh
+Dialogue: 0,0:00:26.81,0:00:27.95,Subtitle,,0,0,0,,{\pos(495,1435)}giá nào sẽ được công bố.
+Dialogue: 0,0:00:28.45,0:00:31.85,Subtitle,,0,0,0,,{\pos(495,1435)}Mốc khởi động cho biết một quá trình\Nđã bắt đầu, chưa phải xác nhận dự án
+Dialogue: 0,0:00:31.85,0:00:32.92,Subtitle,,0,0,0,,{\pos(495,1435)}đã được cấp chứng nhận.
+Dialogue: 0,0:00:33.42,0:00:36.26,Subtitle,,0,0,0,,{\pos(495,1435)}Bạn quan tâm điều gì ở một đô thị\Nthông minh: giao thông, năng lượng
+Dialogue: 0,0:00:36.26,0:00:36.89,Subtitle,,0,0,0,,{\pos(495,1435)}hay môi trường?
+Dialogue: 0,0:00:37.39,0:00:39.34,Subtitle,,0,0,0,,{\pos(495,1435)}Để lại câu hỏi để mình cùng tìm hiểu.

@@ -1,0 +1,25 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.19,0:00:04.59,Subtitle,,0,0,0,,{\pos(495,1435)}3 điều nên kiểm tra trước khi đánh giá\Nmột dự án mới như Vinhomes Saigon
+Dialogue: 0,0:00:04.59,0:00:04.83,Subtitle,,0,0,0,,{\pos(495,1435)}Park.
+Dialogue: 0,0:00:05.33,0:00:07.47,Subtitle,,0,0,0,,{\pos(495,1435)}Thứ nhất, bài đang nói về sự kiện hay\Ntiến độ?
+Dialogue: 0,0:00:07.97,0:00:10.82,Subtitle,,0,0,0,,{\pos(495,1435)}Ví dụ, bài Kick-Off trên Vinhomes\NMarket giới thiệu một sự kiện kinh
+Dialogue: 0,0:00:10.82,0:00:11.07,Subtitle,,0,0,0,,{\pos(495,1435)}doanh.
+Dialogue: 0,0:00:11.57,0:00:14.76,Subtitle,,0,0,0,,{\pos(495,1435)}Sự sôi động của lễ giới thiệu chưa trả\Nlời được dự án đã triển khai đến đâu.
+Dialogue: 0,0:00:15.26,0:00:17.10,Subtitle,,0,0,0,,{\pos(495,1435)}Thứ hai, tách lời tiếp thị khỏi dữ kiện.
+Dialogue: 0,0:00:17.60,0:00:20.92,Subtitle,,0,0,0,,{\pos(495,1435)}Những câu về cơ hội đầu tư cần được\Nxem là lời giới thiệu, không phải lời
+Dialogue: 0,0:00:20.92,0:00:21.65,Subtitle,,0,0,0,,{\pos(495,1435)}hứa giá sẽ tăng.
+Dialogue: 0,0:00:22.15,0:00:25.77,Subtitle,,0,0,0,,{\pos(495,1435)}Thứ ba, hỏi đúng tài liệu: giá tại thời\Nđiểm nào, tiến độ được ghi nhận khi
+Dialogue: 0,0:00:25.77,0:00:27.85,Subtitle,,0,0,0,,{\pos(495,1435)}nào, và hồ sơ pháp lý nào có thể đối\Nchiếu?
+Dialogue: 0,0:00:28.35,0:00:31.48,Subtitle,,0,0,0,,{\pos(495,1435)}Đây là câu hỏi để tìm hiểu thêm, chưa\Nphải kết luận về Saigon Park.
+Dialogue: 0,0:00:31.98,0:00:33.68,Subtitle,,0,0,0,,{\pos(495,1435)}Bạn muốn làm rõ nhóm tài liệu nào\Ntrước?
+Dialogue: 0,0:00:34.18,0:00:34.88,Subtitle,,0,0,0,,{\pos(495,1435)}Để lại câu hỏi.
