@@ -7,6 +7,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 import wave
 import numpy as np
 from PIL import Image
@@ -57,6 +58,19 @@ class ShotProductionTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory(); self.root=Path(self.temp.name)
         self.cfg,self.store,self.project=prepared(self.root)
     def tearDown(self): self.temp.cleanup()
+
+    def wait_preview(self, manager, timeout=15):
+        until=time.monotonic()+timeout
+        while time.monotonic()<until:
+            value=manager.status(self.project['id'])
+            if value['status'] not in {'QUEUED','RUNNING'}: return value
+            time.sleep(.05)
+        self.fail('Preview worker did not finish')
+
+    @staticmethod
+    def fixture_suggestion(**values):
+        return {'values':{**dict.fromkeys(('visual','narration','on_screen_text','subtitle','duration','asset_id')),**values},
+                'rationale':'Explicit test fixture','uncertainty':'No live provider integration'}
 
     def test_requested_timing_consumes_durations_preserves_pcm_and_original(self):
         out=self.root/'retiming'; meta,samples=voice(out); original=file_sha(out/'voice.wav'); brand,template=resolve(self.project['document'])
@@ -127,4 +141,150 @@ class ShotProductionTests(unittest.TestCase):
         self.assertEqual(ai.suggest(before['id'],before['revision'],shot,'Viết ngắn hơn','fixture-request-01'),value);self.assertEqual(len(calls),1)
         applied=self.store.mutate_shots(before['id'],before['revision'],value['operation'])
         self.assertEqual(applied['shot_timeline']['shots'][0]['narration'],'Chào bạn.');self.assertEqual(applied['jobs'],[])
+        self.assertEqual(value['affected_shot_ids'],applied['shot_timeline']['scope']['affected_shot_ids'])
+        self.assertEqual(value['scope'],applied['shot_timeline']['scope'])
+        self.assertEqual(applied['shot_timeline']['shots'][0]['subtitle'],'Chào bạn.')
         with self.assertRaisesRegex(WorkflowError,'STALE'): ai.suggest(before['id'],before['revision'],shot,'Thay nguồn','fixture-request-02')
+
+    def test_same_sha_new_revision_preview_workers_have_independent_receipts_and_outputs(self):
+        manager=PreviewManager(self.cfg,self.store)
+        entered,release=threading.Event(),threading.Event()
+        old_revision=self.project['revision']; original_proxy=manager._proxy
+        def held_proxy(shot,project,event):
+            if project['revision']==old_revision:
+                entered.set()
+                if not release.wait(10): raise WorkflowError('EXPLICIT_TEST_BARRIER_TIMEOUT')
+            return original_proxy(shot,project,event)
+        with patch.object(manager,'_proxy',side_effect=held_proxy):
+            first=manager.generate(self.project['id'],old_revision)
+            old_worker=manager.workers[first['id']]
+            try:
+                self.assertTrue(entered.wait(3),'Old preview did not reach the concurrency barrier')
+                new=asset_mutate(self.store,self.project['id'],old_revision,'fixture2.jpg','tag',['Metadata-only revision'])
+                current=self.store.shot_view(new['id'])
+                self.assertEqual(current['shot_timeline']['sha256'],first['timeline_sha256'])
+                second=manager.generate(new['id'],new['revision'])
+                self.assertNotEqual(first['id'],second['id'])
+                ready=self.wait_preview(manager)
+                self.assertEqual(ready['status'],'READY');self.assertEqual(ready['revision'],new['revision'])
+                current_video=manager.video_path(new['id'],ready['timeline_version'])
+                current_hash=file_sha(current_video)
+                release.set();old_worker.join(timeout=10)
+                self.assertFalse(old_worker.is_alive())
+                self.assertEqual(manager.status(new['id'])['id'],second['id'])
+                self.assertEqual(file_sha(current_video),current_hash)
+                old_record=json.loads((manager.root/first['id']/'preview.json').read_bytes())
+                new_record=json.loads((manager.root/second['id']/'preview.json').read_bytes())
+                self.assertEqual((old_record['revision'],new_record['revision']),(old_revision,new['revision']))
+                self.assertEqual((old_record['status'],new_record['status']),('READY','READY'))
+                self.assertNotEqual(manager.root/first['id']/'preview.mp4',current_video)
+                self.assertIsNone(self.store.get(new['id'])['approval'])
+            finally:
+                release.set();old_worker.join(timeout=10)
+
+    def test_preview_cancel_is_durable_and_explicit_retry_does_not_approve_or_dispatch_tts(self):
+        manager=PreviewManager(self.cfg,self.store); entered=threading.Event()
+        before=self.store.get(self.project['id'])
+        def cancelled_proxy(shot,project,event):
+            entered.set()
+            if event.wait(5): raise WorkflowError('PREVIEW_CANCELLED')
+            raise WorkflowError('EXPLICIT_TEST_BARRIER_TIMEOUT')
+        with patch.object(manager,'_proxy',side_effect=cancelled_proxy):
+            first=manager.generate(self.project['id'],self.project['revision'])
+            worker=manager.workers[first['id']]
+            self.assertTrue(entered.wait(3))
+            response=manager.cancel(self.project['id'],self.project['revision'])
+            self.assertTrue(response['cancel_requested'])
+            cancelled=self.wait_preview(manager);worker.join(timeout=3)
+        self.assertEqual(cancelled['status'],'CANCELLED');self.assertEqual(cancelled['error']['code'],'PREVIEW_CANCELLED')
+        self.assertFalse(worker.is_alive())
+        self.assertEqual(self.store.get(self.project['id']),before)
+        reopened=PreviewManager(self.cfg,Store(self.root))
+        self.assertEqual(reopened.status(self.project['id'])['status'],'CANCELLED')
+        self.assertEqual(reopened.workers,{})
+        reopened.generate(self.project['id'],self.project['revision'])
+        ready=self.wait_preview(reopened)
+        self.assertEqual(ready['status'],'READY')
+        self.assertEqual((ready['provider_calls'],ready['tts_calls']),(0,0))
+        self.assertFalse(ready['final_approval_eligible'])
+        self.assertEqual(self.store.get(self.project['id']),before)
+
+    def test_restart_marks_abandoned_preview_failed_without_automatic_replay(self):
+        manager=PreviewManager(self.cfg,self.store); view=self.store.shot_view(self.project['id'])['shot_timeline']
+        folder=manager._folder(self.project['id'],view['sha256'],self.project['revision']);folder.mkdir()
+        # Explicit abandoned metadata fixture models a process dying before its worker completed.
+        record={'id':folder.name,'project_id':self.project['id'],'revision':self.project['revision'],
+                'timeline_version':view['version'],'timeline_sha256':view['sha256'],'status':'RUNNING',
+                'video_url':None,'provider_calls':0,'tts_calls':0,'final_approval_eligible':False}
+        manager._write(folder/'preview.json',record)
+        before=self.store.get(self.project['id']);reopened=PreviewManager(self.cfg,Store(self.root))
+        failed=reopened.status(self.project['id'])
+        self.assertEqual(failed['status'],'FAILED')
+        self.assertEqual(failed['error'],{'code':'PREVIEW_INTERRUPTED_REQUEST_AGAIN','automatic_replay':False})
+        self.assertEqual(reopened.workers,{})
+        self.assertFalse((folder/'preview.mp4').exists())
+        self.assertEqual(self.store.get(self.project['id']),before)
+        reopened.generate(self.project['id'],self.project['revision'])
+        self.assertEqual(self.wait_preview(reopened)['status'],'READY')
+        self.assertEqual(self.store.get(self.project['id']),before)
+
+    def test_ai_archived_busy_stale_and_bad_request_stop_before_fixture_dispatch(self):
+        calls=[]
+        def provider(context):
+            calls.append(context);return self.fixture_suggestion(narration='Chào bạn.'),{'fixture':True}
+        ai=ShotAIEdit(self.cfg,self.store,provider=provider);p=self.project;shot=p['shot_timeline']['shots'][0]['shot_id']
+        for args in ((p['revision']-1,'Hợp lệ','fixture-stale-key'),(p['revision'],' ','fixture-blank-key'),
+                     (p['revision'],'Hợp lệ','short')):
+            with self.subTest(args=args),self.assertRaises(WorkflowError): ai.suggest(p['id'],args[0],shot,args[1],args[2])
+        self.store.archive(p['id'],p['revision'],True)
+        with self.assertRaisesRegex(WorkflowError,'ARCHIVED'): ai.suggest(p['id'],p['revision'],shot,'Hợp lệ','fixture-archived-key')
+        self.store.archive(p['id'],p['revision'],False)
+        self.store.enqueue(p['id'],p['revision'],'content','fixture-queued-content')
+        with self.assertRaisesRegex(WorkflowError,'PROJECT_BUSY'): ai.suggest(p['id'],p['revision'],shot,'Hợp lệ','fixture-busy-key')
+        self.assertEqual(calls,[])
+        self.assertEqual(list(ai.root.iterdir()),[])
+
+    def test_invalid_ai_suggestions_fail_without_mutation_and_are_never_replayed(self):
+        variants=[{'visual':''},{'narration':''},{'asset_id':'foreign-project.jpg'},{'duration':180},
+                  {'duration':float('nan')},{}]
+        before=self.store.get(self.project['id']);shot=self.project['shot_timeline']['shots'][0]['shot_id']
+        for index,values in enumerate(variants):
+            calls=[]
+            def provider(context,values=values):
+                calls.append(context);return self.fixture_suggestion(**values),{'fixture':True}
+            ai=ShotAIEdit(self.cfg,self.store,provider=provider);key=f'fixture-invalid-{index:02}'
+            with self.subTest(values=values):
+                with self.assertRaises((WorkflowError,ValueError)):
+                    ai.suggest(before['id'],before['revision'],shot,'Explicit invalid response fixture',key)
+                self.assertEqual(self.store.get(before['id']),before)
+                folder=ai.root/digest({'project_id':before['id'],'request_key':key})
+                self.assertTrue((folder/'intent.json').is_file());self.assertTrue((folder/'failure.json').is_file())
+                self.assertFalse((folder/'result.json').exists())
+                with self.assertRaisesRegex(WorkflowError,'OUTCOME_UNKNOWN_NO_REPLAY'):
+                    ai.suggest(before['id'],before['revision'],shot,'Explicit invalid response fixture',key)
+                self.assertEqual(len(calls),1)
+
+    def test_ai_inflight_edit_returns_bound_stale_suggestion_and_apply_is_rejected(self):
+        entered,release=threading.Event(),threading.Event();calls=[];results=[];errors=[]
+        def provider(context):
+            calls.append(context);entered.set()
+            if not release.wait(5): raise WorkflowError('EXPLICIT_TEST_BARRIER_TIMEOUT')
+            return self.fixture_suggestion(narration='Đề xuất từ phiên bản trước.'),{'fixture':True}
+        ai=ShotAIEdit(self.cfg,self.store,provider=provider);before=self.project;shot=before['shot_timeline']['shots'][0]['shot_id']
+        def suggest():
+            try: results.append(ai.suggest(before['id'],before['revision'],shot,'Explicit concurrent fixture','fixture-inflight-key'))
+            except Exception as error: errors.append(error)
+        worker=threading.Thread(target=suggest);worker.start()
+        try:
+            self.assertTrue(entered.wait(3))
+            newer=self.store.mutate_shots(before['id'],before['revision'],{'type':'update','shot_id':shot,'values':{'narration':'Chỉnh sửa con người mới hơn.'}})
+            release.set();worker.join(timeout=5)
+            self.assertFalse(worker.is_alive());self.assertEqual(errors,[]);self.assertEqual(len(calls),1)
+            result=results[0]
+            self.assertEqual(result['revision'],before['revision']);self.assertTrue(result['requires_human_apply'])
+            with self.assertRaisesRegex(WorkflowError,'STALE_VERSION'):
+                self.store.mutate_shots(newer['id'],result['revision'],result['operation'])
+            self.assertEqual(self.store.get(newer['id'])['document'],newer['document'])
+            self.assertEqual(newer['jobs'],[]);self.assertIsNone(newer['approval'])
+        finally:
+            release.set();worker.join(timeout=5)

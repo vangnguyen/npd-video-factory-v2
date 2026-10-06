@@ -76,6 +76,23 @@ class ShotAdapterTests(unittest.TestCase):
         self.assertEqual(before[1:], self.cards()[1:])
         self.assertTrue(result["document"]["proposal"]["narration"].startswith("Lời đọc mới."))
 
+    def test_default_subtitles_follow_narration_and_custom_or_explicit_captions_remain_authoritative(self):
+        self.start()
+        identifier = self.cards()[0]["id"]
+        self.edit({"type": "update", "shot_id": identifier, "values": {"narration": "Lời đọc thay đổi."}})
+        self.assertEqual(self.cards()[0]["subtitle"], "Lời đọc thay đổi.")
+        self.edit({"type": "update", "shot_id": identifier, "values": {"narration": "Lời đọc lần hai.", "subtitle": "Phụ đề riêng."}})
+        self.edit({"type": "update", "shot_id": identifier, "values": {"narration": "Lời đọc lần ba."}})
+        self.assertEqual(self.cards()[0]["subtitle"], "Phụ đề riêng.")
+        following = self.cards()[1]
+        modified = copy.deepcopy(self.project["document"]["proposal"])
+        modified["visual_brief"][1]["narration_excerpt"] = "Đoạn mới qua API cũ."
+        modified["narration"] = " ".join(s["narration_excerpt"] for s in modified["visual_brief"])
+        self.project = self.store.save(self.project["id"], self.project["revision"], proposal=modified)
+        self.assertEqual(self.cards()[1]["id"], following["id"])
+        self.assertEqual(self.cards()[1]["subtitle"], "Đoạn mới qua API cũ.")
+        self.assertEqual(self.cards()[0]["subtitle"], "Phụ đề riêng.")
+
     def test_duration_is_explicit_and_retimes_successors_without_voice_regeneration(self):
         self.start()
         before = self.cards()
@@ -299,6 +316,17 @@ class ShotAdapterTests(unittest.TestCase):
         doc["canonical_timeline"]["sha256"] = digest(doc["canonical_timeline"]["snapshot"])
         with self.assertRaises(WorkflowError):
             self.store.sync_shot_document(copy.deepcopy(doc), doc, self.project["id"])
+
+    def test_new_legacy_scene_after_delete_gets_fresh_noncolliding_identity(self):
+        self.start()
+        old = self.cards()
+        self.edit({"type": "delete", "shot_id": old[1]["id"]})
+        self.project = self.store.save(self.project["id"], self.project["revision"], proposal=proposal())
+        cards = self.cards()
+        self.assertEqual([s["id"] for s in cards[:2]], [old[0]["id"], old[2]["id"]])
+        self.assertEqual(len(set(s["id"] for s in cards)), 3)
+        self.assertNotIn(cards[2]["id"], [s["id"] for s in old])
+        self.assertTrue(validate_document(self.project["document"]))
 
 
 if __name__ == "__main__":

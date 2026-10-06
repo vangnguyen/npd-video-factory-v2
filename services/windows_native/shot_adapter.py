@@ -111,10 +111,14 @@ def _legacy_shots(doc, project_id, previous=None):
         identifier = bindings.get(scene["scene"])
         asset = _assets(doc).get(identifier)
         narration = scene["narration_excerpt"] if scene["narration_excerpt"].strip() or old.get("narration_enabled", True) else old.get("narration", "")
-        result.append({"shot_id": old.get("shot_id") or "shot_" + uuid.uuid5(
-            uuid.NAMESPACE_URL, "video-factory/shot/" + project_id + "/" + str(index + 1)).hex,
+        subtitle = old.get("subtitle", narration)
+        if subtitle == old.get("narration"):
+            subtitle = narration
+        new_id = (uuid.uuid4() if previous else uuid.uuid5(
+            uuid.NAMESPACE_URL, "video-factory/shot/" + project_id + "/" + str(index + 1))).hex
+        result.append({"shot_id": old.get("shot_id") or "shot_" + new_id,
             "visual": scene["visual"], "narration": narration,
-            "subtitle": old.get("subtitle", scene["narration_excerpt"]),
+            "subtitle": subtitle,
             "on_screen_text": scene["on_screen_text"], "asset_id": identifier,
             "duration": old.get("duration", max(.1, options.get("end_target", 0) - options.get("start_target", 0))
                 if options else total * weights[index] / sum(weights)),
@@ -357,6 +361,7 @@ def _apply(shots, doc, operation, store, project, con):
             supplied = [values[key] for key in aliases if key in values]
             if supplied and any(value != supplied[0] for value in supplied):
                 _error("SHOT_FIELD_ALIASES_CONFLICT")
+        follow_narration = "narration" in values and "subtitle" not in values and shot["subtitle"] == shot["narration"]
         for key, value in values.items():
             if key in {"duration_requested", "requested_duration"} and value is None:
                 shot["requested_duration"] = None
@@ -365,6 +370,8 @@ def _apply(shots, doc, operation, store, project, con):
             shot[mapped] = value
             if mapped == "duration":
                 shot["requested_duration"] = value
+        if follow_narration:
+            shot["subtitle"] = shot["narration"]
         if "asset_id" in values and values["asset_id"] != doc_asset_for(shots, index, doc):
             shot["source_start"] = values.get("source_start", 0)
             if _assets(doc).get(shot["asset_id"], {}).get("kind") == "video":

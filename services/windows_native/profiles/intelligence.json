@@ -170,6 +170,40 @@
       "project_references": [
         "https://baochinhphu.vn/thi-truong-bat-dong-san.html"
       ]
+    },
+    {
+      "id": "infrastructure-news",
+      "name": "Infrastructure News",
+      "related_project": null,
+      "target_audience": "Người theo dõi hạ tầng và kết nối đô thị Việt Nam",
+      "preferred_formats": [
+        "Giải thích ngắn",
+        "Đối chiếu nguồn",
+        "Checklist"
+      ],
+      "channel": "Video nội bộ",
+      "cta_types": [
+        "Đọc nguồn",
+        "Gửi câu hỏi"
+      ],
+      "cta_keywords": [
+        "nguồn",
+        "câu hỏi"
+      ],
+      "tone": "Phân biệt kế hoạch, tiến độ thi công và hạ tầng đã vận hành",
+      "duration_seconds": [
+        30,
+        45,
+        60
+      ],
+      "keywords": [
+        "hạ tầng",
+        "giao thông",
+        "kết nối đô thị"
+      ],
+      "project_references": [
+        "https://baochinhphu.vn/"
+      ]
     }
   ]
 }

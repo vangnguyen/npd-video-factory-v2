@@ -107,6 +107,10 @@ class LocalServer(ThreadingHTTPServer):
         self.runner = Runner(self.store, pipeline or Pipeline(config))
         from .intelligence_service import IntelligenceService
         self.intelligence = IntelligenceService(config,self.store)
+        from .shot_preview import PreviewManager
+        from .shot_ai_edit import ShotAIEdit
+        self.previews=PreviewManager(config,self.store)
+        self.shot_ai=ShotAIEdit(config,self.store)
         if start_worker:
             self.runner.start()
             self.intelligence.start()
@@ -114,6 +118,7 @@ class LocalServer(ThreadingHTTPServer):
     def server_close(self):
         self.runner.stop.set()
         self.runner.wake.set()
+        self.previews.close()
         self.intelligence.stop.set()
         self.intelligence.wake.set()
         if self.intelligence.thread.is_alive():
@@ -205,6 +210,23 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith("/api/intelligence/"):
             from .intelligence_routes import get
             return self.reply(get(self,path))
+        if path.startswith('/api/production/'):
+            from .production_routes import get
+            thumbnail_match=re.fullmatch(r'/api/production/videos/([0-9a-f]{32})/thumbnail',path)
+            if thumbnail_match:
+                from .production_thumbnail import thumbnail
+                return self.file(thumbnail(self.server.config,get(self,'/api/production/videos/'+thumbnail_match[1])))
+            result=get(self,path)
+            if re.fullmatch(r'/api/production/videos/[0-9a-f]{32}',path):
+                return self.file(Path(result['path']),video=True)
+            return self.reply(result)
+        shot_route=re.fullmatch(r'/api/projects/([0-9a-f]{32})/(shots|preview|preview/video)',path)
+        if shot_route:
+            identifier,action=shot_route.groups()
+            if action=='shots': return self.reply(self.server.store.shot_view(identifier))
+            if action=='preview': return self.reply(self.server.previews.status(identifier))
+            version=parse_qs(self.path.partition('?')[2]).get('version',[''])[0]
+            return self.file(self.server.previews.video_path(identifier,version),video=True)
         if path == "/api/session":
             return self.reply({"csrf": self.server.csrf}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
         if path == "/api/health":
@@ -219,7 +241,7 @@ class Handler(BaseHTTPRequestHandler):
                               "openai_live_check_performed":False,"assemblyai":assemblyai_connection.status(self.server.config)})
         if path == "/api/brand-templates":
             from .branding import catalog
-            return self.reply(catalog())
+            return self.reply(catalog(include_landscape=parse_qs(self.path.partition('?')[2]).get('formats')==['all']))
         if path == "/api/connections/assemblyai":
             return self.reply(assemblyai_connection.status(self.server.config))
         versions = re.fullmatch(r"/api/projects/([0-9a-f]{32})/versions", path)
@@ -267,6 +289,8 @@ class Handler(BaseHTTPRequestHandler):
         static = {"/": "native.html", "/native.html": "native.html", "/native.css": "native.css", "/native.mjs": "native.mjs",
                   "/intelligence":"intelligence.html", "/intelligence.mjs":"intelligence.mjs",
                   "/settings/assemblyai": "assemblyai.html", "/assemblyai.mjs": "assemblyai.mjs"}
+        static.update({'/shot-studio.mjs':'shot-studio.mjs','/shot-studio.css':'shot-studio.css',
+                       '/production':'production.html','/production.mjs':'production.mjs','/production.css':'production.css'})
         if path in static:
             return self.file(REPO / "apps/studio-web" / static[path])
         raise WorkflowError("ROUTE_NOT_FOUND", 404)
@@ -291,6 +315,25 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith("/api/intelligence/"):
             from .intelligence_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        if self.path.startswith('/api/production/'):
+            from .production_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        shot_route=re.fullmatch(r'/api/projects/([0-9a-f]{32})/(shots|preview|ai-edit|asset-association|script-review)',self.path)
+        if shot_route:
+            identifier,action=shot_route.groups(); body=self.read_body(max_bytes=100000)
+            revision=body.get('revision')
+            if type(revision) is not int: raise WorkflowError('REVISION_REQUIRED',400)
+            if action=='shots': return self.reply(self.server.store.mutate_shots(identifier,revision,body.get('operation')))
+            if action=='preview':
+                if body.get('action')=='generate': return self.reply(self.server.previews.generate(identifier,revision))
+                if body.get('action')=='cancel': return self.reply(self.server.previews.cancel(identifier,revision))
+                raise WorkflowError('PREVIEW_ACTION_REQUIRED',400)
+            if action=='ai-edit':
+                return self.reply(self.server.shot_ai.suggest(identifier,revision,body.get('shot_id'),body.get('instruction'),body.get('request_key')))
+            if action=='asset-association':
+                from .asset_association import mutate
+                return self.reply(mutate(self.server.store,identifier,revision,body.get('asset_id'),body.get('action'),body.get('tags')))
+            return self.reply(self.server.store.review_script(identifier,revision,body.get('reviewer'),body.get('acknowledged'),body.get('script_sha256')))
         if self.path == "/api/connections/assemblyai":
             body = self.read_body(max_bytes=2048)
             if set(body) not in ({"key"}, {"verify_saved"}) or ("verify_saved" in body and body["verify_saved"] is not True):

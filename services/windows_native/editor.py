@@ -149,7 +149,7 @@ def timeline(doc, frames, captions, voice=None):
             start+=length; remaining-=length; offset=0; loop+=1
     for index,cue in enumerate(captions):
         text.append(TimelineClip(clip_id=f"clip_caption_{index:04}",kind="subtitle",label=cue["text"][:240],source_end=cue["end"]-cue["start"],
-            timeline_start=cue["start"],duration=cue["end"]-cue["start"],metadata={"text":cue["text"],"timing_source":"measured_sentence_activity_weighted_phrase_estimate"}))
+            timeline_start=cue["start"],duration=cue["end"]-cue["start"],metadata={"text":cue["text"],"timing_source":cue.get('timing_source',"measured_sentence_activity_weighted_phrase_estimate")}))
     tracks=[
         TimelineTrack(track_id="trk_native_video",type="video",kind="source",label="Cảnh",order=0,clips=visual),
         TimelineTrack(track_id="trk_native_captions",type="text",kind="subtitles",label="Lời đọc",order=1,clips=text)]
