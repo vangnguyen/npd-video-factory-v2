@@ -321,26 +321,127 @@ def quiet_gaps(audio, start, end):
             if b - a >= 6 and a > 0 and b < frames]
 
 
-def trim_boundary(plan, audio, timing):
-    """Same reviewed B onset rule; uncertainty is an explicit failure."""
+def match_opening(plan, expanded):
+    """Match approved spellings exactly; never invent or fuzz missing onset words."""
     from vieneu_utils.phonemize_text import normalize_to_chunks_v3_with_gaps
-    words = [w for segment in timing["transcript"]["segments"] for w in segment["words"]]
-    expanded = [(token, index) for index, word in enumerate(words) for token in tokens(word["text"])]
     normalized, _ = normalize_to_chunks_v3_with_gaps(plan["target_text"], max_chars=4096)
     expected = tokens(" ".join(normalized))
-    if len(expected) < 2:
-        raise WorkflowError("WARM_VOICE_TARGET_ONSET_TOO_SHORT")
-    matches = [i for i in range(len(expanded) - 1) if [t for t, _ in expanded[i:i + 2]] == expected[:2]]
-    if len(matches) != 1:
+    variants = [("sdk_normalized_approved_target", expected)]
+    original = tokens(plan["target_text"])
+    if original != expected:
+        variants.append(("original_approved_target_spelling", original))
+    resolved, ambiguous = [], False
+    for representation, candidate in variants:
+        if len(candidate) < 2:
+            continue
+        for size in range(2, min(8, len(candidate)) + 1):
+            prefix = candidate[:size]
+            matches = [i for i in range(len(expanded) - size + 1)
+                       if [t for t, _ in expanded[i:i + size]] == prefix]
+            if not matches:
+                break
+            if len(matches) == 1:
+                resolved.append({"representation": representation, "flat_token_index": matches[0],
+                                 "matched_opening_tokens": prefix, "exact_prefix_token_count": size})
+                break
+        else:
+            if len(matches) > 1:
+                ambiguous = True
+    if not resolved or ambiguous:
         raise WorkflowError("WARM_VOICE_UNIQUE_TARGET_ONSET_REQUIRED")
-    flat = matches[0]
+    if len({match["flat_token_index"] for match in resolved}) != 1:
+        raise WorkflowError("WARM_VOICE_TARGET_VARIANTS_DISAGREE")
+    return resolved[0]["flat_token_index"], expected, resolved
+
+
+def anchored_disputed_opening(plan, expanded, words, audio):
+    """Locate existing disputed onset PCM from exact anchors on both sides.
+
+    This never substitutes a word: one/two actual ASR head tokens remain in
+    audio, and full word accuracy remains an explicit human review question.
+    """
+    from vieneu_utils.phonemize_text import normalize_to_chunks_v3_with_gaps
+    normalized, _ = normalize_to_chunks_v3_with_gaps(plan["target_text"], max_chars=4096)
+    expected = tokens(" ".join(normalized))
+    targets = [expected]
+    original = tokens(plan["target_text"])
+    if original != expected:
+        targets.append(original)
+    normalized_context, _ = normalize_to_chunks_v3_with_gaps(plan["context_text"], max_chars=4096)
+    contexts = [tokens(" ".join(normalized_context))]
+    original_context = tokens(plan["context_text"])
+    if original_context != contexts[0]:
+        contexts.append(original_context)
+    candidates = {}
+    for context in contexts:
+        for size in range(4, min(8, len(context)) + 1):
+            suffix = context[-size:]
+            for target in targets:
+                for head_size in (1, 2):
+                    following = target[head_size:head_size + 3]
+                    if len(following) != 3:
+                        continue
+                    for flat in range(size, len(expanded) - head_size - 2):
+                        if ([t for t, _ in expanded[flat - size:flat]] != suffix
+                                or [t for t, _ in expanded[flat + head_size:flat + head_size + 3]] != following):
+                            continue
+                        actual_head = [t for t, _ in expanded[flat:flat + head_size]]
+                        if actual_head == target[:head_size]:
+                            continue
+                        first_index = expanded[flat][1]
+                        if first_index <= 0 or expanded[flat - 1][1] == first_index:
+                            continue
+                        previous, first = words[first_index - 1], words[first_index]
+                        pauses = [p for p in quiet_gaps(audio, previous["start_seconds"], first["end_seconds"])
+                                  if abs((p["start_seconds"] + p["end_seconds"]) / 2 - first["start_seconds"]) <= .25 + 1e-9]
+                        if len(pauses) != 1:
+                            continue
+                        # One- and two-token interpretations can locate the same
+                        # existing onset (the second token may already agree).
+                        # Retain the shortest disputed head at that exact onset.
+                        if flat in candidates and candidates[flat]["disputed_head_token_count"] < head_size:
+                            continue
+                        candidates[flat] = {
+                            "representation": "exact_context_suffix_and_target_continuation_with_actual_disputed_head",
+                            "flat_token_index": flat, "actual_disputed_head_tokens": actual_head,
+                            "approved_head_tokens": target[:head_size], "disputed_head_token_count": head_size,
+                            "actual_mismatched_head_token_count": sum(a != b for a, b in zip(actual_head, target[:head_size])),
+                            "matched_context_suffix": suffix, "matched_target_continuation": following,
+                            "matched_opening_tokens": [], "exact_prefix_token_count": 0,
+                            "measured_quiet_gaps": pauses, "first_target_word": first,
+                            "previous_word": previous, "full_target_word_accuracy_confirmed": False}
+    if len(candidates) != 1:
+        raise WorkflowError("WARM_VOICE_DISPUTED_HEAD_REVIEW_REQUIRED")
+    candidate = next(iter(candidates.values()))
+    return candidate["flat_token_index"], expected, [candidate]
+
+
+def trim_boundary(plan, audio, timing):
+    """Same reviewed B onset rule; uncertainty is an explicit failure."""
+    words = [w for segment in timing["transcript"]["segments"] for w in segment["words"]]
+    expanded = [(token, index) for index, word in enumerate(words) for token in tokens(word["text"])]
+    disputed = False
+    try:
+        flat, expected, opening_matches = match_opening(plan, expanded)
+    except WorkflowError as error:
+        if error.code != "WARM_VOICE_UNIQUE_TARGET_ONSET_REQUIRED":
+            raise
+        try:
+            flat, expected, opening_matches = anchored_disputed_opening(plan, expanded, words, audio)
+        except WorkflowError:
+            raise error from None
+        disputed = True
     first_index = expanded[flat][1]
     if first_index <= 0:
         raise WorkflowError("WARM_VOICE_CONTEXT_BOUNDARY_MISSING")
     previous, first = words[first_index - 1], words[first_index]
     gap = first["start_seconds"] - previous["end_seconds"]
     grouped = flat > 0 and expanded[flat - 1][1] == first_index
-    if grouped:
+    if disputed:
+        pauses = opening_matches[0]["measured_quiet_gaps"]
+        cut = (pauses[0]["start_seconds"] + pauses[0]["end_seconds"]) / 2
+        method = "unique_exact_context_and_continuation_anchors_actual_disputed_head_unique_60ms_quiet_gap"
+    elif grouped:
         pauses = quiet_gaps(audio, first["start_seconds"], first["end_seconds"])
         if len(pauses) != 1:
             raise WorkflowError("WARM_VOICE_GROUPED_BOUNDARY_REVIEW_REQUIRED")
@@ -358,13 +459,15 @@ def trim_boundary(plan, audio, timing):
             raise WorkflowError("WARM_VOICE_BOUNDARY_REVIEW_REQUIRED")
         pauses = []
         cut = (previous["end_seconds"] + first["start_seconds"]) / 2
-        method = "two_unique_opening_tokens_provider_word_gap_midpoint"
+        method = "unique_exact_approved_opening_tokens_provider_word_gap_midpoint"
     samples = round(cut * RATE)
     if not 0 < samples < len(audio):
         raise WorkflowError("WARM_VOICE_CUT_OUTSIDE_SOURCE")
     actual = " ".join(t for t, _ in expanded[flat:])
     return {"method": method, "cut_seconds": cut, "removed_samples": samples,
-            "removed_context": plan["context_text"], "matched_opening_tokens": expected[:2],
+            "removed_context": plan["context_text"], "matched_opening_tokens": opening_matches[0]["matched_opening_tokens"],
+            "opening_matches": opening_matches,
+            "onset_asr_disputed": disputed,
             "previous_word": previous, "first_target_word": first, "gap_seconds": gap,
             "asr_group_spans_context_and_target": grouped, "measured_quiet_gaps": pauses,
             "provider_native_timestamps_are_approximate": True,

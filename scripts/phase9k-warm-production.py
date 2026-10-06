@@ -201,15 +201,66 @@ def status():
     print(json.dumps({'cases': [{k: c[k] for k in ('case','job_id','status','stage','error')} for c in report['cases']]}), flush=True)
 
 
+def resume():
+    """Explicitly continue only the known boundary failures after the code repair."""
+    config=Config(); store=Store(config.data_root); report=read(OUT/'jobs.json')
+    before=[]
+    for c in report['cases']:
+        job=store.get_job(c['job_id'])
+        if job['status']=='succeeded': continue
+        assert job['status']=='failed' and job['error']['code']=='WARM_VOICE_UNIQUE_TARGET_ONSET_REQUIRED'
+        attempt=config.data_root/'jobs'/job['id']/'attempts/tts-000'
+        generation=read(attempt/'warm-generation-result.json')
+        assert read(attempt/'warm-generation-status.json')['status']=='pass'
+        before.append({'case':c['case'],'job_id':job['id'],'revision':job['revision'],
+                       'snapshot_sha256':digest(job['snapshot']),'previous_error':job['error'],
+                       'failed_status':read(attempt/'tts-status.json'),
+                       'failed_status_sha256':file_sha(attempt/'tts-status.json'),
+                       'completed_generation':generation,
+                       'failed_attempt_path':str(attempt)})
+    assert {c['case'] for c in before}=={1,2,6,8}
+    preserve(OUT/'boundary-failure-recovery-before.json',{'cases':before,
+             'reason':'Canonical exact-prefix/abbreviation and jointly anchored measured-gap boundary refinement; sources unchanged',
+             'automatic_paid_or_local_inference_retry':False,'new_final_approvals':0})
+    resumed=[]
+    for c in before:
+        job=store.resume(c['job_id'])
+        assert job['snapshot'] == store.get_job(c['job_id'])['snapshot']
+        resumed.append({'case':c['case'],'job_id':job['id'],'revision':job['revision'],'resume_count':job['resume_count'],
+                        'snapshot_sha256':digest(job['snapshot'])})
+        assert resumed[-1]['snapshot_sha256']==c['snapshot_sha256']
+    preserve(OUT/'boundary-failure-recovery-resumed.json',{'cases':resumed,
+             'application_sha':subprocess.check_output([str(config.git),'rev-parse','HEAD'],cwd=REPO,text=True).strip(),
+             'sources_reused_without_inference_replay':True,'provider_durable_known_outcomes_reused':True,
+             'as_yet_unrequested_remaining_timings_may_be_requested_once':True,
+             'final_video_approved':False})
+    print(json.dumps({'explicit_boundary_recovery_jobs':len(resumed),'same_approved_snapshots':True}),flush=True)
+
+
 def verify():
+    from services.windows_native import warm_voice
     config = Config(); store = Store(config.data_root); service = IntelligenceService(config, store)
     production = read(OUT / 'production-approval-manifest.json'); jobs = read(OUT / 'jobs.json')
     owner = read(OUT / 'owner-B-approval.json')
     assert production['owner_B_approval_sha256'] == file_sha(OUT / 'owner-B-approval.json')
-    cases = []; get = checks.integrity.http_reader(); assert get('/api/health')['status'] == 'ready'
+    assert jobs['production_approval_sha256'] == file_sha(OUT / 'production-approval-manifest.json')
+    expected_cases = [1, 2, 4, 6, 8]
+    for manifest in (production, jobs, owner):
+        assert len(manifest['cases']) == 5 and [c['case'] for c in manifest['cases']] == expected_cases
+        assert len({c['project_id'] for c in manifest['cases']}) == 5
+    assert len({c['job_id'] for c in jobs['cases']}) == 5
+    accepted_samples = {(s['case'], s['scene']): s for s in owner['accepted_samples']}
+    assert len(accepted_samples) == 8 and owner['human_onset_audio_accepted'] is True
+    assert owner['final_video_approved'] is False and owner['full_script_word_accuracy_approved'] is False
+    reviewed_samples_verified = set()
+    cases = []; new_source_keys = set()
+    task_provider = {'upload_requests':0,'transcript_create_requests':0,'observe_requests':0}
+    get = checks.integrity.http_reader(); assert get('/api/health')['status'] == 'ready'
     for approved, item in zip(production['cases'], jobs['cases']):
-        assert approved['case'] == item['case']
+        assert approved['case'] == item['case'] and approved['project_id'] == item['project_id']
+        assert approved['revision'] == item['revision'] and approved['snapshot_sha256'] == item['snapshot_sha256']
         job = store.get_job(item['job_id']); p = store.get(item['project_id']); out = config.data_root / 'jobs' / job['id']
+        assert job['id'] == item['job_id'] and job['project_id'] == p['id'] == approved['project_id']
         assert job['status'] == 'succeeded' and job['error'] is None and job['final_review'] is None
         assert job['revision'] == p['revision'] == approved['revision']
         assert p['approval'] == job['snapshot']['approval'] == approved['approval']
@@ -230,6 +281,119 @@ def verify():
         assert voice['quality_policy'] == approved['quality_policy'] == resolve_policy(p['document'])
         assert voice['audio_sha256'] == file_sha(out / 'voice.wav') == render['voice_sha256']
         assert len(voice['units']) == 5 and normalize(' '.join(u['text'] for u in voice['units'])) == normalize(p['document']['proposal']['narration'])
+        proposal = Proposal.model_validate(p['document']['proposal'])
+        canonical_plans = warm_voice.build_plan(proposal, voice['quality_policy'])
+        assert len(canonical_plans) == len(voice['sources']) == len(plan['units']) == 5
+        assert plan['units'] == canonical_plans
+        for key in ('quality_policy', 'quality_policy_sha256', 'source_approval',
+                    'source_document_sha256', 'pipeline_source_sha256', 'warm_source_sha256', 'sources'):
+            assert voice[key] == plan[key]
+        assert voice['source_approval'] == p['approval']
+        assert voice['source_document_sha256'] == approved['document_sha256']
+        assert voice['quality_policy_sha256'] == digest(voice['quality_policy'])
+        assert plan['profile_sha256'] == PROFILE_SHA
+        attempts = []
+        for attempt in sorted((out / 'attempts').glob('tts-*')):
+            status_path = attempt / 'tts-status.json'
+            assert status_path.is_file(), 'Every actual TTS attempt must retain an explicit status'
+            status_value = read(status_path)
+            entries = [{'path': f.relative_to(attempt).as_posix(), 'sha256': file_sha(f), 'bytes': f.stat().st_size}
+                       for f in sorted(attempt.rglob('*'))
+                       if f.is_file() and f.suffix.lower() in {'.json', '.wav', '.log'}]
+            generation_path = attempt / 'warm-generation-result.json'
+            generation = read(generation_path) if generation_path.is_file() else None
+            attempt_voice_path = attempt / 'voice.json'
+            attempt_voice = read(attempt_voice_path) if attempt_voice_path.is_file() else None
+            attempts.append({'name': attempt.name, 'status': status_value['status'],
+                             'code': status_value.get('code'), 'status_path': str(status_path),
+                             'status_sha256': file_sha(status_path), 'status_value': status_value,
+                             'tts_log_sha256': file_sha(attempt / 'tts.log') if (attempt / 'tts.log').is_file() else None,
+                             'generation_result_sha256': file_sha(generation_path) if generation else None,
+                             'new_inference_calls_recorded': generation['new_inference_calls'] if generation else None,
+                             'complete_voice_metadata_sha256': file_sha(attempt_voice_path) if attempt_voice else None,
+                             'counts_from_complete_voice_metadata': {
+                                 'new_local_inference_calls': attempt_voice['new_inference_calls'],
+                                 'reused_local_inference_calls': attempt_voice['reused_inference_calls'],
+                                 'resolved_scene_inferences': attempt_voice['inference_calls'],
+                                 'provider_requests_this_attempt': attempt_voice['provider_requests_this_attempt']
+                             } if attempt_voice else None,
+                             'missing_complete_voice_metadata_is_not_zero_requests': attempt_voice is None,
+                             'source_files': entries, 'source_files_manifest_sha256': digest(entries)})
+        passing = [a for a in attempts if a['status'] == 'pass']
+        assert len(passing) == 1
+        active_attempt = out / 'attempts' / passing[0]['name']
+        assert file_sha(active_attempt / 'voice.wav') == voice['audio_sha256']
+        assert read(active_attempt / 'voice.json') == voice and read(active_attempt / 'tts-plan.json') == plan
+        generation = read(active_attempt / 'warm-generation-result.json')
+        assert voice['inference_calls'] == len(canonical_plans) == 5
+        assert voice['new_inference_calls'] == generation['new_inference_calls']
+        assert len(generation['plan_keys']) == len(set(generation['plan_keys'])) == voice['new_inference_calls']
+        assert set(generation['plan_keys']) <= {warm_voice.cache_key(cp) for cp in canonical_plans}
+        assert voice['new_inference_calls'] + voice['reused_inference_calls'] == voice['inference_calls']
+        scene_integrity = []
+        for canonical_plan, source in zip(canonical_plans, voice['sources']):
+            scene = canonical_plan['scene']; key = warm_voice.cache_key(canonical_plan)
+            assert source['plan'] == canonical_plan and source['plan_sha256'] == key
+            archived = active_attempt / 'context-sources' / f'scene-{scene:02}'
+            assert Path(source['source_wave_path']).resolve() == (archived / 'source.wav').resolve()
+            assert source['source_wave_preserved'] is True and source['archived_files']
+            recorded_paths = set()
+            for saved in source['archived_files']:
+                saved_path = (active_attempt / saved['path']).resolve()
+                assert active_attempt.resolve() in saved_path.parents and not saved_path.is_symlink()
+                assert saved['path'] not in recorded_paths
+                recorded_paths.add(saved['path'])
+                assert file_sha(saved_path) == saved['sha256'] and saved_path.stat().st_size == saved['bytes']
+            assert {str((archived / name).relative_to(active_attempt)).replace('\\', '/')
+                    for name in ('plan.json', 'source.wav', 'generated.json')} <= recorded_paths
+            generated = warm_voice.generated_record(archived, canonical_plan)
+            assert generated == source['generated']
+            assert generated['source_wave_sha256'] == source['source_wave_sha256'] == file_sha(archived / 'source.wav')
+            pcm = warm_voice.read_wave(archived / 'source.wav')
+            if canonical_plan['context_text']:
+                timing = warm_voice.timing_record(archived, canonical_plan, generated)
+                assert timing is not None and timing == source['timing']
+                assert (archived / 'provider/provider-completed.json').is_file()
+                raw_receipt = read(archived / 'provider/provider-completed.json')
+                assert raw_receipt['payload'] == timing['raw_response']
+                assert digest(raw_receipt['payload']) == timing['transcript']['provenance']['raw_response_sha256']
+                reconstructed = warm_voice.trim_boundary(canonical_plan, pcm.astype('float64') / 32768, timing)
+                assert reconstructed['removed_samples'] == source['boundary']['removed_samples']
+                assert abs(reconstructed['cut_seconds'] - source['boundary']['cut_seconds']) <= 1 / warm_voice.RATE
+                assert source['boundary']['provider_native_timestamps_are_approximate'] is True
+            else:
+                assert source['timing'] is None and source['boundary']['removed_samples'] == 0
+                assert source['boundary']['method'] == 'first_scene_without_extra_context'
+            assert source['boundary']['human_audio_accepted'] is False
+            assert source['boundary']['full_target_word_accuracy_confirmed'] is False
+            counts = warm_voice.provider_counts(archived)
+            assert counts == source['provider_receipts_total_in_cache']
+            for counter, value in source['provider_requests_this_attempt'].items():
+                assert isinstance(value, int) and 0 <= value <= counts[counter]
+            reviewed = accepted_samples.get((item['case'], scene))
+            if reviewed:
+                assert generated['origin']['classification'] == 'REUSED_ACTUAL_OWNER_REVIEWED_B_SOURCE'
+                assert generated['origin']['owner_B_approval_sha256'] == production['owner_B_approval_sha256']
+                assert generated['source_wave_sha256'] == reviewed['B_context_source_sha256']
+                assert generated['origin']['reviewed_B_onset_wave_sha256'] == reviewed['B_onset_sha256']
+                assert generated['origin']['reviewed_B_target_wave_sha256'] == reviewed['B_target_sha256']
+                assert abs(source['boundary']['cut_seconds'] - reviewed['cut_seconds']) <= 1 / warm_voice.RATE
+                reviewed_samples_verified.add((item['case'], scene))
+            else:
+                assert generated['origin']['method'] == 'fresh_offline_warm_scene_inference'
+                assert key not in new_source_keys
+                new_source_keys.add(key)
+                for counter in task_provider: task_provider[counter] += counts[counter]
+            scene_integrity.append({'scene': scene, 'plan_sha256': key,
+                'source_wave_sha256': source['source_wave_sha256'], 'cut_seconds': source['boundary']['cut_seconds'],
+                'removed_samples': source['boundary']['removed_samples'], 'cut_method': source['boundary']['method'],
+                'reviewed_B_source_reused': bool(reviewed), 'portable_raw_source_and_timing_integrity': 'PASS',
+                'full_word_accuracy_or_audio_quality_pass_claimed': False})
+        provider_current = {key: sum(s['provider_requests_this_attempt'][key] for s in voice['sources'])
+                            for key in ('upload_requests', 'transcript_create_requests', 'observe_requests')}
+        assert voice['provider_requests_this_attempt'] == provider_current
+        provider_source_total = {key: sum(s['provider_receipts_total_in_cache'][key] for s in voice['sources'])
+                                for key in provider_current}
         assert render['approval'] == p['approval'] and timeline['metadata']['content_intelligence'] == approved['research_lineage']
         assert qc == job['result']['qc'] and qc['passed'] and len(qc['checks']) == 11 and all(qc['checks'].values())
         assert qc['final_sha256'] == file_sha(out / 'final.mp4') and not qc['human_final_video_accepted'] and not qc['published']
@@ -241,7 +405,23 @@ def verify():
                       'voice_duration_seconds': voice['duration_seconds'], 'video_duration_seconds': qc['duration_seconds'],
                       'duration_target': limits, 'duration_target_met': limits[0] <= qc['duration_seconds'] <= limits[-1],
                       'qc_checks': qc['checks'], 'tts_plan_sha256': file_sha(out / 'tts-plan.json'),
+                      'actual_tts_attempts': attempts, 'active_passing_tts_attempt': passing[0]['name'],
+                      'failed_tts_attempts': [a for a in attempts if a['status'] != 'pass'],
+                      'all_attempt_new_inference_calls_recorded': sum(a['new_inference_calls_recorded']
+                          for a in attempts if a['new_inference_calls_recorded'] is not None),
+                      'attempts_without_durable_generation_count': sum(a['new_inference_calls_recorded'] is None
+                          for a in attempts),
+                      'warm_source_integrity': scene_integrity,
+                      'source_totals': {'resolved_scene_inferences': voice['inference_calls'],
+                                        'reviewed_B_scene_sources_reused': sum(s['reviewed_B_source_reused'] for s in scene_integrity),
+                                        'provider_receipts': provider_source_total,
+                                        'semantics': 'All bound source receipts, including previously paid and reused sources; not requests in this successful attempt'},
+                      'current_successful_attempt_counts': {'new_local_inference_calls': voice['new_inference_calls'],
+                                        'reused_local_inference_calls': voice['reused_inference_calls'],
+                                        'provider_requests': provider_current,
+                                        'semantics': 'Only actual new work recorded for the final passing TTS attempt; earlier failed attempts retained separately'},
                       'human_full_audio_accepted': False, 'human_final_video_approved': False})
+    assert reviewed_samples_verified == set(accepted_samples)
     for name, sha in owner['frozen_prior_evidence'].items(): assert file_sha(REPO / name) == sha
     backups = {b['database']: b for b in owner['backups']}
     for b in backups.values(): assert file_sha(b['path']) == b['sha256']
@@ -259,6 +439,24 @@ def verify():
             'intelligence_rows_preserved': intelligence, 'frozen_prior_evidence_unchanged': len(owner['frozen_prior_evidence']),
             'table_snapshots': {'workflow': checks.integrity.table_snapshot(store.db), 'intelligence': checks.integrity.table_snapshot(service.store.db)},
             'owner_B_onset_samples_accepted': 8, 'human_final_video_approvals': 0,
+            'reviewed_B_sources_and_cuts_verified': len(reviewed_samples_verified),
+            'failed_actual_tts_attempt_count': sum(len(c['failed_tts_attempts']) for c in cases),
+            'all_attempt_new_inference_calls_recorded': sum(c['all_attempt_new_inference_calls_recorded'] for c in cases),
+            'attempts_without_durable_generation_count': sum(c['attempts_without_durable_generation_count'] for c in cases),
+            'task_new_source_local_inference_calls':len(new_source_keys),
+            'task_new_source_provider_receipts':task_provider,
+            'task_count_semantics':'Unique fresh source cache entries created for this repair, including work from explicit failed boundary attempts; reused eight prior B sources excluded',
+            'source_totals': {'resolved_scene_inferences': sum(c['source_totals']['resolved_scene_inferences'] for c in cases),
+                'reviewed_B_scene_sources_reused': sum(c['source_totals']['reviewed_B_scene_sources_reused'] for c in cases),
+                'provider_receipts': {key: sum(c['source_totals']['provider_receipts'][key] for c in cases)
+                    for key in ('upload_requests', 'transcript_create_requests', 'observe_requests')},
+                'semantics': 'Complete source history including reused original receipts; not newly billed work'},
+            'current_successful_attempt_totals': {
+                'new_local_inference_calls': sum(c['current_successful_attempt_counts']['new_local_inference_calls'] for c in cases),
+                'reused_local_inference_calls': sum(c['current_successful_attempt_counts']['reused_local_inference_calls'] for c in cases),
+                'provider_requests': {key: sum(c['current_successful_attempt_counts']['provider_requests'][key] for c in cases)
+                    for key in ('upload_requests', 'transcript_create_requests', 'observe_requests')},
+                'semantics': 'Final passing attempts only; earlier failures retained in each case record'},
             'main_service_restarted': False, 'new_provider_added': False, 'published': False, 'CONTENT_INTELLIGENCE_READY': 'NO'}
 
 
@@ -271,12 +469,22 @@ def export():
         folder = OUT / f"case-{c['case']:02}"; actual = config.data_root / 'jobs' / c['job_id']
         for name in ('final.mp4','voice.wav','voice.json','tts-plan.json','input.json','qc-report.json','ffprobe.json','render-manifest.json','timeline.json','subtitles.ass'):
             copy(actual / name, folder / name)
-        attempts = [p for p in sorted((actual / 'attempts').glob('tts-*')) if (p/'tts-status.json').exists() and read(p/'tts-status.json')['status']=='pass']
-        assert len(attempts) == 1
-        # Retain all actual local sources and provider timing receipts, not generated placeholders.
-        for source in attempts[0].rglob('*'):
-            if source.is_file() and source.suffix.lower() in {'.json','.wav'}:
-                copy(source, folder / 'tts-evidence' / source.relative_to(attempts[0]))
+        # Export every actual attempt, including failed boundary checks and their
+        # original status/receipts. Keep the passing evidence path for convenience.
+        for attempt in c['actual_tts_attempts']:
+            actual_attempt = actual / 'attempts' / attempt['name']
+            for entry in attempt['source_files']:
+                source = actual_attempt / entry['path']
+                assert file_sha(source) == entry['sha256']
+                copy(source, folder / 'tts-attempts' / attempt['name'] / entry['path'])
+                if attempt['name'] == c['active_passing_tts_attempt']:
+                    copy(source, folder / 'tts-evidence' / entry['path'])
+        preserve(folder / 'tts-attempt-manifest.json', {
+            'active_passing_tts_attempt': c['active_passing_tts_attempt'],
+            'attempts': c['actual_tts_attempts'], 'failed_attempts': c['failed_tts_attempts'],
+            'source_totals': c['source_totals'],
+            'current_successful_attempt_counts': c['current_successful_attempt_counts'],
+            'failure_evidence_preserved': True, 'human_final_video_approved': False})
         preserve(folder / 'acceptance.json', {**c, 'state': 'FULL_NEW_VIDEO_OWNER_REVIEW_PENDING', 'CONTENT_INTELLIGENCE_READY': 'NO'})
         render = read(actual / 'render-manifest.json'); frames = []; images = []
         for scene in render['scenes']:
@@ -320,5 +528,5 @@ def persistence():
 
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser(); parser.add_argument('action',choices=('cache','prepare','dispatch','status','export','persistence'))
+    parser=argparse.ArgumentParser(); parser.add_argument('action',choices=('cache','prepare','dispatch','status','resume','export','persistence'))
     globals()[parser.parse_args().action]()

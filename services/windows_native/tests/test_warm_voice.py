@@ -162,6 +162,91 @@ class WarmVoiceTests(unittest.TestCase):
         with self.assertRaisesRegex(WorkflowError, 'WARM_VOICE_UNIQUE_TARGET_ONSET_REQUIRED'):
             warm.trim_boundary(self.plans[1], np.ones(48000) * .1, synthetic_timing(self.plans[1], words))
 
+    def test_duplicate_first_two_tokens_extend_to_unique_exact_approved_prefix(self):
+        words = [{'text': 'Đây là khác.', 'start_seconds': .1, 'end_seconds': .2},
+                 {'text': 'Nguồn.', 'start_seconds': .3, 'end_seconds': .4},
+                 {'text': 'Đây là', 'start_seconds': .6, 'end_seconds': .7},
+                 {'text': 'thông tin', 'start_seconds': .7, 'end_seconds': .8}]
+        boundary = warm.trim_boundary(self.plans[1], np.ones(48000) * .1, synthetic_timing(self.plans[1], words))
+        self.assertEqual(boundary['matched_opening_tokens'], ['đây', 'là', 'thông'])
+        self.assertAlmostEqual(boundary['cut_seconds'], .5)
+        self.assertEqual(boundary['first_target_word']['text'], 'Đây là')
+
+    def test_original_approved_abbreviation_matches_actual_asr_without_rewriting_audio(self):
+        plan = {**self.plans[1], 'target_text': 'KMAC được giới thiệu.'}
+        words = [{'text': 'Trước.', 'start_seconds': .1, 'end_seconds': .2},
+                 {'text': 'KMAC', 'start_seconds': .4, 'end_seconds': .5},
+                 {'text': 'được', 'start_seconds': .5, 'end_seconds': .6},
+                 {'text': 'giới thiệu.', 'start_seconds': .6, 'end_seconds': .8}]
+        boundary = warm.trim_boundary(plan, np.ones(48000) * .1, synthetic_timing(plan, words))
+        self.assertEqual(boundary['matched_opening_tokens'], ['kmac', 'được'])
+        self.assertEqual(boundary['opening_matches'][0]['representation'], 'original_approved_target_spelling')
+        self.assertAlmostEqual(boundary['cut_seconds'], .3)
+        self.assertFalse(boundary['full_target_word_accuracy_confirmed'])
+
+    def test_conflicting_exact_spelling_variants_fail_without_guessing(self):
+        plan = {**self.plans[1], 'target_text': 'KMAC được giới thiệu.'}
+        words = [{'text': 'Trước.', 'start_seconds': .0, 'end_seconds': .1},
+                 {'text': 'ca mờ a xê', 'start_seconds': .1, 'end_seconds': .3},
+                 {'text': 'được giới thiệu.', 'start_seconds': .3, 'end_seconds': .5},
+                 {'text': 'KMAC', 'start_seconds': .6, 'end_seconds': .7},
+                 {'text': 'được giới thiệu.', 'start_seconds': .7, 'end_seconds': .9}]
+        with self.assertRaisesRegex(WorkflowError, 'WARM_VOICE_TARGET_VARIANTS_DISAGREE'):
+            warm.trim_boundary(plan, np.ones(48000) * .1, synthetic_timing(plan, words))
+
+    def test_disputed_single_onset_requires_exact_context_and_continuation_plus_quiet_gap(self):
+        plan = {**self.plans[1], 'context_text': 'Chưa chắc phản ánh hiện tại.',
+                'target_text': 'Vang Nguyễn gợi ý một cách đọc tin.'}
+        words = [{'text': 'phản ánh', 'start_seconds': .1, 'end_seconds': .3},
+                 {'text': 'hiện tại', 'start_seconds': .3, 'end_seconds': .6},
+                 {'text': 'và', 'start_seconds': .6, 'end_seconds': .8},
+                 {'text': 'Nguyễn gợi ý', 'start_seconds': .8, 'end_seconds': .9},
+                 {'text': 'một cách', 'start_seconds': .9, 'end_seconds': .95}]
+        audio = np.ones(48000) * .1
+        timing = synthetic_timing(plan, words)
+        with self.assertRaisesRegex(WorkflowError, 'WARM_VOICE_UNIQUE_TARGET_ONSET_REQUIRED'):
+            warm.trim_boundary(plan, audio, timing)
+        audio[round(.5 * 48000):round(.65 * 48000)] = 0
+        boundary = warm.trim_boundary(plan, audio, timing)
+        self.assertTrue(boundary['onset_asr_disputed'])
+        self.assertEqual(boundary['opening_matches'][0]['actual_disputed_head_tokens'], ['và'])
+        self.assertEqual(boundary['opening_matches'][0]['approved_head_tokens'], ['vang'])
+        self.assertAlmostEqual(boundary['cut_seconds'], .575)
+        self.assertFalse(boundary['full_target_word_accuracy_confirmed'])
+        self.assertEqual(boundary['first_target_word']['text'], 'và')
+
+    def test_disputed_two_onset_tokens_keep_actual_words_and_fail_ambiguous_context(self):
+        plan = {**self.plans[1], 'context_text': 'Từ riêng lượng giao dịch.',
+                'target_text': 'Đây là dữ liệu lịch sử.'}
+        words = [{'text': 'riêng lượng', 'start_seconds': .1, 'end_seconds': .3},
+                 {'text': 'giao dịch', 'start_seconds': .3, 'end_seconds': .6},
+                 {'text': 'Để', 'start_seconds': .6, 'end_seconds': .7},
+                 {'text': 'lại', 'start_seconds': .7, 'end_seconds': .8},
+                 {'text': 'dữ liệu lịch', 'start_seconds': .8, 'end_seconds': .9}]
+        audio = np.ones(48000) * .1
+        audio[round(.5 * 48000):round(.65 * 48000)] = 0
+        boundary = warm.trim_boundary(plan, audio, synthetic_timing(plan, words))
+        self.assertEqual(boundary['opening_matches'][0]['actual_disputed_head_tokens'], ['để', 'lại'])
+        self.assertEqual(boundary['opening_matches'][0]['approved_head_tokens'], ['đây', 'là'])
+        duplicate = [dict(w, start_seconds=w['start_seconds'] + 1, end_seconds=w['end_seconds'] + 1) for w in words]
+        longer = np.ones(96000) * .1
+        longer[round(.5 * 48000):round(.65 * 48000)] = 0
+        longer[round(1.5 * 48000):round(1.65 * 48000)] = 0
+        with self.assertRaisesRegex(WorkflowError, 'WARM_VOICE_UNIQUE_TARGET_ONSET_REQUIRED'):
+            warm.trim_boundary(plan, longer, synthetic_timing(plan, words + duplicate))
+
+    def test_disputed_head_without_both_exact_anchors_is_not_guessed(self):
+        plan = {**self.plans[1], 'context_text': 'Chưa chắc phản ánh hiện tại.',
+                'target_text': 'Vang Nguyễn gợi ý một cách đọc tin.'}
+        words = [{'text': 'khác ánh', 'start_seconds': .1, 'end_seconds': .3},
+                 {'text': 'hiện tại', 'start_seconds': .3, 'end_seconds': .6},
+                 {'text': 'và', 'start_seconds': .6, 'end_seconds': .8},
+                 {'text': 'Nguyễn gợi ý', 'start_seconds': .8, 'end_seconds': .9}]
+        audio = np.ones(48000) * .1
+        audio[round(.5 * 48000):round(.65 * 48000)] = 0
+        with self.assertRaisesRegex(WorkflowError, 'WARM_VOICE_UNIQUE_TARGET_ONSET_REQUIRED'):
+            warm.trim_boundary(plan, audio, synthetic_timing(plan, words))
+
     def test_grouped_or_touching_word_boundary_requires_unique_actual_quiet_gap(self):
         words = [{'text': 'Trước.', 'start_seconds': .1, 'end_seconds': .2},
                  {'text': 'Nguồn. Đây', 'start_seconds': .2, 'end_seconds': .6},
