@@ -149,7 +149,7 @@ class NativeSourceTimelineTests(unittest.TestCase):
         for kind in ('content','render'):
             with self.assertRaises(WorkflowError) as failed:
                 self.store.enqueue(self.project['id'],self.project['revision'],kind,uuid.uuid4().hex)
-            self.assertEqual(failed.exception.code,'AUTO_EDIT_SOURCE_RENDER_PATH_REQUIRED')
+            self.assertEqual(failed.exception.code,'AUTO_EDIT_SOURCE_RENDER_PATH_REQUIRED' if kind=='content' else 'AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER')
         with self.assertRaises(WorkflowError):
             self.store.mutate_shots(self.project['id'],self.project['revision'],{'type':'delete','shot_id':self.source_clip()['clip_id']})
         self.assertEqual(self.store.get(self.project['id'])['document'],before)
@@ -159,7 +159,7 @@ class NativeSourceTimelineTests(unittest.TestCase):
         self.assertEqual(len(project['document']['assets']),2)
         with self.assertRaises(WorkflowError) as failed:
             Pipeline(self.config).run({'id':uuid.uuid4().hex,'kind':'render','snapshot':{'document':project['document']}},lambda value:None)
-        self.assertEqual(failed.exception.code,'AUTO_EDIT_SOURCE_RENDER_PATH_REQUIRED')
+        self.assertEqual(failed.exception.code,'AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER')
         previews=PreviewManager(self.config,self.store)
         try:
             with self.assertRaises(WorkflowError) as failed:

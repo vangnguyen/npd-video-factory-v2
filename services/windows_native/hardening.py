@@ -11,7 +11,7 @@ from .contracts import WorkflowError, canonical, digest, file_sha
 
 LIFECYCLE = {"queued": "CREATED", "running": "RUNNING", "retrying": "RETRYING",
              "awaiting_review": "WAITING_HUMAN", "failed": "FAILED", "interrupted": "FAILED",
-             "succeeded": "SUCCEEDED"}
+             "succeeded": "SUCCEEDED", "failed_qc":"FAILED_QC"}
 
 
 def failure(code, step="", http_status=None):

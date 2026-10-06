@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 from typing import Any
@@ -152,11 +153,12 @@ class FullProductionQC:
         freeze["unexplained_freeze_ratio"] = round(unexplained/max(duration,0.001), 4)
         if freeze["unexplained_freeze_ratio"] > 0.15:
             failures.append("freeze-frame ratio exceeds 15 percent")
-        if volume["audio_peak_db"] < -35:
+        intentional_silence=timeline_qc.get('intentional_audio_silence') is True
+        if not intentional_silence and (volume["audio_peak_db"] is None or volume["audio_peak_db"] < -35):
             failures.append("audio is effectively silent")
-        if volume["audio_peak_db"] > -0.05:
+        if volume["audio_peak_db"] is not None and volume["audio_peak_db"] > -0.05:
             failures.append("audio may be clipping")
-        if silence["silence_ratio"] > 0.80:
+        if not intentional_silence and silence["silence_ratio"] > 0.80:
             failures.append("audio silence exceeds 80 percent of the output")
         if vision["dark_visual_sample_ratio"] > 0.10:
             failures.append("sampled Vision QC found excessive dark output")
@@ -178,6 +180,7 @@ class FullProductionQC:
             "sampled_vision_qc": vision,
             "checksum_sha256": _sha256(path),
             "failures": failures,
+            "intentional_audio_silence": intentional_silence,
         }
         if failures:
             raise ProductionQCError("; ".join(failures), report)
@@ -235,7 +238,9 @@ class FullProductionQC:
             raise ProductionQCError("audio volume metadata is unavailable", {"status": "failed"})
         mean = float(mean_match.group(1))
         peak = float(peak_match.group(1))
-        return {"audio_mean_db": round(mean, 3), "audio_peak_db": round(peak, 3), "audio_clipping": peak > -0.05}
+        return {"audio_mean_db": round(mean, 3) if math.isfinite(mean) else None,
+                "audio_peak_db": round(peak, 3) if math.isfinite(peak) else None,
+                "audio_clipping": math.isfinite(peak) and peak > -0.05}
 
     async def _silence(self, path: Path, duration: float) -> dict[str, Any]:
         _stdout, stderr = await _run(
@@ -299,7 +304,15 @@ async def _run(command: list[str], label: str) -> tuple[str, str]:
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
-    stdout, stderr = await process.communicate()
+    communication=asyncio.create_task(process.communicate())
+    try:
+        stdout,stderr=await asyncio.wait_for(asyncio.shield(communication),timeout=900)
+    except BaseException as error:
+        if process.returncode is None:process.kill()
+        await communication
+        if isinstance(error,TimeoutError):
+            raise ProductionQCError('QC tool timed out',{'status':'failed','tool':label,'code':'QC_TOOL_TIMEOUT'}) from None
+        raise
     out = stdout.decode("utf-8", errors="replace")
     err = stderr.decode("utf-8", errors="replace")
     if process.returncode != 0:

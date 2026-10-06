@@ -664,8 +664,12 @@ class Pipeline:
 
     def run(self, job, stage):
         from .auto_edit_timeline import is_auto_edit
-        if is_auto_edit(job['snapshot']['document']) and job['kind'] in {'content','render'}:
+        source_mode=is_auto_edit(job['snapshot']['document'])
+        if source_mode and job['kind']=='content':
             raise WorkflowError('AUTO_EDIT_SOURCE_RENDER_PATH_REQUIRED',400)
+        if source_mode and job['kind']=='render':
+            from .source_approval import validate_render_approval
+            validate_render_approval(job)
         if job["snapshot"]["document"].get("content_intelligence"):
             from .intelligence_lineage import projection
             projection(job["snapshot"]["document"])
@@ -679,6 +683,9 @@ class Pipeline:
                 raise WorkflowError("CHECKPOINT_INPUT_CHANGED")
         else:
             retry_io(lambda: durable_json(out / "input.json", job["snapshot"]), stage, "storage_input")
+        if source_mode and job['kind']=='render':
+            from .source_render import run
+            return run(self.config,job,out,stage)
         if job["kind"] == "auto_edit_analysis":
             from .auto_edit_analysis import analyze, validate_sources
             validate_sources(self.config, job)

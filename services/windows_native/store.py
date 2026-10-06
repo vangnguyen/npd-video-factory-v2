@@ -489,23 +489,32 @@ class Store:
         with self.transaction() as con:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
-            from .voice_quality import resolve_policy
-            resolve_policy(doc)
-            if not doc["proposal"]:
-                raise WorkflowError("CONTENT_AND_IMAGE_REQUIRED")
-            from .north_star_quality import validate_tts_names
-            validate_tts_names(doc,Proposal.model_validate(doc['proposal']))
-            from .editor import validate_plan
-            validate_plan(doc)
-            if doc.get("canonical_timeline"):
-                from .shot_adapter import validate_document
-                validate_document(doc)
-            selected_media(doc)
+            from .auto_edit_timeline import is_auto_edit
+            preview_binding=None
+            if is_auto_edit(doc):
+                from .source_approval import reviewed_preview
+                preview_binding=reviewed_preview(self.root,project)
+            else:
+                from .voice_quality import resolve_policy
+                resolve_policy(doc)
+                if not doc["proposal"]:
+                    raise WorkflowError("CONTENT_AND_IMAGE_REQUIRED")
+                from .north_star_quality import validate_tts_names
+                validate_tts_names(doc,Proposal.model_validate(doc['proposal']))
+                from .editor import validate_plan
+                validate_plan(doc)
+                if doc.get("canonical_timeline"):
+                    from .shot_adapter import validate_document
+                    validate_document(doc)
+                selected_media(doc)
             previous=project["approval"]
             if (not previous or previous["revision"]!=revision or previous["snapshot_sha256"]!=digest(doc)
-                    or previous.get('review_reference')!=review_reference):
+                    or previous.get('review_reference')!=review_reference
+                    or previous.get('reviewed_preview')!=preview_binding):
                 approval = {"revision": revision, "snapshot_sha256": digest(doc),
                             "reviewer": reviewer.strip(), "approved_at": now(), "source": "local_ui_human_review"}
+                if preview_binding is not None:
+                    approval.update(render_mode='source_footage',reviewed_preview=preview_binding)
                 if review_reference is not None:
                     approval.update(source=review_reference['source'],review_reference=review_reference)
                 con.execute("UPDATE projects SET approval=?,updated_at=? WHERE id=?",
@@ -526,7 +535,7 @@ class Store:
             project = self.editable(con, identifier, revision)
             doc, approval = project["document"], project["approval"]
             from .auto_edit_timeline import is_auto_edit
-            if is_auto_edit(doc) and kind in {'content', 'render'}:
+            if is_auto_edit(doc) and kind == 'content':
                 raise WorkflowError('AUTO_EDIT_SOURCE_RENDER_PATH_REQUIRED', 400)
             if doc.get("canonical_timeline"):
                 from .shot_adapter import validate_document
@@ -547,9 +556,14 @@ class Store:
                     raise WorkflowError("AUTO_EDIT_NO_PENDING_VIDEO", 400)
             if kind == "render" and (not approval or approval["revision"] != revision
                                      or approval["snapshot_sha256"] != digest(doc)):
-                raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
+                raise WorkflowError('AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER' if is_auto_edit(doc) else 'HUMAN_APPROVAL_REQUIRED_BEFORE_TTS')
             if kind == "render":
-                selected_media(doc)
+                if is_auto_edit(doc):
+                    from .source_approval import validate_render_approval, reviewed_preview
+                    validate_render_approval({'snapshot':{'document':doc,'approval':approval},'revision':revision,'project_id':identifier})
+                    if reviewed_preview(self.root,project)!=approval['reviewed_preview']:
+                        raise WorkflowError('AUTO_EDIT_CURRENT_PREVIEW_REVIEW_REQUIRED',400)
+                else:selected_media(doc)
             identifier_job, stamp = uuid.uuid4().hex, now()
             snapshot = {"document": doc, "approval": approval}
             con.execute("INSERT INTO jobs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -582,7 +596,7 @@ class Store:
             row = con.execute("SELECT status FROM jobs WHERE id=?", (job["id"],)).fetchone()
             if row is None or row["status"] not in {"running", "retrying"}:
                 raise WorkflowError("JOB_STATE_CONFLICT")
-            status = "failed" if error else ("awaiting_review" if job["kind"] == "content" else "succeeded")
+            status = ('failed_qc' if error.get('code')=='AUTO_EDIT_MEDIA_QC_FAILED' else 'failed') if error else ("awaiting_review" if job["kind"] == "content" else "succeeded")
             if result and job["kind"] == "content":
                 project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (job["project_id"],)).fetchone())
                 if project["revision"] != job["revision"]:
@@ -649,7 +663,7 @@ class Store:
             job = self.job(con.execute("SELECT * FROM jobs WHERE id=?", (identifier,)).fetchone(), con)
             if job["status"] in {"queued", "running", "retrying"} and job["resume_count"]:
                 return job  # Double-click/repeated resume keeps one job/output receipt.
-            if job["status"] not in {"failed", "interrupted"}:
+            if job["status"] not in {"failed", "failed_qc", "interrupted"}:
                 raise WorkflowError("JOB_NOT_RESUMABLE")
             project = self.editable(con, job["project_id"], job["revision"])
             if digest({"document": project["document"], "approval": project["approval"]}) != digest(job["snapshot"]):

@@ -636,7 +636,7 @@
       "apps/api/app/speech_windows.py"
     ],
     "behavior": "API Studio defaults to shot cards; its collapsed advanced view edits the same canonical IDs. Source-relative FFmpeg peak/RMS waveforms follow trim/split/move; absent measurements have no decorative amplitude substitute. Existing trim/split/duplicate/move/lock/mute/zoom/snapping remain. Browser Unicode transcript save, undo/redo and silence rebuild passed on fresh persisted fixtures at 1366/1920/2560 with no horizontal overflow or console errors. Still-image duration and placement edit the same canonical timeline without invented source timestamps or speed. Immutable undo/redo and reload preserve exact 4.25-second image timing; authenticated identities replace client actor claims for timeline create/edit/restore and preview enqueue. Native source-timeline REST mutations and read-only source shot projection are available; source editor UI integration remains incomplete.",
-    "gap": "Native advanced editor bridge remains; fresh real-media full Mode B acceptance and Owner usability UAT are still required. Native source preview/final render/approval, linked source-edit UI and source-project duplication rebinding remain incomplete. Narrated legacy dispatch is guarded for source-mode projects.",
+    "gap": "Native advanced editor bridge remains; fresh real-media full Mode B acceptance and Owner usability UAT are still required. Native linked source-edit UI and source-project duplication rebinding remain incomplete. Narrated legacy dispatch is guarded for source-mode projects.",
     "severity": "P1",
     "dependency": "canonical adapter",
     "wave": "3",
@@ -660,7 +660,7 @@
       "scripts/north_star_native_source_preview_evidence.py"
     ],
     "behavior": "Version-bound proxy jobs and invalidation; Native preview path exists. Still-image duration and placement edit the same canonical timeline without invented source timestamps or speed. Immutable undo/redo and reload preserve exact 4.25-second image timing; authenticated identities replace client actor claims for timeline create/edit/restore and preview enqueue. API FFmpeg preview v2 reads active canonical audio tracks and applies measured source bounds, tempo-preserving playback speed, placement, gain, fades, summed overlap and a latency-compensated limiter without auto-gain. Muted/disabled/zero-volume tracks are excluded. Worker asset fetch includes audio-only sources and verifies SHA256. Real AAC/tone timing, gain, fades, overlap, pitch and mute checks pass; Studio reports legacy silent or current audio capability explicitly. Native source previews now reuse the pure shared proxy renderer, with canonical original audio, source/manifest SHA256 verification, profile-scoped revision cache, durable cancellation/retry and no provider/TTS/project mutation. Local-real MP4/AAC windows, mute and source drift tests pass; proxy limitations are explicit in the Studio label and receipt.",
-    "gap": "Final subtitle/reframe/audio-mixer preview parity and profile-aware cache across both production paths remain; historical visual-only previews are preserved, not replaced. Native bridge and genuine spoken-source E2E remain. Native source proxy still omits captions, smart-reframe keyframes, speech normalization and ducking; complete final-render/approval parity and source UI flow remain.",
+    "gap": "Final subtitle/reframe/audio-mixer preview parity and profile-aware cache across both production paths remain; historical visual-only previews are preserved, not replaced. Native bridge and genuine spoken-source E2E remain. Native source proxy still omits captions, smart-reframe keyframes, speech normalization and ducking; complete preview/final effects parity and source UI flow remain.",
     "severity": "P1",
     "dependency": "timeline/audio",
     "wave": "3/8",
@@ -673,9 +673,14 @@
     "source": [
       "services/windows_native/store.py",
       "apps/api/app/timeline_service.py",
-      "apps/api/app/human_auth.py"
+      "apps/api/app/human_auth.py",
+      "services/windows_native/source_render.py",
+      "services/windows_native/source_approval.py",
+      "services/windows_native/tests/test_source_render.py",
+      "scripts/north_star_native_source_worker_evidence.py",
+      "docs/north-star/native-source-worker-evidence.json"
     ],
-    "behavior": "Explicit revision/hash approvals; edits invalidate them; Owner UAT not inferred.",
+    "behavior": "Explicit revision/hash approvals; edits invalidate them; Owner UAT not inferred. Native source review binds the actual current source proxy video/manifest checksums, canonical version/hash and project revision. The binding is checked again at enqueue and worker execution; edits invalidate approval. Successful renders still require separate watch/listen final-video review; automated review fixtures do not certify Owner UAT.",
     "gap": "Publishing approval and cross-editor binding need end-to-end acceptance.",
     "severity": "P0",
     "dependency": "canonical/publish",
@@ -701,10 +706,15 @@
       "apps/api/app/production_logic.py",
       "apps/api/tests/test_native_source_render_contract.py",
       "scripts/north_star_native_render_transport.py",
-      "packages/contracts/timeline-render.schema.json"
+      "packages/contracts/timeline-render.schema.json",
+      "services/windows_native/source_render.py",
+      "services/windows_native/source_approval.py",
+      "services/windows_native/tests/test_source_render.py",
+      "scripts/north_star_native_source_worker_evidence.py",
+      "docs/north-star/native-source-worker-evidence.json"
     ],
-    "behavior": "Real Native FFmpeg and API Remotion/FFmpeg render paths. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged. API Remotion locally encodes all four aspect ratios with source-relative crop keyframes; 4:5 review is 432x540 to avoid odd YUV420 dimensions, final is 1080x1350. Actual FFprobe geometry and decoded crop traversal have synthetic-media evidence. Private Native renderer transport stages selected media only, validates the versioned contract, exposes exact media routes behind an ephemeral loopback token, supports Range playback and closes on success/failure. It rejects external paths, metadata files and junction escapes; prior outputs cannot be replaced. A Native-specific limited-range YUV420p/BT.709/48kHz profile is actually encoded with Unicode captions and original timeline audio. v2.3 supports VI/EN, up to 600s and explicitly absent captions; historical v2.0–2.2 constraints remain.",
-    "gap": "Shared final render path for uploaded-footage editing and multi-format variants; existing accepted renderer and strict portrait/landscape canvas guard verified locally. Private low-level renderer is not yet wired into Native source jobs/human approval/checkpoints/final QC; its actual synthetic encode is transport evidence, not Mode B or Owner acceptance.",
+    "behavior": "Real Native FFmpeg and API Remotion/FFmpeg render paths. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged. API Remotion locally encodes all four aspect ratios with source-relative crop keyframes; 4:5 review is 432x540 to avoid odd YUV420 dimensions, final is 1080x1350. Actual FFprobe geometry and decoded crop traversal have synthetic-media evidence. Private Native renderer transport stages selected media only, validates the versioned contract, exposes exact media routes behind an ephemeral loopback token, supports Range playback and closes on success/failure. It rejects external paths, metadata files and junction escapes; prior outputs cannot be replaced. A Native-specific limited-range YUV420p/BT.709/48kHz profile is actually encoded with Unicode captions and original timeline audio. v2.3 supports VI/EN, up to 600s and explicitly absent captions; historical v2.0–2.2 constraints remain. Native source jobs now use the same canonical snapshot, stage selected media privately, encode original audio and Unicode captions without narration/provider dispatch, register checksum-bound artifacts and reuse only verified final checkpoints. An actual worker render on synthetic media passes measured full QC and preserves source/project bytes.",
+    "gap": "Complete source editor UI, genuine spoken-source E2E and cached multi-format project variants remain. Source audio normalization/ducking are explicitly not yet implemented on this path. Owner UAT and provider acceptance remain separate.",
     "severity": "P0",
     "dependency": "timeline/profile/QC",
     "wave": "2/6/7",
@@ -718,10 +728,16 @@
       "services/windows_native/pipeline.py",
       "apps/api/app/production_qc.py",
       "services/windows_native/north_star_quality.py",
-      "services/windows_native/tests/test_north_star_quality.py"
+      "services/windows_native/tests/test_north_star_quality.py",
+      "services/windows_native/source_render.py",
+      "services/windows_native/source_approval.py",
+      "services/windows_native/tests/test_source_render.py",
+      "scripts/north_star_native_source_worker_evidence.py",
+      "docs/north-star/native-source-worker-evidence.json",
+      "apps/api/tests/test_production_qc_silence_lifecycle.py"
     ],
-    "behavior": "Decode/dimensions/codecs/A-V/audio/black checks; API freeze/Visual sampling. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged.",
-    "gap": "Native trailing-silence/freeze/subtitle/Vision checks and unified failed_qc semantics.",
+    "behavior": "Decode/dimensions/codecs/A-V/audio/black checks; API freeze/Visual sampling. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged. Native source workers reuse full measured geometry/fps/codecs/audio/A-V/black/freeze/decode/subtitle/timeline and pixel-sampled QC, plus decoded PCM trailing-activity checks. Hard failure persists attempt evidence and uses failed_qc/FAILED_QC with no ready final checkpoint. Explicit canonical track muting permits intentional silence while retaining all visual/codec checks; silent nonfinite measurements serialize as null. Cancellation kills/drains owned QC tools.",
+    "gap": "Semantic Vision QC, voice audibility relative to music, normalization/ducking checks and complete real-source UI acceptance remain. Pixel sampling does not establish semantic Vision-provider acceptance.",
     "severity": "P0",
     "dependency": "quality pipeline",
     "wave": "2/6",
