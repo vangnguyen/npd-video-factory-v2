@@ -412,9 +412,13 @@ class Store:
             self.event(con, identifier, "document_uploaded_approval_invalidated", {"revision": revision+1, "document_id": document["id"], "sha256": document["sha256"]})
         return self.get(identifier)
 
-    def approve(self, identifier, revision, reviewer, acknowledged):
+    def approve(self, identifier, revision, reviewer, acknowledged, *, review_reference=None):
         if acknowledged is not True or not isinstance(reviewer, str) or not 1 <= len(reviewer.strip()) <= 100:
             raise WorkflowError("HUMAN_REVIEW_REQUIRED", 400)
+        if review_reference is not None and (not isinstance(review_reference, dict)
+                or review_reference.get('source') not in {'local_ui_human_review','human_user_reply_in_codex'}
+                or len(json.dumps(review_reference)) > 4000):
+            raise WorkflowError('HUMAN_REVIEW_REFERENCE_INVALID',400)
         with self.transaction() as con:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
@@ -424,9 +428,12 @@ class Store:
             validate_plan(doc)
             selected_media(doc)
             previous=project["approval"]
-            if not previous or previous["revision"]!=revision or previous["snapshot_sha256"]!=digest(doc):
+            if (not previous or previous["revision"]!=revision or previous["snapshot_sha256"]!=digest(doc)
+                    or previous.get('review_reference')!=review_reference):
                 approval = {"revision": revision, "snapshot_sha256": digest(doc),
                             "reviewer": reviewer.strip(), "approved_at": now(), "source": "local_ui_human_review"}
+                if review_reference is not None:
+                    approval.update(source=review_reference['source'],review_reference=review_reference)
                 con.execute("UPDATE projects SET approval=?,updated_at=? WHERE id=?",
                             (json.dumps(approval, ensure_ascii=False), now(), identifier))
                 self.event(con, identifier, "human_content_approved", approval)
