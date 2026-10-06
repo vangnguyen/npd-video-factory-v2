@@ -84,12 +84,16 @@ def build_silence_decisions(
     transcript: DownstreamTranscript,
     config: AutoEditAnalysisRequest,
 ) -> list[dict[str, Any]]:
-    words = [word for segment in transcript.value.segments for word in segment.words]
+    # Word timing is optional. A segment without words is a protected speech
+    # interval, not permission to cut through speech at low audio energy.
+    protected=[(word.start_seconds,word.end_seconds,'word') for segment in transcript.value.segments for word in segment.words]
+    protected += [(segment.start_seconds,segment.end_seconds,'segment_without_word_timestamps')
+                  for segment in transcript.value.segments if not segment.words]
     decisions: list[dict[str, Any]] = []
     for raw_start, raw_end, measured_db in signals.silence_intervals:
         start = round(raw_start + config.padding_before, 6)
         end = round(raw_end - config.padding_after, 6)
-        conflicts = any(_overlap(start, end, word.start_seconds, word.end_seconds) > 0 for word in words)
+        conflicts = any(_overlap(start,end,a,b)>0 for a,b,_ in protected)
         long_enough = end - start >= config.minimum_silence_duration
         enabled = long_enough and not conflicts
         reason = (
@@ -112,6 +116,8 @@ def build_silence_decisions(
                     "raw_start": raw_start,
                     "raw_end": raw_end,
                     "measured_db": measured_db,
+                    "measured_db_available": measured_db is not None,
+                    "speech_protection": sorted({kind for a,b,kind in protected if _overlap(start,end,a,b)>0}),
                     "threshold_db": config.silence_threshold_db,
                     "minimum_duration": config.minimum_silence_duration,
                     "source_media_mutated": False,

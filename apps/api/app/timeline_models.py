@@ -165,10 +165,15 @@ class TimelineCreateRequest(StrictModel):
     content_version_id: str | None = Field(default=None, pattern=r"^pver_[A-Za-z0-9_-]{4,60}$")
     expected_timeline_version: int | None = Field(default=None, ge=1)
     media_plan_id: str | None = Field(default=None, pattern=r"^mpl_[A-Za-z0-9_-]{4,60}$")
+    silence_decision_ids: list[str] | None = Field(default=None,max_length=2000)
     actor_ref: str = Field(default="studio-user", min_length=1, max_length=160)
 
     @model_validator(mode="after")
     def source_contract(self):
+        if self.silence_decision_ids is not None:
+            if self.source_kind!='video_analysis':raise ValueError('silence review requires video analysis')
+            if any(not isinstance(x,str) or not 1<=len(x)<=64 for x in self.silence_decision_ids) or len(set(self.silence_decision_ids))!=len(self.silence_decision_ids):
+                raise ValueError('silence review requires unique decision ids')
         if self.source_kind == "video_analysis":
             if not self.analysis_id or self.content_version_id:
                 raise ValueError("video_analysis requires analysis_id and no storyboard")

@@ -111,7 +111,9 @@
 .timeline-clip strong, .timeline-clip small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .timeline-clip strong { font-size: 8px; }
 .timeline-clip small { margin-top: 3px; opacity: .82; font-size: 7px; }
-.timeline-clip.waveform { background-image: repeating-linear-gradient(90deg, transparent 0 3px, rgba(255,255,255,.38) 3px 4px, transparent 4px 7px, rgba(255,255,255,.2) 7px 8px); }
+.measured-waveform { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: .4; }
+.measured-waveform path { fill: none; stroke: white; stroke-width: .6; }
+.timeline-clip strong, .timeline-clip small { position: relative; z-index: 1; }
 .timeline-clip.disabled::after { content: "ẨN"; position: absolute; right: 3px; top: 3px; padding: 2px 3px; border-radius: 3px; color: #26323c; background: white; font-size: 6px; font-weight: 900; }
 .timeline-playhead { position: absolute; z-index: 8; top: 0; bottom: 0; left: 145px; width: 1px; pointer-events: none; background: #ff625f; box-shadow: 0 0 0 1px rgba(255,98,95,.2); }
 .timeline-playhead span { position: absolute; top: 0; left: -5px; width: 11px; height: 11px; background: #ff625f; clip-path: polygon(0 0,100% 0,50% 100%); }
@@ -277,8 +279,21 @@
   .analytics-heading-actions { align-items: stretch; flex-direction: column; }
   .analytics-metrics { grid-template-columns: 1fr; }
 }
+/* Preserve native hidden semantics even for components with explicit display. */
+.studio-shell [hidden] { display: none !important; }
 /* Multi-input authoring remains inside the existing Studio. */
+#analysis-review, .timeline-panel[aria-label="Shot Editor"] { padding: 18px; }
+.shot-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.shot-overview button { padding: 16px; display: grid; gap: 8px; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: white; overflow-wrap: anywhere; }
+.shot-overview button[aria-pressed="true"] { outline: 2px solid var(--cyan); }
+#analysis-review details { margin: 14px 0; }
+#analysis-review summary, #advanced-timeline > summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
+#analysis-review article { margin: 10px 0; padding: 12px; border: 1px solid var(--line); border-radius: 8px; overflow-wrap: anywhere; }
+#analysis-review textarea, .transcript-item textarea { width: 100%; min-height: 75px; padding: 10px; font: inherit; }
+#analysis-review label { display: block; margin: 10px 0; }
+.transcript-item small { display: block; margin-top: 8px; line-height: 1.5; }
 #multi-input-workbench { margin: 16px 0; padding: 24px; }
+#multi-input-workbench > summary { cursor: pointer; font-weight: 700; }
 #multi-input-workbench label { display: block; margin: 10px 0; }
 #multi-input-workbench textarea { width: 100%; padding: 10px; }
 #multi-input-workbench input, #multi-input-workbench select { padding: 8px; }

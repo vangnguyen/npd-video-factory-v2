@@ -56,7 +56,7 @@ def main():
         '- IMPLEMENTATION_COMPLETE = NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE = NO; PRODUCTION_DEPLOYED = NO for this completion program.',
         '- No external publication, paid provider call, production mutation or protected-main merge was performed.', '',
         '## Verification limits', '',
-        'See `NORTH_STAR_BASELINE_2026.md` and `NORTH_STAR_WAVE_REPORTS.md` for exact commands, runtime failures, passing suites and evidence. Windows cannot execute the three POSIX runtime/security modules; Linux CI is a separate required gate. Docker is not available on this host. Future changes must update both the machine-readable rows and this matrix. A NOT_CONFIGURED capability does not waive adapter implementation or mock contract acceptance.', '']
+        'See `NORTH_STAR_BASELINE_2026.md` and `NORTH_STAR_WAVE_REPORTS.md` for exact commands, runtime failures, passing suites and evidence. The isolated Ubuntu baseline at 834d6db passed 1,896 tests with 5 skips, including the three POSIX modules unavailable on Windows; later changes require their own checks. Docker is not available on this host. Future changes must update both the machine-readable rows and this matrix. A NOT_CONFIGURED capability does not waive adapter implementation or mock contract acceptance.', '']
     (ROOT/'docs/NORTH_STAR_CAPABILITY_MATRIX.md').write_text('\n'.join(text), encoding='utf-8')
     (ROOT/'docs/north-star/source-inventory.json').write_text(json.dumps({'head': git('rev-parse','HEAD'), 'audited_at':datetime.now(timezone.utc).isoformat(), 'sha256':inventory}, indent=2), encoding='utf-8')
     print(json.dumps({'requirements':len(rows),'master_sections':len(sections),'source_files':len(inventory),'classification':dict(Counter(r['status'] for r in rows))}))

@@ -94,7 +94,18 @@ class TimelineService:
                 source_analysis_id=None, source_media_plan_id=None, source_content_version_id=payload.content_version_id,
                 snapshot=snapshot, actor_ref=payload.actor_ref)
             return timeline
-        analysis = await self.auto_edit_repository.get_analysis(payload.analysis_id)
+        existing = await self.repository.get_timeline(project_id)
+        transcript_id = None
+        if existing and payload.silence_decision_ids is not None:
+            if payload.expected_timeline_version is None:
+                raise TimelineEditError("expected_timeline_version is required to rebuild silence cuts")
+            if existing.source_analysis_id != payload.analysis_id:
+                raise TimelineEditError("active timeline uses another source")
+            if any(track.locked and track.type != "metadata" for track in existing.snapshot.tracks):
+                raise TimelineEditError("unlock timeline tracks before rebuilding silence cuts")
+            transcript_id = (existing.snapshot.metadata.get("transcript_revision") or {}).get("transcript_id")
+        analysis = (await self.auto_edit_repository.get_analysis(payload.analysis_id, transcript_id=transcript_id)
+                    if transcript_id else await self.auto_edit_repository.get_analysis(payload.analysis_id))
         if analysis is None or analysis.project_id != project_id:
             raise KeyError(payload.analysis_id)
         if analysis.status != "succeeded":
@@ -123,8 +134,16 @@ class TimelineService:
             source_asset=source_asset,
             media_plan=media_plan,
             media_assets=assets,
+            silence_decision_ids=payload.silence_decision_ids,
         )
         self.validator.validate(snapshot)
+        existing=await self.repository.get_timeline(project_id)
+        if existing and payload.silence_decision_ids is not None:
+            if payload.expected_timeline_version is None:raise TimelineEditError('expected_timeline_version is required to rebuild silence cuts')
+            if existing.source_analysis_id!=analysis.analysis_id:raise TimelineEditError('active timeline uses another source')
+            return await self.repository.commit_mutation(project_id=project_id,expected_version=payload.expected_timeline_version,
+                snapshot=snapshot,mutation={'type':'silence-review-rebuild','source_analysis_id':analysis.analysis_id,
+                                           'selected_decision_ids':payload.silence_decision_ids,'source_media_mutated':False},actor_ref=payload.actor_ref)
         timeline, _ = await self.repository.create_timeline(
             project_id=project_id,
             source_analysis_id=analysis.analysis_id,

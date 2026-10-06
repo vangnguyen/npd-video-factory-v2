@@ -49,9 +49,10 @@
           </div>
         </header>
 
-        <section id="multi-input-workbench" class="timeline-panel">
-          <h2>Project đa đầu vào · MVP-1 dev</h2>
-          <p>Ảnh/phối cảnh, video và idea/prompt/script dùng chung project. Provider thật chưa được cấp quyền. Template nội bộ không phải AI video.</p>
+        <details id="multi-input-workbench" class="timeline-panel">
+          <summary>Tạo dự án, thêm tư liệu hoặc nhập kịch bản</summary>
+          <h2>Tạo dự án và thêm tư liệu</h2>
+          <p>Thêm ảnh, video hoặc audio; nhập ý tưởng hoặc kịch bản để bắt đầu.</p>
           <form id="mvp-project-form"><label>Tên project <input id="mvp-project-name" required maxlength="240"></label><button type="submit">Tạo project</button></form>
           <label><input id="mvp-rights" type="checkbox"> Tôi có quyền sử dụng media cho project này.</label>
           <label>Thêm video/ảnh/audio <input id="mvp-upload" type="file" multiple accept="image/jpeg,image/png,video/mp4,audio/wav,audio/mpeg"></label>
@@ -80,6 +81,15 @@
           <p id="mvp-status"></p><details><summary>Media plan</summary><pre id="mvp-plan"></pre></details>
           <details><summary>Diff phiên bản script</summary><pre id="mvp-script-diff"></pre></details>
           <p>Ảnh không có source duration. Timing cảnh là lịch biên tập, không phải measured word timestamps. Video có lời nói vẫn cần ASR hợp lệ. A/V review và duyệt final ở workbench bên dưới.</p>
+        </details>
+        <section id="analysis-review" class="timeline-panel" hidden>
+          <h2>Kiểm tra phân tích nguồn</h2><p id="analysis-review-summary"></p>
+          <details><summary>Lời nhận diện · xem và sửa trước khi dựng</summary><div id="analysis-transcript-list"></div></details>
+          <details><summary>Cảnh đã phân tích</summary><div id="analysis-scene-list"></div></details>
+          <details open><summary>Khoảng lặng · quyết định cắt có thể hoàn tác</summary><div id="silence-review-list"></div>
+          <p>Chỉ cắt các khoảng đã chọn. Áp dụng sẽ dựng lại timeline từ nguồn và giữ các phiên bản cũ để hoàn tác; cần cập nhật preview và duyệt lại.</p>
+          <button id="apply-silence-review" type="button">Dựng timeline với khoảng cắt đã chọn</button></details>
+          <details><summary>Đoạn nổi bật đề xuất</summary><div id="highlight-review-list"></div></details>
         </section>
         <section id="empty-state" class="studio-empty" hidden>
           <div class="empty-illustration">✂</div>
@@ -99,6 +109,7 @@
             <div class="summary-boundary"><small>An toàn</small><strong>Dry-run only</strong><span>không gửi ra nền tảng</span></div>
           </section>
 
+          <section class="timeline-panel" aria-label="Shot Editor"><h2>Shot Editor</h2><p>Chọn một shot để sửa trên timeline đang lưu. Tư liệu gốc được giữ nguyên.</p><div id="canonical-shot-list" class="shot-overview"></div></section>
           <section class="editor-grid">
             <aside class="editor-panel browser-panel">
               <div class="panel-tabs" role="tablist" aria-label="Nguồn biên tập">
@@ -186,7 +197,7 @@
             </aside>
           </section>
 
-          <section class="timeline-panel">
+          <details class="timeline-panel" id="advanced-timeline"><summary>Timeline nâng cao · tracks, trim, split, di chuyển và khóa</summary>
             <div class="timeline-toolbar">
               <div class="timeline-title"><span class="panel-kicker">Timeline</span><strong>Edit source of truth</strong></div>
               <div class="toolbar-group">
@@ -205,7 +216,7 @@
               </div>
             </div>
             <div class="timeline-help">Kéo clip để di chuyển · thả sang track cùng loại · chọn clip để trim/split/disable/duplicate · mọi thay đổi tạo một phiên bản mới.</div>
-          </section>
+          </details>
 
           <section id="production-workbench" class="production-workbench" aria-label="V2-08 Production Workbench">
             <div class="production-heading">

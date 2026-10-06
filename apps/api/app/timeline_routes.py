@@ -20,6 +20,7 @@ from .timeline_models import (
 )
 from .timeline_repository import TimelineConflictError
 from .timeline_service import PreviewService, TimelineService
+from .human_auth import principal_from
 
 
 router = APIRouter(prefix="/api/v1", tags=["auto-edit-studio"])
@@ -58,9 +59,15 @@ async def create_timeline(
     request: Request,
 ) -> TimelineRead:
     try:
+        if payload.silence_decision_ids is not None:
+            payload = payload.model_copy(update={"actor_ref": principal_from(request).subject})
         return await timeline_service(request).create(project_id, payload)
     except KeyError as exc:
         raise missing(str(exc.args[0])) from exc
+    except TimelineConflictError as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+            detail={"code": "TIMELINE_VERSION_CONFLICT", "message": str(exc),
+                    "expected_version": exc.expected, "current_version": exc.actual}) from exc
     except TimelineEditError as exc:
         raise invalid(str(exc)) from exc
 

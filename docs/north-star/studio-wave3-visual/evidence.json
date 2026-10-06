@@ -1,0 +1,32 @@
+{
+  "scope": "Isolated loopback Studio browser regression; not Owner UAT or real ASR acceptance",
+  "fixture": {
+    "server": "scripts/north_star_studio_fixture.py",
+    "address": "127.0.0.1:18031",
+    "data_directory": "C:\\vf-ui-fixture-a1",
+    "media": "Real locally generated 16-second synthetic video/tone, FFprobe and decoded waveform",
+    "asr": "Explicit deterministic fixture; no real speech recognition",
+    "persistence": "Fresh SQLite, immutable transcript/timeline rows",
+    "production_configuration_changed": false,
+    "publishing": "unavailable",
+    "paid_calls": 0
+  },
+  "viewports": [
+    {"width": 1366, "height": 768, "document_width": 1351, "advanced_timeline_open_by_default": false, "image": "1366-shot.jpg"},
+    {"width": 1920, "height": 1080, "document_width": 1905, "advanced_timeline_open_by_default": false, "image": "1920-shot.jpg"},
+    {"width": 2560, "height": 1440, "document_width": 2545, "advanced_timeline_open_by_default": false, "image": "2560-shot.jpg"}
+  ],
+  "checks": {
+    "shot_selection_opens_existing_canonical_inspector": true,
+    "hidden_inspector_placeholder_is_hidden": true,
+    "unicode_transcript_save_version": 2,
+    "undo_restores_original_text_version": 3,
+    "redo_restores_edited_text_version": 4,
+    "silence_selection_rebuild_version": 5,
+    "approval_after_rebuild": "draft",
+    "measured_waveform_svg_count": 1,
+    "console_errors_or_warnings": 0,
+    "temporary_viewport_reset": true
+  },
+  "limitations": ["No preview/final render or publishing dispatch", "No real ASR or Vision call", "Owner usability/pronunciation acceptance remains pending", "Safe cuts are conservatively disabled where fixture speech segments overlap silence"]
+}

@@ -376,6 +376,7 @@ class AutoEditRepository:
         scenes: list[dict[str, Any]],
         silence_decisions: list[dict[str, Any]],
         highlights: list[dict[str, Any]],
+        signal_evidence: dict[str, Any] | None = None,
     ) -> None:
         async with self.session_factory() as session:
             async with session.begin():
@@ -388,6 +389,8 @@ class AutoEditRepository:
                     raise KeyError(analysis_id)
                 if analysis.status == "succeeded":
                     return
+                if signal_evidence is not None:
+                    analysis.provenance_json = {**analysis.provenance_json, "media_signals": signal_evidence}
                 if transcript is None:
                     if analysis.source_media_json.get("audio_codec") is not None:
                         raise ValueError("audio-bearing video requires a real transcript")

@@ -288,7 +288,7 @@
       "apps/api/app/auto_edit_providers.py",
       "services/windows_native/asr.py"
     ],
-    "behavior": "Real FFmpeg boundaries/motion/audio and typed scene heuristics.",
+    "behavior": "Real FFmpeg shot/silence boundaries and typed scene heuristics; current motion/quality scores are heuristics, not measured motion or Vision quality.",
     "gap": "Combine Vision semantic observations and transcript boundaries in Native pipeline.",
     "severity": "P1",
     "dependency": "Vision",
@@ -302,10 +302,12 @@
     "source": [
       "apps/api/app/auto_edit_logic.py",
       "apps/api/app/auto_edit_providers.py",
-      "apps/api/app/timeline_logic.py"
+      "apps/api/app/timeline_logic.py",
+      "apps/api/tests/test_silence_word_safety.py",
+      "apps/studio-web/analysis-review.mjs"
     ],
-    "behavior": "Non-destructive decisions guarded against transcript words in API.",
-    "gap": "Native review/reversal UI and actual-media word-boundary acceptance.",
+    "behavior": "API decisions protect known word intervals and whole speech segments when words are unavailable. Canonical cuts preserve padding and revalidate overlap. Studio selection rebuilds immutable timeline versions with CAS, locked-track protection, prior transcript binding and approval invalidation; cuts remain reversible. Detector threshold is not reported as measured loudness.",
+    "gap": "Accepted Native integration and real spoken-media boundary acceptance remain. Local FFmpeg tone/silence detection and measured waveform pass; fixture transcript is not real ASR.",
     "severity": "P0",
     "dependency": "transcript/canonical timeline",
     "wave": "3",
@@ -556,10 +558,13 @@
       "apps/studio-web/studio-utils.mjs",
       "apps/studio-web/shot-studio.mjs",
       "apps/studio-web/timeline-history.mjs",
-      "apps/studio-web/tests/timeline-history.test.mjs"
+      "apps/studio-web/tests/timeline-history.test.mjs",
+      "apps/api/app/audio_waveform.py",
+      "apps/studio-web/waveform.mjs",
+      "docs/north-star/studio-wave3-visual/evidence.json"
     ],
-    "behavior": "API advanced trim/split/duplicate/move/lock/mute plus shot Native UI. API timeline multi-step undo/redo now follows immutable content states across newly created restore versions and selects canonical transcript revisions.",
-    "gap": "One Native advanced view with waveform/snapping/zoom/history bound to same timeline.",
+    "behavior": "API Studio defaults to shot cards; its collapsed advanced view edits the same canonical IDs. Source-relative FFmpeg peak/RMS waveforms follow trim/split/move; absent measurements have no decorative amplitude substitute. Existing trim/split/duplicate/move/lock/mute/zoom/snapping remain. Browser Unicode transcript save, undo/redo and silence rebuild passed on fresh persisted fixtures at 1366/1920/2560 with no horizontal overflow or console errors.",
+    "gap": "Native advanced editor bridge remains; fresh real-media full Mode B acceptance and Owner usability UAT are still required.",
     "severity": "P1",
     "dependency": "canonical adapter",
     "wave": "3",

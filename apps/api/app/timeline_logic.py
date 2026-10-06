@@ -30,20 +30,27 @@ def build_initial_timeline(
     source_asset: AssetRead,
     media_plan: MediaPlanRead | None,
     media_assets: dict[str, AssetRead],
+    silence_decision_ids: list[str] | None = None,
 ) -> TimelineSnapshot:
     if analysis.status != "succeeded":
         raise TimelineEditError("Auto Edit analysis must be succeeded before building a timeline")
     if analysis.source_media.duration_seconds is None or analysis.source_media.duration_seconds <= 0:
         raise TimelineEditError("source media must have a positive duration before building a timeline")
     source_duration = float(analysis.source_media.duration_seconds)
-    cuts = sorted(
-        (
-            max(0.0, item.start_seconds - item.padding_before_seconds),
-            min(source_duration, item.end_seconds + item.padding_after_seconds),
-        )
-        for item in analysis.silence_decisions
-        if item.enabled and not item.conflicts_with_speech
-    )
+    protected=[]
+    if analysis.transcript:
+        for segment in analysis.transcript.segments:
+            protected.extend((word.start_seconds,word.end_seconds) for word in segment.words)
+            if not segment.words:protected.append((segment.start_seconds,segment.end_seconds))
+    safe_decisions=[item for item in analysis.silence_decisions if item.enabled and not item.conflicts_with_speech
+        and not any(min(item.end_seconds,end)>max(item.start_seconds,start) for start,end in protected)]
+    if silence_decision_ids is not None:
+        if not set(silence_decision_ids)<={item.decision_id for item in safe_decisions}:
+            raise TimelineEditError('selected silence cut is unknown, overlaps speech or is not safely enabled')
+        safe_decisions=[item for item in safe_decisions if item.decision_id in silence_decision_ids]
+    # Decisions already include preserved speech padding. Expanding them back
+    # to detector boundaries would undo that protection and could cut a word.
+    cuts=sorted((max(0.,item.start_seconds),min(source_duration,item.end_seconds)) for item in safe_decisions)
     source_windows: list[tuple[float, float, dict[str, Any]]] = []
     for scene in analysis.scenes:
         for start, end in _subtract_intervals(scene.start_seconds, scene.end_seconds, cuts):
@@ -62,6 +69,8 @@ def build_initial_timeline(
                 )
             )
     if not source_windows:
+        if cuts:
+            raise TimelineEditError("silence cuts leave no usable source footage")
         source_windows = [(0.0, source_duration, {"fallback": "full-source"})]
 
     source_clips: list[TimelineClip] = []
@@ -76,6 +85,10 @@ def build_initial_timeline(
             "object_key": source_asset.object_key,
             "original_evidence": True,
         }
+        waveform = analysis.provenance.get("media_signals", {}).get("waveform")
+        if waveform and waveform.get("measured"):
+            metadata["source_audio_waveform"] = {**waveform, "bins":[item for item in waveform["bins"]
+                if min(end,item["end_seconds"])>max(start,item["start_seconds"])]}
         source_clips.append(
             TimelineClip(
                 clip_id=_new_id("clip"),
@@ -246,9 +259,11 @@ def build_initial_timeline(
             "source_duration_seconds": source_duration,
             "transcript_revision": {'transcript_id':analysis.transcript.transcript_id,'version':analysis.transcript.version,
                                     'human_edited':not analysis.transcript.is_original_evidence} if analysis.transcript else None,
-            "silence_decisions_applied": sum(
-                item.enabled and not item.conflicts_with_speech for item in analysis.silence_decisions
-            ),
+            "silence_decisions_applied":len(safe_decisions),
+            "silence_speech_padding_preserved":True,
+            "silence_decision_ids":[item.decision_id for item in safe_decisions],
+            **({'silence_review':{'selected_ids':silence_decision_ids,'source_analysis_id':analysis.analysis_id,
+                                 'requires_human_approval':True,'source_media_mutated':False}} if silence_decision_ids is not None else {}),
             "highlight_ids": [item.highlight_id for item in analysis.highlights],
             "preview_profile": "proxy-540x960-no-audio-v1",
             "approval_invalidates_on_change": True,

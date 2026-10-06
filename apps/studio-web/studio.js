@@ -18,6 +18,8 @@ import { authenticatedFetch, ensureAuthenticatedSession } from "/auth.mjs";
 import { initializeMultiInput } from "/multi-input.mjs";
 import { transcriptEditPayload } from "/transcript-editor.mjs";
 import { timelineHistory,timelineTranscriptId } from "/timeline-history.mjs";
+import { silenceSelection,canonicalShotClips } from "/analysis-review.mjs";
+import { waveformPath } from "/waveform.mjs";
 
 const state = {
   workspaceId: null,
@@ -212,6 +214,8 @@ async function loadProject({ quiet = false } = {}) {
 }
 
 function renderNoProject(title, description) {
+  if (!state.projectId) $("#analysis-review").hidden = true;
+  $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
   $("#empty-state").hidden = false;
   $("#empty-title").textContent = title;
@@ -220,6 +224,7 @@ function renderNoProject(title, description) {
 }
 
 function render() {
+  renderAnalysisReview();
   if (!state.timeline) {
     const analysis = activeAnalysis();
     renderNoProject(
@@ -241,6 +246,30 @@ function render() {
   renderProduction();
   renderPublishing();
   renderAnalytics();
+  const sourceShots=canonicalShotClips(state.timeline.snapshot);
+  $("#canonical-shot-list").innerHTML=sourceShots.map((clip,index)=>`<button type="button" data-canonical-shot="${escapeHtml(clip.clip_id)}" aria-pressed="${state.selectedClipId===clip.clip_id}"><strong>Shot ${index+1}</strong><span>${escapeHtml(clip.label)}</span><small>${formatTime(clip.timeline_start)} · ${clip.duration.toFixed(1)} giây${clip.disabled?' · Đã tắt':''}</small></button>`).join('');
+}
+
+function renderAnalysisReview(){
+  const analysis=activeAnalysis();$("#analysis-review").hidden=!analysis;
+  if(!analysis)return;
+  $("#analysis-review-summary").textContent=`${analysis.scenes.length} cảnh · ${analysis.transcript?.language??'Chưa có lời nhận diện'} · ${analysis.highlights.length} đoạn nổi bật${analysis.provenance?.semantic_analysis_refresh_required?' · Nhãn ngữ nghĩa cần cập nhật sau khi sửa lời nhận diện':''}`;
+  const previous=[...$("#silence-review-list").querySelectorAll('[data-silence-id]')];
+  const selected=new Set(state.timeline?.snapshot.metadata.silence_review?.selected_ids??analysis.silence_decisions.filter(d=>d.enabled&&!d.conflicts_with_speech).map(d=>d.decision_id));
+  const binding=`${state.projectId}:${analysis.analysis_id}:${state.timeline?.current_version??0}`;
+  const preserved=new Map($("#silence-review-list").dataset.binding===binding?previous.map(input=>[input.dataset.silenceId,input.checked]):[]);
+  $("#silence-review-list").dataset.binding=binding;
+  $("#analysis-transcript-list").innerHTML=(analysis.transcript?.segments??[]).map(item=>transcriptReviewForm(item,analysis)).join('')||'<p>Chưa có lời nhận diện.</p>';
+  $("#analysis-scene-list").innerHTML=analysis.scenes.map(scene=>`<article><strong>Cảnh ${scene.ordinal+1} · ${formatTime(scene.start_seconds)} → ${formatTime(scene.end_seconds)}</strong><p>${escapeHtml(scene.semantic_label)} · ${escapeHtml(scene.description)}</p><small>Độ tin cậy ${scene.confidence==null?'chưa đo':`${Math.round(scene.confidence*100)}%`}</small></article>`).join('');
+  $("#silence-review-list").innerHTML=analysis.silence_decisions.map(d=>`<label><input type="checkbox" data-silence-id="${escapeHtml(d.decision_id)}" ${(preserved.get(d.decision_id)??selected.has(d.decision_id))?'checked':''} ${d.enabled&&!d.conflicts_with_speech?'':'disabled'}>${formatTime(d.start_seconds)} → ${formatTime(d.end_seconds)} · ${d.conflicts_with_speech?'Giữ lại để bảo vệ lời nói':d.enabled?'Có thể đề xuất cắt':'Giữ lại'}</label>`).join('')||'<p>Không có khoảng lặng đủ điều kiện cắt.</p>';
+  $("#highlight-review-list").innerHTML=analysis.highlights.map(h=>`<article><strong>Đề xuất ${h.rank} · ${(h.highlight_score*100).toFixed(0)}/100</strong><p>${formatTime(h.recommended_start)} → ${formatTime(h.recommended_end)}</p><p>${escapeHtml(h.reason)}</p></article>`).join('')||'<p>Chưa có đoạn nổi bật.</p>';
+}
+
+function transcriptReviewForm(item,analysis){
+  return `<article class="transcript-item"><button type="button" data-seek="${item.start_seconds}">${formatTime(item.start_seconds)} → ${formatTime(item.end_seconds)}</button>
+    <form data-transcript-edit="${escapeHtml(item.segment_id)}" data-transcript-version="${analysis.transcript.version}" data-transcript-id="${escapeHtml(analysis.transcript.transcript_id)}">
+    <label>Lời nhận diện · bản ${analysis.transcript.version}<textarea data-transcript-text="${escapeHtml(item.segment_id)}" required maxlength="4000">${escapeHtml(state.transcriptDrafts.get(item.segment_id)??item.text)}</textarea></label>
+    <button type="submit">Lưu phiên bản mới</button><small>Sửa lời nhận diện giữ tệp gốc, yêu cầu duyệt lại và bỏ dấu thời gian từng từ của đoạn đã sửa.</small></form></article>`;
 }
 
 function renderSummary() {
@@ -273,12 +302,7 @@ function renderBrowser() {
       </button>`).join("")}</div>` : browserEmpty("Chưa có media phù hợp.");
   } else if (state.panelTab === "transcript") {
     const segments = (analysis?.transcript?.segments ?? []).filter((item) => matches(item.text));
-    panel.innerHTML = segments.length ? segments.map((item) => `
-      <article class="transcript-item"><button type="button" data-seek="${item.start_seconds}">${formatTime(item.start_seconds)} → ${formatTime(item.end_seconds)}</button>
-      <form data-transcript-edit="${escapeHtml(item.segment_id)}" data-transcript-version="${analysis.transcript.version}" data-transcript-id="${escapeHtml(analysis.transcript.transcript_id)}">
-      <label>Lời nhận diện · bản ${analysis.transcript.version}<textarea data-transcript-text="${escapeHtml(item.segment_id)}" required maxlength="4000">${escapeHtml(state.transcriptDrafts.get(item.segment_id)??item.text)}</textarea></label>
-      <button type="submit">Lưu phiên bản mới</button><small>Sửa lời nhận diện giữ tệp gốc, yêu cầu duyệt lại và bỏ dấu thời gian từng từ của đoạn đã sửa.</small></form></article>
-    `).join("") : browserEmpty("Project chưa có transcript hoặc không khớp tìm kiếm.");
+    panel.innerHTML = segments.length ? segments.map(item=>transcriptReviewForm(item,analysis)).join("") : browserEmpty("Project chưa có transcript hoặc không khớp tìm kiếm.");
   } else if (state.panelTab === "scenes") {
     const scenes = (analysis?.scenes ?? []).filter((item) => matches(`${item.semantic_label} ${item.description}`));
     panel.innerHTML = scenes.length ? scenes.map((item) => `
@@ -313,7 +337,7 @@ function renderTimeline() {
   $("#timeline-ruler").innerHTML = ticks.join("");
   $("#timeline-tracks").innerHTML = snapshot.tracks.map((track) => `
     <div class="track-row" data-track-row="${escapeHtml(track.track_id)}">
-      <div class="track-head"><div><strong>${escapeHtml(track.label)}</strong><small>${escapeHtml(track.type)} · ${track.clips.length} clip${track.type === "audio" ? " · waveform proxy" : ""}</small></div>
+      <div class="track-head"><div><strong>${escapeHtml(track.label)}</strong><small>${escapeHtml(track.type)} · ${track.clips.length} clip${track.type === "audio" ? (track.clips.some(c=>waveformPath(c))?' · waveform đã đo':' · chưa có waveform đo') : ""}</small></div>
         <div class="track-controls">
           <button data-track-action="lock" data-track-id="${escapeHtml(track.track_id)}" class="${track.locked ? "active" : ""}" title="Khóa track">${track.locked ? "🔒" : "◇"}</button>
           <button data-track-action="mute" data-track-id="${escapeHtml(track.track_id)}" class="${track.muted ? "active" : ""}" title="Tắt tiếng">M</button>
@@ -322,7 +346,8 @@ function renderTimeline() {
       <div class="track-lane" data-track-id="${escapeHtml(track.track_id)}" data-track-type="${escapeHtml(track.type)}" data-track-locked="${track.locked}" style="width:${laneWidth}px">
         ${track.clips.map((clip) => {
           const style = clipStyle(clip, track.kind, state.zoom);
-          return `<button draggable="${!track.locked}" class="timeline-clip ${track.type === "audio" ? "waveform" : ""} ${clip.disabled ? "disabled" : ""} ${clip.clip_id === state.selectedClipId ? "selected" : ""}" data-clip-id="${escapeHtml(clip.clip_id)}" data-track-type="${escapeHtml(track.type)}" style="left:${style.left};width:${style.width};background-color:${style.color};opacity:${style.opacity}"><strong>${escapeHtml(clip.label)}</strong><small>${formatTime(clip.timeline_start)} · ${clip.duration.toFixed(1)}s</small></button>`;
+          const waveform=track.type==='audio'?waveformPath(clip):null;
+          return `<button draggable="${!track.locked}" class="timeline-clip ${clip.disabled ? "disabled" : ""} ${clip.clip_id === state.selectedClipId ? "selected" : ""}" data-clip-id="${escapeHtml(clip.clip_id)}" data-track-type="${escapeHtml(track.type)}" style="left:${style.left};width:${style.width};background-color:${style.color};opacity:${style.opacity}">${waveform?`<svg class="measured-waveform" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="${waveform}"/></svg>`:''}<strong>${escapeHtml(clip.label)}</strong><small>${formatTime(clip.timeline_start)} · ${clip.duration.toFixed(1)}s</small></button>`;
         }).join("")}
       </div>
     </div>`).join("");
@@ -1203,8 +1228,19 @@ $("#browser-content").addEventListener("click", (event) => {
   const seek = event.target.closest("[data-seek]");
   if (seek) setPlayhead(Number(seek.dataset.seek));
 });
-$("#browser-content").addEventListener('input',event=>{const input=event.target.closest('[data-transcript-text]');if(input)state.transcriptDrafts.set(input.dataset.transcriptText,input.value);});
-$("#browser-content").addEventListener('submit',async event=>{
+$("#canonical-shot-list").addEventListener('click',event=>{const card=event.target.closest('[data-canonical-shot]');if(!card)return;state.selectedClipId=card.dataset.canonicalShot;render();});
+$("#apply-silence-review").addEventListener('click',async event=>{
+  const button=event.currentTarget;button.disabled=true;
+  try{
+    const analysis=activeAnalysis(),ids=[...$("#silence-review-list").querySelectorAll('[data-silence-id]:checked:not(:disabled)')].map(input=>input.dataset.silenceId);
+    const selection=silenceSelection(analysis,ids);
+    await api(`/api/v1/projects/${state.projectId}/timeline`,{method:'POST',body:JSON.stringify({analysis_id:analysis.analysis_id,
+      media_plan_id:activeMediaPlan()?.media_plan_id??null,silence_decision_ids:selection,expected_timeline_version:state.timeline?.current_version??null,actor_ref:'studio-user'})});
+    await loadProject();toast('Đã lưu timeline với các khoảng cắt đã chọn. Cần xem preview và duyệt lại.');
+  }catch(error){toast(error.message,true);}finally{button.disabled=false;}
+});
+function captureTranscriptInput(event){const input=event.target.closest('[data-transcript-text]');if(input)state.transcriptDrafts.set(input.dataset.transcriptText,input.value);}
+async function saveTranscriptReview(event){
   const form=event.target.closest('[data-transcript-edit]');if(!form)return;event.preventDefault();
   const analysis=activeAnalysis(),button=form.querySelector('button[type="submit"]');button.disabled=true;
   try{
@@ -1214,7 +1250,11 @@ $("#browser-content").addEventListener('submit',async event=>{
     state.transcriptDrafts.delete(form.dataset.transcriptEdit);await loadProject();
     toast('Đã lưu transcript mới. Preview và phê duyệt cần cập nhật.');
   }catch(error){toast(error.message,true);}finally{button.disabled=false;}
-});
+}
+for(const panel of [$("#browser-content"),$("#analysis-transcript-list")]){
+  panel.addEventListener('input',captureTranscriptInput);
+  panel.addEventListener('submit',saveTranscriptReview);
+}
 
 $("#timeline-tracks").addEventListener("click", async (event) => {
   const trackAction = event.target.closest("[data-track-action]");

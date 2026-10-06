@@ -123,8 +123,9 @@ def require_positive_duration_transcript(
 @dataclass(frozen=True)
 class MediaSignals:
     shot_boundaries: tuple[tuple[float, float], ...]
-    silence_intervals: tuple[tuple[float, float, float], ...]
+    silence_intervals: tuple[tuple[float, float, float | None], ...]
     provenance: dict[str, object]
+    waveform: dict | None = None
 
 
 class MediaProbe(Protocol):
@@ -355,6 +356,7 @@ class DeterministicMediaSignalProvider:
 
 class FFmpegMediaSignalProvider:
     key = "ffmpeg-media-signals"
+    algorithm_version = "scene-silence-waveform-v2"
     _SHOT_TIME = re.compile(r"pts_time:([0-9.]+)")
     _SILENCE_START = re.compile(r"silence_start: ([0-9.]+)")
     _SILENCE_END = re.compile(r"silence_end: ([0-9.]+).+silence_duration: ([0-9.]+)")
@@ -403,7 +405,8 @@ class FFmpegMediaSignalProvider:
             ]
         )
         if metadata.audio_codec:
-            shot_output, silence_output = await asyncio.gather(
+            from .audio_waveform import measure_waveform
+            shot_output, silence_output, waveform = await asyncio.gather(
                 shot_task,
                 self._run(
                     [
@@ -417,10 +420,13 @@ class FFmpegMediaSignalProvider:
                         "-",
                     ]
                 ),
+                measure_waveform(path, executable=self.executable,
+                    duration_seconds=float(metadata.duration_seconds or 0), timeout_seconds=self.timeout_seconds),
             )
         else:
             shot_output = await shot_task
             silence_output = ""
+            waveform = None
         duration = float(metadata.duration_seconds or 0)
         boundaries = tuple(
             (timestamp, 0.8)
@@ -430,17 +436,19 @@ class FFmpegMediaSignalProvider:
         starts = [float(value) for value in self._SILENCE_START.findall(silence_output)]
         ends = [(float(end), float(span)) for end, span in self._SILENCE_END.findall(silence_output)]
         silences = tuple(
-            (start, end, silence_threshold_db)
+            (start, end, None)
             for start, (end, span) in zip(starts, ends, strict=False)
             if span >= minimum_silence_duration and end > start
         )
         return MediaSignals(
             shot_boundaries=boundaries,
             silence_intervals=silences,
+            waveform=waveform,
             provenance={
                 "fixture": False,
                 "paid_call": False,
                 "scene_detector": "ffmpeg-showinfo",
                 "silence_detector": "ffmpeg-silencedetect" if metadata.audio_codec else "no-audio-stream",
+                "silence_level_measurement": "not_measured; detector threshold is configuration",
             },
         )
