@@ -331,7 +331,7 @@
       "apps/api/app/scene_intelligence.py"
     ],
     "behavior": "API Studio Top 3/Top 5/Auto Shorts save separate immutable, fingerprint-idempotent canonical drafts. Scores recompute from the selected transcript, preserve physical observations, expose heuristic factors, protect word/segment boundaries and enforce duration bounds without fabricating missing candidates. Applying requires editor identity, transcript binding, locks and timeline CAS; master history remains and approval invalidates. Additive draft-table migration tested locally; no live migration performed. Top 3/5/Auto Shorts drafts now explain weighted speech coverage, keywords, information density, measured pixel-change, local exposure, pixel repetition and audio energy. Missing multimodal factors remain null, are omitted from weighted scoring and reduce confidence; no semantic model call is invented. Immutable combined-scene assessments now bind selected transcript, source hash, local measurement and saved structured Vision frames/model/confidence/reference. Missing scores stay null; assessment selection feeds highlight drafts without altering original analyses or the active timeline.",
-    "gap": "Real spoken-media/highlight acceptance and Native workflow remain incomplete; selected immutable scene assessments now bind saved Vision and measured factors.",
+    "gap": "Real spoken-media/highlight acceptance and Native workflow remain incomplete; selected immutable scene assessments now bind saved Vision and measured factors. Placeholder descriptions are excluded from text scoring, unavailable semantic factors remain null and saved transcript/Vision descriptions retain explicit evidence basis.",
     "severity": "P1",
     "dependency": "analysis/timeline",
     "wave": "3",

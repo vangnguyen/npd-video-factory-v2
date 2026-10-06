@@ -163,12 +163,15 @@ def build_highlights(
 ) -> list[dict[str, Any]]:
     candidates: list[dict[str, Any]] = []
     for scene in scenes:
-        text = str(scene["description"]).casefold()
-        hooks = sorted(word for word in _HOOK_WORDS if word in text)
-        word_count = len(text.split())
-        information_density = _clamp(word_count / max(12.0, (scene["end_seconds"] - scene["start_seconds"]) * 3.2))
-        hook_score = min(1.0, len(hooks) * 0.3)
         observed=scene.get('evidence',{});local=observed.get('local_metrics')
+        declared = any(key in observed for key in ('transcript_segment_count','transcript_segment_ids','vision_used'))
+        semantic_available = (bool(observed.get('transcript_segment_count') or observed.get('transcript_segment_ids') or observed.get('vision_used'))
+            if declared else bool(str(scene.get('description') or '').strip()))
+        text = str(scene.get("description") or '').casefold() if semantic_available else ''
+        hooks = sorted(word for word in _HOOK_WORDS if word in text) if semantic_available else []
+        word_count = len(text.split())
+        information_density = _clamp(word_count / max(12.0, (scene["end_seconds"] - scene["start_seconds"]) * 3.2)) if semantic_available else None
+        hook_score = min(1.0, len(hooks) * 0.3) if semantic_available else None
         motion=local.get('motion_score') if local is not None else scene.get('motion_score')
         quality=scene.get('quality_score') if observed.get('vision_used') else (
             local.get('local_quality_score') if local is not None else None)
@@ -184,7 +187,8 @@ def build_highlights(
         score=_clamp(sum(contributions.values()))
         duration = float(scene["end_seconds"] - scene["start_seconds"])
         platform = "youtube" if duration > 60 else "facebook_reels"
-        reasons = ['transcript coverage and keyword heuristics', 'information density']
+        reasons = ['saved text keyword/information-density heuristics'] if semantic_available else ['semantic text evidence unavailable']
+        if factors['speech_coverage'] is not None:reasons.append('transcript coverage')
         if motion is not None:reasons.append('measured pixel-change proxy' if local is not None else 'legacy scene score (unverified motion)')
         if audio is not None:reasons.append('measured audio energy')
         if quality is not None:reasons.append('saved Vision quality' if observed.get('vision_used') else 'measured exposure heuristic')
@@ -199,7 +203,9 @@ def build_highlights(
                 "recommended_end": scene["end_seconds"],
                 "recommended_platform": platform,
                 "evidence": {
-                    "algorithm":"multimodal-highlight-v2",
+                    "algorithm":"multimodal-highlight-v3",
+                    "text_evidence_available":semantic_available,
+                    "text_evidence_basis":'saved transcript/Vision evidence' if declared and semantic_available else ('legacy supplied description heuristic' if semantic_available else 'missing; placeholder text excluded'),
                     "speech_semantics": "keyword/information-density heuristic; no semantic model dispatched",
                     "audio_proxy": audio,
                     "motion": motion,

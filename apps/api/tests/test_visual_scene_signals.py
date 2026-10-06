@@ -64,3 +64,18 @@ async def test_failed_local_stage_cancels_siblings_before_source_cleanup():
     async def fail():raise ValueError('fixture failure')
     with pytest.raises(ValueError):await FFmpegMediaSignalProvider._gather(slow(),fail())
     assert cancelled.is_set()
+
+
+def test_placeholder_text_does_not_become_semantic_highlight_evidence():
+    scene={'ordinal':0,'start_seconds':0,'end_seconds':10,'description':'Phân đoạn hình ảnh không có lời thoại nhận diện.',
+        'speech_score':None,'motion_score':None,'quality_score':None,'confidence':0.,
+        'evidence':{'transcript_segment_count':0,'vision_used':False,'local_metrics':{'motion_score':None,
+            'local_quality_score':None,'audio_energy_score':None,'duplicate_frame_ratio':None}}}
+    result=build_highlights(scenes=[scene],top_k=3)[0]
+    assert result['highlight_score']==0 and result['evidence']['available_weight']==0
+    assert result['evidence']['factors']['information_density'] is None and result['evidence']['factors']['hook_keywords'] is None
+    assert not result['evidence']['text_evidence_available']
+    scene['evidence']['transcript_segment_count']=1
+    scene['description']='Ba giây đầu mang một thông tin đã được kiểm chứng.'
+    observed=build_highlights(scenes=[scene],top_k=3)[0]
+    assert observed['evidence']['text_evidence_available'] and observed['evidence']['factors']['information_density']>0

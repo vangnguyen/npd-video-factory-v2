@@ -74,8 +74,12 @@ def build_drafts(analysis,asset,payload,assessment=None):
     # saved physical scene observations and provider evidence remain unchanged.
     for scene in scenes:
         if analysis.transcript:
-            scene['description']=' '.join(segment.text for segment in analysis.transcript.segments
-                if min(scene['end_seconds'],segment.end_seconds)>max(scene['start_seconds'],segment.start_seconds))
+            segments=[segment for segment in analysis.transcript.segments
+                if min(scene['end_seconds'],segment.end_seconds)>max(scene['start_seconds'],segment.start_seconds)]
+            if segments or not scene.get('evidence',{}).get('vision_used'):
+                scene['description']=' '.join(segment.text for segment in segments)
+            scene['evidence']={**scene.get('evidence',{}),'transcript_segment_count':len(segments),
+                'transcript_segment_ids':[segment.segment_id for segment in segments]}
     scored=build_highlights(scenes=scenes,top_k=5)
     drafts=[]
     for item in scored:

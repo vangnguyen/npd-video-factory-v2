@@ -291,3 +291,17 @@ REGRESSIONS: previous accepted videos/live source/data/configuration remain unto
 EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Phase 10 Owner UAT remain separate limitations; none blocks continued safe implementation.
 
 OWNER ACTION REQUIRED: none. NEXT WAVE: complete remaining Mode B controls/Native integration and continue media intelligence plus subsequent safe waves.
+
+## Wave 3/4 — absent semantic highlight factors
+
+WAVE: 3/4
+
+STATUS: IN PROGRESS. HEAD SHA: parent `94a7e3d898bbec58fbaa3976e6a20a0902cbf263`; this focused correction is separately committed.
+
+CAPABILITIES COMPLETED: highlight scoring v3 excludes generic placeholder descriptions when scene evidence has no transcript or saved Vision. Information-density and keyword factors remain null instead of being scored from invented semantic content. All-absent observations yield zero available weight/score without division errors. Legacy caller-supplied descriptions remain explicitly labeled heuristics. Drafts record matching selected-transcript segments and preserve saved Vision descriptions when no speech segment overlaps.
+
+CAPABILITIES PARTIAL: real spoken-source/provider and Native/final acceptance remain. TESTS: focused highlight/local-scene/combined-scene **16/16 PASS**, 21.51 s (`highlight-null-semantic.log`); final missing-text/saved-Vision contract **2/2 PASS**, 6.06 s (`highlight-null-contract-final.log`) after the last Vision-description preservation refinement. REAL PROVIDER TESTS: none. MOCK TESTS: saved synthetic ASR/Vision evidence; existing local FFmpeg scene tests remain labeled local-real.
+
+EVIDENCE: scoring evidence includes `text_evidence_available`, its basis, missing factors and available weight; `test_visual_scene_signals.py` covers null placeholder/observed-text behavior. The full clean Linux B-roll checkpoint `94a7e3d` is running separately and is not attributed to this later correction.
+
+REGRESSIONS: focused earlier highlight/scene contracts pass; accepted source/artifacts/live data untouched. EXTERNAL BLOCKERS: none for continued safe work. OWNER ACTION REQUIRED: none. NEXT WAVE: canonical still-image timing controls, remaining Mode B/Native integration and subsequent safe waves.
