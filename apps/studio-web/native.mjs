@@ -84,7 +84,7 @@ if (typeof document !== "undefined") {
   nativeLegacyLayout(document);
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
-  let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null;
+  let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, workspaceUI=null,brandCatalog=null;
   function message(text, error=false) {$("message").textContent=text;$("message").hidden=false;$("message").classList.toggle("error",error);}
   async function api(path, body) {
     const response = await fetch(path,{method:body?"POST":"GET",credentials:"same-origin",headers:body?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:body?JSON.stringify(body):undefined});
@@ -93,8 +93,9 @@ if (typeof document !== "undefined") {
     return result;
   }
   function controls() {
+    $("prompt").closest('label').hidden=Boolean(workspaceUI)&&$("input-kind").value==='media';
     const active=jobActive(project), shotWorking=shotStudio?.isWorking()??false, blocked=busy||shotWorking||active||project?.archived;
-    document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
+    document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-workspace-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
     $("refresh").disabled=busy||shotWorking;
     $("project-picker").disabled=busy||shotWorking||dirty;
     $("new-project").disabled=busy||shotWorking||dirty;
@@ -166,13 +167,14 @@ if (typeof document !== "undefined") {
     const origin=project?.document.content_intelligence;
     $("intelligence-origin").hidden=!origin;
     $("intelligence-origin").innerHTML=origin?`Từ brief đã duyệt bởi ${esc(origin.brief.approval.reviewer)} · <a href="/intelligence?run=${esc(origin.run.id)}">Xem nghiên cứu & ý tưởng nguồn</a>`:"";
-    $("image-card").hidden=!project;
+    $("image-card").hidden=workspaceUI?false:!project;
+    $("new-project-options").hidden=!workspaceUI||Boolean(project);$("duration-mode-field").hidden=!workspaceUI;
     const proposal=project?.document.proposal;
     $("proposal-card").hidden=!proposal;
     $("project-heading").textContent=project?.document.name??"Bắt đầu một video mới";
     $("version").textContent=project?`Phiên bản ${project.revision}`:"Bản nháp";
     if(reset){dirty=false;dirtyPart=null;if(project){$("project-name").value=project.document.name;$("prompt").value=project.document.prompt;$("input-kind").value=project.document.input_kind??"prompt";}}
-    if(reset){$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";}
+    if(reset){$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";$("duration-mode").value=project?.document.brand_template?.template.duration_policy??"preserve_voice_speed_hold_cta_to_target_refuse_overflow";}
     $("brand-note").textContent=project?.document.brand_template?`${project.document.brand_template.brand.name} · ${project.document.brand_template.template.name}. Thay đổi cần duyệt lại.`:"Đang dùng bố cục MVP đã có. Chọn và áp dụng mẫu để thay đổi.";
     $("document-list").innerHTML=(project?.document.documents??[]).map(d=>`<p><strong>${esc(d.filename)}</strong> · ${d.extracted_text.length.toLocaleString("vi-VN")} ký tự</p>`).join("")||'<p class="hint">Chưa có tài liệu nguồn.</p>';
     if(reset){$("review-check").checked=false;$("final-watch").checked=false;$("history-list").textContent="";$("artifact-list").textContent="";}
@@ -180,7 +182,11 @@ if (typeof document !== "undefined") {
     $("music-note").textContent=project?.document.music?`${project.document.music.filename} · ${project.document.music.duration_seconds.toFixed(1)} giây · tự hạ nhạc khi có lời đọc`:"Chưa có nhạc nền.";
     if(reset)$("music-enabled").checked=Boolean(project?.document.music)&&project.document.music_enabled!==false;
     $("media-count").textContent=`${assets.length} nguồn`;
-    $("media-library").innerHTML=assets.map(a=>`<figure class="media-tile"><img src="${thumbnail(a)}" alt="${esc(a.filename)}" loading="lazy"><figcaption><span>${a.kind==="video"?"▷ VIDEO":"ẢNH"}</span><strong>${esc(a.filename)}</strong>${a.kind==="video"?`<small>${Number(a.duration_seconds).toFixed(1)} giây · âm thanh gốc tắt</small>`:""}<small>${a.illustration?"Phối cảnh minh họa":"Nguồn của bạn"}</small></figcaption></figure>`).join("")||'<p class="hint">Chưa có nguồn. Chọn ảnh/video để thêm vào thư viện.</p>';
+    $("asset-empty-state").hidden=assets.length>0;
+    $("asset-create-first").hidden=Boolean(project);
+    const usedAssets=new Set(bindings.map(b=>b.asset_id));
+    $("media-library").classList.toggle('asset-grid',Boolean(workspaceUI));
+    $("media-library").innerHTML=workspaceUI?assets.map(a=>workspaceUI.assetCard({...a,tags:project?.document.asset_tags?.[a.id]??a.tags??[]},{thumbnail:thumbnail(a),used:usedAssets.has(a.id),attached:true})).join(''):assets.map(a=>`<figure class="media-tile"><img src="${thumbnail(a)}" alt="${esc(a.filename)}" loading="lazy"><figcaption><span>${a.kind==="video"?"▷ VIDEO":"ẢNH"}</span><strong>${esc(a.filename)}</strong>${a.kind==="video"?`<small>${Number(a.duration_seconds).toFixed(1)} giây · âm thanh gốc tắt</small>`:""}<small>${a.illustration?"Phối cảnh minh họa":"Nguồn của bạn"}</small></figcaption></figure>`).join("")||'<p class="hint">Chưa có nguồn. Chọn ảnh/video để thêm vào thư viện.</p>';
     $("media-analysis").innerHTML=(project?.document.media_analysis??[]).map(r=>{
       const asset=assets.find(a=>a.id===r.asset_id&&a.sha256===r.source_sha256);if(!asset)return "";
       const words=(r.transcript?.segments??[]).flatMap(s=>s.words);
@@ -234,13 +240,23 @@ if (typeof document !== "undefined") {
     if(!module)return;
     document.body.classList.add('shot-studio');
     const stylesheet=document.createElement('link');stylesheet.rel='stylesheet';stylesheet.href='/shot-studio.css';document.head.append(stylesheet);
+    if(session.capabilities?.native_studio_ux===true){
+      const [preview,assets,shell]=await Promise.all([import('./video-preview.mjs'),import('./asset-picker.mjs'),import('./studio-shell.mjs')]);
+      workspaceUI={...preview,...assets};
+      document.body.classList.add('studio-ux');
+      $("project-name").value='Video mới';
+      for(const href of ['/studio-shell.css','/studio-workspace.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href;document.head.append(link);}
+      shell.mountStudioShell({page:['assets','brands'].includes(new URLSearchParams(location.search).get('view'))?new URLSearchParams(location.search).get('view'):'project',context:'Không gian sản xuất video'});
+      document.querySelector('.asset-workspace-toolbar').hidden=false;
+    }
     document.querySelectorAll('.stage-navigation,.studio-header-actions,.skip-link,.sidebar [data-stage],.sidebar a[href^="/production"]').forEach(el=>el.hidden=false);
-    shotStudio=module.initializeShotStudio({api,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
+    shotStudio=module.initializeShotStudio({api,ui:workspaceUI,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
   }
   $("save-prompt").addEventListener("click",guarded(async()=>{
-    if(!project)project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value,input_kind:$("input-kind").value});
+    const creating=!project;
+    if(!project){project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value,input_kind:$("input-kind").value,...(workspaceUI&&$("new-content-profile").value?{content_profile_id:$("new-content-profile").value}:{})});if(workspaceUI&&$("new-template").value)project=await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:$("new-brand").value,template_id:$("new-template").value,duration_mode:$("new-duration-mode").value});}
     else project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,prompt:$("prompt").value,input_kind:$("input-kind").value});
-    localStorage.setItem("vf-native-project",project.id);renderProject(true);await projects();message("Đã lưu dự án.");
+    localStorage.setItem("vf-native-project",project.id);if(workspaceUI&&creating){const url=new URL(location.href);url.searchParams.delete('new');url.searchParams.set('project',project.id);history.replaceState(null,'',url);document.querySelectorAll('.sidebar [data-studio-page]').forEach(el=>{const current=el.dataset.studioPage==='projects';el.classList.toggle('active',current);if(current)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});}renderProject(true);await projects();if(creating)shotStudio?.showStage(workspaceUI?.nextProjectStage(project)??'script');message("Đã lưu dự án. Thêm tư liệu tại Assets rồi chọn hình cho từng shot.");
   }));
   async function enqueue(kind,fresh=false) {
     if(dirty)throw new Error("Lưu chỉnh sửa trước khi chạy job.");
@@ -256,7 +272,7 @@ if (typeof document !== "undefined") {
   $("retry").addEventListener("click",guarded(()=>enqueue(project.jobs[0].kind,true)));
   $("save-proposal").addEventListener("click",guarded(async()=>{const proposal=readProposal(),bindings=readBindings();project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,proposal,scene_media:bindings,scene_options:mediaReady({...project.document,proposal,scene_media:bindings})?readOptions():undefined,music_enabled:$("music-enabled").checked});renderProject(true);message("Đã lưu nội dung và cách dựng từng cảnh. Phiên bản mới cần duyệt lại.");}));
   $("auto-plan").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/auto-plan`,{revision:project.revision});renderProject(true);message("Đã đề xuất nguồn và cách dựng. Kiểm tra từng cảnh, đổi nguồn nếu cần rồi duyệt.");}));
-  $("apply-brand").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:$("brand-select").value,template_id:$("template-select").value});renderProject(true);message("Đã lưu cấu hình thương hiệu và mẫu vào phiên bản này. Kiểm tra cách dựng, nội dung và duyệt lại trước khi tạo video.");}));
+  $("apply-brand").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:$("brand-select").value,template_id:$("template-select").value,...(workspaceUI?{duration_mode:$("duration-mode").value}:{})});renderProject(true);message("Đã lưu cấu hình thương hiệu và mẫu vào phiên bản này. Kiểm tra cách dựng, nội dung và duyệt lại trước khi tạo video.");}));
   $("duplicate-project").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/duplicate`,{revision:project.revision});localStorage.setItem("vf-native-project",project.id);renderProject(true);await projects();message("Đã tạo bản sao chưa duyệt; giữ nguyên nội dung và nguồn, cần kiểm tra và duyệt lại.");}));
   $("archive-project").addEventListener("click",guarded(async()=>{const archived=!project.archived;project=await api(`/api/projects/${project.id}/archive`,{revision:project.revision,archived});$("show-archived").checked=archived||$("show-archived").checked;renderProject(true);await projects();message(archived?"Đã lưu trữ dự án. Có thể khôi phục; tệp và lịch sử được giữ nguyên.":"Đã khôi phục dự án.");}));
   $("show-archived").addEventListener("change",guarded(projects));
@@ -287,7 +303,7 @@ if (typeof document !== "undefined") {
     } catch(error) {$("upload-progress").textContent=`Đã lưu ${saved}/${files.length} nguồn. Khi thử lại, chỉ chọn các tệp chưa lưu.`;throw error;}
   }));
   $("project-picker").addEventListener("change",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi đổi dự án.");clearTimeout(timer);project=$("project-picker").value?await api(`/api/projects/${$("project-picker").value}`):null;if(project)localStorage.setItem("vf-native-project",project.id);renderProject(true);schedule();}));
-  $("new-project").addEventListener("click",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi tạo dự án mới.");clearTimeout(timer);project=null;localStorage.removeItem("vf-native-project");$("input-kind").value="prompt";$("prompt").value=(await api("/api/defaults")).prompt;$("project-name").value="Vinhomes Green Paradise Cần Giờ";$("project-picker").value="";renderProject(true);}));
+  $("new-project").addEventListener("click",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi tạo dự án mới.");if(workspaceUI){location.assign('/?new=1');return;}clearTimeout(timer);project=null;localStorage.removeItem("vf-native-project");$("input-kind").value="prompt";$("prompt").value=(await api("/api/defaults")).prompt;$("project-name").value="Vinhomes Green Paradise Cần Giờ";$("project-picker").value="";$("new-video-format").value='9:16';$("new-duration-mode").value='fit_narration_preserve_voice_speed';creationTemplates();renderProject(true);}));
   $("refresh").addEventListener("click",guarded(()=>reload(!dirty)));
   $("jobs").addEventListener("click",guarded(async event=>{const button=event.target.closest("[data-resume]");if(!button)return;if(dirty)throw new Error("Lưu chỉnh sửa trước khi tiếp tục.");await api(`/api/jobs/${button.dataset.resume}/resume`,{});await reload(true);schedule();message("Đang tiếp tục job từ bước đã kiểm chứng.");}));
   $("prompt").addEventListener("input",()=>markDirty("prompt"));
@@ -298,6 +314,8 @@ if (typeof document !== "undefined") {
   $("scenes").addEventListener("change",event=>{if(event.target.matches("input,select,textarea")){const row=event.target.closest(".scene");if(event.target.matches("[data-media]")){row.querySelector("[data-motion]").value="none";row.querySelector("[data-start]").value="0";}scenePreview(row);markDirty("proposal");}});
   window.addEventListener("beforeunload",event=>{if(dirty){event.preventDefault();event.returnValue="";}});
   async function runtimeStatus(){const status=await api("/api/runtime-status");$("runtime-status").textContent=`Nội dung: ${status.openai_key_saved?"key đã lưu; chưa kiểm tra bằng yêu cầu mới":"chưa có key"}. Giọng Thùy Dung: sẵn sàng. FFmpeg: sẵn sàng. AssemblyAI: ${status.assemblyai.connected?"đã xác minh kết nối":"chưa kết nối"}.`;}
-  async function loadBrandCatalog(){const values=await api(shotStudio?"/api/brand-templates?formats=all":"/api/brand-templates");$("brand-select").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("");$("template-select").innerHTML='<option value="">Bố cục MVP hiện có</option>'+values.templates.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join("");$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";}
-  (async()=>{busy=true;controls();try{const session=await api("/api/session");csrf=session.csrf;await initializeSupportedStudio(session);runtimeStatus().catch(()=>{$("runtime-status").textContent="Chưa đọc được trạng thái. Làm mới Studio để kiểm tra.";});$("prompt").value=(await api("/api/defaults")).prompt;await projects();const saved=new URLSearchParams(location.search).get("project")??localStorage.getItem("vf-native-project");if(saved&&[...$("project-picker").options].some(o=>o.value===saved))project=await api(`/api/projects/${saved}`);await loadBrandCatalog();renderProject(true);await projects();schedule();}catch(error){message(error.message,true);}finally{busy=false;controls();}})();
+  function creationTemplates(){if(!brandCatalog)return;const format=$("new-video-format").value,selected=$("new-template").value;const values=brandCatalog.templates.filter(t=>t.aspect_ratio===format);$("new-template").innerHTML=values.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');$("new-template").value=values.some(t=>t.id===selected)?selected:values.find(t=>t.purpose==='property_presentation'&&t.duration_seconds===30)?.id??values[0]?.id??'';}
+  $("new-video-format").addEventListener('change',creationTemplates);
+  async function loadBrandCatalog(){const values=await api(shotStudio?"/api/brand-templates?formats=all":"/api/brand-templates");brandCatalog=values;$("brand-select").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("");$("template-select").innerHTML='<option value="">Bố cục MVP hiện có</option>'+values.templates.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join("");$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";if(workspaceUI){$("new-brand").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');creationTemplates();const {profiles}=await api('/api/intelligence/config');$("new-content-profile").innerHTML='<option value="">Nội dung khác</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');}}
+  (async()=>{busy=true;controls();try{const session=await api("/api/session");csrf=session.csrf;await initializeSupportedStudio(session);runtimeStatus().catch(()=>{$("runtime-status").textContent="Chưa đọc được trạng thái. Làm mới Studio để kiểm tra.";});$("prompt").value=(await api("/api/defaults")).prompt;await projects();const saved=new URLSearchParams(location.search).get("new")==="1"?null:new URLSearchParams(location.search).get("project")??localStorage.getItem("vf-native-project");if(saved&&[...$("project-picker").options].some(o=>o.value===saved))project=await api(`/api/projects/${saved}`);await loadBrandCatalog();renderProject(true);await projects();schedule();}catch(error){message(error.message,true);}finally{busy=false;controls();}})();
 }
