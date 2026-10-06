@@ -242,3 +242,28 @@ REGRESSIONS: focused existing production/approval/content/transcript/reframe pat
 EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Owner Phase 10 UAT are separate limitations; none blocks continued safe implementation.
 
 OWNER ACTION REQUIRED: none for continued safe work. NEXT WAVE: continue B-roll/media resolver and Native integration, then all remaining safe waves.
+
+
+## Wave 3/6 — stable media priority and transcript-bound planning
+
+WAVE: 3/6
+
+STATUS: IN PROGRESS. This closes planner priority/cache correctness; full supporting B-roll/Native/media-provider acceptance remains outstanding.
+
+HEAD SHA: parent `2506539` (render-profile capability assertion correction); this planner capability commit records the increment. Subtitle checkpoint `0dc6bd5980d6c22b8ae1385fcfc4da923366cc3c` is pushed and preserved in `north-star-0dc6bd5.bundle` (verified complete history).
+
+CAPABILITIES COMPLETED: configured media priority is applied to every scene by default instead of rotating through provider tiers by scene number. Explicit `scene_variety` retains the previous multi-provider capability, and old saved configurations read with that original policy. Strict stock selection requires known rights and actual search results when searched; empty/rights-rejected responses fall back. Unsearched counts remain null. B-roll decisions persist source analysis/asset checksum, exact transcript ID/version, saved Vision/frame/provider/model/confidence references, placement, query/prompt and recommendation-only status. Missing Vision no longer contributes an invented 0.55 confidence; the unmeasured scene heuristic is explicitly capped/labeled. Edited transcript semantics mark attention and prompts use selected transcript text. New plan fingerprints bind transcript identity/version; historical and current text produce distinct plans without rewriting prior evidence. Source and saved Vision checksum mismatch is refused before new plan rows or provider work.
+
+CAPABILITIES PARTIAL: dedicated supporting-asset relevance ranking and selection/application UI, Native bridge, internal-library tier, official stock/generated providers, actual budgeted-media E2E and full MediaPlan integration. Primary footage reuse is distinct from a completed supporting B-roll resolver; this increment does not claim the whole B-roll engine ready.
+
+TESTS: **36 focused API PASS**, 75.06 s (`media-planning-policy-final.log`), including existing media resolution/rights/cost/restart contracts and transcript/reframe/scene regressions. New tests cover every-scene priority, explicit variety, immutable/current/historical transcript plans, legacy configuration interpretation, source/Vision hash refusal and empty stock fallback. Expanded empty/unknown/restricted stock-rights cases pass **6/6**, 14.69 s (`media-planning-rights-final.log`). Earlier pre-fallback run passed 18 tests separately.
+
+REAL PROVIDER TESTS: none. MOCK TESTS: explicit synthetic ASR/Vision/stock/image/video fixtures; real SQLite persistence and domain behavior. No external or paid provider was invoked.
+
+EVIDENCE: executable source and `test_media_planning_policy.py`; focused logs in recovery. Complete isolated Linux regression for verified clean `0dc6bd5` finished **1,931 PASS / 1 FAIL / 7 SKIP**, 585.45 s (`api-linux-0dc6bd5.log`). The sole failure was the existing capability contract expecting three profiles after supported 4:5 rendering added a fourth. Separate pushed commit `2506539` updates that assertion; safety configuration tests pass **18/18**, 2.23 s (`render-profile-capabilities-final.log`). A fresh complete committed-source run remains required. The Linux launch's initial shell guard printed a Git-path error because command substitution resolved in the Windows worktree; explicit `/usr/bin/git -C` HEAD/status verified the actual clean checkout before tests. No force/reset or dirty-checkout discard occurred.
+
+REGRESSIONS: accepted Native/source artifacts remain untouched. Previous Native **264/264**, Studio **93/93**, renderer **33/33**, six local-real caption encodes and subtitle contract **6/6** remain attached to the prior increment. New focused media/transcript/reframe/scene tests pass. No live database migration/restart, main merge, external publication or deployment.
+
+EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Owner Phase 10 UAT remain separate; none blocks continued safe work.
+
+OWNER ACTION REQUIRED: none. NEXT WAVE: dedicated B-roll suggestions/application and Native workflow integration, followed by remaining safe waves.

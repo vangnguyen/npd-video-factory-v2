@@ -206,7 +206,7 @@ class MediaIntelligenceRepository:
             status=plan.status,
             fingerprint=plan.fingerprint,
             version=plan.version,
-            configuration=MediaPlanRequest.model_validate(plan.configuration_json),
+            configuration=MediaPlanRequest.model_validate({"selection_policy":"scene_variety",**plan.configuration_json}),
             provider_status=plan.provider_status_json,
             items=items,
             media_assets=assets,

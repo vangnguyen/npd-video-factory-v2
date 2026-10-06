@@ -69,7 +69,7 @@ def build_broll_decision(
     subjects = list(dict.fromkeys([*scene.subjects, *(vision_scene.subjects if vision_scene else [])]))
     intent_parts = [scene.semantic_label, *subjects[:3]]
     intent = " / ".join(part for part in intent_parts if part) or "supporting visual"
-    evidence = vision_scene.description if vision_scene else scene.description
+    evidence = vision_scene.description if vision_scene else transcript_text or scene.description
     query = _compact_query(" ".join([scene.semantic_label, *subjects, evidence]))
     prompt = " ".join(
         part
@@ -82,10 +82,7 @@ def build_broll_decision(
         if part
     )
     duration = round(scene.end_seconds - scene.start_seconds, 3)
-    confidence = min(
-        0.97,
-        round((scene.confidence + (vision_scene.confidence if vision_scene else 0.55)) / 2, 4),
-    )
+    confidence = round(min(scene.confidence, vision_scene.confidence if vision_scene else 0.65), 4)
     return BrollDecisionRead(
         broll_intent=intent[:500],
         search_query=query[:500],
@@ -95,6 +92,20 @@ def build_broll_decision(
         placement_start_seconds=scene.start_seconds,
         placement_end_seconds=scene.end_seconds,
         confidence=confidence,
+        provenance={"source_type":"planning_evidence", "source_analysis_id":analysis.analysis_id,
+            "source_asset_id":analysis.asset_id,"source_asset_sha256":analysis.provenance.get('source_asset_checksum'),
+            "transcript_id":analysis.transcript.transcript_id if analysis.transcript else None,
+            "transcript_version":analysis.transcript.version if analysis.transcript else None,
+            "fixture_asr":bool(analysis.transcript and analysis.transcript.provenance.get('fixture')),
+            "vision_analysis_id":vision.vision_analysis_id if vision else None,
+            "confidence_basis":"minimum saved scene/vision confidence" if vision_scene else "scene heuristic capped at 0.65; no Vision evidence",
+            "semantic_refresh_required":bool(analysis.provenance.get('semantic_analysis_refresh_required')),
+            "frame_evidence":[{"frame_id":frame.frame_id,"timestamp_seconds":frame.timestamp_seconds,
+                "provider":frame.provider_key,"model":frame.model,"confidence":frame.confidence,
+                "evidence_frame_reference":frame.evidence_frame_reference}
+                for frame in (vision.frames if vision else [])
+                if vision_scene and frame.frame_id in vision_scene.evidence_frame_ids],
+            "provider_dispatches":0,"source_media_mutated":False,"recommendation_only":True},
     )
 
 
@@ -112,7 +123,7 @@ def select_strategy(
         payload,
         preferred_media_type=preferred_media_type,
     )
-    start = ordinal % len(desired)
+    start = ordinal % len(desired) if payload.selection_policy == 'scene_variety' else 0
     candidates = desired[start:] + desired[:start]
     for strategy in candidates:
         if strategy == "user_asset" and has_source_asset:
@@ -179,22 +190,25 @@ def build_plan_items(
             vision=vision,
             brand_context=payload.brand_context,
         )
+        raw_candidates = stock_candidates.get(scene.scene_id, [])
+        stock_searched = scene.scene_id in stock_candidates
+        eligible_candidates = [candidate for candidate in raw_candidates if candidate.rights_status in {'licensed','owned','verified'}]
+        effective_stock = stock_available and (bool(eligible_candidates) if payload.selection_policy == 'priority' and stock_searched else True)
         strategy = select_strategy(
             ordinal=scene.ordinal,
             payload=payload,
             preferred_media_type=broll.preferred_media_type,
-            stock_available=stock_available,
+            stock_available=effective_stock,
             image_available=image_available,
             video_available=video_available,
             has_source_asset=source_asset is not None,
         )
-        raw_candidates = stock_candidates.get(scene.scene_id, [])
         vision_scene = next(
             (item for item in (vision.scenes if vision else []) if item.scene_id == scene.scene_id),
             None,
         )
         ranked = rank_stock_candidates(
-            raw_candidates,
+            eligible_candidates if payload.selection_policy == 'priority' else raw_candidates,
             query=broll.search_query,
             vision_description=vision_scene.description if vision_scene else scene.description,
         )
@@ -211,7 +225,7 @@ def build_plan_items(
             payload=payload,
             preferred_media_type=broll.preferred_media_type,
             has_source_asset=source_asset is not None,
-            stock_available=stock_available and payload.allow_stock,
+            stock_available=effective_stock and payload.allow_stock,
             image_available=image_available and payload.allow_ai_image,
             video_available=video_available and payload.allow_ai_video,
         )
@@ -229,10 +243,16 @@ def build_plan_items(
                 selected_media_asset_id=None,
                 estimated_cost_vnd=estimated_value,
                 needs_approval=needs_approval,
-                needs_attention=needs_approval or strategy == "motion_graphic",
+                needs_attention=needs_approval or strategy == "motion_graphic" or bool(broll.provenance['semantic_refresh_required']),
                 status="needs_approval" if needs_approval else "planned",
                 provenance={
-                    "algorithm": "deterministic-media-planner-v2-06",
+                    "algorithm": "priority-media-planner-v1",
+                    "selection_policy":payload.selection_policy,
+                    "resolver_priority":payload.resolver_priority,
+                    "stock_search_state":'results' if eligible_candidates else ('empty_or_rights_rejected' if stock_searched else 'not_searched'),
+                    "stock_result_count":len(raw_candidates) if stock_searched else None,
+                    "stock_rejected_rights_count":len(raw_candidates)-len(eligible_candidates) if stock_searched else None,
+                    "stock_tier_available":effective_stock,
                     "source_scene_id": scene.scene_id,
                     "source_analysis_id": analysis.analysis_id,
                     "vision_analysis_id": vision.vision_analysis_id if vision else None,

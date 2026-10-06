@@ -281,6 +281,7 @@ def plan_request(stack, *, max_ai_cost_vnd: Decimal = Decimal("0")) -> MediaPlan
         platform="facebook_reels",
         brand_context="Ngoc Phuong Dong original real-estate media",
         max_ai_cost_vnd=max_ai_cost_vnd,
+        selection_policy="scene_variety",  # Explicitly retain legacy multi-provider contract coverage.
     )
 
 

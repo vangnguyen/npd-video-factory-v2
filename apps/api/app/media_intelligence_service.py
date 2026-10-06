@@ -126,7 +126,7 @@ class MediaPlanningService:
 
     async def create(self, *, project_id: str, payload: MediaPlanRequest) -> MediaPlanRead:
         project = await self.platform.get_project(project_id)
-        analysis = await self.auto_edit_repository.get_analysis(payload.analysis_id)
+        analysis = await self.auto_edit_repository.get_analysis(payload.analysis_id,transcript_id=payload.transcript_id)
         if project is None or analysis is None or analysis.project_id != project_id:
             raise KeyError(project_id)
         if analysis.status != "succeeded":
@@ -142,18 +142,24 @@ class MediaPlanningService:
             ):
                 raise KeyError(payload.vision_analysis_id)
         source_asset = await self.auto_edit_repository.get_asset(analysis.asset_id)
-        if source_asset is None:
+        if source_asset is None or source_asset.project_id != project_id:
             raise KeyError(analysis.asset_id)
+        if analysis.provenance.get('source_asset_checksum') != source_asset.checksum_sha256:
+            raise ValueError('source analysis checksum is stale')
+        if vision and vision.provenance.get('source_asset_checksum') != source_asset.checksum_sha256:
+            raise ValueError('saved Vision checksum differs from the source asset')
         provider_status = self._provider_status()
         fingerprint = hashlib.sha256(
             json.dumps(
                 {
                     "project_id": project_id,
                     "analysis_fingerprint": analysis.fingerprint,
+                    "transcript_id":analysis.transcript.transcript_id if analysis.transcript else None,
+                    "transcript_version":analysis.transcript.version if analysis.transcript else None,
                     "vision_fingerprint": vision.fingerprint if vision else None,
                     "configuration": payload.model_dump(mode="json"),
                     "providers": provider_status,
-                    "algorithm": "media-planner-v2-06.1",
+                    "algorithm": "priority-media-planner-v1",
                 },
                 sort_keys=True,
                 separators=(",", ":"),
@@ -167,7 +173,9 @@ class MediaPlanningService:
             configuration=payload,
             provider_status=provider_status,
             provenance={
-                "algorithm": "media-planner-v2-06.1",
+                "algorithm": "priority-media-planner-v1",
+                "selection_policy":payload.selection_policy,
+                "transcript_id":analysis.transcript.transcript_id if analysis.transcript else None,
                 "mock_tested": True,
                 "real_provider_tested": False,
                 "source_analysis_id": analysis.analysis_id,

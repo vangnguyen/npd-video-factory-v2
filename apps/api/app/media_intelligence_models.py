@@ -40,6 +40,7 @@ class BrollDecisionRead(StrictModel):
     placement_start_seconds: float = Field(ge=0)
     placement_end_seconds: float = Field(gt=0)
     confidence: float = Field(ge=0, le=1)
+    provenance: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_window(self) -> "BrollDecisionRead":
@@ -93,6 +94,7 @@ class VideoGenerationInput(StrictModel):
 
 class MediaPlanRequest(StrictModel):
     analysis_id: str = Field(pattern=r"^ana_[A-Za-z0-9_-]{4,60}$")
+    transcript_id: str | None = Field(default=None, pattern=r"^trn_[A-Za-z0-9_-]{4,60}$")
     vision_analysis_id: str | None = Field(default=None, pattern=r"^vis_[A-Za-z0-9_-]{4,60}$")
     platform: PlatformTarget = "facebook_reels"
     brand_context: str = Field(default="NPD Video Factory", min_length=1, max_length=500)
@@ -100,6 +102,7 @@ class MediaPlanRequest(StrictModel):
     allow_stock: bool = True
     allow_ai_image: bool = True
     allow_ai_video: bool = True
+    selection_policy: Literal["priority", "scene_variety"] = "priority"
     resolver_priority: list[Literal[
         "user_asset",
         "licensed_stock",

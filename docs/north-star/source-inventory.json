@@ -1,6 +1,6 @@
 {
-  "head": "e99cba6c462c350b23585c1fe152f0e40f3b4f3d",
-  "audited_at": "2026-10-06T20:12:12.404997+00:00",
+  "head": "2506539a38a0cec0e4a9848ff0c7f65ca3654bc9",
+  "audited_at": "2026-10-06T20:28:21.271676+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "34837143393223ca6d432ea6d0c6944c77a6e1136e027a0b84c637af1812cdb8",
@@ -66,9 +66,10 @@
     "renderer/src/subtitles.ts": "1012015a2f05fa2921001980614c06e6892bf4722c4f3283075f0651ab3dd0ba",
     "apps/studio-web/subtitle-editor.mjs": "50f3cb658aeeff09a3f802a4b699484b39f5f108b0bf9af4818288eceff98b28",
     "apps/api/tests/test_subtitle_templates.py": "f0971eb4330428df8b8107d0c5e538f234e16f1be0ef50ffe8ffa8aba8d51a21",
-    "apps/api/app/media_intelligence_logic.py": "070f7d43369e1a439f9fe47c3299636a953d2e2b52132c352a52dcaabf0b9f78",
-    "apps/api/app/media_intelligence_service.py": "998089508a8ed3f233b293050293487d32516dc4a3f53f56d8fa5a7462522d9d",
-    "apps/api/app/media_intelligence_models.py": "ac28eaaaf3d39b8226209b53aa19545754f01b3599402da6a9d6997cf391d589",
+    "apps/api/app/media_intelligence_logic.py": "b8c078ee9e9f14de9b3eaa486634dd0d323a6879058a341e0e96a06b7b96bc58",
+    "apps/api/app/media_intelligence_service.py": "6fa5302815b22271ce669d23a917f9e790f1d6e323782b728f0e7290ecebe13e",
+    "apps/api/tests/test_media_planning_policy.py": "c0c25a2f947ecff51ea1d9aced6598b9fb82934f3e1b9247231a5385bca69203",
+    "apps/api/app/media_intelligence_models.py": "214de94d01a3697e35d1aa6840e9d3c0737288399f873aeb558233c15f99cbd5",
     "apps/api/app/publishing_logic.py": "076ac28052acd442c26aba19b298e0243d4fee0e995befb1b27976fc1e059e85",
     "services/comfyui-bridge/npd_comfyui_bridge/service.py": "20140e36dfe48d09056ccb13e8e3360b062e5aa42e147329022568c4b3424d96",
     "services/comfyui-bridge/npd_comfyui_bridge/workflows.py": "0c3633367aaf16d39661c56aea2739a91e1a7056da75860fefc06bdcc509a58a",

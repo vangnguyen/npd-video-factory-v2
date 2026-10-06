@@ -401,10 +401,11 @@
     "status": "PARTIAL",
     "source": [
       "apps/api/app/media_intelligence_logic.py",
-      "apps/api/app/media_intelligence_service.py"
+      "apps/api/app/media_intelligence_service.py",
+      "apps/api/tests/test_media_planning_policy.py"
     ],
-    "behavior": "Broll decisions contain query/prompt/duration/confidence with fallbacks.",
-    "gap": "Native picker integration; internal-library priority and Vision relevance ranking.",
+    "behavior": "B-roll decisions carry intent/query/prompt/source-time placement and saved analysis/transcript/Vision/frame provenance. Absent Vision uses an explicitly capped scene heuristic, not invented provider confidence. Media resolver now honors configured priority on every scene; legacy variety is explicitly selectable/readable. Empty or unknown-rights stock results fall back. Transcript identity/version binds cache reuse and stale source/Vision checksums are rejected before planning.",
+    "gap": "Dedicated supporting-asset ranking/picker and selected suggestion application; Native integration; internal-library tier; genuine Vision relevance and stock/generated providers remain.",
     "severity": "P1",
     "dependency": "media/rights/Vision",
     "wave": "3/5",
@@ -492,9 +493,10 @@
     "status": "PARTIAL",
     "source": [
       "apps/api/app/media_intelligence_logic.py",
-      "apps/api/app/media_intelligence_models.py"
+      "apps/api/app/media_intelligence_models.py",
+      "apps/api/tests/test_media_planning_policy.py"
     ],
-    "behavior": "Versioned plan and six strategies with budget/fallback selection.",
+    "behavior": "Fingerprint-deduplicated MediaPlans persist scene decisions, costs/approval/fallbacks, canonical source/selected transcript identity and resolver policy. Strict priority is the default; explicitly requested legacy scene variety remains supported. Saved prior plans remain unchanged after transcript editing, and old configurations are interpreted as their historical variety policy.",
     "gap": "Connect Native scene/channel/brand/library/provider availability and Vision ranking.",
     "severity": "P1",
     "dependency": "canonical asset integration",
