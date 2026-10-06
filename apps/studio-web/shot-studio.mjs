@@ -50,12 +50,24 @@ export function scriptStageReview(project) {
   if(!project.archived&&project.approval&&project.approval.revision===project.revision)return {label:'Đã duyệt cùng nội dung',detail:`Kịch bản đã được ${project.approval.reviewer??'người duyệt'} duyệt cùng nội dung và cách dựng ở phiên bản này. Có thể ghi nhận duyệt riêng kịch bản bằng thao tác bên dưới.`};
   return {label:'Cần duyệt',detail:'Lưu chỉnh sửa trước khi duyệt. Thao tác này chỉ duyệt lời đọc, chưa tạo giọng đọc hoặc video.'};
 }
+export const supportsVoiceQuality = capabilities => capabilities?.voice_quality_selection===true;
+export async function loadVoiceQuality(api,capabilities) {
+  return supportsVoiceQuality(capabilities)?await api('/api/voice-quality'):null;
+}
+export function voiceQualityApplyAllowed(project,capabilities,catalog,policyId,{dirty=false,busy=false}={}) {
+  const choice=(catalog?.choices??[]).find(value=>value.id===policyId),current=project?.document?.voice_quality;
+  return Boolean(supportsVoiceQuality(capabilities)&&shotMutationAllowed(project,{dirty,busy})&&policyId&&choice&&!(current?.id===choice.id&&current.version===choice.version&&current.sha256===choice.sha256));
+}
+export function voiceQualityLabel(project,catalog) {
+  const current=project?.document?.voice_quality?.id;
+  return current?(catalog?.choices??[]).find(choice=>choice.id===current)?.label??'Thùy Dung · cấu hình đã lưu':catalog?.default?.label??'Thùy Dung · MVP đã nghiệm thu (theo câu)';
+}
 export function readableSuggestion(values,project) {
   const labels={visual:'Hình ảnh',narration:'Lời đọc',on_screen_text:'Chữ trên video',subtitle:'Phụ đề',duration:'Thời lượng',asset_id:'Nguồn',narration_enabled:'Dùng lời đọc',crop_strategy:'Khung hình',motion:'Chuyển động ảnh',source_start:'Điểm bắt đầu video',transition:'Chuyển cảnh'};
   return Object.entries(values??{}).filter(([key])=>labels[key]).map(([key,value])=>`${labels[key]}: ${key==='asset_id'?(project.document.assets??[]).find(a=>a.id===value)?.filename??'Thay nguồn':key==='duration'||key==='source_start'?`${value} giây`:typeof value==='boolean'?(value?'Có':'Không'):value}`).join(' · ');
 }
 
-export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty,onMessage,onWorking=()=>{}}) {
+export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty,onMessage,onWorking=()=>{},capabilities={}}) {
   const $=id=>document.getElementById(id),esc=escapeText;
   let stage='script',selectedId=null,shotDirty=false,working=false,loadedKey=null,loadingKey=null,preview=null,previewTimer=null,mediaMode='shot',suggestion=null,suggestionRevision=null,draggedId=null,shownProjectId=null;
   const suggestions=new Map();
@@ -71,6 +83,19 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
   const previewShortcut=document.createElement('button');previewShortcut.type='button';previewShortcut.id='toolbar-preview';previewShortcut.className='secondary';previewShortcut.dataset.shotControl='';previewShortcut.textContent='Preview';document.querySelector('.studio-header-actions').append(previewShortcut,$('render'));
   const sceneDetails=document.createElement('details');sceneDetails.id='all-scene-fields';const summary=document.createElement('summary');summary.textContent='Chỉnh sửa toàn bộ kịch bản / cảnh';sceneDetails.append(summary);$('scenes').before(sceneDetails);sceneDetails.append($('scenes'));
   const brandPanel=$('brand-select').closest('details');brandPanel.id='brand-panel';
+  let voiceCatalog=null,voiceShownKey=null,voiceSelect=null,voiceApply=null,voiceNote=null;
+  if(supportsVoiceQuality(capabilities)){
+    const section=document.createElement('section');section.innerHTML='<label>Cách đọc của giọng Thùy Dung<select id="voice-quality-select" data-shot-control data-voice-quality><option value="">Đang tải các cách đọc…</option></select></label><button id="voice-quality-apply" type="button" class="secondary" data-shot-control data-voice-quality>Áp dụng cách đọc cho dự án</button><p id="voice-quality-state" class="hint" role="status"></p><p class="hint">Giữ nguyên giọng Thùy Dung. Cách đọc áp dụng cho toàn dự án; lưu lựa chọn cần duyệt lại và chưa tạo giọng đọc hoặc video.</p>';
+    $('shot-narration-enabled').closest('details').append(section);voiceSelect=$('voice-quality-select');voiceApply=$('voice-quality-apply');voiceNote=$('voice-quality-state');
+    voiceSelect.addEventListener('change',controls);
+    voiceApply.addEventListener('click',()=>void run(async()=>{
+      const project=getProject(),policyId=voiceSelect.value;
+      if(!voiceQualityApplyAllowed(project,capabilities,voiceCatalog,policyId,getGuards())||shotDirty)throw new Error('Lưu chỉnh sửa và chờ tác vụ hoàn tất trước khi áp dụng cách đọc.');
+      const value=await api(`/api/projects/${project.id}/voice-quality`,{revision:project.revision,policy_id:policyId});
+      if(value.revision!==project.revision){preview=preview?{...preview,status:'STALE',video_url:null}:null;mediaMode='shot';}
+      onProject(value,true);render(true);message('Đã lưu cách đọc cho dự án. Duyệt lại nội dung và cách dựng trước khi chủ động tạo giọng đọc và video.');
+    }));
+  }
   const thumbnail=assetId=>`/api/projects/${getProject().id}/media/${encodeURIComponent(assetId)}/thumbnail`;
   const assets=()=>getProject()?.document.assets??(getProject()?.document.asset?[getProject().document.asset]:[]);
   const selected=()=>projectShots(getProject()).find(s=>s.shot_id===selectedId);
@@ -100,7 +125,9 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
     $('shot-ai-apply').disabled||=!safeSuggestion(project,selectedId,suggestion,suggestionRevision);
     document.querySelectorAll('[data-script-control]').forEach(el=>el.disabled=!project?.document.proposal||project.archived||g.busy||g.dirty||(project.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status)));
     $('approve-script-only').disabled=!scriptReviewAllowed(project,{...g,busy:g.busy},$('script-only-ack').checked,$('script-only-reviewer').value)||Boolean(project?.script_review?.current);
+    if(voiceSelect){voiceSelect.disabled=!voiceCatalog||blocked||g.dirty||shotDirty;voiceApply.disabled=!voiceQualityApplyAllowed(project,capabilities,voiceCatalog,voiceSelect.value,g)||shotDirty;}
   }
+  function renderVoiceQuality(reset=false){if(!voiceSelect)return;const project=getProject(),key=`${project?.id??''}:${project?.revision??''}`;if(voiceCatalog&&(reset||key!==voiceShownKey)){const current=project?.document.voice_quality?.id;voiceSelect.innerHTML=`<option value="" disabled>${esc(voiceCatalog.default?.label??'Thùy Dung · MVP đã nghiệm thu (theo câu)')}</option>`+(voiceCatalog.choices??[]).map(choice=>`<option value="${esc(choice.id)}">${esc(choice.label)}</option>`).join('');if(current&&!(voiceCatalog.choices??[]).some(choice=>choice.id===current))voiceSelect.insertAdjacentHTML('beforeend',`<option value="${esc(current)}" disabled>Thùy Dung · cấu hình đã lưu</option>`);voiceSelect.value=current??'';voiceShownKey=key;}voiceNote.textContent=`Hiện tại: ${voiceQualityLabel(project,voiceCatalog)}.`;}
   function fillEditor(){const shot=selected();$('shot-editor-form').hidden=!shot;$('shot-editor-empty').hidden=Boolean(shot);$('shot-editor-title').textContent=shot?`Shot ${shot.scene}`:'Chọn một shot';$('shot-version').textContent=getProject()?.shot_timeline?`Timeline v${getProject().shot_timeline.version}`:'—';if(!shot)return;
     for(const [id,key] of [['shot-visual','visual'],['shot-narration','narration'],['shot-on-screen','on_screen_text'],['shot-subtitle','subtitle'],['shot-duration','duration'],['shot-source-start','source_start'],['shot-crop','crop_strategy'],['shot-motion','motion'],['shot-transition','transition']])$(id).value=shot[key]??'';
     $('shot-narration-enabled').checked=shot.narration_enabled;
@@ -132,7 +159,7 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
     const used=new Set((project.document.scene_media??[]).map(b=>b.asset_id));
     document.querySelectorAll('#media-library .media-tile').forEach((tile,i)=>{const asset=assets()[i];if(!asset)return;tile.querySelector('.asset-details')?.remove();const extra=document.createElement('div');extra.className='asset-details';extra.innerHTML=`<small class="${used.has(asset.id)?'asset-used':'asset-unused'}">${used.has(asset.id)?'Đang dùng trong storyboard':'Chưa dùng trong storyboard'}</small><small>${esc(asset.provenance?.source_type??'Nguồn tải lên')} · ${asset.rights_confirmed?'Đã xác nhận quyền':'Kiểm tra quyền nguồn'}</small><label>Nhãn<input class="asset-tags" data-asset-tags="${esc(asset.id)}" data-asset-control value="${esc((asset.tags??project.document.asset_tags?.[asset.id]??[]).join(', '))}" placeholder="Dự án, phối cảnh…"></label><div class="asset-actions"><button type="button" class="secondary" data-asset-action="tag" data-asset-id="${esc(asset.id)}" data-asset-control>Lưu nhãn</button><button type="button" class="secondary" data-asset-action="remove" data-asset-id="${esc(asset.id)}" data-asset-control ${used.has(asset.id)?'disabled':''}>Gỡ khỏi dự án</button></div><small>Gỡ nguồn giữ nguyên tệp gốc. Thay nguồn ở shot trước khi gỡ nguồn đang dùng.</small>`;tile.querySelector('figcaption').append(extra);});
   }
-  function render(reset=false){const project=getProject(),shots=projectShots(project);if(project?.id!==shownProjectId){shownProjectId=project?.id??null;mediaMode=project?.approval?'final':'shot';preview=null;showStage(project?.document.proposal?'video':'script');}if(!project){loadedKey=null;selectedId=null;preview=null;clearTimeout(previewTimer);}if(project?.shot_timeline&&!shots.some(s=>s.shot_id===selectedId)){selectedId=shots[0]?.shot_id??null;reset=true;}if(reset){$('script-only-ack').checked=false;if(!shotDirty)fillEditor();}renderCards();decorateAssets();progress();renderMedia();controls();if(project&&!project.shot_timeline)void loadView();}
+  function render(reset=false){const project=getProject(),shots=projectShots(project);if(project?.id!==shownProjectId){shownProjectId=project?.id??null;mediaMode=project?.approval?'final':'shot';preview=null;showStage(project?.document.proposal?'video':'script');}if(!project){loadedKey=null;selectedId=null;preview=null;clearTimeout(previewTimer);}if(project?.shot_timeline&&!shots.some(s=>s.shot_id===selectedId)){selectedId=shots[0]?.shot_id??null;reset=true;}if(reset){$('script-only-ack').checked=false;if(!shotDirty)fillEditor();}renderCards();decorateAssets();progress();renderMedia();renderVoiceQuality(reset);controls();if(project&&!project.shot_timeline)void loadView();}
   async function selectShot(id){if(shotDirty){message('Lưu hoặc bỏ chỉnh sửa shot trước khi chọn shot khác.',true);return;}if(!projectShots(getProject()).some(s=>s.shot_id===id))return;selectedId=id;mediaMode='shot';fillEditor();render(false);[...document.querySelectorAll('[data-shot]')].find(el=>el.dataset.shot===id)?.focus();}
   async function run(fn){if(working)return;working=true;onWorking();controls();try{await fn();}catch(error){message(error.message,true);}finally{working=false;onWorking();controls();}}
   async function mutate(operation,{save=false}={}){const project=getProject(),guards=guard();if(!shotMutationAllowed(project,{...guards,dirty:save?guards.dirty&&!shotDirty:guards.dirty,busy:getGuards().busy}))throw new Error('Lưu chỉnh sửa và chờ tác vụ hoàn tất trước khi cập nhật shot.');const value=await api(`/api/projects/${project.id}/shots`,{revision:project.revision,operation});setDirty(false);loadedKey=`${value.id}:${value.revision}`;onProject(value,true);const changed=value.shot_timeline?.scope?.preview_invalidated!==false;if(changed){preview=preview?{...preview,status:'STALE',video_url:null}:null;mediaMode='shot';}render(true);message(changed?'Đã lưu phiên bản shot mới. Preview và phê duyệt cũ cần cập nhật.':'Shot đã trùng với phiên bản đang lưu.');}
@@ -143,7 +170,7 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
   $('storyboard-grid').addEventListener('click',event=>{const button=event.target.closest('[data-storyboard-shot]');if(button){showStage('video');void selectShot(button.dataset.storyboardShot);}});
   $('advanced-tracks').addEventListener('click',event=>{const button=event.target.closest('[data-track-shot]');if(button?.dataset.trackShot)void selectShot(button.dataset.trackShot);});
   $('advanced-toggle').addEventListener('click',()=>{$('advanced-timeline').hidden=!$('advanced-timeline').hidden;$('advanced-toggle').setAttribute('aria-expanded',String(!$('advanced-timeline').hidden));});
-  $('shot-editor-form').addEventListener('input',event=>{if(event.target.id!=='shot-restore-revision')setDirty(true);});
+  $('shot-editor-form').addEventListener('input',event=>{if(event.target.id!=='shot-restore-revision'&&!event.target.matches('[data-voice-quality]'))setDirty(true);});
   $('shot-asset').addEventListener('change',()=>{$('shot-motion').value='none';$('shot-source-start').value=0;setDirty(true);});
   $('shot-editor-form').addEventListener('submit',event=>{event.preventDefault();void run(async()=>{const shot=selected(),values=changedShotValues(shot,formValues());if(!Object.keys(values).length){setDirty(false);return;}await mutate({type:'update',shot_id:selectedId,values},{save:true});});});
   $('shot-discard').addEventListener('click',()=>{setDirty(false);fillEditor();render(false);});
@@ -166,5 +193,6 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
   for(const id of ['script-only-ack','script-only-reviewer'])$(id).addEventListener('input',controls);
   $('approve-script-only').addEventListener('click',()=>void run(async()=>{const p=getProject(),reviewer=$('script-only-reviewer').value;if(!scriptReviewAllowed(p,getGuards(),$('script-only-ack').checked,reviewer))throw new Error('Lưu kịch bản, nhập tên người duyệt và xác nhận đã kiểm tra.');const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p.document.proposal.narration));const script_sha256=[...new Uint8Array(bytes)].map(b=>b.toString(16).padStart(2,'0')).join('');const value=await api(`/api/projects/${p.id}/script-review`,{revision:p.revision,reviewer,acknowledged:true,script_sha256});$('script-only-ack').checked=false;onProject(value,true);render(true);message('Đã duyệt riêng kịch bản đã lưu. Kiểm tra hình ảnh và cách dựng trước khi duyệt sản xuất.');}));
   showStage(stage);render(true);
+  if(supportsVoiceQuality(capabilities))void loadVoiceQuality(api,capabilities).then(value=>{voiceCatalog=value;renderVoiceQuality(true);controls();}).catch(error=>{voiceSelect.options[0].textContent='Không tải được các cách đọc';message(error.message,true);controls();});
   return {refresh:render,controls,isDirty:()=>shotDirty,isWorking:()=>working,showStage};
 }

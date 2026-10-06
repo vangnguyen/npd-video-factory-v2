@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {supportsShotStudio,loadNativeShotStudio,nativeLegacyLayout} from '../native.mjs';
-import {projectShots,shotMutationAllowed,changedShotValues,reorderedShotIds,safeSuggestion,previewLabel,previewTimingLabel,escapeText,scriptReviewAllowed,scriptStageReview,readableSuggestion,boundPreview,currentStudioRender} from '../shot-studio.mjs';
+import {projectShots,shotMutationAllowed,changedShotValues,reorderedShotIds,safeSuggestion,previewLabel,previewTimingLabel,escapeText,scriptReviewAllowed,scriptStageReview,readableSuggestion,boundPreview,currentStudioRender,supportsVoiceQuality,loadVoiceQuality,voiceQualityApplyAllowed,voiceQualityLabel} from '../shot-studio.mjs';
 
 const project={id:'project',revision:7,archived:false,jobs:[],shot_timeline:{version:3,sha256:'timeline-a',shots:[{shot_id:'s-a',scene:1,visual:'Biển',narration:'Nội dung A',subtitle:'Nội dung A',on_screen_text:'A',asset_id:'asset-a',duration:4,narration_enabled:true,crop_strategy:'contain',motion:'none',source_start:0,transition:'cut'},{shot_id:'s-b',scene:2,duration:5}]}};
 
@@ -124,4 +124,29 @@ test('Legacy fallback restores the original workspace without moving its render 
   assert.equal(removedClass,'shot-studio');assert.equal(removedStyle,true);
   assert.equal(workspace.hidden,false);assert.deepEqual(workspace.children,[render,review]);
   assert.ok(phaseOnly.every(el=>el.hidden));assert.match(timing.textContent,/Thùy Dung đã khóa/);
+});
+
+test('Voice-quality catalog is strictly capability gated and never selects a policy on load',async()=>{
+  const catalog={choices:[{id:'warm-scene-context-v1',version:1,sha256:'warm-sha',label:'Thùy Dung · Giọng B (ngữ cảnh)'}],default:{id:null,label:'Thùy Dung · MVP đã nghiệm thu (theo câu)'}};
+  const calls=[],api=async(...args)=>{calls.push(args);return catalog;},before=JSON.stringify(project);
+  for(const capabilities of [{},{voice_quality_selection:false},{voice_quality_selection:'true'}]){assert.equal(supportsVoiceQuality(capabilities),false);assert.equal(await loadVoiceQuality(api,capabilities),null);}
+  assert.deepEqual(calls,[]);
+  assert.equal(await loadVoiceQuality(api,{voice_quality_selection:true}),catalog);
+  assert.deepEqual(calls,[['/api/voice-quality']],'Catalog read sends no POST body or production request');
+  assert.equal(voiceQualityLabel({...project,document:{}},catalog),catalog.default.label);
+  assert.equal(JSON.stringify(project),before,'Reading choices leaves the existing preset and default document untouched');
+});
+
+test('Applying a known voice-quality policy requires saved idle active project state',()=>{
+  const warm={id:'warm-scene-context-v1',version:1,sha256:'warm-sha',label:'Thùy Dung · Giọng B (ngữ cảnh)'},catalog={choices:[warm]},capabilities={voice_quality_selection:true},p={...project,document:{}};
+  assert.equal(voiceQualityApplyAllowed(p,capabilities,catalog,warm.id),true);
+  for(const guards of [{dirty:true},{busy:true}])assert.equal(voiceQualityApplyAllowed(p,capabilities,catalog,warm.id,guards),false);
+  for(const invalid of [null,{...p,archived:true},{...p,jobs:[{status:'running'}]},{...p,jobs:[{status:'retrying'}]}])assert.equal(voiceQualityApplyAllowed(invalid,capabilities,catalog,warm.id),false);
+  assert.equal(voiceQualityApplyAllowed(p,{},catalog,warm.id),false);
+  assert.equal(voiceQualityApplyAllowed(p,capabilities,catalog,''),false,'Sentence default is display-only and cannot be auto-applied');
+  assert.equal(voiceQualityApplyAllowed(p,capabilities,catalog,'unknown'),false);
+  const selected={...p,document:{voice_quality:{id:warm.id,version:warm.version,sha256:warm.sha256}}};
+  assert.equal(voiceQualityApplyAllowed(selected,capabilities,catalog,warm.id),false,'Existing exact policy is a no-op');
+  assert.equal(voiceQualityLabel(selected,catalog),warm.label);
+  assert.equal(voiceQualityApplyAllowed({...selected,document:{voice_quality:{...selected.document.voice_quality,sha256:'stale'}}},capabilities,catalog,warm.id),true);
 });

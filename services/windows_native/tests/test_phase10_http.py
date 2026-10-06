@@ -26,6 +26,7 @@ from services.windows_native.shot_ai_edit import ShotAIEdit
 from services.windows_native.tests.test_intelligence_engines import receipt
 from services.windows_native.tests.test_intelligence_workflow import FixtureIdeas
 from services.windows_native.tests.test_workflow import proposal
+from services.windows_native.voice_quality import policy_reference
 
 
 class NoProviderPipeline:
@@ -149,8 +150,8 @@ class Phase10HTTPTests(unittest.TestCase):
         before = self.database_state()
         status, session, headers = self.request('GET', '/api/session', headers={'Cookie': '', 'X-VF-CSRF': ''})
         self.assertEqual(status, 200)
-        self.assertEqual(session['capabilities'], {'native_shot_studio': True, 'production_intelligence': True})
-        for name in ('native_shot_studio', 'production_intelligence'):
+        self.assertEqual(session['capabilities'], {'native_shot_studio': True, 'production_intelligence': True, 'voice_quality_selection': True})
+        for name in ('native_shot_studio', 'production_intelligence', 'voice_quality_selection'):
             self.assertIs(type(session['capabilities'][name]), bool)
         self.assertEqual(session['csrf'], self.server.csrf)
         self.assertNotIn(self.server.session, json.dumps(session))
@@ -174,6 +175,59 @@ class Phase10HTTPTests(unittest.TestCase):
         self.assertEqual(self.api('POST', endpoint, body, {'Cookie': '', 'X-VF-CSRF': session['csrf']})[0], 401)
         status, failure = self.api('POST', endpoint, body, {'Cookie': request_cookie, 'X-VF-CSRF': session['csrf']})
         self.assertEqual((status, failure['code']), (400, 'SHOT_OPERATION_INVALID'))
+        self.assertEqual(self.database_state(), before)
+
+    def test_voice_quality_catalog_session_and_write_guards_preserve_accepted_default(self):
+        before = self.database_state()
+        self.assertNotIn('voice_quality', self.project['document'])
+        status, catalog = self.api('GET', '/api/voice-quality')
+        self.assertEqual(status, 200)
+        self.assertEqual({c['id'] for c in catalog['choices']}, {'scene-context-v1', 'warm-scene-context-v1'})
+        self.assertIsNone(catalog['default']['id'])
+        self.assertTrue(catalog['selection_requires_explicit_action']); self.assertTrue(catalog['human_listening_required'])
+        for choice in catalog['choices']:
+            self.assertEqual({k: choice[k] for k in ('id', 'version', 'sha256')}, policy_reference(choice['id']))
+            self.assertEqual(set(choice), {'id', 'version', 'sha256', 'label'})
+            self.assertTrue(choice['label'].startswith('Thùy Dung'))
+        self.assertEqual(self.api('GET', '/api/voice-quality', headers={'Cookie': ''})[0], 401)
+        self.assertEqual(self.api('GET', '/api/voice-quality', headers={'Origin': 'https://foreign.invalid'})[0], 403)
+        endpoint = '/api/projects/' + self.project['id'] + '/voice-quality'
+        body = {'revision': self.project['revision'], 'policy_id': 'warm-scene-context-v1'}
+        for headers, status in [({'Cookie': ''}, 401), ({'X-VF-CSRF': 'incorrect'}, 403),
+                ({'Origin': 'https://foreign.invalid'}, 403), ({'Sec-Fetch-Site': 'cross-site'}, 403)]:
+            self.assertEqual(self.api('POST', endpoint, body, headers)[0], status)
+        for invalid in ({**body, 'policy_id': 'unknown'}, {**body, 'policy_id': None},
+                {**body, 'revision': True}):
+            self.assertEqual(self.api('POST', endpoint, invalid)[0], 400)
+        status, failure = self.api('POST', endpoint, {**body, 'revision': self.project['revision'] - 1})
+        self.assertEqual((status, failure['code']), (409, 'STALE_VERSION_RELOAD'))
+        self.assertEqual(self.database_state(), before)
+        self.assertEqual(self.server.store.get(self.project['id']), self.project)
+
+    def test_voice_quality_http_persistence_noop_and_busy_without_dispatch(self):
+        original = deepcopy(self.project)
+        endpoint = '/api/projects/' + original['id'] + '/voice-quality'
+        status, selected = self.api('POST', endpoint, {'revision': original['revision'], 'policy_id': 'warm-scene-context-v1'})
+        self.assertEqual(status, 200)
+        self.assertEqual(selected['revision'], original['revision'] + 1)
+        self.assertEqual(selected['document'], {**original['document'], 'voice_quality': policy_reference('warm-scene-context-v1')})
+        self.assertIsNone(selected['approval']); self.assertEqual(selected['jobs'], [])
+        old_version = next(v for v in self.server.store.versions(original['id']) if v['revision'] == original['revision'])
+        self.assertEqual(old_version['document'], original['document'])
+        self.stop_server(); self.start_server()
+        self.assertEqual(self.api('GET', '/api/projects/' + original['id'])[1], selected)
+        _, reviewed_fixture = self.api('POST', '/api/projects/' + original['id'] + '/approve',
+            {'revision': selected['revision'], 'reviewer': 'HTTP CONTRACT FIXTURE — NOT OWNER ACCEPTANCE', 'acknowledged': True})
+        before = self.database_state()
+        self.assertEqual(self.api('POST', endpoint, {'revision': selected['revision'], 'policy_id': 'warm-scene-context-v1'}),
+            (200, reviewed_fixture))
+        self.assertEqual(self.database_state(), before)
+        # A selection is never a production dispatch; a deliberately queued local
+        # fixture job only verifies that the existing busy guard still applies.
+        self.server.store.enqueue(original['id'], selected['revision'], 'content', uuid.uuid4().hex)
+        before = self.database_state()
+        status, failure = self.api('POST', endpoint, {'revision': selected['revision'], 'policy_id': 'scene-context-v1'})
+        self.assertEqual((status, failure['code']), (409, 'PROJECT_BUSY'))
         self.assertEqual(self.database_state(), before)
 
     def test_shot_http_edit_conflicts_failures_and_legacy_draft_compatibility(self):

@@ -228,7 +228,7 @@ class Handler(BaseHTTPRequestHandler):
             version=parse_qs(self.path.partition('?')[2]).get('version',[''])[0]
             return self.file(self.server.previews.video_path(identifier,version),video=True)
         if path == "/api/session":
-            return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
+            return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -242,6 +242,9 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/brand-templates":
             from .branding import catalog
             return self.reply(catalog(include_landscape=parse_qs(self.path.partition('?')[2]).get('formats')==['all']))
+        if path == '/api/voice-quality':
+            from .voice_quality import catalog
+            return self.reply(catalog())
         if path == "/api/connections/assemblyai":
             return self.reply(assemblyai_connection.status(self.server.config))
         versions = re.fullmatch(r"/api/projects/([0-9a-f]{32})/versions", path)
@@ -376,7 +379,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({"opened":True,"job_id":job["id"]})
         if self.path == "/api/projects":
             return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt")), 201)
-        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive|brand-template)", self.path)
+        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive|brand-template|voice-quality)", self.path)
         if not match:
             raise WorkflowError("ROUTE_NOT_FOUND", 404)
         identifier, action = match[1], match[2]
@@ -391,6 +394,8 @@ class Handler(BaseHTTPRequestHandler):
             result = self.server.store.duplicate(identifier,revision)
         elif action == "brand-template":
             result = self.server.store.set_brand(identifier,revision,body.get("brand_id"),body.get("template_id"))
+        elif action == 'voice-quality':
+            result = self.server.store.set_voice_quality(identifier, revision, body.get('policy_id'))
         elif action == "archive":
             result = self.server.store.archive(identifier,revision,body.get("archived"))
         elif action == "reject":

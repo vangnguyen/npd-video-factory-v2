@@ -235,7 +235,7 @@ if (typeof document !== "undefined") {
     document.body.classList.add('shot-studio');
     const stylesheet=document.createElement('link');stylesheet.rel='stylesheet';stylesheet.href='/shot-studio.css';document.head.append(stylesheet);
     document.querySelectorAll('.stage-navigation,.studio-header-actions,.skip-link,.sidebar [data-stage],.sidebar a[href^="/production"]').forEach(el=>el.hidden=false);
-    shotStudio=module.initializeShotStudio({api,getProject:()=>project,getGuards:()=>({dirty,busy}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
+    shotStudio=module.initializeShotStudio({api,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
   }
   $("save-prompt").addEventListener("click",guarded(async()=>{
     if(!project)project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value,input_kind:$("input-kind").value});
