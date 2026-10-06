@@ -12,20 +12,28 @@ const messages = {
 export const connectionMessage = code => messages[code] ?? "Chưa lưu được kết nối. Kiểm tra quyền truy cập trên PC và thử lại.";
 export const connectionLabel = value => value.connected ? "Đã xác thực kết nối" : value.credential_saved ? "Có khóa — cần kiểm tra" : "Chưa có khóa";
 
+
+export async function installConnectionShell(session, options = {}, importer = () => import('./studio-shell.mjs')) {
+  if(session?.capabilities?.native_studio_ux !== true)return false;
+  try { const shell=await importer();shell.loadStudioShellStyles();shell.mountStudioShell({page:options.page || 'settings',context:options.context || 'Kết nối nhận diện lời nói'});return true; } catch { return false; }
+}
+
 if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
-  let csrf, busy = false, saved = false;
+  let csrf, busy = false, saved = false, stateKnown = false;
   const show = (text, error = false) => {
     $("connection-message").textContent = text;
     $("connection-message").className = "message" + (error ? " error" : "");
     $("connection-message").hidden = false;
   };
   const controls = () => {
-    $("connect").disabled = !csrf || busy || saved;
+    $("connection-refresh").disabled = busy;
+    $("connect").disabled = !csrf || !stateKnown || busy || saved;
     $("assemblyai-key").disabled = busy || saved;
-    $("verify-saved").disabled = !csrf || busy;
+    $("verify-saved").disabled = !csrf || !stateKnown || busy;
   };
   const apply = value => {
+    stateKnown = true;
     saved = value.credential_saved;
     $("connection-state").textContent = connectionLabel(value);
     $("connection-form").hidden = saved;
@@ -52,24 +60,37 @@ if (typeof document !== "undefined") {
   };
   $("connection-form").addEventListener("submit", event => {
     event.preventDefault();
-    if (busy || !csrf || saved) return;
+    if (busy || !csrf || !stateKnown || saved) return;
     const key = $("assemblyai-key").value.trim();
     $("assemblyai-key").value = "";
     void request({key});
   });
-  $("verify-saved").addEventListener("click", () => { if (!busy && csrf) void request({verify_saved: true}); });
+  $("verify-saved").addEventListener("click", () => { if (!busy && csrf && stateKnown) void request({verify_saved: true}); });
   window.addEventListener("pagehide", () => { $("assemblyai-key").value = ""; });
-  (async () => {
+  const loadState = async () => {
+    if(busy)return;
+    busy=true;stateKnown=false;controls();$("connection-state").textContent="Đang đọc trạng thái…";
     try {
       const session = await fetch("/api/session", {cache: "no-store"});
       if (!session.ok) throw new Error();
-      csrf = (await session.json()).csrf;
+      const sessionValue = await session.json();
+      csrf = sessionValue.csrf;
+      await installConnectionShell(sessionValue);
       const response = await fetch("/api/connections/assemblyai", {cache: "no-store"});
       if (!response.ok) throw new Error();
       apply(await response.json());
+      $("connection-message").hidden=true;
     } catch {
       $("connection-state").textContent = "Chưa đọc được trạng thái";
-      show("Không kết nối được Studio. Làm mới trang để thử lại.", true);
-    }
-  })();
+      show("Không kết nối được Studio. Bấm Làm mới để thử lại.", true);
+    } finally { busy=false;controls(); }
+  };
+  $("connection-refresh").addEventListener("click",()=>void loadState());
+  void loadState();
 }
+
+
+
+
+
+

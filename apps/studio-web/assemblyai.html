@@ -12,14 +12,14 @@
     <a class="nav" href="/">← Trở về dự án</a>
     <div class="runtime-card">AssemblyAI<p>Nhận diện lời nói tiếng Việt<br>Giữ thời gian từng từ</p></div>
   </aside>
-  <main>
-    <header><div><p class="eyebrow">KẾT NỐI DỊCH VỤ</p><h1>AssemblyAI</h1></div><span class="badge">TRÊN PC CỦA BẠN</span></header>
+  <main id="studio-main" tabindex="-1">
+    <header class="page-header"><div><p class="eyebrow">KẾT NỐI DỊCH VỤ</p><h1>Kết nối nhận diện lời nói</h1><p class="hint">Quản lý kết nối AssemblyAI trên PC của bạn.</p></div><div class="page-actions"><button id="connection-refresh" class="secondary" type="button">Làm mới</button></div></header>
     <div class="steps"><div><b>01</b> Nhập khóa</div><div><b>02</b> Kiểm tra xác thực</div><div><b>03</b> Lưu kết nối</div></div>
     <section class="card">
-      <div class="card-heading"><h2>Khóa truy cập AssemblyAI</h2><span class="version" id="connection-state">Đang kiểm tra trạng thái…</span></div>
+      <div class="card-heading"><h2>Khóa truy cập AssemblyAI</h2><span class="version" id="connection-state" aria-live="polite">Đang kiểm tra trạng thái…</span></div>
       <p class="hint">Lấy khóa trong tài khoản AssemblyAI của bạn và nhập trực tiếp tại đây. Khóa được mã hóa theo tài khoản Windows, lưu riêng ngoài mã nguồn và không hiển thị lại.</p>
       <form id="connection-form" autocomplete="off">
-        <label for="assemblyai-key">API key</label>
+        <label for="assemblyai-key">Khóa AssemblyAI</label>
         <input id="assemblyai-key" name="assemblyai-key" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="512" required>
         <p class="hint">Nút bên dưới gửi khóa đến AssemblyAI để kiểm tra xác thực, sau đó lưu trên PC. Bước này không gửi audio hoặc tạo transcript. Khi chạy ASR sau đó, audio sẽ được gửi đến AssemblyAI và có thể phát sinh phí.</p>
         <div class="actions"><button class="primary" id="connect" type="submit" disabled>Kiểm tra & lưu kết nối</button><a class="secondary" href="https://www.assemblyai.com/dashboard" target="_blank" rel="noopener noreferrer">Mở tài khoản AssemblyAI ↗</a></div>
@@ -31,3 +31,7 @@
   </main>
 </body>
 </html>
+
+
+
+

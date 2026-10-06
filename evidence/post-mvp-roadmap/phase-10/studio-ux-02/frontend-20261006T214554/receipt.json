@@ -1,0 +1,13 @@
+{
+  "scope": "Studio frontend UX standardization regression",
+  "tested_at": "2026-10-06T14:45:55.2576984Z",
+  "command": "node --test tests/*.test.mjs",
+  "exit_code": 0,
+  "wall_elapsed_ms": 715,
+  "log_path": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\studio-ux-02\\frontend-20261006T214554\\studio-frontend-tests.log",
+  "log_sha256": "dd268c3ce0548ae99ac784aaf88457db81069f63142e7ffb1ad46615baaa1132",
+  "human_uat": "PENDING",
+  "browser_visual_qa": "ROOT_IN_PROGRESS",
+  "provider_calls": 0,
+  "application_data_writes": 0
+}
