@@ -1,0 +1,43 @@
+{
+  "at": "2026-10-06T15:36:21.0004510Z",
+  "action": "Actual idle isolated8030 stop/start",
+  "stopped": [
+    {
+      "ProcessId": 30904,
+      "ParentProcessId": 20916,
+      "CommandLine": "\"C:\\NPD-Video-Factory\\runtime\\venv\\Scripts\\python.exe\" -X utf8 -m services.windows_native.server --config C:\\NPD-Video-Factory\\phase10-uat\\config.json --port 8030"
+    },
+    {
+      "ProcessId": 17072,
+      "ParentProcessId": 30904,
+      "CommandLine": "\"C:\\Users\\PC\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\" -X utf8 -m services.windows_native.server --config C:\\NPD-Video-Factory\\phase10-uat\\config.json --port 8030"
+    }
+  ],
+  "started_wrapper_pid": 31788,
+  "config": "C:\\NPD-Video-Factory\\phase10-uat\\config.json",
+  "main_before": [
+    {
+      "ProcessId": 22112,
+      "CreationDate": "2026-10-06T16:59:46.698017+07:00"
+    },
+    {
+      "ProcessId": 31756,
+      "CreationDate": "2026-10-06T16:59:46.74869+07:00"
+    }
+  ],
+  "main_after": [
+    {
+      "ProcessId": 22112,
+      "CreationDate": "2026-10-06T16:59:46.698017+07:00"
+    },
+    {
+      "ProcessId": 31756,
+      "CreationDate": "2026-10-06T16:59:46.74869+07:00"
+    }
+  ],
+  "main_processes_exact": true,
+  "stdout": "C:\\NPD-Video-Factory\\phase10-uat\\server-final-ux-20261006T153621Z.stdout.log",
+  "stderr": "C:\\NPD-Video-Factory\\phase10-uat\\server-final-ux-20261006T153621Z.stderr.log",
+  "idle_guard": "Agent durable BEFORE all6checksPASS before.json SHA07f680d1536362a8f9d57f89e38ed38dec620be73c93e44970427edf4d569ad7",
+  "git_head": "f870a11d2d9dc594725efc1d5b93ae4a31bef247"
+}

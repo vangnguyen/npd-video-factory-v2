@@ -1,0 +1,535 @@
+{
+  "task": "VF-PHASE10-STUDIO-UX-STANDARDIZATION-02",
+  "head_sha_at_source_audit": "cd435328c5c37999a8c639922a89dc734c651e64",
+  "scope": "Shared shell and secondary pages; source/runtime-fixture verification only",
+  "source_files": [
+    {
+      "path": "apps/studio-web/studio-shell.mjs",
+      "sha256": "091baac31b4a5d859835df5a64c98b6a2d3cce7887c724c8fac3f7087e47ce6a"
+    },
+    {
+      "path": "apps/studio-web/studio-shell.css",
+      "sha256": "1418149cd56501581cca0a2d888e1df1cd5255e1cd5fd7cac901ba2803f12ed9"
+    },
+    {
+      "path": "apps/studio-web/production.html",
+      "sha256": "5309f6a4503aa581c02c957ae39050c8b77ca56b6acb61a000375f9109e13b14"
+    },
+    {
+      "path": "apps/studio-web/production.css",
+      "sha256": "d43bed3920ccf44be371ca403d4c2508d93f729482c8659da07f3afef6df6350"
+    },
+    {
+      "path": "apps/studio-web/production.mjs",
+      "sha256": "ad5794f8db6e2856ae6980289fcfc179531e15f71be98f0467c25f4061964ca0"
+    },
+    {
+      "path": "apps/studio-web/intelligence.html",
+      "sha256": "3006b7bac670dc649b04c53c67dc58d29332595f85529fedd4b77877e43178c5"
+    },
+    {
+      "path": "apps/studio-web/intelligence.mjs",
+      "sha256": "cec6bfd2c0bd2764678ec30f3787651ba956d7a7001ac907281e0aa4180925cd"
+    },
+    {
+      "path": "apps/studio-web/assemblyai.html",
+      "sha256": "2480184a379416851b22e799b87df29498c428cec4358f86516d0be83d77dbfa"
+    },
+    {
+      "path": "apps/studio-web/assemblyai.mjs",
+      "sha256": "c0c514b205eb803050c6b6875eb11663cc311387aa78c1a963455171573de11c"
+    },
+    {
+      "path": "apps/studio-web/tests/studio-shell.test.mjs",
+      "sha256": "a9ddb912976f240ff2716699b76f86b179bf6f0c966deef7cec5719c6046144b"
+    },
+    {
+      "path": "apps/studio-web/tests/secondary-runtime.test.mjs",
+      "sha256": "bd770a76a9bb30622bab02eaf1202202a803231dd6ef69252f897c0cd17048f3"
+    }
+  ],
+  "studio_tests": {
+    "tests": 75,
+    "pass": 75,
+    "fail": 0,
+    "skip": 0,
+    "runner_elapsed_ms": 630.264,
+    "wall_elapsed_ms": 715,
+    "log_path": "evidence/post-mvp-roadmap/phase-10/studio-ux-02/frontend-20261006T214554/studio-frontend-tests.log",
+    "sha256": "dd268c3ce0548ae99ac784aaf88457db81069f63142e7ffb1ad46615baaa1132"
+  },
+  "browser_visual_qa": "PENDING_ROOT_CURRENT_EVIDENCE",
+  "owner_uat": "PENDING",
+  "real_provider_calls": 0,
+  "application_data_writes": 0,
+  "screens": [
+    {
+      "screen": "dashboard",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "projects",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "queue",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "planning-dialog",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "calendar",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "intelligence",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "ci-findings",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "ci-ideas",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "ci-brief",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "library",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "profiles",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "settings",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "new-project",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "script",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "assets-project-empty",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "assets-project-populated",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "assets-global",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "storyboard",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "video-editor",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "video-review",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "brands",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "screen": "advanced-diagnostics",
+      "source_status": "IMPLEMENTED",
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768,
+          "status": "PENDING"
+        },
+        {
+          "width": 1920,
+          "height": 1080,
+          "status": "PENDING"
+        },
+        {
+          "width": 2560,
+          "height": 1440,
+          "status": "PENDING"
+        }
+      ]
+    }
+  ],
+  "gates": {
+    "PRODUCTION_INTELLIGENCE_READY": "YES_EXISTING_PARENT_GATE",
+    "DRAMAGIC_STUDIO_READY": "NO",
+    "PHASE10_READY": "NO",
+    "OWNER_UAT_REQUIRED": "YES"
+  }
+}

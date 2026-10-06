@@ -1,0 +1,12 @@
+[
+  {
+    "ProcessId": 27688,
+    "ParentProcessId": 14468,
+    "CommandLine": "\"C:\\NPD-Video-Factory\\runtime\\venv\\Scripts\\python.exe\" -X utf8 -m services.windows_native.server --config C:\\NPD-Video-Factory\\phase10-uat\\config.json --port 8030"
+  },
+  {
+    "ProcessId": 25840,
+    "ParentProcessId": 27688,
+    "CommandLine": "\"C:\\Users\\PC\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\" -X utf8 -m services.windows_native.server --config C:\\NPD-Video-Factory\\phase10-uat\\config.json --port 8030"
+  }
+]

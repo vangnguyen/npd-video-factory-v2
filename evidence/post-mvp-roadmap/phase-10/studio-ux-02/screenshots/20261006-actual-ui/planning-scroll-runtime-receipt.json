@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-06T16:00:56.6974640Z",
+  "timestamp_scope": "Receipt recorded after actual UI observations; not an exact click timestamp",
+  "method": "Opened existing Planning modal, clicked empty reviewer field to use normal scroll-into-view, captured, then closed without Save",
+  "observations": [
+    {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "dialog_scroll_top": 233,
+      "footer_top": 947.015625,
+      "footer_bottom": 987.015625,
+      "reviewer": "",
+      "image": "planning-footer-1920x1080-final.png",
+      "source": "CDP viewport PNG"
+    },
+    {
+      "viewport": [
+        1366,
+        768
+      ],
+      "dialog_scroll_top": 545,
+      "footer_top": 635.015625,
+      "footer_bottom": 675.015625,
+      "reviewer": "",
+      "image": "planning-footer-1366x768-native-final.jpg",
+      "source": "Original native browser JPEG"
+    }
+  ],
+  "after_close": {
+    "open_dialogs": 0,
+    "visible_video_review_rows": 5
+  },
+  "application_write_or_save": false,
+  "human_acceptance_created": false,
+  "passed": true
+}

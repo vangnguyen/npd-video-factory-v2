@@ -1,0 +1,18 @@
+{
+  "as_of": "2026-10-06T14:44:02.869704+00:00",
+  "head_at_start": "cd435328c5c37999a8c639922a89dc734c651e64",
+  "head_at_completion": "cd435328c5c37999a8c639922a89dc734c651e64",
+  "tests": 255,
+  "passed_count": 255,
+  "failures": 0,
+  "errors": 0,
+  "skipped_count": 0,
+  "skips": [],
+  "passed": true,
+  "elapsed_seconds": 157.875,
+  "command": "python -m unittest discover -s services/windows_native/tests -t . -p test_*.py -v",
+  "log_sha256": "f47d7e756994cca160a00de44cc3e042a491a7cade6f2f0f7ef0f90d2588bc22",
+  "provider_calls": 0,
+  "live_app_data_mutations": 0,
+  "scope": "Disposable test DBs, synthetic transport/provider fixtures and actual local FFmpeg tests; no production or Owner acceptance"
+}

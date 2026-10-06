@@ -1,0 +1,217 @@
+[
+  {
+    "path": "apps/studio-web/app.js",
+    "bytes": 12875,
+    "sha256": "907eff051085bf9f3ee33e546a2e88beb9ef195b8c468bf354c49f4c6356aa61"
+  },
+  {
+    "path": "apps/studio-web/assemblyai.html",
+    "bytes": 2892,
+    "sha256": "2480184a379416851b22e799b87df29498c428cec4358f86516d0be83d77dbfa"
+  },
+  {
+    "path": "apps/studio-web/assemblyai.mjs",
+    "bytes": 4866,
+    "sha256": "c0c514b205eb803050c6b6875eb11663cc311387aa78c1a963455171573de11c"
+  },
+  {
+    "path": "apps/studio-web/asset-picker.mjs",
+    "bytes": 15464,
+    "sha256": "2ac063c5b1006a12b9ddffaf9efba38dc50c5083a23ce93bfb28b05292eb1b70"
+  },
+  {
+    "path": "apps/studio-web/auth.mjs",
+    "bytes": 4793,
+    "sha256": "611a7df939ba82e57bf5a571e2b47e0250e6306b062abfb84f337d22f6066a7a"
+  },
+  {
+    "path": "apps/studio-web/Dockerfile",
+    "bytes": 490,
+    "sha256": "0a93d8a628d0e40690495f09a438e61eca14cc2e8286994c23919eb05f473bd0"
+  },
+  {
+    "path": "apps/studio-web/index.html",
+    "bytes": 6632,
+    "sha256": "1e220ca93e331154c1f08b76c0667ca40dad759a443842b7375bc1104e7bdbd3"
+  },
+  {
+    "path": "apps/studio-web/intelligence.html",
+    "bytes": 6748,
+    "sha256": "3006b7bac670dc649b04c53c67dc58d29332595f85529fedd4b77877e43178c5"
+  },
+  {
+    "path": "apps/studio-web/intelligence.mjs",
+    "bytes": 21884,
+    "sha256": "cec6bfd2c0bd2764678ec30f3787651ba956d7a7001ac907281e0aa4180925cd"
+  },
+  {
+    "path": "apps/studio-web/multi-input.mjs",
+    "bytes": 18876,
+    "sha256": "dd60925adeab3ad5a092a6bab137a1dfd13db30a413cd5232f48f22701a5fac9"
+  },
+  {
+    "path": "apps/studio-web/native.css",
+    "bytes": 8239,
+    "sha256": "a93fef1066545fbfdec163797944d990e5711f929d32017c8a59087630bb3342"
+  },
+  {
+    "path": "apps/studio-web/native.html",
+    "bytes": 22188,
+    "sha256": "a5c7d3ec650a849d89383ccc2d467b04e6d6d226c0186a36e4d5bd4f71690296"
+  },
+  {
+    "path": "apps/studio-web/native.mjs",
+    "bytes": 48166,
+    "sha256": "c5615ac11a0760f36ed520c59d01e88722a270f01e36f5cfc9563e5dacbb9bc2"
+  },
+  {
+    "path": "apps/studio-web/nginx.conf",
+    "bytes": 1070,
+    "sha256": "f2038d08a8a2d52188f164405968fa8af2d866ed25094bdf9db38be1a08cccff"
+  },
+  {
+    "path": "apps/studio-web/package-lock.json",
+    "bytes": 213,
+    "sha256": "75fd69e3257d7a1cad4b3d8934a5ff977e9fb3549a5ceaf42ddcdbe9c2c4a465"
+  },
+  {
+    "path": "apps/studio-web/package.json",
+    "bytes": 166,
+    "sha256": "ca7ea3bd0bd3f4ff5884d62bbc0faad404217541554723b709d8ea6cc96c8f5a"
+  },
+  {
+    "path": "apps/studio-web/production.css",
+    "bytes": 12754,
+    "sha256": "d43bed3920ccf44be371ca403d4c2508d93f729482c8659da07f3afef6df6350"
+  },
+  {
+    "path": "apps/studio-web/production.html",
+    "bytes": 11131,
+    "sha256": "5309f6a4503aa581c02c957ae39050c8b77ca56b6acb61a000375f9109e13b14"
+  },
+  {
+    "path": "apps/studio-web/production.mjs",
+    "bytes": 32679,
+    "sha256": "2eda7c3a4c9f19dfb5ba24b27229d8c6eb2198fab0bb13737cfe7ed44ea39917"
+  },
+  {
+    "path": "apps/studio-web/shot-studio.css",
+    "bytes": 10070,
+    "sha256": "840e7bb58b362ce89bb0c347e6e7752255868c7900b8fde4f32ffa2891f83e76"
+  },
+  {
+    "path": "apps/studio-web/shot-studio.mjs",
+    "bytes": 43287,
+    "sha256": "a40747a342da701efbd84f25afa25416c8377144b5c8ab7a93b5134a12f3c0a2"
+  },
+  {
+    "path": "apps/studio-web/studio-shell.css",
+    "bytes": 10171,
+    "sha256": "1418149cd56501581cca0a2d888e1df1cd5255e1cd5fd7cac901ba2803f12ed9"
+  },
+  {
+    "path": "apps/studio-web/studio-shell.mjs",
+    "bytes": 7027,
+    "sha256": "091baac31b4a5d859835df5a64c98b6a2d3cce7887c724c8fac3f7087e47ce6a"
+  },
+  {
+    "path": "apps/studio-web/studio-utils.mjs",
+    "bytes": 8430,
+    "sha256": "55fdc16a88bb780a0c924f03a96ee7777816f76b28a7046505a516c90425a4fd"
+  },
+  {
+    "path": "apps/studio-web/studio-workspace.css",
+    "bytes": 8490,
+    "sha256": "5dfea9f1014006180c0cadf827c148322af3b5f1d673ef22604497ac9ab7a316"
+  },
+  {
+    "path": "apps/studio-web/studio.css",
+    "bytes": 26632,
+    "sha256": "08f8a121fda8604e076844830499ca54e68ff170e9d893cbbe12b079765c7d0a"
+  },
+  {
+    "path": "apps/studio-web/studio.html",
+    "bytes": 27784,
+    "sha256": "c0694d8452c3f64f0dfdf402348a4746dd05f6aad515cdb8648ea444689b8a18"
+  },
+  {
+    "path": "apps/studio-web/studio.js",
+    "bytes": 61885,
+    "sha256": "b62e59de3c68fd55677e4aefb77705b1ac5693600f2da0ce2063ecda94315a83"
+  },
+  {
+    "path": "apps/studio-web/styles.css",
+    "bytes": 14562,
+    "sha256": "fc01e7cdb34868fe56b2d72d14dd83c133b9a243b0a779a0f2d87720a1bb19f3"
+  },
+  {
+    "path": "apps/studio-web/tests/auth.test.mjs",
+    "bytes": 680,
+    "sha256": "eb790efa7cbce17fde07011b2a1377980f64f0cec24c7ea9a6d06fbf6e995bc9"
+  },
+  {
+    "path": "apps/studio-web/tests/auto-edit-studio.test.mjs",
+    "bytes": 5574,
+    "sha256": "b7ffb57f63935c78af7279ad7f1deee90c4b73ff99ead941fdcb31866a21cb16"
+  },
+  {
+    "path": "apps/studio-web/tests/intelligence-runtime.test.mjs",
+    "bytes": 8283,
+    "sha256": "e9015d1949a60149e1f1cdc85fb238c0704eeea2cd12b48b63e1202f0666b729"
+  },
+  {
+    "path": "apps/studio-web/tests/intelligence.test.mjs",
+    "bytes": 1889,
+    "sha256": "cb812a47608f8edc5153cd6734bdda567186eb31d52f4f0cf4384ee08a8765b6"
+  },
+  {
+    "path": "apps/studio-web/tests/multi-input.test.mjs",
+    "bytes": 1292,
+    "sha256": "201e8239b1b9387f0df611b1d2140ba5a93d46d3fa853b1f870d9f076aa4867b"
+  },
+  {
+    "path": "apps/studio-web/tests/native-workflow.test.mjs",
+    "bytes": 5212,
+    "sha256": "a2f737cc27d4b50c2a707ea8604002d7d0b946c5a2679833112330ced08cc064"
+  },
+  {
+    "path": "apps/studio-web/tests/production.test.mjs",
+    "bytes": 3164,
+    "sha256": "f9b82bc744358dde6cc8f6f6f05969205cb6be96b21338565dee85e5d02cb8ad"
+  },
+  {
+    "path": "apps/studio-web/tests/secondary-runtime.test.mjs",
+    "bytes": 7803,
+    "sha256": "bd770a76a9bb30622bab02eaf1202202a803231dd6ef69252f897c0cd17048f3"
+  },
+  {
+    "path": "apps/studio-web/tests/shot-studio.test.mjs",
+    "bytes": 12546,
+    "sha256": "235d9eaf1f6537ca6796bf80eabfbdf9310210b93e2d56e0a6589fa65c68fdb9"
+  },
+  {
+    "path": "apps/studio-web/tests/studio-shell.test.mjs",
+    "bytes": 12073,
+    "sha256": "a9ddb912976f240ff2716699b76f86b179bf6f0c966deef7cec5719c6046144b"
+  },
+  {
+    "path": "apps/studio-web/tests/studio-workspace.test.mjs",
+    "bytes": 4002,
+    "sha256": "9541bae622d468f4ed9c4ef2fd2983a163d2715084a824185cd6ef328db8bf93"
+  },
+  {
+    "path": "apps/studio-web/tests/trend-radar.test.mjs",
+    "bytes": 2956,
+    "sha256": "6c44e69cc74d806f309ed0015a52e15009984614ae376f3ebc17769ee74519e2"
+  },
+  {
+    "path": "apps/studio-web/trend-utils.mjs",
+    "bytes": 3048,
+    "sha256": "cf87ac1e6a1e1314bed447138919d7665e476d18ab68a7febad09c2c351aa852"
+  },
+  {
+    "path": "apps/studio-web/video-preview.mjs",
+    "bytes": 1638,
+    "sha256": "6da8cc5204d282df4c076aab9581c94e6865e9112d54d055b6e5ed12efd93f8c"
+  }
+]

@@ -1,0 +1,460 @@
+TAP version 13
+# Subtest: human session header is attached without mutating caller headers
+ok 1 - human session header is attached without mutating caller headers
+  ---
+  duration_ms: 2.9888
+  type: 'test'
+  ...
+# Subtest: missing human session fails closed
+ok 2 - missing human session fails closed
+  ---
+  duration_ms: 0.7349
+  type: 'test'
+  ...
+# Subtest: formats editor timecodes and zoom deterministically
+ok 3 - formats editor timecodes and zoom deterministically
+  ---
+  duration_ms: 1.9088
+  type: 'test'
+  ...
+# Subtest: labels version-bound approval and production render states
+ok 4 - labels version-bound approval and production render states
+  ---
+  duration_ms: 2.574
+  type: 'test'
+  ...
+# Subtest: labels publishing dry-run truthfully and flattens gate evidence
+ok 5 - labels publishing dry-run truthfully and flattens gate evidence
+  ---
+  duration_ms: 0.5508
+  type: 'test'
+  ...
+# Subtest: layout failure offers an editing remedy, not a hidden text clamp
+ok 6 - layout failure offers an editing remedy, not a hidden text clamp
+  ---
+  duration_ms: 0.3357
+  type: 'test'
+  ...
+# Subtest: snaps pointer placement to quarter seconds
+ok 7 - snaps pointer placement to quarter seconds
+  ---
+  duration_ms: 0.2743
+  type: 'test'
+  ...
+# Subtest: computes timeline clip placement and respects track compatibility
+ok 8 - computes timeline clip placement and respects track compatibility
+  ---
+  duration_ms: 0.3354
+  type: 'test'
+  ...
+# Subtest: labels ready, stale and running previews without overstating readiness
+ok 9 - labels ready, stale and running previews without overstating readiness
+  ---
+  duration_ms: 0.2796
+  type: 'test'
+  ...
+# Subtest: renders analytics truth states and never turns missing metrics into zero
+ok 10 - renders analytics truth states and never turns missing metrics into zero
+  ---
+  duration_ms: 36.7643
+  type: 'test'
+  ...
+# Subtest: builds a stable V2-10 metric panel from normalized nullable metrics
+ok 11 - builds a stable V2-10 metric panel from normalized nullable metrics
+  ---
+  duration_ms: 2.033
+  type: 'test'
+  ...
+# Subtest: Production Intelligence requires an explicit boolean runtime capability; missing legacy flags preserve original approval contract
+ok 12 - Production Intelligence requires an explicit boolean runtime capability; missing legacy flags preserve original approval contract
+  ---
+  duration_ms: 2.5614
+  type: 'test'
+  ...
+# Subtest: Real CI module boot and approval preserve Phase9 when the session has no Phase10 capability
+ok 13 - Real CI module boot and approval preserve Phase9 when the session has no Phase10 capability
+  ---
+  duration_ms: 68.4845
+  type: 'test'
+  ...
+# Subtest: Real CI module enables Phase10 preflight only on an explicitly capable server
+ok 14 - Real CI module enables Phase10 preflight only on an explicitly capable server
+  ---
+  duration_ms: 9.458
+  type: 'test'
+  ...
+# Subtest: CI keeps its original stylesheet and has no mandatory Production Intelligence module import
+ok 15 - CI keeps its original stylesheet and has no mandatory Production Intelligence module import
+  ---
+  duration_ms: 2.1717
+  type: 'test'
+  ...
+# Subtest: Brief send needs explicit approval, saved edits, idle state and queue approval
+ok 16 - Brief send needs explicit approval, saved edits, idle state and queue approval
+  ---
+  duration_ms: 1.3731
+  type: 'test'
+  ...
+# Subtest: Brief review needs human acknowledgment and reviewer, and never uses a stale draft
+ok 17 - Brief review needs human acknowledgment and reviewer, and never uses a stale draft
+  ---
+  duration_ms: 0.3178
+  type: 'test'
+  ...
+# Subtest: Regenerated candidates keep only the current generation in active selection
+ok 18 - Regenerated candidates keep only the current generation in active selection
+  ---
+  duration_ms: 1.2569
+  type: 'test'
+  ...
+# Subtest: Untrusted research renders as escaped text and links allow only public HTTPS syntax
+ok 19 - Untrusted research renders as escaped text and links allow only public HTTPS syntax
+  ---
+  duration_ms: 0.4213
+  type: 'test'
+  ...
+# Subtest: storyboard source identity is explicit and never a fake analysis
+ok 20 - storyboard source identity is explicit and never a fake analysis
+  ---
+  duration_ms: 1.3716
+  type: 'test'
+  ...
+# Subtest: proposal cannot overwrite unsaved kind/script/original/facts
+ok 21 - proposal cannot overwrite unsaved kind/script/original/facts
+  ---
+  duration_ms: 0.4364
+  type: 'test'
+  ...
+# Subtest: Script-only approval is visible and leaves video production blocked
+ok 22 - Script-only approval is visible and leaves video production blocked
+  ---
+  duration_ms: 1.9145
+  type: 'test'
+  ...
+# Subtest: Render UI requires current approval, saved edits and idle job
+ok 23 - Render UI requires current approval, saved edits and idle job
+  ---
+  duration_ms: 0.4459
+  type: 'test'
+  ...
+# Subtest: Each scene requires one source from its project library
+ok 24 - Each scene requires one source from its project library
+  ---
+  duration_ms: 0.5665
+  type: 'test'
+  ...
+# Subtest: Legacy image projects retain all scene choices without rewriting snapshot
+ok 25 - Legacy image projects retain all scene choices without rewriting snapshot
+  ---
+  duration_ms: 0.3132
+  type: 'test'
+  ...
+# Subtest: Local multi-file selection accepts only supported image and video extensions
+ok 26 - Local multi-file selection accepts only supported image and video extensions
+  ---
+  duration_ms: 0.3803
+  type: 'test'
+  ...
+# Subtest: Only successful video bound to current approved version is visible
+ok 27 - Only successful video bound to current approved version is visible
+  ---
+  duration_ms: 0.3133
+  type: 'test'
+  ...
+# Subtest: Retrying job blocks editing and another render until its receipt completes
+ok 28 - Retrying job blocks editing and another render until its receipt completes
+  ---
+  duration_ms: 0.2147
+  type: 'test'
+  ...
+# Subtest: Document chooser passes declared MIME while server must validate actual content
+ok 29 - Document chooser passes declared MIME while server must validate actual content
+  ---
+  duration_ms: 0.7404
+  type: 'test'
+  ...
+# Subtest: Changed source needs new analysis while existing source keeps its result
+ok 30 - Changed source needs new analysis while existing source keeps its result
+  ---
+  duration_ms: 0.3666
+  type: 'test'
+  ...
+# Subtest: Video/image changes reset incompatible motion and source time
+ok 31 - Video/image changes reset incompatible motion and source time
+  ---
+  duration_ms: 1.4158
+  type: 'test'
+  ...
+# Subtest: Final download requires a review of the same video hash and revision
+ok 32 - Final download requires a review of the same video hash and revision
+  ---
+  duration_ms: 0.2786
+  type: 'test'
+  ...
+# Subtest: A human opening new content from a profile starts fresh while explicit run links remain authoritative
+ok 33 - A human opening new content from a profile starts fresh while explicit run links remain authoritative
+  ---
+  duration_ms: 1.504
+  type: 'test'
+  ...
+# Subtest: Phase10 brief approval needs exact current preflight and reasoned duplicate acknowledgment
+ok 34 - Phase10 brief approval needs exact current preflight and reasoned duplicate acknowledgment
+  ---
+  duration_ms: 0.3133
+  type: 'test'
+  ...
+# Subtest: Explicit batch selections carry immutable content binding and local planning version
+ok 35 - Explicit batch selections carry immutable content binding and local planning version
+  ---
+  duration_ms: 2.5902
+  type: 'test'
+  ...
+# Subtest: Planning calendar keeps undated work visible and never changes underlying content
+ok 36 - Planning calendar keeps undated work visible and never changes underlying content
+  ---
+  duration_ms: 22.1309
+  type: 'test'
+  ...
+# Subtest: Staff filters can retain archived projects explicitly without hiding current review stages
+ok 37 - Staff filters can retain archived projects explicitly without hiding current review stages
+  ---
+  duration_ms: 0.4878
+  type: 'test'
+  ...
+# Subtest: Real Production boot opens dashboard with read-only requests and original batch gates
+ok 38 - Real Production boot opens dashboard with read-only requests and original batch gates
+  ---
+  duration_ms: 45.8679
+  type: 'test'
+  ...
+# Subtest: Real Production boot opens projects with read-only requests and original batch gates
+ok 39 - Real Production boot opens projects with read-only requests and original batch gates
+  ---
+  duration_ms: 8.0059
+  type: 'test'
+  ...
+# Subtest: Real Production boot opens queue with read-only requests and original batch gates
+ok 40 - Real Production boot opens queue with read-only requests and original batch gates
+  ---
+  duration_ms: 4.7931
+  type: 'test'
+  ...
+# Subtest: Real Production boot opens library with read-only requests and original batch gates
+ok 41 - Real Production boot opens library with read-only requests and original batch gates
+  ---
+  duration_ms: 4.7167
+  type: 'test'
+  ...
+# Subtest: AssemblyAI startup and refresh read status without credential/provider submissions
+ok 42 - AssemblyAI startup and refresh read status without credential/provider submissions
+  ---
+  duration_ms: 2.9519
+  type: 'test'
+  ...
+# Subtest: Unknown connection state keeps credential submissions disabled until a successful read
+ok 43 - Unknown connection state keeps credential submissions disabled until a successful read
+  ---
+  duration_ms: 1.9013
+  type: 'test'
+  ...
+# Subtest: Shot view retains server identities and does not invent editable state for old projects
+ok 44 - Shot view retains server identities and does not invent editable state for old projects
+  ---
+  duration_ms: 2.5158
+  type: 'test'
+  ...
+# Subtest: Shot mutation gates reject dirty, busy, archived and active-production projects
+ok 45 - Shot mutation gates reject dirty, busy, archived and active-production projects
+  ---
+  duration_ms: 0.3709
+  type: 'test'
+  ...
+# Subtest: A narration edit sends only narration and never broadens mutation scope
+ok 46 - A narration edit sends only narration and never broadens mutation scope
+  ---
+  duration_ms: 1.087
+  type: 'test'
+  ...
+# Subtest: Keyboard reorder retains every stable shot identity exactly once
+ok 47 - Keyboard reorder retains every stable shot identity exactly once
+  ---
+  duration_ms: 1.3208
+  type: 'test'
+  ...
+# Subtest: AI application requires current binding and a single selected-shot operation with known dependencies
+ok 48 - AI application requires current binding and a single selected-shot operation with known dependencies
+  ---
+  duration_ms: 0.5048
+  type: 'test'
+  ...
+# Subtest: Silent visual proxy labels never imply voice or final acceptance
+ok 49 - Silent visual proxy labels never imply voice or final acceptance
+  ---
+  duration_ms: 0.4036
+  type: 'test'
+  ...
+# Subtest: Script-only review requires a saved script, reviewer and an explicit human acknowledgment
+ok 50 - Script-only review requires a saved script, reviewer and an explicit human acknowledgment
+  ---
+  duration_ms: 0.3768
+  type: 'test'
+  ...
+# Subtest: Legacy current combined approval retains script authority without inventing a script-only review
+ok 51 - Legacy current combined approval retains script authority without inventing a script-only review
+  ---
+  duration_ms: 0.3454
+  type: 'test'
+  ...
+# Subtest: A preview from another revision or timeline cannot enter playback
+ok 52 - A preview from another revision or timeline cannot enter playback
+  ---
+  duration_ms: 0.2064
+  type: 'test'
+  ...
+# Subtest: Studio final review is available only for a current approved active project render
+ok 53 - Studio final review is available only for a current approved active project render
+  ---
+  duration_ms: 0.2815
+  type: 'test'
+  ...
+# Subtest: The staged shell preserves every legacy native control target without duplicate identities
+ok 54 - The staged shell preserves every legacy native control target without duplicate identities
+  ---
+  duration_ms: 1.4958
+  type: 'test'
+  ...
+# Subtest: Old native sessions never request the optional shot module or stylesheet
+ok 55 - Old native sessions never request the optional shot module or stylesheet
+  ---
+  duration_ms: 0.9572
+  type: 'test'
+  ...
+# Subtest: Legacy fallback restores the original workspace without moving its render or review controls
+ok 56 - Legacy fallback restores the original workspace without moving its render or review controls
+  ---
+  duration_ms: 0.354
+  type: 'test'
+  ...
+# Subtest: Voice-quality catalog is strictly capability gated and never selects a policy on load
+ok 57 - Voice-quality catalog is strictly capability gated and never selects a policy on load
+  ---
+  duration_ms: 0.2978
+  type: 'test'
+  ...
+# Subtest: Applying a known voice-quality policy requires saved idle active project state
+ok 58 - Applying a known voice-quality policy requires saved idle active project state
+  ---
+  duration_ms: 0.3891
+  type: 'test'
+  ...
+# Subtest: Shared navigation is stable across page contexts and New starts an explicit fresh project
+ok 59 - Shared navigation is stable across page contexts and New starts an explicit fresh project
+  ---
+  duration_ms: 2.2381
+  type: 'test'
+  ...
+# Subtest: Shell moves certified Native nodes without duplicating controls or losing handlers
+ok 60 - Shell moves certified Native nodes without duplicating controls or losing handlers
+  ---
+  duration_ms: 4.7138
+  type: 'test'
+  ...
+# Subtest: CI primary action moves into PageHeader using the original callback node
+ok 61 - CI primary action moves into PageHeader using the original callback node
+  ---
+  duration_ms: 0.8638
+  type: 'test'
+  ...
+# Subtest: Every secondary page makes zero optional imports/styles on a legacy or false capability
+ok 62 - Every secondary page makes zero optional imports/styles on a legacy or false capability
+  ---
+  duration_ms: 0.4218
+  type: 'test'
+  ...
+# Subtest: Capable secondary startup installs a single shared style/header shell and degrades safely when unavailable
+ok 63 - Capable secondary startup installs a single shared style/header shell and degrades safely when unavailable
+  ---
+  duration_ms: 0.4233
+  type: 'test'
+  ...
+# Subtest: Production view/filter state distinguishes dashboard, projects and exact human review steps
+ok 64 - Production view/filter state distinguishes dashboard, projects and exact human review steps
+  ---
+  duration_ms: 0.3936
+  type: 'test'
+  ...
+# Subtest: Final Videos displays measured saved resolution only and approved local files stay authoritative
+ok 65 - Final Videos displays measured saved resolution only and approved local files stay authoritative
+  ---
+  duration_ms: 0.5578
+  type: 'test'
+  ...
+# Subtest: Secondary HTML has no unconditional dependency on assets unavailable from the accepted old server
+ok 66 - Secondary HTML has no unconditional dependency on assets unavailable from the accepted old server
+  ---
+  duration_ms: 9.765
+  type: 'test'
+  ...
+# Subtest: Preview dimensions follow saved portrait/landscape templates and measured MP4 metadata
+ok 67 - Preview dimensions follow saved portrait/landscape templates and measured MP4 metadata
+  ---
+  duration_ms: 3.2729
+  type: 'test'
+  ...
+# Subtest: New media-first project exposes Assets before any proposal or render exists
+ok 68 - New media-first project exposes Assets before any proposal or render exists
+  ---
+  duration_ms: 0.3626
+  type: 'test'
+  ...
+# Subtest: One picker filters original names/types/tags and preserves source objects
+ok 69 - One picker filters original names/types/tags and preserves source objects
+  ---
+  duration_ms: 1.5329
+  type: 'test'
+  ...
+# Subtest: Asset cards expose selection, provenance and guarded association removal without HTML injection
+ok 70 - Asset cards expose selection, provenance and guarded association removal without HTML injection
+  ---
+  duration_ms: 0.6664
+  type: 'test'
+  ...
+# Subtest: Legacy Native server never needs new optional UX assets during startup
+ok 71 - Legacy Native server never needs new optional UX assets during startup
+  ---
+  duration_ms: 1.5064
+  type: 'test'
+  ...
+# Subtest: declares all eight required radar views
+ok 72 - declares all eight required radar views
+  ---
+  duration_ms: 0.9265
+  type: 'test'
+  ...
+# Subtest: radar view rules remain deterministic and explainable
+ok 73 - radar view rules remain deterministic and explainable
+  ---
+  duration_ms: 0.4877
+  type: 'test'
+  ...
+# Subtest: filters by view, platform and search while sorting by estimate
+ok 74 - filters by view, platform and search while sorting by estimate
+  ---
+  duration_ms: 1.5557
+  type: 'test'
+  ...
+# Subtest: formats scores, VND and Vietnamese lifecycle labels
+ok 75 - formats scores, VND and Vietnamese lifecycle labels
+  ---
+  duration_ms: 19.4135
+  type: 'test'
+  ...
+1..75
+# tests 75
+# suites 0
+# pass 75
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 313.3895

@@ -1,0 +1,40 @@
+{
+  "at": "2026-10-06T15:47:03.6422378Z",
+  "purpose": "Actual already-open Production Refresh session recovery UAT",
+  "stopped": [
+    {
+      "ProcessId": 31788,
+      "CommandLine": "\"C:\\NPD-Video-Factory\\runtime\\venv\\Scripts\\python.exe\" -X utf8 -m services.windows_native.server --config C:\\NPD-Video-Factory\\phase10-uat\\config.json --port 8030"
+    },
+    {
+      "ProcessId": 25108,
+      "CommandLine": "\"C:\\Users\\PC\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\" -X utf8 -m services.windows_native.server --config C:\\NPD-Video-Factory\\phase10-uat\\config.json --port 8030"
+    }
+  ],
+  "started_wrapper_pid": 6096,
+  "main_before": [
+    {
+      "ProcessId": 22112,
+      "CreationDate": "2026-10-06T16:59:46.698017+07:00"
+    },
+    {
+      "ProcessId": 31756,
+      "CreationDate": "2026-10-06T16:59:46.74869+07:00"
+    }
+  ],
+  "main_after": [
+    {
+      "ProcessId": 22112,
+      "CreationDate": "2026-10-06T16:59:46.698017+07:00"
+    },
+    {
+      "ProcessId": 31756,
+      "CreationDate": "2026-10-06T16:59:46.74869+07:00"
+    }
+  ],
+  "main_processes_exact": true,
+  "stdout": "C:\\NPD-Video-Factory\\phase10-uat\\server-refresh-uat-20261006T154703Z.stdout.log",
+  "stderr": "C:\\NPD-Video-Factory\\phase10-uat\\server-refresh-uat-20261006T154703Z.stderr.log",
+  "baseline": "20261006T153742472384Z-after-e88dbea7 restart summary; all8 exact, zeroactivejobs, no app mutations since",
+  "head": "51633c1ed0fc2d2904a15f09761365791a15efa9"
+}

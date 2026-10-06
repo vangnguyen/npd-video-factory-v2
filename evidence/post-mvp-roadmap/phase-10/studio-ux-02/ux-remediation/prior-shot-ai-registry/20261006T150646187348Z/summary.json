@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "registry_files": 7,
+  "reference_count": 114,
+  "failed_references": [],
+  "checks": {
+    "all_referenced_byte_hashes_preserved": true,
+    "no_conflicting_hash_claims": true,
+    "saved_operations13": true,
+    "required_edit_types5": true,
+    "three_real_provider_proposals_and_explicit_applies": true,
+    "undo_proof_preserved": true,
+    "historical_restart5_pass": true,
+    "no_owner_personal_acceptance_claim_from_shot_or_AI": true
+  },
+  "registry_sha256": "2fcbc0d11ef873e4cc98c56344a3e18ae9d328ad21f462b4c6bcb3830cd05454"
+}

@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-06T14:55:40.728Z",
+  "actor": "Codex UI transport/playback QA; not Owner watch/listen acceptance",
+  "beforePause": {
+    "currentTime": 19.660993,
+    "duration": 22.633333,
+    "height": 1920,
+    "paused": false,
+    "readyState": 4,
+    "src": "http://127.0.0.1:8030/api/jobs/24cc405c95eb4a4a9b3d68b665cbc45e/video",
+    "width": 1080
+  },
+  "afterPause": {
+    "currentTime": 19.678017,
+    "paused": true
+  },
+  "humanAcceptance": "PENDING"
+}

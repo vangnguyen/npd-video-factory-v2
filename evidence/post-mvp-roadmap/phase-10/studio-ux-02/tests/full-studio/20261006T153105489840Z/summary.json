@@ -1,0 +1,43 @@
+{
+  "as_of": "2026-10-06T15:31:05.973745+00:00",
+  "implementation_head": "0bd1615b2e13437d6bc1f904ed538f16466fc0a6",
+  "head_at_completion": "0bd1615b2e13437d6bc1f904ed538f16466fc0a6",
+  "working_tree_source_fingerprint_before": "0b1dbadda442237ffe29651eb7652e90709a241630a3caf8f0b8199436173750",
+  "working_tree_source_fingerprint_after": "0b1dbadda442237ffe29651eb7652e90709a241630a3caf8f0b8199436173750",
+  "working_tree_source_unchanged": true,
+  "source_manifest_count": 43,
+  "counts": {
+    "tests": 75,
+    "suites": 0,
+    "pass": 75,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "passed": true,
+  "exit_code": 0,
+  "elapsed_seconds": 0.453,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "--test",
+    "--test-reporter=tap",
+    "tests/auth.test.mjs",
+    "tests/auto-edit-studio.test.mjs",
+    "tests/intelligence-runtime.test.mjs",
+    "tests/intelligence.test.mjs",
+    "tests/multi-input.test.mjs",
+    "tests/native-workflow.test.mjs",
+    "tests/production.test.mjs",
+    "tests/secondary-runtime.test.mjs",
+    "tests/shot-studio.test.mjs",
+    "tests/studio-shell.test.mjs",
+    "tests/studio-workspace.test.mjs",
+    "tests/trend-radar.test.mjs"
+  ],
+  "cwd": "C:\\NPD-Video-Factory\\source\\apps\\studio-web",
+  "log_sha256": "91cac7f64fb9f4a65c438e6d8f010ccaed1212ac0686c62ccb4a589f22230c48",
+  "provider_calls": 0,
+  "app_data_mutations": 0,
+  "scope": "Final full frontend unit suite after focus, stage/review guards, eager bounded thumbnails, fit-duration and shared alignment fixes; no browser/Owner acceptance"
+}

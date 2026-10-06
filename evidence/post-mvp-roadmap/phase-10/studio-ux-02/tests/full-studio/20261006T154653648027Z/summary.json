@@ -1,0 +1,43 @@
+{
+  "as_of": "2026-10-06T15:46:54.211139+00:00",
+  "implementation_head": "51633c1ed0fc2d2904a15f09761365791a15efa9",
+  "head_at_completion": "51633c1ed0fc2d2904a15f09761365791a15efa9",
+  "working_tree_source_fingerprint_before": "151c9d2b1dd124e15daa914560c1fd826f098b571da6e9145a60cb276c71ba5d",
+  "working_tree_source_fingerprint_after": "151c9d2b1dd124e15daa914560c1fd826f098b571da6e9145a60cb276c71ba5d",
+  "working_tree_source_unchanged": true,
+  "source_manifest_count": 43,
+  "counts": {
+    "tests": 79,
+    "suites": 0,
+    "pass": 79,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "passed": true,
+  "exit_code": 0,
+  "elapsed_seconds": 0.429,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "--test",
+    "--test-reporter=tap",
+    "tests/auth.test.mjs",
+    "tests/auto-edit-studio.test.mjs",
+    "tests/intelligence-runtime.test.mjs",
+    "tests/intelligence.test.mjs",
+    "tests/multi-input.test.mjs",
+    "tests/native-workflow.test.mjs",
+    "tests/production.test.mjs",
+    "tests/secondary-runtime.test.mjs",
+    "tests/shot-studio.test.mjs",
+    "tests/studio-shell.test.mjs",
+    "tests/studio-workspace.test.mjs",
+    "tests/trend-radar.test.mjs"
+  ],
+  "cwd": "C:\\NPD-Video-Factory\\source\\apps\\studio-web",
+  "log_sha256": "4146d74832d389c8d43fd47d51f2098fc79365260d8893df5d4f041d825727a1",
+  "provider_calls": 0,
+  "app_data_mutations": 0,
+  "scope": "Final full frontend unit suite including four actual-module explicit Refresh/session rotation cases and shared shot-card block layout fix; no browser/Owner acceptance"
+}

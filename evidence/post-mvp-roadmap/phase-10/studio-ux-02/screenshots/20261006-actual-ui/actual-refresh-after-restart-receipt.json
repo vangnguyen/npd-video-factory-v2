@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-06T15:47:34.443Z",
+  "processReceipt": "../../ux-remediation/final-restart/actual-refresh-session-restart.json",
+  "method": "Clicked existing Productionpage Làm mới after actual8030 restart; no browser reload or navigation",
+  "observed": {
+    "ack": false,
+    "error": false,
+    "message": "Đã làm mới dữ liệu.",
+    "refreshDisabled": false,
+    "reviewer": "",
+    "rows": 5,
+    "stage": "VIDEO_REVIEW",
+    "url": "http://127.0.0.1:8030/production?view=queue",
+    "visibleTitles": [
+      "Bài đăng tháng 8 nói gì về quý II?",
+      "Đọc tin bất động sản theo thời điểm",
+      "Khởi động chưa phải đã đạt",
+      "Lời kỳ vọng hay dữ kiện?",
+      "Con số sự kiện nói lên điều gì?"
+    ]
+  },
+  "passed": true
+}

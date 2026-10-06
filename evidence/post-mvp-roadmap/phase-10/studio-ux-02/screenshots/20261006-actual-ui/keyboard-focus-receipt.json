@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-06T15:31:23.421Z",
+  "case": "actual picker Escape closes and returns to choose-asset control with visible keyboard outline",
+  "observed": {
+    "dialogs": 0,
+    "focus": "shot-choose-asset",
+    "focusOutline": "solid"
+  },
+  "scope": "UI read-only; no selection confirmed or Owner approval submitted"
+}
