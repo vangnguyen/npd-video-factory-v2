@@ -1,0 +1,1 @@
+{"command":["C:\\NPD-Video-Factory\\runtime\\venv\\Scripts\\python.exe","-X","utf8","-m","unittest","discover","-s","services/windows_native/tests","-v"],"commit":false,"live_provider_calls_authorized":false,"purpose":"Full Native regression suite after conservative measured onset-boundary disambiguation","service_restart":false,"started_at":"2026-10-06T12:45:19.873582+00:00"}

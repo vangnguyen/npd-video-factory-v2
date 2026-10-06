@@ -277,6 +277,46 @@ class WarmVoiceTests(unittest.TestCase):
                 warm.generate_offline(out)
             engine.assert_not_called()
 
+    def test_touching_exact_onset_resolves_previous_word_internal_pause_only_with_containing_interval(self):
+        words = [{'text': 'Nguồn.', 'start_seconds': .1, 'end_seconds': .6},
+                 {'text': 'Đây', 'start_seconds': .6, 'end_seconds': .8},
+                 {'text': 'là', 'start_seconds': .8, 'end_seconds': .9}]
+        audio = np.ones(48000) * .1
+        audio[round(.35 * 48000):round(.44 * 48000)] = 0
+        audio[round(.55 * 48000):round(.65 * 48000)] = 0
+        boundary = warm.trim_boundary(self.plans[1], audio, synthetic_timing(self.plans[1], words))
+        self.assertEqual(boundary['method'], 'unique_measured_60ms_quiet_gap_containing_touching_asr_target_onset')
+        self.assertAlmostEqual(boundary['cut_seconds'], .6)
+        self.assertEqual(len(boundary['nearby_measured_quiet_gaps_before_onset_resolution']), 2)
+        self.assertEqual(len(boundary['measured_quiet_gaps']), 1)
+        self.assertFalse(boundary['full_target_word_accuracy_confirmed'])
+
+    def test_multiple_touching_pauses_without_unique_interval_containing_onset_still_fail(self):
+        words = [{'text': 'Nguồn.', 'start_seconds': .1, 'end_seconds': .6},
+                 {'text': 'Đây', 'start_seconds': .6, 'end_seconds': .9},
+                 {'text': 'là', 'start_seconds': .9, 'end_seconds': .95}]
+        audio = np.ones(48000) * .1
+        audio[round(.35 * 48000):round(.44 * 48000)] = 0
+        audio[round(.7 * 48000):round(.79 * 48000)] = 0
+        with self.assertRaisesRegex(WorkflowError, 'WARM_VOICE_TOUCHING_BOUNDARY_REVIEW_REQUIRED'):
+            warm.trim_boundary(self.plans[1], audio, synthetic_timing(self.plans[1], words))
+
+    def test_touching_single_gap_keeps_existing_cut_and_short_quiet_gap_is_rejected(self):
+        words = [{'text': 'Nguồn.', 'start_seconds': .1, 'end_seconds': .6},
+                 {'text': 'Đây', 'start_seconds': .6, 'end_seconds': .8},
+                 {'text': 'là', 'start_seconds': .8, 'end_seconds': .9}]
+        audio = np.ones(48000) * .1
+        timing = synthetic_timing(self.plans[1], words)
+        audio[round(.49 * 48000):round(.57 * 48000)] = 0
+        boundary = warm.trim_boundary(self.plans[1], audio, timing)
+        self.assertEqual(boundary['method'], 'unique_measured_60ms_quiet_gap_near_touching_asr_words')
+        self.assertAlmostEqual(boundary['cut_seconds'], .53)
+        self.assertNotIn('nearby_measured_quiet_gaps_before_onset_resolution', boundary)
+        audio[:] = .1
+        audio[round(.58 * 48000):round(.62 * 48000)] = 0
+        with self.assertRaisesRegex(WorkflowError, 'WARM_VOICE_TOUCHING_BOUNDARY_REVIEW_REQUIRED'):
+            warm.trim_boundary(self.plans[1], audio, timing)
+
     def test_separate_offline_child_resets_seed_per_scene_and_blocks_network(self):
         out = self.root / 'attempt'; out.mkdir()
         self.generation_input(out)

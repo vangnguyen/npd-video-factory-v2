@@ -452,10 +452,17 @@ def trim_boundary(plan, audio, timing):
     elif gap < .04:
         pauses = [p for p in quiet_gaps(audio, previous["start_seconds"], first["end_seconds"])
                   if abs((p["start_seconds"] + p["end_seconds"]) / 2 - first["start_seconds"]) <= .25]
+        nearby_pauses = pauses
+        if len(pauses) > 1:
+            # A pause inside the previous word can fall within the broad ASR
+            # tolerance. Resolve only with the actual onset inside exactly one
+            # measured quiet interval; keep the existing single-gap rule intact.
+            pauses = [p for p in pauses if p["start_seconds"] <= first["start_seconds"] <= p["end_seconds"]]
         if len(pauses) != 1:
             raise WorkflowError("WARM_VOICE_TOUCHING_BOUNDARY_REVIEW_REQUIRED")
         cut = (pauses[0]["start_seconds"] + pauses[0]["end_seconds"]) / 2
-        method = "unique_measured_60ms_quiet_gap_near_touching_asr_words"
+        method = ("unique_measured_60ms_quiet_gap_containing_touching_asr_target_onset" if len(nearby_pauses) > 1
+                  else "unique_measured_60ms_quiet_gap_near_touching_asr_words")
     else:
         if gap > 2:
             raise WorkflowError("WARM_VOICE_BOUNDARY_REVIEW_REQUIRED")
@@ -466,7 +473,7 @@ def trim_boundary(plan, audio, timing):
     if not 0 < samples < len(audio):
         raise WorkflowError("WARM_VOICE_CUT_OUTSIDE_SOURCE")
     actual = " ".join(t for t, _ in expanded[flat:])
-    return {"method": method, "cut_seconds": cut, "removed_samples": samples,
+    result = {"method": method, "cut_seconds": cut, "removed_samples": samples,
             "removed_context": plan["context_text"], "matched_opening_tokens": opening_matches[0]["matched_opening_tokens"],
             "opening_matches": opening_matches,
             "onset_asr_disputed": disputed,
@@ -477,6 +484,10 @@ def trim_boundary(plan, audio, timing):
             "raw_text_token_similarity_diagnostic": round(difflib.SequenceMatcher(a=expected, b=tokens(actual), autojunk=False).ratio(), 4),
             "asr_disagreement_is_not_proof_of_an_audio_word_error": True,
             "full_target_word_accuracy_confirmed": False, "human_audio_accepted": False}
+    if method == "unique_measured_60ms_quiet_gap_containing_touching_asr_target_onset":
+        result["nearby_measured_quiet_gaps_before_onset_resolution"] = nearby_pauses
+        result["onset_resolution_requires_unique_containing_quiet_interval"] = True
+    return result
 
 
 def synthesize_warm(config, snapshot, out, policy):
