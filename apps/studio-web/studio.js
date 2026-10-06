@@ -16,6 +16,8 @@ import {
 } from "/studio-utils.mjs?v=0.12.0";
 import { authenticatedFetch, ensureAuthenticatedSession } from "/auth.mjs";
 import { initializeMultiInput } from "/multi-input.mjs";
+import { transcriptEditPayload } from "/transcript-editor.mjs";
+import { timelineHistory,timelineTranscriptId } from "/timeline-history.mjs";
 
 const state = {
   workspaceId: null,
@@ -44,6 +46,8 @@ const state = {
   snapping: true,
   playhead: 0,
   redoStack: [],
+  undoStack: [],
+  transcriptDrafts: new Map(),
   draggingClipId: null,
   pollTimer: null,
   productionPollTimer: null,
@@ -94,6 +98,12 @@ function setSaveStatus(label, tone = "safe") {
 function activeAnalysis() {
   if (!state.timeline) return state.analyses.find((item) => item.status === "succeeded") ?? null;
   return state.analyses.find((item) => item.analysis_id === state.timeline.source_analysis_id) ?? null;
+}
+async function syncTimelineTranscript(){
+  const id=timelineTranscriptId(state.timeline),analysis=activeAnalysis();
+  if(!id||!analysis||analysis.transcript?.transcript_id===id)return;
+  const selected=await api(`/api/v1/projects/${state.projectId}/analyses/${analysis.analysis_id}?transcript_id=${encodeURIComponent(id)}`);
+  state.analyses=state.analyses.map(item=>item.analysis_id===selected.analysis_id?selected:item);
 }
 
 function activeMediaPlan() {
@@ -170,6 +180,7 @@ async function loadProject({ quiet = false } = {}) {
       publishIdempotencyKey: null,
     });
     state.versions = timeline ? await api(`/api/v1/projects/${state.projectId}/timeline/versions`) : [];
+    await syncTimelineTranscript();
     state.preview = null;
     state.productionPackage = null;
     state.activeProductionRender = null;
@@ -263,7 +274,10 @@ function renderBrowser() {
   } else if (state.panelTab === "transcript") {
     const segments = (analysis?.transcript?.segments ?? []).filter((item) => matches(item.text));
     panel.innerHTML = segments.length ? segments.map((item) => `
-      <article class="transcript-item" data-seek="${item.start_seconds}"><time>${formatTime(item.start_seconds)} → ${formatTime(item.end_seconds)}</time><p>${escapeHtml(item.text)}</p></article>
+      <article class="transcript-item"><button type="button" data-seek="${item.start_seconds}">${formatTime(item.start_seconds)} → ${formatTime(item.end_seconds)}</button>
+      <form data-transcript-edit="${escapeHtml(item.segment_id)}" data-transcript-version="${analysis.transcript.version}" data-transcript-id="${escapeHtml(analysis.transcript.transcript_id)}">
+      <label>Lời nhận diện · bản ${analysis.transcript.version}<textarea data-transcript-text="${escapeHtml(item.segment_id)}" required maxlength="4000">${escapeHtml(state.transcriptDrafts.get(item.segment_id)??item.text)}</textarea></label>
+      <button type="submit">Lưu phiên bản mới</button><small>Sửa lời nhận diện giữ tệp gốc, yêu cầu duyệt lại và bỏ dấu thời gian từng từ của đoạn đã sửa.</small></form></article>
     `).join("") : browserEmpty("Project chưa có transcript hoặc không khớp tìm kiếm.");
   } else if (state.panelTab === "scenes") {
     const scenes = (analysis?.scenes ?? []).filter((item) => matches(`${item.semantic_label} ${item.description}`));
@@ -283,6 +297,7 @@ function browserEmpty(message) {
 }
 
 function renderTimeline() {
+  const history=timelineHistory(state.versions,state.timeline.current_version);state.undoStack=history.undo;state.redoStack=history.redo;
   const snapshot = state.timeline.snapshot;
   const pps = pixelsPerSecond(state.zoom);
   const laneWidth = Math.max(650, snapshot.duration_seconds * pps + 120);
@@ -316,7 +331,7 @@ function renderTimeline() {
   $("#playhead-range").value = state.playhead;
   $("#playhead-label").textContent = formatTime(state.playhead);
   $("#duration-label").textContent = formatTime(snapshot.duration_seconds);
-  $("#undo-button").disabled = state.timeline.current_version <= 1;
+  $("#undo-button").disabled = !state.undoStack.length;
   $("#redo-button").disabled = !state.redoStack.length;
 }
 
@@ -1042,7 +1057,6 @@ async function restoreVersion(targetVersion, { isUndo = false } = {}) {
         actor_ref: "studio-user",
       }),
     });
-    if (isUndo) state.redoStack.push(previousVersion);
     state.preview = state.preview ? { ...state.preview, status: "stale", valid_for_current_timeline: false } : null;
     if (state.productionPackage) {
       state.productionPackage = {
@@ -1056,6 +1070,7 @@ async function restoreVersion(targetVersion, { isUndo = false } = {}) {
     }
     state.versions = await api(`/api/v1/projects/${state.projectId}/timeline/versions`);
     state.selectedClipId = null;
+    await syncTimelineTranscript();
     render();
     setSaveStatus("Đã lưu", "safe");
   } catch (error) {
@@ -1187,6 +1202,18 @@ $("#browser-search").addEventListener("input", (event) => { state.query = event.
 $("#browser-content").addEventListener("click", (event) => {
   const seek = event.target.closest("[data-seek]");
   if (seek) setPlayhead(Number(seek.dataset.seek));
+});
+$("#browser-content").addEventListener('input',event=>{const input=event.target.closest('[data-transcript-text]');if(input)state.transcriptDrafts.set(input.dataset.transcriptText,input.value);});
+$("#browser-content").addEventListener('submit',async event=>{
+  const form=event.target.closest('[data-transcript-edit]');if(!form)return;event.preventDefault();
+  const analysis=activeAnalysis(),button=form.querySelector('button[type="submit"]');button.disabled=true;
+  try{
+    if(analysis?.transcript?.transcript_id!==form.dataset.transcriptId)throw new Error('Transcript đã thay đổi. Làm mới trước khi lưu.');
+    const body=transcriptEditPayload(analysis,state.timeline,form.dataset.transcriptEdit,form.querySelector('textarea').value);
+    await api(`/api/v1/projects/${state.projectId}/analyses/${analysis.analysis_id}/transcript`,{method:'POST',body:JSON.stringify(body)});
+    state.transcriptDrafts.delete(form.dataset.transcriptEdit);await loadProject();
+    toast('Đã lưu transcript mới. Preview và phê duyệt cần cập nhật.');
+  }catch(error){toast(error.message,true);}finally{button.disabled=false;}
 });
 
 $("#timeline-tracks").addEventListener("click", async (event) => {
@@ -1326,10 +1353,10 @@ $("#delete-button").addEventListener("click", async () => {
   await mutate([{ type: "delete", clip_id: selection.clip.clip_id }], "delete-from-timeline");
 });
 $("#undo-button").addEventListener("click", async () => {
-  if (state.timeline?.current_version > 1) await restoreVersion(state.timeline.current_version - 1, { isUndo: true });
+  const target=state.undoStack.at(-1);if(target)await restoreVersion(target,{isUndo:true});
 });
 $("#redo-button").addEventListener("click", async () => {
-  const target = state.redoStack.pop();
+  const target = state.redoStack.at(-1);
   if (target) await restoreVersion(target);
 });
 

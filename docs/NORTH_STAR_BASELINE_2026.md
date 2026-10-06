@@ -47,7 +47,7 @@ Extract the accepted artifact TAR to a **new** recovery directory and verify aga
 
 | Phase | Source evidence | Certification state |
 | --- | --- | --- |
-| 8 | `evidence/post-mvp-roadmap/phase-8`, `INTERNAL_PRODUCTION_RELEASE.md`, existing tag `internal-production-v1` | INTERNAL_PRODUCTION_READY = YES, historical Owner acceptance |
+| 8 | `evidence/post-mvp-roadmap/phase-8/acceptance.md`, `POST_MVP_EXECUTION_REPORT.md`, existing tag `internal-production-v1` | INTERNAL_PRODUCTION_READY = YES, historical Owner acceptance |
 | 9 | `evidence/post-mvp-roadmap/phase-9`, `POST_INTERNAL_PRODUCTION_PHASE9_REPORT.md` | CONTENT_INTELLIGENCE_READY = YES, historical Owner acceptance |
 | 10 | `evidence/post-mvp-roadmap/phase-10`, `PHASE10_FINAL_ACCEPTANCE.md`, `PHASE10_STUDIO_UX_REMEDIATION_REPORT.md` | Technical remediation recorded; Owner rejected prior candidates; repaired candidates remain pending |
 

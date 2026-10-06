@@ -184,7 +184,7 @@ class ProductionPackageService:
         package, _created = await self.repository.create_or_refresh_package(
             timeline=timeline,
             cues=cues,
-            style=SubtitleStyle(animation="none") if timeline.source_content_version_id else SubtitleStyle(),
+            style=SubtitleStyle(animation="none") if timeline.source_content_version_id or (timeline.snapshot.metadata.get('transcript_revision') or {}).get('human_edited') else SubtitleStyle(),
             mix_config=MixConfig(),
             provider_status=audio_provider_status(self.settings),
             actor_ref=payload.actor_ref,

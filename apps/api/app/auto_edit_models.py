@@ -145,6 +145,29 @@ class TranscriptRead(StrictModel):
     created_at: datetime
 
 
+class TranscriptSegmentEdit(StrictModel):
+    segment_id: str = Field(min_length=1,max_length=64)
+    text: str = Field(min_length=1,max_length=4000)
+
+    @model_validator(mode='after')
+    def nonempty(self):
+        if not self.text.strip():raise ValueError('segment text must not be blank')
+        return self
+
+
+class TranscriptEditRequest(StrictModel):
+    expected_version: int = Field(ge=1,strict=True)
+    base_transcript_id: str | None = Field(default=None,min_length=1,max_length=64)
+    expected_timeline_version: int | None = Field(default=None,ge=1,strict=True)
+    segments: list[TranscriptSegmentEdit] = Field(min_length=1,max_length=1000)
+    note: str = Field(default='',max_length=2000)
+
+    @model_validator(mode='after')
+    def unique_segments(self):
+        if len({s.segment_id for s in self.segments})!=len(self.segments):raise ValueError('duplicate segment edit')
+        return self
+
+
 class SceneRead(StrictModel):
     scene_id: str
     ordinal: int = Field(ge=0)

@@ -244,6 +244,8 @@ def build_initial_timeline(
             "source_media_plan_id": media_plan.media_plan_id if media_plan else None,
             "source_asset_id": source_asset.asset_id,
             "source_duration_seconds": source_duration,
+            "transcript_revision": {'transcript_id':analysis.transcript.transcript_id,'version':analysis.transcript.version,
+                                    'human_edited':not analysis.transcript.is_original_evidence} if analysis.transcript else None,
             "silence_decisions_applied": sum(
                 item.enabled and not item.conflicts_with_speech for item in analysis.silence_decisions
             ),

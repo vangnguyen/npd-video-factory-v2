@@ -54,6 +54,26 @@ def derive_subtitle_cues(snapshot: TimelineSnapshot) -> list[SubtitleCue]:
         end = round(min(snapshot.duration_seconds, clip.timeline_start + clip.duration), 3)
         if end - start < 0.05:
             continue
+        if 'subtitle_text' in clip.metadata:
+            # New human-edited text is retained in full, with explicit segment-bound
+            # caption timing. It must not inherit provider word timestamps.
+            text=clip.metadata['subtitle_text']
+            if not isinstance(text,str) or not text.strip():raise ProductionContractError('edited subtitle text is empty')
+            capacity=subtitle_character_capacity(SubtitleStyle())
+            chunks=[];current=''
+            for word in text.split():
+                if len(word)>capacity:raise ProductionContractError('edited subtitle word exceeds safe caption area')
+                if current and len(current)+len(word)+1>capacity:
+                    chunks.append(current);current=''
+                current=(current+' '+word).strip()
+            if current:chunks.append(current)
+            if (end-start)/len(chunks)<.05:raise ProductionContractError('edited subtitle text requires more display time')
+            weights=[len(chunk) for chunk in chunks];total=sum(weights);cursor=start
+            for i,chunk in enumerate(chunks):
+                next_end=end if i==len(chunks)-1 else cursor+(end-start)*weights[i]/total
+                cues.append(SubtitleCue(cue_id=_new_id('sub'),start_seconds=round(cursor,6),end_seconds=round(next_end,6),text=chunk,words=[]))
+                cursor=next_end
+            continue
         # Scene/segment timing is not measured word alignment.
         word_items = [{"text": word["text"],
             "start_seconds": round(clip.timeline_start + (word["start_seconds"]-clip.source_start)/clip.speed, 6),

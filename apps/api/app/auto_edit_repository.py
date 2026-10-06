@@ -522,7 +522,7 @@ class AutoEditRepository:
                 analysis.error_code = None
                 analysis.updated_at = utc_now()
 
-    async def get_analysis(self, analysis_id: str) -> AutoEditAnalysisRead | None:
+    async def get_analysis(self, analysis_id: str, *, transcript_id: str | None = None) -> AutoEditAnalysisRead | None:
         async with self.session_factory() as session:
             analysis = await session.get(AutoEditAnalysisORM, analysis_id)
             if analysis is None:
@@ -530,8 +530,10 @@ class AutoEditRepository:
             transcript_row = await session.scalar(
                 select(TranscriptORM)
                 .where(TranscriptORM.analysis_id == analysis_id)
+                .where(TranscriptORM.transcript_id==transcript_id if transcript_id is not None else True)
                 .order_by(TranscriptORM.version.desc())
             )
+            if transcript_id is not None and transcript_row is None:return None
             transcript_read: TranscriptRead | None = None
             if transcript_row:
                 segment_rows = (

@@ -7,6 +7,7 @@ from fastapi import APIRouter, Header, HTTPException, Request, status
 from .auto_edit_models import (
     AutoEditAnalysisRead,
     AutoEditAnalysisRequest,
+    TranscriptEditRequest,
     UploadCompleteRead,
     UploadCompleteRequest,
     UploadInitRequest,
@@ -15,12 +16,22 @@ from .auto_edit_models import (
 from .auto_edit_providers import MediaProbeError, ProviderNotConfigured
 from .auto_edit_service import AutoEditAnalysisService, UploadConflictError, UploadService, UploadSizeError
 from .human_auth import authorize_project
+from .transcript_editing import edit_transcript,TranscriptEditConflict
 from .media_security import MediaScanUnavailable, MediaSecurityError, UnsafeMediaRejected
 from .media_validation import MediaValidationError
 
 
 router = APIRouter(prefix="/api/v1")
 _SHA256 = re.compile(r"^[a-f0-9]{64}$")
+
+
+@router.post('/projects/{project_id}/analyses/{analysis_id}/transcript',response_model=AutoEditAnalysisRead)
+async def edit_analysis_transcript(project_id:str,analysis_id:str,payload:TranscriptEditRequest,request:Request):
+    principal=await authorize_project(request,project_id,'editor')
+    try:
+        return await edit_transcript(analysis_service_from(request).repository,project_id,analysis_id,payload,principal.subject)
+    except KeyError as exc:raise missing('Analysis') from exc
+    except TranscriptEditConflict as exc:raise error(409,'TRANSCRIPT_EDIT_CONFLICT',str(exc)) from exc
 
 
 def upload_service_from(request: Request) -> UploadService:
@@ -143,8 +154,10 @@ async def get_project_analysis(
     project_id: str,
     analysis_id: str,
     request: Request,
+    transcript_id: str | None = None,
 ) -> AutoEditAnalysisRead:
-    result = await analysis_service_from(request).get(analysis_id)
+    service=analysis_service_from(request)
+    result=await service.repository.get_analysis(analysis_id,transcript_id=transcript_id) if transcript_id is not None else await service.get(analysis_id)
     if result is None or result.project_id != project_id:
         raise missing("Analysis")
     return result

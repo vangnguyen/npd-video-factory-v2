@@ -267,10 +267,13 @@
     "source": [
       "apps/api/app/assemblyai_transcription_provider.py",
       "apps/api/app/auto_edit_models.py",
-      "services/windows_native/asr.py"
+      "services/windows_native/asr.py",
+      "apps/api/app/transcript_editing.py",
+      "apps/studio-web/transcript-editor.mjs",
+      "apps/api/tests/test_transcript_editing.py"
     ],
-    "behavior": "Real normalized ASR and raw evidence; words/timing guards exist.",
-    "gap": "Versioned transcript editor integrated with accepted Native Mode B flow and EN/VI acceptance.",
+    "behavior": "Real normalized ASR and raw evidence; words/timing guards exist. API Studio now edits versioned transcript text, preserves original rows, drops word-alignment claims only for changed text, and atomically changes canonical subtitle clips/invalidation. Canonical transcript IDs follow undo/redo and historical versions are readable.",
+    "gap": "Vietnamese/English real-provider normalized acceptance and the Native/production Mode B ingest/transcript integration remain. Edited scene/highlight semantics are explicitly marked stale pending refresh.",
     "severity": "P1",
     "dependency": "ingest/UI",
     "wave": "3",
@@ -533,9 +536,11 @@
       "apps/api/app/timeline_logic.py",
       "packages/contracts/timeline.schema.json",
       "services/windows_native/north_star_quality.py",
-      "services/windows_native/tests/test_north_star_quality.py"
+      "services/windows_native/tests/test_north_star_quality.py",
+      "apps/studio-web/timeline-history.mjs",
+      "apps/studio-web/tests/timeline-history.test.mjs"
     ],
-    "behavior": "Versioned canonical timelines within each implementation; optimistic revisions. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged.",
+    "behavior": "Versioned canonical timelines within each implementation; optimistic revisions. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged. API timeline multi-step undo/redo now follows immutable content states across newly created restore versions and selects canonical transcript revisions.",
     "gap": "Bridge advanced editor to same Native canonical timeline; avoid parallel edits/export divergence.",
     "severity": "P0",
     "dependency": "canonical adapter",
@@ -549,9 +554,11 @@
     "source": [
       "apps/studio-web/studio.js",
       "apps/studio-web/studio-utils.mjs",
-      "apps/studio-web/shot-studio.mjs"
+      "apps/studio-web/shot-studio.mjs",
+      "apps/studio-web/timeline-history.mjs",
+      "apps/studio-web/tests/timeline-history.test.mjs"
     ],
-    "behavior": "API advanced trim/split/duplicate/move/lock/mute plus shot Native UI.",
+    "behavior": "API advanced trim/split/duplicate/move/lock/mute plus shot Native UI. API timeline multi-step undo/redo now follows immutable content states across newly created restore versions and selects canonical transcript revisions.",
     "gap": "One Native advanced view with waveform/snapping/zoom/history bound to same timeline.",
     "severity": "P1",
     "dependency": "canonical adapter",

@@ -130,115 +130,120 @@ class TimelineRepository:
             return [_version_read(row) for row in rows]
 
     async def commit_mutation(
-        self,
-        *,
-        project_id: str,
-        expected_version: int,
-        snapshot: TimelineSnapshot,
-        mutation: dict[str, Any],
-        actor_ref: str,
+        self, *, project_id: str, expected_version: int, snapshot: TimelineSnapshot,
+        mutation: dict[str, Any], actor_ref: str,
     ) -> TimelineRead:
         async with self.session_factory() as session:
             async with session.begin():
-                timeline = await session.scalar(
-                    select(TimelineORM)
-                    .where(TimelineORM.project_id == project_id)
-                    .with_for_update()
-                )
-                if timeline is None:
-                    raise KeyError(project_id)
-                if timeline.current_version != expected_version:
-                    raise TimelineConflictError(expected=expected_version, actual=timeline.current_version)
-                new_version = expected_version + 1
-                version_id = _new_id("tlv")
-                now = utc_now()
-                session.add(
-                    TimelineVersionORM(
-                        timeline_version_id=version_id,
-                        timeline_id=timeline.timeline_id,
-                        project_id=project_id,
-                        version=new_version,
-                        snapshot_json=snapshot.model_dump(mode="json"),
-                        mutation_json=mutation,
-                        actor_ref=actor_ref,
-                        created_at=now,
-                    )
-                )
-                await session.execute(
-                    update(PreviewJobORM)
-                    .where(
-                        PreviewJobORM.timeline_id == timeline.timeline_id,
-                        PreviewJobORM.status.in_(["queued", "running", "ready"]),
-                    )
-                    .values(
-                        status="stale",
-                        cancellation_requested=True,
-                        invalidated_at=now,
-                        updated_at=now,
-                    )
-                )
-                production_package = await session.scalar(
-                    select(ProductionPackageORM).where(
-                        ProductionPackageORM.timeline_id == timeline.timeline_id
-                    )
-                )
-                if production_package is not None:
-                    await session.execute(
-                        update(ProductionApprovalORM)
-                        .where(
-                            ProductionApprovalORM.package_id == production_package.package_id,
-                            ProductionApprovalORM.status.in_(["awaiting_review", "approved"]),
-                        )
-                        .values(
-                            status="changes_requested",
-                            invalidated_reason="timeline-version-changed",
-                            updated_at=now,
-                        )
-                    )
-                    await session.execute(
-                        update(ProductionRenderJobORM)
-                        .where(
-                            ProductionRenderJobORM.package_id == production_package.package_id,
-                            ProductionRenderJobORM.status.in_(["queued", "running", "awaiting_review", "ready"]),
-                        )
-                        .values(
-                            status="stale",
-                            cancellation_requested=True,
-                            invalidated_at=now,
-                            updated_at=now,
-                        )
-                    )
-                    production_package.current_approval_id = None
-                    production_package.latest_review_render_id = None
-                    production_package.latest_final_render_id = None
-                    production_package.updated_at = now
-                    session.add(
-                        ProductionEventORM(
-                            event_id=_new_id("pev"),
-                            package_id=production_package.package_id,
-                            project_id=project_id,
-                            event_type="production_package.invalidated",
-                            entity_type="timeline",
-                            entity_id=timeline.timeline_id,
-                            actor_ref=actor_ref,
-                            payload_json={
-                                "reason": "timeline-version-changed",
-                                "previous_timeline_version": expected_version,
-                                "new_timeline_version": new_version,
-                            },
-                            created_at=now,
-                        )
-                    )
-                timeline.current_version_id = version_id
-                timeline.current_version = new_version
-                timeline.approval_status = "draft"
-                timeline.approved_timeline_version = None
-                timeline.latest_preview_id = None
-                if mutation.get("type") == "storyboard-rebuild":
-                    timeline.source_content_version_id = mutation["content_version_id"]
-                    timeline.source_analysis_id = None
-                timeline.updated_at = now
+                timeline = await self.commit_mutation_in_session(session=session,
+                    project_id=project_id, expected_version=expected_version, snapshot=snapshot,
+                    mutation=mutation, actor_ref=actor_ref)
             return await self._timeline_read(session, timeline)
+
+    async def commit_mutation_in_session(
+        self, *, session: AsyncSession, project_id: str, expected_version: int,
+        snapshot: TimelineSnapshot, mutation: dict[str, Any], actor_ref: str,
+    ) -> TimelineORM:
+        """Use the caller's transaction for dependent evidence and timeline writes."""
+        timeline = await session.scalar(
+            select(TimelineORM)
+            .where(TimelineORM.project_id == project_id)
+            .with_for_update()
+        )
+        if timeline is None:
+            raise KeyError(project_id)
+        if timeline.current_version != expected_version:
+            raise TimelineConflictError(expected=expected_version, actual=timeline.current_version)
+        new_version = expected_version + 1
+        version_id = _new_id("tlv")
+        now = utc_now()
+        session.add(
+            TimelineVersionORM(
+                timeline_version_id=version_id,
+                timeline_id=timeline.timeline_id,
+                project_id=project_id,
+                version=new_version,
+                snapshot_json=snapshot.model_dump(mode="json"),
+                mutation_json=mutation,
+                actor_ref=actor_ref,
+                created_at=now,
+            )
+        )
+        await session.execute(
+            update(PreviewJobORM)
+            .where(
+                PreviewJobORM.timeline_id == timeline.timeline_id,
+                PreviewJobORM.status.in_(["queued", "running", "ready"]),
+            )
+            .values(
+                status="stale",
+                cancellation_requested=True,
+                invalidated_at=now,
+                updated_at=now,
+            )
+        )
+        production_package = await session.scalar(
+            select(ProductionPackageORM).where(
+                ProductionPackageORM.timeline_id == timeline.timeline_id
+            )
+        )
+        if production_package is not None:
+            await session.execute(
+                update(ProductionApprovalORM)
+                .where(
+                    ProductionApprovalORM.package_id == production_package.package_id,
+                    ProductionApprovalORM.status.in_(["awaiting_review", "approved"]),
+                )
+                .values(
+                    status="changes_requested",
+                    invalidated_reason="timeline-version-changed",
+                    updated_at=now,
+                )
+            )
+            await session.execute(
+                update(ProductionRenderJobORM)
+                .where(
+                    ProductionRenderJobORM.package_id == production_package.package_id,
+                    ProductionRenderJobORM.status.in_(["queued", "running", "awaiting_review", "ready"]),
+                )
+                .values(
+                    status="stale",
+                    cancellation_requested=True,
+                    invalidated_at=now,
+                    updated_at=now,
+                )
+            )
+            production_package.current_approval_id = None
+            production_package.latest_review_render_id = None
+            production_package.latest_final_render_id = None
+            production_package.updated_at = now
+            session.add(
+                ProductionEventORM(
+                    event_id=_new_id("pev"),
+                    package_id=production_package.package_id,
+                    project_id=project_id,
+                    event_type="production_package.invalidated",
+                    entity_type="timeline",
+                    entity_id=timeline.timeline_id,
+                    actor_ref=actor_ref,
+                    payload_json={
+                        "reason": "timeline-version-changed",
+                        "previous_timeline_version": expected_version,
+                        "new_timeline_version": new_version,
+                    },
+                    created_at=now,
+                )
+            )
+        timeline.current_version_id = version_id
+        timeline.current_version = new_version
+        timeline.approval_status = "draft"
+        timeline.approved_timeline_version = None
+        timeline.latest_preview_id = None
+        if mutation.get("type") == "storyboard-rebuild":
+            timeline.source_content_version_id = mutation["content_version_id"]
+            timeline.source_analysis_id = None
+        timeline.updated_at = now
+        return timeline
 
     async def create_preview(
         self,
