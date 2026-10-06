@@ -1,0 +1,2615 @@
+{
+  "actual_saved_operations_count": 12,
+  "additional_narration_repairs": 4,
+  "ai_edit_proof": {
+    "bytes": 32306,
+    "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/aggregate.json",
+    "sha256": "acbd58c2e22cb3470b18e40f6ae34fbc01305cfe2a977be2527465d243f78e88"
+  },
+  "app_mutations_by_aggregator": 0,
+  "append_only": true,
+  "captured_at": "2026-10-06T12:56:59.957085+00:00",
+  "case01_revert": {
+    "approval_not_restored": true,
+    "new_revision": true,
+    "new_timeline_version": true,
+    "replaced_asset_retained": true,
+    "shot_fields_equal_after_replacement": true,
+    "snapshot_content_sha_equals_after_replacement": true
+  },
+  "case01_reverted_revision17_preview_status": "Historical STALE r17; narration edit later created r18/v4 and invalidated its old preview again",
+  "certification": "IN_PROGRESS",
+  "head_sha": "9772e146da727152d816f3fe757c6bbb7e1488f8",
+  "human_personal_watch_listen": "PENDING",
+  "latest_current_revisions": {
+    "01": 18,
+    "02": 15,
+    "04": 15,
+    "06": 14,
+    "08": 16
+  },
+  "latest_current_timeline_versions": {
+    "01": 4,
+    "02": 2,
+    "04": 2,
+    "06": 1,
+    "08": 3
+  },
+  "new_final_render_validation": "IN_PROGRESS_PENDING_VALIDATION",
+  "planning_format_alignment": {
+    "bytes": 842,
+    "path": "evidence/post-mvp-roadmap/phase-10/final-uat/queue/20261006T125118334107Z-execution-2e1a496a/planning-format-alignment.json",
+    "sha256": "18daa3ae448beccd1d0149dbf6a7c6597283cefb459893f3f16bca1eaf75984f"
+  },
+  "previous_immutable_receipt": {
+    "bytes": 83033,
+    "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/action-matrix-v2.json",
+    "sha256": "da45ba99c2f98be2043e3e9af46e9f66a860d511e87008e3c510395ce9449965"
+  },
+  "provider_calls_by_aggregator": 0,
+  "ready_preview_receipts": [
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/d41a6df79588674da1840b89404467f25ca4947ae3d9028c51246750d954fe08.json",
+        "sha256": "aec62864903170dbef98fd58cf3c116f3ae8617a987028adeba6c30f3505f514"
+      },
+      "cached_shots": 0,
+      "case": "01",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 5,
+      "passed": true,
+      "revision": 14,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\d41a6df79588674da1840b89404467f25ca4947ae3d9028c51246750d954fe08\\preview.json",
+      "timeline_version": 0,
+      "video": {
+        "bytes": 465729,
+        "sha256": "6c65814f2e3500681f9f86d9ffc81d64107e42c1a5df97de70ccc153bbf17bf0",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\d41a6df79588674da1840b89404467f25ca4947ae3d9028c51246750d954fe08\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/6dd11d05179831ff7d486843ba01150dc3216433483cca0941601ce144037eae.json",
+        "sha256": "1f9c93940d2ed57ba4751a446f512d0cd4d19d548f2f586be637211228525389"
+      },
+      "cached_shots": 4,
+      "case": "01",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 1,
+      "passed": true,
+      "revision": 16,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\6dd11d05179831ff7d486843ba01150dc3216433483cca0941601ce144037eae\\preview.json",
+      "timeline_version": 2,
+      "video": {
+        "bytes": 471274,
+        "sha256": "ec5f1bf37bae5d05fc9c6e70abafcac65ca088b670807b2bf986b2db8ce1d7e5",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\6dd11d05179831ff7d486843ba01150dc3216433483cca0941601ce144037eae\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/1c3b1a11bbe1e3fd17a880fcc10267e805f52e77f31e573de45b144832850557.json",
+        "sha256": "97234cc0f18c93aa94a6727bca0e1849b07cee107306cfe330977e6d6a7dc54b"
+      },
+      "cached_shots": 0,
+      "case": "02",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 5,
+      "passed": true,
+      "revision": 13,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\1c3b1a11bbe1e3fd17a880fcc10267e805f52e77f31e573de45b144832850557\\preview.json",
+      "timeline_version": 0,
+      "video": {
+        "bytes": 442731,
+        "sha256": "c221638fce8665452510bcf059e7cf4fd3e0559257d1fd4382a9cb6080247ac7",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\1c3b1a11bbe1e3fd17a880fcc10267e805f52e77f31e573de45b144832850557\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/e70cab660dd832e7e8a04de4af742351ad0d7e52b5d18d3c7c3ca81952e285b7.json",
+        "sha256": "1997f043358ab02fe189d55185cdabace2937870f7bdeb70caf4ab42712dd731"
+      },
+      "cached_shots": 4,
+      "case": "02",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 1,
+      "passed": true,
+      "revision": 15,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\e70cab660dd832e7e8a04de4af742351ad0d7e52b5d18d3c7c3ca81952e285b7\\preview.json",
+      "timeline_version": 2,
+      "video": {
+        "bytes": 494605,
+        "sha256": "c9ff5978bd6346d67519376b2225422ad100385263c715715000fa47624bc646",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\e70cab660dd832e7e8a04de4af742351ad0d7e52b5d18d3c7c3ca81952e285b7\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/c9d38292adb159f142e9cc1386dd6f4e1428115b79c35f0294d2d90c5156416b.json",
+        "sha256": "7b4d3772e7f7d7e98023fbbb564e53c57d245d5e72f991c91fd88a0c25b5d25e"
+      },
+      "cached_shots": 0,
+      "case": "04",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 5,
+      "passed": true,
+      "revision": 13,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\c9d38292adb159f142e9cc1386dd6f4e1428115b79c35f0294d2d90c5156416b\\preview.json",
+      "timeline_version": 0,
+      "video": {
+        "bytes": 341020,
+        "sha256": "a9476c5747a1d3ecc8f37c128f8483ebf9c9c9bbad880e945615623cca8e8b24",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\c9d38292adb159f142e9cc1386dd6f4e1428115b79c35f0294d2d90c5156416b\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/e8eaf28c556ecdc6e695d5652e74ab0365e2339f5aa3c655a4c7e723e6cbeec5.json",
+        "sha256": "eb7fcd542f351576dec4084a13498441983b358e82e59e0a3ae29f59676f09f4"
+      },
+      "cached_shots": 5,
+      "case": "04",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 0,
+      "passed": true,
+      "revision": 14,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\e8eaf28c556ecdc6e695d5652e74ab0365e2339f5aa3c655a4c7e723e6cbeec5\\preview.json",
+      "timeline_version": 1,
+      "video": {
+        "bytes": 341020,
+        "sha256": "9197fe3a3f18e463af01799c43cdacc8d65b99835e48462dce23640a716cd9ec",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\e8eaf28c556ecdc6e695d5652e74ab0365e2339f5aa3c655a4c7e723e6cbeec5\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/5b141d2ace73d3999b7427ba6b18ea69e770c29fc56a6564f5ec5965cbe30045.json",
+        "sha256": "5c9b37923dc43a1beb829483e7cdd2f81043afa0dd1c53856f3cc5d76e851d14"
+      },
+      "cached_shots": 0,
+      "case": "08",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 5,
+      "passed": true,
+      "revision": 13,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\5b141d2ace73d3999b7427ba6b18ea69e770c29fc56a6564f5ec5965cbe30045\\preview.json",
+      "timeline_version": 0,
+      "video": {
+        "bytes": 479328,
+        "sha256": "e26cb246d4dbe4fb443bdb8130096212b5f78d74ff13efd5c07d542ef7e9ac50",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\5b141d2ace73d3999b7427ba6b18ea69e770c29fc56a6564f5ec5965cbe30045\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/fc36d730bb68ed5215f41b2e0eaa1c084f3f0ecd9b1db8d0b4a1efaf27bd0556.json",
+        "sha256": "968c70c35dd0821bd54ffd949506585c1ee4396220f0d874c66b22b3456a1f8d"
+      },
+      "cached_shots": 4,
+      "case": "08",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 1,
+      "passed": true,
+      "revision": 15,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\fc36d730bb68ed5215f41b2e0eaa1c084f3f0ecd9b1db8d0b4a1efaf27bd0556\\preview.json",
+      "timeline_version": 2,
+      "video": {
+        "bytes": 487400,
+        "sha256": "1f54f9e20d19f3397c23bd897b31615d80a99a782e650d068370a38b71ece917",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\fc36d730bb68ed5215f41b2e0eaa1c084f3f0ecd9b1db8d0b4a1efaf27bd0556\\preview.mp4"
+      }
+    }
+  ],
+  "required_edit_pending_count": 0,
+  "required_edit_technical_pass_count": 5,
+  "required_edits": [
+    {
+      "action": "replace_media",
+      "case": "01",
+      "required_edit": "Replace one shot media",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "action": "change_duration",
+      "case": "02",
+      "required_edit": "Change one shot duration",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "action": "reorder",
+      "case": "04",
+      "required_edit": "Reorder shots",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "action": "edit_narration",
+      "case": "01",
+      "note": "Actual UI repair r17→r18; narration and default subtitle changed together, assets retained",
+      "required_edit": "Edit narration of one shot",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "action": "regenerate_existing_visual",
+      "case": "08",
+      "implementation": "Select a deterministic alternate existing media candidate; no AI media generation",
+      "required_edit": "Regenerate one shot visual",
+      "status": "TECHNICAL_PASS"
+    }
+  ],
+  "restart_evidence": {
+    "bytes": 17359,
+    "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/restart-persistence-v1.json",
+    "sha256": "a022f5d8b8218bc4836d85bc647809bf0d228cc25ca69c4f3d4b8349865f7f1f"
+  },
+  "restart_persistence": "TECHNICAL_PASS",
+  "restart_scope_note": "Five actual restart snapshots predate the latest case06/08 narration edits; no claim those later changes underwent another server restart.",
+  "saved_operations": [
+    {
+      "action": "replace_media",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:23:57.988034+00:00",
+        "id": 489,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "update",
+          "regeneration_kind": null,
+          "revision": 15,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [],
+            "visual_dependency_shot_ids": [
+              "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": []
+          },
+          "timeline_sha256": "59bfdbea8085984923b8394dbcec2239db469ad1a5b7e669b0f5d303e7a3a7fc",
+          "timeline_version": 1
+        },
+        "project_id": "d3aa854ed0ed552091f513c66642d8a0"
+      },
+      "after": {
+        "bytes": 1696481,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122405837200Z-case01-after-replace-124ba3c3/snapshot.json",
+        "sha256": "17ab0669df2f6349ccdde79df0c77cd05a5f8024b1f18a61b0732966ff860e0b"
+      },
+      "artifact_preservation_scope": "Historical job rows, prior asset metadata and research lineage are exact. Source artifact bytes are covered by separate preservation evidence; no new render was dispatched by the edit.",
+      "before": {
+        "bytes": 1533587,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122325803984Z-case01-before-replace-3cf89258/snapshot.json",
+        "sha256": "b16aaef65bb5b7fa156d04ecf721db40b7e459501073028c3b4b265a0e85b232"
+      },
+      "case": "01",
+      "changed_fields": {
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45": {
+          "asset_id": {
+            "after": "35f6439f4f384ae0a306efcf07b804fb.jpg",
+            "before": "e46d8d10cd0748f6a55576d4ee1ab394.jpg"
+          }
+        }
+      },
+      "checks": {
+        "all_prior_asset_metadata_retained": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_exact": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true
+      },
+      "comparison": {
+        "bytes": 4199,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122405837200Z-case01-after-replace-124ba3c3/shot-comparison.json",
+        "sha256": "b7bf8d95845229f901fdfbb1edde01d4badae06036a97886cfeca724baf2528d"
+      },
+      "order_after": [
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+        "shot_4dfa824b6941581c9301232d09b088d6",
+        "shot_8f1e046b112a5c94b351a2ad9880eba6",
+        "shot_b66c203f9469583da0b0e8dbd39b74c6",
+        "shot_c1c99fb1faa85c12904f3d6268f7b98e"
+      ],
+      "order_before": [
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+        "shot_4dfa824b6941581c9301232d09b088d6",
+        "shot_8f1e046b112a5c94b351a2ad9880eba6",
+        "shot_b66c203f9469583da0b0e8dbd39b74c6",
+        "shot_c1c99fb1faa85c12904f3d6268f7b98e"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "d3aa854ed0ed552091f513c66642d8a0",
+      "revision_after": 15,
+      "revision_before": 14,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "59bfdbea8085984923b8394dbcec2239db469ad1a5b7e669b0f5d303e7a3a7fc",
+      "timeline_sha_before": "54d7fb561fb8b582c7d5044334602163f7a294ff9e8335092140f07c15eb3988",
+      "timeline_version_after": 1,
+      "timeline_version_before": 0,
+      "timestamps_after": [
+        {
+          "end": 8.734644,
+          "requested_duration": null,
+          "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "start": 0.0
+        },
+        {
+          "end": 20.12285,
+          "requested_duration": null,
+          "shot_id": "shot_4dfa824b6941581c9301232d09b088d6",
+          "start": 8.734644
+        },
+        {
+          "end": 27.420147,
+          "requested_duration": null,
+          "shot_id": "shot_8f1e046b112a5c94b351a2ad9880eba6",
+          "start": 20.12285
+        },
+        {
+          "end": 37.371007,
+          "requested_duration": null,
+          "shot_id": "shot_b66c203f9469583da0b0e8dbd39b74c6",
+          "start": 27.420147
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_c1c99fb1faa85c12904f3d6268f7b98e",
+          "start": 37.371007
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 8.734644,
+          "requested_duration": null,
+          "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "start": 0.0
+        },
+        {
+          "end": 20.12285,
+          "requested_duration": null,
+          "shot_id": "shot_4dfa824b6941581c9301232d09b088d6",
+          "start": 8.734644
+        },
+        {
+          "end": 27.420147,
+          "requested_duration": null,
+          "shot_id": "shot_8f1e046b112a5c94b351a2ad9880eba6",
+          "start": 20.12285
+        },
+        {
+          "end": 37.371007,
+          "requested_duration": null,
+          "shot_id": "shot_b66c203f9469583da0b0e8dbd39b74c6",
+          "start": 27.420147
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_c1c99fb1faa85c12904f3d6268f7b98e",
+          "start": 37.371007
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "ai_heading_apply",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:24:38.900027+00:00",
+        "id": 494,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "update",
+          "regeneration_kind": null,
+          "revision": 16,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [],
+            "visual_dependency_shot_ids": [
+              "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": []
+          },
+          "timeline_sha256": "794e5e72d398e7b2b38f44fdc63e097063550ecea77b6e9b9a6459e12f330980",
+          "timeline_version": 2
+        },
+        "project_id": "d3aa854ed0ed552091f513c66642d8a0"
+      },
+      "after": {
+        "bytes": 1831748,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122451432383Z-case01-ai-edit-applied-efa0c10d/snapshot.json",
+        "sha256": "600ccf847c3c587d385bb5614df6a87b160f04b9328e77e542c3f0d04969608c"
+      },
+      "artifact_preservation_scope": "Historical job rows, prior asset metadata and research lineage are exact. Source artifact bytes are covered by separate preservation evidence; no new render was dispatched by the edit.",
+      "before": {
+        "bytes": 1696481,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122405837200Z-case01-after-replace-124ba3c3/snapshot.json",
+        "sha256": "17ab0669df2f6349ccdde79df0c77cd05a5f8024b1f18a61b0732966ff860e0b"
+      },
+      "case": "01",
+      "changed_fields": {
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45": {
+          "on_screen_text": {
+            "after": "Kỳ vọng hay dữ kiện?",
+            "before": "Lời kỳ vọng hay dữ kiện?"
+          }
+        }
+      },
+      "checks": {
+        "all_prior_asset_metadata_retained": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_exact": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true
+      },
+      "comparison": {
+        "bytes": 4194,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122451432383Z-case01-ai-edit-applied-efa0c10d/shot-comparison.json",
+        "sha256": "410e5c753f57f22f2e78801d44fa450cb68e83b2502e40179944c41628e60c0b"
+      },
+      "order_after": [
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+        "shot_4dfa824b6941581c9301232d09b088d6",
+        "shot_8f1e046b112a5c94b351a2ad9880eba6",
+        "shot_b66c203f9469583da0b0e8dbd39b74c6",
+        "shot_c1c99fb1faa85c12904f3d6268f7b98e"
+      ],
+      "order_before": [
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+        "shot_4dfa824b6941581c9301232d09b088d6",
+        "shot_8f1e046b112a5c94b351a2ad9880eba6",
+        "shot_b66c203f9469583da0b0e8dbd39b74c6",
+        "shot_c1c99fb1faa85c12904f3d6268f7b98e"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "d3aa854ed0ed552091f513c66642d8a0",
+      "revision_after": 16,
+      "revision_before": 15,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "794e5e72d398e7b2b38f44fdc63e097063550ecea77b6e9b9a6459e12f330980",
+      "timeline_sha_before": "59bfdbea8085984923b8394dbcec2239db469ad1a5b7e669b0f5d303e7a3a7fc",
+      "timeline_version_after": 2,
+      "timeline_version_before": 1,
+      "timestamps_after": [
+        {
+          "end": 8.734644,
+          "requested_duration": null,
+          "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "start": 0.0
+        },
+        {
+          "end": 20.12285,
+          "requested_duration": null,
+          "shot_id": "shot_4dfa824b6941581c9301232d09b088d6",
+          "start": 8.734644
+        },
+        {
+          "end": 27.420147,
+          "requested_duration": null,
+          "shot_id": "shot_8f1e046b112a5c94b351a2ad9880eba6",
+          "start": 20.12285
+        },
+        {
+          "end": 37.371007,
+          "requested_duration": null,
+          "shot_id": "shot_b66c203f9469583da0b0e8dbd39b74c6",
+          "start": 27.420147
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_c1c99fb1faa85c12904f3d6268f7b98e",
+          "start": 37.371007
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 8.734644,
+          "requested_duration": null,
+          "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "start": 0.0
+        },
+        {
+          "end": 20.12285,
+          "requested_duration": null,
+          "shot_id": "shot_4dfa824b6941581c9301232d09b088d6",
+          "start": 8.734644
+        },
+        {
+          "end": 27.420147,
+          "requested_duration": null,
+          "shot_id": "shot_8f1e046b112a5c94b351a2ad9880eba6",
+          "start": 20.12285
+        },
+        {
+          "end": 37.371007,
+          "requested_duration": null,
+          "shot_id": "shot_b66c203f9469583da0b0e8dbd39b74c6",
+          "start": 27.420147
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_c1c99fb1faa85c12904f3d6268f7b98e",
+          "start": 37.371007
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "ai_heading_revert",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:25:22.529864+00:00",
+        "id": 497,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "revert",
+          "regeneration_kind": null,
+          "revision": 17,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [],
+            "visual_dependency_shot_ids": [
+              "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": []
+          },
+          "timeline_sha256": "59bfdbea8085984923b8394dbcec2239db469ad1a5b7e669b0f5d303e7a3a7fc",
+          "timeline_version": 3
+        },
+        "project_id": "d3aa854ed0ed552091f513c66642d8a0"
+      },
+      "after": {
+        "bytes": 1967402,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122533902961Z-case01-ai-edit-reverted-1ccb4dd9/snapshot.json",
+        "sha256": "b962b16f39d1fac5432d4fdb52dcd49613271f5975b60a440fd83da7ad35e229"
+      },
+      "artifact_preservation_scope": "Historical job rows, prior asset metadata and research lineage are exact. Source artifact bytes are covered by separate preservation evidence; no new render was dispatched by the edit.",
+      "before": {
+        "bytes": 1831748,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122451432383Z-case01-ai-edit-applied-efa0c10d/snapshot.json",
+        "sha256": "600ccf847c3c587d385bb5614df6a87b160f04b9328e77e542c3f0d04969608c"
+      },
+      "case": "01",
+      "changed_fields": {
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45": {
+          "on_screen_text": {
+            "after": "Lời kỳ vọng hay dữ kiện?",
+            "before": "Kỳ vọng hay dữ kiện?"
+          }
+        }
+      },
+      "checks": {
+        "all_prior_asset_metadata_retained": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_exact": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true
+      },
+      "comparison": {
+        "bytes": 4196,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122533902961Z-case01-ai-edit-reverted-1ccb4dd9/shot-comparison.json",
+        "sha256": "458721044a7f24b9547d9b1eca1df28987fc834fb5ab00838f529bebf2bc505a"
+      },
+      "order_after": [
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+        "shot_4dfa824b6941581c9301232d09b088d6",
+        "shot_8f1e046b112a5c94b351a2ad9880eba6",
+        "shot_b66c203f9469583da0b0e8dbd39b74c6",
+        "shot_c1c99fb1faa85c12904f3d6268f7b98e"
+      ],
+      "order_before": [
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+        "shot_4dfa824b6941581c9301232d09b088d6",
+        "shot_8f1e046b112a5c94b351a2ad9880eba6",
+        "shot_b66c203f9469583da0b0e8dbd39b74c6",
+        "shot_c1c99fb1faa85c12904f3d6268f7b98e"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "d3aa854ed0ed552091f513c66642d8a0",
+      "revision_after": 17,
+      "revision_before": 16,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "59bfdbea8085984923b8394dbcec2239db469ad1a5b7e669b0f5d303e7a3a7fc",
+      "timeline_sha_before": "794e5e72d398e7b2b38f44fdc63e097063550ecea77b6e9b9a6459e12f330980",
+      "timeline_version_after": 3,
+      "timeline_version_before": 2,
+      "timestamps_after": [
+        {
+          "end": 8.734644,
+          "requested_duration": null,
+          "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "start": 0.0
+        },
+        {
+          "end": 20.12285,
+          "requested_duration": null,
+          "shot_id": "shot_4dfa824b6941581c9301232d09b088d6",
+          "start": 8.734644
+        },
+        {
+          "end": 27.420147,
+          "requested_duration": null,
+          "shot_id": "shot_8f1e046b112a5c94b351a2ad9880eba6",
+          "start": 20.12285
+        },
+        {
+          "end": 37.371007,
+          "requested_duration": null,
+          "shot_id": "shot_b66c203f9469583da0b0e8dbd39b74c6",
+          "start": 27.420147
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_c1c99fb1faa85c12904f3d6268f7b98e",
+          "start": 37.371007
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 8.734644,
+          "requested_duration": null,
+          "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "start": 0.0
+        },
+        {
+          "end": 20.12285,
+          "requested_duration": null,
+          "shot_id": "shot_4dfa824b6941581c9301232d09b088d6",
+          "start": 8.734644
+        },
+        {
+          "end": 27.420147,
+          "requested_duration": null,
+          "shot_id": "shot_8f1e046b112a5c94b351a2ad9880eba6",
+          "start": 20.12285
+        },
+        {
+          "end": 37.371007,
+          "requested_duration": null,
+          "shot_id": "shot_b66c203f9469583da0b0e8dbd39b74c6",
+          "start": 27.420147
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_c1c99fb1faa85c12904f3d6268f7b98e",
+          "start": 37.371007
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "change_duration",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:26:26.938474+00:00",
+        "id": 510,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "update",
+          "regeneration_kind": null,
+          "revision": 14,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_9a6063f7759754ec9161b25c6dc386f1",
+              "shot_c5a51c1ba0015764b70bf859b207bdc4",
+              "shot_dccca7cd39765cd7b3427a9887ab777c",
+              "shot_ba4bad2eb8195289ae823471d75fb46e",
+              "shot_d89f5044129d56b4975e352b6a8f00e3"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [
+              "shot_c5a51c1ba0015764b70bf859b207bdc4",
+              "shot_dccca7cd39765cd7b3427a9887ab777c",
+              "shot_ba4bad2eb8195289ae823471d75fb46e",
+              "shot_d89f5044129d56b4975e352b6a8f00e3"
+            ],
+            "visual_dependency_shot_ids": [
+              "shot_9a6063f7759754ec9161b25c6dc386f1"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": []
+          },
+          "timeline_sha256": "c91ab279bb45d3d755aaadb1d01eba0aac89916b340afd06cfedd1de0dafc5bd",
+          "timeline_version": 1
+        },
+        "project_id": "206a81364b2e5d0d98fa0cfdf2b5bedb"
+      },
+      "after": {
+        "bytes": 1464048,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122635511021Z-case02-after-duration-5d551371/snapshot.json",
+        "sha256": "82e5beaa2398fb32b324c4e2d2e4cc3c14da059b6b1e430471837ec3b3443f62"
+      },
+      "artifact_preservation_scope": "Historical job rows, prior asset metadata and research lineage are exact. Source artifact bytes are covered by separate preservation evidence; no new render was dispatched by the edit.",
+      "before": {
+        "bytes": 1306719,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122604236811Z-case02-before-duration-d1555262/snapshot.json",
+        "sha256": "2ecc5e2bf13e71360173cb4701e5c41e6ab6f9882b41665efc428475c168e3ee"
+      },
+      "case": "02",
+      "changed_fields": {
+        "shot_9a6063f7759754ec9161b25c6dc386f1": {
+          "duration": {
+            "after": 9.5,
+            "before": 7.5
+          },
+          "requested_duration": {
+            "after": 9.5,
+            "before": null
+          }
+        }
+      },
+      "checks": {
+        "all_prior_asset_metadata_retained": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_exact": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true
+      },
+      "comparison": {
+        "bytes": 4800,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122635511021Z-case02-after-duration-5d551371/shot-comparison.json",
+        "sha256": "4cc81a7263dcc9af27e65085ae6c6a28c2c8c406304d6e68b55cefa6d5ef391a"
+      },
+      "order_after": [
+        "shot_9a6063f7759754ec9161b25c6dc386f1",
+        "shot_c5a51c1ba0015764b70bf859b207bdc4",
+        "shot_dccca7cd39765cd7b3427a9887ab777c",
+        "shot_ba4bad2eb8195289ae823471d75fb46e",
+        "shot_d89f5044129d56b4975e352b6a8f00e3"
+      ],
+      "order_before": [
+        "shot_9a6063f7759754ec9161b25c6dc386f1",
+        "shot_c5a51c1ba0015764b70bf859b207bdc4",
+        "shot_dccca7cd39765cd7b3427a9887ab777c",
+        "shot_ba4bad2eb8195289ae823471d75fb46e",
+        "shot_d89f5044129d56b4975e352b6a8f00e3"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "206a81364b2e5d0d98fa0cfdf2b5bedb",
+      "revision_after": 14,
+      "revision_before": 13,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_9a6063f7759754ec9161b25c6dc386f1",
+          "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "shot_d89f5044129d56b4975e352b6a8f00e3"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [
+          "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "shot_d89f5044129d56b4975e352b6a8f00e3"
+        ],
+        "visual_dependency_shot_ids": [
+          "shot_9a6063f7759754ec9161b25c6dc386f1"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "c91ab279bb45d3d755aaadb1d01eba0aac89916b340afd06cfedd1de0dafc5bd",
+      "timeline_sha_before": "ed2c5e482f49cebfdc3361a68314efa939ec4b89fc9e1321dc56ac4341e0f8e0",
+      "timeline_version_after": 1,
+      "timeline_version_before": 0,
+      "timestamps_after": [
+        {
+          "end": 9.5,
+          "requested_duration": 9.5,
+          "shot_id": "shot_9a6063f7759754ec9161b25c6dc386f1",
+          "start": 0.0
+        },
+        {
+          "end": 23.385135,
+          "requested_duration": null,
+          "shot_id": "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "start": 9.5
+        },
+        {
+          "end": 31.391892,
+          "requested_duration": null,
+          "shot_id": "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "start": 23.385135
+        },
+        {
+          "end": 39.905405,
+          "requested_duration": null,
+          "shot_id": "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "start": 31.391892
+        },
+        {
+          "end": 47.0,
+          "requested_duration": null,
+          "shot_id": "shot_d89f5044129d56b4975e352b6a8f00e3",
+          "start": 39.905405
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 7.5,
+          "requested_duration": null,
+          "shot_id": "shot_9a6063f7759754ec9161b25c6dc386f1",
+          "start": 0.0
+        },
+        {
+          "end": 21.385135,
+          "requested_duration": null,
+          "shot_id": "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "start": 7.5
+        },
+        {
+          "end": 29.391892,
+          "requested_duration": null,
+          "shot_id": "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "start": 21.385135
+        },
+        {
+          "end": 37.905405,
+          "requested_duration": null,
+          "shot_id": "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "start": 29.391892
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_d89f5044129d56b4975e352b6a8f00e3",
+          "start": 37.905405
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "ai_duration_apply",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:26:52.120896+00:00",
+        "id": 511,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "update",
+          "regeneration_kind": null,
+          "revision": 15,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_9a6063f7759754ec9161b25c6dc386f1",
+              "shot_c5a51c1ba0015764b70bf859b207bdc4",
+              "shot_dccca7cd39765cd7b3427a9887ab777c",
+              "shot_ba4bad2eb8195289ae823471d75fb46e",
+              "shot_d89f5044129d56b4975e352b6a8f00e3"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [
+              "shot_c5a51c1ba0015764b70bf859b207bdc4",
+              "shot_dccca7cd39765cd7b3427a9887ab777c",
+              "shot_ba4bad2eb8195289ae823471d75fb46e",
+              "shot_d89f5044129d56b4975e352b6a8f00e3"
+            ],
+            "visual_dependency_shot_ids": [
+              "shot_9a6063f7759754ec9161b25c6dc386f1"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": []
+          },
+          "timeline_sha256": "3243334b96d22e4703f793ca3da0271e9c6bb84fea6fae0ec50d740ae0244ee7",
+          "timeline_version": 2
+        },
+        "project_id": "206a81364b2e5d0d98fa0cfdf2b5bedb"
+      },
+      "after": {
+        "bytes": 1593509,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122706818938Z-case02-ai-duration-applied-2ff58f40/snapshot.json",
+        "sha256": "ef611719d776b133d0a349196e50f6a8c291bd5deaa1ae6fbe06d2735d5ee966"
+      },
+      "artifact_preservation_scope": "Historical job rows, prior asset metadata and research lineage are exact. Source artifact bytes are covered by separate preservation evidence; no new render was dispatched by the edit.",
+      "before": {
+        "bytes": 1464048,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122635511021Z-case02-after-duration-5d551371/snapshot.json",
+        "sha256": "82e5beaa2398fb32b324c4e2d2e4cc3c14da059b6b1e430471837ec3b3443f62"
+      },
+      "case": "02",
+      "changed_fields": {
+        "shot_9a6063f7759754ec9161b25c6dc386f1": {
+          "duration": {
+            "after": 9,
+            "before": 9.5
+          },
+          "requested_duration": {
+            "after": 9,
+            "before": 9.5
+          }
+        }
+      },
+      "checks": {
+        "all_prior_asset_metadata_retained": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_exact": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true
+      },
+      "comparison": {
+        "bytes": 4791,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122706818938Z-case02-ai-duration-applied-2ff58f40/shot-comparison.json",
+        "sha256": "83928699e983f52285b1434c7e0095b81d30c0f18ce7349fe236577da1e4414e"
+      },
+      "order_after": [
+        "shot_9a6063f7759754ec9161b25c6dc386f1",
+        "shot_c5a51c1ba0015764b70bf859b207bdc4",
+        "shot_dccca7cd39765cd7b3427a9887ab777c",
+        "shot_ba4bad2eb8195289ae823471d75fb46e",
+        "shot_d89f5044129d56b4975e352b6a8f00e3"
+      ],
+      "order_before": [
+        "shot_9a6063f7759754ec9161b25c6dc386f1",
+        "shot_c5a51c1ba0015764b70bf859b207bdc4",
+        "shot_dccca7cd39765cd7b3427a9887ab777c",
+        "shot_ba4bad2eb8195289ae823471d75fb46e",
+        "shot_d89f5044129d56b4975e352b6a8f00e3"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "206a81364b2e5d0d98fa0cfdf2b5bedb",
+      "revision_after": 15,
+      "revision_before": 14,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_9a6063f7759754ec9161b25c6dc386f1",
+          "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "shot_d89f5044129d56b4975e352b6a8f00e3"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [
+          "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "shot_d89f5044129d56b4975e352b6a8f00e3"
+        ],
+        "visual_dependency_shot_ids": [
+          "shot_9a6063f7759754ec9161b25c6dc386f1"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "3243334b96d22e4703f793ca3da0271e9c6bb84fea6fae0ec50d740ae0244ee7",
+      "timeline_sha_before": "c91ab279bb45d3d755aaadb1d01eba0aac89916b340afd06cfedd1de0dafc5bd",
+      "timeline_version_after": 2,
+      "timeline_version_before": 1,
+      "timestamps_after": [
+        {
+          "end": 9.0,
+          "requested_duration": 9,
+          "shot_id": "shot_9a6063f7759754ec9161b25c6dc386f1",
+          "start": 0.0
+        },
+        {
+          "end": 22.885135,
+          "requested_duration": null,
+          "shot_id": "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "start": 9.0
+        },
+        {
+          "end": 30.891892,
+          "requested_duration": null,
+          "shot_id": "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "start": 22.885135
+        },
+        {
+          "end": 39.405405,
+          "requested_duration": null,
+          "shot_id": "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "start": 30.891892
+        },
+        {
+          "end": 46.5,
+          "requested_duration": null,
+          "shot_id": "shot_d89f5044129d56b4975e352b6a8f00e3",
+          "start": 39.405405
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 9.5,
+          "requested_duration": 9.5,
+          "shot_id": "shot_9a6063f7759754ec9161b25c6dc386f1",
+          "start": 0.0
+        },
+        {
+          "end": 23.385135,
+          "requested_duration": null,
+          "shot_id": "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "start": 9.5
+        },
+        {
+          "end": 31.391892,
+          "requested_duration": null,
+          "shot_id": "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "start": 23.385135
+        },
+        {
+          "end": 39.905405,
+          "requested_duration": null,
+          "shot_id": "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "start": 31.391892
+        },
+        {
+          "end": 47.0,
+          "requested_duration": null,
+          "shot_id": "shot_d89f5044129d56b4975e352b6a8f00e3",
+          "start": 39.905405
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "reorder",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:27:48.266850+00:00",
+        "id": 519,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "reorder",
+          "regeneration_kind": null,
+          "revision": 14,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_4612efa4c0045a8aa321ce90610f8b15",
+              "shot_766f166165065813bc21687d3f112da8",
+              "shot_8e17507bb96151028f9eb024465957ac"
+            ],
+            "full_render_requested": false,
+            "order_changed": true,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [
+              "shot_4612efa4c0045a8aa321ce90610f8b15",
+              "shot_766f166165065813bc21687d3f112da8"
+            ],
+            "visual_dependency_shot_ids": [],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": [
+              "shot_4612efa4c0045a8aa321ce90610f8b15",
+              "shot_766f166165065813bc21687d3f112da8",
+              "shot_8e17507bb96151028f9eb024465957ac"
+            ]
+          },
+          "timeline_sha256": "6f0006d7d9510b63f00944cc37baaa8c765cd4d9610629dbb22ace3769e9ffa4",
+          "timeline_version": 1
+        },
+        "project_id": "ec5a3d1cf3cf5ec3a1debaf97c189139"
+      },
+      "after": {
+        "bytes": 1404301,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122812183199Z-case04-after-reorder-43a7cb82/snapshot.json",
+        "sha256": "f5b77fb70109c56ddb8d022dea1f015f9be3a05b4494b07d95bc04fe1948e9d0"
+      },
+      "artifact_preservation_scope": "Historical job rows, prior asset metadata and research lineage are exact. Source artifact bytes are covered by separate preservation evidence; no new render was dispatched by the edit.",
+      "before": {
+        "bytes": 1251495,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122713702159Z-case04-before-reorder-67b177d2/snapshot.json",
+        "sha256": "40b01eb427c5ecd780c6e463d90a8597fae0533695c13361920681ce96be37da"
+      },
+      "case": "04",
+      "changed_fields": {},
+      "checks": {
+        "all_prior_asset_metadata_retained": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_exact": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true
+      },
+      "comparison": {
+        "bytes": 4531,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122812183199Z-case04-after-reorder-43a7cb82/shot-comparison.json",
+        "sha256": "5c9fdb9b03308909578fbed19913e73bc1d34a9ae5f48745305d993532fb1f28"
+      },
+      "order_after": [
+        "shot_de6401133cfe58b9b5150e3d41abcde8",
+        "shot_0f71459450575a17961cc2ddf4ea21cb",
+        "shot_4612efa4c0045a8aa321ce90610f8b15",
+        "shot_766f166165065813bc21687d3f112da8",
+        "shot_8e17507bb96151028f9eb024465957ac"
+      ],
+      "order_before": [
+        "shot_de6401133cfe58b9b5150e3d41abcde8",
+        "shot_0f71459450575a17961cc2ddf4ea21cb",
+        "shot_766f166165065813bc21687d3f112da8",
+        "shot_4612efa4c0045a8aa321ce90610f8b15",
+        "shot_8e17507bb96151028f9eb024465957ac"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "ec5a3d1cf3cf5ec3a1debaf97c189139",
+      "revision_after": 14,
+      "revision_before": 13,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_4612efa4c0045a8aa321ce90610f8b15",
+          "shot_766f166165065813bc21687d3f112da8",
+          "shot_8e17507bb96151028f9eb024465957ac"
+        ],
+        "full_render_requested": false,
+        "order_changed": true,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [
+          "shot_4612efa4c0045a8aa321ce90610f8b15",
+          "shot_766f166165065813bc21687d3f112da8"
+        ],
+        "visual_dependency_shot_ids": [],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": [
+          "shot_4612efa4c0045a8aa321ce90610f8b15",
+          "shot_766f166165065813bc21687d3f112da8",
+          "shot_8e17507bb96151028f9eb024465957ac"
+        ]
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "6f0006d7d9510b63f00944cc37baaa8c765cd4d9610629dbb22ace3769e9ffa4",
+      "timeline_sha_before": "bd90ebe730cc8022188d4a58f8fd0209a06762297cac8f907f04fcb163c0ebd1",
+      "timeline_version_after": 1,
+      "timeline_version_before": 0,
+      "timestamps_after": [
+        {
+          "end": 8.111111,
+          "requested_duration": null,
+          "shot_id": "shot_de6401133cfe58b9b5150e3d41abcde8",
+          "start": 0.0
+        },
+        {
+          "end": 21.666667,
+          "requested_duration": null,
+          "shot_id": "shot_0f71459450575a17961cc2ddf4ea21cb",
+          "start": 8.111111
+        },
+        {
+          "end": 29.888889,
+          "requested_duration": null,
+          "shot_id": "shot_4612efa4c0045a8aa321ce90610f8b15",
+          "start": 21.666667
+        },
+        {
+          "end": 37.111111,
+          "requested_duration": null,
+          "shot_id": "shot_766f166165065813bc21687d3f112da8",
+          "start": 29.888889
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_8e17507bb96151028f9eb024465957ac",
+          "start": 37.111111
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 8.111111,
+          "requested_duration": null,
+          "shot_id": "shot_de6401133cfe58b9b5150e3d41abcde8",
+          "start": 0.0
+        },
+        {
+          "end": 21.666667,
+          "requested_duration": null,
+          "shot_id": "shot_0f71459450575a17961cc2ddf4ea21cb",
+          "start": 8.111111
+        },
+        {
+          "end": 28.888889,
+          "requested_duration": null,
+          "shot_id": "shot_766f166165065813bc21687d3f112da8",
+          "start": 21.666667
+        },
+        {
+          "end": 37.111111,
+          "requested_duration": null,
+          "shot_id": "shot_4612efa4c0045a8aa321ce90610f8b15",
+          "start": 28.888889
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_8e17507bb96151028f9eb024465957ac",
+          "start": 37.111111
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "regenerate_existing_visual",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:29:17.813608+00:00",
+        "id": 520,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "regenerate",
+          "regeneration_kind": "deterministic_existing_media_candidate",
+          "revision": 14,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_f7099579279d5360a82a9283ff52014c"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [],
+            "visual_dependency_shot_ids": [
+              "shot_f7099579279d5360a82a9283ff52014c"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": []
+          },
+          "timeline_sha256": "7ad48728f6e4600185572213d869d10782d58a7b24bd322309888c180e63bb21",
+          "timeline_version": 1
+        },
+        "project_id": "7f13a515100d5c07aae9760d665ad2f8"
+      },
+      "after": {
+        "bytes": 1379311,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122934580357Z-case08-after-regenerate-f7878437/snapshot.json",
+        "sha256": "d4cf8177c09d44d9fd6262401f92603e0e224c7ea6d473b0cc2a12935b3db438"
+      },
+      "artifact_preservation_scope": "Historical job rows, prior asset metadata and research lineage are exact. Source artifact bytes are covered by separate preservation evidence; no new render was dispatched by the edit.",
+      "before": {
+        "bytes": 1229145,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122906976085Z-case08-before-regenerate-e0c9cb13/snapshot.json",
+        "sha256": "bef67289997c372cfec71dda8b3200cf1bb0bde257a89f2243d700af761e1722"
+      },
+      "case": "08",
+      "changed_fields": {
+        "shot_f7099579279d5360a82a9283ff52014c": {
+          "asset_id": {
+            "after": "11a1db038ac245c6b75659d603bb2ff5.jpg",
+            "before": "1e04096ed48e49d2b455bbb06e3f329f.jpg"
+          }
+        }
+      },
+      "checks": {
+        "all_prior_asset_metadata_retained": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_exact": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true
+      },
+      "comparison": {
+        "bytes": 4246,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122934580357Z-case08-after-regenerate-f7878437/shot-comparison.json",
+        "sha256": "d796238936041d2624d968bdeb566ab9cbc01dd64c4fdae50fcc647073a76ecd"
+      },
+      "order_after": [
+        "shot_f7099579279d5360a82a9283ff52014c",
+        "shot_6d7e62244a68598183c7f8b45539b096",
+        "shot_34f229ade65f5204ba3f66163467a128",
+        "shot_0618910b8a69568c87a358cb13fa9bbd",
+        "shot_eed8a49a032d515d85e04938dea1f6d9"
+      ],
+      "order_before": [
+        "shot_f7099579279d5360a82a9283ff52014c",
+        "shot_6d7e62244a68598183c7f8b45539b096",
+        "shot_34f229ade65f5204ba3f66163467a128",
+        "shot_0618910b8a69568c87a358cb13fa9bbd",
+        "shot_eed8a49a032d515d85e04938dea1f6d9"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "7f13a515100d5c07aae9760d665ad2f8",
+      "revision_after": 14,
+      "revision_before": 13,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_f7099579279d5360a82a9283ff52014c"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_f7099579279d5360a82a9283ff52014c"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "7ad48728f6e4600185572213d869d10782d58a7b24bd322309888c180e63bb21",
+      "timeline_sha_before": "6c19f98c1aa5e987298a7bd6b0b6ceb2d2ca825ad8c889d7af5286e84889e9ee",
+      "timeline_version_after": 1,
+      "timeline_version_before": 0,
+      "timestamps_after": [
+        {
+          "end": 9.947368,
+          "requested_duration": null,
+          "shot_id": "shot_f7099579279d5360a82a9283ff52014c",
+          "start": 0.0
+        },
+        {
+          "end": 24.947368,
+          "requested_duration": null,
+          "shot_id": "shot_6d7e62244a68598183c7f8b45539b096",
+          "start": 9.947368
+        },
+        {
+          "end": 38.368421,
+          "requested_duration": null,
+          "shot_id": "shot_34f229ade65f5204ba3f66163467a128",
+          "start": 24.947368
+        },
+        {
+          "end": 52.263158,
+          "requested_duration": null,
+          "shot_id": "shot_0618910b8a69568c87a358cb13fa9bbd",
+          "start": 38.368421
+        },
+        {
+          "end": 60.0,
+          "requested_duration": null,
+          "shot_id": "shot_eed8a49a032d515d85e04938dea1f6d9",
+          "start": 52.263158
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 9.947368,
+          "requested_duration": null,
+          "shot_id": "shot_f7099579279d5360a82a9283ff52014c",
+          "start": 0.0
+        },
+        {
+          "end": 24.947368,
+          "requested_duration": null,
+          "shot_id": "shot_6d7e62244a68598183c7f8b45539b096",
+          "start": 9.947368
+        },
+        {
+          "end": 38.368421,
+          "requested_duration": null,
+          "shot_id": "shot_34f229ade65f5204ba3f66163467a128",
+          "start": 24.947368
+        },
+        {
+          "end": 52.263158,
+          "requested_duration": null,
+          "shot_id": "shot_0618910b8a69568c87a358cb13fa9bbd",
+          "start": 38.368421
+        },
+        {
+          "end": 60.0,
+          "requested_duration": null,
+          "shot_id": "shot_eed8a49a032d515d85e04938dea1f6d9",
+          "start": 52.263158
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "ai_asset_apply",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:30:16.015430+00:00",
+        "id": 521,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "update",
+          "regeneration_kind": null,
+          "revision": 15,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_f7099579279d5360a82a9283ff52014c"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [],
+            "visual_dependency_shot_ids": [
+              "shot_f7099579279d5360a82a9283ff52014c"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": []
+          },
+          "timeline_sha256": "e89bee1b3b9aa2295a8923d0a230a4e6e5a6529cc2e0757909e486ae2216694e",
+          "timeline_version": 2
+        },
+        "project_id": "7f13a515100d5c07aae9760d665ad2f8"
+      },
+      "after": {
+        "bytes": 1502330,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T123038580873Z-case08-ai-asset-applied-cad056e0/snapshot.json",
+        "sha256": "2d4b0fd489dcb04d457c2af839bd1c4f0bdf4df6dacd62cc5b04f74dced6de04"
+      },
+      "artifact_preservation_scope": "Historical job rows, prior asset metadata and research lineage are exact. Source artifact bytes are covered by separate preservation evidence; no new render was dispatched by the edit.",
+      "before": {
+        "bytes": 1379311,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T122934580357Z-case08-after-regenerate-f7878437/snapshot.json",
+        "sha256": "d4cf8177c09d44d9fd6262401f92603e0e224c7ea6d473b0cc2a12935b3db438"
+      },
+      "case": "08",
+      "changed_fields": {
+        "shot_f7099579279d5360a82a9283ff52014c": {
+          "asset_id": {
+            "after": "14d69c8121ad48558f33125e3ebc47f0.jpg",
+            "before": "11a1db038ac245c6b75659d603bb2ff5.jpg"
+          }
+        }
+      },
+      "checks": {
+        "all_prior_asset_metadata_retained": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_exact": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true
+      },
+      "comparison": {
+        "bytes": 4205,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T123038580873Z-case08-ai-asset-applied-cad056e0/shot-comparison.json",
+        "sha256": "0a2c85a0a9528d1a77aed45314325127d6c923c5bd212292105da3aadd111f5f"
+      },
+      "order_after": [
+        "shot_f7099579279d5360a82a9283ff52014c",
+        "shot_6d7e62244a68598183c7f8b45539b096",
+        "shot_34f229ade65f5204ba3f66163467a128",
+        "shot_0618910b8a69568c87a358cb13fa9bbd",
+        "shot_eed8a49a032d515d85e04938dea1f6d9"
+      ],
+      "order_before": [
+        "shot_f7099579279d5360a82a9283ff52014c",
+        "shot_6d7e62244a68598183c7f8b45539b096",
+        "shot_34f229ade65f5204ba3f66163467a128",
+        "shot_0618910b8a69568c87a358cb13fa9bbd",
+        "shot_eed8a49a032d515d85e04938dea1f6d9"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "7f13a515100d5c07aae9760d665ad2f8",
+      "revision_after": 15,
+      "revision_before": 14,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_f7099579279d5360a82a9283ff52014c"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_f7099579279d5360a82a9283ff52014c"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "e89bee1b3b9aa2295a8923d0a230a4e6e5a6529cc2e0757909e486ae2216694e",
+      "timeline_sha_before": "7ad48728f6e4600185572213d869d10782d58a7b24bd322309888c180e63bb21",
+      "timeline_version_after": 2,
+      "timeline_version_before": 1,
+      "timestamps_after": [
+        {
+          "end": 9.947368,
+          "requested_duration": null,
+          "shot_id": "shot_f7099579279d5360a82a9283ff52014c",
+          "start": 0.0
+        },
+        {
+          "end": 24.947368,
+          "requested_duration": null,
+          "shot_id": "shot_6d7e62244a68598183c7f8b45539b096",
+          "start": 9.947368
+        },
+        {
+          "end": 38.368421,
+          "requested_duration": null,
+          "shot_id": "shot_34f229ade65f5204ba3f66163467a128",
+          "start": 24.947368
+        },
+        {
+          "end": 52.263158,
+          "requested_duration": null,
+          "shot_id": "shot_0618910b8a69568c87a358cb13fa9bbd",
+          "start": 38.368421
+        },
+        {
+          "end": 60.0,
+          "requested_duration": null,
+          "shot_id": "shot_eed8a49a032d515d85e04938dea1f6d9",
+          "start": 52.263158
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 9.947368,
+          "requested_duration": null,
+          "shot_id": "shot_f7099579279d5360a82a9283ff52014c",
+          "start": 0.0
+        },
+        {
+          "end": 24.947368,
+          "requested_duration": null,
+          "shot_id": "shot_6d7e62244a68598183c7f8b45539b096",
+          "start": 9.947368
+        },
+        {
+          "end": 38.368421,
+          "requested_duration": null,
+          "shot_id": "shot_34f229ade65f5204ba3f66163467a128",
+          "start": 24.947368
+        },
+        {
+          "end": 52.263158,
+          "requested_duration": null,
+          "shot_id": "shot_0618910b8a69568c87a358cb13fa9bbd",
+          "start": 38.368421
+        },
+        {
+          "end": 60.0,
+          "requested_duration": null,
+          "shot_id": "shot_eed8a49a032d515d85e04938dea1f6d9",
+          "start": 52.263158
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "edit_narration",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:45:21.551260+00:00",
+        "id": 552,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "update",
+          "regeneration_kind": null,
+          "revision": 18,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+              "shot_4dfa824b6941581c9301232d09b088d6"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [],
+            "visual_dependency_shot_ids": [
+              "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": [
+              "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+              "shot_4dfa824b6941581c9301232d09b088d6"
+            ]
+          },
+          "timeline_sha256": "2944ea1c9ad5dbad6ddd254635da891756c44fd9a3087de030f30b961b683647",
+          "timeline_version": 4
+        },
+        "project_id": "d3aa854ed0ed552091f513c66642d8a0"
+      },
+      "after": {
+        "bytes": 2379645,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T124548438274Z-case01-after-narration-repair-2c2f6d58/snapshot.json",
+        "sha256": "95af7e460c729fad66c622e07b21bf06db8aeba828a57c962946332d72651b49"
+      },
+      "before": {
+        "bytes": 2246083,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T124502801958Z-case01-before-narration-repair-6d5e1608/snapshot.json",
+        "sha256": "a1bc240ca88a94f24ed8f52937bf7b6e796005dfabe8ef598e5f83d1f5640ec6"
+      },
+      "case": "01",
+      "changed_fields": {
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45": {
+          "narration": {
+            "after": "Lời kỳ vọng có phải là kết quả thực tế? Hãy kiểm tra nguồn.",
+            "before": "Lời kỳ vọng có phải là kết quả thực tế? Hãy đọc đúng phạm vi của một phát biểu."
+          },
+          "subtitle": {
+            "after": "Lời kỳ vọng có phải là kết quả thực tế? Hãy kiểm tra nguồn.",
+            "before": "Lời kỳ vọng có phải là kết quả thực tế? Hãy đọc đúng phạm vi của một phát biểu."
+          }
+        }
+      },
+      "checks": {
+        "asset_metadata_exact": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_subtitle_exact": true,
+        "only_narration_and_following_subtitle_changed": true,
+        "prior_production_approval_invalidated": true,
+        "prior_script_review_stale": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true,
+        "save_no_tts_or_render": true,
+        "scope_current_and_next_voice_context": true,
+        "script_hash_changed": true,
+        "shot_asset_bindings_exact": true
+      },
+      "comparison": {
+        "bytes": 5294,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T124548438274Z-case01-after-narration-repair-2c2f6d58/shot-comparison.json",
+        "sha256": "e6226ee71521ea26c469c4c25b458e1c387b529471b3b6593e1dd8b141b084bf"
+      },
+      "order_after": [
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+        "shot_4dfa824b6941581c9301232d09b088d6",
+        "shot_8f1e046b112a5c94b351a2ad9880eba6",
+        "shot_b66c203f9469583da0b0e8dbd39b74c6",
+        "shot_c1c99fb1faa85c12904f3d6268f7b98e"
+      ],
+      "order_before": [
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+        "shot_4dfa824b6941581c9301232d09b088d6",
+        "shot_8f1e046b112a5c94b351a2ad9880eba6",
+        "shot_b66c203f9469583da0b0e8dbd39b74c6",
+        "shot_c1c99fb1faa85c12904f3d6268f7b98e"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "d3aa854ed0ed552091f513c66642d8a0",
+      "revision_after": 18,
+      "revision_before": 17,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "shot_4dfa824b6941581c9301232d09b088d6"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "shot_4dfa824b6941581c9301232d09b088d6"
+        ]
+      },
+      "script_review_after": {
+        "actor_category": "DELEGATED_CODEX_EXECUTION",
+        "authority_reference_required_for_certification": true,
+        "current": false,
+        "decision": null,
+        "human_acceptance_record": false,
+        "personal_watch_listen_verified_by_helper": false,
+        "record_present": true,
+        "reviewer": "Codex — task Owner cho phép chuẩn bị; Owner chưa xem/nghe",
+        "source": null
+      },
+      "script_review_before": {
+        "actor_category": "DELEGATED_CODEX_EXECUTION",
+        "authority_reference_required_for_certification": true,
+        "current": true,
+        "decision": null,
+        "human_acceptance_record": false,
+        "personal_watch_listen_verified_by_helper": false,
+        "record_present": true,
+        "reviewer": "Codex — task Owner cho phép chuẩn bị; Owner chưa xem/nghe",
+        "source": null
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "2944ea1c9ad5dbad6ddd254635da891756c44fd9a3087de030f30b961b683647",
+      "timeline_sha_before": "59bfdbea8085984923b8394dbcec2239db469ad1a5b7e669b0f5d303e7a3a7fc",
+      "timeline_version_after": 4,
+      "timeline_version_before": 3,
+      "timestamps_after": [
+        {
+          "end": 8.734644,
+          "requested_duration": null,
+          "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "start": 0.0
+        },
+        {
+          "end": 20.12285,
+          "requested_duration": null,
+          "shot_id": "shot_4dfa824b6941581c9301232d09b088d6",
+          "start": 8.734644
+        },
+        {
+          "end": 27.420147,
+          "requested_duration": null,
+          "shot_id": "shot_8f1e046b112a5c94b351a2ad9880eba6",
+          "start": 20.12285
+        },
+        {
+          "end": 37.371007,
+          "requested_duration": null,
+          "shot_id": "shot_b66c203f9469583da0b0e8dbd39b74c6",
+          "start": 27.420147
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_c1c99fb1faa85c12904f3d6268f7b98e",
+          "start": 37.371007
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 8.734644,
+          "requested_duration": null,
+          "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "start": 0.0
+        },
+        {
+          "end": 20.12285,
+          "requested_duration": null,
+          "shot_id": "shot_4dfa824b6941581c9301232d09b088d6",
+          "start": 8.734644
+        },
+        {
+          "end": 27.420147,
+          "requested_duration": null,
+          "shot_id": "shot_8f1e046b112a5c94b351a2ad9880eba6",
+          "start": 20.12285
+        },
+        {
+          "end": 37.371007,
+          "requested_duration": null,
+          "shot_id": "shot_b66c203f9469583da0b0e8dbd39b74c6",
+          "start": 27.420147
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_c1c99fb1faa85c12904f3d6268f7b98e",
+          "start": 37.371007
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "edit_narration_onset_repair",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:45:37.338451+00:00",
+        "id": 553,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "update",
+          "regeneration_kind": null,
+          "revision": 15,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_0f71459450575a17961cc2ddf4ea21cb",
+              "shot_4612efa4c0045a8aa321ce90610f8b15"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [],
+            "visual_dependency_shot_ids": [
+              "shot_0f71459450575a17961cc2ddf4ea21cb"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": [
+              "shot_0f71459450575a17961cc2ddf4ea21cb",
+              "shot_4612efa4c0045a8aa321ce90610f8b15"
+            ]
+          },
+          "timeline_sha256": "2bd9df3040728cbd48abba8bf289f5b4a0153c35664b623167c83dd2012323ad",
+          "timeline_version": 2
+        },
+        "project_id": "ec5a3d1cf3cf5ec3a1debaf97c189139"
+      },
+      "after": {
+        "bytes": 1659413,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T124549911971Z-case04-after-onset-repair-2a34d1bc/snapshot.json",
+        "sha256": "fd85ab4ed56cdcae37f9c05c914ff7ec849c8a3ab516ed3b0432902fa70fa488"
+      },
+      "before": {
+        "bytes": 1534798,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T124505474634Z-case04-before-onset-repair-bcce55ba/snapshot.json",
+        "sha256": "fca3e29a21dddca872552c0dd13538ce2cad699b1f79dd0bebc40dc3c383f71f"
+      },
+      "case": "04",
+      "changed_fields": {
+        "shot_0f71459450575a17961cc2ddf4ea21cb": {
+          "narration": {
+            "after": "Bài viết về sự kiện khởi động dự án nêu gần mười hai nghìn người tham dự và hơn một trăm tám mươi nghìn lượt xem trực tiếp.",
+            "before": "Bài Kick-Off Vinhomes Sài Gòn Park nêu gần mười hai nghìn người tham dự và hơn một trăm tám mươi nghìn lượt xem trực tiếp."
+          },
+          "subtitle": {
+            "after": "Bài viết về sự kiện khởi động dự án nêu gần mười hai nghìn người tham dự và hơn một trăm tám mươi nghìn lượt xem trực tiếp.",
+            "before": "Bài Kick-Off Vinhomes Sài Gòn Park nêu gần mười hai nghìn người tham dự và hơn một trăm tám mươi nghìn lượt xem trực tiếp."
+          }
+        }
+      },
+      "checks": {
+        "asset_metadata_exact": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_subtitle_exact": true,
+        "only_narration_and_following_subtitle_changed": true,
+        "prior_production_approval_invalidated": true,
+        "prior_script_review_stale": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true,
+        "save_no_tts_or_render": true,
+        "scope_current_and_next_voice_context": true,
+        "script_hash_changed": true,
+        "shot_asset_bindings_exact": true
+      },
+      "comparison": {
+        "bytes": 5548,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T124549911971Z-case04-after-onset-repair-2a34d1bc/shot-comparison.json",
+        "sha256": "8ad7f5ea917cad18b6d75b57714ffd891804a703db51f339814c441af4fb202f"
+      },
+      "order_after": [
+        "shot_de6401133cfe58b9b5150e3d41abcde8",
+        "shot_0f71459450575a17961cc2ddf4ea21cb",
+        "shot_4612efa4c0045a8aa321ce90610f8b15",
+        "shot_766f166165065813bc21687d3f112da8",
+        "shot_8e17507bb96151028f9eb024465957ac"
+      ],
+      "order_before": [
+        "shot_de6401133cfe58b9b5150e3d41abcde8",
+        "shot_0f71459450575a17961cc2ddf4ea21cb",
+        "shot_4612efa4c0045a8aa321ce90610f8b15",
+        "shot_766f166165065813bc21687d3f112da8",
+        "shot_8e17507bb96151028f9eb024465957ac"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "ec5a3d1cf3cf5ec3a1debaf97c189139",
+      "revision_after": 15,
+      "revision_before": 14,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_0f71459450575a17961cc2ddf4ea21cb",
+          "shot_4612efa4c0045a8aa321ce90610f8b15"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_0f71459450575a17961cc2ddf4ea21cb"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": [
+          "shot_0f71459450575a17961cc2ddf4ea21cb",
+          "shot_4612efa4c0045a8aa321ce90610f8b15"
+        ]
+      },
+      "script_review_after": {
+        "actor_category": "DELEGATED_CODEX_EXECUTION",
+        "authority_reference_required_for_certification": true,
+        "current": false,
+        "decision": null,
+        "human_acceptance_record": false,
+        "personal_watch_listen_verified_by_helper": false,
+        "record_present": true,
+        "reviewer": "Codex — task Owner cho phép chuẩn bị; Owner chưa xem/nghe",
+        "source": null
+      },
+      "script_review_before": {
+        "actor_category": "DELEGATED_CODEX_EXECUTION",
+        "authority_reference_required_for_certification": true,
+        "current": true,
+        "decision": null,
+        "human_acceptance_record": false,
+        "personal_watch_listen_verified_by_helper": false,
+        "record_present": true,
+        "reviewer": "Codex — task Owner cho phép chuẩn bị; Owner chưa xem/nghe",
+        "source": null
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "2bd9df3040728cbd48abba8bf289f5b4a0153c35664b623167c83dd2012323ad",
+      "timeline_sha_before": "6f0006d7d9510b63f00944cc37baaa8c765cd4d9610629dbb22ace3769e9ffa4",
+      "timeline_version_after": 2,
+      "timeline_version_before": 1,
+      "timestamps_after": [
+        {
+          "end": 8.111111,
+          "requested_duration": null,
+          "shot_id": "shot_de6401133cfe58b9b5150e3d41abcde8",
+          "start": 0.0
+        },
+        {
+          "end": 21.666667,
+          "requested_duration": null,
+          "shot_id": "shot_0f71459450575a17961cc2ddf4ea21cb",
+          "start": 8.111111
+        },
+        {
+          "end": 29.888889,
+          "requested_duration": null,
+          "shot_id": "shot_4612efa4c0045a8aa321ce90610f8b15",
+          "start": 21.666667
+        },
+        {
+          "end": 37.111111,
+          "requested_duration": null,
+          "shot_id": "shot_766f166165065813bc21687d3f112da8",
+          "start": 29.888889
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_8e17507bb96151028f9eb024465957ac",
+          "start": 37.111111
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 8.111111,
+          "requested_duration": null,
+          "shot_id": "shot_de6401133cfe58b9b5150e3d41abcde8",
+          "start": 0.0
+        },
+        {
+          "end": 21.666667,
+          "requested_duration": null,
+          "shot_id": "shot_0f71459450575a17961cc2ddf4ea21cb",
+          "start": 8.111111
+        },
+        {
+          "end": 29.888889,
+          "requested_duration": null,
+          "shot_id": "shot_4612efa4c0045a8aa321ce90610f8b15",
+          "start": 21.666667
+        },
+        {
+          "end": 37.111111,
+          "requested_duration": null,
+          "shot_id": "shot_766f166165065813bc21687d3f112da8",
+          "start": 29.888889
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_8e17507bb96151028f9eb024465957ac",
+          "start": 37.111111
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "edit_narration_later_onset_repair",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:54:22.605364+00:00",
+        "id": 580,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "update",
+          "regeneration_kind": null,
+          "revision": 14,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_443146b227e25756a1684d9720355196",
+              "shot_a254ab21831f538388c965b32ceb5cbe"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [],
+            "visual_dependency_shot_ids": [
+              "shot_443146b227e25756a1684d9720355196"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": [
+              "shot_443146b227e25756a1684d9720355196",
+              "shot_a254ab21831f538388c965b32ceb5cbe"
+            ]
+          },
+          "timeline_sha256": "004f7614e48328652d6569406d624723aff1a79a217d2f001645f423c07e0ff9",
+          "timeline_version": 1
+        },
+        "project_id": "5e9d204790f551eb8afadee33a67a8f6"
+      },
+      "actual_voice_cache_counts": "Pending current render metadata; these are scope expectations only",
+      "after": {
+        "bytes": 1687779,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T125454592781Z-case06-after-narration-repair-beaa6205/snapshot.json",
+        "sha256": "76aab8fb1f0a659ea4ab9224bbd6ce6306b399ea4c5e6e5712e3cb0a05607611"
+      },
+      "before": {
+        "bytes": 1538672,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T125407902852Z-case06-before-narration-repair-abcca6f2/snapshot.json",
+        "sha256": "6fd35cbce7d1d33281433add0da3d6f5bf46eae72ca7ef00e7f9de81342941aa"
+      },
+      "case": "06",
+      "changed_fields": {
+        "shot_443146b227e25756a1684d9720355196": {
+          "narration": {
+            "after": "Thông tin trong bài nói về quý một năm hai nghìn không trăm hai mươi sáu, chưa xác nhận thị trường hiện tại.",
+            "before": "Bài tường thuật quý một năm hai nghìn không trăm hai mươi sáu, chưa xác nhận thị trường hiện tại."
+          },
+          "subtitle": {
+            "after": "Thông tin trong bài nói về quý một năm hai nghìn không trăm hai mươi sáu, chưa xác nhận thị trường hiện tại.",
+            "before": "Bài tường thuật quý một năm hai nghìn không trăm hai mươi sáu, chưa xác nhận thị trường hiện tại."
+          }
+        }
+      },
+      "checks": {
+        "asset_metadata_exact": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_subtitle_exact": true,
+        "only_narration_and_following_subtitle_changed": true,
+        "prior_production_approval_invalidated": true,
+        "prior_script_review_stale": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true,
+        "save_no_tts_or_render": true,
+        "script_hash_changed": true,
+        "shot_asset_bindings_exact": true,
+        "voice_dependency_scope_expected": true
+      },
+      "comparison": {
+        "bytes": 5430,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T125454592781Z-case06-after-narration-repair-beaa6205/shot-comparison.json",
+        "sha256": "4770253657424a8d96335a36fc4358aab6944a429027924aae697a97a04f1364"
+      },
+      "expected_voice_recompute_scene_numbers": [
+        4,
+        5
+      ],
+      "expected_voice_reuse_scene_numbers": [
+        1,
+        2,
+        3
+      ],
+      "order_after": [
+        "shot_6c548036ddc45d5291942cf4e32b73ea",
+        "shot_4f01b1e68ed75ef58a7528eea132b838",
+        "shot_6a17940579ab51fa95a726e7a90379e5",
+        "shot_443146b227e25756a1684d9720355196",
+        "shot_a254ab21831f538388c965b32ceb5cbe"
+      ],
+      "order_before": [
+        "shot_6c548036ddc45d5291942cf4e32b73ea",
+        "shot_4f01b1e68ed75ef58a7528eea132b838",
+        "shot_6a17940579ab51fa95a726e7a90379e5",
+        "shot_443146b227e25756a1684d9720355196",
+        "shot_a254ab21831f538388c965b32ceb5cbe"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "5e9d204790f551eb8afadee33a67a8f6",
+      "revision_after": 14,
+      "revision_before": 13,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_443146b227e25756a1684d9720355196",
+          "shot_a254ab21831f538388c965b32ceb5cbe"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_443146b227e25756a1684d9720355196"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": [
+          "shot_443146b227e25756a1684d9720355196",
+          "shot_a254ab21831f538388c965b32ceb5cbe"
+        ]
+      },
+      "script_review_after": {
+        "actor_category": "DELEGATED_CODEX_EXECUTION",
+        "authority_reference_required_for_certification": true,
+        "current": false,
+        "decision": null,
+        "human_acceptance_record": false,
+        "personal_watch_listen_verified_by_helper": false,
+        "record_present": true,
+        "reviewer": "Codex — task Owner cho phép chuẩn bị; Owner chưa xem/nghe",
+        "source": null
+      },
+      "script_review_before": {
+        "actor_category": "DELEGATED_CODEX_EXECUTION",
+        "authority_reference_required_for_certification": true,
+        "current": true,
+        "decision": null,
+        "human_acceptance_record": false,
+        "personal_watch_listen_verified_by_helper": false,
+        "record_present": true,
+        "reviewer": "Codex — task Owner cho phép chuẩn bị; Owner chưa xem/nghe",
+        "source": null
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "004f7614e48328652d6569406d624723aff1a79a217d2f001645f423c07e0ff9",
+      "timeline_sha_before": "81004e335f7f7f271406b5f6cdd144033a35b5a16bc84c94fc46c26de3b9d835",
+      "timeline_version_after": 1,
+      "timeline_version_before": 0,
+      "timestamps_after": [
+        {
+          "end": 6.76781,
+          "requested_duration": null,
+          "shot_id": "shot_6c548036ddc45d5291942cf4e32b73ea",
+          "start": 0.0
+        },
+        {
+          "end": 18.166227,
+          "requested_duration": null,
+          "shot_id": "shot_4f01b1e68ed75ef58a7528eea132b838",
+          "start": 6.76781
+        },
+        {
+          "end": 27.308707,
+          "requested_duration": null,
+          "shot_id": "shot_6a17940579ab51fa95a726e7a90379e5",
+          "start": 18.166227
+        },
+        {
+          "end": 38.825858,
+          "requested_duration": null,
+          "shot_id": "shot_443146b227e25756a1684d9720355196",
+          "start": 27.308707
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_a254ab21831f538388c965b32ceb5cbe",
+          "start": 38.825858
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 6.76781,
+          "requested_duration": null,
+          "shot_id": "shot_6c548036ddc45d5291942cf4e32b73ea",
+          "start": 0.0
+        },
+        {
+          "end": 18.166227,
+          "requested_duration": null,
+          "shot_id": "shot_4f01b1e68ed75ef58a7528eea132b838",
+          "start": 6.76781
+        },
+        {
+          "end": 27.308707,
+          "requested_duration": null,
+          "shot_id": "shot_6a17940579ab51fa95a726e7a90379e5",
+          "start": 18.166227
+        },
+        {
+          "end": 38.825858,
+          "requested_duration": null,
+          "shot_id": "shot_443146b227e25756a1684d9720355196",
+          "start": 27.308707
+        },
+        {
+          "end": 45.0,
+          "requested_duration": null,
+          "shot_id": "shot_a254ab21831f538388c965b32ceb5cbe",
+          "start": 38.825858
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    },
+    {
+      "action": "edit_narration_cta_repair",
+      "actual_scope_event": {
+        "action": "shot_timeline_saved_approval_invalidated",
+        "created_at": "2026-10-06T12:54:34.278297+00:00",
+        "id": 581,
+        "payload": {
+          "automatic_production": false,
+          "human_review_required": true,
+          "operation": "update",
+          "regeneration_kind": null,
+          "revision": 16,
+          "scope": {
+            "affected_shot_ids": [
+              "shot_eed8a49a032d515d85e04938dea1f6d9"
+            ],
+            "full_render_requested": false,
+            "order_changed": false,
+            "preview_invalidated": true,
+            "provider_calls": 0,
+            "retimed_shot_ids": [],
+            "visual_dependency_shot_ids": [
+              "shot_eed8a49a032d515d85e04938dea1f6d9"
+            ],
+            "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+            "voice_dependency_shot_ids": [
+              "shot_eed8a49a032d515d85e04938dea1f6d9"
+            ]
+          },
+          "timeline_sha256": "0544fe36a04bed3ab01aca3a7fe4c8cdb531174f1c4869dfcbf76989731e5b11",
+          "timeline_version": 3
+        },
+        "project_id": "7f13a515100d5c07aae9760d665ad2f8"
+      },
+      "actual_voice_cache_counts": "Pending current render metadata; these are scope expectations only",
+      "after": {
+        "bytes": 1877855,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T125456123112Z-case08-after-cta-repair-3b1f4cec/snapshot.json",
+        "sha256": "b69f64abc4643dd83525cc0eac47512aedfb06b1246422b9252ae98f9dda4da3"
+      },
+      "before": {
+        "bytes": 1755825,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T125409361970Z-case08-before-cta-repair-e18a95ee/snapshot.json",
+        "sha256": "e140b2475e33022ac169b5653c13650d356c0451fe0e382452e3cb886021d1ea"
+      },
+      "case": "08",
+      "changed_fields": {
+        "shot_eed8a49a032d515d85e04938dea1f6d9": {
+          "narration": {
+            "after": "Bạn có thể đọc bài gốc và gửi câu hỏi cần đối chiếu.",
+            "before": "Đọc nguồn và gửi câu hỏi nếu muốn đối chiếu thêm."
+          },
+          "subtitle": {
+            "after": "Bạn có thể đọc bài gốc và gửi câu hỏi cần đối chiếu.",
+            "before": "Đọc nguồn và gửi câu hỏi nếu muốn đối chiếu thêm."
+          }
+        }
+      },
+      "checks": {
+        "asset_metadata_exact": true,
+        "historical_job_records_exact": true,
+        "independent_comparison_pass": true,
+        "narration_subtitle_exact": true,
+        "only_narration_and_following_subtitle_changed": true,
+        "prior_production_approval_invalidated": true,
+        "prior_script_review_stale": true,
+        "recorded_and_recomputed_scope_exact": true,
+        "recorded_comparison_pass": true,
+        "research_lineage_exact": true,
+        "save_no_tts_or_render": true,
+        "script_hash_changed": true,
+        "shot_asset_bindings_exact": true,
+        "voice_dependency_scope_expected": true
+      },
+      "comparison": {
+        "bytes": 5036,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/20261006T125456123112Z-case08-after-cta-repair-3b1f4cec/shot-comparison.json",
+        "sha256": "d69d5593bcc3b2545effa50a95375f8aa4f70bc8af24f7b3a74c0a1de3976d65"
+      },
+      "expected_voice_recompute_scene_numbers": [
+        5
+      ],
+      "expected_voice_reuse_scene_numbers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "order_after": [
+        "shot_f7099579279d5360a82a9283ff52014c",
+        "shot_6d7e62244a68598183c7f8b45539b096",
+        "shot_34f229ade65f5204ba3f66163467a128",
+        "shot_0618910b8a69568c87a358cb13fa9bbd",
+        "shot_eed8a49a032d515d85e04938dea1f6d9"
+      ],
+      "order_before": [
+        "shot_f7099579279d5360a82a9283ff52014c",
+        "shot_6d7e62244a68598183c7f8b45539b096",
+        "shot_34f229ade65f5204ba3f66163467a128",
+        "shot_0618910b8a69568c87a358cb13fa9bbd",
+        "shot_eed8a49a032d515d85e04938dea1f6d9"
+      ],
+      "owner_personal_acceptance": false,
+      "production_approval_after": null,
+      "project_id": "7f13a515100d5c07aae9760d665ad2f8",
+      "revision_after": 16,
+      "revision_before": 15,
+      "scope": {
+        "affected_shot_ids": [
+          "shot_eed8a49a032d515d85e04938dea1f6d9"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_eed8a49a032d515d85e04938dea1f6d9"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": [
+          "shot_eed8a49a032d515d85e04938dea1f6d9"
+        ]
+      },
+      "script_review_after": {
+        "actor_category": "DELEGATED_CODEX_EXECUTION",
+        "authority_reference_required_for_certification": true,
+        "current": false,
+        "decision": null,
+        "human_acceptance_record": false,
+        "personal_watch_listen_verified_by_helper": false,
+        "record_present": true,
+        "reviewer": "Codex — task Owner cho phép chuẩn bị; Owner chưa xem/nghe",
+        "source": null
+      },
+      "script_review_before": {
+        "actor_category": "DELEGATED_CODEX_EXECUTION",
+        "authority_reference_required_for_certification": true,
+        "current": true,
+        "decision": null,
+        "human_acceptance_record": false,
+        "personal_watch_listen_verified_by_helper": false,
+        "record_present": true,
+        "reviewer": "Codex — task Owner cho phép chuẩn bị; Owner chưa xem/nghe",
+        "source": null
+      },
+      "status": "TECHNICAL_PASS",
+      "timeline_sha_after": "0544fe36a04bed3ab01aca3a7fe4c8cdb531174f1c4869dfcbf76989731e5b11",
+      "timeline_sha_before": "e89bee1b3b9aa2295a8923d0a230a4e6e5a6529cc2e0757909e486ae2216694e",
+      "timeline_version_after": 3,
+      "timeline_version_before": 2,
+      "timestamps_after": [
+        {
+          "end": 9.947368,
+          "requested_duration": null,
+          "shot_id": "shot_f7099579279d5360a82a9283ff52014c",
+          "start": 0.0
+        },
+        {
+          "end": 24.947368,
+          "requested_duration": null,
+          "shot_id": "shot_6d7e62244a68598183c7f8b45539b096",
+          "start": 9.947368
+        },
+        {
+          "end": 38.368421,
+          "requested_duration": null,
+          "shot_id": "shot_34f229ade65f5204ba3f66163467a128",
+          "start": 24.947368
+        },
+        {
+          "end": 52.263158,
+          "requested_duration": null,
+          "shot_id": "shot_0618910b8a69568c87a358cb13fa9bbd",
+          "start": 38.368421
+        },
+        {
+          "end": 60.0,
+          "requested_duration": null,
+          "shot_id": "shot_eed8a49a032d515d85e04938dea1f6d9",
+          "start": 52.263158
+        }
+      ],
+      "timestamps_before": [
+        {
+          "end": 9.947368,
+          "requested_duration": null,
+          "shot_id": "shot_f7099579279d5360a82a9283ff52014c",
+          "start": 0.0
+        },
+        {
+          "end": 24.947368,
+          "requested_duration": null,
+          "shot_id": "shot_6d7e62244a68598183c7f8b45539b096",
+          "start": 9.947368
+        },
+        {
+          "end": 38.368421,
+          "requested_duration": null,
+          "shot_id": "shot_34f229ade65f5204ba3f66163467a128",
+          "start": 24.947368
+        },
+        {
+          "end": 52.263158,
+          "requested_duration": null,
+          "shot_id": "shot_0618910b8a69568c87a358cb13fa9bbd",
+          "start": 38.368421
+        },
+        {
+          "end": 60.0,
+          "requested_duration": null,
+          "shot_id": "shot_eed8a49a032d515d85e04938dea1f6d9",
+          "start": 52.263158
+        }
+      ],
+      "tts_dispatched_by_edit": false
+    }
+  ],
+  "schema_version": "phase10-shot-edit-action-matrix-v3"
+}

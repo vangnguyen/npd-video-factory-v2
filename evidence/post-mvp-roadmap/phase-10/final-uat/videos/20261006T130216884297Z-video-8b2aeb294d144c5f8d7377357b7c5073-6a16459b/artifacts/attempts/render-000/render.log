@@ -1,0 +1,65 @@
+[Parsed_ass_1 @ 000002badee7c400] libass API version: 0x1705000
+[Parsed_ass_1 @ 000002badee7c400] libass source: commit: 0.17.5-8-gb2fe9d8770678a7b5271387d38c20657ebf3429a
+[Parsed_ass_1 @ 000002badee7c400] Shaper: FriBidi 1.0.16 (SIMPLE) HarfBuzz-ng 14.4.0 (COMPLEX)
+[Parsed_ass_1 @ 000002badee7c400] Using font provider directwrite (with GDI)
+[Parsed_ass_1 @ 000002badee7c400] Added subtitle file: 'subtitles.ass' (2 styles, 5 events)
+[mov,mp4,m4a,3gp,3g2,mj2 @ 000002badef02a00] Auto-inserting h264_mp4toannexb bitstream filter
+Input #0, concat, from 'frames.txt':
+  Duration: N/A, start: 0.000000, bitrate: 70 kb/s
+  Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1920x1080 [SAR 1:1 DAR 16:9], 70 kb/s, 30 fps, 30 tbr, 15360 tbn
+    Metadata:
+      handler_name    : VideoHandler
+      encoder         : Lavc63.1.102 libx264
+[aist#1:0/pcm_s16le @ 000002badef4e340] Guessed Channel Layout: mono
+Input #1, wav, from 'render-voice.wav':
+  Duration: 00:01:00.00, bitrate: 768 kb/s
+  Stream #1:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 48000 Hz, mono, s16, 768 kb/s
+Stream mapping:
+  Stream #0:0 (h264) -> fps:default
+  Stream #1:0 (pcm_s16le) -> volume:default
+  format:default -> Stream #0:0 (libx264)
+  atrim:default -> Stream #0:1 (aac)
+[Parsed_ass_1 @ 000002badee7c400] libass API version: 0x1705000
+[Parsed_ass_1 @ 000002badee7c400] libass source: commit: 0.17.5-8-gb2fe9d8770678a7b5271387d38c20657ebf3429a
+[Parsed_ass_1 @ 000002badee7c400] Shaper: FriBidi 1.0.16 (SIMPLE) HarfBuzz-ng 14.4.0 (COMPLEX)
+[Parsed_ass_1 @ 000002badee7c400] Using font provider directwrite (with GDI)
+[Parsed_ass_1 @ 000002badee7c400] Added subtitle file: 'subtitles.ass' (2 styles, 5 events)
+[libx264 @ 000002bae103e200] using SAR=1/1
+[libx264 @ 000002bae103e200] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2
+[libx264 @ 000002bae103e200] profile High, level 4.0, 4:2:0, 8-bit
+[libx264 @ 000002bae103e200] 264 - core 165 r3223 0480cb0 - H.264/MPEG-4 AVC codec - Copyleft 2003-2025 - http://www.videolan.org/x264.html - options: cabac=1 ref=1 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=2 psy=1 psy_rd=1.00:0.00 mixed_ref=0 me_range=16 chroma_me=1 trellis=0 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=0 threads=18 lookahead_threads=6 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=1 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=10 rc=crf mbtree=1 crf=20.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to 'final.mp4':
+  Metadata:
+    encoder         : Lavf63.1.102
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 1920x1080 [SAR 1:1 DAR 16:9], q=2-31, 30 fps, 15360 tbn
+    Metadata:
+      encoder         : Lavc63.1.102 libx264
+    Side data:
+      CPB properties: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+  Stream #0:1: Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, mono, fltp, 192 kb/s
+    Metadata:
+      encoder         : Lavc63.1.102 aac
+[Parsed_ass_1 @ 000002badee7c400] fontselect: (Segoe UI, 400, 0) -> SegoeUI, 0, SegoeUI
+frame=   72 fps=0.0 q=26.0 size=       0KiB time=00:00:03.62 bitrate=   0.1kbits/s speed=6.91x elapsed=0:00:00.52    [mov,mp4,m4a,3gp,3g2,mj2 @ 000002bae10400c0] Auto-inserting h264_mp4toannexb bitstream filter
+frame=  178 fps=171 q=26.0 size=       0KiB time=00:00:07.12 bitrate=   0.1kbits/s speed=6.83x elapsed=0:00:01.04    [mov,mp4,m4a,3gp,3g2,mj2 @ 000002bae10400c0] Auto-inserting h264_mp4toannexb bitstream filter
+frame=  286 fps=184 q=26.0 size=     256KiB time=00:00:10.53 bitrate= 199.0kbits/s speed=6.77x elapsed=0:00:01.55    [mov,mp4,m4a,3gp,3g2,mj2 @ 000002badef2a980] Auto-inserting h264_mp4toannexb bitstream filter
+frame=  396 fps=190 q=26.0 size=     256KiB time=00:00:14.37 bitrate= 145.9kbits/s speed=6.91x elapsed=0:00:02.08    [mov,mp4,m4a,3gp,3g2,mj2 @ 000002ba80aac140] Auto-inserting h264_mp4toannexb bitstream filter
+frame=  509 fps=196 q=26.0 size=     512KiB time=00:00:18.21 bitrate= 230.2kbits/s speed=7.03x elapsed=0:00:02.59    frame=  631 fps=203 q=26.0 size=     512KiB time=00:00:22.22 bitrate= 188.7kbits/s speed=7.16x elapsed=0:00:03.10    frame=  751 fps=207 q=26.0 size=     512KiB time=00:00:26.49 bitrate= 158.3kbits/s speed=7.31x elapsed=0:00:03.62    frame=  869 fps=210 q=26.0 size=     512KiB time=00:00:30.33 bitrate= 138.3kbits/s speed=7.33x elapsed=0:00:04.13    frame=  990 fps=213 q=26.0 size=     512KiB time=00:00:34.26 bitrate= 122.4kbits/s speed=7.36x elapsed=0:00:04.65    frame= 1114 fps=215 q=26.0 size=     512KiB time=00:00:38.35 bitrate= 109.4kbits/s speed=7.41x elapsed=0:00:05.17    frame= 1207 fps=212 q=26.0 size=     512KiB time=00:00:41.68 bitrate= 100.6kbits/s speed=7.33x elapsed=0:00:05.69    frame= 1309 fps=211 q=26.0 size=     512KiB time=00:00:45.09 bitrate=  93.0kbits/s speed=7.26x elapsed=0:00:06.20    frame= 1407 fps=209 q=26.0 size=     768KiB time=00:00:48.08 bitrate= 130.8kbits/s speed=7.15x elapsed=0:00:06.72    frame= 1505 fps=208 q=26.0 size=     768KiB time=00:00:51.49 bitrate= 122.2kbits/s speed=7.11x elapsed=0:00:07.24    frame= 1615 fps=208 q=26.0 size=     768KiB time=00:00:55.16 bitrate= 114.0kbits/s speed=7.11x elapsed=0:00:07.75    frame= 1740 fps=210 q=26.0 size=     768KiB time=00:00:59.17 bitrate= 106.3kbits/s speed=7.15x elapsed=0:00:08.27    [mp4 @ 000002badef4e500] Starting second pass: moving the moov atom to the beginning of the file
+[out#0/mp4 @ 000002badef28800] video:501KiB audio:368KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 7.591919%
+frame= 1800 fps=214 q=-1.0 Lsize=     935KiB time=00:01:00.00 bitrate= 127.6kbits/s speed=7.14x elapsed=0:00:08.40    
+[libx264 @ 000002bae103e200] frame I:8     Avg QP: 6.81  size: 36178
+[libx264 @ 000002bae103e200] frame P:454   Avg QP: 9.72  size:   281
+[libx264 @ 000002bae103e200] frame B:1338  Avg QP:12.68  size:    71
+[libx264 @ 000002bae103e200] consecutive B-frames:  0.9%  0.0%  0.0% 99.1%
+[libx264 @ 000002bae103e200] mb I  I16..4: 92.8%  0.5%  6.7%
+[libx264 @ 000002bae103e200] mb P  I16..4:  0.1%  0.0%  0.0%  P16..4:  0.0%  0.0%  0.0%  0.0%  0.0%    skip:99.8%
+[libx264 @ 000002bae103e200] mb B  I16..4:  0.0%  0.0%  0.0%  B16..8:  0.0%  0.0%  0.0%  direct: 0.0%  skip:100.0%  L0:44.4% L1:55.6% BI: 0.0%
+[libx264 @ 000002bae103e200] 8x8 transform intra:0.5% inter:2.9%
+[libx264 @ 000002bae103e200] coded y,uvDC,uvAC intra: 7.4% 7.6% 6.9% inter: 0.0% 0.0% 0.0%
+[libx264 @ 000002bae103e200] i16 v,h,dc,p: 82% 16%  2%  0%
+[libx264 @ 000002bae103e200] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 50% 26% 23%  0%  0%  0%  0%  0%  1%
+[libx264 @ 000002bae103e200] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 39% 18% 20%  3%  4%  5%  4%  4%  4%
+[libx264 @ 000002bae103e200] i8c dc,h,v,p: 80% 17%  2%  1%
+[libx264 @ 000002bae103e200] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 000002bae103e200] kb/s:68.26
+[aac @ 000002bae101b280] Qavg: 64754.980

@@ -1,0 +1,19 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Arial,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.21,0:00:03.42,Subtitle,,0,0,0,,{\pos(495,1435)}Tách ngày đăng khỏi ngày lấy nguồn\Nđể đọc đúng thời điểm.
+Dialogue: 0,0:00:03.92,0:00:06.39,Subtitle,,0,0,0,,{\pos(495,1435)}Báo Điện tử Chính phủ đăng bài ngày\Nhai mươi bốn tháng tư năm hai nghìn
+Dialogue: 0,0:00:06.39,0:00:07.22,Subtitle,,0,0,0,,{\pos(495,1435)}không trăm hai mươi sáu.
+Dialogue: 0,0:00:07.72,0:00:10.44,Subtitle,,0,0,0,,{\pos(495,1435)}Nguồn được lấy ngày sáu tháng mười\Ntheo giờ Việt Nam, khác với ngày
+Dialogue: 0,0:00:10.44,0:00:10.81,Subtitle,,0,0,0,,{\pos(495,1435)}đăng bài.
+Dialogue: 0,0:00:11.31,0:00:14.05,Subtitle,,0,0,0,,{\pos(495,1435)}Thông tin trong bài nói về quý một\Nnăm hai nghìn không trăm hai mươi
+Dialogue: 0,0:00:14.05,0:00:15.62,Subtitle,,0,0,0,,{\pos(495,1435)}sáu, chưa xác nhận thị trường hiện\Ntại.
+Dialogue: 0,0:00:16.12,0:00:18.78,Subtitle,,0,0,0,,{\pos(495,1435)}Gửi câu hỏi để cùng kiểm tra ngày bài\Nvà kỳ dữ liệu.

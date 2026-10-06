@@ -9,3 +9,8 @@ evidence/post-mvp-roadmap/phase-8/final-review-bundle.md -text whitespace=cr-at-
 evidence/post-mvp-roadmap/phase-9/*.json -text whitespace=cr-at-eol
 evidence/post-mvp-roadmap/phase-9/*review*.md -text whitespace=cr-at-eol,-blank-at-eof
 evidence/post-mvp-roadmap/phase-9/9k/** -text whitespace=cr-at-eol,-blank-at-eof
+
+# Phase 10 UAT receipts and media hashes also bind exact captured bytes.
+evidence/post-mvp-roadmap/phase-10/final-uat/** -text whitespace=cr-at-eol,-blank-at-eof
+# FFmpeg's captured progress lines include padding; retain their original bytes.
+evidence/post-mvp-roadmap/phase-10/final-uat/**/*.log -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

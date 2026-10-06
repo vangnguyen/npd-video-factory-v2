@@ -1,0 +1,686 @@
+{
+  "actual_ai_applies": 3,
+  "actual_provider_calls_represented": 3,
+  "actual_provider_retries_represented": 0,
+  "app_mutations_by_aggregator": 0,
+  "captured_at": "2026-10-06T12:40:23.763202+00:00",
+  "excluded_prior_technical_clone_proposals": true,
+  "head_sha": "b8d8e646f38bbdf81553e32a68f2cf923ed2e2e2",
+  "human_watch_listen_acceptance": "PENDING",
+  "inputs_read_only": true,
+  "operations": [
+    {
+      "actual_changed_fields": {
+        "shot_b3cbd30c2e2551caa88ab55ba8d2ad45": {
+          "on_screen_text": {
+            "after": "Kỳ vọng hay dữ kiện?",
+            "before": "Lời kỳ vọng hay dữ kiện?"
+          }
+        }
+      },
+      "applied_operation": {
+        "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+        "type": "update",
+        "values": {
+          "on_screen_text": "Kỳ vọng hay dữ kiện?"
+        }
+      },
+      "applied_revision": 16,
+      "applied_timeline_sha256": "794e5e72d398e7b2b38f44fdc63e097063550ecea77b6e9b9a6459e12f330980",
+      "applier_classification": "Codex delegated task execution; not personal Owner review",
+      "case": "01",
+      "checks": {
+        "applied_values_persisted": true,
+        "context_digest_exact": true,
+        "derived_asset_reset_only": true,
+        "explicit_apply_required": true,
+        "no_media_generated_no_render_no_fact_certification": true,
+        "project_revision_timeline_bound": true,
+        "provider_completed": true,
+        "provider_identity_exact": true,
+        "provider_raw_byte_hash_exact": true,
+        "provider_usage_exact": true,
+        "raw_values_retained": true,
+        "real_one_call_no_retry": true,
+        "receipt_id_exact": true,
+        "request_input_exact": true,
+        "scope_binds_new_revision_and_sha": true,
+        "scope_exact_actual_apply": true,
+        "selected_shot_context_exact": true
+      },
+      "context_sha256": "27d8a468a09a43c34e2700c00d2a5cc9ddd6ff549d35910d99807a66a08bf412",
+      "event_id": 494,
+      "files": {
+        "context.json": {
+          "archived": {
+            "bytes": 6852,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e/context.json",
+            "sha256": "27d8a468a09a43c34e2700c00d2a5cc9ddd6ff549d35910d99807a66a08bf412"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e\\context.json",
+          "source_sha256": "27d8a468a09a43c34e2700c00d2a5cc9ddd6ff549d35910d99807a66a08bf412"
+        },
+        "intent.json": {
+          "archived": {
+            "bytes": 335,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e/intent.json",
+            "sha256": "ad39e8f80d99db31054999bb2a9aebeb67481bcf9f01ee26e16723ccbd240e18"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e\\intent.json",
+          "source_sha256": "ad39e8f80d99db31054999bb2a9aebeb67481bcf9f01ee26e16723ccbd240e18"
+        },
+        "provider-response.json": {
+          "archived": {
+            "bytes": 3811,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e/provider-response.json",
+            "sha256": "7a24d18e22f0e285f59c4d3d414ea07a55559f62ee358e0c34a2be12f9349605"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e\\provider-response.json",
+          "source_sha256": "7a24d18e22f0e285f59c4d3d414ea07a55559f62ee358e0c34a2be12f9349605"
+        },
+        "request.json": {
+          "archived": {
+            "bytes": 9436,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e/request.json",
+            "sha256": "a4b7f0f9cb962be1416018081e98bf34e732f4ed4ec978eff1a116127323a27b"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e\\request.json",
+          "source_sha256": "a4b7f0f9cb962be1416018081e98bf34e732f4ed4ec978eff1a116127323a27b"
+        },
+        "result.json": {
+          "archived": {
+            "bytes": 1561,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e/result.json",
+            "sha256": "46352c1710c8b0c1c49c6963f5909c8e79a6133f29d056f97d05c584da1f9ac6"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e\\result.json",
+          "source_sha256": "46352c1710c8b0c1c49c6963f5909c8e79a6133f29d056f97d05c584da1f9ac6"
+        }
+      },
+      "input_revision": 15,
+      "input_timeline_sha256": "59bfdbea8085984923b8394dbcec2239db469ad1a5b7e669b0f5d303e7a3a7fc",
+      "owner_personal_acceptance": false,
+      "passed": true,
+      "project_id": "d3aa854ed0ed552091f513c66642d8a0",
+      "provider": {
+        "calls": 1,
+        "model": "gpt-6-luna",
+        "raw_response_sha256": "7a24d18e22f0e285f59c4d3d414ea07a55559f62ee358e0c34a2be12f9349605",
+        "response_id": "resp_0bb36f7b0f4e8201016ac4e875b40c87d0b4b974d15f82f2b2",
+        "retries": 0,
+        "usage": {
+          "input_tokens": 2449,
+          "input_tokens_details": {
+            "cache_write_tokens": 2446,
+            "cached_tokens": 0
+          },
+          "output_tokens": 81,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 2530
+        }
+      },
+      "rationale": "Chỉ rút gọn chữ trên video theo yêu cầu; giữ nguyên lời đọc, nguồn media và thời lượng.",
+      "raw_proposed_values": {
+        "on_screen_text": "Kỳ vọng hay dữ kiện?"
+      },
+      "receipt_id": "85379428369d1b5f63b4116de6f51e0cd461e87397b175ac4fb6b73d2a3c966e",
+      "request_key": "f70fdb2e-7f13-479f-9fde-635c48ad837f",
+      "scope": {
+        "affected_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_b3cbd30c2e2551caa88ab55ba8d2ad45"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "uncertainty": ""
+    },
+    {
+      "actual_changed_fields": {
+        "shot_9a6063f7759754ec9161b25c6dc386f1": {
+          "duration": {
+            "after": 9,
+            "before": 9.5
+          },
+          "requested_duration": {
+            "after": 9,
+            "before": 9.5
+          }
+        }
+      },
+      "applied_operation": {
+        "shot_id": "shot_9a6063f7759754ec9161b25c6dc386f1",
+        "type": "update",
+        "values": {
+          "duration": 9.0
+        }
+      },
+      "applied_revision": 15,
+      "applied_timeline_sha256": "3243334b96d22e4703f793ca3da0271e9c6bb84fea6fae0ec50d740ae0244ee7",
+      "applier_classification": "Codex delegated task execution; not personal Owner review",
+      "case": "02",
+      "checks": {
+        "applied_values_persisted": true,
+        "context_digest_exact": true,
+        "derived_asset_reset_only": true,
+        "explicit_apply_required": true,
+        "no_media_generated_no_render_no_fact_certification": true,
+        "project_revision_timeline_bound": true,
+        "provider_completed": true,
+        "provider_identity_exact": true,
+        "provider_raw_byte_hash_exact": true,
+        "provider_usage_exact": true,
+        "raw_values_retained": true,
+        "real_one_call_no_retry": true,
+        "receipt_id_exact": true,
+        "request_input_exact": true,
+        "scope_binds_new_revision_and_sha": true,
+        "scope_exact_actual_apply": true,
+        "selected_shot_context_exact": true
+      },
+      "context_sha256": "f1e47b8f6e5686a36b426c80009d9cd3fc3b47c1f83f58f13ec89bf0cf125251",
+      "event_id": 511,
+      "files": {
+        "context.json": {
+          "archived": {
+            "bytes": 6454,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989/context.json",
+            "sha256": "f1e47b8f6e5686a36b426c80009d9cd3fc3b47c1f83f58f13ec89bf0cf125251"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989\\context.json",
+          "source_sha256": "f1e47b8f6e5686a36b426c80009d9cd3fc3b47c1f83f58f13ec89bf0cf125251"
+        },
+        "intent.json": {
+          "archived": {
+            "bytes": 335,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989/intent.json",
+            "sha256": "b9b45b75a0d86dd259a46d6a92b6e095cf1fa7370d36b26eba2096139abf6f91"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989\\intent.json",
+          "source_sha256": "b9b45b75a0d86dd259a46d6a92b6e095cf1fa7370d36b26eba2096139abf6f91"
+        },
+        "provider-response.json": {
+          "archived": {
+            "bytes": 3859,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989/provider-response.json",
+            "sha256": "1553af11cb70535988a42e29b601a3f5d6fa25e556322490602195ffc2ed79e2"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989\\provider-response.json",
+          "source_sha256": "1553af11cb70535988a42e29b601a3f5d6fa25e556322490602195ffc2ed79e2"
+        },
+        "request.json": {
+          "archived": {
+            "bytes": 9038,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989/request.json",
+            "sha256": "430c7789198377cc3ad4aecdf3ab76947746714bd34b82a7612595b96f8b93dc"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989\\request.json",
+          "source_sha256": "430c7789198377cc3ad4aecdf3ab76947746714bd34b82a7612595b96f8b93dc"
+        },
+        "result.json": {
+          "archived": {
+            "bytes": 2086,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989/result.json",
+            "sha256": "027dedb2d8b4ac20e08f5bc3adecd16ddfaffe0ebde8a29dba7b8a0e70001e0c"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989\\result.json",
+          "source_sha256": "027dedb2d8b4ac20e08f5bc3adecd16ddfaffe0ebde8a29dba7b8a0e70001e0c"
+        }
+      },
+      "input_revision": 14,
+      "input_timeline_sha256": "c91ab279bb45d3d755aaadb1d01eba0aac89916b340afd06cfedd1de0dafc5bd",
+      "owner_personal_acceptance": false,
+      "passed": true,
+      "project_id": "206a81364b2e5d0d98fa0cfdf2b5bedb",
+      "provider": {
+        "calls": 1,
+        "model": "gpt-6-luna",
+        "raw_response_sha256": "1553af11cb70535988a42e29b601a3f5d6fa25e556322490602195ffc2ed79e2",
+        "response_id": "resp_06153544f245e2e1016ac4e903edc487d0b20476873c2aac5f",
+        "retries": 0,
+        "usage": {
+          "input_tokens": 2377,
+          "input_tokens_details": {
+            "cache_write_tokens": 2374,
+            "cached_tokens": 0
+          },
+          "output_tokens": 91,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 2468
+        }
+      },
+      "rationale": "Rút thời lượng shot xuống 9 giây, giữ nguyên lời đọc và ảnh đang dùng.",
+      "raw_proposed_values": {
+        "duration": 9
+      },
+      "receipt_id": "60ee9bf6bcff15f7ca9c8394618a65c009ae9d8cf15b88934bc728ee1e8a8989",
+      "request_key": "9e01bfcf-8bf9-4f25-ad42-0c47583263fa",
+      "scope": {
+        "affected_shot_ids": [
+          "shot_9a6063f7759754ec9161b25c6dc386f1",
+          "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "shot_d89f5044129d56b4975e352b6a8f00e3"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [
+          "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "shot_d89f5044129d56b4975e352b6a8f00e3"
+        ],
+        "visual_dependency_shot_ids": [
+          "shot_9a6063f7759754ec9161b25c6dc386f1"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "uncertainty": "Thời lượng lời đọc chưa được đo; chưa bảo đảm lời đọc vừa trong 9 giây."
+    },
+    {
+      "actual_changed_fields": {
+        "shot_f7099579279d5360a82a9283ff52014c": {
+          "asset_id": {
+            "after": "14d69c8121ad48558f33125e3ebc47f0.jpg",
+            "before": "11a1db038ac245c6b75659d603bb2ff5.jpg"
+          }
+        }
+      },
+      "applied_operation": {
+        "shot_id": "shot_f7099579279d5360a82a9283ff52014c",
+        "type": "update",
+        "values": {
+          "asset_id": "14d69c8121ad48558f33125e3ebc47f0.jpg",
+          "motion": "none",
+          "source_start": 0
+        }
+      },
+      "applied_revision": 15,
+      "applied_timeline_sha256": "e89bee1b3b9aa2295a8923d0a230a4e6e5a6529cc2e0757909e486ae2216694e",
+      "applier_classification": "Codex delegated task execution; not personal Owner review",
+      "case": "08",
+      "checks": {
+        "applied_values_persisted": true,
+        "context_digest_exact": true,
+        "derived_asset_reset_only": true,
+        "explicit_apply_required": true,
+        "no_media_generated_no_render_no_fact_certification": true,
+        "project_revision_timeline_bound": true,
+        "provider_completed": true,
+        "provider_identity_exact": true,
+        "provider_raw_byte_hash_exact": true,
+        "provider_usage_exact": true,
+        "raw_values_retained": true,
+        "real_one_call_no_retry": true,
+        "receipt_id_exact": true,
+        "request_input_exact": true,
+        "scope_binds_new_revision_and_sha": true,
+        "scope_exact_actual_apply": true,
+        "selected_shot_context_exact": true
+      },
+      "context_sha256": "2809c12453f67b46ec67dc5342322c97254bd51dd1ab36f0453b31f21cb7c810",
+      "event_id": 521,
+      "files": {
+        "context.json": {
+          "archived": {
+            "bytes": 6591,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f/context.json",
+            "sha256": "2809c12453f67b46ec67dc5342322c97254bd51dd1ab36f0453b31f21cb7c810"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f\\context.json",
+          "source_sha256": "2809c12453f67b46ec67dc5342322c97254bd51dd1ab36f0453b31f21cb7c810"
+        },
+        "intent.json": {
+          "archived": {
+            "bytes": 335,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f/intent.json",
+            "sha256": "e19f3ffb1fc3d726a82b260fdfdf55297cefd7a3b9d0c7cd23e90ab7a3aac481"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f\\intent.json",
+          "source_sha256": "e19f3ffb1fc3d726a82b260fdfdf55297cefd7a3b9d0c7cd23e90ab7a3aac481"
+        },
+        "provider-response.json": {
+          "archived": {
+            "bytes": 3853,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f/provider-response.json",
+            "sha256": "5ff72611de42980cf02d66fb200104f7c258c38ed6a1c8d683ae3bceb5a99915"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f\\provider-response.json",
+          "source_sha256": "5ff72611de42980cf02d66fb200104f7c258c38ed6a1c8d683ae3bceb5a99915"
+        },
+        "request.json": {
+          "archived": {
+            "bytes": 9181,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f/request.json",
+            "sha256": "290244182e17be6550b57e0c6697d7910f8a016965b2adaa57fbf3e9ea4fd69c"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f\\request.json",
+          "source_sha256": "290244182e17be6550b57e0c6697d7910f8a016965b2adaa57fbf3e9ea4fd69c"
+        },
+        "result.json": {
+          "archived": {
+            "bytes": 1630,
+            "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f/result.json",
+            "sha256": "839399b77531d48ff59d5779c3e685abd218053cd0d640bc584f71ef75232e1d"
+          },
+          "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-ai-edits\\c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f\\result.json",
+          "source_sha256": "839399b77531d48ff59d5779c3e685abd218053cd0d640bc584f71ef75232e1d"
+        }
+      },
+      "input_revision": 14,
+      "input_timeline_sha256": "7ad48728f6e4600185572213d869d10782d58a7b24bd322309888c180e63bb21",
+      "owner_personal_acceptance": false,
+      "passed": true,
+      "project_id": "7f13a515100d5c07aae9760d665ad2f8",
+      "provider": {
+        "calls": 1,
+        "model": "gpt-6-luna",
+        "raw_response_sha256": "5ff72611de42980cf02d66fb200104f7c258c38ed6a1c8d683ae3bceb5a99915",
+        "response_id": "resp_0d7466eb602082aa016ac4e9d0d4c887d0b0feb4a4bc765420",
+        "retries": 0,
+        "usage": {
+          "input_tokens": 2490,
+          "input_tokens_details": {
+            "cache_write_tokens": 2487,
+            "cached_tokens": 0
+          },
+          "output_tokens": 102,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 2592
+        }
+      },
+      "rationale": "Đổi nguồn ảnh sang asset có tên case-08-alternative-1.png trong thư viện; giữ nguyên các nội dung và thời lượng còn lại.",
+      "raw_proposed_values": {
+        "asset_id": "14d69c8121ad48558f33125e3ebc47f0.jpg"
+      },
+      "receipt_id": "c9a4eac6418b1d2ad9c9fe7bb2db62f011f279d91f0c2f1554b07dd10491a75f",
+      "request_key": "6f64b48a-4fd5-4c21-ae57-9e394467237c",
+      "scope": {
+        "affected_shot_ids": [
+          "shot_f7099579279d5360a82a9283ff52014c"
+        ],
+        "full_render_requested": false,
+        "order_changed": false,
+        "preview_invalidated": true,
+        "provider_calls": 0,
+        "retimed_shot_ids": [],
+        "visual_dependency_shot_ids": [
+          "shot_f7099579279d5360a82a9283ff52014c"
+        ],
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence",
+        "voice_dependency_shot_ids": []
+      },
+      "uncertainty": ""
+    }
+  ],
+  "previews": [
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/d41a6df79588674da1840b89404467f25ca4947ae3d9028c51246750d954fe08.json",
+        "sha256": "aec62864903170dbef98fd58cf3c116f3ae8617a987028adeba6c30f3505f514"
+      },
+      "cached_shots": 0,
+      "case": "01",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 5,
+      "passed": true,
+      "revision": 14,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\d41a6df79588674da1840b89404467f25ca4947ae3d9028c51246750d954fe08\\preview.json",
+      "timeline_version": 0,
+      "video": {
+        "bytes": 465729,
+        "sha256": "6c65814f2e3500681f9f86d9ffc81d64107e42c1a5df97de70ccc153bbf17bf0",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\d41a6df79588674da1840b89404467f25ca4947ae3d9028c51246750d954fe08\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/6dd11d05179831ff7d486843ba01150dc3216433483cca0941601ce144037eae.json",
+        "sha256": "1f9c93940d2ed57ba4751a446f512d0cd4d19d548f2f586be637211228525389"
+      },
+      "cached_shots": 4,
+      "case": "01",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 1,
+      "passed": true,
+      "revision": 16,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\6dd11d05179831ff7d486843ba01150dc3216433483cca0941601ce144037eae\\preview.json",
+      "timeline_version": 2,
+      "video": {
+        "bytes": 471274,
+        "sha256": "ec5f1bf37bae5d05fc9c6e70abafcac65ca088b670807b2bf986b2db8ce1d7e5",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\6dd11d05179831ff7d486843ba01150dc3216433483cca0941601ce144037eae\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/1c3b1a11bbe1e3fd17a880fcc10267e805f52e77f31e573de45b144832850557.json",
+        "sha256": "97234cc0f18c93aa94a6727bca0e1849b07cee107306cfe330977e6d6a7dc54b"
+      },
+      "cached_shots": 0,
+      "case": "02",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 5,
+      "passed": true,
+      "revision": 13,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\1c3b1a11bbe1e3fd17a880fcc10267e805f52e77f31e573de45b144832850557\\preview.json",
+      "timeline_version": 0,
+      "video": {
+        "bytes": 442731,
+        "sha256": "c221638fce8665452510bcf059e7cf4fd3e0559257d1fd4382a9cb6080247ac7",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\1c3b1a11bbe1e3fd17a880fcc10267e805f52e77f31e573de45b144832850557\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/e70cab660dd832e7e8a04de4af742351ad0d7e52b5d18d3c7c3ca81952e285b7.json",
+        "sha256": "1997f043358ab02fe189d55185cdabace2937870f7bdeb70caf4ab42712dd731"
+      },
+      "cached_shots": 4,
+      "case": "02",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 1,
+      "passed": true,
+      "revision": 15,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\e70cab660dd832e7e8a04de4af742351ad0d7e52b5d18d3c7c3ca81952e285b7\\preview.json",
+      "timeline_version": 2,
+      "video": {
+        "bytes": 494605,
+        "sha256": "c9ff5978bd6346d67519376b2225422ad100385263c715715000fa47624bc646",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\e70cab660dd832e7e8a04de4af742351ad0d7e52b5d18d3c7c3ca81952e285b7\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/c9d38292adb159f142e9cc1386dd6f4e1428115b79c35f0294d2d90c5156416b.json",
+        "sha256": "7b4d3772e7f7d7e98023fbbb564e53c57d245d5e72f991c91fd88a0c25b5d25e"
+      },
+      "cached_shots": 0,
+      "case": "04",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 5,
+      "passed": true,
+      "revision": 13,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\c9d38292adb159f142e9cc1386dd6f4e1428115b79c35f0294d2d90c5156416b\\preview.json",
+      "timeline_version": 0,
+      "video": {
+        "bytes": 341020,
+        "sha256": "a9476c5747a1d3ecc8f37c128f8483ebf9c9c9bbad880e945615623cca8e8b24",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\c9d38292adb159f142e9cc1386dd6f4e1428115b79c35f0294d2d90c5156416b\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/e8eaf28c556ecdc6e695d5652e74ab0365e2339f5aa3c655a4c7e723e6cbeec5.json",
+        "sha256": "eb7fcd542f351576dec4084a13498441983b358e82e59e0a3ae29f59676f09f4"
+      },
+      "cached_shots": 5,
+      "case": "04",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 0,
+      "passed": true,
+      "revision": 14,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\e8eaf28c556ecdc6e695d5652e74ab0365e2339f5aa3c655a4c7e723e6cbeec5\\preview.json",
+      "timeline_version": 1,
+      "video": {
+        "bytes": 341020,
+        "sha256": "9197fe3a3f18e463af01799c43cdacc8d65b99835e48462dce23640a716cd9ec",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\e8eaf28c556ecdc6e695d5652e74ab0365e2339f5aa3c655a4c7e723e6cbeec5\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/5b141d2ace73d3999b7427ba6b18ea69e770c29fc56a6564f5ec5965cbe30045.json",
+        "sha256": "5c9b37923dc43a1beb829483e7cdd2f81043afa0dd1c53856f3cc5d76e851d14"
+      },
+      "cached_shots": 0,
+      "case": "08",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 5,
+      "passed": true,
+      "revision": 13,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\5b141d2ace73d3999b7427ba6b18ea69e770c29fc56a6564f5ec5965cbe30045\\preview.json",
+      "timeline_version": 0,
+      "video": {
+        "bytes": 479328,
+        "sha256": "e26cb246d4dbe4fb443bdb8130096212b5f78d74ff13efd5c07d542ef7e9ac50",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\5b141d2ace73d3999b7427ba6b18ea69e770c29fc56a6564f5ec5965cbe30045\\preview.mp4"
+      }
+    },
+    {
+      "archived_receipt": {
+        "bytes": 592,
+        "path": "evidence/post-mvp-roadmap/phase-10/final-uat/shot-edits/ai-edit-proof/20261006T124023763202Z-8205a6bc/preview-receipts/fc36d730bb68ed5215f41b2e0eaa1c084f3f0ecd9b1db8d0b4a1efaf27bd0556.json",
+        "sha256": "968c70c35dd0821bd54ffd949506585c1ee4396220f0d874c66b22b3456a1f8d"
+      },
+      "cached_shots": 4,
+      "case": "08",
+      "checks": {
+        "five_proxy_shots": true,
+        "preview_bytes_hash_exact": true,
+        "ready": true,
+        "revision_exact": true,
+        "silent_proxy_no_final_acceptance": true,
+        "timeline_sha_matches_captured_revision": true,
+        "timeline_version_exact": true,
+        "zero_provider_tts_calls": true
+      },
+      "new_proxy_shots": 1,
+      "passed": true,
+      "revision": 15,
+      "scope": "Silent visual proxy only; not narration or final video acceptance",
+      "source_receipt": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\fc36d730bb68ed5215f41b2e0eaa1c084f3f0ecd9b1db8d0b4a1efaf27bd0556\\preview.json",
+      "timeline_version": 2,
+      "video": {
+        "bytes": 487400,
+        "sha256": "1f54f9e20d19f3397c23bd897b31615d80a99a782e650d068370a38b71ece917",
+        "source": "C:\\NPD-Video-Factory\\phase10-uat\\shot-previews\\fc36d730bb68ed5215f41b2e0eaa1c084f3f0ecd9b1db8d0b4a1efaf27bd0556\\preview.mp4"
+      }
+    }
+  ],
+  "provider_calls_by_aggregator": 0,
+  "schema_version": "phase10-ai-real-apply-proof-v1",
+  "technical_proof_pass": true,
+  "undo_case01": {
+    "approval_not_restored": true,
+    "new_revision": true,
+    "new_timeline_version": true,
+    "replaced_asset_retained": true,
+    "shot_fields_equal_after_replacement": true,
+    "snapshot_content_sha_equals_after_replacement": true
+  }
+}

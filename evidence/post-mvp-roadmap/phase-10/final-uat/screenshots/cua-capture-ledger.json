@@ -1,0 +1,4486 @@
+[
+  {
+    "name": "script-2560x1440.png",
+    "url": "http://127.0.0.1:8030/?project=b1e9b9360d7744adb982cb0803bf19a6",
+    "bodyScrollWidth": 2545,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2545,
+    "documentWidth": 2545,
+    "editorBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "mainBounds": {
+      "bottom": 2433.875,
+      "height": 2433.875,
+      "left": 216,
+      "right": 2545,
+      "top": 0,
+      "width": 2329,
+      "x": 216,
+      "y": 0
+    },
+    "previewBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 216,
+      "top": 0,
+      "width": 216,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 32
+  },
+  {
+    "name": "assets-2560x1440.png",
+    "url": "http://127.0.0.1:8030/?project=b1e9b9360d7744adb982cb0803bf19a6",
+    "bodyScrollWidth": 2560,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2560,
+    "documentWidth": 2560,
+    "editorBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "mainBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 216,
+      "right": 2560,
+      "top": 0,
+      "width": 2344,
+      "x": 216,
+      "y": 0
+    },
+    "previewBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 216,
+      "top": 0,
+      "width": 216,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 25
+  },
+  {
+    "name": "storyboard-2560x1440.png",
+    "url": "http://127.0.0.1:8030/?project=b1e9b9360d7744adb982cb0803bf19a6",
+    "bodyScrollWidth": 2560,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2560,
+    "documentWidth": 2560,
+    "editorBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "mainBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 216,
+      "right": 2560,
+      "top": 0,
+      "width": 2344,
+      "x": 216,
+      "y": 0
+    },
+    "previewBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 216,
+      "top": 0,
+      "width": 216,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 18
+  },
+  {
+    "name": "storyboard-2560x1440.png",
+    "url": "http://127.0.0.1:8030/?project=b1e9b9360d7744adb982cb0803bf19a6",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2560,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2560,
+    "documentWidth": 2560,
+    "editorBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "mainBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 216,
+      "right": 2560,
+      "top": 0,
+      "width": 2344,
+      "x": 216,
+      "y": 0
+    },
+    "previewBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 216,
+      "top": 0,
+      "width": 216,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 18
+  },
+  {
+    "name": "assets-2560x1440.png",
+    "url": "http://127.0.0.1:8030/?project=b1e9b9360d7744adb982cb0803bf19a6",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2560,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2560,
+    "documentWidth": 2560,
+    "editorBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "mainBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 216,
+      "right": 2560,
+      "top": 0,
+      "width": 2344,
+      "x": 216,
+      "y": 0
+    },
+    "previewBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 216,
+      "top": 0,
+      "width": 216,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 25
+  },
+  {
+    "name": "script-2560x1440.png",
+    "url": "http://127.0.0.1:8030/?project=b1e9b9360d7744adb982cb0803bf19a6",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2545,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2545,
+    "documentWidth": 2545,
+    "editorBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "mainBounds": {
+      "bottom": 2433.875,
+      "height": 2433.875,
+      "left": 216,
+      "right": 2545,
+      "top": 0,
+      "width": 2329,
+      "x": 216,
+      "y": 0
+    },
+    "previewBounds": {
+      "bottom": 0,
+      "height": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 216,
+      "top": 0,
+      "width": 216,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 32
+  },
+  {
+    "name": "queue-2560x1440.png",
+    "url": "http://127.0.0.1:8030/production?view=queue",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2545,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2545,
+    "documentWidth": 2545,
+    "mainBounds": {
+      "bottom": 9960.953125,
+      "height": 9960.953125,
+      "left": 226,
+      "right": 1826,
+      "top": 0,
+      "width": 1600,
+      "x": 226,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 226,
+      "top": 0,
+      "width": 226,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 50
+  },
+  {
+    "name": "planning-modal-2560x1440.png",
+    "url": "http://127.0.0.1:8030/production?view=queue",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2545,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2545,
+    "documentWidth": 2545,
+    "mainBounds": {
+      "bottom": 10027.09375,
+      "height": 10027.09375,
+      "left": 226,
+      "right": 1826,
+      "top": 0,
+      "width": 1600,
+      "x": 226,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 226,
+      "top": 0,
+      "width": 226,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 52
+  },
+  {
+    "name": "calendar-2560x1440.png",
+    "url": "http://127.0.0.1:8030/production?view=calendar",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2545,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2545,
+    "documentWidth": 2545,
+    "mainBounds": {
+      "bottom": 9776.75,
+      "height": 9776.75,
+      "left": 226,
+      "right": 1826,
+      "top": 0,
+      "width": 1600,
+      "x": 226,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 226,
+      "top": 0,
+      "width": 226,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 45
+  },
+  {
+    "name": "library-2560x1440.png",
+    "url": "http://127.0.0.1:8030/production?view=library",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2545,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2545,
+    "documentWidth": 2545,
+    "mainBounds": {
+      "bottom": 2337.109375,
+      "height": 2337.109375,
+      "left": 226,
+      "right": 1826,
+      "top": 0,
+      "width": 1600,
+      "x": 226,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 226,
+      "top": 0,
+      "width": 226,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 16
+  },
+  {
+    "name": "profiles-2560x1440.png",
+    "url": "http://127.0.0.1:8030/production?view=profiles",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2545,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2545,
+    "documentWidth": 2545,
+    "mainBounds": {
+      "bottom": 1660.796875,
+      "height": 1660.796875,
+      "left": 226,
+      "right": 1826,
+      "top": 0,
+      "width": 1600,
+      "x": 226,
+      "y": 0
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 226,
+      "top": 0,
+      "width": 226,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 1
+  },
+  {
+    "name": "intelligence-findings-2560x1440.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2545,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2545,
+    "documentWidth": 2545,
+    "mainBounds": {
+      "bottom": 5539.015625,
+      "height": 6920.015625,
+      "left": 245,
+      "right": 1775,
+      "top": -1381,
+      "width": 1530,
+      "x": 245,
+      "y": -1381
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 245,
+      "top": 0,
+      "width": 245,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 30
+  },
+  {
+    "name": "intelligence-ideas-2560x1440.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2560,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2560,
+    "documentWidth": 2560,
+    "mainBounds": {
+      "bottom": 4670.015625,
+      "height": 6920.015625,
+      "left": 245,
+      "right": 1775,
+      "top": -2250,
+      "width": 1530,
+      "x": 245,
+      "y": -2250
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 245,
+      "top": 0,
+      "width": 245,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 30
+  },
+  {
+    "name": "intelligence-brief-2560x1440.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 2560,
+    "documentHeight": 1440,
+    "documentScrollWidth": 2560,
+    "documentWidth": 2560,
+    "mainBounds": {
+      "bottom": 2275.015625,
+      "height": 6920.015625,
+      "left": 245,
+      "right": 1775,
+      "top": -4645,
+      "width": 1530,
+      "x": 245,
+      "y": -4645
+    },
+    "sidebarBounds": {
+      "bottom": 1440,
+      "height": 1440,
+      "left": 0,
+      "right": 245,
+      "top": 0,
+      "width": 245,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 30
+  },
+  {
+    "name": "intelligence-findings-1920x1080.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 1905,
+    "documentHeight": 1080,
+    "documentScrollWidth": 1905,
+    "documentWidth": 1905,
+    "mainBounds": {
+      "bottom": 5359.015625,
+      "height": 6920.015625,
+      "left": 245,
+      "right": 1775,
+      "top": -1561,
+      "width": 1530,
+      "x": 245,
+      "y": -1561
+    },
+    "sidebarBounds": {
+      "bottom": 1080,
+      "height": 1080,
+      "left": 0,
+      "right": 245,
+      "top": 0,
+      "width": 245,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 30
+  },
+  {
+    "name": "intelligence-ideas-1920x1080.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 1920,
+    "documentHeight": 1080,
+    "documentScrollWidth": 1920,
+    "documentWidth": 1920,
+    "mainBounds": {
+      "bottom": 4490.015625,
+      "height": 6920.015625,
+      "left": 245,
+      "right": 1775,
+      "top": -2430,
+      "width": 1530,
+      "x": 245,
+      "y": -2430
+    },
+    "sidebarBounds": {
+      "bottom": 1080,
+      "height": 1080,
+      "left": 0,
+      "right": 245,
+      "top": 0,
+      "width": 245,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 30
+  },
+  {
+    "name": "intelligence-brief-1920x1080.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "bodyScrollWidth": 1920,
+    "documentHeight": 1080,
+    "documentScrollWidth": 1920,
+    "documentWidth": 1920,
+    "mainBounds": {
+      "bottom": 2095.015625,
+      "height": 6920.015625,
+      "left": 245,
+      "right": 1775,
+      "top": -4825,
+      "width": 1530,
+      "x": 245,
+      "y": -4825
+    },
+    "sidebarBounds": {
+      "bottom": 1080,
+      "height": 1080,
+      "left": 0,
+      "right": 245,
+      "top": 0,
+      "width": 245,
+      "x": 0,
+      "y": 0
+    },
+    "visibleButtons": 30
+  },
+  {
+    "name": "intelligence-brief-1920x1080-recapture.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 2095.015625,
+        "height": 6920.015625,
+        "left": 245,
+        "right": 1775,
+        "top": -4825,
+        "width": 1530,
+        "x": 245,
+        "y": -4825
+      },
+      "scrollWidth": 1920,
+      "scrollX": 0,
+      "scrollY": 4825,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 245,
+        "top": 0,
+        "width": 245,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    }
+  },
+  {
+    "name": "intelligence-findings-1920x1080-recapture.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 5359.015625,
+        "height": 6920.015625,
+        "left": 245,
+        "right": 1775,
+        "top": -1561,
+        "width": 1530,
+        "x": 245,
+        "y": -1561
+      },
+      "scrollWidth": 1920,
+      "scrollX": 0,
+      "scrollY": 1561,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 245,
+        "top": 0,
+        "width": 245,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    }
+  },
+  {
+    "name": "intelligence-ideas-1920x1080-recapture.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 4490.015625,
+        "height": 6920.015625,
+        "left": 245,
+        "right": 1775,
+        "top": -2430,
+        "width": 1530,
+        "x": 245,
+        "y": -2430
+      },
+      "scrollWidth": 1920,
+      "scrollX": 0,
+      "scrollY": 2430,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 245,
+        "top": 0,
+        "width": 245,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    }
+  },
+  {
+    "name": "queue-campaign-1920x1080.png",
+    "url": "http://127.0.0.1:8030/production?view=queue",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 2710.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "planning-modal-1920x1080-top.png",
+    "url": "http://127.0.0.1:8030/production?view=queue",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 2661.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1826,
+        "top": -49,
+        "width": 1600,
+        "x": 226,
+        "y": -49
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 49,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "planning-modal-1920x1080-bottom.png",
+    "url": "http://127.0.0.1:8030/production?view=queue",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 2661.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1826,
+        "top": -49,
+        "width": 1600,
+        "x": 226,
+        "y": -49
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 49,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "calendar-1920x1080.png",
+    "url": "http://127.0.0.1:8030/production?view=calendar",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 720,
+      "main": {
+        "bottom": 9951.75,
+        "height": 9951.75,
+        "left": 226,
+        "right": 1265,
+        "top": 0,
+        "width": 1039,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1265,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 720,
+        "height": 720,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1265
+    }
+  },
+  {
+    "name": "library-1920x1080.png",
+    "url": "http://127.0.0.1:8030/production?view=library",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 2337.109375,
+        "height": 2337.109375,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "profiles-1920x1080.png",
+    "url": "http://127.0.0.1:8030/production?view=profiles",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 1660.796875,
+        "height": 1660.796875,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "calendar-1920x1080-recapture.png",
+    "url": "http://127.0.0.1:8030/production?view=calendar",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1920,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    }
+  },
+  {
+    "name": "queue-campaign-1920x1080-recapture.png",
+    "url": "http://127.0.0.1:8030/production?view=queue",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1920,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    }
+  },
+  {
+    "name": "queue-campaign-1920x1080-settled.png",
+    "url": "http://127.0.0.1:8030/production?view=queue",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 2710.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "calendar-1920x1080-settled.png",
+    "url": "http://127.0.0.1:8030/production?view=calendar",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "height": 1080,
+      "main": {
+        "bottom": 9825.75,
+        "height": 9825.75,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case01-voice-b-before-apply.png",
+    "url": "http://127.0.0.1:8030/?project=d3aa854ed0ed552091f513c66642d8a0",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.359375,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.359375,
+        "width": 365,
+        "x": 1500,
+        "y": 10.359375
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.359375,
+        "height": 1431.359375,
+        "left": 216,
+        "right": 1905,
+        "top": -351,
+        "width": 1689,
+        "x": 216,
+        "y": -351
+      },
+      "preview": {
+        "bottom": 503.78125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.21875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.21875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 351,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case01-voice-b-applied.png",
+    "url": "http://127.0.0.1:8030/?project=d3aa854ed0ed552091f513c66642d8a0",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1060,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 20,
+        "width": 365,
+        "x": 1500,
+        "y": 20
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1118.15625,
+        "height": 1507.15625,
+        "left": 216,
+        "right": 1905,
+        "top": -389,
+        "width": 1689,
+        "x": 216,
+        "y": -389
+      },
+      "preview": {
+        "bottom": 541.578125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": 31.578125,
+        "width": 1184,
+        "x": 273,
+        "y": 31.578125
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 389,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case01-replace-selected-before-save.png",
+    "url": "http://127.0.0.1:8030/?project=d3aa854ed0ed552091f513c66642d8a0",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.15625,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.15625,
+        "width": 365,
+        "x": 1500,
+        "y": 10.15625
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.15625,
+        "height": 1507.15625,
+        "left": 216,
+        "right": 1905,
+        "top": -427,
+        "width": 1689,
+        "x": 216,
+        "y": -427
+      },
+      "preview": {
+        "bottom": 503.578125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.421875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.421875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 427,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case01-replace-saved-stale-preview.png",
+    "url": "http://127.0.0.1:8030/?project=d3aa854ed0ed552091f513c66642d8a0",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.15625,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.15625,
+        "width": 365,
+        "x": 1500,
+        "y": 10.15625
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.15625,
+        "height": 1507.15625,
+        "left": 216,
+        "right": 1905,
+        "top": -427,
+        "width": 1689,
+        "x": 216,
+        "y": -427
+      },
+      "preview": {
+        "bottom": 503.578125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.421875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.421875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 427,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "ai-edit-case01-proposal.png",
+    "url": "http://127.0.0.1:8030/?project=d3aa854ed0ed552091f513c66642d8a0",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.15625,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.15625,
+        "width": 365,
+        "x": 1500,
+        "y": 10.15625
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.15625,
+        "height": 1507.15625,
+        "left": 216,
+        "right": 1905,
+        "top": -427,
+        "width": 1689,
+        "x": 216,
+        "y": -427
+      },
+      "preview": {
+        "bottom": 503.578125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.421875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.421875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 427,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case02-duration-before.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1310.78125,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 270.78125,
+        "width": 365,
+        "x": 1500,
+        "y": 270.78125
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1431.359375,
+        "height": 1431.359375,
+        "left": 216,
+        "right": 1905,
+        "top": 0,
+        "width": 1689,
+        "x": 216,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 854.78125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": 344.78125,
+        "width": 1184,
+        "x": 273,
+        "y": 344.78125
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case02-duration-saved.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.15625,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.15625,
+        "width": 365,
+        "x": 1500,
+        "y": 10.15625
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.15625,
+        "height": 1507.15625,
+        "left": 216,
+        "right": 1905,
+        "top": -427,
+        "width": 1689,
+        "x": 216,
+        "y": -427
+      },
+      "preview": {
+        "bottom": 503.578125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.421875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.421875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 427,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "ai-edit-case02-duration-proposal.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.15625,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.15625,
+        "width": 365,
+        "x": 1500,
+        "y": 10.15625
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.15625,
+        "height": 1507.15625,
+        "left": 216,
+        "right": 1905,
+        "top": -427,
+        "width": 1689,
+        "x": 216,
+        "y": -427
+      },
+      "preview": {
+        "bottom": 503.578125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.421875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.421875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 427,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case04-reorder-before.png",
+    "url": "http://127.0.0.1:8030/?project=ec5a3d1cf3cf5ec3a1debaf97c189139",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.359375,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.359375,
+        "width": 365,
+        "x": 1500,
+        "y": 10.359375
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.359375,
+        "height": 1431.359375,
+        "left": 216,
+        "right": 1905,
+        "top": -351,
+        "width": 1689,
+        "x": 216,
+        "y": -351
+      },
+      "preview": {
+        "bottom": 503.78125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.21875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.21875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 351,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case04-reorder-after.png",
+    "url": "http://127.0.0.1:8030/?project=ec5a3d1cf3cf5ec3a1debaf97c189139",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.15625,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.15625,
+        "width": 365,
+        "x": 1500,
+        "y": 10.15625
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.15625,
+        "height": 1507.15625,
+        "left": 216,
+        "right": 1905,
+        "top": -427,
+        "width": 1689,
+        "x": 216,
+        "y": -427
+      },
+      "preview": {
+        "bottom": 503.578125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.421875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.421875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 427,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case08-regenerate-before.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.359375,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.359375,
+        "width": 365,
+        "x": 1500,
+        "y": 10.359375
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.359375,
+        "height": 1431.359375,
+        "left": 216,
+        "right": 1905,
+        "top": -351,
+        "width": 1689,
+        "x": 216,
+        "y": -351
+      },
+      "preview": {
+        "bottom": 503.78125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.21875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.21875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 351,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "case08-regenerate-after.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.15625,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.15625,
+        "width": 365,
+        "x": 1500,
+        "y": 10.15625
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.15625,
+        "height": 1507.15625,
+        "left": 216,
+        "right": 1905,
+        "top": -427,
+        "width": 1689,
+        "x": 216,
+        "y": -427
+      },
+      "preview": {
+        "bottom": 503.578125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.421875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.421875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 427,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "ai-edit-case08-asset-proposal.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.15625,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.15625,
+        "width": 365,
+        "x": 1500,
+        "y": 10.15625
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.15625,
+        "height": 1507.15625,
+        "left": 216,
+        "right": 1905,
+        "top": -427,
+        "width": 1689,
+        "x": 216,
+        "y": -427
+      },
+      "preview": {
+        "bottom": 503.578125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": -6.421875,
+        "width": 1184,
+        "x": 273,
+        "y": -6.421875
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 427,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "script-new-1920x1080.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 2478.078125,
+        "height": 2478.078125,
+        "left": 216,
+        "right": 1905,
+        "top": 0,
+        "width": 1689,
+        "x": 216,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "script-review-bottom-new-1920x1080.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080.078125,
+        "height": 2478.078125,
+        "left": 216,
+        "right": 1905,
+        "top": -1398,
+        "width": 1689,
+        "x": 216,
+        "y": -1398
+      },
+      "preview": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 1398,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "assets-new-1920x1080.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1344.1875,
+        "height": 1344.1875,
+        "left": 216,
+        "right": 1905,
+        "top": 0,
+        "width": 1689,
+        "x": 216,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1905
+    }
+  },
+  {
+    "name": "storyboard-new-1920x1080.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "height": 1080,
+      "main": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 216,
+        "right": 1920,
+        "top": 0,
+        "width": 1704,
+        "x": 216,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "scrollWidth": 1920,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    }
+  },
+  {
+    "name": "script-new-1366x768.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "height": 768,
+      "main": {
+        "bottom": 2375.28125,
+        "height": 2375.28125,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1351
+    }
+  },
+  {
+    "name": "assets-new-1366x768.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "height": 768,
+      "main": {
+        "bottom": 1646.390625,
+        "height": 1646.390625,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1351
+    }
+  },
+  {
+    "name": "storyboard-new-1366x768.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "height": 768,
+      "main": {
+        "bottom": 1245.46875,
+        "height": 1245.46875,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1351
+    }
+  },
+  {
+    "name": "video-new-1366x768-top.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 979.78125,
+        "height": 728,
+        "left": 1023,
+        "right": 1329,
+        "top": 251.78125,
+        "width": 306,
+        "x": 1023,
+        "y": 251.78125
+      },
+      "height": 768,
+      "main": {
+        "bottom": 1245.546875,
+        "height": 1245.546875,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 575.78125,
+        "height": 250,
+        "left": 241,
+        "right": 990,
+        "top": 325.78125,
+        "width": 749,
+        "x": 241,
+        "y": 325.78125
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1351
+    }
+  },
+  {
+    "name": "video-new-1366x768-settled.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 979.78125,
+        "height": 728,
+        "left": 1023,
+        "right": 1329,
+        "top": 251.78125,
+        "width": 306,
+        "x": 1023,
+        "y": 251.78125
+      },
+      "height": 768,
+      "main": {
+        "bottom": 1414.53125,
+        "height": 1414.53125,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 575.78125,
+        "height": 250,
+        "left": 241,
+        "right": 990,
+        "top": 325.78125,
+        "width": 749,
+        "x": 241,
+        "y": 325.78125
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1351
+    }
+  },
+  {
+    "name": "video-new-1366x768-visible.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 979.78125,
+        "height": 728,
+        "left": 1023,
+        "right": 1329,
+        "top": 251.78125,
+        "width": 306,
+        "x": 1023,
+        "y": 251.78125
+      },
+      "height": 768,
+      "main": {
+        "bottom": 1414.53125,
+        "height": 1414.53125,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "preview": {
+        "bottom": 575.78125,
+        "height": 250,
+        "left": 241,
+        "right": 990,
+        "top": 325.78125,
+        "width": 749,
+        "x": 241,
+        "y": 325.78125
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1351
+    }
+  },
+  {
+    "name": "studio-1366x768-final.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 979.78125,
+        "height": 728,
+        "left": 1023,
+        "right": 1329,
+        "top": 251.78125,
+        "width": 306,
+        "x": 1023,
+        "y": 251.78125
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 768,
+      "main": {
+        "bottom": 2078.5625,
+        "height": 2078.5625,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "script-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 768,
+      "main": {
+        "bottom": 2375.28125,
+        "height": 2375.28125,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "assets-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 768,
+      "main": {
+        "bottom": 1646.390625,
+        "height": 1646.390625,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "storyboard-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 768,
+      "main": {
+        "bottom": 1265.859375,
+        "height": 1265.859375,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "shot-strip-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 748,
+        "height": 728,
+        "left": 1023,
+        "right": 1329,
+        "top": 20,
+        "width": 306,
+        "x": 1023,
+        "y": 20
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 768,
+      "main": {
+        "bottom": 1624.5625,
+        "height": 2078.5625,
+        "left": 202,
+        "right": 1351,
+        "top": -454,
+        "width": 1149,
+        "x": 202,
+        "y": -454
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 454,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "shot-editor-bottom-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 748,
+        "height": 728,
+        "left": 1023,
+        "right": 1329,
+        "top": 20,
+        "width": 306,
+        "x": 1023,
+        "y": 20
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 768,
+      "main": {
+        "bottom": 1439.5625,
+        "height": 2078.5625,
+        "left": 202,
+        "right": 1351,
+        "top": -639,
+        "width": 1149,
+        "x": 202,
+        "y": -639
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 639,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "advanced-timeline-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 748,
+        "height": 728,
+        "left": 1023,
+        "right": 1329,
+        "top": 20,
+        "width": 306,
+        "x": 1023,
+        "y": 20
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 768,
+      "main": {
+        "bottom": 1767.953125,
+        "height": 2221.953125,
+        "left": 202,
+        "right": 1351,
+        "top": -454,
+        "width": 1149,
+        "x": 202,
+        "y": -454
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 454,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "queue-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/production",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Hàng đợi nội dung",
+      "height": 768,
+      "main": {
+        "bottom": 2710.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1351,
+        "top": 0,
+        "width": 1125,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "planning-modal-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/production",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Hàng đợi nội dung",
+      "height": 768,
+      "main": {
+        "bottom": 2505.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1351,
+        "top": -205,
+        "width": 1125,
+        "x": 226,
+        "y": -205
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 205,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "planning-modal-bottom-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/production",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Hàng đợi nội dung",
+      "height": 768,
+      "main": {
+        "bottom": 2505.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1351,
+        "top": -205,
+        "width": 1125,
+        "x": 226,
+        "y": -205
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 205,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "calendar-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/production?view=calendar",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Lịch kế hoạch",
+      "height": 768,
+      "main": {
+        "bottom": 3690.75,
+        "height": 9930.75,
+        "left": 226,
+        "right": 1351,
+        "top": -6240,
+        "width": 1125,
+        "x": 226,
+        "y": -6240
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 6240,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "library-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/production?view=library",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Thư viện video",
+      "height": 768,
+      "main": {
+        "bottom": 768,
+        "height": 768,
+        "left": 226,
+        "right": 1366,
+        "top": 0,
+        "width": 1140,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1366,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "profiles-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/production?view=profiles",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Hồ sơ nội dung",
+      "height": 768,
+      "main": {
+        "bottom": 1723.296875,
+        "height": 1723.296875,
+        "left": 226,
+        "right": 1351,
+        "top": 0,
+        "width": 1125,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "studio-1920x1080-final.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1310.78125,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 270.78125,
+        "width": 365,
+        "x": 1500,
+        "y": 270.78125
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1080,
+      "main": {
+        "bottom": 1923.59375,
+        "height": 1923.59375,
+        "left": 216,
+        "right": 1905,
+        "top": 0,
+        "width": 1689,
+        "x": 216,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "shot-strip-1920x1080-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1060,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 20,
+        "width": 365,
+        "x": 1500,
+        "y": 20
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1080,
+      "main": {
+        "bottom": 1346.59375,
+        "height": 1923.59375,
+        "left": 216,
+        "right": 1905,
+        "top": -577,
+        "width": 1689,
+        "x": 216,
+        "y": -577
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 577,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "shot-editor-bottom-1920x1080-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1049.59375,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 9.59375,
+        "width": 365,
+        "x": 1500,
+        "y": 9.59375
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1080,
+      "main": {
+        "bottom": 1079.59375,
+        "height": 1923.59375,
+        "left": 216,
+        "right": 1905,
+        "top": -844,
+        "width": 1689,
+        "x": 216,
+        "y": -844
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 844,
+      "sidebar": {
+        "bottom": 1079.59375,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": -0.40625,
+        "width": 216,
+        "x": 0,
+        "y": -0.40625
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "studio-2560x1440-final.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1372.734375,
+        "height": 1096.953125,
+        "left": 2095,
+        "right": 2495,
+        "top": 275.78125,
+        "width": 400,
+        "x": 2095,
+        "y": 275.78125
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1440,
+      "main": {
+        "bottom": 2124.40625,
+        "height": 2124.40625,
+        "left": 216,
+        "right": 2545,
+        "top": 0,
+        "width": 2329,
+        "x": 216,
+        "y": 0
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "script-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1440,
+      "main": {
+        "bottom": 2412.28125,
+        "height": 2412.28125,
+        "left": 216,
+        "right": 2545,
+        "top": 0,
+        "width": 2329,
+        "x": 216,
+        "y": 0
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "assets-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1440,
+      "main": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 216,
+        "right": 2560,
+        "top": 0,
+        "width": 2344,
+        "x": 216,
+        "y": 0
+      },
+      "scrollWidth": 2560,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "storyboard-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1440,
+      "main": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 216,
+        "right": 2560,
+        "top": 0,
+        "width": 2344,
+        "x": 216,
+        "y": 0
+      },
+      "scrollWidth": 2560,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "shot-editor-bottom-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1116.953125,
+        "height": 1096.953125,
+        "left": 2095,
+        "right": 2495,
+        "top": 20,
+        "width": 400,
+        "x": 2095,
+        "y": 20
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1440,
+      "main": {
+        "bottom": 1659.40625,
+        "height": 2124.40625,
+        "left": 216,
+        "right": 2545,
+        "top": -465,
+        "width": 2329,
+        "x": 216,
+        "y": -465
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 465,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "queue-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/production",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Hàng đợi nội dung",
+      "height": 1440,
+      "main": {
+        "bottom": 2710.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "planning-modal-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/production",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Hàng đợi nội dung",
+      "height": 1440,
+      "main": {
+        "bottom": 2710.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "planning-modal-bottom-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/production",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Hàng đợi nội dung",
+      "height": 1440,
+      "main": {
+        "bottom": 2710.984375,
+        "height": 2710.984375,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "calendar-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/production?view=calendar",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Lịch kế hoạch",
+      "height": 1440,
+      "main": {
+        "bottom": 4026.75,
+        "height": 9825.75,
+        "left": 226,
+        "right": 1826,
+        "top": -5799,
+        "width": 1600,
+        "x": 226,
+        "y": -5799
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 5799,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "library-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/production?view=library",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Thư viện video",
+      "height": 1440,
+      "main": {
+        "bottom": 2337.109375,
+        "height": 2337.109375,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "library-video-modal-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/production?view=library",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Thư viện video",
+      "height": 1440,
+      "main": {
+        "bottom": 2651.109375,
+        "height": 2651.109375,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "case06-narration-repaired.png",
+    "url": "http://127.0.0.1:8030/?project=5e9d204790f551eb8afadee33a67a8f6",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1060,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 20,
+        "width": 365,
+        "x": 1500,
+        "y": 20
+      },
+      "heading": "Đọc tin bất động sản theo thời điểm",
+      "height": 1080,
+      "main": {
+        "bottom": 1516.109375,
+        "height": 1985.109375,
+        "left": 216,
+        "right": 1905,
+        "top": -469,
+        "width": 1689,
+        "x": 216,
+        "y": -469
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 469,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "case08-cta-repaired.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1060,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 20,
+        "width": 365,
+        "x": 1500,
+        "y": 20
+      },
+      "heading": "Bài đăng tháng 8 nói gì về quý II?",
+      "height": 1080,
+      "main": {
+        "bottom": 1379.921875,
+        "height": 1848.921875,
+        "left": 216,
+        "right": 1905,
+        "top": -469,
+        "width": 1689,
+        "x": 216,
+        "y": -469
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 469,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "profiles-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/production?view=profiles",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Hồ sơ nội dung",
+      "height": 1440,
+      "main": {
+        "bottom": 1660.796875,
+        "height": 1660.796875,
+        "left": 226,
+        "right": 1826,
+        "top": 0,
+        "width": 1600,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "intelligence-findings-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Từ nguồn tin đến ý tưởng có căn cứ.",
+      "height": 1440,
+      "main": {
+        "bottom": 5539.015625,
+        "height": 6920.015625,
+        "left": 245,
+        "right": 1775,
+        "top": -1381,
+        "width": 1530,
+        "x": 245,
+        "y": -1381
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 1381,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 245,
+        "top": 0,
+        "width": 245,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "intelligence-ideas-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Từ nguồn tin đến ý tưởng có căn cứ.",
+      "height": 1440,
+      "main": {
+        "bottom": 4670.015625,
+        "height": 6920.015625,
+        "left": 245,
+        "right": 1775,
+        "top": -2250,
+        "width": 1530,
+        "x": 245,
+        "y": -2250
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 2250,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 245,
+        "top": 0,
+        "width": 245,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "intelligence-brief-2560x1440-native.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "heading": "Từ nguồn tin đến ý tưởng có căn cứ.",
+      "height": 1440,
+      "main": {
+        "bottom": 2275.015625,
+        "height": 6920.015625,
+        "left": 245,
+        "right": 1775,
+        "top": -4645,
+        "width": 1530,
+        "x": 245,
+        "y": -4645
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 4645,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 245,
+        "top": 0,
+        "width": 245,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "intelligence-findings-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Từ nguồn tin đến ý tưởng có căn cứ.",
+      "height": 768,
+      "main": {
+        "bottom": 5375.796875,
+        "height": 7084.796875,
+        "left": 245,
+        "right": 1351,
+        "top": -1709,
+        "width": 1106,
+        "x": 245,
+        "y": -1709
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 1709,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 245,
+        "top": 0,
+        "width": 245,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "intelligence-ideas-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Từ nguồn tin đến ý tưởng có căn cứ.",
+      "height": 768,
+      "main": {
+        "bottom": 4426.796875,
+        "height": 7084.796875,
+        "left": 245,
+        "right": 1351,
+        "top": -2658,
+        "width": 1106,
+        "x": 245,
+        "y": -2658
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 2658,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 245,
+        "top": 0,
+        "width": 245,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "intelligence-brief-1366x768-native.png",
+    "url": "http://127.0.0.1:8030/intelligence?run=907a1ca5b2aa46f6bca41d5de9815b9f",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Từ nguồn tin đến ý tưởng có căn cứ.",
+      "height": 768,
+      "main": {
+        "bottom": 1930.796875,
+        "height": 7084.796875,
+        "left": 245,
+        "right": 1351,
+        "top": -5154,
+        "width": 1106,
+        "x": 245,
+        "y": -5154
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 5154,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 245,
+        "top": 0,
+        "width": 245,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "studio-1920x1080-final.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1250.78125,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 210.78125,
+        "width": 365,
+        "x": 1500,
+        "y": 210.78125
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1080,
+      "main": {
+        "bottom": 1863.59375,
+        "height": 1923.59375,
+        "left": 216,
+        "right": 1905,
+        "top": -60,
+        "width": 1689,
+        "x": 216,
+        "y": -60
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 60,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "case08-clean-cta-saved.png",
+    "url": "http://127.0.0.1:8030/?project=7f13a515100d5c07aae9760d665ad2f8",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1060,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 20,
+        "width": 365,
+        "x": 1500,
+        "y": 20
+      },
+      "heading": "Bài đăng tháng 8 nói gì về quý II?",
+      "height": 1080,
+      "main": {
+        "bottom": 1498.109375,
+        "height": 1967.109375,
+        "left": 216,
+        "right": 1905,
+        "top": -469,
+        "width": 1689,
+        "x": 216,
+        "y": -469
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 469,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "library-1366x768-loaded.png",
+    "url": "http://127.0.0.1:8030/production?view=library",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "heading": "Thư viện video",
+      "height": 768,
+      "main": {
+        "bottom": 2421.109375,
+        "height": 2421.109375,
+        "left": 226,
+        "right": 1351,
+        "top": 0,
+        "width": 1125,
+        "x": 226,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 226,
+        "top": 0,
+        "width": 226,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "studio-1366x768-final.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "png": {
+      "width": 1366,
+      "height": 768
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 979.78125,
+        "height": 728,
+        "left": 1023,
+        "right": 1329,
+        "top": 251.78125,
+        "width": 306,
+        "x": 1023,
+        "y": 251.78125
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 768,
+      "main": {
+        "bottom": 2078.5625,
+        "height": 2078.5625,
+        "left": 202,
+        "right": 1351,
+        "top": 0,
+        "width": 1149,
+        "x": 202,
+        "y": 0
+      },
+      "scrollWidth": 1351,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 768,
+        "height": 768,
+        "left": 0,
+        "right": 202,
+        "top": 0,
+        "width": 202,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1366
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "studio-1920x1080-final.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1310.78125,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 270.78125,
+        "width": 365,
+        "x": 1500,
+        "y": 270.78125
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1080,
+      "main": {
+        "bottom": 1923.59375,
+        "height": 1923.59375,
+        "left": 216,
+        "right": 1905,
+        "top": 0,
+        "width": 1689,
+        "x": 216,
+        "y": 0
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "studio-2560x1440-final.png",
+    "url": "http://127.0.0.1:8030/?project=206a81364b2e5d0d98fa0cfdf2b5bedb",
+    "requestedViewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "png": {
+      "width": 2560,
+      "height": 1440
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1372.734375,
+        "height": 1096.953125,
+        "left": 2095,
+        "right": 2495,
+        "top": 275.78125,
+        "width": 400,
+        "x": 2095,
+        "y": 275.78125
+      },
+      "heading": "Khởi động chưa phải đã đạt",
+      "height": 1440,
+      "main": {
+        "bottom": 2124.40625,
+        "height": 2124.40625,
+        "left": 216,
+        "right": 2545,
+        "top": 0,
+        "width": 2329,
+        "x": 216,
+        "y": 0
+      },
+      "scrollWidth": 2545,
+      "scrollX": 0,
+      "scrollY": 0,
+      "sidebar": {
+        "bottom": 1440,
+        "height": 1440,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 2560
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "voice-policy-apply-current-1920x1080.png",
+    "url": "http://127.0.0.1:8030/?project=d3aa854ed0ed552091f513c66642d8a0",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1060,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 20,
+        "width": 365,
+        "x": 1500,
+        "y": 20
+      },
+      "heading": "Lời kỳ vọng hay dữ kiện?",
+      "height": 1080,
+      "main": {
+        "bottom": 1575.3125,
+        "height": 1962.3125,
+        "left": 216,
+        "right": 1905,
+        "top": -387,
+        "width": 1689,
+        "x": 216,
+        "y": -387
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 387,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "ai-edit-history-controls-1920x1080.png",
+    "url": "http://127.0.0.1:8030/?project=d3aa854ed0ed552091f513c66642d8a0",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1050.3125,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 10.3125,
+        "width": 365,
+        "x": 1500,
+        "y": 10.3125
+      },
+      "heading": "Lời kỳ vọng hay dữ kiện?",
+      "height": 1080,
+      "main": {
+        "bottom": 1080.3125,
+        "height": 1962.3125,
+        "left": 216,
+        "right": 1905,
+        "top": -882,
+        "width": 1689,
+        "x": 216,
+        "y": -882
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 882,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  },
+  {
+    "name": "final-human-review-controls-1920x1080.png",
+    "url": "http://127.0.0.1:8030/?project=d3aa854ed0ed552091f513c66642d8a0",
+    "requestedViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "png": {
+      "width": 1920,
+      "height": 1080
+    },
+    "geometry": {
+      "editor": {
+        "bottom": 1060,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 20,
+        "width": 365,
+        "x": 1500,
+        "y": 20
+      },
+      "heading": "Lời kỳ vọng hay dữ kiện?",
+      "height": 1080,
+      "main": {
+        "bottom": 1130.3125,
+        "height": 1962.3125,
+        "left": 216,
+        "right": 1905,
+        "top": -832,
+        "width": 1689,
+        "x": 216,
+        "y": -832
+      },
+      "scrollWidth": 1905,
+      "scrollX": 0,
+      "scrollY": 832,
+      "sidebar": {
+        "bottom": 1080,
+        "height": 1080,
+        "left": 0,
+        "right": 216,
+        "top": 0,
+        "width": 216,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1920
+    },
+    "capture": "Page.captureScreenshot fromSurface true no clip"
+  }
+]

@@ -1,0 +1,1 @@
+{"actor":"Codex — task Owner cho phép chuẩn bị; Owner chưa xem/nghe","actor_type":"agent","authority":"VF-PHASE10-FINAL-UAT-CERTIFICATION-01","automatic_retry":false,"body":{"verify_saved":true},"human_quality_acceptance":false,"human_watch_listen":false,"method":"POST","path":"/api/connections/assemblyai","requested_at":"2026-10-06T12:31:50.715026+00:00","upload_sha256":null}
