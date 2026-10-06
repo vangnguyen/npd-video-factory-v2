@@ -1,0 +1,22 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.20,0:00:03.90,Subtitle,,0,0,0,,{\pos(495,1435)}Một bản tin có thể đúng với thời điểm\Nđược đăng, nhưng chưa chắc phản ánh
+Dialogue: 0,0:00:03.90,0:00:04.23,Subtitle,,0,0,0,,{\pos(495,1435)}hiện tại.
+Dialogue: 0,0:00:04.73,0:00:07.90,Subtitle,,0,0,0,,{\pos(495,1435)}Vang Nguyễn gợi ý một cách đọc tin\Nbất động sản: đặt ba mốc cạnh nhau
+Dialogue: 0,0:00:07.90,0:00:09.97,Subtitle,,0,0,0,,{\pos(495,1435)}— ngày đăng, kỳ dữ liệu và ngày bạn\Nđang xem.
+Dialogue: 0,0:00:10.47,0:00:14.85,Subtitle,,0,0,0,,{\pos(495,1435)}Chẳng hạn, bài của Báo Điện tử Chính\Nphủ đăng ngày 24 tháng 4 năm 2026,
+Dialogue: 0,0:00:14.85,0:00:18.55,Subtitle,,0,0,0,,{\pos(495,1435)}còn nhận định về thị trường trong bài\Nđề cập quý I năm 2026.
+Dialogue: 0,0:00:19.05,0:00:23.48,Subtitle,,0,0,0,,{\pos(495,1435)}Đặt vào ngày 6 tháng 10 năm 2026,\Ndữ liệu quý I là một lát cắt quá khứ; nó
+Dialogue: 0,0:00:23.48,0:00:25.70,Subtitle,,0,0,0,,{\pos(495,1435)}chưa đủ để mô tả thị trường tháng 10.
+Dialogue: 0,0:00:26.20,0:00:29.83,Subtitle,,0,0,0,,{\pos(495,1435)}Trước khi áp dụng một nhận định, hãy\Nhỏi: bài đăng lúc nào, nói về giai đoạn
+Dialogue: 0,0:00:29.83,0:00:33.08,Subtitle,,0,0,0,,{\pos(495,1435)}nào, và có thông tin mới hơn chưa?\NBạn đang vướng ở bản tin nào? Gửi
+Dialogue: 0,0:00:33.08,0:00:34.23,Subtitle,,0,0,0,,{\pos(495,1435)}câu hỏi cho Vang Nguyễn.

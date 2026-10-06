@@ -1,0 +1,22 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.21,0:00:04.68,Subtitle,,0,0,0,,{\pos(495,1435)}3 điều nên kiểm tra trước khi đánh giá\Nmột dự án mới như Vinhomes Saigon
+Dialogue: 0,0:00:04.68,0:00:04.92,Subtitle,,0,0,0,,{\pos(495,1435)}Park.
+Dialogue: 0,0:00:05.42,0:00:08.58,Subtitle,,0,0,0,,{\pos(495,1435)}Thứ nhất, bài đang nói về sự kiện hay\Ntiến độ? Ví dụ, bài Kick-Off trên
+Dialogue: 0,0:00:08.58,0:00:11.66,Subtitle,,0,0,0,,{\pos(495,1435)}Vinhomes Market giới thiệu một sự\Nkiện kinh doanh. Sự sôi động của lễ
+Dialogue: 0,0:00:11.66,0:00:14.20,Subtitle,,0,0,0,,{\pos(495,1435)}giới thiệu chưa trả lời được dự án đã\Ntriển khai đến đâu.
+Dialogue: 0,0:00:14.70,0:00:18.18,Subtitle,,0,0,0,,{\pos(495,1435)}Thứ hai, tách lời tiếp thị khỏi dữ kiện.\NNhững câu về cơ hội đầu tư cần được
+Dialogue: 0,0:00:18.18,0:00:20.65,Subtitle,,0,0,0,,{\pos(495,1435)}xem là lời giới thiệu, không phải lời\Nhứa giá sẽ tăng.
+Dialogue: 0,0:00:21.15,0:00:24.71,Subtitle,,0,0,0,,{\pos(495,1435)}Thứ ba, hỏi đúng tài liệu: giá tại thời\Nđiểm nào, tiến độ được ghi nhận khi
+Dialogue: 0,0:00:24.71,0:00:28.04,Subtitle,,0,0,0,,{\pos(495,1435)}nào, và hồ sơ pháp lý nào có thể đối\Nchiếu? Đây là câu hỏi để tìm hiểu
+Dialogue: 0,0:00:28.04,0:00:29.94,Subtitle,,0,0,0,,{\pos(495,1435)}thêm, chưa phải kết luận về Saigon\NPark.
+Dialogue: 0,0:00:30.44,0:00:33.13,Subtitle,,0,0,0,,{\pos(495,1435)}Bạn muốn làm rõ nhóm tài liệu nào\Ntrước? Để lại câu hỏi.

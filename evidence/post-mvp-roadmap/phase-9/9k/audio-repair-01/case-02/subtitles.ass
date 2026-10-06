@@ -1,0 +1,23 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.22,0:00:04.48,Subtitle,,0,0,0,,{\pos(495,1435)}Vinhomes Green Paradise đang đi tới\Ntiêu chuẩn đô thị thông minh quốc tế
+Dialogue: 0,0:00:04.48,0:00:05.02,Subtitle,,0,0,0,,{\pos(495,1435)}như thế nào?
+Dialogue: 0,0:00:05.52,0:00:10.07,Subtitle,,0,0,0,,{\pos(495,1435)}Theo Vinhomes Market, ngày 3 tháng\N3 năm 2026, dự án khởi động chương
+Dialogue: 0,0:00:10.07,0:00:12.71,Subtitle,,0,0,0,,{\pos(495,1435)}trình chứng nhận, với KMAC, WCCD và\NSUM.
+Dialogue: 0,0:00:13.21,0:00:17.19,Subtitle,,0,0,0,,{\pos(495,1435)}KMAC được giới thiệu là công ty tư\Nvấn; WCCD là Hội đồng Thế giới về Dữ
+Dialogue: 0,0:00:17.19,0:00:21.16,Subtitle,,0,0,0,,{\pos(495,1435)}liệu Đô thị; SUM là Chỉ số Đô thị Tiêu\Nchuẩn hóa. Bài viết nêu mục tiêu
+Dialogue: 0,0:00:21.16,0:00:23.01,Subtitle,,0,0,0,,{\pos(495,1435)}hướng tới chứng chỉ xanh quốc tế.
+Dialogue: 0,0:00:23.51,0:00:27.01,Subtitle,,0,0,0,,{\pos(495,1435)}Điều đáng theo dõi là mục tiêu ấy\Nđược triển khai ra sao và kết quả đánh
+Dialogue: 0,0:00:27.01,0:00:30.31,Subtitle,,0,0,0,,{\pos(495,1435)}giá nào sẽ được công bố. Mốc khởi\Nđộng cho biết một quá trình đã bắt
+Dialogue: 0,0:00:30.31,0:00:32.89,Subtitle,,0,0,0,,{\pos(495,1435)}đầu, chưa phải xác nhận dự án đã\Nđược cấp chứng nhận.
+Dialogue: 0,0:00:33.39,0:00:36.42,Subtitle,,0,0,0,,{\pos(495,1435)}Bạn quan tâm điều gì ở một đô thị\Nthông minh: giao thông, năng lượng
+Dialogue: 0,0:00:36.42,0:00:38.79,Subtitle,,0,0,0,,{\pos(495,1435)}hay môi trường? Để lại câu hỏi để\Nmình cùng tìm hiểu.

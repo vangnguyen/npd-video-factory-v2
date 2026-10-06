@@ -1,0 +1,23 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.21,0:00:04.98,Subtitle,,0,0,0,,{\pos(495,1435)}Nguồn cung tăng, nhưng giao dịch lại\Ngiảm: đọc thị trường thế nào cho
+Dialogue: 0,0:00:04.98,0:00:06.95,Subtitle,,0,0,0,,{\pos(495,1435)}đúng? Cùng nhìn lại quý II năm 2026.
+Dialogue: 0,0:00:07.45,0:00:11.05,Subtitle,,0,0,0,,{\pos(495,1435)}Theo bài trên Báo Điện tử Chính phủ\Nđăng ngày 21 tháng 8 năm 2026,
+Dialogue: 0,0:00:11.05,0:00:14.75,Subtitle,,0,0,0,,{\pos(495,1435)}nguồn cung tiếp tục tăng, giao dịch\Ngiảm và tồn kho có xu hướng tăng
+Dialogue: 0,0:00:14.75,0:00:14.97,Subtitle,,0,0,0,,{\pos(495,1435)}nhẹ.
+Dialogue: 0,0:00:15.47,0:00:21.41,Subtitle,,0,0,0,,{\pos(495,1435)}Số liệu địa phương được bài dẫn ghi\Nnhận khoảng trên 100.005 giao dịch
+Dialogue: 0,0:00:21.41,0:00:26.85,Subtitle,,0,0,0,,{\pos(495,1435)}thành công: bằng 71,5% quý I năm\N2026 và 63,7% cùng kỳ năm 2025.
+Dialogue: 0,0:00:27.35,0:00:31.43,Subtitle,,0,0,0,,{\pos(495,1435)}Hãy chú ý chữ “bằng”: đây là tỷ lệ so\Nvới hai kỳ trước, không phải giảm
+Dialogue: 0,0:00:31.43,0:00:35.29,Subtitle,,0,0,0,,{\pos(495,1435)}71,5% hay 63,7%. Đọc cùng nguồn\Ncung và tồn kho giúp thấy bức tranh
+Dialogue: 0,0:00:35.29,0:00:39.31,Subtitle,,0,0,0,,{\pos(495,1435)}đầy đủ hơn, thay vì suy ra giá của một\Ndự án từ riêng lượng giao dịch.
+Dialogue: 0,0:00:39.81,0:00:43.36,Subtitle,,0,0,0,,{\pos(495,1435)}Đây là dữ liệu lịch sử quý II, chưa mô\Ntả thị trường hôm nay. Bạn muốn đối
+Dialogue: 0,0:00:43.36,0:00:45.80,Subtitle,,0,0,0,,{\pos(495,1435)}chiếu thêm địa bàn hoặc chỉ số nào?\NĐể lại câu hỏi.
