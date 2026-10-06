@@ -140,8 +140,10 @@ def verified_state():
         url = 'http://127.0.0.1:8026/api/jobs/' + job['id'] + '/final'
         with opener.open(url, timeout=30) as response:
             served = hashlib.sha256(response.read()).hexdigest(); code = response.status
-            disposition = response.headers.get('Content-Disposition', '')
-        assert code == 200 and served == c['final_sha256'] and 'attachment' in disposition
+            content_type = response.headers.get('Content-Type', '')
+        # Native final uses the existing video file route; the Studio link's
+        # download attribute handles saving. The server sends no attachment header.
+        assert code == 200 and served == c['final_sha256'] and content_type == 'video/mp4'
         req = urllib.request.Request(url, headers={'Range': 'bytes=100-199'})
         with opener.open(req, timeout=10) as response: ranged = response.read(); range_code = response.status
         with (out / 'final.mp4').open('rb') as video: video.seek(100); expected = video.read(100)
@@ -150,7 +152,8 @@ def verified_state():
             'final_sha256': served, 'snapshot_sha256': c['snapshot_sha256'], 'final_review': job['final_review'],
             'video_duration_seconds': c['video_duration_seconds'], 'duration_exception_accepted': c['case'] in [2, 4, 6],
             'research_lineage': c['research_lineage'], 'opportunity_id': opportunity['id'], 'opportunity_version': opportunity['version'],
-            'opportunity_status': opportunity['status'], 'final_HTTP_200_byte_exact': True, 'final_range_seek': 'PASS'})
+            'opportunity_status': opportunity['status'], 'final_HTTP_200_byte_exact': True,
+            'final_content_type': content_type, 'final_range_seek': 'PASS'})
     backups = authorization['backups']
     for b in backups.values(): assert file_sha(b['path']) == b['sha256']
     workflow = integrity.rows_preserved(backups['workflow']['path'], store.db)
@@ -169,7 +172,9 @@ def verified_state():
             'ten_accepted_phase8_videos_evidence_and_tag_unchanged': True,
             'frozen_prior_evidence_unchanged': len(read(BASE / 'owner-B-approval.json')['frozen_prior_evidence']),
             'owner_final_video_approvals': 5, 'produced_opportunities': 5,
-            'main_service_restarted': False, 'new_provider_calls': 0, 'new_tts_or_render_calls': 0, 'published': False,
+            'main_service_restarted': False, 'existing_native_service_started_from_observed_offline_state': True,
+            'existing_running_process_stopped_or_killed': False,
+            'new_provider_calls': 0, 'new_tts_or_render_calls': 0, 'published': False,
             'INTERNAL_PRODUCTION_READY': 'YES', 'CONTENT_INTELLIGENCE_READY': 'YES'}
 
 
