@@ -1,0 +1,18 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.19,0:00:03.85,Subtitle,,0,0,0,,{\pos(495,1435)}Lời kỳ vọng có phải là kết quả thực tế?\NHãy kiểm tra nguồn.
+Dialogue: 0,0:00:04.35,0:00:08.38,Subtitle,,0,0,0,,{\pos(495,1435)}Theo bài viết trên trang Vinhomes, đại\Ndiện IHG nêu kỳ vọng về hệ sinh thái
+Dialogue: 0,0:00:08.38,0:00:10.75,Subtitle,,0,0,0,,{\pos(495,1435)}lưu trú tại Vinhomes Green Paradise\NCần Giờ.
+Dialogue: 0,0:00:11.25,0:00:14.04,Subtitle,,0,0,0,,{\pos(495,1435)}Đó là lời nguồn dẫn lại, chưa phải xác\Nnhận khách sạn đã vận hành.
+Dialogue: 0,0:00:14.54,0:00:17.42,Subtitle,,0,0,0,,{\pos(495,1435)}Trang nguồn chưa rõ ngày công bố;\Ntrích dẫn này không chứng minh giá,
+Dialogue: 0,0:00:17.42,0:00:18.25,Subtitle,,0,0,0,,{\pos(495,1435)}tiến độ hay pháp lý.
+Dialogue: 0,0:00:18.75,0:00:21.50,Subtitle,,0,0,0,,{\pos(495,1435)}Bạn muốn đối chiếu phát biểu nào?\NGửi câu hỏi để cùng kiểm tra nguồn.

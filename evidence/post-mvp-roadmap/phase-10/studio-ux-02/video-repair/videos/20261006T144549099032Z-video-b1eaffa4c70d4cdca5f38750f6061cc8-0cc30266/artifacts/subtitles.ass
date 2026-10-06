@@ -1,0 +1,16 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,38,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.19,0:00:04.70,Subtitle,,0,0,0,,{\pos(960,910)}Con số sự kiện có cho biết số giao dịch không? Hãy phân biệt đúng chỉ số.
+Dialogue: 0,0:00:05.20,0:00:11.41,Subtitle,,0,0,0,,{\pos(960,910)}Bài viết về sự kiện khởi động dự án Vinhomes Sài Gòn Park nêu gần mười hai nghìn người tham dự và\Nhơn một trăm tám mươi nghìn lượt xem trực tiếp.
+Dialogue: 0,0:00:11.91,0:00:14.95,Subtitle,,0,0,0,,{\pos(960,910)}Số người và lượt xem không xác nhận giao dịch; ngày công bố trang chưa rõ.
+Dialogue: 0,0:00:15.45,0:00:18.11,Subtitle,,0,0,0,,{\pos(960,910)}Đây là số liệu bài viết tường thuật, chưa được đối chiếu độc lập.
+Dialogue: 0,0:00:18.61,0:00:21.88,Subtitle,,0,0,0,,{\pos(960,910)}Bạn muốn kiểm tra phạm vi số liệu? Gửi câu hỏi để cùng đối chiếu nguồn.

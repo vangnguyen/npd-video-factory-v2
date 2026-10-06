@@ -1,0 +1,493 @@
+{
+  "app_mutations": 0,
+  "captured_at": "2026-10-06T14:20:10.504880+00:00",
+  "cases": [
+    {
+      "actual_active_windows_seconds": 15.23,
+      "case": "01",
+      "exact_zero_tail_seconds": 24.945,
+      "final_sha256": "a01a42e757047a67a02662bc86068e35dee10ba7bb76b69e10c33e3d23bc743f",
+      "job_id": "2cdfd4778c834bb68847e80397445626",
+      "last_measured_speech_activity_end_seconds": 19.929999999999996,
+      "last_narration_unit_end_seconds": 20.054999999999996,
+      "name_text": {
+        "Vinhomes Green Paradise": false,
+        "Vinhomes Saigon Park": false
+      },
+      "project_id": "d3aa854ed0ed552091f513c66642d8a0",
+      "project_name_plans": [
+        {
+          "normalized_text": "hãy kiểm tra nguồn. theo bài viết trên trang vinhomes, đại diện i hát gờ nêu kỳ vọng về hệ sinh thái lưu trú tại green paradise.",
+          "scene": 2,
+          "target_text": "Theo bài viết trên trang Vinhomes, đại diện IHG nêu kỳ vọng về hệ sinh thái lưu trú tại Green Paradise."
+        }
+      ],
+      "raw_voice_duration_seconds": 18.955,
+      "render_voice_duration_seconds": 45.0,
+      "resolution": {
+        "height": 1920,
+        "width": 1080
+      },
+      "rms_activity_threshold_relative_full_scale": 0.003,
+      "rms_first_active_seconds": 1.19,
+      "rms_last_active_end_seconds": 19.93,
+      "rms_window_seconds": 0.01,
+      "scene_layout": [
+        {
+          "end": 4.25,
+          "last_speech_activity_end_seconds": 3.85,
+          "measured_voice_seconds": 3.15,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 1,
+          "shot_id": "shot_b3cbd30c2e2551caa88ab55ba8d2ad45",
+          "silent_or_low_activity_tail_seconds": 0.3999999999999999,
+          "start": 0.0
+        },
+        {
+          "end": 9.57,
+          "last_speech_activity_end_seconds": 9.34,
+          "measured_voice_seconds": 5.32,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 2,
+          "shot_id": "shot_4dfa824b6941581c9301232d09b088d6",
+          "silent_or_low_activity_tail_seconds": 0.23000000000000043,
+          "start": 4.25
+        },
+        {
+          "end": 12.92,
+          "last_speech_activity_end_seconds": 12.469999999999997,
+          "measured_voice_seconds": 3.35,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 3,
+          "shot_id": "shot_8f1e046b112a5c94b351a2ad9880eba6",
+          "silent_or_low_activity_tail_seconds": 0.45000000000000284,
+          "start": 9.57
+        },
+        {
+          "end": 17.08,
+          "last_speech_activity_end_seconds": 16.68,
+          "measured_voice_seconds": 4.16,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 4,
+          "shot_id": "shot_b66c203f9469583da0b0e8dbd39b74c6",
+          "silent_or_low_activity_tail_seconds": 0.3999999999999986,
+          "start": 12.92
+        },
+        {
+          "end": 45.0,
+          "last_speech_activity_end_seconds": 19.929999999999996,
+          "measured_voice_seconds": 2.975,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 5,
+          "shot_id": "shot_c1c99fb1faa85c12904f3d6268f7b98e",
+          "silent_or_low_activity_tail_seconds": 25.070000000000004,
+          "start": 17.08
+        }
+      ],
+      "script": "Lời kỳ vọng có phải là kết quả thực tế? Hãy kiểm tra nguồn. Theo bài viết trên trang Vinhomes, đại diện IHG nêu kỳ vọng về hệ sinh thái lưu trú tại Green Paradise. Đó là lời nguồn dẫn lại, chưa phải xác nhận khách sạn đã vận hành. Trang nguồn chưa rõ ngày công bố; trích dẫn này không chứng minh giá, tiến độ hay pháp lý. Bạn muốn đối chiếu phát biểu nào? Gửi câu hỏi để cùng kiểm tra nguồn.",
+      "source_paths": {
+        "final.mp4": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\2cdfd4778c834bb68847e80397445626\\final.mp4",
+        "render-manifest.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\2cdfd4778c834bb68847e80397445626\\render-manifest.json",
+        "render-voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\2cdfd4778c834bb68847e80397445626\\render-voice.json",
+        "render-voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\2cdfd4778c834bb68847e80397445626\\render-voice.wav",
+        "timeline.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\2cdfd4778c834bb68847e80397445626\\timeline.json",
+        "voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\2cdfd4778c834bb68847e80397445626\\voice.json",
+        "voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\2cdfd4778c834bb68847e80397445626\\voice.wav"
+      },
+      "trailing_low_activity_seconds": 25.070000000000004,
+      "verification_receipt": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\final-uat\\videos\\20261006T124912746436Z-video-2cdfd4778c834bb68847e80397445626-5cb7a9e4\\video-verification.json"
+    },
+    {
+      "actual_active_windows_seconds": 17.09,
+      "case": "02",
+      "exact_zero_tail_seconds": 18.4350625,
+      "final_sha256": "a83bf89baa36bc7f52ae5c72a174565b3e86f52ce7297225aed6cec97adae1d4",
+      "job_id": "f221cf0bbf7e480a9de40f65f96d8bf6",
+      "last_measured_speech_activity_end_seconds": 26.43,
+      "last_narration_unit_end_seconds": 26.564999999999998,
+      "name_text": {
+        "Vinhomes Green Paradise": false,
+        "Vinhomes Saigon Park": false
+      },
+      "project_id": "206a81364b2e5d0d98fa0cfdf2b5bedb",
+      "project_name_plans": [
+        {
+          "normalized_text": "khởi động một dự án chứng nhận có đồng nghĩa đã được cấp chứng nhận không? bài viết vinhomes nêu green paradise khởi động dự án chứng nhận đô thị thông minh ngày ba tháng ba năm hai nghìn không trăm hai mươi sáu.",
+          "scene": 2,
+          "target_text": "Bài viết Vinhomes nêu Green Paradise khởi động dự án chứng nhận đô thị thông minh ngày ba tháng ba năm hai nghìn không trăm hai mươi sáu."
+        }
+      ],
+      "raw_voice_duration_seconds": 21.005,
+      "render_voice_duration_seconds": 45.0,
+      "resolution": {
+        "height": 1920,
+        "width": 1080
+      },
+      "rms_activity_threshold_relative_full_scale": 0.003,
+      "rms_first_active_seconds": 1.19,
+      "rms_last_active_end_seconds": 26.44,
+      "rms_window_seconds": 0.01,
+      "scene_layout": [
+        {
+          "end": 9.0,
+          "last_speech_activity_end_seconds": 4.13,
+          "measured_voice_seconds": 3.44,
+          "narration_enabled": true,
+          "requested_duration": 9,
+          "scene": 1,
+          "shot_id": "shot_9a6063f7759754ec9161b25c6dc386f1",
+          "silent_or_low_activity_tail_seconds": 4.87,
+          "start": 0.0
+        },
+        {
+          "end": 14.93,
+          "last_speech_activity_end_seconds": 14.72,
+          "measured_voice_seconds": 5.93,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 2,
+          "shot_id": "shot_c5a51c1ba0015764b70bf859b207bdc4",
+          "silent_or_low_activity_tail_seconds": 0.20999999999999908,
+          "start": 9.0
+        },
+        {
+          "end": 19.08,
+          "last_speech_activity_end_seconds": 18.64,
+          "measured_voice_seconds": 4.15,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 3,
+          "shot_id": "shot_dccca7cd39765cd7b3427a9887ab777c",
+          "silent_or_low_activity_tail_seconds": 0.4399999999999977,
+          "start": 14.93
+        },
+        {
+          "end": 23.02,
+          "last_speech_activity_end_seconds": 22.570000000000004,
+          "measured_voice_seconds": 3.94,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 4,
+          "shot_id": "shot_ba4bad2eb8195289ae823471d75fb46e",
+          "silent_or_low_activity_tail_seconds": 0.44999999999999574,
+          "start": 19.08
+        },
+        {
+          "end": 45.0,
+          "last_speech_activity_end_seconds": 26.43,
+          "measured_voice_seconds": 3.545,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 5,
+          "shot_id": "shot_d89f5044129d56b4975e352b6a8f00e3",
+          "silent_or_low_activity_tail_seconds": 18.57,
+          "start": 23.02
+        }
+      ],
+      "script": "Khởi động một dự án chứng nhận có đồng nghĩa đã được cấp chứng nhận không? Bài viết Vinhomes nêu Green Paradise khởi động dự án chứng nhận đô thị thông minh ngày ba tháng ba năm hai nghìn không trăm hai mươi sáu. Đây là mốc bắt đầu và mục tiêu được nguồn giới thiệu, chưa phải kết quả đã đạt. Ngày công bố trang chưa rõ; nguồn này không xác nhận tình trạng chứng nhận hiện tại. Bạn muốn kiểm tra tiêu chí hay kết quả? Gửi câu hỏi để cùng đối chiếu.",
+      "source_paths": {
+        "final.mp4": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\f221cf0bbf7e480a9de40f65f96d8bf6\\final.mp4",
+        "render-manifest.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\f221cf0bbf7e480a9de40f65f96d8bf6\\render-manifest.json",
+        "render-voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\f221cf0bbf7e480a9de40f65f96d8bf6\\render-voice.json",
+        "render-voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\f221cf0bbf7e480a9de40f65f96d8bf6\\render-voice.wav",
+        "timeline.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\f221cf0bbf7e480a9de40f65f96d8bf6\\timeline.json",
+        "voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\f221cf0bbf7e480a9de40f65f96d8bf6\\voice.json",
+        "voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\f221cf0bbf7e480a9de40f65f96d8bf6\\voice.wav"
+      },
+      "trailing_low_activity_seconds": 18.57,
+      "verification_receipt": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\final-uat\\videos\\20261006T123618803609Z-video-f221cf0bbf7e480a9de40f65f96d8bf6-c2db9024\\video-verification.json"
+    },
+    {
+      "actual_active_windows_seconds": 16.11,
+      "case": "04",
+      "exact_zero_tail_seconds": 23.995,
+      "final_sha256": "cfadfb4085e237e598b6618e7148b7d65a9368cdca6589494e78cb54c61c3c00",
+      "job_id": "87b374a1ae2f49969fb2b5646e2e8458",
+      "last_measured_speech_activity_end_seconds": 20.95,
+      "last_narration_unit_end_seconds": 21.005,
+      "name_text": {
+        "Vinhomes Green Paradise": false,
+        "Vinhomes Saigon Park": false
+      },
+      "project_id": "ec5a3d1cf3cf5ec3a1debaf97c189139",
+      "project_name_plans": [],
+      "raw_voice_duration_seconds": 19.905,
+      "render_voice_duration_seconds": 45.0,
+      "resolution": {
+        "height": 1080,
+        "width": 1920
+      },
+      "rms_activity_threshold_relative_full_scale": 0.003,
+      "rms_first_active_seconds": 1.19,
+      "rms_last_active_end_seconds": 20.98,
+      "rms_window_seconds": 0.01,
+      "scene_layout": [
+        {
+          "end": 5.07,
+          "last_speech_activity_end_seconds": 4.7,
+          "measured_voice_seconds": 3.97,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 1,
+          "shot_id": "shot_de6401133cfe58b9b5150e3d41abcde8",
+          "silent_or_low_activity_tail_seconds": 0.3700000000000001,
+          "start": 0.0
+        },
+        {
+          "end": 10.49,
+          "last_speech_activity_end_seconds": 10.16,
+          "measured_voice_seconds": 5.42,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 2,
+          "shot_id": "shot_0f71459450575a17961cc2ddf4ea21cb",
+          "silent_or_low_activity_tail_seconds": 0.33000000000000007,
+          "start": 5.07
+        },
+        {
+          "end": 14.34,
+          "last_speech_activity_end_seconds": 14.02,
+          "measured_voice_seconds": 3.85,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 3,
+          "shot_id": "shot_4612efa4c0045a8aa321ce90610f8b15",
+          "silent_or_low_activity_tail_seconds": 0.3200000000000003,
+          "start": 10.49
+        },
+        {
+          "end": 17.61,
+          "last_speech_activity_end_seconds": 17.18,
+          "measured_voice_seconds": 3.27,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 4,
+          "shot_id": "shot_766f166165065813bc21687d3f112da8",
+          "silent_or_low_activity_tail_seconds": 0.4299999999999997,
+          "start": 14.34
+        },
+        {
+          "end": 45.0,
+          "last_speech_activity_end_seconds": 20.95,
+          "measured_voice_seconds": 3.395,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 5,
+          "shot_id": "shot_8e17507bb96151028f9eb024465957ac",
+          "silent_or_low_activity_tail_seconds": 24.05,
+          "start": 17.61
+        }
+      ],
+      "script": "Con số sự kiện có cho biết số giao dịch không? Hãy phân biệt đúng chỉ số. Bài viết về sự kiện khởi động dự án nêu gần mười hai nghìn người tham dự và hơn một trăm tám mươi nghìn lượt xem trực tiếp. Số người và lượt xem không xác nhận giao dịch; ngày công bố trang chưa rõ. Đây là số liệu bài viết tường thuật, chưa được đối chiếu độc lập. Bạn muốn kiểm tra phạm vi số liệu? Gửi câu hỏi để cùng đối chiếu nguồn.",
+      "source_paths": {
+        "final.mp4": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\87b374a1ae2f49969fb2b5646e2e8458\\final.mp4",
+        "render-manifest.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\87b374a1ae2f49969fb2b5646e2e8458\\render-manifest.json",
+        "render-voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\87b374a1ae2f49969fb2b5646e2e8458\\render-voice.json",
+        "render-voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\87b374a1ae2f49969fb2b5646e2e8458\\render-voice.wav",
+        "timeline.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\87b374a1ae2f49969fb2b5646e2e8458\\timeline.json",
+        "voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\87b374a1ae2f49969fb2b5646e2e8458\\voice.json",
+        "voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\87b374a1ae2f49969fb2b5646e2e8458\\voice.wav"
+      },
+      "trailing_low_activity_seconds": 24.05,
+      "verification_receipt": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\final-uat\\videos\\20261006T125232176300Z-video-87b374a1ae2f49969fb2b5646e2e8458-f062689d\\video-verification.json"
+    },
+    {
+      "actual_active_windows_seconds": 14.67,
+      "case": "06",
+      "exact_zero_tail_seconds": 26.065125,
+      "final_sha256": "7ccc23ef251a6b023efca867e88f4581b03ec8bba493223c2ced6774d6831b0d",
+      "job_id": "9bd7e74329f542c3b859d98bceaecbc6",
+      "last_measured_speech_activity_end_seconds": 18.78,
+      "last_narration_unit_end_seconds": 18.935000000000002,
+      "name_text": {
+        "Vinhomes Green Paradise": false,
+        "Vinhomes Saigon Park": false
+      },
+      "project_id": "5e9d204790f551eb8afadee33a67a8f6",
+      "project_name_plans": [],
+      "raw_voice_duration_seconds": 17.835,
+      "render_voice_duration_seconds": 45.0,
+      "resolution": {
+        "height": 1920,
+        "width": 1080
+      },
+      "rms_activity_threshold_relative_full_scale": 0.003,
+      "rms_first_active_seconds": 1.2,
+      "rms_last_active_end_seconds": 18.84,
+      "rms_window_seconds": 0.01,
+      "scene_layout": [
+        {
+          "end": 3.72,
+          "last_speech_activity_end_seconds": 3.42,
+          "measured_voice_seconds": 2.62,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 1,
+          "shot_id": "shot_6c548036ddc45d5291942cf4e32b73ea",
+          "silent_or_low_activity_tail_seconds": 0.30000000000000027,
+          "start": 0.0
+        },
+        {
+          "end": 7.65,
+          "last_speech_activity_end_seconds": 7.22,
+          "measured_voice_seconds": 3.93,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 2,
+          "shot_id": "shot_4f01b1e68ed75ef58a7528eea132b838",
+          "silent_or_low_activity_tail_seconds": 0.4300000000000006,
+          "start": 3.72
+        },
+        {
+          "end": 11.100000000000001,
+          "last_speech_activity_end_seconds": 10.809999999999999,
+          "measured_voice_seconds": 3.45,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 3,
+          "shot_id": "shot_6a17940579ab51fa95a726e7a90379e5",
+          "silent_or_low_activity_tail_seconds": 0.2900000000000027,
+          "start": 7.65
+        },
+        {
+          "end": 16.060000000000002,
+          "last_speech_activity_end_seconds": 15.620000000000001,
+          "measured_voice_seconds": 4.96,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 4,
+          "shot_id": "shot_443146b227e25756a1684d9720355196",
+          "silent_or_low_activity_tail_seconds": 0.4400000000000013,
+          "start": 11.100000000000001
+        },
+        {
+          "end": 45.0,
+          "last_speech_activity_end_seconds": 18.78,
+          "measured_voice_seconds": 2.875,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 5,
+          "shot_id": "shot_a254ab21831f538388c965b32ceb5cbe",
+          "silent_or_low_activity_tail_seconds": 26.22,
+          "start": 16.060000000000002
+        }
+      ],
+      "script": "Tách ngày đăng khỏi ngày lấy nguồn để đọc đúng thời điểm. Báo Điện tử Chính phủ đăng bài ngày hai mươi bốn tháng tư năm hai nghìn không trăm hai mươi sáu. Nguồn được lấy ngày sáu tháng mười theo giờ Việt Nam, khác với ngày đăng bài. Thông tin trong bài nói về quý một năm hai nghìn không trăm hai mươi sáu, chưa xác nhận thị trường hiện tại. Gửi câu hỏi để cùng kiểm tra ngày bài và kỳ dữ liệu.",
+      "source_paths": {
+        "final.mp4": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\9bd7e74329f542c3b859d98bceaecbc6\\final.mp4",
+        "render-manifest.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\9bd7e74329f542c3b859d98bceaecbc6\\render-manifest.json",
+        "render-voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\9bd7e74329f542c3b859d98bceaecbc6\\render-voice.json",
+        "render-voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\9bd7e74329f542c3b859d98bceaecbc6\\render-voice.wav",
+        "timeline.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\9bd7e74329f542c3b859d98bceaecbc6\\timeline.json",
+        "voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\9bd7e74329f542c3b859d98bceaecbc6\\voice.json",
+        "voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\9bd7e74329f542c3b859d98bceaecbc6\\voice.wav"
+      },
+      "trailing_low_activity_seconds": 26.22,
+      "verification_receipt": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\final-uat\\videos\\20261006T125735644975Z-video-9bd7e74329f542c3b859d98bceaecbc6-c19400a2\\video-verification.json"
+    },
+    {
+      "actual_active_windows_seconds": 14.73,
+      "case": "08",
+      "exact_zero_tail_seconds": 40.44764583333333,
+      "final_sha256": "376ef9f4618cdd84978888d109db6db46e6273ab9b3f041cbe06adb189804c51",
+      "job_id": "8b2aeb294d144c5f8d7377357b7c5073",
+      "last_measured_speech_activity_end_seconds": 19.43,
+      "last_narration_unit_end_seconds": 19.610000000000007,
+      "name_text": {
+        "Vinhomes Green Paradise": false,
+        "Vinhomes Saigon Park": false
+      },
+      "project_id": "7f13a515100d5c07aae9760d665ad2f8",
+      "project_name_plans": [],
+      "raw_voice_duration_seconds": 18.51,
+      "render_voice_duration_seconds": 60.0,
+      "resolution": {
+        "height": 1080,
+        "width": 1920
+      },
+      "rms_activity_threshold_relative_full_scale": 0.003,
+      "rms_first_active_seconds": 1.2,
+      "rms_last_active_end_seconds": 19.45,
+      "rms_window_seconds": 0.01,
+      "scene_layout": [
+        {
+          "end": 4.49,
+          "last_speech_activity_end_seconds": 4.13,
+          "measured_voice_seconds": 3.39,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 1,
+          "shot_id": "shot_f7099579279d5360a82a9283ff52014c",
+          "silent_or_low_activity_tail_seconds": 0.3600000000000003,
+          "start": 0.0
+        },
+        {
+          "end": 8.95,
+          "last_speech_activity_end_seconds": 8.5,
+          "measured_voice_seconds": 4.46,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 2,
+          "shot_id": "shot_6d7e62244a68598183c7f8b45539b096",
+          "silent_or_low_activity_tail_seconds": 0.4499999999999993,
+          "start": 4.49
+        },
+        {
+          "end": 13.43,
+          "last_speech_activity_end_seconds": 12.979999999999999,
+          "measured_voice_seconds": 4.48,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 3,
+          "shot_id": "shot_34f229ade65f5204ba3f66163467a128",
+          "silent_or_low_activity_tail_seconds": 0.45000000000000107,
+          "start": 8.95
+        },
+        {
+          "end": 17.78,
+          "last_speech_activity_end_seconds": 17.4,
+          "measured_voice_seconds": 4.35,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 4,
+          "shot_id": "shot_0618910b8a69568c87a358cb13fa9bbd",
+          "silent_or_low_activity_tail_seconds": 0.38000000000000256,
+          "start": 13.43
+        },
+        {
+          "end": 60.0,
+          "last_speech_activity_end_seconds": 19.43,
+          "measured_voice_seconds": 1.83,
+          "narration_enabled": true,
+          "requested_duration": null,
+          "scene": 5,
+          "shot_id": "shot_eed8a49a032d515d85e04938dea1f6d9",
+          "silent_or_low_activity_tail_seconds": 40.57,
+          "start": 17.78
+        }
+      ],
+      "script": "Đây là góc nhìn lịch sử về quý hai, không phải bản tin hôm nay. Bài trên Chinhphu.vn công bố ngày hai mươi mốt tháng tám năm hai nghìn không trăm hai mươi sáu. Theo bài viết, nguồn cung tăng trong quý hai, còn giao dịch giảm và tồn kho tăng nhẹ. Đây là lời nguồn báo cáo về kỳ cũ, không xác nhận giá hay tình hình thị trường hiện tại. Gửi câu hỏi để cùng đối chiếu bài gốc.",
+      "source_paths": {
+        "final.mp4": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\8b2aeb294d144c5f8d7377357b7c5073\\final.mp4",
+        "render-manifest.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\8b2aeb294d144c5f8d7377357b7c5073\\render-manifest.json",
+        "render-voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\8b2aeb294d144c5f8d7377357b7c5073\\render-voice.json",
+        "render-voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\8b2aeb294d144c5f8d7377357b7c5073\\render-voice.wav",
+        "timeline.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\8b2aeb294d144c5f8d7377357b7c5073\\timeline.json",
+        "voice.json": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\8b2aeb294d144c5f8d7377357b7c5073\\voice.json",
+        "voice.wav": "C:\\NPD-Video-Factory\\phase10-uat\\jobs\\8b2aeb294d144c5f8d7377357b7c5073\\voice.wav"
+      },
+      "trailing_low_activity_seconds": 40.57,
+      "verification_receipt": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\final-uat\\videos\\20261006T130216884297Z-video-8b2aeb294d144c5f8d7377357b7c5073-6a16459b\\video-verification.json"
+    }
+  ],
+  "conclusion": "Long silent tails occur in actual render-voice PCM from fixed template final hold. Exact full project names absent01/02/04; no listening acceptance inferred.08is1920x1080landscape.",
+  "owner_feedback_is_not_acceptance": true,
+  "provider_calls": 0,
+  "render_calls": 0,
+  "schema_version": "phase10-owner-audio-feedback-read-audit-v1"
+}

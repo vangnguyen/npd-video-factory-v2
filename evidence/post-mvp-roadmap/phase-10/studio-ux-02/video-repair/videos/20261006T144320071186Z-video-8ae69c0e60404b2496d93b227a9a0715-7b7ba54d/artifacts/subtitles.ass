@@ -1,0 +1,21 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.21,0:00:03.89,Subtitle,,0,0,0,,{\pos(495,1435)}Khởi động một dự án chứng nhận có\Nđồng nghĩa đã được cấp chứng nhận
+Dialogue: 0,0:00:03.89,0:00:04.13,Subtitle,,0,0,0,,{\pos(495,1435)}không?
+Dialogue: 0,0:00:04.63,0:00:08.15,Subtitle,,0,0,0,,{\pos(495,1435)}Bài viết Vinhomes nêu Vinhomes\NGreen Paradise Cần Giờ khởi động dự
+Dialogue: 0,0:00:08.15,0:00:11.45,Subtitle,,0,0,0,,{\pos(495,1435)}án chứng nhận đô thị thông minh\Nngày ba tháng ba năm hai nghìn
+Dialogue: 0,0:00:11.45,0:00:12.73,Subtitle,,0,0,0,,{\pos(495,1435)}không trăm hai mươi sáu.
+Dialogue: 0,0:00:13.23,0:00:16.56,Subtitle,,0,0,0,,{\pos(495,1435)}Đây là mốc bắt đầu và mục tiêu được\Nnguồn giới thiệu, chưa phải kết quả đã
+Dialogue: 0,0:00:16.56,0:00:16.74,Subtitle,,0,0,0,,{\pos(495,1435)}đạt.
+Dialogue: 0,0:00:17.24,0:00:20.09,Subtitle,,0,0,0,,{\pos(495,1435)}Ngày công bố trang chưa rõ; nguồn\Nnày không xác nhận tình trạng chứng
+Dialogue: 0,0:00:20.09,0:00:20.67,Subtitle,,0,0,0,,{\pos(495,1435)}nhận hiện tại.
+Dialogue: 0,0:00:21.17,0:00:24.53,Subtitle,,0,0,0,,{\pos(495,1435)}Bạn muốn kiểm tra tiêu chí hay kết\Nquả? Gửi câu hỏi để cùng đối chiếu.

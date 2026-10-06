@@ -1,0 +1,19 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Subtitle,Segoe UI,46,&H00F1F9FC,&H00FFFFFF,&H00101D1B,&H00000000,0,0,0,0,100,100,0,0,1,1,0,5,80,80,0,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.20,0:00:04.13,Subtitle,,0,0,0,,{\pos(495,1435)}Đây là góc nhìn lịch sử về quý hai,\Nkhông phải bản tin hôm nay.
+Dialogue: 0,0:00:04.63,0:00:07.51,Subtitle,,0,0,0,,{\pos(495,1435)}Bài trên Chinhphu.vn công bố ngày hai\Nmươi mốt tháng tám năm hai nghìn
+Dialogue: 0,0:00:07.51,0:00:08.50,Subtitle,,0,0,0,,{\pos(495,1435)}không trăm hai mươi sáu.
+Dialogue: 0,0:00:09.00,0:00:12.55,Subtitle,,0,0,0,,{\pos(495,1435)}Theo bài viết, nguồn cung tăng trong\Nquý hai, còn giao dịch giảm và tồn kho
+Dialogue: 0,0:00:12.55,0:00:12.98,Subtitle,,0,0,0,,{\pos(495,1435)}tăng nhẹ.
+Dialogue: 0,0:00:13.48,0:00:16.68,Subtitle,,0,0,0,,{\pos(495,1435)}Đây là lời nguồn báo cáo về kỳ cũ,\Nkhông xác nhận giá hay tình hình thị
+Dialogue: 0,0:00:16.68,0:00:17.40,Subtitle,,0,0,0,,{\pos(495,1435)}trường hiện tại.
+Dialogue: 0,0:00:17.90,0:00:19.43,Subtitle,,0,0,0,,{\pos(495,1435)}Gửi câu hỏi để cùng đối chiếu bài gốc.

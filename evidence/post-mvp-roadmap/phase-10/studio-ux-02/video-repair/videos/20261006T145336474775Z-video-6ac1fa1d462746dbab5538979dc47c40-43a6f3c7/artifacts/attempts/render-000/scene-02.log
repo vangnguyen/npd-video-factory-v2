@@ -1,0 +1,44 @@
+Input #0, image2, from 'C:\NPD-Video-Factory\phase10-uat\assets\ec283a5d118745d1b497d5c667432c95.jpg':
+  Duration: 00:00:00.03, start: 0.000000, bitrate: 36020 kb/s
+  Stream #0:0: Video: mjpeg (Baseline), yuvj420p(pc, bt470bg/unknown/unknown), 1080x1920 [SAR 1:1 DAR 9:16], 30 fps, 30 tbr, 30 tbn
+Input #1, png_pipe, from 'scene-02.png':
+  Duration: N/A, bitrate: N/A
+  Stream #1:0: Video: png, rgba(pc, gbr/unknown/unknown), 1080x1920, 30 fps, 30 tbr, 30 tbn
+Input #2, lavfi, from 'color=c=0x15352c:s=1080x1920:r=30':
+  Duration: N/A, start: 0.000000, bitrate: N/A
+  Stream #2:0: Video: wrapped_avframe, yuv420p, 1080x1920 [SAR 1:1 DAR 9:16], 30 fps, 30 tbr, 30 tbn
+Stream mapping:
+  Stream #0:0 (mjpeg) -> fps:default
+  Stream #1:0 (png) -> overlay
+  Stream #2:0 (wrapped_avframe) -> overlay
+  format:default -> Stream #0:0 (libx264)
+[swscaler @ 000001e2cea80300] deprecated pixel format used, make sure you did set range correctly
+[libx264 @ 000001e2cb2fe240] using SAR=1/1
+[libx264 @ 000001e2cb2fe240] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2
+[libx264 @ 000001e2cb2fe240] profile High, level 4.0, 4:2:0, 8-bit
+[libx264 @ 000001e2cb2fe240] 264 - core 165 r3223 0480cb0 - H.264/MPEG-4 AVC codec - Copyleft 2003-2025 - http://www.videolan.org/x264.html - options: cabac=1 ref=1 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=2 psy=1 psy_rd=1.00:0.00 mixed_ref=0 me_range=16 chroma_me=1 trellis=0 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=0 threads=18 lookahead_threads=6 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=1 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=10 rc=crf mbtree=1 crf=20.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to 'scene-02.mp4':
+  Metadata:
+    encoder         : Lavf63.1.102
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 1080x1920 [SAR 1:1 DAR 9:16], q=2-31, 30 fps, 15360 tbn
+    Metadata:
+      encoder         : Lavc63.1.102 libx264
+    Side data:
+      CPB properties: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+frame=   20 fps=0.0 q=26.0 size=       0KiB time=00:00:00.60 bitrate=   0.6kbits/s speed=1.17x elapsed=0:00:00.51    frame=   71 fps= 69 q=26.0 size=       0KiB time=00:00:02.30 bitrate=   0.2kbits/s speed=2.23x elapsed=0:00:01.03    [out#0/mp4 @ 000001e2cb4ed3c0] video:40KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 5.643324%
+frame=  119 fps= 97 q=-1.0 Lsize=      42KiB time=00:00:03.90 bitrate=  88.5kbits/s speed=3.17x elapsed=0:00:01.23    
+[libx264 @ 000001e2cb2fe240] frame I:1     Avg QP: 9.34  size: 31409
+[libx264 @ 000001e2cb2fe240] frame P:30    Avg QP: 9.57  size:    88
+[libx264 @ 000001e2cb2fe240] frame B:88    Avg QP:11.08  size:    69
+[libx264 @ 000001e2cb2fe240] consecutive B-frames:  0.8%  1.7%  0.0% 97.5%
+[libx264 @ 000001e2cb2fe240] mb I  I16..4: 92.1%  1.9%  6.0%
+[libx264 @ 000001e2cb2fe240] mb P  I16..4:  0.0%  0.0%  0.0%  P16..4:  0.0%  0.0%  0.0%  0.0%  0.0%    skip:100.0%
+[libx264 @ 000001e2cb2fe240] mb B  I16..4:  0.0%  0.0%  0.0%  B16..8:  0.0%  0.0%  0.0%  direct: 0.0%  skip:100.0%  L0: 7.7% L1:92.3% BI: 0.0%
+[libx264 @ 000001e2cb2fe240] 8x8 transform intra:1.8% inter:1.4%
+[libx264 @ 000001e2cb2fe240] coded y,uvDC,uvAC intra: 6.1% 5.3% 4.6% inter: 0.0% 0.0% 0.0%
+[libx264 @ 000001e2cb2fe240] i16 v,h,dc,p: 86% 13%  1%  0%
+[libx264 @ 000001e2cb2fe240] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 72% 12% 15%  0%  0%  0%  0%  0%  0%
+[libx264 @ 000001e2cb2fe240] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 35% 19% 23%  3%  4%  5%  4%  4%  4%
+[libx264 @ 000001e2cb2fe240] i8c dc,h,v,p: 88% 10%  2%  0%
+[libx264 @ 000001e2cb2fe240] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 000001e2cb2fe240] kb/s:80.95
