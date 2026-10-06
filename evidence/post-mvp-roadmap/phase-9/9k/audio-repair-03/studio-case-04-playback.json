@@ -1,0 +1,10 @@
+{
+  "classification": "BROWSER_PLAYBACK_ONLY_NOT_HUMAN_LISTENING",
+  "currentTime": 30.902313,
+  "duration": 34.615,
+  "paused": true,
+  "readyState": 4,
+  "src": "http://127.0.0.1:8026/api/jobs/2973305d4b5e49679dc442589f1fcb01/video",
+  "full_audio_accepted": false,
+  "final_video_accepted": false
+}
