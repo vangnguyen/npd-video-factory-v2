@@ -73,7 +73,7 @@ export type TimelineRenderManifest = {
     fps: number;
     width: 432 | 540 | 960 | 1080 | 1920;
     height: 540 | 960 | 1080 | 1350 | 1920;
-    language: "vi";
+    language: "vi" | "en";
   };
   brand: {
     name: string;

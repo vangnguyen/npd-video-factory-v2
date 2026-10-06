@@ -8,8 +8,6 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from jsonschema import Draft202012Validator
-
 from .production_models import MixConfig, SubtitleCue, SubtitleStyle, SubtitleVersionRead
 from .timeline_models import TimelineSnapshot
 from .subtitle_templates import extended_subtitle_style, render_subtitle_style, EXTENDED_MODES
@@ -242,7 +240,10 @@ def build_timeline_render_manifest(
     project_slug: str,
     niche: str,
     brand_name: str,
+    language: str = "vi",
 ) -> dict[str, Any]:
+    if language not in {'vi', 'en'}:
+        raise ProductionContractError('render language must be Vietnamese or English')
     width, height = PROFILE_DIMENSIONS[profile]
     validate_reframe_render_profile(snapshot, profile)
     validate_subtitles(subtitles.cues, subtitles.style, snapshot.duration_seconds)
@@ -250,7 +251,8 @@ def build_timeline_render_manifest(
     extended_reframe = profile in {'portrait-1080x1350','review-960x540','review-540x540','review-432x540'} or any(
         clip.metadata.get('reframe') for track in snapshot.tracks for clip in track.clips
         if track.type == 'video' and not track.disabled and not clip.disabled)
-    version = "2.3" if extended_subtitle_style(subtitles.style) else ("2.2" if extended_reframe else ("2.1" if snapshot.schema_version == "1.1" else "2.0"))
+    version = "2.3" if (extended_subtitle_style(subtitles.style) or language == 'en'
+        or not subtitles.cues or snapshot.duration_seconds > 180) else ("2.2" if extended_reframe else ("2.1" if snapshot.schema_version == "1.1" else "2.0"))
     visual_clips: list[dict[str, Any]] = []
     for track in sorted(snapshot.tracks, key=lambda item: item.order):
         if track.type != "video" or track.disabled:
@@ -289,7 +291,7 @@ def build_timeline_render_manifest(
             "fps": int(round(snapshot.fps)),
             "width": width,
             "height": height,
-            "language": "vi",
+            "language": language,
         },
         "brand": {
             "name": brand_name,
@@ -322,6 +324,9 @@ def validate_reframe_render_profile(snapshot: TimelineSnapshot, profile: str) ->
 
 class TimelineRenderContractValidator:
     def __init__(self, schema_path: Path):
+        # Shared planning functions also run in Native's locked voice runtime;
+        # JSON Schema is an explicit API-validator dependency, not an import-time one.
+        from jsonschema import Draft202012Validator
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
         Draft202012Validator.check_schema(schema)
         self.validator = Draft202012Validator(schema)

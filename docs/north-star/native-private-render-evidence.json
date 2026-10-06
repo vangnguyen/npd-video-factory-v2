@@ -1,0 +1,41 @@
+{
+  "duration_seconds": 1.045333,
+  "explicit_fixture": true,
+  "exports": {
+    "audio-filter.txt": "a1140c372bab64335ee4b06a05820c19b3339f7db08ac675675efa61caa0c523",
+    "caption-frame.png": "d999b59f9f975b032d6c76b07e682d81a46994239485672724f1ac1a42ac7f30",
+    "ffprobe.json": "9353ec0883597faa54ed84b7276f240ae86338913081dae250bf7957062377c9",
+    "final.mp4": "96c756646a6fb87d3254a89bb8c21a7d05efea51b57e0cd1a4f906cfd8511cc1",
+    "renderer-process.log": "6c1b7d2d1a334f6744c54801a01a2b75c7c559ede4789383412baa966154a091",
+    "renderer-receipt.json": "e9a7b8cba68f8604550b3ba6b627f4bea375ab570ce0d911f88055ed76ef44f7",
+    "timeline-render.json": "f8dc3dc577b024ccb525aa105019047b6a97e3200f02b3b1fe73db51550589ee"
+  },
+  "final_qc_accepted": false,
+  "fixture_asr": true,
+  "local_real_renderer_transport": true,
+  "new_provider_calls": 0,
+  "new_tts_calls": 0,
+  "owner_uat": false,
+  "production_deployed": false,
+  "project_id": "fc0f495921374fffb8be90e439977328",
+  "project_unchanged": true,
+  "real_provider_acceptance": false,
+  "renderer": {
+    "duration_seconds": 1,
+    "external_publish_requested": false,
+    "final_qc_verified": false,
+    "fixture": false,
+    "fps": 30,
+    "height": 1350,
+    "human_final_video_accepted": false,
+    "private_job_media_only": true,
+    "renderer": "remotion-local-native-job-v1",
+    "status": "success",
+    "width": 1080
+  },
+  "source_final_workflow_wired": false,
+  "source_sha256": "86807ba66900c3bc9fee111db29e9314074c72c49e19f042c7585f158c8a9b1a",
+  "timeline_sha256": "9c1aa32feac84757a381e18e3d1c871ee6c19ba29952edf9f43535dff2af93bf",
+  "ui_workflow_ready": false,
+  "video_sha256": "96c756646a6fb87d3254a89bb8c21a7d05efea51b57e0cd1a4f906cfd8511cc1"
+}

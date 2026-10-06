@@ -76,6 +76,18 @@ describe("renderer contracts", () => {
       .toMatchObject({job_id: "rnd_12345678"});
   });
 
+  it('requires v2.3 for source durations, English and intentionally absent captions',()=>{
+    const manifest=makeTimelineManifest('local.png','mix.wav');
+    manifest.version='2.3';manifest.metadata.language='en';manifest.metadata.duration_seconds=600;
+    manifest.visual_clips[0].type='video';manifest.visual_clips[0].duration=600;manifest.visual_clips[0].source_end=600;
+    manifest.subtitles=[];
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(true);
+    manifest.metadata.duration_seconds=601;
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);
+    manifest.metadata.duration_seconds=600;
+    for(const version of ['2.0','2.1','2.2'] as const){manifest.version=version;expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);}
+  });
+
   it("rejects unsafe, mistimed, or unsupported V2-08 manifests", () => {
     const unsafe = makeTimelineManifest("data:image/png;base64,AA==");
     (unsafe.safety as {publishing_allowed: boolean}).publishing_allowed = true;

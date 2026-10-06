@@ -147,11 +147,11 @@ export const timelineRenderManifestSchema = strictObject({
     project: z.string().min(1),
     niche: z.string().min(1),
     template: z.literal("timeline-render-v1"),
-    duration_seconds: z.number().positive().max(180),
+    duration_seconds: z.number().positive().max(600),
     fps: z.number().int().min(24).max(60),
     width: z.union([z.literal(432), z.literal(540), z.literal(960), z.literal(1080), z.literal(1920)]),
     height: z.union([z.literal(540), z.literal(960), z.literal(1080), z.literal(1350), z.literal(1920)]),
-    language: z.literal("vi"),
+    language: z.enum(["vi", "en"]),
   }),
   brand: strictObject({
     name: z.string().min(1),
@@ -180,7 +180,7 @@ export const timelineRenderManifestSchema = strictObject({
     transform: timelineTransformSchema,
     opacity: z.number().min(0).max(1),
   })).min(1).max(400),
-  subtitles: z.array(timelineSubtitleSchema).min(1).max(300),
+  subtitles: z.array(timelineSubtitleSchema).max(300),
   subtitle_style: strictObject({
     font_family: z.enum(["Noto Sans", "Noto Sans Display"]),
     font_size: z.number().int().min(28).max(84),
@@ -203,6 +203,9 @@ export const timelineRenderManifestSchema = strictObject({
     source_media_mutated: z.literal(false),
   }),
 }).superRefine((manifest, context) => {
+  if(manifest.version!=='2.3'&&(manifest.metadata.duration_seconds>180||manifest.metadata.language!=='vi'||manifest.subtitles.length===0)) {
+    context.addIssue({code:z.ZodIssueCode.custom,path:['metadata'],message:'source duration/language/optional captions require v2.3'});
+  }
   if (manifest.version !== '2.3' && (['word_by_word','karaoke','keyword_highlight'].includes(manifest.subtitle_style.animation)
       || manifest.subtitle_style.template_ref !== undefined || manifest.subtitle_style.keywords !== undefined)) {
     context.addIssue({code:z.ZodIssueCode.custom,path:['subtitle_style'],message:'extended subtitles require v2.3'});
