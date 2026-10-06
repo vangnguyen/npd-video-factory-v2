@@ -33,7 +33,7 @@ export function previewLabel(preview) {
 }
 export function previewTimingLabel(mediaMode,preview=null,project=null) {
   if(mediaMode==='final'&&isSourceProject(project))return 'Bản render dùng điểm cắt, âm thanh gốc và phụ đề đã lưu trong timeline. Xem và nghe đúng video trước khi duyệt bản cuối.';
-  if(mediaMode!=='final'&&preview?.audio_mode==='canonical_timeline_proxy')return 'Preview dùng điểm cắt và âm thanh gốc theo timeline. Chưa dựng phụ đề, keyframe reframe hoặc ducking; cần bản render đầy đủ để duyệt cuối.';
+  if(mediaMode!=='final'&&preview?.audio_mode==='canonical_timeline_proxy')return `Preview dùng điểm cắt và âm thanh theo timeline.${preview.manifest?.music_ducking?' Đã hạ nhạc theo năng lượng âm thanh nguồn.':''}${preview.manifest?.audio_speech_normalization?' Đã áp dụng cân mức nguồn trước âm lượng clip.':''} Chưa dựng phụ đề hoặc keyframe reframe; cần bản render đầy đủ để duyệt cuối.`;
   return mediaMode==='final'?'Bản render dùng giọng Thùy Dung đã khóa. Phụ đề theo đoạn; các shot có lời đọc dùng thời lượng audio đo được.':'Preview hình ảnh chưa tạo hay đo audio; thời điểm phụ đề là ước tính theo thời lượng shot. Bản render dùng giọng Thùy Dung đã khóa.';
 }
 export function boundPreview(project,preview) {

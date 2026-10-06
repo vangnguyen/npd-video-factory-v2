@@ -505,3 +505,25 @@ EVIDENCE: `docs/north-star/native-source-music-evidence.json` indexes 21 exports
 REGRESSIONS: accepted media and original live source/database/configuration/services remain untouched. No protected-main merge, deployment, external publication, new paid/provider/TTS call, destructive migration or runtime installation.
 
 EXTERNAL BLOCKERS: provider acceptance, Docker, browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: opt-in Source normalization/ducking in settings, preview and final render; supporting-media planning/application and remaining North Star work continue.
+
+## Wave 3/6 — Source audio normalization and music ducking
+
+WAVE: 3/6
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. Source DSP is implemented and locally measured; complete Mode B/production acceptance is not inferred.
+
+HEAD SHA: parent `f8e2f60426352b7fe5cc5ac59afd438b2a00be4a`; this audio-processing capability commit records the increment. Parent is pushed and preserved in verified `north-star-source-music.bundle`, SHA256 `ae4f723f3705de1fb913d4fe5349b0481fc0f1becb88dc3c5663166e1364c585`.
+
+CAPABILITIES COMPLETED: optional strictly typed Source settings default off, version the canonical document and invalidate prior preview/approval. A shared pure audio graph normalizes original/music clips before saved gain/fades, sums canonical role stems, applies actual original-energy music sidechain compression and a latency-compensated limiter, then preserves the exact PCM sample duration. Muted/disabled roles do not claim processing; short windows explicitly skip normalization. Locked affected audio tracks reject settings changes. Source proxy and final worker use the same graph; old API/default audio filters remain exact. UI settings, version binding and preview labels report actual DSP receipts. Processing follows the official [FFmpeg filter documentation](https://ffmpeg.org/ffmpeg-filters.html), with single-pass loudnorm targets and explicit 48kHz resampling. The receipt does not fabricate measured integrated LUFS or semantic speech detection.
+
+CAPABILITIES PARTIAL: repeat-boundary music crossfade/advanced transition UI, measured integrated loudness, dialogue-specific source separation and genuine speech/music balance acceptance remain. Source B-roll, automatic subject tracking, Auto Shorts/duplication, caption/reframe proxy parity and Native browser usability remain before Mode B readiness. Full rendered effects parity stays false.
+
+TESTS: full Native **303/303 PASS**, 177.227s (`source-dsp-native-full.log`); frontend **105/105 PASS**, 772.34ms (`source-dsp-studio-r1.log`), plus syntax checks. API canonical processing/audio preview/production QC/Native render contracts **31/31 PASS**, 27.48s (`source-dsp-api-r2.log`). Focused Native settings/music/proxy **13/13 PASS**, 12.562s. Real PCM assertions verify music decreases during original signal activity without changing the original component, saved gain remains proportional after normalization, limiter bounds hold and the 48kHz sample count is exact. The first absolute mono-to-stereo amplitude expectation ignored standard channel conversion; the corrected test compares measured unprocessed baseline while retaining attenuation/source/gain/duration assertions. Its failure log is preserved.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: real FFmpeg PCM checks and separate Native synthetic source/music/DSP/linked-edit/karaoke proxy/private worker/full QC. MOCK TESTS: saved ASR/pre-render reviewer remain explicit fixtures; final review unapproved. No provider/TTS/paid operation.
+
+EVIDENCE: `docs/north-star/native-source-dsp-evidence.json` indexes 21 exports in recovery `native-source-dsp-n6`. Project `1699d4bdd81e43fea3b4dea9a65a038b`, job `9f516cb6c05d49f58c6b09f9230faa1a`. Final SHA256 `c2cc3b7f769977aa4ec8fc4bac065754ac41e6a62fb2f4d35e19add5c9b2381d`; 1080×1350/30fps/H.264/AAC/48kHz, 2.4s video and measured 2.453s container. QC reports no clipping, black/freeze/broken frames or accidental silence; measured peak -12.7dB and mean -20.9dB are not described as LUFS. Five saved clip normalizers and actual energy ducking have receipts; source/project bytes remain unchanged, and final download stays blocked without final review. Full Artifact A/UI/Owner/provider/deployment acceptance are false.
+
+REGRESSIONS: legacy narrated paths and accepted media, original live source/database/configuration/services remain preserved. No protected-main merge, production deployment, external publication, new paid/provider/TTS call, destructive migration or runtime installation.
+
+EXTERNAL BLOCKERS: provider acceptance, Docker, browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: Source B-roll planning and placement, then automatic media intelligence/remaining North Star capabilities; full Linux API regression follows preservation of the shared proxy changes.

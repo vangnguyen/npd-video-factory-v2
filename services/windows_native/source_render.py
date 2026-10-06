@@ -18,7 +18,7 @@ from .hardening import Artifacts,durable_json
 from .source_approval import validate_render_approval,reviewed_preview
 from .source_preview import resolve_assets
 from .north_star_quality import audio_activity
-from app.timeline_audio import build_timeline_audio_graph
+from app.timeline_audio_processing import build_processed_audio_graph
 from app.production_logic import (build_timeline_render_manifest,derive_subtitle_cues,
     validate_subtitles,validate_timeline_renderability)
 from app.production_models import SubtitleStyle,SubtitleVersionRead,MixConfig
@@ -67,7 +67,8 @@ def prepare(config,job,directory):
         shutil.copyfile(path,destination)
         if file_sha(destination)!=asset.checksum_sha256:raise WorkflowError('SOURCE_MEDIA_CHANGED_DURING_RENDER')
         staged[identifier]=(asset,destination)
-    audio=build_timeline_audio_graph(snapshot,staged,first_input_index=0)
+    audio=build_processed_audio_graph(snapshot,staged,first_input_index=0,
+        processing=snapshot.metadata.get('source_audio_processing'))
     mixed=media/'mix.wav'
     command=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n']
     if audio.clips:
@@ -99,7 +100,9 @@ def prepare(config,job,directory):
         'transcript_evidence':root_analysis.get('transcript')})
     durable_json(directory/'audio-analysis.json',{'schema':'canonical-source-audio-v1','clips':audio.clips,
         'muted_clip_ids':audio.muted_clip_ids,'source_audio_included':bool(audio.clips),
-        'normalization_applied':False,'music_ducking':False,'limiter_peak_db':-1 if audio.clips else None,
+        'normalization_applied':bool(audio.processing['normalization_clip_ids']),
+        'music_ducking':audio.processing['music_ducking'],'processing':audio.processing,
+        'limiter_peak_db':-1 if audio.clips else None,
         'tts_calls':0,'actual_paid_cost':None})
     return snapshot,subtitles,assets,audio,profile
 
@@ -157,7 +160,9 @@ def run(config,job,out,stage):
         'canonical_timeline':project['document']['canonical_timeline'],'approval':job['snapshot']['approval'],
         'source_hashes':{identifier:asset.checksum_sha256 for identifier,(asset,path) in assets.items()},
         'captions_included':bool(subtitles.cues),'canonical_audio_included':bool(audio.clips),
-        'speech_normalization':False,'music_ducking':False,'external_provider_calls':0,'tts_calls':0,
+        'speech_normalization':bool(audio.processing['normalization_original_audio_clip_ids']),
+        'music_ducking':audio.processing['music_ducking'],'audio_processing':audio.processing,
+        'external_provider_calls':0,'tts_calls':0,
         'human_final_video_accepted':False,'publishing_allowed':False})
     durable_json(directory/'cost.json',{'external_operations':[],'paid_operation_count':0,
         'actual_local_compute_cost':None,'duration_seconds':time.monotonic()-started})

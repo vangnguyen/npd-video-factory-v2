@@ -8,6 +8,7 @@ from app.timeline_models import TimelineSnapshot
 from app.production_models import SubtitleStyle
 from app.production_logic import derive_subtitle_cues,validate_subtitles,ProductionContractError
 from app.subtitle_templates import load_templates
+from app.timeline_audio_processing import AudioProcessing
 
 
 class Settings(StrictModel):
@@ -15,9 +16,10 @@ class Settings(StrictModel):
     aspect_ratio:Literal['9:16','16:9','1:1','4:5']|None=None
     subtitle_template_ref:str|None=Field(default=None,max_length=100)
     keywords:list[str]=Field(default_factory=list,max_length=30)
+    audio_processing:AudioProcessing|None=None
     @model_validator(mode='after')
     def selected(self):
-        if self.aspect_ratio is None and self.subtitle_template_ref is None:raise ValueError('choice required')
+        if self.aspect_ratio is None and self.subtitle_template_ref is None and self.audio_processing is None:raise ValueError('choice required')
         if self.keywords and not self.subtitle_template_ref:raise ValueError('caption template required')
         return self
 
@@ -31,6 +33,10 @@ def configure(store,project_id,revision,body):
         if payload.aspect_ratio:
             snapshot.width,snapshot.height={'9:16':(1080,1920),'16:9':(1920,1080),'1:1':(1080,1080),'4:5':(1080,1350)}[payload.aspect_ratio]
             snapshot.aspect_ratio=payload.aspect_ratio
+        if payload.audio_processing is not None:
+            if any(track.locked for track in snapshot.tracks if track.kind in {'original_audio','voice','music'}):
+                raise WorkflowError('AUTO_EDIT_AUDIO_TRACK_LOCKED',400)
+            snapshot.metadata['source_audio_processing']=payload.audio_processing.model_dump(mode='json')
         if payload.subtitle_template_ref:
             template=next((item for item in load_templates() if item['template_ref']==payload.subtitle_template_ref),None)
             if template is None:raise WorkflowError('SUBTITLE_TEMPLATE_UNKNOWN',400)

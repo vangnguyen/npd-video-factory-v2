@@ -92,6 +92,10 @@ def validate_document(document):
     snapshot = TimelineSnapshot.model_validate(state['snapshot'])
     if snapshot.metadata.get('native_auto_edit_schema') != SCHEMA or document.get('proposal') is not None:
         raise WorkflowError('AUTO_EDIT_TIMELINE_SCHEMA_INVALID')
+    if snapshot.metadata.get('source_audio_processing') is not None:
+        from app.timeline_audio_processing import AudioProcessing
+        try:AudioProcessing.model_validate(snapshot.metadata['source_audio_processing'])
+        except ValueError:raise WorkflowError('AUTO_EDIT_AUDIO_PROCESSING_INVALID',400) from None
     identifier = snapshot.metadata.get('native_project_id')
     if not isinstance(identifier,str) or not re.fullmatch(r'[a-f0-9]{32}',identifier):
         raise WorkflowError('AUTO_EDIT_TIMELINE_PROJECT_MISMATCH')

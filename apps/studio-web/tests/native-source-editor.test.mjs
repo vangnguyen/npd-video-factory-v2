@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {isSourceProject,sourceRequest,sourceVersions,sourceClipAction,sourceAdvancedMarkup} from '../native-source-editor.mjs';
+import {isSourceProject,sourceRequest,sourceVersions,sourceClipAction,sourceAdvancedMarkup,sourceAudioSettings} from '../native-source-editor.mjs';
 import {sourceCreatePayload} from '../native-auto-edit.mjs';
 import {timelineHistory} from '../timeline-history.mjs';
 import {videoFormat,nextProjectStage} from '../video-preview.mjs';
@@ -42,4 +42,13 @@ test('Source music describes editable routing without claiming automatic ducking
   const project=structuredClone(p);project.document.music={filename:'User music.wav',duration_seconds:30};
   assert.match(musicSummary(project),/Advanced Timeline/);assert.doesNotMatch(musicSummary(project),/tự hạ/);
   assert.match(musicSummary({document:{music:project.document.music}}),/tự hạ/);
+});
+
+test('Source DSP settings preserve advanced configuration and bind both versions',()=>{
+  const project=structuredClone(p);project.document.canonical_timeline.snapshot.metadata.source_audio_processing={duck_ratio:12,normalize_original_audio:false};
+  const body=sourceAudioSettings(project,{duck_music:true,normalize_original_audio:true});
+  assert.equal(body.revision,7);assert.equal(body.payload.expected_version,2);assert.equal(body.payload.audio_processing.duck_ratio,12);
+  assert.equal(body.payload.audio_processing.normalize_original_audio,true);
+  const text=previewTimingLabel('proxy',{audio_mode:'canonical_timeline_proxy',manifest:{music_ducking:true,audio_speech_normalization:true}},project);
+  assert.match(text,/Đã hạ nhạc theo năng lượng/);assert.match(text,/Đã áp dụng cân mức nguồn/);assert.match(text,/Chưa dựng phụ đề/);
 });

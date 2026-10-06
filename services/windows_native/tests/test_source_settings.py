@@ -49,5 +49,23 @@ class SourceSettingsTests(unittest.TestCase):
             'expected_version':1,'operations':[{'type':'set_track_state','track_id':captions['track_id'],'locked':True}]})
         with self.assertRaisesRegex(WorkflowError,'AUTO_EDIT_SUBTITLE_TRACK_LOCKED'):self.configure(subtitle_template_ref='sentence-clean@v1')
 
+    def test_audio_processing_is_versioned_and_locked_tracks_reject_changes(self):
+        self.create();before=copy.deepcopy(self.project)
+        self.configure(audio_processing={'normalize_original_audio':True,'normalize_music':True,'duck_music':True})
+        self.assertEqual(self.project['shot_timeline']['snapshot']['tracks'],before['shot_timeline']['snapshot']['tracks'])
+        self.assertEqual(self.project['shot_timeline']['version'],2);self.assertIsNone(self.project['approval'])
+        config=self.project['shot_timeline']['snapshot']['metadata']['source_audio_processing']
+        self.assertTrue(config['duck_music']);self.assertEqual(config['original_target_lufs'],-16)
+        track=next(item for item in self.project['shot_timeline']['snapshot']['tracks'] if item['kind']=='original_audio')
+        self.project=timeline.edit(self.store,self.project['id'],self.project['revision'],{'expected_version':2,
+            'operations':[{'type':'set_track_state','track_id':track['track_id'],'locked':True}]})
+        locked=copy.deepcopy(self.project)
+        with self.assertRaisesRegex(WorkflowError,'AUTO_EDIT_AUDIO_TRACK_LOCKED'):
+            self.configure(audio_processing={'duck_music':False})
+        self.assertEqual(timeline.view(self.store,self.project['id']),locked)
+        with self.assertRaisesRegex(WorkflowError,'AUTO_EDIT_TIMELINE_REQUEST_INVALID'):
+            self.configure(audio_processing={'duck_music':1})
+        self.assertEqual(timeline.view(self.store,self.project['id']),locked)
+
 
 if __name__=='__main__':unittest.main()

@@ -27,6 +27,10 @@ export function sourceClipAction(project,clipId,type,values={}) {
   const operation={type,clip_id:clipId,...values};
   return sourceRequest(project,linked?'linked_edit':'edit',linked?{operation}:{operations:[operation]});
 }
+export function sourceAudioSettings(project,values) {
+  return sourceRequest(project,'configure',{audio_processing:{
+    ...(sourceState(project)?.snapshot.metadata.source_audio_processing??{}),...values}});
+}
 export function sourceAdvancedMarkup(project,zoom=1,selectedId=null) {
   const state=sourceState(project);if(!state)return '';
   const width=Math.max(350,state.snapshot.duration_seconds*pixelsPerSecond(zoom));
@@ -96,6 +100,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
       ${track.type==='video'?`<details><summary>Crop thủ công (%)</summary><div class="scene-grid">${['x','y','width','height'].map(key=>`<label>${{x:'Trái',y:'Trên',width:'Rộng',height:'Cao'}[key]}<input data-source-crop="${key}" type="number" min="${['width','height'].includes(key)?1:0}" max="100" value="${clip.crop[key]*100}" step="any"></label>`).join('')}</div><button type="button" data-source-action="crop">Lưu crop</button></details>`:''}
       <div class="actions"><button type="button" data-source-action="split">Tách tại playhead</button><button type="button" data-source-action="duplicate">Nhân đôi</button><button type="button" data-source-action="disable">${clip.disabled?'Bật clip':'Tắt clip'}</button><button type="button" data-source-action="delete">Xóa clip</button></div>
       ${track.kind==='source'?'<div class="actions"><button type="button" data-source-action="earlier">← Trước</button><button type="button" data-source-action="later">Sau →</button></div>':''}`:'<p>Chọn shot hoặc clip trong Advanced Timeline.</p>'}
+      <details><summary>Xử lý âm thanh nguồn & nhạc</summary>${[['normalize_original_audio','Cân mức âm thanh nguồn'],['normalize_music','Cân mức nhạc trước âm lượng clip'],['duck_music','Hạ nhạc theo năng lượng âm thanh nguồn']].map(([key,label])=>`<label class="check"><input type="checkbox" data-source-audio="${key}" ${state().snapshot.metadata.source_audio_processing?.[key]?'checked':''}> ${label}</label>`).join('')}<div class="scene-grid"><label>Mức nguồn (LUFS)<input type="number" data-source-audio="original_target_lufs" min="-24" max="-12" value="${state().snapshot.metadata.source_audio_processing?.original_target_lufs??-16}"></label><label>Mức nhạc (LUFS)<input type="number" data-source-audio="music_target_lufs" min="-35" max="-16" value="${state().snapshot.metadata.source_audio_processing?.music_target_lufs??-24}"></label></div><button type="button" data-source-config="audio">Lưu xử lý âm thanh</button><p class="hint">Âm lượng clip vẫn được giữ sau cân mức. Ducking theo tín hiệu nguồn, chưa nhận diện riêng giọng nói. Tạo preview mới và nghe lại sau khi đổi.</p></details>
       <details><summary>Khung hình & phụ đề</summary><label>Định dạng<select data-source-format>${['9:16','16:9','1:1','4:5'].map(r=>`<option ${r===state().snapshot.aspect_ratio?'selected':''}>${r}</option>`).join('')}</select></label><button type="button" data-source-config="format">Lưu định dạng</button>
       <label>Mẫu phụ đề<select data-source-caption>${(catalog?.templates??[]).map(t=>`<option value="${esc(t.template_ref)}" ${t.template_ref===state().snapshot.metadata.subtitle_style?.template_ref?'selected':''}>${esc(t.name??t.label??t.template_ref)}${t.requires_word_timestamps?' · cần thời gian từng từ':''}</option>`).join('')}</select></label><label>Từ khóa nổi bật (phân cách bằng dấu phẩy)<input data-source-keywords value="${esc((state().snapshot.metadata.subtitle_style?.keywords??[]).join(', '))}" maxlength="1000"></label><button type="button" data-source-config="caption" ${catalog?'':'disabled'}>Lưu mẫu phụ đề</button><p class="hint">Sửa lời nói tại Assets. Đoạn đã sửa cần dùng phụ đề theo câu khi không còn căn chỉnh từng từ. Bản dựng nguồn hiện dùng âm thanh gốc; nhạc nền cần được thêm vào timeline riêng.</p></details>`;
     void history();renderAdvanced();controls();
@@ -121,7 +126,11 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
     if(!action&&!config)return;
     void run(async()=>{
       const p=getProject(),found=selected();
-      if(config){await send(sourceRequest(p,'configure',config.dataset.sourceConfig==='format'?{aspect_ratio:host.querySelector('[data-source-format]').value}:{subtitle_template_ref:host.querySelector('[data-source-caption]').value,keywords:host.querySelector('[data-source-keywords]').value.split(',').map(v=>v.trim()).filter(Boolean)}));return;}
+      if(config){
+        const kind=config.dataset.sourceConfig;
+        const body=kind==='audio'?sourceAudioSettings(p,Object.fromEntries([...host.querySelectorAll('[data-source-audio]')].map(el=>[el.dataset.sourceAudio,el.type==='checkbox'?el.checked:Number(el.value)]))):sourceRequest(p,'configure',kind==='format'?{aspect_ratio:host.querySelector('[data-source-format]').value}:{subtitle_template_ref:host.querySelector('[data-source-caption]').value,keywords:host.querySelector('[data-source-keywords]').value.split(',').map(v=>v.trim()).filter(Boolean)});
+        await send(body);return;
+      }
       let type=action.dataset.sourceAction,values={};
       if(type==='earlier'||type==='later'){values.target_index=Math.max(0,Math.min(found.track.clips.length-1,found.index+(type==='earlier'?-1:1)));type='reorder';}
       if(type==='split')values.at_seconds=snapTime(playhead,toolbar.querySelector('[data-source-snap]').checked);

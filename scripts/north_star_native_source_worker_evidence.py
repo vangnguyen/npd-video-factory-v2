@@ -30,6 +30,7 @@ def main():
     parser.add_argument('--evidence-dir',type=Path,required=True)
     parser.add_argument('--edited-timeline',action='store_true')
     parser.add_argument('--music',action='store_true')
+    parser.add_argument('--audio-processing',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
         raise ValueError('Fresh isolated synthetic Native root required')
@@ -75,6 +76,11 @@ def main():
             check=True,capture_output=True,timeout=30)
         music=ingest_music(config,music_path,'audio/wav','Explicit synthetic music.wav',rights_confirmed=True)
         project=store.set_music(project['id'],project['revision'],music)
+    if args.audio_processing:
+        from services.windows_native.source_settings import configure
+        project=configure(store,project['id'],project['revision'],{
+            'expected_version':project['shot_timeline']['version'],
+            'audio_processing':{'normalize_original_audio':True,'normalize_music':True,'duck_music':True}})
     source_hashes={item.name:file_sha(item) for directory in ('assets','originals')
         for item in (root/directory).iterdir() if item.is_file()}
     manager=PreviewManager(config,store)
@@ -125,6 +131,7 @@ def main():
         receipt={'schema':'native-source-worker-evidence-v1','explicit_fixture':True,'synthetic_media':True,
             'linked_source_edits_and_karaoke':args.edited_timeline,
             'canonical_music_added':args.music,
+            'canonical_audio_processing_requested':args.audio_processing,
             'saved_asr_fixture':True,'pre_render_human_review':'AUTOMATED MOCK — NOT OWNER UAT',
             'project_id':project['id'],'job_id':render['id'],'local_real_worker':True,'local_real_full_qc':True,
             'timeline_sha256':project['document']['canonical_timeline']['sha256'],

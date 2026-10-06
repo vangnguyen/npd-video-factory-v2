@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Awaitable, Callable, Protocol
 from .platform_models import AssetRead
 from .timeline_models import TimelineSnapshot
-from .timeline_audio import build_timeline_audio_graph
+from .timeline_audio_processing import build_processed_audio_graph
 from .auto_edit_providers import FFprobeMediaProbe
 
 
@@ -88,6 +88,7 @@ class FFmpegProxyRenderer:
         width: int,
         height: int,
         is_cancelled: Callable[[], Awaitable[bool]],
+        audio_processing: dict | None = None,
     ) -> ProxyRenderResult:
         if await is_cancelled():
             raise PreviewCancelledError("preview was cancelled")
@@ -166,7 +167,8 @@ class FFmpegProxyRenderer:
             previous = output
             rendered_ids.append(clip.clip_id)
         filters.append(f"[{previous}]format=yuv420p[outv]")
-        audio = build_timeline_audio_graph(snapshot, assets, first_input_index=len(renderable) + 1)
+        audio = build_processed_audio_graph(snapshot, assets, first_input_index=len(renderable) + 1,
+            processing=audio_processing)
         probed_audio = {}
         for clip in audio.clips:
             if await is_cancelled():
@@ -250,8 +252,9 @@ class FFmpegProxyRenderer:
                 "audio_clip_receipts": audio.clips,
                 "muted_audio_clip_ids": audio.muted_clip_ids,
                 "audio_limiter_peak_db": -1 if audio.clips else None,
-                "audio_speech_normalization": False,
-                "music_ducking": False,
+                "audio_speech_normalization": bool(audio.processing['normalization_original_audio_clip_ids']),
+                "music_ducking": audio.processing['music_ducking'],
+                "audio_processing": audio.processing,
                 "captions_included": False,
                 "final_render_parity": False,
                 "rendered_clip_ids": rendered_ids,

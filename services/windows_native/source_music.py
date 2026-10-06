@@ -33,7 +33,7 @@ def set_music(store,project_id,revision,music):
              'bpm':None,'mood':None,'energy':None,'provider':'user-upload',
              'source_reference':'originals/'+music['original_id'],'generation_provenance':{}}
         ]}.values())
-        project['document']['music']=copy.deepcopy(music)
+        project['document']['music']={**copy.deepcopy(music),'ducking':'canonical_source_processing_opt_in'}
         track.clips=[]
         for index in range(count):
             start=round(index*duration,6);length=round(min(duration,snapshot.duration_seconds-start),6)
@@ -47,7 +47,8 @@ def set_music(store,project_id,revision,music):
                     'provider':'user-upload','source_reference':'originals/'+music['original_id'],
                     'generation_provenance':{},'music_repeat_index':index,'source_audio_preserved':True}))
         snapshot.metadata['music_review']={'rights_basis':'explicit owner upload attestation',
-            'music_asset_id':music['id'],'human_approval_required':True,'automatic_ducking':False,
+            'music_asset_id':music['id'],'human_approval_required':True,
+            'ducking_requested':bool(snapshot.metadata.get('source_audio_processing',{}).get('duck_music')),
             'previous_versions_preserved':True,'provider_calls':0}
         _save(store,con,project,snapshot,'auto_edit_source_music_saved_review_required')
     return view(store,project_id)

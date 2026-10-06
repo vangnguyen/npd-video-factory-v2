@@ -27,7 +27,7 @@ export const mediaAnalysisPending = doc => mediaLibrary(doc).some(a=>!(doc?.medi
 export const musicType = file => ({wav:"audio/wav",mp3:"audio/mpeg"})[file.name.split(".").pop().toLowerCase()] ?? "";
 export const defaultSceneOptions = (scene, asset, plan) => ({scene,crop_strategy:plan?.crop_strategy??"contain",motion:asset?.kind==="video"?"none":plan?.motion??"none",source_start:asset?.kind==="video"?plan?.source_start??0:0,transition:plan?.transition??"cut"});
 export const finalApproved = job => Boolean(job?.final_review?.decision==="approve"&&job.final_review.revision===job.revision&&job.final_review.artifact_sha256===job.result?.qc?.final_sha256);
-export const musicSummary = project => project?.document.music ? `${project.document.music.filename} · ${project.document.music.duration_seconds.toFixed(1)} giây · ${isSourceProject(project)?'track nhạc trong timeline; chỉnh âm lượng, điểm cắt hoặc tắt âm tại Advanced Timeline':'tự hạ nhạc khi có lời đọc'}` : 'Chưa có nhạc nền.';
+export const musicSummary = project => project?.document.music ? `${project.document.music.filename} · ${project.document.music.duration_seconds.toFixed(1)} giây · ${isSourceProject(project)?`track nhạc trong timeline; chỉnh âm lượng, điểm cắt hoặc tắt âm tại Advanced Timeline${project.document.canonical_timeline.snapshot.metadata.source_audio_processing?.duck_music?'; đã bật ducking theo năng lượng nguồn, nghe preview để kiểm tra':''}`:'tự hạ nhạc khi có lời đọc'}` : 'Chưa có nhạc nền.';
 export const scriptReviewLabel = project => !project?.document?.content_intelligence ? "" : project?.script_review?.current ? (project.approval ? "Lời đọc đã được duyệt." : "Lời đọc đã lưu được duyệt. Hình ảnh và cách dựng còn chờ bạn duyệt.") : project?.script_review ? "Lời đọc đã thay đổi; cần duyệt lại bản mới." : "Lời đọc đang chờ bạn duyệt.";
 
 const errors = {
@@ -36,6 +36,7 @@ const errors = {
   AUTO_EDIT_TIMELINE_VERSION_CHANGED:'Bản timeline đã thay đổi. Làm mới để lấy bản đang lưu.',
   AUTO_EDIT_LINKED_TRACK_LOCKED:'Một track hình, âm thanh hoặc phụ đề đang khóa. Mở khóa trước khi sửa shot nguồn.',
   AUTO_EDIT_MUSIC_TRACK_LOCKED:'Track nhạc đang khóa. Mở khóa trong Advanced Timeline trước khi thay nhạc.',
+  AUTO_EDIT_AUDIO_TRACK_LOCKED:'Một track âm thanh đang khóa. Mở khóa trong Advanced Timeline trước khi đổi xử lý âm thanh.',
   AUTO_EDIT_LINKED_AUDIO_DIVERGED:'Âm thanh đã được chỉnh riêng. Giữ các chỉnh sửa đó hoặc khôi phục bản đồng bộ từ lịch sử trước khi sửa shot liên kết.',
   AUTO_EDIT_SPLIT_TOUCHES_SPOKEN_WORD:'Điểm tách đang nằm trong một từ đang nói. Chọn mốc giữa các từ.',
   AUTO_EDIT_LAST_SOURCE_CLIP_REQUIRED:'Bản dựng cần giữ ít nhất một clip nguồn.',
@@ -201,7 +202,7 @@ if (typeof document !== "undefined") {
     if(reset){$("review-check").checked=false;$("final-watch").checked=false;$("history-list").textContent="";$("artifact-list").textContent="";}
     const assets=mediaLibrary(project?.document),bindings=mediaBindings(project?.document);
     $("music-note").textContent=musicSummary(project);
-    const musicHint=$('music-intake-hint');if(musicHint)musicHint.textContent=isSourceProject(project)?'Nhạc có quyền sử dụng được lặp đến cuối timeline, giữ âm thanh nguồn và tạo bản dựng mới cần duyệt. Chỉnh track nhạc tại Advanced Timeline. Chưa tự hạ nhạc theo lời nói. WAV/MP3 ≤ 25 MB, tối đa 10 phút.':'Nhạc được hạ âm lượng khi có lời đọc. WAV/MP3 ≤ 25 MB, tối đa 10 phút.';
+    const musicHint=$('music-intake-hint');if(musicHint)musicHint.textContent=isSourceProject(project)?'Nhạc có quyền sử dụng được lặp đến cuối timeline, giữ âm thanh nguồn và tạo bản dựng mới cần duyệt. Chỉnh track nhạc tại Advanced Timeline; bật cân mức và ducking trong bảng Xử lý âm thanh nguồn & nhạc rồi nghe preview. WAV/MP3 ≤ 25 MB, tối đa 10 phút.':'Nhạc được hạ âm lượng khi có lời đọc. WAV/MP3 ≤ 25 MB, tối đa 10 phút.';
     if(reset)$("music-enabled").checked=Boolean(project?.document.music)&&project.document.music_enabled!==false;
     $("media-count").textContent=`${assets.length} nguồn`;
     $("asset-empty-state").hidden=assets.length>0;

@@ -61,7 +61,7 @@ async def render(config, project, output, event):
     result = await FFmpegProxyRenderer(str(config.ffmpeg_bin/'ffmpeg.exe'),
         str(config.ffmpeg_bin/'ffprobe.exe')).render(snapshot=snapshot, assets=assets,
             output_path=Path(output), width=round(snapshot.width*.4), height=round(snapshot.height*.4),
-            is_cancelled=cancelled)
+            is_cancelled=cancelled,audio_processing=snapshot.metadata.get('source_audio_processing'))
     # Refuse a receipt if source bytes changed during the local encode.
     for asset, path in assets.values():
         if not path.is_file() or file_sha(path) != asset.checksum_sha256:
