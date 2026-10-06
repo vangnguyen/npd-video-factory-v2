@@ -20,6 +20,7 @@ import { transcriptEditPayload } from "/transcript-editor.mjs";
 import { timelineHistory,timelineTranscriptId } from "/timeline-history.mjs";
 import { silenceSelection,canonicalShotClips } from "/analysis-review.mjs";
 import { waveformPath } from "/waveform.mjs";
+import {reframeProfiles,matchingVision,needsProductionReview} from "/reframe.mjs";
 
 const state = {
   workspaceId: null,
@@ -52,6 +53,7 @@ const state = {
   transcriptDrafts: new Map(),
   highlightDrafts: [],
   highlightSupported: false,
+  visionAnalyses: [],
   draggingClipId: null,
   pollTimer: null,
   productionPollTimer: null,
@@ -184,6 +186,9 @@ async function loadProject({ quiet = false } = {}) {
       publishIdempotencyKey: null,
     });
     state.versions = timeline ? await api(`/api/v1/projects/${state.projectId}/timeline/versions`) : [];
+    state.visionAnalyses=await api(`/api/v1/projects/${state.projectId}/vision-analyses`).catch(error=>{
+      if(error.status===404)return [];throw error;
+    });
     await syncTimelineTranscript();
     state.highlightSupported=true;
     state.highlightDrafts=await api(`/api/v1/projects/${state.projectId}/highlight-drafts`).catch(error=>{
@@ -231,6 +236,7 @@ function renderNoProject(title, description) {
 
 function render() {
   renderAnalysisReview();
+  renderReframe();
   if (!state.timeline) {
     const analysis = activeAnalysis();
     renderNoProject(
@@ -254,6 +260,19 @@ function render() {
   renderAnalytics();
   const sourceShots=canonicalShotClips(state.timeline.snapshot);
   $("#canonical-shot-list").innerHTML=sourceShots.map((clip,index)=>`<button type="button" data-canonical-shot="${escapeHtml(clip.clip_id)}" aria-pressed="${state.selectedClipId===clip.clip_id}"><strong>Shot ${index+1}</strong><span>${escapeHtml(clip.label)}</span><small>${formatTime(clip.timeline_start)} · ${clip.duration.toFixed(1)} giây${clip.disabled?' · Đã tắt':''}</small></button>`).join('');
+}
+
+function renderReframe(){
+  const source=activeAnalysis();
+  $('#reframe-review').hidden=!state.timeline?.source_analysis_id||!source;
+  if($('#reframe-review').hidden)return;
+  const binding=state.timeline.snapshot.metadata.reframe;
+  $('#reframe-aspect').value=binding?.aspect_ratio??'9:16';
+  $('#reframe-vision').innerHTML='<option value="">Cắt giữa · cần kiểm tra</option>'+matchingVision(state.visionAnalyses,source).map(item=>
+    `<option value="${escapeHtml(item.vision_analysis_id)}">${escapeHtml(item.provider_key)} · ${escapeHtml(item.model)} · ${item.frames.length} khung hình</option>`).join('');
+  $('#reframe-vision').value=binding?.vision_analysis_id??'';
+  $('#reframe-status').textContent=binding?`${binding.aspect_ratio} · ${binding.fallback==='center_crop'?'Cắt giữa':binding.strategy} · ${binding.needs_attention?'Cần kiểm tra chủ thể trong A/V review':'Xem A/V review trước khi duyệt'} · timeline v${state.timeline.current_version}`:'Chọn tỷ lệ và kết quả phân tích chủ thể đã lưu. Nếu chưa có, dùng cắt giữa và kiểm tra trong A/V review.';
+  if(binding)$('#final-profile').value=reframeProfiles(state.timeline.snapshot).final;
 }
 
 function renderAnalysisReview(){
@@ -455,7 +474,7 @@ function renderPreview() {
   }
   const busy = ["queued", "running"].includes(state.preview?.status);
   $("#preview-button").disabled = busy;
-  $("#preview-button").textContent = busy ? `Đang tạo ${state.preview.progress}%` : state.preview?.status === "stale" ? "Tạo lại preview" : "Tạo preview 540p";
+  $("#preview-button").textContent = busy ? `Đang tạo ${state.preview.progress}%` : needsProductionReview(state.timeline?.snapshot) ? 'Tạo A/V review cho khung hình' : state.preview?.status === "stale" ? "Tạo lại preview" : "Tạo preview 540p";
   $("#cancel-preview-button").disabled = !busy;
   $("#preview-title").textContent = currentVersion ? `Timeline v${currentVersion}` : "Timeline hiện tại";
 }
@@ -923,7 +942,7 @@ async function createProductionRender(kind) {
         expected_timeline_version: packageState.timeline_version,
         expected_subtitle_version: packageState.subtitle.version,
         expected_audio_version: packageState.audio_mix.version,
-        profile: isFinal ? $("#final-profile").value : "review-540x960",
+        profile: isFinal ? $("#final-profile").value : reframeProfiles(state.timeline.snapshot).review,
         actor_ref: "studio-user",
         ...(isFinal ? {approval_id: packageState.approval?.approval_id} : {}),
       }),
@@ -1114,6 +1133,10 @@ async function restoreVersion(targetVersion, { isUndo = false } = {}) {
 
 async function createPreview() {
   if (!state.timeline) return;
+  if(needsProductionReview(state.timeline.snapshot)){
+    if(!state.productionPackage)return toast('Hãy chuẩn bị audio/phụ đề ở phần A/V review để xem khung hình mới.',true);
+    return createProductionRender('review');
+  }
   try {
     state.preview = await api(`/api/v1/projects/${state.projectId}/preview`, {
       method: "POST",
@@ -1186,6 +1209,16 @@ $("#project-select").addEventListener("change", async (event) => {
 $("#reload-button").addEventListener("click", () => loadProject());
 $("#create-timeline-button").addEventListener("click", createTimeline);
 $("#preview-button").addEventListener("click", createPreview);
+$('#apply-reframe').addEventListener('click',async()=>{
+  if(!state.timeline)return;
+  const button=$('#apply-reframe');button.disabled=true;
+  try{
+    await api(`/api/v1/projects/${state.projectId}/timeline/reframe`,{method:'POST',body:JSON.stringify({
+      expected_version:state.timeline.current_version,aspect_ratio:$('#reframe-aspect').value,
+      vision_analysis_id:$('#reframe-vision').value||null})});
+    await loadProject();toast('Đã lưu khung hình vào timeline. Xem A/V review và duyệt lại.');
+  }catch(error){toast(error.message,true);}finally{button.disabled=false;}
+});
 $("#cancel-preview-button").addEventListener("click", cancelPreview);
 $("#production-package-button").addEventListener("click", createOrRefreshProductionPackage);
 $("#save-subtitles-button").addEventListener("click", saveSubtitles);

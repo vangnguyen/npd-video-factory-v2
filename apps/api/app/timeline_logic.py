@@ -375,6 +375,13 @@ def apply_operations(
                 clip["volume"] = operation.volume
             if operation.crop is not None:
                 clip["crop"] = operation.crop.model_dump(mode="json")
+                # A manual crop is the new canonical choice, not an ignored
+                # overlay beneath an older automatic tracking path.
+                if clip["metadata"].pop("reframe", None) is not None:
+                    clip["metadata"]["reframe_manual_override"] = True
+                    if "reframe" in payload["metadata"]:
+                        payload["metadata"]["reframe"]["needs_attention"] = True
+                        payload["metadata"]["reframe"]["manual_override"] = True
             if operation.transform is not None:
                 clip["transform"] = operation.transform.model_dump(mode="json")
             if operation.speed is not None:

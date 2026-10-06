@@ -21,6 +21,10 @@ PROFILE_DIMENSIONS: dict[str, tuple[int, int]] = {
     "vertical-1080x1920": (1080, 1920),
     "landscape-1920x1080": (1920, 1080),
     "square-1080x1080": (1080, 1080),
+    "portrait-1080x1350": (1080, 1350),
+    "review-960x540": (960, 540),
+    "review-540x540": (540, 540),
+    "review-432x540": (432, 540),
 }
 
 PRODUCTION_VISUAL_CONTENT_TYPES = {
@@ -223,8 +227,12 @@ def build_timeline_render_manifest(
     brand_name: str,
 ) -> dict[str, Any]:
     width, height = PROFILE_DIMENSIONS[profile]
+    validate_reframe_render_profile(snapshot, profile)
     validate_subtitles(subtitles.cues, subtitles.style, snapshot.duration_seconds)
     validate_timeline_renderability(snapshot, available_asset_ids=set(asset_paths))
+    extended_reframe = profile in {'portrait-1080x1350','review-960x540','review-540x540','review-432x540'} or any(
+        clip.metadata.get('reframe') for track in snapshot.tracks for clip in track.clips
+        if track.type == 'video' and not track.disabled and not clip.disabled)
     visual_clips: list[dict[str, Any]] = []
     for track in sorted(snapshot.tracks, key=lambda item: item.order):
         if track.type != "video" or track.disabled:
@@ -242,17 +250,18 @@ def build_timeline_render_manifest(
                     "uri": str(path),
                     "timeline_start": clip.timeline_start,
                     "duration": clip.duration,
-                    "source_start": clip.source_start,
-                    "source_end": clip.source_end,
+                    "source_start": 0 if extended_reframe and media_type == 'image' else clip.source_start,
+                    "source_end": None if extended_reframe and media_type == 'image' else clip.source_end,
                     "fit": clip.metadata.get("fit", "cover"),
                     "crop": clip.crop.model_dump(mode="json"),
+                    **({"crop_keyframes":clip.metadata['reframe']['keyframes']} if clip.metadata.get('reframe') else {}),
                     "transform": clip.transform.model_dump(mode="json"),
                     "opacity": clip.opacity,
                     **({"transition_in": clip.transition_in.model_dump(mode="json")} if snapshot.schema_version == "1.1" else {}),
                 }
             )
     return {
-        "version": "2.1" if snapshot.schema_version == "1.1" else "2.0",
+        "version": "2.2" if extended_reframe else ("2.1" if snapshot.schema_version == "1.1" else "2.0"),
         "metadata": {
             "title": f"{project_name} final edit",
             "project": project_slug,
@@ -287,6 +296,12 @@ def build_timeline_render_manifest(
     }
 
 
+def validate_reframe_render_profile(snapshot: TimelineSnapshot, profile: str) -> None:
+    width, height = PROFILE_DIMENSIONS[profile]
+    if snapshot.metadata.get('reframe') and abs(width/height-snapshot.width/snapshot.height)>1e-6:
+        raise ProductionContractError('render profile must match the reviewed reframe aspect ratio')
+
+
 class TimelineRenderContractValidator:
     def __init__(self, schema_path: Path):
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
@@ -299,8 +314,16 @@ class TimelineRenderContractValidator:
                 raise ProductionContractError("historical v2.0 source contract unchanged")
             if clip["type"] == "video" and (clip["source_end"] is None or clip["source_end"] <= clip["source_start"]):
                 raise ProductionContractError("video render requires a positive source window")
-            if manifest["version"] == "2.1" and clip["type"] == "image" and (clip["source_end"] is not None or clip["source_start"] != 0):
+            if manifest["version"] != "2.0" and clip["type"] == "image" and (clip["source_end"] is not None or clip["source_start"] != 0):
                 raise ProductionContractError("still image render must not fabricate a source duration")
+            if "crop_keyframes" in clip:
+                if manifest["version"] != "2.2":
+                    raise ProductionContractError("crop paths require render contract v2.2")
+                previous = -1.0
+                for point in clip["crop_keyframes"]:
+                    if point["time"] <= previous or point["x"] + point["width"] > 1.000001 or point["y"] + point["height"] > 1.000001:
+                        raise ProductionContractError("crop paths must increase and remain inside source bounds")
+                    previous = point["time"]
         errors = sorted(self.validator.iter_errors(manifest), key=lambda item: list(item.path))
         if errors:
             first = errors[0]

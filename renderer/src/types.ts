@@ -63,7 +63,7 @@ export type RendererInputProps = {
 };
 
 export type TimelineRenderManifest = {
-  version: "2.0" | "2.1";
+  version: "2.0" | "2.1" | "2.2";
   metadata: {
     title: string;
     project: string;
@@ -71,8 +71,8 @@ export type TimelineRenderManifest = {
     template: "timeline-render-v1";
     duration_seconds: number;
     fps: number;
-    width: 540 | 1080 | 1920;
-    height: 960 | 1080 | 1920;
+    width: 432 | 540 | 960 | 1080 | 1920;
+    height: 540 | 960 | 1080 | 1350 | 1920;
     language: "vi";
   };
   brand: {
@@ -98,6 +98,7 @@ export type TimelineRenderManifest = {
     fit: "cover" | "contain";
     transition_in?: {kind: "cut" | "fade" | "dissolve" | "crossfade"; duration_seconds: number};
     crop: {x: number; y: number; width: number; height: number};
+    crop_keyframes?: Array<{time: number; x: number; y: number; width: number; height: number}>;
     transform: {x: number; y: number; scale: number; rotation_degrees: number};
     opacity: number;
   }>;

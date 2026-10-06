@@ -15,6 +15,7 @@ import {
 } from "remotion";
 
 import type {TimelineRenderManifest, TimelineRendererInputProps} from "./types";
+import {sourceCropAt} from "./reframe";
 
 const dbToAmplitude = (db: number): number => Math.pow(10, db / 20);
 
@@ -51,12 +52,13 @@ const VisualLayer: React.FC<{
     ? interpolate(frame, [0, Math.max(1, Math.round(fps*(clip.transition_in?.duration_seconds ?? 0)))], [0,1], {extrapolateLeft:"clamp",extrapolateRight:"clamp"}) : 1;
   const playbackRate = clip.type === "video" && clip.source_end !== null
     ? Math.max(0.05, (clip.source_end - clip.source_start) / clip.duration) : 1;
+  const crop=sourceCropAt(clip,frame/fps);
   const mediaStyle: React.CSSProperties = {
     position: "absolute",
-    width: `${100 / clip.crop.width}%`,
-    height: `${100 / clip.crop.height}%`,
-    left: `${(-clip.crop.x / clip.crop.width) * 100}%`,
-    top: `${(-clip.crop.y / clip.crop.height) * 100}%`,
+    width: `${100 / crop.width}%`,
+    height: `${100 / crop.height}%`,
+    left: `${(-crop.x / crop.width) * 100}%`,
+    top: `${(-crop.y / crop.height) * 100}%`,
     objectFit: clip.fit,
     transform: `translate(${clip.transform.x * 100}%, ${clip.transform.y * 100}%) scale(${clip.transform.scale}) rotate(${clip.transform.rotation_degrees}deg)`,
     transformOrigin: "center",

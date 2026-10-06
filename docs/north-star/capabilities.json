@@ -353,10 +353,15 @@
     "status": "PARTIAL",
     "source": [
       "apps/api/app/vision_logic.py",
-      "apps/api/app/timeline_logic.py"
+      "apps/api/app/timeline_logic.py",
+      "apps/api/app/timeline_reframe.py",
+      "apps/api/tests/test_timeline_reframe.py",
+      "apps/studio-web/reframe.mjs",
+      "renderer/src/reframe.ts",
+      "renderer/src/reframe.test.ts"
     ],
-    "behavior": "Four ratio plans, tracked subject keyframes, bounded smoothing/fallback.",
-    "gap": "Native UI applying same crop keyframes and verified renderer consumption.",
+    "behavior": "Four saved Vision ratio plans bind to immutable canonical timeline crop paths; absent evidence uses center_crop, confidence=0 and needs_attention=true. Editor/CAS/source/hash/locks enforced. Studio selects all four aspects and saved source-scoped Vision; manual crops supersede tracking. Remotion interpolates source-relative paths through trims/splits/moves/speed. v2.2 render contract supports exact even-sized review/final aspect profiles; mismatches reject before queue/provider dispatch. Local encoded four-profile geometry and moving crop decoded-pixel checks pass on synthetic media.",
+    "gap": "Real subject-tracking provider acceptance, Native UI/renderer integration and spoken-footage E2E still required; synthetic crop paths do not prove real Vision performance.",
     "severity": "P1",
     "dependency": "Vision/timeline",
     "wave": "3/4",
@@ -613,9 +618,11 @@
       "renderer/src/TimelineRender.tsx",
       "apps/api/app/production_service.py",
       "services/windows_native/north_star_quality.py",
-      "services/windows_native/tests/test_north_star_quality.py"
+      "services/windows_native/tests/test_north_star_quality.py",
+      "renderer/src/north-star-reframe-smoke.ts",
+      "docs/north-star/wave3-reframe-render-evidence.json"
     ],
-    "behavior": "Real Native FFmpeg and API Remotion/FFmpeg render paths. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged.",
+    "behavior": "Real Native FFmpeg and API Remotion/FFmpeg render paths. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged. API Remotion locally encodes all four aspect ratios with source-relative crop keyframes; 4:5 review is 432x540 to avoid odd YUV420 dimensions, final is 1080x1350. Actual FFprobe geometry and decoded crop traversal have synthetic-media evidence.",
     "gap": "Shared final render path for uploaded-footage editing and multi-format variants; existing accepted renderer and strict portrait/landscape canvas guard verified locally.",
     "severity": "P0",
     "dependency": "timeline/profile/QC",
@@ -998,7 +1005,7 @@
   },
   {
     "id": 64,
-    "name": "E2E flows A–E",
+    "name": "E2E flows Aâ€“E",
     "status": "PARTIAL",
     "source": [
       "scripts/e2e-smoke.sh",

@@ -20,7 +20,8 @@ from .timeline_models import (
 )
 from .timeline_repository import TimelineConflictError
 from .timeline_service import PreviewService, TimelineService
-from .human_auth import principal_from
+from .human_auth import principal_from,authorize_project
+from .timeline_reframe import ReframeApplyRequest,apply_reframe
 
 
 router = APIRouter(prefix="/api/v1", tags=["auto-edit-studio"])
@@ -46,6 +47,19 @@ def invalid(message: str) -> HTTPException:
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         detail={"code": "TIMELINE_INVALID", "message": message},
     )
+
+
+@router.post('/projects/{project_id}/timeline/reframe',response_model=TimelineRead)
+async def reframe_timeline(project_id:str,payload:ReframeApplyRequest,request:Request):
+    principal=await authorize_project(request,project_id,'editor')
+    vision_service=getattr(request.app.state,'vision_analysis_service',None)
+    try:
+        return await apply_reframe(timeline_service(request),getattr(vision_service,'repository',None),
+                                   project_id,payload,principal.subject)
+    except KeyError as exc:raise missing('Source timeline or Vision analysis') from exc
+    except TimelineConflictError as exc:
+        raise HTTPException(409,detail={'code':'TIMELINE_VERSION_CONFLICT','message':str(exc)}) from exc
+    except TimelineEditError as exc:raise invalid(str(exc)) from exc
 
 
 @router.post(

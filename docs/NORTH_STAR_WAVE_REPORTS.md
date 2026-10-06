@@ -145,3 +145,27 @@ REGRESSIONS: targeted analysis/transcript/timeline/production suites pass. Nativ
 EXTERNAL BLOCKERS: Docker absent; actual remote-provider and Owner acceptance remain separate. No blocker to safe work.
 
 OWNER ACTION REQUIRED: none for continued implementation. NEXT WAVE: continue Wave 3/4 reframe, combined scene/media intelligence and Native bridge, then remaining safe waves.
+
+## Wave 3 — canonical reframe, renderer and Studio integration
+
+WAVE: 3
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. All four crop ratios now reach canonical persistence, Studio and local encoded rendering. Native integration and complete spoken-media acceptance remain required.
+
+HEAD SHA: parent `7bc8a7d`; the following reframe capability commit records this increment. Cache fix `7bc8a7d` is already pushed.
+
+CAPABILITIES COMPLETED: editor-scoped reframe applies an existing source/checksum-bound Vision plan, or an explicitly low-confidence center-crop fallback with `needs_attention=true`. No provider is dispatched by this action. Measured source geometry defines bounded normalized source-time keyframes for 9:16, 16:9, 1:1 and 4:5. CAS, immutable history, track locks and approval invalidation are preserved. Trims/splits/moves/speed retain source-relative paths; manual crop edits remove superseded tracking. Studio offers the four aspects and already-saved compatible Vision results. Reframed preview uses production A/V review. Render contract v2.2 transports paths without rewriting older contracts. Review/final profile mismatch is rejected before queue or provider work. 4:5 final is 1080×1350; review is 432×540 because H.264 YUV420 rounded an initial odd 675-pixel height to 674. Exact even dimensions prevent that mismatch.
+
+CAPABILITIES PARTIAL: genuine Vision/subject tracking acceptance, Native pipeline integration, combined scene intelligence, dynamic subtitle completeness and full Mode B E2E. Synthetic paths are not represented as provider tracking results.
+
+TESTS: **49/49 focused API PASS**, 16.05 s (`mode-b-reframe-api-final.log`); **90/90 Studio PASS**, 403.06 ms; **29/29 renderer PASS**, TypeScript and webpack bundle PASS. New tests cover eight measured source/target geometries, immutable persistence, actor/auth roles, stale versions, foreign/stale Vision evidence, manual crop precedence, render contract transport, profile rejection before queue, matching 4:5 review processing, and interpolation through source-time edits. The full prior checkpoint `21169f0` Linux run was **1,908 passed / 1 failed / 6 skipped** in 474.38 s. The failure exposed a null signal-algorithm cache salt changing exact legacy fingerprints. `7bc8a7d` omits that field for unversioned providers, while retaining the new FFmpeg algorithm salt; the original exact-legacy regression passes in the focused suite. A fresh full Linux run is still required at this checkpoint.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: real Remotion/Chrome/FFmpeg encoded four synthetic review videos at 540×960, 960×540, 540×540 and 432×540; FFprobe verifies H.264/AAC geometry and two-second duration (AAC container 2.048 s). Decoded portrait pixels verify the saved path traverses red to blue. Browser actual HTTP/SQLite apply saves timeline v2 and retains Draft status. MOCK TESTS: explicit ASR/Vision fixtures only; deterministic production review in API tests.
+
+EVIDENCE: `docs/north-star/wave3-reframe-render-evidence.json` includes raw probe results, decoded pixel values and six media hashes; `renderer/src/north-star-reframe-smoke.ts` is reproducible and requires a fresh output directory. Actual videos and initial diagnostic failures remain under recovery `reframe-render-r1/r2/r3`, with passing run `r3`. Browser `studio-wave3-visual/reframe-evidence.json` and three screenshots verify 1366/1920/2560 layouts without horizontal overflow, center-crop attention status, Draft approval and no console warning/error. Temporary viewport and test tab reset/closed; loopback fixture server stopped. The browser stylesheet reference is versioned so clients receive the new controls' styles.
+
+REGRESSIONS: focused previous API/Studio/renderer suites pass; full Linux checkpoint is transparently reported above. Native 264/264 is the latest separate Wave 2 result. No accepted media replacement, live data/configuration write, deployment, main merge, paid provider call or external publication occurred.
+
+EXTERNAL BLOCKERS: Docker absent; genuine provider acceptance and Owner UAT remain separate gates. Neither blocks continued safe implementation.
+
+OWNER ACTION REQUIRED: none for this implementation increment. NEXT WAVE: continue Wave 3/4 combined scene intelligence, subtitles/B-roll and Native integration, then all later safe waves.

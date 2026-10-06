@@ -20,7 +20,7 @@ RenderStatus = Literal[
     "failed",
     "failed_qc",
 ]
-RenderProfile = Literal["review-540x960", "vertical-1080x1920", "landscape-1920x1080", "square-1080x1080"]
+RenderProfile = Literal["review-540x960", "review-960x540", "review-540x540", "review-432x540", "vertical-1080x1920", "landscape-1920x1080", "square-1080x1080", "portrait-1080x1350"]
 
 
 class SubtitleWord(StrictModel):
@@ -160,7 +160,7 @@ class NarrationReflowRequest(StrictModel):
 
 
 class FinalRenderCreateRequest(RenderCreateRequest):
-    profile: Literal["vertical-1080x1920", "landscape-1920x1080", "square-1080x1080"] = (
+    profile: Literal["vertical-1080x1920", "landscape-1920x1080", "square-1080x1080", "portrait-1080x1350"] = (
         "vertical-1080x1920"
     )
     approval_id: str = Field(pattern=r"^apr_[A-Za-z0-9_-]{4,60}$")

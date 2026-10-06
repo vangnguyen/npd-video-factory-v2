@@ -6,7 +6,7 @@
     <meta name="description" content="NPD Video Factory V2 Studio — auto edit, publishing dry run and read-only analytics learning" />
     <title>NPD Studio · Auto Edit</title>
     <link rel="stylesheet" href="/styles.css" />
-    <link rel="stylesheet" href="/studio.css?v=0.12.0" />
+    <link rel="stylesheet" href="/studio.css?v=north-star-reframe-1" />
   </head>
   <body>
     <div class="app-shell studio-shell">
@@ -92,6 +92,13 @@
           <details><summary>Đoạn nổi bật đề xuất</summary><div id="highlight-review-list"></div>
           <div class="highlight-actions"><button type="button" data-highlight-count="3">Top 3</button><button type="button" data-highlight-count="5">Top 5</button><button type="button" data-highlight-mode="auto_shorts">Auto Shorts · tạo draft</button></div>
           <p>Các draft được lưu riêng. Chọn một draft để đưa vào timeline; cần xem preview và duyệt lại.</p><div id="highlight-draft-list"></div></details>
+        </section>
+        <section id="reframe-review" class="timeline-panel" hidden>
+          <h2>Khung hình</h2>
+          <label>Tỷ lệ<select id="reframe-aspect"><option>9:16</option><option>16:9</option><option>1:1</option><option>4:5</option></select></label>
+          <label>Theo dõi chủ thể<select id="reframe-vision"><option value="">Cắt giữa · cần kiểm tra</option></select></label>
+          <button id="apply-reframe" type="button">Áp dụng vào timeline</button>
+          <p id="reframe-status" aria-live="polite"></p>
         </section>
         <section id="empty-state" class="studio-empty" hidden>
           <div class="empty-illustration">✂</div>
@@ -286,7 +293,7 @@
                   <button id="changes-button" class="danger-button" disabled>Yêu cầu chỉnh sửa</button>
                 </div>
                 <div class="final-render-row">
-                  <label>Final profile<select id="final-profile"><option value="vertical-1080x1920">Dọc 1080×1920</option><option value="landscape-1920x1080">Ngang 1920×1080</option><option value="square-1080x1080">Vuông 1080×1080</option></select></label>
+                  <label>Final profile<select id="final-profile"><option value="vertical-1080x1920">Dọc 1080×1920</option><option value="landscape-1920x1080">Ngang 1920×1080</option><option value="square-1080x1080">Vuông 1080×1080</option><option value="portrait-1080x1350">4:5 · 1080×1350</option></select></label>
                   <button id="final-render-button" class="primary-button" disabled>Render final đã duyệt</button>
                   <button id="download-final-button" class="secondary-button" disabled>Tải final MP4</button>
                 </div>

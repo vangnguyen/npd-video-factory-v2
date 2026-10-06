@@ -247,9 +247,12 @@ class ProductionPackageService:
         )
 
     async def enqueue_review(self, project_id: str, payload: RenderCreateRequest) -> RenderJobRead:
-        await self._require_current_content(await self.timeline_repository.get_timeline(project_id))
-        if payload.profile != "review-540x960":
-            raise ProductionContractError("review render must use the review-540x960 profile")
+        from .production_logic import validate_reframe_render_profile
+        timeline = await self.timeline_repository.get_timeline(project_id)
+        await self._require_current_content(timeline)
+        if not payload.profile.startswith('review-'):
+            raise ProductionContractError('review render must use a review profile')
+        if timeline:validate_reframe_render_profile(timeline.snapshot,payload.profile)
         render = await self.repository.create_render(
             project_id=project_id,
             expected_timeline_version=payload.expected_timeline_version,
@@ -265,7 +268,10 @@ class ProductionPackageService:
     async def enqueue_final(
         self, project_id: str, payload: FinalRenderCreateRequest
     ) -> RenderJobRead:
-        await self._require_current_content(await self.timeline_repository.get_timeline(project_id))
+        from .production_logic import validate_reframe_render_profile
+        timeline = await self.timeline_repository.get_timeline(project_id)
+        await self._require_current_content(timeline)
+        if timeline:validate_reframe_render_profile(timeline.snapshot,payload.profile)
         render = await self.repository.create_render(
             project_id=project_id,
             expected_timeline_version=payload.expected_timeline_version,

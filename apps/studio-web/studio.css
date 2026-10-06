@@ -282,7 +282,13 @@
 /* Preserve native hidden semantics even for components with explicit display. */
 .studio-shell [hidden] { display: none !important; }
 /* Multi-input authoring remains inside the existing Studio. */
-#analysis-review, .timeline-panel[aria-label="Shot Editor"] { padding: 18px; }
+#analysis-review, #reframe-review, .timeline-panel[aria-label="Shot Editor"] { padding: 18px; }
+#reframe-review label { display: inline-grid; gap: 6px; margin: 0 16px 10px 0; max-width: 100%; }
+#reframe-review select { padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; max-width: 100%; }
+#reframe-review button, #analysis-review button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--navy); color: white; font: inherit; cursor: pointer; }
+#reframe-review button:disabled, #analysis-review button:disabled { opacity: .5; cursor: default; }
+#reframe-status { line-height: 1.6; color: var(--muted); }
+.highlight-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .shot-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .shot-overview button { padding: 16px; display: grid; gap: 8px; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: white; overflow-wrap: anywhere; }
 .shot-overview button[aria-pressed="true"] { outline: 2px solid var(--cyan); }

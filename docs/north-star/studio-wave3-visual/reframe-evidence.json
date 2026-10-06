@@ -1,0 +1,38 @@
+{
+  "fixture": true,
+  "real_provider": false,
+  "owner_uat": false,
+  "checks": [
+    {
+      "approval": "Draft",
+      "documentWidth": 1351,
+      "status": "4:5 · Cắt giữa · Cần kiểm tra chủ thể trong A/V review · timeline v2",
+      "version": "v2",
+      "viewport": [
+        1366,
+        768
+      ]
+    },
+    {
+      "approval": "Draft",
+      "documentWidth": 1905,
+      "status": "4:5 · Cắt giữa · Cần kiểm tra chủ thể trong A/V review · timeline v2",
+      "version": "v2",
+      "viewport": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "approval": "Draft",
+      "documentWidth": 2545,
+      "status": "4:5 · Cắt giữa · Cần kiểm tra chủ thể trong A/V review · timeline v2",
+      "version": "v2",
+      "viewport": [
+        2560,
+        1440
+      ]
+    }
+  ],
+  "console_errors": []
+}
