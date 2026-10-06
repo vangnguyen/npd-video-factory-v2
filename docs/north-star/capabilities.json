@@ -286,10 +286,11 @@
     "source": [
       "apps/api/app/auto_edit_logic.py",
       "apps/api/app/auto_edit_providers.py",
-      "services/windows_native/asr.py"
+      "services/windows_native/asr.py",
+      "apps/api/app/visual_signals.py"
     ],
-    "behavior": "Real FFmpeg shot/silence boundaries and typed scene heuristics; current motion/quality scores are heuristics, not measured motion or Vision quality.",
-    "gap": "Combine Vision semantic observations and transcript boundaries in Native pipeline.",
+    "behavior": "Real FFmpeg shot/silence boundaries and typed scene heuristics; current motion/quality scores are heuristics, not measured motion or Vision quality. Local FFmpeg scene scores are now parsed from actual detector output, with bounded grayscale sampling, pixel-change/exposure/duplicate evidence and transcript/audio-boundary observations persisted. Scene subjects stay empty until semantic Vision evidence exists; transcript keywords are separate. Legacy quality/motion values carry explicit heuristic provenance.",
+    "gap": "Fusion of saved semantic Vision, reviewable assessment versions and Native bridge remain required.",
     "severity": "P1",
     "dependency": "Vision",
     "wave": "3/4",
@@ -322,10 +323,11 @@
       "apps/api/app/auto_edit_models.py",
       "apps/api/app/highlight_drafts.py",
       "apps/api/tests/test_highlight_drafts.py",
-      "apps/api/migrations/versions/0017_north_star_highlight_drafts.py"
+      "apps/api/migrations/versions/0017_north_star_highlight_drafts.py",
+      "apps/api/tests/test_visual_scene_signals.py"
     ],
-    "behavior": "API Studio Top 3/Top 5/Auto Shorts save separate immutable, fingerprint-idempotent canonical drafts. Scores recompute from the selected transcript, preserve physical observations, expose heuristic factors, protect word/segment boundaries and enforce duration bounds without fabricating missing candidates. Applying requires editor identity, transcript binding, locks and timeline CAS; master history remains and approval invalidates. Additive draft-table migration tested locally; no live migration performed.",
-    "gap": "Native integration, measured multimodal scoring and full real spoken-footage acceptance remain. Draft generation/application is local/persistence tested with explicit fixture ASR; no genuine provider acceptance claim.",
+    "behavior": "API Studio Top 3/Top 5/Auto Shorts save separate immutable, fingerprint-idempotent canonical drafts. Scores recompute from the selected transcript, preserve physical observations, expose heuristic factors, protect word/segment boundaries and enforce duration bounds without fabricating missing candidates. Applying requires editor identity, transcript binding, locks and timeline CAS; master history remains and approval invalidates. Additive draft-table migration tested locally; no live migration performed. Top 3/5/Auto Shorts drafts now explain weighted speech coverage, keywords, information density, measured pixel-change, local exposure, pixel repetition and audio energy. Missing multimodal factors remain null, are omitted from weighted scoring and reduce confidence; no semantic model call is invented.",
+    "gap": "Saved Vision and multimodal assessment binding, full real spoken-media acceptance and Native workflow remain incomplete.",
     "severity": "P1",
     "dependency": "analysis/timeline",
     "wave": "3",
@@ -1005,7 +1007,7 @@
   },
   {
     "id": 64,
-    "name": "E2E flows Aâ€“E",
+    "name": "E2E flows AÃ¢â‚¬â€œE",
     "status": "PARTIAL",
     "source": [
       "scripts/e2e-smoke.sh",

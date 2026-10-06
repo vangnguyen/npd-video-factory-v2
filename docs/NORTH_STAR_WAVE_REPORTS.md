@@ -169,3 +169,27 @@ REGRESSIONS: focused previous API/Studio/renderer suites pass; full Linux checkp
 EXTERNAL BLOCKERS: Docker absent; genuine provider acceptance and Owner UAT remain separate gates. Neither blocks continued safe implementation.
 
 OWNER ACTION REQUIRED: none for this implementation increment. NEXT WAVE: continue Wave 3/4 combined scene intelligence, subtitles/B-roll and Native integration, then all later safe waves.
+
+## Wave 3/4 — measured local visual signals and explained highlights
+
+WAVE: 3/4
+
+STATUS: IN PROGRESS. Scene/media intelligence is partial until saved semantic Vision fusion, Native integration and final acceptance are complete.
+
+HEAD SHA: parent `cc949003953d3a3c0904cacbd02ed8c52d881e88`; the measured-signal capability commit records this increment.
+
+CAPABILITIES COMPLETED: actual FFmpeg `lavfi.scene_score` replaces the detector's constant confidence. A bounded local decoder samples at most 360 160×90 grayscale frames; it measures luma, dark/bright fraction, luminance edges, adjacent sample pixel difference, exact duplicate hashes and exposure/black-frame candidates. It does not claim semantic detection, calibrated blur or optical flow. Measurements and waveform persist with algorithm-version cache binding. Scene motion uses a documented pixel-change proxy; local quality is a documented exposure heuristic. Legacy fallback scores remain readable but are explicitly labeled unmeasured heuristics. Transcript keywords no longer masquerade as detected subjects. Scene evidence includes audio boundaries, speech coverage and source timestamps. Highlight scores explain each available weighted contribution; missing motion/audio/quality/novelty remain null in factor evidence rather than invented provider data. Local-stage failure cancels sibling analysis and decoder processes before source cleanup.
+
+CAPABILITIES PARTIAL: saved structured Vision fusion and assessment-version UI, calibrated visual quality/subject tracking, real spoken-source E2E, Native bridge. Historical numeric scene scores are not retroactively changed or treated as new measurement evidence.
+
+TESTS: **61/61 focused API PASS**, 44.41 s (`scene-signals-api.log`). Includes real local FFmpeg black-to-moving-video cut detection, frame sampling bounds, exposure/pixel-change/duplicate measurement, absent audio, null highlight factors, scoring contributions and sibling cancellation; previous upload/transcript/silence/highlight/cache tests pass.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: synthetic video encoded/decoded by FFmpeg with real cut measurements. MOCK TESTS: fixture ASR and provider-scoped HTTP tests retain explicit labels.
+
+EVIDENCE: `visual_signals.py`, `test_visual_scene_signals.py`, analysis persistence and machine-readable capability/source inventory; log in recovery. Reframe checkpoint `cc94900` remains pushed with a verified full-history bundle; its fresh Linux full regression is running separately on the verified checkout. An earlier run was intentionally interrupted because checkout completion had not been verified before launch; it is not certification evidence.
+
+REGRESSIONS: focused existing suites pass. No accepted artifact replacement, live DB migration/restart, external provider call, deployment or main merge.
+
+EXTERNAL BLOCKERS: none to continued safe work; semantic provider acceptance and Docker remain separate limitations.
+
+OWNER ACTION REQUIRED: none for this increment. NEXT WAVE: continue saved Vision/scene fusion and all subsequent safe waves.

@@ -126,6 +126,7 @@ class MediaSignals:
     silence_intervals: tuple[tuple[float, float, float | None], ...]
     provenance: dict[str, object]
     waveform: dict | None = None
+    visual: dict | None = None
 
 
 class MediaProbe(Protocol):
@@ -356,7 +357,7 @@ class DeterministicMediaSignalProvider:
 
 class FFmpegMediaSignalProvider:
     key = "ffmpeg-media-signals"
-    algorithm_version = "scene-silence-waveform-v2"
+    algorithm_version = "scene-silence-waveform-visual-v3"
     _SHOT_TIME = re.compile(r"pts_time:([0-9.]+)")
     _SILENCE_START = re.compile(r"silence_start: ([0-9.]+)")
     _SILENCE_END = re.compile(r"silence_end: ([0-9.]+).+silence_duration: ([0-9.]+)")
@@ -380,6 +381,9 @@ class FFmpegMediaSignalProvider:
             process.kill()
             await process.communicate()
             raise RuntimeError("ffmpeg analysis timed out") from exc
+        finally:
+            if process.returncode is None:
+                process.kill();await process.wait()
         if process.returncode != 0:
             raise RuntimeError(f"ffmpeg analysis failed: {stderr.decode('utf-8', 'replace')[:300]}")
         return stderr.decode("utf-8", "replace")
@@ -398,15 +402,18 @@ class FFmpegMediaSignalProvider:
                 "-i",
                 str(path),
                 "-filter:v",
-                "select='gt(scene,0.35)',showinfo",
+                "select='gt(scene,0.35)',metadata=mode=print:key=lavfi.scene_score,showinfo",
                 "-f",
                 "null",
                 "-",
             ]
         )
+        from .visual_signals import measure_visual_signals
+        visual_task = measure_visual_signals(path,executable=self.executable,
+            duration_seconds=float(metadata.duration_seconds or 0),timeout_seconds=self.timeout_seconds)
         if metadata.audio_codec:
             from .audio_waveform import measure_waveform
-            shot_output, silence_output, waveform = await asyncio.gather(
+            shot_output, silence_output, waveform, visual = await self._gather(
                 shot_task,
                 self._run(
                     [
@@ -422,17 +429,21 @@ class FFmpegMediaSignalProvider:
                 ),
                 measure_waveform(path, executable=self.executable,
                     duration_seconds=float(metadata.duration_seconds or 0), timeout_seconds=self.timeout_seconds),
+                visual_task,
             )
         else:
-            shot_output = await shot_task
+            shot_output, visual = await self._gather(shot_task, visual_task)
             silence_output = ""
             waveform = None
         duration = float(metadata.duration_seconds or 0)
-        boundaries = tuple(
-            (timestamp, 0.8)
-            for timestamp in sorted({float(match) for match in self._SHOT_TIME.findall(shot_output)})
-            if 0.05 < timestamp < max(0, duration - 0.05)
-        )
+        scores = {}; timestamp = None
+        for line in shot_output.splitlines():
+            times = self._SHOT_TIME.findall(line)
+            if times:timestamp = float(times[-1])
+            score = re.search(r'lavfi.scene_score=([0-9.]+)',line)
+            if score and timestamp is not None:scores[timestamp] = min(1.,float(score.group(1)))
+        boundaries = tuple((timestamp,scores[timestamp]) for timestamp in sorted(scores)
+            if .05 < timestamp < max(0,duration-.05))
         starts = [float(value) for value in self._SILENCE_START.findall(silence_output)]
         ends = [(float(end), float(span)) for end, span in self._SILENCE_END.findall(silence_output)]
         silences = tuple(
@@ -444,6 +455,7 @@ class FFmpegMediaSignalProvider:
             shot_boundaries=boundaries,
             silence_intervals=silences,
             waveform=waveform,
+            visual=visual,
             provenance={
                 "fixture": False,
                 "paid_call": False,
@@ -452,3 +464,13 @@ class FFmpegMediaSignalProvider:
                 "silence_level_measurement": "not_measured; detector threshold is configuration",
             },
         )
+
+    @staticmethod
+    async def _gather(*coroutines):
+        tasks=[asyncio.create_task(coroutine) for coroutine in coroutines]
+        try:return await asyncio.gather(*tasks)
+        except BaseException:
+            for task in tasks:
+                if not task.done():task.cancel()
+            await asyncio.gather(*tasks,return_exceptions=True)
+            raise

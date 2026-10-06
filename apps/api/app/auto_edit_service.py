@@ -471,7 +471,7 @@ class AutoEditAnalysisService:
                     asset_id=asset.asset_id, provider_key=self.signal_provider.key, transcript=None,
                     scenes=scenes, silence_decisions=[],
                     highlights=build_highlights(scenes=scenes, top_k=payload.top_highlights),
-                    signal_evidence={**signals.provenance,"waveform":signals.waveform})
+                    signal_evidence={**signals.provenance,"waveform":signals.waveform,"visual":signals.visual})
                 result = await self.repository.get_analysis(analysis_id)
                 if result is None:
                     raise RuntimeError("visual analysis was not persisted")
@@ -657,7 +657,7 @@ class AutoEditAnalysisService:
                 scenes=scenes,
                 silence_decisions=silence,
                 highlights=highlights,
-                signal_evidence={**signals.provenance,"waveform":signals.waveform},
+                signal_evidence={**signals.provenance,"waveform":signals.waveform,"visual":signals.visual},
             )
         except ProviderNotConfigured:
             await self.repository.mark_analysis_failed(analysis_id, "PROVIDER_NOT_CONFIGURED")

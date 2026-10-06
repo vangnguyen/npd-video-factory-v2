@@ -86,7 +86,7 @@ def build_drafts(analysis,asset,payload):
             for scene in analysis.scenes if min(end,scene.end_seconds)-max(start,scene.start_seconds)>=.05]
         selected=analysis.model_copy(update={'scenes':windows,'silence_decisions':[]})
         snapshot=build_initial_timeline(analysis=selected,source_asset=asset,media_plan=None,media_assets={},silence_decision_ids=[])
-        evidence={'algorithm':'highlight-draft-v1','source_start':start,'source_end':end,
+        evidence={'algorithm':'highlight-draft-v2','source_start':start,'source_end':end,
             'score':item['highlight_score'],'reason':item['reason'],'factors':item['evidence'],
             'source_asset_sha256':asset.checksum_sha256,'scoring_transcript_id':analysis.transcript.transcript_id if analysis.transcript else None,
             'mode':payload.mode,'maximum_duration_seconds':payload.maximum_duration_seconds,
