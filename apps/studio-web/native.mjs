@@ -27,6 +27,7 @@ export const mediaAnalysisPending = doc => mediaLibrary(doc).some(a=>!(doc?.medi
 export const musicType = file => ({wav:"audio/wav",mp3:"audio/mpeg"})[file.name.split(".").pop().toLowerCase()] ?? "";
 export const defaultSceneOptions = (scene, asset, plan) => ({scene,crop_strategy:plan?.crop_strategy??"contain",motion:asset?.kind==="video"?"none":plan?.motion??"none",source_start:asset?.kind==="video"?plan?.source_start??0:0,transition:plan?.transition??"cut"});
 export const finalApproved = job => Boolean(job?.final_review?.decision==="approve"&&job.final_review.revision===job.revision&&job.final_review.artifact_sha256===job.result?.qc?.final_sha256);
+export const musicSummary = project => project?.document.music ? `${project.document.music.filename} · ${project.document.music.duration_seconds.toFixed(1)} giây · ${isSourceProject(project)?'track nhạc trong timeline; chỉnh âm lượng, điểm cắt hoặc tắt âm tại Advanced Timeline':'tự hạ nhạc khi có lời đọc'}` : 'Chưa có nhạc nền.';
 export const scriptReviewLabel = project => !project?.document?.content_intelligence ? "" : project?.script_review?.current ? (project.approval ? "Lời đọc đã được duyệt." : "Lời đọc đã lưu được duyệt. Hình ảnh và cách dựng còn chờ bạn duyệt.") : project?.script_review ? "Lời đọc đã thay đổi; cần duyệt lại bản mới." : "Lời đọc đang chờ bạn duyệt.";
 
 const errors = {
@@ -34,6 +35,7 @@ const errors = {
   AUTO_EDIT_CURRENT_PREVIEW_REVIEW_REQUIRED:'Preview chưa có hoặc đã thay đổi. Tạo và xem preview mới trước khi duyệt.',
   AUTO_EDIT_TIMELINE_VERSION_CHANGED:'Bản timeline đã thay đổi. Làm mới để lấy bản đang lưu.',
   AUTO_EDIT_LINKED_TRACK_LOCKED:'Một track hình, âm thanh hoặc phụ đề đang khóa. Mở khóa trước khi sửa shot nguồn.',
+  AUTO_EDIT_MUSIC_TRACK_LOCKED:'Track nhạc đang khóa. Mở khóa trong Advanced Timeline trước khi thay nhạc.',
   AUTO_EDIT_LINKED_AUDIO_DIVERGED:'Âm thanh đã được chỉnh riêng. Giữ các chỉnh sửa đó hoặc khôi phục bản đồng bộ từ lịch sử trước khi sửa shot liên kết.',
   AUTO_EDIT_SPLIT_TOUCHES_SPOKEN_WORD:'Điểm tách đang nằm trong một từ đang nói. Chọn mốc giữa các từ.',
   AUTO_EDIT_LAST_SOURCE_CLIP_REQUIRED:'Bản dựng cần giữ ít nhất một clip nguồn.',
@@ -151,7 +153,7 @@ if (typeof document !== "undefined") {
     if(dirtyPart==="shot"){
       document.querySelectorAll('#brief-card input,#brief-card textarea,#brief-card select,#brief-card button,#proposal-card input,#proposal-card textarea,#proposal-card select,#proposal-card button,#image-card input,#image-card select,#image-card button').forEach(el=>el.disabled=true);
     }
-    if(isSourceProject(project))for(const id of ['generate','apply-brand','brand-select','template-select','upload-music','music-enabled','duplicate-project','save-prompt','input-kind','prompt','upload-documents'])$(id).disabled=true;
+    if(isSourceProject(project))for(const id of ['generate','apply-brand','brand-select','template-select','music-enabled','duplicate-project','save-prompt','input-kind','prompt','upload-documents'])$(id).disabled=true;
     $("save-note").textContent=dirty?"Có chỉnh sửa chưa lưu. Lưu trước khi tạo nội dung hoặc duyệt.":project?.approval?`Đã duyệt bởi ${project.approval.reviewer}.`:project?"Mọi thay đổi được lưu sẽ cần duyệt lại.":"Lưu yêu cầu trước khi tạo đề xuất.";
     shotStudio?.controls();
     nativeAnalysis?.controls();
@@ -198,7 +200,8 @@ if (typeof document !== "undefined") {
     $("document-list").innerHTML=(project?.document.documents??[]).map(d=>`<p><strong>${esc(d.filename)}</strong> · ${d.extracted_text.length.toLocaleString("vi-VN")} ký tự</p>`).join("")||'<p class="hint">Chưa có tài liệu nguồn.</p>';
     if(reset){$("review-check").checked=false;$("final-watch").checked=false;$("history-list").textContent="";$("artifact-list").textContent="";}
     const assets=mediaLibrary(project?.document),bindings=mediaBindings(project?.document);
-    $("music-note").textContent=project?.document.music?`${project.document.music.filename} · ${project.document.music.duration_seconds.toFixed(1)} giây · tự hạ nhạc khi có lời đọc`:"Chưa có nhạc nền.";
+    $("music-note").textContent=musicSummary(project);
+    const musicHint=$('music-intake-hint');if(musicHint)musicHint.textContent=isSourceProject(project)?'Nhạc có quyền sử dụng được lặp đến cuối timeline, giữ âm thanh nguồn và tạo bản dựng mới cần duyệt. Chỉnh track nhạc tại Advanced Timeline. Chưa tự hạ nhạc theo lời nói. WAV/MP3 ≤ 25 MB, tối đa 10 phút.':'Nhạc được hạ âm lượng khi có lời đọc. WAV/MP3 ≤ 25 MB, tối đa 10 phút.';
     if(reset)$("music-enabled").checked=Boolean(project?.document.music)&&project.document.music_enabled!==false;
     $("media-count").textContent=`${assets.length} nguồn`;
     $("asset-empty-state").hidden=assets.length>0;

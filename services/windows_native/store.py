@@ -407,6 +407,10 @@ class Store:
         return doc
 
     def set_music(self, identifier, revision, music):
+        from .auto_edit_timeline import is_auto_edit
+        if is_auto_edit(self.get(identifier)['document']):
+            from .source_music import set_music
+            return set_music(self,identifier,revision,music)
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
             before_shots = copy.deepcopy(doc)

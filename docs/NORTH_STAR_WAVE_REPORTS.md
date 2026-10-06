@@ -483,3 +483,25 @@ EVIDENCE: `docs/north-star/native-source-editor-evidence.json` hashes 21 exports
 REGRESSIONS: original live source/database/configuration/services and accepted artifacts remain untouched. No protected-main merge, production deployment, external publication, paid/provider operation, destructive migration or runtime installation.
 
 EXTERNAL BLOCKERS: genuine provider acceptance, Docker, Owner UAT and blocked browser navigation remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: canonical Source supporting media and licensed music/audio processing, followed by remaining media/provider/platform/distribution/analytics/learning/Hub/hardening waves.
+
+## Wave 3/6 — Canonical Source music intake and playback
+
+WAVE: 3/6
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. Rights-attested music now plays through Source timeline/proxy/final render; Source DSP and B-roll remain.
+
+HEAD SHA: parent `24e5e2cfbf285425363834517e996d6115e11c7b`; this music capability commit records the increment. Parent is pushed and preserved in verified `north-star-source-editor.bundle`, SHA256 `8a6832da9f6ed51f6a5a3cc0a0e8c789b7a037757e96554c218198d0d9aeb783`.
+
+CAPABILITIES COMPLETED: existing WAV/MP3 intake, actual codec/probe/decode and immutable original/checksum/explicit rights attestation are reused. Source music is projected into the canonical asset resolver and a bounded editable audio track with saved gain/fades and duration-matched repetitions, without source stretching or narration generation. Proxy, approval and final-worker hash/path/rights checks include active music. Replacing music retains prior metadata and original bytes so exact timeline history restores still resolve the previous track. Locked music rejects replacement. Legacy narrated music behavior is preserved. Source UI enables music upload, directs track edits/muting to Advanced Timeline and explicitly states that automatic ducking is not yet wired. BPM, mood and energy remain null without measured evidence.
+
+CAPABILITIES PARTIAL: Source normalization/ducking and seamless music crossfade, B-roll, structured subject tracking, full proxy effect parity, Auto Shorts/duplication and genuine spoken-source/browser/Owner acceptance remain. Synthetic tones are not identified as speech or real music-performance acceptance.
+
+TESTS: full Native **301/301 PASS**, 160.988s (`source-music-native-full.log`); frontend **104/104 PASS**, 636.306ms (`source-music-studio-r1.log`). Focused source music/linked/canonical tests **17/17 PASS**, 4.369s. New cases cover actual local source/music proxy, preservation of source tracks/hashes/approval gate, locked/unknown-rights rejection and replacement/history restore. API production code is unchanged in this increment; an uncommitted opt-in DSP engine is tested separately and not counted as integrated capability.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: separate actual synthetic source/music intake, proxy, linked trim/split/karaoke, private worker and full QC. MOCK TESTS: saved ASR and automated pre-render reviewer explicitly fixtures; final review unapproved.
+
+EVIDENCE: `docs/north-star/native-source-music-evidence.json` indexes 21 exports in recovery `native-source-music-n5`. Project `2e797396ee444b4488cd174578087e66`, job `ba68ba9804834f4b815a5432ef1c8592`. Final SHA256 `811c69b20412da1d42c33cbd086672d8601e04604c516df850518afbda656243`; 1080×1350/30fps/H.264/AAC/48kHz, 2.4s video and 2.453s container. QC reports no clipping, black/freeze/broken frames or accidental silence; activity remains explicitly decoded signal activity, not speech detection. Source/music/original hashes and canonical project document are unchanged by rendering; download remains blocked pending final review. Full Artifact A/UI/Owner/provider/deployment acceptance are false.
+
+REGRESSIONS: accepted media and original live source/database/configuration/services remain untouched. No protected-main merge, deployment, external publication, new paid/provider/TTS call, destructive migration or runtime installation.
+
+EXTERNAL BLOCKERS: provider acceptance, Docker, browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: opt-in Source normalization/ducking in settings, preview and final render; supporting-media planning/application and remaining North Star work continue.

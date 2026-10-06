@@ -14,6 +14,7 @@ from typing import Literal
 from pydantic import Field, model_validator
 from .contracts import WorkflowError, digest
 from .media import project_assets
+from .source_assets import canonical_assets
 from .auto_edit_analysis import (
     asset_reference, downstream, selected_transcript, validate_record,
 )
@@ -101,7 +102,7 @@ def validate_document(document):
     validate_record(root, snapshot.metadata.get('native_project_id'), document, root_asset, require_current=False)
     if snapshot.duration_seconds > MAX_DURATION or sum(len(track.clips) for track in snapshot.tracks) > MAX_CLIPS:
         raise WorkflowError('AUTO_EDIT_TIMELINE_LIMIT')
-    assets = {asset_reference(value): value for value in project_assets(document)}
+    assets = {asset_reference(value): value for value in canonical_assets(document)}
     for track in snapshot.tracks:
         for clip in track.clips:
             if clip.asset_id is None:
@@ -118,6 +119,10 @@ def validate_document(document):
                     raise WorkflowError('AUTO_EDIT_TIMELINE_SOURCE_WINDOW_INVALID')
                 if track.type == 'audio' and not asset.get('has_audio'):
                     raise WorkflowError('AUTO_EDIT_TIMELINE_AUDIO_STREAM_REQUIRED')
+            elif asset['kind']=='audio':
+                if track.type!='audio' or clip.source_end is None or clip.source_end>asset['duration_seconds']+.05:
+                    raise WorkflowError('AUTO_EDIT_TIMELINE_SOURCE_WINDOW_INVALID')
+            else:raise WorkflowError('AUTO_EDIT_TIMELINE_SOURCE_KIND_INVALID')
     return state
 
 

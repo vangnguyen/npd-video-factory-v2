@@ -29,6 +29,7 @@ def main():
     parser.add_argument('--data-root',type=Path,required=True)
     parser.add_argument('--evidence-dir',type=Path,required=True)
     parser.add_argument('--edited-timeline',action='store_true')
+    parser.add_argument('--music',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
         raise ValueError('Fresh isolated synthetic Native root required')
@@ -66,6 +67,14 @@ def main():
             'operation':{'type':'split','clip_id':clip,'at_seconds':1.1}})
         project=configure(store,project['id'],project['revision'],{'expected_version':3,
             'aspect_ratio':'4:5','subtitle_template_ref':'karaoke-gold@v1'})
+    if args.music:
+        from services.windows_native.music import ingest_music
+        music_path=root/'explicit-synthetic-music.wav'
+        subprocess.run([str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n',
+            '-f','lavfi','-i','sine=frequency=220:duration=1','-c:a','pcm_s16le',str(music_path)],
+            check=True,capture_output=True,timeout=30)
+        music=ingest_music(config,music_path,'audio/wav','Explicit synthetic music.wav',rights_confirmed=True)
+        project=store.set_music(project['id'],project['revision'],music)
     source_hashes={item.name:file_sha(item) for directory in ('assets','originals')
         for item in (root/directory).iterdir() if item.is_file()}
     manager=PreviewManager(config,store)
@@ -103,7 +112,8 @@ def main():
         durable_json(out/'scene-analysis.json',analysis['scenes'])
         durable_json(out/'highlight-analysis.json',analysis['highlights'])
         durable_json(out/'silence-decisions.json',analysis['silence_decisions'])
-        durable_json(out/'asset-provenance.json',{'explicit_fixture':True,'assets':project['document']['assets'],
+        from services.windows_native.source_assets import canonical_assets
+        durable_json(out/'asset-provenance.json',{'explicit_fixture':True,'assets':canonical_assets(project['document']),
             'source_kind':'generated synthetic testsrc + tone','speech_recognition':'saved ASR fixture; no inference'})
         durable_json(out/'project.json',store.get(project['id']))
         durable_json(out/'job-events.json',events)
@@ -114,6 +124,7 @@ def main():
                 if item.is_file() and file_sha(item)!=source_hashes[item.name]:raise AssertionError('Immutable source changed')
         receipt={'schema':'native-source-worker-evidence-v1','explicit_fixture':True,'synthetic_media':True,
             'linked_source_edits_and_karaoke':args.edited_timeline,
+            'canonical_music_added':args.music,
             'saved_asr_fixture':True,'pre_render_human_review':'AUTOMATED MOCK — NOT OWNER UAT',
             'project_id':project['id'],'job_id':render['id'],'local_real_worker':True,'local_real_full_qc':True,
             'timeline_sha256':project['document']['canonical_timeline']['sha256'],

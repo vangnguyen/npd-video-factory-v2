@@ -6,6 +6,7 @@ from .auto_edit_timeline import validate_document
 from .auto_edit_analysis import asset_reference
 from .contracts import WorkflowError, file_sha
 from .media import media_path, project_assets
+from .source_assets import canonical_assets
 from app.platform_models import AssetRead
 from app.timeline_models import TimelineSnapshot
 from app.timeline_proxy import FFmpegProxyRenderer
@@ -29,7 +30,7 @@ def resolve_assets(config, project):
     needed = {clip.asset_id for clip in active}
     assets = {}
     timestamp = datetime.now(timezone.utc)
-    for item in project_assets(project['document']):
+    for item in canonical_assets(project['document']):
         identifier = asset_reference(item)
         if identifier not in needed:
             continue
@@ -39,7 +40,8 @@ def resolve_assets(config, project):
                 or path.resolve().parent != directory.resolve() or not path.is_file()
                 or file_sha(path) != item['sha256']):
             raise WorkflowError('SOURCE_MEDIA_CHANGED_OR_MISSING')
-        content_type = ('video/quicktime' if path.suffix.lower() == '.mov' else 'video/mp4') if item['kind'] == 'video' else 'image/jpeg'
+        content_type = ('video/quicktime' if path.suffix.lower() == '.mov' else 'video/mp4') if item['kind'] == 'video' else (
+            'audio/wav' if item['kind']=='audio' else 'image/png' if path.suffix.lower()=='.png' else 'image/jpeg')
         dto = AssetRead(asset_id=identifier, workspace_id='native-local', project_id='prj_'+project['id'],
             project_version_id=None, job_id=None, asset_class='source', kind=item['kind'],
             filename=item['id'], object_key='assets/'+item['id'], content_type=content_type,

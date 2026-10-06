@@ -4,6 +4,7 @@ from types import SimpleNamespace
 from .auto_edit_timeline import validate_document
 from .contracts import WorkflowError, digest, file_sha
 from .media import project_assets
+from .source_assets import canonical_assets
 from .source_preview import PROFILE,resolve_assets
 
 
@@ -15,7 +16,7 @@ def reviewed_preview(root,project):
     if not any(track['type']=='video' and not track['disabled'] and any(
         not clip['disabled'] and clip['opacity']>0 for clip in track['clips']) for track in state['snapshot']['tracks']):
         raise WorkflowError('AUTO_EDIT_ENABLED_VIDEO_REQUIRED',400)
-    assets={asset['id']:asset for asset in project_assets(project['document'])}
+    assets={asset['id']:asset for asset in canonical_assets(project['document'])}
     for track in state['snapshot']['tracks']:
         for clip in track['clips']:
             if track['disabled'] or clip['disabled'] or not clip['asset_id']:continue

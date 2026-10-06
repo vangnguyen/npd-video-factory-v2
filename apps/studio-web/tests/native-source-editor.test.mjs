@@ -5,6 +5,7 @@ import {sourceCreatePayload} from '../native-auto-edit.mjs';
 import {timelineHistory} from '../timeline-history.mjs';
 import {videoFormat,nextProjectStage} from '../video-preview.mjs';
 import {previewTimingLabel} from '../shot-studio.mjs';
+import {musicSummary} from '../native.mjs';
 
 const snapshot={width:1080,height:1350,duration_seconds:3,metadata:{native_auto_edit_schema:'native-auto-edit-timeline-v1'},tracks:[
   {track_id:'trk_source',kind:'source',type:'video',label:'Source',clips:[{clip_id:'clip_video',label:'<img onerror=x>',timeline_start:0,duration:3}]},
@@ -35,4 +36,10 @@ test('Source canvas, final explanation and advanced view follow the canonical so
   assert.match(previewTimingLabel('final',null,p),/âm thanh gốc/);assert.doesNotMatch(previewTimingLabel('final',null,p),/Thùy Dung/);
   const markup=sourceAdvancedMarkup(p);assert.match(markup,/data-source-clip="clip_video"/);assert.match(markup,/data-track-state="muted"/);
   assert.ok(!markup.includes('<img onerror'));assert.ok(!markup.includes('aria-label="Biên độ'),'No fabricated waveform without measurements');
+});
+
+test('Source music describes editable routing without claiming automatic ducking',()=>{
+  const project=structuredClone(p);project.document.music={filename:'User music.wav',duration_seconds:30};
+  assert.match(musicSummary(project),/Advanced Timeline/);assert.doesNotMatch(musicSummary(project),/tự hạ/);
+  assert.match(musicSummary({document:{music:project.document.music}}),/tự hạ/);
 });
