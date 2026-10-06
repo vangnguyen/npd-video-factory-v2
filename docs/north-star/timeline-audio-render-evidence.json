@@ -1,0 +1,53 @@
+{
+  "fixture_asr": true,
+  "synthetic_tone_not_speech": true,
+  "local_real_media_encoding": true,
+  "real_provider_tested": false,
+  "human_approval_claimed": false,
+  "production_deployed": false,
+  "timeline_version": 5,
+  "render_sha256": "fd3edf3e9667be0c84de2a2927440fe8e4983e31fcb8402d25b1ac804b533d4e",
+  "codec": "aac",
+  "sample_rate": 48000,
+  "channels": 2,
+  "duration_seconds": 16.0,
+  "audio_clips": [
+    {
+      "clip_id": "clip_89f8363b593745519241",
+      "track_id": "trk_5bb34ee89349410096f8",
+      "asset_id": "ast_4fc470b9f9a84ae693f91d73",
+      "source_sha256": "7fb1d7761675d204e7fe257bfac4f1c06178efd3688dee0b64601fb1563f6fad",
+      "source_start": 0.0,
+      "source_end": 16.0,
+      "timeline_start": 0.0,
+      "duration": 16.0,
+      "speed": 1.0,
+      "volume": 1.0
+    }
+  ],
+  "decoded_windows": [
+    {
+      "start": 0.5,
+      "end": 1,
+      "rms": 0.0,
+      "peak": 0.0
+    },
+    {
+      "start": 4.5,
+      "end": 5,
+      "rms": 0.062457018879697,
+      "peak": 0.088623046875
+    },
+    {
+      "start": 12.5,
+      "end": 13,
+      "rms": 0.0,
+      "peak": 0.0
+    }
+  ],
+  "limiter_peak_db": -1,
+  "non_broll_tracks_preserved": true,
+  "captions_included": false,
+  "final_render_parity": false,
+  "output_directory": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\timeline-audio-render-r2"
+}

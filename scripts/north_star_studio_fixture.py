@@ -26,7 +26,7 @@ from app.auto_edit_providers import FFprobeMediaProbe, FFmpegMediaSignalProvider
 from app.auto_edit_routes import router as auto_edit_router
 from app.timeline_routes import router as timeline_router
 from app.timeline_repository import TimelineRepository
-from app.timeline_service import TimelineService, TimelineContractValidator
+from app.timeline_service import TimelineService, TimelineContractValidator, PreviewService, FFmpegProxyRenderer
 from app.timeline_models import TimelineCreateRequest
 from app.human_auth import authorize_human_request, principal_from
 from app.production_routes import router as production_router
@@ -41,7 +41,7 @@ from app.auto_edit_models import UploadInitRequest,UploadCompleteRequest
 from types import SimpleNamespace
 
 
-def create_harness(data_dir: Path, subtitle_editor: bool = False, broll_editor: bool = False):
+def create_harness(data_dir: Path, subtitle_editor: bool = False, broll_editor: bool = False, audio_preview: bool = False):
     @asynccontextmanager
     async def lifespan(app):
         engine,sessions,platform,repo,uploads,analyses,project,version = await setup_services(data_dir)
@@ -70,6 +70,17 @@ def create_harness(data_dir: Path, subtitle_editor: bool = False, broll_editor: 
         timeline = await app.state.timeline_service.create(project.project_id,TimelineCreateRequest(analysis_id=result.analysis_id,
                                                            silence_decision_ids=[],actor_ref='offline-fixture'))
         tasks=set()
+        if audio_preview:
+            app.state.auto_edit_repository=repo
+            app.state.object_storage=uploads.object_storage
+            app.state.preview_download_root=data_dir/'preview-downloads'
+            class LocalPreviewQueue:
+                async def rpush(self, _key, preview_id):
+                    task=asyncio.create_task(app.state.preview_service.process(preview_id));tasks.add(task)
+                    task.add_done_callback(tasks.discard)
+            app.state.preview_service=PreviewService(repository=timelines,platform=platform,auto_edit_repository=repo,
+                object_storage=uploads.object_storage,queue=LocalPreviewQueue(),renderer=FFmpegProxyRenderer(),
+                staging_root=data_dir/'previews-local')
         if broll_editor:
             import hashlib
             from test_auto_edit_analysis import bytes_stream
@@ -166,6 +177,8 @@ if __name__=='__main__':
     parser.add_argument('--port',type=int,default=18031)
     parser.add_argument('--subtitle-editor',action='store_true')
     parser.add_argument('--broll-editor',action='store_true')
+    parser.add_argument('--audio-preview',action='store_true')
     args=parser.parse_args()
     args.data_dir.mkdir(parents=True,exist_ok=False)
-    uvicorn.run(create_harness(args.data_dir,subtitle_editor=args.subtitle_editor,broll_editor=args.broll_editor),host='127.0.0.1',port=args.port,log_level='warning')
+    uvicorn.run(create_harness(args.data_dir,subtitle_editor=args.subtitle_editor,broll_editor=args.broll_editor,
+        audio_preview=args.audio_preview),host='127.0.0.1',port=args.port,log_level='warning')

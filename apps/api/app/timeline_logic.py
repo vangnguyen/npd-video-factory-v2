@@ -278,7 +278,7 @@ def build_initial_timeline(
             **({'silence_review':{'selected_ids':silence_decision_ids,'source_analysis_id':analysis.analysis_id,
                                  'requires_human_approval':True,'source_media_mutated':False}} if silence_decision_ids is not None else {}),
             "highlight_ids": [item.highlight_id for item in analysis.highlights],
-            "preview_profile": "proxy-540x960-no-audio-v1",
+            "preview_profile": "proxy-540-canonical-audio-v2",
             "approval_invalidates_on_change": True,
         },
     )

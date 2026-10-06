@@ -548,9 +548,12 @@
     "status": "PARTIAL",
     "source": [
       "services/windows_native/pipeline.py",
-      "apps/api/app/production_audio.py"
+      "apps/api/app/production_audio.py",
+      "apps/api/app/timeline_audio.py",
+      "apps/api/tests/test_timeline_audio_preview.py",
+      "scripts/north_star_preview_audio_evidence.py"
     ],
-    "behavior": "Real FFmpeg normalization/sidechain/fades/limiter paths.",
+    "behavior": "Real FFmpeg normalization/sidechain/fades/limiter paths. API FFmpeg preview v2 reads active canonical audio tracks and applies measured source bounds, tempo-preserving playback speed, placement, gain, fades, summed overlap and a latency-compensated limiter without auto-gain. Muted/disabled/zero-volume tracks are excluded. Worker asset fetch includes audio-only sources and verifies SHA256. Real AAC/tone timing, gain, fades, overlap, pitch and mute checks pass; Studio reports legacy silent or current audio capability explicitly.",
     "gap": "Crossfade and measured speech-vs-music QC with accidental/trailing silence gate.",
     "severity": "P0",
     "dependency": "audio QC",
@@ -568,9 +571,12 @@
       "services/windows_native/north_star_quality.py",
       "services/windows_native/tests/test_north_star_quality.py",
       "apps/studio-web/timeline-history.mjs",
-      "apps/studio-web/tests/timeline-history.test.mjs"
+      "apps/studio-web/tests/timeline-history.test.mjs",
+      "apps/api/app/timeline_audio.py",
+      "apps/api/tests/test_timeline_audio_preview.py",
+      "scripts/north_star_preview_audio_evidence.py"
     ],
-    "behavior": "Versioned canonical timelines within each implementation; optimistic revisions. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged. API timeline multi-step undo/redo now follows immutable content states across newly created restore versions and selects canonical transcript revisions.",
+    "behavior": "Versioned canonical timelines within each implementation; optimistic revisions. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged. API timeline multi-step undo/redo now follows immutable content states across newly created restore versions and selects canonical transcript revisions. API FFmpeg preview v2 reads active canonical audio tracks and applies measured source bounds, tempo-preserving playback speed, placement, gain, fades, summed overlap and a latency-compensated limiter without auto-gain. Muted/disabled/zero-volume tracks are excluded. Worker asset fetch includes audio-only sources and verifies SHA256. Real AAC/tone timing, gain, fades, overlap, pitch and mute checks pass; Studio reports legacy silent or current audio capability explicitly. Canonical still-image display duration/placement can be edited, split, restored and reloaded without fabricated source time. HTTP timeline create/edit/restore bind authenticated actor identity.",
     "gap": "Bridge advanced editor to same Native canonical timeline; avoid parallel edits/export divergence.",
     "severity": "P0",
     "dependency": "canonical adapter",
@@ -608,10 +614,13 @@
       "services/windows_native/shot_preview.py",
       "apps/api/app/timeline_service.py",
       "apps/api/tests/test_still_image_timing.py",
-      "scripts/north_star_still_timing_evidence.py"
+      "scripts/north_star_still_timing_evidence.py",
+      "apps/api/app/timeline_audio.py",
+      "apps/api/tests/test_timeline_audio_preview.py",
+      "scripts/north_star_preview_audio_evidence.py"
     ],
-    "behavior": "Version-bound proxy jobs and invalidation; Native preview path exists. Still-image duration and placement edit the same canonical timeline without invented source timestamps or speed. Immutable undo/redo and reload preserve exact 4.25-second image timing; authenticated identities replace client actor claims for timeline create/edit/restore and preview enqueue.",
-    "gap": "Audio-complete preview parity, cancel/progress/cache across both production paths.",
+    "behavior": "Version-bound proxy jobs and invalidation; Native preview path exists. Still-image duration and placement edit the same canonical timeline without invented source timestamps or speed. Immutable undo/redo and reload preserve exact 4.25-second image timing; authenticated identities replace client actor claims for timeline create/edit/restore and preview enqueue. API FFmpeg preview v2 reads active canonical audio tracks and applies measured source bounds, tempo-preserving playback speed, placement, gain, fades, summed overlap and a latency-compensated limiter without auto-gain. Muted/disabled/zero-volume tracks are excluded. Worker asset fetch includes audio-only sources and verifies SHA256. Real AAC/tone timing, gain, fades, overlap, pitch and mute checks pass; Studio reports legacy silent or current audio capability explicitly.",
+    "gap": "Final subtitle/reframe/audio-mixer preview parity and profile-aware cache across both production paths remain; historical visual-only previews are preserved, not replaced. Native bridge and genuine spoken-source E2E remain.",
     "severity": "P1",
     "dependency": "timeline/audio",
     "wave": "3/8",

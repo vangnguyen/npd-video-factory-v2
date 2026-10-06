@@ -1,0 +1,54 @@
+{
+  "fixture_asr": true,
+  "synthetic_tone_not_speech": true,
+  "real_provider_acceptance": false,
+  "viewports": [
+    {
+      "height": 1000,
+      "pageWidth": 1351,
+      "player": {
+        "duration": 16,
+        "error": null,
+        "height": 960,
+        "muted": false,
+        "readyState": 4,
+        "width": 540
+      },
+      "previewStatus": "Sẵn sàng · v1",
+      "summary": "Có âm thanh theo timeline · trim, tốc độ, âm lượng và fade đã áp dụng. Kiểm tra phụ đề và mix hoàn chỉnh ở review.",
+      "width": 1366
+    },
+    {
+      "height": 1080,
+      "pageWidth": 1905,
+      "player": {
+        "duration": 16,
+        "error": null,
+        "height": 960,
+        "muted": false,
+        "readyState": 4,
+        "width": 540
+      },
+      "previewStatus": "Sẵn sàng · v1",
+      "summary": "Có âm thanh theo timeline · trim, tốc độ, âm lượng và fade đã áp dụng. Kiểm tra phụ đề và mix hoàn chỉnh ở review.",
+      "width": 1920
+    },
+    {
+      "height": 1440,
+      "pageWidth": 2545,
+      "player": {
+        "duration": 16,
+        "error": null,
+        "height": 960,
+        "muted": false,
+        "readyState": 4,
+        "width": 540
+      },
+      "previewStatus": "Sẵn sàng · v1",
+      "summary": "Có âm thanh theo timeline · trim, tốc độ, âm lượng và fade đã áp dụng. Kiểm tra phụ đề và mix hoàn chỉnh ở review.",
+      "width": 2560
+    }
+  ],
+  "console_errors_warnings": [],
+  "retained_fixture": "C:/vf-ui-fixture-p2"
+}

@@ -532,6 +532,13 @@ function renderPreview() {
   $("#preview-button").textContent = busy ? `Đang tạo ${state.preview.progress}%` : needsProductionReview(state.timeline?.snapshot) ? 'Tạo A/V review cho khung hình' : state.preview?.status === "stale" ? "Tạo lại preview" : "Tạo preview 540p";
   $("#cancel-preview-button").disabled = !busy;
   $("#preview-title").textContent = currentVersion ? `Timeline v${currentVersion}` : "Timeline hiện tại";
+  $('#preview-audio-summary').textContent = state.preview?.manifest?.playable === false
+    ? 'Bản kiểm thử không phát được; chưa có âm thanh để kiểm tra.'
+    : state.preview?.manifest?.audio_included === true
+      ? 'Có âm thanh theo timeline · trim, tốc độ, âm lượng và fade đã áp dụng. Kiểm tra phụ đề và mix hoàn chỉnh ở review.'
+      : state.preview?.manifest?.audio_included === false
+        ? 'Preview này không có âm thanh. Bản cũ hoặc timeline không có track âm thanh hoạt động.'
+        : 'Âm thanh theo timeline sẽ được ghi rõ sau khi tạo preview.';
 }
 
 function renderProduction() {

@@ -327,3 +327,27 @@ EVIDENCE: `still-image-timing-browser-evidence.json`, three viewport screenshots
 REGRESSIONS: focused previous content/timeline/B-roll/approval contracts pass. Original live source, data/configuration and accepted artifacts are untouched; previous Native/renderer/full-Linux results remain separately identified. No main merge, production deployment or external publication.
 
 EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Phase 10 Owner UAT remain separate limitations. OWNER ACTION REQUIRED: none for continued safe implementation. NEXT WAVE: remaining Mode B/Native integration, structured media intelligence and subsequent safe waves.
+
+## Wave 3/6 — canonical source-audio preview
+
+WAVE: 3/6
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. Source-audio preview is implemented in API Studio; Native and complete final acceptance remain.
+
+HEAD SHA: parent `cb924d5484a0c5799e59f6fa472df47f11a2bb7d`; this audio-preview capability commit records the increment. Parent is pushed and preserved in verified `north-star-cb924d5.bundle`.
+
+CAPABILITIES COMPLETED: preview v2 derives audio only from active canonical audio tracks. It applies source trim, sample-based placement, pitch-preserving tempo, clip gain, fade-in/out and overlapping sums with a latency-compensated -1dB limiter and no auto-gain. Muted/disabled/zero-volume clips require no fetch. Audio-only assets participate in worker downloads and every source checksum is verified. Actual FFprobe requires an audio stream and measured bounds. Missing/out-of-bounds sources fail. Tempo, clips, duration and Windows command size are bounded. Filter graphs use a file; only CLI parser rejection permits the older file-option fallback, never encode failure. Cancellation/timeout reap FFmpeg and remove partial output; stderr is drained while running. FFprobe cancellation also reaps its child. Studio reports current audio, historical silent and nonplayable fixture previews separately, with readable 14px status text.
+
+CAPABILITIES PARTIAL: final subtitle/reframe/mixer parity, speech normalization/music ducking, renderer-profile cache identity, Native integration and genuine spoken-source/final E2E. Historical cached visual-only previews are retained; no ready/accepted artifact is replaced. Source-tone tests do not establish real speech recognition or Owner UAT.
+
+TESTS: **51/51 focused API PASS**, 38.89s (`timeline-audio-preview-final.log`), including previous timeline/image/analysis/production/QC contracts. One subsequent cancellation contract passes **1/1**, 2.22s (`timeline-audio-cancel-contract.log`). The standalone parser-fallback contract previously passed 1/1 and is included in the broad 51. Studio **94/94 PASS**, 460.64ms (`timeline-audio-studio-r1.log`) plus final syntax check. Real tests verify source-window trim, placement gaps, decoded RMS gain, retained 880Hz pitch at 2x duration, mute/no-audio output, fades, overlap/peak limiting, out-of-range refusal and initial cancellation. Contract tests verify audio-only fetching/checksum failures, tempo limits, parser-only fallback and running-child cancellation. Initial test attempts found missing fixture source identity, a wrong fixed preview-size request and FFmpeg 9 removal of the legacy filter-file flag; each is retained and corrected. Full clean Linux checkpoint **`94a7e3d` passed 1,943 tests / 7 skips**, 580.12s (`api-linux-94a7e3d.log`); that checkpoint precedes later semantic/image/audio changes and is not attributed to them.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual WAV/PNG/MP4/AAC encodes and decoded PCM; Studio HTTP/SQLite queue-to-download-to-browser decoding. MOCK TESTS: explicit fixture ASR and synthetic tone footage; zero paid/external calls.
+
+EVIDENCE: `timeline-audio-render-evidence.json` verifies 16.0s stereo AAC/48kHz, canonical source checksum/timing, preserved primary/caption/audio tracks and actual proxy hash `fd3edf3e9667be0c84de2a2927440fe8e4983e31fcb8402d25b1ac804b533d4e`. Decoded expected quiet windows have RMS 0; source-tone window RMS is 0.06246. Full exports remain in recovery `timeline-audio-render-r2`, with earlier rejected flag run retained in r1. `scripts/north_star_preview_audio_evidence.py` only measures the labeled isolated fixture. Browser fixture p1 lacked download dependencies and did not load media; it is retained with its screenshot outside Git. Corrected p2 decoded 540x960/16s with readyState=4 and no media error at all three widths. Final p3 verifies readable status text. Fixture ASR is not real-provider acceptance; the preview has no captions and is not final-render parity.
+
+REGRESSIONS: focused existing production/approval/QC/analysis/timeline contracts pass; original live source remains clean at its original HEAD. Source media, accepted artifacts, live data/configuration are untouched. No main merge, live migration/restart, production deployment or external publication.
+
+EXTERNAL BLOCKERS: genuine provider acceptance, Docker and Phase 10 Owner UAT remain separate. OWNER ACTION REQUIRED: none for continued safe implementation. NEXT WAVE: Native canonical workflow integration and remaining structured media/provider/audio/downstream waves.
+
+Implementation references: [FFmpeg filter documentation](https://ffmpeg.org/ffmpeg-filters.html) for sample-based delay, tempo, mixing and limiter latency/level controls; [FFmpeg option documentation](https://ffmpeg.org/ffmpeg.html) for loading filter arguments from files. This local implementation does not certify other deployment runtimes.

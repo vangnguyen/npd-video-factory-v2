@@ -1,0 +1,39 @@
+{
+  "fixture_asr": true,
+  "synthetic_tone_not_speech": true,
+  "real_provider_acceptance": false,
+  "viewports": [
+    {
+      "display": "block",
+      "duration": 16,
+      "fontSize": "14px",
+      "height": 1000,
+      "mediaError": null,
+      "pageWidth": 1351,
+      "playerReady": 4,
+      "width": 1366
+    },
+    {
+      "display": "block",
+      "duration": 16,
+      "fontSize": "14px",
+      "height": 1080,
+      "mediaError": null,
+      "pageWidth": 1905,
+      "playerReady": 4,
+      "width": 1920
+    },
+    {
+      "display": "block",
+      "duration": 16,
+      "fontSize": "14px",
+      "height": 1440,
+      "mediaError": null,
+      "pageWidth": 2545,
+      "playerReady": 4,
+      "width": 2560
+    }
+  ],
+  "console_errors_warnings": [],
+  "retained_fixture": "C:/vf-ui-fixture-p3"
+}

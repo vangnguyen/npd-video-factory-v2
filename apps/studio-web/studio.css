@@ -89,6 +89,7 @@
 .zoom-control { margin-left: auto; display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 9px; font-weight: 800; }
 .zoom-control input { width: 100px; accent-color: var(--cyan); }
 .timeline-note { color: #758292; font-size: 8px; }
+.preview-audio-summary { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 10px 0 0; }
 .timeline-scroll { overflow: auto; max-width: 100%; background: #101b27; scrollbar-color: #4e6170 #162534; }
 .timeline-canvas { position: relative; min-width: 100%; width: max-content; min-height: 275px; color: white; }
 .timeline-ruler { position: sticky; top: 0; z-index: 6; height: 28px; margin-left: 145px; border-bottom: 1px solid #344250; background: #162534; cursor: crosshair; }
