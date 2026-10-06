@@ -1,36 +1,36 @@
-# Phase 9K — Five actual Native videos, final human review pending
+# Phase 9K — Current real production checkpoint
 
-PHASE: 9K — Content Intelligence practical acceptance, Owner-approved media → actual Native production.
+PHASE: 9K — actual Owner audio feedback and five Native revisions
 
-STATUS: TECHNICAL_PRODUCTION_PASS; PHASE9K_FINAL_HUMAN_WATCH_LISTEN_REVIEW_REQUIRED. Phase 9K final acceptance has not passed.
+STATUS: REPAIRED_VIDEOS_AWAIT_OWNER_LISTENING; new audio/final acceptance 0/5. Phase 9K has not passed.
 
-HEAD SHA: `a44bb0dd234e4c620dd394d18e7a9112be62f988`, production/evidence checkpoint; tested application `9ce137afa8ac62fdb8ce5b35fbba997013adfef3`. Following report-only commit appears in Git history. Frozen Internal Production Release `f61d8de6545653ea46f8ab5f91e6c0c0c167b7af` / annotated `internal-production-v1` remains unchanged.
+HEAD SHA: 235e90664dbddd6a820ad751e32e09d7b8ca84a8, actual MP4/WAV/evidence. Tested TTS child application ce21b4ae8f62c65955209abfc87c5beb395b2169; parent Studio 9ce137afa8ac62fdb8ce5b35fbba997013adfef3 retains unchanged render code. Following report-only commit is recorded in Git history. Release f61d8de6545653ea46f8ab5f91e6c0c0c167b7af / annotated internal-production-v1 remains unchanged.
 
-FILES CHANGED: optional Native approval review_reference and two tests in the application commit; production/verification helpers; genuine Owner media receipt and immutable approved snapshots; per-case storyboard/asset-lineage/current acceptance; five actual MP4s, ffprobe/QC/voice/subtitle/timeline/native manifests; 25 actual frame samples/contact sheets; integrity/HTTP/persistence/visual verification and reports. No Phase 8 evidence changed.
+FILES CHANGED: opt-in speech context policy/revision setter and five tests; local signal/trial/repair/codec verification helpers; actual feedback/negative review/backup/repair approval receipts; five new MP4/WAV/snapshots/QC/timelines/manifests, 25 actual frame samples, Studio screenshot and current reports. Original media/storyboard and original audio/video/evidence preserved.
 
-TESTS: Native 134/134 PASS; Studio 32/32 PASS (Studio unchanged since that run). Actual five MP4s: 11/11 native technical checks each, artifact/source/lineage 5/5 PASS, exact live preview bytes/range-seek/final-approval guards 5/5 PASS. Independent fresh-process reopen of both databases, exact project/approval/job states and output/source hashes 5/5 PASS; table DDL/count/hash snapshots identical. Post-render main-service restart was rejected before execution with “blocked by policy”; this is NOT_PERFORMED_POLICY_BLOCKED, not a fabricated restart PASS. Prior actual restart evidence remains intact.
+TESTS: Native 139/139 PASS. Studio source unchanged, relevant suite 32/32 PASS. Five actual new MP4s: 11/11 QC each, 5/5 source/lineage/hash/approval/transport/range/final guard checks. Decoded AAC waveform correlation >0.99999 at the existing 1.1s offset; no hard clipping or join sample jumps. These do not certify subjective roughness. Fresh-process reopen PASS with identical tables and five current project/job/approval/artifact states; no actual post-render main-service restart PASS is claimed.
 
-EVIDENCE: [Owner media approval](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/owner-media-authorization.json), [approved snapshots](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/production-approval-manifest.json), [actual verification](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/actual-production-verification.json), [fresh-process state](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/real-video-fresh-process-reopen.json), [live preview guards](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/actual-video-preview-http-verification.json), [visual scope](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/actual-video-visual-review.json), [policy limitation](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/service-restart-policy-limitation.json), [final MP4 review bundle](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/final-video-review-bundle.md) and manifest, five case folders.
+EVIDENCE: [Detailed audio-repair checkpoint](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-01/checkpoint.md), [exact revised MP4/WAV review bundle](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-01/review-bundle.md), [Owner feedback/backup receipts](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-01/owner-feedback.json), [new review manifest](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-01/review-manifest.json), actual-verification/audio-and-preview-checks/fresh-process-persistence/visual-review and five output folders.
 
-NEW CAPABILITIES: research → idea → approved brief → approved script v2 → approved original graphics → existing Native TTS/editor/FFmpeg → actual MP4. All five Native projects revision 9. Genuine chat-based media approvals persist with honest provenance. Existing serial Runner generated 43 fresh local Thùy Dung inference calls (8/8/10/7/10), network blocked, speed preset 1, 0 retries, 0 paid-provider calls this production step. No fixture or old voice/video contributes to acceptance. Twenty-five original PNGs retained; normalized Native JPEG derivatives have separate hashes. No second pipeline or external publishing.
+NEW CAPABILITIES: scene-context-v1 uses unchanged narration grouped by scene, deterministic seed 604, original Thùy Dung/model/profile/sampling parameters/speed and explicit policy ID/version/hash. Original sentence policy remains default. Selection adds a revision and clears approval without dispatch. Actual Owner negative feedback binds original five MP4 hashes; native rejection moves v9 → v10, policy selection → v11. Reused words/media approval cites original and repair receipts but expressly excludes new audio/final acceptance. Existing serial Runner creates 27 fresh local calls (5/5/5/5/7), network blocked, zero retries, then the same Native editor/FFmpeg path renders five new previews. No new credential/provider, arbitrary pitch correction, filtering or second pipeline.
 
-REGRESSIONS: none observed in accepted Windows Native scope. All 10 Phase 8 video/evidence hashes and release tag/dependencies unchanged. Pre-task Owner projects/jobs/events/version/final-review rows preserved. Pre-media histories retained, only five authorized project rows updated. All prior intelligence records/versions/decisions/operations unchanged; earlier Owner IHG project and original run/history preserved.
+REGRESSIONS: no verified change to accepted Phase 8 scope. Ten accepted videos/evidence/tag/dependencies preserved. All previous job/event/version/review rows and twelve other projects unchanged; 264 intelligence records, 389 versions, 62 decisions, 35 operations, older Owner IHG history and 292 frozen Phase 9K files stay intact. Original raw voices/MP4s unchanged. Owner-reported original Phase 9K audio quality is rejected, repaired versions await listening.
 
-BLOCKERS: five actual human watch/listen decisions for exact MP4/snapshot hashes are missing. Cases 02/04/06 are shorter than targets; Owner must accept measured duration or request a revision. No new credential/provider/paid-service/migration/major-architecture blocker. Main-service restart after render is a disclosed verification limitation; actual fresh-process persistence PASS is separate.
+BLOCKERS: five genuine new audio/final watch/listen decisions; perceived roughness and timbre stability remain unconfirmed. 02/04/06 are shorter than targets and need acceptance or further revision. Main-service restart remains an explicit verification limitation after its earlier “blocked by policy” rejection, separate from actual fresh-process persistence. No credential/provider/data-loss/migration/major-architecture blocker.
 
-NEXT ACTION: present five completed MP4s to Owner. Record genuine final decisions, then verify final-download and queue transition to PRODUCED and update readiness report. Never infer watch/listen acceptance from earlier brief/script/media approval.
+NEXT ACTION: Owner hears/watches exact new videos and accepts quality/final result/durations or identifies remaining issues. Store only genuine decisions, then verify final download/PRODUCED queue/readiness. No publishing.
 
-| Case | Actual seconds | Target | Native QC | Artifact/lineage/persistence | Human final |
+| Case | Revised seconds | Target | Native QC | Integrity/provenance/persistence | New human audio/final |
 |---|---:|---|---|---|---|
-| 01 | 34.17 | 30–45s, within | 11/11 PASS | PASS | PENDING |
-| 02 | 40.47 | 45–60s, below | 11/11 PASS | PASS | PENDING |
-| 04 | 36.04 | 45s, below | 11/11 PASS | PASS | PENDING |
-| 06 | 36.74 | 45s, below | 11/11 PASS | PASS | PENDING |
-| 08 | 47.23 | 45–60s, within | 11/11 PASS | PASS | PENDING |
+| 01 | 34.43 | 30–45s, within | 11/11 PASS | PASS | PENDING |
+| 02 | 39.97 | 45–60s, below | 11/11 PASS | PASS | PENDING |
+| 04 | 34.30 | 45s, below | 11/11 PASS | PASS | PENDING |
+| 06 | 35.38 | 45s, below | 11/11 PASS | PASS | PENDING |
+| 08 | 46.97 | 45–60s, within | 11/11 PASS | PASS | PENDING |
 
-Duration variance is not hidden by technical QC. Narration and speed preset remain approved versions. Subtitles use measured unit durations with estimated phrase timing, not word alignment. Codex inspected sampled frames; pronunciation/naturalness and complete moving-video watch/listen remain Owner decisions.
+Signal F0 ranges use different unit boundaries and can have octave errors; case 08's range increases, so no claim of improved all-five perceived quality. Scene grouping reduces independent short contexts but the SDK still splits long text. Subtitles use measured scene audio with estimated phrase splits, without word alignment; short cues/cadence/pronunciation require review. Codex inspected sampled frames and Studio playback, not full auditory acceptance.
 
-![Actual Native Studio preview and unconfirmed final review](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/actual-videos-native-studio.png)
+![Actual repaired Native Studio preview and unchecked final review](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/audio-repair-01/native-studio.png)
 
 INTERNAL_PRODUCTION_READY = YES
 
