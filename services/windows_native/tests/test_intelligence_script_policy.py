@@ -18,4 +18,6 @@ class IntelligenceScriptPolicyTests(unittest.TestCase):
         self.assertIn('Không mở đầu bằng lời cảnh báo nguồn máy móc', instructions)
         self.assertIn('Tách ngày công bố, kỳ báo cáo', instructions)
         self.assertIn('không giả định đã có asset hoặc quyền sử dụng', instructions)
+        self.assertIn('Lời đọc chỉ dành cho người xem', instructions)
+        self.assertIn('không chèn Owner, quy trình duyệt, TTS, preset hoặc chi tiết runtime', instructions)
         self.assertIn('Không tự duyệt, không tự xuất bản', instructions)

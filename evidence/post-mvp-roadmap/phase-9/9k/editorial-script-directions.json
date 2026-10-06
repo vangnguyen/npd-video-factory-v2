@@ -1,0 +1,63 @@
+{
+  "origin": "Codex editorial revision of five actual provider-generated native proposals",
+  "human_script_approval": false,
+  "new_provider_calls": 0,
+  "duration_status": "Owner target only; TTS not run and duration not measured",
+  "cases": [
+    {
+      "number": 1,
+      "reason": "Shorten repetitive defensive framing, distinguish agreement from operations, improve CTA and identify the agreement party as the project developer.",
+      "scenes": [
+        ["IHG hợp tác với Vinhomes Green Paradise — điều này thực sự có nghĩa gì với dự án?", "IHG × Green Paradise", "Tiêu đề chữ; chưa chọn media hoặc logo."],
+        ["Ngày 23 tháng 4 năm 2026, chủ đầu tư dự án và IHG ký thỏa thuận hợp tác, theo Vinhomes Market.", "23/04/2026 · Thỏa thuận hợp tác", "Đồ họa mốc thỏa thuận; không dùng ngày này làm ngày đăng bài."],
+        ["Kế hoạch nêu bốn thương hiệu: InterContinental, Crowne Plaza, Holiday Inn Express và Garner. Điểm đáng chú ý là định hướng lưu trú ở nhiều phân khúc, theo kỳ vọng của đại diện IHG.", "Bốn thương hiệu trong kế hoạch hợp tác", "Hiện bốn tên bằng chữ và nhãn kỳ vọng; logo cần duyệt riêng."],
+        ["Đây là bước hợp tác phát triển, chưa phải thông tin khách sạn đã khai trương. Để hiểu ý nghĩa với dự án, cần theo dõi kế hoạch được triển khai ra sao.", "Hợp tác phát triển · Theo dõi triển khai", "Dòng thời gian khái niệm, không mô phỏng hiện trạng công trình."],
+        ["Bạn muốn tìm hiểu thương hiệu nào trong bốn cái tên này? Để lại câu hỏi.", "Bạn quan tâm thương hiệu nào?", "CTA chữ, không có cam kết du lịch hoặc lợi nhuận."]
+      ]
+    },
+    {
+      "number": 2,
+      "reason": "Remove internal Owner/TTS narration, explain only source-supported organization names and retain launch versus award distinction. No new certification, ISO level or current-status claim.",
+      "scenes": [
+        ["Vinhomes Green Paradise đang đi tới tiêu chuẩn đô thị thông minh quốc tế như thế nào?", "Green Paradise hướng tới chuẩn đô thị thông minh", "Tiêu đề chữ; chưa duyệt asset."],
+        ["Theo Vinhomes Market, ngày 3 tháng 3 năm 2026, dự án khởi động chương trình chứng nhận, với KMAC, WCCD và SUM.", "03/03/2026 · Khởi động chương trình chứng nhận", "Đồ họa mốc sự kiện; không gán ngày đăng hoặc kết quả chứng nhận."],
+        ["KMAC được giới thiệu là công ty tư vấn; WCCD là Hội đồng Thế giới về Dữ liệu Đô thị; SUM là Chỉ số Đô thị Tiêu chuẩn hóa. Bài viết nêu mục tiêu hướng tới chứng chỉ xanh quốc tế.", "KMAC · WCCD · SUM", "Tên các tổ chức và mục tiêu theo bài nguồn; không dùng logo hoặc huy hiệu chứng nhận."],
+        ["Điều đáng theo dõi là mục tiêu ấy được triển khai ra sao và kết quả đánh giá nào sẽ được công bố. Mốc khởi động cho biết một quá trình đã bắt đầu, chưa phải xác nhận dự án đã được cấp chứng nhận.", "Khởi động quá trình ≠ đã được cấp chứng nhận", "Hai mốc khái niệm: khởi động và kết quả công bố; không thêm tiến độ mới."],
+        ["Bạn quan tâm điều gì ở một đô thị thông minh: giao thông, năng lượng hay môi trường? Để lại câu hỏi để mình cùng tìm hiểu.", "Bạn quan tâm tiêu chí nào?", "CTA hỏi về mối quan tâm của người xem, không khẳng định tiện ích đã vận hành."]
+      ]
+    },
+    {
+      "number": 4,
+      "reason": "Turn a long fact-check narrative into three actionable buyer questions. Remove unnecessary event attendance figures and an unavailable-checklist promise; preserve marketing/fact/legal-status distinctions.",
+      "scenes": [
+        ["3 điều nên kiểm tra trước khi đánh giá một dự án mới như Vinhomes Saigon Park.", "3 điều cần xem khi đánh giá dự án mới", "Tiêu đề chữ; không mặc định có người dẫn hoặc media dự án."],
+        ["Thứ nhất, bài đang nói về sự kiện hay tiến độ? Ví dụ, bài Kick-Off trên Vinhomes Market giới thiệu một sự kiện kinh doanh. Sự sôi động của lễ giới thiệu chưa trả lời được dự án đã triển khai đến đâu.", "1 · Sự kiện hay tiến độ?", "Hai nhóm thông tin minh họa bằng chữ; không dùng ảnh sự kiện khi chưa có quyền."],
+        ["Thứ hai, tách lời tiếp thị khỏi dữ kiện. Những câu về cơ hội đầu tư cần được xem là lời giới thiệu, không phải lời hứa giá sẽ tăng.", "2 · Tách lời giới thiệu khỏi dữ kiện", "Đồ họa hai nhóm nội dung; không dùng biểu đồ tăng giá."],
+        ["Thứ ba, hỏi đúng tài liệu: giá tại thời điểm nào, tiến độ được ghi nhận khi nào, và hồ sơ pháp lý nào có thể đối chiếu? Đây là câu hỏi để tìm hiểu thêm, chưa phải kết luận về Saigon Park.", "3 · Tài liệu nào, ghi nhận khi nào?", "Ba câu hỏi về tài liệu, không mô phỏng giấy pháp lý hay kết luận về dự án."],
+        ["Bạn muốn làm rõ nhóm tài liệu nào trước? Để lại câu hỏi.", "Bạn muốn làm rõ nhóm tài liệu nào?", "CTA chữ; không hứa cung cấp checklist chưa tồn tại."]
+      ]
+    },
+    {
+      "number": 6,
+      "reason": "Keep the approved hook, make Vang Nguyễn's consultant voice visible without invented credentials, focus on the three dates and remove tangential historical economic claims.",
+      "scenes": [
+        ["Một bản tin có thể đúng với thời điểm được đăng, nhưng chưa chắc phản ánh hiện tại.", "Bản tin nói về thời điểm nào?", "Tiêu đề chữ; không tự tạo chân dung hoặc giọng giả người thật."],
+        ["Vang Nguyễn gợi ý một cách đọc tin bất động sản: đặt ba mốc cạnh nhau — ngày đăng, kỳ dữ liệu và ngày bạn đang xem.", "Ngày đăng · Kỳ dữ liệu · Ngày xem", "Dòng thời gian ba mốc; chỉ dùng tên thương hiệu đã có trong brief."],
+        ["Chẳng hạn, bài của Báo Điện tử Chính phủ đăng ngày 24 tháng 4 năm 2026, còn nhận định về thị trường trong bài đề cập quý I năm 2026.", "24/04/2026 · Dữ liệu quý I/2026", "Đồ họa ngày bài đăng và kỳ báo cáo, trích dẫn ngắn chờ duyệt."],
+        ["Đặt vào ngày 6 tháng 10 năm 2026, dữ liệu quý I là một lát cắt quá khứ; nó chưa đủ để mô tả thị trường tháng 10.", "06/10/2026 · Cần bối cảnh hiện tại", "Đồ họa so sánh các mốc thời gian; không suy diễn tình hình tháng 10."],
+        ["Trước khi áp dụng một nhận định, hãy hỏi: bài đăng lúc nào, nói về giai đoạn nào, và có thông tin mới hơn chưa? Bạn đang vướng ở bản tin nào? Gửi câu hỏi cho Vang Nguyễn.", "Gửi câu hỏi cho Vang Nguyễn", "CTA chữ, không ghi thành tích, giao dịch hoặc chứng chỉ cá nhân."]
+      ]
+    },
+    {
+      "number": 8,
+      "reason": "Use a shorter human hook, attribute the actual stored historical data, preserve the unusual approximate transaction count and percentage denominators, and simplify the CTA.",
+      "scenes": [
+        ["Nguồn cung tăng, nhưng giao dịch lại giảm: đọc thị trường thế nào cho đúng? Cùng nhìn lại quý II năm 2026.", "Nhìn lại thị trường quý II/2026", "Tiêu đề nhấn mạnh kỳ báo cáo lịch sử; không dùng nhãn thị trường hôm nay."],
+        ["Theo bài trên Báo Điện tử Chính phủ đăng ngày 21 tháng 8 năm 2026, nguồn cung tiếp tục tăng, giao dịch giảm và tồn kho có xu hướng tăng nhẹ.", "Nguồn cung ↑ · Giao dịch ↓ · Tồn kho ↑ nhẹ", "Ba chỉ số theo bài nguồn; không biểu diễn như dữ liệu cập nhật trực tiếp."],
+        ["Số liệu địa phương được bài dẫn ghi nhận khoảng trên 100.005 giao dịch thành công: bằng 71,5% quý I năm 2026 và 63,7% cùng kỳ năm 2025.", "Khoảng trên 100.005 · 71,5% quý I · 63,7% cùng kỳ 2025", "Số liệu, kỳ so sánh và tên nguồn bằng chữ; giữ đúng cách nguồn diễn đạt."],
+        ["Hãy chú ý chữ “bằng”: đây là tỷ lệ so với hai kỳ trước, không phải giảm 71,5% hay 63,7%. Đọc cùng nguồn cung và tồn kho giúp thấy bức tranh đầy đủ hơn, thay vì suy ra giá của một dự án từ riêng lượng giao dịch.", "Tỷ lệ so sánh ≠ phần trăm giảm", "Đồ họa giải thích mẫu số; không thêm dữ liệu giá hoặc biến động mới."],
+        ["Đây là dữ liệu lịch sử quý II, chưa mô tả thị trường hôm nay. Bạn muốn đối chiếu thêm địa bàn hoặc chỉ số nào? Để lại câu hỏi.", "Bạn muốn đối chiếu địa bàn hay chỉ số nào?", "CTA câu hỏi; không đưa khuyến nghị mua bán hoặc hứa lợi nhuận."]
+      ]
+    }
+  ]
+}
