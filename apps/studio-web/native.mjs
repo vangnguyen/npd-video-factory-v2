@@ -154,7 +154,7 @@ if (typeof document !== "undefined") {
     if(dirtyPart==="shot"){
       document.querySelectorAll('#brief-card input,#brief-card textarea,#brief-card select,#brief-card button,#proposal-card input,#proposal-card textarea,#proposal-card select,#proposal-card button,#image-card input,#image-card select,#image-card button').forEach(el=>el.disabled=true);
     }
-    if(isSourceProject(project))for(const id of ['generate','apply-brand','brand-select','template-select','music-enabled','duplicate-project','save-prompt','input-kind','prompt','upload-documents'])$(id).disabled=true;
+    if(isSourceProject(project))for(const id of ['generate','apply-brand','brand-select','template-select','music-enabled','save-prompt','input-kind','prompt','upload-documents'])$(id).disabled=true;
     $("save-note").textContent=dirty?"Có chỉnh sửa chưa lưu. Lưu trước khi tạo nội dung hoặc duyệt.":project?.approval?`Đã duyệt bởi ${project.approval.reviewer}.`:project?"Mọi thay đổi được lưu sẽ cần duyệt lại.":"Lưu yêu cầu trước khi tạo đề xuất.";
     shotStudio?.controls();
     nativeAnalysis?.controls();

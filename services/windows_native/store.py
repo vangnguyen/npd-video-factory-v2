@@ -253,18 +253,24 @@ class Store:
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
             from .auto_edit_timeline import is_auto_edit
-            if is_auto_edit(doc):raise WorkflowError('AUTO_EDIT_DUPLICATION_REQUIRES_SOURCE_REBINDING', 400)
             stamp=now(); copy_id=uuid.uuid4().hex
-            doc["duplication"]={"project_id":identifier,"revision":revision,"document_sha256":digest(doc),"created_at":stamp}
-            doc["name"]=doc["name"][:139]+" — bản sao"
-            # Evidence remains immutable in its source project; new project IDs
-            # need their own analysis binding. Saved raw ASR/media can be reused.
-            doc.pop("auto_edit_analyses", None)
-            doc.pop("auto_edit_transcripts", None)
+            source=is_auto_edit(doc)
+            if source:
+                from types import SimpleNamespace
+                from .source_preview import resolve_assets
+                from .source_duplicate import rebind
+                resolve_assets(SimpleNamespace(data_root=self.root),project)
+                doc=rebind(doc,identifier,copy_id,revision,stamp)
+            else:
+                doc["duplication"]={"project_id":identifier,"revision":revision,"document_sha256":digest(doc),"created_at":stamp}
+                doc["name"]=doc["name"][:139]+" — bản sao"
+                # Source evidence belongs to its project; raw ASR is reusable.
+                doc.pop("auto_edit_analyses", None)
+                doc.pop("auto_edit_transcripts", None)
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",(copy_id,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
             self.version(con,copy_id)
             self.event(con,copy_id,"project_duplicated_unapproved",{"source_project":identifier,"source_revision":revision})
-        return self.get(copy_id)
+        return self.shot_view(copy_id) if source else self.get(copy_id)
 
     def archive(self, identifier, revision, archived):
         if type(archived) is not bool:

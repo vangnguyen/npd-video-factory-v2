@@ -549,3 +549,25 @@ EVIDENCE: `docs/north-star/native-source-broll-evidence.json` indexes 22 exports
 REGRESSIONS: original live source is confirmed clean; live database/configuration/services and accepted artifacts remain untouched. No protected-main merge, deployment, external publication, new paid/provider/TTS call, destructive migration or runtime installation.
 
 EXTERNAL BLOCKERS: provider acceptance, Docker, blocked Native browser navigation and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: Source-project evidence rebinding, duplication and reviewable Auto Shorts drafts, then remaining media/provider/platform/distribution/analytics/learning/Hub/hardening work.
+
+## Wave 3 — Source project duplication with rebound evidence
+
+WAVE: 3
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. Source duplication is implemented and locally rendered; Auto Shorts and full UI/provider acceptance remain.
+
+HEAD SHA: parent `c9ad5d75db214571fa2ebb9a23d98643b59913e9`; this source-rebinding commit records the increment. Parent is pushed and preserved in verified `north-star-source-broll.bundle`, SHA256 `c15175aef638e44a24ca37802d485855b0565d1d77509037a184436c6d586244`.
+
+CAPABILITIES COMPLETED: Native validates active file hashes and saved analysis/plan records before copying. An independent project receives new analysis/transcript/segment/word/scene/decision/highlight/plan/item/evidence identities and project-scoped fingerprints. Exact media/source timing, audio, crop, subtitles, locks and supporting-media decisions are retained; canonical history starts at version 1. Explicit lineage saves original document/record/transcript/plan hashes and attributes evidence reuse rather than a fresh provider measurement. Historical stale observations stay stale. Original raw ASR/media/history remain intact; the child has no approval, jobs, preview or final-review decision. Independent trims and plan replacement work. The existing Studio duplicate action is enabled for Source projects, still under revision/session/CSRF guards. No provider dispatch, database migration or media copy/overwrite.
+
+CAPABILITIES PARTIAL: multiple-draft Auto Shorts, durable linked master/platform variants, structured Vision/automatic tracking, full caption/reframe proxy parity and genuine VI/EN speech/current Native browser/Owner acceptance remain. Rebound saved ASR does not certify new speech recognition or create provider evidence.
+
+TESTS: full Native **312/312 PASS**, 171.280s (`source-duplicate-native-full.log`). Focused source duplication/HTTP/legacy workflow **41/41 PASS**, 22.753s (`source-duplicate-native-r2.log`); frontend **107/107 PASS**, 512.1096ms (`source-duplicate-studio-r1.log`), plus syntax check. New checks cover edited transcript/word-policy binding, independent edits, exact parent/history/source preservation, applied plan rebinding/replacement, stale evidence retention, corrupt active media/record rejection without partial child creation and authenticated duplicate writes. API production code is unchanged in this increment.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: separate actual synthetic Source/B-roll/music/DSP/karaoke duplicate proxy/private worker/full QC. MOCK TESTS: saved ASR and automated pre-render reviewer remain explicit fixtures; final review is unapproved.
+
+EVIDENCE: `docs/north-star/native-source-duplicate-evidence.json` indexes 23 exports in recovery `native-source-duplicate-n8`, including the unchanged parent project. Parent `a18c99e290364177917899874a73cf41`, child `580d0d7023ae47b28082a916756ffcce`, render `97589f2a3d634a5aa71ee2cc81534728`. Rebound canonical SHA256 `a92de2bcdb57bbd839ed5c9e820d848e69660a5cb0264abbbc2662e04fb8382e`; actual final SHA256 `2df413b65b94ec9095ffbba0e27a9a1492bf027e477de96aa9de53939ae45133` is identical to the preceding independent supporting-media fixture. Identity-bound timeline/manifest/project receipts differ. Real canvas is 1080×1350/30fps/H.264/AAC/48kHz with 2.4s timeline and 2.453s container. Intentional still intervals explain static-image QC; source, parent and child documents remain unchanged by rendering, and final download stays blocked pending human review. Artifact A/UI/Owner/provider/deployment acceptance remain false.
+
+REGRESSIONS: original live source is confirmed clean; live database/configuration/services and all accepted artifacts remain untouched. No protected-main merge, deployment, external publication, new paid/provider/TTS call, destructive migration or runtime installation.
+
+EXTERNAL BLOCKERS: genuine provider acceptance, Docker, blocked Native browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: reuse the existing complete-speech highlight draft engine for independent, reviewable Native Auto Shorts; remaining North Star waves continue.

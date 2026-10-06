@@ -1,0 +1,107 @@
+"""Rebind saved Source evidence into an independent unapproved local project.
+
+Media bytes are reused by checksum; evidence is explicitly derived, never
+represented as a fresh provider measurement. Original history remains intact.
+"""
+import copy
+from .contracts import WorkflowError,digest
+from .media import project_assets
+from .auto_edit_analysis import fingerprint,validate_record
+from .auto_edit_timeline import validate_document
+from app.auto_edit_models import TranscriptRead
+from app.media_intelligence_models import MediaPlanRead
+
+ALGORITHM='native-source-identity-rebind-v1'
+
+
+def rebind(document,source_id,target_id,revision,created_at):
+    state=validate_document(document)
+    if state['snapshot']['metadata']['native_project_id']!=source_id:
+        raise WorkflowError('AUTO_EDIT_TIMELINE_PROJECT_MISMATCH')
+    assets={item['id']:item for item in project_assets(document)}
+    mapping={source_id:target_id,'prj_'+source_id:'prj_'+target_id}
+    origin={'algorithm':ALGORITHM,'source_project_id':source_id,'source_revision':revision,
+        'source_document_sha256':digest(document),'created_at':created_at,
+        'provider_calls':0,'source_media_mutated':False,'fresh_provider_measurement':False}
+    def register(identifier):
+        if identifier and identifier not in mapping:
+            prefix=identifier.split('_',1)[0]
+            mapping[identifier]=prefix+'_'+digest([ALGORITHM,target_id,identifier])[:24]
+    records=document.get('auto_edit_analyses',[])
+    analysis_keys={}
+    for record in records:
+        asset=assets.get(record['native_asset_id'])
+        if asset is None:raise WorkflowError('AUTO_EDIT_ANALYSIS_SOURCE_MISMATCH')
+        value=validate_record(record,source_id,document,asset,require_current=False)
+        current=value.fingerprint==fingerprint(source_id,document,asset)
+        key=fingerprint(target_id,document,asset) if current else digest([ALGORITHM,target_id,value.fingerprint])
+        mapping[value.analysis_id]='ana_'+key[:24];analysis_keys[value.analysis_id]=(key,current)
+        for item in [*value.scenes,*value.silence_decisions,*value.highlights]:
+            for keyname in ('scene_id','decision_id','highlight_id'):
+                register(getattr(item,keyname,None))
+    transcripts=[record['analysis']['transcript'] for record in records if record['analysis'].get('transcript')]
+    transcripts+=document.get('auto_edit_transcripts',[])
+    for value in transcripts:
+        item=TranscriptRead.model_validate(value)
+        if item.analysis_id not in analysis_keys:raise WorkflowError('AUTO_EDIT_TRANSCRIPT_SOURCE_MISMATCH')
+        register(item.transcript_id)
+        for segment in item.segments:
+            register(segment.segment_id)
+            for word in segment.words:register(word.word_id)
+    plans=document.get('source_broll_plans',[])
+    for record in plans:
+        if record['sha256']!=digest(record['plan']):raise WorkflowError('AUTO_EDIT_BROLL_PLAN_CHANGED')
+        plan=MediaPlanRead.model_validate(record['plan'])
+        if plan.project_id!='prj_'+source_id or plan.analysis_id not in analysis_keys:
+            raise WorkflowError('AUTO_EDIT_BROLL_SOURCE_CHANGED')
+        register(plan.media_plan_id)
+        for item in plan.items:register(item.media_plan_item_id)
+        for item in plan.media_assets:register(item.media_asset_id)
+        if plan.resolution_jobs:raise WorkflowError('AUTO_EDIT_EXTERNAL_PLAN_REBINDING_UNSUPPORTED',400)
+    def rewrite(value):
+        if isinstance(value,str):return mapping.get(value,value)
+        if isinstance(value,list):return [rewrite(item) for item in value]
+        if isinstance(value,dict):return {key:rewrite(item) for key,item in value.items()}
+        return copy.deepcopy(value)
+    output=copy.deepcopy(document)
+    output['auto_edit_analyses']=[]
+    for record in records:
+        changed=rewrite(record);value=changed['analysis'];key,current=analysis_keys[record['analysis']['analysis_id']]
+        value['fingerprint']=key
+        value['provenance']['identity_rebinding']={**origin,'source_analysis_id':record['analysis']['analysis_id'],
+            'source_record_sha256':record['sha256'],'source_analysis_was_current':current}
+        if value['transcript']:
+            value['transcript']['provenance']['identity_rebinding']={**origin,
+                'source_transcript_id':record['analysis']['transcript']['transcript_id'],
+                'source_transcript_sha256':digest(record['analysis']['transcript'])}
+        changed['sha256']=digest({key:value for key,value in changed.items() if key!='sha256'})
+        output['auto_edit_analyses'].append(changed)
+    output['auto_edit_transcripts']=[]
+    for value in document.get('auto_edit_transcripts',[]):
+        changed=rewrite(value);changed['provenance']['identity_rebinding']={**origin,
+            'source_transcript_id':value['transcript_id'],'source_transcript_sha256':digest(value)}
+        TranscriptRead.model_validate(changed);output['auto_edit_transcripts'].append(changed)
+    output['source_broll_plans']=[]
+    plan_fingerprints={}
+    for record in plans:
+        changed=rewrite(record['plan']);changed['fingerprint']=digest([ALGORITHM,target_id,record['plan']['fingerprint']])
+        changed['provenance']['identity_rebinding']={**origin,'source_plan_id':record['plan']['media_plan_id'],
+            'source_plan_sha256':record['sha256']}
+        changed['provenance']['native_source_timeline_version']=1
+        changed=MediaPlanRead.model_validate(changed).model_dump(mode='json')
+        output['source_broll_plans'].append({'plan':changed,'sha256':digest(changed)})
+        plan_fingerprints[changed['media_plan_id']]=changed['fingerprint']
+    snapshot=rewrite(state['snapshot'])
+    snapshot['metadata'].update(native_project_id=target_id,human_review_required=True,
+        source_identity_rebinding=origin)
+    for track in snapshot['tracks']:
+        for clip in track['clips']:
+            meta=clip['metadata']
+            if meta.get('media_plan_id') in plan_fingerprints:
+                meta['media_plan_fingerprint']=plan_fingerprints[meta['media_plan_id']]
+    output['canonical_timeline']={'version':1,'snapshot':snapshot,'sha256':digest(snapshot)}
+    output['source_timeline_mutations']=[{'version':1,'mutation':{'type':'edit','source_identity_rebinding':origin}}]
+    output['duplication']={**origin,'source_timeline_sha256':state['sha256']}
+    output['name']=document['name'][:139]+' — bản sao'
+    validate_document(output)
+    return output

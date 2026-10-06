@@ -32,6 +32,7 @@ def main():
     parser.add_argument('--music',action='store_true')
     parser.add_argument('--audio-processing',action='store_true')
     parser.add_argument('--broll',action='store_true')
+    parser.add_argument('--duplicate-source',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
         raise ValueError('Fresh isolated synthetic Native root required')
@@ -105,6 +106,13 @@ def main():
         project=source_broll.apply(store,config,project['id'],project['revision'],{
             'expected_version':project['shot_timeline']['version'],'media_plan_id':plan['media_plan_id'],
             'expected_plan_version':plan['version'],'item_ids':[item['media_plan_item_id']]})
+    parent=None
+    if args.duplicate_source:
+        parent=store.get(project['id'])
+        project=store.duplicate(project['id'],project['revision'])
+        rebound=auto_edit_analysis.view(store,project['id'])
+        analysis=next(item['analysis'] for item in rebound['analyses']
+            if item['analysis']['analysis_id']==project['shot_timeline']['snapshot']['metadata']['source_analysis_id'])
     source_hashes={item.name:file_sha(item) for directory in ('assets','originals')
         for item in (root/directory).iterdir() if item.is_file()}
     manager=PreviewManager(config,store)
@@ -122,6 +130,7 @@ def main():
         render=store.get_job(render['id'])
         if render['status']!='succeeded' or not render['result']['qc']['passed']:raise RuntimeError(render['error'])
         if store.get(project['id'])['document']!=before:raise AssertionError('Worker mutated source project document')
+        if parent and store.get(parent['id'])!=parent:raise AssertionError('Duplicate source mutated parent project')
         final_download_blocked=False
         try:store.final_video(render['id'])
         except WorkflowError as error:
@@ -148,6 +157,7 @@ def main():
         durable_json(out/'asset-provenance.json',{'explicit_fixture':True,'assets':canonical_assets(project['document']),
             'source_kind':'generated synthetic testsrc + tone','speech_recognition':'saved ASR fixture; no inference'})
         durable_json(out/'project.json',store.get(project['id']))
+        if parent:durable_json(out/'parent-project.json',parent)
         durable_json(out/'job-events.json',events)
         subprocess.run([str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n','-ss','0.35',
             '-i',str(out/'final.mp4'),'-frames:v','1',str(out/'caption-frame.png')],check=True,capture_output=True,timeout=30)
@@ -159,6 +169,9 @@ def main():
             'canonical_music_added':args.music,
             'canonical_audio_processing_requested':args.audio_processing,
             'canonical_supporting_broll_added':args.broll,
+            'source_project_duplicated_with_rebound_evidence':args.duplicate_source,
+            'parent_project_id':parent['id'] if parent else None,
+            'parent_project_unchanged':bool(parent),
             'saved_asr_fixture':True,'pre_render_human_review':'AUTOMATED MOCK — NOT OWNER UAT',
             'project_id':project['id'],'job_id':render['id'],'local_real_worker':True,'local_real_full_qc':True,
             'timeline_sha256':project['document']['canonical_timeline']['sha256'],

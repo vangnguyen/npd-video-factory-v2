@@ -300,6 +300,15 @@ class Phase10HTTPTests(unittest.TestCase):
         self.assertEqual(response.status,201,uploaded)
         self.assertEqual(uploaded['shot_timeline']['version'],4)
         self.assertEqual(uploaded['document']['canonical_timeline'],choice['document']['canonical_timeline'])
+        duplicate_path='/api/projects/'+source_project['id']+'/duplicate';body={'revision':uploaded['revision']}
+        before=self.database_state()
+        self.assertEqual(self.api('POST',duplicate_path,body,{'X-VF-CSRF':'bad'})[0],403)
+        self.assertEqual(self.api('POST',duplicate_path,body,{'Cookie':''})[0],401)
+        self.assertEqual(self.database_state(),before)
+        status,child=self.api('POST',duplicate_path,body);self.assertEqual(status,200)
+        self.assertEqual(child['shot_timeline']['version'],1);self.assertEqual(child['jobs'],[]);self.assertIsNone(child['approval'])
+        self.assertEqual(child['shot_timeline']['snapshot']['metadata']['native_project_id'],child['id'])
+        self.assertEqual(self.api('GET',timeline_path)[1],uploaded)
 
     def test_voice_quality_catalog_session_and_write_guards_preserve_accepted_default(self):
         before = self.database_state()
