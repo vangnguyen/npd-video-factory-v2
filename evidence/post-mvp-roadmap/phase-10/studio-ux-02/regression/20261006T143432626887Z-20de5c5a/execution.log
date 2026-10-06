@@ -1,0 +1,11 @@
+{"step": "baseline", "tables_equal": {"intelligence": true, "workflow": true}, "frozen_count": 1596, "frozen_equal": true}
+{"step": "runtime", "dependencies_unchanged": true}
+C:\NPD-Video-Factory\source\services\windows_native\warm_voice.py:319: RuntimeWarning: invalid value encountered in sqrt
+  levels = np.sqrt(np.mean(clip[:frames * size].reshape(frames, size) ** 2, axis=1))
+Traceback (most recent call last):
+  File "C:\NPD-Video-Factory\source\evidence\post-mvp-roadmap\phase-10\studio-ux-02\regression\20261006T143432626887Z-20de5c5a/read-only-release-audit.py", line 91, in <module>
+    measured=warm_voice.trim_boundary(plan,warm_voice.read_wave(original_wave),{'transcript':transcript})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\NPD-Video-Factory\source\services\windows_native\warm_voice.py", line 449, in trim_boundary
+    raise WorkflowError("WARM_VOICE_GROUPED_BOUNDARY_REVIEW_REQUIRED")
+services.windows_native.contracts.WorkflowError: WARM_VOICE_GROUPED_BOUNDARY_REVIEW_REQUIRED

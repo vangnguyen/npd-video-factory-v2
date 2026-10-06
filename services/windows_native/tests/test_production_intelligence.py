@@ -247,6 +247,25 @@ class ProductionIntelligenceTests(unittest.TestCase):
         self.assertEqual(row['integrity'], 'FAILED')
         self.assertFalse(row['approved']); self.assertIsNone(row['video_url'])
 
+    def test_library_canvas_is_only_saved_verified_probe_and_campaign_is_current_planning(self):
+        project, job = self.rendered(accepted=True)
+        unknown = self.service.library()['items'][0]
+        self.assertIsNone(unknown['width']); self.assertIsNone(unknown['height'])
+        out = self.root / 'jobs' / job['id']; probe = out / 'ffprobe.json'
+        probe.write_text(json.dumps({'streams': [{'codec_type': 'video', 'width': 1920, 'height': 1080}],
+            'test_fixture': 'metadata transport only, not an actual FFmpeg result'}), encoding='utf-8')
+        Artifacts(out, job).commit('render', [out / 'final.mp4', out / 'timeline.json', probe], job['result'])
+        row = self.service.find(item_id('project', project['id']))
+        self.service.save_planning(row['id'], 0, {'campaign': 'Current fixture campaign'}, 'TEST FIXTURE')
+        item = self.service.library()['items'][0]
+        self.assertEqual((item['width'], item['height'], item['aspect_ratio']), (1920, 1080, '16:9'))
+        self.assertEqual(item['media_metadata_source'], 'verified_render_checkpoint_ffprobe')
+        self.assertEqual(item['campaign'], 'Current fixture campaign'); self.assertEqual(item['campaign_source'], 'current_planning')
+        self.assertTrue(item['approved']); self.assertEqual(item['sha256'], job['result']['qc']['final_sha256'])
+        probe.write_text('{}', encoding='utf-8')
+        item = self.service.library()['items'][0]
+        self.assertEqual(item['integrity'], 'FAILED'); self.assertFalse(item['approved']); self.assertIsNone(item['width'])
+
     def test_unapproved_reviewed_and_tampered_video_states(self):
         project, job = self.rendered()
         self.assertEqual(self.service.find(item_id('project', project['id']))['stage'], 'VIDEO_REVIEW')

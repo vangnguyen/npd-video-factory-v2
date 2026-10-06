@@ -10,6 +10,8 @@ from .contracts import PROFILE_SHA, WorkflowError, digest, file_sha
 from .media import project_assets, media_path
 
 CATALOG=Path(__file__).parent/"profiles"/"catalog.json"
+FIXED_DURATION_POLICY="preserve_voice_speed_hold_cta_to_target_refuse_overflow"
+FIT_NARRATION_POLICY="fit_narration_preserve_voice_speed"
 
 
 class Strict(BaseModel):
@@ -85,7 +87,7 @@ class VideoTemplate(Strict):
     height: Literal[1920,1080]=1920
     fps: Literal[30]=30
     aspect_ratio: Literal["9:16","16:9"]="9:16"
-    duration_policy: Literal["preserve_voice_speed_hold_cta_to_target_refuse_overflow"]="preserve_voice_speed_hold_cta_to_target_refuse_overflow"
+    duration_policy: Literal["preserve_voice_speed_hold_cta_to_target_refuse_overflow","fit_narration_preserve_voice_speed"]=FIXED_DURATION_POLICY
 
     @model_validator(mode='after')
     def canvas_pair(self):
@@ -113,14 +115,20 @@ def catalog(include_landscape=False):
     if include_landscape:
         templates += [VideoTemplate.model_validate({**t,'id':t['id']+'-landscape','name':t['name']+' · 16:9',
                          'width':1920,'height':1080,'aspect_ratio':'16:9'}).model_dump() for t in list(templates)]
-    return {"brands":profiles,"templates":templates}
+    return {"brands":profiles,"templates":templates,"duration_modes":[
+        {"id":FIXED_DURATION_POLICY,"name":"Giữ thời lượng mẫu","description":"Giữ hình cuối đến thời lượng đã chọn; không đổi tốc độ giọng đọc."},
+        {"id":FIT_NARRATION_POLICY,"name":"Khớp với lời đọc","description":"Kết thúc sau lời đọc và đoạn kết; giữ thời lượng cảnh đã đặt riêng."}]}
 
 
-def choose(brand_id, template_id):
+def choose(brand_id, template_id, duration_mode=None):
     values=catalog(include_landscape=True)
     brand=next((b for b in values["brands"] if b["id"]==brand_id),None)
     template=next((t for t in values["templates"] if t["id"]==template_id),None)
     if not brand or not template: raise WorkflowError("BRAND_TEMPLATE_CHOICE_REQUIRED",400)
+    if duration_mode is not None:
+        if duration_mode not in (FIXED_DURATION_POLICY,FIT_NARRATION_POLICY):
+            raise WorkflowError("BRAND_DURATION_MODE_INVALID",400)
+        template={**template,"duration_policy":duration_mode}
     return Selection(brand=brand,template=template,brand_sha256=digest(brand),template_sha256=digest(template)).model_dump()
 
 
@@ -155,6 +163,9 @@ def measured_duration(doc, voice_seconds):
     brand,template=resolve(doc)
     required=brand.intro_seconds+voice_seconds+brand.outro_seconds
     if template:
+        if template.duration_policy==FIT_NARRATION_POLICY:
+            if required>180: raise WorkflowError("VIDEO_DURATION_EXCEEDS_180_SECONDS")
+            return required
         if required>template.duration_seconds+.001:
             raise WorkflowError("TEMPLATE_NARRATION_TOO_LONG_CHOOSE_LONGER_OR_EDIT")
         return float(template.duration_seconds)

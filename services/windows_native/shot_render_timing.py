@@ -5,8 +5,23 @@ import wave
 from .contracts import WorkflowError, file_sha, write_json
 
 
+def voice_placement_diagnostics(meta, duration, *, intro=0., source_end=None):
+    """Measured unit activity is a waveform diagnostic, not word alignment."""
+    units=sorted(meta['units'],key=lambda u:u['start_seconds'])
+    last_source_end=source_end if source_end is not None else intro+meta['duration_seconds']
+    last_activity_end=max((intro+u['activity_end_seconds'] for u in units),default=0.)
+    return {'source_voice_end_seconds':last_source_end,
+            'last_narration_activity_end_seconds':last_activity_end,
+            'tail_after_source_voice_seconds':max(0.,duration-last_source_end),
+            'tail_after_narration_activity_seconds':max(0.,duration-last_activity_end),
+            'between_unit_activity_gaps_seconds':[max(0.,b['activity_start_seconds']-a['activity_end_seconds'])
+                                                  for a,b in zip(units,units[1:])],
+            'timing_source':'measured_waveform_activity_not_word_alignment'}
+
+
 def retime_voice(doc, meta, out, brand, template):
     from .shot_adapter import shots
+    from .branding import FIT_NARRATION_POLICY
     import numpy as np
     if not doc.get('canonical_timeline'): return None
     canonical=shots(doc)
@@ -42,7 +57,8 @@ def retime_voice(doc, meta, out, brand, template):
         layout.append({'scene':i+1,'shot_id':shot['shot_id'],'start':cursor,'end':cursor+duration,'requested_duration':requested,
                        'measured_voice_seconds':len(samples)/48000,'narration_enabled':shot['narration_enabled']})
         cursor+=duration
-    target=float(template.duration_seconds) if template else max(25.,cursor)
+    fit=template is not None and template.duration_policy==FIT_NARRATION_POLICY
+    target=cursor if fit else (float(template.duration_seconds) if template else max(25.,cursor))
     if cursor>target+.001 or target>180: raise WorkflowError('TEMPLATE_NARRATION_TOO_LONG_CHOOSE_LONGER_OR_EDIT')
     # A template may hold the final shot; it must never make a requested last shot longer.
     if target>cursor+1/48000:
@@ -61,5 +77,7 @@ def retime_voice(doc, meta, out, brand, template):
            'source_voice_sha256':meta['audio_sha256'],'canonical_timeline_sha256':doc['canonical_timeline']['sha256'],
            'canonical_timeline_version':doc['canonical_timeline']['version'],'sample_preserving_placement':True,
            'speed':1,'pitch_changed':False,'scene_layout':layout,'audio_file':'render-voice.wav'}
+    source_end=max((start+len(samples) for start,samples in placements if len(samples)),default=0)/48000
+    value['voice_placement']=voice_placement_diagnostics(value,target,source_end=source_end)
     write_json(out/'render-voice.json',value)
     return value

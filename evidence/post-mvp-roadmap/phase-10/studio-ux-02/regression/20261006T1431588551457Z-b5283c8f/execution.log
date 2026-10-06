@@ -1,0 +1,10 @@
+{"step": "baseline", "tables_equal": {"intelligence": true, "workflow": true}, "frozen_count": 1596, "frozen_equal": true}
+{"step": "runtime", "dependencies_unchanged": true}
+Traceback (most recent call last):
+  File "C:\NPD-Video-Factory\source\evidence\post-mvp-roadmap\phase-10\studio-ux-02\regression\20261006T1431588551457Z-b5283c8f\read-only-release-audit.py", line 89, in <module>
+    measured=warm_voice.trim_boundary(plan,warm_voice.read_wave(original_wave),{'transcript':transcript})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\NPD-Video-Factory\source\services\windows_native\warm_voice.py", line 423, in trim_boundary
+    words = [w for segment in timing["transcript"]["segments"] for w in segment["words"]]
+                              ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'segments'

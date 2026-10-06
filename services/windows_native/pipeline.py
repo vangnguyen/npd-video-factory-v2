@@ -405,13 +405,14 @@ def render(config, snapshot, out):
         raise WorkflowError("VOICE_ARTIFACT_BINDING_MISMATCH")
     if normalize(" ".join(u["text"] for u in meta["units"])) != normalize(proposal.narration):
         raise WorkflowError("VOICE_NARRATION_BINDING_MISMATCH")
-    from .shot_render_timing import retime_voice
+    from .shot_render_timing import retime_voice, voice_placement_diagnostics
     retimed=retime_voice(doc,meta,out,brand,template)
     if retimed: meta=retimed
     grouped = measured_scene_units(proposal, meta)
     chosen = verify_selected_files(config, doc)
     intro = 0 if retimed else brand.intro_seconds
     duration = meta['duration_seconds'] if retimed else measured_duration(doc,meta["duration_seconds"])
+    voice_placement=retimed['voice_placement'] if retimed else voice_placement_diagnostics(meta,duration,intro=intro)
     if duration > 180:
         raise WorkflowError("VIDEO_DURATION_EXCEEDS_180_SECONDS")
     fonts = Path(os.environ.get("WINDIR", r"C:\Windows")) / "Fonts"
@@ -600,7 +601,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
         "music":{"sha256":music["sha256"],"nominal_gain":brand.music_profile.nominal_gain,"ducking":brand.music_profile.ducking} if music else None,
         "brand_template":doc.get("brand_template"),"duration_policy":template.duration_policy if template else "legacy_measured_voice_minimum_25s",
-        "cta_hold_after_voice_seconds":duration-intro-meta["duration_seconds"],"official_brand_assets_claimed":False,
+        "cta_hold_after_voice_seconds":voice_placement['tail_after_source_voice_seconds'],
+        "voice_placement":voice_placement,"official_brand_assets_claimed":False,
         **({'canonical_timeline':{'version':doc['canonical_timeline']['version'],'sha256':doc['canonical_timeline']['sha256']},
             'scene_layout':retimed['scene_layout'],'source_voice_sha256':retimed['source_voice_sha256'],
             'sample_preserving_placement':True,'custom_subtitle_timing':'shot_estimate_not_word_alignment'} if retimed else {})})

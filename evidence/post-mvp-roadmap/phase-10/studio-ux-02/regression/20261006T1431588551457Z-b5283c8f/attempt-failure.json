@@ -1,0 +1,14 @@
+{
+  "classification": "AUDIT_ENVELOPE_ADAPTATION_NOT_PRODUCTION_REGRESSION",
+  "reason": "Archived actual ASR transcript uses an explicit transcript envelope; initial helper passed the envelope instead of enclosed DTO.",
+  "completed_checks": [
+    "1596 frozen hashes exact",
+    "workflow/intelligence baseline exact",
+    "runtime/dependencies exact",
+    "fixed presets exact"
+  ],
+  "main_http_calls": 0,
+  "provider_calls": 0,
+  "main_app_writes": 0,
+  "next_actual_audit": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\studio-ux-02\\regression\\20261006T143432626887Z-20de5c5a"
+}

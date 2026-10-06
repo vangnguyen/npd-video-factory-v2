@@ -1,0 +1,23 @@
+{
+  "focused_first_run": {
+    "command": "python -m unittest test_voice_duration(6 tests), test_branding(7 tests), test_shot_production.test_requested_timing_consumes_durations_preserves_pcm_and_original",
+    "passed": 14,
+    "failed": 0,
+    "seconds": 3.078,
+    "log": "Original tool result; synthetic-fit-export-test.log separately records the additional real FFmpeg fixture"
+  },
+  "additional_actual_ffmpeg_fixture_test": {
+    "passed": 1,
+    "seconds": 3.007,
+    "log": "synthetic-fit-export-test.log",
+    "synthetic_only": true,
+    "provider_calls": 0,
+    "owner_acceptance": false
+  },
+  "files_owned": [
+    "services/windows_native/branding.py",
+    "services/windows_native/shot_render_timing.py",
+    "services/windows_native/pipeline.py",
+    "services/windows_native/tests/test_voice_duration.py"
+  ]
+}

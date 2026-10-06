@@ -130,12 +130,16 @@ class Store:
                 "step": step, "provider": provider or ("assemblyai" if step in {"asr_upload", "asr_create_transcript", "asr_observe_known_transcript"} else "ffmpeg" if step in {"asr_local_media_analysis", "asr_extract_audio"} else "openai" if "content" in step else "local_vieneu" if "tts" in step else "ffmpeg" if "render" in step else "local_io"),
                 "duration": round(duration, 6), "retry_count": runtime[0] if runtime else 0, "error_code": error_code})
 
-    def create(self, name, prompt, input_kind="prompt"):
+    def create(self, name, prompt, input_kind="prompt", *, content_profile=None):
         if not isinstance(name, str) or not 1 <= len(name.strip()) <= 150:
             raise WorkflowError("PROJECT_NAME_REQUIRED", 400)
         prompt = validate_text(input_kind, prompt)
         identifier = uuid.uuid4().hex
         doc = {"name": name.strip(), "prompt": prompt, "input_kind": input_kind, "proposal": None, "asset": None, "assets": [], "scene_media": [], "documents": []}
+        if content_profile is not None:
+            if not isinstance(content_profile,dict) or not all(isinstance(content_profile.get(k),str) and content_profile[k].strip() for k in ('id','name')):
+                raise WorkflowError('CONTENT_PROFILE_INVALID',400)
+            doc['content_profile']=copy.deepcopy(content_profile)
         stamp = now()
         with self.transaction() as con:
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",
@@ -404,10 +408,10 @@ class Store:
             self.event(con,identifier,"music_saved_review_required",{"revision":revision+1,"music_id":music["id"],"source_sha256":music["source_sha256"]})
         return self.get(identifier)
 
-    def set_brand(self, identifier, revision, brand_id, template_id):
+    def set_brand(self, identifier, revision, brand_id, template_id, *, duration_mode=None):
         from .branding import choose
         from .editor import build_plan, SceneOptions
-        selection=choose(brand_id,template_id)
+        selection=choose(brand_id,template_id,duration_mode=duration_mode) if duration_mode is not None else choose(brand_id,template_id)
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
             before_shots = copy.deepcopy(doc)

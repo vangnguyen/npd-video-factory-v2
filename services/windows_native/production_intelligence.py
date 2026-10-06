@@ -413,11 +413,23 @@ class ProductionIntelligence:
         timeline_schema = None
         if timeline_artifact:
             timeline_schema = json.loads((out / 'timeline.json').read_bytes()).get('schema_version')
+        # Only expose measured canvas metadata when the saved probe itself belongs
+        # to the verified checkpoint. Missing legacy metadata stays unknown.
+        media = {'width': None, 'height': None, 'aspect_ratio': None, 'metadata_source': None}
+        probe_artifact = next((a for a in checkpoint['artifacts'] if a['path'] == 'ffprobe.json'), None)
+        if probe_artifact:
+            probe = json.loads((out / 'ffprobe.json').read_bytes())
+            video_stream = next((s for s in probe.get('streams', []) if s.get('codec_type') == 'video'), {})
+            width, height = video_stream.get('width'), video_stream.get('height')
+            if type(width) is int and type(height) is int and width > 0 and height > 0:
+                divisor = math.gcd(width, height)
+                media.update(width=width, height=height, aspect_ratio=f'{width//divisor}:{height//divisor}',
+                             metadata_source='verified_render_checkpoint_ffprobe')
         return {'path': str(path.resolve()), 'mime': 'video/mp4', 'sha256': sha, 'bytes': path.stat().st_size,
                 'job_id': job['id'], 'project_id': job['project_id'], 'revision': job['revision'],
                 'snapshot_sha256': digest(snapshot), 'lineage': lineage, 'approval': review, 'qc': qc,
                 'render_timeline_sha256': timeline_artifact['sha256'] if timeline_artifact else None,
-                'timeline_schema_version': timeline_schema}
+                'timeline_schema_version': timeline_schema, 'media': media}
 
     def video(self, identifier):
         job = self.production.get_job(identifier)
@@ -431,8 +443,13 @@ class ProductionIntelligence:
                 if job['kind'] != 'render' or job['status'] != 'succeeded':
                     continue
                 doc = job['snapshot']['document']; proposal = doc.get('proposal') or {}; lineage = doc.get('content_intelligence')
+                profile = (lineage['run']['context'].get('profile') or {}) if lineage else (doc.get('content_profile') or {})
+                planning_id = item_id('opportunity', lineage['idea']['opportunity_id']) if lineage else item_id('project', project['id'])
+                planning = self.planning.get(planning_id, {})
                 row = {'id': job['id'], 'project_id': project['id'], 'title': proposal.get('title', doc['name']),
-                       'profile_id': profile_id(lineage['run']) if lineage else None,
+                       'profile_id': profile.get('id'), 'profile_name': profile.get('name'),
+                       'related_project': profile.get('related_project'), 'project_name': doc['name'],
+                       'campaign': planning.get('campaign'), 'campaign_source': 'current_planning' if planning else None,
                        'created_at': job['created_at'], 'render_revision': job['revision'], 'project_revision': project['revision'],
                        'is_current_project_revision': job['revision'] == project['revision'] and digest(doc) == digest(project['document']),
                        'archived': project.get('archived', False), 'snapshot_sha256': digest(job['snapshot']),
@@ -440,11 +457,14 @@ class ProductionIntelligence:
                                     'idea_version': lineage['idea']['version'] if lineage else None, 'render_job_id': job['id']},
                        'format': ((doc.get('brand_template') or {}).get('template') or {}).get('aspect_ratio', '9:16'),
                        'duration_seconds': (job['result'] or {}).get('qc', {}).get('duration_seconds'),
+                       'width': None, 'height': None, 'aspect_ratio': None, 'media_metadata_source': None,
                        'approval': job.get('final_review'), 'approved': False, 'integrity': 'UNVERIFIED', 'lineage': None,
                        'video_url': None, 'thumbnail_url': None}
                 try:
                     checked = self.validate_video(job, require_approval=False)
                     row.update(integrity='PASS', sha256=checked['sha256'], lineage=checked['lineage'])
+                    row.update(width=checked['media']['width'], height=checked['media']['height'],
+                               aspect_ratio=checked['media']['aspect_ratio'], media_metadata_source=checked['media']['metadata_source'])
                     row['versions'].update(timeline_version=(doc.get('canonical_timeline') or {}).get('version'),
                         timeline_sha256=(doc.get('canonical_timeline') or {}).get('sha256'),
                         render_timeline_sha256=checked['render_timeline_sha256'], timeline_schema_version=checked['timeline_schema_version'])

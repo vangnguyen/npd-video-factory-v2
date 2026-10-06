@@ -1,0 +1,20 @@
+{
+  "as_of": "2026-10-06T14:36:10.887410+00:00",
+  "head": "97c0c10f81f44ce16c878100d850f15180cf3568",
+  "tests": 51,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "elapsed_seconds": 35.031,
+  "modules": [
+    "services.windows_native.tests.test_asset_library",
+    "services.windows_native.tests.test_phase10_http",
+    "services.windows_native.tests.test_production_intelligence"
+  ],
+  "command": "python -m unittest services.windows_native.tests.test_asset_library services.windows_native.tests.test_phase10_http services.windows_native.tests.test_production_intelligence -v",
+  "log_sha256": "b4c0845b0d35910d5f44a1e5180b36e16ecf6fbb0e4eb7c8cd0a1b5e8c6d8c64",
+  "provider_calls": 0,
+  "app_data_mutations": 0,
+  "scope": "Disposable local/HTTP/actual FFmpeg intake fixtures; not production or Owner acceptance"
+}

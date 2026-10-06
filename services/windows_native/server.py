@@ -24,7 +24,7 @@ from .hardening import failure
 from .ingestion import DOCUMENT_TYPES, DOCUMENT_MAX_BYTES, ingest_document
 from . import assemblyai_connection
 from .music import MUSIC_TYPES, MUSIC_MAX_BYTES, ingest_music
-from .media import CONTENT_TYPES, IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, discard_media, ingest_media, media_path, project_assets
+from .media import CONTENT_TYPES, IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, discard_media, ingest_media, library_assets, library_file, media_path, project_assets
 
 
 class Runner:
@@ -228,13 +228,27 @@ class Handler(BaseHTTPRequestHandler):
             version=parse_qs(self.path.partition('?')[2]).get('version',[''])[0]
             return self.file(self.server.previews.video_path(identifier,version),video=True)
         if path == "/api/session":
-            return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
+            return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
+                "native_studio_ux": True, "asset_library": True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
             return self.reply({"prompt": (LOCKS / "accepted-prompt.txt").read_text(encoding="utf-8")})
         if path == "/api/projects":
             return self.reply(self.server.store.list(include_archived=parse_qs(self.path.partition("?")[2]).get("archived")==["include"]))
+        if path == '/api/assets':
+            params=parse_qs(self.path.partition('?')[2],keep_blank_values=True)
+            if set(params)-{'kind','q','page','page_size'} or any(len(values)!=1 for values in params.values()):
+                raise WorkflowError('ASSET_LIBRARY_FILTER_INVALID',400)
+            try:
+                page=int(params.get('page',['1'])[0]); size=int(params.get('page_size',['24'])[0])
+            except ValueError:
+                raise WorkflowError('ASSET_LIBRARY_PAGE_INVALID',400) from None
+            return self.reply(library_assets(self.server.store,kind=params.get('kind',['all'])[0],query=params.get('q',[''])[0],page=page,page_size=size))
+        library_route=re.fullmatch(r'/api/assets/([A-Za-z0-9][A-Za-z0-9_.-]{0,99})/(thumbnail|file)',path)
+        if library_route:
+            source,video=library_file(self.server.store,library_route[1],thumbnail=library_route[2]=='thumbnail')
+            return self.file(source,video=video)
         if path == "/api/runtime-status":
             ready=verify_runtime(self.server.config,full=False)
             return self.reply({"tts":ready,"ffmpeg_available":True,"openai_key_saved":self.server.config.secret_file.is_file(),
@@ -294,6 +308,7 @@ class Handler(BaseHTTPRequestHandler):
                   "/settings/assemblyai": "assemblyai.html", "/assemblyai.mjs": "assemblyai.mjs"}
         static.update({'/shot-studio.mjs':'shot-studio.mjs','/shot-studio.css':'shot-studio.css',
                        '/production':'production.html','/production.mjs':'production.mjs','/production.css':'production.css'})
+        static.update({name:name[1:] for name in ('/asset-picker.mjs','/video-preview.mjs','/studio-workspace.css','/studio-shell.mjs','/studio-shell.css')})
         if path in static:
             return self.file(REPO / "apps/studio-web" / static[path])
         raise WorkflowError("ROUTE_NOT_FOUND", 404)
@@ -335,7 +350,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.reply(self.server.shot_ai.suggest(identifier,revision,body.get('shot_id'),body.get('instruction'),body.get('request_key')))
             if action=='asset-association':
                 from .asset_association import mutate
-                return self.reply(mutate(self.server.store,identifier,revision,body.get('asset_id'),body.get('action'),body.get('tags')))
+                return self.reply(mutate(self.server.store,identifier,revision,body.get('asset_id'),body.get('action'),body.get('tags'),asset_ids=body.get('asset_ids')))
             return self.reply(self.server.store.review_script(identifier,revision,body.get('reviewer'),body.get('acknowledged'),body.get('script_sha256')))
         if self.path == "/api/connections/assemblyai":
             body = self.read_body(max_bytes=2048)
@@ -378,7 +393,18 @@ class Handler(BaseHTTPRequestHandler):
             os.startfile(str(out))
             return self.reply({"opened":True,"job_id":job["id"]})
         if self.path == "/api/projects":
-            return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt")), 201)
+            profile=None
+            if 'content_profile_id' in body:
+                identifier=body['content_profile_id']
+                if not isinstance(identifier,str): raise WorkflowError('CONTENT_PROFILE_NOT_FOUND',400)
+                catalog=self.server.intelligence.catalog
+                configured=next((p for p in catalog['profiles'] if p['id']==identifier),None)
+                if configured is None: raise WorkflowError('CONTENT_PROFILE_NOT_FOUND',400)
+                from .contracts import digest
+                keys=('id','name','related_project','target_audience','preferred_formats','channel','tone','duration_seconds','keywords','project_references')
+                profile={k:configured[k] for k in keys if k in configured}
+                profile['configuration_sha256']=digest(configured)
+            return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt"),content_profile=profile), 201)
         match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive|brand-template|voice-quality)", self.path)
         if not match:
             raise WorkflowError("ROUTE_NOT_FOUND", 404)
@@ -393,7 +419,7 @@ class Handler(BaseHTTPRequestHandler):
         elif action == "duplicate":
             result = self.server.store.duplicate(identifier,revision)
         elif action == "brand-template":
-            result = self.server.store.set_brand(identifier,revision,body.get("brand_id"),body.get("template_id"))
+            result = self.server.store.set_brand(identifier,revision,body.get("brand_id"),body.get("template_id"),duration_mode=body.get('duration_mode'))
         elif action == 'voice-quality':
             result = self.server.store.set_voice_quality(identifier, revision, body.get('policy_id'))
         elif action == "archive":

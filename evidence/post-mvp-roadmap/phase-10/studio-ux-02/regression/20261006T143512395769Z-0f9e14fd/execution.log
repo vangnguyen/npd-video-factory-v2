@@ -1,0 +1,18 @@
+{"step": "baseline", "tables_equal": {"intelligence": true, "workflow": true}, "frozen_count": 1596, "frozen_equal": true}
+{"step": "runtime", "dependencies_unchanged": true}
+{"step": "video", "number": 1, "passed": true}
+{"step": "video", "number": 2, "passed": true}
+{"step": "video", "number": 3, "passed": true}
+{"step": "video", "number": 4, "passed": true}
+{"step": "video", "number": 5, "passed": true}
+{"step": "video", "number": 6, "passed": true}
+{"step": "video", "number": 7, "passed": true}
+{"step": "video", "number": 8, "passed": true}
+{"step": "video", "number": 9, "passed": true}
+{"step": "video", "number": 10, "passed": true}
+{"step": "video", "number": 11, "passed": true}
+{"step": "video", "number": 12, "passed": true}
+{"step": "video", "number": 13, "passed": true}
+{"step": "video", "number": 14, "passed": true}
+{"step": "video", "number": 15, "passed": true}
+{"verified_at": "2026-10-06T14:35:25.207844+00:00", "baseline_sha": "4c4043cb8a6a559aeb9dae598fd0391045626b23", "current_head_sha": "97c0c10f81f44ce16c878100d850f15180cf3568", "uncommitted_code_audit": true, "regression_status": "PASS", "original_main_live_tables_exact_before_after": {"intelligence": true, "workflow": true}, "frozen_evidence_files": 1596, "frozen_evidence_unchanged": true, "old_accepted_videos": 15, "old_accepted_hashes_ffprobe_http200_range206_passed": 15, "existing_projects_opened_unchanged": 17, "locked_runtime_dependencies_unchanged": true, "default_fixed_selection_comparisons": 36, "default_fixed_selections_exact": true, "voice_policy_sha256": "d4194a33720ee9def789d05d2cedaaf2e9775f3b4702be9b429e1b4ceb8bcce2", "accepted_eight_b_cuts_exact_zero_samples": true, "original_helper_and_fixed_receipts_unchanged": true, "fixed_receipt_hashes": {"C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\baseline.json": "10379d98503a8a9705ca4c3d641fb2969706d850f7f49b62a0a73f7f34f741aa", "C:\\NPD-Video-Factory\\source\\scripts\\phase10-verify-preservation.py": "c3468522129ec15ac1da49d6cb0685e1794af716e1f6a3fe8cf060df46b293b3", "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\preservation-verification.json": "0e1e73179ab9ca87b0e04915d5753467bd41928d7b312d5903bb4ef9ea0eeca6", "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\final-preservation-verification.json": "5a6fcfa02702cca3e6f263a7dde84fe28d33bd418b70015b1c887c29cf5f7430"}, "prior_phase8_INTERNAL_PRODUCTION_READY": "YES", "prior_phase9_CONTENT_INTELLIGENCE_READY": "YES", "new_phase10_owner_audio_acceptance": "REJECTED_PENDING_REPAIR", "new_human_acceptance": false, "http_write_requests": 0, "main_application_writes": 0, "main_service_restarts": 0, "provider_calls": 0, "production_calls": 0, "preservation_only_no_new_quality_certification": true, "passed": true}

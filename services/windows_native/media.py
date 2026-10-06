@@ -8,6 +8,8 @@ import subprocess
 import shutil
 from fractions import Fraction
 import uuid
+import copy
+import sqlite3
 
 from .contracts import WorkflowError, file_sha
 
@@ -15,6 +17,135 @@ IMAGE_MAX_BYTES = 15 * 1024 * 1024
 VIDEO_MAX_BYTES = 250 * 1024 * 1024
 MAX_ASSETS = 50
 CONTENT_TYPES = {"image/jpeg", "image/png", "video/mp4", "video/quicktime"}
+
+
+def _library_catalog(store, con=None):
+    """Derive a durable library from existing immutable history, without a migration.
+
+    Association removal keeps the historical metadata and bytes. Current projects
+    only supply usage state; reading the library never upgrades old documents.
+    """
+    own = con is None
+    if own:
+        con = sqlite3.connect(store.db.resolve().as_uri() + '?mode=ro', uri=True)
+        con.row_factory = sqlite3.Row
+        con.execute('PRAGMA query_only=ON')
+        con.execute('BEGIN')
+    try:
+        current = con.execute('SELECT id,revision,document,created_at FROM projects ORDER BY id').fetchall()
+        history = con.execute('SELECT project_id,revision,document,created_at FROM project_versions ORDER BY project_id,revision').fetchall()
+        names, used = {}, {}
+        for row in current:
+            doc = json.loads(row['document']); names[row['id']] = doc.get('name', '')
+            for binding in scene_bindings(doc):
+                used.setdefault(binding['asset_id'], set()).add(row['id'])
+        records = {}
+        # The fallback covers older repositories with incomplete initial history.
+        entries = [(r['project_id'], r['revision'], r['document'], r['created_at']) for r in history]
+        entries += [(r['id'], r['revision'], r['document'], r['created_at']) for r in current]
+        for project_id, revision, encoded, created_at in entries:
+            doc = json.loads(encoded)
+            for asset in project_assets(doc):
+                identifier = asset.get('id')
+                if not isinstance(identifier, str):
+                    continue
+                record = records.setdefault(identifier, {'metadata': copy.deepcopy(asset), 'source_projects': {},
+                    'first_seen_at': created_at, 'metadata_conflict': False})
+                immutable = ('sha256', 'kind', 'width', 'height', 'original_id', 'source_sha256', 'source_bytes', 'source_mime')
+                if any(k in record['metadata'] and k in asset and record['metadata'][k] != asset[k] for k in immutable):
+                    record['metadata_conflict'] = True
+                record['source_projects'].setdefault(project_id, {'project_id': project_id,
+                    'project_name': names.get(project_id, doc.get('name', '')), 'first_revision': revision})
+                record['first_seen_at'] = min(record['first_seen_at'], created_at)
+        for identifier, record in records.items():
+            record['used_in_project_ids'] = sorted(used.get(identifier, set()))
+        return records
+    finally:
+        if own:
+            con.close()
+
+
+def _library_path(root, folder, identifier):
+    if not isinstance(identifier, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,99}', identifier):
+        raise WorkflowError('INVALID_MEDIA_ID', 400)
+    directory = (Path(root) / folder).resolve()
+    path = directory / identifier
+    if path.is_symlink() or path.resolve().parent != directory:
+        raise WorkflowError('LIBRARY_SOURCE_PATH_INVALID', 400)
+    return path
+
+
+def _verify_library_record(store, record):
+    asset = record['metadata']
+    if record['metadata_conflict']:
+        raise WorkflowError('LIBRARY_SOURCE_METADATA_CONFLICT')
+    expected = asset.get('sha256')
+    if not isinstance(expected, str) or not re.fullmatch(r'[0-9a-f]{64}', expected) or asset.get('kind') not in {'image', 'video'}:
+        raise WorkflowError('LIBRARY_SOURCE_METADATA_INVALID')
+    path = _library_path(store.root, 'assets', asset['id'])
+    if not path.is_file() or file_sha(path) != expected or ('bytes' in asset and asset['bytes'] != path.stat().st_size):
+        raise WorkflowError('LIBRARY_SOURCE_CHANGED_OR_MISSING')
+    if asset.get('original_id'):
+        original = _library_path(store.root, 'originals', asset['original_id'])
+        if (not original.is_file() or not asset.get('source_sha256') or file_sha(original) != asset['source_sha256']
+                or ('source_bytes' in asset and original.stat().st_size != asset['source_bytes'])):
+            raise WorkflowError('LIBRARY_ORIGINAL_CHANGED_OR_MISSING')
+    return path
+
+
+def library_asset(store, identifier, *, con=None):
+    record = _library_catalog(store, con).get(identifier)
+    if record is None:
+        raise WorkflowError('LIBRARY_ASSET_NOT_FOUND', 404)
+    _verify_library_record(store, record)
+    return record
+
+
+def library_file(store, identifier, *, thumbnail=False):
+    record = library_asset(store, identifier)
+    asset = record['metadata']; source = _verify_library_record(store, record)
+    if not thumbnail:
+        return source, asset['kind'] == 'video'
+    if asset.get('thumbnail_id'):
+        path = _library_path(store.root, 'assets', asset['thumbnail_id'])
+        if not path.is_file():
+            raise WorkflowError('LIBRARY_THUMBNAIL_NOT_FOUND', 404)
+        return path, False
+    if asset['kind'] == 'image':
+        return source, False  # Legacy intake did not produce separate thumbnails.
+    raise WorkflowError('LIBRARY_THUMBNAIL_NOT_FOUND', 404)
+
+
+def library_assets(store, *, kind='all', query='', page=1, page_size=24):
+    if not isinstance(kind, str) or kind not in {'all', 'image', 'video'} or not isinstance(query, str) or len(query) > 200:
+        raise WorkflowError('ASSET_LIBRARY_FILTER_INVALID', 400)
+    if type(page) is not int or not 1 <= page <= 1_000_000 or type(page_size) is not int or not 1 <= page_size <= 100:
+        raise WorkflowError('ASSET_LIBRARY_PAGE_INVALID', 400)
+    needle = query.strip().casefold()
+    records = [r for r in _library_catalog(store).values() if (kind == 'all' or r['metadata'].get('kind') == kind)
+               and (not needle or needle in str(r['metadata'].get('filename', '')).casefold()
+                    or needle in str(r['metadata'].get('title', '')).casefold())]
+    records.sort(key=lambda r: (r['first_seen_at'], r['metadata']['id']), reverse=True)
+    items = []
+    for record in records[(page-1)*page_size:page*page_size]:
+        asset = copy.deepcopy(record['metadata']); identifier = asset['id']
+        try:
+            source = _verify_library_record(store, record)
+            available, issue = True, None
+            asset.setdefault('bytes', source.stat().st_size)
+        except WorkflowError as error:
+            available, issue = False, error.code
+        items.append({**asset, 'available': available, 'availability_issue': issue,
+            'source_project_ids': sorted(record['source_projects']),
+            'used': bool(record['used_in_project_ids']), 'used_in_project_ids': record['used_in_project_ids'],
+            'first_seen_at': record['first_seen_at'],
+            'provenance': {'origin': 'retained_project_asset_history', 'source_projects': list(record['source_projects'].values()),
+                'original_bytes_preserved': bool(asset.get('original_id')), 'metadata_conflict': record['metadata_conflict']},
+            'thumbnail_url': f'/api/assets/{identifier}/thumbnail' if asset.get('thumbnail_id') or asset.get('kind') == 'image' else None,
+            'file_url': f'/api/assets/{identifier}/file'})
+    return {'schema_version': 'windows-native-asset-library-v1', 'items': items, 'total': len(records),
+            'page': page, 'page_size': page_size, 'pages': (len(records)+page_size-1)//page_size,
+            'project_association_removal_deletes_original': False}
 
 
 def project_assets(document):

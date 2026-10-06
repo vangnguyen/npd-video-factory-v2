@@ -1,0 +1,8 @@
+{
+  "classification": "AUDIT_PCM_INPUT_ADAPTATION_NOT_PRODUCTION_REGRESSION",
+  "reason": "Pure boundary helper expects normalized floating PCM as its production caller supplies; audit passed int16 PCM and is corrected to exact production scaling.",
+  "main_http_calls": 0,
+  "provider_calls": 0,
+  "main_app_writes": 0,
+  "next_actual_audit": "C:\\NPD-Video-Factory\\source\\evidence\\post-mvp-roadmap\\phase-10\\studio-ux-02\\regression\\20261006T143512395769Z-0f9e14fd"
+}
