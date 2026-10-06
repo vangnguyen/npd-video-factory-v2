@@ -123,8 +123,8 @@ if (typeof document !== "undefined") {
     if(project?.archived)$("render").disabled=true;
     $("reject-content").disabled=!project?.document.proposal||blocked||dirty;
     const video=currentVideo(project);
-    $("approve-final").disabled=!video||finalApproved(video)||blocked||dirty;
-    $("reject-final").disabled=!video||blocked||dirty;
+    $("approve-final").disabled=!video||finalApproved(video)||blocked||dirty||(Boolean(workspaceUI)&&(!$("final-watch").checked||!$("final-reviewer").value.trim()));
+    $("reject-final").disabled=!video||blocked||dirty||(Boolean(workspaceUI)&&!$("final-reviewer").value.trim());
     $("load-artifacts").disabled=!video||busy;
     $("open-output").disabled=!video||busy||project?.archived;
     $("save-prompt").textContent=project?"Lưu yêu cầu":"Tạo dự án";
@@ -281,6 +281,7 @@ if (typeof document !== "undefined") {
   async function reviewFinal(decision){const video=currentVideo(project);project=await api(`/api/jobs/${video.id}/review`,{revision:project.revision,reviewer:$("final-reviewer").value,acknowledged:$("final-watch").checked,decision,note:$("final-note").value});renderProject(true);message(decision==="approve"?"Đã duyệt đúng tệp đã xem làm bản cuối. Có thể tải MP4.":"Đã trả video để sửa. Sửa cảnh/nội dung, lưu và duyệt lại trước khi tạo bản mới.");}
   $("approve-final").addEventListener("click",guarded(()=>reviewFinal("approve")));
   $("reject-final").addEventListener("click",guarded(()=>reviewFinal("reject")));
+  $("final-watch").addEventListener('change',controls);$("final-reviewer").addEventListener('input',controls);
   $("load-artifacts").addEventListener("click",guarded(async()=>{const value=await api(`/api/jobs/${currentVideo(project).id}/artifacts`);$("artifact-list").innerHTML=`<p>Phiên bản ${value.revision} · kiểm tra ${value.qc.passed?"đạt":"chưa đạt"}</p><p>${esc(value.output_directory)}</p>`+value.artifacts.map(a=>`<p><strong>${esc(a.path)}</strong> · ${a.bytes.toLocaleString("vi-VN")} byte<br><small>${esc(a.sha256)}</small></p>`).join("");}));
   $("open-output").addEventListener("click",guarded(async()=>{await api(`/api/jobs/${currentVideo(project).id}/open-folder`,{});message("Đã mở thư mục chứa video và các tệp kiểm tra.");}));
   $("upload-music").addEventListener("click",guarded(async()=>{const file=$("music-file").files[0];if(!file||!musicType(file)||!file.size||file.size>25*1024*1024||!$("music-rights").checked)throw new Error(errors.MUSIC_RIGHTS_TYPE_SIZE_REQUIRED_MAX_25MB);const response=await fetch(`/api/projects/${project.id}/music`,{method:"POST",credentials:"same-origin",headers:{"Content-Type":musicType(file),"X-VF-CSRF":csrf,"X-VF-Revision":String(project.revision),"X-VF-Rights":"confirmed","X-VF-Filename":encodeURIComponent(file.name)},body:file});const result=await response.json();if(!response.ok)throw new Error(errors[result.code]??result.code);project=result;$("music-file").value="";renderProject(true);message("Đã lưu nhạc nền. Kiểm tra và duyệt lại trước khi render.");}));
