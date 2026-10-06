@@ -1,24 +1,24 @@
 # Phase 9K — Real handoff matrix
 
-PHASE: 9K — Content Intelligence practical acceptance, script review checkpoint
+PHASE: 9K — Content Intelligence practical acceptance, storyboard/media review checkpoint
 
-STATUS: PHASE9K_SCRIPT_REVIEW_REQUIRED; 5/5 real brief handoffs and script drafts, final acceptance PENDING
+STATUS: PHASE9K_STORYBOARD_MEDIA_REVIEW_REQUIRED; 5/5 real brief handoffs and Owner-approved v2 scripts, 25 proposed scenes, final acceptance PENDING
 
-HEAD SHA: `8ad83466bb7e1528a1157dc5c8840f908d0428ce` at checkpoint capture. Application code: `4b2f67faea5687ab97a4c64c3789216de48c8bf3`. The commit containing this report is recorded separately in Git history.
+HEAD SHA: `cee0eabb2c301674c537145788b2c9a2f3fc864b` at checkpoint capture. Tested running application: `2980fdf16e6580fb4a9fbefb82f689cba22ea7da`. The report-only commit is recorded separately in Git history.
 
-FILES CHANGED: approved handoff service/script, native intelligence script instructions, two native test files, review/verification scripts and the per-case evidence under `9k/`. No Phase 8 evidence changed.
+FILES CHANGED: native store's separate saved-script review, Studio label, three Native tests and one Studio test, script-review/storyboard/verification helpers, Owner receipts, per-case proposed plans, 25 graphics/static previews, logs and restart evidence under `9k/`. No Phase 8 evidence changed.
 
-TESTS: 129/129 native PASS after the final application change; existing 31/31 Studio PASS, Studio code unchanged in this task. Live Studio and fresh-process reopen 5/5 PASS. Actual server restart PASS.
+TESTS: 132/132 Native and 32/32 Studio PASS after the final application change. Live Studio and fresh-process reopen 5/5 PASS with durable script receipts and render disabled. Actual server restart and 25/25 graphic hash/dimension/narration/source bindings PASS.
 
-EVIDENCE: `owner-decision.txt`, `owner-authorization.json`, `handoffs.json`, `actual-script-provider-ledger.json`, `script-review-bundle.md`, `script-review-manifest.json`, `script-review-before-restart.json`, `script-review-after-restart.json`, `script-review-studio.png`, and each case directory.
+EVIDENCE: earlier authorization/provider/script snapshots remain unchanged; current `owner-script-decision-v2.txt`, `owner-script-authorization-v2.json`, `script-approval-manifest.json`, `storyboard-media-review-bundle.md`, `storyboard-media-review/review-manifest.json`, `visual-review.json`, `storyboard-media-before-restart.json`, `storyboard-media-after-restart.json`, `script-approved-media-pending-studio.png` and each case directory.
 
-NEW CAPABILITIES: approved intelligence brief durations reach native script generation; explicit editorial direction and viewer-facing narration; retained-research fork preserves an already imported project; actual provider receipts and version/hash-bound script review.
+NEW CAPABILITIES: five actual human script-only decisions bound to unchanged v2 narration/lineage, persisted in existing events and visible in Studio; production approval remains separate. Twenty-five sourced original graphics and reviewed layout proposals are ready for Owner media review. Earlier brief-duration instructions and retained-research fork are reused.
 
 REGRESSIONS: none observed in the accepted Windows Native scope. All existing production rows preserved, including the earlier Owner-created IHG project. Nineteen records of its original research run remain unchanged. Ten accepted MP4s and all Phase 8 evidence match the release baseline. Dependencies unchanged.
 
-BLOCKERS: Owner review of these exact five v2 scripts, then separate storyboard/media approval, five actual video productions and technical/artifact/watch-listen acceptance. No new credentials or paid provider required.
+BLOCKERS: Owner storyboard/media/rights approval, five actual video productions and technical/artifact/watch-listen acceptance. Five exact v2 script approvals are complete. No new credentials or paid provider required.
 
-NEXT ACTION: return all five scripts to Owner and stop. Do not enqueue TTS/render from this checkpoint.
+NEXT ACTION: return the concrete 25-scene storyboard/media bundle to Owner and stop before production. Do not enqueue TTS/render from script-only approval.
 
 ## Production candidates
 
@@ -26,11 +26,11 @@ All rows are actual projects in `C:\NPD-Video-Factory\phase2\workflow.sqlite3`, 
 
 | Case | Brief decision | Score after approved idea edits | Handoff | Script | Owner script approval | TTS/render | New MP4 |
 |---|---|---:|---|---|---|---|---|
-| 01 — IHG × Green Paradise | APPROVE_WITH_EDIT | 53.330 | REAL_NATIVE_PROJECT | v2, native revision 3 | PENDING | NOT_REQUESTED | None |
-| 02 — Smart-city certification | APPROVE_WITH_EDIT | 54.389 | REAL_NATIVE_PROJECT | v2, native revision 3 | PENDING | NOT_REQUESTED | None |
-| 04 — Saigon Park buyer education | APPROVE_WITH_EDIT | 53.256 | REAL_NATIVE_PROJECT | v2, native revision 3 | PENDING | NOT_REQUESTED | None |
-| 06 — Vang Nguyễn/date context | APPROVE | 64.971 | REAL_NATIVE_PROJECT | v2, native revision 3 | PENDING | NOT_REQUESTED | None |
-| 08 — Vietnam Q2/2026 | APPROVE | 83.996 | REAL_NATIVE_PROJECT | v2, native revision 3 | PENDING | NOT_REQUESTED | None |
+| 01 — IHG × Green Paradise | APPROVE_WITH_EDIT | 53.330 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
+| 02 — Smart-city certification | APPROVE_WITH_EDIT | 54.389 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
+| 04 — Saigon Park buyer education | APPROVE_WITH_EDIT | 53.256 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
+| 06 — Vang Nguyễn/date context | APPROVE | 64.971 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
+| 08 — Vietnam Q2/2026 | APPROVE | 83.996 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
 
 Scores are **HEURISTIC_SCORING**, with all components, configured weights and rationales in `idea.json`. Rank #1 selection happened before the requested editorial changes/rescoring; these scores are not performance predictions.
 
@@ -66,7 +66,9 @@ Review bundle SHA256: `ba8f2a4572497fe59ece072f767d0d0a54f668304ebb090cfb9338d1b
 
 Review manifest SHA256: `061cc4579a89419217f5d1b9bbfd241039cb99c2f9a2470fe4250704a8dc65c7`.
 
-The original Phase 9 idea/brief review bundle and manifest remain byte-identical. A future script decision must identify these five exact v2 scripts; selection/brief approval does not authorize production or publishing.
+The original Phase 9 idea/brief and script review bundles/manifests remain byte-identical. Owner's reply `Duyệt v2: 01, 02, 04, 06, 08` identifies these exact five v2 scripts. Current decisions are stored separately in native event receipts and `script-approval-manifest.json`; frozen old snapshots retain their earlier pending state. Media/production/publishing are not authorized by that script-only reply.
+
+Each case now has five proposed graphics and scene options in `storyboard.json`, `asset-lineage.json` and `proposed-production-proposal.json`. No media has been imported into live projects yet. Full checkpoint fields, actual review IDs and visual scope are in [storyboard-media-checkpoint.md](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/storyboard-media-checkpoint.md).
 
 INTERNAL_PRODUCTION_READY = YES
 
