@@ -1,0 +1,69 @@
+Started: 2026-10-06T19:21:33.6303816+07:00 Working directory: apps/studio-web Command: npm test Exit code: 0 Wall elapsed ms: 824 
+
+> npd-video-factory-studio@0.12.0 test
+> node --test tests/*.test.mjs
+
+✔ human session header is attached without mutating caller headers (2.2572ms)
+✔ missing human session fails closed (0.4867ms)
+✔ formats editor timecodes and zoom deterministically (1.3756ms)
+✔ labels version-bound approval and production render states (2.5209ms)
+✔ labels publishing dry-run truthfully and flattens gate evidence (0.6034ms)
+✔ layout failure offers an editing remedy, not a hidden text clamp (0.3755ms)
+✔ snaps pointer placement to quarter seconds (0.313ms)
+✔ computes timeline clip placement and respects track compatibility (0.4029ms)
+✔ labels ready, stale and running previews without overstating readiness (0.3112ms)
+✔ renders analytics truth states and never turns missing metrics into zero (32.5828ms)
+✔ builds a stable V2-10 metric panel from normalized nullable metrics (0.6457ms)
+✔ Production Intelligence requires an explicit boolean runtime capability; missing legacy flags preserve original approval contract (2.7084ms)
+✔ Real CI module boot and approval preserve Phase9 when the session has no Phase10 capability (49.8269ms)
+✔ Real CI module enables Phase10 preflight only on an explicitly capable server (8.3211ms)
+✔ CI keeps its original stylesheet and has no mandatory Production Intelligence module import (1.8825ms)
+✔ Brief send needs explicit approval, saved edits, idle state and queue approval (1.4194ms)
+✔ Brief review needs human acknowledgment and reviewer, and never uses a stale draft (0.3413ms)
+✔ Regenerated candidates keep only the current generation in active selection (0.2741ms)
+✔ Untrusted research renders as escaped text and links allow only public HTTPS syntax (0.4315ms)
+✔ storyboard source identity is explicit and never a fake analysis (1.5624ms)
+✔ proposal cannot overwrite unsaved kind/script/original/facts (0.4071ms)
+✔ Script-only approval is visible and leaves video production blocked (1.9599ms)
+✔ Render UI requires current approval, saved edits and idle job (0.4606ms)
+✔ Each scene requires one source from its project library (0.5137ms)
+✔ Legacy image projects retain all scene choices without rewriting snapshot (0.2955ms)
+✔ Local multi-file selection accepts only supported image and video extensions (0.3828ms)
+✔ Only successful video bound to current approved version is visible (0.2809ms)
+✔ Retrying job blocks editing and another render until its receipt completes (0.2302ms)
+✔ Document chooser passes declared MIME while server must validate actual content (0.3576ms)
+✔ Changed source needs new analysis while existing source keeps its result (0.5393ms)
+✔ Video/image changes reset incompatible motion and source time (1.5742ms)
+✔ Final download requires a review of the same video hash and revision (0.3015ms)
+✔ A human opening new content from a profile starts fresh while explicit run links remain authoritative (1.9792ms)
+✔ Phase10 brief approval needs exact current preflight and reasoned duplicate acknowledgment (0.3535ms)
+✔ Explicit batch selections carry immutable content binding and local planning version (1.1444ms)
+✔ Planning calendar keeps undated work visible and never changes underlying content (14.4413ms)
+✔ Staff filters can retain archived projects explicitly without hiding current review stages (0.326ms)
+✔ Shot view retains server identities and does not invent editable state for old projects (1.9811ms)
+✔ Shot mutation gates reject dirty, busy, archived and active-production projects (0.2676ms)
+✔ A narration edit sends only narration and never broadens mutation scope (0.7564ms)
+✔ Keyboard reorder retains every stable shot identity exactly once (0.247ms)
+✔ AI application requires current binding and a single selected-shot operation with known dependencies (0.4256ms)
+✔ Silent visual proxy labels never imply voice or final acceptance (1.8233ms)
+✔ Script-only review requires a saved script, reviewer and an explicit human acknowledgment (0.5498ms)
+✔ Legacy current combined approval retains script authority without inventing a script-only review (0.4105ms)
+✔ A preview from another revision or timeline cannot enter playback (0.3331ms)
+✔ Studio final review is available only for a current approved active project render (0.4976ms)
+✔ The staged shell preserves every legacy native control target without duplicate identities (1.7772ms)
+✔ Old native sessions never request the optional shot module or stylesheet (1.3338ms)
+✔ Legacy fallback restores the original workspace without moving its render or review controls (0.3073ms)
+✔ Voice-quality catalog is strictly capability gated and never selects a policy on load (0.3206ms)
+✔ Applying a known voice-quality policy requires saved idle active project state (0.3244ms)
+✔ declares all eight required radar views (1.1673ms)
+✔ radar view rules remain deterministic and explainable (0.2801ms)
+✔ filters by view, platform and search while sorting by estimate (1.313ms)
+✔ formats scores, VND and Vietnamese lifecycle labels (25.3185ms)
+ℹ tests 56
+ℹ suites 0
+ℹ pass 56
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 278.0978
