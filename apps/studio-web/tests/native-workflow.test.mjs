@@ -1,6 +1,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending,defaultSceneOptions,musicType,finalApproved,scriptReviewLabel} from '../native.mjs';
+import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending,defaultSceneOptions,musicType,finalApproved,scriptReviewLabel,newProjectQuality} from '../native.mjs';
+
+test('New quality policy is capability gated and older servers keep existing project contract',()=>{
+  assert.deepEqual(newProjectQuality({capabilities:{north_star_quality:true}}),{production_quality:true});
+  for(const session of [null,{}, {capabilities:{north_star_quality:'true'}},{capabilities:{north_star_quality:false}}])assert.deepEqual(newProjectQuality(session),{});
+});
 
 test('Script-only approval is visible and leaves video production blocked',()=>{
   const p={revision:3,approval:null,jobs:[],document:{content_intelligence:{}},script_review:{current:true}};

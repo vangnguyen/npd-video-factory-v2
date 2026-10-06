@@ -130,12 +130,17 @@ class Store:
                 "step": step, "provider": provider or ("assemblyai" if step in {"asr_upload", "asr_create_transcript", "asr_observe_known_transcript"} else "ffmpeg" if step in {"asr_local_media_analysis", "asr_extract_audio"} else "openai" if "content" in step else "local_vieneu" if "tts" in step else "ffmpeg" if "render" in step else "local_io"),
                 "duration": round(duration, 6), "retry_count": runtime[0] if runtime else 0, "error_code": error_code})
 
-    def create(self, name, prompt, input_kind="prompt", *, content_profile=None):
+    def create(self, name, prompt, input_kind="prompt", *, content_profile=None, production_quality=False):
         if not isinstance(name, str) or not 1 <= len(name.strip()) <= 150:
             raise WorkflowError("PROJECT_NAME_REQUIRED", 400)
         prompt = validate_text(input_kind, prompt)
         identifier = uuid.uuid4().hex
         doc = {"name": name.strip(), "prompt": prompt, "input_kind": input_kind, "proposal": None, "asset": None, "assets": [], "scene_media": [], "documents": []}
+        if type(production_quality) is not bool:
+            raise WorkflowError('PRODUCTION_QUALITY_SELECTION_INVALID',400)
+        if production_quality:
+            from .north_star_quality import policy_reference
+            doc['production_quality']=policy_reference()
         if content_profile is not None:
             if not isinstance(content_profile,dict) or not all(isinstance(content_profile.get(k),str) and content_profile[k].strip() for k in ('id','name')):
                 raise WorkflowError('CONTENT_PROFILE_INVALID',400)
@@ -479,6 +484,8 @@ class Store:
             resolve_policy(doc)
             if not doc["proposal"]:
                 raise WorkflowError("CONTENT_AND_IMAGE_REQUIRED")
+            from .north_star_quality import validate_tts_names
+            validate_tts_names(doc,Proposal.model_validate(doc['proposal']))
             from .editor import validate_plan
             validate_plan(doc)
             if doc.get("canonical_timeline"):

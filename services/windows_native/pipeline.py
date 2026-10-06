@@ -269,6 +269,8 @@ def synthesize(config, snapshot, out):
         raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
     proposal = Proposal.model_validate(doc["proposal"])
     quality = resolve_policy(doc)
+    from .north_star_quality import validate_tts_names
+    validate_tts_names(doc, proposal)
     verify_runtime(config)
     if quality and quality.get("unit_grouping") == "warm_scene":
         from .warm_voice import synthesize_warm
@@ -394,6 +396,8 @@ def render(config, snapshot, out):
     doc = snapshot["document"]
     proposal = Proposal.model_validate(doc["proposal"])
     from .branding import validate_assets, resolve, measured_duration
+    from .north_star_quality import validate_tts_names
+    validate_tts_names(doc,proposal)
     brand=validate_assets(config,doc); _,template=resolve(doc)
     palette=brand.palette; safe=brand.safe_areas
     background=palette.background[1:]
@@ -413,10 +417,17 @@ def render(config, snapshot, out):
     intro = 0 if retimed else brand.intro_seconds
     duration = meta['duration_seconds'] if retimed else measured_duration(doc,meta["duration_seconds"])
     voice_placement=retimed['voice_placement'] if retimed else voice_placement_diagnostics(meta,duration,intro=intro)
+    from .north_star_quality import resolve_policy as production_policy, evaluate_speech_placement, validate_render_profile
+    strict_quality=production_policy(doc)
+    speech_qc=evaluate_speech_placement(voice_placement,duration,strict_quality) if strict_quality else None
+    if speech_qc and (not speech_qc['no_narration_dead_air'] or not speech_qc['no_excessive_speech_gaps']):
+        raise WorkflowError('NARRATION_DEAD_AIR_REVIEW_DURATION_REQUIRED')
     if duration > 180:
         raise WorkflowError("VIDEO_DURATION_EXCEEDS_180_SECONDS")
     fonts = Path(os.environ.get("WINDIR", r"C:\Windows")) / "Fonts"
     width,height=(template.width,template.height) if template else (1080,1920)
+    render_profile=validate_render_profile(doc.get('render_profile','landscape' if width>height else 'vertical-short'),width,height,
+                                          template.aspect_ratio if template else '9:16')
     landscape=width>height
     safe_left,safe_right,safe_top,safe_bottom=(90,90,55,100) if landscape else (safe.left,safe.right,safe.top,safe.bottom)
     media_top=230 if landscape else 390
@@ -603,13 +614,14 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         "brand_template":doc.get("brand_template"),"duration_policy":template.duration_policy if template else "legacy_measured_voice_minimum_25s",
         "cta_hold_after_voice_seconds":voice_placement['tail_after_source_voice_seconds'],
         "voice_placement":voice_placement,"official_brand_assets_claimed":False,
+        **({'production_quality':doc['production_quality'],'speech_quality':speech_qc,'render_profile':render_profile} if strict_quality else {}),
         **({'canonical_timeline':{'version':doc['canonical_timeline']['version'],'sha256':doc['canonical_timeline']['sha256']},
             'scene_layout':retimed['scene_layout'],'source_voice_sha256':retimed['source_voice_sha256'],
             'sample_preserving_placement':True,'custom_subtitle_timing':'shot_estimate_not_word_alignment'} if retimed else {})})
-    return qc(config, out, duration,expected_canvas=(width,height))
+    return qc(config, out, duration,expected_canvas=(width,height),quality_policy=strict_quality)
 
 
-def qc(config, out, expected_duration,expected_canvas=(1080,1920)):
+def qc(config, out, expected_duration,expected_canvas=(1080,1920), *, quality_policy=None):
     import numpy as np
     ffprobe = subprocess.check_output([str(config.ffmpeg_bin / "ffprobe.exe"), "-v", "error", "-show_streams", "-show_format", "-of", "json", str(out / "final.mp4")], timeout=30)
     probe = json.loads(ffprobe)
@@ -631,9 +643,15 @@ def qc(config, out, expected_duration,expected_canvas=(1080,1920)):
               "finite_audible_audio": bool(samples.size and np.isfinite(samples).all() and np.sqrt(np.mean(samples ** 2)) > .005),
               "no_hard_clipping": bool(samples.size and np.max(np.abs(samples)) < .999),
               "no_black_intervals": black.returncode == 0 and "black_start:" not in (out / "blackdetect.log").read_text()}
+    quality_evidence={}
+    if quality_policy:
+        from .north_star_quality import audio_activity
+        activity=audio_activity(samples,48000,threshold_db=quality_policy['silence_threshold_db'],window_seconds=quality_policy['activity_window_seconds'])
+        checks['no_trailing_audio_silence']=activity['audio_activity_detected'] and activity['trailing_silence_seconds']<=quality_policy['max_final_audio_tail_seconds']+.02
+        quality_evidence={'decoded_audio_activity':activity,'production_quality_policy':quality_policy}
     report = {"checks": checks, "passed": all(checks.values()), "final_sha256": file_sha(out / "final.mp4"),
               "duration_seconds": float(probe["format"]["duration"]), "final_bytes": (out / "final.mp4").stat().st_size,
-              "human_final_video_accepted": False, "published": False}
+              "human_final_video_accepted": False, "published": False, **quality_evidence}
     write_json(out / "qc-report.json", report)
     if not report["passed"]:
         raise WorkflowError("MEDIA_QC_FAILED")
@@ -683,7 +701,15 @@ class Pipeline:
             else:
                 stage("content_request")
                 result = generate(self.config, job, out, stage)
-            retry_io(lambda: artifacts.commit("content", [out / "content-result.json", out / "content-request.json"], result), stage, "storage_content_checkpoint")
+            files=[out / "content-result.json",out / "content-request.json"]
+            from .north_star_quality import resolve_policy as production_policy,canonicalize_draft
+            if production_policy(doc):
+                result={**result,'proposal':canonicalize_draft(result['proposal']),
+                        'proper_name_normalization':{'policy':doc['production_quality'],'source_proposal_sha256':digest(result['proposal']),
+                                                     'applied_before_human_review':True,'pronunciation_verified':False}}
+                durable_json(out / 'content-draft.json',result)
+                files.append(out / 'content-draft.json')
+            retry_io(lambda: artifacts.commit("content", files, result), stage, "storage_content_checkpoint")
             return result
         approval = job["snapshot"]["approval"]
         if not approval or approval["revision"] != job["revision"] or approval["snapshot_sha256"] != digest(job["snapshot"]["document"]):

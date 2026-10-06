@@ -229,7 +229,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.file(self.server.previews.video_path(identifier,version),video=True)
         if path == "/api/session":
             return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
-                "native_studio_ux": True, "asset_library": True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
+                "native_studio_ux": True, "asset_library": True, "north_star_quality": True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -404,7 +404,7 @@ class Handler(BaseHTTPRequestHandler):
                 keys=('id','name','related_project','target_audience','preferred_formats','channel','tone','duration_seconds','keywords','project_references')
                 profile={k:configured[k] for k in keys if k in configured}
                 profile['configuration_sha256']=digest(configured)
-            return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt"),content_profile=profile), 201)
+            return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt"),content_profile=profile,production_quality=body.get('production_quality',False)), 201)
         match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive|brand-template|voice-quality)", self.path)
         if not match:
             raise WorkflowError("ROUTE_NOT_FOUND", 404)

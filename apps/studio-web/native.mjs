@@ -1,4 +1,5 @@
 export const supportsShotStudio = session => session?.capabilities?.native_shot_studio===true || session?.native_shot_studio===true;
+export const newProjectQuality = session => session?.capabilities?.north_star_quality===true ? {production_quality:true} : {};
 export async function loadNativeShotStudio(session,loader=()=>import('./shot-studio.mjs')) {
   return supportsShotStudio(session)?await loader():null;
 }
@@ -28,6 +29,11 @@ export const finalApproved = job => Boolean(job?.final_review?.decision==="appro
 export const scriptReviewLabel = project => !project?.document?.content_intelligence ? "" : project?.script_review?.current ? (project.approval ? "Lời đọc đã được duyệt." : "Lời đọc đã lưu được duyệt. Hình ảnh và cách dựng còn chờ bạn duyệt.") : project?.script_review ? "Lời đọc đã thay đổi; cần duyệt lại bản mới." : "Lời đọc đang chờ bạn duyệt.";
 
 const errors = {
+  TTS_PROPER_NAME_REVIEW_REQUIRED:"Tên riêng cần dùng cách viết chuẩn trong lời đọc. Sửa và duyệt lại trước khi tạo giọng.",
+  PRODUCTION_QUALITY_POLICY_CHANGED_REVIEW_REQUIRED:"Quy tắc chất lượng đã thay đổi. Kiểm tra và duyệt lại phiên bản dự án.",
+  NARRATION_DEAD_AIR_REVIEW_DURATION_REQUIRED:"Khoảng trống lời đọc quá dài. Chọn Khớp với lời đọc hoặc rút ngắn thời lượng cảnh rồi duyệt lại.",
+  RENDER_PROFILE_CANVAS_MISMATCH:"Kích thước mẫu không khớp định dạng video đã chọn.",
+  RENDER_PROFILE_UNKNOWN:"Định dạng render chưa được hỗ trợ.",
   HUMAN_APPROVAL_REQUIRED_BEFORE_TTS:"Cần duyệt đúng phiên bản nội dung trước khi tạo giọng đọc.",
   STALE_VERSION_RELOAD:"Phiên bản đã thay đổi. Làm mới để lấy bản mới nhất.",
   PROJECT_BUSY:"Dự án đang có job chạy. Chờ job hoàn tất trước khi sửa.",
@@ -84,7 +90,7 @@ if (typeof document !== "undefined") {
   nativeLegacyLayout(document);
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
-  let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, workspaceUI=null,brandCatalog=null;
+  let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, workspaceUI=null,brandCatalog=null,projectQuality={};
   function message(text, error=false) {$("message").textContent=text;$("message").hidden=false;$("message").classList.toggle("error",error);}
   async function api(path, body) {
     const response = await fetch(path,{method:body?"POST":"GET",credentials:"same-origin",headers:body?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:body?JSON.stringify(body):undefined});
@@ -235,6 +241,7 @@ if (typeof document !== "undefined") {
   }
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
+    projectQuality=newProjectQuality(session);
     let module;
     try{module=await loadNativeShotStudio(session);}catch{nativeLegacyLayout(document);message('Đang dùng giao diện Studio hiện hành. Không tải được không gian biên tập mới.',true);return;}
     if(!module)return;
@@ -254,7 +261,7 @@ if (typeof document !== "undefined") {
   }
   $("save-prompt").addEventListener("click",guarded(async()=>{
     const creating=!project;
-    if(!project){project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value,input_kind:$("input-kind").value,...(workspaceUI&&$("new-content-profile").value?{content_profile_id:$("new-content-profile").value}:{})});if(workspaceUI&&$("new-template").value)project=await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:$("new-brand").value,template_id:$("new-template").value,duration_mode:$("new-duration-mode").value});}
+    if(!project){project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value,input_kind:$("input-kind").value,...projectQuality,...(workspaceUI&&$("new-content-profile").value?{content_profile_id:$("new-content-profile").value}:{})});if(workspaceUI&&$("new-template").value)project=await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:$("new-brand").value,template_id:$("new-template").value,duration_mode:$("new-duration-mode").value});}
     else project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,prompt:$("prompt").value,input_kind:$("input-kind").value});
     localStorage.setItem("vf-native-project",project.id);if(workspaceUI&&creating){const url=new URL(location.href);url.searchParams.delete('new');url.searchParams.set('project',project.id);history.replaceState(null,'',url);document.querySelectorAll('.sidebar [data-studio-page]').forEach(el=>{const current=el.dataset.studioPage==='projects';el.classList.toggle('active',current);if(current)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});}renderProject(true);await projects();if(creating)shotStudio?.showStage(workspaceUI?.nextProjectStage(project)??'script');message("Đã lưu dự án. Thêm tư liệu tại Assets rồi chọn hình cho từng shot.");
   }));

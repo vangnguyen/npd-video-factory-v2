@@ -483,10 +483,12 @@
     "source": [
       "services/windows_native/pipeline.py",
       "services/windows_native/warm_voice.py",
-      "apps/api/app/providers.py"
+      "apps/api/app/providers.py",
+      "services/windows_native/north_star_quality.py",
+      "services/windows_native/tests/test_north_star_quality.py"
     ],
-    "behavior": "Real locked VI scene/semantic TTS, measured PCM chunks, protected provider receipts.",
-    "gap": "Canonical proper-name policy, generic voice modes and stricter measured duration/quiet-tail binding.",
+    "behavior": "Real locked VI scene/semantic TTS, measured PCM chunks, protected provider receipts. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged.",
+    "gap": "Provider-neutral voice/language/style/semantic-chunk TTS integration remains; local locked-name inference has evidence, pronunciation Owner UAT pending.",
     "severity": "P0",
     "dependency": "quality policy",
     "wave": "2/6",
@@ -529,9 +531,11 @@
     "source": [
       "services/windows_native/shot_adapter.py",
       "apps/api/app/timeline_logic.py",
-      "packages/contracts/timeline.schema.json"
+      "packages/contracts/timeline.schema.json",
+      "services/windows_native/north_star_quality.py",
+      "services/windows_native/tests/test_north_star_quality.py"
     ],
-    "behavior": "Versioned canonical timelines within each implementation; optimistic revisions.",
+    "behavior": "Versioned canonical timelines within each implementation; optimistic revisions. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged.",
     "gap": "Bridge advanced editor to same Native canonical timeline; avoid parallel edits/export divergence.",
     "severity": "P0",
     "dependency": "canonical adapter",
@@ -592,10 +596,12 @@
     "source": [
       "services/windows_native/pipeline.py",
       "renderer/src/TimelineRender.tsx",
-      "apps/api/app/production_service.py"
+      "apps/api/app/production_service.py",
+      "services/windows_native/north_star_quality.py",
+      "services/windows_native/tests/test_north_star_quality.py"
     ],
-    "behavior": "Real Native FFmpeg and API Remotion/FFmpeg render paths.",
-    "gap": "Strict profile identity, six variants and advanced timeline render parity.",
+    "behavior": "Real Native FFmpeg and API Remotion/FFmpeg render paths. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged.",
+    "gap": "Shared final render path for uploaded-footage editing and multi-format variants; existing accepted renderer and strict portrait/landscape canvas guard verified locally.",
     "severity": "P0",
     "dependency": "timeline/profile/QC",
     "wave": "2/6/7",
@@ -607,9 +613,11 @@
     "status": "PARTIAL",
     "source": [
       "services/windows_native/pipeline.py",
-      "apps/api/app/production_qc.py"
+      "apps/api/app/production_qc.py",
+      "services/windows_native/north_star_quality.py",
+      "services/windows_native/tests/test_north_star_quality.py"
     ],
-    "behavior": "Decode/dimensions/codecs/A-V/audio/black checks; API freeze/Visual sampling.",
+    "behavior": "Decode/dimensions/codecs/A-V/audio/black checks; API freeze/Visual sampling. New Native project quality policy v1 normalizes the three required names visibly before review, rejects unreviewed spellings, checks measured narration tails/gaps, hard-validates profile canvas, and detects actual decoded PCM trailing silence. Legacy project versions remain unchanged.",
     "gap": "Native trailing-silence/freeze/subtitle/Vision checks and unified failed_qc semantics.",
     "severity": "P0",
     "dependency": "quality pipeline",
