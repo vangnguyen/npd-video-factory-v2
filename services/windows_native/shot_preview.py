@@ -1,5 +1,6 @@
-"""Version-bound silent visual proxies. Cached shots are never acceptance artifacts."""
+"""Version-bound local proxies. Cached proxies are never acceptance artifacts."""
 import copy
+import asyncio
 import json
 from pathlib import Path
 import subprocess
@@ -8,6 +9,8 @@ import time
 from .contracts import WorkflowError, digest, file_sha, write_json
 from .media import media_path, project_assets
 from .hardening import durable_json,retry_io
+from .source_preview import PROFILE as SOURCE_PROFILE, resolve_assets, render as render_source
+from app.timeline_proxy import PreviewCancelledError
 
 
 def proxy_key(shot, document):
@@ -40,8 +43,10 @@ class PreviewManager:
         with self.lock:
             retry_io(lambda:durable_json(path,value),lambda _:None,'storage_preview')
 
-    def _folder(self, project_id, timeline_sha, revision):
-        return self.root/digest({'project':project_id,'timeline':timeline_sha,'revision':revision})
+    def _folder(self, project_id, timeline_sha, revision, profile=None):
+        identity={'project':project_id,'timeline':timeline_sha,'revision':revision}
+        if profile:identity['preview_profile']=profile
+        return self.root/digest(identity)
 
     def status(self, project_id):
         with self.lock:
@@ -49,13 +54,14 @@ class PreviewManager:
 
     def _status(self, project_id):
         project=self.store.shot_view(project_id); view,_=shot_fields(project)
-        folder=self._folder(project_id,view['sha256'],project['revision']); record=folder/'preview.json'
+        source_mode=view.get('editing_mode')=='source_footage'
+        folder=self._folder(project_id,view['sha256'],project['revision'],SOURCE_PROFILE if source_mode else None); record=folder/'preview.json'
         if not record.is_file():
             history=sorted(self.root.glob('*/preview.json'),key=lambda p:p.stat().st_mtime,reverse=True)
             previous=next((json.loads(p.read_bytes()) for p in history if json.loads(p.read_bytes()).get('project_id')==project_id),None)
             return {**(previous or {}),'status':'STALE' if previous else 'EMPTY','revision':project['revision'],
                     'timeline_version':view['version'],'timeline_sha256':view['sha256'],
-                    'video_url':None,'audio_mode':'silent_visual_proxy','final_approval_eligible':False}
+                    'video_url':None,'audio_mode':'canonical_timeline_proxy' if source_mode else 'silent_visual_proxy','final_approval_eligible':False}
         value=json.loads(record.read_bytes())
         if value['revision']!=project['revision']:
             return {**value,'status':'STALE','video_url':None}
@@ -66,6 +72,15 @@ class PreviewManager:
             output=folder/'preview.mp4'
             if not output.is_file() or file_sha(output)!=value['sha256']:
                 raise WorkflowError('PREVIEW_ARTIFACT_CHANGED')
+            if source_mode:
+                manifest=folder/'render-manifest.json'
+                if (value.get('preview_profile') != SOURCE_PROFILE or not manifest.is_file()
+                        or file_sha(manifest) != value.get('manifest_sha256')
+                        or json.loads(manifest.read_bytes()) != value.get('manifest')
+                        or value.get('manifest',{}).get('timeline_sha256') != view['sha256']
+                        or value.get('manifest',{}).get('timeline_version') != view['version']):
+                    raise WorkflowError('PREVIEW_MANIFEST_CHANGED')
+                resolve_assets(self.config,project)
             value['video_url']=f"/api/projects/{project_id}/preview/video?version={view['version']}"
         return value
 
@@ -76,27 +91,30 @@ class PreviewManager:
             if project.get('archived'): raise WorkflowError('PROJECT_ARCHIVED_RESTORE_FIRST')
             if any(j['status'] in {'queued','running','retrying'} for j in project['jobs']): raise WorkflowError('PROJECT_BUSY')
             view,shots=shot_fields(project)
-            if view.get('editing_mode') == 'source_footage':
-                raise WorkflowError('AUTO_EDIT_SOURCE_PREVIEW_PATH_REQUIRED',400)
-            if not shots or len(shots)>20 or sum(s['duration'] for s in shots)>180:
-                raise WorkflowError('PREVIEW_SHOTS_DURATION_INVALID',400)
-            assets={a['id']:a for a in project_assets(project['document'])}
-            for s in shots:
-                a=assets.get(s['asset_id']); source=media_path(self.config,s['asset_id']) if a else None
-                if not a or a.get('rights_confirmed') is not True or not source.is_file() or file_sha(source)!=a['sha256']:
-                    raise WorkflowError('SOURCE_MEDIA_CHANGED_OR_MISSING')
-                s['source_sha256']=a['sha256']
-            folder=self._folder(project_id,view['sha256'],revision); folder.mkdir(parents=True,exist_ok=True)
+            source_mode=view.get('editing_mode')=='source_footage'
+            if source_mode:
+                resolve_assets(self.config,project)
+            else:
+                if not shots or len(shots)>20 or sum(s['duration'] for s in shots)>180:
+                    raise WorkflowError('PREVIEW_SHOTS_DURATION_INVALID',400)
+                assets={a['id']:a for a in project_assets(project['document'])}
+                for s in shots:
+                    a=assets.get(s['asset_id']); source=media_path(self.config,s['asset_id']) if a else None
+                    if not a or a.get('rights_confirmed') is not True or not source.is_file() or file_sha(source)!=a['sha256']:
+                        raise WorkflowError('SOURCE_MEDIA_CHANGED_OR_MISSING')
+                    s['source_sha256']=a['sha256']
+            folder=self._folder(project_id,view['sha256'],revision,SOURCE_PROFILE if source_mode else None); folder.mkdir(parents=True,exist_ok=True)
             old=self.status(project_id)
             if old.get('status') in {'READY','RUNNING','QUEUED'}: return old
             identifier=folder.name
             value={'id':identifier,'project_id':project_id,'revision':revision,'timeline_version':view['version'],
                    'timeline_sha256':view['sha256'],'status':'QUEUED','completed_shots':0,'total_shots':len(shots),
-                   'cached_shots':0,'new_proxy_shots':0,'audio_mode':'silent_visual_proxy','final_approval_eligible':False,
+                   'cached_shots':0,'new_proxy_shots':0,'audio_mode':'canonical_timeline_proxy' if source_mode else 'silent_visual_proxy','final_approval_eligible':False,
+                   **({'preview_profile':SOURCE_PROFILE} if source_mode else {}),
                    'provider_calls':0,'tts_calls':0,'video_url':None}
             self._write(folder/'preview.json',value)
             event=threading.Event(); self.cancelled[identifier]=event
-            worker=threading.Thread(target=self._run,args=(copy.deepcopy(project),folder,event),daemon=True,name='native-shot-proxy')
+            worker=threading.Thread(target=self._run_source if source_mode else self._run,args=(copy.deepcopy(project),folder,event),daemon=True,name='native-source-proxy' if source_mode else 'native-shot-proxy')
             self.workers[identifier]=worker; worker.start()
             return value
 
@@ -112,7 +130,7 @@ class PreviewManager:
         value=self.status(project_id)
         if value['status']!='READY' or str(value['timeline_version'])!=str(version):
             raise WorkflowError('PREVIEW_STALE_OR_NOT_READY')
-        return self._folder(project_id,value['timeline_sha256'],value['revision'])/'preview.mp4'
+        return self._folder(project_id,value['timeline_sha256'],value['revision'],value.get('preview_profile'))/'preview.mp4'
 
     @staticmethod
     def _command(command, directory, event):
@@ -205,6 +223,32 @@ Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
         except Exception as error:
             code=error.code if isinstance(error,WorkflowError) else type(error).__name__
             value.update(status='CANCELLED' if code=='PREVIEW_CANCELLED' else 'FAILED',error={'code':code,'automatic_replay':False},video_url=None)
+        finally:
+            with self.lock:
+                self._write(folder/'preview.json',value)
+                self.workers.pop(value['id'],None)
+
+    def _run_source(self, project, folder, event):
+        with self.lock:
+            value=json.loads((folder/'preview.json').read_bytes())
+            value['status']='RUNNING';self._write(folder/'preview.json',value)
+        output=folder/'preview.mp4'
+        try:
+            # Preserve the local renderer concurrency limit. Cancellation is checked
+            # by the shared async renderer before and throughout media execution.
+            with self.render_lock:
+                manifest=asyncio.run(render_source(self.config,project,output,event))
+            if event.is_set():raise PreviewCancelledError('preview was cancelled')
+            manifest_path=folder/'render-manifest.json'
+            self._write(manifest_path,manifest)
+            value.update(status='READY',sha256=file_sha(output),manifest_sha256=file_sha(manifest_path),
+                manifest=manifest,completed_shots=value['total_shots'],new_proxy_shots=value['total_shots'],
+                video_url=f"/api/projects/{project['id']}/preview/video?version={value['timeline_version']}")
+        except Exception as error:
+            code='PREVIEW_CANCELLED' if isinstance(error,PreviewCancelledError) else error.code if isinstance(error,WorkflowError) else 'SOURCE_PREVIEW_RENDER_FAILED'
+            output.unlink(missing_ok=True)
+            value.update(status='CANCELLED' if code=='PREVIEW_CANCELLED' else 'FAILED',
+                error={'code':code,'automatic_replay':False},video_url=None)
         finally:
             with self.lock:
                 self._write(folder/'preview.json',value)

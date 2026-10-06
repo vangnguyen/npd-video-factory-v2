@@ -164,7 +164,7 @@ class NativeSourceTimelineTests(unittest.TestCase):
         try:
             with self.assertRaises(WorkflowError) as failed:
                 previews.generate(project['id'],project['revision'])
-            self.assertEqual(failed.exception.code,'AUTO_EDIT_SOURCE_PREVIEW_PATH_REQUIRED')
+            self.assertEqual(failed.exception.code,'SOURCE_MEDIA_CHANGED_OR_MISSING')
         finally:previews.close()
 
 

@@ -86,6 +86,17 @@ test('A preview from another revision or timeline cannot enter playback',()=>{
   assert.equal(boundPreview(p,{...preview,final_approval_eligible:true}).status,'FAILED');
 });
 
+test('Source proxy playback requires its canonical manifest and labels missing final effects',()=>{
+  const p={...project,shot_timeline:{...project.shot_timeline,editing_mode:'source_footage'}};
+  const preview={status:'READY',revision:7,timeline_sha256:'timeline-a',video_url:'/source-preview',audio_mode:'canonical_timeline_proxy',preview_profile:'native-source-timeline-proxy-v1',final_approval_eligible:false,manifest:{playable:true,timeline_sha256:'timeline-a',timeline_version:3,final_approval_eligible:false}};
+  assert.equal(boundPreview(p,preview).video_url,'/source-preview');
+  assert.match(previewLabel(preview),/âm thanh theo timeline/);
+  assert.match(previewTimingLabel('proxy',preview),/Chưa dựng phụ đề/);
+  for(const changed of [{...preview,manifest:null},{...preview,preview_profile:'old-profile'},{...preview,manifest:{...preview.manifest,timeline_version:2}},{...preview,final_approval_eligible:true}])assert.equal(boundPreview(p,changed).status,'FAILED');
+  assert.equal(boundPreview(project,preview).status,'FAILED');
+  assert.equal(boundPreview(p,{...preview,audio_mode:'silent_visual_proxy'}).status,'FAILED');
+});
+
 test('Studio final review is available only for a current approved active project render',()=>{
   const render={id:'render-a',kind:'render',status:'succeeded',revision:7},p={...project,approval:{revision:7},jobs:[render]};
   assert.equal(currentStudioRender(p),render);

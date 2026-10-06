@@ -25,17 +25,23 @@ export function safeSuggestion(project,shotId,suggestion,suggestionRevision) {
   return Boolean(project?.revision===suggestionRevision && suggestion?.project_id===project.id && suggestion.revision===project.revision && suggestion.timeline_sha256===project.shot_timeline?.sha256 && suggestion?.requires_human_apply===true && suggestion.operation?.type==='update' && suggestion.operation.shot_id===shotId && Array.isArray(affected) && affected.includes(shotId) && new Set(affected).size===affected.length && affected.every(id=>knownIds.has(id)));
 }
 export function previewLabel(preview) {
+  if(preview?.audio_mode==='canonical_timeline_proxy'&&['EMPTY','READY'].includes(preview.status))return preview.status==='READY'?'Xem nguồn đã dựng · âm thanh theo timeline':'Xem video nguồn · âm thanh theo timeline';
   if(!preview||preview.status==='EMPTY')return 'Xem nhanh hình ảnh · chưa có giọng đọc';
   const labels={QUEUED:'Đang chờ preview',RUNNING:`Đang dựng ${preview.completed_shots??0}/${preview.total_shots??0} shot`,READY:'Xem nhanh hình ảnh · chưa có giọng đọc',STALE:'Preview đã cũ · cần tạo lại',FAILED:'Preview lỗi · thử lại khi đã sửa',CANCELLED:'Đã hủy preview'};
   return labels[preview.status]??'Chưa có preview';
 }
-export function previewTimingLabel(mediaMode) {
+export function previewTimingLabel(mediaMode,preview=null) {
+  if(mediaMode!=='final'&&preview?.audio_mode==='canonical_timeline_proxy')return 'Preview dùng điểm cắt và âm thanh gốc theo timeline. Chưa dựng phụ đề, keyframe reframe hoặc ducking; cần bản render đầy đủ để duyệt cuối.';
   return mediaMode==='final'?'Bản render dùng giọng Thùy Dung đã khóa. Phụ đề theo đoạn; các shot có lời đọc dùng thời lượng audio đo được.':'Preview hình ảnh chưa tạo hay đo audio; thời điểm phụ đề là ước tính theo thời lượng shot. Bản render dùng giọng Thùy Dung đã khóa.';
 }
 export function boundPreview(project,preview) {
   if(!preview)return null;
   if(preview.revision!==project?.revision||preview.timeline_sha256!==project?.shot_timeline?.sha256)return {...preview,status:'STALE',video_url:null};
-  if(preview.status==='READY'&&(preview.audio_mode!=='silent_visual_proxy'||preview.final_approval_eligible!==false))return {...preview,status:'FAILED',video_url:null};
+  if(preview.status==='READY'){
+    const source=project?.shot_timeline?.editing_mode==='source_footage';
+    const valid=source?preview.audio_mode==='canonical_timeline_proxy'&&preview.preview_profile==='native-source-timeline-proxy-v1'&&preview.manifest?.playable===true&&preview.manifest?.timeline_sha256===project.shot_timeline.sha256&&preview.manifest?.timeline_version===project.shot_timeline.version&&preview.manifest?.final_approval_eligible===false:preview.audio_mode==='silent_visual_proxy';
+    if(!valid||preview.final_approval_eligible!==false)return {...preview,status:'FAILED',video_url:null};
+  }
   return preview;
 }
 export function currentStudioRender(project) {
@@ -157,10 +163,10 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
     if($('video').hidden)$('video').pause();if(proxy.hidden)proxy.pause();
     if(!image.hidden)image.src=thumbnail(shot.asset_id);if(!proxy.hidden){const firstAsset=projectShots(project).find(s=>s.asset_id)?.asset_id;if(firstAsset)proxy.poster=thumbnail(firstAsset);else proxy.removeAttribute('poster');if(proxy.getAttribute('src')!==preview.video_url)proxy.src=preview.video_url;}
     $('video-placeholder').hidden=!($('video').hidden&&proxy.hidden&&image.hidden);
-    caption.hidden=mediaMode==='final';caption.textContent=mediaMode==='proxy'?'Xem nhanh hình ảnh · chưa có giọng đọc':shot?`Shot ${shot.scene} · ${shot.duration.toFixed(1)} giây · nguồn chưa render`:'Chọn shot hoặc tạo preview';
+    caption.hidden=mediaMode==='final';caption.textContent=mediaMode==='proxy'?previewLabel(preview):shot?`Shot ${shot.scene} · ${shot.duration.toFixed(1)} giây · nguồn chưa render`:'Chọn shot hoặc tạo preview';
     $('final-review-panel').hidden=!final||mediaMode!=='final';$('download').hidden=!final||mediaMode!=='final';$('qc-note').hidden=!final||mediaMode!=='final';
     $('preview-state').textContent=previewLabel(preview);
-    $('preview-timing-note').textContent=previewTimingLabel(mediaMode==='final'&&final?'final':'proxy');
+    $('preview-timing-note').textContent=previewTimingLabel(mediaMode==='final'&&final?'final':'proxy',preview);
     if(ui){const format=ui.applyVideoFormat(canvas,project);$('project-format').textContent=format.label;$('review-video-metadata').textContent=final?`${Number(final.result.qc.duration_seconds).toFixed(1)} giây · ${format.label} · Bản ${final.revision} · Kiểm tra kỹ thuật đạt`:format.label;if(reviewMode&&!final)setReviewMode(false);}
   }
   function renderCards(){const project=getProject(),shots=projectShots(project);const estimated=Boolean(ui&&project?.document?.brand_template?.template?.duration_policy==='fit_narration_preserve_voice_speed');const durationText=s=>`${estimated&&s.requested_duration==null?'Dự kiến ':''}${s.duration.toFixed(1)}`;$('shot-count').textContent=`${shots.length} shot`;const card=s=>`<button class="shot-card ${s.asset_id?'':'error'}" data-shot="${esc(s.shot_id)}" draggable="true" aria-pressed="${s.shot_id===selectedId}" aria-label="Chọn shot ${s.scene}, ${s.duration.toFixed(1)} giây"><strong>SHOT ${s.scene}</strong>${s.asset_id?`<img src="${thumbnail(s.asset_id)}" alt="" loading="lazy">`:'<div class="shot-no-source">Chưa có nguồn</div>'}<small>${durationText(s)}s · ${s.narration_enabled?'Có lời đọc':'Không lời đọc'}</small><small>${assets().find(a=>a.id===s.asset_id)?.kind==='video'?'Video':'Ảnh'} · ${s.asset_id?'Đã chọn nguồn':'Cần chọn nguồn'}</small></button>`;

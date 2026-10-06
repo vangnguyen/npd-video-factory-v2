@@ -395,3 +395,25 @@ EVIDENCE: `native-source-timeline-evidence.json` binds a fresh isolated project 
 REGRESSIONS: accepted narrated projects and artifacts retain their original path/schema. Original live repository/configuration/data/services are untouched. No external provider/publishing call, new paid operation, deployment, protected-main merge or destructive migration.
 
 EXTERNAL BLOCKERS: genuine provider acceptance, Docker, Owner UAT and blocked Native browser navigation remain separate. OWNER ACTION REQUIRED: none for continued safe work. NEXT WAVE: Native source preview/render and shot/advanced editor integration, followed by remaining media/providers/downstream waves.
+
+## Wave 3/6 — Native canonical source-audio preview
+
+WAVE: 3/6
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. Native source proxy transport is implemented; complete source final render/approval and non-developer editing UI remain.
+
+HEAD SHA: parent `74ab241307e01901149835da00b27e0ef128e76e`; this capability commit records source preview integration. Parent is pushed and preserved in verified `north-star-74ab241.bundle`, SHA256 `b58121e6231b756c7dc50b8a5746021c87fd330d2e200fdb3d339e62d58e94bb`.
+
+CAPABILITIES COMPLETED: FFmpeg proxy render classes move into a pure shared module; API imports retain compatibility and a fresh subprocess verifies no repository or SQLAlchemy dependency. Native source previews resolve the same canonical snapshot/assets in the existing store, validate source windows/checksums/paths/rights, reuse original-audio trim/speed/gain/fade/placement/limiter behavior, and dispatch no TTS/ASR/external provider. A separate renderer profile binds the cache to project revision and timeline hash while preserving old silent narrated proxies. Durable cancellation, interrupted-worker policy, explicit retry, source drift rejection, checksum-verified video/manifest playback and current-revision invalidation remain. Preview leaves project/approval/history/source bytes unchanged. Studio accepts a source proxy only with its matching manifest/profile/version and labels original audio and omitted final effects.
+
+CAPABILITIES PARTIAL: this proxy omits captions, smart-reframe keyframes, speech normalization and music ducking; final-render parity and approval eligibility are explicitly false. Native complete shot/advanced source editing, final render/QC/approval, duplication rebinding, music intake and genuine spoken-source UI E2E remain. Current Native browser acceptance remains NOT VERIFIED after the previously blocked isolated URL; no browser success is claimed by these transport tests.
+
+TESTS: full Native **283/283 PASS**, 153.527s (`native-source-preview-full.log`), including Phase 8/9/10 regression suites. Focused Native source/canonical/legacy-render **23/23 PASS**, 33.640s (`native-source-preview-r1.log`). Final five source tests, including fresh import isolation and truthful muted-audio receipts, **5/5 PASS**, 5.182s (`native-source-preview-final.log`), cover the final receipt-only refinement after the full-suite launch. Shared API audio/reframe **31/31 PASS**, 15.86s (`native-source-preview-api-r2.log`); related analysis/multi-input/B-roll/silence **39/39 PASS**, 70.66s (`native-source-preview-api-r3.log`). Studio **99/99 PASS**, 522.515ms (`native-source-preview-studio-r1.log`). The initial API command referenced a nonexistent test filename and ran no tests; the corrected explicit suites pass and the initial log is retained.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual FFmpeg MP4/AAC, canonical source window/duration/geometry, decoded PCM audible placement, track mute, source hash drift, Native SQLite non-mutation and durable cancellation/retry. MOCK TESTS: saved ASR, cancellation barrier, version/profile/manifest/approval UI gates and import-isolation assertion. Synthetic tone and saved fixture ASR do not establish speech recognition quality or human UAT.
+
+EVIDENCE: `native-source-preview-evidence.json` hashes full exports in recovery `native-source-preview-n2`. Preview MP4 SHA256 `7077456364a2004d4a194e71d7e5e4e3e87b3d02f55331620b3d2df66ffbbd8c`: 432×540, 1.0s, decoded RMS 0.0279108881. It derives from preserved source hash `86807ba66900c3bc9fee111db29e9314074c72c49e19f042c7585f158c8a9b1a` and canonical version 2/hash `9c1aa32feac84757a381e18e3d1c871ee6c19ba29952edf9f43535dff2af93bf`. Full preview receipt, render manifest, timeline, FFprobe and measured audio analysis are retained. Final/UI/provider/UAT/deployment readiness remain false.
+
+REGRESSIONS: accepted narrated media/canonical schema, original live repository/data/configuration and live services remain untouched. No protected-main merge, production deployment, external publishing, new paid operation or destructive migration.
+
+EXTERNAL BLOCKERS: real-provider acceptance, Docker, Phase 10 Owner UAT and current Native browser navigation remain separate limitations. OWNER ACTION REQUIRED: none for continued safe implementation. NEXT WAVE: source final render/approval and linked shot/advanced editor integration; then continue the remaining media/provider/downstream waves.
