@@ -50,6 +50,41 @@ class IntelligenceService:
 
     def profiles(self): return {'profiles':self.catalog['profiles'],'scoring':self.catalog['scoring'],'scoring_type':'HEURISTIC_SCORING','research_provider':self.research_provider.key}
 
+    def fork_research_snapshot(self,identifier,version,reviewer,note):
+        """Reuse retained research for a new human-directed production; never replay providers."""
+        human=self.human(reviewer,note=note)
+        bundle=self.bundle(identifier); original=bundle['run']
+        if original['version']!=version: raise WorkflowError('INTELLIGENCE_STALE_VERSION_RELOAD')
+        candidates=[i for i in bundle['ideas'] if i['generation']==original['generation'] and i['status'] not in {'REJECTED','SUPERSEDED'}]
+        if len(candidates)!=5: raise WorkflowError('INTELLIGENCE_FIVE_CURRENT_CANDIDATES_REQUIRED')
+        self.verify_sources(bundle['sources'],bundle['findings'])
+        fields=lambda value:{k:v for k,v in value.items() if k not in {'id','created_at','updated_at','version','provenance','score'}}
+        run=ResearchRun(query=original['query'],context=original['context'],provider=original['provider'],model=original['model'],status='IDEAS',
+            generation=1,source_ids=original['source_ids'],provider_metadata={'cached_research_snapshot':True,'actual_provider_calls':0,'source_retrievals_this_run':0,'originating_metadata':original['provider_metadata']},
+            provenance={'origin':'human_directed_cached_research_fork','original_run_id':identifier,'original_run_version':version,'decision':human})
+        opportunity=Opportunity(**{**fields(bundle['opportunity']),'run_id':run.id,'status':'NEW','selected_idea_id':None,'brief_id':None,'production_project_id':None},provenance={'origin':'human_directed_research_fork','original_opportunity_id':bundle['opportunity']['id']})
+        findings=[ResearchFinding(**{**fields(f),'run_id':run.id},provenance={'origin':'retained_finding_reused','original_finding_id':f['id'],'original_finding_version':f['version'],'original_provenance':f['provenance']}) for f in bundle['findings']]
+        mapping={old['id']:new.id for old,new in zip(bundle['findings'],findings)}
+        ideas=[ContentIdea(**{**fields(i),'run_id':run.id,'opportunity_id':opportunity.id,'generation':1,'status':'CANDIDATE','supporting_research':[mapping[f] for f in i['supporting_research']]},
+            provenance={'origin':'reused_actual_candidate_snapshot','original_idea_id':i['id'],'original_idea_version':i['version'],'actual_provider_calls_this_fork':0,'original_provenance':i['provenance']}) for i in candidates]
+        signals=[]
+        for sid in original['signal_ids']:
+            signal=self.store.get(sid,'TrendSignal')
+            signals.append(TrendSignal(**{**fields(signal),'run_id':run.id,'finding_ids':[mapping[f] for f in signal['finding_ids']]},provenance={'origin':'retained_signal_reused','original_signal_id':sid,'observed_at_preserved':True}))
+        with self.store.transaction() as con:
+            current=self.store.get(identifier,'ResearchRun',con)
+            if current['version']!=version or con.execute("SELECT 1 FROM operations WHERE run_id=? AND status IN ('QUEUED','RUNNING')",(identifier,)).fetchone(): raise WorkflowError('INTELLIGENCE_OPERATION_BUSY_OR_STALE')
+            for finding in findings:self.store.put('ResearchFinding',finding.model_dump(mode='json'),con=con)
+            for signal in signals:self.store.put('TrendSignal',signal.model_dump(mode='json'),con=con)
+            for idea in ideas:
+                value=self.store.put('ContentIdea',idea.model_dump(mode='json'),con=con)
+                scored=score(value,[f.model_dump(mode='json') for f in findings],bundle['sources'],original['context']['profile'],{'scoring':original['context']['scoring']},[])
+                self.store.put('IdeaScore',scored.model_dump(mode='json'),con=con)
+            self.store.put('Opportunity',{**opportunity.model_dump(mode='json'),'supporting_signals':[s.id for s in signals]},con=con)
+            self.store.put('ResearchRun',{**run.model_dump(mode='json'),'opportunity_id':opportunity.id,'finding_ids':[f.id for f in findings],'signal_ids':[s.id for s in signals],'idea_ids':[i.id for i in ideas]},con=con)
+            self.store.decision(con,run.id,'human_reused_research_for_new_production',{**human,'original_run_id':identifier,'source_hashes':{s['id']:s['content_sha256'] for s in bundle['sources']},'provider_calls':0})
+        return self.bundle(run.id)
+
     def create(self,query,profile_id,urls):
         profile=next((p for p in self.catalog['profiles'] if p['id']==profile_id),None)
         if profile is None: raise WorkflowError('INTELLIGENCE_PROFILE_NOT_FOUND',400)

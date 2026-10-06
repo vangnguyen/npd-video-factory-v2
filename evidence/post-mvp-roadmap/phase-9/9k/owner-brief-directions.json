@@ -1,0 +1,88 @@
+{
+  "task": "VF-PHASE9K-CONTENT-INTELLIGENCE-ACCEPTANCE-01",
+  "reviewer": "Owner — VF-PHASE9K qua Codex",
+  "editorial_date": "06/10/2026 (UTC+7)",
+  "common_constraints": [
+    "Mở bằng hook tự nhiên, có giá trị rõ cho người xem; không mở bằng lời cảnh báo nguồn máy móc.",
+    "Tích hợp dữ kiện và bối cảnh thời gian tự nhiên; tránh lặp 'nguồn nói gì/chưa nói gì', 'hãy kiểm tra nguồn', 'chưa được xác minh' khi không cần thiết.",
+    "Không mở rộng dữ kiện ngoài nguồn đã lưu, không bịa chứng nhận/thành tích cá nhân, không cam kết kết quả du lịch hoặc lợi nhuận đầu tư.",
+    "Thời điểm biên tập được Owner yêu cầu: 06/10/2026, UTC+7; dữ liệu kỳ báo cáo lịch sử không phải hiện trạng hôm nay.",
+    "Chỉ tạo kịch bản để Owner duyệt. Kịch bản, storyboard, media, TTS/render, video cuối và publishing chưa được duyệt."
+  ],
+  "cases": [
+    {
+      "number": 1, "decision": "APPROVE_WITH_EDIT", "duration": "30–45 giây",
+      "required_source_literals": ["23/04/2026", "InterContinental", "Crowne Plaza", "Holiday Inn Express", "Garner"],
+      "idea_changes": {
+        "title": "IHG và Green Paradise: thỏa thuận mở ra điều gì?",
+        "hook": "IHG hợp tác với Vinhomes Green Paradise — điều này thực sự có nghĩa gì với dự án?",
+        "angle": "Giải thích ý nghĩa của thỏa thuận và bốn thương hiệu trong kế hoạch hợp tác, phân biệt kế hoạch phát triển với khách sạn đã vận hành.",
+        "estimated_duration": 40,
+        "key_points": [
+          "Bài Vinhomes Market ghi nhận thỏa thuận hợp tác ngày 23/04/2026 giữa chủ đầu tư Vinhomes Green Paradise và IHG.",
+          "Bốn thương hiệu trong nội dung thỏa thuận gồm InterContinental, Crowne Plaza, Holiday Inn Express và Garner; đây là bối cảnh hợp tác, không phải danh sách khách sạn đã khai trương.",
+          "Kỳ vọng về hệ sinh thái lưu trú được quy cho phát biểu của đại diện IHG, không diễn đạt thành kết quả du lịch hoặc lợi nhuận được bảo đảm.",
+          "Giá trị cho người xem là hiểu dự án đang công bố loại thông tin nào và theo dõi triển khai tiếp theo; không kết luận khách sạn đang hoạt động."
+        ]
+      }
+    },
+    {
+      "number": 2, "decision": "APPROVE_WITH_EDIT", "duration": "45–60 giây",
+      "required_source_literals": ["03/03/2026", "KMAC", "WCCD", "SUM"],
+      "idea_changes": {
+        "title": "Green Paradise đi tới chuẩn đô thị thông minh thế nào?",
+        "hook": "Vinhomes Green Paradise đang đi tới tiêu chuẩn đô thị thông minh quốc tế như thế nào?",
+        "angle": "Giải thích bước khởi động quá trình chứng nhận, các bên được bài giới thiệu nêu và ý nghĩa của việc theo dõi tiêu chuẩn mục tiêu cùng kết quả thực tế.",
+        "estimated_duration": 55,
+        "key_points": [
+          "Bài giới thiệu ghi nhận khởi động Dự án Chứng nhận Đô thị Thông minh ngày 03/03/2026.",
+          "KMAC, WCCD và SUM được bài nêu trong bối cảnh hợp tác; chỉ giải thích tên/bối cảnh có trong đoạn trích, không gán thêm vai trò cấp chứng nhận.",
+          "Đối với người tìm hiểu dự án, cần phân biệt tiêu chuẩn và mục tiêu đang theo đuổi với kết quả đã được công bố.",
+          "Khởi động một dự án chứng nhận không đồng nghĩa chứng nhận đã được cấp; không tự bổ sung trạng thái, cấp độ hoặc tiêu chuẩn ISO chưa có trong nguồn."
+        ]
+      }
+    },
+    {
+      "number": 4, "decision": "APPROVE_WITH_EDIT", "duration": "45 giây",
+      "required_source_literals": ["Kick-Off", "Vinhomes Saigon Park"],
+      "idea_changes": {
+        "title": "Ba điều cần xem khi đánh giá một dự án mới",
+        "hook": "3 điều nên kiểm tra trước khi đánh giá một dự án mới như Vinhomes Saigon Park.",
+        "angle": "Giáo dục người mua nhà: phân loại thông tin sự kiện, lời tiếp thị và những dữ kiện dự án cần tài liệu có thể kiểm tra riêng. Dùng bài Kick-Off làm ví dụ, không quảng bá cam kết tăng giá.",
+        "estimated_duration": 45,
+        "key_points": [
+          "Thứ nhất, xác định thông tin đang nói về lễ giới thiệu hay kết quả triển khai; bài Kick-Off Saigon Park là ví dụ thông tin sự kiện.",
+          "Thứ hai, tách các lời giới thiệu về cơ hội hoặc lợi nhuận khỏi bằng chứng; quy mô sự kiện và ngôn ngữ tiếp thị không bảo đảm giá sẽ tăng.",
+          "Thứ ba, với giá, tiến độ và hồ sơ pháp lý của dự án, cần tài liệu phù hợp có thể đối chiếu riêng; bài sự kiện đang lưu chưa chứng minh các thông tin này.",
+          "Cung cấp khung ba câu hỏi hữu ích cho người mua, không đưa ra kết luận về tình trạng pháp lý hoặc giá hiện tại của Saigon Park."
+        ]
+      }
+    },
+    {
+      "number": 6, "decision": "APPROVE", "duration": "45 giây",
+      "required_source_literals": ["quý I/2026"],
+      "brief_changes": {
+        "objective": "Vang Nguyễn giúp người xem hiểu bối cảnh thông tin bất động sản bằng cách phân biệt ngày đăng, kỳ dữ liệu và thời điểm hiện tại; không bịa thành tích hoặc chứng chỉ cá nhân.",
+        "talking_points": [
+          "Giữ hook: Một bản tin có thể đúng với thời điểm được đăng, nhưng chưa chắc phản ánh hiện tại.",
+          "Ví dụ bài nguồn công bố 24/04/2026 đang nói về quý I/2026; tách ngày bài đăng khỏi kỳ báo cáo.",
+          "Thời điểm biên tập là 06/10/2026 theo giờ Việt Nam: khi đọc lại bài đó, không tự coi nội dung quý I là hiện trạng tháng 10.",
+          "Vang Nguyễn hướng dẫn người xem đặt ba mốc cạnh nhau trước khi hiểu một nhận định; không nêu số giao dịch, thành tích hoặc chứng chỉ cá nhân chưa có nguồn."
+        ]
+      }
+    },
+    {
+      "number": 8, "decision": "APPROVE", "duration": "45–60 giây",
+      "required_source_literals": ["quý II/2026", "100.005", "71,5%", "63,7%"],
+      "brief_changes": {
+        "talking_points": [
+          "Tạo câu mở tự nhiên về việc cần đọc nguồn cung, giao dịch và tồn kho cùng nhau; giữ rõ đây là dữ liệu quý II/2026, không phải thị trường hôm nay.",
+          "Bài nguồn công bố 21/08/2026 nêu nguồn cung tiếp tục tăng, giao dịch giảm và tồn kho có xu hướng tăng nhẹ trong quý II/2026.",
+          "Theo số liệu bài dẫn từ báo cáo địa phương: khoảng trên 100.005 giao dịch thành công, bằng 71,5% quý I/2026 và bằng 63,7% cùng kỳ 2025; không nói 'giảm 71,5%' hoặc 'giảm 63,7%'.",
+          "Giá trị cho người theo dõi thị trường là đọc cả lượng cung, giao dịch, tồn kho và kỳ so sánh thay vì suy rộng một chỉ số thành kết luận về giá hay một dự án.",
+          "CTA mời người xem nêu địa bàn hoặc chỉ số muốn đối chiếu tiếp; không khuyên mua/bán hoặc hứa lợi nhuận."
+        ]
+      }
+    }
+  ]
+}

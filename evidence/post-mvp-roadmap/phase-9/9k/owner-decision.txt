@@ -1,0 +1,334 @@
+TASK: VF-PHASE9K-CONTENT-INTELLIGENCE-ACCEPTANCE-01
+
+OWNER DECISION:
+
+APPROVE 5 IDEA BRIEFS FOR REAL PRODUCTION HANDOFF:
+
+- Case 01 — Rank #1 — APPROVE_WITH_EDIT
+- Case 02 — Rank #1 — APPROVE_WITH_EDIT
+- Case 04 — Rank #1 — APPROVE_WITH_EDIT
+- Case 06 — Rank #1 — APPROVE
+- Case 08 — Rank #1 — APPROVE
+
+This approval applies ONLY to idea/brief selection.
+
+It does NOT pre-approve:
+- generated scripts
+- storyboard
+- media selection
+- final videos
+- publishing
+
+==================================================
+OBJECTIVE
+==================================================
+
+Complete Phase 9K using five REAL Content Intelligence → Production handoffs.
+
+Required flow:
+
+RESEARCH
+→ IDEA SCORING
+→ OWNER-APPROVED BRIEF
+→ SCRIPT GENERATION
+→ SCRIPT REVIEW
+→ STORYBOARD / MEDIA PLAN
+→ VIDEO PRODUCTION
+→ FINAL HUMAN REVIEW
+
+Do not count previous Phase 8 videos.
+Do not count synthetic/test-only MP4 files.
+
+Need five new production candidates derived from the five approved Phase 9 briefs.
+
+==================================================
+BRIEF 01
+==================================================
+
+Case:
+Vinhomes Green Paradise × IHG.
+
+Preserve factual distinction:
+
+Partnership/agreement ≠ hotel already operational.
+
+Improve editorial framing.
+
+Avoid overly defensive/fact-check style.
+
+Suggested direction:
+
+“IHG đã xuất hiện tại Vinhomes Green Paradise — nhưng điều này thực sự có nghĩa gì với dự án?”
+
+Explain:
+- what the source confirms
+- four IHG brands / cooperation context where supported
+- what is expectation/statement
+- what is not yet demonstrated
+
+Do not state:
+- hotel is already operating
+- guaranteed investment return
+- guaranteed tourism outcome
+
+Target:
+30–45 sec.
+
+==================================================
+BRIEF 02
+==================================================
+
+Case:
+Vinhomes Green Paradise smart-city certification.
+
+Preserve distinction:
+
+Certification project launched
+≠ certification already awarded.
+
+Suggested positioning:
+
+“Vinhomes Green Paradise đang đi tới tiêu chuẩn đô thị thông minh quốc tế như thế nào?”
+
+Source-supported date:
+03/03/2026 launch of certification project.
+
+Explain organizations/context only where source supports them.
+
+Do not manufacture certification status.
+
+Target:
+45–60 sec.
+
+==================================================
+BRIEF 04
+==================================================
+
+Case:
+Vinhomes Saigon Park.
+
+Reframe from generic fact-check checklist into useful buyer education.
+
+Suggested direction:
+
+“3 điều nên kiểm tra trước khi đánh giá một dự án mới như Vinhomes Saigon Park.”
+
+Use source/event information as an example.
+
+Differentiate:
+- launch/event information
+- marketing statements
+- independently verifiable project facts
+
+Do not turn promotional investment language into guaranteed appreciation/profit.
+
+Target:
+45 sec.
+
+==================================================
+BRIEF 06
+==================================================
+
+Case:
+Vang Nguyễn personal brand.
+
+APPROVED substantially as proposed.
+
+Core hook:
+
+“Một bản tin có thể đúng với thời điểm được đăng, nhưng chưa chắc phản ánh hiện tại.”
+
+Position Vang Nguyễn as a knowledgeable real-estate consultant helping viewers understand information context.
+
+Keep:
+
+publication date
+vs
+data/report period
+vs
+current date.
+
+Do not invent:
+- personal achievements
+- transaction numbers
+- credentials not present in approved sources.
+
+Target:
+45 sec.
+
+==================================================
+BRIEF 08
+==================================================
+
+Case:
+Vietnam real-estate market Q2/2026.
+
+APPROVED.
+
+Use the source-supported Q2/2026 data.
+
+Potential facts include, where verified from the stored source:
+
+- supply continued increasing
+- transactions declined
+- inventory showed slight increase
+- >100,005 successful transactions
+- 71.5% vs Q1/2026
+- 63.7% vs same period 2025
+
+Explicitly identify this as Q2/2026 historical/report-period data.
+
+Do NOT present as “today's market”.
+
+Target:
+45–60 sec.
+
+==================================================
+SCRIPT QUALITY REQUIREMENTS
+==================================================
+
+The Phase 9 system is not being tested merely for factual caution.
+
+It must demonstrate useful content generation.
+
+Every script must contain:
+
+1. Strong human-readable hook.
+2. Clear viewer value.
+3. Natural Vietnamese.
+4. No robotic “source disclaimer” opening.
+5. Facts integrated naturally.
+6. Explicit temporal context where necessary.
+7. CTA appropriate to the audience.
+8. No unsupported factual extension.
+9. No invented credentials/results.
+10. No investment-return promise.
+
+Avoid repeatedly using patterns such as:
+
+“nguồn nói gì/chưa nói gì”
+“hãy kiểm tra nguồn”
+“chưa được xác minh”
+
+unless editorially necessary.
+
+Guardrails should remain, but the resulting video must still be interesting enough for actual social-media use.
+
+==================================================
+SCRIPT REVIEW GATE
+==================================================
+
+Generate all five scripts first.
+
+Persist:
+- brief ID
+- research lineage
+- sources
+- idea score
+- generated script
+- script hash/version
+
+Then STOP at:
+
+PHASE9K_SCRIPT_REVIEW_REQUIRED
+
+Return all five scripts for Owner review.
+
+DO NOT render final production videos until the five scripts have been reviewed/approved.
+
+==================================================
+AFTER SCRIPT APPROVAL
+==================================================
+
+For each approved script:
+
+Script
+→ scene plan
+→ asset plan
+→ auto edit
+→ TTS
+→ subtitle
+→ preview
+→ human review
+→ final render
+
+Reuse the Internal Production pipeline certified in Phase 8.
+
+Do not bypass human approval.
+
+==================================================
+EVIDENCE
+==================================================
+
+Create:
+
+evidence/post-mvp-roadmap/phase-9/9k/
+
+For each case:
+
+case-01/
+case-02/
+case-04/
+case-06/
+case-08/
+
+Store:
+
+research.json
+idea.json
+brief.json
+script-v*.json
+storyboard.json
+asset-lineage.json
+render-manifest.json
+ffprobe.json
+acceptance.json
+final.mp4
+
+Also create:
+
+phase9k-handoff-matrix.md
+phase9k-final-review.md
+
+==================================================
+ACCEPTANCE
+==================================================
+
+9K PASS requires:
+
+5/5 approved briefs handed into production
+5/5 scripts explicitly reviewed
+5/5 new videos actually generated
+5/5 ffprobe technical PASS
+5/5 artifact integrity PASS
+5/5 project state persistence PASS
+5/5 human watch/listen decisions stored
+
+No old Phase 8 video can satisfy this gate.
+
+No fixture/test-only MP4 can satisfy this gate.
+
+==================================================
+FINAL GATE
+==================================================
+
+Only after all above evidence exists:
+
+CONTENT_INTELLIGENCE_READY = YES
+
+Otherwise:
+
+CONTENT_INTELLIGENCE_READY = NO
+
+with explicit blocker list.
+
+Phase 8 remains immutable:
+INTERNAL_PRODUCTION_READY = YES.
+
+Do not regress or reinterpret Phase 8 certification.
+
+START NOW.
+
+First action:
+generate the five real scripts and STOP at
+PHASE9K_SCRIPT_REVIEW_REQUIRED.

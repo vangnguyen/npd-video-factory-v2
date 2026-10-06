@@ -1,0 +1,11 @@
+{
+  "new_wrapper": 30972,
+  "new_listener": 28864,
+  "code_head": "bf4ec728a11848c131ca49df126c1febc5c10b45",
+  "host": "127.0.0.1",
+  "port": 8026,
+  "stopped_verified_wrapper": 20608,
+  "stopped_verified_listener": 8436,
+  "no_jobs_interrupted": true,
+  "first_startup_check": "listener not yet ready after two seconds; next check succeeded"
+}

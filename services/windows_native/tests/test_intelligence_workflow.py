@@ -42,6 +42,30 @@ class IntelligenceWorkflowTests(unittest.TestCase):
         self.service.select(i['id'],i['version'],b['opportunity']['version'],'TEST FIXTURE reviewer')
         return self.service.bundle(b['run']['id'])
 
+    def test_reusing_research_for_new_production_preserves_existing_import_and_sources(self):
+        b=self.selected()
+        brief=self.service.approve_brief(b['brief']['id'],b['brief']['version'],'TEST FIXTURE reviewer',True)
+        old_project=self.service.send(brief['id'],brief['version'])
+        old_document_sha=digest(old_project['document'])
+        reused=self.service.fork_research_snapshot(b['run']['id'],b['run']['version'],'TEST FIXTURE reviewer','New production request using retained evidence')
+        self.assertNotEqual(reused['run']['id'],b['run']['id'])
+        self.assertEqual(reused['run']['source_ids'],b['run']['source_ids'])
+        self.assertEqual([s['retrieved_at'] for s in reused['sources']],[s['retrieved_at'] for s in b['sources']])
+        self.assertEqual(reused['run']['provider_metadata']['actual_provider_calls'],0)
+        self.assertEqual(reused['operations'],[])
+        self.assertEqual(len(reused['ideas']),5)
+        self.assertEqual({f['run_id'] for f in reused['findings']},{reused['run']['id']})
+        self.service.verify_sources(reused['sources'],reused['findings'])
+        i=reused['ideas'][0]
+        new_brief=self.service.select(i['id'],i['version'],reused['opportunity']['version'],'TEST FIXTURE reviewer')
+        new_brief=self.service.approve_brief(new_brief['id'],new_brief['version'],'TEST FIXTURE reviewer',True)
+        new_project=self.service.send(new_brief['id'],new_brief['version'])
+        self.assertNotEqual(new_project['id'],old_project['id'])
+        self.assertIsNone(new_project['approval'])
+        self.assertEqual(new_project['jobs'],[])
+        self.assertEqual(digest(self.production.get(old_project['id'])['document']),old_document_sha)
+        self.assertEqual(self.service.store.get(brief['id'],'ContentBrief'),brief)
+
     def test_research_five_scores_selection_brief_bridge_and_preserved_production(self):
         b=self.selected(); self.assertEqual(len(b['ideas']),5)
         self.assertTrue(all(i['score']['scoring_type']=='HEURISTIC_SCORING' for i in b['ideas']))
