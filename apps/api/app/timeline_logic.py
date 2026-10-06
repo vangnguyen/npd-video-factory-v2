@@ -120,26 +120,40 @@ def build_initial_timeline(
     main_duration = max(0.1, round(cursor, 6))
 
     subtitle_clips: list[TimelineClip] = []
+    # Adjacent visual shots do not break speech. Merge their continuous source
+    # coverage for captions so words crossing a shot boundary remain aligned.
+    subtitle_windows: list[TimelineClip] = []
+    for clip in source_clips:
+        if subtitle_windows and abs(subtitle_windows[-1].source_end-clip.source_start)<1e-6:
+            previous=subtitle_windows[-1]
+            subtitle_windows[-1]=previous.model_copy(update={"source_end":clip.source_end,"duration":previous.duration+clip.duration})
+        else:
+            subtitle_windows.append(clip.model_copy(deep=True))
     if analysis.transcript:
         for segment in analysis.transcript.segments:
-            for source_clip in source_clips:
+            for source_clip in subtitle_windows:
                 overlap_start = max(segment.start_seconds, source_clip.source_start)
                 overlap_end = min(segment.end_seconds, source_clip.source_end)
                 if overlap_end - overlap_start < 0.05:
                     continue
                 mapped_start = source_clip.timeline_start + (overlap_start - source_clip.source_start)
                 duration = overlap_end - overlap_start
+                measured_words=[word for word in segment.words if overlap_start<=word.start_seconds<word.end_seconds<=overlap_end]
+                partial=overlap_start>segment.start_seconds or overlap_end<segment.end_seconds
+                caption_text=' '.join(word.text for word in measured_words) if partial and segment.words else segment.text
+                if not caption_text.strip():continue
                 subtitle_clips.append(
                     TimelineClip(
                         clip_id=_new_id("clip"),
                         kind="subtitle",
-                        label=segment.text[:120],
+                        label=caption_text[:120],
                         asset_id=None,
                         source_start=round(overlap_start, 6),
                         source_end=round(overlap_end, 6),
                         timeline_start=round(mapped_start, 6),
                         duration=round(duration, 6),
                         metadata={
+                            **({"subtitle_text":segment.text} if not segment.words else {}),
                             "transcript_id": analysis.transcript.transcript_id,
                             "segment_id": segment.segment_id,
                             "language": analysis.transcript.language,
@@ -147,12 +161,11 @@ def build_initial_timeline(
                             "editable_in": "V2-08",
                             # Retain measured provider intervals only. Partial words at a
                             # cut are omitted, never stretched/repartitioned to fill a cue.
-                            "timing_source": "provider_native_word_intervals",
+                            "timing_source": "provider_native_word_intervals" if segment.words else "segment_bounds_without_word_alignment",
                             "measured_source_words": [{"text": word.text,
                                 "start_seconds": word.start_seconds,
                                 "end_seconds": word.end_seconds}
-                                for word in segment.words
-                                if overlap_start <= word.start_seconds < word.end_seconds <= overlap_end],
+                                for word in measured_words],
                         },
                     )
                 )

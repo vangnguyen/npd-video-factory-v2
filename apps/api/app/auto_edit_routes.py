@@ -19,10 +19,36 @@ from .human_auth import authorize_project
 from .transcript_editing import edit_transcript,TranscriptEditConflict
 from .media_security import MediaScanUnavailable, MediaSecurityError, UnsafeMediaRejected
 from .media_validation import MediaValidationError
+from .highlight_drafts import (HighlightDraftRequest,HighlightDraftRead,HighlightDraftApply,
+    HighlightDraftConflict,create_drafts,list_drafts,apply_draft)
+from .timeline_models import TimelineRead
+from .timeline_repository import TimelineConflictError
 
 
 router = APIRouter(prefix="/api/v1")
 _SHA256 = re.compile(r"^[a-f0-9]{64}$")
+
+
+@router.get('/projects/{project_id}/highlight-drafts',response_model=list[HighlightDraftRead])
+async def saved_highlight_drafts(project_id:str,request:Request):
+    await authorize_project(request,project_id,'viewer')
+    return await list_drafts(analysis_service_from(request).repository,project_id)
+
+
+@router.post('/projects/{project_id}/highlight-drafts',response_model=list[HighlightDraftRead])
+async def generate_highlight_drafts(project_id:str,payload:HighlightDraftRequest,request:Request):
+    principal=await authorize_project(request,project_id,'editor')
+    try:return await create_drafts(analysis_service_from(request).repository,project_id,payload,principal.subject)
+    except KeyError as exc:raise missing('Analysis/transcript/asset') from exc
+    except (HighlightDraftConflict,ValueError) as exc:raise error(409,'HIGHLIGHT_DRAFT_CONFLICT',str(exc)) from exc
+
+
+@router.post('/projects/{project_id}/highlight-drafts/{draft_id}/apply',response_model=TimelineRead)
+async def apply_highlight_draft(project_id:str,draft_id:str,payload:HighlightDraftApply,request:Request):
+    principal=await authorize_project(request,project_id,'editor')
+    try:return await apply_draft(analysis_service_from(request).repository,project_id,draft_id,payload,principal.subject)
+    except KeyError as exc:raise missing('Highlight draft') from exc
+    except (HighlightDraftConflict,TimelineConflictError) as exc:raise error(409,'HIGHLIGHT_DRAFT_CONFLICT',str(exc)) from exc
 
 
 @router.post('/projects/{project_id}/analyses/{analysis_id}/transcript',response_model=AutoEditAnalysisRead)

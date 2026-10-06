@@ -50,6 +50,8 @@ const state = {
   redoStack: [],
   undoStack: [],
   transcriptDrafts: new Map(),
+  highlightDrafts: [],
+  highlightSupported: false,
   draggingClipId: null,
   pollTimer: null,
   productionPollTimer: null,
@@ -183,6 +185,10 @@ async function loadProject({ quiet = false } = {}) {
     });
     state.versions = timeline ? await api(`/api/v1/projects/${state.projectId}/timeline/versions`) : [];
     await syncTimelineTranscript();
+    state.highlightSupported=true;
+    state.highlightDrafts=await api(`/api/v1/projects/${state.projectId}/highlight-drafts`).catch(error=>{
+      if(error.status===404){state.highlightSupported=false;return [];}throw error;
+    });
     state.preview = null;
     state.productionPackage = null;
     state.activeProductionRender = null;
@@ -263,6 +269,8 @@ function renderAnalysisReview(){
   $("#analysis-scene-list").innerHTML=analysis.scenes.map(scene=>`<article><strong>Cảnh ${scene.ordinal+1} · ${formatTime(scene.start_seconds)} → ${formatTime(scene.end_seconds)}</strong><p>${escapeHtml(scene.semantic_label)} · ${escapeHtml(scene.description)}</p><small>Độ tin cậy ${scene.confidence==null?'chưa đo':`${Math.round(scene.confidence*100)}%`}</small></article>`).join('');
   $("#silence-review-list").innerHTML=analysis.silence_decisions.map(d=>`<label><input type="checkbox" data-silence-id="${escapeHtml(d.decision_id)}" ${(preserved.get(d.decision_id)??selected.has(d.decision_id))?'checked':''} ${d.enabled&&!d.conflicts_with_speech?'':'disabled'}>${formatTime(d.start_seconds)} → ${formatTime(d.end_seconds)} · ${d.conflicts_with_speech?'Giữ lại để bảo vệ lời nói':d.enabled?'Có thể đề xuất cắt':'Giữ lại'}</label>`).join('')||'<p>Không có khoảng lặng đủ điều kiện cắt.</p>';
   $("#highlight-review-list").innerHTML=analysis.highlights.map(h=>`<article><strong>Đề xuất ${h.rank} · ${(h.highlight_score*100).toFixed(0)}/100</strong><p>${formatTime(h.recommended_start)} → ${formatTime(h.recommended_end)}</p><p>${escapeHtml(h.reason)}</p></article>`).join('')||'<p>Chưa có đoạn nổi bật.</p>';
+  $("#highlight-draft-list").innerHTML=state.highlightDrafts.filter(d=>d.analysis_id===analysis.analysis_id).map(d=>`<article><strong>Draft · ${d.snapshot.duration_seconds.toFixed(1)} giây · ${(d.evidence.score*100).toFixed(0)}/100</strong><p>${escapeHtml(d.evidence.reason)}</p><small>${d.evidence.fixture_asr?'Transcript mô phỏng · chưa nghiệm thu ASR':'Dựa trên transcript đã lưu'} · Giữ nguyên nguồn</small><button type="button" data-apply-highlight="${escapeHtml(d.draft_id)}">Chọn draft này cho timeline</button></article>`).join('')||'<p>Chưa tạo draft nổi bật.</p>';
+  $("#analysis-review").querySelectorAll('[data-highlight-count],[data-highlight-mode]').forEach(button=>{button.disabled=!state.highlightSupported;});
 }
 
 function transcriptReviewForm(item,analysis){
@@ -1237,6 +1245,25 @@ $("#apply-silence-review").addEventListener('click',async event=>{
     await api(`/api/v1/projects/${state.projectId}/timeline`,{method:'POST',body:JSON.stringify({analysis_id:analysis.analysis_id,
       media_plan_id:activeMediaPlan()?.media_plan_id??null,silence_decision_ids:selection,expected_timeline_version:state.timeline?.current_version??null,actor_ref:'studio-user'})});
     await loadProject();toast('Đã lưu timeline với các khoảng cắt đã chọn. Cần xem preview và duyệt lại.');
+  }catch(error){toast(error.message,true);}finally{button.disabled=false;}
+});
+$("#analysis-review").addEventListener('click',async event=>{
+  const button=event.target.closest('[data-highlight-count],[data-highlight-mode],[data-apply-highlight]');if(!button)return;
+  button.disabled=true;
+  try{
+    if(button.dataset.applyHighlight){
+      await api(`/api/v1/projects/${state.projectId}/highlight-drafts/${encodeURIComponent(button.dataset.applyHighlight)}/apply`,{
+        method:'POST',body:JSON.stringify({expected_timeline_version:state.timeline?.current_version??null})});
+      await loadProject();toast('Draft đã đưa vào timeline. Xem preview và duyệt trước khi render.');
+    }else{
+      const analysis=activeAnalysis();
+      if(!analysis)throw new Error('Chờ phân tích hoàn tất.');
+      const drafts=await api(`/api/v1/projects/${state.projectId}/highlight-drafts`,{method:'POST',body:JSON.stringify({
+        analysis_id:analysis.analysis_id,transcript_id:analysis.transcript?.transcript_id??null,
+        count:Number(button.dataset.highlightCount??3),mode:button.dataset.highlightMode??'top_highlights',maximum_duration_seconds:60})});
+      state.highlightDrafts=await api(`/api/v1/projects/${state.projectId}/highlight-drafts`);renderAnalysisReview();
+      toast(`Đã lưu ${drafts.length} draft phù hợp. Timeline hiện tại được giữ nguyên.`);
+    }
   }catch(error){toast(error.message,true);}finally{button.disabled=false;}
 });
 function captureTranscriptInput(event){const input=event.target.closest('[data-transcript-text]');if(input)state.transcriptDrafts.set(input.dataset.transcriptText,input.value);}

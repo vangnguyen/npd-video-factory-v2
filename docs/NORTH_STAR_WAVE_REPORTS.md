@@ -104,7 +104,7 @@ WAVE: 3
 
 STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. This increment closes concrete safety/UI gaps; combined scene intelligence, highlight selection, Native integration and full acceptance remain.
 
-HEAD SHA: parent `834d6db`; commit `feat(studio): review safe silence cuts with measured waveforms and shot view` records this increment.
+HEAD SHA: `510e6247a8c51fe8b8ef1bfd461183083f4a1121`; pushed to the completion branch and preserved in verified `north-star-510e624.bundle`.
 
 CAPABILITIES COMPLETED: canonical silence cuts retain padding and reject speech overlap even with stale safety flags; whole speech segments are protected when words are absent. Editor-scoped selection requires timeline CAS, respects locked editable tracks and binds the historical transcript active after undo. All-source removal is rejected. Earlier versions remain immutable and approval/preview/render invalidate. Threshold configuration is distinguished from measured loudness. Local PCM waveform measurement streams bounded peak/RMS bins, persists provenance without migration, fingerprints the algorithm and follows source-relative trim/split/move. Shot cards and the collapsed advanced view select/edit identical canonical clip IDs. Pre-timeline transcript/scene/silence/highlight review is visible. New-project/upload authoring is collapsible and opens for empty projects. Explicit `hidden` semantics correct the inspector placeholder bug.
 
@@ -121,3 +121,27 @@ REGRESSIONS: focused API/Studio pass; full prior-head Ubuntu regression is **1,8
 EXTERNAL BLOCKERS: Docker absent; genuine provider acceptance and Owner UAT remain separate gates. No blocker to further safe implementation.
 
 OWNER ACTION REQUIRED: none for continued implementation. NEXT WAVE: finish Wave 3 analysis/highlight/reframe/Native integration; continue all later safe waves.
+
+## Wave 3 — editable highlight/Auto Shorts drafts
+
+WAVE: 3
+
+STATUS: IN PROGRESS; AUTO_EDIT_MODE_READY = NO. Highlight draft workflow is implemented; remaining Mode B/Native/media integration is not waived.
+
+HEAD SHA: parent `510e624`; commit `feat(auto-edit): save and apply immutable highlight drafts` records this increment.
+
+CAPABILITIES COMPLETED: Top 3, Top 5 and Auto Shorts build separately persisted canonical drafts; repeats reuse fingerprinted drafts and leave the active master timeline unchanged. Scores use the selected transcript, including edited text, with explicit heuristic factors. Selection expands to whole measured words or whole segments without word timestamps; over-duration selections are omitted rather than cut through speech. Fewer available candidates are returned honestly. Editor identity is authoritative. Apply checks transcript/source identity, track locks and timeline CAS, preserves old master versions and invalidates approval. Original provider rows and raw media remain unchanged. Caption coverage merges continuous shots to retain words spanning visual boundaries, and rebuilt unaligned captions retain full Unicode text. The additive migration creates only a draft table; destructive downgrade is refused, and no live DB migration ran. Older APIs lacking the additive endpoint retain Studio loading with disabled draft controls.
+
+CAPABILITIES PARTIAL: measured multimodal scoring, Native bridge, independent platform variants, dynamic subtitles/reframe and complete real spoken-footage E2E acceptance. Existing scene motion/quality remain explicitly identified heuristics, not real Vision/motion observations.
+
+TESTS: **42/42 API PASS**, 61.37 s; **88/88 frontend PASS**, 383.53 ms. Seven new highlight tests cover Top 3/5/fewer candidates, fingerprint reuse, no master mutation, applied history, stale transcript/version rejection, foreign scopes, whole-word boundaries, shot-boundary word retention, long unaligned Unicode caption preservation, authenticated HTTP transport and additive SQLite migration preserving existing rows. An initial test used an extra `segment_id` field on `TranscriptWordRead`; corrected and rerun.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: fresh SQLite persistence and actual browser HTTP generation/application with locally generated synthetic media. MOCK TESTS: fixture ASR is visible and recorded; no speech/provider acceptance claim.
+
+EVIDENCE: `docs/north-star/studio-wave3-visual/highlight-evidence.json`, `highlight-drafts.jpg`, `highlight-applied.jpg`; source/tests/migration indexed in matrix; `mode-b-highlights-42-final.log` and `mode-b-highlights-studio-final.log` in recovery. Browser created two stored mode-specific drafts from one actual scene, kept timeline v1 until selection, then saved v2 with Draft approval and no console errors. Test servers on 18031/18032 were verified and stopped; fresh data under `C:\vf-ui-fixture-a1`/`a2` remains for recovery.
+
+REGRESSIONS: targeted analysis/transcript/timeline/production suites pass. Native 264/264 and prior-head full Ubuntu 1,896/5 results remain separately identified, not silently represented as rerun here. No accepted artifact replacement, live configuration/data write, protected-main merge, paid call or external publish.
+
+EXTERNAL BLOCKERS: Docker absent; actual remote-provider and Owner acceptance remain separate. No blocker to safe work.
+
+OWNER ACTION REQUIRED: none for continued implementation. NEXT WAVE: continue Wave 3/4 reframe, combined scene/media intelligence and Native bridge, then remaining safe waves.

@@ -319,10 +319,13 @@
     "status": "PARTIAL",
     "source": [
       "apps/api/app/auto_edit_logic.py",
-      "apps/api/app/auto_edit_models.py"
+      "apps/api/app/auto_edit_models.py",
+      "apps/api/app/highlight_drafts.py",
+      "apps/api/tests/test_highlight_drafts.py",
+      "apps/api/migrations/versions/0017_north_star_highlight_drafts.py"
     ],
-    "behavior": "Multifactor highlights and reasons scored from analysis inputs.",
-    "gap": "Native Top 3/5/Auto Shorts UI and multimodal evidence integration.",
+    "behavior": "API Studio Top 3/Top 5/Auto Shorts save separate immutable, fingerprint-idempotent canonical drafts. Scores recompute from the selected transcript, preserve physical observations, expose heuristic factors, protect word/segment boundaries and enforce duration bounds without fabricating missing candidates. Applying requires editor identity, transcript binding, locks and timeline CAS; master history remains and approval invalidates. Additive draft-table migration tested locally; no live migration performed.",
+    "gap": "Native integration, measured multimodal scoring and full real spoken-footage acceptance remain. Draft generation/application is local/persistence tested with explicit fixture ASR; no genuine provider acceptance claim.",
     "severity": "P1",
     "dependency": "analysis/timeline",
     "wave": "3",

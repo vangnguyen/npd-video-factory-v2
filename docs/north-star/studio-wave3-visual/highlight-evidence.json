@@ -1,0 +1,26 @@
+{
+  "scope":"Isolated browser regression; explicit fixture ASR with real local synthetic media/persistence",
+  "fixture_server":"127.0.0.1:18032",
+  "data_directory":"C:\\vf-ui-fixture-a2",
+  "checks":{
+    "top_3_available":true,
+    "top_5_available":true,
+    "auto_shorts_available":true,
+    "actual_scene_count":1,
+    "candidate_count_per_request":1,
+    "top_3_top_5_reuse_same_draft":true,
+    "saved_drafts_after_auto_shorts":2,
+    "active_timeline_after_generation":1,
+    "active_timeline_after_selection":2,
+    "approval_after_selection":"draft",
+    "console_warnings_or_errors":0,
+    "paid_provider_calls":0,
+    "publishing_calls":0,
+    "fixture_tab_closed":true,
+    "fixture_servers_stopped":true
+  },
+  "screenshots":["highlight-drafts.jpg","highlight-applied.jpg"],
+  "real_provider_acceptance":false,
+  "owner_uat_accepted":false,
+  "live_database_migrated":false
+}
