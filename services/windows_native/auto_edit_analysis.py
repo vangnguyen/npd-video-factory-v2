@@ -249,7 +249,9 @@ def view(store, project_id):
             "timeline_application_required": True})
     return {"project_id": project_id, "revision": project["revision"], "analyses": result,
         "pending_asset_ids": [asset["id"] for asset in pending(document, project_id)],
-        "provider_calls": 0, "canonical_timeline_mutated": False}
+        "provider_calls": 0, "canonical_timeline_mutated": False,
+        "source_timeline_version": (document.get('canonical_timeline') or {}).get('version') if
+            (document.get('canonical_timeline') or {}).get('snapshot', {}).get('metadata', {}).get('native_auto_edit_schema') else None}
 
 
 def save_result(store, con, project, result):
@@ -277,13 +279,13 @@ def save_result(store, con, project, result):
     _save(store, con, project, document, "auto_edit_analysis_saved", {"analysis_ids": ids})
 
 
-def _save(store, con, project, document, action, details):
+def _save(store, con, project, document, action, details, *, timeline_mutated=False):
     from .store import now
     con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
         (project["revision"] + 1, json.dumps(document, ensure_ascii=False), now(), project["id"]))
     store.version(con, project["id"])
     store.event(con, project["id"], action, {**details, "revision": project["revision"] + 1,
-        "provider_calls": 0, "approval_invalidated": True, "canonical_timeline_mutated": False})
+        "provider_calls": 0, "approval_invalidated": True, "canonical_timeline_mutated": timeline_mutated})
 
 
 def edit_transcript(store, project_id, revision, analysis_id, body):
@@ -291,11 +293,17 @@ def edit_transcript(store, project_id, revision, analysis_id, body):
         payload = TranscriptEditRequest.model_validate(body)
     except ValueError:
         raise WorkflowError("AUTO_EDIT_TRANSCRIPT_EDIT_INVALID", 400) from None
-    if payload.expected_timeline_version is not None:
-        raise WorkflowError("AUTO_EDIT_TIMELINE_APPLICATION_NOT_AVAILABLE", 400)
     with store.transaction() as con:
         project = store.editable(con, project_id, revision)
         document = project["document"]
+        from .auto_edit_timeline import is_auto_edit, validate_document, sync_transcript
+        source_timeline = is_auto_edit(document)
+        if source_timeline:
+            state = validate_document(document)
+            if payload.expected_timeline_version != state['version']:
+                raise WorkflowError('AUTO_EDIT_TIMELINE_VERSION_CHANGED')
+        elif payload.expected_timeline_version is not None:
+            raise WorkflowError("AUTO_EDIT_TIMELINE_APPLICATION_NOT_AVAILABLE", 400)
         record = next((value for value in document.get("auto_edit_analyses", [])
             if value["analysis"]["analysis_id"] == analysis_id), None)
         asset = next((asset for asset in project_assets(document)
@@ -341,6 +349,8 @@ def edit_transcript(store, project_id, revision, analysis_id, body):
                     "source_media_mutated": False, "remote_calls": 0, "timeline_application_required": True},
                 created_at=stamp())
             document["auto_edit_transcripts"] = history + [derived.model_dump(mode="json")]
+            if source_timeline:
+                sync_transcript(document, base, derived)
             _save(store, con, project, document, "auto_edit_transcript_version_saved", {
-                "analysis_id": analysis_id, "transcript_id": derived.transcript_id, "version": derived.version})
+                "analysis_id": analysis_id, "transcript_id": derived.transcript_id, "version": derived.version}, timeline_mutated=source_timeline)
     return view(store, project_id)

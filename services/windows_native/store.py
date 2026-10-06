@@ -252,6 +252,8 @@ class Store:
     def duplicate(self, identifier, revision):
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
+            from .auto_edit_timeline import is_auto_edit
+            if is_auto_edit(doc):raise WorkflowError('AUTO_EDIT_DUPLICATION_REQUIRES_SOURCE_REBINDING', 400)
             stamp=now(); copy_id=uuid.uuid4().hex
             doc["duplication"]={"project_id":identifier,"revision":revision,"document_sha256":digest(doc),"created_at":stamp}
             doc["name"]=doc["name"][:139]+" — bản sao"
@@ -523,6 +525,9 @@ class Store:
                 return self.job(existing, con)
             project = self.editable(con, identifier, revision)
             doc, approval = project["document"], project["approval"]
+            from .auto_edit_timeline import is_auto_edit
+            if is_auto_edit(doc) and kind in {'content', 'render'}:
+                raise WorkflowError('AUTO_EDIT_SOURCE_RENDER_PATH_REQUIRED', 400)
             if doc.get("canonical_timeline"):
                 from .shot_adapter import validate_document
                 validate_document(doc)

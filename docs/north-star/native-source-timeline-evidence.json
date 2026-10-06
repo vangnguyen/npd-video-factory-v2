@@ -1,0 +1,41 @@
+{
+  "explicit_fixture": true,
+  "local_real_measurements": true,
+  "fixture_asr": true,
+  "provider_calls": 0,
+  "project_id": "fc0f495921374fffb8be90e439977328",
+  "source_project_unchanged": true,
+  "source_sha256": "86807ba66900c3bc9fee111db29e9314074c72c49e19f042c7585f158c8a9b1a",
+  "canonical_timeline_version": 2,
+  "timeline_sha256": "9c1aa32feac84757a381e18e3d1c871ee6c19ba29952edf9f43535dff2af93bf",
+  "requested_window": [
+    0.3,
+    1.1
+  ],
+  "word_safe_window": [
+    0.2,
+    1.2
+  ],
+  "duration_seconds": 1.0,
+  "canvas": [
+    1080,
+    1350
+  ],
+  "audio_track_present": true,
+  "original_transcript_preserved": true,
+  "changed_caption_alignment_discarded": true,
+  "exports": {
+    "timeline.json": "85840fbc6d64b904449de569ffa8eb488931e7365faca5848ca4c062e5a9b44f",
+    "transcript.json": "0686b7786b0193b6ac2d3bab6664424ce789aed24c222de5dbb58f813fe895e7",
+    "analysis.json": "af6b98846b6da43300b90dd15da27273eb071b55f0be1f28589254e7bc244ddf",
+    "project.json": "0480bc371808284fd199b86698a6f58f7f10be2aff51c49c448d72156748a252",
+    "original-timeline.json": "d9531e21bef4355c2046318a1073ae6adebe3af716cb07127a1f6da26b7e8e9b",
+    "analysis-job.json": "6d33fb17458ac09205d06647ffe9ed764ebd415cc46956a9e146d39b12183fe1"
+  },
+  "preview_ready": false,
+  "final_render_ready": false,
+  "ui_workflow_ready": false,
+  "owner_uat": false,
+  "real_provider_acceptance": false,
+  "production_deployed": false
+}

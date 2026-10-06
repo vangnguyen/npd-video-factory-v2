@@ -663,6 +663,9 @@ class Pipeline:
         self.config = config
 
     def run(self, job, stage):
+        from .auto_edit_timeline import is_auto_edit
+        if is_auto_edit(job['snapshot']['document']) and job['kind'] in {'content','render'}:
+            raise WorkflowError('AUTO_EDIT_SOURCE_RENDER_PATH_REQUIRED',400)
         if job["snapshot"]["document"].get("content_intelligence"):
             from .intelligence_lineage import projection
             projection(job["snapshot"]["document"])

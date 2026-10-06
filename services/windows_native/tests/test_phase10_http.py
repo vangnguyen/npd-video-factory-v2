@@ -219,6 +219,43 @@ class Phase10HTTPTests(unittest.TestCase):
         self.assertEqual(updated['analyses'][0]['analysis']['transcript']['segments'][0]['words'],[])
         self.assertEqual(self.api('POST',path,body)[0],409)
         self.assertEqual(self.api('GET','/native-auto-edit.mjs')[0],200)
+        # Canonical source editing is opt-in for a separate media project;
+        # the existing narrated HTTP fixture cannot be replaced by this route.
+        timeline_path=endpoint+'/timeline'
+        canonical_body={'revision':updated['revision'],'action':'create','payload':{
+            'analysis_id':transcript['analysis_id'],
+            'transcript_id':updated['analyses'][0]['analysis']['transcript']['transcript_id']}}
+        self.assertEqual(self.api('POST',timeline_path,canonical_body)[0],400)
+        source_project=self.server.store.create('HTTP source timeline fixture','','media')
+        source_project=self.server.store.append_media(source_project['id'],source_project['revision'],asset)
+        job=self.server.store.enqueue(source_project['id'],source_project['revision'],'asr',uuid.uuid4().hex)
+        job=self.server.store.claim(); self.server.store.finish(job,result={'media_analysis':[saved_asr(asset)]})
+        source_project=self.server.store.get(source_project['id'])
+        job=self.server.store.enqueue(source_project['id'],source_project['revision'],'auto_edit_analysis',uuid.uuid4().hex)
+        job=self.server.store.claim()
+        record=make_analysis(source_project['id'],source_project['document'],asset,
+            MediaMetadata(media_kind='video',detected_content_type='video/mp4',duration_seconds=3.,audio_codec='aac'),
+            MediaSignals((),(),{'fixture':True}))
+        self.server.store.finish(job,result={'auto_edit_analyses':[record]})
+        source_project=self.server.store.get(source_project['id'])
+        timeline_path='/api/projects/'+source_project['id']+'/auto-edit/timeline'
+        canonical_body={'revision':source_project['revision'],'action':'create','payload':{
+            'analysis_id':record['analysis']['analysis_id'],'transcript_id':record['analysis']['transcript']['transcript_id']}}
+        for headers,expected in [({'Cookie':''},401),({'X-VF-CSRF':'invalid'},403),({'Origin':'https://foreign.invalid'},403)]:
+            self.assertEqual(self.api('POST',timeline_path,canonical_body,headers)[0],expected)
+        status,canonical=self.api('POST',timeline_path,canonical_body); self.assertEqual(status,200)
+        self.assertEqual(canonical['shot_timeline']['editing_mode'],'source_footage')
+        self.assertEqual(self.api('GET',timeline_path)[1],canonical)
+        self.assertEqual(self.api('GET',timeline_path,headers={'Cookie':''})[0],401)
+        track=next(value for value in canonical['shot_timeline']['snapshot']['tracks'] if value['type']=='audio')
+        mutation={'revision':canonical['revision'],'action':'edit','payload':{'expected_version':1,
+            'operations':[{'type':'set_track_state','track_id':track['track_id'],'muted':True}]}}
+        status,edited=self.api('POST',timeline_path,mutation); self.assertEqual(status,200)
+        self.assertEqual(edited['shot_timeline']['version'],2)
+        self.assertEqual(self.api('POST',timeline_path,mutation)[0],409)
+        forged=deepcopy(mutation); forged['revision']=edited['revision']; forged['payload']['expected_version']=2
+        forged['payload']['actor_ref']='foreign-owner'
+        self.assertEqual(self.api('POST',timeline_path,forged)[0],400)
 
     def test_voice_quality_catalog_session_and_write_guards_preserve_accepted_default(self):
         before = self.database_state()

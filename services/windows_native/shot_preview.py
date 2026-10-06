@@ -76,6 +76,8 @@ class PreviewManager:
             if project.get('archived'): raise WorkflowError('PROJECT_ARCHIVED_RESTORE_FIRST')
             if any(j['status'] in {'queued','running','retrying'} for j in project['jobs']): raise WorkflowError('PROJECT_BUSY')
             view,shots=shot_fields(project)
+            if view.get('editing_mode') == 'source_footage':
+                raise WorkflowError('AUTO_EDIT_SOURCE_PREVIEW_PATH_REQUIRED',400)
             if not shots or len(shots)>20 or sum(s['duration'] for s in shots)>180:
                 raise WorkflowError('PREVIEW_SHOTS_DURATION_INVALID',400)
             assets={a['id']:a for a in project_assets(project['document'])}

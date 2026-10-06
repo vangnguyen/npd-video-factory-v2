@@ -14,6 +14,7 @@ from .models import StrictModel
 from .timeline_logic import build_initial_timeline, TimelineEditError
 from .timeline_models import TimelineSnapshot
 from .timeline_repository import TimelineRepository
+from .speech_windows import protected_window
 
 
 class HighlightDraftConflict(ValueError):pass
@@ -48,23 +49,6 @@ def _read(row):
     return HighlightDraftRead(draft_id=row.draft_id,project_id=row.project_id,analysis_id=row.analysis_id,
         transcript_id=row.transcript_id,fingerprint=row.fingerprint,snapshot=TimelineSnapshot.model_validate(row.snapshot_json),
         evidence=row.evidence_json,actor_ref=row.actor_ref,created_at=row.created_at)
-
-
-def protected_window(start,end,transcript,duration):
-    """Extend selection outward, never cut through a measured word/speech interval."""
-    intervals=[]
-    if transcript:
-        for segment in transcript.segments:
-            intervals.extend((word.start_seconds,word.end_seconds) for word in segment.words)
-            if not segment.words:intervals.append((segment.start_seconds,segment.end_seconds))
-    # Expansions can touch another interval; reach a fixed point without guessing words.
-    while True:
-        before=(start,end)
-        for a,b in intervals:
-            if a<start<b:start=a
-            if a<end<b:end=b
-        if before==(start,end):break
-    return max(0.,start),min(duration,end)
 
 
 def build_drafts(analysis,asset,payload,assessment=None):

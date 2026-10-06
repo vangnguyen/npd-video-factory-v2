@@ -224,6 +224,10 @@ class Handler(BaseHTTPRequestHandler):
         if analysis_route:
             from .auto_edit_analysis import view
             return self.reply(view(self.server.store, analysis_route[1]))
+        source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', path)
+        if source_timeline_route:
+            from .auto_edit_timeline import view
+            return self.reply(view(self.server.store, source_timeline_route[1]))
         shot_route=re.fullmatch(r'/api/projects/([0-9a-f]{32})/(shots|preview|preview/video)',path)
         if shot_route:
             identifier,action=shot_route.groups()
@@ -340,6 +344,14 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith('/api/production/'):
             from .production_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', self.path)
+        if source_timeline_route:
+            from .auto_edit_timeline import create, edit, restore
+            body = self.read_body(max_bytes=100000)
+            if set(body) != {'revision','action','payload'} or type(body.get('revision')) is not int or body.get('action') not in {'create','edit','restore'}:
+                raise WorkflowError('AUTO_EDIT_TIMELINE_REQUEST_INVALID', 400)
+            action = {'create':create,'edit':edit,'restore':restore}[body['action']]
+            return self.reply(action(self.server.store, source_timeline_route[1], body['revision'], body['payload']))
         analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/(ana_[a-f0-9]{24})/transcript', self.path)
         if analysis_route:
             from .auto_edit_analysis import edit_transcript

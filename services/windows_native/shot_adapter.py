@@ -188,6 +188,11 @@ def snapshot_from_shots(shots, doc, *, canvas=None):
 
 
 def shots_from_snapshot(snapshot):
+    if snapshot.get('metadata', {}).get('native_auto_edit_schema'):
+        from .auto_edit_timeline import source_shots, SCHEMA as source_schema
+        if snapshot['metadata']['native_auto_edit_schema'] != source_schema:
+            _error('AUTO_EDIT_TIMELINE_SCHEMA_INVALID')
+        return source_shots(TimelineSnapshot.model_validate(snapshot).model_dump(mode='json'))
     try:
         value = TimelineSnapshot.model_validate(snapshot).model_dump(mode="json")
         if value["schema_version"] != "1.1" or value["metadata"].get("native_shot_schema") != SCHEMA:
@@ -241,6 +246,9 @@ def validate_document(doc):
     state = doc.get("canonical_timeline")
     if state is None:
         return None
+    if state.get('snapshot', {}).get('metadata', {}).get('native_auto_edit_schema'):
+        from .auto_edit_timeline import validate_document as validate_source_document
+        return validate_source_document(doc)
     if not isinstance(state, dict) or set(state) != {"version", "snapshot", "sha256"} or type(state["version"]) is not int or state["version"] < 1:
         _error("SHOT_TIMELINE_STATE_INVALID")
     if state["sha256"] != digest(state["snapshot"]):
@@ -273,6 +281,9 @@ def _state(project):
 def view(store, project):
     if isinstance(project, str):
         project = store.get(project)
+    if (project['document'].get('canonical_timeline') or {}).get('snapshot', {}).get('metadata', {}).get('native_auto_edit_schema'):
+        from .auto_edit_timeline import view as source_view
+        return source_view(store, project['id'])
     state, persisted = _state(project)
     assets = _assets(project["document"])
     shots = []
@@ -407,6 +418,9 @@ def mutate(store, identifier, revision, operation):
     """One optimistic transaction persists snapshot and all derived projections."""
     import json
     from .store import now
+    from .auto_edit_timeline import is_auto_edit
+    if is_auto_edit(store.get(identifier)['document']):
+        _error('AUTO_EDIT_USE_CANONICAL_EDITOR', 400)
     if type(revision) is not int or revision < 1:
         _error("REVISION_REQUIRED")
     with store.transaction() as con:
@@ -442,6 +456,13 @@ def sync_legacy(doc, previous_doc, project_id):
     """Legacy save remains supported; changed fields regenerate the same snapshot."""
     old = previous_doc.get("canonical_timeline")
     if old is None:
+        return doc
+    if old.get('snapshot', {}).get('metadata', {}).get('native_auto_edit_schema'):
+        from .auto_edit_timeline import validate_document as validate_source_document
+        for field in ('proposal', 'scene_media', 'edit_plan', 'brand_template', 'music', 'music_enabled'):
+            if digest(doc.get(field)) != digest(previous_doc.get(field)):
+                _error('AUTO_EDIT_USE_CANONICAL_EDITOR', 400)
+        validate_source_document(doc)
         return doc
     validate_document(previous_doc)
     previous = shots_from_snapshot(old["snapshot"])

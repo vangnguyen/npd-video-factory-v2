@@ -74,7 +74,9 @@ export function initializeNativeAnalysis({api,getProject,onProject,onDirty,onMes
     try{
       const project=getProject();
       await api(`/api/projects/${project.id}/auto-edit/${item.analysis.analysis_id}/transcript`,{
-        revision:project.revision,edit:{expected_version:current.version,segments,...(base?{base_transcript_id:base.transcript_id}:{})}});
+        revision:project.revision,edit:{expected_version:current.version,segments,
+          ...(bundle.source_timeline_version?{expected_timeline_version:bundle.source_timeline_version}:{}),
+          ...(base?{base_transcript_id:base.transcript_id}:{})}});
       identity=null;onProject(await api(`/api/projects/${project.id}`),true);
       onMessage('Đã lưu bản lời nói mới. Bản nhận diện gốc vẫn được giữ; phiên bản dự án cần duyệt lại.');
     }catch(error){onMessage(error.message,true);}
