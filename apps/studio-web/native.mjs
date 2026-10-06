@@ -13,6 +13,7 @@ export const mediaAnalysisPending = doc => mediaLibrary(doc).some(a=>!(doc?.medi
 export const musicType = file => ({wav:"audio/wav",mp3:"audio/mpeg"})[file.name.split(".").pop().toLowerCase()] ?? "";
 export const defaultSceneOptions = (scene, asset, plan) => ({scene,crop_strategy:plan?.crop_strategy??"contain",motion:asset?.kind==="video"?"none":plan?.motion??"none",source_start:asset?.kind==="video"?plan?.source_start??0:0,transition:plan?.transition??"cut"});
 export const finalApproved = job => Boolean(job?.final_review?.decision==="approve"&&job.final_review.revision===job.revision&&job.final_review.artifact_sha256===job.result?.qc?.final_sha256);
+export const scriptReviewLabel = project => !project?.document?.content_intelligence ? "" : project?.script_review?.current ? (project.approval ? "Lời đọc đã được duyệt." : "Lời đọc đã lưu được duyệt. Hình ảnh và cách dựng còn chờ bạn duyệt.") : project?.script_review ? "Lời đọc đã thay đổi; cần duyệt lại bản mới." : "Lời đọc đang chờ bạn duyệt.";
 
 const errors = {
   HUMAN_APPROVAL_REQUIRED_BEFORE_TTS:"Cần duyệt đúng phiên bản nội dung trước khi tạo giọng đọc.",
@@ -175,6 +176,8 @@ if (typeof document !== "undefined") {
       $("facts").innerHTML=proposal.facts_needing_source.map(f=>`<li>${esc(f)}</li>`).join("")||"<li>Đề xuất không liệt kê thêm nguồn. Bạn vẫn cần kiểm tra nội dung.</li>";
     }
     $("approval-state").textContent=project?.approval?"Đã duyệt phiên bản này":"Chờ bạn duyệt";
+    $("script-review-state").textContent=scriptReviewLabel(project);
+    $("script-review-state").hidden=!scriptReviewLabel(project);
     const jobs=project?.jobs??[];
     $("job-empty").hidden=Boolean(jobs.length);
     $("jobs").innerHTML=jobs.slice(0,6).map(job=>`<div class="job ${job.error?"error":""}"><strong>${job.kind==="asr"?"Phân tích nguồn & lời nói":job.kind==="content"?"Nội dung":"Giọng đọc & video"}</strong><small>${new Date(job.created_at).toLocaleString("vi-VN")} · v${job.revision}</small>${esc(job.kind==="asr"&&job.status==="succeeded"?"Kết quả phân tích sẵn sàng · hãy kiểm tra":statusNames[job.status]??job.status)}${["running","retrying"].includes(job.status)?`<small>${esc(stageNames[job.stage]??job.stage)}</small>`:""}${job.error?`<small>${esc(errors[job.error.code]??job.failure?.action??job.error.code)}${job.error.http_status?` · HTTP ${job.error.http_status}`:""}</small>`:""}${["failed","interrupted"].includes(job.status)&&job.revision===project.revision?`<button data-resume="${esc(job.id)}">Tiếp tục từ bước đã lưu</button>`:""}</div>`).join("");

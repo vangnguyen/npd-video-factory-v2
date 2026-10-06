@@ -1,0 +1,40 @@
+✔ human session header is attached without mutating caller headers (2.153ms)
+✔ missing human session fails closed (0.6181ms)
+✔ formats editor timecodes and zoom deterministically (1.1207ms)
+✔ labels version-bound approval and production render states (2.6546ms)
+✔ labels publishing dry-run truthfully and flattens gate evidence (0.5503ms)
+✔ layout failure offers an editing remedy, not a hidden text clamp (0.3391ms)
+✔ snaps pointer placement to quarter seconds (0.2688ms)
+✔ computes timeline clip placement and respects track compatibility (0.3818ms)
+✔ labels ready, stale and running previews without overstating readiness (0.3009ms)
+✔ renders analytics truth states and never turns missing metrics into zero (32.4208ms)
+✔ builds a stable V2-10 metric panel from normalized nullable metrics (0.4824ms)
+✔ Brief send needs explicit approval, saved edits, idle state and queue approval (0.9733ms)
+✔ Brief review needs human acknowledgment and reviewer, and never uses a stale draft (0.2462ms)
+✔ Regenerated candidates keep only the current generation in active selection (0.2258ms)
+✔ Untrusted research renders as escaped text and links allow only public HTTPS syntax (1.1286ms)
+✔ storyboard source identity is explicit and never a fake analysis (1.5227ms)
+✔ proposal cannot overwrite unsaved kind/script/original/facts (0.3928ms)
+✔ Script-only approval is visible and leaves video production blocked (1.2881ms)
+✔ Render UI requires current approval, saved edits and idle job (0.2567ms)
+✔ Each scene requires one source from its project library (0.3394ms)
+✔ Legacy image projects retain all scene choices without rewriting snapshot (0.1962ms)
+✔ Local multi-file selection accepts only supported image and video extensions (0.2407ms)
+✔ Only successful video bound to current approved version is visible (0.1763ms)
+✔ Retrying job blocks editing and another render until its receipt completes (0.146ms)
+✔ Document chooser passes declared MIME while server must validate actual content (0.245ms)
+✔ Changed source needs new analysis while existing source keeps its result (0.2893ms)
+✔ Video/image changes reset incompatible motion and source time (1.0399ms)
+✔ Final download requires a review of the same video hash and revision (0.2916ms)
+✔ declares all eight required radar views (0.8917ms)
+✔ radar view rules remain deterministic and explainable (0.2327ms)
+✔ filters by view, platform and search while sorting by estimate (2.6393ms)
+✔ formats scores, VND and Vietnamese lifecycle labels (18.8855ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 220.2797

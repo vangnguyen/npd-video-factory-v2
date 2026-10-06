@@ -1,6 +1,14 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending,defaultSceneOptions,musicType,finalApproved} from '../native.mjs';
+import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending,defaultSceneOptions,musicType,finalApproved,scriptReviewLabel} from '../native.mjs';
+
+test('Script-only approval is visible and leaves video production blocked',()=>{
+  const p={revision:3,approval:null,jobs:[],document:{content_intelligence:{}},script_review:{current:true}};
+  assert.match(scriptReviewLabel(p),/Hình ảnh và cách dựng còn chờ/);
+  assert.equal(canRender(p,false,false),false);
+  assert.match(scriptReviewLabel({...p,script_review:{current:false}}),/cần duyệt lại/);
+  assert.equal(scriptReviewLabel({...p,document:{}}),'');
+});
 
 test('Render UI requires current approval, saved edits and idle job',()=>{
   const p={revision:3,approval:{revision:3},jobs:[]};

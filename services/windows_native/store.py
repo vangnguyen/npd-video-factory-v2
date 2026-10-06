@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from datetime import datetime, timezone
+import hashlib
 import json
 from pathlib import Path
 import sqlite3
@@ -146,7 +147,50 @@ class Store:
             project["archived"]=bool(state[0]) if state else False
             project["jobs"] = [self.job(r, con) for r in con.execute(
                 "SELECT * FROM jobs WHERE project_id=? ORDER BY created_at DESC", (identifier,))]
+            if project['document'].get('content_intelligence'):
+                project['script_review'] = self.current_script_review(con, project)
             return project
+
+    @staticmethod
+    def current_script_review(con, project):
+        row = con.execute("SELECT payload FROM events WHERE project_id=? AND action='human_script_approved' ORDER BY id DESC LIMIT 1", (project['id'],)).fetchone()
+        if not row:
+            return None
+        review = json.loads(row[0])
+        proposal = project['document'].get('proposal') or {}
+        from .intelligence_lineage import projection
+        current_sha = hashlib.sha256(proposal.get('narration', '').encode('utf-8')).hexdigest()
+        lineage_sha = digest(projection(project['document'])) if project['document'].get('content_intelligence') else None
+        return {**review, 'current': review['script_sha256'] == current_sha and review['lineage_sha256'] == lineage_sha}
+
+    def review_script(self, identifier, revision, reviewer, acknowledged, script_sha256, review_reference=None):
+        """Record script-only human approval without approving media or dispatching jobs."""
+        import re
+        if acknowledged is not True or not isinstance(reviewer, str) or not 1 <= len(reviewer.strip()) <= 100:
+            raise WorkflowError('HUMAN_SCRIPT_REVIEW_REQUIRED', 400)
+        if not isinstance(script_sha256, str) or not re.fullmatch('[a-f0-9]{64}', script_sha256):
+            raise WorkflowError('SCRIPT_REVIEW_HASH_REQUIRED', 400)
+        if review_reference is not None and (not isinstance(review_reference, dict) or len(json.dumps(review_reference)) > 4000):
+            raise WorkflowError('SCRIPT_REVIEW_REFERENCE_INVALID', 400)
+        with self.transaction() as con:
+            project = self.editable(con, identifier, revision)
+            doc = project['document']
+            if not doc.get('proposal'):
+                raise WorkflowError('SCRIPT_REQUIRED_BEFORE_REVIEW', 400)
+            actual_sha = hashlib.sha256(doc['proposal']['narration'].encode('utf-8')).hexdigest()
+            if actual_sha != script_sha256:
+                raise WorkflowError('SCRIPT_REVIEW_STALE_RELOAD')
+            from .intelligence_lineage import projection
+            lineage_sha = digest(projection(doc)) if doc.get('content_intelligence') else None
+            previous = self.current_script_review(con, project)
+            reference = review_reference or {}
+            if not previous or not previous['current'] or previous['review_reference'] != reference or previous['reviewer'] != reviewer.strip():
+                self.event(con, identifier, 'human_script_approved', {
+                    'review_id': uuid.uuid4().hex, 'scope': 'SCRIPT_ONLY', 'script_sha256': actual_sha,
+                    'lineage_sha256': lineage_sha, 'reviewed_at_revision': revision,
+                    'reviewer': reviewer.strip(), 'approved_at': now(), 'review_reference': reference,
+                    'media_approved': False, 'production_approved': False, 'render_dispatched': False})
+        return self.get(identifier)
 
     def list(self, include_archived=False):
         with self.transaction() as con:
