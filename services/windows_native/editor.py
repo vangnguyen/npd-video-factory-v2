@@ -12,7 +12,7 @@ from app.timeline_models import TimelineClip, TimelineTrack, TimelineSnapshot, T
 
 class SceneOptions(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    scene: int = Field(ge=1, le=5)
+    scene: int = Field(ge=1, le=20)
     crop_strategy: Literal["contain", "cover"] = "contain"
     motion: Literal["none", "zoom_in", "pan_left", "pan_right"] = "none"
     source_start: float = Field(default=0, ge=0, le=600, allow_inf_nan=False)
@@ -80,7 +80,7 @@ def build_plan(doc, options=None, *, auto_select=False):
     old = {s["scene"]: s for s in (doc.get("edit_plan") or {}).get("scenes", [])}
     overrides = {o.scene: o for o in parsed}
     total = float(template.duration_seconds) if template else max(25., len(proposal.narration.split())/2.5 + 2.)
-    weights = [len(s.narration_excerpt) for s in proposal.visual_brief]
+    weights = [max(1,len(s.narration_excerpt)) for s in proposal.visual_brief]
     cursor, scenes = 0., []
     for index, scene in enumerate(proposal.visual_brief):
         ranked = candidates(doc, scene, index)
@@ -156,7 +156,7 @@ def timeline(doc, frames, captions, voice=None):
     if voice:
         tracks.append(TimelineTrack(track_id="trk_native_voice",type="audio",kind="voice",label="Thùy Dung",order=len(tracks),clips=[
             TimelineClip(clip_id="clip_native_voice",kind="voice",label="Giọng đọc đã đo",source_end=voice["duration_seconds"],
-                timeline_start=brand.intro_seconds,duration=voice["duration_seconds"],metadata={"sha256":voice["audio_sha256"],"profile_sha256":voice["profile_sha256"],"speed":1})]))
+                timeline_start=0 if doc.get('canonical_timeline') else brand.intro_seconds,duration=voice["duration_seconds"],metadata={"sha256":voice["audio_sha256"],"profile_sha256":voice["profile_sha256"],"speed":1})]))
     music=doc.get("music") if doc.get("music_enabled",True) else None
     if music:
         clips=[]; start=0.; total=frames[-1]["end"]
@@ -170,6 +170,15 @@ def timeline(doc, frames, captions, voice=None):
     if doc.get("content_intelligence"):
         from .intelligence_lineage import projection
         lineage={"content_intelligence":projection(doc)}
-    return TimelineSnapshot(schema_version="1.1",duration_seconds=frames[-1]["end"],tracks=tracks,
+    shape={'width':template.width,'height':template.height,'aspect_ratio':template.aspect_ratio} if template else {}
+    canonical=doc.get('canonical_timeline')
+    if canonical:
+        from .shot_adapter import validate_document,shots
+        validate_document(doc)
+        mapping={i+1:s['shot_id'] for i,s in enumerate(shots(doc))}
+        for clip in visual:
+            clip.metadata['shot_id']=mapping[int(clip.clip_id.split('_')[2])]
+        lineage['canonical_timeline']={'version':canonical['version'],'sha256':canonical['sha256']}
+    return TimelineSnapshot(schema_version="1.1",duration_seconds=frames[-1]["end"],tracks=tracks,**shape,
         metadata={"timing_source":"measured_narration_audio", "edit_plan_sha256":digest(plan), "human_review_required":True,
                   **lineage}).model_dump(mode="json")

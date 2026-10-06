@@ -40,6 +40,8 @@ def build_plan(proposal, policy):
     sentences = sentence_units(proposal)
     plans = []
     for scene in proposal.visual_brief:
+        if not normalize(scene.narration_excerpt):
+            continue
         prior = [u for u in sentences if u["scene"] < scene.scene]
         context = prior[-1]["text"] if prior else ""
         target = normalize(scene.narration_excerpt)

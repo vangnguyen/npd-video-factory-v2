@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+import copy
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -109,9 +110,12 @@ class Store:
         existing = con.execute("SELECT document FROM project_versions WHERE project_id=? AND revision=?", (identifier, project["revision"])).fetchone()
         if existing and digest(json.loads(existing[0])) != digest(project["document"]):
             raise WorkflowError("IMMUTABLE_VERSION_CONFLICT")
+        components = version_components(project["document"])
+        if project["document"].get("canonical_timeline"):
+            components["timeline_version"] = digest(project["document"]["canonical_timeline"])
         con.execute("INSERT OR IGNORE INTO project_versions VALUES(?,?,?,?,?)",
                     (identifier, project["revision"], json.dumps(project["document"], ensure_ascii=False),
-                     json.dumps(version_components(project["document"])), now()))
+                     json.dumps(components), now()))
 
     def versions(self, identifier):
         with self.transaction() as con:
@@ -317,6 +321,9 @@ class Store:
         with self.transaction() as con:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
+            before_shots = copy.deepcopy(doc)
+            if proposal is not None and not doc.get("canonical_timeline") and any(not s["narration_excerpt"].strip() for s in proposal["visual_brief"]):
+                raise WorkflowError("SILENT_SHOTS_REQUIRE_CANONICAL_TIMELINE", 400)
             if input_kind is not None:
                 validate_text(input_kind, prompt if prompt is not None else doc["prompt"])
                 if input_kind != doc.get("input_kind", "prompt"):
@@ -343,6 +350,7 @@ class Store:
                 doc["edit_plan"]=build_plan(doc,scene_options)
             elif any(v is not None for v in (prompt,proposal,asset,scene_media,input_kind,music_enabled)):
                 doc.pop("edit_plan",None)
+            doc = self.sync_shot_document(doc, before_shots, identifier)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                         (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
             self.event(con, identifier, "draft_saved_approval_invalidated", {"revision": revision + 1})
@@ -353,24 +361,43 @@ class Store:
         from .editor import build_plan
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
+            before_shots = copy.deepcopy(doc)
             plan=build_plan(doc,auto_select=True)
             doc["edit_plan"]=plan
             doc["scene_media"]=[{"scene":s["scene"],"asset_id":s["selected_asset"]} for s in plan["scenes"]]
             validate_bindings(doc)
+            doc = self.sync_shot_document(doc, before_shots, identifier)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                         (revision+1,json.dumps(doc,ensure_ascii=False),now(),identifier))
             self.version(con,identifier)
             self.event(con,identifier,"editor_plan_saved_review_required",{"revision":revision+1,"plan_sha256":digest(plan)})
         return self.get(identifier)
 
+    def shot_view(self, identifier):
+        from .shot_adapter import view
+        return view(self, self.get(identifier))
+
+    def mutate_shots(self, identifier, revision, operation):
+        from .shot_adapter import mutate
+        return mutate(self, identifier, revision, operation)
+
+    @staticmethod
+    def sync_shot_document(doc, previous_doc, identifier):
+        if previous_doc.get("canonical_timeline"):
+            from .shot_adapter import sync_legacy
+            return sync_legacy(doc, previous_doc, identifier)
+        return doc
+
     def set_music(self, identifier, revision, music):
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
+            before_shots = copy.deepcopy(doc)
             previous=doc.get("edit_plan"); doc["music"]=music; doc["music_enabled"]=True
             if previous:
                 from .editor import build_plan, SceneOptions
                 doc["edit_plan"]=build_plan(doc,[{k:s[k] for k in SceneOptions.model_fields} for s in previous["scenes"]])
             else: doc.pop("edit_plan",None)
+            doc = self.sync_shot_document(doc, before_shots, identifier)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                         (revision+1,json.dumps(doc,ensure_ascii=False),now(),identifier))
             self.version(con,identifier)
@@ -383,6 +410,7 @@ class Store:
         selection=choose(brand_id,template_id)
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
+            before_shots = copy.deepcopy(doc)
             previous=doc.get("edit_plan"); doc["brand_template"]=selection
             try:
                 validate_bindings(doc,complete=True)
@@ -393,6 +421,7 @@ class Store:
                 options=[{k:s[k] for k in SceneOptions.model_fields} for s in previous["scenes"]] if previous else None
                 doc["edit_plan"]=build_plan(doc,options)
             else: doc.pop("edit_plan",None)
+            doc = self.sync_shot_document(doc, before_shots, identifier)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",(revision+1,json.dumps(doc,ensure_ascii=False),now(),identifier))
             self.version(con,identifier)
             self.event(con,identifier,"brand_template_saved_review_required",{"revision":revision+1,"brand_id":brand_id,"template_id":template_id,"selection_sha256":digest(selection)})
@@ -402,10 +431,12 @@ class Store:
         with self.transaction() as con:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
+            before_shots = copy.deepcopy(doc)
             documents = doc.get("documents", [])
             if len(documents) >= 20:
                 raise WorkflowError("DOCUMENT_LIMIT_20", 400)
             doc["documents"] = documents + [document]
+            doc = self.sync_shot_document(doc, before_shots, identifier)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                 (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
             self.version(con, identifier)
@@ -420,7 +451,9 @@ class Store:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
             if doc.get('voice_quality') != reference:
+                before_shots = copy.deepcopy(doc)
                 doc['voice_quality'] = reference
+                doc = self.sync_shot_document(doc, before_shots, identifier)
                 con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                             (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
                 self.version(con, identifier)
@@ -444,6 +477,9 @@ class Store:
                 raise WorkflowError("CONTENT_AND_IMAGE_REQUIRED")
             from .editor import validate_plan
             validate_plan(doc)
+            if doc.get("canonical_timeline"):
+                from .shot_adapter import validate_document
+                validate_document(doc)
             selected_media(doc)
             previous=project["approval"]
             if (not previous or previous["revision"]!=revision or previous["snapshot_sha256"]!=digest(doc)
@@ -469,6 +505,9 @@ class Store:
                 return self.job(existing, con)
             project = self.editable(con, identifier, revision)
             doc, approval = project["document"], project["approval"]
+            if doc.get("canonical_timeline"):
+                from .shot_adapter import validate_document
+                validate_document(doc)
             if doc.get("content_intelligence"):
                 from .intelligence_lineage import projection
                 projection(doc)
@@ -522,9 +561,13 @@ class Store:
                 if project["revision"] != job["revision"]:
                     raise WorkflowError("STALE_CONTENT_RESULT")
                 doc = project["document"]
+                before_shots = copy.deepcopy(doc)
                 doc["proposal"] = Proposal.model_validate(result["proposal"]).model_dump()
+                if not before_shots.get("canonical_timeline") and any(not s["narration_excerpt"].strip() for s in doc["proposal"]["visual_brief"]):
+                    raise WorkflowError("SILENT_SHOTS_REQUIRE_CANONICAL_TIMELINE", 400)
                 doc["scene_media"] = []  # New proposal requires deliberate source choices.
                 doc.pop("edit_plan",None)
+                doc = self.sync_shot_document(doc, before_shots, project["id"])
                 con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                             (project["revision"] + 1, json.dumps(doc, ensure_ascii=False), now(), project["id"]))
                 self.version(con, project["id"])
@@ -534,6 +577,7 @@ class Store:
                 if project["revision"] != job["revision"] or digest(project["document"]) != digest(job["snapshot"]["document"]):
                     raise WorkflowError("ASR_STALE_RESULT")
                 doc = project["document"]
+                before_shots = copy.deepcopy(doc)
                 incoming = result["media_analysis"]
                 assets = {a["id"]: a for a in project_assets(doc)}
                 if len({r["asset_id"] for r in incoming}) != len(incoming):
@@ -544,6 +588,7 @@ class Store:
                 replaced = {r["asset_id"] for r in incoming}
                 doc["media_analysis"] = [r for r in doc.get("media_analysis", []) if r["asset_id"] not in replaced] + incoming
                 doc.pop("edit_plan",None)
+                doc = self.sync_shot_document(doc, before_shots, project["id"])
                 con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                             (project["revision"]+1, json.dumps(doc, ensure_ascii=False), now(), project["id"]))
                 self.version(con, project["id"])
@@ -589,6 +634,7 @@ class Store:
         with self.transaction() as con:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
+            before_shots = copy.deepcopy(doc)
             library = project_assets(doc)
             if len(library) >= MAX_ASSETS:
                 raise WorkflowError("PROJECT_MEDIA_LIMIT_50", 400)
@@ -596,6 +642,7 @@ class Store:
             doc["assets"] = library + [asset]
             doc.pop("edit_plan",None)
             validate_bindings(doc)
+            doc = self.sync_shot_document(doc, before_shots, identifier)
             con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
                 (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
             self.event(con, identifier, "media_uploaded_approval_invalidated", {"revision": revision + 1, "asset_id": asset["id"], "kind": asset["kind"]})

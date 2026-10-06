@@ -37,16 +37,16 @@ def normalize(text):
 
 class Scene(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    scene: int = Field(ge=1, le=5)
+    scene: int = Field(ge=1, le=20)
     visual: str = Field(min_length=1, max_length=1200)
     on_screen_text: str = Field(min_length=1, max_length=150)
-    narration_excerpt: str = Field(min_length=1, max_length=1500)
+    narration_excerpt: str = Field(min_length=0, max_length=1500)
 
 
 class Proposal(BaseModel):
     model_config = ConfigDict(extra="forbid")
     narration: str = Field(min_length=1, max_length=4000)
-    visual_brief: list[Scene] = Field(min_length=1, max_length=5)
+    visual_brief: list[Scene] = Field(min_length=1, max_length=20)
     facts_needing_source: list[str] = Field(max_length=40)
 
     @model_validator(mode="after")

@@ -179,6 +179,9 @@ def generate(config, job, out, stage=lambda _: None):
     timeout = httpx2.Timeout(90.0, connect=15.0)
     provider_schema = Proposal.model_json_schema()
     provider_schema["properties"]["visual_brief"]["minItems"] = 3
+    provider_schema["properties"]["visual_brief"]["maxItems"] = 5
+    provider_schema["$defs"]["Scene"]["properties"]["scene"]["maximum"] = 5
+    provider_schema["$defs"]["Scene"]["properties"]["narration_excerpt"]["minLength"] = 1
     client = OpenAI(api_key=load_key(config.secret_file), max_retries=0, timeout=timeout,
                     base_url="https://api.openai.com/v1",
                     http_client=httpx2.Client(trust_env=False, timeout=timeout, follow_redirects=False))
@@ -208,6 +211,8 @@ def generate(config, job, out, stage=lambda _: None):
             raise WorkflowError("CONTENT_AMBIGUOUS_RESPONSE")
         try:
             proposal = Proposal.model_validate_json(texts[0]).model_dump()
+            if len(proposal['visual_brief'])>5 or any(not s['narration_excerpt'].strip() for s in proposal['visual_brief']):
+                raise ValueError('Generation remains 3–5 voiced scenes')
         except ValueError:
             raise WorkflowError("CONTENT_SCHEMA_OR_COVERAGE_INVALID") from None
         result = {"proposal": proposal, "model": response.model, "response_id": response.id,
@@ -229,6 +234,7 @@ def sentence_units(proposal):
     # The accepted MVP policy: exact sentence boundaries, no proper-name rewrites.
     return [{"scene": scene.scene, "text": text}
             for scene in proposal.visual_brief
+            if normalize(scene.narration_excerpt)
             for text in re.split(r"(?<=[.!?])\s+", normalize(scene.narration_excerpt))]
 
 
@@ -237,12 +243,12 @@ def speech_units(proposal, document):
     if policy is None:
         return sentence_units(proposal)
     return [{"scene": scene.scene, "text": normalize(scene.narration_excerpt)}
-            for scene in proposal.visual_brief]
+            for scene in proposal.visual_brief if normalize(scene.narration_excerpt)]
 
 
 def measured_scene_units(proposal, meta):
     groups = [[u for u in meta["units"] if u.get("scene") == scene.scene] for scene in proposal.visual_brief]
-    if any(not group or normalize(" ".join(u["text"] for u in group)) != normalize(scene.narration_excerpt)
+    if any((not group and normalize(scene.narration_excerpt)) or normalize(" ".join(u["text"] for u in group)) != normalize(scene.narration_excerpt)
            for scene, group in zip(proposal.visual_brief, groups)):
         raise WorkflowError("VOICE_SCENE_BINDING_MISMATCH")
     if [u for group in groups for u in group] != meta["units"]:
@@ -399,30 +405,41 @@ def render(config, snapshot, out):
         raise WorkflowError("VOICE_ARTIFACT_BINDING_MISMATCH")
     if normalize(" ".join(u["text"] for u in meta["units"])) != normalize(proposal.narration):
         raise WorkflowError("VOICE_NARRATION_BINDING_MISMATCH")
+    from .shot_render_timing import retime_voice
+    retimed=retime_voice(doc,meta,out,brand,template)
+    if retimed: meta=retimed
     grouped = measured_scene_units(proposal, meta)
     chosen = verify_selected_files(config, doc)
-    intro = brand.intro_seconds
-    duration = measured_duration(doc,meta["duration_seconds"])
+    intro = 0 if retimed else brand.intro_seconds
+    duration = meta['duration_seconds'] if retimed else measured_duration(doc,meta["duration_seconds"])
     if duration > 180:
         raise WorkflowError("VIDEO_DURATION_EXCEEDS_180_SECONDS")
     fonts = Path(os.environ.get("WINDIR", r"C:\Windows")) / "Fonts"
-    title_font = ImageFont.truetype(str(fonts / brand.fonts.heading), 60)
-    sub_font = ImageFont.truetype(str(fonts / brand.fonts.body), brand.subtitle_style.font_size)
-    label_font = ImageFont.truetype(str(fonts / brand.fonts.body), 28)
-    text_width=1080-safe.left-safe.right
-    caption_y=(1320+1920-safe.bottom-10)//2
+    width,height=(template.width,template.height) if template else (1080,1920)
+    landscape=width>height
+    safe_left,safe_right,safe_top,safe_bottom=(90,90,55,100) if landscape else (safe.left,safe.right,safe.top,safe.bottom)
+    media_top=230 if landscape else 390
+    caption_top=850 if landscape else 1320
+    title_font = ImageFont.truetype(str(fonts / brand.fonts.heading), 52 if landscape else 60)
+    sub_font = ImageFont.truetype(str(fonts / brand.fonts.body), 38 if landscape else brand.subtitle_style.font_size)
+    label_font = ImageFont.truetype(str(fonts / brand.fonts.body), 24 if landscape else 28)
+    text_width=width-safe_left-safe_right
+    caption_y=(caption_top+height-safe_bottom-10)//2
     captions, frames = [], []
+    if retimed:
+        from .shot_adapter import shots
+        canonical_shots=shots(doc)
     for i, (scene, units) in enumerate(zip(proposal.visual_brief, grouped)):
         asset = chosen[scene.scene]
         options=edit_options.get(scene.scene,{})
-        plane_height=830 if edit_plan else 1000
+        plane_height=530 if landscape else (830 if edit_plan else 1000)
         source = media_path(config, asset["id"])
-        start = 0 if i == 0 else intro + units[0]["start_seconds"]
-        end = duration if i == len(grouped) - 1 else intro + grouped[i + 1][0]["start_seconds"]
+        start = retimed['scene_layout'][i]['start'] if retimed else (0 if i == 0 else intro + units[0]["start_seconds"])
+        end = retimed['scene_layout'][i]['end'] if retimed else (duration if i == len(grouped) - 1 else intro + grouped[i + 1][0]["start_seconds"])
         count = round(end * 30) - round(start * 30)
         if count <= 0:
             raise WorkflowError("SCENE_TOO_SHORT_FOR_VIDEO")
-        frame = Image.new("RGBA", (1080, 1920), palette.background)
+        frame = Image.new("RGBA", (width,height), palette.background)
         draw = ImageDraw.Draw(frame)
         if asset["kind"] == "image" and not edit_plan:
             with Image.open(source) as original:
@@ -430,30 +447,30 @@ def render(config, snapshot, out):
             image.thumbnail((1080, 1000), Image.Resampling.LANCZOS)
             frame.paste(image, ((1080 - image.width) // 2, 390 + (1000 - image.height) // 2))
         else:
-            draw.rectangle((0, 390, 1079, 390+plane_height-1), fill=(0, 0, 0, 0))
-        text_x=safe.left if edit_plan else 70
+            draw.rectangle((0,media_top,width-1,media_top+plane_height-1), fill=(0, 0, 0, 0))
+        text_x=safe_left if edit_plan else 70
         label=f"{brand.intro}   /   {template.scene_label+'   /   ' if template else ''}{i+1:02}"
         logo_offset=0
         if brand.logo:
             with Image.open(media_path(config,brand.logo)) as original: logo=original.convert("RGBA")
-            logo.thumbnail((64,54),Image.Resampling.LANCZOS); frame.alpha_composite(logo,(text_x,safe.top+5)); logo_offset=78
+            logo.thumbnail((64,54),Image.Resampling.LANCZOS); frame.alpha_composite(logo,(text_x,safe_top+5)); logo_offset=78
         if label_font.getlength(label)>text_width-logo_offset: raise WorkflowError("BRAND_INTRO_LABEL_TOO_LONG")
-        draw.text((text_x+logo_offset, safe.top if edit_plan else 90), label, font=label_font, fill=palette.accent)
+        draw.text((text_x+logo_offset, safe_top if edit_plan else 90), label, font=label_font, fill=palette.accent)
         lines = wrap_text(scene.on_screen_text, title_font, text_width if edit_plan else 940)
         if len(lines) > (2 if edit_plan else 3):
             raise WorkflowError("SCENE_HEADING_TOO_LONG")
-        title_y=safe.top+65 if edit_plan else 155
-        if edit_plan and draw.multiline_textbbox((text_x,title_y),"\n".join(lines),font=title_font,spacing=12)[3]>=390:
+        title_y=safe_top+65 if edit_plan else 155
+        if edit_plan and draw.multiline_textbbox((text_x,title_y),"\n".join(lines),font=title_font,spacing=12)[3]>=media_top:
             raise WorkflowError("BRAND_HEADING_EXCEEDS_SAFE_AREA")
         draw.multiline_text((text_x, title_y), "\n".join(lines), font=title_font, spacing=12, fill=palette.text)
         if asset["illustration"]:
-            draw.text((text_x, 1215 if edit_plan else 1390), "Phối cảnh minh họa", font=label_font, fill=palette.accent)
+            draw.text((text_x,775 if landscape else (1215 if edit_plan else 1390)), "Phối cảnh minh họa", font=label_font, fill=palette.accent)
         if edit_plan:
-            draw.rounded_rectangle((safe.left-10,1320,1080-safe.right+10,1920-safe.bottom-10),radius=18,fill=palette.caption_background,outline=palette.caption_border,width=2)
+            draw.rounded_rectangle((safe_left-10,caption_top,width-safe_right+10,height-safe_bottom-10),radius=18,fill=palette.caption_background,outline=palette.caption_border,width=2)
             footer=edit_plan["cta"] if options.get("cta_marker") else " · ".join(brand.project_disclaimers)
             footer_lines=wrap_text(footer,label_font,text_width)
             if len(footer_lines)>2: raise WorkflowError("BRAND_CTA_OR_DISCLAIMER_TOO_LONG")
-            draw.multiline_text((safe.left,1250),"\n".join(footer_lines),font=label_font,spacing=4,fill=palette.muted)
+            draw.multiline_text((safe_left,810 if landscape else 1250),"\n".join(footer_lines),font=label_font,spacing=4,fill=palette.muted)
         else:
             draw.rounded_rectangle((58,1485,1022,1740),radius=18,fill=palette.caption_background,outline=palette.caption_border,width=2)
             draw.text((70,1800)," · ".join(brand.project_disclaimers),font=label_font,fill=palette.muted)
@@ -466,18 +483,18 @@ def render(config, snapshot, out):
                 command += ["-loop","1","-framerate","30","-i",str(source)]
             else:
                 command += ["-stream_loop","-1","-ss",str(options["source_start"]),"-protocol_whitelist","file,pipe","-i",str(source)]
-            command += ["-loop","1","-framerate","30","-i",filename,"-f","lavfi","-i",f"color=c=0x{background}:s=1080x1920:r=30"]
+            command += ["-loop","1","-framerate","30","-i",filename,"-f","lavfi","-i",f"color=c=0x{background}:s={width}x{height}:r=30"]
             index=0 if asset["kind"]=="image" else asset.get("video_stream_index",0)
-            fit=(f"scale=1080:{plane_height}:force_original_aspect_ratio=increase:force_divisible_by=2,crop=1080:{plane_height}" if options["crop_strategy"]=="cover" else
-                 f"scale=1080:{plane_height}:force_original_aspect_ratio=decrease:force_divisible_by=2,pad=1080:{plane_height}:(ow-iw)/2:(oh-ih)/2:color=0x{background}")
+            fit=(f"scale={width}:{plane_height}:force_original_aspect_ratio=increase:force_divisible_by=2,crop={width}:{plane_height}" if options["crop_strategy"]=="cover" else
+                 f"scale={width}:{plane_height}:force_original_aspect_ratio=decrease:force_divisible_by=2,pad={width}:{plane_height}:(ow-iw)/2:(oh-ih)/2:color=0x{background}")
             motion=""
             if asset["kind"]=="image" and options["motion"]!="none":
                 zoom="min(1+on*0.0003,1.08)" if options["motion"]=="zoom_in" else "1.06"
                 progress=f"min(on/{max(count-1,1)},1)"
                 x="iw/2-iw/zoom/2" if options["motion"]=="zoom_in" else f"(iw-iw/zoom)*({('1-' if options['motion']=='pan_left' else '')}{progress})"
-                motion=f",zoompan=z='{zoom}':x='{x}':y='ih/2-ih/zoom/2':d=1:s=1080x{plane_height}:fps=30"
+                motion=f",zoompan=z='{zoom}':x='{x}':y='ih/2-ih/zoom/2':d=1:s={width}x{plane_height}:fps=30"
             fade=f",format=rgba,fade=t=in:st=0:d=0.15:alpha=1,fade=t=out:st={max(count/30-.15,0):.5f}:d=0.15:alpha=1" if options["transition"]=="fade" else ",format=rgba"
-            filters=f"[0:{index}]fps=30,setpts=PTS-STARTPTS,{fit}{motion},setsar=1{fade}[media];[2:v][media]overlay=0:390:shortest=1[base];[base][1:v]overlay=0:0:shortest=1,format=yuv420p[v]"
+            filters=f"[0:{index}]fps=30,setpts=PTS-STARTPTS,{fit}{motion},setsar=1{fade}[media];[2:v][media]overlay=0:{media_top}:shortest=1[base];[base][1:v]overlay=0:0:shortest=1,format=yuv420p[v]"
             command += ["-filter_complex",filters,"-map","[v]"]
         elif asset["kind"] == "image":
             command += ["-loop", "1", "-framerate", "30", "-i", filename]
@@ -500,6 +517,7 @@ def render(config, snapshot, out):
                        "short_video_policy": "selected_start_first_pass_then_wrap_source" if edit_plan and asset["kind"]=="video" else "loop_from_start" if asset["kind"]=="video" else None,
                        "source_start":options.get("source_start",0),"crop_strategy":options.get("crop_strategy","contain"),"motion":options.get("motion","none"),
                        "source_audio": "muted" if asset["kind"] == "video" else None})
+        caption_offset=len(captions)
         for unit in units:
             lines = wrap_text(unit["text"], sub_font, text_width-20 if edit_plan else 900)
             phrases = ["\n".join(lines[j:j+2]) for j in range(0, len(lines), 2)]
@@ -512,7 +530,17 @@ def render(config, snapshot, out):
                 finish = t + (speech_end - intro - unit["activity_start_seconds"]) * weight / sum(weights)
                 captions.append({"start": t, "end": finish, "text": phrase})
                 t = finish
-    if normalize(" ".join(c["text"] for c in captions)) != normalize(proposal.narration):
+        if retimed and canonical_shots[i]['subtitle']!=scene.narration_excerpt:
+            del captions[caption_offset:]
+            lines=wrap_text(canonical_shots[i]['subtitle'],sub_font,text_width-20)
+            phrases=['\n'.join(lines[j:j+2]) for j in range(0,len(lines),2)]
+            weights=[len(normalize(p)) for p in phrases]
+            cursor=start
+            for phrase,weight in zip(phrases,weights):
+                finish=cursor+(end-start)*weight/sum(weights)
+                captions.append({'start':cursor,'end':finish,'text':phrase,'timing_source':'canonical_custom_subtitle_shot_estimate'})
+                cursor=finish
+    if not retimed and normalize(" ".join(c["text"] for c in captions)) != normalize(proposal.narration):
         raise WorkflowError("SUBTITLE_COVERAGE_MISMATCH")
     header = """[Script Info]
 ScriptType: v4.00+
@@ -530,22 +558,26 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     color=brand.subtitle_style.color.lstrip("#")
     primary=f"&H00{color[4:6]}{color[2:4]}{color[0:2]}".upper()
     header=header.replace("Subtitle,Segoe UI,46,&H00F1F9FC",f"Subtitle,{brand.fonts.subtitle_family},{brand.subtitle_style.font_size},{primary}")
+    if landscape:
+        header=header.replace('PlayResX: 1080','PlayResX: 1920').replace('PlayResY: 1920','PlayResY: 1080')
+        header=header.replace(f'Subtitle,{brand.fonts.subtitle_family},{brand.subtitle_style.font_size},',f'Subtitle,{brand.fonts.subtitle_family},38,')
     for cue in captions:
         text = "\\N".join(ass_escape(line) for line in cue["text"].splitlines())
-        events.append(f"Dialogue: 0,{ass_time(cue['start'])},{ass_time(cue['end'])},Subtitle,,0,0,0,,{{\\pos({(safe.left+1080-safe.right)//2 if edit_plan else 540},{caption_y if edit_plan else 1610})}}{text}")
+        events.append(f"Dialogue: 0,{ass_time(cue['start'])},{ass_time(cue['end'])},Subtitle,,0,0,0,,{{\\pos({(safe_left+width-safe_right)//2 if edit_plan else 540},{caption_y if edit_plan else 1610})}}{text}")
     (out / "subtitles.ass").write_text(header + "\n".join(events) + "\n", encoding="utf-8")
     concat = "ffconcat version 1.0\n" + "".join(f"file {f['file']}\n" for f in frames)
     (out / "frames.txt").write_text(concat, encoding="ascii")
-    with wave.open(str(out / "voice.wav"), "rb") as wav:
+    voice_file='render-voice.wav' if retimed else 'voice.wav'
+    with wave.open(str(out / voice_file), "rb") as wav:
         audio = np.frombuffer(wav.readframes(wav.getnframes()), dtype="<i2").astype(np.float64) / 32768
     rms, peak = np.sqrt(np.mean(audio ** 2)), np.max(np.abs(audio))
     if not np.isfinite(audio).all() or rms < 1e-5:
         raise WorkflowError("VOICE_SIGNAL_INVALID_OR_SILENT")
     gain = min(10 ** (-19 / 20) / rms, .90 / peak)
     filters = (f"[0:v]fps=30,ass=subtitles.ass,format=yuv420p[v];"
-               f"[1:a]volume={gain:.8f},adelay=1100,apad,atrim=duration={duration:.4f}[a]")
+               f"[1:a]volume={gain:.8f},adelay={0 if retimed else 1100},apad,atrim=duration={duration:.4f}[a]")
     cmd = [str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-nostdin", "-n", "-f", "concat", "-safe", "1", "-i", "frames.txt",
-           "-i", "voice.wav"]
+           "-i", voice_file]
     music=doc.get("music") if doc.get("music_enabled",True) else None
     if music:
         music_source=media_path(config,music["id"])
@@ -568,11 +600,14 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
         "music":{"sha256":music["sha256"],"nominal_gain":brand.music_profile.nominal_gain,"ducking":brand.music_profile.ducking} if music else None,
         "brand_template":doc.get("brand_template"),"duration_policy":template.duration_policy if template else "legacy_measured_voice_minimum_25s",
-        "cta_hold_after_voice_seconds":duration-intro-meta["duration_seconds"],"official_brand_assets_claimed":False})
-    return qc(config, out, duration)
+        "cta_hold_after_voice_seconds":duration-intro-meta["duration_seconds"],"official_brand_assets_claimed":False,
+        **({'canonical_timeline':{'version':doc['canonical_timeline']['version'],'sha256':doc['canonical_timeline']['sha256']},
+            'scene_layout':retimed['scene_layout'],'source_voice_sha256':retimed['source_voice_sha256'],
+            'sample_preserving_placement':True,'custom_subtitle_timing':'shot_estimate_not_word_alignment'} if retimed else {})})
+    return qc(config, out, duration,expected_canvas=(width,height))
 
 
-def qc(config, out, expected_duration):
+def qc(config, out, expected_duration,expected_canvas=(1080,1920)):
     import numpy as np
     ffprobe = subprocess.check_output([str(config.ffmpeg_bin / "ffprobe.exe"), "-v", "error", "-show_streams", "-show_format", "-of", "json", str(out / "final.mp4")], timeout=30)
     probe = json.loads(ffprobe)
@@ -585,7 +620,7 @@ def qc(config, out, expected_duration):
     samples = np.frombuffer(pcm, dtype="<f4")
     with (out / "blackdetect.log").open("w") as log:
         black = subprocess.run([str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-i", str(out / "final.mp4"), "-vf", "blackdetect=d=0.2:pix_th=0.1", "-an", "-f", "null", "-"], stdout=log, stderr=log, timeout=180)
-    checks = {"portrait_1080x1920": (video["width"], video["height"]) == (1080, 1920),
+    checks = {"portrait_1080x1920" if expected_canvas==(1080,1920) else "landscape_1920x1080": (video["width"], video["height"]) == expected_canvas,
               "h264_aac": video["codec_name"] == "h264" and audio["codec_name"] == "aac",
               "fps_30": video["avg_frame_rate"] == "30/1", "yuv420p": video["pix_fmt"] == "yuv420p",
               "audio_48khz": audio["sample_rate"] == "48000", "full_decode": decoded.returncode == 0,
@@ -710,8 +745,9 @@ class Pipeline:
         result = {"video_url": f"/api/jobs/{job['id']}/video", "qc": report,
                   "output_directory": str(out), "review_required": True,
                   "render_version": digest({"snapshot": job["snapshot"], "job_id": job["id"], "final_sha256": report["final_sha256"]})}
-        paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in
-                        ("final.mp4", "qc-report.json", "ffprobe.json", "render-manifest.json", "subtitles.ass", "timeline.json")], stage, "storage_render_publish")
+        render_files=("final.mp4", "qc-report.json", "ffprobe.json", "render-manifest.json", "subtitles.ass", "timeline.json")
+        if (attempt/'render-voice.json').is_file(): render_files+=('render-voice.json','render-voice.wav')
+        paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in render_files], stage, "storage_render_publish")
         retry_io(lambda: artifacts.commit("render", paths, result), stage, "storage_render_checkpoint")
         return result
 

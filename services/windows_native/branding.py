@@ -81,11 +81,17 @@ class VideoTemplate(Strict):
     purpose: Literal["property_presentation","news_update","personal_brand","event_promo"]
     scene_label: str=Field(min_length=1,max_length=40)
     duration_seconds: Literal[30,45,60]
-    width: Literal[1080]=1080
-    height: Literal[1920]=1920
+    width: Literal[1080,1920]=1080
+    height: Literal[1920,1080]=1920
     fps: Literal[30]=30
-    aspect_ratio: Literal["9:16"]="9:16"
+    aspect_ratio: Literal["9:16","16:9"]="9:16"
     duration_policy: Literal["preserve_voice_speed_hold_cta_to_target_refuse_overflow"]="preserve_voice_speed_hold_cta_to_target_refuse_overflow"
+
+    @model_validator(mode='after')
+    def canvas_pair(self):
+        if (self.width,self.height,self.aspect_ratio) not in {(1080,1920,'9:16'),(1920,1080,'16:9')}:
+            raise ValueError('Template canvas/aspect mismatch')
+        return self
 
 
 class Selection(Strict):
@@ -96,7 +102,7 @@ class Selection(Strict):
     template_sha256: str
 
 
-def catalog():
+def catalog(include_landscape=False):
     raw=json.loads(CATALOG.read_bytes())
     profiles=[]
     for choice in raw["brands"]:
@@ -104,11 +110,14 @@ def catalog():
         profiles.append(BrandProfile.model_validate(value).model_dump())
     templates=[VideoTemplate.model_validate({**family,"id":f"{family['id']}-{seconds}","name":f"{family['name']} · {seconds} giây","duration_seconds":seconds}).model_dump()
                for family in raw["template_families"] for seconds in raw["durations"]]
+    if include_landscape:
+        templates += [VideoTemplate.model_validate({**t,'id':t['id']+'-landscape','name':t['name']+' · 16:9',
+                         'width':1920,'height':1080,'aspect_ratio':'16:9'}).model_dump() for t in list(templates)]
     return {"brands":profiles,"templates":templates}
 
 
 def choose(brand_id, template_id):
-    values=catalog()
+    values=catalog(include_landscape=True)
     brand=next((b for b in values["brands"] if b["id"]==brand_id),None)
     template=next((t for t in values["templates"] if t["id"]==template_id),None)
     if not brand or not template: raise WorkflowError("BRAND_TEMPLATE_CHOICE_REQUIRED",400)
