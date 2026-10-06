@@ -3,31 +3,67 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Video Factory — tạo và duyệt video trên PC Windows">
-  <title>Video Factory · Windows Native</title>
+  <title>NPD Video Studio · Sản xuất video</title>
   <link rel="stylesheet" href="/native.css">
   <script type="module" src="/native.mjs"></script>
 </head>
 <body>
+  <a class="skip-link" href="#studio-main">Đến không gian biên tập</a>
   <aside class="sidebar">
-    <a href="/" class="brand"><span class="brand-mark">V</span><span>VIDEO FACTORY<small>Windows Native Studio</small></span></a>
+    <a href="/" class="brand"><span class="brand-mark">N</span><span>NPD VIDEO STUDIO<small>Không gian sản xuất</small></span></a>
     <div class="side-label">KHÔNG GIAN LÀM VIỆC</div>
-    <button class="nav active" id="new-project">＋ Tạo video mới</button>
-    <a class="nav" href="/intelligence">Nghiên cứu & ý tưởng</a>
+    <nav aria-label="Không gian Studio">
+      <button class="nav active" id="new-project">＋ Dự án mới</button>
+      <a class="nav" href="/production">Hàng chờ sản xuất</a>
+      <a class="nav" href="/intelligence">Nghiên cứu & ý tưởng</a>
+      <a class="nav" href="/production?view=calendar">Lịch nội dung</a>
+      <button class="nav" data-stage="assets" data-studio-nav>Thư viện media</button>
+      <button class="nav" data-stage="script" data-open-brand data-studio-nav>Thương hiệu & mẫu</button>
+      <a class="nav" href="/production?view=library">Video hoàn chỉnh</a>
+      <a class="nav" href="/settings/assemblyai">Cài đặt</a>
+    </nav>
     <label class="side-label" for="project-picker">DỰ ÁN ĐÃ LƯU</label>
     <select id="project-picker"><option value="">Chọn dự án…</option></select>
     <label class="check"><input id="show-archived" type="checkbox"> Hiện dự án đã lưu trữ</label>
     <div class="actions"><button id="duplicate-project" class="secondary">Nhân bản</button><button id="archive-project" class="secondary">Lưu trữ</button></div>
-    <a class="nav" href="/settings/assemblyai">Kết nối AssemblyAI</a>
     <div class="runtime-card"><span class="dot"></span> Chạy trên PC của bạn<p>Nội dung · gpt-6-luna<br>Giọng đọc · Thùy Dung<br>Video · 1080 × 1920</p></div>
     <details class="runtime-detail"><summary>Trạng thái hệ thống</summary><p id="runtime-status">Đang kiểm tra…</p></details>
     <small class="side-footer">MVP1 đã nghiệm thu<br>Prompt → duyệt → giọng đọc → video</small>
   </aside>
-  <main>
-    <header><div><p class="eyebrow">TỪ Ý TƯỞNG ĐẾN VIDEO</p><h1>Một workflow, từng bước rõ ràng.</h1></div><span class="badge">LOCAL STUDIO</span></header>
-    <div class="steps" aria-label="Quy trình"><div><b>01</b> Đề xuất nội dung</div><div><b>02</b> Bạn kiểm tra & duyệt</div><div><b>03</b> Giọng Thùy Dung</div><div><b>04</b> Video hoàn chỉnh</div></div>
+  <main id="studio-main" tabindex="-1">
+    <header class="studio-header"><div><p class="eyebrow">DỰ ÁN / KHÔNG GIAN BIÊN TẬP</p><h1 id="studio-title">Tạo video của bạn</h1></div><div class="studio-header-actions"><span id="studio-save-state" class="version" role="status">Chưa có dự án</span><button class="secondary" data-stage="video" data-studio-nav>Mở Video →</button></div></header>
+    <nav class="stage-navigation" aria-label="Các bước sản xuất">
+      <button data-stage="script" data-studio-nav aria-current="step"><b>01</b><span>Script<small id="stage-script-state">Bắt đầu</small></span></button>
+      <button data-stage="assets" data-studio-nav><b>02</b><span>Assets<small id="stage-assets-state">Chưa có nguồn</small></span></button>
+      <button data-stage="storyboard" data-studio-nav><b>03</b><span>Storyboard<small id="stage-storyboard-state">Chưa có shot</small></span></button>
+      <button data-stage="video" data-studio-nav><b>04</b><span>Video<small id="stage-video-state">Chưa dựng</small></span></button>
+    </nav>
     <p id="intelligence-origin" class="hint" hidden></p>
     <p id="script-review-state" class="hint" hidden></p>
     <p id="message" class="message" role="status" aria-live="polite" hidden></p>
+    <section id="stage-script" data-stage-panel="script" aria-label="Script"><div id="script-stage-body" class="stage-reading"></div><section id="script-only-review" class="card stage-reading" hidden><h2>Duyệt riêng kịch bản</h2><p id="script-only-state" class="hint" role="status"></p><label>Người duyệt kịch bản<input id="script-only-reviewer" maxlength="100" autocomplete="name" data-script-control></label><label class="check"><input id="script-only-ack" type="checkbox" data-script-control> Tôi đã đọc lời đọc và kiểm tra thông tin, nguồn, thời điểm. Tôi duyệt riêng kịch bản đã lưu; hình ảnh, cách dựng và video cuối vẫn cần kiểm tra và duyệt riêng.</label><button id="approve-script-only" class="primary" data-script-control>Duyệt kịch bản này</button></section></section>
+    <section id="stage-assets" data-stage-panel="assets" aria-label="Assets" hidden><div id="assets-stage-body"></div></section>
+    <section id="stage-storyboard" data-stage-panel="storyboard" aria-label="Storyboard" hidden><div class="workspace-heading"><div><p class="eyebrow">TỪ KỊCH BẢN ĐẾN HÌNH ẢNH</p><h2>Storyboard của dự án</h2><p class="hint">Chọn một shot để sửa nguồn, lời đọc và thời lượng. Mọi thay đổi đều cần lưu và duyệt lại.</p></div><button class="secondary" data-stage="video" data-studio-nav>Mở trình biên tập</button></div><div id="storyboard-grid" class="storyboard-grid"></div></section>
+    <section id="stage-video" data-stage-panel="video" aria-label="Video" hidden>
+      <div class="video-workspace">
+        <div class="visual-workspace"><div id="video-stage-body"></div><div class="preview-controls"><button id="create-preview" class="primary" data-shot-control>Tạo preview</button><button id="cancel-preview" class="secondary" data-shot-control hidden>Hủy preview</button><span id="preview-state" role="status" aria-live="polite">Preview chưa có</span></div><div class="shot-strip-heading"><h2>Shots</h2><span id="shot-count" class="hint">0 shot</span><button id="advanced-toggle" class="text-button" data-studio-nav aria-expanded="false" aria-controls="advanced-timeline">Advanced Timeline</button></div><div id="shot-strip" class="shot-strip" aria-label="Danh sách shot"></div><section id="advanced-timeline" class="advanced-timeline" hidden aria-label="Advanced Timeline"><p class="hint">Các track dưới đây cùng thuộc phiên bản timeline của shot editor. Chọn clip để mở shot tương ứng.</p><div id="advanced-tracks"></div></section><div id="video-review-body"></div></div>
+        <aside class="shot-context" aria-label="Shot Editor"><div class="card-heading"><div><p class="eyebrow">SHOT EDITOR</p><h2 id="shot-editor-title">Chọn một shot</h2></div><span id="shot-version" class="version">—</span></div><p id="shot-editor-empty" class="hint">Kịch bản có cảnh sẽ xuất hiện trong shot strip.</p>
+          <form id="shot-editor-form" hidden>
+            <label>Định hướng hình ảnh<textarea id="shot-visual" rows="2" maxlength="1200" data-shot-control></textarea></label>
+            <label>Lời đọc<textarea id="shot-narration" rows="3" maxlength="1500" data-shot-control></textarea></label>
+            <label>Chữ trên video<input id="shot-on-screen" maxlength="150" data-shot-control></label>
+            <label>Phụ đề<textarea id="shot-subtitle" rows="2" maxlength="1500" data-shot-control></textarea></label>
+            <label>Thay nguồn media<select id="shot-asset" data-shot-control></select></label><button type="button" class="text-button" data-stage="assets" data-studio-nav>Tải lên hoặc xem thư viện →</button>
+            <div class="scene-grid"><label>Thời lượng (giây)<input id="shot-duration" type="number" min="0.1" max="180" step="any" data-shot-control></label><label>Bắt đầu video (giây)<input id="shot-source-start" type="number" min="0" step="any" data-shot-control></label></div>
+            <details><summary>Hình ảnh & âm thanh</summary><label>Khung hình<select id="shot-crop" data-shot-control><option value="contain">Giữ toàn ảnh/video</option><option value="cover">Lấp đầy khung hình</option></select></label><label>Chuyển động ảnh<select id="shot-motion" data-shot-control><option value="none">Giữ yên</option><option value="zoom_in">Zoom chậm</option><option value="pan_left">Pan trái</option><option value="pan_right">Pan phải</option></select></label><label>Chuyển cảnh<select id="shot-transition" data-shot-control><option value="cut">Cắt thẳng</option><option value="fade">Mờ nhẹ</option></select></label><label class="check"><input id="shot-narration-enabled" type="checkbox" data-shot-control> Dùng lời đọc cho shot này</label><p class="hint">Giọng Thùy Dung · nhạc và ducking theo mẫu thương hiệu. Chọn khung 9:16 / 16:9 trong Thương hiệu & mẫu.</p></details>
+            <div class="actions"><button id="shot-save" class="primary" type="submit" data-shot-control>Lưu shot</button><button id="shot-discard" class="secondary" type="button" data-shot-control>Bỏ chỉnh sửa</button></div>
+            <div class="actions compact-actions"><button id="shot-earlier" class="secondary" type="button" data-shot-control>← Trước</button><button id="shot-later" class="secondary" type="button" data-shot-control>Sau →</button><button id="shot-duplicate" class="secondary" type="button" data-shot-control>Nhân đôi</button><button id="shot-delete" class="secondary" type="button" data-shot-control>Xóa shot</button></div>
+            <details><summary>Đề xuất & lịch sử shot</summary><button id="shot-regenerate" class="secondary" type="button" data-shot-control>Đề xuất lại nguồn cảnh</button><p class="hint">Chọn một nguồn khác từ thư viện hiện có; chưa tạo ảnh/video bằng AI.</p><label>Khôi phục shot từ phiên bản<input id="shot-restore-revision" type="number" min="1" step="1" data-shot-control></label><button id="shot-revert" class="secondary" type="button" data-shot-control>Khôi phục shot này</button></details>
+          </form>
+          <section class="shot-ai"><h3>AI Edit</h3><label>Yêu cầu cho shot đang chọn<textarea id="shot-ai-input" rows="2" maxlength="2000" placeholder="Ví dụ: Rút shot này còn 4 giây" data-shot-control></textarea></label><button id="shot-ai-suggest" class="secondary" data-shot-control>Xem đề xuất chỉnh sửa</button><p id="shot-ai-result" class="hint" role="status" aria-live="polite"></p><button id="shot-ai-apply" class="secondary" data-shot-control hidden>Dùng đề xuất cho shot</button></section>
+        </aside>
+      </div>
+    </section>
     <div class="workspace">
       <div class="editor">
         <section class="card" id="brief-card">
@@ -66,7 +102,7 @@
         </section>
       </div>
       <aside class="right-column">
-        <section class="card output-card"><p class="eyebrow">03 → 04 / ĐẦU RA</p><h2>Video của bạn</h2><div class="video-placeholder" id="video-placeholder"><span>▷</span><p>Video sẽ xuất hiện ở đây<br>sau khi bạn duyệt nội dung.</p></div><video id="video" controls playsinline preload="metadata" hidden></video><a id="download" class="download" hidden download="video-factory.mp4">Tải video MP4 ↓</a><button id="render" class="primary full" disabled>Tạo giọng đọc & video</button><p class="hint">Giọng Thùy Dung đã khóa. Phụ đề theo đoạn, dựa trên thời lượng audio đo được.</p><p id="qc-note" class="hint"></p></section>
+        <section class="card output-card"><p class="eyebrow">03 → 04 / ĐẦU RA</p><h2>Video của bạn</h2><div class="video-placeholder" id="video-placeholder"><span>▷</span><p>Video sẽ xuất hiện ở đây<br>sau khi bạn duyệt nội dung.</p></div><video id="video" controls playsinline preload="metadata" hidden></video><a id="download" class="download" hidden download="video-factory.mp4">Tải video MP4 ↓</a><button id="render" class="primary full" disabled>Tạo giọng đọc & video</button><p id="preview-timing-note" class="hint">Preview hình ảnh chưa tạo hay đo audio; thời điểm phụ đề là ước tính theo thời lượng shot. Bản render dùng giọng Thùy Dung đã khóa.</p><p id="qc-note" class="hint"></p></section>
         <section class="card" id="final-review-panel" hidden><h2>Duyệt video cuối</h2><p id="final-review-state" class="hint"></p><label>Người duyệt video<input id="final-reviewer" maxlength="100"></label><label class="check"><input id="final-watch" type="checkbox"> Tôi đã xem và nghe video, kiểm tra chữ, hình, giọng đọc, nhạc và nội dung. Tôi duyệt đúng video này làm bản cuối.</label><label>Ghi chú / lý do sửa<textarea id="final-note" rows="2" maxlength="2000"></textarea></label><button id="approve-final" class="primary full">Duyệt video này làm bản cuối</button><button id="reject-final" class="secondary full">Trả video để sửa</button><details><summary>Thông tin tệp</summary><button id="load-artifacts" class="text-button">Xem kiểm tra và mã xác thực</button><div id="artifact-list"></div></details></section>
         <button id="open-output" class="secondary" hidden>Mở thư mục video</button>
         <section class="card job-card"><div class="card-heading"><h2>Tiến trình</h2><button id="refresh" class="text-button">Làm mới ↻</button></div><p id="job-empty" class="hint">Chưa có job.</p><div id="jobs" aria-live="polite"></div><button id="retry" class="secondary full" hidden>Thử lại bằng job mới</button><p id="retry-note" class="hint" hidden>Job mới sẽ chạy lại bước đã lỗi. Có thể phát sinh thêm chi phí tạo nội dung.</p></section>

@@ -409,9 +409,15 @@ class ProductionIntelligence:
             raise WorkflowError('HUMAN_FINAL_VIDEO_APPROVAL_REQUIRED')
         from .intelligence_lineage import projection
         lineage = projection(snapshot['document'])
+        timeline_artifact = next((a for a in checkpoint['artifacts'] if a['path'] == 'timeline.json'), None)
+        timeline_schema = None
+        if timeline_artifact:
+            timeline_schema = json.loads((out / 'timeline.json').read_bytes()).get('schema_version')
         return {'path': str(path.resolve()), 'mime': 'video/mp4', 'sha256': sha, 'bytes': path.stat().st_size,
                 'job_id': job['id'], 'project_id': job['project_id'], 'revision': job['revision'],
-                'snapshot_sha256': digest(snapshot), 'lineage': lineage, 'approval': review, 'qc': qc}
+                'snapshot_sha256': digest(snapshot), 'lineage': lineage, 'approval': review, 'qc': qc,
+                'render_timeline_sha256': timeline_artifact['sha256'] if timeline_artifact else None,
+                'timeline_schema_version': timeline_schema}
 
     def video(self, identifier):
         job = self.production.get_job(identifier)
@@ -439,6 +445,9 @@ class ProductionIntelligence:
                 try:
                     checked = self.validate_video(job, require_approval=False)
                     row.update(integrity='PASS', sha256=checked['sha256'], lineage=checked['lineage'])
+                    row['versions'].update(timeline_version=(doc.get('canonical_timeline') or {}).get('version'),
+                        timeline_sha256=(doc.get('canonical_timeline') or {}).get('sha256'),
+                        render_timeline_sha256=checked['render_timeline_sha256'], timeline_schema_version=checked['timeline_schema_version'])
                     self.validate_video(job)
                     row.update(approved=True, video_url='/api/production/videos/' + job['id'],
                                thumbnail_url='/api/production/videos/' + job['id'] + '/thumbnail')

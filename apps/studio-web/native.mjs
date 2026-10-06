@@ -1,3 +1,15 @@
+export const supportsShotStudio = session => session?.capabilities?.native_shot_studio===true || session?.native_shot_studio===true;
+export async function loadNativeShotStudio(session,loader=()=>import('./shot-studio.mjs')) {
+  return supportsShotStudio(session)?await loader():null;
+}
+export function nativeLegacyLayout(dom) {
+  dom.body.classList.remove('shot-studio');
+  dom.querySelector('link[href="/shot-studio.css"]')?.remove();
+  dom.querySelectorAll('[data-stage-panel],.stage-navigation,.studio-header-actions,.skip-link,.sidebar [data-stage],.sidebar a[href^="/production"]').forEach(el=>el.hidden=true);
+  const workspace=dom.querySelector('.workspace');if(workspace)workspace.hidden=false;
+  const timing=dom.getElementById('preview-timing-note');if(timing)timing.textContent='Giọng Thùy Dung đã khóa. Phụ đề theo đoạn, dựa trên thời lượng audio đo được.';
+}
+
 export const jobActive = project => project?.jobs?.some(j => ["queued", "running", "retrying"].includes(j.status)) ?? false;
 export const currentVideo = project => project?.approval && !project.archived ? project.jobs.find(j => j.kind === "render" && j.status === "succeeded" && j.revision === project.revision) : null;
 export const canRender = (project, dirty, busy) => Boolean(project?.approval && !project.archived && project.approval.revision === project.revision && !dirty && !busy && !jobActive(project));
@@ -69,9 +81,10 @@ const statusNames = {queued:"Đang chờ",running:"Đang chạy",retrying:"Đang
 const stageNames = {starting:"Bắt đầu",prepare_existing_script:"Đang chuẩn bị kịch bản đã nhập",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video",asr_local_media_analysis:"Đang phân tích cảnh nguồn",asr_extract_audio:"Đang tách âm thanh",asr_upload:"Đang gửi âm thanh đến AssemblyAI",asr_create_transcript:"Đang nhận diện lời nói",asr_observe_known_transcript:"Đang chờ kết quả nhận diện",resuming_verified_asr:"Đang khôi phục kết quả đã lưu"};
 
 if (typeof document !== "undefined") {
+  nativeLegacyLayout(document);
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
-  let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0;
+  let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null;
   function message(text, error=false) {$("message").textContent=text;$("message").hidden=false;$("message").classList.toggle("error",error);}
   async function api(path, body) {
     const response = await fetch(path,{method:body?"POST":"GET",credentials:"same-origin",headers:body?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:body?JSON.stringify(body):undefined});
@@ -80,14 +93,14 @@ if (typeof document !== "undefined") {
     return result;
   }
   function controls() {
-    const active=jobActive(project), blocked=busy||active||project?.archived;
-    document.querySelectorAll("input,textarea,select,button").forEach(el=>el.disabled=blocked);
-    $("refresh").disabled=busy;
-    $("project-picker").disabled=busy||dirty;
-    $("new-project").disabled=busy||dirty;
-    $("show-archived").disabled=busy||dirty;
+    const active=jobActive(project), shotWorking=shotStudio?.isWorking()??false, blocked=busy||shotWorking||active||project?.archived;
+    document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
+    $("refresh").disabled=busy||shotWorking;
+    $("project-picker").disabled=busy||shotWorking||dirty;
+    $("new-project").disabled=busy||shotWorking||dirty;
+    $("show-archived").disabled=busy||shotWorking||dirty;
     $("duplicate-project").disabled=!project||blocked||dirty;
-    $("archive-project").disabled=!project||busy||active||dirty;
+    $("archive-project").disabled=!project||busy||shotWorking||active||dirty;
     $("archive-project").textContent=project?.archived?"Khôi phục":"Lưu trữ";
     $("load-history").disabled=!project||busy;
     $("apply-brand").disabled=!project||blocked||dirty;
@@ -105,7 +118,7 @@ if (typeof document !== "undefined") {
     $("music-enabled").disabled=!project?.document.music||!project.document.proposal||blocked||dirtyPart==="prompt";
     document.querySelectorAll(".scene").forEach(row=>{const asset=mediaLibrary(project?.document).find(a=>a.id===row.querySelector("[data-media]").value);row.querySelector("[data-start]").disabled=blocked||dirtyPart==="prompt"||asset?.kind!=="video";row.querySelector("[data-motion]").disabled=blocked||dirtyPart==="prompt"||asset?.kind!=="image";});
     document.querySelectorAll(".scene").forEach(row=>{row.querySelector('[data-move="-1"]').disabled=blocked||dirtyPart==="prompt"||!row.previousElementSibling;row.querySelector('[data-move="1"]').disabled=blocked||dirtyPart==="prompt"||!row.nextElementSibling;});
-    $("render").disabled=!canRender(project,dirty,busy);
+    $("render").disabled=!canRender(project,dirty,busy||shotWorking);
     if(project?.archived)$("render").disabled=true;
     $("reject-content").disabled=!project?.document.proposal||blocked||dirty;
     const video=currentVideo(project);
@@ -117,7 +130,11 @@ if (typeof document !== "undefined") {
     $("save-proposal").disabled=!project?.document.proposal||blocked;
     if(dirtyPart==="proposal"){$("prompt").disabled=true;$("save-prompt").disabled=true;}
     if(dirtyPart==="prompt"){$("scenes").querySelectorAll("input,textarea,select").forEach(el=>el.disabled=true);$("save-proposal").disabled=true;}
+    if(dirtyPart==="shot"){
+      document.querySelectorAll('#brief-card input,#brief-card textarea,#brief-card select,#brief-card button,#proposal-card input,#proposal-card textarea,#proposal-card select,#proposal-card button,#image-card input,#image-card select,#image-card button').forEach(el=>el.disabled=true);
+    }
     $("save-note").textContent=dirty?"Có chỉnh sửa chưa lưu. Lưu trước khi tạo nội dung hoặc duyệt.":project?.approval?`Đã duyệt bởi ${project.approval.reviewer}.`:project?"Mọi thay đổi được lưu sẽ cần duyệt lại.":"Lưu yêu cầu trước khi tạo đề xuất.";
+    shotStudio?.controls();
   }
   function markDirty(part) {dirty=true;dirtyPart=part;$("review-check").checked=false;controls();}
   function readProposal() {
@@ -189,6 +206,7 @@ if (typeof document !== "undefined") {
     if(video){if($("video").getAttribute("src")!==video.result.video_url)$("video").src=video.result.video_url;$("download").href=finalApproved(video)?`/api/jobs/${video.id}/final`:video.result.video_url;$("download").textContent=finalApproved(video)?"Tải video cuối MP4 ↓":"Tải bản xem trước MP4 ↓";$("qc-note").textContent=`Đã qua kiểm tra video và âm thanh · ${video.result.qc.duration_seconds.toFixed(1)} giây. Bạn cần xem lại video cuối.`;}else{$("video").removeAttribute("src");$("download").removeAttribute("href");$("qc-note").textContent="";}
     const failed=jobs[0]&&jobs[0].kind!=="asr"&&["failed","interrupted"].includes(jobs[0].status);
     $("retry").hidden=!failed;$("retry-note").hidden=!failed;
+    shotStudio?.refresh(reset);
     controls();
   }
   async function projects() {
@@ -210,6 +228,15 @@ if (typeof document !== "undefined") {
     },1500);
   }
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
+  async function initializeSupportedStudio(session){
+    let module;
+    try{module=await loadNativeShotStudio(session);}catch{nativeLegacyLayout(document);message('Đang dùng giao diện Studio hiện hành. Không tải được không gian biên tập mới.',true);return;}
+    if(!module)return;
+    document.body.classList.add('shot-studio');
+    const stylesheet=document.createElement('link');stylesheet.rel='stylesheet';stylesheet.href='/shot-studio.css';document.head.append(stylesheet);
+    document.querySelectorAll('.stage-navigation,.studio-header-actions,.skip-link,.sidebar [data-stage],.sidebar a[href^="/production"]').forEach(el=>el.hidden=false);
+    shotStudio=module.initializeShotStudio({api,getProject:()=>project,getGuards:()=>({dirty,busy}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
+  }
   $("save-prompt").addEventListener("click",guarded(async()=>{
     if(!project)project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value,input_kind:$("input-kind").value});
     else project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,prompt:$("prompt").value,input_kind:$("input-kind").value});
@@ -271,6 +298,6 @@ if (typeof document !== "undefined") {
   $("scenes").addEventListener("change",event=>{if(event.target.matches("input,select,textarea")){const row=event.target.closest(".scene");if(event.target.matches("[data-media]")){row.querySelector("[data-motion]").value="none";row.querySelector("[data-start]").value="0";}scenePreview(row);markDirty("proposal");}});
   window.addEventListener("beforeunload",event=>{if(dirty){event.preventDefault();event.returnValue="";}});
   async function runtimeStatus(){const status=await api("/api/runtime-status");$("runtime-status").textContent=`Nội dung: ${status.openai_key_saved?"key đã lưu; chưa kiểm tra bằng yêu cầu mới":"chưa có key"}. Giọng Thùy Dung: sẵn sàng. FFmpeg: sẵn sàng. AssemblyAI: ${status.assemblyai.connected?"đã xác minh kết nối":"chưa kết nối"}.`;}
-  async function loadBrandCatalog(){const values=await api("/api/brand-templates");$("brand-select").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("");$("template-select").innerHTML='<option value="">Bố cục MVP hiện có</option>'+values.templates.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join("");$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";}
-  (async()=>{busy=true;controls();try{csrf=(await api("/api/session")).csrf;runtimeStatus().catch(()=>{$("runtime-status").textContent="Chưa đọc được trạng thái. Làm mới Studio để kiểm tra.";});$("prompt").value=(await api("/api/defaults")).prompt;await projects();const saved=new URLSearchParams(location.search).get("project")??localStorage.getItem("vf-native-project");if(saved&&[...$("project-picker").options].some(o=>o.value===saved))project=await api(`/api/projects/${saved}`);await loadBrandCatalog();renderProject(true);await projects();schedule();}catch(error){message(error.message,true);}finally{busy=false;controls();}})();
+  async function loadBrandCatalog(){const values=await api(shotStudio?"/api/brand-templates?formats=all":"/api/brand-templates");$("brand-select").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("");$("template-select").innerHTML='<option value="">Bố cục MVP hiện có</option>'+values.templates.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join("");$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";}
+  (async()=>{busy=true;controls();try{const session=await api("/api/session");csrf=session.csrf;await initializeSupportedStudio(session);runtimeStatus().catch(()=>{$("runtime-status").textContent="Chưa đọc được trạng thái. Làm mới Studio để kiểm tra.";});$("prompt").value=(await api("/api/defaults")).prompt;await projects();const saved=new URLSearchParams(location.search).get("project")??localStorage.getItem("vf-native-project");if(saved&&[...$("project-picker").options].some(o=>o.value===saved))project=await api(`/api/projects/${saved}`);await loadBrandCatalog();renderProject(true);await projects();schedule();}catch(error){message(error.message,true);}finally{busy=false;controls();}})();
 }

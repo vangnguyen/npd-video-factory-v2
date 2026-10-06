@@ -292,7 +292,7 @@ def _voice_dependency(shots, index):
         return (False, "", "")
     before = next((s["narration"] for s in reversed(shots[:index]) if s["narration_enabled"]), "")
     parts = [s for s in re.split(r"(?<=[.!?])\s+", before.strip()) if s]
-    return (shot["narration_enabled"], shot["narration"], parts[-1] if parts else "")
+    return (shot["narration_enabled"], shot["narration"], parts[-1] if parts else "", index + 1)
 
 
 def scope_changes(before, after):
@@ -315,7 +315,7 @@ def scope_changes(before, after):
     return {"affected_shot_ids": list(dict.fromkeys(changed + voice + retimed)), "voice_dependency_shot_ids": voice,
         "visual_dependency_shot_ids": media, "retimed_shot_ids": retimed, "order_changed": reordered,
         "full_render_requested": False, "provider_calls": 0, "preview_invalidated": True,
-        "voice_context_dependency": "preceding_enabled_shot_last_sentence"}
+        "voice_context_dependency": "scene_ordinal_and_preceding_enabled_shot_last_sentence"}
 
 
 def _apply(shots, doc, operation, store, project, con):

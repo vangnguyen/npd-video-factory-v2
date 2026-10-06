@@ -32,7 +32,8 @@ def main():
             'persisted':project['shot_timeline']['persisted'],'approval':project['approval'],'jobs':len(project['jobs'])},
             'isolated_approved_library_count':len(approved),'human_phase10_acceptance':'PENDING','live_mutations':0,'provider_calls':0}
     result['passed']=all(comparisons.values()) and all(evidence.values()) and all(v['unchanged'] for v in videos) and result['runtime_dependencies_unchanged'] and len(approved)==15
-    (output/'preservation-verification.json').write_bytes(canonical(result))
+    target='final-preservation-verification.json' if '--final' in sys.argv else 'preservation-verification.json'
+    (output/target).write_bytes(canonical(result))
     print(json.dumps({'passed':result['passed'],'live_tables':comparisons,'evidence_files':len(evidence),'accepted_videos':len(videos),
                       'canonical_fresh_process_version':project['shot_timeline']['version'],'isolated_approved_videos':len(approved)}))
     assert result['passed']

@@ -228,7 +228,7 @@ class Handler(BaseHTTPRequestHandler):
             version=parse_qs(self.path.partition('?')[2]).get('version',[''])[0]
             return self.file(self.server.previews.video_path(identifier,version),video=True)
         if path == "/api/session":
-            return self.reply({"csrf": self.server.csrf}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
+            return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":

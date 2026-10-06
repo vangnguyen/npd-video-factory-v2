@@ -129,6 +129,25 @@ class ShotAdapterTests(unittest.TestCase):
         self.edit({"type": "delete", "shot_id": cards[1]["id"]})
         self.assertEqual(len(self.cards()), 19)
 
+    def test_duplicate_and_delete_report_downstream_scene_ordinal_voice_dependencies(self):
+        self.start()
+        original = self.cards()
+        duplicated = self.edit({"type": "duplicate", "shot_id": original[0]["id"]})
+        new = self.cards()
+        duplicate_id = new[1]["id"]
+        # The repeated first narration preserves both later targets and their preceding
+        # sentence context, while their certified warm-cache scene ordinal still changes.
+        self.assertEqual([s["narration"] for s in new[2:]], [s["narration"] for s in original[1:]])
+        self.assertEqual(new[1]["narration"], original[0]["narration"])
+        self.assertEqual(duplicated["shot_timeline"]["scope"]["voice_dependency_shot_ids"],
+            [duplicate_id, original[1]["id"], original[2]["id"]])
+        self.assertEqual(duplicated["shot_timeline"]["scope"]["voice_context_dependency"],
+            "scene_ordinal_and_preceding_enabled_shot_last_sentence")
+        restored = self.edit({"type": "delete", "shot_id": duplicate_id})
+        self.assertEqual(self.cards(), original)
+        self.assertEqual(restored["shot_timeline"]["scope"]["voice_dependency_shot_ids"],
+            [original[1]["id"], original[2]["id"]])
+
     def test_disabled_narration_preserves_editable_text_and_project_coverage(self):
         self.start()
         before = self.cards()

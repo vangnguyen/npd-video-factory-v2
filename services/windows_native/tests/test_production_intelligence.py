@@ -67,8 +67,9 @@ class ProductionIntelligenceTests(unittest.TestCase):
         job = self.production.enqueue(project['id'], 2, 'render', uuid.uuid4().hex)
         out = self.root / 'jobs' / job['id']; out.mkdir(parents=True)
         path = out / 'final.mp4'; path.write_bytes(b'TRANSPORT FIXTURE NOT REAL MEDIA')
+        timeline = out / 'timeline.json'; timeline.write_text('{"schema_version":"1.1","test_fixture":"transport-only; not a rendered production timeline"}', encoding='utf-8')
         result = {'qc': {'passed': True, 'final_sha256': file_sha(path), 'duration_seconds': 45}, 'test_fixture': True}
-        Artifacts(out, job).commit('render', [path], result)
+        Artifacts(out, job).commit('render', [path, timeline], result)
         self.production.claim(); self.production.finish(job, result=result)
         if accepted:
             self.production.review_render(job['id'], 2, 'TEST FIXTURE not human acceptance', True, 'approve')
@@ -231,6 +232,20 @@ class ProductionIntelligenceTests(unittest.TestCase):
         self.assertEqual(item['snapshot_sha256'], digest(job['snapshot']))
         self.assertEqual(item['versions']['script_version'], digest(job['snapshot']['document']['proposal']))
         self.assertEqual(item['duration_seconds'], 45)
+
+    def test_library_timeline_digest_is_actual_checkpoint_artifact_and_tamper_refused(self):
+        project, job = self.rendered(accepted=True)
+        timeline = self.root / 'jobs' / job['id'] / 'timeline.json'
+        versions = self.service.library()['items'][0]['versions']
+        self.assertEqual(versions['render_timeline_sha256'], file_sha(timeline))
+        self.assertEqual(versions['timeline_schema_version'], '1.1')
+        self.assertIsNone(versions['timeline_version'])
+        timeline.write_text('{"schema_version":"changed fixture"}', encoding='utf-8')
+        with self.assertRaisesRegex(WorkflowError, 'CHECKPOINT_ARTIFACT_CHANGED'):
+            self.service.video(job['id'])
+        row = self.service.library()['items'][0]
+        self.assertEqual(row['integrity'], 'FAILED')
+        self.assertFalse(row['approved']); self.assertIsNone(row['video_url'])
 
     def test_unapproved_reviewed_and_tampered_video_states(self):
         project, job = self.rendered()

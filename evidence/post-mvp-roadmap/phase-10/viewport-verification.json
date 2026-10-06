@@ -1,0 +1,93 @@
+{
+  "records": [
+    {
+      "documentWidth": 1351,
+      "height": 768,
+      "panel": {
+        "bottom": 979.78125,
+        "height": 728,
+        "left": 1023,
+        "right": 1329,
+        "top": 251.78125,
+        "width": 306,
+        "x": 1023,
+        "y": 251.78125
+      },
+      "preview": {
+        "bottom": 575.78125,
+        "height": 250,
+        "left": 241,
+        "right": 990,
+        "top": 325.78125,
+        "width": 749,
+        "x": 241,
+        "y": 325.78125
+      },
+      "shots": 5,
+      "width": 1366
+    },
+    {
+      "documentWidth": 1905,
+      "height": 1080,
+      "panel": {
+        "bottom": 1310.78125,
+        "height": 1040,
+        "left": 1500,
+        "right": 1865,
+        "top": 270.78125,
+        "width": 365,
+        "x": 1500,
+        "y": 270.78125
+      },
+      "preview": {
+        "bottom": 854.78125,
+        "height": 510,
+        "left": 273,
+        "right": 1457,
+        "top": 344.78125,
+        "width": 1184,
+        "x": 273,
+        "y": 344.78125
+      },
+      "shots": 5,
+      "width": 1920
+    },
+    {
+      "documentWidth": 2545,
+      "height": 1440,
+      "panel": {
+        "bottom": 1372.734375,
+        "height": 1096.953125,
+        "left": 2095,
+        "right": 2495,
+        "top": 275.78125,
+        "width": 400,
+        "x": 2095,
+        "y": 275.78125
+      },
+      "preview": {
+        "bottom": 1069.78125,
+        "height": 720,
+        "left": 283,
+        "right": 2048,
+        "top": 349.78125,
+        "width": 1765,
+        "x": 283,
+        "y": 349.78125
+      },
+      "shots": 5,
+      "width": 2560
+    }
+  ],
+  "screenshot_note": "Requested viewport dimensions are DOM measurements independent of the returned bitmap. 1366x768 PNG is a complete visual capture; 1920x1080 screenshot became correct after reload. At2560x1440 the IAB compositor returned scaled/cropped or tiled captures despite correct DOM geometry. They are retained only as diagnostic images, not visual PASS evidence.",
+  "visual_acceptance": {
+    "1366": "TECHNICAL_PASS",
+    "1920": "TECHNICAL_PASS",
+    "2560": "DOM_GEOMETRY_PASS_PIXEL_CAPTURE_UNVERIFIED"
+  },
+  "diagnostic_captures": [
+    "screenshots/diagnostic-iab-2560-scaled-capture.jpg",
+    "screenshots/diagnostic-iab-2560-tiled-capture.png"
+  ],
+  "human_wide_screen_check": "PENDING"
+}
