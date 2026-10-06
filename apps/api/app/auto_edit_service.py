@@ -423,7 +423,8 @@ class AutoEditAnalysisService:
                     "configuration": payload.model_dump(mode="json"),
                     "transcription_provider": transcription_provider.key,
                     "signal_provider": self.signal_provider.key,
-                    "signal_algorithm": getattr(self.signal_provider, "algorithm_version", None),
+                    **({"signal_algorithm": self.signal_provider.algorithm_version}
+                       if getattr(self.signal_provider, "algorithm_version", None) else {}),
                     "algorithm_version": self.algorithm_version,
                     **profile_binding,
                 },
