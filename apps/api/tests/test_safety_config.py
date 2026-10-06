@@ -381,6 +381,7 @@ async def test_capabilities_report_no_agent_hub_or_publishing_runtime() -> None:
         "vertical-1080x1920",
         "landscape-1920x1080",
         "square-1080x1080",
+        "portrait-1080x1350",
     ]
     assert result["preview_publish"] is False
     assert result["final_render_publish"] == "dry_run_validation_only"
