@@ -1,0 +1,28 @@
+{
+  "classification": "PHASE9_WINDOWS_NATIVE_INTERNAL_CONTENT_INTELLIGENCE_ACCEPTANCE",
+  "authority": "owner-final-authorization.json: exact human reply Duyệt to full-five-video and duration review question",
+  "checks": [
+    {"requirement": "Research is source/provenance aware", "passed": true, "evidence": "Ten actual practical research cases, typed SOURCE_REPORTED/INFERENCE/UNRESOLVED findings, retained URLs/timestamps/receipts; historical practical evidence and final lineage verification"},
+    {"requirement": "Ideas can be generated from research", "passed": true, "evidence": "Ten actual practical cases with five valid provider candidates each; rejected provider reference failures retained separately"},
+    {"requirement": "Multiple ideas can be ranked", "passed": true, "evidence": "50 initial candidates with version-bound component/final scores and ranking; ten-case practical assessment"},
+    {"requirement": "Scoring is transparent", "passed": true, "evidence": "HEURISTIC_SCORING, ten configured dimensions/weights, component scores and rationale; Studio and Native tests"},
+    {"requirement": "Human can select/edit/reject", "passed": true, "evidence": "Existing Studio tests and five actual Owner brief/idea decisions, v2 script decisions, immutable rejection history and final native decisions"},
+    {"requirement": "Approved brief enters the existing production pipeline", "passed": true, "evidence": "Five real approved handoffs and native projects/jobs; no second renderer; before-final-verification.json"},
+    {"requirement": "Research to final video lineage is preserved", "passed": true, "evidence": "final-verification.json binds five research/idea/brief/script/snapshot/MP4 identities and raw source artifacts"},
+    {"requirement": "Studio supports the workflow", "passed": true, "evidence": "Historical 32 Studio tests on unchanged UI; actual approved final download and five produced queue DOM states"},
+    {"requirement": "Tests pass", "passed": true, "evidence": "159 Native tests; five actual 11-check QC outputs; final HTTP byte/range checks and accepted fresh-process persistence"},
+    {"requirement": "Existing Internal Production Release does not regress", "passed": true, "evidence": "Before-final complete protected-release preflight; ten Phase8 videos/tag/evidence/dependencies unchanged; preserved database rows and 1034 prior evidence hashes"}
+  ],
+  "practical_cases": 10,
+  "initial_valid_candidates": 50,
+  "owner_accepted_current_final_videos": 5,
+  "owner_accepted_duration_exceptions": [2, 4, 6],
+  "produced_opportunities": 5,
+  "fixture_videos_counted": 0,
+  "new_provider_tts_or_render_calls_in_acceptance_step": 0,
+  "unselected_cases_preserved": true,
+  "subjective_owner_acceptance_is_not_objective_word_alignment_or_performance_prediction": true,
+  "published": false,
+  "INTERNAL_PRODUCTION_READY": "YES",
+  "CONTENT_INTELLIGENCE_READY": "YES"
+}
