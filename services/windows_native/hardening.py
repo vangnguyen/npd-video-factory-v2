@@ -115,7 +115,7 @@ class Artifacts:
 def resume_boundary(root, job):
     out = Path(root) / "jobs" / job["id"]
     artifacts = Artifacts(out, job)
-    for step in ("content", "tts", "render", "asr"):
+    for step in ("content", "tts", "render", "asr", "auto_edit_analysis"):
         artifacts.load(step)  # Refuse changed checkpoint bytes before enqueueing.
     if job["kind"] == "asr":
         from .asr import validate_resume

@@ -151,7 +151,7 @@ class Phase10HTTPTests(unittest.TestCase):
         status, session, headers = self.request('GET', '/api/session', headers={'Cookie': '', 'X-VF-CSRF': ''})
         self.assertEqual(status, 200)
         self.assertEqual(session['capabilities'], {'native_shot_studio': True, 'production_intelligence': True, 'voice_quality_selection': True,
-            'native_studio_ux': True, 'asset_library': True, 'north_star_quality': True})
+            'native_studio_ux': True, 'asset_library': True, 'north_star_quality': True, 'native_auto_edit_analysis': True})
         for name in ('native_shot_studio', 'production_intelligence', 'voice_quality_selection', 'native_studio_ux', 'asset_library'):
             self.assertIs(type(session['capabilities'][name]), bool)
         self.assertEqual(session['csrf'], self.server.csrf)
@@ -177,6 +177,48 @@ class Phase10HTTPTests(unittest.TestCase):
         status, failure = self.api('POST', endpoint, body, {'Cookie': request_cookie, 'X-VF-CSRF': session['csrf']})
         self.assertEqual((status, failure['code']), (400, 'SHOT_OPERATION_INVALID'))
         self.assertEqual(self.database_state(), before)
+
+    def test_native_auto_edit_evidence_and_transcript_http_guards(self):
+        from services.windows_native.auto_edit_analysis import make_analysis
+        from services.windows_native.tests.test_auto_edit_analysis import saved_asr
+        from app.auto_edit_models import MediaMetadata
+        from app.auto_edit_providers import MediaSignals
+        asset = {'id': uuid.uuid4().hex+'.mp4', 'kind': 'video', 'filename': 'Explicit HTTP source fixture',
+            'sha256': 'a'*64, 'rights_confirmed': True, 'illustration': False,
+            'duration_seconds': 3., 'width': 320, 'height': 240, 'has_audio': True}
+        self.project = self.server.store.append_media(self.project['id'], self.project['revision'], asset)
+        job = self.server.store.enqueue(self.project['id'], self.project['revision'], 'asr', uuid.uuid4().hex)
+        job = self.server.store.claim()
+        self.server.store.finish(job, result={'media_analysis': [saved_asr(asset)]})
+        self.project = self.server.store.get(self.project['id'])
+        status, job = self.api('POST', '/api/projects/'+self.project['id']+'/jobs', {
+            'revision': self.project['revision'], 'kind': 'auto_edit_analysis', 'request_key': uuid.uuid4().hex})
+        self.assertEqual(status, 200)
+        job = self.server.store.claim()
+        record = make_analysis(self.project['id'], self.project['document'], asset,
+            MediaMetadata(media_kind='video', detected_content_type='video/mp4', duration_seconds=3., audio_codec='aac'),
+            MediaSignals((), ((1.3,1.95,None),), {'fixture': True}))
+        self.server.store.finish(job, result={'auto_edit_analyses': [record]})
+        endpoint = '/api/projects/'+self.project['id']+'/auto-edit'
+        before = self.database_state()
+        status, view = self.api('GET', endpoint); self.assertEqual(status, 200)
+        self.assertEqual(self.api('GET', endpoint)[1], view)
+        self.assertEqual(self.database_state(), before)
+        self.assertEqual(self.api('GET', endpoint, headers={'Cookie':''})[0], 401)
+        transcript = view['analyses'][0]['analysis']['transcript']
+        path = endpoint+'/'+transcript['analysis_id']+'/transcript'
+        body = {'revision': view['revision'], 'edit': {'expected_version': 1,
+            'segments': [{'segment_id': transcript['segments'][0]['segment_id'], 'text':'Vang Nguyễn.'}]}}
+        for headers, expected in [({'Cookie':''},401), ({'X-VF-CSRF':'invalid'},403), ({'Origin':'https://foreign.invalid'},403)]:
+            self.assertEqual(self.api('POST',path,body,headers)[0],expected)
+        self.assertEqual(self.database_state(), before)
+        forged = deepcopy(body); forged['edit']['actor_ref'] = 'other-owner'
+        self.assertEqual(self.api('POST',path,forged)[0],400)
+        status, updated = self.api('POST',path,body); self.assertEqual(status,200)
+        self.assertEqual(updated['analyses'][0]['analysis']['transcript']['version'],2)
+        self.assertEqual(updated['analyses'][0]['analysis']['transcript']['segments'][0]['words'],[])
+        self.assertEqual(self.api('POST',path,body)[0],409)
+        self.assertEqual(self.api('GET','/native-auto-edit.mjs')[0],200)
 
     def test_voice_quality_catalog_session_and_write_guards_preserve_accepted_default(self):
         before = self.database_state()

@@ -676,6 +676,14 @@ class Pipeline:
                 raise WorkflowError("CHECKPOINT_INPUT_CHANGED")
         else:
             retry_io(lambda: durable_json(out / "input.json", job["snapshot"]), stage, "storage_input")
+        if job["kind"] == "auto_edit_analysis":
+            from .auto_edit_analysis import analyze, validate_sources
+            validate_sources(self.config, job)
+            checkpoint = artifacts.load("auto_edit_analysis")
+            if checkpoint:
+                stage("resuming_verified_auto_edit_analysis")
+                return checkpoint["result"]
+            return analyze(self.config, job, out, stage)
         if job["kind"] == "asr":
             from .asr import analyze
             checkpoint = artifacts.load("asr")

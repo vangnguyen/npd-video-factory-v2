@@ -113,6 +113,9 @@ class Store:
         components = version_components(project["document"])
         if project["document"].get("canonical_timeline"):
             components["timeline_version"] = digest(project["document"]["canonical_timeline"])
+        if project["document"].get("auto_edit_analyses"):
+            components["auto_edit_evidence_version"] = digest({key: project["document"].get(key, [])
+                for key in ("auto_edit_analyses", "auto_edit_transcripts")})
         con.execute("INSERT OR IGNORE INTO project_versions VALUES(?,?,?,?,?)",
                     (identifier, project["revision"], json.dumps(project["document"], ensure_ascii=False),
                      json.dumps(components), now()))
@@ -252,6 +255,10 @@ class Store:
             stamp=now(); copy_id=uuid.uuid4().hex
             doc["duplication"]={"project_id":identifier,"revision":revision,"document_sha256":digest(doc),"created_at":stamp}
             doc["name"]=doc["name"][:139]+" — bản sao"
+            # Evidence remains immutable in its source project; new project IDs
+            # need their own analysis binding. Saved raw ASR/media can be reused.
+            doc.pop("auto_edit_analyses", None)
+            doc.pop("auto_edit_transcripts", None)
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",(copy_id,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
             self.version(con,copy_id)
             self.event(con,copy_id,"project_duplicated_unapproved",{"source_project":identifier,"source_revision":revision})
@@ -505,7 +512,7 @@ class Store:
         return self.get(identifier)
 
     def enqueue(self, identifier, revision, kind, request_key):
-        if kind not in {"content", "render", "asr"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
+        if kind not in {"content", "render", "asr", "auto_edit_analysis"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
             raise WorkflowError("INVALID_JOB_REQUEST", 400)
         identity = digest({"project_id": identifier, "revision": revision, "kind": kind})
         with self.transaction() as con:
@@ -529,6 +536,10 @@ class Store:
                 if con.execute("SELECT 1 FROM jobs WHERE project_id=? AND revision=? AND kind='asr'",
                                (identifier, revision)).fetchone():
                     raise WorkflowError("ASR_EXISTING_JOB_RESUME_REQUIRED")
+            if kind == "auto_edit_analysis":
+                from .auto_edit_analysis import pending
+                if not pending(doc, identifier):
+                    raise WorkflowError("AUTO_EDIT_NO_PENDING_VIDEO", 400)
             if kind == "render" and (not approval or approval["revision"] != revision
                                      or approval["snapshot_sha256"] != digest(doc)):
                 raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
@@ -604,6 +615,12 @@ class Store:
                             (project["revision"]+1, json.dumps(doc, ensure_ascii=False), now(), project["id"]))
                 self.version(con, project["id"])
                 self.event(con, project["id"], "media_analyzed_approval_invalidated", {"job_id": job["id"], "assets": sorted(replaced)})
+            if result and job["kind"] == "auto_edit_analysis":
+                from .auto_edit_analysis import save_result
+                project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (job["project_id"],)).fetchone())
+                if project["revision"] != job["revision"] or digest(project["document"]) != digest(job["snapshot"]["document"]):
+                    raise WorkflowError("AUTO_EDIT_STALE_RESULT")
+                save_result(self, con, project, result)
             con.execute("UPDATE jobs SET status=?,stage=?,error=?,result=?,updated_at=? WHERE id=?",
                         (status, status, json.dumps(error) if error else None,
                          json.dumps(result, ensure_ascii=False) if result else None, now(), job["id"]))

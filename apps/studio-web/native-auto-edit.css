@@ -1,0 +1,6 @@
+.native-analysis {border-top:1px solid #ddd;padding:16px 0;min-width:0;overflow-wrap:anywhere}
+.native-analysis h3 {font-size:18px;line-height:1.4;margin:0 0 10px}
+.native-analysis p,.native-analysis label,.native-analysis summary {font-size:14px;line-height:1.5}
+.native-analysis textarea {width:100%;box-sizing:border-box;min-height:70px;font-size:15px;line-height:1.5}
+.native-analysis details {margin:12px 0}
+.native-analysis section {padding:8px 0}

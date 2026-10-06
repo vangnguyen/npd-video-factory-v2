@@ -220,6 +220,10 @@ class Handler(BaseHTTPRequestHandler):
             if re.fullmatch(r'/api/production/videos/[0-9a-f]{32}',path):
                 return self.file(Path(result['path']),video=True)
             return self.reply(result)
+        analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit', path)
+        if analysis_route:
+            from .auto_edit_analysis import view
+            return self.reply(view(self.server.store, analysis_route[1]))
         shot_route=re.fullmatch(r'/api/projects/([0-9a-f]{32})/(shots|preview|preview/video)',path)
         if shot_route:
             identifier,action=shot_route.groups()
@@ -229,7 +233,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.file(self.server.previews.video_path(identifier,version),video=True)
         if path == "/api/session":
             return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
-                "native_studio_ux": True, "asset_library": True, "north_star_quality": True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
+                "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -308,7 +312,7 @@ class Handler(BaseHTTPRequestHandler):
                   "/settings/assemblyai": "assemblyai.html", "/assemblyai.mjs": "assemblyai.mjs"}
         static.update({'/shot-studio.mjs':'shot-studio.mjs','/shot-studio.css':'shot-studio.css',
                        '/production':'production.html','/production.mjs':'production.mjs','/production.css':'production.css'})
-        static.update({name:name[1:] for name in ('/asset-picker.mjs','/video-preview.mjs','/studio-workspace.css','/studio-shell.mjs','/studio-shell.css')})
+        static.update({name:name[1:] for name in ('/asset-picker.mjs','/video-preview.mjs','/studio-workspace.css','/studio-shell.mjs','/studio-shell.css','/native-auto-edit.mjs','/native-auto-edit.css')})
         if path in static:
             return self.file(REPO / "apps/studio-web" / static[path])
         raise WorkflowError("ROUTE_NOT_FOUND", 404)
@@ -336,6 +340,13 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith('/api/production/'):
             from .production_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/(ana_[a-f0-9]{24})/transcript', self.path)
+        if analysis_route:
+            from .auto_edit_analysis import edit_transcript
+            body = self.read_body(max_bytes=100000)
+            if set(body) != {'revision', 'edit'} or type(body.get('revision')) is not int:
+                raise WorkflowError('AUTO_EDIT_TRANSCRIPT_REQUEST_INVALID', 400)
+            return self.reply(edit_transcript(self.server.store, analysis_route[1], body['revision'], analysis_route[2], body['edit']))
         shot_route=re.fullmatch(r'/api/projects/([0-9a-f]{32})/(shots|preview|ai-edit|asset-association|script-review)',self.path)
         if shot_route:
             identifier,action=shot_route.groups(); body=self.read_body(max_bytes=100000)

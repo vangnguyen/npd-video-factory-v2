@@ -84,13 +84,13 @@ const errors = {
   BRAND_HEADING_EXCEEDS_SAFE_AREA:"Tiêu đề vượt vùng chữ an toàn. Rút ngắn chữ trên cảnh này và duyệt lại.",
 };
 const statusNames = {queued:"Đang chờ",running:"Đang chạy",retrying:"Đang thử lại có giới hạn",awaiting_review:"Đề xuất sẵn sàng · cần bạn duyệt",succeeded:"Video đã render · hãy xem lại",failed:"Job đã dừng do lỗi",interrupted:"Job bị ngắt · chưa chạy lại"};
-const stageNames = {starting:"Bắt đầu",prepare_existing_script:"Đang chuẩn bị kịch bản đã nhập",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video",asr_local_media_analysis:"Đang phân tích cảnh nguồn",asr_extract_audio:"Đang tách âm thanh",asr_upload:"Đang gửi âm thanh đến AssemblyAI",asr_create_transcript:"Đang nhận diện lời nói",asr_observe_known_transcript:"Đang chờ kết quả nhận diện",resuming_verified_asr:"Đang khôi phục kết quả đã lưu"};
+const stageNames = {starting:"Bắt đầu",prepare_existing_script:"Đang chuẩn bị kịch bản đã nhập",content_request:"Đang tạo nội dung",checking_scene_media:"Đang kiểm tra nguồn từng cảnh",locked_thuy_dung_tts:"Đang tạo giọng Thùy Dung",ffmpeg_render_and_qc:"Đang render và kiểm tra video",asr_local_media_analysis:"Đang phân tích cảnh nguồn",asr_extract_audio:"Đang tách âm thanh",asr_upload:"Đang gửi âm thanh đến AssemblyAI",asr_create_transcript:"Đang nhận diện lời nói",asr_observe_known_transcript:"Đang chờ kết quả nhận diện",resuming_verified_asr:"Đang khôi phục kết quả đã lưu",auto_edit_local_measurements:"Đang đo cảnh và âm thanh trên máy",resuming_verified_auto_edit_analysis:"Đang khôi phục kết quả dựng nguồn đã đo"};
 
 if (typeof document !== "undefined") {
   nativeLegacyLayout(document);
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
-  let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, workspaceUI=null,brandCatalog=null,projectQuality={};
+  let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, workspaceUI=null,brandCatalog=null,projectQuality={};
   function message(text, error=false) {$("message").textContent=text;$("message").hidden=false;$("message").classList.toggle("error",error);}
   async function api(path, body) {
     const response = await fetch(path,{method:body?"POST":"GET",credentials:"same-origin",headers:body?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:body?JSON.stringify(body):undefined});
@@ -101,7 +101,7 @@ if (typeof document !== "undefined") {
   function controls() {
     $("prompt").closest('label').hidden=Boolean(workspaceUI)&&$("input-kind").value==='media';
     const active=jobActive(project), shotWorking=shotStudio?.isWorking()??false, blocked=busy||shotWorking||active||project?.archived;
-    document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-workspace-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
+    document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-workspace-control],[data-auto-edit-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
     $("refresh").disabled=busy||shotWorking;
     $("project-picker").disabled=busy||shotWorking||dirty;
     $("new-project").disabled=busy||shotWorking||dirty;
@@ -142,6 +142,7 @@ if (typeof document !== "undefined") {
     }
     $("save-note").textContent=dirty?"Có chỉnh sửa chưa lưu. Lưu trước khi tạo nội dung hoặc duyệt.":project?.approval?`Đã duyệt bởi ${project.approval.reviewer}.`:project?"Mọi thay đổi được lưu sẽ cần duyệt lại.":"Lưu yêu cầu trước khi tạo đề xuất.";
     shotStudio?.controls();
+    nativeAnalysis?.controls();
   }
   function markDirty(part) {dirty=true;dirtyPart=part;$("review-check").checked=false;controls();}
   function readProposal() {
@@ -209,7 +210,7 @@ if (typeof document !== "undefined") {
     $("script-review-state").hidden=!scriptReviewLabel(project);
     const jobs=project?.jobs??[];
     $("job-empty").hidden=Boolean(jobs.length);
-    $("jobs").innerHTML=jobs.slice(0,6).map(job=>`<div class="job ${job.error?"error":""}"><strong>${job.kind==="asr"?"Phân tích nguồn & lời nói":job.kind==="content"?"Nội dung":"Giọng đọc & video"}</strong><small>${new Date(job.created_at).toLocaleString("vi-VN")} · v${job.revision}</small>${esc(job.kind==="asr"&&job.status==="succeeded"?"Kết quả phân tích sẵn sàng · hãy kiểm tra":statusNames[job.status]??job.status)}${["running","retrying"].includes(job.status)?`<small>${esc(stageNames[job.stage]??job.stage)}</small>`:""}${job.error?`<small>${esc(errors[job.error.code]??job.failure?.action??job.error.code)}${job.error.http_status?` · HTTP ${job.error.http_status}`:""}</small>`:""}${["failed","interrupted"].includes(job.status)&&job.revision===project.revision?`<button data-resume="${esc(job.id)}">Tiếp tục từ bước đã lưu</button>`:""}</div>`).join("");
+    $("jobs").innerHTML=jobs.slice(0,6).map(job=>`<div class="job ${job.error?"error":""}"><strong>${job.kind==="auto_edit_analysis"?"Đo cảnh & âm thanh trên máy":job.kind==="asr"?"Phân tích nguồn & lời nói":job.kind==="content"?"Nội dung":"Giọng đọc & video"}</strong><small>${new Date(job.created_at).toLocaleString("vi-VN")} · v${job.revision}</small>${esc(["asr","auto_edit_analysis"].includes(job.kind)&&job.status==="succeeded"?"Kết quả phân tích sẵn sàng · hãy kiểm tra":statusNames[job.status]??job.status)}${["running","retrying"].includes(job.status)?`<small>${esc(stageNames[job.stage]??job.stage)}</small>`:""}${job.error?`<small>${esc(errors[job.error.code]??job.failure?.action??job.error.code)}${job.error.http_status?` · HTTP ${job.error.http_status}`:""}</small>`:""}${["failed","interrupted"].includes(job.status)&&job.revision===project.revision?`<button data-resume="${esc(job.id)}">Tiếp tục từ bước đã lưu</button>`:""}</div>`).join("");
     const video=currentVideo(project);
     $("final-review-panel").hidden=!video;
     $("open-output").hidden=!video;
@@ -219,6 +220,7 @@ if (typeof document !== "undefined") {
     const failed=jobs[0]&&jobs[0].kind!=="asr"&&["failed","interrupted"].includes(jobs[0].status);
     $("retry").hidden=!failed;$("retry-note").hidden=!failed;
     shotStudio?.refresh(reset);
+    nativeAnalysis?.refresh(reset);
     controls();
   }
   async function projects() {
@@ -242,6 +244,12 @@ if (typeof document !== "undefined") {
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
     projectQuality=newProjectQuality(session);
+    if(session.capabilities?.native_auto_edit_analysis===true){
+      const analysis=await import('./native-auto-edit.mjs');
+      const stylesheet=document.createElement('link');stylesheet.rel='stylesheet';stylesheet.href='/native-auto-edit.css';document.head.append(stylesheet);
+      nativeAnalysis=analysis.initializeNativeAnalysis({api,getProject:()=>project,getState:()=>({dirty,dirtyPart,busy:busy||(shotStudio?.isWorking()??false)}),
+        onProject:(value,reset)=>{project=value;renderProject(reset);},onDirty:markDirty,onMessage:message});
+    }
     let module;
     try{module=await loadNativeShotStudio(session);}catch{nativeLegacyLayout(document);message('Đang dùng giao diện Studio hiện hành. Không tải được không gian biên tập mới.',true);return;}
     if(!module)return;
@@ -271,10 +279,11 @@ if (typeof document !== "undefined") {
     let requestKey=sessionStorage.getItem(key);
     if(!requestKey||fresh){requestKey=crypto.randomUUID();sessionStorage.setItem(key,requestKey);}
     await api(`/api/projects/${project.id}/jobs`,{revision:project.revision,kind,request_key:requestKey});
-    await reload(false);message(kind==="asr"?"Đã gửi job phân tích nguồn và nhận diện lời nói. Hãy kiểm tra transcript khi hoàn tất.":kind==="content"?"Đã gửi job tạo đề xuất. Bước tiếp theo cần bạn kiểm tra và duyệt.":"Đã gửi job tạo giọng đọc và render video.");
+    await reload(false);message(kind==="auto_edit_analysis"?"Đã gửi job đo cảnh và âm thanh trên máy. Hãy kiểm tra lời nói, cảnh và điểm nổi bật.":kind==="asr"?"Đã gửi job phân tích nguồn và nhận diện lời nói. Hãy kiểm tra transcript khi hoàn tất.":kind==="content"?"Đã gửi job tạo đề xuất. Bước tiếp theo cần bạn kiểm tra và duyệt.":"Đã gửi job tạo giọng đọc và render video.");
   }
   $("generate").addEventListener("click",guarded(()=>enqueue("content")));
   $("analyze-media").addEventListener("click",guarded(()=>enqueue("asr")));
+  $("measure-auto-edit").addEventListener("click",guarded(()=>enqueue("auto_edit_analysis")));
   $("render").addEventListener("click",guarded(()=>enqueue("render")));
   $("retry").addEventListener("click",guarded(()=>enqueue(project.jobs[0].kind,true)));
   $("save-proposal").addEventListener("click",guarded(async()=>{const proposal=readProposal(),bindings=readBindings();project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,proposal,scene_media:bindings,scene_options:mediaReady({...project.document,proposal,scene_media:bindings})?readOptions():undefined,music_enabled:$("music-enabled").checked});renderProject(true);message("Đã lưu nội dung và cách dựng từng cảnh. Phiên bản mới cần duyệt lại.");}));

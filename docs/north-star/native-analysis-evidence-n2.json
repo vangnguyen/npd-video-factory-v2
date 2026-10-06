@@ -1,0 +1,32 @@
+{
+  "explicit_fixture": true,
+  "human_acceptance": false,
+  "job_id": "5c1d7ccc84644c7795af23e815846747",
+  "new_tts_inference": false,
+  "project_id": "ab1263e45ca84f5897d817d9cff7ef69",
+  "provider_dispatch": false,
+  "source_sha256": "86807ba66900c3bc9fee111db29e9314074c72c49e19f042c7585f158c8a9b1a",
+  "url": "http://127.0.0.1:8047/?project=ab1263e45ca84f5897d817d9cff7ef69",
+  "implementation": "native-auto-edit-evidence-v1",
+  "fixture_asr": true,
+  "local_real_ffmpeg_measurements": true,
+  "project_revision": 4,
+  "source_file_unchanged": true,
+  "analysis_id": "ana_3e9eee7275cdfa4089104e40",
+  "analysis_fingerprint": "3e9eee7275cdfa4089104e40713f7dc552a6bac068acc1823957cc3158fec976",
+  "scene_count": 1,
+  "waveform_bin_count": 120,
+  "visual_frame_count": 12,
+  "transcript_fixture_language": "vi",
+  "canonical_timeline_mutated": false,
+  "browser_acceptance": false,
+  "browser_reason": "Chrome ERR_BLOCKED_BY_CLIENT before document loaded; no bypass",
+  "exports": {
+    "analysis.json": "c81ee0f8021529c1ac8c6e77e25ec5cfee002286eccc20966872d39554c56452",
+    "project.json": "ce6fad02d48624d9d599c1b840905480e8e4b5acf25fb8ba0c2fd5f6ae125b85",
+    "job.json": "256c5f0ac2eeb7ef904648f992bccb59c8be001ab515f500a149cdd0522cf441"
+  },
+  "real_provider_acceptance": false,
+  "owner_uat": false,
+  "production_deployed": false
+}
