@@ -1,0 +1,8 @@
+{
+  "actual_studio_restart": true,
+  "wrapper_pid": 8932,
+  "stdout_log": "C:\\NPD-Video-Factory\\phase2\\server-script-review-20261006-113925.stdout.log",
+  "stderr_log": "C:\\NPD-Video-Factory\\phase2\\server-script-review-20261006-113925.stderr.log",
+  "expected_application_sha": "4b2f67faea5687ab97a4c64c3789216de48c8bf3",
+  "render_dispatches": 0
+}
