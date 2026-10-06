@@ -1,0 +1,42 @@
+# North Star gap closure plan
+
+The full Master Spec remains the objective. Existing certified Native components and PostgreSQL services are retained. The capability matrix records 64 requirements and cross-references every section 0–89. Interface-only official adapters require working implementation even when credentials are absent. Missing credentials/GPU only block their real acceptance, not unrelated safe implementation.
+
+## Execution order and acceptance
+
+| Wave | Concrete work / dependencies | Exit evidence |
+| --- | --- | --- |
+| 0 | Preserve actual local history, dangling Git objects, accepted videos and baseline; create/push isolated completion branch. | Verified bundle/raw archive, 15 SHA256 comparisons, remote branch SHA; SOURCE_PRESERVED = YES. Completed. |
+| 1 | Inspect real code, models, tests, UI/runtime; classify all 64 requirements; map every Master Spec section; identify runtime integration gaps. | Machine-readable rows, 90-section crosswalk, source fingerprints, test logs, this plan. Initial audit complete; continuously update. |
+| 2 | Canonical proper-name policy, narration timing, quiet-tail QC, strict vertical-short profile; retain shared shell/assets/picker/review; revalidate repaired candidates. | Focused unit/media tests, Phase 8/9 regression hashes, five unchanged repaired review candidates and honest technical receipt. Owner UAT pending; never self-accept. |
+| 3 | Integrate reusable API analysis with Native ingestion/Transcript/Scenes/Silence/Highlights/Reframe/Subtitles/B-roll UI; advanced and shot editor mutate same canonical timeline. | VI/EN source analysis; reversible word-safe cuts; Top3/Top5/Shorts; four crop ratios; all advanced operations/undo/revision tests and non-developer UI flow. |
+| 4 | Reuse structured Vision adapter/model; attach evidence to Native assets/scenes/reframe/B-roll/thumbnails and QC. | Typed captions/objects/OCR/quality/composition/time/model/confidence; mock contracts; configured real-provider acceptance separately. |
+| 5 | Implement legal stock adapters and rights/provenance; complete image/video operation modes and approved ComfyUI async lifecycle. | Search/get/download HTTP contracts and artifact hashes/licenses; submit/poll/cancel/retry/outage tests; unconfigured services explicitly NOT_CONFIGURED. |
+| 6 | Connect versioned MediaPlan to scripts/storyboards/brand/budget; complete scene TTS/music/mix; unified full QC. | Real playable local media; ducking/limiter/quiet-tail/A-V/black/freeze/bounds/decode tests; failed_qc blocks readiness/publishing. |
+| 7 | Full configurable profile/template family; AI-education acceptance profile; six variants reuse source voice/media/Vision. | One master project exported in all requested ratios/platforms without niche edits to engine or repeated expensive calls. |
+| 8 | Uniform cost ledger/UI/budget checks; RBAC; storage adapter for Native; workspace-scoped caches; health/logs; isolated backup/restore. | Permission-denial matrix, unknown costs null, budget refusal before dispatch, storage/cache hash+isolation tests, restore simulation. |
+| 9 | Official YouTube/TikTok/Instagram/Facebook adapters; metadata/capability validation; Native publishing queue/scheduler/dry-run/history; idempotent retry. | Mock E2E for every platform; unknown rights/stale approval/disabled publishing block; ambiguous timeout cannot duplicate. Live publish requires separate Owner enablement and credentials. |
+| 10 | Authorized analytics collectors and sync/refresh/backoff; immutable snapshots; channel/per-video/time-series/comparison UI. | HTTP contracts for metrics and Retry-After; unavailable metrics null; snapshots append; live acceptance separately gated by secrets. |
+| 11 | Channel-aware winner assessment with velocity/retention/engagement/CTR/follower/cost coverage. | All four states plus explainable evidence; insufficient data never marked winning; no deletions or budget mutation. |
+| 12 | Cross-video learning feature store and recommendations feeding Trend/Idea/Media/Template profiles. | History/audience/global-signal evidence and sample sizes; recommendation-only behavior; no irreversible autonomy. |
+| 13 | Authorized trend-source adapters, normalization, configurable semantic/entity/temporal clustering/lifecycle/opportunity weights; Native eight radar views/filters/detail/idea/project handoff. | Observed sources/evidence retain null metrics; deterministic fixture E2E; real source acceptance separately; personalized recommendations visible. |
+| 14 | Native-to-versioned API/events integration; dedicated service identity, signed retryable webhooks/idempotency/audit. | All requested events, Hub-offline production and eventual deduplicated delivery; no shared DB/Redis/packages/process state. |
+| 15 | Explicit deployment profiles, CPU/GPU independence, isolated Docker/Postgres/Redis/S3/worker/renderer/UI; security/timeouts/rates/retry/soak/recovery. | Disposable stack E2E, restore and bounded soak reports; production remains Owner-gated. No mutation of existing NPD/Hub infrastructure. |
+| 16 | Three complete A/B/C bundles on current source and UI-driven flow; all previous regressions preserved. | Required JSON/media/subtitle/audio/render/QC/job/cost artifacts, hashes and provenance; implementation/mock/local/real/deployed states separated. |
+
+## Integration decisions
+
+1. Keep the existing Native shot view as the default. Do not create another project or timeline source of truth for advanced editing. Use adapters/projections and the current optimistic revision/hash boundary.
+2. Reuse the existing structured analysis, Vision, media-plan, publishing, analytics and bridge domain/services. A source file or fixture does not establish that the Native UI can use that capability.
+3. Use additive, versioned documents and isolated test databases first. Any destructive migration pauses only that action for explicit Owner review.
+4. Preserve raw provider evidence, original uploads, accepted artifacts and old renders. New quality policies create new revisions; they must not retroactively alter or recertify historical media.
+5. Do not reserve invented observed trend/analytics/cost values. Mock payloads are clearly labeled; unknown metrics and billed costs remain null.
+6. Each capability change is a separate reviewable commit. Do not merge protected main. Preserve milestone commits remotely and retain the recovery bundle.
+
+## Required external gates
+
+Owner watch/listen UAT is required for Phase 10 certification. It does not block further safe source implementation. Real publishing requires separate explicit enablement and configured authorized credentials. Missing OAuth/API secrets and approved provider budgets are requested only for concrete real acceptance after mock architecture is complete. GPU acceptance needs configured approved models/workflows. Docker/Linux acceptance needs an isolated available runtime; production deployment requires separate Owner approval.
+
+## Current blockers and baseline testing
+
+The Windows host has no Docker executable; POSIX runtime security modules cannot import `grp`. Do not label skipped/unrun Linux checks as passing. The initial API rerun also encountered a pre-existing inaccessible `pytest-of-PC` temp directory; rerun uses a fresh explicitly scoped temp directory without deleting/changing the old one. Native baseline passes 255 tests with the certified runtime; Studio passes 79 tests. Exact fresh results belong in the wave ledger.
