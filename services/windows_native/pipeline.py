@@ -17,6 +17,7 @@ from .contracts import MODEL, PROFILE_SHA, RUNTIME_VERSIONS, Proposal, WorkflowE
 from .media import media_path, verify_selected_files
 from .hardening import Artifacts, durable_json, retry_io
 from .ingestion import existing_script, provider_context, transcript_script
+from .voice_quality import resolve_policy
 
 REPO = Path(__file__).resolve().parents[2]
 LOCKS = Path(__file__).resolve().parent / "locks"
@@ -231,6 +232,14 @@ def sentence_units(proposal):
             for text in re.split(r"(?<=[.!?])\s+", normalize(scene.narration_excerpt))]
 
 
+def speech_units(proposal, document):
+    policy = resolve_policy(document)
+    if policy is None:
+        return sentence_units(proposal)
+    return [{"scene": scene.scene, "text": normalize(scene.narration_excerpt)}
+            for scene in proposal.visual_brief]
+
+
 def measured_scene_units(proposal, meta):
     groups = [[u for u in meta["units"] if u.get("scene") == scene.scene] for scene in proposal.visual_brief]
     if any(not group or normalize(" ".join(u["text"] for u in group)) != normalize(scene.narration_excerpt)
@@ -253,6 +262,7 @@ def synthesize(config, snapshot, out):
     if not approval or approval["snapshot_sha256"] != digest(doc):
         raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
     proposal = Proposal.model_validate(doc["proposal"])
+    quality = resolve_policy(doc)
     verify_runtime(config)
     import numpy as np
     import socket
@@ -263,12 +273,14 @@ def synthesize(config, snapshot, out):
 
     locked, rate = profile(), 48000
     plan = []
-    for unit in sentence_units(proposal):
+    for unit in speech_units(proposal, doc):
         text = unit["text"]
         chunks, gaps = normalize_to_chunks_v3_with_gaps(text, max_chars=locked["parameters"]["max_chars"])
         plan.append({**unit, "chunks": chunks, "gaps": gaps,
                      "phonemes": [phonemize_text_with_emotions(c) for c in chunks]})
-    write_json(out / "tts-plan.json", {"profile_sha256": PROFILE_SHA, "units": plan})
+    quality_metadata = ({"quality_policy": quality, "quality_policy_sha256": digest(quality),
+                         "pipeline_source_sha256": file_sha(Path(__file__))} if quality else {})
+    write_json(out / "tts-plan.json", {"profile_sha256": PROFILE_SHA, "units": plan, **quality_metadata})
 
     def blocked_connect(*args, **kwargs):
         raise WorkflowError("LOCAL_TTS_OUTBOUND_NETWORK_BLOCKED")
@@ -291,6 +303,9 @@ def synthesize(config, snapshot, out):
     engine.babble_retries = 0
     preset = json.loads((Path(vieneu.__file__).parent / "assets/voices_v3_turbo.json").read_bytes())["presets"][locked["voice_id"]]
     params = {k: locked["parameters"][k] for k in ("temperature", "top_k", "top_p", "repetition_penalty", "max_new_frames")}
+    if quality:
+        # The SDK samples with NumPy's RNG. A fresh TTS child scopes this seed to one job.
+        np.random.seed(quality["random_seed"])
     waves, records, offset, calls = [], [], 0, 0
     for i, unit in enumerate(plan):
         chunks = []
@@ -328,7 +343,9 @@ def synthesize(config, snapshot, out):
     write_json(out / "voice.json", {"audio_sha256": file_sha(out / "voice.wav"), "profile_sha256": PROFILE_SHA,
                                     "duration_seconds": len(audio) / rate, "units": records,
                                     "inference_calls": calls, "retries": 0, "network_blocked": True,
-                                    "word_alignment": "none", "voice": "Thùy Dung", "speed": 1})
+                                    "word_alignment": "none", "voice": "Thùy Dung", "speed": 1,
+                                    **quality_metadata,
+                                    **({"effective_sampling_parameters": params} if quality else {})})
 
 
 def ass_time(t):
@@ -703,6 +720,9 @@ class Pipeline:
         proposal = Proposal.model_validate(job["snapshot"]["document"]["proposal"])
         if meta["profile_sha256"] != PROFILE_SHA or meta["audio_sha256"] != file_sha(attempt / "voice.wav"):
             raise WorkflowError("VOICE_ARTIFACT_BINDING_MISMATCH")
+        quality = resolve_policy(job["snapshot"]["document"])
+        if quality and (meta.get("quality_policy") != quality or meta.get("quality_policy_sha256") != digest(quality)):
+            raise WorkflowError("VOICE_QUALITY_POLICY_BINDING_MISMATCH")
         if normalize(" ".join(u["text"] for u in meta["units"])) != normalize(proposal.narration):
             raise WorkflowError("VOICE_NARRATION_BINDING_MISMATCH")
         measured_scene_units(proposal, meta)

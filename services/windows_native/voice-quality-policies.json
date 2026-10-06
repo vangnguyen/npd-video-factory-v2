@@ -1,0 +1,11 @@
+{
+  "scene-context-v1": {
+    "id": "scene-context-v1",
+    "version": 1,
+    "unit_grouping": "scene",
+    "random_seed": 604,
+    "sampling_overrides": {},
+    "audio_processing": "none",
+    "human_listening_required": true
+  }
+}

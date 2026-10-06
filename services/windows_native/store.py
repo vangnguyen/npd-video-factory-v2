@@ -412,6 +412,22 @@ class Store:
             self.event(con, identifier, "document_uploaded_approval_invalidated", {"revision": revision+1, "document_id": document["id"], "sha256": document["sha256"]})
         return self.get(identifier)
 
+    def set_voice_quality(self, identifier, revision, policy_id):
+        """Explicit local revision; setting a policy never approves or dispatches TTS."""
+        from .voice_quality import policy_reference
+        reference = policy_reference(policy_id)
+        with self.transaction() as con:
+            project = self.editable(con, identifier, revision)
+            doc = project["document"]
+            if doc.get('voice_quality') != reference:
+                doc['voice_quality'] = reference
+                con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
+                            (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
+                self.version(con, identifier)
+                self.event(con, identifier, 'voice_quality_selected_approval_invalidated',
+                           {'revision': revision + 1, 'policy': reference, 'automatic_production': False})
+        return self.get(identifier)
+
     def approve(self, identifier, revision, reviewer, acknowledged, *, review_reference=None):
         if acknowledged is not True or not isinstance(reviewer, str) or not 1 <= len(reviewer.strip()) <= 100:
             raise WorkflowError("HUMAN_REVIEW_REQUIRED", 400)
@@ -422,6 +438,8 @@ class Store:
         with self.transaction() as con:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
+            from .voice_quality import resolve_policy
+            resolve_policy(doc)
             if not doc["proposal"]:
                 raise WorkflowError("CONTENT_AND_IMAGE_REQUIRED")
             from .editor import validate_plan
