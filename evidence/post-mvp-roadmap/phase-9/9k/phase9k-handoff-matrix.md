@@ -1,24 +1,24 @@
 # Phase 9K — Real handoff matrix
 
-PHASE: 9K — Content Intelligence practical acceptance, storyboard/media review checkpoint
+PHASE: 9K — Content Intelligence practical acceptance, five real videos checkpoint
 
-STATUS: PHASE9K_STORYBOARD_MEDIA_REVIEW_REQUIRED; 5/5 real brief handoffs and Owner-approved v2 scripts, 25 proposed scenes, final acceptance PENDING
+STATUS: PHASE9K_FINAL_HUMAN_WATCH_LISTEN_REVIEW_REQUIRED; brief/script/media approvals and actual new videos 5/5, final human acceptance 0/5
 
-HEAD SHA: `cee0eabb2c301674c537145788b2c9a2f3fc864b` at checkpoint capture. Tested running application: `2980fdf16e6580fb4a9fbefb82f689cba22ea7da`. The report-only commit is recorded separately in Git history.
+HEAD SHA: `a44bb0dd234e4c620dd394d18e7a9112be62f988` for production/evidence checkpoint. Tested running application: `9ce137afa8ac62fdb8ce5b35fbba997013adfef3`. The following report-only commit is recorded separately in Git history.
 
-FILES CHANGED: native store's separate saved-script review, Studio label, three Native tests and one Studio test, script-review/storyboard/verification helpers, Owner receipts, per-case proposed plans, 25 graphics/static previews, logs and restart evidence under `9k/`. No Phase 8 evidence changed.
+FILES CHANGED: optional Native approval review_reference with two additional tests, approved-production/acceptance helpers, actual Owner media receipts, 25 Native asset imports/snapshots, five new MP4/ffprobe/QC/voice/subtitle/timeline manifests, 25 sampled actual frames, persistence/HTTP/visual evidence and current reports. No Phase 8 evidence changed.
 
-TESTS: 132/132 Native and 32/32 Studio PASS after the final application change. Live Studio and fresh-process reopen 5/5 PASS with durable script receipts and render disabled. Actual server restart and 25/25 graphic hash/dimension/narration/source bindings PASS.
+TESTS: 134/134 Native and 32/32 Studio PASS; Studio unchanged after its run. Five actual jobs have 11/11 QC, artifact/source/lineage integrity and fresh-process persistence PASS. Five live MP4/range-seek/final-approval guards PASS. Main-service restart after render was policy-blocked before execution; prior actual restart remains separately recorded.
 
-EVIDENCE: earlier authorization/provider/script snapshots remain unchanged; current `owner-script-decision-v2.txt`, `owner-script-authorization-v2.json`, `script-approval-manifest.json`, `storyboard-media-review-bundle.md`, `storyboard-media-review/review-manifest.json`, `visual-review.json`, `storyboard-media-before-restart.json`, `storyboard-media-after-restart.json`, `script-approved-media-pending-studio.png` and each case directory.
+EVIDENCE: frozen brief/script/storyboard review bundles remain unchanged. New `owner-media-decision.txt`, `owner-media-authorization.json`, `production-approval-manifest.json`, `real-production-jobs.json`, `actual-production-verification.json`, `real-video-fresh-process-reopen.json`, `actual-video-preview-http-verification.json`, `actual-video-visual-review.json`, `final-video-review-bundle.md`, `final-video-review-manifest.json`, `actual-videos-native-studio.png` and five actual output directories.
 
-NEW CAPABILITIES: five actual human script-only decisions bound to unchanged v2 narration/lineage, persisted in existing events and visible in Studio; production approval remains separate. Twenty-five sourced original graphics and reviewed layout proposals are ready for Owner media review. Earlier brief-duration instructions and retained-research fork are reused.
+NEW CAPABILITIES: exact human chat approvals now retain honest source/reference metadata in existing Native approval; reviewed original assets enter the existing editor, with unchanged narration/voice preset. Five intelligence-origin previews trace research → idea → brief → script → assets → render. Actual TTS: 43 fresh local calls, network blocked, speed 1, 0 retries; no paid provider calls this production step.
 
 REGRESSIONS: none observed in the accepted Windows Native scope. All existing production rows preserved, including the earlier Owner-created IHG project. Nineteen records of its original research run remain unchanged. Ten accepted MP4s and all Phase 8 evidence match the release baseline. Dependencies unchanged.
 
-BLOCKERS: Owner storyboard/media/rights approval, five actual video productions and technical/artifact/watch-listen acceptance. Five exact v2 script approvals are complete. No new credentials or paid provider required.
+BLOCKERS: five explicit human watch/listen decisions for exact MP4s. Cases 02/04/06 are below requested duration targets; Owner must accept measured duration or request revision. No credentials/provider blocker. Post-render main-service restart was not performed because the tool rejected stopping/restarting the service; fresh-process persistence PASS is recorded separately.
 
-NEXT ACTION: return the concrete 25-scene storyboard/media bundle to Owner and stop before production. Do not enqueue TTS/render from script-only approval.
+NEXT ACTION: return the five completed MP4s for Owner watch/listen; record actual decisions before final-download/queue PRODUCED/readiness. No publishing.
 
 ## Production candidates
 
@@ -26,11 +26,11 @@ All rows are actual projects in `C:\NPD-Video-Factory\phase2\workflow.sqlite3`, 
 
 | Case | Brief decision | Score after approved idea edits | Handoff | Script | Owner script approval | TTS/render | New MP4 |
 |---|---|---:|---|---|---|---|---|
-| 01 — IHG × Green Paradise | APPROVE_WITH_EDIT | 53.330 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
-| 02 — Smart-city certification | APPROVE_WITH_EDIT | 54.389 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
-| 04 — Saigon Park buyer education | APPROVE_WITH_EDIT | 53.256 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
-| 06 — Vang Nguyễn/date context | APPROVE | 64.971 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
-| 08 — Vietnam Q2/2026 | APPROVE | 83.996 | REAL_NATIVE_PROJECT | v2, native revision 3 | OWNER_APPROVED | NOT_REQUESTED | None |
+| 01 — IHG × Green Paradise | APPROVE_WITH_EDIT | 53.330 | REAL_NATIVE_PROJECT | v2, native revision 9 | OWNER_APPROVED | REAL_SUCCEEDED | 34.17s |
+| 02 — Smart-city certification | APPROVE_WITH_EDIT | 54.389 | REAL_NATIVE_PROJECT | v2, native revision 9 | OWNER_APPROVED | REAL_SUCCEEDED | 40.47s; below 45–60s target |
+| 04 — Saigon Park buyer education | APPROVE_WITH_EDIT | 53.256 | REAL_NATIVE_PROJECT | v2, native revision 9 | OWNER_APPROVED | REAL_SUCCEEDED | 36.04s; below 45s target |
+| 06 — Vang Nguyễn/date context | APPROVE | 64.971 | REAL_NATIVE_PROJECT | v2, native revision 9 | OWNER_APPROVED | REAL_SUCCEEDED | 36.74s; below 45s target |
+| 08 — Vietnam Q2/2026 | APPROVE | 83.996 | REAL_NATIVE_PROJECT | v2, native revision 9 | OWNER_APPROVED | REAL_SUCCEEDED | 47.23s |
 
 Scores are **HEURISTIC_SCORING**, with all components, configured weights and rationales in `idea.json`. Rank #1 selection happened before the requested editorial changes/rescoring; these scores are not performance predictions.
 
@@ -52,7 +52,17 @@ Scores are **HEURISTIC_SCORING**, with all components, configured weights and ra
 | 06 | `c5a3b3a6e6045af88d57f08aa425905c` | `83dc590fd7d04fa9b73f5ff5b0f5663b` | `3b69f1c2037d5ac800806990176ae858505df3dc5c8ccd3d6b83ae6896559f33` |
 | 08 | `df21ef39df655f88865bee6563cf23cb` | `c5b1ae812d134fc99ffbdac8665bbd82` | `e271916f45124e4302ef47badce7d0902526022d59d8fe2b98a179f8524f727a` |
 
-Full source/finding references, score, versions and provenance are in `research.json`, `idea.json`, `brief.json`, `handoff.json`, and `script-v1.json`/`script-v2.json`. The original provider proposal remains in v1 and the actual job result; v2 explicitly labels Codex editorial changes and retains its v1 reference. Storyboard and media remain unapproved.
+Full source/finding references, score, versions and provenance are in `research.json`, `idea.json`, `brief.json`, `handoff.json`, and `script-v1.json`/`script-v2.json`. The original provider proposal remains in v1 and the actual job result; v2 labels Codex editorial changes and retains its v1 reference. Owner storyboard/media approval is stored separately with exact assets and snapshots. Original reviewed plans are archived byte-exact; current plans additionally record actual timing/job hashes.
+
+| Case | Actual render job ID | Actual final MP4 SHA256 |
+|---|---|---|
+| 01 | `a847230bfb32426084666e581b8386c9` | `7008dbdd74bea6240d71cff591a3504d7c91e8625ef74abba2c084571931bff0` |
+| 02 | `80e06f058bdb4b4a88fac71ace8240e9` | `326bb7d4fc899de33f9d43b16c77754251628a6b6403ab3a602703dadd9cc624` |
+| 04 | `e500f4700c6b476c8b1db1dd5c774b58` | `c37a207cdc070210f52119676c4d577076c0d52b758dc3983637f7f16dd2bfc7` |
+| 06 | `4ef0f02df38d4fa882805f38d6b56992` | `92d95e9d9c065e07a8438ae0f3c28303c2b754e061625b73213a45b36fc1bf5f` |
+| 08 | `8972ad4cf0df4b3bb766d5aac3608854` | `3c9d38ca44fab1c7721da59609d05c76c1f238a273e15f959d1acc89ad809fee` |
+
+All five final human review records remain empty; Opportunity Queue remains IN_PRODUCTION. The old Phase 8 MP4s and fixture render contribute zero products to this table.
 
 ## Case 01 preservation and rank resolution
 
@@ -68,7 +78,7 @@ Review manifest SHA256: `061cc4579a89419217f5d1b9bbfd241039cb99c2f9a2470fe425070
 
 The original Phase 9 idea/brief and script review bundles/manifests remain byte-identical. Owner's reply `Duyệt v2: 01, 02, 04, 06, 08` identifies these exact five v2 scripts. Current decisions are stored separately in native event receipts and `script-approval-manifest.json`; frozen old snapshots retain their earlier pending state. Media/production/publishing are not authorized by that script-only reply.
 
-Each case now has five proposed graphics and scene options in `storyboard.json`, `asset-lineage.json` and `proposed-production-proposal.json`. No media has been imported into live projects yet. Full checkpoint fields, actual review IDs and visual scope are in [storyboard-media-checkpoint.md](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/storyboard-media-checkpoint.md).
+The later actual Owner reply `Duyệt storyboard/media: 01, 02, 04, 06, 08` authorizes the exact 25 reviewed graphics, scene options, rights and internal production. Its source/reply/hash are retained in `owner-media-authorization.json`; Native approvals retain that reference. Twenty-five assets have been imported and five real jobs succeeded. This reply does not approve final watch/listen or publishing. The old [storyboard checkpoint](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/storyboard-media-checkpoint.md) remains a historical record; [real production checkpoint](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/real-production-checkpoint.md) records current state.
 
 INTERNAL_PRODUCTION_READY = YES
 

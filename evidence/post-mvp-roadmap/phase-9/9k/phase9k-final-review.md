@@ -1,57 +1,62 @@
-# Phase 9K — Final review register, awaiting storyboard/media decisions
+# Phase 9K — Final video review register
 
-Current checkpoint: **PHASE9K_STORYBOARD_MEDIA_REVIEW_REQUIRED**. This register records actual script decisions and outstanding media/video acceptance. Phase 9K has not passed.
+Current checkpoint: **PHASE9K_FINAL_HUMAN_WATCH_LISTEN_REVIEW_REQUIRED**. Five new production MP4s exist; final human acceptance is 0/5. Phase 9K has not passed.
 
-Five native projects and five actual script responses exist. Review version is v2 after Codex editorial preparation; original v1 provider responses are preserved. Owner replied exactly `Duyệt v2: 01, 02, 04, 06, 08`. All five approvals are bound to the unchanged v2 narration/lineage and persisted as SCRIPT_ONLY native events. Twenty-five original graphics and proposed scene plans are ready for the next human review. No text edits accompanied the approval reply.
+Production/evidence HEAD: a44bb0dd234e4c620dd394d18e7a9112be62f988. Tested application: 9ce137afa8ac62fdb8ce5b35fbba997013adfef3. Following report-only commit is recorded separately in Git history.
 
-| Case | Brief/handoff | Script human review | Storyboard/media human review | New final MP4 | ffprobe | Video artifact integrity | Human watch/listen |
+Owner's exact replies “Duyệt v2: 01, 02, 04, 06, 08” and “Duyệt storyboard/media: 01, 02, 04, 06, 08” are retained as separate script and media/rights/internal-production receipts. The unchanged narration, reviewed graphics/scene options and research lineage are hash-bound. Both approvals are complete. Neither reply is a human watch/listen decision for the newly rendered videos.
+
+| Case | Brief/handoff | Script human review | Storyboard/media/rights | New MP4 | ffprobe/QC | Integrity/provenance/persistence | Human watch/listen |
 |---|---|---|---|---|---|---|---|
-| 01 | APPROVED / REAL | OWNER_APPROVED v2 | PENDING; 5 proposed scenes | NOT_GENERATED | NOT_RUN | NOT_APPLICABLE_YET | PENDING |
-| 02 | APPROVED / REAL | OWNER_APPROVED v2 | PENDING; 5 proposed scenes | NOT_GENERATED | NOT_RUN | NOT_APPLICABLE_YET | PENDING |
-| 04 | APPROVED / REAL | OWNER_APPROVED v2 | PENDING; 5 proposed scenes | NOT_GENERATED | NOT_RUN | NOT_APPLICABLE_YET | PENDING |
-| 06 | APPROVED / REAL | OWNER_APPROVED v2 | PENDING; 5 proposed scenes | NOT_GENERATED | NOT_RUN | NOT_APPLICABLE_YET | PENDING |
-| 08 | APPROVED / REAL | OWNER_APPROVED v2 | PENDING; 5 proposed scenes | NOT_GENERATED | NOT_RUN | NOT_APPLICABLE_YET | PENDING |
+| 01 | APPROVED / REAL | OWNER_APPROVED v2 | OWNER_APPROVED, 5 graphics | 34.17s, actual Native job | 11/11 PASS | PASS | PENDING |
+| 02 | APPROVED / REAL | OWNER_APPROVED v2 | OWNER_APPROVED, 5 graphics | 40.47s, actual Native job | 11/11 PASS | PASS | PENDING |
+| 04 | APPROVED / REAL | OWNER_APPROVED v2 | OWNER_APPROVED, 5 graphics | 36.04s, actual Native job | 11/11 PASS | PASS | PENDING |
+| 06 | APPROVED / REAL | OWNER_APPROVED v2 | OWNER_APPROVED, 5 graphics | 36.74s, actual Native job | 11/11 PASS | PASS | PENDING |
+| 08 | APPROVED / REAL | OWNER_APPROVED v2 | OWNER_APPROVED, 5 graphics | 47.23s, actual Native job | 11/11 PASS | PASS | PENDING |
 
-Script/source/hash integrity and persisted project state: **5/5 PASS**, including the latest actual server restart and reopened Studio API with current human script receipts. Both database table snapshots are unchanged across that restart. Proposed graphic/preview hashes and dimensions: **25/25 PASS**. These results do not substitute for Owner media approval, video ffprobe/QC, MP4 integrity or human watch/listen.
+All five projects are actual Native revision 9. Existing sequential Runner generated fresh locked Thùy Dung voice with 43 inference calls total (8/8/10/7/10), speed 1, network blocked, 0 retries. No fixture voice, test decision, old accepted video or new paid provider was used in this production step.
 
-Each case contains `research.json`, `idea.json`, `brief.json`, `script-v1.json`, `script-v2.json`, `script-review.json`, `storyboard.json`, `asset-lineage.json`, `proposed-production-proposal.json`, `render-manifest.json` and `acceptance.json`. Actual provider request/response/result files remain unchanged. Proposed asset metadata now lists five original graphic files per case; no assets have been imported into live Native projects. Storyboard/media approval remains pending and the render manifest says not requested. `ffprobe.json` and `final.mp4` do not exist; no fabricated video files or PASS records are used.
+The final review/download guard remains active: five actual preview endpoints serve the exact MP4 bytes and support range seeking; five final endpoints return HUMAN_FINAL_VIDEO_APPROVAL_REQUIRED. Opportunity Queue remains IN_PRODUCTION.
 
-## Editorial preparation and remaining checks
+**Measured duration and editorial usefulness**
 
-These are Codex observations on usefulness and grounding. Owner has approved the scripts; the notes do not imply media/video acceptance or statistical validation of ranking.
-
-| Case | Useful viewer value and hook | Grounding and CTA | Production feasibility remaining |
+| Case | Viewer value / hook | Grounding / CTA | Actual production limits for Owner review |
 |---|---|---|---|
-| 01 | Directly asks what IHG cooperation means; names four brands and explains the multi-segment lodging direction | Agreement date, developer relationship and brands match retained findings; expectation attributed to IHG; invitation to ask about a brand | 30–45s target, 122 whitespace-separated Vietnamese/brand tokens; five original text graphics proposed, media approval and measured timing pending |
-| 02 | Keeps the requested smart-city hook and introduces the three source-named organizations | Launch dated 03/03/2026, not award; no new ISO/current-status claim; asks what criteria interest viewers | 45–60s target, 152 tokens; launch date and organizations shown as text, no logo/certificate image; pronunciation and media review pending |
-| 04 | Three actionable buyer questions: event/progress, marketing/facts, documents/time | Kick-Off example and marketing wording remain source-attributed; no conclusion about current price, progress or legality; asks which documents to explain | 45s target, 146 tokens; five educational comparison/question graphics proposed; no property photo or guaranteed-return imagery |
-| 06 | Keeps approved opening and three-date reading method with Vang Nguyễn branding | Publication 24/04/2026 vs Q1/2026 vs editorial date 06/10/2026; no invented transactions/credentials; question-based CTA | 45s target, 141 tokens; text branding without invented portrait/credentials; media review pending; date wording must stay correct if revised later |
-| 08 | Opens with supply/transaction contrast and focuses on Q2/2026 historical context | All three indicators and approximate 100.005 count match retained source; 71.5% OF Q1 and 63.7% OF prior-year period, not percentage declines; asks locality/indicator | 45–60s target, 159 tokens; comparison bars have separate 100% baselines; numerical pronunciation and media approval pending; no TTS run |
+| 01 | What IHG cooperation means; four brands and lodging direction | Agreement/source-attributed expectations; invitation to ask about a brand | 34.17s within 30–45s; international brand pronunciation needs listening |
+| 02 | Smart-city hook and three named organizations | 03/03/2026 launch, not an award/current certification; asks criteria of interest | 40.47s below 45–60s target; Owner accepts this duration or requests revision; organization pronunciation needs listening |
+| 04 | Three useful buyer questions: event/progress, marketing/facts, documents/time | Kick-Off and marketing remain source-attributed; no current price/legal/progress conclusion; asks which documents to explain | 36.04s below 45s target; Owner accepts or requests revision |
+| 06 | Approved opening and three-date method with Vang Nguyễn text brand | 24/04/2026 publication vs Q1 vs editorial 06/10/2026; no invented credentials; question CTA | 36.74s below 45s target; Owner accepts or requests revision; historical date stays explicit |
+| 08 | Supply/transaction contrast and Q2/2026 context | Source's approximately 100.005 transactions; 71.5% OF Q1 and 63.7% OF prior-year period; asks locality/indicator | 47.23s within 45–60s; numbers and cadence need listening; comparison bars retain separate baselines |
 
-Token counts are not word counts, measured speech durations, or proof of voice quality. The script-only decision is not a scored effectiveness evaluation of hook/ranking/CTA. Original practical assessment of ten cases remains in `../practical-editorial-assessment.md`; the other five cases are not selected or approved by this task.
+These are Codex editorial observations, not human acceptance or proof of ranking/lead effectiveness. The original assessment of all ten cases covers research usefulness, grounding, idea/ranking usefulness, hook, CTA and feasibility. Five unselected cases remain pending.
 
-## Evidence and boundaries
+Approved narration and speed preset were preserved. Cases 02/04/06 are explicitly below targets; technical QC proves completeness against measured audio, not target duration compliance. Phrase subtitles use measured speech-unit durations and estimated phrase splits, not word alignment. No music was added.
 
-- [Exact five-script review bundle](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/script-review-bundle.md), bound to stable IDs, v2 hashes and native revision 3 by `script-review-manifest.json`.
-- [Real handoff matrix](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/phase9k-handoff-matrix.md), with research → idea → approved brief → native script identity chain.
-- [Actual provider ledger](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/actual-script-provider-ledger.json): five completed `gpt-6-luna` responses, five actual script calls, no editorial regeneration calls.
-- [Actual Owner script decisions](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/script-approval-manifest.json): 5/5 exact v2 scripts; raw Owner reply and bound authorization retained.
-- [Concrete storyboard/media bundle](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/storyboard-media-review-bundle.md): five contact sheets and 25 full-size previews, SHA256 `d9fe7af9329c5bc293a155b9f152fdd65730e3f1b6f83bb65149291a81ac7000`.
-- [Latest restart/preservation verification](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/storyboard-media-after-restart.json): accepted release and pre-task Owner rows unchanged; original Case 01 records/history preserved; sources, drafts and current script receipts reopened; media/import/production counts remain zero.
-- [Native tests](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/native-tests-storyboard.log): 132/132 PASS. [Studio tests](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/studio-tests-storyboard.log): 32/32 PASS.
-- [Subphase checkpoint](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/storyboard-media-checkpoint.md): complete report fields, actual review IDs, visual QA scope and limitations.
+**Actual artifacts and provenance**
 
-![Actual Native Studio showing saved script approved and media review pending](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/script-approved-media-pending-studio.png)
+Each case retains research.json, idea.json, brief.json, handoff.json, original script-v1/provider request/response/result and approved script-v2. Storyboard-reviewed-v3.json and asset-lineage-reviewed-proposal.json preserve the exact reviewed files. Current storyboard records measured timing and render job; original graphics and imported Native derivatives have separate source hashes.
 
-Ten accepted Phase 8 videos remain immutable and are not counted here. The earlier isolated render-contract MP4 is not counted. The five script decisions come directly from Owner; no storyboard/media/final-video approval is invented. No TTS/render/publishing action was dispatched for these five candidates. Static layout previews contain excerpt captions with ellipsis; audio timing/subtitle synchronization and final video QC remain unmeasured.
+The actual output set includes final.mp4, ffprobe.json, qc-report.json, voice.json, tts-plan.json, subtitles.ass, input.json, timeline.json and native-render-manifest.json. Current render-manifest.json and acceptance.json label the actual result and pending final human decision. Five actual job/snapshot/MP4 hashes and complete source lineage appear in the review manifest and handoff matrix.
 
-## Remaining acceptance gates
+- [Five actual videos to watch/listen](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/final-video-review-bundle.md) and [exact final review manifest](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/final-video-review-manifest.json).
+- [Owner media authorization](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/owner-media-authorization.json) and [approved production snapshots](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/production-approval-manifest.json).
+- [Actual production/source/artifact verification](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/actual-production-verification.json), [fresh-process persistence](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/real-video-fresh-process-reopen.json), [preview/seek/final guards](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/actual-video-preview-http-verification.json).
+- [Native tests: 134/134 PASS](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/native-tests-production.log), [Studio tests: 32/32 PASS](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/studio-tests-storyboard.log).
+- [Current handoff matrix](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/phase9k-handoff-matrix.md), [production checkpoint](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/real-production-checkpoint.md).
 
-1. Owner reviews the 25 proposed scenes, exact assets/rights and scene options. Possible decision: `Duyệt storyboard/media đồ họa: 01, 02, 04, 06, 08`, or identify cases/scenes needing edits. This includes using the reviewed original graphics and continuing internal production; it does not approve final videos or publishing.
-2. Import only those reviewed assets and apply the reviewed plan with unchanged approved narration, then record the existing Native production approval and generate five new video previews with measured TTS duration and subtitles.
-3. Store actual ffprobe/QC and artifact hashes, verify persistence/restart, and record five explicit human watch/listen decisions for the exact final MP4s. Preserve research → final-video lineage.
+![Actual Native MP4 preview and pending human final review](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/actual-videos-native-studio.png)
 
-This checkpoint stops at storyboard/media review: five script approvals are complete and the next concrete review bundle is ready. No credentials/provider/architecture blocker exists. The local HTML gallery was not opened because the browser blocks file URLs; the Markdown bundle supplies the images through workspace file links.
+Codex inspected five contact sheets covering 25 sampled actual-video frames and full-size scene 03 of cases 02/08. Legibility/placement were checked within that scope; no full moving-video watch or audio pronunciation review is claimed.
+
+Both database table states and five exact approvals/projects/jobs/artifacts were reopened in a separate process and match the pre-checkpoint. The attempted post-render main-service stop/restart was rejected before execution with “blocked by policy”; Studio remains operational. This limitation is [recorded explicitly](C:/NPD-Video-Factory/source/evidence/post-mvp-roadmap/phase-9/9k/service-restart-policy-limitation.json), separate from actual fresh-process persistence PASS and earlier actual restart evidence.
+
+All ten Phase 8 video/evidence hashes, accepted rows and release marker/dependencies are unchanged. Old Owner IHG project/research/history remains intact. No old video or fixture satisfies this gate. No content has been published externally.
+
+**Remaining human gate**
+
+Owner must watch and listen to all five exact new MP4s, accept or reject each, including the disclosed shorter durations. A complete reply can be: “Đã xem/nghe và duyệt video Phase 9K: 01, 02, 04, 06, 08 cho Windows Native”. Otherwise identify the case/time and requested edit.
+
+After an actual reply or explicit Studio final approval, store the genuine decision bound to MP4/snapshot hashes, verify final-download/PRODUCED queue and update readiness. Do not infer this decision from prior approvals. No credentials/provider/major-architecture blocker exists.
 
 INTERNAL_PRODUCTION_READY = YES
 
