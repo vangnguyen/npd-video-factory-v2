@@ -1,0 +1,72 @@
+{
+  "schema": "north-star-comfyui-durable-evidence-v1",
+  "explicit_fixture": true,
+  "executed_source_sha256": {
+    "scripts\\north_star_comfyui_contract.py": "42f6d93f17fd00e7bf2b3b818df4d9e717118f39647001a0b1fafd64ba4efc78",
+    "apps\\api\\app\\media_intelligence_providers.py": "9308aca5873371b2f67545838f3c5b393a35831918b9be918f42ff7444154ce2",
+    "apps\\api\\app\\media_intelligence_models.py": "083e5d5e71f80f6e5a0bf7caeec90ac1f9f03800abf17041a2bff6a330c28d55",
+    "apps\\api\\app\\media_generation_routes.py": "4245bad5a8d83f0f72b040b12b41456247f2fe96cfdd88addef3e200d17ec07a",
+    "services\\comfyui-bridge\\npd_comfyui_bridge\\service.py": "812dc4514a5c910a9cf4f4ab19ff0bde7b1d005e97ed0b367b5f63c7f1b71825",
+    "services\\comfyui-bridge\\npd_comfyui_bridge\\main.py": "f00ae6c4cee0a0edab1b5105cfea4a3a86d5f5e7569b37c1300e6f21351df96d"
+  },
+  "http_transport": "in-process ASGI",
+  "backend": "deterministic mock",
+  "real_provider_tested": false,
+  "external_provider_calls": 0,
+  "gpu_dispatches": 0,
+  "binary_media_created": false,
+  "binary_artifact_registered": false,
+  "production_eligible": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "store_path": "C:\\vf-comfy-contract-n3\\bridge.sqlite3",
+  "store_sha256": "1fd6f33eab8d51511508bdb755f5265c3892a8bb8d43dd991f697a8eb54cd288",
+  "output_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-generation-modes-n3",
+  "terminal_result_replayed_offline": true,
+  "interruption_required_explicit_retry": true,
+  "workspaces_isolated": true,
+  "audit_omits_private_inputs": true,
+  "exports": {
+    "request.json": "7b78422ae9ed9de58ec3704959b40cbf29dc6ca38cd8a8a7af2afb734e38e36c",
+    "job.json": "b2c1f778182881b4b0d6a547c53ccdb324ced058ba86aa470a08430f1f41cd74",
+    "job-events.json": "0c44c834eae73571800a4cac06c0980471c98919962e7dbf84afd5c58aed2301",
+    "http-security.json": "87ec82a3f3e9f1edab35e6e03e689fccc20348f243cdbc54c85dd87e6d5e2678",
+    "generation-mode-jobs.json": "24f7b851936433c81d5a9ff45da0dd3d0921ade1c32dc0675894bd70bed14a62",
+    "generation-mode-materializations.json": "757b3951ad145bd7c8bfcaa596061644f3df155e62e4bc764d867526706a7fd1",
+    "offline-replay.json": "e15d317cfe62cca90818ffa5671ac7ba937e32f08a422db3cfb265c09186c663",
+    "interruption-recovery.json": "4f1f7d523d66fbc45898d7732ca3b4c39c7fecc0eac2ae0906b4bb0c7538a918",
+    "retried-job.json": "68cfb8768a5c6894092b15b8dfb92c80f816565b6055a9d1c7f42da377c7e2f7",
+    "retried-events.json": "ea68443917cf48156c2db13bd8630cdadacd950f03ae59651e4bb24f6f95cb37"
+  },
+  "generation_request_variants_exercised": 9,
+  "parent_head": "ffc8ec111b800109da5b43e41ea3a02021186b35",
+  "source_sha256": {
+    "apps/api/app/media_generation_routes.py": "4245bad5a8d83f0f72b040b12b41456247f2fe96cfdd88addef3e200d17ec07a",
+    "apps/api/app/media_intelligence_models.py": "083e5d5e71f80f6e5a0bf7caeec90ac1f9f03800abf17041a2bff6a330c28d55",
+    "apps/api/app/media_intelligence_providers.py": "9308aca5873371b2f67545838f3c5b393a35831918b9be918f42ff7444154ce2",
+    "apps/api/tests/test_media_generation_routes.py": "06f8125846f0d380da8ca9f2560a612d7878caa0f1362e8c4be69739b6ac7604",
+    "scripts/north_star_comfyui_contract.py": "42f6d93f17fd00e7bf2b3b818df4d9e717118f39647001a0b1fafd64ba4efc78"
+  },
+  "logs": {
+    "generation-routes-api-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\generation-routes-api-r2.log",
+      "sha256": "8e124fd9e597549616830cc4b073d5e11cbce19926990e3b977cca4a3c5dbd74"
+    },
+    "generation-modes-api-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\generation-modes-api-r1.log",
+      "sha256": "5749b89fa93141c07800485f669c1809bf30ca9fcd2aff4e135eb793e5312d74"
+    },
+    "generation-modes-native-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\generation-modes-native-r1.log",
+      "sha256": "f9d995fb5bcc75be900f866d482ebcebf827f73d0a4324a9ddc5d0450939297c"
+    },
+    "comfyui-generation-modes-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-generation-modes-n3.log",
+      "sha256": "950d4a583f3b4dcd58c93d11ac07c78d85990c3d3a58187d0234038a0654cc7d"
+    }
+  },
+  "mode_contract_tests": 20,
+  "existing_api_tests": 18,
+  "native_tests": 10,
+  "remaining": "Verified reference staging, approved executable graphs, live backend and binary media/rights/cost/provider acceptance; Native controls."
+}

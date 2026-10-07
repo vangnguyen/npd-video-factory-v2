@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any, Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, model_serializer, model_validator
 
 from .models import StrictModel
 
@@ -79,7 +79,33 @@ class ImageGenerationInput(StrictModel):
     style: str = Field(default="cinematic", min_length=1, max_length=160)
     seed: int = Field(default=1, ge=0, le=2_147_483_647)
     quality: Literal["draft", "standard", "high"] = "draft"
-    operation: Literal["generate", "variation", "upscale", "inpaint"] = "generate"
+    operation: Literal["generate", "image_to_image", "variation", "upscale", "inpaint"] = "generate"
+    mask_reference: str | None = Field(default=None, min_length=1, max_length=4096)
+    upscale_factor: Literal[2, 4] | None = None
+
+    @model_validator(mode='after')
+    def validate_operation(self):
+        if any(not value.strip() or len(value) > 4096 for value in self.reference_images):
+            raise ValueError('GENERATION_REFERENCE_INVALID')
+        if self.operation in {'image_to_image', 'variation', 'upscale', 'inpaint'} and not self.reference_images:
+            raise ValueError('GENERATION_REFERENCE_REQUIRED')
+        if self.operation == 'inpaint' and not self.mask_reference:
+            raise ValueError('INPAINT_MASK_REQUIRED')
+        if self.operation != 'inpaint' and self.mask_reference is not None:
+            raise ValueError('MASK_REQUIRES_INPAINT')
+        if self.operation == 'upscale' and self.upscale_factor is None:
+            self.upscale_factor = 2
+        if self.operation != 'upscale' and self.upscale_factor is not None:
+            raise ValueError('SCALE_REQUIRES_UPSCALE')
+        return self
+
+    @model_serializer(mode='wrap')
+    def serialize_operation(self, handler):
+        value = handler(self)
+        for field in ('mask_reference', 'upscale_factor'):
+            if value.get(field) is None:
+                value.pop(field, None)
+        return value # Preserve legacy text-generation request fingerprints.
 
 
 class VideoGenerationInput(StrictModel):
@@ -90,6 +116,14 @@ class VideoGenerationInput(StrictModel):
     duration_seconds: float = Field(default=5, gt=0, le=30)
     seed: int = Field(default=1, ge=0, le=2_147_483_647)
     mode: Literal["text_to_video", "image_to_video", "reference_assisted"] = "text_to_video"
+
+    @model_validator(mode='after')
+    def validate_references(self):
+        if any(not value.strip() or len(value) > 4096 for value in self.reference_images):
+            raise ValueError('GENERATION_REFERENCE_INVALID')
+        if self.mode in {'image_to_video', 'reference_assisted'} and not self.reference_images:
+            raise ValueError('VIDEO_GENERATION_REFERENCE_REQUIRED')
+        return self
 
 
 class MediaPlanRequest(StrictModel):

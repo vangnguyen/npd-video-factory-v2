@@ -64,6 +64,10 @@ The optional bridge now persists its own provider-side queue/state/audit in isol
 workspace/project/job scopes bind authenticated requests and prevent cross-workspace identities.
 Unpriced configured generation requires approval before queueing. GPU estimates and actual costs
 remain null until verified; result-reference JSON is explicitly not a registered binary artifact.
+Image mode contracts now include image-to-image, variation, inpaint masks and 2x/4x upscale;
+video reference modes require images. ComfyUI resolves each to the corresponding approved
+descriptor and persists the selected workflow, seed, references and local elapsed time.
+Real verified-reference resolution and generated binary acceptance remain separate gaps.
 
 ## Fail-closed rules
 

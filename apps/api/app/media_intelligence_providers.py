@@ -11,6 +11,7 @@ from typing import Any, Protocol
 
 import httpx
 from .media_generation_scope import current_generation_scope
+from .media_generation_routes import generation_envelope, workflow_routes
 
 from .media_intelligence_models import (
     ImageGenerationInput,
@@ -413,10 +414,12 @@ class ComfyUIBridgeGenerationProvider:
         timeout_seconds: float = 300,
         transport: httpx.AsyncBaseTransport | None = None,
         service_token: str = '',
+        workflow_overrides: dict[str, str] | None = None,
     ) -> None:
         self.bridge_url = bridge_url.rstrip("/")
         self.modality = modality
         self.workflow_id = workflow_id
+        self.workflow_routes = workflow_routes(modality, workflow_id, workflow_overrides)
         if service_token and (not 32 <= len(service_token) <= 8192 or any(c.isspace() for c in service_token)):
             raise ValueError('COMFYUI_SERVICE_TOKEN_INVALID')
         self._service_token = service_token
@@ -435,6 +438,8 @@ class ComfyUIBridgeGenerationProvider:
         if not self.configured:
             raise MediaProviderNotConfigured("ComfyUI bridge execution is not configured")
         workspace_id, project_id, resolution_job_id = current_generation_scope()
+        workflow_id, operation, inputs = generation_envelope(self.modality, payload, self.workflow_routes)
+        started = asyncio.get_running_loop().time()
         timeout = httpx.Timeout(self.timeout_seconds, connect=10)
         async with httpx.AsyncClient(
             base_url=self.bridge_url,
@@ -447,10 +452,10 @@ class ComfyUIBridgeGenerationProvider:
             response = await client.post(
                 "/v1/jobs",
                 json={
-                    "workflow_id": self.workflow_id,
+                    "workflow_id": workflow_id,
                     "workspace_id": workspace_id,
-                    "inputs": payload.model_dump(mode="json"),
-                    "client_request_id": _stable_token(workspace_id, project_id, resolution_job_id, payload.model_dump_json(), self.workflow_id),
+                    "inputs": inputs,
+                    "client_request_id": _stable_token(workspace_id, project_id, resolution_job_id, payload.model_dump_json(), workflow_id),
                 },
             )
             if response.status_code != 202:
@@ -458,7 +463,7 @@ class ComfyUIBridgeGenerationProvider:
             job = response.json()
             job_id = str(job["job_id"])
             if (not re.fullmatch(r'cui_[A-Za-z0-9_-]{1,80}', job_id) or job.get('workspace_id') != workspace_id or
-                    job.get('workflow_id') != self.workflow_id):
+                    job.get('workflow_id') != workflow_id):
                 raise ValueError('COMFYUI_JOB_BINDING_INVALID')
             deadline = asyncio.get_running_loop().time() + self.timeout_seconds
             while job.get("status") not in {"succeeded", "failed", "cancelled", "timed_out"}:
@@ -469,10 +474,13 @@ class ComfyUIBridgeGenerationProvider:
                 poll.raise_for_status()
                 job = poll.json()
                 if (job.get('job_id') != job_id or job.get('workspace_id') != workspace_id or
-                        job.get('workflow_id') != self.workflow_id):
+                        job.get('workflow_id') != workflow_id):
                     raise ValueError('COMFYUI_JOB_BINDING_INVALID')
         if job.get("status") != "succeeded":
-            raise RuntimeError(f"ComfyUI bridge generation failed: {job.get('error_code') or job.get('status')}")
+            safe_code = job.get('error_code')
+            if safe_code not in {'CANCELLED', 'TIMEOUT', 'EXECUTION_FAILED', 'RECOVERY_REQUIRED'}:
+                safe_code = 'BRIDGE_FAILURE'
+            raise RuntimeError(f"ComfyUI bridge generation failed: {safe_code}")
         result = job.get("result") or {}
         artifact_reference = str(result.get("artifact_reference") or f"comfyui://{job_id}")
         content = json.dumps(
@@ -482,7 +490,7 @@ class ComfyUIBridgeGenerationProvider:
                 "project_id": project_id,
                 "resolution_job_id": resolution_job_id,
                 "artifact_reference": artifact_reference,
-                "workflow_id": self.workflow_id,
+                "workflow_id": workflow_id,
                 "notice": "Bridge artifact reference; binary registration is performed by the GPU deployment.",
             },
             sort_keys=True,
@@ -513,8 +521,17 @@ class ComfyUIBridgeGenerationProvider:
             real_provider_tested=False,
             generation_provenance={
                 "provider": self.key,
-                "model": self.model,
-                "workflow": self.workflow_id,
+                "model": f'workflow:{workflow_id}',
+                "workflow": workflow_id,
+                "workflow_version": job.get('workflow_version'),
+                "operation": operation,
+                "requested_operation": payload.operation if isinstance(payload, ImageGenerationInput) else payload.mode,
+                "seed": payload.seed,
+                "reference_images": payload.reference_images,
+                "mask_reference": payload.mask_reference if isinstance(payload, ImageGenerationInput) else None,
+                "upscale_factor": payload.upscale_factor if isinstance(payload, ImageGenerationInput) else None,
+                "generation_time_seconds": round(asyncio.get_running_loop().time() - started, 6),
+                "generation_time_basis": 'local adapter elapsed; not measured GPU execution',
                 "bridge_job_id": job_id,
                 "prompt": payload.prompt,
                 "real_provider_tested": False,

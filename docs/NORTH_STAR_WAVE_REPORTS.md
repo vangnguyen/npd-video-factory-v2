@@ -708,3 +708,26 @@ EVIDENCE: `docs/north-star/comfyui-durable-contract-evidence.json` indexes nine 
 REGRESSIONS: preserved Native source/editor flows pass focused regression; live source/database/configuration/services and accepted artifacts remain untouched. No protected-main merge, deployment, external publication, new provider budget, GPU infrastructure change or runtime install.
 
 EXTERNAL BLOCKERS: optional GPU/models, authorized provider acceptance, Docker, Native browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for further safe implementation. NEXT WAVE: mode-specific generation/reference contracts, approved live backend/artifact architecture and remaining semantic media, audio/profile/platform/distribution/analytics/learning/Trend/Hub/hardening work.
+
+
+## Wave 5 — Typed generation modes and approved envelope routing
+
+WAVE: 5
+
+STATUS: IN PROGRESS; GENERATIVE_MEDIA_READY = NO. All required request modes have manifest/bridge contract evidence; live generated media and Native integration remain open.
+
+HEAD SHA: parent `ffc8ec111b800109da5b43e41ea3a02021186b35`; this mode-contract commit records the increment. Parent is pushed and preserved in verified `north-star-comfyui-durable.bundle`, SHA256 `e872383e48efdfbb76e982bad7cf0f289540e07b60e71c0ba724270074b359e0`.
+
+CAPABILITIES COMPLETED: typed image-to-image/variation/inpaint/upscale contracts enforce required references, inpaint masks and 2x/4x factors. Video image/reference-assisted modes require references. Text requests with a reference select the image-to-image descriptor. Immutable copied mode routes preserve configured primary workflow overrides and reject invalid IDs/unknown mode keys. Each mode produces only approved input-envelope fields; legacy plain text-generation serialization/fingerprints remain unchanged. Provenance now saves actual routed model/workflow/version, requested/resolved mode, seed, references, mask/scale, null estimated/actual cost and measured local adapter elapsed time. Mode-specific namespace/binding checks remain workspace/project/job scoped. Nine request variants submit, persist and poll through the real ASGI bridge handlers/registry/SQLite using an explicit mock backend. No client graph or arbitrary asset download/read is performed.
+
+CAPABILITIES PARTIAL: actual verified-reference staging, live backend transport and executable reviewed graphs; binary media registration/decoding, independent rights and actual GPU accounting; Native controls/approved budget integration and real provider acceptance. Local adapter elapsed time is not GPU execution time. Mock artifact references/checksum tokens are not generated media bytes.
+
+TESTS: new manifest/mode/schema/provenance/legacy-fingerprint contracts **20/20 PASS**, 0.42s (`generation-routes-api-r2.log`); existing generation scope/media/planning **18/18 PASS**, 42.18s (`generation-modes-api-r1.log`); Native B-roll/Auto Shorts **10/10 PASS**, 6.087s (`generation-modes-native-r1.log`). Actual ASGI bridge mode bundle **PASS**, nine distinct saved jobs over all nine request variants, offline replay and explicit interruption recovery, eleven exports (`comfyui-generation-modes-n3.log`). Full Linux regression at preserved ffc8ec1 is still running and must not be reported as passed. The previous full aa59491 result remains 2,015 PASS/11 SKIP.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual isolated bridge HTTP/SQLite/metadata integrity. MOCK TESTS: all GPU execution/output and source/reference strings; no binary image/video created and zero external/GPU/paid provider calls.
+
+EVIDENCE: `docs/north-star/generation-mode-contract-evidence.json` indexes the eleven immutable exports in recovery `comfyui-generation-modes-n3`, closed-store hash, source and test logs. The original n1/n2 bundles remain unchanged. The fresh n3 receipt pins executed-source hashes after failure-response sanitization. Generated-media readiness, Owner UAT and production deployment remain false.
+
+REGRESSIONS: existing generation/Native source flows pass; live source/database/configuration/services and accepted media remain untouched. No merge/deployment/publication, new provider budget, GPU infrastructure change or runtime install.
+
+EXTERNAL BLOCKERS: GPU/models/approved executable graphs and real-provider acceptance, Docker, Native browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: scoped verified-reference/binary artifact architecture and approved backend execution, then remaining media/audio/profile/platform/distribution/analytics/learning/Trend/Hub/hardening work.

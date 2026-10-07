@@ -20,7 +20,7 @@ sys.path.insert(0, str(ROOT / 'services' / 'comfyui-bridge'))
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-async def run(data_root, output_root):
+async def run(data_root, output_root, *, all_modes=False):
     from httpx import ASGITransport, AsyncClient
     for path in (data_root, output_root):
         if path.exists() or any(p.is_symlink() or getattr(p, 'is_junction', lambda: False)() for p in [path, *path.parents]):
@@ -71,6 +71,40 @@ async def run(data_root, output_root):
             export('job.json', job); export('job-events.json', audit)
             export('http-security.json', {'unauthorized_status': unauthorized.status_code, 'foreign_workspace_status': foreign.status_code,
                 'idempotent_replay_same_job': True, 'transport': 'in-process ASGI; no external network'})
+            if all_modes:
+                sys.path.insert(0, str(ROOT / 'apps' / 'api'))
+                from app.media_generation_scope import media_generation_scope
+                from app.media_intelligence_models import ImageGenerationInput, VideoGenerationInput
+                from app.media_intelligence_providers import ComfyUIBridgeGenerationProvider
+                reference = 'asset://explicit-owned-image-fixture'
+                cases = [('image', {}), ('image', {'reference_images': [reference]}),
+                    ('image', {'operation': 'image_to_image', 'reference_images': [reference]}),
+                    ('image', {'operation': 'variation', 'reference_images': [reference]}),
+                    ('image', {'operation': 'inpaint', 'reference_images': [reference], 'mask_reference': 'asset://explicit-owned-mask-fixture'}),
+                    ('image', {'operation': 'upscale', 'reference_images': [reference], 'upscale_factor': 4}),
+                    ('video', {}), ('video', {'mode': 'image_to_video', 'reference_images': [reference]}),
+                    ('video', {'mode': 'reference_assisted', 'reference_images': [reference]})]
+                jobs, materializations = [], []
+                for number, (modality, options) in enumerate(cases):
+                    adapter = ComfyUIBridgeGenerationProvider(bridge_url='http://explicit-asgi-mock', modality=modality,
+                        workflow_id='npd-text-to-image-v1' if modality == 'image' else 'npd-video-generation-v1',
+                        enabled=True, service_token='explicit-north-star-mock-service-token-32-characters', transport=ASGITransport(app=app))
+                    payload = (ImageGenerationInput if modality == 'image' else VideoGenerationInput)(prompt='Explicit mock mode fixture', seed=17, **options)
+                    with media_generation_scope(workspace_id=request.workspace_id, project_id='explicit-mode-project', job_id='mode-' + str(number)):
+                        materialized = await adapter.generate(payload)
+                    saved = (await client.get('/v1/jobs/' + materialized.provider_job_id, headers=headers)).json()
+                    assert saved['status'] == 'succeeded' and saved['result']['fixture']
+                    assert saved['workflow_id'] == materialized.generation_provenance['workflow']
+                    assert saved['result_metadata_sha256'] == checksum(saved['result'])
+                    assert materialized.actual_cost_vnd is None and not materialized.production_eligible
+                    jobs.append(saved)
+                    materializations.append({'provider_job_id': materialized.provider_job_id, 'content_type': materialized.content_type,
+                        'payload_sha256': hashlib.sha256(materialized.payload).hexdigest(), 'estimated_cost_vnd': None,
+                        'actual_cost_vnd': None, 'rights_status': materialized.rights_status,
+                        'production_eligible': False, 'real_provider_tested': False, 'provenance': materialized.generation_provenance})
+                assert len({item['job_id'] for item in jobs}) == 9
+                export('generation-mode-jobs.json', jobs)
+                export('generation-mode-materializations.json', materializations)
     finally:
         await app.state.bridge_service.close()
     offline = ComfyUIBridgeService(registry, DisabledComfyUIBackend(), job_store=SQLiteBridgeJobStore(store_path))
@@ -110,12 +144,17 @@ async def run(data_root, output_root):
     finally:
         await recovered.close()
     receipt = {'schema': 'north-star-comfyui-durable-evidence-v1', 'explicit_fixture': True,
+        'executed_source_sha256': {str(path.relative_to(ROOT)): sha(path) for path in [
+            ROOT / 'scripts/north_star_comfyui_contract.py', ROOT / 'apps/api/app/media_intelligence_providers.py',
+            ROOT / 'apps/api/app/media_intelligence_models.py', ROOT / 'apps/api/app/media_generation_routes.py',
+            ROOT / 'services/comfyui-bridge/npd_comfyui_bridge/service.py', ROOT / 'services/comfyui-bridge/npd_comfyui_bridge/main.py'] if path.is_file()},
         'http_transport': 'in-process ASGI', 'backend': 'deterministic mock', 'real_provider_tested': False,
         'external_provider_calls': 0, 'gpu_dispatches': 0, 'binary_media_created': False, 'binary_artifact_registered': False,
         'production_eligible': False, 'owner_uat_accepted': False, 'production_deployed': False,
         'store_path': str(store_path), 'store_sha256': sha(store_path), 'output_root': str(output_root),
         'terminal_result_replayed_offline': True, 'interruption_required_explicit_retry': True,
         'workspaces_isolated': True, 'audit_omits_private_inputs': True, 'exports': exports}
+    receipt['generation_request_variants_exercised'] = 9 if all_modes else 0
     export('contract-receipt.json', receipt)
     print(json.dumps({'status': 'CPU_MOCK_CONTRACT_PASS', 'exports': len(exports), 'output_root': str(output_root),
         'real_provider_tested': False, 'gpu_dispatches': 0}))
@@ -125,5 +164,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-root', type=Path, required=True)
     parser.add_argument('--output-root', type=Path, required=True)
+    parser.add_argument('--all-modes', action='store_true')
     args = parser.parse_args()
-    asyncio.run(run(args.data_root, args.output_root))
+    asyncio.run(run(args.data_root, args.output_root, all_modes=args.all_modes))

@@ -65,7 +65,16 @@ its NOT_CONFIGURED failure path. A retained CPU/ASGI contract bundle validates p
 offline replay, scoped access and explicit interruption recovery; all backend outputs are mocks.
 See `docs/north-star/comfyui-durable-contract-evidence.json` for hashes and test logs.
 
-Live backend transport, executable reviewed graphs, mode-specific routing/reference handling,
+Mode routing now selects the approved text/image/reference/inpaint/upscale/video descriptors.
+Inpaint requires image references and a mask; upscale requires references and a bounded 2x/4x
+factor. Image-to-video/reference-assisted requests require references. Typed envelope selection
+matches each checked-in input schema and preserves legacy text-generation fingerprints. Saved
+evidence retains actual routed workflow/version, seed, requested/resolved mode, references,
+mask/scale, null costs and local adapter elapsed time. Reference strings do not authorize arbitrary
+file reads or URL downloads. Nine variants pass through actual ASGI bridge handlers and persist
+mock results; `comfyui-generation-modes-n3` contains eleven retained exports.
+
+Live backend transport, executable reviewed graphs, verified reference resolution,
 binary artifact registration/decoding, provider cost receipts and real GPU acceptance remain open.
 The repository still ships no executable GPU graph and does not claim generative media readiness.
 
