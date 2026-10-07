@@ -152,7 +152,7 @@ class Phase10HTTPTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(session['capabilities'], {'native_shot_studio': True, 'production_intelligence': True, 'voice_quality_selection': True,
             'native_studio_ux': True, 'asset_library': True, 'north_star_quality': True, 'native_auto_edit_analysis': True,
-            'native_source_timeline':True,'native_media_frame_analysis':True})
+            'native_source_timeline':True,'native_media_frame_analysis':True,'native_cost_ledger':True})
         for name in ('native_shot_studio', 'production_intelligence', 'voice_quality_selection', 'native_studio_ux', 'asset_library'):
             self.assertIs(type(session['capabilities'][name]), bool)
         self.assertEqual(session['csrf'], self.server.csrf)

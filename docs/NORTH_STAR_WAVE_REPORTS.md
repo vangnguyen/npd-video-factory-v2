@@ -861,3 +861,25 @@ EVIDENCE: `docs/north-star/native-cost-evidence.json` binds source, seven logs, 
 REGRESSIONS: full Native Phase8/9/10 source tests and Studio checks pass; pinned API passes with skips disclosed. Live source/database/configuration/processes/accepted videos remain untouched. No main merge, deployment, publication or new budget.
 
 EXTERNAL BLOCKERS: provider/billing/OAuth/GPU/Docker/browser/Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: finish safe backup/restore, storage/ownership/cache and remaining media/profiles/distribution/analytics/learning/Trend/Hub/hardening implementation.
+
+## Wave 8 — Offline Native backup and fresh recovery
+
+WAVE: 8
+
+STATUS: IN PROGRESS; Native recovery increment complete; PLATFORM_FOUNDATION_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `0944b7b876d39d63bb9e2cbc191dc73272714ab5`; this recovery commit records the increment. Parent is pushed and preserved in verified `north-star-native-costs.bundle`, SHA256 `8a9f3dc5e18e8eb9d7ca4084eef27945fba82be0234c43f0033506a14ed30c42`.
+
+CAPABILITIES COMPLETED: explicit offline snapshot/fresh restore CLI for the existing Native SQLite/data root. Snapshot uses the server lease and SQLite backup API, includes committed WAL state, verifies current immutable project/intelligence versions and all-table logical hashes, copies owned state/configuration evidence, and rejects active work, source changes, links/hardlinks/junctions, unknown databases and embedded secret files. Restore requires an independent trusted package checksum and a nonexistent destination; strict archive membership/names/type/size/hash checks and restored database/history checks precede directory commit. Hash-scoped receipts/runtime configuration preserve prior recovery evidence. No source-root replacement, service termination/startup, migration, provider dispatch, publishing or invented approval. Failed partial/staging packages remain available for inspection.
+
+CAPABILITIES PARTIAL: production PostgreSQL/Redis/S3/GPU/Docker restore, cross-host runtime/credential recovery and full playable/provider/browser recovery remain unaccepted. ZIP packages contain private state and are unencrypted; protected parent permissions are required. Credential-file contents are excluded and their configured paths remain references. Native restore does not certify production recovery or full Mode A/B.
+
+TESTS: full Native **365/365 PASS**, 191.985s (`native-backup-full-r2.log`); fourteen backup/security tests pass, latest focused run 2.223s. First full run had 364 PASS/1 stale test expectation omitting the previously implemented cost capability flag; only its expected response was corrected. Earlier focused fixture/platform failures and their fixes are retained in the evidence index. Actual CLI backup and fresh restore pass. Fresh restore rehearsal **PASS**, ten exports and eighteen verified entries in `native-restore-contract-n3`. n1 expected a revision from an unchanged reorder; n2 assumed multiple shots in a single-shot fixture. n3 exercises a real on-screen-text update without weakening runtime idempotency. Both failed roots/logs remain retained. Unchanged Studio remains 116 PASS; pinned Linux API f045999 remains 2,085 PASS/11 SKIP.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual Native SQLite backup/WAL/restart/history, owned filesystem security, trusted package/file hashes, CLI execution, exact research/cost/assets recovery with original fixture root unavailable, full FFmpeg decode of the restored two-second video/audio and subsequent canonical editing. MOCK TESTS: research/ideas and the unpriced ledger operation are explicit fixtures; no real billing, spoken ASR, generated AI output or Owner UAT is implied.
+
+EVIDENCE: `docs/north-star/native-restore-evidence.json` binds six source files, thirteen logs, ten exports, the original package SHA256 `783ca3ba75c5ff49fcccfa45419c9818e6356fb68d8d143991ed9a9e988294c7` and a subsequent CLI backup. Fresh owned rehearsal root `C:\vf-native-restore-n3` retains originals under `retained-original`; accepted/live roots are untouched. Runbook: `docs/NATIVE_BACKUP_RESTORE.md`.
+
+REGRESSIONS: full Native Phase8/9/10 source checks pass. Existing accepted artifacts, live source/database/configuration/processes and historical bundles remain unchanged. Remote main remains `fa81c59fbe6b745cba8fed979e30e52a13199afa`; no merge, production deployment, real publication or new paid operation.
+
+EXTERNAL BLOCKERS: real credentials/billing/GPU/Docker/browser/Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: Native health/logging/role enforcement and remaining platform/media/profiles/distribution/analytics/learning/Trend/Hub/hardening work.

@@ -1705,12 +1705,19 @@
       "apps/api/tests/test_comfyui_generation_scope.py",
       "scripts/north_star_comfyui_contract.py",
       "docker-compose.yml",
-      "docs/north-star/comfyui-durable-contract-evidence.json"
+      "docs/north-star/comfyui-durable-contract-evidence.json",
+      "services/windows_native/backup.py",
+      "services/windows_native/tests/test_backup.py",
+      "scripts/native_backup_restore.py",
+      "scripts/north_star_native_restore_contract.py",
+      "docs/NATIVE_BACKUP_RESTORE.md",
+      "services/windows_native/tests/test_phase10_http.py",
+      "docs/north-star/native-restore-evidence.json"
     ],
-    "behavior": "Postgres/Redis/object-store backup and guarded restore scripts. ComfyUI bridge requests/job progress/definition and graph fingerprints/result metadata hashes/audit now survive restart in an isolated single-owner SQLite store. Bounded queues/retries, explicit interrupted-job recovery, authenticated workspace-scoped HTTP and scoped API/worker generation identities are CPU/mock-tested. Arbitrary client graphs and drift/corruption reject; no automatically replayed generation. GPU unknown estimates/actual costs stay null, configured unpriced jobs require approval before queueing and unconfigured providers preserve NOT_CONFIGURED. Numeric legacy plan fields retain only a flagged known lower bound; result-reference JSON does not constitute binary media registration.",
-    "gap": "New isolated restore simulation including config/projects/metadata and hash comparisons.",
+    "behavior": "Existing guarded PostgreSQL/Redis/object-store scripts and isolated ComfyUI restart evidence are retained. Native offline utility now snapshots actual SQLite WAL state, immutable project/intelligence versions, every owned file and source configuration evidence; source change, active operations, linked paths and embedded secret files reject. Fresh restore verifies independent package SHA, per-file hashes, all-table database hashes and history before committing a new directory. Hash-scoped receipts/configuration support repeat backups. An actual fresh technology fixture restores with the original root unavailable, matching project/research/cost/assets exactly, fully decoding video/audio and continuing canonical edits without inventing human approval. Actual CLI backup/restore and 14 security tests pass.",
+    "gap": "Production PostgreSQL/Redis/S3/GPU/Docker restore simulation, cross-host runtime/credential recovery and full playable/provider/browser recovery acceptance remain. Native packages are private unencrypted offline snapshots, not remote production or secret-store recovery. All readiness remains PARTIAL.",
     "severity": "P0",
-    "dependency": "disposable infra",
+    "dependency": "Offline Native window; independently trusted checksum; separate disposable production infrastructure",
     "wave": "8/15",
     "acceptance": "Restore into new DB/store; compare counts/artifact hashes then run flow."
   },

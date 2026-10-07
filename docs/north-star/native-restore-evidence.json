@@ -1,0 +1,145 @@
+{
+  "schema": "north-star-native-restore-evidence-v1",
+  "parent_head": "0944b7b876d39d63bb9e2cbc191dc73272714ab5",
+  "source_sha256": {
+    "services/windows_native/backup.py": "a12edec65be12bd63a89dafff2491d6fa04e843f8394b2667f9e563b6067753f",
+    "services/windows_native/tests/test_backup.py": "f694bfaca9c8320619d5e5e8ab5e1a1201da34931875c5a35ba6532b7d6664f1",
+    "scripts/native_backup_restore.py": "a89f8573c0059491dd5fab2e668ebd0967a7c8466f03653ab02074eb8115b993",
+    "scripts/north_star_native_restore_contract.py": "635e57ee7ddec90549c8ff7cf47c1eee2aaabe8dd959fe8dab0419abdb6c163e",
+    "docs/NATIVE_BACKUP_RESTORE.md": "e57e564646b6595855a7cd8f2c186795b5405e94f1dd104effd0d6ee7a6edee2",
+    "services/windows_native/tests/test_phase10_http.py": "805608037702e6ad6d41db52bd60293b2dc7dcc234295052c0edac0f5fa16166"
+  },
+  "logs": {
+    "native-backup-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-r1.log",
+      "sha256": "bd808103577e01910353fa7db9d01a04d3229010bd8f098f7c111013346f5e4b"
+    },
+    "native-backup-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-r2.log",
+      "sha256": "b1f81c74ff033e066b7cb555b97a8b7d167e77a4fcf1e0ddb4bf13fb3e3d365e"
+    },
+    "native-backup-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-r3.log",
+      "sha256": "aec720ead6aaae6d05ce5edf17ad9fe1dc564fa89b57a78b1956f5cf4a198d4b"
+    },
+    "native-backup-r4.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-r4.log",
+      "sha256": "2f61727a414d36c991f3413ea0924118bb0855fafe48f24396e644e03c0f1ec8"
+    },
+    "native-backup-r5.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-r5.log",
+      "sha256": "6978aeb68cc2813a0cf1210f2c7097b2990ea1201113b904ab7f9637562639ac"
+    },
+    "native-backup-full-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-full-r1.log",
+      "sha256": "2784f82cc09cf48344f2ac36f067e04f957239d25f861338cebff0bafee34a47"
+    },
+    "native-backup-full-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-full-r2.log",
+      "sha256": "67af8bf6449213052be06bab5888030b57bf7b07a72b4724e6806487d848d3e8"
+    },
+    "native-restore-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n1.log",
+      "sha256": "bf19f9d2828453a9a61b1b84d88aff0a4ca991c005cf1e37153e17a912f9a7c6"
+    },
+    "native-restore-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n2.log",
+      "sha256": "a26f13078bc31771714a021d62e999a981bc249f74a61cacd8ce1626c079e2c6"
+    },
+    "native-restore-contract-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3.log",
+      "sha256": "5c3cd2f230bbddecb55251abf6e0d1313b8c0eda916cce5e6c32dac2fb5724dc"
+    },
+    "native-backup-cli-help-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-cli-help-r1.log",
+      "sha256": "224200dccd268fe2651c080d1698cb8d94aa85098cce08781f19f079a75227b9"
+    },
+    "native-backup-cli-restore-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-cli-restore-r1.log",
+      "sha256": "b86c494a616cf8f232db5360996050b3bd07ebbe87f4701aae2b7f8c2f05376f"
+    },
+    "native-backup-cli-create-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-backup-cli-create-r1.log",
+      "sha256": "ffa89a1459ca6e517c56c317f36844ade7fbe0c15e13360abc0f23e8cae856e1"
+    }
+  },
+  "exports": {
+    "asset-recovery.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\asset-recovery.json",
+      "sha256": "77c28cb1092b551c12b5f3e54068b33776a2c167226962ff627db6370a053fc6"
+    },
+    "backup-receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\backup-receipt.json",
+      "sha256": "1a85c127a08235c381e0cc4b6cd73526a84b751a9cded6820482fe7ab1f60bd1"
+    },
+    "cost.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\cost.json",
+      "sha256": "b72674f77a024f22b34ad704f8cafb3b11594f12dc170cb1dea0a741c4064b96"
+    },
+    "project-after-editor.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\project-after-editor.json",
+      "sha256": "cdfd74da7c6180850c86269ffa826118f902f54e9a94f20342432996be31b434"
+    },
+    "project-after-restore.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\project-after-restore.json",
+      "sha256": "393e7403731d2142edeb7f28bb925eee61ee35b8b2e6fd3ee8ac50de7a68535d"
+    },
+    "project-before.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\project-before.json",
+      "sha256": "e25c927d9968312c4b7ed916314a980a8b59d7bea210eae6daad868b078fc985"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\receipt.json",
+      "sha256": "48a63833be7f40919dc409f31bb2f09679602fc8c75978fff8c540fa2991314f"
+    },
+    "research.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\research.json",
+      "sha256": "9dcad90d15bb87248aa6f6bff2ba10e6450f40fe3cddb578123b3857580388a6"
+    },
+    "restore-receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\restore-receipt.json",
+      "sha256": "d823af3b124437a20c358a8d9d7eda2c05eff54923199841597e2ff8b7ba678c"
+    },
+    "versions.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-restore-contract-n3\\versions.json",
+      "sha256": "07133d84f18357ea80f61c387ddabdcd6940a83067bed38ceeaeb494f5b8e9d2"
+    }
+  },
+  "backup": {
+    "path": "C:\\vf-native-restore-n3\\native-offline-backup.zip",
+    "sha256": "783ca3ba75c5ff49fcccfa45419c9818e6356fb68d8d143991ed9a9e988294c7"
+  },
+  "cli_backup": {
+    "path": "C:\\vf-native-restore-n3\\cli-backup.zip",
+    "sha256": "fc2ccc78099e5fe8ff37ade708bb472fdd7c3b1a0f62f1c449d33b2d50a5b090"
+  },
+  "local_real_restore": true,
+  "native_pass": 365,
+  "backup_security_pass": 14,
+  "project_history_exact": true,
+  "research_exact": true,
+  "costs_exact": true,
+  "actual_video_audio_decode": true,
+  "editor_creates_new_revision": true,
+  "original_fixture_unavailable_during_checks": true,
+  "original_fixture_retained": "C:\\vf-native-restore-n3\\retained-original",
+  "failure_roots_retained": [
+    "C:/vf-native-restore-n1",
+    "C:/vf-native-restore-n2"
+  ],
+  "fixture_research_ideas": true,
+  "actual_billing_acceptance": false,
+  "secrets_contents_copied": false,
+  "provider_calls": 0,
+  "services_started": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "postgres_redis_s3_docker_restore_accepted": false,
+  "limitations": [
+    "Offline Native roots only; pinned runtime/source required",
+    "ZIP package is unencrypted private state; protected parent ACL required",
+    "Configured secret-file references are retained; credential recovery is separate",
+    "No live service, production root or accepted artifact was changed",
+    "No full Mode A/B render/provider/browser acceptance is inferred"
+  ]
+}
