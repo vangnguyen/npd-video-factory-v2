@@ -14,6 +14,7 @@ PublicationStatus = Literal[
     "validating",
     "blocked",
     "dry_run_succeeded",
+    "awaiting_publish_approval",
     "publishing",
     "published",
     "failed",
@@ -55,6 +56,26 @@ class PublicationCreateRequest(StrictModel):
     mode: PublicationMode = "dry_run"
     metadata: PublicationMetadata
     actor_ref: str = Field(default="studio-user", min_length=1, max_length=160)
+
+
+class PublishApprovalRequest(StrictModel):
+    model_config = ConfigDict(extra="forbid", strict=True, frozen=True)
+    expected_fingerprint: str = Field(pattern=r"^[a-f0-9]{64}$")
+    expected_artifact_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    expected_target_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    acknowledged: Literal[True]
+
+    @field_validator('acknowledged', mode='before')
+    @classmethod
+    def explicit_boolean_acknowledgment(cls, value):
+        if value is not True:
+            raise ValueError('acknowledged must be the explicit boolean true')
+        return value
+
+
+class PublishApprovalRevokeRequest(StrictModel):
+    model_config = ConfigDict(extra="forbid", strict=True, frozen=True)
+    publish_approval_id: str = Field(pattern=r"^pua_[a-f0-9]{32}$")
 
 
 class PublishingValidationCheck(StrictModel):

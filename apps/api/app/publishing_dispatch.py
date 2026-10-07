@@ -69,7 +69,7 @@ class PublishingDispatchJournal:
         """Resolve the current server configuration; a saved snapshot cannot authorize itself."""
         raw = parent.provider_validation_json.get('target_binding')
         if raw is None:
-            if self.require_target_binding:
+            if self.require_target_binding or parent.status == 'awaiting_publish_approval':
                 raise DispatchError('PUBLISH_TARGET_BINDING_REQUIRED')
             return None
         try:
@@ -116,7 +116,7 @@ class PublishingDispatchJournal:
         return row
 
     async def binding(self, session, parent):
-        if parent.mode != 'live' or parent.status != 'publishing' or parent.receipt_json is not None:
+        if parent.mode != 'live' or parent.status not in ('awaiting_publish_approval', 'publishing') or parent.receipt_json is not None:
             raise DispatchError('PUBLISH_LIVE_VALIDATED_PARENT_REQUIRED')
         for name in ('rights_validation_json', 'platform_validation_json'):
             value = getattr(parent, name)
@@ -215,14 +215,14 @@ class PublishingDispatchJournal:
                     {'publish_approval_id': grant.publish_approval_id, 'binding_sha256': digest, 'scope': 'PUBLISH_ONLY', 'external_action': False})
             return self.grant_public(grant)
 
-    async def revoke(self, workspace, publish_approval_id, *, principal):
+    async def revoke(self, workspace, publish_approval_id, *, principal, publication_id=None):
         if not isinstance(principal, HumanPrincipal) or principal.role_for(workspace) != 'owner' or utc(principal.expires_at) <= utc(self.clock()):
             raise DispatchError('HUMAN_OWNER_PUBLISH_APPROVAL_REQUIRED')
         self.identity_revision(principal.token_id, workspace, principal.subject)
         async with self.session_factory() as session:
             async with session.begin():
                 grant = await session.get(PublishApprovalORM, publish_approval_id)
-                if grant is None or grant.workspace_id != workspace:
+                if grant is None or grant.workspace_id != workspace or (publication_id is not None and grant.publication_id != publication_id):
                     raise DispatchError('PUBLISH_SCOPE_NOT_FOUND')
                 parent = await self.parent(session, workspace, grant.publication_id)
                 changed = await session.execute(update(PublishApprovalORM).where(
@@ -275,6 +275,14 @@ class PublishingDispatchJournal:
                         publish_approval_id=publish_approval_id, binding_sha256=grant.binding_sha256, phase='init_ready', version=1,
                         total_bytes=grant.binding_json['total_bytes'], acknowledged_bytes=0, created_at=utc(self.clock()), updated_at=utc(self.clock()))
                     session.add(row); await session.flush()
+                    if parent.status == 'awaiting_publish_approval':
+                        changed = await session.execute(update(PublicationORM).where(
+                            PublicationORM.publication_id == publication_id, PublicationORM.workspace_id == workspace,
+                            PublicationORM.status == 'awaiting_publish_approval').values(status='publishing', updated_at=utc(self.clock())))
+                        if changed.rowcount != 1:
+                            raise DispatchError('PUBLISH_QUEUE_STALE_RELOAD')
+                        self.event(session, parent, 'publication.publish_consent_admitted', 'publishing-service',
+                            {'publish_approval_id': publish_approval_id, 'external_action': False})
                     self.event(session, parent, 'publication.dispatch_prepared', 'publishing-service', {'version': 1, 'phase': 'init_ready'})
                 return public(row)
             except IntegrityError:

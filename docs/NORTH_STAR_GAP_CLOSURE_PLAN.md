@@ -56,6 +56,8 @@ Publishing source admission now obtains exact scoped bounded local/S3 bytes in a
 
 Publishing destination consent now requires the reviewed strict target digest, fresh server profile/account/credential-configuration lookup and unchanged provider validation. The four-process SQLite rehearsal refuses changed targets before a wire claim. A configured target is not official account verification; profile administration, consent-gated queue/worker, OAuth and full adapters remain. Legacy journal/dry-run evidence stays readable; real workers must require bound targets.
 
+Live publication creation now queues validation without a provider call. Owner-only strict consent/revocation and scoped dispatch APIs are fixture HTTP/SQLite tested, with no default factory activation. Consent creation does not initialize; later prepare atomically admits dispatch. UTC normalization preserves exact SQLite replay. Full workers, native publishing UI, costs and real-provider acceptance remain.
+
 Owner watch/listen UAT is required for Phase 10 certification. It does not block further safe source implementation. Real publishing requires separate explicit enablement and configured authorized credentials. Missing OAuth/API secrets and approved provider budgets are requested only for concrete real acceptance after mock architecture is complete. GPU acceptance needs configured approved models/workflows. Docker/Linux acceptance needs an isolated available runtime; production deployment requires separate Owner approval.
 
 ## Current blockers and baseline testing

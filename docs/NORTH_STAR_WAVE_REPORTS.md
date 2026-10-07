@@ -1047,3 +1047,23 @@ EVIDENCE: `docs/north-star/publishing-target-evidence.json`, `docs/PUBLISHING_TA
 REGRESSIONS: expanded existing checks and full prior API pass. Existing accepted/live media, source/data/schema/processes, runtime/credentials, main and default publishing flags remain untouched. No real publish/delete, deployment, paid operation or destructive migration.
 
 EXTERNAL BLOCKERS: eventual OAuth/account audit/key-provider/Owner real-publish gates; none blocks remaining safe work. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve this increment, then implement consent-gated queue/provider worker and remaining media/analytics/learning/Trend/Hub/hardening work.
+
+### Wave 9 — consent-gated validation queue and Owner publishing API
+
+WAVE: 9 / distribution queue. STATUS: IN PROGRESS; backend queue/Owner API/restart acceptance pass. PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `a2359d4b1f3ef788cd946773890f1951612e819c`; this queue commit records the increment. Parent is pushed/preserved in verified `north-star-publishing-target.bundle`, SHA256 `eba5a6e445b56fa7fd79038041b28bc42617c007222642f38682788da78f6cff`. Fresh receipt rechecks fifteen accepted hashes, clean live source, unchanged remote main and 148 ahead/0 behind.
+
+CAPABILITIES COMPLETED: live create independently enforces three Owner configuration gates, scoped ready destination and existing production/rights/platform checks, then persists awaiting_publish_approval without calling provider.publish. Separate Owner-only strict API consent and publication-scoped revocation use current journal identity/target binding; viewer dispatch reads expose no nonce/private refs. Consent creation leaves the queue unstarted. Later prepare conditionally changes parent state and creates one dispatch in one transaction. No journal/worker is activated by the default factory. Live execution visibility requires an attached worker. SQLite publication/event reads normalize UTC so initial/replayed responses agree exactly.
+
+CAPABILITIES PARTIAL: complete configured profiles/official account and OAuth scopes, full upload/processing/thumbnail/cost worker, atomic edit admission, orphaned receipts, key/OAuth lifecycle, consent renewal, TikTok/Meta adapters and Native distribution UI/scheduler/history. API consent is not browser acceptance, Owner UAT, a real post or full Mode A/B.
+
+TESTS: expanded existing publishing/wire/vault/artifact/migration/analytics/identity/authority/queue regression **145/145 PASS**, 335.55s. Sixteen new queue/security cases. First run passed 59/failed 1 and first contract failed exact replay: a real UTC-naive SQLite reload defect. Normalization fixes read projections without changing stored data. r2 and fresh n2 contract pass. Full pinned target API at a2359d4 remains running; full queue commit requires its own pinned result. Previously indexed 21d02df **2,170 PASS/11 SKIP**, Native 400 and Studio 123 remain separate evidence.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: sixteen authenticated ASGI HTTP requests, actual SQLite transitions and two separate process reads. MOCK TESTS: ready provider/capability/account/credential/human/production approval/render/QC/publish consent fixtures. Fresh `C:\vf-publishing-queue-n2` emits six exports. No provider call, actual credential read or paid operation. The first failed rehearsal remains preserved at n1.
+
+EVIDENCE: `docs/north-star/publishing-queue-evidence.json`, `docs/PUBLISHING_CONSENT_QUEUE.md`, four logs, six n2 exports and current parent preservation receipt. Capability 41 remains PARTIAL.
+
+REGRESSIONS: expanded accepted code checks pass; installed runtimes, accepted/live source/media/data/processes/credentials and main stay untouched. No deployed schema migration, real publishing/deletion, paid call, main merge or production deployment.
+
+EXTERNAL BLOCKERS: eventual real credentials/account audit/Owner publish enablement; no current safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve queue increment, then connect official account/credential checks, journal, encrypted sessions and verified bytes to the upload worker; continue all remaining North Star waves.

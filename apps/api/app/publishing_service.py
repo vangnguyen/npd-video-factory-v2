@@ -16,6 +16,7 @@ from .publishing_models import (
     PublicationCreateRequest,
     PublicationEventRead,
     PublicationRead,
+    PublishingTargetBinding,
     PublishingPlatformStateRead,
     RightsValidationRead,
 )
@@ -25,6 +26,7 @@ from .publishing_providers import (
     PublishingProviderRegistry,
 )
 from .publishing_repository import PublishingRepository
+from .publishing_dispatch import PublishingDispatchJournal
 from .timeline_models import TimelineSnapshot
 
 
@@ -50,6 +52,7 @@ class PublishingService:
         capabilities: PublishingCapabilityRegistry,
         providers: PublishingProviderRegistry,
         settings,
+        dispatch_journal: PublishingDispatchJournal | None = None,
     ):
         self.repository = repository
         self.production_repository = production_repository
@@ -57,6 +60,7 @@ class PublishingService:
         self.capabilities = capabilities
         self.providers = providers
         self.settings = settings
+        self.dispatch_journal = dispatch_journal
 
     async def create(
         self,
@@ -201,6 +205,25 @@ class PublishingService:
             }
         )
 
+        if payload.mode == 'live':
+            gates = all(getattr(self.settings, key, False) is True for key in (
+                'publish_enabled', 'publish_external_execution_enabled', 'publish_owner_gate_enabled'))
+            target = provider_validation.target_binding
+            try:
+                target = PublishingTargetBinding.model_validate(target.model_dump()) if isinstance(target, PublishingTargetBinding) else None
+                target_ready = bool(target and target.workspace_id == package.workspace_id and target.platform == payload.platform
+                    and target.provider_key == provider.provider_key and provider_validation.provider_key == provider.provider_key
+                    and provider_validation.adapter_state == 'ready' and provider_validation.credential_status == 'configured'
+                    and provider_validation.supports_live_publish is True and provider_validation.official_api_only is True)
+            except Exception:
+                target_ready = False
+            provider_validation = provider_validation.model_copy(update={'target_binding': target if target_ready else None, 'checks': [*provider_validation.checks,
+                validation_check('live-service-gates', gates, 'PUBLISH_GATES_ENABLED' if gates else 'PUBLISH_GATES_DISABLED',
+                    'Owner publishing configuration gates are enabled.' if gates else 'Owner publishing configuration gates are disabled.'),
+                validation_check('live-configured-target', target_ready, 'PUBLISH_TARGET_CONFIGURED' if target_ready else 'PUBLISH_TARGET_BINDING_REQUIRED',
+                    'A scoped configured publishing destination is present.' if target_ready else 'A scoped configured publishing destination is required.')
+            ]})
+
         all_checks = [
             *provider_validation.checks,
             *rights.checks,
@@ -220,6 +243,15 @@ class PublishingService:
                 actor_ref=payload.actor_ref,
             )
             raise PublishingBoundaryError(blocked)
+
+        if payload.mode == 'live':
+            # A live create request only validates/reserves; production approval
+            # never substitutes for distinct publish-only Owner consent.
+            queued = await self.repository.finalize(
+                publication.publication_id, status='awaiting_publish_approval', rights_validation=rights,
+                platform_validation=platform_validation, provider_validation=provider_validation,
+                receipt=None, failure_code=None, failure_reason=None, actor_ref=payload.actor_ref)
+            return queued, False
 
         context_payload = PublishingContext(
             platform=payload.platform,
@@ -247,7 +279,7 @@ class PublishingService:
 
         completed = await self.repository.finalize(
             publication.publication_id,
-            status="dry_run_succeeded" if payload.mode == "dry_run" else "published",
+            status="dry_run_succeeded",
             rights_validation=rights,
             platform_validation=platform_validation,
             provider_validation=provider_validation,
@@ -267,6 +299,37 @@ class PublishingService:
     async def history(self, project_id: str) -> list[PublicationEventRead]:
         return await self.repository.list_events(project_id)
 
+    async def approve_publish(self, project_id, publication_id, *, principal, payload, idempotency_key):
+        publication = await self.get(project_id, publication_id)
+        if publication is None:
+            raise KeyError('publication')
+        journal = self._configured_journal()
+        # The journal independently revalidates this human against its current
+        # registry. No actor/role or target configuration is accepted from a body.
+        return await journal.approve(publication.workspace_id, publication_id, principal=principal,
+            expected_fingerprint=payload.expected_fingerprint, expected_artifact_sha256=payload.expected_artifact_sha256,
+            expected_target_sha256=payload.expected_target_sha256, acknowledged=payload.acknowledged,
+            idempotency_key=idempotency_key)
+
+    async def revoke_publish(self, project_id, publication_id, *, principal, publish_approval_id):
+        publication = await self.get(project_id, publication_id)
+        if publication is None:
+            raise KeyError('publication')
+        return await self._configured_journal().revoke(publication.workspace_id, publish_approval_id,
+            principal=principal, publication_id=publication_id)
+
+    async def dispatch_status(self, project_id, publication_id):
+        publication = await self.get(project_id, publication_id)
+        if publication is None:
+            raise KeyError('publication')
+        return await self._configured_journal().get(publication.workspace_id, publication_id)
+
+    def _configured_journal(self):
+        journal = self.dispatch_journal
+        if not isinstance(journal, PublishingDispatchJournal) or journal.require_target_binding is not True:
+            raise PublishingPreconditionError('PUBLISH_DISPATCH_NOT_CONFIGURED', 'Scoped publishing consent is not configured.')
+        return journal
+
     def platform_states(self) -> list[PublishingPlatformStateRead]:
         dry_run = self.providers.for_dry_run().validate()
         states: list[PublishingPlatformStateRead] = []
@@ -283,6 +346,7 @@ class PublishingService:
                         and self.settings.publish_external_execution_enabled
                         and self.settings.publish_owner_gate_enabled
                         and official.supports_live_publish
+                        and getattr(self, 'dispatch_worker', None) is not None
                     ),
                 )
             )

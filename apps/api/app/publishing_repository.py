@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import uuid
+from datetime import timezone
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -255,8 +256,8 @@ def _publication_read(row: PublicationORM) -> PublicationRead:
         failure_code=row.failure_code,
         failure_reason=row.failure_reason,
         actor_ref=row.actor_ref,
-        created_at=row.created_at,
-        updated_at=row.updated_at,
+        created_at=row.created_at.replace(tzinfo=timezone.utc) if row.created_at.tzinfo is None else row.created_at.astimezone(timezone.utc),
+        updated_at=row.updated_at.replace(tzinfo=timezone.utc) if row.updated_at.tzinfo is None else row.updated_at.astimezone(timezone.utc),
     )
 
 
@@ -268,5 +269,5 @@ def _event_read(row: PublicationEventORM) -> PublicationEventRead:
         event_type=row.event_type,
         actor_ref=row.actor_ref,
         payload=dict(row.payload_json or {}),
-        created_at=row.created_at,
+        created_at=row.created_at.replace(tzinfo=timezone.utc) if row.created_at.tzinfo is None else row.created_at.astimezone(timezone.utc),
     )

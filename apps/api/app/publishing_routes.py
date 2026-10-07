@@ -3,10 +3,14 @@ from __future__ import annotations
 from fastapi import APIRouter, Header, HTTPException, Request, Response, status
 
 from .publishing_logic import PublishingContractError
+from .human_auth import authorize_project, principal_from
+from .publishing_dispatch import DispatchError
 from .publishing_models import (
     PublicationCreateRequest,
     PublicationEventRead,
     PublicationRead,
+    PublishApprovalRequest,
+    PublishApprovalRevokeRequest,
     PublishingPlatformStateRead,
 )
 from .publishing_repository import PublicationIdempotencyConflict
@@ -91,3 +95,51 @@ async def publication_history(project_id: str, request: Request) -> list[Publica
 @router.get("/publishing-platforms", response_model=list[PublishingPlatformStateRead])
 async def publishing_platforms(request: Request) -> list[PublishingPlatformStateRead]:
     return service(request).platform_states()
+
+
+def consent_error(exc):
+    if isinstance(exc, KeyError):
+        return error(404, 'PUBLICATION_NOT_FOUND', 'Publication was not found.')
+    if isinstance(exc, DispatchError):
+        code = exc.code
+        status_code = 404 if code == 'PUBLISH_SCOPE_NOT_FOUND' else 403 if code == 'HUMAN_OWNER_PUBLISH_APPROVAL_REQUIRED' else 409
+        return error(status_code, code, code)
+    if isinstance(exc, PublishingPreconditionError):
+        return error(409, exc.code, str(exc))
+    return error(422, 'INVALID_PUBLISHING_REQUEST', str(exc))
+
+
+@router.post('/projects/{project_id}/publications/{publication_id}/publish-approval')
+async def approve_publish(project_id: str, publication_id: str, payload: PublishApprovalRequest, request: Request,
+                          response: Response, idempotency_key: str = Header(alias='Idempotency-Key', min_length=16, max_length=200)):
+    await authorize_project(request, project_id, 'owner')
+    try:
+        value = await service(request).approve_publish(project_id, publication_id, principal=principal_from(request),
+            payload=payload, idempotency_key=idempotency_key)
+        response.headers['Cache-Control'] = 'no-store'
+        return value
+    except (KeyError, DispatchError, PublishingPreconditionError, PublishingContractError) as exc:
+        raise consent_error(exc) from None
+
+
+@router.post('/projects/{project_id}/publications/{publication_id}/publish-approval/revoke')
+async def revoke_publish(project_id: str, publication_id: str, payload: PublishApprovalRevokeRequest, request: Request,
+                         response: Response):
+    await authorize_project(request, project_id, 'owner')
+    try:
+        value = await service(request).revoke_publish(project_id, publication_id, principal=principal_from(request),
+            publish_approval_id=payload.publish_approval_id)
+        response.headers['Cache-Control'] = 'no-store'
+        return value
+    except (KeyError, DispatchError, PublishingPreconditionError) as exc:
+        raise consent_error(exc) from None
+
+
+@router.get('/projects/{project_id}/publications/{publication_id}/dispatch')
+async def dispatch_status(project_id: str, publication_id: str, request: Request, response: Response):
+    try:
+        value = await service(request).dispatch_status(project_id, publication_id)
+        response.headers['Cache-Control'] = 'no-store'
+        return value
+    except (KeyError, DispatchError, PublishingPreconditionError) as exc:
+        raise consent_error(exc) from None

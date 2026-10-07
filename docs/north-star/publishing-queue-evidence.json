@@ -1,0 +1,78 @@
+{
+  "schema": "north-star-publishing-queue-evidence-v1",
+  "parent_head": "a2359d4b1f3ef788cd946773890f1951612e819c",
+  "source_sha256": {
+    "apps/api/app/publishing_models.py": "0f8d175f313b5ecd7508147e04a52360e236772461dfa70cac77dc7415020ed0",
+    "apps/api/app/publishing_service.py": "43cf6686ae9cf08129ad236e60ab69d35602cf8c1d9c253efff0da7df4277eee",
+    "apps/api/app/publishing_repository.py": "3ce0411672965e24efb0d84a1f8ce620555463af250f86bfacf887803c6582c1",
+    "apps/api/app/publishing_dispatch.py": "3c1bd455bf91242048c4f668780bf7df54d60a0145772b43f04323fc8be01e1c",
+    "apps/api/app/publishing_routes.py": "7bd3a27ed78eb245d00f13a03e26ee227f751eb5c5e14a31658ec480e6eea05a",
+    "apps/api/app/human_auth.py": "47e5bc4b56a97d8fac1237fe1231af164855e00551112e03dca9ebeff73f0930",
+    "apps/api/tests/test_publishing_queue.py": "3674d0374305ae1b2bd36d9d5ccb5517f90ce7fa619f5d540e7fa5b0df43839a",
+    "scripts/north_star_publishing_queue_contract.py": "ab62b29e87f42bd9f4a85fc5a36e20cfadb4f6383e6705946375334fcb7ec88d",
+    "docs/PUBLISHING_CONSENT_QUEUE.md": "292f42f2170f94b51c66869844505ae7e5731902cfdeeb8a555a039340248e97"
+  },
+  "logs": {
+    "publishing-queue-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-r1.log",
+      "sha256": "f7c0d999253c779306c0019372e9309b51f1e3586cd6934e93de62b83f81e799"
+    },
+    "publishing-queue-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-r2.log",
+      "sha256": "9dabba3771dfb7c08db92e0a628851e96a0e48f54ac0122165a344a34468356b"
+    },
+    "publishing-queue-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-contract-n1.log",
+      "sha256": "2d1d9ba1a94ddb743397722b67408bd03fe5b9eb5ffbd6bcbc5e3e8a5dd44f0c"
+    },
+    "publishing-queue-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-contract-n2.log",
+      "sha256": "12c352cd07284d3862dd9900852081fe3869fb7be20ebd3b53b3f1eda3ccd0ff"
+    }
+  },
+  "exports": {
+    "events.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-contract-n2\\events.json",
+      "sha256": "953e0d93f23c019e649ce310c496a25f4f825705ff268f3110def214c34d3ece"
+    },
+    "explicit-owner-consent.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-contract-n2\\explicit-owner-consent.json",
+      "sha256": "09deb60f619ffbb0e8bb9c8b6be1b7ed5cb8dba97d34123be3d535fd915a6677"
+    },
+    "http-evidence.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-contract-n2\\http-evidence.json",
+      "sha256": "2cc04640ae8df727f068f652c017ad902e5ea2e89cbdedc1e70fd50b7e43dbd7"
+    },
+    "queued-publication.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-contract-n2\\queued-publication.json",
+      "sha256": "17f40b5e3e46d84e24f2ffa15dceb7ccede68af33edd55b2be94e4a08bdcf290"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-contract-n2\\receipt.json",
+      "sha256": "510ff221f528e21ba8485155d9538d3cbe5b6ac9ba31efed45f8ce671e439656"
+    },
+    "restart-evidence.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-contract-n2\\restart-evidence.json",
+      "sha256": "4b12ca752e70374c775c97dbd08b1edbd54bfbd81fee1cf6c3962fc55e67c5d8"
+    }
+  },
+  "preservation_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-target-preservation.json",
+    "sha256": "481c777da2bfc872cf6d8446b9e667ff0261c0c6eba92a342a1600151496bc68"
+  },
+  "expanded_regression_pass": 145,
+  "expanded_regression_seconds": 335.55,
+  "new_queue_tests": 16,
+  "actual_asgi_http_requests": 16,
+  "separate_process_reads": 2,
+  "full_parent_api_status": "RUNNING_PINNED_A2359D4",
+  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "account_policy_credentials_human_render_qc_inputs_are_fixtures": true,
+  "actual_provider_calls": 0,
+  "real_credentials_read": 0,
+  "paid_operations": 0,
+  "default_factory_worker_or_journal_activated": false,
+  "owner_uat_accepted": false,
+  "publishing_ready": false,
+  "production_deployed": false
+}
