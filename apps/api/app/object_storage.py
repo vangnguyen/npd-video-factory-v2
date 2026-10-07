@@ -11,6 +11,7 @@ from typing import Protocol
 
 import boto3
 from botocore.client import BaseClient
+from botocore.config import Config
 from botocore.exceptions import ClientError
 
 from .config import Settings
@@ -131,16 +132,19 @@ class S3ObjectStorageProvider:
         access_key: str,
         secret_key: str,
         auto_create_bucket: bool,
+        request_config: Config | None = None,
     ):
         self.bucket = bucket
         self.region = region
         self.auto_create_bucket = auto_create_bucket
+        client_options = {"config": request_config} if request_config is not None else {}
         self.client: BaseClient = boto3.client(
             "s3",
             endpoint_url=endpoint_url or None,
             region_name=region,
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_key,
+            **client_options,
         )
 
     async def ensure_ready(self) -> None:

@@ -89,8 +89,8 @@
   "plaintext_uri_or_key_in_database": false,
   "key_or_dependency_absence_has_plaintext_fallback": false,
   "all_keys_human_media_provider_inputs_are_fixtures": true,
-  "full_parent_api_status": "RUNNING_PINNED_302c090",
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_parent_api_status": "PASS",
+  "full_current_api_status": "PASS",
   "actual_external_requests": 0,
   "secrets_read": 0,
   "paid_operations": 0,
@@ -98,5 +98,29 @@
   "live_adapter_activated": false,
   "publishing_ready": false,
   "owner_uat_accepted": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_current_linux_api": {
+    "head": "bf450587061d5d9836f8d760affe1e93e6be569b",
+    "passed": 2150,
+    "skipped": 11,
+    "seconds": 910.3,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-bf45058.log",
+      "sha256": "82801398f1258e1cfeccfc720eae9cbe3eb99e8670a1f552e59be48bfa2256e4"
+    }
+  },
+  "full_parent_linux_api": {
+    "head": "302c090868789d0745f42521a5dcb90ac4cf1b53",
+    "passed": 2134,
+    "skipped": 11,
+    "seconds": 957.82,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-302c090.log",
+      "sha256": "b2830ec43720a3e4d537a1662f2c20b6ed9498459d6d30dfc99cf5daa4f7adc3"
+    }
+  },
+  "isolated_linux_crypto_install_log": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-crypto-linux-install.log",
+    "sha256": "cfe078a8463ec2beef0b5a60ad07c6797ede76022f1ce6525134374ba1df4336"
+  }
 }

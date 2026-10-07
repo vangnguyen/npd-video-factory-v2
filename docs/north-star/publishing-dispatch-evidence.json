@@ -79,7 +79,7 @@
     "skip": 11,
     "seconds": 534.69
   },
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_current_api_status": "PASS",
   "actual_sqlite_transactions": true,
   "separate_publish_consent": true,
   "durable_intent_before_fixture_callback": true,
@@ -95,5 +95,15 @@
   "publishing_ready": false,
   "owner_uat_accepted": false,
   "production_deployed": false,
-  "early_failure_note": "r1 had nine passes and one fixture failure from direct mutation of frozen HumanTokenRecord. Fixture replaces the record with model_copy; production identity immutability remains unchanged. r2 passed 49 tests; subsequent stricter ticket and interrupted-query recovery checks passed the expanded 81-test r3."
+  "early_failure_note": "r1 had nine passes and one fixture failure from direct mutation of frozen HumanTokenRecord. Fixture replaces the record with model_copy; production identity immutability remains unchanged. r2 passed 49 tests; subsequent stricter ticket and interrupted-query recovery checks passed the expanded 81-test r3.",
+  "full_current_linux_api": {
+    "head": "302c090868789d0745f42521a5dcb90ac4cf1b53",
+    "passed": 2134,
+    "skipped": 11,
+    "seconds": 957.82,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-302c090.log",
+      "sha256": "b2830ec43720a3e4d537a1662f2c20b6ed9498459d6d30dfc99cf5daa4f7adc3"
+    }
+  }
 }
