@@ -79,3 +79,8 @@ The neutral adapter now supplies [read-only job reconciliation](COMFYUI_JOB_RECO
 for a lost generation submission reply, including full frozen-request binding
 and actual binary recovery without another submission. The `--reconcile`
 rehearsal retains a separate evidence bundle; Native queue/worker/UI remain next.
+
+The [Native durable queue](NATIVE_GENERATION_QUEUE.md) now persists admission,
+fenced claims, inputs, cost binding, observations, cancellation and read-only
+recovery requests. Worker execution, result ingestion/attachment and HTTP/Assets
+integration remain next.

@@ -1,0 +1,72 @@
+{
+  "schema": "native-generation-queue-evidence-v1",
+  "parent_head": "ec16784652488777f10701394f594095651f07df",
+  "source_sha256": {
+    "services/windows_native/generation_queue.py": "bbb448385c57c6f9bb03fe0e1a776928da4ce86d3d2146b591542fce189a6972",
+    "services/windows_native/generation_models.py": "0bdeece99b15ae65cd77b99ee2c0dd39865cde8aefdca7acf2de43101e512adc",
+    "services/windows_native/tests/test_generation_queue.py": "c29f0f84c144d4eeb33df3064792de50acdf83bc2f6b38f825304f8f1e56f36b",
+    "scripts/north_star_native_generation_queue.py": "1f5a06504e92c707642109d7252ae308aaebffd2a83a742f988877797f17105a",
+    "docs/NATIVE_GENERATION_QUEUE.md": "c30fc479b14a4a9ba7723c62d4a74c25d255efeed83a8b6988cbdde8694e86e1"
+  },
+  "logs": {
+    "native-generation-queue-r1.log": "7583af5b414e3e46ae5d6b91212f681abd8f81e81cc7038b01519d93cff7643d",
+    "native-generation-queue-r2.log": "e429663235409c18fcf6d9890931c1852dfc1d992d6d0de6070b328dd2ffcfd9",
+    "native-generation-queue-r3.log": "6cd90fb43861e2776f7cba5085e3394a8ef7911f7a0a154acd653becfce0d1f6",
+    "native-generation-queue-n1.log": "d3a2e8583eaf5f2b84d66b35b5001fef8bc489f263994f707c7233fa1ad6db71",
+    "native-generation-queue-reopen-n1.log": "5fb20fba023d04c1acb7266b18faacabcf3dbbfab97e65e7af898692e8ea74c8",
+    "native-generation-queue-n2.log": "d3a2e8583eaf5f2b84d66b35b5001fef8bc489f263994f707c7233fa1ad6db71",
+    "native-generation-queue-reopen-n2.log": "5fb20fba023d04c1acb7266b18faacabcf3dbbfab97e65e7af898692e8ea74c8"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-generation-queue-n2",
+  "contract_exports": {
+    "evidence.json": {
+      "sha256": "5b360db038e2e6414c1d3fbedf05b8195f10fc136f1df7fcc214353cf6e61c8a",
+      "bytes": 1350
+    },
+    "new-process-replay.json": {
+      "sha256": "2d8b17b2cd1a5bc02a3cd315d5c02ac4655a85d89c7251617697bc275925add1",
+      "bytes": 216
+    },
+    "offline-snapshot.json": {
+      "sha256": "d1c6b4b7665701b898af2edae1fb78a38d9bd4ba3917a68d1ce4768fa083667b",
+      "bytes": 27900
+    },
+    "reconciliation-receipts.json": {
+      "sha256": "0ec3501586859b5ecd634d361036426f4d967e73626a9a2f887fafff7a920823",
+      "bytes": 560
+    }
+  },
+  "native_affected_passed": 49,
+  "native_affected_seconds": 11.921,
+  "new_queue_cases": 14,
+  "prior_subset_passed": 34,
+  "prior_expanded_passed": 48,
+  "counts_overlap": true,
+  "owned_workspace_project_request_document_source_configuration_snapshot": true,
+  "atomic_concurrent_admission_and_single_claim": true,
+  "lease_seconds": 900,
+  "expired_claims_require_review_and_never_auto_resubmit": true,
+  "old_workers_fenced": true,
+  "confirmed_scoped_reference_inputs_and_final_predispatch_recheck": true,
+  "generation_scoped_cost_intent_cannot_be_reused": true,
+  "content_free_bound_observations_and_deduplication": true,
+  "running_cancel_is_pending": true,
+  "explicit_recovery_grants_only_read_mode": true,
+  "recovery_limit": 3,
+  "project_history_limit": 200,
+  "store_history_limit": 5000,
+  "default_inactive_reopen": true,
+  "new_process_exact_offline_replay": true,
+  "queue_rehearsal_generation_jobs": 3,
+  "mock_provider_observations": true,
+  "actual_generation_result_assets": 0,
+  "external_requests": 0,
+  "paid_operations": 0,
+  "actual_cost_vnd": null,
+  "canonical_project_timeline_mutated": false,
+  "native_worker_result_attachment_http_assets_ui_wired": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "failed_tests": 0
+}

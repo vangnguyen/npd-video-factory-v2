@@ -64,6 +64,11 @@ class GenerationAction(StrictModel):
     expected_fingerprint:str=Field(pattern=r'^[a-f0-9]{64}$')
 
 
+class GenerationRecovery(GenerationAction):
+    acknowledged:StrictBool=False
+    request_key:str=Field(min_length=16,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
+
+
 class GenerationImport(GenerationAction):
     revision:StrictInt=Field(ge=1)
     expected_asset_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
