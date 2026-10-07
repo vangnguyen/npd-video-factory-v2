@@ -112,7 +112,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -134,6 +134,7 @@ if (typeof document !== "undefined") {
     return result;
   }
   function controls() {
+    bridgeUI?.controls();
     $("prompt").closest('label').hidden=Boolean(workspaceUI)&&$("input-kind").value==='media';
     const active=jobActive(project), shotWorking=(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false), blocked=busy||shotWorking||active||project?.archived;
     document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-workspace-control],[data-auto-edit-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
@@ -297,6 +298,10 @@ if (typeof document !== "undefined") {
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
     canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
+    if(session.capabilities?.native_bridge_operator===true){
+      const bridge=await import('./native-bridge.mjs');$('native-bridge-card').hidden=false;
+      bridgeUI=bridge.initializeNativeBridge({api,getState:()=>({busy,canManage,workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});
+    }
     if(session.capabilities?.native_source_variants===true){
       const variants=await import('./native-variants.mjs');$('native-variants-card').hidden=false;
       variantsUI=variants.initializeNativeVariants({api,getState:()=>({project,dirty,busy,

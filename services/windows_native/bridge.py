@@ -55,6 +55,8 @@ class NativeBridge:
         self.stop=threading.Event();self.worker=None
         with store.transaction() as con:
             con.executescript('''
+                CREATE TABLE IF NOT EXISTS native_bridge_bindings (
+                    name TEXT PRIMARY KEY,workspace_id TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS native_bridge_nonces (
                     workspace_id TEXT NOT NULL,nonce_sha256 TEXT NOT NULL,expires_at INTEGER NOT NULL,
                     PRIMARY KEY(workspace_id,nonce_sha256));
@@ -79,9 +81,18 @@ class NativeBridge:
                 CREATE TABLE IF NOT EXISTS native_bridge_cursors (
                     workspace_id TEXT NOT NULL,source TEXT NOT NULL,sequence INTEGER NOT NULL,
                     PRIMARY KEY(workspace_id,source));
+                CREATE TABLE IF NOT EXISTS native_bridge_selections (
+                    workspace_id TEXT NOT NULL,event_id TEXT NOT NULL,key_sha256 TEXT NOT NULL,
+                    request_sha256 TEXT NOT NULL,result_json TEXT NOT NULL,result_sha256 TEXT NOT NULL,
+                    actor_ref TEXT NOT NULL,created_at TEXT NOT NULL,
+                    PRIMARY KEY(workspace_id,event_id,key_sha256));
             ''')
-            existing={r[0] for r in con.execute('SELECT DISTINCT workspace_id FROM native_bridge_events')}
-            if existing and existing!={workspace_id}:raise WorkflowError('NATIVE_BRIDGE_WORKSPACE_INVALID',400)
+            binding=con.execute("SELECT workspace_id FROM native_bridge_bindings WHERE name='workspace'").fetchone()
+            if binding is not None and binding[0]!=workspace_id:raise WorkflowError('NATIVE_BRIDGE_WORKSPACE_INVALID',400)
+            for table in ('native_bridge_events','native_bridge_requests','native_bridge_nonces','native_bridge_deliveries','native_bridge_cursors','native_bridge_selections'):
+                existing={r[0] for r in con.execute('SELECT DISTINCT workspace_id FROM '+table)}
+                if existing and existing!={workspace_id}:raise WorkflowError('NATIVE_BRIDGE_WORKSPACE_INVALID',400)
+            if binding is None:con.execute("INSERT INTO native_bridge_bindings VALUES('workspace',?)",(workspace_id,))
         store.bridge=self
 
     def start(self,observer):
@@ -385,6 +396,58 @@ class NativeBridge:
         if self.transport is None:return None
         return digest({'mode':self.transport.mode,'endpoint':getattr(self.transport,'endpoint','fixture://in-process')})
 
+    def operator_state(self):
+        return {**self.contract(),'native_dto_version':'native-bridge-operator-v1','workspace_id':self.workspace,
+            'destination_sha256':self.destination(),'destination_label':getattr(self.transport,'host',None)
+                if self.transport and self.transport.mode=='http' else 'Bộ nhận mẫu trên máy' if self.transport else None,
+            'operator_actions':['enqueue','cancel'],'http_enablement_from_ui':False}
+
+    def select_delivery(self,event_id,payload,*,actor,action):
+        from .bridge_models import NativeBridgeSelection
+        try:request=NativeBridgeSelection.model_validate(payload)
+        except ValueError:raise WorkflowError('NATIVE_BRIDGE_SELECTION_INVALID',400) from None
+        if action not in ('enqueue','cancel') or not isinstance(actor,str) or not 1<=len(actor)<=100:
+            raise WorkflowError('NATIVE_BRIDGE_SELECTION_INVALID',400)
+        value=request.model_dump(mode='json');key=hashlib.sha256(value.pop('request_key').encode()).hexdigest();fingerprint=digest({'action':action,**value})
+        with self.store.transaction() as con:
+            row=con.execute('SELECT * FROM native_bridge_events WHERE event_id=? AND workspace_id=?',(event_id,self.workspace)).fetchone()
+            if row is None:raise WorkflowError('NATIVE_BRIDGE_EVENT_NOT_FOUND',404)
+            self.read_event(row)
+            if row['envelope_sha256']!=request.expected_envelope_sha256:raise WorkflowError('NATIVE_BRIDGE_EVENT_CHANGED',409)
+            old=con.execute('SELECT * FROM native_bridge_selections WHERE workspace_id=? AND event_id=? AND key_sha256=?',(self.workspace,event_id,key)).fetchone()
+            if old:
+                if old['request_sha256']!=fingerprint:raise WorkflowError('NATIVE_BRIDGE_IDEMPOTENCY_CONFLICT',409)
+                result=json.loads(old['result_json'])
+                if digest(result)!=old['result_sha256']:raise WorkflowError('NATIVE_BRIDGE_SELECTION_EVIDENCE_INVALID')
+                return {**result,'idempotent_replay':True}
+            delivery=con.execute('SELECT * FROM native_bridge_deliveries WHERE event_id=?',(event_id,)).fetchone()
+            if delivery['destination_sha256'] is not None and delivery['destination_sha256']!=request.expected_destination_sha256:
+                raise WorkflowError('NATIVE_BRIDGE_DESTINATION_CHANGED',409)
+            if action=='enqueue':
+                if self.transport is None or self.signing is None or not self.delivery_enabled:raise WorkflowError('NATIVE_BRIDGE_DELIVERY_DISABLED',409)
+                if self.transport.mode!=request.expected_mode or self.destination()!=request.expected_destination_sha256:
+                    raise WorkflowError('NATIVE_BRIDGE_DESTINATION_CHANGED',409)
+                if (request.fixture_acknowledged!=(request.expected_mode=='fixture')
+                    or request.http_acknowledged!=(request.expected_mode=='http')):
+                    raise WorkflowError('NATIVE_BRIDGE_SELECTION_ACK_REQUIRED',400)
+                if delivery['status']!='disabled':raise WorkflowError('NATIVE_BRIDGE_DELIVERY_ALREADY_SELECTED',409)
+                status='queued'
+                con.execute("UPDATE native_bridge_deliveries SET status='queued',mode=?,destination_sha256=?,next_at=?,updated_at=? WHERE event_id=?",
+                    (self.transport.mode,self.destination(),self.clock(),datetime.now(timezone.utc).isoformat(),event_id))
+            else:
+                if request.expected_mode!=delivery['mode'] or request.fixture_acknowledged or request.http_acknowledged:
+                    raise WorkflowError('NATIVE_BRIDGE_SELECTION_INVALID',400)
+                if delivery['status'] not in ('queued','retry_scheduled'):raise WorkflowError('NATIVE_BRIDGE_DELIVERY_NOT_CANCELLABLE',409)
+                status='cancelled'
+                con.execute("UPDATE native_bridge_deliveries SET status='cancelled',next_at=NULL,updated_at=? WHERE event_id=?",(datetime.now(timezone.utc).isoformat(),event_id))
+            result={'contract_version':VERSION,'native_dto_version':'native-bridge-selection-v1','workspace_id':self.workspace,
+                'event_id':event_id,'action':action,'selected_status':status,'request_sha256':fingerprint,
+                'envelope_sha256':row['envelope_sha256'],'destination_sha256':request.expected_destination_sha256,
+                'mode':request.expected_mode,'external_call_performed':False,'actor_ref':actor,'idempotent_replay':False}
+            con.execute('INSERT INTO native_bridge_selections VALUES(?,?,?,?,?,?,?,?)',(self.workspace,event_id,key,fingerprint,
+                json.dumps(result,ensure_ascii=False),digest(result),actor,datetime.now(timezone.utc).isoformat()))
+            return result
+
     def enqueue(self,event_id):
         if not self.delivery_enabled or self.transport is None or self.signing is None:raise WorkflowError('NATIVE_BRIDGE_DELIVERY_DISABLED',409)
         with self.store.transaction() as con:
@@ -439,6 +502,13 @@ class NativeBridge:
             self.read_event(row)
             delivery=dict(con.execute('SELECT * FROM native_bridge_deliveries WHERE event_id=?',(event_id,)).fetchone());delivery.pop('claim_id')
             attempts=[dict(r) for r in con.execute('SELECT * FROM native_bridge_attempts WHERE event_id=? ORDER BY sequence LIMIT 6',(event_id,))]
+            selections=con.execute('SELECT result_json,result_sha256,actor_ref,created_at FROM native_bridge_selections WHERE event_id=? AND workspace_id=? ORDER BY created_at DESC LIMIT 26',(event_id,self.workspace)).fetchall()
+            receipts=[]
+            for item in selections[:25]:
+                value=json.loads(item['result_json'])
+                if digest(value)!=item['result_sha256']:raise WorkflowError('NATIVE_BRIDGE_SELECTION_EVIDENCE_INVALID')
+                receipts.append({'selection':value,'created_at':item['created_at']})
             return {'contract_version':VERSION,'workspace_id':self.workspace,'event_id':event_id,'delivery':delivery,'attempts':attempts,
+                'operator_receipts':receipts,'operator_receipts_truncated':len(selections)>25,
                 'real_hub_receipt_verified':False,'http_response_accepted':delivery['mode']=='http' and delivery['status']=='succeeded',
                 'fixture':delivery['mode']=='fixture'}

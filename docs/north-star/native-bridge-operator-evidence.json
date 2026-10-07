@@ -1,0 +1,130 @@
+{
+  "schema": "native-bridge-operator-evidence-v1",
+  "parent_head": "20264b96863deccd625644f775272c6d266a8557",
+  "source_sha256": {
+    "services/windows_native/bridge.py": "230895c445f087cc14957b08dfe0fa787f8005fce76fbec595dd93646f27cd5c",
+    "services/windows_native/bridge_models.py": "d31dfbbf2f9f98dd7b2ead76f4309a1aeab754aafdd5395f6355b83e5f00ca42",
+    "services/windows_native/bridge_operator_routes.py": "3120c6ad4f1ce0e829bb48936ab066b01883c7e057602bbac0675763d1a1d902",
+    "services/windows_native/access.py": "35148df51f88b811f0b71c9a29016176dedb0eeee75899bb96413f586b4198f0",
+    "services/windows_native/server.py": "e4bc3609614ea3b06999704b0f20d10289dd6a2b0ba850049eb281775889ff01",
+    "services/windows_native/backup.py": "920182a8185eafe898535899e20a4d422a65d728d00de754de5c5344495ea685",
+    "services/windows_native/tests/test_bridge.py": "c8ffb7468dd2af12e2610883ced088d39ac01c6ef8693bc512af1c35a1b3efbc",
+    "services/windows_native/tests/test_bridge_operator_http.py": "e239f86fec7421a07a13df978b7409c2546262db28b326d1ab99688977cba5ff",
+    "services/windows_native/tests/test_phase10_http.py": "cda68d06fe8d16abe5cc2ceb224cb8e0b57a47306a4a820e67dd6b4464115428",
+    "apps/studio-web/native-bridge.mjs": "2812d1c5240f1005dd68b040ced2b52c6e48d66a04a6ca7c5a3fd6b94ef85f19",
+    "apps/studio-web/native.mjs": "aa2575f84cf282bf256da164a090d930ded08e0e086c32599574f4a17878c330",
+    "apps/studio-web/native.html": "47f5ed0459db82326338c24a56b34c590ca009d6ab6253ddbf48a192fc845d67",
+    "apps/studio-web/tests/native-bridge.test.mjs": "1dd89316c59c58741c2aef17f2e93c8dc5a6cbba7b19bce648faa76ba149774e",
+    "scripts/north_star_native_bridge_operator.py": "1314380754d98dbaf85820d04f225e81207c858085aef7662a82158666aea7d0",
+    "docs/NATIVE_AGENT_HUB_BRIDGE.md": "0e84b18d8d23c4df59d56695146ddc4017be37251785d3acfa18ae092538421d"
+  },
+  "logs": {
+    "native-bridge-binding-r1.log": "4c58544c9942301341976cb0ec2ada5ab8b321b5a1d27a200d6711ae5ed7d741",
+    "native-bridge-operator-r1.log": "7acfda59cd987ec38d905d97ad7ba8ab7e8bf5cc07db1359ea194d78227ebab3",
+    "native-full-bridge-operator-r1.log": "0b5605faab008da3a4bcd33d14041c3679e5ac20e8f5cfa5d3e9be4ceeb2cd11",
+    "studio-native-bridge-r1.log": "86f02cbdc38f24ab8a4f013d33ceaa3a755b69c58359b3fd40204019613f91bc",
+    "studio-native-bridge-r2.log": "46df4b9b8d5676228eb34db8dbce69d085e7a2523e5149475a428f51e98ccad1",
+    "native-bridge-operator-contract-n1.log": "896e74125b25eb907ad867f2d5ebe80fbe5d9fa81fc96f43d09bd402d9055517"
+  },
+  "contract_bundle": {
+    "cancellation.json": {
+      "sha256": "5ea2e6c80481aff819a5497da907add58ea19505297e07bd433a8b54596c486a",
+      "bytes": 682
+    },
+    "cancelled-audit.json": {
+      "sha256": "bb76d230178b68aad5be6a74dd3d0820754f25268b7499887296c13494f377cf",
+      "bytes": 2485
+    },
+    "contract.json": {
+      "sha256": "6434d6e8f30f1627bbf85abb1d68c3af9c91a0a6a46f1fc68b1a16f67793644b",
+      "bytes": 921
+    },
+    "delivered-audit.json": {
+      "sha256": "a8d4ca548e020b16582c1aad3cfebf5e664c4e83e532a95f6128a55dbe9874fc",
+      "bytes": 1285
+    },
+    "events.json": {
+      "sha256": "3cda446085587beae1fa4e61d3ed02c455088c026b59d458fd582033bab0a5fb",
+      "bytes": 26164
+    },
+    "http-requests.json": {
+      "sha256": "ac4ac82a755bf7acb9826ff6dcec35ed4e335360eb9e9afbbd5f9f3f34cf2383",
+      "bytes": 1531
+    },
+    "native-operator-backup.zip": {
+      "sha256": "8fd5bee60698cd2bfbe298f4dafc553382ca120b9c413210fe486941d230d585",
+      "bytes": 7542876
+    },
+    "operator-state.json": {
+      "sha256": "374611d3a17bd6bbf12a84ab5511f79c3da472189cff09d50fb91d1d2b36989d",
+      "bytes": 1354
+    },
+    "recovery.json": {
+      "sha256": "546d2d82c2f63437a1d0d17053f456febe87bb4e2d91d459bde08369a3e9a8bc",
+      "bytes": 4396
+    },
+    "selection.json": {
+      "sha256": "e61004c488354a9fc21a2a050eac708126a0eb738056ac08cdd0d6bc92c2e51c",
+      "bytes": 680
+    },
+    "source-restore.json": {
+      "sha256": "186a7dcbb02ab6d3bfbd442231581b62a75ebc7000f25f046112430a75f56d50",
+      "bytes": 2086
+    },
+    "wire-audit.json": {
+      "sha256": "6ee8121945b5e99a75badf860658d9f446f33e68bb22720125b39a74fe1a4a24",
+      "bytes": 158
+    }
+  },
+  "native_full_passed": 497,
+  "native_full_seconds": 295.079,
+  "affected_passed": 55,
+  "affected_seconds": 26.854,
+  "binding_subset_passed": 48,
+  "binding_subset_seconds": 16.676,
+  "studio_passed": 192,
+  "studio_duration_ms": 863.1459,
+  "new_native_cases": 5,
+  "new_studio_cases": 4,
+  "counts_overlap": true,
+  "persistent_empty_root_workspace_binding": true,
+  "legacy_nonce_foreign_scope_fail_closed": true,
+  "owner_selection_csrf_role_before_body_tested": true,
+  "idempotent_frozen_operator_receipts": true,
+  "cancel_queued_after_disable_without_network": true,
+  "service_cannot_select_or_enable": true,
+  "browser_has_no_key_or_enablement_control": true,
+  "literal_text_dom_stale_scope_tested": true,
+  "authenticated_http_requests": 13,
+  "signed_fixture_deliveries": 1,
+  "source_root": "C:/vf-native-fixture-bridge-operator-01",
+  "restore_root": "C:/vf-native-fixture-bridge-operator-restore-01",
+  "new_process_exact": true,
+  "offline_restore_exact": true,
+  "default_disabled_on_restore": true,
+  "parent_documents_histories_media_unchanged": true,
+  "parent_playable_final_sha256": "5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398",
+  "parent_playable_preview_sha256": "1b19c136467326a7ec77c5f532dd758c1c8702efa025e1a09c277f2af44091c7",
+  "media_rerendered": false,
+  "actual_hub_calls": 0,
+  "actual_provider_calls": 0,
+  "paid_operations": 0,
+  "real_credentials_read": 0,
+  "fixture_human_owner_only": true,
+  "browser_real_tested": false,
+  "viewport_real_tested": false,
+  "owner_uat_accepted": false,
+  "real_hub_receiver_compatibility_verified": false,
+  "production_network_verified": false,
+  "offline_soak_complete": false,
+  "bounded_outbox_retention_complete": false,
+  "agent_hub_bridge_ready": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "north_star_ready": false,
+  "unchanged_api_last_passed": 2659,
+  "unchanged_api_last_skipped": 11,
+  "unchanged_api_seconds": 1512.89,
+  "api_rerun": false
+}

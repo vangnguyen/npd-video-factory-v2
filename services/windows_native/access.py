@@ -33,6 +33,7 @@ def permission_for(method, path):
         return None
     if path == '/api/logout':
         return 'read'
+    if re.fullmatch(r'/api/bridge/events/bevt_[a-f0-9]{48}/(enqueue|cancel)',path):return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/vision(?:/nvis_' + ID + r'/(process|cancel))?',path):
         return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/analytics(?:/nasy_' + ID + r'/(process|cancel))?', path):

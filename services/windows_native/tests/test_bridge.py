@@ -102,6 +102,23 @@ class NativeBridgeTests(unittest.TestCase):
         with ThreadPoolExecutor(2) as pool:self.assertEqual(sum(pool.map(attempt,range(2))),1)
         with self.assertRaises(WorkflowError):self.bridge.configure_auth({'x':ServiceIdentity('x',('service','owner'),{'x':KEY})})
 
+    def test_empty_root_workspace_binding_is_persistent_before_any_event_or_auth_call(self):
+        self.assertEqual(self.events(),[])
+        fresh=NativeBridge(Store(self.root),workspace_id=WORKSPACE);self.assertEqual(fresh.workspace,WORKSPACE)
+        with self.assertRaises(WorkflowError):NativeBridge(Store(self.root),workspace_id='wsp_foreign_fixture')
+        with self.store.transaction() as con:
+            self.assertEqual(con.execute('SELECT * FROM native_bridge_bindings').fetchall()[0]['workspace_id'],WORKSPACE)
+            self.assertEqual(con.execute('SELECT count(*) FROM native_bridge_events').fetchone()[0],0)
+
+    def test_nonce_only_legacy_scope_conflict_refuses_claim_and_preserves_foreign_rows(self):
+        with self.store.transaction() as con:
+            con.execute('DELETE FROM native_bridge_bindings')
+            con.execute('INSERT INTO native_bridge_nonces VALUES(?,?,?)',('wsp_foreign_fixture','a'*64,9999999999))
+        with self.assertRaises(WorkflowError):NativeBridge(Store(self.root),workspace_id=WORKSPACE)
+        with self.store.transaction() as con:
+            self.assertEqual(con.execute('SELECT workspace_id FROM native_bridge_nonces').fetchone()[0],'wsp_foreign_fixture')
+            self.assertEqual(con.execute('SELECT count(*) FROM native_bridge_bindings').fetchone()[0],0)
+
     def test_default_off_offline_hub_does_not_break_core_and_capture_rolls_back_with_mutation(self):
         with patch.object(HTTPSWebhookTransport,'send',side_effect=AssertionError('No default HTTP calls')):
             created=self.store.create('Offline fixture','Private source');self.assertIsNone(self.bridge.process())

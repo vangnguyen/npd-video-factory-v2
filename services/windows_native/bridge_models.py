@@ -16,3 +16,12 @@ class NativeBridgeDraft(StrictModel):
     start_pipeline: StrictBool = False
     publish_requested: StrictBool = False
     external_action_requested: StrictBool = False
+
+
+class NativeBridgeSelection(StrictModel):
+    expected_envelope_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    expected_destination_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    expected_mode: Literal['fixture','http']
+    fixture_acknowledged: StrictBool = False
+    http_acknowledged: StrictBool = False
+    request_key: str = Field(min_length=16,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
