@@ -111,6 +111,8 @@ class NativeRightsOverrideTests(unittest.TestCase):
         self.request['revision']=self.project['revision'];self.grant();current=self.store.get(self.project['id'])
         copied=self.store.duplicate(self.project['id'],current['revision']);self.assertNotIn('media_rights_overrides',copied['document'])
         self.assertEqual(canonical_assets(copied['document'])[0]['rights_status'],'unknown');self.assertIsNotNone(self.active())
+        projected=next(iter(shared_assets(copied,self.config,rights_overrides=self.overrides).values()))
+        self.assertEqual(projected.provenance['rights_status'],'unknown');self.assertIsNone(projected.provenance['owner_rights_override'])
         physical=self.root/'assets'/self.asset['id'];original=physical.read_bytes();physical.write_bytes(original+b'EXPLICIT CORRUPTION FIXTURE')
         with self.assertRaises(WorkflowError):self.grant(revision=current['revision'],request_key='native-corrupted-physical-fixture-key')
         self.assertEqual(self.store.get(self.project['id']),current);physical.write_bytes(original)

@@ -94,6 +94,12 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         changed['provenance']['identity_rebinding']={**origin,'source_plan_id':record['plan']['media_plan_id'],
             'source_plan_sha256':record['sha256']}
         changed['provenance']['native_source_timeline_version']=1
+        for media in changed['media_assets']:
+            inherited=media['provenance'].get('owner_rights_override')
+            if inherited:
+                media['provenance']['inherited_owner_exception']={'override_id':inherited['override_id'],'sha256':inherited['sha256'],
+                    'source_project_id':source_id,'authority_transferred':False}
+                media['provenance']['owner_rights_override']=None
         changed=MediaPlanRead.model_validate(changed).model_dump(mode='json')
         output['source_broll_plans'].append({'plan':changed,'sha256':digest(changed)})
         plan_fingerprints[changed['media_plan_id']]=changed['fingerprint']

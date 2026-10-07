@@ -50,11 +50,13 @@ def validate_document(document,*,project_id=None,workspace_id=None):
 
 def clear_project_claims(document):
     """A derived project preserves physical restrictions, never another project's receipt."""
+    reviewed={row['asset_id'] for key in ('media_rights_declarations','media_rights_overrides') for row in document.get(key,[])}
     document.pop('media_rights_declarations',None)
     document.pop('media_rights_overrides',None)
     values=[*document.get('assets',[]),*document.get('source_music_assets',[]),document.get('asset'),document.get('music')]
     for asset in values:
         if isinstance(asset,dict):
+            if asset.get('id') in reviewed:asset['rights_review_required']=True
             asset.pop('rights_declaration_ref',None);asset.pop('rights_declaration_sha256',None)
     return document
 

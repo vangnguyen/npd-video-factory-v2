@@ -31,6 +31,17 @@ class NativeRightsOverrideBrollTests(unittest.TestCase):
         provenance=plan['media_assets'][-1];self.assertEqual(provenance['rights_status'],'unknown');self.assertFalse(provenance['publishing_allowed'])
         self.assertEqual(provenance['provenance']['owner_rights_override']['sha256'],receipt['record']['sha256']);self.apply(plan,item)
         old=timeline.view(self.store,self.project['id']);self.assertTrue(any(track['clips'] for track in old['shot_timeline']['snapshot']['tracks'] if track['kind']=='broll'))
+        from services.windows_native import source_broll as broll
+        copied=self.store.duplicate(self.project['id'],self.project['revision']);child=timeline.view(self.store,copied['id'])
+        projected=broll.shared_assets(child,self.config,rights_overrides=service)
+        support=next(a for a in projected.values() if a.provenance['native_asset_id']==asset['id'])
+        self.assertEqual(support.provenance['rights_status'],'unknown');self.assertIsNone(support.provenance['owner_rights_override'])
+        inherited=child['document']['source_broll_plans'][-1]['plan'];evidence=inherited['media_assets'][-1]
+        self.assertIsNone(evidence['provenance']['owner_rights_override']);self.assertFalse(evidence['provenance']['inherited_owner_exception']['authority_transferred'])
+        with self.assertRaisesRegex(WorkflowError,'MEDIA_RIGHTS_CONFIRMATION_REQUIRED'):
+            broll.apply(self.store,self.config,child['id'],child['revision'],{'expected_version':child['shot_timeline']['version'],
+                'media_plan_id':inherited['media_plan_id'],'expected_plan_version':inherited['version'],'item_ids':[inherited['items'][0]['media_plan_item_id']],
+                'replace_plan_clips':True})
         clock[0]+=timedelta(days=1)
         with self.assertRaisesRegex(WorkflowError,'MEDIA_RIGHTS_CONFIRMATION_REQUIRED'):self.apply(plan,item,replace_plan_clips=True)
         self.assertEqual(timeline.view(self.store,self.project['id']),old)

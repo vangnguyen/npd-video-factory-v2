@@ -21,8 +21,11 @@ def timestamp(value):
 
 
 def rights_sha(asset):
-    return digest({key:asset.get(key) for key in ('id','sha256','source_type','rights_status','license','provider','source_reference',
-        'production_eligible','explicit_fixture','generation_provenance','rights_declaration_ref','rights_declaration_sha256')})
+    value={key:asset.get(key) for key in ('id','sha256','source_type','rights_status','license','provider','source_reference',
+        'production_eligible','explicit_fixture','generation_provenance','rights_declaration_ref','rights_declaration_sha256')}
+    # Preserve existing grant fingerprints for assets predating this marker.
+    if 'rights_review_required' in asset:value['rights_review_required']=asset['rights_review_required']
+    return digest(value)
 
 
 def fixture(asset):

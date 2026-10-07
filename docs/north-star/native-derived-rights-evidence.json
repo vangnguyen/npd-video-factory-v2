@@ -1,0 +1,140 @@
+{
+  "schema": "native-derived-rights-evidence-v1",
+  "parent_head": "c7e89fe8408139387d746a601c532df3ea198b45",
+  "source_sha256": {
+    "services/windows_native/rights.py": "351dda0bd609a247043c8cdb4b3c1a04cebbe597cab76ee289e915223553d016",
+    "services/windows_native/rights_override.py": "1396ceb465a4f3edecb2d83d37121d724d99ff4de1aa4be3665f8492fb745369",
+    "services/windows_native/source_broll.py": "27163c16e943d10afbfe59dfdd783314540b4d4c29f371e6b4f32f73b1e5259e",
+    "services/windows_native/source_duplicate.py": "09bbd12b945bb372592df761500679160d27f5db875e98106083baaedaf8fc7c",
+    "services/windows_native/tests/test_rights_override.py": "80b06769ed0b4d2b406abfc3095db50fc4d9fd016a3cc9428ccd4ab438dfdccb",
+    "services/windows_native/tests/test_rights_override_broll.py": "5973388843a70d6553667edf9dc4875342f6cb7c4a4595421d89c73f27b4baa2",
+    "scripts/north_star_native_rights_override.py": "1878d39eee25d47c57dc4b79d5446ce34ad867451580569787ebae88a3b557ee",
+    "docs/NATIVE_OWNER_RIGHTS_OVERRIDES.md": "d701f05e923f64b746fa6a437357f4c4a45a10dbbd9ee6d9cfca37ace3ab2c43"
+  },
+  "logs": {
+    "native-derived-rights-r0.log": "239e24a279b7c649b6269c7c009e302ee0a8507a97e7180facd68c7a612e0aa6",
+    "native-derived-rights-r1.log": "de108f402914a1fadeab30b101d7ccb2288e785d9ce2242c03b5a99ec05bc69e",
+    "native-derived-rights-r2.log": "82b5403bc7798b0445abd5b7b1c411b396bd415b115b8159060ff8c166fd4740",
+    "native-rights-override-contract-n2.log": "b7f5bbbcc3adb2ae4df754b491a12561b43f1b22c5461fc1cf00b50d0d62bb01"
+  },
+  "contract_bundle": {
+    "contract.json": {
+      "sha256": "bc85503b156977c483354781f6dbe0956dfc2c4ab967133f42e999c0a5007c72",
+      "bytes": 1103
+    },
+    "declaration.json": {
+      "sha256": "b865e2c9fec65c5971a3e8051c38567b06babba27534f131288e44f70e263712",
+      "bytes": 1401
+    },
+    "derived-project.json": {
+      "sha256": "f4b895c13cef5f8e56f63f20756f07384784df7985f72fbd074079711c29117f",
+      "bytes": 148429
+    },
+    "derived-review.json": {
+      "sha256": "aa3d873476aa2dbbf0ae80fe77d489ee1840784f1fe80535e9f1e221f73a8ca6",
+      "bytes": 759
+    },
+    "events.json": {
+      "sha256": "63755f01a4d38394f2db53f13ecdb21d2384cece12f761dab12c91e8cf50c50f",
+      "bytes": 28626
+    },
+    "final-review.json": {
+      "sha256": "827c3d6618cd965d66a99c5ee0864031a5fb0d777952b32a6f335b99afc55a5e",
+      "bytes": 3490
+    },
+    "grant.json": {
+      "sha256": "5437587fe9e6c89d99ed732bac577eea485a922e9b2915cd1a84e35321a636f4",
+      "bytes": 1586
+    },
+    "http-requests.json": {
+      "sha256": "7af6495df7aa404cd5a53f54da8898fc49dbe643e9782ec901c7183996ad552e",
+      "bytes": 2273
+    },
+    "initial-review.json": {
+      "sha256": "d94bbd801913e2895cae2e0c70ec46c127ebe929306b1ae6e731e2f2f28244cc",
+      "bytes": 757
+    },
+    "native-owner-rights-backup.zip": {
+      "sha256": "8a8e7b10dfc0746d0cee0a15fbc7480d98db1cad5b549bc5add6280976644585",
+      "bytes": 7883096
+    },
+    "recovery.json": {
+      "sha256": "7b36698ce9893c2953d4ea6661fea777ae5e5158df573b77d8fde14e01cabf29",
+      "bytes": 4990
+    },
+    "revocation.json": {
+      "sha256": "fba0a56a11d8e6d8cf6447e21133d5134fab0f59573b469e73c7099583158205",
+      "bytes": 1655
+    },
+    "source-restore.json": {
+      "sha256": "1e0c4defab1d70e3d4d3fd1b4b88af57d5c04aa257075adcc5399ffb8456082f",
+      "bytes": 2110
+    }
+  },
+  "affected_passed": 82,
+  "affected_seconds": 44.828,
+  "prior_subset_passed": 35,
+  "prior_subset_seconds": 12.901,
+  "new_cases": 0,
+  "existing_cases_strengthened": 2,
+  "counts_overlap": true,
+  "reproducer_failed_before_fix": {
+    "native-derived-rights-r0.log": "Two actual consumer regressions: a duplicate relabeled unknown rights as verified through legacy upload attestation."
+  },
+  "derived_review_required_preserved": true,
+  "derived_broll_unknown_preserved": true,
+  "copied_plan_active_exception_cleared": true,
+  "source_exception_retained_as_history_without_authority": true,
+  "copied_plan_reapplication_blocked": true,
+  "existing_unmarked_asset_fingerprints_preserved": true,
+  "new_process_exact": true,
+  "offline_restore_exact": true,
+  "source_root": "C:/vf-native-fixture-rights-override-derived-01",
+  "restore_root": "C:/vf-native-fixture-rights-override-derived-restore-01",
+  "local_contract": {
+    "schema_version": "native-owner-rights-contract-v1",
+    "project_id": "4975d4093956466fb8a8c34b8ca3b263",
+    "parent_final_sha256": "5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398",
+    "parent_preview_sha256": "1b19c136467326a7ec77c5f532dd758c1c8702efa025e1a09c277f2af44091c7",
+    "authenticated_http_requests": 15,
+    "explicit_synthetic_owner_exception": true,
+    "independent_rights_verification": false,
+    "publishing_authorized": false,
+    "rights_remain_unknown": true,
+    "revoke_after_disabling": true,
+    "frozen_replay_after_revocation": true,
+    "old_jobs_versions_media_unchanged": true,
+    "actual_media_rerendered": false,
+    "derived_project_id": "c1be2c1958384c82809fd1c6d4cc36cc",
+    "derived_review_required_preserved": true,
+    "derived_exception_authority_transferred": false,
+    "derived_broll_rights_remain_unknown": true,
+    "actual_provider_calls": 0,
+    "actual_hub_calls": 0,
+    "actual_publications": 0,
+    "paid_operations": 0,
+    "real_credentials_read": 0,
+    "owner_uat": false,
+    "browser_real_tested": false,
+    "production_deployed": false
+  },
+  "latest_full_native": {
+    "head": "c7e89fe",
+    "passed": 533,
+    "seconds": 331.869,
+    "rerun": false
+  },
+  "unchanged_studio": {
+    "head": "c7e89fe",
+    "passed": 206,
+    "duration_ms": 1000.2963,
+    "rerun": false
+  },
+  "unchanged_api_latest_full": {
+    "head": "e59a7d5",
+    "passed": 2659,
+    "skipped": 11,
+    "seconds": 1512.89,
+    "rerun": false
+  }
+}

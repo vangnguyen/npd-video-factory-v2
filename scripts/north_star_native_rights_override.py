@@ -71,6 +71,15 @@ def run(args):
         replay=request('POST',base+'/rights-overrides/'+asset['id'],body);assert replay['idempotent_replay'] and replay['record']==granted['record']
         page=request('GET',base+'/rights-overrides');assert next(a for a in page['items'] if a['asset_id']==asset['id'])['active_override']==granted['record']
         current=server.store.get(project['id']);assert canonical_assets(current['document'])==canonical_assets(server.store.versions(project['id'])[1]['document'])
+        child=request('POST',base+'/duplicate',{'revision':current['revision']});assert child['approval'] is None
+        child_review=request('GET','/api/projects/'+child['id']+'/rights-overrides')
+        child_asset=next(a for a in canonical_assets(child['document']) if a['id']==asset['id'])
+        assert child_asset['rights_status']=='unknown' and child_asset['rights_review_required'] is True
+        assert not child['document'].get('media_rights_declarations') and not child['document'].get('media_rights_overrides')
+        assert all(a['active_override'] is None for a in child_review['items'])
+        from services.windows_native.source_broll import shared_assets
+        support=next(a for a in shared_assets(child,config(root),rights_overrides=server.rights_overrides).values() if a.provenance['native_asset_id']==asset['id'])
+        assert support.provenance['rights_status']=='unknown' and support.provenance['owner_rights_override'] is None
         server.rights_overrides.enabled=False
         disabled=request('GET',base+'/rights-overrides');assert not disabled['enabled'] and all(a['active_override'] is None for a in disabled['items'])
         revoked=request('POST',base+'/rights-overrides/'+asset['id'],{**body,'revision':current['revision'],'action':'revoke','allow_publishing_review':False,
@@ -89,10 +98,13 @@ def run(args):
             'parent_preview_sha256':proof['preview_sha256'],'authenticated_http_requests':len(calls),'explicit_synthetic_owner_exception':True,
             'independent_rights_verification':False,'publishing_authorized':False,'rights_remain_unknown':True,'revoke_after_disabling':True,
             'frozen_replay_after_revocation':True,'old_jobs_versions_media_unchanged':True,'actual_media_rerendered':False,
+            'derived_project_id':child['id'],'derived_review_required_preserved':True,'derived_exception_authority_transferred':False,
+            'derived_broll_rights_remain_unknown':True,
             'actual_provider_calls':0,'actual_hub_calls':0,'actual_publications':0,'paid_operations':0,'real_credentials_read':0,
             'owner_uat':False,'browser_real_tested':False,'production_deployed':False}
         for name,value in [('contract.json',result),('http-requests.json',calls),('initial-review.json',initial),('declaration.json',declared),
-            ('grant.json',granted),('revocation.json',revoked),('final-review.json',final),('events.json',after['events']),('source-restore.json',restored)]:
+            ('grant.json',granted),('revocation.json',revoked),('final-review.json',final),('derived-project.json',child),('derived-review.json',child_review),
+            ('events.json',after['events']),('source-restore.json',restored)]:
             (out/name).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     finally:server.shutdown();server.server_close();thread.join(timeout=5)
     frozen=state(root);restart=json.loads(subprocess.check_output([sys.executable,str(Path(__file__).resolve()),'--read-root',str(root)],timeout=60));assert restart==frozen

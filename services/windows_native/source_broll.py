@@ -60,7 +60,7 @@ def shared_assets(project,config,*,rights_overrides=None):
         content_type=('video/quicktime' if item['id'].endswith('.mov') else 'video/mp4') if item['kind']=='video' else (
             'image/png' if item['id'].endswith('.png') else 'image/jpeg')
         confirmed=item.get('rights_confirmed') is True
-        recorded=item.get('source_type') in {'stock','internal_library','ai_generated'} or item.get('rights_declaration_ref') is not None or any(r['asset_id']==item['id'] for r in project['document'].get('media_rights_overrides',[]))
+        recorded=item.get('source_type') in {'stock','internal_library','ai_generated'} or item.get('rights_declaration_ref') is not None or item.get('rights_review_required') is True or any(r['asset_id']==item['id'] for r in project['document'].get('media_rights_overrides',[]))
         override=rights_overrides.active(project['document'],project['id'],item) if rights_overrides is not None else None
         source_type=item.get('source_type') if item.get('source_type') in {'stock','internal_library','ai_generated'} else 'user_upload'
         rights=item.get('rights_status','unknown') if recorded else 'verified' if confirmed else 'unknown'
