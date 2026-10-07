@@ -33,6 +33,7 @@ def error(status_code: int, code: str, message: str) -> HTTPException:
     return HTTPException(
         status_code=status_code,
         detail={"error": {"code": code, "message": message}},
+        headers={'Cache-Control': 'no-store'},
     )
 
 

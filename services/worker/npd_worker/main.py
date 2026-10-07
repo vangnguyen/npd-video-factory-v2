@@ -10,6 +10,7 @@ from app.config import settings
 from app.db import create_engine, create_session_factory, verify_database
 from app.analytics_providers import AnalyticsProviderRegistry
 from app.analytics_repository import AnalyticsRepository
+from app.analytics_refresh_repository import AnalyticsRefreshRepository
 from app.analytics_service import (
     ANALYTICS_SYNC_PROCESSING_KEY,
     ANALYTICS_SYNC_QUEUE_KEY,
@@ -268,13 +269,19 @@ async def run_analytics_sync_queue(redis: Redis, processor: AnalyticsSyncProcess
             await redis.lrem(ANALYTICS_SYNC_PROCESSING_KEY, 1, sync_id)
 
 
-async def run_analytics_due_scheduler(redis: Redis, repository: AnalyticsRepository) -> None:
+async def run_analytics_due_scheduler(redis: Redis, repository: AnalyticsRepository, *, refresh_repository=None, providers=None, runtime_settings=None) -> None:
     while True:
         try:
+            occurrences = []
+            if refresh_repository is not None:
+                def ready(platform, mode, workspace, key):
+                    provider = providers.get(platform=platform, mode=mode, workspace=workspace)
+                    return provider.provider_key == key and provider.state(platform).supports_sync
+                occurrences = await refresh_repository.create_due(settings=runtime_settings, provider_ready=ready)
             due = await repository.activate_due_sync_ids()
             pending = await repository.queued_sync_ids()
             count = 0
-            for sync_id in dict.fromkeys([*due, *pending]):
+            for sync_id in dict.fromkeys([*occurrences, *due, *pending]):
                 count += int(await enqueue_analytics_sync(redis, sync_id))
             if count: logger.info("analytics_due_enqueued count=%d", count)
         except Exception:
@@ -380,6 +387,7 @@ async def main() -> None:
         staging_root=settings.production_render_staging_root,
         brand_name=settings.video_factory_brand_name,
     )
+    analytics_providers = AnalyticsProviderRegistry(settings)
     analytics_processor = AnalyticsSyncProcessor(
         repository=analytics_repository,
         publishing_repository=publishing_repository,
@@ -387,7 +395,7 @@ async def main() -> None:
         trend_repository=TrendRepository(session_factory),
         timeline_repository=timeline_repository,
         production_repository=production_repository,
-        providers=AnalyticsProviderRegistry(settings),
+        providers=analytics_providers,
         settings=settings,
     )
     await recover_media_resolution_jobs(redis, media_repository)
@@ -414,7 +422,8 @@ async def main() -> None:
             run_preview_queue(redis, preview_service),
             run_production_render_queue(redis, production_render_service),
             run_analytics_sync_queue(redis, analytics_processor),
-            run_analytics_due_scheduler(redis, analytics_repository),
+            run_analytics_due_scheduler(redis, analytics_repository,
+                refresh_repository=AnalyticsRefreshRepository(session_factory), providers=analytics_providers, runtime_settings=settings),
         ]
         if webhook_processor is not None:
             tasks.extend(

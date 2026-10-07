@@ -26,7 +26,7 @@ from .analytics_providers import (
     AnalyticsProviderRegistry,
     AnalyticsRateLimited,
 )
-from .analytics_repository import AnalyticsRepository
+from .analytics_repository import AnalyticsRepository, AnalyticsRefreshPlanDisabled
 from .db import utc_now
 from .timeline_models import TimelineSnapshot
 
@@ -264,6 +264,7 @@ class AnalyticsSyncProcessor:
                 expected_attempt=sync.attempt_count,
             )
         try:
+            await self.repository.assert_attempt(sync.sync_id, sync.attempt_count)
             collection = await provider.collect(
                 AnalyticsCollectionContext(
                     platform=sync.platform,
@@ -308,6 +309,9 @@ class AnalyticsSyncProcessor:
                 insights=insights,
                 expected_attempt=sync.attempt_count,
             )
+        except AnalyticsRefreshPlanDisabled as exc:
+            return await self.repository.terminal_failure(sync.sync_id, status='not_configured', code=exc.code,
+                reason=exc.code, expected_attempt=sync.attempt_count)
         except AnalyticsProviderNotConfigured as exc:
             return await self.repository.terminal_failure(
                 sync.sync_id,

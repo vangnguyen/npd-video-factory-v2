@@ -416,6 +416,20 @@
               <button id="analytics-channel-more" class="secondary-button" type="button" disabled>Đọc publication tiếp theo</button>
               <div class="analytics-history-scroll"><table><thead><tr><th>Nền tảng</th><th>Tài khoản</th><th>Profile</th><th>Video</th><th>Project / publication</th><th>Liên kết tài khoản</th><th>Nguồn</th><th>Thu thập</th><th>Khoảng report</th><th>Views</th><th>Watch time (giây)</th><th>Completion</th></tr></thead><tbody id="analytics-channel-rows"></tbody></table></div>
             </article>
+            <article class="analytics-card analytics-refresh-plans">
+              <h3>Lịch đọc analytics</h3><p id="analytics-refresh-note"></p>
+              <div class="analytics-collection-controls">
+                <label>Lần đầu (giờ máy) <input id="analytics-refresh-first" type="datetime-local"></label>
+                <label>Cách nhau (1–168 giờ) <input id="analytics-refresh-interval" type="number" min="1" max="168" step="1" value="24"></label>
+                <label>Số lượt (1–365) <input id="analytics-refresh-runs" type="number" min="1" max="365" step="1" value="7"></label>
+                <label>Số ngày report YouTube <input id="analytics-refresh-lookback" type="number" min="1" max="366" step="1" value="7"></label>
+                <label><input id="analytics-refresh-enabled" type="checkbox"> Bật ngay</label>
+                <label><input id="analytics-refresh-ack" type="checkbox"> Xác nhận lịch chỉ đọc analytics</label>
+                <button id="analytics-refresh-create" class="secondary-button" type="button" disabled>Lưu lịch</button>
+                <button id="analytics-refresh-read" class="secondary-button" type="button">Đọc lại lịch</button>
+              </div>
+              <div class="analytics-history-scroll"><table><thead><tr><th>Lịch</th><th>Trạng thái</th><th>Lượt</th><th>Khoảng cách</th><th>Lần tiếp (UTC)</th><th>Người cập nhật</th><th>Điều khiển</th></tr></thead><tbody id="analytics-refresh-rows"></tbody></table></div>
+            </article>
             <p class="hard-boundary analytics-boundary">Khuyến nghị cần review và chưa tự áp dụng. Analytics không publish, xóa nội dung hoặc đổi media budget.</p>
           </section>
         </div>

@@ -117,8 +117,8 @@
   "api_new_tests": 17,
   "worker_new_tests": 2,
   "studio_all_passed": 145,
-  "full_current_api_status": "PENDING_PINNED_SCHEDULER_COMMIT",
-  "full_parent_api_status": "RUNNING_AT_4219755",
+  "full_current_api_status": "VERIFIED_AT_6751C27_BEFORE_REFRESH_INCREMENT",
+  "full_parent_api_status": "VERIFIED_AT_4219755_BEFORE_SAFETY_INCREMENT",
   "last_completed_linux_api": {
     "head": "2b191184b008a7a6144c51a55b7658ad452de17c",
     "passed": 2501,
@@ -143,5 +143,25 @@
   "analytics_ready": false,
   "implementation_complete": false,
   "real_provider_acceptance_complete": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_parent_linux_api": {
+    "head": "421975542225e1429136678032d15df86aa3adf5",
+    "passed": 2508,
+    "skipped": 11,
+    "seconds": 1326.47,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-4219755.log",
+      "sha256": "1815b05e8e19357f1c8266018dec0579b52aa356552c551ef8291262930103cf"
+    }
+  },
+  "full_current_linux_api": {
+    "head": "6751c27ff7f3dc0677e5af55cef6f0a6e7492e60",
+    "passed": 2525,
+    "skipped": 11,
+    "seconds": 1176.15,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-6751c27.log",
+      "sha256": "3337ec586cc3a8d2aae0367ec2e0e5c4cc978080d9dcd70d1d5a589db76271fd"
+    }
+  }
 }

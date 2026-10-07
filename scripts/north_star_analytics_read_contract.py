@@ -58,12 +58,13 @@ async def run(args):
         fk_before = clone.execute('PRAGMA foreign_key_check').fetchall()
         from sqlalchemy import create_engine as sync_engine
         engine = sync_engine('sqlite:///' + database.as_posix())
-        file = Path(__file__).parents[1] / 'apps/api/migrations/versions/0022_north_star_analytics_reads.py'
-        spec = importlib.util.spec_from_file_location('owned_analytics_migration', file)
-        migration = importlib.util.module_from_spec(spec); spec.loader.exec_module(migration)
         with engine.begin() as connection:
             connection.exec_driver_sql('PRAGMA foreign_keys=OFF')
-            with Operations.context(MigrationContext.configure(connection)): migration.upgrade()
+            for name in ('0022_north_star_analytics_reads.py', '0023_north_star_analytics_refresh.py'):
+                file = Path(__file__).parents[1] / 'apps/api/migrations/versions' / name
+                spec = importlib.util.spec_from_file_location('owned_analytics_migration_' + name[:4], file)
+                migration = importlib.util.module_from_spec(spec); spec.loader.exec_module(migration)
+                with Operations.context(MigrationContext.configure(connection)): migration.upgrade()
         engine.dispose()
         assert clone.execute('PRAGMA foreign_key_check').fetchall() == fk_before
         publications = clone.execute("SELECT receipt_json FROM publications WHERE status='published' AND mode='live' AND mock=1").fetchall()

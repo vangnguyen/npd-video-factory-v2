@@ -38,10 +38,16 @@ from .analytics_models import (
 from .analytics_providers import AnalyticsCollection
 from .db import utc_now, CostRecordORM, ProviderUsageORM, ProviderRegistryORM, VideoProjectORM
 from .publishing_operations import amount
+from .analytics_refresh_db import AnalyticsRefreshPlanORM, AnalyticsRefreshOccurrenceORM
 
 
 class AnalyticsIdempotencyConflict(RuntimeError):
     pass
+
+
+class AnalyticsRefreshPlanDisabled(RuntimeError):
+    code = 'ANALYTICS_REFRESH_PLAN_DISABLED'
+    def __init__(self): super().__init__(self.code)
 
 
 def _new_id(prefix: str) -> str:
@@ -358,9 +364,19 @@ class AnalyticsRepository:
                 row = await session.get(AnalyticsSyncORM, sync_id, with_for_update=True)
                 if row is None:
                     raise KeyError(sync_id)
-                await self._fence(session, row, expected_attempt)
+                await self._fence(session, row, expected_attempt, check_refresh=False)
                 now = utc_now()
-                if row.attempt_count >= row.max_attempts:
+                revoked = False
+                try:
+                    await self._refresh_binding(session, row, lock=True)
+                except AnalyticsRefreshPlanDisabled as exc:
+                    revoked = True
+                    code = reason = exc.code
+                if revoked:
+                    row.status = 'not_configured'
+                    row.next_retry_at = None
+                    event_type = 'analytics.sync_not_configured'
+                elif row.attempt_count >= row.max_attempts:
                     row.status = "failed"
                     row.next_retry_at = None
                     event_type = "analytics.sync_failed"
@@ -403,7 +419,7 @@ class AnalyticsRepository:
                 row = await session.get(AnalyticsSyncORM, sync_id, with_for_update=True)
                 if row is None:
                     raise KeyError(sync_id)
-                await self._fence(session, row, expected_attempt)
+                await self._fence(session, row, expected_attempt, check_refresh=False)
                 now = utc_now()
                 row.status = status
                 row.next_retry_at = None
@@ -527,18 +543,50 @@ class AnalyticsRepository:
                 .order_by(AnalyticsSyncORM.updated_at, AnalyticsSyncORM.sync_id).limit(100))).all())
 
     @staticmethod
-    async def _fence(session, row, expected_attempt):
-        if expected_attempt is None: return
-        changed = await session.execute(update(AnalyticsSyncORM).where(
-            AnalyticsSyncORM.sync_id == row.sync_id, AnalyticsSyncORM.status == 'running',
-            AnalyticsSyncORM.attempt_count == expected_attempt).values(updated_at=AnalyticsSyncORM.updated_at))
-        if changed.rowcount != 1: raise RuntimeError('ANALYTICS_ATTEMPT_OWNERSHIP_LOST')
+    async def _fence(session, row, expected_attempt, *, check_refresh=True):
+        if expected_attempt is not None:
+            changed = await session.execute(update(AnalyticsSyncORM).where(
+                AnalyticsSyncORM.sync_id == row.sync_id, AnalyticsSyncORM.status == 'running',
+                AnalyticsSyncORM.attempt_count == expected_attempt).values(updated_at=AnalyticsSyncORM.updated_at))
+            if changed.rowcount != 1: raise RuntimeError('ANALYTICS_ATTEMPT_OWNERSHIP_LOST')
+        if check_refresh: await AnalyticsRepository._refresh_binding(session, row, lock=True)
+
+    @staticmethod
+    async def _refresh_binding(session, row, *, lock=False):
+        occurrence = await session.scalar(select(AnalyticsRefreshOccurrenceORM).where(AnalyticsRefreshOccurrenceORM.sync_id == row.sync_id))
+        if occurrence is None: return
+        plan = await session.get(AnalyticsRefreshPlanORM, occurrence.plan_id)
+        if (plan is None or not plan.enabled or plan.revision != occurrence.plan_revision
+            or plan.workspace_id != row.workspace_id or plan.project_id != row.project_id
+            or plan.publication_id != row.publication_id or plan.platform != row.platform
+            or plan.provider_mode != row.provider_mode or plan.provider_key != row.provider_key):
+            raise AnalyticsRefreshPlanDisabled()
+        if lock:
+            changed = await session.execute(update(AnalyticsRefreshPlanORM).where(
+                AnalyticsRefreshPlanORM.plan_id == plan.plan_id, AnalyticsRefreshPlanORM.enabled.is_(True),
+                AnalyticsRefreshPlanORM.revision == occurrence.plan_revision).values(revision=occurrence.plan_revision)
+                .execution_options(synchronize_session=False))
+            if changed.rowcount != 1: raise AnalyticsRefreshPlanDisabled()
+        from .publishing_db import PublicationORM
+        parent = await session.get(PublicationORM, row.publication_id)
+        if (parent is None or parent.workspace_id != row.workspace_id or parent.project_id != row.project_id
+            or parent.platform != row.platform or parent.request_fingerprint != plan.publication_fingerprint
+            or parent.status not in ('published', 'dry_run_succeeded')):
+            raise AnalyticsRefreshPlanDisabled()
+        if row.provider_mode == 'official':
+            from .publishing_models import PublishingTargetBinding
+            from .publishing_credentials import target_digest
+            try: target = PublishingTargetBinding.model_validate((parent.provider_validation_json or {}).get('target_binding'))
+            except ValueError: raise AnalyticsRefreshPlanDisabled() from None
+            if (target_digest(target) != plan.target_binding_sha256 or parent.status != 'published'
+                or parent.mode != 'live' or parent.dry_run): raise AnalyticsRefreshPlanDisabled()
 
     async def assert_attempt(self, sync_id, expected_attempt):
         async with self.session_factory() as session:
             row = await session.get(AnalyticsSyncORM, sync_id)
             if row is None or row.status != 'running' or row.attempt_count != expected_attempt:
                 raise RuntimeError('ANALYTICS_ATTEMPT_OWNERSHIP_LOST')
+            await self._refresh_binding(session, row)
 
     async def reserve_operation(self, context, operation, sequence, *, mock, target_sha256,
                                 estimated_cost=None, max_ai_cost=None):

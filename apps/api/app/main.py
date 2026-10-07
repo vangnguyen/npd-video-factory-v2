@@ -21,6 +21,7 @@ from .bridge_service import AgentHubBridgeService
 from .analytics_providers import AnalyticsProviderRegistry
 from .analytics_repository import AnalyticsRepository
 from .analytics_routes import router as analytics_router
+from .analytics_refresh_routes import router as analytics_refresh_router
 from .analytics_service import AnalyticsService
 from .auto_edit_providers import (
     ContractOnlyTranscriptionProvider,
@@ -464,6 +465,7 @@ app.include_router(content_router, dependencies=_human_route_dependencies)
 app.include_router(production_router, dependencies=_human_route_dependencies)
 app.include_router(publishing_router, dependencies=_human_route_dependencies)
 app.include_router(analytics_router, dependencies=_human_route_dependencies)
+app.include_router(analytics_refresh_router, dependencies=_human_route_dependencies)
 app.include_router(provider_safety_router, dependencies=_human_route_dependencies)
 app.include_router(operations_router, dependencies=_human_route_dependencies)
 app.include_router(bridge_router)

@@ -26,6 +26,7 @@ import {compatibleBrollPlans,selectedBrollAsset,brollApplyPayload} from '/broll-
 import {initializePublishingConsole} from '/publishing-console.mjs';
 import {initializeAnalyticsConsole} from '/analytics-console.mjs';
 import {initializeAnalyticsChannels} from '/analytics-channels.mjs';
+import {initializeAnalyticsRefresh} from '/analytics-refresh.mjs';
 
 const state = {
   workspaceId: null,
@@ -89,6 +90,7 @@ const analyticsConsole = initializeAnalyticsConsole({api, getState: () => state,
   },
   onQueued: sync => {state.activeAnalyticsSync = sync; renderAnalytics(); startAnalyticsPolling();}});
 const analyticsChannels = initializeAnalyticsChannels({api, getState: () => state, toast});
+const analyticsRefresh = initializeAnalyticsRefresh({api, getState: () => state, toast});
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 
 class ApiError extends Error {
@@ -805,6 +807,7 @@ function renderAnalytics() {
   )).join("");
   analyticsConsole.sync();
   analyticsChannels.sync();
+  analyticsRefresh.sync();
 }
 
 function startAnalyticsPolling() {

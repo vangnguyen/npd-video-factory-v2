@@ -1323,3 +1323,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: mocked queue outage/recovery, concurrent own
 EVIDENCE: `docs/north-star/analytics-scheduler-safety-evidence.json`, fresh `analytics-read-contract-n8` nine JSON files plus clone DB; original DB hash unchanged. All n1–n7 retained.
 
 REGRESSIONS: accepted media/live source/default network/publishing/Owner gates retained; no live migration, provider call, credential read or paid operation. EXTERNAL BLOCKERS: optional isolated Redis/PostgreSQL/Docker runtime and actual provider/UAT acceptance. OWNER ACTION REQUIRED: none for remaining safe work; real credentials, UAT and deployment remain separate gates. NEXT WAVE: persisted recurring plans, frozen learning/channel baselines, remaining Native/media/Trend/Hub/hardening and final A/B/C acceptance. Original Waves 0–16 remain the objective.
+
+### Wave 10 — Durable recurring read plans and Owner controls
+
+WAVE: 10. STATUS: IN PROGRESS. ANALYTICS_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `6751c27ff7f3dc0677e5af55cef6f0a6e7492e60`, pushed/preserved in `north-star-analytics-scheduler-safety.bundle`, SHA256 `76b8ae651099d988194f04ca0e6a00f0c04801217b17069f95f957a1fc3b8448`; 162 ahead/0 behind, all 15 accepted artifact hashes and clean live source verified. This increment will be separately committed/preserved.
+
+CAPABILITIES COMPLETED: versioned bounded immutable refresh configuration, verified Owner creation/state changes, same-key concurrency, revision/audit and exact provider/publication/destination binding; default-disabled explicit Studio controls; atomic bounded due occurrence/job creation, no catch-up burst and maximum run count; pre-collection/each official read/reservation/completion fences; revoked error retries terminate; re-enablement never revives old occurrences. Successful/error domain responses preserve no-store. Additive three-table migration and refusal of destructive downgrade.
+
+CAPABILITIES PARTIAL: Native/operator/AnalyticsProfile/channel-wide integration; actual Redis Lua/PostgreSQL scheduler/recovery/soak; bounded plan/history pagination; Meta collectors; browser/viewport/Owner UAT; real provider acceptance; frozen project learning features and channel winner baselines.
+
+TESTS: final **64 PASS**, 117.88s selected API/worker/migration/runtime suite (28 new API cases); **152 PASS** full Studio suite, 672.1551ms (seven new cases). Earlier overlapping 61/41/23/38 and model/repository runs are retained. Full Linux safety parent **2525 PASS / 11 SKIP**, 1176.15s; channel parent `4219755` **2508 PASS / 11 SKIP**, 1326.47s. Current refresh source pinned full regression pending. Initial migration fixture omitted Python defaults; fixed. Fresh contract first used an incorrect table/class name, then exposed a missing no-store exception header; corrected with regression coverage. Failed logs/directories remain intact.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: authenticated Owner ASGI/revocation/concurrency/typed query tests, DOM controls and between-wire/error revocation. Fresh n4 recurring contract: three official mock reads/nine authenticated requests, two prior exact snapshots retained and one new snapshot, two occurrences/one revoked without collection, five plan audit entries, nine unknown billed analytics costs. Fresh process restores exact state. No scheduler fixture date certifies provider coverage.
+
+EVIDENCE: `docs/ANALYTICS_REFRESH_PLANS.md`, `docs/north-star/analytics-refresh-evidence.json`; fresh `analytics-refresh-contract-n4` five JSON exports plus owned clone database. All n1–n3 and manual n9/source databases remain unchanged.
+
+REGRESSIONS: accepted media/live source/default publishing/provider/Owner gates preserved. No live migration, credential read, paid operation or external call. EXTERNAL BLOCKERS: actual authorized provider accounts, Owner/browser acceptance and isolated production infrastructure acceptance. OWNER ACTION REQUIRED: none for remaining safe implementation; live secrets/UAT/deployment are separate gates. NEXT WAVE: freeze remaining published project features, channel winner baselines/personalized learning, remaining Native/media/Trend/Hub/hardening and final A/B/C bundles. Original Waves 0–16 remain the objective.
