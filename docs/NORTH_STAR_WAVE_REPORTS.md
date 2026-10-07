@@ -1377,3 +1377,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: fresh relative n3 contract retains ten obser
 EVIDENCE: `docs/CHANNEL_WINNER_ASSESSMENT.md`, `docs/north-star/channel-cohort-evidence.json`; fresh `channel-cohort-contract-n3`, `counter-history-contract-n2` and recurring n5 JSON/owned databases. All earlier bundles retained; fixture media is nonplayable and does not certify full QC or Owner UAT.
 
 REGRESSIONS: accepted media/live source/default provider/publishing/approval boundaries preserved; no live schema/data migration or paid/external operation. EXTERNAL BLOCKERS: real accounts/provider/Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for continuing safe implementation. NEXT WAVE: personalized recommendation aggregation and Trend/Idea/Media/Template feedback, remaining Native/media/Trend/Hub/hardening and final A/B/C bundles. Original Waves 0–16 remain in scope.
+
+### Wave 12 — Immutable channel learning and reviewed downstream guidance
+
+WAVE: 12. STATUS: IN PROGRESS. LEARNING_LOOP_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `1439c4dae90e83d622c390f09e0baae8af0a10ed`, pushed/preserved in `north-star-channel-cohort.bundle`, SHA256 `644e58f442ea755b579d056e7f4779c005b8cdcebd1361fbf8aaa875998bf69b`; 165 ahead/0 behind, fresh 15 accepted hashes and clean live source. Learning increment will be separately committed/preserved.
+
+CAPABILITIES COMPLETED: additive immutable/digested snapshot persistence and versioned policy; exact channel/report/provider/transport/frozen niche/format scope, distinct remote posts, matching winner policy and scored-factor basis, bounded scan/truncation/exclusion evidence. Descriptive feature/control medians require independent sample thresholds; missing data and actual publishing windows stay unavailable. Authenticated idempotent creation/history/recommendation routes, concurrent replay, reviewed Trend/Idea/Queue/project/MediaPlan advisory lineage and explicit Studio controls preserve approval/cost/publish boundaries. Legacy unrequested fingerprints retain their original serialization.
+
+CAPABILITIES PARTIAL: personalized opportunity ranking, direct catalog template selection, Native integration, semantic labels, actual publication-time evidence, history pagination, real account/provider/browser/Owner acceptance and final playable A/B/C. Original Waves 0–16 remain in scope.
+
+TESTS: **58 PASS**, 143.19s affected API/analytics/trend/media suites (24 new API/migration cases); **159 PASS** Studio, 764.8956ms (seven new cases). Counts overlap prior increments. Initial run 18 PASS/1 FAIL had a new test assuming reviewer lacked existing editing rank; expectation corrected. Next run 33 PASS/2 FAIL had a test assuming existing idea replay order was identical and a schema comparison using reflected type-object identity; fixed to compare candidate identity and SQLite table metadata. All logs retained. Full Linux at `681d0c6`: **2558 PASS/11 SKIP**, 1361.43s. Cohort parent `1439c4d`: **2580 PASS/11 SKIP**, 1398.23s. Current learning pinned full suite pending.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: owned SQLite histories, six explicit synthetic metric seeds, three official adapter MockTransport reads, three authenticated learning requests, exact seven metric snapshots/assessments/learning/cost restore, fixture Trend evidence and persisted advisory idea lineage. Media-planner guidance-reader integration is a declared stub test. No paid/external operation, actual posting or budget change. Publishing windows remain unavailable.
+
+EVIDENCE: `docs/CHANNEL_LEARNING_SNAPSHOTS.md`, `docs/north-star/channel-learning-evidence.json`; fresh `channel-learning-contract-n2` seven JSON exports plus owned database/objects, prior n1 retained. Fixture media is nonplayable; no full media QC or Owner acceptance.
+
+REGRESSIONS: prior metrics/accepted media/live source and timeline/approval/publishing/provider defaults preserved. Migration 0024 rehearsed on a new owned SQLite database only; live schema unchanged. EXTERNAL BLOCKERS: real accounts/provider/Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for continuing safe work. NEXT WAVE: personalized opportunity ranking/template review/Native learning; remaining media/Trend/Hub/production hardening and final A/B/C. Continue the full original North Star.

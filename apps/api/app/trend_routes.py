@@ -17,6 +17,7 @@ from .trend_models import (
 )
 from .trend_providers import TrendProviderNotConfigured
 from .trend_service import TrendIntelligenceService
+from .learning_service import LearningError
 
 
 router = APIRouter(prefix="/api/v1", tags=["trend-intelligence"])
@@ -86,6 +87,8 @@ async def refresh_trend_clusters(
 ) -> list[TrendClusterRead]:
     try:
         return await service_from(request).refresh_clusters(workspace_id, payload)
+    except LearningError as exc:
+        raise api_error(exc.code, exc.code, 404 if exc.code.endswith('_NOT_FOUND') else 409) from None
     except KeyError as exc:
         raise api_error("NOT_FOUND", "Workspace not found.", 404) from exc
 
@@ -127,6 +130,8 @@ async def generate_ideas(
 ) -> list[IdeaCandidateRead]:
     try:
         return await service_from(request).generate_ideas(cluster_id, payload)
+    except LearningError as exc:
+        raise api_error(exc.code, exc.code, 404 if exc.code.endswith('_NOT_FOUND') else 409) from None
     except KeyError as exc:
         raise api_error("NOT_FOUND", "Trend cluster not found.", 404) from exc
 
@@ -160,6 +165,8 @@ async def refresh_content_opportunities(
 ) -> list[ContentQueueItemRead]:
     try:
         return await service_from(request).refresh_queue(workspace_id, payload)
+    except LearningError as exc:
+        raise api_error(exc.code, exc.code, 404 if exc.code.endswith('_NOT_FOUND') else 409) from None
     except KeyError as exc:
         raise api_error("NOT_FOUND", "Workspace not found.", 404) from exc
 

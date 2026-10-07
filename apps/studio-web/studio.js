@@ -27,6 +27,7 @@ import {initializePublishingConsole} from '/publishing-console.mjs';
 import {initializeAnalyticsConsole} from '/analytics-console.mjs';
 import {initializeAnalyticsChannels} from '/analytics-channels.mjs';
 import {initializeAnalyticsRefresh} from '/analytics-refresh.mjs';
+import {initializeChannelLearning} from '/channel-learning.mjs';
 
 const state = {
   workspaceId: null,
@@ -91,6 +92,7 @@ const analyticsConsole = initializeAnalyticsConsole({api, getState: () => state,
   onQueued: sync => {state.activeAnalyticsSync = sync; renderAnalytics(); startAnalyticsPolling();}});
 const analyticsChannels = initializeAnalyticsChannels({api, getState: () => state, toast});
 const analyticsRefresh = initializeAnalyticsRefresh({api, getState: () => state, toast});
+const channelLearning = initializeChannelLearning({api, getState: () => state, toast});
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 
 class ApiError extends Error {
@@ -814,6 +816,7 @@ function renderAnalytics() {
   analyticsConsole.sync();
   analyticsChannels.sync();
   analyticsRefresh.sync();
+  channelLearning.sync();
 }
 
 function startAnalyticsPolling() {
@@ -1370,6 +1373,7 @@ $('#browser-content').addEventListener('click',async event=>{
       const analysis=activeAnalysis();if(!analysis)throw new Error('Chờ phân tích video hoàn tất.');
       const plan=await api(`/api/v1/projects/${state.projectId}/media-plans`,{method:'POST',body:JSON.stringify({
         purpose:'supporting_broll',analysis_id:analysis.analysis_id,transcript_id:analysis.transcript?.transcript_id??null,
+        ...channelLearning.advice(),
         allow_stock:false,allow_ai_image:false,allow_ai_video:false})});
       state.selectedBrollPlanId=plan.media_plan_id;state.mediaPlans=await api(`/api/v1/projects/${state.projectId}/media-plans`);
       renderBrowser();toast('Đã lưu đề xuất. Chọn tư liệu bổ trợ cho từng cảnh.');

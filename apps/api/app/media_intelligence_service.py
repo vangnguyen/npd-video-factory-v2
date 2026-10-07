@@ -124,6 +124,7 @@ class MediaPlanningService:
         providers: MediaProviderBundle,
         allow_external_execution: bool,
         allow_paid_execution: bool,
+        learning=None,
     ) -> None:
         self.repository = repository
         self.auto_edit_repository = auto_edit_repository
@@ -132,12 +133,17 @@ class MediaPlanningService:
         self.providers = providers
         self.allow_external_execution = allow_external_execution
         self.allow_paid_execution = allow_paid_execution
+        self.learning = learning
 
     async def create(self, *, project_id: str, payload: MediaPlanRequest) -> MediaPlanRead:
         project = await self.platform.get_project(project_id)
         analysis = await self.auto_edit_repository.get_analysis(payload.analysis_id,transcript_id=payload.transcript_id)
         if project is None or analysis is None or analysis.project_id != project_id:
             raise KeyError(project_id)
+        learning_feedback = None
+        if payload.learning_snapshot_id:
+            if self.learning is None: raise ValueError('LEARNING_SERVICE_NOT_CONFIGURED')
+            learning_feedback = await self.learning.feedback(project.workspace_id, payload.learning_snapshot_id, niche=project.niche)
         if analysis.status != "succeeded":
             raise ValueError("Auto Edit analysis must be succeeded before media planning")
         vision = None
@@ -167,7 +173,7 @@ class MediaPlanningService:
                     "transcript_id":analysis.transcript.transcript_id if analysis.transcript else None,
                     "transcript_version":analysis.transcript.version if analysis.transcript else None,
                     "vision_fingerprint": vision.fingerprint if vision else None,
-                    "configuration": payload.model_dump(mode="json"),
+                    "configuration": payload.model_dump(mode="json", exclude={'learning_snapshot_id'} if payload.learning_snapshot_id is None else set()),
                     "providers": provider_status,
                     "algorithm": "priority-media-planner-v1",
                     **({'supporting_assets':[(asset.asset_id,asset.checksum_sha256,asset.provenance,asset.filename)
@@ -197,6 +203,7 @@ class MediaPlanningService:
                 "source_media_mutated": False,
                 "publish_requested": False,
                 "paid_external_call": False,
+                **({'learning_feedback': learning_feedback} if learning_feedback else {}),
             },
         )
         if not created:

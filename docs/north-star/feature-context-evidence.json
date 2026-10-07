@@ -83,7 +83,7 @@
   "studio_all_passed": 152,
   "studio_seconds": 767.2223,
   "initial_failed_test_retained": true,
-  "full_current_api_status": "PENDING_PINNED_FEATURE_COMMIT",
+  "full_current_api_status": "VERIFIED_AT_681D0C6_BEFORE_COHORT_INCREMENT",
   "full_parent_api_status": "VERIFIED_AT_D3D3A77_BEFORE_FEATURE_INCREMENT",
   "actual_provider_calls": 0,
   "real_credentials_read": 0,
@@ -104,6 +104,16 @@
     "log": {
       "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-d3d3a77.log",
       "sha256": "6fb1d943457f6f15de7089a2cc572a3746c14dab01bd60bd463cea4fdf112501"
+    }
+  },
+  "full_current_linux_api": {
+    "head": "681d0c6552132ca70e4cfff94bcd878612757cb6",
+    "passed": 2558,
+    "skipped": 11,
+    "seconds": 1361.43,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-681d0c6.log",
+      "sha256": "ce61cac4c45b317a04ccb0ee7d9f3358a84fc5bf27c6badb5e54bbd6669b10f1"
     }
   }
 }

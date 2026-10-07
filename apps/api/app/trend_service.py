@@ -40,11 +40,18 @@ class TrendIntelligenceService:
         platform: PlatformRepository,
         *,
         idea_engine: IdeaEngine | None = None,
+        learning=None,
     ) -> None:
         self.repository = repository
         self.providers = providers
         self.platform = platform
         self.idea_engine = idea_engine or IdeaEngine()
+        self.learning = learning
+
+    async def _feedback(self, workspace, request):
+        if not request.learning_snapshot_id: return None
+        if self.learning is None: raise ValueError('LEARNING_SERVICE_NOT_CONFIGURED')
+        return await self.learning.feedback(workspace, request.learning_snapshot_id, niche=request.niche.value)
 
     async def list_sources(self) -> list[TrendSourceRead]:
         return await self.repository.list_sources()
@@ -70,7 +77,16 @@ class TrendIntelligenceService:
         workspace_id: str,
         request: TrendClusterRefreshRequest,
     ) -> list[TrendClusterRead]:
-        return await self.repository.refresh_clusters(workspace_id, request)
+        feedback = await self._feedback(workspace_id, request)
+        clusters = await self.repository.refresh_clusters(workspace_id, request)
+        if feedback:
+            family = next(item for item in feedback['recommendations'] if item['dimension'] == 'trend_family')
+            for cluster in clusters:
+                cluster.learning_feedback = {'learning_snapshot_id': feedback['learning_snapshot_id'],
+                    'content_sha256': feedback['content_sha256'], 'recommendation_only': True,
+                    'matching_trend_family': next((item for item in family['groups'] if item['value'] == cluster.cluster_id), None),
+                    'global_trend_score_unchanged': True}
+        return clusters
 
     async def list_clusters(self, workspace_id: str) -> list[TrendClusterRead]:
         return await self.repository.list_clusters(workspace_id)
@@ -83,10 +99,14 @@ class TrendIntelligenceService:
         cluster_id: str,
         request: IdeaGenerateRequest,
     ) -> list[IdeaCandidateRead]:
+        cluster = await self.repository.get_cluster(cluster_id)
+        if cluster is None: raise KeyError(cluster_id)
+        feedback = await self._feedback(cluster.workspace_id, request)
         return await self.repository.generate_ideas(
             cluster_id,
             request,
             engine=self.idea_engine,
+            learning_feedback=feedback,
         )
 
     async def list_ideas(self, workspace_id: str) -> list[IdeaCandidateRead]:
@@ -97,11 +117,13 @@ class TrendIntelligenceService:
         workspace_id: str,
         request: ContentQueueRefreshRequest,
     ) -> list[ContentQueueItemRead]:
+        feedback = await self._feedback(workspace_id, request)
         cluster_request = TrendClusterRefreshRequest(
             channel=request.channel,
             niche=request.niche,
             business_objective=request.business_objective,
             weights=request.weights,
+            learning_snapshot_id=request.learning_snapshot_id,
         )
         clusters = await self.repository.refresh_clusters(workspace_id, cluster_request)
         cluster_limit = max(1, math.ceil(request.top_n / request.ideas_per_cluster))
@@ -114,12 +136,14 @@ class TrendIntelligenceService:
             cta=request.cta,
             budget_vnd=request.budget_vnd,
             count=request.ideas_per_cluster,
+            learning_snapshot_id=request.learning_snapshot_id,
         )
         for cluster in clusters[:cluster_limit]:
             await self.repository.generate_ideas(
                 cluster.cluster_id,
                 idea_request,
                 engine=self.idea_engine,
+                learning_feedback=feedback,
             )
         return await self.repository.refresh_queue(workspace_id, request)
 

@@ -1,0 +1,161 @@
+{
+  "schema": "channel-learning-evidence-v1",
+  "parent_head": "1439c4dae90e83d622c390f09e0baae8af0a10ed",
+  "source_sha256": {
+    "apps/api/app/learning_db.py": "0c8ebc8788e7f5873d803b40839b15f22d7c0ab9128b4c274eb9b60f3f601ba6",
+    "apps/api/app/learning_models.py": "31091ab994c328f4e45ba9e27b23ca13a17fb38fab5e2ea0e61dc555cf0bd7e0",
+    "apps/api/app/learning_routes.py": "5e8220fa82b0f6935aca87cb30d5e98c5bae6d4572c16c9535b16e610c79c892",
+    "apps/api/app/learning_service.py": "256bfc7ff42f38e5fe6d303a06abadc921840411934727ab3dba9be2bc98a855",
+    "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
+    "apps/api/app/trend_models.py": "ff05b0030e0af6366e82445f81d74e0a4941e307e71179481e555419823077aa",
+    "apps/api/app/trend_repository.py": "870d5409760fe09a9c9806ffcb732c89d6a03d22d11b235d0c31d29baa61af09",
+    "apps/api/app/trend_service.py": "4b771e65c4894a6ef087ada3ad887dc46cd241e7d8c651d7d03758e6af22cc56",
+    "apps/api/app/trend_routes.py": "847fda6d9a4c635e94e8b2ddd98a6a366d0f7f03b5f72fe4efd6dd700ec92c47",
+    "apps/api/app/media_intelligence_models.py": "a7b73a311ab8e9a5a50e995f798c90c96c39c561bade9cd62616566cd1734622",
+    "apps/api/app/media_intelligence_service.py": "fb8f2c9ff8aa651b2c000309be9f3ef091fd767c073d77d7241d8eee1a352c4c",
+    "apps/api/app/media_intelligence_routes.py": "cd4f454324a03f8ed57b809d2c88c31fb260a06fbfe689ff29d0df93a369f043",
+    "apps/api/migrations/versions/0024_north_star_channel_learning.py": "fe6aea091e474af5bba6fe12063ab9e7ada86f136492f0ef86e2d56acdc413d0",
+    "apps/api/tests/test_channel_learning.py": "d3bfb43b64e9d385572c2e62fd10fd3efb69bbe4cb0a668f02dd16e729f0d41b",
+    "apps/api/tests/test_channel_learning_migration.py": "d65e817a92c9626e024d4e3dd2bae1021e6a77fdaadc6fd127f00ff411905783",
+    "apps/studio-web/channel-learning.mjs": "b88c817c2a21415a994edece90aece5d1a1c6def82bb3466c9851e73dcd6105e",
+    "apps/studio-web/tests/channel-learning.test.mjs": "c7073f4d169a3cdeab1914295b78b4f4159dbe56f008e7f6543b2418a52fb5e9",
+    "apps/studio-web/studio.js": "60ae0c5c2a9ad15941f38cddd1d8faebff4629ed3d4aa7c5c4e952c61cf70728",
+    "apps/studio-web/studio.html": "f5af4897bf72f1f5c7a81fb73418be84678c16ce92fc30fa503a3e080eb4ebac",
+    "apps/studio-web/app.js": "94976b62ec02e871d5a436c3fae3a8f2b2506d76582563aeaeb4e57d969024e5",
+    "apps/studio-web/index.html": "1bdc9969d3f07cd662458d3c23f861d0dce817c661fe3c4a796c4050f630d7d4",
+    "scripts/north_star_channel_learning_contract.py": "aafa3a4440c6075dcc53ac1aaea49aa0e3d40badbbede8cfc78841e1a790f862",
+    "docs/CHANNEL_LEARNING_SNAPSHOTS.md": "e16619962f1783f2534059b8b80ad6dde8fefdd6b15be90f7c9e676a4d431176"
+  },
+  "logs": {
+    "channel-learning-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-r1.log",
+      "sha256": "234866a0c0780e85c976441e5d2ae56796b244d79eccedfc9e02fc790938ebf5"
+    },
+    "channel-learning-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-r2.log",
+      "sha256": "6a67489af8ae00c4db63d0cbef7a445e8239a23b9a4782def9741bc63b1473a0"
+    },
+    "channel-learning-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-r3.log",
+      "sha256": "ff95ed83b414302703e7e58a1862a379d52007b099cffee583aaa9d00cba22f5"
+    },
+    "studio-channel-learning-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-channel-learning-r1.log",
+      "sha256": "905ae6b7e10e3144a40e52e13d03028b67f588c0112229f7c41ddb944e43eae7"
+    },
+    "channel-learning-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n1.log",
+      "sha256": "a1cd54e578c4d3741cdd46e7891e2a062dbcb9a0702a2f538ffe0f615e566122"
+    },
+    "channel-learning-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2.log",
+      "sha256": "20e68787490d0a7c59c37fd4c5319d7c492a097ca1dc537b962553516bbb707f"
+    }
+  },
+  "contract": {
+    "directory": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2",
+    "files": {
+      "contract.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2\\contract.json",
+        "sha256": "013d22dab8a9c32d0742183c6709539ee6936bcb776434bd29d2f74c52fa5f2f"
+      },
+      "feedback.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2\\feedback.json",
+        "sha256": "f4fc1825fb44974a0914f5d2e773843fb71561e22bf6937a398d71ca4be15bcc"
+      },
+      "idea-shortlist.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2\\idea-shortlist.json",
+        "sha256": "83058e2416052467db63fbcde886a6c65cdc8c76e6cbbac2eeba2860a5e178ea"
+      },
+      "learning-snapshot.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2\\learning-snapshot.json",
+        "sha256": "90a0aef3b8779e562f3a24df4a17791b19f5e8ae12e7103f9be82ee6af95d2d5"
+      },
+      "requests.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2\\requests.json",
+        "sha256": "b189de017ffe39caf6b48897b14cbfeab1dc769bf81c95b773a85590436397e2"
+      },
+      "restored-state.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2\\restored-state.json",
+        "sha256": "efe24ea93c7f37f37a1224557eb4acd2e41e2cfc14a225e6f0325bef6952a44b"
+      },
+      "trend-evidence.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2\\trend-evidence.json",
+        "sha256": "33bdd7c6a22c7fdcea0d6f9c5a7e4ef4da71346edffb88d0473695bbd99e3850"
+      }
+    },
+    "database": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-learning-contract-n2\\owned-fixture\\production.db",
+      "sha256": "39c85b67075c1d63b49ebe2e052db345c6b5f4bd9248e74404899f75a9ba85c9"
+    },
+    "summary": {
+      "status": "PASS",
+      "synthetic_metric_seeds": 6,
+      "official_mock_reads": 3,
+      "persisted_metric_snapshots": 7,
+      "learning_snapshots": 1,
+      "authenticated_learning_requests": 3,
+      "fresh_process_exact_restore": true,
+      "historical_metrics_unchanged": true,
+      "learning_cost_operations": 0,
+      "analytics_cost_records": 3,
+      "actual_cost": null,
+      "advisory_trend_idea_lineage_verified": true,
+      "publishing_time_unknown": true,
+      "full_media_qc": false,
+      "media_is_nonplayable_fixture_bytes": true,
+      "real_provider_tested": false,
+      "paid_calls": 0,
+      "actual_external_calls": 0,
+      "real_credentials_read": 0,
+      "owner_uat_accepted": false,
+      "accepted_media_replaced": false,
+      "production_deployed": false,
+      "learning_loop_ready": false,
+      "video_factory_north_star_ready": false
+    }
+  },
+  "api_final_affected_passed": 58,
+  "api_final_affected_seconds": 143.19,
+  "new_api_migration_cases": 24,
+  "studio_passed": 159,
+  "studio_duration_ms": 764.8956,
+  "new_studio_cases": 7,
+  "counts_overlap": true,
+  "failed_initial_test_logs_retained": true,
+  "last_completed_linux_api": {
+    "head": "1439c4dae90e83d622c390f09e0baae8af0a10ed",
+    "passed": 2580,
+    "skipped": 11,
+    "seconds": 1398.23,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-1439c4d.log",
+      "sha256": "b09b51a6179c353a0dd7c3e18bed1e250559e8a49e33dcbc3aa5087106cd1650"
+    }
+  },
+  "full_parent_api_status": "VERIFIED_AT_1439C4D_BEFORE_LEARNING_INCREMENT",
+  "full_current_api_status": "PENDING_PINNED_LEARNING_COMMIT",
+  "actual_provider_calls": 0,
+  "paid_operations": 0,
+  "real_credentials_read": 0,
+  "accepted_media_replaced": false,
+  "native_learning_integrated": false,
+  "template_selection_from_advice_integrated": false,
+  "personalized_opportunity_ranking_complete": false,
+  "browser_real_tested": false,
+  "owner_uat_accepted": false,
+  "learning_loop_ready": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "full_parent_linux_api": {
+    "head": "1439c4dae90e83d622c390f09e0baae8af0a10ed",
+    "passed": 2580,
+    "skipped": 11,
+    "seconds": 1398.23,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-1439c4d.log",
+      "sha256": "b09b51a6179c353a0dd7c3e18bed1e250559e8a49e33dcbc3aa5087106cd1650"
+    }
+  }
+}

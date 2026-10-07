@@ -162,6 +162,7 @@ class OpportunityWeights(StrictModel):
 
 
 class TrendContext(StrictModel):
+    learning_snapshot_id: str | None = Field(default=None, pattern=r'^lsn_[A-Za-z0-9_-]{4,60}$')
     channel: str = Field(default="short-video", min_length=1, max_length=80)
     niche: NicheName = NicheName.CUSTOM
     business_objective: str = Field(default="awareness", min_length=1, max_length=80)
@@ -189,6 +190,7 @@ class TrendScoreRead(StrictModel):
 
 
 class TrendClusterRead(StrictModel):
+    learning_feedback: dict[str, Any] | None = None
     cluster_id: str
     workspace_id: str
     canonical_key: str

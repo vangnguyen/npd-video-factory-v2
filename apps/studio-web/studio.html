@@ -430,6 +430,21 @@
               </div>
               <div class="analytics-history-scroll"><table><thead><tr><th>Lịch</th><th>Trạng thái</th><th>Lượt</th><th>Khoảng cách</th><th>Lần tiếp (UTC)</th><th>Người cập nhật</th><th>Điều khiển</th></tr></thead><tbody id="analytics-refresh-rows"></tbody></table></div>
             </article>
+            <article class="analytics-card channel-learning">
+              <h3>Đề xuất từ lịch sử kênh</h3><p id="learning-note"></p>
+              <div class="analytics-collection-controls">
+                <label>Video mỗi nhóm <input id="learning-group-posts" type="number" min="3" max="50" step="1" value="3"></label>
+                <label>Video đối chiếu <input id="learning-control-posts" type="number" min="3" max="50" step="1" value="3"></label>
+                <label>Chênh lệch điểm tối thiểu <input id="learning-score-difference" type="number" min="0" max="100" step="1" value="10"></label>
+                <button id="learning-create" class="secondary-button" type="button" disabled>Lưu snapshot đề xuất mới</button>
+                <button id="learning-read" class="secondary-button" type="button">Đọc lịch sử đề xuất</button>
+              </div>
+              <p id="learning-snapshot-reference"></p>
+              <label><input id="learning-use-advice" type="checkbox" disabled> Đính kèm đề xuất đã review vào kế hoạch B-roll tiếp theo</label>
+              <p>Giọng, phụ đề, cách dựng và hook được gợi ý để thử nghiệm. Mọi thay đổi cần bạn chọn; dữ liệu thiếu không trở thành kết quả thắng.</p>
+              <div class="analytics-history-scroll"><table><thead><tr><th>Đặc điểm</th><th>Giá trị</th><th>Nhóm / đối chiếu</th><th>Chênh lệch</th><th>Đề xuất</th><th>Snapshot bằng chứng</th></tr></thead><tbody id="learning-rows"></tbody></table></div>
+              <div id="learning-history"></div>
+            </article>
             <p class="hard-boundary analytics-boundary">Khuyến nghị cần review và chưa tự áp dụng. Analytics không publish, xóa nội dung hoặc đổi media budget.</p>
           </section>
         </div>

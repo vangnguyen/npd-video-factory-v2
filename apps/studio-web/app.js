@@ -51,7 +51,10 @@ function toast(message, error = false) {
 }
 
 function currentContext() {
+  const learning = $('#learning-reference').value.trim();
+  if (learning && !/^lsn_[A-Za-z0-9_-]{4,60}$/.test(learning)) throw new Error('Snapshot đề xuất không hợp lệ.');
   return {
+    ...(learning ? {learning_snapshot_id: learning} : {}),
     channel: $("#channel-filter").value,
     niche: $("#niche-filter").value,
     business_objective: $("#objective-filter").value,

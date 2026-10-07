@@ -579,6 +579,7 @@ class TrendRepository:
         request: IdeaGenerateRequest,
         *,
         engine: IdeaEngine,
+        learning_feedback: dict | None = None,
     ) -> list[IdeaCandidateRead]:
         trend_request = _trend_request_from_idea(request)
         async with self.session_factory() as session:
@@ -603,7 +604,7 @@ class TrendRepository:
                     "algorithm": "deterministic-idea-engine-v1",
                     "cluster_id": cluster_id,
                     "cluster_version": cluster.version,
-                    "request": request.model_dump(mode="json", exclude={"count"}),
+                    "request": request.model_dump(mode="json", exclude={"count"} | ({"learning_snapshot_id"} if request.learning_snapshot_id is None else set())),
                 }
                 generation_key = hashlib.sha256(
                     json.dumps(generation_payload, sort_keys=True).encode("utf-8")
@@ -659,12 +660,15 @@ class TrendRepository:
                         cta_concept=idea.cta_concept,
                         trend_references_json=idea.trend_references,
                         originality_notes=idea.originality_notes,
-                        brief_json=idea.brief,
+                        brief_json={**idea.brief, **({'learning_feedback': learning_feedback} if learning_feedback else {})},
                         status="draft",
                         provenance={
                             "algorithm": "deterministic-idea-engine-v1",
                             "source_references_only": True,
                             "copied_creator_media": False,
+                            **({'learning_snapshot_id': learning_feedback['learning_snapshot_id'],
+                                'learning_content_sha256': learning_feedback['content_sha256'],
+                                'learning_is_advisory': True} if learning_feedback else {}),
                         },
                     )
                     session.add(row)
@@ -764,6 +768,8 @@ class TrendRepository:
                 ).all()
                 scored: list[tuple[IdeaCandidateORM, IdeaScoreORM, TrendScoreORM | None]] = []
                 for idea in ideas:
+                    if request.learning_snapshot_id and (idea.brief_json or {}).get('learning_feedback', {}).get('learning_snapshot_id') != request.learning_snapshot_id:
+                        continue
                     idea_score = await session.scalar(
                         select(IdeaScoreORM).where(IdeaScoreORM.idea_id == idea.idea_id)
                     )
@@ -792,7 +798,7 @@ class TrendRepository:
                 selected = scored[: request.top_n]
                 state_payload = {
                     "algorithm": "content-opportunity-queue-v1",
-                    "request": request.model_dump(mode="json"),
+                    "request": request.model_dump(mode="json", exclude={'learning_snapshot_id'} if request.learning_snapshot_id is None else set()),
                     "ideas": [(item[0].idea_id, str(item[1].total_score)) for item in selected],
                 }
                 queue_run_id = "qrun_" + hashlib.sha256(

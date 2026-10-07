@@ -127,6 +127,7 @@ class VideoGenerationInput(StrictModel):
 
 
 class MediaPlanRequest(StrictModel):
+    learning_snapshot_id: str | None = Field(default=None, pattern=r'^lsn_[A-Za-z0-9_-]{4,60}$')
     purpose: Literal["scene_media", "supporting_broll"] = "scene_media"
     analysis_id: str = Field(pattern=r"^ana_[A-Za-z0-9_-]{4,60}$")
     transcript_id: str | None = Field(default=None, pattern=r"^trn_[A-Za-z0-9_-]{4,60}$")

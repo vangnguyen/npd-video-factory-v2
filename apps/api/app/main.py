@@ -22,6 +22,8 @@ from .analytics_providers import AnalyticsProviderRegistry
 from .analytics_repository import AnalyticsRepository
 from .analytics_routes import router as analytics_router
 from .analytics_refresh_routes import router as analytics_refresh_router
+from .learning_routes import router as learning_router
+from .learning_service import ChannelLearningService
 from .analytics_service import AnalyticsService
 from .auto_edit_providers import (
     ContractOnlyTranscriptionProvider,
@@ -208,12 +210,14 @@ async def lifespan(app: FastAPI):
     app.state.production_repository = production_repository
     app.state.publishing_repository = publishing_repository
     app.state.analytics_repository = analytics_repository
+    app.state.channel_learning_service = ChannelLearningService(session_factory)
     app.state.default_workspace_id = default_workspace.workspace_id
     app.state.trend_provider_registry = trend_providers
     app.state.trend_intelligence_service = TrendIntelligenceService(
         trend_repository,
         trend_providers,
         platform,
+        learning=app.state.channel_learning_service,
     )
     app.state.job_store = PostgresJobStore(
         session_factory,
@@ -350,6 +354,7 @@ async def lifespan(app: FastAPI):
         providers=media_providers,
         allow_external_execution=settings.media_external_execution_enabled,
         allow_paid_execution=settings.media_paid_execution_enabled,
+        learning=app.state.channel_learning_service,
     )
     app.state.media_resolution_service = MediaResolutionService(
         repository=media_intelligence_repository,
@@ -466,6 +471,7 @@ app.include_router(production_router, dependencies=_human_route_dependencies)
 app.include_router(publishing_router, dependencies=_human_route_dependencies)
 app.include_router(analytics_router, dependencies=_human_route_dependencies)
 app.include_router(analytics_refresh_router, dependencies=_human_route_dependencies)
+app.include_router(learning_router, dependencies=_human_route_dependencies)
 app.include_router(provider_safety_router, dependencies=_human_route_dependencies)
 app.include_router(operations_router, dependencies=_human_route_dependencies)
 app.include_router(bridge_router)

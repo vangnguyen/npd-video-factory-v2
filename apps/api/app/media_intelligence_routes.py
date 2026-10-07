@@ -16,6 +16,7 @@ from .broll_planner import BrollApplyRequest, apply_broll
 from .timeline_models import TimelineRead
 from .timeline_logic import TimelineEditError
 from .timeline_repository import TimelineConflictError
+from .learning_service import LearningError
 
 
 router = APIRouter(prefix="/api/v1")
@@ -61,6 +62,8 @@ async def create_media_plan(
 ) -> MediaPlanRead:
     try:
         return await planning_service(request).create(project_id=project_id, payload=payload)
+    except LearningError as exc:
+        raise error(404 if exc.code.endswith('_NOT_FOUND') else 409, exc.code, exc.code) from None
     except KeyError as exc:
         raise missing("Project, Auto Edit analysis, Vision analysis or source asset") from exc
     except MediaProviderNotConfigured as exc:
