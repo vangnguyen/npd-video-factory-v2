@@ -730,19 +730,23 @@ class Store:
 
     def append_media(self, identifier, revision, asset):
         with self.transaction() as con:
-            project = self.editable(con, identifier, revision)
-            doc = project["document"]
-            before_shots = copy.deepcopy(doc)
-            library = project_assets(doc)
-            if len(library) >= MAX_ASSETS:
-                raise WorkflowError("PROJECT_MEDIA_LIMIT_50", 400)
-            doc["scene_media"] = scene_bindings(doc)
-            doc["assets"] = library + [asset]
-            doc.pop("edit_plan",None)
-            validate_bindings(doc)
-            doc = self.sync_shot_document(doc, before_shots, identifier)
-            con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
-                (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
-            self.event(con, identifier, "media_uploaded_approval_invalidated", {"revision": revision + 1, "asset_id": asset["id"], "kind": asset["kind"]})
-            self.version(con, identifier)
+            self.append_media_in_transaction(con,identifier,revision,asset)
         return self.get(identifier)
+
+    def append_media_in_transaction(self,con,identifier,revision,asset):
+        """Existing upload path shared by atomically receipted stock attachment."""
+        project = self.editable(con, identifier, revision)
+        doc = project["document"]
+        before_shots = copy.deepcopy(doc)
+        library = project_assets(doc)
+        if len(library) >= MAX_ASSETS:
+            raise WorkflowError("PROJECT_MEDIA_LIMIT_50", 400)
+        doc["scene_media"] = scene_bindings(doc)
+        doc["assets"] = library + [asset]
+        doc.pop("edit_plan",None)
+        validate_bindings(doc)
+        doc = self.sync_shot_document(doc, before_shots, identifier)
+        con.execute("UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?",
+            (revision + 1, json.dumps(doc, ensure_ascii=False), now(), identifier))
+        self.event(con, identifier, "media_uploaded_approval_invalidated", {"revision": revision + 1, "asset_id": asset["id"], "kind": asset["kind"]})
+        self.version(con, identifier)

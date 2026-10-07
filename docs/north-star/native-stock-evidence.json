@@ -1,0 +1,157 @@
+{
+  "schema": "native-stock-evidence-v1",
+  "parent_head": "97c2e05e0c2b3b4041c937f18c28d44bc240610e",
+  "source_sha256": {
+    "services/windows_native/stock.py": "47974ab868c5eae0605442c48b7766908ff2d9a5e34eaf1445ce2ec5e6cbef4b",
+    "services/windows_native/stock_models.py": "2ba68dadb8fb11e72adf6612d8df896a49b7f34106b259cda76e694fa2800628",
+    "services/windows_native/stock_registry.py": "7986ecd0df732be38558d8641bba4f5d245baa44c9f2732647072b863c41e700",
+    "services/windows_native/stock_routes.py": "b0a974b9a17516440080bdc2f36223f3b6ba240efd3e9c08abd4cf67d44f3341",
+    "services/windows_native/access.py": "09734ab6680123983e1a49c5f9cf1d4ddde5f28252910bd8f56b8d221b04a9f6",
+    "services/windows_native/backup.py": "74c8e4920389f2a00a4bec730f349d047d8284e40035ca0ed3821193ca14a571",
+    "services/windows_native/server.py": "33ddbe136a95be5164440ff5dadf6df2f60a9d3ecd2651e3f63a0a3e53cc3fb5",
+    "services/windows_native/store.py": "87dac57ed4d157efb432fb39d08a616ac7e205515d099191acc333f45cc55838",
+    "services/windows_native/source_broll.py": "90f6738ecb590ecaac32b7bf34e1442c96a3df0eecfa84c7c905c44f4f99eb5f",
+    "services/windows_native/tests/test_stock.py": "5d29ddaadf8c3661721ba4d7714375068f923963d876606f545a8516d254bf65",
+    "services/windows_native/tests/test_stock_http.py": "6c6ded96272161e2bb41f73ad6309e7b2ef1a96e644bb55e0bdd0132df1a5b13",
+    "services/windows_native/tests/test_phase10_http.py": "a3157a9e693c1af6366c96964f834441a5d2a75d77d5abc510e307bab114ac3f",
+    "apps/studio-web/native-stock.mjs": "616d19f8495ba8510f1d0d32e681593d2effe9aecdec47b8b78ff210b45af9e6",
+    "apps/studio-web/native.mjs": "9fd0eed013414ee56f29f537bfbac71543fa475820f3484cf18a20ade01803ab",
+    "apps/studio-web/native.html": "8bdd7c000afb2c165c059209f814ec56664f57427ca21a64860a42f2d1764be1",
+    "apps/studio-web/native.css": "3c828cb36b11eb1e8e6e0e50efbd3de1628e93b9cd1fceedd49739f417570715",
+    "apps/studio-web/tests/native-stock.test.mjs": "5fe3405d9ccbbcaa0bbaf84fbd55858192be9aa370e8296342f053d4d538cc21",
+    "scripts/north_star_native_stock.py": "39a87c278166a5e166b6971f29bc587f2fce75ce7f67d49334b0492b79d7eadd",
+    "docs/NATIVE_STOCK_MEDIA.md": "d720f6ed0670d4d0cf6ddd30416c13bd3f388e555663a6d392bd4a51a06d488d"
+  },
+  "logs": {
+    "native-stock-r1.log": "2c3fc1a9f0d83d1b8e6232843bd72d2955294f888b972a326fd644354f057a88",
+    "native-stock-r2.log": "eab7befffc817e8e003011cf05caf333ea3b8d01908f5c29d8bf7b9df726301f",
+    "native-stock-r3.log": "0c2d3e73fc0b09b10bceb08b0f5095652992569437f463ef1cf07d8817f6c5d0",
+    "native-stock-r4.log": "b5ef227ea49f13a88431cf2f2f5c55721bf7403be5957376e82b24a75980e2a8",
+    "native-stock-r5.log": "296686cf31d08dfd0125e026a96459f190b2c4fbac55ae3abc2c61a0fe6b7772",
+    "api-stock-native-r1.log": "ca0db9d764fedff2908e475da3e6c82939a9a8235f09446d989cf0c05863a197",
+    "studio-native-stock-r1.log": "d9400e37e225d6d4160749af497c9760e568a319cb4f8f0c93bdec1fac914db3",
+    "studio-native-stock-r2.log": "beb88e705b2d3894ce27d2b9bd7069f3755f1a9c6af426af113e3c38d8014f71",
+    "native-full-stock-r1.log": "934a022510b05fe829daeda476bf849ae47d46631c94040c9bf352d77b06883e",
+    "native-stock-contract-n1.log": "d77fb5a04dbf2f6b4b8d473592b6a4962292041a3f06dbba4c85b900fcb97bc0"
+  },
+  "contract_bundle": {
+    "contract.json": {
+      "sha256": "60325be7df40c52343f5c9c2620322a827cc2f976da8fe8f65bce86a2a026de1",
+      "bytes": 1126
+    },
+    "cost.json": {
+      "sha256": "536f7cc3e10d52df4a9e1c43b0b0600126118c3152206e9c870d52b010e2ea45",
+      "bytes": 5511
+    },
+    "http-requests.json": {
+      "sha256": "9ae414a69818a0ae1e8cb8aabba398050333c6d82749938c40a9abbd5981c23b",
+      "bytes": 4239
+    },
+    "native-stock-backup.zip": {
+      "sha256": "57e6f52298f5b1e788aeb057a0db3cc06f4427b6c80abe62b9b0c25a76e38537",
+      "bytes": 8411510
+    },
+    "pexels-registered.jpg": {
+      "sha256": "65b594e9ac479e328de15361014e30d7218f6c8423d308244fac4d8cf98cd7c1",
+      "bytes": 1830
+    },
+    "pixabay-registered.mp4": {
+      "sha256": "c6c6aa527deadf2280aedcf08b80ccc772a76df7f6d52ac91a8098fa03a2e28e",
+      "bytes": 325592
+    },
+    "recovery.json": {
+      "sha256": "ff017d3a6117eed5552289bce7cb501e0c44f9c108f06a428572c9429c16e93f",
+      "bytes": 4826
+    },
+    "source-projections.json": {
+      "sha256": "a784b5f90d857d3445f22e4a3ad508ec29ab09111f10983956e097189d48133f",
+      "bytes": 6483
+    },
+    "source-restore.json": {
+      "sha256": "4c3829ccae63b3fc1cd7a23594534193cfe44e1d81e5d8a995af8ef7451269c7",
+      "bytes": 2056
+    },
+    "stock-bundles.json": {
+      "sha256": "5192090536f5cb2e4357e3ec02cf1a124056d9f7327931f15fd895083cc09db7",
+      "bytes": 28326
+    },
+    "stock-events.json": {
+      "sha256": "4944d59daf1faba3f18fc2c6155ddc5784b8090d578dbb94fa9875e5ea94ff7c",
+      "bytes": 5380
+    },
+    "stock-history.json": {
+      "sha256": "611e0a90c7b0a7dafb98664a788e0649b941e2dc27b86d8a83b5d5a70de60f12",
+      "bytes": 28223
+    },
+    "wire-audit.json": {
+      "sha256": "d1da27de1515a27fb0a141248ab3021ce6141fa63e550b07b670fe12eff431b6",
+      "bytes": 804
+    }
+  },
+  "native_full_passed": 521,
+  "native_full_seconds": 327.169,
+  "affected_passed": 32,
+  "affected_seconds": 15.16,
+  "api_official_wire_passed": 24,
+  "api_official_wire_seconds": 14.51,
+  "studio_passed": 201,
+  "studio_duration_ms": 948.2869,
+  "new_native_cases": 13,
+  "new_studio_cases": 5,
+  "counts_overlap": true,
+  "failed_attempts_retained": {
+    "native-stock-r1.log": "Fixture expected operations instead of cost summary records and returned no valid core proposal; corrected fixtures without weakening the existing content gate."
+  },
+  "providers_default": "NOT_CONFIGURED",
+  "registry_without_owner_flag_inert": true,
+  "arbitrary_client_urls_forbidden": true,
+  "independent_worker_and_cost_ledger": true,
+  "cache_root_workspace_scoped": true,
+  "download_full_decode_and_original_hash": true,
+  "download_automatic_attachment": false,
+  "atomic_import_and_frozen_version_receipt": true,
+  "fixture_promotion_rejected": true,
+  "source_broll_actual_stock_provenance_preserved": true,
+  "license_independently_verified": false,
+  "owner_legal_override_enabled": false,
+  "new_process_exact": true,
+  "offline_restore_exact": true,
+  "source_root": "C:/vf-native-fixture-stock-01",
+  "restore_root": "C:/vf-native-fixture-stock-restore-01",
+  "local_contract": {
+    "schema_version": "native-stock-contract-v1",
+    "project_id": "4975d4093956466fb8a8c34b8ca3b263",
+    "parent_final_sha256": "5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398",
+    "parent_preview_sha256": "1b19c136467326a7ec77c5f532dd758c1c8702efa025e1a09c277f2af44091c7",
+    "authenticated_http_requests": 28,
+    "fixture_wire_attempts": 6,
+    "actual_provider_calls": 0,
+    "stock_searches": 2,
+    "stock_downloads": 2,
+    "explicit_attachments": 2,
+    "independent_worker_executed": true,
+    "real_local_image_decode": true,
+    "real_local_video_full_decode": true,
+    "source_metadata_and_actual_dimensions_separate": true,
+    "fixture_rights_remain_unknown": true,
+    "no_automatic_attachment": true,
+    "old_jobs_versions_and_media_unchanged": true,
+    "core_approval_invalidated": true,
+    "source_broll_projection_preserves_stock_and_unknown_rights": true,
+    "actual_media_rerendered": false,
+    "real_credentials_read": 0,
+    "actual_publications": 0,
+    "paid_operations": 0,
+    "actual_hub_calls": 0,
+    "owner_uat": false,
+    "browser_real_tested": false,
+    "production_deployed": false
+  },
+  "unchanged_api_latest_full": {
+    "head": "e59a7d5",
+    "passed": 2659,
+    "skipped": 11,
+    "seconds": 1512.89,
+    "rerun": false
+  }
+}

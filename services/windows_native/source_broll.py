@@ -60,20 +60,28 @@ def shared_assets(project,config):
         content_type=('video/quicktime' if item['id'].endswith('.mov') else 'video/mp4') if item['kind']=='video' else (
             'image/png' if item['id'].endswith('.png') else 'image/jpeg')
         confirmed=item.get('rights_confirmed') is True
+        recorded=item.get('source_type') in {'stock','internal_library','ai_generated'} or item.get('rights_declaration_ref') is not None
+        source_type=item.get('source_type') if item.get('source_type') in {'stock','internal_library','ai_generated'} else 'user_upload'
+        rights=item.get('rights_status','unknown') if recorded else 'verified' if confirmed else 'unknown'
+        license=item.get('license') or 'unknown' if recorded else 'owner_upload_rights_attestation' if confirmed else 'unknown'
+        provider=item.get('provider') or 'unknown' if recorded else 'user-upload'
+        source_reference=item.get('source_reference') or 'assets/'+item['id']
         from .media_frame_analysis import asset_summary
         measured=asset_summary(project['document'],project['id'],item,config.data_root)
         output[asset_reference(item)]=AssetRead(asset_id=asset_reference(item),workspace_id='native-local',
             project_id='prj_'+project['id'],project_version_id=None,job_id=None,asset_class='source',kind=item['kind'],
             filename=item['filename'],object_key='assets/'+item['id'],content_type=content_type,
             size_bytes=path.stat().st_size,checksum_sha256=item['sha256'],storage_provider='native-local',version=1,
-            provenance={'source_type':'user_upload','rights_status':'verified' if confirmed else 'unknown',
-                'license':'owner_upload_rights_attestation' if confirmed else 'unknown',
-                'rights_verification_basis':'explicit owner upload attestation; no independent license verification',
-                'provider':'user-upload','source_reference':'assets/'+item['id'],'native_asset_id':item['id'],
+            provenance={'source_type':source_type,'rights_status':rights,'license':license,
+                'rights_verification_basis':'recorded provider/declaration metadata; no independent license verification' if recorded else 'explicit owner upload attestation; no independent license verification',
+                'provider':provider,'source_reference':source_reference,'native_asset_id':item['id'],
+                'license_url':item.get('license_url'),'creator':item.get('creator'),'provider_asset_id':item.get('provider_asset_id'),
+                'attribution_requirement':item.get('attribution_requirement'),'generation_provenance':item.get('generation_provenance',{}),
+                'production_eligible':item.get('production_eligible',not recorded),'actual_native_rights_status':item.get('rights_status','unknown'),
                 'tags':item.get('tags',[]),'description':item.get('description',''),
                 'media_metadata':{key:item.get(key) for key in ('duration_seconds','width','height')},
                 **({'pixel_quality_summary':measured.model_dump(mode='json')} if measured else {}),
-                'fixture':bool(item.get('explicit_fixture'))},created_at=timestamp,updated_at=timestamp)
+                'fixture':bool(item.get('explicit_fixture') or item.get('generation_provenance',{}).get('fixture'))},created_at=timestamp,updated_at=timestamp)
     return output
 
 
@@ -170,22 +178,22 @@ def select(store,config,project_id,revision,body):
         item=next((item for item in plan.items if item.media_plan_item_id==payload.item_id),None)
         if item is None or asset is None or asset.asset_id==analysis.asset_id:
             raise WorkflowError('AUTO_EDIT_BROLL_SELECTION_INVALID',400)
-        if asset.provenance['rights_status']=='unknown':raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
+        if asset.provenance['rights_status'] not in {'owned','licensed','verified'}:raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
         timestamp=datetime.now(timezone.utc);evidence_id='mas_'+uuid.uuid4().hex[:24]
         meta=asset.provenance['media_metadata']
         evidence=MediaAssetProvenanceRead(media_asset_id=evidence_id,workspace_id='native-local',project_id='prj_'+project_id,
             project_version_id=None,media_plan_id=plan.media_plan_id,media_plan_item_id=item.media_plan_item_id,
-            asset_id=asset.asset_id,source_type='user_upload',rights_status='verified',license=asset.provenance['license'],
-            license_url=None,provider='user-upload',provider_asset_id=asset.asset_id,creator=None,
-            source_reference=asset.provenance['source_reference'],attribution_requirement=None,
-            generation_provenance={'source':'immutable-user-upload','checksum_sha256':asset.checksum_sha256},
+            asset_id=asset.asset_id,source_type=asset.provenance['source_type'],rights_status=asset.provenance['rights_status'],license=asset.provenance['license'],
+            license_url=asset.provenance.get('license_url'),provider=asset.provenance['provider'],provider_asset_id=asset.provenance.get('provider_asset_id') or asset.asset_id,creator=asset.provenance.get('creator'),
+            source_reference=asset.provenance['source_reference'],attribution_requirement=asset.provenance.get('attribution_requirement'),
+            generation_provenance={**asset.provenance.get('generation_provenance',{}),'checksum_sha256':asset.checksum_sha256},
             width=meta['width'],height=meta['height'],duration_seconds=meta['duration_seconds'],orientation='unknown',
-            production_eligible=not asset.provenance['fixture'],publishing_allowed=False,downloaded_at=None,
+            production_eligible=asset.provenance['production_eligible'] and not asset.provenance['fixture'],publishing_allowed=False,downloaded_at=None,
             provenance={'asset_checksum_sha256':asset.checksum_sha256,
                 'rights_verification_basis':asset.provenance['rights_verification_basis'],'fixture':asset.provenance['fixture']},
             created_at=timestamp,updated_at=timestamp)
         plan.media_assets.append(evidence);item.selected_media_asset_id=evidence_id;item.source_asset_id=asset.asset_id
-        item.strategy='user_asset';item.status='resolved';item.needs_approval=False
+        item.strategy='licensed_stock' if asset.provenance['source_type']=='stock' else 'user_asset';item.status='resolved';item.needs_approval=False
         item.provenance['explicit_manual_selection']=True;plan.version+=1;plan.updated_at=timestamp
         plan.unresolved_items=sum(item.status!='resolved' for item in plan.items)
         _persist(store,con,project,plan,'auto_edit_broll_selection_saved')
@@ -208,7 +216,7 @@ def apply(store,config,project_id,revision,body):
                 raise WorkflowError('AUTO_EDIT_BROLL_SELECTION_INVALID',400)
             if evidence.provenance['asset_checksum_sha256']!=asset.checksum_sha256:
                 raise WorkflowError('AUTO_EDIT_BROLL_SOURCE_CHANGED')
-            if asset.provenance['rights_status']!='verified':raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
+            if asset.provenance['rights_status'] not in {'owned','licensed','verified'}:raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
             selections.append((item,evidence))
         try:changed=place_broll(snapshot,plan,selections,assets,replace_plan_clips=payload.replace_plan_clips)
         except (TimelineEditError,ValueError):raise WorkflowError('AUTO_EDIT_BROLL_PLACEMENT_INVALID',400) from None

@@ -112,7 +112,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -136,7 +136,7 @@ if (typeof document !== "undefined") {
   function controls() {
     bridgeUI?.controls();
     $("prompt").closest('label').hidden=Boolean(workspaceUI)&&$("input-kind").value==='media';
-    const active=jobActive(project), shotWorking=(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false), blocked=busy||shotWorking||active||project?.archived;
+    const active=jobActive(project), shotWorking=(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false), blocked=busy||shotWorking||active||project?.archived;
     document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-workspace-control],[data-auto-edit-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
     $("refresh").disabled=busy||shotWorking;
     $("project-picker").disabled=busy||shotWorking||dirty;
@@ -187,6 +187,7 @@ if (typeof document !== "undefined") {
     analyticsUI?.controls();
     visionUI?.controls();
     rightsUI?.controls();
+    stockUI?.controls();
     variantsUI?.controls();
     channelUI?.controls();
   }
@@ -222,6 +223,7 @@ if (typeof document !== "undefined") {
     analyticsUI?.sync();
     visionUI?.sync();
     rightsUI?.sync();
+    stockUI?.sync();
     variantsUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
     refreshCosts();
@@ -321,6 +323,12 @@ if (typeof document !== "undefined") {
       const rights=await import('./native-rights.mjs');$('native-rights-panel').hidden=false;
       rightsUI=rights.initializeNativeRights({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
+    }
+    if(session.capabilities?.native_stock_media===true){
+      const stock=await import('./native-stock.mjs');$('native-stock-panel').hidden=false;
+      stockUI=stock.initializeNativeStock({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false),canManage,
+        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
+        onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_analytics_review===true){
       const analytics=await import('./native-analytics.mjs');$('native-analytics-card').hidden=false;
