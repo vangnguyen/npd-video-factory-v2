@@ -60,8 +60,11 @@ def hash_idempotency_key(value: str) -> str:
 
 
 def analytics_request_fingerprint(payload: AnalyticsSyncRequest) -> str:
+    values = payload.model_dump(mode='json')
+    if values.get('query') is None:
+        values.pop('query', None)  # Preserve existing V2-10 idempotency fingerprints.
     encoded = json.dumps(
-        payload.model_dump(mode="json"),
+        values,
         sort_keys=True,
         separators=(",", ":"),
     ).encode("utf-8")

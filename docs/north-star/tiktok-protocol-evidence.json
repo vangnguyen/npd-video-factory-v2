@@ -77,11 +77,21 @@
   "identity_account_credentials_disclosures_and_confirmations_are_fixtures": true,
   "default_factory_activated": false,
   "durable_tiktok_runtime_accepted": false,
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_current_api_status": "VERIFIED_AT_5A5686D_BEFORE_ANALYTICS_INCREMENT",
   "real_provider_acceptance": "BLOCKED_EXTERNAL",
   "provider_policy_constraint": "Official guidance excludes private/internal team upload utilities; eligible creator application/provider review unverified",
   "provider_policy_source": "https://developers.tiktok.com/docs/en/content-sharing-guidelines",
   "owner_uat_accepted": false,
   "publishing_ready": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_current_linux_api": {
+    "head": "5a5686d4ef758f9342e3e67fc0246842867fe56b",
+    "passed": 2451,
+    "skipped": 11,
+    "seconds": 924.32,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-5a5686d.log",
+      "sha256": "38cdf801cc41dc41445fdc59dd1c5d144eb1fa191c5bbf5600cfc8c8b66294bd"
+    }
+  }
 }

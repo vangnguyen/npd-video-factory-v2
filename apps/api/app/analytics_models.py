@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import math
 from typing import Any, Literal
 
 from pydantic import Field, model_validator
@@ -71,6 +72,7 @@ class AnalyticsSyncRequest(StrictModel):
     ] = "winner_candidate"
     scheduled_for: datetime | None = None
     actor_ref: str = Field(default="studio-user", min_length=1, max_length=160)
+    query: dict[str, Any] | None = None
 
     @model_validator(mode="after")
     def validate_schedule(self) -> "AnalyticsSyncRequest":
@@ -80,6 +82,11 @@ class AnalyticsSyncRequest(StrictModel):
             raise ValueError("scheduled_refresh requires scheduled_for")
         if self.provider_mode == "official" and self.fixture_profile != "winner_candidate":
             raise ValueError("fixture_profile applies only to the fixture provider")
+        if self.query is not None:
+            if self.provider_mode != 'official':
+                raise ValueError('query applies only to official analytics')
+            from .analytics_official import AnalyticsQuery
+            self.query = AnalyticsQuery.model_validate(self.query).model_dump(mode='json')
         return self
 
 
@@ -92,12 +99,21 @@ class AnalyticsProviderStateRead(StrictModel):
     supports_sync: bool
     supports_historical_snapshots: bool = True
     supports_rate_limit_backoff: bool = True
-    external_calls_enabled: Literal[False] = False
+    external_calls_enabled: bool = False
     real_provider_tested: Literal[False] = False
     production_deployed: Literal[False] = False
 
 
 class NormalizedMetrics(StrictModel):
+    @model_validator(mode='before')
+    @classmethod
+    def finite_metrics(cls, values):
+        if isinstance(values, dict):
+            for value in values.values():
+                if value is not None and (type(value) not in (int, float) or not math.isfinite(value)):
+                    raise ValueError('Metrics must be finite numbers or null')
+        return values
+
     views: float | None = Field(default=None, ge=0)
     impressions: float | None = Field(default=None, ge=0)
     reach: float | None = Field(default=None, ge=0)
@@ -138,7 +154,8 @@ class AnalyticsMetricSnapshotRead(StrictModel):
     metrics: NormalizedMetrics
     points: list[AnalyticsMetricPointRead]
     mock: bool
-    external_call: Literal[False] = False
+    external_call: bool = False
+    evidence: dict[str, Any] = Field(default_factory=dict)
     created_at: datetime
 
 
@@ -246,7 +263,8 @@ class AnalyticsSyncRead(StrictModel):
     failure_code: str | None
     failure_reason: str | None
     mock: bool
-    external_call: Literal[False] = False
+    external_call: bool = False
+    query: dict[str, Any] | None = None
     actor_ref: str
     created_at: datetime
     updated_at: datetime

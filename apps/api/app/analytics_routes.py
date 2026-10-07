@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Header, HTTPException, Request, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
 
 from .analytics_models import (
     AnalyticsEventRead,
@@ -16,7 +16,11 @@ from .analytics_repository import AnalyticsIdempotencyConflict
 from .analytics_service import AnalyticsBoundaryError, AnalyticsService
 
 
-router = APIRouter(prefix="/api/v1", tags=["analytics"])
+def private_analytics_response(response: Response):
+    response.headers['Cache-Control'] = 'no-store'
+
+
+router = APIRouter(prefix="/api/v1", tags=["analytics"], dependencies=[Depends(private_analytics_response)])
 
 
 def service(request: Request) -> AnalyticsService:

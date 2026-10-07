@@ -26,7 +26,7 @@ class AnalyticsSyncORM(Base):
     __tablename__ = "analytics_sync_jobs"
     __table_args__ = (
         UniqueConstraint("project_id", "idempotency_key_hash", name="uq_analytics_sync_project_idempotency"),
-        CheckConstraint("external_call = false", name="ck_analytics_sync_no_external_call_v2_10"),
+        CheckConstraint("NOT (mock = true AND external_call = true)", name="ck_analytics_sync_transport_truth"),
         Index("ix_analytics_sync_status_schedule", "status", "scheduled_for", "next_retry_at"),
         Index("ix_analytics_sync_project_created", "project_id", "created_at"),
     )
@@ -58,6 +58,7 @@ class AnalyticsSyncORM(Base):
     failure_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     mock: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     external_call: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    query_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     actor_ref: Mapped[str] = mapped_column(String(160), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(
@@ -69,7 +70,7 @@ class AnalyticsMetricSnapshotORM(Base):
     __tablename__ = "analytics_metric_snapshots"
     __table_args__ = (
         UniqueConstraint("sync_id", name="uq_analytics_snapshot_sync"),
-        CheckConstraint("external_call = false", name="ck_analytics_snapshot_no_external_call_v2_10"),
+        CheckConstraint("NOT (mock = true AND external_call = true)", name="ck_analytics_snapshot_transport_truth"),
         Index("ix_analytics_snapshot_project_collected", "project_id", "collected_at"),
     )
 
@@ -93,6 +94,7 @@ class AnalyticsMetricSnapshotORM(Base):
     collected_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     mock: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     external_call: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    evidence_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
 
 class AnalyticsMetricPointORM(Base):

@@ -99,11 +99,13 @@ def test_v2_04_allows_all_fixture_providers_to_be_disabled_in_production() -> No
     assert production.analytics_fixture_enabled is False
 
 
-def test_v2_10_rejects_live_analytics_and_raw_credential_values() -> None:
-    with pytest.raises(ValidationError, match="not activated in V2-10"):
+def test_official_analytics_requires_global_gate_and_external_secret_references() -> None:
+    with pytest.raises(ValidationError, match="global provider safety gate"):
         Settings(_env_file=None, analytics_external_execution_enabled=True)
     with pytest.raises(ValidationError, match="external secret references"):
         Settings(_env_file=None, youtube_analytics_credential_ref="plain-text-token")
+    with pytest.raises(ValidationError, match='prohibit external analytics'):
+        Settings(_env_file=None, app_env='ci', analytics_external_execution_enabled=True, provider_external_execution_enabled=True)
 
 
 def test_v2_11_webhook_delivery_gates_and_allowlist_fail_closed() -> None:

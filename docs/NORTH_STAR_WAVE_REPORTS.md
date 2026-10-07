@@ -1245,3 +1245,27 @@ EVIDENCE: `docs/north-star/meta-protocol-evidence.json`, `docs/META_OFFICIAL_PUB
 REGRESSIONS: selected protocols pass; current full suite pending. Accepted/live source/media/data/processes, main, schemas and publishing defaults remain unchanged. No real publish/delete, paid operation, live migration or deployment.
 
 EXTERNAL BLOCKERS: eventual current authorized provider/version/account/permissions/credential/storage acceptance; no safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: durable scoped Meta/TikTok adapters and account admission, remaining Native/provider controls, analytics/learning/Trend/Hub/hardening capabilities.
+
+### Wave 10 — scoped official analytics reads and immutable observations
+
+WAVE: 10. STATUS: IN PROGRESS. ANALYTICS_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `5a5686d4ef758f9342e3e67fc0246842867fe56b`, pushed/preserved in `north-star-meta-protocol.bundle`, SHA256 `4ff09fa2fb70791b7bdbd60408c32f382ac791198958c857b2587c5dfa0ec655`; fresh prior receipt verifies 15 accepted media and clean live 2ced7bc, main unchanged. This analytics increment will be separately pushed/bundled.
+
+CAPABILITIES COMPLETED: explicitly installed scoped read-only YouTube/TikTok adapters; account/video/receipt/workspace binding; dedicated in-memory read credential admission; bounded official transport with separate host purpose; strict nullable normalization, seconds/VND provider estimates; privacy/error/backoff handling; atomic claim and attempt fences; durable per-read cost intents and null actual billing; historical snapshots/evidence; frozen published edit features; private API response cache policy.
+
+CAPABILITIES PARTIAL: Meta collectors, operator bootstrap/configuration, Native analytics, channel refresh policy, channel/time-series/comparison UI, PostgreSQL migration/queue recovery acceptance, winner baselines and publication-time project feature freezing.
+
+TESTS: 92 selected checks PASS in 56.40s; after frozen edit-feature changes, 15 affected runtime/legacy checks PASS in 52.44s (overlap, not added). Offline migration retains every seeded old row with zero FK violations and refuses unsafe online SQLite before writes. Initial default temp folder access errors, an offset-naive ORM evaluation error, and missing legacy analysis fixture were corrected and retained in logs. First standalone contract used nonexistent `/events` rather than existing `/history`; corrected into fresh bundles without replacing prior files. Prior full Linux at 5a5686d4ef758f9342e3e67fc0246842867fe56b: **2451 PASS / 11 SKIP**, 924.32s; analytics full regression pending pinned commit.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: six official mock reads, five authenticated API requests, two immutable snapshots, six cost records with actual_cost=null; fresh process restores exact snapshot JSON. Transport-true unit test is explicitly a flag simulation, not real-provider evidence.
+
+EVIDENCE: `docs/north-star/analytics-read-evidence.json`; recovery `analytics-read-contract-n3` has eight JSON exports and cloned SQLite DB; retained source DB is byte-identical, its pre-existing fixture FK debt is recorded unchanged. No media replaced.
+
+REGRESSIONS: no accepted media/Owner UAT/source rewritten; default provider and publishing gates retained. Schema changes rehearsed only on owned copies, no live migration.
+
+EXTERNAL BLOCKERS: actual authorized accounts, OAuth scopes/permissions and provider acceptance; PostgreSQL/Docker isolated rehearsal unavailable. OWNER ACTION REQUIRED: none for ongoing safe implementation; separate credentials/permission required for real acceptance and Owner UAT remains pending.
+
+NEXT WAVE: complete analytics operator/UI/channel integration, winner baselines, learning personalization, full Trend Radar/Hub/production/final acceptance gaps; all original Master Spec waves remain in scope.
+
+Wave 10 follow-up: after final capability reporting and real-transport admission guards, 18 safety/capability checks and nine affected runtime checks pass. These overlap earlier counts. Real transport additionally requires an explicit trusted project cost-policy callback and enabled analytics registry; omitted policy leaves it not configured. No actual provider call occurred.

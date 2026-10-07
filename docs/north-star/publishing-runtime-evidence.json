@@ -80,7 +80,7 @@
   "extra_due_race_test_passed": 1,
   "new_runtime_tests": 8,
   "studio_tests_passed": 123,
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_current_api_status": "VERIFIED_AT_5A5686D_BEFORE_ANALYTICS_INCREMENT",
   "initial_harness_failure": "Expected stale-profile rejection code corrected; product rejected the changed target",
   "actual_source_bytes": 4256257,
   "actual_full_qc_runs": 2,
@@ -101,5 +101,15 @@
   "production_migration_executed": false,
   "owner_uat_accepted": false,
   "publishing_ready": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_current_linux_api": {
+    "head": "5a5686d4ef758f9342e3e67fc0246842867fe56b",
+    "passed": 2451,
+    "skipped": 11,
+    "seconds": 924.32,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-5a5686d.log",
+      "sha256": "38cdf801cc41dc41445fdc59dd1c5d144eb1fa191c5bbf5600cfc8c8b66294bd"
+    }
+  }
 }

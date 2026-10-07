@@ -93,8 +93,8 @@
   "new_console_tests": 7,
   "focused_final_console_tests_passed": 7,
   "initial_harness_error": "Incorrect new-test AssetORM import corrected to existing app.db; no product failure",
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
-  "full_runtime_parent_status": "RUNNING_DAD237A",
+  "full_current_api_status": "VERIFIED_AT_5A5686D_BEFORE_ANALYTICS_INCREMENT",
+  "full_runtime_parent_status": "PASS_DAD237A",
   "authenticated_api_requests": 9,
   "actual_full_qc_runs": 2,
   "actual_sqlite_aes": true,
@@ -115,5 +115,25 @@
   "publishing_ready": false,
   "production_migration_executed": false,
   "default_factory_activated": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_runtime_parent_linux_api": {
+    "head": "dad237a7f6772e1b1bdbe8db795e339337aa00a7",
+    "passed": 2329,
+    "skipped": 11,
+    "seconds": 2537.18,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-dad237a.log",
+      "sha256": "c72cdf14d13b0dc1337bc092981f04d97b204b4a6fc0638e83a5d470309ff0c8"
+    }
+  },
+  "full_current_linux_api": {
+    "head": "5a5686d4ef758f9342e3e67fc0246842867fe56b",
+    "passed": 2451,
+    "skipped": 11,
+    "seconds": 924.32,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-5a5686d.log",
+      "sha256": "38cdf801cc41dc41445fdc59dd1c5d144eb1fa191c5bbf5600cfc8c8b66294bd"
+    }
+  }
 }

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 
-from sqlalchemy import or_, select
+from sqlalchemy import or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -36,7 +36,8 @@ from .analytics_models import (
     WinnerFactorRead,
 )
 from .analytics_providers import AnalyticsCollection
-from .db import utc_now
+from .db import utc_now, CostRecordORM, ProviderUsageORM, ProviderRegistryORM, VideoProjectORM
+from .publishing_operations import amount
 
 
 class AnalyticsIdempotencyConflict(RuntimeError):
@@ -67,6 +68,7 @@ class AnalyticsRepository:
         request_fingerprint: str,
         max_attempts: int,
         actor_ref: str,
+        query: dict | None = None,
     ) -> tuple[AnalyticsSyncRead, bool]:
         async with self.session_factory() as session:
             existing = await session.scalar(
@@ -101,6 +103,7 @@ class AnalyticsRepository:
                 failure_reason=None,
                 mock=provider_mode == "fixture",
                 external_call=False,
+                query_json=query,
                 actor_ref=actor_ref,
                 created_at=now,
                 updated_at=now,
@@ -143,15 +146,25 @@ class AnalyticsRepository:
                 if row is None:
                     return None
                 now = utc_now()
+                if row.status == 'running':
+                    return None  # Busy is not ownership of the existing attempt.
                 if row.status not in {"queued", "scheduled", "retry_scheduled"}:
+                    return _sync_read(row)
+                if row.attempt_count >= row.max_attempts:
+                    row.status = 'failed'
+                    row.failure_code = 'ANALYTICS_ATTEMPTS_EXHAUSTED'
+                    row.failure_reason = 'The bounded collection attempts are exhausted.'
+                    row.updated_at = now
                     return _sync_read(row)
                 due_at = row.next_retry_at if row.status == "retry_scheduled" else row.scheduled_for
                 if due_at is not None and _aware(due_at) > now:
                     return _sync_read(row)
-                row.status = "running"
-                row.attempt_count += 1
-                row.next_retry_at = None
-                row.updated_at = now
+                won = await session.execute(update(AnalyticsSyncORM).where(
+                    AnalyticsSyncORM.sync_id == sync_id, AnalyticsSyncORM.status == row.status,
+                    AnalyticsSyncORM.attempt_count == row.attempt_count).values(status='running',
+                        attempt_count=row.attempt_count + 1, next_retry_at=None, updated_at=now))
+                if won.rowcount != 1: return None
+                await session.refresh(row)
                 self._event(
                     session,
                     row,
@@ -170,9 +183,12 @@ class AnalyticsRepository:
         features: VideoFeatureMetadata,
         assessment: AssessmentDraft,
         insights: list[InsightDraft],
+        expected_attempt: int | None = None,
     ) -> AnalyticsSyncRead:
-        if collection.external_call:
-            raise ValueError("V2-10 analytics collection must not report an external call")
+        if (type(collection.mock) is not bool or type(collection.external_call) is not bool
+            or collection.mock and collection.external_call or collection.source_kind not in ('fixture', 'official_api')
+            or collection.source_kind == 'fixture' and not collection.mock):
+            raise ValueError('ANALYTICS_COLLECTION_TRANSPORT_INCONSISTENT')
         async with self.session_factory() as session:
             async with session.begin():
                 row = await session.get(AnalyticsSyncORM, sync_id, with_for_update=True)
@@ -182,6 +198,9 @@ class AnalyticsRepository:
                     return _sync_read(row)
                 if row.status != "running":
                     raise RuntimeError(f"analytics sync {sync_id} is not running")
+                await self._fence(session, row, expected_attempt)
+                if row.provider_key != collection.provider_key or (row.provider_mode == 'fixture') != (collection.source_kind == 'fixture'):
+                    raise ValueError('ANALYTICS_COLLECTION_PROVIDER_MISMATCH')
                 now = utc_now()
                 snapshot_id = _new_id("ams")
                 snapshot = AnalyticsMetricSnapshotORM(
@@ -196,7 +215,8 @@ class AnalyticsRepository:
                     source_kind=collection.source_kind,
                     collected_at=collection.collected_at,
                     mock=collection.mock,
-                    external_call=False,
+                    external_call=collection.external_call,
+                    evidence_json=collection.evidence,
                     created_at=now,
                 )
                 session.add(snapshot)
@@ -288,7 +308,7 @@ class AnalyticsRepository:
                 row.failure_code = None
                 row.failure_reason = None
                 row.mock = collection.mock
-                row.external_call = False
+                row.external_call = row.external_call or collection.external_call
                 row.updated_at = now
                 self._event(
                     session,
@@ -300,7 +320,7 @@ class AnalyticsRepository:
                         "assessment_id": assessment_id,
                         "winner_state": assessment.state,
                         "mock": collection.mock,
-                        "external_call": False,
+                        "external_call": row.external_call,
                         "learning_insights": len(insights),
                         "secret_free": True,
                     },
@@ -329,12 +349,14 @@ class AnalyticsRepository:
         next_retry_at: datetime,
         code: str,
         reason: str,
+        expected_attempt: int | None = None,
     ) -> AnalyticsSyncRead:
         async with self.session_factory() as session:
             async with session.begin():
                 row = await session.get(AnalyticsSyncORM, sync_id, with_for_update=True)
                 if row is None:
                     raise KeyError(sync_id)
+                await self._fence(session, row, expected_attempt)
                 now = utc_now()
                 if row.attempt_count >= row.max_attempts:
                     row.status = "failed"
@@ -356,7 +378,7 @@ class AnalyticsRepository:
                         "failure_code": code,
                         "attempt_count": row.attempt_count,
                         "next_retry_at": row.next_retry_at.isoformat() if row.next_retry_at else None,
-                        "external_call": False,
+                        "external_call": row.external_call,
                         "secret_free": True,
                     },
                     now,
@@ -370,6 +392,7 @@ class AnalyticsRepository:
         status: str,
         code: str,
         reason: str,
+        expected_attempt: int | None = None,
     ) -> AnalyticsSyncRead:
         if status not in {"failed", "not_configured", "cancelled"}:
             raise ValueError(status)
@@ -378,6 +401,7 @@ class AnalyticsRepository:
                 row = await session.get(AnalyticsSyncORM, sync_id, with_for_update=True)
                 if row is None:
                     raise KeyError(sync_id)
+                await self._fence(session, row, expected_attempt)
                 now = utc_now()
                 row.status = status
                 row.next_retry_at = None
@@ -391,7 +415,7 @@ class AnalyticsRepository:
                     "analytics-worker",
                     {
                         "failure_code": code,
-                        "external_call": False,
+                        "external_call": row.external_call,
                         "secret_free": True,
                     },
                     now,
@@ -406,7 +430,8 @@ class AnalyticsRepository:
                     await session.scalars(
                         select(AnalyticsSyncORM).where(
                             or_(
-                                AnalyticsSyncORM.status.in_(["queued", "running"]),
+                                AnalyticsSyncORM.status == 'queued',
+                                (AnalyticsSyncORM.status == 'running') & (AnalyticsSyncORM.updated_at <= now - timedelta(minutes=5)),
                                 (
                                     AnalyticsSyncORM.status == "scheduled"
                                 )
@@ -422,6 +447,12 @@ class AnalyticsRepository:
                 identifiers: list[str] = []
                 for row in rows:
                     if row.status == "running":
+                        changed = await session.execute(update(AnalyticsSyncORM).where(
+                            AnalyticsSyncORM.sync_id == row.sync_id, AnalyticsSyncORM.status == 'running',
+                            AnalyticsSyncORM.attempt_count == row.attempt_count,
+                            AnalyticsSyncORM.updated_at <= now - timedelta(minutes=5)).values(status='queued', updated_at=now)
+                            .execution_options(synchronize_session=False))
+                        if changed.rowcount != 1: continue
                         row.status = "queued"
                         row.updated_at = now
                         self._event(
@@ -429,7 +460,7 @@ class AnalyticsRepository:
                             row,
                             "analytics.sync_recovered",
                             "analytics-worker",
-                            {"external_call": False, "secret_free": True},
+                            {"external_call": row.external_call, "secret_free": True},
                             now,
                         )
                     identifiers.append(row.sync_id)
@@ -471,6 +502,101 @@ class AnalyticsRepository:
         async with self.session_factory() as session:
             row = await session.get(AnalyticsSyncORM, sync_id)
             return _sync_read(row) if row is not None and row.project_id == project_id else None
+
+    async def get_sync_by_id(self, sync_id):
+        async with self.session_factory() as session:
+            row = await session.get(AnalyticsSyncORM, sync_id)
+            return _sync_read(row) if row else None
+
+    @staticmethod
+    async def _fence(session, row, expected_attempt):
+        if expected_attempt is None: return
+        changed = await session.execute(update(AnalyticsSyncORM).where(
+            AnalyticsSyncORM.sync_id == row.sync_id, AnalyticsSyncORM.status == 'running',
+            AnalyticsSyncORM.attempt_count == expected_attempt).values(updated_at=AnalyticsSyncORM.updated_at))
+        if changed.rowcount != 1: raise RuntimeError('ANALYTICS_ATTEMPT_OWNERSHIP_LOST')
+
+    async def assert_attempt(self, sync_id, expected_attempt):
+        async with self.session_factory() as session:
+            row = await session.get(AnalyticsSyncORM, sync_id)
+            if row is None or row.status != 'running' or row.attempt_count != expected_attempt:
+                raise RuntimeError('ANALYTICS_ATTEMPT_OWNERSHIP_LOST')
+
+    async def reserve_operation(self, context, operation, sequence, *, mock, target_sha256,
+                                estimated_cost=None, max_ai_cost=None):
+        import hashlib
+        amount(estimated_cost); amount(max_ai_cost)
+        if operation not in ('account_lookup', 'video_ownership', 'metrics') or type(sequence) is not int or not 1 <= sequence <= 3 or type(mock) is not bool:
+            raise ValueError('ANALYTICS_OPERATION_INVALID')
+        key = hashlib.sha256(f'{context.workspace_id}|{context.sync_id}|{context.attempt_count}|{sequence}'.encode()).hexdigest()
+        async with self.session_factory() as session:
+            async with session.begin():
+                row = await session.get(AnalyticsSyncORM, context.sync_id)
+                if row is None or row.workspace_id != context.workspace_id or row.project_id != context.project_id or row.publication_id != context.publication_id or row.platform != context.platform:
+                    raise ValueError('ANALYTICS_OPERATION_SCOPE_REQUIRED')
+                await self._fence(session, row, context.attempt_count)
+                locked = await session.execute(update(VideoProjectORM).where(VideoProjectORM.project_id == row.project_id,
+                    VideoProjectORM.workspace_id == row.workspace_id).values(updated_at=VideoProjectORM.updated_at))
+                if locked.rowcount != 1: raise ValueError('ANALYTICS_OPERATION_SCOPE_REQUIRED')
+                if await session.scalar(select(ProviderUsageORM).where(ProviderUsageORM.operation_key == key)):
+                    raise ValueError('ANALYTICS_OPERATION_ALREADY_RESERVED')
+                provider = await session.scalar(select(ProviderRegistryORM).where(ProviderRegistryORM.provider_key == row.provider_key,
+                    ProviderRegistryORM.capability == 'analytics', ProviderRegistryORM.workspace_id == row.workspace_id))
+                if provider is None:
+                    provider = await session.scalar(select(ProviderRegistryORM).where(ProviderRegistryORM.provider_key == row.provider_key,
+                        ProviderRegistryORM.capability == 'analytics', ProviderRegistryORM.workspace_id.is_(None)))
+                if provider is None: raise ValueError('ANALYTICS_PROVIDER_NOT_REGISTERED')
+                if not mock and (not provider.enabled or provider.routing_mode == 'disabled'):
+                    raise ValueError('ANALYTICS_PROVIDER_NOT_ENABLED')
+                costs = (await session.execute(select(CostRecordORM, ProviderUsageORM).join(ProviderUsageORM,
+                    CostRecordORM.provider_usage_id == ProviderUsageORM.usage_id).where(CostRecordORM.workspace_id == row.workspace_id,
+                    CostRecordORM.project_id == row.project_id))).all()
+                total, unknown = Decimal('0'), False
+                for cost, usage in costs:
+                    if usage.status in ('not_sent', 'needs_approval'): continue
+                    observed = cost.actual_cost if cost.actual_cost is not None else cost.estimated_cost
+                    if observed is None: unknown = True
+                    else: total += observed
+                blocked = max_ai_cost is not None and (unknown or estimated_cost is None or total + estimated_cost > max_ai_cost)
+                usage_id = 'pus_' + uuid.uuid4().hex; cost_id = 'cost_' + uuid.uuid4().hex; now = utc_now()
+                usage = ProviderUsageORM(usage_id=usage_id, operation_key=key, workspace_id=row.workspace_id,
+                    project_id=row.project_id, job_id=None, provider_id=provider.provider_id, provider_key=row.provider_key,
+                    capability='analytics', model=None, operation='analytics.' + operation, units=Decimal('1'), unit_name='request_intent',
+                    status='needs_approval' if blocked else 'dispatch_intent', metadata_json={'analytics_sync_id': row.sync_id,
+                        'analytics_attempt': context.attempt_count, 'sequence': sequence, 'target_sha256': target_sha256,
+                        'mock': mock, 'external_request_confirmed': False}, created_at=now, completed_at=None)
+                session.add(usage); await session.flush()
+                session.add(CostRecordORM(cost_id=cost_id, workspace_id=row.workspace_id, project_id=row.project_id,
+                    job_id=None, provider_usage_id=usage_id, estimated_cost=estimated_cost, actual_cost=None, currency='VND',
+                    needs_approval=blocked, approved=False, provenance={'source': 'analytics-read-admission', 'analytics_sync_id': row.sync_id,
+                        'mock': mock, 'estimate_source': 'configured_estimate' if estimated_cost is not None else 'unknown'}))
+                row.mock = mock
+                self._event(session, row, 'analytics.operation_reserved', 'analytics-worker', {'usage_id': usage_id,
+                    'cost_id': cost_id, 'operation': operation, 'needs_approval': blocked, 'mock': mock, 'external_call': False}, now)
+            return {'usage_id': usage_id, 'cost_id': cost_id, 'allowed': not blocked, 'mock': mock}
+
+    async def finish_operation(self, context, reservation, *, outcome):
+        if outcome not in ('confirmed', 'not_sent', 'outcome_unknown'): raise ValueError('ANALYTICS_OPERATION_OUTCOME_INVALID')
+        async with self.session_factory() as session:
+            async with session.begin():
+                row = await session.get(AnalyticsSyncORM, context.sync_id)
+                usage = await session.get(ProviderUsageORM, reservation['usage_id'])
+                if (row is None or usage is None or row.workspace_id != context.workspace_id
+                    or usage.workspace_id != row.workspace_id or usage.project_id != row.project_id
+                    or usage.metadata_json.get('analytics_sync_id') != row.sync_id
+                    or usage.metadata_json.get('analytics_attempt') != context.attempt_count
+                    or usage.metadata_json.get('mock') != reservation['mock']): raise ValueError('ANALYTICS_OPERATION_SCOPE_REQUIRED')
+                # Record the observed transport outcome even if this attempt has since lost ownership.
+                changed = await session.execute(update(ProviderUsageORM).where(ProviderUsageORM.usage_id == usage.usage_id,
+                    ProviderUsageORM.status == 'dispatch_intent').values(status=outcome, completed_at=utc_now(),
+                    metadata_json={**usage.metadata_json, 'external_request_confirmed': False if reservation['mock'] or outcome == 'not_sent' else True if outcome == 'confirmed' else None}))
+                if changed.rowcount != 1: raise RuntimeError('ANALYTICS_OPERATION_OUTCOME_CONFLICT')
+                if not reservation['mock'] and outcome != 'not_sent':
+                    row.external_call = True
+                    row.mock = False
+                self._event(session, row, 'analytics.operation_' + outcome, 'analytics-worker', {'usage_id': usage.usage_id,
+                    'cost_id': reservation['cost_id'], 'mock': reservation['mock'], 'external_call': row.external_call,
+                    'outcome': outcome}, utc_now())
 
     async def list_syncs(self, project_id: str) -> list[AnalyticsSyncRead]:
         async with self.session_factory() as session:
@@ -618,7 +744,8 @@ def _sync_read(row: AnalyticsSyncORM) -> AnalyticsSyncRead:
         failure_code=row.failure_code,
         failure_reason=row.failure_reason,
         mock=row.mock,
-        external_call=False,
+        external_call=row.external_call,
+        query=row.query_json,
         actor_ref=row.actor_ref,
         created_at=row.created_at,
         updated_at=row.updated_at,
@@ -659,7 +786,8 @@ async def _snapshot_read(
             for point in points
         ],
         mock=row.mock,
-        external_call=False,
+        external_call=row.external_call,
+        evidence=dict(row.evidence_json or {}),
         created_at=row.created_at,
     )
 

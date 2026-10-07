@@ -63,3 +63,5 @@ Owner watch/listen UAT is required for Phase 10 certification. It does not block
 ## Current blockers and baseline testing
 
 The Windows host has no Docker executable; POSIX runtime security modules cannot import `grp`. Do not label skipped/unrun Linux checks as passing. The initial API rerun also encountered a pre-existing inaccessible `pytest-of-PC` temp directory; rerun uses a fresh explicitly scoped temp directory without deleting/changing the old one. Native baseline passes 255 tests with the certified runtime; Studio passes 79 tests. Exact fresh results belong in the wave ledger.
+
+Scoped YouTube/TikTok analytics runtime now has mock/SQLite evidence and frozen edit-feature capture. Complete Meta, operator/bootstrap, Native/channel UI, scheduler/queue acceptance and real read acceptance. Preserve missing metrics/date coverage and actual publishing-time nulls; freeze remaining project features before personalized learning. No live analytics schema migration or default network activation is authorized by implementation evidence.

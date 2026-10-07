@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Protocol
 
@@ -29,6 +29,10 @@ class AnalyticsCollectionContext:
     publication_id: str
     remote_post_id: str | None
     fixture_profile: str | None
+    workspace_id: str | None = None
+    sync_id: str | None = None
+    attempt_count: int | None = None
+    query: dict | None = None
 
 
 @dataclass(frozen=True)
@@ -40,6 +44,7 @@ class AnalyticsCollection:
     metrics: NormalizedMetrics
     mock: bool
     external_call: bool
+    evidence: dict = field(default_factory=dict)
 
 
 class AnalyticsProvider(Protocol):
@@ -193,7 +198,8 @@ class AnalyticsProviderRegistry:
         "facebook": "facebook-graph-video-insights-api",
     }
 
-    def __init__(self, settings):
+    def __init__(self, settings, *, scoped_factory=None):
+        self.scoped_factory = scoped_factory
         self.fixture = DeterministicAnalyticsProvider()
         credential_refs = {
             "youtube": settings.youtube_analytics_credential_ref,
@@ -210,10 +216,13 @@ class AnalyticsProviderRegistry:
             for platform, provider_key in self.OFFICIAL_KEYS.items()
         }
 
-    def get(self, *, platform: AnalyticsPlatform, mode: str) -> AnalyticsProvider:
+    def get(self, *, platform: AnalyticsPlatform, mode: str, workspace=None) -> AnalyticsProvider:
         if mode == "fixture":
             return self.fixture
         if mode == "official":
+            if self.scoped_factory is not None:
+                configured = self.scoped_factory(platform, workspace)
+                if configured is not None: return configured
             return self.official[platform]
         raise KeyError(mode)
 
@@ -221,5 +230,5 @@ class AnalyticsProviderRegistry:
         output: list[AnalyticsProviderStateRead] = []
         for platform in self.OFFICIAL_KEYS:
             output.append(self.fixture.state(platform))  # type: ignore[arg-type]
-            output.append(self.official[platform].state(platform))  # type: ignore[arg-type]
+            output.append(self.get(platform=platform, mode='official').state(platform))  # type: ignore[arg-type]
         return output

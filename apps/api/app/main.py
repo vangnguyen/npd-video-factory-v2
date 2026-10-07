@@ -1079,6 +1079,9 @@ async def human_session(request: Request) -> dict[str, object]:
 
 @app.get("/api/v1/capabilities", dependencies=_human_route_dependencies)
 async def capabilities() -> dict[str, object]:
+    analytics_service = getattr(app.state, 'analytics_service', None)
+    analytics_states = analytics_service.provider_states() if analytics_service else []
+    official_analytics_ready = any(state.mode == 'official' and state.supports_sync for state in analytics_states)
     return {
         "video_jobs": True,
         "deterministic_content": True,
@@ -1094,8 +1097,8 @@ async def capabilities() -> dict[str, object]:
         "human_write_enabled": settings.human_write_enabled,
         "human_rate_limit_per_minute": settings.human_rate_limit_per_minute,
         "analytics_implemented": True,
-        "analytics_mode": "deterministic_fixture" if settings.analytics_fixture_enabled else "not_configured",
-        "analytics_external_execution_enabled": False,
+        "analytics_mode": 'scoped_official_runtime' if official_analytics_ready else "deterministic_fixture" if settings.analytics_fixture_enabled else "not_configured",
+        "analytics_external_execution_enabled": any(state.external_calls_enabled for state in analytics_states),
         "analytics_historical_snapshots": True,
         "winner_detection": "explainable_recommendation_only",
         "learning_feedback_auto_applied": False,

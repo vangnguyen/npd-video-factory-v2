@@ -279,8 +279,8 @@ class Settings(BaseSettings):
         for credential_ref in analytics_credential_refs:
             if credential_ref and not credential_ref.startswith(("secret://", "vault://", "external://")):
                 raise ValueError("analytics credential values must be external secret references, never tokens")
-        if self.analytics_external_execution_enabled:
-            raise ValueError("official analytics API execution is not activated in V2-10")
+        if self.app_env.lower() in {'ci', 'test'} and self.analytics_external_execution_enabled:
+            raise ValueError('CI and test environments prohibit external analytics')
         if not 1 <= self.analytics_max_attempts <= 10:
             raise ValueError("ANALYTICS_MAX_ATTEMPTS must be between 1 and 10")
         if self.analytics_retry_base_seconds < 1:

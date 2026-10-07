@@ -16,6 +16,8 @@ MAX_BODY = 16 * 1024 * 1024
 MAX_RESPONSE = 1024 * 1024
 TIKTOK_UPLOAD_HOSTS = frozenset({'open-upload.tiktokapis.com', 'upload.us.tiktokapis.com'})
 HOSTS = {'youtube': frozenset({'www.googleapis.com'}),
+    'analytics_youtube': frozenset({'www.googleapis.com', 'youtubeanalytics.googleapis.com'}),
+    'analytics_tiktok': frozenset({'open.tiktokapis.com'}),
     'tiktok': frozenset({'open.tiktokapis.com', *TIKTOK_UPLOAD_HOSTS}),
     'instagram_reels': frozenset({'graph.facebook.com'}),
     'facebook': frozenset({'graph.facebook.com', 'rupload.facebook.com'})}
