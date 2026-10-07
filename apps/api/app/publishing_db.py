@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import JSON, Boolean, CheckConstraint, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, CheckConstraint, DateTime, ForeignKey, Index, Integer, LargeBinary, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .db import Base, utc_now
@@ -120,3 +120,23 @@ class PublicationDispatchORM(Base):
     failure_code: Mapped[str | None] = mapped_column(String(100), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class PublicationPrivateSessionORM(Base):
+    """Immutable encrypted session receipt; keys and plaintext are never persisted."""
+    __tablename__ = 'publication_private_sessions'
+    __table_args__ = (UniqueConstraint('publication_id', name='uq_publication_private_session'),
+        UniqueConstraint('key_id', 'nonce', name='uq_private_session_key_nonce'),
+        CheckConstraint('total_bytes > 0', name='ck_private_session_size'))
+    session_ref: Mapped[str] = mapped_column(String(64), primary_key=True)
+    publication_id: Mapped[str] = mapped_column(String(64), ForeignKey('publication_dispatches.publication_id', ondelete='RESTRICT'), nullable=False)
+    workspace_id: Mapped[str] = mapped_column(String(64), ForeignKey('workspaces.workspace_id', ondelete='RESTRICT'), nullable=False)
+    project_id: Mapped[str] = mapped_column(String(64), ForeignKey('video_projects.project_id', ondelete='RESTRICT'), nullable=False)
+    binding_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    platform: Mapped[str] = mapped_column(String(40), nullable=False)
+    total_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    key_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    nonce: Mapped[bytes] = mapped_column(LargeBinary(12), nullable=False)
+    ciphertext: Mapped[bytes] = mapped_column(LargeBinary(8192), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

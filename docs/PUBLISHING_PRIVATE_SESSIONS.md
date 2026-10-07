@@ -1,0 +1,23 @@
+# Encrypted publishing session receipts
+
+`PublishingSessionVault` persists a confirmed YouTube resumable session URI as AES-256-GCM ciphertext. This inert worker component does not resolve OAuth credentials, enable publishing, call a provider, replace the production secret resolver or grant upload authority. The application factory remains disabled/contract-only.
+
+The optional API `publishing` dependency pins `cryptography==50.0.2`. Core/CPU/Native workflows require no crypto package. Missing dependency, key resolver or matching key fails closed with fixed codes; no plaintext fallback, generated production key or credential file is created. The current tests install crypto in an isolated dependency directory, leaving both installed runtimes unchanged.
+
+An injected key provider returns a 32-byte `SessionEncryptionKey` and public key ID in memory. It must retain prior key IDs for reading old receipts. No key bytes enter the database, API projection, audit, logs or receipt representation. A deployment must supply its approved external key provider and lifecycle; this source does not implement KMS/systemd/Windows credential provisioning or accept production key custody. Python memory erasure is not guaranteed.
+
+The vault accepts only a current private initialization ticket whose workspace, publication, version, nonce and size match the durable journal. The YouTube URI is independently revalidated against the official HTTPS upload origin/path. A fresh random 96-bit nonce and immutable session reference are generated; a database uniqueness constraint rejects key/nonce reuse. Authenticated associated data binds reference, workspace, publication, project, artifact binding, platform, total bytes, key ID and timestamps. The private URL remains ciphertext in `publication_private_sessions`; no public table/event stores it.
+
+One immutable receipt is allowed per publication. Same-ticket/same-session replay returns the existing reference without changing ciphertext, key or expiry. Conflicting URIs cannot overwrite it. The encrypted receipt commits before its reference can be recorded by the dispatch journal. A crash between those commits retains sealed evidence; automatic orphan recovery is still unfinished. It must never create another initialization POST.
+
+The expiry is an internal bounded policy, not a fabricated vendor expiry. Expired receipts require reviewed reconciliation; they cannot extend on replay or reinitialize automatically. Workspace/publication/binding mismatch is rejected before decryption. Ciphertext, nonce or authenticated metadata tampering fails authentication. Missing old rotation keys cannot fall back to the new key.
+
+Loading a session is an internal worker operation and grants no authority to upload a chunk. A revoked/expired publish approval may still permit reading known session state for reconciliation; the dispatch journal independently blocks another chunk. No vault method is exposed to Studio/HTTP, and the upload URI must never reach a browser or provider error log.
+
+`0020_ns_private_publish_session` only adds the encrypted receipt table. It does not migrate production state or create receipts for historical publications. Destructive downgrade refuses execution pending explicit Owner export/recovery approval. An owned SQLite rehearsal checks old rows/table SQL, ORM column/foreign-key/unique constraints and foreign-key integrity. PostgreSQL migration, actual provider/KMS acceptance and production rollout remain separate.
+
+The isolated evidence script produces six exports with actual AES encryption, real SQLite persistence and a separate Python process decrypting the exact URI/size while printing only fixture hashes. Database/sidecar bytes are scanned for the fixture URL/key. All keys, identities, approval, media/QC and provider session inputs are fixtures; no real provider, credential, paid action, Owner UAT or publication is involved.
+
+Remaining work includes durable orphan recovery, complete OAuth/key-provider lifecycle, verified artifact byte admission, full YouTube/TikTok/Meta dispatch/status/thumbnail integration, costs and Native UI/scheduler. The vault currently supports YouTube resumable receipts; additional platform session types still need their own official protocol validation. Publishing and the North Star remain incomplete.
+
+Cryptographic behavior follows the [cryptography AEAD documentation](https://cryptography.io/en/latest/hazmat/primitives/aead/): associated data is authenticated and changing ciphertext/key/nonce/associated data fails validation. Dependency release metadata was checked against [PyPI cryptography](https://pypi.org/project/cryptography/50.0.2/). Official upload protocol sources remain linked in `PUBLISHING_WIRE_PROTOCOLS.md`.

@@ -1,0 +1,102 @@
+{
+  "schema": "north-star-publishing-private-sessions-evidence-v1",
+  "parent_head": "302c090868789d0745f42521a5dcb90ac4cf1b53",
+  "source_sha256": {
+    "apps/api/app/publishing_db.py": "44523acfa19d075a9f159f11f9ff58d691d344a71636243e281270b0742553d2",
+    "apps/api/app/publishing_session_vault.py": "75976ae8443cfeaa22dc26ffe7b07206c74944adf13eff000158aaf2bf6562e6",
+    "apps/api/pyproject.toml": "16d078a93788dae2fd37bcd79b43512fbd7c931173745500ced80e52df972a03",
+    "apps/api/migrations/versions/0020_north_star_private_publish_session.py": "5fc66aca441c87071384e023077c631d771e4439335f7a59c874765e4b76d009",
+    "apps/api/tests/test_publishing_session_vault.py": "9a0f4db5cea046a635214c021eb6a45177ff8f83c0419ea564aa837bb90efc4b",
+    "apps/api/tests/test_publishing_session_migration.py": "59101b361fb12c09e4ab2ce4ac2be98bf5875a889cbddd805151cb493b004ae5",
+    "apps/api/tests/test_publishing_dispatch_migration.py": "52197fa901f10cd7c2fc7187a5c89bc89b8ef4b1143e19973ad075ca43ef66df",
+    "scripts/north_star_publishing_session_contract.py": "a9bbc0121775f8310307cb2de5698a7ba5a63577ad10e7dd0785df1991b5b3fd",
+    "docs/PUBLISHING_PRIVATE_SESSIONS.md": "28079ee6300f0bc70e4f02d7eccc9880ec4916b05b8494f03e9a7d65176095ac"
+  },
+  "logs": {
+    "publishing-crypto-install.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-crypto-install.log",
+      "sha256": "032f6cde46b393e126bc513bc620c148a61aaf77c60f1e65bebec8b01a5e6b7d"
+    },
+    "publishing-vault-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-vault-r1.log",
+      "sha256": "0860650227559352977208351cecf5ad8ae8a87b0e4e873f56c8b437b81eaf77"
+    },
+    "publishing-vault-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-vault-r2.log",
+      "sha256": "ccd05cac36f30beb7fafba57836222436b82282e9682e643b9a3b984f6c6d557"
+    },
+    "publishing-vault-no-crypto-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-vault-no-crypto-r1.log",
+      "sha256": "ae63bef33e993d5f85b420460d49aa3062e771ec1c1a9f97cddca4c8ecac0ee4"
+    },
+    "publishing-vault-missing-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-vault-missing-r1.log",
+      "sha256": "8ff14947c8effa6b9ee81afc7959eeb8b5d25eac34af819a69ad7ae3034daf24"
+    },
+    "publishing-vault-key-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-vault-key-r1.log",
+      "sha256": "59213091c164de0ca4d1bc0eb36af47713c504ec235f57ad4930e8fada9ed6d9"
+    },
+    "publishing-session-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-session-contract-n1.log",
+      "sha256": "5145f7184a9ff6c12f5b216cdc3bf49c5729fea68773053e6e3ce5df6ae34620"
+    }
+  },
+  "exports": {
+    "admission.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-session-contract-n1\\admission.json",
+      "sha256": "7380e142b5cd3e7820657daa1e91d5c00436104eaccf33445f00b0c057b32c09"
+    },
+    "database-inspection.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-session-contract-n1\\database-inspection.json",
+      "sha256": "e7d937085958f83338cc83b2233dd93687abaffa6c0869c53cdeb1ee4daafd2a"
+    },
+    "migration.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-session-contract-n1\\migration.json",
+      "sha256": "d84aa0fb07e387d79216fe10baa32df1f7c6a22b2b621847e045aa5fd69395ad"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-session-contract-n1\\receipt.json",
+      "sha256": "d381297461f6c665dc8f9bb7b6c67e2e1e7bc2dd1397fc6d521ef75cd88a1484"
+    },
+    "restart.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-session-contract-n1\\restart.json",
+      "sha256": "c68e83d79be6d2953a8065a78eebcb092ef3b407bd673c7047bf1f3c38b54f78"
+    },
+    "sealed-receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-session-contract-n1\\sealed-receipt.json",
+      "sha256": "172b075b01eb21aa7c8840f19dc224e8a3c03bb0c32323cc59071e78823412fb"
+    }
+  },
+  "preservation_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-preservation.json",
+    "sha256": "e77eb16479f64b9455e764b1c53b085ca78af9101a9d71bb6972aa1f0c461bfb"
+  },
+  "expanded_regression_pass": 97,
+  "expanded_regression_seconds": 176.78,
+  "latest_key_boundary_pass": 3,
+  "latest_key_boundary_seconds": 20.64,
+  "missing_crypto_fail_closed_pass": 1,
+  "unconfigured_runtime_pass": 2,
+  "unconfigured_runtime_skipped_aead_tests": 12,
+  "new_vault_tests": 15,
+  "new_additive_migration_tests": 1,
+  "crypto_version": "50.0.2",
+  "crypto_isolated_test_directory": "C:/vfns-test-deps/publishing-crypto-50.0.2",
+  "installed_native_or_api_runtime_modified": false,
+  "actual_aes256gcm": true,
+  "separate_process_restart_verified": true,
+  "plaintext_uri_or_key_in_database": false,
+  "key_or_dependency_absence_has_plaintext_fallback": false,
+  "all_keys_human_media_provider_inputs_are_fixtures": true,
+  "full_parent_api_status": "RUNNING_PINNED_302c090",
+  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "actual_external_requests": 0,
+  "secrets_read": 0,
+  "paid_operations": 0,
+  "production_migration_executed": false,
+  "live_adapter_activated": false,
+  "publishing_ready": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false
+}

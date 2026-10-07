@@ -19,7 +19,8 @@ def rehearse(path):
     try:
         with engine.begin() as connection:
             connection.exec_driver_sql('PRAGMA foreign_keys=ON')
-            Base.metadata.create_all(connection, tables=[table for table in Base.metadata.sorted_tables if table.name not in NEW_TABLES])
+            # Later additive models must not leak into this pre-0019 fixture.
+            Base.metadata.create_all(connection, tables=[table for table in Base.metadata.sorted_tables if table.name not in NEW_TABLES | {'publication_private_sessions'}])
             connection.execute(WorkspaceORM.__table__.insert().values(workspace_id='wsp_migration_fixture',
                 slug='migration-fixture', name='Existing fixture workspace', owner_ref='fixture-only'))
             inspector = inspect(connection); old_names = set(inspector.get_table_names())
