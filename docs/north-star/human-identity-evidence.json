@@ -1,0 +1,54 @@
+{
+  "schema": "north-star-human-identity-evidence-v1",
+  "parent_head": "17c5b0cbb3568250e14bd2b7a5134ca57404943d",
+  "source_sha256": {
+    "apps/api/app/human_identity.py": "bd0ce5a3c4f48962799d82caa5b9ea369fef474467dee308435df4dbb85bf78a",
+    "apps/api/app/human_auth.py": "d8e79d73e13221bab66258830b147f17cde7e40764bd15e7990b672a76e67183",
+    "services/windows_native/tests/test_human_identity.py": "a49deb49ba76acda2838f7c1325c3dd1884d7cb2acde9ce4693c76a8fddc992b",
+    "scripts/north_star_human_identity_contract.py": "842cd930b77590813b90938a6feb56ceaa90bafbf0c8b416e261e39ca277ff53",
+    "docs/HUMAN_IDENTITY_CONTRACT.md": "c1b5de6decafdeb17611e0a15568a7667bced163a3846eb70febc14f51daedfb"
+  },
+  "logs": {
+    "native-human-identity-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-human-identity-r1.log",
+      "sha256": "8cbeaba2c0d61d7781a84f34f98e6be76a23f1445c7a466cdcc051e4e89c4165"
+    },
+    "api-human-identity-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-human-identity-r1.log",
+      "sha256": "d3dbb1d2f9742cc91c0f9b69affea4f39b0975f1d0eee4335d54a01198ae25ad"
+    },
+    "human-identity-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\human-identity-contract-n1.log",
+      "sha256": "8108bad9567a55db08aebbb317eef5a62677a8ec289f3886733af7fa62fd2ec5"
+    }
+  },
+  "exports": {
+    "native-identity.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\human-identity-contract-n1\\native-identity.json",
+      "sha256": "8c2b18208af174f893057d978e4f6cd3b28a5940c23686021b215fcf9a25a001"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\human-identity-contract-n1\\receipt.json",
+      "sha256": "a0eab5e44882ceb5c159013f808060e6c9c50aa066b083801bd07a6017b876e2"
+    },
+    "source-preservation.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\human-identity-contract-n1\\source-preservation.json",
+      "sha256": "71c268bb9efc5efecc042f72c6aa687ed9c5305f962fbe1e8c428e1a3bf8f2e1"
+    }
+  },
+  "native_pass": 16,
+  "native_seconds": 3.315,
+  "api_ingress_pass": 4,
+  "api_seconds": 4.1,
+  "moved_identity_ast_exact": 11,
+  "retained_api_authorization_ast_exact": 9,
+  "registry_schema_unchanged": true,
+  "native_no_framework_database_provider_import": true,
+  "fixture_credentials_only": true,
+  "actual_external_calls": 0,
+  "native_http_roles_implemented": false,
+  "native_rbac_ready": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "full_regression_note": "Prior Native 376 and Linux API f045999 2085/11 retained; current refactor has focused tests and full pinned rerun pending."
+}

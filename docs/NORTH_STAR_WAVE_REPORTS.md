@@ -905,3 +905,25 @@ EVIDENCE: `docs/north-star/native-observability-evidence.json` binds six source 
 REGRESSIONS: full Native Phase8/9/10 checks pass; project/queue/provider authorization, session/CSRF, approval and no-replay boundaries remain intact. No main merge, production deployment, publication or new provider budget.
 
 EXTERNAL BLOCKERS: actual credentials/billing/GPU/Docker/browser/Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: role enforcement and remaining media/platform/profiles/distribution/analytics/learning/Trend/Hub/hardening implementation.
+
+## Wave 8 — Shared existing human identity prerequisite
+
+WAVE: 8
+
+STATUS: IN PROGRESS; identity reuse prerequisite implemented; NATIVE_RBAC_READY = NO.
+
+HEAD SHA: parent `17c5b0cbb3568250e14bd2b7a5134ca57404943d`; this identity commit records the increment. Parent is pushed and preserved in verified `north-star-native-observability.bundle`, SHA256 `908017fdf7984d113c9186e56500b8275e02386169c7745af5c77c2cd9696788`.
+
+CAPABILITIES COMPLETED: existing `vf1` hash-token registry/principal/workspace/expiry verifier extracted into a provider-free shared module, with API public names reexported. Eleven identity definitions and nine retained API authentication/authorization/rate-limit definitions have identical AST hashes to the parent. Token/role/lifecycle/schema behavior is unchanged. Pinned Native executes the same contract without FastAPI, database, Redis, provider SDK or GPU package imports. No new credential, permission, production change or service-identity sharing is introduced.
+
+CAPABILITIES PARTIAL: Native registry/workspace/session integration, every-route authorization before dispatch, review-actor binding and Studio login/permission behavior remain. The existing dedicated Agent Hub service identity remains separate. No Native HTTP RBAC completion is inferred from pure contract tests. Whole program implementation remains incomplete.
+
+TESTS: Native identity/observability **16/16 PASS**, 3.315s, including five new identity cases; existing API ingress **4/4 PASS**, 4.10s. Fresh local contract **PASS**, three exports and exact eleven/nine AST comparisons. Prior Native full 376 PASS and Linux API f045999 2,085 PASS/11 SKIP are retained; full current pinned refactor regression remains pending.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: pinned Native import/execution, fixture registry file, lifecycle/hash/workspace validation and Git/source AST comparisons. MOCK TESTS: all human tokens/principals are explicit fixtures; no real credential file was read or issued.
+
+EVIDENCE: `docs/north-star/human-identity-evidence.json` binds five source files, three logs and three exports. `docs/HUMAN_IDENTITY_CONTRACT.md` defines exact scope and remaining integration.
+
+REGRESSIONS: focused existing API/Native checks pass; registry schema, API rate/role behavior and prior source/artifacts remain. Live roots/processes/credentials and accepted artifacts are untouched. No main merge/deployment/publication/provider budget.
+
+EXTERNAL BLOCKERS: current provider/OAuth/GPU/Docker/browser/Owner UAT acceptance remains separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: bind existing identity to Native sessions/permissions/UI, rerun pinned regressions, then remaining media/platform/distribution/analytics/learning/Trend/Hub/hardening work.

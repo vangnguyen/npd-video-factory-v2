@@ -46,6 +46,8 @@ Native offline backup/fresh restore now covers its actual SQLite projects/versio
 
 Native now exposes separate liveness/readiness with bounded read-only state/schema checks, live queue workers and local media-tool presence. It makes no optional-provider/GPU call and does not infer full runtime integrity. Generated request IDs, production step/intelligence outcome IDs and fixed-category JSON logs exclude private content, credentials, raw URLs/errors and arbitrary incoming IDs. Only the Native logger is configured. A fresh eight-request/worker/SQLite/privacy rehearsal and full Native regression pass; uniform cross-service correlation, production collection/retention/alerts and soak remain.
 
+The existing human hash-token/workspace/expiry verifier is now shared without API framework/database/provider imports and executes in the pinned Native runtime. Exact source AST checks preserve identity and API authorization behavior. Native session/workspace/every-route/UI integration remains required; this extraction alone does not establish Native RBAC readiness or issue any credential.
+
 ## Required external gates
 
 Owner watch/listen UAT is required for Phase 10 certification. It does not block further safe source implementation. Real publishing requires separate explicit enablement and configured authorized credentials. Missing OAuth/API secrets and approved provider budgets are requested only for concrete real acceptance after mock architecture is complete. GPU acceptance needs configured approved models/workflows. Docker/Linux acceptance needs an isolated available runtime; production deployment requires separate Owner approval.

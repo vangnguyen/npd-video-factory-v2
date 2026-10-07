@@ -1471,9 +1471,14 @@
       "apps/api/tests/test_comfyui_generation_scope.py",
       "scripts/north_star_comfyui_contract.py",
       "docker-compose.yml",
-      "docs/north-star/comfyui-durable-contract-evidence.json"
+      "docs/north-star/comfyui-durable-contract-evidence.json",
+      "apps/api/app/human_identity.py",
+      "services/windows_native/tests/test_human_identity.py",
+      "scripts/north_star_human_identity_contract.py",
+      "docs/HUMAN_IDENTITY_CONTRACT.md",
+      "docs/north-star/human-identity-evidence.json"
     ],
-    "behavior": "API owner/editor/reviewer/viewer and service auth; Native local session/CSRF. ComfyUI bridge requests/job progress/definition and graph fingerprints/result metadata hashes/audit now survive restart in an isolated single-owner SQLite store. Bounded queues/retries, explicit interrupted-job recovery, authenticated workspace-scoped HTTP and scoped API/worker generation identities are CPU/mock-tested. Arbitrary client graphs and drift/corruption reject; no automatically replayed generation. GPU unknown estimates/actual costs stay null, configured unpriced jobs require approval before queueing and unconfigured providers preserve NOT_CONFIGURED. Numeric legacy plan fields retain only a flagged known lower bound; result-reference JSON does not constitute binary media registration.",
+    "behavior": "API owner/editor/reviewer/viewer and service auth; Native local session/CSRF. ComfyUI bridge requests/job progress/definition and graph fingerprints/result metadata hashes/audit now survive restart in an isolated single-owner SQLite store. Bounded queues/retries, explicit interrupted-job recovery, authenticated workspace-scoped HTTP and scoped API/worker generation identities are CPU/mock-tested. Arbitrary client graphs and drift/corruption reject; no automatically replayed generation. GPU unknown estimates/actual costs stay null, configured unpriced jobs require approval before queueing and unconfigured providers preserve NOT_CONFIGURED. Numeric legacy plan fields retain only a flagged known lower bound; result-reference JSON does not constitute binary media registration. Existing hash-token identity/expiry/workspace contracts now live in a provider-free shared module with unchanged API reexports/authorization behavior. Pinned Native executes the same verifier and four human roles without FastAPI/database/provider dependencies; exact eleven moved/nine retained AST comparisons, five Native contracts and existing API ingress tests pass with explicit fixture credentials. This extraction grants no Native HTTP permission or provider authority.",
     "gap": "Native role enforcement for every mutating route and workspace boundaries.",
     "severity": "P0",
     "dependency": "identity/service bridge",
