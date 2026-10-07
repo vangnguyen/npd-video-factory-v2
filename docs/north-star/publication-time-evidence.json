@@ -108,7 +108,7 @@
   "counts_overlap": true,
   "failed_logs_and_fixture_directories_retained": true,
   "full_parent_api_status": "PASS",
-  "full_current_api_status": "PINNED_0CDA679_RUNNING",
+  "full_current_api_status": "PASS",
   "tiktok_provider_posted_time_implemented": true,
   "youtube_reported_time_retained": true,
   "youtube_exact_publication_time_available": false,
@@ -134,6 +134,16 @@
     "log": {
       "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-8c585a4.log",
       "sha256": "28e45ead1887e05cb694cdde2f8d37ca329c4b523b1c50d5e39d22ebd11fc9e8"
+    }
+  },
+  "full_current_api": {
+    "head": "0cda6793f80725b1d7a32e0037dcc2578430292b",
+    "passed": 2659,
+    "skipped": 11,
+    "seconds": 1825.49,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-0cda679.log",
+      "sha256": "357fc52aab6033050787b65bcb1cf561efff64404e3a00696cb5a51ebe596190"
     }
   }
 }

@@ -28,20 +28,28 @@ EXCLUDED = {'.server.lock', 'workflow.sqlite3-wal', 'workflow.sqlite3-shm',
             'intelligence.sqlite3-wal', 'intelligence.sqlite3-shm'}
 
 
+def io_path(path):
+    """Use Windows extended syntax only for IO after ordinary containment checks."""
+    path=Path(path).absolute();value=str(path)
+    if os.name=='nt' and len(value)>=240 and not value.startswith('\\\\?\\'):
+        return Path('\\\\?\\UNC\\'+value[2:] if value.startswith('\\\\') else '\\\\?\\'+value)
+    return path
+
+
 def guard(path, *, exists=False):
     path = Path(path).absolute()
     if '..' in path.parts:
         raise WorkflowError('BACKUP_PATH_INVALID', 400)
     for item in reversed((path, *path.parents)):
         try:
-            info = item.lstat()
+            info = io_path(item).lstat()
         except FileNotFoundError:
             continue
         if stat.S_ISLNK(info.st_mode) or getattr(info, 'st_file_attributes', 0) & 0x400:
             raise WorkflowError('BACKUP_LINKED_PATH_REJECTED', 400)
-        if item.is_file() and info.st_nlink > 1:
+        if stat.S_ISREG(info.st_mode) and info.st_nlink > 1:
             raise WorkflowError('BACKUP_LINKED_PATH_REJECTED', 400)
-    if exists and not path.exists():
+    if exists and not io_path(path).exists():
         raise WorkflowError('BACKUP_PATH_NOT_FOUND', 404)
     return path
 
@@ -98,6 +106,12 @@ def database_status(path):
             busy = con.execute("SELECT count(*) FROM jobs WHERE status IN ('queued','running','retrying')").fetchone()[0]
             if 'native_cost_operations' in tables:
                 counts['native_cost_operations'] = con.execute('SELECT count(*) FROM native_cost_operations').fetchone()[0]
+            for name in ('native_publications','native_publication_events','native_analytics_syncs','native_analytics_snapshots','native_analytics_events'):
+                if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
+            if 'native_publications' in tables:
+                busy+=con.execute("SELECT count(*) FROM native_publications WHERE status IN ('queued','scheduled')").fetchone()[0]
+            if 'native_analytics_syncs' in tables:
+                busy+=con.execute("SELECT count(*) FROM native_analytics_syncs WHERE status IN ('queued','scheduled','retry_scheduled')").fetchone()[0]
             for identifier, revision, document in con.execute('SELECT id,revision,document FROM projects'):
                 history = con.execute('SELECT document FROM project_versions WHERE project_id=? AND revision=?', (identifier, revision)).fetchone()
                 if history is None or digest(json.loads(document)) != digest(json.loads(history[0])):
@@ -319,9 +333,9 @@ def restore_backup(backup, destination, *, expected_sha256):
             target = guard(staging / relative)
             if staging not in target.parents:
                 raise WorkflowError('BACKUP_ENTRY_PATH_INVALID', 400)
-            target.parent.mkdir(parents=True, exist_ok=True)
+            io_path(target.parent).mkdir(parents=True, exist_ok=True)
             checksum, size = hashlib.sha256(), 0
-            with archive.open(name) as source, target.open('xb') as output:
+            with archive.open(name) as source, io_path(target).open('xb') as output:
                 while chunk := source.read(1024**2):
                     size += len(chunk)
                     if size > row['bytes']:

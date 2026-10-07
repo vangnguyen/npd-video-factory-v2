@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Protocol
 
 from .analytics_models import (
@@ -9,7 +9,6 @@ from .analytics_models import (
     AnalyticsProviderStateRead,
     NormalizedMetrics,
 )
-from .db import utc_now
 
 
 class AnalyticsProviderNotConfigured(RuntimeError):
@@ -157,7 +156,7 @@ class DeterministicAnalyticsProvider:
             provider_key=self.provider_key,
             source=f"fixture://analytics/{context.platform}/{profile}",
             source_kind="fixture",
-            collected_at=utc_now(),
+            collected_at=datetime.now(timezone.utc),
             metrics=profiles[profile],
             mock=True,
             external_call=False,

@@ -33,6 +33,8 @@ def permission_for(method, path):
         return None
     if path == '/api/logout':
         return 'read'
+    if re.fullmatch(r'/api/projects/' + ID + r'/analytics(?:/nasy_' + ID + r'/(process|cancel))?', path):
+        return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/publications/npub_' + ID + r'/(approve|cancel|dry-run)', path):
         return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/publications', path):

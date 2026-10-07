@@ -11,7 +11,7 @@ import unittest
 import uuid
 import zipfile
 
-from services.windows_native.backup import create_backup, restore_backup, relative_name, offline_lease
+from services.windows_native.backup import create_backup, restore_backup, relative_name, offline_lease,io_path
 from services.windows_native.contracts import WorkflowError, file_sha
 from services.windows_native.costs import CostLedger
 from services.windows_native.intelligence_service import IntelligenceService
@@ -42,6 +42,39 @@ class BackupTests(unittest.TestCase):
 
     def restore(self, receipt, destination=None):
         return restore_backup(self.archive, destination or self.destination, expected_sha256=receipt['sha256'])
+
+    def test_nested_artifact_restore_handles_longer_windows_staging_prefix(self):
+        relative=Path('preview-'+'x'*42)/('attempt-'+'y'*42)/('artifact-'+'z'*60+'.bin')
+        source=self.root/relative;io_path(source.parent).mkdir(parents=True)
+        io_path(source).write_bytes(b'EXPLICIT NESTED RESTORE FIXTURE')
+        if os.name=='nt':
+            expanded=self.destination.with_name('.'+self.destination.name+'.restore-'+'a'*32)/relative
+            self.assertGreater(len(str(expanded)),260)
+            self.assertLess(len(str(source)),260)
+        receipt=self.backup();self.restore(receipt)
+        self.assertEqual(io_path(self.destination/relative).read_bytes(),b'EXPLICIT NESTED RESTORE FIXTURE')
+        self.assertEqual(io_path(source).read_bytes(),b'EXPLICIT NESTED RESTORE FIXTURE')
+
+    def test_native_distribution_and_analytics_pending_work_blocks_offline_snapshot(self):
+        from services.windows_native.analytics import NativeAnalytics
+        from services.windows_native.analytics_models import NativeAnalyticsRequest
+        from services.windows_native.publications import NativePublications
+        from services.windows_native.publication_models import NativePublicationCreate,NativePublishApproval,NativePublicationAction
+        from services.windows_native.tests.test_publications import render_fixture,CAPABILITIES
+        project,job=render_fixture(self.store);pubs=NativePublications(self.store,CAPABILITIES)
+        pub,_=pubs.create(project['id'],NativePublicationCreate(revision=project['revision'],final_job_id=job['id'],platform='youtube',
+            metadata={'title':'EXPLICIT BACKUP QUEUE FIXTURE'},request_key='native-backup-queue-fixture-key'),actor='fixture-editor')
+        pubs.approve(project['id'],pub['publication_id'],NativePublishApproval(expected_fingerprint=pub['request_fingerprint'],
+            expected_artifact_sha256=pub['snapshot']['final_sha256'],acknowledged=True),actor='fixture-owner')
+        with self.assertRaisesRegex(WorkflowError,'BACKUP_SOURCE_HAS_ACTIVE_OPERATIONS'):self.backup()
+        pubs.process();analytics=NativeAnalytics(self.store,pubs)
+        sync,_=analytics.create(project['id'],NativeAnalyticsRequest(publication_id=pub['publication_id'],provider_mode='fixture',
+            fixture_profile='insufficient_data',fixture_acknowledged=True,request_key='native-backup-analytics-fixture-key'),actor='fixture-owner')
+        with self.assertRaisesRegex(WorkflowError,'BACKUP_SOURCE_HAS_ACTIVE_OPERATIONS'):self.backup()
+        analytics.cancel(project['id'],sync['sync_id'],fingerprint=sync['request_fingerprint'],actor='fixture-owner')
+        receipt=self.backup();counts=receipt['database_status']['workflow.sqlite3']['counts']
+        self.assertEqual(counts['native_publications'],1);self.assertEqual(counts['native_analytics_syncs'],1)
+        self.assertEqual(counts['native_analytics_snapshots'],0);self.assertEqual(receipt['database_status']['workflow.sqlite3']['active_operations'],0)
 
     def test_actual_snapshot_preserves_projects_history_costs_assets_and_config(self):
         (self.config.secret_file.parent).mkdir()

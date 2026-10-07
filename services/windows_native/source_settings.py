@@ -55,5 +55,6 @@ def configure(store,project_id,revision,body):
                 code='WORD_ALIGNMENT_UNAVAILABLE' if 'WORD_ALIGNMENT' in str(error) else 'SUBTITLE_LAYOUT_OVERFLOW'
                 raise WorkflowError(code,400) from None
             snapshot.metadata['subtitle_style']=style.model_dump(mode='json')
+            snapshot.metadata['subtitle_template_ref']=template['template_ref']
         _save(store,con,project,snapshot,'auto_edit_source_settings_saved')
     return view(store,project_id)

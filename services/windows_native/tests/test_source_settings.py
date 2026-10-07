@@ -26,6 +26,7 @@ class SourceSettingsTests(unittest.TestCase):
             self.assertEqual((snapshot['width'],snapshot['height']),shape);self.assertEqual(snapshot['tracks'],clips)
         for template in load_templates():
             self.configure(subtitle_template_ref=template['template_ref'],keywords=['Cơ hội'])
+            self.assertEqual(self.project['shot_timeline']['snapshot']['metadata']['subtitle_template_ref'],template['template_ref'])
             style=self.project['shot_timeline']['snapshot']['metadata']['subtitle_style']
             self.assertEqual(style['template_ref'],template['template_ref']);self.assertEqual(style['keywords'],['Cơ hội'])
         self.assertIsNone(self.project['approval'])
