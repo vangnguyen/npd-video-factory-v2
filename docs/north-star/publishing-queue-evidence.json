@@ -65,7 +65,7 @@
   "new_queue_tests": 16,
   "actual_asgi_http_requests": 16,
   "separate_process_reads": 2,
-  "full_parent_api_status": "RUNNING_PINNED_A2359D4",
+  "full_parent_api_status": "PASS",
   "full_current_api_status": "PENDING_PINNED_COMMIT",
   "account_policy_credentials_human_render_qc_inputs_are_fixtures": true,
   "actual_provider_calls": 0,
@@ -74,5 +74,15 @@
   "default_factory_worker_or_journal_activated": false,
   "owner_uat_accepted": false,
   "publishing_ready": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_parent_linux_api": {
+    "head": "a2359d4b1f3ef788cd946773890f1951612e819c",
+    "passed": 2194,
+    "skipped": 11,
+    "seconds": 1090.57,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-a2359d4.log",
+      "sha256": "d76a56b805d74a2949041a5e2692ea5633d613cabe1e9521b0384a2f7aedb34a"
+    }
+  }
 }

@@ -1067,3 +1067,23 @@ EVIDENCE: `docs/north-star/publishing-queue-evidence.json`, `docs/PUBLISHING_CON
 REGRESSIONS: expanded accepted code checks pass; installed runtimes, accepted/live source/media/data/processes/credentials and main stay untouched. No deployed schema migration, real publishing/deletion, paid call, main merge or production deployment.
 
 EXTERNAL BLOCKERS: eventual real credentials/account audit/Owner publish enablement; no current safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve queue increment, then connect official account/credential checks, journal, encrypted sessions and verified bytes to the upload worker; continue all remaining North Star waves.
+
+### Wave 9 — scoped in-memory OAuth and exact account protocol
+
+WAVE: 9 / official account admission. STATUS: IN PROGRESS; inert credential/account protocol fixtures pass. PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `472754aaf293a5475e910a590a9e34a96503ffc0`; this OAuth prerequisite commit records the increment. Parent is pushed and preserved in verified `north-star-publishing-queue.bundle`, SHA256 `b2ed7d5be00405c331a3e1938781caff6c99d5619f478ce46060b7308aa06dcc`. Receipt binds prior fresh fifteen-artifact/live-source verification, unchanged main and 149 ahead/0 behind.
+
+CAPABILITIES COMPLETED: strict frozen scoped in-memory token envelope with hidden token, exact reviewed account/profile/provider/credential revision, aware expiry/margin and dedicated upload/account-read scope admission. Resolver/malformed credential failures contain fixed codes, no raw secret text. Official YouTube channels.mine request and exact single-account parser reject ambiguity/pagination/errors without selecting another account. Primary official account/OAuth contracts are linked. No secret acquisition, refresh, persistence or default factory activation.
+
+CAPABILITIES PARTIAL: actual official account verification and OAuth acquisition/refresh/key custody, full consent/byte/session/cost upload worker, processing/thumbnail/scheduler/receipts, profile administration, atomic edit admission/orphan recovery, complete TikTok/Meta and Native UI. Scope/account protocol builders alone confer no permission and do not establish Publishing/Mode A/B Ready.
+
+TESTS: credential/wire/YouTube protocol **66 PASS**, 0.45s, including thirty-one new credential/account fixture cases. r1 21/21, r2 53/53 before existing thirteen YouTube protocol cases were included in r3. Full Linux target commit `a2359d4` passed **2,194 PASS/11 SKIP**, 1,090.57s; target/queue evidence now records this result. The queue's source-specific expanded regression remains 145/145; a full combined queue/OAuth commit regression will follow. Native 400/Studio 123 remain separately pinned.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: type/expiry/scope/identity checks in the actual API runtime. MOCK TESTS: every account/OAuth token/profile/scope/response is a fixture; one explicit MockTransport GET checks official origin/header/body and returns a fixture account. Zero real provider requests, real credentials read or paid operations; no official account claim.
+
+EVIDENCE: `docs/north-star/publishing-oauth-evidence.json`, three logs, current parent preservation receipt and `docs/PUBLISHING_OAUTH_ACCOUNT_ADMISSION.md`. The evidence index records original primary contract URLs and distinguishes the single mock account request from all protocol mocks.
+
+REGRESSIONS: existing wire/YouTube protocol and preserved target full API pass. No installed runtime modification, accepted/live source/media/data/processes/secrets, production schema, main merge, real publish/delete or deployment change.
+
+EXTERNAL BLOCKERS: eventual configured OAuth/account audit/Owner external publishing enablement; no current safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve increment/run combined pinned Linux API, then implement the durable upload/cost worker and remaining North Star waves.

@@ -1,0 +1,57 @@
+{
+  "schema": "north-star-publishing-oauth-evidence-v1",
+  "parent_head": "472754aaf293a5475e910a590a9e34a96503ffc0",
+  "source_sha256": {
+    "apps/api/app/publishing_credentials.py": "6fb0fe5cbe5619e7afdb261782fc16804ace9430ffdf12220c158ca668cef9e7",
+    "apps/api/tests/test_publishing_credentials.py": "19e8f8b7ab55381ab285d7814f227e675993460b0d8ae7c18ee533558152a269",
+    "apps/api/app/publishing_wire.py": "c9e6a2777108bbee19a9cf1e10aeac127bc4487e1ee281abdec0e6094d4d6d84",
+    "apps/api/app/youtube_upload.py": "0455a3be5d85c8f29610d7c900c9a31ebd1de3a7148ad2f9af49a367f631d361",
+    "docs/PUBLISHING_OAUTH_ACCOUNT_ADMISSION.md": "e40a5f260eccf723eac9283dd9c0f81e2508cbe3d9d0abefa5f5b71511d563a9"
+  },
+  "logs": {
+    "publishing-oauth-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-oauth-r1.log",
+      "sha256": "db342dccce955cfb4ec12bc8ce9b638788cf8d7ef0bc44188610348b318cc43d"
+    },
+    "publishing-oauth-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-oauth-r2.log",
+      "sha256": "d5b8102457a3360b9aac248dd6086596bbe9d90ca6e71d4d7f311defbfa27673"
+    },
+    "publishing-oauth-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-oauth-r3.log",
+      "sha256": "9a9cdf64bd3e4d84bb5d91b7f779239e8bcdc40ac317e1af4a248818ace7dfc8"
+    }
+  },
+  "new_credential_account_tests": 31,
+  "credential_wire_protocol_pass": 66,
+  "credential_wire_protocol_seconds": 0.45,
+  "full_preserved_target_linux_api": {
+    "head": "a2359d4b1f3ef788cd946773890f1951612e819c",
+    "passed": 2194,
+    "skipped": 11,
+    "seconds": 1090.57,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-a2359d4.log",
+      "sha256": "d76a56b805d74a2949041a5e2692ea5633d613cabe1e9521b0384a2f7aedb34a"
+    }
+  },
+  "preservation_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-preservation.json",
+    "sha256": "ca6f9c8630871db68357b4d23a027b72c63d1cfc6cab845e0b646dd94455ba41"
+  },
+  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "account_and_oauth_inputs_are_fixtures": true,
+  "mock_account_requests": 1,
+  "actual_provider_requests": 0,
+  "actual_oauth_secrets_read": 0,
+  "paid_operations": 0,
+  "official_account_verification": false,
+  "default_adapter_activated": false,
+  "owner_uat_accepted": false,
+  "publishing_ready": false,
+  "production_deployed": false,
+  "primary_contracts": [
+    "https://developers.google.com/youtube/v3/docs/channels/list",
+    "https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps"
+  ]
+}

@@ -1,0 +1,13 @@
+# In-memory OAuth and exact YouTube account admission
+
+`PublishingOAuthCredential` carries a frozen public target binding, aware expiry, dedicated YouTube scope set and a token excluded from representations. It has no JSON export, secret-file acquisition or refresh fallback. A trusted resolver supplies an already refreshed in-memory credential. Missing configuration/private resolver errors produce fixed codes; no real credential is read by the default factory or these tests.
+
+Admission requires the exact reviewed workspace/profile/account/provider/credential revision. A token expiring within ninety seconds needs refresh before a request. Upload and account-read scopes must both be present: dedicated upload plus readonly, or the documented broader YouTube/force-SSL scopes. Other scopes fail closed under this dedicated credential policy; they are not silently reused from a shared application.
+
+The inert account request is authenticated `channels.list` with `part=id`, `mine=true`, `maxResults=2`. The confirmation parser requires one account with the exact configured ID and no next-page token. Empty, wrong, multiple, paginated, malformed or error responses require review rather than choosing a destination. This single-account policy is deliberately stricter than the platform's collection response. No content-owner/CMS fallback or automatic channel switching occurs.
+
+Primary contracts: [YouTube channels.list](https://developers.google.com/youtube/v3/docs/channels/list) documents the official endpoint, authenticated `mine` filter and returned collection; [YouTube OAuth web-server flow](https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps) documents scope-specific user consent and secure token handling. This implementation contains no OAuth redirect/refresh/callback flow and does not claim that a configured account has been verified.
+
+Thirty-one credential/account fixture cases and existing wire tests pass. One explicit `httpx.MockTransport` request checks exact origin/auth/body and returns a fixture account. It is not a real account verification. No token is printed, persisted, passed on a command line or stored in an evidence export. Actual provider requests, real secrets read and paid operations are zero.
+
+The full upload worker must perform this scoped check before initialization, recheck consent/configuration/expiry before subsequent mutations, retain operation/cost evidence, and use the existing durable intent, encrypted session vault and verified artifact guard. All account/credential helpers remain disconnected from the default factory. OAuth acquisition/refresh/key custody, account audit, budget/real-provider acceptance and Native controls remain open.
