@@ -147,3 +147,27 @@ nodes. MIME/magic validation does not prove full media decoding or registration.
 Official API references: [server routes](https://github.com/Comfy-Org/ComfyUI/blob/master/server.py)
 and [job normalization](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_execution/jobs.py).
 Evidence is indexed in `docs/north-star/comfyui-http-contract-evidence.json`.
+## Binary registration contract
+
+`BinaryArtifactStore` validates bounded PNG/JPEG/MP4 bytes using explicitly
+configured absolute FFmpeg/FFprobe tools. Full decode observes frames; it does
+not certify full QC, rights or production eligibility. The owned artifact root
+uses workspace hashes, bridge job IDs and content-bound identities. Exact
+replay retains old timestamps/documents; corruption, changed provenance and
+linked paths reject. Only fresh temporary files may be cleaned up.
+
+Successful jobs can bind a `vf-artifact://<id>` reference under the existing
+five-field output schema. Authenticated scoped routes provide
+`/v1/jobs/{job}/artifacts/{id}/metadata` and the binary route without `/metadata`.
+They serve only the artifact named by that saved successful result. The API
+adapter verifies immutable result/input/prompt/seed and artifact byte hashes;
+legacy fixture-reference receipts remain compatible. It never downloads an
+arbitrary returned URL. Unknown rights, null costs and false production
+eligibility remain enforced.
+
+Configure `COMFYUI_ARTIFACT_ROOT`, `COMFYUI_FFMPEG_PATH` and
+`COMFYUI_FFPROBE_PATH` in the isolated bridge. The optional GPU Compose service
+declares `/usr/bin` decode tools and the bridge data volume. Docker execution
+has not been verified on this host. Live backend integration is still pending;
+`scripts/north_star_comfyui_binary_contract.py` proves actual synthetic
+FFmpeg media/ASGI/storage/adapter delivery with explicit mock GPU jobs.

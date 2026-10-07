@@ -36,6 +36,7 @@ The full Master Spec remains the objective. Existing certified Native components
 4. Preserve raw provider evidence, original uploads, accepted artifacts and old renders. New quality policies create new revisions; they must not retroactively alter or recertify historical media.
    The official ComfyUI HTTP client is now implemented with bounded origin/profile pinning, submit/status/history/targeted cancel, no-overwrite reference upload/readback and typed binary retrieval. Mock contracts preserve dispatch ambiguity and prohibit global cancellation or automatic write retries. Durable backend admission/integration, actual server pin verification, scoped full-decode reference staging and binary artifact registration remain; checked-in graphs and live execution remain NOT_CONFIGURED.
 5. Do not reserve invented observed trend/analytics/cost values. Mock payloads are clearly labeled; unknown metrics and billed costs remain null.
+   ComfyUI binary storage/HTTP/API delivery now fully decodes local synthetic PNG/JPEG/MP4, preserves scoped immutable bytes and validates job/workflow/input/seed hashes. The current bridge remains disabled/mock; its synthetic binary receipt is not GPU generation, rights clearance or full QC. Admitted durable transport/reference staging and real provider acceptance remain open.
 6. Each capability change is a separate reviewable commit. Do not merge protected main. Preserve milestone commits remotely and retain the recovery bundle.
 
 ## Required external gates

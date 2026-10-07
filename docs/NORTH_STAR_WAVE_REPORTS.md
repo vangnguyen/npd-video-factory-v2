@@ -775,3 +775,24 @@ EVIDENCE: `docs/north-star/comfyui-http-contract-evidence.json` binds source and
 REGRESSIONS: all existing bridge lifecycle/security/compiler checks pass. Live source/database/configuration/processes and accepted artifacts remain untouched. No main merge, deployment or publishing.
 
 EXTERNAL BLOCKERS: actual approved executable graph/GPU/server/provider acceptance, Docker, Owner UAT and Native browser verification remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: durable admitted backend dispatch, verified-reference staging and binary artifacts; remaining media/platform/distribution/analytics/learning/Trend/Hub/hardening work continues afterward.
+## Wave 5 — Actual binary registration and scoped delivery
+
+WAVE: 5
+
+STATUS: IN PROGRESS; GENERATIVE_MEDIA_READY = NO.
+
+HEAD SHA: parent `b1a61c4`; this binary commit records the increment. Parent is pushed and preserved in verified `north-star-comfyui-http.bundle`, SHA256 `60a037569f073768ef29d69a2863f0a1347306fc8c0c2143f35935015bd98ea9`.
+
+CAPABILITIES COMPLETED: bounded actual FFprobe/full FFmpeg PNG/JPEG/MP4 decode with observed frame counts, codec/dimensions/duration/fps/audio facts. Scoped immutable media/typed provenance/manifest hashes persist and replay exactly; corruption, provenance changes and linked paths reject. Fresh temporary files are cleaned without recursive deletion. Successful bridge jobs bind their actual content under the existing five-field output schema. Authenticated workspace-scoped metadata/download routes verify result/workflow/fixture/checksum and never serve an unbound known artifact ID. Neutral API generation now consumes binary bytes only from those fixed routes, validates result/input/prompt/seed/byte bindings and decoded facts, and preserves legacy JSON receipts. Cost remains null; rights unknown and production/QC readiness false. GPU Docker source declares decoding tools and owned volume; no Docker execution claimed.
+
+CAPABILITIES PARTIAL: actual generated AI media, admitted durable live dispatch/reconciliation, reviewed executable graphs, verified reference staging, server/GPU/cost/provider acceptance, full QC/rights and Native UI integration remain. Full decode does not establish QC or legal clearance. The fresh binary evidence uses synthetic FFmpeg media and explicitly fixture-bound mock GPU job results.
+
+TESTS: complete bridge suite **69/69 PASS**, 5.86s (`comfyui-binary-r3.log`); focused API **54/54 PASS**, 23.04s (`comfyui-binary-api-r2.log`); full worker **35/35 PASS**, 2.26s; Native B-roll/Shorts **10/10 PASS**, 3.898s. Windows symlink creation was unavailable in r1 (67 PASS/1 SKIP); the security test now creates a real owned junction and later runs have no skips. Actual binary ASGI/API/SQLite/offline bundle **PASS**, 14 exports in `comfyui-binary-contract-n2`. Earlier n1 exports remain unchanged. Full API remains ffc8ec1 at 2,021 PASS/11 SKIP until a fresh pinned run completes.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual synthetic PNG/JPEG/MP4 decode, owned storage/junction rejection, binary HTTP/API delivery, exact offline replay and closed SQLite checksum. MOCK TESTS: all GPU generation/server pins/model declarations; API malformed-wire fixtures are explicitly not decode proof. Zero external/paid/GPU operations.
+
+EVIDENCE: `docs/north-star/comfyui-binary-contract-evidence.json` binds executed sources, nine logs and all 14 fresh n2 exports. Two actual delivered binaries are PNG and MP4; JPEG decode is covered by the media suite. Owner UAT, full QC, rights clearance, provider acceptance and production deployment remain false.
+
+REGRESSIONS: bridge/compiler/wire, API media/planning/scope/modes, worker and Native B-roll/Shorts checks pass. Accepted artifacts/live source/database/configuration/processes remain untouched; no merge/deployment/publishing/new budget.
+
+EXTERNAL BLOCKERS: actual approved executable workflow/GPU/provider acceptance, Docker and Owner UAT/browser verification remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: complete verified-reference/durable backend architecture, and continue remaining media/planner/audio/profile/platform/distribution/analytics/learning/Trend/Hub/hardening gaps.

@@ -191,6 +191,9 @@ services:
       COMFYUI_BACKEND: ${COMFYUI_BACKEND:-disabled}
       COMFYUI_BRIDGE_TOKEN: ${COMFYUI_BRIDGE_TOKEN:-}
       COMFYUI_JOB_STORE_PATH: /workspace/storage/comfyui-bridge/jobs.sqlite3
+      COMFYUI_ARTIFACT_ROOT: /workspace/storage/comfyui-bridge/artifacts
+      COMFYUI_FFMPEG_PATH: /usr/bin/ffmpeg
+      COMFYUI_FFPROBE_PATH: /usr/bin/ffprobe
       COMFYUI_MAX_CONCURRENT_JOBS: ${COMFYUI_MAX_CONCURRENT_JOBS:-1}
       COMFYUI_MAX_QUEUED_JOBS: ${COMFYUI_MAX_QUEUED_JOBS:-32}
       COMFYUI_MAX_RETRIES: ${COMFYUI_MAX_RETRIES:-3}

@@ -440,6 +440,7 @@ class ComfyUIBridgeGenerationProvider:
         workspace_id, project_id, resolution_job_id = current_generation_scope()
         workflow_id, operation, inputs = generation_envelope(self.modality, payload, self.workflow_routes)
         started = asyncio.get_running_loop().time()
+        binary_content, binary_metadata = None, None
         timeout = httpx.Timeout(self.timeout_seconds, connect=10)
         async with httpx.AsyncClient(
             base_url=self.bridge_url,
@@ -476,6 +477,10 @@ class ComfyUIBridgeGenerationProvider:
                 if (job.get('job_id') != job_id or job.get('workspace_id') != workspace_id or
                         job.get('workflow_id') != workflow_id):
                     raise ValueError('COMFYUI_JOB_BINDING_INVALID')
+            if job.get('status') == 'succeeded' and str((job.get('result') or {}).get('artifact_reference', '')).startswith('vf-artifact://'):
+                from .comfyui_binary_result import registered_binary
+                binary_content, binary_metadata = await registered_binary(client, job=job, workspace_id=workspace_id,
+                    workflow_id=workflow_id, modality=self.modality, inputs=inputs, timeout_seconds=self.timeout_seconds)
         if job.get("status") != "succeeded":
             safe_code = job.get('error_code')
             if safe_code not in {'CANCELLED', 'TIMEOUT', 'EXECUTION_FAILED', 'RECOVERY_REQUIRED'}:
@@ -496,10 +501,12 @@ class ComfyUIBridgeGenerationProvider:
             sort_keys=True,
         ).encode("utf-8")
         media_type = "image" if self.modality == "image" else "video"
+        extension = {'image/png': 'png', 'image/jpeg': 'jpg', 'video/mp4': 'mp4'}.get(binary_metadata['mime_type']) if binary_metadata else 'json'
+        media = binary_metadata['media'] if binary_metadata else result
         return ProviderMaterializedMedia(
-            filename=f"comfyui-{media_type}-{job_id}.json",
-            content_type="application/vnd.npd.comfyui-result+json",
-            payload=content,
+            filename=f"comfyui-{media_type}-{job_id}.{extension}",
+            content_type=binary_metadata['mime_type'] if binary_metadata else "application/vnd.npd.comfyui-result+json",
+            payload=binary_content if binary_metadata else content,
             provider_job_id=job_id,
             source_type="ai_generated",
             rights_status="unknown",
@@ -509,10 +516,10 @@ class ComfyUIBridgeGenerationProvider:
             creator="ComfyUI workflow",
             source_reference=artifact_reference,
             attribution_requirement=None,
-            width=result.get("width"),
-            height=result.get("height"),
-            duration_seconds=result.get("duration_seconds"),
-            orientation="unknown",
+            width=media.get("width"),
+            height=media.get("height"),
+            duration_seconds=media.get("duration_seconds"),
+            orientation=('square' if media['width'] == media['height'] else 'landscape' if media['width'] > media['height'] else 'portrait') if binary_metadata else "unknown",
             production_eligible=False,
             estimated_cost_vnd=None,
             actual_cost_vnd=None,
@@ -538,7 +545,8 @@ class ComfyUIBridgeGenerationProvider:
                 "gpu_compute_cost_verified": False,
                 "fixture": bool(result.get('fixture')) or isinstance(self.transport, httpx.MockTransport),
                 "mock_transport_used": isinstance(self.transport, httpx.MockTransport),
-                "binary_artifact_registered": False,
+                "binary_artifact_registered": binary_metadata is not None,
+                "registered_artifact": binary_metadata,
             },
         )
 

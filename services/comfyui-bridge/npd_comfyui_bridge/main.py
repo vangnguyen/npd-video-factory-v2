@@ -6,12 +6,15 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
+from fastapi.responses import Response
+import hashlib
 
 from .backend import DeterministicMockComfyUIBackend, DisabledComfyUIBackend
 from .models import BridgeJobCreate, BridgeJobRead
 from .service import ComfyUIBridgeService
 from .job_store import SQLiteBridgeJobStore
 from .workflows import WorkflowRegistry
+from .binary_artifacts import ArtifactError, BinaryArtifactStore, FFmpegMediaValidator
 
 
 manifest_path = Path(
@@ -48,6 +51,9 @@ async def lifespan(_app):
 
 app = FastAPI(title="NPD ComfyUI Bridge", version="0.2.0", lifespan=lifespan)
 app.state.bridge_service = service
+app.state.binary_artifact_store = BinaryArtifactStore(
+    Path(os.getenv('COMFYUI_ARTIFACT_ROOT', '/workspace/storage/comfyui-bridge/artifacts')),
+    validator=FFmpegMediaValidator(ffmpeg=os.getenv('COMFYUI_FFMPEG_PATH'), ffprobe=os.getenv('COMFYUI_FFPROBE_PATH')))
 
 
 async def require_service(authorization: str | None = Header(default=None),
@@ -114,6 +120,42 @@ async def job_events(job_id: str, workspace_id: str = Depends(require_service)):
 @app.get("/v1/jobs/{job_id}", response_model=BridgeJobRead, dependencies=[Depends(require_service)])
 async def get_job(job_id: str, workspace_id: str = Depends(require_service)) -> BridgeJobRead:
     return await scoped_job(job_id, workspace_id)
+
+
+async def scoped_artifact(job_id, artifact_id, workspace_id):
+    job = await scoped_job(job_id, workspace_id)
+    result = job.result or {}
+    if job.status != 'succeeded' or result.get('artifact_reference') != 'vf-artifact://' + artifact_id:
+        raise HTTPException(404, detail={'error': {'code': 'NOT_FOUND'}})
+    try:
+        registered = app.state.binary_artifact_store.read(workspace_id=workspace_id, job_id=job_id, artifact_id=artifact_id)
+        document = registered.document
+        if (document['checksum_sha256'] != result.get('checksum_sha256')
+                or document['provenance']['workflow_id'] != job.workflow_id
+                or document['provenance']['workflow_version'] != job.workflow_version
+                or document['fixture'] != result.get('fixture')):
+            raise ArtifactError('ARTIFACT_JOB_BINDING_INVALID')
+        return registered
+    except ArtifactError:
+        raise HTTPException(404, detail={'error': {'code': 'NOT_FOUND'}}) from None
+
+
+@app.get('/v1/jobs/{job_id}/artifacts/{artifact_id}/metadata', dependencies=[Depends(require_service)])
+async def artifact_metadata(job_id: str, artifact_id: str, workspace_id: str = Depends(require_service)):
+    registered = await scoped_artifact(job_id, artifact_id, workspace_id)
+    return registered.document
+
+
+@app.get('/v1/jobs/{job_id}/artifacts/{artifact_id}', dependencies=[Depends(require_service)])
+async def download_artifact(job_id: str, artifact_id: str, workspace_id: str = Depends(require_service)):
+    registered = await scoped_artifact(job_id, artifact_id, workspace_id)
+    content = registered.path.read_bytes()
+    if hashlib.sha256(content).hexdigest() != registered.document['checksum_sha256']:
+        raise HTTPException(404, detail={'error': {'code': 'NOT_FOUND'}})
+    return Response(content=content, media_type=registered.document['mime_type'], headers={
+        'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'private, no-store',
+        'Content-Disposition': 'attachment; filename="' + registered.path.name + '"',
+        'X-VF-Content-SHA256': registered.document['checksum_sha256']})
 
 
 @app.post("/v1/jobs/{job_id}/cancel", response_model=BridgeJobRead, dependencies=[Depends(require_service)])

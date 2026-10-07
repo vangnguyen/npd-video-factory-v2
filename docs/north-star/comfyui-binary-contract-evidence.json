@@ -1,0 +1,146 @@
+{
+  "schema": "north-star-comfyui-binary-evidence-v1",
+  "parent_head": "b1a61c4c26866eb697def7f007f25700c7676807",
+  "source_sha256": {
+    "services/comfyui-bridge/npd_comfyui_bridge/binary_artifacts.py": "9cae30e0c7509981339b72c9a4a990711dd3864eefe3dfdd5ee1c960dcc7ea7b",
+    "services/comfyui-bridge/npd_comfyui_bridge/main.py": "a97248675e84b1471adacef96a403abf597db9680dfa96c6132812b20e0a787b",
+    "services/comfyui-bridge/tests/test_binary_artifacts.py": "84ca592ffcc5dcadec13ee7c1c0bcf2a13d5cc9392b2413fc23dd0e9c9fe3c26",
+    "services/comfyui-bridge/Dockerfile": "f762d7d59cce8c1c1facf6f25c4edcea059748f3fd1dfd598ac3c0e08e5d749f",
+    "apps/api/app/comfyui_binary_result.py": "dba2f6e616842fb7dfe7568988cffc10cda5e864bcff9dab260c5f2a52cbad59",
+    "apps/api/app/media_intelligence_providers.py": "573d9b0093d33e4dbe206a55ea42a5e0311a058962ecc2c0dea317460a1894d1",
+    "apps/api/tests/test_comfyui_binary_result.py": "c67cdaf3d184e8077bfac6b6a784e1dc344c3a01ffc6aac758bf214a25ec7a5d",
+    "scripts/north_star_comfyui_binary_contract.py": "cc8e4fa32e4e6f0b5f0355d202b213a9645df04a6da9897bd2f0f0b622dc8046",
+    "docker-compose.yml": "ebccd863c6a240ce765cba088f8f296c96641e72de31c96bb5ef74d043a7be38",
+    ".env.example": "dc71f27e7b8dbd6e2c3acafc21df22168deeca980a0bcfba0029f1967d5bcbb8"
+  },
+  "logs": {
+    "comfyui-binary-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-r1.log",
+      "sha256": "79c903c92b11c96ef99493485e753f869f9d8d18d67e9bb7fcd978255a889c57"
+    },
+    "comfyui-binary-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-r2.log",
+      "sha256": "9474862a61f55f615e3836bbe4fcf6dcef43cce75a0479dbcf19944ef7c8c756"
+    },
+    "comfyui-binary-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-r3.log",
+      "sha256": "cfd2a2af71d261e26deabd8953a426f588e109a66aac17bb7100298db0e20723"
+    },
+    "comfyui-binary-api-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-api-r1.log",
+      "sha256": "0bf584db1c4ec8de13ac97ddccd71ab1494e2ef7eaf8d8eec2acecfaa05dbb3a"
+    },
+    "comfyui-binary-api-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-api-r2.log",
+      "sha256": "9d5ebb0d7d99d29cba43bfe1bd647180c641d3fecc197a9e741d286a764ae255"
+    },
+    "comfyui-binary-worker-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-worker-r1.log",
+      "sha256": "b0eb3488c306f9147ccd94af5b4ce0acd04db4162c6ba28265d56bf01c944732"
+    },
+    "comfyui-binary-native-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-native-r1.log",
+      "sha256": "35b0c69f3c1b78361798bc996333d202791d712dda098a85384dfccc2b768583"
+    },
+    "comfyui-binary-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n1.log",
+      "sha256": "27b7a8bfa071f26d0b2cd5d0ed72b139c655c2af1a9fec415b46ebbe6db89677"
+    },
+    "comfyui-binary-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2.log",
+      "sha256": "db4d81d92c249022310b478bb10fdfaffa7b74cb9afd4a574b690e5886964943"
+    }
+  },
+  "exports": {
+    "contract-receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\contract-receipt.json",
+      "sha256": "231f7fec4bb2ba95dc82fe85d554e4f2709fca6088165f203c263a7fab1c8850",
+      "size_bytes": 5116
+    },
+    "image-api-provenance.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\image-api-provenance.json",
+      "sha256": "ca14716ab30897581479c464699e0ba357a0a4a63822158ce6d02e34b061d2c8",
+      "size_bytes": 2351
+    },
+    "image-artifact.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\image-artifact.json",
+      "sha256": "2272ee561b587df0a6b6ae2fb2b4bbca28cd514fc99088ced67b0c55653e6485",
+      "size_bytes": 1527
+    },
+    "image-decode-timing.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\image-decode-timing.json",
+      "sha256": "36b6b4422b2e4a1259b8da0e8f09ed7b48c747251dd13e7eed4089c5c5be2ce1",
+      "size_bytes": 124
+    },
+    "image-events.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\image-events.json",
+      "sha256": "30edeaefd2389ddcf331ce19cbae5076bd66f5e2113aba1f234a7c4893e26513",
+      "size_bytes": 3219
+    },
+    "image-job.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\image-job.json",
+      "sha256": "d1c619de61108bb3ebf24d5fc4f626a627b43ae3f1edb0be9baab64108a4d657",
+      "size_bytes": 969
+    },
+    "image.png": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\image.png",
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "size_bytes": 2978
+    },
+    "offline-replay.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\offline-replay.json",
+      "sha256": "1fbedffddea1bb21f573429b0b384d2877bd929977cd8c0cd66e23d25b151995",
+      "size_bytes": 2284
+    },
+    "video-api-provenance.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\video-api-provenance.json",
+      "sha256": "87fb59185446b923c90487a24c61c59546ffbcc8c6f3d7acc74fdf5aa3352d31",
+      "size_bytes": 2371
+    },
+    "video-artifact.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\video-artifact.json",
+      "sha256": "6ba79bc29f1933322314eacf7d2b0b835fa0adddfb98ccee30366bd08eafdd09",
+      "size_bytes": 1531
+    },
+    "video-decode-timing.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\video-decode-timing.json",
+      "sha256": "c82574992ad41f96687fbfc5a2c4ab1d8e387bad63f6307b537bb350fc35fe6d",
+      "size_bytes": 138
+    },
+    "video-events.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\video-events.json",
+      "sha256": "31f6c37ad224d290ae985ffbd7d2e069055208561eebc8f36d8dad69d1d53f05",
+      "size_bytes": 3224
+    },
+    "video-job.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\video-job.json",
+      "sha256": "0973a75bff94da1b4ac9352fe8c4cd76f481fdb349d63f6200271b8bf9a9a92a",
+      "size_bytes": 975
+    },
+    "video.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-binary-contract-n2\\video.mp4",
+      "sha256": "d9ff43ba142c084b9a3a1c66262ec60b192a5473b475711205648515637526af",
+      "size_bytes": 13285
+    }
+  },
+  "bridge_tests_passed": 69,
+  "bridge_tests_skipped": 0,
+  "api_focused_tests_passed": 54,
+  "worker_tests_passed": 35,
+  "native_tests_passed": 10,
+  "actual_synthetic_png_jpeg_mp4_decoded": true,
+  "actual_binary_http_and_adapter_bundle_passed": true,
+  "media_creator": "FFmpeg synthetic fixture; not AI",
+  "actual_bundle_binary_count": 2,
+  "exact_offline_replay_passed": true,
+  "external_provider_calls": 0,
+  "gpu_dispatches": 0,
+  "service_live_backend_wired": false,
+  "rights_status": "unknown",
+  "qc_passed": false,
+  "production_eligible": false,
+  "docker_executed": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "remaining": "Durable admitted live backend/verified references/reviewed graphs/GPU/cost and provider acceptance, Native integration and full QC/rights/Owner acceptance."
+}
