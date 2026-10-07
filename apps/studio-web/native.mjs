@@ -1,3 +1,7 @@
+export const supportsNativeCosts = session => session?.capabilities?.native_cost_ledger===true;
+export async function loadNativeCosts(session,loader=()=>import('./native-costs.mjs')) {
+  return supportsNativeCosts(session)?await loader():null;
+}
 export const supportsShotStudio = session => session?.capabilities?.native_shot_studio===true || session?.native_shot_studio===true;
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 export const newProjectQuality = session => session?.capabilities?.north_star_quality===true ? {production_quality:true} : {};
@@ -31,6 +35,9 @@ export const musicSummary = project => project?.document.music ? `${project.docu
 export const scriptReviewLabel = project => !project?.document?.content_intelligence ? "" : project?.script_review?.current ? (project.approval ? "Lời đọc đã được duyệt." : "Lời đọc đã lưu được duyệt. Hình ảnh và cách dựng còn chờ bạn duyệt.") : project?.script_review ? "Lời đọc đã thay đổi; cần duyệt lại bản mới." : "Lời đọc đang chờ bạn duyệt.";
 
 const errors = {
+  AI_COST_APPROVAL_REQUIRED_BEFORE_DISPATCH:'Ước tính chưa rõ hoặc vượt giới hạn chi phí AI. Kiểm tra ngân sách và nhà cung cấp trước khi tạo yêu cầu mới.',
+  COST_AMOUNT_INVALID:'Nhập số tiền không âm, tối đa 1.000 tỷ đồng và không quá 6 chữ số thập phân.',
+  COST_OPERATION_ALREADY_DISPATCHED_NO_REPLAY:'Yêu cầu đã được ghi nhận. Kiểm tra kết quả trước khi tạo yêu cầu mới.',
   AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER:'Xem preview hiện tại và duyệt bản dựng nguồn trước khi render.',
   AUTO_EDIT_CURRENT_PREVIEW_REVIEW_REQUIRED:'Preview chưa có hoặc đã thay đổi. Tạo và xem preview mới trước khi duyệt.',
   AUTO_EDIT_TIMELINE_VERSION_CHANGED:'Bản timeline đã thay đổi. Làm mới để lấy bản đang lưu.',
@@ -105,6 +112,18 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
+  let costRequest = 0, costUI = null;
+  async function refreshCosts() {
+    if(!costUI||!$('cost-summary'))return;
+    const serial=++costRequest, identifier=project?.id;
+    if(!identifier){$('cost-summary').innerHTML=costUI.costSummaryHTML(null);return;}
+    try {
+      const value=await api(`/api/projects/${identifier}/cost-summary`);
+      if(serial===costRequest && project?.id===identifier)$('cost-summary').innerHTML=costUI.costSummaryHTML(value);
+    } catch {
+      if(serial===costRequest && project?.id===identifier)$('cost-summary').textContent='Chưa tải được chi phí. Làm mới để kiểm tra; không giả định chi phí bằng 0.';
+    }
+  }
   function message(text, error=false) {$("message").textContent=text;$("message").hidden=false;$("message").classList.toggle("error",error);}
   async function api(path, body) {
     const response = await fetch(path,{method:body?"POST":"GET",credentials:"same-origin",headers:body?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:body?JSON.stringify(body):undefined});
@@ -125,6 +144,8 @@ if (typeof document !== "undefined") {
     $("archive-project").textContent=project?.archived?"Khôi phục":"Lưu trữ";
     $("load-history").disabled=!project||busy;
     $("apply-brand").disabled=!project||blocked||dirty;
+    if($('save-cost-policy'))$('save-cost-policy').disabled=!costUI||!project||blocked||(dirty&&dirtyPart!=='cost');
+    if($('max-ai-cost'))$('max-ai-cost').disabled=!costUI||!project||blocked||(dirty&&dirtyPart!=='cost');
     $("brand-select").disabled=!project||blocked||dirty;
     $("template-select").disabled=!project||blocked||dirty;
     $("project-name").disabled=Boolean(project)||busy;
@@ -187,6 +208,8 @@ if (typeof document !== "undefined") {
     row.querySelector("[data-media-note]").textContent=asset?.kind==="video"?`${fit} · tắt âm thanh gốc · clip ngắn lặp sau lượt phát đầu.`:asset?`${fit} · kiểm tra bố cục trong bản xem trước.`:"Chọn một nguồn cho cảnh này trước khi duyệt.";
   }
   function renderProject(reset=true) {
+    if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
+    refreshCosts();
     const origin=project?.document.content_intelligence;
     $("intelligence-origin").hidden=!origin;
     $("intelligence-origin").innerHTML=origin?`Từ brief đã duyệt bởi ${esc(origin.brief.approval.reviewer)} · <a href="/intelligence?run=${esc(origin.run.id)}">Xem nghiên cứu & ý tưởng nguồn</a>`:"";
@@ -261,6 +284,11 @@ if (typeof document !== "undefined") {
   }
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
+    if($('cost-card')){
+      $('cost-card').hidden=!supportsNativeCosts(session);
+      try {costUI=await loadNativeCosts(session);}
+      catch {costUI=null;$('cost-summary').textContent='Chưa tải được bảng chi phí. Làm mới để kiểm tra.';}
+    }
     projectQuality=newProjectQuality(session);
     if(session.capabilities?.native_media_frame_analysis===true){
       const frames=await import('./native-media-frames.mjs');
@@ -314,6 +342,12 @@ if (typeof document !== "undefined") {
   $("save-proposal").addEventListener("click",guarded(async()=>{const proposal=readProposal(),bindings=readBindings();project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,proposal,scene_media:bindings,scene_options:mediaReady({...project.document,proposal,scene_media:bindings})?readOptions():undefined,music_enabled:$("music-enabled").checked});renderProject(true);message("Đã lưu nội dung và cách dựng từng cảnh. Phiên bản mới cần duyệt lại.");}));
   $("auto-plan").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/auto-plan`,{revision:project.revision});renderProject(true);message("Đã đề xuất nguồn và cách dựng. Kiểm tra từng cảnh, đổi nguồn nếu cần rồi duyệt.");}));
   $("apply-brand").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:$("brand-select").value,template_id:$("template-select").value,...(workspaceUI?{duration_mode:$("duration-mode").value}:{})});renderProject(true);message("Đã lưu cấu hình thương hiệu và mẫu vào phiên bản này. Kiểm tra cách dựng, nội dung và duyệt lại trước khi tạo video.");}));
+  $('save-cost-policy')?.addEventListener('click',guarded(async()=>{
+    const value=$('max-ai-cost').value.trim();
+    project=await api(`/api/projects/${project.id}/cost-policy`,{revision:project.revision,max_ai_cost_vnd:value||null});
+    renderProject(true);message('Đã lưu giới hạn chi phí. Kiểm tra và duyệt lại phiên bản trước khi sản xuất.');
+  }));
+  $('max-ai-cost')?.addEventListener('input',()=>markDirty('cost'));
   $("duplicate-project").addEventListener("click",guarded(async()=>{project=await api(`/api/projects/${project.id}/duplicate`,{revision:project.revision});localStorage.setItem("vf-native-project",project.id);renderProject(true);await projects();message("Đã tạo bản sao chưa duyệt; giữ nguyên nội dung và nguồn, cần kiểm tra và duyệt lại.");}));
   $("archive-project").addEventListener("click",guarded(async()=>{const archived=!project.archived;project=await api(`/api/projects/${project.id}/archive`,{revision:project.revision,archived});$("show-archived").checked=archived||$("show-archived").checked;renderProject(true);await projects();message(archived?"Đã lưu trữ dự án. Có thể khôi phục; tệp và lịch sử được giữ nguyên.":"Đã khôi phục dự án.");}));
   $("show-archived").addEventListener("change",guarded(projects));

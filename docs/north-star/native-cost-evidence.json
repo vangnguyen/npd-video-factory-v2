@@ -1,0 +1,103 @@
+{
+  "schema": "north-star-native-cost-evidence-v1",
+  "parent_head": "f0459996c723a0171b450ab1031a25c458672429",
+  "source_sha256": {
+    "services/windows_native/costs.py": "f61d02979408c14dc700cddfaf6c1139906b943ed289eecedb4fe790951d1aa0",
+    "services/windows_native/pipeline.py": "45e172a2840af7dec80f08639757c0a44be5a5c809e32a4661277dac688f91a2",
+    "services/windows_native/asr.py": "ba06ce37600f0764550f02f89034b5a37164ef694419c44121ea8013e002148a",
+    "services/windows_native/shot_ai_edit.py": "68e8a45ced31036d75b8e11422aef4586339f65482610b5cfad9d3344d9ae818",
+    "services/windows_native/server.py": "2ce519c929d8b4bfe5b63cf5ca792fa48b3c8c5a79a5b2f4b016eccd05dbbd9b",
+    "services/windows_native/tests/test_costs.py": "ef6631de88e6d43e46bedc1670559cc4d3be57d97f495ea93210f29a8fd86421",
+    "apps/studio-web/native.html": "ae28191396dc7d6c724557e84afdd749f0f7abe124bc202973395bace5d8aee7",
+    "apps/studio-web/native.mjs": "5911d15590067249486b880c3dd2d46da5f9617393763a3e862e8199aa3c634f",
+    "apps/studio-web/shot-studio.mjs": "a84047b5730c36456105c23ef5c2ee0a2e54cbd6d31235881256e57e58ad8345",
+    "apps/studio-web/native-costs.mjs": "017c99e673d756f17f4f9c897b423eb2976ef70f55eb6f8d44592cc960f87b41",
+    "apps/studio-web/tests/native-costs.test.mjs": "e901b9e4b6d9b48fa56e0596ba3ea4a011cb0fa7e6b499726e3374afd0545711",
+    "scripts/north_star_native_cost_contract.py": "fb347e6805f7208b788f6195a173f148999bcfe4a59be9867c4a1e696b128cc3",
+    "docs/NATIVE_COST_LEDGER.md": "f735b581ab7565bc2e40657e45238cc1365111c07507edd561ad60c7ce06fd9f"
+  },
+  "logs": {
+    "native-costs-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-costs-r1.log",
+      "sha256": "eec66b55460c3b1a8f0426b287d62b91cfa8141833a6970fb43b248d18af7bc9"
+    },
+    "native-costs-full-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-costs-full-r2.log",
+      "sha256": "4052d37e73a2fe151d4bdcc466be09ff3d539429ff77d31ab2472a4520fc3117"
+    },
+    "native-costs-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-costs-r3.log",
+      "sha256": "9d06c3240cff60556495c9edb22f6bd943c6a8973bf97037bcf52f542e826bb4"
+    },
+    "native-costs-studio-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-costs-studio-r1.log",
+      "sha256": "5caf37b26e7fb3c8c98df5490f4a23c4de9a400d6e6c781ee21d16652035a2c5"
+    },
+    "native-costs-studio-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-costs-studio-r2.log",
+      "sha256": "2795000a846e8eaa4cf092afd10e74270572ba64212ce4d21eca7ad84034a372"
+    },
+    "native-cost-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-cost-contract-n1.log",
+      "sha256": "33ea562dc4c27c80d2a790a843b0516a6d4d51b57b80b926bcc52a9a6e9c05ea"
+    },
+    "api-linux-f045999.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-f045999.log",
+      "sha256": "f3d0eaccbc739562928dcf9592d2270887dfc617ac678924e27447379ba63436"
+    }
+  },
+  "exports": {
+    "cost.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-cost-contract-n1\\cost.json",
+      "sha256": "f407a993376f158b564e12eb34ccb9e5858a8acd25cd076f49c7cf3392321cbc"
+    },
+    "job-events.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-cost-contract-n1\\job-events.json",
+      "sha256": "e8ad604df44b566ed78978bb2b22edcd94fd2340b6e3a41dc8c49daed11f5ca0"
+    },
+    "preservation.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-cost-contract-n1\\preservation.json",
+      "sha256": "db88d5a138bdffb4b07087097f98a012b2aa18594c23be6655362ef5bc03a73d"
+    },
+    "project.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-cost-contract-n1\\project.json",
+      "sha256": "640cca4468ab151139e748fa9cfde7b74ea00b9ae3353c174e2d25eff0bfd582"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-cost-contract-n1\\receipt.json",
+      "sha256": "0209237d970dba58e725f280bf9e4e84a294994744a427d01fa02d8b39160d2e"
+    },
+    "versions.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-cost-contract-n1\\versions.json",
+      "sha256": "2fd12b5103b01cf2bbe10c99bae8949a74df363fd4ee242615376eff4401a438"
+    }
+  },
+  "database": {
+    "path": "C:/vf-native-cost-n1/workflow.sqlite3",
+    "sha256": "4d7a8256605abed684ce0589f620184da70555ca9da0100d40c49c885c58d923"
+  },
+  "native_full_regression_pass": 351,
+  "native_full_seconds": 231.82,
+  "latest_cost_contract_pass": 13,
+  "latest_cost_contract_seconds": 5.236,
+  "studio_pass": 116,
+  "native_full_source_note": "Full suite loaded server before the subsequent additive capability flag; latest 13 cost/HTTP checks cover that flag. Core ledger/provider integration unchanged.",
+  "linux_api_commit": "f0459996c723a0171b450ab1031a25c458672429",
+  "linux_api_pass": 2085,
+  "linux_api_skip": 11,
+  "linux_api_seconds": 582.39,
+  "new_schema": "additive CREATE TABLE; no existing record rewrite",
+  "pre_dispatch_budget_refusal": true,
+  "atomic_concurrent_admission": true,
+  "restart_exact": true,
+  "unknown_billed_cost_preserved": true,
+  "uncertain_dispatch_never_replayed": true,
+  "historical_capture_complete": false,
+  "billing_inputs": "explicit synthetic fixtures",
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "native_browser_viewports_verified": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "remaining": "Pre-project intelligence and every provider/job capture, configured admission estimates, real billing/whole-project coverage, multi-user RBAC and current browser acceptance."
+}

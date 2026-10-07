@@ -223,6 +223,10 @@ class Handler(BaseHTTPRequestHandler):
         if path=='/api/auto-edit/subtitle-templates':
             from app.subtitle_templates import template_catalog
             return self.reply(template_catalog())
+        cost_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/cost-summary', path)
+        if cost_route:
+            from .costs import CostLedger
+            return self.reply(CostLedger(self.server.store).summary(cost_route[1]))
         analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit', path)
         if analysis_route:
             from .auto_edit_analysis import view
@@ -251,7 +255,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/session":
             return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
-                "native_source_timeline":True,"native_media_frame_analysis":True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
+                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -333,6 +337,7 @@ class Handler(BaseHTTPRequestHandler):
         static.update({name:name[1:] for name in ('/asset-picker.mjs','/video-preview.mjs','/studio-workspace.css','/studio-shell.mjs','/studio-shell.css','/native-auto-edit.mjs','/native-auto-edit.css')})
         static.update({name:name[1:] for name in ('/native-source-editor.mjs','/native-source-editor.css',
             '/native-source-broll.mjs','/native-media-frames.mjs','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
+        static['/native-costs.mjs'] = 'native-costs.mjs'
         if path in static:
             return self.file(REPO / "apps/studio-web" / static[path])
         raise WorkflowError("ROUTE_NOT_FOUND", 404)
@@ -462,13 +467,18 @@ class Handler(BaseHTTPRequestHandler):
                 profile={k:configured[k] for k in keys if k in configured}
                 profile['configuration_sha256']=digest(configured)
             return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt"),content_profile=profile,production_quality=body.get('production_quality',False)), 201)
-        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive|brand-template|voice-quality)", self.path)
+        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive|brand-template|voice-quality|cost-policy)", self.path)
         if not match:
             raise WorkflowError("ROUTE_NOT_FOUND", 404)
         identifier, action = match[1], match[2]
         revision = body.get("revision")
         if not isinstance(revision, int) or isinstance(revision, bool):
             raise WorkflowError("REVISION_REQUIRED", 400)
+        if action == 'cost-policy':
+            if set(body) != {'revision', 'max_ai_cost_vnd'}:
+                raise WorkflowError('COST_POLICY_FIELDS_INVALID', 400)
+            from .costs import CostLedger
+            return self.reply(CostLedger(self.server.store).set_budget(identifier, revision, body['max_ai_cost_vnd']))
         if action == "draft":
             result = self.server.store.save(identifier, revision, prompt=body.get("prompt"), proposal=body.get("proposal"), scene_media=body.get("scene_media"), input_kind=body.get("input_kind"),scene_options=body.get("scene_options"),music_enabled=body.get("music_enabled"))
         elif action == "auto-plan":

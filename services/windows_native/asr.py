@@ -73,26 +73,42 @@ class DurableTransport:
 
     async def request(self, method, path, credential, timeout, **kwargs):
         # The authorization header is confined to this fixed verified TLS origin.
-        async with self.client_factory(timeout=timeout, trust_env=False, follow_redirects=False) as client:
-            async with client.stream(method, "https://api.assemblyai.com" + path,
-                                     headers={"authorization": credential}, **kwargs) as response:
-                if response.status_code != 200:
-                    raise WorkflowError("ASR_HTTP_REQUEST_FAILED", http_status=response.status_code)
-                chunks, size = [], 0
-                async for chunk in response.aiter_bytes():
-                    size += len(chunk)
-                    if size > 8 * 1024 * 1024:
-                        raise WorkflowError("ASR_RESPONSE_SIZE_LIMIT")
-                    chunks.append(chunk)
-        raw = b"".join(chunks)
-        if credential.encode("ascii") in raw:
-            raise WorkflowError("ASR_RESPONSE_CONTAINS_CREDENTIAL_REJECTED")
-        value = json.loads(raw)
-        if not isinstance(value, dict):
-            raise WorkflowError("ASR_RESPONSE_INVALID")
-        if credential.encode("ascii") in canonical(value):
-            raise WorkflowError("ASR_RESPONSE_CONTAINS_CREDENTIAL_REJECTED")
-        return value
+        ledger, context = getattr(self, 'cost_ledger', None), getattr(self, 'cost_context', None)
+        cost_id = None
+        if ledger and context:
+            operation = ('upload' if path == '/v2/upload' else 'create-transcript'
+                         if method == 'POST' else f'observe-{len(list(self.out.glob("observe-*.intent.json"))):04}')
+            operation = f'asr-{self.binding[:24]}-{operation}'
+            cost_id = ledger.begin(**context, provider='assemblyai', model=assemblyai_asr_profile().model,
+                operation=operation, request_sha256=self.binding,
+                estimated_cost=None, paid=(method == 'POST' and path == '/v2/transcript'))
+        try:
+            async with self.client_factory(timeout=timeout, trust_env=False, follow_redirects=False) as client:
+                async with client.stream(method, "https://api.assemblyai.com" + path,
+                                         headers={"authorization": credential}, **kwargs) as response:
+                    if response.status_code != 200:
+                        raise WorkflowError("ASR_HTTP_REQUEST_FAILED", http_status=response.status_code)
+                    chunks, size = [], 0
+                    async for chunk in response.aiter_bytes():
+                        size += len(chunk)
+                        if size > 8 * 1024 * 1024:
+                            raise WorkflowError("ASR_RESPONSE_SIZE_LIMIT")
+                        chunks.append(chunk)
+            raw = b"".join(chunks)
+            if credential.encode("ascii") in raw:
+                raise WorkflowError("ASR_RESPONSE_CONTAINS_CREDENTIAL_REJECTED")
+            value = json.loads(raw)
+            if not isinstance(value, dict):
+                raise WorkflowError("ASR_RESPONSE_INVALID")
+            if credential.encode("ascii") in canonical(value):
+                raise WorkflowError("ASR_RESPONSE_CONTAINS_CREDENTIAL_REJECTED")
+            if cost_id:
+                ledger.settle(cost_id, status='response_received', response_sha256=digest(value))
+            return value
+        except Exception as error:
+            if cost_id and ledger.pending(cost_id):
+                ledger.settle(cost_id, status='outcome_unknown', error_code=type(error).__name__)
+            raise
 
     async def upload(self, audio, credential, timeout):
         receipt = self.load("upload-ack")
@@ -237,6 +253,11 @@ def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
             profile = assemblyai_asr_profile()
             transport = transport_factory(directory / "provider", digest({"snapshot": job["snapshot"],
                 "asset_id": asset["id"], "audio": metadata, "profile_sha256": assemblyai_profile_sha256()}), stage)
+            if isinstance(transport, DurableTransport):
+                from .costs import CostLedger
+                from .store import Store
+                transport.cost_ledger = CostLedger(Store(config.data_root))
+                transport.cost_context = {'project_id': job['project_id'], 'job_id': job['id']}
             provider = AssemblyAITranscriptionProvider(model=profile.model, credential_alias=ASSEMBLYAI_CREDENTIAL_ALIAS,
                 credential_resolver=lambda _: connection.load_credential(config), profile=profile, transport=transport)
             async def execute():

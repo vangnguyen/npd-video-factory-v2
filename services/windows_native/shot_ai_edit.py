@@ -57,9 +57,19 @@ class ShotAIEdit:
                 raise WorkflowError('SHOT_AI_OUTCOME_UNKNOWN_NO_REPLAY')
             # Validate existing credential before dispatch intent. Plaintext never enters receipts.
             if self.provider is None: load_key(self.config.secret_file)
+            cost_ledger, cost_id = None, None
+            if self.provider is None:
+                from .costs import CostLedger
+                cost_ledger = CostLedger(self.store)
+                cost_id = cost_ledger.begin(project_id=project_id, provider='openai', model=MODEL,
+                    operation='shot-edit-' + directory.name, request_sha256=digest(context), estimated_cost=None)
             durable_json(directory/'context.json',context); durable_json(intent,binding)
             try:
                 response,metadata=(self.provider(context) if self.provider else self._request(context,directory))
+                if cost_id:
+                    from .costs import token_usage
+                    cost_ledger.settle(cost_id, status='response_received', usage=token_usage(metadata.get('usage')),
+                        response_sha256=metadata.get('raw_response_sha256'))
                 proposed=Suggestion.model_validate(response)
                 values={k:v for k,v in proposed.values.model_dump().items() if v is not None}
                 assets={a['id'] for a in project['document'].get('assets',[])}
@@ -86,6 +96,8 @@ class ShotAIEdit:
                        'media_generated':False,'render_dispatched':False,'provider':metadata,'context_sha256':digest(context)}
                 durable_json(result,value); return value
             except Exception as error:
+                if cost_id and cost_ledger.pending(cost_id):
+                    cost_ledger.settle(cost_id, status='outcome_unknown', error_code=type(error).__name__)
                 durable_json(directory/'failure.json',{'code':error.code if isinstance(error,WorkflowError) else type(error).__name__,'automatic_retry':False})
                 raise
 

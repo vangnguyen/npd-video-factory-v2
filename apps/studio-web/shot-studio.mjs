@@ -104,6 +104,7 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
     const editButton=document.createElement('button');editButton.id='return-video-editor';editButton.type='button';editButton.className='secondary';editButton.textContent='← Quay lại biên tập';editButton.hidden=true;editButton.dataset.studioNav='';document.querySelector('.studio-header-actions').append(finalButton,editButton);editButton.addEventListener('click',()=>setReviewMode(false));
     const diagnostics=document.createElement('details');diagnostics.className='production-details';diagnostics.innerHTML='<summary>Chi tiết sản xuất</summary>';
     $('video-review-body').append(diagnostics);diagnostics.append(document.querySelector('.job-card'),$('open-output'));
+    if($('cost-card'))$('video-review-body').append($('cost-card'));
   }
   const previewShortcut=document.createElement('button');previewShortcut.type='button';previewShortcut.id='toolbar-preview';previewShortcut.className='secondary';previewShortcut.dataset.shotControl='';previewShortcut.textContent='Preview';document.querySelector('.studio-header-actions').append(previewShortcut,$('render'));
   const sceneDetails=document.createElement('details');sceneDetails.id='all-scene-fields';const summary=document.createElement('summary');summary.textContent='Chỉnh sửa toàn bộ kịch bản / cảnh';sceneDetails.append(summary);$('scenes').before(sceneDetails);sceneDetails.append($('scenes'));

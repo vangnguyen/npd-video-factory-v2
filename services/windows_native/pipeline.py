@@ -107,7 +107,7 @@ def verify_runtime(config, full=True):
             "resolution": "1080x1920", "native_windows": os.name == "nt", "provider_calls": 0}
 
 
-def provider_request(client, request, job, out, stage, openai):
+def provider_request(client, request, job, out, stage, openai, *, cost_ledger=None):
     """Only a recorded 429 rejection is eligible for one bounded retry."""
     for attempt in range(2):
         name = "content" if attempt == 0 else "content-1"
@@ -116,13 +116,23 @@ def provider_request(client, request, job, out, stage, openai):
             if rejected.exists() and json.loads(rejected.read_bytes()).get("http_status") == 429:
                 continue
             raise WorkflowError("OPENAI_OUTCOME_UNKNOWN_NO_REPLAY")
+        cost_id = cost_ledger.begin(project_id=job['project_id'], job_id=job['id'],
+            provider='openai', model=MODEL, operation=f'content-attempt-{attempt + 1}',
+            request_sha256=digest(request), estimated_cost=None) if cost_ledger else None
         with intent.open("xb") as handle:
             handle.write(canonical({"model": MODEL, "max_attempts": 2, "job_id": job["id"],
                                     "snapshot_sha256": digest(job["snapshot"]), "attempt": attempt + 1}))
             handle.flush(); os.fsync(handle.fileno())
         try:
-            return client.responses.create(**request), attempt + 1
+            response = client.responses.create(**request)
+            if cost_id:
+                from .costs import token_usage
+                cost_ledger.settle(cost_id, status='response_received', usage=token_usage(getattr(response, 'usage', None)))
+            return response, attempt + 1
         except openai.APIStatusError as error:
+            if cost_id:
+                cost_ledger.settle(cost_id, status='rejected' if error.status_code == 429 else 'outcome_unknown',
+                    error_code=type(error).__name__)
             if error.status_code != 429:
                 raise
             durable_json(rejected, {"http_status": 429, "safe_rejection": True, "attempt": attempt + 1})
@@ -131,6 +141,10 @@ def provider_request(client, request, job, out, stage, openai):
             stage("retrying:content_request")
             time.sleep(1)
             stage("content_request")
+        except Exception as error:
+            if cost_id and cost_ledger.pending(cost_id):
+                cost_ledger.settle(cost_id, status='outcome_unknown', error_code=type(error).__name__)
+            raise
     raise WorkflowError("OPENAI_RATE_LIMIT_RETRY_EXHAUSTED", http_status=429)
 
 
@@ -192,7 +206,10 @@ def generate(config, job, out, stage=lambda _: None):
                                     "schema": provider_schema}}}
     try:
         retry_io(lambda: durable_json(out / "content-request.json", request), stage, "storage_content_request")
-        response, attempts = provider_request(client, request, job, out, stage, openai)
+        from .costs import CostLedger
+        from .store import Store
+        response, attempts = provider_request(client, request, job, out, stage, openai,
+            cost_ledger=CostLedger(Store(config.data_root)))
         if intelligence:
             durable_json(out / "content-provider-response.json", response.model_dump(mode="json"))
         if response.status != "completed" or response.model != MODEL or response.usage is None:

@@ -839,3 +839,25 @@ EVIDENCE: `docs/north-star/cost-truth-evidence.json` binds source, six logs, fiv
 REGRESSIONS: analysis, analytics, provider safety, worker and Native ASR checks pass. Live source/database/configuration/processes/accepted media are untouched. No main merge, deployment, publication or new budget.
 
 EXTERNAL BLOCKERS: real billing/provider/OAuth/GPU/Docker and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe implementation. NEXT WAVE: Native cost/ownership/storage/cache/recovery integration and remaining profile/media/distribution/analytics/learning/Trend/Hub/hardening work.
+
+## Wave 8 — Native cost intents, budget and Studio summary
+
+WAVE: 8
+
+STATUS: IN PROGRESS; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `f0459996c723a0171b450ab1031a25c458672429`; this Native increment records the change. Parent is pushed and preserved in verified `north-star-cost-truth.bundle`, SHA256 `e41ac58907422ed12242c205efc27bffef1bea0817036fdaee53109f2d47b0ae`.
+
+CAPABILITIES COMPLETED: additive Native SQLite cost table, content-free intents and immutable outcome receipts; project/job/request/model bindings; exact restart/replay; null estimates/billing and known subtotals. Optional project budget is revisioned, requires current session/CSRF and invalidates approval. Concurrent paid admission accounts for reserved/known actual exposure in one transaction; unknown or excessive estimated spend under an explicit limit blocks before dispatch. Existing authorization/checkpoints remain independent. Content-generation attempts, live shot-edit suggestions and actual ASR upload/create/poll wire calls are metered. Known ASR observation can resume without repeating writes. Token usage does not become a billed price. Capability-gated Studio Cost Summary presents incomplete history and unknown costs, escapes output and preserves pending budget edits; legacy servers require no new optional module/route. Cost information appears in the Video stage without changing default shot UX.
+
+CAPABILITIES PARTIAL: all pre-project intelligence/external provider/job capture, configured admission estimates, historical/full billing reconciliation, real receipts, multi-user RBAC/storage/recovery and current 1366/1920/2560 browser acceptance. A budget-constrained paid operation with no configured estimate remains blocked. A missing optional project limit preserves existing provider authority; the ledger grants no provider/publishing authority. Historical data is not backfilled or recertified. Platform/cost readiness remains NO.
+
+TESTS: full Native **351/351 PASS**, 231.820s; latest cost/HTTP **13/13 PASS**, 5.236s; Studio **116/116 PASS**, zero skips. Full Native loaded the server before the subsequently added capability flag; latest HTTP tests verify that additive flag, while core ledger/provider logic was unchanged. First focused run passed 61 tests, including an imported duplicate Phase10 test class; discovery was corrected to import the helper module, not duplicate its tests. Fresh Native local contract **PASS**, six exports and closed database in `native-cost-contract-n1`. Full Linux API at pushed f045999 **2,085 PASS/11 SKIP**, 582.39s; skips remain unaccepted.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: SQLite, CAS/versioning, actual concurrent admission, Native HTTP/session/CSRF/stale/scope controls, restart and exact uncertain-operation no-replay. MOCK TESTS: provider SDK/wire responses and all monetary/billing hashes; these are explicit fixtures, not actual bills. No external/paid call.
+
+EVIDENCE: `docs/north-star/native-cost-evidence.json` binds source, seven logs, six exports and closed database. `docs/NATIVE_COST_LEDGER.md` describes scope and remaining limits. Prior artifacts and failure roots remain unchanged.
+
+REGRESSIONS: full Native Phase8/9/10 source tests and Studio checks pass; pinned API passes with skips disclosed. Live source/database/configuration/processes/accepted videos remain untouched. No main merge, deployment, publication or new budget.
+
+EXTERNAL BLOCKERS: provider/billing/OAuth/GPU/Docker/browser/Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: finish safe backup/restore, storage/ownership/cache and remaining media/profiles/distribution/analytics/learning/Trend/Hub/hardening implementation.
