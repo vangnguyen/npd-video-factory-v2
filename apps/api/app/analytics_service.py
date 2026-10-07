@@ -352,23 +352,15 @@ class AnalyticsSyncProcessor:
         project = await self.platform_repository.get_project(sync.project_id)
         if project is None:
             raise KeyError(sync.project_id)
-        version = (
-            await self.platform_repository.get_version(project.current_version_id)
-            if project.current_version_id
-            else None
-        )
-        snapshot = dict(version.snapshot) if version else {}
-        source_idea = dict(snapshot.get("source_idea") or {})
-        linked_idea = await self.trend_repository.get_idea_for_project(sync.project_id)
         frozen = await self.production_repository.get_render_context(publication.final_render_id)
         frozen_render = frozen[0] if frozen else None
         if frozen_render and (frozen_render.project_id != sync.project_id or frozen_render.workspace_id != sync.workspace_id
             or frozen_render.output_asset_id != publication.output_asset_id):
             raise ValueError('ANALYTICS_RENDER_FEATURE_SCOPE_MISMATCH')
         timeline = TimelineSnapshot.model_validate(frozen[3]) if frozen else None
-        topic = source_idea.get("title") or snapshot.get("topic")
-        content = dict(snapshot.get("content") or {})
-        cta = (linked_idea.cta_concept if linked_idea else None) or source_idea.get("cta_concept") or content.get("cta")
+        from .production_features import read as read_feature_context
+        context = read_feature_context(frozen_render.manifest, workspace=sync.workspace_id, project=sync.project_id,
+            timeline_version=frozen_render.timeline_version_id) if frozen_render else None
         scene_ids = {
             clip.metadata.get("scene_id")
             for track in (timeline.tracks if timeline else [])
@@ -394,32 +386,37 @@ class AnalyticsSyncProcessor:
         return VideoFeatureMetadata(
             project_id=sync.project_id,
             publication_id=sync.publication_id,
-            trend_cluster_id=(linked_idea.cluster_id if linked_idea else source_idea.get("cluster_id")),
-            idea_id=(linked_idea.idea_id if linked_idea else source_idea.get("idea_id")),
-            hook_type=(linked_idea.hook_concept if linked_idea else source_idea.get("hook_concept")),
+            trend_cluster_id=context.trend_cluster_id if context else None,
+            idea_id=context.idea_id if context else None,
+            hook_type=context.hook_type if context else None,
             duration_seconds=timeline.duration_seconds if timeline else None,
             scene_count=len(scene_ids) if scene_ids else None,
             subtitle_template=subtitle_template,
             voice_profile=voice_profile,
             music_profile=music_profile,
             visual_strategy=(
-                linked_idea.visual_concept
-                if linked_idea
+                context.visual_strategy
+                if context and context.visual_strategy
                 else "+".join(visual_kinds)
                 if visual_kinds
                 else None
             ),
-            niche=project.niche,
-            topic=topic,
-            cta=cta,
+            niche=context.niche if context else None,
+            topic=context.topic if context else None,
+            cta=context.cta if context else None,
             publishing_time=(publication.receipt.created_at if publication.receipt else publication.created_at) if sync.provider_mode == 'fixture' else None,
             evidence={
-                "project_version_id": project.current_version_id,
+                "project_version_id": context.project_version_id if context else None,
                 "timeline_version_id": frozen_render.timeline_version_id if frozen_render else None,
                 'subtitle_version_id': frozen_render.subtitle_version_id if frozen_render else None,
                 'audio_version_id': frozen_render.audio_version_id if frozen_render else None,
                 'feature_edit_source': 'published_render_context' if frozen else None,
-                'project_metadata_source': 'current_project_at_collection',
+                'project_metadata_source': 'published_render_request_context' if context else 'unavailable_legacy_render',
+                'feature_context_sha256': frozen_render.manifest.get('feature_context_sha256') if frozen_render else None,
+                'feature_context_captured_at': context.captured_at.isoformat() if context else None,
+                'source_content_version_id': context.source_content_version_id if context else None,
+                'idea_source': context.idea_source if context else None,
+                'idea_version_at_render_request': context.idea_version if context else None,
                 "publication_receipt_id": publication.receipt.receipt_id if publication.receipt else None,
                 "publication_mock": publication.mock,
                 "publishing_time_source": 'mock_receipt' if sync.provider_mode == 'fixture' else None,

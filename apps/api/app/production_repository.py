@@ -332,6 +332,8 @@ class ProductionRepository:
                     )
                     or 0
                 ) + 1
+                from .production_features import capture
+                feature_context = await capture(session, package)
                 render = ProductionRenderJobORM(
                     render_id=_new_id("rnd"),
                     version=next_version,
@@ -358,6 +360,7 @@ class ProductionRepository:
                         "audio_mix": "ffmpeg-v2-08",
                         "publishing_allowed": False,
                         "requested_by": actor_ref,
+                        **feature_context,
                     },
                     cancellation_requested=False,
                     invalidated_at=None,
@@ -463,7 +466,10 @@ class ProductionRepository:
                 row.output_asset_id = output_asset_id
                 row.qc_status = "passed"
                 row.qc_report_json = qc_report
-                row.manifest_json = manifest
+                from .production_features import retain, read as read_feature_context
+                read_feature_context(row.manifest_json or {}, workspace=row.workspace_id,
+                    project=row.project_id, timeline_version=row.timeline_version_id)
+                row.manifest_json = retain(manifest, row.manifest_json or {})
                 row.error_code = None
                 row.failure_reason = None
                 row.updated_at = utc_now()

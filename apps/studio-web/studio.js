@@ -800,7 +800,13 @@ function renderAnalytics() {
     ["Scene", features.scene_count],
     ["Subtitle", features.subtitle_template],
     ["Voice", features.voice_profile],
+    ["Music", features.music_profile],
     ["Visual", features.visual_strategy],
+    ["Lĩnh vực", features.niche],
+    ["Nội dung", features.topic],
+    ["CTA", features.cta],
+    ["Nguồn nhãn", features.evidence?.project_metadata_source === 'published_render_request_context'
+      ? 'Đã lưu cùng bản render' : 'Chưa có dữ liệu lịch sử'],
   ].filter(([, value]) => value !== null && value !== undefined && value !== "") : [];
   $("#analytics-feature-list").innerHTML = featureItems.map(([label, value]) => (
     `<span><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</span>`

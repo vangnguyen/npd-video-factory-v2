@@ -386,6 +386,10 @@ class ProductionRenderProcessor:
             raise RuntimeError("render staging path escaped its configured root")
         try:
             workdir.mkdir(parents=True, exist_ok=True)
+            from .production_features import read as read_feature_context
+            feature_context = read_feature_context(render.manifest, workspace=render.workspace_id, project=render.project_id,
+                timeline_version=render.timeline_version_id)
+            source_project_version_id = feature_context.project_version_id if feature_context else None
             snapshot = TimelineSnapshot.model_validate(snapshot_json)
             project = await self.platform.get_project(render.project_id)
             if project is None:
@@ -533,7 +537,7 @@ class ProductionRenderProcessor:
                 if path.is_symlink() or hashlib.sha256(path.read_bytes()).hexdigest() != source_evidence["audio_sha256"]:
                     raise ProductionContractError("TTS_SOURCE_AUDIO_IDENTITY_MISMATCH")
                 registered = await self._persist_asset(render,
-                    project_version_id=project.current_version_id, path=path,
+                    project_version_id=source_project_version_id, path=path,
                     asset_class="render", kind="tts-provider-source", content_type="audio/wav")
                 unit["provider_audio_asset_id"] = registered.asset_id
             evidence_manifest = _evidence_manifest(
@@ -543,6 +547,8 @@ class ProductionRenderProcessor:
                 renderer=renderer_result,
                 qc=qc_report,
             )
+            from .production_features import retain
+            evidence_manifest = retain(evidence_manifest, render.manifest)
             evidence_path = workdir / "render-evidence.json"
             evidence_path.write_text(json.dumps(evidence_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
             await self.repository.set_render_progress(render_id, 94)
@@ -556,7 +562,7 @@ class ProductionRenderProcessor:
             ):
                 registered = await self._persist_asset(
                     render,
-                    project_version_id=project.current_version_id,
+                    project_version_id=source_project_version_id,
                     path=path,
                     asset_class=asset_class,
                     kind=kind,
@@ -565,7 +571,7 @@ class ProductionRenderProcessor:
                 supporting_assets[kind] = registered.asset_id
             output_asset = await self._persist_asset(
                 render,
-                project_version_id=project.current_version_id,
+                project_version_id=source_project_version_id,
                 path=output_path,
                 asset_class="render",
                 kind="av-review" if render.render_kind == "review" else "final-render",

@@ -1341,3 +1341,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: authenticated Owner ASGI/revocation/concurre
 EVIDENCE: `docs/ANALYTICS_REFRESH_PLANS.md`, `docs/north-star/analytics-refresh-evidence.json`; fresh `analytics-refresh-contract-n4` five JSON exports plus owned clone database. All n1–n3 and manual n9/source databases remain unchanged.
 
 REGRESSIONS: accepted media/live source/default publishing/provider/Owner gates preserved. No live migration, credential read, paid operation or external call. EXTERNAL BLOCKERS: actual authorized provider accounts, Owner/browser acceptance and isolated production infrastructure acceptance. OWNER ACTION REQUIRED: none for remaining safe implementation; live secrets/UAT/deployment are separate gates. NEXT WAVE: freeze remaining published project features, channel winner baselines/personalized learning, remaining Native/media/Trend/Hub/hardening and final A/B/C bundles. Original Waves 0–16 remain the objective.
+
+### Wave 12 — Frozen render learning metadata and asset lineage
+
+WAVE: 12. STATUS: IN PROGRESS. LEARNING_LOOP_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `d3d3a77fd1ceca32baa8ae191cfdfbbd4096ce52`, pushed/preserved in `north-star-analytics-refresh.bundle`, SHA256 `ff55c92190d75ac3837249af2631cd57c7781a69b2f98fd391568b92b43e434a`; 163 ahead/0 behind, fresh 15 accepted hashes and clean live source. This increment will be separately committed/preserved.
+
+CAPABILITIES COMPLETED: bounded versioned/digested metadata capture at render request; explicit storyboard-content/version precedence, project/idea source attribution; exact workspace/project/timeline validation; completion replacement refusal/rollback; persisted render evidence and supporting/provider-audio/final assets retain frozen project-version lineage. Analytics uses the published render's metadata, never later current tags; legacy absent metadata stays null. Studio displays available labels and historical-source status.
+
+CAPABILITIES PARTIAL: observed publishing time, semantic label validation, Native parity, channel cohorts/winner baselines, cross-video recommendation aggregation and personalized Trend/Idea/Media/Template feedback. Browser/viewport/Owner UAT and final playable E2E remain.
+
+TESTS: **26 PASS**, 150.27s selected production/publishing/analytics regression (five new cases); **152 PASS** Studio, 767.2223ms. Initial run 22 PASS/1 FAIL: test tried to read cleaned staging evidence; changed to download the persisted evidence asset and added lineage assertion. Original log retained. Parent full Linux `d3d3a77` running; latest completed safety parent 2525 PASS/11 SKIP. Current increment pinned full regression pending.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: owned SQLite renderer/approval/provider fixtures; four authenticated ASGI calls, two immutable fixture observations, exact fresh-process state, unchanged queue-time labels and persisted asset/evidence lineage after later edits. Media is nonplayable fixture bytes; no full media QC or Owner acceptance implied.
+
+EVIDENCE: `docs/FROZEN_RENDER_FEATURES.md`, `docs/north-star/feature-context-evidence.json`; fresh `feature-context-contract-n1` six JSON exports plus owned fixture database/objects. No prior artifact is replaced.
+
+REGRESSIONS: accepted media/live source/timeline/approval/provider/publishing defaults preserved; no live migration or paid/external operation. EXTERNAL BLOCKERS: actual provider, Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for ongoing safe work; concrete real acceptance remains separately gated. NEXT WAVE: channel winner cohorts and personalized recommendations, remaining Native/media/Trend/Hub/hardening and final A/B/C acceptance. Original Waves 0–16 remain in scope.
