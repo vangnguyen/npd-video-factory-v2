@@ -30,8 +30,9 @@ class PublishingProcessingJournal:
                     or dispatch.acknowledged_bytes != dispatch.total_bytes):
                     raise DispatchError('PUBLISH_PROCESSING_SCOPE_OR_UPLOAD_INVALID')
                 metadata = PublicationMetadata.model_validate(parent.metadata_json)
-                status, failure = parent.status, None
+                status, failure = parent.status, parent.failure_code
                 if parent.receipt_json is None and parent.status in ('publishing', 'scheduled'):
+                    failure = None
                     if observation.processing == 'failed_requires_review':
                         status, failure = 'failed', 'YOUTUBE_PROCESSING_FAILED_REVIEW_REQUIRED'
                     elif observation.processing == 'processed':

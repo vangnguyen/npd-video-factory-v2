@@ -11,6 +11,7 @@ from .publishing_models import (
     PublicationRead,
     PublishApprovalRequest,
     PublishApprovalRevokeRequest,
+    PublishScheduleRequest,
     PublishingPlatformStateRead,
 )
 from .publishing_repository import PublicationIdempotencyConflict
@@ -139,6 +140,29 @@ async def revoke_publish(project_id: str, publication_id: str, payload: PublishA
 async def dispatch_status(project_id: str, publication_id: str, request: Request, response: Response):
     try:
         value = await service(request).dispatch_status(project_id, publication_id)
+        response.headers['Cache-Control'] = 'no-store'
+        return value
+    except (KeyError, DispatchError, PublishingPreconditionError) as exc:
+        raise consent_error(exc) from None
+
+
+@router.post('/projects/{project_id}/publications/{publication_id}/publishing-work')
+async def schedule_publication(project_id: str, publication_id: str, payload: PublishScheduleRequest,
+                               request: Request, response: Response):
+    await authorize_project(request, project_id, 'owner')
+    try:
+        value = await service(request).schedule_publish(project_id, publication_id, principal=principal_from(request),
+            publish_approval_id=payload.publish_approval_id)
+        response.headers['Cache-Control'] = 'no-store'
+        return value
+    except (KeyError, DispatchError, PublishingPreconditionError) as exc:
+        raise consent_error(exc) from None
+
+
+@router.get('/projects/{project_id}/publications/{publication_id}/publishing-work')
+async def publication_work(project_id: str, publication_id: str, request: Request, response: Response):
+    try:
+        value = await service(request).publishing_work(project_id, publication_id)
         response.headers['Cache-Control'] = 'no-store'
         return value
     except (KeyError, DispatchError, PublishingPreconditionError) as exc:

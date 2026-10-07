@@ -16,7 +16,7 @@ def rehearse(path):
     try:
         with engine.begin() as connection:
             connection.exec_driver_sql('PRAGMA foreign_keys=ON')
-            Base.metadata.create_all(connection, tables=[table for table in Base.metadata.sorted_tables if table.name != name])
+            Base.metadata.create_all(connection, tables=[table for table in Base.metadata.sorted_tables if table.name not in (name, 'publication_work')])
             connection.execute(WorkspaceORM.__table__.insert().values(workspace_id='wsp_vault_migration_fixture',
                 slug='vault-migration-fixture', name='Existing fixture workspace', owner_ref='fixture-only'))
             inspector = inspect(connection); old_names = set(inspector.get_table_names())

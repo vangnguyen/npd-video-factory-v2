@@ -65,6 +65,9 @@ async def test_processing_does_not_infer_publication_and_keeps_mock_receipts_exp
         await fixture['stack'].engine.dispose()
         later = await journal.record(fixture['workspace'], fixture['publication'].publication_id, VID, VideoObservation('unknown'), mock=True)
         assert later['receipt'] == receipt
+    if status == 'failed':
+        later = await journal.record(fixture['workspace'], fixture['publication'].publication_id, VID, VideoObservation('unknown'), mock=True)
+        assert later['status'] == 'failed' and later['failure_code'] == failure
     async with journal.session_factory() as session:
         events = (await session.scalars(select(PublicationEventORM).where(
             PublicationEventORM.event_type == 'publication.processing_observed'))).all()

@@ -26,7 +26,9 @@ from .publishing_providers import (
     PublishingProviderRegistry,
 )
 from .publishing_repository import PublishingRepository
-from .publishing_dispatch import PublishingDispatchJournal
+from .publishing_dispatch import PublishingDispatchJournal, DispatchError, utc
+from .publishing_scheduler import PublishingWorkQueue
+from .human_identity import HumanPrincipal
 from .timeline_models import TimelineSnapshot
 
 
@@ -53,6 +55,7 @@ class PublishingService:
         providers: PublishingProviderRegistry,
         settings,
         dispatch_journal: PublishingDispatchJournal | None = None,
+        work_queue: PublishingWorkQueue | None = None,
     ):
         self.repository = repository
         self.production_repository = production_repository
@@ -61,6 +64,7 @@ class PublishingService:
         self.providers = providers
         self.settings = settings
         self.dispatch_journal = dispatch_journal
+        self.work_queue = work_queue
 
     async def create(
         self,
@@ -329,6 +333,31 @@ class PublishingService:
         if not isinstance(journal, PublishingDispatchJournal) or journal.require_target_binding is not True:
             raise PublishingPreconditionError('PUBLISH_DISPATCH_NOT_CONFIGURED', 'Scoped publishing consent is not configured.')
         return journal
+
+    def _configured_work_queue(self):
+        queue = self.work_queue
+        if type(queue) is not PublishingWorkQueue or queue.journal is not self._configured_journal():
+            raise PublishingPreconditionError('PUBLISH_WORK_NOT_CONFIGURED', 'Durable publishing work is not configured.')
+        return queue
+
+    async def schedule_publish(self, project_id, publication_id, *, principal, publish_approval_id):
+        publication = await self.get(project_id, publication_id)
+        if publication is None: raise KeyError('publication')
+        queue = self._configured_work_queue(); journal = queue.journal
+        if (not isinstance(principal, HumanPrincipal) or principal.role_for(publication.workspace_id) != 'owner'
+            or utc(principal.expires_at) <= utc(journal.clock())):
+            raise DispatchError('HUMAN_OWNER_PUBLISH_APPROVAL_REQUIRED')
+        journal.identity_revision(principal.token_id, publication.workspace_id, principal.subject)
+        if any(getattr(self.settings, name, False) is not True for name in (
+            'publish_enabled', 'publish_external_execution_enabled', 'publish_owner_gate_enabled')):
+            raise PublishingPreconditionError('PUBLISH_WORK_OWNER_GATES_REQUIRED', 'Publishing enablement is required.')
+        await journal.prepare(publication.workspace_id, publication_id, publish_approval_id)
+        return await queue.enqueue(publication.workspace_id, publication_id)
+
+    async def publishing_work(self, project_id, publication_id):
+        publication = await self.get(project_id, publication_id)
+        if publication is None: raise KeyError('publication')
+        return await self._configured_work_queue().for_publication(publication.workspace_id, publication_id)
 
     def platform_states(self) -> list[PublishingPlatformStateRead]:
         dry_run = self.providers.for_dry_run().validate()

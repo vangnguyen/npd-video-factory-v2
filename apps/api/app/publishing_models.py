@@ -51,6 +51,11 @@ class PublicationMetadata(StrictModel):
         return self
 
 
+class PublishScheduleRequest(StrictModel):
+    model_config = ConfigDict(extra='forbid', strict=True, frozen=True)
+    publish_approval_id: str = Field(pattern=r'^pua_[a-f0-9]{32}$')
+
+
 class PublicationCreateRequest(StrictModel):
     platform: PublishingPlatform
     final_render_id: str = Field(pattern=r"^rnd_[A-Za-z0-9_-]{4,60}$")

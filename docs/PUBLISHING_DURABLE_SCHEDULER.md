@@ -1,0 +1,21 @@
+# Durable publishing work
+
+The publication journals remain the source of upload and processing evidence. A separate `publication_work` table tracks scoped execution, due times, consecutive failures and worker ownership. One work record per publication preserves idempotent enqueue and restart state. It does not replace the project timeline, production approval or publish-only Owner consent.
+
+The additive `0021_ns_publish_work` migration is rehearsed only on owned SQLite databases, checking preserved old table SQL/rows, ORM column/FK/constraint/index parity and foreign-key integrity. Destructive downgrade requires explicit Owner approval. No production migration is executed.
+
+## Admission and execution
+
+`POST /api/v1/projects/{project}/publications/{publication}/publishing-work` accepts only the publish-approval ID. It independently checks the current Owner identity, all publishing enablement flags, exact scoped consent and current target/production/rights binding. It prepares the dispatch and queues work; it sends no provider request. Repeated enqueue returns the same work record. The GET at the same path is scoped and viewer-readable, with no-store caching and no lease owner exposed. The production factory leaves the queue unconfigured by default.
+
+Each scheduler tick claims one due record with a conditional version update and private lease. Active leases exclude other workers. An expired lease can be reclaimed; the old worker then fails ownership checks before cost admission, before a wire intent and immediately before sending. A fresh worker instance receives its own lease guard. The default work lease is 600 seconds, the total step deadline is 360 seconds and individual wire requests remain bounded at 60 seconds. Leases fence future actions and writes; they cannot undo a request already in flight.
+
+Only one upload or processing step executes per tick. Source bytes/QC, fresh consent/account/OAuth, request costs and dispatch tickets retain their existing gates. Consecutive transient failures use bounded exponential delay and attempt limits; a valid numeric Retry-After within 1–3,600 seconds can increase that delay. This profile does not claim support for arbitrary HTTP-date Retry-After values. Partial acknowledgements can delay the next range. An active dispatch lease delays a status query without an account request. A known lost chunk response is queried before resuming; an ambiguous initialization without a sealed receipt remains review-required and never re-POSTs. Cancellation leaves durable ownership/intent evidence for expiry-based recovery.
+
+Processing polls are separate. Unknown fields remain null, mismatched visibility/deadlines require review, and a processed scheduled upload waits for observed release. Successful mock processing can complete mock work with no real external publication. No automatic deletion or provider-budget change is introduced.
+
+## Verification and limits
+
+Checks cover scoped/idempotent enqueue, competing claims, expired lease fencing, real SQLite restart, one-init upload/processing, unknown initialization, known lost-final reconciliation, rate limits/failure caps, current Owner/API roles, body forgery, revoked consent and ownership loss during QC or after cost reservation. The real-media rehearsal uses the preserved synthetic portrait source, two actual full QC scans, actual AES/SQLite and two separate Python processes. Its eight official-format requests and receipt are mocks. Human approvals, account/OAuth/key data, timeline/subtitle QC inputs and provider results remain fixtures. The original source and accepted artifacts remain unchanged.
+
+Remaining: production worker/scheduler startup and configuration, explicit cancellation/resume administration, efficient source-copy/QC reuse, atomic edit admission, thumbnail delivery, configured profile/OAuth/key lifecycle, full TikTok/Meta providers and Native distribution UI. Work IDs are real scheduler identifiers; unavailable generic JobORM IDs and actual billing remain null. Provider-wide budget coordination and real-provider acceptance remain separate. PUBLISHING_READY, real publishing, Owner UAT and production deployment are not certified by this rehearsal.

@@ -1127,3 +1127,23 @@ EVIDENCE: `docs/north-star/publishing-completion-evidence.json`, `docs/PUBLISHIN
 REGRESSIONS: 56 focused API and 123 Studio checks pass. Accepted/live media, source, database/processes/credentials, installed runtimes, main and default disabled publishing remain untouched. No deployed migration, paid call, external post/deletion, protected-main merge or deployment.
 
 EXTERNAL BLOCKERS: eventual real OAuth/key/account audit/Owner real publishing enablement; no safe-work blocker now. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve this increment; finish durable scheduling/adapters/UI and continue all media/analytics/learning/Trend/Hub/hardening waves.
+
+### Wave 9 — durable leased publishing scheduler and work API
+
+WAVE: 9. STATUS: IN PROGRESS; durable queue/leases/retry/polling and Owner/API admission pass. PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `51ce5a0b54791b3eb1080fe91759722baf2e3fed` pushed/preserved in verified `north-star-publishing-completion.bundle`, SHA256 `5e71c4baaab46b332126961053ced7dd596d3abe5dba7b8e52ef0f5826a99994`. Fresh receipt verifies all fifteen accepted hashes, clean live source `2ced7b`, unchanged remote main and 152 ahead/0 behind. New scheduler is this increment.
+
+CAPABILITIES COMPLETED: additive scoped one-work-per-publication queue, current Owner consent/enablement admission, no-wire enqueue, viewer status, exact-version exclusive leases, private ownership guards before admission/intent/wire, expired-worker fencing, bounded step/time/retries, numeric Retry-After and partial-ack delay, no-wire wait for active dispatch lease. Known final ambiguity queries; unknown init cannot repeat. Actual leased restart mock completion and immutable processing evidence. Prior failed-processing reason survives later unknown observations.
+
+CAPABILITIES PARTIAL: production startup/configuration, cancellation/resume administration, copy/QC reuse, atomic edit admission, thumbnail/profile/OAuth/key lifecycle, full TikTok/Meta, Native UI and actual acceptance. Work identifiers are real; generic JobORM IDs/actual billing remain unavailable/null.
+
+TESTS: first scheduler/migration/worker/processing **29 PASS**, 168.72s; ownership expansion **11 PASS**, 58.21s; final scheduler/API/queue/migration/worker/protocol/processing **64 PASS**, 171.27s; active-dispatch lease **1 PASS/12 deselected**, 10.11s; API/queue **19 PASS**, 88.51s. **17 new cases** (13 scheduler/3 API/1 migration). Full Linux pinned **5522f38: 2,263 PASS/11 SKIP**, 1,471.00s; worker evidence now indexes that result. Current scheduler/full recovery descendant regression awaits the new pinned commit. Studio 123 remains separately verified.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual SQLite leases/costs/CAS/AES, additive owned migration preserving every old table SQL/row and ORM/FK/unique/check/index parity, two actual full QC scans of unchanged 4,256,257-byte synthetic portrait source, two separate processes claiming/querying/completing durable work. MOCK TESTS: eight official-format calls, one initialization, lost final response, known-session query and mock processing receipt; no real post/URL/paid invoice. Human/account/OAuth/key/approval/provider/timeline/subtitle inputs remain fixtures; no real speech/Video Factory final render/Owner UAT.
+
+EVIDENCE: `docs/north-star/publishing-scheduler-evidence.json`, `docs/PUBLISHING_DURABLE_SCHEDULER.md`, seven logs and six n2 exports. Both owned n1/n2 rehearsals pass and are retained. Root `C:\vf-publishing-scheduler-n2`. Publishing-worker full Linux result and fresh preservation receipt are linked.
+
+REGRESSIONS: final focused API checks pass. Accepted/live source, media, database/processes/credentials, installed runtimes, main and default disabled publishing remain untouched. No production migration, paid call, real post/deletion, main merge or deployment. Old pre-0019/0020 migration fixtures exclude the later additive work table, preserving their historical boundary.
+
+EXTERNAL BLOCKERS: eventual real OAuth/key/account audit/Owner real publishing enablement; no current safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve/run full pinned scheduler regression; finish providers/runtime/Native distribution UI and all remaining media/analytics/learning/Trend/Hub/hardening waves.

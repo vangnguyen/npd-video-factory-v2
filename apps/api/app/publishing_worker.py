@@ -2,17 +2,19 @@
 import asyncio
 from contextlib import suppress
 from decimal import Decimal
+import math
+import re
 import uuid
 
 from .publishing_artifact import PublishingArtifactGuard
 from .publishing_credentials import (confirm_youtube_account, resolve_youtube_credential, youtube_account_request)
 from .publishing_db import PublicationDispatchORM, PublishApprovalORM
-from .publishing_dispatch import PublishingDispatchJournal
+from .publishing_dispatch import PublishingDispatchJournal, utc
 from .publishing_models import PublicationMetadata, PublishingTargetBinding
 from .publishing_operations import PublishingOperationMeter
 from .publishing_processing import PublishingProcessingJournal
 from .publishing_session_vault import PublishingSessionVault
-from .publishing_wire import OfficialHTTPClient
+from .publishing_wire import OfficialHTTPClient, PublishingWireError
 from .youtube_upload import (UNIT, chunk_request, start_request, started_session, status_request, upload_progress,
     video_status_request, video_observation)
 
@@ -23,9 +25,15 @@ class PublishingWorkerError(RuntimeError):
         super().__init__(code)
 
 
+def retry_delay(response):
+    value = response.headers.get('retry-after', '')
+    return int(value) if re.fullmatch('[0-9]{1,4}', value) and 1 <= int(value) <= 3600 else None
+
+
 class YouTubePublishingWorker:
     def __init__(self, *, journal, vault, artifact_guard, meter, client, credential_resolver=None, policy_provider=None,
-                 category_id=None, made_for_kids=None, contains_synthetic_media=None, chunk_size=8 * 1024 * 1024):
+                 category_id=None, made_for_kids=None, contains_synthetic_media=None, chunk_size=8 * 1024 * 1024,
+                 admission_guard=None):
         if (type(journal) is not PublishingDispatchJournal or journal.require_target_binding is not True
             or type(vault) is not PublishingSessionVault or vault.session_factory is not journal.session_factory
             or type(artifact_guard) is not PublishingArtifactGuard
@@ -39,6 +47,9 @@ class YouTubePublishingWorker:
         self.category_id, self.made_for_kids, self.synthetic = category_id, made_for_kids, contains_synthetic_media
         self.chunk_size = chunk_size
         self.mock = client.transport is not None
+        if admission_guard is not None and not callable(admission_guard):
+            raise PublishingWorkerError('PUBLISH_WORKER_CONFIGURATION_INVALID')
+        self.admission_guard = admission_guard
 
     def policy(self):
         try:
@@ -77,10 +88,13 @@ class YouTubePublishingWorker:
                 raise PublishingWorkerError('PUBLISH_WORKER_MOCK_CANNOT_GO_LIVE')
             return {'phase': dispatch.phase, 'version': dispatch.version, 'size': dispatch.total_bytes,
                 'offset': dispatch.acknowledged_bytes, 'ref': dispatch.private_session_ref,
+                'lease_until': utc(dispatch.lease_until) if dispatch.lease_until is not None else None,
                 'binding_sha256': dispatch.binding_sha256, 'target': PublishingTargetBinding.model_validate(target),
                 'metadata': PublicationMetadata.model_validate(parent.metadata_json)}
 
     async def send(self, workspace, publication_id, request, operation, *, credential, ticket=None):
+        if self.admission_guard is not None:
+            await self.admission_guard()
         resolve_youtube_credential(lambda _: credential, credential.target, now=self.journal.clock())
         policy = self.policy(); cap, estimates = policy
         mock = self.client.transport is not None
@@ -90,17 +104,21 @@ class YouTubePublishingWorker:
             request_identity=uuid.uuid4().hex, estimated_cost=estimates.get(operation), max_ai_cost=cap, mock=mock)
         if not reservation.allowed:
             raise PublishingWorkerError('PUBLISH_COST_APPROVAL_REQUIRED')
-        if ticket is not None:
-            # Claim happens only after cost admission. A failed claim proves this
-            # particular reservation was unsent and releases its budget estimate.
-            try:
+        try:
+            if self.admission_guard is not None:
+                await self.admission_guard()
+            if ticket is not None:
+                # Claim happens only after cost admission. A failed claim proves this
+                # particular reservation was unsent and releases its budget estimate.
                 ticket = await self.journal.intent(workspace, publication_id, ticket['version'], ticket['kind'],
                     **ticket.get('range', {}))
-            except BaseException:
-                await self.meter.finish(workspace, publication_id, reservation, outcome='not_sent')
-                raise
+        except BaseException:
+            await self.meter.finish(workspace, publication_id, reservation, outcome='not_sent')
+            raise
         sent = False
         try:
+            if self.admission_guard is not None:
+                await self.admission_guard()
             if self.policy() != policy:
                 raise PublishingWorkerError('PUBLISH_WORKER_POLICY_CHANGED_RELOAD')
             async with asyncio.timeout(60):
@@ -113,6 +131,8 @@ class YouTubePublishingWorker:
                 with suppress(Exception): await self.journal.finish(ticket, uncertain=True)
             raise
         await self.meter.finish(workspace, publication_id, reservation, outcome='confirmed')
+        if operation in ('account_lookup', 'processing_status') and (response.status == 429 or response.status >= 500):
+            raise PublishingWireError('PUBLISHING_READ_RETRY_REQUIRED', status=response.status, retry_after=retry_delay(response))
         return response, ticket
 
     async def step(self, workspace, publication_id):
@@ -129,6 +149,9 @@ class YouTubePublishingWorker:
             return {**public, 'processing_acceptance': 'NOT_CHECKED', 'published': False, 'mock': self.mock}
         reconcile = phase in ('chunk_intent', 'chunk_uncertain', 'reconcile_intent')
         context = await self.context(workspace, publication_id, reconcile=reconcile)
+        if reconcile and context['lease_until'] is not None and context['lease_until'] > utc(self.journal.clock()):
+            raise PublishingWireError('PUBLISHING_RECONCILIATION_LEASE_ACTIVE',
+                retry_after=math.ceil((context['lease_until'] - utc(self.journal.clock())).total_seconds()))
         upload = None
         if phase == 'init_ready':
             self.vault.cipher()  # unavailable key/crypto refuses before account/init wire calls
@@ -144,9 +167,12 @@ class YouTubePublishingWorker:
                 response, ticket = await self.send(workspace, publication_id, request, 'reconcile', credential=credential,
                     ticket={'version': context['version'], 'kind': 'reconcile'})
                 progress = upload_progress(response, upload)
+                if progress.status == 'reconciliation_required':
+                    raise PublishingWireError('PUBLISHING_RECONCILIATION_REQUIRED', uncertain=True, retry_after=retry_delay(response))
                 if progress.acknowledged_bytes is None:
                     raise PublishingWorkerError('PUBLISH_SESSION_REVIEW_REQUIRED')
-                return await self.journal.finish(ticket, acknowledged_bytes=progress.acknowledged_bytes, remote_post_id=progress.remote_video_id)
+                result = await self.journal.finish(ticket, acknowledged_bytes=progress.acknowledged_bytes, remote_post_id=progress.remote_video_id)
+                return {**result, **({'retry_after': progress.retry_after} if progress.retry_after is not None else {})}
             async with self.guard.open(workspace, publication_id) as artifact:
                 if artifact.binding_sha256 != context['binding_sha256']:
                     raise PublishingWorkerError('PUBLISH_WORKER_ARTIFACT_CHANGED')
@@ -172,9 +198,12 @@ class YouTubePublishingWorker:
                 response, ticket = await self.send(workspace, publication_id, request, 'chunk', credential=credential, ticket={'version': context['version'], 'kind': 'chunk',
                     'range': {'offset': context['offset'], 'length': length}})
                 progress = upload_progress(response, upload)
+                if progress.status == 'reconciliation_required':
+                    raise PublishingWireError('PUBLISHING_RECONCILIATION_REQUIRED', uncertain=True, retry_after=retry_delay(response))
                 if progress.acknowledged_bytes is None:
                     raise PublishingWorkerError('PUBLISH_SESSION_REVIEW_REQUIRED')
-                return await self.journal.finish(ticket, acknowledged_bytes=progress.acknowledged_bytes, remote_post_id=progress.remote_video_id)
+                result = await self.journal.finish(ticket, acknowledged_bytes=progress.acknowledged_bytes, remote_post_id=progress.remote_video_id)
+                return {**result, **({'retry_after': progress.retry_after} if progress.retry_after is not None else {})}
         except BaseException:
             if ticket is not None:
                 with suppress(Exception): await self.journal.finish(ticket, uncertain=True)

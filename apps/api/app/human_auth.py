@@ -84,7 +84,7 @@ def required_role_for(request: Request) -> HumanRole:
         return "owner"
     if "/approvals/" in path and path.endswith("/decision"):
         return "reviewer"
-    if path.endswith(("/publish", "/publish-approval", "/publish-approval/revoke")):
+    if path.endswith(("/publish", "/publish-approval", "/publish-approval/revoke", "/publishing-work")):
         return "owner"
     return "editor"
 

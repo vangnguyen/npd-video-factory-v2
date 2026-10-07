@@ -140,3 +140,26 @@ class PublicationPrivateSessionORM(Base):
     ciphertext: Mapped[bytes] = mapped_column(LargeBinary(8192), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class PublicationWorkORM(Base):
+    """Scoped scheduler state; upload/processing evidence remains in its journals."""
+    __tablename__ = 'publication_work'
+    __table_args__ = (UniqueConstraint('publication_id', name='uq_publication_work'),
+        CheckConstraint('version >= 1 AND failures >= 0 AND run_count >= 0', name='ck_publication_work_counts'),
+        Index('ix_publication_work_due', 'workspace_id', 'status', 'next_run_at'))
+    work_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    publication_id: Mapped[str] = mapped_column(String(64), ForeignKey('publication_dispatches.publication_id', ondelete='RESTRICT'), nullable=False)
+    workspace_id: Mapped[str] = mapped_column(String(64), ForeignKey('workspaces.workspace_id', ondelete='RESTRICT'), nullable=False)
+    project_id: Mapped[str] = mapped_column(String(64), ForeignKey('video_projects.project_id', ondelete='RESTRICT'), nullable=False)
+    binding_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    failures: Mapped[int] = mapped_column(Integer, nullable=False)
+    run_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    next_run_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    lease_owner: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    failure_code: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
