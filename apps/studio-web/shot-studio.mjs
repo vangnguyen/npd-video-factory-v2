@@ -105,6 +105,7 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
     const diagnostics=document.createElement('details');diagnostics.className='production-details';diagnostics.innerHTML='<summary>Chi tiết sản xuất</summary>';
     $('video-review-body').append(diagnostics);diagnostics.append(document.querySelector('.job-card'),$('open-output'));
     if($('cost-card'))$('video-review-body').append($('cost-card'));
+    if($('native-publication-card'))$('video-review-body').append($('native-publication-card'));
   }
   const previewShortcut=document.createElement('button');previewShortcut.type='button';previewShortcut.id='toolbar-preview';previewShortcut.className='secondary';previewShortcut.dataset.shotControl='';previewShortcut.textContent='Preview';document.querySelector('.studio-header-actions').append(previewShortcut,$('render'));
   const sceneDetails=document.createElement('details');sceneDetails.id='all-scene-fields';const summary=document.createElement('summary');summary.textContent='Chỉnh sửa toàn bộ kịch bản / cảnh';sceneDetails.append(summary);$('scenes').before(sceneDetails);sceneDetails.append($('scenes'));

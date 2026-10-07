@@ -33,6 +33,10 @@ def permission_for(method, path):
         return None
     if path == '/api/logout':
         return 'read'
+    if re.fullmatch(r'/api/projects/' + ID + r'/publications/npub_' + ID + r'/(approve|cancel|dry-run)', path):
+        return 'manage'
+    if re.fullmatch(r'/api/projects/' + ID + r'/publications', path):
+        return 'edit'
     if path == '/api/connections/assemblyai' or re.fullmatch(r'/api/projects/' + ID + '/cost-policy', path) or re.fullmatch(r'/api/jobs/' + ID + '/open-folder', path):
         return 'manage'
     review = [r'/api/projects/' + ID + '/(approve|reject|script-review)', r'/api/jobs/' + ID + '/review',

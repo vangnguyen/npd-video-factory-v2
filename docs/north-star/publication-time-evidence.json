@@ -107,8 +107,8 @@
   "new_studio_cases": 1,
   "counts_overlap": true,
   "failed_logs_and_fixture_directories_retained": true,
-  "full_parent_api_status": "PINNED_8C585A4_RUNNING",
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_parent_api_status": "PASS",
+  "full_current_api_status": "PINNED_0CDA679_RUNNING",
   "tiktok_provider_posted_time_implemented": true,
   "youtube_reported_time_retained": true,
   "youtube_exact_publication_time_available": false,
@@ -125,5 +125,15 @@
   "analytics_ready": false,
   "implementation_complete": false,
   "real_provider_acceptance_complete": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_parent_api": {
+    "head": "8c585a4ed29b7387d0e49b95f2180a38d751a24b",
+    "passed": 2620,
+    "skipped": 11,
+    "seconds": 1511.09,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-8c585a4.log",
+      "sha256": "28e45ead1887e05cb694cdde2f8d37ca329c4b523b1c50d5e39d22ebd11fc9e8"
+    }
+  }
 }

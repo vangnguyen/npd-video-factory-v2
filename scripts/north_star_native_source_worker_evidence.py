@@ -48,6 +48,8 @@ def main():
     parser.add_argument('--final-effects-preview',action='store_true')
     parser.add_argument('--manual-reframe',action='store_true')
     parser.add_argument('--media-frames',action='store_true')
+    parser.add_argument('--aspect-ratio',choices=('9:16','16:9','1:1','4:5'),default='4:5')
+    parser.add_argument('--explicit-fixture-owned-provenance',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
     if args.auto_shorts and args.duplicate_source:raise ValueError('Choose one fresh draft derivation per evidence run')
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
@@ -63,6 +65,11 @@ def main():
         '-af','adelay=1000,apad=whole_dur=3','-c:v','libx264','-preset','ultrafast','-pix_fmt','yuv420p',
         '-c:a','aac','-t','3',str(source)],check=True,capture_output=True,timeout=30)
     asset=ingest_media(config,source,'video/mp4','Explicit synthetic worker source.mp4',rights_confirmed=True,illustration=False)
+    if args.explicit_fixture_owned_provenance:
+        asset.update(rights_status='owned',license='locally_generated_synthetic_fixture',source_type='synthetic_fixture',
+            provider='local-ffmpeg-fixture',source_reference=source.name,
+            generation_provenance={'explicit_fixture':True,'workflow':'FFmpeg lavfi testsrc2 and sine',
+                'synthetic_tone_not_speech':True,'no_external_media_download':True})
     project=store.create('Source worker — synthetic technology fixture','','media',production_quality=True)
     project=store.append_media(project['id'],project['revision'],asset)
     with store.transaction() as con:
@@ -75,7 +82,7 @@ def main():
     if store.get_job(job['id'])['status']!='succeeded':raise RuntimeError(store.get_job(job['id'])['error'])
     bundle=auto_edit_analysis.view(store,project['id']);analysis=bundle['analyses'][0]['analysis']
     project=auto_edit_timeline.create(store,project['id'],bundle['revision'],{
-        'analysis_id':analysis['analysis_id'],'transcript_id':analysis['transcript']['transcript_id'],'aspect_ratio':'4:5'})
+        'analysis_id':analysis['analysis_id'],'transcript_id':analysis['transcript']['transcript_id'],'aspect_ratio':args.aspect_ratio})
     if args.edited_timeline:
         from services.windows_native.source_linked_edit import edit as linked_edit
         from services.windows_native.source_settings import configure
@@ -85,7 +92,7 @@ def main():
         project=linked_edit(store,project['id'],project['revision'],{'expected_version':2,
             'operation':{'type':'split','clip_id':clip,'at_seconds':1.1}})
         project=configure(store,project['id'],project['revision'],{'expected_version':3,
-            'aspect_ratio':'4:5','subtitle_template_ref':'karaoke-gold@v1'})
+            'aspect_ratio':args.aspect_ratio,'subtitle_template_ref':'karaoke-gold@v1'})
     if args.music:
         from services.windows_native.music import ingest_music
         music_path=root/'explicit-synthetic-music.wav'
@@ -243,6 +250,7 @@ def main():
             for item in (root/directory).iterdir():
                 if item.is_file() and file_sha(item)!=source_hashes[item.name]:raise AssertionError('Immutable source changed')
         receipt={'schema':'native-source-worker-evidence-v1','explicit_fixture':True,'synthetic_media':True,
+            'requested_aspect_ratio':args.aspect_ratio,'explicit_fixture_owned_provenance':args.explicit_fixture_owned_provenance,
             'linked_source_edits_and_karaoke':bool(args.edited_timeline and not args.auto_shorts),
             'canonical_music_added':any(track['kind']=='music' and track['clips'] for track in project['document']['canonical_timeline']['snapshot']['tracks']),
             'canonical_audio_processing_requested':bool(project['document']['canonical_timeline']['snapshot']['metadata'].get('source_audio_processing')),

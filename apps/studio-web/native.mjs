@@ -112,7 +112,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -182,6 +182,7 @@ if (typeof document !== "undefined") {
     shotStudio?.controls();
     nativeAnalysis?.controls();
     mediaFrames?.controls();
+    publicationUI?.controls();
   }
   function markDirty(part) {dirty=true;dirtyPart=part;$("review-check").checked=false;controls();}
   function readProposal() {
@@ -210,6 +211,7 @@ if (typeof document !== "undefined") {
     row.querySelector("[data-media-note]").textContent=asset?.kind==="video"?`${fit} · tắt âm thanh gốc · clip ngắn lặp sau lượt phát đầu.`:asset?`${fit} · kiểm tra bố cục trong bản xem trước.`:"Chọn một nguồn cho cảnh này trước khi duyệt.";
   }
   function renderProject(reset=true) {
+    publicationUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
     refreshCosts();
     const origin=project?.document.content_intelligence;
@@ -287,6 +289,11 @@ if (typeof document !== "undefined") {
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
     canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
+    if(session.capabilities?.native_publication_review===true){
+      const publications=await import('./native-publications.mjs');$('native-publication-card').hidden=false;
+      publicationUI=publications.initializeNativePublications({api,getState:()=>({project,dirty,busy,canManage,
+        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),onMessage:message});
+    }
     if(session.access?.mode==='registry'){
       const access=await import('./native-access.mjs');access.installNativeAccess(session);
     }

@@ -1431,3 +1431,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: four actual read-adapter MockTransport reque
 EVIDENCE: `docs/ANALYTICS_PUBLICATION_TIME.md`, `docs/north-star/publication-time-evidence.json`; `publication-time-contract-n2` six JSON exports plus owned database/objects. Official semantics sources are linked in the document. Fixture bytes/approvals/receipts do not certify real rights, playable media QC or Owner UAT.
 
 REGRESSIONS: older analytics and learning snapshots, fixture serialization, canonical timeline/approval/provider/publishing defaults and accepted/live source preserved. No live migration, paid/external call, deployment or main merge. EXTERNAL BLOCKERS: actual accounts/provider/Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for safe work. NEXT WAVE: Native distribution/channel integration and remaining original Waves 0–16.
+
+### Wave 9 / Native Mode B — Bound publication review and dry runs
+
+WAVE: 9 / 3 / 16. STATUS: IN PROGRESS. PUBLISHING_READY = NO; AUTO_EDIT_MODE_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `0cda6793f80725b1d7a32e0037dcc2578430292b`, pushed/preserved in `north-star-publication-time.bundle`, SHA256 `80beea11ba7ff6ae200eb5df9b11b910891a9216a3586215e6c58bc6d81cc49b`; 168 ahead/0 behind, fresh 15 accepted media hashes and clean live source verified. Native increment will be separately committed/preserved.
+
+CAPABILITIES COMPLETED: Native same-origin/session/CSRF/RBAC publication routes and Video review controls; exact frozen render/final-review/file/capability/rights/platform binding; additive immutable requests, content-free events, Owner-only dry-run approval, UTC schedule/cancel, concurrent/repeated idempotency, keyset history and four-platform pure mock provider receipts. Late UI responses are scoped and rendered as text. Live transport remains unconfigured/default-disabled.
+
+CAPABILITIES PARTIAL: Native live adapters/operator/credentials/profiles, generated voice/thumbnail rights, repeated intentional identical request UX, Native analytics/channel/winner/learning, durable TikTok/Meta runtime, official real/provider/policy and browser/Owner acceptance. Full original Waves 0–16 remain applicable.
+
+TESTS: final focused **26 PASS**, 26.638s; full Native **413 PASS**; Studio **171 PASS**, 847.2475ms. Thirteen new Native and six Studio cases, overlapping counts. Initial full Native 411 tests had one failure from an exact capability assertion omitting the new two flags; corrected without removing prior checks. Initial media contract used the wrong fixture account workspace; corrected. Failed logs/folders remain. Prior pinned Linux `8c585a4`: **2620 PASS / 11 SKIP**, 1511.09s; pinned `0cda679` regression remains running.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: four pure shared publishing receipts, explicit fixture final/publish human reviews and saved ASR. LOCAL-REAL TESTS: fresh synthetic testsrc2/tone source, portrait effects preview/final render and actual FullQC; **23 authenticated Native requests**, two history pages and exact fresh-process restore. Final/source bytes and canonical state after fixture review remain unchanged. No fabricated real platform posts or analytics.
+
+EVIDENCE: `docs/NATIVE_PUBLICATION_REVIEW.md`, `docs/north-star/native-publication-evidence.json`; fresh `native-publication-render-n1` media bundle and `native-publication-contract-n2` six JSON exports. Source/preview/final/QC/transcript/scene/highlights/silence/captions/audio/timeline/provenance/cost/events are retained. This remains a synthetic partial Artifact A rehearsal, not non-developer UI or real-provider/Owner acceptance.
+
+REGRESSIONS: accepted Phase 8–10 artifacts, live source, canonical timeline and existing capabilities/approval/provider defaults preserved. EXTERNAL BLOCKERS: actual credentials/provider/policy/Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for continuing safe work. NEXT WAVE: Native analytics/channel integration and remaining original Trend/media/Hub/hardening/final A/B/C capabilities. No main merge, deployment, live migration, paid provider or external publication occurred.

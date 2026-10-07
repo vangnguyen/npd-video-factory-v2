@@ -31,6 +31,7 @@ from .media import CONTENT_TYPES, IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, discard_medi
 class Runner:
     def __init__(self, store, pipeline, *, observer=None):
         self.store, self.pipeline = store, pipeline
+        self.publications = None
         self.observer = observer or Observer()
         self.stop = threading.Event()
         self.wake = threading.Event()
@@ -41,6 +42,11 @@ class Runner:
         self.thread.start()
 
     def run_one(self):
+        if self.publications is not None:
+            try:
+                if self.publications.process() is not None: return True
+            except WorkflowError:
+                self.observer.emit('worker_failed', stage='publishing', provider='mock-publishing', duration=0)
         job = self.store.claim()
         if not job:
             return False
@@ -133,6 +139,10 @@ class LocalServer(ThreadingHTTPServer):
         from .shot_ai_edit import ShotAIEdit
         self.previews=PreviewManager(config,self.store)
         self.shot_ai=ShotAIEdit(config,self.store)
+        from .publications import NativePublications
+        self.publications = NativePublications(self.store, REPO / 'packages/contracts/publishing-capabilities.json',
+            workspace_id=access.workspace_id if access is not None else 'wsp_native_local')
+        self.runner.publications = self.publications
         if start_worker:
             self.runner.start()
             self.intelligence.start()
@@ -255,6 +265,9 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith("/api/intelligence/"):
             from .intelligence_routes import get
             return self.reply(get(self,path))
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/publications(?:/npub_[a-f0-9]{32})?', path):
+            from .publication_routes import get
+            return self.reply(get(self, path))
         if path.startswith('/api/production/'):
             from .production_routes import get
             thumbnail_match=re.fullmatch(r'/api/production/videos/([0-9a-f]{32})/thumbnail',path)
@@ -305,7 +318,8 @@ class Handler(BaseHTTPRequestHandler):
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
-                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True}}, headers=headers)
+                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
+                "native_publication_review":True,"native_live_publishing":False}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -388,6 +402,7 @@ class Handler(BaseHTTPRequestHandler):
         static.update({name:name[1:] for name in ('/native-source-editor.mjs','/native-source-editor.css',
             '/native-source-broll.mjs','/native-media-frames.mjs','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
         static['/native-costs.mjs'] = 'native-costs.mjs'
+        static['/native-publications.mjs'] = 'native-publications.mjs'
         static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',
                        '/native-access.mjs': 'native-access.mjs', '/native-access.css': 'native-access.css'})
         if path in static:
@@ -433,6 +448,9 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith("/api/intelligence/"):
             from .intelligence_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/publications(?:/npub_[a-f0-9]{32}/(?:approve|cancel|dry-run))?', self.path):
+            from .publication_routes import post
+            return self.reply(post(self, self.path, self.read_body(max_bytes=100000)))
         if self.path.startswith('/api/production/'):
             from .production_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
