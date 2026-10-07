@@ -228,6 +228,10 @@ class Handler(BaseHTTPRequestHandler):
             from .auto_edit_analysis import view
             return self.reply(view(self.server.store, analysis_route[1]))
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', path)
+        shorts_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/shorts',path)
+        if shorts_route:
+            from .source_shorts import view
+            return self.reply(view(self.server.store,shorts_route[1]))
         if source_timeline_route:
             from .auto_edit_timeline import view
             return self.reply(view(self.server.store, source_timeline_route[1]))
@@ -352,6 +356,13 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', self.path)
         broll_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/broll', self.path)
+        shorts_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/shorts',self.path)
+        if shorts_route:
+            from .source_shorts import create
+            body=self.read_body(max_bytes=100000)
+            if set(body)!={'revision','payload'} or type(body.get('revision')) is not int:
+                raise WorkflowError('AUTO_SHORTS_REQUEST_INVALID',400)
+            return self.reply(create(self.server.store,self.server.config,shorts_route[1],body['revision'],body['payload']))
         if broll_route:
             from . import source_broll
             body = self.read_body(max_bytes=100000)

@@ -264,8 +264,8 @@ if (typeof document !== "undefined") {
       const analysis=await import('./native-auto-edit.mjs');
       const stylesheet=document.createElement('link');stylesheet.rel='stylesheet';stylesheet.href='/native-auto-edit.css';document.head.append(stylesheet);
       nativeAnalysis=analysis.initializeNativeAnalysis({api,getProject:()=>project,getState:()=>({dirty,dirtyPart,busy:busy||(shotStudio?.isWorking()??false)}),
-        onProject:(value,reset)=>{project=value;renderProject(reset);},onDirty:markDirty,onMessage:message,
-        sourceEnabled:session.capabilities?.native_source_timeline===true,onSourceCreated:()=>shotStudio?.showStage('video'),onWorking:controls});
+        onProject:(value,reset)=>{const changed=project?.id!==value?.id;project=value;if(changed&&value){localStorage.setItem('vf-native-project',value.id);void projects().catch(error=>message(error.message,true));}renderProject(reset);},onDirty:markDirty,onMessage:message,
+        sourceEnabled:session.capabilities?.native_source_timeline===true,onSourceCreated:()=>shotStudio?.showStage('video'),onWorking:controls,onDraftsCreated:projects});
     }
     let module;
     try{module=await loadNativeShotStudio(session);}catch{nativeLegacyLayout(document);message('Đang dùng giao diện Studio hiện hành. Không tải được không gian biên tập mới.',true);return;}

@@ -33,7 +33,9 @@ def main():
     parser.add_argument('--audio-processing',action='store_true')
     parser.add_argument('--broll',action='store_true')
     parser.add_argument('--duplicate-source',action='store_true')
+    parser.add_argument('--auto-shorts',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
+    if args.auto_shorts and args.duplicate_source:raise ValueError('Choose one fresh draft derivation per evidence run')
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
         raise ValueError('Fresh isolated synthetic Native root required')
     if out.exists() or out==ROOT or ROOT in out.parents or out==root or root in out.parents:
@@ -107,6 +109,17 @@ def main():
             'expected_version':project['shot_timeline']['version'],'media_plan_id':plan['media_plan_id'],
             'expected_plan_version':plan['version'],'item_ids':[item['media_plan_item_id']]})
     parent=None
+    shorts=None
+    if args.auto_shorts:
+        from services.windows_native.source_shorts import create as create_shorts
+        parent=store.get(project['id'])
+        shorts=create_shorts(store,config,project['id'],project['revision'],{
+            'analysis_id':analysis['analysis_id'],'transcript_id':analysis['transcript']['transcript_id'],
+            'expected_version':project['shot_timeline']['version'],'request_key':uuid.uuid4().hex,'count':3,'aspect_ratio':'9:16'})
+        project=shorts['projects'][0]
+        rebound=auto_edit_analysis.view(store,project['id'])
+        analysis=next(item['analysis'] for item in rebound['analyses']
+            if item['analysis']['analysis_id']==project['shot_timeline']['snapshot']['metadata']['source_analysis_id'])
     if args.duplicate_source:
         parent=store.get(project['id'])
         project=store.duplicate(project['id'],project['revision'])
@@ -158,6 +171,7 @@ def main():
             'source_kind':'generated synthetic testsrc + tone','speech_recognition':'saved ASR fixture; no inference'})
         durable_json(out/'project.json',store.get(project['id']))
         if parent:durable_json(out/'parent-project.json',parent)
+        if shorts:durable_json(out/'auto-shorts.json',shorts)
         durable_json(out/'job-events.json',events)
         subprocess.run([str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n','-ss','0.35',
             '-i',str(out/'final.mp4'),'-frames:v','1',str(out/'caption-frame.png')],check=True,capture_output=True,timeout=30)
@@ -165,10 +179,14 @@ def main():
             for item in (root/directory).iterdir():
                 if item.is_file() and file_sha(item)!=source_hashes[item.name]:raise AssertionError('Immutable source changed')
         receipt={'schema':'native-source-worker-evidence-v1','explicit_fixture':True,'synthetic_media':True,
-            'linked_source_edits_and_karaoke':args.edited_timeline,
-            'canonical_music_added':args.music,
-            'canonical_audio_processing_requested':args.audio_processing,
-            'canonical_supporting_broll_added':args.broll,
+            'linked_source_edits_and_karaoke':bool(args.edited_timeline and not args.auto_shorts),
+            'canonical_music_added':any(track['kind']=='music' and track['clips'] for track in project['document']['canonical_timeline']['snapshot']['tracks']),
+            'canonical_audio_processing_requested':bool(project['document']['canonical_timeline']['snapshot']['metadata'].get('source_audio_processing')),
+            'canonical_supporting_broll_added':any(track['kind']=='broll' and track['clips'] for track in project['document']['canonical_timeline']['snapshot']['tracks']),
+            'auto_shorts_drafts_created':bool(shorts),
+            'auto_shorts_generated_count':shorts['batch']['generated_count'] if shorts else None,
+            'auto_shorts_requested_count':shorts['batch']['requested_count'] if shorts else None,
+            'auto_shorts_rendered_count':1 if shorts else None,
             'source_project_duplicated_with_rebound_evidence':args.duplicate_source,
             'parent_project_id':parent['id'] if parent else None,
             'parent_project_unchanged':bool(parent),

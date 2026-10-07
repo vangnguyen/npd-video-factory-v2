@@ -14,14 +14,15 @@ from app.media_intelligence_models import MediaPlanRead
 ALGORITHM='native-source-identity-rebind-v1'
 
 
-def rebind(document,source_id,target_id,revision,created_at):
+def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sha256=None):
     state=validate_document(document)
     if state['snapshot']['metadata']['native_project_id']!=source_id:
         raise WorkflowError('AUTO_EDIT_TIMELINE_PROJECT_MISMATCH')
     assets={item['id']:item for item in project_assets(document)}
     mapping={source_id:target_id,'prj_'+source_id:'prj_'+target_id}
     origin={'algorithm':ALGORITHM,'source_project_id':source_id,'source_revision':revision,
-        'source_document_sha256':digest(document),'created_at':created_at,
+        'source_document_sha256':parent_document_sha256 or digest(document),
+        'source_binding_document_sha256':digest(document),'created_at':created_at,
         'provider_calls':0,'source_media_mutated':False,'fresh_provider_measurement':False}
     def register(identifier):
         if identifier and identifier not in mapping:

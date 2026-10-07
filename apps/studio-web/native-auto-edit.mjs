@@ -19,6 +19,19 @@ export function sourceCreatePayload(project,item,{aspectRatio='9:16',highlightId
     ...(project.document.canonical_timeline?{expected_version:project.document.canonical_timeline.version}:{}),
     ...(highlight?{source_window:[highlight.recommended_start,highlight.recommended_end]}:{})}};
 }
+export function sourceShortsPayload(project,item,{count=3,maximumDuration=60,aspectRatio='9:16',requestKey}={}) {
+  const seed=sourceCreatePayload(project,item,{aspectRatio});
+  if(![3,5].includes(count)||!Number.isFinite(maximumDuration)||maximumDuration<3||maximumDuration>180)throw new Error('Chọn Top 3/Top 5 và thời lượng tối đa 3–180s.');
+  const key=requestKey??globalThis.crypto.randomUUID().replaceAll('-','');
+  if(!/^[a-f0-9]{32}$/.test(key))throw new Error('Mã yêu cầu Auto Shorts không hợp lệ.');
+  return {revision:seed.revision,payload:{analysis_id:seed.payload.analysis_id,transcript_id:seed.payload.transcript_id,
+    ...(seed.payload.expected_version?{expected_version:seed.payload.expected_version}:{}),
+    count,maximum_duration_seconds:maximumDuration,aspect_ratio:aspectRatio,request_key:key}};
+}
+export function shortsMarkup(value) {
+  if(!value?.batches?.length)return '';
+  return `<details open><summary>Các bản Auto Shorts đã tạo</summary>${value.batches.map(batch=>`<section><p>${batch.generated_count}/${batch.requested_count} gợi ý phù hợp · ${esc(batch.aspect_ratio)}. Mỗi bản chưa duyệt; không thêm gợi ý nếu thiếu dữ liệu.</p>${batch.drafts.map(item=>`<p>${esc(item.name)} · nguồn ${formatTime(item.source_window[0])}–${formatTime(item.source_window[1])}s <button type="button" data-auto-edit-control data-open-short="${esc(item.project_id)}">Mở bản dựng</button></p>`).join('')}</section>`).join('')}</details>`;
+}
 export function analysisMarkup(bundle,{project=null,sourceEnabled=false}={}) {
   if(!bundle?.analyses?.length)return '<p class="hint">Chưa có phân tích dựng nguồn. Tải video rồi chọn Đo cảnh & âm thanh.</p>';
   return bundle.analyses.map(item=>{
@@ -41,28 +54,29 @@ export function analysisMarkup(bundle,{project=null,sourceEnabled=false}={}) {
       <details><summary>Điểm nổi bật · Top 3 / Top 5</summary><label>Số gợi ý<select data-auto-edit-control data-highlight-count><option value="3">Top 3</option><option value="5">Top 5</option></select></label>
         ${item.highlights.map((value,index)=>`<section data-highlight-rank="${index+1}" ${index>=3?'hidden':''}><strong>${formatTime(value.recommended_start)}–${formatTime(value.recommended_end)}s · điểm ${formatTime(value.highlight_score)}</strong><p>Gợi ý theo ${esc(Object.entries(value.evidence.factors).filter(([,score])=>score!==null).map(([key])=>factorLabels[key]??key).join(', '))}. Hãy xem đoạn nguồn trước khi chọn.</p><p class="hint">Yếu tố chưa có dữ liệu: ${esc(value.evidence.missing_factors.map(key=>factorLabels[key]??key).join(', ')||'không có')}</p></section>`).join('')}</details>
       ${sourceEnabled&&project?.document.input_kind==='media'&&!project.document.proposal?`<details open><summary>Dựng video nguồn</summary><label>Lựa chọn<select data-auto-edit-control data-source-highlight><option value="">Toàn bộ video</option>${item.highlights.map(h=>`<option value="${esc(h.highlight_id)}">Điểm nổi bật ${h.rank??''} · ${formatTime(h.recommended_start)}–${formatTime(h.recommended_end)}s</option>`).join('')}</select></label><label>Định dạng<select data-auto-edit-control data-source-ratio>${['9:16','16:9','1:1','4:5'].map(r=>`<option>${r}</option>`).join('')}</select></label><p class="hint">Chỉ cắt các khoảng im lặng bạn đã tích chọn. Giữ nguyên video gốc. ${project.document.canonical_timeline?'Tạo lại sẽ lưu một bản timeline mới từ nguồn; chỉnh sửa hiện tại vẫn có trong lịch sử.':''}</p><button data-auto-edit-control data-create-source type="button">${project.document.canonical_timeline?'Tạo lại bản dựng từ lựa chọn':'Tạo bản dựng từ lựa chọn'}</button></details>`:''}
+      ${sourceEnabled&&project?.document.input_kind==='media'&&!project.document.proposal?`<details><summary>Auto Shorts · bản dựng độc lập</summary><label>Số bản tối đa<select data-auto-edit-control data-shorts-count><option value="3">Top 3</option><option value="5">Top 5</option></select></label><label>Thời lượng tối đa (s)<input data-auto-edit-control data-shorts-duration type="number" min="3" max="180" value="60"></label><p class="hint">Dùng định dạng đã chọn ở trên. Giữ nguyên toàn bộ lời nói tại điểm cắt; bỏ gợi ý quá dài. Mỗi bản có timeline riêng để sửa, preview và duyệt. Giữ nguyên dự án hiện tại; B-roll/nhạc/chỉnh sửa thủ công cần chọn lại trong bản mới.</p><button data-auto-edit-control data-create-shorts type="button">Tạo bản Auto Shorts chưa duyệt</button></details>`:''}
     </article>`;
   }).join('');
 }
 
-export function initializeNativeAnalysis({api,getProject,onProject,onDirty,onMessage,getState,sourceEnabled=false,onSourceCreated=()=>{},onWorking=()=>{}}) {
+export function initializeNativeAnalysis({api,getProject,onProject,onDirty,onMessage,getState,sourceEnabled=false,onSourceCreated=()=>{},onWorking=()=>{},onDraftsCreated=()=>{}}) {
   const region=document.getElementById('native-auto-edit-results');
-  let bundle=null, identity=null, loading=false,editingAnalysis=null;
-  const markup=value=>analysisMarkup(value,{project:getProject(),sourceEnabled});
+  let bundle=null,shorts=null,identity=null,loading=false,editingAnalysis=null,pendingShortsRequest=null;
+  const markup=value=>analysisMarkup(value,{project:getProject(),sourceEnabled})+(sourceEnabled?shortsMarkup(shorts):'');
   async function refresh(reset=false) {
     const project=getProject(), key=project?`${project.id}:${project.revision}`:null;
     document.getElementById('native-auto-edit-panel').hidden=!project;
-    if(!project){identity=null;bundle=null;loading=false;region.innerHTML='';return;}
+    if(!project){identity=null;bundle=null;shorts=null;loading=false;region.innerHTML='';return;}
     if(identity===key){if(reset&&bundle){editingAnalysis=null;region.innerHTML=markup(bundle);}return;}
-    identity=key;loading=true;editingAnalysis=null;bundle=null;region.innerHTML='<p class="hint">Đang đọc phân tích nguồn…</p>';
-    try{const value=await api(`/api/projects/${project.id}/auto-edit`);if(identity!==key)return;bundle=value;region.innerHTML=markup(value);}
+    identity=key;loading=true;editingAnalysis=null;bundle=null;shorts=null;region.innerHTML='<p class="hint">Đang đọc phân tích nguồn…</p>';
+    try{const [value,drafts]=await Promise.all([api(`/api/projects/${project.id}/auto-edit`),sourceEnabled?api(`/api/projects/${project.id}/auto-edit/shorts`):null]);if(identity!==key)return;bundle=value;shorts=drafts;region.innerHTML=markup(value);}
     catch(error){if(identity===key){identity=null;onMessage(error.message,true);}}
     finally{if(identity===key||identity===null){loading=false;onWorking();controls();}}
   }
   function controls() {
     const state=getState(), project=getProject();
     const blocked=loading||state.busy||(state.dirty&&state.dirtyPart!=='autoedit')||!project||project.archived||(project.jobs??[]).some(job=>['queued','running','retrying'].includes(job.status));
-    region.querySelectorAll('[data-auto-edit-control]').forEach(element=>element.disabled=blocked||element.dataset.unsafe==='true'||(element.matches('[data-create-source]')&&state.dirty)||(editingAnalysis&&element.closest('[data-native-analysis]').dataset.nativeAnalysis!==editingAnalysis));
+    region.querySelectorAll('[data-auto-edit-control]').forEach(element=>element.disabled=blocked||element.dataset.unsafe==='true'||(element.matches('[data-create-source],[data-create-shorts],[data-open-short]')&&state.dirty)||(editingAnalysis&&element.closest('[data-native-analysis]')?.dataset.nativeAnalysis!==editingAnalysis));
     document.getElementById('measure-auto-edit').disabled=blocked||state.dirty||!bundle?.pending_asset_ids?.length;
   }
   region.addEventListener('input',event=>{if(event.target.matches('[data-transcript-segment]')){editingAnalysis=event.target.closest('[data-native-analysis]').dataset.nativeAnalysis;onDirty('autoedit');}});
@@ -70,6 +84,31 @@ export function initializeNativeAnalysis({api,getProject,onProject,onDirty,onMes
     event.target.closest('[data-native-analysis]').querySelectorAll('[data-highlight-rank]').forEach(element=>element.hidden=Number(element.dataset.highlightRank)>Number(event.target.value));
   }});
   region.addEventListener('click',async event=>{
+    const open=event.target.closest('[data-open-short]'),short=event.target.closest('[data-create-shorts]');
+    if(open||short){
+      if(loading||getState().dirty||getState().busy)return;
+      const project=getProject();loading=true;onWorking();controls();
+      try{
+        if(open){
+          const value=await api(`/api/projects/${open.dataset.openShort}/shots`);
+          if(getProject()?.id!==project.id)return;
+          identity=null;onProject(value,true);onSourceCreated();onMessage('Đã mở bản Short chưa duyệt. Kiểm tra điểm cắt, crop, âm thanh và preview trước khi render.');
+        }else{
+          const article=short.closest('[data-native-analysis]'),item=bundle?.analyses.find(value=>value.analysis.analysis_id===article.dataset.nativeAnalysis);
+          if(!item)return;
+          const options={count:Number(article.querySelector('[data-shorts-count]').value),maximumDuration:Number(article.querySelector('[data-shorts-duration]').value),aspectRatio:article.querySelector('[data-source-ratio]').value};
+          const key=JSON.stringify([project.id,project.revision,item.analysis.analysis_id,item.analysis.transcript?.transcript_id,options]);
+          const body=pendingShortsRequest?.key===key?pendingShortsRequest.body:sourceShortsPayload(project,item,options);
+          pendingShortsRequest={key,body};
+          const result=await api(`/api/projects/${project.id}/auto-edit/shorts`,body);
+          pendingShortsRequest=null;
+          if(getProject()?.id!==project.id||getProject()?.revision!==project.revision)return;
+          shorts={project_id:project.id,batches:[...(shorts?.batches??[]).filter(b=>b.request_key!==result.batch.request_key),result.batch]};
+          region.innerHTML=markup(bundle);await onDraftsCreated();
+          onMessage(`Đã tạo ${result.batch.generated_count}/${result.batch.requested_count} bản phù hợp, chưa duyệt. Mở từng bản để kiểm tra.`);
+        }
+      }catch(error){onMessage(error.message,true);}finally{loading=false;onWorking();controls();}return;
+    }
     const create=event.target.closest('[data-create-source]');
     if(create){
       if(loading||getState().dirty||getState().busy)return;
