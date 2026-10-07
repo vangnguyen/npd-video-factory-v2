@@ -288,9 +288,9 @@ class ProductionIntelligenceTests(unittest.TestCase):
         with self.assertRaisesRegex(WorkflowError, 'HUMAN_FINAL'):
             self.service.video(job['id'])
 
-    def test_profile_catalog_contains_five_configs_and_existing_voice(self):
+    def test_profile_catalog_preserves_five_configs_adds_ai_and_existing_voice(self):
         result = self.service.profiles()
-        self.assertEqual({p['id'] for p in result['profiles']}, {'green-paradise', 'saigon-park', 'vang-nguyen', 'vietnam-property', 'infrastructure-news'})
+        self.assertEqual({p['id'] for p in result['profiles']}, {'green-paradise', 'saigon-park', 'vang-nguyen', 'vietnam-property', 'infrastructure-news', 'ai-education'})
         self.assertTrue(all(not p['voice']['new_credentials_required'] for p in result['profiles']))
         self.assertTrue(all(p['source_policy']['unknown_publication_date'] == 'NEEDS_REVALIDATION' for p in result['profiles']))
         self.assertTrue(all(set(p['supported_aspect_ratios']) == {'9:16', '16:9'} for p in result['profiles']))

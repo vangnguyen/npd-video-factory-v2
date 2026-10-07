@@ -1,27 +1,144 @@
 {
   "defaults": {
     "logo": null,
-    "fonts": {"heading": "seguisb.ttf", "body": "segoeui.ttf", "subtitle_family": "Segoe UI"},
-    "palette": {"background": "#09211f", "text": "#fcf9f1", "accent": "#e2cb9c", "muted": "#bed3cc", "caption_background": "#071918", "caption_border": "#5d6653"},
-    "subtitle_style": {"font_size": 46, "color": "#fcf9f1", "timing": "measured_sentence_activity_weighted_phrase_estimate"},
+    "fonts": {
+      "heading": "seguisb.ttf",
+      "body": "segoeui.ttf",
+      "subtitle_family": "Segoe UI"
+    },
+    "palette": {
+      "background": "#09211f",
+      "text": "#fcf9f1",
+      "accent": "#e2cb9c",
+      "muted": "#bed3cc",
+      "caption_background": "#071918",
+      "caption_border": "#5d6653"
+    },
+    "subtitle_style": {
+      "font_size": 46,
+      "color": "#fcf9f1",
+      "timing": "measured_sentence_activity_weighted_phrase_estimate"
+    },
     "primary_cta": "Liên hệ để nhận thông tin và kiểm chứng trước khi quyết định.",
     "intro_seconds": 1.1,
     "outro_seconds": 1.0,
     "voice_profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
-    "music_profile": {"nominal_gain": 0.12, "ducking": "voice_sidechaincompress", "default_track": null},
-    "safe_areas": {"top": 160, "bottom": 360, "left": 90, "right": 180, "source": "configurable_reference_margins"},
-    "project_disclaimers": ["Thông tin cần được kiểm chứng trước khi giao dịch"]
+    "music_profile": {
+      "nominal_gain": 0.12,
+      "ducking": "voice_sidechaincompress",
+      "default_track": null
+    },
+    "safe_areas": {
+      "top": 160,
+      "bottom": 360,
+      "left": 90,
+      "right": 180,
+      "source": "configurable_reference_margins"
+    },
+    "project_disclaimers": [
+      "Thông tin cần được kiểm chứng trước khi giao dịch"
+    ]
   },
   "brands": [
-    {"id": "vf-reference", "name": "Video Factory · tham chiếu", "intro": "VIDEO FACTORY", "asset_status": "generic_reference"},
-    {"id": "ngoc-phuong-dong", "name": "Ngọc Phương Đông", "intro": "NGỌC PHƯƠNG ĐÔNG", "asset_status": "reference_only_official_assets_missing", "primary_cta": "Liên hệ Ngọc Phương Đông để được tư vấn và kiểm chứng thông tin.", "palette": {"background": "#15352c", "text": "#fffaf0", "accent": "#dfc987", "muted": "#d2dfca", "caption_background": "#102a23", "caption_border": "#bda669"}},
-    {"id": "vang-nguyen", "name": "Vang Nguyễn personal brand", "intro": "VANG NGUYỄN", "asset_status": "reference_only_official_assets_missing", "primary_cta": "Theo dõi Vang Nguyễn để cùng tìm hiểu và đối chiếu nguồn tin.", "fonts": {"heading": "arialbd.ttf", "body": "arial.ttf", "subtitle_family": "Arial"}, "palette": {"background": "#152839", "text": "#f5f7fb", "accent": "#c3d7ec", "muted": "#b9d1df", "caption_background": "#0b1b29", "caption_border": "#6087a7"}, "project_disclaimers": ["Thông tin chia sẻ cần được đối chiếu nguồn."]}
+    {
+      "id": "vf-reference",
+      "name": "Video Factory · tham chiếu",
+      "intro": "VIDEO FACTORY",
+      "asset_status": "generic_reference"
+    },
+    {
+      "id": "ngoc-phuong-dong",
+      "name": "Ngọc Phương Đông",
+      "intro": "NGỌC PHƯƠNG ĐÔNG",
+      "asset_status": "reference_only_official_assets_missing",
+      "primary_cta": "Liên hệ Ngọc Phương Đông để được tư vấn và kiểm chứng thông tin.",
+      "palette": {
+        "background": "#15352c",
+        "text": "#fffaf0",
+        "accent": "#dfc987",
+        "muted": "#d2dfca",
+        "caption_background": "#102a23",
+        "caption_border": "#bda669"
+      }
+    },
+    {
+      "id": "vang-nguyen",
+      "name": "Vang Nguyễn personal brand",
+      "intro": "VANG NGUYỄN",
+      "asset_status": "reference_only_official_assets_missing",
+      "primary_cta": "Theo dõi Vang Nguyễn để cùng tìm hiểu và đối chiếu nguồn tin.",
+      "fonts": {
+        "heading": "arialbd.ttf",
+        "body": "arial.ttf",
+        "subtitle_family": "Arial"
+      },
+      "palette": {
+        "background": "#152839",
+        "text": "#f5f7fb",
+        "accent": "#c3d7ec",
+        "muted": "#b9d1df",
+        "caption_background": "#0b1b29",
+        "caption_border": "#6087a7"
+      },
+      "project_disclaimers": [
+        "Thông tin chia sẻ cần được đối chiếu nguồn."
+      ]
+    },
+    {
+      "id": "vf-ai-education",
+      "name": "AI dễ hiểu — tham chiếu",
+      "intro": "AI DỄ HIỂU",
+      "asset_status": "generic_reference",
+      "primary_cta": "Lưu checklist và đặt câu hỏi về điều bạn muốn kiểm chứng.",
+      "palette": {
+        "background": "#10233b",
+        "text": "#f4f8ff",
+        "accent": "#71d5e8",
+        "muted": "#b5c9df",
+        "caption_background": "#091728",
+        "caption_border": "#478da0"
+      },
+      "project_disclaimers": [
+        "Ví dụ minh họa cần được kiểm chứng từ nguồn. Không bảo đảm kết quả từ AI."
+      ]
+    }
   ],
-  "durations": [30, 45, 60],
+  "durations": [
+    30,
+    45,
+    60
+  ],
   "template_families": [
-    {"id": "property", "name": "Giới thiệu bất động sản", "purpose": "property_presentation", "scene_label": "GIỚI THIỆU"},
-    {"id": "news", "name": "Tin tức / cập nhật", "purpose": "news_update", "scene_label": "CẬP NHẬT"},
-    {"id": "personal", "name": "Thương hiệu cá nhân", "purpose": "personal_brand", "scene_label": "CHIA SẺ"},
-    {"id": "event", "name": "Giới thiệu sự kiện", "purpose": "event_promo", "scene_label": "SỰ KIỆN"}
+    {
+      "id": "property",
+      "name": "Giới thiệu bất động sản",
+      "purpose": "property_presentation",
+      "scene_label": "GIỚI THIỆU"
+    },
+    {
+      "id": "news",
+      "name": "Tin tức / cập nhật",
+      "purpose": "news_update",
+      "scene_label": "CẬP NHẬT"
+    },
+    {
+      "id": "personal",
+      "name": "Thương hiệu cá nhân",
+      "purpose": "personal_brand",
+      "scene_label": "CHIA SẺ"
+    },
+    {
+      "id": "event",
+      "name": "Giới thiệu sự kiện",
+      "purpose": "event_promo",
+      "scene_label": "SỰ KIỆN"
+    },
+    {
+      "id": "ai-education",
+      "name": "Giải thích công nghệ / AI",
+      "purpose": "news_update",
+      "scene_label": "GIẢI THÍCH",
+      "duration_policy": "fit_narration_preserve_voice_speed"
+    }
   ]
 }

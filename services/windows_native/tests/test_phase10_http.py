@@ -524,9 +524,9 @@ class Phase10HTTPTests(unittest.TestCase):
         calendar = self.api('GET', '/api/production/calendar')[1]
         self.assertTrue(calendar['planning_only']); self.assertFalse(calendar['scheduler_enabled']); self.assertFalse(calendar['publish_enabled'])
         catalog = self.api('GET', '/api/production/profiles')[1]
-        self.assertEqual(len(catalog['profiles']), 5); self.assertEqual(len(catalog['brand_templates']['templates']), 24)
-        self.assertEqual(self.api('GET', '/api/brand-templates')[1]['templates'].__len__(), 12)
-        self.assertEqual(len(self.api('GET', '/api/brand-templates?formats=all')[1]['templates']), 24)
+        self.assertEqual(len(catalog['profiles']), 6); self.assertEqual(len(catalog['brand_templates']['templates']), 30)
+        self.assertEqual(self.api('GET', '/api/brand-templates')[1]['templates'].__len__(), 15)
+        self.assertEqual(len(self.api('GET', '/api/brand-templates?formats=all')[1]['templates']), 30)
         self.assertEqual(self.server.store.get(self.project['id']), original)
         self.assertEqual(self.api('GET', '/api/projects/' + self.project['id'])[1]['document'], original['document'])
 

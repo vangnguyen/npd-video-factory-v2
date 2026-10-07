@@ -37,7 +37,7 @@ class IntelligenceHTTPTests(unittest.TestCase):
         self.assertEqual(self.request('POST','/api/intelligence/runs',{},headers={'X-VF-CSRF':'invalid'})[0],403)
         self.assertEqual(self.request('POST','/api/intelligence/runs',{},headers={'Origin':'https://other.example'})[0],403)
         self.assertEqual(self.request('GET','/intelligence',authenticated=False)[0],200)
-        self.assertEqual({p['id'] for p in self.request('GET','/api/intelligence/config')[1]['profiles']}, {'green-paradise','saigon-park','vang-nguyen','vietnam-property','infrastructure-news'})
+        self.assertEqual({p['id'] for p in self.request('GET','/api/intelligence/config')[1]['profiles']}, {'green-paradise','saigon-park','vang-nguyen','vietnam-property','infrastructure-news','ai-education'})
 
     def test_http_workflow_links_approved_brief_to_existing_unapproved_project(self):
         status,b=self.request('POST','/api/intelligence/runs',{'query':'housing fixture','profile_id':'vietnam-property','source_urls':['https://example.com/test']});self.assertEqual(status,200)

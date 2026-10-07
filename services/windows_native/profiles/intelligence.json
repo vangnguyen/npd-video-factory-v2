@@ -204,6 +204,39 @@
       "project_references": [
         "https://baochinhphu.vn/"
       ]
+    },
+    {
+      "id": "ai-education",
+      "name": "Công nghệ / AI dễ hiểu",
+      "related_project": "AI education",
+      "target_audience": "Người mới tìm hiểu công nghệ và cách kiểm chứng nội dung AI",
+      "preferred_formats": [
+        "Giải thích ngắn",
+        "Checklist",
+        "Đối chiếu nguồn"
+      ],
+      "channel": "AI education — hồ sơ tham chiếu nội bộ",
+      "cta_types": [
+        "Đặt câu hỏi",
+        "Lưu checklist"
+      ],
+      "cta_keywords": [
+        "câu hỏi",
+        "checklist"
+      ],
+      "tone": "Dễ hiểu, có nguồn, phân biệt ví dụ minh họa và dữ kiện",
+      "duration_seconds": [
+        30,
+        45,
+        60
+      ],
+      "keywords": [
+        "AI",
+        "công nghệ",
+        "kiểm chứng",
+        "dữ liệu"
+      ],
+      "project_references": []
     }
   ]
 }

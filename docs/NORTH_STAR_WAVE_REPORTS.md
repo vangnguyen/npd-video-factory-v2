@@ -796,3 +796,24 @@ EVIDENCE: `docs/north-star/comfyui-binary-contract-evidence.json` binds executed
 REGRESSIONS: bridge/compiler/wire, API media/planning/scope/modes, worker and Native B-roll/Shorts checks pass. Accepted artifacts/live source/database/configuration/processes remain untouched; no merge/deployment/publishing/new budget.
 
 EXTERNAL BLOCKERS: actual approved executable workflow/GPU/provider acceptance, Docker and Owner UAT/browser verification remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: complete verified-reference/durable backend architecture, and continue remaining media/planner/audio/profile/platform/distribution/analytics/learning/Trend/Hub/hardening gaps.
+## Wave 7 — Configuration-only technology/AI profile
+
+WAVE: 7
+
+STATUS: IN PROGRESS; MULTI_NICHE_READY = NO.
+
+HEAD SHA: parent `75d0391d364e84e3584f060aaf4c8a822578b67d`; this configuration commit records the increment. Parent is pushed and preserved in verified `north-star-comfyui-binary.bundle`, SHA256 `447dc988961dab2a300b82e8aa4365ac4887f351e14d724470bb38e5d870c9ab`.
+
+CAPABILITIES COMPLETED: an AI-education reference profile, generic reference brand and explanation templates at 30/45/60s in portrait/landscape. Existing five profiles, three brands, four families, defaults/durations and frozen selections remain exact objects; catalog now exposes six profiles, fifteen portrait templates and thirty combined templates. New family uses fit-narration duration without voice-speed changes, owned configurable styling and no default unclear-rights music or implied official logo. The existing research/ideas/scoring/brief/project/editor/brand functions process a non-property fixture into five scored ideas, a brief, unapproved production project, frozen selection, edit plan and canonical shot state. Eleven core modules compare unchanged after Git LF/Windows CRLF normalization; raw source and baseline blob hashes are separately retained. No core niche-specific source edit or provider/render dispatch was needed. Restart preserves documents and unrelated project exactly; human production approval still blocks render.
+
+CAPABILITIES PARTIAL: full non-property playable render and non-developer browser acceptance; complete versioned channel/niche/brand/content/video/publishing/analytics profile integration; all six platform variants/cache and real-provider acceptance remain. Native legacy general constraints still include property-related research warnings and need contextual policy integration. No real AI research/narration/voice or final video is certified by this planning proof.
+
+TESTS: full Native **338/338 PASS**, 253.252s (`multi-niche-native-full-r1.log`); two new focused contracts **2/2 PASS**, 0.600s. Initial selected regression was 59 PASS/1 fixture error: a 320x180 card correctly failed the existing 240px minimum, then the fixture was fixed to 640x360 without weakening ingestion. Fresh evidence **PASS**, twelve exports in `multi-niche-contract-n4`. Failed n1/n2/n3 roots/logs are preserved: raw CRLF/blob comparison, minimum image size and canonical timeline persistence before the first editor operation were corrected in the evidence harness. Full Linux API at preserved 75d0391 now **2,057 PASS, 11 SKIP**, 632.59s; skipped checks remain unaccepted.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual isolated Native SQLite/source-byte/asset ingestion, frozen selection, canonical editor persistence and restart/preservation. MOCK TESTS: research source is `test_fixture`; ideas/script/brief gate exercise are explicit fixtures. No actual retrieval/AI/TTS/render/publish call or Owner UAT.
+
+EVIDENCE: `docs/north-star/multi-niche-contract-evidence.json` indexes exact source/log hashes and twelve immutable n4 exports. Template duration receipt is explicitly a calculation for hypothetical five-second narration, not a generated or measured voice.
+
+REGRESSIONS: full Native Phase 8/9/10 source checks and current API regression pass with skips separately recorded. Prior catalog objects/frozen selections and live source/database/configuration/processes/accepted media are retained. Remote main remains `fa81c59fbe6b745cba8fed979e30e52a13199afa`; live source remains clean `2ced7bc81f9402368fb22c9e7aca242e740531af`. No merge/deployment/publication/new budget.
+
+EXTERNAL BLOCKERS: actual provider/GPU/OAuth/Docker/Owner UAT/browser acceptance remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: platform cost/ownership/storage/cache/recovery integration and remaining media/durable backend/profile/variants/distribution/analytics/learning/Trend/Hub/hardening work.

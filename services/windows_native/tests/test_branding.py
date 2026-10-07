@@ -25,8 +25,9 @@ class BrandingTests(unittest.TestCase):
 
     def tearDown(self): self.temp.cleanup()
 
-    def test_two_seed_profiles_twelve_templates_reference_assets_and_locked_voice(self):
-        values=branding.catalog(); self.assertEqual(len(values["templates"]),12)
+    def test_preserved_seed_profiles_and_added_ai_templates_reference_assets_and_locked_voice(self):
+        values=branding.catalog(); self.assertEqual(len(values["templates"]),15)
+        self.assertTrue({f'{family}-{seconds}' for family in ('property','news','personal','event') for seconds in (30,45,60)} <= {v['id'] for v in values['templates']})
         self.assertEqual({v["purpose"] for v in values["templates"]},{"property_presentation","news_update","personal_brand","event_promo"})
         self.assertEqual({v["duration_seconds"] for v in values["templates"]},{30,45,60})
         for profile in values["brands"]:
@@ -78,4 +79,3 @@ class BrandingTests(unittest.TestCase):
     def test_legacy_document_projection_does_not_rewrite_or_add_brand(self):
         doc=self.p["document"]; before=digest(doc); _,template=branding.resolve(doc)
         self.assertIsNone(template); self.assertEqual(digest(doc),before); self.assertNotIn("brand_template",doc)
-

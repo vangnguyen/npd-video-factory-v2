@@ -38,6 +38,7 @@ The full Master Spec remains the objective. Existing certified Native components
 5. Do not reserve invented observed trend/analytics/cost values. Mock payloads are clearly labeled; unknown metrics and billed costs remain null.
    ComfyUI binary storage/HTTP/API delivery now fully decodes local synthetic PNG/JPEG/MP4, preserves scoped immutable bytes and validates job/workflow/input/seed hashes. The current bridge remains disabled/mock; its synthetic binary receipt is not GPU generation, rights clearance or full QC. Admitted durable transport/reference staging and real provider acceptance remain open.
 6. Each capability change is a separate reviewable commit. Do not merge protected main. Preserve milestone commits remotely and retain the recovery bundle.
+   Native configuration now includes a technology/AI education reference profile, brand and explanation template family. Prior profile/catalog objects are retained exactly and eleven production core modules compare unchanged after Git CRLF/LF normalization. The same research/idea/brief/project/editor functions complete a fixture-only non-property planning flow with canonical timeline/restart evidence. Full playable non-property render/browser acceptance, versioned profile-family integration and six cached platform variants remain; MULTI_NICHE_READY is still NO.
 
 ## Required external gates
 

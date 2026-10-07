@@ -1,0 +1,135 @@
+{
+  "schema": "north-star-multi-niche-evidence-v1",
+  "parent_head": "75d0391d364e84e3584f060aaf4c8a822578b67d",
+  "source_sha256": {
+    "services/windows_native/profiles/intelligence.json": "5ec17c4278491de83ffcfe2200af4e863ffe68c5f85d27f39489014d4f71658b",
+    "services/windows_native/profiles/production-intelligence.json": "3c94fa18cf40c0a1fc3a59ce650ee1a6a633a9f8c09812f8c080da2620ee92af",
+    "services/windows_native/profiles/catalog.json": "87d61ea86c8dec618ede60159260bbb3e58d264590ef7c309f9c4b38bda7fa8c",
+    "services/windows_native/tests/test_multi_niche.py": "e6ecafcd84297efdf349c67ce8b287b36819efa79ebcd1d5538463d082ec585f",
+    "services/windows_native/tests/test_branding.py": "5daef92dfa285adf230fc6bfefda2016e9cdeceed4c4f9582f7849211e14fced",
+    "services/windows_native/tests/test_production_intelligence.py": "3f1d1b244b9859eefdd648404ce0579cf8cbb9e8fe77e3a9c816944565877e1e",
+    "services/windows_native/tests/test_phase10_http.py": "e48aa69d78e30a7489775a999b1e8ac7b4bc7036677a5b82eb9907e56a2108a2",
+    "services/windows_native/tests/test_intelligence_http.py": "e5fa92502f97e5649bc86c5df28b29e69df183d8a27310692ae43e2b7caa29c8",
+    "services/windows_native/tests/test_shot_production.py": "4fd120cbb29b506c40641c6c2daabc8ed4908fea2e9fb71faff7532deb77cd6e",
+    "scripts/north_star_multi_niche_contract.py": "fdfa8ad5d6d4fe52fa43743ffd809ccdb26f19e48732734d79e9895781edf48d"
+  },
+  "logs": {
+    "multi-niche-native-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-native-r1.log",
+      "sha256": "d09339d482aa39dc12a18a1613e4e67947a2305f8606f1313898be9378592865"
+    },
+    "multi-niche-native-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-native-r2.log",
+      "sha256": "aed0fae1bc060af3636b0768250466f87d22e963bc37ed46e84a240eb62fee4a"
+    },
+    "multi-niche-native-full-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-native-full-r1.log",
+      "sha256": "a6f77e7de8b781cb014e4812dfd3c1ca5c3758b505ba65000daea3ce8734bf9a"
+    },
+    "multi-niche-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n1.log",
+      "sha256": "455aaf3c2142a168ca579f74f0ea5ece5973fa4564d5e02036ddc178b6e75961"
+    },
+    "multi-niche-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n2.log",
+      "sha256": "35208b0fcf4d6346e3b4ae48b6aaae35a84d9d84ce843a23bacb06c71545d397"
+    },
+    "multi-niche-contract-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n3.log",
+      "sha256": "51aa3a3fb6cb845cf7b1bfea21430bfba1fa2e8d46743ec4b24bd11ab484177c"
+    },
+    "multi-niche-contract-n4.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4.log",
+      "sha256": "8931dbc46dafaf377f0d747a2e7ebb48645d342aeeb368529cae43bed83fe530"
+    },
+    "api-linux-75d0391.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-75d0391.log",
+      "sha256": "6cb723e28a64272ff55e9f228b5323a20e0a214cf587e2e4189f50c0f972b8dc"
+    }
+  },
+  "exports": {
+    "asset-provenance.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\asset-provenance.json",
+      "sha256": "b504e3bed37a7e0e582b5ad17d30a9815933f657e74b1f91998d0bb2d7e1de5b",
+      "size_bytes": 665
+    },
+    "brand-template.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\brand-template.json",
+      "sha256": "56189c94b56b1860372844398ca37cb55e797a3df32e053051c0f8f20757e0cb",
+      "size_bytes": 1971
+    },
+    "brief.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\brief.json",
+      "sha256": "f4070fdc8487ed20ed96e86c5a35c406e61172e3e02d152b34addc91a873a351",
+      "size_bytes": 2332
+    },
+    "canonical-timeline.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\canonical-timeline.json",
+      "sha256": "09c70e7a232edeb12b2e6c7a5d0ec681e3adc13a10b65a38abf1e061f14131b6",
+      "size_bytes": 4429
+    },
+    "contract-receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\contract-receipt.json",
+      "sha256": "c084d5fc24ae5954b3afbe9e355f3345d92212f15f8da1cf41f42fbf8959f7da",
+      "size_bytes": 7709
+    },
+    "idea-shortlist.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\idea-shortlist.json",
+      "sha256": "443c3ade9f29463c85e8db3adf37ec9be83febe0f85d38e637b67159702b93fc",
+      "size_bytes": 19152
+    },
+    "preservation.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\preservation.json",
+      "sha256": "6271d1d5c06eefe0cfedeaa3defe068eeb22ce4f4bea6ebe1b6153b8f5c9ec28",
+      "size_bytes": 812
+    },
+    "profiles.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\profiles.json",
+      "sha256": "e74dc3fb92f0741312214047e22a09fdb81e3444b0a235e436fd3f6d2e9d0d2d",
+      "size_bytes": 30283
+    },
+    "project.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\project.json",
+      "sha256": "4c5013b6943ea267dc0ab107c58171bc5c655d0719c2b75b485f6a6e9bae03b2",
+      "size_bytes": 34814
+    },
+    "research-evidence.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\research-evidence.json",
+      "sha256": "74995f2de21283f03ba662fc2aa34fa15f482ac447a87c4a97d588b819507c42",
+      "size_bytes": 7274
+    },
+    "selected-idea.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\selected-idea.json",
+      "sha256": "c2b9ef60077ab6845b2a1400f54a9a8df42db82fbad89410baf7adc0a185725b",
+      "size_bytes": 3656
+    },
+    "storyboard-plan.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multi-niche-contract-n4\\storyboard-plan.json",
+      "sha256": "fb84bc0aafd157cff2b35a1533aeb2104fd10aef60bc1b9fb28253e8e868c7d8",
+      "size_bytes": 1782
+    }
+  },
+  "native_full_tests_passed": 338,
+  "native_full_tests_seconds": 253.252,
+  "new_contract_tests_passed": 2,
+  "full_parent_75d0391_api_passed": 2057,
+  "full_parent_75d0391_api_skipped": 11,
+  "core_logic_unchanged": true,
+  "core_comparison_basis": "exact bytes after CRLF-to-LF normalization; raw runtime/blob hashes retained separately",
+  "raw_source_lineending_difference_paths": [
+    "services/windows_native/store.py"
+  ],
+  "original_catalog_objects_preserved_exactly": true,
+  "configured_profiles": 6,
+  "portrait_templates": 15,
+  "portrait_and_landscape_templates": 30,
+  "provider_inputs_and_outputs": "explicit fixtures; no live research or AI results",
+  "external_provider_calls": 0,
+  "new_tts_inference_calls": 0,
+  "full_render_executed": false,
+  "non_property_browser_flow_verified": false,
+  "owner_uat_accepted": false,
+  "multi_niche_ready": false,
+  "production_deployed": false,
+  "remaining": "Non-property real playable generation/production/UI acceptance, full versioned channel/niche/brand/content/video/publishing/analytics profile integration, six cached platform variants and real-provider acceptance."
+}

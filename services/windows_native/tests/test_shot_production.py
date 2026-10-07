@@ -97,7 +97,7 @@ class ShotProductionTests(unittest.TestCase):
         self.assertEqual(file_sha(out/'voice.wav'),meta['audio_sha256'])
 
     def test_actual_landscape_template_render_and_canvas_validation(self):
-        self.assertEqual(len(catalog()['templates']),12); self.assertEqual(len(catalog(True)['templates']),24)
+        self.assertEqual(len(catalog()['templates']),15); self.assertEqual(len(catalog(True)['templates']),30)
         project=self.store.set_brand(self.project['id'],self.project['revision'],'vang-nguyen','personal-30-landscape')
         project=self.store.mutate_shots(project['id'],project['revision'],{'type':'update','shot_id':self.project['shot_timeline']['shots'][1]['shot_id'],'values':{'duration':26}})
         self.assertEqual(project['shot_timeline']['snapshot']['width'],1920)

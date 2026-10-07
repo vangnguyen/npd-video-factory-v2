@@ -2,20 +2,91 @@
   "schema_version": "production-intelligence-config-v1",
   "priority": {
     "scoring_type": "HEURISTIC_SCORING",
-    "weights": {"relevance": 0.3, "freshness": 0.2, "campaign_priority": 0.15, "project_priority": 0.15, "readiness": 0.2},
+    "weights": {
+      "relevance": 0.3,
+      "freshness": 0.2,
+      "campaign_priority": 0.15,
+      "project_priority": 0.15,
+      "readiness": 0.2
+    },
     "duplicate_penalty": 20,
-    "readiness": {"IDEA": 10, "BRIEF_READY": 35, "SCRIPT_DRAFT": 45, "SCRIPT_REVIEW": 55, "STORYBOARD": 65, "READY_TO_PRODUCE": 90, "PRODUCING": 80, "VIDEO_REVIEW": 95, "PRODUCED": 100, "REJECTED": 0, "FAILED": 0}
+    "readiness": {
+      "IDEA": 10,
+      "BRIEF_READY": 35,
+      "SCRIPT_DRAFT": 45,
+      "SCRIPT_REVIEW": 55,
+      "STORYBOARD": 65,
+      "READY_TO_PRODUCE": 90,
+      "PRODUCING": 80,
+      "VIDEO_REVIEW": 95,
+      "PRODUCED": 100,
+      "REJECTED": 0,
+      "FAILED": 0
+    }
   },
-  "freshness": {"window_days": 180, "revalidate_after_days": 30, "unknown_score": 0},
-  "similarity": {"threshold": 0.65, "minimum_tokens": 3, "recent_video_limit": 50, "maximum_warnings": 10},
-  "planning": {"default_format": "9:16", "default_duration_seconds": 45, "timezone": "Asia/Saigon", "default_priority": 50},
+  "freshness": {
+    "window_days": 180,
+    "revalidate_after_days": 30,
+    "unknown_score": 0
+  },
+  "similarity": {
+    "threshold": 0.65,
+    "minimum_tokens": 3,
+    "recent_video_limit": 50,
+    "maximum_warnings": 10
+  },
+  "planning": {
+    "default_format": "9:16",
+    "default_duration_seconds": 45,
+    "timezone": "Asia/Saigon",
+    "default_priority": 50
+  },
   "profiles": [
-    {"profile_id": "green-paradise", "brand_id": "ngoc-phuong-dong", "template_family": "property", "content_style": "Giải thích và checklist có nguồn"},
-    {"profile_id": "saigon-park", "brand_id": "ngoc-phuong-dong", "template_family": "property", "content_style": "Phân biệt công bố và thông tin chưa xác nhận"},
-    {"profile_id": "vang-nguyen", "brand_id": "vang-nguyen", "template_family": "personal", "content_style": "Hỏi đáp và hướng dẫn kiểm tra thông tin"},
-    {"profile_id": "vietnam-property", "brand_id": "ngoc-phuong-dong", "template_family": "news", "content_style": "Tin thị trường kèm thời điểm và nguồn"},
-    {"profile_id": "infrastructure-news", "brand_id": "ngoc-phuong-dong", "template_family": "news", "content_style": "Tin hạ tầng phân biệt kế hoạch, thi công và vận hành"}
+    {
+      "profile_id": "green-paradise",
+      "brand_id": "ngoc-phuong-dong",
+      "template_family": "property",
+      "content_style": "Giải thích và checklist có nguồn"
+    },
+    {
+      "profile_id": "saigon-park",
+      "brand_id": "ngoc-phuong-dong",
+      "template_family": "property",
+      "content_style": "Phân biệt công bố và thông tin chưa xác nhận"
+    },
+    {
+      "profile_id": "vang-nguyen",
+      "brand_id": "vang-nguyen",
+      "template_family": "personal",
+      "content_style": "Hỏi đáp và hướng dẫn kiểm tra thông tin"
+    },
+    {
+      "profile_id": "vietnam-property",
+      "brand_id": "ngoc-phuong-dong",
+      "template_family": "news",
+      "content_style": "Tin thị trường kèm thời điểm và nguồn"
+    },
+    {
+      "profile_id": "infrastructure-news",
+      "brand_id": "ngoc-phuong-dong",
+      "template_family": "news",
+      "content_style": "Tin hạ tầng phân biệt kế hoạch, thi công và vận hành"
+    },
+    {
+      "profile_id": "ai-education",
+      "brand_id": "vf-ai-education",
+      "template_family": "ai-education",
+      "content_style": "Giải thích AI bằng ví dụ có nguồn; nêu rõ giới hạn và điều cần kiểm chứng"
+    }
   ],
-  "source_policy": {"require_source_references": true, "unknown_publication_date": "NEEDS_REVALIDATION", "inference_label_required": true},
-  "voice": {"name": "Thùy Dung", "runtime": "existing_locked_windows_native", "new_credentials_required": false}
+  "source_policy": {
+    "require_source_references": true,
+    "unknown_publication_date": "NEEDS_REVALIDATION",
+    "inference_label_required": true
+  },
+  "voice": {
+    "name": "Thùy Dung",
+    "runtime": "existing_locked_windows_native",
+    "new_credentials_required": false
+  }
 }
