@@ -16,6 +16,7 @@ from .production_features import read as read_features
 from .publishing_credentials import target_digest
 from .publishing_db import PublicationORM
 from .publishing_models import PublishingTargetBinding
+from .analytics_publication_time import posting_window
 
 
 class LearningError(ValueError):
@@ -73,8 +74,10 @@ def frozen_observation(row, publication, feature, assessment, render):
                 'duration': bucket(float(feature.duration_seconds)) if feature.duration_seconds is not None else None,
                 'visual_strategy': context.visual_strategy or feature.visual_strategy,
                 'subtitle_style': feature.subtitle_template, 'voice_profile': feature.voice_profile,
-                # Queue/receipt/collection time is not the actual publishing time.
-                'publishing_window': None}, assessment_basis_sha256=digest(assessment_basis(assessment)))
+                'publishing_window': posting_window(row.evidence_json, feature, platform=row.platform,
+                    provider_key=row.provider_key, publication_id=row.publication_id, remote_id=remote,
+                    target_sha256=target_of(publication), collected_at=_aware(row.collected_at), mock=row.mock,
+                    external_call=row.external_call, source_kind=row.source_kind)}, assessment_basis_sha256=digest(assessment_basis(assessment)))
     except (ValueError, TypeError): return None
 
 
@@ -183,6 +186,11 @@ class ChannelLearningService:
                 winner_policy = item.winner_policy_sha256
                 selected.add(item.remote_post_sha256); observations.append(item)
             scope['winner_policy_sha256'] = winner_policy
+            scope['actual_publishing_time_available'] = any(item.features['publishing_window'] for item in observations)
+            scope['publishing_window_basis'] = 'provider_posted_time'
+            scope['publishing_window_timezone'] = 'UTC'
+            scope['publishing_window_bucket_hours'] = 4
+            scope['verified_posted_time_posts'] = sum(item.features['publishing_window'] is not None for item in observations)
             value = LearningSnapshot(learning_snapshot_id='lsn_' + uuid.uuid4().hex[:24], workspace_id=publication.workspace_id,
                 project_id=project, publication_id=publication.publication_id, anchor_snapshot_id=anchor.snapshot_id,
                 scope=scope, policy=payload.policy, observations=observations, dimensions=aggregate(observations, payload.policy),
@@ -191,7 +199,8 @@ class ChannelLearningService:
                     'Descriptive association of relative winner assessment scores; no causal effect or future performance guarantee.',
                     'Latest compatible observations from a bounded scan are not an exhaustive channel history or account totals.',
                     'Requested report intervals do not certify complete provider coverage or equal publication age.',
-                    'Publishing windows stay unavailable until authoritative actual publication timestamps are supported.',
+                    'Publishing windows require response-bound provider posted timestamps. Missing, invalid or ambiguous times stay unavailable.',
+                    'UTC four-hour posting windows describe recorded history; posted time is not verified first public exposure or an optimal audience time.',
                     'Mock transport observations are synthetic evidence and are never combined with real provider observations.',
                     'Feature labels are frozen project annotations or edit facts, not independently verified semantic classifications.'])
             value.content_sha256 = digest(snapshot_content(value.model_dump(mode='json')))

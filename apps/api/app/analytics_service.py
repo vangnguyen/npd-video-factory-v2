@@ -284,7 +284,7 @@ class AnalyticsSyncProcessor:
                     query=sync.query,
                 )
             )
-            features = await self._capture_features(sync, publication)
+            features = await self._capture_features(sync, publication, collection)
             cost = await self.platform_repository.project_cost_summary(sync.project_id)
             assessment = assess_winner(
                 collection.metrics,
@@ -361,7 +361,7 @@ class AnalyticsSyncProcessor:
                 expected_attempt=sync.attempt_count,
             )
 
-    async def _capture_features(self, sync: AnalyticsSyncRead, publication) -> VideoFeatureMetadata:
+    async def _capture_features(self, sync: AnalyticsSyncRead, publication, collection=None) -> VideoFeatureMetadata:
         project = await self.platform_repository.get_project(sync.project_id)
         if project is None:
             raise KeyError(sync.project_id)
@@ -396,6 +396,18 @@ class AnalyticsSyncProcessor:
             subtitle_template = f"{style.position}:{style.animation}:{style.font_family}:{style.font_weight}"
             voice_profile = frozen[2].config.voice.voice if frozen[2].config.voice.enabled else "disabled"
             music_profile = frozen[2].config.music.asset_id or "none"
+        timestamp = None
+        if sync.provider_mode == 'official' and collection is not None and publication.receipt:
+            from .analytics_publication_time import bound_time
+            from .publishing_credentials import target_digest
+            from .publishing_models import PublishingTargetBinding
+            try:
+                target = PublishingTargetBinding.model_validate(publication.provider_validation.target_binding)
+                timestamp = bound_time(collection.evidence, platform=sync.platform, provider_key=collection.provider_key,
+                    publication_id=publication.publication_id, remote_id=publication.receipt.remote_post_id,
+                    target_sha256=target_digest(target), collected_at=collection.collected_at,
+                    mock=collection.mock, external_call=collection.external_call, source_kind=collection.source_kind)
+            except (ValueError, TypeError, AttributeError): pass
         return VideoFeatureMetadata(
             project_id=sync.project_id,
             publication_id=sync.publication_id,
@@ -417,7 +429,8 @@ class AnalyticsSyncProcessor:
             niche=context.niche if context else None,
             topic=context.topic if context else None,
             cta=context.cta if context else None,
-            publishing_time=(publication.receipt.created_at if publication.receipt else publication.created_at) if sync.provider_mode == 'fixture' else None,
+            publishing_time=(publication.receipt.created_at if publication.receipt else publication.created_at)
+                if sync.provider_mode == 'fixture' else timestamp.verified_posted_at if timestamp else None,
             evidence={
                 "project_version_id": context.project_version_id if context else None,
                 "timeline_version_id": frozen_render.timeline_version_id if frozen_render else None,
@@ -435,9 +448,11 @@ class AnalyticsSyncProcessor:
                 'original_context_preserved_without_truncation': bool(context),
                 "publication_receipt_id": publication.receipt.receipt_id if publication.receipt else None,
                 "publication_mock": publication.mock,
-                "publishing_time_source": 'mock_receipt' if sync.provider_mode == 'fixture' else None,
+                "publishing_time_source": 'mock_receipt' if sync.provider_mode == 'fixture'
+                    else timestamp.provider_field if timestamp and timestamp.verified_posted_at else None,
+                **({'publication_time': timestamp.model_dump(mode='json')} if timestamp else {}),
                 'local_receipt_confirmation_time': publication.receipt.created_at.isoformat() if publication.receipt else None,
-                'exact_publishing_time_available': False,
+                'exact_publishing_time_available': bool(timestamp and timestamp.verified_posted_at),
                 "trend_rank_mutated": False,
                 "idea_rank_mutated": False,
                 "automatic_action": False,

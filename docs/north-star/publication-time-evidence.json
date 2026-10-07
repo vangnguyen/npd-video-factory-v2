@@ -1,0 +1,129 @@
+{
+  "schema": "publication-time-evidence-index-v1",
+  "parent_head": "8c585a4ed29b7387d0e49b95f2180a38d751a24b",
+  "source_sha256": {
+    "apps/api/app/analytics_publication_time.py": "e3797365a88db3c282d54182f73687eccc96513a2c09bdf33aa6f66081c55774",
+    "apps/api/app/analytics_official.py": "12dd7dba3cdc00ac9c30123c8b9f603a67da9ace4d753833fb52145633e3b5c4",
+    "apps/api/app/analytics_runtime.py": "e6c8b57f7f262b481b57e605aa924fc29cc13b8a515257eba9d751160085ad67",
+    "apps/api/app/analytics_service.py": "db56fd9448a0e0308b9c177a321fcc6b7f85d23ae2ed314a5336f24b4677abee",
+    "apps/api/app/analytics_repository.py": "76d202504389d6e1355a35ca0968dc0047693e533ce4016445fc0390957d48f7",
+    "apps/api/app/analytics_logic.py": "d076f65a83970b1f538ac905f05f59d92704b9cfaa5bb258f8db6265ad622231",
+    "apps/api/app/learning_service.py": "3ef9a77300835375d0c640d79b7f1287b55e22b3b8dfdec0ae4c2ccb0424da58",
+    "apps/api/tests/test_analytics_publication_time.py": "121aa9f4b3a50bb895d301011f853b6598b7f5107356c7e9ac6dbea36e496df7",
+    "apps/studio-web/channel-learning.mjs": "fd7e7b6beb9b34d7b980875e6ac7ee40890a7337d63fef3d7d2477f6930a55c7",
+    "apps/studio-web/tests/channel-learning.test.mjs": "f31c4025ff7817ca6e00f4f067f279632356b35ff94ad75355ad1e9c2913aa95",
+    "scripts/north_star_publication_time_contract.py": "6b40b30b0465c6184e8e761e529046980e57a10348454c01e4a94a76fdaa23cb",
+    "docs/ANALYTICS_PUBLICATION_TIME.md": "29a308d19b95820f6b8a6ad12bb5d87f3156d686c4eef4915f6cc1cf422692b3"
+  },
+  "logs": {
+    "publication-time-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-r1.log",
+      "sha256": "e0ea97bba2ace9ce268cbcbcf639649b6e677ec20c7fea85647e9f69826d5c63"
+    },
+    "publication-time-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-r2.log",
+      "sha256": "80b4affcf0eddad537e858c2e25055b4f1303eaab3494c709538732bb89d3bca"
+    },
+    "publication-time-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-r3.log",
+      "sha256": "955df90c06ff99949ea456b259e447007bd5d0bb6cc38dba954168b0a76e9e86"
+    },
+    "studio-publication-time-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-publication-time-r1.log",
+      "sha256": "6f7737a4d3629b0b110a42566e17122b6bb0ec44452d17b747324b4e080885e9"
+    },
+    "publication-time-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n1.log",
+      "sha256": "b9b5f1c5553c04913a90afd69d9ad99d2c22eb26ba12b317022be72014fe13fa"
+    },
+    "publication-time-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n2.log",
+      "sha256": "16f5c935f50c54dbbca0ec26959ec318998f9caeff8a4d7630a5eaba50ebfe72"
+    }
+  },
+  "contract": {
+    "directory": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n2",
+    "files": {
+      "contract.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n2\\contract.json",
+        "sha256": "7aa4e7544ba63f980281477d88a262b56b3b72e9af7f8ee671591f3c7374f487"
+      },
+      "first-provider-review.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n2\\first-provider-review.json",
+        "sha256": "a32b316da33b0234df2080e8d2e4b350dad8081df92e60b0fd35611d64764cbd"
+      },
+      "learning-snapshot.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n2\\learning-snapshot.json",
+        "sha256": "fc775398e49012812db4acf2f35add0140732084cf8ac004fcedce3a39bd4649"
+      },
+      "missing-refresh-review.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n2\\missing-refresh-review.json",
+        "sha256": "4350f8258fd2f5b3deab9e119f859b3e525c9506a63f76029686db9ded335033"
+      },
+      "requests.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n2\\requests.json",
+        "sha256": "b781d14f2af4d5092c999c1afdf6e611285779009e731c6538693b7be2c2472e"
+      },
+      "restored-state.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n2\\restored-state.json",
+        "sha256": "6b0a091bc8890cfe359ce208cd3c9e38fed1ec52dcdf5bef00c2a1886ef5384d"
+      }
+    },
+    "database": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-time-contract-n2\\owned-fixture\\production.db",
+      "sha256": "e098f6db3cd4f7e5f5fe19f32671efdb83cdb89ce9662e156603db907f46ff7a"
+    },
+    "summary": {
+      "status": "PASS",
+      "official_mock_reads": 4,
+      "authenticated_requests": 2,
+      "snapshots": 2,
+      "utc_provider_posted_time_bound_to_response": true,
+      "first_public_exposure_verified": false,
+      "missing_refresh_stays_null": true,
+      "insufficient_retention_prevents_winner_or_learning_claim": true,
+      "historical_metrics_unchanged": true,
+      "fresh_process_exact_restore": true,
+      "actual_cost": null,
+      "media_is_nonplayable_fixture_bytes": true,
+      "full_media_qc": false,
+      "owner_uat_accepted": false,
+      "accepted_media_replaced": false,
+      "actual_external_calls": 0,
+      "paid_calls": 0,
+      "real_credentials_read": 0,
+      "real_provider_tested": false,
+      "production_deployed": false,
+      "learning_loop_ready": false,
+      "video_factory_north_star_ready": false
+    }
+  },
+  "api_affected_passed": 135,
+  "api_affected_seconds": 181.05,
+  "later_null_evidence_guard_passed": 1,
+  "new_api_cases": 39,
+  "studio_passed": 165,
+  "studio_duration_ms": 779.88,
+  "new_studio_cases": 1,
+  "counts_overlap": true,
+  "failed_logs_and_fixture_directories_retained": true,
+  "full_parent_api_status": "PINNED_8C585A4_RUNNING",
+  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "tiktok_provider_posted_time_implemented": true,
+  "youtube_reported_time_retained": true,
+  "youtube_exact_publication_time_available": false,
+  "first_public_exposure_verified": false,
+  "utc_posting_window_grouping_implemented": true,
+  "native_personalization_integrated": false,
+  "actual_provider_calls": 0,
+  "real_credentials_read": 0,
+  "paid_operations": 0,
+  "accepted_media_replaced": false,
+  "browser_real_tested": false,
+  "owner_uat_accepted": false,
+  "learning_loop_ready": false,
+  "analytics_ready": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false
+}

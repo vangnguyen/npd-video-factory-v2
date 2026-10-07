@@ -75,6 +75,16 @@ test('changing mode prevents fixture history from being attached as channel advi
   assert.equal(h.get('learning-create').disabled, true);
 });
 
+test('posting-window history labels UTC provider times without implying optimal or first-public times', async () => {
+  const h = harness(), value = snapshot();
+  value.scope = {...value.scope, publishing_window_basis: 'provider_posted_time', publishing_window_timezone: 'UTC', verified_posted_time_posts: 6};
+  h.handler(async () => [value]); await h.controller.read();
+  assert.match(h.get('learning-note').textContent, /6 video có giờ đăng provider, nhóm 4 giờ UTC/);
+  assert.match(h.get('learning-note').textContent, /Chưa xác minh thời điểm công khai đầu tiên hoặc giờ tối ưu/);
+  assert.match(h.get('learning-note').textContent, /Dữ liệu mô phỏng/);
+  assert.deepEqual(h.controller.advice(), {});
+});
+
 const templateResult = (selectable = true) => ({schema_version: 'learning-subtitle-suggestions-v1', project_id: 'prj_fixture',
   workspace_id: 'wsp_fixture', learning_snapshot_id: 'lsn_fixture', learning_content_sha256: 'a'.repeat(64),
   automatic_application: false, human_selection_required: true, subtitle_version: 1,

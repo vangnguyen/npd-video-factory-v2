@@ -1413,3 +1413,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: six explicit synthetic metric seeds tied to 
 EVIDENCE: `docs/PERSONALIZED_OPPORTUNITY_REVIEW.md`, `docs/north-star/personalized-review-evidence.json`; fresh `personalized-contract-n3` eight JSON exports plus owned database/objects. Fixture media is nonplayable; no full media QC or Owner acceptance implied.
 
 REGRESSIONS: base scores/unrequested cache serialization/historical metrics/accepted media/live source and timeline/approval/provider/publishing defaults preserved. No live migration, paid/external operation, deployment or main merge. EXTERNAL BLOCKERS: real accounts/provider/Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for continuing safe work. NEXT WAVE: Native/channel integration, authoritative publication-time evidence, remaining media/full Trend/Hub/production and final A/B/C. Continue original Waves 0–16.
+
+### Wave 10/12 — Response-bound provider posting times
+
+WAVE: 10/12. STATUS: IN PROGRESS. ANALYTICS_READY = NO; LEARNING_LOOP_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `8c585a4ed29b7387d0e49b95f2180a38d751a24b`, pushed/preserved in `north-star-personalized-review.bundle`, SHA256 `de5a041089ab105e9ae699b49d9ab7bb8f50829af06087aee6f2c2af08546ce2`; 167 ahead/0 behind, fresh 15 accepted hashes and clean live source. Timestamp increment will be separately committed/preserved.
+
+CAPABILITIES COMPLETED: typed exact account/video/response/clock/transport evidence; TikTok create_time request and UTC provider-posted normalization; YouTube valid reported timestamp retention with explicit ambiguity and verified time null. Frozen features bind the same evidence and retain verified UTC offsets on SQLite reads. Learning checks identical feature/metric evidence and groups compatible UTC weekday/four-hour provider-posted history. Missing/invalid/future/rebound values stay null. Studio labels provider-posted/missing/mock evidence without optimal-window or first-public-exposure claims.
+
+CAPABILITIES PARTIAL: Native/channel/operator/AnalyticsProfile integration, Meta, semantic features, unambiguous YouTube/public-exposure semantics, full original Trend/Hub/production and playable A/B/C. TikTok supported counters do not provide sufficient retention/completion for a winner or learning recommendation by themselves.
+
+TESTS: **135 PASS**, 181.05s affected analytics/cohort/learning/API suites; later null-evidence guard **1 PASS**. **165 PASS** Studio, 779.88ms. Thirty-nine new API cases and one new Studio case; counts overlap prior increments. Pinned full parent Linux 8c585a4 is running; current timestamp pinned full suite pending.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: four actual read-adapter MockTransport requests across two snapshots, two authenticated review/learning calls, exact fresh-process restore of snapshots/assessments/features/learning/costs. Missing refresh stays null, earlier history remains unchanged and insufficient retention prevents winner/learning claims. Initial rehearsal/tests exposed SQLite UTC-offset loss in the feature read projection; fixed only for new verified times. A test also assumed +00:00 rather than equivalent JSON Z serialization; corrected to compare typed timestamps. Failed evidence retained.
+
+EVIDENCE: `docs/ANALYTICS_PUBLICATION_TIME.md`, `docs/north-star/publication-time-evidence.json`; `publication-time-contract-n2` six JSON exports plus owned database/objects. Official semantics sources are linked in the document. Fixture bytes/approvals/receipts do not certify real rights, playable media QC or Owner UAT.
+
+REGRESSIONS: older analytics and learning snapshots, fixture serialization, canonical timeline/approval/provider/publishing defaults and accepted/live source preserved. No live migration, paid/external call, deployment or main merge. EXTERNAL BLOCKERS: actual accounts/provider/Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for safe work. NEXT WAVE: Native distribution/channel integration and remaining original Waves 0–16.

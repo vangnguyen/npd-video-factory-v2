@@ -10,6 +10,7 @@ from .publishing_credentials import target_digest
 from .publishing_models import PublishingTargetBinding
 from .publishing_profiles import PROVIDER_KEYS
 from .db import utc_now
+from .analytics_publication_time import provider_time
 
 
 class ScopedOfficialAnalyticsProvider:
@@ -74,14 +75,24 @@ class ScopedOfficialAnalyticsProvider:
         async with asyncio.timeout(120):
             account = confirm_account(await send('account_lookup', account_request), target)
             if self.platform == 'youtube':
-                confirm_youtube_video(await send('video_ownership', lambda credential: youtube_video_request(credential, remote_id)), target, remote_id)
+                video_response = await send('video_ownership', lambda credential: youtube_video_request(credential, remote_id))
+                video = confirm_youtube_video(video_response, target, remote_id)
                 metrics, evidence = youtube_metrics(await send('metrics', lambda credential: youtube_report_request(credential, remote_id, query)), query)
             else:
-                metrics, evidence = tiktok_metrics(await send('metrics', lambda credential: tiktok_video_request(credential, remote_id)), remote_id)
+                video_response = await send('metrics', lambda credential: tiktok_video_request(credential, remote_id))
+                metrics, evidence = tiktok_metrics(video_response, remote_id)
+                from .analytics_official import response_object
+                videos = response_object(video_response)['data']['videos']
+                video = videos[0] if videos else {}
             await runtime.binding(context, client, expected_target=target)
+        collected_at = runtime.clock()
+        timestamp = provider_time(platform=self.platform, video=video, observed_at=collected_at,
+            publication_id=context.publication_id, remote_id=remote_id, target_sha256=target_digest(target),
+            response_sha256=response_digest(video_response), mock=client.mock, external_call=not client.mock)
         return AnalyticsCollection(provider_key=self.provider_key, source='official-api://' + self.platform + '/' + remote_id,
-            source_kind='official_api', collected_at=runtime.clock(), metrics=metrics, mock=client.mock, external_call=not client.mock,
+            source_kind='official_api', collected_at=collected_at, metrics=metrics, mock=client.mock, external_call=not client.mock,
             evidence={**evidence, **account, 'publication_receipt_id': parent.receipt.receipt_id,
+                'publication_time': timestamp.model_dump(mode='json'),
                 'publication_id': context.publication_id, 'request_observations': observations,
                 'read_only': True, 'real_provider_tested': False})
 

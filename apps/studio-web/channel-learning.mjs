@@ -41,7 +41,11 @@ export function initializeChannelLearning({api, getState, root = document, toast
     $('learning-use-advice').disabled = !selected;
     $('learning-template-read').disabled = busy || !selected;
     $('learning-snapshot-reference').textContent = selected ? `${selected.learning_snapshot_id} · ${selected.content_sha256}` : 'Chưa chọn snapshot.';
-    $('learning-note').textContent = selected ? `${selected.observations.length} video khác nhau · ${selected.scope.mock ? 'Dữ liệu mô phỏng' : 'Dữ liệu provider'} · Ngách ${selected.scope.niche}. Chỉ đề xuất thử nghiệm sau review. Không có dữ liệu giờ đăng thật.`
+    const posted = selected?.scope?.publishing_window_basis === 'provider_posted_time' && selected.scope.publishing_window_timezone === 'UTC'
+      && Number.isInteger(selected.scope.verified_posted_time_posts) && selected.scope.verified_posted_time_posts > 0;
+    $('learning-note').textContent = selected ? `${selected.observations.length} video khác nhau · ${selected.scope.mock ? 'Dữ liệu mô phỏng' : 'Dữ liệu provider'} · Ngách ${selected.scope.niche}. Chỉ đề xuất thử nghiệm sau review. ${posted
+      ? `${selected.scope.verified_posted_time_posts} video có giờ đăng provider, nhóm 4 giờ UTC. Chưa xác minh thời điểm công khai đầu tiên hoặc giờ tối ưu cho khán giả.`
+      : 'Không có dữ liệu giờ đăng thật đã xác minh.'}`
       : 'Tổng hợp từ analytics đã lưu. Không gọi provider hoặc đổi ngân sách. Lịch sử đọc tối đa 100 snapshot.';
     const rows = $('learning-rows'); rows.replaceChildren();
     for (const dimension of selected?.dimensions ?? []) {

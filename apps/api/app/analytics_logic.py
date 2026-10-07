@@ -335,8 +335,10 @@ def learning_insights(
         drafts.append(
             InsightDraft(
                 insight_type="publishing_window",
-                statement=f"Publishing hour {features.publishing_time.hour:02d}:00 is linked to this observation.",
-                recommendation="Compare at least three posts before recommending a channel publishing window.",
+                statement=(f"Provider posted hour {features.publishing_time.hour:02d}:00 UTC is linked to this observation; first public exposure is unverified."
+                    if features.evidence.get('exact_publishing_time_available') is True
+                    else f"Publishing hour {features.publishing_time.hour:02d}:00 is linked to this observation."),
+                recommendation="Use independent compatible posts and controls before suggesting an experiment with a posting window.",
                 confidence=min(base_confidence, 0.55),
                 evidence_refs=evidence,
             )

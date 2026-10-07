@@ -896,7 +896,8 @@ def _feature_read(row: AnalyticsFeatureSnapshotORM) -> VideoFeatureMetadata:
         niche=row.niche,
         topic=row.topic,
         cta=row.cta,
-        publishing_time=row.publishing_time,
+        publishing_time=_aware(row.publishing_time) if row.publishing_time is not None
+            and (row.evidence_json or {}).get('exact_publishing_time_available') is True else row.publishing_time,
         evidence=dict(row.evidence_json or {}),
         captured_at=row.captured_at,
     )

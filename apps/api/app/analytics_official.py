@@ -23,7 +23,7 @@ SCOPES = {'youtube': frozenset({YT_READ, YT_ANALYTICS, YT_MONEY}),
           'tiktok': frozenset({'user.info.basic', 'video.list'})}
 YT_METRICS = ('views', 'estimatedMinutesWatched', 'averageViewDuration', 'likes', 'comments', 'shares', 'subscribersGained')
 YT_MAPPING = dict(zip(YT_METRICS, ('views', 'watch_time', 'average_view_duration', 'likes', 'comments', 'shares', 'followers_gained')))
-TT_FIELDS = ('id', 'view_count', 'like_count', 'comment_count', 'share_count')
+TT_FIELDS = ('id', 'create_time', 'view_count', 'like_count', 'comment_count', 'share_count')
 TT_MAPPING = {'view_count': 'views', 'like_count': 'likes', 'comment_count': 'comments', 'share_count': 'shares'}
 
 
@@ -179,6 +179,7 @@ def confirm_youtube_video(response, target, remote_id):
         or items[0].get('id') != remote_id or not isinstance(items[0].get('snippet'), dict)
         or items[0]['snippet'].get('channelId') != target.target_account_id):
         fail('ANALYTICS_VIDEO_OWNERSHIP_NOT_CONFIRMED')
+    return items[0]
 
 
 def youtube_report_request(credential, remote_id, query):
