@@ -89,6 +89,10 @@ def validate_document(document):
         raise WorkflowError('AUTO_EDIT_TIMELINE_STATE_INVALID')
     if state['sha256'] != digest(state['snapshot']):
         raise WorkflowError('AUTO_EDIT_TIMELINE_CHANGED')
+    from .channel_profiles import resolve
+    selected_channel=resolve(document)
+    if selected_channel is not None and state['snapshot']['metadata'].get('channel_selection_sha256')!=selected_channel['selection_sha256']:
+        raise WorkflowError('CHANNEL_PROFILE_TIMELINE_BINDING_CHANGED')
     snapshot = TimelineSnapshot.model_validate(state['snapshot'])
     if snapshot.metadata.get('native_auto_edit_schema') != SCHEMA or document.get('proposal') is not None:
         raise WorkflowError('AUTO_EDIT_TIMELINE_SCHEMA_INVALID')
@@ -196,6 +200,8 @@ def create(store, project_id, revision, body):
             'word_safe_window':(start,end) if payload.source_window else None,
             'silence_decision_ids':payload.silence_decision_ids}, human_review_required=True,
             timing_source='measured_source_footage_and_saved_transcript', native_project_id=project_id)
+        from .channel_profiles import bind_source
+        snapshot=bind_source(snapshot,project['document'])
         _save(store, con, project, snapshot, 'auto_edit_canonical_timeline_created')
     return view(store, project_id)
 

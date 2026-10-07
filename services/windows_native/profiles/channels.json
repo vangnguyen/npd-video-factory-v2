@@ -1,0 +1,48 @@
+{
+  "schema_version": "native-channel-profile-catalog-v1",
+  "catalog_ref": "native-reference-channels@1",
+  "profiles": [
+    {
+      "profile_ref": "ai-education-reference@1",
+      "name": "AI dễ hiểu · hồ sơ tham chiếu",
+      "content_profile_id": "ai-education",
+      "niche_profile": {
+        "profile_ref": "technology-education@1",
+        "niche": "technology",
+        "name": "Công nghệ / AI dễ hiểu",
+        "language": "vi",
+        "locale": "vi-VN",
+        "country": "VN",
+        "target_audience": "Người mới tìm hiểu công nghệ và cách kiểm chứng nội dung AI",
+        "tone": "Dễ hiểu, có nguồn, phân biệt ví dụ minh họa và dữ kiện",
+        "keywords": ["AI", "công nghệ", "kiểm chứng", "dữ liệu"]
+      },
+      "brand_id": "vf-ai-education",
+      "video_template_id": "ai-education-30",
+      "source_preferences": {"subtitle_template_ref": "sentence-clean@v1"},
+      "publishing_profile": {"profile_ref": "reviewed-reference-distribution@1", "platforms": ["youtube", "tiktok", "instagram", "facebook"]},
+      "analytics_profile": {"profile_ref": "official-reference-analytics@1"}
+    },
+    {
+      "profile_ref": "property-reference@1",
+      "name": "Nhà ở Việt Nam · hồ sơ tham chiếu",
+      "content_profile_id": "vietnam-property",
+      "niche_profile": {
+        "profile_ref": "property-news@1",
+        "niche": "real_estate",
+        "name": "Nhà ở Việt Nam",
+        "language": "vi",
+        "locale": "vi-VN",
+        "country": "VN",
+        "target_audience": "Người theo dõi thị trường nhà ở Việt Nam",
+        "tone": "Tin có thời điểm, phân biệt báo cáo, dự thảo và quy định có hiệu lực",
+        "keywords": ["nhà ở", "thị trường", "bất động sản"]
+      },
+      "brand_id": "vf-reference",
+      "video_template_id": "property-30",
+      "source_preferences": {"subtitle_template_ref": "sentence-clean@v1"},
+      "publishing_profile": {"profile_ref": "reviewed-reference-distribution@1", "platforms": ["youtube", "tiktok", "instagram", "facebook"]},
+      "analytics_profile": {"profile_ref": "official-reference-analytics@1"}
+    }
+  ]
+}

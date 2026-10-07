@@ -110,9 +110,15 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
     root_analysis=next(value['analysis'] for value in project['document']['auto_edit_analyses']
         if value['analysis']['analysis_id']==snapshot.metadata['source_analysis_id'])
     language=((root_analysis.get('transcript') or {}).get('language') or 'vi')
+    from .channel_profiles import resolve
+    selected_channel=resolve(project['document'])
+    if selected_channel is not None:
+        from .branding import resolve as resolve_brand
+        brand_name=resolve_brand(project['document'])[0].name
+    else:brand_name='Video Factory'
     manifest=build_timeline_render_manifest(snapshot=snapshot,subtitles=subtitles,mix_config=MixConfig(),
         mixed_audio_path=mixed,asset_paths=staged,profile=profile,project_name=project['document']['name'],
-        project_slug=project['id'],niche=project['document'].get('niche','custom'),brand_name='Video Factory',language=language)
+        project_slug=project['id'],niche=project['document'].get('niche','custom'),brand_name=brand_name,language=language)
     # Source workflows use the expanded, strict v2.3 contract even without captions.
     manifest['version']='2.3'
     durable_json(directory/'timeline-render.json',manifest)

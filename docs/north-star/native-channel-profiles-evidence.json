@@ -1,0 +1,258 @@
+{
+  "schema": "native-channel-profiles-evidence-v1",
+  "parent_head": "77c63255ad8a56ee479c1d9d01f395fe96757a65",
+  "source_sha256": {
+    "services/windows_native/channel_profiles.py": "68757672f253f02f00379879d6e5778cd0a24fc4e0019f7ba23139c37cd64b7a",
+    "services/windows_native/profiles/channels.json": "59f711c06aa91ec9f0d37115c168bb6f39cdab6daec95f69ce0d83361803912b",
+    "services/windows_native/store.py": "989a7910faecd6e7caf802fa1c945e2822699d104c946c78a954d05881822394",
+    "services/windows_native/auto_edit_timeline.py": "2c0fc86390625247c3bbf569a3c08a5782ce35f0f452edbfc5dfa7a67b78faec",
+    "services/windows_native/source_render.py": "e36038a2edf6207bdadb1fb546f3fd8b876786a576c9dddeeefdb8550afe2e8d",
+    "services/windows_native/server.py": "33ba015efa62087f5a9ded64528621e49c32641b9d1757f348b9deb5bcdcc3de",
+    "services/windows_native/tests/test_channel_profiles.py": "f6950bcef86c1941b61d9bc3f93dd88148556273876a061031fe237b5054a052",
+    "services/windows_native/tests/test_channel_profiles_http.py": "300ce254171df747226abd800e6d4a04db1ecc13161af464ef716de0a8e5cb1d",
+    "services/windows_native/tests/test_phase10_http.py": "91ec490d7ad60fd68ad9b86adcdb2d016e01127c2fad437d1f75ccad7b6d9668",
+    "apps/studio-web/native-channel-profiles.mjs": "1658a1664c3398129ea55cfa358a071cdbc6089d4da2c847948836977b5b5c32",
+    "apps/studio-web/tests/native-channel-profiles.test.mjs": "09f9297d79a181b89ba347740120f2d2068a8ac04175d08a5ab6852c71e74e23",
+    "apps/studio-web/native.mjs": "ce25bb8f3057399da2cde9df55d9ba4e4e5710ed56707c58446203b552a8e097",
+    "scripts/north_star_native_channel_profiles.py": "53bc281a15821b8793128dbd84ffb4828fe5594c018d39f7dde78f53bcc31027",
+    "docs/NATIVE_CHANNEL_PROFILES.md": "4fc1f0651cf2e428aba3f75dfb3e07a1ba64b509d051fc12b152279ec8001c9b"
+  },
+  "logs": {
+    "native-channel-profiles-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-r1.log",
+      "sha256": "a315fc8f4327fa4a66f9c78fdf084cbbf8a033ced271510d910d6328160e1fb4",
+      "bytes": 5196
+    },
+    "native-channel-profiles-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-r2.log",
+      "sha256": "256e5361daa9a0f2ca9184805258583dc6c175966ec0ece6135ee347b46bbe7a",
+      "bytes": 23048
+    },
+    "native-channel-profiles-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-r3.log",
+      "sha256": "7e9e280efc7ea9e011a64f3d058ad104543d98eaa7b85c4355b9c9acb9f14a9d",
+      "bytes": 3313
+    },
+    "native-channel-profiles-r4.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-r4.log",
+      "sha256": "1f151a024dd15141394d9170f4147660aa3c24649194fb8941e6d03e1bd529fc",
+      "bytes": 9026
+    },
+    "native-full-channel-profiles-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-full-channel-profiles-r1.log",
+      "sha256": "d01e765ff1322491ce1f7da6ae43c84dcd0c37f25158ad5544ef8b19f51b922b",
+      "bytes": 84561
+    },
+    "studio-native-channel-profiles-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-native-channel-profiles-r1.log",
+      "sha256": "31575364405f33175006bc3b03e2c9506b599785d431335e7ae071e79f0e1f37",
+      "bytes": 465
+    },
+    "studio-native-channel-profiles-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-native-channel-profiles-r2.log",
+      "sha256": "6efa626b40683a3196f9e2641076922577eacdc0562a50a482001876c7afbf38",
+      "bytes": 18260
+    },
+    "native-channel-profiles-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1.log",
+      "sha256": "ed71d5671fb0e35f38fe8732519da3f6b9eb6173b48476ec9062248bc8964f30",
+      "bytes": 1681
+    }
+  },
+  "contract_bundle": {
+    "ai-education-reference@1/audio-analysis.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\audio-analysis.json",
+      "sha256": "2940ce358d4199bf33accd3890de3bcb7f92c9e789fd6d8bf5c79a4f26a90dae",
+      "bytes": 1834
+    },
+    "ai-education-reference@1/checkpoint-render.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\checkpoint-render.json",
+      "sha256": "09fc051a8b80fba9917276c7180cc7495bf73fc9230eed7378760739802847c6",
+      "bytes": 4983
+    },
+    "ai-education-reference@1/cost.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\cost.json",
+      "sha256": "81e6f7c0024afdbcd72b5bda0d9e484dfb1e2c5e7447e73e0be048936f757ea6",
+      "bytes": 121
+    },
+    "ai-education-reference@1/ffprobe.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\ffprobe.json",
+      "sha256": "012b31f8cb0e03279adfaf788c698baa47acdd7246872cd4f8f91e2b8f67b664",
+      "bytes": 2631
+    },
+    "ai-education-reference@1/final.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\final.mp4",
+      "sha256": "5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398",
+      "bytes": 797018
+    },
+    "ai-education-reference@1/preview.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\preview.mp4",
+      "sha256": "1b19c136467326a7ec77c5f532dd758c1c8702efa025e1a09c277f2af44091c7",
+      "bytes": 328820
+    },
+    "ai-education-reference@1/project.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\project.json",
+      "sha256": "3d642a46a3d4b33c18e303f35fdf054a06c21720010fa526b9de34381c7bcf14",
+      "bytes": 354659
+    },
+    "ai-education-reference@1/qc-report.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\qc-report.json",
+      "sha256": "181330a7f1f08447e183a8e26327ca66e13503ff85f786167d54ce1343ae3952",
+      "bytes": 1813
+    },
+    "ai-education-reference@1/render-manifest.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\render-manifest.json",
+      "sha256": "e2bc67e9ee9d084178a398c27a1fca8c3b1f697d4289db677bb42ed3556508fa",
+      "bytes": 17153
+    },
+    "ai-education-reference@1/subtitles.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\subtitles.json",
+      "sha256": "a78d3c4ff6eb2c78e6015ade69f027d126e4d752ef19d81ffb62ce3a943ee132",
+      "bytes": 2325
+    },
+    "ai-education-reference@1/timeline-render.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\timeline-render.json",
+      "sha256": "368167fd35643c826f66d5f2bc1abd38dbe0de6a1b05b35857016044043a7bc4",
+      "bytes": 2083
+    },
+    "ai-education-reference@1/timeline.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\ai-education-reference@1\\timeline.json",
+      "sha256": "fb9dbaafadfc47d7d74bc0710fc3fe56be46763102d9276fd95311fc37175949",
+      "bytes": 15258
+    },
+    "backup.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\backup.json",
+      "sha256": "0d459e1b18161f3a85d4c5ab64db752d9976e411a7de4fc52702fc697b324f72",
+      "bytes": 1497
+    },
+    "catalog.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\catalog.json",
+      "sha256": "1852e7c0792c86ee3db73ba5de4d1725f23ad54eb4c8ada6158ba7ee820a5bd7",
+      "bytes": 18024
+    },
+    "contract.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\contract.json",
+      "sha256": "6958fe98868d7e346e62eeb91933d3e232f5c506d6b5a05a8f9ac7a26d31c7c9",
+      "bytes": 1775
+    },
+    "native-channel-backup.zip": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\native-channel-backup.zip",
+      "sha256": "d0e53255c662ea0d5bbdc1a39f6f07aa13f21f76703b5c49b8086b1195e03d96",
+      "bytes": 14107793
+    },
+    "property-reference@1/audio-analysis.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\audio-analysis.json",
+      "sha256": "52d0c9d17ace7ff75dabb96c92615b5b16c4b0c9b8e901732afe20df40f4db2a",
+      "bytes": 1834
+    },
+    "property-reference@1/checkpoint-render.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\checkpoint-render.json",
+      "sha256": "f854251472c1cc499e75723798c63af08149c6252a4e1938cc6fa0ce58dee2b6",
+      "bytes": 4983
+    },
+    "property-reference@1/cost.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\cost.json",
+      "sha256": "3c7a9c61df71d4f9367e819dc3c5afed0a5402664c4e2cdc8ad6bf11bb094c9a",
+      "bytes": 120
+    },
+    "property-reference@1/ffprobe.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\ffprobe.json",
+      "sha256": "85edd9ac16d66f64d2367cdff7c6e8b1c42c7c11b76c4d83bd99addf0d1d2688",
+      "bytes": 2631
+    },
+    "property-reference@1/final.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\final.mp4",
+      "sha256": "5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398",
+      "bytes": 797018
+    },
+    "property-reference@1/preview.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\preview.mp4",
+      "sha256": "1b19c136467326a7ec77c5f532dd758c1c8702efa025e1a09c277f2af44091c7",
+      "bytes": 328820
+    },
+    "property-reference@1/project.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\project.json",
+      "sha256": "14ec5e8c62bea91ef66e4337f2e4b51f3323a14226bceca1431193a9a0798a7c",
+      "bytes": 354445
+    },
+    "property-reference@1/qc-report.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\qc-report.json",
+      "sha256": "181330a7f1f08447e183a8e26327ca66e13503ff85f786167d54ce1343ae3952",
+      "bytes": 1813
+    },
+    "property-reference@1/render-manifest.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\render-manifest.json",
+      "sha256": "80edfbd3034d2e05149634d99ebe4eb5fbc310fd0fab40c2fb875e611dee8e7d",
+      "bytes": 17149
+    },
+    "property-reference@1/subtitles.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\subtitles.json",
+      "sha256": "a43af1f42a5a6afa08992045dd1a6fbf87bd1a9ceae0c38a182fde0b18f4ad87",
+      "bytes": 2325
+    },
+    "property-reference@1/timeline-render.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\timeline-render.json",
+      "sha256": "cddb7760455620c8a5b768a78a69d6715ed02292f21dec0ac67c4ae1e995bc3d",
+      "bytes": 2087
+    },
+    "property-reference@1/timeline.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\property-reference@1\\timeline.json",
+      "sha256": "80b749d6402729588e5d07deaa8ef603fd1201de0c7507238aeb827a0702cb76",
+      "bytes": 15254
+    },
+    "requests.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\requests.json",
+      "sha256": "b4f60f6748e55e569b8533c81f9c11c294306ec4fc6bc6fbb9c10636689dd78d",
+      "bytes": 2237
+    },
+    "restore.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\restore.json",
+      "sha256": "a3ac7427eb2eaef9270a52c6131c5cbe93cfd28fa028be5aeb28faaac525ebc8",
+      "bytes": 1886
+    },
+    "restored-state.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-profiles-contract-n1\\restored-state.json",
+      "sha256": "8e4dda0d2b47bbcdc4409bcb1b14fa3c3a93a26261bc38dc6e06620cde951603",
+      "bytes": 1327283
+    }
+  },
+  "native_full_passed": 471,
+  "native_full_seconds": 293.508,
+  "native_affected_passed": 40,
+  "native_affected_seconds": 42.23,
+  "affected_precedes_final_project_read_guard": true,
+  "studio_passed": 188,
+  "studio_duration_ms": 843.076,
+  "new_native_cases": 9,
+  "new_studio_cases": 3,
+  "counts_overlap": true,
+  "configured_niches": 2,
+  "configuration_only_extra_unit_niche": "knowledge",
+  "native_http_profile_selected": true,
+  "manual_niche_seed": false,
+  "local_real_effects_previews": 2,
+  "local_real_full_qc_renders": 2,
+  "authenticated_native_requests": 19,
+  "frozen_profile_and_source_unchanged": true,
+  "same_source_engine": true,
+  "same_video_source_and_subtitle_preferences": true,
+  "fresh_process_exact_restore": true,
+  "fresh_root_backup_restore_exact": true,
+  "actual_provider_calls": 0,
+  "paid_operations": 0,
+  "real_credentials_read": 0,
+  "real_asr": false,
+  "real_semantic_vision": false,
+  "official_channel_accounts_configured": false,
+  "native_publishing_analytics_profile_runtime_complete": false,
+  "source_visible_brand_overlay_complete": false,
+  "narrated_mode_a_render_acceptance": false,
+  "browser_real_tested": false,
+  "owner_uat_accepted": false,
+  "accepted_artifacts_replaced": false,
+  "multi_niche_ready": false,
+  "auto_edit_mode_ready": false,
+  "implementation_complete": false,
+  "production_deployed": false,
+  "north_star_ready": false
+}

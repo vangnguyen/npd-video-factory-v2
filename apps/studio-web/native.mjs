@@ -112,7 +112,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -186,6 +186,7 @@ if (typeof document !== "undefined") {
     analyticsUI?.controls();
     visionUI?.controls();
     variantsUI?.controls();
+    channelUI?.controls();
   }
   function markDirty(part) {dirty=true;dirtyPart=part;$("review-check").checked=false;controls();}
   function readProposal() {
@@ -214,6 +215,7 @@ if (typeof document !== "undefined") {
     row.querySelector("[data-media-note]").textContent=asset?.kind==="video"?`${fit} · tắt âm thanh gốc · clip ngắn lặp sau lượt phát đầu.`:asset?`${fit} · kiểm tra bố cục trong bản xem trước.`:"Chọn một nguồn cho cảnh này trước khi duyệt.";
   }
   function renderProject(reset=true) {
+    channelUI?.sync();
     publicationUI?.sync();
     analyticsUI?.sync();
     visionUI?.sync();
@@ -351,6 +353,12 @@ if (typeof document !== "undefined") {
       for(const href of ['/studio-shell.css','/studio-workspace.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href;document.head.append(link);}
       shell.mountStudioShell({page:['assets','brands'].includes(new URLSearchParams(location.search).get('view'))?new URLSearchParams(location.search).get('view'):'project',context:'Không gian sản xuất video'});
       document.querySelector('.asset-workspace-toolbar').hidden=false;
+      if(session.capabilities?.native_channel_profiles===true){
+        const channels=await import('./native-channel-profiles.mjs');
+        channelUI=channels.initializeNativeChannels({api,getState:()=>({project,busy,canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
+          onDefaults:value=>{$('new-content-profile').value=value.content_profile_id;$('new-brand').value=value.brand_id;$('new-video-format').value=value.aspect_ratio;creationTemplates();$('new-template').value=value.template_id;$('new-duration-mode').value=value.duration_mode;},onMessage:message});
+        $('new-content-profile').addEventListener('change',()=>channelUI?.clear());
+      }
     }
     document.querySelectorAll('.stage-navigation,.studio-header-actions,.skip-link,.sidebar [data-stage],.sidebar a[href^="/production"]').forEach(el=>el.hidden=false);
     const sourceUI=session.capabilities?.native_source_timeline===true?await import('./native-source-editor.mjs'):null;
@@ -358,7 +366,7 @@ if (typeof document !== "undefined") {
   }
   $("save-prompt").addEventListener("click",guarded(async()=>{
     const creating=!project;
-    if(!project){project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value,input_kind:$("input-kind").value,...projectQuality,...(workspaceUI&&$("new-content-profile").value?{content_profile_id:$("new-content-profile").value}:{})});if(workspaceUI&&$("new-template").value)project=await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:$("new-brand").value,template_id:$("new-template").value,duration_mode:$("new-duration-mode").value});}
+    if(!project){project=await api("/api/projects",{name:$("project-name").value,prompt:$("prompt").value,input_kind:$("input-kind").value,...projectQuality,...(workspaceUI&&$("new-content-profile").value?{content_profile_id:$("new-content-profile").value}:{}),...(channelUI?.request()??{})});if(workspaceUI&&$("new-template").value)project=await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:$("new-brand").value,template_id:$("new-template").value,duration_mode:$("new-duration-mode").value});}
     else project=await api(`/api/projects/${project.id}/draft`,{revision:project.revision,prompt:$("prompt").value,input_kind:$("input-kind").value});
     localStorage.setItem("vf-native-project",project.id);if(workspaceUI&&creating){const url=new URL(location.href);url.searchParams.delete('new');url.searchParams.set('project',project.id);history.replaceState(null,'',url);document.querySelectorAll('.sidebar [data-studio-page]').forEach(el=>{const current=el.dataset.studioPage==='projects';el.classList.toggle('active',current);if(current)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});}renderProject(true);await projects();if(creating)shotStudio?.showStage(workspaceUI?.nextProjectStage(project)??'script');message("Đã lưu dự án. Thêm tư liệu tại Assets rồi chọn hình cho từng shot.");
   }));
@@ -430,5 +438,5 @@ if (typeof document !== "undefined") {
   function creationTemplates(){if(!brandCatalog)return;const format=$("new-video-format").value,selected=$("new-template").value;const values=brandCatalog.templates.filter(t=>t.aspect_ratio===format);$("new-template").innerHTML=values.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');$("new-template").value=values.some(t=>t.id===selected)?selected:values.find(t=>t.purpose==='property_presentation'&&t.duration_seconds===30)?.id??values[0]?.id??'';}
   $("new-video-format").addEventListener('change',creationTemplates);
   async function loadBrandCatalog(){const values=await api(shotStudio?"/api/brand-templates?formats=all":"/api/brand-templates");brandCatalog=values;$("brand-select").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("");$("template-select").innerHTML='<option value="">Bố cục MVP hiện có</option>'+values.templates.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join("");$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";if(workspaceUI){$("new-brand").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');creationTemplates();const {profiles}=await api('/api/intelligence/config');$("new-content-profile").innerHTML='<option value="">Nội dung khác</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');}}
-  (async()=>{busy=true;controls();try{const session=await api("/api/session");csrf=session.csrf;await initializeSupportedStudio(session);runtimeStatus().catch(()=>{$("runtime-status").textContent="Chưa đọc được trạng thái. Làm mới Studio để kiểm tra.";});$("prompt").value=(await api("/api/defaults")).prompt;await projects();const saved=new URLSearchParams(location.search).get("new")==="1"?null:new URLSearchParams(location.search).get("project")??localStorage.getItem("vf-native-project");if(saved&&[...$("project-picker").options].some(o=>o.value===saved))project=await api(`/api/projects/${saved}`);await loadBrandCatalog();renderProject(true);await projects();schedule();}catch(error){message(error.message,true);}finally{busy=false;controls();}})();
+  (async()=>{busy=true;controls();try{const session=await api("/api/session");csrf=session.csrf;await initializeSupportedStudio(session);runtimeStatus().catch(()=>{$("runtime-status").textContent="Chưa đọc được trạng thái. Làm mới Studio để kiểm tra.";});$("prompt").value=(await api("/api/defaults")).prompt;await projects();const saved=new URLSearchParams(location.search).get("new")==="1"?null:new URLSearchParams(location.search).get("project")??localStorage.getItem("vf-native-project");if(saved&&[...$("project-picker").options].some(o=>o.value===saved))project=await api(`/api/projects/${saved}`);await loadBrandCatalog();await channelUI?.load();renderProject(true);await projects();schedule();}catch(error){message(error.message,true);}finally{busy=false;controls();}})();
 }

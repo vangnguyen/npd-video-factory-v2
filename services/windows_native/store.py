@@ -86,6 +86,9 @@ class Store:
         if row is None:
             raise WorkflowError("PROJECT_NOT_FOUND", 404)
         doc = json.loads(row["document"])
+        if doc.get('channel_profile') is not None:
+            from .channel_profiles import resolve
+            resolve(doc)
         return {**dict(row), "document": doc, "input": project_input(doc, row["revision"]),
                 "approval": json.loads(row["approval"]) if row["approval"] else None}
 
@@ -135,7 +138,7 @@ class Store:
                 "step": step, "provider": provider or ("assemblyai" if step in {"asr_upload", "asr_create_transcript", "asr_observe_known_transcript"} else "ffmpeg" if step in {"asr_local_media_analysis", "asr_extract_audio"} else "openai" if "content" in step else "local_vieneu" if "tts" in step else "ffmpeg" if "render" in step else "local_io"),
                 "duration": round(duration, 6), "retry_count": runtime[0] if runtime else 0, "error_code": error_code})
 
-    def create(self, name, prompt, input_kind="prompt", *, content_profile=None, production_quality=False):
+    def create(self, name, prompt, input_kind="prompt", *, content_profile=None, production_quality=False,channel_profile=None):
         if not isinstance(name, str) or not 1 <= len(name.strip()) <= 150:
             raise WorkflowError("PROJECT_NAME_REQUIRED", 400)
         prompt = validate_text(input_kind, prompt)
@@ -150,6 +153,12 @@ class Store:
             if not isinstance(content_profile,dict) or not all(isinstance(content_profile.get(k),str) and content_profile[k].strip() for k in ('id','name')):
                 raise WorkflowError('CONTENT_PROFILE_INVALID',400)
             doc['content_profile']=copy.deepcopy(content_profile)
+        if channel_profile is not None:
+            from .channel_profiles import resolve
+            doc.update(channel_profile=copy.deepcopy(channel_profile),niche=channel_profile['profile']['niche_profile']['niche'])
+            frozen=resolve(doc)
+            if content_profile is not None and content_profile['id']!=frozen['content_profile']['id']:raise WorkflowError('CHANNEL_CONTENT_PROFILE_CONFLICT',400)
+            doc['content_profile']=copy.deepcopy(frozen['content_profile']);doc['brand_template']=copy.deepcopy(frozen['brand_template'])
         stamp = now()
         with self.transaction() as con:
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",
