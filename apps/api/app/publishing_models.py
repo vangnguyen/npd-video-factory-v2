@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import ConfigDict, Field, field_validator, model_validator
 
 from .models import StrictModel
 
@@ -94,6 +94,24 @@ class PlatformValidationRead(StrictModel):
     checks: list[PublishingValidationCheck]
 
 
+class PublishingTargetBinding(StrictModel):
+    """Public configuration identity; contains no OAuth token or secret reference.
+
+    A configured target is not evidence of an official account verification.
+    Credential fingerprints describe stable configuration revisions, never token bytes.
+    """
+
+    model_config = ConfigDict(extra="forbid", strict=True, frozen=True)
+    schema_version: Literal["publishing-target-v1"] = "publishing-target-v1"
+    workspace_id: str = Field(pattern=r"^[A-Za-z0-9_-]{1,80}$")
+    profile_id: str = Field(pattern=r"^ppf_[A-Za-z0-9_-]{4,60}$")
+    profile_version: int = Field(ge=1, le=2_147_483_647)
+    platform: PublishingPlatform
+    provider_key: str = Field(pattern=r"^[A-Za-z0-9_-]{1,100}$")
+    target_account_id: str = Field(pattern=r"^[A-Za-z0-9._~-]{1,128}$")
+    credential_binding_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
 class ProviderValidationRead(StrictModel):
     provider_key: str
     adapter_state: Literal["mock", "not_configured", "contract_only", "ready"]
@@ -102,6 +120,7 @@ class ProviderValidationRead(StrictModel):
     supports_dry_run: bool
     supports_live_publish: bool
     checks: list[PublishingValidationCheck]
+    target_binding: PublishingTargetBinding | None = None
 
 
 class PublishingPlatformStateRead(StrictModel):

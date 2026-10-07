@@ -92,7 +92,7 @@
   "actual_source_bytes": 4256257,
   "full_parent_api_pass": 2150,
   "full_parent_api_skip": 11,
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_current_api_status": "PASS",
   "s3_qc_human_unit_inputs_are_fixtures": true,
   "real_s3_requests": 0,
   "actual_external_requests": 0,
@@ -101,5 +101,19 @@
   "live_adapter_activated": false,
   "owner_uat_accepted": false,
   "publishing_ready": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_current_linux_api": {
+    "head": "21d02dfd63e5470272dac3d3dcd8834a21ee8efe",
+    "passed": 2170,
+    "skipped": 11,
+    "seconds": 801.54,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-21d02df.log",
+      "sha256": "bcf22d02407c7b44ee669ce2fa9fad55ad7b359dcdfa7cf88b643b86138b348a"
+    }
+  },
+  "current_preservation_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-artifact-preservation.json",
+    "sha256": "7781a72d3c619b74b35f346d1a4ee331c2c9fbf059b8a4af2bc5c7ad6025111a"
+  }
 }

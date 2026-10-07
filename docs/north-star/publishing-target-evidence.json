@@ -1,0 +1,77 @@
+{
+  "schema": "north-star-publishing-target-evidence-v1",
+  "parent_head": "21d02dfd63e5470272dac3d3dcd8834a21ee8efe",
+  "source_sha256": {
+    "apps/api/app/publishing_models.py": "d237046d42678cd4d16ca165e6b2191dd2cda546368b6ed1054c1c05d3e2a655",
+    "apps/api/app/publishing_dispatch.py": "472924b77501140b6f8e271e455af09951c69bc4900f427a36e7a0b090817c35",
+    "apps/api/tests/test_publishing_target.py": "1476309a2b9c3713dd80c5aa9e1ec644766789343b3a20fae888f9923144bf51",
+    "apps/api/tests/test_publishing_dispatch.py": "9a6d429ff40cc9c10359ff06d0513c66f604487314dcb132a037cc19bcc588ed",
+    "scripts/north_star_publishing_target_contract.py": "cf0286daf82255a62618e7c16dc9e71b69bffadde832bb9005947f10897314dd",
+    "docs/PUBLISHING_TARGET_BINDING.md": "b7103bd32b8ac25c1bf1cd677d7631e79c9d9d0a3e41f29fe85e9b510b3eccd7"
+  },
+  "logs": {
+    "publishing-target-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-target-r1.log",
+      "sha256": "fa2aa235f00bfe8c22cf07e26934a9eb731a05337105f0296d50a1300240e588"
+    },
+    "publishing-target-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-target-r2.log",
+      "sha256": "4e02424853fead67950b5a36e227b19e8230ff750db0425a59509b809fa32fe6"
+    },
+    "publishing-target-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-target-r3.log",
+      "sha256": "1df0145123a4fd118b970f007e7d000b395a4e20ea8e1d582d433745e40d63fe"
+    },
+    "publishing-target-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-target-contract-n1.log",
+      "sha256": "9799c46aab4e57428b6d9f631b9d03fff94d068104e36c0a11df33ba00fb0fa9"
+    }
+  },
+  "exports": {
+    "explicit-fixture-consent.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-target-contract-n1\\explicit-fixture-consent.json",
+      "sha256": "3abb2d19f2b9511b1a82ff46e82a317d59ecfe99417eca138d4f13e78afac0d3"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-target-contract-n1\\receipt.json",
+      "sha256": "b773315ead4966ece43f151a464b53dfc578114a9e90b16e45e56da7d6e62ada"
+    },
+    "restart-revalidation.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-target-contract-n1\\restart-revalidation.json",
+      "sha256": "da63313ca71dcb953bb11747ebe3a4304a7b3831e0ec5e0eb116ffef0c169555"
+    },
+    "unchanged-dispatch.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-target-contract-n1\\unchanged-dispatch.json",
+      "sha256": "77f0d4a0765cda65f6835cf7d84878d6c4b656aa4dadce64dba286a807c63b03"
+    }
+  },
+  "expanded_regression_pass": 129,
+  "expanded_regression_seconds": 148.39,
+  "new_target_tests": 24,
+  "full_parent_linux_api": {
+    "head": "21d02dfd63e5470272dac3d3dcd8834a21ee8efe",
+    "passed": 2170,
+    "skipped": 11,
+    "seconds": 801.54,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-21d02df.log",
+      "sha256": "bcf22d02407c7b44ee669ce2fa9fad55ad7b359dcdfa7cf88b643b86138b348a"
+    }
+  },
+  "preservation_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-artifact-preservation.json",
+    "sha256": "7781a72d3c619b74b35f346d1a4ee331c2c9fbf059b8a4af2bc5c7ad6025111a"
+  },
+  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "actual_sqlite_transactions": true,
+  "separate_process_revalidations": 4,
+  "account_credential_identity_approval_qc_inputs_are_fixtures": true,
+  "actual_external_requests": 0,
+  "actual_oauth_secrets_read": 0,
+  "paid_operations": 0,
+  "official_account_verification": false,
+  "default_adapter_activated": false,
+  "owner_uat_accepted": false,
+  "publishing_ready": false,
+  "production_deployed": false
+}

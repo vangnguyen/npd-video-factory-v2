@@ -16,6 +16,7 @@ from .human_identity import HumanAuthVerifier, HumanPrincipal
 from .production_db import ProductionApprovalORM, ProductionPackageORM, ProductionRenderJobORM
 from .publishing_db import PublicationDispatchORM, PublicationEventORM, PublicationORM, PublishApprovalORM
 from .publishing_logic import hash_idempotency_key, validate_rights
+from .publishing_models import ProviderValidationRead, PublishingTargetBinding
 from .timeline_db import TimelineORM
 
 
@@ -53,11 +54,43 @@ def public(row):
 
 
 class PublishingDispatchJournal:
-    def __init__(self, session_factory, *, identity_provider=None, clock=utc_now, lease_seconds=180):
+    def __init__(self, session_factory, *, identity_provider=None, target_provider=None,
+                 require_target_binding=False, clock=utc_now, lease_seconds=180):
         if type(lease_seconds) is not int or not 90 <= lease_seconds <= 900:
             raise DispatchError('PUBLISH_DISPATCH_LEASE_INVALID')
         self.session_factory, self.clock, self.lease_seconds = session_factory, clock, lease_seconds
         self.identity_provider = identity_provider
+        if type(require_target_binding) is not bool:
+            raise DispatchError('PUBLISH_TARGET_POLICY_INVALID')
+        self.target_provider = target_provider
+        self.require_target_binding = require_target_binding
+
+    def target_binding(self, parent):
+        """Resolve the current server configuration; a saved snapshot cannot authorize itself."""
+        raw = parent.provider_validation_json.get('target_binding')
+        if raw is None:
+            if self.require_target_binding:
+                raise DispatchError('PUBLISH_TARGET_BINDING_REQUIRED')
+            return None
+        try:
+            validation = ProviderValidationRead.model_validate(parent.provider_validation_json)
+            target = validation.target_binding
+            if (target is None or target.workspace_id != parent.workspace_id or target.platform != parent.platform
+                or target.provider_key != parent.provider_key or validation.provider_key != parent.provider_key
+                or validation.credential_status != 'configured' or not validation.official_api_only):
+                raise ValueError()
+        except Exception:
+            raise DispatchError('PUBLISH_TARGET_BINDING_INVALID') from None
+        try:
+            current = self.target_provider(parent.workspace_id, target.profile_id) if callable(self.target_provider) else None
+            if not isinstance(current, PublishingTargetBinding):
+                raise ValueError()
+            current = PublishingTargetBinding.model_validate(current.model_dump())
+        except Exception:
+            raise DispatchError('PUBLISH_TARGET_REVALIDATION_REQUIRED') from None
+        if current != target:
+            raise DispatchError('PUBLISH_TARGET_CHANGED_REVALIDATE')
+        return target.model_dump(mode='json')
 
     def identity_revision(self, token_id, workspace, subject=None):
         try:
@@ -127,17 +160,22 @@ class PublishingDispatchJournal:
             sources.append(source)
         if validate_rights(sources).status != 'passed':
             raise DispatchError('PUBLISH_RIGHTS_REVALIDATION_REQUIRED')
-        return {'workspace_id': parent.workspace_id, 'project_id': parent.project_id, 'publication_id': parent.publication_id,
+        target = self.target_binding(parent)
+        binding = {'workspace_id': parent.workspace_id, 'project_id': parent.project_id, 'publication_id': parent.publication_id,
             'package_id': parent.package_id, 'production_approval_id': parent.approval_id, 'final_render_id': render.render_id,
             'output_asset_id': asset.asset_id, 'artifact_sha256': asset.checksum_sha256, 'total_bytes': asset.size_bytes,
             'request_fingerprint': parent.request_fingerprint, 'metadata_sha256': checksum(parent.metadata_json),
             'platform': parent.platform, 'provider_key': parent.provider_key}
+        if target is not None:
+            binding.update(target_binding=target, target_binding_sha256=checksum(target),
+                provider_validation_sha256=checksum(provider))
+        return binding
 
     async def approve(self, workspace, publication_id, *, principal, expected_fingerprint, expected_artifact_sha256,
-                      acknowledged, idempotency_key, ttl_seconds=3600):
+                      acknowledged, idempotency_key, ttl_seconds=3600, expected_target_sha256=None):
         options = dict(principal=principal, expected_fingerprint=expected_fingerprint,
             expected_artifact_sha256=expected_artifact_sha256, acknowledged=acknowledged,
-            idempotency_key=idempotency_key, ttl_seconds=ttl_seconds)
+            idempotency_key=idempotency_key, ttl_seconds=ttl_seconds, expected_target_sha256=expected_target_sha256)
         try:
             return await self._approve(workspace, publication_id, **options)
         except IntegrityError:
@@ -148,7 +186,7 @@ class PublishingDispatchJournal:
                 raise DispatchError('PUBLISH_APPROVAL_CONCURRENT_RESERVATION_RELOAD') from None
 
     async def _approve(self, workspace, publication_id, *, principal, expected_fingerprint, expected_artifact_sha256,
-                       acknowledged, idempotency_key, ttl_seconds):
+                       acknowledged, idempotency_key, ttl_seconds, expected_target_sha256):
         now = utc(self.clock())
         if (not isinstance(principal, HumanPrincipal) or principal.role_for(workspace) != 'owner' or utc(principal.expires_at) <= now
             or acknowledged is not True or type(ttl_seconds) is not int or not 60 <= ttl_seconds <= 3600):
@@ -160,6 +198,8 @@ class PublishingDispatchJournal:
                 parent = await self.parent(session, workspace, publication_id); binding = await self.binding(session, parent)
                 if binding['request_fingerprint'] != expected_fingerprint or binding['artifact_sha256'] != expected_artifact_sha256:
                     raise DispatchError('PUBLISH_APPROVAL_STALE_RELOAD')
+                if binding.get('target_binding_sha256') != expected_target_sha256:
+                    raise DispatchError('PUBLISH_APPROVAL_TARGET_STALE_RELOAD')
                 digest = checksum(binding)
                 prior = await session.scalar(select(PublishApprovalORM).where(PublishApprovalORM.publication_id == publication_id, PublishApprovalORM.idempotency_key_hash == key))
                 if prior:
@@ -195,9 +235,13 @@ class PublishingDispatchJournal:
 
     @staticmethod
     def grant_public(grant):
-        return {'publish_approval_id': grant.publish_approval_id, 'publication_id': grant.publication_id,
+        value = {'publish_approval_id': grant.publish_approval_id, 'publication_id': grant.publication_id,
             'workspace_id': grant.workspace_id, 'binding_sha256': grant.binding_sha256,
             'expires_at': utc(grant.expires_at).isoformat(), 'revoked': grant.revoked_at is not None, 'scope': 'PUBLISH_ONLY'}
+        if 'target_binding' in grant.binding_json:
+            value['target_binding'] = grant.binding_json['target_binding']
+            value['target_binding_sha256'] = grant.binding_json['target_binding_sha256']
+        return value
 
     @staticmethod
     def event(session, parent, action, actor, payload):

@@ -1,0 +1,15 @@
+# Publishing destination consent binding
+
+`PublishingTargetBinding` is a frozen, strict, versioned public configuration identity: workspace, publishing profile and revision, platform/provider, destination account and stable credential-configuration fingerprint. It accepts no token, secret reference, URL or additional field. Its fingerprint describes a configuration revision, not a hash of OAuth token bytes. A configured account is not an officially verified account.
+
+For targeted publications, the journal validates the persisted provider snapshot and compares it with a fresh synchronous server `target_provider(workspace_id, profile_id)` lookup. Neither client metadata nor the stored snapshot can authorize itself. The provider must report configured credentials and its platform/provider/workspace must agree with the parent. Invalid/missing configuration and resolver errors fail with fixed codes that exclude private error text. Returned models are revalidated even if a trusted integration used an unchecked model copy.
+
+An Owner must submit the exact reviewed `expected_target_sha256` along with the existing request/artifact fingerprints, explicit acknowledgment and separate publish-only consent. The target and complete provider-validation digest join the binding. Account, profile revision, credential binding or validation changes invalidate that consent before initialization or another chunk. Reusing the approval key with changed configuration fails; a new consent never silently rebinds an existing dispatch or creates another upload session.
+
+The public consent projection includes the reviewed target identity/digest. Audit events retain only approval/binding identity and never add credential fingerprints, secret references or tokens. Reconciliation can still record an already-performed outcome after consent/configuration changes; it does not authorize another chunk, initialization, deletion or budget change.
+
+Legacy untargeted dry runs and journal evidence remain readable without a migration. `require_target_binding=True` is mandatory for the forthcoming configured upload worker: it rejects old untargeted consent. The current application factory is still contract-only/disabled and has no newly activated publishing route. The default compatibility policy is not permission for a real upload.
+
+The owned contract exercises actual SQLite and four separate Python process admissions. Accounts, profiles, credential fingerprints, identities, production approval, QC and consent are fixtures. It refuses an unreviewed target, proves unchanged exact replay, and refuses changed account/profile/credential configuration after restart while the dispatch remains unstarted. It performs zero provider requests and reads zero real credentials.
+
+Remaining work includes durable profile administration, Owner publishing UI/routes, official account/scope verification, OAuth refresh/key custody, atomic edit admission, orphaned-session recovery, full upload/processing/thumbnail adapters, scheduling, costs and real-provider acceptance. This increment alone does not establish Publishing Ready, Mode A/B Ready or Owner UAT.

@@ -54,6 +54,8 @@ Distribution now includes bounded official wire/protocol helpers, a separate pub
 
 Publishing source admission now obtains exact scoped bounded local/S3 bytes in a fresh private copy, verifies whole-file and per-range hashes, reruns existing full QC against the canonical profile/timeline and rechecks current consent/rights. An actual synthetic portrait MP4 passes QC/range reconstruction; copied-object corruption and cancellation cleanup are tested. The original MP4 and all accepted/live media remain unchanged. Atomic admission across edits, actual S3 endpoint/network policy, full worker/adapters, OAuth/costs and Native distribution controls remain.
 
+Publishing destination consent now requires the reviewed strict target digest, fresh server profile/account/credential-configuration lookup and unchanged provider validation. The four-process SQLite rehearsal refuses changed targets before a wire claim. A configured target is not official account verification; profile administration, consent-gated queue/worker, OAuth and full adapters remain. Legacy journal/dry-run evidence stays readable; real workers must require bound targets.
+
 Owner watch/listen UAT is required for Phase 10 certification. It does not block further safe source implementation. Real publishing requires separate explicit enablement and configured authorized credentials. Missing OAuth/API secrets and approved provider budgets are requested only for concrete real acceptance after mock architecture is complete. GPU acceptance needs configured approved models/workflows. Docker/Linux acceptance needs an isolated available runtime; production deployment requires separate Owner approval.
 
 ## Current blockers and baseline testing

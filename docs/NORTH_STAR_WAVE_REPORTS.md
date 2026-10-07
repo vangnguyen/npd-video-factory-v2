@@ -1027,3 +1027,23 @@ EVIDENCE: `docs/north-star/publishing-artifact-evidence.json` binds five source 
 REGRESSIONS: expanded suites and full previous commits pass. Existing timelines, production providers, activation flags, installed runtimes, accepted/live artifacts/data/schema/processes/credentials and main remain untouched. No real storage/provider request, publication/deletion, paid operation or deployment.
 
 EXTERNAL BLOCKERS: actual S3/credentials/account audit/Owner real publishing acceptance are eventual gates; none blocks safe continuation. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve this increment and run pinned regression, then connect verified source/journal/encrypted sessions to the official upload worker and finish remaining distribution/media/analytics/learning/Trend/Hub/hardening work.
+
+### Wave 9 — reviewed destination and fresh publishing configuration binding
+
+WAVE: 9 / distribution admission. STATUS: IN PROGRESS; destination consent/configuration/restart checks pass. PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `21d02dfd63e5470272dac3d3dcd8834a21ee8efe`; this target-binding commit records the increment. Parent is pushed and preserved in verified `north-star-publishing-artifact.bundle`, SHA256 `337ae98d28bce6f9faffc07de58d98fbfc07ae69e956a91c312401f675633187`. Its fresh preservation receipt verifies fifteen accepted hashes, clean live source at `2ced7bc81f9402368fb22c9e7aca242e740531af`, unchanged remote main and 147 ahead/0 behind.
+
+CAPABILITIES COMPLETED: strict frozen versioned public destination/profile/credential-configuration binding, exact Owner-reviewed target digest, fresh trusted server lookup before initialization/chunks, full provider-validation revision binding and fixed private errors. Changed account, profile, credential binding, workspace/provider or validation invalidates consent. Exact replay preserves the grant/deadline; fresh consent cannot silently rebind an existing dispatch. Strict worker policy rejects legacy unbound grants; old dry runs remain readable without schema migration. Public configuration is not official account verification.
+
+CAPABILITIES PARTIAL: configured profile administration and official account/scope verification, consent-gated queue/upload worker, atomic edit admission, orphaned-session recovery, OAuth/key custody, costs, processing/thumbnail receipts, full YouTube/TikTok/Meta adapters and Native distribution UI/scheduler/history. No factory activation or real provider acceptance. Full Mode A/B, Waves 10–16 and North Star remain incomplete.
+
+TESTS: expanded publishing/wire/vault/artifact/migration/analytics/identity/authority regression **129 PASS**, 148.39s; twenty-four new target cases. First run passed 39/failed 1 because SQLAlchemy skipped a malformed fixture update whose boolean True compared equal to integer 1; the test now explicitly persists that corrupted JSON and strict validation remains unchanged. r2 selected nonexistent test paths and ran no tests; r3 uses discovered actual files. Full Linux parent `21d02df` passed **2,170 PASS/11 SKIP**, 801.54s and artifact evidence now indexes it. Full forthcoming target commit remains pending. Native 400/Studio 123 results remain separately pinned.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual SQLite transactions and four separate Python process revalidations. MOCK TESTS: every account/profile/credential fingerprint/human/production approval/QC/consent input is an explicit fixture. Fresh `C:\vf-publishing-target-n1` emits four exports and refuses changed account/profile/credential configuration after restart while dispatch remains unstarted. Zero wire calls/actual secrets read/paid operations; no official account claim.
+
+EVIDENCE: `docs/north-star/publishing-target-evidence.json`, `docs/PUBLISHING_TARGET_BINDING.md`, four fresh exports and full parent regression/preservation receipt. Capability 41 remains PARTIAL; no readiness inflation.
+
+REGRESSIONS: expanded existing checks and full prior API pass. Existing accepted/live media, source/data/schema/processes, runtime/credentials, main and default publishing flags remain untouched. No real publish/delete, deployment, paid operation or destructive migration.
+
+EXTERNAL BLOCKERS: eventual OAuth/account audit/key-provider/Owner real-publish gates; none blocks remaining safe work. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve this increment, then implement consent-gated queue/provider worker and remaining media/analytics/learning/Trend/Hub/hardening work.
