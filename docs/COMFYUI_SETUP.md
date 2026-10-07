@@ -78,6 +78,16 @@ Live backend transport, executable reviewed graphs, verified reference resolutio
 binary artifact registration/decoding, provider cost receipts and real GPU acceptance remain open.
 The repository still ships no executable GPU graph and does not claim generative media readiness.
 
+Reviewed execution declarations can now specify a pinned graph SHA256, an approval reference/kind,
+allowed node classes, exact scalar input bindings, output nodes and approved aspect dimensions.
+The compiler reads only the manifest-selected graph, leaves source bytes unchanged, rejects hash,
+node/binding/output drift and refuses placeholders or test-fixture execution by default. Reference
+bindings require matching typed workspace/upload tokens from a trusted staging resolver; these
+types do not independently verify uploads or rights. Approval references are declarations, not
+proof of Owner approval. Live admission verification, reference staging and GPU transport remain
+required. New unconfigured execution fields are excluded from fingerprints so existing approved
+descriptor/job identities stay compatible. CPU tests use explicitly fake nodes and approval refs.
+
 ## Optional container
 
 The service remains disabled by default:

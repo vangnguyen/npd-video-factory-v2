@@ -1,0 +1,36 @@
+{
+  "schema": "north-star-comfyui-graph-compiler-evidence-v1",
+  "parent_head": "c71bbbe63e48cb3a95a8460981d21035b9f2aa9d",
+  "source_sha256": {
+    "services/comfyui-bridge/npd_comfyui_bridge/model_base.py": "0d16aa1ab93d4084e27273ec42506e9b02ef766e57b79374ea56941ec9d17a4e",
+    "services/comfyui-bridge/npd_comfyui_bridge/execution_models.py": "54e83f677107e855864431350502e363c721923cda21f9bcca28d12f0e2576eb",
+    "services/comfyui-bridge/npd_comfyui_bridge/models.py": "c2c5cd51b82d5993660677407f14313b95f66903adeda5ea1dec181f1ff1b7bc",
+    "services/comfyui-bridge/npd_comfyui_bridge/graph_compiler.py": "a4e20803ca39a2719a3669bbef5c20bd707a1788b0432e39e13b5829049f7729",
+    "services/comfyui-bridge/npd_comfyui_bridge/workflows.py": "a14e66a5aea69b6a18ca358fff188ba5d1bd735fe15de096b3bf80f22b30c6f8",
+    "services/comfyui-bridge/tests/test_graph_compiler.py": "d268ea9a9f31fe86e138e8fc663332d77bf510c25fcd7470837e8bd29c71256a"
+  },
+  "logs": {
+    "comfyui-graph-compiler-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-graph-compiler-r1.log",
+      "sha256": "8acdb89b7eb5bb3da026e910fc1c5fff2d58f55cff230cd49153ea481800d8b3"
+    },
+    "api-linux-ffc8ec1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-ffc8ec1.log",
+      "sha256": "c4434790bdc203c7df190fef140be35c77fa305824ebbe1e7a2bccf271649702"
+    }
+  },
+  "bridge_tests_passed": 29,
+  "new_compiler_cases": 10,
+  "full_parent_ffc8ec1_api_passed": 2021,
+  "full_parent_ffc8ec1_api_skipped": 11,
+  "explicit_fixture_nodes_approval_and_upload_tokens": true,
+  "repository_graphs_executable": false,
+  "repository_execution_configured": false,
+  "actual_reference_uploads_verified": false,
+  "owner_approval_verified": false,
+  "external_provider_calls": 0,
+  "gpu_dispatches": 0,
+  "binary_artifacts_generated": false,
+  "production_deployed": false,
+  "remaining": "Live admission verification, reference staging, backend transport/targeted cancellation, binary artifacts/rights/cost/provider acceptance and Native integration."
+}

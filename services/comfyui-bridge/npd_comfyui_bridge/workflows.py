@@ -59,5 +59,5 @@ class WorkflowRegistry:
             raise ValueError('APPROVED_WORKFLOW_PATH_INVALID')
         if graph.stat().st_size > 2 * 1024 * 1024:
             raise ValueError('APPROVED_WORKFLOW_TOO_LARGE')
-        value = {'definition': definition.model_dump(mode='json'), 'graph_sha256': hashlib.sha256(graph.read_bytes()).hexdigest()}
+        value = {'definition': definition.model_dump(mode='json', exclude_none=True), 'graph_sha256': hashlib.sha256(graph.read_bytes()).hexdigest()}
         return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()).hexdigest()

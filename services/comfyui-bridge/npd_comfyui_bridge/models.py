@@ -3,11 +3,9 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
-
-
-class StrictModel(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+from pydantic import Field
+from .model_base import StrictModel
+from .execution_models import ReviewedGraphExecution
 
 
 class WorkflowDefinition(StrictModel):
@@ -30,6 +28,7 @@ class WorkflowDefinition(StrictModel):
     timeout_seconds: float = Field(default=300, gt=0, le=7200)
     input_schema: dict[str, Any]
     output_schema: dict[str, Any]
+    execution: ReviewedGraphExecution | None = None
 
 
 class WorkflowManifest(StrictModel):

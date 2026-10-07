@@ -731,3 +731,26 @@ EVIDENCE: `docs/north-star/generation-mode-contract-evidence.json` indexes the e
 REGRESSIONS: existing generation/Native source flows pass; live source/database/configuration/services and accepted media remain untouched. No merge/deployment/publication, new provider budget, GPU infrastructure change or runtime install.
 
 EXTERNAL BLOCKERS: GPU/models/approved executable graphs and real-provider acceptance, Docker, Native browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: scoped verified-reference/binary artifact architecture and approved backend execution, then remaining media/audio/profile/platform/distribution/analytics/learning/Trend/Hub/hardening work.
+
+
+## Wave 5 — Pinned reviewed graph compilation
+
+WAVE: 5
+
+STATUS: IN PROGRESS; GENERATIVE_MEDIA_READY = NO. Reviewed graph compilation is CPU-tested; live admission/backend/media acceptance remain incomplete.
+
+HEAD SHA: parent `c71bbbe63e48cb3a95a8460981d21035b9f2aa9d`; this compiler commit records the increment. Parent is pushed and preserved in verified `north-star-generation-modes.bundle`, SHA256 `ca58d1be402c567dbb0960c999fa482e9b7ed330a151c0b9f91de96a2e1e8cc8`.
+
+CAPABILITIES COMPLETED: optional typed manifest execution declarations bind graph SHA256, declared approval kind/reference, permitted node classes, exact scalar parameter/index/transform bindings, output nodes and approved dimensions. The compiler validates manifest identity/input schema, reads only the selected pinned source graph, preserves file bytes/node classes/unbound model choices and rejects changed hashes, absent nodes/bindings/outputs, incompatible transforms, non-scalar values and unavailable aspect dimensions. Image/mask inputs require typed matching workspace/reference/upload tokens; compiler performs no URL/local-asset lookup. Test graphs reject unless explicitly permitted. Checked-in placeholders have no execution declaration and remain NOT_CONFIGURED. Strict model base extraction keeps existing JSON contracts; omitting new null execution fields preserves historical workflow fingerprints exactly.
+
+CAPABILITIES PARTIAL: declared approval references and token types do not independently prove Owner approval, uploaded bytes or rights. Live pinned-manifest admission, actual verified-reference staging, backend submit/poll/targeted cancel, artifact registration/decode/rights/cost and Native integration remain. No GPU work was dispatched and no model weights/executable repository graph were added.
+
+TESTS: complete bridge/graph lifecycle/security CPU suite **29/29 PASS**, 2.35s (`comfyui-graph-compiler-r1.log`), including ten new compiler/binding/compatibility cases. Full isolated Linux API at preserved ffc8ec1 is now **2,021 PASS, 11 SKIP**, 689.84s (`api-linux-ffc8ec1.log`); skips remain unaccepted. This compiler change is confined to the bridge package.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual isolated pinned JSON file reads/checksum checks and unchanged bytes. MOCK TESTS: graph nodes, approval declarations and upload tokens are explicit non-executable fixtures; no independently verified asset/GPU/Owner acceptance is asserted.
+
+EVIDENCE: `docs/north-star/comfyui-graph-compiler-evidence.json` indexes exact source/test/log hashes and the compatibility/null-execution assertions. Earlier n1/n2/n3 media-contract bundles remain unchanged.
+
+REGRESSIONS: existing bridge auth/queue/restart tests remain passing; live source/database/configuration/services and accepted artifacts remain untouched. No merge/deployment/publishing, new paid/GPU operation, model install or destructive migration.
+
+EXTERNAL BLOCKERS: reviewed executable graphs/GPU/provider acceptance, Docker, Native browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe source continuation. NEXT WAVE: admitted backend transport, scoped reference staging and binary artifacts, then remaining media/profile/platform/distribution/analytics/learning/Trend/Hub/hardening work.
