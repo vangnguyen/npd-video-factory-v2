@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, CheckConstraint, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .db import Base, utc_now
@@ -76,3 +76,47 @@ class PublicationEventORM(Base):
     actor_ref: Mapped[str] = mapped_column(String(160), nullable=False)
     payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+
+
+class PublishApprovalORM(Base):
+    """Separate immutable publish-only consent; production approval is retained."""
+    __tablename__ = 'publication_publish_approvals'
+    __table_args__ = (UniqueConstraint('publication_id', 'idempotency_key_hash', name='uq_publish_approval_request'),)
+    publish_approval_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    publication_id: Mapped[str] = mapped_column(String(64), ForeignKey('publications.publication_id', ondelete='RESTRICT'), nullable=False)
+    workspace_id: Mapped[str] = mapped_column(String(64), ForeignKey('workspaces.workspace_id', ondelete='RESTRICT'), nullable=False)
+    project_id: Mapped[str] = mapped_column(String(64), ForeignKey('video_projects.project_id', ondelete='RESTRICT'), nullable=False)
+    idempotency_key_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    binding_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    binding_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    owner_token_id: Mapped[str] = mapped_column(String(80), nullable=False)
+    owner_subject: Mapped[str] = mapped_column(String(160), nullable=False)
+    owner_identity_revision: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class PublicationDispatchORM(Base):
+    """One durable upload initiation per publication; private session is a ref only."""
+    __tablename__ = 'publication_dispatches'
+    __table_args__ = (CheckConstraint('version >= 1 AND acknowledged_bytes >= 0', name='ck_publication_dispatch_progress'),
+        Index('ix_publication_dispatch_workspace_phase', 'workspace_id', 'phase'))
+    publication_id: Mapped[str] = mapped_column(String(64), ForeignKey('publications.publication_id', ondelete='RESTRICT'), primary_key=True)
+    workspace_id: Mapped[str] = mapped_column(String(64), ForeignKey('workspaces.workspace_id', ondelete='RESTRICT'), nullable=False)
+    project_id: Mapped[str] = mapped_column(String(64), ForeignKey('video_projects.project_id', ondelete='RESTRICT'), nullable=False)
+    publish_approval_id: Mapped[str] = mapped_column(String(64), ForeignKey('publication_publish_approvals.publish_approval_id', ondelete='RESTRICT'), nullable=False)
+    binding_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    phase: Mapped[str] = mapped_column(String(40), nullable=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    total_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    acknowledged_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    private_session_ref: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    intent_id: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    intent_offset: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    intent_end: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    remote_post_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    failure_code: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

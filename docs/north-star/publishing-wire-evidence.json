@@ -77,5 +77,15 @@
   "publishing_ready": false,
   "owner_uat_accepted": false,
   "production_deployed": false,
-  "early_failure_note": "r1/r2 failed one fixture whose 81-character tag was rejected by the existing schema before the intended aggregate-limit check. Fixture corrected to 80 characters; both validation layers retained."
+  "early_failure_note": "r1/r2 failed one fixture whose 81-character tag was rejected by the existing schema before the intended aggregate-limit check. Fixture corrected to 80 characters; both validation layers retained.",
+  "full_linux_api": {
+    "head": "f2aa91e7a3de77cc31718c89de8d412293bfee58",
+    "passed": 2120,
+    "skipped": 11,
+    "seconds": 534.69,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-f2aa91e.log",
+      "sha256": "7d26edb889d9a42c5970ba2736b542f052ba029950423d5da3520a940e946c87"
+    }
+  }
 }

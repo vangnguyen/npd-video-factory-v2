@@ -50,6 +50,8 @@ The existing human hash-token/workspace/expiry verifier is now shared without AP
 
 ## Required external gates
 
+Distribution now includes bounded official wire/protocol helpers and a separate publish-only Owner consent/durable dispatch journal. Fresh identity/production/QC/rights binding, one initiation, conditional claims, ambiguous chunk reconciliation and separate-process restart are fixture-tested. The additive migration preserves an owned prior SQLite schema; no production migration is performed. Encrypted private sessions, verified bytes/concurrent-edit admission, OAuth/costs, actual adapters/terminal processing and Native UI remain. This increment does not enable publishing or reduce Waves 9–16.
+
 Owner watch/listen UAT is required for Phase 10 certification. It does not block further safe source implementation. Real publishing requires separate explicit enablement and configured authorized credentials. Missing OAuth/API secrets and approved provider budgets are requested only for concrete real acceptance after mock architecture is complete. GPU acceptance needs configured approved models/workflows. Docker/Linux acceptance needs an isolated available runtime; production deployment requires separate Owner approval.
 
 ## Current blockers and baseline testing

@@ -1,0 +1,99 @@
+{
+  "schema": "north-star-publishing-dispatch-evidence-v1",
+  "parent_head": "f2aa91e7a3de77cc31718c89de8d412293bfee58",
+  "source_sha256": {
+    "apps/api/app/publishing_db.py": "35ba0640a01ee15d0e65b821e67166a8de7aae6bf151d5e88eb45617c60a613a",
+    "apps/api/app/publishing_dispatch.py": "64b0e66fa757fe98bcc9918a0045757ba91611396cceda533065d4b025df95aa",
+    "apps/api/migrations/versions/0019_north_star_publish_dispatch.py": "0f45e3d169e411da8d65777d749fd755ed2247fdf7d919cac942544ab378134a",
+    "apps/api/tests/test_publishing_dispatch.py": "9a6d429ff40cc9c10359ff06d0513c66f604487314dcb132a037cc19bcc588ed",
+    "apps/api/tests/test_publishing_dispatch_migration.py": "ece11ff801e18f159e44e813aafe36b2db786b91576ba1f58ce7c79808baec12",
+    "scripts/north_star_publishing_dispatch_contract.py": "6a409f8cecbb9743beb4f585a96780676890a2cb6b9b6e69cf0ea0b8f5f4a4cf",
+    "docs/PUBLISHING_DISPATCH_JOURNAL.md": "e593bfecd66f0a43277c696d372515a61cd0b99b6c3612b4972d2a140e136993"
+  },
+  "logs": {
+    "publishing-dispatch-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-r1.log",
+      "sha256": "fc43954a3d17911aadfb08c736e7b2319ea913ced80c8c81a0c09fab6f98c451"
+    },
+    "publishing-dispatch-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-r2.log",
+      "sha256": "91a1d94dfd8959a16e00185acc98663b082ff08d6d09d7135ed3aa9caf5e769e"
+    },
+    "publishing-dispatch-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-r3.log",
+      "sha256": "1f1aee2297046d5a8612b4920a83b9eda1c2a4d70c8008a2851862a6dbe63f4c"
+    },
+    "publishing-migration-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-migration-r1.log",
+      "sha256": "0f825df5d39a1f5bddbcbfee5377958141f705f358b0973767c064ed6505b4ba"
+    },
+    "publishing-dispatch-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-contract-n1.log",
+      "sha256": "c7890f536ef5d7c6df46a070ac8365b7aec9a8a41ec58f6f2aeccd93962bf9fa"
+    },
+    "api-linux-f2aa91e.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-f2aa91e.log",
+      "sha256": "7d26edb889d9a42c5970ba2736b542f052ba029950423d5da3520a940e946c87"
+    }
+  },
+  "exports": {
+    "ambiguous-initialization.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-contract-n1\\ambiguous-initialization.json",
+      "sha256": "bb1115b544ae663533f3a398bbb67d74d087952083ac0aa513c3823160e2104a"
+    },
+    "dispatch-history.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-contract-n1\\dispatch-history.json",
+      "sha256": "8fbcdd0fe1bf758bae6365235e9085bced4704402ded0ef5ed021ce6ae1fdd4d"
+    },
+    "events.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-contract-n1\\events.json",
+      "sha256": "052628fb0133525fb13615f406f761c3db449bac98b1b3c5e9ec883faf10c39c"
+    },
+    "migration.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-contract-n1\\migration.json",
+      "sha256": "1b415ee298c596248ac23cd7e39dcd255f55c6735373cd7cf8dd0d4ffa15574e"
+    },
+    "publish-only-fixture-consent.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-contract-n1\\publish-only-fixture-consent.json",
+      "sha256": "4de5262c3a88e88d04cfeca1ce9572e874aaaa232a1bc763674494af8e44a71c"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-contract-n1\\receipt.json",
+      "sha256": "6e416de6d604ebd6508b44eb0547f602514e508787e2bddcba134cab465365b4"
+    },
+    "restart-projections.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-dispatch-contract-n1\\restart-projections.json",
+      "sha256": "b20f9af8939a653b1b38faf121e73185449138188ac7245f285ea55f5316b3d6"
+    }
+  },
+  "new_dispatch_tests": 13,
+  "new_additive_migration_tests": 1,
+  "expanded_regression_pass": 81,
+  "expanded_regression_seconds": 53.88,
+  "migration_pass": 1,
+  "migration_seconds": 2.98,
+  "separate_process_restart_reads": 3,
+  "full_parent_api": {
+    "head": "f2aa91e7a3de77cc31718c89de8d412293bfee58",
+    "pass": 2120,
+    "skip": 11,
+    "seconds": 534.69
+  },
+  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "actual_sqlite_transactions": true,
+  "separate_publish_consent": true,
+  "durable_intent_before_fixture_callback": true,
+  "init_uncertainty_never_auto_repeated": true,
+  "claims_and_stale_replies_fenced": true,
+  "all_human_media_provider_inputs_are_fixtures": true,
+  "private_session_encryption_verified": false,
+  "production_migration_executed": false,
+  "actual_external_requests": 0,
+  "secrets_read": 0,
+  "paid_operations": 0,
+  "app_registry_live_adapter_activated": false,
+  "publishing_ready": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "early_failure_note": "r1 had nine passes and one fixture failure from direct mutation of frozen HumanTokenRecord. Fixture replaces the record with model_copy; production identity immutability remains unchanged. r2 passed 49 tests; subsequent stricter ticket and interrupted-query recovery checks passed the expanded 81-test r3."
+}
