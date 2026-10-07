@@ -546,6 +546,8 @@ async def test_comfyui_provider_sends_only_allowlisted_contract_fields() -> None
 
     async def handler(request: httpx.Request) -> httpx.Response:
         nonlocal submitted
+        assert request.headers['Authorization'] == 'Bearer explicit-comfyui-contract-token-32-characters'
+        assert request.headers['X-VF-Workspace-Id'] == 'fixture-workspace-A'
         if request.method == "POST":
             submitted = __import__("json").loads(request.content)
             return httpx.Response(
@@ -554,6 +556,7 @@ async def test_comfyui_provider_sends_only_allowlisted_contract_fields() -> None
                     "job_id": "cui_fixture_http",
                     "status": "queued",
                     "workflow_id": "npd-text-to-image-v1",
+                    "workspace_id": "fixture-workspace-A",
                 },
             )
         return httpx.Response(
@@ -561,6 +564,8 @@ async def test_comfyui_provider_sends_only_allowlisted_contract_fields() -> None
             json={
                 "job_id": "cui_fixture_http",
                 "status": "succeeded",
+                "workflow_id": "npd-text-to-image-v1",
+                "workspace_id": "fixture-workspace-A",
                 "result": {
                     "artifact_reference": "fixture://comfyui/result",
                     "checksum_sha256": "a" * 64,
@@ -575,11 +580,12 @@ async def test_comfyui_provider_sends_only_allowlisted_contract_fields() -> None
         enabled=True,
         timeout_seconds=1,
         transport=httpx.MockTransport(handler),
+        service_token='explicit-comfyui-contract-token-32-characters',
     )
-    result = await provider.generate(
-        ImageGenerationInput(prompt="original fixture", aspect_ratio="9:16", seed=9)
-    )
-    assert set(submitted) == {"workflow_id", "inputs", "client_request_id"}
+    from app.media_generation_scope import media_generation_scope
+    with media_generation_scope(workspace_id='fixture-workspace-A', project_id='fixture-project-A', job_id='fixture-job-A'):
+        result = await provider.generate(ImageGenerationInput(prompt="original fixture", aspect_ratio="9:16", seed=9))
+    assert set(submitted) == {"workflow_id", "workspace_id", "inputs", "client_request_id"}
     assert "graph" not in submitted and "model_weights" not in submitted
     assert submitted["workflow_id"] == "npd-text-to-image-v1"
     assert result.external_call is True and result.paid is False

@@ -55,6 +55,7 @@ from .provider_safety import (
 )
 from .vision_repository import VisionRepository
 from .stock_media_providers import PexelsStockMediaProvider,PixabayStockMediaProvider,stock_request_scope
+from .media_generation_scope import media_generation_scope
 
 
 MEDIA_RESOLUTION_QUEUE_KEY = "npd:video-factory:v2:media-resolution:queued"
@@ -92,6 +93,7 @@ def create_media_provider_bundle(settings) -> MediaProviderBundle:
             workflow_id=settings.comfyui_image_workflow_id,
             enabled=settings.comfyui_execution_enabled,
             timeout_seconds=settings.comfyui_bridge_timeout_seconds,
+            service_token=settings.comfyui_bridge_token.get_secret_value(),
         )
     else:
         image = ContractOnlyImageGenerationProvider()
@@ -104,6 +106,7 @@ def create_media_provider_bundle(settings) -> MediaProviderBundle:
             workflow_id=settings.comfyui_video_workflow_id,
             enabled=settings.comfyui_execution_enabled,
             timeout_seconds=settings.comfyui_bridge_timeout_seconds,
+            service_token=settings.comfyui_bridge_token.get_secret_value(),
         )
     else:
         video = ContractOnlyVideoGenerationProvider()
@@ -438,6 +441,9 @@ class MediaResolutionService:
                 "algorithm": "media-resolution-v2-06.1",
                 "asynchronous": True,
                 "fixture": not external and capability != 'internal_media',
+                "provider_configured": (self.providers.stock.configured if capability == 'stock_media' else
+                    self.providers.image.configured if capability == 'image_generation' else
+                    self.providers.video.configured if capability == 'video_generation' else True),
                 "request": request_payload,
                 "source_media_mutated": False,
                 "publish_requested": False,
@@ -482,7 +488,7 @@ class MediaResolutionService:
                 raise RuntimeError("external media execution is disabled in V2-06")
             if materialized.paid and not self.allow_paid_execution:
                 raise RuntimeError("paid media execution is disabled in V2-06")
-            if materialized.estimated_cost_vnd > plan.max_ai_cost_vnd and item.strategy in {
+            if (materialized.estimated_cost_vnd is None or materialized.estimated_cost_vnd > plan.max_ai_cost_vnd) and item.strategy in {
                 "ai_image",
                 "ai_video",
                 "motion_graphic",
@@ -818,9 +824,11 @@ class MediaResolutionService:
                 return await self.providers.stock.download_asset(candidate), None
         if item.strategy in {"ai_image", "motion_graphic"}:
             request = ImageGenerationInput.model_validate(job.provenance.get("request") or {})
-            return await self.providers.image.generate(request), None
+            with media_generation_scope(workspace_id=plan.workspace_id, project_id=plan.project_id, job_id=job.resolution_job_id):
+                return await self.providers.image.generate(request), None
         request = VideoGenerationInput.model_validate(job.provenance.get("request") or {})
-        return await self.providers.video.generate(request), None
+        with media_generation_scope(workspace_id=plan.workspace_id, project_id=plan.project_id, job_id=job.resolution_job_id):
+            return await self.providers.video.generate(request), None
 
     def _ensure_provider_configured(self, item) -> None:
         if item.strategy in {"stock_image", "stock_video"} and not self.providers.stock.configured:

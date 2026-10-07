@@ -114,6 +114,7 @@ class Settings(BaseSettings):
     media_external_execution_enabled: bool = False
     media_paid_execution_enabled: bool = False
     comfyui_bridge_url: str = "http://comfyui-bridge:8011"
+    comfyui_bridge_token: SecretStr = Field(default=SecretStr(''), exclude=True, repr=False)
     comfyui_execution_enabled: bool = False
     comfyui_bridge_timeout_seconds: float = 300.0
     comfyui_image_workflow_id: str = "npd-text-to-image-v1"

@@ -3,12 +3,14 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import re
 from dataclasses import dataclass
 from decimal import Decimal
 from html import escape
 from typing import Any, Protocol
 
 import httpx
+from .media_generation_scope import current_generation_scope
 
 from .media_intelligence_models import (
     ImageGenerationInput,
@@ -40,8 +42,8 @@ class ProviderMaterializedMedia:
     duration_seconds: float | None
     orientation: str
     production_eligible: bool
-    estimated_cost_vnd: Decimal
-    actual_cost_vnd: Decimal
+    estimated_cost_vnd: Decimal | None
+    actual_cost_vnd: Decimal | None
     external_call: bool
     paid: bool
     real_provider_tested: bool
@@ -410,42 +412,54 @@ class ComfyUIBridgeGenerationProvider:
         enabled: bool,
         timeout_seconds: float = 300,
         transport: httpx.AsyncBaseTransport | None = None,
+        service_token: str = '',
     ) -> None:
         self.bridge_url = bridge_url.rstrip("/")
         self.modality = modality
         self.workflow_id = workflow_id
-        self.configured = enabled and bool(self.bridge_url)
+        if service_token and (not 32 <= len(service_token) <= 8192 or any(c.isspace() for c in service_token)):
+            raise ValueError('COMFYUI_SERVICE_TOKEN_INVALID')
+        self._service_token = service_token
+        self.configured = enabled and bool(self.bridge_url) and bool(service_token)
         self.timeout_seconds = timeout_seconds
         self.transport = transport
         self.key = f"comfyui-{modality}"
         self.model = f"workflow:{workflow_id}"
 
-    async def estimate_cost(self, payload: ImageGenerationInput | VideoGenerationInput) -> Decimal:
-        return Decimal("0")
+    async def estimate_cost(self, payload: ImageGenerationInput | VideoGenerationInput) -> Decimal | None:
+        return None # GPU compute cost requires configured accounting; absence is not zero.
 
     async def generate(
         self, payload: ImageGenerationInput | VideoGenerationInput
     ) -> ProviderMaterializedMedia:
         if not self.configured:
             raise MediaProviderNotConfigured("ComfyUI bridge execution is not configured")
+        workspace_id, project_id, resolution_job_id = current_generation_scope()
         timeout = httpx.Timeout(self.timeout_seconds, connect=10)
         async with httpx.AsyncClient(
             base_url=self.bridge_url,
             timeout=timeout,
             transport=self.transport,
+            headers={'Authorization': 'Bearer ' + self._service_token, 'X-VF-Workspace-Id': workspace_id},
+            trust_env=False,
+            follow_redirects=False,
         ) as client:
             response = await client.post(
                 "/v1/jobs",
                 json={
                     "workflow_id": self.workflow_id,
+                    "workspace_id": workspace_id,
                     "inputs": payload.model_dump(mode="json"),
-                    "client_request_id": _stable_token(payload.model_dump_json(), self.workflow_id),
+                    "client_request_id": _stable_token(workspace_id, project_id, resolution_job_id, payload.model_dump_json(), self.workflow_id),
                 },
             )
-            if response.status_code >= 400:
+            if response.status_code != 202:
                 raise RuntimeError(f"ComfyUI bridge rejected generation: HTTP {response.status_code}")
             job = response.json()
             job_id = str(job["job_id"])
+            if (not re.fullmatch(r'cui_[A-Za-z0-9_-]{1,80}', job_id) or job.get('workspace_id') != workspace_id or
+                    job.get('workflow_id') != self.workflow_id):
+                raise ValueError('COMFYUI_JOB_BINDING_INVALID')
             deadline = asyncio.get_running_loop().time() + self.timeout_seconds
             while job.get("status") not in {"succeeded", "failed", "cancelled", "timed_out"}:
                 if asyncio.get_running_loop().time() >= deadline:
@@ -454,6 +468,9 @@ class ComfyUIBridgeGenerationProvider:
                 poll = await client.get(f"/v1/jobs/{job_id}")
                 poll.raise_for_status()
                 job = poll.json()
+                if (job.get('job_id') != job_id or job.get('workspace_id') != workspace_id or
+                        job.get('workflow_id') != self.workflow_id):
+                    raise ValueError('COMFYUI_JOB_BINDING_INVALID')
         if job.get("status") != "succeeded":
             raise RuntimeError(f"ComfyUI bridge generation failed: {job.get('error_code') or job.get('status')}")
         result = job.get("result") or {}
@@ -461,6 +478,9 @@ class ComfyUIBridgeGenerationProvider:
         content = json.dumps(
             {
                 "bridge_job_id": job_id,
+                "workspace_id": workspace_id,
+                "project_id": project_id,
+                "resolution_job_id": resolution_job_id,
                 "artifact_reference": artifact_reference,
                 "workflow_id": self.workflow_id,
                 "notice": "Bridge artifact reference; binary registration is performed by the GPU deployment.",
@@ -486,8 +506,8 @@ class ComfyUIBridgeGenerationProvider:
             duration_seconds=result.get("duration_seconds"),
             orientation="unknown",
             production_eligible=False,
-            estimated_cost_vnd=Decimal("0"),
-            actual_cost_vnd=Decimal("0"),
+            estimated_cost_vnd=None,
+            actual_cost_vnd=None,
             external_call=True,
             paid=False,
             real_provider_tested=False,
@@ -498,6 +518,10 @@ class ComfyUIBridgeGenerationProvider:
                 "bridge_job_id": job_id,
                 "prompt": payload.prompt,
                 "real_provider_tested": False,
+                "gpu_compute_cost_verified": False,
+                "fixture": bool(result.get('fixture')) or isinstance(self.transport, httpx.MockTransport),
+                "mock_transport_used": isinstance(self.transport, httpx.MockTransport),
+                "binary_artifact_registered": False,
             },
         )
 

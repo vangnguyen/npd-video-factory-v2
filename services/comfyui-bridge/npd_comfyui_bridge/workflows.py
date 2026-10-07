@@ -1,15 +1,19 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
 from .models import WorkflowDefinition, WorkflowManifest
+from .job_store import linked
 
 
 class WorkflowRegistry:
     def __init__(self, manifest_path: Path):
+        if linked(manifest_path) or manifest_path.stat().st_size > 2 * 1024 * 1024:
+            raise ValueError('APPROVED_MANIFEST_PATH_INVALID')
         self.manifest_path = manifest_path.resolve()
         payload = json.loads(self.manifest_path.read_text(encoding="utf-8"))
         self.manifest = WorkflowManifest.model_validate(payload)
@@ -34,7 +38,26 @@ class WorkflowRegistry:
         return definition
 
     def validate_inputs(self, definition: WorkflowDefinition, inputs: dict) -> None:
+        def reject_graph(value):
+            if isinstance(value, dict):
+                if any(key in {'graph', 'prompt_graph', 'workflow_graph', 'model_weights'} for key in value):
+                    raise ValueError('ARBITRARY_CLIENT_GRAPH_FORBIDDEN')
+                for item in value.values():
+                    reject_graph(item)
+            elif isinstance(value, list):
+                for item in value:
+                    reject_graph(item)
+        reject_graph(inputs)
         Draft202012Validator(definition.input_schema).validate(inputs)
 
     def validate_output(self, definition: WorkflowDefinition, output: dict) -> None:
         Draft202012Validator(definition.output_schema).validate(output)
+
+    def fingerprint(self, definition: WorkflowDefinition) -> str:
+        graph = self.manifest_path.parent / definition.graph_file
+        if any(p.is_symlink() or getattr(p, 'is_junction', lambda: False)() for p in [graph, *graph.parents]):
+            raise ValueError('APPROVED_WORKFLOW_PATH_INVALID')
+        if graph.stat().st_size > 2 * 1024 * 1024:
+            raise ValueError('APPROVED_WORKFLOW_TOO_LARGE')
+        value = {'definition': definition.model_dump(mode='json'), 'graph_sha256': hashlib.sha256(graph.read_bytes()).hexdigest()}
+        return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()).hexdigest()

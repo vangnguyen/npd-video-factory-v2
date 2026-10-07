@@ -29,6 +29,7 @@ async def wait_terminal(service: ComfyUIBridgeService, job_id: str):
 
 def text_to_image_request(client_request_id: str = "fixture-request-001") -> BridgeJobCreate:
     return BridgeJobCreate(
+        workspace_id='fixture-workspace-A',
         workflow_id="npd-text-to-image-v1",
         workflow_version="1.0.0",
         client_request_id=client_request_id,
@@ -125,14 +126,14 @@ async def test_cancelled_job_can_be_retried() -> None:
 @pytest.mark.asyncio
 async def test_timeout_is_terminal_and_retryable() -> None:
     registry = WorkflowRegistry(MANIFEST)
-    registry.get("npd-text-to-image-v1").timeout_seconds = 0.005
-    backend = DeterministicMockComfyUIBackend(delay_seconds=0.02)
+    registry.get("npd-text-to-image-v1").timeout_seconds = 0.05
+    backend = DeterministicMockComfyUIBackend(delay_seconds=0.1)
     service = ComfyUIBridgeService(registry, backend)
     job = await service.submit(text_to_image_request("fixture-request-timeout"))
     timed_out = await wait_terminal(service, job.job_id)
     assert timed_out.status == "timed_out"
     assert timed_out.error_code == "TIMEOUT"
-    registry.get("npd-text-to-image-v1").timeout_seconds = 1
+    backend.delay_seconds = 0
     retried = await service.retry(job.job_id)
     assert retried.retry_count == 1
     assert (await wait_terminal(service, job.job_id)).status == "succeeded"
@@ -153,19 +154,22 @@ async def test_failed_job_can_retry_without_changing_workflow_contract() -> None
     assert result.workflow_version == "1.0.0"
 
 
-def load_bridge_app(monkeypatch, *, execution_enabled: bool):
+def load_bridge_app(monkeypatch, *, execution_enabled: bool, tmp_path: Path):
     monkeypatch.setenv("COMFYUI_WORKFLOW_MANIFEST", str(MANIFEST))
     monkeypatch.setenv("COMFYUI_EXECUTION_ENABLED", str(execution_enabled).lower())
     monkeypatch.setenv("COMFYUI_BACKEND", "mock" if execution_enabled else "disabled")
     monkeypatch.setenv("APP_ENV", "development")
+    monkeypatch.setenv('COMFYUI_JOB_STORE_PATH', str(tmp_path / 'bridge.sqlite3'))
+    monkeypatch.setenv('COMFYUI_BRIDGE_TOKEN', 'explicit-fixture-service-token-32-characters')
     sys.modules.pop("npd_comfyui_bridge.main", None)
     return importlib.import_module("npd_comfyui_bridge.main").app
 
 
 @pytest.mark.asyncio
-async def test_bridge_http_contract_reports_disabled_backend(monkeypatch) -> None:
-    bridge_app = load_bridge_app(monkeypatch, execution_enabled=False)
-    async with AsyncClient(transport=ASGITransport(app=bridge_app), base_url="http://test") as client:
+async def test_bridge_http_contract_reports_disabled_backend(monkeypatch, tmp_path) -> None:
+    bridge_app = load_bridge_app(monkeypatch, execution_enabled=False, tmp_path=tmp_path)
+    async with AsyncClient(transport=ASGITransport(app=bridge_app), base_url="http://test",
+            headers={'Authorization': 'Bearer explicit-fixture-service-token-32-characters', 'X-VF-Workspace-Id': 'fixture-workspace-A'}) as client:
         assert (await client.get("/healthz")).json() == {
             "status": "ok",
             "backend_configured": False,
@@ -180,12 +184,14 @@ async def test_bridge_http_contract_reports_disabled_backend(monkeypatch) -> Non
         rejected = await client.post("/v1/jobs", json=text_to_image_request().model_dump(mode="json"))
         assert rejected.status_code == 503
         assert rejected.json()["detail"]["error"]["code"] == "COMFYUI_NOT_CONFIGURED"
+    await bridge_app.state.bridge_service.close()
 
 
 @pytest.mark.asyncio
-async def test_bridge_http_contract_queues_allowlisted_mock(monkeypatch) -> None:
-    bridge_app = load_bridge_app(monkeypatch, execution_enabled=True)
-    async with AsyncClient(transport=ASGITransport(app=bridge_app), base_url="http://test") as client:
+async def test_bridge_http_contract_queues_allowlisted_mock(monkeypatch, tmp_path) -> None:
+    bridge_app = load_bridge_app(monkeypatch, execution_enabled=True, tmp_path=tmp_path)
+    async with AsyncClient(transport=ASGITransport(app=bridge_app), base_url="http://test",
+            headers={'Authorization': 'Bearer explicit-fixture-service-token-32-characters', 'X-VF-Workspace-Id': 'fixture-workspace-A'}) as client:
         response = await client.post(
             "/v1/jobs", json=text_to_image_request("fixture-request-http").model_dump(mode="json")
         )
@@ -200,3 +206,4 @@ async def test_bridge_http_contract_queues_allowlisted_mock(monkeypatch) -> None
         else:
             raise AssertionError("mock bridge HTTP job did not finish")
         assert result.json()["result"]["fixture"] is True
+    await bridge_app.state.bridge_service.close()

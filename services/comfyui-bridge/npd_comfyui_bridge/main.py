@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import os
+import hmac
+from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
 
 from .backend import DeterministicMockComfyUIBackend, DisabledComfyUIBackend
 from .models import BridgeJobCreate, BridgeJobRead
 from .service import ComfyUIBridgeService
+from .job_store import SQLiteBridgeJobStore
 from .workflows import WorkflowRegistry
 
 
@@ -25,8 +28,44 @@ backend = (
     if execution_enabled and backend_name == "mock"
     else DisabledComfyUIBackend()
 )
-service = ComfyUIBridgeService(registry, backend)
-app = FastAPI(title="NPD ComfyUI Bridge", version="0.1.0")
+service_token = os.getenv('COMFYUI_BRIDGE_TOKEN', '')
+if service_token and (len(service_token) < 32 or len(service_token) > 8192 or any(c.isspace() for c in service_token)):
+    raise RuntimeError('COMFYUI_BRIDGE_TOKEN_INVALID')
+service = ComfyUIBridgeService(registry, backend,
+    job_store=SQLiteBridgeJobStore(Path(os.getenv('COMFYUI_JOB_STORE_PATH', '/workspace/storage/comfyui-bridge/jobs.sqlite3'))),
+    max_concurrent_jobs=int(os.getenv('COMFYUI_MAX_CONCURRENT_JOBS', '1')),
+    max_queued_jobs=int(os.getenv('COMFYUI_MAX_QUEUED_JOBS', '32')),
+    max_retries=int(os.getenv('COMFYUI_MAX_RETRIES', '3')))
+
+
+@asynccontextmanager
+async def lifespan(_app):
+    try:
+        yield
+    finally:
+        await service.close()
+
+
+app = FastAPI(title="NPD ComfyUI Bridge", version="0.2.0", lifespan=lifespan)
+app.state.bridge_service = service
+
+
+async def require_service(authorization: str | None = Header(default=None),
+                          x_vf_workspace_id: str | None = Header(default=None)):
+    if not service_token:
+        raise HTTPException(503, detail={'error': {'code': 'BRIDGE_AUTH_NOT_CONFIGURED'}})
+    if not authorization or not hmac.compare_digest(authorization.encode(), ('Bearer ' + service_token).encode()):
+        raise HTTPException(401, detail={'error': {'code': 'SERVICE_AUTH_REQUIRED'}})
+    if not x_vf_workspace_id or len(x_vf_workspace_id) > 200 or any(c.isspace() for c in x_vf_workspace_id):
+        raise HTTPException(422, detail={'error': {'code': 'WORKSPACE_SCOPE_REQUIRED'}})
+    return x_vf_workspace_id
+
+
+async def scoped_job(job_id, workspace_id):
+    result = await service.get(job_id)
+    if result is None or result.workspace_id != workspace_id:
+        raise HTTPException(404, detail={'error': {'code': 'NOT_FOUND'}})
+    return result
 
 
 @app.get("/healthz")
@@ -37,47 +76,63 @@ async def healthz() -> dict[str, object]:
 @app.get("/readyz")
 async def readyz() -> dict[str, object]:
     return {
-        "status": "ready" if backend.configured else "not_configured",
+        "status": "ready" if backend.configured and service_token else "not_configured",
         "execution_enabled": execution_enabled,
         "approved_workflows": len(registry.manifest.workflows),
     }
 
 
-@app.post("/v1/jobs", response_model=BridgeJobRead, status_code=status.HTTP_202_ACCEPTED)
-async def submit(payload: BridgeJobCreate) -> BridgeJobRead:
+@app.post("/v1/jobs", response_model=BridgeJobRead, status_code=status.HTTP_202_ACCEPTED, dependencies=[Depends(require_service)])
+async def submit(payload: BridgeJobCreate, workspace_id: str = Depends(require_service)) -> BridgeJobRead:
+    if payload.workspace_id != workspace_id:
+        raise HTTPException(422, detail={'error': {'code': 'WORKSPACE_SCOPE_MISMATCH'}})
     try:
         return await service.submit(payload)
     except KeyError as exc:
-        raise HTTPException(404, detail={"error": {"code": "WORKFLOW_NOT_APPROVED", "message": str(exc)}}) from exc
+        raise HTTPException(404, detail={"error": {"code": "WORKFLOW_NOT_APPROVED"}}) from exc
     except RuntimeError as exc:
-        raise HTTPException(503, detail={"error": {"code": "COMFYUI_NOT_CONFIGURED", "message": str(exc)}}) from exc
+        code = str(exc) if str(exc) in {'BRIDGE_QUEUE_FULL', 'BRIDGE_SHUTTING_DOWN', 'BRIDGE_STORE_LIMIT_REACHED'} else 'COMFYUI_NOT_CONFIGURED'
+        raise HTTPException(503, detail={"error": {"code": code}}) from exc
     except Exception as exc:
-        raise HTTPException(422, detail={"error": {"code": "INVALID_WORKFLOW_INPUT", "message": str(exc)}}) from exc
+        raise HTTPException(422, detail={"error": {"code": "INVALID_WORKFLOW_INPUT"}}) from exc
 
 
-@app.get("/v1/jobs/{job_id}", response_model=BridgeJobRead)
-async def get_job(job_id: str) -> BridgeJobRead:
-    result = await service.get(job_id)
-    if result is None:
-        raise HTTPException(404, detail={"error": {"code": "NOT_FOUND", "message": "Job not found."}})
-    return result
+@app.get('/v1/jobs', response_model=list[BridgeJobRead], dependencies=[Depends(require_service)])
+async def list_jobs(limit: int = Query(default=100, ge=1, le=200), workspace_id: str = Depends(require_service)):
+    return await service.list_jobs(limit=limit, workspace_id=workspace_id)
 
 
-@app.post("/v1/jobs/{job_id}/cancel", response_model=BridgeJobRead)
-async def cancel(job_id: str) -> BridgeJobRead:
+@app.get('/v1/jobs/{job_id}/events', dependencies=[Depends(require_service)])
+async def job_events(job_id: str, workspace_id: str = Depends(require_service)):
+    await scoped_job(job_id, workspace_id)
+    try:
+        return await service.events(job_id)
+    except KeyError as exc:
+        raise HTTPException(404, detail={'error': {'code': 'NOT_FOUND'}}) from exc
+
+
+@app.get("/v1/jobs/{job_id}", response_model=BridgeJobRead, dependencies=[Depends(require_service)])
+async def get_job(job_id: str, workspace_id: str = Depends(require_service)) -> BridgeJobRead:
+    return await scoped_job(job_id, workspace_id)
+
+
+@app.post("/v1/jobs/{job_id}/cancel", response_model=BridgeJobRead, dependencies=[Depends(require_service)])
+async def cancel(job_id: str, workspace_id: str = Depends(require_service)) -> BridgeJobRead:
+    await scoped_job(job_id, workspace_id)
     try:
         return await service.cancel(job_id)
     except KeyError as exc:
         raise HTTPException(404, detail={"error": {"code": "NOT_FOUND", "message": "Job not found."}}) from exc
 
 
-@app.post("/v1/jobs/{job_id}/retry", response_model=BridgeJobRead)
-async def retry(job_id: str) -> BridgeJobRead:
+@app.post("/v1/jobs/{job_id}/retry", response_model=BridgeJobRead, dependencies=[Depends(require_service)])
+async def retry(job_id: str, workspace_id: str = Depends(require_service)) -> BridgeJobRead:
+    await scoped_job(job_id, workspace_id)
     try:
         return await service.retry(job_id)
     except KeyError as exc:
         raise HTTPException(404, detail={"error": {"code": "NOT_FOUND", "message": "Job not found."}}) from exc
     except ValueError as exc:
-        raise HTTPException(409, detail={"error": {"code": "INVALID_JOB_STATE", "message": str(exc)}}) from exc
+        raise HTTPException(409, detail={"error": {"code": "INVALID_JOB_STATE"}}) from exc
     except RuntimeError as exc:
-        raise HTTPException(503, detail={"error": {"code": "COMFYUI_NOT_CONFIGURED", "message": str(exc)}}) from exc
+        raise HTTPException(503, detail={"error": {"code": "COMFYUI_NOT_CONFIGURED"}}) from exc

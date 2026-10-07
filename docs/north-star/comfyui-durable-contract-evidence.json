@@ -1,0 +1,89 @@
+{
+  "schema": "north-star-comfyui-durable-evidence-v1",
+  "explicit_fixture": true,
+  "http_transport": "in-process ASGI",
+  "backend": "deterministic mock",
+  "real_provider_tested": false,
+  "external_provider_calls": 0,
+  "gpu_dispatches": 0,
+  "binary_media_created": false,
+  "binary_artifact_registered": false,
+  "production_eligible": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "store_path": "C:\\vf-comfy-contract-n1\\bridge.sqlite3",
+  "store_sha256": "db6e9ed1db9b78be0ed7247f9eb937a1631e2ead3ec8d7f2250ceda9dd9fee2a",
+  "output_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-durable-contract-n1",
+  "terminal_result_replayed_offline": true,
+  "interruption_required_explicit_retry": true,
+  "workspaces_isolated": true,
+  "audit_omits_private_inputs": true,
+  "exports": {
+    "request.json": "7b78422ae9ed9de58ec3704959b40cbf29dc6ca38cd8a8a7af2afb734e38e36c",
+    "job.json": "94b5558b5731d5d32853e89a2a8129593a44257aa7511fa38a1ec6f4450edf1c",
+    "job-events.json": "ef88731eec69452d5e1ff88816dcab11d39ce533ca9f7cb8e8320a21dc157d46",
+    "http-security.json": "87ec82a3f3e9f1edab35e6e03e689fccc20348f243cdbc54c85dd87e6d5e2678",
+    "offline-replay.json": "2d4698d322535aa0591b0835ed007c80d4389edf37113134d06fa0458dbe2c72",
+    "interruption-recovery.json": "7009429e4e6af7df1b46df53977a2e8fc83220ca55aa75667ebf87e8cc7de8cb",
+    "retried-job.json": "325756e963ba76fe5662bcc63d0a4c73e893809b1836e5055156c93aa4d16082",
+    "retried-events.json": "5f6a4977644461ebe6eae751e5a5fa33d459d3f43a0b93be2ec6768faa92ddf4"
+  },
+  "parent_head": "aa59491c086f0cea08bd6d80d8455d40947b4cb3",
+  "source_sha256": {
+    "services/comfyui-bridge/npd_comfyui_bridge/job_store.py": "969c2e751137a44b617c8e7cb81e2c618d56b185e2bb07da35aedb4e0abd4ef6",
+    "services/comfyui-bridge/npd_comfyui_bridge/service.py": "812dc4514a5c910a9cf4f4ab19ff0bde7b1d005e97ed0b367b5f63c7f1b71825",
+    "services/comfyui-bridge/npd_comfyui_bridge/main.py": "f00ae6c4cee0a0edab1b5105cfea4a3a86d5f5e7569b37c1300e6f21351df96d",
+    "services/comfyui-bridge/npd_comfyui_bridge/models.py": "d7ca6e316faee1b031d20dc2c1c7ff88388c9691dde9b8f60221e1250f696b2c",
+    "services/comfyui-bridge/npd_comfyui_bridge/workflows.py": "6b503aaf817873a205c4f61510842e76114b75f9277a7498f7304c1930cf4523",
+    "services/comfyui-bridge/tests/test_bridge.py": "20966e6369bad9827dd0b4eff63c0baccce43085c7d6a2e4f1588772b4323f42",
+    "services/comfyui-bridge/tests/test_durable_bridge.py": "3109e15f59c055bee23064126706dbae2a8ffaa3033c5704f364ba104ba8b5d6",
+    "apps/api/app/media_generation_scope.py": "2fec0a677340a602b48070ecccb913075740736dc7cfff8e993b670ff34ee8ca",
+    "apps/api/app/media_intelligence_providers.py": "f43efaea93e3ca3dc1726e80bf4f9ef16762146c15b0bf7670a050bc2888494b",
+    "apps/api/app/media_intelligence_service.py": "83b3e0ee7206b35012040c54802f21e2f0d170ca8acaf6c884b22f90e693863a",
+    "apps/api/app/media_intelligence_repository.py": "bf03380f91a57299675e9ce8aaad5a7d0c446b104ad5ea561253e7eaf0e9ba15",
+    "apps/api/tests/test_comfyui_generation_scope.py": "2ea6332a58d1f69ca465cf69930caecbe919fd6878382311e23726d6c5f23abd",
+    "scripts/north_star_comfyui_contract.py": "daa8038f489fff5daaad4782415e891fcaac2405e10a3ce326c65562d9fa1e4d",
+    "docker-compose.yml": "d887b7eecf0d9eb61d6ca7779301943a2b1c3a6192a868def20bb9e80b34032b"
+  },
+  "logs": {
+    "comfyui-durable-r4.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-durable-r4.log",
+      "sha256": "b9890299755aaf9864b8216c6d1402c352f5d6e31371b0aba4394a7efc66d33f"
+    },
+    "comfyui-durable-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-durable-r1.log",
+      "sha256": "1e01e8b9e59d96c6bd9110dc85350f83113f01e434beace0f31b9e0281ea8dc0"
+    },
+    "comfyui-durable-api-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-durable-api-r3.log",
+      "sha256": "c786fd6d7e484750a4e72bd9d959c102fdba2a16168c7c0f947c0edd5c616914"
+    },
+    "comfyui-durable-api-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-durable-api-r2.log",
+      "sha256": "50a1f6377088d483e3e596dd42d713c652775ec795fb0e719841b54bc5b1cc28"
+    },
+    "comfyui-durable-worker-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-durable-worker-r1.log",
+      "sha256": "064cc30d870a3ed263d94b0e5a0b2bc1f008c795cb6a003e87fd4cd31967804d"
+    },
+    "comfyui-durable-native-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-durable-native-r1.log",
+      "sha256": "71ee3dab63be135671f3e7b639165d6b45e406c49f5abc381eb604ad17640260"
+    },
+    "comfyui-durable-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-durable-contract-n1.log",
+      "sha256": "f3ce52356ee0395b29c806d88853f983db459cb03a6ab368d1280079805c92e4"
+    },
+    "api-linux-aa59491.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-aa59491.log",
+      "sha256": "2718180e4550c90892837f031eab88798075413bfbc54d0f0e2b572906fe5745"
+    }
+  },
+  "bridge_tests_passed": 19,
+  "api_tests_passed": 60,
+  "worker_tests_passed": 27,
+  "native_tests_passed": 10,
+  "full_parent_linux_api_passed": 2015,
+  "full_parent_linux_api_skipped": 11,
+  "remaining": "Live GPU transport, mode routing, executable reviewed graphs, binary registration/decoding, real cost/provider acceptance and Native controls."
+}

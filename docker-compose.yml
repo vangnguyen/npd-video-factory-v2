@@ -189,8 +189,14 @@ services:
       COMFYUI_WORKFLOW_MANIFEST: /workspace/workflows/comfyui/manifest.json
       COMFYUI_EXECUTION_ENABLED: ${COMFYUI_EXECUTION_ENABLED:-false}
       COMFYUI_BACKEND: ${COMFYUI_BACKEND:-disabled}
+      COMFYUI_BRIDGE_TOKEN: ${COMFYUI_BRIDGE_TOKEN:-}
+      COMFYUI_JOB_STORE_PATH: /workspace/storage/comfyui-bridge/jobs.sqlite3
+      COMFYUI_MAX_CONCURRENT_JOBS: ${COMFYUI_MAX_CONCURRENT_JOBS:-1}
+      COMFYUI_MAX_QUEUED_JOBS: ${COMFYUI_MAX_QUEUED_JOBS:-32}
+      COMFYUI_MAX_RETRIES: ${COMFYUI_MAX_RETRIES:-3}
     volumes:
       - ./workflows/comfyui:/workspace/workflows/comfyui:ro
+      - comfyui-bridge-data:/workspace/storage/comfyui-bridge
     expose:
       - "8011"
     healthcheck:
@@ -203,3 +209,4 @@ volumes:
   postgres-data:
   redis-data:
   minio-data:
+  comfyui-bridge-data:

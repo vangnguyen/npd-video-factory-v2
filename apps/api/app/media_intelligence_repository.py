@@ -262,6 +262,8 @@ class MediaIntelligenceRepository:
             )
             if existing:
                 return _resolution_job_read(existing), False
+            needs_approval = capability != 'internal_media' and (item.needs_approval or
+                (estimated_cost_vnd is None and provenance.get('provider_configured') is True))
             row = MediaResolutionJobORM(
                 resolution_job_id=_new_id("mrj"),
                 fingerprint=fingerprint,
@@ -270,7 +272,7 @@ class MediaIntelligenceRepository:
                 project_version_id=plan.project_version_id,
                 media_plan_id=media_plan_id,
                 media_plan_item_id=media_plan_item_id,
-                status="needs_approval" if item.needs_approval and capability != 'internal_media' else "queued",
+                status="needs_approval" if needs_approval else "queued",
                 progress=0,
                 provider_key=provider_key,
                 capability=capability,
@@ -284,8 +286,9 @@ class MediaIntelligenceRepository:
                 provenance_json=provenance,
             )
             session.add(row)
-            if item.needs_approval and capability != 'internal_media':
+            if needs_approval:
                 item.status = "needs_approval"
+                item.needs_approval = True
                 item.needs_attention = True
             else:
                 item.status = "resolving"
@@ -377,7 +380,7 @@ class MediaIntelligenceRepository:
         orientation: str,
         production_eligible: bool,
         provider_job_id: str | None,
-        actual_cost_vnd: Decimal,
+        actual_cost_vnd: Decimal | None,
         downloaded_at,
         provenance: dict[str, Any],
     ) -> None:

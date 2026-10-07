@@ -265,6 +265,8 @@ def build_plan_items(
                     "originality_guardrail": True,
                     "social_media_downloaded": False,
                     "strategy_estimated": True,
+                    "estimated_cost_unknown": estimated is None,
+                    "estimated_cost_lower_bound_only": estimated is None,
                     **({'supporting_candidates':supporting,'purpose':'supporting_broll',
                         'fallback_keeps_original_footage':selected_support is None and strategy=='user_asset'} if payload.purpose=='supporting_broll' else {}),
                 },

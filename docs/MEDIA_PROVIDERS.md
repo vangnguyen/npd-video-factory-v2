@@ -60,6 +60,10 @@ rights metadata.
 Generation resolution is asynchronous. PostgreSQL is canonical for job state; Redis carries only
 delivery IDs. The API request does not remain open for a long generation job. Replayed requests use
 a deterministic fingerprint and do not create another expensive job.
+The optional bridge now persists its own provider-side queue/state/audit in isolated SQLite;
+workspace/project/job scopes bind authenticated requests and prevent cross-workspace identities.
+Unpriced configured generation requires approval before queueing. GPU estimates and actual costs
+remain null until verified; result-reference JSON is explicitly not a registered binary artifact.
 
 ## Fail-closed rules
 

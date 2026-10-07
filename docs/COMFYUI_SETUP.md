@@ -34,6 +34,41 @@ The tests cover manifest validation, allowlist/version rejection, input validati
 submission, progress, result validation, cancellation, timeout, failure and retry. They use only a
 deterministic mock and create no real media.
 
+## Durable contract — North Star Wave 5
+
+The optional bridge now owns a separate SQLite store and a single-process file lease. Requests,
+job state/progress, exact workflow definition/graph fingerprints, result metadata hashes and a
+content-free event audit persist. Queue concurrency/waiting counts, total stored jobs and explicit
+retry count are bounded. A restarted or gracefully stopped active job becomes RECOVERY_REQUIRED;
+startup does not replay it. Explicit retry preserves identity and rejects approved graph/schema
+drift. Completed request replay still works when the backend is offline. Returned objects cannot
+mutate saved state. The result metadata hash verifies JSON metadata, not generated media bytes.
+
+Every `/v1/jobs` operation requires a service Bearer token and `X-VF-Workspace-Id`. Submission binds
+that header to required `workspace_id`; request identities and list/read/cancel/retry/event access
+remain workspace-scoped. Health stays available without GPU/auth configuration; readiness requires
+both a configured backend and token. `COMFYUI_BRIDGE_TOKEN` is excluded from API settings exports.
+API/worker generation scopes include trusted workspace/project/resolution-job identities, never
+process-wide mutable state. Poll responses must match the requested job/workspace/workflow.
+Arbitrary graph/model-weight keys are rejected even inside older permissive input schemas.
+Backend/schema errors expose fixed messages rather than private inputs/provider error bodies.
+
+`COMFYUI_JOB_STORE_PATH` defaults to `/workspace/storage/comfyui-bridge/jobs.sqlite3`; Compose mounts
+its own `comfyui-bridge-data` volume. Defaults are one concurrent execution, 32 waiting jobs and
+three explicit retries. The CPU stack still excludes the `gpu` service. Container wiring is
+inspected source; Docker execution remains unverified on this host.
+
+Unknown GPU estimates/actual costs stay null. Unpriced configured generation requires approval
+before queueing; legacy numeric MediaPlan fields describe only the known lower bound and carry
+explicit unknown-estimate flags. No free GPU cost is inferred. An unconfigured provider retains
+its NOT_CONFIGURED failure path. A retained CPU/ASGI contract bundle validates persistence,
+offline replay, scoped access and explicit interruption recovery; all backend outputs are mocks.
+See `docs/north-star/comfyui-durable-contract-evidence.json` for hashes and test logs.
+
+Live backend transport, executable reviewed graphs, mode-specific routing/reference handling,
+binary artifact registration/decoding, provider cost receipts and real GPU acceptance remain open.
+The repository still ships no executable GPU graph and does not claim generative media readiness.
+
 ## Optional container
 
 The service remains disabled by default:
