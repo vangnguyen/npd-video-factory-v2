@@ -51,6 +51,8 @@ class NativePublications:
     def event(self, con, row, action, actor, **evidence):
         con.execute('INSERT INTO native_publication_events(publication_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?)',
             (row['publication_id'], row['project_id'], action, actor, json.dumps(evidence), now()))
+        bridge=getattr(self.store,'bridge',None)
+        if bridge is not None:bridge.capture_publication(con,row,action)
 
     def read(self, row):
         value = dict(row); snapshot = json.loads(value.pop('snapshot_json'))

@@ -1,5 +1,7 @@
 # Agent Hub Bridge v1
 
+The API backend described here remains separate from the Windows Native runtime. Native now has its own `/v1/` service DTOs, scoped SQLite replay/outbox, independent worker and fixture delivery/recovery evidence; see [NATIVE_AGENT_HUB_BRIDGE.md](NATIVE_AGENT_HUB_BRIDGE.md). Shared HMAC and event envelopes do not imply shared databases, Redis or Agent Hub internals. No real Agent Hub production call or deployment is certified.
+
 ## Boundary
 
 Agent Hub is an optional control-plane client. Video Factory V2 remains the media execution and

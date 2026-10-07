@@ -125,7 +125,8 @@ def save_image(config, payload):
 class LocalServer(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, port, config, *, pipeline=None, start_worker=True, observer=None, access=None):
+    def __init__(self, port, config, *, pipeline=None, start_worker=True, observer=None, access=None,
+        bridge_auth_registry=None,bridge_webhook_registry=None,bridge_http_enabled=False):
         config.validate_data_root()
         if access is not None:
             from .access import NativeAccess
@@ -163,11 +164,19 @@ class LocalServer(ThreadingHTTPServer):
         self.runner.vision=self.vision
         from .source_variants import SourceVariants
         self.variants=SourceVariants(self.store,workspace_id=self.publications.workspace_id)
+        from .bridge import NativeBridge
+        self.bridge=NativeBridge(self.store,workspace_id=self.publications.workspace_id)
+        self.bridge.attach_intelligence(self.intelligence.store)
+        if bridge_auth_registry is not None:self.bridge.load_auth_registry(bridge_auth_registry)
+        if bridge_http_enabled and bridge_webhook_registry is None:raise WorkflowError('NATIVE_BRIDGE_WEBHOOK_REGISTRY_REQUIRED',400)
+        if bridge_webhook_registry is not None:self.bridge.load_webhook_registry(bridge_webhook_registry,owner_http_enabled=bridge_http_enabled)
         if start_worker:
+            self.bridge.start(self.observer)
             self.runner.start()
             self.intelligence.start()
 
     def server_close(self):
+        self.bridge.close()
         self.runner.stop.set()
         self.runner.wake.set()
         self.previews.close()
@@ -268,6 +277,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def dispatch_get(self):
         path = self.path.split("?", 1)[0]
+        if path.startswith('/v1/'):
+            from .bridge_routes import dispatch
+            return dispatch(self)
         if self.server.access is not None and path in ('/', '/native.html', '/production', '/intelligence', '/settings/assemblyai'):
             try:
                 self.boundary(session=True)
@@ -464,6 +476,9 @@ class Handler(BaseHTTPRequestHandler):
             raise WorkflowError("INVALID_JSON_BODY", 400) from None
 
     def dispatch_post(self):
+        if self.path.startswith('/v1/'):
+            from .bridge_routes import dispatch
+            return dispatch(self)
         if self.path == '/api/login':
             self.boundary(session=False)
             if self.server.access is None:
@@ -808,6 +823,9 @@ def main():
     parser.add_argument("--preflight", action="store_true")
     parser.add_argument('--auth-registry', type=Path)
     parser.add_argument('--workspace-id')
+    parser.add_argument('--bridge-auth-registry',type=Path)
+    parser.add_argument('--bridge-webhook-registry',type=Path)
+    parser.add_argument('--enable-bridge-http',action='store_true')
     args = parser.parse_args()
     config = Config.load(args.config)
     try:
@@ -824,7 +842,8 @@ def main():
         from .windows_job import contain_process_tree, lock_data_root
         contain_process_tree()
         lock = lock_data_root(config.data_root)
-        with LocalServer(args.port, config, access=access) as server:
+        with LocalServer(args.port, config, access=access,bridge_auth_registry=args.bridge_auth_registry,
+            bridge_webhook_registry=args.bridge_webhook_registry,bridge_http_enabled=args.enable_bridge_http) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)
             try:
                 server.serve_forever()

@@ -1,0 +1,176 @@
+{
+  "schema": "native-bridge-evidence-v1",
+  "parent_head": "2404b3edef8134a9c30ed6cea5e7f0d68a846592",
+  "source_sha256": {
+    "services/windows_native/bridge.py": "cd17a91ad5eeebeafec556a838e7f40f97fbc152a34ee879f6c61af4b2bad483",
+    "services/windows_native/bridge_models.py": "14ad12a1248a5a2e57dd2ae9167a268f855458b59f85af8433160b807b4a23d2",
+    "services/windows_native/bridge_routes.py": "23c68214630902b76413471b582be4cbc32e9accbcee6bca45b369504a0667a8",
+    "services/windows_native/bridge_transport.py": "6095f558e82ca62e53557405a4ad21aa29b5dfbbbdbaca4d00f034a6bec7d0cc",
+    "services/windows_native/store.py": "94bea15f2bbad0fe0fa2eb66c8e81a5b1bf5bd2aa8dc1c282ab19728096f39d0",
+    "services/windows_native/intelligence_store.py": "08939cf8657bd79ede47e866e2b1497507cc02910cc4f880dbc50d56649e6e77",
+    "services/windows_native/publications.py": "8d9015a8116e266e0e1d22d96d05fcb2575c191fcbc65fa59d40b81022992e2e",
+    "services/windows_native/analytics.py": "91e270366139445bdc91a45cb5b21351e516c68c23f6bf1e4b58436602bddbd6",
+    "services/windows_native/shot_preview.py": "ad9cc2fbe9d1a58e589b6d7bda41a079c72b3ec00b5fc910b65b661fc72457df",
+    "services/windows_native/server.py": "121a250dc45ef83f5fd2244dd7dc1d3acb156991b102739b399289cbdb6ffc0a",
+    "services/windows_native/observability.py": "ebe1d6042fcb86c2a447819ad8d6097e655b8e573626bbd0e3e433e609243d96",
+    "services/windows_native/backup.py": "a85362eb8b870181fede68bf7117283f8b7a54a0efa3640d8dc2e6b4e2aedcf5",
+    "services/windows_native/tests/test_bridge.py": "6bf6dd5631ba5176b9414c2a1bfd9bcf89bba8f3ad07c20f119ec7a16870288e",
+    "services/windows_native/tests/test_bridge_http.py": "8f59da19806c469b8d2c8a853564580911a9c45317e195f930328db6d918f289",
+    "scripts/north_star_native_bridge.py": "7f6829f1d4edd0d2c2bcb9d417ae2ce34bae7f6aaab63d82b5b0b9b26c7fe762",
+    "apps/api/app/bridge_auth.py": "289fb37d6d553d2c4608958cd6bdd28e27a92c962856d3dae5748a0041d9084b",
+    "packages/contracts/agent-hub-bridge.v1.schema.json": "1f70e3d47fd6b6a666903a9660603b58711302beb871cd2e948684f1600d270a",
+    "docs/NATIVE_AGENT_HUB_BRIDGE.md": "98f6ba8828c937119872f09647c6eb4cd34dbcdfa4d035b346c227a266f75638",
+    "docs/AGENT_HUB_BRIDGE.md": "f46b33e06f89f5dfb02c5d1d20062a0ed77881e8f097122f8798c9f6c42f2c23"
+  },
+  "logs": {
+    "native-bridge-r1.log": "8fd73d2251e44f0bdedd05070bdd7d057cf9e5d01368f90b87d75691396ad2dd",
+    "native-bridge-r2.log": "7ea63deab5a24948cca0b26b906e2d3813ba05087ae95a2cc58bb33022709ff5",
+    "native-bridge-r3.log": "460d1aa5e1c3ae8bdb039cbec573df99b170673269c2fbc5fedfcb0b4572170b",
+    "native-bridge-r4.log": "aae727112b97ff792db8734a5ae23e056b57390db93828c1f9e46e3feb218375",
+    "native-full-bridge-r1.log": "38d164082c6550903ee29053979367af7585f9c795b1a9338b07f1ffed7370cf",
+    "native-bridge-contract-n1.log": "7bad82e89aff0b112287669c8724a500da5c3fad70401c7d53955c73e7a4083e",
+    "native-bridge-contract-n2.log": "af7906134799584f388eab694d3124a4dcf12bc16ed19fe30c66f36440296bb6",
+    "native-bridge-contract-n3.log": "bd115055678b32f852df70b2d39e04f1b3215be5e46f6726d07525e509a1d66f"
+  },
+  "contract_bundle": {
+    "analytics.json": {
+      "sha256": "420710cb1c80caf6530bad878bcd13044525aeab9e17b5bc3f1bf261770cbb5f",
+      "bytes": 12128
+    },
+    "audio-analysis.json": {
+      "sha256": "7125a81f4827330d2dcc079662d99f777a4714abdb4d05176b62e44406d81372",
+      "bytes": 1824
+    },
+    "cost.json": {
+      "sha256": "4972464da725b1aec06ad0582dc4d8965a86361b413287c9b760ca30f3b9f3c6",
+      "bytes": 121
+    },
+    "events.json": {
+      "sha256": "1f99e5ee63b78b5b333981b660824b42471a4a3112ec6bde08628d29a8151110",
+      "bytes": 23462
+    },
+    "evidence.json": {
+      "sha256": "c43d558c3d15ea08a0931095ba34f53ca349467596a62b78dbd84d40d84ef18b",
+      "bytes": 1191
+    },
+    "ffprobe.json": {
+      "sha256": "5153ed315e180d6bd723e787a3fe6e540024fb4ebcc97cc020c1c22552ca73d5",
+      "bytes": 2621
+    },
+    "final.mp4": {
+      "sha256": "5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398",
+      "bytes": 797018
+    },
+    "http-requests.json": {
+      "sha256": "d1ca576c9ef876bb9f24a40bbcddaa48c40e812137387b66702016ac0632abf7",
+      "bytes": 5325
+    },
+    "native-bridge-backup.zip": {
+      "sha256": "9db30745bea7f758327aaa18d962fea6a7df3d4ca3b5675c73709e38377bb95e",
+      "bytes": 7509836
+    },
+    "preview.mp4": {
+      "sha256": "1b19c136467326a7ec77c5f532dd758c1c8702efa025e1a09c277f2af44091c7",
+      "bytes": 328820
+    },
+    "project.json": {
+      "sha256": "182cb96fdf2d57cfb72fd12a207e5059ff4709c6a1a735bb3bf0906d8f5b81ea",
+      "bytes": 358244
+    },
+    "publication.json": {
+      "sha256": "ff9698066f5964af767613bc52de7df51223dbaefb5ae0a4e5ffdbadc44f0275",
+      "bytes": 8895
+    },
+    "qc-report.json": {
+      "sha256": "181330a7f1f08447e183a8e26327ca66e13503ff85f786167d54ce1343ae3952",
+      "bytes": 1813
+    },
+    "recovery.json": {
+      "sha256": "99a3b100ea1ff3284af83a538a6d63bd19602d6e62a85d9146576a5d38a4789d",
+      "bytes": 4205
+    },
+    "render-manifest.json": {
+      "sha256": "a2d8f1053b3eb3a671490a156b71f2dead784a531a14a8415c4e35593889dc07",
+      "bytes": 17153
+    },
+    "research.json": {
+      "sha256": "8a5687d8ccd0133a08edda494ef632678d926c8865a6ee77caac7bacf2c6af0f",
+      "bytes": 27943
+    },
+    "subtitles.json": {
+      "sha256": "e9a8135149d12464033d949699e1c098054a9b558c2774f6a49c7cd09b0c142a",
+      "bytes": 2325
+    },
+    "timeline-render.json": {
+      "sha256": "b99b962f58a0e5685e9dd22056b74a2edc759cb884de4ba36ab99759d697b9df",
+      "bytes": 2034
+    },
+    "timeline.json": {
+      "sha256": "de440271cc26ac1771e1b98f4fc6bcd2a9bc687f95b721b351cfe50a685eec7f",
+      "bytes": 15258
+    },
+    "wire-audit.json": {
+      "sha256": "007058adc4262862eddce5294ceb2f5fa293e30f30343892812356a6ee5ec652",
+      "bytes": 4309
+    }
+  },
+  "native_full_passed": 492,
+  "native_full_seconds": 301.843,
+  "affected_r2_passed": 42,
+  "affected_r2_seconds": 15.231,
+  "affected_r3_passed": 50,
+  "affected_r3_seconds": 25.383,
+  "counts_overlap": true,
+  "new_native_cases": 21,
+  "unchanged_studio_last_passed": 188,
+  "unchanged_studio_duration_ms": 843.076,
+  "studio_rerun": false,
+  "unchanged_api_last_passed": 2659,
+  "unchanged_api_last_skipped": 11,
+  "unchanged_api_seconds": 1512.89,
+  "api_rerun": false,
+  "source_root": "C:/vf-native-fixture-bridge-03",
+  "restore_root": "C:/vf-native-fixture-bridge-restore-03",
+  "signed_native_service_auth_local_tested": true,
+  "durable_nonce_replay_tested": true,
+  "atomic_draft_receipt_history_event_tested": true,
+  "independent_webhook_worker": true,
+  "fixture_signed_delivery_events": 15,
+  "fixture_signed_attempts": 16,
+  "receiver_dedup_contract": true,
+  "actual_local_full_qc_renders": 1,
+  "actual_local_effects_previews": 1,
+  "authenticated_http_requests": 33,
+  "new_process_exact": true,
+  "fresh_root_offline_restore_exact": true,
+  "original_artifacts_unchanged": true,
+  "http_wire_mock_tested": true,
+  "actual_hub_calls": 0,
+  "actual_provider_calls": 0,
+  "paid_operations": 0,
+  "real_credentials_read": 0,
+  "saved_asr_fixture": true,
+  "research_ideas_fixture": true,
+  "publication_analytics_fixture": true,
+  "explicit_synthetic_owned_provenance_seed": true,
+  "runtime_rights_editor_tested": false,
+  "native_delivery_operator_ui_complete": false,
+  "real_hub_receiver_compatibility_verified": false,
+  "isolated_production_network_verified": false,
+  "offline_hub_soak_complete": false,
+  "browser_real_tested": false,
+  "owner_uat_accepted": false,
+  "accepted_artifacts_replaced": false,
+  "agent_hub_bridge_ready": false,
+  "phase10_ready": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "north_star_ready": false,
+  "failed_diagnostics_retained": {
+    "native-bridge-r1": "Wrong frozen selection fixture key; corrected unit assertion.",
+    "native-bridge-r4": "Wrong input projection fixture key; corrected unit assertion.",
+    "native-bridge-contract-n1": "Existing separate-media-project guard rejected prompt project; media-only bridge draft option added.",
+    "native-bridge-contract-n2": "Unknown uploaded rights blocked dry-run approval; actual generated fixture ownership provenance registered only in new n3 root."
+  }
+}

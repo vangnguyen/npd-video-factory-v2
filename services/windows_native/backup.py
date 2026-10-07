@@ -106,7 +106,7 @@ def database_status(path):
             busy = con.execute("SELECT count(*) FROM jobs WHERE status IN ('queued','running','retrying')").fetchone()[0]
             if 'native_cost_operations' in tables:
                 counts['native_cost_operations'] = con.execute('SELECT count(*) FROM native_cost_operations').fetchone()[0]
-            for name in ('native_publications','native_publication_events','native_analytics_syncs','native_analytics_snapshots','native_analytics_events','native_vision_intents','native_vision_events','native_source_variant_batches'):
+            for name in ('native_publications','native_publication_events','native_analytics_syncs','native_analytics_snapshots','native_analytics_events','native_vision_intents','native_vision_events','native_source_variant_batches','native_bridge_events','native_bridge_requests','native_bridge_deliveries','native_bridge_attempts','native_bridge_cursors'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_publications' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_publications WHERE status IN ('queued','scheduled')").fetchone()[0]
@@ -114,11 +114,14 @@ def database_status(path):
                 busy+=con.execute("SELECT count(*) FROM native_analytics_syncs WHERE status IN ('queued','scheduled','retry_scheduled')").fetchone()[0]
             if 'native_vision_intents' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_vision_intents WHERE status='queued'").fetchone()[0]
+            if 'native_bridge_deliveries' in tables:
+                busy+=con.execute("SELECT count(*) FROM native_bridge_deliveries WHERE status IN ('queued','running','retry_scheduled')").fetchone()[0]
             for identifier, revision, document in con.execute('SELECT id,revision,document FROM projects'):
                 history = con.execute('SELECT document FROM project_versions WHERE project_id=? AND revision=?', (identifier, revision)).fetchone()
                 if history is None or digest(json.loads(document)) != digest(json.loads(history[0])):
                     raise WorkflowError('BACKUP_PROJECT_HISTORY_INTEGRITY_FAILED')
         else:
+            if 'native_bridge_source_events' in tables:counts['native_bridge_source_events']=con.execute('SELECT count(*) FROM native_bridge_source_events').fetchone()[0]
             busy = con.execute("SELECT count(*) FROM operations WHERE status IN ('QUEUED','RUNNING')").fetchone()[0]
             for identifier, version, document in con.execute('SELECT id,version,document FROM records'):
                 history = con.execute('SELECT document,sha256 FROM versions WHERE id=? AND version=?', (identifier, version)).fetchone()

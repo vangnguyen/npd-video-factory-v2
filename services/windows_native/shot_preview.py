@@ -43,6 +43,14 @@ class PreviewManager:
         with self.lock:
             retry_io(lambda:durable_json(path,value),lambda _:None,'storage_preview')
 
+    def _ready_event(self,project,value):
+        if getattr(self.store,'bridge',None) is None:return
+        with self.store.transaction() as con:
+            current=con.execute('SELECT revision FROM projects WHERE id=?',(project['id'],)).fetchone()
+            self.store.event(con,project['id'],'bridge_preview_ready',{'preview_id':value['id'],
+                'revision':value['revision'],'timeline_sha256':value['timeline_sha256'],'artifact_sha256':value['sha256'],
+                'manifest_sha256':value.get('manifest_sha256'),'current_revision':current[0] if current else None})
+
     def _folder(self, project_id, timeline_sha, revision, profile=None):
         identity={'project':project_id,'timeline':timeline_sha,'revision':revision}
         if profile:identity['preview_profile']=profile
@@ -222,6 +230,7 @@ Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
             if output.exists(): output.unlink()
             self._command([str(self.config.ffmpeg_bin/'ffmpeg.exe'),'-hide_banner','-nostdin','-n','-f','concat','-safe','0','-i',str(manifest),'-c','copy','-movflags','+faststart',str(output)],folder,event)
             value.update(status='READY',sha256=file_sha(output),video_url=f"/api/projects/{project['id']}/preview/video?version={value['timeline_version']}")
+            self._ready_event(project,value)
         except Exception as error:
             code=error.code if isinstance(error,WorkflowError) else type(error).__name__
             value.update(status='CANCELLED' if code=='PREVIEW_CANCELLED' else 'FAILED',error={'code':code,'automatic_replay':False},video_url=None)
@@ -246,6 +255,7 @@ Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
             value.update(status='READY',sha256=file_sha(output),manifest_sha256=file_sha(manifest_path),
                 manifest=manifest,completed_shots=value['total_shots'],new_proxy_shots=value['total_shots'],
                 video_url=f"/api/projects/{project['id']}/preview/video?version={value['timeline_version']}")
+            self._ready_event(project,value)
         except Exception as error:
             code='PREVIEW_CANCELLED' if isinstance(error,PreviewCancelledError) else error.code if isinstance(error,WorkflowError) else 'SOURCE_PREVIEW_RENDER_FAILED'
             output.unlink(missing_ok=True)

@@ -47,7 +47,7 @@ def route_context(path):
     if path in fixed:
         return fixed[path], None, None
     for prefix, route in (('/api/intelligence/', 'intelligence'), ('/api/production/', 'production'),
-                          ('/api/assets', 'assets'), ('/api/auto-edit/', 'auto_edit')):
+                          ('/api/assets', 'assets'), ('/api/auto-edit/', 'auto_edit'),('/v1/','bridge')):
         if path.startswith(prefix):
             return route, None, None
     return 'other', None, None
@@ -88,7 +88,7 @@ class Observer:
             record.update(status=status if type(status) is int and 100 <= status <= 599 else None,
                 method=method if method in {'GET', 'POST'} else None,
                 route=route if route in {'project', 'job', 'health', 'readiness', 'session', 'runtime',
-                    'projects', 'connection', 'studio', 'intelligence', 'production', 'assets', 'auto_edit', 'other'} else 'other')
+                    'projects', 'connection', 'studio', 'intelligence', 'production', 'assets', 'auto_edit', 'bridge','other'} else 'other')
         try:
             self.sink(json.dumps(record, ensure_ascii=True, separators=(',', ':')))
         except Exception:

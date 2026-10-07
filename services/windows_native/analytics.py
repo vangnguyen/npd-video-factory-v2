@@ -53,6 +53,8 @@ class NativeAnalytics:
     def event(self,con,row,action,actor,**evidence):
         con.execute('INSERT INTO native_analytics_events(sync_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?)',
             (row['sync_id'],row['project_id'],action,actor,json.dumps(evidence),now()))
+        bridge=getattr(self.store,'bridge',None)
+        if bridge is not None:bridge.capture_analytics(con,row,action,evidence)
 
     def publication(self,con,project,identity):
         return self.publications.read(self.publications.get_row(con,project,identity))

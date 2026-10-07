@@ -72,6 +72,8 @@ class IntelligenceStore:
         raw = canonical(value).decode('utf-8')
         con.execute("INSERT INTO versions VALUES(?,?,?,?,?)", (value['id'], value['version'], kind, raw, digest(value)))
         con.execute("INSERT INTO records VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET version=excluded.version,document=excluded.document", (kind, value['id'], value['version'], raw))
+        bridge=getattr(self,'bridge',None)
+        if bridge is not None:bridge.capture_intelligence(con,kind,value)
         return value
 
     def list(self, kind):

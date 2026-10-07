@@ -78,8 +78,11 @@ class Store:
             con.close()
 
     def event(self, con, project_id, action, payload):
-        con.execute("INSERT INTO events(project_id,action,payload,created_at) VALUES(?,?,?,?)",
-                    (project_id, action, json.dumps(payload, ensure_ascii=False), now()))
+        stamp=now()
+        row=con.execute("INSERT INTO events(project_id,action,payload,created_at) VALUES(?,?,?,?)",
+                    (project_id, action, json.dumps(payload, ensure_ascii=False), stamp))
+        bridge=getattr(self,'bridge',None)
+        if bridge is not None:bridge.capture(con,project_id,action,payload,row.lastrowid,stamp)
 
     @staticmethod
     def project(row):
@@ -139,6 +142,13 @@ class Store:
                 "duration": round(duration, 6), "retry_count": runtime[0] if runtime else 0, "error_code": error_code})
 
     def create(self, name, prompt, input_kind="prompt", *, content_profile=None, production_quality=False,channel_profile=None):
+        with self.transaction() as con:
+            identifier=self.create_in_transaction(con,name,prompt,input_kind,content_profile=content_profile,
+                production_quality=production_quality,channel_profile=channel_profile)
+        return self.get(identifier)
+
+    def create_in_transaction(self,con,name,prompt,input_kind='prompt',*,content_profile=None,production_quality=False,channel_profile=None,niche=None):
+        """Shared initial draft path; caller commits draft and dispatch receipt atomically."""
         if not isinstance(name, str) or not 1 <= len(name.strip()) <= 150:
             raise WorkflowError("PROJECT_NAME_REQUIRED", 400)
         prompt = validate_text(input_kind, prompt)
@@ -159,13 +169,13 @@ class Store:
             frozen=resolve(doc)
             if content_profile is not None and content_profile['id']!=frozen['content_profile']['id']:raise WorkflowError('CHANNEL_CONTENT_PROFILE_CONFLICT',400)
             doc['content_profile']=copy.deepcopy(frozen['content_profile']);doc['brand_template']=copy.deepcopy(frozen['brand_template'])
+        elif niche is not None:doc['niche']=niche
         stamp = now()
-        with self.transaction() as con:
-            con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",
-                        (identifier, 1, json.dumps(doc, ensure_ascii=False), None, stamp, stamp))
-            self.event(con, identifier, "project_created", {"revision": 1})
-            self.version(con, identifier)
-        return self.get(identifier)
+        con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",
+                    (identifier, 1, json.dumps(doc, ensure_ascii=False), None, stamp, stamp))
+        self.event(con, identifier, "project_created", {"revision": 1})
+        self.version(con, identifier)
+        return identifier
 
     def get(self, identifier):
         with self.transaction() as con:
