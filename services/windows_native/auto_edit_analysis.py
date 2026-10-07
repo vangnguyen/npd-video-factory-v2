@@ -236,7 +236,10 @@ def view(store, project_id):
                 decision['decision_id'] = 'sil_' + digest([analysis.analysis_id, index])[:24]
             from app.auto_edit_models import SilenceDecisionRead
             selected = selected.model_copy(update={'silence_decisions': [SilenceDecisionRead.model_validate(value) for value in decisions]})
-        fused = combine_scene_evidence(selected, SimpleNamespace(checksum_sha256=asset["sha256"]))
+        from .media_frame_analysis import asset_summary
+        measured=asset_summary(document,project_id,asset,store.root)
+        fused = combine_scene_evidence(selected, SimpleNamespace(checksum_sha256=asset["sha256"]),
+            pixel_frames=measured.frames if measured else ())
         scenes = [value.model_dump(mode="json") for value in fused]
         for scene in scenes:
             scene["evidence"]["transcript_segment_count"] = len(scene["evidence"]["transcript_segment_ids"])

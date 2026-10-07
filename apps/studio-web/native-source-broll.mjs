@@ -28,7 +28,7 @@ export function sourceBrollRequest(project,action,{planId,itemId,assetId,replace
   return {revision:project.revision,action,payload};
 }
 export function sourceBrollMarkup(project) {
-  return `<details><summary>B-roll hỗ trợ</summary><p class="hint">Thêm ảnh/video tại Assets, rồi tạo kế hoạch. Xếp hạng theo tên, mô tả và tag đã lưu; chưa có Vision ngữ nghĩa. Các nguồn stock/AI chưa cấu hình. Mỗi gợi ý cần chọn và đặt riêng, giữ âm thanh gốc.</p>
+  return `<details><summary>B-roll hỗ trợ</summary><p class="hint">Thêm ảnh/video tại Assets, rồi tạo kế hoạch. Xếp hạng theo tên, mô tả và tag; dùng điểm pixel sáng/nét đã đo khi mức liên quan bằng nhau. Điểm pixel chưa hiệu chuẩn; chưa có Vision ngữ nghĩa. Các nguồn stock/AI chưa cấu hình. Mỗi gợi ý cần chọn và đặt riêng, giữ âm thanh gốc.</p>
     <button type="button" data-source-broll="create">Tạo kế hoạch B-roll</button>
     ${sourceBrollPlans(project).map(plan=>`<section><p>Kế hoạch v${plan.version} · ${esc(plan.provider_status.semantic_vision)} · ${plan.unresolved_items} gợi ý chưa chọn</p>${plan.items.map(item=>{
       const decision=item.broll,evidence=plan.media_assets.find(a=>a.media_asset_id===item.selected_media_asset_id);

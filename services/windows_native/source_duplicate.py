@@ -65,6 +65,8 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         if isinstance(value,dict):return {key:rewrite(item) for key,item in value.items()}
         return copy.deepcopy(value)
     output=copy.deepcopy(document)
+    from .media_frame_analysis import rebind_records
+    output['media_frame_analyses']=rebind_records(document,source_id,target_id)
     output['auto_edit_analyses']=[]
     for record in records:
         changed=rewrite(record);value=changed['analysis'];key,current=analysis_keys[record['analysis']['analysis_id']]

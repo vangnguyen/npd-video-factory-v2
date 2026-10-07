@@ -60,6 +60,8 @@ def shared_assets(project,config):
         content_type=('video/quicktime' if item['id'].endswith('.mov') else 'video/mp4') if item['kind']=='video' else (
             'image/png' if item['id'].endswith('.png') else 'image/jpeg')
         confirmed=item.get('rights_confirmed') is True
+        from .media_frame_analysis import asset_summary
+        measured=asset_summary(project['document'],project['id'],item,config.data_root)
         output[asset_reference(item)]=AssetRead(asset_id=asset_reference(item),workspace_id='native-local',
             project_id='prj_'+project['id'],project_version_id=None,job_id=None,asset_class='source',kind=item['kind'],
             filename=item['filename'],object_key='assets/'+item['id'],content_type=content_type,
@@ -70,6 +72,7 @@ def shared_assets(project,config):
                 'provider':'user-upload','source_reference':'assets/'+item['id'],'native_asset_id':item['id'],
                 'tags':item.get('tags',[]),'description':item.get('description',''),
                 'media_metadata':{key:item.get(key) for key in ('duration_seconds','width','height')},
+                **({'pixel_quality_summary':measured.model_dump(mode='json')} if measured else {}),
                 'fixture':bool(item.get('explicit_fixture'))},created_at=timestamp,updated_at=timestamp)
     return output
 
@@ -150,7 +153,7 @@ def create(store,config,project_id,revision,body):
             provenance={'algorithm':ALGORITHM,'source_asset_sha256':analysis.provenance['source_asset_checksum'],
                 'transcript_id':analysis.transcript.transcript_id if analysis.transcript else None,
                 'provider_dispatches':0,'recommendation_only':True,'requires_manual_selection_and_apply':True,
-                'candidate_ranking':'saved filename/description/tags lexical overlap; no semantic Vision',
+                'candidate_ranking':'saved filename/description/tags lexical overlap, then measured pixel heuristic when available; no semantic Vision',
                 'native_source_timeline_version':project['document']['canonical_timeline']['version']},
             created_at=timestamp,updated_at=timestamp)
         if not existing:_persist(store,con,project,plan,'auto_edit_broll_plan_saved')

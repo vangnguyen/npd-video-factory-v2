@@ -60,7 +60,9 @@ def create(store,config,project_id,revision,body):
                 raise WorkflowError('AUTO_EDIT_TRANSCRIPT_VERSION_CHANGED')
             reference=SimpleNamespace(asset_id=analysis.asset_id,checksum_sha256=asset['sha256'],
                 content_type='video/mp4',object_key=asset['id'])
-            scenes=combine_scene_evidence(analysis,reference)
+            from .media_frame_analysis import asset_summary
+            measured=asset_summary(document,project_id,asset,config.data_root)
+            scenes=combine_scene_evidence(analysis,reference,pixel_frames=measured.frames if measured else ())
             assessment=SimpleNamespace(scenes=scenes,assessment_id='sci_'+digest([analysis.analysis_id,payload.transcript_id])[:24],
                 fingerprint=digest([scene.model_dump(mode='json') for scene in scenes]))
             try:prepared=build_drafts(analysis,reference,payload.model_copy(update={'count':5}),assessment)

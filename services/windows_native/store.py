@@ -116,6 +116,8 @@ class Store:
         if project["document"].get("auto_edit_analyses"):
             components["auto_edit_evidence_version"] = digest({key: project["document"].get(key, [])
                 for key in ("auto_edit_analyses", "auto_edit_transcripts")})
+        if project['document'].get('media_frame_analyses'):
+            components['media_frame_evidence_version']=digest(project['document']['media_frame_analyses'])
         con.execute("INSERT OR IGNORE INTO project_versions VALUES(?,?,?,?,?)",
                     (identifier, project["revision"], json.dumps(project["document"], ensure_ascii=False),
                      json.dumps(components), now()))
@@ -267,6 +269,8 @@ class Store:
                 # Source evidence belongs to its project; raw ASR is reusable.
                 doc.pop("auto_edit_analyses", None)
                 doc.pop("auto_edit_transcripts", None)
+                from .media_frame_analysis import rebind_records
+                doc['media_frame_analyses']=rebind_records(doc,identifier,copy_id)
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",(copy_id,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
             self.version(con,copy_id)
             self.event(con,copy_id,"project_duplicated_unapproved",{"source_project":identifier,"source_revision":revision})
@@ -533,7 +537,7 @@ class Store:
         return self.get(identifier)
 
     def enqueue(self, identifier, revision, kind, request_key):
-        if kind not in {"content", "render", "asr", "auto_edit_analysis"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
+        if kind not in {"content", "render", "asr", "auto_edit_analysis", "media_frames"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
             raise WorkflowError("INVALID_JOB_REQUEST", 400)
         identity = digest({"project_id": identifier, "revision": revision, "kind": kind})
         with self.transaction() as con:
@@ -564,6 +568,12 @@ class Store:
                 from .auto_edit_analysis import pending
                 if not pending(doc, identifier):
                     raise WorkflowError("AUTO_EDIT_NO_PENDING_VIDEO", 400)
+            if kind == "media_frames":
+                from .media_frame_analysis import pending,MAX_RECORDS
+                available=pending(doc,identifier)
+                if not available:raise WorkflowError('MEDIA_FRAME_NO_PENDING_ASSET',400)
+                if len(doc.get('media_frame_analyses',[]))+min(16,len(available))>MAX_RECORDS:
+                    raise WorkflowError('MEDIA_FRAME_HISTORY_LIMIT')
             if kind == "render" and (not approval or approval["revision"] != revision
                                      or approval["snapshot_sha256"] != digest(doc)):
                 raise WorkflowError('AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER' if is_auto_edit(doc) else 'HUMAN_APPROVAL_REQUIRED_BEFORE_TTS')
@@ -650,6 +660,12 @@ class Store:
                 if project["revision"] != job["revision"] or digest(project["document"]) != digest(job["snapshot"]["document"]):
                     raise WorkflowError("AUTO_EDIT_STALE_RESULT")
                 save_result(self, con, project, result)
+            if result and job['kind']=='media_frames':
+                from .media_frame_analysis import save_result
+                project=self.project(con.execute('SELECT * FROM projects WHERE id=?',(job['project_id'],)).fetchone())
+                if project['revision']!=job['revision'] or digest(project['document'])!=digest(job['snapshot']['document']):
+                    raise WorkflowError('MEDIA_FRAME_STALE_RESULT')
+                save_result(self,con,project,result,job['id'])
             con.execute("UPDATE jobs SET status=?,stage=?,error=?,result=?,updated_at=? WHERE id=?",
                         (status, status, json.dumps(error) if error else None,
                          json.dumps(result, ensure_ascii=False) if result else None, now(), job["id"]))

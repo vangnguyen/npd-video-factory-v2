@@ -227,6 +227,12 @@ class Handler(BaseHTTPRequestHandler):
         if analysis_route:
             from .auto_edit_analysis import view
             return self.reply(view(self.server.store, analysis_route[1]))
+        frame_route=re.fullmatch(r'/api/projects/([0-9a-f]{32})/media-frames(?:/(mfr_[a-f0-9]{24})/image)?',path)
+        if frame_route:
+            from .media_frame_analysis import view,image_path
+            identifier,frame_id=frame_route.groups()
+            if frame_id:return self.file(image_path(self.server.store,identifier,frame_id))
+            return self.reply(view(self.server.store,identifier))
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', path)
         shorts_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/shorts',path)
         if shorts_route:
@@ -245,7 +251,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/session":
             return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
-                "native_source_timeline":True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
+                "native_source_timeline":True,"native_media_frame_analysis":True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -326,7 +332,7 @@ class Handler(BaseHTTPRequestHandler):
                        '/production':'production.html','/production.mjs':'production.mjs','/production.css':'production.css'})
         static.update({name:name[1:] for name in ('/asset-picker.mjs','/video-preview.mjs','/studio-workspace.css','/studio-shell.mjs','/studio-shell.css','/native-auto-edit.mjs','/native-auto-edit.css')})
         static.update({name:name[1:] for name in ('/native-source-editor.mjs','/native-source-editor.css',
-            '/native-source-broll.mjs','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
+            '/native-source-broll.mjs','/native-media-frames.mjs','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
         if path in static:
             return self.file(REPO / "apps/studio-web" / static[path])
         raise WorkflowError("ROUTE_NOT_FOUND", 404)

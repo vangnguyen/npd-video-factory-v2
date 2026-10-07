@@ -15,6 +15,7 @@ from pydantic import Field, model_validator
 from .models import StrictModel
 from .timeline_logic import TimelineEditError
 from .timeline_models import TimelineClip, TimelineSnapshot, TimelineTrack
+from .media_frame_facts import PixelAssetSummary
 
 
 class BrollApplyRequest(StrictModel):
@@ -62,6 +63,11 @@ def supporting_candidates(assets, analysis, query: str) -> list[dict[str, Any]]:
         available = tokens(" ".join([asset.filename, description, *[str(tag) for tag in tags]]))
         overlap = sorted(wanted & available)
         score = len(overlap) / max(1, len(wanted))
+        measured=None
+        if asset.provenance.get('pixel_quality_summary'):
+            measured=PixelAssetSummary.model_validate(asset.provenance['pixel_quality_summary'])
+            if measured.source_sha256!=asset.checksum_sha256 or any(frame.source_sha256!=asset.checksum_sha256 for frame in measured.frames):
+                raise ValueError('supporting pixel observations source checksum mismatch')
         result.append({"asset_id": asset.asset_id, "filename": asset.filename,
             "checksum_sha256": asset.checksum_sha256, "source_type": tier,
             "rights_status": rights, "license": asset.provenance.get("license", "unknown"),
@@ -73,8 +79,11 @@ def supporting_candidates(assets, analysis, query: str) -> list[dict[str, Any]]:
             "provider": asset.provenance.get("provider", "user-upload"),
             "source_reference": asset.provenance.get("source_reference", f"asset://{asset.asset_id}"),
             "generation_provenance": asset.provenance.get("generation_provenance", {}),
+            "pixel_quality_summary":measured.model_dump(mode='json') if measured else None,
+            "quality_score":measured.heuristic_quality_score if measured else None,
+            "quality_basis":"uncalibrated sampled pixel sharpness/brightness heuristic" if measured else None,
             "fixture": bool(asset.provenance.get("fixture")), "provider_dispatches": 0})
-    return sorted(result, key=lambda item: (-item["relevance_score"], item["asset_id"]))
+    return sorted(result, key=lambda item: (-item["relevance_score"],-item['quality_score'] if item['quality_score'] is not None else 0,item["asset_id"]))
 
 
 def choose_supporting_strategy(payload, candidates, *, stock, image, video, preferred_type):

@@ -24,6 +24,17 @@ from services.windows_native.store import Store
 from services.windows_native.tests.test_auto_edit_analysis import saved_asr
 
 
+def measure_frames(store,runner,project):
+    before=project['document']['canonical_timeline']
+    job=store.enqueue(project['id'],project['revision'],'media_frames',uuid.uuid4().hex)
+    assert runner.run_one()
+    saved=store.get_job(job['id'])
+    if saved['status']!='succeeded':raise RuntimeError(saved['error'])
+    current=auto_edit_timeline.view(store,project['id'])
+    if current['document']['canonical_timeline']!=before:raise AssertionError('Pixel job changed canonical timeline')
+    return current,saved
+
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--data-root',type=Path,required=True)
@@ -36,6 +47,7 @@ def main():
     parser.add_argument('--auto-shorts',action='store_true')
     parser.add_argument('--final-effects-preview',action='store_true')
     parser.add_argument('--manual-reframe',action='store_true')
+    parser.add_argument('--media-frames',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
     if args.auto_shorts and args.duplicate_source:raise ValueError('Choose one fresh draft derivation per evidence run')
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
@@ -87,6 +99,7 @@ def main():
         project=configure(store,project['id'],project['revision'],{
             'expected_version':project['shot_timeline']['version'],
             'audio_processing':{'normalize_original_audio':True,'normalize_music':True,'duck_music':True}})
+    frame_job=None
     if args.broll:
         from PIL import Image,ImageDraw
         from services.windows_native import source_broll
@@ -100,6 +113,7 @@ def main():
         supporting['explicit_fixture']=True
         project=store.append_media(project['id'],project['revision'],supporting)
         project=auto_edit_timeline.view(store,project['id'])
+        if args.media_frames:project,frame_job=measure_frames(store,runner,project)
         project=source_broll.create(store,config,project['id'],project['revision'],{'expected_version':project['shot_timeline']['version']})
         plan=project['document']['source_broll_plans'][-1]['plan'];item=plan['items'][0]
         project=source_broll.select(store,config,project['id'],project['revision'],{
@@ -111,6 +125,7 @@ def main():
             'expected_version':project['shot_timeline']['version'],'media_plan_id':plan['media_plan_id'],
             'expected_plan_version':plan['version'],'item_ids':[item['media_plan_item_id']]})
     parent=None
+    if args.media_frames and frame_job is None:project,frame_job=measure_frames(store,runner,project)
     shorts=None
     if args.auto_shorts:
         from services.windows_native.source_shorts import create as create_shorts
@@ -210,6 +225,17 @@ def main():
         if parent:durable_json(out/'parent-project.json',parent)
         if shorts:durable_json(out/'auto-shorts.json',shorts)
         if args.manual_reframe:durable_json(out/'reframe-plan.json',project['document']['canonical_timeline']['snapshot']['metadata']['source_reframe_plan'])
+        if frame_job:
+            from services.windows_native.media_frame_analysis import view as frame_view,frame_path
+            frame_bundle=frame_view(store,project['id'])
+            durable_json(out/'media-frame-analysis.json',frame_bundle)
+            durable_json(out/'media-frame-job.json',frame_job)
+            rankings=auto_edit_analysis.view(store,project['id'])
+            durable_json(out/'scene-ranking.json',rankings['analyses'][0]['scenes'])
+            durable_json(out/'highlight-ranking.json',rankings['analyses'][0]['highlights'])
+            for observation in frame_bundle['observations']:
+                for frame in observation['frames']:
+                    shutil.copyfile(frame_path(root,frame),out/('source-'+frame['frame_id']+'.png'))
         durable_json(out/'job-events.json',events)
         subprocess.run([str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n','-ss','0.35',
             '-i',str(out/'final.mp4'),'-frames:v','1',str(out/'caption-frame.png')],check=True,capture_output=True,timeout=30)
@@ -225,6 +251,9 @@ def main():
             'final_effects_preview':bool(preview['manifest'].get('rendering_effects_parity')),
             'explicit_manual_reframe':args.manual_reframe,
             'automatic_subject_tracking_performed':False,
+            'local_measured_pixel_frames_saved':bool(frame_job),
+            'semantic_vision_provider_status':'NOT_CONFIGURED',
+            'semantic_vision_inference_performed':False,
             'matching_preview_final_effects_manifests':effects_parity,
             'matching_preview_final_canonical_pcm_sha256':mix_sha,
             'auto_shorts_generated_count':shorts['batch']['generated_count'] if shorts else None,
