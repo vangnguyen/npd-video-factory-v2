@@ -44,6 +44,7 @@ class AssessmentDraft:
     factors: list[WinnerFactorRead]
     evidence: list[str]
     recommendations: list[str]
+    algorithm_version: str = ANALYTICS_ALGORITHM_VERSION
 
 
 @dataclass(frozen=True)
@@ -256,7 +257,7 @@ def learning_insights(
     snapshot_ref: str,
 ) -> list[InsightDraft]:
     base_confidence = min(0.95, max(0.2, assessment.data_coverage))
-    evidence = [snapshot_ref, ANALYTICS_ALGORITHM_VERSION]
+    evidence = [snapshot_ref, assessment.algorithm_version]
     if assessment.state == "insufficient_data":
         return [
             InsightDraft(
@@ -371,7 +372,7 @@ def assessment_model(
         factors=draft.factors,
         evidence=draft.evidence,
         recommendations=draft.recommendations,
-        algorithm_version=ANALYTICS_ALGORITHM_VERSION,
+        algorithm_version=draft.algorithm_version,
         automatic_action=False,
         paid_media_mutation=False,
         content_deletion=False,

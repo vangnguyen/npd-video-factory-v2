@@ -1,0 +1,253 @@
+{
+  "schema": "channel-cohort-evidence-v1",
+  "parent_head": "681d0c6552132ca70e4cfff94bcd878612757cb6",
+  "source_sha256": {
+    "apps/api/app/analytics_cohort.py": "eafcd199a5052c183be570f1994a806b40f884cea74ba939e8ee8b93a81a4520",
+    "apps/api/app/analytics_logic.py": "5a3fead36d9499de9feb2259568c239ce3ba301f72a5e328d6e502ac8404ccc2",
+    "apps/api/app/analytics_repository.py": "b59bd7c6b90ef9bc49909110e2223373234e3b1c5674f1d0d6397e36a112050c",
+    "apps/api/app/analytics_service.py": "33b78c1c819deafcbcf50860106bd3148eb0a44962574e71a39e6c997f1f10de",
+    "apps/api/app/config.py": "a27e4b30080a742c562ffbcc00bd23161624ce19e6453040685f0814c48e05fe",
+    "apps/api/tests/test_analytics_cohort.py": "264c09bbc27fd080d449e34930cb0e624c895fe1c9bb7f95f713ecea5c34a1b1",
+    "apps/api/tests/test_production_feature_context.py": "5b4939bc3784b1e75b0c5fce9a6669e1531b301f9d0f772e791fc9c1791be7c2",
+    "scripts/north_star_channel_cohort_contract.py": "3ac1ab960fabdc775a48c2cfc69ea144a33b6cc3dd161f40ddd4870a876c06d9",
+    "docs/CHANNEL_WINNER_ASSESSMENT.md": "0e6095bce27bcea06a3e3d2fd9335b874a07e0d97fdbd2a84ef6ba021087514f"
+  },
+  "logs": {
+    "analytics-cohort-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-cohort-r1.log",
+      "sha256": "173dc1c83c19b7cc791e9835647a7950e6e418005f2501098aed61f4c248db46"
+    },
+    "analytics-cohort-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-cohort-r2.log",
+      "sha256": "b9e2f4b6b3f9e2f490e7f62739406e26e911e3eb32213a7618cb69f0f148d5a1"
+    },
+    "analytics-cohort-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-cohort-r3.log",
+      "sha256": "316060beba113e13647f5f0a09d57714ea9ce33349fea7aa08878fb316fd9428"
+    },
+    "analytics-cohort-r4.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-cohort-r4.log",
+      "sha256": "2b89e0cb435364c5bab60f44c128dc9ffd256be7f1269ae4e7ab75429e790a76"
+    },
+    "analytics-cohort-r5.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-cohort-r5.log",
+      "sha256": "476fca649c03fbbb41f701d9a004635c7b56fcb4b3155a832d3be5b6c35516d4"
+    },
+    "channel-cohort-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-cohort-contract-n1.log",
+      "sha256": "a12fddc15e1f849920fa4bc69be5ceb21da1a13c8023ebf432559ed1b0324c21"
+    },
+    "channel-cohort-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-cohort-contract-n2.log",
+      "sha256": "2adf13d462f0801f34d3aebeaa31358edab756c8f525c9b758c8a4217765b398"
+    },
+    "channel-cohort-contract-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-cohort-contract-n3.log",
+      "sha256": "d1da5ca0bb78665be9411d685c6c45efb3169c42e0a0ec9f7125301c3fa9b4b0"
+    },
+    "counter-history-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\counter-history-contract-n1.log",
+      "sha256": "0f5bead623c00524f91f9712c3aac08bf76b6dff74c4d3ec67654cb3d0c2f81c"
+    },
+    "counter-history-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\counter-history-contract-n2.log",
+      "sha256": "a1971771e1606e39a27536ed33cf618e97ccce5c7146c3a581b544f2eee28796"
+    },
+    "analytics-refresh-contract-n5.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-refresh-contract-n5.log",
+      "sha256": "71d76ccc2e3007ebb0d0d0507fad3c4909d3bbbad248ff760a9456aa191beb7d"
+    }
+  },
+  "contracts": {
+    "channel-cohort-contract-n3": {
+      "exports": {
+        "contract.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-cohort-contract-n3\\contract.json",
+          "sha256": "df025f583f1cf5b80160e1c30a043b65d577bbe105fa0af2933b9478a6fc503d"
+        },
+        "lineage.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-cohort-contract-n3\\lineage.json",
+          "sha256": "fbb1d856bafaeb8a0c98faa85839d796448ae8c7eeb78dea0380f54c97ba87d0"
+        },
+        "policy.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-cohort-contract-n3\\policy.json",
+          "sha256": "37dfdd99d5361125e61a7af478de5b18bf94e14bef1e1f1bd1e21614ba47e425"
+        },
+        "requests.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-cohort-contract-n3\\requests.json",
+          "sha256": "f1dc17e872d3a4d034cef1fda8d5983c52f5c4eab711a5bb9eecf73060d90e17"
+        },
+        "restored-state.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-cohort-contract-n3\\restored-state.json",
+          "sha256": "6cfb27efc4b41ac05d0e6154b7d1bca16e05a092944850b70bcfa0f75ea5240b"
+        },
+        "owned-fixture/production.db": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-cohort-contract-n3\\owned-fixture\\production.db",
+          "sha256": "49f5d7bd62064c11e1ccc499c77299e3a7a8a0d808b6b86ebf51938d67791447"
+        }
+      },
+      "contract": {
+        "status": "PASS",
+        "synthetic_metric_seed_count": 9,
+        "mock_official_requests": 3,
+        "compatible_distinct_peer_posts": 5,
+        "persisted_snapshots": 10,
+        "old_snapshots_unchanged": 9,
+        "fresh_process_restore": true,
+        "scope_mismatches_excluded": true,
+        "remote_post_duplicates_not_counted": true,
+        "source_transport_flag_simulation_only": true,
+        "media_is_nonplayable_fixture_bytes": true,
+        "provider_coverage_fabricated": false,
+        "publishing_age_fabricated": false,
+        "algorithm_version": "winner-channel-assessment-v1",
+        "observed_state_is_mock_only": true,
+        "real_provider_tested": false,
+        "actual_external_calls": 0,
+        "paid_calls": 0,
+        "real_credentials_read": 0,
+        "owner_uat_accepted": false,
+        "accepted_media_replaced": false,
+        "production_deployed": false,
+        "winner_detection_ready": false
+      }
+    },
+    "counter-history-contract-n2": {
+      "exports": {
+        "contract.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\counter-history-contract-n2\\contract.json",
+          "sha256": "f118174ba9c43647fecb59c4a6f62769583a29613c961efba5df9ea579cecb6c"
+        },
+        "counter-evidence.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\counter-history-contract-n2\\counter-evidence.json",
+          "sha256": "c94a13bc8f7aa866094053d56ec3c809ab2d28796ddd2cae51be38dc5a15de51"
+        },
+        "policy.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\counter-history-contract-n2\\policy.json",
+          "sha256": "37dfdd99d5361125e61a7af478de5b18bf94e14bef1e1f1bd1e21614ba47e425"
+        },
+        "requests.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\counter-history-contract-n2\\requests.json",
+          "sha256": "b0a40eac022cb3b16bac19a72cf33b698ed76827b71f167ebcd2a70cc2f1ac7a"
+        },
+        "restored-state.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\counter-history-contract-n2\\restored-state.json",
+          "sha256": "57f0d00eb6d65080217e44550630447db46ef29f75fbb140ef94f511d31353e7"
+        },
+        "owned-fixture/production.db": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\counter-history-contract-n2\\owned-fixture\\production.db",
+          "sha256": "09513f243d5844c5cb7c2a53c3a89e55ff445c7943c50ce79e75851e386e8993"
+        }
+      },
+      "contract": {
+        "status": "PASS",
+        "collections": 12,
+        "official_mock_reads": 24,
+        "persisted_snapshots": 12,
+        "distinct_peer_posts": 5,
+        "analytics_cost_records": 24,
+        "actual_cost": null,
+        "fresh_process_restore": true,
+        "earlier_collection_clock_is_fixture": true,
+        "historical_counter_refs_preserved": true,
+        "views_per_hour_is_reported_counter_growth": true,
+        "unsupported_retention_and_completion_null": true,
+        "publishing_age_null": true,
+        "assessment_state": "insufficient_data",
+        "algorithm_version": "winner-channel-assessment-v1",
+        "media_is_nonplayable_fixture_bytes": true,
+        "real_provider_tested": false,
+        "actual_external_calls": 0,
+        "paid_calls": 0,
+        "real_credentials_read": 0,
+        "owner_uat_accepted": false,
+        "accepted_media_replaced": false,
+        "production_deployed": false,
+        "winner_detection_ready": false
+      }
+    },
+    "analytics-refresh-contract-n5": {
+      "exports": {
+        "clock-fixture.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-refresh-contract-n5\\clock-fixture.json",
+          "sha256": "f916d8bc64c7bad6c93860078902526d04c58e8fd9dee927adaea51d053b4dda"
+        },
+        "contract.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-refresh-contract-n5\\contract.json",
+          "sha256": "f205731baf2b13bbbb375798ffaa6d1c790bd37996d31ccb6a92818287f7ce43"
+        },
+        "refresh-owned-clone.db": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-refresh-contract-n5\\refresh-owned-clone.db",
+          "sha256": "9bd68ac3df885420da77134e2c0ac33d1ddcf933f8081d37d0484b98a9e51c8e"
+        },
+        "requests.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-refresh-contract-n5\\requests.json",
+          "sha256": "90cb31331da94ab13d9a62fd3fa9baee87f69a69860f10ad94fcf7edd105dc4f"
+        },
+        "restored-state.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-refresh-contract-n5\\restored-state.json",
+          "sha256": "a1a4ff0665ce8466efc44cfeaa0e245bd18aec3190065e6d4a2c038422c9c18f"
+        },
+        "source.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-refresh-contract-n5\\source.json",
+          "sha256": "aca2b0907a574b8e0aa44c5626b02ad95c40e87c81057be45c47f44b85dfb9a2"
+        }
+      },
+      "contract": {
+        "status": "PASS",
+        "official_mock_requests": 3,
+        "authenticated_api_requests": 9,
+        "fresh_process_restore": true,
+        "old_snapshots_unchanged": 2,
+        "new_snapshots": 1,
+        "durable_occurrences": 2,
+        "revoked_occurrences_not_collected": 1,
+        "analytics_cost_records": 9,
+        "actual_cost": null,
+        "external_provider_calls": 0,
+        "real_credentials_read": 0,
+        "paid_calls": 0,
+        "real_provider_tested": false,
+        "owner_uat_accepted": false,
+        "production_deployed": false,
+        "media_replaced": false,
+        "analytics_ready": false
+      }
+    }
+  },
+  "api_broad_prior_passed": 90,
+  "api_broad_prior_seconds": 240.32,
+  "api_final_affected_passed": 45,
+  "api_final_affected_seconds": 42.96,
+  "test_counts_overlap": true,
+  "new_cohort_tests": 21,
+  "new_feature_boundary_tests": 1,
+  "failed_logs_and_directories_retained": true,
+  "full_current_api_status": "PENDING_PINNED_COHORT_COMMIT",
+  "full_parent_api_status": "RUNNING_AT_681D0C6",
+  "last_completed_linux_api": {
+    "head": "d3d3a77fd1ceca32baa8ae191cfdfbbd4096ce52",
+    "passed": 2553,
+    "skipped": 11,
+    "seconds": 1353.1,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-d3d3a77.log",
+      "sha256": "6fb1d943457f6f15de7089a2cc572a3746c14dab01bd60bd463cea4fdf112501"
+    }
+  },
+  "actual_provider_calls": 0,
+  "real_credentials_read": 0,
+  "paid_operations": 0,
+  "accepted_media_replaced": false,
+  "transport_flag_seed_is_simulation": true,
+  "collection_clock_is_fixture": true,
+  "media_is_nonplayable_fixture": true,
+  "browser_real_tested": false,
+  "owner_uat_accepted": false,
+  "native_winner_integrated": false,
+  "winner_detection_ready": false,
+  "learning_loop_ready": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false
+}

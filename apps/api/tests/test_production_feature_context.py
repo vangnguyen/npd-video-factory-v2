@@ -1,10 +1,13 @@
 """Owned render/analytics state: subsequent metadata edits cannot relabel media."""
 import json
+from types import SimpleNamespace
 
 import pytest
 from sqlalchemy import select
 
 from app.db import VideoProjectORM
+from app.db import utc_now
+from app.analytics_service import AnalyticsSyncProcessor
 from app.platform_models import ProjectVersionCreate
 from app.production_db import ProductionRenderJobORM
 from app.production_features import read, retain
@@ -128,3 +131,22 @@ async def test_legacy_render_keeps_missing_metadata_null_after_new_project_edits
     assert features.topic is features.niche is features.cta is features.hook_type is None
     assert features.evidence['project_metadata_source'] == 'unavailable_legacy_render'
     assert features.duration_seconds is not None and features.publishing_time is None
+
+
+@pytest.mark.asyncio
+async def test_long_context_is_retained_exactly_without_overflowing_legacy_feature_columns(tmp_path):
+    stack = await setup_stack(tmp_path)
+    try:
+        _, render = await queued(stack, {'source_idea': {'hook_concept': 'H' * 400, 'visual_concept': 'V' * 800}})
+        sync = SimpleNamespace(project_id=stack.project.project_id, workspace_id=stack.project.workspace_id,
+            publication_id='pub_projection_explicit_fixture', provider_mode='official')
+        parent = SimpleNamespace(final_render_id=render.render_id, output_asset_id=None,
+            publication_id=sync.publication_id, receipt=None, created_at=utc_now(), mock=True)
+        dependencies = SimpleNamespace(platform_repository=stack.platform, production_repository=stack.repository)
+        features = await AnalyticsSyncProcessor._capture_features(dependencies, sync, parent)
+        assert features.hook_type is None and features.visual_strategy == 'source'
+        assert features.evidence['unprojected_context_fields'] == ['hook_type', 'visual_strategy']
+        assert features.evidence['original_context_preserved_without_truncation'] is True
+        assert render.manifest['feature_context']['hook_type'] == 'H' * 400
+        assert render.manifest['feature_context']['visual_strategy'] == 'V' * 800
+    finally: await stack.engine.dispose()

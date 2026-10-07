@@ -220,6 +220,12 @@ class AnalyticsSyncProcessor:
         self.production_repository = production_repository
         self.providers = providers
         self.settings = settings
+        from .analytics_cohort import WinnerChannelPolicy
+        configured = getattr(settings, 'analytics_winner_policy_json', '')
+        try:
+            self.winner_policy = WinnerChannelPolicy.model_validate_json(configured) if configured else WinnerChannelPolicy()
+        except ValueError:
+            raise ValueError('WINNER_CHANNEL_POLICY_INVALID') from None
 
     async def process(self, sync_id: str) -> AnalyticsSyncRead:
         sync = await self.repository.claim(sync_id)
@@ -289,6 +295,13 @@ class AnalyticsSyncProcessor:
                     else None
                 ),
             )
+            if collection.source_kind == 'official_api':
+                from .analytics_cohort import channel_context, assess_channel
+                context = await channel_context(self.repository.session_factory, sync=sync, publication=publication,
+                    collection=collection, features=features, policy=self.winner_policy)
+                assessment = assess_channel(collection.metrics, duration=features.duration_seconds,
+                    production_cost=float(cost.actual_cost_total) if cost.actual_cost_complete and cost.actual_cost_total is not None else None,
+                    context=context, policy=self.winner_policy)
             assessment.evidence.append(
                 "Production-cost input covers recorded operations only: "
                 f"records={cost.records}; unknown_actual_cost_operations="
@@ -388,7 +401,7 @@ class AnalyticsSyncProcessor:
             publication_id=sync.publication_id,
             trend_cluster_id=context.trend_cluster_id if context else None,
             idea_id=context.idea_id if context else None,
-            hook_type=context.hook_type if context else None,
+            hook_type=context.hook_type if context and context.hook_type and len(context.hook_type) <= 160 else None,
             duration_seconds=timeline.duration_seconds if timeline else None,
             scene_count=len(scene_ids) if scene_ids else None,
             subtitle_template=subtitle_template,
@@ -396,7 +409,7 @@ class AnalyticsSyncProcessor:
             music_profile=music_profile,
             visual_strategy=(
                 context.visual_strategy
-                if context and context.visual_strategy
+                if context and context.visual_strategy and len(context.visual_strategy) <= 240
                 else "+".join(visual_kinds)
                 if visual_kinds
                 else None
@@ -417,6 +430,9 @@ class AnalyticsSyncProcessor:
                 'source_content_version_id': context.source_content_version_id if context else None,
                 'idea_source': context.idea_source if context else None,
                 'idea_version_at_render_request': context.idea_version if context else None,
+                'unprojected_context_fields': [field for field, maximum in (('hook_type', 160), ('visual_strategy', 240))
+                    if context and getattr(context, field) and len(getattr(context, field)) > maximum],
+                'original_context_preserved_without_truncation': bool(context),
                 "publication_receipt_id": publication.receipt.receipt_id if publication.receipt else None,
                 "publication_mock": publication.mock,
                 "publishing_time_source": 'mock_receipt' if sync.provider_mode == 'fixture' else None,

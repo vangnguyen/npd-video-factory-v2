@@ -282,7 +282,7 @@ class AnalyticsRepository:
                         factors_json=[item.model_dump(mode="json") for item in assessment.factors],
                         evidence_json=assessment.evidence,
                         recommendations_json=assessment.recommendations,
-                        algorithm_version=ANALYTICS_ALGORITHM_VERSION,
+                        algorithm_version=assessment.algorithm_version,
                         automatic_action=False,
                         paid_media_mutation=False,
                         content_deletion=False,

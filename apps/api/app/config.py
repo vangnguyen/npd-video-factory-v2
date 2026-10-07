@@ -162,6 +162,7 @@ class Settings(BaseSettings):
     analytics_fixture_enabled: bool = True
     analytics_external_execution_enabled: bool = False
     analytics_scheduled_refresh_enabled: bool = False
+    analytics_winner_policy_json: str = Field(default='', max_length=16384)
     analytics_max_attempts: int = 3
     analytics_retry_base_seconds: int = 30
     analytics_retry_max_seconds: int = 900
