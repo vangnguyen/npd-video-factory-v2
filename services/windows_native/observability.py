@@ -132,6 +132,7 @@ def database_ready(path, required):
 def readiness(server):
     root = Path(server.config.data_root).absolute()
     checks = {'state_root': unlinked(root) and root.is_dir(),
+        'auth_configuration': server.access is None or server.access.ready(),
         'workflow_database': database_ready(root / 'workflow.sqlite3', {'projects', 'jobs', 'events', 'project_versions'}),
         'intelligence_database': database_ready(root / 'intelligence.sqlite3', {'records', 'versions', 'operations', 'decisions'}),
         'production_worker': server.workers_enabled and server.runner.thread.is_alive() and not server.runner.stop.is_set(),

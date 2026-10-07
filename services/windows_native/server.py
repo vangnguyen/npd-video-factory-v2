@@ -107,10 +107,20 @@ def save_image(config, payload):
 class LocalServer(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, port, config, *, pipeline=None, start_worker=True, observer=None):
+    def __init__(self, port, config, *, pipeline=None, start_worker=True, observer=None, access=None):
         config.validate_data_root()
+        if access is not None:
+            from .access import NativeAccess
+            if not isinstance(access, NativeAccess):
+                raise WorkflowError('NATIVE_AUTH_CONFIGURATION_INVALID', 400)
+            access.bind_root(config.data_root)
+        else:
+            from .backup import guard
+            if guard(config.data_root / '.vf-auth-workspace.json').exists():
+                raise WorkflowError('NATIVE_AUTH_REGISTRY_REQUIRED_FOR_BOUND_STATE', 503)
         super().__init__(("127.0.0.1", port), Handler)
         self.config, self.store = config, Store(config.data_root)
+        self.access = access
         self.session = secrets.token_urlsafe(32)
         self.csrf = secrets.token_urlsafe(32)
         self.connection_lock = threading.Lock()
@@ -165,9 +175,13 @@ class Handler(BaseHTTPRequestHandler):
             except Exception:
                 raise WorkflowError("LOCAL_SESSION_REQUIRED", 401) from None
             token = cookies.get("vf_native_session")
-            if token is None or not secrets.compare_digest(token.value, self.server.session):
+            if self.server.access is not None:
+                self.auth_session = self.server.access.authenticate(token.value if token else None,
+                    csrf=self.headers.get('X-VF-CSRF'), write=write)
+                self.auth_permission = self.server.access.authorize(self.auth_session, self.command, self.path)
+            elif token is None or not secrets.compare_digest(token.value, self.server.session):
                 raise WorkflowError("LOCAL_SESSION_REQUIRED", 401)
-        if write and not secrets.compare_digest(self.headers.get("X-VF-CSRF", ""), self.server.csrf):
+        if write and self.server.access is None and not secrets.compare_digest(self.headers.get("X-VF-CSRF", ""), self.server.csrf):
             raise WorkflowError("CSRF_TOKEN_REQUIRED", 403)
 
     def reply(self, value, status=200, headers=None):
@@ -224,7 +238,15 @@ class Handler(BaseHTTPRequestHandler):
 
     def dispatch_get(self):
         path = self.path.split("?", 1)[0]
-        self.boundary(session=path.startswith("/api/") and path not in {"/api/session", "/api/health"})
+        if self.server.access is not None and path in ('/', '/native.html', '/production', '/intelligence', '/settings/assemblyai'):
+            try:
+                self.boundary(session=True)
+            except WorkflowError as error:
+                if error.status == 401:
+                    return self.reply({'code': 'NATIVE_AUTH_SESSION_REQUIRED'}, 303, {'Location': '/login'})
+                raise
+        self.boundary(session=path.startswith("/api/") and path != '/api/health'
+            and (path != '/api/session' or self.server.access is not None))
         if path == '/healthz':
             return self.reply({'schema': 'vf-native-health-v1', 'status': 'alive', 'scope': 'http_process'})
         if path == '/readyz':
@@ -276,9 +298,14 @@ class Handler(BaseHTTPRequestHandler):
             version=parse_qs(self.path.partition('?')[2]).get('version',[''])[0]
             return self.file(self.server.previews.video_path(identifier,version),video=True)
         if path == "/api/session":
-            return self.reply({"csrf": self.server.csrf, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
+            access = self.server.access.public(self.auth_session) if self.server.access is not None else {
+                'mode': 'loopback_owner', 'role': 'owner', 'workspace_id': None,
+                'permissions': ['read', 'edit', 'review', 'manage']}
+            csrf = self.auth_session.csrf if self.server.access is not None else self.server.csrf
+            headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
+            return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
-                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True}}, headers={"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"})
+                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -361,6 +388,8 @@ class Handler(BaseHTTPRequestHandler):
         static.update({name:name[1:] for name in ('/native-source-editor.mjs','/native-source-editor.css',
             '/native-source-broll.mjs','/native-media-frames.mjs','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
         static['/native-costs.mjs'] = 'native-costs.mjs'
+        static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',
+                       '/native-access.mjs': 'native-access.mjs', '/native-access.css': 'native-access.css'})
         if path in static:
             return self.file(REPO / "apps/studio-web" / static[path])
         raise WorkflowError("ROUTE_NOT_FOUND", 404)
@@ -376,12 +405,31 @@ class Handler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(length))
             if not isinstance(body, dict):
                 raise ValueError()
+            if getattr(self, 'auth_session', None) is not None and ('reviewer' in body or self.auth_permission == 'review'):
+                body['reviewer'] = self.auth_session.principal.token_id
             return body
         except ValueError:
             raise WorkflowError("INVALID_JSON_BODY", 400) from None
 
     def dispatch_post(self):
+        if self.path == '/api/login':
+            self.boundary(session=False)
+            if self.server.access is None:
+                raise WorkflowError('NATIVE_AUTH_NOT_CONFIGURED', 404)
+            body = self.read_body(max_bytes=2048)
+            if set(body) != {'token'}:
+                raise WorkflowError('NATIVE_AUTH_LOGIN_FIELDS_INVALID', 400)
+            cookie, session = self.server.access.login(body['token'])
+            return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
+                'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        if self.path == '/api/logout':
+            if self.server.access is None:
+                raise WorkflowError('NATIVE_AUTH_NOT_CONFIGURED', 404)
+            cookies = SimpleCookie(); cookies.load(self.headers.get('Cookie', ''))
+            self.server.access.logout(cookies['vf_native_session'].value)
+            return self.reply({'status': 'signed_out'}, headers={
+                'Set-Cookie': 'vf_native_session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0'})
         if self.path.startswith("/api/intelligence/"):
             from .intelligence_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
@@ -656,6 +704,8 @@ class Handler(BaseHTTPRequestHandler):
     def handle_request(self, method):
         self.request_id = uuid.uuid4().hex
         self.response_status = None
+        self.auth_session = None
+        self.auth_permission = None
         started = time.monotonic()
         try:
             self.connection.settimeout(30)
@@ -688,9 +738,17 @@ def main():
     parser.add_argument("--config", type=Path)
     parser.add_argument("--port", type=int, default=8026)
     parser.add_argument("--preflight", action="store_true")
+    parser.add_argument('--auth-registry', type=Path)
+    parser.add_argument('--workspace-id')
     args = parser.parse_args()
     config = Config.load(args.config)
     try:
+        if (args.auth_registry is None) != (args.workspace_id is None):
+            raise WorkflowError('NATIVE_AUTH_CONFIGURATION_INVALID', 400)
+        access = None
+        if args.auth_registry is not None:
+            from .access import NativeAccess
+            access = NativeAccess.from_file(args.auth_registry, args.workspace_id, config.data_root)
         ready = verify_runtime(config, full=True)
         if args.preflight:
             print(json.dumps(ready, ensure_ascii=False))
@@ -698,7 +756,7 @@ def main():
         from .windows_job import contain_process_tree, lock_data_root
         contain_process_tree()
         lock = lock_data_root(config.data_root)
-        with LocalServer(args.port, config) as server:
+        with LocalServer(args.port, config, access=access) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)
             try:
                 server.serve_forever()

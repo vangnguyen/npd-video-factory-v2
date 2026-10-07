@@ -1,0 +1,10 @@
+.native-login{margin:0;background:#f5f7fb;color:#142239;font:16px/1.55 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box}
+.native-login main{width:min(100%,420px);background:white;border:1px solid #d9e0eb;border-radius:18px;padding:32px;box-sizing:border-box}
+.native-login h1{font-size:25px;margin:12px 0}.login-brand{font-weight:750;letter-spacing:.08em;font-size:13px;color:#395be5}
+.native-login label{display:block;font-weight:600}.native-login input{display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 20px;border:1px solid #9aabc0;border-radius:8px;font:inherit}
+.native-login button,.native-access-bar button{font:inherit;padding:9px 15px;border:1px solid #bac5d4;border-radius:8px;cursor:pointer;background:#fff;color:#142239}
+.native-login button{background:#395be5;color:white;width:100%}.native-login button:disabled{opacity:.55;cursor:wait}
+.native-access-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:#eef3fb;border:1px solid #d4deed;border-radius:9px;padding:10px 14px;margin:8px 0 16px;font-size:13px}
+.native-access-bar p{margin:0;flex:1}.native-access-bar [role=status]{flex-basis:100%}
+[data-vf-denied=true]{opacity:.55;cursor:not-allowed!important}a[data-vf-denied=true]{pointer-events:none}
+.native-access-bar button:focus-visible,.native-login :focus-visible{outline:3px solid #6484ed;outline-offset:3px}

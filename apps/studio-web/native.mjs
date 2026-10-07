@@ -112,7 +112,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null;
+  let costRequest = 0, costUI = null, canManage = true;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -128,6 +128,8 @@ if (typeof document !== "undefined") {
   async function api(path, body) {
     const response = await fetch(path,{method:body?"POST":"GET",credentials:"same-origin",headers:body?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:body?JSON.stringify(body):undefined});
     const result=await response.json();
+    if(response.status===401 && result.code==='NATIVE_AUTH_SESSION_REQUIRED')location.assign('/login');
+    if(response.status===403 && result.code==='NATIVE_AUTH_FORBIDDEN')throw new Error('Vai trò hiện tại không có quyền thực hiện thao tác này.');
     if(!response.ok)throw new Error(`${errors[result.code] ?? result.failure?.action ?? result.code} (HTTP ${response.status})`);
     return result;
   }
@@ -284,6 +286,10 @@ if (typeof document !== "undefined") {
   }
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
+    canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
+    if(session.access?.mode==='registry'){
+      const access=await import('./native-access.mjs');access.installNativeAccess(session);
+    }
     if($('cost-card')){
       $('cost-card').hidden=!supportsNativeCosts(session);
       try {costUI=await loadNativeCosts(session);}
@@ -389,7 +395,7 @@ if (typeof document !== "undefined") {
   $("scenes").addEventListener("click",event=>{const button=event.target.closest("[data-move]");if(!button||busy||jobActive(project)||project.archived)return;const row=button.closest(".scene"),target=Number(button.dataset.move)<0?row.previousElementSibling:row.nextElementSibling;if(!target)return;if(Number(button.dataset.move)<0)target.before(row);else target.after(row);document.querySelectorAll(".scene").forEach((r,i)=>{r.querySelector("strong").textContent=`CẢNH ${i+1}`;const media=r.querySelector("[data-media]");media.setAttribute("aria-label",`Nguồn cho cảnh ${i+1}`);media.parentElement.firstChild.textContent=`Nguồn cho cảnh ${i+1}`;});markDirty("proposal");$("narration").textContent=readProposal().narration;message("Đã đổi thứ tự cảnh. Lời đọc sẽ theo thứ tự mới; lưu và duyệt lại trước khi tạo giọng đọc.");});
   $("scenes").addEventListener("change",event=>{if(event.target.matches("input,select,textarea")){const row=event.target.closest(".scene");if(event.target.matches("[data-media]")){row.querySelector("[data-motion]").value="none";row.querySelector("[data-start]").value="0";}scenePreview(row);markDirty("proposal");}});
   window.addEventListener("beforeunload",event=>{if(dirty){event.preventDefault();event.returnValue="";}});
-  async function runtimeStatus(){const status=await api("/api/runtime-status");$("runtime-status").textContent=`Nội dung: ${status.openai_key_saved?"key đã lưu; chưa kiểm tra bằng yêu cầu mới":"chưa có key"}. Giọng Thùy Dung: sẵn sàng. FFmpeg: sẵn sàng. AssemblyAI: ${status.assemblyai.connected?"đã xác minh kết nối":"chưa kết nối"}.`;}
+  async function runtimeStatus(){if(!canManage){$("runtime-status").textContent='Chẩn đoán kết nối dành cho chủ không gian.';return;}const status=await api("/api/runtime-status");$("runtime-status").textContent=`Nội dung: ${status.openai_key_saved?"key đã lưu; chưa kiểm tra bằng yêu cầu mới":"chưa có key"}. Giọng Thùy Dung: sẵn sàng. FFmpeg: sẵn sàng. AssemblyAI: ${status.assemblyai.connected?"đã xác minh kết nối":"chưa kết nối"}.`;}
   function creationTemplates(){if(!brandCatalog)return;const format=$("new-video-format").value,selected=$("new-template").value;const values=brandCatalog.templates.filter(t=>t.aspect_ratio===format);$("new-template").innerHTML=values.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');$("new-template").value=values.some(t=>t.id===selected)?selected:values.find(t=>t.purpose==='property_presentation'&&t.duration_seconds===30)?.id??values[0]?.id??'';}
   $("new-video-format").addEventListener('change',creationTemplates);
   async function loadBrandCatalog(){const values=await api(shotStudio?"/api/brand-templates?formats=all":"/api/brand-templates");brandCatalog=values;$("brand-select").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("");$("template-select").innerHTML='<option value="">Bố cục MVP hiện có</option>'+values.templates.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join("");$("brand-select").value=project?.document.brand_template?.brand.id??"vf-reference";$("template-select").value=project?.document.brand_template?.template.id??"";if(workspaceUI){$("new-brand").innerHTML=values.brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');creationTemplates();const {profiles}=await api('/api/intelligence/config');$("new-content-profile").innerHTML='<option value="">Nội dung khác</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');}}

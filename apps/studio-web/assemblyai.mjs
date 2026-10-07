@@ -15,7 +15,9 @@ export const connectionLabel = value => value.connected ? "Đã xác thực kế
 
 export async function installConnectionShell(session, options = {}, importer = () => import('./studio-shell.mjs')) {
   if(session?.capabilities?.native_studio_ux !== true)return false;
-  try { const shell=await importer();shell.loadStudioShellStyles();shell.mountStudioShell({page:options.page || 'settings',context:options.context || 'Kết nối nhận diện lời nói'});return true; } catch { return false; }
+  try { const shell=await importer();shell.loadStudioShellStyles();shell.mountStudioShell({page:options.page || 'settings',context:options.context || 'Kết nối nhận diện lời nói'});
+    if(session.access?.mode==='registry'){const access=await import('./native-access.mjs');access.installNativeAccess(session);}
+    return true; } catch { return false; }
 }
 
 if (typeof document !== "undefined") {
@@ -72,8 +74,9 @@ if (typeof document !== "undefined") {
     busy=true;stateKnown=false;controls();$("connection-state").textContent="Đang đọc trạng thái…";
     try {
       const session = await fetch("/api/session", {cache: "no-store"});
-      if (!session.ok) throw new Error();
       const sessionValue = await session.json();
+      if(session.status===401 && sessionValue.code==='NATIVE_AUTH_SESSION_REQUIRED')location.assign('/login');
+      if (!session.ok) throw new Error();
       csrf = sessionValue.csrf;
       await installConnectionShell(sessionValue);
       const response = await fetch("/api/connections/assemblyai", {cache: "no-store"});
@@ -88,8 +91,6 @@ if (typeof document !== "undefined") {
   $("connection-refresh").addEventListener("click",()=>void loadState());
   void loadState();
 }
-
-
 
 
 

@@ -1,0 +1,125 @@
+{
+  "schema": "north-star-native-access-evidence-v1",
+  "parent_head": "583d9eaf445622f70ae05d52f8fc4ee3311ad284",
+  "source_sha256": {
+    "services/windows_native/access.py": "67c07033a858deb58c61be2d0e0feb382c97f65f7c84d53dfc5f2eff7e42aa61",
+    "services/windows_native/server.py": "883927e6ab67c4b64eb1d9fe439f3174158f7fe1b698e0c677502e9f304dcdd7",
+    "services/windows_native/observability.py": "fdb4998604316438543e63bdff872b75b2d405b0f3525d5daa55fad2ee583ac9",
+    "services/windows_native/tests/test_access.py": "d3afa8ecd340a7ea6a213755447a6297b306f9a36d5aa6265dac40916a2ee76e",
+    "services/windows_native/tests/test_access_http.py": "365719b2a2fb7b7c0f25aa9f1582a18eb7b2d13a1e7b763d907d291b7c973650",
+    "apps/studio-web/native-access.mjs": "02ea3cec030a519e1a803c7d1cb65b27c161c6d07923723123a0c21e61b5bfad",
+    "apps/studio-web/native-access.css": "fe93fe5d0b63095c873d2cef3cce11774b2911f29bf5c73c9ec4c87e1e3adaf6",
+    "apps/studio-web/native-login.html": "06ada417278a30e0b7198124cd14be16d15b86bb15774205db2bec98916247f8",
+    "apps/studio-web/native-login.mjs": "1c81f259967078631adcf8731449089312b93a5869c5fbaeed63e923423c2f09",
+    "apps/studio-web/native.mjs": "f97fdd74d2ac57911d13f2ff485ede6414ffe23b9b980834f6eb9a380825f1c1",
+    "apps/studio-web/native.html": "7f269c69b442c828a1ab792760091b1c13c428737e72f3dfd343911559346ffb",
+    "apps/studio-web/production.mjs": "5586ef1ca16b2477249a3939c350444bf56c535add998b7a46beb34c4b6a9f59",
+    "apps/studio-web/intelligence.mjs": "c5b51b4e9492ae551020c15e618195008facdab805f10162adf7ece3397ac20f",
+    "apps/studio-web/assemblyai.mjs": "19cedf81aa9006d33064c3526cc77badbfd47970256f5762debb928113e95fe8",
+    "apps/studio-web/tests/native-access.test.mjs": "0554e331461d62ca4dc64e9db6b9fb44f2bfc7027f2d8681572e12ac28e69595",
+    "scripts/north_star_native_access_contract.py": "1057ad14b9c07f07a55284bff02cde720e9bd44337be05f603912fa68a6f527a",
+    "docs/NATIVE_ACCESS.md": "4ba64b54763499ea5e2810c3e3f6ebf5685954995508db241dfbf7ea29698a25"
+  },
+  "logs": {
+    "native-access-http-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-http-r1.log",
+      "sha256": "45bb1038f8ad3eb3b58965e0f4c7628d6b42f872110e26e41a185a3c627c0df4"
+    },
+    "native-access-http-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-http-r2.log",
+      "sha256": "66d3f1f1c7595dab162e910e5775033f73e8a804f62a586d50273d6bcc894e1d"
+    },
+    "native-access-full-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-full-r1.log",
+      "sha256": "7cb29c95e1405682ccb7b111c3f150c6eeb1dccc9be434f9ffc5e6cb53a0c634"
+    },
+    "native-access-full-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-full-r2.log",
+      "sha256": "2160a45e1502e877b651b2ec55a205726b96d320cba992556430d0282359c4a5"
+    },
+    "studio-access-full-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-access-full-r1.log",
+      "sha256": "f71231d8e88e6089476d12e43ad721e12ea013cf6eb4aa2a25881a4c2ebf9024"
+    },
+    "native-access-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n1.log",
+      "sha256": "b35215fe751a6dd049bba81b4e0f9a2bf4ccf27800d2082371ccac49c6b8fda6"
+    },
+    "native-access-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n2.log",
+      "sha256": "b35215fe751a6dd049bba81b4e0f9a2bf4ccf27800d2082371ccac49c6b8fda6"
+    },
+    "native-human-identity-full-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-human-identity-full-r1.log",
+      "sha256": "8bb07a88c40a78015e8de89e29e47426172f39ee795f4a5f754f035115bb8c58"
+    },
+    "api-linux-583d9ea.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-583d9ea.log",
+      "sha256": "01bd1c3eb52521fb8a54e5267017f6ab2a1760f5a54817bbeee09277c57f1388"
+    }
+  },
+  "exports": {
+    "canonical-after.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n2\\canonical-after.json",
+      "sha256": "7c070361a4062c44b1fd9ca01034fb5cbc939ace24d177ff6c733ac8531b0820"
+    },
+    "canonical-before.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n2\\canonical-before.json",
+      "sha256": "877d78ad6f8228cd196b581d78b01d8ba6c6f21196057a99ee914c96484259d5"
+    },
+    "explicit-fixture-script-review.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n2\\explicit-fixture-script-review.json",
+      "sha256": "b7a3cc88ef509b7e27742656ca1da34fae07d7e9e4c2defbd44efe4dcfde43b9"
+    },
+    "privacy-and-gates.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n2\\privacy-and-gates.json",
+      "sha256": "10dda4cdd4b2901d35fc4f2cff474b3439a5b08cf67063ff4cb3f753698555f4"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n2\\receipt.json",
+      "sha256": "bb5b18cf375d01d92b1f5c9f7da9d213023feb0269b7d830e30b3a4040936e0e"
+    },
+    "request-contracts.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n2\\request-contracts.json",
+      "sha256": "71d9096e314b96d4d470c59be94f7f32aa188480ef2c3dbdcd735fa9271d06fe"
+    },
+    "request-logs.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n2\\request-logs.json",
+      "sha256": "ab2f4517e12366aac74891ca3d293830343966a06d62de9f388f9230b43a8b1e"
+    },
+    "session-permissions.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-contract-n2\\session-permissions.json",
+      "sha256": "bb55e8b97d473b39d1e33349439a169ec5b045c89a411045afe72e102d7de5e3"
+    }
+  },
+  "source_preservation": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-access-preservation.json",
+    "sha256": "c5e5b08c0563f6f61b4a009376107961847d894705d3d34d8225d3242b2762b5"
+  },
+  "native_full_pass": 400,
+  "native_seconds": 194.017,
+  "studio_pass": 123,
+  "studio_ms": 622.8104,
+  "new_native_security_tests": 19,
+  "new_studio_access_tests": 7,
+  "isolated_http_requests": 37,
+  "fixture_credentials_only": true,
+  "actual_provider_calls": 0,
+  "native_http_session_roles_implemented": true,
+  "durable_workspace_binding": true,
+  "bound_state_without_registry_fails_closed": true,
+  "legacy_unbound_owner_mode_preserved": true,
+  "human_service_credentials_separate": true,
+  "owner_uat_accepted": false,
+  "browser_uat_verified": false,
+  "production_deployed": false,
+  "full_platform_rbac_complete": false,
+  "unchanged_api_identity_full_regression": {
+    "head": "583d9eaf445622f70ae05d52f8fc4ee3311ad284",
+    "native_pass": 381,
+    "native_seconds": 324.671,
+    "linux_api_pass": 2085,
+    "linux_api_skip": 11,
+    "linux_api_seconds": 722.87
+  }
+}

@@ -6,7 +6,7 @@
     "apps/api/app/human_auth.py": "d8e79d73e13221bab66258830b147f17cde7e40764bd15e7990b672a76e67183",
     "services/windows_native/tests/test_human_identity.py": "a49deb49ba76acda2838f7c1325c3dd1884d7cb2acde9ce4693c76a8fddc992b",
     "scripts/north_star_human_identity_contract.py": "842cd930b77590813b90938a6feb56ceaa90bafbf0c8b416e261e39ca277ff53",
-    "docs/HUMAN_IDENTITY_CONTRACT.md": "c1b5de6decafdeb17611e0a15568a7667bced163a3846eb70febc14f51daedfb"
+    "docs/HUMAN_IDENTITY_CONTRACT.md": "fe191a3a82ca7d3c575bbdc720adaf7a83d9797b3a66d595c0b740a6ab464bc7"
   },
   "logs": {
     "native-human-identity-r1.log": {
@@ -20,6 +20,14 @@
     "human-identity-contract-n1.log": {
       "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\human-identity-contract-n1.log",
       "sha256": "8108bad9567a55db08aebbb317eef5a62677a8ec289f3886733af7fa62fd2ec5"
+    },
+    "native-human-identity-full-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-human-identity-full-r1.log",
+      "sha256": "8bb07a88c40a78015e8de89e29e47426172f39ee795f4a5f754f035115bb8c58"
+    },
+    "api-linux-583d9ea.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-583d9ea.log",
+      "sha256": "01bd1c3eb52521fb8a54e5267017f6ab2a1760f5a54817bbeee09277c57f1388"
     }
   },
   "exports": {
@@ -50,5 +58,13 @@
   "native_rbac_ready": false,
   "owner_uat_accepted": false,
   "production_deployed": false,
-  "full_regression_note": "Prior Native 376 and Linux API f045999 2085/11 retained; current refactor has focused tests and full pinned rerun pending."
+  "full_regression_note": "Pinned prerequisite 583d9ea passes 381 Native and 2085 Linux API/11 skips. HTTP integration is separately indexed by native-access-evidence.json.",
+  "full_regression": {
+    "head": "583d9eaf445622f70ae05d52f8fc4ee3311ad284",
+    "native_pass": 381,
+    "native_seconds": 324.671,
+    "linux_api_pass": 2085,
+    "linux_api_skip": 11,
+    "linux_api_seconds": 722.87
+  }
 }

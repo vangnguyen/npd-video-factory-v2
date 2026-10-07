@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Đăng nhập · NPD Video Studio</title>
+  <link rel="stylesheet" href="/native-access.css">
+  <script type="module" src="/native-login.mjs"></script>
+</head>
+<body class="native-login">
+  <main>
+    <p class="login-brand">NPD VIDEO STUDIO</p>
+    <h1>Đăng nhập Studio</h1>
+    <p>Dùng mã truy cập do chủ không gian cấp cho bạn.</p>
+    <form id="native-login-form">
+      <label for="native-token">Mã truy cập</label>
+      <input id="native-token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="1024" required>
+      <button id="native-login-submit" type="submit">Đăng nhập</button>
+    </form>
+    <p id="native-login-message" role="status" aria-live="polite"></p>
+    <a id="native-login-open" href="/" hidden>Mở Studio</a>
+  </main>
+</body>
+</html>
