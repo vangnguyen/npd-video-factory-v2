@@ -1147,3 +1147,21 @@ EVIDENCE: `docs/north-star/publishing-scheduler-evidence.json`, `docs/PUBLISHING
 REGRESSIONS: final focused API checks pass. Accepted/live source, media, database/processes/credentials, installed runtimes, main and default disabled publishing remain untouched. No production migration, paid call, real post/deletion, main merge or deployment. Old pre-0019/0020 migration fixtures exclude the later additive work table, preserving their historical boundary.
 
 EXTERNAL BLOCKERS: eventual real OAuth/key/account audit/Owner real publishing enablement; no current safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve/run full pinned scheduler regression; finish providers/runtime/Native distribution UI and all remaining media/analytics/learning/Trend/Hub/hardening waves.
+
+### Waves 7/9 — versioned scoped publishing profile configuration
+
+WAVE: 7/9. STATUS: IN PROGRESS; strict public profile configuration/unit contracts pass. MULTI_NICHE_READY = NO; PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `f7858b6d2a451c2fe82b2b6baaaaa99c5559dea0` pushed/preserved in verified `north-star-publishing-scheduler.bundle`, SHA256 `a0720d267fd18e55aa5a43940cb4cdb8a2ee31c042d71bf715fab96891fec157`; receipt links fresh fifteen accepted hashes/clean live source/unchanged main and 153 ahead/0 behind. Profile configuration is this increment.
+
+CAPABILITIES COMPLETED: versioned public PublishingProfile/catalog schema, official platform/provider mapping, workspace/channel selection, no foreign fallback, copied immutable revision history, additive catalog replacement, required explicit YouTube disclosures, exact nullable costs and bounded secret-free JSON.
+
+CAPABILITIES PARTIAL: provider/runtime registration, persistent Owner administration/profile custody, channel/catalog Native UI, complete configuration-family integration, credentials/key lifecycle and real account/provider acceptance. This is configuration evidence, not an external publishing or full multi-channel production acceptance.
+
+TESTS: **20 PASS**, 3.92s. First harness run passed nineteen but produced two setup/teardown errors when pytest expanded the 256 KiB test payload into a Windows environment-variable case name. Short case IDs correct it; current rerun has no warnings/errors. Underlying oversized catalog rejects. Full Linux scheduler parent f7858b6 is running; new profile full regression not yet run. Latest complete API at 5522f38 remains 2,263 pass/11 skip.
+
+REAL PROVIDER TESTS: none. MOCK TESTS: profile/account/binding identities and price inputs are explicit fixtures; no fabricated observed cost or verification. EVIDENCE: `docs/north-star/publishing-profile-evidence.json`, `docs/PUBLISHING_PROFILE_CONFIGURATION.md`, two private recovery logs. Initial oversized output is preserved by hash and never copied into public evidence.
+
+REGRESSIONS: current pure configuration checks pass; source engine, accepted/live data/media/processes/credentials, main and disabled defaults remain unchanged. No migration, provider/paid call, new budget approval, real publish/delete, main merge or deployment.
+
+EXTERNAL BLOCKERS: eventual authorized account/OAuth/key/real-provider acceptance; no safe-work blocker now. OWNER ACTION REQUIRED: none now. NEXT WAVE: connect configured provider/runtime/Native distribution controls and continue all remaining media/analytics/learning/Trend/Hub/hardening work.

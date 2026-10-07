@@ -1,6 +1,6 @@
 {
-  "head": "51ce5a0b54791b3eb1080fe91759722baf2e3fed",
-  "audited_at": "2026-10-07T08:21:06.691505+00:00",
+  "head": "f7858b6d2a451c2fe82b2b6baaaaa99c5559dea0",
+  "audited_at": "2026-10-07T08:34:51.627754+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "46c80d93db0300059f4808bf08a8f5742ba49487ceeb74b380a52ae1ad8a1e89",
@@ -282,6 +282,10 @@
     "apps/api/migrations/versions/0021_north_star_publish_work.py": "073d487f4fa880f0cdcc9a8f6b175d90899fae5cf54e7db64d0f73a351c8ea64",
     "scripts/north_star_publishing_scheduler_contract.py": "e48bd0b0fa16dcb00a5c1d192f20785d8ee84b8bc8ab424b037b9df16635d871",
     "docs/PUBLISHING_DURABLE_SCHEDULER.md": "526c26e8a86f43334265a7a35197562d6ce4f618dc1b4ed3df0ef54bb19a2f5b",
+    "apps/api/app/publishing_profiles.py": "69cf5d4902de6e4c48d5cfa7fca92943f583390077e2e89817e062d151496479",
+    "apps/api/tests/test_publishing_profiles.py": "69b54938c7867939e280d77d94735d9d3cf13d4fe60a576c879cf0f3452894ac",
+    "docs/PUBLISHING_PROFILE_CONFIGURATION.md": "14674c03efc1d0c6001a3907ac4313e52204a5f0629132496f180dc2efe63c05",
+    "docs/north-star/publishing-profile-evidence.json": "fcdf35c0a015ee21d094a02927d81ae2ed108afa76367922db8dc2287d72a1f8",
     "packages/contracts/publishing-capabilities.json": "82f616449fc42a523fcb2754f469c9b0236372325caef4edecf88363d6f50642",
     "apps/api/app/analytics_providers.py": "20537e844a7ed2394a85e39f8d9acb497bdc3f616ca1ad84424e0e9502e1ff01",
     "apps/api/app/analytics_service.py": "77d261426966b7b3be774623cafa0aa0a1ff4cb5da51528791c2d61fd2a36406",
