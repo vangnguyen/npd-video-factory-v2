@@ -1665,3 +1665,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: synthetic identities/Owner decisions/saved A
 EVIDENCE: `docs/NATIVE_OWNER_RIGHTS_OVERRIDES.md`, `docs/north-star/native-derived-rights-evidence.json`; `native-rights-override-contract-n2` has 13 declaration/grant/revoke/derived project/review/HTTP/event/archive/recovery files. Owned source `C:\vf-native-fixture-rights-override-derived-01`, restore `C:\vf-native-fixture-rights-override-derived-restore-01`. Parent final `5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398`, preview `1b19c136467326a7ec77c5f532dd758c1c8702efa025e1a09c277f2af44091c7` unchanged.
 
 REGRESSIONS: reproduced consumer gap fixed; affected suites pass, default-off publishing and independent source/QC/human gates preserved. EXTERNAL BLOCKERS: actual legal/provider/browser/Owner/production acceptance. OWNER ACTION REQUIRED: none for safe implementation. NEXT WAVE: original Native generative integration and MediaPlan/Mode A, remaining full Trend/learning/hardening/A/B/C. No main merge, live migration, real external publishing or deployment.
+
+### Wave 5C/D/E — Trusted generation lifecycle and targeted cancellation
+
+WAVE: 5C / 5D / 5E / 3 / 8. STATUS: IN PROGRESS. GENERATIVE_MEDIA_READY = NO; IMPLEMENTATION_COMPLETE = NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE = NO; PRODUCTION_DEPLOYED = NO.
+
+HEAD SHA: parent `a68c25f7a8977048ab7e1e874804a84af98cf4c3`, pushed/preserved in `north-star-native-derived-rights.bundle`, SHA256 `209d5764ffd224cb3409d5578e50237b21fd7db5af8a766fdd20d8b60072d5a5`; 181 ahead/0 behind, fresh 15 accepted hashes and clean live source. Lifecycle increment will be separately committed/preserved.
+
+CAPABILITIES COMPLETED: optional trusted server observer and strict boolean cancellation hooks in the existing neutral adapter. Bound content-free provider ticket/status/progress projections, null absent progress and callback isolation. Journal failure stops without another submit/poll. Cancellation before submission makes no request; subsequent cancellation targets the authenticated exact bridge job once. Foreign receipts reject, non-200 outcomes have safe errors/no write retry, terminal success racing cancel remains success. Legacy unhooked routing/binary/rights/cost contracts remain.
+
+CAPABILITIES PARTIAL: Native durable generative request/claim/ticket/progress/cancel/recovery, protected approved factory/scoped references/cost/result full local decode/explicit attachment/Assets controls. Approved actual graph/model/GPU/provider provisioning and genuine acceptance. Original MediaPlan/Mode A/B/full Trend/learning/hardening/A/B/C remain.
+
+TESTS: 63 affected API PASS/27.59s; 15 new lifecycle cases, earlier overlapping 61 PASS/40.85s. Native compatibility 20 PASS/2.968s. Latest full API e59a7d5 2659 PASS/11 SKIP/1512.89s and unchanged Native 533 PASS/331.869s plus derived 82 affected PASS, Studio 206 PASS/1000.2963ms retained without unnecessary broad repeat.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: HTTP workflow/job/progress/cancel/binary/scope/API fixtures. LOCAL-REAL TESTS: process/typed provider and Native import/cost/rights compatibility; no actual GPU/generated media/decode or new playable bundle. Existing binary wire fixtures include deliberately non-decodable bytes and are not media acceptance. Real secret/paid/Hub/post/browser/Owner/production actions = 0.
+
+EVIDENCE: `docs/COMFYUI_GENERATION_LIFECYCLE.md`, `docs/north-star/comfyui-lifecycle-evidence.json`, three hashed external logs. Existing actual accepted media and local fixture archives are unchanged; no artifact replaced.
+
+REGRESSIONS: all affected API and Native compatibility tests pass; unchanged caller/provenance/cost/rights/publishing gates preserved. EXTERNAL BLOCKERS: real reviewed workflow/model/GPU/provider and browser/Owner/production acceptance. OWNER ACTION REQUIRED: none for remaining safe integration. NEXT WAVE: Native durable generation/factory/reference/result/attachment/UI and original full MediaPlan/Mode A/B/Trend/learning/hardening/A/B/C. No merge, live migration, paid provider, external publishing or deployment.

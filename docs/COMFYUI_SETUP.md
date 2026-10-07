@@ -1,5 +1,7 @@
 # ComfyUI Bridge setup — V2-06
 
+The adapter also exposes [trusted lifecycle observation and targeted cancellation](COMFYUI_GENERATION_LIFECYCLE.md) for durable client integration. Native generative consumers and real GPU acceptance remain separate open work.
+
 ## Current status
 
 The repository contains a provider-neutral bridge contract at `services/comfyui-bridge` and eight

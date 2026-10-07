@@ -1,0 +1,69 @@
+{
+  "schema": "comfyui-generation-lifecycle-evidence-v1",
+  "parent_head": "a68c25f7a8977048ab7e1e874804a84af98cf4c3",
+  "source_sha256": {
+    "apps/api/app/comfyui_generation_lifecycle.py": "e753827128fb6928034fe3b6db8fa7d114fadeb917e242ce0aea325a55a72f8c",
+    "apps/api/app/media_intelligence_providers.py": "83a178f6d920f2af3f26ad44985a49b0e3a74675b368e884be7fd500184f57d9",
+    "apps/api/tests/test_comfyui_generation_lifecycle.py": "d972f8ecd77155ec99c32105490e24d0f2cffc142dfa8a14e67f84abc35d8f8f",
+    "docs/COMFYUI_GENERATION_LIFECYCLE.md": "b5c48176dc80d1258cbafd6b1e392b6498e0506b6090a65d76d7f0ed6a036f84",
+    "docs/COMFYUI_SETUP.md": "0b7c6feeabe8b54be40c8ebcb93e85d7e5ee037ad35417fe8bfa8e394fff0ce7"
+  },
+  "logs": {
+    "api-comfyui-lifecycle-r1.log": "cf0353964a1e607b3858c7ed7ce1bf2c0d98f6c7dc49bf68250c11c4c66ab485",
+    "api-comfyui-lifecycle-r2.log": "3ea4dceebcf9057ac40defd0dbe1e8c5d9ab8766953457b7e6f59a36b0766843",
+    "native-comfyui-lifecycle-r1.log": "82662679f017f6026df4012446edae116fce90db64225f9c775ef6f087bc042c"
+  },
+  "api_affected_passed": 63,
+  "api_affected_seconds": 27.59,
+  "new_api_cases": 15,
+  "prior_api_subset_passed": 61,
+  "prior_api_subset_seconds": 40.85,
+  "native_compatibility_passed": 20,
+  "native_compatibility_seconds": 2.968,
+  "counts_overlap": true,
+  "trusted_content_free_observer": true,
+  "actual_status_and_progress_preserved": true,
+  "missing_progress": null,
+  "observer_cannot_mutate_job": true,
+  "observer_failure_no_automatic_resubmit_or_poll": true,
+  "cancel_before_submit_zero_requests": true,
+  "targeted_authenticated_cancel_once": true,
+  "global_gpu_interrupt": false,
+  "automatic_cancel_retry": false,
+  "foreign_cancel_receipt_rejected": true,
+  "unknown_cancel_outcome_safe_code": true,
+  "success_race_not_falsely_cancelled": true,
+  "legacy_unhooked_contract_preserved": true,
+  "native_durable_consumer_implemented": false,
+  "wire_mock_tested": true,
+  "gpu_generation_tested": false,
+  "actual_generated_media": false,
+  "real_provider_tests": 0,
+  "real_credentials_read": 0,
+  "paid_operations": 0,
+  "actual_hub_calls": 0,
+  "actual_publications": 0,
+  "browser_real_tested": false,
+  "owner_uat": false,
+  "production_deployed": false,
+  "latest_full_api": {
+    "head": "e59a7d5",
+    "passed": 2659,
+    "skipped": 11,
+    "seconds": 1512.89,
+    "rerun": false
+  },
+  "unchanged_native_latest_full": {
+    "head": "c7e89fe",
+    "passed": 533,
+    "seconds": 331.869,
+    "subsequent_derived_affected_passed": 82,
+    "rerun": false
+  },
+  "unchanged_studio": {
+    "head": "c7e89fe",
+    "passed": 206,
+    "duration_ms": 1000.2963,
+    "rerun": false
+  }
+}

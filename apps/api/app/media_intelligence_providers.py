@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass
 from decimal import Decimal
 from html import escape
-from typing import Any, Protocol
+from typing import Any, Protocol,Callable,Awaitable
 
 import httpx
 from .media_generation_scope import current_generation_scope
@@ -415,6 +415,8 @@ class ComfyUIBridgeGenerationProvider:
         transport: httpx.AsyncBaseTransport | None = None,
         service_token: str = '',
         workflow_overrides: dict[str, str] | None = None,
+        on_job:Callable[[dict[str,Any]],Awaitable[None]]|None=None,
+        cancel_requested:Callable[[],bool]|None=None,
     ) -> None:
         self.bridge_url = bridge_url.rstrip("/")
         self.modality = modality
@@ -428,6 +430,9 @@ class ComfyUIBridgeGenerationProvider:
         self.transport = transport
         self.key = f"comfyui-{modality}"
         self.model = f"workflow:{workflow_id}"
+        if (on_job is not None and not callable(on_job)) or (cancel_requested is not None and not callable(cancel_requested)):
+            raise ValueError('COMFYUI_LIFECYCLE_HOOK_INVALID')
+        self.on_job,self.cancel_requested=on_job,cancel_requested
 
     async def estimate_cost(self, payload: ImageGenerationInput | VideoGenerationInput) -> Decimal | None:
         return None # GPU compute cost requires configured accounting; absence is not zero.
@@ -437,6 +442,8 @@ class ComfyUIBridgeGenerationProvider:
     ) -> ProviderMaterializedMedia:
         if not self.configured:
             raise MediaProviderNotConfigured("ComfyUI bridge execution is not configured")
+        from .comfyui_generation_lifecycle import cancellation_requested,observe
+        if cancellation_requested(self.cancel_requested):raise RuntimeError('COMFYUI_CANCELLED_BEFORE_SUBMISSION')
         workspace_id, project_id, resolution_job_id = current_generation_scope()
         workflow_id, operation, inputs = generation_envelope(self.modality, payload, self.workflow_routes)
         started = asyncio.get_running_loop().time()
@@ -466,10 +473,23 @@ class ComfyUIBridgeGenerationProvider:
             if (not re.fullmatch(r'cui_[A-Za-z0-9_-]{1,80}', job_id) or job.get('workspace_id') != workspace_id or
                     job.get('workflow_id') != workflow_id):
                 raise ValueError('COMFYUI_JOB_BINDING_INVALID')
+            await observe(self.on_job,job,'submitted')
             deadline = asyncio.get_running_loop().time() + self.timeout_seconds
+            cancel_sent=False
             while job.get("status") not in {"succeeded", "failed", "cancelled", "timed_out"}:
                 if asyncio.get_running_loop().time() >= deadline:
                     raise TimeoutError("ComfyUI bridge generation timed out")
+                if not cancel_sent and cancellation_requested(self.cancel_requested):
+                    # Target the persisted job only. No global interrupt or write retry.
+                    await observe(self.on_job,job,'cancel_requested')
+                    cancel_sent=True
+                    cancelled=await client.post(f'/v1/jobs/{job_id}/cancel')
+                    if cancelled.status_code!=200:raise RuntimeError('COMFYUI_TARGETED_CANCEL_HTTP_FAILED')
+                    job=cancelled.json()
+                    if (job.get('job_id')!=job_id or job.get('workspace_id')!=workspace_id or job.get('workflow_id')!=workflow_id):
+                        raise ValueError('COMFYUI_JOB_BINDING_INVALID')
+                    await observe(self.on_job,job,'cancel_response')
+                    if job.get('status') in {'succeeded','failed','cancelled','timed_out'}:break
                 await asyncio.sleep(0.25)
                 poll = await client.get(f"/v1/jobs/{job_id}")
                 poll.raise_for_status()
@@ -477,6 +497,7 @@ class ComfyUIBridgeGenerationProvider:
                 if (job.get('job_id') != job_id or job.get('workspace_id') != workspace_id or
                         job.get('workflow_id') != workflow_id):
                     raise ValueError('COMFYUI_JOB_BINDING_INVALID')
+                await observe(self.on_job,job,'polled')
             if job.get('status') == 'succeeded' and str((job.get('result') or {}).get('artifact_reference', '')).startswith('vf-artifact://'):
                 from .comfyui_binary_result import registered_binary
                 binary_content, binary_metadata = await registered_binary(client, job=job, workspace_id=workspace_id,
