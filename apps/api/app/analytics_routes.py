@@ -9,6 +9,7 @@ from .analytics_models import (
     AnalyticsReportRead,
     AnalyticsSyncRead,
     AnalyticsSyncRequest,
+    AnalyticsProviderMode,
     LearningInsightRead,
     WinnerAssessmentRead,
 )
@@ -139,3 +140,15 @@ async def analytics_history(project_id: str, request: Request) -> list[Analytics
 @router.get("/analytics-providers", response_model=list[AnalyticsProviderStateRead])
 async def analytics_providers(request: Request) -> list[AnalyticsProviderStateRead]:
     return service(request).provider_states()
+
+
+@router.get('/projects/{project_id}/publications/{publication_id}/analytics', response_model=AnalyticsReportRead)
+async def publication_analytics(project_id: str, publication_id: str, request: Request, provider_mode: AnalyticsProviderMode | None = None):
+    try: return await service(request).publication_report(project_id, publication_id, provider_mode=provider_mode)
+    except KeyError: raise error(404, 'ANALYTICS_PUBLICATION_NOT_FOUND', 'Publication was not found.') from None
+
+
+@router.get('/projects/{project_id}/publications/{publication_id}/analytics/snapshots', response_model=list[AnalyticsMetricSnapshotRead])
+async def publication_analytics_snapshots(project_id: str, publication_id: str, request: Request, provider_mode: AnalyticsProviderMode | None = None):
+    try: return await service(request).publication_snapshots(project_id, publication_id, provider_mode=provider_mode)
+    except KeyError: raise error(404, 'ANALYTICS_PUBLICATION_NOT_FOUND', 'Publication was not found.') from None

@@ -130,6 +130,14 @@ class AnalyticsService:
             raise KeyError(project_id)
         return await self.repository.report(project_id)
 
+    async def publication_report(self, project_id, publication_id, *, provider_mode=None):
+        if await self.publishing_repository.get(project_id, publication_id) is None: raise KeyError(publication_id)
+        return await self.repository.report(project_id, publication_id=publication_id, provider_mode=provider_mode)
+
+    async def publication_snapshots(self, project_id, publication_id, *, provider_mode=None):
+        if await self.publishing_repository.get(project_id, publication_id) is None: raise KeyError(publication_id)
+        return await self.repository.list_snapshots(project_id, publication_id=publication_id, provider_mode=provider_mode)
+
     async def snapshots(self, project_id: str) -> list[AnalyticsMetricSnapshotRead]:
         if await self.platform_repository.get_project(project_id) is None:
             raise KeyError(project_id)

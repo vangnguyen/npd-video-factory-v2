@@ -129,6 +129,15 @@ async def run(args):
             response = await client.get(f'/api/v1/projects/{project}/analytics' + suffix)
             assert response.status_code == 200 and response.headers.get('cache-control') == 'no-store', (suffix, response.status_code, response.headers.get('cache-control'))
             api.append({'method': 'GET', 'status': 200, 'no_store': True})
+        for mode in ('official', 'fixture'):
+            for suffix in ('', '/snapshots'):
+                response = await client.get(f'/api/v1/projects/{project}/publications/{publication}/analytics' + suffix,
+                    params={'provider_mode': mode})
+                assert response.status_code == 200 and response.headers.get('cache-control') == 'no-store'
+                body = response.json()
+                if suffix: assert len(body) == (2 if mode == 'official' else 0)
+                else: assert body['publication_id'] == publication and body['history_count'] == (2 if mode == 'official' else 0)
+                api.append({'method': 'GET', 'status': 200, 'no_store': True, 'publication_scoped': True, 'provider_mode': mode})
     snapshots = await repository.list_snapshots(project); assert len(snapshots) == 2 and snapshots[1].metrics.views == 1000
     report = await repository.report(project)
     async with factory() as session:
@@ -162,7 +171,7 @@ asyncio.run(run())"""
         'real_provider_tested': False, 'owner_uat_accepted': False, 'production_deployed': False, 'analytics_ready': False,
         'media_replaced': False, 'requested_dates_are_complete_coverage': False})
     await engine.dispose()
-    print(json.dumps({'status': 'PASS', 'output': str(root), 'official_mock_requests': 6, 'authenticated_api_requests': 5, 'exports': 8}))
+    print(json.dumps({'status': 'PASS', 'output': str(root), 'official_mock_requests': 6, 'authenticated_api_requests': len(api), 'exports': 8}))
 
 
 if __name__ == '__main__':

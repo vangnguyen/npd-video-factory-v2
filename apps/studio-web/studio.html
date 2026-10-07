@@ -370,8 +370,17 @@
             </div>
             <div class="analytics-truth-banner">
               <strong>Phạm vi kiểm thử:</strong>
-              <span>Fixture nội bộ, không gọi YouTube/TikTok/Instagram/Facebook API.</span>
+              <span>Mặc định dùng dữ liệu mô phỏng. Adapter có cấu hình chỉ đọc analytics; kết quả ghi rõ transport.</span>
               <span id="analytics-provider-summary">Provider thật: chưa cấu hình.</span>
+            </div>
+            <div class="analytics-collection-controls">
+              <label>Publication <select id="analytics-publication"><option value="">Chọn publication</option></select></label>
+              <label>Nguồn <select id="analytics-mode"><option value="fixture">Dữ liệu mô phỏng</option><option value="official">Chỉ số từ nền tảng</option></select></label>
+              <label>Profile mô phỏng <select id="analytics-fixture-profile"><option value="normal">Normal</option><option value="winner_candidate">Winner candidate</option><option value="underperforming">Underperforming</option><option value="insufficient_data">Insufficient data</option></select></label>
+              <label>Từ ngày (YouTube) <input id="analytics-start-date" type="date" disabled></label>
+              <label>Đến ngày (YouTube) <input id="analytics-end-date" type="date" disabled></label>
+              <label><input id="analytics-revenue" type="checkbox" disabled> Revenue ước tính (VND, cần monetary scope)</label>
+              <button id="analytics-read-refresh" class="secondary-button" type="button" disabled>Đọc lại lịch sử</button>
             </div>
             <div class="analytics-grid">
               <article class="analytics-card analytics-overview-card">
@@ -390,7 +399,16 @@
                 <div id="analytics-feature-list" class="analytics-feature-list"></div>
               </article>
             </div>
-            <p class="hard-boundary analytics-boundary">Mọi recommendation đều <strong>applied=false</strong>. External calls, content deletion, paid-media mutation và autonomous execution đều false.</p>
+            <article class="analytics-card analytics-observation-history">
+              <h3>Lịch sử theo publication & nguồn</h3>
+              <label>Metric <select id="analytics-history-metric"><option value="views">Views</option><option value="watch_time">Watch time (giây)</option><option value="average_view_duration">Average view duration (giây)</option><option value="likes">Likes</option><option value="comments">Comments</option><option value="shares">Shares</option><option value="completion_rate">Completion rate</option><option value="revenue">Revenue ước tính (VND)</option></select></label>
+              <p id="analytics-history-note"></p>
+              <div id="analytics-history-chart"></div>
+              <div class="analytics-history-scroll"><table><thead><tr><th>Thu thập (UTC)</th><th>Nguồn</th><th>Khoảng report</th><th>Giá trị</th></tr></thead><tbody id="analytics-history-rows"></tbody></table></div>
+              <div class="analytics-collection-controls"><label>Trước <select id="analytics-compare-before"><option value="">Snapshot trước</option></select></label><label>Sau <select id="analytics-compare-after"><option value="">Snapshot sau</option></select></label></div>
+              <p id="analytics-comparison"></p>
+            </article>
+            <p class="hard-boundary analytics-boundary">Khuyến nghị cần review và chưa tự áp dụng. Analytics không publish, xóa nội dung hoặc đổi media budget.</p>
           </section>
         </div>
 

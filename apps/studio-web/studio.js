@@ -24,6 +24,7 @@ import {reframeProfiles,matchingVision,needsProductionReview} from "/reframe.mjs
 import {subtitleCueEdit,compatibleSubtitleTemplates,subtitleSaveStyle,timedSubtitleModes} from '/subtitle-editor.mjs';
 import {compatibleBrollPlans,selectedBrollAsset,brollApplyPayload} from '/broll-planner.mjs';
 import {initializePublishingConsole} from '/publishing-console.mjs';
+import {initializeAnalyticsConsole} from '/analytics-console.mjs';
 
 const state = {
   workspaceId: null,
@@ -79,6 +80,13 @@ const publishingConsole = initializePublishingConsole({api, getState: () => stat
     state.publications = [publication, ...state.publications.filter(row => row.publication_id !== publication.publication_id)];
     renderPublishing();
   }, toast});
+const analyticsConsole = initializeAnalyticsConsole({api, getState: () => state, toast,
+  onReport: report => {
+    state.analyticsReport = report; state.activeAnalyticsSync = report?.latest_sync ?? null; renderAnalytics();
+    if (['scheduled', 'queued', 'running', 'retry_scheduled'].includes(state.activeAnalyticsSync?.status)) startAnalyticsPolling();
+    else stopAnalyticsPolling();
+  },
+  onQueued: sync => {state.activeAnalyticsSync = sync; renderAnalytics(); startAnalyticsPolling();}});
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 
 class ApiError extends Error {
@@ -713,10 +721,6 @@ function renderPublishing() {
   publishingConsole.sync();
 }
 
-function analyticsPublication() {
-  return state.publications.find((item) => item.status === "dry_run_succeeded" && item.mock === true) ?? null;
-}
-
 function analyticsFactorLabel(name) {
   return ({
     view_velocity: "Tốc độ view",
@@ -737,7 +741,6 @@ function renderAnalytics() {
   const status = describeAnalytics(report);
   const sync = state.activeAnalyticsSync ?? report?.latest_sync ?? null;
   const collecting = ["scheduled", "queued", "running", "retry_scheduled"].includes(sync?.status);
-  const eligiblePublication = analyticsPublication();
   const snapshot = report?.latest_snapshot ?? null;
   const assessment = report?.latest_assessment ?? null;
   const providers = state.analyticsProviders ?? [];
@@ -746,18 +749,11 @@ function renderAnalytics() {
 
   $("#analytics-status").textContent = collecting ? "Đang thu thập" : status.label;
   $("#analytics-status").className = `pill ${collecting ? "warning" : status.tone}`;
-  $("#analytics-source-status").textContent = snapshot?.mock === false ? "Nguồn provider" : "Dữ liệu mô phỏng";
+  $("#analytics-source-status").textContent = !snapshot ? 'Chưa có snapshot' : snapshot.mock === false ? "Nguồn provider" : "Dữ liệu mô phỏng";
   $("#analytics-source-status").className = `pill ${snapshot?.mock === false ? "safe" : "muted"}`;
   $("#analytics-provider-summary").textContent = officialProviders.length
-    ? `Provider thật: ${unavailableCount}/${officialProviders.length} chưa cấu hình; external calls=false.`
+    ? `Adapter: ${unavailableCount}/${officialProviders.length} chưa cấu hình; ${officialProviders.some(value => value.external_calls_enabled) ? 'có transport ngoài được bật' : 'transport ngoài tắt; mock nếu cấu hình'}.`
     : "Provider thật: chưa đăng ký; external calls=false.";
-
-  const syncButton = $("#analytics-sync-button");
-  syncButton.disabled = collecting || !eligiblePublication;
-  syncButton.textContent = collecting ? "Đang xử lý…" : "Chạy dữ liệu mô phỏng";
-  syncButton.title = eligiblePublication
-    ? "Tạo một snapshot fixture nội bộ, không gọi nền tảng ngoài."
-    : "Cần một V2-09 dry-run receipt thành công trước khi thu thập fixture.";
 
   $("#analytics-metrics").innerHTML = snapshot
     ? analyticsMetricItems(report).map((item) => `
@@ -805,52 +801,33 @@ function renderAnalytics() {
   $("#analytics-feature-list").innerHTML = featureItems.map(([label, value]) => (
     `<span><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</span>`
   )).join("");
-}
-
-async function createAnalyticsFixtureSync() {
-  const publication = analyticsPublication();
-  if (!publication) return toast("Cần V2-09 dry-run receipt thành công trước khi chạy analytics fixture.", true);
-  $("#analytics-sync-button").disabled = true;
-  try {
-    state.activeAnalyticsSync = await api(`/api/v1/projects/${state.projectId}/analytics/syncs`, {
-      method: "POST",
-      headers: { "Idempotency-Key": `v2-10-studio-${crypto.randomUUID()}` },
-      body: JSON.stringify({
-        publication_id: publication.publication_id,
-        provider_mode: "fixture",
-        trigger: state.analyticsReport?.latest_snapshot ? "manual_refresh" : "initial",
-        fixture_profile: "winner_candidate",
-        actor_ref: "studio-user",
-      }),
-    });
-    renderAnalytics();
-    startAnalyticsPolling();
-    toast("Đã xếp hàng fixture analytics; không có external call.");
-  } catch (error) {
-    toast(error.message, true);
-    renderAnalytics();
-  }
+  analyticsConsole.sync();
 }
 
 function startAnalyticsPolling() {
   stopAnalyticsPolling();
+  const projectId = state.projectId, syncId = state.activeAnalyticsSync?.sync_id, scope = analyticsConsole.key();
   state.analyticsPollTimer = window.setInterval(async () => {
     try {
-      if (!state.activeAnalyticsSync) return stopAnalyticsPolling();
-      state.activeAnalyticsSync = await api(
-        `/api/v1/projects/${state.projectId}/analytics/syncs/${state.activeAnalyticsSync.sync_id}`,
+      if (!state.activeAnalyticsSync || state.projectId !== projectId || analyticsConsole.key() !== scope || state.activeAnalyticsSync.sync_id !== syncId) return stopAnalyticsPolling();
+      const next = await api(
+        `/api/v1/projects/${projectId}/analytics/syncs/${syncId}`,
       );
+      if (state.projectId !== projectId || analyticsConsole.key() !== scope || state.activeAnalyticsSync?.sync_id !== syncId) return;
+      state.activeAnalyticsSync = next;
       const terminal = ["succeeded", "not_configured", "failed", "cancelled"].includes(state.activeAnalyticsSync.status);
       if (terminal) {
         stopAnalyticsPolling();
-        state.analyticsReport = await api(`/api/v1/projects/${state.projectId}/analytics`);
-        toast(state.activeAnalyticsSync.status === "succeeded"
-          ? "Analytics fixture đã chuẩn hóa; recommendation vẫn chưa áp dụng."
-          : `Analytics kết thúc ở trạng thái ${state.activeAnalyticsSync.status}.`,
-          state.activeAnalyticsSync.status === "failed");
+        await analyticsConsole.refresh();
+        if (state.projectId !== projectId || analyticsConsole.key() !== scope || state.activeAnalyticsSync?.sync_id !== syncId) return;
+        toast(next.status === "succeeded"
+          ? "Analytics đã chuẩn hóa; nguồn/transport được ghi rõ. Khuyến nghị vẫn cần review."
+          : `Analytics kết thúc ở trạng thái ${next.status}.`,
+          next.status === "failed");
       }
       renderAnalytics();
     } catch (error) {
+      if (state.projectId !== projectId || analyticsConsole.key() !== scope || state.activeAnalyticsSync?.sync_id !== syncId) return;
       stopAnalyticsPolling();
       toast(error.message, true);
     }
@@ -1342,7 +1319,6 @@ $("#download-final-button").addEventListener("click", async () => {
   } catch(error) { toast(error.message, true); }
 });
 $("#publishing-form").addEventListener("submit", createPublishingDryRun);
-$("#analytics-sync-button").addEventListener("click", createAnalyticsFixtureSync);
 $("#publishing-platform").addEventListener("change", () => {
   state.activePublication = state.publications.find((item) => item.platform === $("#publishing-platform").value) ?? null;
   state.publishRequestSignature = null;

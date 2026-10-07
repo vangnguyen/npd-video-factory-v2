@@ -282,6 +282,7 @@ class AnalyticsEventRead(StrictModel):
 
 class AnalyticsReportRead(StrictModel):
     project_id: str
+    publication_id: str | None = None
     status: Literal["not_started", "collecting", "ready", "not_configured", "failed"]
     latest_sync: AnalyticsSyncRead | None
     latest_snapshot: AnalyticsMetricSnapshotRead | None

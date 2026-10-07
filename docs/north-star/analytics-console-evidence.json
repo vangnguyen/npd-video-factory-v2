@@ -1,0 +1,128 @@
+{
+  "schema": "studio-analytics-observations-evidence-v1",
+  "parent_head": "32db5d9c1cd631819ab768d76e7472e6e4eefe31",
+  "source_sha256": {
+    "apps/api/app/analytics_models.py": "ff0ff4b16f447ec00d94b275d9c71222a6a88e32001e56f37fc9271a07b336cf",
+    "apps/api/app/analytics_repository.py": "5e19cfa380b5643de7ba45b513f19d3846ccb7fa24ee97cda405360c68cea3ac",
+    "apps/api/app/analytics_routes.py": "f816804f9fdc680ec72c7419382408e9bdf9e381fd52b6b394b0f9c79263108a",
+    "apps/api/app/analytics_service.py": "e6c633a31f259d3961cbd75d97d38eb2db7562b6fb9045029b8958b3114c053b",
+    "apps/api/tests/test_analytics_publication_api.py": "e5794e61513beab33ed44f56baaac38d23477fa138550616dd4298612c274122",
+    "apps/studio-web/analytics-console.mjs": "0bea1db6cebea85f9351eeb18916a1f8461b09bf2a55e44c158a98f42364e30f",
+    "apps/studio-web/tests/analytics-console.test.mjs": "3d7f78ea6c171eb1d2b6301dde2a33b5f66c6401eaad66a042a7f465742e9ad3",
+    "apps/studio-web/studio.js": "10ebf5def0246afaa175b2c4e23be7221db15f95e4db5e5da07c245d4a6be397",
+    "apps/studio-web/studio.html": "a6fdf3d41e8237577c1b89c3f2aba1f72b9953e008bbe84bd8d628080ed6d557",
+    "apps/studio-web/studio.css": "9789ba9c45c13b69a6fc40c342f8a9e8faf0658fd5b93669ed5f499c02459a3f",
+    "scripts/north_star_analytics_read_contract.py": "be3ab04c31bdebfb1fb3fd6b15af004e9ea336f925941ae2d6b556758cbfe163",
+    "docs/STUDIO_ANALYTICS_OBSERVATIONS.md": "6fff98b70d9d506b43a0b19d73d1d230711930745e2e993d0ad65cbfd3b46aaa"
+  },
+  "logs": {
+    "analytics-publication-api-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-publication-api-r1.log",
+      "sha256": "b4035888d3418a962f5908759036fdd1c6f67c2c5f35df9294829184bda210b4"
+    },
+    "analytics-console-node-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-console-node-r1.log",
+      "sha256": "3ee8a49ebb6ee65bbaa61948399bc194e0094cfea7ec155ac9d52108f120f228"
+    },
+    "analytics-console-node-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-console-node-r2.log",
+      "sha256": "b914154320483aeba133e928095fe1d0c2ab4661cb12a2e54a619ddb9e27271b"
+    },
+    "studio-analytics-console-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-analytics-console-r1.log",
+      "sha256": "e908d171f08c777bcfd90d23b02e4d7826edb04d7386a87c603c65e21a4f324b"
+    },
+    "studio-analytics-console-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-analytics-console-r2.log",
+      "sha256": "3d99d8890605bcd5061664e8526894d4a2c26b4595b4e4db2d039a2ff6bb4eb1"
+    },
+    "analytics-read-contract-n4.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4.log",
+      "sha256": "9c99f1941998c1383a19593a10790e8ecf33437b3a6d04807227b5759cee7b19"
+    }
+  },
+  "exports": {
+    "analytics-owned-clone.db": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4\\analytics-owned-clone.db",
+      "sha256": "217b3ae6f65f2fe58f7425e79707f8f134621aa693b37b412264bee0a8e9448d"
+    },
+    "contract.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4\\contract.json",
+      "sha256": "d3dded7d6f3eb74b3b50cec03200f13ecf49199e7a425864de3b5c2a7e50ef78"
+    },
+    "cost.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4\\cost.json",
+      "sha256": "6343349337514679908a958a05c3903f32a1a6116b70aca715fff708c50ce49d"
+    },
+    "events.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4\\events.json",
+      "sha256": "b2a934af20db5f2c6423776e7acc4634999ca483f77d32ba758f16297d0e87d0"
+    },
+    "features-and-recommendations.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4\\features-and-recommendations.json",
+      "sha256": "740a02b9e84b99b3270de22042d43c9f11262cf892a5f5ac645b9cdc8fc347fe"
+    },
+    "requests.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4\\requests.json",
+      "sha256": "e8bbc92d683201a0cf5bb7c477d084b222ef4684d4b1194656b0047bf3140d2e"
+    },
+    "snapshots.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4\\snapshots.json",
+      "sha256": "bdedf5d5a6fe12c5ac17f41b212edf4b52627eeb1c31d88046a8b0c540a2e592"
+    },
+    "source.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4\\source.json",
+      "sha256": "8d238d8cffa3d27a5660a5478353ebd2d3f982c3b8602acf9dca78b289833594"
+    },
+    "syncs.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n4\\syncs.json",
+      "sha256": "34e94a067dc0fc3ba9ca1665e001ccc481f2e8ebdc84dd23c89383e6ba8c0eb6"
+    }
+  },
+  "contract": {
+    "status": "PASS",
+    "official_mock_requests": 6,
+    "authenticated_api_requests": 9,
+    "immutable_snapshots": 2,
+    "fresh_process_restore": true,
+    "external_provider_calls": 0,
+    "paid_calls": 0,
+    "actual_cost": null,
+    "cost_records": 6,
+    "source_publication_mock": true,
+    "real_credentials_read": 0,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false,
+    "production_deployed": false,
+    "analytics_ready": false,
+    "media_replaced": false,
+    "requested_dates_are_complete_coverage": false
+  },
+  "full_parent_linux_api": {
+    "head": "32db5d9c1cd631819ab768d76e7472e6e4eefe31",
+    "passed": 2498,
+    "skipped": 11,
+    "seconds": 1000.51,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-32db5d9.log",
+      "sha256": "1a7d6b492b777cf90bad1b26c23cd2102cbccb01f0da523bbe124ec8b76117e3"
+    }
+  },
+  "full_current_api_status": "PENDING_PINNED_STUDIO_COMMIT",
+  "api_selected_passed": 18,
+  "studio_all_passed": 139,
+  "studio_new_tests": 9,
+  "browser_real_tested": false,
+  "viewport_1366_1920_2560_verified": false,
+  "owner_uat_accepted": false,
+  "actual_provider_calls": 0,
+  "real_credentials_read": 0,
+  "paid_operations": 0,
+  "accepted_media_replaced": false,
+  "native_analytics_complete": false,
+  "channel_overview_complete": false,
+  "analytics_ready": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false
+}

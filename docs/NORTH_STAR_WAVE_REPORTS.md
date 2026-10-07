@@ -1269,3 +1269,21 @@ EXTERNAL BLOCKERS: actual authorized accounts, OAuth scopes/permissions and prov
 NEXT WAVE: complete analytics operator/UI/channel integration, winner baselines, learning personalization, full Trend Radar/Hub/production/final acceptance gaps; all original Master Spec waves remain in scope.
 
 Wave 10 follow-up: after final capability reporting and real-transport admission guards, 18 safety/capability checks and nine affected runtime checks pass. These overlap earlier counts. Real transport additionally requires an explicit trusted project cost-policy callback and enabled analytics registry; omitted policy leaves it not configured. No actual provider call occurred.
+
+### Wave 10 — Studio source/publication controls and observation history
+
+WAVE: 10. STATUS: IN PROGRESS. ANALYTICS_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `32db5d9c1cd631819ab768d76e7472e6e4eefe31`, pushed/preserved in `north-star-analytics-reads.bundle`, SHA256 `c335574ba7f1f0c28db905a128d5cceb41cb46cc965e545e9da2bcf87559c34a`; 159 ahead/0 behind, fresh 15 artifact hashes and clean live source verified. Source/UI increment will be separately preserved.
+
+CAPABILITIES COMPLETED: explicit publication/source collection, fixture profile default normal, YouTube date/revenue choice and TikTok cumulative semantics; editor/Owner queue and viewer reads; scoped source-filtered API report/history/assessment/learning; null-preserving chart/table and report-scope comparison; stable ordering; idempotent unknown-submit retry, new confirmed manual refresh; stale project/source/sync guards and active-job polling. No read/selection chains a mutation.
+
+CAPABILITIES PARTIAL: channel-wide overview/refresh, Native analytics, operator/bootstrap, Meta collectors, production pagination, actual browser/viewport/Owner UAT, provider acceptance and winner/learning/channel baselines.
+
+TESTS: **18 PASS**, 97.22s selected authenticated API/runtime/legacy tests (three new publication/source/role cases); **139 PASS** full Studio suite, 595.39ms (nine new analytics cases). JS syntax and diff checks pass. Full Linux parent `32db5d9c1cd631819ab768d76e7472e6e4eefe31`: **2498 PASS / 11 SKIP**, 1000.51s. Current increment pinned full regression pending.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: six official mock reads and nine authenticated API requests; two immutable snapshots restore exactly in a fresh process, six actual-cost-null records. Official/fixture scoped reads show two/zero snapshots respectively. DOM harness is not a real browser acceptance.
+
+EVIDENCE: `docs/north-star/analytics-console-evidence.json`, fresh `analytics-read-contract-n4` eight JSON exports plus copied database; original database SHA unchanged. Prior n1/n2/n3 bundles are retained.
+
+REGRESSIONS: accepted media/source/Owner UAT untouched; all selected tests pass. Default fixture/disabled-network/publishing gates retained. EXTERNAL BLOCKERS: authorized accounts/credentials/provider acceptance; browser UAT and isolated deployment infrastructure. OWNER ACTION REQUIRED: none for remaining safe work; actual credentials/UAT/deployment are separate gates. NEXT WAVE: channel analytics, winner baselines, frozen learning features/personalization, Trend Radar, Hub, hardening and final A/B/C acceptance; full original scope remains.
