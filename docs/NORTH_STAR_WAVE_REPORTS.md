@@ -1521,3 +1521,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: saved ASR and approval fixtures; generated P
 EVIDENCE: `docs/NATIVE_SOURCE_AUDIO_CACHE.md`, `docs/north-star/native-audio-cache-evidence.json`; `native-audio-cache-contract-n1` six media bundles, JSON exports and private archive. Earlier uncached variant n1/n2 and all accepted artifacts remain unchanged. New rendering after restore and browser acceptance are not tested; PCM preparation after restore is verified.
 
 REGRESSIONS: existing phase/provider/approval/publishing defaults and canonical source/audio/caption/variant decisions preserved. EXTERNAL BLOCKERS: configured real providers, Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for continuing safe work. NEXT WAVE: remaining unified Native channel/profile/media/provider integration, Mode A, learning/full Trend/Agent Hub/hardening and original final A/B/C. No main merge, live migration, paid provider, external publication or deployment occurred.
+
+### Wave 8/15 / Native Source — Operational render after recovery
+
+WAVE: 8 / 15 / 3 / 16. STATUS: IN PROGRESS. PRODUCTION_HARDENING_READY = NO; AUTO_EDIT_MODE_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `b9698a3c2186029376f656a18af99f39c3e9e683`, pushed/preserved in `north-star-native-audio-cache.bundle`, SHA256 `c3dc3448f90d2835bbef336370e997a8fa2a28095b7d6e8996848d4c0c36fb06`; 173 ahead/0 behind, fresh 15 accepted hashes and clean live source. Recovery acceptance increment will be separately committed/preserved.
+
+CAPABILITIES COMPLETED: reproducible operational Source-mode recovery contract; independently verified restore/snapshot/second restore; retained owned seed with unavailable original path; exact old media/history/master/family/other-variant preservation. New canonical edit clears approval, unapproved render blocks, fresh effects preview and explicit fixture approval bind a new final render with actual FullQC. New source/audio/staging paths belong to the restored root, and a separate process recovers exact post-render state.
+
+CAPABILITIES PARTIAL: PostgreSQL/Redis/S3/credential and isolated production recovery, genuine source/ASR/semantic/browser/Owner acceptance, remaining original Mode A/B/media/channel/learning/Trend/Hub/hardening and A/B/C bundles. Historical absolute result paths remain original evidence and are not falsely rewritten as new execution locations.
+
+TESTS: new final n2 operational contract PASS; new actual portrait preview/final/FullQC and **six authenticated requests**. Existing Native core is unchanged from **462 PASS**, 288.105s; Studio is unchanged from **185 PASS**, 945.5619ms; API remains pinned **2659 PASS / 11 SKIP**, 1512.89s. Broad suites are not repeated for an evidence-script/documentation-only increment. First n1 expected HTTP 400 instead of the established 409 approval gate; script corrected and failed fixture/log retained.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: saved ASR and automated human-review fixture; no Owner UAT. LOCAL-REAL TESTS: checksum-anchored owned offline backup/restore, source/caption timeline edit, new preview and actual 1080×1920 final/FullQC. Preview builds PCM under restored scope and final hits it. Previous files, frozen project versions/family/master and other variants retain exact hashes/state; fresh-process post-render state matches.
+
+EVIDENCE: `docs/NATIVE_BACKUP_RESTORE.md`, `docs/north-star/native-recovery-render-evidence.json`; `native-recovery-render-contract-n2` preview/final/timeline/audio/subtitle/QC/probe/cost/checkpoint, requests/commands/state/restore exports and private seed archive. Retained owned seed: `C:\vf-native-fixture-source-recovery-seed-02-offline`; operational fixture: `C:\vf-native-fixture-source-recovery-02`.
+
+REGRESSIONS: original six-format media/archive, all accepted artifacts, live source, existing source/provider/approval/publish gates remain unchanged. EXTERNAL BLOCKERS: real provider/browser/Owner and isolated production acceptance. OWNER ACTION REQUIRED: none for continuing safe work. NEXT WAVE: remaining full Native channel/profile/media/provider integration, Mode A variants, learning/full Trend/Hub/hardening and original final A/B/C. No main merge, live migration, paid provider, external publication or deployment occurred.

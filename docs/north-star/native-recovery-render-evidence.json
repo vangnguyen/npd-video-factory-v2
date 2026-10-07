@@ -1,0 +1,165 @@
+{
+  "schema": "native-source-operational-recovery-evidence-v1",
+  "parent_head": "b9698a3c2186029376f656a18af99f39c3e9e683",
+  "source_sha256": {
+    "scripts/north_star_native_source_recovery.py": "e89f72fa099712ae909e78f48aea07f257b633c75d186d02fd81a7f94e0ac128",
+    "docs/NATIVE_BACKUP_RESTORE.md": "a72b265b008b72b306f6f3cdfd997aa9f4366d6fad3a78af7b1f7a821939d23f"
+  },
+  "logs": {
+    "native-recovery-render-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n1.log",
+      "sha256": "199e5ae392a47038494190bb0d0f4589cd82cc73a1b81db735be772b73d8eaee",
+      "bytes": 1221
+    },
+    "native-recovery-render-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2.log",
+      "sha256": "b26327cee4422ffdd88d7f9e7f078b67c79b6b9e87f1b66408ba9608a17c68d8",
+      "bytes": 1102
+    }
+  },
+  "contract_bundle": {
+    "after.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\after.json",
+      "sha256": "2dd051f5c1cce2cee85cd9612367429e7b78cf756c8219c271a9633292fd0387",
+      "bytes": 1763128
+    },
+    "audio-analysis.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\audio-analysis.json",
+      "sha256": "25b9ffaf20df2345c570341d2cc301864ca774ddb4e2b945904882b0d1d1c01a",
+      "bytes": 1826
+    },
+    "before.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\before.json",
+      "sha256": "944ab6dde2d75d9350d02e49c60282a4ddf3f67ddeb5434a405bdc039c04fa5e",
+      "bytes": 1634956
+    },
+    "checkpoint-render.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\checkpoint-render.json",
+      "sha256": "ad3865d1d37ed581fd334a8be33dbf86b1c824fd306e64cda10d3619d703ddb3",
+      "bytes": 4980
+    },
+    "commands.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\commands.json",
+      "sha256": "a175137bc80f6ce85d3dc7c0a633180cefca3260bea5ab2f71067924098a886d",
+      "bytes": 320
+    },
+    "contract.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\contract.json",
+      "sha256": "81f29eef36de21fc4e4042218c94cac0bb46a17763c11d176228c8cebafc73be",
+      "bytes": 1184
+    },
+    "cost.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\cost.json",
+      "sha256": "242f27f6ad563488c14a92d142550e98ebff9e25b35d337de1d926ba529ff50b",
+      "bytes": 121
+    },
+    "ffprobe.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\ffprobe.json",
+      "sha256": "b7a7f37aeb2b054a487e4624d85b3c3da48181f3bc52c69c12359fbc7dbe9d1e",
+      "bytes": 2630
+    },
+    "final.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\final.mp4",
+      "sha256": "5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398",
+      "bytes": 797018
+    },
+    "initial-restore.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\initial-restore.json",
+      "sha256": "c0cf2f06e8e30472c7ff695d0bf19db6de66ddbb9d9ddc9465ed9459b8b181cc",
+      "bytes": 1866
+    },
+    "operational-restore.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\operational-restore.json",
+      "sha256": "f5fec08d705c62628af850377ab84b15c58c04699a51963d16027cb8dbf52c80",
+      "bytes": 1863
+    },
+    "owned-recovery-seed.zip": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\owned-recovery-seed.zip",
+      "sha256": "c0cb9d37343e8e0213b4ea444cb9253b73e33b6bddf389d3e4d07a8ae3641a8a",
+      "bytes": 29743140
+    },
+    "preserved-files.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\preserved-files.json",
+      "sha256": "e60dc4c768aa5d144349f4ca001a63a8c74702ef610029077254e30f8d9aaa1c",
+      "bytes": 46308
+    },
+    "preview-evidence.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\preview-evidence.json",
+      "sha256": "f112f69b8ea044d5f45a54b1808f9d7713c8e549bfd37f18c9f2f559aacc7f5e",
+      "bytes": 3747
+    },
+    "preview.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\preview.mp4",
+      "sha256": "1b19c136467326a7ec77c5f532dd758c1c8702efa025e1a09c277f2af44091c7",
+      "bytes": 328820
+    },
+    "qc-report.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\qc-report.json",
+      "sha256": "a406de27e0d79f75b0c5e5b2118b5de52fe492dadfd3df910c9b871dabc7293d",
+      "bytes": 1811
+    },
+    "render-manifest.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\render-manifest.json",
+      "sha256": "5ecfbd93f50fd422283814ca09f9153047c5b4e6f3e6465d1eec0c9ca79ac198",
+      "bytes": 19165
+    },
+    "requests.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\requests.json",
+      "sha256": "61e52ae0c4f382331af728aa3d98de16d36bde989daa61aa058ec5388266fbf2",
+      "bytes": 743
+    },
+    "seed-backup.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\seed-backup.json",
+      "sha256": "595f1892e235bb77c2446fca41658335e609b4fe613ec6729a7f0d44fee82a03",
+      "bytes": 1494
+    },
+    "subtitles.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\subtitles.json",
+      "sha256": "84bc9200274f66329f2c36a7613c8a360955870d60c751afd477b82eec3ff2c1",
+      "bytes": 2926
+    },
+    "timeline-render.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\timeline-render.json",
+      "sha256": "7cf06dd6f74d6bf59a282f7e9ad4e9b67c6de8201107d6e79d6d9cf073dff070",
+      "bytes": 2236
+    },
+    "timeline.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-recovery-render-contract-n2\\timeline.json",
+      "sha256": "92e2f7d08c16c2cb58b64bc86da53d4d6a0e16e33f8da4760d4ba6776fbeef74",
+      "bytes": 17270
+    }
+  },
+  "native_core_unchanged": true,
+  "native_previous_full_passed": 462,
+  "native_previous_full_seconds": 288.105,
+  "studio_previous_passed": 185,
+  "api_previous_passed": 2659,
+  "api_previous_skipped": 11,
+  "counts_not_newly_repeated": true,
+  "local_real_new_effects_previews_after_restore": 1,
+  "local_real_new_full_qc_renders_after_restore": 1,
+  "authenticated_native_requests": 6,
+  "fresh_root_offline_restore_exact": true,
+  "fresh_process_post_render_exact": true,
+  "retained_seed_original_path_unavailable": true,
+  "prior_media_and_history_unchanged": true,
+  "master_family_and_other_variants_unchanged": true,
+  "current_source_audio_and_staging_in_restored_root": true,
+  "unapproved_render_blocked": true,
+  "new_fixture_approval_required": true,
+  "historical_absolute_result_paths_rewritten": false,
+  "new_final_sha256": "5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398",
+  "retained_seed": "C:\\vf-native-fixture-source-recovery-seed-02-offline",
+  "operational_fixture": "C:\\vf-native-fixture-source-recovery-02",
+  "actual_provider_calls": 0,
+  "paid_operations": 0,
+  "real_credentials_read": 0,
+  "real_asr": false,
+  "browser_real_tested": false,
+  "owner_uat_accepted": false,
+  "accepted_artifacts_replaced": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "production_hardening_ready": false,
+  "north_star_ready": false
+}
