@@ -1,0 +1,87 @@
+{
+  "schema": "tiktok-official-protocol-evidence-v1",
+  "parent_head": "dad237a7f6772e1b1bdbe8db795e339337aa00a7",
+  "source_sha256": {
+    "apps/api/app/tiktok_upload.py": "a5c59b772af3617a7ccab8a94c4e0c447db293b046972568de0d3c828f4d30b6",
+    "apps/api/app/tiktok_credentials.py": "a11aeeaeddd2697526b7880bd5152cb10325102b26afd9a879d782bf88eef58a",
+    "apps/api/app/publishing_wire.py": "be70010ff8a2f5e4fc3baee8bb01c319aa608884d3767d2a9e7eb83055ff1bcc",
+    "apps/api/tests/test_tiktok_upload.py": "e893efe9e2d3564ae995e43c90c67ecd7d8b8b501cedaba329d3a4019949760f",
+    "apps/api/tests/test_tiktok_credentials.py": "7f93d6e86e74bddede62e091d2812a8deaa0916f31edf1ea53667edb61a88113",
+    "scripts/north_star_tiktok_protocol_contract.py": "04daa514a961319188a326348f00c88f60a5bf61ab4632b35989908619b20008",
+    "docs/TIKTOK_OFFICIAL_PUBLISHING_PROTOCOL.md": "675c86e9f2b1e5daef3fb899cc963db54ef9c0d6847dea3166a608ef05bc8ceb"
+  },
+  "logs": {
+    "publishing-tiktok-protocol-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-protocol-r1.log",
+      "sha256": "1ced7752ad8ffb4635995b09840d864bc6e7fee023d152afbe7235f56e631a1e"
+    },
+    "publishing-tiktok-protocol-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-protocol-r2.log",
+      "sha256": "1b563b5e87823a9920ac1fd702aba8927f0ea0ffc554efa2658e29d5909977f0"
+    },
+    "publishing-tiktok-protocol-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-protocol-r3.log",
+      "sha256": "95e2c0a5177e1eab2fbfa4adf4be859b7ce67f7b78b5f7eece6dc999189f7466"
+    },
+    "publishing-tiktok-credentials-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-credentials-r1.log",
+      "sha256": "98ba7965bddfbf7f24b2d69f5340784548b7cfcb53bc506cd3136bf040ec1e25"
+    },
+    "publishing-tiktok-protocol-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-protocol-contract-n1.log",
+      "sha256": "ea965983f408dc0580eb3e50e1a448d5b189d0e3027139959ed2508ddfe01b36"
+    }
+  },
+  "exports": {
+    "contract.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-protocol-contract-n1\\contract.json",
+      "sha256": "44f8540f846878980307b76ff76612df2032ab573ed617b4433f37c291871642"
+    },
+    "media.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-protocol-contract-n1\\media.json",
+      "sha256": "95fb504363b466de35c55326173c15483956546018570027dc14a9943a02c7c1"
+    },
+    "observations.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-protocol-contract-n1\\observations.json",
+      "sha256": "5a1bb50f37c26db1b5591ce6cc65426a63dfdc4c5081fc4d2d8da140b3622e80"
+    },
+    "request-audit.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-protocol-contract-n1\\request-audit.json",
+      "sha256": "dc1e1fe89dae5f20f8a1fd632d19fdf7cb77c24669921d6c3be9db7b9bcd1dfe"
+    },
+    "source.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-tiktok-protocol-contract-n1\\source.json",
+      "sha256": "9bf166692fa95a98255897a6332a32c1985d0a2f9cc7992ccd11446644d54151"
+    }
+  },
+  "preservation_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-preservation.json",
+    "sha256": "164ac670ee2ab4da5d6518f40d2af8c5bc1404e3748d3f60082a20bc7f4e8d39"
+  },
+  "selected_tests_passed": 147,
+  "new_tiktok_protocol_tests": 57,
+  "new_tiktok_credential_tests": 24,
+  "actual_ffprobe_inspection": true,
+  "actual_full_qc_run_in_this_contract": false,
+  "actual_source_bytes": 4256257,
+  "source_unchanged": true,
+  "mock_requests": 6,
+  "initializations": 1,
+  "received_source_sha256": "80de36cef34e3945a196e32928ee8d77e6a67100810501acfd38c35d99ebca2d",
+  "published": false,
+  "actual_cost": null,
+  "cost_records_created": 0,
+  "actual_provider_requests": 0,
+  "paid_operations": 0,
+  "real_credentials_read": 0,
+  "identity_account_credentials_disclosures_and_confirmations_are_fixtures": true,
+  "default_factory_activated": false,
+  "durable_tiktok_runtime_accepted": false,
+  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "real_provider_acceptance": "BLOCKED_EXTERNAL",
+  "provider_policy_constraint": "Official guidance excludes private/internal team upload utilities; eligible creator application/provider review unverified",
+  "provider_policy_source": "https://developers.tiktok.com/docs/en/content-sharing-guidelines",
+  "owner_uat_accepted": false,
+  "publishing_ready": false,
+  "production_deployed": false
+}

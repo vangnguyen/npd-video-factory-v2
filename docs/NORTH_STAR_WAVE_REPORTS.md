@@ -1185,3 +1185,23 @@ EVIDENCE: `docs/north-star/publishing-runtime-evidence.json`, `docs/PUBLISHING_C
 REGRESSIONS: focused checks pass; full current commit pending. Accepted/live media, source/processes/data/credentials, main, disabled defaults and existing schemas remain untouched. No real publish/delete, paid operation, migration or deployment.
 
 EXTERNAL BLOCKERS: eventual authorized provider/account/credential/key acceptance. OWNER ACTION REQUIRED: none for remaining safe work. NEXT WAVE: complete official TikTok/Meta mock provider paths, distribution controls and remaining media/analytics/learning/Trend/Hub/hardening capabilities.
+
+### Waves 8/9 — official TikTok transfer/status and stable account protocol
+
+WAVE: 8/9. STATUS: IN PROGRESS; protocol/account fixture and real synthetic-byte mock transfer pass. PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `dad237a7f6772e1b1bdbe8db795e339337aa00a7`, pushed and preserved in verified `north-star-publishing-runtime.bundle`, SHA256 `9aee43cbdf7bdc4c3d84390c03b411e5861b23a2a95b0a9f8bad682506fc32e6`; 155 ahead/0 behind, main unchanged. TikTok protocol/account is this increment.
+
+CAPABILITIES COMPLETED: inert official device FILE_UPLOAD and trusted-prefix server PULL_FROM_URL builders, explicit privacy/interaction/commercial/AI/music/branded choices, UTF16 captions, fresh creator limits, floor/sequential chunk plan and merged tail, signed upload URL/expiry/origin/auth fences, processing/null public-ID parser, dedicated in-memory scopes/expiry/target checks and exact stable open_id lookup. Regional documented upload host added to strict allowlist; existing YouTube behavior retained.
+
+CAPABILITIES PARTIAL: durable TikTok intent/lease/session/cost/consent binding, verified-pull custody/lifetime, provider supervision, Studio UI and actual account audit/credentials. Helpers perform no automatic request/retry/initialization replay. No invented provider idempotency, billing, URL or metric.
+
+TESTS: **147 PASS**, 0.70s; 57 new protocol and 24 credential cases. Earlier incremental selections **79 PASS**, 1.20s; **80 PASS**, 1.62s; **92 PASS**, 0.57s. Existing YouTube/HTTP/account contracts pass. Full runtime parent dad237a runs independently in pinned Linux checkout; current protocol full suite pending.
+
+REAL PROVIDER TESTS: none. MOCK TESTS: six official MockTransport requests with one initialization transfer preserved 4,256,257-byte synthetic portrait source exactly and observe processing then private completion with absent public IDs. Actual FFprobe inspection/hash pass; source unchanged. No full QC in this protocol contract, no durable job or cost records; actual cost null. Credentials/account/disclosure/user confirmations are fixtures. Published = false; real/paid requests and secret reads = zero.
+
+EVIDENCE: `docs/north-star/tiktok-protocol-evidence.json`, `docs/TIKTOK_OFFICIAL_PUBLISHING_PROTOCOL.md`, five logs and five hashed contract exports. Not Owner UAT/final A/B/C acceptance.
+
+REGRESSIONS: focused contracts pass; current full suite pending. Accepted/live data/media/processes, main, publishing defaults and schemas remain untouched. No real publish/delete, paid operation, live migration or deployment.
+
+EXTERNAL BLOCKERS: TikTok official guidance excludes private/internal team upload utilities and requires eligible creator-facing product/provider review, private accounts for unaudited clients and verified ownership for server pull media. Actual product/provider/credential acceptance remains BLOCKED_EXTERNAL; no safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: durable authorized adapter paths, Meta official providers/controls and all remaining safe North Star capabilities.

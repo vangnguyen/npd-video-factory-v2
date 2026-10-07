@@ -14,8 +14,9 @@ import httpx
 
 MAX_BODY = 16 * 1024 * 1024
 MAX_RESPONSE = 1024 * 1024
+TIKTOK_UPLOAD_HOSTS = frozenset({'open-upload.tiktokapis.com', 'upload.us.tiktokapis.com'})
 HOSTS = {'youtube': frozenset({'www.googleapis.com'}),
-    'tiktok': frozenset({'open.tiktokapis.com', 'open-upload.tiktokapis.com'})}
+    'tiktok': frozenset({'open.tiktokapis.com', *TIKTOK_UPLOAD_HOSTS})}
 _sensitive = ContextVar('vf_publishing_wire_sensitive', default=False)
 
 
@@ -123,7 +124,7 @@ class OfficialHTTPClient:
         url = official_url(request.url, self.platform)
         if self.transport is None and not self.network_enabled:
             raise PublishingWireError('EXTERNAL_PUBLISHING_NOT_ACTIVATED')
-        if urlsplit(url).hostname == 'open-upload.tiktokapis.com' and any(key.lower() == 'authorization' for key in request.headers):
+        if urlsplit(url).hostname in TIKTOK_UPLOAD_HOSTS and any(key.lower() == 'authorization' for key in request.headers):
             raise PublishingWireError('PUBLISHING_UPLOAD_BEARER_FORBIDDEN')
         _install_privacy_filters(); privacy = _sensitive.set(True)
         transport = self.transport
@@ -148,7 +149,7 @@ class OfficialHTTPClient:
                 if len(raw) + len(chunk) > MAX_RESPONSE:
                     raise PublishingWireError('PUBLISHING_RESPONSE_SIZE_LIMIT', status=response.status_code, uncertain=request.method in {'POST', 'PUT', 'DELETE'})
                 raw.extend(chunk)
-            headers = {name: value for name, value in response.headers.items() if name in {'location', 'range', 'retry-after'}}
+            headers = {name: value for name, value in response.headers.items() if name in {'location', 'range', 'content-range', 'retry-after'}}
             if any(len(value) > 4096 for value in headers.values()):
                 raise PublishingWireError('PUBLISHING_RESPONSE_HEADER_LIMIT', uncertain=request.method in {'POST', 'PUT', 'DELETE'})
             return OfficialResponse(response.status_code, headers, bytes(raw))
