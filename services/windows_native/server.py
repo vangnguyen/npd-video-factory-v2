@@ -161,6 +161,8 @@ class LocalServer(ThreadingHTTPServer):
         from .vision import NativeVision
         self.vision=NativeVision(self.store,config,workspace_id=self.publications.workspace_id)
         self.runner.vision=self.vision
+        from .source_variants import SourceVariants
+        self.variants=SourceVariants(self.store,workspace_id=self.publications.workspace_id)
         if start_worker:
             self.runner.start()
             self.intelligence.start()
@@ -286,6 +288,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/vision(?:/nvis_[a-f0-9]{32})?',path):
             from .vision_routes import get
             return self.reply(get(self,path))
+        if path=='/api/auto-edit/variant-profiles' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/variants',path):
+            from .variant_routes import get
+            return self.reply(get(self,path))
         if path in ('/api/analytics/providers','/api/analytics/overview') or re.fullmatch(r'/api/projects/[a-f0-9]{32}/analytics(?:/nasy_[a-f0-9]{32})?',path):
             from .analytics_routes import get
             return self.reply(get(self,path))
@@ -344,7 +349,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -430,6 +435,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-publications.mjs'] = 'native-publications.mjs'
         static['/native-analytics.mjs'] = 'native-analytics.mjs'
         static['/native-vision.mjs'] = 'native-vision.mjs'
+        static['/native-variants.mjs'] = 'native-variants.mjs'
         static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',
                        '/native-access.mjs': 'native-access.mjs', '/native-access.css': 'native-access.css'})
         if path in static:
@@ -478,6 +484,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/vision(?:/nvis_[a-f0-9]{32}/(?:process|cancel))?',self.path):
             from .vision_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/variants',self.path):
+            from .variant_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=20000)))
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/analytics(?:/nasy_[a-f0-9]{32}/(?:process|cancel))?',self.path):
             from .analytics_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))

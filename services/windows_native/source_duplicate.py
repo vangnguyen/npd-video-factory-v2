@@ -95,6 +95,8 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         output['source_broll_plans'].append({'plan':changed,'sha256':digest(changed)})
         plan_fingerprints[changed['media_plan_id']]=changed['fingerprint']
     snapshot=rewrite(state['snapshot'])
+    # Generic copies are independent projects, not registered variant members.
+    snapshot['metadata'].pop('source_variant',None)
     snapshot['metadata'].update(native_project_id=target_id,human_review_required=True,
         source_identity_rebinding=origin)
     for track in snapshot['tracks']:

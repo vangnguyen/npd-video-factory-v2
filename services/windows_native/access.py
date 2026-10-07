@@ -41,6 +41,8 @@ def permission_for(method, path):
         return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/publications', path):
         return 'edit'
+    if re.fullmatch(r'/api/projects/' + ID + r'/variants',path):
+        return 'edit'
     if path == '/api/connections/assemblyai' or re.fullmatch(r'/api/projects/' + ID + '/cost-policy', path) or re.fullmatch(r'/api/jobs/' + ID + '/open-folder', path):
         return 'manage'
     review = [r'/api/projects/' + ID + '/(approve|reject|script-review)', r'/api/jobs/' + ID + '/review',

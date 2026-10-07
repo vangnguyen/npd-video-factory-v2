@@ -112,7 +112,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -185,6 +185,7 @@ if (typeof document !== "undefined") {
     publicationUI?.controls();
     analyticsUI?.controls();
     visionUI?.controls();
+    variantsUI?.controls();
   }
   function markDirty(part) {dirty=true;dirtyPart=part;$("review-check").checked=false;controls();}
   function readProposal() {
@@ -216,6 +217,7 @@ if (typeof document !== "undefined") {
     publicationUI?.sync();
     analyticsUI?.sync();
     visionUI?.sync();
+    variantsUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
     refreshCosts();
     const origin=project?.document.content_intelligence;
@@ -293,6 +295,14 @@ if (typeof document !== "undefined") {
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
     canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
+    if(session.capabilities?.native_source_variants===true){
+      const variants=await import('./native-variants.mjs');$('native-variants-card').hidden=false;
+      variantsUI=variants.initializeNativeVariants({api,getState:()=>({project,dirty,busy,
+        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,
+        workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onCreated:()=>void projects().catch(error=>message(error.message,true)),
+        onOpen:async id=>{if(dirty||busy)throw new Error('Lưu thay đổi và chờ thao tác hiện tại trước.');
+          project=await api(`/api/projects/${id}`);localStorage.setItem('vf-native-project',project.id);renderProject(true);await projects();schedule();}});
+    }
     if(session.capabilities?.native_vision_review===true){
       const vision=await import('./native-vision.mjs');$('native-vision-panel').hidden=false;
       visionUI=vision.initializeNativeVision({api,getState:()=>({project,dirty,busy,canManage,

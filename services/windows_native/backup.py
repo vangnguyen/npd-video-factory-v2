@@ -106,7 +106,7 @@ def database_status(path):
             busy = con.execute("SELECT count(*) FROM jobs WHERE status IN ('queued','running','retrying')").fetchone()[0]
             if 'native_cost_operations' in tables:
                 counts['native_cost_operations'] = con.execute('SELECT count(*) FROM native_cost_operations').fetchone()[0]
-            for name in ('native_publications','native_publication_events','native_analytics_syncs','native_analytics_snapshots','native_analytics_events','native_vision_intents','native_vision_events'):
+            for name in ('native_publications','native_publication_events','native_analytics_syncs','native_analytics_snapshots','native_analytics_events','native_vision_intents','native_vision_events','native_source_variant_batches'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_publications' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_publications WHERE status IN ('queued','scheduled')").fetchone()[0]
