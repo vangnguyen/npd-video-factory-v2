@@ -4,8 +4,10 @@ The adapter also exposes [trusted lifecycle observation and targeted cancellatio
 
 The [reviewed HTTP backend](COMFYUI_HTTP_BACKEND.md) now connects the transport,
 compiler, durable dispatch journal and actual decoded binary registration.
-Repository placeholders still report NOT_CONFIGURED. Reference staging and
-Native queue/UI integration remain open.
+Repository placeholders still report NOT_CONFIGURED.
+[Scoped physical reference staging](COMFYUI_REFERENCE_STAGING.md) is now
+implemented with default-disabled intake; Native source admission and queue/UI
+integration remain open.
 
 ## Current status
 
@@ -81,7 +83,7 @@ mask/scale, null costs and local adapter elapsed time. Reference strings do not 
 file reads or URL downloads. Nine variants pass through actual ASGI bridge handlers and persist
 mock results; `comfyui-generation-modes-n3` contains eleven retained exports.
 
-Executable production graphs, verified reference resolution/staging, provider
+Executable production graphs, Native reference admission/integration, provider
 cost receipts and real GPU acceptance remain open. Runtime HTTP execution and
 binary registration/decoding now have explicit mock-wire/local-media evidence;
 this does not establish real GPU acceptance.

@@ -13,6 +13,7 @@ import sqlite3
 
 from .models import BridgeJobCreate, BridgeJobRead
 from .dispatch_models import PromptDispatch
+from .reference_models import ReferenceUpload
 
 
 MAX_DOCUMENT_BYTES = 128 * 1024
@@ -70,6 +71,8 @@ class SQLiteBridgeJobStore:
                   job_id TEXT NOT NULL, retry_count INTEGER NOT NULL,
                   document BLOB NOT NULL, sha256 TEXT NOT NULL,
                   PRIMARY KEY(job_id, retry_count));
+                CREATE TABLE IF NOT EXISTS bridge_reference_uploads (
+                  identity TEXT PRIMARY KEY, document BLOB NOT NULL, sha256 TEXT NOT NULL);
             """)
         except Exception:
             self._lease.close()
@@ -89,7 +92,7 @@ class SQLiteBridgeJobStore:
                     raise ValueError()
                 job = BridgeJobRead.model_validate(document["job"])
                 request = BridgeJobCreate.model_validate(document["request"])
-                if (job.job_id != job_id or job.workspace_id != request.workspace_id or
+                if (job.job_id != job_id or job.workspace_id != request.workspace_id or job.project_id != request.project_id or
                         job.client_request_id != request.client_request_id or
                         checksum([request.workspace_id, request.client_request_id]) != client_request_id):
                     raise ValueError()
@@ -161,13 +164,19 @@ class SQLiteBridgeJobStore:
                 if (not isinstance(previous, PromptDispatch) or record.job_id != previous.job_id
                         or record.workspace_id != previous.workspace_id or record.retry_count != previous.retry_count
                         or record.prompt_id != previous.prompt_id or record.binding_sha256 != previous.binding_sha256
+                        or record.transport_sha256 != previous.transport_sha256
                         or record.graph_sha256 != previous.graph_sha256 or record.inputs_sha256 != previous.inputs_sha256
                         or previous.cancel_attempted and not record.cancel_attempted
                         or previous.state in {'completed', 'failed', 'cancelled', 'not_submitted'} and record.state != previous.state):
                     raise ValueError('BRIDGE_DISPATCH_TRANSITION_INVALID')
+                prior_row = self.connection.execute('SELECT document,sha256 FROM bridge_prompt_dispatches WHERE job_id=? AND retry_count=?',
+                    (record.job_id, record.retry_count)).fetchone()
+                if (prior_row is None or hashlib.sha256(prior_row[0]).hexdigest() != prior_row[1]
+                        or PromptDispatch.model_validate_json(prior_row[0]) != previous):
+                    raise RuntimeError('BRIDGE_DISPATCH_CONFLICT')
                 cursor = self.connection.execute('UPDATE bridge_prompt_dispatches SET document=?,sha256=? '
                     'WHERE job_id=? AND retry_count=? AND sha256=?', (raw, hashlib.sha256(raw).hexdigest(),
-                    record.job_id, record.retry_count, checksum(previous.model_dump(mode='json'))))
+                    record.job_id, record.retry_count, prior_row[1]))
                 if cursor.rowcount != 1:
                     raise RuntimeError('BRIDGE_DISPATCH_CONFLICT')
         return record.model_copy(deep=True)
@@ -175,3 +184,35 @@ class SQLiteBridgeJobStore:
     def close(self):
         self.connection.close()
         self._lease.close()
+
+    def reference_upload(self, *, workspace_id, project_id, reference_id, target_sha256):
+        identity = checksum([workspace_id, project_id, reference_id, target_sha256])
+        row = self.connection.execute('SELECT document,sha256 FROM bridge_reference_uploads WHERE identity=?', (identity,)).fetchone()
+        if row is None: return None
+        try:
+            raw, expected = row
+            if len(raw) > MAX_DOCUMENT_BYTES or hashlib.sha256(raw).hexdigest() != expected: raise ValueError()
+            record = ReferenceUpload.model_validate_json(raw)
+            if checksum([record.workspace_id, record.project_id, record.reference_id, record.target_sha256]) != identity:
+                raise ValueError()
+            return record
+        except (ValueError, TypeError):
+            raise RuntimeError('REFERENCE_UPLOAD_JOURNAL_INVALID') from None
+
+    def save_reference_upload(self, record, *, previous=None):
+        record = ReferenceUpload.model_validate(record.model_dump(mode='python'))
+        identity = checksum([record.workspace_id, record.project_id, record.reference_id, record.target_sha256])
+        raw = encoded(record.model_dump(mode='json'))
+        with self.connection:
+            if previous is None:
+                if self.connection.execute('SELECT COUNT(*) FROM bridge_reference_uploads').fetchone()[0] >= 5000:
+                    raise RuntimeError('REFERENCE_UPLOAD_JOURNAL_LIMIT')
+                self.connection.execute('INSERT INTO bridge_reference_uploads VALUES(?,?,?)', (identity, raw, hashlib.sha256(raw).hexdigest()))
+            else:
+                if (record.model_dump(exclude={'state', 'updated_at'}) != previous.model_dump(exclude={'state', 'updated_at'})
+                        or previous.state == 'confirmed' and record.state != 'confirmed'):
+                    raise RuntimeError('REFERENCE_UPLOAD_TRANSITION_INVALID')
+                cursor = self.connection.execute('UPDATE bridge_reference_uploads SET document=?,sha256=? WHERE identity=? AND sha256=?',
+                    (raw, hashlib.sha256(raw).hexdigest(), identity, checksum(previous.model_dump(mode='json'))))
+                if cursor.rowcount != 1: raise RuntimeError('REFERENCE_UPLOAD_CONFLICT')
+        return record.model_copy(deep=True)

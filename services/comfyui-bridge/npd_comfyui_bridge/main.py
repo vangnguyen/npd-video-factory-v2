@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import os
 import hmac
+import json
+import asyncio
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request, status
 from fastapi.responses import Response
 import hashlib
 
@@ -15,6 +17,9 @@ from .service import ComfyUIBridgeService
 from .job_store import SQLiteBridgeJobStore
 from .workflows import WorkflowRegistry
 from .binary_artifacts import ArtifactError, BinaryArtifactStore, FFmpegMediaValidator
+from .reference_models import ReferenceAdmission
+from .reference_store import ReferenceStore, ReferenceError
+from .http_transport import IMAGE_LIMIT
 
 
 manifest_path = Path(
@@ -34,7 +39,9 @@ try:
     artifacts = BinaryArtifactStore(
         Path(os.getenv('COMFYUI_ARTIFACT_ROOT', '/workspace/storage/comfyui-bridge/artifacts')),
         validator=FFmpegMediaValidator(ffmpeg=os.getenv('COMFYUI_FFMPEG_PATH'), ffprobe=os.getenv('COMFYUI_FFPROBE_PATH')))
-    backend = select_backend(environment=os.environ, registry=registry, job_store=job_store, artifacts=artifacts)
+    references = ReferenceStore(Path(os.getenv('COMFYUI_REFERENCE_ROOT', '/workspace/storage/comfyui-bridge/references')),
+        validator=artifacts.validator, enabled=os.getenv('COMFYUI_REFERENCE_INTAKE_ENABLED', 'false').casefold() == 'true')
+    backend = select_backend(environment=os.environ, registry=registry, job_store=job_store, artifacts=artifacts, references=references)
     service = ComfyUIBridgeService(registry, backend, job_store=job_store,
         max_concurrent_jobs=int(os.getenv('COMFYUI_MAX_CONCURRENT_JOBS', '1')),
         max_queued_jobs=int(os.getenv('COMFYUI_MAX_QUEUED_JOBS', '32')),
@@ -55,6 +62,7 @@ async def lifespan(_app):
 app = FastAPI(title="NPD ComfyUI Bridge", version="0.2.0", lifespan=lifespan)
 app.state.bridge_service = service
 app.state.binary_artifact_store = artifacts
+app.state.reference_store = references
 
 
 async def require_service(authorization: str | None = Header(default=None),
@@ -102,6 +110,59 @@ async def submit(payload: BridgeJobCreate, workspace_id: str = Depends(require_s
         raise HTTPException(503, detail={"error": {"code": code}}) from exc
     except Exception as exc:
         raise HTTPException(422, detail={"error": {"code": "INVALID_WORKFLOW_INPUT"}}) from exc
+
+
+@app.post('/v1/references', status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_service)])
+async def stage_reference(request: Request, workspace_id: str = Depends(require_service),
+                          x_vf_reference_admission: str | None = Header(default=None)):
+    store = app.state.reference_store
+    if not store.enabled or not store.validator.configured:
+        raise HTTPException(503, detail={'error': {'code': 'REFERENCE_INTAKE_NOT_CONFIGURED'}})
+    try:
+        if not x_vf_reference_admission or len(x_vf_reference_admission.encode()) > 4096:
+            raise ValueError()
+        def unique(pairs):
+            value = {}
+            for key, item in pairs:
+                if key in value: raise ValueError()
+                value[key] = item
+            return value
+        admission = ReferenceAdmission.model_validate(json.loads(x_vf_reference_admission, object_pairs_hook=unique))
+        if admission.workspace_id != workspace_id or request.headers.get('Content-Type', '').split(';')[0] != admission.mime_type:
+            raise ValueError()
+        declared = request.headers.get('Content-Length')
+        if declared and (not declared.isdigit() or not 1 <= int(declared) <= IMAGE_LIMIT):
+            raise ValueError()
+        store._admit(admission)
+    except (ValueError, TypeError, ReferenceError):
+        raise HTTPException(422, detail={'error': {'code': 'REFERENCE_ADMISSION_INVALID'}}) from None
+    content, size = bytearray(), 0
+    try:
+        async with asyncio.timeout(30):
+            async for chunk in request.stream():
+                size += len(chunk)
+                if size > IMAGE_LIMIT:
+                    raise HTTPException(413, detail={'error': {'code': 'REFERENCE_CONTENT_TOO_LARGE'}})
+                content.extend(chunk)
+    except TimeoutError:
+        raise HTTPException(408, detail={'error': {'code': 'REFERENCE_UPLOAD_TIMEOUT'}}) from None
+    if declared is not None and size != int(declared):
+        raise HTTPException(422, detail={'error': {'code': 'REFERENCE_LENGTH_INVALID'}})
+    try:
+        return await store.register(admission=admission, content=bytes(content))
+    except (ReferenceError, ArtifactError, ValueError):
+        raise HTTPException(422, detail={'error': {'code': 'REFERENCE_CONTENT_INVALID'}}) from None
+
+
+@app.get('/v1/references/{reference_id}', dependencies=[Depends(require_service)])
+async def reference_metadata(reference_id: str, workspace_id: str = Depends(require_service),
+                             x_vf_project_id: str | None = Header(default=None)):
+    try:
+        document, _ = app.state.reference_store.read(workspace_id=workspace_id, project_id=x_vf_project_id,
+            source_reference='vf-reference://' + reference_id)
+        return document
+    except (ReferenceError, ArtifactError, ValueError):
+        raise HTTPException(404, detail={'error': {'code': 'NOT_FOUND'}}) from None
 
 
 @app.get('/v1/jobs', response_model=list[BridgeJobRead], dependencies=[Depends(require_service)])

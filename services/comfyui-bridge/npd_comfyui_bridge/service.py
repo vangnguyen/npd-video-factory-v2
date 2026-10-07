@@ -74,13 +74,14 @@ class ComfyUIBridgeService:
                 raise RuntimeError("ComfyUI GPU backend is not configured")
             admission = getattr(self.backend, 'admit', None)
             if admission:
-                admission(workflow=definition, inputs=payload.inputs, workspace_id=payload.workspace_id)
+                admission(workflow=definition, inputs=payload.inputs, workspace_id=payload.workspace_id, project_id=payload.project_id)
             self._check_capacity()
             if len(self._jobs) >= 5000:
                 raise RuntimeError('BRIDGE_STORE_LIMIT_REACHED')
             now = utc_now()
             job = BridgeJobRead(
                 workspace_id=payload.workspace_id,
+                project_id=payload.project_id,
                 job_id=f"cui_{uuid.uuid4().hex[:24]}",
                 workflow_id=definition.workflow_id,
                 workflow_version=definition.version,
@@ -225,7 +226,7 @@ class ComfyUIBridgeService:
                     inputs=request.inputs,
                     progress=update_progress,
                     cancelled=self._cancel_events[job_id],
-                    context=ExecutionContext(job.workspace_id, job.job_id, job.retry_count),
+                    context=ExecutionContext(job.workspace_id, job.job_id, job.retry_count, request.project_id),
                 ),
                 timeout=definition.timeout_seconds,
             )

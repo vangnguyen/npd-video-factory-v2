@@ -12,6 +12,7 @@ class PromptDispatch(StrictModel):
     retry_count: StrictInt = Field(ge=0, le=10)
     prompt_id: str = Field(pattern=r'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$')
     binding_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    transport_sha256: str | None = Field(default=None, pattern=r'^[a-f0-9]{64}$')
     graph_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
     inputs_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
     state: Literal['dispatching', 'submitted', 'uncertain', 'not_submitted', 'completed', 'failed', 'cancelled']

@@ -14,6 +14,7 @@ from npd_comfyui_bridge.execution_context import ExecutionContext
 from npd_comfyui_bridge.http_backend import ReviewedHTTPComfyUIBackend
 from npd_comfyui_bridge.http_transport import ComfyHTTPTransport
 from npd_comfyui_bridge.job_store import SQLiteBridgeJobStore
+from npd_comfyui_bridge.execution_context import BackendExecutionError
 from npd_comfyui_bridge.models import BridgeJobCreate
 from npd_comfyui_bridge.runtime import select_backend
 from npd_comfyui_bridge.service import ComfyUIBridgeService
@@ -383,13 +384,15 @@ async def test_cancel_after_saved_reference_dispatch_reconciles_remote_instead_o
     wire = WireFixture(media['png'], fault='lost_reply')
     service, store, artifacts, payload = build(tmp_path, tools, wire, registry=registry)
     token_calls = []
-    async def explicitly_fake_verified_token(*, workspace_id, source_reference):
+    async def explicitly_fake_verified_token(*, workspace_id, project_id, source_reference):
         token_calls.append(source_reference)
         return VerifiedReferenceToken(workspace_id=workspace_id, source_reference=source_reference,
+            project_id=project_id,
             source_sha256=hashlib.sha256(media['png']).hexdigest(), uploaded_filename='explicit-fixture-token.png',
             upload_sha256=hashlib.sha256(media['png']).hexdigest(), fixture=True)
     service.backend.reference_resolver = explicitly_fake_verified_token
     payload.inputs = inputs(reference_images=['fixture://explicit-owned-reference'])
+    payload.project_id = 'explicit-fixture-project'
     try:
         job = await service.submit(payload); failed = await terminal(service, job.job_id)
         assert failed.recovery_required
@@ -420,3 +423,50 @@ async def test_confirmed_remote_cancel_allows_only_an_explicit_new_attempt(tmp_p
         assert current.prompt_id != prior.prompt_id
     finally:
         await service.close()
+
+
+@pytest.mark.asyncio
+async def test_legacy_text_dispatch_without_new_transport_field_still_reconciles_exact_identity(tmp_path, tools, media):
+    from npd_comfyui_bridge.job_store import encoded
+    wire=WireFixture(media['png'],fault='lost_reply')
+    service,store,artifacts,payload=build(tmp_path,tools,wire)
+    try:
+        job=await service.submit(payload);await terminal(service,job.job_id)
+        raw=store.connection.execute('SELECT document FROM bridge_prompt_dispatches').fetchone()[0]
+        old=json.loads(raw);old.pop('transport_sha256');old_raw=encoded(old)
+        with store.connection:store.connection.execute('UPDATE bridge_prompt_dispatches SET document=?,sha256=?',
+            (old_raw,hashlib.sha256(old_raw).hexdigest()))
+        await service.retry(job.job_id);done=await terminal(service,job.job_id)
+        assert done.status=='succeeded' and sum(p=='/prompt' for _,p in wire.calls)==1
+    finally:await service.close()
+
+
+@pytest.mark.asyncio
+async def test_reference_dispatch_configuration_or_input_drift_blocks_before_source_staging(tmp_path,tools,media):
+    from npd_comfyui_bridge.execution_models import VerifiedReferenceToken
+    registry,definition,_,_=registry_fixture(tmp_path,reference=True)
+    wire=WireFixture(media['png'],fault='lost_reply');service,store,artifacts,payload=build(tmp_path,tools,wire,registry=registry)
+    calls=[]
+    async def fake_token(*,workspace_id,project_id,source_reference):
+        calls.append(source_reference)
+        return VerifiedReferenceToken(workspace_id=workspace_id,project_id=project_id,source_reference=source_reference,
+            source_sha256='a'*64,uploaded_filename='explicit-scope-fixture.png',upload_sha256='a'*64,fixture=True)
+    service.backend.reference_resolver=fake_token
+    payload.project_id='project-A';payload.inputs=inputs(reference_images=['fixture://explicit-owned-reference'])
+    try:
+        job=await service.submit(payload);await terminal(service,job.job_id)
+        context=ExecutionContext(job.workspace_id,job.job_id,0,payload.project_id)
+        async def progress(value):raise AssertionError('Changed input must not execute')
+        with pytest.raises(BackendExecutionError,match='REMOTE_RECOVERY_REQUIRED'):
+            await service.backend.execute(workflow=definition,inputs={**payload.inputs,'reference_images':['fixture://foreign']},
+                context=context,cancelled=asyncio.Event(),progress=progress)
+        assert len(calls)==1
+        await service.close()
+        recovered,store,artifacts,_=build(tmp_path,tools,wire,registry=registry,origin='http://127.0.0.1:8288')
+        recovered.backend.reference_resolver=fake_token
+        try:
+            count=len(wire.calls)
+            await recovered.retry(job.job_id);done=await terminal(recovered,job.job_id)
+            assert done.recovery_required and len(calls)==1 and len(wire.calls)==count
+        finally:await recovered.close()
+    finally:await service.close()

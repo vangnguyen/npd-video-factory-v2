@@ -193,6 +193,8 @@ services:
       COMFYUI_SERVER_SOURCE_SHA256: ${COMFYUI_SERVER_SOURCE_SHA256:-}
       COMFYUI_API_TOKEN: ${COMFYUI_API_TOKEN:-}
       COMFYUI_ALLOWED_HTTP_HOSTS: ${COMFYUI_ALLOWED_HTTP_HOSTS:-}
+      COMFYUI_REFERENCE_INTAKE_ENABLED: ${COMFYUI_REFERENCE_INTAKE_ENABLED:-false}
+      COMFYUI_REFERENCE_ROOT: /workspace/storage/comfyui-bridge/references
       COMFYUI_BRIDGE_TOKEN: ${COMFYUI_BRIDGE_TOKEN:-}
       COMFYUI_JOB_STORE_PATH: /workspace/storage/comfyui-bridge/jobs.sqlite3
       COMFYUI_ARTIFACT_ROOT: /workspace/storage/comfyui-bridge/artifacts

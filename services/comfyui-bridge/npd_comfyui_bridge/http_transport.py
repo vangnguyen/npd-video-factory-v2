@@ -228,6 +228,18 @@ class ComfyHTTPTransport:
             raise ComfyTransportError('COMFY_UPLOAD_CHECKSUM_INVALID')
         return filename
 
+    async def read_input_image(self, *, filename, expected_sha256, mime_type):
+        if (not isinstance(filename, str) or not re.fullmatch(r'vfref_[a-f0-9]{64}\.(png|jpg)', filename)
+                or not isinstance(expected_sha256, str) or not re.fullmatch(r'[a-f0-9]{64}', expected_sha256)
+                or mime_type not in {'image/png', 'image/jpeg'}):
+            raise ComfyTransportError('COMFY_INPUT_BINDING_INVALID')
+        raw, returned_mime = await self._read('GET', '/view', params={'filename': filename, 'subfolder': '', 'type': 'input'},
+            limit=IMAGE_LIMIT, missing_ok=True)
+        if raw is None: return None
+        if hashlib.sha256(raw).hexdigest() != expected_sha256 or returned_mime not in {mime_type, 'application/octet-stream'}:
+            raise ComfyTransportError('COMFY_INPUT_CHECKSUM_INVALID')
+        return raw
+
     async def download_artifact(self, artifact: RemoteArtifact):
         if not isinstance(artifact, RemoteArtifact):
             raise ComfyTransportError('COMFY_ARTIFACT_DESCRIPTOR_INVALID')

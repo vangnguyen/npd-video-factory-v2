@@ -47,6 +47,7 @@ class ReviewedGraphExecution(StrictModel):
 
 class VerifiedReferenceToken(StrictModel):
     workspace_id: str = Field(min_length=1, max_length=200)
+    project_id: str | None = Field(default=None, min_length=1, max_length=200)
     source_reference: str = Field(min_length=1, max_length=4096)
     source_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
     uploaded_filename: str = Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9_-]{0,120}\.(png|jpg|jpeg)$')

@@ -49,7 +49,7 @@ class ReviewedHTTPComfyUIBackend:
                 continue
         return False
 
-    def admit(self, *, workflow, inputs, workspace_id):
+    def admit(self, *, workflow, inputs, workspace_id, project_id=None):
         if not self.configured:
             raise RuntimeError('COMFY_HTTP_NOT_CONFIGURED')
         validate_reviewed_graph(registry=self.registry, definition=workflow, allow_fixture=self.transport.fixture)
@@ -57,6 +57,8 @@ class ReviewedHTTPComfyUIBackend:
         references = inputs.get('reference_images', []) + ([inputs['mask_reference']] if inputs.get('mask_reference') else [])
         if references and self.reference_resolver is None:
             raise ValueError('VERIFIED_REFERENCE_NOT_CONFIGURED')
+        if references and project_id is None:
+            raise ValueError('REFERENCE_PROJECT_SCOPE_REQUIRED')
 
     def _update(self, record, **values):
         updated = PromptDispatch.model_validate({**record.model_dump(mode='python'), **values, 'updated_at': now()})
@@ -111,22 +113,29 @@ class ReviewedHTTPComfyUIBackend:
         return candidates[0]
 
     async def execute(self, *, workflow, inputs, progress, cancelled, context: ExecutionContext):
-        self.admit(workflow=workflow, inputs=inputs, workspace_id=context.workspace_id)
+        self.admit(workflow=workflow, inputs=inputs, workspace_id=context.workspace_id, project_id=context.project_id)
         record = self.job_store.latest_dispatch(context)
+        transport_sha = digest({'origin': self.transport.origin, 'server_source_sha256': self.transport.server_source_sha256,
+            'fixture': self.transport.fixture})
+        if record and (record.inputs_sha256 != checksum(inputs)
+                or record.transport_sha256 is not None and record.transport_sha256 != transport_sha):
+            raise BackendExecutionError('REMOTE_RECOVERY_REQUIRED', recovery_required=True)
         # Cancellation before a fresh dispatch is confirmed locally. A saved
         # write intent must instead reach the targeted remote reconciliation.
         has_remote_intent = record is not None and record.state not in {'failed', 'cancelled', 'not_submitted'}
         verified = {}
         references = inputs.get('reference_images', []) + ([inputs['mask_reference']] if inputs.get('mask_reference') else [])
+        if references and record and record.transport_sha256 is None:
+            raise BackendExecutionError('REMOTE_RECOVERY_REQUIRED', recovery_required=True)
         for reference in dict.fromkeys(references):
             if cancelled.is_set() and not has_remote_intent:
                 raise BackendExecutionError('REMOTE_CANCELLED')
-            token = await self.reference_resolver(workspace_id=context.workspace_id, source_reference=reference)
+            token = await self.reference_resolver(workspace_id=context.workspace_id, project_id=context.project_id, source_reference=reference)
             if not isinstance(token, VerifiedReferenceToken):
                 raise ValueError('VERIFIED_REFERENCE_NOT_CONFIGURED')
             verified[reference] = token
         graph = compile_reviewed_graph(registry=self.registry, definition=workflow, inputs=inputs,
-            workspace_id=context.workspace_id, verified_references=verified, allow_fixture=self.transport.fixture)
+            workspace_id=context.workspace_id, project_id=context.project_id, verified_references=verified, allow_fixture=self.transport.fixture)
         graph_sha, inputs_sha = checksum(graph), checksum(inputs)
         binding = checksum({'origin': self.transport.origin, 'server_source_sha256': self.transport.server_source_sha256,
             'definition_sha256': self.registry.fingerprint(workflow), 'graph_sha256': graph_sha,
@@ -141,6 +150,7 @@ class ReviewedHTTPComfyUIBackend:
                 raise BackendExecutionError('REMOTE_CANCELLED')
             record = PromptDispatch(workspace_id=context.workspace_id, job_id=context.job_id,
                 retry_count=context.retry_count, prompt_id=str(uuid.uuid4()), binding_sha256=binding,
+                transport_sha256=transport_sha,
                 graph_sha256=graph_sha, inputs_sha256=inputs_sha, state='dispatching', created_at=now(), updated_at=now())
             # FULL synchronous SQLite commit precedes the first network await.
             record = self.job_store.save_dispatch(record)

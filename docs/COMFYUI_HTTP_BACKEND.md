@@ -62,11 +62,13 @@ The model identifier comes from the reviewed manifest, not independent remote
 model inspection. Rights remain unknown, production eligibility false, QC
 uncertified and estimated/actual costs null.
 
-Reference modes require a trusted workspace-bound resolver returning verified
-upload tokens. No resolver is installed by default, and those requests reject
-before queue admission. This increment does not implement physical reference
-staging, a client reference endpoint or Native generation queue/UI. Arbitrary
-client URLs, graphs, credentials and model weights do not authorize execution.
+Reference modes require a trusted workspace/project-bound resolver returning
+verified upload tokens. [Physical reference staging](COMFYUI_REFERENCE_STAGING.md)
+now includes authenticated bounded local byte intake, decoded scoped storage and
+durable no-overwrite upload/readback reconciliation. Intake remains disabled by
+default, leaving no default resolver. Native source admission and generation
+queue/UI integration remain open. Arbitrary client URLs, graphs, credentials
+and model weights do not authorize execution.
 
 Evidence is indexed in `docs/north-star/comfyui-http-backend-evidence.json`.
 The new tests exercise HTTP write reservation, lost replies, restart,

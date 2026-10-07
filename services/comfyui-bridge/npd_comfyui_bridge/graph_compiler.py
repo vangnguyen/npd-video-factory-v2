@@ -47,7 +47,7 @@ def validate_reviewed_graph(*, registry, definition, allow_fixture=False):
 
 
 def compile_reviewed_graph(*, registry, definition, inputs,
-                           workspace_id, verified_references=None, allow_fixture=False):
+                           workspace_id, project_id=None, verified_references=None, allow_fixture=False):
     graph = validate_reviewed_graph(registry=registry, definition=definition, allow_fixture=allow_fixture)
     registry.validate_inputs(definition, inputs)
     execution = definition.execution
@@ -68,6 +68,8 @@ def compile_reviewed_graph(*, registry, definition, inputs,
                 raise ValueError('VERIFIED_REFERENCE_NOT_CONFIGURED')
             if token.workspace_id != workspace_id or token.source_reference != value or token.fixture and not allow_fixture:
                 raise ValueError('VERIFIED_REFERENCE_SCOPE_INVALID')
+            if project_id is not None and token.project_id != project_id:
+                raise ValueError('VERIFIED_REFERENCE_PROJECT_SCOPE_INVALID')
             value = token.uploaded_filename
         elif binding.transform in {'aspect_width', 'aspect_height'}:
             dimensions = execution.aspect_dimensions.get(value)

@@ -2,9 +2,10 @@
 from .backend import DeterministicMockComfyUIBackend, DisabledComfyUIBackend
 from .http_backend import ReviewedHTTPComfyUIBackend
 from .http_transport import ComfyHTTPTransport
+from .reference_stager import ScopedReferenceStager
 
 
-def select_backend(*, environment, registry, job_store, artifacts):
+def select_backend(*, environment, registry, job_store, artifacts, references=None):
     name = environment.get('COMFYUI_BACKEND', 'disabled').casefold()
     enabled = environment.get('COMFYUI_EXECUTION_ENABLED', 'false').casefold() == 'true'
     if name not in {'disabled', 'mock', 'http'}:
@@ -20,6 +21,7 @@ def select_backend(*, environment, registry, job_store, artifacts):
             server_source_sha256=environment.get('COMFYUI_SERVER_SOURCE_SHA256', ''), enabled=True,
             bearer_token=environment.get('COMFYUI_API_TOKEN', ''),
             allowed_http_hosts=tuple(filter(None, environment.get('COMFYUI_ALLOWED_HTTP_HOSTS', '').split(','))))
-        return ReviewedHTTPComfyUIBackend(registry=registry, transport=client, job_store=job_store, artifacts=artifacts)
+        resolver = ScopedReferenceStager(references=references, transport=client, job_store=job_store) if references and references.enabled else None
+        return ReviewedHTTPComfyUIBackend(registry=registry, transport=client, job_store=job_store, artifacts=artifacts, reference_resolver=resolver)
     except (ValueError, TypeError):
         raise RuntimeError('COMFYUI_HTTP_CONFIGURATION_INVALID') from None

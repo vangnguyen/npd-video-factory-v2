@@ -1,0 +1,223 @@
+{
+  "schema": "comfyui-reference-staging-evidence-v1",
+  "parent_head": "ab80dfd7e2cb390f68fd1660a656524cc79948c1",
+  "source_sha256": {
+    "services/comfyui-bridge/npd_comfyui_bridge/reference_models.py": "b115fd3e96d67adc0101b03451cdf67da0c254ccc93ed01fad17fcf182d55ba8",
+    "services/comfyui-bridge/npd_comfyui_bridge/reference_store.py": "766e845f0467608937adb14d05810a9718bfe2355b2a9c1bbbe806f2d6e47f4b",
+    "services/comfyui-bridge/npd_comfyui_bridge/reference_stager.py": "4427c7452ee5a8e8a1929c8df502dd508988b9097eb9a504f95bffe736bfea35",
+    "services/comfyui-bridge/npd_comfyui_bridge/execution_context.py": "579fc160a84ab4afa68f41af3df1b5f7cc64a60e3c2a98c81fd0b18302ba01ab",
+    "services/comfyui-bridge/npd_comfyui_bridge/execution_models.py": "d274d867b47f962e2cb4e625044e3809fc7e55c54a189fff8f78e877f6954136",
+    "services/comfyui-bridge/npd_comfyui_bridge/dispatch_models.py": "c6373852b420a37dbc7f635e0ad6b440519ec2c6beb661bd609e971b1946f3f4",
+    "services/comfyui-bridge/npd_comfyui_bridge/http_backend.py": "618d01e3e0c13ae6b29b5f6ec0b506518a3b8f609c80641a17f300634a87e7b6",
+    "services/comfyui-bridge/npd_comfyui_bridge/runtime.py": "1e64c24867bf2680983568b5a741564e3ab6534ad73e569c9dc0e23c5be8b296",
+    "services/comfyui-bridge/npd_comfyui_bridge/models.py": "ec48773713b17e544a51d67134787c9ce09fac17c828d14ced8ed4ee53173552",
+    "services/comfyui-bridge/npd_comfyui_bridge/job_store.py": "cf1ce23587bc142cf6722a04b3cfb71b71f9d089f8df2c02aa066dc43f538646",
+    "services/comfyui-bridge/npd_comfyui_bridge/service.py": "a0f9f55fddb59078c7ae0d61832a2b8f4469517298d4d5264070cbba0944e073",
+    "services/comfyui-bridge/npd_comfyui_bridge/main.py": "283e4282e8e1e4779b5bd578bc45663352fdcc728cde8144ff03d5b519878463",
+    "services/comfyui-bridge/npd_comfyui_bridge/graph_compiler.py": "9347f48490ed60400f15315c5037f31072f89f78d7629f6c654f76e6e2db227c",
+    "services/comfyui-bridge/npd_comfyui_bridge/http_transport.py": "e1c81de0c0e51852abbe16d9c77683f07368f1e25ead4bb9ed2271847fd7f519",
+    "services/comfyui-bridge/tests/test_references.py": "3b2e4a834d9aa8829782db56e97219ea57ed5011dba4f52e643c721271340c35",
+    "services/comfyui-bridge/tests/test_http_backend.py": "90282e46092f3dd974882b7afc8c4cd3ef4a0f642ef6bcb5815b7d188bda838b",
+    "apps/api/app/media_intelligence_providers.py": "fe48f2adc5c802cedc5a4a6f31082ae2f23a1067485a32d0177692f81622deb1",
+    "apps/api/tests/test_comfyui_generation_scope.py": "897c598cc88b75bb4fa08cfd605f2cdd1d90b82edfe2968a48b44eb01e636832",
+    "scripts/north_star_comfyui_http_backend.py": "dfcd0af580fdd85bd722156e4bd37a591709a08f41993743dce43c673e8afe56",
+    "docs/COMFYUI_REFERENCE_STAGING.md": "bacf96c5791937896734a43da9f4289f81a50ab08ed64c240b9915848274ae90"
+  },
+  "logs": {
+    "comfy-references-compat-r1.log": "5f6ce136d3566bea7a5bb9e4654e806d72ae86fa594a56f09131be0616143196",
+    "comfy-references-r1.log": "fca82346d9c7aa0211ddd675255e7ac82935d167dd0c631974b37e3c80f563b1",
+    "comfy-references-r2.log": "c00678759e5edf998b2ca579a0f3bd3a47b8832591ad4c6e9055b7e47614ab01",
+    "comfy-references-r3.log": "1cd11791c537573a6f78337e4ca0fd4e0fe7ac405873284bdda2ce525161a33c",
+    "native-comfy-references-r1.log": "b7ff8801df1c9272db24eab7a660271b411fd0d3a854737520d2336414121047",
+    "comfy-references-contract-n1.log": "8846db9fd4fab8a92b0a1710c7e7215c42db14cb2f9fe31478d92f420a0f3b06",
+    "comfy-references-contract-n2.log": "8846db9fd4fab8a92b0a1710c7e7215c42db14cb2f9fe31478d92f420a0f3b06",
+    "comfy-references-contract-reopen-n2.log": "3244c07d193c0669d07aeae134fa3556b708b4d23a8e9e5885e7f70359398fc3"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\comfy-references-n2",
+  "contract_exports": {
+    "17-media.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "17-provider-provenance.json": {
+      "sha256": "c70761ab58db5cec92c7198a4b6125aef9ff41b5a318fbdeaf968ee4c07c9e5d",
+      "bytes": 2299
+    },
+    "19-media.mp4": {
+      "sha256": "f702406fcb19a92b07d7663d3272f574627067e4d730626826e382e9fd23a787",
+      "bytes": 7002
+    },
+    "19-provider-provenance.json": {
+      "sha256": "315db09119085539c4a48fcc97aeb02d1ac1daa3381df56ec8c640f7d0ec40d4",
+      "bytes": 2318
+    },
+    "23-media.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "23-provider-provenance.json": {
+      "sha256": "c16ccd2f8431ed898346f7e4098b9933bd0fabf3bfa45b899c4a24ac503939e6",
+      "bytes": 2299
+    },
+    "23-uncertain-before-retry.json": {
+      "sha256": "4bd702eea3473551a592b4c9491b6917e786d81654224f07b150a5d10aacf63f",
+      "bytes": 706
+    },
+    "25-media.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "25-provider-provenance.json": {
+      "sha256": "b02bf99be9deb8e208556fdf2c4c79ab6bdda5cb79d2c6cfbbfcf857692ced97",
+      "bytes": 2485
+    },
+    "25-uncertain-before-retry.json": {
+      "sha256": "69899bd1cff3b34a90f69db43b90e3fe31e69d688a0c7f25ffd10d428cb14ef6",
+      "bytes": 735
+    },
+    "27-media.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "27-provider-provenance.json": {
+      "sha256": "f821fb3003c92a802f4a6bf84c154fca5e8fef3719fc9136ecab68a6c0afe84d",
+      "bytes": 2603
+    },
+    "29-media.mp4": {
+      "sha256": "f702406fcb19a92b07d7663d3272f574627067e4d730626826e382e9fd23a787",
+      "bytes": 7002
+    },
+    "29-provider-provenance.json": {
+      "sha256": "28a894d71645dadacc3d788572ac413bd530f11fed6a0b778ec02d6d089f0c80",
+      "bytes": 2502
+    },
+    "31-media.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "31-provider-provenance.json": {
+      "sha256": "d27a6758c8d0e748b4f734a2164174efd659888afec1fd7753f12749963693b8",
+      "bytes": 2447
+    },
+    "33-media.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "33-provider-provenance.json": {
+      "sha256": "fbddda8a97bfcfb253683f9ba895954245dfb6da0c2b2457161aca90e7d81356",
+      "bytes": 2475
+    },
+    "35-media.mp4": {
+      "sha256": "f702406fcb19a92b07d7663d3272f574627067e4d730626826e382e9fd23a787",
+      "bytes": 7002
+    },
+    "35-provider-provenance.json": {
+      "sha256": "509d9c404b939808661524ecf9ef815cf26a98bd459354b3d638ae8f4dd3314b",
+      "bytes": 2493
+    },
+    "37-media.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "37-provider-provenance.json": {
+      "sha256": "988d97917ea4433e0883a68e2b8bbe8321def2b827d0cc0dca45ce154918d405",
+      "bytes": 2479
+    },
+    "gpu-fixture-wires.json": {
+      "sha256": "8e199ed58fe520198178154c6799ad2f86e9fa8d95ded88af5d4adf5c07e0f45",
+      "bytes": 3461
+    },
+    "lifecycle.json": {
+      "sha256": "2abaa8f6756ce14d113b2cb4b1a45385abc2d36d445b6aff9a08643bd8a6b845",
+      "bytes": 7931
+    },
+    "mask-reference.json": {
+      "sha256": "b41b0a746949e2a23170c8b17fd018292e0a04ccb722fa78687154ec9f835904",
+      "bytes": 1285
+    },
+    "new-process-replay.json": {
+      "sha256": "16ca5ec6144b765172c5e60d1a6ddd492e561ef11db5b9ea24858a395424f0cf",
+      "bytes": 76402
+    },
+    "offline-snapshot.json": {
+      "sha256": "cd7a6eb290ccb36148544a4d59cfbcd6ec3c2784e1393e47ed3d9d9aeeccc652",
+      "bytes": 80771
+    },
+    "receipt.json": {
+      "sha256": "07a38fe4291078e7ab2aa1dab9aa4299f838cb07688cba4f633ceab325e2f93e",
+      "bytes": 5919
+    },
+    "source-reference.json": {
+      "sha256": "55b5c1f796df675619f018e475ad3909db63d569c0f74467277231ab2c05d81a",
+      "bytes": 1286
+    }
+  },
+  "affected_passed": 163,
+  "affected_seconds": 47.18,
+  "new_cases": 25,
+  "new_reference_cases": 20,
+  "new_project_response_cases": 3,
+  "new_drift_legacy_cases": 2,
+  "native_compatibility_passed": 26,
+  "native_compatibility_seconds": 5.647,
+  "counts_overlap": true,
+  "authenticated_intake_default_disabled": true,
+  "bounded_stream_bytes": 33554432,
+  "bounded_stream_seconds": 30,
+  "physical_reference_images": 2,
+  "actual_local_decoded_output_artifacts": 10,
+  "request_variants": 9,
+  "mock_gpu_prompt_writes": 10,
+  "mock_input_upload_writes": 2,
+  "manual_job_result_injection": false,
+  "hash_mime_magic_full_decode": true,
+  "workspace_project_asset_receipt_expiry_binding": true,
+  "source_admission_is_trusted_service_assertion": true,
+  "rights_independently_verified": false,
+  "publishing_authorized": false,
+  "source_project_physical_asset_and_owner_decision_independently_verified_by_bridge": false,
+  "native_source_lookup_and_actual_rights_issuance_wired": false,
+  "native_server_queue_ui_wired": false,
+  "durable_no_overwrite_upload_intent_and_hash_readback": true,
+  "uncertain_upload_never_reposted": true,
+  "prompt_target_input_drift_blocks_before_reference_staging": true,
+  "legacy_text_journal_and_wire_compatibility": true,
+  "source_fixture_cannot_reach_live_transport": true,
+  "new_process_offline_exact_replay": true,
+  "generated_output_rights_status": "unknown",
+  "production_eligible": false,
+  "estimated_cost_vnd": null,
+  "actual_cost_vnd": null,
+  "failed_logs_retained": {
+    "r1": "one composite MockTransport fixture duplicated Authorization header casing; corrected fixture only"
+  },
+  "real_provider_tests": 0,
+  "real_gpu_dispatches": 0,
+  "real_credentials_read": 0,
+  "paid_operations": 0,
+  "actual_hub_calls": 0,
+  "actual_publications": 0,
+  "browser_real_tested": false,
+  "owner_uat": false,
+  "production_deployed": false,
+  "docker_executed": false,
+  "latest_full_native": {
+    "head": "c7e89fe",
+    "passed": 533,
+    "seconds": 331.869,
+    "rerun": false
+  },
+  "latest_full_api": {
+    "head": "e59a7d5",
+    "passed": 2659,
+    "skipped": 11,
+    "seconds": 1512.89,
+    "rerun": false
+  },
+  "unchanged_studio": {
+    "head": "c7e89fe",
+    "passed": 206,
+    "duration_ms": 1000.2963,
+    "rerun": false
+  }
+}

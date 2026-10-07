@@ -13,3 +13,9 @@ Only a directly injected test `httpx.MockTransport` creates fixture factory mode
 Seven Native contract cases cover all nine existing route combinations, strict native reference operations, protected registry/default-off behavior, origin/secret restrictions, duplicate/drift/empty reviewed graph guards and an explicit scoped lifecycle wire fixture. Temporary tokens/manifests are synthetic. No actual key, GPU, model, generated media/decode, payment, Owner UAT, external publication or deployment is used.
 
 Next work: durable workspace/project-bound generation jobs and provider tickets/progress/cancellation/recovery, physical scoped references/rights/staging, independent worker/cost admission, full actual local result decoding, explicit attachment and Native Assets controls. Genuine approved executable workflows/models/GPU remain NOT_CONFIGURED until separately provisioned and accepted.
+
+The independent bridge now has [reviewed HTTP execution](COMFYUI_HTTP_BACKEND.md)
+and [physical reference staging](COMFYUI_REFERENCE_STAGING.md), with explicit
+mock-wire/local-decode and new-process evidence. Native source lookup, actual
+rights receipt issuance, service intake calls, queue/worker/cost/result/UI remain
+to be connected; bridge availability does not establish Native mode readiness.

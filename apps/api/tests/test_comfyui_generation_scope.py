@@ -51,6 +51,29 @@ async def test_identical_prompt_in_different_workspace_or_job_gets_separate_brid
     assert len({body['client_request_id'] for body in sent}) == 3
     assert sent[0]['client_request_id'] == sent[3]['client_request_id']
     assert all('graph' not in body for body in sent)
+    assert all('project_id' not in body for body in sent) # Legacy request fingerprints/replay remain unchanged.
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('phase', ['submitted', 'polled', 'cancel_response'])
+async def test_registered_references_require_bound_project_in_every_bridge_response(phase):
+    calls=[]
+    def handler(request):
+        calls.append(request)
+        if request.url.path=='/v1/jobs':
+            body=json.loads(request.content);assert body['project_id']=='project-A'
+        project='foreign' if (phase=='submitted' and len(calls)==1 or phase=='polled' and request.method=='GET'
+            or phase=='cancel_response' and request.url.path.endswith('/cancel')) else 'project-A'
+        return httpx.Response(202 if request.url.path=='/v1/jobs' else 200,json={'job_id':'cui_registered_reference_fixture',
+            'workspace_id':'workspace-A','project_id':project,'workflow_id':'npd-image-to-image-v1','workflow_version':'1.0.0',
+            'status':'queued','progress':0})
+    adapter=provider(httpx.MockTransport(handler))
+    if phase=='cancel_response':adapter.cancel_requested=lambda:len(calls)>0
+    with media_generation_scope(workspace_id='workspace-A',project_id='project-A',job_id='job-A'):
+        with pytest.raises(ValueError,match='COMFYUI_JOB_BINDING_INVALID'):
+            await adapter.generate(ImageGenerationInput(prompt='explicit fixture',operation='image_to_image',
+                reference_images=['vf-reference://'+'a'*64]))
+    assert len(calls)==(1 if phase=='submitted' else 2)
 
 
 @pytest.mark.asyncio

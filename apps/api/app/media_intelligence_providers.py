@@ -446,6 +446,8 @@ class ComfyUIBridgeGenerationProvider:
         if cancellation_requested(self.cancel_requested):raise RuntimeError('COMFYUI_CANCELLED_BEFORE_SUBMISSION')
         workspace_id, project_id, resolution_job_id = current_generation_scope()
         workflow_id, operation, inputs = generation_envelope(self.modality, payload, self.workflow_routes)
+        bound_project = project_id if any(str(value).startswith('vf-reference://') for value in
+            [*inputs.get('reference_images', []), inputs.get('mask_reference') or '']) else None
         started = asyncio.get_running_loop().time()
         binary_content, binary_metadata = None, None
         timeout = httpx.Timeout(self.timeout_seconds, connect=10)
@@ -462,6 +464,7 @@ class ComfyUIBridgeGenerationProvider:
                 json={
                     "workflow_id": workflow_id,
                     "workspace_id": workspace_id,
+                    **({'project_id': bound_project} if bound_project is not None else {}),
                     "inputs": inputs,
                     "client_request_id": _stable_token(workspace_id, project_id, resolution_job_id, payload.model_dump_json(), workflow_id),
                 },
@@ -471,7 +474,7 @@ class ComfyUIBridgeGenerationProvider:
             job = response.json()
             job_id = str(job["job_id"])
             if (not re.fullmatch(r'cui_[A-Za-z0-9_-]{1,80}', job_id) or job.get('workspace_id') != workspace_id or
-                    job.get('workflow_id') != workflow_id):
+                    job.get('workflow_id') != workflow_id or bound_project is not None and job.get('project_id') != bound_project):
                 raise ValueError('COMFYUI_JOB_BINDING_INVALID')
             await observe(self.on_job,job,'submitted')
             deadline = asyncio.get_running_loop().time() + self.timeout_seconds
@@ -486,7 +489,8 @@ class ComfyUIBridgeGenerationProvider:
                     cancelled=await client.post(f'/v1/jobs/{job_id}/cancel')
                     if cancelled.status_code!=200:raise RuntimeError('COMFYUI_TARGETED_CANCEL_HTTP_FAILED')
                     job=cancelled.json()
-                    if (job.get('job_id')!=job_id or job.get('workspace_id')!=workspace_id or job.get('workflow_id')!=workflow_id):
+                    if (job.get('job_id')!=job_id or job.get('workspace_id')!=workspace_id or job.get('workflow_id')!=workflow_id
+                            or bound_project is not None and job.get('project_id') != bound_project):
                         raise ValueError('COMFYUI_JOB_BINDING_INVALID')
                     await observe(self.on_job,job,'cancel_response')
                     if job.get('status') in {'succeeded','failed','cancelled','timed_out'}:break
@@ -495,7 +499,7 @@ class ComfyUIBridgeGenerationProvider:
                 poll.raise_for_status()
                 job = poll.json()
                 if (job.get('job_id') != job_id or job.get('workspace_id') != workspace_id or
-                        job.get('workflow_id') != workflow_id):
+                        job.get('workflow_id') != workflow_id or bound_project is not None and job.get('project_id') != bound_project):
                     raise ValueError('COMFYUI_JOB_BINDING_INVALID')
                 await observe(self.on_job,job,'polled')
             if job.get('status') == 'succeeded' and str((job.get('result') or {}).get('artifact_reference', '')).startswith('vf-artifact://'):

@@ -38,6 +38,7 @@ class WorkflowManifest(StrictModel):
 
 class BridgeJobCreate(StrictModel):
     workspace_id: str = Field(min_length=1, max_length=200, pattern=r"^\S+$")
+    project_id: str | None = Field(default=None, min_length=1, max_length=200, pattern=r"^\S+$")
     workflow_id: str = Field(pattern=r"^[a-z0-9][a-z0-9-]{2,80}$")
     workflow_version: str | None = Field(default=None, max_length=40)
     inputs: dict[str, Any]
@@ -46,6 +47,7 @@ class BridgeJobCreate(StrictModel):
 
 class BridgeJobRead(StrictModel):
     workspace_id: str
+    project_id: str | None = None
     job_id: str
     workflow_id: str
     workflow_version: str
