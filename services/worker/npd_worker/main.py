@@ -418,8 +418,11 @@ async def main() -> None:
             )
         await asyncio.gather(*tasks)
     finally:
-        await redis.aclose()
-        await engine.dispose()
+        try:
+            if hasattr(providers.stock,'aclose'):await providers.stock.aclose()
+        finally:
+            try:await redis.aclose()
+            finally:await engine.dispose()
 
 
 if __name__ == "__main__":

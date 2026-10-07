@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Literal
 from urllib.parse import urlparse
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from .asr_prompt_profile import profile_for_id, prompt_profile_sha256
@@ -19,7 +19,7 @@ from .provider_safety import ProviderTimeoutEnvelope
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore",hide_input_in_errors=True)
 
     app_env: str = "development"
     content_generation_provider: str = "contract"
@@ -101,6 +101,9 @@ class Settings(BaseSettings):
     openai_vision_output_vnd_per_million_tokens: Decimal = Decimal("0")
     media_fixture_enabled: bool = False
     stock_media_provider: str = "contract"
+    pexels_api_key:SecretStr=Field(default=SecretStr(''),exclude=True,repr=False)
+    pixabay_api_key:SecretStr=Field(default=SecretStr(''),exclude=True,repr=False)
+    stock_cache_root:Path=Path('/workspace/storage/stock-cache')
     image_generation_provider: str = "contract"
     video_generation_provider: str = "contract"
     media_staging_root: Path = Path("/workspace/storage/media-resolution")
@@ -360,8 +363,8 @@ class Settings(BaseSettings):
             raise ValueError("AUTO_EDIT_SIGNAL_PROVIDER must be fixture or ffmpeg")
         if self.vision_provider not in {"fixture", "contract", "openai"}:
             raise ValueError("VISION_PROVIDER must be fixture, contract or openai")
-        if self.stock_media_provider not in {"fixture", "contract"}:
-            raise ValueError("STOCK_MEDIA_PROVIDER must be fixture or contract")
+        if self.stock_media_provider not in {"fixture", "contract", "pexels", "pixabay"}:
+            raise ValueError("STOCK_MEDIA_PROVIDER must be fixture, contract, pexels or pixabay")
         if self.image_generation_provider not in {"fixture", "contract", "comfyui"}:
             raise ValueError("IMAGE_GENERATION_PROVIDER must be fixture, contract or comfyui")
         if self.video_generation_provider not in {"fixture", "contract", "comfyui"}:

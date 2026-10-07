@@ -63,7 +63,7 @@ class StockMediaCandidateRead(StrictModel):
     duration_seconds: float | None = Field(default=None, gt=0)
     orientation: Literal["portrait", "landscape", "square", "unknown"]
     media_type: MediaType
-    semantic_score: float = Field(ge=0, le=1)
+    semantic_score: float | None = Field(default=None,ge=0, le=1)
     vision_rerank_score: float | None = Field(default=None, ge=0, le=1)
     rights_status: MediaRightsStatus
     production_eligible: bool

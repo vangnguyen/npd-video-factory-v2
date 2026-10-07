@@ -54,6 +54,7 @@ from .provider_safety import (
     verify_provider_artifact_storage,
 )
 from .vision_repository import VisionRepository
+from .stock_media_providers import PexelsStockMediaProvider,PixabayStockMediaProvider,stock_request_scope
 
 
 MEDIA_RESOLUTION_QUEUE_KEY = "npd:video-factory:v2:media-resolution:queued"
@@ -77,6 +78,11 @@ def create_media_provider_bundle(settings) -> MediaProviderBundle:
         if settings.stock_media_provider == "fixture"
         else ContractOnlyStockMediaProvider()
     )
+    if settings.stock_media_provider in {'pexels','pixabay'}:
+        adapter=PexelsStockMediaProvider if settings.stock_media_provider=='pexels' else PixabayStockMediaProvider
+        secret=settings.pexels_api_key if settings.stock_media_provider=='pexels' else settings.pixabay_api_key
+        stock=adapter(api_key=secret.get_secret_value(),enabled=settings.media_external_execution_enabled,
+            cache_root=settings.stock_cache_root)
     if settings.image_generation_provider == "fixture":
         image: ImageGenerationProvider = DeterministicImageGenerationProvider()
     elif settings.image_generation_provider == "comfyui":
@@ -238,18 +244,11 @@ class MediaPlanningService:
                         stock=stock_available,image=image_available,video=video_available,preferred_type=broll.preferred_media_type)
                 if strategy not in {"stock_image", "stock_video"}:
                     continue
-                if strategy == "stock_video":
-                    found = await self.providers.stock.search_videos(
-                        broll.search_query,
-                        orientation=orientation,
-                        limit=3,
-                    )
-                else:
-                    found = await self.providers.stock.search_images(
-                        broll.search_query,
-                        orientation=orientation,
-                        limit=3,
-                    )
+                with stock_request_scope(project.workspace_id):
+                    if strategy == "stock_video":
+                        found = await self.providers.stock.search_videos(broll.search_query,orientation=orientation,limit=3)
+                    else:
+                        found = await self.providers.stock.search_images(broll.search_query,orientation=orientation,limit=3)
                 self._validate_stock_evidence(found)
                 stock_candidates[scene.scene_id] = found
                 total_stock_candidates += len(found)
@@ -292,9 +291,10 @@ class MediaPlanningService:
                     estimated_cost=Decimal("0"),
                     actual_cost=Decimal("0"),
                     metadata={
-                        "fixture": True,
-                        "external_call": False,
-                        "paid": False,
+                        "fixture": not self.providers.stock.external,
+                        "external_call": self.providers.stock.external,
+                        "paid": self.providers.stock.paid,
+                        "real_provider_tested":self.providers.stock.real_provider_tested,
                         "social_media_downloaded": False,
                     },
                 )
@@ -809,12 +809,13 @@ class MediaResolutionService:
             # in-process search cache: API planning and worker resolution run in
             # separate containers and both must survive restarts.  External
             # adapters may still refresh provider metadata or signed URLs.
-            candidate = (
-                await self.providers.stock.get_asset(selected.provider_asset_id)
-                if self.providers.stock.external
-                else selected
-            )
-            return await self.providers.stock.download_asset(candidate), None
+            with stock_request_scope(plan.workspace_id):
+                candidate = (
+                    await self.providers.stock.get_asset(selected.provider_asset_id)
+                    if self.providers.stock.external
+                    else selected
+                )
+                return await self.providers.stock.download_asset(candidate), None
         if item.strategy in {"ai_image", "motion_graphic"}:
             request = ImageGenerationInput.model_validate(job.provenance.get("request") or {})
             return await self.providers.image.generate(request), None
@@ -855,8 +856,8 @@ def _safe_filename(value: str) -> str:
 
 
 def _asset_kind(strategy: str, content_type: str) -> str:
-    if content_type == "image/svg+xml":
-        return "stock_image" if strategy == "stock_image" else "generated_image"
     if "fixture" in content_type or content_type.endswith("+json"):
         return "media_contract_fixture"
+    if content_type.startswith("image/"):
+        return "stock_image" if strategy == "stock_image" else "generated_image"
     return "stock_video" if strategy == "stock_video" else "generated_video"

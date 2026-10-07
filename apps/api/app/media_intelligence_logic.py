@@ -158,11 +158,12 @@ def rank_stock_candidates(
             )
         )
         overlap = len(query_tokens & source_tokens) / max(1, len(query_tokens))
-        rerank = round(min(1, item.semantic_score * 0.8 + overlap * 0.2), 4)
+        rerank = round(min(1, item.semantic_score * 0.8 + overlap * 0.2), 4) if item.semantic_score is not None else None
         ranked.append(item.model_copy(update={"vision_rerank_score": rerank}))
     return sorted(
         ranked,
-        key=lambda item: (item.vision_rerank_score or 0, item.semantic_score, item.candidate_id),
+        key=lambda item: (item.vision_rerank_score or 0, item.semantic_score or 0,
+            -(item.provenance.get('provider_result_rank') or 0),item.candidate_id),
         reverse=True,
     )
 

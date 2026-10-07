@@ -8,7 +8,7 @@ the optional GPU boundary is documented in [COMFYUI_SETUP.md](COMFYUI_SETUP.md).
 
 | Capability | Interface | Local/CI adapter | Live adapter state | External or paid by default |
 |---|---|---|---|---|
-| Stock image/video | `StockMediaProvider` | deterministic licensed synthetic fixture | `not_configured` | no |
+| Stock image/video | `StockMediaProvider` | deterministic fixture and official HTTP contract mocks | Pexels/Pixabay adapters, disabled until explicitly configured | no |
 | AI image | `ImageGenerationProvider` | deterministic SVG fixture | ComfyUI contract, disabled | no |
 | AI video | `VideoGenerationProvider` | deterministic non-playable JSON fixture | ComfyUI contract, disabled | no |
 | Existing project media | internal media resolver | immutable registered asset | available inside V2 | no |
@@ -22,8 +22,32 @@ are never represented as live capability.
 Each returned candidate must include provider and provider-asset IDs, creator, source reference,
 license and optional license URL, attribution requirement, technical dimensions/duration, rights
 status, production eligibility, estimated VND cost and provenance. Social-platform downloading is
-prohibited. A future real adapter must preserve the selected candidate contract durably so a
-separate worker can resolve it after an API or worker restart.
+prohibited. Selected candidates persist in MediaPlan; the official adapter refreshes canonical
+metadata by provider ID before download, ignoring client-supplied URLs and license claims.
+
+## Official stock adapters — North Star Wave 5
+
+`app.stock_media_providers` implements image/video search, get and download against
+[Pexels API](https://www.pexels.com/api/documentation/) and
+[Pixabay API](https://pixabay.com/api/docs/). API paths are fixed; media downloads use approved
+HTTPS CDN hosts, reject redirects, and enforce byte, MIME/magic and timeout bounds.
+Pixabay image dimensions describe the selected web rendition; video orientation is filtered
+locally. Unavailable semantic and Vision relevance scores stay null.
+
+Responses are cached for 24 hours under a checksum-bound workspace namespace, surviving API/worker
+restart without cross-workspace reuse. Credentials enter only the API wire request; logs, cache,
+settings exports, error messages and CDN requests omit them. Injected MockTransport evidence is
+explicitly marked. `STOCK_MEDIA_PROVIDER=pexels|pixabay`, the corresponding SecretStr key and
+`STOCK_CACHE_ROOT` configure adapters; external execution and the global provider safety gate
+remain off by default. Configuration is not proof of provider health or acceptance.
+
+Candidates retain creator, original source, attribution and
+[Pexels License](https://www.pexels.com/license/) or
+[Pixabay Content License](https://pixabay.com/service/license-summary/). General licensing does
+not establish third-party or personality rights. Downloads remain production-ineligible until
+full decoding, rights records and provider acceptance are complete. The API fee is zero for these
+free adapters; local compute cost is unknown. This increment does not implement Native stock
+search/import controls or bypass credential/right admission in the worker.
 
 ## Generation contracts
 

@@ -662,3 +662,26 @@ EVIDENCE: `docs/north-star/native-media-frame-evidence.json` indexes **41 export
 REGRESSIONS: original live checkout remains clean at `2ced7bc81f9402368fb22c9e7aca242e740531af`; live database/configuration/processes and accepted artifacts are untouched. No main merge, production deployment, external publication, new paid/provider/TTS call, destructive migration or runtime installation.
 
 EXTERNAL BLOCKERS: configured semantic/provider acceptance, Docker, Native browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: configured-provider architecture/consumers and legal stock/generative media adapters, followed by the remaining audio/profile/platform/distribution/analytics/learning/Trend/Hub/hardening work.
+
+
+## Wave 5 — Official stock adapter contracts
+
+WAVE: 5
+
+STATUS: IN PROGRESS; GENERATIVE_MEDIA_READY = NO. Official stock architecture is implemented and mock-tested; Native integration and real provider acceptance remain open.
+
+HEAD SHA: parent `03b94bfe08338236366b22be1aee1ee87803fcbd`; this separate stock commit records the increment. Parent is pushed and preserved in verified `north-star-media-frames.bundle`, SHA256 `d5e1ad86f21504fe5adc3773815ec8b38a5702cbd0d689ae212f7c7e62369b2f`.
+
+CAPABILITIES COMPLETED: provider-neutral Pexels/Pixabay official image/video search, canonical get and bounded download methods; fixed authorized API paths, HTTPS/CDN allowlists, no redirect following, MIME/magic/size/timeout validation and safe retry hints without automatic replay. Durable checksum-bound 24h workspace caches survive restart and isolate concurrent scopes. Pixabay credentials are injected only at the transport boundary; neither adapter exposes keys in HTTPX logs, cache, settings serialization/errors or CDN requests. Candidates preserve selected-rendition dimensions, creator/source/license/attribution and null unavailable semantic/Vision relevance. Saved MediaPlan candidates survive persistence; worker materialization binds workspace scope and refreshes provider IDs instead of trusting caller URLs/rights. PNG/JPEG asset registration now uses image kinds instead of generated_video. Configured adapters are registered without exposing keys and their owned clients close during API/worker shutdown. Existing external/paid/global safety and publishing/production rights gates remain enforced. Mock transports identify their fixture evidence; production eligibility and real_provider_tested remain false.
+
+CAPABILITIES PARTIAL: stock Native controls/import, complete downloaded-media decoding, actual official provider acceptance, independent rights records and credential/right admission remain. Planning ledger metadata describes provider traits rather than counting every request/cache hit/failure; uniform per-operation accounting is a Wave 8 gap. Configured status is not a live provider health check. Image/video generation modes, full ComfyUI lifecycle and playable provider acceptance remain open.
+
+TESTS: API stock/media/planning/safety/B-roll **81/81 PASS**, 57.82s (`stock-providers-api-r7.log`); worker media queue/pipeline **27/27 PASS**, 4.18s (`stock-providers-worker-r1.log`); Native B-roll/Auto Shorts **10/10 PASS**, 9.472s (`stock-providers-native-r1.log`). New stock contracts alone first passed **18/18**, 3.77s (`stock-providers-api-r6.log`), then six asset-kind cases were added. Initial fixture failures were corrected to preserve the existing global configuration gate, register the provider in the isolated ledger and supply required worker capability/external/paid fields. The integration test also confirms the normal fail-closed controller prevents dispatch, even with an injected mock adapter. Failed logs r1/r3/r4/r5 remain retained. The complete Linux API regression at preserved parent 03b94bf passed **1,991 tests, 11 SKIP**, 634.07s (`api-linux-03b94bf.log`); skipped checks are not accepted evidence.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: isolated SQLite planning/persistence and CPU regression; no downloaded official media decoded. MOCK TESTS: all official endpoint, rate-limit, download and media payloads use explicit HTTP mocks; supplied image/video bytes are deliberately nonplayable contract fixtures.
+
+EVIDENCE: `docs/north-star/stock-provider-contract-evidence.json` indexes exact source/test/log hashes and the official reference URLs. No credential was inspected or configured and no external stock, paid provider, publishing or GPU request was dispatched.
+
+REGRESSIONS: preserved Native source workflows pass focused regression; original live checkout, database, configuration, services and accepted artifacts remain untouched. No main merge, production deployment, new runtime installation or destructive migration.
+
+EXTERNAL BLOCKERS: authorized provider credentials/acceptance, optional GPU, Docker, Native browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe implementation continuation. NEXT WAVE: approved generative media/ComfyUI lifecycle and remaining semantic media, audio, profiles, platform, publishing, analytics, learning, Trend Radar, Agent Hub and hardening work.

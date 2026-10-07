@@ -1,0 +1,56 @@
+{
+  "schema": "north-star-stock-contract-evidence-v1",
+  "parent_head": "03b94bfe08338236366b22be1aee1ee87803fcbd",
+  "explicit_http_mocks": true,
+  "real_provider_acceptance": false,
+  "official_media_decode_acceptance": false,
+  "native_stock_ui_implemented": false,
+  "production_deployed": false,
+  "production_eligible": false,
+  "external_provider_calls": 0,
+  "paid_provider_calls": 0,
+  "source_sha256": {
+    "apps/api/app/stock_media_providers.py": "5f2788d31f027e83b3b4fcb58d24001e003825aeb6c8edaca07009ff72778291",
+    "apps/api/tests/test_stock_media_providers.py": "3fd0101c30a8cb4341733f0813290a9f9e7e0d5f1231b6f14609067eb56ea95a",
+    "apps/api/app/config.py": "d0d13aa6e2eccb3782c6002a7a7560114a36347d09cc896118a1f0f5ed8a5343",
+    "apps/api/app/media_intelligence_models.py": "bb9320cf2b94d106f1b1b4358979b34e8c6a6c9edc1c84cdc9f01d0b1d2148a8",
+    "apps/api/app/media_intelligence_logic.py": "1c06f7d906a6e1dadf190154fa1e7a881f134402ca33ffd902040e120f8bdfac",
+    "apps/api/app/media_intelligence_service.py": "6743387053cdb0496ad13198179fbc34c4d6c0655bcaceac0602e5a9974f5d30",
+    "apps/api/app/main.py": "46c80d93db0300059f4808bf08a8f5742ba49487ceeb74b380a52ae1ad8a1e89",
+    "services/worker/npd_worker/main.py": "f4e2027424e124fbacdf0f89e25fd6ab6b23c9643b791b984959391762188c66"
+  },
+  "logs": {
+    "stock-providers-api-r7.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-providers-api-r7.log",
+      "sha256": "3996e5fc866fc3d7d0517332127770428d6c4cfced43ba19ced846f0dd0b540a"
+    },
+    "stock-providers-api-r6.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-providers-api-r6.log",
+      "sha256": "028383bffd439b74218c345fdb5497d88097281918ec4c4b28c4865f27c84470"
+    },
+    "stock-providers-worker-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-providers-worker-r1.log",
+      "sha256": "e27b9a617a15f098ac60f5df872bea64b843870e34a0fb5024ab358f36b08b2b"
+    },
+    "stock-providers-native-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-providers-native-r1.log",
+      "sha256": "49ca6923c76dd854be04c4744dc2e56b23a42c588afce420794a1468847a1957"
+    },
+    "api-linux-03b94bf.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-03b94bf.log",
+      "sha256": "7c9cfd6e261a559ee8886f9ebc7167829aad63cce65e2d8be493c4392dadf40e"
+    }
+  },
+  "primary_references": [
+    "https://www.pexels.com/api/documentation/",
+    "https://pixabay.com/api/docs/",
+    "https://www.pexels.com/license/",
+    "https://pixabay.com/service/license-summary/"
+  ],
+  "api_tests": 81,
+  "worker_tests": 27,
+  "native_regression_tests": 10,
+  "full_parent_linux_api_passed": 1991,
+  "full_parent_linux_api_skipped": 11,
+  "remaining": "Native controls, full decoded media/rights/credential admission, actual provider acceptance, per-request ledger and live health verification."
+}

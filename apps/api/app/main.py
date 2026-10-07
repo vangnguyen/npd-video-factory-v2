@@ -437,8 +437,11 @@ async def lifespan(app: FastAPI):
     try:
         yield
     finally:
-        await redis.aclose()
-        await engine.dispose()
+        try:
+            if hasattr(media_providers.stock,'aclose'):await media_providers.stock.aclose()
+        finally:
+            try:await redis.aclose()
+            finally:await engine.dispose()
 
 
 _production_mode = settings.app_env.lower() == "production"
@@ -778,6 +781,19 @@ def _provider_definitions() -> list[dict[str, object]]:
             "config_ref": "env:STOCK_MEDIA_PROVIDER_*",
             "metadata": {"contract_only": True, "real_provider_tested": False},
         },
+        *[{
+            'provider_key':key,'display_name':name,'capability':'stock_media',
+            'adapter':'app.stock_media_providers.'+adapter,
+            'routing_mode':'primary' if settings.stock_media_provider==key else 'disabled',
+            'status':'healthy' if settings.stock_media_provider==key and settings.media_external_execution_enabled and secret.get_secret_value() else 'not_configured',
+            'enabled':bool(settings.stock_media_provider==key and settings.media_external_execution_enabled and secret.get_secret_value()),
+            'supports_dry_run':False,'config_ref':'env:STOCK_MEDIA_PROVIDER',
+            'metadata':{'paid':False,'official_api':True,'fixture':False,'real_provider_tested':False,
+                'production_eligible':False,'response_cache_seconds':86400,'workspace_scoped_cache':True,
+                'credential_values_exposed':False,'social_media_downloaded':False},
+        } for key,name,adapter,secret in (
+            ('pexels','Pexels Official Stock API','PexelsStockMediaProvider',settings.pexels_api_key),
+            ('pixabay','Pixabay Official Stock API','PixabayStockMediaProvider',settings.pixabay_api_key))],
         {
             "provider_key": "fixture-image-generation",
             "display_name": "Deterministic Image Generation Fixture",
