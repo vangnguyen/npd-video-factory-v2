@@ -62,6 +62,7 @@ class PublicationCreateRequest(StrictModel):
     mode: PublicationMode = "dry_run"
     metadata: PublicationMetadata
     actor_ref: str = Field(default="studio-user", min_length=1, max_length=160)
+    publishing_profile_id: str | None = Field(default=None, pattern=r'^ppf_[A-Za-z0-9_-]{4,60}$')
 
 
 class PublishApprovalRequest(StrictModel):
@@ -148,6 +149,15 @@ class ProviderValidationRead(StrictModel):
     supports_live_publish: bool
     checks: list[PublishingValidationCheck]
     target_binding: PublishingTargetBinding | None = None
+    mock_execution: bool = False
+
+
+class PublicationSubmission(StrictModel):
+    work_id: str = Field(pattern=r'^pwj_[a-f0-9]{32}$')
+    publication_id: str
+    status: Literal['queued', 'running', 'waiting', 'review_required', 'completed']
+    mock: bool
+    external_action: Literal[False] = False
 
 
 class PublishingPlatformStateRead(StrictModel):

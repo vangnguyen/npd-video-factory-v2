@@ -152,7 +152,7 @@ class PublishingRepository:
                 row.provider_validation_json = provider_validation.model_dump(mode="json")
                 row.receipt_json = receipt.model_dump(mode="json") if receipt else None
                 row.external_action = bool(receipt.external_action) if receipt else False
-                row.mock = bool(receipt.mock) if receipt else row.mock
+                row.mock = bool(receipt.mock) if receipt else bool(provider_validation.mock_execution) or row.mock
                 row.failure_code = failure_code
                 row.failure_reason = failure_reason[:2000] if failure_reason else None
                 row.updated_at = utc_now()

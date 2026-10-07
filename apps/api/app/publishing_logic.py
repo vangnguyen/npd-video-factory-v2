@@ -31,8 +31,11 @@ def hash_idempotency_key(value: str) -> str:
 
 
 def request_fingerprint(payload: PublicationCreateRequest) -> str:
+    value = payload.model_dump(mode='json')
+    # Preserve fingerprints for requests recorded before optional profile selection.
+    if value.get('publishing_profile_id') is None: value.pop('publishing_profile_id', None)
     canonical = json.dumps(
-        payload.model_dump(mode="json"),
+        value,
         ensure_ascii=False,
         sort_keys=True,
         separators=(",", ":"),

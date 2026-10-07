@@ -71,7 +71,7 @@
   "new_recovery_tests": 11,
   "new_processing_tests": 10,
   "studio_tests_passed": 123,
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_current_api_status": "VERIFIED_IN_DESCENDANT_F7858B6",
   "actual_full_qc_runs": 2,
   "actual_sqlite_aes": true,
   "actual_source_bytes": 4256257,
@@ -89,5 +89,15 @@
   "owner_uat_accepted": false,
   "publishing_ready": false,
   "default_factory_activated": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_current_linux_api": {
+    "head": "f7858b6d2a451c2fe82b2b6baaaaa99c5559dea0",
+    "passed": 2301,
+    "skipped": 11,
+    "seconds": 1498.79,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-f7858b6.log",
+      "sha256": "a8494f2def3d9376890de518e03f39adbec888965327bd1ee5d227997ba15480"
+    }
+  }
 }

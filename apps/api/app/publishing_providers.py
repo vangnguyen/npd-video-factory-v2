@@ -10,6 +10,7 @@ from .publishing_models import (
     ProviderValidationRead,
     PublicationMetadata,
     PublicationReceipt,
+    PublicationSubmission,
     PublishingPlatform,
 )
 
@@ -30,6 +31,8 @@ class PublishingContext:
     output_asset_id: str
     request_fingerprint: str
     metadata: PublicationMetadata
+    publication_id: str | None = None
+    publish_approval_id: str | None = None
 
 
 class PublishingProvider(Protocol):
@@ -38,7 +41,7 @@ class PublishingProvider(Protocol):
 
     def validate(self) -> ProviderValidationRead: ...
 
-    async def publish(self, context: PublishingContext) -> PublicationReceipt: ...
+    async def publish(self, context: PublishingContext) -> PublicationReceipt | PublicationSubmission: ...
 
     async def get_status(self, receipt: PublicationReceipt) -> str: ...
 
@@ -197,6 +200,7 @@ class PublishingProviderRegistry:
 
     def __init__(self, settings):
         self.mock = MockPublishingProvider()
+        self.scoped_factory = None
         credential_refs = {
             "youtube": settings.youtube_publishing_credential_ref,
             "tiktok": settings.tiktok_publishing_credential_ref,
@@ -218,7 +222,9 @@ class PublishingProviderRegistry:
     def for_dry_run(self) -> MockPublishingProvider:
         return self.mock
 
-    def for_live(self, platform: PublishingPlatform) -> OfficialPublishingProvider:
+    def for_live(self, platform: PublishingPlatform, *, workspace_id=None, profile_id=None):
+        if callable(self.scoped_factory) and workspace_id is not None:
+            return self.scoped_factory(platform, workspace_id, profile_id)
         return self.official[platform]
 
     def official_status(self, platform: PublishingPlatform) -> ProviderValidationRead:

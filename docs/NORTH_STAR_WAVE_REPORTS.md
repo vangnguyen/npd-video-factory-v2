@@ -1165,3 +1165,23 @@ REAL PROVIDER TESTS: none. MOCK TESTS: profile/account/binding identities and pr
 REGRESSIONS: current pure configuration checks pass; source engine, accepted/live data/media/processes/credentials, main and disabled defaults remain unchanged. No migration, provider/paid call, new budget approval, real publish/delete, main merge or deployment.
 
 EXTERNAL BLOCKERS: eventual authorized account/OAuth/key/real-provider acceptance; no safe-work blocker now. OWNER ACTION REQUIRED: none now. NEXT WAVE: connect configured provider/runtime/Native distribution controls and continue all remaining media/analytics/learning/Trend/Hub/hardening work.
+
+### Waves 8/9 — explicit scoped configured publishing runtime
+
+WAVE: 8/9. STATUS: IN PROGRESS; configured runtime/local-real-media mock contract pass. PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `45b945375a514bb330bbd108eea9fdd8dc827c37` pushed/preserved in verified `north-star-publishing-profiles.bundle`, SHA256 `1398b8d61d77d89388973015ab2fe73401e653efc35e9029e761d0e002998fe6`; 154 ahead/0 behind, main unchanged. Receipt links prior fresh fifteen-artifact/live-source verification. Runtime is this increment.
+
+CAPABILITIES COMPLETED: explicit scoped runtime/provider registration, optional channel-profile selection with backward fingerprints, queued provider submissions, authenticated existing queue path, fresh profile resolution within owned step, bounded due scans/claim races, exact persisted receipt scoping and truthful mock publication/Studio labels. Construction/install performs no request, secret read, task or enablement.
+
+CAPABILITIES PARTIAL: production startup/supervisor, persistent Owner profile and secret administration, local cancel/resume, Native distribution UI, atomic edit/wire admission, QC reuse, thumbnails, TikTok/Meta adapters, actual account acceptance/billing/shared budgets. No production readiness claim.
+
+TESTS: expanded runtime/profile/publishing/queue/scheduler/target/API **86 PASS**, 212.31s; later due-scan competition **1 PASS**, 2.09s. New runtime cases: eight. Studio **123 PASS**, 586.2535ms. Initial run rejected a changed target correctly but its expected fixture code was stale; assertion corrected. Full Linux scheduler `f7858b6`: **2,301 PASS / 11 SKIP**, 1,498.79s; indexed separately. Current runtime full regression awaits pinned commit.
+
+REAL PROVIDER TESTS: none. MOCK TESTS: six authenticated ASGI requests, eight mock provider requests, one initialization, lost final reply, known-session recovery and processing after revocation in two separate reconstructed runtime processes. Actual SQLite/AES and two FFmpeg/FFprobe QC scans pass; 4,256,257-byte synthetic portrait source remains unchanged. Eight actual cost fields remain null; identity/account/OAuth/key/approval/timeline/subtitle inputs are fixtures. Published = false; no remote URL/external action.
+
+EVIDENCE: `docs/north-star/publishing-runtime-evidence.json`, `docs/PUBLISHING_CONFIGURED_RUNTIME.md`, five recovery logs and eight hashed contract exports. Contract is not Owner UAT or final A/B/C acceptance.
+
+REGRESSIONS: focused checks pass; full current commit pending. Accepted/live media, source/processes/data/credentials, main, disabled defaults and existing schemas remain untouched. No real publish/delete, paid operation, migration or deployment.
+
+EXTERNAL BLOCKERS: eventual authorized provider/account/credential/key acceptance. OWNER ACTION REQUIRED: none for remaining safe work. NEXT WAVE: complete official TikTok/Meta mock provider paths, distribution controls and remaining media/analytics/learning/Trend/Hub/hardening capabilities.

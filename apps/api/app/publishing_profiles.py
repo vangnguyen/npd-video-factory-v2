@@ -97,6 +97,11 @@ class PublishingProfileRegistry:
     def target(self, workspace, profile_id):
         return self.resolve(workspace, profile_id).target
 
+    def has_platform(self, platform, *, require_youtube_ready=False):
+        return any(self.resolve(workspace, identifier).target.platform == platform
+            and (not require_youtube_ready or self.resolve(workspace, identifier).youtube_ready())
+            for workspace, identifier in {(key[0], key[1]) for key in self._versions})
+
     def replace_catalog(self, catalog):
         replacement = type(self)(catalog)
         for key, value in self._versions.items():

@@ -93,7 +93,8 @@ class PublishingService:
         provider = (
             self.providers.for_dry_run()
             if payload.mode == "dry_run"
-            else self.providers.for_live(payload.platform)
+            else self.providers.for_live(payload.platform, workspace_id=package.workspace_id,
+                profile_id=payload.publishing_profile_id)
         )
         publication, replay = await self.repository.reserve(
             workspace_id=package.workspace_id,

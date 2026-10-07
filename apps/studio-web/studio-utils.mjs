@@ -119,6 +119,7 @@ export function describeProductionRender(render) {
 export function describePublication(publication) {
   if (!publication) return { label: "Chưa chạy", tone: "muted" };
   if (publication.status === "dry_run_succeeded") return { label: "Dry-run PASS", tone: "safe" };
+  if (publication.status === "published" && publication.mock === true) return { label: "Mock publish PASS", tone: "safe" };
   if (publication.status === "blocked") return { label: "Bị chặn an toàn", tone: "danger" };
   if (publication.status === "awaiting_publish_approval") return { label: "Chờ duyệt publish", tone: "warning" };
   if (publication.status === "scheduled") return { label: "Đã lên lịch", tone: "warning" };

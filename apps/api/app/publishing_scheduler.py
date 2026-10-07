@@ -1,5 +1,6 @@
 """Durable bounded scheduling. No background startup or default provider activation."""
 import asyncio
+import inspect
 from dataclasses import dataclass, field
 from datetime import timedelta
 import re
@@ -159,10 +160,11 @@ class PublishingScheduler:
         lease = await self.queue.claim(workspace, work_id, expected_version)
         async def guard(): await self.queue.owned(lease)
         try:
-            worker = self.worker_factory(guard)
-            if type(worker) is not YouTubePublishingWorker or worker.journal is not self.queue.journal or worker.admission_guard is not guard:
-                raise DispatchError('PUBLISH_SCHEDULER_CONFIGURATION_INVALID')
             async with asyncio.timeout(360):
+                worker = self.worker_factory(guard)
+                if inspect.isawaitable(worker): worker = await worker
+                if type(worker) is not YouTubePublishingWorker or worker.journal is not self.queue.journal or worker.admission_guard is not guard:
+                    raise DispatchError('PUBLISH_SCHEDULER_CONFIGURATION_INVALID')
                 state = await self.queue.journal.get(workspace, lease.publication_id)
                 result = await (worker.poll_processing(workspace, lease.publication_id) if state['phase'] == 'uploaded'
                     else worker.step(workspace, lease.publication_id))
