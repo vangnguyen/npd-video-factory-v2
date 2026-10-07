@@ -24,7 +24,7 @@ class ReferenceAdmission(StrictModel):
         if (self.expires_at <= self.issued_at or self.expires_at - self.issued_at > timedelta(hours=1)
                 or self.rights_status == 'restricted'
                 or self.authorization_kind == 'registered_rights' and self.rights_status not in {'owned', 'licensed', 'verified'}
-                or self.authorization_kind == 'explicit_owner_override' and (self.rights_status != 'unknown' or self.fixture)
+                or self.authorization_kind == 'explicit_owner_override' and self.fixture
                 or (self.asset_id.endswith('.png')) != (self.mime_type == 'image/png')):
             raise ValueError('REFERENCE_ADMISSION_INVALID')
         return self

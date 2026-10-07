@@ -81,7 +81,7 @@ class GenerationFactory:
     def __init__(self,credential,*,owner_enabled=False,transport=None,manifest_path=MANIFEST):
         if type(credential) is not GenerationCredential or type(owner_enabled) is not bool:raise WorkflowError('NATIVE_GENERATION_CONFIGURATION_INVALID',400)
         import httpx
-        self.credential,self.manifest_path=credential,guard(manifest_path,exists=True)
+        self.credential,self.manifest_path=credential.model_copy(deep=True),guard(manifest_path,exists=True)
         self.catalog=approved_catalog(self.manifest_path)
         self.mode='fixture' if isinstance(transport,httpx.MockTransport) else 'official';self.transport=transport
         self.enabled=owner_enabled and credential.enabled
@@ -89,6 +89,14 @@ class GenerationFactory:
             'enabled':self.enabled,'mode':self.mode,'manifest_sha256':self.catalog['manifest_sha256'],'schema_version':'native-generation-provider-config-v1'})
 
     def selection(self,modality,payload):
+        import httpx
+        try:current_credential=GenerationCredential.model_validate(self.credential.model_dump())
+        except (ValueError,TypeError):raise WorkflowError('NATIVE_GENERATION_PROVIDER_CONFIGURATION_CHANGED',409) from None
+        current_mode='fixture' if isinstance(self.transport,httpx.MockTransport) else 'official'
+        current_sha=digest({'bridge_url':current_credential.bridge_url,'token_sha256':hashlib.sha256(current_credential.service_token.encode()).hexdigest(),
+            'enabled':self.enabled,'mode':current_mode,'manifest_sha256':self.catalog['manifest_sha256'],'schema_version':'native-generation-provider-config-v1'})
+        if current_sha!=self.sha256 or current_mode!=self.mode or self.enabled and not current_credential.enabled:
+            raise WorkflowError('NATIVE_GENERATION_PROVIDER_CONFIGURATION_CHANGED',409)
         current=approved_catalog(self.manifest_path)
         if current['manifest_sha256']!=self.catalog['manifest_sha256'] or current['workflow_sha256']!=self.catalog['workflow_sha256']:
             raise WorkflowError('NATIVE_GENERATION_WORKFLOW_CONFIGURATION_CHANGED',409)

@@ -1,0 +1,139 @@
+{
+  "schema": "native-generation-reference-evidence-v1",
+  "parent_head": "464481425e5adabd3a8c7ee9fd73ffdcb0bdb0c8",
+  "source_sha256": {
+    "services/windows_native/generation_references.py": "2b7a386cca341f95f7a45bb01cf361b2ac9e52ddf34d7bd5a0116ccefd1aa01a",
+    "services/windows_native/generation_registry.py": "3355c08cde5729259ba5ed1b58762e75a0c73382da6fc976f93d06da95d564be",
+    "services/windows_native/generation_models.py": "6015937cc9388a202827b61bf70993d6175db0f45c943aa760a257d203d78949",
+    "services/windows_native/tests/test_generation_references.py": "bc0a8a7c5ed83aecd040f4739014cbeae9224892df82d46804eb8a8af0fc1347",
+    "services/comfyui-bridge/npd_comfyui_bridge/reference_models.py": "1c13e0fdf8dab67888bd393ae41f9dcb6beb656ee36d0abe3f6951020892cd3e",
+    "services/comfyui-bridge/tests/test_references.py": "88fc0d7745e85b7abf1846156bd25e79fafd6698a5f9ad0f0c2a7f370970168c",
+    "scripts/north_star_native_generation_references.py": "82c5ffb3976f1c8d496ba153753d499050fb45c4bd81b64e1550f703ae3794c9",
+    "docs/NATIVE_GENERATION_REFERENCES.md": "55f26249c4199ce1ba6ca79166b0673b0c5aaeca4d4d3fc883d4a5f784a148d3"
+  },
+  "logs": {
+    "native-generation-references-r1.log": "c17bdf96d6b477dc7c7ef37b2a2307568d6a74f063e9550ebde5534f54930276",
+    "native-generation-references-r2.log": "6488f480dd4cb61ed17652224b6861201160bca97c8a4d3042204315c14957c4",
+    "native-generation-references-r3.log": "6993704eec2a3cd7a9bba5fa54500ca7260be7c550e6095dee17350bc018529d",
+    "native-generation-references-r4.log": "fdc2053dd0322e8bea59708b2eaf1c402b4353121351deebd83d5b438ab0ef06",
+    "generation-native-reference-bridge-r1.log": "03c310957baab0274fbad81bcaa836e479d150bb9be66f28e473b9f93ea1db93",
+    "generation-native-reference-bridge-r2.log": "5a7b19c74ac33c4fb79eebc5f214790e9a981d4b52e79bb027d6e73bfef80564",
+    "native-generation-references-n1.log": "66ff1cb9a4a404d541c2057528173092e0b663e9d992eba2af1ef621771831e7",
+    "native-generation-references-n2.log": "27197c46a1e96298d911b839dc3567e8ab8405230606938f81eeb3a8915e03f9",
+    "native-generation-references-n3.log": "ccee0df042e044880605b038a1120c92ab672e15e662fe7809ac11d64b4db1a1",
+    "native-generation-references-n4.log": "5bc531a193ca0b929d35af07d58e3d10c5e5adacb10fb14cd4129376fe953922",
+    "native-generation-references-reopen-n4.log": "99002f65fc2104a417d628b00f47eaadcd121a715fd17da64d6b2b9a71949b76"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-generation-references-n4",
+  "contract_exports": {
+    "0-artifact-metadata.json": {
+      "sha256": "f8c1611d8595bed16b0e923928dc49e49d37f9e77c8365c5ae73799d6fd1d4fe",
+      "bytes": 1646
+    },
+    "0-generation-result.json": {
+      "sha256": "0ba32a82d541b6a864c8c62063db8332c00c335a88bcf6e76a3d078f1bbca1a3",
+      "bytes": 3606
+    },
+    "0-native-reference-snapshot.json": {
+      "sha256": "6517e76b4c84f817121e0e56d72015b4808aea786f0225cf7a29cf3f135a66fe",
+      "bytes": 2808
+    },
+    "0-output.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "0-scoped-provider-input.json": {
+      "sha256": "2badd33ea087286a9c31a009bfded6b219166a049cb8abe2e25c07d9d1deff94",
+      "bytes": 412
+    },
+    "1-artifact-metadata.json": {
+      "sha256": "53237d6bc1d63d035bff3e47fb098f59e4347af382230d085360a871db200edd",
+      "bytes": 1579
+    },
+    "1-generation-result.json": {
+      "sha256": "517f73b39b8d9e6a678e78e3c9ffff54938571db57d48f26445915c0038f061d",
+      "bytes": 3486
+    },
+    "1-native-reference-snapshot.json": {
+      "sha256": "644e8761224480557c784ef36f71523ed77d570acee323dbf998bc76e732ce70",
+      "bytes": 1810
+    },
+    "1-output.mp4": {
+      "sha256": "f702406fcb19a92b07d7663d3272f574627067e4d730626826e382e9fd23a787",
+      "bytes": 7002
+    },
+    "1-scoped-provider-input.json": {
+      "sha256": "d05edfff326e1836f3c81e26603804c1b328aae096723d14494a61677d0923ba",
+      "bytes": 293
+    },
+    "evidence.json": {
+      "sha256": "e2bcad26416604f20369e592d555784a2d220a2b2bdaa14ef80593e4d75f70b5",
+      "bytes": 3519
+    },
+    "gpu-fixture-wires.json": {
+      "sha256": "7f237152070479e2a2fd4c55ed3fbd4e1d35e853f729a1e00c6edcd0a78686ff",
+      "bytes": 1048
+    },
+    "lifecycle.json": {
+      "sha256": "1e870f63b67e2c954601b6a2a26d6df60283ab0bcd05fdb80be0f762c78aaea9",
+      "bytes": 1325
+    },
+    "native-service-wires.json": {
+      "sha256": "e297dc07757eac6ba8c69760e97773517b6cbcffb1490cfff83875f60f8b27b5",
+      "bytes": 1597
+    },
+    "new-process-replay.json": {
+      "sha256": "8c568640fbf6ff1ffdc0c9ca1f12d0edc15cf24c053a30bf6bffd5853b6675c8",
+      "bytes": 239
+    },
+    "offline-snapshot.json": {
+      "sha256": "f0ab0f019e2926c8d2619bbcb24eec16cb7abe419eb1a11beb1300d3f82e1355",
+      "bytes": 40284
+    }
+  },
+  "native_affected_passed": 40,
+  "native_affected_seconds": 7.898,
+  "new_native_cases": 15,
+  "bridge_api_affected_passed": 58,
+  "bridge_api_seconds": 76.87,
+  "new_bridge_cases": 1,
+  "counts_overlap": true,
+  "actual_project_and_registered_physical_image_binding": true,
+  "hash_mime_magic_local_full_decode_and_registered_dimensions": true,
+  "raw_unknown_upload_attestation_not_promoted": true,
+  "current_scoped_owner_exception_binding": true,
+  "copied_review_marker_requires_fresh_decision": true,
+  "rights_independently_verified": false,
+  "publishing_authorized": false,
+  "durable_before_post_reference_admission_and_dispatch": true,
+  "lost_intake_reply_reconciled_without_repost": true,
+  "expired_or_absent_uncertain_intent_requires_recovery": true,
+  "provider_configuration_and_project_and_asset_and_rights_drift_guarded": true,
+  "response_max_bytes": 65536,
+  "response_total_timeout_seconds": 35,
+  "native_server_queue_worker_cost_result_attachment_ui_wired": false,
+  "native_reference_prerequisite_executed": true,
+  "actual_local_decoded_output_artifacts": 2,
+  "mock_native_intake_writes": 3,
+  "mock_gpu_upload_writes": 3,
+  "mock_gpu_prompt_writes": 2,
+  "manual_job_result_injection": false,
+  "new_process_exact_offline_replay": true,
+  "replay_within_admission_ttl": true,
+  "canonical_timeline_mutated": false,
+  "generated_output_rights_status": "unknown",
+  "production_eligible": false,
+  "actual_cost_vnd": null,
+  "real_provider_tested": false,
+  "paid_operations": 0,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "failed_logs_retained": {
+    "native_r1": "Snapshot timestamp normalization/hash mismatch corrected in product before final checks.",
+    "native_r2": "Fixture metadata edits bypassed immutable version recording; fixture corrected. Identical scoped admission correctly reused across generation selections; assertion corrected.",
+    "bridge_r1": "Windows shared pytest temporary base denied access; retried in fresh owned base without deleting existing paths.",
+    "rehearsal_n1": "Required absolute fresh output path; failed fresh empty data root retained.",
+    "rehearsal_n2": "Rehearsal tried Pydantic serialization on provider dataclass; recorded bounded metadata without payload instead.",
+    "rehearsal_n3": "Existing explicit GPU fixture emits video only for its declared video seeds; rehearsal seed corrected."
+  }
+}

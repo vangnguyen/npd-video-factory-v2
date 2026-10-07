@@ -25,7 +25,9 @@ does not share or query the Native/PostgreSQL database, prove that a source
 project exists, independently verify licensing, or independently validate an
 Owner decision from its hash. The authorizing service must check its actual
 project, registered physical asset, current hash and saved rights decision
-before issuing an admission. Native issuance is not wired yet. Browser clients
+before issuing an admission. The [Native source binding module](NATIVE_GENERATION_REFERENCES.md)
+now performs this prerequisite with local/mock evidence; Native server/queue/UI
+integration remains pending. Browser clients
 receive no service credential and cannot author these assertions through the
 Native UI. A supplied rights receipt is a binding/audit reference, not evidence
 of independent verification. No actual uncertain-rights asset was cleared in

@@ -17,5 +17,7 @@ Next work: durable workspace/project-bound generation jobs and provider tickets/
 The independent bridge now has [reviewed HTTP execution](COMFYUI_HTTP_BACKEND.md)
 and [physical reference staging](COMFYUI_REFERENCE_STAGING.md), with explicit
 mock-wire/local-decode and new-process evidence. Native source lookup, actual
-rights receipt issuance, service intake calls, queue/worker/cost/result/UI remain
-to be connected; bridge availability does not establish Native mode readiness.
+rights receipt issuance and service intake now have a tested
+[Native source binding prerequisite](NATIVE_GENERATION_REFERENCES.md).
+Native server queue/worker/cost/result/attachment/UI remain to be connected;
+bridge availability does not establish Native mode readiness.

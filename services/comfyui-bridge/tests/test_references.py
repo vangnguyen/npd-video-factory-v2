@@ -39,6 +39,14 @@ def test_admission_rejects_unauthorized_rights_graph_secret_path_fixture_and_unb
     with pytest.raises(ValidationError): admission(b'fixture', **changes)
 
 
+def test_owner_exception_preserves_known_raw_rights_that_still_require_scoped_review():
+    # A copied registered asset can retain licensed metadata while requiring a
+    # fresh project decision. The service assertion retains the actual status.
+    value = admission(b'fixture', authorization_kind='explicit_owner_override', rights_status='licensed', fixture=False)
+    assert value.rights_status == 'licensed' and value.authorization_kind == 'explicit_owner_override'
+    with pytest.raises(ValidationError): admission(b'fixture', authorization_kind='explicit_owner_override', rights_status='restricted', fixture=False)
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize('suffix', ['png', 'jpg'])
 async def test_actual_image_registration_exact_replay_and_workspace_project_scope(tmp_path, tools, media, suffix):
