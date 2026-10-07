@@ -92,7 +92,15 @@ const analyticsConsole = initializeAnalyticsConsole({api, getState: () => state,
   onQueued: sync => {state.activeAnalyticsSync = sync; renderAnalytics(); startAnalyticsPolling();}});
 const analyticsChannels = initializeAnalyticsChannels({api, getState: () => state, toast});
 const analyticsRefresh = initializeAnalyticsRefresh({api, getState: () => state, toast});
-const channelLearning = initializeChannelLearning({api, getState: () => state, toast});
+const channelLearning = initializeChannelLearning({api, getState: () => state, toast, onTemplateSelection: reference => {
+  const template = state.subtitleCatalog?.templates.find(item => item.template_ref === reference);
+  const option = [...$('#subtitle-template').options].find(item => item.value === reference);
+  if (!template || !option || option.disabled) throw new Error('Template hoặc thời gian từng từ chưa sẵn sàng.');
+  $('#subtitle-template').value = reference;
+  $('#subtitle-animation').value = template.style.animation; $('#subtitle-position').value = template.style.position;
+  $('#subtitle-font-size').value = template.style.font_size; $('#subtitle-safe-margin').value = template.style.safe_margin_percent;
+  updateSubtitleAlignment();
+}});
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 
 class ApiError extends Error {

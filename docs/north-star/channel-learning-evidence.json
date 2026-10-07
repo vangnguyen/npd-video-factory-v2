@@ -134,7 +134,7 @@
     }
   },
   "full_parent_api_status": "VERIFIED_AT_1439C4D_BEFORE_LEARNING_INCREMENT",
-  "full_current_api_status": "PENDING_PINNED_LEARNING_COMMIT",
+  "full_current_api_status": "VERIFIED_AT_45E274B_BEFORE_PERSONALIZATION_INCREMENT",
   "actual_provider_calls": 0,
   "paid_operations": 0,
   "real_credentials_read": 0,
@@ -156,6 +156,16 @@
     "log": {
       "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-1439c4d.log",
       "sha256": "b09b51a6179c353a0dd7c3e18bed1e250559e8a49e33dcbc3aa5087106cd1650"
+    }
+  },
+  "full_current_linux_api": {
+    "head": "45e274be77d26876856ed0b836739dc666ba4caa",
+    "passed": 2604,
+    "skipped": 11,
+    "seconds": 1432.09,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-45e274b.log",
+      "sha256": "ebc1b139d684e9f8188be6eb06ec506ab5a1eb3e9967eb5809e5191c39a9c494"
     }
   }
 }

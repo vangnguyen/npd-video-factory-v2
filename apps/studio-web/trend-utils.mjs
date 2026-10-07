@@ -10,6 +10,12 @@ export const RADAR_VIEWS = Object.freeze({
 });
 
 export function clusterScore(cluster) {
+  const personalized = cluster?.learning_feedback?.personalized_opportunity;
+  if (personalized?.algorithm_version === 'personalized-opportunity-estimate-v1' && personalized.estimated === true
+      && personalized.recommendation_only === true && personalized.autonomous_execution === false
+      && typeof personalized.personalized_planning_score === 'number' && Number.isFinite(personalized.personalized_planning_score)
+      && personalized.personalized_planning_score >= 0 && personalized.personalized_planning_score <= 100)
+    return personalized.personalized_planning_score;
   return Number(cluster?.score?.total_score ?? 0);
 }
 

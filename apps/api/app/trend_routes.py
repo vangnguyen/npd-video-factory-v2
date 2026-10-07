@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, Query, Request, status
+from fastapi import APIRouter, HTTPException, Query, Request, Response, status
 
 from .trend_models import (
     ContentQueueItemRead,
@@ -18,6 +18,8 @@ from .trend_models import (
 from .trend_providers import TrendProviderNotConfigured
 from .trend_service import TrendIntelligenceService
 from .learning_service import LearningError
+from .personalized_opportunities import ChannelRankingPolicy
+from .models import NicheName
 
 
 router = APIRouter(prefix="/api/v1", tags=["trend-intelligence"])
@@ -97,12 +99,24 @@ async def refresh_trend_clusters(
 async def list_trend_clusters(
     workspace_id: str,
     request: Request,
+    response: Response,
     lifecycle: str | None = Query(default=None, max_length=40),
     platform: str | None = Query(default=None, max_length=80),
     minimum_score: float | None = Query(default=None, ge=0, le=100),
+    learning_snapshot_id: str | None = Query(default=None, pattern=r'^lsn_[A-Za-z0-9_-]{4,60}$'),
+    niche: NicheName | None = None,
+    history_weight: float | None = Query(default=None, ge=0, le=.5),
+    maximum_adjustment_points: float | None = Query(default=None, ge=0, le=25),
 ) -> list[TrendClusterRead]:
+    if learning_snapshot_id: response.headers['Cache-Control'] = 'no-store'
     try:
-        items = await service_from(request).list_clusters(workspace_id)
+        if not learning_snapshot_id and (history_weight is not None or maximum_adjustment_points is not None):
+            raise api_error('LEARNING_POLICY_REQUIRES_SNAPSHOT', 'Select a learning snapshot before configuring channel history.', 422)
+        policy = ChannelRankingPolicy(**{key: value for key, value in dict(history_weight=history_weight, maximum_adjustment_points=maximum_adjustment_points).items() if value is not None})
+        items = await service_from(request).list_clusters(workspace_id, learning_snapshot_id=learning_snapshot_id,
+            niche=niche.value if niche else None, learning_policy=policy)
+    except LearningError as exc:
+        raise api_error(exc.code, exc.code, 404 if exc.code.endswith('_NOT_FOUND') else 409) from None
     except KeyError as exc:
         raise api_error("NOT_FOUND", "Workspace not found.", 404) from exc
     if lifecycle:

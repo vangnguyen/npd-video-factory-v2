@@ -1395,3 +1395,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: owned SQLite histories, six explicit synthet
 EVIDENCE: `docs/CHANNEL_LEARNING_SNAPSHOTS.md`, `docs/north-star/channel-learning-evidence.json`; fresh `channel-learning-contract-n2` seven JSON exports plus owned database/objects, prior n1 retained. Fixture media is nonplayable; no full media QC or Owner acceptance.
 
 REGRESSIONS: prior metrics/accepted media/live source and timeline/approval/publishing/provider defaults preserved. Migration 0024 rehearsed on a new owned SQLite database only; live schema unchanged. EXTERNAL BLOCKERS: real accounts/provider/Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for continuing safe work. NEXT WAVE: personalized opportunity ranking/template review/Native learning; remaining media/Trend/Hub/production hardening and final A/B/C. Continue the full original North Star.
+
+### Wave 12 — Personalized proposals and explicit subtitle-template review
+
+WAVE: 12. STATUS: IN PROGRESS. LEARNING_LOOP_READY = NO; TREND_RADAR_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `45e274be77d26876856ed0b836739dc666ba4caa`, pushed/preserved in `north-star-channel-learning.bundle`, SHA256 `9eaa545eb3436832655454b6d7da61b1012ca0e8f1661160a4e4ddbc0573a62b`; 166 ahead/0 behind, fresh 15 accepted hashes and clean live source. Personalized increment will be separately committed/preserved.
+
+CAPABILITIES COMPLETED: explicit versioned/bounded history ranking controls, separate base/history/result estimates and snapshot/group refs; insufficient history retains null adjustment and original estimate. Read/refresh/Idea/Queue proposals persist policy/source lineage; same-state queues replay and changed policies produce distinct runs. Subtitle-style associations map to versioned catalog starters with compatibility/unknown-style/word-timing guards. Studio provides explicit stored-history ranking, source labels, template reading/form selection and existing version-checked save; no automatic edit or irreversible action.
+
+CAPABILITIES PARTIAL: Native parity, independent channel/operator configuration, semantic feature validation, authoritative publication times/windows, full first-class Trend Radar, real accounts/providers/audience acceptance, browser/Owner and final playable A/B/C. Style-field matching does not prove full historical template identity.
+
+TESTS: **54 PASS**, 154.38s affected API/learning/trend/media/production suites; later route/compatibility **3 PASS**, 19.35s; **164 PASS** Studio, 868.7654ms plus app/studio parse checks. Sixteen new API cases and five new Studio cases; counts overlap previous increments. Full parent Linux `45e274b`: **2604 PASS/11 SKIP**, 1432.09s. Current personalized pinned full suite pending.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: six explicit synthetic metric seeds tied to fixture trend families/styles, three official adapter MockTransport reads; four authenticated calls cover ranked read, queue, suggestion read and explicit subtitle save. Positive/negative history adjustments, new subtitle version, unchanged historical metrics/learning/cost and exact fresh-process restore pass. Rehearsal n1 found incorrect new application-state service binding; fixed to existing production_package_service. n2 reached export but found Windows Vietnamese console encoding; machine JSON uses Unicode escapes. Failed logs/databases retained; n3 passes.
+
+EVIDENCE: `docs/PERSONALIZED_OPPORTUNITY_REVIEW.md`, `docs/north-star/personalized-review-evidence.json`; fresh `personalized-contract-n3` eight JSON exports plus owned database/objects. Fixture media is nonplayable; no full media QC or Owner acceptance implied.
+
+REGRESSIONS: base scores/unrequested cache serialization/historical metrics/accepted media/live source and timeline/approval/provider/publishing defaults preserved. No live migration, paid/external operation, deployment or main merge. EXTERNAL BLOCKERS: real accounts/provider/Owner/browser and isolated production acceptance. OWNER ACTION REQUIRED: none for continuing safe work. NEXT WAVE: Native/channel integration, authoritative publication-time evidence, remaining media/full Trend/Hub/production and final A/B/C. Continue original Waves 0–16.

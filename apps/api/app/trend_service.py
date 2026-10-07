@@ -22,6 +22,7 @@ from .trend_models import (
 from .trend_providers import TrendProviderRegistry
 from .trend_repository import TrendRepository
 from .trend_scoring import IdeaEngine
+from .personalized_opportunities import rank_estimate
 
 
 def _project_slug(title: str, idea_id: str) -> str:
@@ -86,10 +87,22 @@ class TrendIntelligenceService:
                     'content_sha256': feedback['content_sha256'], 'recommendation_only': True,
                     'matching_trend_family': next((item for item in family['groups'] if item['value'] == cluster.cluster_id), None),
                     'global_trend_score_unchanged': True}
+                cluster.learning_feedback['personalized_opportunity'] = rank_estimate(
+                    cluster.score.total_score if cluster.score else 0, cluster.cluster_id, feedback, request.learning_policy)
+            clusters.sort(key=lambda cluster: (-cluster.learning_feedback['personalized_opportunity']['personalized_planning_score'], cluster.cluster_id))
         return clusters
 
-    async def list_clusters(self, workspace_id: str) -> list[TrendClusterRead]:
-        return await self.repository.list_clusters(workspace_id)
+    async def list_clusters(self, workspace_id: str, *, learning_snapshot_id=None, niche=None, learning_policy=None) -> list[TrendClusterRead]:
+        clusters = await self.repository.list_clusters(workspace_id)
+        if learning_snapshot_id:
+            if self.learning is None: raise ValueError('LEARNING_SERVICE_NOT_CONFIGURED')
+            feedback = await self.learning.feedback(workspace_id, learning_snapshot_id, niche=niche)
+            for cluster in clusters:
+                estimate = rank_estimate(cluster.score.total_score if cluster.score else 0, cluster.cluster_id, feedback, learning_policy)
+                cluster.learning_feedback = {'learning_snapshot_id': feedback['learning_snapshot_id'], 'content_sha256': feedback['content_sha256'],
+                    'recommendation_only': True, 'global_trend_score_unchanged': True, 'personalized_opportunity': estimate}
+            clusters.sort(key=lambda cluster: (-cluster.learning_feedback['personalized_opportunity']['personalized_planning_score'], cluster.cluster_id))
+        return clusters
 
     async def get_cluster(self, cluster_id: str) -> TrendClusterRead | None:
         return await self.repository.get_cluster(cluster_id)
@@ -124,8 +137,12 @@ class TrendIntelligenceService:
             business_objective=request.business_objective,
             weights=request.weights,
             learning_snapshot_id=request.learning_snapshot_id,
+            learning_policy=request.learning_policy,
         )
         clusters = await self.repository.refresh_clusters(workspace_id, cluster_request)
+        if feedback:
+            clusters.sort(key=lambda cluster: (-rank_estimate(cluster.score.total_score if cluster.score else 0,
+                cluster.cluster_id, feedback, request.learning_policy)['personalized_planning_score'], cluster.cluster_id))
         cluster_limit = max(1, math.ceil(request.top_n / request.ideas_per_cluster))
         idea_request = IdeaGenerateRequest(
             channel=request.channel,
@@ -137,6 +154,7 @@ class TrendIntelligenceService:
             budget_vnd=request.budget_vnd,
             count=request.ideas_per_cluster,
             learning_snapshot_id=request.learning_snapshot_id,
+            learning_policy=request.learning_policy,
         )
         for cluster in clusters[:cluster_limit]:
             await self.repository.generate_ideas(

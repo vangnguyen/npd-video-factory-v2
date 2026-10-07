@@ -53,8 +53,10 @@ function toast(message, error = false) {
 function currentContext() {
   const learning = $('#learning-reference').value.trim();
   if (learning && !/^lsn_[A-Za-z0-9_-]{4,60}$/.test(learning)) throw new Error('Snapshot đề xuất không hợp lệ.');
+  const weight = Number($('#learning-history-weight').value);
+  if (learning && (!$('#learning-history-weight').value || !Number.isFinite(weight) || weight < 0 || weight > .5)) throw new Error('Trọng số lịch sử cần từ 0 đến 0.5.');
   return {
-    ...(learning ? {learning_snapshot_id: learning} : {}),
+    ...(learning ? {learning_snapshot_id: learning, learning_policy: {history_weight: weight}} : {}),
     channel: $("#channel-filter").value,
     niche: $("#niche-filter").value,
     business_objective: $("#objective-filter").value,
@@ -124,9 +126,11 @@ function renderDetail() {
     return;
   }
   const components = cluster.score?.components ?? {};
+  const personalized = cluster.learning_feedback?.personalized_opportunity;
   panel.className = "detail-panel";
   panel.innerHTML = `
     <div class="detail-head"><div><h3>${escapeHtml(cluster.topic)}</h3><p>${escapeHtml(lifecycleLabel(cluster.lifecycle))} · ${cluster.signal_count} tín hiệu · ${cluster.platforms.length} nền tảng</p></div><span class="pill muted">Estimate ${formatScore(cluster.score?.total_score)}</span></div>
+    ${personalized ? `<p>Ước tính cá nhân hóa ${formatScore(personalized.personalized_planning_score)} · Điều chỉnh lịch sử ${personalized.history_adjustment_points === null ? 'chưa đủ dữ liệu' : escapeHtml(personalized.history_adjustment_points)} · ${personalized.history_mock ? 'Mô phỏng' : 'Provider'} · Cần review, không dự đoán hiệu suất.</p>` : ''}
     <div class="score-breakdown">
       ${Object.entries(components).slice(0, 8).map(([key, value]) => `<div class="score-line"><span>${escapeHtml(key.replaceAll("_", " "))}</span><progress max="100" value="${Math.max(0, Math.min(100, Number(value)))}"></progress><strong>${formatScore(value)}</strong></div>`).join("")}
     </div>
@@ -176,13 +180,17 @@ async function loadWorkspace() {
 
 async function reloadData() {
   if (!state.workspaceId) await loadWorkspace();
+  const context = currentContext(), learningQuery = context.learning_snapshot_id
+    ? `?learning_snapshot_id=${encodeURIComponent(context.learning_snapshot_id)}&niche=${encodeURIComponent(context.niche)}&history_weight=${context.learning_policy.history_weight}` : '';
+  const capturedContext = JSON.stringify([state.workspaceId, context]);
   const [sources, signals, clusters, ideas, queue] = await Promise.all([
     api("/api/v1/trend-sources"),
     api(`/api/v1/workspaces/${state.workspaceId}/trend-signals`),
-    api(`/api/v1/workspaces/${state.workspaceId}/trend-clusters`),
+    api(`/api/v1/workspaces/${state.workspaceId}/trend-clusters${learningQuery}`),
     api(`/api/v1/workspaces/${state.workspaceId}/ideas`),
     api(`/api/v1/workspaces/${state.workspaceId}/content-opportunities`),
   ]);
+  if (capturedContext !== JSON.stringify([state.workspaceId, currentContext()])) return;
   Object.assign(state, { sources, signals, clusters, ideas, queue });
   const healthy = sources.filter((source) => source.status === "healthy");
   $("#provider-status").textContent = `${healthy.length}/${sources.length} nguồn khả dụng`;
@@ -274,6 +282,15 @@ for (const id of ["channel-filter", "niche-filter", "objective-filter"]) {
 $("#refresh-button").addEventListener("click", collectFixture);
 $("#generate-button").addEventListener("click", generateIdeas);
 $("#queue-button").addEventListener("click", refreshQueue);
+$('#learning-rank-read').addEventListener('click', async () => {
+  const button = $('#learning-rank-read'); button.disabled = true;
+  try {await reloadData(); toast('Đã xếp hạng đề xuất từ dữ liệu đã lưu. Chưa tạo project hoặc render.');}
+  catch (error) {toast(error.message, true);}
+  finally {button.disabled = false;}
+});
+for (const id of ['learning-reference', 'learning-history-weight']) $(`#${id}`).addEventListener('change', () => {
+  state.clusters = []; state.selectedClusterId = null; renderAll();
+});
 $("#menu-button").addEventListener("click", () => $(".sidebar").classList.toggle("open"));
 document.addEventListener("click", (event) => {
   if (window.innerWidth <= 860 && !event.target.closest(".sidebar") && !event.target.closest("#menu-button")) $(".sidebar").classList.remove("open");

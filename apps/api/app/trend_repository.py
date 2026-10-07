@@ -43,6 +43,7 @@ from .trend_models import (
     TrendSourceRead,
 )
 from .trend_scoring import ClusterDraft, IdeaDraft, IdeaEngine, ScoreDraft, cluster_signals, score_cluster
+from .personalized_opportunities import VERSION as PERSONALIZATION_VERSION, ChannelRankingPolicy, rank_estimate, request_payload
 
 
 def _float(value: Any | None) -> float | None:
@@ -604,7 +605,10 @@ class TrendRepository:
                     "algorithm": "deterministic-idea-engine-v1",
                     "cluster_id": cluster_id,
                     "cluster_version": cluster.version,
-                    "request": request.model_dump(mode="json", exclude={"count"} | ({"learning_snapshot_id"} if request.learning_snapshot_id is None else set())),
+                    "request": request_payload(request, exclude={'count'}),
+                    **({'personalization_version': PERSONALIZATION_VERSION,
+                        'ranking_policy': (request.learning_policy or ChannelRankingPolicy()).model_dump(mode='json')}
+                        if learning_feedback else {}),
                 }
                 generation_key = hashlib.sha256(
                     json.dumps(generation_payload, sort_keys=True).encode("utf-8")
@@ -660,7 +664,8 @@ class TrendRepository:
                         cta_concept=idea.cta_concept,
                         trend_references_json=idea.trend_references,
                         originality_notes=idea.originality_notes,
-                        brief_json={**idea.brief, **({'learning_feedback': learning_feedback} if learning_feedback else {})},
+                        brief_json={**idea.brief, **({'learning_feedback': learning_feedback,
+                            'personalized_estimate': rank_estimate(idea.total_score, cluster_id, learning_feedback, request.learning_policy)} if learning_feedback else {})},
                         status="draft",
                         provenance={
                             "algorithm": "deterministic-idea-engine-v1",
@@ -770,6 +775,9 @@ class TrendRepository:
                 for idea in ideas:
                     if request.learning_snapshot_id and (idea.brief_json or {}).get('learning_feedback', {}).get('learning_snapshot_id') != request.learning_snapshot_id:
                         continue
+                    if request.learning_snapshot_id and ((idea.brief_json or {}).get('personalized_estimate', {}).get('algorithm_version') != PERSONALIZATION_VERSION
+                        or (idea.brief_json or {}).get('personalized_estimate', {}).get('ranking_policy') != (request.learning_policy or ChannelRankingPolicy()).model_dump(mode='json')):
+                        continue
                     idea_score = await session.scalar(
                         select(IdeaScoreORM).where(IdeaScoreORM.idea_id == idea.idea_id)
                     )
@@ -786,20 +794,27 @@ class TrendRepository:
                     )
                     if idea_score is not None:
                         scored.append((idea, idea_score, trend_score))
+                personalization = {item[0].idea_id: rank_estimate(float(item[1].total_score) * .72
+                    + (float(item[2].total_score) if item[2] else 0) * .28,
+                    item[0].cluster_id, item[0].brief_json['learning_feedback'], request.learning_policy)
+                    for item in scored} if request.learning_snapshot_id else {}
                 scored.sort(
                     key=lambda item: (
-                        -(
+                        -(personalization[item[0].idea_id]['personalized_planning_score'] if personalization else (
                             float(item[1].total_score) * 0.72
                             + (float(item[2].total_score) if item[2] else 0.0) * 0.28
-                        ),
+                        )),
                         item[0].idea_id,
                     )
                 )
                 selected = scored[: request.top_n]
                 state_payload = {
                     "algorithm": "content-opportunity-queue-v1",
-                    "request": request.model_dump(mode="json", exclude={'learning_snapshot_id'} if request.learning_snapshot_id is None else set()),
+                    "request": request_payload(request),
                     "ideas": [(item[0].idea_id, str(item[1].total_score)) for item in selected],
+                    **({'personalization': {item[0].idea_id: personalization[item[0].idea_id] for item in selected},
+                        'trend_scores': [(item[2].trend_score_id, item[2].version, str(item[2].total_score)) if item[2] else None for item in selected]}
+                        if personalization else {}),
                 }
                 queue_run_id = "qrun_" + hashlib.sha256(
                     json.dumps(state_payload, sort_keys=True).encode("utf-8")
@@ -820,6 +835,8 @@ class TrendRepository:
                         + (float(trend_score.total_score) if trend_score else 0.0) * 0.28,
                         3,
                     )
+                    personalized = personalization.get(idea.idea_id)
+                    if personalized: rank_score = personalized['personalized_planning_score']
                     opportunity = await session.scalar(
                         select(ChannelOpportunityORM).where(
                             ChannelOpportunityORM.workspace_id == workspace_id,
@@ -832,6 +849,9 @@ class TrendRepository:
                         f"Trend estimate: {float(trend_score.total_score) if trend_score else 0.0:.1f}/100.",
                         "Rank is a planning estimate, not observed performance.",
                     ]
+                    if personalized:
+                        rationale += [f"Channel history adjustment: {personalized['history_adjustment_points']} points; mock={personalized['history_mock']}.",
+                            f"Learning snapshot {personalized['learning_snapshot_id']} / {personalized['learning_content_sha256']}; association is descriptive."]
                     if opportunity is None:
                         opportunity = ChannelOpportunityORM(
                             opportunity_id=new_id("opp"),
@@ -842,7 +862,7 @@ class TrendRepository:
                             rank_score=Decimal(str(rank_score)),
                             rationale_json=rationale,
                             status="proposed",
-                            provenance={"algorithm": "content-opportunity-queue-v1"},
+                            provenance={"algorithm": "content-opportunity-queue-v1", **({'personalized_estimate': personalized} if personalized else {})},
                         )
                         session.add(opportunity)
                         await session.flush()
@@ -851,6 +871,7 @@ class TrendRepository:
                         opportunity.rationale_json = rationale
                         opportunity.version += 1
                         opportunity.updated_at = utc_now()
+                        if personalized: opportunity.provenance = {**opportunity.provenance, 'personalized_estimate': personalized}
                     row = ContentQueueItemORM(
                         queue_item_id=new_id("queue"),
                         queue_run_id=queue_run_id,
@@ -863,7 +884,8 @@ class TrendRepository:
                         score=Decimal(str(rank_score)),
                         state="proposed",
                         evidence_summary_json=rationale,
-                        provenance={"algorithm": "content-opportunity-queue-v1", "execution": False},
+                        provenance={"algorithm": "content-opportunity-queue-v1", "execution": False,
+                            **({'personalized_estimate': personalized} if personalized else {})},
                     )
                     session.add(row)
                     rows.append(row)

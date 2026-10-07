@@ -6,6 +6,7 @@ from typing import Any, Literal
 from pydantic import Field, HttpUrl, model_validator
 
 from .models import NicheName, StrictModel
+from .personalized_opportunities import ChannelRankingPolicy
 
 
 TrendLifecycle = Literal[
@@ -163,10 +164,17 @@ class OpportunityWeights(StrictModel):
 
 class TrendContext(StrictModel):
     learning_snapshot_id: str | None = Field(default=None, pattern=r'^lsn_[A-Za-z0-9_-]{4,60}$')
+    learning_policy: ChannelRankingPolicy | None = None
     channel: str = Field(default="short-video", min_length=1, max_length=80)
     niche: NicheName = NicheName.CUSTOM
     business_objective: str = Field(default="awareness", min_length=1, max_length=80)
     weights: OpportunityWeights = Field(default_factory=OpportunityWeights)
+
+    @model_validator(mode='after')
+    def require_history_reference(self):
+        if self.learning_policy is not None and self.learning_snapshot_id is None:
+            raise ValueError('LEARNING_POLICY_REQUIRES_SNAPSHOT')
+        return self
 
 
 class TrendClusterRefreshRequest(TrendContext):

@@ -203,9 +203,11 @@
       "apps/api/app/trend_providers.py",
       "apps/studio-web/studio.js",
       "docs/CHANNEL_LEARNING_SNAPSHOTS.md",
-      "docs/north-star/channel-learning-evidence.json"
+      "docs/north-star/channel-learning-evidence.json",
+      "docs/PERSONALIZED_OPPORTUNITY_REVIEW.md",
+      "docs/north-star/personalized-review-evidence.json"
     ],
-    "behavior": "First-class persisted fixture subsystem and radar UI exist. Reviewed channel-learning snapshot references are available as advisory feedback, with workspace/niche checks and immutable source digests.",
+    "behavior": "First-class persisted fixture subsystem and radar UI exist. Reviewed channel-learning snapshot references are available as advisory feedback, with workspace/niche checks and immutable source digests. Explicit reviewed channel history now adds a versioned bounded adjustment to planning estimates; missing evidence preserves nulls and base scores, source refs/mock labels remain exact, and proposal/queue/idea lineage is persisted. Subtitle style associations map to available catalog starters for explicit form selection and version-checked save.",
     "gap": "Actual configured authorized source collection and Native top-level integration.",
     "severity": "P1",
     "dependency": "source adapters",
@@ -263,9 +265,11 @@
     "status": "PARTIAL",
     "source": [
       "apps/api/app/trend_scoring.py",
-      "apps/api/app/trend_models.py"
+      "apps/api/app/trend_models.py",
+      "docs/PERSONALIZED_OPPORTUNITY_REVIEW.md",
+      "docs/north-star/personalized-review-evidence.json"
     ],
-    "behavior": "Configurable component scoring and evidence-backed estimates.",
+    "behavior": "Configurable component scoring and evidence-backed estimates. Explicit reviewed channel history now adds a versioned bounded adjustment to planning estimates; missing evidence preserves nulls and base scores, source refs/mock labels remain exact, and proposal/queue/idea lineage is persisted. Subtitle style associations map to available catalog starters for explicit form selection and version-checked save.",
     "gap": "Complete channel/niche/platform objective settings and response-history feedback.",
     "severity": "P1",
     "dependency": "learning/source feeds",
@@ -280,9 +284,11 @@
       "apps/api/app/trend_scoring.py",
       "services/windows_native/idea_engine.py",
       "docs/CHANNEL_LEARNING_SNAPSHOTS.md",
-      "docs/north-star/channel-learning-evidence.json"
+      "docs/north-star/channel-learning-evidence.json",
+      "docs/PERSONALIZED_OPPORTUNITY_REVIEW.md",
+      "docs/north-star/personalized-review-evidence.json"
     ],
-    "behavior": "Fixture idea angles and real structured Native candidate generation. Reviewed channel-learning snapshot references are available as advisory feedback, with workspace/niche checks and immutable source digests.",
+    "behavior": "Fixture idea angles and real structured Native candidate generation. Reviewed channel-learning snapshot references are available as advisory feedback, with workspace/niche checks and immutable source digests. Explicit reviewed channel history now adds a versioned bounded adjustment to planning estimates; missing evidence preserves nulls and base scores, source refs/mock labels remain exact, and proposal/queue/idea lineage is persisted. Subtitle style associations map to available catalog starters for explicit form selection and version-checked save.",
     "gap": "One trend-plus-history-plus-audience request integrated into production flow.",
     "severity": "P1",
     "dependency": "trend/learning",
@@ -295,9 +301,11 @@
     "status": "PARTIAL",
     "source": [
       "services/windows_native/idea_scoring.py",
-      "apps/api/app/trend_scoring.py"
+      "apps/api/app/trend_scoring.py",
+      "docs/PERSONALIZED_OPPORTUNITY_REVIEW.md",
+      "docs/north-star/personalized-review-evidence.json"
     ],
-    "behavior": "Persisted explainable heuristic components and shortlist ranking.",
+    "behavior": "Persisted explainable heuristic components and shortlist ranking. Explicit reviewed channel history now adds a versioned bounded adjustment to planning estimates; missing evidence preserves nulls and base scores, source refs/mock labels remain exact, and proposal/queue/idea lineage is persisted. Subtitle style associations map to available catalog starters for explicit form selection and version-checked save.",
     "gap": "Full scoring criteria configuration and empirical channel-history recommendations.",
     "severity": "P1",
     "dependency": "learning",
@@ -1740,14 +1748,22 @@
       "apps/studio-web/index.html",
       "scripts/north_star_channel_learning_contract.py",
       "docs/CHANNEL_LEARNING_SNAPSHOTS.md",
-      "docs/north-star/channel-learning-evidence.json"
+      "docs/north-star/channel-learning-evidence.json",
+      "docs/PERSONALIZED_OPPORTUNITY_REVIEW.md",
+      "docs/north-star/personalized-review-evidence.json",
+      "apps/api/app/personalized_opportunities.py",
+      "apps/api/app/learning_templates.py",
+      "apps/api/tests/test_personalized_opportunities.py",
+      "apps/studio-web/trend-utils.mjs",
+      "apps/studio-web/tests/personalized-radar.test.mjs",
+      "scripts/north_star_personalized_contract.py"
     ],
-    "behavior": "Video features, recommendation-only insights and trend feedback persist. Edit features now use the published render frozen timeline/subtitle/audio versions after a later canonical edit. Unverified actual publishing time is null; local receipt-confirmation time is explicitly evidence only. Current project metadata is labelled and still requires publication-time freezing. New API-stack renders retain bounded versioned/digested project/content/idea metadata at request, carry it through persisted render evidence and register output/supporting assets with the frozen project version. Later tags/idea changes cannot relabel analytics; missing legacy metadata stays null. Five new scope/hash/rollback/lineage/legacy tests, 26 selected regressions, full 152 Studio tests and a fresh-process four-request/two-observation mock SQLite/render-evidence contract pass. Fixture media is nonplayable; no full media/Owner/provider acceptance. Official-source assessments now persist versioned/configurable median channel baselines with exact account/provider/report/transport and frozen render/niche/format/duration scope. Distinct remote posts and compatible support sets prevent duplicate/incompatible comparisons; peer references and policy digest remain explainable. Two cumulative observations yield reported counter growth with prior/current refs, unknown update lag and no fabricated publication age/window. Missing retention/completion keeps insufficient_data even when growth scores strongly. Full long annotations remain in render context with explicit bounded analytic projections. Prior 90 and final 45 overlapping checks pass; fresh SQLite processes restore ten relative and twelve cumulative fixture snapshots. All provider traffic is mock; actual billing remains null. Immutable scoped channel-learning snapshots now aggregate distinct-post feature/control medians with configurable evidence thresholds, matching winner policy/factor availability and frozen render lineage. Authenticated idempotent creation/history and Studio review preserve nulls and recommendation-only behavior; reviewed snapshot references persist through Trend/Idea/Queue/project/MediaPlan advisory paths.",
-    "gap": "Personalized opportunity ranking, direct catalog template selection, Native integration, semantic labels, actual publishing-window evidence, history pagination, real account/provider acceptance and final trend-to-learning E2E remain. Mock summaries are not real performance acceptance.",
+    "behavior": "Video features, recommendation-only insights and trend feedback persist. Edit features now use the published render frozen timeline/subtitle/audio versions after a later canonical edit. Unverified actual publishing time is null; local receipt-confirmation time is explicitly evidence only. Current project metadata is labelled and still requires publication-time freezing. New API-stack renders retain bounded versioned/digested project/content/idea metadata at request, carry it through persisted render evidence and register output/supporting assets with the frozen project version. Later tags/idea changes cannot relabel analytics; missing legacy metadata stays null. Five new scope/hash/rollback/lineage/legacy tests, 26 selected regressions, full 152 Studio tests and a fresh-process four-request/two-observation mock SQLite/render-evidence contract pass. Fixture media is nonplayable; no full media/Owner/provider acceptance. Official-source assessments now persist versioned/configurable median channel baselines with exact account/provider/report/transport and frozen render/niche/format/duration scope. Distinct remote posts and compatible support sets prevent duplicate/incompatible comparisons; peer references and policy digest remain explainable. Two cumulative observations yield reported counter growth with prior/current refs, unknown update lag and no fabricated publication age/window. Missing retention/completion keeps insufficient_data even when growth scores strongly. Full long annotations remain in render context with explicit bounded analytic projections. Prior 90 and final 45 overlapping checks pass; fresh SQLite processes restore ten relative and twelve cumulative fixture snapshots. All provider traffic is mock; actual billing remains null. Immutable scoped channel-learning snapshots now aggregate distinct-post feature/control medians with configurable evidence thresholds, matching winner policy/factor availability and frozen render lineage. Authenticated idempotent creation/history and Studio review preserve nulls and recommendation-only behavior; reviewed snapshot references persist through Trend/Idea/Queue/project/MediaPlan advisory paths. Explicit reviewed channel history now adds a versioned bounded adjustment to planning estimates; missing evidence preserves nulls and base scores, source refs/mock labels remain exact, and proposal/queue/idea lineage is persisted. Subtitle style associations map to available catalog starters for explicit form selection and version-checked save.",
+    "gap": "Native parity, channel/operator configuration, semantic feature labels, authoritative publication timestamps/windows, history pagination, actual account/provider/audience acceptance and final trend-to-learning production bundles remain. Personalized proposal estimates and subtitle selection are API/Studio local/mock tested only.",
     "severity": "P1",
     "dependency": "winner/trend/profile integration",
     "wave": "12",
-    "acceptance": "Recommendations cite sample size/history and change no irreversible configuration. Restore immutable learning snapshots exactly in a fresh process; reject duplicate posts, corrupt lineage, incompatible account/report/transport/policy/factor basis and weak samples. Exercise reviewed downstream references and keep all execution/approval gates; complete Native, template-selection and personalized opportunity paths."
+    "acceptance": "Recommendations cite sample size/history and change no irreversible configuration. Restore immutable learning snapshots exactly in a fresh process; reject duplicate posts, corrupt lineage, incompatible account/report/transport/policy/factor basis and weak samples. Exercise reviewed downstream references and keep all execution/approval gates; complete Native, template-selection and personalized opportunity paths. Exercise positive/negative/missing history with bounded policies, immutable queue replay and exact restore; read template suggestions without edit, choose/save explicitly and verify a new subtitle version. Preserve alignment/approval gates and certify Native/real/final acceptance separately."
   },
   {
     "id": 47,
@@ -1998,9 +2014,11 @@
       "scripts/north_star_multi_niche_contract.py",
       "docs/north-star/multi-niche-contract-evidence.json",
       "docs/CHANNEL_LEARNING_SNAPSHOTS.md",
-      "docs/north-star/channel-learning-evidence.json"
+      "docs/north-star/channel-learning-evidence.json",
+      "docs/PERSONALIZED_OPPORTUNITY_REVIEW.md",
+      "docs/north-star/personalized-review-evidence.json"
     ],
-    "behavior": "Frozen version/hash brand/video choices and subtitle settings. Native now adds an AI-education reference profile, generic owned reference brand and explanation template family (30/45/60s, portrait/landscape) using configuration only. Existing five profiles, three brands/four template families/defaults/durations remain exact objects. The additional family fits narration at unchanged voice speed. An isolated fixture flow produces five scored ideas, retained research/brief/lineage, an unapproved project, frozen brand, edit plan and canonical shot state, all exact after restart; no core logic/niche source edit or provider/render call occurred. Full Native 338 tests pass and the fresh 12-export bundle distinguishes mocks from actual local persistence. Reviewed channel-learning snapshot references are available as advisory feedback, with workspace/niche checks and immutable source digests.",
+    "behavior": "Frozen version/hash brand/video choices and subtitle settings. Native now adds an AI-education reference profile, generic owned reference brand and explanation template family (30/45/60s, portrait/landscape) using configuration only. Existing five profiles, three brands/four template families/defaults/durations remain exact objects. The additional family fits narration at unchanged voice speed. An isolated fixture flow produces five scored ideas, retained research/brief/lineage, an unapproved project, frozen brand, edit plan and canonical shot state, all exact after restart; no core logic/niche source edit or provider/render call occurred. Full Native 338 tests pass and the fresh 12-export bundle distinguishes mocks from actual local persistence. Reviewed channel-learning snapshot references are available as advisory feedback, with workspace/niche checks and immutable source digests. Explicit reviewed channel history now adds a versioned bounded adjustment to planning estimates; missing evidence preserves nulls and base scores, source refs/mock labels remain exact, and proposal/queue/idea lineage is persisted. Subtitle style associations map to available catalog starters for explicit form selection and version-checked save.",
     "gap": "Generic content/publishing/scoring/subtitle templates unified through UI/version store.",
     "severity": "P1",
     "dependency": "profile/template adapter",

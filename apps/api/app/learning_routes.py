@@ -41,3 +41,16 @@ async def get(workspace_id: str, identity: str, request: Request):
 async def recommendations(workspace_id: str, identity: str, request: Request):
     try: return await request.app.state.channel_learning_service.feedback(workspace_id, identity)
     except LearningError as exc: raise failure(exc) from None
+
+
+@router.get('/projects/{project_id}/analytics/learning-snapshots/{identity}/subtitle-suggestions')
+async def templates(project_id: str, identity: str, request: Request):
+    from .learning_templates import subtitle_suggestions
+    project = await request.app.state.platform_repository.get_project(project_id)
+    try:
+        value = await request.app.state.channel_learning_service.get(project.workspace_id, identity)
+        if value is None: raise LearningError('LEARNING_SNAPSHOT_NOT_FOUND')
+        if value.scope['niche'] != project.niche: raise LearningError('LEARNING_NICHE_MISMATCH')
+        package = await request.app.state.production_package_service.get(project_id)
+        return {**subtitle_suggestions(value, package), 'project_id': project_id}
+    except LearningError as exc: raise failure(exc) from None

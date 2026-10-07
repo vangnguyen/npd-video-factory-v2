@@ -77,7 +77,7 @@ def test_duplicate_post_or_overflow_refused_before_group_counting():
         aggregate([observation(1), observation(2).model_copy(update={'assessment_basis_sha256': 'd' * 64})], LearningPolicy())
 
 
-async def seed_learning_history(stack, target, *, count=6):
+async def seed_learning_history(stack, target, *, count=6, family_ids=None, subtitle_styles=None):
     """Six explicit manual metric seeds and cloned fixture render annotations, zero wire reads."""
     factory = stack.repository.session_factory
     policy = WinnerChannelPolicy()
@@ -88,11 +88,21 @@ async def seed_learning_history(stack, target, *, count=6):
             render = await session.get(ProductionRenderJobORM, original.final_render_id)
             context = RenderFeatureContext.model_validate(render.manifest_json['feature_context']).model_copy(update={
                 'hook_type': 'fixture-question' if index < 3 else 'fixture-statement',
-                'visual_strategy': 'fixture-source' if index < 3 else 'fixture-slides'})
+                'visual_strategy': 'fixture-source' if index < 3 else 'fixture-slides',
+                **({'trend_cluster_id': family_ids[0 if index < 3 else 1]} if family_ids else {})})
             fields = {column.name: getattr(render, column.name) for column in ProductionRenderJobORM.__table__.columns}
             identity = f'ren_learning_seed_fixture_{index}'
             fields.update(render_id=identity, version=1000 + index,
                 manifest_json={**render.manifest_json, 'feature_context': context.model_dump(mode='json'), 'feature_context_sha256': feature_digest(context)})
+            if subtitle_styles:
+                from app.production_db import SubtitleVersionORM
+                subtitle = await session.get(SubtitleVersionORM, render.subtitle_version_id)
+                subtitle_fields = {column.name: getattr(subtitle, column.name) for column in SubtitleVersionORM.__table__.columns}
+                subtitle_identity = f'sub_learning_seed_fixture_{index}'
+                subtitle_fields.update(subtitle_version_id=subtitle_identity, version=1000 + index,
+                    style_json=subtitle_styles[0 if index < 3 else 1])
+                session.add(SubtitleVersionORM(**subtitle_fields))
+                fields.update(subtitle_version_id=subtitle_identity, subtitle_version=1000 + index)
             session.add(ProductionRenderJobORM(**fields))
             fields = {column.name: getattr(original, column.name) for column in PublicationORM.__table__.columns}
             fields.update(publication_id=parent_id, final_render_id=identity, idempotency_key_hash=hashlib.sha256(parent_id.encode()).hexdigest(),

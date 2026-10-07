@@ -21,17 +21,17 @@ export function learningIntent(state, values) {
     policy: {minimum_group_posts: group, minimum_control_posts: control, maximum_posts: 100, minimum_score_difference: difference}};
 }
 
-export function initializeChannelLearning({api, getState, root = document, toast, uuid = () => crypto.randomUUID()}) {
+export function initializeChannelLearning({api, getState, root = document, toast, uuid = () => crypto.randomUUID(), onTemplateSelection = () => {}}) {
   const $ = id => root.querySelector(`#${id}`), selection = () => ({publicationId: $('analytics-publication').value,
     mode: $('analytics-mode').value, groupPosts: $('learning-group-posts').value,
     controlPosts: $('learning-control-posts').value, difference: $('learning-score-difference').value});
   const key = () => JSON.stringify([getState().workspaceId, getState().projectId, selection().publicationId, selection().mode]);
-  let scope = '', revision = 0, busy = false, snapshots = [], selected = null;
+  let scope = '', revision = 0, busy = false, snapshots = [], selected = null, templates = [], templateVersion = null;
   const idempotency = new Map();
   function element(tag, text) {const node = root.createElement(tag); node.textContent = text; return node;}
   function sync() {
     const next = key();
-    if (next !== scope) {scope = next; revision++; busy = false; snapshots = []; selected = null; $('learning-use-advice').checked = false;}
+    if (next !== scope) {scope = next; revision++; busy = false; snapshots = []; selected = null; templates = []; $('learning-use-advice').checked = false;}
     render();
   }
   function render() {
@@ -39,6 +39,7 @@ export function initializeChannelLearning({api, getState, root = document, toast
     $('learning-create').disabled = busy || Boolean(reason); $('learning-create').title = reason;
     $('learning-read').disabled = busy || !getState().projectId;
     $('learning-use-advice').disabled = !selected;
+    $('learning-template-read').disabled = busy || !selected;
     $('learning-snapshot-reference').textContent = selected ? `${selected.learning_snapshot_id} · ${selected.content_sha256}` : 'Chưa chọn snapshot.';
     $('learning-note').textContent = selected ? `${selected.observations.length} video khác nhau · ${selected.scope.mock ? 'Dữ liệu mô phỏng' : 'Dữ liệu provider'} · Ngách ${selected.scope.niche}. Chỉ đề xuất thử nghiệm sau review. Không có dữ liệu giờ đăng thật.`
       : 'Tổng hợp từ analytics đã lưu. Không gọi provider hoặc đổi ngân sách. Lịch sử đọc tối đa 100 snapshot.';
@@ -58,7 +59,19 @@ export function initializeChannelLearning({api, getState, root = document, toast
     const list = $('learning-history'); list.replaceChildren();
     for (const snapshot of snapshots) {
       const button = element('button', `${snapshot.created_at} · ${snapshot.learning_snapshot_id}`); button.type = 'button';
-      button.addEventListener('click', () => {selected = snapshot; $('learning-use-advice').checked = false; render();}); list.append(button);
+      button.addEventListener('click', () => {selected = snapshot; templates = []; $('learning-use-advice').checked = false; render();}); list.append(button);
+    }
+    const templateRows = $('learning-template-rows'); templateRows.replaceChildren();
+    for (const template of templates) {
+      const row = element('div', `${template.name} · ${template.score_difference} điểm · ${template.attention ?? 'Chỉ khớp đặc điểm style, cần chọn và lưu'}`);
+      const versionMatches = templateVersion === (getState().productionPackage?.subtitle?.version ?? null);
+      const button = element('button', 'Chọn vào form phụ đề'); button.type = 'button'; button.disabled = busy || !template.selectable || !versionMatches;
+      button.addEventListener('click', () => {
+        if (busy || !template.selectable) return;
+        if (templateVersion !== (getState().productionPackage?.subtitle?.version ?? null)) return toast('Phiên bản phụ đề đã đổi. Đọc lại đề xuất.', true);
+        try {onTemplateSelection(template.template_ref); toast('Đã chọn vào form. Review rồi lưu phụ đề.');}
+        catch (error) {toast(error.message, true);}
+      }); row.append(button); templateRows.append(row);
     }
   }
   function validate(value, state) {
@@ -79,7 +92,7 @@ export function initializeChannelLearning({api, getState, root = document, toast
     try {
       const value = await api(endpoint(state), {method: 'POST', headers: {'Idempotency-Key': idem}, body: JSON.stringify(body)});
       if (captured !== key() || ownRevision !== revision) return;
-      selected = validate(value, state); snapshots = [selected, ...snapshots.filter(row => row.learning_snapshot_id !== selected.learning_snapshot_id)].slice(0, 100);
+      selected = validate(value, state); templates = []; snapshots = [selected, ...snapshots.filter(row => row.learning_snapshot_id !== selected.learning_snapshot_id)].slice(0, 100);
       idempotency.delete(signature); $('learning-use-advice').checked = false; toast('Đã lưu đề xuất để review.');
     } catch (error) {if (captured === key()) toast(error.message, true);}
     finally {if (captured === key() && ownRevision === revision) {busy = false; render();}}
@@ -93,12 +106,32 @@ export function initializeChannelLearning({api, getState, root = document, toast
       if (!Array.isArray(result) || result.length > 100 || result.some(row => row.project_id !== state.projectId || row.workspace_id !== state.workspaceId))
         throw new Error('Phạm vi lịch sử học không khớp.');
       snapshots = selection().mode === 'official' ? result.filter(row => row.publication_id === selection().publicationId).map(row => validate(row, state)) : [];
-      selected = snapshots[0] ?? null; $('learning-use-advice').checked = false;
+      selected = snapshots[0] ?? null; templates = []; $('learning-use-advice').checked = false;
     } catch (error) {if (captured === key()) toast(error.message, true);}
     finally {if (captured === key() && ownRevision === revision) {busy = false; render();}}
   }
   function advice() {sync(); return selected && $('learning-use-advice').checked ? {learning_snapshot_id: selected.learning_snapshot_id} : {};}
+  async function readTemplates() {
+    sync(); if (busy || !selected) return;
+    const state = getState(), captured = key(), ownRevision = revision, identity = selected.learning_snapshot_id, sha = selected.content_sha256;
+    busy = true; render();
+    try {
+      const value = await api(endpoint(state) + `/${encodeURIComponent(identity)}/subtitle-suggestions`);
+      if (captured !== key() || ownRevision !== revision || selected?.learning_snapshot_id !== identity) return;
+      if (value?.project_id !== state.projectId || value.workspace_id !== state.workspaceId || value.learning_snapshot_id !== identity
+          || value.learning_content_sha256 !== sha || value.schema_version !== 'learning-subtitle-suggestions-v1'
+          || value.automatic_application !== false || value.human_selection_required !== true || !Array.isArray(value.suggestions) || value.suggestions.length > 100
+          || value.subtitle_version !== (state.productionPackage?.subtitle?.version ?? null)
+          || value.suggestions.some(item => typeof item.selectable !== 'boolean' || typeof item.template_ref !== 'string'))
+        throw new Error('Đề xuất phụ đề đã đổi phạm vi/version. Đọc lại project và snapshot.');
+      templates = value.suggestions;
+      templateVersion = value.subtitle_version;
+      if (!templates.length) toast('Chưa đủ bằng chứng cho template khả dụng.');
+    } catch (error) {if (captured === key()) toast(error.message, true);}
+    finally {if (captured === key() && ownRevision === revision) {busy = false; render();}}
+  }
   $('learning-create').addEventListener('click', create); $('learning-read').addEventListener('click', read);
+  $('learning-template-read').addEventListener('click', readTemplates);
   for (const id of ['analytics-publication', 'analytics-mode', 'learning-group-posts', 'learning-control-posts', 'learning-score-difference']) $(id).addEventListener('change', sync);
-  return {sync, create, read, advice};
+  return {sync, create, read, advice, readTemplates};
 }

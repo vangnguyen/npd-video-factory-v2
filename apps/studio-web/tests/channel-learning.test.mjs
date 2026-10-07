@@ -24,11 +24,11 @@ function harness() {
     append(node) {this.children.push(node);}
     addEventListener(name, fn) {this.listeners[name] = fn;}}
   const root = {querySelector(id) {if (!nodes.has(id)) nodes.set(id, new Node()); return nodes.get(id);}, createElement() {return new Node();}};
-  const get = id => root.querySelector(`#${id}`), current = state(), calls = [], errors = []; let counter = 0;
+  const get = id => root.querySelector(`#${id}`), current = state(), calls = [], errors = [], selections = []; let counter = 0;
   for (const [id, value] of Object.entries({'analytics-publication': 'pub_fixture', 'analytics-mode': 'official', 'learning-group-posts': '3', 'learning-control-posts': '3', 'learning-score-difference': '10'})) get(id).value = value;
   let handler = async (path, options) => options?.method ? snapshot() : [snapshot()];
-  const controller = initializeChannelLearning({root, getState: () => current, api: async (...args) => {calls.push(args); return handler(...args);}, toast: message => errors.push(message), uuid: () => String(++counter)});
-  controller.sync(); return {controller, get, current, calls, errors, handler(fn) {handler = fn;}};
+  const controller = initializeChannelLearning({root, getState: () => current, api: async (...args) => {calls.push(args); return handler(...args);}, toast: message => errors.push(message), uuid: () => String(++counter), onTemplateSelection: reference => selections.push(reference)});
+  controller.sync(); return {controller, get, current, calls, errors, selections, handler(fn) {handler = fn;}};
 }
 
 test('loading does not mutate; creation is explicit and advice requires a reviewed selection', async () => {
@@ -73,4 +73,35 @@ test('changing mode prevents fixture history from being attached as channel advi
   const h = harness(); await h.controller.read(); h.get('learning-use-advice').checked = true;
   h.get('analytics-mode').value = 'fixture'; assert.deepEqual(h.controller.advice(), {});
   assert.equal(h.get('learning-create').disabled, true);
+});
+
+const templateResult = (selectable = true) => ({schema_version: 'learning-subtitle-suggestions-v1', project_id: 'prj_fixture',
+  workspace_id: 'wsp_fixture', learning_snapshot_id: 'lsn_fixture', learning_content_sha256: 'a'.repeat(64),
+  automatic_application: false, human_selection_required: true, subtitle_version: 1,
+  suggestions: [{template_ref: 'sentence-clean@v1', name: '<script>unsafe()</script>', score_difference: 20,
+    selectable, attention: selectable ? null : 'WORD_TIMESTAMPS_REQUIRED'}]});
+
+test('template guidance reads only; choosing a starter changes the form callback without saving', async () => {
+  const h = harness(); await h.controller.create(); h.current.productionPackage = {subtitle: {version: 1}};
+  h.handler(async () => templateResult()); await h.controller.readTemplates();
+  assert.equal(h.selections.length, 0);
+  const row = h.get('learning-template-rows').children[0]; assert.match(row.textContent, /<script>unsafe\(\)<\/script>/);
+  row.children[0].listeners.click(); assert.deepEqual(h.selections, ['sentence-clean@v1']);
+  assert.equal(h.calls.filter(([, options]) => options?.method === 'PUT').length, 0);
+  assert.equal(h.calls[1][1], undefined);
+});
+
+test('unaligned or stale subtitle versions cannot choose a word template', async () => {
+  for (const selectable of [false, true]) {
+    const h = harness(); await h.controller.create(); h.current.productionPackage = {subtitle: {version: 1}};
+    h.handler(async () => templateResult(selectable)); await h.controller.readTemplates();
+    if (selectable) h.current.productionPackage.subtitle.version = 2;
+    h.get('learning-template-rows').children[0].children[0].listeners.click(); assert.deepEqual(h.selections, []);
+  }
+});
+
+test('template result must bind the selected snapshot and current caption version', async () => {
+  const h = harness(); await h.controller.create(); h.current.productionPackage = {subtitle: {version: 2}};
+  h.handler(async () => templateResult()); await h.controller.readTemplates();
+  assert.equal(h.get('learning-template-rows').children.length, 0); assert.match(h.errors[1], /version/);
 });
