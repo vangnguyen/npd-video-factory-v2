@@ -1266,14 +1266,21 @@
   {
     "id": 41,
     "name": "Publishing",
-    "status": "INTERFACE_ONLY",
+    "status": "PARTIAL",
     "source": [
       "apps/api/app/publishing_providers.py",
       "apps/api/app/publishing_service.py",
-      "apps/studio-web/studio.js"
+      "apps/studio-web/studio.js",
+      "apps/api/app/publishing_wire.py",
+      "apps/api/app/youtube_upload.py",
+      "apps/api/tests/test_publishing_wire.py",
+      "apps/api/tests/test_youtube_upload.py",
+      "scripts/north_star_publishing_wire_contract.py",
+      "docs/PUBLISHING_WIRE_PROTOCOLS.md",
+      "docs/north-star/publishing-wire-evidence.json"
     ],
-    "behavior": "Mock queue/dry-run/history; official adapter publish/status/cancel raise.",
-    "gap": "Official adapters and Native queue/scheduler/approval UI; credentials later required.",
+    "behavior": "Mock queue/dry-run/history; official adapter publish/status/cancel raise. Bounded official-origin HTTP transport and YouTube resumable request/response helpers now run against mock transports. They validate Vietnamese metadata/disclosures/byte limits, create official session/chunk/status/delete request builders, parse acknowledged bytes/confirmed IDs, redact secrets and expose uncertain outcomes without redirects or automatic retries. Actual synthetic H264/AAC bytes/full decode pass a five-request mock protocol including final-response loss and same-session reconciliation with exactly one init POST. Application official providers remain disconnected/contract-only; publishing default is disabled.",
+    "gap": "Durable workspace/project/approval/artifact-bound dispatch intent before POST, encrypted private session references, exclusive claims and process-restart reconciliation, scoped verified storage bytes, fresh rights/QC/Human Publish Approval and provider cost capture, OAuth lifecycle, YouTube thumbnail/adapter activation, TikTok/Instagram/Facebook protocols/adapters and Native queue/scheduler/history/approval UI remain. Real credentials/account audit/provider acceptance are external only after these implementation gaps close.",
     "severity": "P1",
     "dependency": "OAuth secrets/Owner enablement",
     "wave": "9",
@@ -1285,9 +1292,11 @@
     "status": "PARTIAL",
     "source": [
       "apps/api/app/publishing_logic.py",
-      "packages/contracts/publishing-capabilities.json"
+      "packages/contracts/publishing-capabilities.json",
+      "apps/api/app/youtube_upload.py",
+      "docs/PUBLISHING_WIRE_PROTOCOLS.md"
     ],
-    "behavior": "Versioned internal limits and render/metadata/rights gates.",
+    "behavior": "Versioned internal limits and render/metadata/rights gates. Inert YouTube protocol validates current official title/tag constraints, UTF8 description bytes, explicit disclosures and future private scheduling; unsupported thumbnail stage fails explicitly.",
     "gap": "Verify configured current official capability versions and full metadata incl thumbnail/schedule.",
     "severity": "P0",
     "dependency": "official adapter specs",

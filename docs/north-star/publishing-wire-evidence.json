@@ -1,0 +1,81 @@
+{
+  "schema": "north-star-publishing-wire-evidence-v1",
+  "parent_head": "6ad3517429a41174d741b42cf66597cf9b84d96f",
+  "source_sha256": {
+    "apps/api/app/publishing_wire.py": "c9e6a2777108bbee19a9cf1e10aeac127bc4487e1ee281abdec0e6094d4d6d84",
+    "apps/api/app/youtube_upload.py": "0455a3be5d85c8f29610d7c900c9a31ebd1de3a7148ad2f9af49a367f631d361",
+    "apps/api/tests/test_publishing_wire.py": "6203432778397eefc769a9cc2630eeda5602f513e6c7efcc7e86599c436b6fce",
+    "apps/api/tests/test_youtube_upload.py": "b4489df8c890076c84df81757737678a80ace4b017920b6c0cc17b3557d2951a",
+    "scripts/north_star_publishing_wire_contract.py": "e0e1eb7c5ac15ba64ef8dc6a02d8519cb9b8400f12e05e7effa5ae2430ab4522",
+    "docs/PUBLISHING_WIRE_PROTOCOLS.md": "0a548730e27d3b6e54a7562da720fc74d8912c13959b600130896b5983e8a3e7"
+  },
+  "logs": {
+    "publishing-wire-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-r1.log",
+      "sha256": "879484d59e04d7ab725378a6ce707d676b406ca75a3b761881896abe5f3d5147"
+    },
+    "publishing-wire-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-r2.log",
+      "sha256": "7ba514ce64bab8a99a71d616c4a6c94f49934ce609843298add340c79cac1bb5"
+    },
+    "publishing-wire-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-r3.log",
+      "sha256": "1d3b932a510f54e645099057e4c12ebb1e12e3d2b0509f4372b9bd7bfb1e3157"
+    },
+    "publishing-wire-integration-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-integration-r1.log",
+      "sha256": "65d4f001549c28fae07907245505f47144291fb5c9c3ba0f0b482ef84c65a76d"
+    },
+    "publishing-wire-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-contract-n1.log",
+      "sha256": "db636955685081cf9a9f20915235d1e6a07ed752e3aff43fbf7a1017098707df"
+    }
+  },
+  "exports": {
+    "disabled-application.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-contract-n1\\disabled-application.json",
+      "sha256": "d989f46b69ae685cb91a4d7f6c821f3f557d118de98b2744d6b97cc9c55ac1ab"
+    },
+    "mock-wire-requests.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-contract-n1\\mock-wire-requests.json",
+      "sha256": "5b503a9d0864cda38cd5d9f89ebda1f530f4d77dc4c236e973a0407d2ddc9a4d"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-contract-n1\\receipt.json",
+      "sha256": "d83012404f4255560311458ab8f5cbe631aaf48ccc0d35b8edbf3c35fd71b001"
+    },
+    "reconciliation.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-contract-n1\\reconciliation.json",
+      "sha256": "1b81446efa090b30e45c8810b0aaeedfe723d739e6f9357d2e5159b04544b988"
+    },
+    "source.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-wire-contract-n1\\source.json",
+      "sha256": "e5153e4c2657982b754af6defe178079b6e9baa920137887839efa8a51d938f8"
+    }
+  },
+  "synthetic_mp4": {
+    "path": "C:\\vf-publishing-wire-n1\\explicit-synthetic-source.mp4",
+    "sha256": "ddd7ac4865d1a5b3fb1b4b1d49871801be2c161162bf2a7470c02a957f272d00"
+  },
+  "focused_pass": 38,
+  "focused_seconds": 7.55,
+  "integration_pass": 68,
+  "integration_seconds": 20.61,
+  "new_wire_protocol_tests": 35,
+  "mock_wire_requests": 5,
+  "one_mock_init_post_after_lost_final_response": true,
+  "full_synthetic_av_decode": true,
+  "mock_transport_only": true,
+  "actual_external_requests": 0,
+  "secrets_read": 0,
+  "paid_operations": 0,
+  "app_registry_live_adapter_activated": false,
+  "default_publish_enabled": false,
+  "durable_dispatch_verified": false,
+  "oauth_real_provider_acceptance": false,
+  "native_publishing_ui_ready": false,
+  "publishing_ready": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "early_failure_note": "r1/r2 failed one fixture whose 81-character tag was rejected by the existing schema before the intended aggregate-limit check. Fixture corrected to 80 characters; both validation layers retained."
+}

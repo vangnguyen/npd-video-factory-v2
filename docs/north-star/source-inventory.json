@@ -1,6 +1,6 @@
 {
-  "head": "583d9eaf445622f70ae05d52f8fc4ee3311ad284",
-  "audited_at": "2026-10-07T04:36:35.706959+00:00",
+  "head": "6ad3517429a41174d741b42cf66597cf9b84d96f",
+  "audited_at": "2026-10-07T04:51:31.649317+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "46c80d93db0300059f4808bf08a8f5742ba49487ceeb74b380a52ae1ad8a1e89",
@@ -217,6 +217,13 @@
     "apps/api/tests/test_production_qc_silence_lifecycle.py": "00623853dfa460ee83d3785f000535e190cb88b2a330079188b0aed84500045d",
     "apps/api/app/publishing_providers.py": "69671d13d2b690229e586d7f00ee94d95003d85279f5adc356f12d46aa8cf37f",
     "apps/api/app/publishing_service.py": "e117090b73fa0c79f920d612cb0ab4480a1040395557baf4460dc78fdf80d86c",
+    "apps/api/app/publishing_wire.py": "c9e6a2777108bbee19a9cf1e10aeac127bc4487e1ee281abdec0e6094d4d6d84",
+    "apps/api/app/youtube_upload.py": "0455a3be5d85c8f29610d7c900c9a31ebd1de3a7148ad2f9af49a367f631d361",
+    "apps/api/tests/test_publishing_wire.py": "6203432778397eefc769a9cc2630eeda5602f513e6c7efcc7e86599c436b6fce",
+    "apps/api/tests/test_youtube_upload.py": "b4489df8c890076c84df81757737678a80ace4b017920b6c0cc17b3557d2951a",
+    "scripts/north_star_publishing_wire_contract.py": "e0e1eb7c5ac15ba64ef8dc6a02d8519cb9b8400f12e05e7effa5ae2430ab4522",
+    "docs/PUBLISHING_WIRE_PROTOCOLS.md": "0a548730e27d3b6e54a7562da720fc74d8912c13959b600130896b5983e8a3e7",
+    "docs/north-star/publishing-wire-evidence.json": "b461aaee288b2b862014cdd9cf6fe55dec546040cda8aef09e27f0f98fca842d",
     "packages/contracts/publishing-capabilities.json": "82f616449fc42a523fcb2754f469c9b0236372325caef4edecf88363d6f50642",
     "apps/api/app/analytics_providers.py": "20537e844a7ed2394a85e39f8d9acb497bdc3f616ca1ad84424e0e9502e1ff01",
     "apps/api/app/analytics_service.py": "77d261426966b7b3be774623cafa0aa0a1ff4cb5da51528791c2d61fd2a36406",
