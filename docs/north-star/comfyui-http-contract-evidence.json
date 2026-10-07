@@ -1,0 +1,34 @@
+{
+  "schema": "north-star-comfyui-http-contract-v1",
+  "parent_head": "6b5e4b3464b27fa65524224ed759892bbb375921",
+  "source_sha256": {
+    "services/comfyui-bridge/npd_comfyui_bridge/http_transport.py": "cfd47946ae8490f5a4b9559d6b3e66c75c59ea9fe7302329aebc6829be765128",
+    "services/comfyui-bridge/tests/test_http_transport.py": "9ab59fcd691296d1f82f19b1821a8e11890afef9cd0d6fd2bedb0ea8c4c861af",
+    "services/comfyui-bridge/pyproject.toml": "ef62092afe26d8e96c2b4ab6d10111e3c4e75c96d96b5ff8a70a195d38eb13f5"
+  },
+  "logs": {
+    "comfyui-http-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-http-r1.log",
+      "sha256": "b81cad54127770374ca6718efd4f8dadf542e04d473604dd26cda07d0518de7f"
+    },
+    "comfyui-http-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\comfyui-http-r2.log",
+      "sha256": "9b8e599b8a3dfa7af23e7367742f72da3f77ccc5a0ea34629ee9b1bb4e6b1624"
+    }
+  },
+  "bridge_tests_passed": 60,
+  "new_http_cases": 31,
+  "network_transport": "explicit httpx.MockTransport",
+  "actual_gpu_calls": 0,
+  "external_provider_calls": 0,
+  "upstream_profile_verified": false,
+  "independent_reference_decode_and_rights_verified": false,
+  "binary_artifacts_registered": false,
+  "service_http_backend_wired": false,
+  "production_deployed": false,
+  "primary_sources": [
+    "https://github.com/Comfy-Org/ComfyUI/blob/master/server.py",
+    "https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_execution/jobs.py"
+  ],
+  "remaining": "Durable live dispatch admission/integration, verified source staging, binary registration/decoding, actual server pin/provider/GPU/cost acceptance and Native integration."
+}

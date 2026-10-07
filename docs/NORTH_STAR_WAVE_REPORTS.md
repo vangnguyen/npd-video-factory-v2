@@ -754,3 +754,24 @@ EVIDENCE: `docs/north-star/comfyui-graph-compiler-evidence.json` indexes exact s
 REGRESSIONS: existing bridge auth/queue/restart tests remain passing; live source/database/configuration/services and accepted artifacts remain untouched. No merge/deployment/publishing, new paid/GPU operation, model install or destructive migration.
 
 EXTERNAL BLOCKERS: reviewed executable graphs/GPU/provider acceptance, Docker, Native browser verification and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe source continuation. NEXT WAVE: admitted backend transport, scoped reference staging and binary artifacts, then remaining media/profile/platform/distribution/analytics/learning/Trend/Hub/hardening work.
+## Wave 5 — Bounded official ComfyUI transport
+
+WAVE: 5
+
+STATUS: IN PROGRESS; GENERATIVE_MEDIA_READY = NO.
+
+HEAD SHA: parent `6b5e4b3464b27fa65524224ed759892bbb375921`; this transport commit records the increment. Parent is pushed and preserved in verified `north-star-comfyui-graph-compiler.bundle`, SHA256 `ca2666722f4e93079ff3e6e9b1ce5e024a7b085689169b8ddb57e2fc10142822`.
+
+CAPABILITIES COMPLETED: inert official wire client for an explicitly configured origin/source-pin profile; bounded submit/job/history/targeted cancellation, reference upload/no-overwrite/checksum readback, and typed PNG/JPEG/MP4 retrieval. URL/userinfo/path/plaintext-host restrictions, finite time/byte limits, isolated credentials, fixed failure codes and Retry-After normalization are enforced. No redirect, global interruption/queue clearing or automatic write retry exists. Lost/malformed/5xx submit results retain explicit dispatch uncertainty; repeated UUIDs do not establish deduplication. Foreign job/history bindings and upload mismatches reject. HTTPX is now a runtime dependency.
+
+CAPABILITIES PARTIAL: client is not yet selected by the service backend factory. Durable dispatch/reconciliation, reviewed executable graphs, actual server pin verification, independent scoped reference rights/decode, binary media registration/full decoding, Native integration and actual GPU cost remain. MIME/magic checks are explicitly not decode evidence.
+
+TESTS: complete bridge suite **60/60 PASS**, 2.23s (`comfyui-http-r2.log`), including **31** new HTTP/origin/error/upload/media contracts. First run also passed 60/60. Full API regression remains the preserved ffc8ec1 result, 2,021 PASS/11 SKIP; this change is bridge-only.
+
+REAL PROVIDER TESTS: none. MOCK TESTS: all new wire interactions use explicit MockTransport and fixture server-source pins. LOCAL-REAL TESTS: existing durable SQLite/pinned graph regressions remain passing. No GPU generation/external/paid call occurred.
+
+EVIDENCE: `docs/north-star/comfyui-http-contract-evidence.json` binds source and logs; earlier accepted exports remain unchanged.
+
+REGRESSIONS: all existing bridge lifecycle/security/compiler checks pass. Live source/database/configuration/processes and accepted artifacts remain untouched. No main merge, deployment or publishing.
+
+EXTERNAL BLOCKERS: actual approved executable graph/GPU/server/provider acceptance, Docker, Owner UAT and Native browser verification remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: durable admitted backend dispatch, verified-reference staging and binary artifacts; remaining media/platform/distribution/analytics/learning/Trend/Hub/hardening work continues afterward.

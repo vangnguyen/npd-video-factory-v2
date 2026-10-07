@@ -126,3 +126,24 @@ Unknown workflow/version and schema mismatch are rejected before queueing. Disab
 cancelled/failed job may be retried explicitly; the original workflow/version and request identity
 remain auditable. Result artifacts must be registered through the V2 object/provenance layer before
 they can participate in a media plan.
+# Official transport contract (North Star increment)
+
+`npd_comfyui_bridge.http_transport.ComfyHTTPTransport` is an inert low-level
+client for an operator-selected origin and source-pinned targeted-cancel API
+profile. Current service backend selection remains disabled/mock; configuring
+this client alone does not authorize GPU generation. The server source pin is
+an operator contract declaration and still needs real-installation verification.
+
+The client uses `/prompt`, `/api/jobs/{id}`, `/history/{id}`,
+`/api/jobs/{id}/cancel`, `/upload/image` and `/view`. It never retries writes,
+follows redirects, clears shared queues or invokes global interruption. The
+caller must persist dispatch before POST: ComfyUI does not deduplicate a
+repeated prompt UUID. An uncertain submission needs reconciliation before any
+explicit new attempt. Reference upload uses no overwrite and exact hash-bound
+readback; trusted staging must additionally prove scope, rights and full decode.
+Output descriptors permit only bounded PNG/JPEG/MP4 files from saved output
+nodes. MIME/magic validation does not prove full media decoding or registration.
+
+Official API references: [server routes](https://github.com/Comfy-Org/ComfyUI/blob/master/server.py)
+and [job normalization](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_execution/jobs.py).
+Evidence is indexed in `docs/north-star/comfyui-http-contract-evidence.json`.

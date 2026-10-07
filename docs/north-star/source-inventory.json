@@ -1,6 +1,6 @@
 {
-  "head": "c71bbbe63e48cb3a95a8460981d21035b9f2aa9d",
-  "audited_at": "2026-10-07T02:00:03.470816+00:00",
+  "head": "6b5e4b3464b27fa65524224ed759892bbb375921",
+  "audited_at": "2026-10-07T02:08:46.247541+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "46c80d93db0300059f4808bf08a8f5742ba49487ceeb74b380a52ae1ad8a1e89",
@@ -34,6 +34,10 @@
     "services/windows_native/media.py": "2e57ff465a2e7fdbc6a7e43df48996d24f934371fc20843070369ee9145c4bbc",
     "apps/api/app/providers.py": "b64c2e492b2de20a9beeb90f69fb3cc5fef443d670eee8e69660c9dc36477d6f",
     "services/windows_native/pipeline.py": "0e9cf8184e8c938879da7c24b81fbf41fa81efbaa4fcedd7c9532e2b737c3601",
+    "services/comfyui-bridge/npd_comfyui_bridge/http_transport.py": "cfd47946ae8490f5a4b9559d6b3e66c75c59ea9fe7302329aebc6829be765128",
+    "services/comfyui-bridge/tests/test_http_transport.py": "9ab59fcd691296d1f82f19b1821a8e11890afef9cd0d6fd2bedb0ea8c4c861af",
+    "services/comfyui-bridge/pyproject.toml": "ef62092afe26d8e96c2b4ab6d10111e3c4e75c96d96b5ff8a70a195d38eb13f5",
+    "docs/north-star/comfyui-http-contract-evidence.json": "441d84aee9c82fd25527b9ed31aabf94fc343d0b984e856187c948fd4a338e5a",
     "apps/api/app/trend_service.py": "28cc530793a7d90f6cafed56be0c38b4fd7b710bb510283ea3cc8848dca94fbd",
     "apps/api/app/trend_providers.py": "5befe1bfe7e93b867052bde113319f9b2cda6c9738c922281f68d95a9525ec25",
     "apps/studio-web/studio.js": "727a122ab991af7990fc24b94d688af4fd72ef7364b29113efe6160a902a25ba",
