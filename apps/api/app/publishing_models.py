@@ -16,6 +16,7 @@ PublicationStatus = Literal[
     "dry_run_succeeded",
     "awaiting_publish_approval",
     "publishing",
+    "scheduled",
     "published",
     "failed",
     "cancelled",

@@ -71,6 +71,8 @@ test("labels publishing dry-run truthfully and flattens gate evidence", () => {
   };
   assert.deepEqual(describePublication(publication), { label: "Dry-run PASS", tone: "safe" });
   assert.equal(describePublication({ status: "blocked" }).tone, "danger");
+  assert.equal(describePublication({ status: "awaiting_publish_approval" }).tone, "warning");
+  assert.equal(describePublication({ status: "scheduled" }).tone, "warning");
   const gates = publicationGateItems(publication);
   assert.equal(gates.length, 3);
   assert.deepEqual(gates.map((item) => item.group), ["Approval / final", "Quyền media", "Nền tảng"]);

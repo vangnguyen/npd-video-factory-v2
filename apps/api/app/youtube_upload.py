@@ -169,6 +169,38 @@ def video_status(response, identifier):
     return 'unknown'
 
 
+@dataclass(frozen=True)
+class VideoObservation:
+    processing: str
+    privacy: str | None = None
+    scheduled_at: datetime | None = None
+
+    def __post_init__(self):
+        if (self.processing not in ('processed', 'processing', 'failed_requires_review', 'unknown')
+            or self.privacy not in (None, 'public', 'private', 'unlisted')
+            or (self.scheduled_at is not None and (not isinstance(self.scheduled_at, datetime)
+                or self.scheduled_at.tzinfo is None))):
+            raise PublishingWireError('YOUTUBE_PROVIDER_STATUS_INVALID')
+
+
+def video_observation(response, identifier):
+    """Selected observed fields only; unavailable visibility is never inferred."""
+    processing = video_status(response, identifier)
+    status = response.json_object()['items'][0].get('status', {})
+    privacy = status.get('privacyStatus'); scheduled = status.get('publishAt')
+    if scheduled is not None:
+        try:
+            if not isinstance(scheduled, str) or len(scheduled) > 40:
+                raise ValueError()
+            scheduled = datetime.fromisoformat(scheduled.replace('Z', '+00:00'))
+            if scheduled.tzinfo is None:
+                raise ValueError()
+            scheduled = scheduled.astimezone(timezone.utc)
+        except Exception:
+            raise PublishingWireError('YOUTUBE_PROVIDER_STATUS_INVALID') from None
+    return VideoObservation(processing, privacy, scheduled)
+
+
 def delete_request(identifier, token):
     # A distinct application Owner delete approval is required before dispatch.
     return OfficialRequest('DELETE', ORIGIN + '/youtube/v3/videos?' + urlencode({'id': video_id(identifier)}), bearer_headers(token))

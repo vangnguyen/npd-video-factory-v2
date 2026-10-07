@@ -10,9 +10,11 @@ from .publishing_db import PublicationDispatchORM, PublishApprovalORM
 from .publishing_dispatch import PublishingDispatchJournal
 from .publishing_models import PublicationMetadata, PublishingTargetBinding
 from .publishing_operations import PublishingOperationMeter
+from .publishing_processing import PublishingProcessingJournal
 from .publishing_session_vault import PublishingSessionVault
 from .publishing_wire import OfficialHTTPClient
-from .youtube_upload import (UNIT, chunk_request, start_request, started_session, status_request, upload_progress)
+from .youtube_upload import (UNIT, chunk_request, start_request, started_session, status_request, upload_progress,
+    video_status_request, video_observation)
 
 
 class PublishingWorkerError(RuntimeError):
@@ -118,6 +120,10 @@ class YouTubePublishingWorker:
         public = await self.journal.get(workspace, publication_id)
         phase = public['phase']
         if phase in ('init_intent', 'init_uncertain'):
+            recovered = await self.vault.recover_initialization(workspace, publication_id,
+                expected_version=public['version'])
+            if recovered is not None:
+                return recovered
             raise PublishingWorkerError('PUBLISH_INITIALIZATION_REVIEW_REQUIRED')
         if phase == 'uploaded':
             return {**public, 'processing_acceptance': 'NOT_CHECKED', 'published': False, 'mock': self.mock}
@@ -173,3 +179,19 @@ class YouTubePublishingWorker:
             if ticket is not None:
                 with suppress(Exception): await self.journal.finish(ticket, uncertain=True)
             raise
+
+    async def poll_processing(self, workspace, publication_id):
+        """Read an already uploaded video; no new mutation/receipt inference."""
+        self.policy()
+        state = await self.journal.get(workspace, publication_id)
+        if state['phase'] != 'uploaded' or state['remote_post_id'] is None:
+            raise PublishingWorkerError('PUBLISH_PROCESSING_UPLOAD_REQUIRED')
+        context = await self.context(workspace, publication_id, reconcile=True)
+        credential = resolve_youtube_credential(self.credential_resolver, context['target'], now=self.journal.clock())
+        response, _ = await self.send(workspace, publication_id, youtube_account_request(credential), 'account_lookup', credential=credential)
+        confirm_youtube_account(response, context['target'])
+        response, _ = await self.send(workspace, publication_id,
+            video_status_request(state['remote_post_id'], credential.token), 'processing_status', credential=credential)
+        observation = video_observation(response, state['remote_post_id'])
+        journal = PublishingProcessingJournal(self.journal.session_factory, clock=self.journal.clock)
+        return await journal.record(workspace, publication_id, state['remote_post_id'], observation, mock=self.mock)

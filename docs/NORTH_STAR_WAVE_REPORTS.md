@@ -1107,3 +1107,23 @@ EVIDENCE: `docs/north-star/publishing-worker-evidence.json`, `docs/PUBLISHING_UP
 REGRESSIONS: expanded checks and full previous API pass. Accepted/live source/media/data/processes/credentials, installed runtimes, main and default publishing settings remain untouched. No deployed schema change, real publishing/deletion, paid call, main merge or deployment.
 
 EXTERNAL BLOCKERS: eventual OAuth/key/account audit/Owner real publishing authorization; no current safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve/run pinned worker regression, finish session recovery/processing/scheduler/adapters/UI and continue remaining media/analytics/learning/Trend/Hub/hardening waves.
+
+### Wave 9 — sealed-session recovery and observed processing
+
+WAVE: 9. STATUS: IN PROGRESS; local receipt recovery, processing/visibility/schedule persistence and mock completion pass. PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `5522f3825726b57c49437373fc05400ae15e336c` pushed/preserved in full-history `north-star-publishing-worker.bundle`, SHA256 `6c59a29b16304353a7c285d183dc6232da1bd33d0bcf884a4bbb5a0ea09d00fc`; receipt binds 151 ahead/0 behind and unchanged remote main. New recovery/processing source is this increment.
+
+CAPABILITIES COMPLETED: exact-version scoped AES receipt recovery from orphaned initialization, no provider call/re-POST/receipt extension, stale-ticket fencing, revoked-consent past-response recovery while future chunks remain blocked. Scoped processing GETs and cost intents; selected privacy/deadline observations retain nulls, immutable mock/real-mode receipt boundary, append-only audit, exact scheduled deadline followed by observed public release. Correct consent/scheduled Studio labels.
+
+CAPABILITIES PARTIAL: durable scheduler, poll/backoff/worker ownership/QC reuse, atomic edit admission, thumbnail/profile/OAuth/key administration, full TikTok/Meta, Native UI and production wiring/actual acceptance. Uploaded remains distinct from processed/published. Mock completion is not real publishing or final A/B/C acceptance.
+
+TESTS: recovery/vault/worker **33 PASS**, 162.04s; processing/protocol **23 PASS**, 47.65s; **21 new cases** total. Studio **123 PASS**, 786.9062ms. Parent full Linux 5522f38 is running; current recovery increment full regression pending a pinned commit.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual SQLite/AES and two full QC scans of the preserved 4,256,257-byte synthetic portrait MP4; two separate Python processes recover and record processing; receiver bytes match unchanged source. MOCK TESTS: six official-format requests with one initialization, zero recovery requests, mock processed/private receipt with null URL and published=false. Identity/account/OAuth/key/human approval/provider/timeline/subtitle inputs remain fixtures; no real speech, Video Factory final render or Owner UAT.
+
+EVIDENCE: `docs/north-star/publishing-completion-evidence.json`, `docs/PUBLISHING_RECOVERY_PROCESSING.md`, four logs and seven exports in `publishing-completion-contract-n1`. Owned root `C:\vf-publishing-completion-n1` retained. Actual billing remains null.
+
+REGRESSIONS: 56 focused API and 123 Studio checks pass. Accepted/live media, source, database/processes/credentials, installed runtimes, main and default disabled publishing remain untouched. No deployed migration, paid call, external post/deletion, protected-main merge or deployment.
+
+EXTERNAL BLOCKERS: eventual real OAuth/key/account audit/Owner real publishing enablement; no safe-work blocker now. OWNER ACTION REQUIRED: none now. NEXT WAVE: preserve this increment; finish durable scheduling/adapters/UI and continue all media/analytics/learning/Trend/Hub/hardening waves.
