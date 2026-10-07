@@ -17,4 +17,6 @@ Changing project, publication or source clears the view and discards stale respo
 
 Evidence: authenticated owned SQLite/ASGI tests, frontend DOM harness, and fresh `analytics-read-contract-n4` copied from the retained mock publication database. The standalone contract performs six official mock reads and nine authenticated API calls, restores two immutable snapshots in a new process, and records six costs with actual cost null. Its source database remains byte-identical and no video is replaced.
 
-No browser/viewport/Owner UAT, real account collection or production deployment is certified. Channel-wide overview/refresh, production pagination and Native integration remain gaps. `ANALYTICS_READY = NO`; the original North Star remains in scope.
+The later [bounded history/channel increment](ANALYTICS_CHANNEL_OBSERVATIONS.md) adds explicit paginated observation reads and a workspace channel observation view. Its fresh n6 contract and evidence are retained separately from this original n4 rehearsal. Account-level collectors, recurring refresh, Native integration and complete AnalyticsProfile/operator configuration remain gaps.
+
+No browser/viewport/Owner UAT, real account collection or production deployment is certified. `ANALYTICS_READY = NO`; the original North Star remains in scope.

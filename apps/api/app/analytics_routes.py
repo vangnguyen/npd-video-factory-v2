@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, status
 
 from .analytics_models import (
     AnalyticsEventRead,
@@ -15,6 +15,7 @@ from .analytics_models import (
 )
 from .analytics_repository import AnalyticsIdempotencyConflict
 from .analytics_service import AnalyticsBoundaryError, AnalyticsService
+from .analytics_views import ChannelObservationPage, ObservationPage
 
 
 def private_analytics_response(response: Response):
@@ -152,3 +153,23 @@ async def publication_analytics(project_id: str, publication_id: str, request: R
 async def publication_analytics_snapshots(project_id: str, publication_id: str, request: Request, provider_mode: AnalyticsProviderMode | None = None):
     try: return await service(request).publication_snapshots(project_id, publication_id, provider_mode=provider_mode)
     except KeyError: raise error(404, 'ANALYTICS_PUBLICATION_NOT_FOUND', 'Publication was not found.') from None
+
+
+@router.get('/projects/{project_id}/publications/{publication_id}/analytics/observations', response_model=ObservationPage)
+async def publication_observations(project_id: str, publication_id: str, request: Request,
+        provider_mode: AnalyticsProviderMode = 'fixture', limit: int = Query(default=50, ge=1, le=100),
+        cursor: str | None = Query(default=None, pattern=r'^ams_[A-Za-z0-9_-]{4,60}$')):
+    try:
+        return await service(request).observations(project_id, publication_id, provider_mode=provider_mode, limit=limit, cursor=cursor)
+    except KeyError: raise error(404, 'ANALYTICS_PUBLICATION_NOT_FOUND', 'Publication was not found.') from None
+    except ValueError: raise error(400, 'ANALYTICS_CURSOR_SCOPE_INVALID', 'Cursor does not belong to this observation history.') from None
+
+
+@router.get('/workspaces/{workspace_id}/analytics/channels', response_model=ChannelObservationPage)
+async def workspace_channel_observations(workspace_id: str, request: Request,
+        provider_mode: AnalyticsProviderMode = 'fixture', limit: int = Query(default=50, ge=1, le=100),
+        cursor: str | None = Query(default=None, pattern=r'^pub_[A-Za-z0-9_-]{4,60}$')):
+    try:
+        return await service(request).channel_observations(workspace_id, provider_mode=provider_mode, limit=limit, cursor=cursor)
+    except KeyError: raise error(404, 'NOT_FOUND', 'Workspace was not found.') from None
+    except ValueError: raise error(400, 'ANALYTICS_CURSOR_SCOPE_INVALID', 'Cursor does not belong to this workspace.') from None

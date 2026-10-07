@@ -70,8 +70,11 @@ export function analyticsSeries(snapshots, metric, {workspaceId, projectId, publ
 export function analyticsChartPaths(points) {
   const finite = points.filter(point => typeof point.value === 'number' && Number.isFinite(point.value) && Number.isFinite(Date.parse(point.time)));
   if (!finite.length) return {paths: [], minimum: null, maximum: null};
-  const minimum = Math.min(...finite.map(point => point.value)), maximum = Math.max(...finite.map(point => point.value));
-  const start = Math.min(...finite.map(point => Date.parse(point.time))), end = Math.max(...finite.map(point => Date.parse(point.time)));
+  let minimum = Infinity, maximum = -Infinity, start = Infinity, end = -Infinity;
+  for (const point of finite) {
+    minimum = Math.min(minimum, point.value); maximum = Math.max(maximum, point.value);
+    start = Math.min(start, Date.parse(point.time)); end = Math.max(end, Date.parse(point.time));
+  }
   const paths = []; let current = null;
   for (const point of points) {
     if (point.value === null || !Number.isFinite(point.value) || !Number.isFinite(Date.parse(point.time))) {current = null; continue;}
@@ -85,7 +88,7 @@ export function analyticsChartPaths(points) {
 
 export function initializeAnalyticsConsole({api, getState, root = document, onReport, onQueued, toast, uuid = () => crypto.randomUUID()}) {
   const $ = id => root.querySelector(`#${id}`);
-  let scope = '', revision = 0, busy = false, snapshots = [], idempotency = new Map();
+  let scope = '', revision = 0, busy = false, snapshots = [], nextCursor = null, totalCount = 0, idempotency = new Map();
   const selected = () => ({publicationId: $('analytics-publication').value, mode: $('analytics-mode').value,
     fixtureProfile: $('analytics-fixture-profile').value, startDate: $('analytics-start-date').value,
     endDate: $('analytics-end-date').value, includeRevenue: $('analytics-revenue').checked});
@@ -98,7 +101,7 @@ export function initializeAnalyticsConsole({api, getState, root = document, onRe
   }
   function clearIfChanged() {
     const next = key(); if (next === scope) return;
-    scope = next; revision += 1; busy = false; snapshots = []; idempotency = new Map();
+    scope = next; revision += 1; busy = false; snapshots = []; nextCursor = null; totalCount = 0; idempotency = new Map();
     onReport(null); renderHistory();
   }
   function renderHistory() {
@@ -127,7 +130,7 @@ export function initializeAnalyticsConsole({api, getState, root = document, onRe
         point.value === null ? 'Không có dữ liệu' : String(point.value)]) tr.append(row('td', text));
       table.append(tr);
     }
-    $('analytics-history-note').textContent = 'Thời điểm thu thập snapshot. Ngày yêu cầu không xác nhận coverage; chênh lệch report không phải tốc độ view.';
+    $('analytics-history-note').textContent = `Đang xem ${snapshots.length}/${totalCount} snapshot (tối đa 500 trong một lần xem). Thời điểm thu thập không xác nhận coverage; chênh lệch report không phải tốc độ view.`;
     options($('analytics-compare-before'), snapshots.map(value => ({value: value.snapshot_id, label: value.collected_at})), 'Snapshot trước');
     options($('analytics-compare-after'), snapshots.map(value => ({value: value.snapshot_id, label: value.collected_at})), 'Snapshot sau');
     compare();
@@ -157,6 +160,18 @@ export function initializeAnalyticsConsole({api, getState, root = document, onRe
     $('analytics-sync-button').textContent = official ? 'Thu thập chỉ số nền tảng' : 'Chạy dữ liệu mô phỏng';
     $('analytics-sync-button').title = reason || (official ? 'Chỉ đọc analytics; không publish hoặc đổi ngân sách.' : 'Fixture được gắn nhãn mô phỏng.');
     $('analytics-read-refresh').disabled = busy || !publication;
+    $('analytics-history-more').disabled = busy || !nextCursor || snapshots.length >= 500;
+  }
+  function checkedPage(page, state, selection) {
+    if (page?.workspace_id !== state.workspaceId || page.project_id !== state.projectId
+        || page.publication_id !== selection.publicationId || page.provider_mode !== selection.mode
+        || !Array.isArray(page.items) || page.items.length > 50 || !Number.isInteger(page.total_count)
+        || page.total_count < 0 || (page.next_cursor !== null && !/^ams_[A-Za-z0-9_-]{4,60}$/.test(page.next_cursor ?? '')))
+      throw new Error('Analytics page scope không khớp.');
+    const kind = selection.mode === 'fixture' ? 'fixture' : 'official_api';
+    if (page.items.some(value => value.project_id !== state.projectId || value.workspace_id !== state.workspaceId
+        || value.publication_id !== selection.publicationId || value.source_kind !== kind)) throw new Error('Analytics observation scope không khớp.');
+    return page;
   }
   async function refresh() {
     clearIfChanged(); const state = getState(); const selection = selected();
@@ -165,11 +180,27 @@ export function initializeAnalyticsConsole({api, getState, root = document, onRe
     try {
       const base = `/api/v1/projects/${encodeURIComponent(state.projectId)}/publications/${encodeURIComponent(selection.publicationId)}/analytics`;
       const query = `?provider_mode=${selection.mode}`;
-      const [report, history] = await Promise.all([api(base + query), api(base + '/snapshots' + query)]);
+      const [report, rawPage] = await Promise.all([api(base + query), api(base + '/observations' + query + '&limit=50')]);
       if (captured !== key() || ownRevision !== revision) return;
       if (report.project_id !== state.projectId || report.publication_id !== selection.publicationId) throw new Error('Analytics scope không khớp.');
-      snapshots = history.filter(value => value.project_id === state.projectId && value.workspace_id === state.workspaceId && value.publication_id === selection.publicationId);
+      const page = checkedPage(rawPage, state, selection);
+      snapshots = page.items; nextCursor = page.next_cursor; totalCount = page.total_count;
       onReport(report); renderHistory();
+    } catch (error) {if (captured === key()) toast(error.message, true);}
+    finally {if (captured === key() && ownRevision === revision) {busy = false; sync();}}
+  }
+  async function more() {
+    clearIfChanged(); if (busy || !nextCursor || snapshots.length >= 500) return;
+    const state = getState(), selection = selected(), captured = key(), ownRevision = revision, cursor = nextCursor;
+    busy = true; sync();
+    try {
+      const path = `/api/v1/projects/${encodeURIComponent(state.projectId)}/publications/${encodeURIComponent(selection.publicationId)}/analytics/observations`;
+      const rawPage = await api(path + `?provider_mode=${selection.mode}&limit=50&cursor=${encodeURIComponent(cursor)}`);
+      if (captured !== key() || ownRevision !== revision) return;
+      const page = checkedPage(rawPage, state, selection);
+      if (page.next_cursor === cursor) throw new Error('Analytics cursor không tiến triển.');
+      snapshots = [...new Map([...snapshots, ...page.items].map(value => [value.snapshot_id, value])).values()].slice(0, 500);
+      nextCursor = page.next_cursor; totalCount = page.total_count; renderHistory();
     } catch (error) {if (captured === key()) toast(error.message, true);}
     finally {if (captured === key() && ownRevision === revision) {busy = false; sync();}}
   }
@@ -194,8 +225,9 @@ export function initializeAnalyticsConsole({api, getState, root = document, onRe
   for (const id of ['analytics-publication', 'analytics-mode']) $(id).addEventListener('change', () => {clearIfChanged(); sync(); refresh();});
   for (const id of ['analytics-fixture-profile', 'analytics-start-date', 'analytics-end-date', 'analytics-revenue']) $(id).addEventListener('change', sync);
   $('analytics-read-refresh').addEventListener('click', refresh);
+  $('analytics-history-more').addEventListener('click', more);
   $('analytics-sync-button').addEventListener('click', collect);
   $('analytics-history-metric').addEventListener('change', renderHistory);
   for (const id of ['analytics-compare-before', 'analytics-compare-after']) $(id).addEventListener('change', compare);
-  return {sync, refresh, collect, key};
+  return {sync, refresh, more, collect, key};
 }

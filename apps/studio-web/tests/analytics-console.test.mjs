@@ -59,7 +59,8 @@ function harness() {
   const state = baseState(), calls = [], queued = []; let counter = 0, handler;
   handler = async (path, options = {}) => {
     if (options.method === 'POST') return {sync_id: `sync_${counter}`, project_id: state.projectId, publication_id: 'pub_fixture', provider_mode: 'fixture', status: 'queued'};
-    if (path.includes('/snapshots')) return [snapshot];
+    if (path.includes('/observations')) return {workspace_id: state.workspaceId, project_id: state.projectId, publication_id: 'pub_fixture',
+      provider_mode: 'fixture', items: [snapshot], total_count: 1, next_cursor: null};
     return {project_id: state.projectId, publication_id: 'pub_fixture', latest_sync: null};
   };
   const controller = initializeAnalyticsConsole({api: async (...args) => {calls.push(args); return handler(...args);}, getState: () => state, root,
@@ -93,9 +94,9 @@ test('unknown request failure reuses its key on explicit retry', async () => {
 
 test('late history response cannot populate another project', async () => {
   const h = harness(); let resolveReport, resolveHistory;
-  h.handler(path => new Promise(resolve => {if (path.includes('/snapshots')) resolveHistory = resolve; else resolveReport = resolve;}));
+  h.handler(path => new Promise(resolve => {if (path.includes('/observations')) resolveHistory = resolve; else resolveReport = resolve;}));
   const pending = h.controller.refresh(); h.state.projectId = 'prj_new'; h.state.publications = []; h.controller.sync();
-  resolveReport({project_id: 'prj_fixture', publication_id: 'pub_fixture'}); resolveHistory([snapshot]); await pending;
+  resolveReport({project_id: 'prj_fixture', publication_id: 'pub_fixture'}); resolveHistory({items: [snapshot]}); await pending;
   assert.equal(h.state.analyticsReport, null); assert.equal(h.get('analytics-history-rows').children.length, 0);
 });
 
@@ -103,4 +104,31 @@ test('viewer can read but cannot enqueue observations', async () => {
   const h = harness(); h.state.principal.workspace_roles.wsp_fixture = 'viewer'; h.controller.sync();
   await h.controller.collect(); assert.equal(h.calls.length, 0);
   await h.controller.refresh(); assert.equal(h.calls.length, 2);
+});
+
+test('older pages are explicit reads, deduplicate and stop at the visible bound', async () => {
+  const h = harness(); let page = 0;
+  h.handler(async path => {
+    if (!path.includes('/observations')) return {project_id: h.state.projectId, publication_id: 'pub_fixture'};
+    page += 1;
+    const items = Array.from({length: 50}, (_, index) => ({...snapshot, snapshot_id: `ams_page_${page}_${index}`}));
+    return {workspace_id: h.state.workspaceId, project_id: h.state.projectId, publication_id: 'pub_fixture', provider_mode: 'fixture',
+      items, next_cursor: `ams_next_page_${page}`, total_count: 900};
+  });
+  await h.controller.refresh(); assert.equal(page, 1);
+  assert.equal(h.get('analytics-history-rows').children.length, 50);
+  for (let count = 0; count < 12; count++) await h.controller.more();
+  assert.equal(page, 10); assert.equal(h.get('analytics-history-rows').children.length, 500);
+  assert.equal(h.get('analytics-history-more').disabled, true);
+  assert(h.calls.every(([, options]) => !options?.method));
+  assert(h.calls.at(-1)[0].includes('cursor=ams_next_page_9'));
+});
+
+test('foreign source page is rejected and does not replace displayed history', async () => {
+  const h = harness(); await h.controller.refresh();
+  h.handler(async path => path.includes('/observations') ? {workspace_id: 'foreign', project_id: h.state.projectId,
+    publication_id: 'pub_fixture', provider_mode: 'fixture', items: [snapshot], next_cursor: null, total_count: 1}
+    : {project_id: h.state.projectId, publication_id: 'pub_fixture'});
+  await h.controller.refresh();
+  assert.equal(h.get('analytics-history-rows').children.length, 1);
 });

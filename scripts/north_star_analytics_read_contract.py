@@ -114,7 +114,7 @@ async def run(args):
     application.state.human_api_enabled = True; application.state.human_write_enabled = True
     application.state.human_auth_verifier = HumanAuthVerifier(registry, max_token_ttl_seconds=86400)
     application.state.human_rate_limiter = HumanRateLimiter(MemoryRateStore(), requests_per_minute=1000)
-    api = []; syncs = []
+    api = []; syncs = []; observation_views = {}
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=application), base_url='http://fixture', headers={'Authorization': 'Bearer ' + token}) as client:
         for index in range(2):
             payload = {'publication_id': publication, 'provider_mode': 'official', 'trigger': 'initial' if index == 0 else 'manual_refresh',
@@ -138,6 +138,27 @@ async def run(args):
                 if suffix: assert len(body) == (2 if mode == 'official' else 0)
                 else: assert body['publication_id'] == publication and body['history_count'] == (2 if mode == 'official' else 0)
                 api.append({'method': 'GET', 'status': 200, 'no_store': True, 'publication_scoped': True, 'provider_mode': mode})
+        base = f'/api/v1/projects/{project}/publications/{publication}/analytics/observations'
+        first = await client.get(base, params={'provider_mode': 'official', 'limit': 1})
+        assert first.status_code == 200 and first.json()['total_count'] == 2 and first.json()['next_cursor']
+        second = await client.get(base, params={'provider_mode': 'official', 'limit': 1, 'cursor': first.json()['next_cursor']})
+        assert second.status_code == 200 and second.json()['next_cursor'] is None
+        assert first.json()['items'][0]['snapshot_id'] != second.json()['items'][0]['snapshot_id']
+        empty = await client.get(base, params={'provider_mode': 'fixture', 'limit': 1})
+        assert empty.status_code == 200 and empty.json()['items'] == [] and empty.json()['total_count'] == 0
+        observation_views['history_pages'] = [first.json(), second.json(), empty.json()]
+        for response in (first, second, empty):
+            assert response.headers.get('cache-control') == 'no-store'
+            api.append({'method': 'GET', 'status': 200, 'no_store': True, 'bounded_observations': True})
+        for mode in ('official', 'fixture'):
+            response = await client.get(f'/api/v1/workspaces/{workspace}/analytics/channels', params={'provider_mode': mode, 'limit': 50})
+            assert response.status_code == 200 and response.headers.get('cache-control') == 'no-store'
+            body = response.json(); assert body['account_totals'] is None
+            if mode == 'official':
+                videos = [video for channel in body['channels'] for video in channel['videos'] if video['publication_id'] == publication]
+                assert len(videos) == 1 and videos[0]['binding_state'] == 'matched' and videos[0]['latest_snapshot']['mock'] is True
+            observation_views['channels_' + mode] = body
+            api.append({'method': 'GET', 'status': 200, 'no_store': True, 'workspace_channels': True, 'provider_mode': mode})
     snapshots = await repository.list_snapshots(project); assert len(snapshots) == 2 and snapshots[1].metrics.views == 1000
     report = await repository.report(project)
     async with factory() as session:
@@ -165,13 +186,14 @@ asyncio.run(run())"""
     write(root, 'cost.json', [{'cost_id': cost.cost_id, 'estimated_cost': cost.estimated_cost, 'actual_cost': cost.actual_cost,
         'provider_usage_id': cost.provider_usage_id, 'job_id': cost.job_id, 'provenance': cost.provenance} for cost in costs])
     write(root, 'requests.json', {'official_mock_requests': request_audit, 'authenticated_api_requests': api})
+    write(root, 'observation-views.json', observation_views)
     write(root, 'contract.json', {'status': 'PASS', 'official_mock_requests': len(request_audit), 'authenticated_api_requests': len(api),
         'immutable_snapshots': 2, 'fresh_process_restore': True, 'external_provider_calls': 0, 'paid_calls': 0,
         'actual_cost': None, 'cost_records': 6, 'source_publication_mock': True, 'real_credentials_read': 0,
         'real_provider_tested': False, 'owner_uat_accepted': False, 'production_deployed': False, 'analytics_ready': False,
         'media_replaced': False, 'requested_dates_are_complete_coverage': False})
     await engine.dispose()
-    print(json.dumps({'status': 'PASS', 'output': str(root), 'official_mock_requests': 6, 'authenticated_api_requests': len(api), 'exports': 8}))
+    print(json.dumps({'status': 'PASS', 'output': str(root), 'official_mock_requests': 6, 'authenticated_api_requests': len(api), 'exports': 9}))
 
 
 if __name__ == '__main__':

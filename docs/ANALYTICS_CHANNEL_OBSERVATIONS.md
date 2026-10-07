@@ -1,0 +1,18 @@
+# Bounded analytics and channel observations
+
+The API Studio can read stored publication observations grouped by exact configured channel target. It reads one publication page at a time, keeps official and fixture sources separate, and displays individual video metrics. These reports are not account totals: differing report intervals, repeated remote video receipts, unsupported metrics, and collection timestamps do not justify summing reach, rates or lifetime channel performance.
+
+Read endpoints, protected by the existing human workspace/project permissions:
+
+- `GET /api/v1/projects/{project_id}/publications/{publication_id}/analytics/observations?provider_mode=official&limit=50`
+- `GET /api/v1/workspaces/{workspace_id}/analytics/channels?provider_mode=official&limit=50`
+
+Both default to the fixture source, allow 1–100 records per page, and return a nullable `next_cursor`. Pass that exact cursor to read the next page in the same scope. A missing, foreign or wrong-source cursor is rejected. The history cursor uses collected timestamp, created timestamp and snapshot ID, so equal timestamps retain deterministic ordering. Snapshots remain immutable; newer rows can appear on a later refresh. Counts describe the read time, not a transactional multi-page export. All successful responses are `no-store`; no provider, queue or publication action runs during these reads.
+
+Channel pages enumerate eligible publication IDs within the authorized workspace, then select the latest observation of each mock/actual transport kind. Groups include platform, provider and the entire profile/account/configuration binding digest. An official observation joins a configured target only when its saved account-match evidence and target digest match. Unbound, mismatched and uncollected publications stay separate. Fixture rows explicitly lack real account verification. `matched` for a mock official contract proves the fixture binding only; it is not real-provider acceptance. Different credential/profile revisions are not silently merged.
+
+Channel rows preserve project/publication identity, title, requested interval, source labels, nullable normalized metrics and precise collection timestamps. `account_totals` is always null. Duplicate remote video receipts are visible as individual publications and are never added into totals. This remains an observation view, not a full versioned AnalyticsProfile or account-level collector.
+
+The Studio reads 50 rows per explicit request and caps one view at 500 publications or snapshots. Older-page controls never collect new analytics. Source/workspace changes clear channel rows and late responses are discarded. All supplied text is inserted as text nodes. History comparison retains its exact scope and null-preserving semantics. The latest-summary query now reads bounded rows and counts history in SQL; assessment and learning records refer to the same latest observation. Its additive `learning_insights_truncated` flag reports the 100-insight response bound. Legacy complete-list endpoints remain available and are still unbounded; clients should use the observation pages for growing histories.
+
+Verification uses owned SQLite, authenticated ASGI, DOM harnesses and the copied mock publication contract. Transport-false/true metadata in the channel isolation unit case is explicitly simulated; it makes no real-provider claim. No real credentials, external collection, live database migration, accepted-media replacement, browser viewport test, Owner UAT or production deployment occurred. Native integration, recurring refresh policy, Meta collectors, account-level profiles, winner baselines and provider acceptance remain required. `ANALYTICS_READY = NO`.

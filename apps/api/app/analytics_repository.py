@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 
-from sqlalchemy import or_, select, update
+from sqlalchemy import func, or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -598,7 +598,7 @@ class AnalyticsRepository:
                     'cost_id': reservation['cost_id'], 'mock': reservation['mock'], 'external_call': row.external_call,
                     'outcome': outcome}, utc_now())
 
-    async def list_syncs(self, project_id: str, *, publication_id=None, provider_mode=None) -> list[AnalyticsSyncRead]:
+    async def list_syncs(self, project_id: str, *, publication_id=None, provider_mode=None, limit=None) -> list[AnalyticsSyncRead]:
         async with self.session_factory() as session:
             rows = (
                 await session.scalars(
@@ -606,12 +606,12 @@ class AnalyticsRepository:
                     .where(AnalyticsSyncORM.project_id == project_id)
                     .where(*([AnalyticsSyncORM.publication_id == publication_id] if publication_id else []))
                     .where(*([AnalyticsSyncORM.provider_mode == provider_mode] if provider_mode else []))
-                    .order_by(AnalyticsSyncORM.created_at.desc())
+                    .order_by(AnalyticsSyncORM.created_at.desc(), AnalyticsSyncORM.sync_id.desc()).limit(limit)
                 )
             ).all()
             return [_sync_read(row) for row in rows]
 
-    async def list_snapshots(self, project_id: str, *, publication_id=None, provider_mode=None) -> list[AnalyticsMetricSnapshotRead]:
+    async def list_snapshots(self, project_id: str, *, publication_id=None, provider_mode=None, limit=None) -> list[AnalyticsMetricSnapshotRead]:
         async with self.session_factory() as session:
             rows = (
                 await session.scalars(
@@ -619,35 +619,37 @@ class AnalyticsRepository:
                     .where(AnalyticsMetricSnapshotORM.project_id == project_id)
                     .where(*([AnalyticsMetricSnapshotORM.publication_id == publication_id] if publication_id else []))
                     .where(*([AnalyticsMetricSnapshotORM.source_kind == ('fixture' if provider_mode == 'fixture' else 'official_api')] if provider_mode else []))
-                    .order_by(AnalyticsMetricSnapshotORM.collected_at.desc(), AnalyticsMetricSnapshotORM.created_at.desc(), AnalyticsMetricSnapshotORM.snapshot_id.desc())
+                    .order_by(AnalyticsMetricSnapshotORM.collected_at.desc(), AnalyticsMetricSnapshotORM.created_at.desc(), AnalyticsMetricSnapshotORM.snapshot_id.desc()).limit(limit)
                 )
             ).all()
             return [await _snapshot_read(session, row) for row in rows]
 
-    async def list_assessments(self, project_id: str, *, publication_id=None, provider_mode=None) -> list[WinnerAssessmentRead]:
+    async def list_assessments(self, project_id: str, *, publication_id=None, provider_mode=None, snapshot_id=None, limit=None) -> list[WinnerAssessmentRead]:
         async with self.session_factory() as session:
             rows = (
                 await session.scalars(
                     select(WinnerAssessmentORM)
                     .where(WinnerAssessmentORM.project_id == project_id)
+                    .where(*([WinnerAssessmentORM.snapshot_id == snapshot_id] if snapshot_id else []))
                     .where(*([WinnerAssessmentORM.publication_id == publication_id] if publication_id else []))
                     .where(*([WinnerAssessmentORM.snapshot_id.in_(select(AnalyticsMetricSnapshotORM.snapshot_id).where(
                         AnalyticsMetricSnapshotORM.source_kind == ('fixture' if provider_mode == 'fixture' else 'official_api')))] if provider_mode else []))
-                    .order_by(WinnerAssessmentORM.created_at.desc())
+                    .order_by(WinnerAssessmentORM.created_at.desc()).limit(limit)
                 )
             ).all()
             return [_assessment_read(row) for row in rows]
 
-    async def list_insights(self, project_id: str, *, publication_id=None, provider_mode=None) -> list[LearningInsightRead]:
+    async def list_insights(self, project_id: str, *, publication_id=None, provider_mode=None, snapshot_id=None, limit=None) -> list[LearningInsightRead]:
         async with self.session_factory() as session:
             rows = (
                 await session.scalars(
                     select(AnalyticsLearningInsightORM)
                     .where(AnalyticsLearningInsightORM.project_id == project_id)
+                    .where(*([AnalyticsLearningInsightORM.snapshot_id == snapshot_id] if snapshot_id else []))
                     .where(*([AnalyticsLearningInsightORM.publication_id == publication_id] if publication_id else []))
                     .where(*([AnalyticsLearningInsightORM.snapshot_id.in_(select(AnalyticsMetricSnapshotORM.snapshot_id).where(
                         AnalyticsMetricSnapshotORM.source_kind == ('fixture' if provider_mode == 'fixture' else 'official_api')))] if provider_mode else []))
-                    .order_by(AnalyticsLearningInsightORM.created_at.desc())
+                    .order_by(AnalyticsLearningInsightORM.created_at.desc()).limit(limit)
                 )
             ).all()
             return [_insight_read(row) for row in rows]
@@ -664,10 +666,17 @@ class AnalyticsRepository:
             return [_event_read(row) for row in rows]
 
     async def report(self, project_id: str, *, publication_id=None, provider_mode=None) -> AnalyticsReportRead:
-        syncs = await self.list_syncs(project_id, publication_id=publication_id, provider_mode=provider_mode)
-        snapshots = await self.list_snapshots(project_id, publication_id=publication_id, provider_mode=provider_mode)
-        assessments = await self.list_assessments(project_id, publication_id=publication_id, provider_mode=provider_mode)
-        insights = await self.list_insights(project_id, publication_id=publication_id, provider_mode=provider_mode)
+        syncs = await self.list_syncs(project_id, publication_id=publication_id, provider_mode=provider_mode, limit=1)
+        snapshots = await self.list_snapshots(project_id, publication_id=publication_id, provider_mode=provider_mode, limit=1)
+        assessments = await self.list_assessments(project_id, publication_id=publication_id, provider_mode=provider_mode,
+            snapshot_id=snapshots[0].snapshot_id if snapshots else None, limit=1)
+        insights = await self.list_insights(project_id, publication_id=publication_id, provider_mode=provider_mode,
+            snapshot_id=snapshots[0].snapshot_id if snapshots else None, limit=101)
+        async with self.session_factory() as session:
+            history_count = await session.scalar(select(func.count()).select_from(AnalyticsMetricSnapshotORM)
+                .where(AnalyticsMetricSnapshotORM.project_id == project_id)
+                .where(*([AnalyticsMetricSnapshotORM.publication_id == publication_id] if publication_id else []))
+                .where(*([AnalyticsMetricSnapshotORM.source_kind == ('fixture' if provider_mode == 'fixture' else 'official_api')] if provider_mode else [])))
         feature: VideoFeatureMetadata | None = None
         if snapshots:
             async with self.session_factory() as session:
@@ -697,9 +706,10 @@ class AnalyticsRepository:
             latest_assessment=assessments[0] if assessments else None,
             video_features=feature,
             learning_insights=(
-                [item for item in insights if not snapshots or item.snapshot_id == snapshots[0].snapshot_id]
+                [item for item in insights[:100] if not snapshots or item.snapshot_id == snapshots[0].snapshot_id]
             ),
-            history_count=len(snapshots),
+            learning_insights_truncated=len(insights) > 100,
+            history_count=history_count,
             recommendation_only=True,
             external_execution_enabled=False,
         )

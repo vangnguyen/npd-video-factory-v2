@@ -1287,3 +1287,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: six official mock reads and nine authenticat
 EVIDENCE: `docs/north-star/analytics-console-evidence.json`, fresh `analytics-read-contract-n4` eight JSON exports plus copied database; original database SHA unchanged. Prior n1/n2/n3 bundles are retained.
 
 REGRESSIONS: accepted media/source/Owner UAT untouched; all selected tests pass. Default fixture/disabled-network/publishing gates retained. EXTERNAL BLOCKERS: authorized accounts/credentials/provider acceptance; browser UAT and isolated deployment infrastructure. OWNER ACTION REQUIRED: none for remaining safe work; actual credentials/UAT/deployment are separate gates. NEXT WAVE: channel analytics, winner baselines, frozen learning features/personalization, Trend Radar, Hub, hardening and final A/B/C acceptance; full original scope remains.
+
+### Wave 10 — Bounded history and channel observation UI
+
+WAVE: 10. STATUS: IN PROGRESS. ANALYTICS_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `2b191184b008a7a6144c51a55b7658ad452de17c`, pushed/preserved in `north-star-analytics-console.bundle`, SHA256 `5f6038d4eb946bae2671942b0c25b117dd4c0982c4c3aa5a712fdbafe97142f9`; 160 ahead/0 behind, fresh 15 artifact hashes and clean live source verified. This channel increment will be separately preserved.
+
+CAPABILITIES COMPLETED: 1–100 row keyset observation pages with stable timestamp ties and exact scope; bounded latest-summary queries and SQL history counts; latest assessment/learning alignment; channel publication pages with exact account/profile/provider/transport separation; individual report intervals/nullable metrics, no account totals; explicit 50-row Studio history/channel reads, 500-row view bound, text-node rendering and stale response guards.
+
+CAPABILITIES PARTIAL: Native/operator/AnalyticsProfile integration; durable recurring refresh; Meta collectors; actual account-level analytics/winner baselines; legacy complete-list pagination; browser/viewport/Owner UAT and provider acceptance.
+
+TESTS: **24 PASS**, 116.12s expanded API before final summary refinement; **16 PASS**, 60.55s final affected API tests, overlapping counts (seven new projection cases). **145 PASS** full Studio suite, 757.51ms (six new frontend cases). Syntax/diff checks pass. Full Linux parent `2b191184b008a7a6144c51a55b7658ad452de17c` running; latest completed full at `32db5d9`: 2498 PASS / 11 SKIP. Current channel source full regression awaits pinned commit. Initial API run: 12 PASS/1 FAIL from an incorrect expected fixture value, corrected; old log retained.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: six official-protocol mock reads and 14 authenticated ASGI requests; two immutable snapshots restore exactly in a fresh process, six actual-cost-null records. Channel transport flag isolation test is deliberate metadata simulation, not observed provider acceptance. DOM harness does not certify browser usability.
+
+EVIDENCE: `docs/north-star/analytics-views-evidence.json`; fresh `analytics-read-contract-n6` nine JSON exports plus owned clone DB. Original source DB hash unchanged; n1–n5 retained.
+
+REGRESSIONS: accepted media and live source untouched; fixture/network/publishing defaults retained. No live schema migration, provider credential read or paid call. EXTERNAL BLOCKERS: real authorized account/provider acceptance and Owner/browser UAT. OWNER ACTION REQUIRED: none for continuing safe implementation; real credentials, UAT and deployment are separate gates. NEXT WAVE: durable refresh and queue safety, frozen learning features/channel winner baselines, remaining Native/media/Trend/Hub/hardening and final A/B/C acceptance. Original Waves 0–16 remain in scope.

@@ -25,6 +25,7 @@ import {subtitleCueEdit,compatibleSubtitleTemplates,subtitleSaveStyle,timedSubti
 import {compatibleBrollPlans,selectedBrollAsset,brollApplyPayload} from '/broll-planner.mjs';
 import {initializePublishingConsole} from '/publishing-console.mjs';
 import {initializeAnalyticsConsole} from '/analytics-console.mjs';
+import {initializeAnalyticsChannels} from '/analytics-channels.mjs';
 
 const state = {
   workspaceId: null,
@@ -87,6 +88,7 @@ const analyticsConsole = initializeAnalyticsConsole({api, getState: () => state,
     else stopAnalyticsPolling();
   },
   onQueued: sync => {state.activeAnalyticsSync = sync; renderAnalytics(); startAnalyticsPolling();}});
+const analyticsChannels = initializeAnalyticsChannels({api, getState: () => state, toast});
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 
 class ApiError extends Error {
@@ -802,6 +804,7 @@ function renderAnalytics() {
     `<span><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</span>`
   )).join("");
   analyticsConsole.sync();
+  analyticsChannels.sync();
 }
 
 function startAnalyticsPolling() {

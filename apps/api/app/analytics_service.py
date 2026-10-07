@@ -138,6 +138,19 @@ class AnalyticsService:
         if await self.publishing_repository.get(project_id, publication_id) is None: raise KeyError(publication_id)
         return await self.repository.list_snapshots(project_id, publication_id=publication_id, provider_mode=provider_mode)
 
+    async def observations(self, project_id, publication_id, *, provider_mode, limit, cursor=None):
+        publication = await self.publishing_repository.get(project_id, publication_id)
+        if publication is None: raise KeyError(publication_id)
+        from .analytics_views import observation_page
+        return await observation_page(self.repository.session_factory, workspace=publication.workspace_id,
+            project=project_id, publication=publication_id, mode=provider_mode, limit=limit, cursor=cursor)
+
+    async def channel_observations(self, workspace_id, *, provider_mode, limit, cursor=None):
+        if await self.platform_repository.get_workspace(workspace_id) is None: raise KeyError(workspace_id)
+        from .analytics_views import channel_page
+        return await channel_page(self.repository.session_factory, workspace=workspace_id,
+            mode=provider_mode, limit=limit, cursor=cursor)
+
     async def snapshots(self, project_id: str) -> list[AnalyticsMetricSnapshotRead]:
         if await self.platform_repository.get_project(project_id) is None:
             raise KeyError(project_id)

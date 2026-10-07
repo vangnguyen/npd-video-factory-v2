@@ -289,6 +289,7 @@ class AnalyticsReportRead(StrictModel):
     latest_assessment: WinnerAssessmentRead | None
     video_features: VideoFeatureMetadata | None
     learning_insights: list[LearningInsightRead]
+    learning_insights_truncated: bool = False
     history_count: int = Field(ge=0)
     recommendation_only: Literal[True] = True
     external_execution_enabled: Literal[False] = False
