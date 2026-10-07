@@ -2,6 +2,11 @@
 
 The adapter also exposes [trusted lifecycle observation and targeted cancellation](COMFYUI_GENERATION_LIFECYCLE.md) for durable client integration. Native generative consumers and real GPU acceptance remain separate open work.
 
+The [reviewed HTTP backend](COMFYUI_HTTP_BACKEND.md) now connects the transport,
+compiler, durable dispatch journal and actual decoded binary registration.
+Repository placeholders still report NOT_CONFIGURED. Reference staging and
+Native queue/UI integration remain open.
+
 ## Current status
 
 The repository contains a provider-neutral bridge contract at `services/comfyui-bridge` and eight
@@ -76,8 +81,10 @@ mask/scale, null costs and local adapter elapsed time. Reference strings do not 
 file reads or URL downloads. Nine variants pass through actual ASGI bridge handlers and persist
 mock results; `comfyui-generation-modes-n3` contains eleven retained exports.
 
-Live backend transport, executable reviewed graphs, verified reference resolution,
-binary artifact registration/decoding, provider cost receipts and real GPU acceptance remain open.
+Executable production graphs, verified reference resolution/staging, provider
+cost receipts and real GPU acceptance remain open. Runtime HTTP execution and
+binary registration/decoding now have explicit mock-wire/local-media evidence;
+this does not establish real GPU acceptance.
 The repository still ships no executable GPU graph and does not claim generative media readiness.
 
 Reviewed execution declarations can now specify a pinned graph SHA256, an approval reference/kind,
@@ -132,8 +139,8 @@ they can participate in a media plan.
 
 `npd_comfyui_bridge.http_transport.ComfyHTTPTransport` is an inert low-level
 client for an operator-selected origin and source-pinned targeted-cancel API
-profile. Current service backend selection remains disabled/mock; configuring
-this client alone does not authorize GPU generation. The server source pin is
+profile. Service backend selection now supports disabled/mock/reviewed HTTP;
+configuring this client alone does not authorize GPU generation. The server source pin is
 an operator contract declaration and still needs real-installation verification.
 
 The client uses `/prompt`, `/api/jobs/{id}`, `/history/{id}`,

@@ -11,15 +11,13 @@ from .job_store import linked
 from .execution_models import VerifiedReferenceToken
 
 
-def compile_reviewed_graph(*, registry, definition, inputs,
-                           workspace_id, verified_references=None, allow_fixture=False):
+def validate_reviewed_graph(*, registry, definition, allow_fixture=False):
     approved = registry.get(definition.workflow_id, definition.version)
     if approved.model_dump(mode='json', exclude_none=True) != definition.model_dump(mode='json', exclude_none=True):
         raise ValueError('GRAPH_DEFINITION_NOT_IN_MANIFEST')
     execution = definition.execution
     if execution is None:
         raise ValueError('APPROVED_GRAPH_EXECUTION_NOT_CONFIGURED')
-    registry.validate_inputs(definition, inputs)
     if execution.approval_kind == 'explicit_fixture' and not allow_fixture:
         raise ValueError('FIXTURE_GRAPH_EXECUTION_FORBIDDEN')
     path = registry.manifest_path.parent / definition.graph_file
@@ -42,6 +40,17 @@ def compile_reviewed_graph(*, registry, definition, inputs,
             raise ValueError('APPROVED_GRAPH_NODE_INVALID')
     if any(node not in graph for node in execution.output_nodes):
         raise ValueError('APPROVED_GRAPH_OUTPUT_MISSING')
+    for binding in execution.bindings:
+        if binding.node_id not in graph or binding.input_name not in graph[binding.node_id]['inputs']:
+            raise ValueError('APPROVED_GRAPH_BINDING_MISSING')
+    return graph
+
+
+def compile_reviewed_graph(*, registry, definition, inputs,
+                           workspace_id, verified_references=None, allow_fixture=False):
+    graph = validate_reviewed_graph(registry=registry, definition=definition, allow_fixture=allow_fixture)
+    registry.validate_inputs(definition, inputs)
+    execution = definition.execution
     result = copy.deepcopy(graph)
     for binding in execution.bindings:
         if binding.node_id not in result or binding.input_name not in result[binding.node_id]['inputs']:

@@ -9,7 +9,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
 from fastapi.responses import Response
 import hashlib
 
-from .backend import DeterministicMockComfyUIBackend, DisabledComfyUIBackend
+from .runtime import select_backend
 from .models import BridgeJobCreate, BridgeJobRead
 from .service import ComfyUIBridgeService
 from .job_store import SQLiteBridgeJobStore
@@ -26,19 +26,22 @@ app_env = os.getenv("APP_ENV", "development").casefold()
 if app_env == "production" and backend_name == "mock":
     raise RuntimeError("mock ComfyUI backend is prohibited in production")
 registry = WorkflowRegistry(manifest_path)
-backend = (
-    DeterministicMockComfyUIBackend()
-    if execution_enabled and backend_name == "mock"
-    else DisabledComfyUIBackend()
-)
 service_token = os.getenv('COMFYUI_BRIDGE_TOKEN', '')
 if service_token and (len(service_token) < 32 or len(service_token) > 8192 or any(c.isspace() for c in service_token)):
     raise RuntimeError('COMFYUI_BRIDGE_TOKEN_INVALID')
-service = ComfyUIBridgeService(registry, backend,
-    job_store=SQLiteBridgeJobStore(Path(os.getenv('COMFYUI_JOB_STORE_PATH', '/workspace/storage/comfyui-bridge/jobs.sqlite3'))),
-    max_concurrent_jobs=int(os.getenv('COMFYUI_MAX_CONCURRENT_JOBS', '1')),
-    max_queued_jobs=int(os.getenv('COMFYUI_MAX_QUEUED_JOBS', '32')),
-    max_retries=int(os.getenv('COMFYUI_MAX_RETRIES', '3')))
+job_store = SQLiteBridgeJobStore(Path(os.getenv('COMFYUI_JOB_STORE_PATH', '/workspace/storage/comfyui-bridge/jobs.sqlite3')))
+try:
+    artifacts = BinaryArtifactStore(
+        Path(os.getenv('COMFYUI_ARTIFACT_ROOT', '/workspace/storage/comfyui-bridge/artifacts')),
+        validator=FFmpegMediaValidator(ffmpeg=os.getenv('COMFYUI_FFMPEG_PATH'), ffprobe=os.getenv('COMFYUI_FFPROBE_PATH')))
+    backend = select_backend(environment=os.environ, registry=registry, job_store=job_store, artifacts=artifacts)
+    service = ComfyUIBridgeService(registry, backend, job_store=job_store,
+        max_concurrent_jobs=int(os.getenv('COMFYUI_MAX_CONCURRENT_JOBS', '1')),
+        max_queued_jobs=int(os.getenv('COMFYUI_MAX_QUEUED_JOBS', '32')),
+        max_retries=int(os.getenv('COMFYUI_MAX_RETRIES', '3')))
+except Exception:
+    job_store.close()
+    raise
 
 
 @asynccontextmanager
@@ -51,9 +54,7 @@ async def lifespan(_app):
 
 app = FastAPI(title="NPD ComfyUI Bridge", version="0.2.0", lifespan=lifespan)
 app.state.bridge_service = service
-app.state.binary_artifact_store = BinaryArtifactStore(
-    Path(os.getenv('COMFYUI_ARTIFACT_ROOT', '/workspace/storage/comfyui-bridge/artifacts')),
-    validator=FFmpegMediaValidator(ffmpeg=os.getenv('COMFYUI_FFMPEG_PATH'), ffprobe=os.getenv('COMFYUI_FFPROBE_PATH')))
+app.state.binary_artifact_store = artifacts
 
 
 async def require_service(authorization: str | None = Header(default=None),

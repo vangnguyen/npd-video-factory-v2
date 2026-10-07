@@ -1,0 +1,143 @@
+{
+  "schema": "comfyui-http-backend-evidence-v1",
+  "parent_head": "8d029250e04bda9b17ecd94f0a5cd601a2183f5f",
+  "source_sha256": {
+    "services/comfyui-bridge/npd_comfyui_bridge/execution_context.py": "71e2af85d2673080f3ddccedd88862a4150cc2c888e7aa029e4f257d4eaa85f1",
+    "services/comfyui-bridge/npd_comfyui_bridge/dispatch_models.py": "3baf70b0c91171410b95ee796e34cf1641c649ecb9ac39ea496f44548df0c10e",
+    "services/comfyui-bridge/npd_comfyui_bridge/http_backend.py": "39982d5898246eb4e4620b1ffebd045ad50e19b57eda54f23efefba0fd3d224f",
+    "services/comfyui-bridge/npd_comfyui_bridge/runtime.py": "a70b63ad27c2abb9f417387487528a02b93141fc62d69ce94720cd6eafd87a0c",
+    "services/comfyui-bridge/npd_comfyui_bridge/backend.py": "1d0bbc9f000bdfa366eb55d5c7a3b0896cac52378b7549ecf0345bd924e5ed42",
+    "services/comfyui-bridge/npd_comfyui_bridge/models.py": "26da480bdcfc052a87d059d90a6147cc18fcee2ce0f5788a3e1e2b7ab400baef",
+    "services/comfyui-bridge/npd_comfyui_bridge/job_store.py": "e0bf064f5821169652fc22deac3a4fcecfc7ad9a93ac51473e7ad1d7aae3ff9e",
+    "services/comfyui-bridge/npd_comfyui_bridge/service.py": "c64e47f225d51be9e6e3f3946e3c1a26ab3dde9ddec4ec9364a9a9735b32dd1a",
+    "services/comfyui-bridge/npd_comfyui_bridge/main.py": "9561bb8c7a2f53183ff20995b5d31cf2fc0c08cc5d64de88544184fc328ee109",
+    "services/comfyui-bridge/npd_comfyui_bridge/graph_compiler.py": "3e6131d8062b3dfa42b7f33b781bb0d9406d2681cd4a2ea901a498040d4787e2",
+    "services/comfyui-bridge/npd_comfyui_bridge/binary_artifacts.py": "2b68b3013cb7c7b8be8f3f7d0e0844a7f51b4e44ffaff104ee291238e07ac0e6",
+    "services/comfyui-bridge/tests/test_http_backend.py": "9031706d42fa93b19a0b387fcef81466fee86c5a805d7ac049c8c813814b0b41",
+    "scripts/north_star_comfyui_http_backend.py": "0e4bc8cb8e7bccc38ac28d37753d776e79886efb0bf07a40adea286ceab8b962",
+    "docs/COMFYUI_HTTP_BACKEND.md": "f1b5cb4748d1d44a579e5b8effdf1568b2ab1299a750591566f047007445bba4"
+  },
+  "logs": {
+    "comfy-http-backend-r1.log": "bbd0ed54617c6ce769c9955cd5852dd0e6075b5044779368df83f12bd99d987f",
+    "comfy-http-backend-r2.log": "d81598051afaaba2c52890fe61e4afebdffb593be0310200c1dd543b0693197a",
+    "comfy-http-backend-r3.log": "70469ddb41d3ee1684d92f9c62304293fa216ea147fc47d118714f233adb09de",
+    "comfy-http-backend-r4.log": "9137e9c3d4a71e18c9aa1109ebf612b1fafdad72310b261b27797e889ba09186",
+    "comfy-http-backend-r5.log": "72a9bf23e860620b46a7c83e6dba74d3c2092851ab9af92662bd99f85cae1c00",
+    "comfy-http-backend-r6.log": "5993d3738be96fa31774fc41ee7742d5d61772a8944459e5ca463f67ba7de7c5",
+    "native-comfy-http-backend-r1.log": "821c179faf7a3dd79ba38b94c0911a7cf041efb9d1d395f29dd3d87f7d50b25d",
+    "comfy-http-contract-n1.log": "ae99696f73f1c12b09c7de08d326b29f46b97e5f9dd3c8bdb050994e69339e55",
+    "comfy-http-contract-reopen-n1.log": "bb07c2061e1a23c9d802cdf200a615c69f145ac4417440a16a2631056f4bd1b2",
+    "comfy-http-contract-n2.log": "ae99696f73f1c12b09c7de08d326b29f46b97e5f9dd3c8bdb050994e69339e55",
+    "comfy-http-contract-reopen-n2.log": "bb07c2061e1a23c9d802cdf200a615c69f145ac4417440a16a2631056f4bd1b2"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\comfy-http-backend-n2",
+  "contract_exports": {
+    "17-media.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "17-provider-provenance.json": {
+      "sha256": "9abfc3d6ff136c234626ca81d7761398c33edf48560a1bc2da2420be733270ac",
+      "bytes": 2299
+    },
+    "19-media.mp4": {
+      "sha256": "f702406fcb19a92b07d7663d3272f574627067e4d730626826e382e9fd23a787",
+      "bytes": 7002
+    },
+    "19-provider-provenance.json": {
+      "sha256": "cdc12ccd7e455a820ffb8ef698a909df7a9e82f912bebf9e52ff7b30350d395c",
+      "bytes": 2318
+    },
+    "23-media.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "23-provider-provenance.json": {
+      "sha256": "d2653350393a0a9ddd973cbaf823d11c32a10f472bc1029cbae9da2feb6e6af5",
+      "bytes": 2299
+    },
+    "gpu-fixture-wires.json": {
+      "sha256": "080f3c9e9e22f3bffcfd3c5093431c07be6e29e2a01985f3b7a7416b615ec64d",
+      "bytes": 855
+    },
+    "lifecycle.json": {
+      "sha256": "5f74f3126c891897a06277cbd13424ec8e4c1d86b838295050bb9a2f3962e152",
+      "bytes": 2652
+    },
+    "new-process-replay.json": {
+      "sha256": "c6eb0ecaf39684c1c4841237b78188cb891f9c5c57e169b5ac04db67473611ef",
+      "bytes": 22996
+    },
+    "offline-snapshot.json": {
+      "sha256": "f810e5e73452af67fc504743edb12f7e63ed74492a69e8a7ec7d58babb3521d8",
+      "bytes": 22938
+    },
+    "receipt.json": {
+      "sha256": "641258198a18275612f29c22f9d8b3f7e7ff3d245176188737efacf992bdf10b",
+      "bytes": 2740
+    },
+    "uncertain-before-retry.json": {
+      "sha256": "e35ed9961322287fd4b06e8bd6c12ba6aebd136718f672a04bec77113f259ecf",
+      "bytes": 684
+    }
+  },
+  "affected_passed": 138,
+  "affected_seconds": 42.65,
+  "new_backend_cases": 26,
+  "native_compatibility_passed": 26,
+  "native_compatibility_seconds": 6.395,
+  "counts_overlap": true,
+  "runtime_http_selection_default_disabled": true,
+  "checked_in_graphs": "NOT_CONFIGURED",
+  "reviewed_graph_scope_definition_node_output_binding_checks": true,
+  "durable_write_reservation_before_post": true,
+  "uncertain_dispatch_reconciles_without_resubmission": true,
+  "startup_external_replay": false,
+  "targeted_cancel_pending_until_remote_terminal": true,
+  "global_gpu_interrupt": false,
+  "success_race_preserved": true,
+  "actual_local_decoded_artifacts": 3,
+  "mock_gpu_prompt_writes": 3,
+  "manual_job_result_injection": false,
+  "new_process_offline_exact_replay": true,
+  "windows_extended_path_registration_fixed": true,
+  "rights_status": "unknown",
+  "production_eligible": false,
+  "estimated_cost_vnd": null,
+  "actual_cost_vnd": null,
+  "physical_reference_staging_implemented": false,
+  "native_server_queue_ui_wired": false,
+  "real_provider_tests": 0,
+  "real_gpu_dispatches": 0,
+  "real_credentials_read": 0,
+  "paid_operations": 0,
+  "actual_hub_calls": 0,
+  "actual_publications": 0,
+  "browser_real_tested": false,
+  "owner_uat": false,
+  "production_deployed": false,
+  "docker_executed": false,
+  "failed_logs_retained": {
+    "r2": "timeout fixture and actual Windows long-path registration failure",
+    "r3": "same issues before monotonic deadline and extended paths"
+  },
+  "latest_full_native": {
+    "head": "c7e89fe",
+    "passed": 533,
+    "seconds": 331.869,
+    "rerun": false
+  },
+  "latest_full_api": {
+    "head": "e59a7d5",
+    "passed": 2659,
+    "skipped": 11,
+    "seconds": 1512.89,
+    "rerun": false
+  },
+  "unchanged_studio": {
+    "head": "c7e89fe",
+    "passed": 206,
+    "duration_ms": 1000.2963,
+    "rerun": false
+  }
+}

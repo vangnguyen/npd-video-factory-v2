@@ -63,6 +63,16 @@ def checked(path, root):
     return path
 
 
+def native_path(path):
+    """Use Windows extended paths for server-owned hashed storage directories."""
+    path = Path(path).resolve()
+    value = str(path)
+    if os.name == 'nt' and not value.startswith('\\\\?\\'):
+        value = '\\\\?\\UNC\\' + value[2:] if value.startswith('\\\\') else '\\\\?\\' + value
+        return Path(value)
+    return path
+
+
 class FFmpegMediaValidator:
     def __init__(self, *, ffmpeg=None, ffprobe=None, timeout_seconds=30):
         if not 1 <= timeout_seconds <= 120:
@@ -165,7 +175,7 @@ class BinaryArtifactStore:
         self.root = Path(root)
         if linked(self.root):
             raise ArtifactError('ARTIFACT_PATH_INVALID')
-        self.root = self.root.resolve()
+        self.root = native_path(self.root)
         if not isinstance(validator, FFmpegMediaValidator):
             raise ArtifactError('ARTIFACT_VALIDATOR_INVALID')
         self.validator = validator

@@ -5,6 +5,7 @@ import hashlib
 from typing import Awaitable, Callable, Protocol
 
 from .models import WorkflowDefinition
+from .execution_context import ExecutionContext
 
 
 ProgressCallback = Callable[[int], Awaitable[None]]
@@ -20,6 +21,7 @@ class ComfyUIBackend(Protocol):
         inputs: dict,
         progress: ProgressCallback,
         cancelled: asyncio.Event,
+        context: ExecutionContext,
     ) -> dict: ...
 
 
@@ -44,6 +46,7 @@ class DeterministicMockComfyUIBackend:
         inputs: dict,
         progress: ProgressCallback,
         cancelled: asyncio.Event,
+        context: ExecutionContext,
     ) -> dict:
         for value in (15, 45, 80):
             if cancelled.is_set():

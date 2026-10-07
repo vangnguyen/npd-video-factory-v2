@@ -5,6 +5,7 @@ import uuid
 from datetime import datetime, timezone
 
 from .backend import ComfyUIBackend
+from .execution_context import BackendExecutionError, ExecutionContext
 from .models import BridgeJobCreate, BridgeJobRead
 from .job_store import SQLiteBridgeJobStore, checksum, encoded
 from .workflows import WorkflowRegistry
@@ -71,6 +72,9 @@ class ComfyUIBridgeService:
                 return existing.model_copy(deep=True)
             if not self.backend.configured:
                 raise RuntimeError("ComfyUI GPU backend is not configured")
+            admission = getattr(self.backend, 'admit', None)
+            if admission:
+                admission(workflow=definition, inputs=payload.inputs, workspace_id=payload.workspace_id)
             self._check_capacity()
             if len(self._jobs) >= 5000:
                 raise RuntimeError('BRIDGE_STORE_LIMIT_REACHED')
@@ -125,6 +129,11 @@ class ComfyUIBridgeService:
                 raise KeyError(job_id)
             if job.status in {"succeeded", "failed", "cancelled", "timed_out"}:
                 return job.model_copy(deep=True)
+            if getattr(self.backend, 'cooperative_cancellation', False):
+                updated = job.model_copy(update={'cancellation_requested': True, 'updated_at': utc_now()})
+                self._set_job(updated)
+                self._cancel_events[job_id].set()
+                return updated.model_copy(deep=True)
             updated = job.model_copy(
                 update={"status": "cancelled", "updated_at": utc_now(), "error_code": "CANCELLED"}
             )
@@ -176,6 +185,7 @@ class ComfyUIBridgeService:
                     "updated_at": utc_now(),
                     "result_metadata_sha256": None,
                     "recovery_required": False,
+                    "cancellation_requested": False,
                 }
             )
             self._set_job(updated)
@@ -215,6 +225,7 @@ class ComfyUIBridgeService:
                     inputs=request.inputs,
                     progress=update_progress,
                     cancelled=self._cancel_events[job_id],
+                    context=ExecutionContext(job.workspace_id, job.job_id, job.retry_count),
                 ),
                 timeout=definition.timeout_seconds,
             )
@@ -235,7 +246,11 @@ class ComfyUIBridgeService:
                         }
                     ))
         except asyncio.TimeoutError:
-            await self._fail(job_id, "TIMEOUT", "ComfyUI workflow timed out", status="timed_out")
+            await self._fail(job_id, "TIMEOUT", "ComfyUI workflow timed out", status="timed_out",
+                recovery_required=bool(getattr(self.backend, 'cooperative_cancellation', False)))
+        except BackendExecutionError as exc:
+            await self._fail(job_id, exc.code, 'Remote execution requires review.' if exc.recovery_required else 'Remote job reached a terminal failure state.',
+                status=exc.status, recovery_required=exc.recovery_required)
         except asyncio.CancelledError:
             async with self._lock:
                 current = self._jobs.get(job_id)
@@ -245,12 +260,13 @@ class ComfyUIBridgeService:
                         'error_code': 'RECOVERY_REQUIRED' if self._closing else 'CANCELLED',
                         'recovery_required': self._closing, 'updated_at': utc_now()}))
         except Exception:
-            await self._fail(job_id, "EXECUTION_FAILED", 'Workflow execution or result validation failed.')
+            await self._fail(job_id, "EXECUTION_FAILED", 'Workflow execution or result validation failed.',
+                recovery_required=bool(getattr(self.backend, 'cooperative_cancellation', False)))
         finally:
             if acquired:
                 self._semaphore.release()
 
-    async def _fail(self, job_id: str, code: str, reason: str, *, status: str = "failed") -> None:
+    async def _fail(self, job_id: str, code: str, reason: str, *, status: str = "failed", recovery_required=False) -> None:
         async with self._lock:
             current = self._jobs[job_id]
             if current.status == 'cancelled':
@@ -260,6 +276,7 @@ class ComfyUIBridgeService:
                     "status": status,
                     "error_code": code,
                     "failure_reason": reason[:1000],
+                    "recovery_required": recovery_required,
                     "updated_at": utc_now(),
                 }
             ))
@@ -281,3 +298,6 @@ class ComfyUIBridgeService:
                         'recovery_required': True, 'updated_at': utc_now()}))
             if self.job_store:
                 self.job_store.close()
+        close_backend = getattr(self.backend, 'close', None)
+        if close_backend:
+            await close_backend()

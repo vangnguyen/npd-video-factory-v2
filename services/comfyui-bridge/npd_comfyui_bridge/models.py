@@ -61,3 +61,4 @@ class BridgeJobRead(StrictModel):
     definition_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     result_metadata_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     recovery_required: bool = False
+    cancellation_requested: bool = False
