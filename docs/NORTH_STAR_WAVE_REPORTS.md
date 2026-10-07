@@ -1225,3 +1225,23 @@ EVIDENCE: `docs/north-star/publishing-console-evidence.json`, `docs/STUDIO_PUBLI
 REGRESSIONS: current focused selections pass; full suite pending. Accepted/live media/source/data/processes, main, existing schemas and publishing defaults remain untouched. No actual publish/delete, paid operation, live migration or deployment.
 
 EXTERNAL BLOCKERS: eventual actual account/credential/provider acceptance and Owner UAT; no safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: official Meta protocol/adapters, durable non-YouTube paths, Native integration and remaining media/analytics/learning/Trend/Hub/hardening capabilities.
+
+### Wave 9 — official Meta container/upload/status protocol
+
+WAVE: 9. STATUS: IN PROGRESS; Meta mock protocol and exact physical synthetic-byte transfer pass. PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `e6754e232a31dc771762d9bf86e38f72da9fe5c4`, pushed/preserved in verified `north-star-publishing-console.bundle`, SHA256 `bd13b3ba7b8cc67fbb08416fe60a43b1e728ec37fff55425dd698b47b408a1d2`; 157 ahead/0 behind. Fresh preservation verifies fifteen accepted hashes and clean live source 2ced7bc; main unchanged. Meta protocol is this increment.
+
+CAPABILITIES COMPLETED: inert Facebook-Login explicit Graph version/account/object helpers; Instagram create REELS container, exact status observation, target-bound FINISHED admission and separate publish request; Facebook start, exact official rupload binding, bounded bytes/authorized hosted URL, explicit DRAFT/PUBLISHED finish and separate nullable phase/progress observation. Strict official Meta hosts added without default network activation. Raw errors/secret URLs never become public evidence; no vendor idempotency is invented.
+
+CAPABILITIES PARTIAL: durable Meta credential/account/permission/consent/cost/intent/session/lease/reconciliation/supervisor paths, full metadata/login variants, actual hosted retrieval, provider-specific UI and current real provider acceptance. Local binary body cap 16 MiB and caption cap 2,200 are internal supported profiles; no claim about current vendor maxima. Draft/upload/finish success is not an accepted public receipt.
+
+TESTS: **153 PASS**, 0.73s including 37 new Meta cases and existing TikTok/YouTube/HTTP checks. Initial new-module exception syntax collection error corrected before passing run. Full runtime parent dad237a Linux remains running; current pinned full regression pending.
+
+REAL PROVIDER TESTS: none. MOCK TESTS: seven official MockTransport requests; exact preserved 4,256,257-byte synthetic portrait bytes received by Facebook fixture, draft finish and nullable phases; separate Instagram FINISHED container/fixture media ID. Actual hosted download/account/permissions/version not verified, no full QC in this protocol-only contract. Actual costs null; no cost records, real/paid requests or secret reads. Published=false; no production activation.
+
+EVIDENCE: `docs/north-star/meta-protocol-evidence.json`, `docs/META_OFFICIAL_PUBLISHING_PROTOCOL.md`, three logs and four preserved hashed JSON exports. Official Meta collections used after reference pages returned rate limits. This is mock protocol evidence, not Owner UAT/final A/B/C/provider/production acceptance.
+
+REGRESSIONS: selected protocols pass; current full suite pending. Accepted/live source/media/data/processes, main, schemas and publishing defaults remain unchanged. No real publish/delete, paid operation, live migration or deployment.
+
+EXTERNAL BLOCKERS: eventual current authorized provider/version/account/permissions/credential/storage acceptance; no safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: durable scoped Meta/TikTok adapters and account admission, remaining Native/provider controls, analytics/learning/Trend/Hub/hardening capabilities.

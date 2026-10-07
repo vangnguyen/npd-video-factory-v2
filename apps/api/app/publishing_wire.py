@@ -16,7 +16,9 @@ MAX_BODY = 16 * 1024 * 1024
 MAX_RESPONSE = 1024 * 1024
 TIKTOK_UPLOAD_HOSTS = frozenset({'open-upload.tiktokapis.com', 'upload.us.tiktokapis.com'})
 HOSTS = {'youtube': frozenset({'www.googleapis.com'}),
-    'tiktok': frozenset({'open.tiktokapis.com', *TIKTOK_UPLOAD_HOSTS})}
+    'tiktok': frozenset({'open.tiktokapis.com', *TIKTOK_UPLOAD_HOSTS}),
+    'instagram_reels': frozenset({'graph.facebook.com'}),
+    'facebook': frozenset({'graph.facebook.com', 'rupload.facebook.com'})}
 _sensitive = ContextVar('vf_publishing_wire_sensitive', default=False)
 
 
@@ -78,7 +80,8 @@ class OfficialRequest:
             raise PublishingWireError('PUBLISHING_REQUEST_INVALID')
         if not isinstance(self.headers, dict) or len(self.headers) > 12:
             raise PublishingWireError('PUBLISHING_REQUEST_INVALID')
-        allowed = {'authorization', 'content-type', 'content-length', 'content-range', 'x-upload-content-length', 'x-upload-content-type'}
+        allowed = {'authorization', 'content-type', 'content-length', 'content-range',
+            'x-upload-content-length', 'x-upload-content-type', 'offset', 'file_size', 'file_url'}
         for key, value in self.headers.items():
             if not isinstance(key, str) or key.lower() not in allowed or not isinstance(value, str) or len(value) > 8192 or not value.isascii() or any(ord(c) < 32 or ord(c) == 127 for c in value):
                 raise PublishingWireError('PUBLISHING_REQUEST_INVALID')

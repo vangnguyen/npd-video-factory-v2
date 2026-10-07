@@ -1,0 +1,71 @@
+{
+  "schema": "meta-official-protocol-evidence-v1",
+  "parent_head": "e6754e232a31dc771762d9bf86e38f72da9fe5c4",
+  "source_sha256": {
+    "apps/api/app/publishing_wire.py": "de8d90077e1dde349ae2fa1323460d19d5361c69850d49703ac6515365693e2d",
+    "apps/api/app/meta_publishing_protocol.py": "ade70693f9195de161e24774bed7f389ff3bfe90a46b14d2e8f5827a63898e57",
+    "apps/api/tests/test_meta_publishing_protocol.py": "0e622345f1e1887a7f8aad292324dd91edf241f65e9f36fddf855b0f38126a27",
+    "scripts/north_star_meta_protocol_contract.py": "c732f55902f42a6b95a43e787190365bee22dd07ee0887b280afc432ce66a206",
+    "docs/META_OFFICIAL_PUBLISHING_PROTOCOL.md": "28066a6efbe8e333148a5fae59d7030ff21f980602cc5da5300272ea3a0b1c52"
+  },
+  "logs": {
+    "publishing-meta-protocol-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-meta-protocol-r1.log",
+      "sha256": "9dad80bbe8ed4e56c4c46283291c899da21b8b6ba901b04016fd4c8b9c5e40c9"
+    },
+    "publishing-meta-protocol-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-meta-protocol-r2.log",
+      "sha256": "ec43fa088514fd93598f406d58b42a5064e288bb967c4600c2db1a4282d10458"
+    },
+    "publishing-meta-protocol-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-meta-protocol-contract-n1.log",
+      "sha256": "977586c672506272c25b1c57ccf4c714b55ced10de7f60c068da22cf50b4ca26"
+    }
+  },
+  "exports": {
+    "contract.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-meta-protocol-contract-n1\\contract.json",
+      "sha256": "d4a9d79a0e9209686808b296116fe8aef345aefe8020e5ae46b05d6ff65410e8"
+    },
+    "observations.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-meta-protocol-contract-n1\\observations.json",
+      "sha256": "e8f2ea34cf5163f182e73808985e7e062963caa9000bacd3d09a9da6779b3a68"
+    },
+    "request-audit.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-meta-protocol-contract-n1\\request-audit.json",
+      "sha256": "a8371fd17f0abad25f22489aebe9bbcc9e0259a7e29dc97674130eccc73fbdc0"
+    },
+    "source.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-meta-protocol-contract-n1\\source.json",
+      "sha256": "95472f79d581097c6a13c1eb96a780e8c4e6f5c4e2eaca61aa492a226ebf2c3a"
+    }
+  },
+  "preservation_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-console-preservation.json",
+    "sha256": "210dd4cd9a769d30c5bc3513cfe443549156565d205a7cee8cdc0343af7b9155"
+  },
+  "selected_tests_passed": 153,
+  "new_meta_tests": 37,
+  "initial_collection_error": "New module exception-chaining syntax corrected before passing rerun",
+  "actual_source_bytes": 4256257,
+  "source_unchanged": true,
+  "facebook_binary_received_hash_matches": true,
+  "mock_requests": 7,
+  "instagram_hosted_download_actual_tested": false,
+  "account_or_permissions_verified": false,
+  "version_actual_verified": false,
+  "actual_full_qc_in_this_contract": false,
+  "actual_cost": null,
+  "cost_records_created": 0,
+  "actual_provider_requests": 0,
+  "paid_operations": 0,
+  "real_credentials_read": 0,
+  "published": false,
+  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_runtime_parent_status": "RUNNING_DAD237A",
+  "durable_meta_adapter_accepted": false,
+  "default_factory_activated": false,
+  "owner_uat_accepted": false,
+  "publishing_ready": false,
+  "production_deployed": false
+}
