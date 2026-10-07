@@ -137,6 +137,7 @@ def render_final_effects(config,project,output,event):
         'captions_included':bool(subtitles.cues),'smart_reframe_keyframes_included':keyframes,
         'canonical_audio_routing':True,'canonical_source_audio':bool(audio.clips),'audio_included':bool(audio.clips),
         'music_ducking':audio.processing['music_ducking'],'audio_processing':audio.processing,
+        'audio_intermediate_cache':json.loads((directory/'audio-analysis.json').read_bytes())['intermediate_cache'],
         'audio_speech_normalization':bool(audio.processing['normalization_original_audio_clip_ids']),
         'tts_calls':0,'external_provider_calls':0,'final_qc_verified':False,
         'final_render_parity':False,'final_approval_eligible':False,'human_final_video_accepted':False}

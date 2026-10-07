@@ -23,6 +23,13 @@ def config(root):
 def read(root,master):
     store=Store(root);variants=SourceVariants(store,workspace_id=WORKSPACE);page=variants.page(master,limit=100)
     return {'master':store.get(master),'families':page,'children':[store.get(item['project_id']) for batch in page['items'] for item in batch['result']['variants']]}
+def verify_cache(root,project_id):
+    from services.windows_native.source_render import prepare_project
+    store=Store(root);project=store.get(project_id);before=project['document'];directory=root/('explicit-cache-restart-'+uuid.uuid4().hex);directory.mkdir()
+    prepare_project(config(root),project,directory,'explicit-cache-restart')
+    value=json.loads((directory/'audio-analysis.json').read_bytes())['intermediate_cache']
+    assert store.get(project_id)['document']==before
+    return value
 def run(args):
     root=args.data_root.resolve();destination=args.restore_root.resolve();out=args.output.resolve()
     for path in [root,destination]:
@@ -81,22 +88,34 @@ def run(args):
             for name in ['final.mp4','timeline.json','timeline-render.json','subtitles.json','audio-analysis.json','render-manifest.json','cost.json','qc-report.json','ffprobe.json','checkpoint-render.json']:
                 shutil.copyfile(final_folder/name,folder/name)
             shutil.copyfile(server.previews.video_path(child['id'],preview['timeline_version']),folder/'preview.mp4')
+            final_audio=json.loads((final_folder/'audio-analysis.json').read_bytes())['intermediate_cache']
+            preview_audio=preview['manifest']['audio_intermediate_cache']
             rendered.append({'profile':profile,'project_id':child['id'],'job_id':job['id'],'final_sha256':file_sha(folder/'final.mp4'),'preview_sha256':file_sha(folder/'preview.mp4'),
                 'timeline_sha256':child['document']['canonical_timeline']['sha256'],'canonical_pcm_sha256':file_sha(Path(manifest['audio']['mix_uri'])),
+                'preview_audio_cache':preview_audio,'final_audio_cache':final_audio,
                 'local_real_full_qc':True,'fixture_approval':True,'owner_uat':False,'external_provider_calls':0,'paid_operations':0})
             print(json.dumps({'rendered_profile':profile['profile_ref'],'qc':'PASS'}),flush=True)
         assert store.get(project['id'])==before and store.versions(project['id'])==versions
         assert all(file_sha(root/name)==sha for name,sha in source_files.items())
         assert len({item['canonical_pcm_sha256'] for item in rendered})==1
+        assert [item['preview_audio_cache']['status'] for item in rendered]==['built']+['hit']*5
+        assert all(item['final_audio_cache']['status']=='hit' for item in rendered)
+        assert len({item['final_audio_cache']['key'] for item in rendered})==1
         history=request('GET',base+'?limit=1');assert history['items'][0]['batch_id']==batch['batch_id']
     finally:server.shutdown();server.server_close();thread.join(timeout=5)
     expected=read(root,project['id']);restarted=json.loads(subprocess.check_output([sys.executable,str(Path(__file__).resolve()),'--read-root',str(root),'--project',project['id']],timeout=60));assert restarted==expected
+    restarted_cache=json.loads(subprocess.check_output([sys.executable,str(Path(__file__).resolve()),'--verify-cache-root',str(root),'--project',rendered[0]['project_id']],timeout=60))
+    assert restarted_cache['status']=='hit' and restarted_cache['pcm']['sha256']==rendered[0]['canonical_pcm_sha256']
     backup=create_backup(settings,out/'native-variant-backup.zip');restore=restore_backup(out/'native-variant-backup.zip',destination,expected_sha256=backup['sha256'])
     restored=json.loads(subprocess.check_output([sys.executable,str(Path(__file__).resolve()),'--read-root',str(destination),'--project',project['id']],timeout=60));assert restored==expected
     for item in rendered:assert file_sha(destination/'jobs'/item['job_id']/'final.mp4')==item['final_sha256']
+    restored_cache=json.loads(subprocess.check_output([sys.executable,str(Path(__file__).resolve()),'--verify-cache-root',str(destination),'--project',rendered[0]['project_id']],timeout=60))
+    assert restored_cache['status']=='built' and restored_cache['pcm']['sha256']==restarted_cache['pcm']['sha256'] and restored_cache['key']!=restarted_cache['key']
+    assert read(destination,project['id'])==expected
     summary={'status':'PASS','master_project_id':project['id'],'source_root':str(root),'restore_root':str(destination),'formats':6,'local_real_full_qc_renders':6,
         'authenticated_native_requests':len(requests),'master_and_source_unchanged':True,'initial_analysis_and_frame_evidence_reused':True,'fresh_process_restore_exact':True,
-        'fresh_root_backup_restore_exact':True,'same_canonical_pcm_across_formats':True,'audio_or_render_intermediate_cache_reused':False,
+        'fresh_root_backup_restore_exact':True,'same_canonical_pcm_across_formats':True,'audio_or_render_intermediate_cache_reused':True,
+        'pcm_cache_builds':1,'pcm_cache_hits':11,'new_process_cache_hit':restarted_cache,'restored_root_recomputed_separate_scope':restored_cache,
         'niche_configuration':'examples/technology-explainer.request.json','niche':'technology','native_channel_profile_ui_tested':False,
         'saved_asr_fixture':True,'real_semantic_vision':False,'real_subject_tracking':False,'actual_provider_calls':0,'paid_operations':0,'real_credentials_read':0,
         'owner_uat_accepted':False,'browser_acceptance':False,'real_publication':False,'render_after_restore_tested':False,'production_deployed':False,'variants':rendered,'source_files':source_files}
@@ -106,6 +125,7 @@ def run(args):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--data-root',type=Path);parser.add_argument('--restore-root',type=Path);parser.add_argument('--output',type=Path)
-    parser.add_argument('--read-root',type=Path);parser.add_argument('--project');args=parser.parse_args()
-    if args.read_root:print(json.dumps(read(args.read_root,args.project),ensure_ascii=True))
+    parser.add_argument('--read-root',type=Path);parser.add_argument('--verify-cache-root',type=Path);parser.add_argument('--project');args=parser.parse_args()
+    if args.verify_cache_root:print(json.dumps(verify_cache(args.verify_cache_root,args.project),ensure_ascii=True))
+    elif args.read_root:print(json.dumps(read(args.read_root,args.project),ensure_ascii=True))
     else:run(args)

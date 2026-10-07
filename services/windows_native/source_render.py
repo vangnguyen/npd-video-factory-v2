@@ -91,8 +91,14 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
         filters=directory/'audio-filter.txt';filters.write_text(';'.join(audio.filters),encoding='utf-8')
         command += [*audio.inputs,'-/filter_complex',str(filters),'-map','[outa]']
     else:command += ['-f','lavfi','-i','anullsrc=r=48000:cl=stereo','-t',str(snapshot.duration_seconds)]
-    command += ['-c:a','pcm_s16le','-ar','48000','-ac','2',str(mixed)]
-    command_run(command,directory,'audio-mix.log',300,'AUTO_EDIT_AUDIO_MIX_FAILED',cancel_event)
+    from .source_audio_cache import scope,fingerprint,materialize
+    cache_request=fingerprint(scope(config.data_root,project),audio,staged,snapshot.duration_seconds,config.ffmpeg_bin/'ffmpeg.exe')
+    def build_mix(destination):
+        command_run([*command,'-c:a','pcm_s16le','-ar','48000','-ac','2',str(destination)],
+            directory,'audio-mix.log',300,'AUTO_EDIT_AUDIO_MIX_FAILED',cancel_event)
+    cache=materialize(config.data_root,cache_request,mixed,build_mix,cancel_event=cancel_event)
+    # A cache hit does not waive current source checks or bind another timeline.
+    resolve_assets(config,project)
     enabled_captions=any(track.kind=='subtitles' and not track.disabled and any(
         not clip.disabled and clip.label.strip() for clip in track.clips) for track in snapshot.tracks)
     cues=derive_subtitle_cues(snapshot) if enabled_captions else []
@@ -119,7 +125,7 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
         'normalization_applied':bool(audio.processing['normalization_clip_ids']),
         'music_ducking':audio.processing['music_ducking'],'processing':audio.processing,
         'limiter_peak_db':-1 if audio.clips else None,
-        'tts_calls':0,'actual_paid_cost':None})
+        'tts_calls':0,'actual_paid_cost':None,'intermediate_cache':cache})
     return snapshot,subtitles,assets,audio,profile
 
 
