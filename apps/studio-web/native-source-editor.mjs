@@ -36,6 +36,19 @@ export function sourcePreviewSettings(project,mode) {
   if(!['lightweight','final_effects'].includes(mode))throw new Error('Chọn kiểu preview hợp lệ.');
   return sourceRequest(project,'configure',{preview_mode:mode});
 }
+export function sourceReframeRequest(project,{aspect_ratio,mode,points=[]}) {
+  if(!['9:16','16:9','1:1','4:5'].includes(aspect_ratio)||!['center_crop','manual_override'].includes(mode))throw new Error('Chọn định dạng và cách crop hợp lệ.');
+  if(mode==='manual_override'&&(!points.length||points.some(p=>![p.time,p.x,p.y,p.zoom].every(Number.isFinite)||p.time<0||p.x<0||p.x>1||p.y<0||p.y>1||p.zoom<1||p.zoom>4)||new Set(points.map(p=>p.time)).size!==points.length))throw new Error('Kiểm tra mốc nguồn, tâm crop và mức zoom; mỗi mốc cần khác nhau.');
+  return sourceRequest(project,'reframe',{aspect_ratio,mode,points:mode==='manual_override'?points:[]});
+}
+const pointMarkup=(point,index,sourceDuration=600)=>`<fieldset class="scene-grid" data-source-crop-point><legend>Mốc ${index+1}</legend>${[['time','Giây trên nguồn',point.time,0,sourceDuration],['x','Tâm ngang (%)',point.x*100,0,100],['y','Tâm dọc (%)',point.y*100,0,100],['zoom','Zoom (%)',point.zoom*100,100,400]].map(([key,label,value,min,max])=>`<label>${label}<input data-crop-point="${key}" type="number" min="${min}" max="${max}" step="any" required value="${esc(value)}"></label>`).join('')}<button type="button" data-source-crop-remove>Xóa mốc</button></fieldset>`;
+export function sourceReframeMarkup(project) {
+  const snapshot=sourceState(project)?.snapshot;if(!snapshot)return '';
+  const saved=snapshot.metadata.source_reframe_plan,plan=saved?.plan;
+  const sourceDuration=saved?.source_duration_seconds??project.document.auto_edit_analyses?.find(r=>r.analysis.analysis_id===snapshot.metadata.source_analysis_id)?.analysis.source_media.duration_seconds??600;
+  const points=saved?.manual_points?.length?[...saved.manual_points].sort((a,b)=>a.time-b.time):[{time:0,x:.5,y:.5,zoom:1}];
+  return `<details><summary>Đường crop theo nguồn</summary><p class="hint">Tracking chưa được cấu hình; độ tin cậy theo dõi chưa có. Crop giữa cần kiểm tra chủ thể. Mốc thủ công dùng giây của video gốc, giữ nguyên âm thanh và phụ đề; preview đầy đủ mới thể hiện đường crop.</p>${plan?`<p>Đã lưu: ${plan.strategy==='manual_override'?'tọa độ thủ công':'crop giữa'} · ${esc(plan.aspect_ratio)} · ${plan.needs_attention?'cần kiểm tra':'vẫn cần xem và duyệt video'}</p>`:''}<form data-source-reframe-form data-source-duration-limit="${esc(sourceDuration)}"><label>Định dạng<select data-source-reframe-ratio>${['9:16','16:9','1:1','4:5'].map(r=>`<option ${r===snapshot.aspect_ratio?'selected':''}>${r}</option>`).join('')}</select></label><label>Cách crop<select data-source-reframe-mode><option value="center_crop" ${plan?.strategy!=='manual_override'?'selected':''}>Crop giữa · chưa có tracking</option><option value="manual_override" ${plan?.strategy==='manual_override'?'selected':''}>Đường crop thủ công</option></select></label><div data-source-crop-points ${plan?.strategy==='manual_override'?'':'hidden'}>${points.map((point,index)=>pointMarkup(point,index,sourceDuration)).join('')}<button type="button" data-source-crop-add>Thêm mốc</button></div><div class="actions"><button type="submit">Lưu đường crop</button><button type="button" data-source-reframe-discard>Bỏ chỉnh sửa crop</button></div></form></details>`;
+}
 export function sourceAdvancedMarkup(project,zoom=1,selectedId=null) {
   const state=sourceState(project);if(!state)return '';
   const width=Math.max(350,state.snapshot.duration_seconds*pixelsPerSecond(zoom));
@@ -63,13 +76,19 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
   toolbar.innerHTML='<button type="button" data-source-history="undo">Hoàn tác</button><button type="button" data-source-history="redo">Làm lại</button><label>Zoom<input data-source-zoom type="range" min="0.5" max="4" step="0.25" value="1"></label><label class="check"><input data-source-snap type="checkbox" checked> Bám mốc 0,25s</label><label>Playhead (s)<input data-source-playhead type="number" min="0" step="0.01" value="0"></label><output data-source-position>0.00s</output>';
   $('advanced-tracks').before(toolbar);
   if(!document.querySelector('link[data-source-editor-style]')){const link=document.createElement('link');link.rel='stylesheet';link.href='/native-source-editor.css';link.dataset.sourceEditorStyle='true';document.head.append(link);}
-  let working=false,dirty=false,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null;
+  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null;
   const state=()=>sourceState(getProject());
   const selected=()=>getClip(state(),selectedId);
   const locked=()=>selected()?.track.locked;
   const blocked=()=>working||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
   function controls(){
-    host.querySelectorAll('input,select,button').forEach(el=>el.disabled=blocked()||Boolean(locked()));
+    host.querySelectorAll('input,select,button').forEach(el=>el.disabled=blocked());
+    if(locked())host.querySelectorAll('[data-source-form] input,[data-source-form] button,[data-source-action],[data-source-placement],[data-source-speed],[data-source-volume],[data-source-crop]').forEach(el=>el.disabled=true);
+    const manual=host.querySelector('[data-source-reframe-mode]')?.value==='manual_override';
+    host.querySelectorAll('[data-source-crop-point]').forEach(el=>el.disabled=!manual||blocked()||dirtyForm==='trim');
+    if(dirtyForm)host.querySelectorAll('[data-source-form],[data-source-reframe-form]').forEach(form=>{
+      if((form.hasAttribute('data-source-reframe-form')?'reframe':'trim')!==dirtyForm)form.querySelectorAll('input,select,button').forEach(el=>el.disabled=true);
+    });
     const history=timelineHistory(versions,state()?.version??0);
     toolbar.querySelectorAll('[data-source-history]').forEach(el=>el.disabled=blocked()||dirty||!history[el.dataset.sourceHistory].length);
     $('advanced-tracks').querySelectorAll('[data-source-track]').forEach(el=>el.disabled=blocked()||dirty);
@@ -116,6 +135,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
       <details><summary>Khung hình & phụ đề</summary><label>Định dạng<select data-source-format>${['9:16','16:9','1:1','4:5'].map(r=>`<option ${r===state().snapshot.aspect_ratio?'selected':''}>${r}</option>`).join('')}</select></label><button type="button" data-source-config="format">Lưu định dạng</button>
       <label>Mẫu phụ đề<select data-source-caption>${(catalog?.templates??[]).map(t=>`<option value="${esc(t.template_ref)}" ${t.template_ref===state().snapshot.metadata.subtitle_style?.template_ref?'selected':''}>${esc(t.name??t.label??t.template_ref)}${t.requires_word_timestamps?' · cần thời gian từng từ':''}</option>`).join('')}</select></label><label>Từ khóa nổi bật (phân cách bằng dấu phẩy)<input data-source-keywords value="${esc((state().snapshot.metadata.subtitle_style?.keywords??[]).join(', '))}" maxlength="1000"></label><button type="button" data-source-config="caption" ${catalog?'':'disabled'}>Lưu mẫu phụ đề</button><p class="hint">Sửa lời nói tại Assets. Đoạn đã sửa cần dùng phụ đề theo câu khi không còn căn chỉnh từng từ. Bản dựng nguồn hiện dùng âm thanh gốc; nhạc nền cần được thêm vào timeline riêng.</p></details>`;
     host.insertAdjacentHTML('beforeend',sourceBrollMarkup(p));
+    host.insertAdjacentHTML('beforeend',sourceReframeMarkup(p));
     void history();renderAdvanced();controls();
   }
   async function run(fn,{allowDirty=false}={}){
@@ -125,11 +145,29 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
   }
   async function send(body){
     const p=getProject();const value=await api(`/api/projects/${p.id}/auto-edit/timeline`,body);
-    dirty=false;onDirty(false);shownKey=null;historyKey=null;onProject(value,true);
+    dirty=false;dirtyForm=null;onDirty(false);shownKey=null;historyKey=null;onProject(value,true);
     onMessage('Đã lưu bản dựng mới. Preview và phê duyệt cũ cần cập nhật.');renderSelected(true);
   }
-  host.addEventListener('input',event=>{if(event.target.closest('[data-source-form]')){dirty=true;onDirty(true);controls();}});
-  host.addEventListener('submit',event=>{if(!event.target.matches('[data-source-form]'))return;event.preventDefault();void run(async()=>{
+  host.addEventListener('input',event=>{const form=event.target.closest('[data-source-form],[data-source-reframe-form]');if(form){dirty=true;dirtyForm=form.hasAttribute('data-source-reframe-form')?'reframe':'trim';onDirty(true);controls();}});
+  host.addEventListener('change',event=>{if(event.target.matches('[data-source-reframe-mode]'))host.querySelector('[data-source-crop-points]').hidden=event.target.value!=='manual_override';});
+  host.addEventListener('submit',event=>{
+    if(!event.target.matches('[data-source-reframe-form]'))return;event.preventDefault();
+    if(dirtyForm==='trim'){onMessage('Lưu hoặc bỏ chỉnh sửa điểm cắt trước khi crop.',true);return;}
+    void run(async()=>{
+      const points=[...host.querySelectorAll('[data-source-crop-point]')].map(row=>Object.fromEntries([...row.querySelectorAll('[data-crop-point]')].map(el=>[el.dataset.cropPoint,Number(el.value)/(el.dataset.cropPoint==='time'?1:100)])));
+      await send(sourceReframeRequest(getProject(),{aspect_ratio:host.querySelector('[data-source-reframe-ratio]').value,mode:host.querySelector('[data-source-reframe-mode]').value,points}));
+    },{allowDirty:true});
+  });
+  host.addEventListener('click',event=>{
+    const add=event.target.closest('[data-source-crop-add]'),remove=event.target.closest('[data-source-crop-remove]'),discard=event.target.closest('[data-source-reframe-discard]');
+    if(!add&&!remove&&!discard)return;
+    if(blocked()||dirtyForm==='trim'){onMessage('Lưu hoặc bỏ chỉnh sửa điểm cắt trước khi crop.',true);return;}
+    if(discard){dirty=false;dirtyForm=null;onDirty(false);renderSelected(true);return;}
+    if(add){const rows=[...host.querySelectorAll('[data-source-crop-point]')],count=rows.length;if(count>=200)return;const latest=Math.max(0,...rows.map(row=>Number(row.querySelector('[data-crop-point="time"]').value)));add.insertAdjacentHTML('beforebegin',pointMarkup({time:Math.min(Number(add.closest('[data-source-reframe-form]').dataset.sourceDurationLimit),latest+.25),x:.5,y:.5,zoom:1},count,Number(add.closest('[data-source-reframe-form]').dataset.sourceDurationLimit)));}
+    else remove.closest('[data-source-crop-point]').remove();
+    dirty=true;dirtyForm='reframe';onDirty(true);controls();
+  });
+  host.addEventListener('submit',event=>{if(!event.target.matches('[data-source-form]'))return;event.preventDefault();if(dirtyForm==='reframe'){onMessage('Lưu hoặc bỏ chỉnh sửa crop trước khi sửa điểm cắt.',true);return;}void run(async()=>{
     const p=getProject(),clip=selected().clip;
     await send(sourceClipAction(p,clip.clip_id,'trim',clip.kind==='image'?{duration:Number(host.querySelector('[data-source-duration]').value)}:{source_start:Number(host.querySelector('[data-source-start]').value),source_end:Number(host.querySelector('[data-source-end]').value)}));
   },{allowDirty:true});});
@@ -141,10 +179,10 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
         planId:item?.dataset.brollPlan,itemId:item?.dataset.brollItem,
         assetId:item?.querySelector('[data-broll-asset]').value,replace:item?.querySelector('[data-broll-replace]').checked});
       const value=await api(`/api/projects/${p.id}/auto-edit/broll`,body);
-      dirty=false;onDirty(false);shownKey=null;historyKey=null;onProject(value,true);
+      dirty=false;dirtyForm=null;onDirty(false);shownKey=null;historyKey=null;onProject(value,true);
       onMessage(body.action==='apply'?'Đã đặt B-roll vào bản dựng mới. Tạo preview và kiểm tra crop, âm thanh, điểm cắt.':'Đã lưu kế hoạch/lựa chọn. Timeline chỉ đổi sau khi đặt B-roll.');renderSelected(true);
     });return;}
-    const discard=event.target.closest('[data-source-discard]');if(discard){dirty=false;onDirty(false);renderSelected(true);return;}
+    const discard=event.target.closest('[data-source-discard]');if(discard){dirty=false;dirtyForm=null;onDirty(false);renderSelected(true);return;}
     const action=event.target.closest('[data-source-action]'),config=event.target.closest('[data-source-config]');
     if(!action&&!config)return;
     void run(async()=>{

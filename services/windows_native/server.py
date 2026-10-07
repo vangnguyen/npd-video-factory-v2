@@ -374,10 +374,11 @@ class Handler(BaseHTTPRequestHandler):
             from .auto_edit_timeline import create, edit, restore
             from .source_linked_edit import edit as linked_edit
             from .source_settings import configure
+            from .source_reframe import apply as reframe
             body = self.read_body(max_bytes=100000)
-            if set(body) != {'revision','action','payload'} or type(body.get('revision')) is not int or body.get('action') not in {'create','edit','restore','linked_edit','configure'}:
+            if set(body) != {'revision','action','payload'} or type(body.get('revision')) is not int or body.get('action') not in {'create','edit','restore','linked_edit','configure','reframe'}:
                 raise WorkflowError('AUTO_EDIT_TIMELINE_REQUEST_INVALID', 400)
-            action = {'create':create,'edit':edit,'restore':restore,'linked_edit':linked_edit,'configure':configure}[body['action']]
+            action = {'create':create,'edit':edit,'restore':restore,'linked_edit':linked_edit,'configure':configure,'reframe':reframe}[body['action']]
             return self.reply(action(self.server.store, source_timeline_route[1], body['revision'], body['payload']))
         analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/(ana_[a-f0-9]{24})/transcript', self.path)
         if analysis_route:

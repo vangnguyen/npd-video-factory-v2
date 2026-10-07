@@ -15,3 +15,5 @@
 .source-timeline-clip svg {display:block;width:100%;height:25px;stroke:white;stroke-width:0.5}
 [data-broll-item] {padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:8px;min-width:0;overflow-wrap:anywhere}
 [data-broll-item] button {margin:4px 0}
+#native-source-inspector [data-source-crop-point] {min-width:0;max-width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:8px}
+#native-source-inspector [data-source-crop-point] label {min-width:0}

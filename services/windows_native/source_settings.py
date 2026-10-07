@@ -34,6 +34,9 @@ def configure(store,project_id,revision,body):
         if payload.preview_mode is not None:
             snapshot.metadata['source_preview_mode']=payload.preview_mode
         if payload.aspect_ratio:
+            if any(clip.metadata.get('reframe',{}).get('aspect_ratio') not in {None,payload.aspect_ratio}
+                    for track in snapshot.tracks for clip in track.clips):
+                raise WorkflowError('AUTO_EDIT_REFRAME_REAPPLY_FOR_FORMAT_REQUIRED',400)
             snapshot.width,snapshot.height={'9:16':(1080,1920),'16:9':(1920,1080),'1:1':(1080,1080),'4:5':(1080,1350)}[payload.aspect_ratio]
             snapshot.aspect_ratio=payload.aspect_ratio
         if payload.audio_processing is not None:

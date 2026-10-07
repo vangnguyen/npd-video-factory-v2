@@ -25,6 +25,7 @@ def test_four_ratios_keep_exact_geometry_and_mark_no_vision_fallback(source_size
     snapshot=build_initial_timeline(analysis=analysis,source_asset=source,media_plan=None,media_assets={})
     result=bind_reframe(snapshot,asset_id=source.asset_id,metadata=analysis.source_media,plan=plan,vision_analysis_id=None)
     assert (result.width,result.height)==ASPECT_DIMENSIONS[aspect]
+    assert result.aspect_ratio==aspect
     assert result.metadata['reframe']['fallback']=='center_crop' and result.metadata['reframe']['needs_attention']
     clip=next(c for t in result.tracks if t.kind=='source' for c in t.clips)
     for keyframe in clip.metadata['reframe']['keyframes']:

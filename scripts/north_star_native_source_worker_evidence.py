@@ -35,6 +35,7 @@ def main():
     parser.add_argument('--duplicate-source',action='store_true')
     parser.add_argument('--auto-shorts',action='store_true')
     parser.add_argument('--final-effects-preview',action='store_true')
+    parser.add_argument('--manual-reframe',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
     if args.auto_shorts and args.duplicate_source:raise ValueError('Choose one fresh draft derivation per evidence run')
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
@@ -127,6 +128,11 @@ def main():
         rebound=auto_edit_analysis.view(store,project['id'])
         analysis=next(item['analysis'] for item in rebound['analyses']
             if item['analysis']['analysis_id']==project['shot_timeline']['snapshot']['metadata']['source_analysis_id'])
+    if args.manual_reframe:
+        from services.windows_native.source_reframe import apply as reframe
+        project=reframe(store,project['id'],project['revision'],{
+            'expected_version':project['shot_timeline']['version'],'aspect_ratio':'9:16','mode':'manual_override',
+            'points':[{'time':0,'x':.2,'y':.5,'zoom':1},{'time':2.9,'x':.8,'y':.5,'zoom':1.1}]})
     if args.final_effects_preview:
         from services.windows_native.source_settings import configure
         project=configure(store,project['id'],project['revision'],{
@@ -203,6 +209,7 @@ def main():
         durable_json(out/'project.json',store.get(project['id']))
         if parent:durable_json(out/'parent-project.json',parent)
         if shorts:durable_json(out/'auto-shorts.json',shorts)
+        if args.manual_reframe:durable_json(out/'reframe-plan.json',project['document']['canonical_timeline']['snapshot']['metadata']['source_reframe_plan'])
         durable_json(out/'job-events.json',events)
         subprocess.run([str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n','-ss','0.35',
             '-i',str(out/'final.mp4'),'-frames:v','1',str(out/'caption-frame.png')],check=True,capture_output=True,timeout=30)
@@ -216,6 +223,8 @@ def main():
             'canonical_supporting_broll_added':any(track['kind']=='broll' and track['clips'] for track in project['document']['canonical_timeline']['snapshot']['tracks']),
             'auto_shorts_drafts_created':bool(shorts),
             'final_effects_preview':bool(preview['manifest'].get('rendering_effects_parity')),
+            'explicit_manual_reframe':args.manual_reframe,
+            'automatic_subject_tracking_performed':False,
             'matching_preview_final_effects_manifests':effects_parity,
             'matching_preview_final_canonical_pcm_sha256':mix_sha,
             'auto_shorts_generated_count':shorts['batch']['generated_count'] if shorts else None,

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {isSourceProject,sourceRequest,sourceVersions,sourceClipAction,sourceAdvancedMarkup,sourceAudioSettings,sourcePreviewSettings} from '../native-source-editor.mjs';
+import {isSourceProject,sourceRequest,sourceVersions,sourceClipAction,sourceAdvancedMarkup,sourceAudioSettings,sourcePreviewSettings,sourceReframeRequest,sourceReframeMarkup} from '../native-source-editor.mjs';
 import {sourceCreatePayload} from '../native-auto-edit.mjs';
 import {timelineHistory} from '../timeline-history.mjs';
 import {videoFormat,nextProjectStage} from '../video-preview.mjs';
@@ -69,4 +69,18 @@ test('full effects preview binds profile to canonical choice without allowing fi
   assert.match(previewTimingLabel('proxy',preview,project),/cùng hiệu ứng/);
   assert.match(previewTimingLabel('proxy',preview,project),/duyệt riêng/);
   assert.doesNotMatch(previewTimingLabel('proxy',preview,project),/Chưa dựng phụ đề/);
+});
+
+test('source-relative crop requests bind versions and never invent tracking confidence',()=>{
+  const values={aspect_ratio:'4:5',mode:'manual_override',points:[{time:0,x:.2,y:.5,zoom:1},{time:2.9,x:.8,y:.5,zoom:1.1}]};
+  const body=sourceReframeRequest(p,values);assert.equal(body.action,'reframe');assert.equal(body.payload.expected_version,2);
+  assert.deepEqual(body.payload.points,values.points);
+  assert.deepEqual(sourceReframeRequest(p,{...values,mode:'center_crop'}).payload.points,[]);
+  assert.throws(()=>sourceReframeRequest(p,{...values,points:[]}),/Kiểm tra/);
+  assert.throws(()=>sourceReframeRequest(p,{...values,points:[values.points[0],values.points[0]]}),/Kiểm tra/);
+  assert.throws(()=>sourceReframeRequest(p,{...values,points:[{time:NaN,x:.5,y:.5,zoom:1}]}),/Kiểm tra/);
+  const project=structuredClone(p);project.document.canonical_timeline.snapshot.aspect_ratio='4:5';
+  const markup=sourceReframeMarkup(project);assert.match(markup,/Tracking chưa được cấu hình/);
+  assert.match(markup,/giây của video gốc/);assert.match(markup,/data-source-reframe-form/);
+  assert.match(markup,/4:5/);assert.doesNotMatch(markup,/confidence.*0\.9/);
 });

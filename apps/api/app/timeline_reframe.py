@@ -55,6 +55,7 @@ def bind_reframe(snapshot:TimelineSnapshot,*,asset_id:str,metadata,plan:ReframeP
             affected.append(clip.clip_id)
     if not affected:raise TimelineEditError('active timeline has no enabled footage from this source')
     result.width,result.height=ASPECT_DIMENSIONS[plan.aspect_ratio]
+    result.aspect_ratio=plan.aspect_ratio
     result.metadata={**result.metadata,'reframe':{'aspect_ratio':plan.aspect_ratio,'vision_analysis_id':vision_analysis_id,
         'plan_id':plan.reframe_id,'strategy':plan.strategy,'confidence':plan.confidence,'fallback':plan.fallback,
         'needs_attention':plan.needs_attention,'affected_clip_ids':affected,'human_review_required':True,'provider_dispatches':0}}
