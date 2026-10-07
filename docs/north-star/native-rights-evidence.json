@@ -1,0 +1,129 @@
+{
+  "schema": "native-rights-evidence-v1",
+  "parent_head": "6656848291ee93966cdf9110ee9c6accf4dcbe1f",
+  "source_sha256": {
+    "services/windows_native/rights.py": "78a43cd423e8821ba515ee1599b134aa3ff2134de7fbca9c4e959fa9c41c3a25",
+    "services/windows_native/rights_models.py": "a5ce5c0e047961d31e1bc23dd421818234f51b6cc0ee4c74f93493c10bc5c97b",
+    "services/windows_native/rights_routes.py": "70a7034fe9fb22f9226f00df9197be4fe800953f643d2813652be17bb29e9253",
+    "services/windows_native/access.py": "174d9d0fca27ad0fef0e276d67b1dd0c4b6c3a67283edaed4484a99624393045",
+    "services/windows_native/server.py": "1e337bfc4f6dad17d613b0120b259b288174c1a99cdaa011df3604fc82a83a22",
+    "services/windows_native/media.py": "398bcb41f53b378fb34b09a0d1bf4735bcf9e28577ee7198f6dd9572e5a133c8",
+    "services/windows_native/music.py": "9a0b4083fa001aa2d3ec381d7659808970a4c45c496b77fb0008969808a065b8",
+    "services/windows_native/store.py": "c4ae1a68835b1ab7027eabce651f93a6c96a107dff3b44b2eb47709ecd30624b",
+    "services/windows_native/source_duplicate.py": "b6bff606f5a3f54e78607ef99c3a8b410da0746bcce85e7cb9d96cdea514d0ae",
+    "services/windows_native/backup.py": "9abb7366914b750cce11a727d3c05854a0069b14763d0e9b8eb0b467e2ce47d2",
+    "services/windows_native/bridge.py": "cac676be542d380dbaaabf9b65ee1adc5d54050042284daaece57f457225e0aa",
+    "services/windows_native/tests/test_rights.py": "802ac9a5ac215d94b515b1efac371234c6b85f36469b23af3ed7caa754e18ff9",
+    "services/windows_native/tests/test_rights_http.py": "fec07b2521efa3d03db73aa599d544d26b010336e91b832c89465c301780c7d7",
+    "services/windows_native/tests/test_rights_publications.py": "10e1b244462ffe571ee0a0973a440090fac57a780de9b284d7408ef009b26485",
+    "services/windows_native/tests/test_phase10_http.py": "b76096e25f2cb376ee7939bfb9b1bfc5235942bc2656290c26ff8e4edeebcff5",
+    "services/windows_native/tests/test_publications.py": "616bd9735594fa163ea83a73e18adaea3e9259049e09b00798bb1acab5f43d01",
+    "apps/studio-web/native-rights.mjs": "4d558bf2b1aaeebec62510c36b148ab8bd4a6726ca16aa38f0136a5152825d91",
+    "apps/studio-web/native.mjs": "d3f7e2d100b2e4cbc14752939538f4aa18966f628c3e157053e9305e6536776d",
+    "apps/studio-web/native.html": "d8ad8bff48d38d502a017429ab6808a41bb72515a119358c2d097af8c9e299e8",
+    "apps/studio-web/tests/native-rights.test.mjs": "c50ec482dc1df89d2e8ff78bce46a3f57377d9e46ad41102bcdde68762545480",
+    "scripts/north_star_native_rights.py": "1411690c4b6992db31dee6eb5e7601e0573cee324a447dc3487a58cd9a8e4937",
+    "docs/NATIVE_MEDIA_RIGHTS.md": "41b84026d48159fd04fb8562493968ca62fa7164637eb9ee650b2ea9843de57b"
+  },
+  "logs": {
+    "native-rights-r1.log": "24504875bd018f6edb986194f84e84189e2c9c017ad1ed609b809eea8bb49c1a",
+    "native-rights-r2.log": "18860bd70f90c945cce9e6c145efa7727db9f3efffa6822ef9cab52e3c66862f",
+    "native-rights-r3.log": "dd7a78b8443442270996ee5912ee7cf28b58b0eba81587f4dd47088591ebe6a6",
+    "native-rights-r4.log": "ff2c05087243a69eae617a2b9d4aa15e322f40a8383c6a9d5d27d82253dd8097",
+    "native-full-rights-r1.log": "d5d03da34c0567f14b1170f13b80736ca8a4181b3e47758170956e8159d855bf",
+    "studio-native-rights-r1.log": "1ebc8c020d888fb01d860baffb1267b4bc22bd37786fd7bfc7851326917b41e0",
+    "studio-native-rights-r2.log": "dbdd53672315b47e74b01fd1f84a67b77df00eb23f67bb586486cc8dcf2fe86e",
+    "native-rights-contract-n1.log": "35fb32b546a1f8478d14d82d53798aaa4dd4f8fec19a894593617f87b7e1eac6"
+  },
+  "contract_bundle": {
+    "blocked-publication.json": {
+      "sha256": "57aaa27509df024e8a633d3fad7b26afaeb908a5751d6a767f0ed52f51c0167d",
+      "bytes": 8481
+    },
+    "contract.json": {
+      "sha256": "a6f462a9ececa883a9c69c0f7c8bd5a6c075077880ad47daf9cf95d19a819890",
+      "bytes": 1002
+    },
+    "declaration.json": {
+      "sha256": "998b922b64caa80545ff8dfe18c81eb230edc12dc35236c42552415db955366c",
+      "bytes": 1473
+    },
+    "events.json": {
+      "sha256": "9c99a8dea10fa023b3f141fca6c2b16e286b183c02c36dbdfbd7a55cbca68232",
+      "bytes": 27656
+    },
+    "final-rights.json": {
+      "sha256": "c9617c6fd577fcfeb3d4639648aa0083c478cf8f3da22b9772fbccb514f2d547",
+      "bytes": 2371
+    },
+    "http-requests.json": {
+      "sha256": "f73caee8e4c17c8dd8d0f4eedae65b224672251aad2400a14a55ceca9fb994e9",
+      "bytes": 2305
+    },
+    "initial-rights.json": {
+      "sha256": "09b8c2f1fd090fd0eba3abf9bd4bbde0e7df88fa01f1cd1557de375be73d7cbc",
+      "bytes": 1110
+    },
+    "native-rights-backup.zip": {
+      "sha256": "8dcaa348f60f95f71be9a9fea3fd19f845fb5593e816c2de6f2a493e904de604",
+      "bytes": 7653423
+    },
+    "recovery.json": {
+      "sha256": "ccaf91c5510bd13d417f59f2e75c5b15414f719e6c3f85e3591b46eab62ed7dc",
+      "bytes": 4429
+    },
+    "restricted-declaration.json": {
+      "sha256": "8ffa5f4b842dc7082b37221227fef5639ee04dcae7afa2ea5544bb4106f66da1",
+      "bytes": 1478
+    },
+    "source-restore.json": {
+      "sha256": "c08bab4cd4a7a052dea3569982c61d469c8a9bb3405f071873ff6ec60d100218",
+      "bytes": 2059
+    }
+  },
+  "native_full_passed": 508,
+  "native_full_seconds": 309.569,
+  "affected_passed": 57,
+  "affected_seconds": 31.928,
+  "studio_passed": 196,
+  "studio_duration_ms": 909.1149,
+  "new_native_cases": 11,
+  "new_studio_cases": 4,
+  "counts_overlap": true,
+  "failed_attempts_retained": {
+    "native-rights-r3.log": "Wrong publication HTTP module name and assertion expecting new stale-render intent instead of existing immutable revision rejection; fixed fixtures/command without weakening product gates."
+  },
+  "new_uploads_explicit_unknown_provenance": true,
+  "existing_legacy_metadata_rewritten_on_read": false,
+  "typed_owner_declarations_csrf_role_before_body": true,
+  "declarations_verify_license": false,
+  "owner_override_enabled": false,
+  "frozen_receipt_replay_bound_to_immutable_version": true,
+  "current_approval_invalidated": true,
+  "unknown_rights_block_publishing": true,
+  "existing_render_revision_guard_blocks_stale_dispatch": true,
+  "physical_bytes_and_old_render_history_unchanged": true,
+  "project_duplicate_drops_foreign_claim_scope_and_keeps_restriction": true,
+  "literal_dom_and_stale_scope_tested": true,
+  "authenticated_http_requests": 15,
+  "source_root": "C:/vf-native-fixture-rights-01",
+  "restore_root": "C:/vf-native-fixture-rights-restore-01",
+  "new_process_exact": true,
+  "offline_restore_exact": true,
+  "actual_media_rerendered": false,
+  "actual_provider_calls": 0,
+  "actual_hub_calls": 0,
+  "actual_publications": 0,
+  "paid_operations": 0,
+  "real_credentials_read": 0,
+  "browser_real_tested": false,
+  "owner_uat": false,
+  "production_deployed": false,
+  "unchanged_api_latest_full": {
+    "head": "e59a7d5",
+    "passed": 2659,
+    "skipped": 11,
+    "seconds": 1512.89,
+    "rerun": false
+  }
+}

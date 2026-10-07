@@ -244,7 +244,8 @@ def ingest_media(config, source, content_type, filename, *, rights_confirmed, il
     identifier = uuid.uuid4().hex
     asset = {"id": identifier + (".mp4" if video else ".jpg"), "thumbnail_id": identifier + ".thumb.jpg",
              "filename": display_filename(filename), "kind": "video" if video else "image",
-             "rights_confirmed": True, "illustration": illustration}
+             "rights_confirmed": True, "illustration": illustration,'source_type':'user_upload','rights_status':'unknown',
+             'license':None,'provider':'native-local-upload','source_reference':'upload://'+identifier,'generation_provenance':{}}
     dest, thumbnail = media_path(config, asset["id"]), media_path(config, asset["thumbnail_id"])
     try:
         if video:

@@ -65,6 +65,9 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         if isinstance(value,dict):return {key:rewrite(item) for key,item in value.items()}
         return copy.deepcopy(value)
     output=copy.deepcopy(document)
+    if 'media_rights_declarations' in output:
+        from .rights import clear_project_claims
+        clear_project_claims(output)
     from .media_frame_analysis import rebind_records
     output['media_frame_analyses']=rebind_records(document,source_id,target_id)
     output['auto_edit_analyses']=[]

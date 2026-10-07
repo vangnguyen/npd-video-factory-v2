@@ -46,4 +46,5 @@ def ingest_music(config, source, content_type, filename, *, rights_confirmed):
     return {"id":destination.name,"original_id":original_id,"kind":"music","filename":display_filename(filename),
         "sha256":file_sha(destination),"bytes":destination.stat().st_size,"source_sha256":file_sha(source),
         "source_mime":content_type,"duration_seconds":duration,"rights_confirmed":True,"source":"immutable_user_upload",
-        "ducking":"voice_sidechaincompress", "nominal_gain":.12}
+        "ducking":"voice_sidechaincompress", "nominal_gain":.12,'source_type':'user_upload','rights_status':'unknown',
+        'license':None,'provider':'native-local-upload','source_reference':'upload://'+original_id,'generation_provenance':{}}

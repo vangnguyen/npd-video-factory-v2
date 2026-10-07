@@ -89,6 +89,9 @@ class Store:
         if row is None:
             raise WorkflowError("PROJECT_NOT_FOUND", 404)
         doc = json.loads(row["document"])
+        if 'media_rights_declarations' in doc:
+            from .rights import validate_document
+            validate_document(doc,project_id=row['id'])
         if doc.get('channel_profile') is not None:
             from .channel_profiles import resolve
             resolve(doc)
@@ -283,6 +286,9 @@ class Store:
                 resolve_assets(SimpleNamespace(data_root=self.root),project)
                 doc=rebind(doc,identifier,copy_id,revision,stamp)
             else:
+                if 'media_rights_declarations' in doc:
+                    from .rights import clear_project_claims
+                    clear_project_claims(doc)
                 doc["duplication"]={"project_id":identifier,"revision":revision,"document_sha256":digest(doc),"created_at":stamp}
                 doc["name"]=doc["name"][:139]+" — bản sao"
                 # Source evidence belongs to its project; raw ASR is reusable.

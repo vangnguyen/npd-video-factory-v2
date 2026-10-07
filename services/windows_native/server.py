@@ -119,7 +119,9 @@ def save_image(config, payload):
     path = directory / identifier
     image.save(path, quality=95)
     return {"id": identifier, "sha256": file_sha(path), "illustration": payload["illustration"],
-            "rights_confirmed": True, "width": image.width, "height": image.height}
+            "rights_confirmed": True, "width": image.width, "height": image.height,
+            "source_type":"user_upload","rights_status":"unknown","license":None,
+            "provider":"native-local-upload","source_reference":"upload://"+identifier[:-4],"generation_provenance":{}}
 
 
 class LocalServer(ThreadingHTTPServer):
@@ -167,6 +169,8 @@ class LocalServer(ThreadingHTTPServer):
         from .bridge import NativeBridge
         self.bridge=NativeBridge(self.store,workspace_id=self.publications.workspace_id)
         self.bridge.attach_intelligence(self.intelligence.store)
+        from .rights import NativeRights
+        self.rights=NativeRights(self.store,workspace_id=self.publications.workspace_id)
         if bridge_auth_registry is not None:self.bridge.load_auth_registry(bridge_auth_registry)
         if bridge_http_enabled and bridge_webhook_registry is None:raise WorkflowError('NATIVE_BRIDGE_WEBHOOK_REGISTRY_REQUIRED',400)
         if bridge_webhook_registry is not None:self.bridge.load_webhook_registry(bridge_webhook_registry,owner_http_enabled=bridge_http_enabled)
@@ -292,6 +296,9 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith('/api/bridge/'):
             from .bridge_operator_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights',path):
+            from .rights_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path == '/healthz':
             return self.reply({'schema': 'vf-native-health-v1', 'status': 'alive', 'scope': 'http_process'})
         if path == '/readyz':
@@ -367,7 +374,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -453,6 +460,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-publications.mjs'] = 'native-publications.mjs'
         static['/native-analytics.mjs'] = 'native-analytics.mjs'
         static['/native-vision.mjs'] = 'native-vision.mjs'
+        static['/native-rights.mjs'] = 'native-rights.mjs'
         static['/native-variants.mjs'] = 'native-variants.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
@@ -494,6 +502,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
                 'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights/[a-f0-9]{32}\.(jpg|png|mp4|wav)',self.path):
+            from .rights_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
         if self.path.startswith('/api/bridge/'):
             from .bridge_operator_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=8192)),headers={'Cache-Control':'no-store'})
