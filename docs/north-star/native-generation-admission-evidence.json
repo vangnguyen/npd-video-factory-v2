@@ -1,0 +1,71 @@
+{
+  "schema": "native-generation-admission-evidence-v1",
+  "parent_head": "31b8fa67d01d8a2f397d157196a7411f6679ff32",
+  "source_sha256": {
+    "services/windows_native/generation_models.py": "6015937cc9388a202827b61bf70993d6175db0f45c943aa760a257d203d78949",
+    "services/windows_native/generation_registry.py": "945e54fe13b61740a3367fde1e3c908f3a76384dd3fd6999a72d401ddf1f6295",
+    "services/windows_native/tests/test_generation_registry.py": "fe3bd195bebc09de113f4bb026733d8579812caf0722e19f58e85f79c0aa4b80",
+    "docs/NATIVE_GENERATION_ADMISSION.md": "30f28c901aa644cb158f0f7518387b9fc1b726b4901b104989514b5d2376fdd5"
+  },
+  "logs": {
+    "native-generation-registry-r1.log": "d6e1f1cc2cb4b86e082ff2f2169d504665a2dfec14a926eb4c82b78d8c7c5623",
+    "native-generation-registry-r2.log": "38ae2b23c777886326baa0e5154d30b2ce3055dfcd845c61e0cebc5677821a73"
+  },
+  "affected_passed": 40,
+  "affected_seconds": 21.953,
+  "new_native_cases": 7,
+  "earlier_subset_passed": 27,
+  "earlier_subset_seconds": 6.292,
+  "counts_overlap": true,
+  "strict_owned_id_hash_request_contracts": true,
+  "client_uri_graph_result_credentials_rights_forbidden": true,
+  "nine_existing_routes_tested": true,
+  "registry_outside_state_workspace_strict_default_off": true,
+  "approved_local_or_isolated_bridge_origin_only": true,
+  "existing_placeholder_workflows": "NOT_CONFIGURED",
+  "owner_flag_cannot_enable_unreviewed_empty_graph": true,
+  "frozen_manifest_graph_hashes_and_drift_rejection": true,
+  "fixture_mode_injection_only": true,
+  "automatic_fixture_fallback": false,
+  "pure_bridge_contracts_reused_without_http_database_jsonschema_runtime": true,
+  "scoped_wire_observation_tested": true,
+  "native_server_or_queue_wired": false,
+  "physical_reference_resolution_staging_implemented": false,
+  "generated_media_or_decode_tested": false,
+  "real_provider_tests": 0,
+  "gpu_tests": 0,
+  "real_credentials_read": 0,
+  "paid_operations": 0,
+  "actual_hub_calls": 0,
+  "actual_publications": 0,
+  "browser_real_tested": false,
+  "owner_uat": false,
+  "production_deployed": false,
+  "latest_full_native": {
+    "head": "c7e89fe",
+    "passed": 533,
+    "seconds": 331.869,
+    "subsequent_derived_affected_passed": 82,
+    "rerun": false
+  },
+  "unchanged_api_latest_affected": {
+    "head": "31b8fa6",
+    "passed": 63,
+    "seconds": 27.59,
+    "new_cases": 15,
+    "rerun": false
+  },
+  "unchanged_api_latest_full": {
+    "head": "e59a7d5",
+    "passed": 2659,
+    "skipped": 11,
+    "seconds": 1512.89,
+    "rerun": false
+  },
+  "unchanged_studio": {
+    "head": "c7e89fe",
+    "passed": 206,
+    "duration_ms": 1000.2963,
+    "rerun": false
+  }
+}

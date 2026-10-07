@@ -1683,3 +1683,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: HTTP workflow/job/progress/cancel/binary/sco
 EVIDENCE: `docs/COMFYUI_GENERATION_LIFECYCLE.md`, `docs/north-star/comfyui-lifecycle-evidence.json`, three hashed external logs. Existing actual accepted media and local fixture archives are unchanged; no artifact replaced.
 
 REGRESSIONS: all affected API and Native compatibility tests pass; unchanged caller/provenance/cost/rights/publishing gates preserved. EXTERNAL BLOCKERS: real reviewed workflow/model/GPU/provider and browser/Owner/production acceptance. OWNER ACTION REQUIRED: none for remaining safe integration. NEXT WAVE: Native durable generation/factory/reference/result/attachment/UI and original full MediaPlan/Mode A/B/Trend/learning/hardening/A/B/C. No merge, live migration, paid provider, external publishing or deployment.
+
+### Wave 5C/D/E / Native — Typed admission and protected approved factory
+
+WAVE: 5C / 5D / 5E / 3 / 8. STATUS: IN PROGRESS. GENERATIVE_MEDIA_READY = NO; IMPLEMENTATION_COMPLETE = NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE = NO; PRODUCTION_DEPLOYED = NO.
+
+HEAD SHA: parent `31b8fa67d01d8a2f397d157196a7411f6679ff32`, pushed/preserved in `north-star-comfyui-lifecycle.bundle`, SHA256 `5eba080e3eb96a0d5702c198c9ffeff34104196b8e019e92dea1264cba7b3cf1`; 182 ahead/0 behind, fresh 15 accepted hashes and clean live source. Admission increment will be separately committed/preserved.
+
+CAPABILITIES COMPLETED: strict native image/video/reference/mask/mode/duration/seed/scale/acknowledgment contracts selecting owned asset IDs and hashes, no client URI/graph/result/credentials/rights. Protected external workspace-bound default-off registry and local/isolated token destination, pure shared approved workflow model reuse, frozen manifest/graph/Owner-review/executable structure, pre-dispatch drift rejection. Existing placeholders stay NOT_CONFIGURED despite enabled credentials. Injection-only wire fixture mode reuses nine existing routes and lifecycle without rights/cost/production promotion.
+
+CAPABILITIES PARTIAL: modules not wired into Native server/queue/UI. Durable requests/tickets/progress/cancel/recovery, physical scoped references/rights/staging, worker/cost/result full local decode/attachment/Assets remain. Actual reviewed models/workflows/GPU and genuine acceptance. Full original MediaPlan/Mode A/B/Trend/learning/hardening/A/B/C remain applicable.
+
+TESTS: 40 affected Native PASS/21.953s, seven new cases; earlier overlapping 27 PASS/6.292s. New modules plus stock/rights/Phase10 HTTP compatibility checked. No existing Native runtime/UI/API source changed; prior full Native 533 PASS/331.869s, derived 82 affected PASS, SDK affected API 63 PASS/27.59s, full API 2659 PASS/11 SKIP/1512.89s and Studio 206 PASS/1000.2963ms retained without broad repeat.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: Native typed admission, synthetic protected tokens/manifests/approval metadata, local wire lifecycle and nine route combinations. LOCAL-REAL TESTS: guarded source manifest/graph/temp configuration reads and drift, existing actual stock media/rights/Phase10 HTTP compatibility. No actual generated media/decode, GPU, real key, paid operation, Hub/post, browser/Owner UAT or production.
+
+EVIDENCE: `docs/NATIVE_GENERATION_ADMISSION.md`, `docs/north-star/native-generation-admission-evidence.json`, two hashed external logs. Accepted/source/playable artifacts remain unchanged; no replacement.
+
+REGRESSIONS: all affected tests pass; unconfigured graphs cannot execute and no Native capability flag/runtime enablement is introduced. EXTERNAL BLOCKERS: actual reviewed workflow/model/GPU/provider and browser/Owner/production acceptance. OWNER ACTION REQUIRED: none for continuing safe integration. NEXT WAVE: Native persistent generation/factory/reference/cost/result/attachment/UI, original MediaPlan/Mode A/B/full Trend/learning/hardening/A/B/C. No main merge, live migration, paid provider, external publishing or deployment.

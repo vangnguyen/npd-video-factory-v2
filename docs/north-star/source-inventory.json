@@ -1,6 +1,6 @@
 {
-  "head": "a68c25f7a8977048ab7e1e874804a84af98cf4c3",
-  "audited_at": "2026-10-07T22:08:16.230650+00:00",
+  "head": "31b8fa67d01d8a2f397d157196a7411f6679ff32",
+  "audited_at": "2026-10-07T22:15:59.929611+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -190,6 +190,11 @@
     "docs/COMFYUI_GENERATION_LIFECYCLE.md": "b5c48176dc80d1258cbafd6b1e392b6498e0506b6090a65d76d7f0ed6a036f84",
     "docs/COMFYUI_SETUP.md": "0b7c6feeabe8b54be40c8ebcb93e85d7e5ee037ad35417fe8bfa8e394fff0ce7",
     "docs/north-star/comfyui-lifecycle-evidence.json": "eee390f973c77ca9d74a04d379cf54036d1d42f25376eac5b4b4cfcc28b1e4d6",
+    "services/windows_native/generation_models.py": "6015937cc9388a202827b61bf70993d6175db0f45c943aa760a257d203d78949",
+    "services/windows_native/generation_registry.py": "945e54fe13b61740a3367fde1e3c908f3a76384dd3fd6999a72d401ddf1f6295",
+    "services/windows_native/tests/test_generation_registry.py": "fe3bd195bebc09de113f4bb026733d8579812caf0722e19f58e85f79c0aa4b80",
+    "docs/NATIVE_GENERATION_ADMISSION.md": "30f28c901aa644cb158f0f7518387b9fc1b726b4901b104989514b5d2376fdd5",
+    "docs/north-star/native-generation-admission-evidence.json": "26950e6e8d52dbf7ea15eea2595820b24f6d88ec7def005c2c393a55224a7c0b",
     "apps/api/app/trend_service.py": "0515d9bcdcc254336ae9b0e8f8389f828f111a182fae1d6cac62ab91c05c12d9",
     "apps/api/app/trend_providers.py": "5befe1bfe7e93b867052bde113319f9b2cda6c9738c922281f68d95a9525ec25",
     "apps/studio-web/studio.js": "b2cc7d771dd5cbf17e40d63919bb5b74d44489c79dfecbb94509a8926c733e0b",
