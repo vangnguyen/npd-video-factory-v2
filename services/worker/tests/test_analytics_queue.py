@@ -6,7 +6,8 @@ from types import SimpleNamespace
 import pytest
 
 from app.analytics_service import ANALYTICS_SYNC_PROCESSING_KEY, ANALYTICS_SYNC_QUEUE_KEY
-from npd_worker.main import recover_analytics_sync_jobs, run_analytics_sync_queue
+from npd_worker.main import recover_analytics_sync_jobs, run_analytics_sync_queue, run_analytics_due_scheduler
+from app.analytics_service import enqueue_analytics_sync
 
 
 class FakePipeline:
@@ -64,6 +65,11 @@ class FakeRedis:
         self.lists[key] = [item for item in self.lists.get(key, []) if item != value]
         self.removed.set()
 
+    async def eval(self, _script, key_count, queued, processing, identifier):
+        assert key_count == 2
+        if identifier in self.lists[queued] or identifier in self.lists[processing]: return 0
+        self.lists[queued].append(identifier); return 1
+
 
 class FakeRepository:
     async def recover_incomplete_sync_ids(self):
@@ -90,6 +96,38 @@ async def test_analytics_recovery_deduplicates_database_and_processing_state() -
         "ans_duplicate",
         "ans_pending",
     ]
+
+
+@pytest.mark.asyncio
+async def test_queue_admission_deduplicates_pending_and_processing_syncs():
+    redis = FakeRedis()
+    assert await enqueue_analytics_sync(redis, 'ans_pending') is False
+    assert await enqueue_analytics_sync(redis, 'ans_inflight') is False
+    assert await enqueue_analytics_sync(redis, 'ans_new_sync') is True
+    assert await enqueue_analytics_sync(redis, 'ans_new_sync') is False
+    with pytest.raises(ValueError): await enqueue_analytics_sync(redis, 'private content')
+    assert redis.lists[ANALYTICS_SYNC_QUEUE_KEY] == ['ans_pending', 'ans_new_sync']
+
+
+@pytest.mark.asyncio
+async def test_due_tick_survives_queue_outage_and_recovers_without_private_logging(monkeypatch, caplog):
+    redis = FakeRedis(); redis.lists[ANALYTICS_SYNC_QUEUE_KEY] = []
+    original = redis.eval; ticks = 0
+    class Repository:
+        async def activate_due_sync_ids(self): return ['ans_due_fixture'] if ticks == 0 else []
+        async def queued_sync_ids(self): return ['ans_due_fixture']
+    async def eval_once(*args):
+        if ticks == 0: raise ConnectionError('PRIVATE TOKEN / PRIVATE ENDPOINT')
+        return await original(*args)
+    redis.eval = eval_once
+    async def sleep(seconds):
+        nonlocal ticks
+        assert seconds == 5; ticks += 1
+        if ticks == 2: raise asyncio.CancelledError()
+    monkeypatch.setattr('npd_worker.main.asyncio.sleep', sleep)
+    with pytest.raises(asyncio.CancelledError): await run_analytics_due_scheduler(redis, Repository())
+    assert redis.lists[ANALYTICS_SYNC_QUEUE_KEY] == ['ans_due_fixture']
+    assert 'analytics_due_tick_failed' in caplog.text and 'PRIVATE' not in caplog.text
 
 
 @pytest.mark.asyncio

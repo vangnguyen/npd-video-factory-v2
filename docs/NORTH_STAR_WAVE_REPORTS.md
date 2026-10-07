@@ -1305,3 +1305,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: six official-protocol mock reads and 14 auth
 EVIDENCE: `docs/north-star/analytics-views-evidence.json`; fresh `analytics-read-contract-n6` nine JSON exports plus owned clone DB. Original source DB hash unchanged; n1–n5 retained.
 
 REGRESSIONS: accepted media and live source untouched; fixture/network/publishing defaults retained. No live schema migration, provider credential read or paid call. EXTERNAL BLOCKERS: real authorized account/provider acceptance and Owner/browser UAT. OWNER ACTION REQUIRED: none for continuing safe implementation; real credentials, UAT and deployment are separate gates. NEXT WAVE: durable refresh and queue safety, frozen learning features/channel winner baselines, remaining Native/media/Trend/Hub/hardening and final A/B/C acceptance. Original Waves 0–16 remain in scope.
+
+### Wave 10 — Scheduling, UTC and queue recovery safety
+
+WAVE: 10. STATUS: IN PROGRESS. ANALYTICS_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `421975542225e1429136678032d15df86aa3adf5`, pushed/preserved in `north-star-analytics-views.bundle`, SHA256 `dac67fae94f87160e331969d740305d68a813e16e60498dac8d6e54adbb0314b`; 161 ahead/0 behind, fresh 15 artifact hashes and clean live source verified. Safety increment will be separately preserved.
+
+CAPABILITIES COMPLETED: explicit schedule gate cannot be bypassed by another trigger; worker and each official read recheck revocation; provider minimum retry interval respected; bounded due CAS/skip-locked claims; stable queued-job recovery after failed admission; atomic Redis-list admission architecture; content-free queue errors; disabled fixture capability state; new offset timestamps normalized to UTC across restart with naive provider timestamps rejected. Historical rows/exports remain intact; legacy non-UTC schedules are not recertified.
+
+CAPABILITIES PARTIAL: durable recurring refresh and Owner controls; Native/operator/AnalyticsProfile integration; real Redis Lua/PostgreSQL skip-locked/outage/soak acceptance; active-attempt restart; Meta/account-level collectors, winner/learning baselines; browser/UAT and real provider acceptance.
+
+TESTS: **46 PASS**, 149.22s final selected API/worker suite (17 new API and two new worker cases); **145 PASS** Studio, 713.5628ms. Earlier overlapping runs: 29 PASS; 34 PASS; corrected worker-only four PASS. Initial failures were test expectations: concurrent readers can select the same first page, and an existing queue assertion was misplaced while adding a test. Both were corrected and logs retained. Full Linux `2b19118`: **2501 PASS / 11 SKIP**, 1177.88s; channel parent `4219755` running. Current safety source awaits pinned full regression.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: mocked queue outage/recovery, concurrent owned SQLite claims, between-read schedule revocation, long Retry-After and +07:00 timestamp restart. Fresh n8 contract performs six official mock reads/14 authenticated requests, restores two exact snapshots and records six unknown billed costs. Redis mock does not execute Lua; PostgreSQL skip-locked remains unverified.
+
+EVIDENCE: `docs/north-star/analytics-scheduler-safety-evidence.json`, fresh `analytics-read-contract-n8` nine JSON files plus clone DB; original DB hash unchanged. All n1–n7 retained.
+
+REGRESSIONS: accepted media/live source/default network/publishing/Owner gates retained; no live migration, provider call, credential read or paid operation. EXTERNAL BLOCKERS: optional isolated Redis/PostgreSQL/Docker runtime and actual provider/UAT acceptance. OWNER ACTION REQUIRED: none for remaining safe work; real credentials, UAT and deployment remain separate gates. NEXT WAVE: persisted recurring plans, frozen learning/channel baselines, remaining Native/media/Trend/Hub/hardening and final A/B/C acceptance. Original Waves 0–16 remain the objective.

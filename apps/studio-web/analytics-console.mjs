@@ -21,6 +21,8 @@ export function analyticsSyncPlan(state, selection) {
   const body = {publication_id: publication.publication_id, provider_mode: selection.mode,
     trigger: 'manual_refresh', actor_ref: 'studio-user'};
   if (selection.mode === 'fixture') {
+    const fixture = state.analyticsProviders.find(row => row.platform === publication.platform && row.mode === 'fixture');
+    if (fixture?.supports_sync === false) throw new Error('Dữ liệu mô phỏng đang bị tắt.');
     if (!['dry_run_succeeded', 'published'].includes(publication.status) || !fixtureProfiles.has(selection.fixtureProfile))
       throw new Error('Publication hoặc profile mô phỏng chưa sẵn sàng.');
     body.fixture_profile = selection.fixtureProfile;

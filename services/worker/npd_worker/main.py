@@ -14,6 +14,7 @@ from app.analytics_service import (
     ANALYTICS_SYNC_PROCESSING_KEY,
     ANALYTICS_SYNC_QUEUE_KEY,
     AnalyticsSyncProcessor,
+    enqueue_analytics_sync,
 )
 from app.bridge_auth import SigningKeyring
 from app.bridge_repository import BridgeRepository
@@ -269,11 +270,17 @@ async def run_analytics_sync_queue(redis: Redis, processor: AnalyticsSyncProcess
 
 async def run_analytics_due_scheduler(redis: Redis, repository: AnalyticsRepository) -> None:
     while True:
-        identifiers = await repository.activate_due_sync_ids()
-        for sync_id in identifiers:
-            await redis.rpush(ANALYTICS_SYNC_QUEUE_KEY, sync_id)
-        if identifiers:
-            logger.info("analytics_due_enqueued count=%d", len(identifiers))
+        try:
+            due = await repository.activate_due_sync_ids()
+            pending = await repository.queued_sync_ids()
+            count = 0
+            for sync_id in dict.fromkeys([*due, *pending]):
+                count += int(await enqueue_analytics_sync(redis, sync_id))
+            if count: logger.info("analytics_due_enqueued count=%d", count)
+        except Exception:
+            # Durable queued rows remain recoverable on the next tick. Avoid raw
+            # connection/provider errors, which may contain private endpoints.
+            logger.warning('analytics_due_tick_failed')
         await asyncio.sleep(5)
 
 

@@ -18,7 +18,9 @@ class AnalyticsProviderNotConfigured(RuntimeError):
 
 class AnalyticsRateLimited(RuntimeError):
     def __init__(self, retry_after_seconds: int, message: str = "analytics provider rate limited"):
-        self.retry_after_seconds = max(1, retry_after_seconds)
+        if type(retry_after_seconds) is not int or not 1 <= retry_after_seconds <= 86400:
+            raise ValueError('ANALYTICS_RETRY_AFTER_INVALID')
+        self.retry_after_seconds = retry_after_seconds
         super().__init__(message)
 
 
@@ -199,6 +201,7 @@ class AnalyticsProviderRegistry:
     }
 
     def __init__(self, settings, *, scoped_factory=None):
+        self.settings = settings
         self.scoped_factory = scoped_factory
         self.fixture = DeterministicAnalyticsProvider()
         credential_refs = {
@@ -229,6 +232,9 @@ class AnalyticsProviderRegistry:
     def states(self) -> list[AnalyticsProviderStateRead]:
         output: list[AnalyticsProviderStateRead] = []
         for platform in self.OFFICIAL_KEYS:
-            output.append(self.fixture.state(platform))  # type: ignore[arg-type]
+            fixture_state = self.fixture.state(platform)
+            if not self.settings.analytics_fixture_enabled:
+                fixture_state = fixture_state.model_copy(update={'supports_sync': False, 'adapter_state': 'not_configured'})
+            output.append(fixture_state)
             output.append(self.get(platform=platform, mode='official').state(platform))  # type: ignore[arg-type]
         return output

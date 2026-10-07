@@ -111,6 +111,12 @@ class OfficialAnalyticsRuntime:
 
     async def binding(self, context, client, expected_target=None):
         if not self.enabled() or not client.enabled: raise AnalyticsOfficialError('ANALYTICS_EXECUTION_DISABLED')
+        sync = await self.repository.get_sync_by_id(context.sync_id)
+        if (sync is None or sync.project_id != context.project_id or sync.workspace_id != context.workspace_id
+            or sync.publication_id != context.publication_id or sync.platform != context.platform):
+            raise AnalyticsOfficialError('ANALYTICS_SCOPE_REQUIRED')
+        if (sync.trigger == 'scheduled_refresh' or sync.scheduled_for is not None) and not getattr(self.settings, 'analytics_scheduled_refresh_enabled', False):
+            raise AnalyticsOfficialError('ANALYTICS_SCHEDULED_REFRESH_DISABLED')
         if not client.mock and not self.explicit_cost_policy: raise AnalyticsOfficialError('ANALYTICS_COST_POLICY_REQUIRED')
         parent = await self.publishing_repository.get(context.project_id, context.publication_id)
         if (parent is None or parent.workspace_id != context.workspace_id or parent.platform != context.platform

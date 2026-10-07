@@ -34,6 +34,24 @@ from .timeline_models import TimelineSnapshot
 ANALYTICS_SYNC_QUEUE_KEY = "npd:video-factory:v2:analytics:queued"
 ANALYTICS_SYNC_PROCESSING_KEY = "npd:video-factory:v2:analytics:processing"
 
+# Atomic list admission on the repository's Redis 7 profile. The stable sync ID
+# plus the database attempt fence prevent replaying a collection after completion.
+ANALYTICS_QUEUE_ADMISSION = """
+if redis.call('LPOS', KEYS[1], ARGV[1]) or redis.call('LPOS', KEYS[2], ARGV[1]) then
+  return 0
+end
+redis.call('RPUSH', KEYS[1], ARGV[1])
+return 1
+"""
+
+
+async def enqueue_analytics_sync(redis, sync_id):
+    import re
+    if not isinstance(sync_id, str) or not re.fullmatch(r'ans_[A-Za-z0-9_-]{4,60}', sync_id):
+        raise ValueError('ANALYTICS_QUEUE_IDENTIFIER_INVALID')
+    return bool(await redis.eval(ANALYTICS_QUEUE_ADMISSION, 2,
+        ANALYTICS_SYNC_QUEUE_KEY, ANALYTICS_SYNC_PROCESSING_KEY, sync_id))
+
 
 class QueueClient(Protocol):
     async def rpush(self, key: str, value: str) -> object: ...
@@ -86,7 +104,7 @@ class AnalyticsService:
                 "ANALYTICS_FIXTURE_DISABLED",
                 "Deterministic analytics fixtures are disabled in this environment.",
             )
-        if payload.trigger == "scheduled_refresh" and not self.settings.analytics_scheduled_refresh_enabled:
+        if (payload.trigger == "scheduled_refresh" or payload.scheduled_for is not None) and not self.settings.analytics_scheduled_refresh_enabled:
             raise AnalyticsBoundaryError(
                 "ANALYTICS_SCHEDULED_REFRESH_DISABLED",
                 "Scheduled analytics refresh is disabled until an owner enables the read-only scheduler gate.",
@@ -115,7 +133,7 @@ class AnalyticsService:
             actor_ref=payload.actor_ref,
             query=payload.query,
         )
-        if not replay and sync.status == "queued":
+        if sync.status == "queued":
             await self.queue.rpush(ANALYTICS_SYNC_QUEUE_KEY, sync.sync_id)
         return sync, replay
 
@@ -211,6 +229,10 @@ class AnalyticsSyncProcessor:
             return busy
         if sync.status != "running":
             return sync
+        if (sync.trigger == 'scheduled_refresh' or sync.scheduled_for is not None) and not self.settings.analytics_scheduled_refresh_enabled:
+            return await self.repository.terminal_failure(sync_id, status='not_configured',
+                code='ANALYTICS_SCHEDULED_REFRESH_DISABLED', reason='Scheduled analytics refresh is disabled.',
+                expected_attempt=sync.attempt_count)
         publication = await self.publishing_repository.get(sync.project_id, sync.publication_id)
         if publication is None:
             return await self.repository.terminal_failure(
@@ -295,13 +317,8 @@ class AnalyticsSyncProcessor:
                 expected_attempt=sync.attempt_count,
             )
         except AnalyticsRateLimited as exc:
-            delay = min(
-                self.settings.analytics_retry_max_seconds,
-                max(
-                    exc.retry_after_seconds,
-                    self.settings.analytics_retry_base_seconds * (2 ** max(0, sync.attempt_count - 1)),
-                ),
-            )
+            delay = max(exc.retry_after_seconds, min(self.settings.analytics_retry_max_seconds,
+                self.settings.analytics_retry_base_seconds * (2 ** max(0, sync.attempt_count - 1))))
             return await self.repository.schedule_retry(
                 sync.sync_id,
                 next_retry_at=utc_now() + timedelta(seconds=delay),
@@ -313,7 +330,7 @@ class AnalyticsSyncProcessor:
             from .analytics_official import AnalyticsOfficialError
             if isinstance(exc, AnalyticsOfficialError):
                 return await self.repository.terminal_failure(sync.sync_id,
-                    status='not_configured' if exc.code in ('ANALYTICS_OAUTH_NOT_CONFIGURED', 'ANALYTICS_OAUTH_REFRESH_REQUIRED') else 'failed',
+                    status='not_configured' if exc.code in ('ANALYTICS_OAUTH_NOT_CONFIGURED', 'ANALYTICS_OAUTH_REFRESH_REQUIRED', 'ANALYTICS_SCHEDULED_REFRESH_DISABLED') else 'failed',
                     code=exc.code, reason=exc.code, expected_attempt=sync.attempt_count)
             delay = min(
                 self.settings.analytics_retry_max_seconds,

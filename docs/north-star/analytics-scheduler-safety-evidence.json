@@ -1,0 +1,147 @@
+{
+  "schema": "analytics-scheduler-safety-evidence-v1",
+  "parent_head": "421975542225e1429136678032d15df86aa3adf5",
+  "source_sha256": {
+    "apps/api/app/analytics_providers.py": "29938569f1765df1b65e255e486a21e013efce9b15aa22d7ab98708580e0c910",
+    "apps/api/app/analytics_repository.py": "fac908f5b67cd82fcf67a9f22ef912e72d521a5e11e8bb8e95194e2db22b4528",
+    "apps/api/app/analytics_runtime.py": "cfda22a75db5ee75b135b644bb5e26b2650a1fc5985046515a10f328a79d558b",
+    "apps/api/app/analytics_service.py": "94a0fc014c71a93b65b8ab7f113331c216817d2613a9b64f0964511dc8b41fec",
+    "apps/api/tests/test_analytics_scheduler_safety.py": "c9101fd0b85a33733613849ac806a3627875467bdf11411e2d1c8aad44373d9a",
+    "apps/studio-web/analytics-console.mjs": "dac798dee6d7c414c55681733fd359cacef157a944f086acd43b8309ea941a85",
+    "apps/studio-web/tests/analytics-console.test.mjs": "116b6e8360b0a6bf6cd29126cdaeebe947fca8de2a672eb40c08be29d37a201e",
+    "services/worker/npd_worker/main.py": "e1486d236e40cc2bd982aa257f59a633c51a8476048e521023299cca221839cc",
+    "services/worker/tests/test_analytics_queue.py": "761a5a29fe8da4e9b38aa3ef834d1d0b94211f4ec25ffd9e1f1ee5c576e13887",
+    "docs/ANALYTICS_SCHEDULER_SAFETY.md": "0d9aff3fca621461b66bc82b2cf7490fb0f56543b49471c472cb68fa782fc8e4"
+  },
+  "logs": {
+    "analytics-scheduler-safety-api-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-scheduler-safety-api-r1.log",
+      "sha256": "e1f199c985d3b7638bf9a8991bbe3536aa30ec37e9ee785c9c7235cb3642fa5a"
+    },
+    "analytics-scheduler-safety-api-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-scheduler-safety-api-r2.log",
+      "sha256": "c0330f629723d06dabb3c28ce187e90b1c44ce9c8153ef1a3a7f58e7079da8ba"
+    },
+    "analytics-scheduler-safety-api-worker-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-scheduler-safety-api-worker-r3.log",
+      "sha256": "0eeb9bd717f24a82e32d919a4b8e598fbfa9965fed7962ed8c2bb6ad47f14138"
+    },
+    "analytics-scheduler-worker-r4.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-scheduler-worker-r4.log",
+      "sha256": "68789d96ac528e2bea0cae680ea3ea462d6dd154fe1c4c7d093a7cc3f3ddb988"
+    },
+    "analytics-scheduler-safety-api-worker-r5.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-scheduler-safety-api-worker-r5.log",
+      "sha256": "4d35e2836b639a52b7fd5cdc6d19919ddb35a7965b55924e70c46d509ee90826"
+    },
+    "analytics-scheduler-safety-api-worker-r6.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-scheduler-safety-api-worker-r6.log",
+      "sha256": "a3a68bf523306f4a1436571b5790094cd1d339fce1afbe631eb2402348a31baa"
+    },
+    "studio-analytics-scheduler-safety-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-analytics-scheduler-safety-r1.log",
+      "sha256": "885aa06c8ca6b111be5cfd766a4049f26a5923c064501267afa34bccffe926b8"
+    },
+    "analytics-read-contract-n7.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n7.log",
+      "sha256": "1d59f74373bb28204e490c4686e80c6b33f4ba880d2fcb0542dbd9c2e6e156dc"
+    },
+    "analytics-read-contract-n8.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8.log",
+      "sha256": "234449ca517d6cbe03f5884c2fde9bc6e424b6a0065928be4c10b252f29dbfd6"
+    }
+  },
+  "exports": {
+    "analytics-owned-clone.db": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\analytics-owned-clone.db",
+      "sha256": "62c89bf223e0dd2e4ba796349ff8f615731b276dc725f46b4c176b4e063fb1da"
+    },
+    "contract.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\contract.json",
+      "sha256": "09938c9380c286d792e756a18bcc58b4f26f9e3e0073fef8fbcafcd36372d9f9"
+    },
+    "cost.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\cost.json",
+      "sha256": "2e40e031f517e90faf31115f07f1c42d37135241241c79d858e47128f8d63dfc"
+    },
+    "events.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\events.json",
+      "sha256": "cd0acef5029760b38e728dd6ec51d7a2c0f53995aa4cab7afc0dd09287b25dcd"
+    },
+    "features-and-recommendations.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\features-and-recommendations.json",
+      "sha256": "423cb3df92f8bf2ebf6d066318e63127c720d5f3791725dbfcfc7a1823f3cb8c"
+    },
+    "observation-views.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\observation-views.json",
+      "sha256": "e3654c130547da391165a6c5fd0df779caab360fa5b3eb634b7595a8ec697fa1"
+    },
+    "requests.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\requests.json",
+      "sha256": "5e41fc1e5efe2c4c0dae4c6ade0179afabc8f21eaff4bde3dddc10ebe20e722f"
+    },
+    "snapshots.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\snapshots.json",
+      "sha256": "6269a19078951dd442f200c25f0954623c98030b100e77cc3b0ba094306c83c7"
+    },
+    "source.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\source.json",
+      "sha256": "8d238d8cffa3d27a5660a5478353ebd2d3f982c3b8602acf9dca78b289833594"
+    },
+    "syncs.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\analytics-read-contract-n8\\syncs.json",
+      "sha256": "261d7efff3d912d1bafd17cb07d43c78d029ec186c860a5e724812db92afad1f"
+    }
+  },
+  "contract": {
+    "status": "PASS",
+    "official_mock_requests": 6,
+    "authenticated_api_requests": 14,
+    "immutable_snapshots": 2,
+    "fresh_process_restore": true,
+    "external_provider_calls": 0,
+    "paid_calls": 0,
+    "actual_cost": null,
+    "cost_records": 6,
+    "source_publication_mock": true,
+    "real_credentials_read": 0,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false,
+    "production_deployed": false,
+    "analytics_ready": false,
+    "media_replaced": false,
+    "requested_dates_are_complete_coverage": false
+  },
+  "api_worker_final_passed": 46,
+  "api_worker_final_seconds": 149.22,
+  "api_new_tests": 17,
+  "worker_new_tests": 2,
+  "studio_all_passed": 145,
+  "full_current_api_status": "PENDING_PINNED_SCHEDULER_COMMIT",
+  "full_parent_api_status": "RUNNING_AT_4219755",
+  "last_completed_linux_api": {
+    "head": "2b191184b008a7a6144c51a55b7658ad452de17c",
+    "passed": 2501,
+    "skipped": 11,
+    "seconds": 1177.88,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-2b19118.log",
+      "sha256": "14b9165d8d28953a6c7425d5d5725f0a6ce0037ad1e2adeb843c2b5d6044419b"
+    }
+  },
+  "browser_real_tested": false,
+  "owner_uat_accepted": false,
+  "actual_provider_calls": 0,
+  "real_credentials_read": 0,
+  "paid_operations": 0,
+  "accepted_media_replaced": false,
+  "redis_lua_real_tested": false,
+  "postgresql_due_claim_real_tested": false,
+  "live_migration_performed": false,
+  "recurring_refresh_complete": false,
+  "native_analytics_complete": false,
+  "analytics_ready": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false
+}

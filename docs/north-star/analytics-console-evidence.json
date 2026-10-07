@@ -108,7 +108,7 @@
       "sha256": "1a7d6b492b777cf90bad1b26c23cd2102cbccb01f0da523bbe124ec8b76117e3"
     }
   },
-  "full_current_api_status": "PENDING_PINNED_STUDIO_COMMIT",
+  "full_current_api_status": "VERIFIED_AT_2B19118_BEFORE_CHANNEL_INCREMENT",
   "api_selected_passed": 18,
   "studio_all_passed": 139,
   "studio_new_tests": 9,
@@ -124,5 +124,15 @@
   "analytics_ready": false,
   "implementation_complete": false,
   "real_provider_acceptance_complete": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "full_current_linux_api": {
+    "head": "2b191184b008a7a6144c51a55b7658ad452de17c",
+    "passed": 2501,
+    "skipped": 11,
+    "seconds": 1177.88,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-2b19118.log",
+      "sha256": "14b9165d8d28953a6c7425d5d5725f0a6ce0037ad1e2adeb843c2b5d6044419b"
+    }
+  }
 }

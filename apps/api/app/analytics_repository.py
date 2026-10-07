@@ -70,6 +70,7 @@ class AnalyticsRepository:
         actor_ref: str,
         query: dict | None = None,
     ) -> tuple[AnalyticsSyncRead, bool]:
+        if scheduled_for is not None: scheduled_for = _utc_input(scheduled_for)
         async with self.session_factory() as session:
             existing = await session.scalar(
                 select(AnalyticsSyncORM).where(
@@ -213,7 +214,7 @@ class AnalyticsRepository:
                     provider_key=collection.provider_key,
                     source=collection.source,
                     source_kind=collection.source_kind,
-                    collected_at=collection.collected_at,
+                    collected_at=_utc_input(collection.collected_at),
                     mock=collection.mock,
                     external_call=collection.external_call,
                     evidence_json=collection.evidence,
@@ -351,6 +352,7 @@ class AnalyticsRepository:
         reason: str,
         expected_attempt: int | None = None,
     ) -> AnalyticsSyncRead:
+        next_retry_at = _utc_input(next_retry_at)
         async with self.session_factory() as session:
             async with session.begin():
                 row = await session.get(AnalyticsSyncORM, sync_id, with_for_update=True)
@@ -481,22 +483,31 @@ class AnalyticsRepository:
                                 & (AnalyticsSyncORM.next_retry_at <= now),
                             )
                         )
-                        .order_by(AnalyticsSyncORM.updated_at)
-                        .with_for_update()
+                        .order_by(AnalyticsSyncORM.updated_at, AnalyticsSyncORM.sync_id)
+                        .limit(100)
+                        .with_for_update(skip_locked=True)
                     )
                 ).all()
+                identifiers = []
                 for row in rows:
-                    row.status = "queued"
-                    row.updated_at = now
+                    changed = await session.execute(update(AnalyticsSyncORM).where(
+                        AnalyticsSyncORM.sync_id == row.sync_id, AnalyticsSyncORM.status == row.status,
+                        AnalyticsSyncORM.attempt_count == row.attempt_count,
+                        or_((AnalyticsSyncORM.status == 'scheduled') & (AnalyticsSyncORM.scheduled_for <= now),
+                            (AnalyticsSyncORM.status == 'retry_scheduled') & (AnalyticsSyncORM.next_retry_at <= now)))
+                        .values(status='queued', updated_at=now).execution_options(synchronize_session=False))
+                    if changed.rowcount != 1: continue
+                    await session.refresh(row)
+                    identifiers.append(row.sync_id)
                     self._event(
                         session,
                         row,
                         "analytics.sync_due_queued",
                         "analytics-worker",
-                        {"external_call": False, "secret_free": True},
+                        {"external_call": row.external_call, "secret_free": True},
                         now,
                     )
-                return [row.sync_id for row in rows]
+                return identifiers
 
     async def get_sync(self, project_id: str, sync_id: str) -> AnalyticsSyncRead | None:
         async with self.session_factory() as session:
@@ -507,6 +518,13 @@ class AnalyticsRepository:
         async with self.session_factory() as session:
             row = await session.get(AnalyticsSyncORM, sync_id)
             return _sync_read(row) if row else None
+
+    async def queued_sync_ids(self):
+        """Bounded database recovery after admission succeeds but Redis is unavailable."""
+        async with self.session_factory() as session:
+            return list((await session.scalars(select(AnalyticsSyncORM.sync_id)
+                .where(AnalyticsSyncORM.status == 'queued')
+                .order_by(AnalyticsSyncORM.updated_at, AnalyticsSyncORM.sync_id).limit(100))).all())
 
     @staticmethod
     async def _fence(session, row, expected_attempt):
@@ -759,8 +777,8 @@ def _sync_read(row: AnalyticsSyncORM) -> AnalyticsSyncRead:
         request_fingerprint=row.request_fingerprint,
         attempt_count=row.attempt_count,
         max_attempts=row.max_attempts,
-        scheduled_for=row.scheduled_for,
-        next_retry_at=row.next_retry_at,
+        scheduled_for=_aware(row.scheduled_for) if row.scheduled_for else None,
+        next_retry_at=_aware(row.next_retry_at) if row.next_retry_at else None,
         snapshot_id=row.snapshot_id,
         failure_code=row.failure_code,
         failure_reason=row.failure_reason,
@@ -794,7 +812,7 @@ async def _snapshot_read(
         provider_key=row.provider_key,
         source=row.source,
         source_kind=row.source_kind,
-        collected_at=row.collected_at,
+        collected_at=_aware(row.collected_at),
         metrics=NormalizedMetrics.model_validate(values),
         points=[
             AnalyticsMetricPointRead(
@@ -889,4 +907,10 @@ def _event_read(row: AnalyticsEventORM) -> AnalyticsEventRead:
 
 
 def _aware(value: datetime) -> datetime:
-    return value if value.tzinfo is not None else value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc) if value.tzinfo is not None else value.replace(tzinfo=timezone.utc)
+
+
+def _utc_input(value: datetime) -> datetime:
+    if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() is None:
+        raise ValueError('ANALYTICS_TIMESTAMP_TIMEZONE_REQUIRED')
+    return value.astimezone(timezone.utc)

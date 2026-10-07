@@ -26,6 +26,8 @@ test('explicit fixture profile, dates and TikTok cumulative semantics', () => {
     assert.throws(() => analyticsSyncPlan(baseState(), {...selection, ...changes}));
   const state = baseState(); state.publications = [{...publication, platform: 'tiktok'}]; state.analyticsProviders[0].platform = 'tiktok';
   assert.equal(analyticsSyncPlan(state, selection).query, undefined);
+  const disabled = baseState(); disabled.analyticsProviders.push({platform: 'youtube', mode: 'fixture', supports_sync: false});
+  assert.throws(() => analyticsSyncPlan(disabled, {publicationId: 'pub_fixture', mode: 'fixture', fixtureProfile: 'normal'}), /đang bị tắt/);
 });
 
 test('history retains zero/null and refuses foreign, fixture/provider and report-interval comparisons', () => {
