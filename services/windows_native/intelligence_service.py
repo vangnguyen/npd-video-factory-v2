@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import threading
+import time
 import uuid
 from .contracts import WorkflowError, canonical, digest, file_sha
 from .intelligence_models import ContentBrief, ContentIdea, Opportunity, ResearchFinding, ResearchRun, ResearchSource, TrendSignal
@@ -10,6 +11,7 @@ from .intelligence_store import IntelligenceStore
 from .idea_engine import CandidateDraft, OpenAIIdeaProvider, validate_candidates
 from .idea_scoring import configuration, score
 from .research import PublicWebResearchProvider, validate_findings
+from .observability import Observer
 
 IDEA_EDITABLE=set(CandidateDraft.model_fields)-{'supporting_research','evidence_references'}
 BRIEF_EDITABLE={'objective','audience','angle','hook','talking_points','cta','constraints'}
@@ -30,8 +32,9 @@ def draft_brief_fields(idea,findings):
 
 
 class IntelligenceService:
-    def __init__(self,config,production,*,research_provider=None,idea_provider=None):
+    def __init__(self,config,production,*,research_provider=None,idea_provider=None,observer=None):
         self.config=config; self.production=production
+        self.observer = observer or Observer()
         self.store=IntelligenceStore(config.data_root)
         self.catalog=configuration()
         self.research_provider=research_provider or PublicWebResearchProvider(config.data_root/'research-sources')
@@ -157,6 +160,8 @@ class IntelligenceService:
             if not row: return False
             operation=dict(row); con.execute("UPDATE operations SET status='RUNNING' WHERE id=?",(operation['id'],))
         out=self.config.data_root/'intelligence-operations'/operation['id']
+        started = time.monotonic()
+        completed = False
         try:
             out.mkdir(parents=True,exist_ok=False)
             run=self.store.get(operation['run_id'],'ResearchRun')
@@ -200,6 +205,7 @@ class IntelligenceService:
                     self.store.put('Opportunity',{**opportunity,'status':'NEW','selected_idea_id':None,'brief_id':None,'opportunity_score':best['final_score'],'suggested_hook':ranked['hook'],'candidate_format':ranked['format'],'proposed_angle':ranked['angle']},opportunity['version'],con)
                     self.store.put('ResearchRun',{**run,'status':'IDEAS','error':None,'generation':generation,'idea_ids':run['idea_ids']+[i['id'] for i in ideas],'provider_metadata':{**run['provider_metadata'],'last_idea_generation':metadata}},run['version'],con)
             with self.store.transaction() as con: con.execute("UPDATE operations SET status='SUCCEEDED' WHERE id=?",(operation['id'],))
+            completed = True
         except Exception as exc:
             error={'code':exc.code if isinstance(exc,WorkflowError) else type(exc).__name__,'automatic_replay':False}
             if isinstance(exc,WorkflowError) and exc.http_status: error['http_status']=exc.http_status
@@ -209,6 +215,10 @@ class IntelligenceService:
                 con.execute("UPDATE operations SET status='FAILED',error=? WHERE id=?",(canonical(error).decode(),operation['id']))
                 run=self.store.get(operation['run_id'],'ResearchRun',con)
                 self.store.put('ResearchRun',{**run,'status':'FAILED','error':error},run['version'],con)
+        finally:
+            self.observer.emit('intelligence_completed' if completed else 'intelligence_failed',
+                request_id=operation['id'], job_id=operation['id'], run_id=operation['run_id'],
+                stage=operation['action'], provider=None, duration=time.monotonic() - started)
         return True
 
     def work(self):

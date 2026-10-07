@@ -24,12 +24,14 @@ from .hardening import failure
 from .ingestion import DOCUMENT_TYPES, DOCUMENT_MAX_BYTES, ingest_document
 from . import assemblyai_connection
 from .music import MUSIC_TYPES, MUSIC_MAX_BYTES, ingest_music
+from .observability import Observer, configure_logging, readiness, route_context, step_context
 from .media import CONTENT_TYPES, IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, discard_media, ingest_media, library_assets, library_file, media_path, project_assets
 
 
 class Runner:
-    def __init__(self, store, pipeline):
+    def __init__(self, store, pipeline, *, observer=None):
         self.store, self.pipeline = store, pipeline
+        self.observer = observer or Observer()
         self.stop = threading.Event()
         self.wake = threading.Event()
         self.thread = threading.Thread(target=self.work, daemon=True, name="native-single-worker")
@@ -43,20 +45,28 @@ class Runner:
         if not job:
             return False
         step, started = "starting", time.monotonic()
+        def log_step(error=False):
+            category, provider = step_context(step)
+            self.observer.emit('worker_failed' if error else 'worker_step', request_id=job['id'],
+                job_id=job['id'], project_id=job['project_id'], stage=category, provider=provider,
+                duration=time.monotonic() - started)
         def stage(value):
             nonlocal step, started
             self.store.log_step(job, step, time.monotonic() - started)
+            log_step()
             self.store.stage(job["id"], value)
             step, started = value, time.monotonic()
         try:
             result = self.pipeline.run(job, stage)
             self.store.log_step(job, step, time.monotonic() - started)
+            log_step()
             self.store.finish(job, result=result)
         except Exception as error:
             safe = {"code": error.code if isinstance(error, WorkflowError) else type(error).__name__, "automatic_retry": False}
             if isinstance(error, WorkflowError) and error.http_status:
                 safe["http_status"] = error.http_status
             self.store.log_step(job, step, time.monotonic() - started, safe["code"])
+            log_step(error=True)
             self.store.finish(job, error=safe)
         return True
 
@@ -97,16 +107,18 @@ def save_image(config, payload):
 class LocalServer(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, port, config, *, pipeline=None, start_worker=True):
+    def __init__(self, port, config, *, pipeline=None, start_worker=True, observer=None):
         config.validate_data_root()
         super().__init__(("127.0.0.1", port), Handler)
         self.config, self.store = config, Store(config.data_root)
         self.session = secrets.token_urlsafe(32)
         self.csrf = secrets.token_urlsafe(32)
         self.connection_lock = threading.Lock()
-        self.runner = Runner(self.store, pipeline or Pipeline(config))
+        self.observer = observer or Observer()
+        self.workers_enabled = start_worker
+        self.runner = Runner(self.store, pipeline or Pipeline(config), observer=self.observer)
         from .intelligence_service import IntelligenceService
-        self.intelligence = IntelligenceService(config,self.store)
+        self.intelligence = IntelligenceService(config,self.store,observer=self.observer)
         from .shot_preview import PreviewManager
         from .shot_ai_edit import ShotAIEdit
         self.previews=PreviewManager(config,self.store)
@@ -131,6 +143,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def log_message(self, *args):
         pass  # No body, tokens, user content or provider error details in HTTP logs.
+
+    def send_response(self, code, message=None):
+        self.response_status = code
+        super().send_response(code, message)
 
     def boundary(self, write=False, session=True):
         port = self.server.server_port
@@ -168,6 +184,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Connection", "close")
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
+        if getattr(self, 'request_id', None):
+            self.send_header('X-Request-ID', self.request_id)
         self.send_header("Referrer-Policy", "no-referrer")
         self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; media-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
         for name, value in (headers or {}).items():
@@ -207,6 +225,11 @@ class Handler(BaseHTTPRequestHandler):
     def dispatch_get(self):
         path = self.path.split("?", 1)[0]
         self.boundary(session=path.startswith("/api/") and path not in {"/api/session", "/api/health"})
+        if path == '/healthz':
+            return self.reply({'schema': 'vf-native-health-v1', 'status': 'alive', 'scope': 'http_process'})
+        if path == '/readyz':
+            value, status = readiness(self.server)
+            return self.reply(value, status)
         if path.startswith("/api/intelligence/"):
             from .intelligence_routes import get
             return self.reply(get(self,path))
@@ -631,6 +654,9 @@ class Handler(BaseHTTPRequestHandler):
             pass
 
     def handle_request(self, method):
+        self.request_id = uuid.uuid4().hex
+        self.response_status = None
+        started = time.monotonic()
         try:
             self.connection.settimeout(30)
             if method == "GET":
@@ -643,6 +669,11 @@ class Handler(BaseHTTPRequestHandler):
             self.close_connection = True
         except Exception:
             self.refuse({"code": "LOCAL_REQUEST_FAILED"}, 500)
+        finally:
+            route, project_id, job_id = route_context(self.path)
+            self.server.observer.emit('http_request', request_id=self.request_id,
+                project_id=project_id, job_id=job_id, stage='http', provider=None,
+                duration=time.monotonic() - started, status=self.response_status, method=method, route=route)
 
     def do_GET(self):
         self.handle_request("GET")
@@ -652,6 +683,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
+    configure_logging()
     parser = argparse.ArgumentParser(description="Video Factory Windows Native Studio")
     parser.add_argument("--config", type=Path)
     parser.add_argument("--port", type=int, default=8026)

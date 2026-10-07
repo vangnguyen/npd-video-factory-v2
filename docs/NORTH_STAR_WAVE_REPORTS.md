@@ -883,3 +883,25 @@ EVIDENCE: `docs/north-star/native-restore-evidence.json` binds six source files,
 REGRESSIONS: full Native Phase8/9/10 source checks pass. Existing accepted artifacts, live source/database/configuration/processes and historical bundles remain unchanged. Remote main remains `fa81c59fbe6b745cba8fed979e30e52a13199afa`; no merge, production deployment, real publication or new paid operation.
 
 EXTERNAL BLOCKERS: real credentials/billing/GPU/Docker/browser/Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: Native health/logging/role enforcement and remaining platform/media/profiles/distribution/analytics/learning/Trend/Hub/hardening work.
+
+## Wave 8 — Native health and content-free operational telemetry
+
+WAVE: 8
+
+STATUS: IN PROGRESS; Native health/logging increment complete; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `96f3b980eb25eb92f8ca52b30a8f974f8d1fd75d`; this telemetry commit records the increment. Parent is pushed and preserved in verified `north-star-native-recovery.bundle`, SHA256 `8a5bb9efb6621fadaadb422b16fbf31106851969bd38d590cafac8696dd0b6c4`.
+
+CAPABILITIES COMPLETED: `/healthz` liveness and `/readyz` required local state/schema/worker/tool-presence availability under the existing loopback Host/origin boundary. Missing/corrupt/linked databases never become newly created or followed; reads are bounded. Missing/disabled/stopped required dependencies return 503 while HTTP can remain alive. No optional GPU/provider/secret test or external call. Every GET/POST dispatch generates an opaque response request ID; incoming arbitrary IDs are ignored. Fixed-category JSON telemetry records scoped IDs/duration/status with null unknown context, production steps and intelligence outcomes. Raw paths, queries, bodies, headers, filenames, cookies, secrets, provider errors and private content are excluded. Only the Native logger is configured; SDK/global logging levels remain untouched. Sink failure cannot change workflow results. Existing durable database step events and legacy health/session responses remain compatible.
+
+CAPABILITIES PARTIAL: all-service correlation, production log access/collection/retention, metrics/alerts and soak acceptance. Readiness is availability/tool-presence evidence, not full tool/model/database integrity or real-provider acceptance. Intelligence provider context remains null when unknown. Pipeline provider categories alone do not prove actual dispatch, spend or media acceptance.
+
+TESTS: full Native **376/376 PASS**, 195.490s (`native-observability-full-r1.log`); latest focused HTTP/cost/worker/intelligence **75/75 PASS**, 30.249s, including eleven new telemetry/privacy/readiness checks. Earlier focused run was 60/60 before intelligence instrumentation. Fresh actual local contract **PASS**, seven exports/eight requests in `native-observability-contract-n3`. n1 was correctly refused because an absent-secret path parent overlapped the fixture data root; only fixture layout changed. n2 research correctly failed relevance for a sentinel-only query; n3 uses the existing valid AI-education fixture query and waits for a terminal result without weakening research validation. Failed roots/logs remain retained. Unchanged Studio remains 116 PASS; pinned Linux API f045999 remains 2,085 PASS/11 SKIP.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: actual isolated HTTP, SQLite, worker/intelligence threads, generated correlation, required-dependency loss, corrupt/missing/linked database rejection and content-free logger capture. MOCK TESTS: generated content/research/ideas and worker failure bodies are explicit fixtures. No paid/external operation or Owner approval.
+
+EVIDENCE: `docs/north-star/native-observability-evidence.json` binds six source files, six logs and seven n3 exports; `docs/NATIVE_OBSERVABILITY.md` defines exact readiness/logging limits. All owned contract threads are closed; live/accepted roots are untouched.
+
+REGRESSIONS: full Native Phase8/9/10 checks pass; project/queue/provider authorization, session/CSRF, approval and no-replay boundaries remain intact. No main merge, production deployment, publication or new provider budget.
+
+EXTERNAL BLOCKERS: actual credentials/billing/GPU/Docker/browser/Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: role enforcement and remaining media/platform/profiles/distribution/analytics/learning/Trend/Hub/hardening implementation.

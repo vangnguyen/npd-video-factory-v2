@@ -1,0 +1,13 @@
+# Native health and operational logs
+
+`GET /healthz` reports HTTP process liveness. `GET /readyz` reports availability of the local state root, expected workflow/intelligence database schemas, both queue workers and the presence of FFmpeg/FFprobe. It returns HTTP 503 when a required check fails. Both routes preserve the existing loopback Host/same-origin boundary and require no session cookie. `/api/health` remains compatible with the existing Studio.
+
+Readiness performs bounded read-only SQLite operations, never creates a missing database and refuses linked paths. It does not execute a provider, read a secret, test GPU availability, certify full database integrity or certify tool/model/provider acceptance. Runtime preflight and full media/QC/recovery checks remain separate. An idle core can be ready with optional providers absent; disabled or stopped workers are not ready even while the HTTP process remains alive.
+
+Each GET/POST dispatch generates its own opaque `X-Request-ID`; a caller's value is ignored. HTTP telemetry includes only registered event/route categories, status, method, fixed stage/provider categories, bounded duration and valid opaque IDs. Query strings, URLs, filenames, bodies, headers, cookies, credentials, raw exceptions and uploaded content are excluded. Unknown provider/project/job context stays null.
+
+Production worker steps and intelligence outcomes use the same structured schema, `vf-native-operation-v1`. Intelligence operations before project creation retain null project/provider context and their own operation/run IDs. Provider fields on pipeline step logs identify the configured stage category; they do not establish that a real provider executed, accepted media or billed an operation. Fixtures and actual provider evidence must still be assessed separately.
+
+The Native CLI configures only the `video_factory.native` logger, with JSON lines on stderr and no propagation. It does not raise SDK, HTTP-library or global logging levels, because credential-bearing upload URLs can otherwise enter logs. Logging failures cannot change workflow outcomes. Existing durable database job-step events remain intact. Deployment log collection/access/retention, correlation across every media service, metrics/alerts and soak acceptance remain production hardening work.
+
+The fresh local contract in `scripts/north_star_native_observability_contract.py` runs an isolated HTTP server, actual idle workers/SQLite, explicit fixture content/research, eight requests, required-dependency failure and privacy checks. It closes every owned thread. Evidence is indexed by `docs/north-star/native-observability-evidence.json`; no external/paid operation, Owner UAT or production deployment is implied.

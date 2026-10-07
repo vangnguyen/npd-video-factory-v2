@@ -1518,10 +1518,16 @@
     "source": [
       "apps/api/app/operations_observability.py",
       "apps/api/app/main.py",
-      "services/windows_native/server.py"
+      "services/windows_native/server.py",
+      "services/windows_native/observability.py",
+      "services/windows_native/intelligence_service.py",
+      "services/windows_native/tests/test_observability.py",
+      "scripts/north_star_native_observability_contract.py",
+      "docs/NATIVE_OBSERVABILITY.md",
+      "docs/north-star/native-observability-evidence.json"
     ],
-    "behavior": "API healthz/readyz and operations telemetry exist.",
-    "gap": "Native health/readiness and uniform stage/provider/duration request logs.",
+    "behavior": "Existing API telemetry/health remains. Native /healthz and /readyz now separate liveness from bounded read-only SQLite/schema, unlinked state, queue worker and local media-tool presence. Missing/stopped required dependencies return 503; optional provider/GPU absence does not trigger provider calls. Every GET/POST dispatch generates a request ID and content-free fixed-category JSON telemetry; Native production steps and intelligence outcomes retain scoped IDs/durations with null unknown provider/project context. Only the Native logger is configured, preserving SDK/global levels; URL/query/body/header/cookie/raw error/private content and incoming arbitrary request IDs cannot enter records. Actual local eight-request/worker/SQLite proof and eleven focused health/privacy/security tests pass.",
+    "gap": "Uniform correlation across all independent media/service operations, production log access/collection/retention, metrics/alerts and soak acceptance remain. Native readiness verifies local availability/tool presence, not full database/tool/model/provider/production integrity acceptance.",
     "severity": "P1",
     "dependency": "runtime integration",
     "wave": "8/15",

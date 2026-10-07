@@ -1,0 +1,95 @@
+{
+  "schema": "north-star-native-observability-evidence-v1",
+  "parent_head": "96f3b980eb25eb92f8ca52b30a8f974f8d1fd75d",
+  "source_sha256": {
+    "services/windows_native/observability.py": "dc2e78e29012ad64321ead8dc5966d99ecdeb02f96918f5e72cb7cbd63dce11e",
+    "services/windows_native/server.py": "ec448ef29b259abd639198528bfbaa65f14838d2f34eb25a5e1722fefed34c41",
+    "services/windows_native/intelligence_service.py": "00085ac72f39a77add91ca6aced808cdc4f7e889e764648278f100bf15876d21",
+    "services/windows_native/tests/test_observability.py": "00ba2a65fdc371bb454ac93de735a9dd4c718dbc1883b1df6d8f535ebcff3852",
+    "scripts/north_star_native_observability_contract.py": "033355b584915f30adaa2dcfb18d6c871d819b34a0e5ff0caf593c06b0928894",
+    "docs/NATIVE_OBSERVABILITY.md": "bb1f698dca8d75c4dc4cb62eb6a2b15cbcc84b07bbdcece4d10085878f307cde"
+  },
+  "logs": {
+    "native-observability-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-r1.log",
+      "sha256": "72094580437bcb730a34fa4d543e797286d3f92df03cba7149c2be291aa7acec"
+    },
+    "native-observability-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-r2.log",
+      "sha256": "4f097962e86ed924847899e078307b7359e8123507e750e285ff60d994c74969"
+    },
+    "native-observability-full-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-full-r1.log",
+      "sha256": "638e91c94295640beae707b1f77f1ada74d864020aed4906256d339bf8961830"
+    },
+    "native-observability-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n1.log",
+      "sha256": "2e01c00f71273174010b29da2eff02ea8431e4571755a17e856cc5c4027b9d3e"
+    },
+    "native-observability-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n2.log",
+      "sha256": "3f0a1da82ff43ac188546448022e9da04c3f8091c2c7ad36c72a550801bd612d"
+    },
+    "native-observability-contract-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n3.log",
+      "sha256": "29d6eeee55936808381aba8efff0af44826f8e22bd71af96a570be770f5e91d2"
+    }
+  },
+  "exports": {
+    "health.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n3\\health.json",
+      "sha256": "536d82a90eaeb394ea99264192cfa51042d32b5876b997007f7d6d5cd5d2d1d4"
+    },
+    "intelligence-logs.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n3\\intelligence-logs.json",
+      "sha256": "8811212207d8f11a7189d939c42489c317e80170ef124ffdc0f2e2808281b5e2"
+    },
+    "privacy.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n3\\privacy.json",
+      "sha256": "8a4f7e810e1aac20c6489d85e4f3eb920a5908bd49ef53a61a792952f3818433"
+    },
+    "readiness.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n3\\readiness.json",
+      "sha256": "b9b927529af1ba356be0ada3837e95ce9fa8171d47d0d57bcba9ab518d2b5024"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n3\\receipt.json",
+      "sha256": "7b66fe6aa156694550c9f2ce37f783e78501caed1289d89acccedc8a8d00f6e2"
+    },
+    "request-logs.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n3\\request-logs.json",
+      "sha256": "b9f5734221f5f4606b7bddfa0c0381ab17798d9b2ae6ae8ae043a0192d221124"
+    },
+    "worker-logs.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-observability-contract-n3\\worker-logs.json",
+      "sha256": "6e64c1bcfbd7865c36f4a99cfd458275997062b235f06262e7bcbd12e062e0fb"
+    }
+  },
+  "native_full_pass": 376,
+  "native_full_seconds": 195.49,
+  "focused_pass": 75,
+  "focused_seconds": 30.249,
+  "new_observability_tests": 11,
+  "local_real_http_sqlite_workers": true,
+  "http_contract_requests": 8,
+  "null_unknown_context": true,
+  "generated_request_ids": true,
+  "secrets_private_content_raw_errors_excluded": true,
+  "only_own_logger_configured": true,
+  "fixture_content_research_ideas": true,
+  "actual_provider_calls": 0,
+  "paid_operations": 0,
+  "optional_gpu_provider_acceptance": false,
+  "full_runtime_integrity_acceptance": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "failure_roots_retained": [
+    "C:/vf-native-observability-n1",
+    "C:/vf-native-observability-n2"
+  ],
+  "remaining": [
+    "Uniform instrumentation across all independent media/service operations",
+    "Production log collection/access/retention/metrics/alerts and soak acceptance",
+    "Tool/model/database full integrity, real provider and Docker acceptance remain separate"
+  ]
+}
