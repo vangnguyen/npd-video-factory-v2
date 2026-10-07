@@ -107,6 +107,7 @@ def database_status(path):
             if 'native_cost_operations' in tables:
                 counts['native_cost_operations'] = con.execute('SELECT count(*) FROM native_cost_operations').fetchone()[0]
             if 'native_rights_requests' in tables:counts['native_rights_requests']=con.execute('SELECT count(*) FROM native_rights_requests').fetchone()[0]
+            if 'native_rights_override_requests' in tables:counts['native_rights_override_requests']=con.execute('SELECT count(*) FROM native_rights_override_requests').fetchone()[0]
             for name in ('native_stock_bindings','native_stock_jobs','native_stock_imports','native_stock_events'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_stock_jobs' in tables:busy+=con.execute("SELECT count(*) FROM native_stock_jobs WHERE status IN ('queued','running','retry_scheduled')").fetchone()[0]

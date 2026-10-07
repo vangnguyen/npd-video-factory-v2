@@ -139,6 +139,8 @@ class NativePublications:
         projections = [SimpleNamespace(asset_id=identity, provenance={**available.get(identity, {}).get('provenance', {}),
             **{key: available.get(identity, {})[key] for key in ('rights_status', 'license', 'production_eligible') if key in available.get(identity, {})}}) for identity in used]
         rights = validate_rights(projections)
+        from .rights_override import validate_publication_rights
+        rights=validate_publication_rights(self.store,document,job['project_id'],assets,used,rights)
         qc = dict(job['result']['qc']); profile = PROFILES.get((qc.get('width'), qc.get('height')), 'native-unmapped-profile')
         platform = validate_platform(capability=self.capabilities.get(payload.platform), metadata=payload.metadata,
             render=SimpleNamespace(profile=profile, qc_report=qc), output_asset=SimpleNamespace(size_bytes=path.stat().st_size), mode='dry_run')

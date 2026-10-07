@@ -1,0 +1,144 @@
+{
+  "schema": "native-owner-rights-evidence-v1",
+  "parent_head": "a691a555eaccfe5f4e5c96b477362285888ccdc5",
+  "source_sha256": {
+    "services/windows_native/rights_override.py": "6dc3c7e25c76c0792e0197725b7fa7579b93489ab04a08b61a402accdf1df4d9",
+    "services/windows_native/rights_override_models.py": "dfa55c3ba298d3b3f5c5187876b24071783e252bd037faf7c995d9f2be42b8dd",
+    "services/windows_native/rights_override_routes.py": "a6733471e03db9976c2fef0bc5bcd857e1f1cd41646dd9bed5a265c58597c1e5",
+    "services/windows_native/access.py": "9c561b79088db89ffab90adfbd215071cf06be8b85bfbbf790be77e5aa44014a",
+    "services/windows_native/backup.py": "b992e26e8b74a044be51bcb3ba3496b1c02279f2fc3bab9c11a75d0965a5e398",
+    "services/windows_native/bridge.py": "58875999ff00ca6e6315a2d12147dea3f828e917af8b429f1167e18c7eaf76c7",
+    "services/windows_native/publications.py": "be975fb56a0033df3b5802a9c6ab33d5bdf97cd1206cb40b32efa29c28a6d8c1",
+    "services/windows_native/rights.py": "a26c3ec26fd8d627196719a4419af1b66c8d03cf67e49b496857e0279d8fe292",
+    "services/windows_native/server.py": "f60d3794ccabd044788fbc7e3f8dd38f5807662e7986c77185da8395137cd89c",
+    "services/windows_native/source_broll.py": "d4b28af8d015a68eafe73cd48a564505466fd83404c8481348d690e22f97c775",
+    "services/windows_native/source_duplicate.py": "9a9fa0fba7a2713c895f5381efceea73852c8fe36a06cc8c6e83b35535da86df",
+    "services/windows_native/store.py": "e230b804340166ce490a846a2b378f26b79f004a439941c4fecedcf65ff3da88",
+    "services/windows_native/tests/test_rights_override.py": "6fc3a82c117e33527ef4c94825ca08a79f04e5277846439733a19cccb66d3fb1",
+    "services/windows_native/tests/test_rights_override_http.py": "d3e11b817907e08fe92c38bc5ac175c9dafc30f8a7b67aa4f1518a21fd6868ba",
+    "services/windows_native/tests/test_rights_override_broll.py": "d6c841df8a45432d0a2ab9c4cbdf09ec0dc6d479dc3acf7ef333e3d7e0b813f1",
+    "services/windows_native/tests/test_phase10_http.py": "8e0abcf16ded5d384dbcfece5fd29f1bd20ddd8dbab941068c567f12241e94df",
+    "services/windows_native/tests/test_publications.py": "1e87214edb438b5fcaad46e3c9d8b3eef1b067eae3ab076f09590b46669f6005",
+    "apps/studio-web/native-rights-override.mjs": "c7a8d7fa31e113b66bb4e0eafa6b927f33d868aa6c25c96a315b85885f64b2e4",
+    "apps/studio-web/native.mjs": "bdfe9d39f3c4f01b3a3452bc512302f9d030c8e120c81eb0dfc544e736b9bdcd",
+    "apps/studio-web/native.html": "0b6835df5777970e2b4c4859df83787f48dec108b261918a848c4f567fd05399",
+    "apps/studio-web/tests/native-rights-override.test.mjs": "705fb66c2466070631290c8d914dc60bc42f1d9e4f1235d5d49ad74da8a6fc34",
+    "scripts/north_star_native_rights_override.py": "23cb76decc5f94b2826bb7957575523b59d57452e51b26d29c85c0ad223d11a7",
+    "docs/NATIVE_OWNER_RIGHTS_OVERRIDES.md": "77b032c45e2a19e865163a3a37a56fac045d1223a77b9e55cdf1421eec047dc6",
+    "docs/NATIVE_MEDIA_RIGHTS.md": "907dc92006de85137e0f6b3f9c6efc9fb7da7a9734af240407a4257e17a4ea89",
+    "docs/NATIVE_STOCK_MEDIA.md": "436ee503ccf17e36ed05e98e41647a06f6ccc0e68c983e302a170dc98c582347"
+  },
+  "logs": {
+    "native-rights-override-r1.log": "aa60e33bf461e53f3bcfbc3eef2e1e0a0dec91618898f3515f78f410d7b178ea",
+    "native-rights-override-r2.log": "1cb5b83261b8928bed9607613e41c0e34051bb69eec64784adc30a5b8f7e9679",
+    "native-rights-override-r3.log": "d3fd6f9772cd4eddcc8758f32fe35fdef69b178ff732920e10fc589fe422192f",
+    "native-rights-override-r4.log": "d68f328c3fabe9bd7543ef69f36597814852bdd8c4f4de7b687f3a932d61eedb",
+    "studio-native-rights-override-r1.log": "cbdebc0a73be0a6059e7af2f29a9712015dc43b087bc3e945eb7276c2db03fd9",
+    "studio-native-rights-override-r2.log": "120b28ead4408f36c97d43681334777915a641db7d91303ee6bda17fcf01600c",
+    "native-full-rights-override-r1.log": "2eeeb6016ba82ab94b0a54a13dd1f89ace6db6d795a7fde11ed06e2d7720dd27",
+    "native-rights-override-contract-n1.log": "096311312ce4d0023531bc30ad86ecb0c53cc01c4cb8ddbc9a2034b277cc67bf"
+  },
+  "contract_bundle": {
+    "contract.json": {
+      "sha256": "99856a92695eb5fec19e623dd24ec2ba6e0717c88993567170760fb2e34dea43",
+      "bytes": 895
+    },
+    "declaration.json": {
+      "sha256": "b56074726aa9373ac9cac31c21925718a30ae5225c9c9a9dd9e364e95fd13709",
+      "bytes": 1401
+    },
+    "events.json": {
+      "sha256": "c2f7ea6db1d53ef483b4a363986cf5c3f6737039fb2faf4db907ad1043a3260c",
+      "bytes": 27337
+    },
+    "final-review.json": {
+      "sha256": "04ba3d26140f7f842a7779c01a34009216fea98c0c7f7571270a25ac905af2df",
+      "bytes": 3490
+    },
+    "grant.json": {
+      "sha256": "93f5c3b63b94b53c1576c690b3fed93bac4697c62d76748bf7ee58adf8da8c1a",
+      "bytes": 1586
+    },
+    "http-requests.json": {
+      "sha256": "81eefac6dfafa0e5f6f0d8614240c7c202ad11b8d26217122ebbd15518d7a72d",
+      "bytes": 2015
+    },
+    "initial-review.json": {
+      "sha256": "d94bbd801913e2895cae2e0c70ec46c127ebe929306b1ae6e731e2f2f28244cc",
+      "bytes": 757
+    },
+    "native-owner-rights-backup.zip": {
+      "sha256": "ce48649d99f6165aa1a1b7c7bcb38ad7fa704dff25826713416fc1e8ab10494d",
+      "bytes": 7764248
+    },
+    "recovery.json": {
+      "sha256": "ff5ee0ea3c8fe740846134ecb571b9397512824205dbc8e6c4d2e87ca6cc6a77",
+      "bytes": 4958
+    },
+    "revocation.json": {
+      "sha256": "4fc9ab8db3bbe8a04e15a45093d6cb3b1994d3f0ed2c493319c7538c8258abaa",
+      "bytes": 1655
+    },
+    "source-restore.json": {
+      "sha256": "2b00350d01ac9fd9aeb773e3bf3f186473119bfa78ddfe56015c4ce8bfd18af2",
+      "bytes": 2086
+    }
+  },
+  "native_full_passed": 533,
+  "native_full_seconds": 331.869,
+  "affected_passed": 58,
+  "affected_seconds": 34.884,
+  "studio_passed": 206,
+  "studio_duration_ms": 1000.2963,
+  "new_native_cases": 12,
+  "new_studio_cases": 5,
+  "counts_overlap": true,
+  "default_disabled_requires_human_auth_configuration": true,
+  "browser_enablement": false,
+  "scoped_reason_evidence_media_rights_hash_expiry": true,
+  "rights_independently_verified": false,
+  "publishing_authorized": false,
+  "physical_provider_provenance_unchanged": true,
+  "fixture_and_restricted_promotion_forbidden": true,
+  "revoke_after_disabling": true,
+  "frozen_replay_after_revocation": true,
+  "atomic_approval_version_event_receipt": true,
+  "derived_project_drops_exception_scope": true,
+  "local_broll_unknown_rights_preserved": true,
+  "local_broll_expiry_reapply_blocked": true,
+  "approved_dry_run_expiry_revalidation_blocked_before_mock_dispatch": true,
+  "new_process_exact": true,
+  "offline_restore_exact": true,
+  "source_root": "C:/vf-native-fixture-rights-override-01",
+  "restore_root": "C:/vf-native-fixture-rights-override-restore-01",
+  "local_contract": {
+    "schema_version": "native-owner-rights-contract-v1",
+    "project_id": "4975d4093956466fb8a8c34b8ca3b263",
+    "parent_final_sha256": "5cae013b924493561de30578d3525af7a500f1ca56a1e9c7f7f528683796c398",
+    "parent_preview_sha256": "1b19c136467326a7ec77c5f532dd758c1c8702efa025e1a09c277f2af44091c7",
+    "authenticated_http_requests": 13,
+    "explicit_synthetic_owner_exception": true,
+    "independent_rights_verification": false,
+    "publishing_authorized": false,
+    "rights_remain_unknown": true,
+    "revoke_after_disabling": true,
+    "frozen_replay_after_revocation": true,
+    "old_jobs_versions_media_unchanged": true,
+    "actual_media_rerendered": false,
+    "actual_provider_calls": 0,
+    "actual_hub_calls": 0,
+    "actual_publications": 0,
+    "paid_operations": 0,
+    "real_credentials_read": 0,
+    "owner_uat": false,
+    "browser_real_tested": false,
+    "production_deployed": false
+  },
+  "unchanged_api_latest_full": {
+    "head": "e59a7d5",
+    "passed": 2659,
+    "skipped": 11,
+    "seconds": 1512.89,
+    "rerun": false
+  }
+}

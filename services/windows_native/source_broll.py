@@ -48,7 +48,7 @@ class Apply(StrictModel):
     replace_plan_clips:bool=Field(default=False,strict=True)
 
 
-def shared_assets(project,config):
+def shared_assets(project,config,*,rights_overrides=None):
     """Attribute owner attestation precisely; never infer an external license."""
     output={};timestamp=datetime.now(timezone.utc)
     for item in project_assets(project['document']):
@@ -60,7 +60,8 @@ def shared_assets(project,config):
         content_type=('video/quicktime' if item['id'].endswith('.mov') else 'video/mp4') if item['kind']=='video' else (
             'image/png' if item['id'].endswith('.png') else 'image/jpeg')
         confirmed=item.get('rights_confirmed') is True
-        recorded=item.get('source_type') in {'stock','internal_library','ai_generated'} or item.get('rights_declaration_ref') is not None
+        recorded=item.get('source_type') in {'stock','internal_library','ai_generated'} or item.get('rights_declaration_ref') is not None or any(r['asset_id']==item['id'] for r in project['document'].get('media_rights_overrides',[]))
+        override=rights_overrides.active(project['document'],project['id'],item) if rights_overrides is not None else None
         source_type=item.get('source_type') if item.get('source_type') in {'stock','internal_library','ai_generated'} else 'user_upload'
         rights=item.get('rights_status','unknown') if recorded else 'verified' if confirmed else 'unknown'
         license=item.get('license') or 'unknown' if recorded else 'owner_upload_rights_attestation' if confirmed else 'unknown'
@@ -78,6 +79,7 @@ def shared_assets(project,config):
                 'license_url':item.get('license_url'),'creator':item.get('creator'),'provider_asset_id':item.get('provider_asset_id'),
                 'attribution_requirement':item.get('attribution_requirement'),'generation_provenance':item.get('generation_provenance',{}),
                 'production_eligible':item.get('production_eligible',not recorded),'actual_native_rights_status':item.get('rights_status','unknown'),
+                'owner_rights_override':override,
                 'tags':item.get('tags',[]),'description':item.get('description',''),
                 'media_metadata':{key:item.get(key) for key in ('duration_seconds','width','height')},
                 **({'pixel_quality_summary':measured.model_dump(mode='json')} if measured else {}),
@@ -134,7 +136,7 @@ def create(store,config,project_id,revision,body):
     except ValueError:raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400) from None
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);_cas(project,payload.expected_version)
-        snapshot,analysis=context(project);assets=shared_assets(project,config)
+        snapshot,analysis=context(project);assets=shared_assets(project,config,rights_overrides=getattr(store,'rights_overrides',None))
         configuration=MediaPlanRequest(analysis_id=analysis.analysis_id,
             transcript_id=analysis.transcript.transcript_id if analysis.transcript else None,
             purpose='supporting_broll',brand_context=payload.brand_context,max_ai_cost_vnd=Decimal('0'))
@@ -174,11 +176,11 @@ def select(store,config,project_id,revision,body):
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);_cas(project,payload.expected_version)
         _,analysis=context(project);plan=_plan(project['document'],payload.media_plan_id,payload.expected_plan_version)
-        _bound(plan,analysis);assets=shared_assets(project,config);asset=assets.get(payload.asset_id)
+        _bound(plan,analysis);assets=shared_assets(project,config,rights_overrides=getattr(store,'rights_overrides',None));asset=assets.get(payload.asset_id)
         item=next((item for item in plan.items if item.media_plan_item_id==payload.item_id),None)
         if item is None or asset is None or asset.asset_id==analysis.asset_id:
             raise WorkflowError('AUTO_EDIT_BROLL_SELECTION_INVALID',400)
-        if asset.provenance['rights_status'] not in {'owned','licensed','verified'}:raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
+        if asset.provenance['rights_status'] not in {'owned','licensed','verified'} and not asset.provenance.get('owner_rights_override'):raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
         timestamp=datetime.now(timezone.utc);evidence_id='mas_'+uuid.uuid4().hex[:24]
         meta=asset.provenance['media_metadata']
         evidence=MediaAssetProvenanceRead(media_asset_id=evidence_id,workspace_id='native-local',project_id='prj_'+project_id,
@@ -190,7 +192,8 @@ def select(store,config,project_id,revision,body):
             width=meta['width'],height=meta['height'],duration_seconds=meta['duration_seconds'],orientation='unknown',
             production_eligible=asset.provenance['production_eligible'] and not asset.provenance['fixture'],publishing_allowed=False,downloaded_at=None,
             provenance={'asset_checksum_sha256':asset.checksum_sha256,
-                'rights_verification_basis':asset.provenance['rights_verification_basis'],'fixture':asset.provenance['fixture']},
+                'rights_verification_basis':asset.provenance['rights_verification_basis'],'fixture':asset.provenance['fixture'],
+                'owner_rights_override':asset.provenance.get('owner_rights_override')},
             created_at=timestamp,updated_at=timestamp)
         plan.media_assets.append(evidence);item.selected_media_asset_id=evidence_id;item.source_asset_id=asset.asset_id
         item.strategy='licensed_stock' if asset.provenance['source_type']=='stock' else 'user_asset';item.status='resolved';item.needs_approval=False
@@ -207,7 +210,7 @@ def apply(store,config,project_id,revision,body):
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);_cas(project,payload.expected_version)
         snapshot,analysis=context(project);plan=_plan(project['document'],payload.media_plan_id,payload.expected_plan_version)
-        _bound(plan,analysis);assets=shared_assets(project,config);selections=[]
+        _bound(plan,analysis);assets=shared_assets(project,config,rights_overrides=getattr(store,'rights_overrides',None));selections=[]
         for identifier in payload.item_ids:
             item=next((item for item in plan.items if item.media_plan_item_id==identifier),None)
             evidence=next((value for value in plan.media_assets if item and value.media_asset_id==item.selected_media_asset_id),None)
@@ -216,7 +219,7 @@ def apply(store,config,project_id,revision,body):
                 raise WorkflowError('AUTO_EDIT_BROLL_SELECTION_INVALID',400)
             if evidence.provenance['asset_checksum_sha256']!=asset.checksum_sha256:
                 raise WorkflowError('AUTO_EDIT_BROLL_SOURCE_CHANGED')
-            if asset.provenance['rights_status'] not in {'owned','licensed','verified'}:raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
+            if asset.provenance['rights_status'] not in {'owned','licensed','verified'} and not asset.provenance.get('owner_rights_override'):raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
             selections.append((item,evidence))
         try:changed=place_broll(snapshot,plan,selections,assets,replace_plan_clips=payload.replace_plan_clips)
         except (TimelineEditError,ValueError):raise WorkflowError('AUTO_EDIT_BROLL_PLACEMENT_INVALID',400) from None

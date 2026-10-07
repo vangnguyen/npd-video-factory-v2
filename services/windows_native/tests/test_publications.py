@@ -19,8 +19,8 @@ ROOT = Path(__file__).resolve().parents[3]
 CAPABILITIES = ROOT / 'packages/contracts/publishing-capabilities.json'
 
 
-def render_fixture(store, *, rights='owned', source_mode=True,asset=None):
-    project = store.create('EXPLICIT SYNTHETIC PUBLICATION FIXTURE', '', 'media'); identifier = uuid.uuid4().hex
+def render_fixture(store, *, rights='owned', source_mode=True,asset=None,project=None):
+    project = project or store.create('EXPLICIT SYNTHETIC PUBLICATION FIXTURE', '', 'media'); identifier = uuid.uuid4().hex
     asset = asset or {'id': 'explicit_fixture.mp4', 'kind': 'video', 'filename': 'EXPLICIT OWNED RIGHTS FIXTURE',
         'rights_confirmed': True, 'rights_status': rights, 'license': 'explicit-owned-fixture-license'}
     document = {**project['document'], 'assets': [asset], 'canonical_timeline': {'snapshot': {

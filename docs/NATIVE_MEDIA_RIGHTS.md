@@ -1,5 +1,7 @@
 # Native media source and rights review
 
+The declaration behavior below remains unchanged. A separate, default-disabled [Owner exception workflow](NATIVE_OWNER_RIGHTS_OVERRIDES.md) now records scoped decisions without verifying rights or authorizing publication. It does not add override fields to the declaration DTO.
+
 This is a versioned human declaration workflow, not provider verification or a legal override. The Assets stage exposes it when `native_rights_review=true`. Reading is explicit and permitted to viewers; saving requires the existing Owner `manage` permission, session, same-origin and CSRF checks before the request body is consumed.
 
 New Native image/video and music uploads, including the legacy image endpoint, record their actual `source_type=user_upload`, `provider=native-local-upload`, opaque `upload://` reference, `rights_status=unknown`, nullable license and empty generation provenance. The intake acknowledgment records a user statement. Existing asset metadata is not silently rewritten when read. It does not acquire a license from a filename, extension, checkbox or model output.

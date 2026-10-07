@@ -92,6 +92,9 @@ class Store:
         if 'media_rights_declarations' in doc:
             from .rights import validate_document
             validate_document(doc,project_id=row['id'])
+        if 'media_rights_overrides' in doc:
+            from .rights_override import validate_document
+            validate_document(doc,project_id=row['id'])
         if doc.get('channel_profile') is not None:
             from .channel_profiles import resolve
             resolve(doc)
@@ -286,7 +289,7 @@ class Store:
                 resolve_assets(SimpleNamespace(data_root=self.root),project)
                 doc=rebind(doc,identifier,copy_id,revision,stamp)
             else:
-                if 'media_rights_declarations' in doc:
+                if 'media_rights_declarations' in doc or 'media_rights_overrides' in doc:
                     from .rights import clear_project_claims
                     clear_project_claims(doc)
                 doc["duplication"]={"project_id":identifier,"revision":revision,"document_sha256":digest(doc),"created_at":stamp}

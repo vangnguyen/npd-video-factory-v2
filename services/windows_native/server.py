@@ -129,8 +129,9 @@ class LocalServer(ThreadingHTTPServer):
 
     def __init__(self, port, config, *, pipeline=None, start_worker=True, observer=None, access=None,
         bridge_auth_registry=None,bridge_webhook_registry=None,bridge_http_enabled=False,
-        stock_registry=None,stock_api_enabled=False,stock_factories=None):
+        stock_registry=None,stock_api_enabled=False,stock_factories=None,owner_rights_overrides=False):
         config.validate_data_root()
+        if owner_rights_overrides and access is None:raise WorkflowError('NATIVE_RIGHTS_OVERRIDE_HUMAN_AUTH_REQUIRED',400)
         if access is not None:
             from .access import NativeAccess
             if not isinstance(access, NativeAccess):
@@ -172,6 +173,8 @@ class LocalServer(ThreadingHTTPServer):
         self.bridge.attach_intelligence(self.intelligence.store)
         from .rights import NativeRights
         self.rights=NativeRights(self.store,workspace_id=self.publications.workspace_id)
+        from .rights_override import NativeRightsOverrides
+        self.rights_overrides=NativeRightsOverrides(self.store,workspace_id=self.publications.workspace_id,enabled=owner_rights_overrides)
         from .stock import NativeStock
         from .stock_registry import load as load_stock
         if stock_api_enabled and stock_registry is None:raise WorkflowError('NATIVE_STOCK_REGISTRY_REQUIRED',400)
@@ -316,6 +319,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights',path):
             from .rights_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights-overrides',path):
+            from .rights_override_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path == '/healthz':
             return self.reply({'schema': 'vf-native-health-v1', 'status': 'alive', 'scope': 'http_process'})
         if path == '/readyz':
@@ -391,7 +397,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_owner_rights_override_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -478,6 +484,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-analytics.mjs'] = 'native-analytics.mjs'
         static['/native-vision.mjs'] = 'native-vision.mjs'
         static['/native-rights.mjs'] = 'native-rights.mjs'
+        static['/native-rights-override.mjs'] = 'native-rights-override.mjs'
         static['/native-stock.mjs'] = 'native-stock.mjs'
         static['/native-variants.mjs'] = 'native-variants.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
@@ -525,6 +532,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights/[a-f0-9]{32}\.(jpg|png|mp4|wav)',self.path):
             from .rights_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights-overrides/[a-f0-9]{32}\.(jpg|png|mp4|wav)',self.path):
+            from .rights_override_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
         if self.path.startswith('/api/bridge/'):
             from .bridge_operator_routes import post
@@ -867,6 +877,7 @@ def main():
     parser.add_argument('--enable-bridge-http',action='store_true')
     parser.add_argument('--stock-provider-registry',type=Path)
     parser.add_argument('--enable-stock-api',action='store_true')
+    parser.add_argument('--enable-owner-rights-overrides',action='store_true')
     args = parser.parse_args()
     config = Config.load(args.config)
     try:
@@ -885,7 +896,7 @@ def main():
         lock = lock_data_root(config.data_root)
         with LocalServer(args.port, config, access=access,bridge_auth_registry=args.bridge_auth_registry,
             bridge_webhook_registry=args.bridge_webhook_registry,bridge_http_enabled=args.enable_bridge_http,
-            stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api) as server:
+            stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api,owner_rights_overrides=args.enable_owner_rights_overrides) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)
             try:
                 server.serve_forever()

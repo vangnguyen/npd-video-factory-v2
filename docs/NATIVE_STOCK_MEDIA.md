@@ -1,5 +1,7 @@
 # Native stock media intake
 
+The separate [Owner exception workflow](NATIVE_OWNER_RIGHTS_OVERRIDES.md) now provides default-disabled, expiring legal-decision architecture. It retains actual stock provenance and cannot promote provider fixture media. Genuine asset-specific decisions and real-provider acceptance still require Owner/provider evidence.
+
 The Assets stage now connects the existing provider-neutral stock contract and official Pexels/Pixabay adapters to Native Studio. This is search, download, local validation, review and explicit project attachment. It does not automatically place media, verify third-party rights, enable publishing or replace an accepted artifact.
 
 Both providers are `NOT_CONFIGURED` by default. `--stock-provider-registry` reads a strict version-1 JSON file outside the state root, with `native_workspace_id` and optional `pexels`/`pixabay` objects containing `api_key` and `enabled`. Loading the file does not enable calls; `--enable-stock-api` is also required. No browser endpoint can read/write keys, change this configuration or turn it on. The file is read once, with bounded size, duplicate-key rejection, path/link checks, exact workspace and secret-safe failure codes. Credentials are neither persisted in project/job/evidence data nor sent to CDN requests. Production ACL/provisioning/rotation remains part of hardening; no real registry was loaded during this increment.

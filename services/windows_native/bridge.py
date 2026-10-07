@@ -351,7 +351,7 @@ class NativeBridge:
         if row:data.update(project_revision=row['revision'],document_sha256=digest(json.loads(row['document'])))
         if action in ('project_created','project_duplicated_unapproved'):event_type='video.project.created'
         elif action=='human_content_approved':event_type='video.approved'
-        elif action in ('draft_saved_approval_invalidated','media_analyzed_approval_invalidated','auto_edit_canonical_timeline_created','auto_edit_canonical_timeline_edited','auto_edit_canonical_timeline_restored','media_rights_declared_review_required'):event_type='video.approval.required'
+        elif action in ('draft_saved_approval_invalidated','media_analyzed_approval_invalidated','auto_edit_canonical_timeline_created','auto_edit_canonical_timeline_edited','auto_edit_canonical_timeline_restored','media_rights_declared_review_required','media_rights_override_review_required'):event_type='video.approval.required'
         elif action=='bridge_preview_ready':
             event_type='video.preview.ready';data.update({k:payload.get(k) for k in ('preview_id','revision','timeline_sha256','artifact_sha256','manifest_sha256','current_revision')})
             data.update(final_approval_eligible=False)
