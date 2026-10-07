@@ -39,7 +39,7 @@
     "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-queue-preservation.json",
     "sha256": "ca6f9c8630871db68357b4d23a027b72c63d1cfc6cab845e0b646dd94455ba41"
   },
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_current_api_status": "PASS",
   "account_and_oauth_inputs_are_fixtures": true,
   "mock_account_requests": 1,
   "actual_provider_requests": 0,
@@ -53,5 +53,15 @@
   "primary_contracts": [
     "https://developers.google.com/youtube/v3/docs/channels/list",
     "https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps"
-  ]
+  ],
+  "full_current_linux_api": {
+    "head": "de9546b07e0ad492775789aa7c9755185e47bb97",
+    "passed": 2241,
+    "skipped": 11,
+    "seconds": 1288.13,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-de9546b.log",
+      "sha256": "32b0f20d427dbf07d2912086a6f864e33ae5956607465cc98e008ccc4b3c60bc"
+    }
+  }
 }

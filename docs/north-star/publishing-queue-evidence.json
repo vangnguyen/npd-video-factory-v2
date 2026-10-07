@@ -66,7 +66,7 @@
   "actual_asgi_http_requests": 16,
   "separate_process_reads": 2,
   "full_parent_api_status": "PASS",
-  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_current_api_status": "VERIFIED_IN_DESCENDANT_DE9546B",
   "account_policy_credentials_human_render_qc_inputs_are_fixtures": true,
   "actual_provider_calls": 0,
   "real_credentials_read": 0,
@@ -83,6 +83,16 @@
     "log": {
       "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-a2359d4.log",
       "sha256": "d76a56b805d74a2949041a5e2692ea5633d613cabe1e9521b0384a2f7aedb34a"
+    }
+  },
+  "full_current_linux_api": {
+    "head": "de9546b07e0ad492775789aa7c9755185e47bb97",
+    "passed": 2241,
+    "skipped": 11,
+    "seconds": 1288.13,
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\api-linux-de9546b.log",
+      "sha256": "32b0f20d427dbf07d2912086a6f864e33ae5956607465cc98e008ccc4b3c60bc"
     }
   }
 }
