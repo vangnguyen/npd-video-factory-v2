@@ -33,6 +33,7 @@ export function previewLabel(preview) {
 }
 export function previewTimingLabel(mediaMode,preview=null,project=null) {
   if(mediaMode==='final'&&isSourceProject(project))return 'Bản render dùng điểm cắt, âm thanh gốc và phụ đề đã lưu trong timeline. Xem và nghe đúng video trước khi duyệt bản cuối.';
+  if(mediaMode!=='final'&&preview?.audio_mode==='canonical_timeline_proxy'&&preview?.manifest?.rendering_effects_parity===true)return `Preview đầy đủ dùng cùng hiệu ứng, crop, phụ đề đang bật và âm thanh của renderer cuối, ở độ phân giải thấp.${preview.manifest?.music_ducking?' Đã hạ nhạc theo năng lượng âm thanh nguồn.':''} Video cuối vẫn cần xem, nghe và duyệt riêng.`;
   if(mediaMode!=='final'&&preview?.audio_mode==='canonical_timeline_proxy')return `Preview dùng điểm cắt và âm thanh theo timeline.${preview.manifest?.music_ducking?' Đã hạ nhạc theo năng lượng âm thanh nguồn.':''}${preview.manifest?.audio_speech_normalization?' Đã áp dụng cân mức nguồn trước âm lượng clip.':''} Chưa dựng phụ đề hoặc keyframe reframe; cần bản render đầy đủ để duyệt cuối.`;
   return mediaMode==='final'?'Bản render dùng giọng Thùy Dung đã khóa. Phụ đề theo đoạn; các shot có lời đọc dùng thời lượng audio đo được.':'Preview hình ảnh chưa tạo hay đo audio; thời điểm phụ đề là ước tính theo thời lượng shot. Bản render dùng giọng Thùy Dung đã khóa.';
 }
@@ -41,7 +42,9 @@ export function boundPreview(project,preview) {
   if(preview.revision!==project?.revision||preview.timeline_sha256!==project?.shot_timeline?.sha256)return {...preview,status:'STALE',video_url:null};
   if(preview.status==='READY'){
     const source=project?.shot_timeline?.editing_mode==='source_footage';
-    const valid=source?preview.audio_mode==='canonical_timeline_proxy'&&preview.preview_profile==='native-source-timeline-proxy-v1'&&preview.manifest?.playable===true&&preview.manifest?.timeline_sha256===project.shot_timeline.sha256&&preview.manifest?.timeline_version===project.shot_timeline.version&&preview.manifest?.final_approval_eligible===false:preview.audio_mode==='silent_visual_proxy';
+    const full=project?.document?.canonical_timeline?.snapshot?.metadata?.source_preview_mode==='final_effects';
+    const profile=full?'native-source-final-effects-preview-v2':'native-source-timeline-proxy-v1';
+    const valid=source?preview.audio_mode==='canonical_timeline_proxy'&&preview.preview_profile===profile&&(!full||preview.manifest?.rendering_effects_parity===true&&preview.manifest?.preview_profile===profile&&preview.manifest?.scale===.4)&&preview.manifest?.playable===true&&preview.manifest?.timeline_sha256===project.shot_timeline.sha256&&preview.manifest?.timeline_version===project.shot_timeline.version&&preview.manifest?.final_approval_eligible===false:preview.audio_mode==='silent_visual_proxy';
     if(!valid||preview.final_approval_eligible!==false)return {...preview,status:'FAILED',video_url:null};
   }
   return preview;

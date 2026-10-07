@@ -5,8 +5,8 @@ import {renderNativeJob} from './native-job-render';
 console.log=console.info=console.warn=console.error=()=>undefined;
 
 try {
-  if(process.argv.length!==3)throw new Error('NATIVE_RENDER_JOB_PATH_INVALID');
-  const receipt=await renderNativeJob(process.argv[2]);
+  if(process.argv.length!==3&&(process.argv.length!==4||process.argv[3]!=='--preview'))throw new Error('NATIVE_RENDER_JOB_PATH_INVALID');
+  const receipt=await renderNativeJob(process.argv[2],undefined,{preview:process.argv[3]==='--preview'});
   process.stdout.write(JSON.stringify(receipt)+'\n');
 }catch(error){
   const message=error instanceof Error?error.message:'';

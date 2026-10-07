@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {isSourceProject,sourceRequest,sourceVersions,sourceClipAction,sourceAdvancedMarkup,sourceAudioSettings} from '../native-source-editor.mjs';
+import {isSourceProject,sourceRequest,sourceVersions,sourceClipAction,sourceAdvancedMarkup,sourceAudioSettings,sourcePreviewSettings} from '../native-source-editor.mjs';
 import {sourceCreatePayload} from '../native-auto-edit.mjs';
 import {timelineHistory} from '../timeline-history.mjs';
 import {videoFormat,nextProjectStage} from '../video-preview.mjs';
-import {previewTimingLabel} from '../shot-studio.mjs';
+import {previewTimingLabel,boundPreview} from '../shot-studio.mjs';
 import {musicSummary} from '../native.mjs';
 
 const snapshot={width:1080,height:1350,duration_seconds:3,metadata:{native_auto_edit_schema:'native-auto-edit-timeline-v1'},tracks:[
@@ -51,4 +51,22 @@ test('Source DSP settings preserve advanced configuration and bind both versions
   assert.equal(body.payload.audio_processing.normalize_original_audio,true);
   const text=previewTimingLabel('proxy',{audio_mode:'canonical_timeline_proxy',manifest:{music_ducking:true,audio_speech_normalization:true}},project);
   assert.match(text,/Đã hạ nhạc theo năng lượng/);assert.match(text,/Đã áp dụng cân mức nguồn/);assert.match(text,/Chưa dựng phụ đề/);
+});
+
+test('full effects preview binds profile to canonical choice without allowing final acceptance',()=>{
+  const project=structuredClone(p);project.document.canonical_timeline.snapshot.metadata.source_preview_mode='final_effects';
+  project.shot_timeline={sha256:'saved',version:2,editing_mode:'source_footage'};
+  const body=sourcePreviewSettings(project,'final_effects');assert.equal(body.payload.expected_version,2);
+  assert.equal(body.payload.preview_mode,'final_effects');assert.throws(()=>sourcePreviewSettings(project,'external'),/hợp lệ/);
+  const preview={status:'READY',revision:7,timeline_sha256:'saved',preview_profile:'native-source-final-effects-preview-v2',
+    audio_mode:'canonical_timeline_proxy',final_approval_eligible:false,manifest:{playable:true,
+      rendering_effects_parity:true,preview_profile:'native-source-final-effects-preview-v2',scale:.4,
+      timeline_sha256:'saved',timeline_version:2,final_approval_eligible:false}};
+  assert.equal(boundPreview(project,preview).status,'READY');
+  assert.equal(boundPreview(project,{...preview,preview_profile:'native-source-timeline-proxy-v1'}).status,'FAILED');
+  assert.equal(boundPreview(project,{...preview,manifest:{...preview.manifest,rendering_effects_parity:false}}).status,'FAILED');
+  assert.equal(boundPreview(project,{...preview,final_approval_eligible:true}).status,'FAILED');
+  assert.match(previewTimingLabel('proxy',preview,project),/cùng hiệu ứng/);
+  assert.match(previewTimingLabel('proxy',preview,project),/duyệt riêng/);
+  assert.doesNotMatch(previewTimingLabel('proxy',preview,project),/Chưa dựng phụ đề/);
 });

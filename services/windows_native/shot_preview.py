@@ -9,7 +9,7 @@ import time
 from .contracts import WorkflowError, digest, file_sha, write_json
 from .media import media_path, project_assets
 from .hardening import durable_json,retry_io
-from .source_preview import PROFILE as SOURCE_PROFILE, resolve_assets, render as render_source
+from .source_preview import profile_for, resolve_assets, render as render_source
 from app.timeline_proxy import PreviewCancelledError
 
 
@@ -55,7 +55,8 @@ class PreviewManager:
     def _status(self, project_id):
         project=self.store.shot_view(project_id); view,_=shot_fields(project)
         source_mode=view.get('editing_mode')=='source_footage'
-        folder=self._folder(project_id,view['sha256'],project['revision'],SOURCE_PROFILE if source_mode else None); record=folder/'preview.json'
+        profile=profile_for(project) if source_mode else None
+        folder=self._folder(project_id,view['sha256'],project['revision'],profile); record=folder/'preview.json'
         if not record.is_file():
             history=sorted(self.root.glob('*/preview.json'),key=lambda p:p.stat().st_mtime,reverse=True)
             previous=next((json.loads(p.read_bytes()) for p in history if json.loads(p.read_bytes()).get('project_id')==project_id),None)
@@ -74,7 +75,7 @@ class PreviewManager:
                 raise WorkflowError('PREVIEW_ARTIFACT_CHANGED')
             if source_mode:
                 manifest=folder/'render-manifest.json'
-                if (value.get('preview_profile') != SOURCE_PROFILE or not manifest.is_file()
+                if (value.get('preview_profile') != profile or not manifest.is_file()
                         or file_sha(manifest) != value.get('manifest_sha256')
                         or json.loads(manifest.read_bytes()) != value.get('manifest')
                         or value.get('manifest',{}).get('timeline_sha256') != view['sha256']
@@ -103,14 +104,15 @@ class PreviewManager:
                     if not a or a.get('rights_confirmed') is not True or not source.is_file() or file_sha(source)!=a['sha256']:
                         raise WorkflowError('SOURCE_MEDIA_CHANGED_OR_MISSING')
                     s['source_sha256']=a['sha256']
-            folder=self._folder(project_id,view['sha256'],revision,SOURCE_PROFILE if source_mode else None); folder.mkdir(parents=True,exist_ok=True)
+            profile=profile_for(project) if source_mode else None
+            folder=self._folder(project_id,view['sha256'],revision,profile); folder.mkdir(parents=True,exist_ok=True)
             old=self.status(project_id)
             if old.get('status') in {'READY','RUNNING','QUEUED'}: return old
             identifier=folder.name
             value={'id':identifier,'project_id':project_id,'revision':revision,'timeline_version':view['version'],
                    'timeline_sha256':view['sha256'],'status':'QUEUED','completed_shots':0,'total_shots':len(shots),
                    'cached_shots':0,'new_proxy_shots':0,'audio_mode':'canonical_timeline_proxy' if source_mode else 'silent_visual_proxy','final_approval_eligible':False,
-                   **({'preview_profile':SOURCE_PROFILE} if source_mode else {}),
+                   **({'preview_profile':profile} if source_mode else {}),
                    'provider_calls':0,'tts_calls':0,'video_url':None}
             self._write(folder/'preview.json',value)
             event=threading.Event(); self.cancelled[identifier]=event

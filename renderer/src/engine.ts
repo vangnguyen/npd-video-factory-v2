@@ -13,7 +13,7 @@ const getServeUrl = (): Promise<string> => {
 };
 
 export class RemotionRenderEngine implements RenderEngine {
-  constructor(private readonly options:{sourceProfile?:boolean}={}) {}
+  constructor(private readonly options:{sourceProfile?:boolean;scale?:number}={}) {}
   async render({manifest, outputPath, onProgress}: Parameters<RenderEngine["render"]>[0]): Promise<void> {
     const serveUrl = await getServeUrl();
     const inputProps = {manifest};
@@ -28,6 +28,8 @@ export class RemotionRenderEngine implements RenderEngine {
       codec: "h264",
       audioCodec: "aac",
       crf: 23,
+      scale: this.options.scale ?? 1,
+      overwrite: false,
       ...(this.options.sourceProfile?{pixelFormat:'yuv420p' as const,colorSpace:'bt709' as const,sampleRate:48000}:{}),
       outputLocation: outputPath,
       inputProps,

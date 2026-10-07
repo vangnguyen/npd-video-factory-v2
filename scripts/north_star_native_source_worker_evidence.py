@@ -34,6 +34,7 @@ def main():
     parser.add_argument('--broll',action='store_true')
     parser.add_argument('--duplicate-source',action='store_true')
     parser.add_argument('--auto-shorts',action='store_true')
+    parser.add_argument('--final-effects-preview',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
     if args.auto_shorts and args.duplicate_source:raise ValueError('Choose one fresh draft derivation per evidence run')
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
@@ -126,6 +127,10 @@ def main():
         rebound=auto_edit_analysis.view(store,project['id'])
         analysis=next(item['analysis'] for item in rebound['analyses']
             if item['analysis']['analysis_id']==project['shot_timeline']['snapshot']['metadata']['source_analysis_id'])
+    if args.final_effects_preview:
+        from services.windows_native.source_settings import configure
+        project=configure(store,project['id'],project['revision'],{
+            'expected_version':project['shot_timeline']['version'],'preview_mode':'final_effects'})
     source_hashes={item.name:file_sha(item) for directory in ('assets','originals')
         for item in (root/directory).iterdir() if item.is_file()}
     manager=PreviewManager(config,store)
@@ -160,6 +165,32 @@ def main():
         shutil.copyfile(jobdir/'qc-report.json',out/'qc.json')
         shutil.copyfile(manager.video_path(project['id'],preview['timeline_version']),out/'preview.mp4')
         durable_json(out/'preview.json',preview)
+        effects_parity=None;mix_sha=None
+        if args.final_effects_preview:
+            preview_folder=manager.video_path(project['id'],preview['timeline_version']).parent
+            attempts=list((preview_folder/'attempts').glob('effects-preview-*'))
+            if len(attempts)!=1:raise AssertionError('Fresh effects preview must have one private attempt')
+            attempt=attempts[0]
+            for name in ('timeline-render.json','audio-analysis.json','renderer-receipt.json'):
+                shutil.copyfile(attempt/name,out/('preview-'+name))
+            shutil.copyfile(preview_folder/'render-manifest.json',out/'preview-render-manifest.json')
+            pmanifest=json.loads((attempt/'timeline-render.json').read_bytes())
+            fmanifest=json.loads((out/'timeline-render.json').read_bytes())
+            def effects(manifest):
+                # Each derivation assigns fresh cue identities; rendered words,
+                # timings and style must match independently of those identities.
+                return {'metadata':manifest['metadata'],'subtitles':[{k:v for k,v in cue.items() if k!='cue_id'}
+                        for cue in manifest['subtitles']],
+                    'subtitle_style':manifest['subtitle_style'],'brand':manifest['brand'],
+                    'visual_clips':[{key:value for key,value in clip.items() if key!='uri'}
+                        for clip in manifest['visual_clips']]}
+            effects_parity=effects(pmanifest)==effects(fmanifest)
+            mix_sha=file_sha(Path(pmanifest['audio']['mix_uri']))
+            if not effects_parity or mix_sha!=file_sha(Path(fmanifest['audio']['mix_uri'])):
+                raise AssertionError('Preview/final effects or canonical PCM mix differ')
+            subprocess.run([str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n','-ss','0.35',
+                '-i',str(out/'preview.mp4'),'-frames:v','1',str(out/'preview-caption-frame.png')],
+                check=True,capture_output=True,timeout=30)
         durable_json(out/'transcript.json',analysis['transcript'])
         durable_json(out/'scene-analysis.json',analysis['scenes'])
         durable_json(out/'highlight-analysis.json',analysis['highlights'])
@@ -184,6 +215,9 @@ def main():
             'canonical_audio_processing_requested':bool(project['document']['canonical_timeline']['snapshot']['metadata'].get('source_audio_processing')),
             'canonical_supporting_broll_added':any(track['kind']=='broll' and track['clips'] for track in project['document']['canonical_timeline']['snapshot']['tracks']),
             'auto_shorts_drafts_created':bool(shorts),
+            'final_effects_preview':bool(preview['manifest'].get('rendering_effects_parity')),
+            'matching_preview_final_effects_manifests':effects_parity,
+            'matching_preview_final_canonical_pcm_sha256':mix_sha,
             'auto_shorts_generated_count':shorts['batch']['generated_count'] if shorts else None,
             'auto_shorts_requested_count':shorts['batch']['requested_count'] if shorts else None,
             'auto_shorts_rendered_count':1 if shorts else None,

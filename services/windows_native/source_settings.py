@@ -17,9 +17,10 @@ class Settings(StrictModel):
     subtitle_template_ref:str|None=Field(default=None,max_length=100)
     keywords:list[str]=Field(default_factory=list,max_length=30)
     audio_processing:AudioProcessing|None=None
+    preview_mode:Literal['lightweight','final_effects']|None=None
     @model_validator(mode='after')
     def selected(self):
-        if self.aspect_ratio is None and self.subtitle_template_ref is None and self.audio_processing is None:raise ValueError('choice required')
+        if self.aspect_ratio is None and self.subtitle_template_ref is None and self.audio_processing is None and self.preview_mode is None:raise ValueError('choice required')
         if self.keywords and not self.subtitle_template_ref:raise ValueError('caption template required')
         return self
 
@@ -30,6 +31,8 @@ def configure(store,project_id,revision,body):
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);state=_cas(project,payload.expected_version)
         snapshot=TimelineSnapshot.model_validate(state['snapshot'])
+        if payload.preview_mode is not None:
+            snapshot.metadata['source_preview_mode']=payload.preview_mode
         if payload.aspect_ratio:
             snapshot.width,snapshot.height={'9:16':(1080,1920),'16:9':(1920,1080),'1:1':(1080,1080),'4:5':(1080,1350)}[payload.aspect_ratio]
             snapshot.aspect_ratio=payload.aspect_ratio

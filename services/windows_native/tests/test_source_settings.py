@@ -67,5 +67,16 @@ class SourceSettingsTests(unittest.TestCase):
             self.configure(audio_processing={'duck_music':1})
         self.assertEqual(timeline.view(self.store,self.project['id']),locked)
 
+    def test_preview_mode_versions_without_replacing_existing_history(self):
+        self.create();before=copy.deepcopy(self.project)
+        self.configure(preview_mode='final_effects')
+        self.assertEqual(self.project['shot_timeline']['version'],2)
+        self.assertEqual(self.project['shot_timeline']['snapshot']['tracks'],before['shot_timeline']['snapshot']['tracks'])
+        self.assertEqual(self.project['shot_timeline']['snapshot']['metadata']['source_preview_mode'],'final_effects')
+        with self.assertRaisesRegex(WorkflowError,'AUTO_EDIT_TIMELINE_REQUEST_INVALID'):
+            self.configure(preview_mode='provider_graph')
+        self.configure(preview_mode='lightweight')
+        self.assertEqual(self.project['shot_timeline']['version'],3)
+
 
 if __name__=='__main__':unittest.main()

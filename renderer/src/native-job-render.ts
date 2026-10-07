@@ -13,7 +13,10 @@ const inside = (root:string,path:string) => {
   return rel!==''&&!rel.startsWith('..')&&!isAbsolute(rel);
 };
 
-export async function renderNativeJob(directory:string, engine:RenderEngine=new RemotionRenderEngine({sourceProfile:true})) {
+export async function renderNativeJob(directory:string, engine?:RenderEngine, options:{preview?:boolean}={}) {
+  if(options.preview!==undefined&&typeof options.preview!=='boolean')throw new Error('NATIVE_RENDER_OPTIONS_INVALID');
+  const scale=options.preview === true ? 0.4 : 1;
+  engine ??= new RemotionRenderEngine({sourceProfile:true,scale});
   if(!isAbsolute(directory))throw new Error('NATIVE_RENDER_JOB_PATH_INVALID');
   const root=await realpath(directory),media=join(root,'media');
   const output=join(root,'final.mp4');
@@ -57,8 +60,10 @@ export async function renderNativeJob(directory:string, engine:RenderEngine=new 
     await access(output);
     const receipt={status:'success',renderer:'remotion-local-native-job-v1',
       fixture:!(engine instanceof RemotionRenderEngine),final_qc_verified:false,
-      duration_seconds:manifest.metadata.duration_seconds,width:manifest.metadata.width,
-      height:manifest.metadata.height,fps:manifest.metadata.fps,private_job_media_only:true,
+      duration_seconds:manifest.metadata.duration_seconds,width:Math.round(manifest.metadata.width*scale),
+      height:Math.round(manifest.metadata.height*scale),fps:manifest.metadata.fps,private_job_media_only:true,
+      ...(options.preview?{preview:true,scale,composition_width:manifest.metadata.width,
+        composition_height:manifest.metadata.height,rendering_effects_parity:true}:{}),
       external_publish_requested:false,human_final_video_accepted:false};
     await writeFile(join(root,'renderer-receipt.json'),JSON.stringify(receipt,null,2)+'\n');
     return receipt;

@@ -71,3 +71,16 @@ it('rejects a media directory junction that points at private job files',async()
   await expect(renderNativeJob(root,engine)).rejects.toThrow('NATIVE_RENDER_MEDIA_SCOPE_INVALID');
   expect(engine.render).not.toHaveBeenCalled();
 });
+
+it('scaled preview keeps full composition props and records a separate non-acceptance profile',async()=>{
+  const {root,manifest}=await fixture();
+  const result=await renderNativeJob(root,{render:vi.fn(async({manifest:props,outputPath})=>{
+    expect(props.metadata.width).toBe(manifest.metadata.width);
+    expect(props.metadata.height).toBe(manifest.metadata.height);
+    await writeFile(outputPath,'explicit nonplayable preview fixture');
+  })},{preview:true});
+  expect(result.width).toBe(Math.round(manifest.metadata.width*.4));
+  expect(result.height).toBe(Math.round(manifest.metadata.height*.4));
+  expect(result).toMatchObject({fixture:true,preview:true,scale:.4,rendering_effects_parity:true,
+    final_qc_verified:false,human_final_video_accepted:false});
+});

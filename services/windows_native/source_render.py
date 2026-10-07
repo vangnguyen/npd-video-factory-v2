@@ -29,11 +29,18 @@ PROFILES={(1080,1920):'vertical-1080x1920',(1920,1080):'landscape-1920x1080',
     (1080,1080):'square-1080x1080',(1080,1350):'portrait-1080x1350'}
 
 
-def command_run(command,directory,log_name,timeout,code):
+def command_run(command,directory,log_name,timeout,code,cancel_event=None):
     with (directory/log_name).open('ab') as log:
         process=subprocess.Popen(command,cwd=REPO,stdout=log,stderr=log,
             creationflags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0,start_new_session=os.name!='nt')
-        try:result=process.wait(timeout=timeout)
+        try:
+            if cancel_event is None:result=process.wait(timeout=timeout)
+            else:
+                started=time.monotonic()
+                while process.poll() is None:
+                    if cancel_event.wait(.15):raise WorkflowError('PREVIEW_CANCELLED')
+                    if time.monotonic()-started>timeout:raise WorkflowError('PREVIEW_TIMEOUT')
+                result=process.returncode
         except BaseException:
             # Terminate only this owned child tree. The Native parent is also
             # contained by its Windows Job Object in the running application.
@@ -43,6 +50,8 @@ def command_run(command,directory,log_name,timeout,code):
                         stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=15)
                 else:os.killpg(process.pid,signal.SIGKILL)
                 process.wait(timeout=15)
+            if cancel_event is not None:
+                raise
             raise WorkflowError(code+'_INTERRUPTED',503) from None
     if result:raise WorkflowError(code)
 
@@ -57,12 +66,19 @@ def check_preview(config,job):
 
 def prepare(config,job,directory):
     project=check_preview(config,job)
+    return prepare_project(config,project,directory,job['id'])
+
+
+def prepare_project(config,project,directory,render_id,cancel_event=None):
+    """Shared staged effects/audio preparation. Final dispatch still requires approval."""
+    if cancel_event is not None and cancel_event.is_set():raise WorkflowError('PREVIEW_CANCELLED')
     snapshot,assets=resolve_assets(config,project)
     profile=PROFILES.get((snapshot.width,snapshot.height))
     if profile is None:raise WorkflowError('AUTO_EDIT_RENDER_PROFILE_INVALID',400)
     media=directory/'media';media.mkdir()
     staged={}
     for identifier,(asset,path) in assets.items():
+        if cancel_event is not None and cancel_event.is_set():raise WorkflowError('PREVIEW_CANCELLED')
         destination=media/(identifier+path.suffix.lower())
         shutil.copyfile(path,destination)
         if file_sha(destination)!=asset.checksum_sha256:raise WorkflowError('SOURCE_MEDIA_CHANGED_DURING_RENDER')
@@ -76,13 +92,13 @@ def prepare(config,job,directory):
         command += [*audio.inputs,'-/filter_complex',str(filters),'-map','[outa]']
     else:command += ['-f','lavfi','-i','anullsrc=r=48000:cl=stereo','-t',str(snapshot.duration_seconds)]
     command += ['-c:a','pcm_s16le','-ar','48000','-ac','2',str(mixed)]
-    command_run(command,directory,'audio-mix.log',300,'AUTO_EDIT_AUDIO_MIX_FAILED')
+    command_run(command,directory,'audio-mix.log',300,'AUTO_EDIT_AUDIO_MIX_FAILED',cancel_event)
     enabled_captions=any(track.kind=='subtitles' and not track.disabled and any(
         not clip.disabled and clip.label.strip() for clip in track.clips) for track in snapshot.tracks)
     cues=derive_subtitle_cues(snapshot) if enabled_captions else []
     style=SubtitleStyle.model_validate(snapshot.metadata.get('subtitle_style') or {'animation':'none'})
-    subtitles=SubtitleVersionRead(subtitle_version_id='sub_'+digest([job['id'],'captions'])[:24],
-        package_id='pkg_'+job['project_id'],project_id='prj_'+job['project_id'],timeline_version_id='tlv_'+job['id'],
+    subtitles=SubtitleVersionRead(subtitle_version_id='sub_'+digest([render_id,'captions'])[:24],
+        package_id='pkg_'+project['id'],project_id='prj_'+project['id'],timeline_version_id='tlv_'+render_id,
         timeline_version=project['document']['canonical_timeline']['version'],version=1,cues=cues,style=style,
         actor_ref='native-session-owner',created_at=datetime.now(timezone.utc))
     root_analysis=next(value['analysis'] for value in project['document']['auto_edit_analyses']
