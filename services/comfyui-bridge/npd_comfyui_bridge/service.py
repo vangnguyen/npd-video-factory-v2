@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 from .backend import ComfyUIBackend
 from .execution_context import BackendExecutionError, ExecutionContext
-from .models import BridgeJobCreate, BridgeJobRead
+from .models import BridgeJobCreate, BridgeJobRead, BridgeJobLookupRead
 from .job_store import SQLiteBridgeJobStore, checksum, encoded
 from .workflows import WorkflowRegistry
 
@@ -110,6 +110,15 @@ class ComfyUIBridgeService:
         async with self._lock:
             job = self._jobs.get(job_id)
             return job.model_copy(deep=True) if job else None
+
+    async def lookup(self, *, workspace_id, client_request_id):
+        """Read a lost submission by exact scoped key; no dispatch/retry effect."""
+        async with self._lock:
+            job = next((value for value in self._jobs.values() if value.workspace_id == workspace_id
+                and value.client_request_id == client_request_id), None)
+            if job is None: return None
+            request = self._requests[job.job_id]
+            return BridgeJobLookupRead(job=job.model_copy(deep=True), request_sha256=checksum(request.model_dump(mode='json')))
 
     async def list_jobs(self, *, limit=100, workspace_id=None):
         async with self._lock:

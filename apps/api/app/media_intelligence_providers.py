@@ -437,13 +437,18 @@ class ComfyUIBridgeGenerationProvider:
     async def estimate_cost(self, payload: ImageGenerationInput | VideoGenerationInput) -> Decimal | None:
         return None # GPU compute cost requires configured accounting; absence is not zero.
 
-    async def generate(
-        self, payload: ImageGenerationInput | VideoGenerationInput
-    ) -> ProviderMaterializedMedia:
+    async def generate(self, payload: ImageGenerationInput | VideoGenerationInput) -> ProviderMaterializedMedia:
+        return await self._run(payload)
+
+    async def reconcile(self, payload: ImageGenerationInput | VideoGenerationInput, *, provider_job_id=None) -> ProviderMaterializedMedia:
+        """Read an existing bound job; never resubmit or authorize bridge retry."""
+        return await self._run(payload,reconcile=True,provider_job_id=provider_job_id)
+
+    async def _run(self, payload: ImageGenerationInput | VideoGenerationInput, *, reconcile=False, provider_job_id=None) -> ProviderMaterializedMedia:
         if not self.configured:
             raise MediaProviderNotConfigured("ComfyUI bridge execution is not configured")
         from .comfyui_generation_lifecycle import cancellation_requested,observe
-        if cancellation_requested(self.cancel_requested):raise RuntimeError('COMFYUI_CANCELLED_BEFORE_SUBMISSION')
+        if not reconcile and cancellation_requested(self.cancel_requested):raise RuntimeError('COMFYUI_CANCELLED_BEFORE_SUBMISSION')
         workspace_id, project_id, resolution_job_id = current_generation_scope()
         workflow_id, operation, inputs = generation_envelope(self.modality, payload, self.workflow_routes)
         bound_project = project_id if any(str(value).startswith('vf-reference://') for value in
@@ -459,24 +464,26 @@ class ComfyUIBridgeGenerationProvider:
             trust_env=False,
             follow_redirects=False,
         ) as client:
-            response = await client.post(
-                "/v1/jobs",
-                json={
+            request = {
                     "workflow_id": workflow_id,
                     "workspace_id": workspace_id,
                     **({'project_id': bound_project} if bound_project is not None else {}),
                     "inputs": inputs,
                     "client_request_id": _stable_token(workspace_id, project_id, resolution_job_id, payload.model_dump_json(), workflow_id),
-                },
-            )
-            if response.status_code != 202:
-                raise RuntimeError(f"ComfyUI bridge rejected generation: HTTP {response.status_code}")
-            job = response.json()
+                }
+            if reconcile:
+                from .comfyui_generation_reconciliation import lookup
+                job = await lookup(client,request,provider_job_id=provider_job_id,timeout_seconds=self.timeout_seconds)
+            else:
+                response = await client.post('/v1/jobs',json=request)
+                if response.status_code != 202:
+                    raise RuntimeError(f"ComfyUI bridge rejected generation: HTTP {response.status_code}")
+                job = response.json()
             job_id = str(job["job_id"])
             if (not re.fullmatch(r'cui_[A-Za-z0-9_-]{1,80}', job_id) or job.get('workspace_id') != workspace_id or
                     job.get('workflow_id') != workflow_id or bound_project is not None and job.get('project_id') != bound_project):
                 raise ValueError('COMFYUI_JOB_BINDING_INVALID')
-            await observe(self.on_job,job,'submitted')
+            await observe(self.on_job,job,'reconciled' if reconcile else 'submitted')
             deadline = asyncio.get_running_loop().time() + self.timeout_seconds
             cancel_sent=False
             while job.get("status") not in {"succeeded", "failed", "cancelled", "timed_out"}:

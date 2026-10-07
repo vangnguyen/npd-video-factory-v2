@@ -11,7 +11,7 @@ from .models import StrictModel
 
 class GenerationObservation(StrictModel):
     schema_version:Literal['comfyui-generation-observation-v1']='comfyui-generation-observation-v1'
-    phase:Literal['submitted','polled','cancel_requested','cancel_response']
+    phase:Literal['submitted','reconciled','polled','cancel_requested','cancel_response']
     provider_job_id:str=Field(pattern=r'^cui_[A-Za-z0-9_-]{1,80}$')
     workspace_id:str=Field(min_length=1,max_length=200)
     workflow_id:str=Field(pattern=r'^[a-z0-9][a-z0-9-]{2,80}$')

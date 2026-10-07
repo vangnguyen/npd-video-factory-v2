@@ -100,7 +100,7 @@ async def run(args):
     backend=ReviewedHTTPComfyUIBackend(registry=bridge.registry,transport=gpu,job_store=store,artifacts=bridge.app.state.binary_artifact_store,poll_seconds=.01,
         reference_resolver=ScopedReferenceStager(references=bridge.app.state.reference_store,transport=gpu,job_store=store))
     bridge.backend=backend;bridge.service=ComfyUIBridgeService(bridge.registry,backend,job_store=store);bridge.app.state.bridge_service=bridge.service
-    calls=[];lost=[True];observations=[]
+    calls=[];lost=[True];lost_generation=[args.reconcile];observations=[]
     async def observe(value):observations.append(value)
     async def native_wire(request):
         assert request.headers['Authorization']=='Bearer '+TOKEN and request.headers['X-VF-Workspace-Id']==WORKSPACE
@@ -109,6 +109,8 @@ async def run(args):
             response=await client.request(request.method,request.url.path,content=request.content,headers=dict(request.headers))
         if request.method=='POST' and request.url.path=='/v1/references' and lost[0]:
             lost[0]=False;raise httpx.ReadError('EXPLICIT LOST NATIVE INTAKE REPLY')
+        if request.method=='POST' and request.url.path=='/v1/jobs' and lost_generation[0]:
+            lost_generation[0]=False;raise httpx.ReadError('EXPLICIT LOST GENERATION SUBMISSION REPLY')
         return response
     factory=GenerationFactory(GenerationCredential(bridge_url='http://localhost:8011',service_token=TOKEN,enabled=True),owner_enabled=True,
         transport=httpx.MockTransport(native_wire),manifest_path=manifest)
@@ -120,7 +122,18 @@ async def run(args):
             identity=uuid.uuid4().hex;snapshot=references.freeze(project['id'],project['revision'],value,factory,fixture_acknowledged=True)
             payload=await references.stage(identity,snapshot,factory);write(args.output_root/f'{index}-native-reference-snapshot.json',snapshot)
             write(args.output_root/f'{index}-scoped-provider-input.json',payload.model_dump(mode='json'))
-            with media_generation_scope(workspace_id=WORKSPACE,project_id=project['id'],job_id=identity):result=await factory.create(value.modality,payload,on_job=observe).generate(payload)
+            adapter=factory.create(value.modality,payload,on_job=observe)
+            with media_generation_scope(workspace_id=WORKSPACE,project_id=project['id'],job_id=identity):
+                try:result=await adapter.generate(payload)
+                except httpx.ReadError:
+                    if not args.reconcile:raise
+                    result=await adapter.reconcile(payload)
+                if args.reconcile and index==1:
+                    recovered=await adapter.reconcile(payload,provider_job_id=result.provider_job_id)
+                    assert recovered.payload==result.payload and recovered.source_reference==result.source_reference
+                    write(args.output_root/'known-ticket-reconciliation.json',{'provider_job_id':recovered.provider_job_id,
+                        'source_reference':recovered.source_reference,'payload_sha256':hashlib.sha256(recovered.payload).hexdigest(),
+                        'rights_status':recovered.rights_status,'production_eligible':recovered.production_eligible,'actual_cost_vnd':None})
             assert result.rights_status=='unknown' and not result.production_eligible and result.actual_cost_vnd is None and not result.real_provider_tested
             recorded=asdict(result);recorded.pop('payload');recorded['payload_sha256']=hashlib.sha256(result.payload).hexdigest()
             write(args.output_root/f'{index}-generation-result.json',recorded)
@@ -129,6 +142,9 @@ async def run(args):
             write(args.output_root/f'{index}-artifact-metadata.json',document);write(args.output_root/(f'{index}-output'+path.suffix),path.read_bytes())
         assert native.get(project['id'])==before and sum(c['path']=='/v1/references' and c['method']=='POST' for c in calls)==3
         assert sum(c['path']=='/prompt' for c in wire.calls)==2 and sum(c['path']=='/upload/image' for c in wire.calls)==3
+        assert sum(c['path']=='/v1/jobs' and c['method']=='POST' for c in calls)==2
+        if args.reconcile:
+            assert not lost_generation[0] and sum(c['path'].startswith('/v1/jobs/by-client-request/') for c in calls)==2
         # A second generation job has a separately timed source receipt; its
         # bytes remain immutable, independently scope-bound and hash checked.
         write(args.output_root/'native-service-wires.json',calls);write(args.output_root/'gpu-fixture-wires.json',wire.calls)
@@ -140,6 +156,8 @@ async def run(args):
     write(args.output_root/'evidence.json',{'schema_version':'north-star-native-generation-reference-evidence-v1','explicit_fixture':True,'workspace_id':WORKSPACE,
         'project_id':project['id'],'data_root':str(args.data_root),'actual_local_decoded_outputs':2,'native_reference_admissions':3,
         'mock_gpu_prompt_writes':2,'mock_gpu_reference_upload_writes':3,'mock_native_intake_writes':3,'lost_native_intake_reply_reconciled':True,
+        'lost_generation_submission_reply_reconciled':args.reconcile,'known_ticket_binary_read_reconciled':args.reconcile,
+        'generation_submission_writes':2,'read_only_job_lookup_count':2 if args.reconcile else 0,
         'canonical_timeline_mutated':False,'native_generation_queue_or_ui_wired':False,'real_provider_tested':False,'paid_operations':0,
         'rights_independently_verified':False,'owner_uat_accepted':False,'production_deployed':False,
         'source_sha256':{file:sha(ROOT/file) for file in files},'exports':{p.name:{'sha256':sha(p),'size_bytes':p.stat().st_size} for p in args.output_root.iterdir() if p.is_file()}})
@@ -149,6 +167,7 @@ async def run(args):
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--data-root',type=Path,required=True);parser.add_argument('--output-root',type=Path,required=True)
     parser.add_argument('--ffmpeg',type=Path,required=True);parser.add_argument('--ffprobe',type=Path,required=True);parser.add_argument('--reopen',action='store_true')
+    parser.add_argument('--reconcile',action='store_true')
     # The bridge test runtime owns FastAPI/jsonschema. Only missing modules are
     # resolved from the separate installed Native runtime; no runtime is edited.
     parser.add_argument('--native-site-packages',type=Path)

@@ -366,8 +366,18 @@ async def test_actual_authenticated_bridge_serves_backend_result_to_neutral_bina
         assert result.generation_provenance['binary_artifact_registered'] and result.generation_provenance['fixture']
         assert result.rights_status == 'unknown' and result.production_eligible is False and result.actual_cost_vnd is None
         assert observations[0]['phase'] == 'submitted' and observations[-1]['status'] == 'succeeded'
+        # Exact bound reads recover actual registered bytes; no new prompt is
+        # sent, even when the caller has no durable provider ticket yet.
+        with media_generation_scope(workspace_id='workspace-A', project_id='fixture-project-A', job_id='fixture-resolution-A'):
+            recovered = await adapter.reconcile(ImageGenerationInput(prompt='Explicit scalar fixture', aspect_ratio='9:16', seed=27))
+        assert recovered.payload == result.payload and recovered.provider_job_id == result.provider_job_id
+        assert observations[-1]['phase'] == 'reconciled'
         job_id = result.provider_job_id; artifact_id = result.source_reference.removeprefix('vf-artifact://')
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
+            saved_job=await service.get(job_id);lookup='/v1/jobs/by-client-request/'+saved_job.client_request_id
+            assert (await client.get(lookup)).status_code == 401
+            assert (await client.get(lookup,headers={'Authorization':'Bearer explicit-fixture-service-token-32-characters',
+                'X-VF-Workspace-Id':'foreign-workspace'})).status_code == 404
             route = f'/v1/jobs/{job_id}/artifacts/{artifact_id}'
             assert (await client.get(route)).status_code == 401
             assert (await client.get(route, headers={'Authorization': 'Bearer explicit-fixture-service-token-32-characters',

@@ -1,0 +1,137 @@
+{
+  "schema": "comfyui-job-reconciliation-evidence-v1",
+  "parent_head": "562f5fca6bccebbb1ef00c4c93a014edbc461c7f",
+  "source_sha256": {
+    "apps/api/app/comfyui_generation_reconciliation.py": "5849057315a85f5dd00aa6effc9654b60fb1c1198f4b47bc355144d9ab7d07ce",
+    "apps/api/app/comfyui_generation_lifecycle.py": "e4a6057257fac2c4f0bcfd15bf710648517419b25d87f8ea865392da42692ac6",
+    "apps/api/app/media_intelligence_providers.py": "490012511581fa381894dcf27aa3259c28104de046c60d951f481d179fcb981c",
+    "apps/api/tests/test_comfyui_reconciliation.py": "0b0eded3cf550386e0fdf45ab2648998d6a1c8b41e60e9da09debe9eee5a98f2",
+    "services/comfyui-bridge/npd_comfyui_bridge/models.py": "ec3d2522981b26cdb7604fdf8852d33caf4763a6c465c4dc69f03f9da55e1fa4",
+    "services/comfyui-bridge/npd_comfyui_bridge/service.py": "3871088e1406b99313d5ec46fac1662c8eb0c968369f736ef788bafa10dba2b4",
+    "services/comfyui-bridge/npd_comfyui_bridge/main.py": "7bf06ccb7860eedb542a0fea30d9f08dfbfe6d042d73b9bdbbd2de1ce342fe65",
+    "services/comfyui-bridge/tests/test_bridge.py": "db82990916021327e3876a6ebaaba9e6a73654c1134e4f52fcc18624a3c16835",
+    "services/comfyui-bridge/tests/test_http_backend.py": "f5a38d9b89975efe124c228d6d466d9898c528f3c11e2e295a8d9533630a354b",
+    "scripts/north_star_native_generation_references.py": "ccb0e78d6375d98643d1e9a5e8fd7a942e71682bbec242ba23c09d25d2529461",
+    "docs/COMFYUI_JOB_RECONCILIATION.md": "8a56d714e9376004b90293eedc04b408fef0b3653b2ea2cc1e91558df761cb07"
+  },
+  "logs": {
+    "comfyui-reconciliation-r1.log": "1bf63e3e662b4cfcf9e7db71cf62d9fa8f14b82a0012a3cec88e12aa0ba39687",
+    "comfyui-reconciliation-r2.log": "43a5d86623c4e836c30d157196d1eafc5717554f41b62e36145ff69ff6d70352",
+    "comfyui-reconciliation-r3.log": "2c278704e52194db43a913bf313c783f744f0cc3cffd276d612caae50ebd1afd",
+    "native-comfyui-reconciliation-r1.log": "22e328299acd6ea4995824163a5a30ecfc65bb7f949902d20ab5054a03777da8",
+    "native-generation-references-n5.log": "5bc531a193ca0b929d35af07d58e3d10c5e5adacb10fb14cd4129376fe953922",
+    "native-generation-references-reopen-n5.log": "99002f65fc2104a417d628b00f47eaadcd121a715fd17da64d6b2b9a71949b76"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-generation-references-n5",
+  "contract_exports": {
+    "0-artifact-metadata.json": {
+      "sha256": "761e9f2fa8e49eacdd630a2ca630a16d826f81fccc2eaf5971b14ec5d0cff675",
+      "bytes": 1646
+    },
+    "0-generation-result.json": {
+      "sha256": "4da79f8faf56a326683702551521e2d4dd4a5f6f68dba88663c1acaddef7ebb8",
+      "bytes": 3606
+    },
+    "0-native-reference-snapshot.json": {
+      "sha256": "0399e4eab02398db015197a4cdbfaede92b8753642c50496f3fdf8ce0e8c67f2",
+      "bytes": 2808
+    },
+    "0-output.png": {
+      "sha256": "b8120b05af5b562f8e6afae62cc3fcceaf26ce8b67b725a7ebda273e8a1455aa",
+      "bytes": 2978
+    },
+    "0-scoped-provider-input.json": {
+      "sha256": "1b2a0cbf9782135c10436f85d5c556e8ff594d1721eafcb236ebc56b074513a6",
+      "bytes": 412
+    },
+    "1-artifact-metadata.json": {
+      "sha256": "e5980752e569da87453b634ce874ceeeb6e67a6378d7f49dc5b3e255f70f5ead",
+      "bytes": 1579
+    },
+    "1-generation-result.json": {
+      "sha256": "3ecb32deda274ba8f3254b9d5477458f7781684da8824a6702ae0ae7daff9f2e",
+      "bytes": 3486
+    },
+    "1-native-reference-snapshot.json": {
+      "sha256": "204b507a2ae2e94adfb99d8e06e93ee04e217c4c9a06e2f23d3d77c625718095",
+      "bytes": 1810
+    },
+    "1-output.mp4": {
+      "sha256": "f702406fcb19a92b07d7663d3272f574627067e4d730626826e382e9fd23a787",
+      "bytes": 7002
+    },
+    "1-scoped-provider-input.json": {
+      "sha256": "a6eea7b850ac49e14a539fed8e7082b964468ce2c3116344b115f3fb78b11b3d",
+      "bytes": 293
+    },
+    "evidence.json": {
+      "sha256": "1a50c8e8fd95807ad03de0bcd2c000abea9e39287286dd2a0c5ff0a3441afe58",
+      "bytes": 3850
+    },
+    "gpu-fixture-wires.json": {
+      "sha256": "6023d65809b4e02768e1745ad9ac936d9f240dca8e13caf3d6b460a2c98d584b",
+      "bytes": 1048
+    },
+    "known-ticket-reconciliation.json": {
+      "sha256": "a8988ba047e83c5bf71dcff5efcf47ad8dc0dc12429e2a691d641c0739b25ac7",
+      "bytes": 337
+    },
+    "lifecycle.json": {
+      "sha256": "67bfd4249bdc76c2e4b4a50205f44b83fd46b6ac2ba1b56f71bdddbdb1e46db3",
+      "bytes": 1665
+    },
+    "native-service-wires.json": {
+      "sha256": "3bb2bd81426d64d61c24fec1d4eb9a21d71a79dfb847b823dc663dab2bd3056d",
+      "bytes": 2096
+    },
+    "new-process-replay.json": {
+      "sha256": "8c568640fbf6ff1ffdc0c9ca1f12d0edc15cf24c053a30bf6bffd5853b6675c8",
+      "bytes": 239
+    },
+    "offline-snapshot.json": {
+      "sha256": "aa0b0efdc7f74b1a2095e49fd758a2ac3773fb2677ddea6d88368fff286a3ad4",
+      "bytes": 40284
+    }
+  },
+  "bridge_api_affected_passed": 173,
+  "bridge_api_seconds": 39.61,
+  "final_focused_passed": 17,
+  "final_focused_seconds": 1.53,
+  "new_api_cases": 14,
+  "new_bridge_cases": 2,
+  "counts_overlap": true,
+  "native_compatibility_passed": 22,
+  "native_compatibility_seconds": 5.271,
+  "authenticated_workspace_scoped_lookup": true,
+  "full_frozen_request_sha256_binding": true,
+  "optional_known_ticket_binding": true,
+  "lookup_grants_generation_or_retry_authority": false,
+  "lookup_no_dispatch_or_event_mutation": true,
+  "legacy_submission_body_preserved": true,
+  "read_only_missing_ticket_recovery": true,
+  "backend_disabled_persistent_lookup_tested": true,
+  "bounded_response_bytes": 65536,
+  "actual_local_decoded_output_artifacts": 2,
+  "mock_generation_submission_writes": 2,
+  "mock_gpu_prompt_writes": 2,
+  "mock_gpu_upload_writes": 3,
+  "mock_native_intake_writes": 3,
+  "read_only_job_lookup_count": 2,
+  "lost_native_intake_reply_reconciled_without_repost": true,
+  "lost_generation_submission_reply_reconciled_without_repost": true,
+  "known_ticket_exact_binary_recovery": true,
+  "new_process_exact_offline_replay": true,
+  "manual_job_result_injection": false,
+  "canonical_timeline_mutated": false,
+  "native_server_queue_worker_cost_result_attachment_ui_wired": false,
+  "generated_rights_status": "unknown",
+  "production_eligible": false,
+  "actual_cost_vnd": null,
+  "real_provider_tested": false,
+  "paid_operations": 0,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "failed_logs_retained": {
+    "r1": "A test filename was mistyped; no tests ran. Corrected command retained alongside passing affected/focused logs."
+  }
+}

@@ -46,6 +46,40 @@ def text_to_image_request(client_request_id: str = "fixture-request-001") -> Bri
     )
 
 
+@pytest.mark.asyncio
+async def test_scoped_request_lookup_returns_fingerprint_copy_and_has_no_dispatch_or_event_effect():
+    from npd_comfyui_bridge.job_store import checksum
+    service=ComfyUIBridgeService(WorkflowRegistry(MANIFEST),DeterministicMockComfyUIBackend())
+    try:
+        first=text_to_image_request('exact-scoped-lookup');second=first.model_copy(update={'workspace_id':'workspace-B'})
+        a=await service.submit(first);b=await service.submit(second);await wait_terminal(service,a.job_id);await wait_terminal(service,b.job_id)
+        before=await service.events(a.job_id);result=await service.lookup(workspace_id=first.workspace_id,client_request_id=first.client_request_id)
+        assert result.job.job_id==a.job_id and result.request_sha256==checksum(first.model_dump(mode='json'))
+        result.job.status='failed';assert (await service.get(a.job_id)).status=='succeeded'
+        assert (await service.lookup(workspace_id='workspace-B',client_request_id=first.client_request_id)).job.job_id==b.job_id
+        assert await service.lookup(workspace_id='foreign',client_request_id=first.client_request_id) is None
+        assert await service.lookup(workspace_id=first.workspace_id,client_request_id='absent') is None
+        assert await service.events(a.job_id)==before
+    finally:await service.close()
+
+
+@pytest.mark.asyncio
+async def test_request_lookup_reopens_immutable_saved_job_with_backend_disabled(tmp_path):
+    from npd_comfyui_bridge.backend import DisabledComfyUIBackend
+    from npd_comfyui_bridge.job_store import SQLiteBridgeJobStore,checksum
+    path=tmp_path/'lookup.sqlite3';registry=WorkflowRegistry(MANIFEST);request=text_to_image_request('persisted-request-lookup')
+    service=ComfyUIBridgeService(registry,DeterministicMockComfyUIBackend(),job_store=SQLiteBridgeJobStore(path))
+    try:
+        submitted=await service.submit(request);saved=await wait_terminal(service,submitted.job_id);events=await service.events(saved.job_id)
+    finally:await service.close()
+    reopened=ComfyUIBridgeService(registry,DisabledComfyUIBackend(),job_store=SQLiteBridgeJobStore(path))
+    try:
+        result=await reopened.lookup(workspace_id=request.workspace_id,client_request_id=request.client_request_id)
+        assert result.job==saved and result.request_sha256==checksum(request.model_dump(mode='json'))
+        assert await reopened.events(saved.job_id)==events and not reopened.backend.configured
+    finally:await reopened.close()
+
+
 def test_manifest_is_versioned_and_strictly_allowlisted() -> None:
     registry = WorkflowRegistry(MANIFEST)
     assert registry.manifest.manifest_version == "v2-06.1"

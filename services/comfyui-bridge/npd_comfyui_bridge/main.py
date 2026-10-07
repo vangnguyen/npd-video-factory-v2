@@ -7,12 +7,12 @@ import asyncio
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request, status, Path as ApiPath
 from fastapi.responses import Response
 import hashlib
 
 from .runtime import select_backend
-from .models import BridgeJobCreate, BridgeJobRead
+from .models import BridgeJobCreate, BridgeJobRead, BridgeJobLookupRead
 from .service import ComfyUIBridgeService
 from .job_store import SQLiteBridgeJobStore
 from .workflows import WorkflowRegistry
@@ -177,6 +177,14 @@ async def job_events(job_id: str, workspace_id: str = Depends(require_service)):
         return await service.events(job_id)
     except KeyError as exc:
         raise HTTPException(404, detail={'error': {'code': 'NOT_FOUND'}}) from exc
+
+
+@app.get('/v1/jobs/by-client-request/{client_request_id}', response_model=BridgeJobLookupRead, dependencies=[Depends(require_service)])
+async def lookup_job(client_request_id: str = ApiPath(min_length=4, max_length=160, pattern=r'^[A-Za-z0-9_-]+$'),
+                     workspace_id: str = Depends(require_service)):
+    value = await service.lookup(workspace_id=workspace_id, client_request_id=client_request_id)
+    if value is None: raise HTTPException(404, detail={'error': {'code': 'NOT_FOUND'}})
+    return value
 
 
 @app.get("/v1/jobs/{job_id}", response_model=BridgeJobRead, dependencies=[Depends(require_service)])

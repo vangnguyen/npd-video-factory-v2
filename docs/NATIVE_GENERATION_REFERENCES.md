@@ -74,3 +74,8 @@ are explicit fixtures. Generated rights remain unknown, production eligibility
 false and actual billed costs null. No real model/GPU/provider credentials,
 payment, legal clearance, Owner UAT, external publication or deployment is
 claimed. Native HTTP/UI and cost integration remain next.
+
+The neutral adapter now supplies [read-only job reconciliation](COMFYUI_JOB_RECONCILIATION.md)
+for a lost generation submission reply, including full frozen-request binding
+and actual binary recovery without another submission. The `--reconcile`
+rehearsal retains a separate evidence bundle; Native queue/worker/UI remain next.
