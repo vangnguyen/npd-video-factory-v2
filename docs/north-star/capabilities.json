@@ -1331,9 +1331,12 @@
     "status": "PARTIAL",
     "source": [
       "apps/api/app/analytics_logic.py",
-      "apps/api/app/analytics_models.py"
+      "apps/api/app/analytics_models.py",
+      "apps/api/app/analytics_service.py",
+      "apps/api/tests/test_cost_truth.py",
+      "docs/north-star/cost-truth-evidence.json"
     ],
-    "behavior": "Explainable multifactor four-state assessment with coverage guards.",
+    "behavior": "Explainable multifactor four-state assessment with coverage guards. Observed production-cost efficiency now requires complete actual costs for the recorded operations. Estimated costs and partially billed subtotals cannot score profitability. Assessment evidence explicitly states the limited ledger coverage.",
     "gap": "Channel baselines/time velocity and observed-response acceptance integrated in Native UI.",
     "severity": "P1",
     "dependency": "analytics",
@@ -1385,9 +1388,17 @@
       "apps/api/app/media_generation_routes.py",
       "apps/api/app/media_intelligence_models.py",
       "apps/api/tests/test_media_generation_routes.py",
-      "docs/north-star/generation-mode-contract-evidence.json"
+      "docs/north-star/generation-mode-contract-evidence.json",
+      "apps/api/app/platform_models.py",
+      "apps/api/app/repositories.py",
+      "apps/api/app/assemblyai_transcription_provider.py",
+      "apps/api/app/auto_edit_service.py",
+      "apps/api/app/analytics_service.py",
+      "apps/api/tests/test_cost_truth.py",
+      "scripts/north_star_cost_truth_contract.py",
+      "docs/north-star/cost-truth-evidence.json"
     ],
-    "behavior": "Durable reservations/limits and cost fields exist; Native estimates preserved. Official Pexels/Pixabay adapters now implement bounded search/get/download with attributed licensing and checksum-bound workspace-isolated 24h caching; selected MediaPlan persistence and scoped materialization are mock-tested. Unavailable semantic/Vision relevance remains null; caller URLs/rights are ignored in favor of provider-ID refresh. Mock transport evidence is labeled, credentials are absent from settings/logs/cache/CDN calls and existing global safety still prevents unapproved dispatch. ComfyUI bridge requests/job progress/definition and graph fingerprints/result metadata hashes/audit now survive restart in an isolated single-owner SQLite store. Bounded queues/retries, explicit interrupted-job recovery, authenticated workspace-scoped HTTP and scoped API/worker generation identities are CPU/mock-tested. Arbitrary client graphs and drift/corruption reject; no automatically replayed generation. GPU unknown estimates/actual costs stay null, configured unpriced jobs require approval before queueing and unconfigured providers preserve NOT_CONFIGURED. Numeric legacy plan fields retain only a flagged known lower bound; result-reference JSON does not constitute binary media registration. Typed mode envelopes now select approved text-to-image, image-to-image/variation, inpaint/mask, 2x/4x upscale and text/image/reference-assisted video workflows. Required references/mask/factor constraints reject before dispatch. Legacy text request serialization/fingerprints are preserved; immutable copied routes retain primary workflow overrides. Nine variants pass actual scoped bridge ASGI submission/persistence/polling with explicit mock backend results. Provenance includes routed workflow/version/model, seed, references, resolved/requested mode, mask/scale and local elapsed time; estimated/actual GPU cost remains null. No real binary media or verified-reference resolution is claimed.",
+    "behavior": "Durable reservations/limits and cost fields exist; Native estimates preserved. Official Pexels/Pixabay adapters now implement bounded search/get/download with attributed licensing and checksum-bound workspace-isolated 24h caching; selected MediaPlan persistence and scoped materialization are mock-tested. Unavailable semantic/Vision relevance remains null; caller URLs/rights are ignored in favor of provider-ID refresh. Mock transport evidence is labeled, credentials are absent from settings/logs/cache/CDN calls and existing global safety still prevents unapproved dispatch. ComfyUI bridge requests/job progress/definition and graph fingerprints/result metadata hashes/audit now survive restart in an isolated single-owner SQLite store. Bounded queues/retries, explicit interrupted-job recovery, authenticated workspace-scoped HTTP and scoped API/worker generation identities are CPU/mock-tested. Arbitrary client graphs and drift/corruption reject; no automatically replayed generation. GPU unknown estimates/actual costs stay null, configured unpriced jobs require approval before queueing and unconfigured providers preserve NOT_CONFIGURED. Numeric legacy plan fields retain only a flagged known lower bound; result-reference JSON does not constitute binary media registration. Typed mode envelopes now select approved text-to-image, image-to-image/variation, inpaint/mask, 2x/4x upscale and text/image/reference-assisted video workflows. Required references/mask/factor constraints reject before dispatch. Legacy text request serialization/fingerprints are preserved; immutable copied routes retain primary workflow overrides. Nine variants pass actual scoped bridge ASGI submission/persistence/polling with explicit mock backend results. Provenance includes routed workflow/version/model, seed, references, resolved/requested mode, mask/scale and local elapsed time; estimated/actual GPU cost remains null. No real binary media or verified-reference resolution is claimed. Cost summaries now expose null complete totals when any recorded operation is unpriced, separate estimated/actual completeness and unknown counts, and explicitly retain legacy fields as known subtotals. ASR duration-rate formulas remain estimates; raw credit debit is not converted into VND. Safety-controller reservations are recorded separately from billed costs. Foreign project/job cost records and negative/nonfinite amounts reject. Restart and exact idempotent replay retain missing costs. Winner profitability excludes estimates and partial actual totals. All monetary/provider data in the new persistence bundle are explicit fixtures; it does not certify whole-project capture or billing.",
     "gap": "All external calls record uniform estimated/actual/model/project/job; Native Cost Summary.",
     "severity": "P0",
     "dependency": "provider integration",

@@ -346,7 +346,9 @@ class AssemblyAITranscriptionProvider:
                 "original_evidence": True,
                 "secret_recorded": False,
                 "provider_credit_debit": result.get("credit_debit"),
+                "estimated_cost_vnd": str(cost),
+                "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
                 "latency_ms": round((self._monotonic() - started) * 1000, 3),
             },
-            actual_cost_vnd=cost,
+            actual_cost_vnd=None,
         )

@@ -817,3 +817,25 @@ EVIDENCE: `docs/north-star/multi-niche-contract-evidence.json` indexes exact sou
 REGRESSIONS: full Native Phase 8/9/10 source checks and current API regression pass with skips separately recorded. Prior catalog objects/frozen selections and live source/database/configuration/processes/accepted media are retained. Remote main remains `fa81c59fbe6b745cba8fed979e30e52a13199afa`; live source remains clean `2ced7bc81f9402368fb22c9e7aca242e740531af`. No merge/deployment/publication/new budget.
 
 EXTERNAL BLOCKERS: actual provider/GPU/OAuth/Docker/Owner UAT/browser acceptance remain separate. OWNER ACTION REQUIRED: none for safe continuation. NEXT WAVE: platform cost/ownership/storage/cache/recovery integration and remaining media/durable backend/profile/variants/distribution/analytics/learning/Trend/Hub/hardening work.
+
+## Wave 8 — Nullable cost totals and reservation separation
+
+WAVE: 8
+
+STATUS: IN PROGRESS; PLATFORM_FOUNDATION_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `7f45444625c1149213b0c0ec6fe9167928e5e679`; this cost commit records the increment. Parent is pushed and preserved in verified `north-star-ai-education-profile.bundle`, SHA256 `cbd9d6ca34fadc6d2a370b9cc7871928381770bd764dec88dd68f5a1d13a5e49`.
+
+CAPABILITIES COMPLETED: existing cost subtotal fields remain compatible and explicitly described as known subtotals. Separate estimated/actual totals stay null if their respective recorded operations are unpriced; unknown counts/completeness and recorded-operations-only basis are exposed. ASR configured rate times duration is an estimate; unavailable billed cost remains null, even when an untyped provider credit debit exists. Auto Edit persists billing from the result separately from safety-controller budget reservation and no longer replaces an unavailable estimate with zero. Negative/nonfinite amounts and mismatched workspace/project/job bindings reject before cost persistence. An explicit cost limit marks an unpriced record as needing approval; this record-time flag does not itself authorize or prevent an earlier provider dispatch. Winner cost efficiency uses only complete actual totals for recorded operations, and states that full project billing coverage is not certified.
+
+CAPABILITIES PARTIAL: uniform capture of every operation, Native Cost Summary/ledger, project-level admission before dispatch, billing reconciliation and whole-project capture remain. Existing provider safety budget gates are retained. The new evidence uses synthetic monetary inputs and mock provider responses; it is not actual spend or real billing acceptance.
+
+TESTS: focused cost truth/provider safety **50/50 PASS**, 50.13s; existing Auto Edit/analytics/ASR/durable platform **50/50 PASS**, 41.71s; worker **35/35 PASS**, 3.43s; Native ASR **11/11 PASS**, 11.609s. Initial run had 76 PASS/2 test assertion errors against a nonexistent `TranscriptRead` billing field; the assertions were corrected without changing runtime behavior. A fresh local SQLite contract **PASS**, five JSON exports plus closed database, exact restart/replay and null winner-cost factor. Previous pinned Linux 75d0391 result remains 2,057 PASS/11 SKIP until this increment's full run.
+
+REAL PROVIDER TESTS: none. LOCAL-REAL TESTS: isolated SQLite, restart, JSON null serialization, project/job isolation and immutable replay. MOCK TESTS: all prices, billed inputs, ASR wire responses, controller reservation and analytics/publication fixtures. No external/paid operation.
+
+EVIDENCE: `docs/north-star/cost-truth-evidence.json` binds source, six logs, five JSON exports and closed database in `cost-truth-contract-n1`. Historical records/artifacts are not rewritten.
+
+REGRESSIONS: analysis, analytics, provider safety, worker and Native ASR checks pass. Live source/database/configuration/processes/accepted media are untouched. No main merge, deployment, publication or new budget.
+
+EXTERNAL BLOCKERS: real billing/provider/OAuth/GPU/Docker and Owner UAT remain separate. OWNER ACTION REQUIRED: none for safe implementation. NEXT WAVE: Native cost/ownership/storage/cache/recovery integration and remaining profile/media/distribution/analytics/learning/Trend/Hub/hardening work.

@@ -161,11 +161,22 @@ class CostRecordRead(StrictModel):
 class ProjectCostSummary(StrictModel):
     project_id: ProjectId
     currency: Literal["VND"] = "VND"
-    estimated_cost: Decimal
-    actual_cost: Decimal
+    estimated_cost: Decimal = Field(
+        description="Legacy known estimated-cost subtotal; use estimated_cost_total for a complete total."
+    )
+    actual_cost: Decimal = Field(
+        description="Legacy known actual-cost subtotal; use actual_cost_total for a complete total."
+    )
     unpriced_operations: int
     needs_approval: bool
     records: int
+    estimated_cost_total: Decimal | None = None
+    actual_cost_total: Decimal | None = None
+    estimated_cost_complete: bool = False
+    actual_cost_complete: bool = False
+    unknown_estimated_cost_operations: int = Field(default=0, ge=0)
+    unknown_actual_cost_operations: int = Field(default=0, ge=0)
+    totals_basis: Literal["recorded_operations_only_v1"] = "recorded_operations_only_v1"
 
 
 class JobEventRead(StrictModel):

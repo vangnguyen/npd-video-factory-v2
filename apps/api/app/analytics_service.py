@@ -222,12 +222,17 @@ class AnalyticsSyncProcessor:
                 collection.metrics,
                 video_duration_seconds=features.duration_seconds,
                 production_cost_vnd=(
-                    float(cost.actual_cost)
-                    if cost.actual_cost and cost.actual_cost > 0
-                    else float(cost.estimated_cost)
-                    if cost.estimated_cost and cost.estimated_cost > 0
+                    float(cost.actual_cost_total)
+                    if cost.actual_cost_complete and cost.actual_cost_total is not None
                     else None
                 ),
+            )
+            assessment.evidence.append(
+                "Production-cost input covers recorded operations only: "
+                f"records={cost.records}; unknown_actual_cost_operations="
+                f"{cost.unknown_actual_cost_operations}; actual_cost_complete="
+                f"{cost.actual_cost_complete}; estimated spend and budget reservations "
+                "are excluded. This does not certify full project billing coverage."
             )
             insights = learning_insights(
                 assessment=assessment,

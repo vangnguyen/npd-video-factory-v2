@@ -1,0 +1,87 @@
+{
+  "schema": "north-star-cost-truth-evidence-v1",
+  "parent_head": "7f45444625c1149213b0c0ec6fe9167928e5e679",
+  "source_sha256": {
+    "apps/api/app/platform_models.py": "306f498bcf7628f5b66bf84d70de45d326e6da4ccf205d7341dc08b469305530",
+    "apps/api/app/repositories.py": "243fe0c99f4bfc64f802578b93193e62560aec8ba401750d7efe0db1544469d3",
+    "apps/api/app/assemblyai_transcription_provider.py": "6562bff074388c9dd54fdd170595822c6c8b48957ce737b78d30db33b7860dfc",
+    "apps/api/app/auto_edit_service.py": "6b31ecf26e96166c0f0cbddd70079ca6b2fb258061fdf8f8a5249f620111842c",
+    "apps/api/app/analytics_service.py": "77d261426966b7b3be774623cafa0aa0a1ff4cb5da51528791c2d61fd2a36406",
+    "apps/api/tests/test_cost_truth.py": "6bc2ae65faa6a81da116f131f02676ab1e130910a0e4d51d2539e59c42f8986c",
+    "scripts/north_star_cost_truth_contract.py": "a75a0416141da4a7e71ed2633f42d34ae47a406d6c2d7fc615fc964c89fdd478"
+  },
+  "logs": {
+    "cost-truth-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-r1.log",
+      "sha256": "833c0de67f3efb00db6dac13bb9fc76440c1b71fe1b38f75075b69e7b4352f19"
+    },
+    "cost-truth-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-r2.log",
+      "sha256": "05e8253cb07068557a742fc6b98b4258b357e4161c6e6b4c154a68284b44aa49"
+    },
+    "cost-truth-regression-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-regression-r2.log",
+      "sha256": "b14146ef68d849145937d3885561fe1f3be7ce60b342f120dada0e5e7e147ec7"
+    },
+    "cost-truth-native-asr-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-native-asr-r1.log",
+      "sha256": "62a89eaa7b983fdc0dfe9588c35f9e09597064da9b04f0686419b75780f2dce8"
+    },
+    "cost-truth-worker-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-worker-r1.log",
+      "sha256": "d80f5fd5550d1d897241549d52aa68ffa630f65d870b114c24c46612382aed66"
+    },
+    "cost-truth-contract-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-contract-n1.log",
+      "sha256": "7553247d887ec4f46ee366e6b187566703628c146d41df9f521058555a1b473c"
+    }
+  },
+  "exports": {
+    "cost-assessment.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-contract-n1\\cost-assessment.json",
+      "sha256": "d68fa547b95846d8f8e95cbc823dccfaaf6143bd48b9acdb16a2ec8c7eca91b8"
+    },
+    "cost-contract.sqlite3": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-contract-n1\\cost-contract.sqlite3",
+      "sha256": "c371af1afc8d5e7a350344e2c06923266bf67f56e815932e57b38606c1ae9f0f"
+    },
+    "cost-records.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-contract-n1\\cost-records.json",
+      "sha256": "23ab6134b7bbd3accac7ac49876b757a534d861348ce56be0d51d8f839984156"
+    },
+    "cost-summary.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-contract-n1\\cost-summary.json",
+      "sha256": "e638714e26834c361cd78addbadf4532efb725eddde8c2fedfeee1c028cbface"
+    },
+    "provider-usage.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-contract-n1\\provider-usage.json",
+      "sha256": "c625d105195a978515104f9b691173cf3f2c95cad8dd08be328e90ecc18d0306"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\cost-truth-contract-n1\\receipt.json",
+      "sha256": "b723e97b80fa4e8456907e3148532e856b71e106cc841eb6f9c63b26811b308b"
+    }
+  },
+  "new_cost_contract_cases": 28,
+  "focused_cost_and_provider_safety_pass": 50,
+  "existing_api_regression_pass": 50,
+  "worker_pass": 35,
+  "native_asr_pass": 11,
+  "initial_run": {
+    "passed": 76,
+    "failed": 2,
+    "cause": "test assertion used a nonexistent TranscriptRead billing field; corrected test only"
+  },
+  "local_real_persistence": true,
+  "billing_inputs": "explicit synthetic fixtures; not real billed spend",
+  "restart_exact": true,
+  "unpriced_totals_null": true,
+  "estimated_actual_coverage_independent": true,
+  "foreign_project_job_rejected": true,
+  "budget_reservation_is_billed_cost": false,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "production_deployed": false,
+  "full_project_cost_capture_verified": false,
+  "remaining": "Native ledger/UI and uniform capture for every external operation; full billing coverage, before-dispatch project budget admission, real receipts and fresh pinned Linux regression remain."
+}

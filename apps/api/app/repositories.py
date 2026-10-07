@@ -537,6 +537,9 @@ class PlatformRepository:
         max_cost_vnd: Decimal | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> tuple[ProviderUsageRead, CostRecordRead]:
+        for amount in (estimated_cost, actual_cost, max_cost_vnd):
+            if amount is not None and (not amount.is_finite() or amount < 0):
+                raise ValueError("provider cost must be finite and non-negative")
         operation_key = hashlib.sha256(
             (
                 f"{workspace_id}|{project_id or '-'}|{job_id or '-'}|"
@@ -545,6 +548,16 @@ class PlatformRepository:
         ).hexdigest()
         async with self.session_factory() as session:
             async with session.begin():
+                if await session.get(WorkspaceORM, workspace_id) is None:
+                    raise KeyError(workspace_id)
+                if project_id is not None:
+                    project = await session.get(VideoProjectORM, project_id)
+                    if project is None or project.workspace_id != workspace_id:
+                        raise ValueError("provider cost project scope mismatch")
+                if job_id is not None:
+                    job = await session.get(JobORM, job_id)
+                    if job is None or job.workspace_id != workspace_id or job.project_id != project_id:
+                        raise ValueError("provider cost job scope mismatch")
                 existing_usage = await session.scalar(
                     select(ProviderUsageORM).where(ProviderUsageORM.operation_key == operation_key)
                 )
@@ -589,7 +602,7 @@ class PlatformRepository:
                 await session.flush()
                 projected = estimated_cost if estimated_cost is not None else actual_cost
                 needs_approval = bool(
-                    max_cost_vnd is not None and projected is not None and projected > max_cost_vnd
+                    max_cost_vnd is not None and (projected is None or projected > max_cost_vnd)
                 )
                 cost = CostRecordORM(
                     cost_id=new_id("cost"),
@@ -643,6 +656,8 @@ class PlatformRepository:
                         ),
                         func.coalesce(func.max(case((CostRecordORM.needs_approval.is_(True), 1), else_=0)), 0),
                         func.count(CostRecordORM.cost_id),
+                        func.coalesce(func.sum(case((CostRecordORM.estimated_cost.is_(None), 1), else_=0)), 0),
+                        func.coalesce(func.sum(case((CostRecordORM.actual_cost.is_(None), 1), else_=0)), 0),
                     ).where(CostRecordORM.project_id == project_id)
                 )
             ).one()
@@ -653,6 +668,12 @@ class PlatformRepository:
                 unpriced_operations=int(result[2]),
                 needs_approval=bool(result[3]),
                 records=int(result[4]),
+                estimated_cost_total=Decimal(str(result[0])) if int(result[5]) == 0 else None,
+                actual_cost_total=Decimal(str(result[1])) if int(result[6]) == 0 else None,
+                estimated_cost_complete=int(result[5]) == 0,
+                actual_cost_complete=int(result[6]) == 0,
+                unknown_estimated_cost_operations=int(result[5]),
+                unknown_actual_cost_operations=int(result[6]),
             )
 
 

@@ -624,11 +624,13 @@ class AutoEditAnalysisService:
                 model=transcription_provider.model,
                 units=Decimal(str(source_media.duration_seconds)) / Decimal("60"),
                 unit_name="audio_minute",
-                estimated_cost=(
-                    transcription_provider.estimated_cost_vnd or Decimal("0")
-                ),
-                actual_cost=transcription_result.receipt.charged_cost_vnd,
+                estimated_cost=transcription_provider.estimated_cost_vnd,
+                actual_cost=transcription_result.value.actual_cost_vnd,
                 metadata={
+                    "budget_reserved_vnd": str(transcription_result.receipt.charged_cost_vnd),
+                    "budget_reservation_is_billed_cost": False,
+                    "estimated_cost_basis": "provider_admission_estimate",
+                    "actual_cost_known": transcription_result.value.actual_cost_vnd is not None,
                     "fixture": transcript.provenance.get("fixture", False),
                     "external_call": transcript.provenance.get("external_call", False),
                     "currency": "VND",
