@@ -185,6 +185,26 @@ class PublishingDispatchJournal:
             except IntegrityError:
                 raise DispatchError('PUBLISH_APPROVAL_CONCURRENT_RESERVATION_RELOAD') from None
 
+    async def review(self, workspace, publication_id):
+        """Fresh public review snapshot; reading it grants no authority or lease."""
+        async with self.session_factory() as session:
+            parent = await self.parent(session, workspace, publication_id)
+            binding = await self.binding(session, parent)
+            grants = (await session.scalars(select(PublishApprovalORM).where(
+                PublishApprovalORM.workspace_id == workspace, PublishApprovalORM.publication_id == publication_id)
+                .order_by(PublishApprovalORM.created_at.desc()).limit(100))).all()
+            active = None
+            for grant in grants:
+                try:
+                    await self.valid_grant(session, parent, grant.publish_approval_id)
+                except DispatchError:
+                    continue
+                active = self.grant_public(grant)
+                break
+            return {**binding, 'binding_sha256': checksum(binding), 'metadata': parent.metadata_json,
+                'active_publish_approval': active, 'mock': parent.mock,
+                'reviewed_at': utc(self.clock()).isoformat(), 'external_action': False}
+
     async def _approve(self, workspace, publication_id, *, principal, expected_fingerprint, expected_artifact_sha256,
                        acknowledged, idempotency_key, ttl_seconds, expected_target_sha256):
         now = utc(self.clock())

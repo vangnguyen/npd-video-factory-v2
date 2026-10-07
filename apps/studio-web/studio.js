@@ -23,9 +23,12 @@ import { waveformPath } from "/waveform.mjs";
 import {reframeProfiles,matchingVision,needsProductionReview} from "/reframe.mjs";
 import {subtitleCueEdit,compatibleSubtitleTemplates,subtitleSaveStyle,timedSubtitleModes} from '/subtitle-editor.mjs';
 import {compatibleBrollPlans,selectedBrollAsset,brollApplyPayload} from '/broll-planner.mjs';
+import {initializePublishingConsole} from '/publishing-console.mjs';
 
 const state = {
   workspaceId: null,
+  workspaceSlug: null,
+  principal: null,
   projects: [],
   projectId: null,
   assets: [],
@@ -70,6 +73,12 @@ const state = {
 const $ = (selector) => document.querySelector(selector);
 const multiInput = initializeMultiInput({api, getState: () => state, refresh: () => loadProject(),
   refreshProjects: () => loadProjectList(), toast, uploadFetch: authenticatedFetch});
+const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
+  setPublication: publication => {
+    state.activePublication = publication;
+    state.publications = [publication, ...state.publications.filter(row => row.publication_id !== publication.publication_id)];
+    renderPublishing();
+  }, toast});
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 
 class ApiError extends Error {
@@ -133,6 +142,7 @@ async function loadProjectList() {
   try {
   const workspaces = await api("/api/v1/workspaces");
   state.workspaceId = workspaces[0]?.workspace_id ?? null;
+  state.workspaceSlug = workspaces[0]?.slug ?? null;
   if (!state.workspaceId) {
     renderNoProject("Workspace chưa được khởi tạo.", "Tạo workspace và project trước khi mở Studio.");
     return;
@@ -700,6 +710,7 @@ function renderPublishing() {
       return `<button type="button" data-publication-id="${escapeHtml(item.publication_id)}"><span>${escapeHtml(item.platform)}</span><small class="${escapeHtml(itemStatus.tone)}">${escapeHtml(itemStatus.label)} · ${escapeHtml(item.publication_id)}</small></button>`;
     }).join("")}`
     : `<p class="browser-empty">Chưa có dry-run receipt.</p>`;
+  publishingConsole.sync();
 }
 
 function analyticsPublication() {
@@ -864,6 +875,7 @@ function publicationPayload() {
       caption: $("#publishing-caption").value.trim(),
       hashtags: $("#publishing-hashtags").value.split(",").map((item) => item.trim().replace(/^#/, "")).filter(Boolean),
       privacy: $("#publishing-privacy").value,
+      scheduled_at: $("#publishing-scheduled").value ? new Date($("#publishing-scheduled").value).toISOString() : null,
     },
     actor_ref: "studio-user",
   };
@@ -1621,6 +1633,6 @@ window.addEventListener("beforeunload", () => {
   stopAnalyticsPolling();
 });
 ensureAuthenticatedSession()
-  .then(() => loadProjectList())
+  .then(principal => { state.principal = principal; return loadProjectList(); })
   .catch((error) => { renderNoProject("Không tải được Studio.", error.message); toast(error.message, true); })
   .finally(() => multiInput.setBusy(false));

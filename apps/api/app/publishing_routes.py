@@ -98,6 +98,24 @@ async def publishing_platforms(request: Request) -> list[PublishingPlatformState
     return service(request).platform_states()
 
 
+@router.get('/projects/{project_id}/publishing-profiles')
+async def publishing_profiles(project_id: str, request: Request, response: Response):
+    await authorize_project(request, project_id, 'viewer')
+    response.headers['Cache-Control'] = 'no-store'
+    return await service(request).profiles_for_project(project_id)
+
+
+@router.get('/projects/{project_id}/publications/{publication_id}/publish-review')
+async def publish_review(project_id: str, publication_id: str, request: Request, response: Response):
+    await authorize_project(request, project_id, 'viewer')
+    try:
+        value = await service(request).publish_review(project_id, publication_id)
+        response.headers['Cache-Control'] = 'no-store'
+        return value
+    except (KeyError, DispatchError, PublishingPreconditionError) as exc:
+        raise consent_error(exc) from None
+
+
 def consent_error(exc):
     if isinstance(exc, KeyError):
         return error(404, 'PUBLICATION_NOT_FOUND', 'Publication was not found.')

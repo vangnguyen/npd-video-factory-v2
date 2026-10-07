@@ -304,6 +304,20 @@ class PublishingService:
     async def history(self, project_id: str) -> list[PublicationEventRead]:
         return await self.repository.list_events(project_id)
 
+    async def profiles_for_project(self, project_id):
+        from .publishing_profiles import PublishingProfileRegistry
+        registry = getattr(self, 'profile_registry', None)
+        if type(registry) is not PublishingProfileRegistry: return []
+        package = await self.production_repository.get_package(project_id)
+        return registry.latest_for_workspace(package.workspace_id) if package else []
+
+    async def publish_review(self, project_id, publication_id):
+        publication = await self.get(project_id, publication_id)
+        if publication is None: raise KeyError('publication')
+        value = await self._configured_journal().review(publication.workspace_id, publication_id)
+        return {**value, 'owner_gates_enabled': all(getattr(self.settings, key, False) is True for key in (
+            'publish_enabled', 'publish_external_execution_enabled', 'publish_owner_gate_enabled'))}
+
     async def approve_publish(self, project_id, publication_id, *, principal, payload, idempotency_key):
         publication = await self.get(project_id, publication_id)
         if publication is None:

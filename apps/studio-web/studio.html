@@ -316,7 +316,7 @@
               <div>
                 <span class="panel-kicker">V2-09 · Publishing safety</span>
                 <h2>Publishing Panel</h2>
-                <p>Kiểm tra đúng final render, approval, quyền media và giới hạn nền tảng. Kết quả chỉ là receipt mô phỏng; không có bài đăng thật.</p>
+                <p>Kiểm tra final render, quyền media và nền tảng. Dry-run tạo receipt mô phỏng; Owner có thể chuẩn bị bản review riêng khi publishing đã được bật.</p>
               </div>
               <span id="publishing-live-status" class="pill warning">Live bị khóa</span>
             </div>
@@ -327,15 +327,32 @@
                 <label class="wide-field">Mô tả<textarea id="publishing-description" maxlength="10000" placeholder="Mô tả dài, CTA và thông tin nguồn"></textarea></label>
                 <label class="wide-field">Caption<textarea id="publishing-caption" maxlength="10000" placeholder="Caption hiển thị trên nền tảng"></textarea></label>
                 <label>Hashtag<input id="publishing-hashtags" type="text" placeholder="VinhTien, NgocPhuongDong" /></label>
-                <label>Quyền riêng tư<select id="publishing-privacy"><option value="private">Private</option><option value="unlisted">Unlisted</option><option value="public">Public (dry-run)</option></select></label>
+                <label>Quyền riêng tư<select id="publishing-privacy"><option value="private">Private</option><option value="unlisted">Unlisted</option><option value="public">Public</option></select></label>
+                <label>Lịch phát hành (tùy chọn)<input id="publishing-scheduled" type="datetime-local" /></label>
                 <button id="publishing-dry-run-button" class="primary-button wide-field" type="submit" disabled>Kiểm tra và tạo dry-run receipt</button>
-                <p class="hard-boundary wide-field">Không có nút publish live. OAuth/token chỉ dùng qua external secret reference và chưa được kích hoạt.</p>
+                <p class="hard-boundary wide-field">Publishing mặc định bị khóa. Duyệt sản xuất không thay thế duyệt publish.</p>
               </form>
               <div class="publishing-result">
                 <div class="production-card-title"><div><span class="card-icon">↗</span><strong>Kết quả kiểm tra</strong></div><span id="publishing-status" class="pill muted">Chưa chạy</span></div>
                 <div id="publishing-gates" class="publishing-gates"><p class="browser-empty">Cần final render đã duyệt và QC PASS.</p></div>
                 <div id="publication-history" class="publication-history"></div>
               </div>
+            </div>
+            <div class="production-stage">
+              <h3>Duyệt publish và hàng đợi</h3>
+              <label>Kênh<select id="publishing-profile"><option value="">Chọn kênh đã cấu hình</option></select></label>
+              <div class="button-row">
+                <button id="publishing-refresh" type="button">Cập nhật trạng thái và kênh</button>
+                <button id="publishing-prepare" type="button" disabled>Chuẩn bị bản review</button>
+              </div>
+              <pre id="publishing-review-text" class="publishing-review-text" aria-live="polite"></pre>
+              <label><input id="publishing-acknowledge" type="checkbox" disabled /> Tôi đã xem video và xác nhận đúng nội dung, kênh, quyền riêng tư và quyền media của bản review này.</label>
+              <div class="button-row">
+                <button id="publishing-consent" type="button" disabled>Duyệt riêng cho publish</button>
+                <button id="publishing-enqueue" type="button" disabled>Xếp hàng publish đã duyệt</button>
+                <button id="publishing-revoke" type="button" disabled>Thu hồi duyệt publish</button>
+              </div>
+              <p id="publishing-work-text" aria-live="polite"></p>
             </div>
           </section>
 

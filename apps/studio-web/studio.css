@@ -323,3 +323,5 @@
 @media(max-width:900px) {
   .production-grid { grid-template-columns: minmax(0,1fr); }
 }
+/* Bounded public review metadata preserves readable hashes and Vietnamese text. */
+.publishing-review-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 22rem; overflow: auto; font: inherit; }

@@ -123,6 +123,7 @@ class YouTubePublishingRuntime:
         service.providers.scoped_factory = select_provider
         service.providers.official['youtube'] = ScopedYouTubePublishingProvider(self)
         service.dispatch_journal, service.work_queue, service.dispatch_worker = self.journal, self.queue, self
+        service.profile_registry = self.profiles
         return self
 
     async def worker_for(self, workspace, publication_id, admission_guard=None):

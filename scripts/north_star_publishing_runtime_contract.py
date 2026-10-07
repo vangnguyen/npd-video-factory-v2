@@ -102,9 +102,18 @@ async def run(root, output, source, ffmpeg, ffprobe):
             row = PublicationRead.model_validate(created.json()); assert row.mock and row.status == 'awaiting_publish_approval'
             receiver.append(ExplicitReceiver({**fixture, 'publication': row}, runtime.journal, profile.target, source.read_bytes(), lose_final=True))
             path = project_path + f'/publications/{row.publication_id}'
+            profiles = await client.get(project_path + '/publishing-profiles', headers=headers('viewer'))
+            assert profiles.status_code == 200 and profiles.json() == [profile.model_dump(mode='json')]
+            requests.append({'method': 'GET', 'status': 200, 'action': 'viewer-scoped-profiles'})
+            review = await client.get(path + '/publish-review', headers=headers('viewer'))
+            assert review.status_code == 200 and review.headers['cache-control'] == 'no-store'
+            reviewed = review.json()
+            assert reviewed['artifact_sha256'] == stored.checksum_sha256 and reviewed['target_binding'] == profile.target.model_dump(mode='json')
+            assert reviewed['active_publish_approval'] is None and receiver[0].requests == []
+            requests.append({'method': 'GET', 'status': 200, 'action': 'viewer-exact-review-no-authority'})
             consent = await client.post(path + '/publish-approval', headers={**headers('owner'), 'Idempotency-Key': 'explicit-runtime-http-consent'},
-                json={'expected_fingerprint': row.request_fingerprint, 'expected_artifact_sha256': stored.checksum_sha256,
-                    'expected_target_sha256': checksum(profile.target.model_dump(mode='json')), 'acknowledged': True})
+                json={'expected_fingerprint': reviewed['request_fingerprint'], 'expected_artifact_sha256': reviewed['artifact_sha256'],
+                    'expected_target_sha256': reviewed['target_binding_sha256'], 'acknowledged': True})
             assert consent.status_code == 200; requests.append({'method': 'POST', 'status': 200, 'action': 'publish-only-consent'})
             grant = consent.json()
             queued = await client.post(path + '/publishing-work', headers=headers('owner'), json={'publish_approval_id': grant['publish_approval_id']})
@@ -120,6 +129,9 @@ async def run(root, output, source, ffmpeg, ffprobe):
             assert sha(received) == source_sha and receiver[0].initializations == 1
             revoked = await client.post(path + '/publish-approval/revoke', headers=headers('owner'), json={'publish_approval_id': grant['publish_approval_id']})
             assert revoked.status_code == 200; requests.append({'method': 'POST', 'status': 200, 'action': 'revoke-future-mutation'})
+            revoked_review = await client.get(path + '/publish-review', headers=headers('viewer'))
+            assert revoked_review.status_code == 200 and revoked_review.json()['active_publish_approval'] is None
+            requests.append({'method': 'GET', 'status': 200, 'action': 'viewer-revoked-review'})
             await fixture['stack'].engine.dispose(); fixture['clock'][0] += timedelta(seconds=30)
             queried = restarted(fixture, root, uncertain, received, 'query')
             fixture['clock'][0] += timedelta(seconds=2)
@@ -133,6 +145,8 @@ async def run(root, output, source, ffmpeg, ffprobe):
             events = (await session.scalars(select(PublicationEventORM).where(PublicationEventORM.publication_id == row.publication_id))).all()
         assert len(costs) == 8 and all(cost.actual_cost is None for cost in costs)
         write(output / 'api.json', {'requests': requests, 'all_accounts_roles_gates_approvals_are_fixtures': True, 'created': created.json(), 'completed': done})
+        write(output / 'review.json', {'before_consent': reviewed, 'after_revocation': revoked_review.json(),
+            'profiles': profiles.json(), 'reading_grants_no_authority': True})
         write(output / 'work.json', {'queued': work, 'initialized': initialized, 'uncertain': uncertain, 'query': queried, 'processing': completed})
         write(output / 'media-qc.json', {'reports': reports, 'actual_av_quality': True, 'timeline_subtitle_approval_inputs_are_fixtures': True})
         write(output / 'profile.json', catalog.model_dump(mode='json'))
@@ -145,12 +159,12 @@ async def run(root, output, source, ffmpeg, ffprobe):
     exported = ''.join(path.read_text(encoding='utf-8') for path in output.glob('*.json'))
     assert all(value not in exported for value in ('Bearer ', 'EXPLICIT_PRIVATE_FIXTURE', 'private_session_ref', 'lease_owner'))
     write(output / 'receipt.json', {'schema': 'publishing-runtime-contract-v1', 'status': 'PASS',
-        'api_requests': 6, 'actual_full_qc_runs': 2, 'separate_processes': 2, 'mock_requests': 8, 'initializations': 1,
+        'api_requests': len(requests), 'actual_full_qc_runs': 2, 'separate_processes': 2, 'mock_requests': 8, 'initializations': 1,
         'actual_provider_requests': 0, 'paid_operations': 0, 'real_credentials_read': 0,
         'mock_publication_complete': True, 'published': False, 'owner_uat_accepted': False,
         'publishing_ready': False, 'production_deployed': False,
         'exports_sha256': {path.name: sha(path) for path in sorted(output.glob('*.json'))}})
-    print(json.dumps({'status': 'PASS', 'exports': 8, 'api_requests': 6, 'mock_requests': 8,
+    print(json.dumps({'status': 'PASS', 'exports': 9, 'api_requests': len(requests), 'mock_requests': 8,
         'separate_processes': 2, 'initializations': 1, 'published': False}))
 
 

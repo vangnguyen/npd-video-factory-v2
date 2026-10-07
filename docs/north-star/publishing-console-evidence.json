@@ -1,0 +1,119 @@
+{
+  "schema": "studio-publish-review-queue-evidence-v1",
+  "parent_head": "27dce5d516d7beae357fed1b365c2b97d5d971e0",
+  "source_sha256": {
+    "apps/api/app/publishing_dispatch.py": "8952ed89c48e4b3ae79ffdfb58e9919268bfc332a5e3041e0addee585ad35bce",
+    "apps/api/app/publishing_profiles.py": "e18ab85127021b30c795adce120aae98080f7586e248679f3f4b0aa3757783da",
+    "apps/api/app/publishing_routes.py": "7a9048ba0dc6ec3c9eea34e69835a1fdbed03a377028e6ebfef39e9e976f6ffb",
+    "apps/api/app/publishing_runtime.py": "7acbfc3f293a301fabb4eff8ea072c14dc0e60bb31cf1e4ce315036f456e0d7b",
+    "apps/api/app/publishing_service.py": "f02acc75eba6a3751caf8d7b0d2d219b4b815ce7b68ca94281d2fd0ef4f22c29",
+    "apps/api/tests/test_publishing_review_api.py": "dcdbd563c66d0cd8b3139749d84aeb61cfc77651dc82f0c78c7b8501c02812b2",
+    "apps/studio-web/publishing-console.mjs": "dfebbbec473906e2d4ad36bc9b833742aa84fb26c1202d45bb8f52110c5c3ae8",
+    "apps/studio-web/tests/publishing-console.test.mjs": "e8d9323b516f20145e6f778e9ccfa310863a6a222ee063a8a0209ca05698a1d7",
+    "apps/studio-web/studio.js": "a788e4bb4beff133ec957d834d605e57e72acb8e0d3a5976aba586192fb66723",
+    "apps/studio-web/studio.html": "a19f2c97cec6e9ef276bf43724c15a20152521a6b1d3f947a97a96f0795c7045",
+    "apps/studio-web/studio.css": "2f56c55590dfe322c3a57b64cc5329678f1773982c793806eb3874e475646bf1",
+    "scripts/north_star_publishing_runtime_contract.py": "511d167e3f0ca6ef0d7184d5b7847f6e0683cf20a0449a7e22c5f20cb77ad1b7",
+    "docs/STUDIO_PUBLISH_REVIEW_QUEUE.md": "6b2b442627f56a2d26d931420e6ffa36c7a81e862ed27f77551eb576563a1b6c"
+  },
+  "logs": {
+    "publishing-review-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-review-r1.log",
+      "sha256": "a46a5581ae227547e549f91e7fa6a0d8587ffefd2bad0380da7c703d78fcd1f0"
+    },
+    "publishing-review-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-review-r2.log",
+      "sha256": "8997f6b3bf7e8c23e875635a11ce2e9fb5b7d55f70b9dc6f15569957f35bd9a0"
+    },
+    "publishing-review-diagnostic-r3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-review-diagnostic-r3.log",
+      "sha256": "e14ed8aeca69d151759653ea991c73bee7f6602f6a9c9a71656376fca7db2d89"
+    },
+    "studio-publishing-console-r1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-publishing-console-r1.log",
+      "sha256": "fb3595cab2a511c97150e6c638d483f15f0fb954169f8be65393606adc3da8b0"
+    },
+    "studio-publishing-console-r2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\studio-publishing-console-r2.log",
+      "sha256": "5279ba247d0cd82c694c3f563e46325d753fc59abef471bce576e8ee4389c266"
+    },
+    "publishing-runtime-contract-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2.log",
+      "sha256": "a780dc03476a37336a71e6744a55f329b6dd2bd6b35158860efe5dfdd10f7d4e"
+    }
+  },
+  "exports": {
+    "api.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2\\api.json",
+      "sha256": "4091b65b94199c83bee35b1e520f349cb923cbce00c4a9188bdde58e9a4f966f"
+    },
+    "cost.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2\\cost.json",
+      "sha256": "2d00d1060d73cbf29cc714dbe1ddecbb70f4d4083e22ad28691c39d5c84368be"
+    },
+    "events.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2\\events.json",
+      "sha256": "9cebad30d8d322038668d17cbf2d1954944b703d527eaa836da5be66041606f8"
+    },
+    "media-qc.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2\\media-qc.json",
+      "sha256": "ae26bcbb73b5c4a3d3c05cad6498f6b45fbfe7b4a40caded75facbfb7905835a"
+    },
+    "profile.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2\\profile.json",
+      "sha256": "19f4badd37b5994a422224a28a4487a82569da6335d0735643af738ac64bf057"
+    },
+    "receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2\\receipt.json",
+      "sha256": "c24808c85ba5c0f0c88b8fbab47f9372c10ff8deefda2760dff146a40dd52133"
+    },
+    "review.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2\\review.json",
+      "sha256": "622864f4d4621e53462959a2abc3884b8e935a0f6935063f4c5d77177f4514ba"
+    },
+    "source.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2\\source.json",
+      "sha256": "6b90796d99650bc1bc56bd0113bfc63e7fc80ed10b241dce05c3400eddc73d49"
+    },
+    "work.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-runtime-contract-n2\\work.json",
+      "sha256": "5b89d95611df31566e8cb7c8253f5027148523c9ea76d3f59b00ce07f3218aa6"
+    }
+  },
+  "preservation_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-protocol-preservation.json",
+    "sha256": "bea67ff9a74f33ad186cb571f45fefbbea43c8702445df86c2f47889f65e0900"
+  },
+  "expanded_api_tests_passed": 51,
+  "expanded_seconds": 516.95,
+  "new_api_tests": 4,
+  "diagnostic_new_api_tests_passed": 4,
+  "diagnostic_seconds": 45.92,
+  "studio_tests_passed": 130,
+  "new_console_tests": 7,
+  "focused_final_console_tests_passed": 7,
+  "initial_harness_error": "Incorrect new-test AssetORM import corrected to existing app.db; no product failure",
+  "full_current_api_status": "PENDING_PINNED_COMMIT",
+  "full_runtime_parent_status": "RUNNING_DAD237A",
+  "authenticated_api_requests": 9,
+  "actual_full_qc_runs": 2,
+  "actual_sqlite_aes": true,
+  "separate_processes": 2,
+  "actual_source_bytes": 4256257,
+  "source_unchanged": true,
+  "mock_requests": 8,
+  "initializations": 1,
+  "actual_costs": null,
+  "identity_account_oauth_key_approval_provider_timeline_subtitle_inputs_are_fixtures": true,
+  "actual_provider_requests": 0,
+  "paid_operations": 0,
+  "real_credentials_read": 0,
+  "published": false,
+  "browser_1366_1920_2560_accepted": false,
+  "owner_uat_accepted": false,
+  "native_distribution_ui_complete": false,
+  "publishing_ready": false,
+  "production_migration_executed": false,
+  "default_factory_activated": false,
+  "production_deployed": false
+}

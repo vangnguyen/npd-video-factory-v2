@@ -97,6 +97,10 @@ class PublishingProfileRegistry:
     def target(self, workspace, profile_id):
         return self.resolve(workspace, profile_id).target
 
+    def latest_for_workspace(self, workspace):
+        return [self.resolve(workspace, identifier) for identifier in
+            sorted({key[1] for key in self._versions if key[0] == workspace})]
+
     def has_platform(self, platform, *, require_youtube_ready=False):
         return any(self.resolve(workspace, identifier).target.platform == platform
             and (not require_youtube_ready or self.resolve(workspace, identifier).youtube_ready())

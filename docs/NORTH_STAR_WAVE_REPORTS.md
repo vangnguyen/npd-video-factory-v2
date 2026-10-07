@@ -1205,3 +1205,23 @@ EVIDENCE: `docs/north-star/tiktok-protocol-evidence.json`, `docs/TIKTOK_OFFICIAL
 REGRESSIONS: focused contracts pass; current full suite pending. Accepted/live data/media/processes, main, publishing defaults and schemas remain untouched. No real publish/delete, paid operation, live migration or deployment.
 
 EXTERNAL BLOCKERS: TikTok official guidance excludes private/internal team upload utilities and requires eligible creator-facing product/provider review, private accounts for unaudited clients and verified ownership for server pull media. Actual product/provider/credential acceptance remains BLOCKED_EXTERNAL; no safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: durable authorized adapter paths, Meta official providers/controls and all remaining safe North Star capabilities.
+
+### Waves 8/9 — API Studio exact publish review and separate consent/queue controls
+
+WAVE: 8/9. STATUS: IN PROGRESS; review/API/Studio fixture and actual-media mock restart checks pass. PUBLISHING_READY = NO; IMPLEMENTATION_COMPLETE = NO.
+
+HEAD SHA: parent `27dce5d516d7beae357fed1b365c2b97d5d971e0`, pushed/preserved in verified `north-star-tiktok-protocol.bundle`, SHA256 `29c301757060a4aecc5eadd9417a391a60bc96bae73c6f6933eff5f859a92c86`; 156 ahead/0 behind. Fresh preservation verifies all fifteen accepted hashes and clean live source 2ced7bc; main unchanged. Console is this increment.
+
+CAPABILITIES COMPLETED: project-scoped latest public profiles; current no-store review snapshot with exact render/artifact/target/metadata binding and active consent validation; API Studio separate prepare, acknowledge/consent, explicit enqueue, status refresh and selected-consent revoke; exact Owner workspace/global/slug role, textContent metadata rendering, stale scope/expiry/hash rejection, disabled defaults and optional explicit schedule input. Reads/consent never chain queue/provider execution.
+
+CAPABILITIES PARTIAL: Native distribution controls, browser sizes/Owner usability acceptance, persistent Owner configuration/secret administration, cancel/resume, production supervision and non-YouTube durable adapters/real acceptance. No readiness or UAT acceptance claim.
+
+TESTS: expanded API review/profile/runtime/work/queue **51 PASS**, 516.95s; four new API cases independently **4 PASS**, 45.92s. Studio **130 PASS**, 2,551.8853ms; seven focused console cases after final binding additions **7 PASS**, 111.4237ms. JS syntax/diff checks pass. Initial collection error was an incorrect new-test AssetORM import, corrected to app.db. Full dad237a Linux runtime parent remains running; current full suite pending pinned commit.
+
+REAL PROVIDER TESTS: none. MOCK TESTS: expanded real-media runtime contract has nine authenticated ASGI requests including viewer profiles/exact review/revoked review; two actual QC scans, SQLite/AES, two reconstructed runtime processes, one initialization and eight mock provider requests. Source remains identical 4,256,257-byte synthetic portrait; actual costs null. All roles/accounts/keys/credentials/approval/timeline/subtitle fixtures; published=false, no real/paid calls/secret reads. UI tests use an explicit DOM/API harness, not a browser acceptance.
+
+EVIDENCE: `docs/north-star/publishing-console-evidence.json`, `docs/STUDIO_PUBLISH_REVIEW_QUEUE.md`, six recovery logs and nine preserved hashed JSON exports in publishing-runtime-contract-n2. Prior n1 is retained. Not final A/B/C acceptance or Owner UAT.
+
+REGRESSIONS: current focused selections pass; full suite pending. Accepted/live media/source/data/processes, main, existing schemas and publishing defaults remain untouched. No actual publish/delete, paid operation, live migration or deployment.
+
+EXTERNAL BLOCKERS: eventual actual account/credential/provider acceptance and Owner UAT; no safe-work blocker. OWNER ACTION REQUIRED: none now. NEXT WAVE: official Meta protocol/adapters, durable non-YouTube paths, Native integration and remaining media/analytics/learning/Trend/Hub/hardening capabilities.
