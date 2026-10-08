@@ -1,0 +1,197 @@
+{
+  "schema": "native-analytics-visuals-evidence-v1",
+  "parent_head": "0fa21bfa2aade6de38fb8089c39f87c278b57aa2",
+  "source_sha256": {
+    "apps/studio-web/native-analytics.mjs": "3bff7186875694d001b8d8c92409ffd7afb7c2a7b753c852f2e7d2ab5989145e",
+    "apps/studio-web/native.html": "8531c61b5f3d807017f66c58a5d9c6303969d64147bbf45fa61de24f06a2562e",
+    "apps/studio-web/native.css": "a1d138621ee50ac01d8c3b7def85f70f8d97285ab2f6ba156376df3258b6c587",
+    "apps/studio-web/tests/native-analytics-visuals.test.mjs": "b06d8f2009615020f4a470e561265385fe8ddddec5738999b4d83c49368b63c6",
+    "scripts/north_star_native_analytics_visuals.py": "4830429b780834fd0c1feff2689b570528c2d31a52205a682707dc566416e4fd",
+    "scripts/north_star_native_analytics_visuals.mjs": "f5e2f09b39f5a152cc5a76ad3e76924e4ae5c67f7df06bb741a0e170588e1f01",
+    "docs/NATIVE_ANALYTICS_VISUALS.md": "7e8ef1d7224aecf4f603acbbc6420324e1bbd457bb2c556bda104c1804803783"
+  },
+  "tests": {
+    "full_studio_passed": 268,
+    "full_studio_ms": 1105.2995,
+    "new_dom_cases": 10,
+    "affected_native_passed": 26,
+    "affected_native_seconds": 22.039,
+    "unchanged_full_native_passed": 699,
+    "unchanged_full_native_seconds": 508.54,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-analytics-visuals-flow-n4",
+    "evidence_sha256": "61925629e3f3f75a1beeb0c232cf76b74b8a87726727a5a2b3a199dfed7626b2",
+    "human_http_requests": 14,
+    "historical_snapshots": 4,
+    "new_fixture_scenarios": 3,
+    "exports": {
+      "analytics-page.json": {
+        "sha256": "cc33227c4434c1f677ac373bccd25b22efd3aa696218bde5dd442ac069f68fae",
+        "bytes": 53151
+      },
+      "backup.json": {
+        "sha256": "8347bbb8ba1a5a99ad50c702830075f2fae694fec3cc650d2d024c93b2ce5235",
+        "bytes": 2443
+      },
+      "historical-snapshot-rows.json": {
+        "sha256": "8df3252a12e60f9d78c95b933cbd33f264c77c4ffc08e8f8963238c92e9c2657",
+        "bytes": 33612
+      },
+      "history-before.json": {
+        "sha256": "f5054f3553b8b96296c45d0299708a48edf9e5c9bc2c257205808ff641a7163b",
+        "bytes": 14255
+      },
+      "http-requests.json": {
+        "sha256": "adfa348b463aced50ead4eb7401b6665bcb84c22af0ce0cc6e9b57e8458b0104",
+        "bytes": 1894
+      },
+      "initial-restore.json": {
+        "sha256": "4e297dd5d624097bba61bcbdf154a0cd701b5eabd1c20f47fcddb5b4b67b2cf0",
+        "bytes": 2816
+      },
+      "insufficient_data-snapshot.json": {
+        "sha256": "efdb1ed3311ab9d6ad739efefe02ca7d6337582c3c46f4f6e2c39dc7c384dc9c",
+        "bytes": 8955
+      },
+      "official-not-configured.json": {
+        "sha256": "fa640cdf21673f4dc088ed28feed3b45517d9d2ddd25ddb14fecbfde048f4263",
+        "bytes": 1198
+      },
+      "owned-analytics-visuals.zip": {
+        "sha256": "83c63514f70aab6bc209dee1cf38b7d57021b58980953307f354bcdc669f8191",
+        "bytes": 15180382
+      },
+      "underperforming-snapshot.json": {
+        "sha256": "cdb0723153fc299c64fd06e9e2af8f32274bd8d92bd39ae7ed2168970d9414aa",
+        "bytes": 9387
+      },
+      "winner_candidate-snapshot.json": {
+        "sha256": "ea87c52451aa66d4f42ead5af9cbe54a83d59cf657883e0866f9c5ef1f2cfedd",
+        "bytes": 9516
+      },
+      "workspace-overview.json": {
+        "sha256": "ee5a092a708ae41a36c986a4db0e18ea4988286b38e184d67fec803fcea237b6",
+        "bytes": 11033
+      }
+    }
+  },
+  "component": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-analytics-visuals-flow-n4\\visuals",
+    "receipt_sha256": "01bdf07fde44d1145095bb8a6ebc9e0b5ddf374a9b83a41f95e430fcedbda4ad",
+    "files": {
+      "all-null-revenue-model.json": {
+        "sha256": "2a4291ec07e4ae5624bc68cde15f57e43ac409da27315ab13ca2e0bab0c17676",
+        "bytes": 3015
+      },
+      "completion_rate-model.json": {
+        "sha256": "4595d81ab3ad5db35f822e990e4115c61383b437b738ebf8f81424dc4f6e6dcb",
+        "bytes": 8274
+      },
+      "completion_rate-review.png": {
+        "sha256": "f9e232925a47d9f3629140d85d49c9529ea966d34125938861ce4ed497a3520e",
+        "bytes": 33444
+      },
+      "completion_rate.svg": {
+        "sha256": "4f97cac79ef99893f1c7237c34ca45ce902fa5213d1c6569b07e579d8388aec7",
+        "bytes": 2015
+      },
+      "component-evidence.html": {
+        "sha256": "3ad83d9f747ae49d142e8015a56ac69bd1953d91b7914eb98affc51c6c88dc39",
+        "bytes": 17650
+      },
+      "render-receipt.json": {
+        "sha256": "01bdf07fde44d1145095bb8a6ebc9e0b5ddf374a9b83a41f95e430fcedbda4ad",
+        "bytes": 2090
+      },
+      "revenue-model.json": {
+        "sha256": "0bbcd0a51d763e8639bb9ee477cbd35883433ca2de0bb3fff8ff78f5b4338cb6",
+        "bytes": 7278
+      },
+      "revenue-review.png": {
+        "sha256": "d1fdaee7e38b3b43295a190aff6d2c902300400018ea31dbf083395dbc272f54",
+        "bytes": 31839
+      },
+      "revenue.svg": {
+        "sha256": "17ed87e4eaae9860b1937838b45885e088f06b58361253d9e5f54495f1159ac8",
+        "bytes": 1475
+      },
+      "views-model.json": {
+        "sha256": "2bacd6b11b4e7bba7ebabebe97326adfec86125a6e61440fb74d5966a05ae505",
+        "bytes": 8736
+      },
+      "views-review.png": {
+        "sha256": "9ffcd0e72719a4ed18b0121a9f6ebb5061441759ad195ee31e1a9291b1c02a26",
+        "bytes": 39331
+      },
+      "views.svg": {
+        "sha256": "6725a6597035c5f432caeb290f62bd78e1d83b85edecc3bd39f0d0edf92382ef",
+        "bytes": 2237
+      },
+      "watch_time-model.json": {
+        "sha256": "940d7b0165920882d265d41eac54bff3cb123eb75bf56076b2526e0d08596f85",
+        "bytes": 8295
+      },
+      "watch_time-review.png": {
+        "sha256": "9d499680c5b2c41e6b2835c87ab9595843728ab5defbfb1aec530d17adf303df",
+        "bytes": 41449
+      },
+      "watch_time.svg": {
+        "sha256": "859196ca44fd3275886edf3c2548d8f9454cd305015b3859a6ea9b9a26117108",
+        "bytes": 2059
+      }
+    },
+    "sharp": "0.35.4",
+    "libvips": "8.18.6",
+    "pngs_inspected": [
+      "completion_rate-review.png",
+      "watch_time-review.png",
+      "revenue-review.png"
+    ],
+    "final_revenue_leading_digit_verified": true
+  },
+  "logs": {
+    "native-analytics-visuals-affected-r1.log": "ebb2e25691a99030fdfc80986a64c23696b4079ff65e97d63905b24a48f5d5e5",
+    "native-analytics-visuals-flow-n1.log": "0c11f2582e52f12fc47cbc08f3d33016e023a3d4b51961a29925c3c7a63ff7d3",
+    "native-analytics-visuals-flow-n2.log": "c3d35b029ccdf455db3f3001e5786f73f045e59320f58fbbcefe9398c28bac74",
+    "native-analytics-visuals-flow-n3.log": "c3d35b029ccdf455db3f3001e5786f73f045e59320f58fbbcefe9398c28bac74",
+    "native-analytics-visuals-flow-n4.log": "c3d35b029ccdf455db3f3001e5786f73f045e59320f58fbbcefe9398c28bac74",
+    "studio-analytics-visuals-artifacts-n2.log": "66bca5527acb82d4ac8004648fbcc39dcafcbb879a7b1a71fae79f2470c95a1e",
+    "studio-analytics-visuals-artifacts-n3.log": "6bf408826f3d94c761bd1a4dede2a03040237da008d6d3e91c4098ac1833beab",
+    "studio-analytics-visuals-artifacts-n4.log": "6bf408826f3d94c761bd1a4dede2a03040237da008d6d3e91c4098ac1833beab",
+    "studio-analytics-visuals-artifacts-r2.log": "6bf408826f3d94c761bd1a4dede2a03040237da008d6d3e91c4098ac1833beab",
+    "studio-analytics-visuals-focused-r2.log": "8126f2a27a137f5a8f65b3ece982fa304d3ab7d5605b7da1a5644974bfb70848",
+    "studio-analytics-visuals-full-r1.log": "137e7b7e548243f437bed5a562899c2ba05b377c4d75d99c30752918a1fae36c",
+    "studio-analytics-visuals-full-r2.log": "51e0750d65a76b1fb5d2808b66fb1f65406d0ec0abb436c73854d1d8c8102943",
+    "studio-analytics-visuals-full-r3.log": "2a048e6dd0ecbbd70e1c698398f0b929add9396e7da4abd0d45f91c73aa3e357",
+    "studio-analytics-visuals-raster-n3.log": "d8acadd1fa2aa83fa22f51d4814de35f709456ed5aa22fef0a9865a3717e976c",
+    "studio-analytics-visuals-raster-n4.log": "d8acadd1fa2aa83fa22f51d4814de35f709456ed5aa22fef0a9865a3717e976c",
+    "studio-analytics-visuals-raster-r2.log": "e3847a29c5d26cc9af06bcc416e0ef617120f3a2e58528eb07813be1d509b85f",
+    "studio-analytics-visuals-raster-review-r2.log": "d8acadd1fa2aa83fa22f51d4814de35f709456ed5aa22fef0a9865a3717e976c"
+  },
+  "all_15_metrics_selectable": true,
+  "redraw_dispatches_no_provider": true,
+  "null_gaps_and_all_null_graph_absence_preserved": true,
+  "zero_values_preserved": true,
+  "separate_publication_platform_source_series": true,
+  "relative_change_missing_for_zero_or_unknown_base": true,
+  "normalized_seconds_percent_vnd_rpm_units": true,
+  "loaded_history_limits_exposed": true,
+  "full_numeric_axes_not_clipped": true,
+  "project_switch_clears_chart": true,
+  "old_history_project_jobs_media_unchanged": true,
+  "fixture_scenarios_not_audience_trajectory": true,
+  "no_account_totals_or_channel_baseline_claim": true,
+  "official_native_provider_status": "NOT_CONFIGURED",
+  "actual_audience_observed": false,
+  "browser_non_developer_uat": false,
+  "owner_uat_accepted": false,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
