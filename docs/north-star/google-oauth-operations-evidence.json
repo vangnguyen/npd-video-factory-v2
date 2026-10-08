@@ -1,0 +1,130 @@
+{
+  "schema": "native-google-oauth-operations-evidence-v1",
+  "parent_head": "abe1639cc12850984335d3926a2a0d362ac51bbc",
+  "source_sha256": {
+    "services/windows_native/google_oauth_operations.py": "7f9cb998da4c0d9fc9ffbd1005049ff920615535a20e95c4ef83a022af572614",
+    "services/windows_native/tests/test_google_oauth_operations.py": "d08f5ac6de53f1d73ff256db3fce618f5673abecb7fe9f9ad1ff7029cb7d7006",
+    "services/windows_native/google_oauth_vault.py": "8fe554cc6b6cff22808b7105321e4bc730fbd451bbe1648b600fa56bd194073e",
+    "apps/api/app/google_oauth_protocol.py": "348b2f03971111c2f6e2d8711ae50a0940fbef15208a7740f65502f4fad56099",
+    "services/windows_native/backup.py": "5b1160ef7475aff5236a1befb5aa9063edb7af52c9c68eb29fe3b1ebdd337a6c",
+    "scripts/north_star_google_oauth_operations.py": "c8fc492639c894e74d612689bcfba3ede7d954f0abfaf14c70b72f7728075b55",
+    "docs/NATIVE_GOOGLE_OAUTH_OPERATIONS.md": "9e3d4a71e59775e696e1408f046345d5b46f6e05693d37c25b703dd2e09fcaa6"
+  },
+  "tests": {
+    "related_native_passed": 152,
+    "related_native_seconds": 53.413,
+    "related_api_passed": 163,
+    "related_api_seconds": 30.51,
+    "new_operation_cases": 28,
+    "unchanged_studio_passed_at_prior": 384,
+    "prior_full_native_passed": 1074,
+    "current_full_native_run": false,
+    "current_full_studio_run": false,
+    "current_full_api_run": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-oauth-operations-flow-n3",
+    "evidence_sha256": "2236c4b47c4493f9efa662d655dcf760b90014510d50a792400b72c9d3102791",
+    "exports": {
+      "backup.json": {
+        "sha256": "b0addeb7f0e4d4ec748256d5586121185d5c941b71c3dcece7378d2f276d17aa",
+        "bytes": 1623
+      },
+      "cost.json": {
+        "sha256": "b3c880fd45859ebb929f2a709449732635dc5d383a90a1166fe527a71f25989f",
+        "bytes": 4189
+      },
+      "evidence.json": {
+        "sha256": "2236c4b47c4493f9efa662d655dcf760b90014510d50a792400b72c9d3102791",
+        "bytes": 3282
+      },
+      "expected-authorization-history.json": {
+        "sha256": "e46ca5d1c3635e0fdb1bad2d9af716e16308e45bb58d29087488b54e2d1541d1",
+        "bytes": 13101
+      },
+      "expected-journals.json": {
+        "sha256": "8fe588630c546c379a9a622845069d018548aefe1139efccfadf07e51da8e2b3",
+        "bytes": 44834
+      },
+      "expected-operation-history.json": {
+        "sha256": "9f08e34b775d654536fbca935847ab76d06a0527bea759a19d42db4442bdafbd",
+        "bytes": 22891
+      },
+      "expected-private-receipts.json": {
+        "sha256": "2cf116434692a56da8ddce89d8639ef884a2e813297f49cf1a652537527481b6",
+        "bytes": 4536
+      },
+      "expected-project.json": {
+        "sha256": "6cc4e9a006832e3c83246164d5bc1ee9b647442f7410fe326cbcf3765df79362",
+        "bytes": 898
+      },
+      "legacy-finite-refresh-replay.json": {
+        "sha256": "d69de18e295c77d45963f01a8b1e873faf0a1b3233157f1927cafbf0f8a478b6",
+        "bytes": 304
+      },
+      "mock-wire-summary.json": {
+        "sha256": "096881de7f89cb9a2a94d1ad1c1ac8f7dadbc89e6a662e82913c97c502f1490f",
+        "bytes": 436
+      },
+      "new-process-replay.json": {
+        "sha256": "ca92e506b67c46658a5a97c48add35fdd907fb3b28758255a26e80db75a2df05",
+        "bytes": 349
+      },
+      "public-oauth-operations.zip": {
+        "sha256": "9d628e2e69086c539b900238b3544e9e154a4a45739fc8614b5c39f11277bf81",
+        "bytes": 333777
+      },
+      "recovery-restore.json": {
+        "sha256": "aef0f997c82358d272db410ca80590b7119f570648ac153ad1dc03f64663e99d",
+        "bytes": 2045
+      },
+      "restored-in-process.json": {
+        "sha256": "ca92e506b67c46658a5a97c48add35fdd907fb3b28758255a26e80db75a2df05",
+        "bytes": 349
+      }
+    },
+    "state_root": "C:/vf-native-fixture-google-oauth-operations-state-03",
+    "private_root": "C:/vf-native-fixture-google-oauth-operations-secrets-03",
+    "restore_root": "C:/vf-native-fixture-google-oauth-operations-restore-03",
+    "backup_sha256": "9d628e2e69086c539b900238b3544e9e154a4a45739fc8614b5c39f11277bf81",
+    "backup_bytes": 333777,
+    "backup_entries": 9,
+    "journal_count": 25
+  },
+  "logs": {
+    "google-oauth-operations-api-related-n1.log": "9fe3275347013071af4d6abcd11254eb526645b686bcca8b2d57311e10ca8b59",
+    "google-oauth-operations-api-related-n2.log": "f99cb0097091d820cfbfc33015cc5e4ff8804546e6b2eb215fb1091b25a38adf",
+    "google-oauth-operations-native-related-n1.log": "a68785df4689f8a49ab3e6cd0bc39e01b0533bb92a532576b8c706fc8227021c",
+    "google-oauth-operations-native-related-n2.log": "04220530cc5bcb4c6f69eb2cd40c0fc51fd0585563113eabe863f11f88ccf37e"
+  },
+  "inert_constructor_default_operator_gate_no_startup_private_reads": true,
+  "exact_current_owner_role_identity_revision_expiry_before_after_claim_wire_and_custody": true,
+  "project_revision_document_target_slot_client_config_transport_mock_and_consent_window_fences": true,
+  "private_state_pkce_and_refresh_source_rechecked_before_dispatch": true,
+  "durable_unique_code_and_original_refresh_generation_claims_atomic_with_authorization_consumption": true,
+  "correct_denial_consumed_without_provider_cost_or_raw_details": true,
+  "distinct_project_cost_intent_response_receipt_unknown_amounts_null_no_authority": true,
+  "bounded_history_validates_original_source_and_cost_without_current_secrets_authority": true,
+  "timeout_rate_limit_malformed_scope_restart_no_automatic_retry": true,
+  "cost_intent_before_reference_crash_window_recovered_without_decrypt": true,
+  "immutable_original_and_new_grant_refs_unknown_refresh_expiry_null_no_autoactive_pointer": true,
+  "backup_busy_claim_gate_public_only_journals_fresh_restore_and_unmounted_history": true,
+  "prior_finite_refresh_original_journals_history_project_job_files_default_paths_exact": true,
+  "signed_routes_studio_account_confirmation_credential_resolver_or_production_secret_service_integrated": false,
+  "mock_token_requests": 3,
+  "authorization_histories": 3,
+  "operation_histories": 4,
+  "grant_generations": 2,
+  "private_synthetic_cipher_files": 7,
+  "real_secret_reads": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "new_media_operations": 0,
+  "browser_owner_real_provider_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
