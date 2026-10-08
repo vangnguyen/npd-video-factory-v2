@@ -141,7 +141,8 @@ class NativePublications:
         rights = validate_rights(projections)
         from .rights_override import validate_publication_rights
         rights=validate_publication_rights(self.store,document,job['project_id'],assets,used,rights)
-        qc = dict(job['result']['qc']); profile = PROFILES.get((qc.get('width'), qc.get('height')), 'native-unmapped-profile')
+        from .publication_qc import project as project_qc
+        qc = project_qc(job); profile = PROFILES.get((qc.get('width'), qc.get('height')), 'native-unmapped-profile')
         platform = validate_platform(capability=self.capabilities.get(payload.platform), metadata=payload.metadata,
             render=SimpleNamespace(profile=profile, qc_report=qc), output_asset=SimpleNamespace(size_bytes=path.stat().st_size), mode='dry_run')
         attention = []

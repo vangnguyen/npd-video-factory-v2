@@ -5,6 +5,7 @@ export const studioNavigation = [
   {id:'work',label:'CÔNG VIỆC',items:[
     {id:'dashboard',label:'Sản xuất',href:'/production?view=dashboard',icon:'grid'},
     {id:'projects',label:'Dự án',href:'/production?view=projects',icon:'folder'},
+    {id:'trends',label:'Trend Radar',href:'/trends',icon:'idea'},
     {id:'intelligence',label:'Nghiên cứu & ý tưởng',href:'/intelligence',icon:'idea'},
     {id:'calendar',label:'Lịch nội dung',href:'/production?view=calendar',icon:'calendar'}]},
   {id:'library',label:'THƯ VIỆN',items:[
@@ -42,7 +43,7 @@ export function loadStudioShellStyles(doc = document) {
   if(doc.querySelector('link[data-studio-shell-style]'))return;
   const link=doc.createElement('link');link.rel='stylesheet';link.href='/studio-shell.css';link.dataset.studioShellStyle='true';doc.head.append(link);
 }
-export function mountStudioShell({page='project',context='Không gian sản xuất video',title,document:doc=globalThis.document}={}) {
+export function mountStudioShell({page='project',context='Không gian sản xuất video',title,capabilities={},document:doc=globalThis.document}={}) {
   if(!doc)return null;
   const main=doc.getElementById('studio-main') || doc.querySelector('main'),sidebar=doc.querySelector('aside.sidebar');
   if(!main || !sidebar)return null;
@@ -60,6 +61,7 @@ export function mountStudioShell({page='project',context='Không gian sản xu�
     const section=element(doc,'section','studio-nav-group');section.dataset.navGroup=group.id;
     section.append(element(doc,'h2','studio-nav-label',group.label));
     for(const item of group.items) {
+      if(item.id==='trends'&&capabilities.native_trend_radar!==true)continue;
       const node=item.id==='create'&&newProject?newProject:element(doc,'a');
       if(node.tagName==='A')node.href=item.href;
       node.className='studio-nav-item'+(item.id==='create'?' studio-create':'')+(item.id===current?' active':'');
@@ -91,5 +93,4 @@ export function mountStudioShell({page='project',context='Không gian sản xu�
   if(!doc.querySelector('.skip-link')){const skip=element(doc,'a','skip-link','Đến nội dung chính');skip.href='#studio-main';doc.body.prepend(skip);}
   return {main,sidebar,header,topbar};
 }
-
 

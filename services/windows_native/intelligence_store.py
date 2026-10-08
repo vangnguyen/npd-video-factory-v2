@@ -6,6 +6,9 @@ import json
 import sqlite3
 from .contracts import WorkflowError, canonical, digest
 from .intelligence_models import MODELS
+from .trend_radar_models import RadarRecord
+
+MODELS['RadarRecord'] = RadarRecord
 
 
 class IntelligenceStore:

@@ -15,7 +15,7 @@ export const escapeHtml = value => String(value??'').replace(/[&<>"']/g,c=>({'&'
 
 export async function installIntelligenceShell(session, options = {}, importer = () => import('./studio-shell.mjs')) {
   if(session?.capabilities?.native_studio_ux !== true)return false;
-  try { const shell=await importer();shell.loadStudioShellStyles();shell.mountStudioShell({page:options.page || 'intelligence',context:options.context || 'Nghiên cứu nguồn và lựa chọn ý tưởng'});
+  try { const shell=await importer();shell.loadStudioShellStyles();shell.mountStudioShell({page:options.page || 'intelligence',context:options.context || 'Nghiên cứu nguồn và lựa chọn ý tưởng',capabilities:session.capabilities});
     if(session.access?.mode==='registry'){const access=await import('./native-access.mjs');access.installNativeAccess(session);}
     return true; } catch { return false; }
 }

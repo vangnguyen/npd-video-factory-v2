@@ -15,7 +15,7 @@ export const connectionLabel = value => value.connected ? "Đã xác thực kế
 
 export async function installConnectionShell(session, options = {}, importer = () => import('./studio-shell.mjs')) {
   if(session?.capabilities?.native_studio_ux !== true)return false;
-  try { const shell=await importer();shell.loadStudioShellStyles();shell.mountStudioShell({page:options.page || 'settings',context:options.context || 'Kết nối nhận diện lời nói'});
+  try { const shell=await importer();shell.loadStudioShellStyles();shell.mountStudioShell({page:options.page || 'settings',context:options.context || 'Kết nối nhận diện lời nói',capabilities:session.capabilities});
     if(session.access?.mode==='registry'){const access=await import('./native-access.mjs');access.installNativeAccess(session);}
     return true; } catch { return false; }
 }
@@ -91,7 +91,6 @@ if (typeof document !== "undefined") {
   $("connection-refresh").addEventListener("click",()=>void loadState());
   void loadState();
 }
-
 
 
 

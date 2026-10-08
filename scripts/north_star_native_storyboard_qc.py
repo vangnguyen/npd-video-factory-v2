@@ -30,16 +30,20 @@ def write(path,value):
 def config(root,local_tts=False):
     absent=root.parent/(root.name+'-absent-secrets')
     return Config(data_root=root,runtime_root=Path(r'C:\NPD-Video-Factory\runtime') if local_tts else root/'absent-runtime',secret_file=absent/'absent-openai.env',assemblyai_secret_file=absent/'absent-asr.dpapi')
-def snapshot(root):
+def snapshot(root,with_intelligence=False):
     store=Store(root);projects=[store.get(row['id']) for row in store.list(include_archived=True)]
     with store.transaction() as con:
         events=[dict(row) for row in con.execute('SELECT * FROM events ORDER BY id')]
         jobs=[store.job(row,con) for row in con.execute('SELECT * FROM jobs ORDER BY id')]
-    return {'projects':projects,'versions':{p['id']:store.versions(p['id']) for p in projects},'jobs':jobs,'events':events,
+    value={'projects':projects,'versions':{p['id']:store.versions(p['id']) for p in projects},'jobs':jobs,'events':events,
         'costs':{p['id']:CostLedger(store).summary(p['id']) for p in projects},
         'files':{str(path.relative_to(root)).replace('\\','/'):{'sha256':file_sha(path),'bytes':path.stat().st_size}
-            for name in ['assets','originals','shot-previews','jobs'] for path in sorted((root/name).rglob('*')) if path.is_file()},
+            for name in ['assets','originals','shot-previews','jobs']+(['research-sources','intelligence-operations'] if with_intelligence else []) for path in sorted((root/name).rglob('*')) if path.is_file()},
         'external_execution_enabled':False,'publishing_enabled':False}
+    if with_intelligence:
+        from north_star_native_trend_flow import snapshot as intelligence_snapshot
+        value['intelligence']=intelligence_snapshot(root)
+    return value
 
 class CachedToneFixture:
     def __init__(self,settings):self.settings=settings
@@ -54,10 +58,11 @@ class CachedToneFixture:
 
 def run(args):
     if args.local_tts and not args.narration_preparation:raise ValueError('Local TTS requires explicit narration preparation/review flow')
+    if args.trend_radar and not args.narration_preparation:raise ValueError('Trend flow requires measured narration review')
     if args.local_tts:os.environ['HF_HUB_OFFLINE']='1';os.environ['TRANSFORMERS_OFFLINE']='1'
     root,destination,out=args.data_root.resolve(),args.restore_root.resolve(),args.output.resolve()
     if args.reopen:
-        expected=json.loads((out/'offline-snapshot.json').read_bytes());assert snapshot(root)==snapshot(destination)==expected
+        expected=json.loads((out/'offline-snapshot.json').read_bytes());assert snapshot(root,args.trend_radar)==snapshot(destination,args.trend_radar)==expected
         for location in [root,destination]:
             for job in snapshot(location)['jobs']:
                 if job['status']=='succeeded':
@@ -73,7 +78,7 @@ def run(args):
     if args.local_tts:assert not settings.secret_file.exists() and not settings.assemblyai_secret_file.exists(),'No external credentials permitted in the local voice rehearsal'
     runtime_before=verify_runtime(settings) if args.local_tts else None
     raw,registry=fixture('owner',workspace=WORKSPACE);access=NativeAccess(HumanAuthVerifier(HumanAuthRegistry.model_validate(registry),max_token_ttl_seconds=86400),WORKSPACE)
-    server=LocalServer(0,settings,pipeline=Pipeline(settings) if args.local_tts else CachedToneFixture(settings),start_worker=False,access=access);cookie,session=access.login(raw)
+    server=LocalServer(0,settings,pipeline=Pipeline(settings) if args.local_tts else CachedToneFixture(settings),start_worker=False,access=access,owner_rights_overrides=args.trend_radar);cookie,session=access.login(raw)
     thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
     def send(method,path,body=None,*,status=200,binary=None,headers=None):
         connection=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=30)
@@ -83,13 +88,18 @@ def run(args):
         value=json.loads(payload) if content_type.startswith('application/json') else {'bytes':len(payload),'sha256':__import__('hashlib').sha256(payload).hexdigest()}
         requests.append({'method':method,'path':path,'status':response.status});assert response.status==status,(response.status,value);return value
     try:
-        project=send('POST','/api/projects',{'name':'EXPLICIT NATIVE FULL QC FIXTURE','prompt':'Authored synthetic teaching fixture; no research provider',
-            'channel_profile_ref':'ai-education-reference@1','production_quality':True,'narrated_workflow':args.narration_preparation},status=201);identifier=project['id'];base='/api/projects/'+identifier
+        if args.trend_radar:
+            from north_star_native_trend_flow import prepare,review_owned_images,distribution
+            project=prepare(server,send,out,write)
+        else:project=send('POST','/api/projects',{'name':'EXPLICIT NATIVE FULL QC FIXTURE','prompt':'Authored synthetic teaching fixture; no research provider',
+            'channel_profile_ref':'ai-education-reference@1','production_quality':True,'narrated_workflow':args.narration_preparation},status=201)
+        identifier=project['id'];base='/api/projects/'+identifier
         for ordinal in range(2):
             image=Image.new('RGB',(640,360),(20,65+ordinal*40,135));drawing=ImageDraw.Draw(image)
             drawing.rectangle((80,70,550,280),fill=(170,40+ordinal*80,90));drawing.ellipse((150,100,310,260),fill=(30,210,190));buffer=io.BytesIO();image.save(buffer,format='PNG')
             project=send('POST',base+'/media',status=201,binary=buffer.getvalue(),headers={'Content-Type':'image/png','X-VF-Revision':str(project['revision']),
                 'X-VF-Rights':'confirmed','X-VF-Illustration':'true','X-VF-Filename':quote(f'Technology AI educational explicit owned fixture {ordinal}.png',safe='')})
+        if args.trend_radar:project=review_owned_images(server,send,project)
         assets=project['document']['assets'];proposal={'narration':'Xin chào. Cảm ơn.','visual_brief':[
             {'scene':1,'visual':'Technology AI educational fixture','on_screen_text':'Vang Nguyễn','narration_excerpt':'Xin chào.'},
             {'scene':2,'visual':'Technology teaching fixture','on_screen_text':'Cần Giờ','narration_excerpt':'Cảm ơn.'}],
@@ -158,6 +168,7 @@ def run(args):
         for name in ['final.mp4','timeline.json','render-manifest.json','qc-report.json','transport-qc-report.json','full-qc-report.json','subtitles.ass','voice.wav','voice.json','render-voice.wav','render-voice.json']:
             shutil.copyfile(rendered/name,out/name)
         shutil.copytree(rendered/'subtitle-qc',out/'subtitle-qc');write(out/'media-plan.json',applied);write(out/'render-job.json',finished)
+        if args.trend_radar:distribution(server,send,out,write,server.store.get(identifier),finished)
         # The actual frozen-video negative render must reach failed_qc, with no publication of a successful artifact checkpoint.
         frozen=root/'explicit-frozen-video.mp4';subprocess.run([str(settings.ffmpeg_bin/'ffmpeg.exe'),'-hide_banner','-nostdin','-v','error','-f','lavfi','-i','color=c=0x346278:s=640x360:r=30:d=3.3',
             '-c:v','libx264','-pix_fmt','yuv420p','-movflags','+faststart',str(frozen)],capture_output=True,check=True,timeout=20)
@@ -188,8 +199,8 @@ def run(args):
         write(out/'failed-qc-report.json',failure);cost=CostLedger(server.store).summary(identifier);assert cost['attempted_operations']==0;write(out/'cost.json',cost)
         write(out/'job-events.json',snapshot(root)['events']);write(out/'project.json',server.store.get(identifier));write(out/'human-http-wires.json',requests)
     finally:server.shutdown();server.server_close();thread.join(timeout=2)
-    actual=snapshot(root);backup=create_backup(settings,out/'native-storyboard-full-qc-backup.zip')
-    restore=restore_backup(out/'native-storyboard-full-qc-backup.zip',destination,expected_sha256=backup['sha256']);assert snapshot(destination)==actual
+    actual=snapshot(root,args.trend_radar);backup=create_backup(settings,out/'native-storyboard-full-qc-backup.zip')
+    restore=restore_backup(out/'native-storyboard-full-qc-backup.zip',destination,expected_sha256=backup['sha256']);assert snapshot(destination,args.trend_radar)==actual
     write(out/'backup-restore.json',{'backup':backup,'restore':restore,'exact_state':True});write(out/'offline-snapshot.json',actual)
     if args.local_tts:
         runtime_after=verify_runtime(settings);assert runtime_before==runtime_after
@@ -201,6 +212,10 @@ def run(args):
         'services/windows_native/tests/test_narration_http.py','services/windows_native/narration_preview.py','services/windows_native/shot_preview.py','services/windows_native/tests/test_narration_preview.py',
         'apps/studio-web/native-narration.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/shot-studio.mjs','apps/studio-web/tests/native-narration.test.mjs','apps/studio-web/tests/shot-studio.test.mjs']
     source+=['services/windows_native/narrated_workflow.py','apps/studio-web/project-quality.mjs']
+    if args.trend_radar:source+=['services/windows_native/trend_radar.py','services/windows_native/trend_radar_models.py','services/windows_native/trend_radar_engine.py',
+        'services/windows_native/trend_radar_providers.py','services/windows_native/trend_radar_routes.py','services/windows_native/trend_radar_learning.py','services/windows_native/trend_radar_lineage.py',
+        'services/windows_native/intelligence_store.py','services/windows_native/intelligence_service.py','services/windows_native/intelligence_lineage.py','services/windows_native/analytics_features.py',
+        'services/windows_native/bridge.py','services/windows_native/publications.py','services/windows_native/publication_qc.py','scripts/north_star_native_trend_flow.py','apps/studio-web/trend-radar.mjs','apps/studio-web/trend-radar.html','apps/studio-web/trend-radar.css']
     write(out/'evidence.json',{'schema_version':'north-star-native-storyboard-full-qc-rehearsal-v1','workspace_id':WORKSPACE,'project_id':identifier,
         'actual_human_http_requests':len(requests),'actual_native_worker':True,'actual_ffmpeg_render':True,'actual_full_media_qc':True,'actual_libass_subtitle_pixels':True,
         'actual_frozen_video_failure':True,'failed_qc_terminal_state':not args.narration_preparation,'failed_qc_report':True,'blocked_final_admission_for_frozen_preview':args.narration_preparation,'actual_backup_restore':True,'explicit_synthetic_pcm_fixture':not args.local_tts,
@@ -208,9 +223,10 @@ def run(args):
         'narration_preparation_tested':args.narration_preparation,'measured_canonical_timing_apply_tested':args.narration_preparation,'verified_pcm_reuse_tested':args.narration_preparation,
         'preview_kind':'measured_scene_narration_full_effects_preview' if args.narration_preparation else 'silent_visual_proxy','audible_preview_implementation_tested':args.narration_preparation,
         'audible_preview_acceptance':False,'human_approval_is_signed_fixture':True,'owner_uat_accepted':False,'production_deployed':False,
+        'trend_radar_idea_production_learning_fixture_tested':args.trend_radar,'mock_market_trends':args.trend_radar,'mock_research_and_ideas':args.trend_radar,
         'source_sha256':{p:file_sha(ROOT/p) for p in source},'exports':{str(p.relative_to(out)).replace('\\','/'):{'sha256':file_sha(p),'bytes':p.stat().st_size} for p in out.rglob('*') if p.is_file()}})
     print(json.dumps({'status':'STORYBOARD_FULL_QC_ACTUAL_LOCAL_TTS_PASS' if args.local_tts else 'STORYBOARD_FULL_QC_LOCAL_REAL_SYNTHETIC_PCM_PASS','human_http_requests':len(requests),'full_qc':'passed','frozen_video':'failed_qc'}))
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--data-root',type=Path,required=True);parser.add_argument('--restore-root',type=Path,required=True);parser.add_argument('--output',type=Path,required=True)
-    parser.add_argument('--reopen',action='store_true');parser.add_argument('--narration-preparation',action='store_true');parser.add_argument('--local-tts',action='store_true');run(parser.parse_args())
+    parser.add_argument('--reopen',action='store_true');parser.add_argument('--narration-preparation',action='store_true');parser.add_argument('--local-tts',action='store_true');parser.add_argument('--trend-radar',action='store_true');run(parser.parse_args())

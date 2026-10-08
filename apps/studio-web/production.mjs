@@ -25,7 +25,7 @@ export const calendarGroups=(items,group,month)=>{const filtered=items.filter(r=
 
 export async function installProductionShell(session, options = {}, importer = () => import('./studio-shell.mjs')) {
   if(session?.capabilities?.native_studio_ux !== true)return false;
-  try { const shell=await importer();shell.loadStudioShellStyles();shell.mountStudioShell({page:options.page || 'queue',context:options.context || 'Kế hoạch và tiến độ sản xuất'});
+  try { const shell=await importer();shell.loadStudioShellStyles();shell.mountStudioShell({page:options.page || 'queue',context:options.context || 'Kế hoạch và tiến độ sản xuất',capabilities:session.capabilities});
     if(session.access?.mode==='registry'){const access=await import('./native-access.mjs');access.installNativeAccess(session);}
     return true; } catch { return false; }
 }

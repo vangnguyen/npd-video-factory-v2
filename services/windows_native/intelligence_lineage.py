@@ -19,7 +19,11 @@ def validate(lineage):
         raise WorkflowError('CONTENT_INTELLIGENCE_REFERENCES_INVALID')
     if brief.key_facts!=[next(f.claim for f in findings if f.id==identifier) for identifier in idea.supporting_research]:
         raise WorkflowError('CONTENT_INTELLIGENCE_FACTS_CHANGED')
-    return {'schema_version':lineage['schema_version'],'research_run_id':run.id,'content_idea_id':idea.id,'content_idea_version':idea.version,'content_brief_id':brief.id,'content_brief_version':brief.version,'approved_brief_sha256':lineage['approved_brief_sha256'],'lineage_sha256':lineage['sha256'],'source_references':[{'id':s.id,'reference':s.reference,'content_sha256':s.content_sha256,'retrieved_at':s.retrieved_at.isoformat()} for s in sources]}
+    result={'schema_version':lineage['schema_version'],'research_run_id':run.id,'content_idea_id':idea.id,'content_idea_version':idea.version,'content_brief_id':brief.id,'content_brief_version':brief.version,'approved_brief_sha256':lineage['approved_brief_sha256'],'lineage_sha256':lineage['sha256'],'source_references':[{'id':s.id,'reference':s.reference,'content_sha256':s.content_sha256,'retrieved_at':s.retrieved_at.isoformat()} for s in sources]}
+    if run.context.get('trend_radar') is not None:
+        from .trend_radar_lineage import validate as validate_trend
+        result['trend_radar']=validate_trend(run.context['trend_radar'])
+    return result
 
 
 def projection(doc):

@@ -41,7 +41,7 @@ def public_target(reference):
         raise WorkflowError("RESEARCH_PUBLIC_HTTPS_URL_REQUIRED",400) from None
 
 
-def retrieve(reference, max_bytes=2*1024*1024):
+def retrieve(reference, max_bytes=2*1024*1024, *, accepted_types=('text/html','text/plain')):
     requested=reference
     for _ in range(4):
         url,address=public_target(reference)
@@ -58,7 +58,7 @@ def retrieve(reference, max_bytes=2*1024*1024):
                 continue
             if response.status!=200: raise WorkflowError('RESEARCH_HTTP_ERROR',http_status=response.status)
             content_type=response.getheader('Content-Type','')
-            if content_type.split(';')[0].lower() not in ('text/html','text/plain'):
+            if content_type.split(';')[0].lower() not in accepted_types:
                 raise WorkflowError('RESEARCH_TEXT_SOURCE_REQUIRED')
             raw=response.read(max_bytes+1)
             if not raw or len(raw)>max_bytes: raise WorkflowError('RESEARCH_SOURCE_SIZE_LIMIT')

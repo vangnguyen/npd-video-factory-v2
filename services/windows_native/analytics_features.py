@@ -19,6 +19,13 @@ def capture(publication,job,stamp):
     # Do not infer semantic hook/topic/niche labels from filenames or later project state.
     lineage=document.get('content_intelligence') or {};idea=lineage.get('idea') or {};brief=lineage.get('brief') or {}
     explicit=document.get('analytics_features') or {}
+    trend_context=(lineage.get('run') or {}).get('context',{}).get('trend_radar')
+    trend=None
+    if trend_context is not None:
+        from .trend_radar_lineage import validate
+        trend=validate(trend_context)
+    from .channel_profiles import resolve
+    channel=resolve(document) if document.get('channel_profile') else None
     evidence={'project_metadata_source':'native_published_render_request_snapshot','publication_snapshot_sha256':publication['snapshot_sha256'],
         'render_job_id':job['id'],'job_snapshot_sha256':snapshot['job_snapshot_sha256'],
         'canonical_timeline_sha256':snapshot['canonical_timeline_sha256'],'final_sha256':snapshot['final_sha256'],
@@ -26,10 +33,12 @@ def capture(publication,job,stamp):
         'exact_publishing_time_available':False,'provider_posted_time':None,'source_is_dry_run':True,
         'semantic_labels_verified':False,'production_cost_vnd':None,
         'frozen_subtitle_style':metadata.get('subtitle_style'),'subtitle_catalog_id_verified':subtitle is not None}
+    if channel:evidence.update(channel_profile_ref=channel['profile']['profile_ref'],channel_profile_sha256=channel['profile_sha256'])
+    if trend:evidence['trend_radar']=trend
     return VideoFeatureMetadata(feature_snapshot_id='nftr_'+digest([publication['publication_id'],publication['snapshot_sha256']])[:32],
         project_id=publication['project_id'],publication_id=publication['publication_id'],
-        idea_id=idea.get('id'),trend_cluster_id=explicit.get('trend_cluster_id'),hook_type=explicit.get('hook_type'),
+        idea_id=idea.get('id'),trend_cluster_id=trend['trend_cluster_id'] if trend else explicit.get('trend_cluster_id'),hook_type=explicit.get('hook_type'),
         duration_seconds=job.get('result',{}).get('qc',{}).get('duration_seconds'),scene_count=len(scene_ids) if scene_ids else None,
         subtitle_template=subtitle,voice_profile=explicit.get('voice_profile'),music_profile=explicit.get('music_profile'),
-        visual_strategy=explicit.get('visual_strategy'),niche=explicit.get('niche'),topic=explicit.get('topic') or brief.get('topic'),
+        visual_strategy=explicit.get('visual_strategy'),niche=channel['profile']['niche_profile']['niche'] if channel else explicit.get('niche'),topic=explicit.get('topic') or brief.get('topic'),
         cta=explicit.get('cta') or brief.get('cta'),publishing_time=None,evidence=evidence,captured_at=stamp).model_dump(mode='json')

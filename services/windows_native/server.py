@@ -130,11 +130,13 @@ class LocalServer(ThreadingHTTPServer):
     def __init__(self, port, config, *, pipeline=None, start_worker=True, observer=None, access=None,
         bridge_auth_registry=None,bridge_webhook_registry=None,bridge_http_enabled=False,
         stock_registry=None,stock_api_enabled=False,stock_factories=None,owner_rights_overrides=False,
-        generation_registry=None,generation_api_enabled=False,generation_factory=None):
+        generation_registry=None,generation_api_enabled=False,generation_factory=None,
+        trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None):
         config.validate_data_root()
         if owner_rights_overrides and access is None:raise WorkflowError('NATIVE_RIGHTS_OVERRIDE_HUMAN_AUTH_REQUIRED',400)
         if generation_api_enabled and (access is None or generation_registry is None):raise WorkflowError('NATIVE_GENERATION_PROTECTED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
         if generation_registry is not None and generation_factory is not None:raise WorkflowError('NATIVE_GENERATION_CONFIGURATION_CONFLICT',400)
+        if trend_feed_enabled and (access is None or trend_feed_registry is None):raise WorkflowError('TREND_PROTECTED_FEED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
         if access is not None:
             from .access import NativeAccess
             if not isinstance(access, NativeAccess):
@@ -166,6 +168,9 @@ class LocalServer(ThreadingHTTPServer):
         from .analytics import NativeAnalytics
         self.analytics=NativeAnalytics(self.store,self.publications)
         self.runner.analytics=self.analytics
+        from .trend_radar import NativeTrendRadar
+        self.trends=NativeTrendRadar(self.intelligence,self.analytics,workspace=self.publications.workspace_id,
+            providers=trend_providers,feed_registry=trend_feed_registry,owner_enabled=trend_feed_enabled,observer=self.observer)
         from .vision import NativeVision
         self.vision=NativeVision(self.store,config,workspace_id=self.publications.workspace_id)
         self.runner.vision=self.vision
@@ -199,6 +204,7 @@ class LocalServer(ThreadingHTTPServer):
         if bridge_http_enabled and bridge_webhook_registry is None:raise WorkflowError('NATIVE_BRIDGE_WEBHOOK_REGISTRY_REQUIRED',400)
         if bridge_webhook_registry is not None:self.bridge.load_webhook_registry(bridge_webhook_registry,owner_http_enabled=bridge_http_enabled)
         if start_worker:
+            self.trends.start()
             self.generation.start(self.observer)
             self.stock.start(self.observer)
             self.bridge.start(self.observer)
@@ -206,6 +212,7 @@ class LocalServer(ThreadingHTTPServer):
             self.intelligence.start()
 
     def server_close(self):
+        self.trends.close()
         self.generation.close()
         self.stock.close()
         self.bridge.close()
@@ -320,7 +327,7 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith('/v1/'):
             from .bridge_routes import dispatch
             return dispatch(self)
-        if self.server.access is not None and path in ('/', '/native.html', '/production', '/intelligence', '/settings/assemblyai'):
+        if self.server.access is not None and path in ('/', '/native.html', '/production', '/intelligence', '/trends', '/settings/assemblyai'):
             try:
                 self.boundary(session=True)
             except WorkflowError as error:
@@ -368,6 +375,9 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith("/api/intelligence/"):
             from .intelligence_routes import get
             return self.reply(get(self,path))
+        if path.startswith('/api/trends/'):
+            from .trend_radar_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/vision(?:/nvis_[a-f0-9]{32})?',path):
             from .vision_routes import get
             return self.reply(get(self,path))
@@ -435,7 +445,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_owner_rights_override_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -528,6 +538,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-media-resolution.mjs'] = 'native-media-resolution.mjs'
         static['/native-media-planner.mjs'] = 'native-media-planner.mjs'
         static['/native-narration.mjs'] = 'native-narration.mjs'
+        static.update({'/trends':'trend-radar.html','/trend-radar.mjs':'trend-radar.mjs','/trend-radar.css':'trend-radar.css'})
         static['/native-variants.mjs'] = 'native-variants.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
@@ -600,6 +611,9 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith("/api/intelligence/"):
             from .intelligence_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        if self.path.startswith('/api/trends/'):
+            from .trend_radar_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         narration_route=re.fullmatch(r'/api/projects/([a-f0-9]{32})/narration/([a-f0-9]{32})/apply',self.path)
         if narration_route:
             from .narration import apply
@@ -934,6 +948,8 @@ def main():
     parser.add_argument('--enable-stock-api',action='store_true')
     parser.add_argument('--generation-provider-registry',type=Path)
     parser.add_argument('--enable-generation-api',action='store_true')
+    parser.add_argument('--trend-feed-registry',type=Path)
+    parser.add_argument('--enable-trend-feeds',action='store_true')
     parser.add_argument('--enable-owner-rights-overrides',action='store_true')
     args = parser.parse_args()
     config = Config.load(args.config)
@@ -954,7 +970,8 @@ def main():
         with LocalServer(args.port, config, access=access,bridge_auth_registry=args.bridge_auth_registry,
             bridge_webhook_registry=args.bridge_webhook_registry,bridge_http_enabled=args.enable_bridge_http,
             stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api,owner_rights_overrides=args.enable_owner_rights_overrides,
-            generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api) as server:
+            generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api,
+            trend_feed_registry=args.trend_feed_registry,trend_feed_enabled=args.enable_trend_feeds) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)
             try:
                 server.serve_forever()

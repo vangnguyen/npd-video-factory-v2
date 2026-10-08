@@ -261,6 +261,12 @@ class Store:
         lines += ['Giới hạn:']+['- '+p for p in brief['constraints']]
         prompt=validate_text('idea','\n'.join(lines))
         doc={'name':name[:150],'prompt':prompt,'input_kind':'idea','proposal':None,'asset':None,'assets':[],'scene_media':[],'documents':[],'content_intelligence':lineage}
+        channel=lineage['run']['context'].get('channel_profile')
+        if channel is not None:
+            from .channel_profiles import resolve
+            resolve({'channel_profile':channel,'niche':channel['profile']['niche_profile']['niche']})
+            doc.update(channel_profile=copy.deepcopy(channel),content_profile=copy.deepcopy(channel['content_profile']),
+                niche=channel['profile']['niche_profile']['niche'],brand_template=copy.deepcopy(channel['brand_template']))
         from .narrated_workflow import selections
         policies=selections(production_quality=production_quality,narrated_workflow=narrated_workflow);doc.update(policies)
         stamp=now()

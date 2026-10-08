@@ -410,7 +410,7 @@ if (typeof document !== "undefined") {
       document.body.classList.add('studio-ux');
       $("project-name").value='Video mới';
       for(const href of ['/studio-shell.css','/studio-workspace.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href;document.head.append(link);}
-      shell.mountStudioShell({page:['assets','brands'].includes(new URLSearchParams(location.search).get('view'))?new URLSearchParams(location.search).get('view'):'project',context:'Không gian sản xuất video'});
+      shell.mountStudioShell({page:['assets','brands'].includes(new URLSearchParams(location.search).get('view'))?new URLSearchParams(location.search).get('view'):'project',context:'Không gian sản xuất video',capabilities:session.capabilities});
       document.querySelector('.asset-workspace-toolbar').hidden=false;
       if(session.capabilities?.native_channel_profiles===true){
         const channels=await import('./native-channel-profiles.mjs');

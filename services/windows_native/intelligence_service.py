@@ -88,17 +88,27 @@ class IntelligenceService:
             self.store.decision(con,run.id,'human_reused_research_for_new_production',{**human,'original_run_id':identifier,'source_hashes':{s['id']:s['content_sha256'] for s in bundle['sources']},'provider_calls':0})
         return self.bundle(run.id)
 
-    def create(self,query,profile_id,urls):
+    def create(self,query,profile_id,urls,*,trend_context=None,channel_profile=None,con=None):
         profile=next((p for p in self.catalog['profiles'] if p['id']==profile_id),None)
         if profile is None: raise WorkflowError('INTELLIGENCE_PROFILE_NOT_FOUND',400)
         if not isinstance(urls,list) or not 1<=len(urls)<=5 or any(not isinstance(u,str) or len(u)>2000 for u in urls): raise WorkflowError('RESEARCH_SOURCE_URLS_REQUIRED_1_TO_5',400)
-        run=ResearchRun(query=query,context={'profile':profile,'profile_sha256':digest(profile),'source_urls':urls,'scoring':self.catalog['scoring']},provider=self.research_provider.key,
+        context={'profile':profile,'profile_sha256':digest(profile),'source_urls':urls,'scoring':self.catalog['scoring']}
+        if trend_context is not None:
+            from .trend_radar_lineage import validate
+            validate(trend_context)
+            if channel_profile!=trend_context['channel_selection'] or channel_profile['profile']['content_profile_id']!=profile_id:raise WorkflowError('TREND_CHANNEL_PROFILE_MISMATCH',400)
+            context.update(trend_radar=trend_context,channel_profile=channel_profile)
+        elif channel_profile is not None:raise WorkflowError('TREND_CONTEXT_REQUIRED',400)
+        run=ResearchRun(query=query,context=context,provider=self.research_provider.key,
                         provenance={'origin':'explicit_research_input','source_discovery':'human supplied public URLs or configured references'})
         opportunity=Opportunity(run_id=run.id,topic=run.query[:300],related_project=profile['related_project'],target_audience=profile['target_audience'],reason_now='Yêu cầu nghiên cứu mới; chưa có dữ liệu đo mức độ thịnh hành.',
             supporting_signals=[],proposed_angle='Chờ nghiên cứu và ý tưởng',research_freshness='Chưa nghiên cứu',provenance={'origin':'explicit_content_signal','not_measured_market_trend':True})
-        with self.store.transaction() as con:
-            self.store.put('Opportunity',opportunity.model_dump(mode='json'),con=con)
-            self.store.put('ResearchRun',{**run.model_dump(mode='json'),'opportunity_id':opportunity.id},con=con)
+        def persist(conn):
+            saved_opportunity=self.store.put('Opportunity',opportunity.model_dump(mode='json'),con=conn)
+            saved_run=self.store.put('ResearchRun',{**run.model_dump(mode='json'),'opportunity_id':opportunity.id},con=conn)
+            return {'run':saved_run,'opportunity':saved_opportunity}
+        if con is not None:return persist(con)
+        with self.store.transaction() as conn:persist(conn)
         return self.bundle(run.id)
 
     def bundle(self,identifier):

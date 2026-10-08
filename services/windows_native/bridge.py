@@ -166,6 +166,10 @@ class NativeBridge:
             event_type='trend.opportunity.detected'
             payload.update(signal_count=len(value['supporting_signals']),opportunity_score=value.get('opportunity_score'),
                 source_kind='research_heuristic',global_platform_metrics_verified=False)
+        elif kind=='RadarRecord' and value.get('record_type')=='assessment' and value.get('payload',{}).get('cluster_id'):
+            event_type='trend.opportunity.detected';p=value['payload']
+            payload.update(cluster_id=p['cluster_id'],signal_count=len(p['signal_ids']),opportunity_score=p['score']['total_score'],
+                source_kind='normalized_trend_estimate',mock=p['mock'],global_platform_metrics_verified=False,recommendation_only=True)
         elif kind=='ResearchRun' and value.get('status')=='IDEAS':
             event_type='idea.shortlist.ready';payload.update(idea_count=len(value.get('idea_ids',[])),generation=value.get('generation'))
         if event_type:
