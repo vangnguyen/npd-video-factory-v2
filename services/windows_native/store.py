@@ -147,24 +147,21 @@ class Store:
                 "step": step, "provider": provider or ("assemblyai" if step in {"asr_upload", "asr_create_transcript", "asr_observe_known_transcript"} else "ffmpeg" if step in {"asr_local_media_analysis", "asr_extract_audio"} else "openai" if "content" in step else "local_vieneu" if "tts" in step else "ffmpeg" if "render" in step else "local_io"),
                 "duration": round(duration, 6), "retry_count": runtime[0] if runtime else 0, "error_code": error_code})
 
-    def create(self, name, prompt, input_kind="prompt", *, content_profile=None, production_quality=False,channel_profile=None):
+    def create(self, name, prompt, input_kind="prompt", *, content_profile=None, production_quality=False,channel_profile=None,narrated_workflow=False):
         with self.transaction() as con:
             identifier=self.create_in_transaction(con,name,prompt,input_kind,content_profile=content_profile,
-                production_quality=production_quality,channel_profile=channel_profile)
+                production_quality=production_quality,channel_profile=channel_profile,narrated_workflow=narrated_workflow)
         return self.get(identifier)
 
-    def create_in_transaction(self,con,name,prompt,input_kind='prompt',*,content_profile=None,production_quality=False,channel_profile=None,niche=None):
+    def create_in_transaction(self,con,name,prompt,input_kind='prompt',*,content_profile=None,production_quality=False,channel_profile=None,niche=None,narrated_workflow=False):
         """Shared initial draft path; caller commits draft and dispatch receipt atomically."""
         if not isinstance(name, str) or not 1 <= len(name.strip()) <= 150:
             raise WorkflowError("PROJECT_NAME_REQUIRED", 400)
         prompt = validate_text(input_kind, prompt)
         identifier = uuid.uuid4().hex
         doc = {"name": name.strip(), "prompt": prompt, "input_kind": input_kind, "proposal": None, "asset": None, "assets": [], "scene_media": [], "documents": []}
-        if type(production_quality) is not bool:
-            raise WorkflowError('PRODUCTION_QUALITY_SELECTION_INVALID',400)
-        if production_quality:
-            from .north_star_quality import policy_reference
-            doc['production_quality']=policy_reference()
+        from .narrated_workflow import selections
+        doc.update(selections(production_quality=production_quality,narrated_workflow=narrated_workflow))
         if content_profile is not None:
             if not isinstance(content_profile,dict) or not all(isinstance(content_profile.get(k),str) and content_profile[k].strip() for k in ('id','name')):
                 raise WorkflowError('CONTENT_PROFILE_INVALID',400)
@@ -252,7 +249,7 @@ class Store:
             raise WorkflowError("PROJECT_BUSY")
         return project
 
-    def create_from_brief(self, name, lineage):
+    def create_from_brief(self, name, lineage, *, production_quality=False,narrated_workflow=False):
         from .intelligence_lineage import validate
         validate(lineage)
         identifier=uuid.uuid5(uuid.NAMESPACE_URL,'video-factory/approved-brief/'+lineage['brief']['id']+'/'+lineage['sha256']).hex
@@ -264,12 +261,15 @@ class Store:
         lines += ['Giới hạn:']+['- '+p for p in brief['constraints']]
         prompt=validate_text('idea','\n'.join(lines))
         doc={'name':name[:150],'prompt':prompt,'input_kind':'idea','proposal':None,'asset':None,'assets':[],'scene_media':[],'documents':[],'content_intelligence':lineage}
+        from .narrated_workflow import selections
+        policies=selections(production_quality=production_quality,narrated_workflow=narrated_workflow);doc.update(policies)
         stamp=now()
         with self.transaction() as con:
             existing=con.execute('SELECT * FROM projects WHERE id=?',(identifier,)).fetchone()
             if existing:
-                previous=json.loads(existing['document']).get('content_intelligence')
+                previous_doc=json.loads(existing['document']);previous=previous_doc.get('content_intelligence')
                 if previous!=lineage: raise WorkflowError('CONTENT_INTELLIGENCE_BRIDGE_CONFLICT')
+                if any(previous_doc.get(key)!=policies.get(key) for key in ('production_quality','narrated_workflow')):raise WorkflowError('CONTENT_INTELLIGENCE_CREATION_POLICY_CONFLICT',409)
             else:
                 con.execute('INSERT INTO projects VALUES(?,?,?,?,?,?)',(identifier,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
                 self.event(con,identifier,'approved_brief_imported_for_script_review',{'brief_id':lineage['brief']['id'],'idea_id':lineage['idea']['id'],'lineage_sha256':lineage['sha256'],'automatic_production':False})
@@ -448,6 +448,12 @@ class Store:
         if previous_doc.get("canonical_timeline"):
             from .shot_adapter import sync_legacy
             return sync_legacy(doc, previous_doc, identifier)
+        from .narrated_workflow import required
+        if required(doc) and doc.get('proposal'):
+            from .shot_adapter import _state,project_projection,shots_from_snapshot,validate_document
+            state,_=_state({'id':identifier,'document':doc})
+            doc=project_projection(doc,shots_from_snapshot(state['snapshot']))
+            doc['canonical_timeline']={**state,'version':1};validate_document(doc)
         return doc
 
     def set_music(self, identifier, revision, music):
@@ -558,6 +564,9 @@ class Store:
                     from .shot_adapter import validate_document
                     validate_document(doc)
                 selected_media(doc)
+                if purpose=='production':
+                    from .narrated_workflow import require_measured
+                    require_measured(doc)
                 if doc.get('prepared_narration') and purpose=='production':
                     from types import SimpleNamespace
                     from .narration_preview import reviewed
@@ -633,6 +642,9 @@ class Store:
                         raise WorkflowError('AUTO_EDIT_CURRENT_PREVIEW_REVIEW_REQUIRED',400)
                 else:
                     selected_media(doc)
+                    if kind=='render':
+                        from .narrated_workflow import require_measured
+                        require_measured(doc)
                     if kind=='render' and doc.get('prepared_narration'):
                         from types import SimpleNamespace
                         from .narration_preview import reviewed

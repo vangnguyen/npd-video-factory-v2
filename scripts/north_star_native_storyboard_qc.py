@@ -1,9 +1,11 @@
-"""Actual native HTTP/worker/libass/full-QC/recovery; explicit synthetic PCM only.
+"""Actual native HTTP/worker/libass/full-QC/recovery; synthetic PCM by default.
 
-No voice inference, semantic Vision, research, paid operation or Owner UAT is
-claimed. Approval below belongs to an isolated signed human identity fixture.
+--local-tts explicitly uses the installed locked local model without new paid
+providers. No semantic Vision, research or Owner UAT is claimed. Approval below
+belongs to an isolated signed human identity fixture.
 """
-import argparse,http.client,io,json,re,shutil,subprocess,sys,threading,time,uuid
+import argparse,http.client,io,json,os,re,shutil,subprocess,sys,threading,time,uuid
+from contextlib import nullcontext
 from pathlib import Path
 from unittest.mock import patch
 from urllib.parse import quote
@@ -15,7 +17,7 @@ from services.windows_native.branding import FIT_NARRATION_POLICY
 from services.windows_native.contracts import digest,file_sha,write_json
 from services.windows_native.costs import CostLedger
 from services.windows_native.hardening import Artifacts
-from services.windows_native.pipeline import Config,Pipeline
+from services.windows_native.pipeline import Config,Pipeline,profile,verify_runtime
 from services.windows_native.server import LocalServer
 from services.windows_native.store import Store
 from services.windows_native.tests.test_human_identity import fixture
@@ -25,9 +27,9 @@ WORKSPACE='wsp_native_storyboard_full_qc_fixture'
 
 def write(path,value):
     with path.open('xb') as handle:handle.write((json.dumps(value,ensure_ascii=False,indent=2,allow_nan=False)+'\n').encode())
-def config(root):
+def config(root,local_tts=False):
     absent=root.parent/(root.name+'-absent-secrets')
-    return Config(data_root=root,runtime_root=root/'absent-runtime',secret_file=absent/'absent-openai.env',assemblyai_secret_file=absent/'absent-asr.dpapi')
+    return Config(data_root=root,runtime_root=Path(r'C:\NPD-Video-Factory\runtime') if local_tts else root/'absent-runtime',secret_file=absent/'absent-openai.env',assemblyai_secret_file=absent/'absent-asr.dpapi')
 def snapshot(root):
     store=Store(root);projects=[store.get(row['id']) for row in store.list(include_archived=True)]
     with store.transaction() as con:
@@ -51,23 +53,27 @@ class CachedToneFixture:
             return Pipeline(self.settings).run(job,stage)
 
 def run(args):
+    if args.local_tts and not args.narration_preparation:raise ValueError('Local TTS requires explicit narration preparation/review flow')
+    if args.local_tts:os.environ['HF_HUB_OFFLINE']='1';os.environ['TRANSFORMERS_OFFLINE']='1'
     root,destination,out=args.data_root.resolve(),args.restore_root.resolve(),args.output.resolve()
     if args.reopen:
         expected=json.loads((out/'offline-snapshot.json').read_bytes());assert snapshot(root)==snapshot(destination)==expected
         for location in [root,destination]:
             for job in snapshot(location)['jobs']:
                 if job['status']=='succeeded':
-                    with patch('services.windows_native.pipeline.verify_runtime'),patch('services.windows_native.pipeline.synthesize',side_effect=AssertionError('No voice inference')):
-                        assert Pipeline(config(location)).run(job,lambda _:None)==job['result']
+                    with (nullcontext() if args.local_tts else patch('services.windows_native.pipeline.verify_runtime')),patch('services.windows_native.pipeline.synthesize',side_effect=AssertionError('No new voice inference on replay')):
+                        assert Pipeline(config(location,args.local_tts)).run(job,lambda _:None)==job['result']
         write(out/'new-process-replay.json',{'exact_source_and_restored_state':True,'exact_verified_render_checkpoint_replay':True,
             'external_execution_enabled':False,'provider_calls':0,'actual_voice_inference':False,'owner_uat_accepted':False})
         print(json.dumps({'status':'STORYBOARD_FULL_QC_RESTART_RESTORE_PASS'}));return
     for path in [root,destination]:
         if path.parent!=Path('C:/') or not re.fullmatch(r'vf-native-fixture-storyboard-qc-[a-z0-9-]+',path.name) or path.exists():raise ValueError('Fresh owned fixture roots required')
     if root==destination or out.exists() or out==ROOT or ROOT in out.parents or out==root or root in out.parents:raise ValueError('Fresh distinct external evidence required')
-    root.mkdir();out.mkdir(parents=True);settings=config(root);requests=[]
+    root.mkdir();out.mkdir(parents=True);settings=config(root,args.local_tts);requests=[]
+    if args.local_tts:assert not settings.secret_file.exists() and not settings.assemblyai_secret_file.exists(),'No external credentials permitted in the local voice rehearsal'
+    runtime_before=verify_runtime(settings) if args.local_tts else None
     raw,registry=fixture('owner',workspace=WORKSPACE);access=NativeAccess(HumanAuthVerifier(HumanAuthRegistry.model_validate(registry),max_token_ttl_seconds=86400),WORKSPACE)
-    server=LocalServer(0,settings,pipeline=CachedToneFixture(settings),start_worker=False,access=access);cookie,session=access.login(raw)
+    server=LocalServer(0,settings,pipeline=Pipeline(settings) if args.local_tts else CachedToneFixture(settings),start_worker=False,access=access);cookie,session=access.login(raw)
     thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
     def send(method,path,body=None,*,status=200,binary=None,headers=None):
         connection=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=30)
@@ -78,7 +84,7 @@ def run(args):
         requests.append({'method':method,'path':path,'status':response.status});assert response.status==status,(response.status,value);return value
     try:
         project=send('POST','/api/projects',{'name':'EXPLICIT NATIVE FULL QC FIXTURE','prompt':'Authored synthetic teaching fixture; no research provider',
-            'channel_profile_ref':'ai-education-reference@1','production_quality':True},status=201);identifier=project['id'];base='/api/projects/'+identifier
+            'channel_profile_ref':'ai-education-reference@1','production_quality':True,'narrated_workflow':args.narration_preparation},status=201);identifier=project['id'];base='/api/projects/'+identifier
         for ordinal in range(2):
             image=Image.new('RGB',(640,360),(20,65+ordinal*40,135));drawing=ImageDraw.Draw(image)
             drawing.rectangle((80,70,550,280),fill=(170,40+ordinal*80,90));drawing.ellipse((150,100,310,260),fill=(30,210,190));buffer=io.BytesIO();image.save(buffer,format='PNG')
@@ -88,9 +94,14 @@ def run(args):
             {'scene':1,'visual':'Technology AI educational fixture','on_screen_text':'Vang Nguyễn','narration_excerpt':'Xin chào.'},
             {'scene':2,'visual':'Technology teaching fixture','on_screen_text':'Cần Giờ','narration_excerpt':'Cảm ơn.'}],
             'facts_needing_source':['Explicit authored synthetic fixture; no researched claims']}
+        if args.local_tts:
+            texts=['Vang Nguyễn chia sẻ cách kiểm tra nguồn thông tin về trí tuệ nhân tạo.','Hai ví dụ tên riêng là Vinhomes Green Paradise Cần Giờ và Vinhomes Saigon Park.']
+            proposal['narration']=' '.join(texts)
+            for scene,text in zip(proposal['visual_brief'],texts):scene['narration_excerpt']=text
         project=send('POST',base+'/draft',{'revision':project['revision'],'proposal':proposal,'music_enabled':False,
             'scene_media':[{'scene':1,'asset_id':assets[0]['id']},{'scene':2,'asset_id':assets[1]['id']}]})
         project=send('POST',base+'/brand-template',{'revision':project['revision'],'brand_id':'vang-nguyen','template_id':'personal-30','duration_mode':FIT_NARRATION_POLICY})
+        if args.local_tts:project=send('POST',base+'/voice-quality',{'revision':project['revision'],'policy_id':'scene-context-v1'})
         view=send('GET',base+'/shots')
         for shot in list(view['shot_timeline']['shots']):
             for values in [{'duration':1.5},{'requested_duration':None}]:
@@ -105,7 +116,7 @@ def run(args):
         while True:
             preview=send('GET',base+'/preview')
             if preview['status'] not in {'QUEUED','RUNNING'}:break
-            assert time.monotonic()<deadline;time.sleep(.05)
+            assert time.monotonic()<deadline;time.sleep(.25 if args.local_tts else .05)
         assert preview['status']=='READY' and preview['audio_mode']=='silent_visual_proxy' and preview['final_approval_eligible'] is False
         shutil.copyfile(server.previews.video_path(identifier,preview['timeline_version']),out/('visual-proxy.mp4' if args.narration_preparation else 'preview.mp4'));write(out/('visual-proxy.json' if args.narration_preparation else 'preview.json'),preview)
         view=send('GET',base+'/shots');approval=send('POST',base+'/approve',{'revision':view['revision'],'reviewer':'EXPLICIT SIGNED HUMAN FIXTURE; NOT OWNER UAT','acknowledged':True,'purpose':'narration' if args.narration_preparation else 'production'})
@@ -117,13 +128,16 @@ def run(args):
             current=send('POST',base+'/narration/'+prepared['id']+'/apply',{'revision':approval['revision'],'expected_plan_sha256':prepared['result']['plan_sha256'],'acknowledged':True})
             assert current['approval'] is None and current['document']['prepared_narration']['voice_audio_sha256']==audio['sha256']
             write(out/'narration-job.json',prepared);write(out/'narration-page.json',page);write(out/'narration-plan.json',prepared['result']['plan']);write(out/'narration-applied-project.json',current)
-            send('POST',base+'/preview',{'revision':current['revision'],'action':'generate'});deadline=time.monotonic()+45
+            send('POST',base+'/preview',{'revision':current['revision'],'action':'generate'});deadline=time.monotonic()+120
             while True:
                 audible=send('GET',base+'/preview')
                 if audible['status'] not in {'QUEUED','RUNNING'}:break
-                assert time.monotonic()<deadline;time.sleep(.05)
+                assert time.monotonic()<deadline;time.sleep(.25 if args.local_tts else .05)
             assert audible['status']=='READY' and audible['audio_mode']=='measured_scene_narration_full_effects_preview' and audible['final_approval_eligible'] is True
             assert audible['manifest']['new_inference_calls']==0 and audible['manifest']['qc']['passed']
+            if args.local_tts:
+                original=json.loads((root/'jobs'/prepared['id']/'voice.json').read_bytes());assert original['inference_calls']>=2 and original['network_blocked'] is True
+                assert original['quality_policy']['id']=='scene-context-v1';write(out/'actual-local-voice.json',original)
             shutil.copyfile(server.previews.video_path(identifier,audible['timeline_version']),out/'preview.mp4');write(out/'preview.json',audible)
             write(out/'audible-preview-manifest.json',audible['manifest']);write(out/'audible-preview-full-qc.json',audible['manifest']['qc']['full_quality'])
             approval=send('POST',base+'/approve',{'revision':current['revision'],'reviewer':'EXPLICIT SIGNED AFTER-TIMING FIXTURE; NOT OWNER UAT','acknowledged':True})
@@ -135,7 +149,8 @@ def run(args):
         if args.narration_preparation:
             reuse=json.loads((rendered/'voice-reuse.json').read_bytes());assert reuse['source_job_id']==prepared['id'] and reuse['new_inference_calls']==0
             assert file_sha(rendered/'voice.wav')==prepared['result']['plan']['voice_audio_sha256'];write(out/'voice-reuse.json',reuse)
-        assert qc['status']=='passed' and qc['full_production_qc']['broken_frames']==0 and qc['subtitle_bounds']['sample_count']==2
+        render_manifest=json.loads((rendered/'render-manifest.json').read_bytes())
+        assert qc['status']=='passed' and qc['full_production_qc']['broken_frames']==0 and qc['subtitle_bounds']['sample_count']==len(render_manifest['captions'])>0
         assert qc['full_production_qc']['width']==1080 and qc['full_production_qc']['height']==1920
         assert not qc['human_final_video_accepted'] and not qc['semantic_vision_used'];assert file_sha(rendered/'voice.wav')==json.loads((rendered/'voice.json').read_bytes())['audio_sha256']
         assert Pipeline(settings).run(finished,lambda _:None)==finished['result']
@@ -151,11 +166,11 @@ def run(args):
         asset=current['document']['assets'][-1];shot=send('GET',base+'/shots')['shot_timeline']['shots'][0]
         current=send('POST',base+'/shots',{'revision':current['revision'],'operation':{'type':'update','shot_id':shot['shot_id'],'values':{'asset_id':asset['id'],'motion':'none'}}})
         if args.narration_preparation:
-            send('POST',base+'/preview',{'revision':current['revision'],'action':'generate'});deadline=time.monotonic()+45
+            send('POST',base+'/preview',{'revision':current['revision'],'action':'generate'});deadline=time.monotonic()+120
             while True:
                 failed=send('GET',base+'/preview')
                 if failed['status'] not in {'QUEUED','RUNNING'}:break
-                assert time.monotonic()<deadline;time.sleep(.05)
+                assert time.monotonic()<deadline;time.sleep(.25 if args.local_tts else .05)
             assert failed['status']=='FAILED' and failed['final_approval_eligible'] is False
             from services.windows_native.narration_preview import folder_for
             negative=list((folder_for(settings,current)/'attempts').glob('narration-preview-*/full-qc-report.json'));assert len(negative)==1
@@ -176,21 +191,26 @@ def run(args):
     actual=snapshot(root);backup=create_backup(settings,out/'native-storyboard-full-qc-backup.zip')
     restore=restore_backup(out/'native-storyboard-full-qc-backup.zip',destination,expected_sha256=backup['sha256']);assert snapshot(destination)==actual
     write(out/'backup-restore.json',{'backup':backup,'restore':restore,'exact_state':True});write(out/'offline-snapshot.json',actual)
+    if args.local_tts:
+        runtime_after=verify_runtime(settings);assert runtime_before==runtime_after
+        write(out/'actual-local-runtime.json',{'before':runtime_before,'after':runtime_after,'locked_model_sdk_verified_unchanged':True,'tts_model':profile()['model'],
+            'content_model_executed':False,'model_downloads':0,'sdk_modified':False,'paid_operations':0,'speech_quality_accepted':False,'owner_uat_accepted':False})
     source=['services/windows_native/storyboard_qc.py','services/windows_native/pipeline.py','services/windows_native/store.py','services/windows_native/hardening.py','services/windows_native/shot_render_timing.py',
         'services/windows_native/backup.py','services/windows_native/tests/test_storyboard_qc.py','apps/api/app/production_qc.py','apps/api/app/production_logic.py','scripts/north_star_native_storyboard_qc.py']
     if args.narration_preparation:source+=['services/windows_native/narration.py','services/windows_native/access.py','services/windows_native/server.py','services/windows_native/tests/test_narration.py',
         'services/windows_native/tests/test_narration_http.py','services/windows_native/narration_preview.py','services/windows_native/shot_preview.py','services/windows_native/tests/test_narration_preview.py',
         'apps/studio-web/native-narration.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/shot-studio.mjs','apps/studio-web/tests/native-narration.test.mjs','apps/studio-web/tests/shot-studio.test.mjs']
+    source+=['services/windows_native/narrated_workflow.py','apps/studio-web/project-quality.mjs']
     write(out/'evidence.json',{'schema_version':'north-star-native-storyboard-full-qc-rehearsal-v1','workspace_id':WORKSPACE,'project_id':identifier,
         'actual_human_http_requests':len(requests),'actual_native_worker':True,'actual_ffmpeg_render':True,'actual_full_media_qc':True,'actual_libass_subtitle_pixels':True,
-        'actual_frozen_video_failure':True,'failed_qc_terminal_state':not args.narration_preparation,'failed_qc_report':True,'blocked_final_admission_for_frozen_preview':args.narration_preparation,'actual_backup_restore':True,'explicit_synthetic_pcm_fixture':True,
-        'provider_calls':0,'paid_operations':0,'actual_voice_inference':False,'semantic_vision_used':False,'rights_independently_verified':False,
+        'actual_frozen_video_failure':True,'failed_qc_terminal_state':not args.narration_preparation,'failed_qc_report':True,'blocked_final_admission_for_frozen_preview':args.narration_preparation,'actual_backup_restore':True,'explicit_synthetic_pcm_fixture':not args.local_tts,
+        'provider_calls':0,'provider_call_scope':'external_network','external_provider_calls':0,'paid_operations':0,'actual_voice_inference':args.local_tts,'local_model_inference_calls':original['inference_calls'] if args.local_tts else 0,'semantic_vision_used':False,'rights_independently_verified':False,
         'narration_preparation_tested':args.narration_preparation,'measured_canonical_timing_apply_tested':args.narration_preparation,'verified_pcm_reuse_tested':args.narration_preparation,
         'preview_kind':'measured_scene_narration_full_effects_preview' if args.narration_preparation else 'silent_visual_proxy','audible_preview_implementation_tested':args.narration_preparation,
         'audible_preview_acceptance':False,'human_approval_is_signed_fixture':True,'owner_uat_accepted':False,'production_deployed':False,
         'source_sha256':{p:file_sha(ROOT/p) for p in source},'exports':{str(p.relative_to(out)).replace('\\','/'):{'sha256':file_sha(p),'bytes':p.stat().st_size} for p in out.rglob('*') if p.is_file()}})
-    print(json.dumps({'status':'STORYBOARD_FULL_QC_LOCAL_REAL_SYNTHETIC_PCM_PASS','human_http_requests':len(requests),'full_qc':'passed','frozen_video':'failed_qc'}))
+    print(json.dumps({'status':'STORYBOARD_FULL_QC_ACTUAL_LOCAL_TTS_PASS' if args.local_tts else 'STORYBOARD_FULL_QC_LOCAL_REAL_SYNTHETIC_PCM_PASS','human_http_requests':len(requests),'full_qc':'passed','frozen_video':'failed_qc'}))
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--data-root',type=Path,required=True);parser.add_argument('--restore-root',type=Path,required=True);parser.add_argument('--output',type=Path,required=True)
-    parser.add_argument('--reopen',action='store_true');parser.add_argument('--narration-preparation',action='store_true');run(parser.parse_args())
+    parser.add_argument('--reopen',action='store_true');parser.add_argument('--narration-preparation',action='store_true');parser.add_argument('--local-tts',action='store_true');run(parser.parse_args())

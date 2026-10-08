@@ -781,6 +781,9 @@ class Pipeline:
         if checkpoint:
             stage("resuming_verified_render")
             return checkpoint["result"]
+        if job['kind']=='render':
+            from .narrated_workflow import require_measured
+            require_measured(job['snapshot']['document'])
         if job['kind']=='render' and job['snapshot']['document'].get('prepared_narration'):
             from .narration_preview import validate_render_approval
             validate_render_approval(self.config,job)

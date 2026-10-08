@@ -50,7 +50,8 @@ document before application.
 
 ## Final audio reuse
 
-After the user approves the edited document, rendering verifies the original
+After the user reviews the current audible preview and approves the edited
+document, rendering verifies the original
 successful narration job, its approved snapshot, both checkpoints, plan and
 current voice fingerprint. It copies the original WAV, metadata and TTS plan
 into a new final-job checkpoint and records `voice-reuse.json`, including
@@ -71,20 +72,24 @@ corruption, CSRF, RBAC and inference-free final rendering. Six UI cases cover
 scoped evidence, literal text, acknowledgement, role/state guards, uncertain
 response handling and late response rejection.
 
-The isolated worker rehearsal uses a technology channel, 51 actual human HTTP
+The preserved preparation-only worker rehearsal uses a technology channel, 51 actual human HTTP
 requests, actual ingestion, MediaPlan/canonical application, preparation,
 explicit timing apply/reapproval, final FFmpeg/full QC, frozen-video failure,
 and actual backup/restore plus exact separate-process replay. Its audio is
 explicitly cached synthetic PCM; no model inference, paid operation, semantic
 Vision, genuine speech quality, browser usability or Owner UAT is inferred.
 
-The current visual preview remains a silent proxy. Listening to the separate
-audio and inspecting measured timings does not complete the required combined
-audible preview/final approval flow. That integration is next, followed by the
-remaining original Mode A/B, Trend Radar, publishing, analytics, learning,
-Agent Hub, hardening and final acceptance work. Provider-neutral languages and
-voice styles remain partial. This increment does not certify North Star
-completion or production deployment.
+That historical increment's visual preview was a silent proxy. Current prepared
+narration supports combined audible preview and exact current-preview production
+approval; see `NATIVE_NARRATED_STORYBOARD_PREVIEW.md`. New guided projects save
+the first canonical script and require measured narration before production;
+the installed local scene model has a separate genuine-inference/recovery
+rehearsal in `NATIVE_GUIDED_NARRATION_WORKFLOW.md`. Speech/Owner/browser acceptance,
+provider-neutral languages/styles and remaining original Mode A/B, Trend Radar,
+publishing, analytics, learning, Agent Hub, hardening and final acceptance work
+remain separate. These increments do not certify North Star completion or
+production deployment. Historical source/evidence remains available at its
+preserved commits and recovery bundles.
 
 See `north-star/native-narration-preparation-evidence.json` and
 `NORTH_STAR_WAVE_REPORTS.md` for final tests, source hashes and recovery evidence.

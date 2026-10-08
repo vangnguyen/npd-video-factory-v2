@@ -116,13 +116,14 @@
         </section>
         <section class="card" id="proposal-card" hidden>
           <div class="card-heading"><div><p class="eyebrow">02 / KIỂM TRA & DUYỆT</p><h2>Đề xuất dành cho bạn</h2></div><span id="approval-state" class="version">Chờ duyệt</span></div>
+          <p id="narrated-workflow-hint" class="hint" hidden></p>
           <p class="hint">Mỗi cảnh dùng một ảnh hoặc một video. Chọn nguồn rồi sửa lời đọc, chữ trên video theo từng cảnh.</p>
           <button id="auto-plan" class="secondary">Đề xuất nguồn & cách dựng cảnh</button><p class="hint">Ưu tiên lời nói trùng nội dung; ảnh còn lại được luân phiên từ thư viện. Kiểm tra hình, chỉnh nguồn và cách dựng trước khi duyệt.</p>
           <div id="scenes"></div>
           <details class="narration-detail"><summary>Lời đọc hoàn chỉnh</summary><p id="narration"></p></details>
           <div class="facts"><strong>Thông tin cần nguồn xác minh</strong><ul id="facts"></ul><p class="hint">Đề xuất chưa xác minh các dữ kiện. Kiểm tra trước khi duyệt.</p></div>
           <button id="save-proposal" class="secondary">Lưu bản chỉnh sửa</button>
-          <div class="review"><label>Người duyệt<input id="reviewer" maxlength="100" placeholder="Tên của bạn" data-vf-permission="review"></label><label class="check"><input id="review-check" type="checkbox"> Tôi đã kiểm tra lời đọc, thông tin cần nguồn, ảnh/video từng cảnh và quyền sử dụng. Tôi duyệt phiên bản này để tạo giọng đọc và video.</label><button id="approve" class="primary">Duyệt nội dung này</button></div>
+          <div class="review"><label>Người duyệt<input id="reviewer" maxlength="100" placeholder="Tên của bạn" data-vf-permission="review"></label><label class="check"><input id="review-check" type="checkbox"><span id="production-review-copy">Tôi đã kiểm tra lời đọc, thông tin cần nguồn, ảnh/video từng cảnh và quyền sử dụng. Tôi duyệt phiên bản này để tạo giọng đọc và video.</span></label><button id="approve" class="primary">Duyệt nội dung này</button></div>
           <details><summary>Yêu cầu sửa nội dung</summary><label>Lý do cần sửa<textarea id="content-rejection" rows="2" maxlength="2000"></textarea></label><button id="reject-content" class="secondary">Trả nội dung để sửa</button></details>
         </section>
       </div>

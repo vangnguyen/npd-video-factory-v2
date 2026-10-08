@@ -435,7 +435,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_owner_rights_override_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_owner_rights_override_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -724,7 +724,7 @@ class Handler(BaseHTTPRequestHandler):
                 keys=('id','name','related_project','target_audience','preferred_formats','channel','tone','duration_seconds','keywords','project_references')
                 profile={k:configured[k] for k in keys if k in configured}
                 profile['configuration_sha256']=digest(configured)
-            return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt"),content_profile=profile,production_quality=body.get('production_quality',False),channel_profile=channel), 201)
+            return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt"),content_profile=profile,production_quality=body.get('production_quality',False),channel_profile=channel,narrated_workflow=body.get('narrated_workflow',False)), 201)
         match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive|brand-template|voice-quality|cost-policy)", self.path)
         if not match:
             raise WorkflowError("ROUTE_NOT_FOUND", 404)

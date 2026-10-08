@@ -332,7 +332,9 @@ class IntelligenceService:
             self.store.decision(con,identifier,'human_approved_brief',approval)
         return value
 
-    def send(self,identifier,version):
+    def send(self,identifier,version,*,production_quality=False,narrated_workflow=False):
+        from .narrated_workflow import selections
+        selections(production_quality=production_quality,narrated_workflow=narrated_workflow)
         with self.store.transaction() as con:
             brief=self.store.get(identifier,'ContentBrief',con)
             if type(version) is not int or brief['version']!=version: raise WorkflowError('INTELLIGENCE_STALE_VERSION_RELOAD')
@@ -343,7 +345,7 @@ class IntelligenceService:
             self.verify_sources(sources,findings)
             lineage={'schema_version':'content-intelligence-lineage-v1','run':run,'idea':idea,'brief':brief,'sources':sources,'findings':findings,'approved_brief_sha256':digest(brief_content(brief))}
             lineage['sha256']=digest(lineage)
-            project=self.production.create_from_brief(idea['title'],lineage)
+            project=self.production.create_from_brief(idea['title'],lineage,production_quality=production_quality,narrated_workflow=narrated_workflow)
             self.store.put('Opportunity',{**opportunity,'status':'IN_PRODUCTION','production_project_id':project['id']},opportunity['version'],con)
             self.store.decision(con,identifier,'explicit_send_to_native_script_review',{'project_id':project['id'],'lineage_sha256':lineage['sha256'],'no_tts_render_dispatch':True})
         return project

@@ -1,0 +1,282 @@
+{
+  "schema": "native-guided-narration-evidence-v1",
+  "parent_head": "cecf6652be9c66ca31a90edb577622fd889519c9",
+  "source_sha256": {
+    "services/windows_native/storyboard_qc.py": "b3ec1818890e33e5496d465e457858644d0652a669c281f0005f940e9815b877",
+    "services/windows_native/pipeline.py": "856aba0992b4d8df7673dc4be226cb82f5af296870e53830f260af17328ecd5a",
+    "services/windows_native/store.py": "f4d43407866e0ddf47cb35804ea1ac6e05a7909f7b39e87c2aeab8195218f93c",
+    "services/windows_native/hardening.py": "d6a1dcf62e4c444ae2dbd2d3df92d4dc3e3ea276d60751ce1b673475272f1290",
+    "services/windows_native/shot_render_timing.py": "08ca7aada408a1750546ca8e2716ad8a19e885edec4555a2b60a1a81f3e4c9bb",
+    "services/windows_native/backup.py": "af915cbd4882502fde13c550c6536746bbd5fa83446d7087eec41cb0d3c61ef3",
+    "services/windows_native/tests/test_storyboard_qc.py": "d65709f67720ec4d99d153828d884a6ac054e2cba5889ec4a03bcfe0867f0dd1",
+    "apps/api/app/production_qc.py": "512fddf9747bf831c85e012b4d042f2eb90af08e70e238661bd1cb7a0774fdc0",
+    "apps/api/app/production_logic.py": "c8daec5186d7aeec840dc9e0538b578ae6c5518cc531261158af817f5bb0a4c3",
+    "scripts/north_star_native_storyboard_qc.py": "d5c13e5c15f6e9d6f3dc0ca33ce2846813f1eec089cec11fc47b9fcf7c6dd341",
+    "services/windows_native/narration.py": "0adb6cf571eb2ed3aa453dacc6c8315fad842fc8b19190c61df500d1b499c0d1",
+    "services/windows_native/access.py": "8442bbc8457b69bb8e321c4b5483c20b10336c600b0647e2af5321938bd450ae",
+    "services/windows_native/server.py": "f78a8d2997d5fe8134bbbcd094a932688f512f2c78388f1729c8f343d52090fe",
+    "services/windows_native/tests/test_narration.py": "064522462396ece3df3ec507449b1123a0f8f145d20baec11d05a910a26f10cb",
+    "services/windows_native/tests/test_narration_http.py": "5eda67e1d1f95260605700865d56b4840f4d39208f0051ec5f408ab387f18f9b",
+    "services/windows_native/narration_preview.py": "7e25a3a9e11856a68205487fe0012357d7ba7b06bd4516e124bc379e4b50733f",
+    "services/windows_native/shot_preview.py": "b272f45e84c3f7b2927ca5a7cc167d012041883d9a359c6c4ebffe8d0abfbfc7",
+    "services/windows_native/tests/test_narration_preview.py": "de6c4a4925098d67604784a53a559b7c6e0958ef5bf4cfc37a0a0ce86a214b5f",
+    "apps/studio-web/native-narration.mjs": "a7a43d38d67d10fd9deeeed9fbdb193d1087eaeb3987a5d2d0e698ca1cfaeb4e",
+    "apps/studio-web/native.mjs": "90a9c4c34c597e4f389c5f64b96682aada40e4a3841d769efd473570b7074492",
+    "apps/studio-web/native.html": "b3c1a6c1ecce2acd354a50699167404ff19fce881f5accd5020d2dcbf8a753a3",
+    "apps/studio-web/shot-studio.mjs": "83b567cef818851e59c99965d00d2323afb0dc772525a025c5a09bac29e54c49",
+    "apps/studio-web/tests/native-narration.test.mjs": "b40dd4d48c2be135695567ccbb7e03e9b1dd68a45ba41989778a39893b2c6624",
+    "apps/studio-web/tests/shot-studio.test.mjs": "ce26aed289a77697c64051b36bd8cdfc8b329f7e13e932272738521c5bb696e8",
+    "services/windows_native/narrated_workflow.py": "369bbed73ed7fc7610cf43e94a4a2e6a38c7406481898da8a0776185472337ce",
+    "apps/studio-web/project-quality.mjs": "5e93b9fd8dfd45068a88dcc83bf54a1dff448e0c495ec07b7fe9b4894f2ac0b4",
+    "services/windows_native/tests/test_narrated_workflow.py": "b3a390aa09a24084eadd04b6511ba061b1d36324bf9d98e075296f72187240d2",
+    "services/windows_native/tests/test_phase10_http.py": "5bc5acbfb13bdd432cb0693e10f7d2cf5b05a1ca5470514d0ff2d75484c3e835",
+    "services/windows_native/intelligence_service.py": "a90755c1496cabc3e4116ef8da0509a0fb0485dac0792430865112e2124e87be",
+    "services/windows_native/intelligence_routes.py": "c746d3d455c4da0993d89ef83832ce214043facc7863fe0c6857e88ca53f288e",
+    "apps/studio-web/intelligence.mjs": "c2c6645d0cc31da84391b7952a1e4d7c41042879bfaa86a9787ef54a95d1dc45",
+    "apps/studio-web/tests/project-quality.test.mjs": "fd639a32545bcc3a4ed9330c87fc4406fd331ca86aee4a8442c884cf04fe472f",
+    "docs/NATIVE_GUIDED_NARRATION_WORKFLOW.md": "8b5507d2f5a9712e741ad180b18fff7bb56b42ca53fdb8652e40a2ba8bf34828"
+  },
+  "logs": {
+    "native-guided-narration-full-r1.log": "5c3ff1a4bb921371ae50eb92e68a7de4964a1f10553ee50c81bd2bade20ee6f4",
+    "native-guided-narration-r1.log": "654b7377bce7902b5867ef5891be280601791f08a59e566ec3cc0905f1d8e15a",
+    "native-guided-narration-r2.log": "5b6c328a0171439add5807ed57104b741a3e59ebbf08e03fbb5efd1a04b2bbb7",
+    "native-guided-narration-r3.log": "8226db737c3073512dce4adc7a6b7e4aaffd1296ca9a5d5c416a48f7beb9222c",
+    "native-guided-narration-r4.log": "0524787451ae959772186baf51025ed93c047c4cb1e7af321fa30ad219b36d44",
+    "native-guided-real-narration-n1.log": "6b1e71622e2ebfadfcaf4fb3817de149bca6dfe5ca39fbcf4209c990260c294b",
+    "native-guided-real-narration-n2.log": "eaf9682b2b061f892a6967e268cf3cf342c67f56454ab5d2b2734aada4da6747",
+    "native-guided-real-narration-reopen-n2.log": "8050eb47051f5f4c628998f3e0a444949d0d41109a0ca162a2fc432c479f266a",
+    "studio-guided-narration-full-r1.log": "34526a26151cd00dc020f8e7bc2d79a23ac99a6f1a4c373e5c7711374fba7fee",
+    "studio-guided-narration-full-r2.log": "d4adff14152e86e0e4e5d77adeb7b2a54a573acfeb3924ed6dd8e41a59783fc3"
+  },
+  "runtime_preflight": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-real-narration-runtime-preflight-r1.json",
+    "sha256": "b229010944a81e6de8db7ec1892bdef038a76f03f0bb272105f7d6473e5c1a28"
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-guided-real-narration-n2",
+    "evidence_sha256": "bc879baaa1c806eeeaa8c57c6f16c793810c64b262a9011089811ee8318df0c0",
+    "replay_sha256": "c8ec03bce4bfabc421d65e005802a94dc5eea082a8d9a0a69d870c3df96d3908",
+    "indexed_exports": 41,
+    "human_http_requests": 93,
+    "exports": {
+      "actual-local-runtime.json": {
+        "sha256": "a4e9e08b1437f12d1667ec0d9f279eebaab62cde10264e68943391b3c36e2d50",
+        "bytes": 750
+      },
+      "actual-local-voice.json": {
+        "sha256": "20abacf2aa5cc14dcce99d7ffda1d6309f9e67db63e8bd2fbf814852ef6353d9",
+        "bytes": 1502
+      },
+      "artifact-review.json": {
+        "sha256": "471223bd42a9d9ed29787c26e09e656817d6acc4f2988c6cd398c15b6ff3fee2",
+        "bytes": 13159
+      },
+      "audible-preview-full-qc.json": {
+        "sha256": "455be90bf349257939592ee1f6505a424b2c86f197a72a491d672d26ef0ff862",
+        "bytes": 7413
+      },
+      "audible-preview-manifest.json": {
+        "sha256": "942668945d7490322353563d2798b734fcf71cebefcdc9b3a71e36c8f6152888",
+        "bytes": 14309
+      },
+      "backup-restore.json": {
+        "sha256": "6f25e8cf36cc7193a1c89e3b91a4e3205ef5b307e726f65e98b4102e72ee8e3d",
+        "bytes": 5650
+      },
+      "blocked-approval.json": {
+        "sha256": "1c30b349f9fe6e5eef12d11e086fbfa9131196ca4a73de6a3605a8c7e18e87a7",
+        "bytes": 388
+      },
+      "blocked-render-admission.json": {
+        "sha256": "8e24bae5118f0b62ca7764cd5b896c8fa149a34e10535abe895f4a21c2455a3a",
+        "bytes": 352
+      },
+      "cost.json": {
+        "sha256": "5788ff5565cf1f2d9d0d1ee3203dcab7ebcd3c0e30d5f140ca76c0ff19c7e68e",
+        "bytes": 791
+      },
+      "failed-preview.json": {
+        "sha256": "9145a81deea27edbbd4731aafa6e6e3842951cbe7c140ce61eea55edf3aef6dd",
+        "bytes": 695
+      },
+      "failed-qc-report.json": {
+        "sha256": "7abeabd55e260dbac4fe61b43bfda6b19d68855242049049377a557d3570d87e",
+        "bytes": 7273
+      },
+      "final.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "full-qc-report.json": {
+        "sha256": "247d2086ab35ed1f749d5f5a16b0546b1af98d83140120d8dab07c60962bb67b",
+        "bytes": 5316
+      },
+      "human-http-wires.json": {
+        "sha256": "2c1533e586fe2120d2429d36ab01dad3f9c11d4feac686d45889123154798bd0",
+        "bytes": 11053
+      },
+      "job-events.json": {
+        "sha256": "9ac3c6bcf0c66f8ec22a848842ca778d40b3a29eb0feff2746649ba74add1735",
+        "bytes": 15499
+      },
+      "media-plan.json": {
+        "sha256": "bef3df8016a9526491c73b564fdd70d31100fa90de2a1cad4c76ec4df01c2e1f",
+        "bytes": 59922
+      },
+      "narration-applied-project.json": {
+        "sha256": "a7dce4f546baffadc7a14a8bbf648df1d6e796751c44e229ffd5570e3194a44e",
+        "bytes": 233300
+      },
+      "narration-job.json": {
+        "sha256": "943a3878f8fc9943296c2d944b7ce64d30b588bda11d2ff64295a8c1081816b6",
+        "bytes": 109863
+      },
+      "narration-page.json": {
+        "sha256": "583b49b39f57819e11d00431f95026344e50b56b51b1bbfc369c493a42918244",
+        "bytes": 4604
+      },
+      "narration-plan.json": {
+        "sha256": "aa3a3ccd24d2fd33bf8301a37fb01ce81fc450fcb2210d04fc7424272b335897",
+        "bytes": 3146
+      },
+      "native-storyboard-full-qc-backup.zip": {
+        "sha256": "2ced94aa6f45fcad3fc3261e3214a38828b4857ed584e9a5909088623fab915f",
+        "bytes": 13074350
+      },
+      "offline-snapshot.json": {
+        "sha256": "72af4459305a45690410e1cd464e0131eda70ffe3867fbf17eaa0cb0dddf7637",
+        "bytes": 1459854
+      },
+      "preview.json": {
+        "sha256": "eeec309cfed94e0f49eced028cd382b29805b88be775845f8ca1fa84abd22797",
+        "bytes": 15970
+      },
+      "preview.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "project.json": {
+        "sha256": "682633f7b60eff1b10a81d4864bb75b41f2a3f9969c1620c908eca347f6b64bf",
+        "bytes": 356817
+      },
+      "qc-report.json": {
+        "sha256": "c76e53a3a020cc5ce6081a3d5cf800df4808b17fdf5d883e4ea36891d47ae05c",
+        "bytes": 6518
+      },
+      "render-job.json": {
+        "sha256": "b13eda3de670f208ffa22eb224086a7a58236357da43544662e47fb305961828",
+        "bytes": 118430
+      },
+      "render-manifest.json": {
+        "sha256": "f2d13be9210034a5fbd2709a6ffca44dfe8b3830aad604d5724be0027a6c3555",
+        "bytes": 6171
+      },
+      "render-voice.json": {
+        "sha256": "cfb10c7fa0cb27d78a5277aae1e175aa733a7920f86aa217bdf8831eb629305a",
+        "bytes": 2386
+      },
+      "render-voice.wav": {
+        "sha256": "2eecdb49cf94e207530857335398dfcb88a529681f10b3da5d1330cb83d92150",
+        "bytes": 904364
+      },
+      "subtitles.ass": {
+        "sha256": "e658e110947873f018ac1b7f6c3a033a9c8b136b457458277f619dccfc0a69d2",
+        "bytes": 947
+      },
+      "timeline.json": {
+        "sha256": "085ef32d38d652b4d9904d9e04518ef3232a8bed560dd1911c39eea944c4fcbb",
+        "bytes": 5189
+      },
+      "transport-qc-report.json": {
+        "sha256": "4fb749b301e35a931b5111f358341ed6c5b4aa7729b73e2ab3052a833db41a57",
+        "bytes": 1160
+      },
+      "visual-proxy.json": {
+        "sha256": "47ad835e67908e17b0c5af8ba0dd3f54fcb9139e2860e951938c9597ee2960f2",
+        "bytes": 658
+      },
+      "visual-proxy.mp4": {
+        "sha256": "10d2ade4658c2ab186440a2172abd93ac842a48ec03410d642c7a5c5f4510040",
+        "bytes": 50700
+      },
+      "voice-reuse.json": {
+        "sha256": "65017bcd42a1426f14947e8ab8f1cb1b6958af94bc07fb616fe92a5ce2d4737c",
+        "bytes": 571
+      },
+      "voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "subtitle-qc/000.png": {
+        "sha256": "8710ff89a903fce552ff947559c28aa6cf682ae32f296c5d3677b40443485cdb",
+        "bytes": 63104
+      },
+      "subtitle-qc/001.png": {
+        "sha256": "7688e3ebb7cda6cdd21c1f097677d4dbe033e97a942e559bc73247283024ee45",
+        "bytes": 60594
+      },
+      "subtitle-qc/002.png": {
+        "sha256": "b37c9d095f8b41d39343ba862af96108853a351636013d819244c5eed0ebbf4d",
+        "bytes": 24086
+      }
+    }
+  },
+  "tests": {
+    "full_native_passed": 656,
+    "full_native_seconds": 529.006,
+    "full_studio_passed": 243,
+    "full_studio_ms": 1107.108,
+    "new_native_cases": 8,
+    "new_dom_cases": 2,
+    "affected_guided_native_passed": 8,
+    "affected_guided_native_seconds": 7.724,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "creation_preferences_versioned_and_shared_with_approved_ideas": true,
+  "first_script_saved_to_same_canonical_timeline_without_arbitrary_edit": true,
+  "read_endpoints_do_not_initialize_or_mutate_edits": true,
+  "legacy_projects_not_opted_in": true,
+  "guided_production_requires_measured_voice_and_current_audible_preview": true,
+  "brief_retry_cannot_change_creation_policy": true,
+  "actual_local_model_inference": true,
+  "tts_model": "vieneu-v3-turbo",
+  "local_model_inference_calls": 2,
+  "voice_duration_seconds": 7.32,
+  "final_duration_seconds": 9.433,
+  "actual_subtitle_pixel_masks": 3,
+  "proper_names_in_authored_script": [
+    "Vang Nguyễn",
+    "Vinhomes Green Paradise Cần Giờ",
+    "Vinhomes Saigon Park"
+  ],
+  "pronunciation_accepted": false,
+  "speech_quality_accepted": false,
+  "owner_optional_listening_review": "deferred_by_owner_keep_implementing",
+  "review_frame": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-guided-real-narration-frame-n2.png",
+    "sha256": "705f0f2b202a4e679a3f2097bcfb4a63402801be45a406cc6e692b73695e3404",
+    "timestamp_seconds": 5.2,
+    "visually_inspected": true,
+    "browser_or_owner_uat": false
+  },
+  "word_alignment_claimed": false,
+  "actual_current_preview_and_final_original_pcm_reuse": true,
+  "actual_full_qc_and_frozen_preview_rejection": true,
+  "actual_backup_restore_and_process_replay_without_new_inference": true,
+  "locked_sdk_model_bytes_verified_unchanged": true,
+  "model_downloads": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "semantic_vision_used": false,
+  "rights_independently_verified": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "stop_condition_pending": false
+}

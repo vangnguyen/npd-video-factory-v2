@@ -1,10 +1,11 @@
+import {newProjectQuality,narratedWorkflowGuide,usesNarratedWorkflow} from './project-quality.mjs';
+export {newProjectQuality} from './project-quality.mjs';
 export const supportsNativeCosts = session => session?.capabilities?.native_cost_ledger===true;
 export async function loadNativeCosts(session,loader=()=>import('./native-costs.mjs')) {
   return supportsNativeCosts(session)?await loader():null;
 }
 export const supportsShotStudio = session => session?.capabilities?.native_shot_studio===true || session?.native_shot_studio===true;
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
-export const newProjectQuality = session => session?.capabilities?.north_star_quality===true ? {production_quality:true} : {};
 export async function loadNativeShotStudio(session,loader=()=>import('./shot-studio.mjs')) {
   return supportsShotStudio(session)?await loader():null;
 }
@@ -35,6 +36,10 @@ export const musicSummary = project => project?.document.music ? `${project.docu
 export const scriptReviewLabel = project => !project?.document?.content_intelligence ? "" : project?.script_review?.current ? (project.approval ? "Lời đọc đã được duyệt." : "Lời đọc đã lưu được duyệt. Hình ảnh và cách dựng còn chờ bạn duyệt.") : project?.script_review ? "Lời đọc đã thay đổi; cần duyệt lại bản mới." : "Lời đọc đang chờ bạn duyệt.";
 
 const errors = {
+  NARRATION_MEASURED_TIMING_REQUIRED:'Tạo lời đọc, nghe kết quả và áp dụng thời lượng đã đo trước khi duyệt preview.',
+  NARRATION_CURRENT_AUDIBLE_PREVIEW_REVIEW_REQUIRED:'Tạo và xem preview có tiếng của phiên bản hiện tại trước khi duyệt.',
+  NARRATION_AUDIBLE_PREVIEW_APPROVAL_REQUIRED:'Duyệt preview có tiếng hiện tại trước khi render. Duyệt để tạo lời đọc chưa đủ.',
+  PREPARED_NARRATION_INPUT_CHANGED_REPREPARE:'Lời đọc hoặc giọng đã thay đổi. Duyệt nội dung và tạo lời đọc mới.',
   AI_COST_APPROVAL_REQUIRED_BEFORE_DISPATCH:'Ước tính chưa rõ hoặc vượt giới hạn chi phí AI. Kiểm tra ngân sách và nhà cung cấp trước khi tạo yêu cầu mới.',
   COST_AMOUNT_INVALID:'Nhập số tiền không âm, tối đa 1.000 tỷ đồng và không quá 6 chữ số thập phân.',
   COST_OPERATION_ALREADY_DISPATCHED_NO_REPLAY:'Yêu cầu đã được ghi nhận. Kiểm tra kết quả trước khi tạo yêu cầu mới.',
@@ -155,7 +160,7 @@ if (typeof document !== "undefined") {
     $("generate").disabled=!project||blocked||dirty;
     $("generate").textContent=project?.document.input_kind==="script"||project?.input?.metadata.workflow==="REVIEW_TRANSCRIPT"?"Chuẩn bị kịch bản để bạn duyệt":"Tạo đề xuất nội dung ↗";
     $("upload-documents").disabled=!project||blocked||dirty;
-    $("approve").disabled=!(isSourceProject(project)?shotStudio?.sourceReady():mediaReady(project?.document)&&(!project?.document?.prepared_narration||shotStudio?.narratedReady()))||blocked||dirty||Boolean(project.approval&&project.approval.approval_scope!=='narration_only');
+    $("approve").disabled=!(isSourceProject(project)?shotStudio?.sourceReady():mediaReady(project?.document)&&(!usesNarratedWorkflow(project)||project?.document?.prepared_narration)&&(!project?.document?.prepared_narration||shotStudio?.narratedReady()))||blocked||dirty||Boolean(project.approval&&project.approval.approval_scope!=='narration_only');
     $("upload-media").disabled=!project||blocked||dirty;
     $("analyze-media").disabled=!project||blocked||dirty||!mediaAnalysisPending(project.document);
     $("auto-plan").disabled=!project?.document.proposal||!mediaLibrary(project?.document).length||blocked||dirty;
@@ -271,6 +276,9 @@ if (typeof document !== "undefined") {
       $("facts").innerHTML=proposal.facts_needing_source.map(f=>`<li>${esc(f)}</li>`).join("")||"<li>Đề xuất không liệt kê thêm nguồn. Bạn vẫn cần kiểm tra nội dung.</li>";
     }
     $("approval-state").textContent=project?.approval?.approval_scope==='narration_only'?"Đã duyệt để tạo lời đọc":project?.approval?"Đã duyệt phiên bản này":"Chờ bạn duyệt";
+    const workflowHint=$("narrated-workflow-hint");if(workflowHint){workflowHint.textContent=narratedWorkflowGuide(project);workflowHint.hidden=!workflowHint.textContent;}
+    const reviewCopy=$("production-review-copy");if(reviewCopy)reviewCopy.textContent=usesNarratedWorkflow(project)?'Tôi đã xem và nghe preview có tiếng của phiên bản này, kiểm tra nội dung, phụ đề, nhạc và quyền sử dụng tư liệu. Tôi duyệt để render video cuối.':'Tôi đã kiểm tra lời đọc, thông tin cần nguồn, ảnh/video từng cảnh và quyền sử dụng. Tôi duyệt phiên bản này để tạo giọng đọc và video.';
+    $("render").textContent=usesNarratedWorkflow(project)?'Render video đã duyệt':'Tạo giọng đọc & video';
     $("script-review-state").textContent=scriptReviewLabel(project);
     $("script-review-state").hidden=!scriptReviewLabel(project);
     const jobs=project?.jobs??[];

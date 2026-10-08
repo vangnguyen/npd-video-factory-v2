@@ -65,8 +65,10 @@ explicit cached synthetic PCM. No genuine voice inference, semantic Vision,
 independent rights, paid operation, browser usability or Owner UAT is inferred.
 
 See `north-star/native-narrated-preview-evidence.json` and
-`NORTH_STAR_WAVE_REPORTS.md` for exact tests and hashes. Genuine local-model
-inference, guided new-project defaults, provider-neutral voices/languages/styles
-and the remaining original Mode A/B, Trend, publishing, analytics, learning,
+`NORTH_STAR_WAVE_REPORTS.md` for this increment's exact tests and hashes. Current
+guided project defaults and actual installed local-model inference are described
+in `NATIVE_GUIDED_NARRATION_WORKFLOW.md`, with separate final-source evidence.
+Speech/Owner/browser acceptance, provider-neutral voices/languages/styles and
+the remaining original Mode A/B, Trend, publishing, analytics, learning,
 Agent Hub, hardening and final A/B/C acceptance remain program work.
 This increment does not certify North Star completion or production deployment.

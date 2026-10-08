@@ -41,7 +41,7 @@ def post(handler,path,body):
         if match:
             identifier,action=match[1],match[2]
             if action=='send':
-                project=service.send(identifier,body.get('version'))
+                project=service.send(identifier,body.get('version'),production_quality=body.get('production_quality',False),narrated_workflow=body.get('narrated_workflow',False))
                 return {'project_id':project['id'],'production_dispatch':False,'next':'human_script_review'}
             if action=='approve': service.approve_brief(identifier,body.get('version'),body.get('reviewer'),body.get('acknowledged'),body.get('note',''))
             else: service.edit_brief(identifier,body.get('version'),body.get('changes',{}),body.get('reviewer'))
