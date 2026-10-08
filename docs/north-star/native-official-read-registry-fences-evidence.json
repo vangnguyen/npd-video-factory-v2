@@ -1,0 +1,124 @@
+{
+  "schema": "native-official-read-registry-fences-evidence-v1",
+  "parent_head": "0ec96022e4ef860e6e9c1669e6b16d9144170ba9",
+  "source_sha256": {
+    "services/windows_native/official_account_registry.py": "8c6579ba3ba39bb00107e4e8dce57cba08ffa0868b028e7cd8f76c3075084575",
+    "services/windows_native/official_analytics.py": "4f32214cb3d69fbc37ca0f57ef1a584115f31007ea1f51ad0a0e1886548ab633",
+    "services/windows_native/tests/test_official_account_registry.py": "4ae42e11c8a17db0943445952f77563cb62a75e3cc1864ed2e33cca8fe31988d",
+    "services/windows_native/tests/test_official_analytics.py": "0e7371f60f002ade6f528e42dd675719a8eac9d59a180cb29779a24a66b6be28",
+    "scripts/north_star_native_official_read_registry.py": "b9d592489f61ef74b21b646dcd105ab5a41f0839ad973b1bb56871dbce10b41d",
+    "docs/NATIVE_OFFICIAL_READ_REGISTRY_FENCES.md": "775611987482ad95deb93f0ba6678ee884eea866a6201bae601bbea4a6e3a187",
+    "docs/NATIVE_OFFICIAL_ANALYTICS_KERNEL.md": "70558a21042d421d8e79339369aee9b57542d9b15595b2be06ab7f1ad20616fb"
+  },
+  "tests": {
+    "current_related_native_passed": 204,
+    "seconds": 281.182,
+    "modules": 15,
+    "new_native_cases": 14,
+    "initial_related_201_before_final_resolution_fences": true,
+    "focused_registry_and_analytics_20_passed": true,
+    "final_resolution_3_passed": true,
+    "prior_full_native_935_at_parent": true,
+    "prior_full_studio_307_source_unchanged": true
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-read-registry-fences-flow-n1",
+    "evidence_sha256": "aab45ad6e1d69de84ec2dfad6172abab9613a946163d001d168170a046aa5d62",
+    "exports": {
+      "backup.json": {
+        "sha256": "412b8f28881a7e25ec52e36339c1275548834fea1aa24b4dbb0bed497b918171",
+        "bytes": 1949
+      },
+      "completed-review.json": {
+        "sha256": "68dbe38f5edc22e7d5ecb70fc5697afce2a31da1daad868855663b57e3da73ac",
+        "bytes": 13989
+      },
+      "cost-summary.json": {
+        "sha256": "bcb02cf147eb38ad7b53e47107705c9f5a17984e3e3162447a6511e6cd43d8cb",
+        "bytes": 20399
+      },
+      "evidence.json": {
+        "sha256": "aab45ad6e1d69de84ec2dfad6172abab9613a946163d001d168170a046aa5d62",
+        "bytes": 3781
+      },
+      "expected-analytics-history.json": {
+        "sha256": "aac99795cc30b7315204c8f983e0c5fc21a9dce44e1e3f6b62de913ec09f2de8",
+        "bytes": 26293
+      },
+      "expected-jobs.json": {
+        "sha256": "9b106f26c2562ada05f58cfb095393a60e3d4149e5ae33417ed653ac428b3756",
+        "bytes": 2965
+      },
+      "expected-journals.json": {
+        "sha256": "1c16d540abd87c9df613b5f3e172af12d4730e3f6fa68a68c77c02201105d501",
+        "bytes": 82722
+      },
+      "expected-project.json": {
+        "sha256": "f97d4d78e4304783d26f721ca849c49427d113b208488cabf328e9acd6967bfb",
+        "bytes": 5207
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-analytics-kernel-replay.json": {
+        "sha256": "5d68cbb0970156ce0751bedbd3d97e0f04ac874be71c8c611cc23c21d82635d9",
+        "bytes": 99
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "edc81de61a6b548f3b546a2c0151ef9ef9563f4fa946c342dcd846d02cc82ebf",
+        "bytes": 1972
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "fea8082bfac5db65c954fa48ad1c9053956e882b4c9fe6c462d8d699096827b2",
+        "bytes": 1321
+      },
+      "new-process-replay.json": {
+        "sha256": "c1c04f392eef0a1292ed075b7b21a806464d8cc84ce648c9965aeb1d41e8a219",
+        "bytes": 285
+      },
+      "owned-official-read-registry.zip": {
+        "sha256": "d932a9aa54a04c441748d81a93682704cac42734bf8d407dcc7d117d9964604a",
+        "bytes": 962540
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "881e6a77f83889397082fb9c3f606940e4159970068699ad2b9128c3a12c9c0c",
+        "bytes": 258
+      },
+      "recovery-restore.json": {
+        "sha256": "ba9e5ae3dcb7ffc5370a6e240e714290e8835f2690607cca9693058ede1f27ac",
+        "bytes": 2381
+      },
+      "restored-in-process.json": {
+        "sha256": "c1c04f392eef0a1292ed075b7b21a806464d8cc84ce648c9965aeb1d41e8a219",
+        "bytes": 285
+      }
+    },
+    "backup_sha256": "d932a9aa54a04c441748d81a93682704cac42734bf8d407dcc7d117d9964604a",
+    "backup_bytes": 962540
+  },
+  "logs": {
+    "native-official-read-registry-fences-related-n2.log": "c953e02aa3634af6df8317c4329178da1cad868d38f2d4b576f3bb0981c31894",
+    "native-official-read-registry-fences-related.log": "8e52a4153d8c5c7279afadaa36735b5e2178c40cdd9675bcfe819284ea8c6745"
+  },
+  "strict_external_registry_load_and_frozen_exact_bytes_checked_before_and_after_credential_resolution": true,
+  "owner_source_claim_registry_and_fresh_lifetime_checked_after_final_resolution_before_wire": true,
+  "constructor_only_hashes_compatible_loaded_configuration_requires_fresh_explicit_consent": true,
+  "changed_registry_zero_extra_reads_removed_registry_history_and_twenty_journal_prior_kernel_restore_exact": true,
+  "mock_analytics_read_requests": 6,
+  "mock_publication_wire_requests": 10,
+  "mock_initial_account_lookup_requests": 1,
+  "signed_http_requests": 0,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_oauth_provider_and_clock_fixtures": true,
+  "accepted_runtime_publishing_or_analytics_enabled": false,
+  "real_provider_browser_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

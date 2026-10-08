@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 import httpx
 from pydantic import ValidationError
-from services.windows_native.contracts import WorkflowError
+from services.windows_native.contracts import WorkflowError,digest,file_sha
 from services.windows_native.official_account_tokens import AccessToken,save,load,PREFIX,ENTROPY
 from services.windows_native.official_account_registry import Account,AccountFactory,Registry,load as registry_load
 from app.analytics_official import AnalyticsHTTPClient,AnalyticsOAuthCredential,YT_READ,YT_ANALYTICS,AnalyticsOfficialError
@@ -88,3 +88,57 @@ class OfficialAccountRegistryTests(unittest.TestCase):
             AnalyticsOAuthCredential(self.target,datetime.now(timezone.utc)+timedelta(hours=1),frozenset({YT_READ}),self.token['token'])]:
             factory=self.factory(owner_read_enabled=True,transport=httpx.MockTransport(lambda _:None),resolver=lambda _:credential)
             with self.assertRaises(AnalyticsOfficialError):factory.credential()
+
+    def registry(self,name='readonly-registry.json'):
+        path=self.folder/name;path.write_text(json.dumps({'version':1,'workspace_id':'wsp_fixture','accounts':[self.account.model_dump(mode='json')]}),encoding='utf-8')
+        return path
+
+    def test_registry_load_freezes_exact_external_bytes_without_decrypt_or_request(self):
+        path=self.registry()
+        with patch('services.windows_native.official_account_registry.token_load',side_effect=AssertionError('No startup token read')):
+            loaded=registry_load(path,self.root,'wsp_fixture',owner_read_enabled=True)[self.account.account_ref]
+            public=loaded.public();self.assertEqual(loaded.registry_file,path);self.assertEqual(loaded.registry_sha256,file_sha(path))
+            self.assertEqual(public['configuration_sha256'],digest({**self.account.model_dump(mode='json'),'registry_sha256':file_sha(path)}))
+            self.assertFalse(public['credential_present']);self.assertFalse(public['credential_verified']);self.assertFalse(public['publishing_enabled'])
+            self.assertNotIn(str(path),json.dumps(public));self.assertNotIn(str(self.secret),json.dumps(public))
+        self.assertFalse(self.secret.exists())
+
+    def test_changed_registry_blocks_credential_resolution_even_with_same_byte_count(self):
+        path=self.registry();factory=self.factory(owner_read_enabled=True,transport=httpx.MockTransport(lambda _:self.fail('No wire')),
+            resolver=lambda _:self.fail('Changed registry must stop before OAuth'),registry_file=path,registry_sha256=file_sha(path))
+        before=path.stat().st_size;path.write_bytes(path.read_bytes().replace(b'UC_EXPLICIT_FIXTURE',b'UC_REPLACED_FIXTURE'))
+        self.assertEqual(path.stat().st_size,before)
+        for operation in (factory.public,factory.credential):
+            with self.assertRaisesRegex(WorkflowError,'CONFIGURATION_CHANGED'):operation()
+
+    def test_removed_registry_blocks_before_token_load(self):
+        path=self.registry();factory=registry_load(path,self.root,'wsp_fixture',owner_read_enabled=True)[self.account.account_ref];path.unlink()
+        with patch('services.windows_native.official_account_registry.token_load',side_effect=AssertionError('No token read')):
+            with self.assertRaisesRegex(WorkflowError,'CONFIGURATION_CHANGED'):factory.credential()
+
+    def test_changed_registry_hash_path_or_cleared_binding_cannot_bypass_frozen_fence(self):
+        for i,mutation in enumerate((lambda f:setattr(f,'registry_file',None),lambda f:setattr(f,'registry_sha256',None),
+            lambda f:setattr(f,'registry_sha256','b'*64),lambda f:setattr(f,'registry_file',self.folder/'replacement.json'))):
+            path=self.registry('readonly-mutation-'+str(i)+'.json');factory=registry_load(path,self.root,'wsp_fixture')[self.account.account_ref];mutation(factory)
+            with self.assertRaisesRegex(WorkflowError,'CONFIGURATION_CHANGED'):factory.public()
+
+    def test_partial_or_invalid_registry_binding_is_rejected(self):
+        path=self.registry()
+        for kwargs in ({'registry_file':path},{'registry_sha256':file_sha(path)},{'registry_file':path,'registry_sha256':True},
+            {'registry_file':path,'registry_sha256':'INVALID'}):
+            with self.assertRaisesRegex(WorkflowError,'CONFIGURATION_INVALID'):self.factory(**kwargs)
+
+    def test_registry_paths_and_operator_flag_are_strict_before_read(self):
+        for path in (Path('relative-registry.json'),self.root/'registry.json',Path(__file__).resolve()):
+            with self.assertRaises(WorkflowError):registry_load(path,self.root,'wsp_fixture')
+        path=self.registry()
+        with self.assertRaisesRegex(WorkflowError,'CONFIGURATION_INVALID'):registry_load(path,self.root,'wsp_fixture',owner_read_enabled=1)
+
+    def test_changed_file_during_registry_load_fails_before_factory_or_secret(self):
+        path=self.registry()
+        with patch('services.windows_native.official_account_registry.file_sha',return_value='b'*64):
+            with self.assertRaisesRegex(WorkflowError,'REGISTRY_INVALID'):registry_load(path,self.root,'wsp_fixture')
+
+    def test_constructor_only_configuration_hash_remains_compatible(self):
+        factory=self.factory();self.assertEqual(factory.sha256,digest(self.account.model_dump(mode='json')))
+        self.assertIsNone(factory.registry_file);self.assertIsNone(factory.registry_sha256)

@@ -20,7 +20,7 @@ from .store import now
 from app.analytics_models import NormalizedMetrics, VideoFeatureMetadata
 from app.analytics_official import (AnalyticsOfficialError, AnalyticsRateLimited, account_request,
     confirm_account, youtube_video_request, confirm_youtube_video, youtube_report_request,
-    youtube_metrics, response_digest, YT_MAPPING)
+    youtube_metrics, response_digest, YT_MAPPING, resolve_credential)
 from app.publishing_wire import PublishingWireError
 from app.publishing_models import PublishingTargetBinding
 from app.publishing_credentials import target_digest
@@ -291,6 +291,8 @@ class NativeOfficialAnalytics:
             # Resolve afresh after the final local fence; no cached bearer survives expiry.
             fresh = factory.credential(request.query, now=self.clock())
             if fresh != credential: raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_CREDENTIAL_CHANGED')
+            self.admission(project,identity,claim)
+            resolve_credential(lambda _:fresh,factory.account.target,request.query,now=self.clock())
             sent = True; response = asyncio.run(factory.client.request(wire_request))
             self.costs.settle(cost, status='response_received', response_sha256=response_digest(response))
             summary = parser(response, credential, request)

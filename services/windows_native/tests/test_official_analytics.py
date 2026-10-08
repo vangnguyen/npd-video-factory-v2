@@ -16,6 +16,7 @@ from services.windows_native.official_analytics import NativeOfficialAnalytics, 
 from services.windows_native.official_analytics_models import Collect, Cancel
 from services.windows_native.official_account_registry import AccountFactory
 from services.windows_native.contracts import WorkflowError, digest
+from services.windows_native.contracts import file_sha
 from services.windows_native.backup import database_status
 from app.analytics_official import YT_METRICS, YT_READ, YT_ANALYTICS, YT_MONEY, AnalyticsOAuthCredential
 from app.human_identity import HumanAuthRegistry, HumanAuthVerifier
@@ -143,6 +144,60 @@ class OfficialAnalyticsTests(OfficialAnalyticsFixture,unittest.TestCase):
     def test_changed_current_account_configuration_stops_before_credentials(self):
         self.collect();self.reader.account.read_enabled=False;done=self.analytics.process()
         self.assertEqual(done['status'],'failed');self.assertEqual(self.read_wire,[])
+
+    def bound_registry(self):
+        path=self.folder/'explicit-readonly-analytics-registry.json'
+        path.write_text(json.dumps({'version':1,'workspace_id':self.workspace,'accounts':[self.reader.account.model_dump(mode='json')]}),encoding='utf-8')
+        self.reader=AccountFactory(self.reader.account,self.root,self.workspace,owner_read_enabled=True,
+            transport=httpx.MockTransport(self.read_response),resolver=lambda _:self.read_credential,registry_file=path,registry_sha256=file_sha(path))
+        self.accounts.factories[self.reader.account.account_ref]=self.reader
+        return path
+
+    def test_registry_change_after_consent_blocks_before_oauth_or_provider_read(self):
+        path=self.bound_registry();self.collect();path.write_bytes(path.read_bytes()+b' ')
+        done=self.analytics.process();self.assertEqual(done['status'],'failed');self.assertEqual(done['failure_code'],'NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CHANGED')
+        self.assertEqual(self.read_wire,[]);self.assertIsNone(done['result'])
+
+    def test_registry_change_during_response_blocks_remaining_reads_and_snapshot(self):
+        path=self.bound_registry();response=self.read_response
+        def changed(request):
+            result=response(request);path.write_bytes(path.read_bytes()+b' ');return result
+        self.reader.client.wire.transport.handler=changed
+        done=self.run_collection();self.assertEqual(done['status'],'failed');self.assertEqual(len(self.read_wire),1);self.assertIsNone(done['result'])
+
+    def test_completed_snapshot_reopens_without_removed_registry_or_current_factory(self):
+        path=self.bound_registry();done=self.run_collection();result=done['result'];path.unlink();self.accounts.factories.clear()
+        restored=NativeOfficialAnalytics(self.service);self.assertEqual(restored.get(self.project['id'],done['sync_id'])['result'],result)
+        self.assertEqual(restored.page(self.project['id'])['items'][0]['result'],result)
+
+    def final_resolution(self,callback):
+        path=self.bound_registry();calls=[0]
+        def resolver(_):
+            calls[0]+=1
+            if calls[0]==2:callback(path)
+            return self.read_credential
+        self.reader=AccountFactory(self.reader.account,self.root,self.workspace,owner_read_enabled=True,
+            transport=httpx.MockTransport(self.read_response),resolver=resolver,registry_file=path,registry_sha256=file_sha(path))
+        self.accounts.factories[self.reader.account.account_ref]=self.reader
+        return calls
+
+    def test_registry_change_during_final_credential_resolution_prevents_wire(self):
+        calls=self.final_resolution(lambda path:path.write_bytes(path.read_bytes()+b' '));done=self.run_collection()
+        self.assertEqual(calls[0],2);self.assertEqual(done['status'],'failed');self.assertEqual(self.read_wire,[])
+        self.assertEqual(done['failure_code'],'NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CHANGED')
+
+    def test_owner_change_during_final_credential_resolution_prevents_wire(self):
+        def revoke(_):
+            raw=self.verifier.registry.model_dump(mode='json');raw['tokens'][self.principal.token_id]['enabled']=False
+            self.verifier=HumanAuthVerifier(HumanAuthRegistry.model_validate(raw),max_token_ttl_seconds=86400)
+        calls=self.final_resolution(revoke);done=self.run_collection();self.assertEqual(calls[0],2)
+        self.assertEqual(done['status'],'failed');self.assertEqual(self.read_wire,[])
+
+    def test_clock_advancing_during_final_resolution_rechecks_credential_lifetime(self):
+        self.read_credential=AnalyticsOAuthCredential(self.target,self.clock[0]+timedelta(seconds=100),frozenset({YT_READ,YT_ANALYTICS}),'EXPLICIT-ANALYTICS-READ-TOKEN-FIXTURE-0123456789')
+        calls=self.final_resolution(lambda _:self.clock.__setitem__(0,self.clock[0]+timedelta(seconds=20)))
+        done=self.run_collection();self.assertEqual(calls[0],2);self.assertEqual(done['failure_code'],'ANALYTICS_OAUTH_REFRESH_REQUIRED')
+        self.assertEqual(self.read_wire,[])
 
     def test_expired_owner_consent_stops_before_cost_or_network(self):
         self.collect();self.clock[0]+=timedelta(seconds=901);self.assertIsNone(self.analytics.process())

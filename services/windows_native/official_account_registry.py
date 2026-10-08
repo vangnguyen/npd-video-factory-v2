@@ -1,11 +1,10 @@
 """Protected public account bindings; calls and token reads are explicit only."""
-import json
+import hashlib,json,re
 from pathlib import Path
 from typing import Literal
 from pydantic import Field,StrictBool,StrictInt,field_validator,model_validator
 from . import ingestion
-from .backup import guard
-from .contracts import WorkflowError,digest
+from .contracts import WorkflowError,digest,file_sha
 from .official_account_tokens import protected_path,unique_pairs,load as token_load
 from app.models import StrictModel
 from app.publishing_models import PublishingTargetBinding
@@ -49,28 +48,39 @@ class Registry(StrictModel):
         return self
 
 class AccountFactory:
-    def __init__(self,account,root,workspace,*,owner_read_enabled=False,transport=None,resolver=None):
+    def __init__(self,account,root,workspace,*,owner_read_enabled=False,transport=None,resolver=None,registry_file=None,registry_sha256=None):
         if type(owner_read_enabled) is not bool or type(account) is not Account or account.target.workspace_id!=workspace:
             raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
         self.account=account.model_copy(deep=True);self.root=Path(root);self.workspace=workspace
+        if (registry_file is None)!=(registry_sha256 is None) or registry_sha256 is not None and (not isinstance(registry_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',registry_sha256)):
+            raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
+        self.registry_file=protected_path(registry_file,self.root) if registry_file is not None else None
+        self.registry_sha256=registry_sha256;self.frozen_registry_file=self.registry_file;self.frozen_registry_sha256=registry_sha256
         self.path=protected_path(account.token_file,root)
         self.client=AnalyticsHTTPClient(account.target.platform,network_enabled=owner_read_enabled and account.read_enabled,transport=transport)
         if resolver is not None and not callable(resolver):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_RESOLVER_INVALID',400)
         self.resolver=resolver;self.read_enabled=owner_read_enabled and account.read_enabled
-        self.frozen=self.account.model_dump(mode='json');self.sha256=digest(self.frozen)
+        self.frozen=self.account.model_dump(mode='json');self.sha256=digest({**self.frozen,**({'registry_sha256':registry_sha256} if registry_sha256 is not None else {})})
         self.frozen_root=self.root.absolute();self.frozen_resolver=resolver;self.frozen_enabled=self.read_enabled
         self.frozen_transport=transport;self.frozen_network=self.client.wire.network_enabled
         self.frozen_client=self.client;self.frozen_wire=self.client.wire
 
     def check(self):
-        try:parsed=Account.model_validate(self.account.model_dump(mode='json'))
+        try:
+            parsed=Account.model_validate(self.account.model_dump(mode='json'))
+            if (self.registry_file!=self.frozen_registry_file or self.registry_sha256!=self.frozen_registry_sha256
+                or (self.registry_file is None)!=(self.registry_sha256 is None)):raise ValueError()
+            if self.registry_file is not None and (protected_path(self.registry_file,self.root)!=self.registry_file
+                or not self.registry_file.is_file() or not 1<=self.registry_file.stat().st_size<=262144
+                or file_sha(self.registry_file)!=self.registry_sha256):raise ValueError()
         except Exception:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CHANGED') from None
         if (type(self.client) is not AnalyticsHTTPClient or self.client is not self.frozen_client
             or type(self.client.wire) is not OfficialHTTPClient or self.client.wire is not self.frozen_wire
             or self.client.wire.platform!='analytics_'+parsed.target.platform or self.root.absolute()!=self.frozen_root
             or self.resolver is not self.frozen_resolver or self.read_enabled is not self.frozen_enabled
             or self.client.wire.transport is not self.frozen_transport or self.client.wire.network_enabled is not self.frozen_network
-            or parsed.model_dump(mode='json')!=self.frozen or digest(parsed.model_dump(mode='json'))!=self.sha256
+            or parsed.model_dump(mode='json')!=self.frozen
+            or digest({**parsed.model_dump(mode='json'),**({'registry_sha256':self.registry_sha256} if self.registry_sha256 is not None else {})})!=self.sha256
             or parsed.target.workspace_id!=self.workspace or protected_path(parsed.token_file,self.root)!=self.path
             or self.client.platform!=parsed.target.platform):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CHANGED')
         return parsed
@@ -89,12 +99,17 @@ class AccountFactory:
         value=self.check()
         if not self.read_enabled or not self.client.enabled:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_READ_DISABLED')
         resolver=self.resolver or (lambda target:token_load(self.path,self.root,target,value.credential_alias))
-        return resolve_credential(resolver,value.target,query,now=now)
+        credential=resolve_credential(resolver,value.target,query,now=now)
+        self.check()
+        return credential
 
 def load(path,root,workspace,*,owner_read_enabled=False):
-    path=guard(Path(path),exists=True)
-    if Path(root).absolute() in path.parents or path.stat().st_size>262144:raise WorkflowError('NATIVE_OFFICIAL_REGISTRY_MUST_BE_OUTSIDE_STATE',400)
-    try:registry=Registry.model_validate(json.loads(path.read_bytes(),object_pairs_hook=unique_pairs))
+    if type(owner_read_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
+    path=protected_path(path,root)
+    if not path.is_file() or not 1<=path.stat().st_size<=262144:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_REGISTRY_INVALID',400)
+    try:
+        raw=path.read_bytes();registry=Registry.model_validate(json.loads(raw,object_pairs_hook=unique_pairs));checksum=hashlib.sha256(raw).hexdigest()
+        if file_sha(path)!=checksum:raise ValueError()
     except Exception:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_REGISTRY_INVALID',400) from None
     if registry.workspace_id!=workspace:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_WORKSPACE_MISMATCH',400)
-    return {a.account_ref:AccountFactory(a,root,workspace,owner_read_enabled=owner_read_enabled) for a in registry.accounts}
+    return {a.account_ref:AccountFactory(a,root,workspace,owner_read_enabled=owner_read_enabled,registry_file=path,registry_sha256=checksum) for a in registry.accounts}
