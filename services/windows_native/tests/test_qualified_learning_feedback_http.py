@@ -1,5 +1,6 @@
 """Signed synthetic source projection; no provider, browser or Owner acceptance."""
 import copy, json, unittest, uuid
+from pathlib import Path
 from datetime import timedelta
 from unittest.mock import patch
 from services.windows_native.tests.test_official_learning_http import OfficialLearningHTTPFixture
@@ -29,6 +30,16 @@ class QualifiedFeedbackHTTPFixture(OfficialLearningHTTPFixture):
         assert status==200,value;assert headers['Cache-Control']=='no-store';return value
 
 class QualifiedFeedbackHTTPTests(QualifiedFeedbackHTTPFixture,unittest.TestCase):
+    def test_qualified_controls_parent_callbacks_review_card_and_radar_are_served_exactly(self):
+        root=Path(__file__).resolve().parents[3]/'apps'/'studio-web'
+        files={}
+        for name in ('native.html','native.mjs','shot-studio.mjs','native-qualified-learning.mjs','native-official-learning.mjs','trend-radar.mjs'):
+            status,value,_=self.request('GET','/'+name);self.assertEqual(status,200);self.assertEqual(value,(root/name).read_bytes());files[name]=value.decode('utf-8')
+        self.assertIn('native-qualified-learning-card',files['native.html']);self.assertIn("qualifiedLearningUI?.sync()",files['native.mjs'])
+        self.assertIn("getBinding:()=>officialLearningUI.currentBinding()",files['native.mjs']);self.assertIn('native-qualified-learning-card',files['shot-studio.mjs'])
+        self.assertIn('currentBinding:()=>({learning:selected})',files['native-official-learning.mjs']);self.assertIn('learningSummary(value,workspace)',files['trend-radar.mjs'])
+        self.assertFalse(self.server.runner.wake.is_set())
+
     def test_signed_projection_source_dimensions_history_and_templates_are_local_only(self):
         wire=self.read_wire.copy();before=self.server.store.get(self.project['id']);costs=self.analytics.costs.summary(self.project['id'])
         self.server.runner.wake.clear();value=self.project_feedback();record=value['record']

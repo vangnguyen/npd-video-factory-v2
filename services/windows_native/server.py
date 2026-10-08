@@ -682,6 +682,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-official-analytics.mjs'] = 'native-official-analytics.mjs'
         static['/native-official-winners.mjs'] = 'native-official-winners.mjs'
         static['/native-official-learning.mjs'] = 'native-official-learning.mjs'
+        static['/native-qualified-learning.mjs'] = 'native-qualified-learning.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
         static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',

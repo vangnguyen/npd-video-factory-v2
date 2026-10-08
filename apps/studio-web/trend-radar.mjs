@@ -2,6 +2,17 @@ export const radarViews=[['trending-now','Trending Now'],['rising-fast','Rising 
 const labels={velocity:'Tốc độ tăng',acceleration:'Gia tốc',cross_platform_spread:'Lan rộng nhiều nền tảng',engagement_quality:'Chất lượng tương tác',novelty:'Độ mới',channel_fit:'Phù hợp kênh',format_fit:'Phù hợp định dạng',monetization_fit:'Phù hợp mục tiêu thương mại',saturation:'Bão hòa',competition:'Cạnh tranh',rights_risk:'Rủi ro quyền sử dụng',policy_risk:'Rủi ro chính sách'};
 const defaults={velocity:1.3,acceleration:1.2,cross_platform_spread:1.2,engagement_quality:1,novelty:1,channel_fit:1,format_fit:.9,monetization_fit:.8,saturation:1.1,competition:.9,rights_risk:1.3,policy_risk:1.2};
 export const supportsTrendRadar=s=>s?.capabilities?.native_trend_radar===true;
+export function learningSummary(value,workspace){
+  const p=value?.payload;if(value?.schema_version!=='native-trend-radar-record-v1'||value.workspace_id!==workspace||value.record_type!=='learning'||typeof p?.scope?.mock!=='boolean')throw new Error('Lịch sử học khác không gian hoặc nguồn.');
+  if(p.schema_version==='native-qualified-learning-feedback-v1'||p.source_binding||p.consumers){
+    if(p.schema_version!=='native-qualified-learning-feedback-v1'||p.mock!==p.scope.mock||p.real_audience_observation!==!p.mock||!Number.isInteger(p.observation_count)||p.observation_count<0||p.observation_count>100
+      ||p.recommendation_only!==true||p.automatic_application!==false||p.provider_calls!==0||p.publishing_enabled!==false||typeof p.source_binding?.learning_id!=='string'||!/^nols_[a-f0-9]{32}$/.test(p.source_binding.learning_id)
+      ||typeof p.source_binding.learning_sha256!=='string'||!/^[a-f0-9]{64}$/.test(p.source_binding.learning_sha256))throw new Error('Bản học có nguồn không hợp lệ.');
+    return{count:p.observation_count,label:p.mock?'Mô phỏng API':'Quan sát API nền tảng',qualified:true};
+  }
+  if(!Array.isArray(p.observations)||p.observations.length>100||p.scope.real_audience_observation!==false||p.recommendation_only!==true||p.autonomous_execution!==false)throw new Error('Bản học thử nghiệm không hợp lệ.');
+  return{count:p.observations.length,label:p.scope.mock?'Thử nghiệm':'Chưa cấu hình',qualified:false};
+}
 export function publicLink(value){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!u.hash?u.href:null;}catch{return null;}}
 export function validateRadarPage(value,workspace){
   if(value?.schema_version!=='native-trend-radar-page-v1'||value.workspace_id!==workspace||!Array.isArray(value.items)||value.items.length>100||value.automatic_production!==false||value.publishing_enabled!==false)throw new Error('Dữ liệu Radar khác không gian hiện tại.');
@@ -56,7 +67,7 @@ export function mountRadar({dom=globalThis.document,api,session,navigate=url=>gl
     if(collections.workspace_id!==workspace||learning.workspace_id!==workspace)throw new Error('Lịch sử khác không gian hiện tại.');$('radar-collections').replaceChildren();
     for(const value of collections.items.slice(0,10))$('radar-collections').append(node(dom,'p',`${value.payload.request.provider_key} · ${value.payload.status} · ${value.payload.signal_ids.length} tín hiệu${value.payload.cached_collection_id?' · dùng bản đã lưu':''}${value.payload.failure_code?' · '+value.payload.failure_code:''}`));
     const selected=$('radar-learning').value;$('radar-learning').replaceChildren(node(dom,'option','Chưa dùng lịch sử'));$('radar-learning').children[0].value='';
-    for(const value of learning.items.filter(v=>v.payload.scope.channel_profile_ref===$('radar-channel').value&&v.payload.scope.platform===$('radar-platform').value&&v.payload.status!=='not_configured')){const option=node(dom,'option',`${value.payload.scope.mock?'Thử nghiệm':'Khán giả'} · ${value.payload.observations.length} bài · ${value.created_at}`);option.value=value.id;$('radar-learning').append(option);}
+    for(const value of learning.items.filter(v=>v.payload.scope.channel_profile_ref===$('radar-channel').value&&v.payload.scope.platform===$('radar-platform').value&&v.payload.status!=='not_configured')){const summary=learningSummary(value,workspace),option=node(dom,'option',`${summary.label} · ${summary.count} bài · ${value.created_at}`);option.value=value.id;$('radar-learning').append(option);}
     if([...$('radar-learning').children].some(v=>v.value===selected))$('radar-learning').value=selected;
     clearTimeout(timer);if(collections.items.some(v=>['queued','running'].includes(v.payload.status)))timer=setTimeout(()=>saved().catch(e=>message(e.message,true)),2000);
   }

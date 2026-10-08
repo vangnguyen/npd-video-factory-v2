@@ -1,0 +1,177 @@
+{
+  "schema": "native-qualified-learning-controls-evidence-v1",
+  "parent_head": "c885f18270a67534d896c93b7ac0b6f78441eca2",
+  "source_sha256": {
+    "services/windows_native/server.py": "0891a667e7e34506d0c69591260b34c1624d4c5c3e7c01607b061a22c0ee9478",
+    "services/windows_native/tests/test_qualified_learning_feedback_http.py": "991edb8fcd8b5ccc165e75b65f2a300d108ea8588d7a425644ace2460804c84e",
+    "scripts/north_star_native_qualified_learning_controls.py": "7492601a01fff80bbfad28c228e5374a69c739b3d4a4456c6692570175166358",
+    "apps/studio-web/native.html": "f8a6fd7dd36b1deb90f11e514fb6de169a70905502bbabd4e65a19860bcb8a5a",
+    "apps/studio-web/native.mjs": "722ba1ee91f07c99863137c20363f37b5cbdb3ce969416464825e88898824232",
+    "apps/studio-web/shot-studio.mjs": "feb4b1d8b3bb1d6e9cac4f7cdd2ed8f07d79a5fcd62fe169b10e7564e5e56625",
+    "apps/studio-web/native-qualified-learning.mjs": "11a43ca47c31f4966570bdb6551f6466b265b59055667086a5c367a8ee0bf662",
+    "apps/studio-web/native-official-learning.mjs": "e6e22c3d7fd43f5d0e23874a24c13491fd9407f5280ae616d895455c66ba9009",
+    "apps/studio-web/trend-radar.mjs": "1ea8bb9f7c7a6c8b1b4ee81501419f7703855fec1e8d6dc2823cde0be884e541",
+    "apps/studio-web/tests/native-qualified-learning.test.mjs": "7d4eb33e15df620bc63cb2cfc602ec1a69430cdc108e03f5e20ee9f009bb5bc7",
+    "apps/studio-web/tests/native-official-learning.test.mjs": "afd78b81b66943433a60983741f044b59a29e970390008a4f14c7591e760c712",
+    "apps/studio-web/tests/native-trend-radar.test.mjs": "9f754ba5680f40410f6c51485b6bcaba587e31a73e96d70e4324c7527659c556",
+    "docs/NATIVE_QUALIFIED_LEARNING_CONTROLS.md": "9a772c9e7693788cdf48534ba6f1e0932240122af1c5e9d7b195e2f04e421964"
+  },
+  "tests": {
+    "full_native_passed": 1028,
+    "full_native_seconds": 1348.272,
+    "full_studio_passed": 363,
+    "studio_duration_ms": 1252.9547,
+    "new_controls_cases": 15,
+    "new_parent_callback_cases": 2,
+    "new_radar_cases": 3,
+    "new_signed_static_http_cases": 1,
+    "focused_signed_http_passed": 9,
+    "focused_signed_http_seconds": 43.122,
+    "api_code_unchanged": true
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-qualified-learning-controls-flow-n2",
+    "evidence_sha256": "c4c21ba1a65447ea841d2b7e1afd4419ba5d7eec90a979915cd2f64955f3ef6f",
+    "exports": {
+      "backup.json": {
+        "sha256": "2b83c143380063a21fae0f2e9d49e092a62db6a322dfe53c56794b7d29891817",
+        "bytes": 3836
+      },
+      "bounded-history.json": {
+        "sha256": "f358965c9c6e3f735c21e4abcf5dc871440ce7763b7d82880261a01707a08eba",
+        "bytes": 15621
+      },
+      "cost-summary.json": {
+        "sha256": "906e73a5d4a9931f88fa778dcad540b9902f2db1fc89d19eea23364807b74999",
+        "bytes": 16896
+      },
+      "evidence.json": {
+        "sha256": "c4c21ba1a65447ea841d2b7e1afd4419ba5d7eec90a979915cd2f64955f3ef6f",
+        "bytes": 6138
+      },
+      "expected-analytics-history.json": {
+        "sha256": "53ea97850cab31c627e4383f4ca0a6b15103bc71d4723e05f07600493223f9fa",
+        "bytes": 10548
+      },
+      "expected-intelligence-journals.json": {
+        "sha256": "66f8f35affb1e2b7e5f1d406af3ba9e32d55ab81f41179fcf722d90bf5e00af5",
+        "bytes": 23791
+      },
+      "expected-jobs.json": {
+        "sha256": "cfe4625b6e86235764cc48bf488aafbb122072c4cc0df2bf36b742a6ef2f363d",
+        "bytes": 13901
+      },
+      "expected-journals.json": {
+        "sha256": "9ce794dc403f2e0a2d4f1e34c5cf1dafde5dd30eff0812f9df2f8747f65b6e98",
+        "bytes": 76062
+      },
+      "expected-learning-history.json": {
+        "sha256": "a655a0eeb1100e597bfd2a442753bc265a93ab1e595943ab424fe6f9628f67f7",
+        "bytes": 7410
+      },
+      "expected-projections.json": {
+        "sha256": "cdfdbf74b4b8849a27b5b6946eedcf5d3933a1df7c7ca9eaab21ef608bc4532f",
+        "bytes": 14746
+      },
+      "expected-projects.json": {
+        "sha256": "c2ad8841e8f869b9493282faba6b294827994170d161cabf6ed437467a6eeefd",
+        "bytes": 27983
+      },
+      "expected-publications.json": {
+        "sha256": "df35e8b8bf8aabd8aeb5d5de04b1d4101be545ec447eb6b8a31088199cdfce0b",
+        "bytes": 14805
+      },
+      "expected-template-suggestions.json": {
+        "sha256": "f360c243345a70a792ad43816275f74fec89a906ad4763b16030a2a394850022",
+        "bytes": 1694
+      },
+      "expected-winner-history.json": {
+        "sha256": "4842e5582283c631bb576d3fc9cdfcffc6a064a0c076e502a00d0ad4c5e07a64",
+        "bytes": 24193
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-qualified-feedback-replay.json": {
+        "sha256": "5fc9cf546380721b88c7129d7e0d579d50260d66ac3a1bb1d0317afbc64570b6",
+        "bytes": 131
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "edc81de61a6b548f3b546a2c0151ef9ef9563f4fa946c342dcd846d02cc82ebf",
+        "bytes": 1972
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "c1d2f344b33a9e399f60841bd22753961c94ade5c79ae4de49e193bcf41dd3fd",
+        "bytes": 662
+      },
+      "new-process-replay.json": {
+        "sha256": "d2e2612899805874fb21334edd5731c2b8a76e02a09b1c9f1abb2345c0d10059",
+        "bytes": 352
+      },
+      "owned-qualified-learning-controls.zip": {
+        "sha256": "58367f722ee4e1990e6a6c4474836e2d7cd0c56861ee907c8719d63239f342fd",
+        "bytes": 1463933
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "40c9ad898940dc27c4514085f2c7971392bae19ac1ddf0e4d73da51f33f151fd",
+        "bytes": 258
+      },
+      "projection-response.json": {
+        "sha256": "151fb358d827adf726f686513881f85911ccdb3c388be858cbaafa4a6dc16f04",
+        "bytes": 15141
+      },
+      "recovery-restore.json": {
+        "sha256": "e621c27d23d479b59eda124286f34e5f0fb0e0b91b06cb54f03b830bba5fc7cf",
+        "bytes": 4249
+      },
+      "restored-in-process.json": {
+        "sha256": "d2e2612899805874fb21334edd5731c2b8a76e02a09b1c9f1abb2345c0d10059",
+        "bytes": 352
+      },
+      "sanitized-operation-logs.json": {
+        "sha256": "de3f36b507a1dc3bff0ad5976728a5fe054f1d6837d764fc2fca6681f973d8f8",
+        "bytes": 7688
+      },
+      "served-studio-files.json": {
+        "sha256": "a2e00cd1b36fe858842f50f8cbc87000d59806a866d9d1053a898f523924fe85",
+        "bytes": 795
+      },
+      "signed-http-summary.json": {
+        "sha256": "a8904d26299620d2ea4925657c030096ab7f794008bc8fea22858b276ada7b1a",
+        "bytes": 5769
+      }
+    },
+    "backup_sha256": "58367f722ee4e1990e6a6c4474836e2d7cd0c56861ee907c8719d63239f342fd",
+    "backup_bytes": 1463933,
+    "backup_entries": 12
+  },
+  "logs": {
+    "native-qualified-learning-controls-native-full-n1.log": "4f3df460001d8c019c1364fa8514116ad985c6419bf72b44158f968bff1e44a0",
+    "native-qualified-learning-controls-studio-full-n1.log": "94c737d4a07348f6b760def05e53077f55b98de159d1d1a744ea347354192953",
+    "native-qualified-learning-controls-studio-full-n2.log": "3587e6b9d1a4b6fefd444ac17472b051bcdb2ca52187bd14ead272c2a2e897df"
+  },
+  "inert_explicit_ack_parent_verified_source_channel_platform_hash_request_consumer_binding": true,
+  "uncertain_projection_keys_survive_revisions_roles_and_source_selection": true,
+  "late_workspace_project_revision_archive_role_or_selected_source_responses_discarded": true,
+  "template_evidence_group_control_hash_manual_choice_word_timing_and_historical_style_limit_preserved": true,
+  "radar_qualified_counts_and_legacy_observations_distinct_schema_removal_relabel_refused": true,
+  "six_studio_files_exactly_served": true,
+  "one_receipt_observation_assessment_learning_projection_24_workflow_four_intelligence_journals_fresh_restore_exact": true,
+  "signed_http_requests": 19,
+  "mock_analytics_read_requests": 3,
+  "mock_publication_wire_requests": 10,
+  "mock_initial_account_lookup_requests": 1,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_source_qc_rights_oauth_account_metrics_identity_and_clock_fixtures": true,
+  "qualified_bridge_events_integrated": false,
+  "browser_owner_real_provider_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

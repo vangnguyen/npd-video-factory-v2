@@ -116,6 +116,7 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
     if($('native-official-analytics-card'))$('video-review-body').append($('native-official-analytics-card'));
     if($('native-official-winners-card'))$('video-review-body').append($('native-official-winners-card'));
     if($('native-official-learning-card'))$('video-review-body').append($('native-official-learning-card'));
+    if($('native-qualified-learning-card'))$('video-review-body').append($('native-qualified-learning-card'));
     if($('native-analytics-card'))$('video-review-body').append($('native-analytics-card'));
     if($('native-variants-card'))$('video-review-body').append($('native-variants-card'));
   }
