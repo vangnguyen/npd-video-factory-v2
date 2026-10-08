@@ -83,8 +83,8 @@ class StudioMediaPlannerTests(unittest.TestCase):
         current=self.server.store.get(self.project['id']);CostLedger=__import__('services.windows_native.costs',fromlist=['CostLedger']).CostLedger;CostLedger(self.server.store).set_budget(self.project['id'],current['revision'],'0')
         record=self.create({'resolver_priority':['ai_image','user_asset'],'aspect_ratio':'4:5'});plan=record['plan']
         self.assertEqual(plan['input']['budget']['remaining_known_budget_vnd'],'0');self.assertFalse(plan['input']['budget']['planning_authorizes_payment'])
-        self.assertTrue(all(item['strategy']=='ai_image' and item['estimated_cost_vnd'] is None and item['needs_approval'] and item['status']=='requires_provider' and item['target_aspect_ratio']=='4:5' for item in plan['items']))
-        self.assertTrue(all(item['fallback']==['user_asset'] for item in plan['items']));self.assertEqual(self.pipeline.calls,0)
+        self.assertTrue(all(item['strategy']=='user_asset' and item['estimated_cost_vnd'] is None and not item['needs_approval'] and item['status']=='selected' and item['target_aspect_ratio']=='4:5' for item in plan['items']))
+        self.assertTrue(all(item['fallback']==[] and item['new_generation_budget_blocked']==['ai_image','ai_video'] for item in plan['items']));self.assertEqual(self.pipeline.calls,0)
         current=self.server.store.get(self.project['id']);self.assertEqual(current['jobs'],[]);self.assertEqual(self.server.generation.page(self.project['id'])['total'],0)
         self.server.generation=NativeGenerationWorker(NativeGenerationQueue(self.server.store,workspace_id=self.server.publications.workspace_id),self.config)
         self.assertFalse(self.request('GET',self.base())[1]['items'][0]['input_current'])
@@ -147,3 +147,55 @@ class StudioMediaPlannerTests(unittest.TestCase):
             doc=before['document'];doc['studio_media_plans'][0]['plan']['items'][0]['query']='tampered isolated fixture'
             con.execute('UPDATE projects SET revision=revision+1,document=? WHERE id=?',(json.dumps(doc),self.project['id']));self.server.store.version(con,self.project['id'])
         self.assertEqual(self.request('GET',self.base())[0],409)
+
+    def test_finite_budget_without_any_feasible_asset_preserves_unknown_price_and_approval(self):
+        self.account('editor');factory=GenerationFactory(GenerationCredential(bridge_url='http://localhost:8011',service_token='explicit-media-plan-fixture-token-32',enabled=True),owner_enabled=True,
+            transport=httpx.MockTransport(lambda request:(_ for _ in ()).throw(AssertionError('No budget planning network call'))))
+        self.server.generation=NativeGenerationWorker(NativeGenerationQueue(self.server.store,workspace_id=self.server.publications.workspace_id,factory=factory),self.config)
+        from services.windows_native.tests.test_workflow import proposal
+        from services.windows_native.costs import CostLedger
+        project=self.server.store.create('No assets budget fallback fixture','Not a provider acceptance')
+        project=self.server.store.save(project['id'],project['revision'],proposal=proposal());self.project=CostLedger(self.server.store).set_budget(project['id'],project['revision'],'1000')
+        record=self.create({'resolver_priority':['ai_image','user_asset','motion_graphic']})
+        self.assertTrue(all(item['strategy']=='ai_image' and item['needs_approval'] and item['status']=='requires_approval' and item['estimated_cost_vnd'] is None
+            and item['selected_asset_id'] is None and item['fallback']==[] for item in record['plan']['items']))
+        self.assertEqual(self.server.generation.page(project['id'])['total'],0);self.assertEqual(CostLedger(self.server.store).summary(project['id'])['attempted_operations'],0)
+
+    def test_v1_history_is_exact_read_only_and_new_policy_requires_new_plan(self):
+        self.account('editor');record=self.create();current=self.server.store.get(self.project['id']);old=record['plan'];old['algorithm']='native-storyboard-media-planner-v1'
+        for item in old['items']:item.pop('new_generation_budget_blocked')
+        old['fingerprint']=digest({'algorithm':old['algorithm'],'input_sha256':old['input_sha256'],'options':old['options']});old_sha=digest(old)
+        with self.server.store.transaction() as con:
+            doc=current['document'];doc['studio_media_plans']=[{'plan':old,'sha256':old_sha}]
+            con.execute('UPDATE projects SET revision=revision+1,document=? WHERE id=?',(json.dumps(doc),self.project['id']));self.server.store.version(con,self.project['id'])
+        before=self.server.store.get(self.project['id']);status,page,_=self.request('GET',self.base());self.assertEqual(status,200);historical=page['items'][0]
+        self.assertEqual(historical['plan'],old);self.assertEqual(digest(historical['plan']),old_sha);self.assertFalse(historical['input_current']);self.assertFalse(historical['policy_current'])
+        item=old['items'][0];status,error,_=self.request('POST',self.base()+'/'+old['media_plan_id']+'/select',{**self.action(historical),'shot_id':item['shot_id'],'asset_id':self.asset['id'],'expected_asset_sha256':self.asset['sha256']})
+        self.assertEqual(status,409);self.assertEqual(error['code'],'STUDIO_MEDIA_PLAN_POLICY_CHANGED');self.assertEqual(self.server.store.get(self.project['id']),before)
+        new=self.create();self.assertEqual(new['plan']['algorithm'],'native-storyboard-media-planner-v2');self.assertNotEqual(new['plan']['media_plan_id'],old['media_plan_id'])
+        self.assertEqual(self.server.store.get(self.project['id'])['document']['studio_media_plans'][0],{'plan':old,'sha256':old_sha})
+
+    def test_existing_registered_ai_asset_reuse_needs_no_generation_budget_or_configured_provider(self):
+        self.account('editor');asset=self.image(filename='Ảnh dự án · EXPLICIT AI ASSET REUSE FIXTURE.jpg',source_type='ai_generated',rights_status='licensed',license='EXPLICIT MOCK LICENSE ASSERTION',provider='explicit-fixture',
+            production_eligible=True,explicit_fixture=True,generation_provenance={'fixture':True,'rights_are_mock_assertion':True})
+        from services.windows_native.costs import CostLedger
+        current=self.server.store.get(self.project['id']);CostLedger(self.server.store).set_budget(current['id'],current['revision'],'0')
+        record=self.create({'resolver_priority':['ai_image','user_asset']});items=record['plan']['items']
+        self.assertTrue(all(item['strategy']=='ai_image' and item['selected_asset_id']==asset['id'] and not item['needs_approval'] and item['status']=='selected' for item in items))
+        self.assertTrue(all(item['candidates'][0]['fixture'] for item in items))
+        self.assertTrue(all(item['status']=='NOT_CONFIGURED' for item in record['plan']['input']['provider_availability']['generation']['items']))
+        self.assertEqual(self.server.generation.page(current['id'])['total'],0);self.assertEqual(CostLedger(self.server.store).summary(current['id'])['attempted_operations'],0)
+
+    def test_finite_budget_prefers_configured_stock_fallback_without_making_a_stock_request(self):
+        self.account('editor');factory=GenerationFactory(GenerationCredential(bridge_url='http://localhost:8011',service_token='explicit-media-plan-fixture-token-32',enabled=True),owner_enabled=True,
+            transport=httpx.MockTransport(lambda request:(_ for _ in ()).throw(AssertionError('No generation or stock dispatch in planning'))))
+        self.server.generation=NativeGenerationWorker(NativeGenerationQueue(self.server.store,workspace_id=self.server.publications.workspace_id,factory=factory),self.config)
+        from services.windows_native.costs import CostLedger
+        current=self.server.store.get(self.project['id']);CostLedger(self.server.store).set_budget(current['id'],current['revision'],'0')
+        # Explicit catalog fixture, not a real configured stock account or license.
+        providers=self.server.media_planner.providers();providers['stock']['items'][0].update(status='CONFIGURED',mode='fixture',configuration_sha256='9'*64)
+        self.server.media_planner.providers=lambda:providers
+        record=self.create({'resolver_priority':['ai_video','licensed_stock','user_asset'],'preferred_media_type':'video'})
+        self.assertTrue(all(item['strategy']=='stock_video' and item['status']=='requires_provider' and item['selected_asset_id'] is None and item['estimated_cost_vnd'] is None
+            and not item['needs_approval'] and item['fallback']==['user_asset'] for item in record['plan']['items']))
+        self.assertEqual(self.server.stock.page(current['id'])['items'],[]);self.assertEqual(self.server.generation.page(current['id'])['total'],0);self.assertEqual(CostLedger(self.server.store).summary(current['id'])['attempted_operations'],0)

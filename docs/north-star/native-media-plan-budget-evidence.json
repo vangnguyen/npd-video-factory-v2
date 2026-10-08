@@ -1,0 +1,166 @@
+{
+  "schema": "native-storyboard-media-plan-budget-evidence-v1",
+  "parent_head": "0b8b90e95939373d54c52b8cc79742331207f206",
+  "algorithm": "native-storyboard-media-planner-v2",
+  "source_sha256": {
+    "services/windows_native/studio_media_models.py": "b1accc59fe17eec6b644fd134b0ec4081feeb11af4360ddda4a0bff8a9a8b034",
+    "services/windows_native/studio_media_planner.py": "66fc8ef79564894c471fc62a08ba31cf1fb95055b370a65c03e7f673343d69f7",
+    "services/windows_native/studio_media_routes.py": "15d41f3ae19a7fe516c4551e525a6fb57c17a9b54eceda621200830ec03d89c1",
+    "services/windows_native/server.py": "20ebbdd9f77030d74ea2acae32e6988665150af65177766d97da60f6e427aa8b",
+    "services/windows_native/access.py": "fba2884e3e16c2f3ba3af53797f2a9cc30e99b620059ee386b078df4343303bb",
+    "services/windows_native/store.py": "4c9dbe79b08dd8248debf12130ea902c4aaa3bed428896217baf9d60f0cde0be",
+    "apps/studio-web/native-media-planner.mjs": "32a1a55d319af9b061249982df6f8d75436c48caddccef48f6c93241db50ca7c",
+    "apps/studio-web/native.mjs": "61f6826b174332a69e3d0accf475a1c029a5dbd576c8abe4f43eb3588a8d56c0",
+    "apps/studio-web/native.html": "06bafc97ba77e079b848c659edc3027dfa9a4d10c13cdb2c971565cf94daa9c3",
+    "apps/studio-web/native.css": "f19e3b97e0b3c3d609b0cf095d85a365ff76dd32dcb4c8e2f435837fecf84005",
+    "scripts/north_star_native_studio_media_planner.py": "bda85401677b25de3a4463666bd03c99210d41004bd444a7897beea2238899dc",
+    "services/windows_native/tests/test_studio_media_planner.py": "7838150ccf0be5f78ec685edcb83ebb6bf6dd489b6ca875f38529a2739d4921a",
+    "apps/studio-web/tests/native-media-planner.test.mjs": "40636cdc5a58005634131644f07ab0c25bbd8743ad9b8196aa98e7149c11e4fa",
+    "docs/NATIVE_STORYBOARD_MEDIA_PLANNER.md": "aae3a13bb986453789498aa91d8373c2e5721f57e4677590d7e76306073e91a5"
+  },
+  "logs": {
+    "native-media-plan-budget-r1.log": "46b1ab628689076744cceab08ce41947b28a8929fe8443ee25218f03aba2efcb",
+    "native-media-plan-budget-r2.log": "ee91e3665af9022c5904b9d49ea0db05419ac75f45601a0b4c6ee01f393ad70b",
+    "native-media-plan-budget-r3.log": "c7acd16e31a5d62b1dd478120bf5ade62fa02fb9ae199874bcd0d6e2ad738abf",
+    "native-media-plan-budget-studio-r1.log": "9dbe6ff31db8f3ddf780db6961979c6aaac4761886115e1d7d9bba8218b4a52b",
+    "native-media-plan-budget-n1.log": "8f608e5eb6ba714b5b73d59b2b5edc79b1b9197a88268d564b6c1aefbebef7fb"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-studio-media-plan-budget-n1",
+  "owned_root": "C:/vf-native-fixture-studio-media-plan-budget-01",
+  "restore_root": "C:/vf-native-fixture-studio-media-plan-budget-restore-01",
+  "contract_exports": {
+    "ai-education-reference@1\\cost.json": {
+      "sha256": "b30b255051b53158573098edb41f1b7228d3077130768e4b6b2eb96ce5db1a9d",
+      "bytes": 815
+    },
+    "ai-education-reference@1\\ffprobe.json": {
+      "sha256": "f21cbfd9fd54e35f6a44610b502cc310c3f7ac89bf28a3742b56db221665b92a",
+      "bytes": 2438
+    },
+    "ai-education-reference@1\\media-plan.json": {
+      "sha256": "892aef18a2d8da624201b40c850746ff2b6a772a287f71a3a1fe4b083b222e6c",
+      "bytes": 61255
+    },
+    "ai-education-reference@1\\preview-frame.png": {
+      "sha256": "12f5aeaa430a6fb060a9c653a0fe4f59ef381890cd21a5b81be02d943f31be35",
+      "bytes": 36585
+    },
+    "ai-education-reference@1\\preview.json": {
+      "sha256": "78bcc1b654a426039da387f0b400ff9ef2b6f7b435b8ed9104e718d65c4a1441",
+      "bytes": 676
+    },
+    "ai-education-reference@1\\preview.mp4": {
+      "sha256": "0b99e8212adcf8146be0803aa75cbdc6e003306df436ddd07f8cecfa26230556",
+      "bytes": 32686
+    },
+    "ai-education-reference@1\\project.json": {
+      "sha256": "0a546ee08b72a5e6214aa0418070211b39022b7de8173c10418ec2488b810851",
+      "bytes": 153075
+    },
+    "ai-education-reference@1\\script.json": {
+      "sha256": "86eef18dda0bb6f1b0db738f2dfbaef07a075ccf12d24802e809a0a2a319ac38",
+      "bytes": 599
+    },
+    "ai-education-reference@1\\source-hashes.json": {
+      "sha256": "d23c57afb6acb64258628678e20fdcd8e68b543cea113c188f5d81c6fc193688",
+      "bytes": 227
+    },
+    "ai-education-reference@1\\timeline.json": {
+      "sha256": "8b9966a3e6a16c9c538fb90b110abc411b41bea84dc2ed6ce6277f57ba635250",
+      "bytes": 5492
+    },
+    "evidence.json": {
+      "sha256": "d28693ce9f0aa765ad20c4b48323b0246e5a09d11d6ee0e68d5928021159eaa1",
+      "bytes": 7272
+    },
+    "http-requests.json": {
+      "sha256": "10b62d0e04a5aaf5d74bfef95096e7e5cadbc358b56cf1a8a391a475f91c90d3",
+      "bytes": 4009
+    },
+    "native-studio-media-plan-backup.zip": {
+      "sha256": "af355ce4fed1e373ab6e69406a8ae156e4c2de1c100f857513ec00526f9a742b",
+      "bytes": 1507096
+    },
+    "property-reference@1\\cost.json": {
+      "sha256": "d35bb1ddeffc6333eec024bd79a77baf35c7b428fa740bc793aedd0f8ace0553",
+      "bytes": 815
+    },
+    "property-reference@1\\ffprobe.json": {
+      "sha256": "962034a97b7659402903c2b9ee41fc4810f443b66580fdb8a1f4def1214a25c0",
+      "bytes": 2438
+    },
+    "property-reference@1\\media-plan.json": {
+      "sha256": "d91026709239ff5dd230dbb751b17af037bbe0009d0222010e0e16e7296140b6",
+      "bytes": 61306
+    },
+    "property-reference@1\\preview-frame.png": {
+      "sha256": "12f5aeaa430a6fb060a9c653a0fe4f59ef381890cd21a5b81be02d943f31be35",
+      "bytes": 36585
+    },
+    "property-reference@1\\preview.json": {
+      "sha256": "9e43ac9104e9a199658a122baef7f0b1e4584d5b26629a254a8a1fccb69eb739",
+      "bytes": 676
+    },
+    "property-reference@1\\preview.mp4": {
+      "sha256": "0b99e8212adcf8146be0803aa75cbdc6e003306df436ddd07f8cecfa26230556",
+      "bytes": 32686
+    },
+    "property-reference@1\\project.json": {
+      "sha256": "365d4f02a1b7f0a558f606f90d7f41b6134ae5b366361fee428a0a2ad41c4f8c",
+      "bytes": 153347
+    },
+    "property-reference@1\\script.json": {
+      "sha256": "89a804b9bb4ed50b37c44f68b1adfe5c8ecdcbbca5d69c7f9ffdba7de94c23e4",
+      "bytes": 612
+    },
+    "property-reference@1\\source-hashes.json": {
+      "sha256": "f02c316c937bd62010172b56bd679de9a4b9fd7056e1a981980e4a5181e1db5e",
+      "bytes": 227
+    },
+    "property-reference@1\\timeline.json": {
+      "sha256": "0231618a7fa328b157270aa70d808fd5c886d1b1ba0cfd407394f3bb8e20ba5b",
+      "bytes": 5505
+    },
+    "recovery.json": {
+      "sha256": "515bc767a2949c45b49539f92d1b4d975aa54f6859e313f7bd827b47a6a65f21",
+      "bytes": 5628
+    }
+  },
+  "affected_native_passed": 28,
+  "affected_native_seconds": 20.525,
+  "studio_passed": 222,
+  "studio_duration_ms": 1305.203,
+  "prior_full_native_head": "0b8b90e95939373d54c52b8cc79742331207f206",
+  "prior_full_native_passed": 605,
+  "prior_full_native_seconds": 397.205,
+  "new_native_cases": 4,
+  "new_dom_case": 1,
+  "finite_unknown_generation_price_blocks_new_generation_strategy": true,
+  "feasible_owned_asset_or_configured_stock_fallback": true,
+  "existing_registered_ai_reuse_needs_no_new_generation_budget": true,
+  "no_feasible_fallback_requires_approval_with_null_price": true,
+  "v1_history_returns_exact_original_json_and_hash": true,
+  "v1_is_read_only_and_explicit_new_v2_plan_required": true,
+  "no_destructive_migration": true,
+  "human_http_requests": 31,
+  "niches": [
+    "technology",
+    "real_estate"
+  ],
+  "configured_generation_catalog_is_fixture_transport_forbids_calls": true,
+  "owned_actual_image_ingest_and_ffmpeg_silent_visual_proxies": true,
+  "exact_process_backup_restore": true,
+  "provider_calls": 0,
+  "paid_operations": 0,
+  "price_is_not_fabricated": true,
+  "retained_r2_reuse_fixture_unrelated_filename_corrected_to_actual_query_without_weakening_relevance": true,
+  "mock_rights_and_stock_catalog_unit_assertions_not_genuine_license_or_account": true,
+  "real_provider_acceptance_complete": false,
+  "final_tts_qc_accepted": false,
+  "automatic_resolver_complete": false,
+  "browser_usability_tested": false,
+  "owner_uat": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "north_star_ready": false
+}

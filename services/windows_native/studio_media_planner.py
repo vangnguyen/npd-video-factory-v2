@@ -18,7 +18,7 @@ from app.broll_planner import tokens
 from app.media_intelligence_logic import platform_aspect_ratio,_compact_query
 from app.media_frame_facts import PixelAssetSummary
 
-ALGORITHM='native-storyboard-media-planner-v1'
+ALGORITHM='native-storyboard-media-planner-v2'
 MAX_VERSIONS=100
 MAX_PLAN_BYTES=1024*1024
 MAX_HISTORY_BYTES=16*1024*1024
@@ -99,29 +99,36 @@ class NativeStudioMediaPlanner:
 
     def items(self,context,options):
         available=self.availability(context,options);items=[]
+        # Generation estimates are unavailable in the protected Native catalog.
+        # The cost ledger rejects an unknown estimate under every finite limit.
+        blocked=[strategy for strategy in ('ai_image','ai_video') if available[strategy] and context['budget']['max_ai_cost_vnd'] is not None]
         for ordinal,shot in enumerate(context['storyboard'],1):
             query=_compact_query(shot['visual']+' '+shot['narration']+' '+shot['on_screen_text'])[:500]
-            candidates=self.candidates(context,query);selected=None;strategy=None
+            candidates=self.candidates(context,query);selected=None;strategy=None;deferred=None
             tiers=options.resolver_priority
             for tier in tiers:
                 matching=[value for value in candidates if value.selectable and value.resolver_tier==tier and (value.relevance_score>0 or value.asset_id==shot['asset_id'])]
                 if matching:
                     selected=next((value for value in matching if value.asset_id==shot['asset_id']),matching[0]);strategy=selected.strategy;break
                 if tier in {'licensed_stock','ai_image','ai_video'} and available[tier]:
+                    if tier in blocked:
+                        deferred=deferred or tier
+                        continue
                     strategy='stock_'+options.preferred_media_type if tier=='licensed_stock' else tier;break
-            strategy=strategy or ('motion_graphic' if 'motion_graphic' in tiers else 'user_asset')
+            strategy=strategy or deferred or ('motion_graphic' if 'motion_graphic' in tiers else 'user_asset')
             fallback=[]
             for tier in tiers:
-                if any(value.selectable and value.resolver_tier==tier for value in candidates) or available.get(tier) and tier not in {'user_asset','internal_library'}:
+                if any(value.selectable and value.resolver_tier==tier for value in candidates) or available.get(tier) and tier not in {'user_asset','internal_library',*blocked}:
                     fallback.append('stock_'+options.preferred_media_type if tier=='licensed_stock' else 'user_asset' if tier=='internal_library' else tier)
             fallback=list(dict.fromkeys(value for value in fallback if value!=strategy))
             items.append(Item(shot_id=shot['shot_id'],ordinal=ordinal,visual_brief=shot['visual'],narration=shot['narration'],on_screen_text=shot['on_screen_text'],
                 duration_seconds=shot['duration'],duration_basis='draft_shot_duration_requires_measured_voice_fit',target_aspect_ratio=options.aspect_ratio or platform_aspect_ratio(options.platform),strategy=strategy,fallback=fallback,query=query,
                 generation_prompt=(' '.join([shot['visual'],shot['narration'],'Original supporting visual; review brands, rights and factual accuracy.']))[:4000],
                 candidates=candidates,selected_asset_id=selected.asset_id if selected else None,selected_asset_sha256=selected.sha256 if selected else None,
-                status='selected' if selected else 'requires_implementation' if strategy=='motion_graphic' else 'requires_asset' if strategy=='user_asset' else 'requires_provider',
+                status='selected' if selected else 'requires_approval' if strategy in blocked else 'requires_implementation' if strategy=='motion_graphic' else 'requires_asset' if strategy=='user_asset' else 'requires_provider',
+                new_generation_budget_blocked=blocked,
                 needs_approval=selected is None and strategy in {'ai_image','ai_video'},
-                decision_basis='existing owned project media; manual review before timeline apply' if selected else 'configured provider path requires separate Assets request; unknown price is not zero' if strategy in {'stock_image','stock_video','ai_image','ai_video'} else 'no executable fallback selected; human media required'))
+                decision_basis='existing project media selected as feasible fallback; unpriced new generation blocked under finite budget' if selected and deferred else 'existing owned project media; manual review before timeline apply' if selected else 'unknown generation estimate under finite budget; approval/pricing required and no feasible fallback selected' if strategy in blocked else 'configured provider path requires separate Assets request; unknown price is not zero' if strategy in {'stock_image','stock_video','ai_image','ai_video'} else 'no executable fallback selected; human media required'))
         return items
 
     def records(self,document,identity=None):
@@ -131,7 +138,7 @@ class NativeStudioMediaPlanner:
         try:
             for record in records:
                 plan=Plan.model_validate(record['plan'])
-                if record['sha256']!=digest(record['plan']) or plan.workspace_id!=self.workspace or plan.input_sha256!=digest(plan.input) or plan.fingerprint!=digest({'algorithm':ALGORITHM,'input_sha256':plan.input_sha256,'options':plan.options.model_dump(mode='json')}) or plan.version!=last.get(plan.media_plan_id,0)+1 or plan.input.get('project_id')!=plan.project_id or plan.input.get('workspace_id')!=self.workspace:raise ValueError()
+                if record['sha256']!=digest(record['plan']) or plan.workspace_id!=self.workspace or plan.input_sha256!=digest(plan.input) or plan.fingerprint!=digest({'algorithm':plan.algorithm,'input_sha256':plan.input_sha256,'options':plan.options.model_dump(mode='json')}) or plan.version!=last.get(plan.media_plan_id,0)+1 or plan.input.get('project_id')!=plan.project_id or plan.input.get('workspace_id')!=self.workspace:raise ValueError()
                 last[plan.media_plan_id]=plan.version;parsed.append((plan,record['sha256']))
         except (ValueError,KeyError,TypeError):raise WorkflowError('STUDIO_MEDIA_PLAN_HISTORY_INVALID') from None
         return [(plan,sha) for plan,sha in parsed if identity is None or plan.media_plan_id==identity]
@@ -142,6 +149,7 @@ class NativeStudioMediaPlanner:
         plan,sha=records[-1]
         if plan.project_id!=project['id']:raise WorkflowError('STUDIO_MEDIA_PLAN_NOT_FOUND',404)
         if plan.version!=payload.expected_plan_version or sha!=payload.expected_plan_sha256:raise WorkflowError('STUDIO_MEDIA_PLAN_VERSION_CHANGED')
+        if plan.algorithm!=ALGORITHM:raise WorkflowError('STUDIO_MEDIA_PLAN_POLICY_CHANGED')
         context,state=self.context(con,project)
         if plan.input_sha256!=digest(context) or plan.application is not None:raise WorkflowError('STUDIO_MEDIA_PLAN_INPUT_CHANGED')
         return plan,context,state
@@ -183,7 +191,7 @@ class NativeStudioMediaPlanner:
             else:
                 if not payload.query.strip() or not payload.generation_prompt.strip():raise WorkflowError('STUDIO_MEDIA_PLAN_BRIEF_REQUIRED',400)
                 values={'strategy':payload.strategy,'query':payload.query,'generation_prompt':payload.generation_prompt,'selected_asset_id':None,'selected_asset_sha256':None,
-                    'status':'requires_implementation' if payload.strategy=='motion_graphic' else 'requires_asset' if payload.strategy=='user_asset' else 'requires_provider',
+                    'status':'requires_approval' if payload.strategy in item.new_generation_budget_blocked else 'requires_implementation' if payload.strategy=='motion_graphic' else 'requires_asset' if payload.strategy=='user_asset' else 'requires_provider',
                     'needs_approval':payload.strategy in {'ai_image','ai_video'},'decision_basis':'explicit human planning preference; provider execution and payment not authorized'}
             values['fallback']=[value for value in item.fallback if value!=values['strategy']]
             changed=Item.model_validate({**item.model_dump(mode='json'),**values});plan.items=[changed if value.shot_id==item.shot_id else value for value in plan.items]
@@ -216,7 +224,11 @@ class NativeStudioMediaPlanner:
             except WorkflowError as error:
                 if error.code not in {'STUDIO_MEDIA_PLAN_SCRIPT_REQUIRED','STUDIO_MEDIA_PLAN_USE_SOURCE_BROLL','SOURCE_MEDIA_CHANGED_OR_MISSING'}:raise
                 context=None;input_sha=None;reason=error.code
-            return {'schema_version':'native-storyboard-media-page-v1','workspace_id':self.workspace,'project_id':project_id,'revision':project['revision'],
+            raw_records={(record['plan']['media_plan_id'],record['plan']['version']):record['plan'] for record in project['document'].get('studio_media_plans',[])}
+            return {'schema_version':'native-storyboard-media-page-v1','current_algorithm':ALGORITHM,'workspace_id':self.workspace,'project_id':project_id,'revision':project['revision'],
                 'timeline_version':state['version'] if context is not None else None,'input_sha256':input_sha,'input':context,'unavailable_reason':reason,
-                'items':[{'plan':plan.model_dump(mode='json'),'sha256':sha,'input_current':plan.input_sha256==input_sha and plan.application is None} for plan,sha in latest.values()],
+                # Return the exact hashed historical JSON, without adding new DTO defaults.
+                'items':[{'plan':copy.deepcopy(raw_records[(plan.media_plan_id,plan.version)]),'sha256':sha,
+                    'input_current':plan.input_sha256==input_sha and plan.application is None and plan.algorithm==ALGORITHM,
+                    'policy_current':plan.algorithm==ALGORITHM} for plan,sha in latest.values()],
                 'history_versions':len(records),'external_dispatches':0,'paid_operations':0,'publishing_enabled':False,'real_provider_tested':False}

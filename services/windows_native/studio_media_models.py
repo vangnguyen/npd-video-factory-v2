@@ -93,7 +93,8 @@ class Item(StrictModel):
     candidates:list[Candidate]=Field(max_length=50)
     selected_asset_id:str|None=None
     selected_asset_sha256:str|None=Field(default=None,pattern=HASH)
-    status:Literal['planned','selected','requires_asset','requires_provider','requires_implementation']
+    status:Literal['planned','selected','requires_asset','requires_provider','requires_implementation','requires_approval']
+    new_generation_budget_blocked:list[Literal['ai_image','ai_video']]=Field(default_factory=list,max_length=2)
     estimated_cost_vnd:None=None
     needs_approval:bool
     needs_attention:Literal[True]=True
@@ -109,7 +110,7 @@ class Item(StrictModel):
 
 class Plan(StrictModel):
     schema_version:Literal['native-storyboard-media-plan-v1']
-    algorithm:Literal['native-storyboard-media-planner-v1']
+    algorithm:Literal['native-storyboard-media-planner-v1','native-storyboard-media-planner-v2']
     workspace_id:str
     project_id:str=Field(pattern=r'^[a-f0-9]{32}$')
     media_plan_id:str=Field(pattern=PLAN)

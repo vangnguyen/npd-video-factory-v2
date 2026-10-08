@@ -42,7 +42,14 @@ def run(args):
     if root==destination or out==ROOT or ROOT in out.parents or out==root or root in out.parents:raise ValueError('Distinct external output required')
     root.mkdir();out.mkdir(parents=True,exist_ok=False);settings=config(root)
     raw,registry=fixture('owner',workspace=WORKSPACE);access=NativeAccess(HumanAuthVerifier(HumanAuthRegistry.model_validate(registry),max_token_ttl_seconds=86400),WORKSPACE)
-    server=LocalServer(0,settings,pipeline=NoProviderPipeline(),start_worker=False,access=access);cookie,session=access.login(raw)
+    factory=None
+    if args.budget_provider_fixture:
+        import httpx
+        from services.windows_native.generation_registry import GenerationFactory,GenerationCredential
+        def forbidden(request):raise AssertionError('Budget fallback rehearsal cannot dispatch any provider request')
+        factory=GenerationFactory(GenerationCredential(bridge_url='http://localhost:8011',service_token='explicit-budget-planner-fixture-token-32',enabled=True),
+            owner_enabled=True,transport=httpx.MockTransport(forbidden))
+    server=LocalServer(0,settings,pipeline=NoProviderPipeline(),start_worker=False,access=access,generation_factory=factory);cookie,session=access.login(raw)
     thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start();requests=[];results=[]
     def send(method,path,body=None,*,expected=200,binary=None,headers=None):
         connection=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=30)
@@ -70,13 +77,20 @@ def run(args):
             project=send('GET',base+'/shots')
             for shot in project['shot_timeline']['shots']:
                 project=send('POST',base+'/shots',{'revision':project['revision'],'operation':{'type':'update','shot_id':shot['shot_id'],'values':{'duration':1.5}}})
-            before=server.store.shot_view(identifier);page=send('POST',base+'/media-plans',{'revision':before['revision'],'expected_timeline_version':before['shot_timeline']['version'],
-                'options':{'platform':'youtube_shorts','preferred_media_type':'image'}})
+            if args.budget_provider_fixture:
+                project=send('POST',base+'/cost-policy',{'revision':project['revision'],'max_ai_cost_vnd':'0'})
+            options={'platform':'youtube_shorts','preferred_media_type':'image'}
+            if args.budget_provider_fixture:options['resolver_priority']=['ai_image','user_asset','licensed_stock','internal_library','ai_video','motion_graphic']
+            before=server.store.shot_view(identifier);page=send('POST',base+'/media-plans',{'revision':before['revision'],'expected_timeline_version':before['shot_timeline']['version'],'options':options})
             record=page['items'][-1];assert record['input_current'];assert record['plan']['input']['niche']==profile['niche_profile']['niche']
             assert record['plan']['input']['channel_profile']==before['document']['channel_profile'];assert server.store.shot_view(identifier)['shot_timeline']['snapshot']==before['shot_timeline']['snapshot']
             assert all(item['status']=='selected' for item in record['plan']['items']);assert all(item['estimated_cost_vnd'] is None for item in record['plan']['items'])
+            if args.budget_provider_fixture:
+                assert record['plan']['algorithm']=='native-storyboard-media-planner-v2' and record['plan']['input']['budget']['max_ai_cost_vnd']=='0'
+                assert all(item['strategy']=='user_asset' and item['new_generation_budget_blocked']==['ai_image','ai_video'] for item in record['plan']['items'])
+                assert all(item['status']=='CONFIGURED' and item['mode']=='fixture' for item in record['plan']['input']['provider_availability']['generation']['items'])
             original=server.store.get(identifier);cached=send('POST',base+'/media-plans',{'revision':original['revision'],'expected_timeline_version':before['shot_timeline']['version'],
-                'options':{'platform':'youtube_shorts','preferred_media_type':'image'}});assert cached==page;assert server.store.get(identifier)==original
+                'options':options});assert cached==page;assert server.store.get(identifier)==original
             def action(value):return {'revision':server.store.get(identifier)['revision'],'expected_plan_version':value['plan']['version'],'expected_plan_sha256':value['sha256']}
             first=record['plan']['items'][0];selected=send('POST',base+'/media-plans/'+record['plan']['media_plan_id']+'/select',{**action(record),'shot_id':first['shot_id'],
                 'asset_id':assets[1]['id'],'expected_asset_sha256':assets[1]['sha256']})['items'][-1]
@@ -102,7 +116,8 @@ def run(args):
                 (folder/name).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
             results.append({'project_id':identifier,'channel_profile_ref':profile['profile_ref'],'niche':profile['niche_profile']['niche'],'media_plan_id':record['plan']['media_plan_id'],
                 'plan_versions':3,'selected_shot':first['shot_id'],'preview_sha256':file_sha(folder/'preview.mp4'),'preview_dimensions':[540,960],'duration_seconds':float(probe['format']['duration']),
-                'silent_visual_proxy':True,'final_approval_eligible':False,'actual_local_ingest_preview':True,'fixture_content':True,'source_hashes_unchanged':True})
+                'silent_visual_proxy':True,'final_approval_eligible':False,'actual_local_ingest_preview':True,'fixture_content':True,'source_hashes_unchanged':True,
+                'finite_budget_feasible_fallback':args.budget_provider_fixture})
             print(json.dumps({'niche':profile['niche_profile']['niche'],'preview':'PASS','plan':'PASS'}),flush=True)
         assert len(results)==2 and any(item['niche']=='technology' for item in results)
     finally:server.shutdown();server.server_close();thread.join(timeout=5)
@@ -115,12 +130,14 @@ def run(args):
         'source_sha256':{path:file_sha(ROOT/path) for path in ['services/windows_native/studio_media_models.py','services/windows_native/studio_media_planner.py','services/windows_native/studio_media_routes.py',
             'services/windows_native/server.py','services/windows_native/access.py','services/windows_native/store.py','apps/studio-web/native-media-planner.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/native.css',str(Path(__file__).relative_to(ROOT)).replace('\\','/')]},
         'results':results,'human_http_requests':len(requests),'restore':'PASS','provider_calls':0,'paid_operations':0,'owner_uat':False,'fixture_content':True,'transcription_tested':False,
+        'configured_catalog_is_explicit_fixture':args.budget_provider_fixture,'finite_zero_budget_skips_unpriced_new_generation':args.budget_provider_fixture,
         'tts_tested':False,'full_final_render_tested':False,'full_qc_tested':False,'stock_or_generation_executed':False,'semantic_vision_tested':False,'browser_usability_tested':False,'real_provider_acceptance_complete':False,'production_deployed':False,
         'exports':{str(path.relative_to(out)):{'sha256':file_sha(path),'bytes':path.stat().st_size} for path in sorted(out.rglob('*')) if path.is_file()}}
     (out/'evidence.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps({'status':'PASS','niches':2,'human_http_requests':len(requests),'provider_calls':0,'paid_operations':0,'restart_restore':'PASS'}),flush=True)
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--data-root',type=Path);parser.add_argument('--restore-root',type=Path);parser.add_argument('--output',type=Path);parser.add_argument('--read-root',type=Path);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--data-root',type=Path);parser.add_argument('--restore-root',type=Path);parser.add_argument('--output',type=Path);parser.add_argument('--read-root',type=Path)
+    parser.add_argument('--budget-provider-fixture',action='store_true');args=parser.parse_args()
     if args.read_root:print(json.dumps(snapshot(args.read_root.resolve()),ensure_ascii=True));return
     run(args)
 

@@ -8,7 +8,8 @@ export function validateMediaPlanPage(page,state){
     ||!ID.test(page.project_id)||page.external_dispatches!==0||page.paid_operations!==0||page.publishing_enabled!==false||page.real_provider_tested!==false
     ||!Array.isArray(page.items)||page.items.length>100||!Number.isInteger(page.history_versions)||page.history_versions>100||page.history_versions<page.items.length)throw new Error('Kế hoạch không khớp phiên bản dự án. Tải lại để kiểm tra.');
   for(const record of page.items){const plan=record?.plan;
-    if(!HASH.test(record?.sha256??'')||typeof record.input_current!=='boolean'||plan?.schema_version!=='native-storyboard-media-plan-v1'||plan.algorithm!=='native-storyboard-media-planner-v1'
+    if(!HASH.test(record?.sha256??'')||typeof record.input_current!=='boolean'||plan?.schema_version!=='native-storyboard-media-plan-v1'||!['native-storyboard-media-planner-v1','native-storyboard-media-planner-v2'].includes(plan.algorithm)
+      ||record.input_current&&plan.algorithm!==(page.current_algorithm??'native-storyboard-media-planner-v1')
       ||plan.workspace_id!==state.workspace_id||plan.project_id!==project.id||!PLAN.test(plan.media_plan_id??'')||!Number.isInteger(plan.version)||plan.version<1
       ||!HASH.test(plan.input_sha256??'')||!HASH.test(plan.fingerprint??'')||plan.external_dispatches!==0||plan.paid_operations!==0||plan.publishing_enabled!==false
       ||plan.semantic_vision_used!==false||plan.real_provider_tested!==false||plan.recommendation_only!==true||!Array.isArray(plan.items)||plan.items.length<1||plan.items.length>20
@@ -70,6 +71,7 @@ export function initializeNativeMediaPlanner({api,getState,onMessage,onWorking=(
         element('strong',`Shot ${item.ordinal} · ${STRATEGIES[item.strategy]} · ${item.target_aspect_ratio}`,row);element('p',item.visual_brief,row);
         element('p',`${item.duration_seconds.toFixed(2)} giây dự kiến; thời lượng chốt theo lời đọc đo được. Fallback: ${item.fallback.map(value=>STRATEGIES[value]).join(', ')||'cần thêm tư liệu'}.`,row,{class:'hint'});
         element('p',`Chi phí mới: chưa biết · ${item.needs_approval?'cần duyệt chi phí trước khi tạo AI':'cần xem lại tư liệu'} · ${item.status==='requires_implementation'?'cách tạo này chưa thực thi':'xếp hạng theo tên, mô tả, tag; chưa có Vision ngữ nghĩa'}`,row,{class:'hint'});
+        if(item.new_generation_budget_blocked?.length)element('p',`Tạo AI mới cần giá ước tính trước khi dùng ngân sách đã giới hạn: ${item.new_generation_budget_blocked.map(value=>STRATEGIES[value]).join(', ')}. Có thể dùng tư liệu đã có và đã kiểm tra quyền.`,row,{class:'hint'});
         const strategy=element('select',null,row,{'aria-label':`Chiến lược shot ${item.ordinal}`});for(const [value,label] of Object.entries(STRATEGIES))element('option',label,strategy,{value});strategy.value=item.strategy;
         const query=element('textarea',null,row,{'aria-label':`Tìm kiếm shot ${item.ordinal}`,maxlength:500});query.value=item.query;
         const prompt=element('textarea',null,row,{'aria-label':`Prompt shot ${item.ordinal}`,maxlength:4000});prompt.value=item.generation_prompt;

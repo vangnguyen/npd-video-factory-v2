@@ -59,3 +59,10 @@ test('read-only panel remains reviewable and blocks stale plans without automati
   assert.equal(h.button('Tải kế hoạch').disabled,false);h.current.canEdit=true;const value=page();value.items[0].input_current=false;h.handler(async()=>value);await h.controller.load();
   assert.equal(h.button('Áp dụng vào shot').disabled,true);assert.equal(h.calls.filter(([,options])=>options).length,0);
 });
+test('current v2 budget fallback and prior v1 history remain distinct without promoted prices or automatic dispatch',async()=>{
+  const h=harness(),value=page();value.current_algorithm='native-storyboard-media-planner-v2';value.items[0].plan.algorithm='native-storyboard-media-planner-v2';
+  value.items[0].plan.items[0].new_generation_budget_blocked=['ai_image','ai_video'];value.input.budget.max_ai_cost_vnd='0';h.handler(async()=>value);await h.controller.load();
+  assert.ok(h.root.querySelectorAll('p').some(node=>String(node.textContent).includes('giá ước tính')));assert.equal(h.calls.filter(([,options])=>options).length,0);
+  const old=page();old.current_algorithm='native-storyboard-media-planner-v2';old.items[0].input_current=false;assert.doesNotThrow(()=>validateMediaPlanPage(old,state()));
+  assert.throws(()=>mediaPlanRequest(state(),old,'apply',{planId:PLAN,shotId:SHOT,acknowledged:true}));old.items[0].input_current=true;assert.throws(()=>validateMediaPlanPage(old,state()));
+});

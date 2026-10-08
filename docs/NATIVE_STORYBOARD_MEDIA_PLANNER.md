@@ -18,6 +18,14 @@ Creating/revising/selecting a plan leaves canonical editing unchanged. Explicit 
 
 Stock/generation operations are requested separately through the existing Assets workers and their explicit consent, current project/source/configuration, cost, idempotency, rights, actual decoding and import gates. This increment does not execute an automatic end-to-end resolver or assign a provider result to the timeline. An imported asset changes inputs and requires a fresh plan. Unknown generation pricing grants no payment authority.
 
+## Finite-budget planning policy
+
+Algorithm `native-storyboard-media-planner-v2` mirrors the existing cost ledger: a missing generation estimate cannot fit a finite project budget, including zero and positive limits. Such new AI image/video choices are deferred while the configured resolver order continues through eligible existing assets or configured stock. Reusing registered AI media with valid attributed rights requires no new generation operation. Unknown/restricted/ineligible media remains unavailable for automatic selection. If no feasible fallback exists, the planned AI choice keeps its null price, `requires_approval` and attention; no job/payment is dispatched. The UI identifies generation strategies blocked by unknown price. An unset budget is not an estimate or a grant of provider/payment authority.
+
+Version 1 plans remain exact hashed, read-only history. Reads return their original JSON without new model defaults; prior records, applied edits and artifacts are not rewritten. A new version 2 plan must be explicitly created before current-policy changes/apply. Fingerprints use each saved plan's actual algorithm version. No data migration occurs.
+
+The optional `--budget-provider-fixture` rehearsal flag is confined to fresh owned fixture roots. It supplies a configured mock catalog whose transport forbids every request, and saves a zero budget through actual Owner-fixture HTTP. Two configured niches choose real project media, produce local visual previews and restore exactly with zero provider/paid calls. This is not a genuine enabled GPU/provider account or a verified license. The registered-AI reuse and stock-catalog unit cases also use explicit mock rights/catalog assertions.
+
 ## HTTP and bounds
 
 - `GET /api/projects/{id}/media-plans`: scoped read, current input, latest plans and stale/applied markers.
