@@ -26,6 +26,7 @@ class OfficialAnalyticsHTTPFixture(analytics_fixture.OfficialAnalyticsFixture):
         self.server.official_publications.clock=lambda:self.clock[0]
         self.analytics=NativeOfficialAnalytics(self.server.official_publications,enabled=True)
         self.server.official_analytics=self.server.runner.official_analytics=self.analytics
+        self.server.bridge.bind_qualified_sources(analytics=self.analytics)
         self.server.publications.capabilities_path=self.publications.capabilities_path
         self.server.publications.capabilities=self.publications.capabilities;self.server.publications.capabilities_sha256=self.publications.capabilities_sha256
         self.cookie,session=access.login(self.raw);self.csrf=session.csrf

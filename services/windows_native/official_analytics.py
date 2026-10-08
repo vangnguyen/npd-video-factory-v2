@@ -342,6 +342,8 @@ class NativeOfficialAnalytics:
                 con.execute("UPDATE native_official_analytics_attempts SET status='succeeded',finished_at=? WHERE attempt_id=?",(stamp,claim))
                 con.execute("UPDATE native_official_analytics_syncs SET status='succeeded',claim_id=NULL,result_snapshot_id=?,failure_code=NULL,updated_at=? WHERE sync_id=?",(result_id,now(),identity))
                 self.event(con,row,'analytics.official.collected','worker',result_snapshot_id=result_id,mock=value['mock'],external_call=not value['mock'])
+                bridge=getattr(self.store,'bridge',None)
+                if bridge is not None:bridge.capture_qualified(con,'analytics',self,project,identity)
         except Exception as error:
             self.failure(project,identity,claim,error)
         return self.get(project, identity)

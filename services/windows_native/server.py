@@ -277,6 +277,7 @@ class LocalServer(ThreadingHTTPServer):
         from .bridge import NativeBridge
         self.bridge=NativeBridge(self.store,workspace_id=self.publications.workspace_id)
         self.bridge.attach_intelligence(self.intelligence.store)
+        self.bridge.bind_qualified_sources(analytics=self.official_analytics,winner=self.official_winners,learning=self.official_learning,projection=self.qualified_learning)
         from .rights import NativeRights
         self.rights=NativeRights(self.store,workspace_id=self.publications.workspace_id)
         from .rights_override import NativeRightsOverrides

@@ -142,7 +142,8 @@ class QualifiedFeedbackTests(FeedbackFixture, unittest.TestCase):
         record, _ = self.project_feedback()
         for mutate in (lambda p:p.update(mock=False), lambda p:p['source_binding'].update(learning_sha256='f'*64),
             lambda p:p['recommendations'][0].update(state='recommendations_available'), lambda p:p['consumers']['idea_engine'][0].update(missing_feature_posts=999),
-            lambda p:p.update(automatic_application=True), lambda p:p['scope'].update(target_binding_sha256='f'*64),lambda p:p.pop('schema_version')):
+            lambda p:p.update(automatic_application=True),lambda p:p.update(mock=1),lambda p:p.update(automatic_application=0),lambda p:p.update(recommendation_only=1),
+            lambda p:p.update(publishing_enabled=0),lambda p:p.update(provider_calls=False),lambda p:p['scope'].update(target_binding_sha256='f'*64),lambda p:p.pop('schema_version')):
             changed = copy.deepcopy(record); mutate(changed['payload'])
             with self.radar.store.transaction() as con:
                 raw = json.dumps(changed); con.execute('UPDATE records SET document=? WHERE id=?', (raw, record['id']))

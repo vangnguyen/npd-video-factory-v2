@@ -1,0 +1,196 @@
+{
+  "schema": "native-qualified-bridge-evidence-v1",
+  "parent_head": "f5b345f0ea21735d1f2eb4f6f7331d09358994f8",
+  "source_sha256": {
+    "services/windows_native/bridge.py": "27bbdec8d44bc3a514624e3b95ad4f98b2add3f3c8fce4da2cf931805172c042",
+    "services/windows_native/qualified_bridge_sources.py": "799c1b582d12b5768e46b3689ad98200860da055f4aff5be749fea34fa69a4bc",
+    "services/windows_native/server.py": "e8fac8b97fb7585d7dc7affb26bf6ead541357e5fb7c5b36a336fdd8ea2c5fad",
+    "services/windows_native/official_analytics.py": "c2929f723a9b4e9fa1bc78512802d0077b1af7319f3a15b3fea243fd2207c6e9",
+    "services/windows_native/official_winners.py": "40ea729ccd7115b1309187b4dcc724e764c94def1caef81a434abb367a91714d",
+    "services/windows_native/official_learning.py": "73bb2d0c68bbabcc99b8dc3cb771d37e798cecc24bd06b6fc7450b714fa33673",
+    "services/windows_native/qualified_learning_feedback.py": "b3c4fd35c9a62cbedfd503dd01726c4d46d3a679d1a192a0ec457eb4d4b6a913",
+    "services/windows_native/tests/test_qualified_bridge.py": "2c9d6e4351b9773792ddd31bd0c32545e0a11d352106c5cfc4a84c72d8b2501d",
+    "services/windows_native/tests/test_qualified_bridge_http.py": "7240c17f14d831452dd8e56f3542005eb880c7da2c91a579c8fed1e9f77d300f",
+    "services/windows_native/tests/test_qualified_learning_feedback.py": "3a4953dbb30c82d35cd476fdc53b250145821702c1dec25b7146388d23ff58aa",
+    "services/windows_native/tests/test_official_analytics_http.py": "c32f08d3f94eec61bde9935d99a397e3587fe240efb16576726d0f4e5c270e46",
+    "services/windows_native/tests/test_official_winner_http.py": "fae99fc38adad535eaa2847f4c04efcdb7f2b5876e877f5d593e1775f8cdccdc",
+    "services/windows_native/tests/test_official_learning_http.py": "d02c66e2117cc72ab3b84544cac762d4c232ab61d46c12144e75f9120e1b9e02",
+    "services/windows_native/tests/test_qualified_learning_feedback_http.py": "29ddc9b4f3a95338e760cf3853bd17d1ca4398bcc37c36d5e99ebec68aed889f",
+    "apps/studio-web/native-bridge.mjs": "eefd2016fd647423719a6c8692c164a4670f64ede740fbfea09dad0f437dd69a",
+    "apps/studio-web/tests/native-bridge.test.mjs": "c08567e387404fbe03bc3ee3cca182c10ffadc61f5d65066ddf0ad56d5d8ee35",
+    "apps/api/tests/test_qualified_feedback_event_contract.py": "45677ca0c5ca49a625078c523ab6a08258fb801b306802884daf18eaa228a7b1",
+    "packages/contracts/agent-hub-qualified-feedback.v1.schema.json": "462b961068efdcd9d2dd6a75238e8f6a71a0805af147bbe48356951d56fdeaae",
+    "scripts/north_star_native_qualified_bridge.py": "f60c6dffe59156a5bdc5f1eda84cce7be24c262fab1ce2f7fc63ce36e5e9dd4f",
+    "docs/NATIVE_QUALIFIED_BRIDGE.md": "12c06124d1f1bcae6c1cd4f88986f06b8d5aea06cc476ff6d0fbaba1f84bad0e"
+  },
+  "tests": {
+    "full_native_passed": 1046,
+    "full_native_seconds": 1459.109,
+    "full_studio_passed": 366,
+    "studio_duration_ms": 1449.782,
+    "api_contract_passed": 13,
+    "api_contract_seconds": 0.21,
+    "new_source_kernel_cases": 13,
+    "new_signed_http_cases": 5,
+    "new_studio_cases": 3,
+    "full_api_run": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-qualified-bridge-flow-n1",
+    "evidence_sha256": "d5e05959325cb7ae37fcc382c7f11bd1de2472977c6728ec5e2344e493f658e7",
+    "exports": {
+      "backup.json": {
+        "sha256": "dd57b220ec61d957170e88b6043f4c01897a28d29e037f38e752d8d72430c2df",
+        "bytes": 3814
+      },
+      "cost-summary.json": {
+        "sha256": "8a6f22928b93cfdf890783d8d543107c0549f5e38e52564d85ece882433a09fa",
+        "bytes": 16896
+      },
+      "evidence.json": {
+        "sha256": "d5e05959325cb7ae37fcc382c7f11bd1de2472977c6728ec5e2344e493f658e7",
+        "bytes": 7461
+      },
+      "expected-analytics-history.json": {
+        "sha256": "d375e2518938719e097028b7bd831d1cbf34264bcd906a52c3c83acb35080818",
+        "bytes": 10548
+      },
+      "expected-bridge-journals.json": {
+        "sha256": "ff7667a48a175810175de11e66864722eca67b43f693adcf5096a9d1ea09703f",
+        "bytes": 13047
+      },
+      "expected-bridge-page.json": {
+        "sha256": "e1787c7317196c0e3e391036da0b24c6daa711cce7424311844b811ab66e26d5",
+        "bytes": 10867
+      },
+      "expected-delivery-audit.json": {
+        "sha256": "653744b63193185b83abb6f0b68770b3994842bc6a7a404aef93a56b08d4f46d",
+        "bytes": 2638
+      },
+      "expected-intelligence-journals.json": {
+        "sha256": "df31326c1cb1ff27d18d7ca8afe809c48977b09a5419f30d715a98121989a13f",
+        "bytes": 25938
+      },
+      "expected-jobs.json": {
+        "sha256": "d402c7d176a756a56999e49bbca1c30558fbb490331874c9999daebec7160de3",
+        "bytes": 13901
+      },
+      "expected-journals.json": {
+        "sha256": "09165b8a6df6aa761466cedd7275cc4799f354a194a5196a444440169ac56a86",
+        "bytes": 76062
+      },
+      "expected-learning-history.json": {
+        "sha256": "362429b3a5fd574c7a9d59d1dc7b21a6f5035676b92ce4b60a6a983f51a0e919",
+        "bytes": 7410
+      },
+      "expected-projection.json": {
+        "sha256": "73aab9ae028df954521b15d16f007a48a1719b8e5d044027f44f7b1477a72b23",
+        "bytes": 13960
+      },
+      "expected-projects.json": {
+        "sha256": "586d476e394e37d1e4fa70b3d304144b28c296db23fe4936b7870151a72c481c",
+        "bytes": 27983
+      },
+      "expected-publications.json": {
+        "sha256": "03a96b1160cd58a7768a85e59d374d88c7d4d44dcb8b89b4f5a4d83072550360",
+        "bytes": 14805
+      },
+      "expected-winner-history.json": {
+        "sha256": "0301301ce26cb158b28d351f325ac7c2d04313c6e0be91aeb190e6c111ac621c",
+        "bytes": 24193
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-qualified-controls-replay.json": {
+        "sha256": "4fd9e2f30e4610e1dfdba35cfacb682962396e3c0ea8b592c59dd5b1a723dbcf",
+        "bytes": 116
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "edc81de61a6b548f3b546a2c0151ef9ef9563f4fa946c342dcd846d02cc82ebf",
+        "bytes": 1972
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "c1d2f344b33a9e399f60841bd22753961c94ade5c79ae4de49e193bcf41dd3fd",
+        "bytes": 662
+      },
+      "new-process-replay.json": {
+        "sha256": "695660539e6561dfa88e1797f468e9aedaa0d00077226afba9b9eeff89ea9a9d",
+        "bytes": 432
+      },
+      "owned-qualified-bridge.zip": {
+        "sha256": "bfc145f7ec87da66c2b14dcbeb3b8f8c118f052cd893c85677cbcd2c57a47b77",
+        "bytes": 1472125
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "a75f90a1fa107f54d15acef38a8ac67a61e282013371dac7a6f9e796371045b2",
+        "bytes": 258
+      },
+      "recovery-restore.json": {
+        "sha256": "ae0df3210abd32328b0ba68e886a62e9c8275fccba9aecb3737c37a733db66b5",
+        "bytes": 4216
+      },
+      "restored-in-process.json": {
+        "sha256": "695660539e6561dfa88e1797f468e9aedaa0d00077226afba9b9eeff89ea9a9d",
+        "bytes": 432
+      },
+      "sanitized-operation-logs.json": {
+        "sha256": "9667e0bb80d7be498ab5c211d60b71478d7c5de54f213fa1416ee65f2e6ea842",
+        "bytes": 5782
+      },
+      "served-studio-files.json": {
+        "sha256": "b68f46aeb4d72f7dda06a279614abb35a2f654ca3c65033a489ad521c71f50d4",
+        "bytes": 383
+      },
+      "signed-fixture-delivery-wire.json": {
+        "sha256": "c1b3132b2fc97de243e11184ff61d7e05b09b95ccaa6f88fa31b6b7b94756dca",
+        "bytes": 499
+      },
+      "signed-http-summary.json": {
+        "sha256": "ca482890f70785333c3c6f6948359b3d8d70260f6040973df6e4bba0c1eb6972",
+        "bytes": 4316
+      }
+    },
+    "backup_sha256": "bfc145f7ec87da66c2b14dcbeb3b8f8c118f052cd893c85677cbcd2c57a47b77",
+    "backup_bytes": 1472125,
+    "backup_entries": 12
+  },
+  "logs": {
+    "native-qualified-bridge-api-contract-n1.log": "0088d3a708c7234f57b29c27b77c629f8132d9691622fae63b9acef9622a2912",
+    "native-qualified-bridge-native-full-n1.log": "4cc7ba008f50b4bb9872413e97d56f5ad4de1c8d8f771d50d320e4ec71725921",
+    "native-qualified-bridge-studio-full-n1.log": "f33625bb2c4729adee390a4bdfb4ba3b6d6407d3752a057d4cdbccee36800e5f"
+  },
+  "legacy_v1_schema_unchanged": true,
+  "qualified_contract": "agent-hub-qualified-feedback.v1",
+  "qualified_payload_version": "native-qualified-source-event-v1",
+  "source_receipt_response_cost_assessment_learning_projection_bindings_revalidated_on_read_and_delivery": true,
+  "canonical_boolean_numeric_relabel_downgrade_and_changed_source_refused": true,
+  "workflow_source_capture_and_intelligence_projection_outbox_atomic": true,
+  "projection_reader_workflow_transaction_and_read_only_intelligence_wal_no_inverse_writer_lock": true,
+  "historical_reads_after_owner_expiry_archive_provider_removal": true,
+  "four_sparse_mock_events_without_false_winner_claim": true,
+  "analytics_observation_count_is_one_retained_report_not_views_or_learning_sample_count": true,
+  "lost_fixture_reply_reuses_same_signed_body_event_and_idempotency_key": true,
+  "delivery_semantics": "at_least_once_fixture_no_hub_receipt",
+  "one_receipt_observation_assessment_learning_projection_24_workflow_eight_bridge_five_intelligence_journals_fresh_restore_exact": true,
+  "signed_http_requests": 14,
+  "qualified_events": 4,
+  "signed_fixture_delivery_attempts": 2,
+  "distinct_fixture_receiver_events": 1,
+  "mock_analytics_read_requests": 3,
+  "mock_publication_wire_requests": 10,
+  "mock_initial_account_lookup_requests": 1,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "actual_hub_calls": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_source_qc_rights_oauth_account_metrics_identity_and_clock_fixtures": true,
+  "browser_owner_real_receiver_provider_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

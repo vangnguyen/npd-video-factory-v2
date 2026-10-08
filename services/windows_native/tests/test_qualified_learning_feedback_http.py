@@ -16,6 +16,7 @@ class QualifiedFeedbackHTTPFixture(OfficialLearningHTTPFixture):
         self.feedback=NativeQualifiedLearningFeedback(self.learning,self.server.trends)
         self.server.qualified_learning=self.feedback;self.server.trends.qualified_learning=self.feedback
         self.server.intelligence.qualified_learning=self.feedback;self.server.store.qualified_learning=self.feedback
+        self.server.bridge.bind_qualified_sources(projection=self.feedback)
         self.learned=self.create_learning();self.learned.pop('idempotent_replay')
         self.server.runner.wake.clear()
 

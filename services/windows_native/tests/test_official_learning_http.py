@@ -19,6 +19,7 @@ class OfficialLearningHTTPFixture(OfficialWinnerHTTPFixture):
     def setUp(self):
         with patch.object(review_fixture,'render_fixture',side_effect=self.configured_render):super().setUp()
         self.server.official_learning=NativeOfficialLearning(self.winners);self.learning=self.server.official_learning
+        self.server.bridge.bind_qualified_sources(learning=self.learning)
         self.assessment=self.create_winner();self.assessment.pop('idempotent_replay');self.learning_base='/api/projects/'+self.project['id']+'/official-learning'
     def learning_body(self,**changes):
         return Create.model_validate({'assessment_id':self.assessment['assessment_id'],'expected_assessment_sha256':self.assessment['snapshot_sha256'],

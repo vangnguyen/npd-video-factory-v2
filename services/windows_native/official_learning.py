@@ -142,7 +142,9 @@ class NativeOfficialLearning:
             con.execute('INSERT INTO native_official_learning_snapshots VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',(identity,self.workspace,project,anchor['publication_id'],anchor['assessment_id'],anchor['result_snapshot_id'],key,fp,digest(snapshot),json.dumps(snapshot),authority['token_id'],stamp))
             con.execute('INSERT INTO native_official_learning_events(learning_id,workspace_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?,?)',
                 (identity,self.workspace,project,'analytics.official.learning.saved',authority['token_id'],json.dumps({'observations':len(observations),'mock':anchor['mock'],'recommendation_only':True,'external_call':False}),stamp))
-            return self.read(con,self.row(con,project,identity)),False
+            value=self.read(con,self.row(con,project,identity));bridge=getattr(self.store,'bridge',None)
+            if bridge is not None:bridge.capture_qualified(con,'learning',self,project,identity)
+            return value,False
     def get(self,project,identity):
         with self.store.transaction() as con:return self.read(con,self.row(con,project,identity))
     def page(self,project,*,publication=None,limit=25,cursor=None):

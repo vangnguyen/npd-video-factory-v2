@@ -21,12 +21,13 @@ from .bridge_transport import BridgeResponse,FixtureWebhookTransport,HTTPSWebhoo
 from app.bridge_auth import (ServiceAuthVerifier,ServiceAuthError,SigningKeyring,
     CONTRACT_VERSION_HEADER,SERVICE_ID_HEADER,KEY_ID_HEADER,TIMESTAMP_HEADER,NONCE_HEADER,
     CONTENT_HASH_HEADER,SIGNATURE_HEADER,canonical_json_bytes,ServiceIdentity,_decode_keys)
+from .qualified_bridge_sources import QualifiedSources,CONTRACT as QUALIFIED_CONTRACT,VERSION as QUALIFIED_PAYLOAD,EVENTS as QUALIFIED_EVENTS,TYPES as QUALIFIED_TYPES
 
 VERSION='agent-hub-bridge.v1'
 EVENTS=('trend.opportunity.detected','idea.shortlist.ready','video.project.created',
     'video.analysis.completed','video.preview.ready','video.approval.required','video.approved',
     'video.render.completed','video.render.failed','video.publish.completed','video.publish.failed',
-    'video.analytics.updated','video.winner.detected')
+    'video.analytics.updated','video.winner.detected','video.winner.assessed','video.learning.updated')
 HEADERS=(SERVICE_ID_HEADER,KEY_ID_HEADER,TIMESTAMP_HEADER,NONCE_HEADER,CONTENT_HASH_HEADER,SIGNATURE_HEADER,CONTRACT_VERSION_HEADER)
 
 
@@ -51,7 +52,7 @@ class NativeBridge:
         if marker.exists() and json.loads(marker.read_bytes())!={'schema':'vf-native-workspace-binding-v1','workspace_id':workspace_id}:
             raise WorkflowError('NATIVE_BRIDGE_WORKSPACE_INVALID',400)
         self.verifier=None;self.identities={};self.signing=None;self.transport=None;self.delivery_enabled=False
-        self.intelligence=None
+        self.intelligence=None;self.sources=QualifiedSources(self)
         self.stop=threading.Event();self.worker=None
         with store.transaction() as con:
             con.executescript('''
@@ -160,6 +161,24 @@ class NativeBridge:
                 raise WorkflowError('NATIVE_BRIDGE_WORKSPACE_INVALID',400)
         self.intelligence=store;store.bridge=self
 
+    def bind_qualified_sources(self,**services):
+        """Bind existing local readers; this never enables delivery or a provider."""
+        self.sources.bind(**services)
+
+    def capture_qualified(self,con,kind,service,project,identity):
+        if kind not in ('analytics','winner','learning') or self.sources.services.get(kind) is not service:
+            raise WorkflowError('NATIVE_BRIDGE_QUALIFIED_SOURCE_CONFIGURATION_CHANGED')
+        value=self.sources.read(kind,project,identity,con);payload,_=self.sources.payload(kind,value)
+        for event in self.sources.events(kind,payload):self.put(con,self.sources.envelope(kind,value,event))
+
+    def capture_projection(self,con,service,record,source_con):
+        if self.sources.services.get('projection') is not service or self.intelligence is not service.store:
+            raise WorkflowError('NATIVE_BRIDGE_QUALIFIED_SOURCE_CONFIGURATION_CHANGED')
+        value=self.sources.read('projection',record['payload']['source_binding']['project_id'],record['id'],source_con,record)
+        envelope=self.sources.envelope('projection',value,'video.learning.updated');self.validate(envelope)
+        con.execute('INSERT INTO native_bridge_source_events(event_id,workspace_id,envelope_json,envelope_sha256) VALUES(?,?,?,?)',
+            (envelope['event_id'],self.workspace,canonical_json_bytes(envelope).decode(),digest(envelope)))
+
     def capture_intelligence(self,con,kind,value):
         event_type=None;payload={'record_id':value['id'],'record_version':value['version'],'record_sha256':digest(value)}
         if kind=='Opportunity' and value.get('supporting_signals') and value.get('status')=='NEW':
@@ -191,7 +210,7 @@ class NativeBridge:
         if not rows:return 0
         with self.store.transaction() as con:
             for row in rows:
-                self.put(con,self.read_event(row))
+                self.put(con,self.read_event(row,source_con=con))
             con.execute("INSERT INTO native_bridge_cursors VALUES(?,'intelligence',?) ON CONFLICT(workspace_id,source) DO UPDATE SET sequence=max(sequence,excluded.sequence)",(self.workspace,rows[-1]['sequence']))
         return len(rows)
 
@@ -238,6 +257,7 @@ class NativeBridge:
 
     def contract(self):
         return {'contract_version':VERSION,'api_version':'v1','backend':'windows_native',
+            'event_contract_versions':[VERSION,QUALIFIED_CONTRACT],'qualified_source_payload_version':QUALIFIED_PAYLOAD,
             'native_dto_version':'native-bridge-draft-v1','service_auth':'hmac-sha256','webhook_auth':'hmac-sha256-keyring',
             'inbound_actions':['project.create_draft'],'outbound_events':list(EVENTS),'execution_boundary':'draft_only',
             'service_auth_configured':self.verifier is not None,'webhook_delivery_enabled':self.delivery_enabled,
@@ -306,12 +326,17 @@ class NativeBridge:
 
     def validate(self,value):
         try:
-            if (not isinstance(value,dict) or set(value)!={'contract_version','event_id','event_type','occurred_at','payload'} or value['contract_version']!=VERSION
+            if (not isinstance(value,dict) or set(value)!={'contract_version','event_id','event_type','occurred_at','payload'} or value['contract_version'] not in (VERSION,QUALIFIED_CONTRACT)
                 or value['event_type'] not in EVENTS or not isinstance(value['event_id'],str) or not re.fullmatch(r'bevt_[a-f0-9]{48}',value['event_id'])
                 or not isinstance(value['payload'],dict) or value['payload'].get('workspace_id')!=self.workspace):raise ValueError()
             stamp=datetime.fromisoformat(value['occurred_at'])
             if stamp.tzinfo is None:raise ValueError()
             origin=value['payload']['origin_ref']
+            if not isinstance(origin,str):raise ValueError()
+            p=value['payload'];qualified=value['contract_version']==QUALIFIED_CONTRACT or origin.startswith('qualified-v1:') or 'payload_schema_version' in p or 'source_type' in p
+            if qualified:
+                if value['contract_version']!=QUALIFIED_CONTRACT or value['event_type'] not in QUALIFIED_EVENTS or p.get('payload_schema_version')!=QUALIFIED_PAYLOAD or p.get('source_type') not in QUALIFIED_TYPES or not origin.startswith('qualified-v1:'):raise ValueError()
+            elif value['event_type'] in ('video.winner.assessed','video.learning.updated'):raise ValueError()
             if value['event_id']!='bevt_'+digest({'workspace':self.workspace,'origin':origin,'type':value['event_type']})[:48]:raise ValueError()
         except (ValueError,TypeError,KeyError):raise WorkflowError('NATIVE_BRIDGE_EVENT_EVIDENCE_INVALID') from None
         self._safe(value)
@@ -371,11 +396,12 @@ class NativeBridge:
                 elif job['kind'] in ('asr','auto_edit_analysis','media_frames') and job['status']=='succeeded':event_type='video.analysis.completed'
         if event_type:self.put(con,self.envelope(event_type,'workflow:'+str(sequence),data,stamp))
 
-    def read_event(self,row):
+    def read_event(self,row,*,source_con=None):
         value=json.loads(row['envelope_json'])
         if digest(value)!=row['envelope_sha256'] or row['workspace_id']!=self.workspace or value['event_id']!=row['event_id']:
             raise WorkflowError('NATIVE_BRIDGE_EVENT_EVIDENCE_INVALID')
         self.validate(value)
+        if value['contract_version']==QUALIFIED_CONTRACT:self.sources.validate(value,source_con)
         return value
 
     def page(self,*,limit=25,cursor=None):
@@ -392,7 +418,7 @@ class NativeBridge:
                 (self.workspace,after,limit+1)).fetchall();items=[]
             for row in rows[:limit]:
                 delivery=dict(con.execute('SELECT * FROM native_bridge_deliveries WHERE event_id=?',(row['event_id'],)).fetchone())
-                delivery.pop('claim_id');items.append({'sequence':row['sequence'],'envelope':self.read_event(row),'envelope_sha256':row['envelope_sha256'],'delivery':delivery})
+                delivery.pop('claim_id');items.append({'sequence':row['sequence'],'envelope':self.read_event(row,source_con=con),'envelope_sha256':row['envelope_sha256'],'delivery':delivery})
             next_cursor=base64.urlsafe_b64encode(json.dumps([self.workspace,rows[limit-1]['sequence']]).encode()).decode().rstrip('=') if len(rows)>limit else None
             return {'contract_version':VERSION,'workspace_id':self.workspace,'items':items,'next_cursor':next_cursor,'delivery_enabled':self.delivery_enabled}
 
@@ -416,7 +442,7 @@ class NativeBridge:
         with self.store.transaction() as con:
             row=con.execute('SELECT * FROM native_bridge_events WHERE event_id=? AND workspace_id=?',(event_id,self.workspace)).fetchone()
             if row is None:raise WorkflowError('NATIVE_BRIDGE_EVENT_NOT_FOUND',404)
-            self.read_event(row)
+            self.read_event(row,source_con=con)
             if row['envelope_sha256']!=request.expected_envelope_sha256:raise WorkflowError('NATIVE_BRIDGE_EVENT_CHANGED',409)
             old=con.execute('SELECT * FROM native_bridge_selections WHERE workspace_id=? AND event_id=? AND key_sha256=?',(self.workspace,event_id,key)).fetchone()
             if old:
@@ -457,7 +483,7 @@ class NativeBridge:
         with self.store.transaction() as con:
             row=con.execute('SELECT * FROM native_bridge_events WHERE event_id=? AND workspace_id=?',(event_id,self.workspace)).fetchone()
             if row is None:raise WorkflowError('NATIVE_BRIDGE_EVENT_NOT_FOUND',404)
-            self.read_event(row)
+            self.read_event(row,source_con=con)
             delivery=con.execute('SELECT * FROM native_bridge_deliveries WHERE event_id=?',(event_id,)).fetchone()
             if delivery['status']!='disabled':return
             con.execute("UPDATE native_bridge_deliveries SET status='queued',mode=?,destination_sha256=?,next_at=?,updated_at=? WHERE event_id=?",
@@ -478,7 +504,7 @@ class NativeBridge:
             if row['attempts']>=5:
                 con.execute("UPDATE native_bridge_deliveries SET status='failed' WHERE event_id=?",(row['event_id'],));return row['event_id']
             event=con.execute('SELECT * FROM native_bridge_events WHERE event_id=?',(row['event_id'],)).fetchone()
-            body=canonical_json_bytes(self.read_event(event));attempt=row['attempts']+1
+            body=canonical_json_bytes(self.read_event(event,source_con=con));attempt=row['attempts']+1
             headers=self.signing.sign(body,timestamp=int(stamp),event_id=row['event_id'])
             headers.update({'Content-Type':'application/json','Idempotency-Key':row['event_id']})
             con.execute("UPDATE native_bridge_deliveries SET status='running',attempts=?,claim_id=?,lease_until=?,next_at=NULL WHERE event_id=?",(attempt,claim,stamp+120,row['event_id']))
@@ -503,7 +529,7 @@ class NativeBridge:
         with self.store.transaction() as con:
             row=con.execute('SELECT * FROM native_bridge_events WHERE event_id=? AND workspace_id=?',(event_id,self.workspace)).fetchone()
             if row is None:raise WorkflowError('NATIVE_BRIDGE_EVENT_NOT_FOUND',404)
-            self.read_event(row)
+            self.read_event(row,source_con=con)
             delivery=dict(con.execute('SELECT * FROM native_bridge_deliveries WHERE event_id=?',(event_id,)).fetchone());delivery.pop('claim_id')
             attempts=[dict(r) for r in con.execute('SELECT * FROM native_bridge_attempts WHERE event_id=? ORDER BY sequence LIMIT 6',(event_id,))]
             selections=con.execute('SELECT result_json,result_sha256,actor_ref,created_at FROM native_bridge_selections WHERE event_id=? AND workspace_id=? ORDER BY created_at DESC LIMIT 26',(event_id,self.workspace)).fetchall()

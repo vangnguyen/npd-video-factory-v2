@@ -159,7 +159,9 @@ class NativeOfficialWinners:
                 (identity,self.workspace,project,candidate['publication_id'],payload.sync_id,candidate['result_snapshot_id'],key,fingerprint,digest(snapshot),json.dumps(snapshot),authority['token_id'],stamp))
             con.execute('INSERT INTO native_official_winner_events(assessment_id,workspace_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?,?)',
                 (identity,self.workspace,project,'analytics.official.winner.assessed',authority['token_id'],json.dumps({'state':assessment['state'],'mock':candidate['scope']['mock'],'recommendation_only':True,'external_call':False}),stamp))
-            return self.read(con,self.row(con,project,identity)),False
+            value=self.read(con,self.row(con,project,identity));bridge=getattr(self.store,'bridge',None)
+            if bridge is not None:bridge.capture_qualified(con,'winner',self,project,identity)
+            return value,False
 
     def get(self,project,identity):
         with self.store.transaction() as con:return self.read(con,self.row(con,project,identity))

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ngocphuongdong.com/video-factory/agent-hub-qualified-feedback.v1.schema.json",
+  "title": "Qualified Native source feedback event v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "event_id", "event_type", "occurred_at", "payload"],
+  "properties": {
+    "contract_version": {"const": "agent-hub-qualified-feedback.v1"},
+    "event_id": {"type": "string", "pattern": "^bevt_[a-f0-9]{48}$"},
+    "event_type": {"enum": ["video.analytics.updated", "video.winner.assessed", "video.winner.detected", "video.learning.updated"]},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace_id", "backend", "origin_ref", "execution_controlled_by_video_factory", "automatic_action", "payload_schema_version", "source_type", "source_kind", "source_ref", "source_sha256", "original_snapshot_sha256", "result_sha256", "project_id", "publication_id", "scope_sha256", "source_binding_sha256", "state", "assessment_score", "peer_count", "observation_count", "winner_policy_sha256", "winner_factor_basis_sha256", "channel_baseline_verified", "mock", "real_audience_observation", "source_external_call", "recommendation_only", "automatic_application", "publishing_enabled", "provider_calls", "real_provider_acceptance"],
+      "properties": {
+        "workspace_id": {"type": "string", "pattern": "^wsp_[A-Za-z0-9_-]{4,64}$"},
+        "backend": {"const": "windows_native"},
+        "origin_ref": {"type": "string", "pattern": "^qualified-v1:(analytics|winner|learning|projection):[a-f0-9]{32}:", "maxLength": 200},
+        "execution_controlled_by_video_factory": {"const": true},
+        "automatic_action": {"const": false},
+        "payload_schema_version": {"const": "native-qualified-source-event-v1"},
+        "source_type": {"enum": ["analytics", "winner", "learning", "projection"]},
+        "source_kind": {"enum": ["qualified_official_analytics", "qualified_official_winner", "qualified_official_learning", "qualified_learning_projection"]},
+        "source_ref": {"type": "string", "pattern": "^((noas|nowa|nols)_[a-f0-9]{32}|[a-f0-9]{32})$"},
+        "source_sha256": {"$ref": "#/$defs/sha"},
+        "original_snapshot_sha256": {"$ref": "#/$defs/sha"},
+        "result_sha256": {"$ref": "#/$defs/sha"},
+        "project_id": {"type": "string", "pattern": "^[a-f0-9]{32}$"},
+        "publication_id": {"type": "string", "pattern": "^nopu_[a-f0-9]{32}$"},
+        "scope_sha256": {"$ref": "#/$defs/sha"},
+        "source_binding_sha256": {"$ref": "#/$defs/sha"},
+        "state": {"enum": ["succeeded", "winner_candidate", "normal", "underperforming", "insufficient_data", "recommendations_available", "no_positive_association"]},
+        "assessment_score": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+        "peer_count": {"type": ["integer", "null"], "minimum": 0, "maximum": 100},
+        "observation_count": {"type": "integer", "minimum": 0, "maximum": 100},
+        "winner_policy_sha256": {"anyOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]},
+        "winner_factor_basis_sha256": {"anyOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]},
+        "channel_baseline_verified": {"type": ["boolean", "null"]},
+        "mock": {"type": "boolean"},
+        "real_audience_observation": {"type": "boolean"},
+        "source_external_call": {"type": "boolean"},
+        "recommendation_only": {"const": true},
+        "automatic_application": {"const": false},
+        "publishing_enabled": {"const": false},
+        "provider_calls": {"const": 0, "type": "integer"},
+        "real_provider_acceptance": {"const": false}
+      },
+      "allOf": [
+        {"if": {"properties": {"mock": {"const": true}}}, "then": {"properties": {"real_audience_observation": {"const": false}, "source_external_call": {"const": false}, "channel_baseline_verified": {"enum": [false, null]}}}, "else": {"properties": {"real_audience_observation": {"const": true}, "source_external_call": {"const": true}}}},
+        {"if": {"properties": {"source_type": {"const": "analytics"}}}, "then": {"properties": {"source_kind": {"const": "qualified_official_analytics"}, "source_ref": {"pattern": "^noas_"}, "state": {"const": "succeeded"}, "assessment_score": {"type": "null"}, "peer_count": {"type": "null"}, "observation_count": {"const": 1}, "channel_baseline_verified": {"type": "null"}}}},
+        {"if": {"properties": {"source_type": {"const": "winner"}}}, "then": {"properties": {"source_kind": {"const": "qualified_official_winner"}, "source_ref": {"pattern": "^nowa_"}, "peer_count": {"type": "integer"}, "observation_count": {"const": 1}, "channel_baseline_verified": {"type": "boolean"}}}},
+        {"if": {"properties": {"source_type": {"const": "learning"}}}, "then": {"properties": {"source_kind": {"const": "qualified_official_learning"}, "source_ref": {"pattern": "^nols_"}, "assessment_score": {"type": "null"}, "peer_count": {"type": "null"}, "channel_baseline_verified": {"type": "null"}}}},
+        {"if": {"properties": {"source_type": {"const": "projection"}}}, "then": {"properties": {"source_kind": {"const": "qualified_learning_projection"}, "source_ref": {"pattern": "^[a-f0-9]{32}$"}, "assessment_score": {"type": "null"}, "peer_count": {"type": "null"}, "channel_baseline_verified": {"type": "null"}}}}
+      ]
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"event_type": {"const": "video.analytics.updated"}}}, "then": {"properties": {"payload": {"properties": {"source_type": {"const": "analytics"}}}}}},
+    {"if": {"properties": {"event_type": {"enum": ["video.winner.assessed", "video.winner.detected"]}}}, "then": {"properties": {"payload": {"properties": {"source_type": {"const": "winner"}}}}}},
+    {"if": {"properties": {"event_type": {"const": "video.winner.detected"}}}, "then": {"properties": {"payload": {"properties": {"state": {"const": "winner_candidate"}, "assessment_score": {"type": "number"}, "peer_count": {"type": "integer", "minimum": 3}}}}}},
+    {"if": {"properties": {"event_type": {"const": "video.learning.updated"}}}, "then": {"properties": {"payload": {"properties": {"source_type": {"enum": ["learning", "projection"]}}}}}}
+  ],
+  "$defs": {"sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

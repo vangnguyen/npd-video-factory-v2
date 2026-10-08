@@ -12,6 +12,7 @@ from services.windows_native.server import Handler
 class OfficialWinnerHTTPFixture(OfficialAnalyticsHTTPFixture):
     def setUp(self):
         super().setUp();self.server.official_winners=NativeOfficialWinners(self.analytics);self.winners=self.server.official_winners
+        self.server.bridge.bind_qualified_sources(winner=self.winners)
         value=self.create_http();assert self.server.runner.run_one()
         self.observation=self.request('GET',self.base+'/'+value['sync_id'])[1];self.winner_base='/api/projects/'+self.project['id']+'/official-winners'
     def winner_body(self,**changes):

@@ -6,7 +6,7 @@ from pydantic import Field, StrictBool, ValidationError, field_validator
 from app.models import StrictModel
 from app.learning_templates import style_signature
 from app.subtitle_templates import CATALOG, template_catalog
-from .contracts import WorkflowError, digest, file_sha
+from .contracts import WorkflowError, digest, file_sha,canonical
 from .channel_profiles import select, resolve
 from .official_learning import NativeOfficialLearning
 from .trend_radar import NativeTrendRadar
@@ -151,7 +151,7 @@ class NativeQualifiedLearningFeedback:
             with (self.learning.store.transaction() if source_con is None else nullcontext(source_con)) as source:
                 original = self.learning.read(source, self.learning.row(source, request.project_id, request.learning_id))
                 expected = content(request, original, p['channel_selection'], p['authority'])
-            if p != expected or p['schema_version'] != SCHEMA or record['provenance'] != {
+            if canonical(p) != canonical(expected) or p['schema_version'] != SCHEMA or record['provenance'] != {
                 'origin': 'native-trend-radar-v1', 'recommendation_only': True, 'automatic_production': False}:
                 raise ValueError()
             return record
@@ -179,6 +179,8 @@ class NativeQualifiedLearningFeedback:
                     'actor_ref': authority['token_id'], 'source_binding': source_binding(original),
                     'mock': original['mock'], 'observation_count': original['observation_count'],
                     'recommendation_only': True, 'provider_calls': 0})
+                bridge=getattr(self.store,'bridge',None)
+                if bridge is not None:bridge.capture_projection(con,self,record,source)
             return record, False
 
     def get(self, identifier, *, source_con=None):
