@@ -9,14 +9,16 @@ import json,re,uuid
 from .contracts import WorkflowError,digest
 from .official_publication_models import Create,Approve,Action
 from .official_publication_registry import PublishingFactory
+from .official_publication_dispatch import Ticket
 from .publications import PROFILES
 from .publication_qc import project as project_qc
 from .store import now
 from app.human_identity import HumanAuthVerifier,HumanPrincipal
 from app.publishing_logic import validate_platform
 from app.publishing_models import PublishingTargetBinding
+from app.publishing_models import PublicationMetadata,PublicationReceipt
 from app.publishing_credentials import target_digest
-from app.youtube_upload import start_request,size_bytes
+from app.youtube_upload import start_request,size_bytes,UploadProgress,VideoObservation,UNIT,video_id
 from app.publishing_wire import PublishingWireError
 from types import SimpleNamespace
 
@@ -49,6 +51,22 @@ class NativeOfficialPublications:
                 publication_id TEXT PRIMARY KEY,workspace_id TEXT NOT NULL,project_id TEXT NOT NULL,snapshot_sha256 TEXT NOT NULL,approval_id TEXT NOT NULL,
                 phase TEXT NOT NULL,version INTEGER NOT NULL,total_bytes INTEGER NOT NULL,acknowledged_bytes INTEGER NOT NULL,
                 private_session_ref TEXT,remote_post_id TEXT,intent_id TEXT,failure_code TEXT,updated_at TEXT NOT NULL);''')
+            con.executescript('''CREATE TABLE IF NOT EXISTS native_official_publish_intents (
+                intent_id TEXT PRIMARY KEY,publication_id TEXT NOT NULL,workspace_id TEXT NOT NULL,project_id TEXT NOT NULL,
+                snapshot_sha256 TEXT NOT NULL,approval_id TEXT NOT NULL,version INTEGER NOT NULL,operation TEXT NOT NULL,
+                range_start INTEGER,range_end INTEGER,body_sha256 TEXT NOT NULL,status TEXT NOT NULL,created_at TEXT NOT NULL,
+                UNIQUE(publication_id,version));
+                CREATE UNIQUE INDEX IF NOT EXISTS native_official_publish_one_init ON native_official_publish_intents(publication_id) WHERE operation='init';
+                CREATE TABLE IF NOT EXISTS native_official_publish_responses (
+                intent_id TEXT PRIMARY KEY,publication_id TEXT NOT NULL,workspace_id TEXT NOT NULL,project_id TEXT NOT NULL,
+                response_sha256 TEXT NOT NULL,result_json TEXT NOT NULL,result_sha256 TEXT NOT NULL,created_at TEXT NOT NULL,retry_not_before TEXT);
+                CREATE TABLE IF NOT EXISTS native_official_publish_processing (
+                observation_id TEXT PRIMARY KEY,publication_id TEXT NOT NULL,workspace_id TEXT NOT NULL,project_id TEXT NOT NULL,
+                snapshot_sha256 TEXT NOT NULL,remote_post_id TEXT NOT NULL,response_sha256 TEXT NOT NULL,
+                observation_json TEXT NOT NULL,observation_sha256 TEXT NOT NULL,created_at TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS native_official_publish_receipts (
+                publication_id TEXT PRIMARY KEY,workspace_id TEXT NOT NULL,project_id TEXT NOT NULL,snapshot_sha256 TEXT NOT NULL,
+                receipt_json TEXT NOT NULL,receipt_sha256 TEXT NOT NULL,created_at TEXT NOT NULL);''')
             if con.execute('SELECT 1 FROM native_official_publications WHERE workspace_id!=? LIMIT 1',(self.workspace,)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKSPACE_CHANGED')
     def event(self,con,row,action,actor,**evidence):
         con.execute('INSERT INTO native_official_publish_events(publication_id,workspace_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?,?)',
@@ -74,10 +92,25 @@ class NativeOfficialPublications:
                 or value['dedupe_sha256']!=digest({'workspace':self.workspace,'platform':target.platform,'account':target.target_account_id,'final':snapshot['final_sha256'],'mock':snapshot['mock']})
                 or value['status'] not in {'not_configured','awaiting_publish_approval','queued','running','cancelled','review_required','completed'}):raise ValueError()
             size_bytes(snapshot['final_bytes']);value.pop('key_sha256')
-            return {**value,'snapshot':snapshot,'schema_version':'native-official-publication-v1','mock':snapshot['mock'],'token_returned':False,'real_provider_tested':False}
+            return {**value,'snapshot':snapshot,'schema_version':'native-official-publication-v1','mock':snapshot['mock'],'token_returned':False,'real_provider_tested':False,'receipt':None,'published':False,'mock_publication_complete':False}
         except (ValueError,TypeError,KeyError,PublishingWireError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EVIDENCE_CHANGED') from None
     def get(self,project,identity):
-        with self.store.transaction() as con:return self.read(self.row(con,project,identity))
+        with self.store.transaction() as con:
+            value=self.read(self.row(con,project,identity));row=con.execute('SELECT * FROM native_official_publish_receipts WHERE publication_id=?',(identity,)).fetchone()
+            receipt=None
+            if row is not None:
+                try:
+                    receipt=json.loads(row['receipt_json']);parsed=PublicationReceipt.model_validate(receipt)
+                    dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
+                    if (any(row[k]!=value[k] for k in ('workspace_id','project_id','snapshot_sha256')) or digest(receipt)!=row['receipt_sha256']
+                        or parsed.request_fingerprint!=value['request_fingerprint'] or parsed.mode!='live' or parsed.platform!='youtube'
+                        or parsed.provider_key!='youtube-data-api-publishing' or receipt.get('mock') is not value['mock']
+                        or receipt.get('external_action') is not (not value['mock']) or parsed.remote_url is not None
+                        or dispatch is None or dispatch['remote_post_id']!=parsed.remote_post_id or dispatch['phase']!='uploaded'
+                        or dispatch['acknowledged_bytes']!=dispatch['total_bytes'] or value['status']!='completed'):raise ValueError()
+                except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RECEIPT_CHANGED') from None
+            if value['status']=='completed' and receipt is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RECEIPT_CHANGED')
+            return {**value,'receipt':receipt,'published':receipt is not None and not value['mock'],'mock_publication_complete':receipt is not None and value['mock']}
     def states(self):
         self.accounts.check_workspace()
         return {'schema_version':'native-official-publishing-factories-v1','workspace_id':self.workspace,'profiles':[f.public() for _,f in sorted(self.factories.items())],
@@ -186,7 +219,10 @@ class NativeOfficialPublications:
             dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
             if (dispatch is None or any(dispatch[k]!=row[k] for k in ('workspace_id','project_id','snapshot_sha256','approval_id'))
                 or dispatch['total_bytes']!=value['snapshot']['final_bytes'] or type(dispatch['version']) is not int or dispatch['version']<1
-                or not 0<=dispatch['acknowledged_bytes']<=dispatch['total_bytes']):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
+                or type(dispatch['acknowledged_bytes']) is not int or not 0<=dispatch['acknowledged_bytes']<=dispatch['total_bytes']
+                or dispatch['phase'] not in ('prepared','init_intent','init_unconfirmed','uploading','chunk_intent','reconcile_intent','reconciliation_required','uploaded','review_required')
+                or dispatch['private_session_ref'] is not None and not re.fullmatch(r'nups_[a-f0-9]{32}',dispatch['private_session_ref'])
+                or dispatch['remote_post_id'] is not None and not re.fullmatch(r'[A-Za-z0-9_-]{11}',dispatch['remote_post_id'])):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
             return value,factory,path,dict(dispatch)
     def cancel(self,project,identity,payload,*,principal):
         authority=self.identity(principal)
@@ -200,3 +236,142 @@ class NativeOfficialPublications:
                 con.execute("UPDATE native_official_publish_approvals SET status='revoked',revoked_at=? WHERE publication_id=? AND status='active'",(now(),identity))
                 self.event(con,row,'official.publication.cancelled',authority['token_id'],external_action=False)
             return self.read(self.row(con,project,identity))
+    def begin_intent(self,project,identity,expected_version,operation,*,range_start=None,range_end=None,body_sha256=None):
+        if type(expected_version) is not int or expected_version<1 or operation not in ('init','chunk','reconcile'):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_INVALID',400)
+        with self.store.transaction() as con:
+            value,factory,_,dispatch=self.admission(project,identity,con=con)
+            if dispatch['version']!=expected_version or dispatch['intent_id'] is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_ALREADY_CLAIMED')
+            last=con.execute('SELECT retry_not_before FROM native_official_publish_responses WHERE publication_id=? ORDER BY created_at DESC,rowid DESC LIMIT 1',(identity,)).fetchone()
+            if last and last['retry_not_before'] is not None and utc(self.clock())<utc(datetime.fromisoformat(last['retry_not_before'])):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_BACKOFF_ACTIVE')
+            if operation=='init':
+                if dispatch['phase']!='prepared' or dispatch['private_session_ref'] is not None or dispatch['acknowledged_bytes']!=0 or dispatch['remote_post_id'] is not None or any(v is not None for v in (range_start,range_end,body_sha256)):
+                    raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INIT_REVIEW_REQUIRED')
+                if con.execute("SELECT 1 FROM native_official_publish_intents WHERE publication_id=? AND operation='init'",(identity,)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INIT_ALREADY_ATTEMPTED')
+                body_sha256=digest({'metadata':value['snapshot']['metadata'],'disclosures':value['snapshot']['disclosures'],'total_bytes':dispatch['total_bytes']})
+            else:
+                if not isinstance(dispatch['private_session_ref'],str) or not re.fullmatch(r'nups_[a-f0-9]{32}',dispatch['private_session_ref']):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_SESSION_RECONCILIATION_REQUIRED')
+                if dispatch['remote_post_id'] is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_ALREADY_UPLOADED')
+                if operation=='chunk':
+                    if (dispatch['phase']!='uploading' or type(range_start) is not int or type(range_end) is not int
+                        or range_start!=dispatch['acknowledged_bytes'] or not range_start<range_end<=dispatch['total_bytes']
+                        or range_end-range_start!=min(factory.profile.chunk_size,dispatch['total_bytes']-range_start)
+                        or not isinstance(body_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',body_sha256)):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CHUNK_INTENT_INVALID',400)
+                else:
+                    if dispatch['phase'] not in ('uploading','reconciliation_required') or any(v is not None for v in (range_start,range_end,body_sha256)):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RECONCILIATION_INVALID',400)
+                    body_sha256=digest({'status_query':True,'total_bytes':dispatch['total_bytes']})
+            stamp=now();intent=uuid.uuid4().hex;version=dispatch['version']+1
+            con.execute('INSERT INTO native_official_publish_intents VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',(intent,identity,self.workspace,project,value['snapshot_sha256'],value['approval_id'],version,operation,range_start,range_end,body_sha256,'dispatch_intent',stamp))
+            con.execute("UPDATE native_official_publish_dispatches SET phase=?,version=?,intent_id=?,updated_at=? WHERE publication_id=?",(operation+'_intent',version,intent,stamp,identity))
+            con.execute("UPDATE native_official_publications SET status='running',updated_at=? WHERE publication_id=?",(stamp,identity))
+            self.event(con,self.row(con,project,identity),'official.publication.dispatch.intent','worker',operation=operation,version=version,body_sha256=body_sha256,external_action=False)
+            return Ticket(identity,self.workspace,project,value['snapshot_sha256'],value['approval_id'],operation,version,intent)
+    def ticket(self,con,ticket):
+        value,factory,path,dispatch=self.admission(ticket.project_id,ticket.publication_id,con=con) if type(ticket) is Ticket else (None,None,None,None)
+        value,dispatch,intent=self.fence(con,ticket)
+        return value,factory,path,dispatch,intent
+    def fence(self,con,ticket):
+        """Local response/recovery fence; this alone grants no provider dispatch."""
+        if type(ticket) is not Ticket:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TICKET_INVALID',400)
+        Ticket(**ticket.__dict__)
+        if ticket.workspace_id!=self.workspace:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TICKET_SCOPE_INVALID')
+        row=self.row(con,ticket.project_id,ticket.publication_id);value=self.read(row)
+        dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(ticket.publication_id,)).fetchone()
+        if dispatch is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TICKET_STALE')
+        dispatch=dict(dispatch)
+        if any(dispatch[k]!=getattr(ticket,k) for k in ('workspace_id','project_id','snapshot_sha256','approval_id','version','intent_id')) or dispatch['phase']!=ticket.operation+'_intent':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TICKET_STALE')
+        if any(row[k]!=getattr(ticket,k) for k in ('workspace_id','project_id','snapshot_sha256','approval_id')):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TICKET_STALE')
+        intent=con.execute('SELECT * FROM native_official_publish_intents WHERE intent_id=?',(ticket.intent_id,)).fetchone()
+        if intent is None or intent['status']!='dispatch_intent' or any(intent[k]!=getattr(ticket,k) for k in ('publication_id','workspace_id','project_id','snapshot_sha256','approval_id','operation','version')):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_BINDING_CHANGED')
+        intent=dict(intent)
+        if not isinstance(intent['body_sha256'],str) or not re.fullmatch(r'[a-f0-9]{64}',intent['body_sha256']):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_BINDING_CHANGED')
+        if ticket.operation=='chunk':
+            start,end=intent['range_start'],intent['range_end']
+            if type(start) is not int or type(end) is not int or start!=dispatch['acknowledged_bytes'] or not start<end<=dispatch['total_bytes'] or end-start!=min(value['snapshot']['chunk_size'],dispatch['total_bytes']-start):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_BINDING_CHANGED')
+        else:
+            expected=digest({'metadata':value['snapshot']['metadata'],'disclosures':value['snapshot']['disclosures'],'total_bytes':dispatch['total_bytes']}) if ticket.operation=='init' else digest({'status_query':True,'total_bytes':dispatch['total_bytes']})
+            if intent['range_start'] is not None or intent['range_end'] is not None or intent['body_sha256']!=expected:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_BINDING_CHANGED')
+        return value,dispatch,intent
+    def state(self,project,identity):
+        current=self.get(project,identity)
+        with self.store.transaction() as con:
+            value=self.read(self.row(con,project,identity));row=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
+            if value['status']!=current['status'] or value['updated_at']!=current['updated_at']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_STATE_CHANGED_RELOAD')
+            if row is not None and any(row[k]!=value[k] for k in ('workspace_id','project_id','snapshot_sha256','approval_id')):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
+            return {'schema_version':'native-official-publish-dispatch-v1','publication_id':identity,'workspace_id':self.workspace,'project_id':project,
+                'snapshot_sha256':value['snapshot_sha256'],'mock':value['mock'],'dispatch':None if row is None else {k:row[k] for k in ('phase','version','total_bytes','acknowledged_bytes','private_session_ref','remote_post_id','failure_code')},
+                'published':current['published'],'receipt':current['receipt'],'mock_publication_complete':current['mock_publication_complete'],'processing_acceptance':'CONFIRMED' if current['receipt'] else 'NOT_CHECKED','session_uri_returned':False,'token_returned':False}
+    def uncertain(self,ticket,code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'):
+        if not isinstance(code,str) or not re.fullmatch(r'[A-Z0-9_]{1,120}',code):code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'
+        with self.store.transaction() as con:
+            _,dispatch,_=self.fence(con,ticket)
+            phase='init_unconfirmed' if ticket.operation=='init' else 'reconciliation_required'
+            # Retain the artifact duplicate guard even if current consent expired.
+            con.execute('UPDATE native_official_publish_intents SET status=? WHERE intent_id=?',('outcome_unknown',ticket.intent_id))
+            con.execute('UPDATE native_official_publish_dispatches SET phase=?,version=version+1,intent_id=NULL,failure_code=?,updated_at=? WHERE publication_id=?',(phase,code,now(),ticket.publication_id))
+            con.execute('UPDATE native_official_publications SET status=?,failure_code=?,updated_at=? WHERE publication_id=?',('review_required' if phase=='init_unconfirmed' else 'queued',code,now(),ticket.publication_id))
+            self.event(con,self.row(con,ticket.project_id,ticket.publication_id),'official.publication.response.unconfirmed','worker',operation=ticket.operation,failure_code=code,automatic_init_retry=False,acknowledged_bytes=dispatch['acknowledged_bytes'])
+        return self.state(ticket.project_id,ticket.publication_id)
+    def finish_progress(self,ticket,progress,response_sha256):
+        if type(ticket) is not Ticket or ticket.operation not in ('chunk','reconcile') or type(progress) is not UploadProgress or not isinstance(response_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',response_sha256):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROGRESS_INVALID',400)
+        if progress.status not in ('uploading','uploaded','reconciliation_required','session_expired_requires_review','failed_requires_review') or progress.retry_after is not None and (type(progress.retry_after) is not int or not 1<=progress.retry_after<=3600):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROGRESS_INVALID',400)
+        with self.store.transaction() as con:
+            value,_,_,dispatch,intent=self.ticket(con,ticket)
+            offset,remote=progress.acknowledged_bytes,progress.remote_video_id
+            if progress.status in ('uploading','uploaded'):
+                ceiling=intent['range_end'] if ticket.operation=='chunk' else con.execute("SELECT max(range_end) FROM native_official_publish_intents WHERE publication_id=? AND workspace_id=? AND project_id=? AND snapshot_sha256=? AND operation='chunk'",(ticket.publication_id,self.workspace,ticket.project_id,ticket.snapshot_sha256)).fetchone()[0] or 0
+                if type(offset) is not int or not dispatch['acknowledged_bytes']<=offset<=ceiling or offset>dispatch['total_bytes']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_ACKNOWLEDGEMENT_INVALID')
+                if progress.status=='uploaded':
+                    if offset!=dispatch['total_bytes'] or ceiling!=dispatch['total_bytes']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_ACKNOWLEDGEMENT_INVALID')
+                    try:video_id(remote)
+                    except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_ACKNOWLEDGEMENT_INVALID') from None
+                    phase='uploaded'
+                else:
+                    if remote is not None or offset==dispatch['total_bytes'] or offset%UNIT:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_ACKNOWLEDGEMENT_INVALID')
+                    phase='uploading'
+            else:
+                if offset is not None or remote is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROGRESS_INVALID',400)
+                offset=dispatch['acknowledged_bytes'];phase='reconciliation_required' if progress.status=='reconciliation_required' else 'review_required'
+            result={'schema_version':'native-official-upload-progress-v1','operation':ticket.operation,'status':progress.status,'acknowledged_bytes':offset,'remote_post_id':remote,'mock':value['mock'],'retry_after':progress.retry_after,'processing_acceptance':'NOT_CHECKED','published':False}
+            instant=utc(self.clock());retry=(instant+timedelta(seconds=progress.retry_after)).isoformat() if progress.retry_after is not None else None
+            con.execute('INSERT INTO native_official_publish_responses VALUES(?,?,?,?,?,?,?,?,?)',(ticket.intent_id,ticket.publication_id,self.workspace,ticket.project_id,response_sha256,json.dumps(result),digest(result),instant.isoformat(),retry))
+            con.execute("UPDATE native_official_publish_intents SET status='response_received' WHERE intent_id=?",(ticket.intent_id,))
+            con.execute('UPDATE native_official_publish_dispatches SET phase=?,version=version+1,acknowledged_bytes=?,remote_post_id=?,intent_id=NULL,failure_code=NULL,updated_at=? WHERE publication_id=?',(phase,offset,remote,now(),ticket.publication_id))
+            con.execute('UPDATE native_official_publications SET status=?,failure_code=NULL,updated_at=? WHERE publication_id=?',('review_required' if phase=='review_required' else 'queued',now(),ticket.publication_id))
+            self.event(con,self.row(con,ticket.project_id,ticket.publication_id),'official.publication.upload.progress','worker',response_sha256=response_sha256,**result)
+        return self.state(ticket.project_id,ticket.publication_id)
+    def recover(self):
+        """Only at owned worker startup, before accepting work; never dispatches."""
+        with self.store.transaction() as con:
+            self.accounts.check_workspace()
+            rows=con.execute("SELECT * FROM native_official_publish_dispatches WHERE workspace_id=? AND intent_id IS NOT NULL AND phase IN ('init_intent','chunk_intent','reconcile_intent')",(self.workspace,)).fetchall()
+            tickets=[Ticket(row['publication_id'],self.workspace,row['project_id'],row['snapshot_sha256'],row['approval_id'],row['phase'].removesuffix('_intent'),row['version'],row['intent_id']) for row in rows]
+        for ticket in tickets:self.uncertain(ticket,'NATIVE_OFFICIAL_PUBLISH_RESTART_REVIEW_REQUIRED')
+        return {'recovered_intents':len(tickets),'external_calls':0,'automatic_init_retry':False}
+    def record_processing(self,project,identity,expected_version,observation,response_sha256):
+        if type(expected_version) is not int or type(observation) is not VideoObservation or not isinstance(response_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',response_sha256):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_INVALID',400)
+        try:observation=VideoObservation(observation.processing,observation.privacy,observation.scheduled_at)
+        except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_INVALID',400) from None
+        with self.store.transaction() as con:
+            value,_,_,dispatch=self.admission(project,identity,con=con)
+            if dispatch['phase']!='uploaded' or dispatch['version']!=expected_version or dispatch['remote_post_id'] is None or dispatch['acknowledged_bytes']!=dispatch['total_bytes']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_BINDING_CHANGED')
+            metadata=PublicationMetadata.model_validate(value['snapshot']['metadata']);instant=utc(self.clock());confirmed=False;failure=None
+            if observation.processing=='failed_requires_review':failure='YOUTUBE_PROCESSING_FAILED_REVIEW_REQUIRED'
+            elif observation.processing=='processed':
+                if metadata.scheduled_at is None:
+                    confirmed=observation.privacy==metadata.privacy
+                    if not confirmed:failure='YOUTUBE_VISIBILITY_UNCONFIRMED_REVIEW_REQUIRED'
+                elif utc(metadata.scheduled_at)>instant:
+                    if observation.privacy!='private' or observation.scheduled_at!=utc(metadata.scheduled_at):failure='YOUTUBE_SCHEDULE_UNCONFIRMED_REVIEW_REQUIRED'
+                else:
+                    confirmed=observation.privacy=='public'
+                    if not confirmed:failure='YOUTUBE_SCHEDULE_RELEASE_UNCONFIRMED_REVIEW_REQUIRED'
+            evidence={'schema_version':'native-official-processing-observation-v1','processing':observation.processing,'privacy':observation.privacy,'scheduled_at':observation.scheduled_at.isoformat() if observation.scheduled_at else None,
+                'remote_post_id':dispatch['remote_post_id'],'mock':value['mock'],'external_call':not value['mock'],'confirmed':confirmed,'failure_code':failure,'observed_at':instant.isoformat()}
+            con.execute('INSERT INTO native_official_publish_processing VALUES(?,?,?,?,?,?,?,?,?,?)',(uuid.uuid4().hex,identity,self.workspace,project,value['snapshot_sha256'],dispatch['remote_post_id'],response_sha256,json.dumps(evidence),digest(evidence),instant.isoformat()))
+            if confirmed:
+                receipt=PublicationReceipt(receipt_id='rcpt_'+uuid.uuid4().hex,provider_key='youtube-data-api-publishing',platform='youtube',mode='live',request_fingerprint=value['request_fingerprint'],remote_post_id=dispatch['remote_post_id'],remote_url=None,mock=value['mock'],external_action=not value['mock'],created_at=instant).model_dump(mode='json')
+                con.execute('INSERT INTO native_official_publish_receipts VALUES(?,?,?,?,?,?,?)',(identity,self.workspace,project,value['snapshot_sha256'],json.dumps(receipt),digest(receipt),instant.isoformat()))
+            con.execute('UPDATE native_official_publish_dispatches SET version=version+1,failure_code=?,updated_at=? WHERE publication_id=?',(failure,now(),identity))
+            con.execute('UPDATE native_official_publications SET status=?,failure_code=?,updated_at=? WHERE publication_id=?',('completed' if confirmed else 'review_required' if failure else 'queued',failure,now(),identity))
+            self.event(con,self.row(con,project,identity),'official.publication.processing.observed','worker',response_sha256=response_sha256,**evidence)
+        return self.get(project,identity)

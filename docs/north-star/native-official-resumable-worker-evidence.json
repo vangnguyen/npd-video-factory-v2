@@ -1,0 +1,125 @@
+{
+  "schema": "native-official-resumable-worker-evidence-v1",
+  "parent_head": "771b6983072659bfed952de7994b26b283f9762c",
+  "source_sha256": {
+    "services/windows_native/official_publications.py": "2c70ee1b26f6002723f39fd06bdabb22bc25f1b4b12154297b4c7d71e4b7c08a",
+    "services/windows_native/official_publication_dispatch.py": "a28df7bcf68b13fe5903922fe81af16825a5d4fd5263a3ba9df1b5159b1f2d73",
+    "services/windows_native/official_publication_sessions.py": "30fc6f0e5d173ea7ab01e8a0c6ce559ae9a46bbee3f73dea682a1fa5d3f50699",
+    "services/windows_native/official_publication_worker.py": "ceeedd28252a49708f7640cf84bac62f4557ece171870dbf1fa204239590c1a7",
+    "services/windows_native/backup.py": "f19199e4ed01115e8dc774f8bbf14f7eefcd09f66ea63817435fcb01c626dbbb",
+    "services/windows_native/tests/test_official_publication_dispatch.py": "38b178254df55645e87d2708fb761392fc6de5c397456ea01bbc6a05e36acb59",
+    "services/windows_native/tests/test_official_publication_sessions.py": "53fe49d009104ed08c7d0c1a16d212ce0dd2770911ee8ea64f325c2e95e657fd",
+    "services/windows_native/tests/test_official_publication_worker.py": "10018ddd95193381ada636851b15634d3006d597701632c13f5eac758ae9b84a",
+    "services/windows_native/tests/test_publications.py": "cefd33d9facd56d6a7509aa10c2ee17e097ad7e91d46a3f7890bd8edc031a29f",
+    "scripts/north_star_native_official_resumable_worker.py": "62b3cb83e69bac2d0f99eb2256c427aa9fe72dd1bc02eff63d852771e61d234f",
+    "docs/NATIVE_OFFICIAL_RESUMABLE_WORKER.md": "aa2778e3ebaa3b4e055aa1e0779d19c17ac5901f118c6f845b018dc918c5729d",
+    "docs/NATIVE_OFFICIAL_PUBLISH_REVIEW.md": "a5f8e60cc0aa49ddad6480453e8a31d14441ff0c1a9ad5adb96c74ecc3901849"
+  },
+  "tests": {
+    "current_full_native_passed": 815,
+    "seconds": 613.934,
+    "new_native_cases": 28,
+    "focused_native_passed": 86,
+    "focused_seconds": 48.931,
+    "unchanged_prior_studio_passed": 285,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-resumable-worker-flow-n1",
+    "evidence_sha256": "6df0a5c1eba2ac96d8889e69c5224949cc7b309ccd6b54e235e90e16f5a019b2",
+    "exports": {
+      "backup.json": {
+        "sha256": "5b2b2151046eaeefb9b923befb18426cca35fc2b6d3a8f71108e8b97b3d7965e",
+        "bytes": 1456
+      },
+      "completed-review.json": {
+        "sha256": "ceea754180879f6b0dc2da3fca3cb3aeaafe3176d0fe1ad2efa6299bc0e6ce4f",
+        "bytes": 13890
+      },
+      "cost-summary.json": {
+        "sha256": "cd7adfd8d8d32b7879e834f1e12d4d30de88037445adda69457f61ecf615bc59",
+        "bytes": 15650
+      },
+      "created-review.json": {
+        "sha256": "1225f43be3dbb6a736cb4c9e33516ac7626996c9e6e5c667b83635c66127531d",
+        "bytes": 13441
+      },
+      "dispatch-states.json": {
+        "sha256": "1c1b36ef8d251e195dc3bd813aceea2c58ea755c158f7fb3c9432265e20fba5a",
+        "bytes": 4093
+      },
+      "expected-journals.json": {
+        "sha256": "e77a94343d20e11e305b0cb8d13aaa4dfbe43756016af971956561af2ebff0a4",
+        "bytes": 41643
+      },
+      "expected-project.json": {
+        "sha256": "20e461c3d4e2650cbbbbc8c9772fe7321d2c6dee6a0b026cb71af492acd36e6a",
+        "bytes": 5207
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "mock-wire-summary.json": {
+        "sha256": "4cf31b30e4c1705107c9d0daaef9de7fbf8bb6c6b06f8ded057b0bbbf6be5007",
+        "bytes": 2363
+      },
+      "owned-official-resumable-worker.zip": {
+        "sha256": "3edb219c852143f87c87b8d7595773f82c6ad8f07baa69cc5309d1dd8981a5ae",
+        "bytes": 831076
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "0a8f8b8cf1eecfc5fa4fead35c069b5450fa20af12af147ee0d5ddaabac95b38",
+        "bytes": 258
+      },
+      "protected-session-summary.json": {
+        "sha256": "6a6a2b735448aa28455ffb51b4e857e045bd2c49d8ed6809054bc5823373fa85",
+        "bytes": 230
+      },
+      "recovery-restore.json": {
+        "sha256": "e973ab7e226b1d0178fdb0e2ee2390fa700aabdf16a6e462b85bf73b715403fb",
+        "bytes": 1868
+      },
+      "restored-in-process.json": {
+        "sha256": "571bc7876ed905fa7265fe0e04ca9f3a0237575b570a827554c11938568a7c27",
+        "bytes": 309
+      },
+      "new-process-replay.json": {
+        "sha256": "571bc7876ed905fa7265fe0e04ca9f3a0237575b570a827554c11938568a7c27",
+        "bytes": 309
+      }
+    },
+    "backup_sha256": "3edb219c852143f87c87b8d7595773f82c6ad8f07baa69cc5309d1dd8981a5ae"
+  },
+  "logs": {
+    "native-official-resumable-worker-flow-n1.log": "eb9bea6af3911808ebe25be4f839f66c4224152f3335e56e1dfadd4c21b6263a",
+    "native-official-resumable-worker-full-r1.log": "f2f01082c1e77fa7a3654aad280344a7a804d0f612629b209f2433fb36a59063"
+  },
+  "durable_one_init_intent_and_scoped_version_fences": true,
+  "interrupted_chunk_reconciles_same_session_before_more_bytes": true,
+  "monotonic_bounded_chunk_acknowledgements": true,
+  "actual_windows_dpapi_domain_private_acl_and_binding_expiry": true,
+  "known_init_response_after_consent_expiry_retained_without_authority": true,
+  "processing_privacy_confirmed_before_receipt": true,
+  "mock_receipts_cannot_be_relabelled_as_real": true,
+  "unknown_costs_null_and_check_scoped": true,
+  "workflow_restore_and_fresh_process_all_ten_journals_exact": true,
+  "private_session_and_tokens_excluded_from_archive": true,
+  "mock_wire_requests": 12,
+  "initializations": 1,
+  "reconciliations": 1,
+  "data_chunks": 3,
+  "real_publications": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_fixtures": true,
+  "signed_http_or_studio_worker_integration": false,
+  "accepted_runtime_publishing_enabled": false,
+  "real_media_qc_legal_account_provider_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

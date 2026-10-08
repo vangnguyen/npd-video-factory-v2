@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[3]
 CAPABILITIES = ROOT / 'packages/contracts/publishing-capabilities.json'
 
 
-def render_fixture(store, *, rights='owned', source_mode=True,asset=None,project=None):
+def render_fixture(store, *, rights='owned', source_mode=True,asset=None,project=None,final_bytes=None):
     project = project or store.create('EXPLICIT SYNTHETIC PUBLICATION FIXTURE', '', 'media'); identifier = uuid.uuid4().hex
     asset = asset or {'id': 'explicit_fixture.mp4', 'kind': 'video', 'filename': 'EXPLICIT OWNED RIGHTS FIXTURE',
         'rights_confirmed': True, 'rights_status': rights, 'license': 'explicit-owned-fixture-license'}
@@ -36,7 +36,7 @@ def render_fixture(store, *, rights='owned', source_mode=True,asset=None,project
         con.execute('INSERT INTO jobs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)', (identifier, project['id'], revision, 'render', 'running',
             'explicit_fixture', uuid.uuid4().hex, digest(snapshot), json.dumps(snapshot), None, None, stamp, stamp))
     job = store.get_job(identifier); directory = store.root / 'jobs' / identifier; directory.mkdir(parents=True)
-    final = directory / 'final.mp4'; final.write_bytes(b'EXPLICIT NONPLAYABLE NATIVE PUBLICATION FIXTURE; NO FULL QC')
+    final = directory / 'final.mp4'; final.write_bytes(final_bytes if final_bytes is not None else b'EXPLICIT NONPLAYABLE NATIVE PUBLICATION FIXTURE; NO FULL QC')
     result = {'qc': {'passed': True, 'width': 1080, 'height': 1920, 'duration_seconds': 3, 'video_codec': 'h264',
         'audio_codec': 'aac', 'final_sha256': file_sha(final), 'fixture': True, 'full_media_qc': False},
         'review_required': True, 'output_directory': str(directory), 'provider_calls': 0}
