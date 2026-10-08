@@ -1,0 +1,134 @@
+{
+  "schema": "native-official-learning-kernel-evidence-v1",
+  "parent_head": "aa7cd36697e7526727b81b85b0e625d86b612634",
+  "source_sha256": {
+    "services/windows_native/official_learning.py": "15c2a9ea61e4b72ae74581135978107abef02054e8ac434566df78b84ab3bf1c",
+    "services/windows_native/official_learning_models.py": "8382a422aee355d6ce1d3a579a22ae398bb127b055127f42d6c05a02d696ad15",
+    "services/windows_native/tests/test_official_learning.py": "552a2f59148764c4d05643ca9f445e2c584ab52f0b9b6ad0f4d766bcfea0d90f",
+    "services/windows_native/backup.py": "be54f7f4a66b8a594dac645cfef5289f8f0df7de9f8a673fd313e60a8bedda71",
+    "scripts/north_star_native_official_learning.py": "2902eae35313200a820f2896b04f3852dc052e7b8b1cb872f75b6f5d271ef645",
+    "apps/api/app/learning_models.py": "31091ab994c328f4e45ba9e27b23ca13a17fb38fab5e2ea0e61dc555cf0bd7e0",
+    "docs/NATIVE_OFFICIAL_LEARNING_KERNEL.md": "c9e532fb139a8e98a0b0f063a187205f54d690b7e448fe34094573d0eb3ecee0"
+  },
+  "tests": {
+    "current_related_native_passed": 84,
+    "native_seconds": 341.026,
+    "native_modules": 4,
+    "new_native_cases": 12,
+    "prior_full_native_983_and_studio_329_at_parent": true,
+    "prior_api_cohort_learning_50_shared_rules_unchanged": true,
+    "preliminary_external_draft_ten_cases_passed_not_current_source_acceptance": true
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-learning-kernel-flow-n1",
+    "evidence_sha256": "ba13a3ba51dfb19459293055fccfa67d0537f5df9e6246b93aec8b92ed7888f8",
+    "exports": {
+      "backup.json": {
+        "sha256": "251897577ed136e5d7f2b6d76537f2227cfda99a7992c8987b69e299f9d4450f",
+        "bytes": 2140
+      },
+      "cost-summary.json": {
+        "sha256": "c36206523e3406f550560fcb21de35db60d093b72bdb3a5da8df5e59e385f730",
+        "bytes": 139290
+      },
+      "evidence.json": {
+        "sha256": "ba13a3ba51dfb19459293055fccfa67d0537f5df9e6246b93aec8b92ed7888f8",
+        "bytes": 4398
+      },
+      "expected-analytics-history.json": {
+        "sha256": "1222dfd242057e779d9d8318b02c4504c18321c7e0879e7a81c930d6896ac697",
+        "bytes": 116430
+      },
+      "expected-jobs.json": {
+        "sha256": "9b0c03c38651fdb28cd8c238e36b472ed68b871c0084f386c9aab92b3d317378",
+        "bytes": 97852
+      },
+      "expected-journals.json": {
+        "sha256": "29581212e94c0979276983b1b577a01bf25fa48e025f347b853cab831087c65b",
+        "bytes": 775829
+      },
+      "expected-learning-history.json": {
+        "sha256": "da9c042d14b57a525916aeb05a010d32985e35086326ade432006215decd4554",
+        "bytes": 54645
+      },
+      "expected-projects.json": {
+        "sha256": "96ee5370b008f932dd5437366616c1542d5cfdfabb950b0bc48481bef51203b4",
+        "bytes": 197031
+      },
+      "expected-publications.json": {
+        "sha256": "65d31c40885edcf7e0bb66353e75ab846c618f06d14e19d192bf274e7e7b3bbc",
+        "bytes": 103659
+      },
+      "expected-winner-history.json": {
+        "sha256": "8e99e78487c8995b52c4090ec0a5164c8ccff7475198bbbcd327d7f1a4eba240",
+        "bytes": 402595
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-signed-winner-controls-replay.json": {
+        "sha256": "30e69227850c69d553796bdfa25077be2dba6bfdec62058307ca632fc9b9dba3",
+        "bytes": 113
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "e2c361dd4916564649ec23e35d47d2931b14c266dd05ed86a3cc9e5bb064cd7c",
+        "bytes": 13786
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "a3791dd05039d066953a5eaa2963b8a27ad66895376675fd48f5e16a21579252",
+        "bytes": 8146
+      },
+      "new-process-replay.json": {
+        "sha256": "cba0f06b199e0d9facd07223c19db93e6754700b1d545e0dfc975450636905fe",
+        "bytes": 330
+      },
+      "owned-official-learning.zip": {
+        "sha256": "2ff6950b1705fc49722b3bfde22a39b22258af570414483874b66855979afcce",
+        "bytes": 5229341
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "567bf8237ebdd354058951210d275127a3b1753c6004d10837ee97fa30a56482",
+        "bytes": 1788
+      },
+      "recovery-restore.json": {
+        "sha256": "38e3f12f65dfe3b118022a1d2404ac47f0135d7f1cd50cd7bba2969d72edf140",
+        "bytes": 2536
+      },
+      "restored-in-process.json": {
+        "sha256": "cba0f06b199e0d9facd07223c19db93e6754700b1d545e0dfc975450636905fe",
+        "bytes": 330
+      }
+    },
+    "backup_sha256": "2ff6950b1705fc49722b3bfde22a39b22258af570414483874b66855979afcce",
+    "backup_bytes": 5229341
+  },
+  "logs": {
+    "native-official-learning-draft-checks-n1.log": "23a5b32f29ed7cfde97348ed684e9242d22d0bb0f4232b98da550428d2b8e8a1",
+    "native-official-learning-native-related-n1.log": "240d1834b9dc981b652c5694c6080d2e9c2fbaf2abe0695eec4e1b0c07c2e153"
+  },
+  "existing_pure_descriptive_learning_rules_no_orm_provider_or_api_rule_change": true,
+  "strict_current_owner_recommendation_mock_digest_key_policy_and_one_transaction_qualified_source_selection": true,
+  "same_account_query_transport_format_niche_channel_winner_policy_factor_basis_and_latest_distinct_post_evidence": true,
+  "latest_insufficient_or_basis_changed_post_cannot_revive_stale_score": true,
+  "frozen_selected_assessment_observation_hashes_recomputed_without_later_scan_credentials_or_editable_metadata": true,
+  "six_qualified_synthetic_posts_three_group_three_control_descriptive_association_then_five_post_insufficient_snapshot": true,
+  "seven_receipts_eleven_histories_eight_assessments_two_learning_snapshots_twenty_four_journals_and_prior_controls_exact": true,
+  "mock_analytics_read_requests": 33,
+  "mock_publication_wire_requests": 70,
+  "mock_peer_account_lookup_requests": 6,
+  "mock_initial_account_lookup_requests": 1,
+  "signed_http_requests": 0,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_oauth_provider_and_clock_fixtures": true,
+  "accepted_runtime_publishing_or_analytics_enabled": false,
+  "real_provider_browser_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

@@ -130,6 +130,8 @@ def database_status(path):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             for name in ('native_official_winner_assessments','native_official_winner_events'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
+            for name in ('native_official_learning_snapshots','native_official_learning_events'):
+                if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_official_analytics_syncs' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_official_analytics_syncs WHERE status IN ('queued','running','retry_scheduled')").fetchone()[0]
             for name in ('native_official_publications','native_official_publish_approvals','native_official_publish_events','native_official_publish_dispatches','native_official_publish_intents','native_official_publish_responses','native_official_publish_sessions','native_official_publish_processing','native_official_publish_receipts','native_official_publish_renewals','native_official_publish_read_backoffs','native_official_publish_queue_plans','native_official_publish_queue_steps','native_official_publish_queue_events'):
