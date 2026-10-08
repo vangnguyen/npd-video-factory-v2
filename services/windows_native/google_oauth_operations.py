@@ -7,7 +7,8 @@ import asyncio,base64,hashlib,json,re,uuid
 from datetime import datetime,timedelta
 from typing import Literal
 from pydantic import Field,StrictBool,StrictInt,ValidationError,field_validator,model_validator
-from .contracts import WorkflowError,digest
+from .contracts import WorkflowError,digest,file_sha
+from .official_account_tokens import protected_path
 from .costs import CostLedger
 from .google_oauth_vault import NativeGoogleOAuthVault,SecretReceipt
 from .official_publications import NativeOfficialPublications,utc
@@ -68,7 +69,7 @@ class Cancel(StrictModel):
     expected_snapshot_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
 
 class NativeGoogleOAuthOperations:
-    def __init__(self,publications,vault,*,slots=None,client=None,enabled=False):
+    def __init__(self,publications,vault,*,slots=None,client=None,enabled=False,registry_file=None,registry_sha256=None):
         if type(publications) is not NativeOfficialPublications or type(vault) is not NativeGoogleOAuthVault or type(enabled) is not bool:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONFIGURATION_INVALID',400)
         self.publications,self.store,self.workspace,self.clock=publications,publications.store,publications.workspace,publications.clock
         self.vault,self.client,self.enabled=vault,GoogleOAuthTokenClient() if client is None else client,enabled
@@ -76,6 +77,9 @@ class NativeGoogleOAuthOperations:
         self.slots={key:typed(value,Slot) for key,value in dict(slots or {}).items()}
         if len(self.slots)>50 or any(key!=s.slot_id or s.target.workspace_id!=self.workspace for key,s in self.slots.items()):raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONFIGURATION_INVALID',400)
         self.slot_sha=digest({k:v.model_dump(mode='json') for k,v in self.slots.items()})
+        if (registry_file is None)!=(registry_sha256 is None) or registry_sha256 is not None and not re.fullmatch(r'[a-f0-9]{64}',registry_sha256):raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONFIGURATION_INVALID',400)
+        self.registry_file=protected_path(registry_file,self.store.root) if registry_file is not None else None;self.registry_sha256=registry_sha256
+        self.frozen_registry=(self.registry_file,registry_sha256)
         self.costs=CostLedger(self.store)
         self.frozen=(publications,self.store,self.workspace,self.clock,self.store.root.absolute(),vault,self.client,enabled,self.costs,self.slot_sha)
         self.frozen_identity_provider=publications.identity_provider;self.frozen_accounts=publications.accounts
@@ -100,6 +104,8 @@ class NativeGoogleOAuthOperations:
             if type(self.enabled) is not bool or (self.publications,self.store,self.workspace,self.clock,self.store.root.absolute(),self.vault,self.client,self.enabled,self.costs,self.slot_sha)!=self.frozen:raise ValueError()
             if self.publications.store is not self.store or self.publications.workspace!=self.workspace or self.publications.clock is not self.clock or self.costs.store is not self.store:raise ValueError()
             if self.publications.identity_provider is not self.frozen_identity_provider or self.publications.accounts is not self.frozen_accounts or self.frozen_accounts.store is not self.store or self.frozen_accounts.workspace!=self.workspace:raise ValueError()
+            if (self.registry_file,self.registry_sha256)!=self.frozen_registry:raise ValueError()
+            if self.registry_file is not None and (protected_path(self.registry_file,self.store.root)!=self.registry_file or not self.registry_file.is_file() or not 1<=self.registry_file.stat().st_size<=262144 or file_sha(self.registry_file)!=self.registry_sha256):raise ValueError()
             if digest({k:typed(v,Slot).model_dump(mode='json') for k,v in self.slots.items()})!=self.slot_sha:raise ValueError()
             self.publications.accounts.check_workspace();self.vault.check();self.client.check()
         except Exception:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONFIGURATION_CHANGED') from None
@@ -107,7 +113,8 @@ class NativeGoogleOAuthOperations:
     def states(self):
         return {'schema_version':'native-google-oauth-runtime-v1','workspace_id':self.workspace,'enabled':self.configured(),'default_enabled':False,
             'slots':[s.model_dump(mode='json') for _,s in sorted(self.slots.items())],'automatic_refresh':False,'startup_decryption':False,
-            'account_verified':False,'token_returned':False,'publishing_enabled':False,'production_consent_renewed':False,'real_provider_tested':False}
+            'account_verified':False,'token_returned':False,'publishing_enabled':False,'production_consent_renewed':False,'real_provider_tested':False,
+            **({'registry_sha256':self.registry_sha256} if self.registry_sha256 is not None else {})}
     def identity(self,principal=None,authority=None):
         try:
             self.check();current=self.publications.identity(principal,**({'token_id':authority['token_id'],'subject':authority['subject']} if authority else {}))
@@ -138,6 +145,9 @@ class NativeGoogleOAuthOperations:
             request=cls.model_validate({**snapshot['request'],'request_key':'internal-google-oauth-key'});slot=Slot.model_validate(snapshot['slot'])
             common={'schema_version','workspace_id','project_id','request','authority','slot','document_sha256','mock','approved_at','deadline',
                 'token_returned','publishing_enabled','production_consent_renewed','account_verified','automatic_refresh'}
+            if 'registry_sha256' in snapshot:
+                if not re.fullmatch(r'[a-f0-9]{64}',snapshot['registry_sha256']):raise ValueError()
+                common.add('registry_sha256')
             extra=({'authorization_receipt'} if kind=='authorization' else {'operation','source_ref','source_snapshot_sha256','authorization_receipt'} if snapshot['operation']=='authorization_code' else {'operation','source_ref','source_result_sha256','previous_grant_receipt'})
             if (digest(snapshot)!=value['snapshot_sha256'] or digest(snapshot['request'])!=value['request_sha256'] or snapshot['workspace_id']!=self.workspace or value['workspace_id']!=self.workspace
                 or set(snapshot)!=common|extra
@@ -241,11 +251,12 @@ class NativeGoogleOAuthOperations:
         if deadline>at(authority['expires_at']):raise WorkflowError('NATIVE_GOOGLE_OAUTH_OWNER_WINDOW_REQUIRED',403)
         return {'workspace_id':self.workspace,'project_id':project,'request':payload.model_dump(mode='json',exclude={'request_key'}),'authority':authority,
             'slot':slot.model_dump(mode='json'),'document_sha256':digest(document),'mock':self.client.mock,'approved_at':stamp.isoformat(),'deadline':deadline.isoformat(),
-            'token_returned':False,'publishing_enabled':False,'production_consent_renewed':False,'account_verified':False,'automatic_refresh':False,**extra}
+            'token_returned':False,'publishing_enabled':False,'production_consent_renewed':False,'account_verified':False,'automatic_refresh':False,
+            **({'registry_sha256':self.registry_sha256} if self.registry_sha256 is not None else {}),**extra}
     def fence(self,con,project,snapshot):
         self.identity(authority=snapshot['authority']);cls=Start if snapshot.get('operation')!='refresh_token' else Refresh
         payload=cls.model_validate({**snapshot['request'],'request_key':'internal-google-oauth-key'});slot=self.slot(payload);current=self.source(con,project,payload)
-        if slot.model_dump(mode='json')!=snapshot['slot'] or digest(current['document'])!=snapshot['document_sha256'] or not at(snapshot['approved_at'])<=utc(self.clock())<at(snapshot['deadline']):raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONSENT_CHANGED')
+        if snapshot.get('registry_sha256')!=self.registry_sha256 or slot.model_dump(mode='json')!=snapshot['slot'] or digest(current['document'])!=snapshot['document_sha256'] or not at(snapshot['approved_at'])<=utc(self.clock())<at(snapshot['deadline']):raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONSENT_CHANGED')
         if not self.configured():raise WorkflowError('NATIVE_GOOGLE_OAUTH_DISABLED')
         return slot
     def start(self,project,payload,*,principal):

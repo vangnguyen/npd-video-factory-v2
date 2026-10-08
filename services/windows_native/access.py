@@ -38,6 +38,7 @@ def permission_for(method, path):
     if re.fullmatch(r'/api/projects/'+ID+r'/official-accounts/npac_'+ID+r'/verify',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-analytics(?:/noas_'+ID+r'/cancel)?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-analytics-refresh(?:/noap_'+ID+r'/cancel)?',path):return 'manage'
+    if re.fullmatch(r'/api/projects/'+ID+r'/google-oauth/(?:authorizations(?:/ngoa_'+ID+r'/(?:authorization-url|exchange|cancel))?|refresh)',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-winners',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-learning',path):return 'manage'
     if path in ('/api/trends/collections','/api/trends/learning','/api/trends/learning/qualified') or re.fullmatch(r'/api/trends/collections/'+ID+'/cancel',path):return 'manage'

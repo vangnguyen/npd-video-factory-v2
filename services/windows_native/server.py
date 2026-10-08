@@ -38,6 +38,7 @@ class Runner:
         self.official_publish_queue = None
         self.official_analytics = None
         self.official_analytics_refresh = None
+        self.google_oauth = None
         self.vision = None
         self.observer = observer or Observer()
         self.stop = threading.Event()
@@ -51,6 +52,7 @@ class Runner:
         if self.official_publish_queue is not None:self.official_publish_queue.recover()
         if self.official_analytics is not None:self.official_analytics.recover()
         if self.official_analytics_refresh is not None:self.official_analytics_refresh.recover()
+        if self.google_oauth is not None:self.google_oauth.recover()
         self.thread.start()
 
     def run_one(self):
@@ -174,8 +176,25 @@ class LocalServer(ThreadingHTTPServer):
         trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None,
         official_account_registry=None,official_account_read_enabled=False,official_account_factories=None,
         official_publish_registry=None,official_publish_enabled=False,official_publish_factories=None,official_publish_session_directory=None,official_publish_queue_enabled=False,
-        official_analytics_enabled=False,official_analytics_refresh_enabled=False):
+        official_analytics_enabled=False,official_analytics_refresh_enabled=False,
+        google_oauth_registry=None,google_oauth_directory=None,google_oauth_enabled=False,google_oauth_slots=None,google_oauth_client=None):
         config.validate_data_root()
+        if type(google_oauth_enabled) is not bool:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONFIGURATION_INVALID',400)
+        if google_oauth_registry is not None and (google_oauth_slots is not None or google_oauth_client is not None):raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONFIGURATION_CONFLICT',400)
+        if (google_oauth_registry is not None or google_oauth_slots is not None or google_oauth_enabled) and access is None:raise WorkflowError('NATIVE_GOOGLE_OAUTH_HUMAN_AUTH_REQUIRED',400)
+        if google_oauth_enabled and (google_oauth_directory is None or google_oauth_registry is None and google_oauth_slots is None):raise WorkflowError('NATIVE_GOOGLE_OAUTH_PROTECTED_REGISTRY_VAULT_REQUIRED',400)
+        if (google_oauth_slots is None)!=(google_oauth_client is None):raise WorkflowError('NATIVE_GOOGLE_OAUTH_MOCK_INJECTION_REQUIRED',400)
+        if google_oauth_slots is not None:
+            from .google_oauth_operations import Slot,typed
+            from app.google_oauth_protocol import GoogleOAuthTokenClient
+            if not isinstance(google_oauth_slots,dict) or type(google_oauth_client) is not GoogleOAuthTokenClient or not google_oauth_client.mock:raise WorkflowError('NATIVE_GOOGLE_OAUTH_MOCK_INJECTION_REQUIRED',400)
+            google_oauth_client.check()
+            google_oauth_slots={key:typed(value,Slot) for key,value in google_oauth_slots.items()}
+            if len(google_oauth_slots)>50 or any(key!=s.slot_id or s.target.workspace_id!=access.workspace_id for key,s in google_oauth_slots.items()):raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONFIGURATION_INVALID',400)
+        if google_oauth_directory is not None:
+            from .official_account_tokens import protected_path
+            directory=protected_path(google_oauth_directory,config.data_root)
+            if directory.exists() and not directory.is_dir():raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONFIGURATION_INVALID',400)
         if type(official_analytics_refresh_enabled) is not bool or official_analytics_refresh_enabled and not official_analytics_enabled:
             raise WorkflowError('NATIVE_OFFICIAL_REFRESH_CONFIGURATION_INVALID',400)
         if type(official_analytics_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_CONFIGURATION_INVALID',400)
@@ -219,6 +238,10 @@ class LocalServer(ThreadingHTTPServer):
                 raise WorkflowError('NATIVE_AUTH_REGISTRY_REQUIRED_FOR_BOUND_STATE', 503)
         from .official_account_registry import load as load_accounts
         loaded_accounts=load_accounts(official_account_registry,config.data_root,access.workspace_id if access is not None else 'wsp_native_local',owner_read_enabled=official_account_read_enabled) if official_account_registry is not None else official_account_factories
+        loaded_google=None
+        if google_oauth_registry is not None:
+            from .google_oauth_registry import load as load_google
+            loaded_google=load_google(google_oauth_registry,config.data_root,access.workspace_id)
         super().__init__(("127.0.0.1", port), Handler)
         self.config, self.store = config, Store(config.data_root)
         self.access = access
@@ -253,6 +276,19 @@ class LocalServer(ThreadingHTTPServer):
         from .official_publication_worker import NativeOfficialPublicationWorker
         publishing=load_publishing(official_publish_registry,self.store.root,self.publications.workspace_id,owner_enabled=official_publish_enabled) if official_publish_registry is not None else official_publish_factories
         self.official_publications=NativeOfficialPublications(self.store,self.publications,self.official_accounts,factories=publishing,identity_provider=self.official_publish_identity)
+        self.google_oauth=None
+        with self.store.transaction() as con:
+            has_google_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_google_oauth_authorizations'").fetchone() is not None
+        if loaded_google is not None or google_oauth_slots is not None or has_google_history:
+            from .google_oauth_operations import NativeGoogleOAuthOperations
+            from .google_oauth_vault import NativeGoogleOAuthVault
+            from app.google_oauth_protocol import GoogleOAuthTokenClient
+            registry,path,checksum=loaded_google if loaded_google is not None else (None,None,None)
+            enabled=google_oauth_enabled and (registry.token_exchange_enabled if registry is not None else google_oauth_slots is not None)
+            slots={s.slot_id:s for s in registry.slots} if registry is not None else google_oauth_slots
+            vault=NativeGoogleOAuthVault(google_oauth_directory or config.secret_file.parent/'google-oauth-private',self.store.root,self.publications.workspace_id)
+            self.google_oauth=NativeGoogleOAuthOperations(self.official_publications,vault,slots=slots,client=google_oauth_client or GoogleOAuthTokenClient(network_enabled=enabled),enabled=enabled,registry_file=path,registry_sha256=checksum)
+            self.runner.google_oauth=self.google_oauth
         # Production network clients come only from the protected, explicitly enabled registry.
         self.official_publish_vault=SessionVault(self.official_publications,official_publish_session_directory)
         self.official_publish_worker=NativeOfficialPublicationWorker(self.official_publications,self.official_publish_vault)
@@ -497,6 +533,9 @@ class Handler(BaseHTTPRequestHandler):
         if path=='/api/connections/official-accounts' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/account-checks(?:/nack_[a-f0-9]{32})?',path):
             from .official_account_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if path=='/api/connections/google-oauth' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations|operations)(?:/(?:ngoa_|ngop_)[a-f0-9]{32})?',path):
+            from .google_oauth_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path=='/api/connections/official-analytics-refresh' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics-refresh(?:/noap_[a-f0-9]{32})?',path):
             from .official_analytics_refresh_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
@@ -739,6 +778,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
                 'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations(?:/ngoa_[a-f0-9]{32}/(?:authorization-url|exchange|cancel))?|refresh)',self.path):
+            from .google_oauth_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/(?:media-plans/nmp_[a-f0-9]{32}/resolve/(?:generate|search|download)|media-resolutions/nmr_[a-f0-9]{32}/import)',self.path):
             from .studio_media_resolution_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
@@ -1144,6 +1186,9 @@ def main():
     parser.add_argument('--enable-official-account-reads',action='store_true')
     parser.add_argument('--enable-official-analytics',action='store_true')
     parser.add_argument('--enable-official-analytics-refresh',action='store_true')
+    parser.add_argument('--google-oauth-registry',type=Path)
+    parser.add_argument('--google-oauth-directory',type=Path)
+    parser.add_argument('--enable-google-oauth',action='store_true')
     parser.add_argument('--official-publish-registry',type=Path)
     parser.add_argument('--official-publish-session-directory',type=Path)
     parser.add_argument('--enable-official-publishing',action='store_true')
@@ -1173,6 +1218,7 @@ def main():
             generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api,
             official_account_registry=args.official_account_registry,official_account_read_enabled=args.enable_official_account_reads,
             official_analytics_enabled=args.enable_official_analytics,official_analytics_refresh_enabled=args.enable_official_analytics_refresh,
+            google_oauth_registry=args.google_oauth_registry,google_oauth_directory=args.google_oauth_directory,google_oauth_enabled=args.enable_google_oauth,
             official_publish_registry=args.official_publish_registry,official_publish_session_directory=args.official_publish_session_directory,official_publish_enabled=args.enable_official_publishing,official_publish_queue_enabled=args.enable_official_publish_queue,
             trend_feed_registry=args.trend_feed_registry,trend_feed_enabled=args.enable_trend_feeds) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)
