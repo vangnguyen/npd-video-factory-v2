@@ -1,7 +1,7 @@
 const schema='native-scene-narration-plan-v1',id=/^[a-f0-9]{32}$/,sha=/^[a-f0-9]{64}$/;
 const source=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 const active=s=>s.active||(s.project?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
-const blocked=s=>s.busy||s.dirty||active(s)||s.project?.archived||s.canEdit===false||source(s.project);
+const blocked=(s,review=false)=>s.busy||s.dirty||active(s)||s.project?.archived||(review?s.canReview===false:s.canEdit===false)||source(s.project);
 export function validateNarrationPage(value,state){
   if(value?.schema_version!==schema||value.project_id!==state.project?.id||value.revision!==state.project?.revision||!Array.isArray(value.items)||value.items.length>50)throw new Error('Kết quả lời đọc không khớp dự án đã lưu.');
   for(const item of value.items){
@@ -13,9 +13,13 @@ export function validateNarrationPage(value,state){
   }
   return value;
 }
-export function narrationRequest(state,page,action,{jobId,acknowledged=false,requestKey}={}){
-  if(!id.test(state.project?.id??'')||blocked(state))throw new Error('Lưu thay đổi và chờ tác vụ hoàn tất trước khi tạo hoặc áp dụng lời đọc.');
+export function narrationRequest(state,page,action,{jobId,acknowledged=false,requestKey,reviewer}={}){
+  if(!id.test(state.project?.id??'')||blocked(state,action==='approve'))throw new Error('Lưu thay đổi và chờ tác vụ hoàn tất trước khi tạo hoặc áp dụng lời đọc.');
   const p=state.project,base=`/api/projects/${p.id}`;
+  if(action==='approve'){
+    if(typeof reviewer!=='string'||!reviewer.trim()||reviewer.trim().length>100||acknowledged!==true)throw new Error('Nhập tên và xác nhận duyệt nội dung để tạo lời đọc.');
+    return {path:base+'/approve',body:{revision:p.revision,reviewer:reviewer.trim(),acknowledged:true,purpose:'narration'}};
+  }
   if(action==='prepare'){
     if(!p.approval||p.approval.revision!==p.revision||!p.document?.canonical_timeline||typeof requestKey!=='string'||requestKey.length<8||requestKey.length>100)throw new Error('Duyệt nội dung đã lưu trước khi tạo lời đọc.');
     return {path:base+'/jobs',body:{revision:p.revision,kind:'narration',request_key:requestKey}};
@@ -30,10 +34,13 @@ export function initializeNativeNarration({api,getState,onMessage,onWorking=()=>
   function node(tag,text,parent,attributes={}){const value=dom.createElement(tag);if(text!==null)value.textContent=text;for(const [k,v]of Object.entries(attributes))value.setAttribute(k,String(v));parent.append(value);return value;}
   node('summary','Lời đọc & thời lượng đã đo',root);node('p','Duyệt nội dung trước khi tạo giọng. Nghe audio và xem thời lượng từng cảnh, rồi chọn áp dụng. Áp dụng sẽ xóa duyệt trước đó; preview có tiếng và video cuối vẫn cần xem, nghe và duyệt riêng.',root,{class:'hint'});
   const tools=node('div',null,root,{class:'planner-tools'}),refresh=node('button','Tải kết quả lời đọc',tools,{type:'button'}),prepare=node('button','Tạo lời đọc để xem trước',tools,{type:'button'}),list=node('div',null,root);
+  const review=node('div',null,root),nameLabel=node('label','Người duyệt nội dung',review),reviewer=node('input',null,nameLabel,{maxlength:'100'}),ackLabel=node('label',null,review,{class:'check'}),reviewAck=node('input',null,ackLabel,{type:'checkbox'});
+  node('span','Tôi đã kiểm tra nội dung đã lưu và quyền sử dụng tư liệu. Duyệt để tạo lời đọc; preview có tiếng và video cuối cần xem, nghe và duyệt riêng.',ackLabel);
+  const approve=node('button','Duyệt để tạo lời đọc',review,{type:'button'});
   async function execute(request,revisionChange){
     if(working)return;const key=context(),ticket=++serial;working=true;onWorking(true);controls();
     try{await api(request.path,{method:'POST',body:JSON.stringify(request.body)});if(ticket!==serial||key!==context())return;
-      pending=null;page=null;draw();await onSaved();onMessage(revisionChange?'Đã áp dụng thời lượng đo được. Xem lại timeline và duyệt lại trước khi render.':'Đã xếp hàng tạo lời đọc. Chờ tác vụ hoàn tất rồi tải kết quả để nghe và kiểm tra.');
+      pending=null;page=null;draw();await onSaved();onMessage(revisionChange?'Đã áp dụng thời lượng đo được. Tạo preview có tiếng, xem và nghe rồi duyệt lại trước khi render.':request.body.purpose==='narration'?'Đã duyệt nội dung để tạo lời đọc. Tạo giọng, xem thời lượng và áp dụng vào timeline trước khi duyệt preview.':'Đã xếp hàng tạo lời đọc. Chờ tác vụ hoàn tất rồi tải kết quả để nghe và kiểm tra.');
     }catch(error){onMessage(error.message,true);}finally{working=false;onWorking(false);controls();}
   }
   async function load(){
@@ -54,11 +61,13 @@ export function initializeNativeNarration({api,getState,onMessage,onWorking=()=>
     }
   }
   function controls(){const state=getState();root.hidden=!state.project||source(state.project);refresh.disabled=working||state.busy||!state.project||source(state.project);
+    reviewer.disabled=working||blocked(state,true);reviewAck.disabled=reviewer.disabled;approve.disabled=reviewer.disabled||!state.project?.document.proposal||!reviewAck.checked||!reviewer.value?.trim();
     prepare.disabled=working||blocked(state)||!state.project?.approval||state.project.approval.revision!==state.project.revision||!state.project.document?.canonical_timeline;
     for(const button of list.querySelectorAll('button'))button.disabled=working||blocked(state)||!button._narrationItem?.timing_apply_current||!button._narrationItem.result?.plan.fit_narration_template||!button._narrationAck.checked;
     for(const input of list.querySelectorAll('input'))input.disabled=working||blocked(state);
   }
   function sync(){const key=context();if(binding!==key){binding=key;serial++;page=null;pending=null;draw();}controls();}
   refresh.addEventListener('click',load);prepare.addEventListener('click',async()=>{try{const state=getState();pending=pending??narrationRequest(state,page,'prepare',{requestKey:newKey()});await execute(pending,false);}catch(error){onMessage(error.message,true);}});
+  reviewer.addEventListener('input',controls);reviewAck.addEventListener('change',controls);approve.addEventListener('click',async()=>{try{await execute(narrationRequest(getState(),page,'approve',{reviewer:reviewer.value,acknowledged:reviewAck.checked}),false);}catch(error){onMessage(error.message,true);}});
   sync();return {load,sync,controls,isWorking:()=>working};
 }

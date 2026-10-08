@@ -74,17 +74,22 @@ def subtitle_evidence(config,directory,manifest,duration,width,height):
         'cue_count':len(captions),'sample_count':len(samples),'safe_rectangle':rect,'ass_sha256':layout['ass_sha256'],
         'samples':samples,'failures':failures,'external_provider_calls':0,'word_alignment_claimed':False}
 
-def inspect(config,snapshot,directory,legacy_report):
+def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
     document=snapshot['document'];manifest_path=guard(directory/'render-manifest.json',exists=True);manifest=json.loads(manifest_path.read_bytes())
     duration=manifest['duration_seconds'];layout=manifest.get('subtitle_layout') or {};width,height=layout.get('width'),layout.get('height')
     binding={'schema_version':'native-storyboard-full-qc-v1','document_sha256':digest(document),'render_manifest_sha256':file_sha(manifest_path),
         'final_sha256':legacy_report['final_sha256'],'human_final_video_accepted':False,'published':False,'external_provider_calls':0,'paid_operations':0,
         'semantic_vision_used':False,'rights_independently_verified':False}
+    if preview_only:binding['render_purpose']='narration_preview'
     full=None;subtitle=None;timeline=None
     write_json(directory/'transport-qc-report.json',legacy_report)
     try:
         if not legacy_report['passed'] or not number(duration) or duration<=0 or type(width) is not int or type(height) is not int:raise WorkflowError('STORYBOARD_QC_RENDER_BINDING_INVALID')
-        if manifest.get('approval')!=snapshot.get('approval') or not snapshot.get('approval') or snapshot['approval'].get('snapshot_sha256')!=digest(document):raise WorkflowError('STORYBOARD_QC_APPROVAL_CHANGED')
+        if preview_only:
+            from .narration_preview import validate_context
+            validate_context(config,snapshot)
+            if manifest.get('approval') is not None or manifest.get('render_purpose')!='narration_preview' or manifest.get('preview_authorization')!=snapshot['preview_authorization']:raise WorkflowError('STORYBOARD_QC_PREVIEW_AUTHORIZATION_CHANGED')
+        elif manifest.get('approval')!=snapshot.get('approval') or not snapshot.get('approval') or snapshot['approval'].get('snapshot_sha256')!=digest(document):raise WorkflowError('STORYBOARD_QC_APPROVAL_CHANGED')
         canonical=document.get('canonical_timeline')
         if canonical and manifest.get('canonical_timeline')!={'version':canonical['version'],'sha256':canonical['sha256']}:raise WorkflowError('STORYBOARD_QC_CANONICAL_TIMELINE_CHANGED')
         voice=manifest.get('voice_audio_file')

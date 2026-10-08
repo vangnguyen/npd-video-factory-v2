@@ -17,8 +17,8 @@ export function nativeLegacyLayout(dom) {
 }
 
 export const jobActive = project => project?.jobs?.some(j => ["queued", "running", "retrying"].includes(j.status)) ?? false;
-export const currentVideo = project => project?.approval && !project.archived ? project.jobs.find(j => j.kind === "render" && j.status === "succeeded" && j.revision === project.revision) : null;
-export const canRender = (project, dirty, busy) => Boolean(project?.approval && !project.archived && project.approval.revision === project.revision && !dirty && !busy && !jobActive(project));
+export const currentVideo = project => project?.approval && project.approval.approval_scope!=='narration_only' && !project.archived ? project.jobs.find(j => j.kind === "render" && j.status === "succeeded" && j.revision === project.revision) : null;
+export const canRender = (project, dirty, busy) => Boolean(project?.approval && project.approval.approval_scope!=='narration_only' && !project.archived && project.approval.revision === project.revision && !dirty && !busy && !jobActive(project));
 export const mediaLibrary = doc => (doc?.assets ?? (doc?.asset ? [doc.asset] : [])).map(a=>({...a,kind:a.kind??"image",filename:a.filename??"Ảnh đã lưu"}));
 export const mediaBindings = doc => doc?.scene_media ?? (doc?.asset ? (doc.proposal?.visual_brief??[]).map(s=>({scene:s.scene,asset_id:doc.asset.id})) : []);
 export const mediaReady = doc => {
@@ -155,7 +155,7 @@ if (typeof document !== "undefined") {
     $("generate").disabled=!project||blocked||dirty;
     $("generate").textContent=project?.document.input_kind==="script"||project?.input?.metadata.workflow==="REVIEW_TRANSCRIPT"?"Chuẩn bị kịch bản để bạn duyệt":"Tạo đề xuất nội dung ↗";
     $("upload-documents").disabled=!project||blocked||dirty;
-    $("approve").disabled=!(isSourceProject(project)?shotStudio?.sourceReady():mediaReady(project?.document))||blocked||dirty||Boolean(project.approval);
+    $("approve").disabled=!(isSourceProject(project)?shotStudio?.sourceReady():mediaReady(project?.document)&&(!project?.document?.prepared_narration||shotStudio?.narratedReady()))||blocked||dirty||Boolean(project.approval&&project.approval.approval_scope!=='narration_only');
     $("upload-media").disabled=!project||blocked||dirty;
     $("analyze-media").disabled=!project||blocked||dirty||!mediaAnalysisPending(project.document);
     $("auto-plan").disabled=!project?.document.proposal||!mediaLibrary(project?.document).length||blocked||dirty;
@@ -270,7 +270,7 @@ if (typeof document !== "undefined") {
       $("narration").textContent=proposal.narration;
       $("facts").innerHTML=proposal.facts_needing_source.map(f=>`<li>${esc(f)}</li>`).join("")||"<li>Đề xuất không liệt kê thêm nguồn. Bạn vẫn cần kiểm tra nội dung.</li>";
     }
-    $("approval-state").textContent=project?.approval?"Đã duyệt phiên bản này":"Chờ bạn duyệt";
+    $("approval-state").textContent=project?.approval?.approval_scope==='narration_only'?"Đã duyệt để tạo lời đọc":project?.approval?"Đã duyệt phiên bản này":"Chờ bạn duyệt";
     $("script-review-state").textContent=scriptReviewLabel(project);
     $("script-review-state").hidden=!scriptReviewLabel(project);
     const jobs=project?.jobs??[];
@@ -358,7 +358,7 @@ if (typeof document !== "undefined") {
     }
     if(session.capabilities?.native_narration_preparation===true){
       const narration=await import('./native-narration.mjs');
-      narrationUI=narration.initializeNativeNarration({api,getState:()=>({project,dirty,busy,active:jobActive(project),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
+      narrationUI=narration.initializeNativeNarration({api,getState:()=>({project,dirty,busy,active:jobActive(project),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canReview:session.access?.mode!=='registry'||session.access.permissions?.includes('review')===true}),
         onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_analytics_review===true){

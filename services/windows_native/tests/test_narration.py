@@ -25,6 +25,17 @@ class NarrationTests(unittest.TestCase):
             result=Pipeline(self.config).run(job,lambda _:None)
         self.store.finish(job,result=result);return self.store.get_job(job['id']),out,result
     def body(self,result):return {'revision':self.store.get(self.project['id'])['revision'],'expected_plan_sha256':result['plan_sha256'],'acknowledged':True}
+    def audible(self,project):
+        import time
+        from services.windows_native.shot_preview import PreviewManager
+        manager=PreviewManager(self.config,self.store);manager.generate(project['id'],project['revision']);deadline=time.monotonic()+30
+        try:
+            while time.monotonic()<deadline:
+                status=manager.status(project['id'])
+                if status['status'] not in {'QUEUED','RUNNING'}:self.assertEqual(status['status'],'READY',status);return status
+                time.sleep(.05)
+            self.fail('Narrated preview fixture deadline')
+        finally:manager.close()
 
     def test_preparation_measures_scene_pcm_without_render_or_edit_and_returns_exact_checkpoint_replay(self):
         before=copy.deepcopy(self.project['document']);job,out,result=self.finish();self.assertEqual(self.store.get(self.project['id'])['document'],before)
@@ -60,7 +71,7 @@ class NarrationTests(unittest.TestCase):
         self.assertNotEqual(identity(changed['document']),fp);self.assertFalse(page(self.store,changed['id'])['items'][0]['voice_input_current'])
 
     def test_final_render_reuses_verified_pcm_without_inference_and_keeps_original_source_approval(self):
-        source,out,result=self.finish();updated=apply(self.store,self.project['id'],source['id'],self.body(result));updated=self.store.approve(updated['id'],updated['revision'],'EXPLICIT FINAL FIXTURE',True)
+        source,out,result=self.finish();updated=apply(self.store,self.project['id'],source['id'],self.body(result));self.audible(updated);updated=self.store.approve(updated['id'],updated['revision'],'EXPLICIT FINAL FIXTURE',True)
         job=self.store.enqueue(updated['id'],updated['revision'],'render',uuid.uuid4().hex);job=self.store.claim()
         with patch('services.windows_native.pipeline.verify_runtime'),patch('services.windows_native.pipeline.synthesize',side_effect=AssertionError('No inference allowed')):
             rendered=Pipeline(self.config).run(job,lambda _:None)
@@ -70,7 +81,7 @@ class NarrationTests(unittest.TestCase):
         self.assertEqual(self.store.get_job(source['id'])['snapshot']['approval'],source['snapshot']['approval'])
 
     def test_changed_source_pcm_or_plan_blocks_reuse_before_any_inference(self):
-        source,out,result=self.finish();updated=apply(self.store,self.project['id'],source['id'],self.body(result));updated=self.store.approve(updated['id'],updated['revision'],'EXPLICIT FIXTURE',True)
+        source,out,result=self.finish();updated=apply(self.store,self.project['id'],source['id'],self.body(result));self.audible(updated);updated=self.store.approve(updated['id'],updated['revision'],'EXPLICIT FIXTURE',True)
         job=self.store.enqueue(updated['id'],updated['revision'],'render',uuid.uuid4().hex);target=self.root/'jobs'/job['id'];target.mkdir();(out/'voice.wav').write_bytes(b'EXPLICIT CORRUPTION FIXTURE')
         with self.assertRaisesRegex(WorkflowError,'CHECKPOINT_ARTIFACT_CHANGED'):reuse(self.config,job,Artifacts(target,job),lambda _:None)
         self.assertFalse((target/'voice.wav').exists())

@@ -527,7 +527,8 @@ class Store:
                            {'revision': revision + 1, 'policy': reference, 'automatic_production': False})
         return self.get(identifier)
 
-    def approve(self, identifier, revision, reviewer, acknowledged, *, review_reference=None):
+    def approve(self, identifier, revision, reviewer, acknowledged, *, review_reference=None,purpose='production'):
+        if purpose not in {'production','narration'}:raise WorkflowError('HUMAN_APPROVAL_PURPOSE_INVALID',400)
         if acknowledged is not True or not isinstance(reviewer, str) or not 1 <= len(reviewer.strip()) <= 100:
             raise WorkflowError("HUMAN_REVIEW_REQUIRED", 400)
         if review_reference is not None and (not isinstance(review_reference, dict)
@@ -538,10 +539,12 @@ class Store:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
             from .auto_edit_timeline import is_auto_edit
-            preview_binding=None
+            preview_binding=None;render_mode=None;approval_scope='narration_only' if purpose=='narration' else None
             if is_auto_edit(doc):
+                if purpose=='narration':raise WorkflowError('AUTO_EDIT_SOURCE_AUDIO_PATH_REQUIRED',400)
                 from .source_approval import reviewed_preview
                 preview_binding=reviewed_preview(self.root,project)
+                render_mode='source_footage'
             else:
                 from .voice_quality import resolve_policy
                 resolve_policy(doc)
@@ -555,14 +558,20 @@ class Store:
                     from .shot_adapter import validate_document
                     validate_document(doc)
                 selected_media(doc)
+                if doc.get('prepared_narration') and purpose=='production':
+                    from types import SimpleNamespace
+                    from .narration_preview import reviewed
+                    preview_binding=reviewed(self,SimpleNamespace(data_root=self.root),project,con=con)
+                    render_mode='prepared_narration'
             previous=project["approval"]
             if (not previous or previous["revision"]!=revision or previous["snapshot_sha256"]!=digest(doc)
                     or previous.get('review_reference')!=review_reference
-                    or previous.get('reviewed_preview')!=preview_binding):
+                    or previous.get('reviewed_preview')!=preview_binding or previous.get('approval_scope')!=approval_scope):
                 approval = {"revision": revision, "snapshot_sha256": digest(doc),
                             "reviewer": reviewer.strip(), "approved_at": now(), "source": "local_ui_human_review"}
                 if preview_binding is not None:
-                    approval.update(render_mode='source_footage',reviewed_preview=preview_binding)
+                    approval.update(render_mode=render_mode,reviewed_preview=preview_binding)
+                if approval_scope is not None:approval['approval_scope']=approval_scope
                 if review_reference is not None:
                     approval.update(source=review_reference['source'],review_reference=review_reference)
                 con.execute("UPDATE projects SET approval=?,updated_at=? WHERE id=?",
@@ -615,13 +624,19 @@ class Store:
             if kind in {"render","narration"} and (not approval or approval["revision"] != revision
                                      or approval["snapshot_sha256"] != digest(doc)):
                 raise WorkflowError('AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER' if is_auto_edit(doc) else 'HUMAN_APPROVAL_REQUIRED_BEFORE_TTS')
+            if kind=='render' and approval.get('approval_scope')=='narration_only':raise WorkflowError('NARRATION_AUDIBLE_PREVIEW_APPROVAL_REQUIRED',400)
             if kind in {"render","narration"}:
                 if is_auto_edit(doc):
                     from .source_approval import validate_render_approval, reviewed_preview
                     validate_render_approval({'snapshot':{'document':doc,'approval':approval},'revision':revision,'project_id':identifier})
                     if reviewed_preview(self.root,project)!=approval['reviewed_preview']:
                         raise WorkflowError('AUTO_EDIT_CURRENT_PREVIEW_REVIEW_REQUIRED',400)
-                else:selected_media(doc)
+                else:
+                    selected_media(doc)
+                    if kind=='render' and doc.get('prepared_narration'):
+                        from types import SimpleNamespace
+                        from .narration_preview import reviewed
+                        if approval.get('render_mode')!='prepared_narration' or approval.get('reviewed_preview')!=reviewed(self,SimpleNamespace(data_root=self.root),project,con=con):raise WorkflowError('NARRATION_AUDIBLE_PREVIEW_APPROVAL_REQUIRED',400)
             identifier_job, stamp = uuid.uuid4().hex, now()
             snapshot = {"document": doc, "approval": approval}
             con.execute("INSERT INTO jobs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",

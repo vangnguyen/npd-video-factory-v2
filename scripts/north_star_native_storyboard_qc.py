@@ -107,8 +107,8 @@ def run(args):
             if preview['status'] not in {'QUEUED','RUNNING'}:break
             assert time.monotonic()<deadline;time.sleep(.05)
         assert preview['status']=='READY' and preview['audio_mode']=='silent_visual_proxy' and preview['final_approval_eligible'] is False
-        shutil.copyfile(server.previews.video_path(identifier,preview['timeline_version']),out/'preview.mp4');write(out/'preview.json',preview)
-        view=send('GET',base+'/shots');approval=send('POST',base+'/approve',{'revision':view['revision'],'reviewer':'EXPLICIT SIGNED HUMAN FIXTURE; NOT OWNER UAT','acknowledged':True})
+        shutil.copyfile(server.previews.video_path(identifier,preview['timeline_version']),out/('visual-proxy.mp4' if args.narration_preparation else 'preview.mp4'));write(out/('visual-proxy.json' if args.narration_preparation else 'preview.json'),preview)
+        view=send('GET',base+'/shots');approval=send('POST',base+'/approve',{'revision':view['revision'],'reviewer':'EXPLICIT SIGNED HUMAN FIXTURE; NOT OWNER UAT','acknowledged':True,'purpose':'narration' if args.narration_preparation else 'production'})
         if args.narration_preparation:
             prepared=send('POST',base+'/jobs',{'revision':approval['revision'],'kind':'narration','request_key':'explicit-narration-preparation-01'});assert server.runner.run_one()
             prepared=next(job for job in send('GET',base)['jobs'] if job['id']==prepared['id']);assert prepared['status']=='succeeded',prepared
@@ -117,7 +117,17 @@ def run(args):
             current=send('POST',base+'/narration/'+prepared['id']+'/apply',{'revision':approval['revision'],'expected_plan_sha256':prepared['result']['plan_sha256'],'acknowledged':True})
             assert current['approval'] is None and current['document']['prepared_narration']['voice_audio_sha256']==audio['sha256']
             write(out/'narration-job.json',prepared);write(out/'narration-page.json',page);write(out/'narration-plan.json',prepared['result']['plan']);write(out/'narration-applied-project.json',current)
+            send('POST',base+'/preview',{'revision':current['revision'],'action':'generate'});deadline=time.monotonic()+45
+            while True:
+                audible=send('GET',base+'/preview')
+                if audible['status'] not in {'QUEUED','RUNNING'}:break
+                assert time.monotonic()<deadline;time.sleep(.05)
+            assert audible['status']=='READY' and audible['audio_mode']=='measured_scene_narration_full_effects_preview' and audible['final_approval_eligible'] is True
+            assert audible['manifest']['new_inference_calls']==0 and audible['manifest']['qc']['passed']
+            shutil.copyfile(server.previews.video_path(identifier,audible['timeline_version']),out/'preview.mp4');write(out/'preview.json',audible)
+            write(out/'audible-preview-manifest.json',audible['manifest']);write(out/'audible-preview-full-qc.json',audible['manifest']['qc']['full_quality'])
             approval=send('POST',base+'/approve',{'revision':current['revision'],'reviewer':'EXPLICIT SIGNED AFTER-TIMING FIXTURE; NOT OWNER UAT','acknowledged':True})
+            assert approval['approval']['reviewed_preview']['sha256']==audible['sha256'] and approval['approval']['render_mode']=='prepared_narration'
         body={'revision':approval['revision'],'kind':'render','request_key':'explicit-storyboard-full-qc-render-01'}
         queued=send('POST',base+'/jobs',body);assert send('POST',base+'/jobs',body)['id']==queued['id'];assert server.runner.run_one()
         finished=next(job for job in send('GET',base)['jobs'] if job['id']==queued['id']);assert finished['status']=='succeeded',finished
@@ -140,13 +150,27 @@ def run(args):
             'X-VF-Revision':str(current['revision']),'X-VF-Rights':'confirmed','X-VF-Illustration':'false','X-VF-Filename':'EXPLICIT-FROZEN-VIDEO.mp4'})
         asset=current['document']['assets'][-1];shot=send('GET',base+'/shots')['shot_timeline']['shots'][0]
         current=send('POST',base+'/shots',{'revision':current['revision'],'operation':{'type':'update','shot_id':shot['shot_id'],'values':{'asset_id':asset['id'],'motion':'none'}}})
-        current=send('POST',base+'/approve',{'revision':current['revision'],'reviewer':'EXPLICIT SIGNED NEGATIVE FIXTURE; NOT OWNER UAT','acknowledged':True})
-        failed=send('POST',base+'/jobs',{'revision':current['revision'],'kind':'render','request_key':'explicit-storyboard-full-qc-frozen-01'});assert server.runner.run_one()
-        failed=next(job for job in send('GET',base)['jobs'] if job['id']==failed['id']);assert failed['status']=='failed_qc' and failed['result'] is None,failed
-        failed_root=root/'jobs'/failed['id'];assert Artifacts(failed_root,failed).load('render') is None
-        negative=list((failed_root/'attempts').glob('render-*/full-qc-report.json'));assert len(negative)==1
-        failure=json.loads(negative[0].read_bytes());assert failure['status']=='failed_qc' and 'freeze-frame ratio exceeds 15 percent' in failure['full_production_qc']['failures']
-        write(out/'failed-qc-job.json',failed);write(out/'failed-qc-report.json',failure);cost=CostLedger(server.store).summary(identifier);assert cost['attempted_operations']==0;write(out/'cost.json',cost)
+        if args.narration_preparation:
+            send('POST',base+'/preview',{'revision':current['revision'],'action':'generate'});deadline=time.monotonic()+45
+            while True:
+                failed=send('GET',base+'/preview')
+                if failed['status'] not in {'QUEUED','RUNNING'}:break
+                assert time.monotonic()<deadline;time.sleep(.05)
+            assert failed['status']=='FAILED' and failed['final_approval_eligible'] is False
+            from services.windows_native.narration_preview import folder_for
+            negative=list((folder_for(settings,current)/'attempts').glob('narration-preview-*/full-qc-report.json'));assert len(negative)==1
+            failure=json.loads(negative[0].read_bytes());assert failure['status']=='failed_qc' and 'freeze-frame ratio exceeds 15 percent' in failure['full_production_qc']['failures']
+            approval_block=send('POST',base+'/approve',{'revision':current['revision'],'reviewer':'EXPLICIT NEGATIVE FIXTURE','acknowledged':True},status=400)
+            render_block=send('POST',base+'/jobs',{'revision':current['revision'],'kind':'render','request_key':'explicit-frozen-blocked-render-01'},status=409)
+            write(out/'failed-preview.json',failed);write(out/'blocked-approval.json',approval_block);write(out/'blocked-render-admission.json',render_block)
+        else:
+            current=send('POST',base+'/approve',{'revision':current['revision'],'reviewer':'EXPLICIT SIGNED NEGATIVE FIXTURE; NOT OWNER UAT','acknowledged':True})
+            failed=send('POST',base+'/jobs',{'revision':current['revision'],'kind':'render','request_key':'explicit-storyboard-full-qc-frozen-01'});assert server.runner.run_one()
+            failed=next(job for job in send('GET',base)['jobs'] if job['id']==failed['id']);assert failed['status']=='failed_qc' and failed['result'] is None,failed
+            failed_root=root/'jobs'/failed['id'];assert Artifacts(failed_root,failed).load('render') is None
+            negative=list((failed_root/'attempts').glob('render-*/full-qc-report.json'));assert len(negative)==1
+            failure=json.loads(negative[0].read_bytes());assert failure['status']=='failed_qc' and 'freeze-frame ratio exceeds 15 percent' in failure['full_production_qc']['failures'];write(out/'failed-qc-job.json',failed)
+        write(out/'failed-qc-report.json',failure);cost=CostLedger(server.store).summary(identifier);assert cost['attempted_operations']==0;write(out/'cost.json',cost)
         write(out/'job-events.json',snapshot(root)['events']);write(out/'project.json',server.store.get(identifier));write(out/'human-http-wires.json',requests)
     finally:server.shutdown();server.server_close();thread.join(timeout=2)
     actual=snapshot(root);backup=create_backup(settings,out/'native-storyboard-full-qc-backup.zip')
@@ -155,13 +179,15 @@ def run(args):
     source=['services/windows_native/storyboard_qc.py','services/windows_native/pipeline.py','services/windows_native/store.py','services/windows_native/hardening.py','services/windows_native/shot_render_timing.py',
         'services/windows_native/backup.py','services/windows_native/tests/test_storyboard_qc.py','apps/api/app/production_qc.py','apps/api/app/production_logic.py','scripts/north_star_native_storyboard_qc.py']
     if args.narration_preparation:source+=['services/windows_native/narration.py','services/windows_native/access.py','services/windows_native/server.py','services/windows_native/tests/test_narration.py',
-        'services/windows_native/tests/test_narration_http.py','apps/studio-web/native-narration.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/tests/native-narration.test.mjs']
+        'services/windows_native/tests/test_narration_http.py','services/windows_native/narration_preview.py','services/windows_native/shot_preview.py','services/windows_native/tests/test_narration_preview.py',
+        'apps/studio-web/native-narration.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/shot-studio.mjs','apps/studio-web/tests/native-narration.test.mjs','apps/studio-web/tests/shot-studio.test.mjs']
     write(out/'evidence.json',{'schema_version':'north-star-native-storyboard-full-qc-rehearsal-v1','workspace_id':WORKSPACE,'project_id':identifier,
         'actual_human_http_requests':len(requests),'actual_native_worker':True,'actual_ffmpeg_render':True,'actual_full_media_qc':True,'actual_libass_subtitle_pixels':True,
-        'actual_frozen_video_failure':True,'failed_qc_terminal_state':True,'actual_backup_restore':True,'explicit_synthetic_pcm_fixture':True,
+        'actual_frozen_video_failure':True,'failed_qc_terminal_state':not args.narration_preparation,'failed_qc_report':True,'blocked_final_admission_for_frozen_preview':args.narration_preparation,'actual_backup_restore':True,'explicit_synthetic_pcm_fixture':True,
         'provider_calls':0,'paid_operations':0,'actual_voice_inference':False,'semantic_vision_used':False,'rights_independently_verified':False,
         'narration_preparation_tested':args.narration_preparation,'measured_canonical_timing_apply_tested':args.narration_preparation,'verified_pcm_reuse_tested':args.narration_preparation,
-        'preview_kind':'silent_visual_proxy','audible_preview_acceptance':False,'human_approval_is_signed_fixture':True,'owner_uat_accepted':False,'production_deployed':False,
+        'preview_kind':'measured_scene_narration_full_effects_preview' if args.narration_preparation else 'silent_visual_proxy','audible_preview_implementation_tested':args.narration_preparation,
+        'audible_preview_acceptance':False,'human_approval_is_signed_fixture':True,'owner_uat_accepted':False,'production_deployed':False,
         'source_sha256':{p:file_sha(ROOT/p) for p in source},'exports':{str(p.relative_to(out)).replace('\\','/'):{'sha256':file_sha(p),'bytes':p.stat().st_size} for p in out.rglob('*') if p.is_file()}})
     print(json.dumps({'status':'STORYBOARD_FULL_QC_LOCAL_REAL_SYNTHETIC_PCM_PASS','human_http_requests':len(requests),'full_qc':'passed','frozen_video':'failed_qc'}))
 

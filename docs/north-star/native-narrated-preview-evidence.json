@@ -1,0 +1,249 @@
+{
+  "schema": "native-narrated-preview-evidence-v1",
+  "parent_head": "c1db6aaf3f594f6091d3f1ca47ab44197a694bac",
+  "source_sha256": {
+    "services/windows_native/storyboard_qc.py": "b3ec1818890e33e5496d465e457858644d0652a669c281f0005f940e9815b877",
+    "services/windows_native/pipeline.py": "bcb2416e451e41a1e8f80b560ada01a4dcb7f7eb211b914fa349d5e0b09db245",
+    "services/windows_native/store.py": "4552fe7d66f0f99a952143b9cce058e675023f677b5622ef8071591a860e1c84",
+    "services/windows_native/hardening.py": "d6a1dcf62e4c444ae2dbd2d3df92d4dc3e3ea276d60751ce1b673475272f1290",
+    "services/windows_native/shot_render_timing.py": "08ca7aada408a1750546ca8e2716ad8a19e885edec4555a2b60a1a81f3e4c9bb",
+    "services/windows_native/backup.py": "af915cbd4882502fde13c550c6536746bbd5fa83446d7087eec41cb0d3c61ef3",
+    "services/windows_native/tests/test_storyboard_qc.py": "d65709f67720ec4d99d153828d884a6ac054e2cba5889ec4a03bcfe0867f0dd1",
+    "apps/api/app/production_qc.py": "512fddf9747bf831c85e012b4d042f2eb90af08e70e238661bd1cb7a0774fdc0",
+    "apps/api/app/production_logic.py": "c8daec5186d7aeec840dc9e0538b578ae6c5518cc531261158af817f5bb0a4c3",
+    "scripts/north_star_native_storyboard_qc.py": "c6139e20005d6d020973b43de53f28f32d99d06c146c1291f3e87346116849a5",
+    "services/windows_native/narration.py": "0adb6cf571eb2ed3aa453dacc6c8315fad842fc8b19190c61df500d1b499c0d1",
+    "services/windows_native/access.py": "8442bbc8457b69bb8e321c4b5483c20b10336c600b0647e2af5321938bd450ae",
+    "services/windows_native/server.py": "e400174e43f63978bb9f8ed265cbe7d93b2599eb2deea6b83191f4418609d00a",
+    "services/windows_native/tests/test_narration.py": "064522462396ece3df3ec507449b1123a0f8f145d20baec11d05a910a26f10cb",
+    "services/windows_native/tests/test_narration_http.py": "5eda67e1d1f95260605700865d56b4840f4d39208f0051ec5f408ab387f18f9b",
+    "services/windows_native/narration_preview.py": "7e25a3a9e11856a68205487fe0012357d7ba7b06bd4516e124bc379e4b50733f",
+    "services/windows_native/shot_preview.py": "b272f45e84c3f7b2927ca5a7cc167d012041883d9a359c6c4ebffe8d0abfbfc7",
+    "services/windows_native/tests/test_narration_preview.py": "de6c4a4925098d67604784a53a559b7c6e0958ef5bf4cfc37a0a0ce86a214b5f",
+    "apps/studio-web/native-narration.mjs": "a7a43d38d67d10fd9deeeed9fbdb193d1087eaeb3987a5d2d0e698ca1cfaeb4e",
+    "apps/studio-web/native.mjs": "cca40fcc765f0aeaf14be6518bd39d120afe49970987351d143bb5d15ec8d43d",
+    "apps/studio-web/native.html": "7655b81bc06e05e306330447ac53b283d186630f4703f01760eeb01a11061862",
+    "apps/studio-web/shot-studio.mjs": "83b567cef818851e59c99965d00d2323afb0dc772525a025c5a09bac29e54c49",
+    "apps/studio-web/tests/native-narration.test.mjs": "b40dd4d48c2be135695567ccbb7e03e9b1dd68a45ba41989778a39893b2c6624",
+    "apps/studio-web/tests/shot-studio.test.mjs": "ce26aed289a77697c64051b36bd8cdfc8b329f7e13e932272738521c5bb696e8",
+    "docs/NATIVE_NARRATED_STORYBOARD_PREVIEW.md": "80c0e573232620cac4a90eb02c0358c27bfe133936992f866b0632a5308c9f12",
+    "services/windows_native/tests/test_phase10_http.py": "f3762a62588db477cad487cbc574a2b3a5a6c58f26d64d3b669126174aa13111"
+  },
+  "logs": {
+    "native-narrated-preview-full-r1.log": "a870fd17242051da04d94427e5ac44f4243d63bd9bc89cf0eea738d21ec448d1",
+    "native-narrated-preview-index-r1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-narrated-preview-n1.log": "6d83691453834ffda1ee164d7af22204aaf2581b514fa7f1932e34db06778c7a",
+    "native-narrated-preview-reopen-n1.log": "8050eb47051f5f4c628998f3e0a444949d0d41109a0ca162a2fc432c479f266a",
+    "native-narration-preview-r1.log": "d75d990a9f81c18c966c57d361dc1bcf68d982f9d2ee4f937bcb49f7820ce1a2",
+    "native-narration-preview-r2.log": "96f0b1edc02567dcbaec5774fbe7884a7c5a01829dd5233072bb387dd5b68f2d",
+    "studio-narrated-preview-full-r1.log": "831f54a02d5d3d4edd4e58de3fdabd798d26a13963c21af0015ece7599a5b5e1",
+    "studio-narration-preview-r1.log": "1cba7afa07acb92cfe9f45f072a3c910f1190e9b41cf8621b49e3308e23eff95",
+    "studio-narration-preview-r2.log": "4e94ea7a434bee89550109ba330f5fa2caf42a2bb9aa13bc380211d0f7dbaf34",
+    "studio-narration-preview-r3.log": "57848ee49eb088aeaca303d1b03ad09017db295310902068459c267a62c5dba8",
+    "studio-narration-preview-r4.log": "c4413aa4f090741d703964d7b40f70404b20367d18ca78e5c3f8d05f8f8315c0"
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-preview-n1",
+    "evidence_sha256": "4bb8483f6f3114fa2e36f1a6fb65f39973a8637497cb9fcf846dce106cf1a548",
+    "replay_sha256": "c8ec03bce4bfabc421d65e005802a94dc5eea082a8d9a0a69d870c3df96d3908",
+    "indexed_exports": 38,
+    "human_http_requests": 147,
+    "exports": {
+      "artifact-review.json": {
+        "sha256": "17d045bf419fa357e2cde36b5714b7403592a360bafc526380b747a67de29652",
+        "bytes": 11911
+      },
+      "audible-preview-full-qc.json": {
+        "sha256": "4a55a1088fdc3f8a52c988f1477318fa37b05c45578d32e8fd61fcd196ef3223",
+        "bytes": 6509
+      },
+      "audible-preview-manifest.json": {
+        "sha256": "5d13aec7f0cf6315aa4b47ac26ae9117e8ff68442cdfa053354c8eab2520ad99",
+        "bytes": 13058
+      },
+      "backup-restore.json": {
+        "sha256": "90c4211d136e5b82943ad1c718cf12b048c68c33445c134aca2102a9799738af",
+        "bytes": 5652
+      },
+      "blocked-approval.json": {
+        "sha256": "1c30b349f9fe6e5eef12d11e086fbfa9131196ca4a73de6a3605a8c7e18e87a7",
+        "bytes": 388
+      },
+      "blocked-render-admission.json": {
+        "sha256": "8e24bae5118f0b62ca7764cd5b896c8fa149a34e10535abe895f4a21c2455a3a",
+        "bytes": 352
+      },
+      "cost.json": {
+        "sha256": "e0861d362d9bd9718ec2d78e53bc2d215bdbc64427f4be9c379349bb572c7ab8",
+        "bytes": 791
+      },
+      "failed-preview.json": {
+        "sha256": "f31d340c5ea8605185ad7899adca4df52732efc157c4bd4bd85ef199d7e9ef8d",
+        "bytes": 694
+      },
+      "failed-qc-report.json": {
+        "sha256": "7e2a01674ab976dc8fc345a57c1bd9c69b8519195f79d51b0386ec18241b3c11",
+        "bytes": 6363
+      },
+      "final.mp4": {
+        "sha256": "2c4fa6f80ddf1b3fedc2d435884f1a81a9c4153e93db2988b46077b263c6c4cb",
+        "bytes": 111961
+      },
+      "full-qc-report.json": {
+        "sha256": "65cb0c3a3e835575b2bec10c5c3afe8c4ef92d3ab9d67c1bfdd4e366b145ba0f",
+        "bytes": 4714
+      },
+      "human-http-wires.json": {
+        "sha256": "98b485ad7e114593dc4c643080888c2e4fefee3dda6083b7eeb2c43497fca76f",
+        "bytes": 17418
+      },
+      "job-events.json": {
+        "sha256": "4f7d97b05afcf8c4d46d36be30f3f72e01b8f71ccf29d4e2cc8bd10026ce4102",
+        "bytes": 15100
+      },
+      "media-plan.json": {
+        "sha256": "915ff4b9ecd415c03b48fd50d8b7c819d137e8c6b3b0edddc4314384bb47237b",
+        "bytes": 58239
+      },
+      "narration-applied-project.json": {
+        "sha256": "7bd4e5f5eef3c4ac834b5cfeb13847a996b213f899166869c4bcc0e60350a2c8",
+        "bytes": 225455
+      },
+      "narration-job.json": {
+        "sha256": "90b2dd75a7e6aa2d0522a2aabb2796a617c661869ceb4036d16e0471e2b44c26",
+        "bytes": 106095
+      },
+      "narration-page.json": {
+        "sha256": "8f59c766969d4c3bf5f4466009d8028dcc39bb616e30d150a0bd013c9988ee6b",
+        "bytes": 4276
+      },
+      "narration-plan.json": {
+        "sha256": "7931108bba52c39bfa8b9389b9c7e9b93538a5f67b5d8b784c55e7b8d7913747",
+        "bytes": 2818
+      },
+      "native-storyboard-full-qc-backup.zip": {
+        "sha256": "a1c31442c393fec6ddafe992388db78ad420ac7cac92840d67dfd48e633f75ff",
+        "bytes": 5276118
+      },
+      "offline-snapshot.json": {
+        "sha256": "41827ead04727ce13b654a7221034a024d843e94c204c6fed40b99d1ca5e1b10",
+        "bytes": 1361400
+      },
+      "preview.json": {
+        "sha256": "6ec57b8eb4f969d340c23387ebc7cc7c4f8f0dcafe3ee3aa2beed45e53b62522",
+        "bytes": 14651
+      },
+      "preview.mp4": {
+        "sha256": "2c4fa6f80ddf1b3fedc2d435884f1a81a9c4153e93db2988b46077b263c6c4cb",
+        "bytes": 111961
+      },
+      "project.json": {
+        "sha256": "83fd417d8f8b1f23cbab56d8b1c5359c49a09006346c84ac7894ed0ff37a59be",
+        "bytes": 343250
+      },
+      "qc-report.json": {
+        "sha256": "fcf1585952989e1b11242d3af11eb3a3d3400cd990f3acfafd9ad6eeebaf9034",
+        "bytes": 5894
+      },
+      "render-job.json": {
+        "sha256": "9eccb2fa52b7f36e5963be6466d0616b4bcdcbec1a4aa25a0abd22e03fab0f74",
+        "bytes": 113894
+      },
+      "render-manifest.json": {
+        "sha256": "d5ac208d00a81937bb4068ee395ce61edace62ec9ab0ed89c70f80bb49c53efd",
+        "bytes": 5953
+      },
+      "render-voice.json": {
+        "sha256": "d14523ee5add4a0acd1b2b74688d7d1627111cc32315e0caaec51c0372fd3354",
+        "bytes": 1650
+      },
+      "render-voice.wav": {
+        "sha256": "35677f346c4e74181c4c57bbc6262d730bb43a95954e6cbc73cb55572b654cbd",
+        "bytes": 316844
+      },
+      "subtitles.ass": {
+        "sha256": "c44ca8097f4ef5816a7a83d9a690de171e222fa93548e2295a5028c79f77204e",
+        "bytes": 719
+      },
+      "timeline.json": {
+        "sha256": "cfae0368af00d94c983e0d26e028eeb7a738dc977a56f35a0ff548e47417c8f0",
+        "bytes": 4317
+      },
+      "transport-qc-report.json": {
+        "sha256": "9796ce24415f7f822f2d2ca56522a2dc35d7d891a89888db4919e52811d381c0",
+        "bytes": 1138
+      },
+      "visual-proxy.json": {
+        "sha256": "ba1d993ec1fa2f476f4fc774233e143f0e97ce0d7b64c0cb18daec15c9aa9408",
+        "bytes": 658
+      },
+      "visual-proxy.mp4": {
+        "sha256": "eb84d5ed83f409230f11030cebd9dec9a84b62c35d1ef1017ee099f58f934b92",
+        "bytes": 160844
+      },
+      "voice-reuse.json": {
+        "sha256": "d81b795dc94e0615d5200fc206b07c9170b9307542fe3a3d9da64b02b18a5bf1",
+        "bytes": 571
+      },
+      "voice.json": {
+        "sha256": "8144ac3ac650c4d59133de32e77c511f7324fc3777313c8f4b3f96e98aeff9e9",
+        "bytes": 519
+      },
+      "voice.wav": {
+        "sha256": "6019f07bcb0d56b684e656cdff45d0839417add2801bc8648b6c240b34e53e5a",
+        "bytes": 115244
+      },
+      "subtitle-qc/000.png": {
+        "sha256": "040b397f2d0964a18d24aba32a30f42fb0dc26b6a74db61f77285e0713135fa9",
+        "bytes": 20936
+      },
+      "subtitle-qc/001.png": {
+        "sha256": "a24b76d1b7f624a62ad574cc8edf93c65bb577954bc9697efdb3f17f6601d4e2",
+        "bytes": 19896
+      }
+    }
+  },
+  "tests": {
+    "full_native_passed": 648,
+    "full_native_seconds": 539.58,
+    "full_studio_passed": 241,
+    "full_studio_ms": 1474.9825,
+    "new_native_cases": 6,
+    "new_dom_cases": 3,
+    "affected_native_passed": 28,
+    "affected_native_seconds": 97.457,
+    "affected_studio_passed": 25,
+    "affected_studio_ms": 129.481,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "actual_audible_preview_media_and_full_qc": true,
+  "actual_source_pcm_reuse_without_new_inference": true,
+  "narration_only_approval_cannot_render": true,
+  "actual_current_preview_bound_to_production_approval": true,
+  "actual_frozen_preview_blocks_production_approval_and_render_admission": true,
+  "failed_qc_render_terminal_state_in_this_rehearsal": false,
+  "actual_backup_restore_and_process_replay": true,
+  "explicit_synthetic_pcm_fixture": true,
+  "actual_voice_inference": false,
+  "audible_preview_owner_acceptance": false,
+  "semantic_vision_used": false,
+  "provider_calls": 0,
+  "paid_operations": 0,
+  "rights_independently_verified": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "visual_samples_inspected": {
+    "native-narrated-preview-frame-n1.png": {
+      "sha256": "9285310d41d1814a5eb8bc6a0da91ec4813b5a489ab89e9970ccc990a4fc5944",
+      "bytes": 108617
+    },
+    "native-narrated-preview-caption-frame-n1.png": {
+      "sha256": "d3c61834a7be97d02a785ac382b51f4827b532d9224029d62397c3fcea0dcb2f",
+      "bytes": 119944
+    }
+  },
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "stop_condition_pending": false
+}

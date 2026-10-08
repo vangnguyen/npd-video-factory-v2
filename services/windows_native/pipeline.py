@@ -406,11 +406,14 @@ def music_filters(filters, duration, gain=.12):
     return filters.replace("[a]","[narration]",1)+f";[narration]asplit=2[sidechain][voiceout];[2:a]volume={gain:.6f},apad,atrim=duration={duration:.4f},afade=t=out:st={max(duration-1,0):.4f}:d=1[bed];[bed][sidechain]sidechaincompress=threshold=0.015:ratio=8:attack=20:release=250[ducked];[voiceout][ducked]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95:level=false[a]"
 
 
-def render(config, snapshot, out):
+def render(config, snapshot, out, *, preview_only=False):
     from PIL import Image, ImageDraw, ImageFont
     import numpy as np
 
     doc = snapshot["document"]
+    if preview_only:
+        from .narration_preview import validate_context
+        validate_context(config,snapshot)
     proposal = Proposal.model_validate(doc["proposal"])
     from .branding import validate_assets, resolve, measured_duration
     from .north_star_quality import validate_tts_names
@@ -630,6 +633,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             "font_family":brand.fonts.subtitle_family,"geometry_basis":"actual_libass_pixels_required_by_full_qc"},
         "profile_sha256": PROFILE_SHA, "subtitle_timing": "ESTIMATED_WITH_MEASURED_SCENE_AUDIO",
         "word_alignment": "none", "approval": snapshot["approval"], "voice_speed": 1,
+        **({'render_purpose':'narration_preview','preview_authorization':snapshot['preview_authorization']} if preview_only else {}),
         "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
         "music":{"sha256":music["sha256"],"nominal_gain":brand.music_profile.nominal_gain,"ducking":brand.music_profile.ducking} if music else None,
         "brand_template":doc.get("brand_template"),"duration_policy":template.duration_policy if template else "legacy_measured_voice_minimum_25s",
@@ -640,9 +644,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             'scene_layout':retimed['scene_layout'],'source_voice_sha256':retimed['source_voice_sha256'],
             'sample_preserving_placement':True,'custom_subtitle_timing':'shot_estimate_not_word_alignment'} if retimed else {})})
     report=qc(config, out, duration,expected_canvas=(width,height),quality_policy=strict_quality)
-    if strict_quality:
+    if strict_quality or preview_only:
         from .storyboard_qc import inspect
-        return inspect(config,snapshot,out,report)
+        return inspect(config,snapshot,out,report,preview_only=preview_only)
     return report
 
 
@@ -697,6 +701,8 @@ class Pipeline:
         if source_mode and job['kind']=='render':
             from .source_approval import validate_render_approval
             validate_render_approval(job)
+        if job['kind']=='render' and not source_mode:
+            if (job['snapshot'].get('approval') or {}).get('approval_scope')=='narration_only':raise WorkflowError('NARRATION_AUDIBLE_PREVIEW_APPROVAL_REQUIRED',400)
         if job["snapshot"]["document"].get("content_intelligence"):
             from .intelligence_lineage import projection
             projection(job["snapshot"]["document"])
@@ -775,6 +781,9 @@ class Pipeline:
         if checkpoint:
             stage("resuming_verified_render")
             return checkpoint["result"]
+        if job['kind']=='render' and job['snapshot']['document'].get('prepared_narration'):
+            from .narration_preview import validate_render_approval
+            validate_render_approval(self.config,job)
         if job['kind']=='render' and not artifacts.load('tts'):
             from .narration import reuse
             reuse(self.config,job,artifacts,stage)

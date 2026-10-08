@@ -759,7 +759,7 @@ class Handler(BaseHTTPRequestHandler):
                 (self.server.config.data_root / "assets" / asset["id"]).unlink(missing_ok=True)
                 raise
         elif action == "approve":
-            result = self.server.store.approve(identifier, revision, body.get("reviewer"), body.get("acknowledged"))
+            result = self.server.store.approve(identifier, revision, body.get("reviewer"), body.get("acknowledged"),purpose=body.get('purpose','production'))
         else:
             if body.get("kind") == "asr":
                 from .asr import pending_speech

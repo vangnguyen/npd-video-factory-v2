@@ -2,9 +2,23 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {supportsShotStudio,loadNativeShotStudio,nativeLegacyLayout} from '../native.mjs';
-import {projectShots,shotMutationAllowed,changedShotValues,reorderedShotIds,safeSuggestion,previewLabel,previewTimingLabel,escapeText,scriptReviewAllowed,scriptStageReview,readableSuggestion,boundPreview,currentStudioRender,supportsVoiceQuality,loadVoiceQuality,voiceQualityApplyAllowed,voiceQualityLabel} from '../shot-studio.mjs';
+import {projectShots,shotMutationAllowed,changedShotValues,reorderedShotIds,safeSuggestion,previewLabel,previewTimingLabel,escapeText,scriptReviewAllowed,scriptStageReview,readableSuggestion,boundPreview,currentStudioRender,supportsVoiceQuality,loadVoiceQuality,voiceQualityApplyAllowed,voiceQualityLabel,narratedPreviewReady} from '../shot-studio.mjs';
 
 const project={id:'project',revision:7,archived:false,jobs:[],shot_timeline:{version:3,sha256:'timeline-a',shots:[{shot_id:'s-a',scene:1,visual:'Biển',narration:'Nội dung A',subtitle:'Nội dung A',on_screen_text:'A',asset_id:'asset-a',duration:4,narration_enabled:true,crop_strategy:'contain',motion:'none',source_start:0,transition:'cut'},{shot_id:'s-b',scene:2,duration:5}]}};
+
+test('narrated preview is bound to current canonical edits and audio, with distinct approval eligibility',()=>{
+  const p={...project,document:{prepared_narration:{voice_audio_sha256:'voice-a'}}},preview={status:'READY',revision:7,timeline_sha256:'timeline-a',video_url:'/private-fixture-preview',
+    audio_mode:'measured_scene_narration_full_effects_preview',preview_profile:'native-narrated-storyboard-preview-v1',final_approval_eligible:true,
+    manifest:{schema_version:'native-narrated-storyboard-preview-v1',playable:true,timeline_sha256:'timeline-a',timeline_version:3,source_voice_sha256:'voice-a',new_inference_calls:0,final_render_authorized:false,qc:{passed:true}}};
+  assert.equal(boundPreview(p,preview).status,'READY');assert.equal(narratedPreviewReady(p,preview),true);assert.match(previewLabel(preview),/có lời đọc/);assert.match(previewTimingLabel('proxy',preview,p),/đã đo/);
+  for(const mutate of [v=>v.final_approval_eligible=false,v=>v.manifest.source_voice_sha256='foreign',v=>v.manifest.final_render_authorized=true,v=>v.manifest.qc.passed=false,v=>v.preview_profile='old']){
+    const v=structuredClone(preview);mutate(v);assert.equal(boundPreview(p,v).status,'FAILED');assert.equal(narratedPreviewReady(p,v),false);
+  }
+  assert.equal(boundPreview(p,{...preview,revision:8}).status,'STALE');assert.equal(boundPreview(project,preview).status,'FAILED');
+});
+test('narration-only approval never presents a final production render',()=>{
+  assert.equal(currentStudioRender({...project,approval:{revision:7,approval_scope:'narration_only'},jobs:[{kind:'render',status:'succeeded',revision:7}]}),null);
+});
 
 test('Shot view retains server identities and does not invent editable state for old projects',()=>{
   const before=JSON.stringify(project);

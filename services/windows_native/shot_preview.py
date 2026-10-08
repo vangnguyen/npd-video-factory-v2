@@ -11,6 +11,7 @@ from .media import media_path, project_assets
 from .hardening import durable_json,retry_io
 from .source_preview import profile_for, resolve_assets, render as render_source
 from app.timeline_proxy import PreviewCancelledError
+from .narration_preview import PROFILE as NARRATION_PROFILE,authorization as narration_authorization,render as render_narration,reviewed as reviewed_narration
 
 
 def proxy_key(shot, document):
@@ -63,14 +64,14 @@ class PreviewManager:
     def _status(self, project_id):
         project=self.store.shot_view(project_id); view,_=shot_fields(project)
         source_mode=view.get('editing_mode')=='source_footage'
-        profile=profile_for(project) if source_mode else None
+        profile=profile_for(project) if source_mode else NARRATION_PROFILE if project['document'].get('prepared_narration') else None
         folder=self._folder(project_id,view['sha256'],project['revision'],profile); record=folder/'preview.json'
         if not record.is_file():
             history=sorted(self.root.glob('*/preview.json'),key=lambda p:p.stat().st_mtime,reverse=True)
             previous=next((json.loads(p.read_bytes()) for p in history if json.loads(p.read_bytes()).get('project_id')==project_id),None)
             return {**(previous or {}),'status':'STALE' if previous else 'EMPTY','revision':project['revision'],
                     'timeline_version':view['version'],'timeline_sha256':view['sha256'],
-                    'video_url':None,'audio_mode':'canonical_timeline_proxy' if source_mode else 'silent_visual_proxy','final_approval_eligible':False}
+                    'video_url':None,'audio_mode':'canonical_timeline_proxy' if source_mode else 'measured_scene_narration_full_effects_preview' if profile==NARRATION_PROFILE else 'silent_visual_proxy','final_approval_eligible':False}
         value=json.loads(record.read_bytes())
         if value['revision']!=project['revision']:
             return {**value,'status':'STALE','video_url':None}
@@ -90,6 +91,8 @@ class PreviewManager:
                         or value.get('manifest',{}).get('timeline_version') != view['version']):
                     raise WorkflowError('PREVIEW_MANIFEST_CHANGED')
                 resolve_assets(self.config,project)
+            elif profile==NARRATION_PROFILE:
+                reviewed_narration(self.store,self.config,project)
             value['video_url']=f"/api/projects/{project_id}/preview/video?version={view['version']}"
         return value
 
@@ -112,19 +115,20 @@ class PreviewManager:
                     if not a or a.get('rights_confirmed') is not True or not source.is_file() or file_sha(source)!=a['sha256']:
                         raise WorkflowError('SOURCE_MEDIA_CHANGED_OR_MISSING')
                     s['source_sha256']=a['sha256']
-            profile=profile_for(project) if source_mode else None
+            profile=profile_for(project) if source_mode else NARRATION_PROFILE if project['document'].get('prepared_narration') else None
+            if profile==NARRATION_PROFILE:narration_authorization(self.store,project)
             folder=self._folder(project_id,view['sha256'],revision,profile); folder.mkdir(parents=True,exist_ok=True)
             old=self.status(project_id)
             if old.get('status') in {'READY','RUNNING','QUEUED'}: return old
             identifier=folder.name
             value={'id':identifier,'project_id':project_id,'revision':revision,'timeline_version':view['version'],
                    'timeline_sha256':view['sha256'],'status':'QUEUED','completed_shots':0,'total_shots':len(shots),
-                   'cached_shots':0,'new_proxy_shots':0,'audio_mode':'canonical_timeline_proxy' if source_mode else 'silent_visual_proxy','final_approval_eligible':False,
-                   **({'preview_profile':profile} if source_mode else {}),
+                   'cached_shots':0,'new_proxy_shots':0,'audio_mode':'canonical_timeline_proxy' if source_mode else 'measured_scene_narration_full_effects_preview' if profile==NARRATION_PROFILE else 'silent_visual_proxy','final_approval_eligible':False,
+                   **({'preview_profile':profile} if profile else {}),
                    'provider_calls':0,'tts_calls':0,'video_url':None}
             self._write(folder/'preview.json',value)
             event=threading.Event(); self.cancelled[identifier]=event
-            worker=threading.Thread(target=self._run_source if source_mode else self._run,args=(copy.deepcopy(project),folder,event),daemon=True,name='native-source-proxy' if source_mode else 'native-shot-proxy')
+            worker=threading.Thread(target=self._run_source if source_mode else self._run_narration if profile==NARRATION_PROFILE else self._run,args=(copy.deepcopy(project),folder,event),daemon=True,name='native-source-proxy' if source_mode else 'native-narrated-preview' if profile==NARRATION_PROFILE else 'native-shot-proxy')
             self.workers[identifier]=worker; worker.start()
             return value
 
@@ -135,6 +139,23 @@ class PreviewManager:
             value=self.status(project_id)
             if value.get('id') in self.cancelled: self.cancelled[value['id']].set()
             return {**value,'cancel_requested':True}
+
+    def _run_narration(self,project,folder,event):
+        with self.lock:
+            value=json.loads((folder/'preview.json').read_bytes());value['status']='RUNNING';self._write(folder/'preview.json',value)
+        output=folder/'preview.mp4'
+        try:
+            with self.render_lock:manifest=render_narration(self.config,self.store,project,folder,event)
+            if event.is_set():raise WorkflowError('PREVIEW_CANCELLED')
+            value.update(status='READY',sha256=file_sha(output),manifest_sha256=file_sha(folder/'preview-manifest.json'),manifest=manifest,
+                completed_shots=value['total_shots'],new_proxy_shots=value['total_shots'],final_approval_eligible=True,
+                video_url=f"/api/projects/{project['id']}/preview/video?version={value['timeline_version']}")
+            self._ready_event(project,value)
+        except Exception as error:
+            code=error.code if isinstance(error,WorkflowError) else 'NARRATION_PREVIEW_RENDER_FAILED'
+            output.unlink(missing_ok=True);value.update(status='CANCELLED' if code=='PREVIEW_CANCELLED' else 'FAILED',error={'code':code,'automatic_replay':False},video_url=None,final_approval_eligible=False)
+        finally:
+            with self.lock:self._write(folder/'preview.json',value);self.workers.pop(value['id'],None)
 
     def video_path(self, project_id, version):
         value=self.status(project_id)
