@@ -1,0 +1,129 @@
+{
+  "schema": "native-official-publish-queue-kernel-evidence-v1",
+  "parent_head": "d92568efa1219143c2126a193105cc89f43684a2",
+  "source_sha256": {
+    "services/windows_native/official_publication_queue.py": "82949a6db72153c22dbbf85277f98699a943081d315681b4225429bb8b75dc9e",
+    "services/windows_native/official_publication_worker.py": "601a54fbf1806eb8b5a4e9127c587e2c7c63984d22767eb008f34963f066c694",
+    "services/windows_native/backup.py": "60c339422f66796a3f921826d6f24c1323ff14da099eb7c62c54183c23da6ef0",
+    "services/windows_native/tests/test_official_publication_queue.py": "58d61ce91c9246d961665f16ffa295c5aaee8c374c68a0838e58a455ba55c842",
+    "scripts/north_star_native_official_publish_queue.py": "fbda22720f9048d8d9b598c584401e16e8c0b5ba27249e9ef6c288f30000257b",
+    "docs/NATIVE_OFFICIAL_PUBLISH_QUEUE_KERNEL.md": "7d2aaaa8f39157d9a719b7afe7413c2d6d805912f2bcf79bf9ce87d0c4bc7214"
+  },
+  "tests": {
+    "current_full_native_passed": 890,
+    "seconds": 737.501,
+    "new_native_cases": 24,
+    "prior_unchanged_full_studio_passed": 299,
+    "prior_studio_head": "d92568efa1219143c2126a193105cc89f43684a2",
+    "focused_19_passed_before_last_5_cases": true
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-publish-queue-kernel-flow-n1",
+    "evidence_sha256": "ecf12c68d3e282abb91182e7fc53589c080f622b1058a1e01cc32ab4428880db",
+    "exports": {
+      "backup.json": {
+        "sha256": "6a59ea6c23d58587c7c45bdf661baab6004bb338b437fb11427eb1cdf86013ba",
+        "bytes": 1708
+      },
+      "completed-review.json": {
+        "sha256": "ef43062737c974bc5af75afec099aa98ba0edc7d517634625f9a0b33288b164c",
+        "bytes": 13989
+      },
+      "cost-summary.json": {
+        "sha256": "862b715c47618abcd3496556cb646c9526cd9abef3783f710cc3beaadf58764c",
+        "bytes": 15650
+      },
+      "evidence.json": {
+        "sha256": "ecf12c68d3e282abb91182e7fc53589c080f622b1058a1e01cc32ab4428880db",
+        "bytes": 4100
+      },
+      "expected-journals.json": {
+        "sha256": "3d968d97347fba3214d1180518a9603d3517bd758fb6d79df1da259d2d4e6861",
+        "bytes": 59552
+      },
+      "expected-plan-history.json": {
+        "sha256": "7172917b52e0ddaa69387adaf4aaac0ed4c7e9b0a40cfc83e7dea1e403e58585",
+        "bytes": 10854
+      },
+      "expected-project.json": {
+        "sha256": "08b99a76db9b5c83408ba81cfafe9b99b4a6c99423861a710d16cdbbf3020710",
+        "bytes": 5207
+      },
+      "explicit-first-plan.json": {
+        "sha256": "9915788837992ef6f4fd93da4df5cd2a7d8c45a67d904d6c4a10f1b8242ad71d",
+        "bytes": 1946
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-revocation-replay.json": {
+        "sha256": "04d349903b09eab93e4bd122c1f4db0204dfe7c09b25801edd085faf5797e1ce",
+        "bytes": 133
+      },
+      "mock-wire-summary.json": {
+        "sha256": "4cf31b30e4c1705107c9d0daaef9de7fbf8bb6c6b06f8ded057b0bbbf6be5007",
+        "bytes": 2363
+      },
+      "new-process-replay.json": {
+        "sha256": "74316bdf80df990451bbd5e44874688c72f53db5e2f0cf99474abfae148f97ba",
+        "bytes": 254
+      },
+      "owned-official-publish-queue.zip": {
+        "sha256": "695c4040eb63594e3d4854e25ee9ed213f51a09ead2c0d18c74f9f5184e533d5",
+        "bytes": 892717
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "5444f7bea7f53f93dcf80c10a55f21597dd116043d28ec984bc920b911349057",
+        "bytes": 258
+      },
+      "recovery-restore.json": {
+        "sha256": "6f9098527fcb40589ca92dae0e405fc9498d052b340e65f39342d6b00329446c",
+        "bytes": 2110
+      },
+      "restored-in-process.json": {
+        "sha256": "74316bdf80df990451bbd5e44874688c72f53db5e2f0cf99474abfae148f97ba",
+        "bytes": 254
+      },
+      "separate-replacement-plan.json": {
+        "sha256": "1e6424768a01d0dac162204f1b8c3ad8456df4b98a968b19423382a691292e84",
+        "bytes": 1946
+      },
+      "uncertain-first-plan-stopped.json": {
+        "sha256": "f7cd0511b1dd4a23935d5f63a71ff5dde7bf4ab47a8dfd753fa540cbd249b060",
+        "bytes": 4107
+      }
+    },
+    "backup_sha256": "695c4040eb63594e3d4854e25ee9ed213f51a09ead2c0d18c74f9f5184e533d5"
+  },
+  "logs": {
+    "native-official-publish-queue-kernel-full.log": "73a017bc21c43d683e840595c03c527097768061d7fc78690d5221aea8ac561f"
+  },
+  "default_off_and_publication_approval_alone_no_execution": true,
+  "separate_finite_scoped_owner_policy_bound_to_current_grant": true,
+  "atomic_claims_typed_qualified_results_and_prior_history_integrity_before_wire": true,
+  "per_wire_internal_guard_no_client_override": true,
+  "cancel_deadline_source_owner_grant_operator_change_stop": true,
+  "known_response_local_preservation_and_publication_revocation_no_invented_ack": true,
+  "unknown_outcome_no_auto_retry_and_explicit_new_plan_same_session_one_init": true,
+  "durable_bounded_read_backoff": true,
+  "owned_restart_no_decrypt_wire_retry_or_renewal": true,
+  "fifteen_journal_backup_counts_and_exact_fresh_process_recovery": true,
+  "current_source_and_parent_unchanged": true,
+  "preceding_revocation_receipt_twelve_journals_exact": true,
+  "signed_http_requests": 0,
+  "mock_wire_requests": 12,
+  "real_publications": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_oauth_provider_and_clock_fixtures": true,
+  "queue_kernel_only_not_http_studio_or_runner_integration": true,
+  "durable_queue_studio_runtime_integration_complete": false,
+  "accepted_runtime_publishing_enabled": false,
+  "real_provider_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
