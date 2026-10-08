@@ -402,8 +402,9 @@ def wrap_text(text, font, width):
     return lines
 
 
-def music_filters(filters, duration, gain=.12):
-    return filters.replace("[a]","[narration]",1)+f";[narration]asplit=2[sidechain][voiceout];[2:a]volume={gain:.6f},apad,atrim=duration={duration:.4f},afade=t=out:st={max(duration-1,0):.4f}:d=1[bed];[bed][sidechain]sidechaincompress=threshold=0.015:ratio=8:attack=20:release=250[ducked];[voiceout][ducked]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95:level=false[a]"
+def music_filters(filters, duration, gain=.12,*,canonical_fades=False):
+    fade='' if canonical_fades else f",afade=t=out:st={max(duration-1,0):.4f}:d=1"
+    return filters.replace("[a]","[narration]",1)+f";[narration]asplit=2[sidechain][voiceout];[2:a]volume={gain:.6f},apad,atrim=duration={duration:.4f}{fade}[bed];[bed][sidechain]sidechaincompress=threshold=0.015:ratio=8:attack=20:release=250[ducked];[voiceout][ducked]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95:level=false[a]"
 
 
 def render(config, snapshot, out, *, preview_only=False):
@@ -612,12 +613,17 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     cmd = [str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-nostdin", "-n", "-f", "concat", "-safe", "1", "-i", "frames.txt",
            "-i", voice_file]
     music=doc.get("music") if doc.get("music_enabled",True) else None
+    music_loop=None
     if music:
         music_source=media_path(config,music["id"])
         if music.get("rights_confirmed") is not True or not music_source.is_file() or file_sha(music_source)!=music["sha256"]:
             raise WorkflowError("MUSIC_ARTIFACT_CHANGED_OR_RIGHTS_MISSING")
-        cmd += ["-stream_loop","-1","-i",str(music_source)]
-        filters=music_filters(filters,duration,brand.music_profile.nominal_gain)
+        if music.get('narrated_loop'):
+            from .narrated_music import materialize
+            music_source,music_loop=materialize(config,doc,out)
+            cmd += ['-i',str(music_source)]
+        else:cmd += ["-stream_loop","-1","-i",str(music_source)]
+        filters=music_filters(filters,duration,brand.music_profile.nominal_gain,canonical_fades=music_loop is not None)
     cmd += ["-filter_complex", filters, "-map", "[v]", "-map", "[a]", "-c:v", "libx264",
            "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
            "-ar", "48000", "-movflags", "+faststart", "-t", f"{duration:.4f}", "final.mp4"]
@@ -637,6 +643,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         **({'render_purpose':'narration_preview','preview_authorization':snapshot['preview_authorization']} if preview_only else {}),
         "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
         "music":{"sha256":music["sha256"],"nominal_gain":brand.music_profile.nominal_gain,"ducking":brand.music_profile.ducking} if music else None,
+        **({'canonical_music_loop':music_loop} if music_loop is not None else {}),
         "brand_template":doc.get("brand_template"),"duration_policy":template.duration_policy if template else "legacy_measured_voice_minimum_25s",
         "cta_hold_after_voice_seconds":voice_placement['tail_after_source_voice_seconds'],
         "voice_placement":voice_placement,"official_brand_assets_claimed":False,
@@ -850,6 +857,7 @@ class Pipeline:
             render_files+=('transport-qc-report.json','full-qc-report.json')
             render_files+=tuple(str(path.relative_to(attempt)).replace('\\','/') for path in sorted((attempt/'subtitle-qc').glob('*.png')))
         if (attempt/'render-voice.json').is_file(): render_files+=('render-voice.json','render-voice.wav')
+        if (attempt/'music-loop.json').is_file():render_files+=('music-loop.json','music-loop.wav')
         paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in render_files], stage, "storage_render_publish")
         if (out/'voice-reuse.json').is_file():paths.append(out/'voice-reuse.json')
         retry_io(lambda: artifacts.commit("render", paths, result), stage, "storage_render_checkpoint")

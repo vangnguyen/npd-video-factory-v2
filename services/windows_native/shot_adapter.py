@@ -184,6 +184,11 @@ def snapshot_from_shots(shots, doc, *, canvas=None):
     if doc.get("content_intelligence"):
         from .intelligence_lineage import projection
         value["metadata"]["content_intelligence"] = projection(doc)
+    from .narrated_music import track as music_track,decision_metadata
+    music=music_track(doc,value['duration_seconds'])
+    if music is not None:
+        value['tracks'].append(music)
+        value['metadata']['narrated_music_loop']=decision_metadata(doc,value['duration_seconds'])
     return TimelineSnapshot.model_validate(value).model_dump(mode="json")
 
 

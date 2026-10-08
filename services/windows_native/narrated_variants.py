@@ -121,6 +121,8 @@ class NativeNarratedVariants:
             brand,template=resolve(document)
             if template is None:raise WorkflowError('NARRATED_VARIANT_FROZEN_TEMPLATE_REQUIRED',400)
             verify_selected_files(SimpleNamespace(data_root=self.store.root),document)
+            from .narrated_music import verify_source
+            verify_source(SimpleNamespace(data_root=self.store.root),document)
             available=catalog();profiles={v['profile_ref']:v for v in available['profiles']}
             if any(ref not in profiles for ref in payload.profile_refs):raise WorkflowError('NARRATED_VARIANT_PROFILE_UNKNOWN',400)
             if con.execute('SELECT COUNT(*) FROM native_narrated_variant_batches WHERE workspace_id=? AND master_project_id=?',(self.workspace,project_id)).fetchone()[0]>=50:

@@ -462,7 +462,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -825,7 +825,7 @@ class Handler(BaseHTTPRequestHandler):
             project=self.server.store.editable(con,identifier,revision)
             if loop_crossfade:
                 from .auto_edit_timeline import is_auto_edit
-                if not is_auto_edit(project['document']):raise WorkflowError('MUSIC_LOOP_CROSSFADE_SOURCE_TIMELINE_REQUIRED',400)
+                if not is_auto_edit(project['document']) and not project['document'].get('canonical_timeline'):raise WorkflowError('MUSIC_LOOP_CROSSFADE_SOURCE_TIMELINE_REQUIRED',400)
         directory=self.server.config.data_root/"uploads"; directory.mkdir(parents=True,exist_ok=True)
         source=directory/(uuid.uuid4().hex+".part")
         try:

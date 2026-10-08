@@ -31,3 +31,5 @@ The retained signed HTTP music review rehearsal records declaration/grant exact 
 Machine index: `docs/north-star/native-audio-quality-evidence.json`. External recovery contains `native-music-crossfade-flow-n1`, `native-music-review-flow-n1` and `native-audio-quality-narration-n1`; none replaces accepted videos.
 
 Remaining audio scope includes narrated-mode loop crossfades, independent stem-level perceptual balance/speech audibility acceptance, expanded provider-neutral voices/languages, measured BPM/mood/energy for uploaded music, and actual rights/browser/non-developer/Owner acceptance. Final output loudness is a measurement, not a complete audio-quality certificate. Original Mode A/B, publishing/analytics/learning, integration, production and final acceptance requirements remain active.
+
+Subsequent narrated-mode implementation is documented in [Native narrated music loops](NATIVE_NARRATED_MUSIC_LOOPS.md). The statements above describe this earlier preserved increment; its evidence and artifacts remain unchanged.

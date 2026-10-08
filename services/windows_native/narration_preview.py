@@ -22,6 +22,9 @@ def prepared(store,project,*,con=None):
 
 def authorization(store,project,*,con=None):
     job,out,result=prepared(store,project,con=con);canonical=project['document']['canonical_timeline']
+    from .narrated_music import verify_source
+    from types import SimpleNamespace
+    verify_source(SimpleNamespace(data_root=store.root),project['document'])
     return {'schema_version':PROFILE,'project_id':project['id'],'revision':project['revision'],'document_sha256':digest(project['document']),
         'canonical_timeline_version':canonical['version'],'canonical_timeline_sha256':canonical['sha256'],'prepared_reference_sha256':digest(project['document']['prepared_narration']),
         'voice_input_sha256':result['plan']['voice_input_sha256'],'voice_audio_sha256':result['plan']['voice_audio_sha256'],
@@ -58,6 +61,7 @@ def render(config,store,project,folder,event):
     published.path('subtitle-qc').mkdir(exist_ok=True)
     names=['render-manifest.json','qc-report.json','full-qc-report.json','transport-qc-report.json','subtitles.ass','timeline.json','voice.json']
     if (attempt/'render-voice.json').is_file():names.append('render-voice.json')
+    if (attempt/'music-loop.json').is_file():names+=['music-loop.json','music-loop.wav']
     names+= [path.relative_to(attempt).as_posix() for path in sorted((attempt/'subtitle-qc').glob('*.png'))]
     for name in names:files.append(published.metadata(published.publish(attempt/name,name)))
     output=published.publish(attempt/'final.mp4','preview.mp4')
@@ -91,6 +95,8 @@ def reviewed(store,config,project,*,con=None):
         full=json.loads((folder/'full-qc-report.json').read_bytes())
         if full!=manifest['qc']['full_quality'] or full.get('status')!='passed' or full.get('render_purpose')!='narration_preview' or full.get('final_sha256')!=manifest['output_sha256'] or full.get('document_sha256')!=expected['document_sha256']:raise ValueError()
         verify_selected_files(config,project['document'])
+        from .narrated_music import verify_bundle
+        verify_bundle(config,project['document'],folder)
     except (OSError,ValueError,KeyError,TypeError):raise WorkflowError('NARRATION_CURRENT_AUDIBLE_PREVIEW_REVIEW_REQUIRED',400) from None
     return {'id':folder.name,'sha256':manifest['output_sha256'],'manifest_sha256':file_sha(folder/'preview-manifest.json'),'profile':PROFILE,
         'timeline_version':manifest['timeline_version'],'timeline_sha256':manifest['timeline_sha256'],'document_sha256':manifest['document_sha256'],

@@ -472,10 +472,14 @@ class Store:
         if is_auto_edit(self.get(identifier)['document']):
             from .source_music import set_music
             return set_music(self,identifier,revision,music,loop_crossfade_seconds=loop_crossfade_seconds)
-        if loop_crossfade_seconds!=0:raise WorkflowError('MUSIC_LOOP_CROSSFADE_SOURCE_TIMELINE_REQUIRED',400)
+        if type(loop_crossfade_seconds) not in (int,float):raise WorkflowError('MUSIC_LOOP_CROSSFADE_INVALID',400)
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
             before_shots = copy.deepcopy(doc)
+            if loop_crossfade_seconds:
+                from .narrated_music import attach
+                if not doc.get('canonical_timeline'):raise WorkflowError('MUSIC_LOOP_CROSSFADE_SOURCE_TIMELINE_REQUIRED',400)
+                music=attach(self.root,music,loop_crossfade_seconds)
             previous=doc.get("edit_plan"); doc["music"]=music; doc["music_enabled"]=True
             if previous:
                 from .editor import build_plan, SceneOptions

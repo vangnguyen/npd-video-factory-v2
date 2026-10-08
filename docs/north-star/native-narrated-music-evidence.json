@@ -1,0 +1,1077 @@
+{
+  "schema": "native-narrated-music-evidence-v1",
+  "parent_head": "a23457f443717a0e0329f88967f0ec5ba39f8b15",
+  "source_sha256": {
+    "services/windows_native/narrated_music.py": "0835746d822916fc973c8d58990d2a8a5dce6d13127d5e9b1218882a5329d52b",
+    "services/windows_native/narrated_variants.py": "a67ed24b190eb6572209e714b05a6d3906f351ad0c5eb82dea41750ef489bd60",
+    "services/windows_native/shot_adapter.py": "15543c299ccd275677bf7204250c873e0f7d832c6408fed8c06035ed1c079a24",
+    "services/windows_native/store.py": "9364a4df6c68c5c0c7e29b78e4e5418c1edc7baf38feacb85adc1358a1ff3a8a",
+    "services/windows_native/pipeline.py": "d50186ed791525412708aa2a84b86cdf32035e319b259a8e4604c41b2e15ec9e",
+    "services/windows_native/narration_preview.py": "a10e8821f190c13d93b467e0ccd1621366b0c7f8d1582c82d46ba24eebe3df8c",
+    "services/windows_native/storyboard_qc.py": "4ddef5d5259d8e3de24ccf5835b3756f5ceec8cacbab81cc16170e5b23c08266",
+    "services/windows_native/server.py": "9d4ad70142f94f268b92c49a29be5993bc2a730c35e0f81283bf0fb077d66a11",
+    "services/windows_native/tests/test_narrated_music.py": "7c404ed47d2baac8f1fc89c2102b114de79bfa9273dfcefc1055a3649be439bc",
+    "services/windows_native/tests/test_narrated_music_http.py": "9a7644a036bad5f49c86dd4c3d026de596b6137f2f3a1bc29cf4e00116258caa",
+    "services/windows_native/tests/test_phase10_http.py": "3a6795abc7797e40297bf80aead81a3affa8867f2616afef2e2fddbc79792567",
+    "apps/studio-web/native.mjs": "ff2183a9e0f0830fd7b5e1653fa56b76254a46b9e64c19b477becd164ce34ac9",
+    "apps/studio-web/native.html": "18ce23c3aa3687a0b19e1597bd2bc43e42e48d96894e42a058f50f48c21173af",
+    "apps/studio-web/tests/native-music-loop.test.mjs": "c382707c313f372a84b1a48924e8dda035b5451aabd77f3c417d265771c27c8b",
+    "scripts/north_star_native_narrated_music.py": "2dd49ec332eb385182e213fb40170749b01e5837af50dbf9af6de6283a47cd24",
+    "docs/NATIVE_NARRATED_MUSIC_LOOPS.md": "0a1a182e8b4f75774dcb8e640c89fb06d5efea45241c0ae346b47128c6e1fbc1",
+    "docs/NATIVE_MUSIC_CROSSFADE_LOUDNESS.md": "3a96f6c42c2e3e170d2739cf8fcc42205fdb3aa8633fab8c10748e9d8ec48039"
+  },
+  "tests": {
+    "full_native_passed": 745,
+    "full_native_seconds": 630.835,
+    "new_native_cases": 13,
+    "full_studio_passed": 279,
+    "full_studio_seconds": 1.1306372,
+    "new_studio_cases": 1,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-music-flow-n1",
+    "evidence_sha256": "645940d150eb6016a6292ea71b5c8d0a40be0eb202dbff534ea428905e830a6e",
+    "receipts": [
+      {
+        "project_id": "6b75a9f22609580abc002aa36ebc2c83",
+        "render_job_id": "b0dd2eb7a9f34182a98a3a608f838e0e",
+        "profile": {
+          "profile_ref": "youtube-landscape@1",
+          "label": "YouTube · 16:9",
+          "platform": "youtube",
+          "aspect_ratio": "16:9",
+          "width": 1920,
+          "height": 1080
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "ad82ae9cc691d262b9ad687495990c58b27eb67751e5ec3b2873973f4c08df9c",
+        "preview_sha256": "4b232cde52f0c5972ccda086d64b1ae435eaee4cea56b5f46a70a419e81cac52",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "music_loop": {
+          "canonical_timeline_sha256": "d3e7a4ce3868fbd8126cf6f597fb722216ea3940ea135b48e0324346a05a247b",
+          "canonical_track_sha256": "1934bd34b9f33f05f1e31a5593dfa82853cca81fa104781e9b6276e7ad7f2487",
+          "channels": 2,
+          "curve": "linear_overlap",
+          "external_calls": 0,
+          "input_peak_db": -21.07302754869217,
+          "input_rms_db": -24.08432524938707,
+          "limiter": true,
+          "nominal_gain_after_bed": 0.12,
+          "normalization_gain": 1.7956275598577138,
+          "output_frames": 452160,
+          "output_sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+          "policy_sha256": "e7590d469114797e084fdba8e42d0d50bf61312f2fa256a956b4082c1f2a9439",
+          "pre_pcm_clipped_samples": 0,
+          "repeat_count": 4,
+          "rights_independently_verified": false,
+          "sample_rate": 48000,
+          "schema_version": "native-narrated-music-loop-v1",
+          "source_frames": 144000,
+          "source_mutated": false,
+          "source_sha256": "bdb8e806d39826edf3c90d81028e0f56aa9113b83aa01af1827d6a19f4fafebc",
+          "speech_quality_accepted": false,
+          "voice_sidechain_ducking": true
+        },
+        "identical_preview_final_music_pcm": true,
+        "new_inference_calls": 0,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "d74080a5646953dd9a6aa314b62dcfab",
+        "render_job_id": "f4301584abd949e3b722a6d4320775b1",
+        "profile": {
+          "profile_ref": "youtube-shorts@1",
+          "label": "YouTube Shorts · 9:16",
+          "platform": "youtube",
+          "aspect_ratio": "9:16",
+          "width": 1080,
+          "height": 1920
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "8e9f6ba306f3bb3ed7c8ae220aaac352c2c3d106266afe785de54c77df580b6f",
+        "preview_sha256": "9f0c6fe1a935d97241a8d0f5beab886f7eba7b249ceed030dbde3b4f50c597be",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "music_loop": {
+          "canonical_timeline_sha256": "6a3e97fef17f766fa46f3b8ab2a74f8348aebe1c37224662b3f63a84f0826a78",
+          "canonical_track_sha256": "1934bd34b9f33f05f1e31a5593dfa82853cca81fa104781e9b6276e7ad7f2487",
+          "channels": 2,
+          "curve": "linear_overlap",
+          "external_calls": 0,
+          "input_peak_db": -21.07302754869217,
+          "input_rms_db": -24.08432524938707,
+          "limiter": true,
+          "nominal_gain_after_bed": 0.12,
+          "normalization_gain": 1.7956275598577138,
+          "output_frames": 452160,
+          "output_sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+          "policy_sha256": "e7590d469114797e084fdba8e42d0d50bf61312f2fa256a956b4082c1f2a9439",
+          "pre_pcm_clipped_samples": 0,
+          "repeat_count": 4,
+          "rights_independently_verified": false,
+          "sample_rate": 48000,
+          "schema_version": "native-narrated-music-loop-v1",
+          "source_frames": 144000,
+          "source_mutated": false,
+          "source_sha256": "bdb8e806d39826edf3c90d81028e0f56aa9113b83aa01af1827d6a19f4fafebc",
+          "speech_quality_accepted": false,
+          "voice_sidechain_ducking": true
+        },
+        "identical_preview_final_music_pcm": true,
+        "new_inference_calls": 0,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "26a3df4216a45b6e913d2f156dc140cf",
+        "render_job_id": "a5fa34ba125344a887bdd8825aa0a89b",
+        "profile": {
+          "profile_ref": "tiktok-short@1",
+          "label": "TikTok · 9:16",
+          "platform": "tiktok",
+          "aspect_ratio": "9:16",
+          "width": 1080,
+          "height": 1920
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "9f0c6fe1a935d97241a8d0f5beab886f7eba7b249ceed030dbde3b4f50c597be",
+        "preview_sha256": "9f0c6fe1a935d97241a8d0f5beab886f7eba7b249ceed030dbde3b4f50c597be",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "music_loop": {
+          "canonical_timeline_sha256": "6a3e97fef17f766fa46f3b8ab2a74f8348aebe1c37224662b3f63a84f0826a78",
+          "canonical_track_sha256": "1934bd34b9f33f05f1e31a5593dfa82853cca81fa104781e9b6276e7ad7f2487",
+          "channels": 2,
+          "curve": "linear_overlap",
+          "external_calls": 0,
+          "input_peak_db": -21.07302754869217,
+          "input_rms_db": -24.08432524938707,
+          "limiter": true,
+          "nominal_gain_after_bed": 0.12,
+          "normalization_gain": 1.7956275598577138,
+          "output_frames": 452160,
+          "output_sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+          "policy_sha256": "e7590d469114797e084fdba8e42d0d50bf61312f2fa256a956b4082c1f2a9439",
+          "pre_pcm_clipped_samples": 0,
+          "repeat_count": 4,
+          "rights_independently_verified": false,
+          "sample_rate": 48000,
+          "schema_version": "native-narrated-music-loop-v1",
+          "source_frames": 144000,
+          "source_mutated": false,
+          "source_sha256": "bdb8e806d39826edf3c90d81028e0f56aa9113b83aa01af1827d6a19f4fafebc",
+          "speech_quality_accepted": false,
+          "voice_sidechain_ducking": true
+        },
+        "identical_preview_final_music_pcm": true,
+        "new_inference_calls": 0,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "1aa9ebb15ead5b5992237805d9a95fcd",
+        "render_job_id": "4e1d9b1708d54f59a489f65392cbc5e3",
+        "profile": {
+          "profile_ref": "instagram-reel@1",
+          "label": "Instagram Reels · 9:16",
+          "platform": "instagram",
+          "aspect_ratio": "9:16",
+          "width": 1080,
+          "height": 1920
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "2928779be5ee34133c579f8506f701cec411189f107e333f1dd10ec2974fed26",
+        "preview_sha256": "6afc84860e67158333df7f72875cf9be0703d8c343c6e283d31383dd3e184283",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "music_loop": {
+          "canonical_timeline_sha256": "6a3e97fef17f766fa46f3b8ab2a74f8348aebe1c37224662b3f63a84f0826a78",
+          "canonical_track_sha256": "1934bd34b9f33f05f1e31a5593dfa82853cca81fa104781e9b6276e7ad7f2487",
+          "channels": 2,
+          "curve": "linear_overlap",
+          "external_calls": 0,
+          "input_peak_db": -21.07302754869217,
+          "input_rms_db": -24.08432524938707,
+          "limiter": true,
+          "nominal_gain_after_bed": 0.12,
+          "normalization_gain": 1.7956275598577138,
+          "output_frames": 452160,
+          "output_sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+          "policy_sha256": "e7590d469114797e084fdba8e42d0d50bf61312f2fa256a956b4082c1f2a9439",
+          "pre_pcm_clipped_samples": 0,
+          "repeat_count": 4,
+          "rights_independently_verified": false,
+          "sample_rate": 48000,
+          "schema_version": "native-narrated-music-loop-v1",
+          "source_frames": 144000,
+          "source_mutated": false,
+          "source_sha256": "bdb8e806d39826edf3c90d81028e0f56aa9113b83aa01af1827d6a19f4fafebc",
+          "speech_quality_accepted": false,
+          "voice_sidechain_ducking": true
+        },
+        "identical_preview_final_music_pcm": true,
+        "new_inference_calls": 0,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "0108ac987070582e93d428ef10b9960a",
+        "render_job_id": "04b74db3f66d4be486442897e4bb6a05",
+        "profile": {
+          "profile_ref": "social-square@1",
+          "label": "Social · 1:1",
+          "platform": null,
+          "aspect_ratio": "1:1",
+          "width": 1080,
+          "height": 1080
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "2a5712926a282d654c509d23ed09c25a964572040993af2ce52e0a62a41fd938",
+        "preview_sha256": "0509fbbdae50f1333066e6e1e7d1de408fcc475d7f2beaff50a117bb844be52e",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "music_loop": {
+          "canonical_timeline_sha256": "d9629e2757a9f6e4910d8224cffea27eee43e1b6e4bb3ed44089804d42054dd3",
+          "canonical_track_sha256": "1934bd34b9f33f05f1e31a5593dfa82853cca81fa104781e9b6276e7ad7f2487",
+          "channels": 2,
+          "curve": "linear_overlap",
+          "external_calls": 0,
+          "input_peak_db": -21.07302754869217,
+          "input_rms_db": -24.08432524938707,
+          "limiter": true,
+          "nominal_gain_after_bed": 0.12,
+          "normalization_gain": 1.7956275598577138,
+          "output_frames": 452160,
+          "output_sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+          "policy_sha256": "e7590d469114797e084fdba8e42d0d50bf61312f2fa256a956b4082c1f2a9439",
+          "pre_pcm_clipped_samples": 0,
+          "repeat_count": 4,
+          "rights_independently_verified": false,
+          "sample_rate": 48000,
+          "schema_version": "native-narrated-music-loop-v1",
+          "source_frames": 144000,
+          "source_mutated": false,
+          "source_sha256": "bdb8e806d39826edf3c90d81028e0f56aa9113b83aa01af1827d6a19f4fafebc",
+          "speech_quality_accepted": false,
+          "voice_sidechain_ducking": true
+        },
+        "identical_preview_final_music_pcm": true,
+        "new_inference_calls": 0,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "7829af87f068592d861068790496e13f",
+        "render_job_id": "7fed751ab01a417d88a044d4c7d89285",
+        "profile": {
+          "profile_ref": "social-feed@1",
+          "label": "Feed · 4:5",
+          "platform": null,
+          "aspect_ratio": "4:5",
+          "width": 1080,
+          "height": 1350
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "cc077d767e7a8a405ed1d2e6b0da98f92ae251ef833a196dc3049617463888b6",
+        "preview_sha256": "6836bf8c9d328870883743915d59d9b6dfcbc8a21dbba22ce5e256af6ad24c28",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "music_loop": {
+          "canonical_timeline_sha256": "bd4e5fbd225df6e4c56818f63989295baf76124f3ea9e708da79ace321e2b0cb",
+          "canonical_track_sha256": "1934bd34b9f33f05f1e31a5593dfa82853cca81fa104781e9b6276e7ad7f2487",
+          "channels": 2,
+          "curve": "linear_overlap",
+          "external_calls": 0,
+          "input_peak_db": -21.07302754869217,
+          "input_rms_db": -24.08432524938707,
+          "limiter": true,
+          "nominal_gain_after_bed": 0.12,
+          "normalization_gain": 1.7956275598577138,
+          "output_frames": 452160,
+          "output_sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+          "policy_sha256": "e7590d469114797e084fdba8e42d0d50bf61312f2fa256a956b4082c1f2a9439",
+          "pre_pcm_clipped_samples": 0,
+          "repeat_count": 4,
+          "rights_independently_verified": false,
+          "sample_rate": 48000,
+          "schema_version": "native-narrated-music-loop-v1",
+          "source_frames": 144000,
+          "source_mutated": false,
+          "source_sha256": "bdb8e806d39826edf3c90d81028e0f56aa9113b83aa01af1827d6a19f4fafebc",
+          "speech_quality_accepted": false,
+          "voice_sidechain_ducking": true
+        },
+        "identical_preview_final_music_pcm": true,
+        "new_inference_calls": 0,
+        "owner_uat_accepted": false
+      }
+    ],
+    "exports": {
+      "backup.json": {
+        "sha256": "b9c1425e01b4117c29df02559e574c81e6786efa7a26b966c5cb9d44bcef33ca",
+        "bytes": 2630
+      },
+      "catalog.json": {
+        "sha256": "53adb211c05670b78ec169e3fc5239759466ed7cf8e38d3ad41596ba01dd1601",
+        "bytes": 1396
+      },
+      "copied-master.json": {
+        "sha256": "fc13dad4c37a3ba57c07796b75d0b021df9440e654307b3822b7ced0d332f066",
+        "bytes": 645345
+      },
+      "created-family.json": {
+        "sha256": "43150383fdba9233ca28502a0dd0e3bd6a666b80e464f70bc3f4a39493ff77d3",
+        "bytes": 15431
+      },
+      "expected-family-page.json": {
+        "sha256": "7360c7de1c4a762b04b1de92b5c3bad581c98be9ec49c550fcb3520ee052e447",
+        "bytes": 33771
+      },
+      "explicit-tone-music.wav": {
+        "sha256": "bdb8e806d39826edf3c90d81028e0f56aa9113b83aa01af1827d6a19f4fafebc",
+        "bytes": 576078
+      },
+      "http-requests.json": {
+        "sha256": "b586f857d11be741a880f57f516b9c5fc0f75eee449ac9141b894ed6efa8cc22",
+        "bytes": 16216
+      },
+      "initial-restore.json": {
+        "sha256": "667f390226f6c177e25031cdae0aaabebac579979c4a41db67b9eb4f6c682d0f",
+        "bytes": 2987
+      },
+      "master-music.json": {
+        "sha256": "e07da48171200d8f309b2a46b6da3f1686d34bd82bb0a17adef7c67891dd42bb",
+        "bytes": 1176
+      },
+      "original-master.json": {
+        "sha256": "e5a038cc2a9073aebcf5432117187e1fc5cc8d67497e59103bd661fbb99d91a7",
+        "bytes": 655683
+      },
+      "owned-narrated-music.zip": {
+        "sha256": "988e921dac0e04ad92ca6bd0a7faf896e014500f1203d89674570d32b4559f8d",
+        "bytes": 156647442
+      },
+      "physical-source-hashes.json": {
+        "sha256": "989c0fef1c1f93188c5fd76ba18f00ae6c02fdaea9e2e1473f2a0ef6971d1277",
+        "bytes": 111778
+      },
+      "receipts.json": {
+        "sha256": "3b216c4c791af5153bf6952bc1f9028590affa1dd0e6f4bcd55159f93d40975d",
+        "bytes": 11409
+      },
+      "recovery-restore.json": {
+        "sha256": "71192d5785b396ce8a033258c4af2b5483c2e7ad76080e0e6f40e35b72a86a25",
+        "bytes": 3012
+      },
+      "restored-in-process.json": {
+        "sha256": "533fef029002b801cecf79eb62d7f3d4431d1980a3ca42b0e331c663534c9ba6",
+        "bytes": 224
+      },
+      "instagram-reel-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "instagram-reel-1/canonical-timeline.json": {
+        "sha256": "feb4990b5bdb083f8cdebb967f07532cbc3e1f010af29dee1059c6795e5f5611",
+        "bytes": 15393
+      },
+      "instagram-reel-1/cost.json": {
+        "sha256": "7ff5ed191ec5cc28764c99a177f34415cbaba9e9faab3b0649bd8be649abe662",
+        "bytes": 791
+      },
+      "instagram-reel-1/ffprobe.json": {
+        "sha256": "6c82a7a47cc8b12d5f9297491239de575a14dad82c1fd0af038355e9adf6685b",
+        "bytes": 2492
+      },
+      "instagram-reel-1/final.mp4": {
+        "sha256": "2928779be5ee34133c579f8506f701cec411189f107e333f1dd10ec2974fed26",
+        "bytes": 306022
+      },
+      "instagram-reel-1/full-qc-report.json": {
+        "sha256": "fde11cab50d857c34e6697354b6e64ff1a33a20dfd8d7761e6afb313c4c0e7e0",
+        "bytes": 6786
+      },
+      "instagram-reel-1/initial-project.json": {
+        "sha256": "c74a45707a7fd8965571a515286155a75f4f1ecb5dd34a4916409c4901bc5868",
+        "bytes": 102391
+      },
+      "instagram-reel-1/job-events.json": {
+        "sha256": "772c1e2a8ffdbeb654d215fec459894b8750755acebbbafe328c7a7a9d322562",
+        "bytes": 4530
+      },
+      "instagram-reel-1/job.json": {
+        "sha256": "8185041efde76497ce4520a8ef41eaac0165ac14b2bffc25e158d85813a1b73f",
+        "bytes": 116263
+      },
+      "instagram-reel-1/music-loop.json": {
+        "sha256": "f4ceee7a38affe27b57192c69441ef6cf835128e3992f8853b6e79f0071c87ac",
+        "bytes": 932
+      },
+      "instagram-reel-1/music-loop.wav": {
+        "sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+        "bytes": 1808684
+      },
+      "instagram-reel-1/preview.json": {
+        "sha256": "1a66cd41ba4e5762813781351674c679550add98f5349d3ad5e773753f684792",
+        "bytes": 18428
+      },
+      "instagram-reel-1/preview.mp4": {
+        "sha256": "6afc84860e67158333df7f72875cf9be0703d8c343c6e283d31383dd3e184283",
+        "bytes": 302184
+      },
+      "instagram-reel-1/qc-report.json": {
+        "sha256": "fbb058f991ca2f775f38005391e2d2a1fb901cfb9a0903e59681880ca2dc1ebb",
+        "bytes": 7990
+      },
+      "instagram-reel-1/qc.json": {
+        "sha256": "3d59de91ee87433884af6f985493235b442fa1ddd6c3f98974d768fc7137c9a5",
+        "bytes": 11204
+      },
+      "instagram-reel-1/render-approval-fixture.json": {
+        "sha256": "c59559a5fce32bb4f18c0abd4675b88aa2ac94f979cd4a2e2132ea7a59f4f1c0",
+        "bytes": 1214
+      },
+      "instagram-reel-1/render-manifest.json": {
+        "sha256": "774232bbf25d880ebafde24ed344ddd2ba59a7f21faff50cd878261c61138d95",
+        "bytes": 7263
+      },
+      "instagram-reel-1/review-frame.png": {
+        "sha256": "ffa6c4c1e230af3f5abb1347f16d5ffb3686575e7150ad74239ceb2c706a3484",
+        "bytes": 176726
+      },
+      "instagram-reel-1/subtitles.ass": {
+        "sha256": "e658e110947873f018ac1b7f6c3a033a9c8b136b457458277f619dccfc0a69d2",
+        "bytes": 947
+      },
+      "instagram-reel-1/timeline.json": {
+        "sha256": "52ad0e46d53d2a2cf06f101d70917c1b4b923dc22318a4710cba8113d22261a3",
+        "bytes": 9518
+      },
+      "instagram-reel-1/transport-qc-report.json": {
+        "sha256": "a0b14c36103c43b95e0b6fb46db08833fa6b206ac07b07a8439c7b70a3f01c47",
+        "bytes": 1162
+      },
+      "instagram-reel-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "instagram-reel-1/voice-reuse.json": {
+        "sha256": "8fecf484d12e79d76e0473e5c193f5ee236458f59d00422a55a0f27ed5cdc0da",
+        "bytes": 1863
+      },
+      "instagram-reel-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "instagram-reel-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "social-feed-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "social-feed-1/canonical-timeline.json": {
+        "sha256": "1bd40ae21afcd00173fea4d8c0b2cb82f3fd5c2a72f7a1d750eb7271a851f050",
+        "bytes": 15392
+      },
+      "social-feed-1/cost.json": {
+        "sha256": "517d228d289831678f040d26d801da5a576de047eb57973a7abdf5881a6b458b",
+        "bytes": 791
+      },
+      "social-feed-1/ffprobe.json": {
+        "sha256": "c76a6c22b0dc4ad90760b677c9fae3282b458c8a0ce8ee85651f28e2dd1de1c3",
+        "bytes": 2491
+      },
+      "social-feed-1/final.mp4": {
+        "sha256": "cc077d767e7a8a405ed1d2e6b0da98f92ae251ef833a196dc3049617463888b6",
+        "bytes": 291952
+      },
+      "social-feed-1/full-qc-report.json": {
+        "sha256": "24c3364b7d7cfdeaf9718a17e928f913e6dab9d843ce81c045ab3f293c2ac88d",
+        "bytes": 6800
+      },
+      "social-feed-1/initial-project.json": {
+        "sha256": "6dbfeb801242049d384fb19ee01b1e396e02c49045233271d7949c5c1d320b69",
+        "bytes": 102357
+      },
+      "social-feed-1/job-events.json": {
+        "sha256": "703b77253eb44132230568e09f4c162bcd60b156b4285aa5612c08a05c13974e",
+        "bytes": 4527
+      },
+      "social-feed-1/job.json": {
+        "sha256": "a2363479ba30fe053f48a4029a465482e7605a983354326c0a063fccd6558947",
+        "bytes": 116360
+      },
+      "social-feed-1/music-loop.json": {
+        "sha256": "3af9b7483c75af13f65d03faa08d3ad562fa41ed4dbd3c4471f8861a5857e050",
+        "bytes": 932
+      },
+      "social-feed-1/music-loop.wav": {
+        "sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+        "bytes": 1808684
+      },
+      "social-feed-1/preview.json": {
+        "sha256": "f63dd4b1ec219af3f8c1d49d0b8e0ac062d832bf5f2ef4b9185ad2f3003f60fb",
+        "bytes": 18559
+      },
+      "social-feed-1/preview.mp4": {
+        "sha256": "6836bf8c9d328870883743915d59d9b6dfcbc8a21dbba22ce5e256af6ad24c28",
+        "bytes": 288919
+      },
+      "social-feed-1/qc-report.json": {
+        "sha256": "82ac864400270c5ab0df7898f27ce31f403e9cc06e1217e4fd1d43a43221d9ad",
+        "bytes": 8009
+      },
+      "social-feed-1/qc.json": {
+        "sha256": "f1f3877cae18744012175b58268cf38a376932b1cbef8a084e3d7c04e4f826b6",
+        "bytes": 11303
+      },
+      "social-feed-1/render-approval-fixture.json": {
+        "sha256": "77b8b8cf589e9b2e04fa63e5f156a2b8e1b577f237551683c9dfd9737845ab6d",
+        "bytes": 1214
+      },
+      "social-feed-1/render-manifest.json": {
+        "sha256": "b77667f9782f6e395710f051db1a536fe15f50086c150d9c4fe951440c1b3c70",
+        "bytes": 7263
+      },
+      "social-feed-1/review-frame.png": {
+        "sha256": "9e27953c9770c53b0ca94057f51bc9dd6bb7a0f97c7a242f9bb304d16d00198f",
+        "bytes": 151470
+      },
+      "social-feed-1/subtitles.ass": {
+        "sha256": "bbda2a83b97395f01c2beab072c10eea21b1c192dec197d0881229402924e8cf",
+        "bytes": 947
+      },
+      "social-feed-1/timeline.json": {
+        "sha256": "86e0d76f162fafaaa41607f7426e42b3c7e6db7a696b90f9fb12e8bdcb18ae88",
+        "bytes": 9521
+      },
+      "social-feed-1/transport-qc-report.json": {
+        "sha256": "90ce6636ada95686a257d67312ce037867cf82a91d6bf70b38a6940b64b459ac",
+        "bytes": 1167
+      },
+      "social-feed-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "social-feed-1/voice-reuse.json": {
+        "sha256": "3a7bf00177ad3c2cb971da123f3cc003fe5a30c105c8c8d61303aed4f8dabca7",
+        "bytes": 1863
+      },
+      "social-feed-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "social-feed-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "social-square-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "social-square-1/canonical-timeline.json": {
+        "sha256": "415d4d3f1b57d2fcd6847d7a14488f1cc69b6adf4d90d2b327e61042970c7887",
+        "bytes": 15392
+      },
+      "social-square-1/cost.json": {
+        "sha256": "715142a566fbedf691c45285a5e9009370b95502dc6aa34223af6c1043ee6570",
+        "bytes": 791
+      },
+      "social-square-1/ffprobe.json": {
+        "sha256": "933d47a338abcf67877fa5bd856ec4820036da44a866504a3e1c696d6f53531a",
+        "bytes": 2491
+      },
+      "social-square-1/final.mp4": {
+        "sha256": "2a5712926a282d654c509d23ed09c25a964572040993af2ce52e0a62a41fd938",
+        "bytes": 270529
+      },
+      "social-square-1/full-qc-report.json": {
+        "sha256": "369061a387b6027746f0e6c18a7888ccdc7cded7f1cd1e8d84503545b3639a8b",
+        "bytes": 6295
+      },
+      "social-square-1/initial-project.json": {
+        "sha256": "7efe7c3d2e3f17865cfece719178da57e749f3f3722122097b40af608195fcf0",
+        "bytes": 102358
+      },
+      "social-square-1/job-events.json": {
+        "sha256": "bd78f6c2d8c201bf5436de7cded24f1ee4a9f8b5380b5532c5e0eb06bc756fcc",
+        "bytes": 4529
+      },
+      "social-square-1/job.json": {
+        "sha256": "74cf0cd1809fa8e2bf866c6cf02853740edea8d7ccd3ecfa60bab8d77b40f335",
+        "bytes": 115379
+      },
+      "social-square-1/music-loop.json": {
+        "sha256": "3603704d883811f22ed7fe697e46883b9e9316d2adeae8098fe21f419c8f1d37",
+        "bytes": 932
+      },
+      "social-square-1/music-loop.wav": {
+        "sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+        "bytes": 1808684
+      },
+      "social-square-1/preview.json": {
+        "sha256": "19caf2c1ea842039732103bfa5c9b1d1662d439ac57c83b6103994e526b74ac7",
+        "bytes": 17346
+      },
+      "social-square-1/preview.mp4": {
+        "sha256": "0509fbbdae50f1333066e6e1e7d1de408fcc475d7f2beaff50a117bb844be52e",
+        "bytes": 283462
+      },
+      "social-square-1/qc-report.json": {
+        "sha256": "71165db39e93a61d2c92a931e90ed521aa069304bc572a216a5d002b25346281",
+        "bytes": 7497
+      },
+      "social-square-1/qc.json": {
+        "sha256": "5054d799c20b928f8966461d61aa7afc22ad4913e0a4eb1018d17a6bdf999c35",
+        "bytes": 10433
+      },
+      "social-square-1/render-approval-fixture.json": {
+        "sha256": "39a5993a46f516e50e1df5fd0e7e0f6fd1cbe530869cb86446c822b41c2ce73a",
+        "bytes": 1214
+      },
+      "social-square-1/render-manifest.json": {
+        "sha256": "dc9c7d8cd6e0bfca04ce34812897f51cf08efaf7a09c601feef957a180f64f78",
+        "bytes": 7196
+      },
+      "social-square-1/review-frame.png": {
+        "sha256": "96059d576d6d64b4d56d105e007262dc9cc1ad858b1f62d697c9fcb7bd823f12",
+        "bytes": 131434
+      },
+      "social-square-1/subtitles.ass": {
+        "sha256": "3420c2b0efbc9b3a1b1cfd9c2030b8eee879b04f71fdacd996197afa51b764f1",
+        "bytes": 877
+      },
+      "social-square-1/timeline.json": {
+        "sha256": "47dcf48a008ca17d6533c40f1ca9b68b5848b2823d675e6b2e472568d59d0a95",
+        "bytes": 8942
+      },
+      "social-square-1/transport-qc-report.json": {
+        "sha256": "56fe334461ed1db0ed46fa271edf158e4b00aa2cd257891b16b1be5927b38186",
+        "bytes": 1160
+      },
+      "social-square-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "social-square-1/voice-reuse.json": {
+        "sha256": "a90954a4795f6793ef259f7e9dbb718fbf64c892efd2ee2f0ce324c14aa937e1",
+        "bytes": 1863
+      },
+      "social-square-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "social-square-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "tiktok-short-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "tiktok-short-1/canonical-timeline.json": {
+        "sha256": "feb4990b5bdb083f8cdebb967f07532cbc3e1f010af29dee1059c6795e5f5611",
+        "bytes": 15393
+      },
+      "tiktok-short-1/cost.json": {
+        "sha256": "88ae2d8d1069bb7350ed20e925055229ce8b5a0f8826ce8a6d82929635a504a1",
+        "bytes": 791
+      },
+      "tiktok-short-1/ffprobe.json": {
+        "sha256": "8f15506608d0b0ccc88f82739fe6d6bb578b7bdadec61d540073d0490b38aec7",
+        "bytes": 2492
+      },
+      "tiktok-short-1/final.mp4": {
+        "sha256": "9f0c6fe1a935d97241a8d0f5beab886f7eba7b249ceed030dbde3b4f50c597be",
+        "bytes": 303712
+      },
+      "tiktok-short-1/full-qc-report.json": {
+        "sha256": "c96c436dbe80484603a54f46d1e93f2d85badf1e967cbe09555d1807b8b875fd",
+        "bytes": 6786
+      },
+      "tiktok-short-1/initial-project.json": {
+        "sha256": "4787178c9c965e18a9b94b2f52c48ee447fbd33eb1fafb8e3ecb9651e9c76821",
+        "bytes": 102368
+      },
+      "tiktok-short-1/job-events.json": {
+        "sha256": "236527ff93ae57b6b9796d42fe8dd1767eabbef1647d03b71c555d8d143c59a3",
+        "bytes": 4528
+      },
+      "tiktok-short-1/job.json": {
+        "sha256": "17c2332f8645c665b79fa32a22a85e9af4af9d1c2f7c07e25efa03c60e4b1808",
+        "bytes": 116240
+      },
+      "tiktok-short-1/music-loop.json": {
+        "sha256": "f4ceee7a38affe27b57192c69441ef6cf835128e3992f8853b6e79f0071c87ac",
+        "bytes": 932
+      },
+      "tiktok-short-1/music-loop.wav": {
+        "sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+        "bytes": 1808684
+      },
+      "tiktok-short-1/preview.json": {
+        "sha256": "b87893a0ad1c77cfb2f6e974a5ee13c8f0edf936c63e4fdedac17d2810aeeb22",
+        "bytes": 18428
+      },
+      "tiktok-short-1/preview.mp4": {
+        "sha256": "9f0c6fe1a935d97241a8d0f5beab886f7eba7b249ceed030dbde3b4f50c597be",
+        "bytes": 303712
+      },
+      "tiktok-short-1/qc-report.json": {
+        "sha256": "08f635dc9e80d3c0fdc20b255a8ce10199e3171aa5f17766a15c3273aadbcb03",
+        "bytes": 7990
+      },
+      "tiktok-short-1/qc.json": {
+        "sha256": "28b5c31b14572559a63035081a3e055bb35425e7c95a73ef50eda046d6d66860",
+        "bytes": 11204
+      },
+      "tiktok-short-1/render-approval-fixture.json": {
+        "sha256": "a1ec3dd01dd71c66cf5e349f8c2c7acf882958ed2f1188c2e7d3cf4d7a5c4271",
+        "bytes": 1214
+      },
+      "tiktok-short-1/render-manifest.json": {
+        "sha256": "c6a41ddb2227e53a09dbefe6d7b9efce42c78d130c9b5e546273201f09383599",
+        "bytes": 7263
+      },
+      "tiktok-short-1/review-frame.png": {
+        "sha256": "ffa6c4c1e230af3f5abb1347f16d5ffb3686575e7150ad74239ceb2c706a3484",
+        "bytes": 176726
+      },
+      "tiktok-short-1/subtitles.ass": {
+        "sha256": "e658e110947873f018ac1b7f6c3a033a9c8b136b457458277f619dccfc0a69d2",
+        "bytes": 947
+      },
+      "tiktok-short-1/timeline.json": {
+        "sha256": "52ad0e46d53d2a2cf06f101d70917c1b4b923dc22318a4710cba8113d22261a3",
+        "bytes": 9518
+      },
+      "tiktok-short-1/transport-qc-report.json": {
+        "sha256": "3e54169592e929136c8a41fa35e2da9daadc4afa7392cff7bcc860f4bded3dbe",
+        "bytes": 1162
+      },
+      "tiktok-short-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "tiktok-short-1/voice-reuse.json": {
+        "sha256": "487e75603bca0953934c8cdc2567916e340d27e85f1b8fca056ba392acb110d1",
+        "bytes": 1863
+      },
+      "tiktok-short-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "tiktok-short-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "youtube-landscape-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "youtube-landscape-1/canonical-timeline.json": {
+        "sha256": "c7be5244d5fdd38bfc3ac7a5c573700e52a918f373efae69217b243bb01b2d13",
+        "bytes": 15393
+      },
+      "youtube-landscape-1/cost.json": {
+        "sha256": "a49637dda0ad3157e715890d992332648a63cc84080c2f55e64c946b3f2ebd2b",
+        "bytes": 791
+      },
+      "youtube-landscape-1/ffprobe.json": {
+        "sha256": "4bbc2c68fb6c0cda2020a18e1ea53988c3853522c1ef0f179178cb8a0d667750",
+        "bytes": 2492
+      },
+      "youtube-landscape-1/final.mp4": {
+        "sha256": "ad82ae9cc691d262b9ad687495990c58b27eb67751e5ec3b2873973f4c08df9c",
+        "bytes": 291187
+      },
+      "youtube-landscape-1/full-qc-report.json": {
+        "sha256": "37c5859a7aea63e6b5ce6421a09f5ce32bd00729a817f70cf398013d14f7da14",
+        "bytes": 6262
+      },
+      "youtube-landscape-1/initial-project.json": {
+        "sha256": "56dfb3251d28c4ad953934ae7c0a62ce9fc7cbe621004e4da538281763efc2be",
+        "bytes": 102381
+      },
+      "youtube-landscape-1/job-events.json": {
+        "sha256": "5b53dd4b59f64a4a2bbeacdf90f8a4b1dd054c4f1ce60be3dc8dfcf8fd6ac714",
+        "bytes": 4531
+      },
+      "youtube-landscape-1/job.json": {
+        "sha256": "407e991ab6808e5a457113549e9cf6193fc2ac703514eba140d823f26b4aa5e2",
+        "bytes": 115260
+      },
+      "youtube-landscape-1/music-loop.json": {
+        "sha256": "a593aee6bcc35d6507f4a5f87af360a2c3319e53c1888539c5e2464d15b0a63e",
+        "bytes": 932
+      },
+      "youtube-landscape-1/music-loop.wav": {
+        "sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+        "bytes": 1808684
+      },
+      "youtube-landscape-1/preview.json": {
+        "sha256": "6613ac55fa2a26146faa201011034edaec8ed7780bfa57e241559d52346b6974",
+        "bytes": 17211
+      },
+      "youtube-landscape-1/preview.mp4": {
+        "sha256": "4b232cde52f0c5972ccda086d64b1ae435eaee4cea56b5f46a70a419e81cac52",
+        "bytes": 291992
+      },
+      "youtube-landscape-1/qc-report.json": {
+        "sha256": "758d84e313c401d4bd6e7631f5b473f877f5e99096c4b71e2d5e3c8489e9790f",
+        "bytes": 7467
+      },
+      "youtube-landscape-1/qc.json": {
+        "sha256": "5d1d409d25f282815bcad84a4de2ef1520a75a8ef1d97f85be8baea135140e0b",
+        "bytes": 10323
+      },
+      "youtube-landscape-1/render-approval-fixture.json": {
+        "sha256": "034559f809784fff447c2f31ad3487173bf63026adac3b7a6a7d2544925a9893",
+        "bytes": 1214
+      },
+      "youtube-landscape-1/render-manifest.json": {
+        "sha256": "228c22a065426a771607851c3599f1900d40d5a0f04c81e4b009284ec095c2b2",
+        "bytes": 7204
+      },
+      "youtube-landscape-1/review-frame.png": {
+        "sha256": "590a127af3d2db47d3eb8141c6a04e407f394334505e9ca1b93b9f0af18bc049",
+        "bytes": 143937
+      },
+      "youtube-landscape-1/subtitles.ass": {
+        "sha256": "3f127b3b1b75ad86a4cee7542e7de3ddca97fa9b0bced3b9a6d3957bb205c37b",
+        "bytes": 875
+      },
+      "youtube-landscape-1/timeline.json": {
+        "sha256": "c0855a2ef4bea4c231fb3255c632000685cc7fd56bcfd915de914ed200a7daf5",
+        "bytes": 8939
+      },
+      "youtube-landscape-1/transport-qc-report.json": {
+        "sha256": "f66f2d80859e0e8acfa42d0f42c7ac0cd67e8b9a4c1bb0281f5b5674f46ae189",
+        "bytes": 1163
+      },
+      "youtube-landscape-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "youtube-landscape-1/voice-reuse.json": {
+        "sha256": "ad02bab3ca22c72ec659dd6d433254a49a561f5538873bc9b4aaaf64668b541b",
+        "bytes": 1863
+      },
+      "youtube-landscape-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "youtube-landscape-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "youtube-shorts-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "youtube-shorts-1/canonical-timeline.json": {
+        "sha256": "feb4990b5bdb083f8cdebb967f07532cbc3e1f010af29dee1059c6795e5f5611",
+        "bytes": 15393
+      },
+      "youtube-shorts-1/cost.json": {
+        "sha256": "babcdfbff647db8acb3fedcd4138e8185f29e4caaa733a34f98849648fa74532",
+        "bytes": 791
+      },
+      "youtube-shorts-1/ffprobe.json": {
+        "sha256": "04213ecf12fb5b585337853d087fe9a3ed7f0acf36c4107d3f6188e20d551897",
+        "bytes": 2492
+      },
+      "youtube-shorts-1/final.mp4": {
+        "sha256": "8e9f6ba306f3bb3ed7c8ae220aaac352c2c3d106266afe785de54c77df580b6f",
+        "bytes": 305217
+      },
+      "youtube-shorts-1/full-qc-report.json": {
+        "sha256": "419eda9919c9fa76bc8c1a1d0311af370c89a33220261228989ae640b307c8bd",
+        "bytes": 6786
+      },
+      "youtube-shorts-1/initial-project.json": {
+        "sha256": "2d71a1f48e3420d66ac0c7fd873a124222572ad0956534b28afacf7a6c76d0b0",
+        "bytes": 102387
+      },
+      "youtube-shorts-1/job-events.json": {
+        "sha256": "7fb35d348f576d9f9eccf59551074b151b876e735901247ab97bc5da1003b1aa",
+        "bytes": 4530
+      },
+      "youtube-shorts-1/job.json": {
+        "sha256": "892ddec2ff0ce8950a2683a70ad66ab44cd4b96383a8104da0d6677edd45d5ea",
+        "bytes": 116259
+      },
+      "youtube-shorts-1/music-loop.json": {
+        "sha256": "f4ceee7a38affe27b57192c69441ef6cf835128e3992f8853b6e79f0071c87ac",
+        "bytes": 932
+      },
+      "youtube-shorts-1/music-loop.wav": {
+        "sha256": "47cbac8412f4dc82bd81b2f151555df16d51c67b60099bef9920cf0196fb0f45",
+        "bytes": 1808684
+      },
+      "youtube-shorts-1/preview.json": {
+        "sha256": "2d0568aa376c0c69d8d32a5671c9fb4ac87be1a35d7cd9175d3ef7fdc6c71edb",
+        "bytes": 18428
+      },
+      "youtube-shorts-1/preview.mp4": {
+        "sha256": "9f0c6fe1a935d97241a8d0f5beab886f7eba7b249ceed030dbde3b4f50c597be",
+        "bytes": 303712
+      },
+      "youtube-shorts-1/qc-report.json": {
+        "sha256": "9799c7e1918103a35f46ccc4edb513be13b15270b119413f4e15df883f3493f1",
+        "bytes": 7990
+      },
+      "youtube-shorts-1/qc.json": {
+        "sha256": "24e20d2c26886f50530b7172890550da441db9660050741ba7d88e22a40fdf24",
+        "bytes": 11204
+      },
+      "youtube-shorts-1/render-approval-fixture.json": {
+        "sha256": "d8c850866fd20a50e4f7a485978b62652c8c6d276b1dd1dd13b55b17858b2059",
+        "bytes": 1214
+      },
+      "youtube-shorts-1/render-manifest.json": {
+        "sha256": "6c06508e7dddf8a4bfbc559f726d4fda0d9627f753b8d357de3da233be38a1d7",
+        "bytes": 7263
+      },
+      "youtube-shorts-1/review-frame.png": {
+        "sha256": "ffa6c4c1e230af3f5abb1347f16d5ffb3686575e7150ad74239ceb2c706a3484",
+        "bytes": 176726
+      },
+      "youtube-shorts-1/subtitles.ass": {
+        "sha256": "e658e110947873f018ac1b7f6c3a033a9c8b136b457458277f619dccfc0a69d2",
+        "bytes": 947
+      },
+      "youtube-shorts-1/timeline.json": {
+        "sha256": "52ad0e46d53d2a2cf06f101d70917c1b4b923dc22318a4710cba8113d22261a3",
+        "bytes": 9518
+      },
+      "youtube-shorts-1/transport-qc-report.json": {
+        "sha256": "b65072fc5a42813544e63242b53a4aece5a95946884b526544bfe42c198088cf",
+        "bytes": 1162
+      },
+      "youtube-shorts-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "youtube-shorts-1/voice-reuse.json": {
+        "sha256": "11df0d595e3a7ee9bfacd44bfe2c6fb4e2d183b70591099ec09ecece182b1591",
+        "bytes": 1863
+      },
+      "youtube-shorts-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "youtube-shorts-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "instagram-reel-1/subtitle-qc/000.png": {
+        "sha256": "8710ff89a903fce552ff947559c28aa6cf682ae32f296c5d3677b40443485cdb",
+        "bytes": 63104
+      },
+      "instagram-reel-1/subtitle-qc/001.png": {
+        "sha256": "7688e3ebb7cda6cdd21c1f097677d4dbe033e97a942e559bc73247283024ee45",
+        "bytes": 60594
+      },
+      "instagram-reel-1/subtitle-qc/002.png": {
+        "sha256": "b37c9d095f8b41d39343ba862af96108853a351636013d819244c5eed0ebbf4d",
+        "bytes": 24086
+      },
+      "social-feed-1/subtitle-qc/000.png": {
+        "sha256": "98e5307afabfbe77b1ff9fe3c454c8dab52d00902259b08217405f98deae6e34",
+        "bytes": 54439
+      },
+      "social-feed-1/subtitle-qc/001.png": {
+        "sha256": "60f42af3216bd20a0ae546f0bc269635dcd4581d77121fc19170dc1b8bdd3337",
+        "bytes": 57113
+      },
+      "social-feed-1/subtitle-qc/002.png": {
+        "sha256": "0d97aff9bf1f0a04b2f3e8c17a769828e52fe2f0d8aabbbbfc64c57dd7f9c43e",
+        "bytes": 12711
+      },
+      "social-square-1/subtitle-qc/000.png": {
+        "sha256": "663fbf310ae774f6fcef265111211eede39c83c4ec5307fddd2ddf03a5497756",
+        "bytes": 48200
+      },
+      "social-square-1/subtitle-qc/001.png": {
+        "sha256": "6abe9e99ecda5735560af16dccb0ffa43981592d9d1175587445a8275fcbb696",
+        "bytes": 52400
+      },
+      "tiktok-short-1/subtitle-qc/000.png": {
+        "sha256": "8710ff89a903fce552ff947559c28aa6cf682ae32f296c5d3677b40443485cdb",
+        "bytes": 63104
+      },
+      "tiktok-short-1/subtitle-qc/001.png": {
+        "sha256": "7688e3ebb7cda6cdd21c1f097677d4dbe033e97a942e559bc73247283024ee45",
+        "bytes": 60594
+      },
+      "tiktok-short-1/subtitle-qc/002.png": {
+        "sha256": "b37c9d095f8b41d39343ba862af96108853a351636013d819244c5eed0ebbf4d",
+        "bytes": 24086
+      },
+      "youtube-landscape-1/subtitle-qc/000.png": {
+        "sha256": "6908761e53193d6f1f91db67121ec535e1a05486a92f4f0174c76d06b7715597",
+        "bytes": 48908
+      },
+      "youtube-landscape-1/subtitle-qc/001.png": {
+        "sha256": "6878132fbf0b1f9356d4a953299406cfa4ae370b83611c7aa57c34f463c9589c",
+        "bytes": 54267
+      },
+      "youtube-shorts-1/subtitle-qc/000.png": {
+        "sha256": "8710ff89a903fce552ff947559c28aa6cf682ae32f296c5d3677b40443485cdb",
+        "bytes": 63104
+      },
+      "youtube-shorts-1/subtitle-qc/001.png": {
+        "sha256": "7688e3ebb7cda6cdd21c1f097677d4dbe033e97a942e559bc73247283024ee45",
+        "bytes": 60594
+      },
+      "youtube-shorts-1/subtitle-qc/002.png": {
+        "sha256": "b37c9d095f8b41d39343ba862af96108853a351636013d819244c5eed0ebbf4d",
+        "bytes": 24086
+      },
+      "new-process-replay.json": {
+        "sha256": "533fef029002b801cecf79eb62d7f3d4431d1980a3ca42b0e331c663534c9ba6",
+        "bytes": 224
+      }
+    }
+  },
+  "logs": {
+    "native-narrated-music-contracts-r1.log": "6341ee37a6281a2a463e57aa015893da85d9f75e09c10ea8ed7868f79504a2c9",
+    "native-narrated-music-contracts-r2.log": "1a6bf29165c7f86c1915ada85decbf4fb1ccdd903bf2d27002d800bd33ae54c5",
+    "native-narrated-music-contracts-r3.log": "a1fc15449e472ace9e32b3be20548f61fc47db85351f61f72a4bd6e9540081dd",
+    "native-narrated-music-contracts-r4.log": "36cb00b0ccdeef6e2c9af86a5d037d666c47b912bca88200d1e151c6997b1f90",
+    "native-narrated-music-flow-n1.log": "d0356b21d87f8f66055927086c0965db3215bf775223984f2a70dc3972164d18",
+    "native-narrated-music-full-native-r1.log": "9fcafb69eb16633ad6164d2e8c6b2ca98b288ec5032ea1f1f73cfa128d23ceae",
+    "native-narrated-music-studio-full-r1.log": "9e63e8fb5b817a983bc0cf68429297d49d36c3381d88b5217eeba993f64c91e9",
+    "native-narrated-music-studio-r1.log": "dda1311154a777624e574041ee7429c7cf901790ad1d19af35c3153931ea7eff"
+  },
+  "signed_http_requests": 138,
+  "actual_source_frames_and_overlap_canonical_track": true,
+  "source_files_unchanged": true,
+  "shared_preview_and_final_normalized_pcm": true,
+  "voice_sidechain_ducking_and_limiter": true,
+  "source_and_output_corruption_prevent_approval_or_full_qc_acceptance": true,
+  "malformed_nonfinite_numeric_flags_and_forged_canonical_track_rejected": true,
+  "reversible_timing_disable_and_family_rollback_tested": true,
+  "legacy_zero_path_and_source_mode_preserved": true,
+  "studio_separate_capability_and_saved_timeline_gating": true,
+  "decoded_review_frames_inspected": [
+    "youtube-shorts",
+    "social-square"
+  ],
+  "both_database_restore_and_new_process_replay": true,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_inference_calls": 0,
+  "music_is_explicit_synthetic_fixture": true,
+  "previously_generated_genuine_local_voice_pcm_reused": true,
+  "owner_uat_accepted": false,
+  "speech_quality_accepted": false,
+  "voice_music_balance_accepted": false,
+  "rights_independently_verified": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
