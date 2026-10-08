@@ -1,0 +1,170 @@
+{
+  "schema": "native-official-analytics-refresh-evidence-v1",
+  "parent_head": "24f38b4061b080d1e4d8100f98d5f7af7170b60e",
+  "source_sha256": {
+    "services/windows_native/official_analytics.py": "20d1b68a9a73f10f2b95a9e910eb2aacb4b3fe7fb08fdc488e9b7613cbe72237",
+    "services/windows_native/official_analytics_refresh.py": "e299c3850d019477f2dde67ee195d115bd463dfb55a791ebc74a701144aa7d6e",
+    "services/windows_native/official_analytics_refresh_routes.py": "5ac7c265b9bea5ab017b6d486b5994beaac09eaf5fe05abf458e5b7b3ac3cd10",
+    "services/windows_native/server.py": "207646a0b63908c97253e87d858a1e56d61e09fbbf8dcd6e0e4503a5dbd795ed",
+    "services/windows_native/access.py": "847f0e412268452194509868810e5a81f849531771637352713b8c76c04c9377",
+    "services/windows_native/backup.py": "64e63007e8314bd32ad4fa89fe62d80830dec1cce269fd583f29b7367c8e62f9",
+    "services/windows_native/tests/test_official_analytics_refresh.py": "b0b29b814dd2b84c1db3ea8671dac9fedb241ea3736015366b1453981965b7f2",
+    "services/windows_native/tests/test_official_analytics_refresh_http.py": "bfddb4d7706a0f61bb8c40afb1b7f2037bb34174749342a20cbbae6e3d3ca4f8",
+    "scripts/north_star_native_official_analytics_refresh.py": "ca762630552a0e082903b26853f1b6ff10e02ffc72694878f7eaedc9318c8871",
+    "docs/NATIVE_OFFICIAL_ANALYTICS_REFRESH.md": "95d29489fd9d3aba19cdeb131f282cca1a0b12caf787155b3fc6731b65ff71c6"
+  },
+  "tests": {
+    "full_native_passed": 1074,
+    "full_native_seconds": 1518.386,
+    "related_native_passed": 138,
+    "related_native_seconds": 381.713,
+    "full_studio_passed": 366,
+    "studio_duration_ms": 2356.058,
+    "new_kernel_cases": 22,
+    "new_signed_http_cases": 6,
+    "api_code_unchanged": true,
+    "full_api_run": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-refresh-flow-n2",
+    "evidence_sha256": "49cd1d88ded3584de279e3fbf6b9df071ab32e41169e11dc9a1eee86f6bc90e8",
+    "exports": {
+      "backup.json": {
+        "sha256": "b769c44d058d333f60d75309eae3bb6393dcbf4f2f263540b4cb981e4d666458",
+        "bytes": 3983
+      },
+      "cost-summary.json": {
+        "sha256": "8df93485d18847a6326b31274ee18fb2165dcd9fff36ec2d9acc19df7b9bdeb7",
+        "bytes": 20399
+      },
+      "evidence.json": {
+        "sha256": "49cd1d88ded3584de279e3fbf6b9df071ab32e41169e11dc9a1eee86f6bc90e8",
+        "bytes": 5283
+      },
+      "expected-analytics-history.json": {
+        "sha256": "38009005680ff2c53be898cc4a04047a0bf07b29562fc819041ccbd1baa94663",
+        "bytes": 20398
+      },
+      "expected-bridge-journals.json": {
+        "sha256": "8683004c623b4f173d6d8c8f95af67d32a6d45cb2d027023f97613942fc8ecdc",
+        "bytes": 5099
+      },
+      "expected-bridge-page.json": {
+        "sha256": "c921967084bf217879a5c4d91004daa2f2fb3e0d4c53b3c9f202dee60bccaad9",
+        "bytes": 5305
+      },
+      "expected-intelligence-journals.json": {
+        "sha256": "62b0e2cf81c9aea542642c3b1a725d4c4c9fc3f63eb6a34c5254a2f26a62fd20",
+        "bytes": 114
+      },
+      "expected-jobs.json": {
+        "sha256": "63a1ad9a164a830d78e3219ee3505bd81bfc1b67336982db7b93e02eaabc2b09",
+        "bytes": 2965
+      },
+      "expected-journals.json": {
+        "sha256": "48712131b58019e94eb35543e4116b3eed8540b2cec2b2d5a84f400d82113ca8",
+        "bytes": 86419
+      },
+      "expected-projects.json": {
+        "sha256": "71d746b48bac36d2f8663d031ebadf141ab4e8b39b602868557de107506e211b",
+        "bytes": 5555
+      },
+      "expected-publications.json": {
+        "sha256": "e2d3d5ca0d74d9823729948cbe0a96f6d762b06178063bde47e40f45f42d50c8",
+        "bytes": 14805
+      },
+      "expected-refresh-plan.json": {
+        "sha256": "7bcfe9f4fc09368294872bab9d94777dea10e840f6d9bfa3239462fcae3aa2cc",
+        "bytes": 29744
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-qualified-bridge-replay.json": {
+        "sha256": "9a6eeb810de9d736d6e8ca778aff984e3f23dda04ae58a916af09e578674566c",
+        "bytes": 147
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "edc81de61a6b548f3b546a2c0151ef9ef9563f4fa946c342dcd846d02cc82ebf",
+        "bytes": 1972
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "fea8082bfac5db65c954fa48ad1c9053956e882b4c9fe6c462d8d699096827b2",
+        "bytes": 1321
+      },
+      "new-process-replay.json": {
+        "sha256": "4c78a7904aeba0765c6e928a27fe1591835f7863afc51f4515e89e07443fd2e0",
+        "bytes": 433
+      },
+      "owned-official-refresh.zip": {
+        "sha256": "f4477d2bc2088b78f902fdbc1daeb9b096c5184021d11e1f35e2984da4b28598",
+        "bytes": 1464072
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "c49ed25a6487f88beaf33660be16a4ee0f0804b4ccbde5398fd9d272edd2ca13",
+        "bytes": 258
+      },
+      "recovery-restore.json": {
+        "sha256": "e39eb8a7d814ba5e71ef084a4f873fb97bddceaed439e467a745562ccfbaff95",
+        "bytes": 4385
+      },
+      "restored-in-process.json": {
+        "sha256": "4c78a7904aeba0765c6e928a27fe1591835f7863afc51f4515e89e07443fd2e0",
+        "bytes": 433
+      },
+      "sanitized-operation-logs.json": {
+        "sha256": "d1ec9f51ee73a135564587f9f5f5c551ec6848336bc7a0c639221eebbb889963",
+        "bytes": 5446
+      },
+      "served-studio-files.json": {
+        "sha256": "876862ce185a0d547c5cb558f6c9e7c41e20ecc9d8e13f1fcbfe4f40a8cb0e2c",
+        "bytes": 395
+      },
+      "signed-http-summary.json": {
+        "sha256": "a9e6586de78a15ac7e99ecd27fc87413efb1b61c229d63633d6a6cd1ece8ad6f",
+        "bytes": 3694
+      }
+    },
+    "backup_sha256": "f4477d2bc2088b78f902fdbc1daeb9b096c5184021d11e1f35e2984da4b28598",
+    "backup_bytes": 1464072,
+    "backup_entries": 12
+  },
+  "logs": {
+    "native-official-refresh-native-full-n1.log": "1d79c92855d0bed4eea2c6cb0df7c4600a2e224474b480ff4c314c381db75ccd",
+    "native-official-refresh-related-n1.log": "cd238ed303f2fde0efe8ea8ed70cb93a68004b93650c8a1a2fe311ed6f746594",
+    "native-official-refresh-studio-full-n1.log": "8709381e04aa57f8653f13f7cd8068db80ba916c7eb7cb062360ba07736afce8"
+  },
+  "default_disabled_collector_and_separate_refresh_runtime_no_startup_credential_reads": true,
+  "fixed_query_original_publication_receipt_account_configuration_owner_identity_and_credential_window": true,
+  "raw_separate_background_read_mock_retry_acknowledgements": true,
+  "one_atomic_child_consent_and_occurrence_with_owner_final_fence_rollback": true,
+  "no_catchup_burst_no_second_pending_read_or_automatic_unknown_retry_or_consent_renewal": true,
+  "exact_scoped_idempotency_keys_and_finite_ordinals": true,
+  "known_backoff_reuses_same_occurrence_and_original_response_cost_snapshot": true,
+  "cancellation_explicit_pending_read_choice_exact_policy_and_version": true,
+  "historical_original_source_queries_nulls_snapshots_after_archive_expiry_provider_removal": true,
+  "new_additive_workflow_journals": 3,
+  "one_receipt_plan_two_occurrences_observations_events_27_workflow_eight_bridge_five_intelligence_journals_fresh_restore_exact": true,
+  "prior_qualified_bridge_original_sources_events_projection_exact": true,
+  "signed_http_requests": 11,
+  "mock_analytics_read_requests": 6,
+  "mock_publication_wire_requests": 10,
+  "mock_initial_account_lookup_requests": 1,
+  "finite_completed_plan": 1,
+  "occurrences": 2,
+  "qualified_analytics_source_events": 2,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "actual_hub_calls": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_media_qc_rights_account_oauth_identity_clock_fixtures": true,
+  "studio_finite_plan_controls_integrated": false,
+  "browser_owner_real_provider_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

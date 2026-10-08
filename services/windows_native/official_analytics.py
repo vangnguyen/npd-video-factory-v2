@@ -1,6 +1,7 @@
 """Receipt-bound, finite, read-only YouTube analytics with immutable observations.
 
-No credential acquisition, publishing operation, fixture fallback, or recurring plan.
+No credential acquisition, publishing operation or fixture fallback.
+Separately approved finite refresh plans reuse this exact collector.
 The default operator gate is off. Protocol mocks remain non-audience observations.
 """
 import asyncio
@@ -173,38 +174,48 @@ class NativeOfficialAnalytics:
 
     def create(self, project, payload, *, principal):
         self.check(); payload = typed(payload, Collect); authority = self.identity(principal)
+        return self._create_authorized(project, payload, authority=authority)
+
+    def _create_authorized(self, project, payload, *, authority, con=None, deadline_cap=None):
+        """Internal same-transaction admission; authority is never an HTTP field."""
+        from contextlib import nullcontext
+        self.check(); payload = typed(payload, Collect); self.identity(authority=authority)
+        instant = utc(self.clock())
+        if deadline_cap is not None:
+            if not isinstance(deadline_cap, datetime) or deadline_cap.tzinfo is None:
+                raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_INTERNAL_DEADLINE_INVALID')
+            seconds = min(payload.valid_for_seconds, int((utc(deadline_cap)-instant).total_seconds()))
+            if seconds < 60:raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_READ_CONSENT_EXPIRED')
+            payload = typed(payload.model_copy(update={'valid_for_seconds':seconds}), Collect)
         request = payload.model_dump(mode='json', exclude={'request_key'}); key, fp = digest(payload.request_key), digest(request)
-        with self.store.transaction() as con:
-            prior = con.execute('SELECT * FROM native_official_analytics_syncs WHERE workspace_id=? AND project_id=? AND key_sha256=?', (self.workspace, project, key)).fetchone()
+        with (self.store.transaction() if con is None else nullcontext(con)) as source_con:
+            prior = source_con.execute('SELECT * FROM native_official_analytics_syncs WHERE workspace_id=? AND project_id=? AND key_sha256=?', (self.workspace, project, key)).fetchone()
             if prior:
                 if prior['request_fingerprint'] != fp: raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_IDEMPOTENCY_CONFLICT')
                 return self.read(prior), True
-        instant = utc(self.clock()); publication, source = self.source(project, payload, instant.isoformat())
-        factory = self.accounts.factories.get(payload.account_ref)
-        if type(factory) is not AccountFactory: raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_ACCOUNT_NOT_CONFIGURED')
-        public = factory.public()
-        if (public['target'] != publication['snapshot']['target'] or factory.sha256 != payload.expected_configuration_sha256
-            or factory.client.mock is not publication['mock'] or payload.acknowledged_protocol_mock is not publication['mock']):
-            raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_ACCOUNT_BINDING_CHANGED')
-        deadline = min(instant+timedelta(seconds=payload.valid_for_seconds), utc(datetime.fromisoformat(authority['expires_at'])))
-        snapshot = {'schema_version': 'native-official-analytics-consent-v1', 'workspace_id': self.workspace, 'project_id': project,
-            'publication_id': payload.publication_id, 'account_ref': payload.account_ref, 'request': request, 'authority': authority,
-            'source': source, 'target': public['target'], 'target_binding_sha256': public['target_binding_sha256'],
-            'configuration_sha256': factory.sha256, 'mock': publication['mock'], 'consented_at': instant.isoformat(),
-            'deadline': deadline.isoformat(), 'publishing_authority': False, 'recurring_authority': False}
-        status = 'queued' if self.enabled and public['status'] == 'CONFIGURED' else 'not_configured'
-        identity, stamp = 'noas_'+uuid.uuid4().hex, now()
-        with self.store.transaction() as con:
-            # Race-safe exact-key replay after the source reads, before journal insertion.
-            prior = con.execute('SELECT * FROM native_official_analytics_syncs WHERE workspace_id=? AND project_id=? AND key_sha256=?', (self.workspace, project, key)).fetchone()
-            if prior:
-                if prior['request_fingerprint'] != fp: raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_IDEMPOTENCY_CONFLICT')
-                return self.read(prior), True
+            publication, source = self.source(project, payload, instant.isoformat(), con=source_con)
+            factory = self.accounts.factories.get(payload.account_ref)
+            if type(factory) is not AccountFactory: raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_ACCOUNT_NOT_CONFIGURED')
+            public = factory.public()
+            if (public['target'] != publication['snapshot']['target'] or factory.sha256 != payload.expected_configuration_sha256
+                or factory.client.mock is not publication['mock'] or payload.acknowledged_protocol_mock is not publication['mock']):
+                raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_ACCOUNT_BINDING_CHANGED')
+            deadline = min(instant+timedelta(seconds=payload.valid_for_seconds), utc(datetime.fromisoformat(authority['expires_at'])))
+            snapshot = {'schema_version': 'native-official-analytics-consent-v1', 'workspace_id': self.workspace, 'project_id': project,
+                'publication_id': payload.publication_id, 'account_ref': payload.account_ref, 'request': request, 'authority': authority,
+                'source': source, 'target': public['target'], 'target_binding_sha256': public['target_binding_sha256'],
+                'configuration_sha256': factory.sha256, 'mock': publication['mock'], 'consented_at': instant.isoformat(),
+                'deadline': deadline.isoformat(), 'publishing_authority': False, 'recurring_authority': False}
+            status = 'queued' if self.enabled and public['status'] == 'CONFIGURED' else 'not_configured'
+            identity, stamp = 'noas_'+uuid.uuid4().hex, now()
             self.identity(authority=authority)
-            con.execute('INSERT INTO native_official_analytics_syncs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            if utc(self.clock()) >= deadline:raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_READ_CONSENT_EXPIRED')
+            source_con.execute('INSERT INTO native_official_analytics_syncs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 (identity,self.workspace,project,payload.publication_id,key,fp,digest(snapshot),json.dumps(snapshot),status,0,None,None,
                  'NATIVE_OFFICIAL_ANALYTICS_READ_NOT_CONFIGURED' if status=='not_configured' else None,None,authority['token_id'],stamp,stamp))
-            row = self.row(con, project, identity); self.event(con, row, 'analytics.official.read.created', authority['token_id'], status=status, mock=snapshot['mock'], external_call=False)
+            row = self.row(source_con, project, identity)
+            self.event(source_con, row, 'analytics.official.read.created', authority['token_id'], status=status, mock=snapshot['mock'], external_call=False)
+            self.identity(authority=authority)
             return self.read(row), False
 
     def get(self, project, identity, *, con=None):
@@ -428,15 +439,23 @@ class NativeOfficialAnalytics:
 
     def cancel(self, project, identity, payload, *, principal):
         payload=typed(payload,Cancel);authority=self.identity(principal)
-        with self.store.transaction() as con:
-            row=self.row(con,project,identity);value=self.read(row)
+        return self._cancel_authorized(project,identity,payload,authority=authority)
+
+    def _cancel_authorized(self, project, identity, payload, *, authority, con=None):
+        """Internal cancellation preserving original response/cost/intention history."""
+        from contextlib import nullcontext
+        payload=typed(payload,Cancel);self.identity(authority=authority)
+        with (self.store.transaction() if con is None else nullcontext(con)) as source_con:
+            row=self.row(source_con,project,identity);value=self.read(row)
             if payload.expected_snapshot_sha256!=value['snapshot_sha256']:raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_BINDING_CHANGED')
+            self.identity(authority=authority)
             if row['status'] not in {'succeeded','cancelled'}:
                 if row['claim_id']:
-                    con.execute("UPDATE native_official_analytics_attempts SET status='cancelled',finished_at=? WHERE attempt_id=? AND status='running'",(now(),row['claim_id']))
-                con.execute("UPDATE native_official_analytics_syncs SET status='cancelled',claim_id=NULL,next_at=NULL,updated_at=? WHERE sync_id=?",(now(),identity))
-                self.event(con,row,'analytics.official.read.cancelled',authority['token_id'],external_call=False,remote_action=False)
-        return self.get(project,identity)
+                    source_con.execute("UPDATE native_official_analytics_attempts SET status='cancelled',finished_at=? WHERE attempt_id=? AND status='running'",(now(),row['claim_id']))
+                source_con.execute("UPDATE native_official_analytics_syncs SET status='cancelled',claim_id=NULL,next_at=NULL,updated_at=? WHERE sync_id=?",(now(),identity))
+                self.event(source_con,row,'analytics.official.read.cancelled',authority['token_id'],external_call=False,remote_action=False)
+            self.identity(authority=authority)
+            return self.get(project,identity,con=source_con)
 
     def recover(self):
         self.check();count=0;costs=[]

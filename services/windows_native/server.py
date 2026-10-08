@@ -37,6 +37,7 @@ class Runner:
         self.official_publish_worker = None
         self.official_publish_queue = None
         self.official_analytics = None
+        self.official_analytics_refresh = None
         self.vision = None
         self.observer = observer or Observer()
         self.stop = threading.Event()
@@ -49,6 +50,7 @@ class Runner:
         if self.official_publish_worker is not None:self.official_publish_worker.recover()
         if self.official_publish_queue is not None:self.official_publish_queue.recover()
         if self.official_analytics is not None:self.official_analytics.recover()
+        if self.official_analytics_refresh is not None:self.official_analytics_refresh.recover()
         self.thread.start()
 
     def run_one(self):
@@ -80,9 +82,13 @@ class Runner:
         if self.official_analytics is not None:
             started=time.monotonic()
             try:
+                refreshed=self.official_analytics_refresh.tick() if self.official_analytics_refresh is not None else None
                 value=self.official_analytics.process()
                 if value is not None:
                     self.observer.emit('worker_step',job_id=value['sync_id'],project_id=value['project_id'],stage='official_analytics_read',provider='youtube-analytics-api',duration=time.monotonic()-started)
+                    return True
+                if refreshed is not None:
+                    self.observer.emit('worker_step',job_id=refreshed['plan_id'],project_id=refreshed['project_id'],stage='official_analytics_refresh',provider='local-scheduler',duration=time.monotonic()-started)
                     return True
             except WorkflowError:self.observer.emit('worker_failed',stage='official_analytics_read',duration=time.monotonic()-started)
         if self.official_publish_queue is not None:
@@ -168,8 +174,10 @@ class LocalServer(ThreadingHTTPServer):
         trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None,
         official_account_registry=None,official_account_read_enabled=False,official_account_factories=None,
         official_publish_registry=None,official_publish_enabled=False,official_publish_factories=None,official_publish_session_directory=None,official_publish_queue_enabled=False,
-        official_analytics_enabled=False):
+        official_analytics_enabled=False,official_analytics_refresh_enabled=False):
         config.validate_data_root()
+        if type(official_analytics_refresh_enabled) is not bool or official_analytics_refresh_enabled and not official_analytics_enabled:
+            raise WorkflowError('NATIVE_OFFICIAL_REFRESH_CONFIGURATION_INVALID',400)
         if type(official_analytics_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_CONFIGURATION_INVALID',400)
         if official_analytics_enabled:
             if access is None or not (official_account_registry is not None and official_account_read_enabled or official_account_factories is not None):
@@ -255,6 +263,9 @@ class LocalServer(ThreadingHTTPServer):
         from .official_analytics import NativeOfficialAnalytics
         self.official_analytics=NativeOfficialAnalytics(self.official_publications,enabled=official_analytics_enabled)
         self.runner.official_analytics=self.official_analytics
+        from .official_analytics_refresh import NativeOfficialAnalyticsRefresh
+        self.official_analytics_refresh=NativeOfficialAnalyticsRefresh(self.official_analytics,enabled=official_analytics_refresh_enabled)
+        self.runner.official_analytics_refresh=self.official_analytics_refresh
         from .official_winners import NativeOfficialWinners
         self.official_winners=NativeOfficialWinners(self.official_analytics)
         from .official_learning import NativeOfficialLearning
@@ -485,6 +496,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path=='/api/connections/official-accounts' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/account-checks(?:/nack_[a-f0-9]{32})?',path):
             from .official_account_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if path=='/api/connections/official-analytics-refresh' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics-refresh(?:/noap_[a-f0-9]{32})?',path):
+            from .official_analytics_refresh_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path=='/api/connections/official-analytics' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics(?:/noas_[a-f0-9]{32}|/source/nopu_[a-f0-9]{32})?',path):
             from .official_analytics_routes import get
@@ -780,6 +794,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-accounts/npac_[a-f0-9]{32}/verify',self.path):
             from .official_account_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=20000)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics-refresh(?:/noap_[a-f0-9]{32}/cancel)?',self.path):
+            from .official_analytics_refresh_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics(?:/noas_[a-f0-9]{32}/cancel)?',self.path):
             from .official_analytics_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
@@ -1125,6 +1142,7 @@ def main():
     parser.add_argument('--official-account-registry',type=Path)
     parser.add_argument('--enable-official-account-reads',action='store_true')
     parser.add_argument('--enable-official-analytics',action='store_true')
+    parser.add_argument('--enable-official-analytics-refresh',action='store_true')
     parser.add_argument('--official-publish-registry',type=Path)
     parser.add_argument('--official-publish-session-directory',type=Path)
     parser.add_argument('--enable-official-publishing',action='store_true')
@@ -1153,7 +1171,7 @@ def main():
             stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api,owner_rights_overrides=args.enable_owner_rights_overrides,
             generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api,
             official_account_registry=args.official_account_registry,official_account_read_enabled=args.enable_official_account_reads,
-            official_analytics_enabled=args.enable_official_analytics,
+            official_analytics_enabled=args.enable_official_analytics,official_analytics_refresh_enabled=args.enable_official_analytics_refresh,
             official_publish_registry=args.official_publish_registry,official_publish_session_directory=args.official_publish_session_directory,official_publish_enabled=args.enable_official_publishing,official_publish_queue_enabled=args.enable_official_publish_queue,
             trend_feed_registry=args.trend_feed_registry,trend_feed_enabled=args.enable_trend_feeds) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)
