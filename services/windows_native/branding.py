@@ -84,14 +84,14 @@ class VideoTemplate(Strict):
     scene_label: str=Field(min_length=1,max_length=40)
     duration_seconds: Literal[30,45,60]
     width: Literal[1080,1920]=1080
-    height: Literal[1920,1080]=1920
+    height: Literal[1920,1080,1350]=1920
     fps: Literal[30]=30
-    aspect_ratio: Literal["9:16","16:9"]="9:16"
+    aspect_ratio: Literal["9:16","16:9","1:1","4:5"]="9:16"
     duration_policy: Literal["preserve_voice_speed_hold_cta_to_target_refuse_overflow","fit_narration_preserve_voice_speed"]=FIXED_DURATION_POLICY
 
     @model_validator(mode='after')
     def canvas_pair(self):
-        if (self.width,self.height,self.aspect_ratio) not in {(1080,1920,'9:16'),(1920,1080,'16:9')}:
+        if (self.width,self.height,self.aspect_ratio) not in {(1080,1920,'9:16'),(1920,1080,'16:9'),(1080,1080,'1:1'),(1080,1350,'4:5')}:
             raise ValueError('Template canvas/aspect mismatch')
         return self
 
@@ -104,7 +104,7 @@ class Selection(Strict):
     template_sha256: str
 
 
-def catalog(include_landscape=False):
+def catalog(include_landscape=False,include_all_formats=False):
     raw=json.loads(CATALOG.read_bytes())
     profiles=[]
     for choice in raw["brands"]:
@@ -112,16 +112,21 @@ def catalog(include_landscape=False):
         profiles.append(BrandProfile.model_validate(value).model_dump())
     templates=[VideoTemplate.model_validate({**family,"id":f"{family['id']}-{seconds}","name":f"{family['name']} · {seconds} giây","duration_seconds":seconds}).model_dump()
                for family in raw["template_families"] for seconds in raw["durations"]]
-    if include_landscape:
+    if include_landscape or include_all_formats:
         templates += [VideoTemplate.model_validate({**t,'id':t['id']+'-landscape','name':t['name']+' · 16:9',
                          'width':1920,'height':1080,'aspect_ratio':'16:9'}).model_dump() for t in list(templates)]
+    if include_all_formats:
+        base=[t for t in templates if t['aspect_ratio']=='9:16']
+        for suffix,height,ratio in [('square',1080,'1:1'),('feed',1350,'4:5')]:
+            templates += [VideoTemplate.model_validate({**t,'id':t['id']+'-'+suffix,'name':t['name']+' · '+ratio,
+                'width':1080,'height':height,'aspect_ratio':ratio}).model_dump() for t in base]
     return {"brands":profiles,"templates":templates,"duration_modes":[
         {"id":FIXED_DURATION_POLICY,"name":"Giữ thời lượng mẫu","description":"Giữ hình cuối đến thời lượng đã chọn; không đổi tốc độ giọng đọc."},
         {"id":FIT_NARRATION_POLICY,"name":"Khớp với lời đọc","description":"Kết thúc sau lời đọc và đoạn kết; giữ thời lượng cảnh đã đặt riêng."}]}
 
 
 def choose(brand_id, template_id, duration_mode=None):
-    values=catalog(include_landscape=True)
+    values=catalog(include_all_formats=True)
     brand=next((b for b in values["brands"] if b["id"]==brand_id),None)
     template=next((t for t in values["templates"] if t["id"]==template_id),None)
     if not brand or not template: raise WorkflowError("BRAND_TEMPLATE_CHOICE_REQUIRED",400)

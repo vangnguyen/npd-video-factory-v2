@@ -446,15 +446,17 @@ def render(config, snapshot, out, *, preview_only=False):
         raise WorkflowError("VIDEO_DURATION_EXCEEDS_180_SECONDS")
     fonts = Path(os.environ.get("WINDIR", r"C:\Windows")) / "Fonts"
     width,height=(template.width,template.height) if template else (1080,1920)
-    render_profile=validate_render_profile(doc.get('render_profile','landscape' if width>height else 'vertical-short'),width,height,
+    default_profile={(1080,1920):'vertical-short',(1920,1080):'landscape',(1080,1080):'square',(1080,1350):'portrait-feed'}.get((width,height))
+    render_profile=validate_render_profile(doc.get('render_profile',default_profile),width,height,
                                           template.aspect_ratio if template else '9:16')
+    from .narrated_layout import layout
+    geometry=layout(render_profile['id'],width,height,render_profile['aspect_ratio'],brand,editable=bool(edit_plan))
     landscape=width>height
-    safe_left,safe_right,safe_top,safe_bottom=(90,90,55,100) if landscape else (safe.left,safe.right,safe.top,safe.bottom)
-    media_top=230 if landscape else 390
-    caption_top=850 if landscape else 1320
-    title_font = ImageFont.truetype(str(fonts / brand.fonts.heading), 52 if landscape else 60)
-    sub_font = ImageFont.truetype(str(fonts / brand.fonts.body), 38 if landscape else brand.subtitle_style.font_size)
-    label_font = ImageFont.truetype(str(fonts / brand.fonts.body), 24 if landscape else 28)
+    safe_left,safe_right,safe_top,safe_bottom=(geometry[k] for k in ('safe_left','safe_right','safe_top','safe_bottom'))
+    media_top,caption_top=geometry['media_top'],geometry['caption_top']
+    title_font = ImageFont.truetype(str(fonts / brand.fonts.heading),geometry['title_font_size'])
+    sub_font = ImageFont.truetype(str(fonts / brand.fonts.body),geometry['subtitle_font_size'])
+    label_font = ImageFont.truetype(str(fonts / brand.fonts.body),geometry['label_font_size'])
     text_width=width-safe_left-safe_right
     caption_y=(caption_top+height-safe_bottom-10)//2
     captions, frames = [], []
@@ -464,7 +466,7 @@ def render(config, snapshot, out, *, preview_only=False):
     for i, (scene, units) in enumerate(zip(proposal.visual_brief, grouped)):
         asset = chosen[scene.scene]
         options=edit_options.get(scene.scene,{})
-        plane_height=530 if landscape else (830 if edit_plan else 1000)
+        plane_height=geometry['plane_height']
         source = media_path(config, asset["id"])
         start = retimed['scene_layout'][i]['start'] if retimed else (0 if i == 0 else intro + units[0]["start_seconds"])
         end = retimed['scene_layout'][i]['end'] if retimed else (duration if i == len(grouped) - 1 else intro + grouped[i + 1][0]["start_seconds"])
@@ -496,13 +498,13 @@ def render(config, snapshot, out, *, preview_only=False):
             raise WorkflowError("BRAND_HEADING_EXCEEDS_SAFE_AREA")
         draw.multiline_text((text_x, title_y), "\n".join(lines), font=title_font, spacing=12, fill=palette.text)
         if asset["illustration"]:
-            draw.text((text_x,775 if landscape else (1215 if edit_plan else 1390)), "Phối cảnh minh họa", font=label_font, fill=palette.accent)
+            draw.text((text_x,geometry['illustration_y']), "Phối cảnh minh họa", font=label_font, fill=palette.accent)
         if edit_plan:
             draw.rounded_rectangle((safe_left-10,caption_top,width-safe_right+10,height-safe_bottom-10),radius=18,fill=palette.caption_background,outline=palette.caption_border,width=2)
             footer=edit_plan["cta"] if options.get("cta_marker") else " · ".join(brand.project_disclaimers)
             footer_lines=wrap_text(footer,label_font,text_width)
             if len(footer_lines)>2: raise WorkflowError("BRAND_CTA_OR_DISCLAIMER_TOO_LONG")
-            draw.multiline_text((safe_left,810 if landscape else 1250),"\n".join(footer_lines),font=label_font,spacing=4,fill=palette.muted)
+            draw.multiline_text((safe_left,geometry['footer_y']),"\n".join(footer_lines),font=label_font,spacing=4,fill=palette.muted)
         else:
             draw.rounded_rectangle((58,1485,1022,1740),radius=18,fill=palette.caption_background,outline=palette.caption_border,width=2)
             draw.text((70,1800)," · ".join(brand.project_disclaimers),font=label_font,fill=palette.muted)
@@ -590,9 +592,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     color=brand.subtitle_style.color.lstrip("#")
     primary=f"&H00{color[4:6]}{color[2:4]}{color[0:2]}".upper()
     header=header.replace("Subtitle,Segoe UI,46,&H00F1F9FC",f"Subtitle,{brand.fonts.subtitle_family},{brand.subtitle_style.font_size},{primary}")
-    if landscape:
-        header=header.replace('PlayResX: 1080','PlayResX: 1920').replace('PlayResY: 1920','PlayResY: 1080')
-        header=header.replace(f'Subtitle,{brand.fonts.subtitle_family},{brand.subtitle_style.font_size},',f'Subtitle,{brand.fonts.subtitle_family},38,')
+    header=header.replace('PlayResX: 1080',f'PlayResX: {width}').replace('PlayResY: 1920',f'PlayResY: {height}')
+    header=header.replace(f'Subtitle,{brand.fonts.subtitle_family},{brand.subtitle_style.font_size},',f'Subtitle,{brand.fonts.subtitle_family},{geometry["subtitle_font_size"]},')
     for cue in captions:
         text = "\\N".join(ass_escape(line) for line in cue["text"].splitlines())
         events.append(f"Dialogue: 0,{ass_time(cue['start'])},{ass_time(cue['end'])},Subtitle,,0,0,0,,{{\\pos({(safe_left+width-safe_right)//2 if edit_plan else 540},{caption_y if edit_plan else 1610})}}{text}")
@@ -663,7 +664,10 @@ def qc(config, out, expected_duration,expected_canvas=(1080,1920), *, quality_po
     samples = np.frombuffer(pcm, dtype="<f4")
     with (out / "blackdetect.log").open("w") as log:
         black = subprocess.run([str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-i", str(out / "final.mp4"), "-vf", "blackdetect=d=0.2:pix_th=0.1", "-an", "-f", "null", "-"], stdout=log, stderr=log, timeout=180)
-    checks = {"portrait_1080x1920" if expected_canvas==(1080,1920) else "landscape_1920x1080": (video["width"], video["height"]) == expected_canvas,
+    canvas_check={(1080,1920):'portrait_1080x1920',(1920,1080):'landscape_1920x1080',
+        (1080,1080):'square_1080x1080',(1080,1350):'portrait_feed_1080x1350'}.get(expected_canvas)
+    if canvas_check is None:raise WorkflowError('RENDER_PROFILE_CANVAS_MISMATCH',400)
+    checks = {canvas_check: (video["width"], video["height"]) == expected_canvas,
               "h264_aac": video["codec_name"] == "h264" and audio["codec_name"] == "aac",
               "fps_30": video["avg_frame_rate"] == "30/1", "yuv420p": video["pix_fmt"] == "yuv420p",
               "audio_48khz": audio["sample_rate"] == "48000", "full_decode": decoded.returncode == 0,
