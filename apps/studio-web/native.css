@@ -3,4 +3,5 @@
 .runtime-detail{font-size:11px;line-height:1.7;margin-top:16px;color:#bed0c2}#history-list,#artifact-list{overflow-wrap:anywhere;font-size:12px;line-height:1.7}#history-list details{margin-top:12px}#artifact-list small{font-size:10px}.scene-edit summary{font-size:12px;cursor:pointer;padding:12px 0}
  .native-publication-evidence {white-space:pre-wrap;overflow-wrap:anywhere;max-height:28rem;overflow:auto;font-size:.8rem;}
 .native-stock-preview img,.native-stock-preview video{display:block;width:100%;max-width:480px;max-height:540px;object-fit:contain;background:#101624;border-radius:12px}
+.native-generation-preview img,.native-generation-preview video{display:block;width:100%;max-width:480px;max-height:540px;object-fit:contain;background:#101624;border-radius:12px}
 .native-analytics-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:4px 12px}.native-analytics-metrics p{margin:2px 0;font-size:13px}

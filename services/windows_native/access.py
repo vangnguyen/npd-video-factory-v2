@@ -38,6 +38,7 @@ def permission_for(method, path):
     if re.fullmatch(r'/api/projects/'+ID+r'/rights-overrides/[a-f0-9]{32}\.(jpg|png|mp4|wav)',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/stock/nstk_'+ID+r'/import',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/stock/(search|download|nstk_'+ID+r'/cancel)',path):return 'manage'
+    if re.fullmatch(r'/api/projects/'+ID+r'/generation(?:/'+ID+r'/(cancel|recover|import))?',path):return 'edit'
     if re.fullmatch(r'/api/projects/' + ID + r'/vision(?:/nvis_' + ID + r'/(process|cancel))?',path):
         return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/analytics(?:/nasy_' + ID + r'/(process|cancel))?', path):

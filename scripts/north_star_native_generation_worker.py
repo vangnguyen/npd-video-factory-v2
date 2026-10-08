@@ -3,7 +3,7 @@
 An independent bridge loop survives a lost submission reply. No generation
 result is manually injected. Recovery uses lookup or the actual staged receipt.
 """
-import argparse,asyncio,hashlib,importlib,json,os,shutil,subprocess,sys
+import argparse,asyncio,hashlib,http.client,importlib,json,os,shutil,subprocess,sys,threading,time
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT),str(ROOT/'services/comfyui-bridge'),str(ROOT/'apps/api'),str(ROOT/'scripts')]
@@ -45,9 +45,11 @@ async def run(args):
     from services.windows_native.generation_worker import NativeGenerationWorker
     if args.reopen:
         actual=snapshot(args.data_root);assert actual==json.loads((args.output_root/'offline-snapshot.json').read_bytes())
+        if args.native_http:
+            assert args.restore_root and snapshot(args.restore_root)==actual
         write(args.output_root/'new-process-replay.json',{'exact_replay':True,'default_execution_enabled':False,'external_requests':0,
             'generation_results':sum(len(p['items']) for p in actual['pages']),'imports':len(actual['imports']),'physical_media_hashes_verified':True,
-            'real_provider_tested':False,'owner_uat_accepted':False,'production_deployed':False})
+            'actual_backup_restore_verified':args.native_http,'real_provider_tested':False,'owner_uat_accepted':False,'production_deployed':False})
         print(json.dumps({'status':'NATIVE_GENERATION_WORKER_NEW_PROCESS_PASS','results':3,'external_requests':0}));return
     fresh(args.data_root);fresh(args.output_root);manifest=fixture_manifest(args.data_root,references=True)
     # Existing bridge fixtures use 128x72 pixels. This new consumer rehearsal
@@ -57,7 +59,9 @@ async def run(args):
         graph_path=manifest.parent/definition['graph_file'];graph=json.loads(graph_path.read_bytes());graph['prompt']['2']['inputs'].update(width=640,height=360)
         graph_path.write_text(json.dumps(graph),encoding='utf-8');definition['execution']['graph_sha256']=sha(graph_path);definition['execution']['aspect_dimensions']={'16:9':[640,360]}
     manifest.write_text(json.dumps(definitions),encoding='utf-8')
-    native=Store(args.data_root/'native');config=Config(data_root=native.root);project=native.create('EXPLICIT WORKER REHEARSAL','EXPLICIT SYNTHETIC INPUT')
+    native=Store(args.data_root/'native');config=Config(data_root=native.root,ffmpeg_bin=args.ffmpeg.parent,runtime_root=args.data_root/'absent-fixture-runtime',
+        secret_file=args.data_root/'absent-fixture-secrets/openai.env',assemblyai_secret_file=args.data_root/'absent-fixture-secrets/assemblyai.dpapi')
+    project=native.create('EXPLICIT WORKER REHEARSAL','EXPLICIT SYNTHETIC INPUT')
     assets=[]
     for name,color in [('source',(30,90,140)),('mask',(255,255,255))]:
         path=args.data_root/(name+'.png');Image.new('RGB',(320,240),color).save(path)
@@ -98,6 +102,39 @@ async def run(args):
     factory=GenerationFactory(GenerationCredential(bridge_url='http://localhost:8011',service_token=TOKEN,enabled=True),owner_enabled=True,
         transport=httpx.MockTransport(native_wire),manifest_path=manifest)
     queue=NativeGenerationQueue(native,workspace_id=WORKSPACE,factory=factory);worker=NativeGenerationWorker(queue,config)
+    server=None;http_calls=[];operation_logs=[];cookie=None;session=None
+    if args.native_http:
+        from services.windows_native.server import LocalServer
+        from services.windows_native.access import NativeAccess
+        from services.windows_native.observability import Observer
+        from services.windows_native.tests.test_human_identity import fixture as human_fixture
+        from app.human_identity import HumanAuthVerifier,HumanAuthRegistry
+        def account(role):
+            nonlocal cookie,session
+            raw,document=human_fixture(role,workspace=WORKSPACE);access=NativeAccess(HumanAuthVerifier(HumanAuthRegistry.model_validate(document),max_token_ttl_seconds=86400),WORKSPACE)
+            access.bind_root(native.root);server.access=access;cookie,session=access.login(raw)
+        raw,document=human_fixture('editor',workspace=WORKSPACE);access=NativeAccess(HumanAuthVerifier(HumanAuthRegistry.model_validate(document),max_token_ttl_seconds=86400),WORKSPACE)
+        class ForbiddenCorePipeline:
+            def run(self,*_,**__):raise AssertionError('No core paid provider permitted in generation rehearsal')
+        server=LocalServer(0,config,access=access,pipeline=ForbiddenCorePipeline(),start_worker=False,generation_factory=factory,observer=Observer(operation_logs.append))
+        queue,worker=server.generation.queue,server.generation;worker.start(server.observer);server_thread=threading.Thread(target=server.serve_forever,daemon=True);server_thread.start();account('editor')
+        def send_http(method,path,body=None,status=200):
+            connection=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=10)
+            connection.request(method,path,body=json.dumps(body) if body is not None else None,headers={'Content-Type':'application/json','Cookie':'vf_native_session='+cookie,'X-VF-CSRF':session.csrf})
+            response=connection.getresponse();content=response.read();headers=dict(response.getheaders());connection.close()
+            value=json.loads(content) if headers.get('Content-Type','').startswith('application/json') else {'bytes':len(content),'sha256':hashlib.sha256(content).hexdigest()}
+            http_calls.append({'method':method,'path':path,'status':response.status});assert response.status==status,(response.status,value)
+            assert headers.get('Cache-Control')=='no-store';return value
+        async def http_request(*values,**options):return await asyncio.to_thread(send_http,*values,**options)
+        async def wait(identity,expected):
+            deadline=time.monotonic()+90
+            while time.monotonic()<deadline:
+                value=await http_request('GET',f'/api/projects/{project["id"]}/generation/{identity}')
+                if value['status']==expected:return value
+                if value['status'] in {'failed','not_configured','cancelled','needs_approval'}:raise AssertionError(value)
+                await asyncio.sleep(.08)
+            raise AssertionError('Bounded Native generation worker deadline')
+        configured=await http_request('GET','/api/generation/providers');assert len(configured['items'])==8 and not configured['ui_enablement_supported']
     ref=lambda asset:{'asset_id':asset['id'],'asset_sha256':asset['sha256']}
     cases=[NativeImageParameters(prompt='EXPLICIT LOST-REPLY IMAGE FIXTURE',aspect_ratio='16:9',seed=51),
         NativeVideoParameters(prompt='EXPLICIT VIDEO WORKER FIXTURE',mode='image_to_video',references=[ref(assets[0])],aspect_ratio='16:9',seed=29,duration_seconds=.6),
@@ -105,20 +142,29 @@ async def run(args):
     jobs=[];recoveries=[]
     try:
         for index,value in enumerate(cases):
-            job,_=queue.create(project['id'],GenerationCreate(revision=project['revision'],parameters=value,fixture_acknowledged=True,
-                request_key=f'explicit-generation-worker-case-{index}'),actor='explicit-editor-fixture');jobs.append(job)
             original_finish=worker.finish
             if index==2:
                 def crash(*_,**__):raise WorkflowError('EXPLICIT_CRASH_AFTER_PERSISTED_MEDIA_STAGE')
                 worker.finish=crash
-            await asyncio.to_thread(worker.process);worker.finish=original_finish
+            payload=GenerationCreate(revision=project['revision'],parameters=value,fixture_acknowledged=True,request_key=f'explicit-generation-worker-case-{index}')
+            if args.native_http:
+                if index==0:
+                    account('viewer');await http_request('POST',f'/api/projects/{project["id"]}/generation',payload.model_dump(mode='json'),status=403);account('editor')
+                job=await http_request('POST',f'/api/projects/{project["id"]}/generation',payload.model_dump(mode='json'))
+                await wait(job['generation_id'],'recovery_required' if index in (0,2) else 'succeeded')
+            else:
+                job,_=queue.create(project['id'],payload,actor='explicit-editor-fixture');await asyncio.to_thread(worker.process)
+            jobs.append(job);worker.finish=original_finish
             if index in (0,2):
                 interrupted=worker.get(project['id'],job['generation_id']);assert interrupted['status']=='recovery_required'
                 if index==0:assert interrupted['provider_job_id'] is None
                 write(args.output_root/f'{index}-interrupted-job.json',interrupted)
-                recoveries.append(queue.recover(project['id'],job['generation_id'],GenerationRecovery(expected_fingerprint=job['request_fingerprint'],
-                    acknowledged=True,request_key=f'explicit-worker-read-only-recovery-{index}'),actor='explicit-editor-fixture'))
-                before_calls=len(calls);await asyncio.to_thread(worker.process)
+                recovery=GenerationRecovery(expected_fingerprint=job['request_fingerprint'],acknowledged=True,request_key=f'explicit-worker-read-only-recovery-{index}');before_calls=len(calls)
+                if args.native_http:
+                    recoveries.append(await http_request('POST',f'/api/projects/{project["id"]}/generation/{job["generation_id"]}/recover',recovery.model_dump(mode='json')))
+                    await wait(job['generation_id'],'succeeded')
+                else:
+                    recoveries.append(queue.recover(project['id'],job['generation_id'],recovery,actor='explicit-editor-fixture'));await asyncio.to_thread(worker.process)
                 if index==2:assert len(calls)==before_calls
             result=worker.get(project['id'],job['generation_id']);assert result['status']=='succeeded' and result['result']['asset']['rights_status']=='unknown'
             assert result['result']['mode']==['reconcile','create','local_stage_recovery'][index] and not result['result']['production_eligible']
@@ -130,7 +176,14 @@ async def run(args):
         for job in jobs:
             result=worker.get(project['id'],job['generation_id']);current=native.get(project['id']);request=GenerationImport(revision=current['revision'],
                 expected_fingerprint=job['request_fingerprint'],expected_asset_sha256=result['result']['asset']['sha256'],acknowledged=True,request_key='explicit-generation-worker-import-'+job['generation_id'])
-            receipt=worker.attach(project['id'],job['generation_id'],request,actor='explicit-editor-fixture');assert worker.attach(project['id'],job['generation_id'],request,actor='explicit-editor-fixture')['idempotent_replay']
+            if args.native_http:
+                path=f'/api/projects/{project["id"]}/generation/{job["generation_id"]}'
+                account('viewer');media=await http_request('GET',path+'/file');assert media['sha256']==result['result']['asset']['sha256']
+                await http_request('POST',path+'/import',request.model_dump(mode='json'),status=403);account('editor')
+                receipt=await http_request('POST',path+'/import',request.model_dump(mode='json'));assert (await http_request('POST',path+'/import',request.model_dump(mode='json')))['idempotent_replay']
+                assert (await http_request('GET',path))['attachment']==receipt
+            else:
+                receipt=worker.attach(project['id'],job['generation_id'],request,actor='explicit-editor-fixture');assert worker.attach(project['id'],job['generation_id'],request,actor='explicit-editor-fixture')['idempotent_replay']
             attachments.append(receipt)
         current=native.get(project['id']);assert current['revision']==before['revision']+3 and current['approval'] is None
         assert current['document'].get('canonical_timeline')==before['document'].get('canonical_timeline')
@@ -141,17 +194,30 @@ async def run(args):
         costs=queue.costs.summary(project['id']);assert len(costs['records'])==6 and all(r['actual_cost'] is None and not r['paid'] for r in costs['records'])
         write(args.output_root/'recovery-requests.json',recoveries);write(args.output_root/'attachment-receipts.json',attachments)
         write(args.output_root/'native-service-wires.json',calls);write(args.output_root/'gpu-fixture-wires.json',wire.calls)
-    finally:await bridge.service.close()
+    finally:
+        if server is not None:await asyncio.to_thread(server.shutdown);server.server_close();server_thread.join(timeout=2)
+        await bridge.service.close()
+    if args.native_http:
+        from services.windows_native.backup import create_backup,restore_backup
+        assert args.restore_root;fresh(args.restore_root)
+        backup=create_backup(config,args.output_root/'native-generation-backup.zip');restore=restore_backup(args.output_root/'native-generation-backup.zip',args.restore_root/'native',expected_sha256=backup['sha256'])
+        assert backup['database_status']['workflow.sqlite3']['counts']['native_generation_results']==3
+        assert snapshot(args.restore_root)==snapshot(args.data_root)
+        write(args.output_root/'backup-restore.json',{'backup':backup,'restore':restore,'exact_native_generation_restore':True})
+        write(args.output_root/'human-http-wires.json',http_calls);write(args.output_root/'content-free-operations.json',operation_logs)
     write(args.output_root/'offline-snapshot.json',snapshot(args.data_root))
     files=['services/windows_native/generation_worker.py','services/windows_native/generation_queue.py','services/windows_native/generation_media.py',
         'services/windows_native/observability.py','scripts/north_star_native_generation_worker.py']
+    if args.native_http:files+=['services/windows_native/generation_routes.py','services/windows_native/generation_registry.py','services/windows_native/server.py','services/windows_native/access.py','services/windows_native/backup.py',
+        'apps/studio-web/native-generation.mjs','apps/studio-web/native-source-broll.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/native.css']
     write(args.output_root/'evidence.json',{'schema_version':'north-star-native-generation-worker-v1','explicit_fixture':True,'workspace_id':WORKSPACE,
         'project_id':project['id'],'data_root':str(args.data_root),'actual_local_decoded_outputs':3,'native_reference_admissions':3,'native_worker_wired':True,
         'generation_submission_writes':3,'mock_gpu_prompt_writes':3,'mock_gpu_reference_uploads':3,'mock_native_reference_intake_writes':3,'read_only_lookup_count':1,
         'lost_submission_reply_reconciled_without_second_submit':True,'persisted_stage_crash_recovered_without_provider_calls':True,'duplicate_reference_hash_binding_passed':True,
         'generation_results_manually_injected':False,'explicit_attachment_receipts':3,'cost_operations':6,'actual_cost_vnd':None,'paid_operations':0,
         'automatic_attachment':False,'canonical_timeline_auto_edited':False,'rights_independently_verified':False,'rights_status':'unknown','production_eligible':False,
-        'native_http_assets_ui_wired':False,'real_provider_tested':False,'owner_uat_accepted':False,'production_deployed':False,
+        'native_http_assets_ui_wired':args.native_http,'human_http_requests':len(http_calls),'actual_backup_restore_verified':args.native_http,
+        'real_provider_tested':False,'owner_uat_accepted':False,'production_deployed':False,
         'source_sha256':{name:sha(ROOT/name) for name in files},'exports':{p.name:{'sha256':sha(p),'bytes':p.stat().st_size} for p in args.output_root.iterdir() if p.is_file()}})
     print(json.dumps({'status':'NATIVE_GENERATION_WORKER_REAL_BYTES_MOCK_GPU_PASS','outputs':3,'submissions':3,'explicit_imports':3,'real_provider':False}))
 
@@ -159,6 +225,7 @@ async def run(args):
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--data-root',type=Path,required=True);parser.add_argument('--output-root',type=Path,required=True)
     parser.add_argument('--ffmpeg',type=Path,required=True);parser.add_argument('--ffprobe',type=Path,required=True);parser.add_argument('--reopen',action='store_true')
+    parser.add_argument('--native-http',action='store_true');parser.add_argument('--restore-root',type=Path)
     parser.add_argument('--native-site-packages',type=Path);options=parser.parse_args()
     if options.native_site_packages:sys.path.append(str(options.native_site_packages))
     asyncio.run(run(options))

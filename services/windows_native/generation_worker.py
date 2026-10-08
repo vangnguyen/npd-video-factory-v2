@@ -59,13 +59,16 @@ class NativeGenerationWorker:
 
     def get(self,project,identity,*,physical=True):
         with self.store.transaction() as con:
-            job=self.queue.read(self.queue.row(con,project,identity));result=None
-            if job['status']=='succeeded':result,stage=self.result(con,project,identity,physical=physical);result={**result,'asset':stage['asset']}
-            return {**job,'worker_wired':True,'result':result}
+            job=self.queue.read(self.queue.row(con,project,identity));result=None;attachment=None
+            if job['status']=='succeeded':
+                result,stage=self.result(con,project,identity,physical=physical);result={**result,'asset':stage['asset']}
+                attachment=self.import_receipt(con,project,identity,stage['asset'])
+            return {**job,'worker_wired':True,'result':result,'attachment':attachment}
 
     def page(self,project,*,limit=25):
         page=self.queue.page(project,limit=limit)
-        return {**page,'items':[self.get(project,j['generation_id'],physical=False) for j in page['items']]}
+        with self.store.transaction() as con:total=con.execute('SELECT COUNT(*) FROM native_generation_jobs WHERE workspace_id=? AND project_id=?',(self.queue.workspace,project)).fetchone()[0]
+        return {**page,'items':[self.get(project,j['generation_id'],physical=False) for j in page['items']],'worker_wired':True,'automatic_attachment':False,'total':total,'has_more':len(page['items'])<total}
 
     def finish(self,claim,operation,*,mode):
         with self.store.transaction() as con:
@@ -139,6 +142,22 @@ class NativeGenerationWorker:
         with self.store.transaction() as con:
             _,stage=self.result(con,project,identity);asset=stage['asset'];return guard(self.store.root/'assets'/asset['id'],exists=True),asset
 
+    def import_receipt(self,con,project,identity,asset):
+        row=con.execute('SELECT * FROM native_generation_imports WHERE generation_id=?',(identity,)).fetchone()
+        if row is None:return None
+        try:
+            receipt=json.loads(row['receipt_json']);job=self.queue.row(con,project,identity)
+            revision=receipt['revision'];request={'revision':revision-1,'expected_fingerprint':job['request_fingerprint'],'expected_asset_sha256':asset['sha256'],'acknowledged':True}
+            version=con.execute('SELECT document FROM project_versions WHERE project_id=? AND revision=?',(project,revision)).fetchone()
+            if (row['workspace_id']!=self.queue.workspace or row['project_id']!=project or row['request_sha256']!=digest(request)
+                or digest(receipt)!=row['receipt_sha256'] or receipt.get('schema_version')!='native-generation-import-v1' or receipt.get('workspace_id')!=self.queue.workspace
+                or receipt.get('project_id')!=project or receipt.get('generation_id')!=identity or receipt.get('asset_id')!=asset['id'] or receipt.get('asset_sha256')!=asset['sha256']
+                or type(revision) is not int or revision<2 or receipt.get('approval_invalidated') is not True or receipt.get('rights_independently_verified') is not False
+                or receipt.get('canonical_timeline_auto_edited') is not False or receipt.get('external_calls')!=0 or receipt.get('idempotent_replay') is not False
+                or version is None or digest(json.loads(version[0]))!=receipt.get('document_sha256') or asset not in json.loads(version[0]).get('assets',[])):raise ValueError()
+        except (KeyError,TypeError,ValueError):raise WorkflowError('NATIVE_GENERATION_IMPORT_RECEIPT_INVALID') from None
+        return receipt
+
     def attach(self,project,identity,payload,*,actor):
         if type(payload) is not GenerationImport or not payload.acknowledged:raise WorkflowError('NATIVE_GENERATION_IMPORT_ACK_REQUIRED',400)
         request=payload.model_dump(mode='json');key=hashlib.sha256(request.pop('request_key').encode()).hexdigest();fingerprint=digest(request)
@@ -147,13 +166,8 @@ class NativeGenerationWorker:
             if payload.expected_fingerprint!=row['request_fingerprint'] or payload.expected_asset_sha256!=asset['sha256']:raise WorkflowError('NATIVE_GENERATION_IMPORT_BINDING_CHANGED')
             old=con.execute('SELECT * FROM native_generation_imports WHERE generation_id=?',(identity,)).fetchone()
             if old:
-                receipt=json.loads(old['receipt_json']);version=con.execute('SELECT document FROM project_versions WHERE project_id=? AND revision=?',(project,receipt.get('revision'))).fetchone()
-                if (old['workspace_id']!=self.queue.workspace or old['project_id']!=project or old['key_sha256']!=key or old['request_sha256']!=fingerprint
-                    or digest(receipt)!=old['receipt_sha256'] or receipt.get('schema_version')!='native-generation-import-v1' or receipt.get('workspace_id')!=self.queue.workspace
-                    or receipt.get('project_id')!=project or receipt.get('generation_id')!=identity or receipt.get('asset_id')!=asset['id'] or receipt.get('asset_sha256')!=asset['sha256']
-                    or receipt.get('revision')!=payload.revision+1 or receipt.get('approval_invalidated') is not True or receipt.get('rights_independently_verified') is not False
-                    or receipt.get('canonical_timeline_auto_edited') is not False or receipt.get('external_calls')!=0 or version is None
-                    or digest(json.loads(version[0]))!=receipt.get('document_sha256') or asset not in json.loads(version[0]).get('assets',[])):
+                receipt=self.import_receipt(con,project,identity,asset)
+                if old['key_sha256']!=key or old['request_sha256']!=fingerprint or receipt['revision']!=payload.revision+1:
                     raise WorkflowError('NATIVE_GENERATION_IMPORT_RECEIPT_INVALID')
                 return {**receipt,'idempotent_replay':True}
             self.store.append_media_in_transaction(con,project,payload.revision,deepcopy(asset));current=self.store.project(con.execute('SELECT * FROM projects WHERE id=?',(project,)).fetchone())

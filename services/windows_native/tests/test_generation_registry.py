@@ -72,6 +72,33 @@ class NativeGenerationRegistryTests(unittest.TestCase):
         for endpoint in ['http://127.0.0.1:8011','http://[::1]:8011','http://localhost:8011','http://comfyui-bridge:8011']:
             self.assertEqual(GenerationCredential(bridge_url=endpoint,service_token=TOKEN).bridge_url,endpoint)
 
+    def test_protected_external_reviewed_manifest_and_missing_optional_operation_never_enable_client_graphs(self):
+        from services.windows_native.store import Store
+        from services.windows_native.pipeline import Config
+        from services.windows_native.generation_queue import NativeGenerationQueue
+        from services.windows_native.generation_worker import NativeGenerationWorker
+        from services.windows_native.generation_routes import providers
+        with tempfile.TemporaryDirectory() as directory:
+            base=Path(directory);root=base/'state';root.mkdir();folder=base/'protected-workflows';folder.mkdir()
+            document=json.loads(MANIFEST.read_bytes());row=document['workflows'][0];graph={'prompt':{'1':{'class_type':'ExplicitReviewedConfigurationFixture','inputs':{'text':'literal'}}}}
+            graph_path=folder/row['graph_file'];graph_path.write_text(json.dumps(graph));row['execution']={'graph_sha256':hashlib.sha256(graph_path.read_bytes()).hexdigest(),
+                'approval_kind':'owner_approved','approval_reference':'EXPLICIT CONFIGURATION UNIT FIXTURE, NOT OWNER UAT','allowed_node_classes':['ExplicitReviewedConfigurationFixture'],
+                'bindings':[{'parameter':'prompt','node_id':'1','input_name':'text'}],'output_nodes':['1']}
+            manifest=folder/'manifest.json';manifest.write_text(json.dumps({'manifest_version':'explicit-configuration-unit-v1','workflows':[row]}))
+            registry=base/'protected-registry.json';raw={'version':1,'native_workspace_id':'wsp_external_manifest_fixture','workflow_manifest':str(manifest),
+                'comfyui':{'bridge_url':'http://localhost:8011','service_token':TOKEN,'enabled':True}};registry.write_text(json.dumps(raw))
+            inactive=load(registry,root,raw['native_workspace_id']);self.assertFalse(inactive.enabled)
+            configured=load(registry,root,raw['native_workspace_id'],owner_enabled=True);self.assertEqual(configured.selection('image',ImageGenerationInput(prompt='fixture'))['status'],'CONFIGURED')
+            store=Store(root);queue=NativeGenerationQueue(store,workspace_id=raw['native_workspace_id'],factory=configured);worker=NativeGenerationWorker(queue,Config(data_root=root))
+            catalog=providers(worker);self.assertEqual(len(catalog['items']),8);self.assertEqual(sum(item['status']=='CONFIGURED' for item in catalog['items']),1)
+            project=store.create('EXPLICIT CONFIGURATION FIXTURE','PRIVATE');job,_=queue.create(project['id'],GenerationCreate(revision=1,parameters=NativeVideoParameters(prompt='unsupported optional fixture'),
+                external_acknowledged=True,request_key='explicit-missing-video-workflow-key'),actor='explicit-editor-fixture')
+            self.assertEqual(job['status'],'not_configured');self.assertIsNone(job['snapshot']['selection']['workflow_version']);self.assertIsNone(queue.claim())
+            for value in ['relative/manifest.json',str(root/'manifest.json')]:
+                if value==str(root/'manifest.json'):(root/'manifest.json').write_text(manifest.read_text())
+                registry.write_text(json.dumps({**raw,'workflow_manifest':value}))
+                with self.assertRaises(WorkflowError):load(registry,root,raw['native_workspace_id'],owner_enabled=True)
+
     def test_duplicate_manifest_and_changed_review_graph_cannot_become_configured(self):
         with tempfile.TemporaryDirectory() as directory:
             base=Path(directory);raw=json.loads(MANIFEST.read_bytes());row=raw['workflows'][0]

@@ -1,0 +1,194 @@
+{
+  "schema": "native-generation-http-studio-evidence-v1",
+  "parent_head": "cb0bdbc3fe88bde0eadb39f2544d3562c5bdaceb",
+  "source_sha256": {
+    "services/windows_native/generation_worker.py": "0757f0dbcd2c91033e7fdf09da799929fa9483ce08160544e44959e584e163e6",
+    "services/windows_native/generation_queue.py": "51d125d75572ae070fd36400bdabb9130cedfaba566cc9f6193743cbc97e8b54",
+    "services/windows_native/generation_media.py": "7242e8e727b2729a7648c48f9dca35fb1214362c2a82f4c0125a3dcf6b77fc7e",
+    "services/windows_native/observability.py": "090b4ab54be11ef2a9cfc68fd4b8b4a1cb606d8a56faafb7a7ce4c8c83a0ec2f",
+    "scripts/north_star_native_generation_worker.py": "0a0afcdfff34c701b7459a50b63fc915e38a5386242d872e6f78a5bec1ab798a",
+    "services/windows_native/generation_routes.py": "e6446f53e0299ef9d04d678e1a18d5cc501d924709bd3e5737e456360a3d82da",
+    "services/windows_native/generation_registry.py": "7f66cecd9e0a97f7d7b4f43cdbf13ace81e2f819c8c9251fb8335a35aa7bbd43",
+    "services/windows_native/server.py": "731fdecfb0864002c77ae6aa3701475da7e955c2d64bad4be3e1f7c37faf4044",
+    "services/windows_native/access.py": "bed0214a0c6e451410af3f6abd968b09f24cf7ce146738d3c0f79c680c4d8524",
+    "services/windows_native/backup.py": "efac1172ff1c0ae46a83ec90137bb628ba11a8ff9fd0e49d86f2fd6ae2b38b18",
+    "apps/studio-web/native-generation.mjs": "73e48b4ec227480ad466afaf08e1a1c37ef826fdf162d3a237b7fea685867936",
+    "apps/studio-web/native-source-broll.mjs": "d06533f405f6f3a5ca3412bd7c318c1753fda06089ef7d017ba5bd7b012b0128",
+    "apps/studio-web/native.mjs": "420f00ff0231fdab2de0a1fda22a48ef4db51c767fc03094e2877b0aa62b8ffb",
+    "apps/studio-web/native.html": "2c7f4defba2ec0f321c83707c1b5ab56b01bf96250d4851be2b883dc19875d52",
+    "apps/studio-web/native.css": "0e971466b8feada960a7a084f07114e2c20311173bb77aee070e8d7d79a3aac1",
+    "services/windows_native/tests/test_generation_http.py": "3bc0fa4e4e8fb732ee601e97c2363efada8172eb1f8a4f057245770f7ead2ef7",
+    "services/windows_native/tests/test_generation_registry.py": "55e71c31b84b87686058414a773babcd2f2cc24efc728bd5ec4b1a00c09b3b60",
+    "services/windows_native/tests/test_backup.py": "db6ae77e90358ca5d61abd84fb59a838aafa193664ca4fd7b6fc13ed9a39c454",
+    "services/windows_native/tests/test_phase10_http.py": "e39fe505b6c9b8b1a77c9d8d8a90c05fc0173fc53a733d83499884eba045ece3",
+    "apps/studio-web/tests/native-generation.test.mjs": "aa440d7526d0bd5516d86c1e3c2b63dfda61f2c6bda0de3367776680413cd47e",
+    "docs/NATIVE_GENERATION_HTTP_STUDIO.md": "1a8fd32f6e5f44c6a8abf59302065dbdbfee8cd63d34f23ae1cf3658d1e7b864"
+  },
+  "logs": {
+    "native-generation-http-r1.log": "b1f939c9ea5b139090ca12bcdca7e0b3ce74cdf109b1d848c14bdab09ac14b55",
+    "native-generation-http-full-r2.log": "56d412d869d787da9ac1e4e98f0215124aeb125f36d420a8ed2f82e30fae2ee7",
+    "native-generation-http-affected-r3.log": "aa95d0686da7713bca14c1b5dd9a4ca91ac3f4db9afd2ddd7f82d3ca3b31347a",
+    "native-generation-http-full-r4.log": "b89580567f306ce1c41952251af52927d32f5bd9628edda7f08f6f60dc6c771d",
+    "native-generation-studio-r1.log": "50d7f0477222f4055e1c64916c5f6db04423f8f1ca43c58f39f04f6cad482017",
+    "native-generation-studio-r2.log": "886d528a35b5a2f583fd5541c03f232443fe85e0b90d058efb59da016b095603",
+    "native-generation-http-n1.log": "dbaad33ebd03b180eb90311e412ccddb77e89ee6a0253109334a59ff5bba977b",
+    "native-generation-http-n2.log": "4c16b77492140c426ba05187236cdc98cc4c4d37dc909789bcfcfdd8bc97ccc4",
+    "native-generation-http-reopen-n2.log": "ad3cd293c7c72f2549451bd2a84f202dc4685d34d087723036fe62d7cd6f29f8",
+    "native-generation-http-n3.log": "4c16b77492140c426ba05187236cdc98cc4c4d37dc909789bcfcfdd8bc97ccc4",
+    "native-generation-http-reopen-n3.log": "ad3cd293c7c72f2549451bd2a84f202dc4685d34d087723036fe62d7cd6f29f8"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-generation-http-n3",
+  "restore_root": "C:/vf-native-generation-http-restore-03",
+  "contract_exports": {
+    "0-completed-job.json": {
+      "sha256": "178c447137131de895d930aca135ef50b3d7424a2b5c14289ef5bd5382fa880e",
+      "bytes": 9615
+    },
+    "0-interrupted-job.json": {
+      "sha256": "52d0615899b0608a711bc06332423ed2063d1da0c88dbbd8188524a4b4ad6d8c",
+      "bytes": 3731
+    },
+    "0-normalized.jpg": {
+      "sha256": "96fc94546ec9c59a1db9d50ce5f91d0d46cc3a802a958de571b1ffefdd868493",
+      "bytes": 30027
+    },
+    "0-original.png": {
+      "sha256": "b5b59f970a5bad64835f1d78b2dd136fe181c000ed398ea7d449c5a9d6f29d75",
+      "bytes": 26482
+    },
+    "0-thumbnail.jpg": {
+      "sha256": "79024adb6d4f4467f7102257f2ae5397d305cc56feeef2be9db2067c54bfc042",
+      "bytes": 13760
+    },
+    "1-completed-job.json": {
+      "sha256": "dead93e6856004601c04e2b5d6c4e77b703c2b6516f8d02c9947f9755605c1e8",
+      "bytes": 11130
+    },
+    "1-normalized.mp4": {
+      "sha256": "c36327c02427117c5799817b02040a5cfb0ebf4fdfbb1d9c614fc823fec47fe1",
+      "bytes": 34785
+    },
+    "1-original.mp4": {
+      "sha256": "c36327c02427117c5799817b02040a5cfb0ebf4fdfbb1d9c614fc823fec47fe1",
+      "bytes": 34785
+    },
+    "1-thumbnail.jpg": {
+      "sha256": "4da79d971aef079063fbf18428cb293d8db88afccfbd0464470d89a78673f21d",
+      "bytes": 14772
+    },
+    "2-completed-job.json": {
+      "sha256": "791df4b56de5f936d32c37c5c572b9f02ff3e25e37e7cd13d56a079dc1546e32",
+      "bytes": 13044
+    },
+    "2-interrupted-job.json": {
+      "sha256": "db6db7b1375207ea013fc12ab2d5d6a1deb5230a414ab00c4cc1814ba54fec9f",
+      "bytes": 7139
+    },
+    "2-normalized.jpg": {
+      "sha256": "96fc94546ec9c59a1db9d50ce5f91d0d46cc3a802a958de571b1ffefdd868493",
+      "bytes": 30027
+    },
+    "2-original.png": {
+      "sha256": "b5b59f970a5bad64835f1d78b2dd136fe181c000ed398ea7d449c5a9d6f29d75",
+      "bytes": 26482
+    },
+    "2-thumbnail.jpg": {
+      "sha256": "79024adb6d4f4467f7102257f2ae5397d305cc56feeef2be9db2067c54bfc042",
+      "bytes": 13760
+    },
+    "attachment-receipts.json": {
+      "sha256": "567d6dc2f0399e89cc6eb10664e7f2276810c434b5cfb0240b20320f0b6089ab",
+      "bytes": 2118
+    },
+    "backup-restore.json": {
+      "sha256": "d35521a517a2a7b3694c829712d5d4ce73675d1786956dcbcb2c616c9ad795fd",
+      "bytes": 5418
+    },
+    "content-free-operations.json": {
+      "sha256": "65cf213fd4b7b4a1d501943d9341194c776b37a7f44212ff8e06b7ec5598d426",
+      "bytes": 20340
+    },
+    "evidence.json": {
+      "sha256": "ab70e1a2c9a307ee23b770e63e788c1e160e6bfefcd9501649634f93b5561632",
+      "bytes": 6416
+    },
+    "gpu-fixture-wires.json": {
+      "sha256": "7838109efddb55d1ceaa0aa38aa167fe62862555202fe76f7a3830a7891252c5",
+      "bytes": 1332
+    },
+    "human-http-wires.json": {
+      "sha256": "2bad5d7d00f4b5dbbff990415325ba5a6792b318470999dc8952c44e5e6f5cb1",
+      "bytes": 7769
+    },
+    "native-generation-backup.zip": {
+      "sha256": "0fbe537ba267f538e4ee727399e3d627829aa903fdf38bfbce02c3dd5ad87cc1",
+      "bytes": 835769
+    },
+    "native-service-wires.json": {
+      "sha256": "1374ba5112c488f9bd424b0ed635f9c689fac5fda43fd83022bcbf2665c1bd5e",
+      "bytes": 1938
+    },
+    "new-process-replay.json": {
+      "sha256": "06cdb2b803e1b5d7c0ce46da233567a372c016ff8384780a09ac65b356664d9f",
+      "bytes": 314
+    },
+    "offline-snapshot.json": {
+      "sha256": "b649a5a23d97abd9c0cc4178ec67b496c092a14389e711804728a160df32075a",
+      "bytes": 159585
+    },
+    "pre-attachment-project.json": {
+      "sha256": "9b1e443046ae9cb1b5bff4df2d0feeff2359dec66a009081ee2c5fd95dd95e73",
+      "bytes": 5748
+    },
+    "recovery-requests.json": {
+      "sha256": "fc20e4a335105efdfa84fd2f4ae2afe56eb95bc7580accbdedfa32b0c3ea081b",
+      "bytes": 1075
+    }
+  },
+  "full_native_passed": 594,
+  "full_native_seconds": 376.826,
+  "affected_native_passed": 56,
+  "affected_native_seconds": 22.949,
+  "studio_passed": 214,
+  "studio_duration_ms": 859.8792,
+  "new_http_cases": 5,
+  "new_backup_case": 1,
+  "new_registry_case": 1,
+  "new_dom_cases": 8,
+  "prior_overlapping_http_worker_backup_passed": 32,
+  "retained_full_593_one_stale_capability_assertion_failure_corrected_without_removing_cookie_csrf_checks": true,
+  "retained_first_http_rehearsal_helper_name_collision_fixed": true,
+  "native_assets_generation_http_and_independent_worker_wired": true,
+  "eight_typed_operations_owned_references_mask_scale_duration_and_stable_request_keys": true,
+  "human_editor_mutations_reviewer_viewer_read_only": true,
+  "unauthorized_bodies_not_read_and_service_header_not_human_session": true,
+  "csrf_same_origin_loopback_and_workspace_boundary": true,
+  "browser_receives_no_keys_endpoints_graphs_or_provider_results_input": true,
+  "protected_external_reviewed_manifest_default_inactive": true,
+  "missing_optional_workflows_remain_not_configured_and_no_dispatch": true,
+  "explicit_local_media_review_recovery_and_import": true,
+  "frozen_import_projection_and_late_foreign_scope_guard": true,
+  "active_generation_blocks_backup": true,
+  "actual_backup_restore_and_separate_process_default_inactive_exact_replay": true,
+  "actual_local_media_and_bridge_decode": true,
+  "synthetic_pixels_and_mock_gpu_apis": true,
+  "human_http_requests": 51,
+  "generation_submissions": 3,
+  "mock_gpu_prompt_writes": 3,
+  "mock_gpu_reference_uploads": 3,
+  "native_reference_intake_writes": 3,
+  "read_only_lookup_count": 1,
+  "post_stage_local_recovery_additional_calls": 0,
+  "generation_results_manually_injected": false,
+  "explicit_imports": 3,
+  "cost_operations": 6,
+  "actual_cost_vnd": null,
+  "paid_operations": 0,
+  "rights_status": "unknown",
+  "production_eligible": false,
+  "automatic_attachment": false,
+  "canonical_timeline_auto_edited": false,
+  "browser_usability_or_owner_uat_accepted": false,
+  "real_provider_tested": false,
+  "production_deployed": false
+}

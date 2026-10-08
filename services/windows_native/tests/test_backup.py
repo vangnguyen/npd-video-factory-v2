@@ -40,6 +40,23 @@ class BackupTests(unittest.TestCase):
     def backup(self):
         return create_backup(self.config, self.archive)
 
+    def test_native_generation_pending_dispatch_blocks_backup_and_counts_all_additive_journals(self):
+        import httpx
+        from services.windows_native.generation_registry import GenerationFactory,GenerationCredential
+        from services.windows_native.generation_queue import NativeGenerationQueue
+        from services.windows_native.generation_worker import NativeGenerationWorker
+        from services.windows_native.generation_models import GenerationCreate,GenerationAction,NativeImageParameters
+        def forbidden(request):raise AssertionError('No generation call allowed in backup fixture')
+        factory=GenerationFactory(GenerationCredential(bridge_url='http://localhost:8011',service_token='explicit-backup-generation-fixture-token-32',enabled=True),
+            owner_enabled=True,transport=httpx.MockTransport(forbidden))
+        queue=NativeGenerationQueue(self.store,workspace_id='wsp_generation_backup_fixture',factory=factory);NativeGenerationWorker(queue,self.config)
+        job,_=queue.create(self.project['id'],GenerationCreate(revision=1,parameters=NativeImageParameters(prompt='EXPLICIT BACKUP QUEUE FIXTURE'),
+            fixture_acknowledged=True,request_key='explicit-generation-backup-job-key'),actor='explicit-editor-fixture')
+        with self.assertRaisesRegex(WorkflowError,'BACKUP_SOURCE_HAS_ACTIVE_OPERATIONS'):self.backup()
+        self.assertFalse(self.archive.exists());queue.cancel(self.project['id'],job['generation_id'],GenerationAction(expected_fingerprint=job['request_fingerprint']),actor='explicit-editor-fixture')
+        receipt=self.backup();counts=receipt['database_status']['workflow.sqlite3']['counts'];self.assertEqual(counts['native_generation_jobs'],1)
+        self.assertEqual(counts['native_generation_results'],0);self.assertEqual(counts['native_generation_imports'],0);self.assertEqual(counts['native_generation_media'],0)
+
     def restore(self, receipt, destination=None):
         return restore_backup(self.archive, destination or self.destination, expected_sha256=receipt['sha256'])
 

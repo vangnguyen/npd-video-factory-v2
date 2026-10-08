@@ -129,9 +129,12 @@ class LocalServer(ThreadingHTTPServer):
 
     def __init__(self, port, config, *, pipeline=None, start_worker=True, observer=None, access=None,
         bridge_auth_registry=None,bridge_webhook_registry=None,bridge_http_enabled=False,
-        stock_registry=None,stock_api_enabled=False,stock_factories=None,owner_rights_overrides=False):
+        stock_registry=None,stock_api_enabled=False,stock_factories=None,owner_rights_overrides=False,
+        generation_registry=None,generation_api_enabled=False,generation_factory=None):
         config.validate_data_root()
         if owner_rights_overrides and access is None:raise WorkflowError('NATIVE_RIGHTS_OVERRIDE_HUMAN_AUTH_REQUIRED',400)
+        if generation_api_enabled and (access is None or generation_registry is None):raise WorkflowError('NATIVE_GENERATION_PROTECTED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
+        if generation_registry is not None and generation_factory is not None:raise WorkflowError('NATIVE_GENERATION_CONFIGURATION_CONFLICT',400)
         if access is not None:
             from .access import NativeAccess
             if not isinstance(access, NativeAccess):
@@ -181,16 +184,23 @@ class LocalServer(ThreadingHTTPServer):
         if stock_registry is not None and stock_factories is not None:raise WorkflowError('NATIVE_STOCK_CONFIGURATION_CONFLICT',400)
         factories=load_stock(stock_registry,self.store.root,self.publications.workspace_id,owner_enabled=stock_api_enabled) if stock_registry is not None else stock_factories
         self.stock=NativeStock(self.store,config,workspace_id=self.publications.workspace_id,factories=factories)
+        from .generation_queue import NativeGenerationQueue
+        from .generation_worker import NativeGenerationWorker
+        from .generation_registry import load as load_generation
+        generation=load_generation(generation_registry,self.store.root,self.publications.workspace_id,owner_enabled=generation_api_enabled) if generation_registry is not None else generation_factory
+        self.generation=NativeGenerationWorker(NativeGenerationQueue(self.store,workspace_id=self.publications.workspace_id,factory=generation),config)
         if bridge_auth_registry is not None:self.bridge.load_auth_registry(bridge_auth_registry)
         if bridge_http_enabled and bridge_webhook_registry is None:raise WorkflowError('NATIVE_BRIDGE_WEBHOOK_REGISTRY_REQUIRED',400)
         if bridge_webhook_registry is not None:self.bridge.load_webhook_registry(bridge_webhook_registry,owner_http_enabled=bridge_http_enabled)
         if start_worker:
+            self.generation.start(self.observer)
             self.stock.start(self.observer)
             self.bridge.start(self.observer)
             self.runner.start()
             self.intelligence.start()
 
     def server_close(self):
+        self.generation.close()
         self.stock.close()
         self.bridge.close()
         self.runner.stop.set()
@@ -305,6 +315,14 @@ class Handler(BaseHTTPRequestHandler):
                 raise
         self.boundary(session=path.startswith("/api/") and path != '/api/health'
             and (path != '/api/session' or self.server.access is not None))
+        generation_file=re.fullmatch(r'/api/projects/([a-f0-9]{32})/generation/([a-f0-9]{32})/file',path)
+        if generation_file:
+            if '?' in self.path:raise WorkflowError('NATIVE_GENERATION_PAGE_INVALID',400)
+            file,asset=self.server.generation.asset_file(*generation_file.groups())
+            return self.file(file,video=asset['kind']=='video')
+        if path=='/api/generation/providers' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/generation(?:/[a-f0-9]{32})?',path):
+            from .generation_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         stock_file=re.fullmatch(r'/api/projects/([a-f0-9]{32})/stock/(nstk_[a-f0-9]{32})/file',path)
         if stock_file:
             if '?' in self.path:raise WorkflowError('NATIVE_STOCK_PAGE_INVALID',400)
@@ -397,7 +415,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_owner_rights_override_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_owner_rights_override_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -486,6 +504,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-rights.mjs'] = 'native-rights.mjs'
         static['/native-rights-override.mjs'] = 'native-rights-override.mjs'
         static['/native-stock.mjs'] = 'native-stock.mjs'
+        static['/native-generation.mjs'] = 'native-generation.mjs'
         static['/native-variants.mjs'] = 'native-variants.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
@@ -527,6 +546,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
                 'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/generation(?:/[a-f0-9]{32}/(?:cancel|recover|import))?',self.path):
+            from .generation_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/stock/(search|download|nstk_[a-f0-9]{32}/(?:cancel|import))',self.path):
             from .stock_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
@@ -877,6 +899,8 @@ def main():
     parser.add_argument('--enable-bridge-http',action='store_true')
     parser.add_argument('--stock-provider-registry',type=Path)
     parser.add_argument('--enable-stock-api',action='store_true')
+    parser.add_argument('--generation-provider-registry',type=Path)
+    parser.add_argument('--enable-generation-api',action='store_true')
     parser.add_argument('--enable-owner-rights-overrides',action='store_true')
     args = parser.parse_args()
     config = Config.load(args.config)
@@ -896,7 +920,8 @@ def main():
         lock = lock_data_root(config.data_root)
         with LocalServer(args.port, config, access=access,bridge_auth_registry=args.bridge_auth_registry,
             bridge_webhook_registry=args.bridge_webhook_registry,bridge_http_enabled=args.enable_bridge_http,
-            stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api,owner_rights_overrides=args.enable_owner_rights_overrides) as server:
+            stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api,owner_rights_overrides=args.enable_owner_rights_overrides,
+            generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)
             try:
                 server.serve_forever()

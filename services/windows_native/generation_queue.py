@@ -45,9 +45,16 @@ class NativeGenerationQueue:
 
     def selection(self,value):
         inputs=api_parameters(value,{ref.asset_id:'native-owned-selection://'+ref.asset_id for ref in selected_references(value)})
-        if self.factory:return self.factory.selection(value.modality,inputs)
         primary='npd-text-to-image-v1' if value.modality=='image' else 'npd-video-generation-v1'
-        key,operation,_=generation_envelope(value.modality,inputs,workflow_routes(value.modality,primary));catalog=approved_catalog(MANIFEST);definition=catalog['definitions'][key]
+        key,operation,_=generation_envelope(value.modality,inputs,workflow_routes(value.modality,primary))
+        if self.factory:
+            try:return self.factory.selection(value.modality,inputs)
+            except WorkflowError as error:
+                if error.code!='NATIVE_GENERATION_WORKFLOW_NOT_APPROVED':raise
+                return {'provider':'comfyui-'+value.modality,'workflow_id':key,'workflow_version':None,'operation':operation,'workflow_sha256':None,
+                    'manifest_sha256':self.factory.catalog['manifest_sha256'],'provider_configuration_sha256':self.factory.sha256,'mode':self.factory.mode,
+                    'status':'NOT_CONFIGURED','executable_workflow_reviewed':False,'real_provider_tested':False}
+        catalog=approved_catalog(MANIFEST);definition=catalog['definitions'][key]
         return {'provider':'comfyui-'+value.modality,'workflow_id':key,'workflow_version':definition.version,'operation':operation,
             'workflow_sha256':catalog['workflow_sha256'][key],'manifest_sha256':catalog['manifest_sha256'],'provider_configuration_sha256':None,
             'mode':'official','status':'NOT_CONFIGURED','executable_workflow_reviewed':catalog['reviewed'][key],'real_provider_tested':False}

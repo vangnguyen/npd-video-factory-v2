@@ -47,6 +47,7 @@ class GenerationRegistry(StrictModel):
     version:StrictInt=Field(ge=1,le=1)
     native_workspace_id:str=Field(min_length=1,max_length=100)
     comfyui:GenerationCredential|None=None
+    workflow_manifest:str|None=Field(default=None,min_length=1,max_length=1000)
 
 
 def approved_catalog(path):
@@ -132,4 +133,10 @@ def load(path,root,workspace,*,owner_enabled=False):
         registry=GenerationRegistry.model_validate(raw)
     except (ValueError,TypeError):raise WorkflowError('NATIVE_GENERATION_REGISTRY_INVALID',400) from None
     if registry.native_workspace_id!=workspace:raise WorkflowError('NATIVE_GENERATION_REGISTRY_WORKSPACE_MISMATCH',400)
-    return GenerationFactory(registry.comfyui,owner_enabled=owner_enabled) if registry.comfyui is not None else None
+    manifest=MANIFEST
+    if registry.workflow_manifest is not None:
+        candidate=Path(registry.workflow_manifest)
+        if not candidate.is_absolute():raise WorkflowError('NATIVE_GENERATION_WORKFLOW_MANIFEST_MUST_BE_PROTECTED_ABSOLUTE',400)
+        manifest=guard(candidate,exists=True)
+        if guard(root) in manifest.parents:raise WorkflowError('NATIVE_GENERATION_WORKFLOW_MANIFEST_MUST_BE_OUTSIDE_STATE',400)
+    return GenerationFactory(registry.comfyui,owner_enabled=owner_enabled,manifest_path=manifest) if registry.comfyui is not None else None
