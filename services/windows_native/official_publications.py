@@ -6,6 +6,7 @@ Dry-run receipts and account checks cannot themselves grant publishing authority
 from contextlib import nullcontext
 from datetime import datetime,timedelta,timezone
 import base64,json,re,uuid
+from pydantic import ValidationError
 from .contracts import WorkflowError,digest
 from .official_publication_models import Create,Approve,Action,Renew
 from .official_publication_registry import PublishingFactory
@@ -25,6 +26,19 @@ from types import SimpleNamespace
 def utc(value):
     if not isinstance(value,datetime) or value.tzinfo is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TIME_INVALID',400)
     return value.astimezone(timezone.utc)
+
+MIN_INIT_SCHEDULE_LEAD_SECONDS=60  # Internal bounded-request margin, not a vendor limit.
+
+def preflight(metadata,total_bytes,profile,instant):
+    if metadata.scheduled_at is not None and (utc(metadata.scheduled_at)-utc(instant)).total_seconds()<MIN_INIT_SCHEDULE_LEAD_SECONDS:
+        raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_FUTURE_SCHEDULE_MARGIN_REQUIRED',400)
+    try:
+        start_request(metadata,total_bytes,'EXPLICIT-UNSENT-PREFLIGHT-TOKEN',category_id=profile.category_id,made_for_kids=profile.made_for_kids,
+            contains_synthetic_media=profile.contains_synthetic_media,now=utc(instant))
+    except PublishingWireError as error:raise WorkflowError(error.code,400) from None
+
+def metadata_for(payload,review):
+    return payload.metadata or PublicationMetadata.model_validate(review['snapshot']['request']['metadata'])
 
 class NativeOfficialPublications:
     def __init__(self,store,publications,accounts,*,factories=None,identity_provider=None,clock=lambda:datetime.now(timezone.utc)):
@@ -100,6 +114,10 @@ class NativeOfficialPublications:
                 or value['dedupe_sha256']!=digest({'workspace':self.workspace,'platform':target.platform,'account':target.target_account_id,'final':snapshot['final_sha256'],'mock':snapshot['mock']})
                 or value['status'] not in {'not_configured','awaiting_publish_approval','queued','running','cancelled','review_required','completed'}):raise ValueError()
             size_bytes(snapshot['final_bytes']);value.pop('key_sha256')
+            if 'reviewed_at' in snapshot:
+                if datetime.fromisoformat(snapshot['reviewed_at']).tzinfo is None:raise ValueError()
+                if snapshot.get('metadata_source')!=('explicit_owner_request' if request.metadata is not None else 'completed_dry_run'):raise ValueError()
+                if request.metadata is not None and snapshot['metadata']!=request.metadata.model_dump(mode='json'):raise ValueError()
             return {**value,'snapshot':snapshot,'schema_version':'native-official-publication-v1','mock':snapshot['mock'],'token_returned':False,'real_provider_tested':False,'receipt':None,'published':False,'mock_publication_complete':False}
         except (ValueError,TypeError,KeyError,PublishingWireError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EVIDENCE_CHANGED') from None
     def get(self,project,identity):
@@ -157,7 +175,7 @@ class NativeOfficialPublications:
             if current.role_for(self.workspace)!='owner' or principal is not None and current!=principal:raise ValueError()
             return {'token_id':record.token_id,'subject':record.subject,'identity_revision_sha256':digest(record.model_dump(mode='json')),'expires_at':utc(record.expires_at).isoformat()}
         except Exception:raise WorkflowError('NATIVE_HUMAN_OWNER_PUBLISH_APPROVAL_REQUIRED',403) from None
-    def source(self,con,project,payload,factory):
+    def source(self,con,project,payload,factory,*,validation_time=None):
         current=self.store.editable(con,project,payload.revision);parent=self.publications.get_row(con,project,payload.dry_run_publication_id)
         review,_=self.publications.revalidate(con,parent)
         if review['status']!='dry_run_succeeded' or review['snapshot_sha256']!=payload.expected_dry_run_snapshot_sha256 or review['snapshot']['request']['platform']!='youtube':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_VALIDATED_DRY_RUN_REQUIRED')
@@ -168,15 +186,20 @@ class NativeOfficialPublications:
         if account_factory is None or account_factory.public()['status']!='CONFIGURED' or account_factory.sha256!=check['snapshot']['configuration_sha256']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CURRENT_ACCOUNT_PROOF_REQUIRED')
         if state['configuration_sha256']!=payload.expected_configuration_sha256:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_CHANGED')
         job,actual,path=self.publications.render(con,project,review['snapshot']['request']['final_job_id']);qc=project_qc(job)
-        from app.publishing_models import PublicationMetadata
-        metadata=PublicationMetadata.model_validate(review['snapshot']['request']['metadata'])
+        metadata=metadata_for(payload,review)
         platform=validate_platform(capability=self.publications.capabilities.get('youtube'),metadata=metadata,render=SimpleNamespace(profile=PROFILES.get((qc.get('width'),qc.get('height')),'native-unmapped-profile'),qc_report=qc),output_asset=SimpleNamespace(size_bytes=path.stat().st_size),mode='live')
         if platform.status!='passed':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PLATFORM_VALIDATION_FAILED')
         # Pure metadata/disclosure admission only; this request is never dispatched here.
-        start_request(metadata,path.stat().st_size,'EXPLICIT-UNSENT-PREFLIGHT-TOKEN',category_id=factory.profile.category_id,made_for_kids=factory.profile.made_for_kids,contains_synthetic_media=factory.profile.contains_synthetic_media,now=utc(self.clock()))
+        preflight(metadata,path.stat().st_size,factory.profile,utc(validation_time if validation_time is not None else self.clock()))
         return current,review,check,state,job,actual,path,platform.model_dump(mode='json')
     def create(self,project,payload,*,principal):
-        authority=self.identity(principal);request=payload.model_dump(mode='json',exclude={'request_key'});key=digest(payload.request_key);fingerprint=digest(request)
+        try:
+            if type(payload) is not Create:raise TypeError()
+            payload=Create.model_validate(payload.model_dump(mode='python',warnings=False))
+        except (ValidationError,TypeError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_FIELDS_INVALID',400) from None
+        authority=self.identity(principal);request=payload.model_dump(mode='json',exclude={'request_key','metadata'})
+        if payload.metadata is not None:request['metadata']=payload.metadata.model_dump(mode='json')
+        key=digest(payload.request_key);fingerprint=digest(request)
         with self.store.transaction() as con:
             prior=con.execute('SELECT * FROM native_official_publications WHERE workspace_id=? AND project_id=? AND key_sha256=?',(self.workspace,project,key)).fetchone()
             if prior:
@@ -184,12 +207,13 @@ class NativeOfficialPublications:
                 return self.read(prior),True
             factory=self.factories.get(payload.profile_id)
             if factory is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_NOT_CONFIGURED')
-            current,review,check,state,job,actual,path,platform=self.source(con,project,payload,factory)
+            reviewed_at=utc(self.clock());current,review,check,state,job,actual,path,platform=self.source(con,project,payload,factory,validation_time=reviewed_at)
             snapshot={'schema_version':'native-official-publication-snapshot-v1','workspace_id':self.workspace,'project_id':project,'project_revision':current['revision'],
                 'document_sha256':digest(current['document']),'request':request,'dry_run_snapshot_sha256':review['snapshot_sha256'],'account_check_snapshot_sha256':check['snapshot_sha256'],
                 'account_result_sha256':check['result_sha256'],'configuration_sha256':state['configuration_sha256'],'target':state['target'],'target_binding_sha256':state['target_binding_sha256'],
                 'final_job_id':job['id'],'final_sha256':actual,'final_bytes':path.stat().st_size,'final_job_snapshot_sha256':digest(job['snapshot']),
-                'final_review':job['final_review'],'validation':{'dry_run':review['snapshot']['validation'],'official_platform':platform},'metadata':review['snapshot']['request']['metadata'],
+                'final_review':job['final_review'],'validation':{'dry_run':review['snapshot']['validation'],'official_platform':platform},'metadata':metadata_for(payload,review).model_dump(mode='json'),
+                'reviewed_at':reviewed_at.isoformat(),'metadata_source':'explicit_owner_request' if payload.metadata is not None else 'completed_dry_run',
                 'disclosures':state['disclosures'],'chunk_size':state['chunk_size'],'mock':state['mock'],'dry_run_receipt_is_publish_authority':False,'account_check_is_publish_authority':False,
                 'separate_owner_publish_approval_required':True,'token_returned':False}
             dedupe=digest({'workspace':self.workspace,'platform':'youtube','account':state['target']['target_account_id'],'final':actual,'mock':state['mock']})
@@ -201,21 +225,24 @@ class NativeOfficialPublications:
     def revalidate(self,con,row):
         value=self.read(row);snapshot=value['snapshot'];payload=Create.model_validate({**snapshot['request'],'request_key':'internal-official-publish-key'});factory=self.factories.get(payload.profile_id)
         if factory is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_CHANGED')
-        current,review,check,state,job,actual,path,platform=self.source(con,row['project_id'],payload,factory)
+        try:reviewed_at=utc(datetime.fromisoformat(snapshot.get('reviewed_at',row['created_at'])))
+        except (ValueError,TypeError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EVIDENCE_CHANGED') from None
+        current,review,check,state,job,actual,path,platform=self.source(con,row['project_id'],payload,factory,validation_time=reviewed_at)
         expected={'document_sha256':digest(current['document']),'account_check_snapshot_sha256':check['snapshot_sha256'],'account_result_sha256':check['result_sha256'],
             'final_job_id':job['id'],'final_sha256':actual,'final_bytes':path.stat().st_size,'final_job_snapshot_sha256':digest(job['snapshot']),'final_review':job['final_review'],
             'validation':{'dry_run':review['snapshot']['validation'],'official_platform':platform},'target':state['target'],'target_binding_sha256':state['target_binding_sha256'],
-            'metadata':review['snapshot']['request']['metadata'],'disclosures':state['disclosures'],'chunk_size':state['chunk_size'],'mock':state['mock']}
+            'metadata':metadata_for(payload,review).model_dump(mode='json'),'disclosures':state['disclosures'],'chunk_size':state['chunk_size'],'mock':state['mock']}
         if state['status']!='CONFIGURED' or any(snapshot[k]!=v for k,v in expected.items()):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_REVIEW_BINDING_CHANGED')
         return value,factory,path
     def approve(self,project,identity,payload,*,principal):
         authority=self.identity(principal)
         with self.store.transaction() as con:
-            row=self.row(con,project,identity);value,_,_=self.revalidate(con,row)
+            row=self.row(con,project,identity);value,factory,_=self.revalidate(con,row)
             if value['snapshot_sha256']!=payload.expected_snapshot_sha256:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_REVIEW_BINDING_CHANGED')
             if row['status']=='queued' and row['approval_id']:
                 self.valid_grant(con,row);return self.read(row)
             if row['status']!='awaiting_publish_approval':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_NOT_REVIEWABLE')
+            preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),value['snapshot']['final_bytes'],factory.profile,self.clock())
             instant=utc(self.clock());expires=min(instant+timedelta(seconds=payload.valid_for_seconds),datetime.fromisoformat(authority['expires_at']))
             if (expires-instant).total_seconds()<60:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_OWNER_TOKEN_EXPIRING')
             grant={'schema_version':'native-official-publish-approval-v1','publication_id':identity,'workspace_id':self.workspace,'project_id':project,
@@ -254,7 +281,7 @@ class NativeOfficialPublications:
             if prior is not None:
                 if prior['publication_id']!=identity or prior['request_sha256']!=fingerprint:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_IDEMPOTENCY_CONFLICT')
                 return {**{k:prior[k] for k in ('renewal_id','publication_id','workspace_id','project_id','prior_approval_id','approval_id','dispatch_version','snapshot_sha256','created_at')},'replayed':True,'external_calls':0,'automatic_renewal':False}
-            value,_,_=self.revalidate(con,row);dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
+            value,factory,_=self.revalidate(con,row);dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
             if (row['status'] not in ('queued','review_required') or value['snapshot_sha256']!=payload.expected_snapshot_sha256 or dispatch is None
                 or any(dispatch[k]!=row[k] for k in ('workspace_id','project_id','snapshot_sha256','approval_id'))
                 or dispatch['version']!=payload.expected_dispatch_version or dispatch['intent_id'] is not None or dispatch['total_bytes']!=value['snapshot']['final_bytes']
@@ -262,6 +289,7 @@ class NativeOfficialPublications:
                 or dispatch['phase'] not in ('prepared','uploading','reconciliation_required','uploaded')):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
             if dispatch['phase']=='prepared':
                 if dispatch['private_session_ref'] is not None or dispatch['remote_post_id'] is not None or dispatch['acknowledged_bytes']!=0 or con.execute("SELECT 1 FROM native_official_publish_intents WHERE publication_id=? AND operation='init'",(identity,)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
+                preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),value['snapshot']['final_bytes'],factory.profile,self.clock())
             else:
                 session=con.execute('SELECT * FROM native_official_publish_sessions WHERE session_ref=? AND publication_id=? AND workspace_id=? AND project_id=?',(dispatch['private_session_ref'],identity,self.workspace,project)).fetchone()
                 if (session is None or any(session[k]!=value['snapshot'][k] for k in ('target_binding_sha256','configuration_sha256')) or session['snapshot_sha256']!=value['snapshot_sha256']

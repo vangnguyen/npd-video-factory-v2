@@ -4,16 +4,18 @@ export function initializeNativeOfficialPublications({api,getState,root=document
   const node=(tag,text,id)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(id)n.id='native-official-publish-'+id;return n;};
   const button=(text,id,permission='manage')=>{const n=node('button',text,id);n.type='button';n.className='secondary';n.dataset.vfPermission=permission;return n;};
   const config=button('Đọc cấu hình','config'),sources=button('Đọc video và xác minh tài khoản','sources'),sourceMore=button('Đọc thêm nguồn','source-more'),
-    profile=node('select',null,'profile'),dryRun=node('select',null,'dry-run'),account=node('select',null,'account'),create=button('Chuẩn bị review xuất bản','create'),
+    profile=node('select',null,'profile'),dryRun=node('select',null,'dry-run'),account=node('select',null,'account'),scheduled=node('input',null,'scheduled'),create=button('Chuẩn bị review xuất bản','create'),
     history=button('Đọc lịch sử xuất bản','history-read','read'),more=button('Đọc trang tiếp','more','read'),read=button('Đọc trạng thái đã lưu','read','read'),
     ack=node('input',null,'ack'),ackLabel=node('label'),ackCaption=node('span'),approve=button('Duyệt xuất bản','approve'),renew=button('Duyệt tiếp phiên hiện tại','renew'),
     cancel=button('Hủy yêu cầu chưa gửi','cancel'),sendAck=node('input',null,'send-ack'),sendLabel=node('label'),sendCaption=node('span'),
     step=button('Gửi bước tiếp theo','step'),poll=button('Đọc xử lý tại nền tảng','poll'),status=node('p',null,'status'),list=node('div',null,'history'),detail=node('pre',null,'detail');
   ack.type='checkbox';sendAck.type='checkbox';ackLabel.append(ackCaption,ack);sendLabel.append(sendCaption,sendAck);
+  scheduled.type='datetime-local';scheduled.step='1';
   const labeled=(text,control)=>{const label=node('label',text);label.append(control);return label;};
   const hint=node('p','Tự động đăng đang tắt. Chủ không gian cần cài cấu hình và duyệt riêng. Mỗi lần gửi chỉ thực hiện một bước; đọc lịch sử để kiểm tra kết quả.');hint.className='hint';
   card.append(node('summary','Xuất bản qua API nền tảng'),hint,config,sources,sourceMore,labeled('Tài khoản xuất bản',profile),labeled('Video đã kiểm tra mô phỏng',dryRun),
-    labeled('Xác minh tài khoản hiện tại',account),create,history,list,more,read,status,ackLabel,approve,renew,cancel,sendLabel,step,poll,detail);
+    labeled('Xác minh tài khoản hiện tại',account),labeled('Giờ xuất bản (để trống để dùng metadata đã kiểm tra)',scheduled),
+    node('p','Giờ theo thiết bị: '+Intl.DateTimeFormat().resolvedOptions().timeZone+'. Lịch mới cần video có quyền riêng tư private.'),create,history,list,more,read,status,ackLabel,approve,renew,cancel,sendLabel,step,poll,detail);
   let generation=0,scope='',working=false,profiles=[],vault=null,dryRows=[],accountRows=[],sourceCursors=[null,null],rows=[],cursor=null,selected=null,dispatch=null;
   const keys=new Map(),sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),nopu=v=>typeof v==='string'&&/^nopu_[a-f0-9]{32}$/.test(v);
   const context=()=>{const s=getState();return JSON.stringify([s.workspace_id,s.project?.id,s.project?.revision,s.project?.archived,s.canManage,s.dirty,s.active]);};
@@ -25,6 +27,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
   function controls(){const s=getState(),blocked=working||s.busy,p=currentProfile(),d=currentDry(),a=currentAccount(),phase=dispatch?.dispatch?.phase;
     config.disabled=blocked||!s.canManage;sources.disabled=blocked||!s.canManage||!s.project;sourceMore.disabled=blocked||!s.canManage||!sourceCursors.some(Boolean)||dryRows.length>=500||accountRows.length>=500;
     for(const select of [profile,dryRun,account])select.disabled=blocked||!s.canManage;
+    scheduled.disabled=blocked||!s.canManage;
     create.disabled=blocked||!ready({...s,busy:false})||p?.status!=='CONFIGURED'||vault?.status!=='CONFIGURED'||!d||!a;
     history.disabled=blocked||!s.project;more.disabled=blocked||!cursor||rows.length>=500;read.disabled=blocked||!selected;
     const mutate=!blocked&&ready({...s,busy:false})&&current(s);
@@ -48,7 +51,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
       revision:selected.snapshot.project_revision,final_sha256:selected.snapshot.final_sha256,snapshot_sha256:selected.snapshot_sha256,
       status:selected.status,approval_id:selected.approval_id,dispatch,receipt:selected.receipt},null,2):'Đọc cấu hình và chọn video hiện tại để chuẩn bị review.';controls();}
   function sync(){const next=context();if(next!==scope){scope=next;generation++;profiles=[];vault=null;dryRows=[];accountRows=[];rows=[];selected=null;dispatch=null;cursor=null;sourceCursors=[null,null];
-      for(const select of [profile,dryRun,account]){select.replaceChildren();select.value='';}ack.checked=false;sendAck.checked=false;}render();}
+      for(const select of [profile,dryRun,account]){select.replaceChildren();select.value='';}scheduled.value='';ack.checked=false;sendAck.checked=false;}render();}
   function validateProfile(p){const s=getState(),t=p?.target;
     if(p?.schema_version!=='native-official-publishing-factory-v1'||t?.workspace_id!==s.workspace_id||t.platform!=='youtube'||t.provider_key!=='youtube-data-api-publishing'
       ||!/^ppf_[A-Za-z0-9_-]{4,60}$/.test(t.profile_id??'')||!Number.isInteger(t.profile_version)||t.profile_version<1||!sha(t.credential_binding_sha256)
@@ -107,6 +110,9 @@ export function initializeNativeOfficialPublications({api,getState,root=document
     if(!['create','approve','renew','cancel','step','poll'].includes(action))throw new Error('Thao tác xuất bản không hợp lệ.');
     if(action==='create'){const p=currentProfile(),d=currentDry(),a=currentAccount();if(p?.status!=='CONFIGURED'||vault?.status!=='CONFIGURED'||!d||!a)throw new Error('Chọn cấu hình, video đã kiểm tra và xác minh tài khoản hiện tại.');
       body={revision:s.project.revision,dry_run_publication_id:d.publication_id,expected_dry_run_snapshot_sha256:d.snapshot_sha256,account_check_id:a.check_id,profile_id:p.target.profile_id,expected_configuration_sha256:p.configuration_sha256};
+      if(scheduled.value){const at=new Date(scheduled.value);
+        if(!/^\d{4}-\d\d-\d\dT\d\d:\d\d(?::\d\d)?$/.test(scheduled.value)||!Number.isFinite(at.getTime())||at.getTime()-Date.now()<60000||d.snapshot.request.metadata.privacy!=='private')throw new Error('Chọn giờ tương lai còn ít nhất một phút và metadata private.');
+        body.metadata={...d.snapshot.request.metadata,scheduled_at:at.toISOString()};}
     }else{if(!selected||!current(s))throw new Error('Chọn yêu cầu đúng phiên bản hiện tại.');path+='/'+identity+'/'+action;body={expected_snapshot_sha256:selected.snapshot_sha256};
       if(action==='approve'||action==='renew'){if(!ack.checked)throw new Error('Xác nhận duyệt riêng yêu cầu này.');body={...body,acknowledged_official_publication:true,valid_for_seconds:900};}
       if(action==='renew'||action==='step'||action==='poll'){if(!dispatch?.dispatch)throw new Error('Đọc trạng thái hiện tại trước.');body.expected_dispatch_version=dispatch.dispatch.version;}

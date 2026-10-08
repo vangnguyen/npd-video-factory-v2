@@ -3,7 +3,7 @@ from typing import Literal
 from pydantic import Field,StrictBool,StrictInt,field_validator,model_validator
 from . import ingestion
 from app.models import StrictModel
-from app.publishing_models import PublishingTargetBinding
+from app.publishing_models import PublishingTargetBinding,PublicationMetadata
 from app.youtube_upload import UNIT,MAX_BODY
 
 class Profile(StrictModel):
@@ -32,6 +32,16 @@ class Create(StrictModel):
     profile_id:str=Field(pattern=r'^ppf_[A-Za-z0-9_-]{4,60}$')
     expected_configuration_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
     request_key:str=Field(min_length=16,max_length=200,pattern=r'^[A-Za-z0-9_-]+$')
+    metadata:PublicationMetadata|None=None
+    @field_validator('metadata',mode='before')
+    @classmethod
+    def explicit_metadata(cls,value):
+        if isinstance(value,PublicationMetadata):value=value.model_dump(mode='python',warnings=False)
+        if value is not None:
+            if not isinstance(value,dict):raise ValueError('Typed publishing metadata required')
+            instant=value.get('scheduled_at')
+            if isinstance(instant,(bool,int,float)):raise ValueError('Explicit timezone-aware schedule required')
+        return value
 
 class Approve(StrictModel):
     expected_snapshot_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')

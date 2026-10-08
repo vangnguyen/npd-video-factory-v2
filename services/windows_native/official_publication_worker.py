@@ -8,7 +8,7 @@ from dataclasses import replace
 from contextlib import suppress
 from .contracts import WorkflowError,digest,file_sha
 from .costs import CostLedger
-from .official_publications import NativeOfficialPublications
+from .official_publications import NativeOfficialPublications,preflight
 from .official_publication_sessions import SessionVault
 from app.publishing_credentials import PublishingCredentialError,youtube_account_request,confirm_youtube_account
 from app.publishing_models import PublicationMetadata
@@ -38,6 +38,8 @@ class NativeOfficialPublicationWorker:
             if dispatch['version']!=version:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_STALE')
             if ticket is not None:self.journal.ticket(con,ticket)
             self.journal.eligible(con,project,identity,value)
+            if dispatch['phase'] in ('prepared','init_intent'):
+                preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),dispatch['total_bytes'],factory.profile,self.journal.clock())
             return value,factory,path,dispatch
     def send(self,project,identity,version,factory,credential,request,operation,*,ticket=None):
         value,current,_,_=self.context(project,identity,version,ticket)

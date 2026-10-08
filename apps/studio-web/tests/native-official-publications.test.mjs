@@ -8,7 +8,7 @@ const configuration=()=>({schema_version:'native-official-publishing-factories-v
   session_vault:{schema_version:'native-official-session-vault-v1',workspace_id:workspace,status:'CONFIGURED',session_uri_returned:false,oauth_token_stored:false}});
 const dryRow=()=>({schema_version:'native-publication-v1',workspace_id:workspace,project_id:id,publication_id:dry,status:'dry_run_succeeded',snapshot_sha256:sha,request_fingerprint:sha,mock:true,external_action:false,publish_enabled:false,
   receipt:{mode:'dry_run',mock:true,external_action:false,provider_key:'mock-publishing',request_fingerprint:sha,remote_post_id:null,remote_url:null},
-  snapshot:{request:{revision:1,platform:'youtube',mode:'dry_run',metadata:{title:'<img src=x onerror=unsafe()> fixture'}}}});
+  snapshot:{request:{revision:1,platform:'youtube',mode:'dry_run',metadata:{title:'<img src=x onerror=unsafe()> fixture',privacy:'private'}}}});
 const accountRow=()=>({schema_version:'native-official-account-check-v1',workspace_id:workspace,project_id:id,check_id:check,status:'succeeded',snapshot_sha256:sha,token_returned:false,publishing_enabled:false,
   snapshot:{project_revision:1,mock:true,target:target()},result:{account_match:true,read_only:true,mock:true,external_call:false}});
 const row=(status='awaiting_publish_approval')=>({schema_version:'native-official-publication-v1',publication_id:pub,workspace_id:workspace,project_id:id,snapshot_sha256:sha,request_fingerprint:sha,status,approval_id:null,
@@ -74,3 +74,12 @@ test('confirmed mock receipt keeps real published false and reads do not perform
   receipt:{mode:'live',platform:'youtube',provider_key:'youtube-data-api-publishing',request_fingerprint:sha,mock:true,external_action:false,remote_post_id:'FIXTURE0001',remote_url:null}};
   h.current(r);await h.controller.readHistory();await h.controller.readState();assert.match(h.get('status').textContent,/chưa được đăng thật/);assert.equal(h.get('step').disabled,true);assert.equal(h.get('approve').disabled,true);
   assert.ok(h.calls.every(([,body])=>body===undefined));assert.equal(h.get('history').children[0].innerHTML,undefined);});
+test('explicit local schedule normalizes to UTC and leaves ordinary request fields unchanged',async()=>{const h=harness();await h.controller.readConfig();await h.controller.readSources();
+  const date=new Date(Date.now()+3600000),pad=v=>String(v).padStart(2,'0'),local=`${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  h.get('scheduled').value=local;await h.controller.execute('create');const body=h.calls.at(-1)[1];assert.equal(body.metadata.scheduled_at,new Date(local).toISOString());assert.equal(body.metadata.privacy,'private');assert.equal(body.dry_run_publication_id,dry);
+  assert.equal(h.calls.filter(([,body])=>body).length,1);assert.equal(h.get('step').disabled,true);});
+test('past malformed or nonprivate schedules do not create requests and scope resets draft time',async()=>{const h=harness();await h.controller.readConfig();await h.controller.readSources();const count=h.calls.length;
+  for(const value of ['2020-01-01T12:00:00','not-a-date','2030-01-01T12:00:00Z']){h.get('scheduled').value=value;await h.controller.execute('create');assert.equal(h.calls.length,count);}
+  h.handler(async(path,body)=>path.includes('/publications?')?{schema_version:'native-publication-page-v1',workspace_id:workspace,project_id:id,items:[{...dryRow(),snapshot:{request:{...dryRow().snapshot.request,metadata:{...dryRow().snapshot.request.metadata,privacy:'public'}}}}],next_cursor:null}:h.defaultHandler(path,body));
+  await h.controller.readSources();h.get('scheduled').value='2030-01-01T12:00:00';const before=h.calls.length;await h.controller.execute('create');assert.equal(h.calls.length,before);
+  h.state.project.revision=2;h.controller.sync();assert.equal(h.get('scheduled').value,'');assert.equal(h.get('create').disabled,true);});
