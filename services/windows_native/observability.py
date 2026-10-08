@@ -14,8 +14,10 @@ import time
 
 LOGGER = logging.getLogger('video_factory.native')
 EVENTS = {'http_request', 'worker_step', 'worker_failed', 'intelligence_completed', 'intelligence_failed'}
-STAGES = {'http', 'starting', 'content', 'transcription', 'media_analysis', 'tts', 'render', 'worker', 'research', 'ideas', 'generation'}
-PROVIDERS = {'assemblyai', 'openai', 'local_vieneu', 'ffmpeg', 'local_io', 'comfyui'}
+STAGES = {'http', 'starting', 'content', 'transcription', 'media_analysis', 'tts', 'render', 'worker', 'research', 'ideas', 'generation',
+          'analytics','publishing','official_analytics_read','official_account_read','official_publish_queue'}
+PROVIDERS = {'assemblyai', 'openai', 'local_vieneu', 'ffmpeg', 'local_io', 'comfyui',
+             'youtube-analytics-api','youtube-data-api-publishing','tiktok-content-posting-api','mock-publishing'}
 
 
 def configure_logging():
@@ -29,7 +31,7 @@ def configure_logging():
 
 
 def identifier(value):
-    return value if isinstance(value, str) and re.fullmatch('[a-f0-9]{32}', value) else None
+    return value if isinstance(value, str) and re.fullmatch(r'(?:noas_|nack_|nopq_|nasy_)?[a-f0-9]{32}', value) else None
 
 
 def route_context(path):

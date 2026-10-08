@@ -1,0 +1,165 @@
+{
+  "schema": "native-official-analytics-controls-evidence-v1",
+  "parent_head": "36a07fc8d6702edbdfef11e8775d44f6707d6af4",
+  "source_sha256": {
+    "services/windows_native/server.py": "da71e1db6fcd81f670604e94cf3990fdbe46effcb016bf3ce62421c3d9ee17fd",
+    "services/windows_native/access.py": "4d3ad841abd7bada4d32af5e4bb301c3b7b14c1baaa0ec50fb37925c13c76ffd",
+    "services/windows_native/observability.py": "df37d852fea8a9a87aa1913cd67e3f3b56698fd5a6e6d184d4a396c315648095",
+    "services/windows_native/official_analytics_routes.py": "e7d0b1739191767ece86671cf6ab363110e5ac45f3015aa2105f1cd878f6bde0",
+    "services/windows_native/tests/test_official_analytics_http.py": "b11637c91ac7ddaded54accbed1c1059649ddc9843cbb4ae9484724764079bb0",
+    "services/windows_native/tests/test_observability.py": "750e164f1c295a44ed50b72322bdcbeec005b190494b27dbabc69c74d576b53a",
+    "apps/studio-web/native.html": "cf14628154fdbe984e33a4e07c669ccc100094ec29189de7984b05ab39c1b756",
+    "apps/studio-web/native.mjs": "157a7c119d1b4350de976e0df71a19b70763d8339862ab015dd4f3816694015c",
+    "apps/studio-web/shot-studio.mjs": "15e6389537854474a237615b862abde118874673f25ca5a37319d294116c3a77",
+    "apps/studio-web/native-official-publications.mjs": "ec785039984c18680d9f880728342b43b01e932af680963a039efacb1d8e5720",
+    "apps/studio-web/native-official-analytics.mjs": "c8d1fb1c9669e54b72ed49f50f4e9ded6dde0182bc038e003cbe88c601b481ae",
+    "apps/studio-web/native-analytics.mjs": "2c62f23bbd2db9847989d3eecb2cc173c0fc8ade5dc5fca77e4289e725537fad",
+    "apps/studio-web/tests/native-official-analytics.test.mjs": "60ec0c8351fbb551c90ea179028caa599a62375c4fb3a82cf262bd4aee360ba7",
+    "scripts/north_star_native_official_analytics_controls.py": "36a2e24d029f42f97481e7194852a837d2962ea759b4edf552f83a84a8ce36f5",
+    "docs/NATIVE_OFFICIAL_ANALYTICS_CONTROLS.md": "3dce88bd13a35a5572d86c54fc3ba63917b8d354e61e26d6fc689279787f4c66",
+    "docs/NATIVE_OFFICIAL_ANALYTICS_KERNEL.md": "d7cf64ccef7c4efba40006980bae27d56e89135a1f0c914d8c49826d4ffd1013"
+  },
+  "tests": {
+    "full_current_native_passed": 962,
+    "native_seconds": 938.529,
+    "full_current_studio_passed": 319,
+    "studio_ms": 1231.7905,
+    "new_native_cases": 13,
+    "new_native_http_cases": 11,
+    "new_observer_cases": 2,
+    "new_studio_dom_cases": 12,
+    "initial_studio_dom_12_passed": true,
+    "prior_unchanged_linux_api_2659_passed_11_skipped": true
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-analytics-controls-flow-n1",
+    "evidence_sha256": "72a7c8ce9483d874bc4e584b7210c33e606d115418466aee83c90886b8f42b5a",
+    "exports": {
+      "backup.json": {
+        "sha256": "b2c48d0533c27771171bb9dcc9e08e312c4bdf59f635ae01745c0a0462eaba70",
+        "bytes": 3649
+      },
+      "bounded-history.json": {
+        "sha256": "41b8bc423564019c17a8febdb0447432dda166fbf25230d1f5d6673c78f30962",
+        "bytes": 27730
+      },
+      "completed-review.json": {
+        "sha256": "25c7b9ac097e5e000f40a8fca000dabd74677a25e7470730f62a21ca47977ef5",
+        "bytes": 13989
+      },
+      "cost-summary.json": {
+        "sha256": "f4732270f3fba529af3d8d8e4837e229f6e935d39a6905c95a266fb147a186c4",
+        "bytes": 21569
+      },
+      "evidence.json": {
+        "sha256": "72a7c8ce9483d874bc4e584b7210c33e606d115418466aee83c90886b8f42b5a",
+        "bytes": 6235
+      },
+      "expected-analytics-history.json": {
+        "sha256": "89c3191bf67bdf194dbf673433113980a174de357f7b0b21f81182630b1028e9",
+        "bytes": 26254
+      },
+      "expected-jobs.json": {
+        "sha256": "a4f40d642dcf45f0db6938d6d5ee704613106cd6195a0fed433409b80d3b3c27",
+        "bytes": 2965
+      },
+      "expected-journals.json": {
+        "sha256": "1ba4b3d4325a7410f1fc131baacbc218757c1d804717ae792ddb1350274ccde9",
+        "bytes": 84142
+      },
+      "expected-project.json": {
+        "sha256": "ce0c9516b39723644c0a15632560b0d2de39cd97af9b87b62e78b2515df10a48",
+        "bytes": 5207
+      },
+      "explicit-runtime-status.json": {
+        "sha256": "6e8584eebd8d63a0654d3637be94cb1bac5bbf34e00e8f02f25a090b286c2fe4",
+        "bytes": 1515
+      },
+      "first-known-backoff.json": {
+        "sha256": "87ebb97ef878d2fb3d574c712a9f1d8f802db23fda30d1a132e2967309ea7d0f",
+        "bytes": 5698
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-read-registry-replay.json": {
+        "sha256": "5d68cbb0970156ce0751bedbd3d97e0f04ac874be71c8c611cc23c21d82635d9",
+        "bytes": 99
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "edc81de61a6b548f3b546a2c0151ef9ef9563f4fa946c342dcd846d02cc82ebf",
+        "bytes": 1972
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "a3f52e885ebb6bbce7309364dd9f5354d110ab4ca15b4aa265652d092e3f000e",
+        "bytes": 1470
+      },
+      "new-process-replay.json": {
+        "sha256": "c1c04f392eef0a1292ed075b7b21a806464d8cc84ce648c9965aeb1d41e8a219",
+        "bytes": 285
+      },
+      "owned-official-analytics-controls.zip": {
+        "sha256": "4c8ca9b7a387c5c268161e175c5867adce55160b06ef5680782d4408bedb5fcb",
+        "bytes": 1381866
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "bd7065d218e1d887d298b9dac125d74495febe3b2254d75b6312d266da4ee0bb",
+        "bytes": 258
+      },
+      "recovery-restore.json": {
+        "sha256": "47f72cc9e4c9d9d77da7cf23437cad49818779d1816bf129b12391f79bd8c0b2",
+        "bytes": 4062
+      },
+      "restored-in-process.json": {
+        "sha256": "c1c04f392eef0a1292ed075b7b21a806464d8cc84ce648c9965aeb1d41e8a219",
+        "bytes": 285
+      },
+      "sanitized-operation-logs.json": {
+        "sha256": "67cf89bd4ad608508981785ebdc19a1c3230e82defc576d413cada04d71bbed8",
+        "bytes": 9902
+      },
+      "served-studio-files.json": {
+        "sha256": "aa104ee644810a3d6444349f9f63752f1030482af2e63f76aa14554c939703f0",
+        "bytes": 804
+      },
+      "server-receipt-binding.json": {
+        "sha256": "dc7738f777ed667000d4684a07c72c605838a55385302cf17a4c0ff28b722f4d",
+        "bytes": 1051
+      },
+      "signed-http-summary.json": {
+        "sha256": "9e220384e198bc7a6d322b6af084bfc386ddd4a5c2bc81b017e3f438ec4ab497",
+        "bytes": 7611
+      }
+    },
+    "backup_sha256": "4c8ca9b7a387c5c268161e175c5867adce55160b06ef5680782d4408bedb5fcb",
+    "backup_bytes": 1381866
+  },
+  "logs": {
+    "native-official-analytics-controls-native-full-n1.log": "0373974bf81d608a70625fb14cecf87d15e6bfc2cafecf0173a6463447c4bd20",
+    "native-official-analytics-controls-studio-full-n1.log": "a20df491da3a0629315970f174ca015bbf516c258959cec79bf68f985c27ecdd"
+  },
+  "independent_default_off_protected_read_registry_and_human_gate_before_socket": true,
+  "signed_owner_csrf_before_body_and_no_provider_call_in_create_or_completed_exact_key_replay": true,
+  "server_receipt_digest_binding_no_client_json_hash_inference": true,
+  "runner_finite_attempt_current_source_identity_account_deadline_and_backoff": true,
+  "nullable_qualified_mock_results_no_audience_claim_automatic_read_or_fixture_fallback": true,
+  "scoped_studio_late_response_opaque_cursor_unknown_key_and_historical_cancel": true,
+  "all_six_studio_files_served_twenty_journals_three_histories_and_prior_registry_restore_exact": true,
+  "signed_http_requests": 22,
+  "mock_analytics_read_requests": 7,
+  "mock_publication_wire_requests": 10,
+  "mock_initial_account_lookup_requests": 1,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_oauth_provider_and_clock_fixtures": true,
+  "accepted_runtime_publishing_or_analytics_enabled": false,
+  "real_provider_browser_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

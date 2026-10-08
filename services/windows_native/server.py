@@ -36,6 +36,7 @@ class Runner:
         self.official_accounts = None
         self.official_publish_worker = None
         self.official_publish_queue = None
+        self.official_analytics = None
         self.vision = None
         self.observer = observer or Observer()
         self.stop = threading.Event()
@@ -47,6 +48,7 @@ class Runner:
         if self.official_accounts is not None:self.official_accounts.recover()
         if self.official_publish_worker is not None:self.official_publish_worker.recover()
         if self.official_publish_queue is not None:self.official_publish_queue.recover()
+        if self.official_analytics is not None:self.official_analytics.recover()
         self.thread.start()
 
     def run_one(self):
@@ -75,6 +77,14 @@ class Runner:
                         provider=value['snapshot']['target']['provider_key'],duration=time.monotonic()-started)
                     return True
             except WorkflowError:self.observer.emit('worker_failed',stage='official_account_read',duration=time.monotonic()-started)
+        if self.official_analytics is not None:
+            started=time.monotonic()
+            try:
+                value=self.official_analytics.process()
+                if value is not None:
+                    self.observer.emit('worker_step',job_id=value['sync_id'],project_id=value['project_id'],stage='official_analytics_read',provider='youtube-analytics-api',duration=time.monotonic()-started)
+                    return True
+            except WorkflowError:self.observer.emit('worker_failed',stage='official_analytics_read',duration=time.monotonic()-started)
         if self.official_publish_queue is not None:
             started=time.monotonic()
             try:
@@ -157,8 +167,17 @@ class LocalServer(ThreadingHTTPServer):
         generation_registry=None,generation_api_enabled=False,generation_factory=None,
         trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None,
         official_account_registry=None,official_account_read_enabled=False,official_account_factories=None,
-        official_publish_registry=None,official_publish_enabled=False,official_publish_factories=None,official_publish_session_directory=None,official_publish_queue_enabled=False):
+        official_publish_registry=None,official_publish_enabled=False,official_publish_factories=None,official_publish_session_directory=None,official_publish_queue_enabled=False,
+        official_analytics_enabled=False):
         config.validate_data_root()
+        if type(official_analytics_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_CONFIGURATION_INVALID',400)
+        if official_analytics_enabled:
+            if access is None or not (official_account_registry is not None and official_account_read_enabled or official_account_factories is not None):
+                raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_PROTECTED_READ_RUNTIME_AND_AUTH_REQUIRED',400)
+            if official_account_factories is not None:
+                from .official_account_registry import AccountFactory
+                if (not isinstance(official_account_factories,dict) or any(type(f) is not AccountFactory or not f.client.mock for f in official_account_factories.values())):
+                    raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_MOCK_INJECTION_REQUIRED',400)
         if type(official_publish_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
         if type(official_publish_queue_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_CONFIGURATION_INVALID',400)
         if official_publish_queue_enabled and (access is None or official_publish_session_directory is None or not (official_publish_registry is not None and official_publish_enabled or official_publish_factories is not None)):
@@ -190,6 +209,8 @@ class LocalServer(ThreadingHTTPServer):
             from .backup import guard
             if guard(config.data_root / '.vf-auth-workspace.json').exists():
                 raise WorkflowError('NATIVE_AUTH_REGISTRY_REQUIRED_FOR_BOUND_STATE', 503)
+        from .official_account_registry import load as load_accounts
+        loaded_accounts=load_accounts(official_account_registry,config.data_root,access.workspace_id if access is not None else 'wsp_native_local',owner_read_enabled=official_account_read_enabled) if official_account_registry is not None else official_account_factories
         super().__init__(("127.0.0.1", port), Handler)
         self.config, self.store = config, Store(config.data_root)
         self.access = access
@@ -214,8 +235,7 @@ class LocalServer(ThreadingHTTPServer):
         self.analytics_refresh=self.analytics.refresh
         self.runner.analytics=self.analytics
         from .official_accounts import NativeOfficialAccounts
-        from .official_account_registry import load as load_accounts
-        accounts=load_accounts(official_account_registry,self.store.root,self.publications.workspace_id,owner_read_enabled=official_account_read_enabled) if official_account_registry is not None else official_account_factories
+        accounts=loaded_accounts
         if accounts and access is None and any(f.client.wire.network_enabled for f in accounts.values()):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_HUMAN_AUTH_REQUIRED',400)
         self.official_accounts=NativeOfficialAccounts(self.store,workspace_id=self.publications.workspace_id,factories=accounts)
         self.runner.official_accounts=self.official_accounts
@@ -232,6 +252,9 @@ class LocalServer(ThreadingHTTPServer):
         from .official_publication_queue import NativeOfficialPublicationQueue
         self.official_publish_queue=NativeOfficialPublicationQueue(self.official_publish_worker,enabled=official_publish_queue_enabled)
         self.runner.official_publish_queue=self.official_publish_queue
+        from .official_analytics import NativeOfficialAnalytics
+        self.official_analytics=NativeOfficialAnalytics(self.official_publications,enabled=official_analytics_enabled)
+        self.runner.official_analytics=self.official_analytics
         from .trend_radar import NativeTrendRadar
         self.trends=NativeTrendRadar(self.intelligence,self.analytics,workspace=self.publications.workspace_id,
             providers=trend_providers,feed_registry=trend_feed_registry,owner_enabled=trend_feed_enabled,observer=self.observer)
@@ -453,6 +476,9 @@ class Handler(BaseHTTPRequestHandler):
         if path=='/api/connections/official-accounts' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/account-checks(?:/nack_[a-f0-9]{32})?',path):
             from .official_account_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if path=='/api/connections/official-analytics' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics(?:/noas_[a-f0-9]{32}|/source/nopu_[a-f0-9]{32})?',path):
+            from .official_analytics_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path == '/healthz':
             return self.reply({'schema': 'vf-native-health-v1', 'status': 'alive', 'scope': 'http_process'})
         if path == '/readyz':
@@ -638,6 +664,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-official-accounts.mjs'] = 'native-official-accounts.mjs'
         static['/native-official-publications.mjs'] = 'native-official-publications.mjs'
         static['/native-official-publication-queue.mjs'] = 'native-official-publication-queue.mjs'
+        static['/native-official-analytics.mjs'] = 'native-official-analytics.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
         static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',
@@ -734,6 +761,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-accounts/npac_[a-f0-9]{32}/verify',self.path):
             from .official_account_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=20000)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics(?:/noas_[a-f0-9]{32}/cancel)?',self.path):
+            from .official_analytics_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications/nopu_[a-f0-9]{32}/queue(?:/nopq_[a-f0-9]{32}/cancel)?',self.path):
             from .official_publication_queue_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
@@ -1069,6 +1099,7 @@ def main():
     parser.add_argument('--enable-generation-api',action='store_true')
     parser.add_argument('--official-account-registry',type=Path)
     parser.add_argument('--enable-official-account-reads',action='store_true')
+    parser.add_argument('--enable-official-analytics',action='store_true')
     parser.add_argument('--official-publish-registry',type=Path)
     parser.add_argument('--official-publish-session-directory',type=Path)
     parser.add_argument('--enable-official-publishing',action='store_true')
@@ -1097,6 +1128,7 @@ def main():
             stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api,owner_rights_overrides=args.enable_owner_rights_overrides,
             generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api,
             official_account_registry=args.official_account_registry,official_account_read_enabled=args.enable_official_account_reads,
+            official_analytics_enabled=args.enable_official_analytics,
             official_publish_registry=args.official_publish_registry,official_publish_session_directory=args.official_publish_session_directory,official_publish_enabled=args.enable_official_publishing,official_publish_queue_enabled=args.enable_official_publish_queue,
             trend_feed_registry=args.trend_feed_registry,trend_feed_enabled=args.enable_trend_feeds) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)

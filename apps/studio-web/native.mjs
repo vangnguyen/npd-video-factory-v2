@@ -140,7 +140,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,officialPublicationUI=null,officialQueueUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -228,6 +228,7 @@ if (typeof document !== "undefined") {
     officialAccountsUI?.controls();
     officialPublicationUI?.controls();
     officialQueueUI?.controls();
+    officialAnalyticsUI?.controls();
     channelUI?.controls();
   }
   function markDirty(part) {dirty=true;dirtyPart=part;$("review-check").checked=false;controls();}
@@ -273,6 +274,7 @@ if (typeof document !== "undefined") {
     officialAccountsUI?.sync();
     officialPublicationUI?.sync();
     officialQueueUI?.sync();
+    officialAnalyticsUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
     refreshCosts();
     const origin=project?.document.content_intelligence;
@@ -439,9 +441,12 @@ if (typeof document !== "undefined") {
     if(session.capabilities?.native_official_publication_review===true){
       const official=await import('./native-official-publications.mjs');$('native-official-publications-card').hidden=false;
       officialPublicationUI=official.initializeNativeOfficialPublications({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),
-        workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>officialQueueUI?.sync()});
+        workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>{officialQueueUI?.sync();officialAnalyticsUI?.sync();}});
       const queue=await import('./native-official-publication-queue.mjs');$('native-official-publication-queue-card').hidden=false;
       officialQueueUI=queue.initializeNativeOfficialPublicationQueue({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),
+        workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialPublicationUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();}});
+      const officialAnalytics=await import('./native-official-analytics.mjs');$('native-official-analytics-card').hidden=false;
+      officialAnalyticsUI=officialAnalytics.initializeNativeOfficialAnalytics({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialPublicationUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();}});
     }
     if(session.access?.mode==='registry'){

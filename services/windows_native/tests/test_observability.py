@@ -46,6 +46,21 @@ class ObserverTests(unittest.TestCase):
             raise OSError('synthetic sink failure')
         Observer(failed).emit('worker_step', duration=.2)
 
+    def test_official_worker_ids_stages_and_providers_are_fixed_and_content_free(self):
+        records=[];observer=Observer(records.append)
+        for prefix,stage,provider in [('noas_','official_analytics_read','youtube-analytics-api'),
+            ('nack_','official_account_read','youtube-data-api-publishing'),('nopq_','official_publish_queue','youtube-data-api-publishing')]:
+            observer.emit('worker_step',job_id=prefix+'a'*32,project_id='b'*32,stage=stage,provider=provider,duration=.1)
+            value=json.loads(records[-1]);self.assertEqual(value['job_id'],prefix+'a'*32);self.assertEqual(value['stage'],stage);self.assertEqual(value['provider'],provider)
+        self.assertNotIn('token',json.dumps(records));self.assertNotIn('upload_id',json.dumps(records))
+
+    def test_official_prefix_does_not_admit_arbitrary_private_identifiers(self):
+        records=[];observer=Observer(records.append)
+        for identity in ('noas_Bearer-private-token','nack_'+'a'*33,'nopq_'+('a'*32)+'/private','untrusted_'+'a'*32):
+            observer.emit('worker_step',job_id=identity,provider='private-provider',stage='private-stage')
+            value=json.loads(records[-1]);self.assertIsNone(value['job_id']);self.assertIsNone(value['provider']);self.assertEqual(value['stage'],'worker')
+        self.assertNotIn('private',json.dumps(records))
+
     def test_cli_logging_does_not_enable_sdk_or_global_logging(self):
         logger = logging.getLogger('video_factory.native')
         prior = (list(logger.handlers), logger.level, logger.propagate)
