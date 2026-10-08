@@ -1,0 +1,173 @@
+{
+  "schema": "native-official-publish-controls-evidence-v1",
+  "parent_head": "8d04e89db08ba0a1532641308a4107736afc4979",
+  "source_sha256": {
+    "services/windows_native/server.py": "0c9bd5205eefa6ff631da0167f32db5110356221f5032a4b48b274f99b0f6e70",
+    "services/windows_native/access.py": "1d77c959b32cbc3690b1a5a8ea5c2e71b5c1f8b244dea80de0169e057b07f5b0",
+    "services/windows_native/official_publication_models.py": "a1e83ef16aed5972cca0b2b4588692a00e8980221f7629f7c99f4626488e0ae1",
+    "services/windows_native/official_publications.py": "0445434ef3f22c8571e8293d0e4738a335186abbb77233a60d5d755dbefa5348",
+    "services/windows_native/official_publication_routes.py": "9822d1ee18c759b0cac1b316b3134472c03981c26cb1ec450a6bee0aa64f0cfc",
+    "services/windows_native/tests/test_official_publications_http.py": "262e1d29271369d009c3754b2e7a0591136e7b4379c5ca1e49e058095436dd62",
+    "services/windows_native/tests/test_phase10_http.py": "225176c0115abbea649415a612b65cfd942e0b528a5436e7996739dc4ec3da0a",
+    "apps/studio-web/native.html": "c3727a534e93c94e9e766501602a6d5606ef65eed7c038560429af278271e1dd",
+    "apps/studio-web/native.mjs": "69bdad29ecfd116a2c704fbe210eaec8880332f91e39b97da3d71ac51698b4ab",
+    "apps/studio-web/shot-studio.mjs": "2958a90bfb7e235bbdeb9f06ee6105ad01b2106be563f06d592965527527e198",
+    "apps/studio-web/native-official-publications.mjs": "96304e4edbfeba2ff51b33e5bd07511e638d200635fcdad0a7bd5d1baf64cac8",
+    "apps/studio-web/tests/native-official-publications.test.mjs": "630b20550c4d9f0e34741cbb226cee91d63bcd759d79f79807e6223efa6c51b4",
+    "scripts/north_star_native_official_publish_controls.py": "e7fa23f09096bc49a6ef331e1d96986c9154fe4b73942754b0c35ba1d3f40484",
+    "docs/NATIVE_OFFICIAL_PUBLISH_CONTROLS.md": "f8182cc8241e0b0648bbfa2ff3bd24e2a6d1a7ca1554cbe6e2f0eaa145cfb999"
+  },
+  "tests": {
+    "current_full_native_passed": 846,
+    "seconds": 672.15,
+    "current_full_studio_passed": 295,
+    "new_signed_http_cases": 7,
+    "new_dom_cases": 10,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-publish-controls-flow-n2",
+    "evidence_sha256": "18f209f0f15245f7eb65b1304e321d435a2c7169949327faecdcc7042ea45638",
+    "exports": {
+      "backup.json": {
+        "sha256": "55370fb8391567dfe318ba5cad7e72a48b8d0fdd92c3425e08365a3c23191522",
+        "bytes": 3251
+      },
+      "completed-review.json": {
+        "sha256": "a2906c2e970033b6b0404f6adefe0a5e187b38abb92f804e20b5e16efd14031f",
+        "bytes": 13890
+      },
+      "cost-summary.json": {
+        "sha256": "753cf5880b0ab5edb398eed07fe34e81af9b88f4135575431c55c19012e0d6fd",
+        "bytes": 15650
+      },
+      "default-disabled-config.json": {
+        "sha256": "81d6a81cac7505b3de0f69218e43734dcbcc2144effd68534f759f4a951e4b64",
+        "bytes": 1235
+      },
+      "expected-journals.json": {
+        "sha256": "563c01b212b1e74b60226f539dec8536c393e05f7c6cf2378b2b4f402ff1c539",
+        "bytes": 44619
+      },
+      "expected-project.json": {
+        "sha256": "15032123297652c59f2e7fd406d532940e23ac227d0479b7de7c2559781bc010",
+        "bytes": 5207
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "http-summary.json": {
+        "sha256": "5217458493b98281eb3d82f69ee2690535c6417bbfcc66ee2bab6c31e2ae34bf",
+        "bytes": 11137
+      },
+      "initial-consent.json": {
+        "sha256": "7948d74e8eb164a638ba77ae5989e632c6a7fd97afe6a702faaff3c4b616b4ab",
+        "bytes": 13441
+      },
+      "mock-wire-summary.json": {
+        "sha256": "e8cadfa0522299264cc91a2ae7305a9c96c6e52eb71dc243cf3173c9bad81f96",
+        "bytes": 2363
+      },
+      "owned-official-publish-controls.zip": {
+        "sha256": "a4ce4d841e9a80aa601a8c4ca44cd1f9f66f07facd397a0ae3ab97abe67c07f9",
+        "bytes": 1270960
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "fb0677dbc2086a390fab0482a866e0ce2e02989664db539f6934eadbac99cd7a",
+        "bytes": 258
+      },
+      "protected-use-summary.json": {
+        "sha256": "318eed44a1bfc19b059edce5b1caca31152afb9960444e349a9c0aa0731bc2ed",
+        "bytes": 69
+      },
+      "public-config.json": {
+        "sha256": "c3de2287990f6e25c21cbae21c5a46bf50ba2371bebf6dae2bce2082bc18c13b",
+        "bytes": 1946
+      },
+      "recovery-restore.json": {
+        "sha256": "a1df5ac3f90599a9f12d975c01322360546fdb00cb19033acba2d5a3255e1612",
+        "bytes": 3662
+      },
+      "renewed-consent.json": {
+        "sha256": "3a31ac611eac35b8927c0b5b0fb0f8eaf25c83a3122c8a2004c8246aec8b7d3e",
+        "bytes": 14070
+      },
+      "restored-in-process.json": {
+        "sha256": "b92c1836100dcea4bf2279f411a81da7c266184656d963ba2f517ee4100a5bca",
+        "bytes": 258
+      },
+      "separate-unsent-review.json": {
+        "sha256": "695872ad1e79ba6e790be8590420b1a99dad472af692510df107104d7ae22429",
+        "bytes": 13455
+      },
+      "source-account-check-page.json": {
+        "sha256": "ebe56a0518aa7af92fcaabc2b411ebf1fdfe4250d78413c16a209d1d8db8228a",
+        "bytes": 3648
+      },
+      "source-dry-run-page.json": {
+        "sha256": "0e91a2ef4293b3d237759ad0b65a2941adf56129e972c32c3f83efc981066722",
+        "bytes": 9884
+      },
+      "terminal-dispatch.json": {
+        "sha256": "a1841511ecdc570f47494b566f6c547ab4f09408931eddfa5c27a46b52230e74",
+        "bytes": 1243
+      },
+      "terminal-history.json": {
+        "sha256": "208202e29042920bd74fe9bff2485dfbb3144e15f1eaf2053207dff2535cb6ab",
+        "bytes": 15830
+      },
+      "unsent-history.json": {
+        "sha256": "7a1f76d61d527777fde0d8f784dcfb37b7df1ea352cbd8fd838263f8aaa14cde",
+        "bytes": 15317
+      },
+      "uploaded-processing-not-confirmed.json": {
+        "sha256": "73cbc9a47d4b3355d663edfddd2643f21d99f33a5330e66cc524f94e1e961253",
+        "bytes": 13441
+      },
+      "new-process-replay.json": {
+        "sha256": "b92c1836100dcea4bf2279f411a81da7c266184656d963ba2f517ee4100a5bca",
+        "bytes": 258
+      }
+    },
+    "backup_sha256": "a4ce4d841e9a80aa601a8c4ca44cd1f9f66f07facd397a0ae3ab97abe67c07f9"
+  },
+  "logs": {
+    "native-official-publish-controls-native-full.log": "322b75c0762ad8ee3379ba38e6bbfcb32c403e905165d6f9d10d67a353114ab8",
+    "native-official-publish-controls-studio-full.log": "573d6cd876e072b5d0b0b92183ad6c73a1a965fa31141b63735ffb2696e2dcb8"
+  },
+  "signed_owner_rbac_csrf_before_body": true,
+  "current_snapshot_source_final_grant_and_version_fences": true,
+  "bounded_scoped_paginated_read_history": true,
+  "protected_registry_and_vault_only_explicit_owner_enablement": true,
+  "mock_only_injection_and_no_network_client_body": true,
+  "default_startup_status_history_approval_and_runner_no_automatic_sends": true,
+  "owned_startup_recovery_no_credentials_or_wire": true,
+  "optional_studio_module_same_shot_shell_nodes": true,
+  "owner_saved_idle_review_and_separate_approval": true,
+  "one_confirmed_step_then_fresh_read_required": true,
+  "unknown_review_renewal_reuses_key_unknown_upload_requires_state": true,
+  "late_response_scope_and_role_fences": true,
+  "text_nodes_mock_qualified_receipts": true,
+  "private_tokens_registry_paths_and_sessions_excluded_from_archive": true,
+  "workflow_fresh_process_all_twelve_journals_exact": true,
+  "signed_http_requests": 30,
+  "mock_wire_requests": 12,
+  "publishing_token_decryptions": 30,
+  "session_decryptions": 4,
+  "real_publications": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_and_oauth_fixtures": true,
+  "durable_automatic_upload_queue_scheduling_complete": false,
+  "secure_oauth_acquisition_refresh_rotation_complete": false,
+  "authentic_native_receipt_to_analytics_complete": false,
+  "accepted_runtime_publishing_enabled": false,
+  "real_oauth_media_qc_legal_account_provider_browser_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

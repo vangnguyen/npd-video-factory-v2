@@ -5,7 +5,7 @@ Dry-run receipts and account checks cannot themselves grant publishing authority
 """
 from contextlib import nullcontext
 from datetime import datetime,timedelta,timezone
-import json,re,uuid
+import base64,json,re,uuid
 from .contracts import WorkflowError,digest
 from .official_publication_models import Create,Approve,Action,Renew
 from .official_publication_registry import PublishingFactory
@@ -123,6 +123,27 @@ class NativeOfficialPublications:
         self.accounts.check_workspace()
         return {'schema_version':'native-official-publishing-factories-v1','workspace_id':self.workspace,'profiles':[f.public() for _,f in sorted(self.factories.items())],
             'automatic_publishing':False,'separate_owner_publish_approval_required':True,'token_returned':False,'real_provider_tested':False}
+    def page(self,project,*,limit=25,cursor=None):
+        if type(limit) is not int or not 1<=limit<=100:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PAGE_INVALID',400)
+        after=None
+        if cursor is not None:
+            try:
+                if not isinstance(cursor,str) or len(cursor)>2048:raise ValueError()
+                after=json.loads(base64.urlsafe_b64decode(cursor+'='*(-len(cursor)%4)))
+                if (not isinstance(after,list) or len(after)!=4 or after[:2]!=[self.workspace,project]
+                    or not isinstance(after[2],str) or len(after[2])>40 or not isinstance(after[3],str)
+                    or not re.fullmatch(r'nopu_[a-f0-9]{32}',after[3]) or datetime.fromisoformat(after[2]).tzinfo is None):raise ValueError()
+            except (ValueError,TypeError,IndexError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PAGE_INVALID',400) from None
+        with self.store.transaction() as con:
+            self.accounts.check_workspace();self.store.project(con.execute('SELECT * FROM projects WHERE id=?',(project,)).fetchone())
+            where='workspace_id=? AND project_id=?';params=[self.workspace,project]
+            if after:where+=' AND (created_at<? OR (created_at=? AND publication_id<?))';params.extend([after[2],after[2],after[3]])
+            rows=con.execute('SELECT * FROM native_official_publications WHERE '+where+' ORDER BY created_at DESC,publication_id DESC LIMIT ?',(*params,limit+1)).fetchall()
+            for row in rows:self.read(row)
+            next_cursor=base64.urlsafe_b64encode(json.dumps([self.workspace,project,rows[limit-1]['created_at'],rows[limit-1]['publication_id']]).encode()).decode().rstrip('=') if len(rows)>limit else None
+        return {'schema_version':'native-official-publication-page-v1','workspace_id':self.workspace,'project_id':project,
+            'items':[self.get(project,r['publication_id']) for r in rows[:limit]],'truncated':len(rows)>limit,'next_cursor':next_cursor,
+            'automatic_publishing':False,'token_returned':False,'session_uri_returned':False}
     def identity(self,principal=None,*,token_id=None,subject=None):
         try:
             verifier=self.identity_provider() if self.identity_provider else None

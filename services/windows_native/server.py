@@ -34,6 +34,7 @@ class Runner:
         self.publications = None
         self.analytics = None
         self.official_accounts = None
+        self.official_publish_worker = None
         self.vision = None
         self.observer = observer or Observer()
         self.stop = threading.Event()
@@ -43,6 +44,7 @@ class Runner:
     def start(self):
         self.store.recover()
         if self.official_accounts is not None:self.official_accounts.recover()
+        if self.official_publish_worker is not None:self.official_publish_worker.recover()
         self.thread.start()
 
     def run_one(self):
@@ -144,8 +146,21 @@ class LocalServer(ThreadingHTTPServer):
         stock_registry=None,stock_api_enabled=False,stock_factories=None,owner_rights_overrides=False,
         generation_registry=None,generation_api_enabled=False,generation_factory=None,
         trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None,
-        official_account_registry=None,official_account_read_enabled=False,official_account_factories=None):
+        official_account_registry=None,official_account_read_enabled=False,official_account_factories=None,
+        official_publish_registry=None,official_publish_enabled=False,official_publish_factories=None,official_publish_session_directory=None):
         config.validate_data_root()
+        if type(official_publish_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
+        if official_publish_registry is not None and official_publish_factories is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_CONFLICT',400)
+        if (official_publish_registry is not None or official_publish_factories is not None) and access is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_HUMAN_AUTH_REQUIRED',400)
+        if official_publish_enabled and (access is None or official_publish_registry is None or official_publish_session_directory is None):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROTECTED_REGISTRY_VAULT_AND_HUMAN_AUTH_REQUIRED',400)
+        if official_publish_factories is not None:
+            from .official_publication_registry import PublishingFactory
+            if not isinstance(official_publish_factories,dict) or any(type(f) is not PublishingFactory for f in official_publish_factories.values()):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
+            if any(f.client.transport is None for f in official_publish_factories.values()):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_MOCK_INJECTION_REQUIRED',400)
+        if official_publish_session_directory is not None:
+            from .official_account_tokens import protected_path
+            directory=protected_path(official_publish_session_directory,config.data_root)
+            if directory.exists() and not directory.is_dir():raise WorkflowError('NATIVE_OFFICIAL_SESSION_CONFIGURATION_INVALID',400)
         if type(official_account_read_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
         if official_account_read_enabled and (access is None or official_account_registry is None):raise WorkflowError('NATIVE_OFFICIAL_PROTECTED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
         if official_account_registry is not None and official_account_factories is not None:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CONFLICT',400)
@@ -191,6 +206,16 @@ class LocalServer(ThreadingHTTPServer):
         if accounts and access is None and any(f.client.wire.network_enabled for f in accounts.values()):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_HUMAN_AUTH_REQUIRED',400)
         self.official_accounts=NativeOfficialAccounts(self.store,workspace_id=self.publications.workspace_id,factories=accounts)
         self.runner.official_accounts=self.official_accounts
+        from .official_publication_registry import load as load_publishing
+        from .official_publications import NativeOfficialPublications
+        from .official_publication_sessions import SessionVault
+        from .official_publication_worker import NativeOfficialPublicationWorker
+        publishing=load_publishing(official_publish_registry,self.store.root,self.publications.workspace_id,owner_enabled=official_publish_enabled) if official_publish_registry is not None else official_publish_factories
+        self.official_publications=NativeOfficialPublications(self.store,self.publications,self.official_accounts,factories=publishing,identity_provider=self.official_publish_identity)
+        # Production network clients come only from the protected, explicitly enabled registry.
+        self.official_publish_vault=SessionVault(self.official_publications,official_publish_session_directory)
+        self.official_publish_worker=NativeOfficialPublicationWorker(self.official_publications,self.official_publish_vault)
+        self.runner.official_publish_worker=self.official_publish_worker
         from .trend_radar import NativeTrendRadar
         self.trends=NativeTrendRadar(self.intelligence,self.analytics,workspace=self.publications.workspace_id,
             providers=trend_providers,feed_registry=trend_feed_registry,owner_enabled=trend_feed_enabled,observer=self.observer)
@@ -237,6 +262,10 @@ class LocalServer(ThreadingHTTPServer):
             self.bridge.start(self.observer)
             self.runner.start()
             self.intelligence.start()
+
+    def official_publish_identity(self):
+        if self.access is None:return None
+        self.access.refresh();return self.access.verifier
 
     def server_close(self):
         self.trends.close()
@@ -431,6 +460,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/publications(?:/npub_[a-f0-9]{32})?', path):
             from .publication_routes import get
             return self.reply(get(self, path))
+        if path=='/api/connections/official-publishing' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications(?:/nopu_[a-f0-9]{32}(?:/state)?)?',path):
+            from .official_publication_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path.startswith('/api/production/'):
             from .production_routes import get
             thumbnail_match=re.fullmatch(r'/api/production/videos/([0-9a-f]{32})/thumbnail',path)
@@ -485,7 +517,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
-                "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
+                "native_publication_review":True,"native_live_publishing":False,"native_official_publication_review":self.server.access is not None,"native_analytics_review":True,
                 "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
@@ -585,6 +617,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-variants.mjs'] = 'native-variants.mjs'
         static['/native-narrated-variants.mjs'] = 'native-narrated-variants.mjs'
         static['/native-official-accounts.mjs'] = 'native-official-accounts.mjs'
+        static['/native-official-publications.mjs'] = 'native-official-publications.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
         static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',
@@ -681,6 +714,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-accounts/npac_[a-f0-9]{32}/verify',self.path):
             from .official_account_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=20000)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications(?:/nopu_[a-f0-9]{32}/(?:approve|renew|cancel|step|poll))?',self.path):
+            from .official_publication_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/publications(?:/npub_[a-f0-9]{32}/(?:approve|cancel|dry-run))?', self.path):
             from .publication_routes import post
             return self.reply(post(self, self.path, self.read_body(max_bytes=100000)))
@@ -1010,6 +1046,9 @@ def main():
     parser.add_argument('--enable-generation-api',action='store_true')
     parser.add_argument('--official-account-registry',type=Path)
     parser.add_argument('--enable-official-account-reads',action='store_true')
+    parser.add_argument('--official-publish-registry',type=Path)
+    parser.add_argument('--official-publish-session-directory',type=Path)
+    parser.add_argument('--enable-official-publishing',action='store_true')
     parser.add_argument('--trend-feed-registry',type=Path)
     parser.add_argument('--enable-trend-feeds',action='store_true')
     parser.add_argument('--enable-owner-rights-overrides',action='store_true')
@@ -1034,6 +1073,7 @@ def main():
             stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api,owner_rights_overrides=args.enable_owner_rights_overrides,
             generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api,
             official_account_registry=args.official_account_registry,official_account_read_enabled=args.enable_official_account_reads,
+            official_publish_registry=args.official_publish_registry,official_publish_session_directory=args.official_publish_session_directory,official_publish_enabled=args.enable_official_publishing,
             trend_feed_registry=args.trend_feed_registry,trend_feed_enabled=args.enable_trend_feeds) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)
             try:

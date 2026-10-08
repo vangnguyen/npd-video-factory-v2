@@ -110,6 +110,8 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
     $('video-review-body').append(diagnostics);diagnostics.append(document.querySelector('.job-card'),$('open-output'));
     if($('cost-card'))$('video-review-body').append($('cost-card'));
     if($('native-publication-card'))$('video-review-body').append($('native-publication-card'));
+    if($('native-official-accounts-card'))$('video-review-body').append($('native-official-accounts-card'));
+    if($('native-official-publications-card'))$('video-review-body').append($('native-official-publications-card'));
     if($('native-analytics-card'))$('video-review-body').append($('native-analytics-card'));
     if($('native-variants-card'))$('video-review-body').append($('native-variants-card'));
   }

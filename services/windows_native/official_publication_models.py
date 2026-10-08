@@ -49,3 +49,6 @@ class Action(StrictModel):
 class Renew(Approve):
     expected_dispatch_version:StrictInt=Field(ge=1)
     request_key:str=Field(min_length=16,max_length=200,pattern=r'^[A-Za-z0-9_-]+$')
+
+class Step(Action):
+    expected_dispatch_version:StrictInt=Field(ge=1)
