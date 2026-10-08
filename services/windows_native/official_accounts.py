@@ -167,7 +167,7 @@ class NativeOfficialAccounts:
         try:
             factory,value=self.admission(project,identity,claim);snapshot=value['snapshot'];credential=factory.credential(now=self.clock())
             request=account_request(credential)
-            operation=self.costs.begin(project_id=project,provider='official-'+credential.target.platform,model=None,operation='account_lookup',
+            operation=self.costs.begin(project_id=project,provider='official-'+credential.target.platform,model=None,operation='account_lookup.'+identity,
                 request_sha256=digest({'check_id':identity,'snapshot_sha256':value['snapshot_sha256'],'operation':'account_lookup'}),estimated_cost=None,
                 external_call=not factory.client.mock,paid=False)
             self.admission(project,identity,claim);sent=True

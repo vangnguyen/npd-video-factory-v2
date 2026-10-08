@@ -78,3 +78,12 @@ class OfficialAccountsTests(unittest.TestCase):
         check=self.create();result=self.service.process();proof=copy.deepcopy(result['result']);proof['mock']=False;proof['external_call']=True
         with self.store.transaction() as con:con.execute('UPDATE native_official_account_checks SET result_json=?,result_sha256=? WHERE check_id=?',(json.dumps(proof),digest(proof),check['check_id']))
         with self.assertRaisesRegex(WorkflowError,'EVIDENCE_CHANGED'):self.service.get(self.project['id'],check['check_id'])
+    def test_fresh_owner_checks_have_distinct_cost_intents_while_exact_replay_never_resends(self):
+        first=self.create();first=self.service.process();body=self.body().model_copy(update={'request_key':'explicit-fresh-owner-account-read-key'})
+        second=self.create(body);second=self.service.process()
+        self.assertEqual(first['status'],second['status']);self.assertEqual(second['status'],'succeeded');self.assertEqual(len(self.calls),2)
+        self.assertNotEqual(first['result']['cost_operation_id'],second['result']['cost_operation_id']);costs=self.service.costs.summary(self.project['id'])['records']
+        self.assertEqual(len(costs),2);self.assertEqual({r['operation'] for r in costs},{'account_lookup.'+v['check_id'] for v in (first,second)})
+        self.assertTrue(all(r['actual_cost'] is None and not r['external_call'] and not r['paid'] for r in costs))
+        replay,exact=self.service.create(self.project['id'],self.account.account_ref,body,actor='EXPLICIT SECOND OWNER FIXTURE');self.assertTrue(exact);self.assertEqual(replay,second)
+        self.assertIsNone(self.service.process());self.assertEqual(len(self.calls),2)

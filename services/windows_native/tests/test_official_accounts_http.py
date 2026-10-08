@@ -69,3 +69,14 @@ class OfficialAccountsHTTPTests(unittest.TestCase):
         self.assertEqual(len({c['check_id'] for c in first['items']+second['items']}),3)
         other=self.server.store.create('Other explicit fixture','No providers');self.assertEqual(self.request('GET','/api/projects/'+other['id']+'/account-checks?cursor='+first['next_cursor'])[0],400)
         self.assertEqual(self.calls,[])
+    def test_each_fresh_signed_owner_check_dispatches_once_with_its_own_cost_record(self):
+        before=self.server.store.get(self.project['id']);completed=[]
+        for index in range(2):
+            body=self.body(request_key='explicit-fresh-signed-owner-check-'+str(index));status,queued,_=self.request('POST',self.url(),body);self.assertEqual(status,200)
+            self.assertTrue(self.server.runner.run_one());status,value,_=self.request('GET','/api/projects/'+self.project['id']+'/account-checks/'+queued['check_id'])
+            self.assertEqual(status,200);self.assertEqual(value['status'],'succeeded');completed.append(value)
+            replay=self.request('POST',self.url(),body)[1];self.assertTrue(replay['idempotent_replay']);self.assertEqual(replay['check_id'],value['check_id'])
+            self.assertFalse(self.server.runner.run_one());self.assertEqual(len(self.calls),index+1)
+        self.assertNotEqual(completed[0]['result']['cost_operation_id'],completed[1]['result']['cost_operation_id'])
+        costs=self.server.official_accounts.costs.summary(self.project['id'])['records'];self.assertEqual(len(costs),2);self.assertTrue(all(row['actual_cost'] is None for row in costs))
+        self.assertEqual(self.pipeline.calls,0);self.assertEqual(self.server.store.get(self.project['id']),before)

@@ -1,0 +1,108 @@
+{
+  "schema": "native-official-account-cost-retry-evidence-v1",
+  "parent_head": "f66257252bc60f5e8fb9f6eab0dcd58bc05fd369",
+  "source_sha256": {
+    "services/windows_native/official_accounts.py": "a263dbb085ab2db8472d0bc8ac2e5336ce210fbbd510b576568269aa8787bafc",
+    "services/windows_native/tests/test_official_accounts.py": "b9c6b513ad51be00feff202a5f7aee2f6bd4a1504977981959e1352e1fb574fc",
+    "services/windows_native/tests/test_official_accounts_http.py": "0f683d5f46c27b7c94ea9444e9b81d75478d88d9efc091631d45647b10356808",
+    "scripts/north_star_native_official_account_rechecks.py": "857bc068a9bf08aba6321e2489ed3227db016d7b193fb9fdcfc975a28397f71a",
+    "docs/NATIVE_OFFICIAL_ACCOUNT_REVIEW.md": "19418a18fceb70d9d851803af3b8cb86b67f776b6d9fec76055c1844ef668e8c"
+  },
+  "tests": {
+    "current_related_native_passed": 55,
+    "seconds": 39.927,
+    "new_native_cases": 2,
+    "prior_full_native_passed": 785,
+    "prior_full_native_head": "f66257252bc60f5e8fb9f6eab0dcd58bc05fd369",
+    "full_native_rerun_after_one_line_cost_fix": false,
+    "unchanged_prior_studio_passed": 285,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-account-rechecks-flow-n2",
+    "evidence_sha256": "0dcebbd1f058bdb9fd885962b5184a45f5cb0f424de749ff78099eac709cfd48",
+    "exports": {
+      "backup.json": {
+        "sha256": "9cf10caae16580a842e68c7aba2a55b53dfdf2e6f2053d31929e997b64889f9b",
+        "bytes": 2743
+      },
+      "expected-costs.json": {
+        "sha256": "8f69820ad6a2e88ad0a7f26947ed7fe9ae2fc06238ca902b82f11fd6fcf2a4e4",
+        "bytes": 4274
+      },
+      "expected-history.json": {
+        "sha256": "a3ea89be23093210d7e45a70060185c87a8f006886d2aff23135c97e5cb4ffb0",
+        "bytes": 18452
+      },
+      "fresh-checks.json": {
+        "sha256": "f80f363923566eb5b09d126d7018bc1d0d2be28423e6018af83642d5a5f15cc5",
+        "bytes": 6513
+      },
+      "http-requests.json": {
+        "sha256": "e7840a8c7f375f9b46ced87af508334bd4d7af20a59ebc5c44d52f5652927ca6",
+        "bytes": 1393
+      },
+      "initial-restore.json": {
+        "sha256": "b4f02a69f9f4fcd3b3023337304760126d6a17f400fdf2bf61892c35f7c47fd0",
+        "bytes": 3117
+      },
+      "owned-official-account-rechecks.zip": {
+        "sha256": "acbfb0bea385f9444b097c735e64785cd52624ca43e3d8cf63b0d8be9aaa914f",
+        "bytes": 156715080
+      },
+      "physical-source-hashes.json": {
+        "sha256": "9916ca138f7bac8b3d80bf541a1b5410312fb57b8119c55172ee8de2d3e8722b",
+        "bytes": 206335
+      },
+      "prior-costs.json": {
+        "sha256": "df4a174212b0db5a316f135fca0b330fe07570ca9e452123cd722221f62f8ad5",
+        "bytes": 2100
+      },
+      "project-expected.json": {
+        "sha256": "e5a038cc2a9073aebcf5432117187e1fc5cc8d67497e59103bd661fbb99d91a7",
+        "bytes": 655683
+      },
+      "recovery-restore.json": {
+        "sha256": "9b84d880ddd7af79bfd56fb62069d7b17fd6971f66395918a03b717c16d3151a",
+        "bytes": 3151
+      },
+      "restored-in-process.json": {
+        "sha256": "c2f8950abd051b266ea5ddacd504c5a5a4929d143d448de033523cbe35812fc2",
+        "bytes": 153
+      },
+      "wire-fixtures.json": {
+        "sha256": "5d526586197a75961707a70b61269cee8ce425728397da55639616ae0290c81c",
+        "bytes": 465
+      },
+      "new-process-replay.json": {
+        "sha256": "c2f8950abd051b266ea5ddacd504c5a5a4929d143d448de033523cbe35812fc2",
+        "bytes": 153
+      }
+    },
+    "backup_sha256": "acbfb0bea385f9444b097c735e64785cd52624ca43e3d8cf63b0d8be9aaa914f"
+  },
+  "logs": {
+    "native-official-account-rechecks-flow-n2.log": "74381fb5ff2f75d727e28d69c76103cdf1168341f43bf036e5e14d5da78beae0"
+  },
+  "regression_log_sha256": "bc4862536c63a5d11a6cc7b13174a2b948db37bebd9f0b64d6c046d371abf46b",
+  "two_fresh_owner_checks_each_dispatch_once": true,
+  "ledger_intent_is_check_scoped": true,
+  "exact_retry_no_second_wire_or_cost": true,
+  "old_operation_and_account_history_unchanged": true,
+  "unknown_costs_remain_null": true,
+  "signed_http_requests": 9,
+  "mock_account_reads": 2,
+  "actual_dpapi_fixture_credentials_used": true,
+  "both_database_backup_restore_and_fresh_process_exact_history": true,
+  "prior_media_artifacts_unchanged": 1280,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "real_account_or_owner_acceptance": false,
+  "official_publish_worker_integrated": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
