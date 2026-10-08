@@ -37,12 +37,13 @@ class NativeOfficialPublicationWorker:
             value,factory,path,dispatch=self.journal.admission(project,identity,con=con)
             if dispatch['version']!=version:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_STALE')
             if ticket is not None:self.journal.ticket(con,ticket)
+            self.journal.eligible(con,project,identity,value)
             return value,factory,path,dispatch
     def send(self,project,identity,version,factory,credential,request,operation,*,ticket=None):
         value,current,_,_=self.context(project,identity,version,ticket)
         if current is not factory or factory.credential(now=self.journal.clock())!=credential:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CREDENTIAL_CHANGED')
         # No private URL, bearer or raw response enters SQLite/audit/cost rows.
-        cost=self.costs.begin(project_id=project,provider='official-youtube',model=None,operation=operation+'.'+uuid.uuid4().hex,
+        cost=self.costs.begin(project_id=project,provider='official-youtube',model=None,operation=operation+'.'+(ticket.intent_id if ticket is not None else uuid.uuid4().hex),
             request_sha256=digest({'publication_id':identity,'snapshot_sha256':value['snapshot_sha256'],'version':version,'operation':operation,'body_sha256':hashlib.sha256(request.body).hexdigest()}),
             external_call=not value['mock'],paid=False,estimated_cost=None)
         sent=False
@@ -56,7 +57,9 @@ class NativeOfficialPublicationWorker:
             self.costs.settle(cost,status='outcome_unknown' if sent else 'rejected',error_code=code(error));raise
     def account(self,project,identity,version,factory,credential):
         response=self.send(project,identity,version,factory,credential,youtube_account_request(credential),'publish_account_lookup')
-        if response.status==429 or response.status>=500:raise PublishingWireError('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF',retry_after=retry_delay(response))
+        if response.status==429 or response.status>=500:
+            self.journal.read_backoff(project,identity,version,'publish_account_lookup',retry_delay(response),response_digest(response))
+            raise PublishingWireError('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF',retry_after=retry_delay(response))
         confirm_youtube_account(response,credential.target);self.context(project,identity,version)
     def step(self,project,identity,expected_version):
         if type(expected_version) is not int:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_VERSION_INVALID',400)
@@ -95,6 +98,18 @@ class NativeOfficialPublicationWorker:
         if dispatch['phase']!='uploaded' or dispatch['remote_post_id'] is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_UPLOAD_REQUIRED')
         credential=factory.credential(now=self.journal.clock());self.account(project,identity,expected_version,factory,credential)
         response=self.send(project,identity,expected_version,factory,credential,video_status_request(dispatch['remote_post_id'],credential.token),'publish_processing_status')
-        if response.status==429 or response.status>=500:raise PublishingWireError('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF',retry_after=retry_delay(response))
+        if response.status==429 or response.status>=500:
+            self.journal.read_backoff(project,identity,expected_version,'publish_processing_status',retry_delay(response),response_digest(response))
+            raise PublishingWireError('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF',retry_after=retry_delay(response))
         observation=video_observation(response,dispatch['remote_post_id'])
         return self.journal.record_processing(project,identity,expected_version,observation,response_digest(response))
+    def recover(self):
+        """Owned startup only. Finalize unfinished costs without credential reads."""
+        if self.journal is not self.frozen_journal or self.vault is not self.frozen_vault or self.costs.store is not self.journal.store:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_CONFIGURATION_CHANGED')
+        self.journal.accounts.check_workspace();result=self.journal.recover();settled=0
+        with self.journal.store.transaction() as con:
+            rows=con.execute("SELECT c.* FROM native_cost_operations c WHERE c.provider='official-youtube' AND c.paid=0 AND c.status='dispatch_intent' AND EXISTS(SELECT 1 FROM native_official_publications p WHERE p.project_id=c.project_id AND p.workspace_id=?)",(self.journal.workspace,)).fetchall()
+        for row in rows:
+            if not re.fullmatch(r'(publish_account_lookup|publish_processing_status|upload_initialize|upload_chunk|upload_reconcile)\.[a-f0-9]{32}',row['operation']):continue
+            self.costs.settle(row['id'],status='outcome_unknown',error_code='NATIVE_OFFICIAL_PUBLISH_RESTART_OUTCOME_UNKNOWN');settled+=1
+        return {**result,'unfinished_costs_marked_unknown':settled,'automatic_upload_retry':False}

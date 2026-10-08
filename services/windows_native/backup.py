@@ -126,7 +126,7 @@ def database_status(path):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_official_account_checks' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_official_account_checks WHERE status IN ('queued','running')").fetchone()[0]
-            for name in ('native_official_publications','native_official_publish_approvals','native_official_publish_events','native_official_publish_dispatches','native_official_publish_intents','native_official_publish_responses','native_official_publish_sessions','native_official_publish_processing','native_official_publish_receipts'):
+            for name in ('native_official_publications','native_official_publish_approvals','native_official_publish_events','native_official_publish_dispatches','native_official_publish_intents','native_official_publish_responses','native_official_publish_sessions','native_official_publish_processing','native_official_publish_receipts','native_official_publish_renewals','native_official_publish_read_backoffs'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_official_publications' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_official_publications WHERE status IN ('queued','running')").fetchone()[0]

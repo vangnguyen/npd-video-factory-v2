@@ -45,3 +45,7 @@ class Approve(StrictModel):
 
 class Action(StrictModel):
     expected_snapshot_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
+
+class Renew(Approve):
+    expected_dispatch_version:StrictInt=Field(ge=1)
+    request_key:str=Field(min_length=16,max_length=200,pattern=r'^[A-Za-z0-9_-]+$')

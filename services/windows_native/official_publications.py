@@ -7,7 +7,7 @@ from contextlib import nullcontext
 from datetime import datetime,timedelta,timezone
 import json,re,uuid
 from .contracts import WorkflowError,digest
-from .official_publication_models import Create,Approve,Action
+from .official_publication_models import Create,Approve,Action,Renew
 from .official_publication_registry import PublishingFactory
 from .official_publication_dispatch import Ticket
 from .publications import PROFILES
@@ -66,7 +66,15 @@ class NativeOfficialPublications:
                 observation_json TEXT NOT NULL,observation_sha256 TEXT NOT NULL,created_at TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS native_official_publish_receipts (
                 publication_id TEXT PRIMARY KEY,workspace_id TEXT NOT NULL,project_id TEXT NOT NULL,snapshot_sha256 TEXT NOT NULL,
-                receipt_json TEXT NOT NULL,receipt_sha256 TEXT NOT NULL,created_at TEXT NOT NULL);''')
+                receipt_json TEXT NOT NULL,receipt_sha256 TEXT NOT NULL,created_at TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS native_official_publish_renewals (
+                renewal_id TEXT PRIMARY KEY,publication_id TEXT NOT NULL,workspace_id TEXT NOT NULL,project_id TEXT NOT NULL,
+                key_sha256 TEXT NOT NULL,request_sha256 TEXT NOT NULL,prior_approval_id TEXT NOT NULL,approval_id TEXT NOT NULL,
+                dispatch_version INTEGER NOT NULL,snapshot_sha256 TEXT NOT NULL,created_at TEXT NOT NULL,UNIQUE(workspace_id,project_id,key_sha256));
+                CREATE TABLE IF NOT EXISTS native_official_publish_read_backoffs (
+                observation_id TEXT PRIMARY KEY,publication_id TEXT NOT NULL,workspace_id TEXT NOT NULL,project_id TEXT NOT NULL,
+                snapshot_sha256 TEXT NOT NULL,operation TEXT NOT NULL,response_sha256 TEXT NOT NULL,delay_seconds INTEGER NOT NULL,
+                observed_at TEXT NOT NULL,retry_not_before TEXT NOT NULL);''')
             if con.execute('SELECT 1 FROM native_official_publications WHERE workspace_id!=? LIMIT 1',(self.workspace,)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKSPACE_CHANGED')
     def event(self,con,row,action,actor,**evidence):
         con.execute('INSERT INTO native_official_publish_events(publication_id,workspace_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?,?)',
@@ -106,7 +114,7 @@ class NativeOfficialPublications:
                         or parsed.request_fingerprint!=value['request_fingerprint'] or parsed.mode!='live' or parsed.platform!='youtube'
                         or parsed.provider_key!='youtube-data-api-publishing' or receipt.get('mock') is not value['mock']
                         or receipt.get('external_action') is not (not value['mock']) or parsed.remote_url is not None
-                        or dispatch is None or dispatch['remote_post_id']!=parsed.remote_post_id or dispatch['phase']!='uploaded'
+                        or dispatch is None or any(dispatch[k]!=value[k] for k in ('workspace_id','project_id','snapshot_sha256','approval_id')) or dispatch['remote_post_id']!=parsed.remote_post_id or dispatch['phase']!='uploaded'
                         or dispatch['acknowledged_bytes']!=dispatch['total_bytes'] or value['status']!='completed'):raise ValueError()
                 except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RECEIPT_CHANGED') from None
             if value['status']=='completed' and receipt is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RECEIPT_CHANGED')
@@ -209,8 +217,78 @@ class NativeOfficialPublications:
                 or grant['mock'] is not self.read(row)['snapshot']['mock'] or not issued<=instant<expires or not 60<=(expires-issued).total_seconds()<=3600):raise ValueError()
             authority=self.identity(token_id=grant['authority']['token_id'],subject=grant['authority']['subject'])
             if authority!=grant['authority']:raise ValueError()
+            if 'renewal_id' in grant:
+                renewal=con.execute('SELECT * FROM native_official_publish_renewals WHERE renewal_id=? AND publication_id=? AND approval_id=?',(grant['renewal_id'],row['publication_id'],row['approval_id'])).fetchone()
+                if (renewal is None or any(renewal[k]!=row[k] for k in ('workspace_id','project_id','snapshot_sha256'))
+                    or grant.get('restart_initialization_authorized') is not False or grant.get('prior_approval_id')!=renewal['prior_approval_id']):raise ValueError()
             return grant
         except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CURRENT_OWNER_GRANT_REQUIRED') from None
+    def renew(self,project,identity,payload,*,principal):
+        if type(payload) is not Renew:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_INVALID',400)
+        try:payload=Renew.model_validate(payload.model_dump(mode='json'))
+        except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_INVALID',400) from None
+        authority=self.identity(principal);key=digest(payload.request_key);fingerprint=digest({'publication_id':identity,'request':payload.model_dump(mode='json',exclude={'request_key'})})
+        with self.store.transaction() as con:
+            row=self.row(con,project,identity);prior=con.execute('SELECT * FROM native_official_publish_renewals WHERE workspace_id=? AND project_id=? AND key_sha256=?',(self.workspace,project,key)).fetchone()
+            if prior is not None:
+                if prior['publication_id']!=identity or prior['request_sha256']!=fingerprint:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_IDEMPOTENCY_CONFLICT')
+                return {**{k:prior[k] for k in ('renewal_id','publication_id','workspace_id','project_id','prior_approval_id','approval_id','dispatch_version','snapshot_sha256','created_at')},'replayed':True,'external_calls':0,'automatic_renewal':False}
+            value,_,_=self.revalidate(con,row);dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
+            if (row['status'] not in ('queued','review_required') or value['snapshot_sha256']!=payload.expected_snapshot_sha256 or dispatch is None
+                or any(dispatch[k]!=row[k] for k in ('workspace_id','project_id','snapshot_sha256','approval_id'))
+                or dispatch['version']!=payload.expected_dispatch_version or dispatch['intent_id'] is not None or dispatch['total_bytes']!=value['snapshot']['final_bytes']
+                or type(dispatch['acknowledged_bytes']) is not int or not 0<=dispatch['acknowledged_bytes']<=dispatch['total_bytes']
+                or dispatch['phase'] not in ('prepared','uploading','reconciliation_required','uploaded')):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
+            if dispatch['phase']=='prepared':
+                if dispatch['private_session_ref'] is not None or dispatch['remote_post_id'] is not None or dispatch['acknowledged_bytes']!=0 or con.execute("SELECT 1 FROM native_official_publish_intents WHERE publication_id=? AND operation='init'",(identity,)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
+            else:
+                session=con.execute('SELECT * FROM native_official_publish_sessions WHERE session_ref=? AND publication_id=? AND workspace_id=? AND project_id=?',(dispatch['private_session_ref'],identity,self.workspace,project)).fetchone()
+                if (session is None or any(session[k]!=value['snapshot'][k] for k in ('target_binding_sha256','configuration_sha256')) or session['snapshot_sha256']!=value['snapshot_sha256']
+                    or session['total_bytes']!=dispatch['total_bytes'] or session['mock']!=int(value['mock'])):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_SESSION_CHANGED')
+                if dispatch['phase']=='uploaded':
+                    if dispatch['acknowledged_bytes']!=dispatch['total_bytes'] or not isinstance(dispatch['remote_post_id'],str) or not re.fullmatch(r'[A-Za-z0-9_-]{11}',dispatch['remote_post_id']):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
+                elif dispatch['remote_post_id'] is not None or utc(datetime.fromisoformat(session['expires_at']))<=utc(self.clock()):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_SESSION_EXPIRED_REVIEW_REQUIRED')
+            instant=utc(self.clock());expires=min(instant+timedelta(seconds=payload.valid_for_seconds),datetime.fromisoformat(authority['expires_at']))
+            if (expires-instant).total_seconds()<60:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_OWNER_TOKEN_EXPIRING')
+            approval='nopa_'+uuid.uuid4().hex;renewal='nopr_'+uuid.uuid4().hex;stamp=now();version=dispatch['version']+1
+            grant={'schema_version':'native-official-publish-approval-v1','publication_id':identity,'workspace_id':self.workspace,'project_id':project,'snapshot_sha256':row['snapshot_sha256'],
+                'authority':authority,'issued_at':instant.isoformat(),'expires_at':expires.isoformat(),'acknowledged_official_publication':True,'dry_run_approval_reused':False,'mock':value['mock'],
+                'renewal_id':renewal,'prior_approval_id':row['approval_id'],'restart_initialization_authorized':False}
+            con.execute("UPDATE native_official_publish_approvals SET status='revoked',revoked_at=? WHERE publication_id=? AND status='active'",(stamp,identity))
+            con.execute('INSERT INTO native_official_publish_approvals VALUES(?,?,?,?,?,?,?,?,?)',(approval,identity,self.workspace,project,digest(grant),json.dumps(grant),'active',stamp,None))
+            con.execute('INSERT INTO native_official_publish_renewals VALUES(?,?,?,?,?,?,?,?,?,?,?)',(renewal,identity,self.workspace,project,key,fingerprint,row['approval_id'],approval,version,row['snapshot_sha256'],stamp))
+            con.execute("UPDATE native_official_publications SET status='queued',approval_id=?,failure_code=NULL,updated_at=? WHERE publication_id=?",(approval,stamp,identity))
+            con.execute('UPDATE native_official_publish_dispatches SET approval_id=?,version=?,failure_code=NULL,updated_at=? WHERE publication_id=?',(approval,version,stamp,identity))
+            self.event(con,row,'official.publication.consent.renewed',authority['token_id'],renewal_id=renewal,approval_id=approval,prior_approval_id=row['approval_id'],phase=dispatch['phase'],acknowledged_bytes=dispatch['acknowledged_bytes'],automatic=False,external_action=False)
+            return {'renewal_id':renewal,'publication_id':identity,'workspace_id':self.workspace,'project_id':project,'approval_id':approval,'prior_approval_id':row['approval_id'],'dispatch_version':version,'snapshot_sha256':row['snapshot_sha256'],'created_at':stamp,'replayed':False,'external_calls':0,'automatic_renewal':False}
+    def backoff_until(self,con,project,identity,value):
+        times=[]
+        for row in con.execute('SELECT * FROM native_official_publish_responses WHERE publication_id=? AND retry_not_before IS NOT NULL',(identity,)):
+            try:
+                result=json.loads(row['result_json']);created=utc(datetime.fromisoformat(row['created_at']));retry=utc(datetime.fromisoformat(row['retry_not_before']));delay=result['retry_after']
+                if (row['workspace_id']!=self.workspace or row['project_id']!=project or digest(result)!=row['result_sha256'] or result['mock'] is not value['mock']
+                    or type(delay) is not int or not 1<=delay<=3600 or retry!=created+timedelta(seconds=delay)):raise ValueError()
+                times.append(retry)
+            except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_BACKOFF_EVIDENCE_CHANGED') from None
+        for row in con.execute('SELECT * FROM native_official_publish_read_backoffs WHERE publication_id=?',(identity,)):
+            try:
+                instant=utc(datetime.fromisoformat(row['observed_at']));retry=utc(datetime.fromisoformat(row['retry_not_before']));delay=row['delay_seconds']
+                if any(row[k]!=value[k] for k in ('workspace_id','project_id','snapshot_sha256')) or type(delay) is not int or not 1<=delay<=3600 or retry!=instant+timedelta(seconds=delay):raise ValueError()
+                times.append(retry)
+            except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_BACKOFF_EVIDENCE_CHANGED') from None
+        return max(times).isoformat() if times else None
+    def eligible(self,con,project,identity,value):
+        retry=self.backoff_until(con,project,identity,value)
+        if retry is not None and utc(self.clock())<utc(datetime.fromisoformat(retry)):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_BACKOFF_ACTIVE')
+    def read_backoff(self,project,identity,version,operation,delay,response_sha256):
+        if type(version) is not int or operation not in ('publish_account_lookup','publish_processing_status') or type(delay) is not int or not 1<=delay<=3600 or not isinstance(response_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',response_sha256):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF_INVALID',400)
+        with self.store.transaction() as con:
+            value,_,_,dispatch=self.admission(project,identity,con=con)
+            if dispatch['version']!=version:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_STALE')
+            instant=utc(self.clock());retry=instant+timedelta(seconds=delay)
+            con.execute('INSERT INTO native_official_publish_read_backoffs VALUES(?,?,?,?,?,?,?,?,?,?)',(uuid.uuid4().hex,identity,self.workspace,project,value['snapshot_sha256'],operation,response_sha256,delay,instant.isoformat(),retry.isoformat()))
+            self.event(con,self.row(con,project,identity),'official.publication.read.backoff','worker',operation=operation,retry_not_before=retry.isoformat(),response_sha256=response_sha256)
+        return retry.isoformat()
     def admission(self,project,identity,*,con=None):
         with (self.store.transaction() if con is None else nullcontext(con)) as con:
             row=self.row(con,project,identity)
@@ -241,8 +319,7 @@ class NativeOfficialPublications:
         with self.store.transaction() as con:
             value,factory,_,dispatch=self.admission(project,identity,con=con)
             if dispatch['version']!=expected_version or dispatch['intent_id'] is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_ALREADY_CLAIMED')
-            last=con.execute('SELECT retry_not_before FROM native_official_publish_responses WHERE publication_id=? ORDER BY created_at DESC,rowid DESC LIMIT 1',(identity,)).fetchone()
-            if last and last['retry_not_before'] is not None and utc(self.clock())<utc(datetime.fromisoformat(last['retry_not_before'])):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_BACKOFF_ACTIVE')
+            self.eligible(con,project,identity,value)
             if operation=='init':
                 if dispatch['phase']!='prepared' or dispatch['private_session_ref'] is not None or dispatch['acknowledged_bytes']!=0 or dispatch['remote_post_id'] is not None or any(v is not None for v in (range_start,range_end,body_sha256)):
                     raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INIT_REVIEW_REQUIRED')
@@ -278,6 +355,7 @@ class NativeOfficialPublications:
         dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(ticket.publication_id,)).fetchone()
         if dispatch is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TICKET_STALE')
         dispatch=dict(dispatch)
+        if dispatch['total_bytes']!=value['snapshot']['final_bytes'] or type(dispatch['acknowledged_bytes']) is not int or not 0<=dispatch['acknowledged_bytes']<=dispatch['total_bytes']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
         if any(dispatch[k]!=getattr(ticket,k) for k in ('workspace_id','project_id','snapshot_sha256','approval_id','version','intent_id')) or dispatch['phase']!=ticket.operation+'_intent':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TICKET_STALE')
         if any(row[k]!=getattr(ticket,k) for k in ('workspace_id','project_id','snapshot_sha256','approval_id')):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TICKET_STALE')
         intent=con.execute('SELECT * FROM native_official_publish_intents WHERE intent_id=?',(ticket.intent_id,)).fetchone()
@@ -299,7 +377,7 @@ class NativeOfficialPublications:
             if row is not None and any(row[k]!=value[k] for k in ('workspace_id','project_id','snapshot_sha256','approval_id')):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
             return {'schema_version':'native-official-publish-dispatch-v1','publication_id':identity,'workspace_id':self.workspace,'project_id':project,
                 'snapshot_sha256':value['snapshot_sha256'],'mock':value['mock'],'dispatch':None if row is None else {k:row[k] for k in ('phase','version','total_bytes','acknowledged_bytes','private_session_ref','remote_post_id','failure_code')},
-                'published':current['published'],'receipt':current['receipt'],'mock_publication_complete':current['mock_publication_complete'],'processing_acceptance':'CONFIRMED' if current['receipt'] else 'NOT_CHECKED','session_uri_returned':False,'token_returned':False}
+                'published':current['published'],'receipt':current['receipt'],'mock_publication_complete':current['mock_publication_complete'],'processing_acceptance':'CONFIRMED' if current['receipt'] else 'NOT_CHECKED','retry_not_before':self.backoff_until(con,project,identity,value),'session_uri_returned':False,'token_returned':False}
     def uncertain(self,ticket,code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'):
         if not isinstance(code,str) or not re.fullmatch(r'[A-Z0-9_]{1,120}',code):code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'
         with self.store.transaction() as con:
