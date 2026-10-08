@@ -1,6 +1,6 @@
 {
-  "head": "ff78087685ac6ee47aa6ed321fa2a7cddbc76eb6",
-  "audited_at": "2026-10-08T22:15:00.913092+00:00",
+  "head": "645cd381b9718c83e05949cc0e4e09e635937a05",
+  "audited_at": "2026-10-08T22:32:18.743649+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -417,6 +417,11 @@
     "scripts/north_star_google_oauth_protocol.py": "6700f686f75ec633caa4863c33d1019ecc52dae9978225725107cc8662820183",
     "docs/GOOGLE_OAUTH_PROTOCOL.md": "e4988efe341587c75bea03af8d05e58910a7c7bfa9d407a06fdd62c76abf28bc",
     "docs/north-star/google-oauth-protocol-evidence.json": "4b1b43496d3bc577aadda4bb0ea42811ce050144563d4ac6f24ce2963c47148a",
+    "services/windows_native/google_oauth_vault.py": "8fe554cc6b6cff22808b7105321e4bc730fbd451bbe1648b600fa56bd194073e",
+    "services/windows_native/tests/test_google_oauth_vault.py": "f1693e88087dcf43679e19ef68d523cd2c93c67159a68128e704073f05fe5692",
+    "scripts/north_star_google_oauth_vault.py": "e6eee8eb633318f3d5dd75f51c7b8729a8a9783169c4f8ef4367f5f64bd76768",
+    "docs/NATIVE_GOOGLE_OAUTH_CUSTODY.md": "708272be7d894d81eee11d65ffdcc51473ace58dee0e03da84659f020193491d",
+    "docs/north-star/google-oauth-vault-evidence.json": "2c0d23b2b736010ffb8dc1ac4266883c989f49f16e331044b5657bcd864ec494",
     "apps/api/app/trend_service.py": "0515d9bcdcc254336ae9b0e8f8389f828f111a182fae1d6cac62ab91c05c12d9",
     "apps/api/app/trend_providers.py": "5befe1bfe7e93b867052bde113319f9b2cda6c9738c922281f68d95a9525ec25",
     "apps/studio-web/studio.js": "b2cc7d771dd5cbf17e40d63919bb5b74d44489c79dfecbb94509a8926c733e0b",

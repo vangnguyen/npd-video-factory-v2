@@ -1,0 +1,111 @@
+{
+  "schema": "native-google-oauth-custody-evidence-v1",
+  "parent_head": "645cd381b9718c83e05949cc0e4e09e635937a05",
+  "source_sha256": {
+    "services/windows_native/google_oauth_vault.py": "8fe554cc6b6cff22808b7105321e4bc730fbd451bbe1648b600fa56bd194073e",
+    "services/windows_native/tests/test_google_oauth_vault.py": "f1693e88087dcf43679e19ef68d523cd2c93c67159a68128e704073f05fe5692",
+    "apps/api/app/google_oauth_protocol.py": "348b2f03971111c2f6e2d8711ae50a0940fbef15208a7740f65502f4fad56099",
+    "scripts/north_star_google_oauth_vault.py": "e6eee8eb633318f3d5dd75f51c7b8729a8a9783169c4f8ef4367f5f64bd76768",
+    "docs/NATIVE_GOOGLE_OAUTH_CUSTODY.md": "708272be7d894d81eee11d65ffdcc51473ace58dee0e03da84659f020193491d"
+  },
+  "tests": {
+    "related_native_passed": 74,
+    "related_native_seconds": 2.354,
+    "related_api_passed": 135,
+    "related_api_seconds": 3.01,
+    "new_custody_cases": 18,
+    "unchanged_studio_passed_at_prior": 384,
+    "prior_full_native_passed": 1074,
+    "current_full_native_run": false,
+    "current_full_studio_run": false,
+    "current_full_api_run": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-oauth-vault-flow-n2",
+    "evidence_sha256": "b72541eec72b0d1a524cbac2077e9032ff41d9dc158f2b2364cab3c759d07477",
+    "exports": {
+      "backup.json": {
+        "sha256": "71f7bd4f00034b483b322af5515b46210f1b4ba434f70c1fd1489d76a344e5b6",
+        "bytes": 804
+      },
+      "evidence.json": {
+        "sha256": "b72541eec72b0d1a524cbac2077e9032ff41d9dc158f2b2364cab3c759d07477",
+        "bytes": 2515
+      },
+      "expected-grant-proofs.json": {
+        "sha256": "16a6e0320671e3961579bb29382e040424c4b3621221523e2663cf034f53ddc1",
+        "bytes": 2947
+      },
+      "expected-project.json": {
+        "sha256": "24e8cccc16f1abd87bc79ed9d2ba2f0247a947c31d8f947a3f36f5888b9f2fb6",
+        "bytes": 1196
+      },
+      "expected-references.json": {
+        "sha256": "89631985f1df140fd503dea2bdd73ffdc7e068bd7e52c54d917cd51860df1e10",
+        "bytes": 5932
+      },
+      "legacy-finite-refresh-replay.json": {
+        "sha256": "d69de18e295c77d45963f01a8b1e873faf0a1b3233157f1927cafbf0f8a478b6",
+        "bytes": 304
+      },
+      "mock-wire-summary.json": {
+        "sha256": "fbe1fa0c2eeaec2708fd8675207ed5bee55a00dfeac1051e99fd6463621b3988",
+        "bytes": 727
+      },
+      "new-process-replay.json": {
+        "sha256": "c2cf2bfad4a8461fa4621236868c3b75fcb64b358a7e5f02699941067c57f747",
+        "bytes": 337
+      },
+      "public-oauth-metadata.zip": {
+        "sha256": "86d4576b513a2fa2e3cd29802f782f497dc6df82ff012c25b92a6cf5a193579f",
+        "bytes": 97364
+      },
+      "recovery-restore.json": {
+        "sha256": "a6aef2c4610aea4e9d1298763c3139609076a4d4159f3b42bd14de83ca4629cb",
+        "bytes": 1214
+      },
+      "restored-in-process.json": {
+        "sha256": "c2cf2bfad4a8461fa4621236868c3b75fcb64b358a7e5f02699941067c57f747",
+        "bytes": 337
+      }
+    },
+    "state_root": "C:/vf-native-fixture-google-oauth-vault-state-02",
+    "private_root": "C:/vf-native-fixture-google-oauth-vault-secrets-02",
+    "restore_root": "C:/vf-native-fixture-google-oauth-vault-restore-02",
+    "backup_sha256": "86d4576b513a2fa2e3cd29802f782f497dc6df82ff012c25b92a6cf5a193579f",
+    "backup_bytes": 97364,
+    "backup_entries": 9
+  },
+  "logs": {
+    "google-oauth-vault-api-related-n1.log": "f66062ca985263edb10fcff53e97efbdeb61d6b4300cd63a8c8cb8d846dbe965",
+    "google-oauth-vault-native-related-n1.log": "004c2d479469b793d877f99a2249d6fe68632d9a683be2614dda3f250ef98d9f"
+  },
+  "inert_constructor_states_no_startup_private_reads_or_directory_creation": true,
+  "outside_source_state_absolute_unlinked_domain_kind_purpose_workspace_dpapi": true,
+  "private_acl_only_current_user_local_system_before_flush_atomic_nonreplace_rename": true,
+  "opaque_reference_cipher_size_hash_outer_inner_client_target_alias_purpose_validation": true,
+  "pending_pkce_original_client_state_and_expiry_roundtrip_no_expired_authorization_use": true,
+  "immutable_explicit_grant_generation_without_autoactive_pointer": true,
+  "original_known_refresh_expiry_target_configuration_mock_and_prior_cipher_preserved": true,
+  "nullable_unknown_refresh_expiry_and_historical_expired_intent_retained": true,
+  "malformed_private_model_no_secret_serializer_warning": true,
+  "private_dacl_on_all_eight_files_verified": true,
+  "public_metadata_only_backup_and_new_process_same_private_mount_recovery_exact": true,
+  "unmounted_private_custody_does_not_resolve_restored_metadata": true,
+  "prior_finite_refresh_original_journals_history_project_job_files_default_paths_exact": true,
+  "durable_one_use_callback_operation_claims_cost_audit_signed_native_api_studio_or_resolver_integrated": false,
+  "private_cipher_files": 8,
+  "mock_token_requests": 4,
+  "grant_proofs": 4,
+  "real_secret_reads": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "new_media_operations": 0,
+  "browser_owner_real_provider_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
