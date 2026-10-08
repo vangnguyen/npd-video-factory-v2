@@ -308,6 +308,14 @@ class Handler(BaseHTTPRequestHandler):
                 remaining -= len(chunk)
 
     def dispatch_get(self):
+        narration_route=re.fullmatch(r'/api/projects/([a-f0-9]{32})/narration(?:/([a-f0-9]{32})/audio)?',self.path)
+        if narration_route:
+            from .narration import page,load
+            project_id,job_id=narration_route.groups()
+            if job_id:
+                with self.server.store.transaction() as con:_,out,_=load(self.server.store,con,project_id,job_id)
+                return self.file(out/'voice.wav')
+            return self.reply(page(self.server.store,project_id),headers={'Cache-Control':'no-store'})
         path = self.path.split("?", 1)[0]
         if path.startswith('/v1/'):
             from .bridge_routes import dispatch
@@ -427,7 +435,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_owner_rights_override_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_owner_rights_override_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -519,6 +527,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-generation.mjs'] = 'native-generation.mjs'
         static['/native-media-resolution.mjs'] = 'native-media-resolution.mjs'
         static['/native-media-planner.mjs'] = 'native-media-planner.mjs'
+        static['/native-narration.mjs'] = 'native-narration.mjs'
         static['/native-variants.mjs'] = 'native-variants.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
@@ -591,6 +600,10 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith("/api/intelligence/"):
             from .intelligence_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        narration_route=re.fullmatch(r'/api/projects/([a-f0-9]{32})/narration/([a-f0-9]{32})/apply',self.path)
+        if narration_route:
+            from .narration import apply
+            return self.reply(apply(self.server.store,*narration_route.groups(),self.read_body(max_bytes=4096)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/vision(?:/nvis_[a-f0-9]{32}/(?:process|cancel))?',self.path):
             from .vision_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))

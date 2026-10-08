@@ -43,6 +43,7 @@ def permission_for(method, path):
     if re.fullmatch(r'/api/projects/'+ID+r'/media-plans/nmp_'+ID+r'/resolve/generate',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/media-resolutions/nmr_'+ID+r'/import',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/media-plans(?:/nmp_'+ID+r'/(select|revise|apply))?',path):return 'edit'
+    if re.fullmatch(r'/api/projects/'+ID+r'/narration/'+ID+r'/apply',path):return 'edit'
     if re.fullmatch(r'/api/projects/' + ID + r'/vision(?:/nvis_' + ID + r'/(process|cancel))?',path):
         return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/analytics(?:/nasy_' + ID + r'/(process|cancel))?', path):

@@ -690,6 +690,8 @@ class Pipeline:
     def run(self, job, stage):
         from .auto_edit_timeline import is_auto_edit
         source_mode=is_auto_edit(job['snapshot']['document'])
+        if source_mode and job['kind']=='narration':
+            raise WorkflowError('AUTO_EDIT_SOURCE_AUDIO_PATH_REQUIRED',400)
         if source_mode and job['kind']=='content':
             raise WorkflowError('AUTO_EDIT_SOURCE_RENDER_PATH_REQUIRED',400)
         if source_mode and job['kind']=='render':
@@ -773,6 +775,9 @@ class Pipeline:
         if checkpoint:
             stage("resuming_verified_render")
             return checkpoint["result"]
+        if job['kind']=='render' and not artifacts.load('tts'):
+            from .narration import reuse
+            reuse(self.config,job,artifacts,stage)
         if artifacts.load("tts"):
             stage("resuming_verified_tts")
         else:
@@ -801,6 +806,10 @@ class Pipeline:
                 if (out / "voice.wav").exists():
                     raise WorkflowError("TTS_UNCHECKPOINTED_OUTPUT_REVIEW_REQUIRED")
                 tts_attempt()
+        if job['kind']=='narration':
+            stage('measuring_scene_narration_for_review')
+            from .narration import prepare
+            return prepare(self.config,job,out,artifacts)
         report = None
         for attempt_number in range(2):
             stage("ffmpeg_render_and_qc")
@@ -826,11 +835,12 @@ class Pipeline:
             render_files+=tuple(str(path.relative_to(attempt)).replace('\\','/') for path in sorted((attempt/'subtitle-qc').glob('*.png')))
         if (attempt/'render-voice.json').is_file(): render_files+=('render-voice.json','render-voice.wav')
         paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in render_files], stage, "storage_render_publish")
+        if (out/'voice-reuse.json').is_file():paths.append(out/'voice-reuse.json')
         retry_io(lambda: artifacts.commit("render", paths, result), stage, "storage_render_checkpoint")
         return result
 
     @staticmethod
-    def publish_voice(artifacts, attempt, job, stage):
+    def publish_voice(artifacts, attempt, job, stage, *, extra_names=()):
         if json.loads((attempt / "input.json").read_bytes()) != job["snapshot"]:
             raise WorkflowError("TTS_RECOVERY_SNAPSHOT_MISMATCH")
         meta = json.loads((attempt / "voice.json").read_bytes())
@@ -843,7 +853,8 @@ class Pipeline:
         if normalize(" ".join(u["text"] for u in meta["units"])) != normalize(proposal.narration):
             raise WorkflowError("VOICE_NARRATION_BINDING_MISMATCH")
         measured_scene_units(proposal, meta)
-        paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in ("voice.wav", "voice.json", "tts-plan.json")], stage, "storage_tts_publish")
+        if extra_names not in ((),('voice-reuse.json',)):raise WorkflowError('VOICE_EXTRA_ARTIFACT_INVALID')
+        paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in ("voice.wav", "voice.json", "tts-plan.json",*extra_names)], stage, "storage_tts_publish")
         retry_io(lambda: artifacts.commit("tts", paths), stage, "storage_tts_checkpoint")
 
     @staticmethod

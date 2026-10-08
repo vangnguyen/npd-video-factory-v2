@@ -51,7 +51,9 @@ def retime_voice(doc, meta, out, brand, template):
         for u in units:
             mapped=copy.deepcopy(u)
             for key in ('start_seconds','end_seconds','activity_start_seconds','activity_end_seconds'):
-                mapped[key]=target_start+u[key]-source_start
+                # Bind times to the samples actually placed above. Float addition
+                # and subtraction can otherwise invert adjoining scene boundaries.
+                mapped[key]=(round(target_start*48000)+round(u[key]*48000)-round(source_start*48000))/48000
             mapped['source_start_seconds']=u['start_seconds']; mapped['source_end_seconds']=u['end_seconds']
             mapped['shot_id']=shot['shot_id']; updated.append(mapped)
         layout.append({'scene':i+1,'shot_id':shot['shot_id'],'start':cursor,'end':cursor+duration,'requested_duration':requested,

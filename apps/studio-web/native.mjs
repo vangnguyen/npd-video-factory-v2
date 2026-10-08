@@ -112,7 +112,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -190,6 +190,7 @@ if (typeof document !== "undefined") {
     stockUI?.controls();
     generationUI?.controls();
     mediaPlannerUI?.controls();
+    narrationUI?.controls();
     rightsOverrideUI?.controls();
     variantsUI?.controls();
     channelUI?.controls();
@@ -229,6 +230,7 @@ if (typeof document !== "undefined") {
     stockUI?.sync();
     generationUI?.sync();
     mediaPlannerUI?.sync();
+    narrationUI?.sync();
     rightsOverrideUI?.sync();
     variantsUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
@@ -353,6 +355,11 @@ if (typeof document !== "undefined") {
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canManage,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         enableResolution:session.capabilities?.native_storyboard_media_resolution===true,
         onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
+    }
+    if(session.capabilities?.native_narration_preparation===true){
+      const narration=await import('./native-narration.mjs');
+      narrationUI=narration.initializeNativeNarration({api,getState:()=>({project,dirty,busy,active:jobActive(project),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
+        onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_analytics_review===true){
       const analytics=await import('./native-analytics.mjs');$('native-analytics-card').hidden=false;

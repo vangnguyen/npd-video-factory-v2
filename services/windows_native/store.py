@@ -303,6 +303,8 @@ class Store:
                 # Decisions bind project identity, current rights and canonical shots.
                 doc['studio_media_plan_origin']={'source_project_id':identifier,'source_revision':revision,
                     'source_history_sha256':digest(doc.pop('studio_media_plans')),'new_plan_required':True}
+            if doc.get('prepared_narration'):
+                doc['prepared_narration_origin']={'source_project_id':identifier,'source_reference_sha256':digest(doc.pop('prepared_narration')),'new_preparation_required':True}
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",(copy_id,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
             self.version(con,copy_id)
             self.event(con,copy_id,"project_duplicated_unapproved",{"source_project":identifier,"source_revision":revision})
@@ -569,7 +571,7 @@ class Store:
         return self.get(identifier)
 
     def enqueue(self, identifier, revision, kind, request_key):
-        if kind not in {"content", "render", "asr", "auto_edit_analysis", "media_frames"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
+        if kind not in {"content", "render", "narration", "asr", "auto_edit_analysis", "media_frames"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
             raise WorkflowError("INVALID_JOB_REQUEST", 400)
         identity = digest({"project_id": identifier, "revision": revision, "kind": kind})
         with self.transaction() as con:
@@ -583,6 +585,10 @@ class Store:
             from .auto_edit_timeline import is_auto_edit
             if is_auto_edit(doc) and kind == 'content':
                 raise WorkflowError('AUTO_EDIT_SOURCE_RENDER_PATH_REQUIRED', 400)
+            if kind=='narration':
+                if is_auto_edit(doc):raise WorkflowError('AUTO_EDIT_SOURCE_AUDIO_PATH_REQUIRED',400)
+                from .narration import identity as narration_identity
+                narration_identity(doc)
             if doc.get("canonical_timeline"):
                 from .shot_adapter import validate_document
                 validate_document(doc)
@@ -606,10 +612,10 @@ class Store:
                 if not available:raise WorkflowError('MEDIA_FRAME_NO_PENDING_ASSET',400)
                 if len(doc.get('media_frame_analyses',[]))+min(16,len(available))>MAX_RECORDS:
                     raise WorkflowError('MEDIA_FRAME_HISTORY_LIMIT')
-            if kind == "render" and (not approval or approval["revision"] != revision
+            if kind in {"render","narration"} and (not approval or approval["revision"] != revision
                                      or approval["snapshot_sha256"] != digest(doc)):
                 raise WorkflowError('AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER' if is_auto_edit(doc) else 'HUMAN_APPROVAL_REQUIRED_BEFORE_TTS')
-            if kind == "render":
+            if kind in {"render","narration"}:
                 if is_auto_edit(doc):
                     from .source_approval import validate_render_approval, reviewed_preview
                     validate_render_approval({'snapshot':{'document':doc,'approval':approval},'revision':revision,'project_id':identifier})

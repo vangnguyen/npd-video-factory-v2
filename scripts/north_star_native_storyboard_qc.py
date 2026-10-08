@@ -42,10 +42,11 @@ def snapshot(root):
 class CachedToneFixture:
     def __init__(self,settings):self.settings=settings
     def run(self,job,stage):
-        assert job['kind']=='render','This rehearsal cannot dispatch other providers'
-        out=self.settings.data_root/'jobs'/job['id'];out.mkdir(parents=True,exist_ok=False)
-        voice(out);write_json(out/'tts-plan.json',{'explicit_synthetic_pcm_fixture':True,'actual_voice_inference':False,'provider_calls':0,'paid_operations':0})
-        Artifacts(out,job).commit('tts',[out/'voice.wav',out/'voice.json',out/'tts-plan.json'],{'explicit_cached_pcm_fixture':True})
+        assert job['kind'] in {'render','narration'},'This rehearsal cannot dispatch other providers'
+        if job['kind']=='narration' or not job['snapshot']['document'].get('prepared_narration'):
+            out=self.settings.data_root/'jobs'/job['id'];out.mkdir(parents=True,exist_ok=False)
+            voice(out);write_json(out/'tts-plan.json',{'explicit_synthetic_pcm_fixture':True,'actual_voice_inference':False,'provider_calls':0,'paid_operations':0})
+            Artifacts(out,job).commit('tts',[out/'voice.wav',out/'voice.json',out/'tts-plan.json'],{'explicit_cached_pcm_fixture':True})
         with patch('services.windows_native.pipeline.verify_runtime'),patch('services.windows_native.pipeline.synthesize',side_effect=AssertionError('No voice inference')):
             return Pipeline(self.settings).run(job,stage)
 
@@ -108,10 +109,22 @@ def run(args):
         assert preview['status']=='READY' and preview['audio_mode']=='silent_visual_proxy' and preview['final_approval_eligible'] is False
         shutil.copyfile(server.previews.video_path(identifier,preview['timeline_version']),out/'preview.mp4');write(out/'preview.json',preview)
         view=send('GET',base+'/shots');approval=send('POST',base+'/approve',{'revision':view['revision'],'reviewer':'EXPLICIT SIGNED HUMAN FIXTURE; NOT OWNER UAT','acknowledged':True})
+        if args.narration_preparation:
+            prepared=send('POST',base+'/jobs',{'revision':approval['revision'],'kind':'narration','request_key':'explicit-narration-preparation-01'});assert server.runner.run_one()
+            prepared=next(job for job in send('GET',base)['jobs'] if job['id']==prepared['id']);assert prepared['status']=='succeeded',prepared
+            page=send('GET',base+'/narration');assert page['items'][0]['result']==prepared['result'];audio=send('GET',base+'/narration/'+prepared['id']+'/audio')
+            assert audio['sha256']==prepared['result']['plan']['voice_audio_sha256']
+            current=send('POST',base+'/narration/'+prepared['id']+'/apply',{'revision':approval['revision'],'expected_plan_sha256':prepared['result']['plan_sha256'],'acknowledged':True})
+            assert current['approval'] is None and current['document']['prepared_narration']['voice_audio_sha256']==audio['sha256']
+            write(out/'narration-job.json',prepared);write(out/'narration-page.json',page);write(out/'narration-plan.json',prepared['result']['plan']);write(out/'narration-applied-project.json',current)
+            approval=send('POST',base+'/approve',{'revision':current['revision'],'reviewer':'EXPLICIT SIGNED AFTER-TIMING FIXTURE; NOT OWNER UAT','acknowledged':True})
         body={'revision':approval['revision'],'kind':'render','request_key':'explicit-storyboard-full-qc-render-01'}
         queued=send('POST',base+'/jobs',body);assert send('POST',base+'/jobs',body)['id']==queued['id'];assert server.runner.run_one()
         finished=next(job for job in send('GET',base)['jobs'] if job['id']==queued['id']);assert finished['status']=='succeeded',finished
         rendered=root/'jobs'/queued['id'];qc=json.loads((rendered/'full-qc-report.json').read_bytes())
+        if args.narration_preparation:
+            reuse=json.loads((rendered/'voice-reuse.json').read_bytes());assert reuse['source_job_id']==prepared['id'] and reuse['new_inference_calls']==0
+            assert file_sha(rendered/'voice.wav')==prepared['result']['plan']['voice_audio_sha256'];write(out/'voice-reuse.json',reuse)
         assert qc['status']=='passed' and qc['full_production_qc']['broken_frames']==0 and qc['subtitle_bounds']['sample_count']==2
         assert qc['full_production_qc']['width']==1080 and qc['full_production_qc']['height']==1920
         assert not qc['human_final_video_accepted'] and not qc['semantic_vision_used'];assert file_sha(rendered/'voice.wav')==json.loads((rendered/'voice.json').read_bytes())['audio_sha256']
@@ -141,14 +154,17 @@ def run(args):
     write(out/'backup-restore.json',{'backup':backup,'restore':restore,'exact_state':True});write(out/'offline-snapshot.json',actual)
     source=['services/windows_native/storyboard_qc.py','services/windows_native/pipeline.py','services/windows_native/store.py','services/windows_native/hardening.py','services/windows_native/shot_render_timing.py',
         'services/windows_native/backup.py','services/windows_native/tests/test_storyboard_qc.py','apps/api/app/production_qc.py','apps/api/app/production_logic.py','scripts/north_star_native_storyboard_qc.py']
+    if args.narration_preparation:source+=['services/windows_native/narration.py','services/windows_native/access.py','services/windows_native/server.py','services/windows_native/tests/test_narration.py',
+        'services/windows_native/tests/test_narration_http.py','apps/studio-web/native-narration.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/tests/native-narration.test.mjs']
     write(out/'evidence.json',{'schema_version':'north-star-native-storyboard-full-qc-rehearsal-v1','workspace_id':WORKSPACE,'project_id':identifier,
         'actual_human_http_requests':len(requests),'actual_native_worker':True,'actual_ffmpeg_render':True,'actual_full_media_qc':True,'actual_libass_subtitle_pixels':True,
         'actual_frozen_video_failure':True,'failed_qc_terminal_state':True,'actual_backup_restore':True,'explicit_synthetic_pcm_fixture':True,
         'provider_calls':0,'paid_operations':0,'actual_voice_inference':False,'semantic_vision_used':False,'rights_independently_verified':False,
+        'narration_preparation_tested':args.narration_preparation,'measured_canonical_timing_apply_tested':args.narration_preparation,'verified_pcm_reuse_tested':args.narration_preparation,
         'preview_kind':'silent_visual_proxy','audible_preview_acceptance':False,'human_approval_is_signed_fixture':True,'owner_uat_accepted':False,'production_deployed':False,
         'source_sha256':{p:file_sha(ROOT/p) for p in source},'exports':{str(p.relative_to(out)).replace('\\','/'):{'sha256':file_sha(p),'bytes':p.stat().st_size} for p in out.rglob('*') if p.is_file()}})
     print(json.dumps({'status':'STORYBOARD_FULL_QC_LOCAL_REAL_SYNTHETIC_PCM_PASS','human_http_requests':len(requests),'full_qc':'passed','frozen_video':'failed_qc'}))
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--data-root',type=Path,required=True);parser.add_argument('--restore-root',type=Path,required=True);parser.add_argument('--output',type=Path,required=True)
-    parser.add_argument('--reopen',action='store_true');run(parser.parse_args())
+    parser.add_argument('--reopen',action='store_true');parser.add_argument('--narration-preparation',action='store_true');run(parser.parse_args())
