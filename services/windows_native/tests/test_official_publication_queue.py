@@ -1,5 +1,7 @@
 """Finite default-off queue with explicit nonplayable media/provider fixtures."""
 import json,unittest
+import os,subprocess,sys
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from datetime import timedelta
@@ -192,3 +194,8 @@ class OfficialQueueTests(OfficialDispatchFixture,unittest.TestCase):
         with self.assertRaisesRegex(WorkflowError,'OUTCOME_INVALID'):self.queue.finish(ticket,Outcome(mock=True).model_copy(update={'published':1}))
         with self.assertRaisesRegex(WorkflowError,'TICKET_STALE'):self.queue.guard(replace(ticket,claim_id='f'*32))
         self.assertEqual(self.wire,[])
+    def test_cold_library_import_uses_existing_native_contract_bootstrap(self):
+        environment=dict(os.environ);environment.pop('PYTHONPATH',None)
+        result=subprocess.run([sys.executable,'-c','from services.windows_native.official_publication_queue import QueueCreate; print("QUEUE_IMPORT_OK")'],
+            cwd=Path(__file__).resolve().parents[3],env=environment,capture_output=True,text=True,check=True)
+        self.assertEqual(result.stdout.strip(),'QUEUE_IMPORT_OK')

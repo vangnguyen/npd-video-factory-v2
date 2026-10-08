@@ -112,6 +112,7 @@ export function initializeShotStudio({api,getProject,getGuards,onProject,onDirty
     if($('native-publication-card'))$('video-review-body').append($('native-publication-card'));
     if($('native-official-accounts-card'))$('video-review-body').append($('native-official-accounts-card'));
     if($('native-official-publications-card'))$('video-review-body').append($('native-official-publications-card'));
+    if($('native-official-publication-queue-card'))$('video-review-body').append($('native-official-publication-queue-card'));
     if($('native-analytics-card'))$('video-review-body').append($('native-analytics-card'));
     if($('native-variants-card'))$('video-review-body').append($('native-variants-card'));
   }

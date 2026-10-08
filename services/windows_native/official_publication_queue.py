@@ -5,12 +5,12 @@ worker and never creates credentials, refreshes grants or clears upload guards.
 """
 from dataclasses import dataclass
 from datetime import datetime,timedelta
-import json,re,uuid
+import base64,json,re,uuid
 from typing import Literal
 from pydantic import Field,StrictBool,StrictInt,field_validator,model_validator
-from app.models import StrictModel
 from .contracts import WorkflowError,digest
 from .official_publication_models import Step
+from app.models import StrictModel
 from .official_publications import utc
 from .official_publication_worker import NativeOfficialPublicationWorker,code
 
@@ -139,6 +139,27 @@ class NativeOfficialPublicationQueue:
         with self.store.transaction() as con:
             row=self.row(con,project,identity);value=self.read(con,row)
             return {**value,'steps':self.steps(con,row,value)}
+    def states(self):
+        return {'schema_version':'native-official-publish-queue-runtime-v1','workspace_id':self.workspace,'enabled':self.configured(),
+            'default_enabled':False,'separate_owner_plan_approval_required':True,'automatic_consent_renewal':False,'remote_deletion_enabled':False,
+            'token_returned':False,'session_uri_returned':False,'real_provider_tested':False}
+    def page(self,project,publication,*,limit=25,cursor=None):
+        if type(limit) is not int or not 1<=limit<=100:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_PAGE_INVALID',400)
+        after=None
+        if cursor is not None:
+            try:
+                if not isinstance(cursor,str) or len(cursor)>2048:raise ValueError()
+                after=json.loads(base64.urlsafe_b64decode(cursor+'='*(-len(cursor)%4)))
+                if not isinstance(after,list) or len(after)!=5 or after[:3]!=[self.workspace,project,publication] or not isinstance(after[3],str) or len(after[3])>40 or datetime.fromisoformat(after[3]).tzinfo is None or not isinstance(after[4],str) or not re.fullmatch(r'nopq_[a-f0-9]{32}',after[4]):raise ValueError()
+            except (ValueError,TypeError,IndexError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_PAGE_INVALID',400) from None
+        with self.store.transaction() as con:
+            self.journal.read(self.journal.row(con,project,publication));where='workspace_id=? AND project_id=? AND publication_id=?';params=[self.workspace,project,publication]
+            if after:where+=' AND (created_at<? OR (created_at=? AND plan_id<?))';params.extend([after[3],after[3],after[4]])
+            rows=con.execute('SELECT * FROM native_official_publish_queue_plans WHERE '+where+' ORDER BY created_at DESC,plan_id DESC LIMIT ?',(*params,limit+1)).fetchall()
+            for row in rows:self.read(con,row)
+            next_cursor=base64.urlsafe_b64encode(json.dumps([self.workspace,project,publication,rows[limit-1]['created_at'],rows[limit-1]['plan_id']]).encode()).decode().rstrip('=') if len(rows)>limit else None
+        return {'schema_version':'native-official-publish-queue-page-v1','workspace_id':self.workspace,'project_id':project,'publication_id':publication,
+            'items':[self.get(project,row['plan_id']) for row in rows[:limit]],'next_cursor':next_cursor,'truncated':len(rows)>limit,'token_returned':False,'session_uri_returned':False}
     def steps(self,con,row,value):
         steps=[]
         for step in con.execute('SELECT * FROM native_official_publish_queue_steps WHERE plan_id=? ORDER BY ordinal',(row['plan_id'],)):

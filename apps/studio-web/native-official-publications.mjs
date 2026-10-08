@@ -1,5 +1,5 @@
 // Explicit signed review and bounded provider actions. No secret input or automatic sends.
-export function initializeNativeOfficialPublications({api,getState,root=document,onMessage=()=>{},onWorking=()=>{},uuid=()=>crypto.randomUUID()}){
+export function initializeNativeOfficialPublications({api,getState,root=document,onMessage=()=>{},onWorking=()=>{},onSelection=()=>{},uuid=()=>crypto.randomUUID()}){
   const card=root.getElementById('native-official-publications-card');card.replaceChildren();
   const node=(tag,text,id)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(id)n.id='native-official-publish-'+id;return n;};
   const button=(text,id,permission='manage')=>{const n=node('button',text,id);n.type='button';n.className='secondary';n.dataset.vfPermission=permission;return n;};
@@ -50,7 +50,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
     sendCaption.textContent=selected?.mock?'Tôi cho phép thực hiện một bước mô phỏng.':'Tôi cho phép gửi một bước hoặc đọc xử lý qua API thật.';
     detail.textContent=selected?JSON.stringify({target:selected.snapshot.target,metadata:selected.snapshot.metadata,disclosures:selected.snapshot.disclosures,
       revision:selected.snapshot.project_revision,final_sha256:selected.snapshot.final_sha256,snapshot_sha256:selected.snapshot_sha256,
-      status:selected.status,approval_id:selected.approval_id,dispatch,receipt:selected.receipt},null,2):'Đọc cấu hình và chọn video hiện tại để chuẩn bị review.';controls();}
+      status:selected.status,approval_id:selected.approval_id,dispatch,receipt:selected.receipt},null,2):'Đọc cấu hình và chọn video hiện tại để chuẩn bị review.';controls();onSelection();}
   function sync(){const next=context();if(next!==scope){scope=next;generation++;profiles=[];vault=null;dryRows=[];accountRows=[];rows=[];selected=null;dispatch=null;cursor=null;sourceCursors=[null,null];
       for(const select of [profile,dryRun,account]){select.replaceChildren();select.value='';}scheduled.value='';ack.checked=false;sendAck.checked=false;}render();}
   function validateProfile(p){const s=getState(),t=p?.target;
@@ -134,5 +134,5 @@ export function initializeNativeOfficialPublications({api,getState,root=document
   config.addEventListener('click',()=>readConfig());sources.addEventListener('click',()=>readSources());sourceMore.addEventListener('click',()=>readSources(true));history.addEventListener('click',()=>readHistory());more.addEventListener('click',()=>readHistory(true));read.addEventListener('click',()=>readState());
   for(const [control,action] of [[create,'create'],[approve,'approve'],[renew,'renew'],[cancel,'cancel'],[revoke,'revoke'],[step,'step'],[poll,'poll']])control.addEventListener('click',()=>execute(action));
   ack.addEventListener('change',controls);sendAck.addEventListener('change',controls);profile.addEventListener('change',()=>{sourceOptions();ack.checked=false;sendAck.checked=false;controls();});sync();
-  return{sync,controls,readConfig,readSources,readHistory,readState,execute,isWorking:()=>working};
+  return{sync,controls,readConfig,readSources,readHistory,readState,execute,isWorking:()=>working,currentBinding:()=>({publication:selected,dispatch})};
 }
