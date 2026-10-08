@@ -14,7 +14,7 @@ from .costs import CostLedger
 from app.media_generation_routes import workflow_routes,generation_envelope
 from app.comfyui_generation_lifecycle import GenerationObservation
 
-STATES={'not_configured','queued','running','failed','cancelled','recovery_required','needs_approval'}
+STATES={'not_configured','queued','running','succeeded','failed','cancelled','recovery_required','needs_approval'}
 ID=re.compile(r'^[a-f0-9]{32}$')
 
 
@@ -98,6 +98,7 @@ class NativeGenerationQueue:
                     or observation.workflow_version!=selection['workflow_version'] or not row['dispatch_started']):raise ValueError()
             elif row['provider_job_id'] is not None or row['observation_sha256'] is not None:raise ValueError()
             if (row['status']=='running')!=(row['claim_id'] is not None and row['lease_until'] is not None):raise ValueError()
+            if row['status']=='succeeded' and (not observation or observation.status!='succeeded' or not row['dispatch_started'] or row['failure_code'] is not None):raise ValueError()
         except (ValueError,TypeError,KeyError):raise WorkflowError('NATIVE_GENERATION_JOURNAL_INVALID') from None
         public={k:row[k] for k in ('generation_id','workspace_id','project_id','request_fingerprint','status','phase','provider_job_id','cost_operation_id',
             'recovery_count','failure_code','created_at','updated_at')}
@@ -159,8 +160,10 @@ class NativeGenerationQueue:
             if self.factory is None or not self.factory.enabled:return None
             row=con.execute("SELECT * FROM native_generation_jobs WHERE workspace_id=? AND status='queued' ORDER BY created_at,generation_id LIMIT 1",(self.workspace,)).fetchone()
             if row is None:return None
-            value=self.read(row);selected=self.selection(parameters(value['snapshot']['request']['parameters']))
-            if (selected['status']!='CONFIGURED' or selected['provider_configuration_sha256']!=value['snapshot']['selection']['provider_configuration_sha256']
+            value=self.read(row)
+            try:selected=self.selection(parameters(value['snapshot']['request']['parameters']))
+            except WorkflowError:selected=None
+            if (selected is None or selected['status']!='CONFIGURED' or selected['provider_configuration_sha256']!=value['snapshot']['selection']['provider_configuration_sha256']
                 or selected['workflow_sha256']!=value['snapshot']['selection']['workflow_sha256']):
                 status='recovery_required' if row['dispatch_started'] else 'failed'
                 con.execute('UPDATE native_generation_jobs SET status=?,phase=?,failure_code=?,updated_at=? WHERE generation_id=?',
@@ -185,6 +188,11 @@ class NativeGenerationQueue:
             if value['provider_input'] is not None and value['provider_input']!=expected:raise WorkflowError('NATIVE_GENERATION_PROVIDER_INPUT_CHANGED')
             con.execute("UPDATE native_generation_jobs SET provider_input_json=?,provider_input_sha256=?,phase='input_bound',updated_at=? WHERE generation_id=?",(json.dumps(expected),digest(expected),now(),row['generation_id']))
             self.event(con,row,'generation.input.bound','native-generation-worker',input_sha256=digest(expected),external_call=False)
+
+    def renew(self,claim):
+        with self.store.transaction() as con:
+            row=self.fenced(con,claim)
+            con.execute('UPDATE native_generation_jobs SET lease_until=?,updated_at=? WHERE generation_id=? AND claim_id=?',(self.clock()+900,now(),row['generation_id'],claim['claim_id']))
 
     def bound_input(self,con,row):
         snapshot=self.read(row)['snapshot'];typed,params,_=self.references.check(snapshot['references'],self.factory,con);uris={}

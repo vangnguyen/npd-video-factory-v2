@@ -14,8 +14,8 @@ import time
 
 LOGGER = logging.getLogger('video_factory.native')
 EVENTS = {'http_request', 'worker_step', 'worker_failed', 'intelligence_completed', 'intelligence_failed'}
-STAGES = {'http', 'starting', 'content', 'transcription', 'media_analysis', 'tts', 'render', 'worker', 'research', 'ideas'}
-PROVIDERS = {'assemblyai', 'openai', 'local_vieneu', 'ffmpeg', 'local_io'}
+STAGES = {'http', 'starting', 'content', 'transcription', 'media_analysis', 'tts', 'render', 'worker', 'research', 'ideas', 'generation'}
+PROVIDERS = {'assemblyai', 'openai', 'local_vieneu', 'ffmpeg', 'local_io', 'comfyui'}
 
 
 def configure_logging():

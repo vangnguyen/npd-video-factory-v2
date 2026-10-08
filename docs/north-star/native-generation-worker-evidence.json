@@ -1,0 +1,154 @@
+{
+  "schema": "native-generation-worker-evidence-v1",
+  "parent_head": "d69e27acb61ef447323b0f639ade819751b4dd99",
+  "source_sha256": {
+    "services/windows_native/generation_worker.py": "e0c397797ffe2e5e49556900da3bbf2a378eeddaff84248a74ab4d089b2947ca",
+    "services/windows_native/generation_queue.py": "25cea1e73504ca0e40c9529a1f1de45933cee8536e0b41053932de1e3f36cc64",
+    "services/windows_native/generation_media.py": "7242e8e727b2729a7648c48f9dca35fb1214362c2a82f4c0125a3dcf6b77fc7e",
+    "services/windows_native/observability.py": "090b4ab54be11ef2a9cfc68fd4b8b4a1cb606d8a56faafb7a7ce4c8c83a0ec2f",
+    "services/windows_native/tests/test_generation_worker.py": "0ad70c6f041f620a32dd669667a8ae29fd61d89b389a3d609653b607f721b9ac",
+    "scripts/north_star_native_generation_worker.py": "df322b47fbe9cbdafcfd49f0d31ec9c603946b72e7b199cbc5674c06e5b421b6",
+    "docs/NATIVE_GENERATION_WORKER.md": "8024644ad154934782b9d34e13b073c15632cd8c1418482a6f3e2b3f31832404"
+  },
+  "logs": {
+    "native-generation-worker-r1.log": "d59ee47e5f0f02121d15e410c5c79b9a5288400507c37023a88e9372b72c23f1",
+    "native-generation-worker-r2.log": "0a180b137f867ff3cd444efd7efc6f089aa6926107740cbd1b0e0ac5675576d8",
+    "native-generation-worker-r3.log": "af38e2d07d3d5f55899bfff19098081ce8515b90780f6c1bb469ed218fafdcfc",
+    "native-generation-worker-n1.log": "4c16b77492140c426ba05187236cdc98cc4c4d37dc909789bcfcfdd8bc97ccc4",
+    "native-generation-worker-n2.log": "4c16b77492140c426ba05187236cdc98cc4c4d37dc909789bcfcfdd8bc97ccc4",
+    "native-generation-worker-reopen-n2.log": "ad3cd293c7c72f2549451bd2a84f202dc4685d34d087723036fe62d7cd6f29f8"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-generation-worker-n2",
+  "contract_exports": {
+    "0-completed-job.json": {
+      "sha256": "28cd205b0ca18b9792159f38410721ffdbc39b63d2ffffacec6f54de36869d6e",
+      "bytes": 9605
+    },
+    "0-interrupted-job.json": {
+      "sha256": "ce9df5e89e3f01cf8560691913cfe2709927fb8d0fc7671668ba1d357784966f",
+      "bytes": 3709
+    },
+    "0-normalized.jpg": {
+      "sha256": "96fc94546ec9c59a1db9d50ce5f91d0d46cc3a802a958de571b1ffefdd868493",
+      "bytes": 30027
+    },
+    "0-original.png": {
+      "sha256": "b5b59f970a5bad64835f1d78b2dd136fe181c000ed398ea7d449c5a9d6f29d75",
+      "bytes": 26482
+    },
+    "0-thumbnail.jpg": {
+      "sha256": "79024adb6d4f4467f7102257f2ae5397d305cc56feeef2be9db2067c54bfc042",
+      "bytes": 13760
+    },
+    "1-completed-job.json": {
+      "sha256": "99c2dd08ff1fd9c24abdd1d27d19a6e7ae0d0982c6a95e500840d9e7e15cd9aa",
+      "bytes": 11091
+    },
+    "1-normalized.mp4": {
+      "sha256": "c36327c02427117c5799817b02040a5cfb0ebf4fdfbb1d9c614fc823fec47fe1",
+      "bytes": 34785
+    },
+    "1-original.mp4": {
+      "sha256": "c36327c02427117c5799817b02040a5cfb0ebf4fdfbb1d9c614fc823fec47fe1",
+      "bytes": 34785
+    },
+    "1-thumbnail.jpg": {
+      "sha256": "4da79d971aef079063fbf18428cb293d8db88afccfbd0464470d89a78673f21d",
+      "bytes": 14772
+    },
+    "2-completed-job.json": {
+      "sha256": "1908ee8f954b94e6605e674ee5e4f1ca3af076148873f4732306596e7d99f152",
+      "bytes": 13022
+    },
+    "2-interrupted-job.json": {
+      "sha256": "f6a08f024b337071619b2b2ceeb79deef539bff68ee771aa1630df4810a5f3a1",
+      "bytes": 7117
+    },
+    "2-normalized.jpg": {
+      "sha256": "96fc94546ec9c59a1db9d50ce5f91d0d46cc3a802a958de571b1ffefdd868493",
+      "bytes": 30027
+    },
+    "2-original.png": {
+      "sha256": "b5b59f970a5bad64835f1d78b2dd136fe181c000ed398ea7d449c5a9d6f29d75",
+      "bytes": 26482
+    },
+    "2-thumbnail.jpg": {
+      "sha256": "79024adb6d4f4467f7102257f2ae5397d305cc56feeef2be9db2067c54bfc042",
+      "bytes": 13760
+    },
+    "attachment-receipts.json": {
+      "sha256": "43b8cce9ea67191e217e7ce2178914aa0fa34e63aef6e1fef3d0ae3662120a1f",
+      "bytes": 2139
+    },
+    "evidence.json": {
+      "sha256": "d17f38af2f3344a9d2ca7158e6fc15ff12f7898bc79b6df8a9179f45af6ba821",
+      "bytes": 4661
+    },
+    "gpu-fixture-wires.json": {
+      "sha256": "67af32e5be2aada8e62bacaaafd637d5fb6b437af7aadeaa50d30fc2903662b9",
+      "bytes": 1332
+    },
+    "native-service-wires.json": {
+      "sha256": "b6a8bce1cbcfa1eb3adfa6cde9a44548a216471cbc9044a816dc8f2e1a688cad",
+      "bytes": 2020
+    },
+    "new-process-replay.json": {
+      "sha256": "68d1810c3b9bcbda98abc72fa55053dff218b33b6062a78aacd71fb799fc7974",
+      "bytes": 272
+    },
+    "offline-snapshot.json": {
+      "sha256": "f732193ceb9566a02af0a9efb772b15e1e388b9fcc012ad84e9c30219d02d921",
+      "bytes": 157694
+    },
+    "pre-attachment-project.json": {
+      "sha256": "463936f67ab62b4acb19afb3cfbafc0dcb6d27506afd5714fa5da943fbc57b4d",
+      "bytes": 5748
+    },
+    "recovery-requests.json": {
+      "sha256": "4147f086cb0bbd7243bedc80a9379711159963ac092f288355d27f4c43cabc2a",
+      "bytes": 1089
+    }
+  },
+  "native_affected_passed": 78,
+  "native_affected_seconds": 40.393,
+  "new_worker_cases": 11,
+  "prior_overlapping_passed": [
+    30,
+    10
+  ],
+  "failed_tests": 0,
+  "native_independent_worker_wired": true,
+  "default_inactive_no_gpu_cpu_dependency": true,
+  "protected_configuration_drift_terminates_queue_head": true,
+  "fenced_dispatch_cost_intent_before_submission": true,
+  "official_unknown_price_budget_block_before_calls": true,
+  "provider_observation_binding": true,
+  "actual_native_and_bridge_media_decode": true,
+  "terminal_result_receipt_and_physical_verification": true,
+  "explicit_atomic_import_approval_invalidation": true,
+  "frozen_import_idempotency_after_later_edit": true,
+  "lost_submission_reply_reconciled_without_resubmission": true,
+  "post_stage_crash_recovers_locally_without_new_calls": true,
+  "duplicate_reference_hash_binding": true,
+  "separate_process_default_inactive_exact_replay": true,
+  "synthetic_pixels_and_mock_gpu_api": true,
+  "generation_results_manually_injected": false,
+  "actual_outputs": 3,
+  "native_generation_submissions": 3,
+  "mock_gpu_prompt_writes": 3,
+  "native_reference_intake_writes": 3,
+  "mock_gpu_reference_uploads": 3,
+  "read_only_lookup_count": 1,
+  "explicit_imports": 3,
+  "cost_operations": 6,
+  "actual_cost_vnd": null,
+  "paid_operations": 0,
+  "rights_status": "unknown",
+  "production_eligible": false,
+  "automatic_attachment": false,
+  "canonical_timeline_auto_edited": false,
+  "native_http_assets_ui_wired": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false
+}

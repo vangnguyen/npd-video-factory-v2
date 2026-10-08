@@ -45,7 +45,7 @@ class NativeGenerationMedia:
                 or type(width) is not int or type(height) is not int or not 1<=width<=8192 or not 1<=height<=8192 or width*height>16*1024*1024
                 or digest(workflow_evidence)!=selected['workflow_sha256'] or definition['workflow_id']!=workflow or definition['version']!=selected['workflow_version']
                 or registered.graph_sha256!=workflow_evidence['graph_sha256'] or registered.model!=(', '.join(definition.get('required_model_identifiers',[]))[:200] or 'unspecified-reviewed-model')
-                or registered.source_reference_sha256!=[by_id[i] for i in ids]
+                or registered.source_reference_sha256!=[by_id[i] for i in dict.fromkeys(ids)]
                 or registered.workflow_id!=workflow or registered.workflow_version!=selected['workflow_version'] or registered.inputs_sha256!=digest(inputs)
                 or registered.prompt_sha256!=hashlib.sha256(payload.prompt.encode()).hexdigest() or registered.seed!=payload.seed
                 or proof.get('artifact_id')!=digest([self.queue.workspace,value['provider_job_id'],sha]) or proof.get('checksum_sha256')!=sha
@@ -132,6 +132,8 @@ class NativeGenerationMedia:
                 width=asset['width'],height=asset['height'],duration=asset.get('duration_seconds'))
             expected_original={ 'image/png':'.png','image/jpeg':'.jpg','video/mp4':'.mp4'}[asset['source_mime']]
             if not asset['original_id'].endswith(expected_original) or not asset['id'].endswith('.jpg' if asset['kind']=='image' else '.mp4'):raise ValueError()
+            if asset['kind']=='video' and (type(asset.get('fps')) not in (int,float) or abs(asset['fps']-proof['media']['fps'])>.01
+                or type(asset.get('has_audio')) is not bool or asset['has_audio']!=(proof['media']['audio_streams']>0)):raise ValueError()
             if physical:
                 for directory,key,checksum,size in [('assets','id','sha256','bytes'),('originals','original_id','source_sha256','source_bytes')]:
                     path=guard(self.store.root/directory/asset[key],exists=True)
