@@ -1,0 +1,99 @@
+{
+  "schema": "native-generation-media-evidence-v1",
+  "parent_head": "483cc1687382d9ce2d39e06d25e6ee133d00f7a8",
+  "source_sha256": {
+    "services/windows_native/generation_media.py": "b21fb62c29bc28425011e9dd49aeac016c74a6a995bee2960130e8bb3286383d",
+    "services/windows_native/tests/test_generation_media.py": "d01282d188944cc9555047ec9ce2c6671bef460cd975ea3b0718f0e3c73529ff",
+    "scripts/north_star_native_generation_media.py": "3918cf26cf973f3a81ac44be21c2fbd18b63ff7934c024aa31721826157ca735",
+    "docs/NATIVE_GENERATION_MEDIA.md": "a6890c156983c0bf0ef7d5b3a42fce8ea4dc0316fae67eb32af22e90259c3d53"
+  },
+  "logs": {
+    "native-generation-media-r1.log": "2d4f20707e00d7694841bc43c195f061885ce7de89915c53e5d6d25629ca297e",
+    "native-generation-media-r2.log": "889df7bb0a01050680114608196996e1b20c31a1020a6b157c39ade509c4dec5",
+    "native-generation-media-r3.log": "19003d55eae63d3e56e9165684b9dcb47d93251fb4acc1973689b0f28e77a4b9",
+    "native-generation-media-r4.log": "05f92ac917e77ad403dffe17f3d65321fcba6ec45d3df3a22926c3927c188b77",
+    "native-generation-media-r5.log": "3f0ad9ed9c8be7351a02c947323807e45d98da614309abb711746ef0bbd07a07",
+    "native-generation-media-n1.log": "5f93e8e5d886262fe77e32f7e1e7d5f6832543e0aa59672b731c46179550cb65",
+    "native-generation-media-reopen-n1.log": "b3dbf20d2b7aa299709c4e627e3c82de69110112ad92bda71fc1093c8d8664bd"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-generation-media-n1",
+  "contract_exports": {
+    "evidence.json": {
+      "sha256": "f4319febcee6dfbb978e0e8838ce5ce88c92a9c106460520caf4f3b338af2805",
+      "bytes": 2565
+    },
+    "image-normalized.jpg": {
+      "sha256": "23fe4dfd437f0dff57a97ee6833498f2299c2c8e11bb2279fb7f46c9bc7453c6",
+      "bytes": 4310
+    },
+    "image-original.png": {
+      "sha256": "2330737d23841cb9dc511a1ea64ff03a4492fcdf308621c62ecaa804eeaf5503",
+      "bytes": 1487
+    },
+    "image-receipt.json": {
+      "sha256": "5d937cb436b23f1b3d8e0c8efd2a915d10a83642cd25ac691b420db34cc85ef4",
+      "bytes": 8725
+    },
+    "image-thumbnail.jpg": {
+      "sha256": "ae66524c2d0d989e4bb849f67589ea990ce84535e93c2983586997378e814437",
+      "bytes": 2669
+    },
+    "local-source-video.mp4": {
+      "sha256": "c36327c02427117c5799817b02040a5cfb0ebf4fdfbb1d9c614fc823fec47fe1",
+      "bytes": 34785
+    },
+    "new-process-replay.json": {
+      "sha256": "2795a70c52f2a3fd504bb9e0a555331acc85ce01ce714f0b538d8324893423df",
+      "bytes": 306
+    },
+    "offline-snapshot.json": {
+      "sha256": "238a8cc6922cf66c9d2090af4c448c47a42a3d49dcf5434a5ee04e2128b9f9e5",
+      "bytes": 41240
+    },
+    "video-normalized.mp4": {
+      "sha256": "c36327c02427117c5799817b02040a5cfb0ebf4fdfbb1d9c614fc823fec47fe1",
+      "bytes": 34785
+    },
+    "video-original.mp4": {
+      "sha256": "c36327c02427117c5799817b02040a5cfb0ebf4fdfbb1d9c614fc823fec47fe1",
+      "bytes": 34785
+    },
+    "video-receipt.json": {
+      "sha256": "990250456c2cf60b4c770a8ff04599883c38fe4f15f7919d5281ffad07f39d5c",
+      "bytes": 8762
+    },
+    "video-thumbnail.jpg": {
+      "sha256": "4da79d971aef079063fbf18428cb293d8db88afccfbd0464470d89a78673f21d",
+      "bytes": 14772
+    }
+  },
+  "native_affected_passed": 56,
+  "native_affected_seconds": 21.311,
+  "new_media_cases": 7,
+  "initial_count_35_contained_14_duplicate_queue_cases": true,
+  "intermediate_failed_runs_retained": [
+    "r2: fixture model mismatch plus incorrect snapshot key",
+    "r3: incorrect source-snapshot key"
+  ],
+  "trusted_fenced_job_bound_binary_and_frozen_workflow_model_input_reference_graph_binding": true,
+  "actual_native_image_and_full_video_decode": true,
+  "immutable_receipt_and_exact_replay": true,
+  "physical_original_normalized_thumbnail_hash_checks": true,
+  "rehashed_semantic_tampering_rejects": true,
+  "separate_process_default_inactive_exact_replay": true,
+  "actual_assets": 2,
+  "synthetic_pixels": true,
+  "mock_provider_metadata_and_observations": true,
+  "registered_bridge_service_called": false,
+  "generation_posts": 0,
+  "external_requests": 0,
+  "paid_operations": 0,
+  "actual_cost_vnd": null,
+  "rights_status": "unknown",
+  "production_eligible": false,
+  "canonical_project_approval_timeline_mutated": false,
+  "native_worker_success_attachment_http_assets_ui_wired": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false
+}

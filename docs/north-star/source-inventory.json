@@ -1,6 +1,6 @@
 {
-  "head": "ec16784652488777f10701394f594095651f07df",
-  "audited_at": "2026-10-07T23:48:23.524857+00:00",
+  "head": "483cc1687382d9ce2d39e06d25e6ee133d00f7a8",
+  "audited_at": "2026-10-08T00:20:28.672273+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -160,6 +160,11 @@
     "scripts/north_star_native_generation_queue.py": "1f5a06504e92c707642109d7252ae308aaebffd2a83a742f988877797f17105a",
     "docs/NATIVE_GENERATION_QUEUE.md": "c30fc479b14a4a9ba7723c62d4a74c25d255efeed83a8b6988cbdde8694e86e1",
     "docs/north-star/native-generation-queue-evidence.json": "5048bea5f9e3c0e649d9ac164d206427a6bafbd81fd81b7077d4c9b49a9103c9",
+    "services/windows_native/generation_media.py": "b21fb62c29bc28425011e9dd49aeac016c74a6a995bee2960130e8bb3286383d",
+    "services/windows_native/tests/test_generation_media.py": "d01282d188944cc9555047ec9ce2c6671bef460cd975ea3b0718f0e3c73529ff",
+    "scripts/north_star_native_generation_media.py": "3918cf26cf973f3a81ac44be21c2fbd18b63ff7934c024aa31721826157ca735",
+    "docs/NATIVE_GENERATION_MEDIA.md": "a6890c156983c0bf0ef7d5b3a42fce8ea4dc0316fae67eb32af22e90259c3d53",
+    "docs/north-star/native-generation-media-evidence.json": "89cfc04685ef43d3056934b39846f1aa3ad56093a8bca71195bf19584503d181",
     "apps/api/app/object_storage.py": "83ffa2914dee6a29a1e81329b458d23adab1e9cea9ab9fd6720459f6c544a12f",
     "services/windows_native/media.py": "398bcb41f53b378fb34b09a0d1bf4735bcf9e28577ee7198f6dd9572e5a133c8",
     "apps/api/app/publishing_artifact.py": "5edc04fb448a692b54f554bc8480e1f76d2caede325ac50c086d370d244b952d",

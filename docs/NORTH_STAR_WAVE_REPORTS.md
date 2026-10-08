@@ -1791,3 +1791,21 @@ REAL PROVIDER TESTS: 0. MOCK TESTS: provider observations/cancellation/reconcili
 EVIDENCE: `docs/NATIVE_GENERATION_QUEUE.md`, `docs/north-star/native-generation-queue-evidence.json`, four hashed exports under external `recovery/native-generation-queue-n2`, seven logs, owned data `C:\vf-native-generation-queue-fixture-02`. Earlier n1 retained. Native project/approval/timeline unchanged.
 
 REGRESSIONS: final affected tests pass; fresh accepted verification follows preservation. EXTERNAL BLOCKERS: genuine reviewed workflows/models/GPU/source-pin/provider and Owner/production acceptance. OWNER ACTION REQUIRED: none for safe work. NEXT WAVE: connect independent Native generation worker/read-only recovery/actual result intake/attachment/HTTP/Assets, then original Mode A/B/MediaPlan/full Trend/learning/hardening/A/B/C. No main merge/live migration/new budget/real publishing/deployment.
+
+### Wave 5C/5D/5E — Native actual generated-media staging
+
+WAVE: 5C / 5D / 5E / 3 / 8. STATUS: IN PROGRESS. GENERATIVE_MEDIA_READY = NO; IMPLEMENTATION_COMPLETE = NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE = NO; PRODUCTION_DEPLOYED = NO.
+
+HEAD SHA: parent `483cc1687382d9ce2d39e06d25e6ee133d00f7a8`, pushed/preserved in `north-star-native-generation-queue.bundle`, SHA256 `b013b90748d2dc0956e710785fd7bd38866ddebd1413b994ae8944cf7feef1ec`; 188 ahead/0 behind, 15 accepted hashes/live source clean. Staging receives a separate commit/push/bundle.
+
+CAPABILITIES COMPLETED: fenced registered binary/job/workspace/input/provenance binding; frozen workflow definition/model/graph/reference hashes; actual Native MIME/magic/PIL or FFprobe/full FFmpeg decoding; video dimensions/duration/fps/audio agreement; immutable SQLite stage receipt; exact repeat produces no extra files; physical original/normalized/thumbnail hash checks; unknown rights/ineligibility/attention, unknown cost, fixture distinction; failed-intake cleanup restricted to new owned files; default-inactive separate-process exact replay. Project/approval/canonical timeline remain unchanged.
+
+CAPABILITIES PARTIAL: executing independent Native worker, terminal success, explicit result attachment, HTTP/Assets/RBAC still next. Genuine GPU/provider/model/source-pin/license/quality, alpha-aware mask/logo editing, full original Mode A/B/MediaPlan/Trend/learning/hardening/A/B/C remain.
+
+TESTS: final affected Native media/queue/registry/reference/cost 56 PASS/21.311s, 7 new media cases. Initial overlapping 35 count included 14 duplicate helper-discovered queue cases; import corrected. Intermediate r2/r3 failures retained: fixture model mismatch and incorrect source-snapshot field name, fixed without weakening gates. Focused r4 21 PASS/4.097s before final video metadata binding. Prior full Native 533 PASS/331.869s, Linux API 2659 PASS/11 SKIP/1512.89s and Studio 206 PASS/1000.2963ms unchanged; no broad repeat.
+
+REAL PROVIDER TESTS: 0. MOCK TESTS: registered bridge metadata and provider observations, no bridge request or actual GPU/model generation. LOCAL-REAL TESTS: actual synthetic PNG and FFmpeg MP4, Native full media decoding, SQLite immutable stage/replay, original/normalized/thumbnail hashes and separate-process exact default-inactive projects/versions/jobs/events/cost/staged-media replay. Two assets, external requests=0, generation POSTs=0, paid operations=0; cost intents are not billed outcomes. Rehearsal claims end recovery_required rather than claiming execution success.
+
+EVIDENCE: `docs/NATIVE_GENERATION_MEDIA.md`, `docs/north-star/native-generation-media-evidence.json`, 12 hashed exports under external `recovery/native-generation-media-n1`, seven logs, owned `C:\vf-native-generation-media-fixture-01`. No accepted artifacts replaced.
+
+REGRESSIONS: final affected checks pass; fresh accepted verification follows preservation. EXTERNAL BLOCKERS: genuine reviewed workflows/models/GPU/source-pin/provider and Owner/production acceptance. OWNER ACTION REQUIRED: none for safe work. NEXT WAVE: independent Native generation worker/read-only reconciliation/success/explicit attachment/HTTP/Assets; continue original full Mode A/B/MediaPlan/Trend/learning/hardening/A/B/C. No main merge/live migration/new budget/real publishing/deployment.
