@@ -11,11 +11,11 @@ function page(){return {schema_version:'native-storyboard-media-page-v1',workspa
         query:'Technology AI',generation_prompt:'Original AI visual',estimated_cost_vnd:null,needs_attention:true,needs_approval:false,status:'selected',selected_asset_id:ASSET,selected_asset_sha256:SHA,
         candidates:[{asset_id:ASSET,sha256:SHA,filename:'Vang Nguyễn <img onerror=x>',confidence:null,selectable:true,fixture:true,
           provenance:{license:'owner_upload_rights_attestation',provider:'user-upload',source_reference:'assets/'+ASSET,actual_native_rights_status:'unknown',rights_verification_basis:'Owner upload attestation; no independent license'}}]}]}}]};}
-function harness(){class Node{constructor(tag){this.tagName=tag.toUpperCase();this.children=[];this.dataset={};this.listeners={};this.value='';this.checked=false;}
+function harness({enableResolution=false}={}){class Node{constructor(tag){this.tagName=tag.toUpperCase();this.children=[];this.dataset={};this.listeners={};this.value='';this.checked=false;}
   append(...nodes){this.children.push(...nodes);}replaceChildren(...nodes){this.children=nodes;}setAttribute(name,value){this[name]=value;}addEventListener(name,fn){this.listeners[name]=fn;}
   querySelectorAll(selector){return this.children.flatMap(node=>[...(selector.split(',').includes(node.tagName.toLowerCase())?[node]:[]),...node.querySelectorAll(selector)]);}}
   const root=new Node('details'),dom={getElementById:()=>root,createElement:tag=>new Node(tag)},current=state(),calls=[],messages=[],saved=[];let answer=async()=>page();
-  const controller=initializeNativeMediaPlanner({dom,getState:()=>current,api:async(path,options)=>{calls.push([path,options]);return answer(path,options);},onMessage:(...values)=>messages.push(values),
+  const controller=initializeNativeMediaPlanner({dom,enableResolution,getState:()=>current,api:async(path,options)=>{calls.push([path,options]);return answer(path,options);},onMessage:(...values)=>messages.push(values),
     onSaved:async()=>{saved.push(true);current.project.revision++;controller.sync();}});
   return {root,current,calls,messages,saved,controller,handler:fn=>{answer=fn;},button:text=>root.querySelectorAll('button').find(node=>node.textContent===text)};
 }
@@ -24,6 +24,12 @@ test('strict scope and claims keep missing estimates null, forbid promoted evide
   const current=state();assert.equal(validateMediaPlanPage(page(),current).paid_operations,0);
   for(const mutate of [value=>value.workspace_id='wsp_foreign',value=>value.revision++,value=>value.paid_operations=1,value=>value.items[0].plan.semantic_vision_used=true,
     value=>value.items[0].plan.items[0].estimated_cost_vnd='0',value=>value.items[0].plan.items[0].candidates[0].asset_id=ASSET+'/../../private']){const value=page();mutate(value);assert.throws(()=>validateMediaPlanPage(value,current));}
+});
+test('actual planner composition exposes explicit per-shot resolution controls without loading or writing provider jobs',async()=>{
+  const h=harness({enableResolution:true}),value=page();value.items[0].plan.items[0].strategy='ai_image';value.items[0].plan.items[0].status='requires_provider';value.items[0].plan.items[0].selected_asset_id=null;value.items[0].plan.items[0].selected_asset_sha256=null;
+  value.input.provider_availability.generation.items=[{modality:'image',operation:'generate',mode:'fixture',status:'CONFIGURED'}];h.handler(async()=>value);
+  assert.equal(h.calls.length,0);await h.controller.load();assert.equal(h.calls.length,1);assert.ok(h.button('Tạo AI theo shot'));assert.ok(h.button('Đọc lịch sử tư liệu theo shot'));
+  const query=h.root.querySelectorAll('textarea')[0];query.value='Unsaved query fixture';await h.button('Tạo AI theo shot').listeners.click();assert.equal(h.calls.length,1);assert.match(h.messages.at(-1)[0],/Lưu/);
 });
 test('requests bind actual revision plan hash asset bytes and explicit apply acknowledgment without provider DTO',()=>{
   const current=state(),value=page(),args={planId:PLAN,shotId:SHOT};

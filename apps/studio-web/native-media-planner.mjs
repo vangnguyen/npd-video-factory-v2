@@ -1,4 +1,5 @@
-// Human-reviewed storyboard decisions. This panel never submits provider jobs.
+// Saved storyboard decisions with explicitly requested existing-provider jobs.
+import {initializeNativeMediaResolution} from './native-media-resolution.mjs';
 const HASH=/^[a-f0-9]{64}$/,ID=/^[a-f0-9]{32}$/,PLAN=/^nmp_[a-f0-9]{32}$/,SHOT=/^shot_[a-f0-9]{32}$/,ASSET=/^[a-f0-9]{32}\.(jpg|png|mp4|mov)$/;
 const STRATEGIES={user_asset:'Tư liệu dự án',stock_video:'Video stock',stock_image:'Ảnh stock',ai_image:'Ảnh AI',ai_video:'Video AI',motion_graphic:'Đồ họa chuyển động'};
 const sourceProject=project=>Boolean(project?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema);
@@ -44,23 +45,25 @@ export function mediaPlanRequest(state,page,action,{planId,shotId,assetId,strate
   return {path:`${base}/${record.plan.media_plan_id}/${action}`,body};
 }
 
-export function initializeNativeMediaPlanner({api,getState,onMessage,onWorking=()=>{},onSaved=async()=>{},dom=globalThis.document}){
+export function initializeNativeMediaPlanner({api,getState,onMessage,onWorking=()=>{},onSaved=async()=>{},dom=globalThis.document,enableResolution=false}){
   const root=dom.getElementById('native-media-planner-panel');let page=null,working=false,serial=0,binding=null;
   const context=()=>{const state=getState();return `${state.workspace_id}:${state.project?.id}:${state.project?.revision}:${sourceProject(state.project)}`;};
-  const blocked=()=>{const state=getState();return working||state.busy||state.dirty||state.active||state.project?.archived;};
+  const blocked=()=>{const state=getState();return working||(resolution?.isWorking()??false)||state.busy||state.dirty||state.active||state.project?.archived;};
   function element(tag,text,parent,attributes={}){const node=dom.createElement(tag);if(text!==null)node.textContent=text;for(const [name,value] of Object.entries(attributes))node.setAttribute(name,String(value));parent.append(node);return node;}
   const summary=element('summary','Kế hoạch tư liệu theo shot',root);
-  const hint=element('p','Tạo kế hoạch từ lời đọc và storyboard đã lưu. Xem lựa chọn, nguồn và quyền sử dụng trước khi áp dụng vào shot. Stock/AI được tìm hoặc tạo riêng tại Assets. Tỷ lệ chọn ở đây dành cho tư liệu; định dạng bản dựng theo template dự án.',root,{class:'hint'});
+  const hint=element('p','Tạo kế hoạch từ lời đọc và storyboard đã lưu. Xem lựa chọn, nguồn và quyền sử dụng trước khi áp dụng vào shot. Stock/AI cần xác nhận gửi yêu cầu, xem kết quả và thêm tư liệu trước khi lập lại kế hoạch. Tỷ lệ chọn ở đây dành cho tư liệu; định dạng bản dựng theo template dự án.',root,{class:'hint'});
   const tools=element('div',null,root,{class:'planner-tools'});
   const refresh=element('button','Tải kế hoạch',tools,{type:'button'});
   const platform=element('select',null,tools,{'aria-label':'Nền tảng kế hoạch'});
   for(const [value,label] of Object.entries({youtube_shorts:'YouTube Shorts',youtube:'YouTube',tiktok:'TikTok',instagram_reels:'Reels Instagram',facebook_reels:'Reels Facebook',social_feed:'Bài đăng vuông'})){const option=element('option',label,platform,{value});}
   const aspect=element('select',null,tools,{'aria-label':'Tỷ lệ tư liệu'});for(const value of ['','9:16','16:9','1:1','4:5'])element('option',value||'Theo nền tảng',aspect,{value});
   const create=element('button','Tạo kế hoạch mới',tools,{type:'button'});const status=element('p','',root,{role:'status'}),body=element('div',null,root);
+  const resolution=enableResolution?initializeNativeMediaResolution({api,getState:()=>({...getState(),busy:getState().busy||working}),getPlanPage:()=>page,root,dom,
+    onMessage,onSaved,onWorking:()=>{controls();onWorking();}}):null;
   function controls(){const state=getState();root.hidden=!state.project||sourceProject(state.project);refresh.disabled=blocked()||!state.project;
     create.disabled=blocked()||!state.canEdit||!page?.input;platform.disabled=aspect.disabled=blocked()||!state.canEdit;
-    body.querySelectorAll('button,input,select,textarea').forEach(node=>node.disabled=blocked()||!state.canEdit||node.dataset.locked==='true');}
-  function render(){body.replaceChildren();status.textContent=page?`${page.history_versions} bản lưu · ${page.items.length} kế hoạch. Chi phí thực tế và ước tính chưa rõ giữ trạng thái chưa rõ.`:'Tải kế hoạch để xem đầu vào hiện tại.';
+    body.querySelectorAll('button,input,select,textarea').forEach(node=>node.disabled=blocked()||!state.canEdit||node.dataset.locked==='true');resolution?.controls();}
+  function render(){body.replaceChildren();resolution?.clearSceneControls();status.textContent=page?`${page.history_versions} bản lưu · ${page.items.length} kế hoạch. Chi phí thực tế và ước tính chưa rõ giữ trạng thái chưa rõ.`:'Tải kế hoạch để xem đầu vào hiện tại.';
     if(page?.unavailable_reason)status.textContent='Cần lời đọc, storyboard và tư liệu không bị thay đổi trước khi lập kế hoạch.';
     if(page?.input){const budget=page.input.budget;const config=page.input.provider_availability;
       element('p',`Ngân sách AI: ${budget.max_ai_cost_vnd??'chưa đặt'} VND · đã ghi nhận ${budget.known_paid_exposure_vnd} VND · ${budget.unknown_paid_actual_costs} khoản chưa có chi phí thực tế.`,body,{class:'hint'});
@@ -84,11 +87,12 @@ export function initializeNativeMediaPlanner({api,getState,onMessage,onWorking=(
         const label=element('label','Tôi đã xem tư liệu và muốn thay hình của shot này.',row,{class:'check'}),ack=element('input',null,label,{type:'checkbox'});
         const apply=element('button','Áp dụng vào shot',row,{type:'button'});apply.dataset.locked=String(locked||item.status!=='selected');apply.addEventListener('click',()=>change('apply',{planId:plan.media_plan_id,shotId:item.shot_id,acknowledged:ack.checked}));
         row.querySelectorAll('input,select,textarea,button').forEach(node=>{if(locked)node.dataset.locked='true';});
+        resolution?.scene(record,item,row,{isDraftChanged:()=>strategy.value!==item.strategy||query.value!==item.query||prompt.value!==item.generation_prompt});
       }
     }
-    controls();
+    resolution?.refresh();controls();
   }
-  function sync(){if(binding!==context()){binding=context();serial++;page=null;render();}else controls();}
+  function sync(){if(binding!==context()){binding=context();serial++;page=null;render();}else controls();resolution?.sync();}
   async function perform(fn){sync();if(blocked())return;working=true;onWorking();controls();try{await fn();}catch(error){onMessage(error.message,true);}finally{working=false;sync();render();onWorking();}}
   async function load(){return perform(async()=>{const state=getState(),expected=context(),token=++serial;
     const value=await api(`/api/projects/${state.project.id}/media-plans`);if(token!==serial||expected!==context())return;page=validateMediaPlanPage(value,state);});}
@@ -97,5 +101,5 @@ export function initializeNativeMediaPlanner({api,getState,onMessage,onWorking=(
       await onSaved();const current=getState();if(current.project?.id===value.project_id&&current.workspace_id===value.workspace_id&&current.project.revision===value.revision){binding=context();page=validateMediaPlanPage(value,current);onMessage(action==='apply'?'Đã đổi shot. Tạo preview và duyệt lại trước khi render.':'Đã lưu kế hoạch tư liệu.');}});}
   refresh.addEventListener('click',load);create.addEventListener('click',()=>change('create',{options:{platform:platform.value||'youtube_shorts',aspect_ratio:aspect.value||null}}));
   root.addEventListener('toggle',()=>{if(root.open&&!page&&!blocked()&&getState().project&&!sourceProject(getState().project))load();});sync();
-  return {sync,controls,load,isWorking:()=>working};
+  return {sync,controls,load,isWorking:()=>working||(resolution?.isWorking()??false)};
 }

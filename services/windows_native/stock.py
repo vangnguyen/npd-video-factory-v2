@@ -146,9 +146,10 @@ class NativeStock:
         if candidate is None or digest(candidate)!=request['expected_candidate_sha256']:raise WorkflowError('NATIVE_STOCK_SELECTION_CHANGED')
         return parent,candidate
 
-    def create(self,project,payload,*,actor):
+    def create(self,project,payload,*,actor,on_admitted=None):
         kind='search' if type(payload) is StockSearch else 'download' if type(payload) is StockDownload else None
         if kind is None or not isinstance(actor,str) or not 1<=len(actor)<=100:raise WorkflowError('NATIVE_STOCK_REQUEST_INVALID',400)
+        if on_admitted is not None and not callable(on_admitted):raise WorkflowError('NATIVE_STOCK_ADMISSION_HOOK_INVALID',400)
         request=payload.model_dump(mode='json');key=hashlib.sha256(request.pop('request_key').encode()).hexdigest()
         if kind=='search':
             request['query']=' '.join(request['query'].split())
@@ -174,6 +175,7 @@ class NativeStock:
                 (identity,self.workspace,project,kind,fingerprint,key,json.dumps(snapshot,ensure_ascii=False),digest(snapshot),status,0,None,None,None,None,None,None,stamp,stamp))
             row=self.row(con,project,identity);self.event(con,row,'stock.request.created',actor,status=status,kind=kind,provider=provider,mode=mode,external_call=False)
             value=self.read(row)
+            if on_admitted is not None:on_admitted(con,current,value)
         self.wake.set();return value,False
 
     def cancel(self,project,identity,*,fingerprint,actor):

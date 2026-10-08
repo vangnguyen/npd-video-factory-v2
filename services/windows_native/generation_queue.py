@@ -129,8 +129,9 @@ class NativeGenerationQueue:
                 'items':[self.read(row) for row in con.execute('SELECT * FROM native_generation_jobs WHERE workspace_id=? AND project_id=? ORDER BY created_at DESC,generation_id DESC LIMIT ?',
                     (self.workspace,project,limit))],'worker_wired':False,'publish_enabled':False}
 
-    def create(self,project,payload,*,actor):
+    def create(self,project,payload,*,actor,on_admitted=None):
         if type(payload) is not GenerationCreate or not isinstance(actor,str) or not 1<=len(actor)<=100:raise WorkflowError('NATIVE_GENERATION_REQUEST_INVALID',400)
+        if on_admitted is not None and not callable(on_admitted):raise WorkflowError('NATIVE_GENERATION_ADMISSION_HOOK_INVALID',400)
         request=payload.model_dump(mode='json');key=hashlib.sha256(request.pop('request_key').encode()).hexdigest();fingerprint=digest(request)
         with self.store.transaction() as con:
             old=con.execute('SELECT * FROM native_generation_jobs WHERE workspace_id=? AND project_id=? AND key_sha256=?',(self.workspace,project,key)).fetchone()
@@ -156,7 +157,12 @@ class NativeGenerationQueue:
             status='queued' if references is not None else 'not_configured'
             con.execute('INSERT INTO native_generation_jobs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 (identity,self.workspace,project,fingerprint,key,json.dumps(snapshot),digest(snapshot),status,status,None,None,0,None,None,None,None,None,None,0,0,None,stamp,stamp))
-            row=self.row(con,project,identity);self.event(con,row,'generation.request.created',actor,status=status,external_call=False);return self.read(row),False
+            row=self.row(con,project,identity);self.event(con,row,'generation.request.created',actor,status=status,external_call=False)
+            value=self.read(row)
+            # Internal consumers may bind their journal in this same FULL transaction.
+            # Raising rolls back the job/event; no worker can observe an unbound job.
+            if on_admitted is not None:on_admitted(con,current,value)
+            return value,False
 
     def claim(self):
         with self.store.transaction() as con:

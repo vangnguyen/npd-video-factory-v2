@@ -1,0 +1,252 @@
+{
+  "schema": "native-storyboard-media-resolution-evidence-v1",
+  "parent_head": "cea77ce4dab9952eb1a843922020473947ec829f",
+  "source_sha256": {
+    "apps/studio-web/native-generation.mjs": "73e48b4ec227480ad466afaf08e1a1c37ef826fdf162d3a237b7fea685867936",
+    "apps/studio-web/native-media-planner.mjs": "0f97c58ad32536c580cc0127bd58d3b11941e193c910aefd12056fdd75ba2b32",
+    "apps/studio-web/native-media-resolution.mjs": "48a6e353e9aa95ee57d2ef5a1adb3062f53d01aa8c45a30ee0520347a5e84797",
+    "apps/studio-web/native-source-broll.mjs": "d06533f405f6f3a5ca3412bd7c318c1753fda06089ef7d017ba5bd7b012b0128",
+    "apps/studio-web/native.css": "f19e3b97e0b3c3d609b0cf095d85a365ff76dd32dcb4c8e2f435837fecf84005",
+    "apps/studio-web/native.html": "06bafc97ba77e079b848c659edc3027dfa9a4d10c13cdb2c971565cf94daa9c3",
+    "apps/studio-web/native.mjs": "14e0645c604fb7d579a23297df3b82e9c606e7a9fca42f14e566a45e124c3948",
+    "scripts/north_star_native_generation_worker.py": "1ab0fb27fdae1a03b9ed1bbfa1a5ba58b83a77ba3c007c21f05bc4d7ff7819c8",
+    "scripts/north_star_native_studio_stock_resolution.py": "5ac0b8974b8ed5077aaa605cded7d79fdfbacc096a90143d93c9a9632f5c2a32",
+    "services/windows_native/access.py": "3db8944099bf1eb418945d1c4fa5bee2ad2ed049cfbfb7b979bd6f2f9e224a47",
+    "services/windows_native/backup.py": "af915cbd4882502fde13c550c6536746bbd5fa83446d7087eec41cb0d3c61ef3",
+    "services/windows_native/generation_media.py": "7242e8e727b2729a7648c48f9dca35fb1214362c2a82f4c0125a3dcf6b77fc7e",
+    "services/windows_native/generation_queue.py": "5af8e7e1ae9612b2727be93bce2b9ad4f5e6d75db1ae75fd25ac745e0002f324",
+    "services/windows_native/generation_registry.py": "7f66cecd9e0a97f7d7b4f43cdbf13ace81e2f819c8c9251fb8335a35aa7bbd43",
+    "services/windows_native/generation_routes.py": "e6446f53e0299ef9d04d678e1a18d5cc501d924709bd3e5737e456360a3d82da",
+    "services/windows_native/generation_worker.py": "0757f0dbcd2c91033e7fdf09da799929fa9483ce08160544e44959e584e163e6",
+    "services/windows_native/observability.py": "090b4ab54be11ef2a9cfc68fd4b8b4a1cb606d8a56faafb7a7ce4c8c83a0ec2f",
+    "services/windows_native/server.py": "51abd0397f81655ed6473f9ff000a0f2dc5228810f902d4085eade250c216cce",
+    "services/windows_native/stock.py": "64de86f1ebacf2586f0782b544d274c2c596b4cddc3b304fb05c9c4994d88e71",
+    "services/windows_native/studio_media_planner.py": "66fc8ef79564894c471fc62a08ba31cf1fb95055b370a65c03e7f673343d69f7",
+    "services/windows_native/studio_media_resolution.py": "870aea25cac4e835ed1b6b3abcf3067267b9a1991477a46fdacdb2468e7fb155",
+    "services/windows_native/studio_media_resolution_routes.py": "495b70123c74b3962f56c7afdab2ec325734d073b1ef6d9e1ad8771d34d186c1",
+    "services/windows_native/tests/test_studio_media_resolution.py": "5cdaf42a2c0c9e3a64a818487e97f9e853d117aab8f4a1ea4c71f530b891ad1f",
+    "services/windows_native/tests/test_phase10_http.py": "becf46d88c408e944892af441274adb2c3f8bfcd564c112dc8821457b111669b",
+    "apps/studio-web/tests/native-media-resolution.test.mjs": "f92f50401a4e4c7d2e7e6b83ef27c3a9ac594e0fb25f62535b79acd00d085462",
+    "apps/studio-web/tests/native-media-planner.test.mjs": "be306b8f4906b84d4a54a8b22ff585a336d137e726709f26fd9c2856cd23de6c",
+    "docs/NATIVE_STORYBOARD_MEDIA_RESOLUTION.md": "9128fbc92e8bb4fe60b86e3f43c21b21dc0e1c9f1fd112177f890e02fac433b1"
+  },
+  "logs": {
+    "native-media-resolution-full-n1.log": "1df9423bf16d6c81e480622e2b3b7dd7b39113d88ed9b98bd0305c0524fcd3f1",
+    "native-storyboard-resolution-n1.log": "8f7d503c4cdab1d0d7daacebd29dcbbaa137c60477196fc1839dc989945336fc",
+    "native-storyboard-resolution-n2.log": "de34840f3a57e5e93fefaab25f267d6b319128ef2b8d0ee5cc68a810d16de020",
+    "native-storyboard-resolution-n3-reopen.log": "ad3cd293c7c72f2549451bd2a84f202dc4685d34d087723036fe62d7cd6f29f8",
+    "native-storyboard-resolution-n3.log": "4c16b77492140c426ba05187236cdc98cc4c4d37dc909789bcfcfdd8bc97ccc4",
+    "native-storyboard-resolution-n4-reopen.log": "ad3cd293c7c72f2549451bd2a84f202dc4685d34d087723036fe62d7cd6f29f8",
+    "native-storyboard-resolution-n4.log": "4c16b77492140c426ba05187236cdc98cc4c4d37dc909789bcfcfdd8bc97ccc4",
+    "native-storyboard-stock-resolution-n1-reopen.log": "fe216c1b83a5151d5caa56a07bbb4198535063762e6419ba81525d106d2ccad1",
+    "native-storyboard-stock-resolution-n1.log": "c66203fa060d5e9bc3b6ceaaa570e801e0a5eb4e86dd6cf92930e4716ad70579",
+    "native-storyboard-stock-resolution-n2-reopen.log": "d573e874a402cfc645f60e0cd11417b8b3429f9bc86f7dd9ccc7e9ded95a28d1",
+    "native-storyboard-stock-resolution-n2.log": "c66203fa060d5e9bc3b6ceaaa570e801e0a5eb4e86dd6cf92930e4716ad70579",
+    "native-storyboard-stock-resolution-n3-reopen.log": "d573e874a402cfc645f60e0cd11417b8b3429f9bc86f7dd9ccc7e9ded95a28d1",
+    "native-storyboard-stock-resolution-n3.log": "c66203fa060d5e9bc3b6ceaaa570e801e0a5eb4e86dd6cf92930e4716ad70579",
+    "studio-media-resolution-full-n1.log": "9c7af962d2e0e31af81bea7d66a14e7761df5fd72cd2b164701b0a5d4e04a839",
+    "studio-media-resolution-full-n2.log": "12e2798f7785c1bde8f639c49da8be21459ccef8ced3379922afff1ed11a4d43"
+  },
+  "rehearsals": {
+    "native-storyboard-resolution-n4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-storyboard-resolution-n4",
+      "evidence_sha256": "1a5d80015917e4906c5a5be32d1833e347ee5b1b385801a420efba25ecd77ef6",
+      "replay_sha256": "fa884289cdf52b7615cf192b049595818f25e7a06e32417f2c34ce64982545af",
+      "indexed_exports": 28,
+      "human_http_requests": 62,
+      "exports": {
+        "0-completed-job.json": {
+          "sha256": "bf7d708f48caf62618aaef0b73350123d11143c06a072396bb0a6c91d09d5636",
+          "bytes": 10259
+        },
+        "0-interrupted-job.json": {
+          "sha256": "190e36478976ece0d36e2c22f50d0d9ff044bbac10396b1ebc40f403c0ae7a3c",
+          "bytes": 4214
+        },
+        "0-normalized.jpg": {
+          "sha256": "96fc94546ec9c59a1db9d50ce5f91d0d46cc3a802a958de571b1ffefdd868493",
+          "bytes": 30027
+        },
+        "0-original.png": {
+          "sha256": "b5b59f970a5bad64835f1d78b2dd136fe181c000ed398ea7d449c5a9d6f29d75",
+          "bytes": 26482
+        },
+        "0-thumbnail.jpg": {
+          "sha256": "79024adb6d4f4467f7102257f2ae5397d305cc56feeef2be9db2067c54bfc042",
+          "bytes": 13760
+        },
+        "1-completed-job.json": {
+          "sha256": "8814904867ff445152a680a033bec502672191ee7c0357abc42f63751df80659",
+          "bytes": 11112
+        },
+        "1-normalized.mp4": {
+          "sha256": "c36327c02427117c5799817b02040a5cfb0ebf4fdfbb1d9c614fc823fec47fe1",
+          "bytes": 34785
+        },
+        "1-original.mp4": {
+          "sha256": "c36327c02427117c5799817b02040a5cfb0ebf4fdfbb1d9c614fc823fec47fe1",
+          "bytes": 34785
+        },
+        "1-thumbnail.jpg": {
+          "sha256": "4da79d971aef079063fbf18428cb293d8db88afccfbd0464470d89a78673f21d",
+          "bytes": 14772
+        },
+        "2-completed-job.json": {
+          "sha256": "5c76f13eb8c9ee89e80fff24339636fc760f16160ae24ac85f35ed1df80b2d74",
+          "bytes": 13044
+        },
+        "2-interrupted-job.json": {
+          "sha256": "56dfb21f9b50dbf55eb2d12c4b909e38f6b1c31e48203517231f2e3d73f24537",
+          "bytes": 7139
+        },
+        "2-normalized.jpg": {
+          "sha256": "96fc94546ec9c59a1db9d50ce5f91d0d46cc3a802a958de571b1ffefdd868493",
+          "bytes": 30027
+        },
+        "2-original.png": {
+          "sha256": "b5b59f970a5bad64835f1d78b2dd136fe181c000ed398ea7d449c5a9d6f29d75",
+          "bytes": 26482
+        },
+        "2-thumbnail.jpg": {
+          "sha256": "79024adb6d4f4467f7102257f2ae5397d305cc56feeef2be9db2067c54bfc042",
+          "bytes": 13760
+        },
+        "attachment-receipts.json": {
+          "sha256": "b267b26217718db397fc78d793014783bf53ac82c3a2c76c0ec6a8d3f224ca0e",
+          "bytes": 2118
+        },
+        "backup-restore.json": {
+          "sha256": "d717987d049b4d4c18dad945ab49946ee6e1172027a7ed8c1fb11b8106130d99",
+          "bytes": 5631
+        },
+        "content-free-operations.json": {
+          "sha256": "d50bf5dcf8918172210ef8c4d5824f5b535ad6120dbe628dd0ec6b4e52ab6d1e",
+          "bytes": 24419
+        },
+        "gpu-fixture-wires.json": {
+          "sha256": "17b5fd64b182f7d6e2ff37c14a031b7c3798726243c648f28e9dabd1b8ee06de",
+          "bytes": 1332
+        },
+        "human-http-wires.json": {
+          "sha256": "59bb6ac64c33a36f19e14febd650ab4edc140697118206094189e287b0b8b5d0",
+          "bytes": 9347
+        },
+        "native-generation-backup.zip": {
+          "sha256": "94b5878652106303a8c379c5b887302e04b4b1752cac56be603c6f5b0b0d57cf",
+          "bytes": 1036570
+        },
+        "native-service-wires.json": {
+          "sha256": "5ff0e26ce8723b7425c16406adbaf5120abc42608a12bc5cce1a1d433394f1f3",
+          "bytes": 1938
+        },
+        "offline-snapshot.json": {
+          "sha256": "49cfba67c3160d0103c533bd86388e26303680b22b46d5742a78c8c24e2fb9a2",
+          "bytes": 379755
+        },
+        "pre-attachment-project.json": {
+          "sha256": "6b53b593c29e4baedf811deed2acdb6f5dd1592ad78e8c4c246f475767e7dfc4",
+          "bytes": 30224
+        },
+        "recovery-requests.json": {
+          "sha256": "370f1915bdb654ef82739297d6bbc0379174bcdc827a23517ad7b47ac83f468b",
+          "bytes": 1075
+        },
+        "storyboard-media-plan.json": {
+          "sha256": "26ef59601c92e136dc03666d4f1a27445b2daf2a4258c031d01139b29ab934c7",
+          "bytes": 31991
+        },
+        "storyboard-replan-rights-blocked.json": {
+          "sha256": "152200c9a3cab5398a148140308b4ce98d9c637325ab7b0badd9921389aac636",
+          "bytes": 88270
+        },
+        "storyboard-resolution-imported.json": {
+          "sha256": "3033d620a4dbed517552ad0663b0a871ee023b10bd180d1a5d2c22f9746b9081",
+          "bytes": 14245
+        },
+        "storyboard-resolution-ready.json": {
+          "sha256": "fa75c68a48e9ce0db7936f2c006272068040001127f9f659c425b2044423ec30",
+          "bytes": 12797
+        }
+      },
+      "real_provider_tested": false,
+      "owner_uat_accepted": false
+    },
+    "native-storyboard-stock-resolution-n3": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-storyboard-stock-resolution-n3",
+      "evidence_sha256": "8443dfdee9a41f64b02d751bae99dba079ca9cb13e23c72d7cbc895ebb81fc67",
+      "replay_sha256": "a9cda2ebc9f5ccadbd9c5f5f221ee8b08964ba8f9cb3067a415324b26a037d8d",
+      "indexed_exports": 10,
+      "human_http_requests": 17,
+      "exports": {
+        "backup-restore.json": {
+          "sha256": "da6ce608c9fd8fdbd1de9508de738e67bd1770250a2a5b5d0205a6385241411e",
+          "bytes": 5631
+        },
+        "cost.json": {
+          "sha256": "4a1b798f736feb567c9b9770fc7ee66244b51cfac5858d584065ecad32124848",
+          "bytes": 3081
+        },
+        "human-http-wires.json": {
+          "sha256": "e056a14e21dcf093d8b9ea401122653d50478582a146b0ce4f77c01c2f287f13",
+          "bytes": 2485
+        },
+        "native-storyboard-stock-backup.zip": {
+          "sha256": "fcb37d421056618618de01fe92ce913be86fb5e726c947b0eda97de269264eb6",
+          "bytes": 696142
+        },
+        "offline-snapshot.json": {
+          "sha256": "1014877c3a3edaab526b56ddd8c413f4af1023cf722e42b63d5310bf725eb524",
+          "bytes": 339699
+        },
+        "stock-download-resolution.json": {
+          "sha256": "02d943dcc820b665d6106645e70cb047f3a83f38777e6d1428a58953cea9b6e3",
+          "bytes": 10065
+        },
+        "stock-import-resolution.json": {
+          "sha256": "697e182e97b5448654df012f3b0afde124043e6ad47d570cb4ab594a71447f81",
+          "bytes": 11526
+        },
+        "stock-mock-wires.json": {
+          "sha256": "8c11b78b4bc0edff6a4a47071f1941c127baa6c87b9cb029d2fe4574518e7e8f",
+          "bytes": 285
+        },
+        "stock-replan-rights-blocked.json": {
+          "sha256": "69a8a53768f68d8cd95111051c89af46d620122c68bc4e2e8c40903ebc82dd2f",
+          "bytes": 82034
+        },
+        "stock-search-resolution.json": {
+          "sha256": "be2241801157f4de17506eb3c09f4c02ed3911ab29cd7b2e77a74fe03a8ce4c0",
+          "bytes": 6788
+        }
+      },
+      "real_provider_tested": false,
+      "owner_uat_accepted": false
+    }
+  },
+  "new_backend_cases": 11,
+  "new_dom_cases": 10,
+  "tests": {
+    "full_native_passed": 620,
+    "full_native_seconds": 411.034,
+    "full_studio_passed": 232,
+    "full_studio_ms": 1119.6627
+  },
+  "actual_atomic_sqlite_admission_verified": true,
+  "concurrent_deduplication_and_rollback_verified": true,
+  "stock_manage_permission_preserved": true,
+  "same_key_lost_response_replay_verified": true,
+  "actual_decoded_media_and_explicit_import": true,
+  "actual_backup_restore_and_process_replay": true,
+  "provider_results_manually_injected": false,
+  "automatic_attachment": false,
+  "automatic_timeline_placement": false,
+  "unknown_rights_block_replanning": true,
+  "real_provider_tested": false,
+  "rights_independently_verified": false,
+  "paid_operations": 0,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "stop_condition_pending": false
+}

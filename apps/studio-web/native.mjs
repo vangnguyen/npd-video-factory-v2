@@ -350,7 +350,8 @@ if (typeof document !== "undefined") {
     if(session.capabilities?.native_storyboard_media_planner===true){
       const planner=await import('./native-media-planner.mjs');
       mediaPlannerUI=planner.initializeNativeMediaPlanner({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false),
-        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
+        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canManage,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
+        enableResolution:session.capabilities?.native_storyboard_media_resolution===true,
         onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_analytics_review===true){
