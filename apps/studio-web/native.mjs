@@ -117,7 +117,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -197,6 +197,7 @@ if (typeof document !== "undefined") {
     mediaPlannerUI?.controls();
     narrationUI?.controls();
     rightsOverrideUI?.controls();
+    narrationRightsUI?.controls();
     variantsUI?.controls();
     channelUI?.controls();
   }
@@ -237,6 +238,7 @@ if (typeof document !== "undefined") {
     mediaPlannerUI?.sync();
     narrationUI?.sync();
     rightsOverrideUI?.sync();
+    narrationRightsUI?.sync();
     variantsUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
     refreshCosts();
@@ -367,6 +369,11 @@ if (typeof document !== "undefined") {
     if(session.capabilities?.native_narration_preparation===true){
       const narration=await import('./native-narration.mjs');
       narrationUI=narration.initializeNativeNarration({api,getState:()=>({project,dirty,busy,active:jobActive(project),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canReview:session.access?.mode!=='registry'||session.access.permissions?.includes('review')===true}),
+        onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
+    }
+    if(session.capabilities?.native_narration_rights_review===true){
+      const rights=await import('./native-narration-rights.mjs');
+      narrationRightsUI=rights.initializeNativeNarrationRights({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_analytics_review===true){

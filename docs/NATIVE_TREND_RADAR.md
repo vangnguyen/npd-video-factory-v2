@@ -116,13 +116,19 @@ dimensions/codecs were nested inside full QC. The publishing adapter now project
 those exact measurements only after checking the full QC status, document hash,
 final hash and checksum. The certified legacy/Source envelope stays unchanged.
 
-Generated voice/model provenance still blocks storyboard publication, including
-dry-run admission. Source-image exceptions cannot clear this independent gate.
-The rehearsal retains that blocker, rejected publishing approval, unavailable
-official analytics, zero learned observations and unchanged recommendation ranking.
-It does not fabricate a completed publication, analytics snapshot or winner result.
-The next publishing increment must add reviewed generated-voice provenance without
-weakening unknown-rights, exact-artifact or human publish approval requirements.
+Generated voice/model provenance blocks storyboard publication by default.
+Source-image exceptions cannot clear this independent gate. The indexed Radar
+rehearsal retains that blocker, rejected publishing approval, unavailable official
+analytics, zero learned observations and unchanged recommendation ranking. It does
+not fabricate a completed publication, analytics snapshot or winner result.
+
+The subsequent `NATIVE_NARRATION_PUBLICATION_PROVENANCE.md` increment adds a
+default-disabled, exact and expiring Owner exception for verified narration/model/
+original-PCM review, with fresh preview and production/final/publishing approval.
+Its separate rehearsal reaches mock publication and one explicitly synthetic
+analytics/absolute-winner observation; learning remains insufficient. Revocation
+blocks pending approval, copies drop authority, and independent legal/speech/Owner
+or real audience acceptance is not inferred. The original Radar bundle is retained.
 
 ## Evidence boundaries
 

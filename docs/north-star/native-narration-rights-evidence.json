@@ -1,0 +1,400 @@
+{
+  "schema": "native-narration-rights-evidence-v1",
+  "parent_head": "358a1186c66939f2a8b459d0af5439debfd1b740",
+  "source_sha256": {
+    "services/windows_native/storyboard_qc.py": "b3ec1818890e33e5496d465e457858644d0652a669c281f0005f940e9815b877",
+    "services/windows_native/pipeline.py": "856aba0992b4d8df7673dc4be226cb82f5af296870e53830f260af17328ecd5a",
+    "services/windows_native/store.py": "9f697dde371a7b4f4bdf64ab034a1610e0c4f984deea25afc34eb65138b9565e",
+    "services/windows_native/hardening.py": "d6a1dcf62e4c444ae2dbd2d3df92d4dc3e3ea276d60751ce1b673475272f1290",
+    "services/windows_native/shot_render_timing.py": "08ca7aada408a1750546ca8e2716ad8a19e885edec4555a2b60a1a81f3e4c9bb",
+    "services/windows_native/backup.py": "af915cbd4882502fde13c550c6536746bbd5fa83446d7087eec41cb0d3c61ef3",
+    "services/windows_native/tests/test_storyboard_qc.py": "d65709f67720ec4d99d153828d884a6ac054e2cba5889ec4a03bcfe0867f0dd1",
+    "apps/api/app/production_qc.py": "512fddf9747bf831c85e012b4d042f2eb90af08e70e238661bd1cb7a0774fdc0",
+    "apps/api/app/production_logic.py": "c8daec5186d7aeec840dc9e0538b578ae6c5518cc531261158af817f5bb0a4c3",
+    "scripts/north_star_native_storyboard_qc.py": "f8bf89c7ab229913600191ddfdeb991764f3b1ee97484631aee7571ce55af406",
+    "services/windows_native/narration.py": "0adb6cf571eb2ed3aa453dacc6c8315fad842fc8b19190c61df500d1b499c0d1",
+    "services/windows_native/access.py": "31154ef5b0ecf2204857440120f00b51433a55c823b4297e15f018fbd8d952fb",
+    "services/windows_native/server.py": "1f5ba2c37a2ea3c7c1ba806d599dc98e1b12b8ae39ac7066aeafaafa429f71ac",
+    "services/windows_native/tests/test_narration.py": "064522462396ece3df3ec507449b1123a0f8f145d20baec11d05a910a26f10cb",
+    "services/windows_native/tests/test_narration_http.py": "5eda67e1d1f95260605700865d56b4840f4d39208f0051ec5f408ab387f18f9b",
+    "services/windows_native/narration_preview.py": "7e25a3a9e11856a68205487fe0012357d7ba7b06bd4516e124bc379e4b50733f",
+    "services/windows_native/shot_preview.py": "b272f45e84c3f7b2927ca5a7cc167d012041883d9a359c6c4ebffe8d0abfbfc7",
+    "services/windows_native/tests/test_narration_preview.py": "de6c4a4925098d67604784a53a559b7c6e0958ef5bf4cfc37a0a0ce86a214b5f",
+    "apps/studio-web/native-narration.mjs": "a7a43d38d67d10fd9deeeed9fbdb193d1087eaeb3987a5d2d0e698ca1cfaeb4e",
+    "apps/studio-web/native.mjs": "a3feb0c09caa57e37ee38a7fd553e2eeb9515579d4f9783630216da88c091d37",
+    "apps/studio-web/native.html": "098a64e5fbe551fdb4e3c0e9157646f749f78fba1048d3fff5c8782febaa7c9f",
+    "apps/studio-web/shot-studio.mjs": "83b567cef818851e59c99965d00d2323afb0dc772525a025c5a09bac29e54c49",
+    "apps/studio-web/tests/native-narration.test.mjs": "b40dd4d48c2be135695567ccbb7e03e9b1dd68a45ba41989778a39893b2c6624",
+    "apps/studio-web/tests/shot-studio.test.mjs": "ce26aed289a77697c64051b36bd8cdfc8b329f7e13e932272738521c5bb696e8",
+    "services/windows_native/narrated_workflow.py": "369bbed73ed7fc7610cf43e94a4a2e6a38c7406481898da8a0776185472337ce",
+    "apps/studio-web/project-quality.mjs": "5e93b9fd8dfd45068a88dcc83bf54a1dff448e0c495ec07b7fe9b4894f2ac0b4",
+    "services/windows_native/trend_radar.py": "8393610de798ca6868e78b2cea04720c0f9b9cd42f977ab36c2cece8cc0c59b6",
+    "services/windows_native/trend_radar_models.py": "4d86c9f7a288488d4d17ee31699be6241a636d29db664b71c244637755e95a85",
+    "services/windows_native/trend_radar_engine.py": "ef64d474b9a5b8fad4f54d141bfe02bf0fdb0185ca79019f6640a3102852da9c",
+    "services/windows_native/trend_radar_providers.py": "c8809fa21a182f46fc0ee267f07fdb8b8c13be0646b73ba7d32fe6a2f6475d46",
+    "services/windows_native/trend_radar_routes.py": "2adb581a4092ac01ba305acf55328f6835be5ae8fdddf78160d475bfab961edd",
+    "services/windows_native/trend_radar_learning.py": "b9d3d032ea03d8044f1609674562ddb91fe1472c7c0aee2012e7d5d6e3d45c7a",
+    "services/windows_native/trend_radar_lineage.py": "5c5907158d7b4347c23d25fa4fe6a6ea40e94a5b5e036ca0093e361b51176c6d",
+    "services/windows_native/intelligence_store.py": "398ff9f7508b8cc91829bfd9fb4a03a2d7638007df1390ff022bec11216beffa",
+    "services/windows_native/intelligence_service.py": "942db1849cbfa9f4c878b9c885504a15235e2f0e645a1e514ef8fb96b36d3610",
+    "services/windows_native/intelligence_lineage.py": "74655fc39486a1b24335f56ef91f36f3403d0b12ca845669a4249fc2337c0234",
+    "services/windows_native/analytics_features.py": "cbd8f37e94f8f4b1f83678a9f7fc5053f102b99aba01858df12874294ffe219c",
+    "services/windows_native/bridge.py": "3b82a4fbcea453ae44e557bac0035e56357061e2d17f772166484916ca444fa9",
+    "services/windows_native/publications.py": "e975faaa5aedc9d58ed95261c4900190613e848340bf3caa2b93d284d7e58ccd",
+    "services/windows_native/publication_qc.py": "7b07f5a9d599af82cd86c8514cb4080b1e7425c07f0f8918b0658d81d28e106f",
+    "scripts/north_star_native_trend_flow.py": "0e16370187ec23094252224a26ab56cd4bfac21a0114d21282bc07e2f502448f",
+    "apps/studio-web/trend-radar.mjs": "676a275f325f6c5143f4cf196a84ec0f53bd63182daf33acdf51c4b09534629c",
+    "apps/studio-web/trend-radar.html": "ac54d35bf6b5768fbfe0d6f8bd6ebe8136d21ed34c5320a4a3be2465dd415af8",
+    "apps/studio-web/trend-radar.css": "c5eafc031dffe3af70cd8d133e7d97d17e9c41315bbf1ce496905298e723d028",
+    "services/windows_native/narration_rights.py": "42c2a53873bf61bff28b47736dba56b11113878ae38d65a932c9c2080e3890dc",
+    "services/windows_native/narration_rights_models.py": "6814c706cd99f8618cf22e5c290820291568103c61f74a677c0bb441414503ba",
+    "services/windows_native/narration_rights_routes.py": "e5f1bd40f486b73d87e0c4766aebb476f164e38b2d522865532ef80ad9aa8dcb",
+    "services/windows_native/tests/test_narration_rights.py": "7b62065e4b47b81126287afd2f335ae1baa03a4759e945df57986f383bac9e53",
+    "services/windows_native/tests/test_narration_rights_http.py": "bd6930afa48c64dfce2b9c4cfbdf5621cad53adf36a6194ab65723cf1a181cba",
+    "apps/studio-web/native-narration-rights.mjs": "20f6d013b5405c6e564ed6d1d1278872475752f5da979b5a80588ec250e16752",
+    "apps/studio-web/tests/native-narration-rights.test.mjs": "9d4ca317f33642603c28f2b3e77b9308eee31ad8f5013de71fa9447c9400ccbf",
+    "scripts/north_star_native_narration_rights_flow.py": "a4c4bb746f059f579c073270da9b36ae5cadcd3b62ec0809d0487afaac2e0663",
+    "docs/NATIVE_NARRATION_PUBLICATION_PROVENANCE.md": "004144711fc6707f8601e487c9421097db79d83c88177b74f0754d48b862d94d",
+    "docs/NATIVE_TREND_RADAR.md": "6996d00485e36c66f832fa8d4852ec7f6a1a1dbf05e504a742cf7c9ab1e48c25",
+    "services/windows_native/tests/test_phase10_http.py": "2fddc2008d9ab5ab010a50a7b6ba99ebbc17c2ce0e854dccb76d4cf127476b37"
+  },
+  "logs": {
+    "native-narration-rights-affected-r1.log": "72479d226de48d772d3dac946bad55744c8749c6fc746470a5286f938e992ce3",
+    "native-narration-rights-affected-r2.log": "5a1b91d6f1ce32cef0d7672fcf978e8e7099d11590d99514ab589a487b7f52b2",
+    "native-narration-rights-affected-r3.log": "efa2f353cf8be2bd1adbe20ae38f4c93c4eecdd8e933bdd1fd8bb2b4c16be0a2",
+    "native-narration-rights-flow-n1.log": "a1e58d61485e2cfef327c0e07b3d4347ae798e9c4f447c41ae24a55f9f3a9339",
+    "native-narration-rights-full-r1.log": "af09410ae6d429d42d66def634c1739cc5dd36230098a073fc233a830664aaf5",
+    "native-narration-rights-reopen-n1.log": "8050eb47051f5f4c628998f3e0a444949d0d41109a0ca162a2fc432c479f266a",
+    "studio-narration-rights-affected-r1.log": "1c4d786801e499df367fb86705060128600037a9b46cce2979e819b3615e7779",
+    "studio-narration-rights-full-r1.log": "1ea1140061cd9c3e50a405fd398722e9e6bf89d8c2ef44240a95cd869196d83b"
+  },
+  "tests": {
+    "full_native_passed": 686,
+    "full_native_seconds": 521.507,
+    "full_studio_passed": 254,
+    "full_studio_ms": 1015.4109,
+    "new_native_cases": 12,
+    "new_dom_cases": 5,
+    "affected_native_passed": 36,
+    "affected_native_seconds": 40.692,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narration-rights-flow-n1",
+    "evidence_sha256": "04974426ae7983dd3a7d7d32c13c77208b2681b762912b322a8d9bb06bc140fe",
+    "replay_sha256": "c8ec03bce4bfabc421d65e005802a94dc5eea082a8d9a0a69d870c3df96d3908",
+    "indexed_exports": 67,
+    "human_http_requests": 141,
+    "exports": {
+      "actual-local-runtime.json": {
+        "sha256": "a4e9e08b1437f12d1667ec0d9f279eebaab62cde10264e68943391b3c36e2d50",
+        "bytes": 750
+      },
+      "actual-local-voice.json": {
+        "sha256": "20abacf2aa5cc14dcce99d7ffda1d6309f9e67db63e8bd2fbf814852ef6353d9",
+        "bytes": 1502
+      },
+      "analytics-sync-not-configured.json": {
+        "sha256": "add56ae4c83d861bee9339bccfbe0f7a8ca70083bc88ba944291b81be465c90c",
+        "bytes": 1191
+      },
+      "approved-brief.json": {
+        "sha256": "76ebfcfc01fa0fd6e93987953737b2348293c38fce45feedb7ddbfd948cfcac9",
+        "bytes": 2165
+      },
+      "artifact-review.json": {
+        "sha256": "e1f1968bba1d70cb2e8b6c4fe1f96c157d63cd4a79020c40a0316e2a459649b7",
+        "bytes": 13157
+      },
+      "audible-preview-full-qc.json": {
+        "sha256": "3903e99c42979c184cc81a09735a5f3dd46a8f3a9977af36250e9ce93dd9578a",
+        "bytes": 7413
+      },
+      "audible-preview-manifest.json": {
+        "sha256": "359cc44b2f5a58e98a75e129c96c790cd68feb7a2e823cef1d0087f2e909accb",
+        "bytes": 14309
+      },
+      "backup-restore.json": {
+        "sha256": "2ee2f166abf0b37cc1dd6adde2057d4fa71b29ec73d0d11303d3ea721461864c",
+        "bytes": 5652
+      },
+      "blocked-approval.json": {
+        "sha256": "1c30b349f9fe6e5eef12d11e086fbfa9131196ca4a73de6a3605a8c7e18e87a7",
+        "bytes": 388
+      },
+      "blocked-publish-approval-after-revoke.json": {
+        "sha256": "034c87ced86067b819f6669571b045c989d806eabfe76bd40550c8180e939892",
+        "bytes": 330
+      },
+      "blocked-render-admission.json": {
+        "sha256": "8e24bae5118f0b62ca7764cd5b896c8fa149a34e10535abe895f4a21c2455a3a",
+        "bytes": 352
+      },
+      "bridge-harvest.json": {
+        "sha256": "606fb1919626bb7187bb5867bdd6076ca9a6ab2819468b97fc3b6fae2c28b581",
+        "bytes": 115
+      },
+      "cost.json": {
+        "sha256": "11183fdcd530648d6d2a7a14ca0f1655fb8c5d406882bbe41751c19a6a1bc8ca",
+        "bytes": 791
+      },
+      "duplicate-without-narration-authority.json": {
+        "sha256": "2e535b8200228326c48f4ee06945e939355f4b58c9893773860d532caf968b99",
+        "bytes": 86783
+      },
+      "failed-preview.json": {
+        "sha256": "9c7dc74b6ec5d9db65421f038076c736bbf593d4e560ac844291e773a45fdd3d",
+        "bytes": 695
+      },
+      "failed-qc-report.json": {
+        "sha256": "7b611b52fc2dcfc090a28cac092644eec9d416f758ceb78c627994e5ddcf150b",
+        "bytes": 7273
+      },
+      "final.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "fixture-analytics-snapshot.json": {
+        "sha256": "2f862cd20524edd75d47f2df913b85d2d5fbed0e0b73df0f39249b3e8426e5e4",
+        "bytes": 9405
+      },
+      "fixture-analytics-sync.json": {
+        "sha256": "1c6593ad1b63215042f314f0f14940b00ef2e54810c8fe77a4653840c52ac78c",
+        "bytes": 12098
+      },
+      "fixture-winner-assessment.json": {
+        "sha256": "deb6126ff94c78a86ccca48da6b21be45bfaf5c18c0cfa2d8b2ceb9a1a153059",
+        "bytes": 2408
+      },
+      "frozen-render-features.json": {
+        "sha256": "1a28b612f5b624df266029521fcc03ad06264f3048ed18928e030c0557cb8351",
+        "bytes": 2316
+      },
+      "full-qc-report.json": {
+        "sha256": "80bfde06f25cdd2e1fefab4d9cdafc636938898823a257a359d8de55481e5f9a",
+        "bytes": 5316
+      },
+      "human-http-wires.json": {
+        "sha256": "60d0b2cf03dff1ed3113999c6f5e56e285a099bad772cc32bee84ff50de299d1",
+        "bytes": 17075
+      },
+      "idea-shortlist.json": {
+        "sha256": "d2fe839ad78ed911051dca966225e1a20c3cae1c25bc2b1cbcc8bf5ddcdd0284",
+        "bytes": 17707
+      },
+      "job-events.json": {
+        "sha256": "5969fca7224de522607d69d3ef2404dbb93d5bf738d78ca585444e6230dee4c5",
+        "bytes": 18668
+      },
+      "learning-feedback.json": {
+        "sha256": "c1adf4381d4037beef6571e0f2905eab27af709e4eb8dc0ece35624075c3e456",
+        "bytes": 5842
+      },
+      "media-plan.json": {
+        "sha256": "8281436738f9669b39c0994e8d91911008bd74b6c05da27f2a598dcfc5b35ab9",
+        "bytes": 73026
+      },
+      "mock-publication.json": {
+        "sha256": "8f57d339884ae880a0867950e6ed4786e32381aec90f227cf55e192e1c293bc9",
+        "bytes": 10833
+      },
+      "narration-applied-project.json": {
+        "sha256": "d131486abd01cb556ea75fd7a642f1e925f147d7f64d87cd50171c00864c0bbf",
+        "bytes": 408571
+      },
+      "narration-job.json": {
+        "sha256": "ec9ebf77d202b66c53a94dec3fcb5cdf01980531c4f152b37e34e6a4ee139c86",
+        "bytes": 194292
+      },
+      "narration-page.json": {
+        "sha256": "d6fde4e12c5c54eca1104c5d2a02fa76309f9aa6e371d9351e8620a0a253d79d",
+        "bytes": 4604
+      },
+      "narration-plan.json": {
+        "sha256": "81584de52dd38870c82e707f0edead343d112533993a3c323052b0402b68dd91",
+        "bytes": 3146
+      },
+      "narration-rights-after.json": {
+        "sha256": "f8ec7a4f93bbf52893ea32813049997de911f0f83c6de629412b941bfa82ddd4",
+        "bytes": 21668
+      },
+      "narration-rights-before.json": {
+        "sha256": "190ffb9e9b571ffeeb0c81d91995de7d869e92e2c36353a89de0f40cd25d53bf",
+        "bytes": 6386
+      },
+      "narration-rights-exception.json": {
+        "sha256": "fec43e5142f054209af9ee15116328d85fbb5b8571c5a623904b2a601173f4b7",
+        "bytes": 7810
+      },
+      "narration-rights-revocation.json": {
+        "sha256": "2ec1b53cfaf00b3154660e6677063cc8c9a2ecaf403168898fa3418b6dfb19c0",
+        "bytes": 7862
+      },
+      "native-storyboard-full-qc-backup.zip": {
+        "sha256": "5aab6431dc1f1b48543fbbf131749c292ada313af0ab2068fd5d61280a5f971b",
+        "bytes": 15105872
+      },
+      "offline-snapshot.json": {
+        "sha256": "154fcd4fd72d6e046a4b3b12eba87b852214b5601ce61cbfc33c7043e78d6b3f",
+        "bytes": 4284048
+      },
+      "pending-publication-before-revoke.json": {
+        "sha256": "af9db13c7dc9972b1fdcbc4ccde98bc6acc77c6cbf0bd09ddc72a6ccae1dac7f",
+        "bytes": 9994
+      },
+      "personalized-opportunity.json": {
+        "sha256": "8200272e01328780807306a54ef82bde6f009d7bfc06bda060cbee82e96b5aad",
+        "bytes": 15693
+      },
+      "preview.json": {
+        "sha256": "7468efe7b75a25b2731703286440007967b1eecf87f1e44970a0d90446d21ec4",
+        "bytes": 15970
+      },
+      "preview.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "project.json": {
+        "sha256": "21f8726fdaf74486624baea17a6c106419a4903fce9445f41fef088296907f3d",
+        "bytes": 646982
+      },
+      "publication-approval.json": {
+        "sha256": "a93419a43c46497d70da136b6e36a49cd39de2a354dd41d8e252fb2a28bbbcf5",
+        "bytes": 10401
+      },
+      "publication-intent.json": {
+        "sha256": "556307284d5077e8b48543e5250e686a48a3d5bebf1c7e09fbccc375bcb5f373",
+        "bytes": 9994
+      },
+      "qc-report.json": {
+        "sha256": "5b8d1404b61e6b445efe036645fc1cafa8bd4913ca6920efa4e1b61d60179949",
+        "bytes": 6518
+      },
+      "render-job.json": {
+        "sha256": "2d0365e52c93831405234220e24392671256c93c97ae1a6515c6da6bc1213b5f",
+        "bytes": 211313
+      },
+      "render-manifest.json": {
+        "sha256": "2f9a0828d2fceb36ad5b665adb4e3664fed5c97af2a56a676a7ad6c1e9ac84db",
+        "bytes": 6171
+      },
+      "render-voice.json": {
+        "sha256": "e8f52bb0fa3548bf15064aeafecc3e84d5c3f8721c0d4c8c9e73d1c0adda5f69",
+        "bytes": 2386
+      },
+      "render-voice.wav": {
+        "sha256": "2eecdb49cf94e207530857335398dfcb88a529681f10b3da5d1330cb83d92150",
+        "bytes": 904364
+      },
+      "research-evidence.json": {
+        "sha256": "5718cf28dfb9420b5ac7348e856b051e1051b57376e2dc5bd01d1f4068aa4ac6",
+        "bytes": 45776
+      },
+      "selected-idea.json": {
+        "sha256": "99e3053e84e40ae186c086ce7a4be4c38ea8765af84aa84560781cd821081ece",
+        "bytes": 3365
+      },
+      "subtitles.ass": {
+        "sha256": "e658e110947873f018ac1b7f6c3a033a9c8b136b457458277f619dccfc0a69d2",
+        "bytes": 947
+      },
+      "timeline.json": {
+        "sha256": "6576b7f5f91ab00114e1d1ad1b6ff6da792df740d822c5b1a27dc15cc44160d6",
+        "bytes": 6619
+      },
+      "transport-qc-report.json": {
+        "sha256": "4fb749b301e35a931b5111f358341ed6c5b4aa7729b73e2ab3052a833db41a57",
+        "bytes": 1160
+      },
+      "trend-assessment.json": {
+        "sha256": "b10545c231c2f750342a7cbe8b6cca6a9a3503ef8822b7806f4f968fba95ccc3",
+        "bytes": 13778
+      },
+      "trend-evidence.json": {
+        "sha256": "52c8cbd1658090fe30e44a9caf500a61a0969a247e1704cc3526915fc8300d42",
+        "bytes": 12082
+      },
+      "trend-handoff.json": {
+        "sha256": "30649de34b63960a34a95bd03a7cdfa3829f33b6732f75547a8b9bfb4b4d1f57",
+        "bytes": 1086
+      },
+      "trend-to-learning.json": {
+        "sha256": "4b0faacfe761ef9776cf8b586012aa5348149c4500391b2d34084a3210156c10",
+        "bytes": 872
+      },
+      "visual-proxy.json": {
+        "sha256": "471004cac3bcc9c7641f814f62e8864c480dc0edafc6ba0c1885dc1c139bee5e",
+        "bytes": 658
+      },
+      "visual-proxy.mp4": {
+        "sha256": "10d2ade4658c2ab186440a2172abd93ac842a48ec03410d642c7a5c5f4510040",
+        "bytes": 50700
+      },
+      "voice-reuse.json": {
+        "sha256": "85cf7511136de122ee91ae9787319ff5632d2d4721ec9f4a8a0de0659c3b7b72",
+        "bytes": 571
+      },
+      "voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "subtitle-qc/000.png": {
+        "sha256": "8710ff89a903fce552ff947559c28aa6cf682ae32f296c5d3677b40443485cdb",
+        "bytes": 63104
+      },
+      "subtitle-qc/001.png": {
+        "sha256": "7688e3ebb7cda6cdd21c1f097677d4dbe033e97a942e559bc73247283024ee45",
+        "bytes": 60594
+      },
+      "subtitle-qc/002.png": {
+        "sha256": "b37c9d095f8b41d39343ba862af96108853a351636013d819244c5eed0ebbf4d",
+        "bytes": 24086
+      }
+    }
+  },
+  "default_disabled_exception_requires_existing_owner_auth_flag": true,
+  "raw_voice_rights_unknown": true,
+  "exact_model_profile_original_pcm_narration_checkpoint_binding": true,
+  "expiry_and_revocation_and_duplicate_isolation_tested": true,
+  "exception_clears_approval_preserves_canonical_and_original_pcm": true,
+  "fresh_audible_preview_production_final_publish_approval_separate": true,
+  "actual_local_model_inference": true,
+  "tts_model": "vieneu-v3-turbo",
+  "local_model_inference_calls": 2,
+  "voice_duration_seconds": 7.32,
+  "final_duration_seconds": 9.433,
+  "actual_subtitle_pixel_masks": 3,
+  "mock_publication_completed": true,
+  "remote_post_id": null,
+  "official_analytics_not_configured": true,
+  "fixture_analytics_snapshot_created": true,
+  "absolute_fixture_winner_state": "normal",
+  "actual_observed_audience": false,
+  "frozen_channel_and_trend_render_features": true,
+  "compatible_distinct_mock_learning_observations": 1,
+  "ranking_adjustment_applied": false,
+  "full_artifact_c_complete": false,
+  "actual_pending_publish_approval_rejected_after_revocation": true,
+  "actual_duplicate_drops_narration_authority": true,
+  "actual_backup_both_databases_distribution_tables_receipts_and_process_replay": true,
+  "locked_sdk_model_bytes_verified_unchanged": true,
+  "model_downloads": 0,
+  "speech_quality_accepted": false,
+  "pronunciation_accepted": false,
+  "owner_optional_listening_review": "deferred_by_owner_keep_implementing",
+  "rights_independently_verified": false,
+  "owner_uat_accepted": false,
+  "semantic_vision_used": false,
+  "browser_non_developer_uat": false,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "stop_condition_pending": false
+}

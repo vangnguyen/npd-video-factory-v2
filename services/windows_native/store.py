@@ -95,6 +95,9 @@ class Store:
         if 'media_rights_overrides' in doc:
             from .rights_override import validate_document
             validate_document(doc,project_id=row['id'])
+        if 'narration_rights_exceptions' in doc:
+            from .narration_rights import validate_document
+            validate_document(doc,project_id=row['id'])
         if doc.get('channel_profile') is not None:
             from .channel_profiles import resolve
             resolve(doc)
@@ -311,6 +314,8 @@ class Store:
                     'source_history_sha256':digest(doc.pop('studio_media_plans')),'new_plan_required':True}
             if doc.get('prepared_narration'):
                 doc['prepared_narration_origin']={'source_project_id':identifier,'source_reference_sha256':digest(doc.pop('prepared_narration')),'new_preparation_required':True}
+            if doc.get('narration_rights_exceptions'):
+                doc['narration_rights_origin']={'source_project_id':identifier,'history_sha256':digest(doc.pop('narration_rights_exceptions')),'new_review_required':True}
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",(copy_id,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
             self.version(con,copy_id)
             self.event(con,copy_id,"project_duplicated_unapproved",{"source_project":identifier,"source_revision":revision})

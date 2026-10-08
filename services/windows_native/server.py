@@ -183,6 +183,8 @@ class LocalServer(ThreadingHTTPServer):
         self.rights=NativeRights(self.store,workspace_id=self.publications.workspace_id)
         from .rights_override import NativeRightsOverrides
         self.rights_overrides=NativeRightsOverrides(self.store,workspace_id=self.publications.workspace_id,enabled=owner_rights_overrides)
+        from .narration_rights import NativeNarrationRights
+        self.narration_rights=NativeNarrationRights(self.store,workspace_id=self.publications.workspace_id,enabled=owner_rights_overrides)
         from .stock import NativeStock
         from .stock_registry import load as load_stock
         if stock_api_enabled and stock_registry is None:raise WorkflowError('NATIVE_STOCK_REGISTRY_REQUIRED',400)
@@ -367,6 +369,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights-overrides',path):
             from .rights_override_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/narration-rights',path):
+            from .narration_rights_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path == '/healthz':
             return self.reply({'schema': 'vf-native-health-v1', 'status': 'alive', 'scope': 'http_process'})
         if path == '/readyz':
@@ -445,7 +450,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -533,6 +538,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-vision.mjs'] = 'native-vision.mjs'
         static['/native-rights.mjs'] = 'native-rights.mjs'
         static['/native-rights-override.mjs'] = 'native-rights-override.mjs'
+        static['/native-narration-rights.mjs'] = 'native-narration-rights.mjs'
         static['/native-stock.mjs'] = 'native-stock.mjs'
         static['/native-generation.mjs'] = 'native-generation.mjs'
         static['/native-media-resolution.mjs'] = 'native-media-resolution.mjs'
@@ -597,6 +603,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights-overrides/[a-f0-9]{32}\.(jpg|png|mp4|wav)',self.path):
             from .rights_override_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/narration-rights',self.path):
+            from .narration_rights_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
         if self.path.startswith('/api/bridge/'):
             from .bridge_operator_routes import post

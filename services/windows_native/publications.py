@@ -125,7 +125,7 @@ class NativePublications:
             raise WorkflowError('HUMAN_FINAL_VIDEO_APPROVAL_REQUIRED')
         return job, actual, path
 
-    def validation(self, job, path, payload):
+    def validation(self, job, path, payload,con=None):
         document = job['snapshot']['document']; timeline = document.get('canonical_timeline', {}).get('snapshot')
         assets = canonical_assets(document)
         if timeline:
@@ -146,13 +146,18 @@ class NativePublications:
         platform = validate_platform(capability=self.capabilities.get(payload.platform), metadata=payload.metadata,
             render=SimpleNamespace(profile=profile, qc_report=qc), output_asset=SimpleNamespace(size_bytes=path.stat().st_size), mode='dry_run')
         attention = []
+        narration_rights=None
         # Physical source rights alone do not establish locked/generated voice/model rights for publication.
         if not timeline or timeline.get('metadata', {}).get('native_auto_edit_schema') != 'native-auto-edit-timeline-v1':
-            attention.append('NATIVE_GENERATED_VOICE_PUBLICATION_PROVENANCE_REQUIRED')
+            service=getattr(self.store,'narration_rights',None)
+            narration_rights=service.publication(job,con) if service is not None else None
+            if narration_rights is None:attention.append('NATIVE_GENERATED_VOICE_PUBLICATION_PROVENANCE_REQUIRED')
         if payload.metadata.thumbnail_asset_id is not None: attention.append('NATIVE_THUMBNAIL_PUBLICATION_BINDING_NOT_CONFIGURED')
         passed = rights.status == platform.status == 'passed' and not attention
-        return {'rights': rights.model_dump(mode='json'), 'platform': platform.model_dump(mode='json'), 'attention': attention,
+        value={'rights': rights.model_dump(mode='json'), 'platform': platform.model_dump(mode='json'), 'attention': attention,
             'status': 'passed' if passed else 'failed', 'provider': self.provider.validate().model_dump(mode='json')}
+        if narration_rights is not None:value['narration_rights']=narration_rights
+        return value
 
     def create(self, project, payload, *, actor):
         request_hash = digest(payload.model_dump(mode='json', exclude={'request_key'})); key_hash = hashlib.sha256(payload.request_key.encode()).hexdigest()
@@ -167,7 +172,7 @@ class NativePublications:
             scheduled = payload.metadata.scheduled_at
             if scheduled and not utc(self.clock()) < utc(scheduled) <= utc(self.clock()) + timedelta(days=365):
                 raise WorkflowError('NATIVE_PUBLICATION_SCHEDULE_INVALID', 400)
-            validation = self.validation(job, path, payload)
+            validation = self.validation(job, path, payload,con)
             from .contracts import file_sha
             if file_sha(self.capabilities_path) != self.capabilities_sha256:
                 raise WorkflowError('NATIVE_PUBLICATION_CAPABILITIES_CHANGED_RESTART_REQUIRED')
@@ -196,7 +201,7 @@ class NativePublications:
             or actual != snapshot['final_sha256'] or path.stat().st_size != snapshot['final_bytes']
             or job['final_review'] != snapshot['final_review'] or file_sha(self.capabilities_path) != snapshot['capabilities_sha256']):
             raise WorkflowError('NATIVE_PUBLICATION_REVIEW_BINDING_CHANGED')
-        if self.validation(job, path, payload) != snapshot['validation'] or snapshot['validation']['status'] != 'passed':
+        if self.validation(job, path, payload,con) != snapshot['validation'] or snapshot['validation']['status'] != 'passed':
             raise WorkflowError('NATIVE_PUBLICATION_VALIDATION_FAILED')
         return value, payload
 
