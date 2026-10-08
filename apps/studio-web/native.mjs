@@ -112,7 +112,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -136,7 +136,7 @@ if (typeof document !== "undefined") {
   function controls() {
     bridgeUI?.controls();
     $("prompt").closest('label').hidden=Boolean(workspaceUI)&&$("input-kind").value==='media';
-    const active=jobActive(project), shotWorking=(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false), blocked=busy||shotWorking||active||project?.archived;
+    const active=jobActive(project), shotWorking=(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false), blocked=busy||shotWorking||active||project?.archived;
     document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-workspace-control],[data-auto-edit-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
     $("refresh").disabled=busy||shotWorking;
     $("project-picker").disabled=busy||shotWorking||dirty;
@@ -189,6 +189,7 @@ if (typeof document !== "undefined") {
     rightsUI?.controls();
     stockUI?.controls();
     generationUI?.controls();
+    mediaPlannerUI?.controls();
     rightsOverrideUI?.controls();
     variantsUI?.controls();
     channelUI?.controls();
@@ -227,6 +228,7 @@ if (typeof document !== "undefined") {
     rightsUI?.sync();
     stockUI?.sync();
     generationUI?.sync();
+    mediaPlannerUI?.sync();
     rightsOverrideUI?.sync();
     variantsUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
@@ -325,23 +327,29 @@ if (typeof document !== "undefined") {
     }
     if(session.capabilities?.native_rights_review===true){
       const rights=await import('./native-rights.mjs');$('native-rights-panel').hidden=false;
-      rightsUI=rights.initializeNativeRights({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false),canManage,active:jobActive(project),
+      rightsUI=rights.initializeNativeRights({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_stock_media===true){
       const stock=await import('./native-stock.mjs');$('native-stock-panel').hidden=false;
-      stockUI=stock.initializeNativeStock({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false),canManage,
+      stockUI=stock.initializeNativeStock({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canManage,
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_owner_rights_override_review===true){
       const overrides=await import('./native-rights-override.mjs');$('native-rights-override-panel').hidden=false;
-      rightsOverrideUI=overrides.initializeNativeRightsOverride({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false),canManage,active:jobActive(project),
+      rightsOverrideUI=overrides.initializeNativeRightsOverride({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_generation_media===true){
       const generation=await import('./native-generation.mjs');$('native-generation-panel').hidden=false;
-      generationUI=generation.initializeNativeGeneration({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false),
+      generationUI=generation.initializeNativeGeneration({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),
+        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
+        onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
+    }
+    if(session.capabilities?.native_storyboard_media_planner===true){
+      const planner=await import('./native-media-planner.mjs');
+      mediaPlannerUI=planner.initializeNativeMediaPlanner({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false),
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
@@ -366,12 +374,12 @@ if (typeof document !== "undefined") {
     projectQuality=newProjectQuality(session);
     if(session.capabilities?.native_media_frame_analysis===true){
       const frames=await import('./native-media-frames.mjs');
-      mediaFrames=frames.initializeMediaFrames({api,getProject:()=>project,getState:()=>({dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)}),onWorking:controls,onMessage:message});
+      mediaFrames=frames.initializeMediaFrames({api,getProject:()=>project,getState:()=>({dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)}),onWorking:controls,onMessage:message});
     }
     if(session.capabilities?.native_auto_edit_analysis===true){
       const analysis=await import('./native-auto-edit.mjs');
       const stylesheet=document.createElement('link');stylesheet.rel='stylesheet';stylesheet.href='/native-auto-edit.css';document.head.append(stylesheet);
-      nativeAnalysis=analysis.initializeNativeAnalysis({api,getProject:()=>project,getState:()=>({dirty,dirtyPart,busy:busy||(shotStudio?.isWorking()??false)}),
+      nativeAnalysis=analysis.initializeNativeAnalysis({api,getProject:()=>project,getState:()=>({dirty,dirtyPart,busy:busy||(shotStudio?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)}),
         onProject:(value,reset)=>{const changed=project?.id!==value?.id;project=value;if(changed&&value){localStorage.setItem('vf-native-project',value.id);void projects().catch(error=>message(error.message,true));}renderProject(reset);},onDirty:markDirty,onMessage:message,
         sourceEnabled:session.capabilities?.native_source_timeline===true,onSourceCreated:()=>shotStudio?.showStage('video'),onWorking:controls,onDraftsCreated:projects});
     }
@@ -390,14 +398,14 @@ if (typeof document !== "undefined") {
       document.querySelector('.asset-workspace-toolbar').hidden=false;
       if(session.capabilities?.native_channel_profiles===true){
         const channels=await import('./native-channel-profiles.mjs');
-        channelUI=channels.initializeNativeChannels({api,getState:()=>({project,busy,canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
+        channelUI=channels.initializeNativeChannels({api,getState:()=>({project,busy:busy||(mediaPlannerUI?.isWorking()??false),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
           onDefaults:value=>{$('new-content-profile').value=value.content_profile_id;$('new-brand').value=value.brand_id;$('new-video-format').value=value.aspect_ratio;creationTemplates();$('new-template').value=value.template_id;$('new-duration-mode').value=value.duration_mode;},onMessage:message});
         $('new-content-profile').addEventListener('change',()=>channelUI?.clear());
       }
     }
     document.querySelectorAll('.stage-navigation,.studio-header-actions,.skip-link,.sidebar [data-stage],.sidebar a[href^="/production"]').forEach(el=>el.hidden=false);
     const sourceUI=session.capabilities?.native_source_timeline===true?await import('./native-source-editor.mjs'):null;
-    shotStudio=module.initializeShotStudio({api,ui:workspaceUI,sourceUI,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
+    shotStudio=module.initializeShotStudio({api,ui:workspaceUI,sourceUI,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy:busy||(mediaPlannerUI?.isWorking()??false)}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
   }
   $("save-prompt").addEventListener("click",guarded(async()=>{
     const creating=!project;

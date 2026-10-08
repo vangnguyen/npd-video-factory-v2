@@ -1,0 +1,190 @@
+{
+  "schema": "native-storyboard-media-plan-evidence-v1",
+  "parent_head": "cf6a3dd1a12c1b401680a00f0a09533f64fe155d",
+  "source_sha256": {
+    "services/windows_native/studio_media_models.py": "17cd577f74c1a222d8366fc10714764322f0f43e965b925772c5c3f8101be700",
+    "services/windows_native/studio_media_planner.py": "e7bbf58189eb976342a358e52a52ee312fdc421c303aceab173a4878ebb602dd",
+    "services/windows_native/studio_media_routes.py": "15d41f3ae19a7fe516c4551e525a6fb57c17a9b54eceda621200830ec03d89c1",
+    "services/windows_native/server.py": "20ebbdd9f77030d74ea2acae32e6988665150af65177766d97da60f6e427aa8b",
+    "services/windows_native/access.py": "fba2884e3e16c2f3ba3af53797f2a9cc30e99b620059ee386b078df4343303bb",
+    "services/windows_native/store.py": "4c9dbe79b08dd8248debf12130ea902c4aaa3bed428896217baf9d60f0cde0be",
+    "apps/studio-web/native-media-planner.mjs": "38f2a509cebeb2a803754857ea5c200d0a13c35cea2122682bcbc8423134be22",
+    "apps/studio-web/native.mjs": "61f6826b174332a69e3d0accf475a1c029a5dbd576c8abe4f43eb3588a8d56c0",
+    "apps/studio-web/native.html": "06bafc97ba77e079b848c659edc3027dfa9a4d10c13cdb2c971565cf94daa9c3",
+    "apps/studio-web/native.css": "f19e3b97e0b3c3d609b0cf095d85a365ff76dd32dcb4c8e2f435837fecf84005",
+    "scripts/north_star_native_studio_media_planner.py": "32a9a713cd0419cdd9d24fcb1727d12f0957fd28929d46b9918b565479cb1c65",
+    "services/windows_native/tests/test_studio_media_planner.py": "a06a5ef0232279ac4f94a7ef2b97f7c1bc8eae14b6d2192e6ab34e033507cb6c",
+    "services/windows_native/tests/test_phase10_http.py": "786527b1813d914630dd3d4fba2f7bddf70a928b96f2bfacac0ab6482e0e975f",
+    "apps/studio-web/tests/native-media-planner.test.mjs": "fbc9aaa5da4b5c7072585461a09872b73fd3cd0b7a7a38c94ad8354fffd6f120",
+    "docs/NATIVE_STORYBOARD_MEDIA_PLANNER.md": "49db70df6b00033237649f1e010c1d1896200c3db30321ac32a5064a768c2918"
+  },
+  "logs": {
+    "native-studio-media-planner-r1.log": "a13a0af1af354f7cac996ace1ee79efac50e2cd479cf33c505e6870bddf3a951",
+    "native-studio-media-planner-r2.log": "3d3133a526d572911c968d6b4696ff49caabcefa3ed72bf5867dc46c5467c3c9",
+    "native-studio-media-planner-r3.log": "4489333e587165ce28897ed1d98ad1e605d4816ddf8b6c38710953599425a683",
+    "native-studio-media-plan-full-r4.log": "2740e9587e2a33f6cf86c124c6e8c94599c7704d4f28b4499cfce8f6266a302a",
+    "native-studio-media-planner-ui-r1.log": "ced0019f975866f5e74eaf4f7b202129e3b2047f383f07d0ad01a5535602310e",
+    "native-studio-media-plan-studio-r2.log": "96b6c7f20b4879e9e3315cc8eafac53ce0ba214d40bf40d18ca2731ec856f04a",
+    "native-studio-media-plan-n1.log": "13ab5d3a8764b486339b0bfa2969e181169be561627e7c88c2277dff64ef7df5",
+    "native-studio-media-plan-n2.log": "19e5175604bbc1dcebd7f51fc13d0a7d8c4de0b708fd0a419e73ce57c7d44eb4",
+    "native-studio-media-plan-n3.log": "5ebeb4913d1f0c0898ce7fd820a6dbae14151d4afdb8198df168f18e3ebb18ce",
+    "native-studio-media-plan-n4.log": "fbf4da3c5ded2220a6194be461e2e44c929197fdf8c9036531c17528de4fadd6"
+  },
+  "contract_root": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\native-studio-media-plan-n4",
+  "owned_root": "C:/vf-native-fixture-studio-media-plan-04",
+  "restore_root": "C:/vf-native-fixture-studio-media-plan-restore-04",
+  "contract_exports": {
+    "ai-education-reference@1\\cost.json": {
+      "sha256": "5053ece2ade928af9356cd6cdd5ceb02ec63e6b3c2c52dfa8bd6c23d06be2ca5",
+      "bytes": 816
+    },
+    "ai-education-reference@1\\ffprobe.json": {
+      "sha256": "7f18ab55fe57b01c9f437fe86b866abe38ac3cd32dbd99b184203b4c7e497279",
+      "bytes": 2431
+    },
+    "ai-education-reference@1\\media-plan.json": {
+      "sha256": "8bf407d7a4ec35390ca2440c4abc5524d1966a0752497fcd27bfc09386345001",
+      "bytes": 59980
+    },
+    "ai-education-reference@1\\preview-frame.png": {
+      "sha256": "12f5aeaa430a6fb060a9c653a0fe4f59ef381890cd21a5b81be02d943f31be35",
+      "bytes": 36585
+    },
+    "ai-education-reference@1\\preview.json": {
+      "sha256": "5110c5c52de6ce17cc0b0def14d92fcf198f9e05dbf1e20211dc0c5b900e119d",
+      "bytes": 675
+    },
+    "ai-education-reference@1\\preview.mp4": {
+      "sha256": "0b99e8212adcf8146be0803aa75cbdc6e003306df436ddd07f8cecfa26230556",
+      "bytes": 32686
+    },
+    "ai-education-reference@1\\project.json": {
+      "sha256": "1ac9aefc554cd22fa8c69026192c89300e5307615f2b40d07f5c624c66dfebab",
+      "bytes": 150692
+    },
+    "ai-education-reference@1\\script.json": {
+      "sha256": "86eef18dda0bb6f1b0db738f2dfbaef07a075ccf12d24802e809a0a2a319ac38",
+      "bytes": 599
+    },
+    "ai-education-reference@1\\source-hashes.json": {
+      "sha256": "cb0e8488900d0e4348341d9688d73cee4a4ba04ee4ba29444f9cdbacddca5e9c",
+      "bytes": 227
+    },
+    "ai-education-reference@1\\timeline.json": {
+      "sha256": "5f9a6042b67067e16ab59871de8c9123c37ae89cd58a0f1d32aaaa5bc9c246cd",
+      "bytes": 5492
+    },
+    "evidence.json": {
+      "sha256": "070b1d42aa2aded5770f46f6f6b437dda84749c9f0c6e87f5d97d4bf419ca977",
+      "bytes": 7064
+    },
+    "http-requests.json": {
+      "sha256": "195abd1adc83d471c9d0f2ad2e7e9b277f5e259150ddc5c908a8ed3fa744191f",
+      "bytes": 3753
+    },
+    "native-studio-media-plan-backup.zip": {
+      "sha256": "2c34d48742b0197f525a835c4b6d53cecf74151d5b0b90bc447ae1d5ac6975c4",
+      "bytes": 1461891
+    },
+    "property-reference@1\\cost.json": {
+      "sha256": "66fe8d28f0ff533e8c0735af1df1ef3784d625e063449e9380f4f1f87467627f",
+      "bytes": 816
+    },
+    "property-reference@1\\ffprobe.json": {
+      "sha256": "b3dcaff8d06bd3f157efade029467c9c9fd04aee9167a3af98f627e191fbb1da",
+      "bytes": 2431
+    },
+    "property-reference@1\\media-plan.json": {
+      "sha256": "dcdabff952eb61293747439d20e97c923c4f81445887c067866162ddeae25fae",
+      "bytes": 60031
+    },
+    "property-reference@1\\preview-frame.png": {
+      "sha256": "12f5aeaa430a6fb060a9c653a0fe4f59ef381890cd21a5b81be02d943f31be35",
+      "bytes": 36585
+    },
+    "property-reference@1\\preview.json": {
+      "sha256": "bd6e4ec1aeb812ecc6f4adf8bb9dd902b76beb6109af785882689c4d5350f1b7",
+      "bytes": 675
+    },
+    "property-reference@1\\preview.mp4": {
+      "sha256": "0b99e8212adcf8146be0803aa75cbdc6e003306df436ddd07f8cecfa26230556",
+      "bytes": 32686
+    },
+    "property-reference@1\\project.json": {
+      "sha256": "7330b39a3c98e8c1e331cfbfb17883b81120c2baebd2677871c9420cd17f88b2",
+      "bytes": 150964
+    },
+    "property-reference@1\\script.json": {
+      "sha256": "89a804b9bb4ed50b37c44f68b1adfe5c8ecdcbbca5d69c7f9ffdba7de94c23e4",
+      "bytes": 612
+    },
+    "property-reference@1\\source-hashes.json": {
+      "sha256": "05c7b6fe34e0b073bae204f21a3bcd07e82d0fd18a46bcac01c84817abf0ccd3",
+      "bytes": 227
+    },
+    "property-reference@1\\timeline.json": {
+      "sha256": "4ddb9d89a9bfe080e49d783f11e70bda306a0591e2594a437df088b89736bbce",
+      "bytes": 5505
+    },
+    "recovery.json": {
+      "sha256": "39ff54f1d4ea090cabfb151e496d4d108b2a454e962632a6a26a26b22ed6ecee",
+      "bytes": 5593
+    }
+  },
+  "full_native_passed": 605,
+  "full_native_seconds": 397.205,
+  "affected_native_passed": 40,
+  "affected_native_seconds": 43.901,
+  "focused_native_passed": 11,
+  "focused_native_seconds": 13.977,
+  "studio_passed": 221,
+  "studio_duration_ms": 1039.8603,
+  "new_native_http_cases": 11,
+  "new_dom_cases": 7,
+  "human_http_requests": 29,
+  "two_configured_niches": [
+    "technology",
+    "real_estate"
+  ],
+  "actual_local_uploaded_image_normalization_and_hashes": true,
+  "actual_local_silent_visual_preview": true,
+  "preview_dimensions": [
+    540,
+    960
+  ],
+  "preview_durations_seconds": [
+    3,
+    3
+  ],
+  "fixture_content": true,
+  "fixture_human_credentials": true,
+  "same_canonical_shot_snapshot": true,
+  "no_second_editing_database": true,
+  "saved_input_fingerprints_and_versioned_decisions": true,
+  "explicit_selection_then_acknowledged_atomic_apply": true,
+  "approval_invalidated_and_source_other_shots_narration_preserved": true,
+  "stale_input_asset_provider_and_scope_guard": true,
+  "duplicate_requires_new_scoped_plan": true,
+  "plan_history_bytes_and_versions_bounded": true,
+  "actual_separate_process_and_backup_restore_exact": true,
+  "provider_calls": 0,
+  "paid_operations": 0,
+  "source_hashes_unchanged": true,
+  "retained_rehearsal_failures": [
+    "n1: fixture compared catalog instead of exact frozen project channel selection",
+    "n2: fixture raw Vietnamese HTTP filename header not percent encoded",
+    "n3: fixture separate-process cp1252 stdout; ASCII JSON escaping corrected"
+  ],
+  "product_gates_weakened": false,
+  "semantic_vision_tested": false,
+  "tts_tested": false,
+  "final_render_qc_tested": false,
+  "stock_or_generated_provider_executed": false,
+  "automatic_resolver_complete": false,
+  "browser_usability_tested": false,
+  "owner_uat": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "north_star_ready": false
+}

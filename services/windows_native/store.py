@@ -299,6 +299,10 @@ class Store:
                 doc.pop("auto_edit_transcripts", None)
                 from .media_frame_analysis import rebind_records
                 doc['media_frame_analyses']=rebind_records(doc,identifier,copy_id)
+            if doc.get('studio_media_plans'):
+                # Decisions bind project identity, current rights and canonical shots.
+                doc['studio_media_plan_origin']={'source_project_id':identifier,'source_revision':revision,
+                    'source_history_sha256':digest(doc.pop('studio_media_plans')),'new_plan_required':True}
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",(copy_id,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
             self.version(con,copy_id)
             self.event(con,copy_id,"project_duplicated_unapproved",{"source_project":identifier,"source_revision":revision})

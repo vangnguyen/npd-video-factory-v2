@@ -189,6 +189,10 @@ class LocalServer(ThreadingHTTPServer):
         from .generation_registry import load as load_generation
         generation=load_generation(generation_registry,self.store.root,self.publications.workspace_id,owner_enabled=generation_api_enabled) if generation_registry is not None else generation_factory
         self.generation=NativeGenerationWorker(NativeGenerationQueue(self.store,workspace_id=self.publications.workspace_id,factory=generation),config)
+        from .studio_media_planner import NativeStudioMediaPlanner
+        from .generation_routes import providers as generation_providers
+        self.media_planner=NativeStudioMediaPlanner(self.store,config,workspace_id=self.publications.workspace_id,
+            providers=lambda:{'workspace_id':self.publications.workspace_id,'stock':self.stock.providers(),'generation':generation_providers(self.generation)})
         if bridge_auth_registry is not None:self.bridge.load_auth_registry(bridge_auth_registry)
         if bridge_http_enabled and bridge_webhook_registry is None:raise WorkflowError('NATIVE_BRIDGE_WEBHOOK_REGISTRY_REQUIRED',400)
         if bridge_webhook_registry is not None:self.bridge.load_webhook_registry(bridge_webhook_registry,owner_http_enabled=bridge_http_enabled)
@@ -315,6 +319,9 @@ class Handler(BaseHTTPRequestHandler):
                 raise
         self.boundary(session=path.startswith("/api/") and path != '/api/health'
             and (path != '/api/session' or self.server.access is not None))
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/media-plans',path):
+            from .studio_media_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         generation_file=re.fullmatch(r'/api/projects/([a-f0-9]{32})/generation/([a-f0-9]{32})/file',path)
         if generation_file:
             if '?' in self.path:raise WorkflowError('NATIVE_GENERATION_PAGE_INVALID',400)
@@ -415,7 +422,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_owner_rights_override_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_owner_rights_override_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -505,6 +512,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-rights-override.mjs'] = 'native-rights-override.mjs'
         static['/native-stock.mjs'] = 'native-stock.mjs'
         static['/native-generation.mjs'] = 'native-generation.mjs'
+        static['/native-media-planner.mjs'] = 'native-media-planner.mjs'
         static['/native-variants.mjs'] = 'native-variants.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
@@ -546,6 +554,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
                 'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/media-plans(?:/nmp_[a-f0-9]{32}/(?:select|revise|apply))?',self.path):
+            from .studio_media_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/generation(?:/[a-f0-9]{32}/(?:cancel|recover|import))?',self.path):
             from .generation_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
