@@ -648,7 +648,7 @@ class Store:
             row = con.execute("SELECT status FROM jobs WHERE id=?", (job["id"],)).fetchone()
             if row is None or row["status"] not in {"running", "retrying"}:
                 raise WorkflowError("JOB_STATE_CONFLICT")
-            status = ('failed_qc' if error.get('code')=='AUTO_EDIT_MEDIA_QC_FAILED' else 'failed') if error else ("awaiting_review" if job["kind"] == "content" else "succeeded")
+            status = ('failed_qc' if error.get('code') in {'AUTO_EDIT_MEDIA_QC_FAILED','STORYBOARD_FULL_MEDIA_QC_FAILED'} else 'failed') if error else ("awaiting_review" if job["kind"] == "content" else "succeeded")
             if result and job["kind"] == "content":
                 project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (job["project_id"],)).fetchone())
                 if project["revision"] != job["revision"]:

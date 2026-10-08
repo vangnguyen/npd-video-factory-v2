@@ -624,6 +624,10 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     write_json(out / "timeline.json",timeline(doc,frames,captions,meta))
     write_json(out / "render-manifest.json", {"duration_seconds": duration, "captions": captions, "scenes": frames,
         "voice_sha256": meta["audio_sha256"], "scene_source_policy": "exactly_one_image_or_video",
+        "voice_audio_file":voice_file,
+        "subtitle_layout":{"schema_version":"native-ass-render-layout-v1","width":width,"height":height,
+            "safe_rectangle":[safe_left,safe_top,width-safe_right,height-safe_bottom],"ass_sha256":file_sha(out/'subtitles.ass'),
+            "font_family":brand.fonts.subtitle_family,"geometry_basis":"actual_libass_pixels_required_by_full_qc"},
         "profile_sha256": PROFILE_SHA, "subtitle_timing": "ESTIMATED_WITH_MEASURED_SCENE_AUDIO",
         "word_alignment": "none", "approval": snapshot["approval"], "voice_speed": 1,
         "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
@@ -635,7 +639,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         **({'canonical_timeline':{'version':doc['canonical_timeline']['version'],'sha256':doc['canonical_timeline']['sha256']},
             'scene_layout':retimed['scene_layout'],'source_voice_sha256':retimed['source_voice_sha256'],
             'sample_preserving_placement':True,'custom_subtitle_timing':'shot_estimate_not_word_alignment'} if retimed else {})})
-    return qc(config, out, duration,expected_canvas=(width,height),quality_policy=strict_quality)
+    report=qc(config, out, duration,expected_canvas=(width,height),quality_policy=strict_quality)
+    if strict_quality:
+        from .storyboard_qc import inspect
+        return inspect(config,snapshot,out,report)
+    return report
 
 
 def qc(config, out, expected_duration,expected_canvas=(1080,1920), *, quality_policy=None):
@@ -812,6 +820,10 @@ class Pipeline:
                   "output_directory": str(out), "review_required": True,
                   "render_version": digest({"snapshot": job["snapshot"], "job_id": job["id"], "final_sha256": report["final_sha256"]})}
         render_files=("final.mp4", "qc-report.json", "ffprobe.json", "render-manifest.json", "subtitles.ass", "timeline.json")
+        if (attempt/'full-qc-report.json').is_file():
+            artifacts.path('subtitle-qc').mkdir(exist_ok=True)
+            render_files+=('transport-qc-report.json','full-qc-report.json')
+            render_files+=tuple(str(path.relative_to(attempt)).replace('\\','/') for path in sorted((attempt/'subtitle-qc').glob('*.png')))
         if (attempt/'render-voice.json').is_file(): render_files+=('render-voice.json','render-voice.wav')
         paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in render_files], stage, "storage_render_publish")
         retry_io(lambda: artifacts.commit("render", paths, result), stage, "storage_render_checkpoint")

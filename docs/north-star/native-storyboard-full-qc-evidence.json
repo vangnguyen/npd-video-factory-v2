@@ -1,0 +1,171 @@
+{
+  "schema": "native-storyboard-full-qc-evidence-v1",
+  "parent_head": "0dd276ba4ebb06bb572b736de0e0594c06165549",
+  "source_sha256": {
+    "services/windows_native/storyboard_qc.py": "c5db0cb02b1ac53bd3690329eef4783870ea4ad1d1e303a76e41998590f99bd1",
+    "services/windows_native/pipeline.py": "c5f3e6b3156abfc74c3d4a5a23effcded1bb2d098850782bb208549fabfd0024",
+    "services/windows_native/store.py": "559ad55b9bf1b74739de2ecd4e7eace60979f5bf563148d0406a834d9e677a5d",
+    "services/windows_native/hardening.py": "891df4ff11699fb21cce045c5acd94a93f3bea4de58988b4f20e3b83fe31cd0a",
+    "services/windows_native/shot_render_timing.py": "51a7fde5c25b318ed6e891d309e031d0782cd927e26fa0f7ec05497705e84135",
+    "services/windows_native/backup.py": "af915cbd4882502fde13c550c6536746bbd5fa83446d7087eec41cb0d3c61ef3",
+    "services/windows_native/tests/test_storyboard_qc.py": "d65709f67720ec4d99d153828d884a6ac054e2cba5889ec4a03bcfe0867f0dd1",
+    "apps/api/app/production_qc.py": "512fddf9747bf831c85e012b4d042f2eb90af08e70e238661bd1cb7a0774fdc0",
+    "apps/api/app/production_logic.py": "c8daec5186d7aeec840dc9e0538b578ae6c5518cc531261158af817f5bb0a4c3",
+    "scripts/north_star_native_storyboard_qc.py": "6d67014387d2b2acf9bfb54cdcf987b127b017c0b7835bf512aab30b4fea2e78",
+    "docs/NATIVE_STORYBOARD_FULL_QC.md": "2b704873bc6068840a5f2608e7a5f94d59a0b238b50b6f5e990043dd4569f278"
+  },
+  "logs": {
+    "native-storyboard-full-qc-full-n1.log": "592ef264ca1103e40c4cd975a5d10c02ae74efa2e2464f2f488162b82b600a9d",
+    "native-storyboard-full-qc-r1.log": "cde1450f081e19463663a0b7a65528a765dbc75a545d0eb3b17da3c0518bd336",
+    "native-storyboard-full-qc-r2.log": "d751e275498c7dfc08221f18607317da1424accc6fe5bcff33697b70fb252bf9",
+    "native-storyboard-full-qc-r3.log": "b3b7d047e4f8eb9d1e5086cd89185dd27967503a08b2500c222df319a7c2f34a",
+    "native-storyboard-full-qc-r4.log": "1c63ee405cbcb26fb869978c6f63a479c8adbb98b97d8ba65d3877921a855b31",
+    "native-storyboard-full-qc-r5.log": "74b6a5ac08ca736b214d4af012427c1b29ca9bb99761146b77b0bcc8323965c3",
+    "native-storyboard-full-qc-rehearsal-n1.log": "f8d9603ba289e090c2d3a9f4340e8befb8fef40069ccde5a6b69bd7849e0f07a",
+    "native-storyboard-full-qc-rehearsal-n2.log": "10d32f6d28d084ce62f3d0877452a3c010eb40ebcc5f5075e112beb4dee99910",
+    "native-storyboard-full-qc-rehearsal-n3.log": "7968b687e777abfb23ce8e5cbe11f6a8c847dea8dfbb5bf58eee697c1b1aed5c",
+    "native-storyboard-full-qc-rehearsal-n4-reopen.log": "8050eb47051f5f4c628998f3e0a444949d0d41109a0ca162a2fc432c479f266a",
+    "native-storyboard-full-qc-rehearsal-n4.log": "e759baf847e2e664de62b98fd6e6214fe20e1f68614439330d1e9b9b32f6b639"
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-storyboard-full-qc-n4",
+    "evidence_sha256": "b65a03734b72337b4d24065e90fbdf0ede1e4d1f201d459e52ec767989901cc3",
+    "replay_sha256": "c8ec03bce4bfabc421d65e005802a94dc5eea082a8d9a0a69d870c3df96d3908",
+    "indexed_exports": 27,
+    "human_http_requests": 38,
+    "exports": {
+      "artifact-review.json": {
+        "sha256": "9a0de808c3ddf68bdea26b24220824e692a157f168e24a8876f122af5cc55d52",
+        "bytes": 11732
+      },
+      "backup-restore.json": {
+        "sha256": "14c7fbe0871cc7099bca8211a6431802d3d84e1a2e6b9336965d3c2e36c0e2d5",
+        "bytes": 5586
+      },
+      "cost.json": {
+        "sha256": "5e7816b30d4fbc915f303901b86d8c397abf50345359fda5781d302ca530b465",
+        "bytes": 791
+      },
+      "failed-qc-job.json": {
+        "sha256": "79f3ddf516558db1fa0d152fdddf6a16acd51a26373907a2885a302c8a6f9345",
+        "bytes": 105038
+      },
+      "failed-qc-report.json": {
+        "sha256": "11ecb309fff9d278dbf4a115a1902968ff527532cdb56148be4361f72ad18b21",
+        "bytes": 6367
+      },
+      "final.mp4": {
+        "sha256": "2c4fa6f80ddf1b3fedc2d435884f1a81a9c4153e93db2988b46077b263c6c4cb",
+        "bytes": 111961
+      },
+      "full-qc-report.json": {
+        "sha256": "dcbff372e3c64fe6ec18eaae28d8624188f2b4fec9d26a1d68d06fd9745ba965",
+        "bytes": 4759
+      },
+      "human-http-wires.json": {
+        "sha256": "976b965cd5be0ff9ddd66026a52c6f2a70be2055e571e30a794bb4d674b4da15",
+        "bytes": 4470
+      },
+      "job-events.json": {
+        "sha256": "ca1f2b389b64df2f2541e2fbae9d31fba4ad169ca6844d7149f81664183e8262",
+        "bytes": 13003
+      },
+      "media-plan.json": {
+        "sha256": "a0f39239113b8d6940805d1896a97231717060f8d62d21c22ac78e0430f77599",
+        "bytes": 58239
+      },
+      "native-storyboard-full-qc-backup.zip": {
+        "sha256": "c62b21a6f973d61dcdc3778366d9abd5ea728c72238294282625ad2f739d3672",
+        "bytes": 3932290
+      },
+      "offline-snapshot.json": {
+        "sha256": "2185cc924cf181dfbfd10b4d291583c4777210a96e446dc26cb7b0713b4437f4",
+        "bytes": 1227645
+      },
+      "preview.json": {
+        "sha256": "e9322b59ff37b15fd2dcf93e5aeb37056671f6061db845226f35f28ad3bfda85",
+        "bytes": 658
+      },
+      "preview.mp4": {
+        "sha256": "eb84d5ed83f409230f11030cebd9dec9a84b62c35d1ef1017ee099f58f934b92",
+        "bytes": 160844
+      },
+      "project.json": {
+        "sha256": "3024d20b408a2aa37dedcf13a46dbd7ff90c87ada14ed1880331ef2c3c7202be",
+        "bytes": 340121
+      },
+      "qc-report.json": {
+        "sha256": "4e487d3c4dc1eff42cba70d1688a3ebd729de47b059e14a664298ff9e2e3118e",
+        "bytes": 5939
+      },
+      "render-job.json": {
+        "sha256": "48e2ccf596f3fcb53d296665f6a9bc4a77a1f8c94b270ba98e28c90f033f0101",
+        "bytes": 112331
+      },
+      "render-manifest.json": {
+        "sha256": "24b45880a0a16e0a3642fbc66ef0e4729b821378c6d5bfda140df70196a39c45",
+        "bytes": 5159
+      },
+      "render-voice.json": {
+        "sha256": "fdaa8948c2223ee9b5bfaf88c5a716cb60c66240be059ef59871ef92c74baaaa",
+        "bytes": 1772
+      },
+      "render-voice.wav": {
+        "sha256": "35677f346c4e74181c4c57bbc6262d730bb43a95954e6cbc73cb55572b654cbd",
+        "bytes": 316844
+      },
+      "subtitles.ass": {
+        "sha256": "c44ca8097f4ef5816a7a83d9a690de171e222fa93548e2295a5028c79f77204e",
+        "bytes": 719
+      },
+      "timeline.json": {
+        "sha256": "9ab350ec7bc9b5bebde46ec06ca30675ac90aeb81c94401c0f1d8d8c44cb7985",
+        "bytes": 4347
+      },
+      "transport-qc-report.json": {
+        "sha256": "9796ce24415f7f822f2d2ca56522a2dc35d7d891a89888db4919e52811d381c0",
+        "bytes": 1138
+      },
+      "voice.json": {
+        "sha256": "8144ac3ac650c4d59133de32e77c511f7324fc3777313c8f4b3f96e98aeff9e9",
+        "bytes": 519
+      },
+      "voice.wav": {
+        "sha256": "6019f07bcb0d56b684e656cdff45d0839417add2801bc8648b6c240b34e53e5a",
+        "bytes": 115244
+      },
+      "subtitle-qc/000.png": {
+        "sha256": "040b397f2d0964a18d24aba32a30f42fb0dc26b6a74db61f77285e0713135fa9",
+        "bytes": 20936
+      },
+      "subtitle-qc/001.png": {
+        "sha256": "a24b76d1b7f624a62ad574cc8edf93c65bb577954bc9697efdb3f17f6601d4e2",
+        "bytes": 19896
+      }
+    }
+  },
+  "tests": {
+    "full_native_passed": 630,
+    "full_native_seconds": 468.47,
+    "new_qc_cases": 10,
+    "unchanged_prior_studio_passed": 232,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "actual_worker_render_full_qc": true,
+  "actual_subtitle_glyph_bounds": true,
+  "actual_video_freeze_failed_qc": true,
+  "actual_backup_restore_and_process_replay": true,
+  "explicit_synthetic_pcm_fixture": true,
+  "actual_voice_inference": false,
+  "semantic_vision_used": false,
+  "rights_independently_verified": false,
+  "provider_calls": 0,
+  "paid_operations": 0,
+  "audible_preview_acceptance": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "stop_condition_pending": false
+}
