@@ -1,5 +1,6 @@
 """Actual signed HTTP/Runner tests; explicit synthetic source/account wires."""
 import unittest,json
+from pathlib import Path
 from datetime import timedelta
 from unittest.mock import patch
 from services.windows_native.tests.test_official_analytics_http import OfficialAnalyticsHTTPFixture
@@ -20,6 +21,16 @@ class OfficialRefreshHTTPFixture(OfficialAnalyticsHTTPFixture):
         self.assertEqual(status,200,value);self.assertEqual(headers['Cache-Control'],'no-store');self.saved_plan=value;return value
 
 class OfficialRefreshHTTPTests(OfficialRefreshHTTPFixture,unittest.TestCase):
+    def test_actual_studio_module_parent_and_html_bytes_are_served_without_provider_or_session_enablement(self):
+        root=Path(__file__).resolve().parents[3]/'apps'/'studio-web'
+        session_before=self.request('GET','/api/session')[1]
+        for name in ('native-official-refresh.mjs','native.html','native.mjs'):
+            status,value,headers=self.request('GET','/'+name)
+            self.assertEqual(status,200);self.assertEqual(value,(root/name).read_bytes())
+            self.assertNotIn(self.read_credential.token.encode(),value)
+        self.assertEqual(self.request('GET','/api/session')[1],session_before)
+        self.assertNotIn('native_official_analytics_refresh',session_before['capabilities'])
+        self.assertEqual(self.read_wire,[]);self.assertFalse(self.server.runner.run_one())
     def test_signed_creation_is_inert_runner_appends_two_original_snapshots_and_source_events(self):
         self.assertFalse(self.server.runner.run_one());runtime=self.request('GET','/api/connections/official-analytics-refresh')[1]
         self.assertTrue(runtime['enabled']);self.assertFalse(runtime['default_enabled']);self.assertFalse(runtime['publishing_enabled'])

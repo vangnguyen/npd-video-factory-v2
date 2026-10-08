@@ -1,0 +1,1009 @@
+{
+  "fixture_kind": "explicit_nonplayable_protocol_mock_not_provider_or_owner_acceptance",
+  "plan": {
+    "plan_id": "noap_82eef66136684f45abd49e64735f07a8",
+    "workspace_id": "wsp_official_publication_fixture",
+    "project_id": "740f48273c4e419d817ab07ef07e1080",
+    "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+    "request_fingerprint": "8510fdb058ffb1dca3ab8bf01313a49901f68d2d550aad8b9f56989f101c15fc",
+    "policy_sha256": "9ab28dfd13ef787e73c102ed2fc229a2ecd29dca0d22a09cbc6bb982ec11ba76",
+    "status": "completed",
+    "version": 5,
+    "run_count": 2,
+    "next_due_at": "2026-10-08T21:19:27.560396+00:00",
+    "pending_sync_id": null,
+    "failure_code": null,
+    "actor_ref": "explicit-fixture",
+    "created_at": "2026-10-08T21:17:27.560396+00:00",
+    "updated_at": "2026-10-08T21:18:27.560396+00:00",
+    "schema_version": "native-official-analytics-refresh-plan-v1",
+    "policy": {
+      "schema_version": "native-official-analytics-refresh-policy-v1",
+      "plan_id": "noap_82eef66136684f45abd49e64735f07a8",
+      "workspace_id": "wsp_official_publication_fixture",
+      "project_id": "740f48273c4e419d817ab07ef07e1080",
+      "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+      "request": {
+        "schema_version": "native-official-analytics-refresh-request-v1",
+        "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+        "expected_publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+        "expected_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+        "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "expected_configuration_sha256": "0eb17c141440ac1f373300bdff40ebc618f9de67df8f0757ff9925794da2f5cb",
+        "query": {
+          "start_date": "2026-10-01",
+          "end_date": "2026-10-07",
+          "include_revenue": false
+        },
+        "acknowledged_read_only": true,
+        "acknowledged_protocol_mock": true,
+        "acknowledged_bounded_retries": false,
+        "max_attempts": 1,
+        "valid_for_seconds": 900,
+        "acknowledged_background_reads": true,
+        "max_runs": 2,
+        "interval_seconds": 60,
+        "start_at": "2026-10-08T21:17:27.560396Z",
+        "deadline": "2026-10-08T21:32:27.560396Z"
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "49658b84cffdadf4ffb478a750d761626daea1b0249c293f622c92c69cf91242",
+        "expires_at": "2026-10-08T22:17:27.560396+00:00"
+      },
+      "mock": true,
+      "source": {
+        "publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+        "receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+        "dry_run_snapshot_sha256": "e50a36eed72a241d74fa943489e336820347d05cc757bccca6ad61d4444204fb",
+        "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+        "job_result_sha256": "bdacc2b7361414297b1c9245dc6d0d76ef06cf728bffca45d8ca924523dad5c9",
+        "final_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+        "features": {
+          "feature_snapshot_id": "noftr_e6ae63adff8328510ae65bc88b667fd8",
+          "project_id": "740f48273c4e419d817ab07ef07e1080",
+          "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+          "trend_cluster_id": null,
+          "idea_id": null,
+          "hook_type": null,
+          "duration_seconds": 3.0,
+          "scene_count": null,
+          "subtitle_template": null,
+          "voice_profile": null,
+          "music_profile": null,
+          "visual_strategy": null,
+          "niche": null,
+          "topic": null,
+          "cta": null,
+          "publishing_time": null,
+          "evidence": {
+            "project_metadata_source": "native_published_render_request_snapshot",
+            "publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+            "render_job_id": "07d4190cff604f7282ea44f5f767bcfb",
+            "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+            "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+            "final_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+            "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+            "current_project_metadata_used": false,
+            "exact_publishing_time_available": false,
+            "provider_posted_time": null,
+            "source_is_dry_run": false,
+            "semantic_labels_verified": false,
+            "production_cost_vnd": null,
+            "frozen_subtitle_style": null,
+            "subtitle_catalog_id_verified": false,
+            "official_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+            "publication_protocol_mock": true
+          },
+          "captured_at": "2026-10-08T21:17:27.560396Z"
+        },
+        "remote_post_id": "FIXTURE0001",
+        "receipt_mock": true
+      },
+      "target_binding_sha256": "bef704546ae9cdc8732fddb793e63be0874991a2b3e6828cb7ffd199cf297ab4",
+      "credential_proof": {
+        "expires_at": "2026-10-08T22:17:27.560396+00:00",
+        "scopes_sha256": "2f67c89be62d30cb2c47218a44b43fa22329718f7953f65c30d794458e36b8e6",
+        "target_binding_sha256": "bef704546ae9cdc8732fddb793e63be0874991a2b3e6828cb7ffd199cf297ab4"
+      },
+      "approved_at": "2026-10-08T21:17:27.560396+00:00",
+      "automatic_consent_renewal": false,
+      "publishing_enabled": false,
+      "fixed_report_query": true
+    },
+    "mock": true,
+    "token_returned": false,
+    "publishing_enabled": false,
+    "automatic_consent_renewal": false,
+    "real_provider_tested": false,
+    "occurrences": [
+      {
+        "schema_version": "native-official-analytics-refresh-occurrence-v1",
+        "occurrence_id": "noao_0a12b1e53b1045af96c98557221619e6",
+        "plan_id": "noap_82eef66136684f45abd49e64735f07a8",
+        "workspace_id": "wsp_official_publication_fixture",
+        "project_id": "740f48273c4e419d817ab07ef07e1080",
+        "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+        "ordinal": 1,
+        "policy_sha256": "9ab28dfd13ef787e73c102ed2fc229a2ecd29dca0d22a09cbc6bb982ec11ba76",
+        "sync_id": "noas_961c83f6e13a408ca0189e8ae90ba71e",
+        "consent_sha256": "77a2e29580a980ae188e0b04829c0b6eea623cb6eb4f80f6e5f98c9dd969677c",
+        "read_request_sha256": "8de9e5c3359ac02d6d97a28e6b10fe3ccc4f103678f25b7696adb426fc382e31",
+        "due_at": "2026-10-08T21:17:27.560396+00:00",
+        "admitted_at": "2026-10-08T21:17:27.560396+00:00",
+        "occurrence_sha256": "66325849729bbb46c268ee5d1540af1cf73148e236b68390b98230410b318012",
+        "sync": {
+          "sync_id": "noas_961c83f6e13a408ca0189e8ae90ba71e",
+          "workspace_id": "wsp_official_publication_fixture",
+          "project_id": "740f48273c4e419d817ab07ef07e1080",
+          "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+          "request_fingerprint": "8de9e5c3359ac02d6d97a28e6b10fe3ccc4f103678f25b7696adb426fc382e31",
+          "snapshot_sha256": "77a2e29580a980ae188e0b04829c0b6eea623cb6eb4f80f6e5f98c9dd969677c",
+          "status": "succeeded",
+          "attempts": 1,
+          "next_at": null,
+          "failure_code": null,
+          "result_snapshot_id": "noam_7e533c433dfb47a88dbf08bde5bb49ec",
+          "actor_ref": "explicit-fixture",
+          "created_at": "2026-10-08T21:17:30.510642+00:00",
+          "updated_at": "2026-10-08T21:17:30.965524+00:00",
+          "schema_version": "native-official-analytics-sync-v1",
+          "snapshot": {
+            "schema_version": "native-official-analytics-consent-v1",
+            "workspace_id": "wsp_official_publication_fixture",
+            "project_id": "740f48273c4e419d817ab07ef07e1080",
+            "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+            "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "request": {
+              "schema_version": "native-official-analytics-request-v1",
+              "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+              "expected_publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+              "expected_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+              "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "expected_configuration_sha256": "0eb17c141440ac1f373300bdff40ebc618f9de67df8f0757ff9925794da2f5cb",
+              "query": {
+                "start_date": "2026-10-01",
+                "end_date": "2026-10-07",
+                "include_revenue": false
+              },
+              "acknowledged_read_only": true,
+              "acknowledged_protocol_mock": true,
+              "acknowledged_bounded_retries": false,
+              "max_attempts": 1,
+              "valid_for_seconds": 900
+            },
+            "authority": {
+              "token_id": "explicit-fixture",
+              "subject": "usr:explicit-fixture",
+              "identity_revision_sha256": "49658b84cffdadf4ffb478a750d761626daea1b0249c293f622c92c69cf91242",
+              "expires_at": "2026-10-08T22:17:27.560396+00:00"
+            },
+            "source": {
+              "publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+              "receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+              "dry_run_snapshot_sha256": "e50a36eed72a241d74fa943489e336820347d05cc757bccca6ad61d4444204fb",
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "job_result_sha256": "bdacc2b7361414297b1c9245dc6d0d76ef06cf728bffca45d8ca924523dad5c9",
+              "final_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+              "features": {
+                "feature_snapshot_id": "noftr_e6ae63adff8328510ae65bc88b667fd8",
+                "project_id": "740f48273c4e419d817ab07ef07e1080",
+                "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+                "trend_cluster_id": null,
+                "idea_id": null,
+                "hook_type": null,
+                "duration_seconds": 3.0,
+                "scene_count": null,
+                "subtitle_template": null,
+                "voice_profile": null,
+                "music_profile": null,
+                "visual_strategy": null,
+                "niche": null,
+                "topic": null,
+                "cta": null,
+                "publishing_time": null,
+                "evidence": {
+                  "project_metadata_source": "native_published_render_request_snapshot",
+                  "publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+                  "render_job_id": "07d4190cff604f7282ea44f5f767bcfb",
+                  "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                  "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                  "final_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+                  "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                  "current_project_metadata_used": false,
+                  "exact_publishing_time_available": false,
+                  "provider_posted_time": null,
+                  "source_is_dry_run": false,
+                  "semantic_labels_verified": false,
+                  "production_cost_vnd": null,
+                  "frozen_subtitle_style": null,
+                  "subtitle_catalog_id_verified": false,
+                  "official_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+                  "publication_protocol_mock": true
+                },
+                "captured_at": "2026-10-08T21:17:27.560396Z"
+              },
+              "remote_post_id": "FIXTURE0001",
+              "receipt_mock": true
+            },
+            "target": {
+              "schema_version": "publishing-target-v1",
+              "workspace_id": "wsp_official_publication_fixture",
+              "profile_id": "ppf_official_publication_fixture",
+              "profile_version": 1,
+              "platform": "youtube",
+              "provider_key": "youtube-data-api-publishing",
+              "target_account_id": "UC_EXPLICIT_FIXTURE",
+              "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "target_binding_sha256": "bef704546ae9cdc8732fddb793e63be0874991a2b3e6828cb7ffd199cf297ab4",
+            "configuration_sha256": "0eb17c141440ac1f373300bdff40ebc618f9de67df8f0757ff9925794da2f5cb",
+            "mock": true,
+            "consented_at": "2026-10-08T21:17:27.560396+00:00",
+            "deadline": "2026-10-08T21:32:27.560396+00:00",
+            "publishing_authority": false,
+            "recurring_authority": false
+          },
+          "mock": true,
+          "publishing_enabled": false,
+          "token_returned": false,
+          "real_provider_tested": false,
+          "result": {
+            "schema_version": "native-official-analytics-snapshot-v1",
+            "result_snapshot_id": "noam_7e533c433dfb47a88dbf08bde5bb49ec",
+            "sync_id": "noas_961c83f6e13a408ca0189e8ae90ba71e",
+            "workspace_id": "wsp_official_publication_fixture",
+            "project_id": "740f48273c4e419d817ab07ef07e1080",
+            "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+            "snapshot_sha256": "77a2e29580a980ae188e0b04829c0b6eea623cb6eb4f80f6e5f98c9dd969677c",
+            "platform": "youtube",
+            "provider_key": "youtube-analytics-api",
+            "source_kind": "official_protocol_mock",
+            "mock": true,
+            "external_call": false,
+            "real_audience_observation": false,
+            "metrics": {
+              "views": 0.0,
+              "impressions": null,
+              "reach": null,
+              "watch_time": 150.0,
+              "average_view_duration": 1.2,
+              "completion_rate": null,
+              "likes": 0.0,
+              "comments": 0.0,
+              "shares": 0.0,
+              "saves": null,
+              "followers_gained": 0.0,
+              "clicks": null,
+              "ctr": null,
+              "revenue": null,
+              "rpm": null,
+              "observation_window_hours": null
+            },
+            "evidence": {
+              "query": {
+                "start_date": "2026-10-01",
+                "end_date": "2026-10-07",
+                "include_revenue": false
+              },
+              "row_count": 1,
+              "currency": null,
+              "revenue_basis": null,
+              "metric_mapping": {
+                "views": "views",
+                "estimatedMinutesWatched": "watch_time",
+                "averageViewDuration": "average_view_duration",
+                "likes": "likes",
+                "comments": "comments",
+                "shares": "shares",
+                "subscribersGained": "followers_gained"
+              },
+              "watch_time_conversion": "minutes * 60",
+              "observed_window_hours": null,
+              "coverage_end_date": null,
+              "completion_rate_supported": false,
+              "rpm_derived": false
+            },
+            "features": {
+              "feature_snapshot_id": "noftr_e6ae63adff8328510ae65bc88b667fd8",
+              "project_id": "740f48273c4e419d817ab07ef07e1080",
+              "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+              "trend_cluster_id": null,
+              "idea_id": null,
+              "hook_type": null,
+              "duration_seconds": 3.0,
+              "scene_count": null,
+              "subtitle_template": null,
+              "voice_profile": null,
+              "music_profile": null,
+              "visual_strategy": null,
+              "niche": null,
+              "topic": null,
+              "cta": null,
+              "publishing_time": null,
+              "evidence": {
+                "project_metadata_source": "native_published_render_request_snapshot",
+                "publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+                "render_job_id": "07d4190cff604f7282ea44f5f767bcfb",
+                "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                "final_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+                "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                "current_project_metadata_used": false,
+                "exact_publishing_time_available": false,
+                "provider_posted_time": null,
+                "source_is_dry_run": false,
+                "semantic_labels_verified": false,
+                "production_cost_vnd": null,
+                "frozen_subtitle_style": null,
+                "subtitle_catalog_id_verified": false,
+                "official_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+                "publication_protocol_mock": true
+              },
+              "captured_at": "2026-10-08T21:17:27.560396Z"
+            },
+            "publication_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+            "remote_post_id": "FIXTURE0001",
+            "response_refs": [
+              "noar_d7444a7477ab4bb5a9c3c5df031af027",
+              "noar_3d4297b06d794acab2a59ca95f8e2322",
+              "noar_a3ca9ab9e97744508abcbeab619c4586"
+            ],
+            "attempt_id": "noaa_607175b8e3c64d6987d0f52535a51356",
+            "collected_at": "2026-10-08T21:17:27.560396+00:00",
+            "publishing_time": null,
+            "automatic_action": false,
+            "real_provider_tested": false
+          }
+        }
+      },
+      {
+        "schema_version": "native-official-analytics-refresh-occurrence-v1",
+        "occurrence_id": "noao_1bbb62275ce045cdbd7b188ccc4a2e5d",
+        "plan_id": "noap_82eef66136684f45abd49e64735f07a8",
+        "workspace_id": "wsp_official_publication_fixture",
+        "project_id": "740f48273c4e419d817ab07ef07e1080",
+        "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+        "ordinal": 2,
+        "policy_sha256": "9ab28dfd13ef787e73c102ed2fc229a2ecd29dca0d22a09cbc6bb982ec11ba76",
+        "sync_id": "noas_13e227bef50e4b849e221ded7f2250e2",
+        "consent_sha256": "62703d6730ffcda4c3f6dedfcd4018e37275dd3cd4fe6c57e9e56084860d8dc6",
+        "read_request_sha256": "67f71fc96b602710055c4db3c7fbe9dc1cebbec98613442dbf48363c1d4b60a2",
+        "due_at": "2026-10-08T21:18:27.560396+00:00",
+        "admitted_at": "2026-10-08T21:18:27.560396+00:00",
+        "occurrence_sha256": "5869b06c55131926e8d1399602cdd9481f28ed861a2b1f1a1b743cba45756a38",
+        "sync": {
+          "sync_id": "noas_13e227bef50e4b849e221ded7f2250e2",
+          "workspace_id": "wsp_official_publication_fixture",
+          "project_id": "740f48273c4e419d817ab07ef07e1080",
+          "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+          "request_fingerprint": "67f71fc96b602710055c4db3c7fbe9dc1cebbec98613442dbf48363c1d4b60a2",
+          "snapshot_sha256": "62703d6730ffcda4c3f6dedfcd4018e37275dd3cd4fe6c57e9e56084860d8dc6",
+          "status": "succeeded",
+          "attempts": 1,
+          "next_at": null,
+          "failure_code": null,
+          "result_snapshot_id": "noam_2370bf4b0dea4e488057aca182a7d3c1",
+          "actor_ref": "explicit-fixture",
+          "created_at": "2026-10-08T21:17:31.089079+00:00",
+          "updated_at": "2026-10-08T21:17:31.503423+00:00",
+          "schema_version": "native-official-analytics-sync-v1",
+          "snapshot": {
+            "schema_version": "native-official-analytics-consent-v1",
+            "workspace_id": "wsp_official_publication_fixture",
+            "project_id": "740f48273c4e419d817ab07ef07e1080",
+            "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+            "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "request": {
+              "schema_version": "native-official-analytics-request-v1",
+              "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+              "expected_publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+              "expected_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+              "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "expected_configuration_sha256": "0eb17c141440ac1f373300bdff40ebc618f9de67df8f0757ff9925794da2f5cb",
+              "query": {
+                "start_date": "2026-10-01",
+                "end_date": "2026-10-07",
+                "include_revenue": false
+              },
+              "acknowledged_read_only": true,
+              "acknowledged_protocol_mock": true,
+              "acknowledged_bounded_retries": false,
+              "max_attempts": 1,
+              "valid_for_seconds": 840
+            },
+            "authority": {
+              "token_id": "explicit-fixture",
+              "subject": "usr:explicit-fixture",
+              "identity_revision_sha256": "49658b84cffdadf4ffb478a750d761626daea1b0249c293f622c92c69cf91242",
+              "expires_at": "2026-10-08T22:17:27.560396+00:00"
+            },
+            "source": {
+              "publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+              "receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+              "dry_run_snapshot_sha256": "e50a36eed72a241d74fa943489e336820347d05cc757bccca6ad61d4444204fb",
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "job_result_sha256": "bdacc2b7361414297b1c9245dc6d0d76ef06cf728bffca45d8ca924523dad5c9",
+              "final_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+              "features": {
+                "feature_snapshot_id": "noftr_e6ae63adff8328510ae65bc88b667fd8",
+                "project_id": "740f48273c4e419d817ab07ef07e1080",
+                "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+                "trend_cluster_id": null,
+                "idea_id": null,
+                "hook_type": null,
+                "duration_seconds": 3.0,
+                "scene_count": null,
+                "subtitle_template": null,
+                "voice_profile": null,
+                "music_profile": null,
+                "visual_strategy": null,
+                "niche": null,
+                "topic": null,
+                "cta": null,
+                "publishing_time": null,
+                "evidence": {
+                  "project_metadata_source": "native_published_render_request_snapshot",
+                  "publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+                  "render_job_id": "07d4190cff604f7282ea44f5f767bcfb",
+                  "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                  "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                  "final_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+                  "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                  "current_project_metadata_used": false,
+                  "exact_publishing_time_available": false,
+                  "provider_posted_time": null,
+                  "source_is_dry_run": false,
+                  "semantic_labels_verified": false,
+                  "production_cost_vnd": null,
+                  "frozen_subtitle_style": null,
+                  "subtitle_catalog_id_verified": false,
+                  "official_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+                  "publication_protocol_mock": true
+                },
+                "captured_at": "2026-10-08T21:18:27.560396Z"
+              },
+              "remote_post_id": "FIXTURE0001",
+              "receipt_mock": true
+            },
+            "target": {
+              "schema_version": "publishing-target-v1",
+              "workspace_id": "wsp_official_publication_fixture",
+              "profile_id": "ppf_official_publication_fixture",
+              "profile_version": 1,
+              "platform": "youtube",
+              "provider_key": "youtube-data-api-publishing",
+              "target_account_id": "UC_EXPLICIT_FIXTURE",
+              "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "target_binding_sha256": "bef704546ae9cdc8732fddb793e63be0874991a2b3e6828cb7ffd199cf297ab4",
+            "configuration_sha256": "0eb17c141440ac1f373300bdff40ebc618f9de67df8f0757ff9925794da2f5cb",
+            "mock": true,
+            "consented_at": "2026-10-08T21:18:27.560396+00:00",
+            "deadline": "2026-10-08T21:32:27.560396+00:00",
+            "publishing_authority": false,
+            "recurring_authority": false
+          },
+          "mock": true,
+          "publishing_enabled": false,
+          "token_returned": false,
+          "real_provider_tested": false,
+          "result": {
+            "schema_version": "native-official-analytics-snapshot-v1",
+            "result_snapshot_id": "noam_2370bf4b0dea4e488057aca182a7d3c1",
+            "sync_id": "noas_13e227bef50e4b849e221ded7f2250e2",
+            "workspace_id": "wsp_official_publication_fixture",
+            "project_id": "740f48273c4e419d817ab07ef07e1080",
+            "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+            "snapshot_sha256": "62703d6730ffcda4c3f6dedfcd4018e37275dd3cd4fe6c57e9e56084860d8dc6",
+            "platform": "youtube",
+            "provider_key": "youtube-analytics-api",
+            "source_kind": "official_protocol_mock",
+            "mock": true,
+            "external_call": false,
+            "real_audience_observation": false,
+            "metrics": {
+              "views": null,
+              "impressions": null,
+              "reach": null,
+              "watch_time": null,
+              "average_view_duration": null,
+              "completion_rate": null,
+              "likes": null,
+              "comments": null,
+              "shares": null,
+              "saves": null,
+              "followers_gained": null,
+              "clicks": null,
+              "ctr": null,
+              "revenue": null,
+              "rpm": null,
+              "observation_window_hours": null
+            },
+            "evidence": {
+              "query": {
+                "start_date": "2026-10-01",
+                "end_date": "2026-10-07",
+                "include_revenue": false
+              },
+              "row_count": 0,
+              "currency": null,
+              "revenue_basis": null,
+              "metric_mapping": {
+                "views": "views",
+                "estimatedMinutesWatched": "watch_time",
+                "averageViewDuration": "average_view_duration",
+                "likes": "likes",
+                "comments": "comments",
+                "shares": "shares",
+                "subscribersGained": "followers_gained"
+              },
+              "watch_time_conversion": "minutes * 60",
+              "observed_window_hours": null,
+              "coverage_end_date": null,
+              "completion_rate_supported": false,
+              "rpm_derived": false
+            },
+            "features": {
+              "feature_snapshot_id": "noftr_e6ae63adff8328510ae65bc88b667fd8",
+              "project_id": "740f48273c4e419d817ab07ef07e1080",
+              "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+              "trend_cluster_id": null,
+              "idea_id": null,
+              "hook_type": null,
+              "duration_seconds": 3.0,
+              "scene_count": null,
+              "subtitle_template": null,
+              "voice_profile": null,
+              "music_profile": null,
+              "visual_strategy": null,
+              "niche": null,
+              "topic": null,
+              "cta": null,
+              "publishing_time": null,
+              "evidence": {
+                "project_metadata_source": "native_published_render_request_snapshot",
+                "publication_snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+                "render_job_id": "07d4190cff604f7282ea44f5f767bcfb",
+                "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                "final_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+                "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                "current_project_metadata_used": false,
+                "exact_publishing_time_available": false,
+                "provider_posted_time": null,
+                "source_is_dry_run": false,
+                "semantic_labels_verified": false,
+                "production_cost_vnd": null,
+                "frozen_subtitle_style": null,
+                "subtitle_catalog_id_verified": false,
+                "official_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+                "publication_protocol_mock": true
+              },
+              "captured_at": "2026-10-08T21:18:27.560396Z"
+            },
+            "publication_receipt_sha256": "866c447b6f77265f718ccbd9b1461d32e719ab0d65c6f14283a82e32ae73ca7c",
+            "remote_post_id": "FIXTURE0001",
+            "response_refs": [
+              "noar_7a540a35ef814834b6f776bfe7d390ee",
+              "noar_9d558d4b520e48738948d41c217bf863",
+              "noar_4717e24eade741a7b4e51e2c70088e64"
+            ],
+            "attempt_id": "noaa_58cfece886334f24a3de966198de9587",
+            "collected_at": "2026-10-08T21:18:27.560396+00:00",
+            "publishing_time": null,
+            "automatic_action": false,
+            "real_provider_tested": false
+          }
+        }
+      }
+    ]
+  },
+  "publication": {
+    "publication_id": "nopu_77082ce6f9294f498b3911d33d466df6",
+    "workspace_id": "wsp_official_publication_fixture",
+    "project_id": "740f48273c4e419d817ab07ef07e1080",
+    "request_fingerprint": "329d76a2d3edb377045ea043db2a49cb1fddfcf7718bd95bff96f62be5c11e08",
+    "snapshot_sha256": "1333b9bfef5dad1f8c87e7b10a9e69606ef7db1062025d74a7208792e0f812ef",
+    "dedupe_sha256": "b51b16a4c9aa250e5794387c9940f39eb05ec2ff7eb657e815813db9a27e40b3",
+    "status": "completed",
+    "approval_id": "nopa_ed8fbfdb9161435882817df1bd07567b",
+    "failure_code": null,
+    "actor_ref": "explicit-fixture",
+    "created_at": "2026-10-08T21:17:27.964684+00:00",
+    "updated_at": "2026-10-08T21:17:29.658629+00:00",
+    "snapshot": {
+      "schema_version": "native-official-publication-snapshot-v1",
+      "workspace_id": "wsp_official_publication_fixture",
+      "project_id": "740f48273c4e419d817ab07ef07e1080",
+      "project_revision": 2,
+      "document_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+      "request": {
+        "schema_version": "native-official-publication-request-v1",
+        "revision": 2,
+        "dry_run_publication_id": "npub_4b50c95ba65147209c81a177ea2d54c2",
+        "expected_dry_run_snapshot_sha256": "e50a36eed72a241d74fa943489e336820347d05cc757bccca6ad61d4444204fb",
+        "account_check_id": "nack_c0e0341e9a0b40a996b8fddaf48f1eae",
+        "profile_id": "ppf_official_publication_fixture",
+        "expected_configuration_sha256": "05ebabf819823fa11bb24a6b291be1f082a72dd7bb37c656f4f9bbbc27e171fc"
+      },
+      "dry_run_snapshot_sha256": "e50a36eed72a241d74fa943489e336820347d05cc757bccca6ad61d4444204fb",
+      "account_check_snapshot_sha256": "a67e53fb4163535562c9cedbb03da88bc2ebe846eaa9cfa0a6a356015423b97f",
+      "account_result_sha256": "61b1b6b6c0102e634279fa607fb4cecd679b7c948a6b9b651824653cf3d58dbb",
+      "configuration_sha256": "05ebabf819823fa11bb24a6b291be1f082a72dd7bb37c656f4f9bbbc27e171fc",
+      "target": {
+        "schema_version": "publishing-target-v1",
+        "workspace_id": "wsp_official_publication_fixture",
+        "profile_id": "ppf_official_publication_fixture",
+        "profile_version": 1,
+        "platform": "youtube",
+        "provider_key": "youtube-data-api-publishing",
+        "target_account_id": "UC_EXPLICIT_FIXTURE",
+        "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "target_binding_sha256": "bef704546ae9cdc8732fddb793e63be0874991a2b3e6828cb7ffd199cf297ab4",
+      "final_job_id": "07d4190cff604f7282ea44f5f767bcfb",
+      "final_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+      "final_bytes": 524305,
+      "final_job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+      "final_review": {
+        "id": 1,
+        "job_id": "07d4190cff604f7282ea44f5f767bcfb",
+        "project_id": "740f48273c4e419d817ab07ef07e1080",
+        "revision": 2,
+        "artifact_sha256": "ef981754d454f6cd383e21375f10f082bc54cc3f67c36584cdd12ac5659722c2",
+        "snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+        "decision": "approve",
+        "reviewer": "EXPLICIT SYNTHETIC FINAL REVIEW — NOT OWNER UAT",
+        "note": "",
+        "created_at": "2026-10-08T21:17:27.647430+00:00"
+      },
+      "validation": {
+        "dry_run": {
+          "rights": {
+            "status": "passed",
+            "policy_version": "v2-09-rights-fail-closed-v1",
+            "asset_ids": [
+              "explicit_fixture.mp4"
+            ],
+            "checks": [
+              {
+                "key": "asset:explicit_fixture.mp4",
+                "passed": true,
+                "code": "RIGHTS_VERIFIED",
+                "message": "Asset rights evidence is sufficient.",
+                "evidence": {
+                  "asset_id": "explicit_fixture.mp4",
+                  "rights_status": "owned",
+                  "license_present": true,
+                  "production_eligible": true
+                }
+              }
+            ]
+          },
+          "platform": {
+            "status": "passed",
+            "capability": {
+              "platform": "youtube",
+              "version": "2026-08-27.v1",
+              "verification_state": "owner_verified_for_live",
+              "supported_profiles": [
+                "vertical-1080x1920",
+                "landscape-1920x1080",
+                "square-1080x1080"
+              ],
+              "min_duration_seconds": 1.0,
+              "max_duration_seconds": 180.0,
+              "max_file_size_bytes": 2000000000,
+              "video_codecs": [
+                "h264"
+              ],
+              "audio_codecs": [
+                "aac"
+              ],
+              "max_title_characters": 100,
+              "max_caption_characters": 5000,
+              "max_hashtags": 15,
+              "thumbnail": "optional"
+            },
+            "checks": [
+              {
+                "key": "render-profile",
+                "passed": true,
+                "code": "PROFILE_SUPPORTED",
+                "message": "Final render profile is supported by the versioned platform contract.",
+                "evidence": {
+                  "profile": "vertical-1080x1920"
+                }
+              },
+              {
+                "key": "duration",
+                "passed": true,
+                "code": "DURATION_SUPPORTED",
+                "message": "Duration is within the configured platform range.",
+                "evidence": {
+                  "duration_seconds": 3.0
+                }
+              },
+              {
+                "key": "resolution",
+                "passed": true,
+                "code": "RESOLUTION_PRESENT",
+                "message": "QC contains a positive output resolution.",
+                "evidence": {
+                  "width": 1080,
+                  "height": 1920
+                }
+              },
+              {
+                "key": "file-size",
+                "passed": true,
+                "code": "FILE_SIZE_SUPPORTED",
+                "message": "Output size is within the configured platform ceiling.",
+                "evidence": {
+                  "size_bytes": 524305
+                }
+              },
+              {
+                "key": "video-codec",
+                "passed": true,
+                "code": "VIDEO_CODEC_SUPPORTED",
+                "message": "Video codec is supported.",
+                "evidence": {
+                  "codec": "h264"
+                }
+              },
+              {
+                "key": "audio-codec",
+                "passed": true,
+                "code": "AUDIO_CODEC_SUPPORTED",
+                "message": "Audio codec is supported.",
+                "evidence": {
+                  "codec": "aac"
+                }
+              },
+              {
+                "key": "title-length",
+                "passed": true,
+                "code": "TITLE_SUPPORTED",
+                "message": "Title length is supported.",
+                "evidence": {
+                  "characters": 32
+                }
+              },
+              {
+                "key": "caption-length",
+                "passed": true,
+                "code": "CAPTION_SUPPORTED",
+                "message": "Caption length is supported.",
+                "evidence": {
+                  "characters": 0
+                }
+              },
+              {
+                "key": "hashtag-count",
+                "passed": true,
+                "code": "HASHTAGS_SUPPORTED",
+                "message": "Hashtag count is supported.",
+                "evidence": {
+                  "count": 0
+                }
+              },
+              {
+                "key": "thumbnail",
+                "passed": true,
+                "code": "THUMBNAIL_SUPPORTED",
+                "message": "Thumbnail requirement is satisfied.",
+                "evidence": {
+                  "policy": "optional"
+                }
+              },
+              {
+                "key": "capability-live-verification",
+                "passed": true,
+                "code": "CAPABILITY_DRY_RUN_ONLY",
+                "message": "Capability snapshot is permitted for this execution mode.",
+                "evidence": {
+                  "verification_state": "owner_verified_for_live"
+                }
+              }
+            ]
+          },
+          "attention": [],
+          "status": "passed",
+          "provider": {
+            "provider_key": "mock-publishing",
+            "adapter_state": "mock",
+            "credential_status": "not_required",
+            "official_api_only": true,
+            "supports_dry_run": true,
+            "supports_live_publish": false,
+            "checks": [
+              {
+                "key": "external-action",
+                "passed": true,
+                "code": "DRY_RUN_NO_EXTERNAL_ACTION",
+                "message": "Deterministic dry-run provider performs no external action.",
+                "evidence": {
+                  "external_action": false
+                }
+              }
+            ],
+            "target_binding": null,
+            "mock_execution": false
+          }
+        },
+        "official_platform": {
+          "status": "passed",
+          "capability": {
+            "platform": "youtube",
+            "version": "2026-08-27.v1",
+            "verification_state": "owner_verified_for_live",
+            "supported_profiles": [
+              "vertical-1080x1920",
+              "landscape-1920x1080",
+              "square-1080x1080"
+            ],
+            "min_duration_seconds": 1.0,
+            "max_duration_seconds": 180.0,
+            "max_file_size_bytes": 2000000000,
+            "video_codecs": [
+              "h264"
+            ],
+            "audio_codecs": [
+              "aac"
+            ],
+            "max_title_characters": 100,
+            "max_caption_characters": 5000,
+            "max_hashtags": 15,
+            "thumbnail": "optional"
+          },
+          "checks": [
+            {
+              "key": "render-profile",
+              "passed": true,
+              "code": "PROFILE_SUPPORTED",
+              "message": "Final render profile is supported by the versioned platform contract.",
+              "evidence": {
+                "profile": "vertical-1080x1920"
+              }
+            },
+            {
+              "key": "duration",
+              "passed": true,
+              "code": "DURATION_SUPPORTED",
+              "message": "Duration is within the configured platform range.",
+              "evidence": {
+                "duration_seconds": 3.0
+              }
+            },
+            {
+              "key": "resolution",
+              "passed": true,
+              "code": "RESOLUTION_PRESENT",
+              "message": "QC contains a positive output resolution.",
+              "evidence": {
+                "width": 1080,
+                "height": 1920
+              }
+            },
+            {
+              "key": "file-size",
+              "passed": true,
+              "code": "FILE_SIZE_SUPPORTED",
+              "message": "Output size is within the configured platform ceiling.",
+              "evidence": {
+                "size_bytes": 524305
+              }
+            },
+            {
+              "key": "video-codec",
+              "passed": true,
+              "code": "VIDEO_CODEC_SUPPORTED",
+              "message": "Video codec is supported.",
+              "evidence": {
+                "codec": "h264"
+              }
+            },
+            {
+              "key": "audio-codec",
+              "passed": true,
+              "code": "AUDIO_CODEC_SUPPORTED",
+              "message": "Audio codec is supported.",
+              "evidence": {
+                "codec": "aac"
+              }
+            },
+            {
+              "key": "title-length",
+              "passed": true,
+              "code": "TITLE_SUPPORTED",
+              "message": "Title length is supported.",
+              "evidence": {
+                "characters": 32
+              }
+            },
+            {
+              "key": "caption-length",
+              "passed": true,
+              "code": "CAPTION_SUPPORTED",
+              "message": "Caption length is supported.",
+              "evidence": {
+                "characters": 0
+              }
+            },
+            {
+              "key": "hashtag-count",
+              "passed": true,
+              "code": "HASHTAGS_SUPPORTED",
+              "message": "Hashtag count is supported.",
+              "evidence": {
+                "count": 0
+              }
+            },
+            {
+              "key": "thumbnail",
+              "passed": true,
+              "code": "THUMBNAIL_SUPPORTED",
+              "message": "Thumbnail requirement is satisfied.",
+              "evidence": {
+                "policy": "optional"
+              }
+            },
+            {
+              "key": "capability-live-verification",
+              "passed": true,
+              "code": "CAPABILITY_DRY_RUN_ONLY",
+              "message": "Capability snapshot is permitted for this execution mode.",
+              "evidence": {
+                "verification_state": "owner_verified_for_live"
+              }
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "title": "Explicit official review fixture",
+        "description": "",
+        "caption": "",
+        "hashtags": [],
+        "thumbnail_asset_id": null,
+        "privacy": "private",
+        "scheduled_at": null
+      },
+      "reviewed_at": "2026-10-08T21:17:27.560396+00:00",
+      "metadata_source": "completed_dry_run",
+      "disclosures": {
+        "category_id": "27",
+        "made_for_kids": false,
+        "contains_synthetic_media": true
+      },
+      "chunk_size": 262144,
+      "mock": true,
+      "dry_run_receipt_is_publish_authority": false,
+      "account_check_is_publish_authority": false,
+      "separate_owner_publish_approval_required": true,
+      "token_returned": false
+    },
+    "schema_version": "native-official-publication-v1",
+    "mock": true,
+    "token_returned": false,
+    "real_provider_tested": false,
+    "receipt": {
+      "receipt_id": "rcpt_a62b922c1b344f04b704b26b18eb9eb8",
+      "provider_key": "youtube-data-api-publishing",
+      "platform": "youtube",
+      "mode": "live",
+      "request_fingerprint": "329d76a2d3edb377045ea043db2a49cb1fddfcf7718bd95bff96f62be5c11e08",
+      "remote_post_id": "FIXTURE0001",
+      "remote_url": null,
+      "mock": true,
+      "external_action": false,
+      "duplicate_post_created": false,
+      "created_at": "2026-10-08T21:17:27.560396Z"
+    },
+    "published": false,
+    "mock_publication_complete": true
+  }
+}

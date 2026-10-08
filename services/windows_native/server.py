@@ -695,6 +695,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-official-publications.mjs'] = 'native-official-publications.mjs'
         static['/native-official-publication-queue.mjs'] = 'native-official-publication-queue.mjs'
         static['/native-official-analytics.mjs'] = 'native-official-analytics.mjs'
+        static['/native-official-refresh.mjs'] = 'native-official-refresh.mjs'
         static['/native-official-winners.mjs'] = 'native-official-winners.mjs'
         static['/native-official-learning.mjs'] = 'native-official-learning.mjs'
         static['/native-qualified-learning.mjs'] = 'native-qualified-learning.mjs'
