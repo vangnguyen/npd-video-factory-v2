@@ -38,14 +38,14 @@ def credential_path(config):
     return path
 
 
-def _dpapi(value, *, decrypt=False):
+def _dpapi(value, *, decrypt=False, entropy=ENTROPY, description="Video Factory AssemblyAI"):
     if os.name != "nt":
         raise WorkflowError("ASSEMBLYAI_WINDOWS_SECRET_STORAGE_REQUIRED", 503)
     class Blob(ctypes.Structure):
         _fields_ = [("size", wintypes.DWORD), ("data", ctypes.POINTER(ctypes.c_ubyte))]
-    raw_buffer, entropy_buffer = ctypes.create_string_buffer(value), ctypes.create_string_buffer(ENTROPY)
+    raw_buffer, entropy_buffer = ctypes.create_string_buffer(value), ctypes.create_string_buffer(entropy)
     raw = Blob(len(value), ctypes.cast(raw_buffer, ctypes.POINTER(ctypes.c_ubyte)))
-    entropy = Blob(len(ENTROPY), ctypes.cast(entropy_buffer, ctypes.POINTER(ctypes.c_ubyte)))
+    entropy = Blob(len(entropy), ctypes.cast(entropy_buffer, ctypes.POINTER(ctypes.c_ubyte)))
     output = Blob()
     crypt = ctypes.WinDLL("crypt32", use_last_error=True)
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)
@@ -59,7 +59,6 @@ def _dpapi(value, *, decrypt=False):
         function = crypt.CryptProtectData
         function.argtypes = [ctypes.POINTER(Blob), wintypes.LPCWSTR, ctypes.POINTER(Blob),
                              ctypes.c_void_p, ctypes.c_void_p, wintypes.DWORD, ctypes.POINTER(Blob)]
-        description = "Video Factory AssemblyAI"
     function.restype = wintypes.BOOL
     if not function(ctypes.byref(raw), description, ctypes.byref(entropy), None, None, 1, ctypes.byref(output)):
         raise WorkflowError("ASSEMBLYAI_WINDOWS_SECRET_PROTECTION_FAILED", 503)

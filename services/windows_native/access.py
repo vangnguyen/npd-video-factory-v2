@@ -33,6 +33,7 @@ def permission_for(method, path):
         return None
     if path == '/api/logout':
         return 'read'
+    if re.fullmatch(r'/api/projects/'+ID+r'/official-accounts/npac_'+ID+r'/verify',path):return 'manage'
     if path in ('/api/trends/collections','/api/trends/learning') or re.fullmatch(r'/api/trends/collections/'+ID+'/cancel',path):return 'manage'
     if path in ('/api/trends/refresh','/api/trends/handoff'):return 'edit'
     if re.fullmatch(r'/api/bridge/events/bevt_[a-f0-9]{48}/(enqueue|cancel)',path):return 'manage'

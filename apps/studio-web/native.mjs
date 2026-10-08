@@ -140,7 +140,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -225,6 +225,7 @@ if (typeof document !== "undefined") {
     narrationRightsUI?.controls();
     variantsUI?.controls();
     narratedVariantsUI?.controls();
+    officialAccountsUI?.controls();
     channelUI?.controls();
   }
   function markDirty(part) {dirty=true;dirtyPart=part;$("review-check").checked=false;controls();}
@@ -267,6 +268,7 @@ if (typeof document !== "undefined") {
     narrationRightsUI?.sync();
     variantsUI?.sync();
     narratedVariantsUI?.sync();
+    officialAccountsUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
     refreshCosts();
     const origin=project?.document.content_intelligence;
@@ -419,6 +421,11 @@ if (typeof document !== "undefined") {
       const analytics=await import('./native-analytics.mjs');$('native-analytics-card').hidden=false;
       analyticsUI=analytics.initializeNativeAnalytics({api,getState:()=>({project,dirty,busy,canManage,
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,enableRefresh:session.capabilities?.native_analytics_refresh===true});
+    }
+    if(session.capabilities?.native_official_account_review===true){
+      const accounts=await import('./native-official-accounts.mjs');$('native-official-accounts-card').hidden=false;
+      officialAccountsUI=accounts.initializeNativeOfficialAccounts({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),
+        workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});
     }
     if(session.capabilities?.native_publication_review===true){
       const publications=await import('./native-publications.mjs');$('native-publication-card').hidden=false;

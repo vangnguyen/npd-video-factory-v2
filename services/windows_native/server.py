@@ -33,6 +33,7 @@ class Runner:
         self.store, self.pipeline = store, pipeline
         self.publications = None
         self.analytics = None
+        self.official_accounts = None
         self.vision = None
         self.observer = observer or Observer()
         self.stop = threading.Event()
@@ -41,6 +42,7 @@ class Runner:
 
     def start(self):
         self.store.recover()
+        if self.official_accounts is not None:self.official_accounts.recover()
         self.thread.start()
 
     def run_one(self):
@@ -60,6 +62,15 @@ class Runner:
                 if self.publications.process() is not None: return True
             except WorkflowError:
                 self.observer.emit('worker_failed', stage='publishing', provider='mock-publishing', duration=0)
+        if self.official_accounts is not None:
+            started=time.monotonic()
+            try:
+                value=self.official_accounts.process()
+                if value is not None:
+                    self.observer.emit('worker_step',job_id=value['check_id'],project_id=value['project_id'],stage='official_account_read',
+                        provider=value['snapshot']['target']['provider_key'],duration=time.monotonic()-started)
+                    return True
+            except WorkflowError:self.observer.emit('worker_failed',stage='official_account_read',duration=time.monotonic()-started)
         job = self.store.claim()
         if not job:
             return False
@@ -132,8 +143,12 @@ class LocalServer(ThreadingHTTPServer):
         bridge_auth_registry=None,bridge_webhook_registry=None,bridge_http_enabled=False,
         stock_registry=None,stock_api_enabled=False,stock_factories=None,owner_rights_overrides=False,
         generation_registry=None,generation_api_enabled=False,generation_factory=None,
-        trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None):
+        trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None,
+        official_account_registry=None,official_account_read_enabled=False,official_account_factories=None):
         config.validate_data_root()
+        if type(official_account_read_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
+        if official_account_read_enabled and (access is None or official_account_registry is None):raise WorkflowError('NATIVE_OFFICIAL_PROTECTED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
+        if official_account_registry is not None and official_account_factories is not None:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CONFLICT',400)
         if owner_rights_overrides and access is None:raise WorkflowError('NATIVE_RIGHTS_OVERRIDE_HUMAN_AUTH_REQUIRED',400)
         if generation_api_enabled and (access is None or generation_registry is None):raise WorkflowError('NATIVE_GENERATION_PROTECTED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
         if generation_registry is not None and generation_factory is not None:raise WorkflowError('NATIVE_GENERATION_CONFIGURATION_CONFLICT',400)
@@ -170,6 +185,12 @@ class LocalServer(ThreadingHTTPServer):
         self.analytics=NativeAnalytics(self.store,self.publications)
         self.analytics_refresh=self.analytics.refresh
         self.runner.analytics=self.analytics
+        from .official_accounts import NativeOfficialAccounts
+        from .official_account_registry import load as load_accounts
+        accounts=load_accounts(official_account_registry,self.store.root,self.publications.workspace_id,owner_read_enabled=official_account_read_enabled) if official_account_registry is not None else official_account_factories
+        if accounts and access is None and any(f.client.wire.network_enabled for f in accounts.values()):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_HUMAN_AUTH_REQUIRED',400)
+        self.official_accounts=NativeOfficialAccounts(self.store,workspace_id=self.publications.workspace_id,factories=accounts)
+        self.runner.official_accounts=self.official_accounts
         from .trend_radar import NativeTrendRadar
         self.trends=NativeTrendRadar(self.intelligence,self.analytics,workspace=self.publications.workspace_id,
             providers=trend_providers,feed_registry=trend_feed_registry,owner_enabled=trend_feed_enabled,observer=self.observer)
@@ -384,6 +405,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/narration-rights',path):
             from .narration_rights_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if path=='/api/connections/official-accounts' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/account-checks(?:/nack_[a-f0-9]{32})?',path):
+            from .official_account_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path == '/healthz':
             return self.reply({'schema': 'vf-native-health-v1', 'status': 'alive', 'scope': 'http_process'})
         if path == '/readyz':
@@ -462,7 +486,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -560,6 +584,7 @@ class Handler(BaseHTTPRequestHandler):
         static.update({'/trends':'trend-radar.html','/trend-radar.mjs':'trend-radar.mjs','/trend-radar.css':'trend-radar.css'})
         static['/native-variants.mjs'] = 'native-variants.mjs'
         static['/native-narrated-variants.mjs'] = 'native-narrated-variants.mjs'
+        static['/native-official-accounts.mjs'] = 'native-official-accounts.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
         static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',
@@ -653,6 +678,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/analytics(?:/nasy_[a-f0-9]{32}/(?:process|cancel))?',self.path) or re.fullmatch(r'/api/projects/[a-f0-9]{32}/analytics-refresh(?:/tick|/narp_[a-f0-9]{32}/state)?',self.path):
             from .analytics_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-accounts/npac_[a-f0-9]{32}/verify',self.path):
+            from .official_account_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=20000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/publications(?:/npub_[a-f0-9]{32}/(?:approve|cancel|dry-run))?', self.path):
             from .publication_routes import post
             return self.reply(post(self, self.path, self.read_body(max_bytes=100000)))
@@ -980,6 +1008,8 @@ def main():
     parser.add_argument('--enable-stock-api',action='store_true')
     parser.add_argument('--generation-provider-registry',type=Path)
     parser.add_argument('--enable-generation-api',action='store_true')
+    parser.add_argument('--official-account-registry',type=Path)
+    parser.add_argument('--enable-official-account-reads',action='store_true')
     parser.add_argument('--trend-feed-registry',type=Path)
     parser.add_argument('--enable-trend-feeds',action='store_true')
     parser.add_argument('--enable-owner-rights-overrides',action='store_true')
@@ -1003,6 +1033,7 @@ def main():
             bridge_webhook_registry=args.bridge_webhook_registry,bridge_http_enabled=args.enable_bridge_http,
             stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api,owner_rights_overrides=args.enable_owner_rights_overrides,
             generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api,
+            official_account_registry=args.official_account_registry,official_account_read_enabled=args.enable_official_account_reads,
             trend_feed_registry=args.trend_feed_registry,trend_feed_enabled=args.enable_trend_feeds) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)
             try:

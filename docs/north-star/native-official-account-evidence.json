@@ -1,0 +1,172 @@
+{
+  "schema": "native-official-account-evidence-v1",
+  "parent_head": "c73724880455de197a2711b74d6972fe401e0ae4",
+  "source_sha256": {
+    "services/windows_native/official_accounts.py": "2ba37e788c30d9bbda66d9ef6cb76990715c256e0a54a9a37112f99fbd9c2ade",
+    "services/windows_native/official_account_tokens.py": "448f1386fccea627e9919232861a99094679dee73fc831ea8dfe4cce600daac9",
+    "services/windows_native/official_account_registry.py": "3385c24d5b293c49474f435ab006106cb6120338411d1d086c723a87fbe94c6a",
+    "services/windows_native/official_account_routes.py": "e70b7fac1135b30e37cf1164832d6ae8f04d83b3a1816cd3565e08ca5b1ba2c0",
+    "services/windows_native/assemblyai_connection.py": "ab709cd0e7cbb9fffecc7849910e63c89d96cee61a79730df8a660bb4234f009",
+    "services/windows_native/server.py": "b04e6815812ea1a87074bab0383c5aaece5b58a4211d1d507f0b4e88a2c23d16",
+    "services/windows_native/access.py": "9550e593866bd4c9aa55b321db4e4d47ca9e3b987a5460a01ee1672071d40b20",
+    "services/windows_native/backup.py": "55a29c52c62f7632d4361aa619e6e14b1bef56e8b7249db17eda3734071c74e6",
+    "services/windows_native/tests/test_official_accounts.py": "62088e3546696e299f1b8bf3d0f76a11b1501f37e717b1851faca9c51727c9b7",
+    "services/windows_native/tests/test_official_account_registry.py": "432960905584978656d0f543b5616c19770f33b8b857089ee6b45181db9f691f",
+    "services/windows_native/tests/test_official_accounts_http.py": "25a92e4cdeabeb0b37fb80c2c61e8a808e740c2a7a6b26b63bdcb4df8a9f20be",
+    "services/windows_native/tests/test_phase10_http.py": "322a830dfc7c6bd0801f583c1386041a481db74245b5da390741eb9483eec9b5",
+    "apps/studio-web/native-official-accounts.mjs": "4434df4d04d3c96cea613133c87a343a960e6abaca0f82f66d749542f3ffc5ad",
+    "apps/studio-web/native.mjs": "05ceefb295593d882a29d73dc52f5d7c7c5c07eba9addab3f72eeecafbe044a8",
+    "apps/studio-web/native.html": "660a15e3f3e49bf344be55134923ad3ede4ae7a22fac17836bd4a88dfbda9003",
+    "apps/studio-web/tests/native-official-accounts.test.mjs": "d557040812d3a5caa3f534560c318188ed412f33cc9298b8d226f7adb0a2d8bb",
+    "scripts/north_star_native_official_accounts.py": "3b5589a4a54da943a430257587a15d274a750862873ff92e393a16219467916b",
+    "docs/NATIVE_OFFICIAL_ACCOUNT_REVIEW.md": "00f774218e07cb2dafed1165426e3862664b3ee3efed60cd5eb80b778196e907"
+  },
+  "tests": {
+    "full_native_passed": 765,
+    "full_native_seconds": 598.568,
+    "new_native_cases": 20,
+    "full_studio_passed": 285,
+    "full_studio_seconds": 1.2290982,
+    "new_studio_cases": 6,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-accounts-flow-n1",
+    "evidence_sha256": "9585602ea19b0e4602761c5590bc4b2506ad9ec1951df0f87b1d8aca0c6bfce9",
+    "exports": {
+      "backup.json": {
+        "sha256": "51f55fe413e07c2a86e10cee8592bf2f8827ec7cf214a7e5bd930abb758a5fd8",
+        "bytes": 2726
+      },
+      "cost.json": {
+        "sha256": "217a14f82629713d60eef45df24e4e5108f4d8a45a12cc29b844d90660d533c8",
+        "bytes": 3010
+      },
+      "default-disabled-state.json": {
+        "sha256": "b7a9fc6a89729c64550188073318c2da7a31efc5e9e29240c6e627bfc04e70ae",
+        "bytes": 2538
+      },
+      "dpapi-fixture-receipts.json": {
+        "sha256": "64035f6f99fbf715f7420f561eb9e1ef3c7533259aa9cc978392875d29f9e5bd",
+        "bytes": 778
+      },
+      "expected-checks.json": {
+        "sha256": "26daa544d627702d808bbb2664a1bc77a8d77896ac666c50f16dc0af8f4053b8",
+        "bytes": 11102
+      },
+      "expired-fixture-check.json": {
+        "sha256": "2b53d57d86db2904931d1920f8bed6ca78d25884d21abf7fb5d5c487a71fa18c",
+        "bytes": 2107
+      },
+      "explicit-fixture-state.json": {
+        "sha256": "f8e96e56f5f8af40e19db47253461a2a597ac7b63bb3cca839c7b1203079abe4",
+        "bytes": 2528
+      },
+      "http-requests.json": {
+        "sha256": "a4a8f4c3aff36f687e644cbed81c611320ac7cc56ec65ef855d41b0f9e0ec942",
+        "bytes": 3144
+      },
+      "initial-restore.json": {
+        "sha256": "7f8b1c10aba2573d756057bb378c5c8af449df2702c51a9539704100a40bfd41",
+        "bytes": 2997
+      },
+      "interrupted-fixture-check.json": {
+        "sha256": "20ba4ae981190e4c884a174b3930e661d308a662ce90e1245bb137023ab1052c",
+        "bytes": 2131
+      },
+      "owned-official-accounts.zip": {
+        "sha256": "dede897ae134b35e8a8da76d60d82184286dfc02ea512db9a9807692e1257e10",
+        "bytes": 156681226
+      },
+      "paginated-history.json": {
+        "sha256": "e9603ed94674cf192e9f64d19ca960d881919fa53b6434ed348329278e965834",
+        "bytes": 12673
+      },
+      "physical-source-hashes.json": {
+        "sha256": "9916ca138f7bac8b3d80bf541a1b5410312fb57b8119c55172ee8de2d3e8722b",
+        "bytes": 206335
+      },
+      "project-before.json": {
+        "sha256": "e5a038cc2a9073aebcf5432117187e1fc5cc8d67497e59103bd661fbb99d91a7",
+        "bytes": 655683
+      },
+      "queued-backup-admission.json": {
+        "sha256": "02dbb71f07d8e4998b18763dba447af854ff2a6e27874520d10b19b67387ac22",
+        "bytes": 99
+      },
+      "recovery-restore.json": {
+        "sha256": "fd0e4dc426ee78e610de35dd3449b9106be308ee1c16166729e256151437074c",
+        "bytes": 3114
+      },
+      "restored-in-process.json": {
+        "sha256": "41e5469402ddf752ffb085cab32726ef00fc6d15e9d4875929394dd1895aa46e",
+        "bytes": 217
+      },
+      "tiktok-fixture-check.json": {
+        "sha256": "5fe26da55bb256ca74f6ae8467bcf806bcc79c897fe35cb10b74aadbe4624c3a",
+        "bytes": 3123
+      },
+      "wire-fixtures.json": {
+        "sha256": "16721e959c53a43abbb4ed75c9a37ff27da21023601e3a1f9806a38ece0ba332",
+        "bytes": 444
+      },
+      "youtube-fixture-check.json": {
+        "sha256": "a25aa71439a99663387e98df0f26a1d67c25689a0451a231019f0f1abbe03e80",
+        "bytes": 3122
+      },
+      "new-process-replay.json": {
+        "sha256": "41e5469402ddf752ffb085cab32726ef00fc6d15e9d4875929394dd1895aa46e",
+        "bytes": 217
+      }
+    },
+    "backup_sha256": "dede897ae134b35e8a8da76d60d82184286dfc02ea512db9a9807692e1257e10"
+  },
+  "logs": {
+    "native-official-account-asr-regression-r1.log": "c7aece04adee084d9c933649611343e4991416f839d0b0a7341206dda1beac7b",
+    "native-official-account-registry-r1.log": "a22a42d38961ae87255a546536b05e5390e03cbafe90917995a59819b7234f07",
+    "native-official-account-registry-r2.log": "abe5c911b4c6f5ca82f5e8cb5f7fd90d48bb27465a23d40ea47a2ee7ed9a049a",
+    "native-official-accounts-contracts-r1.log": "5b7a4a65ffa15c8e195c8d1641bc1df7551535f120c539c84ab350b9084fd5b3",
+    "native-official-accounts-contracts-r2.log": "dc7a940124469107cf7bf03e02a4cadd677c7a58b3fdd8a620dbd321bc73cd32",
+    "native-official-accounts-contracts-r3.log": "9030fd239fbfdd790663a71ced4e02c7e4d5ccf8a57fe3031ee8e830138a3a5a",
+    "native-official-accounts-flow-n1.log": "7000c92eae995ad54e2e5530e0d76cfbb762abda33e8f90c07a6a31b7eb08a12",
+    "native-official-accounts-full-native-r1.log": "7fcba23ecabe6722f8dbf57dbf1da107dd5ba22421de7b7389edd948b6c99bef",
+    "native-official-accounts-full-studio-r1.log": "b6c00635118b46fac43debd3af2f4db81c8c1b7e9484114aa3206eab01268b68",
+    "native-official-accounts-http-r1.log": "500385796bab9fee5095bb4764b1871af71523297a0e318fbb493ff6b889333d",
+    "native-official-accounts-integrated-r1.log": "70e0342436d4ef67f9e560f46ccf6f44971d5d792bc2bb43711798c892141047",
+    "native-official-accounts-integrated-r2.log": "ec047f1f32a2c3259f8a905e5c4cdff78384bf760db32da6a97076cab726b758",
+    "native-official-accounts-studio-r1.log": "c82baf1d5c55ef48e659b6e749e250de8390bc574a15c5953879660dca356a6e"
+  },
+  "signed_http_requests": 19,
+  "explicit_fixture_account_reads": 2,
+  "scoped_youtube_and_tiktok_account_confirmation_contracts": true,
+  "actual_windows_dpapi_and_private_acl": true,
+  "separate_entropy_domain_preserves_assemblyai": true,
+  "default_disabled_no_token_or_network_read": true,
+  "absolute_private_mounts_and_duplicate_foreign_scope_rejection": true,
+  "frozen_target_client_wire_transport_resolver_config_checked_before_after_and_commit": true,
+  "signed_manage_csrf_before_body": true,
+  "exact_key_replay_and_immutable_project_configuration_snapshots": true,
+  "expired_and_stale_configuration_without_dispatch": true,
+  "mock_evidence_cannot_be_relabelled_as_external": true,
+  "interrupted_reads_no_automatic_resend": true,
+  "scoped_bounded_history_pagination": true,
+  "studio_explicit_configuration_acknowledgement_saved_idle_owner_and_stale_response_gates": true,
+  "both_database_backup_restore_and_fresh_process_pass": true,
+  "prior_media_artifacts_unchanged": 1280,
+  "check_rows_restored": 4,
+  "audit_events_restored": 8,
+  "secrets_not_in_project_backup": true,
+  "cost_unknown_null": true,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_inference_or_render_calls": 0,
+  "real_account_verified": false,
+  "official_publish_and_analytics_runtime_complete": false,
+  "publishing_enabled": false,
+  "owner_uat_accepted": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
