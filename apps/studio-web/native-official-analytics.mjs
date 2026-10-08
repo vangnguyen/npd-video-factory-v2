@@ -1,6 +1,6 @@
 // Explicit receipt-bound read consent. Initialization and rendering make no requests.
 import {nativeAnalyticsMetrics,nativeAnalyticsValue} from './native-analytics.mjs';
-export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=document,onMessage=()=>{},onWorking=()=>{},uuid=()=>crypto.randomUUID()}){
+export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=document,onMessage=()=>{},onWorking=()=>{},onSelection=()=>{},uuid=()=>crypto.randomUUID()}){
   const card=root.getElementById('native-official-analytics-card');card.replaceChildren();
   const node=(tag,text,id)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(id)n.id='native-official-analytics-'+id;return n;};
   const button=(text,id,permission='read')=>{const n=node('button',text,id);n.type='button';n.className='secondary';n.dataset.vfPermission=permission;return n;};
@@ -46,7 +46,7 @@ export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=
     let ready=false;try{request();ready=true;}catch{}create.disabled=blocked||!ready;mockLabel.hidden=binding?.mock!==true;retryLabel.hidden=Number(attempts.value)<=1;}
   function sync(){const next=context();if(next!==scope){scope=next;generation++;runtime=null;accounts=[];binding=null;rows=[];cursor=null;selected=null;keys.clear();
       unknownKeys.clear();account.replaceChildren();list.replaceChildren();metrics.replaceChildren();detail.textContent='';for(const input of[ack,mockAck,retryAck])input.checked=false;
-      status.textContent='Đọc bằng chứng của video đã chọn và cấu hình trước khi cho phép analytics.';}controls();}
+      status.textContent='Đọc bằng chứng của video đã chọn và cấu hình trước khi cho phép analytics.';onSelection();}controls();}
   async function run(fn){sync();const s=getState();if(working||s.busy||!s.project)return;const current=context(),ticket=++generation;working=true;onWorking(true);controls();
     const accept=()=>ticket===generation&&current===context();try{await fn(s,accept);}catch(error){if(accept())onMessage(error.message,true);}finally{working=false;onWorking(false);sync();}}
   function validateSource(value,s){if(value?.schema_version!=='native-official-analytics-publication-binding-v1'||value.workspace_id!==s.workspace_id||value.project_id!==s.project.id
@@ -73,7 +73,7 @@ export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=
     metrics.replaceChildren();detail.textContent=selected?JSON.stringify(selected,null,2):'';
     if(selected?.result){const r=selected.result;status.textContent=(r.mock?'Mô phỏng giao thức API · chưa quan sát khán giả thật.':'Quan sát từ API nền tảng · kiểm tra phạm vi bằng chứng.')+' Khoảng báo cáo: '+r.evidence.query.start_date+' → '+r.evidence.query.end_date+'. Thu thập: '+r.collected_at+'.';
       for(const metric of nativeAnalyticsMetrics){const box=node('div');box.append(node('strong',metric.label),node('p',nativeAnalyticsValue(r.metrics[metric.id],metric.id)));metrics.append(box);}
-    }else if(selected)status.textContent=selected.status+(selected.failure_code?' · '+selected.failure_code:'')+'. Không tạo dữ liệu thay thế.';controls();}
+    }else if(selected)status.textContent=selected.status+(selected.failure_code?' · '+selected.failure_code:'')+'. Không tạo dữ liệu thay thế.';onSelection();controls();}
   async function readConfig(){if(!getState().canManage)return;await run(async(s,accept)=>{const value=await api('/api/connections/official-analytics');if(!accept())return;
     if(value?.schema_version!=='native-official-analytics-capabilities-v1'||value.workspace_id!==s.workspace_id||typeof value.enabled!=='boolean'||value.default_enabled!==false||value.publishing_enabled!==false||value.token_returned!==false||value.fixture_fallback!==false||!Array.isArray(value.accounts)||value.accounts.length>50)throw new Error('Cấu hình analytics không hợp lệ.');
     for(const a of value.accounts)if(!/^npac_[a-f0-9]{32}$/.test(a.account_ref??'')||!sha(a.configuration_sha256)||a.target?.workspace_id!==s.workspace_id||a.target?.platform!=='youtube'||!['official','fixture'].includes(a.mode)||a.token_returned!==false||a.publishing_enabled!==false)throw new Error('Tài khoản analytics không hợp lệ.');
@@ -90,8 +90,8 @@ export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=
     ack.checked=mockAck.checked=retryAck.checked=false;render();});}
   async function cancelRead(){if(!getState().canManage)return;await run(async(s,accept)=>{if(!selected)return;const value=await api(endpoint(s)+'/'+selected.sync_id+'/cancel',{expected_snapshot_sha256:selected.snapshot_sha256});if(!accept())return;
     selected=validateRow(value,s);rows=rows.map(r=>r.sync_id===selected.sync_id?selected:r);render();});}
-  function prepareNew(){if(working||getState().busy||!getState().canManage)return;if(selected&&!unknownKeys.size)keys.clear();selected=null;ack.checked=mockAck.checked=retryAck.checked=false;metrics.replaceChildren();detail.textContent='';controls();}
+  function prepareNew(){if(working||getState().busy||!getState().canManage)return;if(selected&&!unknownKeys.size)keys.clear();selected=null;ack.checked=mockAck.checked=retryAck.checked=false;metrics.replaceChildren();detail.textContent='';onSelection();controls();}
   for(const[b,fn]of[[config,readConfig],[source,readSource],[history,()=>readHistory()],[more,()=>readHistory(true)],[read,readStored],[create,createRead],[cancel,cancelRead],[fresh,prepareNew]])b.addEventListener('click',fn);
   for(const input of[account,start,end,attempts,ack,mockAck,retryAck,revenue])input.addEventListener('change',controls);
-  sync();return{readConfig,readSource,readHistory,readStored,createRead,cancelRead,prepareNew,sync,controls,isWorking:()=>working};
+  sync();return{readConfig,readSource,readHistory,readStored,createRead,cancelRead,prepareNew,sync,controls,currentBinding:()=>({sync:selected}),isWorking:()=>working};
 }

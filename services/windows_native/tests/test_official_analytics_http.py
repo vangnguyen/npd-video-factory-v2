@@ -15,7 +15,7 @@ from services.windows_native.contracts import WorkflowError,digest
 from services.windows_native.observability import Observer
 from app.human_identity import HumanAuthVerifier,HumanAuthRegistry
 
-class OfficialAnalyticsHTTPTests(analytics_fixture.OfficialAnalyticsFixture,unittest.TestCase):
+class OfficialAnalyticsHTTPFixture(analytics_fixture.OfficialAnalyticsFixture):
     request=access_fixture.NativeAccessHTTPTests.request
     def setUp(self):
         super().setUp();self.config=Config(data_root=self.root,runtime_root=self.folder/'runtime',secret_file=self.folder/'secrets'/'absent-openai',assemblyai_secret_file=self.folder/'secrets'/'absent-asr',ffmpeg_bin=self.folder/'absent-ffmpeg')
@@ -38,6 +38,7 @@ class OfficialAnalyticsHTTPTests(analytics_fixture.OfficialAnalyticsFixture,unit
     def create_http(self,**changes):
         status,value,headers=self.request('POST',self.base,self.collection(**changes).model_dump(mode='json'))
         self.assertEqual(status,200,value);self.assertEqual(headers['Cache-Control'],'no-store');self.sync=value;return value
+class OfficialAnalyticsHTTPTests(OfficialAnalyticsHTTPFixture,unittest.TestCase):
     def test_explicit_signed_create_stores_only_then_runner_collects_three_read_proofs(self):
         self.assertFalse(self.server.runner.run_one());self.assertEqual(self.read_wire,[])
         status,runtime,headers=self.request('GET','/api/connections/official-analytics');self.assertEqual(status,200);self.assertTrue(runtime['enabled'])

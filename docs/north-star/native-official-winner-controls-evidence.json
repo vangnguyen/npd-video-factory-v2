@@ -1,0 +1,159 @@
+{
+  "schema": "native-official-winner-controls-evidence-v1",
+  "parent_head": "50678c7944521c3a67262e11d2e7d82fb31e3caa",
+  "source_sha256": {
+    "services/windows_native/server.py": "c891f079867459d63d45c0b5aac8155e00eb6d892dbe8001e47cc4b551f0b953",
+    "services/windows_native/access.py": "4ffcbded7f3244bed46b497742e285854efeef54d3f057611fc1013cf7868987",
+    "services/windows_native/official_winner_routes.py": "ac116401616dac971b10a58a338b8422b234e5e74fc26a461dc71d6d8e34e296",
+    "services/windows_native/tests/test_official_winner_http.py": "3235ba265ad7e47fc502c6f51374e7cd65f5811b3f332ddecf213dc542b0d39d",
+    "services/windows_native/tests/test_official_analytics_http.py": "49ff62db0dc87f6a8ae64d7cef7390cf52fd191cde499bda73e038fd1bf92bdd",
+    "apps/studio-web/native.html": "9db662ef00a0efe0dc5c30b45c4a5952d0e6e1ff47d5d17bc0b7be69ab074f3a",
+    "apps/studio-web/native.mjs": "84995f4cfdb2cefe1ad5d9d8b7a0e61e9f9654525d5bd35c952fb388d7426623",
+    "apps/studio-web/shot-studio.mjs": "48b7779dcd9a3615a245eb0715d8b3f54fe73fb26e82740f7dad6aa5c1a3ca1a",
+    "apps/studio-web/native-official-analytics.mjs": "2c687227fa441b193f8f84a40355fe5b2fcb24bab710964a81206e2aba8b7027",
+    "apps/studio-web/native-official-winners.mjs": "cad2618cf6d4fefe11521515cf00832662a621c5b55f02ae7c86be30968b70aa",
+    "apps/studio-web/tests/native-official-winners.test.mjs": "9cdea853f9643e82dabbae93546f5a61cf104f92ab8d09e85b88f80fda5cc378",
+    "scripts/north_star_native_official_winner_controls.py": "3b8a6c3ece8b31d466023c6d7cd0097d11a28345ee2b8450a2b69a48616d33c5",
+    "docs/NATIVE_OFFICIAL_WINNER_CONTROLS.md": "db6e4e08290e863f35d7c2e01bb23c0f532e85fdcaf6ac950e66d5ccb7ecb166"
+  },
+  "tests": {
+    "full_native_passed": 983,
+    "native_seconds": 1076.871,
+    "new_native_cases": 8,
+    "full_studio_passed": 329,
+    "studio_duration_ms": 1340.4858,
+    "new_dom_cases": 10,
+    "initial_related_http_18_passed_one_windows_fixture_text_encoding_error_fixed_explicit_utf8": true,
+    "prior_api_cohort_learning_50_at_parent_source_unchanged": true
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-winner-controls-flow-n2",
+    "evidence_sha256": "6bdb724b3e910d5fb3ea646d88f66f1aadd8c18b5901e1c121a826335c242a4c",
+    "exports": {
+      "backup.json": {
+        "sha256": "f2fe7c57c503f1e9d56fe9398cca50584daaf530b527f91d69304879cdeaa99c",
+        "bytes": 3735
+      },
+      "bounded-history.json": {
+        "sha256": "3435252948afa732a947bec215716ebcc075ca1090d6eee0cc1e6b09929f0ac5",
+        "bytes": 75735
+      },
+      "cost-summary.json": {
+        "sha256": "5f9618c446ff41431c65550b741f1febc28bded1e28e62484cdafafc96427c33",
+        "bytes": 20399
+      },
+      "evidence.json": {
+        "sha256": "6bdb724b3e910d5fb3ea646d88f66f1aadd8c18b5901e1c121a826335c242a4c",
+        "bytes": 5753
+      },
+      "expected-analytics-history.json": {
+        "sha256": "c6b39a90e49f881e2fdc4956caef5a932f17ff260af1df8d3cc35d5875402f18",
+        "bytes": 20395
+      },
+      "expected-jobs.json": {
+        "sha256": "d61b9b8eb3759e3a3e7cfd0997f7823c3a669e33394410422b49955c495e94fb",
+        "bytes": 2965
+      },
+      "expected-journals.json": {
+        "sha256": "7b0e6b31b5b1749ba96eb311370276680f20a0e685818bf45b90f03fad6b93d2",
+        "bytes": 113878
+      },
+      "expected-projects.json": {
+        "sha256": "b8a45650e31f3b161726d9b885580389cd63ce5aff0f89f17786853b2544ea8a",
+        "bytes": 5555
+      },
+      "expected-publications.json": {
+        "sha256": "217c6f8bf9928427dbab938f59d52ba2caa545e8f99aad343a50e79be57f21ca",
+        "bytes": 14805
+      },
+      "expected-winner-history.json": {
+        "sha256": "e5cf101c17468963886af009088751cc306ef85a9a386efc32405d7b0b7ea8f9",
+        "bytes": 71756
+      },
+      "explicit-runtime-status.json": {
+        "sha256": "2adc58fbfbf188c50eca746c5144698185fa97aae062db9a3626b914c80de284",
+        "bytes": 1078
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-winner-kernel-replay.json": {
+        "sha256": "776fa5ad9e132932b1c079ba8e0f035c7b2059854b4d2fa4119e34940d73f0bb",
+        "bytes": 113
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "edc81de61a6b548f3b546a2c0151ef9ef9563f4fa946c342dcd846d02cc82ebf",
+        "bytes": 1972
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "fea8082bfac5db65c954fa48ad1c9053956e882b4c9fe6c462d8d699096827b2",
+        "bytes": 1321
+      },
+      "new-process-replay.json": {
+        "sha256": "d929a2336a8f8cdef47d4ab9abe09f65d997de06093786f9b374f22aed22b8a5",
+        "bytes": 300
+      },
+      "owned-official-winner-controls.zip": {
+        "sha256": "23f90bfadc8b904c355f3dfa004fd3efa9770a3819dfaad00f66d7a66764ab35",
+        "bytes": 1435186
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "10c5f1b157a779d4f227edb4b07d9eb7ccb2a5081cd4333d62ef35fc5a0b75ac",
+        "bytes": 258
+      },
+      "recovery-restore.json": {
+        "sha256": "662065f97543c615dbf04d79a326114bfeadfe743d764fcad4138508e8c84b21",
+        "bytes": 4145
+      },
+      "restored-in-process.json": {
+        "sha256": "d929a2336a8f8cdef47d4ab9abe09f65d997de06093786f9b374f22aed22b8a5",
+        "bytes": 300
+      },
+      "sanitized-operation-logs.json": {
+        "sha256": "85d28c1dc5a4f1972d9ce638a335b313ac499e394a57c4e144573aafca07c58d",
+        "bytes": 8733
+      },
+      "served-studio-files.json": {
+        "sha256": "2ac8089cb311b605ad6f4008d040bfc3c3b4b30eb4500c148c721991d467a086",
+        "bytes": 665
+      },
+      "server-result-binding.json": {
+        "sha256": "0ef7e40128697315f1f25366020d393f84ba43391ceda31d20326e31d2ecab29",
+        "bytes": 1540
+      },
+      "signed-http-summary.json": {
+        "sha256": "9e149fb89eec245f04932733cd3f30517ff6807da24533182f7d26ff4cec08c8",
+        "bytes": 6913
+      }
+    },
+    "backup_sha256": "23f90bfadc8b904c355f3dfa004fd3efa9770a3819dfaad00f66d7a66764ab35",
+    "backup_bytes": 1435186
+  },
+  "logs": {
+    "native-official-winner-controls-native-full-n1.log": "095232b2a66365c9e7951969c5f562d45e5253967b4a1e6cfd705f0cf361ab9b",
+    "native-official-winner-controls-studio-full-n1.log": "7ccc711062c362523b2cb231fd84fe265a269ebcd09ea16b0bf816e1bd523a5b"
+  },
+  "signed_current_owner_csrf_before_body_strict_policy_mock_ack_observation_digest_and_scoped_history": true,
+  "separate_server_canonical_observation_binding_preserves_existing_history_response_shapes": true,
+  "assessment_has_no_provider_credential_cost_media_or_runner_operation": true,
+  "explicit_studio_policy_weights_nullable_factors_peer_evidence_recommendation_and_mock_qualifiers": true,
+  "unknown_request_keys_retained_scope_changes_and_late_responses_fail_closed": true,
+  "twenty_signed_requests_two_observations_three_assessments_twenty_two_journals_and_prior_kernel_replay_exact": true,
+  "signed_http_requests": 20,
+  "mock_analytics_read_requests": 6,
+  "mock_publication_wire_requests": 10,
+  "mock_initial_account_lookup_requests": 1,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_oauth_provider_and_clock_fixtures": true,
+  "accepted_runtime_publishing_or_analytics_enabled": false,
+  "real_provider_browser_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
