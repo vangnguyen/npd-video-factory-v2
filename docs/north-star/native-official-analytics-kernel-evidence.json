@@ -1,0 +1,130 @@
+{
+  "schema": "native-official-analytics-kernel-evidence-v1",
+  "parent_head": "3f0aab38740e0f0b26870882d6181765f7a8ed39",
+  "source_sha256": {
+    "services/windows_native/official_analytics.py": "6dd536d5490998dac9390799a19b3d45004a8c17c3fcf70e39b15a49186cc5b1",
+    "services/windows_native/official_analytics_models.py": "cf61ee4dfff0942313816e11a66d5142b782cf9850b5874e0fa544d28d19eace",
+    "services/windows_native/backup.py": "86a0e27c730ddea30746e9fb184816e87b90b4a8af04ca61ea819efc523837df",
+    "services/windows_native/tests/test_official_analytics.py": "5d4804d57c5716378c26fd53a34cb60357bbacb7020ccf492f41301db72fef3e",
+    "scripts/north_star_native_official_analytics.py": "d7bbebc3ce2eaa40e9b8b72a708f37769f2144ef18b16cc92fa057d376119899",
+    "docs/NATIVE_OFFICIAL_ANALYTICS_KERNEL.md": "9b0c94df5c0ac5f28a34e7b34fe61ac0809e040af285ff1e64d5f0a26ab81ae9"
+  },
+  "tests": {
+    "current_full_native_passed": 935,
+    "seconds": 853.195,
+    "new_native_cases": 36,
+    "current_full_studio_passed": 307,
+    "studio_source_unchanged": true,
+    "focused_native_34_before_last_two_cases_and_final_transaction_fences": true,
+    "focused_4_then_2_after_final_fences_passed": true,
+    "initial_one_media_project_fixture_error_repaired_no_gate_relaxed": true
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-analytics-kernel-flow-n1",
+    "evidence_sha256": "9ff1f4f310143cc0dd303c45efecaf56d8625f7f510643270fa6b2230bb67c1f",
+    "exports": {
+      "backup.json": {
+        "sha256": "bfbecf57c20351331f1be0e091f21062c44d58c395801c7f3d776b2cf72ada2c",
+        "bytes": 1942
+      },
+      "completed-review.json": {
+        "sha256": "556cd8395f5f86b6446bdc30bbaf6cf14a00c3bb672381363cf4adba7a15c445",
+        "bytes": 13989
+      },
+      "cost-summary.json": {
+        "sha256": "a7006884120d994bb476588948faa072e9610f894a51eff83d658c9636d4a6b3",
+        "bytes": 21569
+      },
+      "evidence.json": {
+        "sha256": "9ff1f4f310143cc0dd303c45efecaf56d8625f7f510643270fa6b2230bb67c1f",
+        "bytes": 4380
+      },
+      "expected-analytics-history.json": {
+        "sha256": "8a6550717950b7aa0c385d99eb196705d717bedde34da586838329b4e6f2b7d3",
+        "bytes": 26254
+      },
+      "expected-jobs.json": {
+        "sha256": "0ddfb135373b37df9b3216f3b18a5c7b30a08fb3884fa917999a98a6acc38d2c",
+        "bytes": 2965
+      },
+      "expected-journals.json": {
+        "sha256": "8480d2cb6c54adb8bf4b971e5f266f18510d04d5b2e3c484ac5b58ab7050a81f",
+        "bytes": 84142
+      },
+      "expected-project.json": {
+        "sha256": "6def38edd24f01968196cd1ed5a1b2312e60c2b5039c433c3a07b4a7fb83bdc9",
+        "bytes": 5207
+      },
+      "first-known-backoff.json": {
+        "sha256": "00ed0a95083549d29edd11d26b485b71015ed7f882058da92fa2d0881094f913",
+        "bytes": 5698
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-queue-controls-replay.json": {
+        "sha256": "79d2a2d506b4be64dc0b7acc9ad6607175c12050cc234d7894d7c47b58c23423",
+        "bytes": 93
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "edc81de61a6b548f3b546a2c0151ef9ef9563f4fa946c342dcd846d02cc82ebf",
+        "bytes": 1972
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "a3f52e885ebb6bbce7309364dd9f5354d110ab4ca15b4aa265652d092e3f000e",
+        "bytes": 1470
+      },
+      "new-process-replay.json": {
+        "sha256": "c1c04f392eef0a1292ed075b7b21a806464d8cc84ce648c9965aeb1d41e8a219",
+        "bytes": 285
+      },
+      "owned-official-analytics.zip": {
+        "sha256": "d6032a3e3d73dc46fa52b3b760ff16dd6231fa20d35d55dec0dce199b35cf4ca",
+        "bytes": 962541
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "34700f4dbfb02272aec1912e0be96316ce38245c1400d5e761c77788d5be6234",
+        "bytes": 258
+      },
+      "recovery-restore.json": {
+        "sha256": "5ec423a68332dad3599541e0759e8ff9ebad366fbe0efd25cc0422c6e3569bef",
+        "bytes": 2340
+      },
+      "restored-in-process.json": {
+        "sha256": "c1c04f392eef0a1292ed075b7b21a806464d8cc84ce648c9965aeb1d41e8a219",
+        "bytes": 285
+      }
+    },
+    "backup_sha256": "d6032a3e3d73dc46fa52b3b760ff16dd6231fa20d35d55dec0dce199b35cf4ca",
+    "backup_bytes": 962541
+  },
+  "logs": {
+    "native-official-analytics-kernel-full.log": "9d2925da02ca98241bcaa3a165ba1cac07f70cb5c899cdf2774a6123daad5469",
+    "native-official-analytics-kernel-studio-full.log": "d65f457e38b82a36ec306607d0cb2c7400153e346ab6c7d46b0d2de6372e38fe"
+  },
+  "default_off_no_startup_decrypt_provider_call_or_publish_authority": true,
+  "strict_current_owner_finite_receipt_account_query_and_raw_mock_consent": true,
+  "atomic_claim_fresh_oauth_channel_video_ownership_report_and_response_write_source_fences": true,
+  "durable_bounded_known_backoff_unknown_outcome_no_auto_retry": true,
+  "cancelled_and_interrupted_cost_recovery_scoped_idempotent": true,
+  "immutable_nullable_observations_original_render_features_no_window_or_publish_time_inference": true,
+  "twenty_journals_three_analytics_histories_receipt_jobs_assets_and_prior_queue_exact_fresh_restore": true,
+  "kernel_only_native_signed_routes_runner_studio_scheduled_refresh_winner_learning_bridge_still_required": true,
+  "mock_analytics_read_requests": 7,
+  "mock_publication_wire_requests": 10,
+  "mock_initial_account_lookup_requests": 1,
+  "signed_http_requests": 0,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_oauth_provider_and_clock_fixtures": true,
+  "accepted_runtime_publishing_or_analytics_enabled": false,
+  "real_provider_browser_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
