@@ -262,6 +262,11 @@ class LocalServer(ThreadingHTTPServer):
         from .trend_radar import NativeTrendRadar
         self.trends=NativeTrendRadar(self.intelligence,self.analytics,workspace=self.publications.workspace_id,
             providers=trend_providers,feed_registry=trend_feed_registry,owner_enabled=trend_feed_enabled,observer=self.observer)
+        from .qualified_learning_feedback import NativeQualifiedLearningFeedback
+        self.qualified_learning=NativeQualifiedLearningFeedback(self.official_learning,self.trends)
+        self.trends.qualified_learning=self.qualified_learning
+        self.intelligence.qualified_learning=self.qualified_learning
+        self.store.qualified_learning=self.qualified_learning
         from .vision import NativeVision
         self.vision=NativeVision(self.store,config,workspace_id=self.publications.workspace_id)
         self.runner.vision=self.vision

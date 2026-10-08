@@ -1,0 +1,165 @@
+{
+  "schema": "native-qualified-learning-feedback-evidence-v1",
+  "parent_head": "bac79068a1c2ad7e3a4596f2977f78b07a08cecf",
+  "source_sha256": {
+    "services/windows_native/qualified_learning_feedback.py": "82c426303c22d8ff1e79265fa664469774668b1feefb0df0cc3e4397322bbee3",
+    "services/windows_native/trend_radar.py": "c077e1d6cca4cc95fac323d56ff684a5896efba667978164c56f172c8ef81d52",
+    "services/windows_native/trend_radar_routes.py": "7c5b151a2e223ed8036b11f8de6f8cd0f54773d1669bbc7432fd0c0e0a0d81b1",
+    "services/windows_native/trend_radar_lineage.py": "38e5ec5faff46f4492a80bf8503d97ed8bb98793179315a00a5ffc493ce7757a",
+    "services/windows_native/intelligence_service.py": "b68373d562801bff0ca1abedf7d6f039a9abe8fdfe03b81e414e78fb2e3f0e41",
+    "services/windows_native/idea_engine.py": "7d0bead4a79fbced38be684165f345276586322b8dac2c5987dfcf9756a12400",
+    "services/windows_native/studio_media_planner.py": "a676de52944478b4c93d5e3f4cd26d6e6d0369ca3cb229a09b6125ad2c806e65",
+    "services/windows_native/server.py": "ce1c746c600d44e751fd4a16ef33358e665ac3b0abd858be11c29e1a22201e52",
+    "services/windows_native/access.py": "9f468a2bee3adab2c579c5f126a5026a8eb4ab7402dad289d8005c7dd332291a",
+    "services/windows_native/tests/test_qualified_learning_feedback.py": "648f28e27738ae9f1300acc12544ce0ddf4a8b570bef749e16645b5024b596e5",
+    "services/windows_native/tests/test_qualified_learning_feedback_http.py": "09186a7db29b45923a3f2de0bfb140b27d004e857ed6ce05f71365054a6db86b",
+    "scripts/north_star_native_qualified_learning.py": "08994988e366d928aa29f033b676ed4fe285fe0f33072386fbc3755b912d3053",
+    "docs/NATIVE_QUALIFIED_LEARNING_FEEDBACK.md": "7229e9d9746f0fcbd3cad7dd4c7bb777fbc2fb517fefa335c49d7a65637ddfce"
+  },
+  "tests": {
+    "current_related_native_passed": 91,
+    "related_native_seconds": 351.926,
+    "new_kernel_consumer_cases": 16,
+    "new_signed_http_cases": 8,
+    "full_studio_passed": 343,
+    "studio_duration_ms": 1303.8662,
+    "prior_full_native_at_signed_controls": 1003,
+    "prior_full_native_seconds": 1277.771,
+    "current_full_native_not_run": true,
+    "api_rules_unchanged": true
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-qualified-learning-feedback-flow-n2",
+    "evidence_sha256": "aec6ee65495abbe9dd77871c44d540b7367f7d167f499dcefbf34254b3b412ad",
+    "exports": {
+      "backup.json": {
+        "sha256": "3bfb375ba2679665dca35ef5d016b39bbf021e654604f9d004582c8ade75dc2e",
+        "bytes": 2735
+      },
+      "cost-summary.json": {
+        "sha256": "0a5212dfc00f0c643763e66ec802cfc82705d66ce5bc8e2d94292650ba3a4a94",
+        "bytes": 140168
+      },
+      "evidence.json": {
+        "sha256": "aec6ee65495abbe9dd77871c44d540b7367f7d167f499dcefbf34254b3b412ad",
+        "bytes": 5651
+      },
+      "expected-analytics-history.json": {
+        "sha256": "50e046baa062802f96162e001a2511bd3ddaf60e10a04053bc7bd085479b1456",
+        "bytes": 118224
+      },
+      "expected-intelligence-journals.json": {
+        "sha256": "51f6dc655416917159ddd85a1f2e74a31e844b1aa28048bc11fc8d0876753c06",
+        "bytes": 479769
+      },
+      "expected-jobs.json": {
+        "sha256": "329a62ccc78191270123b7dde89c2609ef1e1b941c997b700568b9a711809c3f",
+        "bytes": 99458
+      },
+      "expected-journals.json": {
+        "sha256": "c7595dc70c1d038644c7b5bbf3c587667a78bfa89d289c4c0204585afac1e31e",
+        "bytes": 798952
+      },
+      "expected-learning-history.json": {
+        "sha256": "0e35d9a526da5ff3218f74dff0d4cb548db46da1c769e31095f03105c97cee43",
+        "bytes": 90044
+      },
+      "expected-media-plan.json": {
+        "sha256": "55fb289babc0f432a8ca5a5d91b72ca35806e7e4a2bd503ce8b09ee63a1c2d4a",
+        "bytes": 58575
+      },
+      "expected-projections.json": {
+        "sha256": "1a636e110e900e2373ed52d896a3efd2b4512f7925f21996d33d2cbf7ab2ada8",
+        "bytes": 68754
+      },
+      "expected-projects.json": {
+        "sha256": "09b81d68d94e57adf51ad2531f4a414be9538d033152181594c0d459e93e7fb1",
+        "bytes": 347498
+      },
+      "expected-publications.json": {
+        "sha256": "a9f4ed21b69ec81370c5e40b3d6ae3eca8c2efaa0813e26bf1145565db1eafe8",
+        "bytes": 103659
+      },
+      "expected-template-suggestions.json": {
+        "sha256": "1a173a6bc6fbfca75a6f9d4397b3dc32660913a1c2a58c39aa0c2411ed6393f9",
+        "bytes": 2950
+      },
+      "expected-winner-history.json": {
+        "sha256": "bff5e15c9653b10d53cc8825d487599f29d75ddfabb22276b58422cd45903211",
+        "bytes": 406510
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-signed-learning-controls-replay.json": {
+        "sha256": "f3dc3491702d42188a3ebf5d08b8e6f8e78dd2f72c0162f3c43a3bf68bf9c5c9",
+        "bytes": 130
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "e2c361dd4916564649ec23e35d47d2931b14c266dd05ed86a3cc9e5bb064cd7c",
+        "bytes": 13786
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "a3791dd05039d066953a5eaa2963b8a27ad66895376675fd48f5e16a21579252",
+        "bytes": 8146
+      },
+      "new-process-replay.json": {
+        "sha256": "3f815cf7f820ccf35d0f6be83ef5f206fd0b345516b193b04b2997fd9fc7b68f",
+        "bytes": 405
+      },
+      "owned-qualified-learning.zip": {
+        "sha256": "e03d4ed5d8fae47dc140deb98a14dfda143bc11f79536fcb150faa088e9f8062",
+        "bytes": 6219472
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "8e5bc3b0c474ca501f2314258e70125bb5fe4f6d57b70612b5961441e8391a96",
+        "bytes": 1905
+      },
+      "recovery-restore.json": {
+        "sha256": "6794b928810e225e1ee26a169cfac8ffd715d434820c64b77b45f1dcf4608de4",
+        "bytes": 3157
+      },
+      "restored-in-process.json": {
+        "sha256": "3f815cf7f820ccf35d0f6be83ef5f206fd0b345516b193b04b2997fd9fc7b68f",
+        "bytes": 405
+      }
+    },
+    "backup_sha256": "e03d4ed5d8fae47dc140deb98a14dfda143bc11f79536fcb150faa088e9f8062",
+    "backup_bytes": 6219472,
+    "backup_entries": 31
+  },
+  "logs": {
+    "native-qualified-learning-related-n1.log": "b9ec99fe37ccc5fc7373f6a4d78179d3adcb659f677d962fd5899f1706bd321f",
+    "native-qualified-learning-related-n2.log": "0e9390641a73aa1fc6898f5796d808c938e0b7555a73e1d616ea9d5b86e62284",
+    "native-qualified-learning-studio-full-n1.log": "b67839fab8febe96d7548c1c9feeea9efb576f5da41f2d1bdfa25bd728ed5751"
+  },
+  "qualified_original_learning_assessment_peer_response_cost_receipt_feature_scope_bound_every_read": true,
+  "current_owner_csrf_raw_ack_mock_digest_channel_scope_idempotency_and_final_identity_recheck": true,
+  "schema_removal_cannot_downgrade_to_fixture_reader": true,
+  "consistent_writer_order_readonly_intelligence_reuses_workflow_transaction_no_nested_begin": true,
+  "four_consumers_preserve_seven_dimensions_distinct_posts_group_controls_nulls_mock_original_lineage": true,
+  "mock_history_refuses_real_trend_ranking": true,
+  "qualified_frozen_idea_packet_revalidated_before_fixture_research_or_idea_dispatch": true,
+  "storyboard_media_recommendations_saved_without_applying_shots_or_payment": true,
+  "catalog_template_reference_or_style_match_full_historical_style_unverified_human_selection": true,
+  "seven_receipts_eleven_observations_eight_assessments_three_learning_two_projections_24_workflow_four_intelligence_journals_restore_exact": true,
+  "mock_publication_wire_requests": 70,
+  "mock_analytics_read_requests": 33,
+  "mock_peer_account_requests": 6,
+  "mock_initial_account_requests": 1,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "retained_signed_http_requests": 0,
+  "explicit_synthetic_source_qc_rights_oauth_account_metrics_research_ideas_script_identity_fixtures": true,
+  "one_local_created_illustration_not_rendered_or_inferred": true,
+  "studio_projection_controls_or_qualified_bridge_events_integrated": false,
+  "browser_owner_real_provider_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

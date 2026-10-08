@@ -59,6 +59,19 @@ class NativeStudioMediaPlanner:
                 'unknown_paid_estimates':sum(row['estimated_cost'] is None for row in attempted),
                 'unknown_paid_actual_costs':sum(row['actual_cost'] is None for row in attempted),
                 'historical_capture_complete':False,'planning_authorizes_payment':False}}
+        from .qualified_learning_feedback import from_run_context,qualified_context
+        feedback=from_run_context((doc.get('content_intelligence') or {}).get('run',{}).get('context'))
+        if feedback is not None:
+            qualified_context(getattr(self.store,'qualified_learning',None),feedback,source_con=con)
+            selection=doc.get('channel_profile') or {};scope=feedback['scope']
+            if scope['channel_profile_ref']!=(selection.get('profile') or {}).get('profile_ref') or scope['channel_profile_sha256']!=selection.get('profile_sha256'):
+                raise WorkflowError('NATIVE_QUALIFIED_LEARNING_SCOPE_MISMATCH',409)
+            context['channel_history_recommendations']={'schema_version':'native-qualified-media-recommendations-v1',
+                'projection_id':feedback['projection_id'],'projection_sha256':feedback['projection_sha256'],
+                'source_binding':feedback['source_binding'],'mock':feedback['mock'],
+                'real_audience_observation':feedback['real_audience_observation'],
+                'dimensions':feedback['consumers']['media_planner'],'recommendation_only':True,
+                'automatic_application':False,'planning_authorizes_payment':False,'limitation':feedback['limitations'][0]}
         return context,state
 
     @staticmethod

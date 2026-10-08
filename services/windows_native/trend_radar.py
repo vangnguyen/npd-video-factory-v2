@@ -32,6 +32,15 @@ class NativeTrendRadar:
     def get(self,identifier,record_type=None,con=None):
         value=self.store.get(identifier,'RadarRecord',con)
         if value['workspace_id']!=self.workspace or (record_type and value['record_type']!=record_type):raise WorkflowError('TREND_RECORD_NOT_FOUND',404)
+        if value['record_type']=='learning' and (value['payload'].get('schema_version')=='native-qualified-learning-feedback-v1'
+            or 'source_binding' in value['payload'] or 'consumers' in value['payload']):
+            from .qualified_learning_feedback import NativeQualifiedLearningFeedback
+            service=getattr(self,'qualified_learning',None)
+            if type(service) is not NativeQualifiedLearningFeedback or service.radar is not self:raise WorkflowError('NATIVE_QUALIFIED_LEARNING_NOT_CONFIGURED',409)
+            service.read(value)
+        if value['record_type']=='assessment' and value['payload'].get('learning_feedback') is not None:
+            from .qualified_learning_feedback import qualified_context
+            qualified_context(getattr(self,'qualified_learning',None),value['payload']['learning_feedback'])
         return value
 
     def records(self,record_type,con,limit=2001):
@@ -165,11 +174,14 @@ class NativeTrendRadar:
             existing=self.records('cluster',con);used=set();assessments=[]
             feedback=None
             if payload.learning_snapshot_id:
-                learning=self.get(payload.learning_snapshot_id,'learning',con)['payload'];scope=learning['scope']
+                learning_record=self.get(payload.learning_snapshot_id,'learning',con);learning=learning_record['payload'];scope=learning['scope']
                 if scope['channel_profile_ref']!=payload.channel_profile_ref or scope['channel_profile_sha256']!=selection['profile_sha256'] or scope['platform']!=payload.platform:
                     raise WorkflowError('TREND_LEARNING_SCOPE_MISMATCH',409)
                 if scope['mock'] and any(not v['payload']['mock'] for v in values):raise WorkflowError('TREND_MOCK_HISTORY_CANNOT_RANK_REAL_SIGNALS',409)
                 feedback={'learning_snapshot_id':payload.learning_snapshot_id,'content_sha256':digest(learning),'scope':scope,'recommendations':learning['recommendations']}
+                if learning.get('schema_version')=='native-qualified-learning-feedback-v1':
+                    from .qualified_learning_feedback import context
+                    feedback['qualified_context']=context(learning_record)
             for draft,members,edges in clusters(values,payload.clustering,as_of):
                 references=sorted({v['payload']['signal']['source_reference'] for v in members})
                 matching=[v for v in existing if v['id'] not in used and (set(v['payload']['source_references']) & set(references) or v['payload']['canonical_key']==draft.canonical_key)]
@@ -188,7 +200,8 @@ class NativeTrendRadar:
                     'cluster_snapshot':cluster,'signal_ids':draft.signal_ids,'signal_hashes':{v['id']:v['payload']['raw_signal_hash'] for v in members},
                     'channel_selection':selection,'platform':payload.platform,'business_objective':payload.business_objective,
                     'score':score,'ranking':ranking,'as_of':as_of.isoformat(),'mock':all(v['payload']['mock'] for v in members),
-                    'mixed_source_modes':len({v['payload']['mock'] for v in members})>1,'automatic_production':False},con,assessment_id)
+                    'mixed_source_modes':len({v['payload']['mock'] for v in members})>1,'automatic_production':False,
+                    **({'learning_feedback':feedback['qualified_context']} if feedback and 'qualified_context' in feedback else {})},con,assessment_id)
                 assessments.append(assessment_id)
             batch=self.put('assessment',{'record_role':'refresh_batch','request':request,'request_sha256':digest(request),
                 'assessment_ids':assessments,'as_of':as_of.isoformat(),'latest_signal_count':len(values),'source_scan_truncated':len(all_signals)>2000,

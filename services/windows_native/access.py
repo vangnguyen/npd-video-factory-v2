@@ -39,7 +39,7 @@ def permission_for(method, path):
     if re.fullmatch(r'/api/projects/'+ID+r'/official-analytics(?:/noas_'+ID+r'/cancel)?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-winners',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-learning',path):return 'manage'
-    if path in ('/api/trends/collections','/api/trends/learning') or re.fullmatch(r'/api/trends/collections/'+ID+'/cancel',path):return 'manage'
+    if path in ('/api/trends/collections','/api/trends/learning','/api/trends/learning/qualified') or re.fullmatch(r'/api/trends/collections/'+ID+'/cancel',path):return 'manage'
     if path in ('/api/trends/refresh','/api/trends/handoff'):return 'edit'
     if re.fullmatch(r'/api/bridge/events/bevt_[a-f0-9]{48}/(enqueue|cancel)',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/rights/[a-f0-9]{32}\.(jpg|png|mp4|wav|music\.wav)',path):return 'manage'

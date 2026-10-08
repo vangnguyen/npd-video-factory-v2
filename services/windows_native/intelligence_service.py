@@ -98,6 +98,11 @@ class IntelligenceService:
             validate(trend_context)
             if channel_profile!=trend_context['channel_selection'] or channel_profile['profile']['content_profile_id']!=profile_id:raise WorkflowError('TREND_CHANNEL_PROFILE_MISMATCH',400)
             context.update(trend_radar=trend_context,channel_profile=channel_profile)
+            from .qualified_learning_feedback import from_run_context,qualified_context,idea_recommendations
+            feedback=from_run_context(context)
+            if feedback is not None:
+                qualified_context(getattr(self,'qualified_learning',None),feedback)
+                context['channel_history_recommendations']=idea_recommendations(feedback)
         elif channel_profile is not None:raise WorkflowError('TREND_CONTEXT_REQUIRED',400)
         run=ResearchRun(query=query,context=context,provider=self.research_provider.key,
                         provenance={'origin':'explicit_research_input','source_discovery':'human supplied public URLs or configured references'})
@@ -175,6 +180,12 @@ class IntelligenceService:
         try:
             out.mkdir(parents=True,exist_ok=False)
             run=self.store.get(operation['run_id'],'ResearchRun')
+            from .qualified_learning_feedback import from_run_context,qualified_context,idea_recommendations
+            feedback=from_run_context(run['context'])
+            if feedback is not None:
+                qualified_context(getattr(self,'qualified_learning',None),feedback)
+                if run['context'].get('channel_history_recommendations')!=idea_recommendations(feedback):raise WorkflowError('NATIVE_QUALIFIED_LEARNING_CONTEXT_CHANGED')
+            elif run['context'].get('channel_history_recommendations') is not None:raise WorkflowError('NATIVE_QUALIFIED_LEARNING_CONTEXT_CHANGED')
             if operation['action']=='research':
                 run=self.store.put('ResearchRun',{**run,'status':'RESEARCHING','error':None},run['version'])
                 sources,findings,metadata=self.research_provider.research(run['query'],{**run['context'],'run_id':run['id']})
