@@ -51,6 +51,7 @@ def permission_for(method, path):
         return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/analytics(?:/nasy_' + ID + r'/(process|cancel))?', path):
         return 'manage'
+    if re.fullmatch(r'/api/projects/'+ID+r'/analytics-refresh(?:/tick|/narp_'+ID+r'/state)?',path):return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/publications/npub_' + ID + r'/(approve|cancel|dry-run)', path):
         return 'manage'
     if re.fullmatch(r'/api/projects/' + ID + r'/publications', path):

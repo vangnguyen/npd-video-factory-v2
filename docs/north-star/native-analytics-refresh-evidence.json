@@ -1,0 +1,175 @@
+{
+  "schema": "native-analytics-refresh-evidence-v1",
+  "parent_head": "429ddf517691428e53dbbc49532efb5fe798f224",
+  "source_sha256": {
+    "services/windows_native/analytics_refresh.py": "e06dcb682aa380b6ee573ad2731c44acd7cc68ade174a75f7d2de35b7b590b68",
+    "services/windows_native/analytics_refresh_models.py": "99e36d42e88dfa1735da6ad0928a73db60c59cef315082cc2c07237389fd608a",
+    "services/windows_native/analytics.py": "02aa0c7dd0e43df265384f4c9830973e5c2776296401f426cfb7ebf7858e0c39",
+    "services/windows_native/analytics_routes.py": "148bf32c5112b944e6b11c19fe291609201c5facd34081ea9e3d8c214ed6b166",
+    "services/windows_native/server.py": "9283631588437456a702645cb941b17bccdf5d295bcf9039bdbb47cfcdb4ed2a",
+    "services/windows_native/access.py": "c311e182bad03d8a0640f8308b29c1c425050dec0048b08390887f4279bb6c2b",
+    "services/windows_native/backup.py": "43b4c6435a4446d91ed89d5d09b92b88b87e72ff8fa8eacce57e795d5832946a",
+    "services/windows_native/tests/test_analytics_refresh.py": "bbe283aeff4aad1c952dcd10d088616d2d3774297c43c3ddb8470d13f287c91e",
+    "services/windows_native/tests/test_analytics_refresh_http.py": "3d3a4887cff571ec74ae6cb848d7c8993a12ba9f3231313c7d85d9f6f85c84e8",
+    "apps/studio-web/native-analytics-refresh.mjs": "5a2626282904e5fb0a4560ae2119d0439d28379061be7bf51ad49e041abfe38b",
+    "apps/studio-web/native-analytics.mjs": "2c62f23bbd2db9847989d3eecb2cc173c0fc8ade5dc5fca77e4289e725537fad",
+    "apps/studio-web/native.mjs": "06c87c05d5ae4e2a71fc1e26aa68bc6d5d2c343d35733c482b20746317481b45",
+    "apps/studio-web/native.html": "113fe4f65fa1f6c3d0a076930da203cbebd8d06a47886c950f90c4a1f6508186",
+    "apps/studio-web/tests/native-analytics-refresh.test.mjs": "cb5195a7ba309716af6ea6669c0a2342ca508628e0fc8c1b498c4d5da1aefecb",
+    "scripts/north_star_native_analytics_refresh.py": "f73a4543a068e7a1e56718ff662d6eac2d809883078c91769ea13a3c782ac048",
+    "services/windows_native/tests/test_phase10_http.py": "d772932856d2d21e4705eba24721001b9931a56b1dade361f5ed345f5308d51e",
+    "docs/NATIVE_RECURRING_ANALYTICS.md": "86cb26fe795b5deced98b3002b03972d326cbbce450d4d226b59a0a36bdf6685"
+  },
+  "tests": {
+    "full_native_passed": 713,
+    "full_native_seconds": 530.623,
+    "new_native_cases": 14,
+    "full_studio_passed": 273,
+    "full_studio_ms": 1172.6025,
+    "new_dom_cases": 5,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-analytics-refresh-flow-n2",
+    "evidence_sha256": "594bc7a247030d229b71395a126cb971e86d8fb23f3f148f500f148a2720b0d5",
+    "human_http_requests": 29,
+    "plans": 3,
+    "occurrences": 4,
+    "new_fixture_snapshots": 2,
+    "exports": {
+      "backup.json": {
+        "sha256": "2e9d9e46d78aefa2ba25754d54ebbe0ec465ffbc8f7417028519aa27621f211d",
+        "bytes": 2586
+      },
+      "cancelled-rate-sync.json": {
+        "sha256": "9cfa8a7b1646234de020edf1aea5d8cca66d42e834705f5cdb5068912fc9ae63",
+        "bytes": 2406
+      },
+      "created-normal-policy.json": {
+        "sha256": "a58740e9d6ee2ae358958ed63af49084efd2d9066cb283d37ae310c86d2a73e6",
+        "bytes": 2377
+      },
+      "evidence.json": {
+        "sha256": "594bc7a247030d229b71395a126cb971e86d8fb23f3f148f500f148a2720b0d5",
+        "bytes": 5298
+      },
+      "exhausted-normal-policy.json": {
+        "sha256": "5b5d2e90ceaa3f48be4ed1116ee94c473be5540fa86ee4342785c4d969b02e14",
+        "bytes": 5928
+      },
+      "exhausted-rate-policy.json": {
+        "sha256": "9a5999ef589d09fb1c8da0f36b99b3e1d4eba4e2963b9a07f68aef2058aa67ee",
+        "bytes": 6807
+      },
+      "exhausted-rate-sync.json": {
+        "sha256": "68c838f214f9ca17c2e292889e9028c472b57d381643999f5e0593931d2ad5ea",
+        "bytes": 2888
+      },
+      "expected-policies.json": {
+        "sha256": "773e0a8ef157a49c93b7aa580b106369c661f8cf2dff9792a34dfb76cd9a5a0d",
+        "bytes": 16611
+      },
+      "first-recurring-sync.json": {
+        "sha256": "408832966ecbd5d0af287ea5b230d09ddaaaece02a10b6c6348f1b703c16665d",
+        "bytes": 13144
+      },
+      "history-after.json": {
+        "sha256": "cac8cfeb297c5dd7e9b65ec253d5e0132820d4d39d864a370d9f3f98b97c0ffe",
+        "bytes": 83259
+      },
+      "history-before.json": {
+        "sha256": "c47d2c1027a44fb43871e6f6c777e52947d325e513c3e49aa1273d07400869fa",
+        "bytes": 53116
+      },
+      "http-requests.json": {
+        "sha256": "88275bb6ba15ea02d02cd35c3f45ad53a12b4d47033b1261b4ba0d1cdf24b2d5",
+        "bytes": 4276
+      },
+      "initial-restore.json": {
+        "sha256": "edb31cc331d8a31723f0b12bcc701ce8229847873524e99201fe0c9de3a97d76",
+        "bytes": 2808
+      },
+      "new-process-replay.json": {
+        "sha256": "142911d400cbeb69a08eea043060548216d2cdd7d7d215ad2c19a9438a5d10b5",
+        "bytes": 141
+      },
+      "official-not-configured-policy.json": {
+        "sha256": "eae755d8f52d92c137a31d486a44e8cb05474a43549e349c7e39d093463e48aa",
+        "bytes": 2391
+      },
+      "owned-analytics-refresh.zip": {
+        "sha256": "59a176fd62a07aa9e833523d7603f4ae5ef7351a666e9eca40c22030d18475d6",
+        "bytes": 15291878
+      },
+      "physical-source-hashes.json": {
+        "sha256": "21cac9d23afa9379341ab80e6ff4a3639194bcf609593ecdba1d0e4712cf7630",
+        "bytes": 25132
+      },
+      "project-before-and-after.json": {
+        "sha256": "21f8726fdaf74486624baea17a6c106419a4903fce9445f41fef088296907f3d",
+        "bytes": 646982
+      },
+      "rate-limited-sync.json": {
+        "sha256": "c36422315c290a3e28112dc4b4f0e595ef463e09ff6b58ed432f3b2035d3745d",
+        "bytes": 2090
+      },
+      "recovery-restore.json": {
+        "sha256": "0fb4b71f442f2fe3ebbba3936a954218682109b6dae07fad7e3036af69aeada9",
+        "bytes": 2975
+      },
+      "restored-in-process.json": {
+        "sha256": "142911d400cbeb69a08eea043060548216d2cdd7d7d215ad2c19a9438a5d10b5",
+        "bytes": 141
+      }
+    }
+  },
+  "logs": {
+    "analytics-refresh-api-r1.log": "5786f5e8aa7d8b10b074880b6d693d9a397a4032c20278313bb0cb84ca1668cd",
+    "analytics-refresh-bundle-verify.log": "80d33dd344867f58710ffd3ab1eb2859d3fa7f803bc776e2fee8b33a2cc34364",
+    "analytics-refresh-contract-n1.log": "f4a93d15b995d0b1320489a3a0a6ce3c9397e366c78542097ae2078b272368ae",
+    "analytics-refresh-contract-n2.log": "61ace3050f7cffdf4fa4335ba33c490da3950ac6f5761d7273412c529e6d7143",
+    "analytics-refresh-contract-n3.log": "c7dfeb0aab48b6ba2d802444f8c5b4c2e0b91dc87c48f10ca2f4a381913a1f32",
+    "analytics-refresh-contract-n4.log": "d4bc1707332049c6df52803f93e55262e4498cb880e0cb4f32601c1f175673ec",
+    "analytics-refresh-contract-n5.log": "71d76ccc2e3007ebb0d0d0507fad3c4909d3bbbad248ff760a9456aa191beb7d",
+    "analytics-refresh-fence-r1.log": "2cf26b2ea2663cd8dfa3151c36ab554aa2bd8b948f59495e66b354a4a93432ae",
+    "analytics-refresh-final-r1.log": "e11e5915d81faad7550ee3f5f144c5b5ff8ffc8dcc6b7e7a0bac9d01d12d3aa2",
+    "analytics-refresh-final-r2.log": "ddea72949f29f0e984e5c44b2094822106464d78d66e8a2d59e75bc988b3e681",
+    "analytics-refresh-final-r3.log": "d4060365e323b195514926fb54384e190b5748210f8437c3292e10e77decb6b9",
+    "analytics-refresh-migration-r1.log": "e93f3eeb8692123e8239273086703378586e3f2051db1df18f90c4fc08fac5bf",
+    "analytics-refresh-migration-r2.log": "b9dd3d99f580c8c3bfb30d0fe7e634239287247d35e251ad06288f2bd311666b",
+    "analytics-refresh-models-r1.log": "3aad292ca00d095b135a951011c9e1ea9e19e7558a7a5aaa3c3e6ceba5a4c851",
+    "analytics-refresh-node-r1.log": "8419c9a7b9f483e37e380d4e67ceca85d35da3254c02a26355e9c8e97ce94d5d",
+    "analytics-refresh-repository-r1.log": "82dfc91184905ab08b4ab829bd875e1d7942a6cf3e561ea84e38fab9e60549a4",
+    "analytics-refresh-repository-r2.log": "35e3792d744cbe32838d62dddb9808d7506fcff53bbe004f16dfae805982c28d",
+    "native-analytics-refresh-full-native.log": "26296d8157af4bee5a02f98c1df712d4e6d2c55fc3fa1cb54211deff039e3477",
+    "native-analytics-refresh-full-studio.log": "75cc07a944568bbf1b30fda69c350ad1509eb73abcd0f287f54cc5bce70709d0",
+    "native-analytics-refresh-n1.log": "b8cd394b64c9460ee31641aca0a77e644089a1d1d7ca6ca8b543076383488980",
+    "native-analytics-refresh-n2.log": "454ecf745fe11afa662df61e61d360c6130573845a6213e519b75009ee82eeda",
+    "native-analytics-refresh-reopen-n2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "studio-analytics-refresh-r1.log": "5baf5d327d06771d7ba9356e4ad88e6e113528afc829941767308d6cdf15128b"
+  },
+  "runtime_profile_versioned_frozen_channel_base_unchanged": true,
+  "default_disabled": true,
+  "explicit_owner_fixture_and_read_only_acknowledgment": true,
+  "official_native_provider_status": "NOT_CONFIGURED",
+  "official_sync_jobs_created": 0,
+  "atomic_occurrence_and_existing_queue": true,
+  "bounded_schedule_and_max_runs": true,
+  "rate_limit_backoff_reused": true,
+  "pending_jobs_cancelled_on_revision_change": true,
+  "missed_slots_skip_without_burst": true,
+  "same_plan_and_history_after_restore_new_process": true,
+  "historical_project_jobs_media_preserved": true,
+  "null_metrics_not_fabricated": true,
+  "fixture_clock_and_metrics_not_audience_trajectory": true,
+  "actual_audience_observed": false,
+  "browser_non_developer_uat": false,
+  "owner_uat_accepted": false,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

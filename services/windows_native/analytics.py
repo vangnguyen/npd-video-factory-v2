@@ -6,6 +6,7 @@ from datetime import datetime,timedelta,timezone
 import hashlib
 import json
 import uuid
+from contextlib import nullcontext
 
 from .contracts import WorkflowError,digest
 from .analytics_features import capture
@@ -25,6 +26,7 @@ class NativeAnalytics:
     def __init__(self,store,publications,*,clock=lambda:datetime.now(timezone.utc)):
         self.store,self.publications,self.clock=store,publications,clock
         self.workspace=publications.workspace_id;self.provider=DeterministicAnalyticsProvider()
+        self.refresh = None
         with store.transaction() as con:
             con.executescript('''
                 CREATE TABLE IF NOT EXISTS native_analytics_syncs (
@@ -42,13 +44,16 @@ class NativeAnalytics:
                     event_id INTEGER PRIMARY KEY AUTOINCREMENT,sync_id TEXT NOT NULL,project_id TEXT NOT NULL,
                     action TEXT NOT NULL,actor_ref TEXT NOT NULL,evidence_json TEXT NOT NULL,created_at TEXT NOT NULL);
             ''')
+        from .analytics_refresh import NativeAnalyticsRefresh
+        self.refresh=NativeAnalyticsRefresh(self)
 
     def states(self):
         return {'schema_version':'native-analytics-providers-v1','workspace_id':self.workspace,'external_calls_enabled':False,
             'official':[OfficialAnalyticsProvider(platform=p,provider_key='native-official-'+p,credential_ref='').state(p).model_dump(mode='json')
                 for p in ['youtube','tiktok','instagram_reels','facebook']],
             'fixture':[self.provider.state(p).model_dump(mode='json') for p in ['youtube','tiktok','instagram_reels','facebook']],
-            'automatic_sync_enabled':False,'real_provider_tested':False,'production_deployed':False}
+            'automatic_sync_enabled':False,'recurring_fixture_supported':True,'official_scheduled_refresh_enabled':False,
+            'real_provider_tested':False,'production_deployed':False}
 
     def event(self,con,row,action,actor,**evidence):
         con.execute('INSERT INTO native_analytics_events(sync_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?)',
@@ -79,10 +84,10 @@ class NativeAnalytics:
         if row is None:raise WorkflowError('NATIVE_ANALYTICS_SYNC_NOT_FOUND',404)
         return row
 
-    def create(self,project,payload,*,actor):
+    def create(self,project,payload,*,actor,con=None,due_refresh=False):
         request=payload.model_dump(mode='json',exclude={'request_key'});fingerprint=digest(request)
         key=hashlib.sha256(payload.request_key.encode()).hexdigest()
-        with self.store.transaction() as con:
+        with (self.store.transaction() if con is None else nullcontext(con)) as con:
             prior=con.execute('SELECT * FROM native_analytics_syncs WHERE workspace_id=? AND project_id=? AND request_key_sha256=?',
                 (self.workspace,project,key)).fetchone()
             if prior:
@@ -90,13 +95,14 @@ class NativeAnalytics:
                 return self.read_sync(prior),True
             pub=self.publication(con,project,payload.publication_id)
             failure=None;status='queued';scheduled=payload.scheduled_for
-            if scheduled and not utc(self.clock())<utc(scheduled)<=utc(self.clock())+timedelta(days=365):
+            instant=utc(self.clock())
+            if scheduled and not ((utc(scheduled)<=instant if due_refresh else instant<utc(scheduled)<=instant+timedelta(days=365))):
                 raise WorkflowError('NATIVE_ANALYTICS_SCHEDULE_INVALID',400)
             if payload.provider_mode=='official':
                 status='not_configured';failure='NATIVE_ANALYTICS_OFFICIAL_ACCOUNT_AND_LIVE_PUBLICATION_REQUIRED'
             elif pub['status']!='dry_run_succeeded' or not pub['receipt'] or pub['receipt']['mock'] is not True:
                 raise WorkflowError('NATIVE_ANALYTICS_COMPLETED_DRY_RUN_REQUIRED')
-            elif scheduled:status='scheduled'
+            elif scheduled and not due_refresh:status='scheduled'
             stamp=now();identity='nasy_'+uuid.uuid4().hex
             con.execute('INSERT INTO native_analytics_syncs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 (identity,self.workspace,project,payload.publication_id,key,fingerprint,json.dumps(request),self.binding(pub),
@@ -147,6 +153,9 @@ class NativeAnalytics:
                 con.execute('SAVEPOINT native_analytics_attempt')
                 try:
                     value=self.read_sync(row);payload=NativeAnalyticsRequest.model_validate({**value['request'],'request_key':'internal-native-analytics-key'})
+                    if self.refresh is not None and not self.refresh.admit(con,row):
+                        con.execute('RELEASE native_analytics_attempt')
+                        return self.read_sync(self.row(con,row['project_id'],row['sync_id']))
                     pub=self.publication(con,row['project_id'],row['publication_id'])
                     if payload.provider_mode!='fixture' or not payload.fixture_acknowledged or self.binding(pub)!=row['binding_sha256']:
                         raise WorkflowError('NATIVE_ANALYTICS_BINDING_CHANGED')
@@ -174,6 +183,9 @@ class NativeAnalytics:
                         'features':features,'assessment':{**asdict(assessment),'factors':[factor.model_dump(mode='json') for factor in assessment.factors],
                             'basis':'explicit_fixture_absolute_reference_only','channel_baseline_verified':False,'automatic_action':False},
                         'insights':[{**asdict(item),'applied':False,'autonomous_execution':False,'mock':True} for item in insights]}
+                    if self.refresh is not None:
+                        occurrence=self.refresh.evidence(con,row)
+                        if occurrence is not None:snapshot['evidence']['refresh_occurrence']=occurrence
                     con.execute('INSERT INTO native_analytics_snapshots VALUES(?,?,?,?,?,?,?,?)',
                         (snapshot_id,row['sync_id'],self.workspace,row['project_id'],row['publication_id'],stamp,digest(snapshot),json.dumps(snapshot,ensure_ascii=False)))
                     con.execute("UPDATE native_analytics_syncs SET status='succeeded',attempts=?,snapshot_id=?,failure_code=NULL,next_at=NULL,updated_at=? WHERE sync_id=?",
@@ -195,8 +207,8 @@ class NativeAnalytics:
                 return self.read_sync(self.row(con,row['project_id'],row['sync_id']))
             return None
 
-    def cancel(self,project,identity,*,fingerprint,actor):
-        with self.store.transaction() as con:
+    def cancel(self,project,identity,*,fingerprint,actor,con=None):
+        with (self.store.transaction() if con is None else nullcontext(con)) as con:
             row=self.row(con,project,identity)
             if fingerprint!=row['request_fingerprint']:raise WorkflowError('NATIVE_ANALYTICS_BINDING_CHANGED')
             if row['status']=='succeeded':raise WorkflowError('NATIVE_ANALYTICS_ALREADY_COMPLETE')

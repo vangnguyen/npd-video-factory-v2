@@ -1,3 +1,4 @@
+import {initializeNativeAnalyticsRefresh} from './native-analytics-refresh.mjs';
 export const supportsNativeAnalytics=session=>session?.capabilities?.native_analytics_review===true;
 const metricNames=['views','impressions','reach','watch_time','average_view_duration','completion_rate','likes','comments','shares','saves','followers_gained','clicks','ctr','revenue','rpm'];
 export const nativeAnalyticsMetrics=Object.freeze([
@@ -95,7 +96,7 @@ export function nativeMetricSeries(rows,metric='views'){
     .sort((a,b)=>Date.parse(a.collected_at)-Date.parse(b.collected_at)||a.snapshot_id.localeCompare(b.snapshot_id));
 }
 
-export function initializeNativeAnalytics({api,getState,root=document,onMessage=()=>{},uuid=()=>crypto.randomUUID()}){
+export function initializeNativeAnalytics({api,getState,root=document,onMessage=()=>{},uuid=()=>crypto.randomUUID(),enableRefresh=false}){
   const $=id=>root.getElementById(id);let scope='',revision=0,working=false,rows=[],selected=null,cursor=null,view='project';const keys=new Map();
   const context=()=>JSON.stringify([getState().project?.id,getState().project?.revision,$('native-analytics-publication').value]);
   const base=()=>`/api/projects/${getState().project.id}/analytics`;
@@ -182,5 +183,7 @@ export function initializeNativeAnalytics({api,getState,root=document,onMessage=
     onMessage('Đã chuẩn bị ý định mới. Kiểm tra nguồn và xác nhận trước khi lưu yêu cầu; chưa gọi provider.');controls();});
   for(const id of ['native-analytics-mode','native-analytics-ack'])$(id).addEventListener('change',controls);
   metricSelect.addEventListener('change',render);
-  sync();return{sync,controls,read,execute,publications};
+  const refreshUI=enableRefresh?initializeNativeAnalyticsRefresh({api,getState,root,onMessage,uuid}):null;
+  if(enableRefresh)$('native-refresh-section').hidden=false;
+  sync();return{sync(){sync();refreshUI?.sync();},controls(){controls();refreshUI?.controls();},read,execute,publications,refreshUI};
 }

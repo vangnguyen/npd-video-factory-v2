@@ -391,7 +391,7 @@ if (typeof document !== "undefined") {
     if(session.capabilities?.native_analytics_review===true){
       const analytics=await import('./native-analytics.mjs');$('native-analytics-card').hidden=false;
       analyticsUI=analytics.initializeNativeAnalytics({api,getState:()=>({project,dirty,busy,canManage,
-        workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});
+        workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,enableRefresh:session.capabilities?.native_analytics_refresh===true});
     }
     if(session.capabilities?.native_publication_review===true){
       const publications=await import('./native-publications.mjs');$('native-publication-card').hidden=false;
