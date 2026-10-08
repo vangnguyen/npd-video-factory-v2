@@ -1,0 +1,138 @@
+{
+  "schema": "native-official-winner-kernel-evidence-v1",
+  "parent_head": "de62cbfedf03ffdc1ee6889bffd496fed125b014",
+  "source_sha256": {
+    "apps/api/app/analytics_channel_policy.py": "f7399821d141d19295d4799c6ce92e3524e8462989f2485f92d954c81908a88d",
+    "apps/api/app/analytics_cohort.py": "db3b5dbff2802402c159d6a35c7a72263bfdbbcfe8bfa0be58b217216a2bb233",
+    "services/windows_native/official_winners.py": "bc5b55f62f03da77024e807db2845c87d288b826b6bae4f47ac73866b0adf7fa",
+    "services/windows_native/official_winner_models.py": "23ab21ac3282ce7a8d03c229afa22366c74bf07ff442ec635c0783552cc4d434",
+    "services/windows_native/official_analytics.py": "71809430c9efdb23d1fff3ef092c6677d946bc3e772271f6fb0a1256b2152601",
+    "services/windows_native/official_publications.py": "c8f73277194a3f09fb1385be199a269170334f202c37d6b61ac770de5a48b6d9",
+    "services/windows_native/backup.py": "57064607d7da6e05c989b9f24a816280f71b1d295d36537ab075363f3e1be511",
+    "services/windows_native/tests/test_official_winners.py": "c4fc6c3237fb8aa766dd4c2db52798343bf286fe6a0d0cdc22d5fb47c57e7c5e",
+    "scripts/north_star_native_official_winners.py": "79fc963671e1a8a1eb4c1d0f242922570259af949ed0086ad705903ec206baa7",
+    "docs/NATIVE_OFFICIAL_WINNER_KERNEL.md": "c8a6942238ad0aad84f2c68ece615ed610063017961ea2636ffd6b242c531b21"
+  },
+  "tests": {
+    "current_related_native_passed": 148,
+    "native_seconds": 322.393,
+    "native_modules": 8,
+    "new_native_cases": 13,
+    "current_api_cohort_learning_passed": 50,
+    "api_seconds": 72.91,
+    "prior_full_native_962_at_parent": true,
+    "prior_full_studio_319_source_unchanged": true,
+    "initial_api_32_passed_18_tmp_permission_errors_repaired_in_owned_fresh_directory": true,
+    "initial_native_fixture_archive_and_float_comparison_repaired_without_product_gate_relaxation": true
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-winner-kernel-flow-n1",
+    "evidence_sha256": "5f4f2b40dd1f7bea123ee3909e517dbc45bf865600045167980846065c1cfa2b",
+    "exports": {
+      "backup.json": {
+        "sha256": "ad708bb0f9abcef8504af098575239322098098e1f5185ca572ae1c28e3d4ccb",
+        "bytes": 2041
+      },
+      "cost-summary.json": {
+        "sha256": "083e1b729c46f6d9ec343139b63ecce8e5295db732017b19b098f58e5de2ae1f",
+        "bytes": 121493
+      },
+      "evidence.json": {
+        "sha256": "5f4f2b40dd1f7bea123ee3909e517dbc45bf865600045167980846065c1cfa2b",
+        "bytes": 4871
+      },
+      "expected-analytics-history.json": {
+        "sha256": "ac3c7c59a015c3ed5db62dcf15d7ac7ac1196ce88ae0c37440f216ea1a87a905",
+        "bytes": 105499
+      },
+      "expected-jobs.json": {
+        "sha256": "4db4c62f14a6d77b3e7d9dca1e315428a39a0ff01a482489ea9a22e10a91501e",
+        "bytes": 83373
+      },
+      "expected-journals.json": {
+        "sha256": "47c41f735975d9122f355a421af99aa0949f7a9d73c21496ffd154dc69ba5c13",
+        "bytes": 542915
+      },
+      "expected-projects.json": {
+        "sha256": "7489c3a383d42f1785773526bb922318442a287d6c8b62190b353eaa022b7f96",
+        "bytes": 167847
+      },
+      "expected-publications.json": {
+        "sha256": "ae49a190b836361f0b0adb1e971c2ad0e232391f6312604932903eb3c571fd10",
+        "bytes": 88850
+      },
+      "expected-winner-history.json": {
+        "sha256": "ea477319ca12a89bd72aafe9d3d7df95c27a2fb71ba1a96aeca3d36170e378de",
+        "bytes": 196668
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "legacy-signed-controls-replay.json": {
+        "sha256": "5d68cbb0970156ce0751bedbd3d97e0f04ac874be71c8c611cc23c21d82635d9",
+        "bytes": 99
+      },
+      "mock-publication-wire-summary.json": {
+        "sha256": "f4b44e3b6803b54fbd7c2a732bbcc4d409f854db36b3e92210796d4900d281ba",
+        "bytes": 11817
+      },
+      "mock-read-wire-summary.json": {
+        "sha256": "6fed6081d231d84776c422b253377aff75fe18b433bdf83c6ec6eda2893a5e9e",
+        "bytes": 7338
+      },
+      "new-process-replay.json": {
+        "sha256": "52960b53f5d171f84e51cdbc51401f4496f0ca3f285971a2c693b0c3c2a58013",
+        "bytes": 307
+      },
+      "owned-official-winners.zip": {
+        "sha256": "7ed8f493b847be07b0c5d041b75d7f9bd39b52052d46f2c3ec16a8b8d265e0f1",
+        "bytes": 4400057
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "1e3c9e98c68129162ab545fd82220dbc98a4ba245e44ed80857b0ebb26c1eaa6",
+        "bytes": 1533
+      },
+      "recovery-restore.json": {
+        "sha256": "5da4bd7c4b5a75163d91529617ae2018692aaf86e07937b199530b654e433168",
+        "bytes": 2434
+      },
+      "restored-in-process.json": {
+        "sha256": "52960b53f5d171f84e51cdbc51401f4496f0ca3f285971a2c693b0c3c2a58013",
+        "bytes": 307
+      }
+    },
+    "backup_sha256": "7ed8f493b847be07b0c5d041b75d7f9bd39b52052d46f2c3ec16a8b8d265e0f1",
+    "backup_bytes": 4400057
+  },
+  "logs": {
+    "native-official-winner-api-related-n1.log": "17444d938ed76d7279cb2498c99ea5f6d3f45a7a60a74ddf3e3a19767fb6e663",
+    "native-official-winner-api-related-n2.log": "71948072877f0a88a65c7a3f96e8c5c1e1aede3f330fb8ee4e4ee94949644e17",
+    "native-official-winner-native-related-n1.log": "2ea2d686a581da18f90717cd999c3417c508c109ee721f21ef875649455a8c96",
+    "native-official-winner-native-related-n2.log": "79123118a0cd3c71bf78dac4d8473857c14e756e07a5981888150d074f452652"
+  },
+  "shared_pure_existing_policy_rule_bodies_algorithm_version_and_default_contract_unchanged": true,
+  "qualified_candidate_peer_receipt_response_cost_frozen_features_validated_in_one_transaction": true,
+  "current_owner_strict_recommendation_and_mock_acknowledgement_bounded_same_scope_distinct_posts": true,
+  "latest_saved_result_ties_duplicate_remote_posts_unknown_scope_and_sparse_metrics_fail_closed": true,
+  "frozen_original_assessment_recomputed_without_new_cohort_credentials_provider_or_current_editable_metadata": true,
+  "all_four_qualified_mock_states_no_real_audience_baseline_velocity_or_automatic_action": true,
+  "six_receipts_ten_histories_four_assessments_twenty_two_journals_and_prior_signed_controls_restore_exact": true,
+  "mock_analytics_read_requests": 30,
+  "mock_publication_wire_requests": 60,
+  "mock_peer_account_lookup_requests": 5,
+  "mock_initial_account_lookup_requests": 1,
+  "signed_http_requests": 0,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_oauth_provider_and_clock_fixtures": true,
+  "accepted_runtime_publishing_or_analytics_enabled": false,
+  "real_provider_browser_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

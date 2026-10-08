@@ -121,8 +121,9 @@ class NativeOfficialPublications:
                 if request.metadata is not None and snapshot['metadata']!=request.metadata.model_dump(mode='json'):raise ValueError()
             return {**value,'snapshot':snapshot,'schema_version':'native-official-publication-v1','mock':snapshot['mock'],'token_returned':False,'real_provider_tested':False,'receipt':None,'published':False,'mock_publication_complete':False}
         except (ValueError,TypeError,KeyError,PublishingWireError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EVIDENCE_CHANGED') from None
-    def get(self,project,identity):
-        with self.store.transaction() as con:
+    def get(self,project,identity,*,con=None):
+        from contextlib import nullcontext
+        with (self.store.transaction() if con is None else nullcontext(con)) as con:
             value=self.read(self.row(con,project,identity));row=con.execute('SELECT * FROM native_official_publish_receipts WHERE publication_id=?',(identity,)).fetchone()
             receipt=None
             if row is not None:

@@ -109,14 +109,15 @@ class NativeOfficialAnalytics:
             raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_NOT_FOUND', 404)
         return row
 
-    def source(self, project, request, stamp):
-        publication = self.publications.get(project, request.publication_id)
+    def source(self, project, request, stamp, *, con=None):
+        from contextlib import nullcontext
+        publication = self.publications.get(project, request.publication_id, con=con)
         receipt, snapshot = publication['receipt'], publication['snapshot']
         if (publication['status'] != 'completed' or receipt is None
             or publication['snapshot_sha256'] != request.expected_publication_snapshot_sha256
             or digest(receipt) != request.expected_receipt_sha256):
             raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_QUALIFIED_RECEIPT_REQUIRED')
-        with self.store.transaction() as con:
+        with (self.store.transaction() if con is None else nullcontext(con)) as con:
             parent = self.publications.publications.read(self.publications.publications.get_row(con, project, snapshot['request']['dry_run_publication_id']))
             job = self.store.job(con.execute('SELECT * FROM jobs WHERE id=? AND project_id=?', (snapshot['final_job_id'], project)).fetchone(), con)
             if (parent['snapshot_sha256'] != snapshot['dry_run_snapshot_sha256'] or parent['status'] != 'dry_run_succeeded'
@@ -206,8 +207,9 @@ class NativeOfficialAnalytics:
             row = self.row(con, project, identity); self.event(con, row, 'analytics.official.read.created', authority['token_id'], status=status, mock=snapshot['mock'], external_call=False)
             return self.read(row), False
 
-    def get(self, project, identity):
-        with self.store.transaction() as con:
+    def get(self, project, identity, *, con=None):
+        from contextlib import nullcontext
+        with (self.store.transaction() if con is None else nullcontext(con)) as con:
             value = self.read(self.row(con, project, identity))
             value['result'] = self.result(con, value) if value['result_snapshot_id'] else None
             return value
