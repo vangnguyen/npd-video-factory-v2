@@ -1,0 +1,124 @@
+{
+  "schema": "native-official-publish-review-evidence-v1",
+  "parent_head": "803960d5decc90f7fb72eaf76fb779018955580e",
+  "source_sha256": {
+    "services/windows_native/official_publications.py": "b2f2f054d26898515efec71adeddfc32fedbba169c5d03e60ddae1f66b303243",
+    "services/windows_native/official_publication_models.py": "df3534447bc2aadfdbb7f848727023784b0a9b27d40d7559ce3fddae386a87f9",
+    "services/windows_native/official_publication_registry.py": "69d41f7d9d46b2413df27e3b8d0cdc87c72458100ba26058b199b756f76b86a8",
+    "services/windows_native/backup.py": "0da8fd5f5da223d614043aa8b6b3fef9c2c437adb75fd063b311ce62ea440950",
+    "services/windows_native/tests/test_official_publications.py": "032e87ea8d103efc05df01b2004dd089c3ccc29702f4ca886d0a6b06e3740c83",
+    "scripts/north_star_native_official_publish_review.py": "d41c4e9f1554fe082a0b0d777b3b9e2b0a11e0e7546fb647c59d10318116a5df",
+    "docs/NATIVE_OFFICIAL_PUBLISH_REVIEW.md": "947518066678fa14b2f6bfbedac69d4d6ba73ee324e03d059b843006cc71f97b"
+  },
+  "tests": {
+    "full_native_passed": 785,
+    "full_native_seconds": 614.12,
+    "new_native_cases": 20,
+    "focused_prior_related_cases_passed": 63,
+    "focused_prior_related_seconds": 20.631,
+    "unchanged_prior_studio_passed": 285,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-publish-review-flow-n1",
+    "evidence_sha256": "94616b4ca707513b3bc3f4824d735f332dd880c384f3e08ece1a622b351e1222",
+    "exports": {
+      "backup.json": {
+        "sha256": "e2ab5ad1a66c4ed456347e9b9607832e603c00cd55742fd66b50840df7a048b7",
+        "bytes": 1212
+      },
+      "expected-events.json": {
+        "sha256": "c9dd64eb0cad0f5165e68589d49d2d4bca68c29a8b40b23fcd78afc462d2cb03",
+        "bytes": 1318
+      },
+      "expected-grants.json": {
+        "sha256": "56086f718fdf2740acfb2cd27ad4831c41b96a82ed7c85d0706d308cf5beacce",
+        "bytes": 1262
+      },
+      "expected-review.json": {
+        "sha256": "94cbd08bac048232c82e639d5f6a5b9d135912299e85b4207f0c1fe9450e37a1",
+        "bytes": 13354
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "owned-official-publish-review.zip": {
+        "sha256": "c8fc541635348909a25945959cb97807af0ba9d96a291a73131af218f30c0211",
+        "bytes": 216520
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "83b9db2ab1ed50c6552dd9e08b2b80d87eccdf1df2d5b9d541dbc1a50dde5ccd",
+        "bytes": 258
+      },
+      "prepared-dispatch.json": {
+        "sha256": "db925220963cf851266fa908aae09c1ad8c6a248d5ee1dcfb13aece398614ff5",
+        "bytes": 558
+      },
+      "project-expected.json": {
+        "sha256": "685c66b78b18a7eae29aa8c0acd3f50c751c94740afa6e977a7cd024d99eab47",
+        "bytes": 5207
+      },
+      "recovery-restore.json": {
+        "sha256": "8ce597fbf09990d6bde15c0ef60c761d7ae5b7625523812cfb9541d1e44c855f",
+        "bytes": 1622
+      },
+      "restored-in-process.json": {
+        "sha256": "d23b0b49d54e3100f4ce198f1b3ea0ff1c35fd478fdc03da7aa80cfd63d991db",
+        "bytes": 262
+      },
+      "review-approved.json": {
+        "sha256": "a5a7805719baec24a4d165ffa9d912ad9c43daa9fcffaa2a869ab749f627079f",
+        "bytes": 13351
+      },
+      "review-cancelled.json": {
+        "sha256": "94cbd08bac048232c82e639d5f6a5b9d135912299e85b4207f0c1fe9450e37a1",
+        "bytes": 13354
+      },
+      "review-created.json": {
+        "sha256": "5bbcdd2d7afd3577d8cf605f488adcdf0591bad8dda708f61573f0232b850b0f",
+        "bytes": 13335
+      },
+      "new-process-replay.json": {
+        "sha256": "d23b0b49d54e3100f4ce198f1b3ea0ff1c35fd478fdc03da7aa80cfd63d991db",
+        "bytes": 262
+      }
+    },
+    "backup_sha256": "c8fc541635348909a25945959cb97807af0ba9d96a291a73131af218f30c0211"
+  },
+  "logs": {
+    "native-official-publication-review-contracts-r1.log": "775ec8bfb0d7f5daa80d06038748e8d6a34133d4815c8aa7034e7c614466f60d",
+    "native-official-publication-review-contracts-r2.log": "18eec4d793b1592e4885be47c526b10cd647832ec3ab5c2b2f6a1223a90ce344",
+    "native-official-publication-review-contracts-r3.log": "ab9ed91f266e857644e7332e94015f4ea01935078634cb95491c5f71b0706101",
+    "native-official-publication-review-integrated-r1.log": "a4ac9400b89a1ee0419327db2014225d9186e3d4f78d689866e8e537e6765da5",
+    "native-official-publication-review-integrated-r2.log": "09e319f4b90bb55ff2e7f212e96ebc026cbb6e9dbad295a02b28e3a5ef3c02a7",
+    "native-official-publish-review-flow-n1.log": "e75aa0fc2679d6d2c53d4dad5f9dce81f2e4db7161442ad0a94c185453275196",
+    "native-official-publish-review-full-native-r1.log": "52693e35775d5aeed8c9ae7bf13b90758f80d73ec8fc2b6c7c81cc5a8cfd85d7"
+  },
+  "typed_default_off_target_disclosures_chunk_gates_and_frozen_factory": true,
+  "current_account_proof_and_final_project_artifact_rights_platform_revalidated": true,
+  "separate_verified_human_owner_grant_and_current_identity_expiry_revision": true,
+  "dry_run_and_account_check_are_not_publish_authority": true,
+  "duplicate_same_account_final_hash_guard_mode_scoped": true,
+  "unsent_cancelled_or_unconfigured_review_can_be_replaced_history_preserved": true,
+  "atomic_review_and_grant_concurrency": true,
+  "strict_rehashed_flags_and_invalid_size_sanitized": true,
+  "unsent_cancel_revokes_grant_begun_dispatch_needs_reconciliation": true,
+  "backup_counts_four_tables_and_rejects_pending_work": true,
+  "workflow_database_restore_and_new_process_exact_replay": true,
+  "no_orm_framework_gpu_or_crypto_dependency_for_journal": true,
+  "rehearsal_render_rights_account_identity_and_capability_are_explicit_fixtures": true,
+  "fixture_render_nonplayable_not_full_media_qc": true,
+  "official_http_studio_upload_worker_integrated": false,
+  "protected_publishing_credential_and_session_lifecycle_complete": false,
+  "official_upload_requests": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "owner_uat_accepted": false,
+  "real_account_platform_or_media_accepted": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
