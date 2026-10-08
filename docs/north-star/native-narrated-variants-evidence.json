@@ -1,0 +1,920 @@
+{
+  "schema": "native-narrated-variants-evidence-v1",
+  "parent_head": "be237b59da075b0faccafc2b1dbea3e053bf84f1",
+  "source_sha256": {
+    "services/windows_native/narrated_variants.py": "f769bfb72d3551f746499f9fee6d0c07fea021952863754a6dfd5936380361bf",
+    "services/windows_native/narrated_variants_models.py": "290b956124b1c7b6bb9b013be9d3627ced53750b1146e78f16646d950dc2fae3",
+    "services/windows_native/narrated_variant_routes.py": "31e6ca6666ef26a2dba46a0698a6b865ec6de9e451e19fbde11f698d75716317",
+    "services/windows_native/narration.py": "50957425827d236ef6241d77d0df9498ac9ff44c0786d2ae802958d51e9e0a57",
+    "services/windows_native/narration_preview.py": "af511e27f377d3f6018c01adeb1887a8c219807ba894e3c4ac7293a61f5402bd",
+    "services/windows_native/narration_rights.py": "9aa7141fcf112a737e944b285f6e0ba851f36d9e9b50b0b7600bbb69ddc615eb",
+    "services/windows_native/server.py": "a72adc8aafb93971e2a5d614391e2cfb6037434c527328c205821c3e8bed2432",
+    "services/windows_native/access.py": "91ae5d48d363468b579a9bbb0bab16d86b28331a39c734246a4ab05a75a6ca2e",
+    "services/windows_native/backup.py": "bf6f7b32dc573148a807df91922ce9efe9884bea4126a446e8729c707385afd0",
+    "services/windows_native/tests/test_narrated_variants.py": "2be9fdfc3f945f57b78670a601aed6d73d8210d879606b39255ccadee05197a3",
+    "services/windows_native/tests/test_narrated_variants_http.py": "fc5e535ea8d6cbd70089468272a4e82c53f96ebde2f6f9f9e7b9f7b96eb8ea4e",
+    "apps/studio-web/native-narrated-variants.mjs": "38dc920bdef55f33925ee5660bdee35ac6d27f442394b29c16ccd5ebe59f10bf",
+    "apps/studio-web/native-narration.mjs": "5bb20a49005867a5b65c5793cb5420fec3277d26e5a3e00c76332cbee5a7141e",
+    "apps/studio-web/native.mjs": "f78f4aa3223245e5d77c12bb143dde86f3e8eb7cf1e7edc1bf41a701b74dbe60",
+    "apps/studio-web/native.html": "a3318a0c44f36207acaa0f40f4258859711831db03daa6083b49de215412a398",
+    "apps/studio-web/tests/native-narrated-variants.test.mjs": "81f302e2175a3a7a3ef16e719599d998aa30a80dd017ac5abe7ab9dc76daeb80",
+    "scripts/north_star_native_narrated_variants.py": "116c35269982454e3075e630cbd3399a0e039f179a28b3c317298aba79e1ac28",
+    "apps/studio-web/native-variants.mjs": "dc6ad24bbff5557300732f07576667a9d61475eb1cd17e45dcf3e270394f2e3b",
+    "docs/NATIVE_NARRATED_VARIANTS.md": "79a082866d26412d043f05889219794eea49eb109e71bb585832e1ee5ad29d01",
+    "services/windows_native/tests/test_phase10_http.py": "0979b354e26b7ee247fa53fb6fe806334fa28b9e3e1c23624ba1b330bb48f8ae"
+  },
+  "tests": {
+    "full_native_passed": 732,
+    "full_native_seconds": 571.264,
+    "new_native_cases": 15,
+    "full_studio_passed": 278,
+    "new_studio_cases": 5,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-variants-flow-n5",
+    "evidence_sha256": "c8e952958ff67c60040850dae0d1826e6735c9731bcd8d1c841a9c901ce03edd",
+    "receipts": [
+      {
+        "project_id": "3542246ddb7f58fb99c7a7062b22f0c1",
+        "profile": {
+          "profile_ref": "youtube-landscape@1",
+          "label": "YouTube · 16:9",
+          "platform": "youtube",
+          "aspect_ratio": "16:9",
+          "width": 1920,
+          "height": 1080
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "58d55182b3f24f39caaed349b0113940483c9449a28e26c836d893d244e62541",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "preview_sha256": "58d55182b3f24f39caaed349b0113940483c9449a28e26c836d893d244e62541",
+        "new_inference_calls": 0,
+        "independent_fixture_approval": true,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "18cef551ff1c500fae7fb7f99af5ed08",
+        "profile": {
+          "profile_ref": "youtube-shorts@1",
+          "label": "YouTube Shorts · 9:16",
+          "platform": "youtube",
+          "aspect_ratio": "9:16",
+          "width": 1080,
+          "height": 1920
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "preview_sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "new_inference_calls": 0,
+        "independent_fixture_approval": true,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "366bb59f6bdb5286b290509068ff2017",
+        "profile": {
+          "profile_ref": "tiktok-short@1",
+          "label": "TikTok · 9:16",
+          "platform": "tiktok",
+          "aspect_ratio": "9:16",
+          "width": 1080,
+          "height": 1920
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "preview_sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "new_inference_calls": 0,
+        "independent_fixture_approval": true,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "f45e4167eee65d4d969350412f61e4e5",
+        "profile": {
+          "profile_ref": "instagram-reel@1",
+          "label": "Instagram Reels · 9:16",
+          "platform": "instagram",
+          "aspect_ratio": "9:16",
+          "width": 1080,
+          "height": 1920
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "preview_sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "new_inference_calls": 0,
+        "independent_fixture_approval": true,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "14c16cb29bcf5575b0c807737d8a0987",
+        "profile": {
+          "profile_ref": "social-square@1",
+          "label": "Social · 1:1",
+          "platform": null,
+          "aspect_ratio": "1:1",
+          "width": 1080,
+          "height": 1080
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "7b60c3ebcb940c41b9ce79587bc334eabd3307d7de80c62090b0ca08993edad5",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "preview_sha256": "7b60c3ebcb940c41b9ce79587bc334eabd3307d7de80c62090b0ca08993edad5",
+        "new_inference_calls": 0,
+        "independent_fixture_approval": true,
+        "owner_uat_accepted": false
+      },
+      {
+        "project_id": "a1cdd59ea91c59a4a74ba1f5d8a67a23",
+        "profile": {
+          "profile_ref": "social-feed@1",
+          "label": "Feed · 4:5",
+          "platform": null,
+          "aspect_ratio": "4:5",
+          "width": 1080,
+          "height": 1350
+        },
+        "source_voice_sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "final_sha256": "b701ab0ce269c9779f8f92b6f195bec377449c9153ab2a121332feb62194af32",
+        "duration_seconds": 9.433333,
+        "full_qc": "passed",
+        "preview_sha256": "b701ab0ce269c9779f8f92b6f195bec377449c9153ab2a121332feb62194af32",
+        "new_inference_calls": 0,
+        "independent_fixture_approval": true,
+        "owner_uat_accepted": false
+      }
+    ],
+    "exports": {
+      "backup.json": {
+        "sha256": "90a696df6b119e00287ec824a31f16fc467d2a145cd0c50a4960da00e571a12e",
+        "bytes": 2631
+      },
+      "catalog.json": {
+        "sha256": "53adb211c05670b78ec169e3fc5239759466ed7cf8e38d3ad41596ba01dd1601",
+        "bytes": 1396
+      },
+      "copied-master-visual-restoration.json": {
+        "sha256": "0bb76fb65a97993443f8fc6383502edee759dceaeec86703fafed7f643fa9063",
+        "bytes": 503
+      },
+      "created-family.json": {
+        "sha256": "bf6eaeaefa2756b7f58a7862c480d7927742b593f4370ac995577eb1aa3a47a3",
+        "bytes": 15431
+      },
+      "expected-family-page.json": {
+        "sha256": "c87a3cc67e282fe76c6f3f2ccfbbdf85d61aecc3baa8185cffb3fb6ac1e425d6",
+        "bytes": 17105
+      },
+      "http-requests.json": {
+        "sha256": "a15d7f2c957f34e312cfb90790a302e00d916fd85ab253e02b2b333b3b953104",
+        "bytes": 32402
+      },
+      "initial-restore.json": {
+        "sha256": "c0e6fdabde4495e6301d752fc4d7e3f0b7e679dc1f9ffd5b08ef243c42e60f2d",
+        "bytes": 2808
+      },
+      "original-master.json": {
+        "sha256": "fc13dad4c37a3ba57c07796b75d0b021df9440e654307b3822b7ced0d332f066",
+        "bytes": 645345
+      },
+      "owned-narrated-variants.zip": {
+        "sha256": "2ed9e307c77ce4009cc1de568afc3f2b4dd853f588c76d65509be3c5e92aaec9",
+        "bytes": 62954300
+      },
+      "physical-source-hashes.json": {
+        "sha256": "21cac9d23afa9379341ab80e6ff4a3639194bcf609593ecdba1d0e4712cf7630",
+        "bytes": 25132
+      },
+      "receipts.json": {
+        "sha256": "01ee7b370586ecb8a2938b87809a075d3187dc9dfe797d0627050a94b310c74a",
+        "bytes": 4191
+      },
+      "recovery-restore.json": {
+        "sha256": "7b554b968f764e4ed18b70306ab85458d4590ad598fa4d6d72e4bf72b483f51f",
+        "bytes": 3020
+      },
+      "restored-in-process.json": {
+        "sha256": "1765009a386fe0d1e9a3dad5874dc73292b60ee2b26da42d61c8a77ed541e432",
+        "bytes": 196
+      },
+      "instagram-reel-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "instagram-reel-1/canonical-timeline.json": {
+        "sha256": "4e8064a745eccfa40252c631a34ab4f038e9b20fed244da5fcccda7530615675",
+        "bytes": 7310
+      },
+      "instagram-reel-1/cost.json": {
+        "sha256": "c2361c3b3777fcae73eb20062cfcef25fcd96f652c6b8a16e1ca2c90bc5c8adf",
+        "bytes": 791
+      },
+      "instagram-reel-1/final.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "instagram-reel-1/full-qc-report.json": {
+        "sha256": "5dcd68e30a1aef502f6b37861d2d66cfeb50c1c72c96c99247fa9074ceb3adac",
+        "bytes": 5837
+      },
+      "instagram-reel-1/initial-project.json": {
+        "sha256": "c9fbbc5d25663bc79d0e16f137a8bfa4d94318580a8d8d5c1cec63542991d017",
+        "bytes": 92053
+      },
+      "instagram-reel-1/job-events.json": {
+        "sha256": "309a831685d92df209eb1c3db369879f1b25242a1eba8a1c16a087c5dbe17460",
+        "bytes": 4520
+      },
+      "instagram-reel-1/job.json": {
+        "sha256": "d18a698cd2f4e4e4183db8e54c9e8996aa5f0d77e004760d529c4ec9bd63ce9f",
+        "bytes": 104096
+      },
+      "instagram-reel-1/narration-review.json": {
+        "sha256": "f51e3d773cc112837c1cf8135d1ee183342a9862b820a2d166089bf6eef18e74",
+        "bytes": 7770
+      },
+      "instagram-reel-1/preview.json": {
+        "sha256": "3bd7f49c5ecb655fbb815a15b1fdeb4b8d6abdf764e6b56c29bdd9e579321396",
+        "bytes": 16693
+      },
+      "instagram-reel-1/preview.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "instagram-reel-1/qc-report.json": {
+        "sha256": "5f1e5b7adcad741dd44604ccc95aaf0eb1a950244a1e7d1761f5fa72b377e4fe",
+        "bytes": 7039
+      },
+      "instagram-reel-1/qc.json": {
+        "sha256": "f11c5f7f23d7b2ef59e26283907c37701dc1d1de2428c436ef042d0289fd56f3",
+        "bytes": 10008
+      },
+      "instagram-reel-1/render-approval-fixture.json": {
+        "sha256": "a8b305fcbe8420008fe4d748ef696c4533aa3c57ac47e1766e8b65596d00fa66",
+        "bytes": 1214
+      },
+      "instagram-reel-1/render-manifest.json": {
+        "sha256": "ed9824463ed796019fa00ae412810b4a7bf17ccd51427dbbbe702a106ecfe19c",
+        "bytes": 6178
+      },
+      "instagram-reel-1/review-frame.png": {
+        "sha256": "ffa6c4c1e230af3f5abb1347f16d5ffb3686575e7150ad74239ceb2c706a3484",
+        "bytes": 176726
+      },
+      "instagram-reel-1/rights-review.json": {
+        "sha256": "3e22cdfdce48e2d98b47a046bcc806ee853c5e718bda35f94151a24190d47b11",
+        "bytes": 6614
+      },
+      "instagram-reel-1/subtitles.ass": {
+        "sha256": "e658e110947873f018ac1b7f6c3a033a9c8b136b457458277f619dccfc0a69d2",
+        "bytes": 947
+      },
+      "instagram-reel-1/timeline.json": {
+        "sha256": "871b667f3de7f4ed19b2b10c39b073de7a7cd3cab59d04d2c856f7f45086dcbc",
+        "bytes": 6619
+      },
+      "instagram-reel-1/transport-qc-report.json": {
+        "sha256": "4fb749b301e35a931b5111f358341ed6c5b4aa7729b73e2ab3052a833db41a57",
+        "bytes": 1160
+      },
+      "instagram-reel-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "instagram-reel-1/voice-reuse.json": {
+        "sha256": "8c42ed2305fa160403f870cf3e27248c8efbdfea60e056d498a45381fd174dd2",
+        "bytes": 1863
+      },
+      "instagram-reel-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "instagram-reel-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "social-feed-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "social-feed-1/canonical-timeline.json": {
+        "sha256": "65cb7f746e578c88a0e0fbd7d9990f158ac9f9a4ebd1009619c6447d35623c9e",
+        "bytes": 7309
+      },
+      "social-feed-1/cost.json": {
+        "sha256": "e2f528ef8b014596e2ecbc7e1d2c8102641d2962f1fa6a62c10cd8851835676f",
+        "bytes": 791
+      },
+      "social-feed-1/final.mp4": {
+        "sha256": "b701ab0ce269c9779f8f92b6f195bec377449c9153ab2a121332feb62194af32",
+        "bytes": 248672
+      },
+      "social-feed-1/full-qc-report.json": {
+        "sha256": "ca5650feec9cfdf7d1666f059aeb949700539ca337e60a36afb8bc6aa1ceb4a9",
+        "bytes": 5851
+      },
+      "social-feed-1/initial-project.json": {
+        "sha256": "cec2d34e581b21c604287f70b369b9f62a874d9c0bedbf42dc12433b71a57b38",
+        "bytes": 92019
+      },
+      "social-feed-1/job-events.json": {
+        "sha256": "7c9cca90b8ff5838d501c02f34ec21419d94771c9afc78db82eac0c67883aa50",
+        "bytes": 4518
+      },
+      "social-feed-1/job.json": {
+        "sha256": "860167d85949fd38f476352debb634b442898652f753006eb98d1259d1c91d85",
+        "bytes": 104193
+      },
+      "social-feed-1/narration-review.json": {
+        "sha256": "b31071f9d68b7a0116a0330f32858a04d83e8ac2589cc75d3c9311b1603e8fbd",
+        "bytes": 7770
+      },
+      "social-feed-1/preview.json": {
+        "sha256": "6ed923c030b15b0bd67dee22411ab627ed75a9bd50f3fbe1642639f76828be56",
+        "bytes": 16824
+      },
+      "social-feed-1/preview.mp4": {
+        "sha256": "b701ab0ce269c9779f8f92b6f195bec377449c9153ab2a121332feb62194af32",
+        "bytes": 248672
+      },
+      "social-feed-1/qc-report.json": {
+        "sha256": "cce02f7482326af7195bf2788fbe0bf60780f2d0c3fee0523e8e0df8ba7f9648",
+        "bytes": 7058
+      },
+      "social-feed-1/qc.json": {
+        "sha256": "a64dd1610596bc6322395839e19e7fb7d4a8944d8d74917042e76e9d9d55c329",
+        "bytes": 10107
+      },
+      "social-feed-1/render-approval-fixture.json": {
+        "sha256": "6ed8a245c0f46c91b619acd90ef7e35e66994150838001283c89b4013b4bd3c4",
+        "bytes": 1214
+      },
+      "social-feed-1/render-manifest.json": {
+        "sha256": "2b3ad35b28cf03d3ee4a2f0c614f95d0b14057b9df26e5feac76831eb01e7c05",
+        "bytes": 6178
+      },
+      "social-feed-1/review-frame.png": {
+        "sha256": "9e27953c9770c53b0ca94057f51bc9dd6bb7a0f97c7a242f9bb304d16d00198f",
+        "bytes": 151470
+      },
+      "social-feed-1/rights-review.json": {
+        "sha256": "6e3a0f116146334f3a3987b3c9429685048b339a0f8dc8271fbf843e1aac4836",
+        "bytes": 6614
+      },
+      "social-feed-1/subtitles.ass": {
+        "sha256": "bbda2a83b97395f01c2beab072c10eea21b1c192dec197d0881229402924e8cf",
+        "bytes": 947
+      },
+      "social-feed-1/timeline.json": {
+        "sha256": "f220a9f06e9a3fbc7df60f65193907004a11517c608571b5f0eb12d9ca68c3c2",
+        "bytes": 6622
+      },
+      "social-feed-1/transport-qc-report.json": {
+        "sha256": "f155e708bd1f746918785fea962a847327158a22557ff042949ced96b844c15f",
+        "bytes": 1165
+      },
+      "social-feed-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "social-feed-1/voice-reuse.json": {
+        "sha256": "fe0682f55f5c1db91ec8bfc9bb6f5ee4ddb99a12b04932fccfdae0f1445c3be4",
+        "bytes": 1863
+      },
+      "social-feed-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "social-feed-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "social-square-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "social-square-1/canonical-timeline.json": {
+        "sha256": "53c69b7771ed3a298134e841be1e1581b3b8faf1c7e8c17da7e35212994da6ab",
+        "bytes": 7309
+      },
+      "social-square-1/cost.json": {
+        "sha256": "8dfa3b7940e58d3180001e75536826f35fa5d1bccf08abba011802834f667304",
+        "bytes": 791
+      },
+      "social-square-1/final.mp4": {
+        "sha256": "7b60c3ebcb940c41b9ce79587bc334eabd3307d7de80c62090b0ca08993edad5",
+        "bytes": 240182
+      },
+      "social-square-1/full-qc-report.json": {
+        "sha256": "3279f1ac549412d5092f7d68793c4bfce5ace40d5a65fe4bffc69a04afd91925",
+        "bytes": 5339
+      },
+      "social-square-1/initial-project.json": {
+        "sha256": "c72e81b160db002beb860e0e703b35b5aed536aec8bf947caf02d1dd438d60d8",
+        "bytes": 92020
+      },
+      "social-square-1/job-events.json": {
+        "sha256": "d1e7e90b7f731b8e450c5f3d51c454201a929d0abf2b3d27f7ca953c9b6c46fb",
+        "bytes": 4520
+      },
+      "social-square-1/job.json": {
+        "sha256": "06584d68699e2d22c16888972592603abbe8e771eae29ab1aca5e00160cb1442",
+        "bytes": 103205
+      },
+      "social-square-1/narration-review.json": {
+        "sha256": "5f9c3f455d2d04479e200c62953ff2adfa81988076461abcfb63312971f884ba",
+        "bytes": 7770
+      },
+      "social-square-1/preview.json": {
+        "sha256": "e9ecd2b18f34ed8c61f15b0e9f7a831e302ab3ca2d6ef70b561436f4922d6ca8",
+        "bytes": 15611
+      },
+      "social-square-1/preview.mp4": {
+        "sha256": "7b60c3ebcb940c41b9ce79587bc334eabd3307d7de80c62090b0ca08993edad5",
+        "bytes": 240182
+      },
+      "social-square-1/qc-report.json": {
+        "sha256": "7418858597993fa8019aff52ad46e4bfe20660d5627803b15c338c6ce090a61d",
+        "bytes": 6539
+      },
+      "social-square-1/qc.json": {
+        "sha256": "4ff63bd2ae7b7932ee8eac7f0c98c26295f3a80e273c4ca40c92793eec93b79c",
+        "bytes": 9230
+      },
+      "social-square-1/render-approval-fixture.json": {
+        "sha256": "2810bba0c27c8f25b90321fbfeb4937f8f448c6511fb015135f2d97f15557344",
+        "bytes": 1214
+      },
+      "social-square-1/render-manifest.json": {
+        "sha256": "423de054ed18f34ad678ce9f911961c690383d88531430c0743ba78789577ab9",
+        "bytes": 6111
+      },
+      "social-square-1/review-frame.png": {
+        "sha256": "96059d576d6d64b4d56d105e007262dc9cc1ad858b1f62d697c9fcb7bd823f12",
+        "bytes": 131434
+      },
+      "social-square-1/rights-review.json": {
+        "sha256": "c804fbac7886a4b27d4dc393d986a7ca3b380bfc490dea971fd800228a91609a",
+        "bytes": 6614
+      },
+      "social-square-1/subtitles.ass": {
+        "sha256": "3420c2b0efbc9b3a1b1cfd9c2030b8eee879b04f71fdacd996197afa51b764f1",
+        "bytes": 877
+      },
+      "social-square-1/timeline.json": {
+        "sha256": "d74c81a48ce163405dd670dc13b5ec3edb9d9a8d1e26549641bf67cd73cc8ca1",
+        "bytes": 6043
+      },
+      "social-square-1/transport-qc-report.json": {
+        "sha256": "7cfb24cbd17fa4b99d05bebffa1173a6c9b31229f9119fa2073b035f0108ce8e",
+        "bytes": 1158
+      },
+      "social-square-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "social-square-1/voice-reuse.json": {
+        "sha256": "e8fa7131d1f827f73342be478abf20d060d9d0a9e92c33ef106c596d362a9431",
+        "bytes": 1863
+      },
+      "social-square-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "social-square-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "tiktok-short-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "tiktok-short-1/canonical-timeline.json": {
+        "sha256": "4e8064a745eccfa40252c631a34ab4f038e9b20fed244da5fcccda7530615675",
+        "bytes": 7310
+      },
+      "tiktok-short-1/cost.json": {
+        "sha256": "0597639ee7730fa7cb2cfa8751aae5f8dfc562055335878045fdfdae23fe3ed5",
+        "bytes": 791
+      },
+      "tiktok-short-1/final.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "tiktok-short-1/full-qc-report.json": {
+        "sha256": "7d5584be8a6eeb5d82c77a5988fb00eb3bc7fd46d6c715ae10e35eab54c37670",
+        "bytes": 5837
+      },
+      "tiktok-short-1/initial-project.json": {
+        "sha256": "7cec0646d83bf7d23dd4a973941afbcdc0271488264c9c57dab554c5f22dac29",
+        "bytes": 92030
+      },
+      "tiktok-short-1/job-events.json": {
+        "sha256": "a1a0067c78570e5bf0c1731ad4cb773abb1f676a9f9b675e4cc474bbf686a692",
+        "bytes": 4517
+      },
+      "tiktok-short-1/job.json": {
+        "sha256": "21a45f1f8b658ace924d415a87775c40e2f01c4d9146e6f523f1e2ab511eae97",
+        "bytes": 104073
+      },
+      "tiktok-short-1/narration-review.json": {
+        "sha256": "2f21a2a065945ce0494e26a2a20549fcebf06f992ecf6ee3313883e9ce2b1b57",
+        "bytes": 7770
+      },
+      "tiktok-short-1/preview.json": {
+        "sha256": "eaf2c72f1b3a883517648fff1efd1ad85b6c8fc2ab3cdc68ecab2c4ecaa77606",
+        "bytes": 16693
+      },
+      "tiktok-short-1/preview.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "tiktok-short-1/qc-report.json": {
+        "sha256": "da7274c9b15f7c245d78212c8dfb98f3cfb89a54fadc9a9770d96e34bf343e0c",
+        "bytes": 7039
+      },
+      "tiktok-short-1/qc.json": {
+        "sha256": "04f31c6599a15b872995f2bc60bd1ead4f74c703cdf79d61766db51fd1acddd7",
+        "bytes": 10008
+      },
+      "tiktok-short-1/render-approval-fixture.json": {
+        "sha256": "6c3a7fd5f3a848780305e11444a660d9a451ad1ac0acb0857b82ed05cdca274e",
+        "bytes": 1214
+      },
+      "tiktok-short-1/render-manifest.json": {
+        "sha256": "836eccff290233ef1b48b0742fed1dd9e3d27a5d9617a64ff7c002dcebd7136d",
+        "bytes": 6178
+      },
+      "tiktok-short-1/review-frame.png": {
+        "sha256": "ffa6c4c1e230af3f5abb1347f16d5ffb3686575e7150ad74239ceb2c706a3484",
+        "bytes": 176726
+      },
+      "tiktok-short-1/rights-review.json": {
+        "sha256": "3afb5abf1e1fd038cf857166c061a0487b1ece195c4382dd245f1fef314524e4",
+        "bytes": 6614
+      },
+      "tiktok-short-1/subtitles.ass": {
+        "sha256": "e658e110947873f018ac1b7f6c3a033a9c8b136b457458277f619dccfc0a69d2",
+        "bytes": 947
+      },
+      "tiktok-short-1/timeline.json": {
+        "sha256": "871b667f3de7f4ed19b2b10c39b073de7a7cd3cab59d04d2c856f7f45086dcbc",
+        "bytes": 6619
+      },
+      "tiktok-short-1/transport-qc-report.json": {
+        "sha256": "4fb749b301e35a931b5111f358341ed6c5b4aa7729b73e2ab3052a833db41a57",
+        "bytes": 1160
+      },
+      "tiktok-short-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "tiktok-short-1/voice-reuse.json": {
+        "sha256": "1b87d6e43bfccfbca1ada7356e991b6eedf7c2c996141772d26f524cc3842b13",
+        "bytes": 1863
+      },
+      "tiktok-short-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "tiktok-short-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "youtube-landscape-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "youtube-landscape-1/canonical-timeline.json": {
+        "sha256": "fd23bb18362079f2770143461bba272a19280e4214cf5d9fd9a9fd54789e73e6",
+        "bytes": 7310
+      },
+      "youtube-landscape-1/cost.json": {
+        "sha256": "7ffe0f21da4c455a0790f504bee9234f9fad66cef4fbb89404e554dbbf151972",
+        "bytes": 791
+      },
+      "youtube-landscape-1/final.mp4": {
+        "sha256": "58d55182b3f24f39caaed349b0113940483c9449a28e26c836d893d244e62541",
+        "bytes": 247907
+      },
+      "youtube-landscape-1/full-qc-report.json": {
+        "sha256": "47311ee10380a8410ea0b00534cd33a52d3d128d4edee4171b25a1b6e9e5c061",
+        "bytes": 5313
+      },
+      "youtube-landscape-1/initial-project.json": {
+        "sha256": "e07028a2d930273ae1760514e4ea8f934a7a0bdf9f2465571a77b5bf1fdc4e29",
+        "bytes": 92043
+      },
+      "youtube-landscape-1/job-events.json": {
+        "sha256": "453bf5effbbb884cc480275ea85b6ec5ff8909ffa6477d4a20a78a48b46273bc",
+        "bytes": 4522
+      },
+      "youtube-landscape-1/job.json": {
+        "sha256": "b20e08fe3c03c9ef4efa63449ccd0fa57f74db1a0947531d54cb22a2fd3a6441",
+        "bytes": 103093
+      },
+      "youtube-landscape-1/narration-review.json": {
+        "sha256": "a2710fd8d911cf1a7fe02108581f0409e2be555a9b38074297e2e96b46339b83",
+        "bytes": 7770
+      },
+      "youtube-landscape-1/preview.json": {
+        "sha256": "65fc7f0635553be1681c99e7e184f281c99a84776d73c8cafd741b021b793f69",
+        "bytes": 15476
+      },
+      "youtube-landscape-1/preview.mp4": {
+        "sha256": "58d55182b3f24f39caaed349b0113940483c9449a28e26c836d893d244e62541",
+        "bytes": 247907
+      },
+      "youtube-landscape-1/qc-report.json": {
+        "sha256": "3cdacb947af394ea9d69bf6dc019b6521dff9c5ce98b91f55701a0bdf3a417b7",
+        "bytes": 6516
+      },
+      "youtube-landscape-1/qc.json": {
+        "sha256": "fefa7e630e9a7b837546b90482ca000a0f5cc9daa861f846aef1e4207266654d",
+        "bytes": 9127
+      },
+      "youtube-landscape-1/render-approval-fixture.json": {
+        "sha256": "faf53cc6c38e76edf3ae99b607784ab421092d9517690b70c9b038267c67bcf8",
+        "bytes": 1214
+      },
+      "youtube-landscape-1/render-manifest.json": {
+        "sha256": "63bdbb02c816b89a7b3a687fce3d8221a86111dccc2577ea5734776415f5f95e",
+        "bytes": 6119
+      },
+      "youtube-landscape-1/review-frame.png": {
+        "sha256": "590a127af3d2db47d3eb8141c6a04e407f394334505e9ca1b93b9f0af18bc049",
+        "bytes": 143937
+      },
+      "youtube-landscape-1/rights-review.json": {
+        "sha256": "b707b53ce1946105c4f63d3c0a9e6d46fe280f21c62fa20816dc5533fc20e7f3",
+        "bytes": 6614
+      },
+      "youtube-landscape-1/subtitles.ass": {
+        "sha256": "3f127b3b1b75ad86a4cee7542e7de3ddca97fa9b0bced3b9a6d3957bb205c37b",
+        "bytes": 875
+      },
+      "youtube-landscape-1/timeline.json": {
+        "sha256": "e957fc3f513bea882ccfeeefa9fae81f2472fc3b721f2abe3c2c4f502068a184",
+        "bytes": 6040
+      },
+      "youtube-landscape-1/transport-qc-report.json": {
+        "sha256": "2c63a052b0ae0ce621d283b6f99aaa356a6242329bfa81e59c0e312065982ae3",
+        "bytes": 1161
+      },
+      "youtube-landscape-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "youtube-landscape-1/voice-reuse.json": {
+        "sha256": "0c23ef22a23c93ade089d5f3637e41991e1773cb24448c1098d192a36fd69f13",
+        "bytes": 1863
+      },
+      "youtube-landscape-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "youtube-landscape-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "youtube-shorts-1/asset-provenance.json": {
+        "sha256": "a3d76c5bfd66daa0e23388272bfb262d4add3619b2f50352bc780247e5fb5278",
+        "bytes": 2891
+      },
+      "youtube-shorts-1/canonical-timeline.json": {
+        "sha256": "4e8064a745eccfa40252c631a34ab4f038e9b20fed244da5fcccda7530615675",
+        "bytes": 7310
+      },
+      "youtube-shorts-1/cost.json": {
+        "sha256": "77a94d0e2fc35b93e58663ff58f526a48113ffd9ed7095fcfc3151328536b7af",
+        "bytes": 791
+      },
+      "youtube-shorts-1/final.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "youtube-shorts-1/full-qc-report.json": {
+        "sha256": "4d44d3e4a8005b0a4d89675bc6e19c9898f53b28ff5de224c6a3befeb0b202e8",
+        "bytes": 5837
+      },
+      "youtube-shorts-1/initial-project.json": {
+        "sha256": "78edc91fb45df4011171a3333ebe68dfbe48db4e4ab871cb94dbbec8d1c72597",
+        "bytes": 92049
+      },
+      "youtube-shorts-1/job-events.json": {
+        "sha256": "956bd5353e31dab06043de097a07e25310945344ca7919029af2dc2b4798a0f3",
+        "bytes": 4521
+      },
+      "youtube-shorts-1/job.json": {
+        "sha256": "a60aca1dd52bebcaad64f1a6ee4dd67ebceb888be329774285b8b38dbdd28fc1",
+        "bytes": 104092
+      },
+      "youtube-shorts-1/narration-review.json": {
+        "sha256": "01734f49a8bb32a1a43de3dc0b584d2278cf94fccc848fdd53533c40984e372e",
+        "bytes": 7770
+      },
+      "youtube-shorts-1/preview.json": {
+        "sha256": "fefeb8f779cb5a28ea249b9a90efbc6e6a627d916aa31579254841af88f54598",
+        "bytes": 16693
+      },
+      "youtube-shorts-1/preview.mp4": {
+        "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+        "bytes": 261937
+      },
+      "youtube-shorts-1/qc-report.json": {
+        "sha256": "1b957d89620e341eda547408ab343401d7b81cd7eb692d08defb3e4645af4556",
+        "bytes": 7039
+      },
+      "youtube-shorts-1/qc.json": {
+        "sha256": "df576df0091f3bce69b17bfc952743e0a12dd4e867046ee9d851814b39ab46f2",
+        "bytes": 10008
+      },
+      "youtube-shorts-1/render-approval-fixture.json": {
+        "sha256": "dadd14bfe5901e4d8e62b876ac8b92c450fd24ca17a3cdb836dc5338351b4c9d",
+        "bytes": 1214
+      },
+      "youtube-shorts-1/render-manifest.json": {
+        "sha256": "c1fa606842a485065cba168ca2537fc6b27b3191c2bf9f5508e98b5395aaf2d0",
+        "bytes": 6178
+      },
+      "youtube-shorts-1/review-frame.png": {
+        "sha256": "ffa6c4c1e230af3f5abb1347f16d5ffb3686575e7150ad74239ceb2c706a3484",
+        "bytes": 176726
+      },
+      "youtube-shorts-1/rights-review.json": {
+        "sha256": "2b93169c3361d7386079c1f2c390c0ca1cabe2cec9a2106a28b004f6fede54f0",
+        "bytes": 6614
+      },
+      "youtube-shorts-1/subtitles.ass": {
+        "sha256": "e658e110947873f018ac1b7f6c3a033a9c8b136b457458277f619dccfc0a69d2",
+        "bytes": 947
+      },
+      "youtube-shorts-1/timeline.json": {
+        "sha256": "871b667f3de7f4ed19b2b10c39b073de7a7cd3cab59d04d2c856f7f45086dcbc",
+        "bytes": 6619
+      },
+      "youtube-shorts-1/transport-qc-report.json": {
+        "sha256": "4fb749b301e35a931b5111f358341ed6c5b4aa7729b73e2ab3052a833db41a57",
+        "bytes": 1160
+      },
+      "youtube-shorts-1/tts-plan.json": {
+        "sha256": "efae55f9b28a8c1b52de19bcf3b56a2126c026d36d5d078d4de446a84e03f1cb",
+        "bytes": 1225
+      },
+      "youtube-shorts-1/voice-reuse.json": {
+        "sha256": "3d0338b91e9293a5a72182568478e9a160ca0b3cf7fbf7a165eeb228b5a77ef6",
+        "bytes": 1863
+      },
+      "youtube-shorts-1/voice.json": {
+        "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+        "bytes": 1231
+      },
+      "youtube-shorts-1/voice.wav": {
+        "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+        "bytes": 702764
+      },
+      "instagram-reel-1/subtitle-qc/000.png": {
+        "sha256": "8710ff89a903fce552ff947559c28aa6cf682ae32f296c5d3677b40443485cdb",
+        "bytes": 63104
+      },
+      "instagram-reel-1/subtitle-qc/001.png": {
+        "sha256": "7688e3ebb7cda6cdd21c1f097677d4dbe033e97a942e559bc73247283024ee45",
+        "bytes": 60594
+      },
+      "instagram-reel-1/subtitle-qc/002.png": {
+        "sha256": "b37c9d095f8b41d39343ba862af96108853a351636013d819244c5eed0ebbf4d",
+        "bytes": 24086
+      },
+      "social-feed-1/subtitle-qc/000.png": {
+        "sha256": "98e5307afabfbe77b1ff9fe3c454c8dab52d00902259b08217405f98deae6e34",
+        "bytes": 54439
+      },
+      "social-feed-1/subtitle-qc/001.png": {
+        "sha256": "60f42af3216bd20a0ae546f0bc269635dcd4581d77121fc19170dc1b8bdd3337",
+        "bytes": 57113
+      },
+      "social-feed-1/subtitle-qc/002.png": {
+        "sha256": "0d97aff9bf1f0a04b2f3e8c17a769828e52fe2f0d8aabbbbfc64c57dd7f9c43e",
+        "bytes": 12711
+      },
+      "social-square-1/subtitle-qc/000.png": {
+        "sha256": "663fbf310ae774f6fcef265111211eede39c83c4ec5307fddd2ddf03a5497756",
+        "bytes": 48200
+      },
+      "social-square-1/subtitle-qc/001.png": {
+        "sha256": "6abe9e99ecda5735560af16dccb0ffa43981592d9d1175587445a8275fcbb696",
+        "bytes": 52400
+      },
+      "tiktok-short-1/subtitle-qc/000.png": {
+        "sha256": "8710ff89a903fce552ff947559c28aa6cf682ae32f296c5d3677b40443485cdb",
+        "bytes": 63104
+      },
+      "tiktok-short-1/subtitle-qc/001.png": {
+        "sha256": "7688e3ebb7cda6cdd21c1f097677d4dbe033e97a942e559bc73247283024ee45",
+        "bytes": 60594
+      },
+      "tiktok-short-1/subtitle-qc/002.png": {
+        "sha256": "b37c9d095f8b41d39343ba862af96108853a351636013d819244c5eed0ebbf4d",
+        "bytes": 24086
+      },
+      "youtube-landscape-1/subtitle-qc/000.png": {
+        "sha256": "6908761e53193d6f1f91db67121ec535e1a05486a92f4f0174c76d06b7715597",
+        "bytes": 48908
+      },
+      "youtube-landscape-1/subtitle-qc/001.png": {
+        "sha256": "6878132fbf0b1f9356d4a953299406cfa4ae370b83611c7aa57c34f463c9589c",
+        "bytes": 54267
+      },
+      "youtube-shorts-1/subtitle-qc/000.png": {
+        "sha256": "8710ff89a903fce552ff947559c28aa6cf682ae32f296c5d3677b40443485cdb",
+        "bytes": 63104
+      },
+      "youtube-shorts-1/subtitle-qc/001.png": {
+        "sha256": "7688e3ebb7cda6cdd21c1f097677d4dbe033e97a942e559bc73247283024ee45",
+        "bytes": 60594
+      },
+      "youtube-shorts-1/subtitle-qc/002.png": {
+        "sha256": "b37c9d095f8b41d39343ba862af96108853a351636013d819244c5eed0ebbf4d",
+        "bytes": 24086
+      },
+      "new-process-replay.json": {
+        "sha256": "1765009a386fe0d1e9a3dad5874dc73292b60ee2b26da42d61c8a77ed541e432",
+        "bytes": 196
+      }
+    },
+    "source_sha256_at_rehearsal": {
+      "services/windows_native/narrated_variants.py": "f769bfb72d3551f746499f9fee6d0c07fea021952863754a6dfd5936380361bf",
+      "services/windows_native/narrated_variants_models.py": "290b956124b1c7b6bb9b013be9d3627ced53750b1146e78f16646d950dc2fae3",
+      "services/windows_native/narrated_variant_routes.py": "31e6ca6666ef26a2dba46a0698a6b865ec6de9e451e19fbde11f698d75716317",
+      "services/windows_native/narration.py": "50957425827d236ef6241d77d0df9498ac9ff44c0786d2ae802958d51e9e0a57",
+      "services/windows_native/narration_preview.py": "af511e27f377d3f6018c01adeb1887a8c219807ba894e3c4ac7293a61f5402bd",
+      "services/windows_native/narration_rights.py": "9aa7141fcf112a737e944b285f6e0ba851f36d9e9b50b0b7600bbb69ddc615eb",
+      "services/windows_native/server.py": "a72adc8aafb93971e2a5d614391e2cfb6037434c527328c205821c3e8bed2432",
+      "services/windows_native/access.py": "91ae5d48d363468b579a9bbb0bab16d86b28331a39c734246a4ab05a75a6ca2e",
+      "services/windows_native/backup.py": "bf6f7b32dc573148a807df91922ce9efe9884bea4126a446e8729c707385afd0",
+      "services/windows_native/tests/test_narrated_variants.py": "8abc2980c2dbc27eb7fe229307e75e5cf4b7f0fb0a5622a93e62d2560732a835",
+      "services/windows_native/tests/test_narrated_variants_http.py": "fc5e535ea8d6cbd70089468272a4e82c53f96ebde2f6f9f9e7b9f7b96eb8ea4e",
+      "apps/studio-web/native-narrated-variants.mjs": "38dc920bdef55f33925ee5660bdee35ac6d27f442394b29c16ccd5ebe59f10bf",
+      "apps/studio-web/native-narration.mjs": "5bb20a49005867a5b65c5793cb5420fec3277d26e5a3e00c76332cbee5a7141e",
+      "apps/studio-web/native.mjs": "f78f4aa3223245e5d77c12bb143dde86f3e8eb7cf1e7edc1bf41a701b74dbe60",
+      "apps/studio-web/native.html": "a3318a0c44f36207acaa0f40f4258859711831db03daa6083b49de215412a398",
+      "apps/studio-web/tests/native-narrated-variants.test.mjs": "81f302e2175a3a7a3ef16e719599d998aa30a80dd017ac5abe7ab9dc76daeb80",
+      "scripts/north_star_native_narrated_variants.py": "116c35269982454e3075e630cbd3399a0e039f179a28b3c317298aba79e1ac28"
+    }
+  },
+  "nonruntime_test_fixture_change_after_rehearsal": {
+    "path": "services/windows_native/tests/test_narrated_variants.py",
+    "change": "Nested unit fixture selects the existing youtube-landscape@1 profile instead of an unknown youtube-long@1 name. Full final Native suite covers corrected test."
+  },
+  "logs": {
+    "native-narrated-variants-affected-r1.log": "67b306a1986ae14d127b480a4977f47951f013cb08169998c6bd2e4fab6272ce",
+    "native-narrated-variants-contracts-r1.log": "e129594a5bbbd7e7c1d64d753520e9296319690717f4bf770dbad73e9ac0998e",
+    "native-narrated-variants-contracts-r2.log": "1c9cd494e065ed1c6545fefcfbbd9b70cec0322f09fb0cdd44052a6ec9c3eca9",
+    "native-narrated-variants-contracts-r3.log": "71ed0eec63e1bed9a1a96c2d9ed1081a2b21417fe9707a6acbf1327009dcd29a",
+    "native-narrated-variants-flow-n1.log": "df0e6c527c9ef9510b69c7007c97111ea82672766a37730a553db65d9e2155ef",
+    "native-narrated-variants-flow-n2.log": "c39c98fc636a33a68866fb8e713a07316f191bc76222dff56682fed16c19a70b",
+    "native-narrated-variants-flow-n3.log": "45efb535040aa987da1b6e9b2e9f24fdffc9237d67c60324d2e8aca20efa2fe8",
+    "native-narrated-variants-flow-n4.log": "7c1d288569c8ad6f8878c08191a30336356abe0bbc7ba1f3ef184d88841660c8",
+    "native-narrated-variants-flow-n5.log": "cec77f5c13bd41f6cc88b735b8bd48abe27481bfc9e8e76f072a58e3b5fbafe6",
+    "native-narrated-variants-full-native-r1.log": "8bb9a0da3cffe47701c98c3e2a4d4f0d6dbffe420f8f44c44de322e1dc79995a",
+    "native-narrated-variants-new-process-n5.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-narrated-variants-studio-full-r1.log": "e6cdfae53351f56cf64179354d45a809aae4b91ae111f223c5e4b3a0f4f6bb29",
+    "native-narrated-variants-studio-full-r2.log": "8efeaee360225422160c8f9d05fded460186b916f8048819afb15f79b922267a",
+    "native-narrated-variants-studio-r1.log": "6698fca59559bd08f94b5f479b5309af1f065bd48b9370acb28d530622007955"
+  },
+  "signed_http_requests": 270,
+  "scoped_atomic_idempotent_family_and_cursor": true,
+  "source_project_job_approval_plan_pcm_and_workspace_verified": true,
+  "six_genuine_previously_generated_pcm_previews_and_final_renders": true,
+  "new_inference_calls": 0,
+  "authority_not_inherited": true,
+  "independent_child_preview_and_fixture_approval": true,
+  "nested_original_source_and_failed_child_rollback_tested": true,
+  "narration_read_routes_authentication_fixed": true,
+  "native_panel_json_adapter_fixed": true,
+  "decoded_review_frames_inspected": [
+    "youtube-landscape",
+    "youtube-shorts",
+    "social-square",
+    "social-feed"
+  ],
+  "copied_master_frozen_failure_restored_by_verified_historical_visual_edit": true,
+  "qc_guard_unchanged": true,
+  "both_database_backup_restore_and_fresh_process_replay": true,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "owner_uat_accepted": false,
+  "speech_quality_accepted": false,
+  "rights_independently_verified": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

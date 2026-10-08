@@ -74,7 +74,25 @@ def page(store,project_id):
             except (WorkflowError,ValueError,KeyError,TypeError):current=False
             items.append({'job_id':job['id'],'revision':job['revision'],'status':job['status'],'error':job['error'],'result':result,'voice_input_current':current,
                 'timing_apply_current':current and result['plan']['source_document_sha256']==digest(project['document'])})
-    return {'schema_version':SCHEMA,'project_id':project_id,'revision':project['revision'],'items':items,'prepared_narration':project['document'].get('prepared_narration')}
+        ref=project['document'].get('prepared_narration');derived=None
+        if isinstance(ref,dict) and 'derivation' in ref:
+            source,_,result=load_reference(store,con,project_id,project['document'])
+            derived={'schema_version':'native-derived-narration-review-v1','project_id':project_id,'workspace_id':ref['derivation']['workspace_id'],
+                'source_project_id':source['project_id'],'source_job_id':source['id'],'derivation':copy.deepcopy(ref['derivation']),
+                'derivation_sha256':digest(ref['derivation']),'source_result':result,
+                'voice_url':f'/api/projects/{project_id}/narration/{source["id"]}/audio','new_inference_calls':0,
+                'human_review_required':True,'approval_inherited':False,'rights_authority_inherited':False}
+    value={'schema_version':SCHEMA,'project_id':project_id,'revision':project['revision'],'items':items,'prepared_narration':project['document'].get('prepared_narration')}
+    if derived is not None:value['derived_narration']=derived
+    return value
+
+def load_reference(store,con,project_id,document):
+    reference=document.get('prepared_narration')
+    if isinstance(reference,dict) and 'derivation' in reference:
+        from .narrated_variants import resolve_reference
+        return resolve_reference(store,con,project_id,document)
+    if not isinstance(reference,dict):raise WorkflowError('NARRATION_VERIFIED_PREPARATION_REQUIRED',400)
+    return load(store,con,project_id,reference.get('job_id'))
 
 def apply(store,project_id,job_id,payload):
     from .shot_adapter import _state,shots_from_snapshot,_check_shot,_assets,project_projection,snapshot_from_shots,validate_document
@@ -106,12 +124,16 @@ def reuse(config,job,artifacts,stage):
     if reference is None:return False
     if not isinstance(reference,dict) or reference.get('schema_version')!=SCHEMA or reference.get('voice_input_sha256')!=identity(job['snapshot']['document']):raise WorkflowError('PREPARED_NARRATION_INPUT_CHANGED_REPREPARE')
     store=Store(config.data_root)
-    with store.transaction() as con:source,source_out,result=load(store,con,job['project_id'],reference['job_id'])
+    with store.transaction() as con:source,source_out,result=load_reference(store,con,job['project_id'],job['snapshot']['document'])
     plan=result['plan']
     if result['plan_sha256']!=reference.get('plan_sha256') or plan['voice_audio_sha256']!=reference.get('voice_audio_sha256') or plan['voice_input_sha256']!=identity(job['snapshot']['document']):raise WorkflowError('PREPARED_NARRATION_BINDING_CHANGED')
     attempt=Pipeline.attempt(artifacts.out,'voice-reuse');copy_artifacts=Artifacts(attempt,job)
     for name in ('voice.wav','voice.json','tts-plan.json'):copy_artifacts.publish(source_out/name,name)
-    write_json(attempt/'input.json',job['snapshot']);write_json(attempt/'voice-reuse.json',{'schema_version':'native-prepared-narration-reuse-v1',
+    receipt={'schema_version':'native-prepared-narration-reuse-v1',
         'source_job_id':source['id'],'source_revision':source['revision'],'source_snapshot_sha256':digest(source['snapshot']),'source_plan_sha256':result['plan_sha256'],
-        'voice_input_sha256':plan['voice_input_sha256'],'source_voice_sha256':plan['voice_audio_sha256'],'new_inference_calls':0,'sample_preserving':True})
+        'voice_input_sha256':plan['voice_input_sha256'],'source_voice_sha256':plan['voice_audio_sha256'],'new_inference_calls':0,'sample_preserving':True}
+    if 'derivation' in reference:receipt.update({'source_project_id':source['project_id'],'target_project_id':job['project_id'],
+        'derivation':copy.deepcopy(reference['derivation']),'derivation_sha256':digest(reference['derivation']),
+        'approval_inherited':False,'rights_authority_inherited':False})
+    write_json(attempt/'input.json',job['snapshot']);write_json(attempt/'voice-reuse.json',receipt)
     Pipeline.publish_voice(artifacts,attempt,job,stage,extra_names=('voice-reuse.json',));return True

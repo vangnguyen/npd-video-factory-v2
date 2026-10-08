@@ -11,6 +11,22 @@ export function validateNarrationPage(value,state){
       for(const scene of p.items)if(!Number.isFinite(scene.recommended_duration_seconds)||scene.recommended_duration_seconds<=0||!Number.isFinite(scene.measured_audio_seconds)||scene.measured_audio_seconds<0)throw new Error('Thời lượng lời đọc chưa hợp lệ.');
     }
   }
+  if(value.derived_narration){const d=value.derived_narration,r=d.source_result,p=r?.plan,b=d.derivation;
+    if(d.schema_version!=='native-derived-narration-review-v1'||d.project_id!==value.project_id||d.workspace_id!==state.workspace_id
+      ||!id.test(d.source_project_id)||!id.test(d.source_job_id)||!sha.test(d.derivation_sha256)
+      ||d.voice_url!==`/api/projects/${value.project_id}/narration/${d.source_job_id}/audio`||d.new_inference_calls!==0
+      ||d.approval_inherited!==false||d.rights_authority_inherited!==false||d.human_review_required!==true
+      ||b?.schema_version!=='native-narrated-narration-derivation-v1'||b.child_project_id!==value.project_id||b.workspace_id!==state.workspace_id
+      ||!id.test(b.master_project_id??'')||!/^nnvb_[a-f0-9]{32}$/.test(b.batch_id??'')
+      ||['source_snapshot_sha256','source_approval_sha256','source_plan_sha256','source_voice_sha256','voice_input_sha256','source_prepared_reference_sha256'].some(k=>!sha.test(b[k]??''))
+      ||b.source_project_id!==d.source_project_id||b.source_narration_job_id!==d.source_job_id||b.source_plan_sha256!==r?.plan_sha256
+      ||b.approval_inherited!==false||b.rights_authority_inherited!==false||b.new_inference_calls!==0||b.human_review_required!==true
+      ||p?.schema_version!==schema||p.project_id!==d.source_project_id||p.job_id!==d.source_job_id||p.voice_audio_sha256!==b.source_voice_sha256
+      ||p.voice_input_sha256!==b.voice_input_sha256||p.word_alignment_claimed!==false||p.speech_quality_accepted!==false||p.confidence!==null
+      ||!Number.isFinite(p.source_duration_seconds)||p.source_duration_seconds<=0||!Array.isArray(p.items)||!p.items.length||p.items.length>20
+      ||r.voice_url!==`/api/projects/${d.source_project_id}/narration/${d.source_job_id}/audio`)throw new Error('Nguồn lời đọc tái sử dụng không khớp bản dựng này.');
+    if(state.project.document.prepared_narration?.derivation?.batch_id!==b.batch_id||state.project.document.prepared_narration?.job_id!==d.source_job_id)throw new Error('Lời đọc không thuộc bản dựng đã lưu.');
+  }
   return value;
 }
 export function narrationRequest(state,page,action,{jobId,acknowledged=false,requestKey,reviewer}={}){
@@ -30,7 +46,7 @@ export function narrationRequest(state,page,action,{jobId,acknowledged=false,req
 }
 export function initializeNativeNarration({api,getState,onMessage,onWorking=()=>{},onSaved=async()=>{},dom=globalThis.document,newKey=()=>globalThis.crypto.randomUUID()}){
   const root=dom.getElementById('native-narration-panel');let page=null,working=false,serial=0,binding=null,pending=null;
-  const context=()=>{const s=getState();return `${s.project?.id}:${s.project?.revision}:${source(s.project)}`;};
+  const context=()=>{const s=getState();return `${s.workspace_id}:${s.project?.id}:${s.project?.revision}:${source(s.project)}`;};
   function node(tag,text,parent,attributes={}){const value=dom.createElement(tag);if(text!==null)value.textContent=text;for(const [k,v]of Object.entries(attributes))value.setAttribute(k,String(v));parent.append(value);return value;}
   node('summary','Lời đọc & thời lượng đã đo',root);node('p','Duyệt nội dung trước khi tạo giọng. Nghe audio và xem thời lượng từng cảnh, rồi chọn áp dụng. Áp dụng sẽ xóa duyệt trước đó; preview có tiếng và video cuối vẫn cần xem, nghe và duyệt riêng.',root,{class:'hint'});
   const tools=node('div',null,root,{class:'planner-tools'}),refresh=node('button','Tải kết quả lời đọc',tools,{type:'button'}),prepare=node('button','Tạo lời đọc để xem trước',tools,{type:'button'}),list=node('div',null,root);
@@ -49,6 +65,11 @@ export function initializeNativeNarration({api,getState,onMessage,onWorking=()=>
     catch(error){if(ticket===serial)onMessage(error.message,true);}finally{working=false;onWorking(false);controls();}
   }
   function draw(){list.replaceChildren();if(!page)return;
+    if(page.derived_narration){const d=page.derived_narration,plan=d.source_result.plan,card=node('article',null,list,{class:'planner-scene'});
+      node('h3','Lời đọc tái sử dụng từ master',card);node('p',`Audio gốc ${plan.source_duration_seconds.toFixed(2)} giây · giữ nguyên PCM đã đo. Bản này cần preview có tiếng và duyệt riêng.`,card);
+      node('audio',null,card,{controls:'',preload:'none',src:d.voice_url});node('p',`Dự án nguồn: ${d.source_project_id} · job: ${d.source_job_id} · SHA256: ${plan.voice_audio_sha256}`,card);
+      node('p','Quyền sử dụng và duyệt video của master không chuyển sang bản này. Chưa xác nhận chất lượng giọng hoặc căn chỉnh từng từ.',card);
+    }
     for(const item of page.items){const card=node('article',null,list,{class:'planner-scene'});node('h3',`Lời đọc · ${item.status}`,card);
       if(!item.result){if(item.error)node('p',String(item.error.code??'Chưa có kết quả'),card);continue;}
       const plan=item.result.plan;node('p',`Audio gốc ${plan.source_duration_seconds.toFixed(2)} giây · bản dựng theo lời đọc ${plan.recommended_duration_seconds.toFixed(2)} giây. Chưa xác nhận chất lượng giọng hoặc căn chỉnh từng từ.`,card);

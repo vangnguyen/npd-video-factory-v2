@@ -1,6 +1,15 @@
 import {newProjectQuality,narratedWorkflowGuide,usesNarratedWorkflow} from './project-quality.mjs';
 export {newProjectQuality} from './project-quality.mjs';
 export const supportsNativeCosts = session => session?.capabilities?.native_cost_ledger===true;
+export function nativeRequestBody(value){
+  if(value===undefined||value===null)return undefined;
+  if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Yêu cầu Studio phải là một đối tượng JSON.');
+  if(Object.hasOwn(value,'method')){
+    if(value.method!=='POST'||typeof value.body!=='string'||Object.keys(value).some(key=>!['method','body'].includes(key)))throw new Error('Thao tác Studio không hợp lệ.');
+    const body=JSON.parse(value.body);if(!body||typeof body!=='object'||Array.isArray(body))throw new Error('Nội dung thao tác Studio không hợp lệ.');return body;
+  }
+  return value;
+}
 export async function loadNativeCosts(session,loader=()=>import('./native-costs.mjs')) {
   return supportsNativeCosts(session)?await loader():null;
 }
@@ -125,7 +134,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,musicLoopEnabled=false;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,musicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -139,7 +148,8 @@ if (typeof document !== "undefined") {
   }
   function message(text, error=false) {$("message").textContent=text;$("message").hidden=false;$("message").classList.toggle("error",error);}
   async function api(path, body) {
-    const response = await fetch(path,{method:body?"POST":"GET",credentials:"same-origin",headers:body?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:body?JSON.stringify(body):undefined});
+    const payload=nativeRequestBody(body);
+    const response = await fetch(path,{method:payload?"POST":"GET",credentials:"same-origin",headers:payload?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:payload?JSON.stringify(payload):undefined});
     const result=await response.json();
     if(response.status===401 && result.code==='NATIVE_AUTH_SESSION_REQUIRED')location.assign('/login');
     if(response.status===403 && result.code==='NATIVE_AUTH_FORBIDDEN')throw new Error('Vai trò hiện tại không có quyền thực hiện thao tác này.');
@@ -208,6 +218,7 @@ if (typeof document !== "undefined") {
     rightsOverrideUI?.controls();
     narrationRightsUI?.controls();
     variantsUI?.controls();
+    narratedVariantsUI?.controls();
     channelUI?.controls();
   }
   function markDirty(part) {dirty=true;dirtyPart=part;$("review-check").checked=false;controls();}
@@ -249,6 +260,7 @@ if (typeof document !== "undefined") {
     rightsOverrideUI?.sync();
     narrationRightsUI?.sync();
     variantsUI?.sync();
+    narratedVariantsUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
     refreshCosts();
     const origin=project?.document.content_intelligence;
@@ -344,6 +356,14 @@ if (typeof document !== "undefined") {
         onOpen:async id=>{if(dirty||busy)throw new Error('Lưu thay đổi và chờ thao tác hiện tại trước.');
           project=await api(`/api/projects/${id}`);localStorage.setItem('vf-native-project',project.id);renderProject(true);await projects();schedule();}});
     }
+    if(session.capabilities?.native_narrated_variants===true){
+      const variants=await import('./native-narrated-variants.mjs');$('native-narrated-variants-card').hidden=false;
+      narratedVariantsUI=variants.initializeNarratedVariants({api,getState:()=>({project,dirty,busy,active:jobActive(project),
+        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,
+        workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onCreated:()=>void projects().catch(error=>message(error.message,true)),
+        onOpen:async id=>{if(dirty||busy)throw new Error('Lưu thay đổi và chờ thao tác hiện tại trước.');
+          project=await api(`/api/projects/${id}`);localStorage.setItem('vf-native-project',project.id);renderProject(true);await projects();schedule();}});
+    }
     if(session.capabilities?.native_vision_review===true){
       const vision=await import('./native-vision.mjs');$('native-vision-panel').hidden=false;
       visionUI=vision.initializeNativeVision({api,getState:()=>({project,dirty,busy,canManage,
@@ -380,7 +400,7 @@ if (typeof document !== "undefined") {
     }
     if(session.capabilities?.native_narration_preparation===true){
       const narration=await import('./native-narration.mjs');
-      narrationUI=narration.initializeNativeNarration({api,getState:()=>({project,dirty,busy,active:jobActive(project),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canReview:session.access?.mode!=='registry'||session.access.permissions?.includes('review')===true}),
+      narrationUI=narration.initializeNativeNarration({api,getState:()=>({project,dirty,busy,workspace_id:session.access?.workspace_id??'wsp_native_local',active:jobActive(project),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canReview:session.access?.mode!=='registry'||session.access.permissions?.includes('review')===true}),
         onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_narration_rights_review===true){

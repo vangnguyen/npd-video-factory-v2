@@ -6,15 +6,15 @@ import copy,json
 from .backup import guard
 from .contracts import WorkflowError,digest,file_sha
 from .hardening import Artifacts,durable_json
-from .narration import SCHEMA,identity,load
+from .narration import SCHEMA,identity,load_reference
 PROFILE='native-narrated-storyboard-preview-v1'
 
 def prepared(store,project,*,con=None):
     reference=project['document'].get('prepared_narration')
     if not isinstance(reference,dict) or reference.get('schema_version')!=SCHEMA or reference.get('voice_input_sha256')!=identity(project['document']):raise WorkflowError('PREPARED_NARRATION_INPUT_CHANGED_REPREPARE')
     if con is None:
-        with store.transaction() as current:job,out,result=load(store,current,project['id'],reference['job_id'])
-    else:job,out,result=load(store,con,project['id'],reference['job_id'])
+        with store.transaction() as current:job,out,result=load_reference(store,current,project['id'],project['document'])
+    else:job,out,result=load_reference(store,con,project['id'],project['document'])
     plan=result['plan'];approval=job['snapshot'].get('approval')
     if (reference.get('plan_sha256')!=result['plan_sha256'] or reference.get('voice_audio_sha256')!=plan['voice_audio_sha256']
         or not approval or approval.get('revision')!=job['revision'] or approval.get('snapshot_sha256')!=digest(job['snapshot']['document'])):raise WorkflowError('NARRATION_PREVIEW_SOURCE_APPROVAL_CHANGED')

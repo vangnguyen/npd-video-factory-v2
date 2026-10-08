@@ -19,7 +19,7 @@ export function initializeNativeVariants({api,getState,root=document,onMessage=(
         button.type='button';button.className='secondary';button.dataset.vfPermission='read';button.addEventListener('click',async()=>{
           if(getState().dirty||getState().busy||working)return onMessage('Lưu thay đổi và chờ thao tác hiện tại trước.',true);
           try{await onOpen(variant.project_id);}catch(error){onMessage(error.message,true);}});line.append(button);section.append(line);}history.append(section);}
-    $('native-variants-status').textContent=source()?'Tạo các bản từ timeline đã lưu. Crop của mỗi bản chuyển về center crop cần kiểm tra; nguồn, lời nói và phân tích đã có được tái sử dụng.':'Lưu bản dựng từ video tải lên trước khi tạo các định dạng. Chưa hỗ trợ master lồng tiếng trong đường Native này.';controls();
+    $('native-variants-status').textContent=source()?'Tạo các bản từ timeline đã lưu. Crop của mỗi bản chuyển về center crop cần kiểm tra; nguồn, lời nói và phân tích đã có được tái sử dụng.':'Lưu bản dựng từ video tải lên trước khi tạo các định dạng. Với master lồng tiếng, mở mục Các định dạng từ master lồng tiếng.';controls();
   }
   function sync(){const next=context();if(next!==scope){scope=next;sequence++;working=false;profiles=[];rows=[];cursor=null;selected.clear();keys.clear();$('native-variants-choices').replaceChildren();}render();}
   function profile(value){const geometry=dimensions[value?.aspect_ratio];if(!/^[a-z][a-z0-9-]{2,60}@[1-9][0-9]*$/.test(value?.profile_ref??'')||!geometry

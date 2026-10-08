@@ -178,6 +178,8 @@ class LocalServer(ThreadingHTTPServer):
         self.runner.vision=self.vision
         from .source_variants import SourceVariants
         self.variants=SourceVariants(self.store,workspace_id=self.publications.workspace_id)
+        from .narrated_variants import NativeNarratedVariants
+        self.narrated_variants=NativeNarratedVariants(self.store,workspace_id=self.publications.workspace_id)
         from .bridge import NativeBridge
         self.bridge=NativeBridge(self.store,workspace_id=self.publications.workspace_id)
         self.bridge.attach_intelligence(self.intelligence.store)
@@ -287,12 +289,12 @@ class Handler(BaseHTTPRequestHandler):
         for name, value in (headers or {}).items():
             self.send_header(name, value)
 
-    def file(self, path, *, video=False):
+    def file(self, path, *, video=False, headers=None):
         if not path.is_file():
             raise WorkflowError("ARTIFACT_NOT_FOUND", 404)
         size, start, end = path.stat().st_size, 0, path.stat().st_size - 1
         request_range = self.headers.get("Range") if video else None
-        status, extra = 200, {}
+        status, extra = 200, dict(headers or {})
         if video:
             extra["Accept-Ranges"] = "bytes"
         if request_range:
@@ -319,14 +321,6 @@ class Handler(BaseHTTPRequestHandler):
                 remaining -= len(chunk)
 
     def dispatch_get(self):
-        narration_route=re.fullmatch(r'/api/projects/([a-f0-9]{32})/narration(?:/([a-f0-9]{32})/audio)?',self.path)
-        if narration_route:
-            from .narration import page,load
-            project_id,job_id=narration_route.groups()
-            if job_id:
-                with self.server.store.transaction() as con:_,out,_=load(self.server.store,con,project_id,job_id)
-                return self.file(out/'voice.wav')
-            return self.reply(page(self.server.store,project_id),headers={'Cache-Control':'no-store'})
         path = self.path.split("?", 1)[0]
         if path.startswith('/v1/'):
             from .bridge_routes import dispatch
@@ -340,6 +334,22 @@ class Handler(BaseHTTPRequestHandler):
                 raise
         self.boundary(session=path.startswith("/api/") and path != '/api/health'
             and (path != '/api/session' or self.server.access is not None))
+        narration_route=re.fullmatch(r'/api/projects/([a-f0-9]{32})/narration(?:/([a-f0-9]{32})/audio)?',self.path)
+        if narration_route:
+            from .narration import page,load,load_reference
+            project_id,job_id=narration_route.groups()
+            if job_id:
+                with self.server.store.transaction() as con:
+                    project=self.server.store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone())
+                    ref=project['document'].get('prepared_narration')
+                    if isinstance(ref,dict) and 'derivation' in ref and ref.get('job_id')==job_id:
+                        _,out,_=load_reference(self.server.store,con,project_id,project['document'])
+                    else:_,out,_=load(self.server.store,con,project_id,job_id)
+                return self.file(out/'voice.wav',headers={'Cache-Control':'no-store'})
+            return self.reply(page(self.server.store,project_id),headers={'Cache-Control':'no-store'})
+        if path=='/api/narrated/variant-profiles' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/narrated-variants',path):
+            from .narrated_variant_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/media-plans',path):
             from .studio_media_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
@@ -452,7 +462,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -549,6 +559,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-narration.mjs'] = 'native-narration.mjs'
         static.update({'/trends':'trend-radar.html','/trend-radar.mjs':'trend-radar.mjs','/trend-radar.css':'trend-radar.css'})
         static['/native-variants.mjs'] = 'native-variants.mjs'
+        static['/native-narrated-variants.mjs'] = 'native-narrated-variants.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
         static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',
@@ -636,6 +647,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/variants',self.path):
             from .variant_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=20000)))
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/narrated-variants',self.path):
+            from .narrated_variant_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=20000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/analytics(?:/nasy_[a-f0-9]{32}/(?:process|cancel))?',self.path) or re.fullmatch(r'/api/projects/[a-f0-9]{32}/analytics-refresh(?:/tick|/narp_[a-f0-9]{32}/state)?',self.path):
             from .analytics_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))

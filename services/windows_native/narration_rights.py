@@ -11,7 +11,7 @@ from urllib.parse import urlsplit,parse_qsl
 from .backup import guard
 from .contracts import WorkflowError,digest,file_sha,PROFILE_SHA
 from .hardening import Artifacts
-from .narration import load,identity,SCHEMA
+from .narration import load_reference,identity,SCHEMA
 from .narration_rights_models import ReviewCreate,ReviewRecord,VERSION
 from .rights_override import timestamp
 from .store import now
@@ -55,7 +55,7 @@ class NativeNarrationRights:
         from .pipeline import profile,LOCKS
         ref=document.get('prepared_narration')
         if not isinstance(ref,dict) or ref.get('schema_version')!=SCHEMA:raise WorkflowError('NATIVE_NARRATION_RIGHTS_PREPARATION_REQUIRED',409)
-        job,out,result=load(self.store,con,project_id,ref.get('job_id'));plan=result['plan']
+        job,out,result=load_reference(self.store,con,project_id,document);plan=result['plan']
         if (ref.get('plan_sha256')!=result['plan_sha256'] or ref.get('voice_input_sha256')!=identity(document)
             or ref['voice_input_sha256']!=plan['voice_input_sha256'] or ref.get('voice_audio_sha256')!=plan['voice_audio_sha256']):raise WorkflowError('NATIVE_NARRATION_RIGHTS_INPUT_CHANGED',409)
         meta=json.loads((out/'voice.json').read_bytes());tts=json.loads((out/'tts-plan.json').read_bytes());locked=profile()
@@ -64,7 +64,7 @@ class NativeNarrationRights:
             or file_sha(out/'voice.json')!=plan['voice_metadata_sha256'] or file_sha(out/'tts-plan.json')!=plan['tts_plan_sha256']
             or manifest.get('profile_sha256')!=PROFILE_SHA):raise WorkflowError('NATIVE_NARRATION_RIGHTS_PROVENANCE_CHANGED')
         # No private local artifact paths or narration text are exposed in this projection.
-        return {'schema_version':PROVENANCE,'workspace_id':self.workspace,'project_id':project_id,'narration_job_id':job['id'],
+        value={'schema_version':PROVENANCE,'workspace_id':self.workspace,'project_id':project_id,'narration_job_id':job['id'],
             'source_revision':job['revision'],'source_snapshot_sha256':digest(job['snapshot']),'plan_sha256':result['plan_sha256'],
             'voice_input_sha256':plan['voice_input_sha256'],'voice_audio_sha256':plan['voice_audio_sha256'],
             'voice_metadata_sha256':plan['voice_metadata_sha256'],'tts_plan_sha256':plan['tts_plan_sha256'],'profile_sha256':PROFILE_SHA,
@@ -74,6 +74,9 @@ class NativeNarrationRights:
             'voice_duration_seconds':plan['source_duration_seconds'],
             'explicit_fixture':tts.get('explicit_synthetic_pcm_fixture') is True or meta.get('explicit_synthetic_pcm_fixture') is True,
             'rights_status':'unknown','rights_independently_verified':False,'speech_quality_accepted':False,'publishing_authorized':False}
+        if 'derivation' in ref:value.update({'source_project_id':job['project_id'],'derivation_sha256':digest(ref['derivation']),
+            'approval_inherited':False,'rights_authority_inherited':False})
+        return value
 
     def active(self,document,project_id,provenance,*,publishing=False):
         validate_document(document,project_id=project_id,workspace_id=self.workspace)
