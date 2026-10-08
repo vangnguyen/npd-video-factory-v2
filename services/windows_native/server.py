@@ -257,6 +257,8 @@ class LocalServer(ThreadingHTTPServer):
         self.runner.official_analytics=self.official_analytics
         from .official_winners import NativeOfficialWinners
         self.official_winners=NativeOfficialWinners(self.official_analytics)
+        from .official_learning import NativeOfficialLearning
+        self.official_learning=NativeOfficialLearning(self.official_winners)
         from .trend_radar import NativeTrendRadar
         self.trends=NativeTrendRadar(self.intelligence,self.analytics,workspace=self.publications.workspace_id,
             providers=trend_providers,feed_registry=trend_feed_registry,owner_enabled=trend_feed_enabled,observer=self.observer)
@@ -484,6 +486,9 @@ class Handler(BaseHTTPRequestHandler):
         if path=='/api/connections/official-winners' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-winners(?:/nowa_[a-f0-9]{32}|/source/noas_[a-f0-9]{32})?',path):
             from .official_winner_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if path=='/api/connections/official-learning' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-learning(?:/nols_[a-f0-9]{32}|/source/nowa_[a-f0-9]{32})?',path):
+            from .official_learning_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path == '/healthz':
             return self.reply({'schema': 'vf-native-health-v1', 'status': 'alive', 'scope': 'http_process'})
         if path == '/readyz':
@@ -671,6 +676,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-official-publication-queue.mjs'] = 'native-official-publication-queue.mjs'
         static['/native-official-analytics.mjs'] = 'native-official-analytics.mjs'
         static['/native-official-winners.mjs'] = 'native-official-winners.mjs'
+        static['/native-official-learning.mjs'] = 'native-official-learning.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
         static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',
@@ -773,6 +779,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-winners',self.path):
             from .official_winner_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=40000)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-learning',self.path):
+            from .official_learning_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=20000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications/nopu_[a-f0-9]{32}/queue(?:/nopq_[a-f0-9]{32}/cancel)?',self.path):
             from .official_publication_queue_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})

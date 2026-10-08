@@ -14,6 +14,7 @@ const config=()=>({schema_version:'native-official-winner-capabilities-v1',works
   automatic_assessment:false,provider_calls_enabled:false,recommendation_only:true,automatic_action:false,publishing_enabled:false,token_returned:false});
 const request=()=>({schema_version:'native-official-winner-request-v1',sync_id:syncId,expected_result_sha256:resultSha,policy:policy(),acknowledged_recommendation_only:true,acknowledged_protocol_mock:true});
 function row(body=request()){
+  const{request_key,...bounded}=body;
   const assessment={state:'insufficient_data',score:null,data_coverage:0,algorithm_version:'winner-channel-assessment-v1',basis:'matching_native_official_channel_report_scope',mock:true,
     source_kind:'official_protocol_mock',real_audience_observation:false,external_call:false,automatic_action:false,publishing_enabled:false,channel_baseline_verified:false,
     view_velocity_supported:false,publishing_age_hours:null,actual_publication_time:null,recommendations:['Review'],limitations:['Mock'],
@@ -21,7 +22,7 @@ function row(body=request()){
   return{schema_version:'native-official-winner-assessment-v1',assessment_id:assessmentId,workspace_id:workspace,project_id:project,publication_id:pub,sync_id:syncId,result_snapshot_id:resultId,
     snapshot_sha256:'5'.repeat(64),mock:true,real_audience_observation:false,recommendation_only:true,automatic_action:false,external_call:false,publishing_enabled:false,token_returned:false,peer_count:0,assessment,
     snapshot:{schema_version:'native-official-winner-snapshot-v1',workspace_id:workspace,project_id:project,publication_id:pub,sync_id:syncId,result_snapshot_id:resultId,recommendation_only:true,automatic_action:false,publishing_enabled:false,
-      request:body,policy_sha256:policySha,candidate_rows_truncated:false,peers:[],candidate:{project_id:project,publication_id:pub,sync_id:syncId,result_snapshot_id:resultId,result_sha256:resultSha,consent_sha256:consentSha,publication_receipt_sha256:receiptSha,scope:scope()},assessment:structuredClone(assessment)}};
+      request:bounded,policy_sha256:policySha,candidate_rows_truncated:false,peers:[],candidate:{project_id:project,publication_id:pub,sync_id:syncId,result_snapshot_id:resultId,result_sha256:resultSha,consent_sha256:consentSha,publication_receipt_sha256:receiptSha,scope:scope()},assessment:structuredClone(assessment)}};
 }
 const page=(items,cursor=null)=>({schema_version:'native-official-winner-page-v1',workspace_id:workspace,project_id:project,publication_id:pub,items,next_cursor:cursor,recommendation_only:true,automatic_action:false,external_call:false,publishing_enabled:false,token_returned:false});
 function harness(){const nodes=new Map();class Node{constructor(){this.children=[];this.value='';this.checked=false;this.dataset={};this.listeners={};this.max='';}set id(v){this._id=v;nodes.set(v,this);}get id(){return this._id;}
@@ -68,3 +69,10 @@ test('history preserves null and zero factors and scoped cursor pagination stays
   for(const bad of[page([],'x'.repeat(2049)),page([{...row(),project_id:'9'.repeat(32)}]),page([],true)]){h.handler(async()=>bad);await h.controller.readHistory();assert.equal(h.get('history').children.length,1);}assert.equal(h.messages.length,3);});
 test('immutable saved history remains readable after current project edits archive or active work',async()=>{const h=harness();await h.controller.readSource();await h.controller.readHistory();h.state.project.revision=2;h.state.project.archived=true;h.state.dirty=true;h.state.active=true;h.controller.sync();
   await h.controller.readSource();await h.controller.readHistory();await h.controller.readStored();assert.equal(h.get('factors').children.length,10);assert.match(h.get('status').textContent,/Chưa đủ dữ liệu/);});
+test('older assessment from another saved report interval remains readable with its own binding',async()=>{const h=harness();await h.controller.readSource();const value=row(),oldSync='noas_'+'8'.repeat(32),oldResult='noam_'+'9'.repeat(32);
+  value.sync_id=value.snapshot.sync_id=value.snapshot.request.sync_id=value.snapshot.candidate.sync_id=oldSync;value.result_snapshot_id=value.snapshot.result_snapshot_id=value.snapshot.candidate.result_snapshot_id=oldResult;
+  value.snapshot.candidate.scope.query={...query(),start_date:'2026-09-01'};h.handler(async()=>page([value]));await h.controller.readHistory();assert.equal(h.messages.length,0);assert.equal(h.get('factors').children.length,10);
+  assert.match(h.get('detail').textContent,/2026-09-01/);});
+test('save response must match submitted policy and uncertainty retains key after a wrong returned request',async()=>{const h=harness();await ready(h);h.handler(async()=>row({...request(),policy:{...policy(),minimum_views:600}}));await h.controller.createAssessment();
+  const key=h.calls.at(-1)[1].request_key;assert.equal(h.get('detail').textContent,'');assert.equal(h.get('ack').checked,true);assert.match(h.messages.at(-1)[0],/không đúng yêu cầu/);
+  h.controller.prepareNew();ack(h);h.handler(h.defaultHandler);await h.controller.createAssessment();assert.equal(h.calls.at(-1)[1].request_key,key);assert.equal(h.get('factors').children.length,10);});

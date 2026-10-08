@@ -1,7 +1,7 @@
 // Explicit local assessments of qualified immutable observations; no provider work.
 const names={view_velocity:'Tốc độ xem',retention:'Giữ chân',completion:'Hoàn thành',engagement:'Tương tác',shares:'Chia sẻ',saves:'Lưu',ctr:'CTR',follower_conversion:'Chuyển đổi người theo dõi',revenue_efficiency:'Hiệu quả doanh thu',production_cost_efficiency:'Hiệu quả chi phí'};
 const labels={winner_candidate:'Ứng viên nổi bật',normal:'Thông thường',underperforming:'Hiệu quả thấp',insufficient_data:'Chưa đủ dữ liệu'};
-export function initializeNativeOfficialWinners({api,getState,getBinding,root=document,onMessage=()=>{},onWorking=()=>{},uuid=()=>crypto.randomUUID()}){
+export function initializeNativeOfficialWinners({api,getState,getBinding,root=document,onMessage=()=>{},onWorking=()=>{},onSelection=()=>{},uuid=()=>crypto.randomUUID()}){
   const card=root.getElementById('native-official-winners-card');card.replaceChildren();
   const node=(tag,text,id)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(id)n.id='native-official-winners-'+id;return n;};
   const button=(text,id,permission='read')=>{const n=node('button',text,id);n.type='button';n.className='secondary';n.dataset.vfPermission=permission;return n;};
@@ -23,6 +23,7 @@ export function initializeNativeOfficialWinners({api,getState,getBinding,root=do
     config,source,status,policyBox,ackLabel,mockLabel,create,history,list,more,read,fresh,factors,detail);
   let scope='',generation=0,working=false,runtime=null,binding=null,rows=[],cursor=null,selected=null;const keys=new Map(),unknownKeys=new Set();
   const sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),id=(v,prefix)=>typeof v==='string'&&new RegExp('^'+prefix+'_[a-f0-9]{32}$').test(v),finite=v=>typeof v==='number'&&Number.isFinite(v);
+  const stable=v=>JSON.stringify(v,(_,child)=>child&&typeof child==='object'&&!Array.isArray(child)?Object.fromEntries(Object.keys(child).sort().map(k=>[k,child[k]])):child);
   const observation=()=>getBinding()?.sync??null,endpoint=s=>'/api/projects/'+s.project.id+'/official-winners';
   const context=()=>{const s=getState(),a=observation();return JSON.stringify([s.workspace_id,s.project?.id,s.project?.revision,s.project?.archived,s.dirty,s.active,s.canManage,a?.sync_id,a?.snapshot_sha256,a?.result_snapshot_id,a?.status]);};
   const sameQuery=(a,b)=>a&&b&&['start_date','end_date','include_revenue'].every(k=>a[k]===b[k])&&Object.keys(a).length===3&&Object.keys(b).length===3;
@@ -38,7 +39,7 @@ export function initializeNativeOfficialWinners({api,getState,getBinding,root=do
     more.disabled=blocked||!cursor||rows.length>=500;read.disabled=blocked||!selected;fresh.disabled=blocked||!s.canManage;for(const n of[...Object.values(fields),...Object.values(weights),ack,mockAck])n.disabled=blocked||!s.canManage;
     let ready=false;try{request();ready=true;}catch{}create.disabled=blocked||!ready;mockLabel.hidden=binding?.mock!==true;}
   function sync(){const next=context();if(next!==scope){scope=next;generation++;runtime=null;binding=null;rows=[];cursor=null;selected=null;keys.clear();unknownKeys.clear();list.replaceChildren();factors.replaceChildren();detail.textContent='';
-    ack.checked=mockAck.checked=false;for(const n of[...Object.values(fields),...Object.values(weights)])n.value='';status.textContent='Đọc bằng chứng của quan sát đã chọn và chính sách trước khi đánh giá.';}controls();}
+    ack.checked=mockAck.checked=false;for(const n of[...Object.values(fields),...Object.values(weights)])n.value='';status.textContent='Đọc bằng chứng của quan sát đã chọn và chính sách trước khi đánh giá.';onSelection();}controls();}
   async function run(fn){sync();const s=getState();if(working||s.busy||!s.project)return;const current=context(),ticket=++generation;working=true;onWorking(true);controls();const accept=()=>ticket===generation&&current===context();
     try{await fn(s,accept);}catch(error){if(accept())onMessage(error.message,true);}finally{working=false;onWorking(false);sync();}}
   function validateSource(value,s){const a=observation(),r=a?.result;if(value?.schema_version!=='native-official-winner-source-binding-v1'||value.workspace_id!==s.workspace_id||value.project_id!==s.project.id
@@ -53,7 +54,7 @@ export function initializeNativeOfficialWinners({api,getState,getBinding,root=do
     ||snap?.schema_version!=='native-official-winner-snapshot-v1'||snap.workspace_id!==s.workspace_id||snap.project_id!==s.project.id||snap.publication_id!==binding.publication_id||snap.sync_id!==value.sync_id||snap.result_snapshot_id!==value.result_snapshot_id
     ||snap.recommendation_only!==true||snap.automatic_action!==false||snap.publishing_enabled!==false||!sha(snap.policy_sha256)||c?.scope?.workspace_id!==s.workspace_id||c.project_id!==s.project.id||c.publication_id!==binding.publication_id
     ||c.sync_id!==value.sync_id||c.result_snapshot_id!==value.result_snapshot_id||!sha(c.result_sha256)||c.publication_receipt_sha256!==binding.publication_receipt_sha256||c.scope?.mock!==binding.mock||c.scope?.source_kind!==binding.scope.source_kind
-    ||c.scope.target_binding_sha256!==binding.scope.target_binding_sha256||!sameQuery(c.scope.query,binding.scope.query)||snap.request?.sync_id!==value.sync_id||snap.request.expected_result_sha256!==c.result_sha256
+    ||c.scope.target_binding_sha256!==binding.scope.target_binding_sha256||snap.request?.sync_id!==value.sync_id||snap.request.expected_result_sha256!==c.result_sha256
     ||snap.request.acknowledged_recommendation_only!==true||snap.request.acknowledged_protocol_mock!==value.mock||!Array.isArray(snap.peers)||!Number.isInteger(value.peer_count)||value.peer_count!==snap.peers.length||value.peer_count>100
     ||typeof snap.candidate_rows_truncated!=='boolean'||!a||JSON.stringify(snap.assessment)!==JSON.stringify(a)||!Object.hasOwn(labels,a.state)||a.algorithm_version!=='winner-channel-assessment-v1'
     ||a.basis!=='matching_native_official_channel_report_scope'||a.mock!==value.mock||a.source_kind!==c.scope.source_kind||a.real_audience_observation!==!value.mock||a.external_call!==false||a.automatic_action!==false||a.publishing_enabled!==false
@@ -63,13 +64,13 @@ export function initializeNativeOfficialWinners({api,getState,getBinding,root=do
     validatePolicy(snap.request.policy);for(const f of a.factors){if(!Object.hasOwn(names,f.factor)||!finite(f.weight)||f.weight<0||f.weight>1||f.score!==null&&(!finite(f.score)||f.score<0||f.score>100)
       ||!f.evidence||f.evidence.policy_sha256!==snap.policy_sha256||!Number.isInteger(f.evidence.peer_count)||f.evidence.peer_count<0||f.evidence.peer_count>100
       ||!Array.isArray(f.evidence.peer_snapshot_ids)||f.evidence.peer_snapshot_ids.length!==f.evidence.peer_count||['raw_value','peer_median'].some(k=>f.evidence[k]!==null&&(!finite(f.evidence[k])||f.evidence[k]<0)))throw new Error('Yếu tố đánh giá không hợp lệ.');}
-    if(value.sync_id===binding.sync_id&&(c.result_sha256!==binding.result_sha256||c.result_snapshot_id!==binding.result_snapshot_id||c.consent_sha256!==binding.consent_sha256))throw new Error('Quan sát đã thay đổi.');return value;}
+    if(value.sync_id===binding.sync_id&&(c.result_sha256!==binding.result_sha256||c.result_snapshot_id!==binding.result_snapshot_id||c.consent_sha256!==binding.consent_sha256||!sameQuery(c.scope.query,binding.scope.query)))throw new Error('Quan sát đã thay đổi.');return value;}
   const display=v=>v===null?'Chưa có':String(v);
   function render(){list.replaceChildren();for(const value of rows){const b=button(value.assessment_id+' · '+labels[value.assessment.state]+(value.mock?' · mô phỏng API':''),'entry-'+value.assessment_id);b.addEventListener('click',()=>{selected=value;render();});list.append(b);}
     factors.replaceChildren();detail.textContent=selected?JSON.stringify(selected,null,2):'';if(selected){const a=selected.assessment;status.textContent=labels[a.state]+' · Điểm: '+display(a.score)+' · Video đối chiếu: '+selected.peer_count+' · Tỷ trọng có dữ liệu: '+a.data_coverage+
       (selected.mock?' · Mô phỏng API; chưa có phản hồi khán giả thật.':' · Quan sát từ API nền tảng.')+' Chỉ khuyến nghị.';
       for(const f of a.factors){const box=node('div');box.append(node('strong',names[f.factor]),node('p','Điểm: '+display(f.score)),node('p','Giá trị: '+display(f.evidence.raw_value)+' · Trung vị: '+display(f.evidence.peer_median)),node('p','Trọng số: '+f.weight+' · Đối chiếu: '+f.evidence.peer_count));factors.append(box);}}
-    controls();}
+    onSelection();controls();}
   async function readConfig(){if(!getState().canManage)return;await run(async(s,accept)=>{const value=await api('/api/connections/official-winners');if(!accept())return;
     if(value?.schema_version!=='native-official-winner-capabilities-v1'||value.workspace_id!==s.workspace_id||!sha(value.default_policy_sha256)||value.maximum_candidate_rows!==500||value.automatic_assessment!==false||value.provider_calls_enabled!==false
       ||value.recommendation_only!==true||value.automatic_action!==false||value.publishing_enabled!==false||value.token_returned!==false)throw new Error('Cấu hình đánh giá không hợp lệ.');validatePolicy(value.default_policy);runtime=value;
@@ -82,9 +83,9 @@ export function initializeNativeOfficialWinners({api,getState,getBinding,root=do
     const incoming=value.items.map(v=>validateRow(v,s));rows=append?[...rows,...incoming].slice(0,500):incoming;cursor=value.next_cursor;selected=rows.find(v=>v.assessment_id===selected?.assessment_id)??rows[0]??null;render();});}
   async function readStored(){await run(async(s,accept)=>{if(!selected)return;const value=await api(endpoint(s)+'/'+selected.assessment_id);if(!accept())return;selected=validateRow(value,s);rows=rows.map(v=>v.assessment_id===selected.assessment_id?selected:v);render();});}
   async function createAssessment(){await run(async(s,accept)=>{const body=request(),fingerprint=JSON.stringify(body);if(!keys.has(fingerprint))keys.set(fingerprint,'native-official-winner-'+uuid());unknownKeys.add(fingerprint);
-    const value=await api(endpoint(s),{...body,request_key:keys.get(fingerprint)});if(!accept())return;selected=validateRow(value,s);unknownKeys.delete(fingerprint);rows=[selected,...rows.filter(v=>v.assessment_id!==selected.assessment_id)].slice(0,500);ack.checked=mockAck.checked=false;render();});}
-  function prepareNew(){if(working||getState().busy||!getState().canManage)return;if(selected&&!unknownKeys.size)keys.clear();selected=null;ack.checked=mockAck.checked=false;factors.replaceChildren();detail.textContent='';controls();}
+    const value=await api(endpoint(s),{...body,request_key:keys.get(fingerprint)});if(!accept())return;const accepted=validateRow(value,s);if(stable(accepted.snapshot.request)!==stable(body))throw new Error('Đánh giá trả về không đúng yêu cầu.');selected=accepted;unknownKeys.delete(fingerprint);rows=[selected,...rows.filter(v=>v.assessment_id!==selected.assessment_id)].slice(0,500);ack.checked=mockAck.checked=false;render();});}
+  function prepareNew(){if(working||getState().busy||!getState().canManage)return;if(selected&&!unknownKeys.size)keys.clear();selected=null;ack.checked=mockAck.checked=false;factors.replaceChildren();detail.textContent='';onSelection();controls();}
   for(const[b,fn]of[[config,readConfig],[source,readSource],[create,createAssessment],[history,()=>readHistory()],[more,()=>readHistory(true)],[read,readStored],[fresh,prepareNew]])b.addEventListener('click',fn);
   for(const n of[...Object.values(fields),...Object.values(weights),ack,mockAck])n.addEventListener('change',controls);
-  sync();return{readConfig,readSource,createAssessment,readHistory,readStored,prepareNew,sync,controls,isWorking:()=>working};
+  sync();return{readConfig,readSource,createAssessment,readHistory,readStored,prepareNew,sync,controls,currentBinding:()=>({assessment:selected}),isWorking:()=>working};
 }

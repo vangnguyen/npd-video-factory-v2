@@ -140,7 +140,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialWinnerUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialWinnerUI=null,officialLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -230,6 +230,7 @@ if (typeof document !== "undefined") {
     officialQueueUI?.controls();
     officialAnalyticsUI?.controls();
     officialWinnerUI?.controls();
+    officialLearningUI?.controls();
     channelUI?.controls();
   }
   function markDirty(part) {dirty=true;dirtyPart=part;$("review-check").checked=false;controls();}
@@ -277,6 +278,7 @@ if (typeof document !== "undefined") {
     officialQueueUI?.sync();
     officialAnalyticsUI?.sync();
     officialWinnerUI?.sync();
+    officialLearningUI?.sync();
     if(reset&&$('max-ai-cost'))$('max-ai-cost').value=project?.document?.cost_policy?.max_ai_cost_vnd??'';
     refreshCosts();
     const origin=project?.document.content_intelligence;
@@ -452,7 +454,10 @@ if (typeof document !== "undefined") {
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialPublicationUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>officialWinnerUI?.sync()});
       const officialWinners=await import('./native-official-winners.mjs');$('native-official-winners-card').hidden=false;
       officialWinnerUI=officialWinners.initializeNativeOfficialWinners({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),
-        workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialAnalyticsUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();}});
+        workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialAnalyticsUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>officialLearningUI?.sync()});
+      const officialLearning=await import('./native-official-learning.mjs');$('native-official-learning-card').hidden=false;
+      officialLearningUI=officialLearning.initializeNativeOfficialLearning({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),
+        workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialWinnerUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();}});
     }
     if(session.access?.mode==='registry'){
       const access=await import('./native-access.mjs');access.installNativeAccess(session);
