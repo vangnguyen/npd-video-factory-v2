@@ -100,6 +100,8 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
         # Shared measurements contain interval tuples; freeze the exact JSON shape
         # before returning it, so first delivery and checkpoint replay are identical.
         full=json.loads(json.dumps(full,allow_nan=False))
+        from .audio_loudness import measure
+        full['measured_audio_loudness']=measure(config,directory/'final.mp4')
         if (file_sha(manifest_path)!=binding['render_manifest_sha256'] or file_sha(directory/'final.mp4')!=binding['final_sha256'] or full['checksum_sha256']!=binding['final_sha256']):raise WorkflowError('STORYBOARD_QC_RENDER_BINDING_INVALID')
         verify_selected_files(config,document)
         report={**binding,'status':'passed','full_production_qc':full,'subtitle_bounds':subtitle,'timeline':timeline}

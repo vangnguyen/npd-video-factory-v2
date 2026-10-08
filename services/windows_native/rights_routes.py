@@ -11,6 +11,6 @@ def get(handler,path):
 
 
 def post(handler,path,body):
-    match=re.fullmatch(r'/api/projects/([a-f0-9]{32})/rights/([a-f0-9]{32}\.(?:jpg|png|mp4|wav))',path)
+    match=re.fullmatch(r'/api/projects/([a-f0-9]{32})/rights/([a-f0-9]{32}\.(?:jpg|png|mp4|wav|music\.wav))',path)
     if not match:raise WorkflowError('NATIVE_RIGHTS_ROUTE_NOT_FOUND',404)
     return handler.server.rights.declare(match[1],match[2],body,actor=actor(handler))

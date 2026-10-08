@@ -450,7 +450,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -598,10 +598,10 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/stock/(search|download|nstk_[a-f0-9]{32}/(?:cancel|import))',self.path):
             from .stock_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
-        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights/[a-f0-9]{32}\.(jpg|png|mp4|wav)',self.path):
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights/[a-f0-9]{32}\.(jpg|png|mp4|wav|music\.wav)',self.path):
             from .rights_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
-        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights-overrides/[a-f0-9]{32}\.(jpg|png|mp4|wav)',self.path):
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/rights-overrides/[a-f0-9]{32}\.(jpg|png|mp4|wav|music\.wav)',self.path):
             from .rights_override_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16384)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/narration-rights',self.path):
@@ -801,8 +801,14 @@ class Handler(BaseHTTPRequestHandler):
             raise WorkflowError("MUSIC_UPLOAD_HEADERS_INVALID",400) from None
         if content_type not in MUSIC_TYPES or not 0<length<=MUSIC_MAX_BYTES or self.headers.get("Transfer-Encoding") or self.headers.get("X-VF-Rights")!="confirmed":
             raise WorkflowError("MUSIC_RIGHTS_TYPE_SIZE_REQUIRED_MAX_25MB",400)
+        fade_text=self.headers.get('X-VF-Music-Loop-Crossfade','0')
+        if not re.fullmatch(r'(?:0(?:\.\d{1,3})?|1(?:\.0{1,3})?)',fade_text):raise WorkflowError('MUSIC_LOOP_CROSSFADE_INVALID',400)
+        loop_crossfade=float(fade_text)
         with self.server.store.transaction() as con:
-            self.server.store.editable(con,identifier,revision)
+            project=self.server.store.editable(con,identifier,revision)
+            if loop_crossfade:
+                from .auto_edit_timeline import is_auto_edit
+                if not is_auto_edit(project['document']):raise WorkflowError('MUSIC_LOOP_CROSSFADE_SOURCE_TIMELINE_REQUIRED',400)
         directory=self.server.config.data_root/"uploads"; directory.mkdir(parents=True,exist_ok=True)
         source=directory/(uuid.uuid4().hex+".part")
         try:
@@ -812,7 +818,7 @@ class Handler(BaseHTTPRequestHandler):
             source.write_bytes(raw)
             music=ingest_music(self.server.config,source,content_type,unquote(self.headers.get("X-VF-Filename","Nhạc nền")),rights_confirmed=True)
             try:
-                result=self.server.store.set_music(identifier,revision,music)
+                result=self.server.store.set_music(identifier,revision,music,loop_crossfade_seconds=loop_crossfade) if loop_crossfade else self.server.store.set_music(identifier,revision,music)
             except Exception:
                 (self.server.config.data_root/"assets"/music["id"]).unlink(missing_ok=True)
                 (self.server.config.data_root/"originals"/music["original_id"]).unlink(missing_ok=True)

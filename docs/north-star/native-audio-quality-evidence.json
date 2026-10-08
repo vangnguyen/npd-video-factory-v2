@@ -1,0 +1,375 @@
+{
+  "schema": "native-audio-quality-evidence-v1",
+  "parent_head": "2e8b4ac864e10612c65d30a78371be25d51c287f",
+  "source_sha256": {
+    "apps/studio-web/native-rights-override.mjs": "c8bfe86ac9458588cf967bb1f981ae5531b581798487d75c968001f21adece4c",
+    "apps/studio-web/native-rights.mjs": "e5728b1bb9b1c43515d926bc5e8d60a14af96a3d1a1194ae4e247a779160f34f",
+    "apps/studio-web/native.html": "36da6df25db1b715e69e1dd48c14dee7532969012933dac21218936409179209",
+    "apps/studio-web/native.mjs": "187c482918743dd1d5fb52a6ead593b369dd9ca9a6a8a5dd4a58936dc034bdd7",
+    "apps/studio-web/tests/native-music-loop.test.mjs": "112ea5ca8994f813de6546c275fbe959ed9ed24375d9536a96470e508dbb29b2",
+    "apps/studio-web/tests/native-rights-override.test.mjs": "94d58dff7ad4803fc6fcda621ce33be800e33fe6a1ab0d96e2484cf49a6b9c8e",
+    "apps/studio-web/tests/native-rights.test.mjs": "e14b4ee798e8cc893272c1585aab1ea0e0a4bb10e70e96cac2ec4c89c973145d",
+    "docs/NATIVE_MUSIC_CROSSFADE_LOUDNESS.md": "98d71afc5b1ec63eba4e3599999bc3531069316e7285d2822444a694fd601902",
+    "scripts/north_star_native_music_review.py": "8ddb9c7ae4d9f060261158e98e263aa73123548a3fe60eab0dbbf8d623b17564",
+    "scripts/north_star_native_source_worker_evidence.py": "e6e9707024db2d17bdf39a0988ae11e978931779eeafae874cbac1a00b2ce31c",
+    "scripts/north_star_native_storyboard_qc.py": "b45be2c5b27065c67f0529b0ff663d10ab80f7074413d09a24698c99f7fc218c",
+    "services/windows_native/access.py": "56c448ba7dd8ccd08660f94ca02ddead7f435f5425e1fe6f509c99d74a58dc4a",
+    "services/windows_native/audio_loudness.py": "c2e95caee4d0f714a6bdc0c2d587d622f3e06dfd38613eb1a307a5913b0038c9",
+    "services/windows_native/rights.py": "d47a2b3d37cd80433f4090e5a1c2ccf70fc725643eb818937d514bb148d51f70",
+    "services/windows_native/rights_models.py": "a4674e9ce0358f7dffdcb906afe77a2cd26c7a6bebce4c8aae73bd57c998ddc1",
+    "services/windows_native/rights_override.py": "c0c2896b290586c964d5928d1b14f55afaf923dd01ad2a471e438d392385d3f5",
+    "services/windows_native/rights_override_models.py": "0cfdf34a4975aaa50c0cf670040a66be2b5f2ae4b47b41cf5127deadbda44c62",
+    "services/windows_native/rights_override_routes.py": "954369f3924e9a5e2a42a4c08460f219ce022f4bf92b238b18f4014a0bb73448",
+    "services/windows_native/rights_routes.py": "07029e5794781158034a52d6711e99fe11fd90375ea4613c5ac65312ccaf0567",
+    "services/windows_native/server.py": "3ef5110ead27fac8cfff4ce5ef259ecc2f73b92a826404c2be9b92a998892816",
+    "services/windows_native/source_music.py": "6a8693455238a1a84da6ee43763866f2d1137cb2266f379675750b49dd55ac53",
+    "services/windows_native/source_render.py": "751a7185945960613338d5f0badf6663e967a6ed6fbc3d7e9e1da5c6db0d86df",
+    "services/windows_native/store.py": "d1eb7ab9daf30ee9866a6ecbfadce7db0a779fef176d347ff98c1aa513e2819b",
+    "services/windows_native/storyboard_qc.py": "614369292b626c9f70f6c427f105396940efddb0d4e06b6ab59fa068a07962a1",
+    "services/windows_native/tests/test_audio_loudness.py": "f23256bf88536ceaa9064294cd151365283074f4eb525849a3764890eafd28d6",
+    "services/windows_native/tests/test_music_http.py": "9e393314d3b47f69699190ac0c9f57f0b74af09bc345d6ab5fd46a19be3150ea",
+    "services/windows_native/tests/test_music_rights.py": "b4a9c8da1a04d469c56cf6b5aaddd826680cbf4837ddb7788bb5649c94010237",
+    "services/windows_native/tests/test_phase10_http.py": "362777550efae75ae4709d801b063e9aca992f2aeefc14cc79909c8d0e25a90f",
+    "services/windows_native/tests/test_source_music.py": "154f184050d79468e32774e6117c4ea6690256fa72791b4025fafb186f7ecb7e",
+    "services/windows_native/tests/test_source_render.py": "fbc666ea10f01eeebc74603eb308ca2b098524de38f15092497901cb155a049e",
+    "services/windows_native/tests/test_storyboard_qc.py": "5b6f25e45be24eb5eb87653abc5293f2020028e1742bb3a53a73c5664d0d0673"
+  },
+  "logs": {
+    "native-audio-quality-focused-r1.log": "b5429b45f41b36c41db3f37931c3affb4593441fa1c9c9d9b8ee65bd26a2d44d",
+    "native-audio-quality-full-r1.log": "6b4b1db5757eab6e92efeed588cdcf0a6d15049e8aa5a1136d8c35af397de2f9",
+    "native-audio-quality-http-qc-r1.log": "864d42a21f0514bb0a3cf4fd56b32826ca75624a9fbbbef18ba165d347892f86",
+    "native-audio-quality-narration-n1.log": "19881dcef3815d640beadb8abbb0d4a6d55c6dee351d6a160228090d50cd7e60",
+    "native-audio-quality-narration-n2.log": "eaf9682b2b061f892a6967e268cf3cf342c67f56454ab5d2b2734aada4da6747",
+    "native-audio-quality-narration-reopen-n2.log": "8050eb47051f5f4c628998f3e0a444949d0d41109a0ca162a2fc432c479f266a",
+    "native-audio-quality-narration-reopen.log": "8050eb47051f5f4c628998f3e0a444949d0d41109a0ca162a2fc432c479f266a",
+    "native-audio-quality-studio-focused.log": "6f1c513f791fc66d2c98ff57beb051dc060c09de88d2ce7b5e73a5c7ebd01717",
+    "studio-audio-quality-full-r1.log": "418ceee74d67b279110f6493bd3868721c08cee1480e977176c2be14a8493ed5",
+    "studio-audio-quality-full-r2.log": "386b5ff726d0d8dcd3573388c209890b3ada15af75e29d12e4c1b31beebaca6c",
+    "native-music-crossfade-flow-n1.log": "1de68d5145af29c85b3b47fa12f4c7a85740b08b48012ab0ed1d3bf820d78883",
+    "native-music-crossfade-flow-n2.log": "fe3f2947b548ff74833b33bb017c8c7d848453b952942ebb43a3e73dc4de576d",
+    "native-music-review-flow-n1.log": "bf1abe5df976377153e41fbcce3d8f9bb106b8618f9906df5dc729929cb4f36b",
+    "native-music-review-reopen.log": "528e401979721a5b306be39b6db4366510f67256fc1b35bff598e4eee3b8c08b"
+  },
+  "tests": {
+    "full_native_passed": 699,
+    "full_native_seconds": 508.54,
+    "full_studio_passed": 258,
+    "full_studio_ms": 1119.3069,
+    "new_native_cases": 13,
+    "new_dom_cases": 4,
+    "focused_native_before_final_guards_passed": 29,
+    "focused_dom_passed": 13,
+    "unchanged_prior_linux_api_passed": 2659,
+    "unchanged_prior_linux_api_skipped": 11
+  },
+  "rehearsals": {
+    "native-music-crossfade-flow-n2": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-music-crossfade-flow-n2",
+      "evidence_sha256": "affea37e166b1c17b2ee7db454c9ac18ca8d0496f3bc7fd3f3c9630d17bba223",
+      "exports": {
+        "asset-provenance.json": "1b31ebdac1770ee98f9a5303884dba3575c40e6a846348df046f1961376e2565",
+        "audio-analysis.json": "396ea3270a10f04940aa2041d5e9f780d13a42472e4038ac629123e692703c6a",
+        "caption-frame.png": "e54e30358800178de45564041dcdcc296bb46de895d73cff1d6c123ebe8e6167",
+        "checkpoint-render.json": "d892731f5a578a1f0ea61ca4c5b2df343d738a1945d9eda850f0241db8ec701b",
+        "cost.json": "9c3461e7a03a4cee42f79e6b7372a1f25d64c5446527eda1bb51e7967636116f",
+        "ffprobe.json": "874a9974fc7a43dc303f062126ae52bdd4c8c94b7aa6a0858cba6f1c2fd26e5b",
+        "final.mp4": "d76db66354fc25ddaff5a276d8f02e6c28e1512674ada67378084a685ed3b10d",
+        "highlight-analysis.json": "a573fea906cefc8b01826be3bdfcf35f20ad922b170ff699d7c0d7737fa49194",
+        "job-events.json": "35bb3165864680e97ce0154519a5bdb91e33e98c9c2b50ed69daa1e5c8e364fa",
+        "preview-audio-analysis.json": "2fa9b3bca1e8542e49e6b4ae9704999a31a18b167cadfa3af5082befe947eced",
+        "preview-caption-frame.png": "a636925994ded4ccc091fa1791902a51394206c969878f977973cf0d0ad257de",
+        "preview-render-manifest.json": "481552f1c294e27e1821746ec698815e801ea4e1b78f94d1aca3555cbc2275d7",
+        "preview-renderer-receipt.json": "49690dd316cdee9d50cff6eaeac003c32435b85be673c2eb1b8aaf4f8a380ff6",
+        "preview-timeline-render.json": "3572ebb0d6f25b8b0abd994fc51ab685a8e7e17184557b04093b77b7c2121927",
+        "preview.json": "055e4a7b4536e07258b4ae58b899091bc02c26d0e7b3d449ed554eced51bbb58",
+        "preview.mp4": "1384c3840c9b1ab141d302ad575edc560a53b942c9a12a63a6fbbc2161a3e7a0",
+        "project.json": "436978ab7941851dada36b32dfd76797c01cc014a2b9cf612ff07656105511e3",
+        "qc.json": "60471120bb9a6b8921b335eeb117687c449b4bb4c1be64387814883c6daa492d",
+        "render-manifest.json": "0616f69d7587b243541581cd16811290c973cef5e2c98ff4f5cefb5d48895417",
+        "renderer-receipt.json": "d73079613a898cff90e9e42f05907a0392a46ee94beda29d59681c3e03bb9b2c",
+        "scene-analysis.json": "ee38d873dd1fa3ff7316a27714f1217eafe772ceeb1b2ad9ca5aa498225483be",
+        "silence-decisions.json": "9b049c41e09f60c09d2f6299228dba11e8f6a6c46ca088753a62c79d8b886304",
+        "subtitles.json": "9e94f32ba78d527305a8243a1b3255335236fbfcb75e0b942a5cb668a56ca6c8",
+        "timeline-render.json": "0bfa1886d82b5ead25ad79ed331b3bab70b63d90c3a55068c401c8e0da1808b8",
+        "timeline.json": "0910709bb81092bb8878446052e01e8f2e53a6ddaa68cf1b31ca4edd9d8bc4d6",
+        "transcript.json": "caa7ea66091ed54360085c223537b5a7a02ab5f531ab8673ddebf6c1bccc6596"
+      },
+      "export_count": 26
+    },
+    "native-music-review-flow-n1": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-music-review-flow-n1",
+      "evidence_sha256": "da52038d86e5476894118ebc04c7094ca061a68b73807ef68b4eaa59f6b15f94",
+      "exports": {
+        "backup.json": {
+          "sha256": "17165cf87791f7f73abf7e17bf8ec5fe08cc369e4ce456cb3b926f903f8b4440",
+          "bytes": 2425
+        },
+        "declaration.json": {
+          "sha256": "726d0ed3cb4282f80ccbed6996593a9e1e93123fac402b1e799d6f7a3e4ddce2",
+          "bytes": 1413
+        },
+        "duplicate.json": {
+          "sha256": "b14b40253e0e1cde4dfbfde9c0270fea3e7383aba3830eee5183eed53072c137",
+          "bytes": 193489
+        },
+        "grant.json": {
+          "sha256": "2b2be25a4943c1cb230564e786b580e23d84530376352ba7288e3bf4e3853f79",
+          "bytes": 1569
+        },
+        "http-requests.json": {
+          "sha256": "641aa3fb89f06a78e72bbe8a00c87d1c2fb52cddd1bd246760a6f68b56930550",
+          "bytes": 1780
+        },
+        "offline-snapshot.json": {
+          "sha256": "67dd5eaac828ceed1394d31754e87fa9d960b1c02f0a4c393dfda6531815ad19",
+          "bytes": 2024266
+        },
+        "owned-music-review.zip": {
+          "sha256": "887613d921913d0ca9b400e25220d0b54b4220bed86eb9b51a161b2a3ab31852",
+          "bytes": 6793012
+        },
+        "restore.json": {
+          "sha256": "470a8822dfbc8c6baec18d636e889cb17926006ccc79f7b6306315254383589f",
+          "bytes": 2817
+        },
+        "review-history.json": {
+          "sha256": "2e8d77a769c1ad9be23da9fbbfd1c8869f763e72430b79e1c1a42f1625c3892d",
+          "bytes": 3876
+        },
+        "revocation.json": {
+          "sha256": "91e76c3adecf69db51e60c1686a46fb29e1fea63efacc6cf797f1d6196ddc3e2",
+          "bytes": 1637
+        }
+      },
+      "export_count": 10
+    },
+    "native-audio-quality-narration-n2": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-audio-quality-narration-n2",
+      "evidence_sha256": "e8e033bacb40ebad4d434e47dcfe0d8531c8b262e650af5806cf79a4a026f468",
+      "exports": {
+        "actual-local-runtime.json": {
+          "sha256": "a4e9e08b1437f12d1667ec0d9f279eebaab62cde10264e68943391b3c36e2d50",
+          "bytes": 750
+        },
+        "actual-local-voice.json": {
+          "sha256": "20abacf2aa5cc14dcce99d7ffda1d6309f9e67db63e8bd2fbf814852ef6353d9",
+          "bytes": 1502
+        },
+        "artifact-review.json": {
+          "sha256": "87dd070df2eb05dcefcb8b35625bb4534450fb6914b0f225e3e5a9f4ad99c5b7",
+          "bytes": 13846
+        },
+        "audible-preview-full-qc.json": {
+          "sha256": "dd67c2cabbed6e3b63a90e1e477fe1600c4942b9f454882eed5e184a789decd0",
+          "bytes": 8049
+        },
+        "audible-preview-manifest.json": {
+          "sha256": "7f3a80dc609d765ba4d2a347c5c1efc35b5b471a670bcb8956fc033cc6abb375",
+          "bytes": 15005
+        },
+        "backup-restore.json": {
+          "sha256": "ce28d382483e04a4ca45b76beb5624ecbd0e5b9d8c0898eb3a578932f362e8b1",
+          "bytes": 5616
+        },
+        "blocked-approval.json": {
+          "sha256": "1c30b349f9fe6e5eef12d11e086fbfa9131196ca4a73de6a3605a8c7e18e87a7",
+          "bytes": 388
+        },
+        "blocked-render-admission.json": {
+          "sha256": "8e24bae5118f0b62ca7764cd5b896c8fa149a34e10535abe895f4a21c2455a3a",
+          "bytes": 352
+        },
+        "cost.json": {
+          "sha256": "ea76bb2e136e6308fd87571c2006f4dfd7e38eb86d982dc6baa7cee775f2dc4a",
+          "bytes": 791
+        },
+        "failed-preview.json": {
+          "sha256": "15bfe64cadd7ad3020a74c71114dc4867f29eeb07b0cd663a0522472ec531d57",
+          "bytes": 695
+        },
+        "failed-qc-report.json": {
+          "sha256": "62e6120f6b920b714ecc120ab93b3b0e8003b176541648fa1c8fe3f30ec70156",
+          "bytes": 7273
+        },
+        "final.mp4": {
+          "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+          "bytes": 261937
+        },
+        "full-qc-report.json": {
+          "sha256": "9c0c6061e13a7d2d2a2a490db6438e4966b448e7d1311b0f01fe5f6e12ea8f3c",
+          "bytes": 5837
+        },
+        "human-http-wires.json": {
+          "sha256": "b05cf96118c58c4bb68d6044d993e93b71cc8f796be0989b9dab2ec1b9112162",
+          "bytes": 11053
+        },
+        "job-events.json": {
+          "sha256": "c93a3656ed7d31ad32f60e4811f8755abfa1f3b37047073013e0ead5120de65c",
+          "bytes": 15505
+        },
+        "media-plan.json": {
+          "sha256": "0cd5f56eda2b8e524f902ab1dfdcba688162a745858dc66ca5f43f039e924c18",
+          "bytes": 59922
+        },
+        "narration-applied-project.json": {
+          "sha256": "f69b52ac43ec91c29517831025492e953d80cbbbfe87b47cbaff7c01c2430d09",
+          "bytes": 233300
+        },
+        "narration-job.json": {
+          "sha256": "241acffbae8077023de980eb37f9500ca763ac7f2c6a620af6437c4590e6814a",
+          "bytes": 109863
+        },
+        "narration-page.json": {
+          "sha256": "525fa55ad0055433bfa3720f9684771b49746793b7355a6bad9c9b23ab1377d8",
+          "bytes": 4604
+        },
+        "narration-plan.json": {
+          "sha256": "a275342ad4d7f88205de30516461d7ea553f988df13fdbcd892a7e164348bccb",
+          "bytes": 3146
+        },
+        "native-storyboard-full-qc-backup.zip": {
+          "sha256": "20cf6a294644c4737cdb1998177ffa953debd12eef6bd48c59b101a1edd65181",
+          "bytes": 13096202
+        },
+        "offline-snapshot.json": {
+          "sha256": "f986daa7beba855c1483f20483bdf622d10e7970a6cc0501b7340c5926de1711",
+          "bytes": 1461474
+        },
+        "preview.json": {
+          "sha256": "fe860635acfd9961e43884a504dde8554eb7cdb65a2b31d0fb6f3277aaa4d0f6",
+          "bytes": 16696
+        },
+        "preview.mp4": {
+          "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+          "bytes": 261937
+        },
+        "project.json": {
+          "sha256": "c7e1a871b5a0ae8fc648991237225052f729604939eadef780576f43d4c95ac1",
+          "bytes": 357594
+        },
+        "qc-report.json": {
+          "sha256": "46842e5f4fc6f655a0bb848b77d694778406ad36043d2d522e771a7369645c53",
+          "bytes": 7039
+        },
+        "render-job.json": {
+          "sha256": "81039e9d04ca941a376d0c1c28df78d7b34c8ba80b6ed83ff3d6cc4a3d46d22c",
+          "bytes": 119147
+        },
+        "render-manifest.json": {
+          "sha256": "13e1407bcc023cf8950de0670a7c19208451ceeb9a6c468ef6666323e79868bb",
+          "bytes": 6171
+        },
+        "render-voice.json": {
+          "sha256": "2da00336d757b9156ebc95a2ced27922c05008853d6f4e377a8943bc5aead152",
+          "bytes": 2386
+        },
+        "render-voice.wav": {
+          "sha256": "2eecdb49cf94e207530857335398dfcb88a529681f10b3da5d1330cb83d92150",
+          "bytes": 904364
+        },
+        "subtitles.ass": {
+          "sha256": "e658e110947873f018ac1b7f6c3a033a9c8b136b457458277f619dccfc0a69d2",
+          "bytes": 947
+        },
+        "timeline.json": {
+          "sha256": "96ce3698bf61a8ed448a2ff9f950edf425bd64d9f3c6250bf40bd1f16434ec12",
+          "bytes": 5189
+        },
+        "transport-qc-report.json": {
+          "sha256": "4fb749b301e35a931b5111f358341ed6c5b4aa7729b73e2ab3052a833db41a57",
+          "bytes": 1160
+        },
+        "visual-proxy.json": {
+          "sha256": "035c8e269c1a6d019d6b3a0ae137ad0ef795aa651ff794342839dfb9e5a63577",
+          "bytes": 658
+        },
+        "visual-proxy.mp4": {
+          "sha256": "10d2ade4658c2ab186440a2172abd93ac842a48ec03410d642c7a5c5f4510040",
+          "bytes": 50700
+        },
+        "voice-reuse.json": {
+          "sha256": "1bc0d8edf1e23eaa6d4f3755a09974b581d2e3a890d405fca930f204f2a73134",
+          "bytes": 571
+        },
+        "voice.json": {
+          "sha256": "b9b5fc8e6d4ebc091f72f5dd455d6b78e57208d6375c81a8c1f62655022fa751",
+          "bytes": 1231
+        },
+        "voice.wav": {
+          "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185",
+          "bytes": 702764
+        },
+        "subtitle-qc/000.png": {
+          "sha256": "8710ff89a903fce552ff947559c28aa6cf682ae32f296c5d3677b40443485cdb",
+          "bytes": 63104
+        },
+        "subtitle-qc/001.png": {
+          "sha256": "7688e3ebb7cda6cdd21c1f097677d4dbe033e97a942e559bc73247283024ee45",
+          "bytes": 60594
+        },
+        "subtitle-qc/002.png": {
+          "sha256": "b37c9d095f8b41d39343ba862af96108853a351636013d819244c5eed0ebbf4d",
+          "bytes": 24086
+        }
+      },
+      "export_count": 41
+    }
+  },
+  "canonical_source_music_loop_crossfade": true,
+  "zero_preserves_legacy_repeat_behavior": true,
+  "same_preview_final_pcm": true,
+  "source_final_measured_loudness": {
+    "audio_modified": false,
+    "external_provider_calls": 0,
+    "input_sha256": "d76db66354fc25ddaff5a276d8f02e6c28e1512674ada67378084a685ed3b10d",
+    "integrated_lufs": -15.73,
+    "loudness_range_lu": 0.0,
+    "measurement_state": "measured",
+    "normalization_target_achieved_claimed": false,
+    "provider": "local-ffmpeg-loudnorm-input-measurement",
+    "relative_threshold_lufs": -27.49,
+    "schema_version": "native-measured-audio-loudness-v1",
+    "speech_detection_performed": false,
+    "true_peak_dbfs": -12.66,
+    "voice_music_balance_accepted": false
+  },
+  "genuine_local_narration_final_measured_loudness": {
+    "audio_modified": false,
+    "external_provider_calls": 0,
+    "input_sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+    "integrated_lufs": -18.89,
+    "loudness_range_lu": 2.7,
+    "measurement_state": "measured",
+    "normalization_target_achieved_claimed": false,
+    "provider": "local-ffmpeg-loudnorm-input-measurement",
+    "relative_threshold_lufs": -29.07,
+    "schema_version": "native-measured-audio-loudness-v1",
+    "speech_detection_performed": false,
+    "true_peak_dbfs": -0.93,
+    "voice_music_balance_accepted": false
+  },
+  "measurement_errors_fail_qc": true,
+  "measured_input_hashes_bound": true,
+  "actual_signed_music_rights_http_requests": 13,
+  "actual_signed_narration_http_requests": 93,
+  "music_rights_suffix_and_owner_only_routes": true,
+  "raw_music_rights_unknown": true,
+  "default_disabled_scoped_music_exceptions": true,
+  "rights_independently_verified": false,
+  "actual_music_and_narration_restore_checkpoint_replay": true,
+  "local_model_inference_calls": 2,
+  "locked_sdk_model_bytes_unchanged": true,
+  "actual_semantic_vision_used": false,
+  "speech_detection_performed": false,
+  "speech_quality_accepted": false,
+  "voice_music_balance_accepted": false,
+  "owner_optional_listening_review": "deferred_keep_implementing",
+  "owner_uat_accepted": false,
+  "browser_non_developer_uat": false,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

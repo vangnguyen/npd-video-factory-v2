@@ -467,11 +467,12 @@ class Store:
             doc['canonical_timeline']={**state,'version':1};validate_document(doc)
         return doc
 
-    def set_music(self, identifier, revision, music):
+    def set_music(self, identifier, revision, music,*,loop_crossfade_seconds=0):
         from .auto_edit_timeline import is_auto_edit
         if is_auto_edit(self.get(identifier)['document']):
             from .source_music import set_music
-            return set_music(self,identifier,revision,music)
+            return set_music(self,identifier,revision,music,loop_crossfade_seconds=loop_crossfade_seconds)
+        if loop_crossfade_seconds!=0:raise WorkflowError('MUSIC_LOOP_CROSSFADE_SOURCE_TIMELINE_REQUIRED',400)
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
             before_shots = copy.deepcopy(doc)

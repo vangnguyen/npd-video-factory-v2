@@ -113,7 +113,7 @@ class NativeRights:
             project=self.store.editable(con,project_id,payload.revision);document=deepcopy(project['document']);validate_document(document,project_id=project_id,workspace_id=self.workspace)
             asset=next((item for item in canonical_assets(document) if item['id']==asset_id),None)
             if asset is None:raise WorkflowError('NATIVE_RIGHTS_ASSET_NOT_FOUND',404)
-            if asset.get('sha256')!=payload.asset_sha256 or not re.fullmatch(r'[a-f0-9]{32}\.(jpg|png|mp4|wav)',asset_id):
+            if asset.get('sha256')!=payload.asset_sha256 or not re.fullmatch(r'[a-f0-9]{32}\.(jpg|png|mp4|wav|music\.wav)',asset_id):
                 raise WorkflowError('NATIVE_RIGHTS_ASSET_CHANGED',409)
             path=guard(self.store.root/'assets'/asset_id,exists=True)
             if file_sha(path)!=payload.asset_sha256:raise WorkflowError('NATIVE_RIGHTS_ASSET_CHANGED',409)

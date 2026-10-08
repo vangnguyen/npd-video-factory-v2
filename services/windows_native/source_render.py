@@ -181,8 +181,20 @@ def run(config,job,out,stage):
         raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED')
     # Detect source changes during rendering before registering a ready artifact.
     resolve_assets(config,project)
+    from .audio_loudness import measure
+    try:
+        loudness=measure(config,output)
+        if loudness['input_sha256']!=report['checksum_sha256'] or loudness['input_sha256']!=file_sha(output):
+            raise WorkflowError('NATIVE_AUDIO_LOUDNESS_INPUT_CHANGED')
+    except WorkflowError as error:
+        durable_json(directory/'qc-report.json',{**report,'passed':False,'status':'failed',
+            'human_final_video_accepted':False,'failures':[error.code]})
+        raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
     qc={**report,'passed':True,'final_sha256':file_sha(output),'human_final_video_accepted':False,'published':False,
         'render_profile':profile,'audio_activity':activity,'intentional_audio_silence':not bool(audio.clips)}
+    qc['measured_audio_loudness']=loudness
+    analysis=json.loads((directory/'audio-analysis.json').read_bytes());analysis['final_output_loudness']=loudness
+    durable_json(directory/'audio-analysis.json',analysis)
     durable_json(directory/'qc-report.json',qc);durable_json(directory/'ffprobe.json',probe)
     durable_json(directory/'render-manifest.json',{'renderer':'remotion-local-native-job-v1','profile':profile,
         'canonical_timeline':project['document']['canonical_timeline'],'approval':job['snapshot']['approval'],

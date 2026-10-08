@@ -41,6 +41,7 @@ def main():
     parser.add_argument('--evidence-dir',type=Path,required=True)
     parser.add_argument('--edited-timeline',action='store_true')
     parser.add_argument('--music',action='store_true')
+    parser.add_argument('--music-loop-crossfade',type=float,default=0)
     parser.add_argument('--audio-processing',action='store_true')
     parser.add_argument('--broll',action='store_true')
     parser.add_argument('--duplicate-source',action='store_true')
@@ -51,6 +52,9 @@ def main():
     parser.add_argument('--aspect-ratio',choices=('9:16','16:9','1:1','4:5'),default='4:5')
     parser.add_argument('--explicit-fixture-owned-provenance',action='store_true')
     args=parser.parse_args();root=args.data_root.resolve();out=args.evidence_dir.resolve()
+    import math
+    if not math.isfinite(args.music_loop_crossfade) or not 0<=args.music_loop_crossfade<=.5 or (args.music_loop_crossfade and not args.music):
+        raise ValueError('Crossfade requires music and must fit half the one-second synthetic source')
     if args.auto_shorts and args.duplicate_source:raise ValueError('Choose one fresh draft derivation per evidence run')
     if root.parent!=Path('C:/') or not root.name.startswith('vf-native-fixture-') or root.exists():
         raise ValueError('Fresh isolated synthetic Native root required')
@@ -100,7 +104,7 @@ def main():
             '-f','lavfi','-i','sine=frequency=220:duration=1','-c:a','pcm_s16le',str(music_path)],
             check=True,capture_output=True,timeout=30)
         music=ingest_music(config,music_path,'audio/wav','Explicit synthetic music.wav',rights_confirmed=True)
-        project=store.set_music(project['id'],project['revision'],music)
+        project=store.set_music(project['id'],project['revision'],music,loop_crossfade_seconds=args.music_loop_crossfade)
     if args.audio_processing:
         from services.windows_native.source_settings import configure
         project=configure(store,project['id'],project['revision'],{
@@ -253,6 +257,8 @@ def main():
             'requested_aspect_ratio':args.aspect_ratio,'explicit_fixture_owned_provenance':args.explicit_fixture_owned_provenance,
             'linked_source_edits_and_karaoke':bool(args.edited_timeline and not args.auto_shorts),
             'canonical_music_added':any(track['kind']=='music' and track['clips'] for track in project['document']['canonical_timeline']['snapshot']['tracks']),
+            'canonical_music_loop_crossfade_seconds':args.music_loop_crossfade,
+            'measured_final_audio_loudness':render['result']['qc'].get('measured_audio_loudness'),
             'canonical_audio_processing_requested':bool(project['document']['canonical_timeline']['snapshot']['metadata'].get('source_audio_processing')),
             'canonical_supporting_broll_added':any(track['kind']=='broll' and track['clips'] for track in project['document']['canonical_timeline']['snapshot']['tracks']),
             'auto_shorts_drafts_created':bool(shorts),

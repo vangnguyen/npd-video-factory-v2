@@ -48,3 +48,10 @@ test('late foreign context and forged verified receipt cannot alter current work
   h.handler(async()=>page());await h.controller.load();fill(h);h.handler(async(path,body)=>{const value=receipt(body);value.record.rights_independently_verified=true;return value;});
   await h.controller.record('grant');assert.equal(h.saved.length,0);assert.equal(h.messages.at(-1)[1],true);
 });
+test('physical music intake suffix supports a scoped exception with unchanged unverified rights claims',async()=>{
+  const h=harness(),asset='b'.repeat(32)+'.music.wav';
+  h.handler(async(path,body)=>{const v=body?receipt(body):page();if(body)v.record.asset_id=asset;else v.items[0].asset_id=asset;return v;});
+  await h.controller.load();fill(h);await h.controller.record('grant');
+  assert.equal(h.saved.length,1);assert.equal(h.calls.at(-1)[0],`/api/projects/${PROJECT}/rights-overrides/${asset}`);
+  assert.equal(h.saved[0].record.rights_independently_verified,false);assert.equal(h.saved[0].record.publishing_authorized,false);
+});

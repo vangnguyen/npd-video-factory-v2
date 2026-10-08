@@ -6,6 +6,12 @@ export async function loadNativeCosts(session,loader=()=>import('./native-costs.
 }
 export const supportsShotStudio = session => session?.capabilities?.native_shot_studio===true || session?.native_shot_studio===true;
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
+export function musicLoopHeaders(project,value,enabled=false){
+  if(!enabled||!isSourceProject(project))return {};
+  const n=Number(value);
+  if(typeof value!=='string'||!value.trim()||!Number.isFinite(n)||n<0||n>1||Math.abs(n*1000-Math.round(n*1000))>1e-8)throw new Error('Nhập chuyển tiếp vòng nhạc từ 0 đến 1 giây, tối đa ba số thập phân.');
+  return n?{'X-VF-Music-Loop-Crossfade':String(n)}:{};
+}
 export async function loadNativeShotStudio(session,loader=()=>import('./shot-studio.mjs')) {
   return supportsShotStudio(session)?await loader():null;
 }
@@ -97,6 +103,8 @@ const errors = {
   EDITOR_PLAN_CHANGED_OR_STALE:"Kế hoạch cảnh đã thay đổi. Lưu và duyệt lại trước khi tạo video.",
   MUSIC_RIGHTS_TYPE_SIZE_REQUIRED_MAX_25MB:"Xác nhận quyền dùng nhạc WAV/MP3, tối đa 25 MB.",
   MUSIC_AUDIO_INVALID_WAV_MP3_MAX_10_MINUTES:"Chọn bản nhạc WAV/MP3 hợp lệ, tối đa 10 phút.",
+  MUSIC_LOOP_CROSSFADE_INVALID:"Nhập chuyển tiếp vòng nhạc từ 0 đến 1 giây và không quá nửa thời lượng tệp nhạc.",
+  MUSIC_LOOP_CROSSFADE_SOURCE_TIMELINE_REQUIRED:"Chuyển tiếp vòng nhạc cần dự án dựng video nguồn có timeline.",
   MUSIC_ARTIFACT_CHANGED_OR_RIGHTS_MISSING:"Bản nhạc bị thay đổi hoặc thiếu quyền sử dụng. Lưu và duyệt lại.",
   PROJECT_ARCHIVED_RESTORE_FIRST:"Khôi phục dự án từ lưu trữ trước khi sửa hoặc tạo video.",
   HUMAN_FINAL_WATCH_LISTEN_REVIEW_REQUIRED:"Nhập người duyệt và xác nhận đã xem, nghe đúng video trước khi duyệt bản cuối.",
@@ -117,7 +125,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,musicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -165,6 +173,7 @@ if (typeof document !== "undefined") {
     $("analyze-media").disabled=!project||blocked||dirty||!mediaAnalysisPending(project.document);
     $("auto-plan").disabled=!project?.document.proposal||!mediaLibrary(project?.document).length||blocked||dirty;
     $("upload-music").disabled=!project||blocked||dirty;
+    if($('music-loop-crossfade'))$('music-loop-crossfade').disabled=!project||blocked||dirty||!musicLoopEnabled||!isSourceProject(project);
     $("music-enabled").disabled=!project?.document.music||!project.document.proposal||blocked||dirtyPart==="prompt";
     document.querySelectorAll(".scene").forEach(row=>{const asset=mediaLibrary(project?.document).find(a=>a.id===row.querySelector("[data-media]").value);row.querySelector("[data-start]").disabled=blocked||dirtyPart==="prompt"||asset?.kind!=="video";row.querySelector("[data-motion]").disabled=blocked||dirtyPart==="prompt"||asset?.kind!=="image";});
     document.querySelectorAll(".scene").forEach(row=>{row.querySelector('[data-move="-1"]').disabled=blocked||dirtyPart==="prompt"||!row.previousElementSibling;row.querySelector('[data-move="1"]').disabled=blocked||dirtyPart==="prompt"||!row.nextElementSibling;});
@@ -260,6 +269,8 @@ if (typeof document !== "undefined") {
     $("music-note").textContent=musicSummary(project);
     const musicHint=$('music-intake-hint');if(musicHint)musicHint.textContent=isSourceProject(project)?'Nhạc có quyền sử dụng được lặp đến cuối timeline, giữ âm thanh nguồn và tạo bản dựng mới cần duyệt. Chỉnh track nhạc tại Advanced Timeline; bật cân mức và ducking trong bảng Xử lý âm thanh nguồn & nhạc rồi nghe preview. WAV/MP3 ≤ 25 MB, tối đa 10 phút.':'Nhạc được hạ âm lượng khi có lời đọc. WAV/MP3 ≤ 25 MB, tối đa 10 phút.';
     if(reset)$("music-enabled").checked=Boolean(project?.document.music)&&project.document.music_enabled!==false;
+    if($('music-loop-crossfade-label'))$('music-loop-crossfade-label').hidden=!musicLoopEnabled||!isSourceProject(project);
+    if(reset&&$('music-loop-crossfade'))$('music-loop-crossfade').value=String(project?.document?.canonical_timeline?.snapshot?.metadata?.music_review?.loop_crossfade?.duration_seconds??0);
     $("media-count").textContent=`${assets.length} nguồn`;
     $("asset-empty-state").hidden=assets.length>0;
     $("asset-create-first").hidden=Boolean(project);
@@ -320,6 +331,7 @@ if (typeof document !== "undefined") {
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
     canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
+    musicLoopEnabled=session.capabilities?.native_source_music_loop_crossfade===true;
     if(session.capabilities?.native_bridge_operator===true){
       const bridge=await import('./native-bridge.mjs');$('native-bridge-card').hidden=false;
       bridgeUI=bridge.initializeNativeBridge({api,getState:()=>({busy,canManage,workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});
@@ -470,7 +482,7 @@ if (typeof document !== "undefined") {
   $("final-watch").addEventListener('change',controls);$("final-reviewer").addEventListener('input',controls);
   $("load-artifacts").addEventListener("click",guarded(async()=>{const value=await api(`/api/jobs/${currentVideo(project).id}/artifacts`);$("artifact-list").innerHTML=`<p>Phiên bản ${value.revision} · kiểm tra ${value.qc.passed?"đạt":"chưa đạt"}</p><p>${esc(value.output_directory)}</p>`+value.artifacts.map(a=>`<p><strong>${esc(a.path)}</strong> · ${a.bytes.toLocaleString("vi-VN")} byte<br><small>${esc(a.sha256)}</small></p>`).join("");}));
   $("open-output").addEventListener("click",guarded(async()=>{await api(`/api/jobs/${currentVideo(project).id}/open-folder`,{});message("Đã mở thư mục chứa video và các tệp kiểm tra.");}));
-  $("upload-music").addEventListener("click",guarded(async()=>{const file=$("music-file").files[0];if(!file||!musicType(file)||!file.size||file.size>25*1024*1024||!$("music-rights").checked)throw new Error(errors.MUSIC_RIGHTS_TYPE_SIZE_REQUIRED_MAX_25MB);const response=await fetch(`/api/projects/${project.id}/music`,{method:"POST",credentials:"same-origin",headers:{"Content-Type":musicType(file),"X-VF-CSRF":csrf,"X-VF-Revision":String(project.revision),"X-VF-Rights":"confirmed","X-VF-Filename":encodeURIComponent(file.name)},body:file});const result=await response.json();if(!response.ok)throw new Error(errors[result.code]??result.code);project=result;$("music-file").value="";renderProject(true);message("Đã lưu nhạc nền. Kiểm tra và duyệt lại trước khi render.");}));
+  $("upload-music").addEventListener("click",guarded(async()=>{const file=$("music-file").files[0];if(!file||!musicType(file)||!file.size||file.size>25*1024*1024||!$("music-rights").checked)throw new Error(errors.MUSIC_RIGHTS_TYPE_SIZE_REQUIRED_MAX_25MB);const loop=musicLoopHeaders(project,$('music-loop-crossfade')?.value??'0',musicLoopEnabled);const response=await fetch(`/api/projects/${project.id}/music`,{method:"POST",credentials:"same-origin",headers:{"Content-Type":musicType(file),"X-VF-CSRF":csrf,"X-VF-Revision":String(project.revision),"X-VF-Rights":"confirmed","X-VF-Filename":encodeURIComponent(file.name),...loop},body:file});const result=await response.json();if(!response.ok)throw new Error(errors[result.code]??result.code);project=result;$("music-file").value="";renderProject(true);message("Đã lưu nhạc nền. Kiểm tra và duyệt lại trước khi render.");}));
   $("music-enabled").addEventListener("change",()=>markDirty("proposal"));
   $("approve").addEventListener("click",guarded(async()=>{if(dirty)throw new Error("Lưu chỉnh sửa trước khi duyệt.");project=await api(`/api/projects/${project.id}/approve`,{revision:project.revision,reviewer:$("reviewer").value,acknowledged:$("review-check").checked});renderProject(true);message(isSourceProject(project)?'Đã duyệt bản dựng nguồn hiện tại. Có thể render và kiểm tra video cuối.':"Đã ghi nhận bạn duyệt phiên bản này. Có thể tạo giọng đọc và video.");}));
   $("upload-media").addEventListener("click",guarded(async()=>{

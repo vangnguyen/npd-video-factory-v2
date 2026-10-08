@@ -28,7 +28,7 @@ class OverrideRecord(StrictModel):
     override_id:str=Field(pattern=r'^nro_[a-f0-9]{32}$')
     workspace_id:str=Field(min_length=1,max_length=100)
     project_id:str=Field(pattern=r'^[a-f0-9]{32}$')
-    asset_id:str=Field(pattern=r'^[a-f0-9]{32}\.(jpg|png|mp4|wav)$')
+    asset_id:str=Field(pattern=r'^[a-f0-9]{32}\.(jpg|png|mp4|wav|music\.wav)$')
     asset_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
     request:OverrideRequest
     actor_ref:str=Field(min_length=1,max_length=100)

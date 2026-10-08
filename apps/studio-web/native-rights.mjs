@@ -1,4 +1,4 @@
-const HASH=/^[a-f0-9]{64}$/,ID=/^[a-f0-9]{32}\.(jpg|png|mp4|wav)$/;
+const HASH=/^[a-f0-9]{64}$/,ID=/^[a-f0-9]{32}\.(jpg|png|mp4|wav|music\.wav)$/;
 export const supportsNativeRights=session=>session?.capabilities?.native_rights_review===true;
 
 export function initializeNativeRights({api,getState,dom=document,onMessage=()=>{},onSaved=async()=>{},onWorking=()=>{},uuid=()=>crypto.randomUUID()}){

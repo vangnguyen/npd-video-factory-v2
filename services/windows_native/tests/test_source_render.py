@@ -68,6 +68,9 @@ class NativeSourceRenderTests(unittest.TestCase):
         result=self.store.get_job(job['id'])
         self.assertEqual(result['status'],'succeeded',result['error'])
         self.assertTrue(result['result']['qc']['passed']);self.assertFalse(result['result']['qc']['human_final_video_accepted'])
+        measured=result['result']['qc']['measured_audio_loudness']
+        self.assertEqual(measured['measurement_state'],'measured');self.assertLess(measured['integrated_lufs'],0)
+        self.assertFalse(measured['normalization_target_achieved_claimed']);self.assertFalse(measured['speech_detection_performed'])
         self.assertEqual(result['result']['tts_calls'],0);self.assertEqual(result['result']['provider_calls'],0)
         self.assertFalse(any('tts_child' in str(argument) for command in calls for argument in command))
         self.assertEqual(self.store.get(self.project['id'])['document'],before);self.assertEqual(file_sha(source),original)
@@ -117,6 +120,15 @@ class NativeSourceRenderTests(unittest.TestCase):
         with patch.object(source_render,'command_run',side_effect=AssertionError('No media tools before human boundary')):
             with self.assertRaisesRegex(WorkflowError,'AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER'):
                 Pipeline(self.config).run(fake,lambda value:None)
+
+    def test_loudness_failure_is_failed_qc_with_report_and_no_ready_final(self):
+        self.review_fixture();job=self.store.enqueue(self.project['id'],self.project['revision'],'render',uuid.uuid4().hex)
+        with patch('services.windows_native.audio_loudness.measure',side_effect=WorkflowError('NATIVE_AUDIO_LOUDNESS_SCAN_FAILED')):
+            Runner(self.store,Pipeline(self.config)).run_one()
+        finished=self.store.get_job(job['id']);self.assertEqual(finished['status'],'failed_qc',finished['error'])
+        folder=self.root/'jobs'/job['id'];self.assertIsNone(finished['result']);self.assertFalse((folder/'final.mp4').exists())
+        reports=list((folder/'attempts').glob('*/qc-report.json'));self.assertTrue(reports)
+        self.assertEqual(json.loads(reports[0].read_bytes())['failures'],['NATIVE_AUDIO_LOUDNESS_SCAN_FAILED'])
 
 
 if __name__=='__main__':unittest.main()

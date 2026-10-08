@@ -44,3 +44,10 @@ test('late foreign revisions and fabricated verification cannot update current f
   h.handler(async()=>page());await h.controller.load();h.ack.checked=true;h.handler(async(path,body)=>{const value=receipt(body);value.declaration.verified=true;return value;});
   await h.controller.declare();assert.equal(h.saved.length,0);assert.equal(h.messages.at(-1)[1],true);assert.equal(h.ack.checked,true);
 });
+test('music intake suffix supports an explicit declaration without treating it as verified rights',async()=>{
+  const h=harness(),asset='b'.repeat(32)+'.music.wav';
+  h.handler(async(path,body)=>{const v=body?receipt(body):page();if(body)v.declaration.asset_id=asset;else v.items[0].asset_id=asset;return v;});
+  await h.controller.load();h.fields.claimed_rights.value='owned';h.ack.checked=true;await h.controller.declare();
+  assert.equal(h.saved.length,1);assert.equal(h.calls.at(-1)[0],`/api/projects/${PROJECT}/rights/${asset}`);
+  assert.equal(h.saved[0].declaration.verified,false);
+});

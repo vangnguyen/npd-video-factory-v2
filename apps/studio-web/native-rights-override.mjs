@@ -1,4 +1,4 @@
-const HASH=/^[a-f0-9]{64}$/,ASSET=/^[a-f0-9]{32}\.(jpg|png|mp4|wav)$/,OVERRIDE=/^nro_[a-f0-9]{32}$/;
+const HASH=/^[a-f0-9]{64}$/,ASSET=/^[a-f0-9]{32}\.(jpg|png|mp4|wav|music\.wav)$/,OVERRIDE=/^nro_[a-f0-9]{32}$/;
 export function initializeNativeRightsOverride({api,getState,dom=document,onMessage=()=>{},onSaved=async()=>{},onWorking=()=>{},uuid=()=>crypto.randomUUID()}){
   const root=dom.getElementById('native-rights-override-panel'),node=(tag,text)=>{const value=dom.createElement(tag);value.textContent=text??'';return value;};
   const status=node('p','Chưa đọc ngoại lệ quyền của dự án.'),read=node('button','Đọc ngoại lệ của Owner'),choice=node('select'),detail=node('pre'),form=node('div');

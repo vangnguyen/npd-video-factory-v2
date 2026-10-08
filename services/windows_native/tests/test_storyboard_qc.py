@@ -61,6 +61,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     def test_full_quality_render_keeps_pcm_and_records_measured_freeze_pixels_decode_audio_and_source_bindings(self):
         out=self.output();raw_sha=file_sha(out/'voice.wav');report=render(self.config,self.snapshot,out);full=report['full_quality'];detail=full['full_production_qc']
         self.assertTrue(report['passed']);self.assertTrue(report['checks']['full_production_qc']);self.assertEqual(full['status'],'passed')
+        self.assertEqual(detail['measured_audio_loudness']['measurement_state'],'measured')
+        self.assertEqual(detail['measured_audio_loudness']['input_sha256'],file_sha(out/'final.mp4'))
+        self.assertFalse(detail['measured_audio_loudness']['voice_music_balance_accepted'])
         self.assertGreater(detail['freeze_frame_ratio'],.5);self.assertGreater(detail['intentional_still_seconds'],0);self.assertLessEqual(detail['unexplained_freeze_ratio'],.15)
         self.assertEqual(detail['broken_frames'],0);self.assertEqual(detail['sampled_vision_qc']['provider'],'ffmpeg-signalstats');self.assertFalse(full['semantic_vision_used'])
         self.assertEqual(full['final_sha256'],file_sha(out/'final.mp4'));self.assertEqual(full['document_sha256'],digest(self.document));self.assertEqual(file_sha(out/'voice.wav'),raw_sha)
@@ -103,6 +106,13 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         doc=copy.deepcopy(self.document);doc.pop('production_quality');out=self.output()
         report=render(self.config,{'document':doc,'approval':{'snapshot_sha256':digest(doc),'reviewer':'EXPLICIT LEGACY FIXTURE'}},out)
         self.assertTrue(report['passed']);self.assertNotIn('full_quality',report);self.assertFalse((out/'full-qc-report.json').exists())
+
+    def test_measurement_failure_cannot_admit_storyboard_quality_success(self):
+        out=self.output()
+        with patch('services.windows_native.audio_loudness.measure',side_effect=WorkflowError('NATIVE_AUDIO_LOUDNESS_SCAN_FAILED')):
+            with self.assertRaisesRegex(WorkflowError,'STORYBOARD_FULL_MEDIA_QC_FAILED'):render(self.config,self.snapshot,out)
+        report=json.loads((out/'qc-report.json').read_bytes());self.assertFalse(report['passed'])
+        self.assertEqual(report['full_quality']['failure_code'],'NATIVE_AUDIO_LOUDNESS_SCAN_FAILED')
 
     def test_storyboard_quality_failure_has_the_same_failed_qc_job_state_as_source_mode(self):
         self.store.approve(self.project['id'],self.project['revision'],'EXPLICIT STATE FIXTURE',True)

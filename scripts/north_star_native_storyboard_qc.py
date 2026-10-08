@@ -218,7 +218,8 @@ def run(args):
         write(out/'actual-local-runtime.json',{'before':runtime_before,'after':runtime_after,'locked_model_sdk_verified_unchanged':True,'tts_model':profile()['model'],
             'content_model_executed':False,'model_downloads':0,'sdk_modified':False,'paid_operations':0,'speech_quality_accepted':False,'owner_uat_accepted':False})
     source=['services/windows_native/storyboard_qc.py','services/windows_native/pipeline.py','services/windows_native/store.py','services/windows_native/hardening.py','services/windows_native/shot_render_timing.py',
-        'services/windows_native/backup.py','services/windows_native/tests/test_storyboard_qc.py','apps/api/app/production_qc.py','apps/api/app/production_logic.py','scripts/north_star_native_storyboard_qc.py']
+        'services/windows_native/backup.py','services/windows_native/audio_loudness.py','services/windows_native/tests/test_audio_loudness.py',
+        'services/windows_native/tests/test_storyboard_qc.py','apps/api/app/production_qc.py','apps/api/app/production_logic.py','scripts/north_star_native_storyboard_qc.py']
     if args.narration_preparation:source+=['services/windows_native/narration.py','services/windows_native/access.py','services/windows_native/server.py','services/windows_native/tests/test_narration.py',
         'services/windows_native/tests/test_narration_http.py','services/windows_native/narration_preview.py','services/windows_native/shot_preview.py','services/windows_native/tests/test_narration_preview.py',
         'apps/studio-web/native-narration.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/shot-studio.mjs','apps/studio-web/tests/native-narration.test.mjs','apps/studio-web/tests/shot-studio.test.mjs']

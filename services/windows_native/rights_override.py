@@ -120,7 +120,7 @@ class NativeRightsOverrides:
             asset=next((a for a in canonical_assets(doc) if a['id']==asset_id),None)
             if asset is None:raise WorkflowError('NATIVE_RIGHTS_OVERRIDE_ASSET_NOT_FOUND',404)
             if (asset.get('sha256')!=payload.asset_sha256 or rights_sha(asset)!=payload.expected_rights_sha256
-                or not re.fullmatch(r'[a-f0-9]{32}\.(jpg|png|mp4|wav)',asset_id)
+                or not re.fullmatch(r'[a-f0-9]{32}\.(jpg|png|mp4|wav|music\.wav)',asset_id)
                 or file_sha(guard(self.store.root/'assets'/asset_id,exists=True))!=payload.asset_sha256):
                 raise WorkflowError('NATIVE_RIGHTS_OVERRIDE_ASSET_CHANGED',409)
             history=doc.setdefault('media_rights_overrides',[])
