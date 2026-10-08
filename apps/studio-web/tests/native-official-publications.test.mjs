@@ -27,6 +27,7 @@ function harness(){const nodes=new Map();class Node{constructor(){this.children=
     if(path.includes('/account-checks'))return{schema_version:'native-official-account-check-page-v1',workspace_id:workspace,project_id:id,items:[accountRow()],next_cursor:null,token_returned:false};
     if(path.includes('/publications?'))return{schema_version:'native-publication-page-v1',workspace_id:workspace,project_id:id,items:[dryRow()],next_cursor:null};
     if(body){if(path.endsWith('/approve')||path.endsWith('/renew'))current={...row('queued'),approval_id:'nopa_'+'f'.repeat(32)};
+      else if(path.endsWith('/revoke'))current={...current,status:'review_required',failure_code:'NATIVE_OFFICIAL_PUBLISH_CONSENT_REVOKED'};
       else if(path.endsWith('/cancel'))current=row('cancelled');else if(path.endsWith('/step')){version++;phase='uploading';return dispatch(current,phase,version);}return current;}
     if(path.endsWith('/state'))return dispatch(current,phase,version);if(path.includes('/official-publications?'))return page([current]);return current;};handler=defaultHandler;
   const controller=initializeNativeOfficialPublications({root,getState:()=>({...state}),api:async(...args)=>{calls.push(args);return handler(...args);},uuid:()=> 'explicit-request-key-'+(++key),onMessage:(...v)=>messages.push(v),onWorking:value=>{working.push(value);state.busy=value;}});
@@ -52,7 +53,7 @@ test('unknown review outcome retains exact idempotency key and unknown upload re
   const count=h.calls.length;h.get('send-ack').checked=true;await h.controller.execute('step');assert.equal(h.calls.length,count);assert.equal(h.get('step').disabled,true);});
 test('viewer can read scoped history but cannot load connections or grant any provider action',async()=>{const h=harness();h.state.canManage=false;h.controller.sync();await h.controller.readConfig();await h.controller.readSources();await h.controller.execute('create');
   assert.equal(h.calls.length,0);await h.controller.readHistory();assert.equal(h.calls.length,1);await h.controller.readState();assert.equal(h.calls.length,3);h.get('ack').checked=true;h.get('send-ack').checked=true;
-  for(const action of ['approve','renew','cancel','step','poll'])await h.controller.execute(action);assert.equal(h.calls.length,3);assert.equal(h.get('approve').disabled,true);});
+  for(const action of ['approve','renew','revoke','cancel','step','poll'])await h.controller.execute(action);assert.equal(h.calls.length,3);assert.equal(h.get('approve').disabled,true);});
 test('saved idle project guards and authoritative target filtering reject stale or foreign sources',async()=>{const h=harness();await h.controller.readConfig();h.handler(async(path)=>path.includes('/account-checks')?
   {schema_version:'native-official-account-check-page-v1',workspace_id:workspace,project_id:id,items:[{...accountRow(),snapshot:{...accountRow().snapshot,target:{...target(),target_account_id:'FOREIGN'}}}],next_cursor:null,token_returned:false}:
   {schema_version:'native-publication-page-v1',workspace_id:workspace,project_id:id,items:[{...dryRow(),snapshot:{request:{...dryRow().snapshot.request,revision:2}}}],next_cursor:null});
@@ -83,3 +84,13 @@ test('past malformed or nonprivate schedules do not create requests and scope re
   h.handler(async(path,body)=>path.includes('/publications?')?{schema_version:'native-publication-page-v1',workspace_id:workspace,project_id:id,items:[{...dryRow(),snapshot:{request:{...dryRow().snapshot.request,metadata:{...dryRow().snapshot.request.metadata,privacy:'public'}}}}],next_cursor:null}:h.defaultHandler(path,body));
   await h.controller.readSources();h.get('scheduled').value='2030-01-01T12:00:00';const before=h.calls.length;await h.controller.execute('create');assert.equal(h.calls.length,before);
   h.state.project.revision=2;h.controller.sync();assert.equal(h.get('scheduled').value,'');assert.equal(h.get('create').disabled,true);});
+test('owner can stop historical grant after edits archive or active analysis without approving or sending',async()=>{const h=harness();await queued(h);const old={...row('queued'),approval_id:'nopa_'+'f'.repeat(32)};
+  h.current(old);h.state.project.revision=2;h.state.project.archived=true;h.state.dirty=true;h.state.active=true;h.controller.sync();await h.controller.readHistory();
+  assert.equal(h.get('revoke').disabled,false);assert.equal(h.get('renew').disabled,true);assert.equal(h.get('step').disabled,true);
+  const count=h.calls.length;await h.controller.execute('revoke');assert.equal(h.calls.length,count+1);assert.equal(h.calls.at(-1)[0],`/api/projects/${id}/official-publications/${pub}/revoke`);
+  assert.deepEqual(h.calls.at(-1)[1],{expected_snapshot_sha256:sha});assert.equal(h.get('send-ack').checked,false);assert.match(h.messages.at(-1)[0],/Đã dừng quyền gửi/);
+  assert.equal(h.get('step').disabled,true);assert.equal(h.get('approve').disabled,true);});
+test('stop refuses viewer foreign row completed receipt and unapproved review',async()=>{const h=harness();await create(h);let count=h.calls.length;await h.controller.execute('revoke');assert.equal(h.calls.length,count);
+  await queued(h);h.state.canManage=false;h.controller.sync();await h.controller.readHistory();count=h.calls.length;await h.controller.execute('revoke');assert.equal(h.calls.length,count);assert.equal(h.get('revoke').disabled,true);
+  h.state.canManage=true;h.controller.sync();h.handler(async()=>page([{...row('queued'),project_id:'f'.repeat(32),approval_id:'nopa_'+'f'.repeat(32)}]));await h.controller.readHistory();
+  count=h.calls.length;await h.controller.execute('revoke');assert.equal(h.calls.length,count);assert.equal(h.get('revoke').disabled,true);});

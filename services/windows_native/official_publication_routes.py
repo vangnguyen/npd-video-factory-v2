@@ -26,13 +26,13 @@ def get(handler,path):
     return service.page(project,limit=limit,cursor=params.get('cursor',[None])[0])
 
 def post(handler,path,body):
-    match=re.fullmatch(BASE+r'(?:/'+IDENTITY+r'/(approve|renew|cancel|step|poll))?',path)
+    match=re.fullmatch(BASE+r'(?:/'+IDENTITY+r'/(approve|renew|revoke|cancel|step|poll))?',path)
     if not match:raise WorkflowError('ROUTE_NOT_FOUND',404)
     project,identity,action=match.groups();service=handler.server.official_publications
     session=getattr(handler,'auth_session',None)
     if session is None:raise WorkflowError('NATIVE_HUMAN_OWNER_PUBLISH_APPROVAL_REQUIRED',403)
     principal=session.principal;service.identity(principal)
-    try:payload={None:Create,'approve':Approve,'renew':Renew,'cancel':Action,'step':Step,'poll':Step}[action].model_validate(body)
+    try:payload={None:Create,'approve':Approve,'renew':Renew,'revoke':Action,'cancel':Action,'step':Step,'poll':Step}[action].model_validate(body)
     except (ValidationError,TypeError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_FIELDS_INVALID',400) from None
     if action is None:
         value,replay=service.create(project,payload,principal=principal)
@@ -42,6 +42,7 @@ def post(handler,path,body):
         renewal=service.renew(project,identity,payload,principal=principal)
         return {**service.get(project,identity),'renewal':renewal}
     if action=='cancel':return service.cancel(project,identity,payload,principal=principal)
+    if action=='revoke':return service.revoke(project,identity,payload,principal=principal)
     value=service.get(project,identity)
     if value['snapshot_sha256']!=payload.expected_snapshot_sha256:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_BINDING_CHANGED')
     worker=handler.server.official_publish_worker

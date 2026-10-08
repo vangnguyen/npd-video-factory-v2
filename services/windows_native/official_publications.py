@@ -28,6 +28,7 @@ def utc(value):
     return value.astimezone(timezone.utc)
 
 MIN_INIT_SCHEDULE_LEAD_SECONDS=60  # Internal bounded-request margin, not a vendor limit.
+CONSENT_REVOKED='NATIVE_OFFICIAL_PUBLISH_CONSENT_REVOKED'
 
 def preflight(metadata,total_bytes,profile,instant):
     if metadata.scheduled_at is not None and (utc(metadata.scheduled_at)-utc(instant)).total_seconds()<MIN_INIT_SCHEDULE_LEAD_SECONDS:
@@ -351,6 +352,28 @@ class NativeOfficialPublications:
                 or dispatch['private_session_ref'] is not None and not re.fullmatch(r'nups_[a-f0-9]{32}',dispatch['private_session_ref'])
                 or dispatch['remote_post_id'] is not None and not re.fullmatch(r'[A-Za-z0-9_-]{11}',dispatch['remote_post_id'])):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
             return value,factory,path,dict(dispatch)
+    def revoke(self,project,identity,payload,*,principal):
+        """Stop future sends locally, including after source changes or expiry.
+
+        Dispatch versions/intents remain intact so an in-flight known response can
+        still be fenced and its private session retained. No provider is contacted.
+        """
+        if type(payload) is not Action:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_FIELDS_INVALID',400)
+        try:payload=Action.model_validate(payload.model_dump(mode='python',warnings=False))
+        except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_FIELDS_INVALID',400) from None
+        authority=self.identity(principal)
+        with self.store.transaction() as con:
+            row=self.row(con,project,identity);value=self.read(row)
+            if value['snapshot_sha256']!=payload.expected_snapshot_sha256:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_REVIEW_BINDING_CHANGED')
+            if row['status']=='completed':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_ALREADY_COMPLETED')
+            if row['approval_id'] is None or row['status']=='cancelled':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_NO_GRANT_TO_REVOKE')
+            active=con.execute("SELECT count(*) FROM native_official_publish_approvals WHERE publication_id=? AND workspace_id=? AND project_id=? AND status='active'",(identity,self.workspace,project)).fetchone()[0]
+            if active or row['failure_code']!=CONSENT_REVOKED or row['status']!='review_required':
+                stamp=now()
+                con.execute("UPDATE native_official_publish_approvals SET status='revoked',revoked_at=? WHERE publication_id=? AND workspace_id=? AND project_id=? AND status='active'",(stamp,identity,self.workspace,project))
+                con.execute("UPDATE native_official_publications SET status='review_required',failure_code=?,updated_at=? WHERE publication_id=? AND workspace_id=? AND project_id=?",(CONSENT_REVOKED,stamp,identity,self.workspace,project))
+                self.event(con,row,'official.publication.consent.revoked',authority['token_id'],revoked_grants=active,external_action=False,remote_delete_requested=False)
+            return self.read(self.row(con,project,identity))
     def cancel(self,project,identity,payload,*,principal):
         authority=self.identity(principal)
         with self.store.transaction() as con:
@@ -430,12 +453,13 @@ class NativeOfficialPublications:
     def uncertain(self,ticket,code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'):
         if not isinstance(code,str) or not re.fullmatch(r'[A-Z0-9_]{1,120}',code):code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'
         with self.store.transaction() as con:
-            _,dispatch,_=self.fence(con,ticket)
+            value,dispatch,_=self.fence(con,ticket)
             phase='init_unconfirmed' if ticket.operation=='init' else 'reconciliation_required'
             # Retain the artifact duplicate guard even if current consent expired.
             con.execute('UPDATE native_official_publish_intents SET status=? WHERE intent_id=?',('outcome_unknown',ticket.intent_id))
             con.execute('UPDATE native_official_publish_dispatches SET phase=?,version=version+1,intent_id=NULL,failure_code=?,updated_at=? WHERE publication_id=?',(phase,code,now(),ticket.publication_id))
-            con.execute('UPDATE native_official_publications SET status=?,failure_code=?,updated_at=? WHERE publication_id=?',('review_required' if phase=='init_unconfirmed' else 'queued',code,now(),ticket.publication_id))
+            revoked=value['failure_code']==CONSENT_REVOKED
+            con.execute('UPDATE native_official_publications SET status=?,failure_code=?,updated_at=? WHERE publication_id=?',('review_required' if revoked or phase=='init_unconfirmed' else 'queued',CONSENT_REVOKED if revoked else code,now(),ticket.publication_id))
             self.event(con,self.row(con,ticket.project_id,ticket.publication_id),'official.publication.response.unconfirmed','worker',operation=ticket.operation,failure_code=code,automatic_init_retry=False,acknowledged_bytes=dispatch['acknowledged_bytes'])
         return self.state(ticket.project_id,ticket.publication_id)
     def finish_progress(self,ticket,progress,response_sha256):

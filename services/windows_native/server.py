@@ -714,7 +714,7 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-accounts/npac_[a-f0-9]{32}/verify',self.path):
             from .official_account_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=20000)),headers={'Cache-Control':'no-store'})
-        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications(?:/nopu_[a-f0-9]{32}/(?:approve|renew|cancel|step|poll))?',self.path):
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications(?:/nopu_[a-f0-9]{32}/(?:approve|renew|revoke|cancel|step|poll))?',self.path):
             from .official_publication_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/publications(?:/npub_[a-f0-9]{32}/(?:approve|cancel|dry-run))?', self.path):

@@ -7,7 +7,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
     profile=node('select',null,'profile'),dryRun=node('select',null,'dry-run'),account=node('select',null,'account'),scheduled=node('input',null,'scheduled'),create=button('Chuẩn bị review xuất bản','create'),
     history=button('Đọc lịch sử xuất bản','history-read','read'),more=button('Đọc trang tiếp','more','read'),read=button('Đọc trạng thái đã lưu','read','read'),
     ack=node('input',null,'ack'),ackLabel=node('label'),ackCaption=node('span'),approve=button('Duyệt xuất bản','approve'),renew=button('Duyệt tiếp phiên hiện tại','renew'),
-    cancel=button('Hủy yêu cầu chưa gửi','cancel'),sendAck=node('input',null,'send-ack'),sendLabel=node('label'),sendCaption=node('span'),
+    cancel=button('Hủy yêu cầu chưa gửi','cancel'),revoke=button('Dừng quyền gửi của yêu cầu này','revoke'),sendAck=node('input',null,'send-ack'),sendLabel=node('label'),sendCaption=node('span'),
     step=button('Gửi bước tiếp theo','step'),poll=button('Đọc xử lý tại nền tảng','poll'),status=node('p',null,'status'),list=node('div',null,'history'),detail=node('pre',null,'detail');
   ack.type='checkbox';sendAck.type='checkbox';ackLabel.append(ackCaption,ack);sendLabel.append(sendCaption,sendAck);
   scheduled.type='datetime-local';scheduled.step='1';
@@ -15,7 +15,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
   const hint=node('p','Tự động đăng đang tắt. Chủ không gian cần cài cấu hình và duyệt riêng. Mỗi lần gửi chỉ thực hiện một bước; đọc lịch sử để kiểm tra kết quả.');hint.className='hint';
   card.append(node('summary','Xuất bản qua API nền tảng'),hint,config,sources,sourceMore,labeled('Tài khoản xuất bản',profile),labeled('Video đã kiểm tra mô phỏng',dryRun),
     labeled('Xác minh tài khoản hiện tại',account),labeled('Giờ xuất bản (để trống để dùng metadata đã kiểm tra)',scheduled),
-    node('p','Giờ theo thiết bị: '+Intl.DateTimeFormat().resolvedOptions().timeZone+'. Lịch mới cần video có quyền riêng tư private.'),create,history,list,more,read,status,ackLabel,approve,renew,cancel,sendLabel,step,poll,detail);
+    node('p','Giờ theo thiết bị: '+Intl.DateTimeFormat().resolvedOptions().timeZone+'. Lịch mới cần video có quyền riêng tư private.'),create,history,list,more,read,status,ackLabel,approve,renew,cancel,revoke,sendLabel,step,poll,detail);
   let generation=0,scope='',working=false,profiles=[],vault=null,dryRows=[],accountRows=[],sourceCursors=[null,null],rows=[],cursor=null,selected=null,dispatch=null;
   const keys=new Map(),sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),nopu=v=>typeof v==='string'&&/^nopu_[a-f0-9]{32}$/.test(v);
   const context=()=>{const s=getState();return JSON.stringify([s.workspace_id,s.project?.id,s.project?.revision,s.project?.archived,s.canManage,s.dirty,s.active]);};
@@ -34,6 +34,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
     approve.disabled=!mutate||selected?.status!=='awaiting_publish_approval'||!ack.checked;
     renew.disabled=!mutate||!['queued','review_required'].includes(selected?.status)||!['prepared','uploading','reconciliation_required','uploaded'].includes(phase)||!ack.checked;
     cancel.disabled=!mutate||!(['awaiting_publish_approval','not_configured'].includes(selected?.status)||['queued','review_required'].includes(selected?.status)&&phase==='prepared'&&dispatch?.dispatch.private_session_ref===null);
+    revoke.disabled=blocked||!s.canManage||!s.project||!selected?.approval_id||!['queued','running','review_required'].includes(selected?.status);
     ack.disabled=!mutate||!['awaiting_publish_approval','queued','review_required'].includes(selected?.status);
     sendAck.disabled=!mutate||selected?.status!=='queued'||!dispatch;
     const delayed=Boolean(dispatch?.retry_not_before&&Date.parse(dispatch.retry_not_before)>Date.now());
@@ -106,14 +107,16 @@ export function initializeNativeOfficialPublications({api,getState,root=document
   const readState=()=>invoke(async s=>{if(!selected)throw new Error('Chọn yêu cầu để đọc trạng thái.');const identity=selected.publication_id;
     const r=validateRow(await api(endpoint(s)+'/'+identity)),d=validateDispatch(await api(endpoint(s)+'/'+identity+'/state'),r);
     return()=>{selected=r;dispatch=d;rows=rows.map(v=>v.publication_id===identity?r:v);ack.checked=false;sendAck.checked=false;};});
-  const execute=action=>invoke(async s=>{if(!ready(s))throw new Error('Lưu dự án, chờ xử lý và dùng quyền chủ không gian.');let path=endpoint(s),body,key=null,identity=selected?.publication_id;
-    if(!['create','approve','renew','cancel','step','poll'].includes(action))throw new Error('Thao tác xuất bản không hợp lệ.');
+  const execute=action=>invoke(async s=>{if(action==='revoke'?!s.canManage||!s.project:!ready(s))throw new Error('Lưu dự án, chờ xử lý và dùng quyền chủ không gian.');let path=endpoint(s),body,key=null,identity=selected?.publication_id;
+    if(!['create','approve','renew','revoke','cancel','step','poll'].includes(action))throw new Error('Thao tác xuất bản không hợp lệ.');
     if(action==='create'){const p=currentProfile(),d=currentDry(),a=currentAccount();if(p?.status!=='CONFIGURED'||vault?.status!=='CONFIGURED'||!d||!a)throw new Error('Chọn cấu hình, video đã kiểm tra và xác minh tài khoản hiện tại.');
       body={revision:s.project.revision,dry_run_publication_id:d.publication_id,expected_dry_run_snapshot_sha256:d.snapshot_sha256,account_check_id:a.check_id,profile_id:p.target.profile_id,expected_configuration_sha256:p.configuration_sha256};
       if(scheduled.value){const at=new Date(scheduled.value);
         if(!/^\d{4}-\d\d-\d\dT\d\d:\d\d(?::\d\d)?$/.test(scheduled.value)||!Number.isFinite(at.getTime())||at.getTime()-Date.now()<60000||d.snapshot.request.metadata.privacy!=='private')throw new Error('Chọn giờ tương lai còn ít nhất một phút và metadata private.');
         body.metadata={...d.snapshot.request.metadata,scheduled_at:at.toISOString()};}
-    }else{if(!selected||!current(s))throw new Error('Chọn yêu cầu đúng phiên bản hiện tại.');path+='/'+identity+'/'+action;body={expected_snapshot_sha256:selected.snapshot_sha256};
+    }else{if(!selected||action!=='revoke'&&!current(s))throw new Error('Chọn yêu cầu đúng phiên bản hiện tại.');
+      if(action==='revoke'&&(!selected.approval_id||!['queued','running','review_required'].includes(selected.status)))throw new Error('Chọn yêu cầu đã có quyền gửi để dừng.');
+      path+='/'+identity+'/'+action;body={expected_snapshot_sha256:selected.snapshot_sha256};
       if(action==='approve'||action==='renew'){if(!ack.checked)throw new Error('Xác nhận duyệt riêng yêu cầu này.');body={...body,acknowledged_official_publication:true,valid_for_seconds:900};}
       if(action==='renew'||action==='step'||action==='poll'){if(!dispatch?.dispatch)throw new Error('Đọc trạng thái hiện tại trước.');body.expected_dispatch_version=dispatch.dispatch.version;}
       if(action==='step'||action==='poll'){const phase=dispatch?.dispatch?.phase;
@@ -126,10 +129,10 @@ export function initializeNativeOfficialPublications({api,getState,root=document
       if(key)keys.delete(key);
       const r=action==='step'?validateRow(await api(endpoint(s)+'/'+identity)):v;
       return()=>{selected=r;dispatch=null;rows=[r,...rows.filter(row=>row.publication_id!==r.publication_id)].slice(0,500);cursor=null;ack.checked=false;sendAck.checked=false;
-        onMessage(r.mock?'Đã lưu bước mô phỏng. Video chưa được đăng thật.':'Đã lưu kết quả. Đọc trạng thái trước khi thực hiện bước tiếp theo.');};
+        onMessage(action==='revoke'?'Đã dừng quyền gửi. Lịch sử và phiên tải được giữ; thao tác này không xóa bài tại nền tảng.':r.mock?'Đã lưu bước mô phỏng. Video chưa được đăng thật.':'Đã lưu kết quả. Đọc trạng thái trước khi thực hiện bước tiếp theo.');};
     }catch(error){if(action==='step'||action==='poll')dispatch=null;throw error;}});
   config.addEventListener('click',()=>readConfig());sources.addEventListener('click',()=>readSources());sourceMore.addEventListener('click',()=>readSources(true));history.addEventListener('click',()=>readHistory());more.addEventListener('click',()=>readHistory(true));read.addEventListener('click',()=>readState());
-  for(const [control,action] of [[create,'create'],[approve,'approve'],[renew,'renew'],[cancel,'cancel'],[step,'step'],[poll,'poll']])control.addEventListener('click',()=>execute(action));
+  for(const [control,action] of [[create,'create'],[approve,'approve'],[renew,'renew'],[cancel,'cancel'],[revoke,'revoke'],[step,'step'],[poll,'poll']])control.addEventListener('click',()=>execute(action));
   ack.addEventListener('change',controls);sendAck.addEventListener('change',controls);profile.addEventListener('change',()=>{sourceOptions();ack.checked=false;sendAck.checked=false;controls();});sync();
   return{sync,controls,readConfig,readSources,readHistory,readState,execute,isWorking:()=>working};
 }

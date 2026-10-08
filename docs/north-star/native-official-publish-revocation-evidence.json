@@ -1,0 +1,158 @@
+{
+  "schema": "native-official-publish-revocation-evidence-v1",
+  "parent_head": "27ac774738f88252b9bc5ce956f06ec95524a1e4",
+  "source_sha256": {
+    "services/windows_native/official_publications.py": "a534310000b3395b4abf9bb4921fcf20f41857edd778bbcbd6ca2136e123e486",
+    "services/windows_native/official_publication_routes.py": "6d4bf76244b989079d6790c5c518f5caaa8c2a8d4770d2bae54331560a52a5a3",
+    "services/windows_native/access.py": "c4d0f6ed4bce79a160f774e4a17cbe4530dfeb9cfd8d1ea256ae52324801e068",
+    "services/windows_native/server.py": "51dca6d36ac1f912f827969a54777ee8f9468d0a749544f10495dd2c3a7716cd",
+    "services/windows_native/tests/test_official_publication_revocation.py": "1a21e66e9d09004392bae6ecb384f8ceef95d26760d9b18ece3fc944262022ab",
+    "services/windows_native/tests/test_official_publications_http.py": "1366337d1b0c727add5464abe48975afac5d8ee2775728f4eb36e46a7bf641ba",
+    "apps/studio-web/native-official-publications.mjs": "61174ff795dfd61542e79dcaa4b472e7fc2263a4a20c2ab885d5d9d1030547ab",
+    "apps/studio-web/tests/native-official-publications.test.mjs": "d878e1cc804c728b32833ae1aafc9dbf4fefd8aaabf6ecb162ef21cea90d2ab7",
+    "scripts/north_star_native_official_publish_revocation.py": "bf122aee2e1c1952564a190280e87ae37d78272ab0de5a60b070b3968bb5db91",
+    "docs/NATIVE_OFFICIAL_PUBLISH_REVOCATION.md": "13e499f3eafab3f6cb9f1079c4d0dd160d3d3b9419f504236349aeafb3b8513e"
+  },
+  "tests": {
+    "current_related_native_passed": 113,
+    "seconds": 105.608,
+    "current_full_studio_passed": 299,
+    "new_native_cases": 10,
+    "new_dom_cases": 2,
+    "prior_full_native_passed": 846,
+    "prior_full_native_head": "fac51977fa8bfb482670533b05bcfcf73ab6c81a",
+    "full_native_rerun_after_revocation": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-official-publish-revocation-flow-n1",
+    "evidence_sha256": "e093dc0b2fb1f0f7a0961ff2c39813f9d660805571c1a8b08f451b8711278512",
+    "exports": {
+      "backup.json": {
+        "sha256": "67a926723649a6eb6fa9aa16a8c7b596b4f74547eeca2780d8ce53c636293c1b",
+        "bytes": 3255
+      },
+      "completed-review.json": {
+        "sha256": "408d433e85dd8efcb0a7c9a783fdf6ef793b6549777be13e8d0c27567e424e93",
+        "bytes": 13989
+      },
+      "cost-summary.json": {
+        "sha256": "c9462337715a7da68555cef2e3855d313e7cccdf6d9215541d8b8bbdecab467a",
+        "bytes": 15683
+      },
+      "evidence.json": {
+        "sha256": "e093dc0b2fb1f0f7a0961ff2c39813f9d660805571c1a8b08f451b8711278512",
+        "bytes": 5386
+      },
+      "expected-journals.json": {
+        "sha256": "5f12ea92bef2b830a858244ddf8aa69a5ffb71b567b3a613aa99b15e4ad22d88",
+        "bytes": 48600
+      },
+      "expected-project.json": {
+        "sha256": "60c045851fc6945f27ede0a794a1504bf2984060fb41dffcd2fe715e9f40cce7",
+        "bytes": 5207
+      },
+      "explicit-renewal-existing-session-reconciled.json": {
+        "sha256": "8f77d512176666bdfdd9586e883ef7807127a4ea1b89759a76f72c8b1e1d57c3",
+        "bytes": 791
+      },
+      "first-local-stop.json": {
+        "sha256": "04e5043bd05c8060ef0e400af11be301d9cbda66799bb12bf71b5a11168a2bf2",
+        "bytes": 13586
+      },
+      "fixture-capabilities.json": {
+        "sha256": "d94c9694e4eca08c01dbf6c36ca0a78ae07a8e12f62a50ce4839a7a9a04a39b1",
+        "bytes": 2384
+      },
+      "frozen-review.json": {
+        "sha256": "26ddec7a39881aa8f02e5ca3b7b5eb6483c063808362699e2882a910f7ef2762",
+        "bytes": 13554
+      },
+      "http-summary.json": {
+        "sha256": "3e2c7cd9c4abdd88222971f70ddbda09080cff83968403fa54f31db96c19051a",
+        "bytes": 13749
+      },
+      "legacy-metadata-replay.json": {
+        "sha256": "3f7131f7d7183f47abd44e251a2dacef71cbf70718d5d6a4f7eca4ea28016e9d",
+        "bytes": 137
+      },
+      "mock-wire-summary.json": {
+        "sha256": "619ee5538bc4c72713c6e7ebc523d0dcc81845fdc8bb133e19e8fd0a309671e6",
+        "bytes": 2363
+      },
+      "new-process-replay.json": {
+        "sha256": "353d365db831f84528ebda9596c94021bea23167f4ab54b747a23ec823303d89",
+        "bytes": 243
+      },
+      "owned-official-publish-revocation.zip": {
+        "sha256": "2d3d8428bd5245092131ba18e606b92c893352d8e00ae76f1f51c1fb558e8506",
+        "bytes": 1270960
+      },
+      "physical-fixture-artifacts.json": {
+        "sha256": "815892c938c4838c5bc520048d3d9a8e4a556bbc6593f225d2d33d6ba2a0c4ab",
+        "bytes": 258
+      },
+      "public-config.json": {
+        "sha256": "e4bd9219ab6e1c5629c211d4dad08cbecc895bb41e27ed123a54fc888e49f032",
+        "bytes": 1917
+      },
+      "recovery-restore.json": {
+        "sha256": "92f1a582a6ed40d0b00b8e9ded9bfc86fc44d4daf380cafa09772708167d3326",
+        "bytes": 3668
+      },
+      "response-time-stop.json": {
+        "sha256": "a754094302e64cac94a1df3fa112290d48b6d1b6b36addd33a49a01d05747ac8",
+        "bytes": 13586
+      },
+      "restored-in-process.json": {
+        "sha256": "353d365db831f84528ebda9596c94021bea23167f4ab54b747a23ec823303d89",
+        "bytes": 243
+      },
+      "same-session-unknown-chunk.json": {
+        "sha256": "ab78cd305a9baf1b7fa4668650a5600dfcb6cbd820a874899efecda664a21751",
+        "bytes": 842
+      },
+      "separate-consent.json": {
+        "sha256": "30a4f0edb6542f1eb693d8b5fd9ac666adc01c1f5a6af3a36cfb6e2e232cd34d",
+        "bytes": 13540
+      },
+      "terminal-dispatch.json": {
+        "sha256": "78b7bd08b94f85633a45a14015afa0d5debf9cdd5b42199d43bf4aefe4293fb1",
+        "bytes": 1243
+      },
+      "terminal-history.json": {
+        "sha256": "0dd4d37df5880cdf892eab63e0e5a99517d124fe9bab4a725a17cdea0fc29911",
+        "bytes": 15937
+      }
+    },
+    "backup_sha256": "2d3d8428bd5245092131ba18e606b92c893352d8e00ae76f1f51c1fb558e8506"
+  },
+  "logs": {
+    "native-official-publish-revocation-related.log": "fca593f38641ee4b4d2132f84d2781cff998d8cb3ebb881e6b6c34c33869c4c3",
+    "native-official-publish-revocation-studio-full-n2.log": "0552113e35dd726f966c77c1ea6b118b929ec607de7d7b4802872e8c10e89437",
+    "native-official-publish-revocation-studio-full.log": "9716bd5b91a247da9b2e68654c741d600746c6ca3f8e493ed1f5219971a13bef"
+  },
+  "owner_local_scoped_stop_after_expiry_source_and_configuration_changes": true,
+  "dispatch_intent_version_session_offset_history_preserved": true,
+  "exact_stop_replay_one_event": true,
+  "response_time_revocation_sticky_known_session_retained_no_invented_ack": true,
+  "explicit_renewal_same_session_reconciliation_one_init": true,
+  "processing_race_no_receipt_completed_history_preserved": true,
+  "signed_roles_and_csrf_before_body": true,
+  "studio_historical_grant_stop_after_edit_archive_active_analysis": true,
+  "current_source_and_parent_unchanged": true,
+  "fresh_process_and_prior_receipt_twelve_journal_replay_exact": true,
+  "signed_http_requests": 36,
+  "mock_wire_requests": 12,
+  "real_publications": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "new_render_or_inference_calls": 0,
+  "explicit_nonplayable_qc_rights_identity_account_platform_oauth_and_provider_fixtures": true,
+  "durable_automatic_queue_scheduling_complete": false,
+  "accepted_runtime_publishing_enabled": false,
+  "real_provider_or_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

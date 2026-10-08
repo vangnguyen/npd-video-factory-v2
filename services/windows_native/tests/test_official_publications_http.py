@@ -79,7 +79,7 @@ class OfficialPublicationsHTTPTests(unittest.TestCase):
     def test_roles_csrf_and_loopback_owner_are_rejected_before_body_or_provider(self):
         for role in ('editor','reviewer','viewer'):
             self.account(role)
-            for suffix in ('','/nopu_'+'a'*32+'/approve','/nopu_'+'a'*32+'/renew','/nopu_'+'a'*32+'/cancel','/nopu_'+'a'*32+'/step','/nopu_'+'a'*32+'/poll'):
+            for suffix in ('','/nopu_'+'a'*32+'/approve','/nopu_'+'a'*32+'/renew','/nopu_'+'a'*32+'/revoke','/nopu_'+'a'*32+'/cancel','/nopu_'+'a'*32+'/step','/nopu_'+'a'*32+'/poll'):
                 with patch.object(Handler,'read_body',side_effect=AssertionError('Unauthorized body must not be read')):
                     self.assertEqual(self.request('POST',self.base+suffix,{})[0],403)
             self.assertEqual(self.request('GET','/api/connections/official-publishing')[0],403)
@@ -87,6 +87,7 @@ class OfficialPublicationsHTTPTests(unittest.TestCase):
         self.account('owner')
         with patch.object(Handler,'read_body',side_effect=AssertionError('Missing CSRF body must not be read')):
             self.assertEqual(self.request('POST',self.base,{}, {'X-VF-CSRF':''})[0],403)
+            self.assertEqual(self.request('POST',self.base+'/nopu_'+'a'*32+'/revoke',{}, {'X-VF-CSRF':''})[0],403)
         self.assertEqual(self.wire,[])
         # Existing anonymous loopback mode has no signed publish identity.
         self.server.access=None;self.cookie=self.server.session;self.csrf=self.server.csrf
@@ -100,6 +101,18 @@ class OfficialPublicationsHTTPTests(unittest.TestCase):
         for change in ({'expected_dispatch_version':True},{'token':'NEVER'},{'session_uri':'https://untrusted.invalid'},{'expected_snapshot_sha256':'f'*64}):
             self.assertIn(self.action(value,**change)[0],(400,409))
         self.assertEqual(self.wire,[])
+    def test_signed_revocation_preserves_dispatch_and_stops_future_send_after_source_change(self):
+        value=self.create_http();self.approve_http(value);self.assertEqual(self.action(value)[0],200)
+        before=self.state_http(value);calls=len(self.wire);path=self.base+'/'+value['publication_id']+'/revoke';body={'expected_snapshot_sha256':value['snapshot_sha256']}
+        self.assertEqual(self.request('POST',path,{**body,'token':'NEVER'})[0],400)
+        self.assertEqual(self.request('POST',path,{'expected_snapshot_sha256':'f'*64})[0],409)
+        other=self.server.store.create('Other revocation fixture','No provider')
+        self.assertEqual(self.request('POST','/api/projects/'+other['id']+'/official-publications/'+value['publication_id']+'/revoke',body)[0],404)
+        with self.server.store.transaction() as con:con.execute('UPDATE projects SET revision=revision+1 WHERE id=?',(self.project['id'],))
+        status,stopped,_=self.request('POST',path,body);self.assertEqual(status,200,stopped);self.assertEqual(stopped['failure_code'],'NATIVE_OFFICIAL_PUBLISH_CONSENT_REVOKED')
+        self.assertEqual(self.request('POST',path,body)[1],stopped);self.assertEqual(self.state_http(value),before)
+        self.assertEqual(self.action(value)[0],409);self.assertEqual(len(self.wire),calls)
+        with self.server.store.transaction() as con:self.assertEqual(con.execute("SELECT count(*) FROM native_official_publish_events WHERE action='official.publication.consent.revoked'").fetchone()[0],1)
     def test_exact_create_renewal_and_cancellation_replay_do_not_send(self):
         body=self.body().model_dump(mode='json');value=self.create_http();self.assertTrue(self.request('POST',self.base,body)[1]['idempotent_replay'])
         self.approve_http(value,valid_for_seconds=60);self.clock[0]+=timedelta(seconds=61)
