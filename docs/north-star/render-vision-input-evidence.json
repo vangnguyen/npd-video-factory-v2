@@ -1,0 +1,78 @@
+{
+  "schema_version": "north-star-render-vision-input-evidence-v1",
+  "tests": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-frame-bridge-related-n1.log",
+    "sha256": "a5a88361fa2b849d071808eee986fdb801e740859ff5f4b2ae0466286fd2eebf",
+    "bytes": 9515,
+    "passed": 40,
+    "new_cases": 5
+  },
+  "flows": [
+    {
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-input-source-flow-n2\\evidence.json",
+        "sha256": "24e56a2b22cf44ac6d2bdf5f3b7ce9de92919e83054cf2105ba69fe0c9f2a341",
+        "bytes": 1263
+      },
+      "binding": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-input-source-flow-n2\\original-and-restored-input.json",
+        "sha256": "633f6268c775cc1a43b64508e7b323e877aa07e64e734ebcb47ca50dfafac2fa",
+        "bytes": 21363
+      },
+      "protocol_mock_result": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-input-source-flow-n2\\protocol-mock-result.json",
+        "sha256": "86201421733e84fddc296a9fdc92682e232f7998aab5254fe94bad63e528d754",
+        "bytes": 12266
+      },
+      "mock_wires": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-input-source-flow-n2\\protocol-mock-wires.json",
+        "sha256": "bb647db78225133ed71ff14227ff4d768498744e04386e7f604db0e33973c9e1",
+        "bytes": 781
+      },
+      "matches_current_project_document": true,
+      "actual_input_frames": 8
+    },
+    {
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-input-storyboard-flow-n1\\evidence.json",
+        "sha256": "a1246185981c506668d7327dc4b62c77443cc54493431f524caaf6fca3a242ac",
+        "bytes": 1285
+      },
+      "binding": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-input-storyboard-flow-n1\\original-and-restored-input.json",
+        "sha256": "d09a56d75ed1421f8adc50a706be29d67e09f279a0344ce86b9a30d60a2b1de5",
+        "bytes": 21351
+      },
+      "protocol_mock_result": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-input-storyboard-flow-n1\\protocol-mock-result.json",
+        "sha256": "8d33b8feb07d48027867be4915c1ac082c48c036ab81c3ce3a56e269adf99ef6",
+        "bytes": 12297
+      },
+      "mock_wires": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-input-storyboard-flow-n1\\protocol-mock-wires.json",
+        "sha256": "c0f3e69017aba8fc37ea09a8119f6ced6b165c0056a1fcff6fca9ab30dbb71dc",
+        "bytes": 781
+      },
+      "matches_current_project_document": false,
+      "actual_input_frames": 8
+    }
+  ],
+  "source_sha256": {
+    "services/windows_native/render_vision_frame_bridge.py": "71b5a89d9d7752447ad1f9153ea180cc31caf1d9fa0e6e2173c7909a3b29a059",
+    "services/windows_native/tests/test_render_vision_frame_bridge.py": "ec6eedfa26470c7e28887d3b0c9b5eb7f5bf8f83748e99f5fdd92eb6e43d9026",
+    "scripts/north_star_render_vision_input.py": "060271e8932cc49155aa97fc6024ede085c8b775278fc73d293f11701e24c156"
+  },
+  "rendered_png_pts_checksum_checkpoint_scope_binding": true,
+  "source_asset_factory_rejects_render_scope": true,
+  "external_dispatches": 0,
+  "paid_operations": 0,
+  "semantic_inference_performed": false,
+  "purpose_controller_and_owner_consent_implemented": false,
+  "genuine_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "initial_attempts": {
+    "unit": "focused-n1 executed12 tests due to seven imported Source cases; final module import avoids duplicate discovery and final40 covers five new cases.",
+    "retained_source": "Source n1 serialized a dataclass as a Pydantic model and stopped after an in-process mock. Corrected to dataclasses.asdict; no source journal/permission/provider gate changed; n2 passes."
+  }
+}

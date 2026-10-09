@@ -1,6 +1,6 @@
 {
-  "head": "18289637d7c5d4aadba348e6f8222e0b6ce5eaa9",
-  "audited_at": "2026-10-09T13:18:39.032508+00:00",
+  "head": "3e8135fdb18418d2670755ce43bc650e990ffbb9",
+  "audited_at": "2026-10-09T13:37:56.430595+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -664,6 +664,11 @@
     "scripts/north_star_render_frame_recovery.py": "4c799de4630f8abb9bc5568ad3ebca58442ed04d8c53937a647db16437235471",
     "docs/NATIVE_RENDER_FRAME_QC.md": "2735879dbd53cadb122142c4c7ff787f9326a86cbbebfc1086b076f61e489cc7",
     "docs/north-star/render-frame-qc-evidence.json": "d480c8e1ec3e3186c537f5eebaa368ad764a4a54cc1b9ef0c064a8468574bf56",
+    "services/windows_native/render_vision_frame_bridge.py": "71b5a89d9d7752447ad1f9153ea180cc31caf1d9fa0e6e2173c7909a3b29a059",
+    "services/windows_native/tests/test_render_vision_frame_bridge.py": "ec6eedfa26470c7e28887d3b0c9b5eb7f5bf8f83748e99f5fdd92eb6e43d9026",
+    "scripts/north_star_render_vision_input.py": "060271e8932cc49155aa97fc6024ede085c8b775278fc73d293f11701e24c156",
+    "docs/NATIVE_RENDER_VISION_INPUT.md": "79941b11ab86623406307836829d933bf69ecd7f4d558cfcd5c023854b8d9c86",
+    "docs/north-star/render-vision-input-evidence.json": "dca9bff7b41570b993ff2c1f9b44104d52854db1f42251e75156d7d139cb4f8d",
     "apps/api/app/timeline_reframe.py": "4aae70d8f8c47aa275748ac9a4a488768a839c0b216680be0aef7c2742351bae",
     "apps/api/tests/test_timeline_reframe.py": "2e7e36f02b89dfabc57cb8778b1826f977c15c4356da1ccd99b64beeeacf4345",
     "apps/studio-web/reframe.mjs": "f120fe8b24bae84d623aa3d287b33a09fcaa7ea015694be18908878ae5e330db",
