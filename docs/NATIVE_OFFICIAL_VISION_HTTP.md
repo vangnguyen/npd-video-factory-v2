@@ -1,0 +1,22 @@
+# Signed Native official Vision routes
+
+The separate official Vision kernel now has scoped signed loopback routes, protected public configuration and recovery-only startup wiring. The existing `/vision` fixture and `/api/session` contracts remain unchanged, including `native_official_vision=false`. This is implemented and mock/local-real tested; genuine Vision acceptance, Studio controls and planner/QC consumption remain separate requirements.
+
+`LocalServer` accepts `official_vision_registry`, `official_vision_directory` and a raw boolean `official_vision_enabled`, default false. The CLI equivalents are `--official-vision-registry`, `--official-vision-directory` and `--enable-official-vision`. Registry and private directory must be paired and outside source/state; configured operation requires human authentication. The protected registry is hash frozen. Startup/status reads check public metadata and ciphertext presence without decrypting keys, creating an absent vault, calling a provider or granting consent. Injected factories are permitted only as exact scoped explicit mock factories, with the same directory and operator gate; injected network factories are refused.
+
+A fresh default server creates none of the three official Vision journals. Explicit configuration or existing history loads the service. Unconfigured historical recovery keeps the original snapshots and costs without current credentials or profiles. `Runner.start()` recovers interrupted claims as outcome unknown; `Runner.run_one()` never dispatches official Vision or renews consent. Analysis remains a separate explicit signed operation.
+
+| Route | Behavior |
+| --- | --- |
+| GET `/api/connections/official-vision` | Owner-only public configuration; inert default state. |
+| GET `/api/projects/<id>/official-vision` | Scoped read history; bounded limit 1–100 and scoped cursor. Empty default history creates no journal. |
+| GET `/api/projects/<id>/official-vision/nvoi_<id>` | Original evidence and nullable result/response; no current credential requirement. |
+| POST `/api/projects/<id>/official-vision` | Current Owner/CSRF, strict finite source/rights/profile/cost/mock acknowledgement; exact replay preserves original consent. |
+| POST `/api/projects/<id>/official-vision/nvoi_<id>/process` | Current Owner/CSRF plus original snapshot hash; one-use guarded kernel dispatch. |
+| POST `/api/projects/<id>/official-vision/nvoi_<id>/cancel` | Current Owner/CSRF plus snapshot hash; local cancellation without claiming remote rollback. |
+
+Authorization, origin and CSRF checks precede request-body consumption. Bodies are bounded to 16,000 bytes; extra authority, key, endpoint, enabled, coerced acknowledgement and money fields are refused. History is available to scoped viewers. Cross-project identifiers/cursors and duplicate/unknown query fields fail. Replies use no-store and structured diagnostics exclude credentials and private payloads. Known complete responses remain reviewable after late Owner revocation; ambiguous timeout cannot be retried by HTTP or worker.
+
+Verification includes 15 new signed HTTP cases and the related Native regressions. The retained rehearsal restores the preserved kernel backup into a fresh owned clone, uses the existing nine actual PNGs and synthetic DPAPI generations, and sends 50 signed requests with four explicit mock provider requests. Five new finite intents yield two mock results, one review result, one timeout and one local cancellation. Thirteen total official histories and all 76 server journals recover exactly in a fresh process with no current provider configuration. Original projects/media/legacy histories/private generations and Session shapes remain exact. Mock billed costs remain null and paid/external false. Earlier rehearsal harness errors (module-name shadowing and a repeated no-store header assumption) were repaired using fresh outputs; those incomplete roots are retained separately.
+
+Run `scripts/north_star_official_vision_http.py --kernel-input <preserved-kernel-evidence> --output <fresh-external-folder> --state-root C:/vf-native-fixture-official-vision-http-state-04 --restore-root C:/vf-native-fixture-official-vision-http-restore-04`. Fresh-process verification uses `--new-process` with output/restore root. Initial roots and evidence outputs must be fresh. This grants no real paid-provider, publishing, production deployment or Owner UAT approval.

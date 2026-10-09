@@ -362,6 +362,28 @@ class NativeOfficialVision:
     def get(self, project, identity):
         with self.store.transaction() as con: return self.read(con,self.row(con,project,identity))
 
+    def page(self, project, *, limit=25, cursor=None):
+        if type(limit) is not int or not 1 <= limit <= 100: raise WorkflowError('NATIVE_OFFICIAL_VISION_PAGE_INVALID',400)
+        after = None
+        if cursor is not None:
+            try:
+                if not isinstance(cursor,str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,1000}',cursor): raise ValueError()
+                after = json.loads(base64.urlsafe_b64decode(cursor+'='*(-len(cursor)%4)))
+                if (not isinstance(after,list) or len(after) != 4 or after[:2] != [self.workspace,project]
+                    or not isinstance(after[2],str) or len(after[2]) > 40 or datetime.fromisoformat(after[2]).tzinfo is None
+                    or not isinstance(after[3],str) or not re.fullmatch(r'nvoi_[a-f0-9]{32}',after[3])): raise ValueError()
+            except Exception: raise WorkflowError('NATIVE_OFFICIAL_VISION_CURSOR_INVALID',400) from None
+        with self.store.transaction() as con:
+            if con.execute('SELECT 1 FROM projects WHERE id=?',(project,)).fetchone() is None: raise WorkflowError('PROJECT_NOT_FOUND',404)
+            where = 'workspace_id=? AND project_id=?'; params = [self.workspace,project]
+            if after:
+                where += ' AND (created_at<? OR (created_at=? AND vision_id<?))'; params.extend([after[2],after[2],after[3]])
+            rows = con.execute('SELECT * FROM native_official_vision_intents WHERE '+where+' ORDER BY created_at DESC,vision_id DESC LIMIT ?',(*params,limit+1)).fetchall()
+            next_cursor = base64.urlsafe_b64encode(json.dumps([self.workspace,project,rows[limit-1]['created_at'],rows[limit-1]['vision_id']]).encode()).decode().rstrip('=') if len(rows)>limit else None
+            return {'schema_version':'native-official-vision-page-v1','workspace_id':self.workspace,'project_id':project,
+                'items':[self.read(con,row) for row in rows[:limit]],'next_cursor':next_cursor,'limit':limit,
+                'automatic_dispatch':False,'publishing_enabled':False,'owner_uat_accepted':False}
+
     def cancel(self, project, identity, payload, *, principal):
         payload = typed(payload,Action); self.identity(principal)
         with self.store.transaction() as con:
