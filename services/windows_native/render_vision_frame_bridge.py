@@ -8,6 +8,8 @@ import hashlib
 import math
 from pathlib import Path
 import re
+import sqlite3
+from contextlib import nullcontext
 
 from app.auto_edit_models import MediaMetadata
 from app.openai_vision_provider import ExtractedVisionFrame
@@ -19,18 +21,18 @@ from .store import Store
 
 
 class NativeRenderEvidenceFrameExtractor:
-    def __init__(self,store,config,project_id,job_id,*,workspace_id='wsp_native_local'):
+    def __init__(self,store,config,project_id,job_id,*,workspace_id='wsp_native_local',con=None):
         self.store,self.config=store,config
         self.root=store.root.absolute();self.project_id=project_id;self.job_id=job_id;self.workspace=workspace_id
         self.max_image_bytes=MAX_PNG_BYTES;self.max_dimension_pixels=960
         self._identity=(store,config,self.root,config.data_root.absolute(),project_id,job_id,workspace_id)
-        original=self._load()
+        original=self._load(con=con)
         self.max_frames=len(original['record']['observation']['frames'])
         self._max_frames=self.max_frames
         self._fingerprint=digest(original)
-        self._check()
+        self._check(con=con)
 
-    def _load(self):
+    def _load(self,*,con=None):
         try:
             if (type(self.store) is not Store or self.root!=self.config.data_root.absolute() or self.root!=self.store.root.absolute()
                 or (self.store,self.config,self.root,self.config.data_root.absolute(),self.project_id,self.job_id,self.workspace)!=self._identity
@@ -44,7 +46,13 @@ class NativeRenderEvidenceFrameExtractor:
                 import json
                 if scope.stat().st_size>512 or scope.stat().st_nlink!=1 or json.loads(scope.read_bytes())!={'schema':'vf-native-workspace-binding-v1','workspace_id':self.workspace}:raise ValueError()
             elif self.workspace!='wsp_native_local':raise ValueError()
-            project=self.store.get(self.project_id);job=self.store.get_job(self.job_id)
+            # Admission already holds BEGIN IMMEDIATE. Reuse that exact owned
+            # connection instead of opening a second writer and deadlocking.
+            if con is not None and (type(con) is not sqlite3.Connection or not con.in_transaction
+                or Path(con.execute('PRAGMA database_list').fetchone()[2]).absolute()!=self.store.db.absolute()):raise ValueError()
+            with nullcontext(con) if con is not None else self.store.transaction() as owned:
+                project=self.store.project(owned.execute('SELECT * FROM projects WHERE id=?',(self.project_id,)).fetchone())
+                job=self.store.job(owned.execute('SELECT * FROM jobs WHERE id=?',(self.job_id,)).fetchone(),owned)
             if job['project_id']!=self.project_id or job['kind']!='render' or job['status']!='succeeded' or not job['result']:raise ValueError()
             directory=self.root/'jobs'/self.job_id;artifact=Artifacts(directory,job);checkpoint=artifact.load('render')
             if checkpoint is None or digest(checkpoint['result'])!=digest(job['result']):raise ValueError()
@@ -76,21 +84,21 @@ class NativeRenderEvidenceFrameExtractor:
                 'matches_current_project_document':document_sha==digest(project['document'])}
         except Exception:raise WorkflowError('NATIVE_RENDER_VISION_INPUT_BINDING_INVALID') from None
 
-    def _check(self):
-        value=self._load()
+    def _check(self,*,con=None):
+        value=self._load(con=con)
         if (digest(value)!=self._fingerprint or type(self.max_frames) is not int or self.max_frames!=self._max_frames
             or self.max_frames!=len(value['record']['observation']['frames'])):
             raise WorkflowError('NATIVE_RENDER_VISION_INPUT_CHANGED')
         return value
 
-    def input_metadata(self):
-        value=self._check();frame=value['record']['observation']['frames'][0]
+    def input_metadata(self,*,con=None):
+        value=self._check(con=con);frame=value['record']['observation']['frames'][0]
         return MediaMetadata(media_kind='image',detected_content_type='image/png',format_name='png',width=frame['width'],height=frame['height'])
 
-    def binding(self):
-        value=self._check()
+    def binding(self,*,con=None):
+        value=self._check(con=con)
         return {'schema_version':'native-render-vision-frame-input-v1',**copy.deepcopy(value),
-            'render_artifact_id':'render:'+self.job_id,'input_metadata':self.input_metadata().model_dump(mode='json'),
+            'render_artifact_id':'render:'+self.job_id,'input_metadata':self.input_metadata(con=con).model_dump(mode='json'),
             'source_asset_analysis_consent_reused':False,'separate_owner_provider_consent_required':True,
             'purpose':'rendered_video_quality_review','semantic_inference_performed':False,'prediction_confidence_calibrated':False,
             'continuous_tracking_performed':False,'external_provider_calls':0,'paid_operations':0,'publishing_authorized':False,

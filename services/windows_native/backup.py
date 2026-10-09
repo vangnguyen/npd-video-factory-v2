@@ -132,6 +132,10 @@ def database_status(path):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_official_vision_intents' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_official_vision_intents WHERE status='claimed'").fetchone()[0]
+            for name in ('native_render_vision_intents','native_render_vision_responses','native_render_vision_events'):
+                if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
+            if 'native_render_vision_intents' in tables:
+                busy+=con.execute("SELECT count(*) FROM native_render_vision_intents WHERE status='claimed'").fetchone()[0]
             if 'native_official_account_checks' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_official_account_checks WHERE status IN ('queued','running')").fetchone()[0]
             for name in ('native_official_analytics_syncs','native_official_analytics_attempts','native_official_analytics_responses','native_official_analytics_snapshots','native_official_analytics_events','native_official_analytics_refresh_plans','native_official_analytics_refresh_occurrences','native_official_analytics_refresh_events'):

@@ -1,0 +1,64 @@
+{
+  "schema_version": "north-star-render-vision-controller-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-controller-focused-n3.log",
+      "sha256": "198a8c8f416722ef8aadf0e9cc28b443a2052759dc2bf0c8d9edee88698dd363",
+      "bytes": 4711,
+      "passed": 21
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-controller-related-n1.log",
+      "sha256": "5f18d09396755aad8ecad40363eef6bece0bbc0e5b3822926eaa81454f4720ef",
+      "bytes": 14563,
+      "passed": 65
+    }
+  ],
+  "new_native_cases": 21,
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-controller-flow-n1\\evidence.json",
+    "sha256": "b2ddf1fbb1d80f8531ec11ce785963a2eaf82ec6183eec1167e434a088c16586",
+    "bytes": 1701
+  },
+  "original_history": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-controller-flow-n1\\expected-history.json",
+    "sha256": "45bf3a13b61d761d9cc8b7216870053343cf6d4cfd19c3a02805a9fbacd6123a",
+    "bytes": 174130
+  },
+  "new_process_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-controller-flow-n1\\new-process-replay.json",
+    "sha256": "e2e79a02c290139258262e77d99fdc2e40099f03b67dd8a62e8e531e71acd549",
+    "bytes": 360
+  },
+  "source_sha256": {
+    "services/windows_native/render_vision.py": "41ff5c8999a1c08c9bae0d88b9f99a4407a400e70ede9f3cdea6c1f55ef84df5",
+    "services/windows_native/render_vision_models.py": "9fbcd8e9c95268ce97e68e3e2165f1252efd3eb0dd6af27219078672eae4b888",
+    "services/windows_native/render_vision_frame_bridge.py": "dcb8bcf52600e6ab31005c9906becaa15d6d5b8ff11fa66ef3a86c0e6b174432",
+    "services/windows_native/backup.py": "14ebf30f6d8ecdae668c8cb1268332018809e82ed61813be608f84bfdc836784",
+    "services/windows_native/tests/test_render_vision.py": "e1f913a993c07d86ccb5698c6ae395a0b7c24859237246d96f35201654619a18",
+    "scripts/north_star_render_vision_controller.py": "e67a2d8d58acd85a91b19a56e289e6795369f8e18c39c4aba591c0a4e3a39f1a"
+  },
+  "public_backup_sha256": "8ef497f416c80a3fe875852588a3e9a4fa40fb969582de5f118e23a0ff5a7386",
+  "retained_generation_scope": "All final runtime sources exact. Test source at rehearsal preceded only the absent-key fixture path correction; final21 test source/checksum and n3 log indexed separately. Initial20 PASS/175.150s was intermediate; n2 had one conservative protected-root fixture failure, repaired without changing the guard.",
+  "finite_current_owner_one_use_render_consent": true,
+  "original_request_response_cost_and_events_journal": true,
+  "owned_shared_connection_prevents_nested_writer_deadlock": true,
+  "late_revoke_and_unknown_outcome_no_replay": true,
+  "source_asset_consent_reused": false,
+  "protocol_mock_requests": 6,
+  "complete_responses": 5,
+  "mock_results": 1,
+  "mock_cost_operations": 6,
+  "original_timeline_projects_media_checkpoints_png_pts_exact": true,
+  "keyless_new_process_public_restore_exact": true,
+  "external_dispatches": 0,
+  "paid_operations": 0,
+  "live_credentials_read": false,
+  "semantic_inference_performed": false,
+  "observed_actual_billed_cost": null,
+  "hard_qc_replaced": false,
+  "signed_http_or_ui_integrated": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false
+}
