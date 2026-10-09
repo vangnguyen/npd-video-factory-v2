@@ -40,6 +40,7 @@ class Runner:
         self.official_analytics_refresh = None
         self.google_oauth = None
         self.official_vision = None
+        self.render_vision = None
         self.vision = None
         self.observer = observer or Observer()
         self.stop = threading.Event()
@@ -55,6 +56,7 @@ class Runner:
         if self.official_analytics_refresh is not None:self.official_analytics_refresh.recover()
         if self.google_oauth is not None:self.google_oauth.recover()
         if self.official_vision is not None:self.official_vision.recover()
+        if self.render_vision is not None:self.render_vision.recover()
         self.thread.start()
 
     def run_one(self):
@@ -180,8 +182,15 @@ class LocalServer(ThreadingHTTPServer):
         official_publish_registry=None,official_publish_enabled=False,official_publish_factories=None,official_publish_session_directory=None,official_publish_queue_enabled=False,
         official_analytics_enabled=False,official_analytics_refresh_enabled=False,
         google_oauth_registry=None,google_oauth_directory=None,google_oauth_enabled=False,google_oauth_slots=None,google_oauth_client=None,
-        official_vision_registry=None,official_vision_directory=None,official_vision_enabled=False,official_vision_factories=None):
+        official_vision_registry=None,official_vision_directory=None,official_vision_enabled=False,official_vision_factories=None,
+        render_vision_registry=None,render_vision_directory=None,render_vision_enabled=False,render_vision_factories=None):
         config.validate_data_root()
+        if type(render_vision_enabled) is not bool:raise WorkflowError('NATIVE_RENDER_VISION_RUNTIME_INVALID',400)
+        if render_vision_registry is not None and render_vision_factories is not None:raise WorkflowError('NATIVE_RENDER_VISION_CONFIGURATION_CONFLICT',400)
+        has_render_vision=render_vision_registry is not None or render_vision_factories is not None
+        if has_render_vision!=(render_vision_directory is not None) or render_vision_enabled and not has_render_vision:
+            raise WorkflowError('NATIVE_RENDER_VISION_PROTECTED_REGISTRY_VAULT_REQUIRED',400)
+        if has_render_vision and access is None:raise WorkflowError('NATIVE_RENDER_VISION_HUMAN_AUTH_REQUIRED',400)
         if type(official_vision_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_VISION_CONFIGURATION_INVALID',400)
         if official_vision_registry is not None and official_vision_factories is not None:raise WorkflowError('NATIVE_OFFICIAL_VISION_CONFIGURATION_CONFLICT',400)
         has_vision_config=official_vision_registry is not None or official_vision_factories is not None
@@ -265,6 +274,20 @@ class LocalServer(ThreadingHTTPServer):
                 loaded_vision=dict(official_vision_factories)
                 for f in loaded_vision.values():f.check()
             else:loaded_vision=load_vision(official_vision_registry,vault,operator_enabled=official_vision_enabled)
+        loaded_render_vision=None
+        if has_render_vision:
+            from .vision_credentials import NativeVisionKeyVault
+            from .render_vision_registry import load as load_render_vision,NativeRenderVisionFactory
+            vault=NativeVisionKeyVault(render_vision_directory,config.data_root,access.workspace_id)
+            if render_vision_factories is not None:
+                if (type(render_vision_factories) is not dict or len(render_vision_factories)>8
+                    or any(type(f) is not NativeRenderVisionFactory or not f.mock or key!=f.profile.profile_id
+                        or f.workspace!=access.workspace_id or f.root!=vault.root or f.vault.directory!=vault.directory
+                        or f.operator_enabled is not render_vision_enabled for key,f in render_vision_factories.items())):
+                    raise WorkflowError('NATIVE_RENDER_VISION_MOCK_INJECTION_REQUIRED',400)
+                loaded_render_vision=dict(render_vision_factories)
+                for f in loaded_render_vision.values():f.check()
+            else:loaded_render_vision=load_render_vision(render_vision_registry,vault,operator_enabled=render_vision_enabled)
         super().__init__(("127.0.0.1", port), Handler)
         self.config, self.store = config, Store(config.data_root)
         self.access = access
@@ -347,6 +370,14 @@ class LocalServer(ThreadingHTTPServer):
             from .official_vision import NativeOfficialVision
             self.official_vision=NativeOfficialVision(self.vision,factories=loaded_vision,enabled=official_vision_enabled,identity_provider=self.official_publish_identity)
             self.runner.official_vision=self.official_vision
+        self.render_vision=None
+        with self.store.transaction() as con:
+            has_render_vision_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_render_vision_intents'").fetchone() is not None
+        if loaded_render_vision is not None or has_render_vision_history:
+            from .render_vision import NativeRenderVision
+            self.render_vision=NativeRenderVision(self.store,config,workspace_id=self.publications.workspace_id,
+                factories=loaded_render_vision,enabled=render_vision_enabled,identity_provider=self.official_publish_identity)
+            self.runner.render_vision=self.render_vision
         from .source_variants import SourceVariants
         self.variants=SourceVariants(self.store,workspace_id=self.publications.workspace_id)
         from .narrated_variants import NativeNarratedVariants
@@ -572,6 +603,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path=='/api/connections/official-vision' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-vision(?:/nvoi_[a-f0-9]{32})?',path):
             from .official_vision_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if path=='/api/connections/render-vision' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-vision(?:/nrvi_[a-f0-9]{32}|/input/[a-f0-9]{32})?',path):
+            from .render_vision_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path=='/api/connections/official-analytics-refresh' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics-refresh(?:/noap_[a-f0-9]{32})?',path):
             from .official_analytics_refresh_routes import get
@@ -834,6 +868,9 @@ class Handler(BaseHTTPRequestHandler):
         self.boundary(write=True)
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-vision(?:/nvoi_[a-f0-9]{32}/(?:process|cancel))?',self.path):
             from .official_vision_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-vision(?:/nrvi_[a-f0-9]{32}/(?:process|cancel))?',self.path):
+            from .render_vision_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations(?:/ngoa_[a-f0-9]{32}/(?:authorization-url|exchange|cancel))?|refresh)',self.path):
             from .google_oauth_routes import post
@@ -1261,6 +1298,9 @@ def main():
     parser.add_argument('--official-vision-registry',type=Path)
     parser.add_argument('--official-vision-directory',type=Path)
     parser.add_argument('--enable-official-vision',action='store_true')
+    parser.add_argument('--render-vision-registry',type=Path)
+    parser.add_argument('--render-vision-directory',type=Path)
+    parser.add_argument('--enable-render-vision',action='store_true')
     parser.add_argument('--official-publish-registry',type=Path)
     parser.add_argument('--official-publish-session-directory',type=Path)
     parser.add_argument('--enable-official-publishing',action='store_true')
@@ -1292,6 +1332,7 @@ def main():
             official_analytics_enabled=args.enable_official_analytics,official_analytics_refresh_enabled=args.enable_official_analytics_refresh,
             google_oauth_registry=args.google_oauth_registry,google_oauth_directory=args.google_oauth_directory,google_oauth_enabled=args.enable_google_oauth,
             official_vision_registry=args.official_vision_registry,official_vision_directory=args.official_vision_directory,official_vision_enabled=args.enable_official_vision,
+            render_vision_registry=args.render_vision_registry,render_vision_directory=args.render_vision_directory,render_vision_enabled=args.enable_render_vision,
             official_publish_registry=args.official_publish_registry,official_publish_session_directory=args.official_publish_session_directory,official_publish_enabled=args.enable_official_publishing,official_publish_queue_enabled=args.enable_official_publish_queue,
             trend_feed_registry=args.trend_feed_registry,trend_feed_enabled=args.enable_trend_feeds) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)

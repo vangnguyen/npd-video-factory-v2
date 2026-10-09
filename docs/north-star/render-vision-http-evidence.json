@@ -1,0 +1,56 @@
+{
+  "schema_version": "north-star-render-vision-http-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-http-focused-n2.log",
+      "sha256": "d1a08a367619e750b8cae6f6ef74364e7ff981c3e0f5a9bb4ce98bfd544b0d99",
+      "bytes": 2446,
+      "passed": 9
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-http-related-n1.log",
+      "sha256": "dc2a96e58362b8f0048681f264f2db87bd538816db91ae416518825792a99546",
+      "bytes": 8906,
+      "passed": 39
+    }
+  ],
+  "new_native_cases": 9,
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-http-flow-n2\\evidence.json",
+    "sha256": "29756655c23b79fcd3647b8db89caee5428bb59a8c8d757b00ef695a9409e93c",
+    "bytes": 1649
+  },
+  "new_process_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-http-flow-n2\\new-process-replay.json",
+    "sha256": "b9f49697aba103acbc729528c9922f48e0ac1c9a85033f315fd1e5f11891bac7",
+    "bytes": 320
+  },
+  "source_sha256": {
+    "services/windows_native/server.py": "8690110cd73f69894ee26f21a5b7f41633f2c0104516a435aca0d5b42ccb4aed",
+    "services/windows_native/access.py": "cf0f71de3f54e7b6112816e227b63c31b938b1e6964131dfc451b1c211699859",
+    "services/windows_native/render_vision_routes.py": "27e3e2ab22cc29a65b233ef4f82cb35032fbcaf6e3dbf8e96593b1c40f46659b",
+    "services/windows_native/render_vision.py": "41ff5c8999a1c08c9bae0d88b9f99a4407a400e70ede9f3cdea6c1f55ef84df5",
+    "services/windows_native/tests/test_render_vision_http.py": "c6057e607b03fda890b4b0c704e075a19b09a78bfd432ca4097f22972cbb9fa8",
+    "scripts/north_star_render_vision_http.py": "0ff530aeddaeb59e8e711d745ac31a4d621eb994a5bbeaba0b8ccf1940d8ac15"
+  },
+  "public_backup_sha256": "4588bf1a2a02f3392daff50c0179fdd97a48960d172e18e8f3e9ba0e3dcec212",
+  "signed_http_requests": 15,
+  "all_histories": 9,
+  "protocol_mock_requests": 2,
+  "signed_current_owner_guards_precede_body": true,
+  "separate_default_disabled_registry_and_runtime": true,
+  "readonly_input_grants_no_authority": true,
+  "worker_recovery_no_dispatch_or_renewal": true,
+  "keyless_application_restore_exact": true,
+  "original_projects_timeline_media_checkpoints_png_pts_exact": true,
+  "external_dispatches": 0,
+  "paid_operations": 0,
+  "live_credentials_read": false,
+  "semantic_inference_performed": false,
+  "source_asset_consent_reused": false,
+  "hard_qc_replaced": false,
+  "studio_ui_integrated": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false
+}
