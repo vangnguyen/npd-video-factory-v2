@@ -23,7 +23,7 @@ def get(handler,path):
     if path=='/api/connections/google-oauth':
         if params:raise WorkflowError('NATIVE_GOOGLE_OAUTH_PAGE_INVALID',400)
         if handler.server.google_oauth is not None:return handler.server.google_oauth.states()
-        return {'schema_version':'native-google-oauth-runtime-v1','workspace_id':handler.server.publications.workspace_id,'enabled':False,'default_enabled':False,'slots':[],
+        return {'schema_version':'native-google-oauth-runtime-v1','workspace_id':handler.server.publications.workspace_id,'enabled':False,'default_enabled':False,'slots':[],'mock':False,
             'automatic_refresh':False,'startup_decryption':False,'account_verified':False,'token_returned':False,'publishing_enabled':False,'production_consent_renewed':False,'real_provider_tested':False}
     match=re.fullmatch(BASE+r'/(authorizations|operations)(?:/(ngoa_[a-f0-9]{32}|ngop_[a-f0-9]{32}))?',path)
     if not match:raise WorkflowError('ROUTE_NOT_FOUND',404)

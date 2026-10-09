@@ -4,6 +4,7 @@ Secrets stay in the immutable private vault. No runtime or credential resolver i
 activated here; a successful grant is not account, read or publish approval.
 """
 import asyncio,base64,hashlib,json,re,uuid
+from dataclasses import replace
 from datetime import datetime,timedelta
 from typing import Literal
 from pydantic import Field,StrictBool,StrictInt,ValidationError,field_validator,model_validator
@@ -13,10 +14,11 @@ from .costs import CostLedger
 from .google_oauth_vault import NativeGoogleOAuthVault,SecretReceipt
 from .official_publications import NativeOfficialPublications,utc
 from app.models import StrictModel
+from app.human_identity import HumanPrincipal
 from app.publishing_models import PublishingTargetBinding
 from app.publishing_credentials import target_digest
 from app.google_oauth_protocol import (GoogleDesktopClient,GoogleOAuthTokenClient,GoogleOAuthError,
-    authorization,exchange_request,refresh_request,parse_tokens,loopback)
+    authorization,exchange_request,refresh_request,parse_tokens,loopback,pairs)
 
 TABLES=('native_google_oauth_authorizations','native_google_oauth_operations','native_google_oauth_events')
 STATUSES={'claimed','succeeded','failed','outcome_unknown','review_required'}
@@ -112,7 +114,7 @@ class NativeGoogleOAuthOperations:
     def configured(self):self.check();return self.enabled and (self.client.mock or self.client.network_enabled)
     def states(self):
         return {'schema_version':'native-google-oauth-runtime-v1','workspace_id':self.workspace,'enabled':self.configured(),'default_enabled':False,
-            'slots':[s.model_dump(mode='json') for _,s in sorted(self.slots.items())],'automatic_refresh':False,'startup_decryption':False,
+            'slots':[s.model_dump(mode='json') for _,s in sorted(self.slots.items())],'mock':self.client.mock,'automatic_refresh':False,'startup_decryption':False,
             'account_verified':False,'token_returned':False,'publishing_enabled':False,'production_consent_renewed':False,'real_provider_tested':False,
             **({'registry_sha256':self.registry_sha256} if self.registry_sha256 is not None else {})}
     def identity(self,principal=None,authority=None):
@@ -270,6 +272,9 @@ class NativeGoogleOAuthOperations:
             status='not_configured';identity='ngoa_'+uuid.uuid4().hex
             if self.configured():
                 flow=authorization(self.private_client(slot),payload.redirect_uri,now=at(snapshot['approved_at']),valid_for_seconds=payload.valid_for_seconds)
+                # The public identity only routes this callback. The original
+                # 384-bit random suffix remains private and is compared in full.
+                flow=replace(flow,state=identity+'.'+flow.state)
                 snapshot['authorization_receipt']=self.vault.save_authorization(flow,slot.client);self.fence(con,project,snapshot);status='awaiting_callback'
             self.identity(authority=authority);stamp=utc(self.clock()).isoformat()
             con.execute('INSERT INTO native_google_oauth_authorizations VALUES(?,?,?,?,?,?,?,?,?,?,?)',(identity,self.workspace,project,key,request,digest(snapshot),json.dumps(snapshot),status,None,stamp,stamp))
@@ -298,6 +303,36 @@ class NativeGoogleOAuthOperations:
         if con.execute('SELECT 1 FROM native_google_oauth_operations WHERE workspace_id=? AND source_ref=?',(self.workspace,snapshot['source_ref'])).fetchone():raise WorkflowError('NATIVE_GOOGLE_OAUTH_SOURCE_ALREADY_CONSUMED')
         con.execute('INSERT INTO native_google_oauth_operations VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',(identity,self.workspace,project,key,digest(snapshot['request']),digest(snapshot),json.dumps(snapshot),snapshot['source_ref'],'claimed',None,None,None,None,stamp,stamp))
         self.event(con,project,identity,'oauth.operation.claimed',snapshot['authority']['token_id'],operation=snapshot['operation']);self.fence(con,project,snapshot);return identity
+    async def callback(self,query,*,redirect_uri):
+        """One bounded external navigation, authorized by original private state.
+
+        This cannot create consent or select a credential. The saved approving
+        Owner must still exist with exactly the original identity revision.
+        Legacy intents without a routing prefix retain signed manual POST.
+        """
+        if type(query) is not str or not query.isascii() or not 1<=len(query)<=8192 or any(ord(c)<32 for c in query):raise WorkflowError('NATIVE_GOOGLE_OAUTH_CALLBACK_INVALID',400)
+        try:
+            loopback(redirect_uri);values=pairs(query)
+        except GoogleOAuthError:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CALLBACK_INVALID',400) from None
+        match=re.fullmatch(r'(ngoa_[a-f0-9]{32})\.([A-Za-z0-9_-]{64})',values.get('state',''))
+        if match is None:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CALLBACK_INVALID',400)
+        if not self.configured():raise WorkflowError('NATIVE_GOOGLE_OAUTH_DISABLED')
+        with self.store.transaction() as con:
+            row=con.execute('SELECT project_id FROM native_google_oauth_authorizations WHERE authorization_id=? AND workspace_id=?',(match[1],self.workspace)).fetchone()
+            if row is None:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CALLBACK_INVALID',400)
+            project=row['project_id'];saved=self.read(self.row(con,project,match[1],'authorization'),'authorization')
+            if saved['status']!='awaiting_callback':raise WorkflowError('NATIVE_GOOGLE_OAUTH_AUTHORIZATION_NOT_PENDING')
+            if saved['snapshot']['request']['redirect_uri']!=redirect_uri:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CALLBACK_INVALID',400)
+            self.fence(con,project,saved['snapshot'])
+            authority=self.identity(authority=saved['snapshot']['authority'])
+            try:
+                verifier=self.publications.identity_provider();record=verifier.registry.tokens[authority['token_id']]
+                principal=HumanPrincipal(token_id=record.token_id,subject=record.subject,display_name=record.display_name,platform_role=record.platform_role,workspace_roles=dict(record.workspace_roles),expires_at=record.expires_at)
+            except Exception:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CURRENT_OWNER_REQUIRED',403) from None
+            if self.identity(principal)!=authority:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CURRENT_OWNER_REQUIRED',403)
+        # Exchange rechecks all authority/source/private bindings and atomically
+        # consumes the original intent before any token endpoint dispatch.
+        return await self.exchange(project,match[1],query,principal=principal,expected_snapshot_sha256=saved['snapshot_sha256'])
     async def exchange(self,project,identity,callback_query,*,principal,expected_snapshot_sha256):
         self.identity(principal)
         with self.store.transaction() as con:

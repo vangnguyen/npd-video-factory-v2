@@ -468,6 +468,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def dispatch_get(self):
         path = self.path.split("?", 1)[0]
+        if path=='/oauth/google/callback':
+            from .google_oauth_callback import dispatch
+            return dispatch(self)
         if path.startswith('/v1/'):
             from .bridge_routes import dispatch
             return dispatch(self)

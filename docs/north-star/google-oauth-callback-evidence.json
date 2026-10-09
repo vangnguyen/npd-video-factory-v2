@@ -1,0 +1,175 @@
+{
+  "schema_version": "native-google-oauth-callback-evidence-v1",
+  "parent_head": "d93696d071e28241cdfbc3390ded7737084bd7cd",
+  "source_sha256": {
+    "services/windows_native/google_oauth_registry.py": "57663cec08ca1a866786d79e909721187bcd2c8650264c827f9d7e430e3e5237",
+    "services/windows_native/google_oauth_routes.py": "2a6b760fb830d3551f9ce7ca2c32b72c9aae96e0bcf8e7e3e30c05d7a7b9c61b",
+    "services/windows_native/google_oauth_operations.py": "c1552a8d056c1a85641440855fb77a369bf6158d650095b095643e0e658e5567",
+    "services/windows_native/server.py": "5e6248f8a1da27af0eacb638143c74c359179bc8b80bd7404090a4041a552811",
+    "services/windows_native/access.py": "4a059512aed07e848e88e7236bd4448632ec1c008459fa394e9a234a0c83e1ef",
+    "services/windows_native/tests/test_google_oauth_http.py": "683ecb56c9710b2497516f46089d43dc91fae245c454c36584d6982f0722ca5b",
+    "services/windows_native/google_oauth_callback.py": "638476a8711513a84cfdf150e3deb4f58c95a2f3a593e93ee58ba3c408e399f9",
+    "services/windows_native/tests/test_google_oauth_callback.py": "77469b0b44a9883a58dc6e455a65cafb52cdf52e7481abe86b3e5799a1aafb2a",
+    "scripts/north_star_google_oauth_callback.py": "20dd3bb205b9d414eccac77554e3749a78f54bd145154faecd5c0a27229f3ac4",
+    "docs/NATIVE_GOOGLE_OAUTH_CALLBACK.md": "6fc468c69fddb03eb69dcff06421ff657dd63a36183aa177d163fee7d2a610e5"
+  },
+  "tests": {
+    "related_native": {
+      "passed": 175,
+      "seconds": 207.831,
+      "log": "google-oauth-callback-native-related-n1.log",
+      "sha256": "bcc846f1fb95d3fea94d033c0d97642f3e05d1f1c5c75451badf00d72a86045d"
+    },
+    "full_native": {
+      "passed": 1181,
+      "seconds": 1881.144,
+      "log": "google-oauth-callback-native-full-n1.log",
+      "sha256": "178a72635e23ab0afca111a2b7a67ba74de467b58f5ba1fca06a09df102d6c14"
+    },
+    "prior_focused_callback": {
+      "passed": 21,
+      "seconds": 43.847,
+      "log": "google-oauth-callback-new-n2.log",
+      "sha256": "82fde65e2a5d111e1fda303fe0b67cebfb4f6bba565d9b5cc519d67906e6d206"
+    },
+    "new_callback_cases": 23,
+    "related_api": {
+      "passed": 163,
+      "seconds": 41.19,
+      "log": "google-oauth-callback-api-related-n1.log",
+      "sha256": "b2cdf0eef45a151302764faa6c2c0dc9ab475bff886be121295ae34de1ee9360"
+    },
+    "unchanged_studio_passed_at_prior": 384,
+    "current_full_studio_run": false,
+    "current_full_api_run": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-oauth-callback-flow-n1",
+    "evidence_sha256": "3aa632cadca140e4f8e5f0d9b8e41b2c413e11b8300e18ccb4bff92954c44627",
+    "exports": {
+      "backup.json": {
+        "sha256": "af15e8b465ba899e911734abff469529c60f2e299ac69bb5c47930f4476170e6",
+        "bytes": 4112
+      },
+      "callback-01.html": {
+        "sha256": "4576f2e6f5b68222b774ffa790e5267eefa2358e1c42ea10f4775a6bc6828682",
+        "bytes": 332
+      },
+      "callback-02.html": {
+        "sha256": "f1b15e48014584534b05e054f249847ee5f44e0e8b2932f690405b23b1c6ec9c",
+        "bytes": 345
+      },
+      "callback-03.html": {
+        "sha256": "dcb13926369daf6ffdaf18bd554f071f88e7978327aea28e0a111f6f297cf164",
+        "bytes": 344
+      },
+      "callback-04.html": {
+        "sha256": "d4b3ac604279c578203ab6f462f6bd112aaa60a35bb3d4fdad523c48ed50f6f5",
+        "bytes": 324
+      },
+      "callback-observations.json": {
+        "sha256": "1631e35d32affafbe80bc00ed415c3ff02cf38273756d639e509569f0001c4f9",
+        "bytes": 955
+      },
+      "cost.json": {
+        "sha256": "85d9f48648e9ab54a941ef7b07facf6e1a9d8990187d2da7563c0692795d0cbb",
+        "bytes": 4189
+      },
+      "evidence.json": {
+        "sha256": "3aa632cadca140e4f8e5f0d9b8e41b2c413e11b8300e18ccb4bff92954c44627",
+        "bytes": 4423
+      },
+      "expected-authorization-history.json": {
+        "sha256": "0eba525c63a9da1c47d28e62abc1488bf3dd04f3076055f8c36ff61025671904",
+        "bytes": 17807
+      },
+      "expected-journals.json": {
+        "sha256": "b72d0018591b93e59b6358ef677fc18c05be54b7b9123c08ff271371d85ebb7e",
+        "bytes": 52491
+      },
+      "expected-operation-history.json": {
+        "sha256": "e3caa7038a21395bcf6a33ee1f3e8072f73f8039dc369cbb66c61438dbf252fe",
+        "bytes": 23263
+      },
+      "expected-private-receipts.json": {
+        "sha256": "bd05c14ddde0e9a3943c58400f09a39f05844ba4b64503df82f2eebc1bfd9ec3",
+        "bytes": 5187
+      },
+      "expected-project.json": {
+        "sha256": "aeb41fccf52bd3dda7ece883626c2aeae86a81722d39d6dc62a25221eeac85a5",
+        "bytes": 887
+      },
+      "http-observations.json": {
+        "sha256": "de11fea1be38b49104cbd3038ff2274a5ddd9b220792a6ab3acd311b41002d3f",
+        "bytes": 6078
+      },
+      "legacy-finite-refresh-replay.json": {
+        "sha256": "d69de18e295c77d45963f01a8b1e873faf0a1b3233157f1927cafbf0f8a478b6",
+        "bytes": 304
+      },
+      "legacy-google-oauth-http-replay.json": {
+        "sha256": "5d7d61152bf286c3fb5193a12dd8ff09b543e24c0fcc877193cfd8e16d773891",
+        "bytes": 324
+      },
+      "legacy-google-oauth-operations-replay.json": {
+        "sha256": "154a2834ffc466b82d110c1e45bd7dd7dccd2a94ada593b217835204ca11d356",
+        "bytes": 356
+      },
+      "mock-wire-summary.json": {
+        "sha256": "72d89b711fa5e4f14e85970c2e4837e2ee15ecb62c0156628b18f3de5c9d8743",
+        "bytes": 382
+      },
+      "new-process-replay.json": {
+        "sha256": "5915012b0f49d7b754ad67705e67005d3fdad92f2cd178b97541b04b282a725f",
+        "bytes": 318
+      },
+      "public-oauth-callback.zip": {
+        "sha256": "f41afb18d0a7d135f5db5718986ba6a99fe9abc0cfcca18ecae4e2e3aec843a0",
+        "bytes": 937978
+      },
+      "recovery-restore.json": {
+        "sha256": "a01d4057c8b7817c45e54af25a6a76cb9b4f365f2663111144644e7ddd1edede",
+        "bytes": 4533
+      },
+      "restored-in-process.json": {
+        "sha256": "5915012b0f49d7b754ad67705e67005d3fdad92f2cd178b97541b04b282a725f",
+        "bytes": 318
+      }
+    },
+    "private_root": "C:/vf-native-fixture-google-oauth-callback-secrets-01",
+    "restore_root": "C:/vf-native-fixture-google-oauth-callback-restore-01",
+    "backup_sha256": "f41afb18d0a7d135f5db5718986ba6a99fe9abc0cfcca18ecae4e2e3aec843a0",
+    "backup_bytes": 937978,
+    "backup_entries": 10,
+    "journal_count": 76
+  },
+  "exact_loopback_external_document_navigation_no_cookie_or_general_csrf_bypass": true,
+  "new_private_state_public_locator_and_original_384_bit_random_suffix": true,
+  "exact_current_saved_owner_identity_revision_and_expiry_before_private_reads": true,
+  "frozen_operator_registry_client_project_revision_document_redirect_original_consent_window_fences": true,
+  "private_full_state_pkce_and_one_use_durable_claim_before_token_dispatch": true,
+  "legacy_unprefixed_private_state_signed_manual_exchange_and_history_preserved": true,
+  "fixed_html_no_private_query_identity_account_provider_reflection_cookie_or_redirect": true,
+  "no_store_no_referrer_csp_content_type_duplicate_header_get_body_and_fetch_guards": true,
+  "mock_runtime_explicit_session_and_historical_getter_shapes_unchanged": true,
+  "denial_no_wire_cost_unknown_restart_no_auto_retry_no_credential_selection_or_production_consent_renewal": true,
+  "fresh_public_restore_private_dacl_and_original_prior_history_exact": true,
+  "studio_account_confirmation_credential_resolver_production_custody_genuine_oauth_integrated": false,
+  "signed_http_requests": 13,
+  "external_callback_http_requests": 4,
+  "total_http_requests": 17,
+  "mock_token_requests": 3,
+  "grant_generations": 2,
+  "private_synthetic_cipher_files": 8,
+  "real_secret_reads": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "real_publications": 0,
+  "real_audience_observations": 0,
+  "new_media_operations": 0,
+  "browser_owner_real_provider_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
