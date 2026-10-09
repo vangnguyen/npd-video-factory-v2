@@ -1,0 +1,96 @@
+{
+  "schema_version": "windows-object-storage-paths-evidence-v1",
+  "parent_head": "ddf150b5d7ce117f23320ec822fcbeb5df3404b3",
+  "source_sha256": {
+    "apps/api/app/object_storage.py": "20614a9fa8da0e0190cdb70d1402428f8f3d83a798bca5e1d41d74e47052cb6a",
+    "apps/api/app/publishing_artifact.py": "2f1f4bc211b924ce0f14a33edd09f3f7df799d004a16442cc451e18615cbbea8",
+    "apps/api/tests/test_object_storage_paths.py": "bc25424ed3ac10f631cc1ec5e4a9cd3ca178b44f3b646f441d501bc4787b72b4",
+    "scripts/north_star_windows_object_storage.py": "fb4431ef03aa9049fc9c7545b9cb506ad99c04656ff2c301d3f490bc1468a482",
+    "docs/WINDOWS_OBJECT_STORAGE_PATHS.md": "44b8b8071155bf2c16d7ca5fe4f50b26e3a416fc9553b44078e00c52cb7e0828"
+  },
+  "before": {
+    "schema_version": "windows-object-storage-original-repro-v1",
+    "source_sha256": "83ffa2914dee6a29a1e81329b458d23adab1e9cea9ab9fd6720459f6c544a12f",
+    "valid_long_root_characters": 313,
+    "failure_type": "FileNotFoundError",
+    "winerror": 3,
+    "max_path_failure_reproduced": true,
+    "machine_policy_changed": false,
+    "external_provider_tested": false,
+    "live_state_changed": false
+  },
+  "tests": {
+    "related": {
+      "passed": 200,
+      "initially_skipped": 7,
+      "seconds": 102.92,
+      "log_sha256": "6ee3714aafd12629cd880c742501285b32dcb0bcab69e8d86e1af18c2b07632e"
+    },
+    "resolved_publishing_worker": {
+      "passed": 7,
+      "seconds": 22.63,
+      "log_sha256": "7e78e8923232af0769cf0d77d7814b83caffc4446eba21de0d77e20be16e7b18",
+      "explicit_protocol_mock_only": true
+    },
+    "new_storage_cases": 25,
+    "all_207_checks_executed_passed": true,
+    "private_optional_dependency_receipt_sha256": "32a480e48039511f4359eefee3b2bd1a95c2eacaca4817d3cbaef75f2169288e",
+    "shared_runtime_modified": false,
+    "previous_native_full": 1260,
+    "previous_studio_full": 422,
+    "current_full_native_or_studio_repeated": false
+  },
+  "rehearsal": {
+    "schema_version": "windows-object-storage-long-path-rehearsal-v1",
+    "source_sha256": {
+      "apps/api/app/object_storage.py": "20614a9fa8da0e0190cdb70d1402428f8f3d83a798bca5e1d41d74e47052cb6a",
+      "apps/api/app/publishing_artifact.py": "2f1f4bc211b924ce0f14a33edd09f3f7df799d004a16442cc451e18615cbbea8",
+      "apps/api/tests/test_object_storage_paths.py": "bc25424ed3ac10f631cc1ec5e4a9cd3ca178b44f3b646f441d501bc4787b72b4",
+      "scripts/north_star_windows_object_storage.py": "fb4431ef03aa9049fc9c7545b9cb506ad99c04656ff2c301d3f490bc1468a482"
+    },
+    "accepted_artifact": {
+      "object_key": "workspaces/wsp_long_path_preservation/projects/explicit-recovery-project/jobs/original-accepted-artifact-roundtrip/final.mp4",
+      "sha256": "3de523aff48851e8af293ae32eb202399f14089ab3025e257a568479367c66ba",
+      "bytes": 4213829,
+      "accepted_source_path": "C:\\NPD-Video-Factory\\phase2\\jobs\\bd289973201a483ead1ee133173ad84a\\final.mp4"
+    },
+    "portable_key_unchanged": true,
+    "local_root_characters": 334,
+    "stored_private_io_characters": 463,
+    "download_path_characters": 353,
+    "private_admission_path_characters": 355,
+    "source_stored_download_private_exact_sha256": true,
+    "private_bounded_checksum_range_admission": true,
+    "source_never_replaced": true,
+    "object_store_reopen_simulation": true,
+    "machine_policy_changed": false,
+    "s3_or_other_provider_tested": false,
+    "external_provider_calls": 0,
+    "paid_operations": 0,
+    "new_render_or_full_media_qc_performed": false,
+    "original_media_acceptance_reused_only_for_bytes": true,
+    "owner_uat_accepted": false,
+    "publishing_performed": false,
+    "production_deployed": false
+  },
+  "fresh_process": {
+    "same_portable_key_and_original_bytes": true,
+    "sha256": "3de523aff48851e8af293ae32eb202399f14089ab3025e257a568479367c66ba",
+    "bytes": 4213829,
+    "current_config_credentials_network_required": false,
+    "accepted_source_unchanged": true,
+    "publishing_performed": false,
+    "production_deployed": false
+  },
+  "actual_original_accepted_artifact_read_only": true,
+  "new_render_full_media_qc_or_owner_acceptance": false,
+  "portable_keys_s3_boundary_preserved": true,
+  "machine_policy_modified": false,
+  "real_s3_tested": false,
+  "real_provider_tested": false,
+  "publishing_performed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

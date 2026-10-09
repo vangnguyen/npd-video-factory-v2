@@ -3,6 +3,9 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import mimetypes
+import ntpath
+import os
+import uuid
 import re
 import shutil
 from dataclasses import dataclass
@@ -56,9 +59,34 @@ def artifact_object_key(*, workspace_id: str, project_id: str, job_id: str, file
     )
 
 
+def extended_windows_path(name: str) -> str:
+    """Normalize before the Win32 extended prefix; no machine policy change."""
+    name = name.replace("/", "\\")
+    if name.startswith("\\\\?\\UNC\\"):
+        name = "\\\\" + name[8:]
+    elif name.startswith("\\\\?\\"):
+        name = name[4:]
+    if name.startswith("\\\\.\\") or name.startswith("\\\\?\\"):
+        raise ValueError("device namespaces are not filesystem paths")
+    name = ntpath.normpath(name)
+    drive, tail = ntpath.splitdrive(name)
+    if not drive or not tail.startswith("\\"):
+        raise ValueError("an absolute filesystem path is required")
+    if drive.startswith("\\\\"):
+        return "\\\\?\\UNC\\" + name[2:]
+    if len(drive) != 2 or drive[1] != ":" or not drive[0].isalpha():
+        raise ValueError("device namespaces are not filesystem paths")
+    return "\\\\?\\" + name
+
+
+def filesystem_path(path: Path) -> Path:
+    """Private I/O path; portable object keys and public roots stay unchanged."""
+    return Path(extended_windows_path(os.path.abspath(path))) if os.name == "nt" else path
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
-    with path.open("rb") as handle:
+    with filesystem_path(path).open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
@@ -73,32 +101,34 @@ class LocalObjectStorageProvider:
 
     def __init__(self, root: Path):
         self.root = root.resolve()
+        self._io_root = filesystem_path(self.root).resolve()
 
     def _path(self, object_key: str) -> Path:
         key = validate_object_key(object_key)
-        candidate = (self.root / Path(*PurePosixPath(key).parts)).resolve()
-        if self.root not in candidate.parents:
+        candidate = (self._io_root / Path(*PurePosixPath(key).parts)).resolve()
+        if self._io_root not in candidate.parents:
             raise ValueError("object key escaped local object store")
         return candidate
 
     async def ensure_ready(self) -> None:
-        self.root.mkdir(parents=True, exist_ok=True)
-        probe = self.root / ".readyz"
+        self._io_root.mkdir(parents=True, exist_ok=True)
+        probe = self._io_root / (".readyz-" + uuid.uuid4().hex)
         probe.write_bytes(b"ok")
         probe.unlink(missing_ok=True)
 
     async def put_file(self, *, object_key: str, path: Path, content_type: str | None = None) -> StoredObject:
-        source = path.resolve()
+        source = filesystem_path(path).resolve()
         if not source.is_file():
             raise FileNotFoundError(source)
         destination = self._path(object_key)
+        destination = filesystem_path(destination)
         destination.parent.mkdir(parents=True, exist_ok=True)
         if destination != source:
             await asyncio.to_thread(_copy_file, source, destination)
         return StoredObject(
             object_key=validate_object_key(object_key),
-            checksum_sha256=sha256_file(source),
-            size_bytes=source.stat().st_size,
+            checksum_sha256=sha256_file(destination),
+            size_bytes=destination.stat().st_size,
             content_type=content_type or detected_content_type(source),
             storage_provider=self.name,
         )
@@ -107,6 +137,7 @@ class LocalObjectStorageProvider:
         source = self._path(object_key)
         if not source.is_file():
             raise FileNotFoundError(object_key)
+        destination = filesystem_path(destination)
         destination.parent.mkdir(parents=True, exist_ok=True)
         await asyncio.to_thread(_copy_file, source, destination)
 
@@ -115,9 +146,20 @@ class LocalObjectStorageProvider:
 
 
 def _copy_file(source: Path, destination: Path) -> None:
-    temporary = destination.with_suffix(destination.suffix + ".tmp")
-    shutil.copyfile(source, temporary)
-    temporary.replace(destination)
+    source, destination = filesystem_path(source), filesystem_path(destination)
+    temporary = destination.with_name(".vf-object-" + uuid.uuid4().hex + ".tmp")
+    created = False
+    try:
+        with temporary.open("xb") as output:
+            created = True
+            with source.open("rb") as input_file:
+                shutil.copyfileobj(input_file, output, 1024 * 1024)
+            output.flush()
+            os.fsync(output.fileno())
+        temporary.replace(destination)
+    finally:
+        if created:
+            temporary.unlink(missing_ok=True)
 
 
 class S3ObjectStorageProvider:
@@ -162,7 +204,7 @@ class S3ObjectStorageProvider:
 
     async def put_file(self, *, object_key: str, path: Path, content_type: str | None = None) -> StoredObject:
         key = validate_object_key(object_key)
-        source = path.resolve()
+        source = filesystem_path(path).resolve()
         if not source.is_file():
             raise FileNotFoundError(source)
         checksum = sha256_file(source)
@@ -187,10 +229,14 @@ class S3ObjectStorageProvider:
 
     async def download_file(self, *, object_key: str, destination: Path) -> None:
         key = validate_object_key(object_key)
+        destination = filesystem_path(destination)
         destination.parent.mkdir(parents=True, exist_ok=True)
-        temporary = destination.with_suffix(destination.suffix + ".tmp")
-        await asyncio.to_thread(self.client.download_file, self.bucket, key, str(temporary))
-        temporary.replace(destination)
+        temporary = destination.with_name(".vf-object-" + uuid.uuid4().hex + ".tmp")
+        try:
+            await asyncio.to_thread(self.client.download_file, self.bucket, key, str(temporary))
+            temporary.replace(destination)
+        finally:
+            temporary.unlink(missing_ok=True)
 
     async def exists(self, *, object_key: str) -> bool:
         key = validate_object_key(object_key)

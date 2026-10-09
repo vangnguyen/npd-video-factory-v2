@@ -13,7 +13,7 @@ import time
 from botocore.config import Config
 
 from .db import AssetORM
-from .object_storage import LocalObjectStorageProvider, S3ObjectStorageProvider, validate_object_key
+from .object_storage import LocalObjectStorageProvider, S3ObjectStorageProvider, validate_object_key, filesystem_path
 from .production_db import ProductionRenderJobORM
 from .production_logic import PROFILE_DIMENSIONS
 from .production_qc import FullProductionQC, ProductionQCError
@@ -42,6 +42,7 @@ def publishing_storage_config():
 def guarded_path(value, *, directory=False):
     path = Path(value).absolute()
     if '..' in path.parts: raise ArtifactAdmissionError('PUBLISH_ARTIFACT_PATH_INVALID')
+    path = filesystem_path(path)
     try:
         for part in (*reversed(path.parents), path):
             info = part.lstat()
@@ -61,6 +62,7 @@ def bounded_copy(storage, object_key, destination, expected_size, cancellation=N
         if type(expected_size) is not int or not 1 <= expected_size <= MAX_BYTES:
             raise ArtifactAdmissionError('PUBLISH_ARTIFACT_SIZE_MISMATCH')
         object_key = validate_object_key(object_key)
+        destination = filesystem_path(destination)
         if isinstance(storage, LocalObjectStorageProvider):
             source = guarded_path(storage.root / Path(*PurePosixPath(object_key).parts))
             stream = source.open('rb')
