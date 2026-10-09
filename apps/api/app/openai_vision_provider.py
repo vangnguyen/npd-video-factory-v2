@@ -545,11 +545,14 @@ class OpenAIVisionProvider:
         allow_zero_cost_contract_test: bool = False,
         monotonic_clock: Callable[[], float] = time.perf_counter,
         response_observer: Callable[["VisionResponseObservation"], None] | None = None,
+        dispatch_guard: Callable[[], None] | None = None,
     ) -> None:
         if type(allow_zero_cost_contract_test) is not bool:
             raise ValueError("Explicit Vision contract-test flag required")
         if response_observer is not None and (not callable(response_observer) or inspect.iscoroutinefunction(response_observer)):
             raise ValueError("Synchronous Vision response observer required")
+        if dispatch_guard is not None and (not callable(dispatch_guard) or inspect.iscoroutinefunction(dispatch_guard)):
+            raise ValueError('Synchronous Vision dispatch admission required')
         if allow_zero_cost_contract_test and (transport is None or isinstance(transport, httpx.AsyncHTTPTransport)):
             raise ValueError("Zero-cost Vision tests require an explicitly injected test transport")
         if model != "gpt-5-mini":
@@ -602,6 +605,7 @@ class OpenAIVisionProvider:
         self._response_schema = response_schema
         self._monotonic_clock = monotonic_clock
         self._response_observer = response_observer
+        self._dispatch_guard = dispatch_guard
 
     def __repr__(self) -> str:
         return f"OpenAIVisionProvider(model={self.model!r}, credential_alias=<redacted>)"
@@ -690,6 +694,18 @@ class OpenAIVisionProvider:
                     "Accept-Encoding": "identity",
                 },
             )
+            if self._dispatch_guard is not None:
+                try:
+                    returned = self._dispatch_guard()
+                    if returned is not None:
+                        if inspect.iscoroutine(returned): returned.close()
+                        raise ValueError()
+                except Exception:
+                    evidence = _error_evidence(category='transport_error', code='OPENAI_VISION_DISPATCH_ADMISSION_FAILED',
+                        retryable=False, client_request_id=client_request_id,
+                        provider_error_message='Current Vision dispatch admission required before send')
+                    raise OpenAIVisionResponseError('Current Vision dispatch admission required before send',
+                        error_evidence=evidence, code=evidence.code) from None
             response = await client.send(request, stream=True)
             provider_request_id = _safe_request_id(response.headers.get("x-request-id"))
             trace.mark(

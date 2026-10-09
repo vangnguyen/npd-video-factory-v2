@@ -98,7 +98,7 @@ class NativeVisionFactory:
             'controller_hard_timeout_seconds': 120, 'max_output_tokens': 8000,
             'provider_authorized': False, 'automatic_dispatch': False, 'publishing_enabled': False, 'real_provider_tested': False}
 
-    def provider(self, extractor, *, response_observer=None):
+    def provider(self, extractor, *, response_observer=None, admission_guard=None):
         p = self.check()
         if self.public()['status'] != 'CONFIGURED': raise WorkflowError('NATIVE_VISION_PROVIDER_NOT_CONFIGURED')
         if (type(extractor) is not NativeEvidenceFrameExtractor or extractor.root != self.root
@@ -106,16 +106,19 @@ class NativeVisionFactory:
             raise WorkflowError('NATIVE_VISION_PROVIDER_INPUT_INVALID', 400)
         extractor.binding()
         def resolve(alias):
+            if admission_guard is not None: admission_guard()
             current = self.check()
             if current.key_receipt.credential_alias != alias or self.public()['status'] != 'CONFIGURED':
                 raise WorkflowError('NATIVE_VISION_PROVIDER_NOT_CONFIGURED')
-            key = self.vault.key(current.key_receipt); self.check(); return key
+            key = self.vault.key(current.key_receipt); self.check()
+            if admission_guard is not None: admission_guard()
+            return key
         return OpenAIVisionProvider(credential_alias=p.key_receipt.credential_alias, credential_resolver=resolve,
             frame_extractor=extractor, estimated_cost_vnd=p.estimated_cost_vnd,
             input_vnd_per_million_tokens=p.input_vnd_per_million_tokens,
             cached_input_vnd_per_million_tokens=p.cached_input_vnd_per_million_tokens,
             output_vnd_per_million_tokens=p.output_vnd_per_million_tokens,
-            transport=self.transport, allow_zero_cost_contract_test=self.mock, response_observer=response_observer)
+            transport=self.transport, allow_zero_cost_contract_test=self.mock, response_observer=response_observer, dispatch_guard=admission_guard)
 
 
 def load(path, vault, *, operator_enabled=False):
