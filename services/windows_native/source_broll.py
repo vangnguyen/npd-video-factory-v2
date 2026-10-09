@@ -22,6 +22,8 @@ from app.timeline_logic import TimelineEditError
 from app.media_intelligence_models import MediaPlanRequest,MediaPlanRead,MediaAssetProvenanceRead
 from app.media_intelligence_logic import build_plan_items
 from app.broll_planner import place_broll
+from .official_vision_evidence import ReviewedVision
+from . import source_broll_vision as reviewed
 
 ALGORITHM='native-source-broll-v1'
 MAX_PLAN_VERSIONS=100
@@ -30,6 +32,7 @@ MAX_PLAN_VERSIONS=100
 class Create(StrictModel):
     expected_version:int=Field(ge=1,strict=True)
     brand_context:str=Field(default='Video Factory',min_length=1,max_length=500)
+    reviewed_vision:list[ReviewedVision]=Field(default_factory=list,max_length=50)
 
 
 class Select(StrictModel):
@@ -48,6 +51,33 @@ class Apply(StrictModel):
     replace_plan_clips:bool=Field(default=False,strict=True)
 
 
+def asset_projection(project,item,*,size_bytes,timestamp,override=None,measured=None):
+    """Pure attributed metadata, shared by current intake and frozen history."""
+    content_type=('video/quicktime' if item['id'].endswith('.mov') else 'video/mp4') if item['kind']=='video' else (
+        'image/png' if item['id'].endswith('.png') else 'image/jpeg')
+    confirmed=item.get('rights_confirmed') is True
+    recorded=item.get('source_type') in {'stock','internal_library','ai_generated'} or item.get('rights_declaration_ref') is not None or item.get('rights_review_required') is True or any(r['asset_id']==item['id'] for r in project['document'].get('media_rights_overrides',[]))
+    source_type=item.get('source_type') if item.get('source_type') in {'stock','internal_library','ai_generated'} else 'user_upload'
+    rights=item.get('rights_status','unknown') if recorded else 'verified' if confirmed else 'unknown'
+    license=item.get('license') or 'unknown' if recorded else 'owner_upload_rights_attestation' if confirmed else 'unknown'
+    provider=item.get('provider') or 'unknown' if recorded else 'user-upload'
+    source_reference=item.get('source_reference') or 'assets/'+item['id']
+    return AssetRead(asset_id=asset_reference(item),workspace_id='native-local',
+        project_id='prj_'+project['id'],project_version_id=None,job_id=None,asset_class='source',kind=item['kind'],
+        filename=item['filename'],object_key='assets/'+item['id'],content_type=content_type,
+        size_bytes=size_bytes,checksum_sha256=item['sha256'],storage_provider='native-local',version=1,
+        provenance={'source_type':source_type,'rights_status':rights,'license':license,
+            'rights_verification_basis':'recorded provider/declaration metadata; no independent license verification' if recorded else 'explicit owner upload attestation; no independent license verification',
+            'provider':provider,'source_reference':source_reference,'native_asset_id':item['id'],
+            'license_url':item.get('license_url'),'creator':item.get('creator'),'provider_asset_id':item.get('provider_asset_id'),
+            'attribution_requirement':item.get('attribution_requirement'),'generation_provenance':item.get('generation_provenance',{}),
+            'production_eligible':item.get('production_eligible',not recorded),'actual_native_rights_status':item.get('rights_status','unknown'),
+            'owner_rights_override':override,
+            'tags':item.get('tags',[]),'description':item.get('description',''),
+            'media_metadata':{key:item.get(key) for key in ('duration_seconds','width','height')},
+            **({'pixel_quality_summary':measured.model_dump(mode='json')} if measured else {}),
+            'fixture':bool(item.get('explicit_fixture') or item.get('generation_provenance',{}).get('fixture'))},created_at=timestamp,updated_at=timestamp)
+
 def shared_assets(project,config,*,rights_overrides=None):
     """Attribute owner attestation precisely; never infer an external license."""
     output={};timestamp=datetime.now(timezone.utc)
@@ -57,34 +87,27 @@ def shared_assets(project,config,*,rights_overrides=None):
         if (directory.is_symlink() or path.is_symlink() or path.resolve().parent!=directory.resolve()
                 or not path.is_file() or file_sha(path)!=item['sha256']):
             raise WorkflowError('SOURCE_MEDIA_CHANGED_OR_MISSING')
-        content_type=('video/quicktime' if item['id'].endswith('.mov') else 'video/mp4') if item['kind']=='video' else (
-            'image/png' if item['id'].endswith('.png') else 'image/jpeg')
-        confirmed=item.get('rights_confirmed') is True
-        recorded=item.get('source_type') in {'stock','internal_library','ai_generated'} or item.get('rights_declaration_ref') is not None or item.get('rights_review_required') is True or any(r['asset_id']==item['id'] for r in project['document'].get('media_rights_overrides',[]))
-        override=rights_overrides.active(project['document'],project['id'],item) if rights_overrides is not None else None
-        source_type=item.get('source_type') if item.get('source_type') in {'stock','internal_library','ai_generated'} else 'user_upload'
-        rights=item.get('rights_status','unknown') if recorded else 'verified' if confirmed else 'unknown'
-        license=item.get('license') or 'unknown' if recorded else 'owner_upload_rights_attestation' if confirmed else 'unknown'
-        provider=item.get('provider') or 'unknown' if recorded else 'user-upload'
-        source_reference=item.get('source_reference') or 'assets/'+item['id']
         from .media_frame_analysis import asset_summary
         measured=asset_summary(project['document'],project['id'],item,config.data_root)
-        output[asset_reference(item)]=AssetRead(asset_id=asset_reference(item),workspace_id='native-local',
-            project_id='prj_'+project['id'],project_version_id=None,job_id=None,asset_class='source',kind=item['kind'],
-            filename=item['filename'],object_key='assets/'+item['id'],content_type=content_type,
-            size_bytes=path.stat().st_size,checksum_sha256=item['sha256'],storage_provider='native-local',version=1,
-            provenance={'source_type':source_type,'rights_status':rights,'license':license,
-                'rights_verification_basis':'recorded provider/declaration metadata; no independent license verification' if recorded else 'explicit owner upload attestation; no independent license verification',
-                'provider':provider,'source_reference':source_reference,'native_asset_id':item['id'],
-                'license_url':item.get('license_url'),'creator':item.get('creator'),'provider_asset_id':item.get('provider_asset_id'),
-                'attribution_requirement':item.get('attribution_requirement'),'generation_provenance':item.get('generation_provenance',{}),
-                'production_eligible':item.get('production_eligible',not recorded),'actual_native_rights_status':item.get('rights_status','unknown'),
-                'owner_rights_override':override,
-                'tags':item.get('tags',[]),'description':item.get('description',''),
-                'media_metadata':{key:item.get(key) for key in ('duration_seconds','width','height')},
-                **({'pixel_quality_summary':measured.model_dump(mode='json')} if measured else {}),
-                'fixture':bool(item.get('explicit_fixture') or item.get('generation_provenance',{}).get('fixture'))},created_at=timestamp,updated_at=timestamp)
+        override=rights_overrides.active(project['document'],project['id'],item) if rights_overrides is not None else None
+        output[asset_reference(item)]=asset_projection(project,item,size_bytes=path.stat().st_size,timestamp=timestamp,override=override,measured=measured)
     return output
+
+
+def selected_evidence(project_id,plan,item,asset,evidence_id,timestamp):
+    meta=asset.provenance['media_metadata']
+    return MediaAssetProvenanceRead(media_asset_id=evidence_id,workspace_id='native-local',project_id='prj_'+project_id,
+        project_version_id=None,media_plan_id=plan.media_plan_id,media_plan_item_id=item.media_plan_item_id,
+        asset_id=asset.asset_id,source_type=asset.provenance['source_type'],rights_status=asset.provenance['rights_status'],license=asset.provenance['license'],
+        license_url=asset.provenance.get('license_url'),provider=asset.provenance['provider'],provider_asset_id=asset.provenance.get('provider_asset_id') or asset.asset_id,creator=asset.provenance.get('creator'),
+        source_reference=asset.provenance['source_reference'],attribution_requirement=asset.provenance.get('attribution_requirement'),
+        generation_provenance={**asset.provenance.get('generation_provenance',{}),'checksum_sha256':asset.checksum_sha256},
+        width=meta['width'],height=meta['height'],duration_seconds=meta['duration_seconds'],orientation='unknown',
+        production_eligible=asset.provenance['production_eligible'] and not asset.provenance['fixture'],publishing_allowed=False,downloaded_at=None,
+        provenance={'asset_checksum_sha256':asset.checksum_sha256,
+            'rights_verification_basis':asset.provenance['rights_verification_basis'],'fixture':asset.provenance['fixture'],
+            'owner_rights_override':asset.provenance.get('owner_rights_override')},
+        created_at=timestamp,updated_at=timestamp)
 
 
 def context(project):
@@ -106,6 +129,8 @@ def _plan(document,identifier,version):
     record=max(records,key=lambda item:item['plan']['version'])
     if record['sha256']!=digest(record['plan']):raise WorkflowError('AUTO_EDIT_BROLL_PLAN_CHANGED')
     plan=MediaPlanRead.model_validate(record['plan'])
+    if reviewed.reviewed_plan(plan) and digest(record['plan'])!=digest(plan.model_dump(mode='json')):
+        raise WorkflowError('AUTO_EDIT_BROLL_PLAN_CHANGED')
     if plan.version!=version:raise WorkflowError('AUTO_EDIT_BROLL_PLAN_VERSION_CHANGED')
     return plan
 
@@ -123,6 +148,10 @@ def _persist(store,con,project,plan,action):
     document=copy.deepcopy(project['document']);records=document.get('source_broll_plans',[])
     if len(records)>=MAX_PLAN_VERSIONS:raise WorkflowError('AUTO_EDIT_BROLL_HISTORY_LIMIT',400)
     value=plan.model_dump(mode='json');records.append({'plan':value,'sha256':digest(value)})
+    if reviewed.reviewed_plan(plan):
+        from .contracts import canonical
+        if len(canonical(value))>1024*1024 or len(canonical(records))>16*1024*1024:
+            raise WorkflowError('AUTO_EDIT_BROLL_REVIEWED_HISTORY_LIMIT',400)
     document['source_broll_plans']=records
     con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',
         (project['revision']+1,json.dumps(document,ensure_ascii=False),now(),project['id']))
@@ -131,70 +160,69 @@ def _persist(store,con,project,plan,action):
         'canonical_timeline_mutated':False,'approval_invalidated':True,'source_media_mutated':False})
 
 
-def create(store,config,project_id,revision,body):
+def create(store,config,project_id,revision,body,*,official_vision=None):
     try:payload=Create.model_validate(body)
     except ValueError:raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400) from None
+    if payload.reviewed_vision:official_vision=reviewed.bind_reader(store,config,project_id,requests=payload.reviewed_vision,getter=official_vision)
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);_cas(project,payload.expected_version)
         snapshot,analysis=context(project);assets=shared_assets(project,config,rights_overrides=getattr(store,'rights_overrides',None))
         configuration=MediaPlanRequest(analysis_id=analysis.analysis_id,
             transcript_id=analysis.transcript.transcript_id if analysis.transcript else None,
             purpose='supporting_broll',brand_context=payload.brand_context,max_ai_cost_vnd=Decimal('0'))
-        fingerprint=digest({'algorithm':ALGORITHM,'analysis':analysis.model_dump(mode='json'),
+        vision_context=reviewed.prepare(store,config,project,analysis,assets,payload.reviewed_vision,source_con=con,getter=official_vision) if payload.reviewed_vision else None
+        algorithm=reviewed.ALGORITHM if vision_context is not None else ALGORITHM
+        fingerprint=digest({'algorithm':algorithm,'analysis':analysis.model_dump(mode='json'),
             'configuration':configuration.model_dump(mode='json'),
             'assets':{identifier:{'sha256':asset.checksum_sha256,'filename':asset.filename,'provenance':asset.provenance}
-                for identifier,asset in assets.items()}})
+                for identifier,asset in assets.items()},**({'reviewed_vision':vision_context} if vision_context is not None else {})})
         existing=[record for record in project['document'].get('source_broll_plans',[]) if record['plan']['fingerprint']==fingerprint]
         if existing:
             cached=max(existing,key=lambda item:item['plan']['version'])
-            _plan(project['document'],cached['plan']['media_plan_id'],cached['plan']['version'])
+            saved=_plan(project['document'],cached['plan']['media_plan_id'],cached['plan']['version'])
+            if vision_context is not None:reviewed.validate(store,config,project,saved,source_con=con,current=True,getter=official_vision)
         identifier='mpl_'+uuid.uuid4().hex[:24]
         items=build_plan_items(media_plan_id=identifier,fingerprint=fingerprint,analysis=analysis,vision=None,
             payload=configuration,source_asset=assets[analysis.asset_id],supporting_assets=list(assets.values()),
             stock_candidates={},stock_available=False,image_available=False,video_available=False,
             image_cost_vnd=None,video_cost_vnd=None)
+        if vision_context is not None:items=reviewed.items(identifier,fingerprint,analysis,assets,configuration,vision_context)
+        scene_vision=reviewed.scene_view(analysis,assets,vision_context) if vision_context is not None else None
         timestamp=datetime.now(timezone.utc)
         plan=MediaPlanRead(media_plan_id=identifier,workspace_id='native-local',project_id='prj_'+project_id,
-            project_version_id=None,analysis_id=analysis.analysis_id,vision_analysis_id=None,status='draft',
+            project_version_id=None,analysis_id=analysis.analysis_id,vision_analysis_id=scene_vision.vision_analysis_id if scene_vision else None,status='draft',
             fingerprint=fingerprint,version=1,configuration=configuration,
             provider_status={key:'NOT_CONFIGURED' for key in ('stock','ai_image','ai_video','semantic_vision')},
             items=items,media_assets=[],resolution_jobs=[],projected_ai_cost_vnd=0,max_ai_cost_vnd=0,
             needs_approval=False,publishing_blocked=True,unresolved_items=len(items),error_code=None,
-            provenance={'algorithm':ALGORITHM,'source_asset_sha256':analysis.provenance['source_asset_checksum'],
+            provenance={'algorithm':algorithm,'source_asset_sha256':analysis.provenance['source_asset_checksum'],
                 'transcript_id':analysis.transcript.transcript_id if analysis.transcript else None,
                 'provider_dispatches':0,'recommendation_only':True,'requires_manual_selection_and_apply':True,
                 'candidate_ranking':'saved filename/description/tags lexical overlap, then measured pixel heuristic when available; no semantic Vision',
-                'native_source_timeline_version':project['document']['canonical_timeline']['version']},
+                'native_source_timeline_version':project['document']['canonical_timeline']['version'],
+                **({'reviewed_vision':vision_context,'reviewed_input':reviewed.capture(project,analysis,assets),
+                    'semantic_vision_used':vision_context['semantic_vision_used'],'prediction_confidence_calibrated':False,
+                    'candidate_ranking':'saved metadata plus explicitly reviewed provider labels and uncalibrated sampled prediction; mocks add no semantic or quality score'} if vision_context is not None else {})},
             created_at=timestamp,updated_at=timestamp)
         if not existing:_persist(store,con,project,plan,'auto_edit_broll_plan_saved')
     return timeline_view(store,project_id)
 
 
-def select(store,config,project_id,revision,body):
+def select(store,config,project_id,revision,body,*,official_vision=None):
     try:payload=Select.model_validate(body)
     except ValueError:raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400) from None
+    if official_vision is None:official_vision=reviewed.bind_reader(store,config,project_id,plan_id=payload.media_plan_id)
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);_cas(project,payload.expected_version)
         _,analysis=context(project);plan=_plan(project['document'],payload.media_plan_id,payload.expected_plan_version)
         _bound(plan,analysis);assets=shared_assets(project,config,rights_overrides=getattr(store,'rights_overrides',None));asset=assets.get(payload.asset_id)
+        reviewed.validate(store,config,project,plan,source_con=con,current=True,getter=official_vision)
         item=next((item for item in plan.items if item.media_plan_item_id==payload.item_id),None)
         if item is None or asset is None or asset.asset_id==analysis.asset_id:
             raise WorkflowError('AUTO_EDIT_BROLL_SELECTION_INVALID',400)
         if asset.provenance['rights_status'] not in {'owned','licensed','verified'} and not asset.provenance.get('owner_rights_override'):raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
         timestamp=datetime.now(timezone.utc);evidence_id='mas_'+uuid.uuid4().hex[:24]
-        meta=asset.provenance['media_metadata']
-        evidence=MediaAssetProvenanceRead(media_asset_id=evidence_id,workspace_id='native-local',project_id='prj_'+project_id,
-            project_version_id=None,media_plan_id=plan.media_plan_id,media_plan_item_id=item.media_plan_item_id,
-            asset_id=asset.asset_id,source_type=asset.provenance['source_type'],rights_status=asset.provenance['rights_status'],license=asset.provenance['license'],
-            license_url=asset.provenance.get('license_url'),provider=asset.provenance['provider'],provider_asset_id=asset.provenance.get('provider_asset_id') or asset.asset_id,creator=asset.provenance.get('creator'),
-            source_reference=asset.provenance['source_reference'],attribution_requirement=asset.provenance.get('attribution_requirement'),
-            generation_provenance={**asset.provenance.get('generation_provenance',{}),'checksum_sha256':asset.checksum_sha256},
-            width=meta['width'],height=meta['height'],duration_seconds=meta['duration_seconds'],orientation='unknown',
-            production_eligible=asset.provenance['production_eligible'] and not asset.provenance['fixture'],publishing_allowed=False,downloaded_at=None,
-            provenance={'asset_checksum_sha256':asset.checksum_sha256,
-                'rights_verification_basis':asset.provenance['rights_verification_basis'],'fixture':asset.provenance['fixture'],
-                'owner_rights_override':asset.provenance.get('owner_rights_override')},
-            created_at=timestamp,updated_at=timestamp)
+        evidence=selected_evidence(project_id,plan,item,asset,evidence_id,timestamp)
         plan.media_assets.append(evidence);item.selected_media_asset_id=evidence_id;item.source_asset_id=asset.asset_id
         item.strategy='licensed_stock' if asset.provenance['source_type']=='stock' else 'user_asset';item.status='resolved';item.needs_approval=False
         item.provenance['explicit_manual_selection']=True;plan.version+=1;plan.updated_at=timestamp
@@ -203,14 +231,16 @@ def select(store,config,project_id,revision,body):
     return timeline_view(store,project_id)
 
 
-def apply(store,config,project_id,revision,body):
+def apply(store,config,project_id,revision,body,*,official_vision=None):
     try:payload=Apply.model_validate(body)
     except ValueError:raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400) from None
     if len(set(payload.item_ids))!=len(payload.item_ids):raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400)
+    if official_vision is None:official_vision=reviewed.bind_reader(store,config,project_id,plan_id=payload.media_plan_id)
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);_cas(project,payload.expected_version)
         snapshot,analysis=context(project);plan=_plan(project['document'],payload.media_plan_id,payload.expected_plan_version)
         _bound(plan,analysis);assets=shared_assets(project,config,rights_overrides=getattr(store,'rights_overrides',None));selections=[]
+        reviewed.validate(store,config,project,plan,source_con=con,current=True,getter=official_vision)
         for identifier in payload.item_ids:
             item=next((item for item in plan.items if item.media_plan_item_id==identifier),None)
             evidence=next((value for value in plan.media_assets if item and value.media_asset_id==item.selected_media_asset_id),None)

@@ -162,12 +162,16 @@ def image_path(store,project_id,frame_id):
     raise WorkflowError('MEDIA_FRAME_NOT_FOUND',404)
 
 
-def asset_summary(document,project_id,asset,root):
+def asset_summary(document,project_id,asset,root,*,verify_frames=True):
+    # Historical consumers may reconstruct typed metadata from an immutable
+    # project version; current media/ranking callers still verify physical PNGs.
+    if type(verify_frames) is not bool:raise WorkflowError('MEDIA_FRAME_VERIFICATION_FLAG_INVALID')
     for record in reversed(document.get('media_frame_analyses',[])):
         value=record['observation']
         if value['asset_id']!=asset['id'] or value['source_sha256']!=asset['sha256']:continue
         validate(record,project_id,asset)
-        for frame in value['frames']:frame_path(root,frame)
+        if verify_frames:
+            for frame in value['frames']:frame_path(root,frame)
         measured=[MeasuredFrame(frame_id=frame['frame_id'],timestamp_seconds=frame['timestamp_seconds'],
             reference=frame['reference'],sha256=frame['sha256'],source_sha256=value['source_sha256'],
             provider=value['provider'],model=value['model'],pixel_facts=frame['pixel_facts']) for frame in value['frames']]

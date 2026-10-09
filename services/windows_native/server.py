@@ -919,7 +919,7 @@ class Handler(BaseHTTPRequestHandler):
             if set(body) != {'revision','action','payload'} or type(body.get('revision')) is not int or body.get('action') not in {'create','select','apply'}:
                 raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400)
             action = {'create':source_broll.create,'select':source_broll.select,'apply':source_broll.apply}[body['action']]
-            return self.reply(action(self.server.store,self.server.config,broll_route[1],body['revision'],body['payload']))
+            return self.reply(action(self.server.store,self.server.config,broll_route[1],body['revision'],body['payload'],official_vision=lambda:self.server.official_vision))
         if source_timeline_route:
             from .auto_edit_timeline import create, edit, restore
             from .source_linked_edit import edit as linked_edit

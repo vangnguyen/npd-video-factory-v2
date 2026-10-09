@@ -249,6 +249,11 @@ def source_shots(snapshot):
 
 def view(store, project_id):
     project = store.get(project_id)
+    if any(record.get('plan',{}).get('provenance',{}).get('algorithm')=='native-source-broll-v2'
+        or 'reviewed_vision' in record.get('plan',{}).get('provenance',{}) or 'reviewed_input' in record.get('plan',{}).get('provenance',{})
+        for record in project['document'].get('source_broll_plans',[])):
+        from .source_broll_vision import history
+        history(store,project)
     state = validate_document(project['document'])
     if state['snapshot']['metadata'].get('native_project_id') != project_id:
         raise WorkflowError('AUTO_EDIT_TIMELINE_PROJECT_MISMATCH')

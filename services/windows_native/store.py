@@ -286,8 +286,16 @@ class Store:
         return self.get(identifier)
 
     def duplicate(self, identifier, revision):
+        # Original reviewed provider histories cannot be re-issued to a child.
+        # Validate before BEGIN: keyless readers initialize their own journals.
+        from .source_broll_vision import reviewed_plan,history
+        from app.media_intelligence_models import MediaPlanRead
+        previous=self.get(identifier)
+        has_reviewed=any(reviewed_plan(MediaPlanRead.model_validate(v['plan'])) for v in previous['document'].get('source_broll_plans',[]))
+        if has_reviewed:history(self,previous)
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
+            if has_reviewed and digest(doc)!=digest(previous['document']):raise WorkflowError('STALE_VERSION_RELOAD')
             from .auto_edit_timeline import is_auto_edit
             stamp=now(); copy_id=uuid.uuid4().hex
             source=is_auto_edit(doc)

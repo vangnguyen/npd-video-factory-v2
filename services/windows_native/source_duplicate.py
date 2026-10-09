@@ -50,6 +50,8 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
             register(segment.segment_id)
             for word in segment.words:register(word.word_id)
     plans=document.get('source_broll_plans',[])
+    from .source_broll_vision import reviewed_plan
+    inherited_reviewed={}
     for record in plans:
         if record['sha256']!=digest(record['plan']):raise WorkflowError('AUTO_EDIT_BROLL_PLAN_CHANGED')
         plan=MediaPlanRead.model_validate(record['plan'])
@@ -59,6 +61,7 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         for item in plan.items:register(item.media_plan_item_id)
         for item in plan.media_assets:register(item.media_asset_id)
         if plan.resolution_jobs:raise WorkflowError('AUTO_EDIT_EXTERNAL_PLAN_REBINDING_UNSUPPORTED',400)
+        if reviewed_plan(plan):inherited_reviewed[plan.media_plan_id]=record
     def rewrite(value):
         if isinstance(value,str):return mapping.get(value,value)
         if isinstance(value,list):return [rewrite(item) for item in value]
@@ -90,6 +93,11 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
     output['source_broll_plans']=[]
     plan_fingerprints={}
     for record in plans:
+        if record['plan']['media_plan_id'] in inherited_reviewed:
+            output.setdefault('source_broll_inherited_reviewed_history',[]).append({
+                'source_project_id':source_id,'source_revision':revision,'original_record':copy.deepcopy(record),
+                'original_record_sha256':digest(record),'authority_transferred':False,'new_plan_required':True})
+            continue
         changed=rewrite(record['plan']);changed['fingerprint']=digest([ALGORITHM,target_id,record['plan']['fingerprint']])
         changed['provenance']['identity_rebinding']={**origin,'source_plan_id':record['plan']['media_plan_id'],
             'source_plan_sha256':record['sha256']}
@@ -113,6 +121,10 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
             meta=clip['metadata']
             if meta.get('media_plan_id') in plan_fingerprints:
                 meta['media_plan_fingerprint']=plan_fingerprints[meta['media_plan_id']]
+            for old,record in inherited_reviewed.items():
+                if meta.get('media_plan_id')==mapping[old]:
+                    meta['inherited_reviewed_vision']={'source_project_id':source_id,'source_plan_id':old,
+                        'source_plan_sha256':record['sha256'],'authority_transferred':False,'new_plan_required':True}
     output['canonical_timeline']={'version':1,'snapshot':snapshot,'sha256':digest(snapshot)}
     output['source_timeline_mutations']=[{'version':1,'mutation':{'type':'edit','source_identity_rebinding':origin}}]
     output['duplication']={**origin,'source_timeline_sha256':state['sha256']}

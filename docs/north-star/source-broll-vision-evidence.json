@@ -1,0 +1,133 @@
+{
+  "schema_version": "native-source-broll-vision-evidence-v1",
+  "parent_head": "1d3adbbb5a1227e46e930233fb36c4e12f037f21",
+  "source_sha256": {
+    "services/windows_native/source_broll_vision.py": "779af71b3e127a80723cf73a349a81210ed3c9390d6b0a08424749efb0556602",
+    "services/windows_native/source_broll.py": "b4e3e015aa8394da1ed22358c17295b05bb9f2d9a14e03eff206a9934461a80a",
+    "services/windows_native/source_duplicate.py": "b05dda5f938f909dc3f50476b7b58cbb7173a35e2627f377e46460689a517277",
+    "services/windows_native/store.py": "c4f8e6ed2fa3ab4eafa45cc7c2b83cd71e1d32fd64fa3e905bb65d455151d1f8",
+    "services/windows_native/auto_edit_timeline.py": "9adc2547be1f5797803018e5d038fb44f972d016ce83b1bf8cbadb4b64ce897b",
+    "services/windows_native/media_frame_analysis.py": "31d66d27967d9ca9a22e9c4221dc6513abe32d3afe39f7ccea8e2c79931bc0d4",
+    "services/windows_native/server.py": "bb85d73431ee3f441945f93398d45528fe53ce78478e01b1d8b0b02049bf6b35",
+    "services/windows_native/tests/test_source_broll_vision.py": "6664e5228791baad2dec257bc5f15dc9a028aa52180ccef9b21bd4fa290cf745",
+    "scripts/north_star_source_broll_vision.py": "fd4e337edca6516931efab23293deb7824a4505210f9a44480b7b2674c3a3001",
+    "docs/NATIVE_SOURCE_BROLL_REVIEWED_VISION.md": "73090b29af470a47b0a2cc1d05dd3045ea5abd362c8d159b3a0781fa0205e448"
+  },
+  "tests": {
+    "native_related": 52,
+    "native_seconds": 110.899,
+    "new_native_cases": 13,
+    "native_log_sha256": "55c61e18744df2dd3f3491d7aff1f06f33db07aa0989b6ef01c94cab7dbac998",
+    "previous_full_native": 1260,
+    "previous_full_studio": 427,
+    "current_full_native_or_studio_repeated": false,
+    "intermediate_harness_failures_corrected": true
+  },
+  "rehearsal": {
+    "schema_version": "native-source-broll-vision-rehearsal-v1",
+    "source_sha256": {
+      "services/windows_native/source_broll_vision.py": "779af71b3e127a80723cf73a349a81210ed3c9390d6b0a08424749efb0556602",
+      "services/windows_native/source_broll.py": "b4e3e015aa8394da1ed22358c17295b05bb9f2d9a14e03eff206a9934461a80a",
+      "services/windows_native/source_duplicate.py": "b05dda5f938f909dc3f50476b7b58cbb7173a35e2627f377e46460689a517277",
+      "services/windows_native/store.py": "c4f8e6ed2fa3ab4eafa45cc7c2b83cd71e1d32fd64fa3e905bb65d455151d1f8",
+      "services/windows_native/auto_edit_timeline.py": "9adc2547be1f5797803018e5d038fb44f972d016ce83b1bf8cbadb4b64ce897b",
+      "services/windows_native/media_frame_analysis.py": "31d66d27967d9ca9a22e9c4221dc6513abe32d3afe39f7ccea8e2c79931bc0d4",
+      "services/windows_native/server.py": "bb85d73431ee3f441945f93398d45528fe53ce78478e01b1d8b0b02049bf6b35",
+      "services/windows_native/tests/test_source_broll_vision.py": "6664e5228791baad2dec257bc5f15dc9a028aa52180ccef9b21bd4fa290cf745",
+      "scripts/north_star_source_broll_vision.py": "fd4e337edca6516931efab23293deb7824a4505210f9a44480b7b2674c3a3001"
+    },
+    "signed_http_requests": 11,
+    "actual_source_video_seconds": 3,
+    "actual_source_dimensions": [
+      320,
+      240
+    ],
+    "actual_source_audio": "synthetic test tone, not speech",
+    "asr_and_source_analysis": "explicit saved fixtures, not genuine spoken-media acceptance",
+    "new_cpu_frame_jobs": 1,
+    "new_mock_requests": 1,
+    "plan_history_versions": 3,
+    "explicit_canonical_apply": 1,
+    "duplicate_preserves_original_review_without_authority_transfer": true,
+    "source_audio_tracks_and_bytes_unchanged": true,
+    "original_source_response_cost_binding_exact": true,
+    "mock_semantic_ranking_used": false,
+    "new_external_dispatches": 0,
+    "new_paid_operations": 0,
+    "new_studio_ui_integrated": false,
+    "actual_parent_browser_executed": false,
+    "full_media_qc_or_final_render": false,
+    "owner_uat_accepted": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "public_backup_sha256": "e91409a24cdb58475a22dfcc4280e4279d107d6ab7f77a8b7ed2475990044147",
+    "exports": {
+      "backup.json": {
+        "sha256": "7a769c4b77cb6a49373928e90042061657f1f27c4c4358ab9aebd9acbf1ebc3b",
+        "bytes": 4118
+      },
+      "cost-summary.json": {
+        "sha256": "df29315b1684e21a976a94617fdd3ef41027655124c396dfc181877c80968b89",
+        "bytes": 2044
+      },
+      "expected-journals.json": {
+        "sha256": "95af0c10445ce5b99b1a0b34812b6d1c50add7c67321965e7583d676234bbffc",
+        "bytes": 1106230
+      },
+      "expected-projects.json": {
+        "sha256": "d2523e292f2cc66fcae793bc3af5a7dacbb75bc7f0016fb7ba5ec234a700a07b",
+        "bytes": 622591
+      },
+      "mock-wire-summary.json": {
+        "sha256": "ba29d8858b6fa5b39577701871932331846cd31b3cf25c44f5b638056d4c6ffd",
+        "bytes": 79
+      },
+      "original-vision.json": {
+        "sha256": "b4f7dcf082c3624e2afb2c039cb6023e67dd1b1caa6052cdd5846ce564967b82",
+        "bytes": 24549
+      },
+      "public-source-broll-vision.zip": {
+        "sha256": "e91409a24cdb58475a22dfcc4280e4279d107d6ab7f77a8b7ed2475990044147",
+        "bytes": 3442621
+      },
+      "restore.json": {
+        "sha256": "998bbf47037a8c2fe41926f19dab740a1a616c4427fe729d022942b7c7d75c16",
+        "bytes": 4524
+      },
+      "restored-in-process.json": {
+        "sha256": "da804562d011725c70ada4bae9b3e2e30d542e6a8653fb6ad319f5c446d1983a",
+        "bytes": 270
+      },
+      "signed-http-summary.json": {
+        "sha256": "00e8094931f36ec62ac2528d21b9a3a38e3f2e8d2708e96cf103224205e0ac79",
+        "bytes": 1488
+      },
+      "source-hashes.json": {
+        "sha256": "e6cf43aba14c18169017c5aa7946019f4c1e96b72fd8fab5ebff21a0e18c7818",
+        "bytes": 223
+      }
+    }
+  },
+  "fresh_process": {
+    "all_original_vision_plan_versions_projects_journals_source_bytes_exact": true,
+    "keyless_disabled_provider_history": true,
+    "provider_consent_renewed": false,
+    "provider_retry_or_dispatch": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "original_attributed_asset_and_selected_media_history_bound": true,
+  "mock_semantic_ranking": false,
+  "keyless_history": true,
+  "new_studio_ui_integrated": false,
+  "actual_parent_browser_tested": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "new_paid_operations": 0,
+  "new_external_dispatches": 0,
+  "publishing_performed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
