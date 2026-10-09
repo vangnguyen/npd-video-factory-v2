@@ -1,0 +1,15 @@
+# Source preview thumbnails
+
+Studio's existing project-media thumbnail route now returns a verified image for legacy source videos without `thumbnail_id`. It reuses the first candidate from an existing hash-bound CPU frame analysis. It validates project/asset/source SHA256, the saved analysis and frame PNG/hash/dimensions before serving the original bytes. No new decode, provider call, job, paid operation or project mutation occurs.
+
+Modern ingest thumbnails remain byte-exact JPEG/PNG. Original image assets are verified JPEG/PNG. Linked paths, missing or changed source bytes, corrupt frames, foreign assets and a video registered as a thumbnail are refused. A video without a measured candidate receives a clearly labeled static placeholder, never MP4 bytes in an image response. This placeholder is not registered as an asset, provider result, chosen publication thumbnail or QC evidence.
+
+Responses identify `X-VF-Thumbnail-Basis` and `X-VF-Semantic-Inference:false` with no-store caching. Raw video Range transport remains separate and byte-exact. No review, rights, approval or publishing authority is added.
+
+Verification: 41 related Native tests passed in 43.007s, including six new real-media/HTTP cases. An actual isolated in-app browser signed in with its synthetic fixture identity, opened the original Source project and displayed a complete 480x360 image; no console errors were observed. A screenshot was displayed through the tool only; no durable export was attempted. The temporary tab and listener are closed. This is preview verification, not Owner UAT or genuine Vision acceptance.
+
+Retained rehearsal performed four signed HTTP reads with all providers disabled: exact PNG thumbnail, exact MP4 byte range, unauthenticated refusal and foreign-project refusal. All seven preserved projects, original recommendations, Vision/cost journals and source bytes remained exact. Public backup and a separate disabled/keyless process restored all seven and the identical thumbnail. Evidence is under recovery/20261007/project-thumbnail-flow-n2. The first retained-script attempt used a nonexistent top-level project name field and was stopped; it is kept in project-thumbnail-flow-n1. The final script selects the browser-observed original project ID and does not weaken validation.
+
+Sources: services/windows_native/project_thumbnail.py; services/windows_native/server.py; services/windows_native/tests/test_project_thumbnail.py; scripts/north_star_project_thumbnail.py; apps/studio-web/source-video-placeholder.svg. Indexed proof: docs/north-star/project-thumbnail-evidence.json.
+
+The source is synthetic test-pattern/tone with preserved ASR/scene/Vision fixtures. No new preview/render/full QC, genuine spoken-media/provider test, paid call, publication, production mutation or Owner acceptance occurred. Original reviewed crop/publication-thumbnail/QC consumers, OAuth grant/account bridge and the full remaining original North Star requirements remain open. PHASE10_READY, IMPLEMENTATION_COMPLETE, REAL_PROVIDER_ACCEPTANCE_COMPLETE, PRODUCTION_DEPLOYED and VIDEO_FACTORY_NORTH_STAR_READY remain NO. Listening/UAT is deferred; no STOP pending.

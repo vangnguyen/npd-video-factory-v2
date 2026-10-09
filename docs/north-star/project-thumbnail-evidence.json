@@ -1,0 +1,147 @@
+{
+  "schema_version": "native-project-thumbnail-evidence-v1",
+  "parent_head": "03a2b9649e0e28a4307cd5c48f6bee4d59f6bf2b",
+  "source_sha256": {
+    "services/windows_native/project_thumbnail.py": "670aa3d568d444c1c0f1da4344255a620bf9d2bdb5099e6bf6060deeaee4b59e",
+    "services/windows_native/server.py": "9767bb62728613ab0453bd91c51bb8b02072dce7f4eccbbe173a5a9f52b05719",
+    "apps/studio-web/source-video-placeholder.svg": "ee1ded0c5475a9962fba6fb6df7eda6a264c52843744e0f0d156426943a18de1",
+    "services/windows_native/tests/test_project_thumbnail.py": "46e5a0f0e53ba2669cee3561054720e9d3b2d78b1d03318b1b35b1236366418c",
+    "scripts/north_star_project_thumbnail.py": "590cc39d3910075d85b70fa7eef1e6a1d76aef396496cdbced2bb98a7670170d",
+    "docs/NATIVE_PROJECT_THUMBNAILS.md": "81224b8b4409f28da1107a91de4b65e34ab8c20ca3ffff1108e4832aedca1077"
+  },
+  "tests": {
+    "native_related": 41,
+    "native_seconds": 43.007,
+    "new_native_cases": 6,
+    "native_log_sha256": "2ab4162def42e2d5481091583b750c714458c7081b2f2d7c3ab9a586a908674e"
+  },
+  "rehearsal": {
+    "schema_version": "native-project-thumbnail-rehearsal-v1",
+    "source_sha256": {
+      "services/windows_native/project_thumbnail.py": "670aa3d568d444c1c0f1da4344255a620bf9d2bdb5099e6bf6060deeaee4b59e",
+      "services/windows_native/server.py": "9767bb62728613ab0453bd91c51bb8b02072dce7f4eccbbe173a5a9f52b05719",
+      "apps/studio-web/source-video-placeholder.svg": "ee1ded0c5475a9962fba6fb6df7eda6a264c52843744e0f0d156426943a18de1",
+      "services/windows_native/tests/test_project_thumbnail.py": "46e5a0f0e53ba2669cee3561054720e9d3b2d78b1d03318b1b35b1236366418c",
+      "scripts/north_star_project_thumbnail.py": "590cc39d3910075d85b70fa7eef1e6a1d76aef396496cdbced2bb98a7670170d"
+    },
+    "signed_http_requests": 4,
+    "new_cpu_jobs": 0,
+    "new_mock_requests": 0,
+    "new_paid_operations": 0,
+    "new_external_dispatches": 0,
+    "all7_projects_original_results_journals_source_bytes_exact": true,
+    "public_backup_sha256": "e110e56416b21760b45a43bd49c585576a7bbba93b13e26d164043c2c76d31bb",
+    "prior_public_backup_sha256": "a7e74eb183bc10f10ec67007545b0d36fcb650599f9013986485519e391b87fa",
+    "actual_browser": {
+      "executed": true,
+      "synthetic_fixture_identity": true,
+      "source_image_complete": true,
+      "natural_width": 480,
+      "natural_height": 360,
+      "console_errors_observed": 0,
+      "temporary_tab_closed": true,
+      "screenshot_tool_only": true,
+      "durable_screenshot_export": false
+    },
+    "asr_scene_and_vision": "preserved explicit fixtures over owned synthetic source, not genuine provider acceptance",
+    "full_qc_or_new_final_render": false,
+    "owner_uat_accepted": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "exports": {
+      "backup.json": {
+        "sha256": "614b3004389ff4811342bade282757cc66bbf7857f99657d8a2738181febb1c1",
+        "bytes": 4114
+      },
+      "expected-journals.json": {
+        "sha256": "1663d162c00dc720301caef5d665ab536b3ce8dda575c9274a35f85b803e62c7",
+        "bytes": 3766687
+      },
+      "expected-projects.json": {
+        "sha256": "befb141521c864ca9d6bed93c529e81775e3779050b30a152bacd5f6b41826fe",
+        "bytes": 2147465
+      },
+      "expected-scenes.json": {
+        "sha256": "0508426a455540012ad93465ac5620c1c7c073271b7889cb6ad4c9718d269ed1",
+        "bytes": 116602
+      },
+      "original-vision-history.json": {
+        "sha256": "df3654208ba2290474d37e34bdf8fbf2a4aed32869e52bedc09e2e23c6913f60",
+        "bytes": 112596
+      },
+      "public-project-thumbnail.zip": {
+        "sha256": "e110e56416b21760b45a43bd49c585576a7bbba93b13e26d164043c2c76d31bb",
+        "bytes": 6099295
+      },
+      "restore.json": {
+        "sha256": "da8a44c2546e0c55ad55e4be3805160d405ee129abd1052df5ad35f850108d9c",
+        "bytes": 4512
+      },
+      "restored-in-process.json": {
+        "sha256": "fac00a8a38513af0ee0025061d505c88bcc17c82aa2d37f6653ec1ff2740c42d",
+        "bytes": 254
+      },
+      "served-thumbnail.png": {
+        "sha256": "f776630d5f11a4599cb4177715334e8062ea54cbec824c0756763ec81cb4ceeb",
+        "bytes": 81239
+      },
+      "source-hashes.json": {
+        "sha256": "e6cf43aba14c18169017c5aa7946019f4c1e96b72fd8fab5ebff21a0e18c7818",
+        "bytes": 223
+      },
+      "thumbnail-proof.json": {
+        "sha256": "a5dcc93b90847d50fbe0f75f12240f4b06fd73f6de2f1e68d2693e8c86e8bc69",
+        "bytes": 1057
+      }
+    }
+  },
+  "fresh_process": {
+    "all7_projects_original_recommendations_results_journals_source_bytes_thumbnail_exact": true,
+    "keyless_default_disabled_recovery": true,
+    "provider_retry_or_consent_renewal": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "thumbnail": {
+    "project_id": "aef7219b866240bebf1e355d4a07220f",
+    "asset_id": "395395139cd34eeba120d7127d1522a5.mp4",
+    "basis": "saved_cpu_pixel_frame",
+    "sha256": "f776630d5f11a4599cb4177715334e8062ea54cbec824c0756763ec81cb4ceeb",
+    "dimensions": [
+      480,
+      360
+    ],
+    "signed_calls": [
+      {
+        "method": "GET",
+        "route": "/api/projects/aef7219b866240bebf1e355d4a07220f/media/395395139cd34eeba120d7127d1522a5.mp4/thumbnail",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "route": "/api/projects/aef7219b866240bebf1e355d4a07220f/media/395395139cd34eeba120d7127d1522a5.mp4",
+        "status": 206
+      },
+      {
+        "method": "GET",
+        "route": "/api/projects/aef7219b866240bebf1e355d4a07220f/media/395395139cd34eeba120d7127d1522a5.mp4/thumbnail",
+        "status": 401
+      },
+      {
+        "method": "GET",
+        "route": "/api/projects/ffffffffffffffffffffffffffffffff/media/395395139cd34eeba120d7127d1522a5.mp4/thumbnail",
+        "status": 404
+      }
+    ],
+    "raw_range_bytes_exact": true,
+    "all_existing_source_and_history_exact": true
+  },
+  "new_paid_operations": 0,
+  "new_external_dispatches": 0,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

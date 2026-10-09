@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320" role="img" aria-label="Video nguồn chưa có ảnh xem trước">
+  <rect width="480" height="320" rx="16" fill="#13372e"/>
+  <path d="M213 102 287 146 213 190Z" fill="#d5e5d1"/>
+  <text x="240" y="235" text-anchor="middle" fill="#f0f3e9" font-family="sans-serif" font-size="22">Video nguồn</text>
+  <text x="240" y="267" text-anchor="middle" fill="#cfddd5" font-family="sans-serif" font-size="17">Chưa có ảnh xem trước</text>
+</svg>

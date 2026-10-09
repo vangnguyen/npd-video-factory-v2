@@ -714,14 +714,17 @@ class Handler(BaseHTTPRequestHandler):
             with self.server.store.transaction() as con:
                 rows = con.execute("SELECT payload,created_at FROM events WHERE action='job_step' AND project_id=? AND json_extract(payload,'$.job_id')=? ORDER BY id", (job["project_id"], job["id"]))
                 return self.reply([{**json.loads(r["payload"]), "created_at": r["created_at"]} for r in rows])
-        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/media/([0-9a-f]{32}\.(?:jpg|mp4))(/thumbnail)?", path)
+        match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/media/([0-9a-f]{32}\.(?:jpg|jpeg|png|mp4|mov))(/thumbnail)?", path)
         if match:
             project = self.server.store.get(match[1])
             asset = next((a for a in project_assets(project["document"]) if a["id"] == match[2]), None)
             if asset is None:
                 raise WorkflowError("MEDIA_NOT_IN_PROJECT", 404)
-            identifier = asset.get("thumbnail_id", asset["id"]) if match[3] else asset["id"]
-            return self.file(media_path(self.server.config, identifier), video=not match[3] and asset["kind"] == "video")
+            if match[3]:
+                from .project_thumbnail import thumbnail
+                source,basis=thumbnail(self.server.store,self.server.config,match[1],match[2])
+                return self.file(source,headers={'Cache-Control':'no-store','X-VF-Thumbnail-Basis':basis,'X-VF-Semantic-Inference':'false'})
+            return self.file(media_path(self.server.config,asset['id']),video=asset['kind']=='video')
         match = re.fullmatch(r"/api/projects/([0-9a-f]{32})(/image)?", path)
         if match:
             project = self.server.store.get(match[1])
