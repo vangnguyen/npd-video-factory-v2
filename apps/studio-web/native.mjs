@@ -140,7 +140,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -165,7 +165,7 @@ if (typeof document !== "undefined") {
   function controls() {
     bridgeUI?.controls();
     $("prompt").closest('label').hidden=Boolean(workspaceUI)&&$("input-kind").value==='media';
-    const active=jobActive(project), shotWorking=(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)||(renderVisionUI?.isWorking()??false), blocked=busy||shotWorking||active||project?.archived;
+    const active=jobActive(project), shotWorking=(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false), blocked=busy||shotWorking||active||project?.archived;
     document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-workspace-control],[data-auto-edit-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
     $("refresh").disabled=busy||shotWorking;
     $("project-picker").disabled=busy||shotWorking||dirty;
@@ -218,6 +218,7 @@ if (typeof document !== "undefined") {
     visionUI?.controls();
     officialVisionUI?.controls();
     renderVisionUI?.controls();
+    renderThumbnailUI?.controls();
     rightsUI?.controls();
     stockUI?.controls();
     generationUI?.controls();
@@ -271,6 +272,7 @@ if (typeof document !== "undefined") {
     visionUI?.sync();
     officialVisionUI?.sync();
     renderVisionUI?.sync();
+    renderThumbnailUI?.sync();
     rightsUI?.sync();
     stockUI?.sync();
     generationUI?.sync();
@@ -395,44 +397,51 @@ if (typeof document !== "undefined") {
     }
     if(session.capabilities?.native_vision_review===true){
       const vision=await import('./native-vision.mjs');$('native-vision-panel').hidden=false;
-      visionUI=vision.initializeNativeVision({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,
+      visionUI=vision.initializeNativeVision({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});
     }
     if(session.capabilities?.native_vision_review===true&&session.access?.mode==='registry'){
       const vision=await import('./native-official-vision.mjs');$('native-official-vision-card').hidden=false;
-      officialVisionUI=vision.initializeNativeOfficialVision({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false),canManage,active:jobActive(project),
+      officialVisionUI=vision.initializeNativeOfficialVision({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access.workspace_id}),onMessage:message,onWorking:controls});
     }
     if(session.capabilities?.native_render_vision_review===true&&session.access?.mode==='registry'){
       const vision=await import('./native-render-vision.mjs');$('native-render-vision-card').hidden=false;
-      renderVisionUI=vision.initializeNativeRenderVision({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      renderVisionUI=vision.initializeNativeRenderVision({api,getState:()=>({project,dirty,busy:busy||(renderThumbnailUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access.workspace_id}),onMessage:message,onWorking:working=>{controls();if(!working)void refreshCosts();}});
+    }
+    if(session.capabilities?.native_render_thumbnail_review===true){
+      const thumbnail=await import('./native-render-thumbnail.mjs');$('native-render-thumbnail-card').hidden=false;
+      renderThumbnailUI=thumbnail.initializeNativeRenderThumbnail({api,getReviewedVision:()=>renderVisionUI?.currentBinding()??null,
+        getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),
+          canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
+        onMessage:message,onWorking:controls});
     }
     if(session.capabilities?.native_rights_review===true){
       const rights=await import('./native-rights.mjs');$('native-rights-panel').hidden=false;
-      rightsUI=rights.initializeNativeRights({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canManage,active:jobActive(project),
+      rightsUI=rights.initializeNativeRights({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_stock_media===true){
       const stock=await import('./native-stock.mjs');$('native-stock-panel').hidden=false;
-      stockUI=stock.initializeNativeStock({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canManage,
+      stockUI=stock.initializeNativeStock({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canManage,
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_owner_rights_override_review===true){
       const overrides=await import('./native-rights-override.mjs');$('native-rights-override-panel').hidden=false;
-      rightsOverrideUI=overrides.initializeNativeRightsOverride({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canManage,active:jobActive(project),
+      rightsOverrideUI=overrides.initializeNativeRightsOverride({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_generation_media===true){
       const generation=await import('./native-generation.mjs');$('native-generation-panel').hidden=false;
-      generationUI=generation.initializeNativeGeneration({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),
+      generationUI=generation.initializeNativeGeneration({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_storyboard_media_planner===true){
       const planner=await import('./native-media-planner.mjs');
-      mediaPlannerUI=planner.initializeNativeMediaPlanner({api,getReviewedVision:()=>officialVisionUI?.currentBinding()??null,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false),
+      mediaPlannerUI=planner.initializeNativeMediaPlanner({api,getReviewedVision:()=>officialVisionUI?.currentBinding()??null,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false),
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canManage,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         enableResolution:session.capabilities?.native_storyboard_media_resolution===true,
         onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
@@ -444,50 +453,50 @@ if (typeof document !== "undefined") {
     }
     if(session.capabilities?.native_narration_rights_review===true){
       const rights=await import('./native-narration-rights.mjs');
-      narrationRightsUI=rights.initializeNativeNarrationRights({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
+      narrationRightsUI=rights.initializeNativeNarrationRights({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_analytics_review===true){
       const analytics=await import('./native-analytics.mjs');$('native-analytics-card').hidden=false;
-      analyticsUI=analytics.initializeNativeAnalytics({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,
+      analyticsUI=analytics.initializeNativeAnalytics({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,enableRefresh:session.capabilities?.native_analytics_refresh===true});
     }
     if(session.capabilities?.native_official_account_review===true){
       const accounts=await import('./native-official-accounts.mjs');$('native-official-accounts-card').hidden=false;
-      officialAccountsUI=accounts.initializeNativeOfficialAccounts({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      officialAccountsUI=accounts.initializeNativeOfficialAccounts({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});
     }
     if(session.access?.mode==='registry'&&session.capabilities?.native_official_account_review===true){
       const googleOAuth=await import('./native-google-oauth.mjs');$('native-google-oauth-card').hidden=false;
-      googleOAuthUI=googleOAuth.initializeNativeGoogleOAuth({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      googleOAuthUI=googleOAuth.initializeNativeGoogleOAuth({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access.workspace_id}),onMessage:message});
     }
     if(session.capabilities?.native_publication_review===true){
       const publications=await import('./native-publications.mjs');$('native-publication-card').hidden=false;
-      publicationUI=publications.initializeNativePublications({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,
+      publicationUI=publications.initializeNativePublications({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),onMessage:message});
     }
     if(session.capabilities?.native_official_publication_review===true){
       const official=await import('./native-official-publications.mjs');$('native-official-publications-card').hidden=false;
-      officialPublicationUI=official.initializeNativeOfficialPublications({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      officialPublicationUI=official.initializeNativeOfficialPublications({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>{officialQueueUI?.sync();officialAnalyticsUI?.sync();officialRefreshUI?.sync();}});
       const queue=await import('./native-official-publication-queue.mjs');$('native-official-publication-queue-card').hidden=false;
-      officialQueueUI=queue.initializeNativeOfficialPublicationQueue({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      officialQueueUI=queue.initializeNativeOfficialPublicationQueue({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialPublicationUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();}});
       const officialAnalytics=await import('./native-official-analytics.mjs');$('native-official-analytics-card').hidden=false;
-      officialAnalyticsUI=officialAnalytics.initializeNativeOfficialAnalytics({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      officialAnalyticsUI=officialAnalytics.initializeNativeOfficialAnalytics({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialPublicationUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>officialWinnerUI?.sync()});
       const officialRefresh=await import('./native-official-refresh.mjs');$('native-official-refresh-card').hidden=false;
-      officialRefreshUI=officialRefresh.initializeNativeOfficialRefresh({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      officialRefreshUI=officialRefresh.initializeNativeOfficialRefresh({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialPublicationUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();}});
       const officialWinners=await import('./native-official-winners.mjs');$('native-official-winners-card').hidden=false;
-      officialWinnerUI=officialWinners.initializeNativeOfficialWinners({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      officialWinnerUI=officialWinners.initializeNativeOfficialWinners({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialAnalyticsUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>officialLearningUI?.sync()});
       const officialLearning=await import('./native-official-learning.mjs');$('native-official-learning-card').hidden=false;
-      officialLearningUI=officialLearning.initializeNativeOfficialLearning({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      officialLearningUI=officialLearning.initializeNativeOfficialLearning({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialWinnerUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>qualifiedLearningUI?.sync()});
       const qualifiedLearning=await import('./native-qualified-learning.mjs');$('native-qualified-learning-card').hidden=false;
-      qualifiedLearningUI=qualifiedLearning.initializeNativeQualifiedLearning({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false),canManage,active:jobActive(project),
+      qualifiedLearningUI=qualifiedLearning.initializeNativeQualifiedLearning({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialLearningUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();}});
     }
     if(session.access?.mode==='registry'){
@@ -501,12 +510,12 @@ if (typeof document !== "undefined") {
     projectQuality=newProjectQuality(session);
     if(session.capabilities?.native_media_frame_analysis===true){
       const frames=await import('./native-media-frames.mjs');
-      mediaFrames=frames.initializeMediaFrames({api,getProject:()=>project,getState:()=>({dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)}),onWorking:controls,onMessage:message});
+      mediaFrames=frames.initializeMediaFrames({api,getProject:()=>project,getState:()=>({dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)}),onWorking:controls,onMessage:message});
     }
     if(session.capabilities?.native_auto_edit_analysis===true){
       const analysis=await import('./native-auto-edit.mjs');
       const stylesheet=document.createElement('link');stylesheet.rel='stylesheet';stylesheet.href='/native-auto-edit.css';document.head.append(stylesheet);
-      nativeAnalysis=analysis.initializeNativeAnalysis({api,getProject:()=>project,getState:()=>({dirty,dirtyPart,busy:busy||(renderVisionUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)}),
+      nativeAnalysis=analysis.initializeNativeAnalysis({api,getProject:()=>project,getState:()=>({dirty,dirtyPart,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(shotStudio?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)}),
         onProject:(value,reset)=>{const changed=project?.id!==value?.id;project=value;if(changed&&value){localStorage.setItem('vf-native-project',value.id);void projects().catch(error=>message(error.message,true));}renderProject(reset);},onDirty:markDirty,onMessage:message,
         sourceEnabled:session.capabilities?.native_source_timeline===true,onSourceCreated:()=>shotStudio?.showStage('video'),onWorking:controls,onDraftsCreated:projects});
     }
@@ -525,14 +534,14 @@ if (typeof document !== "undefined") {
       document.querySelector('.asset-workspace-toolbar').hidden=false;
       if(session.capabilities?.native_channel_profiles===true){
         const channels=await import('./native-channel-profiles.mjs');
-        channelUI=channels.initializeNativeChannels({api,getState:()=>({project,busy:busy||(renderVisionUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
+        channelUI=channels.initializeNativeChannels({api,getState:()=>({project,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
           onDefaults:value=>{$('new-content-profile').value=value.content_profile_id;$('new-brand').value=value.brand_id;$('new-video-format').value=value.aspect_ratio;creationTemplates();$('new-template').value=value.template_id;$('new-duration-mode').value=value.duration_mode;},onMessage:message});
         $('new-content-profile').addEventListener('change',()=>channelUI?.clear());
       }
     }
     document.querySelectorAll('.stage-navigation,.studio-header-actions,.skip-link,.sidebar [data-stage],.sidebar a[href^="/production"]').forEach(el=>el.hidden=false);
     const sourceUI=session.capabilities?.native_source_timeline===true?await import('./native-source-editor.mjs'):null;
-    shotStudio=module.initializeShotStudio({api,ui:workspaceUI,sourceUI,getReviewedVision:()=>officialVisionUI?.currentBinding()??null,onDraftsCreated:projects,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,workspace_id:session.access?.workspace_id??'wsp_native_local'}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
+    shotStudio=module.initializeShotStudio({api,ui:workspaceUI,sourceUI,getReviewedVision:()=>officialVisionUI?.currentBinding()??null,onDraftsCreated:projects,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,workspace_id:session.access?.workspace_id??'wsp_native_local'}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
   }
   $("save-prompt").addEventListener("click",guarded(async()=>{
     const creating=!project;

@@ -378,6 +378,8 @@ class LocalServer(ThreadingHTTPServer):
             self.render_vision=NativeRenderVision(self.store,config,workspace_id=self.publications.workspace_id,
                 factories=loaded_render_vision,enabled=render_vision_enabled,identity_provider=self.official_publish_identity)
             self.runner.render_vision=self.render_vision
+        from .render_thumbnails import NativeRenderThumbnails
+        self.render_thumbnails=NativeRenderThumbnails(self.store,config,workspace_id=self.publications.workspace_id,render_vision=self.render_vision)
         from .source_variants import SourceVariants
         self.variants=SourceVariants(self.store,workspace_id=self.publications.workspace_id)
         from .narrated_variants import NativeNarratedVariants
@@ -610,6 +612,12 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-vision/input/[a-f0-9]{32}/frame/[0-7]',path):
             from .render_vision_routes import frame
             return frame(self,path)
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-thumbnails(?:/ast_rthumb_[a-f0-9]{32})?',path):
+            from .render_thumbnail_routes import get
+            return self.reply(get(self,path))
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-thumbnails/ast_rthumb_[a-f0-9]{32}/image',path):
+            from .render_thumbnail_routes import image
+            return image(self,path)
         if path=='/api/connections/official-analytics-refresh' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics-refresh(?:/noap_[a-f0-9]{32})?',path):
             from .official_analytics_refresh_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
@@ -714,7 +722,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_official_publication_review":self.server.access is not None,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -806,6 +814,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-vision.mjs'] = 'native-vision.mjs'
         static['/native-official-vision.mjs'] = 'native-official-vision.mjs'
         static['/native-render-vision.mjs'] = 'native-render-vision.mjs'
+        static['/native-render-thumbnail.mjs'] = 'native-render-thumbnail.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'
         static['/native-scene-review.mjs'] = 'native-scene-review.mjs'
         static['/native-source-crop-review.mjs'] = 'native-source-crop-review.mjs'
@@ -876,6 +885,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-vision(?:/nrvi_[a-f0-9]{32}/(?:process|cancel))?',self.path):
             from .render_vision_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-thumbnails',self.path):
+            from .render_thumbnail_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000)))
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations(?:/ngoa_[a-f0-9]{32}/(?:authorization-url|exchange|cancel))?|refresh)',self.path):
             from .google_oauth_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})

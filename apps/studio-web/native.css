@@ -8,6 +8,12 @@
 .native-analytics-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:4px 12px}.native-analytics-metrics p{margin:2px 0;font-size:13px}
 .native-analytics-chart{min-width:0;max-width:100%;margin:14px 0;overflow-x:auto}.native-analytics-chart svg{display:block;width:100%;min-width:680px;height:auto;background:#f7faf6;border:1px solid #d8e2d7;border-radius:9px}.native-analytics-comparison{max-width:100%;overflow-x:auto;margin:14px 0}.native-analytics-comparison table{border-collapse:collapse;width:100%;font-size:12px}.native-analytics-comparison caption{text-align:left;font-weight:600;margin:8px 0}.native-analytics-comparison th,.native-analytics-comparison td{padding:8px;border-bottom:1px solid #dce5dd;text-align:left;vertical-align:top;overflow-wrap:anywhere}.native-analytics-comparison th{min-width:105px}#native-analytics-series p,#native-analytics-series li{overflow-wrap:anywhere;font-size:12px;line-height:1.7}
 /* Render QC stays readable beside the portrait player, with bounded frame lists. */
+#native-render-thumbnail-card>label{display:grid;gap:6px;margin:12px 0;min-width:0}
+#native-render-thumbnail-card>label:has(input[type=checkbox]){display:flex;align-items:flex-start;gap:8px}
+#native-render-thumbnail-card input:not([type=checkbox]),#native-render-thumbnail-card select{max-width:100%;min-width:0}
+#native-render-thumbnail-card input[type=checkbox]{width:16px;height:16px;flex:0 0 16px;margin:2px 0}
+#native-render-thumbnail-card>button{margin:6px 4px 6px 0}
+#native-render-thumbnail-list{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
 #native-render-vision-card>label{display:grid;gap:6px;margin:12px 0;min-width:0}
 #native-render-vision-card>label:has(input[type=checkbox]){display:flex;align-items:flex-start;gap:8px}
 #native-render-vision-card input:not([type=checkbox]),#native-render-vision-card select{max-width:100%;min-width:0}

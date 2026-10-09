@@ -1,0 +1,79 @@
+{
+  "schema_version": "north-star-render-thumbnail-studio-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-http-regression-n1.log",
+      "sha256": "4a3b38fb65ad23d35c9cbcdce9b587b89b61fe6fa1bf7c18e32a791b30f50bf6",
+      "bytes": 9723,
+      "passed": 41,
+      "new_cases": 6,
+      "seconds": 132.769
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-studio-regression-n2.log",
+      "sha256": "8300e822f1c3f19bf319415a59f3ef0de0914b2efe215df53bd297e4c49e805e",
+      "bytes": 50429,
+      "passed": 493,
+      "new_cases": 22,
+      "duration_ms": 1596.324
+    }
+  ],
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-studio-flow-n3\\evidence.json",
+    "sha256": "08bbb583e3ad2d354731b5567d103efa10b1571f77b1bc4bc94e0fbf92a877e1",
+    "bytes": 3364
+  },
+  "new_process_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-studio-flow-n3\\new-process-replay.json",
+    "sha256": "215f1741d36603bcdefb28de2777b8c20ec56df4c030103c74f5c8f7e37be2e8",
+    "bytes": 256
+  },
+  "source_sha256": {
+    "services/windows_native/server.py": "5a3ccc4e152ffbe7bd504c47f8cd9424d26027346348e6b4c7c43bc00a12274d",
+    "services/windows_native/access.py": "e4fb3e9bcbf43e4f843725a1ca88f51ced129a5d63f57879fae5d43d28ce02a9",
+    "services/windows_native/render_thumbnail_routes.py": "766825ceb125da3acb01d0443b95c935cb8dda35bbd70b53813a9ef558bb4749",
+    "services/windows_native/tests/test_render_thumbnail_http.py": "144f87714261dca55094c4090a4a8fa58b36d71ab312cbb3aecbac82a15f1398",
+    "services/windows_native/tests/test_phase10_http.py": "0b06f90fd126e28ce3b9ce07e8807b50ee72cc1a8259b59b945ab160ebf2323f",
+    "apps/studio-web/native-render-thumbnail.mjs": "7b0a773069df68b5200c7711f6580b2029edec45038937e416008f9995f24ee2",
+    "apps/studio-web/native.mjs": "ff16c6b635b707ddbc75f46932aae3efe83f8e9a558febd04143cda8b10246b4",
+    "apps/studio-web/native.html": "e17adef13b22bcb077cc12e18d34d7f879cb057b4fa9c2656fa638622c6f6cbe",
+    "apps/studio-web/native.css": "5ff0debc30ce978340f0f0c97e4591f107a7316fca52f69dedc23c5921c4aad5",
+    "apps/studio-web/shot-studio.mjs": "73aa4a7dcc9866805e8def73e9a72debb2fe4b73902b09abc538949a270b65f1",
+    "apps/studio-web/tests/native-render-thumbnail.test.mjs": "6715541e6e0ea5b47aa5e154366afb05cb4f5b3cb61cf9c677d299529db81787",
+    "apps/studio-web/tests/fixtures/native-render-thumbnail-v1.json": "736e1de9ef4a952bb44a8997cd07fa6ab34298557602868ca668eb37b9d3aeb3",
+    "scripts/north_star_render_thumbnail_studio.py": "3317c8228c164b34a11660aa4a95168a517255b060de912ed68ff854128448eb",
+    "scripts/north_star_render_thumbnail_studio.mjs": "f6aa6179a260d9e2c45a3805356ad453c6987f17114789be475c01fe48fa57cc"
+  },
+  "public_backup_sha256": "f1136d8154f84fecc38d05691d9c3ab7582448216078c4798929781650f9f2cf",
+  "signed_http_requests": 24,
+  "original_png_reads": 8,
+  "selected_png_reads": 3,
+  "thumbnail_selections": 6,
+  "original_vision_histories": 11,
+  "original_cost_vision_journals_projects_media_png_pts_exact": true,
+  "keyless_application_recovery_exact": true,
+  "browser_observations": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-studio-browser-n1\\observations.json",
+    "sha256": "a1b2581615fc3198e8f6823f116210ce81f46847ab84ba667965767b248cf52a",
+    "bytes": 1372
+  },
+  "browser_integrity": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-studio-browser-n1\\readonly-integrity.json",
+    "sha256": "af923faa5fd89c7584ec7aed9aad706681d34e71a258e94985c744866a60f09f",
+    "bytes": 240
+  },
+  "http_and_studio_integrated": true,
+  "real_parent_browser_executed": true,
+  "rights_status": "unknown",
+  "publishing_authorized": false,
+  "thumbnail_publication_transport_bound": false,
+  "new_provider_calls": 0,
+  "new_paid_operations": 0,
+  "new_renders": 0,
+  "new_media_copies": 0,
+  "owner_uat_accepted": false,
+  "real_provider_tested": false,
+  "production_deployed": false,
+  "initial_recovery_error_and_safe_resumption": "Windows refused the final verified-staging rename at restore-03; original staging and failed log retained; same original verified public backup restored at fresh restore-04 without replaying HTTP selections.",
+  "successful_restore_root": "C:\\vf-native-fixture-render-thumbnail-studio-restore-04"
+}
