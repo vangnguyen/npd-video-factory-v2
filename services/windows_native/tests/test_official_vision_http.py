@@ -1,5 +1,6 @@
 """Signed actual local HTTP, actual CPU PNG/DPAPI, explicitly synthetic Vision."""
-import base64,copy,json,threading,unittest
+import base64,copy,json,re,threading,unittest
+from urllib.parse import urljoin
 from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
@@ -204,6 +205,25 @@ class NativeOfficialVisionHTTPTests(OfficialVisionHTTPFixture,unittest.TestCase)
                     for table in TABLES:self.assertIsNone(con.execute('SELECT name FROM sqlite_master WHERE name=?',(table,)).fetchone())
             finally:
                 default.shutdown();thread.join();self.server,self.cookie,self.csrf=original
+
+    def test_studio_module_and_separate_card_are_served_without_analysis_or_capability_enablement(self):
+        for path,expected in (('/native-official-vision.mjs',b'initializeNativeOfficialVision'),('/native.html',b'id="native-official-vision-card" hidden'),('/native.mjs',b'officialVisionUI?.sync()')):
+            status,value,_=self.http('GET',path);self.assertEqual(status,200);self.assertIn(expected,value)
+        self.assertFalse(self.http('GET','/api/session')[1]['capabilities']['native_official_vision']);self.assertEqual(self.calls,[])
+
+    def test_actual_main_page_module_dependencies_load_with_javascript_mime(self):
+        status,html,_=self.http('GET','/native.html');self.assertEqual(status,200)
+        pending=re.findall(r'<script[^>]*src="([^"]+)"',html.decode('utf-8'));seen=set()
+        self.assertIn('/native.mjs',pending)
+        while pending:
+            path=pending.pop()
+            if path in seen:continue
+            self.assertTrue(path.startswith('/'));self.assertLess(len(seen),128)
+            status,value,headers=self.http('GET',path);self.assertEqual(status,200,path);self.assertTrue(headers['Content-Type'].startswith(('text/javascript','application/javascript')),path)
+            seen.add(path)
+            for reference in re.findall(r'(?:from\s*|import\s*\(\s*|import\s*)[\'\"]([^\'\"]+)[\'\"]',value.decode('utf-8')):
+                if reference.startswith('./') and reference.endswith('.mjs'):pending.append(urljoin(path,reference))
+        self.assertIn('/project-quality.mjs',seen);self.assertIn('/native-official-vision.mjs',seen);self.assertGreater(len(seen),20);self.assertEqual(self.calls,[])
 
 
 if __name__=='__main__':unittest.main()

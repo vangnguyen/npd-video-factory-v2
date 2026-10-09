@@ -755,6 +755,8 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-analytics.mjs'] = 'native-analytics.mjs'
         static['/native-analytics-refresh.mjs'] = 'native-analytics-refresh.mjs'
         static['/native-vision.mjs'] = 'native-vision.mjs'
+        static['/native-official-vision.mjs'] = 'native-official-vision.mjs'
+        static['/project-quality.mjs'] = 'project-quality.mjs'
         static['/native-rights.mjs'] = 'native-rights.mjs'
         static['/native-rights-override.mjs'] = 'native-rights-override.mjs'
         static['/native-narration-rights.mjs'] = 'native-narration-rights.mjs'

@@ -140,7 +140,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -216,6 +216,7 @@ if (typeof document !== "undefined") {
     publicationUI?.controls();
     analyticsUI?.controls();
     visionUI?.controls();
+    officialVisionUI?.controls();
     rightsUI?.controls();
     stockUI?.controls();
     generationUI?.controls();
@@ -267,6 +268,7 @@ if (typeof document !== "undefined") {
     publicationUI?.sync();
     analyticsUI?.sync();
     visionUI?.sync();
+    officialVisionUI?.sync();
     rightsUI?.sync();
     stockUI?.sync();
     generationUI?.sync();
@@ -393,6 +395,11 @@ if (typeof document !== "undefined") {
       const vision=await import('./native-vision.mjs');$('native-vision-panel').hidden=false;
       visionUI=vision.initializeNativeVision({api,getState:()=>({project,dirty,busy,canManage,
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});
+    }
+    if(session.capabilities?.native_vision_review===true&&session.access?.mode==='registry'){
+      const vision=await import('./native-official-vision.mjs');$('native-official-vision-card').hidden=false;
+      officialVisionUI=vision.initializeNativeOfficialVision({api,getState:()=>({project,dirty,busy:busy||(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false),canManage,active:jobActive(project),
+        workspace_id:session.access.workspace_id}),onMessage:message,onWorking:controls});
     }
     if(session.capabilities?.native_rights_review===true){
       const rights=await import('./native-rights.mjs');$('native-rights-panel').hidden=false;

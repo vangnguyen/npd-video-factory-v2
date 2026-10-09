@@ -1,0 +1,219 @@
+{
+  "schema_version": "native-official-vision-ui-evidence-v1",
+  "parent_head": "45e2775034208290c7b1b71074f176aabaf7ad1f",
+  "source_sha256": {
+    "apps/studio-web/native-official-vision.mjs": "096cf5b80308f17202c73ed6ea3f6401e84d65c9dfa9c744310ca0820fa93ff0",
+    "apps/studio-web/native.mjs": "211ca6f0ab90a4b83082c5f396843c685c9dcfb04ce33d00328eccdc2cfb697d",
+    "apps/studio-web/native.html": "def8761783f4795b3a61039d5fe53e30f8d02f7f933dc3b8865c69a938a75408",
+    "apps/studio-web/tests/native-official-vision.test.mjs": "16dafa6625a354e64f308a1231335f28b5311b99b29f7e1fc58a262a4b1b8c23",
+    "apps/studio-web/tests/fixtures/native-official-vision-v1.json": "61a3bf263780d1c9a7245d20b3e366330bb3f61c803c701f951b3504f3de1f70",
+    "services/windows_native/server.py": "6534020ba8c3f3a3012e6217cacc89d2ce27af3e38502ff9d5c3707fef46a338",
+    "services/windows_native/tests/test_official_vision_http.py": "9ec63220193dee6abf235aac5726608a5bf4c2db5c435456451ecfb02803a826",
+    "scripts/north_star_official_vision_ui.py": "689efb0bb278bae4cef369105ea12eb13ac46fe0b7d5cb036de1f0cb6ad9bfad",
+    "scripts/north_star_official_vision_ui.mjs": "9fa7d645d44c649dd7329522ef4b0a55991fbba952f52fa127f26ee428816f24",
+    "docs/NATIVE_OFFICIAL_VISION_UI.md": "d1a4042745536803baf012aff9e0e8c50857879a3e6ac406887c88fe307a3494"
+  },
+  "tests": {
+    "native_full": {
+      "tests": 1260,
+      "seconds": 1918.028,
+      "skipped": 0,
+      "log": "official-vision-ui-native-full-n2.log",
+      "sha256": "3505625ba71309c6f45a0ab4b5224a698da342baf302b10d55d516bcd78ec40f"
+    },
+    "native_http_focused": {
+      "passed": 17,
+      "seconds": 37.439,
+      "sha256": "8b42dc251bd0debc89fd126d5a8193ad67d0fc6fd90064e644ecafec5f84422b"
+    },
+    "studio_full": {
+      "passed": 422,
+      "milliseconds": 23177.8268,
+      "new_vision_cases": 18,
+      "sha256": "8a4fa7308da378c05de94aa00383ab815cdc630ce66504599c706b24cf229cbd"
+    },
+    "first_native_full_interrupted_not_claimed": true,
+    "new_api_full_repeated": false
+  },
+  "rehearsal": {
+    "schema_version": "native-official-vision-ui-rehearsal-v1",
+    "source_sha256": {
+      "apps/studio-web/native-official-vision.mjs": "096cf5b80308f17202c73ed6ea3f6401e84d65c9dfa9c744310ca0820fa93ff0",
+      "apps/studio-web/native.mjs": "211ca6f0ab90a4b83082c5f396843c685c9dcfb04ce33d00328eccdc2cfb697d",
+      "apps/studio-web/native.html": "def8761783f4795b3a61039d5fe53e30f8d02f7f933dc3b8865c69a938a75408",
+      "apps/studio-web/tests/native-official-vision.test.mjs": "16dafa6625a354e64f308a1231335f28b5311b99b29f7e1fc58a262a4b1b8c23",
+      "apps/studio-web/tests/fixtures/native-official-vision-v1.json": "61a3bf263780d1c9a7245d20b3e366330bb3f61c803c701f951b3504f3de1f70",
+      "services/windows_native/server.py": "6534020ba8c3f3a3012e6217cacc89d2ce27af3e38502ff9d5c3707fef46a338",
+      "services/windows_native/tests/test_official_vision_http.py": "9ec63220193dee6abf235aac5726608a5bf4c2db5c435456451ecfb02803a826",
+      "scripts/north_star_official_vision_ui.py": "689efb0bb278bae4cef369105ea12eb13ac46fe0b7d5cb036de1f0cb6ad9bfad",
+      "scripts/north_star_official_vision_ui.mjs": "9fa7d645d44c649dd7329522ef4b0a55991fbba952f52fa127f26ee428816f24"
+    },
+    "signed_http_requests": 34,
+    "new_finite_intents": 4,
+    "new_mock_requests": 3,
+    "new_complete_responses": 3,
+    "new_mock_results": 2,
+    "all_current_journals": 76,
+    "all_official_histories": 17,
+    "reused_unique_pngs": 9,
+    "new_cpu_jobs": 0,
+    "original_projects_media_histories_private_generations_exact": true,
+    "session_shape_default_false_flag_exact": true,
+    "explicit_source_finite_budget_raw_mock_consent_separate_manual_process_cancel_review_history": true,
+    "parent_source_and_static_checked": true,
+    "actual_browser_executed": false,
+    "current_keys_or_config_for_restored_history_required": false,
+    "real_credentials": false,
+    "external_provider_calls": 0,
+    "paid_operations": 0,
+    "semantic_inference_performed": false,
+    "owner_uat_accepted": false,
+    "publishing_enabled": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "public_backup_sha256": "352d8398ce918e7b8001163237d43dab43d6d4dcecb0b7b89129f525e581b134",
+    "exports": {
+      "backup.json": {
+        "sha256": "2a9a251210dabcf171a8882e6beb56b1101d8fb722a6f2c5dbf15ede9c5865ac",
+        "bytes": 4119
+      },
+      "cost-summary.json": {
+        "sha256": "4f3b256670867aa6628b95301494889cfc713d45e90370c87653d88992288888",
+        "bytes": 20801
+      },
+      "expected-all-journals.json": {
+        "sha256": "2b7077532feec581aedd75bc1e72df58ba7c1d497c877997e2ac730dc8dc6038",
+        "bytes": 712335
+      },
+      "expected-all-official-history.json": {
+        "sha256": "ea2c20713703b389526a0b3d239ff7f423f5089ac2975567c1f471ceacb9d013",
+        "bytes": 622220
+      },
+      "expected-legacy-history.json": {
+        "sha256": "d82394844ac68474fdf2b9a918e69fa15125ba3a443b00afd9b484c18b74d390",
+        "bytes": 121693
+      },
+      "expected-projects.json": {
+        "sha256": "52b65d096929791be8f8421be289c626c0cc47e74a29e05b3466c4a0cf3c985b",
+        "bytes": 58721
+      },
+      "mock-wire-summary.json": {
+        "sha256": "cfdf6913cdbfb53ad1ac0f9176dff9b0882d5336c57edab30c797e28e5f8c882",
+        "bytes": 231
+      },
+      "node-controller-errors.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "node-controller-proof.json": {
+        "sha256": "987cb2ee7c546a69ad92f8b974acf5170d47c76108c00e5e94ee7655d700c291",
+        "bytes": 114321
+      },
+      "prior-restore.json": {
+        "sha256": "d6acd708b1ab0f1cedf4e3b0a863724a1a429165341f6695833a4ba1924b17da",
+        "bytes": 4519
+      },
+      "public-official-vision-ui.zip": {
+        "sha256": "352d8398ce918e7b8001163237d43dab43d6d4dcecb0b7b89129f525e581b134",
+        "bytes": 2946126
+      },
+      "restore.json": {
+        "sha256": "6b91d7e741368889454aef7ae4398e5524180b57e9947d3630a05265d33a3cdb",
+        "bytes": 4523
+      },
+      "restored-in-process.json": {
+        "sha256": "859efc01643a97648a886f77f7281942a3777bb1be03961c87f958cefddd266e",
+        "bytes": 359
+      }
+    }
+  },
+  "fresh_process": {
+    "all_current_journals_exact": true,
+    "journal_count": 76,
+    "all_official_histories_exact": 17,
+    "original_projects_legacy_history_exact": true,
+    "current_credentials_config_identity_required_for_history": false,
+    "startup_decryption": false,
+    "retry_dispatch_consent_renewal": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "actual_browser": {
+    "schema_version": "native-official-vision-browser-evidence-v1",
+    "actual_cua_parent_browser_executed": true,
+    "origin": "http://127.0.0.1:55189",
+    "explicit_test_human_identity": true,
+    "current_real_credentials": false,
+    "actual_provider_calls": 0,
+    "paid_operations": 0,
+    "new_mock_successful_intents": 1,
+    "all_official_histories": 18,
+    "all_current_journals": 76,
+    "separate_manual_configuration_source_finite_request_process_history": true,
+    "parent_static_module_dependency_missing_route_repaired": "/project-quality.mjs",
+    "reloaded_history_does_not_inherit_consent_or_dispatch": true,
+    "source_image_loaded": {
+      "width": 480,
+      "height": 270
+    },
+    "viewport_dom_checks": [
+      {
+        "width": 1366,
+        "height": 768,
+        "document_client_width": 1351,
+        "document_scroll_width": 1351,
+        "control_overflow": false
+      },
+      {
+        "width": 1920,
+        "height": 1080,
+        "document_client_width": 1905,
+        "document_scroll_width": 1905,
+        "control_overflow": false
+      },
+      {
+        "width": 2560,
+        "height": 1440,
+        "document_client_width": 2545,
+        "document_scroll_width": 2545,
+        "control_overflow": false
+      }
+    ],
+    "raw_evidence_folded": true,
+    "viewport_override_reset_tabs_closed": true,
+    "screenshots_shown_by_cua": true,
+    "durable_screenshot_export_available": false,
+    "screenshot_export_limitation": "Browser approval review refused data URL export; no workaround attempted. Virtual 2560 DOM check does not claim a 2560 raster capture.",
+    "fixture_server_finally_receipt_available": false,
+    "owned_fixture_server_process_observed_stopped": true,
+    "original_projects_media_legacy_history_exact": true,
+    "mock_response_new_vision_id": "nvoi_59592066066f4981912c064b11d19c24",
+    "public_backup_sha256": "6efdea7863475d68adbe5c49d5679aa78fb3288e276a8b504c159fbaaef0ea58",
+    "real_provider_tested": false,
+    "owner_uat_accepted": false,
+    "publishing_enabled": false,
+    "production_deployed": false
+  },
+  "actual_browser_fresh_process": {
+    "all_current_journals_exact": true,
+    "journal_count": 76,
+    "all_official_histories_exact": 18,
+    "original_projects_legacy_history_exact": true,
+    "current_keys_config_identity_required_for_history": false,
+    "retry_dispatch_consent_renewal": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "explicit_request_and_process_no_automatic_dispatch_or_consent_renewal": true,
+  "scoped_plain_text_history_no_current_key_required": true,
+  "original_projects_media_private_generations_legacy_session_preserved": true,
+  "parent_missing_quality_static_import_repaired_and_dependency_closure_tested": true,
+  "media_planner_qc_admission_complete": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "publishing_enabled": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
