@@ -635,6 +635,10 @@ class Handler(BaseHTTPRequestHandler):
             from .costs import CostLedger
             return self.reply(CostLedger(self.server.store).summary(cost_route[1]))
         analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit', path)
+        scene_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-reviews', path)
+        if scene_reviews:
+            from .scene_review import page
+            return self.reply(page(self.server.store,self.server.config,scene_reviews[1],official_vision=lambda:self.server.official_vision),headers={'Cache-Control':'no-store'})
         if analysis_route:
             from .auto_edit_analysis import view
             return self.reply(view(self.server.store, analysis_route[1]))
@@ -907,6 +911,11 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', self.path)
         broll_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/broll', self.path)
+        scene_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-reviews',self.path)
+        if scene_reviews:
+            from .scene_review import create
+            return self.reply(create(self.server.store,self.server.config,scene_reviews[1],self.read_body(max_bytes=16000),
+                official_vision=lambda:self.server.official_vision),headers={'Cache-Control':'no-store'})
         shorts_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/shorts',self.path)
         if shorts_route:
             from .source_shorts import create

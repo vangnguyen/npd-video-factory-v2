@@ -1,0 +1,130 @@
+{
+  "schema_version": "native-reviewed-scene-evidence-v1",
+  "parent_head": "633afb9a23cf130ac460c2b4786af83bd63533b9",
+  "source_sha256": {
+    "services/windows_native/scene_review.py": "056eb098c348bf0c7c5bb8c81fd735a2f400c3db0419f2afa02fa804c512a2b2",
+    "services/windows_native/access.py": "484ce78caeecb0f5be2020b48f154a04fcc74afdf033b88b36f8479cf8685258",
+    "services/windows_native/server.py": "e82d809e12e9db2c33e735e4c79594974f12027373208d2a525ae4440e4e0f53",
+    "services/windows_native/auto_edit_timeline.py": "7deb9a4cc490550ecaff13ff19850eb977c4ce217da11442cbe90547dfcb40b6",
+    "services/windows_native/source_duplicate.py": "2689abf4a6b6f760979f563b2bd3f4efe98511086e73d2ee66286df6241db9c6",
+    "services/windows_native/store.py": "87496142aa6832553b4b78667bfe32739e409da0a3cc09f4fa4a4f9e2625c0a9",
+    "services/windows_native/tests/test_scene_review.py": "9cbe42c4adf52b73d7297d6ee8cce155b46df888d56936ab0c0fa41ec43ba94d",
+    "scripts/north_star_scene_review.py": "270bb2307a402b1deee1305bde35d8b7bef7a05fa4dba46088b20fac3e3bd418",
+    "docs/NATIVE_REVIEWED_SCENE_RECOMMENDATIONS.md": "a0588e80ac27cd46bfb2e631bbc4b43a362f12af72b93c668ce6fec0f40635aa"
+  },
+  "tests": {
+    "native_related": 82,
+    "native_seconds": 351.428,
+    "native_log_sha256": "506de1bb2e9dbf270069c6b2bdd3888e58c6d23c40db78ca58467e9188e7871b",
+    "new_cases": 9,
+    "current_full_native_repeated": false,
+    "studio_repeated": false,
+    "previous_full_native": 1260,
+    "previous_full_studio": 433
+  },
+  "rehearsal": {
+    "schema_version": "native-reviewed-scene-rehearsal-v1",
+    "source_sha256": {
+      "services/windows_native/scene_review.py": "056eb098c348bf0c7c5bb8c81fd735a2f400c3db0419f2afa02fa804c512a2b2",
+      "services/windows_native/access.py": "484ce78caeecb0f5be2020b48f154a04fcc74afdf033b88b36f8479cf8685258",
+      "services/windows_native/server.py": "e82d809e12e9db2c33e735e4c79594974f12027373208d2a525ae4440e4e0f53",
+      "services/windows_native/auto_edit_timeline.py": "7deb9a4cc490550ecaff13ff19850eb977c4ce217da11442cbe90547dfcb40b6",
+      "services/windows_native/source_duplicate.py": "2689abf4a6b6f760979f563b2bd3f4efe98511086e73d2ee66286df6241db9c6",
+      "services/windows_native/store.py": "87496142aa6832553b4b78667bfe32739e409da0a3cc09f4fa4a4f9e2625c0a9",
+      "services/windows_native/tests/test_scene_review.py": "9cbe42c4adf52b73d7297d6ee8cce155b46df888d56936ab0c0fa41ec43ba94d",
+      "scripts/north_star_scene_review.py": "270bb2307a402b1deee1305bde35d8b7bef7a05fa4dba46088b20fac3e3bd418"
+    },
+    "signed_http_requests": 11,
+    "new_mock_requests": 1,
+    "new_cpu_jobs": 0,
+    "reused_source_video_seconds": 3,
+    "asr_source_analysis_and_vision": "explicit saved fixtures, not genuine speech/provider acceptance",
+    "saved_recommendations": 1,
+    "deduplicated_create_exact": true,
+    "source_audio_tracks_duration_bytes_original_results_costs_exact": true,
+    "inherited_history_without_authority_transfer": true,
+    "new_external_dispatches": 0,
+    "new_paid_operations": 0,
+    "new_studio_ui_integrated": false,
+    "actual_parent_browser_executed": false,
+    "full_media_qc_or_final_render": false,
+    "owner_uat_accepted": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "public_backup_sha256": "d7fbfee238f942fc3a5271d2047c15a17efb31b3d5b6a4794eb4ad5cdac4fe4a",
+    "prior_public_backup_sha256": "dac2f0691ba02a4b17b223908100927d967f8879e8b89f96cf208014bb9fe0dd",
+    "exports": {
+      "backup.json": {
+        "sha256": "cb3d352869806774d3bb536379d9ae73c8f63f5f1dfed1772a4cc7a5a9494d19",
+        "bytes": 4104
+      },
+      "cost-summary.json": {
+        "sha256": "e111b919697e4b5e3f29a975f4902d1358c6da98a228d4a738bc80b7d8949a54",
+        "bytes": 3289
+      },
+      "expected-journals.json": {
+        "sha256": "76511682615b2dabb937adc26a37e73d74b0c74e0194ed006cca1e620126e60c",
+        "bytes": 2497562
+      },
+      "expected-projects.json": {
+        "sha256": "ed0fa8a7357697569d8d6d259bbfe629c5bb5146b06e2ad431c7a6421fd0e6b8",
+        "bytes": 1303342
+      },
+      "expected-scenes.json": {
+        "sha256": "a404a73b18c8bca88512c0743e544f86b36a0a5c45c42970b49eb1b7cf7dbcd1",
+        "bytes": 115010
+      },
+      "mock-wire-summary.json": {
+        "sha256": "032c087b91c5bb222444cb1a1566e29359b5f84ff71e483c4b7d6c948ce2bd51",
+        "bytes": 79
+      },
+      "original-vision-history.json": {
+        "sha256": "df3654208ba2290474d37e34bdf8fbf2a4aed32869e52bedc09e2e23c6913f60",
+        "bytes": 112596
+      },
+      "prior-restore.json": {
+        "sha256": "049ede6082c0c64622410d2e8c30d7c902fb28df2fff46fdd9b14a9e307b8dd3",
+        "bytes": 4497
+      },
+      "public-scene-review.zip": {
+        "sha256": "d7fbfee238f942fc3a5271d2047c15a17efb31b3d5b6a4794eb4ad5cdac4fe4a",
+        "bytes": 4806767
+      },
+      "restore.json": {
+        "sha256": "572ac57a3916a365e466f0435be876103e2f52965346018670bf7f67a8041b8c",
+        "bytes": 4496
+      },
+      "restored-in-process.json": {
+        "sha256": "722cfb910db2044b9138d38a3ab93787597e67ea470ff5357bb9688f7cecf378",
+        "bytes": 272
+      },
+      "signed-http-summary.json": {
+        "sha256": "ebd6574c2bb0634e5785d65b46922c9d0daba3a1f96f26fe969895f7df604703",
+        "bytes": 1513
+      },
+      "source-hashes.json": {
+        "sha256": "e6cf43aba14c18169017c5aa7946019f4c1e96b72fd8fab5ebff21a0e18c7818",
+        "bytes": 223
+      }
+    }
+  },
+  "fresh_process": {
+    "all_original_scene_highlight_projects_vision_journals_source_bytes_exact": true,
+    "keyless_disabled_provider_history": true,
+    "provider_consent_renewed": false,
+    "provider_retry_or_dispatch": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "scene_review_backend_integrated": true,
+  "scene_review_ui_integrated": false,
+  "new_paid_operations": 0,
+  "new_external_dispatches": 0,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "publishing_performed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

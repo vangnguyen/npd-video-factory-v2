@@ -249,6 +249,10 @@ def source_shots(snapshot):
 
 def view(store, project_id):
     project = store.get(project_id)
+    if project['document'].get('source_scene_recommendations'):
+        from .scene_review import page
+        from .pipeline import Config
+        page(store,Config(data_root=store.root),project_id)
     if any(record.get('plan',{}).get('provenance',{}).get('algorithm')=='native-source-broll-v2'
         or 'reviewed_vision' in record.get('plan',{}).get('provenance',{}) or 'reviewed_input' in record.get('plan',{}).get('provenance',{})
         for record in project['document'].get('source_broll_plans',[])):

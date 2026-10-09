@@ -13,6 +13,15 @@ from app.media_intelligence_models import MediaPlanRead
 
 ALGORITHM='native-source-identity-rebind-v1'
 
+def archive_scene_reviews(document,source_id,revision):
+    """Retain original reviews as lineage, without child workspace authority."""
+    records=document.pop('source_scene_recommendations',[])
+    for record in records:
+        if record['recommendation']['project_id']!=source_id or digest(record['recommendation'])!=record['sha256']:
+            raise WorkflowError('NATIVE_SCENE_REVIEW_HISTORY_INVALID')
+        document.setdefault('source_scene_inherited_reviewed_history',[]).append({'source_project_id':source_id,'source_revision':revision,
+            'original_record':copy.deepcopy(record),'original_record_sha256':digest(record),'authority_transferred':False,'new_review_required':True})
+
 
 def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sha256=None):
     state=validate_document(document)
@@ -68,6 +77,7 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         if isinstance(value,dict):return {key:rewrite(item) for key,item in value.items()}
         return copy.deepcopy(value)
     output=copy.deepcopy(document)
+    archive_scene_reviews(output,source_id,revision)
     if 'media_rights_declarations' in output or 'media_rights_overrides' in output:
         from .rights import clear_project_claims
         clear_project_claims(output)

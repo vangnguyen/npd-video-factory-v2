@@ -293,9 +293,14 @@ class Store:
         previous=self.get(identifier)
         has_reviewed=any(reviewed_plan(MediaPlanRead.model_validate(v['plan'])) for v in previous['document'].get('source_broll_plans',[]))
         if has_reviewed:history(self,previous)
+        has_scenes=bool(previous['document'].get('source_scene_recommendations'))
+        if has_scenes:
+            from .scene_review import page
+            from .pipeline import Config
+            page(self,Config(data_root=self.root),identifier)
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
-            if has_reviewed and digest(doc)!=digest(previous['document']):raise WorkflowError('STALE_VERSION_RELOAD')
+            if (has_reviewed or has_scenes) and digest(doc)!=digest(previous['document']):raise WorkflowError('STALE_VERSION_RELOAD')
             from .auto_edit_timeline import is_auto_edit
             stamp=now(); copy_id=uuid.uuid4().hex
             source=is_auto_edit(doc)
@@ -306,6 +311,8 @@ class Store:
                 resolve_assets(SimpleNamespace(data_root=self.root),project)
                 doc=rebind(doc,identifier,copy_id,revision,stamp)
             else:
+                from .source_duplicate import archive_scene_reviews
+                archive_scene_reviews(doc,identifier,revision)
                 if 'media_rights_declarations' in doc or 'media_rights_overrides' in doc:
                     from .rights import clear_project_claims
                     clear_project_claims(doc)
