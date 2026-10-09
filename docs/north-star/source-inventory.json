@@ -1,6 +1,6 @@
 {
-  "head": "7c439024245aaa7ed3c01693b3a2cb0590beb1de",
-  "audited_at": "2026-10-09T12:40:21.456567+00:00",
+  "head": "0a1578d775d9ec98841f9413eb24b860c19cae7c",
+  "audited_at": "2026-10-09T12:45:09.718360+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -1018,6 +1018,8 @@
     "scripts/native_backup_restore.py": "a89f8573c0059491dd5fab2e668ebd0967a7c8466f03653ab02074eb8115b993",
     "scripts/north_star_native_restore_contract.py": "635e57ee7ddec90549c8ff7cf47c1eee2aaabe8dd959fe8dab0419abdb6c163e",
     "docs/north-star/native-restore-evidence.json": "b8e4c6a305f7d48bdf3dbd3a7b8a23129aad5a7c30d9065207ad91e471b807d0",
+    "docs/RECOVERY_RETENTION.md": "1520ecff2fd1d57ff3f25897593f98c5c41859dff4163375f7c04bf60e09dcda",
+    "docs/north-star/recovery-retention-evidence.json": "461cedc9fa4404f25c8076f1c45c6d774329465deceea57631d9b9f328f37943",
     "docs/DEPLOYMENT.md": "e6e027da861a56a2e6b8cb2e86512c6c5fef85cdea381c73da0da09474e8504c",
     "docs/API.md": "0d934d3b65edf6b947d2242e3d63926e567ab25997778a92a02d24bd144516da",
     "docs/TESTING.md": "a23fda4dbaa4b3fe6c2c8b6e0fa18bd9a1b0951ac698a28e115761c47187a907",

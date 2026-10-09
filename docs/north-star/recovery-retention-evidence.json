@@ -1,0 +1,1047 @@
+{
+  "schema_version": "vf-authorized-recovery-retention-evidence-v1",
+  "parent_head": "0a1578d775d9ec98841f9413eb24b860c19cae7c",
+  "user_authorization": "Dữ liệu đã sử dụng xong có thể xóa để tối ưu bộ nhớ pc",
+  "plan": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\cleanup-20261009-03\\plan.json",
+    "sha256": "a8ae5fca68cabb546887ea7f30ab07efa8ffb065e961c5c1e072676529e229f8"
+  },
+  "receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\cleanup-20261009-03\\receipt.json",
+    "sha256": "7d9457a51150ba2708c15b7e7e5fec4c8a549d1cbc4097c9ed663fa139440c20"
+  },
+  "pending_source_checkpoint": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\cleanup-20261009-03\\pending-source-checkpoint.zip",
+    "sha256": "aac1b002cfe95d60034397e5677a0758841cacdfd3c2449fe2396ec8f571aee8",
+    "source_sha256": {
+      "apps/studio-web/native-source-editor.css": "7e73f9c93c5cd6a28f46b120afbbf18d3a327df7dbe6324dd808b40e1acb583c",
+      "apps/studio-web/native-source-editor.mjs": "910c591bf2134a00f60b6a039ac43257eac7822c43522d0d216efabeb6281589",
+      "apps/studio-web/native-source-thumbnail-review.mjs": "b1b66131607b8087f096eeef85d4f193e2b4a397135741b2127f276f15da6be3",
+      "services/windows_native/access.py": "7bb44f1af9e04dbaac894ecd978b74a66d87963b63e81ac3517c00e785cb870d",
+      "services/windows_native/auto_edit_timeline.py": "3c9787751a4490cecfbebc2d44e3b75e354bca7fd4c31c339fd4cc70c65a27c8",
+      "services/windows_native/project_thumbnail.py": "a6efba47102a9a358a5a871a6d75b8750512147c9c727e0e29db926b5374d29b",
+      "services/windows_native/server.py": "dc46a7084985bd234049fe62b04d7913d8b67480ae425666f0bb7799cbc338ae",
+      "services/windows_native/source_duplicate.py": "3eb044dd8d6975f051bec1bdc7871f981d4c9b9e1e956ee5d3f5d45fd31d79b8",
+      "services/windows_native/source_thumbnail_review.py": "93d7d0211b0bbcf6dd463a3e8207e14ec04641f87c0c7a8bb7fc6faccd363411",
+      "services/windows_native/store.py": "2c05a45f6d6695e168f2d4f20bce75e4f4c2d99e939a7a71e5e475eb46560f81",
+      "services/windows_native/tests/test_official_vision_http.py": "627dfc71ed97e4a94b199e59edf1b4825301bfc1a9a0eddfb9f2f510f3e55a57",
+      "services/windows_native/tests/test_source_thumbnail_review.py": "164a8065fcf0e5b66f6267d5a6a5bf9e99f2a462684af169be41cd131e21494c"
+    }
+  },
+  "retained_at_cleanup": [
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\video-factory-pre-north-star.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-834d6db.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-510e624.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-21169f0.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-cc94900.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-e99cba6.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-0dc6bd5.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-bab4e24.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-94a7e3d.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-cb924d5.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-official-vision-http.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-official-vision-ui.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-object-storage-paths.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-reviewed-vision-planning.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-source-broll-vision.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-source-broll-review.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-reviewed-scene-recommendations.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-reviewed-scene-editing.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-project-thumbnails.bundle",
+    "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-reviewed-source-crops.bundle"
+  ],
+  "latest_full_bundle_at_cleanup": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-reviewed-source-crops.bundle",
+    "sha256": "40f5ebaae6c85603c32b6118180a0a9bf078a482481cf40a620cbea8668198db",
+    "bytes": 197640099
+  },
+  "latest_source_preservation": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-reviewed-source-thumbnails.bundle",
+    "sha256": "5e0bb06ac805baeddbe6686adc9c43c7ced852ece4c9bc0fd0663943bb52dae8",
+    "bytes": 197674893
+  },
+  "all_advertised_objects_covered": true,
+  "accepted_artifacts_fresh_verified": [
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\bd289973201a483ead1ee133173ad84a\\final.mp4",
+      "sha256": "3de523aff48851e8af293ae32eb202399f14089ab3025e257a568479367c66ba",
+      "bytes": 4213829,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\ce85ef66f7c14fec8baced448b97e446\\final.mp4",
+      "sha256": "8ffb131d476f2e66156288eea800ede4eefecbdc69fd5a54fe1db0542762fce9",
+      "bytes": 4633611,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\ada99f2de3aa4b2c9f6b07ff8ee48512\\final.mp4",
+      "sha256": "ac7015299d104b8435e5d5d728925754a02fe7f5e9e6f405dcdc2db07ab133d9",
+      "bytes": 5151150,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\512d5c15781644fe8bcf5548ba50f523\\final.mp4",
+      "sha256": "3fe6569d9075ba5b7ec7e52ae970ab819515d498205b6fb7d26e19191aec98bd",
+      "bytes": 5078345,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\d965046cfe6540159c07a81db41ae8ee\\final.mp4",
+      "sha256": "f1a02ddba1e9cdeca5f116a89d989b9883b98d581cf2bb188e4d4d716f2a5b76",
+      "bytes": 4890456,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\6e8311ed16c44f8bbcd028a6ceaad2fc\\final.mp4",
+      "sha256": "4808b8d1d3dce586350fcb4f7f36bc3a87faecff2620aa3081a2280be9f80eb6",
+      "bytes": 9995926,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\07a70e2df1cc4406a5411e7383913628\\final.mp4",
+      "sha256": "23108da4e551179bc79b1bc516ba6416728e7237e1c69a38264e33edd77da31c",
+      "bytes": 2574491,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\375bb70b35c941c4a47a757afd895f0d\\final.mp4",
+      "sha256": "eca21b5b341a0775f8aa6414da437dc96cf2ee50ab4492facd1deca4174583c3",
+      "bytes": 5643417,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\3fccd54c2ac74e1885315272eb8a0556\\final.mp4",
+      "sha256": "199a89b98b38e64640a22d33bdfe83a863c8551f5dc0a7a7381ecb8972aac9e3",
+      "bytes": 4424951,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\383fa919e288472ebc7d3e2352bd92b1\\final.mp4",
+      "sha256": "f6cd0b54dd5e92a4199dd1a609007a2cce4efb7fcbee9b8ce64354ca9caaab0b",
+      "bytes": 2547644,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\ffcde63a120f4fbd96cc6a2d0ac60471\\final.mp4",
+      "sha256": "d8370c38a7edee3a4aeab2d1e000e726802daaa694974f178acdca7fa1e5aa07",
+      "bytes": 1232480,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\c097b4bab5de4fb98f4a6a1e38b7fa20\\final.mp4",
+      "sha256": "f2931fe23c45d1ad2c3e85ddbb8f51dfcfe00fcdff6c3a787d0ec8c7ec1ff58e",
+      "bytes": 1469069,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\2973305d4b5e49679dc442589f1fcb01\\final.mp4",
+      "sha256": "1fa30d2f7737727a97d7f21c4532277b06362de30ab4cf89a7accc860a9ff599",
+      "bytes": 1392622,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\393e8485b8b9420290b7fe100da89882\\final.mp4",
+      "sha256": "75d908cf65e9ca7afd72bd2ac9be99d2c18bb0fea0d0865ef5cc512e81e6a542",
+      "bytes": 1388504,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\NPD-Video-Factory\\phase2\\jobs\\d82fe11dc6764fd1aa495fdd472dcf4c\\final.mp4",
+      "sha256": "c6e4f5377a95c61d91b3053f641712bba6773a801916619bc7a94cd765575029",
+      "bytes": 1591553,
+      "unchanged": true
+    }
+  ],
+  "deleted_bundles": [
+    {
+      "name": "north-star-5fd3fa5.bundle",
+      "bytes": 193426294,
+      "sha256": "10b3efa99312c8c57a0fd5363df188cc3feff097e386a920cab53ee55df7049a",
+      "advertised_refs_sha256": "b85acc65b75b04471849f01a54d83261bf44d583569cd875c6725c5966a77b46",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-72c1510.bundle",
+      "bytes": 193738505,
+      "sha256": "c6aafc570c21d74ac624f81e0fa597bd76a37e012ae49f62c45e12203ca5845d",
+      "advertised_refs_sha256": "72714a1b7e57b01e9ed82d5fef0114df1353a5d2ddfc0937d8dc95ab599f4d53",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-74ab241.bundle",
+      "bytes": 193753043,
+      "sha256": "b58121e6231b756c7dc50b8a5746021c87fd330d2e200fdb3d339e62d58e94bb",
+      "advertised_refs_sha256": "5b64fea946c14346e61eef669e99c81d616a3252d888e5952ea16d005a7a3bd4",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-preview.bundle",
+      "bytes": 193769846,
+      "sha256": "bccfe2c68d07fe771539a1ac61178d86287c760494c983034a702b297c35bc00",
+      "advertised_refs_sha256": "eab5101999f343a211fd5c791c0edd4eedb46b39ac79df3a66935631e8daae12",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-private-render.bundle",
+      "bytes": 193782337,
+      "sha256": "f8942bffc3e66c7d39363ebae4666dd68eba60ac7694a53e4137a857e2198c5e",
+      "advertised_refs_sha256": "a2f0478a9e0c2bcba19299e018bbca7bfcd992a465307ea9b82ea6f23fcfdfa3",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-worker.bundle",
+      "bytes": 193802326,
+      "sha256": "e7f5ee7ffb45311238fa858536318f50350ddb35c39428ca34c06510fda4b81d",
+      "advertised_refs_sha256": "54cf71e22c6dedb27a6ca4224e3845a219d04fe03833463a4b2581255aa432c4",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-editor.bundle",
+      "bytes": 193831293,
+      "sha256": "8a6832da9f6ed51f6a5a3cc0a0e8c789b7a037757e96554c218198d0d9aeb783",
+      "advertised_refs_sha256": "d95549f5f2cc11fc5413ad7bf74372bc898e66f8a4ee1f0a3a62fa8856034534",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-music.bundle",
+      "bytes": 193841616,
+      "sha256": "ae4f723f3705de1fb913d4fe5349b0481fc0f1becb88dc3c5663166e1364c585",
+      "advertised_refs_sha256": "bd6ff17eb7f80b2331ecce8af5fdd3cfa4ad1702efac278821c218512f1b4118",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-dsp.bundle",
+      "bytes": 193856330,
+      "sha256": "73830bb6ed43c3ede7897d5d3424d3e46535764663a55f3212be3422137275f4",
+      "advertised_refs_sha256": "e4cd7e186617485c055888ee6b7a9583ec659e99a392b39e17c01ff89634577a",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-broll.bundle",
+      "bytes": 193875582,
+      "sha256": "c15175aef638e44a24ca37802d485855b0565d1d77509037a184436c6d586244",
+      "advertised_refs_sha256": "5a7572b21fc92c3b1c13d01477c0805548e9872af6d57de5fe998f88149c9e98",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-duplicate.bundle",
+      "bytes": 193886983,
+      "sha256": "84a9fdb41513daf132bd3fedaa1b09bb21ce3599dedf795fba4d2ac9d3546c88",
+      "advertised_refs_sha256": "4707c9d1d62407e98ffc1e1d54bd3b10f82a8a16f64d5fc7e93d5dd4cc981cff",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-shorts.bundle",
+      "bytes": 193907199,
+      "sha256": "2208586776f77b363c999fb4f37f6216e8fbfd67ed8154980ebbd2be8596f9bd",
+      "advertised_refs_sha256": "cc1c59c771c1ac973114f0856589548fb45a0a427b689387662b8bd6b41824a6",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-effects-preview.bundle",
+      "bytes": 193920862,
+      "sha256": "baebc74e7b0a1dd3ab55867c483a01652e76731b7889541a07a2279805030e7a",
+      "advertised_refs_sha256": "af048b8deb9d3eebc9ae3486789f43e0c07118956756ec9cde37f8dc79203239",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-source-reframe.bundle",
+      "bytes": 193936107,
+      "sha256": "9741fdafa2e42329400ba95f9acb0dc10ba0dbe389b469cd4d945f936113dc84",
+      "advertised_refs_sha256": "97cf5e04a145e9f59642735417dd47b9256efbb06a3c31aa8ddda0f0a5d01e46",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-media-frames.bundle",
+      "bytes": 193963748,
+      "sha256": "d5e1ad86f21504fe5adc3773815ec8b38a5702cbd0d689ae212f7c7e62369b2f",
+      "advertised_refs_sha256": "2e69878ab414abaec86a3fcbb12e781ac679aac30b187b025ab239fa258c6fec",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-stock-providers.bundle",
+      "bytes": 193984422,
+      "sha256": "6433269a3b00565f4c31ad8dd28c1e6fe5042210ebae9122492e4c055f00ce6a",
+      "advertised_refs_sha256": "5b6c3f325b3d831f4a620b367d712078099f7f38458b12c306da492c8559759d",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-comfyui-durable.bundle",
+      "bytes": 194008693,
+      "sha256": "e872383e48efdfbb76e982bad7cf0f289540e07b60e71c0ba724270074b359e0",
+      "advertised_refs_sha256": "1ba78c6962156fb48082b34ed2dc5ae70bdd55ab71724b0434990c83827a7a96",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-generation-modes.bundle",
+      "bytes": 194021440,
+      "sha256": "ca58d1be402c567dbb0960c999fa482e9b7ed330a151c0b9f91de96a2e1e8cc8",
+      "advertised_refs_sha256": "4569049eda8ac9a297ae9013e7a626e7307309715b7d946daf6833329e48e83a",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-comfyui-graph-compiler.bundle",
+      "bytes": 194031358,
+      "sha256": "ca2666722f4e93079ff3e6e9b1ce5e024a7b085689169b8ddb57e2fc10142822",
+      "advertised_refs_sha256": "77b480b092ba48f2c80386280c0600d5b18df610a5fecdc95bd980278ccd77dd",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-comfyui-http.bundle",
+      "bytes": 194043106,
+      "sha256": "60a037569f073768ef29d69a2863f0a1347306fc8c0c2143f35935015bd98ea9",
+      "advertised_refs_sha256": "408553eeeba8633cf03d4ff9ec99e5f636c4ea7fe019c30ba970610777642e39",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-comfyui-binary.bundle",
+      "bytes": 194079887,
+      "sha256": "447dc988961dab2a300b82e8aa4365ac4887f351e14d724470bb38e5d870c9ab",
+      "advertised_refs_sha256": "8ccbdcf511cb390fe3323df33cf92282e4a51b133c4011cd4df2fd14b7f2a0b5",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-ai-education-profile.bundle",
+      "bytes": 194127920,
+      "sha256": "cbd9d6ca34fadc6d2a370b9cc7871928381770bd764dec88dd68f5a1d13a5e49",
+      "advertised_refs_sha256": "5aad28b711d94008585e1bf9e95bf5aa2706bcf5ebeeaad495edd0cd93907a35",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-cost-truth.bundle",
+      "bytes": 194099730,
+      "sha256": "e41ac58907422ed12242c205efc27bffef1bea0817036fdaee53109f2d47b0ae",
+      "advertised_refs_sha256": "ca9aa08bc45861cec43a1caa0c5d9ed4cab0da3137cf18ddb0a682e0c0e6d901",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-costs.bundle",
+      "bytes": 194120693,
+      "sha256": "8a9f3dc5e18e8eb9d7ca4084eef27945fba82be0234c43f0033506a14ed30c42",
+      "advertised_refs_sha256": "6414ddad09191007a710f6d0f83308ccecb4677b2747a398a2675251a5641d78",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-recovery.bundle",
+      "bytes": 194141970,
+      "sha256": "8a5bb9efb6621fadaadb422b16fbf31106851969bd38d590cafac8696dd0b6c4",
+      "advertised_refs_sha256": "85a1afd4316d1c1a82a7b8840e27fa4a8e631c13c9f7fe8fdfe50e55d39516ed",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-observability.bundle",
+      "bytes": 194159272,
+      "sha256": "908017fdf7984d113c9186e56500b8275e02386169c7745af5c77c2cd9696788",
+      "advertised_refs_sha256": "1c914a3247ec56ef5cf0f60b76a553a7ca499f5765523268666ecdf18b73bd68",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-human-identity.bundle",
+      "bytes": 194170035,
+      "sha256": "10e201444d5242f6934e39accebe464bda6d8c23e6c1ea07c24a604539ea8a49",
+      "advertised_refs_sha256": "b9c1c91e9d4173348fef3cf8ee872cc2a6c3054ac87c3c41675768e10ca474a6",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-access.bundle",
+      "bytes": 194201612,
+      "sha256": "552290bf38b3d3dcac429a4bdc8ca1da6fb7a187e2496fd3f29d0fe2d8e94a20",
+      "advertised_refs_sha256": "0965c4760e0e007e3dc053fbe132bb0e41e399b23e8877d9c5ce46638eb133b8",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-wire.bundle",
+      "bytes": 194223630,
+      "sha256": "7042dcac94a481a0c434cfea1b3099b1aa748f82bfd36af079b9828d3c7e819b",
+      "advertised_refs_sha256": "410dde78eff3809f2fb338037b6591af0e3a4ded1d9d8238ad2cea5b4da4c4f5",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-dispatch.bundle",
+      "bytes": 194290075,
+      "sha256": "80cfd1fa69e5745a9ca98df706de5a612253c501402c021a48f5405a5910db8c",
+      "advertised_refs_sha256": "0aca541ba7a9638d464305d7bede18a3663f17caf8dd0e4dac2b07fb5db17b33",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-sessions.bundle",
+      "bytes": 194308269,
+      "sha256": "9419197b68ea76949087f3370a430adb626f60219ebc9b2af9c620d3c02fc4e2",
+      "advertised_refs_sha256": "f6c3c9e749c961ea1299e2ef7d2f029992da32add15914fc8365ec06edd4ef83",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-artifact.bundle",
+      "bytes": 194312050,
+      "sha256": "337ae98d28bce6f9faffc07de58d98fbfc07ae69e956a91c312401f675633187",
+      "advertised_refs_sha256": "668bf9c065a19777895b64cba5fbfe5c129725a3b79b3ae45a215e1f50ca5fbc",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-target.bundle",
+      "bytes": 194347804,
+      "sha256": "eba5a6e445b56fa7fd79038041b28bc42617c007222642f38682788da78f6cff",
+      "advertised_refs_sha256": "c99c502ea190fc7a9272fb64773e25be209a5bcea4c656374e20fc6791feeaec",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-queue.bundle",
+      "bytes": 194318817,
+      "sha256": "b2ed7d5be00405c331a3e1938781caff6c99d5619f478ce46060b7308aa06dcc",
+      "advertised_refs_sha256": "1fd31859db80e0cb509827a0b0ec1a3c8ccd39723984c68aafbbae67f078b3dd",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-oauth.bundle",
+      "bytes": 194371156,
+      "sha256": "e64f114abd635090d5d8a5e49ab372c251088d3585237d511ecebc4167e93a51",
+      "advertised_refs_sha256": "3c6331c82e502b58253fbea7cb09b5ffe2bd9f0baa5cca68e8902c67afa0b336",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-worker.bundle",
+      "bytes": 194409095,
+      "sha256": "6c59a29b16304353a7c285d183dc6232da1bd33d0bcf884a4bbb5a0ea09d00fc",
+      "advertised_refs_sha256": "43ec8cd88578ff928c45a5ee5821343ca45562f8dca3d865bc4a35fcfe1a5659",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-completion.bundle",
+      "bytes": 194423242,
+      "sha256": "5e71c4baaab46b332126961053ced7dd596d3abe5dba7b8e52ef0f5826a99994",
+      "advertised_refs_sha256": "f557ad11f12f78268485224d90b6783367e0a7a1dabd1d3c580d5499c593a971",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-scheduler.bundle",
+      "bytes": 194471350,
+      "sha256": "a0720d267fd18e55aa5a43940cb4cdb8a2ee31c042d71bf715fab96891fec157",
+      "advertised_refs_sha256": "28e30642e1079c61938575bd71518da2fb7058d61d6f2776e3c658ada75c9a72",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-profiles.bundle",
+      "bytes": 194428685,
+      "sha256": "1398b8d61d77d89388973015ab2fe73401e653efc35e9029e761d0e002998fe6",
+      "advertised_refs_sha256": "6b22fe30802a7d3f4018d466c9346d994b0eeb27793bfa2986a82842892d05d8",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-runtime.bundle",
+      "bytes": 194490313,
+      "sha256": "9aee43cbdf7bdc4c3d84390c03b411e5861b23a2a95b0a9f8bad682506fc32e6",
+      "advertised_refs_sha256": "e3afde3038e75cd75c5a4d58dbce02a46c2bcc805d8b7cfa66e7753705d60745",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-tiktok-protocol.bundle",
+      "bytes": 194476994,
+      "sha256": "29c301757060a4aecc5eadd9417a391a60bc96bae73c6f6933eff5f859a92c86",
+      "advertised_refs_sha256": "1b7de0f6223cf32de14be6867357b36a8b9300143aa9b08337de197d7352818b",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publishing-console.bundle",
+      "bytes": 194510624,
+      "sha256": "bd13b3ba7b8cc67fbb08416fe60a43b1e728ec37fff55425dd698b47b408a1d2",
+      "advertised_refs_sha256": "13a41422638b4b0ab4fd2d3332cc69bb9269648bcf20661d8830fc9ee8389a30",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-meta-protocol.bundle",
+      "bytes": 194541499,
+      "sha256": "4ff09fa2fb70791b7bdbd60408c32f382ac791198958c857b2587c5dfa0ec655",
+      "advertised_refs_sha256": "0e92775a28c3f8d9b0882d7a7f56823ca5754ce3398101bd852e581ad087c1d8",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-analytics-reads.bundle",
+      "bytes": 194608179,
+      "sha256": "c335574ba7f1f0c28db905a128d5cceb41cb46cc965e545e9da2bcf87559c34a",
+      "advertised_refs_sha256": "99884415afbe8f2fec9fcc7ea708a2e766ae214ad8c5da0a5eaabcf05159bbfb",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-analytics-console.bundle",
+      "bytes": 194587472,
+      "sha256": "5f6038d4eb946bae2671942b0c25b117dd4c0982c4c3aa5a712fdbafe97142f9",
+      "advertised_refs_sha256": "31105c5ca04e34ed7e42f3651e3e05116b31f6f92cc73d02406939c3dcac25f2",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-analytics-views.bundle",
+      "bytes": 194623040,
+      "sha256": "dac67fae94f87160e331969d740305d68a813e16e60498dac8d6e54adbb0314b",
+      "advertised_refs_sha256": "bf00be6d9d78d18967bcc3027a858f88befc2e88a497701a0887385ecfe0ebb2",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-analytics-scheduler-safety.bundle",
+      "bytes": 194629350,
+      "sha256": "76b8ae651099d988194f04ca0e6a00f0c04801217b17069f95f957a1fc3b8448",
+      "advertised_refs_sha256": "c02c610fea798ef4911ecac06f72338dd5ba9c0af6dc88bd05a3a5f90faef76d",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-analytics-refresh.bundle",
+      "bytes": 194667010,
+      "sha256": "ff55c92190d75ac3837249af2631cd57c7781a69b2f98fd391568b92b43e434a",
+      "advertised_refs_sha256": "ff073493ed882b820fec2a8362cb181103b55866245176d082d3d5872d1bae17",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-feature-context.bundle",
+      "bytes": 194687297,
+      "sha256": "b67e0e0658b629558eda4d88c9e65beb82922e122fc82efaeaa0d8c2a6fda5a0",
+      "advertised_refs_sha256": "331ef6498ef814561695314d59f700e5dcfa8f27a707635758fcb88ec2b1e86d",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-channel-cohort.bundle",
+      "bytes": 194719898,
+      "sha256": "644e58f442ea755b579d056e7f4779c005b8cdcebd1361fbf8aaa875998bf69b",
+      "advertised_refs_sha256": "09d419839ba4c7a0d52aad5b85a669732d4d175ab275395900d95a8cf890221e",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-channel-learning.bundle",
+      "bytes": 194797622,
+      "sha256": "9eaa545eb3436832655454b6d7da61b1012ca0e8f1661160a4e4ddbc0573a62b",
+      "advertised_refs_sha256": "ad6df09c8ac12700df818314d6750d8272affde9ac06eca47fc8bcebe8120149",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-personalized-review.bundle",
+      "bytes": 194803212,
+      "sha256": "de5a041089ab105e9ae699b49d9ab7bb8f50829af06087aee6f2c2af08546ce2",
+      "advertised_refs_sha256": "b581be7ff584355c505b818b56bdf8453af1ba4e6783e3b8f0e4538ba51cbabd",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-publication-time.bundle",
+      "bytes": 194792847,
+      "sha256": "80beea11ba7ff6ae200eb5df9b11b910891a9216a3586215e6c58bc6d81cc49b",
+      "advertised_refs_sha256": "0ead3fe2bf3f6283002a40e37e0ae8e35dec750f3b959245720adf1ecc6f4516",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-publications.bundle",
+      "bytes": 194822672,
+      "sha256": "7ad9fda2659f44a4c859d08ef97f3d3e26a3f412491e7ba6bed42e1d5a082cf1",
+      "advertised_refs_sha256": "eaf249926f3dcdf8c5f3cd5926e41d5868148b9853d77c991efd075abd22404c",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-analytics.bundle",
+      "bytes": 194889437,
+      "sha256": "cf06000fcdeffe2855eb660d41f2c273906909b040fe2d5018404ac4040f3893",
+      "advertised_refs_sha256": "41120668ea953da9677a25d957cb63920049a73d5e25b631d6d1a24b82011cba",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-vision.bundle",
+      "bytes": 194675000,
+      "sha256": "0fec8b6ee39b0e3454d2b0dbd3da887c914dd79cb6a394c64132a99ccbf54943",
+      "advertised_refs_sha256": "751507dbe3a4a81e24683951908cca59f8831137f177294bfa217859fd83814a",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-variants.bundle",
+      "bytes": 194742972,
+      "sha256": "8fb0e22f0d761e18241cbb24a10ad76ac610b8d87e74c59b21297563f81607a7",
+      "advertised_refs_sha256": "aea9721b14f97f7146856265f0cc81b574f5ae8444c89d591d7b2e877b711f8b",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-audio-cache.bundle",
+      "bytes": 195025843,
+      "sha256": "c3dc3448f90d2835bbef336370e997a8fa2a28095b7d6e8996848d4c0c36fb06",
+      "advertised_refs_sha256": "a56896025f48f7b2df7cd60e3c9c89a15115fd73c4aca5aa1ebfce9676bc2f17",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-recovery-render.bundle",
+      "bytes": 195086430,
+      "sha256": "5fbd44c5976aa6e9fe472cb4c077b25b3a9e9a19b7fa9da9a6ce257ccb762619",
+      "advertised_refs_sha256": "4e7e20c93b593351e7aff90bd5ea4b2f2c15cad68a209eb24c266f6f0e17c49d",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-channel-profiles.bundle",
+      "bytes": 195036691,
+      "sha256": "153e0dcf5e86022a881dc57c1e905ad33403427be3e5c40314f5292e4ffcc6c2",
+      "advertised_refs_sha256": "e307f0891178418671fd9036c58f437202601d9e488bfa01e1f44a78255cb7c0",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-agent-hub-bridge.bundle",
+      "bytes": 195180498,
+      "sha256": "c803ea796fd0a08be68a89ae00b5726462a30c6fb1046cf5bd193553bffde18a",
+      "advertised_refs_sha256": "17564060670264f49269f6eaca0b56694a994aafec5d8345396d03d81eae623e",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-bridge-operator.bundle",
+      "bytes": 195075789,
+      "sha256": "ebbfe6ec748661d8353a5b1e9103edb41ab383ecac8af7b3365bed38221d92da",
+      "advertised_refs_sha256": "396ad89209d98cca84d8293fd5d81884b88cb22854c2d41fc1e2b52961a6be7e",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-media-rights.bundle",
+      "bytes": 195123306,
+      "sha256": "be2688417b92516aed834a629e7a90b6e46cd39e8b2070b4f2ea24e0f5fb854d",
+      "advertised_refs_sha256": "72eba0c2963f87b83c417ae9eeb8a65ec20e270233ee451085638067d1a09b6b",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-stock.bundle",
+      "bytes": 195153971,
+      "sha256": "bd2599a9558feae430cbea23ab190830d8b7c5ad6da11e9564a87936ab20287a",
+      "advertised_refs_sha256": "e77e73876726911b00f46fbfaa6a966eb20f316e8c690195dd9acefc1c9a352a",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-owner-rights.bundle",
+      "bytes": 195218052,
+      "sha256": "41b70bbea4bece87f65e109a5084b962245c3fa0ee480b9bab5c265255bb1c38",
+      "advertised_refs_sha256": "434959533cc716e3640bca53cc3f06333941fbab11dc646900001b5ec6db07ac",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-derived-rights.bundle",
+      "bytes": 195212978,
+      "sha256": "209d5764ffd224cb3409d5578e50237b21fd7db5af8a766fdd20d8b60072d5a5",
+      "advertised_refs_sha256": "d747227235c1bb84b3b28874cc04fff385fa688151ee89d1f71e13a609a3528a",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-comfyui-lifecycle.bundle",
+      "bytes": 195229982,
+      "sha256": "5eba080e3eb96a0d5702c198c9ffeff34104196b8e019e92dea1264cba7b3cf1",
+      "advertised_refs_sha256": "836e7ee2bcfe789d2bc14f26605758490b49ad1470cbc8813d753a9213c5d3fa",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-generation-admission.bundle",
+      "bytes": 195250502,
+      "sha256": "b092c79cb7aafb6c12bc7457f2db00650127862a04cfbfdfda19f9aba175da38",
+      "advertised_refs_sha256": "6427e64fed1bc79d81fe39e1254d655e3113fbc94676866773c39c554d55dfd8",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-comfy-http-backend.bundle",
+      "bytes": 195235634,
+      "sha256": "90228ef950096dcc99f44d6c9d25b8393a999a798bd4c1b30e702f3d0c4d4da5",
+      "advertised_refs_sha256": "6a29520dd67d93ceb543f89c10b8479b4a0938121836a743d14e353c1a7e3af7",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-comfy-references.bundle",
+      "bytes": 195364578,
+      "sha256": "88d87847b90444c85716cd6bfd58a9f5feffd8a283bceefbe156846c28e4171e",
+      "advertised_refs_sha256": "59aded04b8fe85f57029ae18a242f3f278bb38a71be8eefdd5aa733922bf0ce4",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-generation-references.bundle",
+      "bytes": 195356315,
+      "sha256": "1703b07c19df96ccec15dbfca7a80cc848cd80628be2ac4b1c8053ec8b192e5e",
+      "advertised_refs_sha256": "3cd163f55f5ba6ab2f5997d80a510ff4fd7844514e9f27d594c63eec95627e47",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-comfyui-job-reconciliation.bundle",
+      "bytes": 195390422,
+      "sha256": "334ff7bc50e321d564c2e2bdca711ec7e4c7ef753e4cc994f4f3205055732047",
+      "advertised_refs_sha256": "57dc951216624bf4685f10153d2e41194154d75fcfce06b9c2489e07244a63e8",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-generation-queue.bundle",
+      "bytes": 195430115,
+      "sha256": "b013b90748d2dc0956e710785fd7bd38866ddebd1413b994ae8944cf7feef1ec",
+      "advertised_refs_sha256": "d54f7267d974f49208a158ed9d2faa2285ba520698750ace44a000f82ac876a0",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-generation-media.bundle",
+      "bytes": 195436522,
+      "sha256": "d1895a23c527a02ad0411b70e4d5285ff5d781b6d318a08360a6f32c8cd88505",
+      "advertised_refs_sha256": "235c10f459376622999b4f271918ff367eecb28b5276a1939095fe44bf53281b",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-generation-worker.bundle",
+      "bytes": 195451671,
+      "sha256": "a8e28d6299c4e01b3385b6a32e6b5d5a091f24ad01a07955f243dc8fe87ff315",
+      "advertised_refs_sha256": "c95c029c1f3b87ce3006dc67c94eaf4697e7a9915b0ccf221fada4115b92102d",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-generation-http-studio.bundle",
+      "bytes": 195495298,
+      "sha256": "b98bd533c06131f55517f02f143844e6adf37f007c6533d7d394220cef3a1908",
+      "advertised_refs_sha256": "b9ca9764ae833b5c8e4b9e05eb27974192fbbf05fd9121829d620b07494d3c8f",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-studio-media-plan.bundle",
+      "bytes": 195508181,
+      "sha256": "7bc177b877763dba98f6054caead0f84b6435018a70f2928335e3bdd65f9ad97",
+      "advertised_refs_sha256": "645511427c5877035dc0187390ce2545499d4cfcc1f0ae063d470fa45e5d1ca1",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-media-plan-budget.bundle",
+      "bytes": 195543695,
+      "sha256": "35a5396542fa1e44a9c17033e6ebdec35ea8c0a41c3b70f916c3de262744407d",
+      "advertised_refs_sha256": "f9252e0ee8560eec010399f53609ab5f8b5e12f6b4fe2843e5cb051458999d06",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-media-resolution.bundle",
+      "bytes": 195564667,
+      "sha256": "c3abb95f786db24298e2347e689e4f1223c2f162f95ad4e934ed9858c18939f7",
+      "advertised_refs_sha256": "6ff8bbe9b8592d7c65cb780b81e6b3227b46dd9a82b70f3d5d8a887ec3d54f73",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-storyboard-full-qc.bundle",
+      "bytes": 195556420,
+      "sha256": "ddc9ff1c2301df794f34a085fa87a932e3a1692cb879a8f09da92eb5e9d04572",
+      "advertised_refs_sha256": "1857daa76b06e7aee6802802f1339b8b31b19e1cbfb5390ad7f3cbdc1a897f75",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-narration-preparation.bundle",
+      "bytes": 195606082,
+      "sha256": "39848f3bd37574201bc302f6c61927311d78c3ed3537157da6a8366e446b2f07",
+      "advertised_refs_sha256": "446dcb73a3acb446308a1f61b9759d6674797460440fe113d9b54988f31e1fc6",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-narrated-preview.bundle",
+      "bytes": 195636440,
+      "sha256": "98beab24520df9b686446e2e682f9ff21c8e945a681c4cb40e3e0eda200fe8b9",
+      "advertised_refs_sha256": "7834c60d60a5852830d2d3000662897a1946c39d47e2fbc4fe86ad32e16d206b",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-guided-narration.bundle",
+      "bytes": 195635751,
+      "sha256": "cedf6d172dd3e587dda324ee1db909d4432bbecfebbcd93a6071f328c230aba1",
+      "advertised_refs_sha256": "1295487b3d298ba3d5a0de347e8e0dec55840625fd5149736dfe2d37757a479c",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-trend-radar.bundle",
+      "bytes": 195439464,
+      "sha256": "d85f5cbea272b2adac85b59358adb10b75f0a0a20ca5540329ca33510c30ee89",
+      "advertised_refs_sha256": "b075faa81c8173eebd2e9513f427aab56840ee1d9547a3f92e8852e1c8bb02a3",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-narration-rights.bundle",
+      "bytes": 195514065,
+      "sha256": "12e969b16bb94a73322d8502d314484b43040b80c8aa0756cd5142a0c93d994c",
+      "advertised_refs_sha256": "ec2835ea1c4a6f56698080d192664bf35b8c07ae84715630b0e143889b06a867",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-audio-quality.bundle",
+      "bytes": 195554477,
+      "sha256": "aab25c4bc6ea8dc9d49926b006319665dab7c2c69a5f97d9a4d3c8de0e006a08",
+      "advertised_refs_sha256": "b5fb44e79722a27d023332fe27ed5d5e03067d3ead03478caa164810a5cc0c8a",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-analytics-visuals.bundle",
+      "bytes": 195574076,
+      "sha256": "9779d2b02b42d13c64229a90e0b9d09fca06e50f31e975ccf0b77cab5f9b199f",
+      "advertised_refs_sha256": "15ace6ea48146ff5d029ce1bc741575f707b0aca60da705eafa7cd1b474b8903",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-analytics-refresh.bundle",
+      "bytes": 195911611,
+      "sha256": "0f38538f55076e952ebff2c9bb28498b5405ac29b27eabaf10b917dae15f2b23",
+      "advertised_refs_sha256": "5ba3db641dd080963569e44c343e669f70e72c8c68832bb4b6700470f96b78f2",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-narrated-canvas.bundle",
+      "bytes": 195961262,
+      "sha256": "56f7c1e805b68a721ce0bc05e1d91cc4855f99a1e15120807755486dd7d2fe87",
+      "advertised_refs_sha256": "173c3ca7e9aee710b942399a5e3c56e200fa113270d125b3c6a9adc6027b9f8b",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-narrated-variants.bundle",
+      "bytes": 195987667,
+      "sha256": "c18e344bed8ce361f22757906d0197f1c129928bfc6c3c16565ca3ce7f4c18c6",
+      "advertised_refs_sha256": "fe512aee63702dc53a96ddfe833556915f18659e94bfd3e23aca824bc613175a",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-narrated-music.bundle",
+      "bytes": 196010679,
+      "sha256": "c721dab8fac988f202e0f07fa733e1250974f3ab2e6c577df91ae6750e71f2be",
+      "advertised_refs_sha256": "165375e2889e77b4b4f3439a3b945808ffd9028230c18b82106ae5c660ac574e",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-accounts.bundle",
+      "bytes": 196088741,
+      "sha256": "be17fccdb0c0190a912e917507d5c74b71b6e4d5abb9f7e4b36d34e8f1259d6b",
+      "advertised_refs_sha256": "12354af93d0b5ae13e703edec60591ffc5a1605234c78a7f079a777c34977aa8",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-publish-review.bundle",
+      "bytes": 196119027,
+      "sha256": "3500a551aaa622de1512518d384d4221b955ddba887dcb55935e63671e52baee",
+      "advertised_refs_sha256": "14a9993a01252018cd311e22aea620050d956b9a0a3d2d69781dfdcca1886fe7",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-account-cost-retries.bundle",
+      "bytes": 196199159,
+      "sha256": "024b81895881724e05f578b1631eef8ce8996368a206a9801dd12ab6d85f7f5c",
+      "advertised_refs_sha256": "710803b84be73dfabcdcb794c3ef95b450d9f3080220545d17495fa5c7025447",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-resumable-worker.bundle",
+      "bytes": 196158747,
+      "sha256": "349cd41c2044a63d0a22a0c0f6b1d90fe41bc2ce03058ea729cdb7f23fce7d25",
+      "advertised_refs_sha256": "0df3e8198da5ed2e4e2b1a9eff5ee8c8c872e2486e4f57db22b3fff014f8aeac",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-publish-lifecycle.bundle",
+      "bytes": 196184260,
+      "sha256": "d890a6bcf7a4c1a903058631f024fb063306b962c3432328c5d12228ef828259",
+      "advertised_refs_sha256": "5d04773621a173d30d533aadb1f9feda1555b92eaa366768b52617c528b308fd",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-publish-credentials.bundle",
+      "bytes": 196208797,
+      "sha256": "4c16cd07f0a2854041decef50271a768e2230fc3c233a76300802b4e3e2ed194",
+      "advertised_refs_sha256": "acafc3c9a91b3bc52442d92a81b54ad0f11df2c4d2a0cbdf21fbcb10abac8929",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-publish-controls.bundle",
+      "bytes": 196252164,
+      "sha256": "282545e9cac6fdde3721ad040e8d5d32caed1cc57a9bad7513d6c546a3488dd2",
+      "advertised_refs_sha256": "408e9a0620854eeb0cb44199b7e63aa520ee28d53ee3670499e8d0e7c21ab29b",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-publish-metadata.bundle",
+      "bytes": 196274562,
+      "sha256": "9e574592422f9b354f32a2b54a22e43696373d5e21522225daff25eb6f90e71f",
+      "advertised_refs_sha256": "e554273d378126265d2fc8a82fb2738526928251f21708d4a6749e2c455a8c25",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-publish-revocation.bundle",
+      "bytes": 196302177,
+      "sha256": "01071659039940f238a9cc9387f6fce407db147c01993690da133acbb93d8b78",
+      "advertised_refs_sha256": "7ab4406b0db3f39178c888b1e5ce7e7f4dd5b52951f2a0159fc1bd8903ce4306",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-publish-queue-kernel.bundle",
+      "bytes": 196328442,
+      "sha256": "01c8cb7560d3363ffea03dd1803e9e50e1f7429103883403c4e028d73052c6df",
+      "advertised_refs_sha256": "8836fc1e0c130d9084a5fc14ff1e5248019da94e83ef6519f12a0413c304691d",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-publish-queue-controls.bundle",
+      "bytes": 196356126,
+      "sha256": "7a7a145b91fca05054878181db00081e7434bf9e2fe9316a920843f55a187f04",
+      "advertised_refs_sha256": "5521332c14bc1d84eefae9c2c5ea68ea994118bccb6f80aaf5108069fcd2522c",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-analytics-kernel.bundle",
+      "bytes": 196412683,
+      "sha256": "900e425a6a79eab6bab4e89ac461252b819b73adca493747346a052de1fe53ef",
+      "advertised_refs_sha256": "78e7a6d7b056866d20c29e644bfd2fa30b70fe4e12c2a9858f4fbe23a21c35c6",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-read-registry-fences.bundle",
+      "bytes": 196418804,
+      "sha256": "fb0c7895c90c361653b49c24ca40f6a12daae529bfab5104b5818e51ad3ea880",
+      "advertised_refs_sha256": "a643ba38bdba3525e0c49bc89c51911c9229fa2a66ba55fe9cd31ed77c71c071",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-analytics-controls.bundle",
+      "bytes": 196471466,
+      "sha256": "70175c19c1b13323eb095e8f66aa2a40c1a86872b0e93ebcfb7eec0070a575f8",
+      "advertised_refs_sha256": "097ca1a6a4f2f26385f193b65feed2451f7630002e99c76be8d7be2fe1f536dc",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-winner-kernel.bundle",
+      "bytes": 196481073,
+      "sha256": "fe43bd34ba5dceaa79ceb09a8ab520349ceb4b9d5df2b9a67b0c7255d4570dcb",
+      "advertised_refs_sha256": "8c7106b45413088de997224adb2d3250e6d3222e67bf21dd6979f22fff284b2c",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-winner-controls.bundle",
+      "bytes": 196520733,
+      "sha256": "ddc7de2e544239cfc77100fc9af9a05f9891636e70849ffaca0e50ece0394149",
+      "advertised_refs_sha256": "ea6371785574bbb728493cf068f187fa23699c3bf6f570807b3cf3e32a12aa72",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-learning-kernel.bundle",
+      "bytes": 196540808,
+      "sha256": "f7dea99273fa6b8c7d457024423398e09714148c94942fc731f08a99b30f377e",
+      "advertised_refs_sha256": "37b5847e5a4aac11d0e62df2553f779a18b535870506d519ccd800eaf4bb469a",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-learning-controls.bundle",
+      "bytes": 196643513,
+      "sha256": "2ed99c0e9fbbe865647a2894578c6020376ef52f46d10c99c9fc15c3918be989",
+      "advertised_refs_sha256": "c8a29c49bc824979a196f02c0a3ae6fb157350fe1e632df0942d5cde8293c0b5",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-qualified-learning-feedback.bundle",
+      "bytes": 196732341,
+      "sha256": "18a91b739b1c8db9e58b1897a108f548bd9eb27de127bfbd010f5e8407f2ef7f",
+      "advertised_refs_sha256": "06123cb4fcc4cb02e4f2e11e5293fb17fa2324cd4d696216a031633deeec6004",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-qualified-learning-controls.bundle",
+      "bytes": 196672223,
+      "sha256": "4db5125a06efec15bd7a32b8ce34c506c5b7d6e353e7d130457922d784c678a2",
+      "advertised_refs_sha256": "20fa6250a1d03547f7c5d993da846bac2916139330834bb6284eb93fc714c023",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-qualified-bridge.bundle",
+      "bytes": 196722228,
+      "sha256": "ce55b73c76ce5d15d26aab30525f8e2f42b154cb07b511fe4a96191fd9eed2d7",
+      "advertised_refs_sha256": "4b7ecb66f93a3ea76955a61aeeb4351941c5928771c913eb7099aa8161ee18c1",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-refresh.bundle",
+      "bytes": 196786682,
+      "sha256": "8ec64fb9ed854c0f0d267ac803c53de46b63c722e0eecf5c0639b953b800d0e6",
+      "advertised_refs_sha256": "5a8dfe5b9f4bf54e604e6bf3b098fd5e87b3995b096e45a807aef06ec15ea59f",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-native-official-refresh-controls.bundle",
+      "bytes": 196807668,
+      "sha256": "621e3d8886fd672fd9eba3b3278a5558c8e96b3da790308caaf5be3303f0bda6",
+      "advertised_refs_sha256": "12fde31584471da3bdff29ebdbf31c22990ad3a1db31087c895921fe91a9048f",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-google-oauth-protocol.bundle",
+      "bytes": 196822911,
+      "sha256": "5ff367641f934a79d65c5201dea272d70820576bd0bd84875e2ce4d176fffe92",
+      "advertised_refs_sha256": "bfdd8fd132d1406660f2b66bbef63d2f00b969727bb57fd0987a41a169301449",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-google-oauth-vault.bundle",
+      "bytes": 196856672,
+      "sha256": "ce1c4e78b8dc13a8c190a55ae7041400aea830dd826e65705e0b351d4d696731",
+      "advertised_refs_sha256": "0d57684b77c51f52cea0af2a7c461f48463d4020a0dabe2c0c21d32f12514740",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-google-oauth-operations.bundle",
+      "bytes": 196890329,
+      "sha256": "8679b3fe1663b093c4499b0cdd0f70bb892c66c7306b578b41fcbd41178307b9",
+      "advertised_refs_sha256": "8b929f47f54093f174c9e86b4e7fa0baa3842784ea76ffaad8528828af776e9c",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-google-oauth-http.bundle",
+      "bytes": 196947542,
+      "sha256": "c846895602c4889d81ed1e2fb1103f1a7d8ea1230b598ffda072ecc85640f52e",
+      "advertised_refs_sha256": "e7f90db3da205574b448635dd63f69a69aa8c79e18c6bdcbf57b2a15652a441c",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-google-oauth-callback.bundle",
+      "bytes": 196932680,
+      "sha256": "af3721de1bc570be32dad3954f38803dfa98fee4a1033697aa610d230121d5c3",
+      "advertised_refs_sha256": "c9bc3251627db77f9563e85a371319f49f4a30e55eee5d45a902de289d0dbbbc",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-google-oauth-ui.bundle",
+      "bytes": 197000510,
+      "sha256": "a26501754ff9a6d6fe87e53cdaeac640c53d4f2f470879ea8e7bf82727a73dfd",
+      "advertised_refs_sha256": "06e24dc9e8b0465199961bf53296df24861e80a1817147f0d5f499b664996304",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-vision-frame-bridge.bundle",
+      "bytes": 197088236,
+      "sha256": "1a0a4e2f4f688e0cabf66abea40678eda4a9305d46bb3417e2e2f94efd9bb80e",
+      "advertised_refs_sha256": "7530e8e3529bc9d1e5c11e26c672a45b3fdb881c71f51b6eff771081aa1cf885",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-vision-transport.bundle",
+      "bytes": 197100053,
+      "sha256": "10f0b3c239883949f8e0853575bdfd2eea416e82e9d317c29c652d125fa36d16",
+      "advertised_refs_sha256": "f72eb457ad0a067d56fcf3727134ba3a8c8338e898d4038dd6f3645e212c1345",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-vision-registry.bundle",
+      "bytes": 197115063,
+      "sha256": "47c6ea4fb7e0a77a50172613a8cc9b04b8b535bec9b93cb8d1eba7a378a4355f",
+      "advertised_refs_sha256": "7a0f1ada8284e83ef3d401aa2a08f667e598c5c6fcde81309123ceae362e2085",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-vision-response.bundle",
+      "bytes": 197164964,
+      "sha256": "98ec8b036a6fa29cc233f6902d2c6428ba85777458fe98a8ab16e528796a1643",
+      "advertised_refs_sha256": "0c94d842c959cc639c3951e888e8e708ba330b18ea15cee6521445ff707a7199",
+      "advertised_objects_covered": true
+    },
+    {
+      "name": "north-star-official-vision.bundle",
+      "bytes": 197207279,
+      "sha256": "fdf06cd1f2a4603430a042e6e151c6841226fceb54f88f52b4faac372acfb249",
+      "advertised_refs_sha256": "8f466af1504cf4d5d43db43000e2378d457373413046b92f0bf52bee4eaff9ea",
+      "advertised_objects_covered": true
+    }
+  ],
+  "deleted_bytes": 24402019617,
+  "disk_free_after": 44715663360,
+  "failures": 0,
+  "accepted_media_deleted": false,
+  "source_repository_deleted": false,
+  "evidence_receipts_deleted": false,
+  "raw_baseline_archive_deleted": false,
+  "source_preserved": true,
+  "main_merged": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "owner_uat_accepted": false,
+  "stop_condition_pending": false
+}
