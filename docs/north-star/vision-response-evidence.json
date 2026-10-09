@@ -1,0 +1,75 @@
+{
+  "schema_version": "native-vision-complete-response-evidence-v1",
+  "parent_head": "e7045f532228538ad061818f393a9313ba08a292",
+  "source_sha256": {
+    "apps/api/app/openai_vision_provider.py": "56e7d0b7efacd6886e5964845eafa97e6e06b6dacd4f1a0c16c08f2eee822686",
+    "apps/api/tests/test_vision_response_observer.py": "685c7d373558118b3af97d2062a1d41c81bee335197b3aaea01199c6060acab8",
+    "services/windows_native/vision_registry.py": "79f78a6d44d12737c50ec8cd9f3a0921d1a5de63b3d95f145478e1432f153a69",
+    "services/windows_native/tests/test_vision_registry.py": "9c9589059b1d49a3641fd09562eb978a80734105850af54fb14f95f60e496bb8",
+    "scripts/north_star_vision_response.py": "f0ad8f2675d86ea7464094b813827ce42153b8a3598170950606da1c46249dd5",
+    "docs/NATIVE_VISION_RESPONSE_EVIDENCE.md": "83c7683bc8160cfce98bada26e5cc5d0e05764da514a8a7f23ede513e16d3a57"
+  },
+  "tests": {
+    "api_related": {
+      "passed": 122,
+      "new_observer_cases": 28,
+      "seconds": 23.6,
+      "log": "vision-observer-api-n2.log",
+      "sha256": "c88d5e59dfd0534203b92be68f241ed1baaadd825ab68135d325e919e6a284a6",
+      "fresh_owned_short_base": "C:/vf-vision-observer-pytest-03"
+    },
+    "native_related": {
+      "passed": 35,
+      "seconds": 13.757,
+      "log": "vision-observer-native-n1.log",
+      "sha256": "84a7d4832a5dc22c8d6947c5b571a7fdc910188792b59503acdd28792a099f7e"
+    },
+    "initial_model_mismatch_test_exposed_and_repaired": true,
+    "intermediate_long_windows_path_fixture_failures": {
+      "failed": 5,
+      "passed": 117,
+      "log_sha256": "e3190d4a151860528c1aff230b0ffb013ab55af6122045ff2ad485e789186ca8",
+      "same_source_short_path_rerun_all_passed": true,
+      "general_object_storage_long_path_hardening_complete": false
+    },
+    "prior_full_native_passed": 1181,
+    "unchanged_prior_studio_passed": 404,
+    "current_full_native_api_studio_run": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\vision-response-flow-n1",
+    "sha256": "82e4aee84f6a0908f40d10670899e4752b8ae0faced039c46bfc8522678aed3a",
+    "public_backup_sha256": "8a3169414450966be46e29dfceebb4698b8d2684e734285e8fad8c20e263657e",
+    "fresh_process_sha256": "6d64e1d87decd6fc9dbaf24a0fe46dc0114f0daa20cb4a05565493af6f78bc7f",
+    "complete_observations": 5,
+    "mock_requests": 5,
+    "cost_operations": 5,
+    "known_usage": 4,
+    "unknown_usage": 1,
+    "projects": 2,
+    "reused_unique_pngs": 9,
+    "journals": 10,
+    "original_legacy_histories": 4,
+    "new_cpu_jobs": 0
+  },
+  "optional_sync_observer_only_complete_bounded_body_before_semantics_or_cleanup_constructor_inert": true,
+  "safe_request_complete_response_sha_http_ids_mock_and_strict_usage_only_no_body_captions_key_or_private_path": true,
+  "explicit_integer_usage_no_missing_zero_bool_string_float_negative_or_cached_clamping_ceilings_enforced_unknown_null": true,
+  "returned_model_configured_family_or_dated_snapshot_no_arbitrary_model_acceptance": true,
+  "known_usage_hash_retained_despite_semantic_json_schema_coverage_model_incomplete_cleanup_or_late_configuration_failure": true,
+  "no_complete_observer_for_incomplete_ambiguous_oversized_body_private_fixed_callback_failure_no_retry_context_restored": true,
+  "five_additive_mock_ledger_records_actual_billed_cost_null_and_mock_paid_external_false_known_response_before_late_fence": true,
+  "original_projects_media_private_ciphers_nine_original_journal_rows_four_history_shapes_preserved_all_ten_journals_fresh_recovery_exact": true,
+  "real_secret_reads": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "real_publications": 0,
+  "semantic_inference_performed": false,
+  "native_official_runtime_integrated": false,
+  "browser_owner_acceptance": false,
+  "billing_invoice_verified": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

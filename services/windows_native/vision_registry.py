@@ -98,7 +98,7 @@ class NativeVisionFactory:
             'controller_hard_timeout_seconds': 120, 'max_output_tokens': 8000,
             'provider_authorized': False, 'automatic_dispatch': False, 'publishing_enabled': False, 'real_provider_tested': False}
 
-    def provider(self, extractor):
+    def provider(self, extractor, *, response_observer=None):
         p = self.check()
         if self.public()['status'] != 'CONFIGURED': raise WorkflowError('NATIVE_VISION_PROVIDER_NOT_CONFIGURED')
         if (type(extractor) is not NativeEvidenceFrameExtractor or extractor.root != self.root
@@ -115,7 +115,7 @@ class NativeVisionFactory:
             input_vnd_per_million_tokens=p.input_vnd_per_million_tokens,
             cached_input_vnd_per_million_tokens=p.cached_input_vnd_per_million_tokens,
             output_vnd_per_million_tokens=p.output_vnd_per_million_tokens,
-            transport=self.transport, allow_zero_cost_contract_test=self.mock)
+            transport=self.transport, allow_zero_cost_contract_test=self.mock, response_observer=response_observer)
 
 
 def load(path, vault, *, operator_enabled=False):

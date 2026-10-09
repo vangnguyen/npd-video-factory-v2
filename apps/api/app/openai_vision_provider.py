@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import hashlib
+import inspect
 import json
 import re
 import time
@@ -14,7 +15,7 @@ from pathlib import Path
 from typing import Literal, Protocol
 
 import httpx
-from pydantic import Field, ValidationError, model_validator
+from pydantic import Field, StrictBool, StrictInt, ValidationError, field_validator, model_validator
 
 from .auto_edit_models import MediaMetadata, SceneRead
 from .models import StrictModel
@@ -484,6 +485,37 @@ def _error_evidence(
     )
 
 
+class VisionResponseObservation(StrictModel):
+    """Complete bounded wire evidence, without provider body, captions or credentials."""
+    schema_version: Literal['vision-response-observation-v1'] = 'vision-response-observation-v1'
+    request_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    response_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    http_status: StrictInt = Field(ge=100, le=599)
+    provider_request_id: str | None = Field(default=None, max_length=200)
+    client_request_id: str = Field(pattern=r'^[A-Za-z0-9._:-]{1,200}$')
+    mock_transport: StrictBool
+    input_tokens: StrictInt | None = Field(default=None, ge=0, le=1000000000)
+    cached_input_tokens: StrictInt | None = Field(default=None, ge=0, le=1000000000)
+    output_tokens: StrictInt | None = Field(default=None, ge=0, le=1000000000)
+    calculated_usage_cost_vnd: str | None = Field(default=None, pattern=r'^[0-9]{1,13}\.[0-9]{6}$')
+    billing_invoice_verified: Literal[False] = False
+
+    @field_validator('billing_invoice_verified', mode='before')
+    @classmethod
+    def invoice_unverified(cls, value):
+        if value is not False: raise ValueError('Raw unverified billing marker required')
+        return value
+
+    @model_validator(mode='after')
+    def coherent(self):
+        values = (self.input_tokens, self.cached_input_tokens, self.output_tokens, self.calculated_usage_cost_vnd)
+        if any(v is None for v in values) != all(v is None for v in values):
+            raise ValueError('Usage evidence is known together or unavailable')
+        if self.cached_input_tokens is not None and self.cached_input_tokens > self.input_tokens:
+            raise ValueError('Cached usage cannot exceed input usage')
+        return self
+
+
 class OpenAIVisionProvider:
     """Fail-closed Responses API adapter; authorization remains in ProviderSafetyController."""
 
@@ -512,9 +544,12 @@ class OpenAIVisionProvider:
         transport: httpx.AsyncBaseTransport | None = None,
         allow_zero_cost_contract_test: bool = False,
         monotonic_clock: Callable[[], float] = time.perf_counter,
+        response_observer: Callable[["VisionResponseObservation"], None] | None = None,
     ) -> None:
         if type(allow_zero_cost_contract_test) is not bool:
             raise ValueError("Explicit Vision contract-test flag required")
+        if response_observer is not None and (not callable(response_observer) or inspect.iscoroutinefunction(response_observer)):
+            raise ValueError("Synchronous Vision response observer required")
         if allow_zero_cost_contract_test and (transport is None or isinstance(transport, httpx.AsyncHTTPTransport)):
             raise ValueError("Zero-cost Vision tests require an explicitly injected test transport")
         if model != "gpt-5-mini":
@@ -566,6 +601,7 @@ class OpenAIVisionProvider:
         self._allow_zero_cost_contract_test = allow_zero_cost_contract_test
         self._response_schema = response_schema
         self._monotonic_clock = monotonic_clock
+        self._response_observer = response_observer
 
     def __repr__(self) -> str:
         return f"OpenAIVisionProvider(model={self.model!r}, credential_alias=<redacted>)"
@@ -662,6 +698,8 @@ class OpenAIVisionProvider:
                 provider_request_id=provider_request_id,
             )
             response_bytes = await self._read_response(response, client_request_id, provider_request_id)
+            if self._response_observer is not None:
+                self._observe_response(response_bytes, request_bytes, response.status_code, provider_request_id, client_request_id)
         except httpx.TimeoutException as exc:
             if isinstance(exc, httpx.PoolTimeout):
                 trace.mark("http_connection_pool", dispatch_state="not_sent")
@@ -924,6 +962,14 @@ class OpenAIVisionProvider:
                 category="structured_output_validation",
             ) from None
 
+        returned_model = response_payload.get('model')
+        if (not isinstance(returned_model, str) or not re.fullmatch(re.escape(self.model) + r'(?:-\d{4}-\d{2}-\d{2})?', returned_model)):
+            evidence = _error_evidence(category='response_parse_failure', code='OPENAI_VISION_RETURNED_MODEL_MISMATCH',
+                retryable=False, http_status=response.status_code, response_bytes=response_bytes,
+                provider_request_id=provider_request_id, client_request_id=client_request_id,
+                provider_error_message='Vision returned model does not match the configured family')
+            raise OpenAIVisionResponseError('Vision returned model does not match the configured family',
+                error_evidence=evidence, code=evidence.code) from None
         expected_indexes = set(range(len(extracted)))
         actual_indexes = {frame.frame_index for frame in structured.frames}
         if actual_indexes != expected_indexes:
@@ -984,6 +1030,35 @@ class OpenAIVisionProvider:
             provenance=provenance,
             actual_cost_vnd=actual_cost,
         )
+
+    def _observe_response(self, response_bytes, request_bytes, http_status, provider_request_id, client_request_id):
+        known = {}
+        try:
+            envelope = _strict_json(response_bytes)
+            receipt, calculated = self._cost_receipt(envelope.get('usage') if isinstance(envelope, dict) else None,
+                http_status=http_status, response_bytes=response_bytes,
+                provider_request_id=provider_request_id, client_request_id=client_request_id)
+            known = {'input_tokens': receipt['input_tokens'], 'cached_input_tokens': receipt['cached_input_tokens'],
+                'output_tokens': receipt['output_tokens'], 'calculated_usage_cost_vnd': str(calculated)}
+        except (ValueError, UnicodeError, RecursionError, OpenAIVisionResponseError):
+            # Complete response evidence remains known even when usage is unavailable.
+            pass
+        observation = VisionResponseObservation(request_sha256=hashlib.sha256(request_bytes).hexdigest(),
+            response_sha256=hashlib.sha256(response_bytes).hexdigest(), http_status=http_status,
+            provider_request_id=_safe_request_id(provider_request_id), client_request_id=client_request_id,
+            mock_transport=self._transport is not None, **known)
+        try:
+            returned = self._response_observer(observation)
+            if returned is not None:
+                if inspect.iscoroutine(returned): returned.close()
+                raise ValueError()
+        except Exception:
+            evidence = _error_evidence(category='response_parse_failure', code='OPENAI_VISION_RESPONSE_OBSERVATION_FAILED',
+                retryable=False, http_status=http_status, response_bytes=response_bytes,
+                provider_request_id=provider_request_id, client_request_id=client_request_id,
+                provider_error_message='Complete Vision response could not be retained; review required')
+            raise OpenAIVisionResponseError('Complete Vision response observation requires review',
+                error_evidence=evidence, code=evidence.code) from None
 
     @staticmethod
     async def _read_response(response, client_request_id, provider_request_id):
@@ -1149,14 +1224,12 @@ class OpenAIVisionProvider:
                 category="usage_receipt_missing",
             )
         try:
-            input_tokens = max(0, int(usage.get("input_tokens", 0)))
-            output_tokens = max(0, int(usage.get("output_tokens", 0)))
+            input_tokens = usage.get("input_tokens")
+            output_tokens = usage.get("output_tokens")
             details = usage.get("input_tokens_details")
-            cached_tokens = (
-                max(0, int(details.get("cached_tokens", 0)))
-                if isinstance(details, dict)
-                else 0
-            )
+            cached_tokens = details.get('cached_tokens') if isinstance(details, dict) else None
+            if (any(type(v) is not int or not 0 <= v <= 1000000000 for v in (input_tokens, output_tokens, cached_tokens))
+                or cached_tokens > input_tokens): raise ValueError()
         except (TypeError, ValueError) as exc:
             evidence = _error_evidence(
                 category="usage_receipt_invalid",
@@ -1174,7 +1247,6 @@ class OpenAIVisionProvider:
                 code=evidence.code,
                 category="usage_receipt_invalid",
             ) from None
-        cached_tokens = min(cached_tokens, input_tokens)
         if input_tokens > self.input_token_ceiling:
             evidence = _error_evidence(
                 category="usage_receipt_invalid",

@@ -213,18 +213,19 @@ class VisionRegistryFrameTests(unittest.TestCase):
         return NativeVisionFactory(profile(r), vault, operator_enabled=True, transport=transport)
 
     def test_exact_factory_protected_key_and_native_png_enter_shared_mock_adapter_without_runtime_mutation(self):
-        bridge = self.bridge(); before = self.store.get(self.project['id']); calls = []
+        bridge = self.bridge(); before = self.store.get(self.project['id']); calls = []; observations = []
         def handler(request):
             self.assertEqual(request.headers['Authorization'], 'Bearer ' + KEY); calls.append(request.method)
             return httpx.Response(200, json=frames_fixture.response_payload(1))
         factory = self.factory(httpx.MockTransport(handler))
         with patch('services.windows_native.assemblyai_connection._dpapi', side_effect=AssertionError('NO CONSTRUCTOR DECRYPT')):
-            provider = factory.provider(bridge); self.assertEqual(factory.public()['status'], 'CONFIGURED')
+            provider = factory.provider(bridge, response_observer=observations.append); self.assertEqual(factory.public()['status'], 'CONFIGURED')
         self.assertEqual(calls, [])
         from services.windows_native.media_frame_analysis import checked_path
         result = asyncio.run(provider.analyze(checked_path(self.config, bridge.source['asset']), metadata=bridge.input_metadata(),
             scenes=[], asset_id=bridge.source['asset']['id'], checksum_sha256=bridge.source['asset']['sha256'], sample_interval_seconds=1))
         self.assertEqual(calls, ['POST']); self.assertTrue(result.provenance['mock_tested'])
+        self.assertEqual(len(observations), 1); self.assertEqual(observations[0].response_sha256, result.provenance['response_sha256'])
         self.assertFalse(result.provenance['real_provider_tested']); self.assertEqual(result.frames[0].evidence_frame_reference, bridge.binding()['source_frame_evidence'][0]['reference'])
         self.assertEqual(self.store.get(self.project['id']), before)
         row, _ = self.service.create(self.project['id'], self.payload(provider_mode='official', fixture_acknowledged=False), actor='fixture-owner')
