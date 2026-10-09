@@ -1,6 +1,6 @@
 {
-  "head": "930c2477863d3ec5513145014b29b0ba542a9c78",
-  "audited_at": "2026-10-09T00:55:58.800223+00:00",
+  "head": "f7bf0872b64d2aca360d5c943a6d59f8be7bcd90",
+  "audited_at": "2026-10-09T01:09:28.443346+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -457,6 +457,12 @@
     "scripts/north_star_vision_transport.py": "34baca46c7db2bf1293e9658fe11f139ab104041bfb643be0e8c8fd59837a87a",
     "docs/NATIVE_VISION_TRANSPORT.md": "64bb54da8cd6acbbc8bea111570c5d1c443bc0b81d23d8124dff237dc3c77810",
     "docs/north-star/vision-transport-evidence.json": "0b9aee346cd25bdabe542cd865281895aafdd3ffda250a95434c2087aee5bede",
+    "services/windows_native/vision_credentials.py": "237f2f77132af9cdd6a74b1717e1a4e68744a1810dd40f57a67d27895b68d183",
+    "services/windows_native/vision_registry.py": "7226080595356dd54bc8b9cf19b1ae1e9cf31eb36edd8b3613d3d8ef8254d769",
+    "services/windows_native/tests/test_vision_registry.py": "056231ba1a312a143c31b9b0e074758b969d6a0f5cc52616453a1a24c4f8f384",
+    "scripts/north_star_vision_registry.py": "64ca9612d603ab68ed96855f2082a18f3911018fabecb15c8128fd6a21737d11",
+    "docs/NATIVE_VISION_REGISTRY.md": "6e032f54fcf44afbd3964a544a64a201b0497431019684a0a0814390b6df6772",
+    "docs/north-star/vision-registry-evidence.json": "e21712296597b313b0c8d1fe4f3eb0512cf75b95f80081954db66a87d18d8492",
     "apps/api/app/trend_service.py": "0515d9bcdcc254336ae9b0e8f8389f828f111a182fae1d6cac62ab91c05c12d9",
     "apps/api/app/trend_providers.py": "5befe1bfe7e93b867052bde113319f9b2cda6c9738c922281f68d95a9525ec25",
     "apps/studio-web/studio.js": "b2cc7d771dd5cbf17e40d63919bb5b74d44489c79dfecbb94509a8926c733e0b",

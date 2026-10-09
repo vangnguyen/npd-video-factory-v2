@@ -1,0 +1,63 @@
+{
+  "schema_version": "native-vision-registry-evidence-v1",
+  "parent_head": "f7bf0872b64d2aca360d5c943a6d59f8be7bcd90",
+  "source_sha256": {
+    "services/windows_native/vision_credentials.py": "237f2f77132af9cdd6a74b1717e1a4e68744a1810dd40f57a67d27895b68d183",
+    "services/windows_native/vision_registry.py": "7226080595356dd54bc8b9cf19b1ae1e9cf31eb36edd8b3613d3d8ef8254d769",
+    "services/windows_native/tests/test_vision_registry.py": "056231ba1a312a143c31b9b0e074758b969d6a0f5cc52616453a1a24c4f8f384",
+    "scripts/north_star_vision_registry.py": "64ca9612d603ab68ed96855f2082a18f3911018fabecb15c8128fd6a21737d11",
+    "docs/NATIVE_VISION_REGISTRY.md": "6e032f54fcf44afbd3964a544a64a201b0497431019684a0a0814390b6df6772"
+  },
+  "tests": {
+    "native_related": {
+      "passed": 103,
+      "new_focused_cases": 21,
+      "seconds": 22.775,
+      "log": "vision-registry-related-n1.log",
+      "sha256": "038fcb95d0576cd15112579c5d09dd8b3466e78121586b9d452d36c3a638c4d9"
+    },
+    "api_related": {
+      "passed": 65,
+      "seconds": 1.28,
+      "log": "vision-registry-api-n1.log",
+      "sha256": "f35c23108118abce3b4749a0d3fa39565d2d8372800caa3edc66161ccaff6303"
+    },
+    "unchanged_studio_prior_passed": 404,
+    "prior_full_native_passed": 1181,
+    "current_full_native_api_studio_run": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\vision-registry-flow-n1",
+    "sha256": "60064e116448428bca73a1f2474e0178a556fc077bd198837b4153d747052447",
+    "public_backup_sha256": "82e0f51f8984a16e126578b0a0d1300cbb6ae79eb96037818d718e7b068319d0",
+    "fresh_process_sha256": "c3c7ba99d82312180e351174be1f42111ce52865a7bd28138cde023d896ac52f",
+    "actual_synthetic_dpapi_generations": 2,
+    "actual_protected_dacls": 2,
+    "reused_pngs": 9,
+    "mock_requests": 2,
+    "projects": 2,
+    "original_journals": 9,
+    "legacy_histories": 4,
+    "new_cpu_jobs": 0
+  },
+  "immutable_workspace_domain_bound_private_envelope_receipt_hash_bytes_outer_inner_identity_and_nonreplace_atomic_generation": true,
+  "current_user_system_protected_dacl_before_write_and_no_key_in_repr_public_receipt_error_or_public_backup": true,
+  "startup_discovery_status_constructor_and_recovery_no_decrypt_create_missing_vault_or_dispatch": true,
+  "raw_operator_separate_profile_enablement_positive_real_vnd_envelope_finite_decimal_no_bool_float_coercion": true,
+  "frozen_protected_registry_profile_vault_workspace_operator_mock_exact_mocktransport_and_factory_binding": true,
+  "same_structured_adapter_actual_native_png_metadata_reference_binding_legacy_fixture_not_configured_getter_session_unchanged": true,
+  "public_only_backup_original_files_projects_nine_journals_four_histories_exact_fresh_process_mounted_disabled_and_unmounted_inert": true,
+  "real_secret_reads": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "real_publications": 0,
+  "semantic_inference_performed": false,
+  "decoded_pts_verified": false,
+  "continuous_tracking_performed": false,
+  "native_official_runtime_integrated": false,
+  "browser_owner_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
