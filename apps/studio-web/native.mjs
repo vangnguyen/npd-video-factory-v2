@@ -140,7 +140,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -226,6 +226,7 @@ if (typeof document !== "undefined") {
     variantsUI?.controls();
     narratedVariantsUI?.controls();
     officialAccountsUI?.controls();
+    googleOAuthUI?.controls();
     officialPublicationUI?.controls();
     officialQueueUI?.controls();
     officialAnalyticsUI?.controls();
@@ -276,6 +277,7 @@ if (typeof document !== "undefined") {
     variantsUI?.sync();
     narratedVariantsUI?.sync();
     officialAccountsUI?.sync();
+    googleOAuthUI?.sync();
     officialPublicationUI?.sync();
     officialQueueUI?.sync();
     officialAnalyticsUI?.sync();
@@ -440,6 +442,11 @@ if (typeof document !== "undefined") {
       const accounts=await import('./native-official-accounts.mjs');$('native-official-accounts-card').hidden=false;
       officialAccountsUI=accounts.initializeNativeOfficialAccounts({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});
+    }
+    if(session.access?.mode==='registry'&&session.capabilities?.native_official_account_review===true){
+      const googleOAuth=await import('./native-google-oauth.mjs');$('native-google-oauth-card').hidden=false;
+      googleOAuthUI=googleOAuth.initializeNativeGoogleOAuth({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),
+        workspace_id:session.access.workspace_id}),onMessage:message});
     }
     if(session.capabilities?.native_publication_review===true){
       const publications=await import('./native-publications.mjs');$('native-publication-card').hidden=false;

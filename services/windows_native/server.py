@@ -734,6 +734,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-variants.mjs'] = 'native-variants.mjs'
         static['/native-narrated-variants.mjs'] = 'native-narrated-variants.mjs'
         static['/native-official-accounts.mjs'] = 'native-official-accounts.mjs'
+        static['/native-google-oauth.mjs'] = 'native-google-oauth.mjs'
         static['/native-official-publications.mjs'] = 'native-official-publications.mjs'
         static['/native-official-publication-queue.mjs'] = 'native-official-publication-queue.mjs'
         static['/native-official-analytics.mjs'] = 'native-official-analytics.mjs'

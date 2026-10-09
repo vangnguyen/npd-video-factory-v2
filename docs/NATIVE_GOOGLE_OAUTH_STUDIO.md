@@ -1,0 +1,17 @@
+# Native Studio Google connection controls
+
+The signed Native Studio now includes a Google connection card under the existing official-account review capability. The card starts hidden; only a registry-authenticated Studio initializes it. No Session capability or historical getter shape was added. The default server remains unconfigured and publishing remains disabled.
+
+The Owner explicitly reads the protected public configuration, selects a dedicated analytics or upload client, acknowledges the credential operation and sets its original 60–900 second consent window. Protocol mock mode requires its own acknowledgement. Analytics, optional monetary analytics and upload permissions are displayed separately in Vietnamese.
+
+Preparing authorization does not fetch or open a private URL. A second explicit action fetches the fixed Google authorization link for that exact intent, slot, purpose, current loopback port and consent window. The link exists only in the current DOM, uses `noopener noreferrer`, and requires the human's click to open the system browser. Its click rechecks expiry and current permission/source context. Input changes, project/workspace/revision/role/archive changes and subsequent actions clear it. No raw URL, state, verifier, code or token enters history, messages, exports or browser storage.
+
+After the external callback the human explicitly reads the authorization and operation histories. Successful grants remain unselected and unverified. Account confirmation, credential selection, analytics consent and publishing approval remain separate steps. Read-only project-scoped historical evidence remains available without current credentials or configuration, including expired records. Pages are bounded and cursors encoded.
+
+Refresh requires selecting the exact successful original operation/result and a separate acknowledgement/new finite credential-operation window. The UI refuses an original grant generation already consumed by a known refresh; the server's durable uniqueness check remains authoritative. Refresh creates a new immutable grant, without automatically selecting it or renewing read, background or publishing consent. Cancellation binds the original authorization snapshot and cancels only a pending intent.
+
+Uncertain or malformed replies retain their original idempotency key for the same workspace/project/exact intent. Verified replies close that key. Late replies cannot cross project, workspace, revision, role, archive, dirty, active-job or changed-input context. Keys are bounded without evicting uncertainty. Initialization, control updates and synchronization never call a provider, poll, publish or refresh.
+
+Verification uses explicitly labelled public protocol fixtures for isolated DOM tests and the actual integrated source module over signed local HTTP, SQLite and synthetic Windows DPAPI custody. Served parent HTML/module bytes, CSP/no-store/no-referrer headers and original project/Session equality are checked separately. This proves source integration and controller behavior; it does not execute the parent in a real browser or certify Owner usability, genuine OAuth, paid providers, audience data or production deployment.
+
+`scripts/north_star_google_oauth_ui.py --output <fresh-external-json>` runs the bounded synthetic rehearsal. It creates no real credential, browser navigation, publication, media operation or background consent. Earlier accepted media and OAuth/finite-refresh recovery exports are preserved separately. Listening review and Owner UAT remain deferred.
