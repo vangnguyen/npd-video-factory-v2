@@ -762,6 +762,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-vision.mjs'] = 'native-vision.mjs'
         static['/native-official-vision.mjs'] = 'native-official-vision.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'
+        static['/native-scene-review.mjs'] = 'native-scene-review.mjs'
         static['/project-quality.mjs'] = 'project-quality.mjs'
         static['/native-rights.mjs'] = 'native-rights.mjs'
         static['/native-rights-override.mjs'] = 'native-rights-override.mjs'
@@ -922,7 +923,7 @@ class Handler(BaseHTTPRequestHandler):
             body=self.read_body(max_bytes=100000)
             if set(body)!={'revision','payload'} or type(body.get('revision')) is not int:
                 raise WorkflowError('AUTO_SHORTS_REQUEST_INVALID',400)
-            return self.reply(create(self.server.store,self.server.config,shorts_route[1],body['revision'],body['payload']))
+            return self.reply(create(self.server.store,self.server.config,shorts_route[1],body['revision'],body['payload'],official_vision=lambda:self.server.official_vision))
         if broll_route:
             from . import source_broll
             body = self.read_body(max_bytes=100000)
@@ -939,7 +940,8 @@ class Handler(BaseHTTPRequestHandler):
             if set(body) != {'revision','action','payload'} or type(body.get('revision')) is not int or body.get('action') not in {'create','edit','restore','linked_edit','configure','reframe'}:
                 raise WorkflowError('AUTO_EDIT_TIMELINE_REQUEST_INVALID', 400)
             action = {'create':create,'edit':edit,'restore':restore,'linked_edit':linked_edit,'configure':configure,'reframe':reframe}[body['action']]
-            return self.reply(action(self.server.store, source_timeline_route[1], body['revision'], body['payload']))
+            return self.reply(action(self.server.store, source_timeline_route[1], body['revision'], body['payload'],
+                **({'config':self.server.config,'official_vision':lambda:self.server.official_vision} if body['action']=='create' else {})))
         analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/(ana_[a-f0-9]{24})/transcript', self.path)
         if analysis_route:
             from .auto_edit_analysis import edit_transcript

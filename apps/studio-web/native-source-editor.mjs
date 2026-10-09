@@ -3,6 +3,7 @@ import {waveformPath} from './waveform.mjs';
 import {timelineHistory} from './timeline-history.mjs';
 import {sourceBrollRequest,sourceBrollMarkup} from './native-source-broll.mjs';
 import {initializeSourceBrollReview} from './native-source-broll-review.mjs';
+import {initializeSceneReview} from './native-scene-review.mjs';
 
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 export const sourceState=p=>isSourceProject(p)?p.document.canonical_timeline:null;
@@ -66,7 +67,7 @@ export function sourceAdvancedMarkup(project,zoom=1,selectedId=null) {
     }).join('')}</div></section>`).join('');
 }
 
-export function initializeSourceEditor({api,getProject,getGuards,getReviewedVision=()=>null,getSelected,getPreview,getPlayers,onProject,onDirty,onMessage,onWorking}) {
+export function initializeSourceEditor({api,getProject,getGuards,getReviewedVision=()=>null,getSelected,getPreview,getPlayers,onProject,onDirty,onMessage,onWorking,onDraftsCreated=()=>{}}) {
   const $=id=>document.getElementById(id);
   const host=document.createElement('section');host.id='native-source-inspector';host.hidden=true;
   $('shot-editor-form').after(host);
@@ -81,7 +82,11 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   const state=()=>sourceState(getProject());
   const selected=()=>getClip(state(),selectedId);
   const locked=()=>selected()?.track.locked;
-  const blocked=()=>working||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
+  const blocked=()=>working||sceneReview.isWorking()||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
+  const sceneRoot=document.createElement('section');
+  const sceneReview=initializeSceneReview({root:sceneRoot,api,getReviewedVision,onProject,onMessage,onWorking,onDraftsCreated,
+    getState:()=>({project:getProject(),workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,
+      dirty:dirty||getGuards().dirty,busy:working||getGuards().busy,active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   const reviewRoot=document.createElement('section');
   const brollReview=initializeSourceBrollReview({root:reviewRoot,getReviewedVision,onMessage,getState:()=>({project:getProject(),
     workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,dirty:dirty||getGuards().dirty,
@@ -106,6 +111,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
       if(record?.plan.items.find(i=>i.media_plan_item_id===itemId)?.status!=='resolved')el.disabled=true;
     });
     brollReview.sync();
+    sceneReview.sync();
   }
   function renderAdvanced(){
     toolbar.hidden=!isSourceProject(getProject());
@@ -142,6 +148,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
       <label>Mẫu phụ đề<select data-source-caption>${(catalog?.templates??[]).map(t=>`<option value="${esc(t.template_ref)}" ${t.template_ref===state().snapshot.metadata.subtitle_style?.template_ref?'selected':''}>${esc(t.name??t.label??t.template_ref)}${t.requires_word_timestamps?' · cần thời gian từng từ':''}</option>`).join('')}</select></label><label>Từ khóa nổi bật (phân cách bằng dấu phẩy)<input data-source-keywords value="${esc((state().snapshot.metadata.subtitle_style?.keywords??[]).join(', '))}" maxlength="1000"></label><button type="button" data-source-config="caption" ${catalog?'':'disabled'}>Lưu mẫu phụ đề</button><p class="hint">Sửa lời nói tại Assets. Đoạn đã sửa cần dùng phụ đề theo câu khi không còn căn chỉnh từng từ. Bản dựng nguồn hiện dùng âm thanh gốc; nhạc nền cần được thêm vào timeline riêng.</p></details>`;
     host.insertAdjacentHTML('beforeend',sourceBrollMarkup(p,{workspaceId:getGuards().workspace_id??'wsp_native_local'}));
     host.querySelector('[data-broll-review-host]').append(reviewRoot);
+    host.append(sceneRoot);
     host.insertAdjacentHTML('beforeend',sourceReframeMarkup(p));
     void history();renderAdvanced();controls();
   }
@@ -234,7 +241,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   });
   for(const player of getPlayers())player.addEventListener('timeupdate',()=>{if(!isSourceProject(getProject())||player.hidden)return;playhead=player.currentTime;toolbar.querySelector('[data-source-position]').value=`${num(playhead)}s`;});
   void api('/api/auto-edit/subtitle-templates').then(value=>{catalog=value;shownKey=null;if(isSourceProject(getProject())&&!dirty)renderSelected(true);}).catch(error=>onMessage(error.message,true));
-  return {selectShot(id){selectedId=id;renderSelected();},renderAdvanced,controls,isWorking:()=>working,
+  return {selectShot(id){selectedId=id;renderSelected();},renderAdvanced,controls,isWorking:()=>working||sceneReview.isWorking(),
     readyForApproval:()=>isSourceProject(getProject())&&getPreview()?.status==='READY'&&getPreview()?.timeline_sha256===state().sha256,
     render:()=>renderSelected()};
 }

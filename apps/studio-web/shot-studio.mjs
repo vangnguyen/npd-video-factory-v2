@@ -82,7 +82,7 @@ export function readableSuggestion(values,project) {
   return Object.entries(values??{}).filter(([key])=>labels[key]).map(([key,value])=>`${labels[key]}: ${key==='asset_id'?(project.document.assets??[]).find(a=>a.id===value)?.filename??'Thay nguồn':key==='duration'||key==='source_start'?`${value} giây`:typeof value==='boolean'?(value?'Có':'Không'):value}`).join(' · ');
 }
 
-export function initializeShotStudio({api,getProject,getGuards,getReviewedVision=()=>null,onProject,onDirty,onMessage,onWorking=()=>{},capabilities={},ui=null,sourceUI=null}) {
+export function initializeShotStudio({api,getProject,getGuards,getReviewedVision=()=>null,onProject,onDirty,onMessage,onWorking=()=>{},onDraftsCreated=()=>{},capabilities={},ui=null,sourceUI=null}) {
   const $=id=>document.getElementById(id),esc=escapeText;
   let stage='script',selectedId=null,shotDirty=false,working=false,loadedKey=null,loadingKey=null,preview=null,previewTimer=null,mediaMode='shot',suggestion=null,suggestionRevision=null,draggedId=null,shownProjectId=null;
   const suggestions=new Map();
@@ -140,7 +140,7 @@ export function initializeShotStudio({api,getProject,getGuards,getReviewedVision
   const thumbnail=assetId=>`/api/projects/${getProject().id}/media/${encodeURIComponent(assetId)}/thumbnail`;
   const assets=()=>getProject()?.document.assets??(getProject()?.document.asset?[getProject().document.asset]:[]);
   const selected=()=>projectShots(getProject()).find(s=>s.shot_id===selectedId);
-  const sourceEditor=capabilities.native_source_timeline===true&&sourceUI?sourceUI.initializeSourceEditor({api,getProject,getGuards,getReviewedVision,
+  const sourceEditor=capabilities.native_source_timeline===true&&sourceUI?sourceUI.initializeSourceEditor({api,getProject,getGuards,getReviewedVision,onDraftsCreated,
     getSelected:()=>selectedId,getPreview:()=>preview,getPlayers:()=>[$('video'),proxy],onProject:value=>onProject(value,true),
     onDirty:setDirty,onMessage,onWorking}):null;
   const guard=()=>({...getGuards(),busy:getGuards().busy||working||(sourceEditor?.isWorking()??false)});

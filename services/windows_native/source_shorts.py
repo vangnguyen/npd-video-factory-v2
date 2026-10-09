@@ -11,6 +11,8 @@ from .source_preview import resolve_assets
 from .source_duplicate import rebind
 from app.highlight_draft_logic import HighlightDraftRequest,build_drafts,HighlightDraftConflict
 from app.scene_evidence import combine_scene_evidence
+from app.scene_evidence import SceneObservation
+from .scene_selection import Selection
 
 ALGORITHM='native-auto-shorts-v1'
 ACTION='auto_shorts_created_unapproved'
@@ -25,6 +27,7 @@ class Create(HighlightDraftRequest):
     expected_version:int|None=Field(default=None,ge=1,strict=True)
     request_key:str=Field(pattern=r'^[a-f0-9]{32}$')
     aspect_ratio:Literal['9:16','16:9','1:1','4:5']='9:16'
+    reviewed_scene:Selection|None=None
 
 
 def records(con,project_id):
@@ -39,10 +42,21 @@ def view(store,project_id):
     return {'project_id':project_id,'batches':batches,'provider_calls':0,'recommendation_only':True}
 
 
-def create(store,config,project_id,revision,body):
+def create(store,config,project_id,revision,body,*,official_vision=None):
     try:payload=Create.model_validate(body)
     except ValueError:raise WorkflowError('AUTO_SHORTS_REQUEST_INVALID',400) from None
-    request_sha=digest({'revision':revision,'payload':payload.model_dump(mode='json')})
+    payload_json=payload.model_dump(mode='json')
+    if payload.reviewed_scene is None:payload_json.pop('reviewed_scene')
+    request_sha=digest({'revision':revision,'payload':payload_json})
+    from .scene_selection import reader,selected,lineage
+    # Preserve exact historical idempotency even when current inputs/consent
+    # have changed; replay never creates a new child or provider operation.
+    with store.transaction() as con:
+        replay=next((v for v in records(con,project_id) if v['request_key']==payload.request_key),None)
+    if replay is not None:
+        if replay['request_sha256']!=request_sha:raise WorkflowError('AUTO_SHORTS_IDEMPOTENCY_CONFLICT')
+        return {'batch':replay,'projects':[timeline_view(store,v['project_id']) for v in replay['drafts']]}
+    getter=reader(store,config,project_id,payload.reviewed_scene,official_vision)
     with store.transaction() as con:
         batches=records(con,project_id)
         cached=next((item for item in batches if item['request_key']==payload.request_key),None)
@@ -63,9 +77,14 @@ def create(store,config,project_id,revision,body):
             from .media_frame_analysis import asset_summary
             measured=asset_summary(document,project_id,asset,config.data_root)
             scenes=combine_scene_evidence(analysis,reference,pixel_frames=measured.frames if measured else ())
+            reviewed=None
+            if payload.reviewed_scene is not None:
+                reviewed=selected(store,config,project,payload.reviewed_scene,payload.analysis_id,con,getter)
+                scenes=[SceneObservation.model_validate(v) for v in reviewed['recommendation']['result']['scenes']]
             assessment=SimpleNamespace(scenes=scenes,assessment_id='sci_'+digest([analysis.analysis_id,payload.transcript_id])[:24],
                 fingerprint=digest([scene.model_dump(mode='json') for scene in scenes]))
-            try:prepared=build_drafts(analysis,reference,payload.model_copy(update={'count':5}),assessment)
+            try:prepared=build_drafts(analysis,reference,payload.model_copy(update={'count':5}),assessment,
+                scored_highlights=reviewed['recommendation']['result']['scene_ranking'] if reviewed else None)
             except (HighlightDraftConflict,ValueError):raise WorkflowError('AUTO_SHORTS_SELECTION_INVALID',400) from None
             if not prepared:raise WorkflowError('AUTO_SHORTS_NO_COMPLETE_SPEECH_WINDOW_FITS',400)
             from .store import now
@@ -86,6 +105,9 @@ def create(store,config,project_id,revision,body):
                     source_short={'algorithm':ALGORITHM,'rank':rank,'parent_project_id':project_id,
                         'parent_revision':revision,'parent_document_sha256':parent_sha,'evidence':evidence,
                         'human_approval_required':True,'provider_calls':0,'source_media_mutated':False})
+                if reviewed is not None:
+                    evidence['reviewed_scene_selection']=lineage(reviewed)
+                    snapshot.metadata['highlight_draft']['reviewed_scene_selection']=lineage(reviewed)
                 for track in snapshot.tracks:
                     for clip in track.clips:
                         if clip.asset_id:clip.metadata['native_asset_id']=asset['id']
@@ -96,6 +118,8 @@ def create(store,config,project_id,revision,body):
                 child_document=rebind(seed,project_id,identifier,revision,timestamp,parent_document_sha256=parent_sha)
                 # Ranking lineage identifies the actual parent, not the rebound child.
                 child_document['canonical_timeline']['snapshot']['metadata']['source_short']=copy.deepcopy(snapshot.metadata['source_short'])
+                if reviewed is not None:
+                    child_document['canonical_timeline']['snapshot']['metadata']['highlight_draft']['reviewed_scene_selection']=lineage(reviewed)
                 child_document['canonical_timeline']['sha256']=digest(child_document['canonical_timeline']['snapshot'])
                 validate_document(child_document)
                 child_document['name']=document['name'][:110]+' — Short '+str(rank)
@@ -119,6 +143,7 @@ def create(store,config,project_id,revision,body):
                     'scenes':[scene.model_dump(mode='json') for scene in scenes]},
                 'provider_calls':0,'paid_operations':0,'parent_document_mutated':False,
                 'human_approval_required':True,'created_at':timestamp}
+            if reviewed is not None:result['scene_evidence']['reviewed_scene_selection']=lineage(reviewed)
             store.event(con,project_id,ACTION,result)
     # No nested write transaction while materializing canonical projections.
     return {'batch':result,'projects':[timeline_view(store,item['project_id']) for item in result['drafts']]}

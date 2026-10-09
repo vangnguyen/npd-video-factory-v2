@@ -1,0 +1,252 @@
+{
+  "schema_version": "native-reviewed-scene-selection-evidence-v1",
+  "parent_head": "9052f821542ed2a213c85599b04e9d826073ffea",
+  "source_sha256": {
+    "services/windows_native/scene_selection.py": "80c13f1ac88b4cd61a4173a1b487bf98262d22530e3cba31a9a39372c17eb6c8",
+    "services/windows_native/auto_edit_timeline.py": "4e24da11220bb14ad6b2aa8d4da3afcd4b4b7aa074e5bebc54f0c361e5dc930a",
+    "services/windows_native/source_shorts.py": "84e17613ee990b99ad9562548d39da00fb78524fc84af812227d82439caaeee5",
+    "services/windows_native/source_duplicate.py": "6220c248badfefab2044551160c2392210a6a42fcdb4ddaa837c6101114d3837",
+    "services/windows_native/server.py": "2f9d16ce42f2f6f302a9a6bad97825ac2029448747dc97005d0e8ac48b52f679",
+    "services/windows_native/tests/test_scene_selection.py": "067eee5d3729c6a42b867865de3e761bfc92076993348dd76c1a26a6b15d3dba",
+    "services/windows_native/tests/test_official_vision_http.py": "cd3817646171ea8f128df9dbb543ea66bec9dfdbfed162e0029db2f5c7dd955a",
+    "apps/api/app/highlight_draft_logic.py": "27940819c9d36cca7495404bf5989f7025f636f7d92f3bdb99c1177387a6f9d0",
+    "apps/studio-web/native-scene-review.mjs": "1763365be308781a19fda00b763d8c67d1c224477bf1217aff94f17b6d0e1e3e",
+    "apps/studio-web/native-source-editor.mjs": "8861a23e8bc5727c005cef539d81f91c64ff805eea3c4bc33ac86d20a326cb2b",
+    "apps/studio-web/native.mjs": "f571abcc9ea31693ffb47f1e1218d7b3243e67dd2dbf7925de60b94a07c53e87",
+    "apps/studio-web/shot-studio.mjs": "a084b1e11416c63040fe9c4364656d7a609257fde74e6c11209df8374684e205",
+    "apps/studio-web/tests/native-scene-review.test.mjs": "458f6eec3d7ffdecb1791c10e972244efddbd09faed53e628405a02f107621db",
+    "apps/studio-web/tests/fixtures/native-scene-review-v1.json": "9f5f79c0739b49c76d487074b3bf376f379344e52ec8749134053e549c9903bd",
+    "scripts/north_star_scene_selection.py": "05dec06cbc8e3a487bb0b855ae87feae7161c35ec66cc50e1da0e919bcbd9686",
+    "scripts/north_star_scene_selection.mjs": "e533c45f943d8384be4122ddf85b2e43328479246ef24eaae187f8d739788bb6",
+    "docs/NATIVE_REVIEWED_SCENE_EDITING.md": "57ac7f5bf2d9c4531cad3e387848033f7e9c271efe6cb0d6874159bed4d2cf15"
+  },
+  "tests": {
+    "native_related": 48,
+    "native_seconds": 83.424,
+    "native_log_sha256": "f5584b36587c6354b2ae7c295a497f77bab276fe609b5485bffc50fb46339d26",
+    "new_native_cases": 5,
+    "studio_full": 440,
+    "new_studio_cases": 7,
+    "studio_ms": 1448.4305,
+    "studio_log_sha256": "64e23cbddf8fabcf5637f2bc180da1ee21048664962164834dbf1fa7eec258a9",
+    "shared_api": 8,
+    "shared_api_seconds": 9.48,
+    "api_log_sha256": "11eadd5f7f86c193429f1e1a1af0989c6c4a59215e2e77076fe03aefc796913b"
+  },
+  "rehearsal": {
+    "schema_version": "native-reviewed-scene-selection-rehearsal-v1",
+    "source_sha256": {
+      "services/windows_native/scene_selection.py": "80c13f1ac88b4cd61a4173a1b487bf98262d22530e3cba31a9a39372c17eb6c8",
+      "services/windows_native/auto_edit_timeline.py": "4e24da11220bb14ad6b2aa8d4da3afcd4b4b7aa074e5bebc54f0c361e5dc930a",
+      "services/windows_native/source_shorts.py": "84e17613ee990b99ad9562548d39da00fb78524fc84af812227d82439caaeee5",
+      "services/windows_native/source_duplicate.py": "6220c248badfefab2044551160c2392210a6a42fcdb4ddaa837c6101114d3837",
+      "services/windows_native/server.py": "2f9d16ce42f2f6f302a9a6bad97825ac2029448747dc97005d0e8ac48b52f679",
+      "services/windows_native/tests/test_scene_selection.py": "067eee5d3729c6a42b867865de3e761bfc92076993348dd76c1a26a6b15d3dba",
+      "services/windows_native/tests/test_official_vision_http.py": "cd3817646171ea8f128df9dbb543ea66bec9dfdbfed162e0029db2f5c7dd955a",
+      "apps/api/app/highlight_draft_logic.py": "27940819c9d36cca7495404bf5989f7025f636f7d92f3bdb99c1177387a6f9d0",
+      "apps/studio-web/native-scene-review.mjs": "1763365be308781a19fda00b763d8c67d1c224477bf1217aff94f17b6d0e1e3e",
+      "apps/studio-web/native-source-editor.mjs": "8861a23e8bc5727c005cef539d81f91c64ff805eea3c4bc33ac86d20a326cb2b",
+      "apps/studio-web/native.mjs": "f571abcc9ea31693ffb47f1e1218d7b3243e67dd2dbf7925de60b94a07c53e87",
+      "apps/studio-web/shot-studio.mjs": "a084b1e11416c63040fe9c4364656d7a609257fde74e6c11209df8374684e205",
+      "apps/studio-web/tests/native-scene-review.test.mjs": "458f6eec3d7ffdecb1791c10e972244efddbd09faed53e628405a02f107621db",
+      "apps/studio-web/tests/fixtures/native-scene-review-v1.json": "9f5f79c0739b49c76d487074b3bf376f379344e52ec8749134053e549c9903bd",
+      "scripts/north_star_scene_selection.py": "05dec06cbc8e3a487bb0b855ae87feae7161c35ec66cc50e1da0e919bcbd9686",
+      "scripts/north_star_scene_selection.mjs": "e533c45f943d8384be4122ddf85b2e43328479246ef24eaae187f8d739788bb6"
+    },
+    "signed_http_requests": 17,
+    "new_mock_requests": 0,
+    "new_cpu_jobs": 0,
+    "reused_source_video_seconds": 3,
+    "asr_source_analysis_and_vision": "preserved explicit fixtures, not genuine speech/provider acceptance",
+    "deduplicated_recommendation_save_exact": true,
+    "explicit_canonical_rebuild": 1,
+    "independent_unapproved_shorts": 2,
+    "all_previous_recommendations_versions_original_results_cost_and_source_bytes_exact": true,
+    "new_external_dispatches": 0,
+    "new_paid_operations": 0,
+    "dom_controller_tested": true,
+    "actual_parent_browser_executed": false,
+    "full_media_qc_or_final_render": false,
+    "owner_uat_accepted": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "public_backup_sha256": "1050a03b8a9eda00bffb6cbae2ae42a1ac177520e1b1ba337fe0fe8a319d6282",
+    "prior_public_backup_sha256": "d7fbfee238f942fc3a5271d2047c15a17efb31b3d5b6a4794eb4ad5cdac4fe4a",
+    "exports": {
+      "backup.json": {
+        "sha256": "b2aacd9260c97a7cab0156c3cb662e4f0f4a5eecb5fe105cd0f546a8dc9209dd",
+        "bytes": 4110
+      },
+      "cost-summary.json": {
+        "sha256": "e111b919697e4b5e3f29a975f4902d1358c6da98a228d4a738bc80b7d8949a54",
+        "bytes": 3289
+      },
+      "expected-journals.json": {
+        "sha256": "679589d5fd8ab3ab2ca46a928e0446f03bd9f0962a088968f4c8596e98c63a35",
+        "bytes": 3262508
+      },
+      "expected-projects.json": {
+        "sha256": "afdec6cbb0fb0c1ab575eb0fc9753efdff4ddb883fa43a7f4b0b7e3262035892",
+        "bytes": 1716073
+      },
+      "expected-scenes.json": {
+        "sha256": "ec19c3ed5e1a381d622055594f66c49e4582bc3a02296839923e00df81dbaaa6",
+        "bytes": 115806
+      },
+      "node-controller-errors.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "node-controller-proof.json": {
+        "sha256": "0bd39ed7bc2e52ea58ccf60c4a2c85a29f07759213dd35bc317a942f4dbda871",
+        "bytes": 888437
+      },
+      "original-vision-history.json": {
+        "sha256": "df3654208ba2290474d37e34bdf8fbf2a4aed32869e52bedc09e2e23c6913f60",
+        "bytes": 112596
+      },
+      "prior-restore.json": {
+        "sha256": "85c5899fe7475fb43cded94f4b0704c4c5cd4261e691ab14e4d02beb41f5f07c",
+        "bytes": 4499
+      },
+      "public-scene-selection.zip": {
+        "sha256": "1050a03b8a9eda00bffb6cbae2ae42a1ac177520e1b1ba337fe0fe8a319d6282",
+        "bytes": 5558475
+      },
+      "restore.json": {
+        "sha256": "0a932f6ed7665ad62ea1442632e701c4fad8e4605017d355fe86e3036298d58b",
+        "bytes": 4508
+      },
+      "restored-in-process.json": {
+        "sha256": "89844465c3387b8262f6babeeb5a3e014d50cb4a10767a0ffde2ce44b8280c3c",
+        "bytes": 276
+      },
+      "source-hashes.json": {
+        "sha256": "e6cf43aba14c18169017c5aa7946019f4c1e96b72fd8fab5ebff21a0e18c7818",
+        "bytes": 223
+      }
+    }
+  },
+  "fresh_process": {
+    "all_original_recommendations_edits_shorts_vision_journals_source_bytes_exact": true,
+    "keyless_disabled_provider_history": true,
+    "provider_consent_renewed": false,
+    "provider_retry_or_dispatch": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "actual_browser": {
+    "schema_version": "native-scene-selection-real-browser-v1",
+    "actual_parent_browser_executed": true,
+    "browser": "Codex in-app browser via documented cua_repl",
+    "synthetic_fixture_identity": true,
+    "new_real_provider_calls": 0,
+    "new_paid_operations": 0,
+    "new_cpu_jobs": 0,
+    "new_mock_calls": 0,
+    "source_and_asr_vision": "owned3s synthetic test pattern/tone and saved ASR/scene/protocol mocks",
+    "actions": [
+      "login",
+      "open original source project",
+      "show Video editor",
+      "expand original recommendations",
+      "select explicit mock recommendation",
+      "independent recommendation and mock acknowledgements",
+      "set maximum duration3s",
+      "create independent unapproved Shorts"
+    ],
+    "visible_success": "Đã tạo 2/3 bản Shorts độc lập chưa duyệt. Mở từ danh sách dự án để sửa, preview và duyệt.",
+    "created_unapproved_projects": 2,
+    "parent_and_all_previous_projects_results_costs_source_bytes_exact": true,
+    "console_errors_observed": 0,
+    "dom_viewports": [
+      {
+        "width": 934,
+        "height": 704,
+        "body_width": 919,
+        "source_width": 237,
+        "source_scroll_width": 237
+      },
+      {
+        "width": 1366,
+        "height": 768,
+        "body_width": 1351,
+        "source_width": 261,
+        "source_scroll_width": 261
+      },
+      {
+        "width": 1920,
+        "height": 1080,
+        "body_width": 1905,
+        "source_width": 297,
+        "source_scroll_width": 297
+      },
+      {
+        "width": 2560,
+        "height": 1440,
+        "body_width": 2545,
+        "source_width": 303,
+        "source_scroll_width": 303
+      }
+    ],
+    "viewport_reset": true,
+    "temporary_browser_closed": true,
+    "screenshot_displayed_in_tool_only": true,
+    "durable_screenshot_export": false,
+    "known_limitation": "legacy video without thumbnail_id is sent as MP4 to image thumbnail route; this fixture bypassed modern ingest thumbnail generation; repair pending",
+    "public_restore_all7_projects_history_journals_source_bytes_exact": true,
+    "public_backup_sha256": "a7e74eb183bc10f10ec67007545b0d36fcb650599f9013986485519e391b87fa",
+    "owner_uat_accepted": false,
+    "full_media_qc_or_new_final_render": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "exports": {
+      "backup.json": {
+        "sha256": "2ecc619d74fdf3b415a3e728827487b3688a12fa4150243e31fcc89b027fa9f6",
+        "bytes": 4126
+      },
+      "expected-journals.json": {
+        "sha256": "1663d162c00dc720301caef5d665ab536b3ce8dda575c9274a35f85b803e62c7",
+        "bytes": 3766687
+      },
+      "expected-projects.json": {
+        "sha256": "befb141521c864ca9d6bed93c529e81775e3779050b30a152bacd5f6b41826fe",
+        "bytes": 2147465
+      },
+      "expected-scenes.json": {
+        "sha256": "0508426a455540012ad93465ac5620c1c7c073271b7889cb6ad4c9718d269ed1",
+        "bytes": 116602
+      },
+      "last-shorts-batch.json": {
+        "sha256": "cd3f17fad011e71aa59d775e047cad72a20c2e5ea14c2b424949b7e0a2b1e8ed",
+        "bytes": 35821
+      },
+      "original-vision-history.json": {
+        "sha256": "df3654208ba2290474d37e34bdf8fbf2a4aed32869e52bedc09e2e23c6913f60",
+        "bytes": 112596
+      },
+      "public-browser-scene-selection.zip": {
+        "sha256": "a7e74eb183bc10f10ec67007545b0d36fcb650599f9013986485519e391b87fa",
+        "bytes": 6064404
+      },
+      "restore.json": {
+        "sha256": "bb2aa34a4f63875d017a6a094a5a76ff7597525ce05ec497e0499e1c334f4796",
+        "bytes": 4500
+      },
+      "source-hashes.json": {
+        "sha256": "e6cf43aba14c18169017c5aa7946019f4c1e96b72fd8fab5ebff21a0e18c7818",
+        "bytes": 223
+      }
+    }
+  },
+  "scene_review_ui_and_explicit_editing_integrated": true,
+  "new_paid_operations": 0,
+  "new_external_dispatches": 0,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "publishing_performed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

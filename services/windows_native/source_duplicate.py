@@ -122,6 +122,12 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         output['source_broll_plans'].append({'plan':changed,'sha256':digest(changed)})
         plan_fingerprints[changed['media_plan_id']]=changed['fingerprint']
     snapshot=rewrite(state['snapshot'])
+    original_selection=state['snapshot']['metadata'].get('reviewed_scene_selection')
+    if original_selection is not None:
+        snapshot['metadata'].pop('reviewed_scene_selection',None);snapshot['metadata'].pop('reviewed_highlight_id',None)
+        snapshot['metadata']['inherited_reviewed_scene_selection']={'original_selection':copy.deepcopy(original_selection),
+            'original_highlight_id':state['snapshot']['metadata'].get('reviewed_highlight_id'),
+            'authority_transferred':False,'new_review_required':True}
     # Generic copies are independent projects, not registered variant members.
     snapshot['metadata'].pop('source_variant',None)
     snapshot['metadata'].update(native_project_id=target_id,human_review_required=True,

@@ -224,7 +224,7 @@ class NativeOfficialVisionHTTPTests(OfficialVisionHTTPFixture,unittest.TestCase)
             for reference in re.findall(r'(?:from\s*|import\s*\(\s*|import\s*)[\'\"]([^\'\"]+)[\'\"]',value.decode('utf-8')):
                 if reference.startswith('./') and reference.endswith('.mjs'):pending.append(urljoin(path,reference))
         self.assertIn('/project-quality.mjs',seen);self.assertIn('/native-official-vision.mjs',seen)
-        self.assertIn('/native-source-broll-review.mjs',seen);self.assertGreater(len(seen),20);self.assertEqual(self.calls,[])
+        self.assertIn('/native-source-broll-review.mjs',seen);self.assertIn('/native-scene-review.mjs',seen);self.assertGreater(len(seen),20);self.assertEqual(self.calls,[])
 
 
 if __name__=='__main__':unittest.main()

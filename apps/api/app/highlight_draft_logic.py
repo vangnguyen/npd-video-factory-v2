@@ -19,7 +19,7 @@ class HighlightDraftRequest(StrictModel):
     mode: Literal['top_highlights','auto_shorts'] = 'top_highlights'
     maximum_duration_seconds: float = Field(default=60,ge=3,le=180)
 
-def build_drafts(analysis,asset,payload,assessment=None):
+def build_drafts(analysis,asset,payload,assessment=None,*,scored_highlights=None):
     if analysis.status!='succeeded':raise HighlightDraftConflict('analysis is not ready')
     scenes=[scene.model_dump(mode='json') for scene in (assessment.scenes if assessment else analysis.scenes)]
     # Re-score against the exact selected transcript, including human text edits;
@@ -32,7 +32,9 @@ def build_drafts(analysis,asset,payload,assessment=None):
                 scene['description']=' '.join(segment.text for segment in segments)
             scene['evidence']={**scene.get('evidence',{}),'transcript_segment_count':len(segments),
                 'transcript_segment_ids':[segment.segment_id for segment in segments]}
-    scored=build_highlights(scenes=scenes,top_k=5)
+    # Optional original reviewed ranking is admitted by the Native consumer's
+    # immutable source/journal validation; existing callers keep local scoring.
+    scored=build_highlights(scenes=scenes,top_k=5) if scored_highlights is None else scored_highlights[:5]
     drafts=[]
     for item in scored:
         start,end=protected_window(item['recommended_start'],item['recommended_end'],analysis.transcript,
