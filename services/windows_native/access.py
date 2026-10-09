@@ -75,7 +75,7 @@ def permission_for(method, path):
     if any(re.fullmatch(pattern, path) for pattern in review):
         return 'review'
     edit = [r'/api/projects', r'/api/projects/' + ID + '/(draft|image|jobs|auto-plan|duplicate|archive|brand-template|voice-quality|shots|preview|ai-edit|asset-association|media|documents|music)',
-        r'/api/projects/' + ID + '/auto-edit/(timeline|broll|shorts|scene-reviews)',
+        r'/api/projects/' + ID + '/auto-edit/(timeline|broll|shorts|scene-reviews|thumbnail-reviews(?:/select)?)',
         r'/api/projects/' + ID + '/auto-edit/ana_[a-f0-9]{24}/transcript', r'/api/jobs/' + ID + '/resume',
         r'/api/intelligence/runs', r'/api/intelligence/runs/' + ID + '/(research|ideas)',
         r'/api/intelligence/ideas/' + ID + '/(select|edit|reject)',

@@ -1,0 +1,143 @@
+{
+  "schema_version": "native-reviewed-source-thumbnail-evidence-v1",
+  "parent_head": "7c439024245aaa7ed3c01693b3a2cb0590beb1de",
+  "source_sha256": {
+    "services/windows_native/source_thumbnail_review.py": "93d7d0211b0bbcf6dd463a3e8207e14ec04641f87c0c7a8bb7fc6faccd363411",
+    "services/windows_native/project_thumbnail.py": "f753683799c08e1e53bcee27f7ede15ea3fc7d71e007531dd01d4089b861cd38",
+    "services/windows_native/source_duplicate.py": "3eb044dd8d6975f051bec1bdc7871f981d4c9b9e1e956ee5d3f5d45fd31d79b8",
+    "services/windows_native/auto_edit_timeline.py": "3c9787751a4490cecfbebc2d44e3b75e354bca7fd4c31c339fd4cc70c65a27c8",
+    "services/windows_native/store.py": "2c05a45f6d6695e168f2d4f20bce75e4f4c2d99e939a7a71e5e475eb46560f81",
+    "services/windows_native/server.py": "dc46a7084985bd234049fe62b04d7913d8b67480ae425666f0bb7799cbc338ae",
+    "services/windows_native/access.py": "7bb44f1af9e04dbaac894ecd978b74a66d87963b63e81ac3517c00e785cb870d",
+    "apps/studio-web/native-source-editor.mjs": "910c591bf2134a00f60b6a039ac43257eac7822c43522d0d216efabeb6281589",
+    "apps/studio-web/native-source-editor.css": "7e73f9c93c5cd6a28f46b120afbbf18d3a327df7dbe6324dd808b40e1acb583c",
+    "apps/studio-web/native-source-thumbnail-review.mjs": "d86fbe00a5605c74925255257b4c4f92ebb0deff1d77e338efb637d078055d6e",
+    "apps/studio-web/tests/native-source-thumbnail-review.test.mjs": "eefbb32c1239670fa7fa87098e6edc39d15a0f0fa56ab237aedc5d084dfea59b",
+    "apps/studio-web/tests/fixtures/native-source-thumbnail-v1.json": "19f8277ca3104d31958b40854cc2dd94e6db1c9ced23faa1c7c200f396c474f6",
+    "services/windows_native/tests/test_source_thumbnail_review.py": "164a8065fcf0e5b66f6267d5a6a5bf9e99f2a462684af169be41cd131e21494c",
+    "services/windows_native/tests/test_official_vision_http.py": "627dfc71ed97e4a94b199e59edf1b4825301bfc1a9a0eddfb9f2f510f3e55a57",
+    "scripts/north_star_source_thumbnail.py": "5066fdf5c1bd0b80ed4277da796d2ca73d35ce560e1ee9e9ccefcf73385d2aa4",
+    "scripts/north_star_source_thumbnail.mjs": "e3239e1ed052d0d704b0ff2fb5ba1dd0a595147993fb4d251a3c3195ff60c459",
+    "docs/NATIVE_REVIEWED_SOURCE_THUMBNAILS.md": "15a0179e4e4b01e7b78158e7131125ad273c16960483f66b26cd40033bfb9fcb"
+  },
+  "tests": {
+    "native_related": 61,
+    "native_seconds": 204.04,
+    "new_native_cases": 8,
+    "native_log_sha256": "a7b0de1262dd55b4a06e47befd4149c8d81c806e6dc4c769d8bc3442e745f0c4",
+    "studio": 449,
+    "studio_ms": 2153.2776,
+    "new_studio_cases": 5,
+    "studio_log_sha256": "b0519adc242532701cf51f264e69af5bd813876e4c4d2dd502bcb99d98dcb23c"
+  },
+  "rehearsal": {
+    "schema_version": "native-reviewed-source-thumbnail-rehearsal-v1",
+    "source_sha256": {
+      "services/windows_native/source_thumbnail_review.py": "93d7d0211b0bbcf6dd463a3e8207e14ec04641f87c0c7a8bb7fc6faccd363411",
+      "services/windows_native/project_thumbnail.py": "f753683799c08e1e53bcee27f7ede15ea3fc7d71e007531dd01d4089b861cd38",
+      "services/windows_native/source_duplicate.py": "3eb044dd8d6975f051bec1bdc7871f981d4c9b9e1e956ee5d3f5d45fd31d79b8",
+      "services/windows_native/auto_edit_timeline.py": "3c9787751a4490cecfbebc2d44e3b75e354bca7fd4c31c339fd4cc70c65a27c8",
+      "services/windows_native/store.py": "2c05a45f6d6695e168f2d4f20bce75e4f4c2d99e939a7a71e5e475eb46560f81",
+      "services/windows_native/server.py": "dc46a7084985bd234049fe62b04d7913d8b67480ae425666f0bb7799cbc338ae",
+      "services/windows_native/access.py": "7bb44f1af9e04dbaac894ecd978b74a66d87963b63e81ac3517c00e785cb870d",
+      "apps/studio-web/native-source-editor.mjs": "910c591bf2134a00f60b6a039ac43257eac7822c43522d0d216efabeb6281589",
+      "apps/studio-web/native-source-editor.css": "7e73f9c93c5cd6a28f46b120afbbf18d3a327df7dbe6324dd808b40e1acb583c",
+      "apps/studio-web/native-source-thumbnail-review.mjs": "d86fbe00a5605c74925255257b4c4f92ebb0deff1d77e338efb637d078055d6e",
+      "apps/studio-web/tests/native-source-thumbnail-review.test.mjs": "eefbb32c1239670fa7fa87098e6edc39d15a0f0fa56ab237aedc5d084dfea59b",
+      "apps/studio-web/tests/fixtures/native-source-thumbnail-v1.json": "19f8277ca3104d31958b40854cc2dd94e6db1c9ced23faa1c7c200f396c474f6",
+      "services/windows_native/tests/test_source_thumbnail_review.py": "164a8065fcf0e5b66f6267d5a6a5bf9e99f2a462684af169be41cd131e21494c",
+      "services/windows_native/tests/test_official_vision_http.py": "627dfc71ed97e4a94b199e59edf1b4825301bfc1a9a0eddfb9f2f510f3e55a57",
+      "scripts/north_star_source_thumbnail.py": "5066fdf5c1bd0b80ed4277da796d2ca73d35ce560e1ee9e9ccefcf73385d2aa4",
+      "scripts/north_star_source_thumbnail.mjs": "e3239e1ed052d0d704b0ff2fb5ba1dd0a595147993fb4d251a3c3195ff60c459"
+    },
+    "signed_http_requests": 18,
+    "saved_recommendations": 1,
+    "explicit_selected_pngs": 2,
+    "unapproved_duplicate": 1,
+    "new_mock_requests": 0,
+    "new_cpu_jobs": 0,
+    "original_source_asr_vision": "preserved owned synthetic media and explicit fixtures, not genuine provider acceptance",
+    "new_external_dispatches": 0,
+    "new_paid_operations": 0,
+    "all_previous_projects_recommendations_results_costs_source_bytes_exact": true,
+    "dom_controller_tested": true,
+    "actual_parent_browser_executed": false,
+    "full_qc_or_new_final_render": false,
+    "owner_uat_accepted": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "public_backup_sha256": "557878fc3fc3b1e328bf48772489feecbcc96c7fdea7e24918e2c8192d4957d8",
+    "prior_public_backup_sha256": "165994b91eab857437ff0ae570c88126b61617fa1a6cba4db86d0fde2e534de9",
+    "exports": {
+      "backup.json": {
+        "sha256": "38f2fbf3e900a5a0f22be86ecc168a40f92ee1e7b1c6af3ae1445f073f75e275",
+        "bytes": 4114
+      },
+      "expected-journals.json": {
+        "sha256": "7bc6bf959675e3445e477357df8405eb89e61235b48a3da22f4840d33e3345fa",
+        "bytes": 9075246
+      },
+      "expected-projects.json": {
+        "sha256": "f89fa29fc25e8280fe062fa80f9c83c9259e7300c7e65413afc03075630ec429",
+        "bytes": 4265491
+      },
+      "expected-thumbnail-pages.json": {
+        "sha256": "a24833554997557c9d3e371d9aadc480f679b4ddee105d2aba46ebffddaeee73",
+        "bytes": 86614
+      },
+      "node-controller-errors.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "node-controller-proof.json": {
+        "sha256": "2548c03b78e523f11ce5619d9477cea94ff862f64047b0a04916bad54354f24a",
+        "bytes": 1020188
+      },
+      "original-vision-history.json": {
+        "sha256": "df3654208ba2290474d37e34bdf8fbf2a4aed32869e52bedc09e2e23c6913f60",
+        "bytes": 112596
+      },
+      "prior-restore.json": {
+        "sha256": "0bf1a144de7210da3c0967d735a45ac787c644f0bf19606edb0f95f7ad24ddcf",
+        "bytes": 4501
+      },
+      "public-source-thumbnail.zip": {
+        "sha256": "557878fc3fc3b1e328bf48772489feecbcc96c7fdea7e24918e2c8192d4957d8",
+        "bytes": 11100671
+      },
+      "restore.json": {
+        "sha256": "8982566f22a5215db5fcfb447307c42b2eca01838695ffa7c80aeab845817171",
+        "bytes": 4513
+      },
+      "restored-in-process.json": {
+        "sha256": "7143d4cf5f71410afaae8dda29a949ddc6dd5abe277bcd40fc370d05ebafb65c",
+        "bytes": 276
+      },
+      "source-hashes.json": {
+        "sha256": "e6cf43aba14c18169017c5aa7946019f4c1e96b72fd8fab5ebff21a0e18c7818",
+        "bytes": 223
+      },
+      "ui-fixture.json": {
+        "sha256": "b10ecdd7abb28c50a80ac14d972fe273ad63e49ed6e03fbfb2dfa017ca52e0e4",
+        "bytes": 1059861
+      }
+    }
+  },
+  "fresh_process": {
+    "all9_projects_original_thumbnail_crop_scene_results_cost_journals_source_bytes_exact": true,
+    "selected_png_exact": true,
+    "keyless_disabled_recovery": true,
+    "provider_retry_or_consent_renewal": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "actual_parent_browser_executed": false,
+  "new_paid_operations": 0,
+  "new_external_dispatches": 0,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

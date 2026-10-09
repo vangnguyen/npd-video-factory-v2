@@ -18,6 +18,13 @@ def thumbnail(store,config,project_id,asset_id):
     project=store.get(project_id);asset=next((v for v in project_assets(project['document']) if v['id']==asset_id),None)
     if asset is None:raise WorkflowError('MEDIA_NOT_IN_PROJECT',404)
     if asset.get('kind') not in {'image','video'}:raise WorkflowError('MEDIA_THUMBNAIL_KIND_INVALID',400)
+    selected=project['document'].get('source_thumbnail_selection')
+    if selected is not None:
+        from .source_thumbnail_review import validate_selection
+        validate_selection(project)
+    if selected is not None and selected.get('source_asset_id')==asset_id:
+        from .source_thumbnail_review import selected_image
+        return selected_image(store,config,project),'explicit_reviewed_source_frame'
     if asset.get('thumbnail_id'):
         return image(media_path(config,asset['thumbnail_id']),store.root/'assets'),'registered_ingest_thumbnail'
     source=checked_path(config,asset)

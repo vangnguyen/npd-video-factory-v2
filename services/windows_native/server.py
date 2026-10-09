@@ -636,6 +636,10 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(CostLedger(self.server.store).summary(cost_route[1]))
         analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit', path)
         scene_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-reviews', path)
+        thumbnail_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/thumbnail-reviews',path)
+        if thumbnail_reviews:
+            from .source_thumbnail_review import page
+            return self.reply(page(self.server.store,self.server.config,thumbnail_reviews[1],official_vision=lambda:self.server.official_vision),headers={'Cache-Control':'no-store'})
         if scene_reviews:
             from .scene_review import page
             return self.reply(page(self.server.store,self.server.config,scene_reviews[1],official_vision=lambda:self.server.official_vision),headers={'Cache-Control':'no-store'})
@@ -757,7 +761,7 @@ class Handler(BaseHTTPRequestHandler):
                        '/production':'production.html','/production.mjs':'production.mjs','/production.css':'production.css'})
         static.update({name:name[1:] for name in ('/asset-picker.mjs','/video-preview.mjs','/studio-workspace.css','/studio-shell.mjs','/studio-shell.css','/native-auto-edit.mjs','/native-auto-edit.css')})
         static.update({name:name[1:] for name in ('/native-source-editor.mjs','/native-source-editor.css',
-            '/native-source-broll.mjs','/native-media-frames.mjs','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
+            '/native-source-broll.mjs','/native-media-frames.mjs','/native-source-thumbnail-review.mjs','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
         static['/native-costs.mjs'] = 'native-costs.mjs'
         static['/native-publications.mjs'] = 'native-publications.mjs'
         static['/native-analytics.mjs'] = 'native-analytics.mjs'
@@ -917,6 +921,12 @@ class Handler(BaseHTTPRequestHandler):
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', self.path)
         broll_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/broll', self.path)
         scene_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-reviews',self.path)
+        thumbnail_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/thumbnail-reviews(/select)?',self.path)
+        if thumbnail_reviews:
+            from .source_thumbnail_review import create,select
+            action=select if thumbnail_reviews[2] else create
+            return self.reply(action(self.server.store,self.server.config,thumbnail_reviews[1],self.read_body(max_bytes=16000),
+                official_vision=lambda:self.server.official_vision),headers={'Cache-Control':'no-store'})
         if scene_reviews:
             from .scene_review import create
             return self.reply(create(self.server.store,self.server.config,scene_reviews[1],self.read_body(max_bytes=16000),

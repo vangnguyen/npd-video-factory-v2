@@ -5,6 +5,7 @@ import {sourceBrollRequest,sourceBrollMarkup} from './native-source-broll.mjs';
 import {initializeSourceBrollReview} from './native-source-broll-review.mjs';
 import {initializeSceneReview} from './native-scene-review.mjs';
 import {initializeSourceCropReview} from './native-source-crop-review.mjs';
+import {initializeSourceThumbnailReview} from './native-source-thumbnail-review.mjs';
 
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 export const sourceState=p=>isSourceProject(p)?p.document.canonical_timeline:null;
@@ -79,23 +80,28 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   toolbar.innerHTML='<button type="button" data-source-history="undo">Hoàn tác</button><button type="button" data-source-history="redo">Làm lại</button><label>Zoom<input data-source-zoom type="range" min="0.5" max="4" step="0.25" value="1"></label><label class="check"><input data-source-snap type="checkbox" checked> Bám mốc 0,25s</label><label>Playhead (s)<input data-source-playhead type="number" min="0" step="0.01" value="0"></label><output data-source-position>0.00s</output>';
   $('advanced-tracks').before(toolbar);
   if(!document.querySelector('link[data-source-editor-style]')){const link=document.createElement('link');link.rel='stylesheet';link.href='/native-source-editor.css';link.dataset.sourceEditorStyle='true';document.head.append(link);}
-  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null;
+  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null,thumbnailReview=null;
   const state=()=>sourceState(getProject());
   const selected=()=>getClip(state(),selectedId);
   const locked=()=>selected()?.track.locked;
-  const blocked=()=>working||sceneReview.isWorking()||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
+  const blocked=()=>working||sceneReview.isWorking()||thumbnailReview?.isWorking()||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
   const sceneRoot=document.createElement('section');
   const sceneReview=initializeSceneReview({root:sceneRoot,api,getReviewedVision,onProject,onMessage,onWorking,onDraftsCreated,
     getState:()=>({project:getProject(),workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,
-      dirty:dirty||getGuards().dirty,busy:working||getGuards().busy,active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
+      dirty:dirty||getGuards().dirty,busy:working||getGuards().busy||thumbnailReview?.isWorking(),active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   const reviewRoot=document.createElement('section');
   const brollReview=initializeSourceBrollReview({root:reviewRoot,getReviewedVision,onMessage,getState:()=>({project:getProject(),
     workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,dirty:dirty||getGuards().dirty,
-    busy:working||getGuards().busy,active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
+    busy:working||getGuards().busy||thumbnailReview?.isWorking(),active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   const cropRoot=document.createElement('section');
   const cropReview=initializeSourceCropReview({root:cropRoot,getReviewedVision,onMessage,getState:()=>({project:getProject(),
     workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,dirty:dirty||getGuards().dirty,
-    busy:working||getGuards().busy,active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
+    busy:working||getGuards().busy||thumbnailReview?.isWorking(),active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
+  const thumbnailRoot=document.createElement('section');
+  thumbnailReview=initializeSourceThumbnailReview({root:thumbnailRoot,api,getReviewedVision,onProject,onMessage,onWorking,
+    getState:()=>({project:getProject(),workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,
+      dirty:dirty||getGuards().dirty,busy:working||getGuards().busy||sceneReview.isWorking(),
+      active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   function controls(){
     host.querySelectorAll('input,select,button').forEach(el=>el.disabled=blocked());
     if(locked())host.querySelectorAll('[data-source-form] input,[data-source-form] button,[data-source-action],[data-source-placement],[data-source-speed],[data-source-volume],[data-source-crop]').forEach(el=>el.disabled=true);
@@ -118,6 +124,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     brollReview.sync();
     sceneReview.sync();
     cropReview.sync();
+    thumbnailReview.sync();
   }
   function renderAdvanced(){
     toolbar.hidden=!isSourceProject(getProject());
@@ -157,6 +164,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     host.append(sceneRoot);
     host.insertAdjacentHTML('beforeend',sourceReframeMarkup(p));
     host.append(cropRoot);
+    host.append(thumbnailRoot);
     void history();renderAdvanced();controls();
   }
   async function run(fn,{allowDirty=false}={}){
@@ -255,7 +263,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   });
   for(const player of getPlayers())player.addEventListener('timeupdate',()=>{if(!isSourceProject(getProject())||player.hidden)return;playhead=player.currentTime;toolbar.querySelector('[data-source-position]').value=`${num(playhead)}s`;});
   void api('/api/auto-edit/subtitle-templates').then(value=>{catalog=value;shownKey=null;if(isSourceProject(getProject())&&!dirty)renderSelected(true);}).catch(error=>onMessage(error.message,true));
-  return {selectShot(id){selectedId=id;renderSelected();},renderAdvanced,controls,isWorking:()=>working||sceneReview.isWorking(),
+  return {selectShot(id){selectedId=id;renderSelected();},renderAdvanced,controls,isWorking:()=>working||sceneReview.isWorking()||thumbnailReview.isWorking(),
     readyForApproval:()=>isSourceProject(getProject())&&getPreview()?.status==='READY'&&getPreview()?.timeline_sha256===state().sha256,
     render:()=>renderSelected()};
 }

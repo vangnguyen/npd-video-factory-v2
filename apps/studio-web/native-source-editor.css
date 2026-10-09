@@ -17,3 +17,6 @@
 [data-broll-item] button {margin:4px 0}
 #native-source-inspector [data-source-crop-point] {min-width:0;max-width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:8px}
 #native-source-inspector [data-source-crop-point] label {min-width:0}
+#native-source-inspector [data-thumbnail-images] figure { margin: 1rem 0; min-width: 0; }
+#native-source-inspector [data-thumbnail-images] img { display: block; max-width: 100%; height: auto; }
+#native-source-inspector [data-thumbnail-images] figcaption { overflow-wrap: anywhere; }

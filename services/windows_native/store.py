@@ -295,6 +295,11 @@ class Store:
         if has_reviewed:history(self,previous)
         has_scenes=bool(previous['document'].get('source_scene_recommendations'))
         has_reframe=bool(previous['document'].get('source_reframe_reviews'))
+        has_thumbnails=bool(previous['document'].get('source_thumbnail_reviews')) or previous['document'].get('source_thumbnail_selection') is not None
+        if has_thumbnails:
+            from .source_thumbnail_review import page as thumbnail_history
+            from .pipeline import Config
+            thumbnail_history(self,Config(data_root=self.root),identifier)
         if has_reframe:
             from .source_reframe_vision import history as reframe_history
             from .pipeline import Config
@@ -305,7 +310,7 @@ class Store:
             page(self,Config(data_root=self.root),identifier)
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
-            if (has_reviewed or has_scenes or has_reframe) and digest(doc)!=digest(previous['document']):raise WorkflowError('STALE_VERSION_RELOAD')
+            if (has_reviewed or has_scenes or has_reframe or has_thumbnails) and digest(doc)!=digest(previous['document']):raise WorkflowError('STALE_VERSION_RELOAD')
             from .auto_edit_timeline import is_auto_edit
             stamp=now(); copy_id=uuid.uuid4().hex
             source=is_auto_edit(doc)

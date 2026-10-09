@@ -269,6 +269,10 @@ def source_shots(snapshot):
 
 def view(store, project_id):
     project = store.get(project_id)
+    if project['document'].get('source_thumbnail_reviews') or project['document'].get('source_thumbnail_selection') is not None:
+        from .source_thumbnail_review import page as thumbnail_history
+        from .pipeline import Config
+        thumbnail_history(store,Config(data_root=store.root),project_id)
     if project['document'].get('source_reframe_reviews'):
         from .source_reframe_vision import history as reframe_history
         from .pipeline import Config
