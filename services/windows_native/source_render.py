@@ -150,6 +150,7 @@ def run(config,job,out,stage):
     directory.mkdir(parents=True)
     started=time.monotonic();stage('source_timeline_audio_and_captions')
     snapshot,subtitles,assets,audio,profile=prepare(config,job,directory)
+    original_render_manifest_sha=file_sha(directory/'timeline-render.json')
     stage('source_private_remotion_render')
     command_run([str(node),str(tsx),str(REPO/'renderer/src/native-job-cli.ts'),str(directory)],
         directory,'renderer.log',max(180,min(1800,snapshot.duration_seconds*12)),'AUTO_EDIT_RENDERER_FAILED')
@@ -193,6 +194,18 @@ def run(config,job,out,stage):
     qc={**report,'passed':True,'final_sha256':file_sha(output),'human_final_video_accepted':False,'published':False,
         'render_profile':profile,'audio_activity':activity,'intentional_audio_silence':not bool(audio.clips)}
     qc['measured_audio_loudness']=loudness
+    from .render_frame_qc import build as render_frame_evidence,artifact_names as render_frame_artifacts
+    try:
+        qc['rendered_frame_evidence']=render_frame_evidence(config,directory,
+            document_sha256=digest(project['document']),manifest_name='timeline-render.json')
+        measured_frames=qc['rendered_frame_evidence']['observation']
+        if (measured_frames['rendered_video_sha256']!=qc['final_sha256']
+                or measured_frames['render_manifest_sha256']!=original_render_manifest_sha):
+            raise WorkflowError('RENDER_FRAME_QC_INPUT_CHANGED')
+    except WorkflowError as error:
+        durable_json(directory/'qc-report.json',{**qc,'passed':False,'status':'failed',
+            'failures':[error.code]})
+        raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
     analysis=json.loads((directory/'audio-analysis.json').read_bytes());analysis['final_output_loudness']=loudness
     durable_json(directory/'audio-analysis.json',analysis)
     durable_json(directory/'qc-report.json',qc);durable_json(directory/'ffprobe.json',probe)
@@ -208,7 +221,13 @@ def run(config,job,out,stage):
         'actual_local_compute_cost':None,'duration_seconds':time.monotonic()-started})
     files=('final.mp4','qc-report.json','ffprobe.json','render-manifest.json','timeline.json',
         'timeline-render.json','subtitles.json','audio-analysis.json','cost.json','renderer-receipt.json')
+    try:files+=render_frame_artifacts(directory)
+    except WorkflowError:raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
+    artifacts.path('render-frame-qc').mkdir(exist_ok=True)
     paths=[artifacts.publish(directory/name,name) for name in files]
+    from .render_frame_qc import validate as validate_render_frames
+    try:validate_render_frames(out,qc['rendered_frame_evidence'],document_sha256=digest(project['document']))
+    except WorkflowError:raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
     result={'video_url':f"/api/jobs/{job['id']}/video",'qc':qc,'output_directory':str(out),'review_required':True,
         'render_mode':'source_footage','provider_calls':0,'tts_calls':0,
         'render_version':digest({'snapshot':job['snapshot'],'job_id':job['id'],'final_sha256':qc['final_sha256']})}

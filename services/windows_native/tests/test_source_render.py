@@ -6,7 +6,7 @@ import uuid
 from unittest.mock import patch
 
 from services.windows_native import auto_edit_timeline as timeline
-from services.windows_native.contracts import WorkflowError,file_sha
+from services.windows_native.contracts import WorkflowError,file_sha,digest
 from services.windows_native.pipeline import Pipeline
 from services.windows_native.server import Runner
 from services.windows_native.shot_preview import PreviewManager
@@ -85,9 +85,20 @@ class NativeSourceRenderTests(unittest.TestCase):
         folder=self.root/'jobs'/job['id']
         self.assertTrue((folder/'checkpoint-render.json').is_file())
         self.assertTrue((folder/'subtitles.json').is_file());self.assertTrue((folder/'cost.json').is_file())
+        from services.windows_native.render_frame_qc import validate
+        frames=result['result']['qc']['rendered_frame_evidence'];value=validate(folder,frames,document_sha256=digest(before))
+        self.assertEqual(value['rendered_video_sha256'],result['result']['qc']['final_sha256'])
+        self.assertFalse(value['semantic_inference_performed']);self.assertTrue((folder/'render-frame-qc/0.png').is_file())
         manifest=json.loads((folder/'render-manifest.json').read_bytes())
         self.assertEqual(manifest['canonical_timeline'],before['canonical_timeline'])
         self.assertFalse(manifest['publishing_allowed'])
+        image=folder/'render-frame-qc/0.png';original_image=image.read_bytes()
+        image.write_bytes(b'EXPLICIT RENDERED FRAME CORRUPTION FIXTURE')
+        with self.assertRaisesRegex(WorkflowError,'CHECKPOINT_ARTIFACT_CHANGED'):
+            Pipeline(self.config).run(result,lambda value:None)
+        with self.assertRaisesRegex(WorkflowError,'CHECKPOINT_ARTIFACT_CHANGED'):
+            self.store.final_video(job['id'])
+        image.write_bytes(original_image)
         (folder/'final.mp4').write_bytes(b'explicit isolated damaged final')
         with self.assertRaisesRegex(WorkflowError,'CHECKPOINT_ARTIFACT_CHANGED'):
             Pipeline(self.config).run(result,lambda value:None)
@@ -129,6 +140,27 @@ class NativeSourceRenderTests(unittest.TestCase):
         folder=self.root/'jobs'/job['id'];self.assertIsNone(finished['result']);self.assertFalse((folder/'final.mp4').exists())
         reports=list((folder/'attempts').glob('*/qc-report.json'));self.assertTrue(reports)
         self.assertEqual(json.loads(reports[0].read_bytes())['failures'],['NATIVE_AUDIO_LOUDNESS_SCAN_FAILED'])
+
+    def test_render_frame_input_change_is_failed_qc_without_ready_final(self):
+        self.review_fixture();job=self.store.enqueue(self.project['id'],self.project['revision'],'render',uuid.uuid4().hex)
+        with patch('services.windows_native.render_frame_qc.build',side_effect=WorkflowError('RENDER_FRAME_QC_INPUT_CHANGED')):
+            Runner(self.store,Pipeline(self.config)).run_one()
+        finished=self.store.get_job(job['id']);self.assertEqual(finished['status'],'failed_qc',finished['error'])
+        folder=self.root/'jobs'/job['id'];self.assertIsNone(finished['result']);self.assertFalse((folder/'final.mp4').exists())
+        reports=list((folder/'attempts').glob('*/qc-report.json'));self.assertTrue(reports)
+        self.assertEqual(json.loads(reports[0].read_bytes())['failures'],['RENDER_FRAME_QC_INPUT_CHANGED'])
+
+    def test_rendered_frame_copy_corruption_cannot_create_ready_checkpoint(self):
+        from services.windows_native.hardening import Artifacts
+        self.review_fixture();job=self.store.enqueue(self.project['id'],self.project['revision'],'render',uuid.uuid4().hex)
+        original=Artifacts.publish
+        def broken_copy(artifacts,source,name):
+            path=original(artifacts,source,name)
+            if name=='render-frame-qc/0.png':path.write_bytes(b'EXPLICIT COPY CORRUPTION FIXTURE')
+            return path
+        with patch.object(Artifacts,'publish',new=broken_copy):Runner(self.store,Pipeline(self.config)).run_one()
+        finished=self.store.get_job(job['id']);self.assertEqual(finished['status'],'failed_qc',finished['error'])
+        self.assertIsNone(finished['result']);self.assertFalse((self.root/'jobs'/job['id']/'checkpoint-render.json').exists())
 
 
 if __name__=='__main__':unittest.main()

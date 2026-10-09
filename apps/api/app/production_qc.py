@@ -279,6 +279,9 @@ class FullProductionQC:
             "luma_min": round(min(values), 3),
             "luma_max": round(max(values), 3),
             "external_vision_call": False,
+            "semantic_inference_performed": False,
+            "confidence": None,
+            "basis": "measured_center_region_luma_not_semantic_vision",
         }
 
     async def _decode(self, path: Path) -> dict[str, Any]:

@@ -195,6 +195,12 @@ def main():
                 'render-manifest.json','ffprobe.json','cost.json','renderer-receipt.json','checkpoint-render.json'):
             shutil.copyfile(jobdir/name,out/name)
         shutil.copyfile(jobdir/'qc-report.json',out/'qc.json')
+        from services.windows_native.render_frame_qc import validate as validate_render_frames
+        frames=json.loads((jobdir/'render-frame-qc.json').read_bytes())
+        assert frames==render['result']['qc']['rendered_frame_evidence']
+        assert validate_render_frames(jobdir,frames)['rendered_video_sha256']==render['result']['qc']['final_sha256']
+        for name in ('render-frame-qc.json','render-frame-qc.log'):shutil.copyfile(jobdir/name,out/name)
+        shutil.copytree(jobdir/'render-frame-qc',out/'render-frame-qc')
         shutil.copyfile(manager.video_path(project['id'],preview['timeline_version']),out/'preview.mp4')
         durable_json(out/'preview.json',preview)
         effects_parity=None;mix_sha=None
@@ -266,6 +272,8 @@ def main():
             'explicit_manual_reframe':args.manual_reframe,
             'automatic_subject_tracking_performed':False,
             'local_measured_pixel_frames_saved':bool(frame_job),
+            'actual_decoded_final_render_frame_evidence':True,
+            'final_render_decoded_pts_measured':True,
             'semantic_vision_provider_status':'NOT_CONFIGURED',
             'semantic_vision_inference_performed':False,
             'matching_preview_final_effects_manifests':effects_parity,

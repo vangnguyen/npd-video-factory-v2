@@ -1,0 +1,153 @@
+{
+  "schema_version": "north-star-render-frame-qc-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-native-n2.log",
+      "sha256": "52136766a6ebb67bf717b9c81c5987e0370e5f84005f5c2e763b255c30fa495c",
+      "bytes": 11052,
+      "passed": 48,
+      "mock_asr_and_human_review": true,
+      "actual_local_ffmpeg_and_pixels": true
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-native-final-n1.log",
+      "sha256": "455705cdfaae1d2aa179c5da8af8f313136a2a0c2db0a397ce337576550b823d",
+      "bytes": 7511,
+      "passed": 32,
+      "mock_asr_and_human_review": true,
+      "actual_local_ffmpeg_and_pixels": true
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-api-n1.log",
+      "sha256": "dc0f6144168fab1369f7cfb8fe45061755cad967f76055c21eaeb027bc9b13c5",
+      "bytes": 101,
+      "passed": 8,
+      "mock_asr_and_human_review": true,
+      "actual_local_ffmpeg_and_pixels": false
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-native-final-n2.log",
+      "sha256": "dd808d3d47ec3552a4d94871435ad28c2c54d37ca300af0b2e3467c349e3d54d",
+      "bytes": 8194,
+      "passed": 35,
+      "new_native_cases": 13,
+      "post_copy_corruption_source_storyboard_preview_tested": true,
+      "mock_asr_and_human_review": true,
+      "actual_local_ffmpeg_and_pixels": true
+    }
+  ],
+  "flows": [
+    {
+      "kind": "source",
+      "state_root": "C:/vf-native-fixture-render-frame-qc-source-01",
+      "restore_root": "C:/vf-native-fixture-render-frame-qc-source-restore-01",
+      "project_count": 1,
+      "successful_renders": [
+        {
+          "job_id": "04c03f1ac0d14f3d93068082d7f26737",
+          "render_sha256": "7b97f5ef0a9241c6aa8e7af51db96f0425dea387a9f9992ee74cc9d30e0eb8bc",
+          "frame_count": 8,
+          "record_sha256": "e89da6e3826071bc29b9b3a0e114e85446fdc066e7efa682b7b5a4fa40e90425"
+        }
+      ],
+      "render_frame_records": 2,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-source-recovery-n1\\evidence.json",
+        "sha256": "861b9df8ce30f5175d6bccac744e5f1774df1e818473e0922d72456f23734ccd",
+        "bytes": 1619
+      },
+      "final_reader_revalidation": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-source-recovery-n1\\final-reader-revalidation.json",
+        "sha256": "8a4fdf2626ccffda7d9ee06ce857951d17d5f81b4234fde6c203bef8b3132777",
+        "bytes": 427
+      },
+      "backup": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-source-recovery-n1\\public-render-frame-qc.zip",
+        "sha256": "d9dca5b3bce0834fbc32714858ceb5de61ba39e74e9b66b1df2aa488e82987dc",
+        "bytes": 7675340
+      },
+      "new_process_replay": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-source-recovery-n1\\new-process-replay.json",
+        "sha256": "780b846af3833a4da61136e34a41f6696d3970b324dcb507c2e8cc026c9848a9",
+        "bytes": 243
+      },
+      "scope_clarification": "Initial new_decode_or_render=false refers to no new video extraction/render; existing PNGs are actually decoded by Pillow and revalidated."
+    },
+    {
+      "kind": "storyboard",
+      "state_root": "C:/vf-native-fixture-storyboard-qc-render-frames-01",
+      "restore_root": "C:/vf-native-fixture-render-frame-qc-storyboard-restore-02",
+      "project_count": 1,
+      "successful_renders": [
+        {
+          "job_id": "73d7398ba99d4584a51a5584f383a980",
+          "render_sha256": "e14cf232322c700dc640d516c5f29034b4216a78bb1d569638247e1272c31129",
+          "frame_count": 8,
+          "record_sha256": "e3385845046ef6220ab32aa98e8cca89b2161a054d0d205b14bebe27bf74f6c4"
+        }
+      ],
+      "render_frame_records": 4,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-storyboard-recovery-n1\\evidence.json",
+        "sha256": "85f506f0c3ad16b0c137888aae9c2bc78c84d96b8e293131dd40f51805c2b822",
+        "bytes": 1619
+      },
+      "final_reader_revalidation": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-storyboard-recovery-n1\\final-reader-revalidation.json",
+        "sha256": "8a4fdf2626ccffda7d9ee06ce857951d17d5f81b4234fde6c203bef8b3132777",
+        "bytes": 427
+      },
+      "backup": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-storyboard-recovery-n1\\public-render-frame-qc.zip",
+        "sha256": "15f4b4001aea06ea47a2e987cff6b7791495d7bb1cb52f1092b66b04c5ff88c5",
+        "bytes": 6846681
+      },
+      "new_process_replay": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-storyboard-recovery-n1\\new-process-replay.json",
+        "sha256": "780b846af3833a4da61136e34a41f6696d3970b324dcb507c2e8cc026c9848a9",
+        "bytes": 243
+      },
+      "scope_clarification": "Initial new_decode_or_render=false refers to no new video extraction/render; existing PNGs are actually decoded by Pillow and revalidated."
+    }
+  ],
+  "source_worker": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-source-flow-n1\\evidence.json",
+    "sha256": "877382559f1d342734f979e6d50e846d95264275a66e45cee127b3e148684fef",
+    "bytes": 7097
+  },
+  "storyboard_worker": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-frame-qc-storyboard-flow-n1\\evidence.json",
+    "sha256": "525178bb6610d72fdcd516882ad5d9e2bdb7f66da42a5e3959b1e031d90035a0",
+    "bytes": 11740
+  },
+  "source_sha256": {
+    "services/windows_native/render_frame_qc.py": "93ff3e4451e87e17fb4889af4a394846c76e3722b7bcc3d5fccef18b5ce7bdfe",
+    "services/windows_native/source_render.py": "0a067959f53cd23440ccc9b6161c3ff4454e60a207b7bdd6562850ac23427a1b",
+    "services/windows_native/storyboard_qc.py": "dfc5ee393fff8b38bc13c67de33faeccf79a26d4261c2897f426b3eb0f453090",
+    "services/windows_native/narration_preview.py": "0e7bfc55fd22e49b8a54498952fe2d2762d8029d9b65f5f341d2919887df72eb",
+    "services/windows_native/pipeline.py": "31bed65369fecb579a7dfbc71cd871324a86aa9fc5e67f7cafa92c01f3626d68",
+    "apps/api/app/production_qc.py": "4f59e446a7605a68cbe6c542899cbcfbfb057e61f0327e364b517e4af0ac4f81",
+    "services/windows_native/tests/test_render_frame_qc.py": "c2087c208a530997f3104bcc66ad87437c27a3880eeeda2483696cd108064e4a",
+    "services/windows_native/tests/test_source_render.py": "62fbf2038f411df99f70b533ead2529c701cd2877261245538f6047a9ac130c4",
+    "services/windows_native/tests/test_storyboard_qc.py": "833b94c3ac8502580a70e93e1313e83ee24a0c946a1d1310b8f23c3c38c69ae5",
+    "services/windows_native/tests/test_narration_preview.py": "36c39aa382ebe7b9874c5626c9740ea25abfac0acc86835cbe314ee0eef9be72",
+    "apps/api/tests/test_production_qc_silence_lifecycle.py": "101624604e6d193968e1a1c35e42206766daa7e8dd5bd648271d6d60935344b4",
+    "scripts/north_star_render_frame_recovery.py": "4c799de4630f8abb9bc5568ad3ebca58442ed04d8c53937a647db16437235471",
+    "scripts/north_star_native_source_worker_evidence.py": "56ca41571e2e7a17a0ee4167860ac0c2f68ca20db5d9b3008a93f7999f4def22",
+    "scripts/north_star_native_storyboard_qc.py": "60a21acbce4910340f4dc5c55d3aab11906033e5fcc927604f4a3aff315022f7"
+  },
+  "original_renderer_deterministic_pixel_samples": true,
+  "decoded_render_pts_measured_and_log_revalidated": true,
+  "source_input_pts_tracking_verified": false,
+  "genuine_semantic_vision_provider_tested": false,
+  "paid_operations": 0,
+  "external_provider_calls": 0,
+  "mock_speech_recognition": true,
+  "mock_human_approval": true,
+  "owner_uat_accepted": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "post_copy_final_materialization_revalidated_before_ready_checkpoint": true,
+  "retained_generation_scope": "Retained flow outputs precede final copy-corruption admission guards. Final35 tests execute the final producer/preview guards with actual local media; final reader revalidates original retained outputs and PTS without rewriting evidence."
+}

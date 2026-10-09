@@ -18,6 +18,15 @@ async def test_silent_volume_is_json_null_without_nonfinite_metrics(monkeypatch,
 
 
 @pytest.mark.asyncio
+async def test_signalstats_measurement_does_not_claim_semantic_vision(monkeypatch, tmp_path):
+    monkeypatch.setattr(module,'_run',AsyncMock(return_value=('lavfi.signalstats.YAVG=112\nlavfi.signalstats.YAVG=120','')))
+    value=await module.FullProductionQC()._vision_samples(tmp_path/'render.mp4')
+    assert value['provider']=='ffmpeg-signalstats' and value['sample_count']==2
+    assert value['external_vision_call'] is False and value['semantic_inference_performed'] is False
+    assert value['confidence'] is None and value['basis']=='measured_center_region_luma_not_semantic_vision'
+
+
+@pytest.mark.asyncio
 async def test_only_explicit_silent_plan_can_pass_audio_and_still_requires_visual_qc(monkeypatch, tmp_path):
     path=tmp_path/'contract-only-not-playable.mp4';path.write_bytes(b'x'*10001)
     qc=module.FullProductionQC()

@@ -63,8 +63,14 @@ def render(config,store,project,folder,event):
     if (attempt/'render-voice.json').is_file():names.append('render-voice.json')
     if (attempt/'music-loop.json').is_file():names+=['music-loop.json','music-loop.wav']
     names+= [path.relative_to(attempt).as_posix() for path in sorted((attempt/'subtitle-qc').glob('*.png'))]
+    from .render_frame_qc import artifact_names as render_frame_artifacts
+    published.path('render-frame-qc').mkdir(exist_ok=True)
+    names+=list(render_frame_artifacts(attempt))
     for name in names:files.append(published.metadata(published.publish(attempt/name,name)))
     output=published.publish(attempt/'final.mp4','preview.mp4')
+    from .render_frame_qc import validate as validate_render_frames
+    validate_render_frames(folder,qc['full_quality']['full_production_qc']['rendered_frame_evidence'],
+        document_sha256=digest(project['document']),materialized_video_name='preview.mp4')
     manifest={'schema_version':PROFILE,'preview_authorization':value['preview_authorization'],'project_id':project['id'],'revision':project['revision'],
         'document_sha256':digest(project['document']),'timeline_version':project['document']['canonical_timeline']['version'],'timeline_sha256':project['document']['canonical_timeline']['sha256'],
         'playable':True,'audio_mode':'measured_scene_narration_full_effects_preview','output_sha256':file_sha(output),'artifacts':files,'qc':qc,
@@ -94,6 +100,16 @@ def reviewed(store,config,project,*,con=None):
             if path.stat().st_size!=item['bytes'] or file_sha(path)!=item['sha256']:raise ValueError()
         full=json.loads((folder/'full-qc-report.json').read_bytes())
         if full!=manifest['qc']['full_quality'] or full.get('status')!='passed' or full.get('render_purpose')!='narration_preview' or full.get('final_sha256')!=manifest['output_sha256'] or full.get('document_sha256')!=expected['document_sha256']:raise ValueError()
+        frame_evidence=(full.get('full_production_qc') or {}).get('rendered_frame_evidence')
+        if frame_evidence is not None:
+            from .render_frame_qc import validate as validate_render_frames
+            try:
+                frames=validate_render_frames(folder,frame_evidence,document_sha256=expected['document_sha256'],materialized_video_name='preview.mp4')
+                saved=json.loads((folder/'render-frame-qc.json').read_bytes())
+                names={'render-frame-qc.json','render-frame-qc.log',*(frame['evidence_frame_reference'] for frame in frames['frames'])}
+                if digest(saved)!=digest(frame_evidence) or not names.issubset({item['path'] for item in artifacts}):raise ValueError()
+            except WorkflowError:raise ValueError() from None
+        elif (folder/'render-frame-qc.json').exists():raise ValueError()
         verify_selected_files(config,project['document'])
         from .narrated_music import verify_bundle
         verify_bundle(config,project['document'],folder)

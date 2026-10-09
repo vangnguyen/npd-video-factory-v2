@@ -856,9 +856,17 @@ class Pipeline:
             artifacts.path('subtitle-qc').mkdir(exist_ok=True)
             render_files+=('transport-qc-report.json','full-qc-report.json')
             render_files+=tuple(str(path.relative_to(attempt)).replace('\\','/') for path in sorted((attempt/'subtitle-qc').glob('*.png')))
+            from .render_frame_qc import artifact_names as render_frame_artifacts
+            artifacts.path('render-frame-qc').mkdir(exist_ok=True)
+            try:render_files+=render_frame_artifacts(attempt)
+            except WorkflowError:raise WorkflowError('STORYBOARD_FULL_MEDIA_QC_FAILED') from None
         if (attempt/'render-voice.json').is_file(): render_files+=('render-voice.json','render-voice.wav')
         if (attempt/'music-loop.json').is_file():render_files+=('music-loop.json','music-loop.wav')
         paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in render_files], stage, "storage_render_publish")
+        if (attempt/'full-qc-report.json').is_file():
+            from .render_frame_qc import validate as validate_render_frames
+            try:validate_render_frames(out,report['full_quality']['full_production_qc']['rendered_frame_evidence'],document_sha256=digest(job['snapshot']['document']))
+            except WorkflowError:raise WorkflowError('STORYBOARD_FULL_MEDIA_QC_FAILED') from None
         if (out/'voice-reuse.json').is_file():paths.append(out/'voice-reuse.json')
         retry_io(lambda: artifacts.commit("render", paths, result), stage, "storage_render_checkpoint")
         return result

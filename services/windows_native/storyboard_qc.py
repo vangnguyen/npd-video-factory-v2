@@ -102,6 +102,9 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
         # Shared measurements contain interval tuples; freeze the exact JSON shape
         # before returning it, so first delivery and checkpoint replay are identical.
         full=json.loads(json.dumps(full,allow_nan=False))
+        from .render_frame_qc import build as render_frame_evidence
+        full['rendered_frame_evidence']=render_frame_evidence(config,directory,
+            document_sha256=binding['document_sha256'],manifest_name='render-manifest.json')
         from .audio_loudness import measure
         full['measured_audio_loudness']=measure(config,directory/'final.mp4')
         if music_loop is not None:full['canonical_music_loop']=music_loop

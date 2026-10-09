@@ -1,5 +1,6 @@
 """Actual narrated FFmpeg previews from explicitly cached synthetic PCM."""
 import copy,json,threading,time,unittest,uuid
+from unittest.mock import patch
 from services.windows_native.tests import test_narration as fixture
 from services.windows_native.narration import apply
 from services.windows_native.narration_preview import PROFILE,snapshot,validate_context,reviewed,folder_for,render
@@ -36,6 +37,34 @@ class NarrationPreviewTests(unittest.TestCase):
             binding=reviewed(self.store,self.config,self.store.get(project['id']));self.assertEqual(binding['sha256'],file_sha(manager.video_path(project['id'],value['timeline_version'])))
             self.assertIsNone(self.store.get(project['id'])['approval']);self.assertEqual(file_sha(out/'voice.wav'),raw);self.assertEqual(len(self.store.get(project['id'])['jobs']),1)
             self.assertEqual(manager.generate(project['id'],project['revision']),manager.status(project['id']))
+            from services.windows_native.render_frame_qc import validate
+            evidence=manifest['qc']['full_quality']['full_production_qc']['rendered_frame_evidence']
+            frames=validate(folder_for(self.config,project),evidence,materialized_video_name='preview.mp4')
+            self.assertEqual(frames['rendered_video_sha256'],manifest['output_sha256'])
+            self.assertFalse(frames['semantic_inference_performed']);self.assertFalse(frames['owner_uat_accepted'])
+            self.assertIn('render-frame-qc/0.png',{item['path'] for item in manifest['artifacts']})
+        finally:manager.close()
+
+    def test_changed_decoded_render_frame_blocks_narrated_preview_review_and_serving(self):
+        project,_,_=self.fitted();manager,value=self.generate(project)
+        try:
+            self.assertEqual(value['status'],'READY',value);folder=folder_for(self.config,project)
+            (folder/'render-frame-qc/0.png').write_bytes(b'EXPLICIT FINAL-RENDER FRAME CORRUPTION')
+            with self.assertRaisesRegex(WorkflowError,'CURRENT_AUDIBLE_PREVIEW'):reviewed(self.store,self.config,self.store.get(project['id']))
+            with self.assertRaises(WorkflowError):manager.video_path(project['id'],value['timeline_version'])
+        finally:manager.close()
+
+    def test_decoded_render_frame_copy_corruption_never_exposes_ready_narrated_preview(self):
+        from services.windows_native.hardening import Artifacts
+        project,_,_=self.fitted();folder=folder_for(self.config,project);original=Artifacts.publish
+        def broken_copy(artifacts,source,name):
+            path=original(artifacts,source,name)
+            if artifacts.out==folder and name=='render-frame-qc/0.png':path.write_bytes(b'EXPLICIT COPY CORRUPTION FIXTURE')
+            return path
+        with patch.object(Artifacts,'publish',new=broken_copy):manager,value=self.generate(project)
+        try:
+            self.assertEqual(value['status'],'FAILED',value);self.assertFalse(value['final_approval_eligible'])
+            self.assertFalse((folder/'preview-manifest.json').exists());self.assertIsNone(self.store.get(project['id'])['approval'])
         finally:manager.close()
 
     def test_changed_subtitle_pixel_evidence_blocks_preview_review_and_serving(self):

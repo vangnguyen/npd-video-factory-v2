@@ -69,6 +69,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         self.assertEqual(full['final_sha256'],file_sha(out/'final.mp4'));self.assertEqual(full['document_sha256'],digest(self.document));self.assertEqual(file_sha(out/'voice.wav'),raw_sha)
         self.assertEqual(full['subtitle_bounds']['sample_count'],2);self.assertFalse(full['human_final_video_accepted']);self.assertFalse(full['published']);self.assertFalse(full['rights_independently_verified'])
         self.assertTrue((out/'transport-qc-report.json').is_file());self.assertTrue((out/'full-qc-report.json').is_file())
+        from services.windows_native.render_frame_qc import validate
+        evidence=detail['rendered_frame_evidence'];value=validate(out,evidence,document_sha256=digest(self.document))
+        self.assertEqual(value['rendered_video_sha256'],full['final_sha256']);self.assertFalse(value['semantic_inference_performed'])
 
     def test_real_frozen_video_is_not_exempted_as_an_image_hold(self):
         path=self.root/'assets'/(uuid.uuid4().hex+'.mp4')
@@ -99,8 +102,29 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             result=Pipeline(self.config).run(job,lambda _:None);self.assertTrue(result['qc']['full_quality']['status']=='passed')
             self.assertEqual(Pipeline(self.config).run(job,lambda _:None),result)
             checkpoint=artifacts.load('render');names={item['path'] for item in checkpoint['artifacts']};self.assertIn('full-qc-report.json',names);self.assertIn('subtitle-qc/000.png',names)
+            self.assertIn('render-frame-qc.json',names);self.assertIn('render-frame-qc/0.png',names)
             (out/'subtitle-qc/000.png').write_bytes(b'EXPLICIT EVIDENCE CORRUPTION FIXTURE')
             with self.assertRaisesRegex(WorkflowError,'CHECKPOINT_ARTIFACT_CHANGED'):Pipeline(self.config).run(job,lambda _:None)
+
+    def test_render_frame_measurement_failure_cannot_admit_storyboard_quality(self):
+        out=self.output()
+        with patch('services.windows_native.render_frame_qc.build',side_effect=WorkflowError('RENDER_FRAME_QC_INPUT_CHANGED')):
+            with self.assertRaisesRegex(WorkflowError,'STORYBOARD_FULL_MEDIA_QC_FAILED'):render(self.config,self.snapshot,out)
+        report=json.loads((out/'qc-report.json').read_bytes());self.assertFalse(report['passed'])
+        self.assertEqual(report['full_quality']['failure_code'],'RENDER_FRAME_QC_INPUT_CHANGED')
+
+    def test_storyboard_rendered_frame_copy_corruption_prevents_ready_checkpoint(self):
+        job={'id':uuid.uuid4().hex,'project_id':self.project['id'],'revision':self.project['revision'],'kind':'render','snapshot':self.snapshot}
+        out=self.root/'jobs'/job['id'];out.parent.mkdir(exist_ok=True);voice(out);write_json(out/'tts-plan.json',{'explicit_fixture':True});artifacts=Artifacts(out,job)
+        artifacts.commit('tts',[out/'voice.wav',out/'voice.json',out/'tts-plan.json'],{'explicit_cached_pcm_fixture':True})
+        original=Artifacts.publish
+        def broken_copy(artifacts,source,name):
+            path=original(artifacts,source,name)
+            if name=='render-frame-qc/0.png':path.write_bytes(b'EXPLICIT COPY CORRUPTION FIXTURE')
+            return path
+        with patch.object(Artifacts,'publish',new=broken_copy),patch('services.windows_native.pipeline.verify_runtime'),patch('services.windows_native.pipeline.synthesize',side_effect=AssertionError('No synthesis allowed')):
+            with self.assertRaisesRegex(WorkflowError,'STORYBOARD_FULL_MEDIA_QC_FAILED'):Pipeline(self.config).run(job,lambda _:None)
+        self.assertFalse((out/'checkpoint-render.json').exists())
 
     def test_legacy_render_report_does_not_claim_unperformed_full_quality(self):
         doc=copy.deepcopy(self.document);doc.pop('production_quality');out=self.output()

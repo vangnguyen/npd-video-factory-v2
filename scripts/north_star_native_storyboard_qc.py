@@ -176,6 +176,12 @@ def run(args):
         for name in ['final.mp4','timeline.json','render-manifest.json','qc-report.json','transport-qc-report.json','full-qc-report.json','subtitles.ass','voice.wav','voice.json','render-voice.wav','render-voice.json']:
             shutil.copyfile(rendered/name,out/name)
         shutil.copytree(rendered/'subtitle-qc',out/'subtitle-qc');write(out/'media-plan.json',applied);write(out/'render-job.json',finished)
+        from services.windows_native.render_frame_qc import validate as validate_render_frames
+        frames=json.loads((rendered/'render-frame-qc.json').read_bytes())
+        assert frames==qc['full_production_qc']['rendered_frame_evidence']
+        assert validate_render_frames(rendered,frames,document_sha256=qc['document_sha256'])['rendered_video_sha256']==qc['final_sha256']
+        for name in ('render-frame-qc.json','render-frame-qc.log'):shutil.copyfile(rendered/name,out/name)
+        shutil.copytree(rendered/'render-frame-qc',out/'render-frame-qc')
         if args.narration_rights:
             from north_star_native_narration_rights_flow import distribution as voice_distribution
             voice_distribution(server,send,out,write,server.store.get(identifier),finished)
@@ -224,6 +230,7 @@ def run(args):
         'services/windows_native/tests/test_narration_http.py','services/windows_native/narration_preview.py','services/windows_native/shot_preview.py','services/windows_native/tests/test_narration_preview.py',
         'apps/studio-web/native-narration.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/shot-studio.mjs','apps/studio-web/tests/native-narration.test.mjs','apps/studio-web/tests/shot-studio.test.mjs']
     source+=['services/windows_native/narrated_workflow.py','apps/studio-web/project-quality.mjs']
+    source+=['services/windows_native/render_frame_qc.py','services/windows_native/tests/test_render_frame_qc.py']
     if args.trend_radar:source+=['services/windows_native/trend_radar.py','services/windows_native/trend_radar_models.py','services/windows_native/trend_radar_engine.py',
         'services/windows_native/trend_radar_providers.py','services/windows_native/trend_radar_routes.py','services/windows_native/trend_radar_learning.py','services/windows_native/trend_radar_lineage.py',
         'services/windows_native/intelligence_store.py','services/windows_native/intelligence_service.py','services/windows_native/intelligence_lineage.py','services/windows_native/analytics_features.py',
