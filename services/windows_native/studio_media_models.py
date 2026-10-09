@@ -4,6 +4,7 @@ from pydantic import Field,model_validator
 from . import ingestion
 from app.models import StrictModel
 from app.media_intelligence_models import MediaStrategy,PlatformTarget
+from .official_vision_evidence import ReviewedVision
 
 HASH=r'^[a-f0-9]{64}$'
 PLAN=r'^nmp_[a-f0-9]{32}$'
@@ -30,6 +31,7 @@ class Create(StrictModel):
     revision:int=Field(ge=1,strict=True)
     expected_timeline_version:int=Field(ge=0,strict=True)
     options:Options=Field(default_factory=Options)
+    reviewed_vision:list[ReviewedVision]=Field(default_factory=list,max_length=50)
 
 
 class Action(StrictModel):
@@ -71,7 +73,7 @@ class Candidate(StrictModel):
     relevance_score:float=Field(ge=0,le=1,allow_inf_nan=False)
     quality_score:float|None=Field(default=None,ge=0,le=1,allow_inf_nan=False)
     confidence:None=None
-    score_basis:Literal['saved_filename_description_tags_and_uncalibrated_pixel_tiebreak']
+    score_basis:Literal['saved_filename_description_tags_and_uncalibrated_pixel_tiebreak','reviewed_provider_labels_and_uncalibrated_predicted_sample_quality']
     selectable:bool
     fixture:bool
     provenance:dict
@@ -109,8 +111,8 @@ class Item(StrictModel):
 
 
 class Plan(StrictModel):
-    schema_version:Literal['native-storyboard-media-plan-v1']
-    algorithm:Literal['native-storyboard-media-planner-v1','native-storyboard-media-planner-v2']
+    schema_version:Literal['native-storyboard-media-plan-v1','native-storyboard-media-plan-v2']
+    algorithm:Literal['native-storyboard-media-planner-v1','native-storyboard-media-planner-v2','native-storyboard-media-planner-v3']
     workspace_id:str
     project_id:str=Field(pattern=r'^[a-f0-9]{32}$')
     media_plan_id:str=Field(pattern=PLAN)
@@ -127,9 +129,15 @@ class Plan(StrictModel):
     paid_operations:Literal[0]=0
     publishing_enabled:Literal[False]=False
     recommendation_only:Literal[True]=True
-    semantic_vision_used:Literal[False]=False
+    semantic_vision_used:bool=Field(default=False,strict=True)
     real_provider_tested:Literal[False]=False
     @model_validator(mode='after')
     def unique(self):
         if len({value.shot_id for value in self.items})!=len(self.items) or [value.ordinal for value in self.items]!=list(range(1,len(self.items)+1)):raise ValueError('Invalid scene sequence')
+        if self.schema_version=='native-storyboard-media-plan-v2':
+            reviewed=self.input.get('reviewed_vision')
+            if (self.algorithm!='native-storyboard-media-planner-v3' or not isinstance(reviewed,dict)
+                or self.input.get('schema_version')!='native-storyboard-media-input-v2'
+                or type(reviewed.get('semantic_vision_used')) is not bool or self.semantic_vision_used is not reviewed['semantic_vision_used']):raise ValueError('Invalid reviewed Vision plan')
+        elif self.algorithm=='native-storyboard-media-planner-v3' or self.semantic_vision_used or 'reviewed_vision' in self.input:raise ValueError('Legacy plan cannot claim reviewed Vision')
         return self

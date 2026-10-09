@@ -1,5 +1,9 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {initializeNativeMediaPlanner,validateMediaPlanPage,mediaPlanRequest} from '../native-media-planner.mjs';
+import {readFileSync} from 'node:fs';
+import {initializeNativeMediaPlanner,validateMediaPlanPage,mediaPlanRequest,reviewedVisionRequest} from '../native-media-planner.mjs';
+const visionFixture=JSON.parse(readFileSync(new URL('./fixtures/native-official-vision-v1.json',import.meta.url)));
+assert.equal(visionFixture.fixture_kind,'explicit_nonplayable_protocol_mock_not_provider_or_owner_acceptance');
+const visionSeed=visionFixture.histories.find(row=>row.status==='succeeded');
 const WSP='wsp_media_plan_fixture',PROJECT='a'.repeat(32),PLAN='nmp_'+'b'.repeat(32),SHOT='shot_'+'c'.repeat(32),SHA='d'.repeat(64),ASSET='e'.repeat(32)+'.jpg';
 function state(){return {workspace_id:WSP,project:{id:PROJECT,revision:5,document:{}},canEdit:true,dirty:false,busy:false,active:false};}
 function page(){return {schema_version:'native-storyboard-media-page-v1',workspace_id:WSP,project_id:PROJECT,revision:5,timeline_version:0,input_sha256:SHA,
@@ -14,10 +18,11 @@ function page(){return {schema_version:'native-storyboard-media-page-v1',workspa
 function harness({enableResolution=false}={}){class Node{constructor(tag){this.tagName=tag.toUpperCase();this.children=[];this.dataset={};this.listeners={};this.value='';this.checked=false;}
   append(...nodes){this.children.push(...nodes);}replaceChildren(...nodes){this.children=nodes;}setAttribute(name,value){this[name]=value;}addEventListener(name,fn){this.listeners[name]=fn;}
   querySelectorAll(selector){return this.children.flatMap(node=>[...(selector.split(',').includes(node.tagName.toLowerCase())?[node]:[]),...node.querySelectorAll(selector)]);}}
-  const root=new Node('details'),dom={getElementById:()=>root,createElement:tag=>new Node(tag)},current=state(),calls=[],messages=[],saved=[];let answer=async()=>page();
-  const controller=initializeNativeMediaPlanner({dom,enableResolution,getState:()=>current,api:async(path,options)=>{calls.push([path,options]);return answer(path,options);},onMessage:(...values)=>messages.push(values),
+  const root=new Node('details'),dom={getElementById:()=>root,createElement:tag=>new Node(tag)},current=state(),calls=[],messages=[],saved=[];let answer=async()=>page(),vision=null;
+  const controller=initializeNativeMediaPlanner({dom,enableResolution,getState:()=>current,getReviewedVision:()=>vision,api:async(path,options)=>{calls.push([path,options]);return answer(path,options);},onMessage:(...values)=>messages.push(values),
     onSaved:async()=>{saved.push(true);current.project.revision++;controller.sync();}});
-  return {root,current,calls,messages,saved,controller,handler:fn=>{answer=fn;},button:text=>root.querySelectorAll('button').find(node=>node.textContent===text)};
+  return {root,current,calls,messages,saved,controller,handler:fn=>{answer=fn;},vision:row=>{vision=row;},
+    checkbox:text=>root.querySelectorAll('label').find(node=>node.textContent===text)?.querySelectorAll('input')[0],button:text=>root.querySelectorAll('button').find(node=>node.textContent===text)};
 }
 
 test('strict scope and claims keep missing estimates null, forbid promoted evidence and unsafe asset paths',()=>{
@@ -50,11 +55,73 @@ test('panel loads only on explicit read and renders source strings literally wit
 });
 test('unacknowledged apply and unknown-rights selection send no write; saved apply reloads new revision',async()=>{
   const h=harness();await h.controller.load();await h.button('Áp dụng vào shot').listeners.click();assert.equal(h.calls.filter(([,options])=>options).length,0);
-  const ack=h.root.querySelectorAll('input')[0];ack.checked=true;h.handler(async()=>{const next=page();next.revision=6;next.items[0].input_current=false;next.items[0].plan.version=2;return next;});
+  const ack=h.checkbox('Tôi đã xem tư liệu và muốn thay hình của shot này.');ack.checked=true;h.handler(async()=>{const next=page();next.revision=6;next.items[0].input_current=false;next.items[0].plan.version=2;return next;});
   await h.button('Áp dụng vào shot').listeners.click();assert.equal(h.saved.length,1);const [path,options]=h.calls.at(-1);assert.equal(path,`/api/projects/${PROJECT}/media-plans/${PLAN}/apply`);
   assert.equal(JSON.parse(options.body).revision,5);assert.equal(JSON.parse(options.body).acknowledged,true);assert.match(h.messages.at(-1)[0],/preview/);assert.equal(h.current.project.revision,6);
   const value=page();value.items[0].plan.items[0].candidates[0].selectable=false;value.items[0].plan.items[0].selected_asset_id=null;value.items[0].plan.items[0].selected_asset_sha256=null;
   assert.throws(()=>mediaPlanRequest(state(),value,'select',{planId:PLAN,shotId:SHOT,assetId:ASSET}),/quyền/);
+});
+
+// Projection derived from an explicitly mocked original fixture for UI contracts.
+// Signed native tests separately validate it against the immutable original journal.
+function reviewedPage(seed=visionSeed){const value=page(),record=value.items[0],plan=record.plan,request={vision_id:seed.vision_id,expected_snapshot_sha256:seed.snapshot_sha256,
+  expected_result_sha256:seed.result_sha256,acknowledged_reviewed_result:true,acknowledged_protocol_mock:true},source=seed.snapshot.source,result=seed.result;
+  value.workspace_id=plan.workspace_id=seed.workspace_id;value.project_id=plan.project_id=seed.project_id;
+  value.current_algorithm='native-storyboard-media-planner-v2';value.supported_algorithms=['native-storyboard-media-planner-v2','native-storyboard-media-planner-v3'];
+  const item={schema_version:'native-reviewed-vision-item-v1',request,workspace_id:seed.workspace_id,project_id:seed.project_id,asset_id:source.asset.id,source_sha256:source.asset.sha256,
+    source_observation_sha256:source.source_observation.sha256,source_binding_sha256:seed.snapshot.input_binding.source_binding_sha256,input_binding_sha256:SHA,
+    response_id:seed.response_id,response_sha256:result.response_sha256,cost_operation_id:seed.cost_operation_id,original_approved_at:seed.snapshot.approved_at,original_deadline:seed.snapshot.deadline,
+    provider:'openai-vision',model:'gpt-5-mini',mock:true,semantic_inference_performed:false,frames:structuredClone(result.frames),scenes:structuredClone(result.scenes),
+    best_frame_ids:result.best_frame_ids,thumbnail_candidate_ids:result.thumbnail_candidate_ids,source_frame_evidence:seed.snapshot.input_binding.source_frame_evidence,
+    calculated_usage_cost_vnd:result.calculated_usage_cost_vnd,observed_actual_billed_cost_vnd:null,prediction_confidence_calibrated:false,continuous_tracking_performed:false,decoded_pts_verified:false,
+    automatic_application:false,planning_authorizes_payment:false,full_media_qc_replaced:false,publishing_authorized:false,owner_uat_accepted:false,real_provider_tested:false};
+  plan.schema_version='native-storyboard-media-plan-v2';plan.algorithm='native-storyboard-media-planner-v3';plan.input={schema_version:'native-storyboard-media-input-v2',
+    reviewed_vision:{schema_version:'native-reviewed-vision-context-v1',workspace_id:seed.workspace_id,project_id:seed.project_id,items:[item],semantic_vision_used:false,mock_present:true,
+      recommendation_only:true,automatic_application:false,external_dispatches:0,paid_operations:0,original_provider_consent_renewed:false,full_media_qc_replaced:false,publishing_authorized:false,owner_uat_accepted:false}};
+  const candidate=plan.items[0].candidates[0];candidate.asset_id=plan.items[0].selected_asset_id=source.asset.id;candidate.sha256=plan.items[0].selected_asset_sha256=source.asset.sha256;
+  candidate.score_basis='saved_filename_description_tags_and_uncalibrated_pixel_tiebreak';candidate.provenance.reviewed_vision={request,response_id:seed.response_id,response_sha256:result.response_sha256,
+    cost_operation_id:seed.cost_operation_id,mock:true,semantic_inference_performed:false,confidence_calibrated:false,full_evidence_in:'input.reviewed_vision'};
+  return value;
+}
+function reviewedHarness(){const h=harness();h.current.workspace_id=visionSeed.workspace_id;h.current.project.id=visionSeed.project_id;h.vision(structuredClone(visionSeed));h.controller.sync();
+  h.handler(async()=>reviewedPage());return h;}
+test('reviewed v3 page preserves mock evidence and refuses reclassified flags or detached candidate lineage',()=>{
+  const current={...state(),workspace_id:visionSeed.workspace_id,project:{id:visionSeed.project_id,revision:5,document:{}}};assert.doesNotThrow(()=>validateMediaPlanPage(reviewedPage(),current));
+  for(const mutate of[v=>v.items[0].plan.semantic_vision_used=true,v=>v.items[0].plan.input.reviewed_vision.items[0].mock=false,
+    v=>v.items[0].plan.input.reviewed_vision.original_provider_consent_renewed=true,v=>v.items[0].plan.items[0].candidates[0].provenance.reviewed_vision.response_sha256='0'.repeat(64),
+    v=>v.items[0].plan.items[0].candidates[0].score_basis='reviewed_provider_labels_and_uncalibrated_predicted_sample_quality',
+    v=>v.items[0].plan.input.reviewed_vision.items[0].observed_actual_billed_cost_vnd='0',v=>v.supported_algorithms=['native-storyboard-media-planner-v3']]){
+    const value=reviewedPage();mutate(value);assert.throws(()=>validateMediaPlanPage(value,current));}
+});
+test('original reviewed request requires separate raw mock and reviewed acknowledgements and exact scope',()=>{
+  const current={workspace_id:visionSeed.workspace_id,project:{id:visionSeed.project_id}};
+  for(const options of[{}, {acknowledgedReviewed:1,acknowledgedMock:true},{acknowledgedReviewed:true,acknowledgedMock:false},{acknowledgedReviewed:true,acknowledgedMock:1}])assert.throws(()=>reviewedVisionRequest(visionSeed,current,options));
+  const request=reviewedVisionRequest(visionSeed,current,{acknowledgedReviewed:true,acknowledgedMock:true});assert.equal(request.expected_result_sha256,visionSeed.result_sha256);
+  assert.equal(request.acknowledged_reviewed_result,true);assert.equal(request.max_operation_cost_vnd,undefined);
+  assert.throws(()=>reviewedVisionRequest(visionSeed,{...current,project:{id:PROJECT}},{acknowledgedReviewed:true,acknowledgedMock:true}));
+});
+test('choosing reviewed Vision is local and only an explicitly acknowledged new plan sends references',async()=>{
+  const h=reviewedHarness();await h.controller.load();const count=h.calls.length;await h.button('Chọn kết quả Vision đang xem').listeners.click();assert.equal(h.calls.length,count);
+  await h.button('Tạo kế hoạch mới').listeners.click();assert.equal(h.calls.length,count);
+  h.checkbox('Tôi đã xem kết quả Vision và muốn dùng cho kế hoạch mới.').checked=true;
+  await h.button('Tạo kế hoạch mới').listeners.click();assert.equal(h.calls.length,count);
+  h.checkbox('Tôi hiểu mô phỏng không bổ sung điểm nhận diện hoặc chất lượng thật.').checked=true;
+  h.handler(async()=>{const next=reviewedPage();next.revision=6;return next;});await h.button('Tạo kế hoạch mới').listeners.click();
+  assert.equal(h.calls.length,count+1);const body=JSON.parse(h.calls.at(-1)[1].body);assert.deepEqual(body.reviewed_vision,[reviewedVisionRequest(visionSeed,h.current,{acknowledgedReviewed:true,acknowledgedMock:true})]);
+  assert.equal(h.calls.some(([path])=>path.endsWith('/process')),false);assert.equal(body.acknowledged_external_image_analysis,undefined);
+  assert.equal(h.checkbox('Tôi đã xem kết quả Vision và muốn dùng cho kế hoạch mới.').checked,false);
+});
+test('context access and selection drift clear local Vision acknowledgements without provider actions',async()=>{
+  for(const mutate of[h=>h.current.project.revision++,h=>h.current.canEdit=false,h=>h.current.dirty=true,h=>h.current.busy=true,
+    h=>h.current.active=true,h=>h.current.project.archived=true,h=>h.vision(null)]){
+    const h=reviewedHarness();await h.controller.load();await h.button('Chọn kết quả Vision đang xem').listeners.click();
+    h.checkbox('Tôi đã xem kết quả Vision và muốn dùng cho kế hoạch mới.').checked=true;h.checkbox('Tôi hiểu mô phỏng không bổ sung điểm nhận diện hoặc chất lượng thật.').checked=true;
+    const count=h.calls.length;mutate(h);h.controller.sync();assert.equal(h.checkbox('Tôi đã xem kết quả Vision và muốn dùng cho kế hoạch mới.').checked,false);assert.equal(h.calls.length,count);
+  }
+});
+test('literal reviewed mock result remains visible in history without automatically choosing it',async()=>{
+  const h=reviewedHarness();await h.controller.load();assert.equal(h.checkbox('Tôi đã xem kết quả Vision và muốn dùng cho kế hoạch mới.').checked,false);
+  assert.ok(h.root.querySelectorAll('p').some(node=>String(node.textContent).includes('không bổ sung điểm nhận diện')));assert.equal(h.calls.length,1);
 });
 test('late foreign response is discarded after project changes and cannot restore old choices',async()=>{
   const h=harness();let release;h.handler(()=>new Promise(resolve=>{release=resolve;}));const pending=h.controller.load();h.current.project={id:'f'.repeat(32),revision:1,document:{}};h.controller.sync();release(page());await pending;

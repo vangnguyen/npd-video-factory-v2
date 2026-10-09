@@ -375,7 +375,8 @@ class LocalServer(ThreadingHTTPServer):
         from .studio_media_planner import NativeStudioMediaPlanner
         from .generation_routes import providers as generation_providers
         self.media_planner=NativeStudioMediaPlanner(self.store,config,workspace_id=self.publications.workspace_id,
-            providers=lambda:{'workspace_id':self.publications.workspace_id,'stock':self.stock.providers(),'generation':generation_providers(self.generation)})
+            providers=lambda:{'workspace_id':self.publications.workspace_id,'stock':self.stock.providers(),'generation':generation_providers(self.generation)},
+            official_vision=lambda:self.official_vision)
         from .studio_media_resolution import NativeStudioMediaResolution
         self.media_resolution=NativeStudioMediaResolution(self.media_planner,self.generation,self.stock)
         if bridge_auth_registry is not None:self.bridge.load_auth_registry(bridge_auth_registry)

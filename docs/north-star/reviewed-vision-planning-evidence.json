@@ -1,0 +1,131 @@
+{
+  "schema_version": "native-reviewed-vision-planning-evidence-v1",
+  "parent_head": "1b0e7a77685ad528b22c804c57b7c676ab294a06",
+  "source_sha256": {
+    "services/windows_native/official_vision_evidence.py": "79ffae12f60aba478c2ced4ece465ef7cb43f20bb5197eea419781b5853a7563",
+    "services/windows_native/studio_media_planner.py": "e66519f60f189a55fd769a4fb1ad0f7a593b77d8a10fd98f6180e1b8d8b53446",
+    "services/windows_native/studio_media_models.py": "81dd643bac25b4e8984774f9c2067fb818eecd700ecf551b9a3916fafcc34e55",
+    "services/windows_native/server.py": "1a1f59d71cb66bddb3751efbe19d15bac40b134617823b64f8bab7c6e72e45f6",
+    "services/windows_native/tests/test_official_vision_evidence.py": "53ea68b7c2941e88d489a45c2d1e2ed477093167194b09f58dfb8a8924b2f8d9",
+    "services/windows_native/tests/test_studio_reviewed_vision.py": "119e44199d0e6de888be0b31e1e5effaba8cc5496988c43c65e5c6c390a2bc8a",
+    "apps/studio-web/native-media-planner.mjs": "6dd9da1b0e69a62c95032cf72a4efac83d5e5afca6131ddad6320899484b347b",
+    "apps/studio-web/native.mjs": "d9ac02fa598d52a5db9c0dd877f92502128a3ac2386c013749a747e7bf3988d9",
+    "apps/studio-web/tests/native-media-planner.test.mjs": "2e5114588cd7131360482597f757e7bee757051c164e7725711ee0e6fa52715b",
+    "scripts/north_star_reviewed_vision.py": "ec4e48377e2a2e4e48b3938f9d3d9cf4b012e786163f859d82fc228ee09393bf",
+    "scripts/north_star_reviewed_vision.mjs": "ab87616b1d3dc3fcd42e58b6457dfe7dd91d67b3053f7c48ac3c927e66567a47",
+    "docs/NATIVE_REVIEWED_VISION_PLANNING.md": "67c307247c8f6f105e85947db755246249d0871fcb45751c87defab8069be202"
+  },
+  "tests": {
+    "native_related": 83,
+    "native_seconds": 108.93,
+    "native_log_sha256": "54d3d12ff4d479f6f30eeec171981e45d1ea3e0085f6c262fd8c81579edb954a",
+    "new_native_cases": 16,
+    "studio_full": 427,
+    "studio_duration_ms": 2030.3802,
+    "studio_log_sha256": "bb697e6550f4d0f4a889c1dd604892275e79d84fa780ec15ebbd38e8da11d049",
+    "new_studio_cases": 5,
+    "previous_full_native": 1260,
+    "current_full_native_repeated": false,
+    "intermediate_harness_failures_corrected": true
+  },
+  "rehearsal": {
+    "schema_version": "native-reviewed-vision-rehearsal-v1",
+    "source_sha256": {
+      "services/windows_native/official_vision_evidence.py": "79ffae12f60aba478c2ced4ece465ef7cb43f20bb5197eea419781b5853a7563",
+      "services/windows_native/studio_media_planner.py": "e66519f60f189a55fd769a4fb1ad0f7a593b77d8a10fd98f6180e1b8d8b53446",
+      "services/windows_native/studio_media_models.py": "81dd643bac25b4e8984774f9c2067fb818eecd700ecf551b9a3916fafcc34e55",
+      "services/windows_native/server.py": "1a1f59d71cb66bddb3751efbe19d15bac40b134617823b64f8bab7c6e72e45f6",
+      "services/windows_native/tests/test_official_vision_evidence.py": "53ea68b7c2941e88d489a45c2d1e2ed477093167194b09f58dfb8a8924b2f8d9",
+      "services/windows_native/tests/test_studio_reviewed_vision.py": "119e44199d0e6de888be0b31e1e5effaba8cc5496988c43c65e5c6c390a2bc8a",
+      "apps/studio-web/native-media-planner.mjs": "6dd9da1b0e69a62c95032cf72a4efac83d5e5afca6131ddad6320899484b347b",
+      "apps/studio-web/native.mjs": "d9ac02fa598d52a5db9c0dd877f92502128a3ac2386c013749a747e7bf3988d9",
+      "apps/studio-web/tests/native-media-planner.test.mjs": "2e5114588cd7131360482597f757e7bee757051c164e7725711ee0e6fa52715b",
+      "scripts/north_star_reviewed_vision.py": "ec4e48377e2a2e4e48b3938f9d3d9cf4b012e786163f859d82fc228ee09393bf",
+      "scripts/north_star_reviewed_vision.mjs": "ab87616b1d3dc3fcd42e58b6457dfe7dd91d67b3053f7c48ac3c927e66567a47"
+    },
+    "signed_http_requests": 23,
+    "new_cpu_png_measurement_jobs": 1,
+    "actual_owned_source_dimensions": [
+      480,
+      270
+    ],
+    "new_mock_requests": 1,
+    "new_complete_responses": 1,
+    "plan_history_versions": 3,
+    "explicit_canonical_apply": 1,
+    "original_source_response_cost_binding_exact": true,
+    "mock_semantic_ranking_used": false,
+    "new_external_dispatches": 0,
+    "new_paid_operations": 0,
+    "actual_parent_browser_executed": false,
+    "full_media_qc_or_final_render": false,
+    "owner_uat_accepted": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "public_backup_sha256": "86fab58ac4081d2856504934c22239a8ab10f7499feed0e7ab227e566af2cfa0",
+    "exports": {
+      "backup.json": {
+        "sha256": "ed818e5c24cc5ba42f07802c8cbab9ea2ab330732d4e7ddea9bab604832caf68",
+        "bytes": 4109
+      },
+      "cost-summary.json": {
+        "sha256": "600682fb705c08ab41a53d1abd83becfe1a00a5bbd63c2fb3f8546c5ee44b1c9",
+        "bytes": 2044
+      },
+      "expected-journals.json": {
+        "sha256": "1ef1e81e57235f7e331b4e3a6663c029964415cb90316e05b521413f2c8293f3",
+        "bytes": 299420
+      },
+      "explicit-owned-technology-fixture.png": {
+        "sha256": "7e6547d925a1630f0e70bb0aeaa97f0d820171a90f5f6636a6029aa88f00f1d4",
+        "bytes": 1036
+      },
+      "mock-wire-summary.json": {
+        "sha256": "ba29d8858b6fa5b39577701871932331846cd31b3cf25c44f5b638056d4c6ffd",
+        "bytes": 79
+      },
+      "node-controller-errors.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "node-controller-proof.json": {
+        "sha256": "9a4efee7a20262f46d9ba791f0b819a00fa47fc7054c3f5643f975395f2ab6a2",
+        "bytes": 202340
+      },
+      "public-reviewed-vision.zip": {
+        "sha256": "86fab58ac4081d2856504934c22239a8ab10f7499feed0e7ab227e566af2cfa0",
+        "bytes": 1173989
+      },
+      "restore.json": {
+        "sha256": "d8c9ac03c13ccba2979dbb170c7f077607e8d0a9420440befb6b3ce4a6c67868",
+        "bytes": 4507
+      },
+      "restored-in-process.json": {
+        "sha256": "36c469bc4a87156a24c0b8d6315b420dc0695d8f20cb023071153cd0e432387c",
+        "bytes": 268
+      }
+    }
+  },
+  "fresh_process": {
+    "original_vision_and_all_plan_versions_current_project_journals_exact": true,
+    "keyless_disabled_provider_history": true,
+    "provider_consent_renewed": false,
+    "provider_retry_or_dispatch": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "original_projection_and_current_source_bound": true,
+  "mock_semantic_ranking": false,
+  "current_keys_or_provider_consent_required_for_history": false,
+  "new_external_dispatches": 0,
+  "new_paid_operations": 0,
+  "owner_uat_accepted": false,
+  "actual_new_parent_browser_tested": false,
+  "real_provider_tested": false,
+  "publishing_performed": false,
+  "full_media_qc_or_final_render": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

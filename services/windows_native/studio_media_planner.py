@@ -19,17 +19,20 @@ from app.media_intelligence_logic import platform_aspect_ratio,_compact_query
 from app.media_frame_facts import PixelAssetSummary
 
 ALGORITHM='native-storyboard-media-planner-v2'
+VISION_ALGORITHM='native-storyboard-media-planner-v3'
+SUPPORTED_ALGORITHMS={ALGORITHM,VISION_ALGORITHM}
 MAX_VERSIONS=100
 MAX_PLAN_BYTES=1024*1024
 MAX_HISTORY_BYTES=16*1024*1024
 
 
 class NativeStudioMediaPlanner:
-    def __init__(self,store,config,*,workspace_id,providers):
+    def __init__(self,store,config,*,workspace_id,providers,official_vision=lambda:None):
         self.store,self.config,self.workspace,self.providers=store,config,workspace_id,providers
+        self.official_vision=official_vision
         CostLedger(store)
 
-    def context(self,con,project):
+    def context(self,con,project,reviewed_vision=None):
         doc=project['document']
         if is_auto_edit(doc):raise WorkflowError('STUDIO_MEDIA_PLAN_USE_SOURCE_BROLL',400)
         if not doc.get('proposal'):raise WorkflowError('STUDIO_MEDIA_PLAN_SCRIPT_REQUIRED',400)
@@ -72,6 +75,13 @@ class NativeStudioMediaPlanner:
                 'real_audience_observation':feedback['real_audience_observation'],
                 'dimensions':feedback['consumers']['media_planner'],'recommendation_only':True,
                 'automatic_application':False,'planning_authorizes_payment':False,'limitation':feedback['limitations'][0]}
+        if reviewed_vision:
+            from .official_vision_evidence import build_context
+            service=self.official_vision()
+            if service is None or service.store is not self.store or service.config is not self.config or service.workspace!=self.workspace:
+                raise WorkflowError('STUDIO_MEDIA_PLAN_VISION_SCOPE_INVALID')
+            context['schema_version']='native-storyboard-media-input-v2'
+            context['reviewed_vision']=build_context(service,project,reviewed_vision,source_con=con)
         return context,state
 
     @staticmethod
@@ -89,16 +99,29 @@ class NativeStudioMediaPlanner:
 
     def candidates(self,context,query):
         wanted=tokens(query);result=[]
+        reviewed={v['asset_id']:v for v in (context.get('reviewed_vision') or {}).get('items',[])}
         for asset in context['assets'].values():
             p=asset['provenance'];tags=p.get('tags',[])
             available=tokens(' '.join([asset['filename'],str(p.get('description') or ''),*[str(tag) for tag in tags if isinstance(tag,str)]]))
             measured=PixelAssetSummary.model_validate(p['pixel_quality_summary']) if p.get('pixel_quality_summary') else None
+            quality=measured.heuristic_quality_score if measured else None
+            basis='saved_filename_description_tags_and_uncalibrated_pixel_tiebreak';vision=reviewed.get(asset['asset_id']);lineage=None
+            if vision is not None:
+                from .official_vision_evidence import ranking_inputs
+                if vision['source_sha256']!=asset['sha256']:raise WorkflowError('STUDIO_MEDIA_PLAN_VISION_SOURCE_CHANGED')
+                signals=ranking_inputs(vision);available|=signals['semantic_tokens']
+                if not vision['mock']:
+                    quality=signals['predicted_sample_quality'];basis='reviewed_provider_labels_and_uncalibrated_predicted_sample_quality'
+                lineage={'request':copy.deepcopy(vision['request']),'response_id':vision['response_id'],'response_sha256':vision['response_sha256'],
+                    'cost_operation_id':vision['cost_operation_id'],'mock':vision['mock'],'semantic_inference_performed':vision['semantic_inference_performed'],
+                    'confidence_calibrated':False,'full_evidence_in':'input.reviewed_vision'}
             strategy,tier=self.asset_strategy(asset)
             result.append(Candidate(asset_id=asset['asset_id'],sha256=asset['sha256'],filename=asset['filename'],kind=asset['kind'],strategy=strategy,resolver_tier=tier,
-                relevance_score=round(len(wanted&available)/max(1,len(wanted)),6),quality_score=measured.heuristic_quality_score if measured else None,
-                score_basis='saved_filename_description_tags_and_uncalibrated_pixel_tiebreak',selectable=self.selectable(asset),fixture=bool(p.get('fixture')),
+                relevance_score=round(len(wanted&available)/max(1,len(wanted)),6),quality_score=quality,
+                score_basis=basis,selectable=self.selectable(asset),fixture=bool(p.get('fixture')),
                 provenance={**{key:copy.deepcopy(p.get(key)) for key in ('source_type','rights_status','actual_native_rights_status','license','license_url','provider','source_reference','rights_verification_basis','owner_rights_override','production_eligible')},
-                    'asset_provenance_sha256':digest(p),'generation_provenance_sha256':digest(p.get('generation_provenance',{})),'full_evidence_in':'input.assets'}))
+                    'asset_provenance_sha256':digest(p),'generation_provenance_sha256':digest(p.get('generation_provenance',{})),'full_evidence_in':'input.assets',
+                    **({'reviewed_vision':lineage} if lineage is not None else {})}))
         return sorted(result,key=lambda value:(-value.relevance_score,-(value.quality_score or 0),value.asset_id))
 
     @staticmethod
@@ -144,7 +167,7 @@ class NativeStudioMediaPlanner:
                 decision_basis='existing project media selected as feasible fallback; unpriced new generation blocked under finite budget' if selected and deferred else 'existing owned project media; manual review before timeline apply' if selected else 'unknown generation estimate under finite budget; approval/pricing required and no feasible fallback selected' if strategy in blocked else 'configured provider path requires separate Assets request; unknown price is not zero' if strategy in {'stock_image','stock_video','ai_image','ai_video'} else 'no executable fallback selected; human media required'))
         return items
 
-    def records(self,document,identity=None):
+    def records(self,document,identity=None,*,source_con=None):
         records=document.get('studio_media_plans',[])
         if not isinstance(records,list) or len(records)>MAX_VERSIONS or len(canonical(records))>MAX_HISTORY_BYTES:raise WorkflowError('STUDIO_MEDIA_PLAN_HISTORY_INVALID')
         parsed=[];last={}
@@ -152,18 +175,29 @@ class NativeStudioMediaPlanner:
             for record in records:
                 plan=Plan.model_validate(record['plan'])
                 if record['sha256']!=digest(record['plan']) or plan.workspace_id!=self.workspace or plan.input_sha256!=digest(plan.input) or plan.fingerprint!=digest({'algorithm':plan.algorithm,'input_sha256':plan.input_sha256,'options':plan.options.model_dump(mode='json')}) or plan.version!=last.get(plan.media_plan_id,0)+1 or plan.input.get('project_id')!=plan.project_id or plan.input.get('workspace_id')!=self.workspace:raise ValueError()
+                if plan.algorithm==VISION_ALGORITHM:
+                    from .official_vision_evidence import validate_saved
+                    service=self.official_vision()
+                    if source_con is None or service is None or service.store is not self.store or service.config is not self.config or service.workspace!=self.workspace:raise ValueError()
+                    validate_saved(service,{'id':plan.project_id},plan.input['reviewed_vision'],source_con=source_con)
+                    if any(record['plan'].get(k) is not False for k in ('publishing_enabled','real_provider_tested')) or record['plan'].get('recommendation_only') is not True:raise ValueError()
+                    # Recompute the visible attribution/scores from the exact saved
+                    # reviewed projection. Rehashing a plan must not promote a mock.
+                    for item,raw in zip(plan.items,record['plan']['items'],strict=True):
+                        expected=[value.model_dump(mode='json') for value in self.candidates(plan.input,item.query)[:50]]
+                        if digest(raw['candidates'])!=digest(expected):raise ValueError()
                 last[plan.media_plan_id]=plan.version;parsed.append((plan,record['sha256']))
         except (ValueError,KeyError,TypeError):raise WorkflowError('STUDIO_MEDIA_PLAN_HISTORY_INVALID') from None
         return [(plan,sha) for plan,sha in parsed if identity is None or plan.media_plan_id==identity]
 
     def bound(self,con,project,identity,payload):
-        records=self.records(project['document'],identity)
+        records=self.records(project['document'],identity,source_con=con)
         if not records:raise WorkflowError('STUDIO_MEDIA_PLAN_NOT_FOUND',404)
         plan,sha=records[-1]
         if plan.project_id!=project['id']:raise WorkflowError('STUDIO_MEDIA_PLAN_NOT_FOUND',404)
         if plan.version!=payload.expected_plan_version or sha!=payload.expected_plan_sha256:raise WorkflowError('STUDIO_MEDIA_PLAN_VERSION_CHANGED')
-        if plan.algorithm!=ALGORITHM:raise WorkflowError('STUDIO_MEDIA_PLAN_POLICY_CHANGED')
-        context,state=self.context(con,project)
+        if plan.algorithm not in SUPPORTED_ALGORITHMS:raise WorkflowError('STUDIO_MEDIA_PLAN_POLICY_CHANGED')
+        context,state=self.context(con,project,self.reviewed_requests(plan))
         if plan.input_sha256!=digest(context) or plan.application is not None:raise WorkflowError('STUDIO_MEDIA_PLAN_INPUT_CHANGED')
         return plan,context,state
 
@@ -181,13 +215,15 @@ class NativeStudioMediaPlanner:
 
     def create(self,project_id,payload):
         with self.store.transaction() as con:
-            project=self.store.editable(con,project_id,payload.revision);context,state=self.context(con,project)
+            project=self.store.editable(con,project_id,payload.revision);context,state=self.context(con,project,payload.reviewed_vision)
             if state['version']!=payload.expected_timeline_version:raise WorkflowError('STUDIO_MEDIA_PLAN_TIMELINE_CHANGED')
-            options=payload.options;input_sha=digest(context);fingerprint=digest({'algorithm':ALGORITHM,'input_sha256':input_sha,'options':options.model_dump(mode='json')})
-            records=self.records(project['document']);same=[plan for plan,sha in records if plan.fingerprint==fingerprint and plan.project_id==project_id and plan.application is None]
+            algorithm=VISION_ALGORITHM if payload.reviewed_vision else ALGORITHM
+            options=payload.options;input_sha=digest(context);fingerprint=digest({'algorithm':algorithm,'input_sha256':input_sha,'options':options.model_dump(mode='json')})
+            records=self.records(project['document'],source_con=con);same=[plan for plan,sha in records if plan.fingerprint==fingerprint and plan.project_id==project_id and plan.application is None]
             if not same:
-                stamp=now();plan=Plan(schema_version='native-storyboard-media-plan-v1',algorithm=ALGORITHM,workspace_id=self.workspace,project_id=project_id,media_plan_id='nmp_'+uuid.uuid4().hex,
-                    version=1,fingerprint=fingerprint,input_sha256=input_sha,input=context,options=options,items=self.items(context,options),created_at=stamp,updated_at=stamp)
+                stamp=now();plan=Plan(schema_version='native-storyboard-media-plan-v2' if payload.reviewed_vision else 'native-storyboard-media-plan-v1',algorithm=algorithm,workspace_id=self.workspace,project_id=project_id,media_plan_id='nmp_'+uuid.uuid4().hex,
+                    version=1,fingerprint=fingerprint,input_sha256=input_sha,input=context,options=options,items=self.items(context,options),created_at=stamp,updated_at=stamp,
+                    semantic_vision_used=(context.get('reviewed_vision') or {}).get('semantic_vision_used',False))
                 self.persist(con,project,plan)
         return self.page(project_id)
 
@@ -206,6 +242,8 @@ class NativeStudioMediaPlanner:
                 values={'strategy':payload.strategy,'query':payload.query,'generation_prompt':payload.generation_prompt,'selected_asset_id':None,'selected_asset_sha256':None,
                     'status':'requires_approval' if payload.strategy in item.new_generation_budget_blocked else 'requires_implementation' if payload.strategy=='motion_graphic' else 'requires_asset' if payload.strategy=='user_asset' else 'requires_provider',
                     'needs_approval':payload.strategy in {'ai_image','ai_video'},'decision_basis':'explicit human planning preference; provider execution and payment not authorized'}
+                if plan.algorithm==VISION_ALGORITHM:
+                    values['candidates']=self.candidates(context,payload.query)[:50]
             values['fallback']=[value for value in item.fallback if value!=values['strategy']]
             changed=Item.model_validate({**item.model_dump(mode='json'),**values});plan.items=[changed if value.shot_id==item.shot_id else value for value in plan.items]
             plan.version+=1;plan.updated_at=now();self.persist(con,project,plan)
@@ -229,7 +267,7 @@ class NativeStudioMediaPlanner:
 
     def page(self,project_id):
         with self.store.transaction() as con:
-            project=self.store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone());records=self.records(project['document']);latest={}
+            project=self.store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone());records=self.records(project['document'],source_con=con);latest={}
             for plan,sha in records:
                 if plan.project_id!=project_id:raise WorkflowError('STUDIO_MEDIA_PLAN_SCOPE_INVALID')
                 latest[plan.media_plan_id]=(plan,sha)
@@ -238,10 +276,23 @@ class NativeStudioMediaPlanner:
                 if error.code not in {'STUDIO_MEDIA_PLAN_SCRIPT_REQUIRED','STUDIO_MEDIA_PLAN_USE_SOURCE_BROLL','SOURCE_MEDIA_CHANGED_OR_MISSING'}:raise
                 context=None;input_sha=None;reason=error.code
             raw_records={(record['plan']['media_plan_id'],record['plan']['version']):record['plan'] for record in project['document'].get('studio_media_plans',[])}
-            return {'schema_version':'native-storyboard-media-page-v1','current_algorithm':ALGORITHM,'workspace_id':self.workspace,'project_id':project_id,'revision':project['revision'],
+            return {'schema_version':'native-storyboard-media-page-v1','current_algorithm':ALGORITHM,'supported_algorithms':sorted(SUPPORTED_ALGORITHMS),'workspace_id':self.workspace,'project_id':project_id,'revision':project['revision'],
                 'timeline_version':state['version'] if context is not None else None,'input_sha256':input_sha,'input':context,'unavailable_reason':reason,
                 # Return the exact hashed historical JSON, without adding new DTO defaults.
                 'items':[{'plan':copy.deepcopy(raw_records[(plan.media_plan_id,plan.version)]),'sha256':sha,
-                    'input_current':plan.input_sha256==input_sha and plan.application is None and plan.algorithm==ALGORITHM,
-                    'policy_current':plan.algorithm==ALGORITHM} for plan,sha in latest.values()],
+                    'input_current':self.input_current(con,project,plan,input_sha) and plan.application is None,
+                    'policy_current':plan.algorithm in SUPPORTED_ALGORITHMS} for plan,sha in latest.values()],
                 'history_versions':len(records),'external_dispatches':0,'paid_operations':0,'publishing_enabled':False,'real_provider_tested':False}
+
+    @staticmethod
+    def reviewed_requests(plan):
+        from .official_vision_evidence import ReviewedVision
+        return [ReviewedVision.model_validate(v['request']) for v in (plan.input.get('reviewed_vision') or {}).get('items',[])]
+
+    def input_current(self,con,project,plan,default_sha):
+        if plan.algorithm not in SUPPORTED_ALGORITHMS:return False
+        if plan.algorithm==ALGORITHM:return plan.input_sha256==default_sha
+        try:
+            context,_=self.context(con,project,self.reviewed_requests(plan))
+            return plan.input_sha256==digest(context)
+        except WorkflowError:return False
