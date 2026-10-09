@@ -1,0 +1,45 @@
+{
+  "schema_version": "north-star-render-thumbnail-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-focused-n2.log",
+      "sha256": "8e0b09f362c2795c0a12a9fef90f23c301fad7ea3b756441d0ad560f057b6cf4",
+      "bytes": 6159,
+      "passed": 28,
+      "new_cases": 11
+    }
+  ],
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-flow-n1\\evidence.json",
+    "sha256": "5add5f1649e746e89b10c4d488be2450693c08087d4e8e38a385c03d100aa0f3",
+    "bytes": 1613
+  },
+  "new_process_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-flow-n1\\new-process-replay.json",
+    "sha256": "c817c804de73c6a543bb8922d3f21ed48d57014709e8759dea7d134030c33cc1",
+    "bytes": 257
+  },
+  "source_sha256": {
+    "services/windows_native/render_thumbnails.py": "a2ab6008186e5e43485c742009e01ef63602c4b27df1fd4e39077f630c6bbdc4",
+    "services/windows_native/backup.py": "905e2649198f6977c49a82ad40c9d455935b3441c15ae30bbb6fe3c2967106a5",
+    "services/windows_native/tests/test_render_thumbnails.py": "7868fa35fc1f8553f44b5187a3611d5c76ae945d16a502ea6036480035377b64",
+    "scripts/north_star_render_thumbnails.py": "960f5fd2ab575258f42fff8b0a6bbab6667f3d9a732248b3b02a2cf709979243"
+  },
+  "public_backup_sha256": "e25b6892a7624ec4863f74bf4d4aa4e7181661bd0a7a42592dbaa8f73c42c2e7",
+  "explicit_thumbnail_selections": 3,
+  "original_vision_histories": 11,
+  "original_projects_timeline_media_checkpoint_png_pts_exact": true,
+  "original_cost_vision_journals_exact": true,
+  "keyless_recovery_exact": true,
+  "independent_thumbnail_ack_required": true,
+  "copied_media": 0,
+  "new_provider_calls": 0,
+  "new_paid_operations": 0,
+  "rights_status": "unknown",
+  "publishing_authorized": false,
+  "http_or_studio_integrated": false,
+  "thumbnail_publication_transport_bound": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false
+}
