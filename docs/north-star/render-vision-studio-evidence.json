@@ -1,0 +1,82 @@
+{
+  "schema_version": "north-star-render-vision-studio-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-studio-http-regression-n3.log",
+      "sha256": "b5240ffbec8beb3896dea3baa2689abd04b87e53cb1ffa75b5415c3fc3f09e15",
+      "bytes": 8083,
+      "passed": 35,
+      "kind": "native"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-studio-regression-n4.log",
+      "sha256": "0a6a886f7d5f928bed3765b1aa9577958734540f636bada48dcb918d23dda2bf",
+      "bytes": 48292,
+      "passed": 471,
+      "kind": "studio"
+    }
+  ],
+  "new_studio_cases": 22,
+  "new_native_png_cases": 3,
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-studio-flow-n4\\evidence.json",
+    "sha256": "25bf3687e724244e284fd9cb47e7ef19e338bbf9c090b11442bd211ab1989584",
+    "bytes": 2580
+  },
+  "new_process_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-studio-flow-n4\\new-process-replay.json",
+    "sha256": "b9f49697aba103acbc729528c9922f48e0ac1c9a85033f315fd1e5f11891bac7",
+    "bytes": 320
+  },
+  "browser_observations": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-studio-browser-n2\\observations.json",
+    "sha256": "c6c0a9c613fac3eb3244ef5458b58098bafe688b5ef9531427ed948fb749bb33",
+    "bytes": 1731
+  },
+  "browser_post_integrity": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-studio-browser-n2\\post-browser-integrity.json",
+    "sha256": "6635497917d95b6cf9b01ddd96a0b126950d4509569ee1e0e49a54a3417d5100",
+    "bytes": 307
+  },
+  "source_sha256": {
+    "apps/studio-web/native-render-vision.mjs": "81bdb363162892c8a99436e5a4c17662850d8e51e5aaec5feb4ac46583db8a3e",
+    "apps/studio-web/native.mjs": "612edb0539d7843e897e390e7e935071a4e5b16c6e8ee038dae3f93c6fdb7f62",
+    "apps/studio-web/native.html": "7830bf2a26ec40d905914c8f51bf61d684d8f549ad0d43f3abc84e3f83906b67",
+    "apps/studio-web/native.css": "5fa34ac6b6d70d306d798e789057e0b42dda4ede6f0381166a7721aca31791ff",
+    "apps/studio-web/shot-studio.mjs": "7e09713acb823c4340b5834798060ff7ea9aa9c013ce206dedd65fd1c751c685",
+    "apps/studio-web/tests/native-render-vision.test.mjs": "9713bfa0273f3fa0406dc120e211565a77d92e39b8ee50f4491a09b7ee798c5a",
+    "apps/studio-web/tests/fixtures/native-render-vision-v1.json": "f8f39bd18b85f70a5d7546678a3b9cce1ef7829c38eeeb2b520d5b31a4b626f8",
+    "services/windows_native/render_vision_routes.py": "b69883266f36c4b07146ec1529b6b656229fcc897158868ca2f7a4be7c7cb3a8",
+    "services/windows_native/server.py": "9c8c54af43edc1b1575b24226f19ce7e6f5e03b35ab85f4832046a0365cfc9f7",
+    "services/windows_native/tests/test_render_vision_http.py": "024e933e3dadde5db2d17771ff2b1d03e74f88e160804865c9121364a575ed24",
+    "services/windows_native/tests/test_phase10_http.py": "baa8068cb0817866f3c4f0f66abb0008febaefa28e62b2be630f2678eed5be94",
+    "scripts/north_star_render_vision_studio.py": "a0ea8a42363ecd66b36286ebcd50911d0ac22504957bea58c8f9d17b3319e8d5",
+    "scripts/north_star_render_vision_studio.mjs": "a52c110c69d704835dc57a54d3b8d38cf4edf3f7fa92cb790c79970dcf513abb"
+  },
+  "public_backup_sha256": "48ce73d20d5d803ddc052394a67eba95b617cbe1bfd6dbf8c6b87640809c298f",
+  "signed_http_requests": 23,
+  "all_histories": 11,
+  "exact_rendered_png_http_reads": 8,
+  "protocol_mock_requests": 1,
+  "studio_ui_integrated": true,
+  "dom_controller_tested": true,
+  "actual_parent_browser_executed": true,
+  "responsive_dom_tested": [
+    1366,
+    1920,
+    2560
+  ],
+  "responsive_raster_acceptance": false,
+  "default_disabled_readonly_keyless_history": true,
+  "original_projects_timeline_media_checkpoints_png_pts_exact": true,
+  "current_owner_finite_consent_and_bounded_cost_required": true,
+  "external_dispatches": 0,
+  "paid_operations": 0,
+  "live_credentials_read": false,
+  "semantic_inference_performed": false,
+  "source_asset_consent_reused": false,
+  "hard_qc_replaced": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false
+}

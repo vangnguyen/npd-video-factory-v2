@@ -1,5 +1,5 @@
 """Actual signed loopback rendered-QC contract; no real provider or spend."""
-import http.client,json,threading,unittest
+import hashlib,http.client,json,threading,unittest
 from unittest.mock import patch
 from pathlib import Path
 from app.human_identity import HumanAuthRegistry,HumanAuthVerifier
@@ -141,6 +141,38 @@ class NativeRenderVisionHTTPTests(unittest.TestCase):
             self.server.runner.start()
         done=self.service.get(self.project['id'],row['vision_id']);self.assertEqual(done['status'],'outcome_unknown')
         self.assertEqual(done['snapshot']['deadline'],row['snapshot']['deadline']);self.assertEqual(self.calls,[])
+
+    def test_original_decoded_pngs_signed_viewer_read_are_exact_without_source_or_provider_consent(self):
+        original=self.store.get(self.project['id']);frames=self.bridge().binding()['record']['observation']['frames']
+        self.account('viewer')
+        with patch.object(self.vault,'key',side_effect=AssertionError('NO FRAME KEY READ')):
+            for index,frame in enumerate(frames):
+                status,payload,headers=self.http('GET',self.base+'/input/'+self.job['id']+'/frame/'+str(index))
+                self.assertEqual(status,200);self.assertEqual(payload[:8],b'\x89PNG\r\n\x1a\n')
+                self.assertEqual(hashlib.sha256(payload).hexdigest(),frame['sha256']);self.assertEqual(len(payload),frame['size_bytes'])
+                self.assertEqual(headers['Content-Type'],'image/png');self.assertEqual(headers['Cache-Control'],'no-store')
+                self.assertEqual(headers['X-Content-Type-Options'],'nosniff')
+        self.assertEqual(self.store.get(self.project['id']),original);self.assertEqual(self.calls,[]);self.assertEqual(self.pipeline.calls,0)
+
+    def test_frame_auth_scope_index_and_query_cannot_return_pixels(self):
+        route=self.base+'/input/'+self.job['id']+'/frame/0'
+        self.assertEqual(self.http('GET',route,headers={'Cookie':''})[0],401)
+        for path,code in ((route+'?extra=1',400),(route[:-1]+'8',404),(route[:-1]+'-1',404),
+            (self.base+'/input/'+'0'*32+'/frame/0',409),
+            ('/api/projects/'+'0'*32+'/render-vision/input/'+self.job['id']+'/frame/0',409)):
+            status,payload,_=self.http('GET',path);self.assertEqual(status,code,path);self.assertIsInstance(payload,dict)
+        self.assertEqual(self.calls,[])
+
+    def test_frame_corruption_and_change_after_read_fail_closed_but_historical_project_edit_is_readable(self):
+        route=self.base+'/input/'+self.job['id']+'/frame/0'
+        self.store.save(self.project['id'],self.project['revision'],prompt='EXPLICIT LATER PROJECT REVISION')
+        self.assertEqual(self.http('GET',route)[0],200)
+        path=self.root/'jobs'/self.job['id']/'render-frame-qc'/'0.png';original=path.read_bytes()
+        with patch('services.windows_native.render_vision_routes.checked') as checked_read:
+            checked_read.return_value.read_bytes.return_value=original+b'EXPLICIT ALTERED READ'
+            self.assertEqual(self.http('GET',route)[0],409)
+        path.write_bytes(original+b'EXPLICIT CORRUPT PNG')
+        self.assertEqual(self.http('GET',route)[0],409);self.assertEqual(self.calls,[])
 
 
 if __name__=='__main__':unittest.main()

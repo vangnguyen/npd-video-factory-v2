@@ -5,6 +5,8 @@ from pydantic import ValidationError
 from .contracts import WorkflowError,digest
 from .render_vision_models import RenderAnalyze,RenderAction
 from .render_vision_frame_bridge import NativeRenderEvidenceFrameExtractor
+from .render_frame_qc import checked
+import hashlib
 
 BASE=r'/api/projects/([a-f0-9]{32})/render-vision'
 IDENTITY=r'(nrvi_[a-f0-9]{32})'
@@ -23,6 +25,21 @@ def input_view(handler,project,job):
     return {'schema_version':'native-render-vision-input-view-v1','workspace_id':workspace,'project_id':project,'render_job_id':job,
         'revision':binding['current_project_revision'],'input_sha256':digest(binding),'binding':binding,
         'provider_authorized':False,'source_asset_consent_reused':False,'automatic_dispatch':False,'publishing_enabled':False,'owner_uat_accepted':False}
+
+
+def frame(handler,path):
+    match=re.fullmatch(BASE+r'/input/([a-f0-9]{32})/frame/([0-7])',path)
+    if not match:raise WorkflowError('ROUTE_NOT_FOUND',404)
+    if handler.path.partition('?')[2]:raise WorkflowError('NATIVE_RENDER_VISION_PAGE_INVALID',400)
+    project,job,index=match.groups();server=handler.server
+    bridge=NativeRenderEvidenceFrameExtractor(server.store,server.config,project,job,workspace_id=server.publications.workspace_id)
+    binding=bridge.binding();frames=binding['record']['observation']['frames']
+    if int(index)>=len(frames):raise WorkflowError('NATIVE_RENDER_VISION_FRAME_NOT_FOUND',404)
+    original=frames[int(index)];payload=checked(server.store.root/'jobs'/job,original['evidence_frame_reference']).read_bytes()
+    if hashlib.sha256(payload).hexdigest()!=original['sha256'] or digest(bridge.binding())!=digest(binding):
+        raise WorkflowError('NATIVE_RENDER_VISION_INPUT_CHANGED')
+    handler.send_response(200);handler.common('image/png',len(payload))
+    handler.end_headers();handler.wfile.write(payload)
 
 
 def get(handler,path):
