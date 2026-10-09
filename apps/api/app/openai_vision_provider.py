@@ -18,6 +18,7 @@ from pydantic import Field, ValidationError, model_validator
 
 from .auto_edit_models import MediaMetadata, SceneRead
 from .models import StrictModel
+from .publishing_wire import _install_privacy_filters, _sensitive
 from .provider_safety import (
     ProviderErrorEvidence,
     ProviderExecutionTrace,
@@ -37,12 +38,30 @@ from .vision_providers import (
 
 
 _SUPPORTED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
+_MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 _CATEGORY = Literal["person", "face", "product", "object", "building", "logo", "text"]
 _SECRET_TEXT_PATTERNS = (
+    re.compile(r"data:image/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+", re.IGNORECASE),
     re.compile(r"sk-[A-Za-z0-9_-]{8,}", re.IGNORECASE),
     re.compile(r"(?i)(bearer\s+)\S+"),
     re.compile(r"(?i)((?:api[_-]?key|token|password|secret)\s*[:=]\s*)\S+"),
 )
+
+
+def _strict_json(value: bytes | str) -> object:
+    def pairs(items):
+        result = {}
+        for key, item in items:
+            if key in result:
+                raise ValueError("Duplicate provider JSON field")
+            result[key] = item
+        return result
+
+    def constant(_value):
+        raise ValueError("Nonfinite provider JSON value")
+
+    return json.loads(value.decode('utf-8') if isinstance(value, bytes) else value,
+        object_pairs_hook=pairs, parse_constant=constant)
 
 
 def _redact_provider_text(value: object, *, limit: int) -> str | None:
@@ -58,7 +77,7 @@ def _safe_request_id(value: object) -> str | None:
     if not isinstance(value, str) or not value.strip():
         return None
     candidate = value.strip()
-    if re.fullmatch(r"[A-Za-z0-9._:-]{1,200}", candidate):
+    if re.fullmatch(r"[A-Za-z0-9._:-]{1,200}", candidate) and _redact_provider_text(candidate, limit=200) == candidate:
         return candidate
     return "sha256:" + hashlib.sha256(candidate.encode("utf-8")).hexdigest()
 
@@ -409,8 +428,8 @@ def _provider_error_fields(
     response_bytes: bytes,
 ) -> tuple[str | None, str | None, str | None, str | None]:
     try:
-        payload = json.loads(response_bytes)
-    except (json.JSONDecodeError, UnicodeDecodeError):
+        payload = _strict_json(response_bytes)
+    except (ValueError, UnicodeDecodeError, RecursionError):
         return None, None, None, None
     if not isinstance(payload, dict) or not isinstance(payload.get("error"), dict):
         return None, None, None, None
@@ -494,6 +513,10 @@ class OpenAIVisionProvider:
         allow_zero_cost_contract_test: bool = False,
         monotonic_clock: Callable[[], float] = time.perf_counter,
     ) -> None:
+        if type(allow_zero_cost_contract_test) is not bool:
+            raise ValueError("Explicit Vision contract-test flag required")
+        if allow_zero_cost_contract_test and (transport is None or isinstance(transport, httpx.AsyncHTTPTransport)):
+            raise ValueError("Zero-cost Vision tests require an explicitly injected test transport")
         if model != "gpt-5-mini":
             raise ValueError("V3-01-09 is locked to gpt-5-mini")
         if base_url.rstrip("/") != "https://api.openai.com":
@@ -568,8 +591,10 @@ class OpenAIVisionProvider:
         alias = self.credential_alias
         if not alias:
             raise VisionProviderNotConfigured("OpenAI Vision credential alias is not configured")
-        api_key = self._credential_resolver(alias).strip()
-        if not api_key:
+        resolved = self._credential_resolver(alias)
+        api_key = resolved.strip() if isinstance(resolved, str) else None
+        if (not api_key or not 8 <= len(api_key) <= 4096 or not api_key.isascii()
+            or any(ord(c) < 33 or ord(c) > 126 for c in api_key)):
             raise VisionProviderNotConfigured("OpenAI Vision credential alias cannot be resolved")
         if not self._allow_zero_cost_contract_test and (
             self.estimated_cost_vnd <= 0 or self._input_rate <= 0 or self._output_rate <= 0
@@ -606,30 +631,37 @@ class OpenAIVisionProvider:
         response: httpx.Response | None = None
         response_bytes: bytes | None = None
         provider_request_id: str | None = None
+        client: httpx.AsyncClient | None = None
+        _install_privacy_filters()
+        privacy = _sensitive.set(True)
         try:
-            async with httpx.AsyncClient(
+            client = httpx.AsyncClient(
                 base_url=self._base_url,
                 timeout=timeout,
                 transport=self._transport,
-            ) as client:
-                request = client.build_request(
-                    "POST",
-                    "/v1/responses",
-                    content=request_bytes,
-                    headers={
-                        "Authorization": f"Bearer {api_key}",
-                        "Content-Type": "application/json",
-                        "X-Client-Request-Id": client_request_id,
-                    },
-                )
-                response = await client.send(request, stream=True)
-                provider_request_id = _safe_request_id(response.headers.get("x-request-id"))
-                trace.mark(
-                    "http_response_read",
-                    dispatch_state="response_headers_received",
-                    provider_request_id=provider_request_id,
-                )
-                response_bytes = await response.aread()
+                trust_env=False,
+                follow_redirects=False,
+                limits=httpx.Limits(max_connections=1, max_keepalive_connections=0, keepalive_expiry=0),
+            )
+            request = client.build_request(
+                "POST",
+                "/v1/responses",
+                content=request_bytes,
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                    "X-Client-Request-Id": client_request_id,
+                    "Accept-Encoding": "identity",
+                },
+            )
+            response = await client.send(request, stream=True)
+            provider_request_id = _safe_request_id(response.headers.get("x-request-id"))
+            trace.mark(
+                "http_response_read",
+                dispatch_state="response_headers_received",
+                provider_request_id=provider_request_id,
+            )
+            response_bytes = await self._read_response(response, client_request_id, provider_request_id)
         except httpx.TimeoutException as exc:
             if isinstance(exc, httpx.PoolTimeout):
                 trace.mark("http_connection_pool", dispatch_state="not_sent")
@@ -655,7 +687,7 @@ class OpenAIVisionProvider:
                     retryable=True,
                     provider_error_message="OpenAI Vision transport timed out",
                 )
-            ) from exc
+            ) from None
         except httpx.RequestError as exc:
             raise ProviderTransientError(
                 "OPENAI_VISION_NETWORK_ERROR",
@@ -667,10 +699,34 @@ class OpenAIVisionProvider:
                     provider_error_type=type(exc).__name__,
                     provider_error_message="OpenAI Vision transport failed",
                 ),
-            ) from exc
+            ) from None
+        except OpenAIVisionResponseError:
+            raise
+        except Exception:
+            evidence = _error_evidence(category="transport_error", code="OPENAI_VISION_TRANSPORT_UNCLASSIFIED",
+                retryable=False, client_request_id=client_request_id, provider_request_id=provider_request_id,
+                http_status=response.status_code if response is not None else None,
+                provider_error_message="OpenAI Vision transport outcome requires review")
+            raise OpenAIVisionResponseError("OpenAI Vision transport outcome requires review", error_evidence=evidence,
+                code=evidence.code) from None
         finally:
-            if response is not None:
-                await response.aclose()
+            close_failed = False
+            try:
+                for resource in (response, client):
+                    if resource is not None:
+                        try:
+                            await resource.aclose()
+                        except Exception:
+                            close_failed = True
+            finally:
+                _sensitive.reset(privacy)
+            if close_failed:
+                evidence = _error_evidence(category="transport_error", code="OPENAI_VISION_TRANSPORT_CLOSE_FAILED",
+                    retryable=False, client_request_id=client_request_id, provider_request_id=provider_request_id,
+                    http_status=response.status_code if response is not None else None,
+                    response_bytes=response_bytes, provider_error_message="OpenAI Vision transport cleanup requires review")
+                raise OpenAIVisionResponseError("OpenAI Vision transport cleanup requires review", error_evidence=evidence,
+                    code=evidence.code) from None
         if response is None or response_bytes is None:
             raise RuntimeError("OpenAI Vision transport completed without a response")
         latency_ms = trace.elapsed_ms()
@@ -715,7 +771,7 @@ class OpenAIVisionProvider:
                     provider_error_message=error_message,
                 ),
             )
-        if response.status_code >= 400:
+        if response.status_code != 200:
             evidence = _error_evidence(
                 category="http_provider_error",
                 code="OPENAI_VISION_HTTP_ERROR",
@@ -736,8 +792,8 @@ class OpenAIVisionProvider:
                 category="http_provider_error",
             )
         try:
-            response_payload = response.json()
-        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            response_payload = _strict_json(response_bytes)
+        except (ValueError, UnicodeDecodeError, RecursionError) as exc:
             evidence = _error_evidence(
                 category="response_parse_failure",
                 code="OPENAI_VISION_RESPONSE_PARSE_FAILED",
@@ -753,7 +809,7 @@ class OpenAIVisionProvider:
                 error_evidence=evidence,
                 code=evidence.code,
                 category="response_parse_failure",
-            ) from exc
+            ) from None
         if not isinstance(response_payload, dict):
             evidence = _error_evidence(
                 category="response_parse_failure",
@@ -828,10 +884,10 @@ class OpenAIVisionProvider:
                 category="response_parse_failure",
             )
         try:
-            structured_payload = json.loads(structured_text)
+            structured_payload = _strict_json(structured_text)
             if not isinstance(structured_payload, dict):
                 raise TypeError("structured output root must be an object")
-        except (json.JSONDecodeError, TypeError) as exc:
+        except (ValueError, TypeError, RecursionError) as exc:
             evidence = _error_evidence(
                 category="response_parse_failure",
                 code="OPENAI_VISION_STRUCTURED_OUTPUT_PARSE_FAILED",
@@ -847,7 +903,7 @@ class OpenAIVisionProvider:
                 error_evidence=evidence,
                 code=evidence.code,
                 category="response_parse_failure",
-            ) from exc
+            ) from None
         try:
             structured = _VisionOutput.model_validate(structured_payload)
         except ValidationError as exc:
@@ -866,7 +922,7 @@ class OpenAIVisionProvider:
                 error_evidence=evidence,
                 code=evidence.code,
                 category="structured_output_validation",
-            ) from exc
+            ) from None
 
         expected_indexes = set(range(len(extracted)))
         actual_indexes = {frame.frame_index for frame in structured.frames}
@@ -928,6 +984,44 @@ class OpenAIVisionProvider:
             provenance=provenance,
             actual_cost_vnd=actual_cost,
         )
+
+    @staticmethod
+    async def _read_response(response, client_request_id, provider_request_id):
+        def refuse(code):
+            evidence = _error_evidence(category="response_parse_failure", code=code, retryable=False,
+                http_status=response.status_code, provider_request_id=provider_request_id,
+                client_request_id=client_request_id, provider_error_message="OpenAI Vision response transport requires review")
+            # A truncated/unread response never receives a fabricated complete response hash.
+            raise OpenAIVisionResponseError("OpenAI Vision response transport requires review", error_evidence=evidence,
+                code=code, category="response_parse_failure") from None
+
+        lengths = response.headers.get_list('content-length')
+        encodings = response.headers.get_list('content-encoding')
+        if (len(lengths) > 1 or len(encodings) > 1
+            or encodings and encodings[0].strip().lower() not in ('', 'identity')):
+            refuse('OPENAI_VISION_RESPONSE_TRANSPORT_INVALID')
+        expected = None
+        if lengths:
+            raw = lengths[0]
+            if not 1 <= len(raw) <= 20 or not raw.isascii() or not raw.isdigit():
+                refuse('OPENAI_VISION_RESPONSE_TRANSPORT_INVALID')
+            expected = int(raw)
+            if expected > _MAX_RESPONSE_BYTES:
+                refuse('OPENAI_VISION_RESPONSE_BOUND_EXCEEDED')
+        if response.is_stream_consumed:
+            raw = response.content
+            if len(raw) > _MAX_RESPONSE_BYTES:
+                refuse('OPENAI_VISION_RESPONSE_BOUND_EXCEEDED')
+        else:
+            data = bytearray()
+            async for chunk in response.aiter_raw():
+                if len(data) + len(chunk) > _MAX_RESPONSE_BYTES:
+                    refuse('OPENAI_VISION_RESPONSE_BOUND_EXCEEDED')
+                data.extend(chunk)
+            raw = bytes(data)
+        if expected is not None and expected != len(raw):
+            refuse('OPENAI_VISION_RESPONSE_TRANSPORT_INVALID')
+        return raw
 
     def _request_payload(
         self, frames: tuple[ExtractedVisionFrame, ...]
@@ -1079,7 +1173,7 @@ class OpenAIVisionProvider:
                 error_evidence=evidence,
                 code=evidence.code,
                 category="usage_receipt_invalid",
-            ) from exc
+            ) from None
         cached_tokens = min(cached_tokens, input_tokens)
         if input_tokens > self.input_token_ceiling:
             evidence = _error_evidence(

@@ -1,0 +1,62 @@
+{
+  "schema_version": "native-vision-transport-evidence-v1",
+  "parent_head": "930c2477863d3ec5513145014b29b0ba542a9c78",
+  "source_sha256": {
+    "apps/api/app/openai_vision_provider.py": "af39563b050fef01496ae3132d7be0807dbb6d84a743af28902b512905f1008e",
+    "apps/api/tests/test_vision_transport_safety.py": "4460674153bd30552a1d1bef96373692f40a2be3ae2091463a2ec3e22cafde52",
+    "scripts/north_star_vision_transport.py": "34baca46c7db2bf1293e9658fe11f139ab104041bfb643be0e8c8fd59837a87a",
+    "docs/NATIVE_VISION_TRANSPORT.md": "64bb54da8cd6acbbc8bea111570c5d1c443bc0b81d23d8124dff237dc3c77810"
+  },
+  "tests": {
+    "related_api": {
+      "passed": 94,
+      "new_wire_cases": 35,
+      "seconds": 30.63,
+      "log": "vision-transport-api-related-n2.log",
+      "sha256": "20dd9360d4662a705a76d40c52cdd08f80c9f5cec6360b83487717567377d577"
+    },
+    "native_frame_bridge": {
+      "passed": 14,
+      "seconds": 9.903,
+      "log": "vision-transport-native-bridge-n2.log",
+      "sha256": "791f09d3696ca7786c0563f1ffb88e94f36fd0450a01ad93d7b14c25852ba9c5"
+    },
+    "prior_related_native_passed": 61,
+    "unchanged_studio_at_prior_passed": 404,
+    "prior_full_native_passed": 1181,
+    "current_full_native_api_or_studio_run": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\vision-transport-flow-n2.json",
+    "sha256": "de55dcb610cd69152e8fd8fcf9b8f1ba2a1c21ee38c8fc821ccd249abf994740",
+    "prior_backup_sha256": "d7783ad6c12c836772f2c4cf4397cb4da0c0c0e0aeff14ed235185bb26815254",
+    "fresh_source_replay_sha256": "65ca7f42e6e5eff75919846319d998c36575346d288759469c64e09e636174c9",
+    "reused_actual_pngs": 9,
+    "mock_requests": 2,
+    "new_cpu_jobs": 0,
+    "projects": 2,
+    "original_journals": 9,
+    "legacy_histories": 4
+  },
+  "fixed_origin_no_environment_proxy_no_redirect_one_connection_no_keepalive_identity_encoding": true,
+  "two_mebibyte_bounded_stream_complete_content_length_duplicate_encoding_guards_and_no_partial_complete_hash": true,
+  "utf8_duplicate_nonfinite_envelope_and_structured_output_fail_closed_non200_never_success": true,
+  "raw_contract_test_flag_requires_injected_transport_default_builtin_network_bypass_refused_before_secret_frames": true,
+  "malformed_credentials_before_frame_or_wire_bounded_private_context_logging_and_final_reset_on_error_cancel": true,
+  "inline_image_redaction_secret_shaped_request_id_hash_private_transport_parser_validation_usage_traceback_suppression": true,
+  "typed_original_timeout_chain_and_complete_response_cost_usage_contract_preserved_fixed_unclassified_cleanup_review_no_retry": true,
+  "original_nine_actual_png_frames_projects_journals_source_files_four_legacy_shapes_and_fresh_recovery_exact": true,
+  "real_secret_reads": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "real_publications": 0,
+  "semantic_inference_performed": false,
+  "decoded_pts_verified": false,
+  "continuous_tracking_performed": false,
+  "native_official_runtime_integrated": false,
+  "browser_owner_real_provider_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
