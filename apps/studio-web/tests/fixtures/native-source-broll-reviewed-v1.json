@@ -1,0 +1,2602 @@
+{
+  "fixture_kind": "explicit_protocol_and_saved_asr_fixtures_not_provider_or_owner_acceptance",
+  "source_evidence": "source-broll-vision-flow-n3",
+  "workspace_id": "wsp_vision_rehearsal",
+  "project": {
+    "id": "aef7219b866240bebf1e355d4a07220f",
+    "revision": 12,
+    "document": {
+      "canonical_timeline": {
+        "version": 2,
+        "snapshot": {
+          "schema_version": "1.1",
+          "width": 1080,
+          "height": 1920,
+          "fps": 30.0,
+          "aspect_ratio": "9:16",
+          "duration_seconds": 3.0,
+          "tracks": [
+            {
+              "track_id": "trk_a63d7d0c37224415a06f",
+              "type": "video",
+              "kind": "source",
+              "label": "Video gốc",
+              "order": 0,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_2b48b8f6c70e4b02847d",
+                  "kind": "source",
+                  "label": "Cảnh 1",
+                  "asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                  "source_start": 0.0,
+                  "source_end": 1.5,
+                  "timeline_start": 0.0,
+                  "duration": 1.5,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "scene_id": "scn_9dae2de081dfefa31c5283a9",
+                    "scene_ordinal": 0,
+                    "semantic_label": "Mở đầu",
+                    "quality_score": 0.74,
+                    "source_checksum_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                    "content_type": "video/mp4",
+                    "object_key": "395395139cd34eeba120d7127d1522a5.mp4",
+                    "original_evidence": true,
+                    "native_asset_id": "395395139cd34eeba120d7127d1522a5.mp4"
+                  }
+                },
+                {
+                  "clip_id": "clip_1813a01d53d14b82ac08",
+                  "kind": "source",
+                  "label": "Cảnh 2",
+                  "asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                  "source_start": 1.5,
+                  "source_end": 3.0,
+                  "timeline_start": 1.5,
+                  "duration": 1.5,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "scene_id": "scn_49d452efbd484711a02b4b81",
+                    "scene_ordinal": 1,
+                    "semantic_label": "Phân đoạn 2",
+                    "quality_score": 0.692,
+                    "source_checksum_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                    "content_type": "video/mp4",
+                    "object_key": "395395139cd34eeba120d7127d1522a5.mp4",
+                    "original_evidence": true,
+                    "native_asset_id": "395395139cd34eeba120d7127d1522a5.mp4"
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_7188c9b1d9864397b0df",
+              "type": "video",
+              "kind": "broll",
+              "label": "B-roll",
+              "order": 1,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_8a3f6580eb414ff384c1",
+                  "kind": "image",
+                  "label": "Mở đầu Xin chào",
+                  "asset_id": "ast_1ad3af54e6b747ed18188ccc4e78fb7f",
+                  "source_start": 0.0,
+                  "source_end": null,
+                  "timeline_start": 0.0,
+                  "duration": 1.5,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 0.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "media_plan_id": "mpl_609f3cc003884acba91c30db",
+                    "media_plan_fingerprint": "c3126350ad1dbff1f1c95c96f24b990dc575aafc1cc75ebd48069f489a871272",
+                    "media_plan_item_id": "mpi_8a90224dfc4613e486cb4174",
+                    "media_asset_id": "mas_41a25bef45654abd9c155df3",
+                    "source_asset_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                    "content_type": "image/jpeg",
+                    "object_key": "assets/7485ba4d351a4222b0952fdc6b9a827b.jpg",
+                    "rights_status": "verified",
+                    "license": "owner_upload_rights_attestation",
+                    "generation_provenance": {
+                      "checksum_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7"
+                    },
+                    "source_reference": "upload://7485ba4d351a4222b0952fdc6b9a827b",
+                    "publishing_allowed": false,
+                    "production_eligible": false,
+                    "broll_intent": "Mở đầu",
+                    "placement_source_window": [
+                      0.0,
+                      1.5
+                    ],
+                    "original_audio_preserved": true,
+                    "provider_dispatches": 0,
+                    "native_asset_id": "7485ba4d351a4222b0952fdc6b9a827b.jpg",
+                    "source_checksum_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7"
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_9cb1a3d92353414b8129",
+              "type": "text",
+              "kind": "subtitles",
+              "label": "Bản chép lời",
+              "order": 2,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_d1d095e3be70438ab634",
+                  "kind": "subtitle",
+                  "label": "Xin chào.",
+                  "asset_id": null,
+                  "source_start": 0.2,
+                  "source_end": 1.2,
+                  "timeline_start": 0.2,
+                  "duration": 1.0,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "transcript_id": "trn_c3d8a45daaf80ccfcdbec4df",
+                    "segment_id": "seg_9dae2de081dfefa31c5283a9",
+                    "language": "vi",
+                    "confidence": 0.9,
+                    "editable_in": "V2-08",
+                    "timing_source": "provider_native_word_intervals",
+                    "measured_source_words": [
+                      {
+                        "text": "Xin",
+                        "start_seconds": 0.2,
+                        "end_seconds": 0.6
+                      },
+                      {
+                        "text": "chào.",
+                        "start_seconds": 0.7,
+                        "end_seconds": 1.2
+                      }
+                    ]
+                  }
+                },
+                {
+                  "clip_id": "clip_0618431700854bdf8187",
+                  "kind": "subtitle",
+                  "label": "Cơ hội mới.",
+                  "asset_id": null,
+                  "source_start": 2.0,
+                  "source_end": 2.6,
+                  "timeline_start": 2.0,
+                  "duration": 0.6,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "transcript_id": "trn_c3d8a45daaf80ccfcdbec4df",
+                    "segment_id": "seg_49d452efbd484711a02b4b81",
+                    "language": "vi",
+                    "confidence": 0.8,
+                    "editable_in": "V2-08",
+                    "timing_source": "provider_native_word_intervals",
+                    "measured_source_words": [
+                      {
+                        "text": "Cơ",
+                        "start_seconds": 2.0,
+                        "end_seconds": 2.3
+                      },
+                      {
+                        "text": "hội",
+                        "start_seconds": 2.31,
+                        "end_seconds": 2.45
+                      },
+                      {
+                        "text": "mới.",
+                        "start_seconds": 2.46,
+                        "end_seconds": 2.6
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_8e1b4e73ed084665acce",
+              "type": "audio",
+              "kind": "original_audio",
+              "label": "Âm thanh gốc",
+              "order": 3,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_e37e43c2cf78419e8657",
+                  "kind": "original_audio",
+                  "label": "Âm thanh gốc 1",
+                  "asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                  "source_start": 0.0,
+                  "source_end": 1.5,
+                  "timeline_start": 0.0,
+                  "duration": 1.5,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "scene_id": "scn_9dae2de081dfefa31c5283a9",
+                    "scene_ordinal": 0,
+                    "semantic_label": "Mở đầu",
+                    "quality_score": 0.74,
+                    "source_checksum_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                    "content_type": "video/mp4",
+                    "object_key": "395395139cd34eeba120d7127d1522a5.mp4",
+                    "original_evidence": true,
+                    "native_asset_id": "395395139cd34eeba120d7127d1522a5.mp4"
+                  }
+                },
+                {
+                  "clip_id": "clip_bb247c3ce1ab4b8ab6a7",
+                  "kind": "original_audio",
+                  "label": "Âm thanh gốc 2",
+                  "asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                  "source_start": 1.5,
+                  "source_end": 3.0,
+                  "timeline_start": 1.5,
+                  "duration": 1.5,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "scene_id": "scn_49d452efbd484711a02b4b81",
+                    "scene_ordinal": 1,
+                    "semantic_label": "Phân đoạn 2",
+                    "quality_score": 0.692,
+                    "source_checksum_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                    "content_type": "video/mp4",
+                    "object_key": "395395139cd34eeba120d7127d1522a5.mp4",
+                    "original_evidence": true,
+                    "native_asset_id": "395395139cd34eeba120d7127d1522a5.mp4"
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_b91752045422428aab12",
+              "type": "metadata",
+              "kind": "metadata",
+              "label": "Dấu mốc AI",
+              "order": 4,
+              "locked": true,
+              "muted": false,
+              "disabled": false,
+              "clips": []
+            }
+          ],
+          "metadata": {
+            "source_analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+            "source_media_plan_id": null,
+            "source_asset_id": "ast_286c4eb14842a0566221bf765038a553",
+            "source_duration_seconds": 3.0,
+            "transcript_revision": {
+              "transcript_id": "trn_c3d8a45daaf80ccfcdbec4df",
+              "version": 1,
+              "human_edited": false
+            },
+            "silence_decisions_applied": 0,
+            "silence_speech_padding_preserved": true,
+            "silence_decision_ids": [],
+            "silence_review": {
+              "selected_ids": [],
+              "source_analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+              "requires_human_approval": true,
+              "source_media_mutated": false
+            },
+            "highlight_ids": [
+              "hig_49d452efbd484711a02b4b81",
+              "hig_24f17fab4a2a638935a91c87"
+            ],
+            "preview_profile": "proxy-540-canonical-audio-v2",
+            "approval_invalidates_on_change": true,
+            "source_selection": {
+              "requested_window": null,
+              "word_safe_window": null,
+              "silence_decision_ids": []
+            },
+            "human_review_required": true,
+            "timing_source": "measured_source_footage_and_saved_transcript",
+            "native_project_id": "aef7219b866240bebf1e355d4a07220f",
+            "native_auto_edit_schema": "native-auto-edit-timeline-v1",
+            "broll_review": {
+              "media_plan_id": "mpl_609f3cc003884acba91c30db",
+              "item_ids": [
+                "mpi_8a90224dfc4613e486cb4174"
+              ],
+              "human_approval_required": true,
+              "source_media_mutated": false
+            }
+          },
+          "source_media_mutated": false,
+          "publish_requested": false
+        },
+        "sha256": "c1b9c4d4c3e4e0b94a93aa3d119ea03a379a36ed08f0511d9d5324bcc9c9ab18"
+      },
+      "source_broll_plans": [
+        {
+          "plan": {
+            "media_plan_id": "mpl_609f3cc003884acba91c30db",
+            "workspace_id": "native-local",
+            "project_id": "prj_aef7219b866240bebf1e355d4a07220f",
+            "project_version_id": null,
+            "analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+            "vision_analysis_id": null,
+            "status": "draft",
+            "fingerprint": "c3126350ad1dbff1f1c95c96f24b990dc575aafc1cc75ebd48069f489a871272",
+            "version": 2,
+            "configuration": {
+              "learning_snapshot_id": null,
+              "purpose": "supporting_broll",
+              "analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+              "transcript_id": "trn_c3d8a45daaf80ccfcdbec4df",
+              "vision_analysis_id": null,
+              "platform": "facebook_reels",
+              "brand_context": "Video Factory",
+              "max_ai_cost_vnd": "0",
+              "allow_stock": true,
+              "allow_ai_image": true,
+              "allow_ai_video": true,
+              "selection_policy": "priority",
+              "resolver_priority": [
+                "user_asset",
+                "licensed_stock",
+                "internal_library",
+                "ai_image",
+                "ai_video",
+                "motion_graphic"
+              ]
+            },
+            "provider_status": {
+              "stock": "NOT_CONFIGURED",
+              "ai_image": "NOT_CONFIGURED",
+              "ai_video": "NOT_CONFIGURED",
+              "semantic_vision": "NOT_CONFIGURED"
+            },
+            "items": [
+              {
+                "media_plan_item_id": "mpi_8a90224dfc4613e486cb4174",
+                "media_plan_id": "mpl_609f3cc003884acba91c30db",
+                "scene_id": "scn_9dae2de081dfefa31c5283a9",
+                "ordinal": 0,
+                "strategy": "user_asset",
+                "fallback": [
+                  "motion_graphic"
+                ],
+                "broll": {
+                  "broll_intent": "Mở đầu",
+                  "search_query": "Mở đầu Xin chào",
+                  "duration_seconds": 1.5,
+                  "preferred_media_type": "video",
+                  "generation_prompt": "Video Factory Xin chào. Xin chào. original supporting visual, no logos, no copied creator treatment",
+                  "placement_start_seconds": 0.0,
+                  "placement_end_seconds": 1.5,
+                  "confidence": 0.65,
+                  "provenance": {
+                    "source_type": "planning_evidence",
+                    "source_analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+                    "source_asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                    "source_asset_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                    "transcript_id": "trn_c3d8a45daaf80ccfcdbec4df",
+                    "transcript_version": 1,
+                    "fixture_asr": true,
+                    "vision_analysis_id": null,
+                    "confidence_basis": "scene heuristic capped at 0.65; no Vision evidence",
+                    "semantic_refresh_required": false,
+                    "frame_evidence": [],
+                    "provider_dispatches": 0,
+                    "source_media_mutated": false,
+                    "recommendation_only": true,
+                    "reviewed_vision_recommendation_only": true,
+                    "confidence_calibrated": false,
+                    "full_evidence_in": "plan.provenance.reviewed_vision",
+                    "semantic_provider_used": false
+                  }
+                },
+                "candidates": [],
+                "source_asset_id": "ast_1ad3af54e6b747ed18188ccc4e78fb7f",
+                "selected_media_asset_id": "mas_41a25bef45654abd9c155df3",
+                "estimated_cost_vnd": "0",
+                "needs_approval": false,
+                "needs_attention": false,
+                "status": "resolved",
+                "provenance": {
+                  "algorithm": "priority-media-planner-v1",
+                  "selection_policy": "priority",
+                  "resolver_priority": [
+                    "user_asset",
+                    "licensed_stock",
+                    "internal_library",
+                    "ai_image",
+                    "ai_video",
+                    "motion_graphic"
+                  ],
+                  "stock_search_state": "not_searched",
+                  "stock_result_count": null,
+                  "stock_rejected_rights_count": null,
+                  "stock_tier_available": false,
+                  "source_scene_id": "scn_9dae2de081dfefa31c5283a9",
+                  "source_analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+                  "vision_analysis_id": null,
+                  "originality_guardrail": true,
+                  "social_media_downloaded": false,
+                  "strategy_estimated": true,
+                  "estimated_cost_unknown": false,
+                  "estimated_cost_lower_bound_only": false,
+                  "supporting_candidates": [
+                    {
+                      "asset_id": "ast_1ad3af54e6b747ed18188ccc4e78fb7f",
+                      "filename": "Xin chào supporting.png",
+                      "checksum_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                      "source_type": "user_asset",
+                      "rights_status": "verified",
+                      "license": "owner_upload_rights_attestation",
+                      "content_type": "image/jpeg",
+                      "duration_seconds": null,
+                      "width": 320,
+                      "height": 240,
+                      "relevance_score": 0.666667,
+                      "confidence": null,
+                      "score_basis": "lexical overlap in saved filename, description and tags; not semantic Vision",
+                      "matched_tokens": [
+                        "chào",
+                        "xin"
+                      ],
+                      "needs_attention": false,
+                      "provider": "user-upload",
+                      "source_reference": "upload://7485ba4d351a4222b0952fdc6b9a827b",
+                      "generation_provenance": {},
+                      "pixel_quality_summary": {
+                        "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                        "observation_sha256": "4472d4a34026265b883042911be67a7f3badf1f9583486f5199de411645c780f",
+                        "provider": "local_ffmpeg_pillow_pixels",
+                        "model": "pixel-quality-facts-v1",
+                        "sample_count": 1,
+                        "heuristic_quality_score": 0.119216,
+                        "black_sample_fraction": 0.0,
+                        "confidence": null,
+                        "semantic_relevance": null,
+                        "frames": [
+                          {
+                            "frame_id": "mfr_5dbee24ca79e8da937791a99",
+                            "timestamp_seconds": 0.0,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+                            "sha256": "c643f6dc35c9751a3d004fb8097670f6f163cf8fb855ebaeaf2709bbd4ffc38d",
+                            "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 38.0,
+                              "luma_stddev": 0.0,
+                              "low_luma_fraction": 0.0,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 0.0,
+                              "sample_pixels_sha256": "efae8e9485dcff6af40101e49af6f7e0a0166e50698e4b43d7d651b9ff921406",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.119216,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          }
+                        ]
+                      },
+                      "quality_score": 0.119216,
+                      "quality_basis": "uncalibrated sampled pixel sharpness/brightness heuristic",
+                      "fixture": true,
+                      "provider_dispatches": 0,
+                      "reviewed_vision": {
+                        "request": {
+                          "vision_id": "nvoi_d07fa58fd38543f0b6e368b2d74eb7bc",
+                          "expected_snapshot_sha256": "c8875cb4988e5c1a925db9455c29ae55d0f9b32992476ca39172d7cd95d6ae06",
+                          "expected_result_sha256": "7cf7e9a5bd3c57085d1f0aa8eaa76fa9fa62dbe72ae5e8cce8916ecc13531c4b",
+                          "acknowledged_reviewed_result": true,
+                          "acknowledged_protocol_mock": true
+                        },
+                        "response_id": "nvor_c95a49e780d84e74a374c7962f2801f2",
+                        "response_sha256": "b38f3a3a0a2cb4ec5dd25aa81ebd3f437f0dfd23e0bfb9028d600c4e4a4b2c5a",
+                        "cost_operation_id": "c709a0661e6c805b34490dc89d5d4556573412c9fdce3b76d547a307f96963ff",
+                        "mock": true,
+                        "semantic_inference_performed": false,
+                        "confidence_calibrated": false,
+                        "full_evidence_in": "plan.provenance.reviewed_vision"
+                      }
+                    }
+                  ],
+                  "purpose": "supporting_broll",
+                  "fallback_keeps_original_footage": false,
+                  "reviewed_vision_recommendation_only": true,
+                  "confidence_calibrated": false,
+                  "explicit_manual_selection": true
+                }
+              },
+              {
+                "media_plan_item_id": "mpi_47f217e848730c88b3e6cd89",
+                "media_plan_id": "mpl_609f3cc003884acba91c30db",
+                "scene_id": "scn_49d452efbd484711a02b4b81",
+                "ordinal": 1,
+                "strategy": "user_asset",
+                "fallback": [
+                  "motion_graphic"
+                ],
+                "broll": {
+                  "broll_intent": "Phân đoạn 2",
+                  "search_query": "Phân đoạn 2 Cơ hội mới",
+                  "duration_seconds": 1.5,
+                  "preferred_media_type": "video",
+                  "generation_prompt": "Video Factory Cơ hội mới. Cơ hội mới. original supporting visual, no logos, no copied creator treatment",
+                  "placement_start_seconds": 1.5,
+                  "placement_end_seconds": 3.0,
+                  "confidence": 0.65,
+                  "provenance": {
+                    "source_type": "planning_evidence",
+                    "source_analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+                    "source_asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                    "source_asset_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                    "transcript_id": "trn_c3d8a45daaf80ccfcdbec4df",
+                    "transcript_version": 1,
+                    "fixture_asr": true,
+                    "vision_analysis_id": null,
+                    "confidence_basis": "scene heuristic capped at 0.65; no Vision evidence",
+                    "semantic_refresh_required": false,
+                    "frame_evidence": [],
+                    "provider_dispatches": 0,
+                    "source_media_mutated": false,
+                    "recommendation_only": true,
+                    "reviewed_vision_recommendation_only": true,
+                    "confidence_calibrated": false,
+                    "full_evidence_in": "plan.provenance.reviewed_vision",
+                    "semantic_provider_used": false
+                  }
+                },
+                "candidates": [],
+                "source_asset_id": null,
+                "selected_media_asset_id": null,
+                "estimated_cost_vnd": "0",
+                "needs_approval": false,
+                "needs_attention": true,
+                "status": "planned",
+                "provenance": {
+                  "algorithm": "priority-media-planner-v1",
+                  "selection_policy": "priority",
+                  "resolver_priority": [
+                    "user_asset",
+                    "licensed_stock",
+                    "internal_library",
+                    "ai_image",
+                    "ai_video",
+                    "motion_graphic"
+                  ],
+                  "stock_search_state": "not_searched",
+                  "stock_result_count": null,
+                  "stock_rejected_rights_count": null,
+                  "stock_tier_available": false,
+                  "source_scene_id": "scn_49d452efbd484711a02b4b81",
+                  "source_analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+                  "vision_analysis_id": null,
+                  "originality_guardrail": true,
+                  "social_media_downloaded": false,
+                  "strategy_estimated": true,
+                  "estimated_cost_unknown": false,
+                  "estimated_cost_lower_bound_only": false,
+                  "supporting_candidates": [
+                    {
+                      "asset_id": "ast_1ad3af54e6b747ed18188ccc4e78fb7f",
+                      "filename": "Xin chào supporting.png",
+                      "checksum_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                      "source_type": "user_asset",
+                      "rights_status": "verified",
+                      "license": "owner_upload_rights_attestation",
+                      "content_type": "image/jpeg",
+                      "duration_seconds": null,
+                      "width": 320,
+                      "height": 240,
+                      "relevance_score": 0.0,
+                      "confidence": null,
+                      "score_basis": "lexical overlap in saved filename, description and tags; not semantic Vision",
+                      "matched_tokens": [],
+                      "needs_attention": true,
+                      "provider": "user-upload",
+                      "source_reference": "upload://7485ba4d351a4222b0952fdc6b9a827b",
+                      "generation_provenance": {},
+                      "pixel_quality_summary": {
+                        "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                        "observation_sha256": "4472d4a34026265b883042911be67a7f3badf1f9583486f5199de411645c780f",
+                        "provider": "local_ffmpeg_pillow_pixels",
+                        "model": "pixel-quality-facts-v1",
+                        "sample_count": 1,
+                        "heuristic_quality_score": 0.119216,
+                        "black_sample_fraction": 0.0,
+                        "confidence": null,
+                        "semantic_relevance": null,
+                        "frames": [
+                          {
+                            "frame_id": "mfr_5dbee24ca79e8da937791a99",
+                            "timestamp_seconds": 0.0,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+                            "sha256": "c643f6dc35c9751a3d004fb8097670f6f163cf8fb855ebaeaf2709bbd4ffc38d",
+                            "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 38.0,
+                              "luma_stddev": 0.0,
+                              "low_luma_fraction": 0.0,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 0.0,
+                              "sample_pixels_sha256": "efae8e9485dcff6af40101e49af6f7e0a0166e50698e4b43d7d651b9ff921406",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.119216,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          }
+                        ]
+                      },
+                      "quality_score": 0.119216,
+                      "quality_basis": "uncalibrated sampled pixel sharpness/brightness heuristic",
+                      "fixture": true,
+                      "provider_dispatches": 0,
+                      "reviewed_vision": {
+                        "request": {
+                          "vision_id": "nvoi_d07fa58fd38543f0b6e368b2d74eb7bc",
+                          "expected_snapshot_sha256": "c8875cb4988e5c1a925db9455c29ae55d0f9b32992476ca39172d7cd95d6ae06",
+                          "expected_result_sha256": "7cf7e9a5bd3c57085d1f0aa8eaa76fa9fa62dbe72ae5e8cce8916ecc13531c4b",
+                          "acknowledged_reviewed_result": true,
+                          "acknowledged_protocol_mock": true
+                        },
+                        "response_id": "nvor_c95a49e780d84e74a374c7962f2801f2",
+                        "response_sha256": "b38f3a3a0a2cb4ec5dd25aa81ebd3f437f0dfd23e0bfb9028d600c4e4a4b2c5a",
+                        "cost_operation_id": "c709a0661e6c805b34490dc89d5d4556573412c9fdce3b76d547a307f96963ff",
+                        "mock": true,
+                        "semantic_inference_performed": false,
+                        "confidence_calibrated": false,
+                        "full_evidence_in": "plan.provenance.reviewed_vision"
+                      }
+                    }
+                  ],
+                  "purpose": "supporting_broll",
+                  "fallback_keeps_original_footage": true,
+                  "reviewed_vision_recommendation_only": true,
+                  "confidence_calibrated": false
+                }
+              }
+            ],
+            "media_assets": [
+              {
+                "media_asset_id": "mas_41a25bef45654abd9c155df3",
+                "workspace_id": "native-local",
+                "project_id": "prj_aef7219b866240bebf1e355d4a07220f",
+                "project_version_id": null,
+                "media_plan_id": "mpl_609f3cc003884acba91c30db",
+                "media_plan_item_id": "mpi_8a90224dfc4613e486cb4174",
+                "asset_id": "ast_1ad3af54e6b747ed18188ccc4e78fb7f",
+                "source_type": "user_upload",
+                "rights_status": "verified",
+                "license": "owner_upload_rights_attestation",
+                "license_url": null,
+                "provider": "user-upload",
+                "provider_asset_id": "ast_1ad3af54e6b747ed18188ccc4e78fb7f",
+                "creator": null,
+                "source_reference": "upload://7485ba4d351a4222b0952fdc6b9a827b",
+                "attribution_requirement": null,
+                "generation_provenance": {
+                  "checksum_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7"
+                },
+                "width": 320,
+                "height": 240,
+                "duration_seconds": null,
+                "orientation": "unknown",
+                "production_eligible": false,
+                "publishing_allowed": false,
+                "owner_override_recorded": false,
+                "downloaded_at": null,
+                "provenance": {
+                  "asset_checksum_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                  "rights_verification_basis": "explicit owner upload attestation; no independent license verification",
+                  "fixture": true,
+                  "owner_rights_override": null
+                },
+                "created_at": "2026-10-09T07:26:58.022351Z",
+                "updated_at": "2026-10-09T07:26:58.022351Z"
+              }
+            ],
+            "resolution_jobs": [],
+            "projected_ai_cost_vnd": "0",
+            "max_ai_cost_vnd": "0",
+            "needs_approval": false,
+            "publishing_blocked": true,
+            "unresolved_items": 1,
+            "source_media_mutated": false,
+            "publish_requested": false,
+            "paid_external_call": false,
+            "error_code": null,
+            "provenance": {
+              "algorithm": "native-source-broll-v2",
+              "source_asset_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+              "transcript_id": "trn_c3d8a45daaf80ccfcdbec4df",
+              "provider_dispatches": 0,
+              "recommendation_only": true,
+              "requires_manual_selection_and_apply": true,
+              "candidate_ranking": "saved metadata plus explicitly reviewed provider labels and uncalibrated sampled prediction; mocks add no semantic or quality score",
+              "native_source_timeline_version": 1,
+              "reviewed_vision": {
+                "schema_version": "native-reviewed-vision-context-v1",
+                "workspace_id": "wsp_vision_rehearsal",
+                "project_id": "aef7219b866240bebf1e355d4a07220f",
+                "items": [
+                  {
+                    "schema_version": "native-reviewed-vision-item-v1",
+                    "request": {
+                      "vision_id": "nvoi_d07fa58fd38543f0b6e368b2d74eb7bc",
+                      "expected_snapshot_sha256": "c8875cb4988e5c1a925db9455c29ae55d0f9b32992476ca39172d7cd95d6ae06",
+                      "expected_result_sha256": "7cf7e9a5bd3c57085d1f0aa8eaa76fa9fa62dbe72ae5e8cce8916ecc13531c4b",
+                      "acknowledged_reviewed_result": true,
+                      "acknowledged_protocol_mock": true
+                    },
+                    "workspace_id": "wsp_vision_rehearsal",
+                    "project_id": "aef7219b866240bebf1e355d4a07220f",
+                    "asset_id": "7485ba4d351a4222b0952fdc6b9a827b.jpg",
+                    "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                    "source_observation_sha256": "4472d4a34026265b883042911be67a7f3badf1f9583486f5199de411645c780f",
+                    "source_binding_sha256": "ce736f6077c470eec7b2339d3671e984ab5bf549032cfb597e03fb1150878ce1",
+                    "input_binding_sha256": "43806f8e3a1130de8186fad5debc26eaafe7db762b099999590f79c109780dd2",
+                    "response_id": "nvor_c95a49e780d84e74a374c7962f2801f2",
+                    "response_sha256": "b38f3a3a0a2cb4ec5dd25aa81ebd3f437f0dfd23e0bfb9028d600c4e4a4b2c5a",
+                    "cost_operation_id": "c709a0661e6c805b34490dc89d5d4556573412c9fdce3b76d547a307f96963ff",
+                    "original_approved_at": "2026-10-09T07:26:57.569232+00:00",
+                    "original_deadline": "2026-10-09T07:36:57.569232+00:00",
+                    "provider": "openai-vision",
+                    "model": "gpt-5-mini",
+                    "mock": true,
+                    "semantic_inference_performed": false,
+                    "frames": [
+                      {
+                        "frame_id": "vfr_82dd13dbf35f859517e73069",
+                        "timestamp_seconds": 0.0,
+                        "evidence_frame_reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+                        "caption": "[EXPLICIT HTTP MOCK] Minh họa AI educational short.",
+                        "scene_description": "[EXPLICIT HTTP MOCK] Generic educational frame, no real semantic inference.",
+                        "semantic_label": "explicit_ai_education_mock",
+                        "environment": "explicit_mock",
+                        "action": "explicit_mock",
+                        "objects": [],
+                        "ocr": [],
+                        "composition": {
+                          "primary_subject_box": null,
+                          "subject_position": "unknown",
+                          "saliency_box": null,
+                          "headroom_ratio": 0.1,
+                          "visual_balance_score": 0.5,
+                          "safe_crop": false
+                        },
+                        "quality": {
+                          "quality_score": 0.5,
+                          "black_frame": false,
+                          "blur_score": 0.2,
+                          "overexposed": false,
+                          "underexposed": false,
+                          "low_resolution": false,
+                          "watermark_or_logo_detected": false,
+                          "frozen_or_duplicate": false,
+                          "issues": [
+                            "explicit_mock_not_inferred"
+                          ]
+                        },
+                        "confidence": 0.5,
+                        "provider_key": "openai-vision",
+                        "model": "gpt-5-mini"
+                      }
+                    ],
+                    "scenes": [],
+                    "best_frame_ids": [
+                      "vfr_82dd13dbf35f859517e73069"
+                    ],
+                    "thumbnail_candidate_ids": [
+                      "vfr_82dd13dbf35f859517e73069"
+                    ],
+                    "source_frame_evidence": [
+                      {
+                        "frame_id": "mfr_5dbee24ca79e8da937791a99",
+                        "timestamp_seconds": 0.0,
+                        "timestamp_basis": "requested_ffmpeg_source_seek; decoded_pts_unavailable",
+                        "decoded_pts_seconds": null,
+                        "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+                        "sha256": "c643f6dc35c9751a3d004fb8097670f6f163cf8fb855ebaeaf2709bbd4ffc38d",
+                        "decoded_pixels_sha256": "9c51f60e2ecc6630d9a9db3479366bbe03072b3b3536e3599e031335ecb0599d",
+                        "width": 480,
+                        "height": 360,
+                        "pixel_facts": {
+                          "algorithm": "pixel-quality-facts-v1",
+                          "sample_width": 64,
+                          "sample_height": 64,
+                          "luma_mean": 38.0,
+                          "luma_stddev": 0.0,
+                          "low_luma_fraction": 0.0,
+                          "high_luma_fraction": 0.0,
+                          "laplacian_variance": 0.0,
+                          "sample_pixels_sha256": "efae8e9485dcff6af40101e49af6f7e0a0166e50698e4b43d7d651b9ff921406",
+                          "black_sample": false,
+                          "heuristic_quality_score": 0.119216,
+                          "confidence": null,
+                          "calibration": null,
+                          "semantic_inference_performed": false,
+                          "frame_caption": null,
+                          "scene_description": null,
+                          "object_detections": null,
+                          "person_detections": null,
+                          "ocr": null,
+                          "environment": null,
+                          "action": null,
+                          "subject_position": null,
+                          "safe_crop": null,
+                          "saliency": null,
+                          "headroom": null,
+                          "blur_score": null,
+                          "overexposed": null,
+                          "underexposed": null,
+                          "watermark_or_logo_evidence": null,
+                          "broll_relevance": null
+                        },
+                        "duplicate_sample_of": null
+                      }
+                    ],
+                    "calculated_usage_cost_vnd": "2.620000",
+                    "observed_actual_billed_cost_vnd": null,
+                    "prediction_confidence_calibrated": false,
+                    "continuous_tracking_performed": false,
+                    "decoded_pts_verified": false,
+                    "automatic_application": false,
+                    "planning_authorizes_payment": false,
+                    "full_media_qc_replaced": false,
+                    "publishing_authorized": false,
+                    "owner_uat_accepted": false,
+                    "real_provider_tested": false
+                  }
+                ],
+                "semantic_vision_used": false,
+                "mock_present": true,
+                "recommendation_only": true,
+                "automatic_application": false,
+                "external_dispatches": 0,
+                "paid_operations": 0,
+                "original_provider_consent_renewed": false,
+                "full_media_qc_replaced": false,
+                "publishing_authorized": false,
+                "owner_uat_accepted": false
+              },
+              "reviewed_input": {
+                "schema_version": "native-reviewed-source-broll-input-v1",
+                "source_revision": 9,
+                "source_document_sha256": "4533be8b55066e0a7ca0718c2311a5582a60607adcfaa13c3def31fd8d65f9a5",
+                "analysis": {
+                  "analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+                  "workspace_id": "native-local",
+                  "project_id": "prj_aef7219b866240bebf1e355d4a07220f",
+                  "project_version_id": null,
+                  "asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                  "status": "succeeded",
+                  "fingerprint": "de6c3cba05d8e60efa4e32da7495e301a328da2632b0b9db1cd3a2082f0d5ab3",
+                  "configuration": {
+                    "asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                    "acceptance_operation_id": null,
+                    "top_highlights": 3,
+                    "silence_threshold_db": -35.0,
+                    "minimum_silence_duration": 0.5,
+                    "padding_before": 0.08,
+                    "padding_after": 0.08,
+                    "word_timing_policy": "strict_provider_intervals"
+                  },
+                  "source_media": {
+                    "media_kind": "video",
+                    "detected_content_type": "video/mp4",
+                    "format_name": null,
+                    "duration_seconds": 3.0,
+                    "width": 320,
+                    "height": 240,
+                    "fps": 30.0,
+                    "video_codec": "h264",
+                    "audio_codec": "aac",
+                    "audio_channels": null,
+                    "audio_sample_rate": null
+                  },
+                  "transcript": {
+                    "transcript_id": "trn_c3d8a45daaf80ccfcdbec4df",
+                    "analysis_id": "ana_de6c3cba05d8e60efa4e32da",
+                    "asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                    "version": 1,
+                    "is_original_evidence": true,
+                    "provider_key": "explicit-asr-fixture",
+                    "language": "vi",
+                    "confidence": 0.9,
+                    "segments": [
+                      {
+                        "segment_id": "seg_9dae2de081dfefa31c5283a9",
+                        "ordinal": 0,
+                        "start_seconds": 0.2,
+                        "end_seconds": 1.2,
+                        "text": "Xin chào.",
+                        "speaker": null,
+                        "confidence": 0.9,
+                        "words": [
+                          {
+                            "word_id": "wrd_9dae2de081dfefa31c5283a9",
+                            "ordinal": 0,
+                            "start_seconds": 0.2,
+                            "end_seconds": 0.6,
+                            "text": "Xin",
+                            "confidence": 0.9
+                          },
+                          {
+                            "word_id": "wrd_49d452efbd484711a02b4b81",
+                            "ordinal": 1,
+                            "start_seconds": 0.7,
+                            "end_seconds": 1.2,
+                            "text": "chào.",
+                            "confidence": 0.8
+                          }
+                        ]
+                      },
+                      {
+                        "segment_id": "seg_49d452efbd484711a02b4b81",
+                        "ordinal": 1,
+                        "start_seconds": 2.0,
+                        "end_seconds": 2.6,
+                        "text": "Cơ hội mới.",
+                        "speaker": null,
+                        "confidence": 0.8,
+                        "words": [
+                          {
+                            "word_id": "wrd_24f17fab4a2a638935a91c87",
+                            "ordinal": 2,
+                            "start_seconds": 2.0,
+                            "end_seconds": 2.3,
+                            "text": "Cơ",
+                            "confidence": 0.8
+                          },
+                          {
+                            "word_id": "wrd_bf3f8642b590de885ccec8a9",
+                            "ordinal": 3,
+                            "start_seconds": 2.31,
+                            "end_seconds": 2.45,
+                            "text": "hội",
+                            "confidence": 0.8
+                          },
+                          {
+                            "word_id": "wrd_999fdf465876ace89f7ee0f1",
+                            "ordinal": 4,
+                            "start_seconds": 2.46,
+                            "end_seconds": 2.6,
+                            "text": "mới.",
+                            "confidence": 0.8
+                          }
+                        ]
+                      }
+                    ],
+                    "provenance": {
+                      "provider": "explicit-asr-fixture",
+                      "fixture": true,
+                      "native_saved_receipt_reused": true,
+                      "source_media_mutated": false,
+                      "remote_calls": 0,
+                      "timing_rewrite_applied": false
+                    },
+                    "created_at": "2026-10-09T07:26:55.786202Z"
+                  },
+                  "scenes": [
+                    {
+                      "scene_id": "scn_9dae2de081dfefa31c5283a9",
+                      "ordinal": 0,
+                      "start_seconds": 0.0,
+                      "end_seconds": 1.5,
+                      "semantic_label": "Mở đầu",
+                      "description": "Xin chào.",
+                      "subjects": [],
+                      "quality_score": 0.74,
+                      "motion_score": 0.5,
+                      "speech_score": 0.666667,
+                      "confidence": 0.783333,
+                      "evidence": {
+                        "shot_boundary": false,
+                        "transcript_segment_count": 1,
+                        "transcript_keywords": [],
+                        "subjects_available": false,
+                        "local_metrics": {
+                          "sample_count": 0,
+                          "motion_score": null,
+                          "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+                          "local_quality_score": null,
+                          "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+                          "black_frame_ratio": null,
+                          "overexposure_ratio": null,
+                          "underexposure_ratio": null,
+                          "mean_luma": null,
+                          "mean_edge_strength": null,
+                          "duplicate_frame_ratio": null,
+                          "audio_rms": null,
+                          "audio_energy_score": null,
+                          "sample_timestamps": []
+                        },
+                        "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+                        "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+                        "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+                        "audio_boundaries": [
+                          {
+                            "start_seconds": 0.55,
+                            "end_seconds": 0.9
+                          },
+                          {
+                            "start_seconds": 1.3,
+                            "end_seconds": 1.95
+                          }
+                        ],
+                        "shot_detection_score": null,
+                        "vision_used": false,
+                        "vision_deferred_to": "V2-05"
+                      }
+                    },
+                    {
+                      "scene_id": "scn_49d452efbd484711a02b4b81",
+                      "ordinal": 1,
+                      "start_seconds": 1.5,
+                      "end_seconds": 3.0,
+                      "semantic_label": "Phân đoạn 2",
+                      "description": "Cơ hội mới.",
+                      "subjects": [],
+                      "quality_score": 0.692,
+                      "motion_score": 0.7,
+                      "speech_score": 0.4,
+                      "confidence": 0.77,
+                      "evidence": {
+                        "shot_boundary": true,
+                        "transcript_segment_count": 1,
+                        "transcript_keywords": [],
+                        "subjects_available": false,
+                        "local_metrics": {
+                          "sample_count": 0,
+                          "motion_score": null,
+                          "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+                          "local_quality_score": null,
+                          "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+                          "black_frame_ratio": null,
+                          "overexposure_ratio": null,
+                          "underexposure_ratio": null,
+                          "mean_luma": null,
+                          "mean_edge_strength": null,
+                          "duplicate_frame_ratio": null,
+                          "audio_rms": null,
+                          "audio_energy_score": null,
+                          "sample_timestamps": []
+                        },
+                        "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+                        "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+                        "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+                        "audio_boundaries": [
+                          {
+                            "start_seconds": 1.3,
+                            "end_seconds": 1.95
+                          }
+                        ],
+                        "shot_detection_score": 0.7,
+                        "vision_used": false,
+                        "vision_deferred_to": "V2-05"
+                      }
+                    }
+                  ],
+                  "silence_decisions": [
+                    {
+                      "decision_id": "sil_9dae2de081dfefa31c5283a9",
+                      "start_seconds": 0.63,
+                      "end_seconds": 0.82,
+                      "padding_before_seconds": 0.08,
+                      "padding_after_seconds": 0.08,
+                      "enabled": false,
+                      "reason": "Disabled because the proposed cut overlaps a spoken word.",
+                      "conflicts_with_speech": true,
+                      "evidence": {
+                        "raw_start": 0.55,
+                        "raw_end": 0.9,
+                        "measured_db": null,
+                        "measured_db_available": false,
+                        "speech_protection": [
+                          "word"
+                        ],
+                        "threshold_db": -35.0,
+                        "minimum_duration": 0.5,
+                        "source_media_mutated": false
+                      }
+                    },
+                    {
+                      "decision_id": "sil_49d452efbd484711a02b4b81",
+                      "start_seconds": 1.38,
+                      "end_seconds": 1.87,
+                      "padding_before_seconds": 0.08,
+                      "padding_after_seconds": 0.08,
+                      "enabled": false,
+                      "reason": "Disabled because padding leaves less than the minimum silence duration.",
+                      "conflicts_with_speech": false,
+                      "evidence": {
+                        "raw_start": 1.3,
+                        "raw_end": 1.95,
+                        "measured_db": null,
+                        "measured_db_available": false,
+                        "speech_protection": [],
+                        "threshold_db": -35.0,
+                        "minimum_duration": 0.5,
+                        "source_media_mutated": false
+                      }
+                    }
+                  ],
+                  "highlights": [
+                    {
+                      "highlight_id": "hig_49d452efbd484711a02b4b81",
+                      "rank": 1,
+                      "highlight_score": 0.333334,
+                      "reason": "saved text keyword/information-density heuristics; transcript coverage",
+                      "recommended_start": 0.0,
+                      "recommended_end": 1.5,
+                      "recommended_platform": "facebook_reels",
+                      "scene_id": "scn_9dae2de081dfefa31c5283a9",
+                      "evidence": {
+                        "algorithm": "multimodal-highlight-v3",
+                        "text_evidence_available": true,
+                        "text_evidence_basis": "saved transcript/Vision evidence",
+                        "speech_semantics": "keyword/information-density heuristic; no semantic model dispatched",
+                        "audio_proxy": null,
+                        "motion": null,
+                        "information_density": 0.166667,
+                        "hook_keywords": [],
+                        "vision_used": false,
+                        "factors": {
+                          "speech_coverage": 0.666667,
+                          "motion": null,
+                          "information_density": 0.166667,
+                          "hook_keywords": 0.0,
+                          "quality": null,
+                          "pixel_novelty": null,
+                          "audio_energy": null
+                        },
+                        "weights": {
+                          "speech_coverage": 0.25,
+                          "motion": 0.15,
+                          "information_density": 0.2,
+                          "hook_keywords": 0.15,
+                          "quality": 0.1,
+                          "pixel_novelty": 0.05,
+                          "audio_energy": 0.1
+                        },
+                        "available_weight": 0.6,
+                        "contributions": {
+                          "speech_coverage": 0.277778,
+                          "information_density": 0.055556,
+                          "hook_keywords": 0.0
+                        },
+                        "missing_factors": [
+                          "motion",
+                          "quality",
+                          "pixel_novelty",
+                          "audio_energy"
+                        ],
+                        "confidence": 0.47
+                      }
+                    },
+                    {
+                      "highlight_id": "hig_24f17fab4a2a638935a91c87",
+                      "rank": 2,
+                      "highlight_score": 0.325,
+                      "reason": "saved text keyword/information-density heuristics; transcript coverage; hook keywords: cơ hội",
+                      "recommended_start": 1.5,
+                      "recommended_end": 3.0,
+                      "recommended_platform": "facebook_reels",
+                      "scene_id": "scn_49d452efbd484711a02b4b81",
+                      "evidence": {
+                        "algorithm": "multimodal-highlight-v3",
+                        "text_evidence_available": true,
+                        "text_evidence_basis": "saved transcript/Vision evidence",
+                        "speech_semantics": "keyword/information-density heuristic; no semantic model dispatched",
+                        "audio_proxy": null,
+                        "motion": null,
+                        "information_density": 0.25,
+                        "hook_keywords": [
+                          "cơ hội"
+                        ],
+                        "vision_used": false,
+                        "factors": {
+                          "speech_coverage": 0.4,
+                          "motion": null,
+                          "information_density": 0.25,
+                          "hook_keywords": 0.3,
+                          "quality": null,
+                          "pixel_novelty": null,
+                          "audio_energy": null
+                        },
+                        "weights": {
+                          "speech_coverage": 0.25,
+                          "motion": 0.15,
+                          "information_density": 0.2,
+                          "hook_keywords": 0.15,
+                          "quality": 0.1,
+                          "pixel_novelty": 0.05,
+                          "audio_energy": 0.1
+                        },
+                        "available_weight": 0.6,
+                        "contributions": {
+                          "speech_coverage": 0.166667,
+                          "information_density": 0.083333,
+                          "hook_keywords": 0.075
+                        },
+                        "missing_factors": [
+                          "motion",
+                          "quality",
+                          "pixel_novelty",
+                          "audio_energy"
+                        ],
+                        "confidence": 0.462
+                      }
+                    }
+                  ],
+                  "source_media_mutated": false,
+                  "publish_requested": false,
+                  "error_code": null,
+                  "provenance": {
+                    "algorithm": "native-auto-edit-evidence-v1",
+                    "source_asset_checksum": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                    "native_asset_id": "395395139cd34eeba120d7127d1522a5.mp4",
+                    "saved_asr_analysis_sha256": "350ab5cac16bbecbf21e1ff9ef854d3826e9190af61fa2d76c7392b75ff83420",
+                    "media_signals": {
+                      "fixture": true,
+                      "waveform": null,
+                      "visual": null,
+                      "silence_intervals": [
+                        [
+                          0.55,
+                          0.9,
+                          null
+                        ],
+                        [
+                          1.3,
+                          1.95,
+                          null
+                        ]
+                      ]
+                    },
+                    "transcript_status": "saved_receipt",
+                    "silence_cuts_blocked_without_transcript": false,
+                    "provider_calls": 0,
+                    "paid_external_call": false,
+                    "human_review_required": true,
+                    "source_media_mutated": false,
+                    "canonical_timeline_mutated": false,
+                    "semantic_analysis_refresh_required": false
+                  },
+                  "created_at": "2026-10-09T07:26:55.786202Z",
+                  "updated_at": "2026-10-09T07:26:55.786202Z"
+                },
+                "assets": {
+                  "ast_286c4eb14842a0566221bf765038a553": {
+                    "asset_id": "ast_286c4eb14842a0566221bf765038a553",
+                    "workspace_id": "native-local",
+                    "project_id": "prj_aef7219b866240bebf1e355d4a07220f",
+                    "project_version_id": null,
+                    "job_id": null,
+                    "asset_class": "source",
+                    "kind": "video",
+                    "filename": "EXPLICIT SYNTHETIC test pattern and tone.mp4",
+                    "object_key": "assets/395395139cd34eeba120d7127d1522a5.mp4",
+                    "content_type": "video/mp4",
+                    "size_bytes": 309906,
+                    "checksum_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                    "storage_provider": "native-local",
+                    "version": 1,
+                    "provenance": {
+                      "source_type": "user_upload",
+                      "rights_status": "verified",
+                      "license": "owner_upload_rights_attestation",
+                      "rights_verification_basis": "explicit owner upload attestation; no independent license verification",
+                      "provider": "user-upload",
+                      "source_reference": "assets/395395139cd34eeba120d7127d1522a5.mp4",
+                      "native_asset_id": "395395139cd34eeba120d7127d1522a5.mp4",
+                      "license_url": null,
+                      "creator": null,
+                      "provider_asset_id": null,
+                      "attribution_requirement": null,
+                      "generation_provenance": {},
+                      "production_eligible": true,
+                      "actual_native_rights_status": "unknown",
+                      "owner_rights_override": null,
+                      "tags": [],
+                      "description": "",
+                      "media_metadata": {
+                        "duration_seconds": 3.0,
+                        "width": 320,
+                        "height": 240
+                      },
+                      "pixel_quality_summary": {
+                        "source_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                        "observation_sha256": "56cd0c22cc97e2bccc1411f58d0329fb8aa5a4433978bd6485c9a171672b1aa4",
+                        "provider": "local_ffmpeg_pillow_pixels",
+                        "model": "pixel-quality-facts-v1",
+                        "sample_count": 8,
+                        "heuristic_quality_score": 0.987721625,
+                        "black_sample_fraction": 0.0,
+                        "confidence": null,
+                        "semantic_relevance": null,
+                        "frames": [
+                          {
+                            "frame_id": "mfr_3135d0009d2fe42cd0085acb",
+                            "timestamp_seconds": 0.1875,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-3135d0009d2fe42cd0085acb.png",
+                            "sha256": "11640f4c365bbcb1d85afc20711fdd8e83e0c3c9518c474e83eca4afc0143a45",
+                            "source_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 123.569580078125,
+                              "luma_stddev": 64.55568198525579,
+                              "low_luma_fraction": 0.00830078125,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 1904.2517116557178,
+                              "sample_pixels_sha256": "242eede8e53b0b402d9b6dc0755a5259d339d3075f2547626100774b042049c1",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.987669,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          },
+                          {
+                            "frame_id": "mfr_a2bead1d2f759925a6c76745",
+                            "timestamp_seconds": 0.5625,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-a2bead1d2f759925a6c76745.png",
+                            "sha256": "df344bcf8aebe6c6796e498e6ece0aea59c8378a9a62af4d334b3d56ae0f423d",
+                            "source_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 123.781494140625,
+                              "luma_stddev": 63.94749860201761,
+                              "low_luma_fraction": 0.01220703125,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 2010.3416486333283,
+                              "sample_pixels_sha256": "30945a147a7eceaa39a5f0a3c1f36231baa2e498ed437b86727532477dee22a5",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.988334,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          },
+                          {
+                            "frame_id": "mfr_b258e876aca6dc14578ac072",
+                            "timestamp_seconds": 0.9375,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-b258e876aca6dc14578ac072.png",
+                            "sha256": "8615ab23752d78eda99cb8133af61806c6b94845fa9ad1790ac6a3bcde78f556",
+                            "source_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 123.8193359375,
+                              "luma_stddev": 64.61668887826326,
+                              "low_luma_fraction": 0.01220703125,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 1973.0921486219588,
+                              "sample_pixels_sha256": "af61a7bdd447a9e95a4d12b466fd571dcd1798b760c06c2319bd71ff459aa1a1",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.988453,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          },
+                          {
+                            "frame_id": "mfr_21644776bfc8f676c63ced54",
+                            "timestamp_seconds": 1.3125,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-21644776bfc8f676c63ced54.png",
+                            "sha256": "50898ccf308a484e53e90e50a7db8027bb6489ba7694822b12f029c9f777b8c1",
+                            "source_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 123.453369140625,
+                              "luma_stddev": 64.59556248497611,
+                              "low_luma_fraction": 0.01220703125,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 1939.9472058567158,
+                              "sample_pixels_sha256": "d4362dc4de3db2d75b937d86ea5cdd4c6b4acec540621cf7fd859f43a4918489",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.987305,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          },
+                          {
+                            "frame_id": "mfr_2c8ef8b3cddf357000b93bfb",
+                            "timestamp_seconds": 1.6875,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-2c8ef8b3cddf357000b93bfb.png",
+                            "sha256": "cdc7214235dc3d1cb7136c9c1819c1f1b3b5a7455095dcdc60a3f2f773ff97f6",
+                            "source_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 123.521728515625,
+                              "luma_stddev": 64.44323610911667,
+                              "low_luma_fraction": 0.01220703125,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 1997.6661128306773,
+                              "sample_pixels_sha256": "095b6d3ccdccf88bc7eb3e80e953f2c3cfe958eda7b5b59644593f711c274664",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.987519,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          },
+                          {
+                            "frame_id": "mfr_71fdd85ec480ee4cb28f1191",
+                            "timestamp_seconds": 2.0625,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-71fdd85ec480ee4cb28f1191.png",
+                            "sha256": "321a89db47c7f094b376e4a5d1c07d1f4e7cd2455c0414b345399720cb037399",
+                            "source_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 123.66455078125,
+                              "luma_stddev": 64.54772620469787,
+                              "low_luma_fraction": 0.01220703125,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 2004.0855224190896,
+                              "sample_pixels_sha256": "d22abf2ba6eb269bb2cf9200de04f94e44f9629c4d858482b3f373b45d536460",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.987967,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          },
+                          {
+                            "frame_id": "mfr_80520024053b9c0f2f90182b",
+                            "timestamp_seconds": 2.4375,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-80520024053b9c0f2f90182b.png",
+                            "sha256": "6321a584fb31fb044375a3047b91205b504525c5eb4a401c28e8c8ddaac4da74",
+                            "source_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 123.015869140625,
+                              "luma_stddev": 63.83132444648357,
+                              "low_luma_fraction": 0.01220703125,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 2053.1469124686932,
+                              "sample_pixels_sha256": "118fc91fcc86bdeb53f5db57789fa2489457baea311aa2ade81c5abcdc477edb",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.985932,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          },
+                          {
+                            "frame_id": "mfr_607211316c31ac38463ffb19",
+                            "timestamp_seconds": 2.8125,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-607211316c31ac38463ffb19.png",
+                            "sha256": "f776630d5f11a4599cb4177715334e8062ea54cbec824c0756763ec81cb4ceeb",
+                            "source_sha256": "63a8ac09149832792ef6780e77eed41b370188937550424aae9763f47da6e361",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 123.8642578125,
+                              "luma_stddev": 64.46294153908146,
+                              "low_luma_fraction": 0.01220703125,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 2086.888773779914,
+                              "sample_pixels_sha256": "a0a2a2bda696ec706808b659bb0599ef8829dd654a48219161ef4fe8e9e2eee3",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.988594,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          }
+                        ]
+                      },
+                      "fixture": true
+                    }
+                  },
+                  "ast_1ad3af54e6b747ed18188ccc4e78fb7f": {
+                    "asset_id": "ast_1ad3af54e6b747ed18188ccc4e78fb7f",
+                    "workspace_id": "native-local",
+                    "project_id": "prj_aef7219b866240bebf1e355d4a07220f",
+                    "project_version_id": null,
+                    "job_id": null,
+                    "asset_class": "source",
+                    "kind": "image",
+                    "filename": "Xin chào supporting.png",
+                    "object_key": "assets/7485ba4d351a4222b0952fdc6b9a827b.jpg",
+                    "content_type": "image/jpeg",
+                    "size_bytes": 1831,
+                    "checksum_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                    "storage_provider": "native-local",
+                    "version": 1,
+                    "provenance": {
+                      "source_type": "user_upload",
+                      "rights_status": "verified",
+                      "license": "owner_upload_rights_attestation",
+                      "rights_verification_basis": "explicit owner upload attestation; no independent license verification",
+                      "provider": "user-upload",
+                      "source_reference": "upload://7485ba4d351a4222b0952fdc6b9a827b",
+                      "native_asset_id": "7485ba4d351a4222b0952fdc6b9a827b.jpg",
+                      "license_url": null,
+                      "creator": null,
+                      "provider_asset_id": null,
+                      "attribution_requirement": null,
+                      "generation_provenance": {},
+                      "production_eligible": true,
+                      "actual_native_rights_status": "unknown",
+                      "owner_rights_override": null,
+                      "tags": [],
+                      "description": "",
+                      "media_metadata": {
+                        "duration_seconds": null,
+                        "width": 320,
+                        "height": 240
+                      },
+                      "pixel_quality_summary": {
+                        "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                        "observation_sha256": "4472d4a34026265b883042911be67a7f3badf1f9583486f5199de411645c780f",
+                        "provider": "local_ffmpeg_pillow_pixels",
+                        "model": "pixel-quality-facts-v1",
+                        "sample_count": 1,
+                        "heuristic_quality_score": 0.119216,
+                        "black_sample_fraction": 0.0,
+                        "confidence": null,
+                        "semantic_relevance": null,
+                        "frames": [
+                          {
+                            "frame_id": "mfr_5dbee24ca79e8da937791a99",
+                            "timestamp_seconds": 0.0,
+                            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+                            "sha256": "c643f6dc35c9751a3d004fb8097670f6f163cf8fb855ebaeaf2709bbd4ffc38d",
+                            "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+                            "provider": "local_ffmpeg_pillow_pixels",
+                            "model": "pixel-quality-facts-v1",
+                            "pixel_facts": {
+                              "algorithm": "pixel-quality-facts-v1",
+                              "sample_width": 64,
+                              "sample_height": 64,
+                              "luma_mean": 38.0,
+                              "luma_stddev": 0.0,
+                              "low_luma_fraction": 0.0,
+                              "high_luma_fraction": 0.0,
+                              "laplacian_variance": 0.0,
+                              "sample_pixels_sha256": "efae8e9485dcff6af40101e49af6f7e0a0166e50698e4b43d7d651b9ff921406",
+                              "black_sample": false,
+                              "heuristic_quality_score": 0.119216,
+                              "confidence": null,
+                              "calibration": null,
+                              "semantic_inference_performed": false,
+                              "frame_caption": null,
+                              "scene_description": null,
+                              "object_detections": null,
+                              "person_detections": null,
+                              "ocr": null,
+                              "environment": null,
+                              "action": null,
+                              "subject_position": null,
+                              "safe_crop": null,
+                              "saliency": null,
+                              "headroom": null,
+                              "blur_score": null,
+                              "overexposed": null,
+                              "underexposed": null,
+                              "watermark_or_logo_evidence": null,
+                              "broll_relevance": null
+                            }
+                          }
+                        ]
+                      },
+                      "fixture": true
+                    }
+                  }
+                }
+              },
+              "semantic_vision_used": false,
+              "prediction_confidence_calibrated": false
+            },
+            "created_at": "2026-10-09T07:26:57.895980Z",
+            "updated_at": "2026-10-09T07:26:58.022351Z"
+          },
+          "sha256": "14fb7f86a64ecda8e945dd5bad8a045c285a7d4aed516096ce9ac06a5d284990"
+        }
+      ]
+    }
+  },
+  "original_vision": {
+    "vision_id": "nvoi_d07fa58fd38543f0b6e368b2d74eb7bc",
+    "workspace_id": "wsp_vision_rehearsal",
+    "project_id": "aef7219b866240bebf1e355d4a07220f",
+    "request_sha256": "41140199f937c2cf0d6a4f06c074636880a6d517a60745a58dabbcddcbcaba77",
+    "snapshot_sha256": "c8875cb4988e5c1a925db9455c29ae55d0f9b32992476ca39172d7cd95d6ae06",
+    "status": "succeeded",
+    "claim_id": "nvoc_2228f85328ba400096447d3a1b77a7e9",
+    "cost_operation_id": "c709a0661e6c805b34490dc89d5d4556573412c9fdce3b76d547a307f96963ff",
+    "response_id": "nvor_c95a49e780d84e74a374c7962f2801f2",
+    "result_sha256": "7cf7e9a5bd3c57085d1f0aa8eaa76fa9fa62dbe72ae5e8cce8916ecc13531c4b",
+    "failure_code": null,
+    "actor_ref": "usr:explicit-fixture",
+    "created_at": "2026-10-09T07:26:57.569232+00:00",
+    "updated_at": "2026-10-09T07:26:57.797742+00:00",
+    "schema_version": "native-official-vision-intent-v1",
+    "snapshot": {
+      "schema_version": "native-official-vision-snapshot-v1",
+      "workspace_id": "wsp_vision_rehearsal",
+      "project_id": "aef7219b866240bebf1e355d4a07220f",
+      "request": {
+        "schema_version": "native-official-vision-analyze-v1",
+        "revision": 8,
+        "profile_id": "nvip_dddddddddddddddddddddddddddddddd",
+        "expected_configuration_sha256": "d9be545de8549d14b81e1763a53d11dfbd44facfec53e2c824e52ef392be3c14",
+        "observation_id": "mfo_dd63f7d696dd41d107e55b39",
+        "acknowledged_external_image_analysis": true,
+        "acknowledged_protocol_mock": true,
+        "max_operation_cost_vnd": "500",
+        "valid_for_seconds": 600
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "b70074b43e03e08b6d503788dc703cb3d569659575e2a5d513cea39c8b9d5ff6",
+        "expires_at": "2026-10-09T08:26:55.649813+00:00"
+      },
+      "document_sha256": "5034c13fb270125b4a02b42191cf2dc6d0d5ae1f1af74b3308ef6b2f9fa04cc8",
+      "source": {
+        "asset": {
+          "id": "7485ba4d351a4222b0952fdc6b9a827b.jpg",
+          "thumbnail_id": "7485ba4d351a4222b0952fdc6b9a827b.thumb.jpg",
+          "filename": "Xin chào supporting.png",
+          "kind": "image",
+          "rights_confirmed": true,
+          "illustration": true,
+          "source_type": "user_upload",
+          "rights_status": "unknown",
+          "license": null,
+          "provider": "native-local-upload",
+          "source_reference": "upload://7485ba4d351a4222b0952fdc6b9a827b",
+          "generation_provenance": {},
+          "width": 320,
+          "height": 240,
+          "sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+          "bytes": 1831,
+          "original_id": "7485ba4d351a4222b0952fdc6b9a827b.png",
+          "source_sha256": "b9af9565af1899206ff467d80733599c2a473af6fae607d0784043102fcc18ec",
+          "source_bytes": 783,
+          "source_mime": "image/png",
+          "source": "immutable_user_upload",
+          "version": 1,
+          "explicit_fixture": true
+        },
+        "source_observation": {
+          "observation": {
+            "schema": "native-media-frame-observations-v1",
+            "observation_id": "mfo_dd63f7d696dd41d107e55b39",
+            "fingerprint": "dd63f7d696dd41d107e55b39de40c9518b76c0bfa0636e518fb1ae3fbe98fbc6",
+            "project_id": "aef7219b866240bebf1e355d4a07220f",
+            "asset_id": "7485ba4d351a4222b0952fdc6b9a827b.jpg",
+            "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+            "job_id": "9b50371df49c4796967bd80fd4ea4526",
+            "provider": "local_ffmpeg_pillow_pixels",
+            "model": "pixel-quality-facts-v1",
+            "created_at": "2026-10-09T07:26:56.835567+00:00",
+            "semantic_provider_status": "NOT_CONFIGURED",
+            "semantic_inference_performed": false,
+            "external_provider_calls": 0,
+            "confidence": null,
+            "rights_status": "owner_upload_attestation",
+            "rights_independently_verified": false,
+            "needs_attention": true,
+            "frames": [
+              {
+                "frame_id": "mfr_5dbee24ca79e8da937791a99",
+                "timestamp_seconds": 0.0,
+                "timestamp_basis": "requested_ffmpeg_source_seek; decoded_pts_unavailable",
+                "decoded_pts_seconds": null,
+                "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+                "sha256": "c643f6dc35c9751a3d004fb8097670f6f163cf8fb855ebaeaf2709bbd4ffc38d",
+                "decoded_pixels_sha256": "9c51f60e2ecc6630d9a9db3479366bbe03072b3b3536e3599e031335ecb0599d",
+                "width": 480,
+                "height": 360,
+                "pixel_facts": {
+                  "algorithm": "pixel-quality-facts-v1",
+                  "sample_width": 64,
+                  "sample_height": 64,
+                  "luma_mean": 38.0,
+                  "luma_stddev": 0.0,
+                  "low_luma_fraction": 0.0,
+                  "high_luma_fraction": 0.0,
+                  "laplacian_variance": 0.0,
+                  "sample_pixels_sha256": "efae8e9485dcff6af40101e49af6f7e0a0166e50698e4b43d7d651b9ff921406",
+                  "black_sample": false,
+                  "heuristic_quality_score": 0.119216,
+                  "confidence": null,
+                  "calibration": null,
+                  "semantic_inference_performed": false,
+                  "frame_caption": null,
+                  "scene_description": null,
+                  "object_detections": null,
+                  "person_detections": null,
+                  "ocr": null,
+                  "environment": null,
+                  "action": null,
+                  "subject_position": null,
+                  "safe_crop": null,
+                  "saliency": null,
+                  "headroom": null,
+                  "blur_score": null,
+                  "overexposed": null,
+                  "underexposed": null,
+                  "watermark_or_logo_evidence": null,
+                  "broll_relevance": null
+                },
+                "duplicate_sample_of": null
+              }
+            ],
+            "best_frame_ids": [
+              "mfr_5dbee24ca79e8da937791a99"
+            ],
+            "thumbnail_candidate_ids": [
+              "mfr_5dbee24ca79e8da937791a99"
+            ],
+            "ranking_basis": "uncalibrated sampled pixel sharpness/brightness heuristic; semantic relevance unknown",
+            "frozen_video_detection_performed": false,
+            "exact_sample_duplicate_detection": true
+          },
+          "sha256": "4472d4a34026265b883042911be67a7f3badf1f9583486f5199de411645c780f"
+        },
+        "source_media": {
+          "media_kind": "image",
+          "detected_content_type": "image/jpeg",
+          "format_name": null,
+          "duration_seconds": null,
+          "width": 320,
+          "height": 240,
+          "fps": null,
+          "video_codec": null,
+          "audio_codec": null,
+          "audio_channels": null,
+          "audio_sample_rate": null
+        },
+        "scenes": [],
+        "transcript_ref": null
+      },
+      "rights": {
+        "schema_version": "native-official-vision-rights-v1",
+        "asset_id": "7485ba4d351a4222b0952fdc6b9a827b.jpg",
+        "asset_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+        "rights_sha256": "8241c5eb7f7811ed9bf1547a73a76216f13fafdaac6065d3ff066246b8ba8bca",
+        "rights_status": "unknown",
+        "authorization_kind": "protocol_mock_only_unverified_rights",
+        "override": null,
+        "rights_independently_verified": false,
+        "publishing_authorized": false
+      },
+      "input_binding": {
+        "schema_version": "native-vision-frame-input-v1",
+        "project_id": "aef7219b866240bebf1e355d4a07220f",
+        "asset_id": "7485ba4d351a4222b0952fdc6b9a827b.jpg",
+        "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+        "source_binding_sha256": "ce736f6077c470eec7b2339d3671e984ab5bf549032cfb597e03fb1150878ce1",
+        "source_observation_id": "mfo_dd63f7d696dd41d107e55b39",
+        "source_observation_sha256": "4472d4a34026265b883042911be67a7f3badf1f9583486f5199de411645c780f",
+        "original_source_metadata": {
+          "media_kind": "image",
+          "detected_content_type": "image/jpeg",
+          "format_name": null,
+          "duration_seconds": null,
+          "width": 320,
+          "height": 240,
+          "fps": null,
+          "video_codec": null,
+          "audio_codec": null,
+          "audio_channels": null,
+          "audio_sample_rate": null
+        },
+        "vision_input_metadata": {
+          "media_kind": "image",
+          "detected_content_type": "image/png",
+          "format_name": "png",
+          "duration_seconds": null,
+          "width": 480,
+          "height": 360,
+          "fps": null,
+          "video_codec": null,
+          "audio_codec": null,
+          "audio_channels": null,
+          "audio_sample_rate": null
+        },
+        "source_frame_evidence": [
+          {
+            "frame_id": "mfr_5dbee24ca79e8da937791a99",
+            "timestamp_seconds": 0.0,
+            "timestamp_basis": "requested_ffmpeg_source_seek; decoded_pts_unavailable",
+            "decoded_pts_seconds": null,
+            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+            "sha256": "c643f6dc35c9751a3d004fb8097670f6f163cf8fb855ebaeaf2709bbd4ffc38d",
+            "decoded_pixels_sha256": "9c51f60e2ecc6630d9a9db3479366bbe03072b3b3536e3599e031335ecb0599d",
+            "width": 480,
+            "height": 360,
+            "pixel_facts": {
+              "algorithm": "pixel-quality-facts-v1",
+              "sample_width": 64,
+              "sample_height": 64,
+              "luma_mean": 38.0,
+              "luma_stddev": 0.0,
+              "low_luma_fraction": 0.0,
+              "high_luma_fraction": 0.0,
+              "laplacian_variance": 0.0,
+              "sample_pixels_sha256": "efae8e9485dcff6af40101e49af6f7e0a0166e50698e4b43d7d651b9ff921406",
+              "black_sample": false,
+              "heuristic_quality_score": 0.119216,
+              "confidence": null,
+              "calibration": null,
+              "semantic_inference_performed": false,
+              "frame_caption": null,
+              "scene_description": null,
+              "object_detections": null,
+              "person_detections": null,
+              "ocr": null,
+              "environment": null,
+              "action": null,
+              "subject_position": null,
+              "safe_crop": null,
+              "saliency": null,
+              "headroom": null,
+              "blur_score": null,
+              "overexposed": null,
+              "underexposed": null,
+              "watermark_or_logo_evidence": null,
+              "broll_relevance": null
+            },
+            "duplicate_sample_of": null
+          }
+        ],
+        "scenes_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "transcript_ref": null,
+        "timestamp_basis": "requested_ffmpeg_source_seek; decoded_pts_unavailable",
+        "decoded_pts_seconds": null,
+        "continuous_tracking_performed": false,
+        "frozen_video_detection_performed": false,
+        "semantic_inference_performed": false,
+        "external_provider_calls": 0,
+        "paid_operations": 0,
+        "source_media_mutated": false,
+        "canonical_timeline_mutated": false
+      },
+      "configuration": {
+        "schema_version": "native-vision-provider-configuration-v1",
+        "workspace_id": "wsp_vision_rehearsal",
+        "profile": {
+          "schema_version": "native-vision-profile-v1",
+          "profile_id": "nvip_dddddddddddddddddddddddddddddddd",
+          "enabled": true,
+          "provider": "openai-vision",
+          "model": "gpt-5-mini",
+          "key_receipt": {
+            "schema_version": "native-vision-key-receipt-v1",
+            "reference": "nviv_6ec8e8185078490098b038f872c0e9d4",
+            "workspace_id": "wsp_vision_rehearsal",
+            "credential_alias": "explicit-source-broll-vision",
+            "key_binding_sha256": "8ef9ecf4be0a46ab533bb2731757328abbcbc59c1af28660deab2765cbdb84ba",
+            "cipher_sha256": "59e92e703c9b6560ec7412d1df9ad6b8e7e9642a06e531c7d937ed9b7996c0d2",
+            "bytes": 801,
+            "key_returned": false,
+            "provider_authorized": false,
+            "publishing_enabled": false
+          },
+          "estimated_cost_vnd": "200",
+          "input_vnd_per_million_tokens": "10000",
+          "cached_input_vnd_per_million_tokens": "1000",
+          "output_vnd_per_million_tokens": "20000"
+        },
+        "configuration_sha256": "d9be545de8549d14b81e1763a53d11dfbd44facfec53e2c824e52ef392be3c14",
+        "status": "CONFIGURED",
+        "mock": true,
+        "credential_present": true,
+        "credential_verified": false,
+        "startup_decryption": false,
+        "source_frame_limit": 8,
+        "input_dimension_limit": 2048,
+        "provider_http_timeout_seconds": 90,
+        "controller_hard_timeout_seconds": 120,
+        "max_output_tokens": 8000,
+        "provider_authorized": false,
+        "automatic_dispatch": false,
+        "publishing_enabled": false,
+        "real_provider_tested": false
+      },
+      "approved_at": "2026-10-09T07:26:57.569232+00:00",
+      "deadline": "2026-10-09T07:36:57.569232+00:00",
+      "publishing_enabled": false,
+      "automatic_dispatch": false,
+      "owner_uat_accepted": false
+    },
+    "response": {
+      "schema_version": "vision-response-observation-v1",
+      "request_sha256": "7dcc5d59ed613d982e881f95ed173f63294a715f78ccbdcb1fc684c57295e5d7",
+      "response_sha256": "b38f3a3a0a2cb4ec5dd25aa81ebd3f437f0dfd23e0bfb9028d600c4e4a4b2c5a",
+      "http_status": 200,
+      "provider_request_id": null,
+      "client_request_id": "vf-e4786a074c8247929da8dfc5b27cbb43",
+      "mock_transport": true,
+      "input_tokens": 120,
+      "cached_input_tokens": 20,
+      "output_tokens": 80,
+      "calculated_usage_cost_vnd": "2.620000",
+      "billing_invoice_verified": false
+    },
+    "result": {
+      "schema_version": "native-official-vision-result-v1",
+      "vision_id": "nvoi_d07fa58fd38543f0b6e368b2d74eb7bc",
+      "workspace_id": "wsp_vision_rehearsal",
+      "project_id": "aef7219b866240bebf1e355d4a07220f",
+      "snapshot_sha256": "c8875cb4988e5c1a925db9455c29ae55d0f9b32992476ca39172d7cd95d6ae06",
+      "response_id": "nvor_c95a49e780d84e74a374c7962f2801f2",
+      "cost_operation_id": "c709a0661e6c805b34490dc89d5d4556573412c9fdce3b76d547a307f96963ff",
+      "response_sha256": "b38f3a3a0a2cb4ec5dd25aa81ebd3f437f0dfd23e0bfb9028d600c4e4a4b2c5a",
+      "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+      "input_binding": {
+        "schema_version": "native-vision-frame-input-v1",
+        "project_id": "aef7219b866240bebf1e355d4a07220f",
+        "asset_id": "7485ba4d351a4222b0952fdc6b9a827b.jpg",
+        "source_sha256": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+        "source_binding_sha256": "ce736f6077c470eec7b2339d3671e984ab5bf549032cfb597e03fb1150878ce1",
+        "source_observation_id": "mfo_dd63f7d696dd41d107e55b39",
+        "source_observation_sha256": "4472d4a34026265b883042911be67a7f3badf1f9583486f5199de411645c780f",
+        "original_source_metadata": {
+          "media_kind": "image",
+          "detected_content_type": "image/jpeg",
+          "format_name": null,
+          "duration_seconds": null,
+          "width": 320,
+          "height": 240,
+          "fps": null,
+          "video_codec": null,
+          "audio_codec": null,
+          "audio_channels": null,
+          "audio_sample_rate": null
+        },
+        "vision_input_metadata": {
+          "media_kind": "image",
+          "detected_content_type": "image/png",
+          "format_name": "png",
+          "duration_seconds": null,
+          "width": 480,
+          "height": 360,
+          "fps": null,
+          "video_codec": null,
+          "audio_codec": null,
+          "audio_channels": null,
+          "audio_sample_rate": null
+        },
+        "source_frame_evidence": [
+          {
+            "frame_id": "mfr_5dbee24ca79e8da937791a99",
+            "timestamp_seconds": 0.0,
+            "timestamp_basis": "requested_ffmpeg_source_seek; decoded_pts_unavailable",
+            "decoded_pts_seconds": null,
+            "reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+            "sha256": "c643f6dc35c9751a3d004fb8097670f6f163cf8fb855ebaeaf2709bbd4ffc38d",
+            "decoded_pixels_sha256": "9c51f60e2ecc6630d9a9db3479366bbe03072b3b3536e3599e031335ecb0599d",
+            "width": 480,
+            "height": 360,
+            "pixel_facts": {
+              "algorithm": "pixel-quality-facts-v1",
+              "sample_width": 64,
+              "sample_height": 64,
+              "luma_mean": 38.0,
+              "luma_stddev": 0.0,
+              "low_luma_fraction": 0.0,
+              "high_luma_fraction": 0.0,
+              "laplacian_variance": 0.0,
+              "sample_pixels_sha256": "efae8e9485dcff6af40101e49af6f7e0a0166e50698e4b43d7d651b9ff921406",
+              "black_sample": false,
+              "heuristic_quality_score": 0.119216,
+              "confidence": null,
+              "calibration": null,
+              "semantic_inference_performed": false,
+              "frame_caption": null,
+              "scene_description": null,
+              "object_detections": null,
+              "person_detections": null,
+              "ocr": null,
+              "environment": null,
+              "action": null,
+              "subject_position": null,
+              "safe_crop": null,
+              "saliency": null,
+              "headroom": null,
+              "blur_score": null,
+              "overexposed": null,
+              "underexposed": null,
+              "watermark_or_logo_evidence": null,
+              "broll_relevance": null
+            },
+            "duplicate_sample_of": null
+          }
+        ],
+        "scenes_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "transcript_ref": null,
+        "timestamp_basis": "requested_ffmpeg_source_seek; decoded_pts_unavailable",
+        "decoded_pts_seconds": null,
+        "continuous_tracking_performed": false,
+        "frozen_video_detection_performed": false,
+        "semantic_inference_performed": false,
+        "external_provider_calls": 0,
+        "paid_operations": 0,
+        "source_media_mutated": false,
+        "canonical_timeline_mutated": false
+      },
+      "mock": true,
+      "semantic_inference_performed": false,
+      "adapter_provenance": {
+        "fixture": false,
+        "mock_tested": true,
+        "real_provider_tested": false,
+        "external_call": true,
+        "paid": true,
+        "structured_output": true,
+        "source_checksum": "1ebc6ee2bbf28c4091bd357455de1071e3b4dc5ab5515271ba07c92ed45734c7",
+        "provider": "openai",
+        "model_requested": "gpt-5-mini",
+        "model_returned": "gpt-5-mini",
+        "request_sha256": "7dcc5d59ed613d982e881f95ed173f63294a715f78ccbdcb1fc684c57295e5d7",
+        "response_sha256": "b38f3a3a0a2cb4ec5dd25aa81ebd3f437f0dfd23e0bfb9028d600c4e4a4b2c5a",
+        "provider_response_id_sha256": "f2754209ccd7d6cfe4b9adb56a2ea4fcf533d30ffe2e072da103244f61e6070f",
+        "latency_ms": 111.279,
+        "provider_request_id": null,
+        "client_request_id": "vf-e4786a074c8247929da8dfc5b27cbb43",
+        "credential_alias_sha256": "57114ee7c6866d206464fbb96c2df9c0f375611cf5d4e0b7aaa4f49290449078",
+        "artifact_evidence": [
+          {
+            "frame_index": 0,
+            "timestamp_seconds": 0.0,
+            "evidence_frame_reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+            "sha256": "c643f6dc35c9751a3d004fb8097670f6f163cf8fb855ebaeaf2709bbd4ffc38d",
+            "content_type": "image/png"
+          }
+        ],
+        "cost_receipt": {
+          "currency": "VND",
+          "status": "contract_test_calculated",
+          "input_tokens": 120,
+          "cached_input_tokens": 20,
+          "output_tokens": 80,
+          "input_vnd_per_million_tokens": "10000",
+          "cached_input_vnd_per_million_tokens": "1000",
+          "output_vnd_per_million_tokens": "20000",
+          "actual_cost_vnd": "2.620000",
+          "calculation_version": "openai-token-usage-v1"
+        },
+        "secret_recorded": false
+      },
+      "external_provider_calls": 0,
+      "paid_operation_attempted": false,
+      "frames": [
+        {
+          "frame_id": "vfr_82dd13dbf35f859517e73069",
+          "timestamp_seconds": 0.0,
+          "evidence_frame_reference": "media-frame://9b50371df49c4796967bd80fd4ea4526/frame-5dbee24ca79e8da937791a99.png",
+          "caption": "[EXPLICIT HTTP MOCK] Minh họa AI educational short.",
+          "scene_description": "[EXPLICIT HTTP MOCK] Generic educational frame, no real semantic inference.",
+          "semantic_label": "explicit_ai_education_mock",
+          "environment": "explicit_mock",
+          "action": "explicit_mock",
+          "objects": [],
+          "ocr": [],
+          "composition": {
+            "primary_subject_box": null,
+            "subject_position": "unknown",
+            "saliency_box": null,
+            "headroom_ratio": 0.1,
+            "visual_balance_score": 0.5,
+            "safe_crop": false
+          },
+          "quality": {
+            "quality_score": 0.5,
+            "black_frame": false,
+            "blur_score": 0.2,
+            "overexposed": false,
+            "underexposed": false,
+            "low_resolution": false,
+            "watermark_or_logo_detected": false,
+            "frozen_or_duplicate": false,
+            "issues": [
+              "explicit_mock_not_inferred"
+            ]
+          },
+          "confidence": 0.5,
+          "provider_key": "openai-vision",
+          "model": "gpt-5-mini"
+        }
+      ],
+      "scenes": [],
+      "reframe_plans": [
+        {
+          "reframe_id": "rfr_4f57ef98c38259306bee2b0a",
+          "aspect_ratio": "9:16",
+          "strategy": "center_crop",
+          "subject_track_id": null,
+          "keyframes": [
+            {
+              "time": 0.0,
+              "x": 0.5,
+              "y": 0.5,
+              "scale": 2.37037
+            }
+          ],
+          "smoothing": "none",
+          "maximum_jump": 0.15,
+          "subtitle_safe_area_bottom": 0.2,
+          "confidence": 0.0,
+          "fallback": "center_crop",
+          "needs_attention": true,
+          "manual_override_allowed": true,
+          "manual_override_applied": false,
+          "source_media_mutated": false
+        },
+        {
+          "reframe_id": "rfr_d82dd2db18e8a4e2347753e2",
+          "aspect_ratio": "16:9",
+          "strategy": "center_crop",
+          "subject_track_id": null,
+          "keyframes": [
+            {
+              "time": 0.0,
+              "x": 0.5,
+              "y": 0.5,
+              "scale": 1.333333
+            }
+          ],
+          "smoothing": "none",
+          "maximum_jump": 0.15,
+          "subtitle_safe_area_bottom": 0.2,
+          "confidence": 0.0,
+          "fallback": "center_crop",
+          "needs_attention": true,
+          "manual_override_allowed": true,
+          "manual_override_applied": false,
+          "source_media_mutated": false
+        },
+        {
+          "reframe_id": "rfr_2482eb0a81ffc110ffe4fcec",
+          "aspect_ratio": "1:1",
+          "strategy": "center_crop",
+          "subject_track_id": null,
+          "keyframes": [
+            {
+              "time": 0.0,
+              "x": 0.5,
+              "y": 0.5,
+              "scale": 1.333333
+            }
+          ],
+          "smoothing": "none",
+          "maximum_jump": 0.15,
+          "subtitle_safe_area_bottom": 0.2,
+          "confidence": 0.0,
+          "fallback": "center_crop",
+          "needs_attention": true,
+          "manual_override_allowed": true,
+          "manual_override_applied": false,
+          "source_media_mutated": false
+        },
+        {
+          "reframe_id": "rfr_e2eb4eb95d8a29a37760d9ad",
+          "aspect_ratio": "4:5",
+          "strategy": "center_crop",
+          "subject_track_id": null,
+          "keyframes": [
+            {
+              "time": 0.0,
+              "x": 0.5,
+              "y": 0.5,
+              "scale": 1.666667
+            }
+          ],
+          "smoothing": "none",
+          "maximum_jump": 0.15,
+          "subtitle_safe_area_bottom": 0.2,
+          "confidence": 0.0,
+          "fallback": "center_crop",
+          "needs_attention": true,
+          "manual_override_allowed": true,
+          "manual_override_applied": false,
+          "source_media_mutated": false
+        }
+      ],
+      "best_frame_ids": [
+        "vfr_82dd13dbf35f859517e73069"
+      ],
+      "thumbnail_candidate_ids": [
+        "vfr_82dd13dbf35f859517e73069"
+      ],
+      "subject_tracks": [],
+      "calculated_usage_cost_vnd": "2.620000",
+      "observed_actual_billed_cost_vnd": null,
+      "automatic_planning_eligible": false,
+      "canonical_timeline_mutated": false,
+      "continuous_tracking_performed": false,
+      "decoded_pts_verified": false,
+      "confidence_calibrated": false,
+      "billing_invoice_verified": false,
+      "publishing_authorized": false,
+      "owner_uat_accepted": false,
+      "real_provider_tested": false
+    },
+    "needs_approval": false,
+    "publishing_enabled": false,
+    "automatic_retry": false,
+    "owner_uat_accepted": false
+  }
+}

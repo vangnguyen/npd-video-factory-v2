@@ -2,6 +2,7 @@ import {getClip,clipStyle,snapTime,pixelsPerSecond} from './studio-utils.mjs';
 import {waveformPath} from './waveform.mjs';
 import {timelineHistory} from './timeline-history.mjs';
 import {sourceBrollRequest,sourceBrollMarkup} from './native-source-broll.mjs';
+import {initializeSourceBrollReview} from './native-source-broll-review.mjs';
 
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 export const sourceState=p=>isSourceProject(p)?p.document.canonical_timeline:null;
@@ -65,7 +66,7 @@ export function sourceAdvancedMarkup(project,zoom=1,selectedId=null) {
     }).join('')}</div></section>`).join('');
 }
 
-export function initializeSourceEditor({api,getProject,getGuards,getSelected,getPreview,getPlayers,onProject,onDirty,onMessage,onWorking}) {
+export function initializeSourceEditor({api,getProject,getGuards,getReviewedVision=()=>null,getSelected,getPreview,getPlayers,onProject,onDirty,onMessage,onWorking}) {
   const $=id=>document.getElementById(id);
   const host=document.createElement('section');host.id='native-source-inspector';host.hidden=true;
   $('shot-editor-form').after(host);
@@ -80,7 +81,11 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
   const state=()=>sourceState(getProject());
   const selected=()=>getClip(state(),selectedId);
   const locked=()=>selected()?.track.locked;
-  const blocked=()=>working||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
+  const blocked=()=>working||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
+  const reviewRoot=document.createElement('section');
+  const brollReview=initializeSourceBrollReview({root:reviewRoot,getReviewedVision,onMessage,getState:()=>({project:getProject(),
+    workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,dirty:dirty||getGuards().dirty,
+    busy:working||getGuards().busy,active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   function controls(){
     host.querySelectorAll('input,select,button').forEach(el=>el.disabled=blocked());
     if(locked())host.querySelectorAll('[data-source-form] input,[data-source-form] button,[data-source-action],[data-source-placement],[data-source-speed],[data-source-volume],[data-source-crop]').forEach(el=>el.disabled=true);
@@ -100,6 +105,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
       const record=(getProject()?.document.source_broll_plans??[]).filter(r=>r.plan.media_plan_id===planId).at(-1);
       if(record?.plan.items.find(i=>i.media_plan_item_id===itemId)?.status!=='resolved')el.disabled=true;
     });
+    brollReview.sync();
   }
   function renderAdvanced(){
     toolbar.hidden=!isSourceProject(getProject());
@@ -134,7 +140,8 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
       <details><summary>Preview</summary><label>Kiểu preview<select data-source-preview-mode><option value="lightweight" ${state().snapshot.metadata.source_preview_mode!=='final_effects'?'selected':''}>Nhẹ · âm thanh và điểm cắt</option><option value="final_effects" ${state().snapshot.metadata.source_preview_mode==='final_effects'?'selected':''}>Đầy đủ · phụ đề, crop và hiệu ứng</option></select></label><button type="button" data-source-config="preview">Lưu kiểu preview</button><p class="hint">Preview đầy đủ dùng hiệu ứng và âm thanh của renderer cuối, ở độ phân giải thấp để xem nhanh hơn. Vẫn cần xem, nghe và duyệt video cuối sau khi render. Tạo preview mới sau khi lưu.</p></details>
       <details><summary>Khung hình & phụ đề</summary><label>Định dạng<select data-source-format>${['9:16','16:9','1:1','4:5'].map(r=>`<option ${r===state().snapshot.aspect_ratio?'selected':''}>${r}</option>`).join('')}</select></label><button type="button" data-source-config="format">Lưu định dạng</button>
       <label>Mẫu phụ đề<select data-source-caption>${(catalog?.templates??[]).map(t=>`<option value="${esc(t.template_ref)}" ${t.template_ref===state().snapshot.metadata.subtitle_style?.template_ref?'selected':''}>${esc(t.name??t.label??t.template_ref)}${t.requires_word_timestamps?' · cần thời gian từng từ':''}</option>`).join('')}</select></label><label>Từ khóa nổi bật (phân cách bằng dấu phẩy)<input data-source-keywords value="${esc((state().snapshot.metadata.subtitle_style?.keywords??[]).join(', '))}" maxlength="1000"></label><button type="button" data-source-config="caption" ${catalog?'':'disabled'}>Lưu mẫu phụ đề</button><p class="hint">Sửa lời nói tại Assets. Đoạn đã sửa cần dùng phụ đề theo câu khi không còn căn chỉnh từng từ. Bản dựng nguồn hiện dùng âm thanh gốc; nhạc nền cần được thêm vào timeline riêng.</p></details>`;
-    host.insertAdjacentHTML('beforeend',sourceBrollMarkup(p));
+    host.insertAdjacentHTML('beforeend',sourceBrollMarkup(p,{workspaceId:getGuards().workspace_id??'wsp_native_local'}));
+    host.querySelector('[data-broll-review-host]').append(reviewRoot);
     host.insertAdjacentHTML('beforeend',sourceReframeMarkup(p));
     void history();renderAdvanced();controls();
   }
@@ -173,12 +180,16 @@ export function initializeSourceEditor({api,getProject,getGuards,getSelected,get
   },{allowDirty:true});});
   host.addEventListener('click',event=>{
     const broll=event.target.closest('[data-source-broll]');
-    if(broll){void run(async()=>{
-      const p=getProject(),item=broll.closest('[data-broll-item]');
-      const body=sourceBrollRequest(p,broll.dataset.sourceBroll,{
+    if(broll){let body;const p=getProject(),item=broll.closest('[data-broll-item]'),workspaceId=getGuards().workspace_id??'wsp_native_local';
+      try{body=sourceBrollRequest(p,broll.dataset.sourceBroll,{
         planId:item?.dataset.brollPlan,itemId:item?.dataset.brollItem,
-        assetId:item?.querySelector('[data-broll-asset]').value,replace:item?.querySelector('[data-broll-replace]').checked});
+        assetId:item?.querySelector('[data-broll-asset]').value,replace:item?.querySelector('[data-broll-replace]').checked,workspaceId,
+        reviewedVision:broll.dataset.sourceBroll==='create'?brollReview.references():[]});
+      }catch(error){onMessage(error.message,true);return;}
+      void run(async()=>{
       const value=await api(`/api/projects/${p.id}/auto-edit/broll`,body);
+      if(getProject()?.id!==p.id||getProject()?.revision!==p.revision||getGuards().canEdit===false||getGuards().dirty
+        ||(getGuards().workspace_id??'wsp_native_local')!==workspaceId)return;
       dirty=false;dirtyForm=null;onDirty(false);shownKey=null;historyKey=null;onProject(value,true);
       onMessage(body.action==='apply'?'Đã đặt B-roll vào bản dựng mới. Tạo preview và kiểm tra crop, âm thanh, điểm cắt.':'Đã lưu kế hoạch/lựa chọn. Timeline chỉ đổi sau khi đặt B-roll.');renderSelected(true);
     });return;}

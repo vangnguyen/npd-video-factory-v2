@@ -19,6 +19,6 @@ test('Native B-roll uses newest saved plan and binds project, plan and canonical
 });
 test('Native B-roll markup escapes saved metadata and attributes heuristic/provider limits',()=>{
   const html=sourceBrollMarkup(p);assert.ok(!html.includes('<img onerror'));assert.ok(!html.includes('<script>'));
-  assert.match(html,/NOT_CONFIGURED/);assert.match(html,/heuristic/);assert.match(html,/chưa có Vision/);
+  assert.match(html,/NOT_CONFIGURED/);assert.match(html,/heuristic/);assert.match(html,/chưa chọn Vision ngữ nghĩa đã xem/);
   assert.match(html,/ast_unknown"\s+disabled/);assert.match(html,/data-broll-replace/);
 });

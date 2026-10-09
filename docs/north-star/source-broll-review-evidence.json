@@ -1,0 +1,134 @@
+{
+  "schema_version": "native-source-broll-review-evidence-v1",
+  "parent_head": "44cc50c858ca47f9d7fe0e0e75d4d1ab6d6b2beb",
+  "source_sha256": {
+    "apps/studio-web/native-source-broll-review.mjs": "6032882bb95ec342e521e67deeaa060e8d5892f45c6cd3ee9f5c9af5bd69d783",
+    "apps/studio-web/native-source-broll.mjs": "b867a8d77a95cadcc871fd42abc60f9d1a4e03f21022cc3cf7110875cfa49a0a",
+    "apps/studio-web/native-source-editor.mjs": "de34306adc42eef3ce4983f739a29f9b951f8685b0a305f98d0335486d7908c7",
+    "apps/studio-web/native-media-planner.mjs": "cd452bfcf691930f4166f28313c7c2c623f965b0d2d58f5a76955ea1e260a58a",
+    "apps/studio-web/native.mjs": "7e0cd0300cec28a9ead6eef2c202018531d8866720e7e5be4de10dd7d82508bb",
+    "apps/studio-web/shot-studio.mjs": "7d2cf31323d7c05f122c8a79a201f951e187135fc07e9785bdcd106bc1c2414c",
+    "apps/studio-web/tests/native-source-broll-review.test.mjs": "49d71dc92f7b6616d70f6b9325deab8c5636ebe2145b31222807dd2af36357fb",
+    "apps/studio-web/tests/native-source-broll.test.mjs": "6b83f138e7c7a45d85d19d369af97fce4e9ad1ef94c70dac74c34a9290e529ab",
+    "apps/studio-web/tests/fixtures/native-source-broll-reviewed-v1.json": "c50f53394c481551dc70ba9f6d7a2e73dec3f429875ec6809ef7b9c9d1a1d2f2",
+    "services/windows_native/server.py": "2dea1df6bd90f90f5676ed362a3988ad5e930760beb7e2980510d1798ca0d6c9",
+    "services/windows_native/tests/test_official_vision_http.py": "ce1e1fbc640d79a9ba69c2dc4f9fa52e5c94f5378620e00ee63a0390ca597f63",
+    "scripts/north_star_source_broll_review.py": "ecfe4cdbffbdf6dbd3d382a864fd0eed42b33e5295f1460f8eb61af617b93d3f",
+    "scripts/north_star_source_broll_review.mjs": "33afd3a871ff99d86dbdeaa0a2d50abf5b4a2a99b5d3a5618c9b4dd15d3d645e",
+    "docs/NATIVE_SOURCE_BROLL_VISION_REVIEW_UI.md": "bb9f5405a2021b2b26a5cdfa66f12f1423746894867368fcc60bdc41d8f4671c"
+  },
+  "tests": {
+    "native_related": 30,
+    "native_seconds": 65.869,
+    "native_log_sha256": "0f9120be52eedd65e02b85b28c427a2e6f325d42477c2989a2591353ebd5d2bb",
+    "studio_full": 433,
+    "new_studio_cases": 6,
+    "studio_duration_ms": 1321.3875,
+    "studio_log_sha256": "3e700dab2ffcb47190e94fcfe4d9196bd4d5f240e4ff56515467d19270242c00",
+    "current_full_native_repeated": false,
+    "previous_full_native": 1260
+  },
+  "rehearsal": {
+    "schema_version": "native-source-broll-review-rehearsal-v1",
+    "source_sha256": {
+      "apps/studio-web/native-source-broll-review.mjs": "6032882bb95ec342e521e67deeaa060e8d5892f45c6cd3ee9f5c9af5bd69d783",
+      "apps/studio-web/native-source-broll.mjs": "b867a8d77a95cadcc871fd42abc60f9d1a4e03f21022cc3cf7110875cfa49a0a",
+      "apps/studio-web/native-source-editor.mjs": "de34306adc42eef3ce4983f739a29f9b951f8685b0a305f98d0335486d7908c7",
+      "apps/studio-web/native-media-planner.mjs": "cd452bfcf691930f4166f28313c7c2c623f965b0d2d58f5a76955ea1e260a58a",
+      "apps/studio-web/native.mjs": "7e0cd0300cec28a9ead6eef2c202018531d8866720e7e5be4de10dd7d82508bb",
+      "apps/studio-web/shot-studio.mjs": "7d2cf31323d7c05f122c8a79a201f951e187135fc07e9785bdcd106bc1c2414c",
+      "apps/studio-web/tests/native-source-broll-review.test.mjs": "49d71dc92f7b6616d70f6b9325deab8c5636ebe2145b31222807dd2af36357fb",
+      "apps/studio-web/tests/native-source-broll.test.mjs": "6b83f138e7c7a45d85d19d369af97fce4e9ad1ef94c70dac74c34a9290e529ab",
+      "apps/studio-web/tests/fixtures/native-source-broll-reviewed-v1.json": "c50f53394c481551dc70ba9f6d7a2e73dec3f429875ec6809ef7b9c9d1a1d2f2",
+      "services/windows_native/server.py": "2dea1df6bd90f90f5676ed362a3988ad5e930760beb7e2980510d1798ca0d6c9",
+      "services/windows_native/tests/test_official_vision_http.py": "ce1e1fbc640d79a9ba69c2dc4f9fa52e5c94f5378620e00ee63a0390ca597f63",
+      "scripts/north_star_source_broll_review.py": "ecfe4cdbffbdf6dbd3d382a864fd0eed42b33e5295f1460f8eb61af617b93d3f",
+      "scripts/north_star_source_broll_review.mjs": "33afd3a871ff99d86dbdeaa0a2d50abf5b4a2a99b5d3a5618c9b4dd15d3d645e"
+    },
+    "signed_http_requests": 15,
+    "new_mock_requests": 0,
+    "new_cpu_jobs": 0,
+    "reused_source_video_seconds": 3,
+    "asr_source_analysis_and_vision": "preserved explicit fixtures, not genuine speech/provider acceptance",
+    "plan_history_versions": 4,
+    "deduplicated_create_preserves_original_plan": true,
+    "explicit_select_and_replace_apply": true,
+    "source_audio_tracks_duration_bytes_original_result_and_cost_exact": true,
+    "new_external_dispatches": 0,
+    "new_paid_operations": 0,
+    "dom_controller_tested": true,
+    "actual_parent_browser_executed": false,
+    "full_media_qc_or_final_render": false,
+    "owner_uat_accepted": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "public_backup_sha256": "dac2f0691ba02a4b17b223908100927d967f8879e8b89f96cf208014bb9fe0dd",
+    "prior_public_backup_sha256": "e91409a24cdb58475a22dfcc4280e4279d107d6ab7f77a8b7ed2475990044147",
+    "exports": {
+      "backup.json": {
+        "sha256": "770d4e42bb47a7c9ccede6260f44d5e3bc221cc28687282a4c671138514a2dcb",
+        "bytes": 4118
+      },
+      "cost-summary.json": {
+        "sha256": "df29315b1684e21a976a94617fdd3ef41027655124c396dfc181877c80968b89",
+        "bytes": 2044
+      },
+      "expected-journals.json": {
+        "sha256": "576e2c5fe6dc2d298f0db4a030c09f4499059030913a392ef5a242dfe0dae10c",
+        "bytes": 1543840
+      },
+      "expected-projects.json": {
+        "sha256": "f1f08268edab12a9694f922c6df32afe2ca22cd26cf686b914e1477ecb7f9dff",
+        "bytes": 702710
+      },
+      "node-controller-errors.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "node-controller-proof.json": {
+        "sha256": "b2de8d07df15abf5ad0df9847ed144ec35be017984a7dadc8aee87ff889e6670",
+        "bytes": 426536
+      },
+      "prior-restore.json": {
+        "sha256": "33875b42e495fb8c3df0ae3fc3cd0d9e32a765881514faf846ae83a2c13d8f3f",
+        "bytes": 4518
+      },
+      "public-source-broll-review.zip": {
+        "sha256": "dac2f0691ba02a4b17b223908100927d967f8879e8b89f96cf208014bb9fe0dd",
+        "bytes": 3883058
+      },
+      "restore.json": {
+        "sha256": "1a9dff2a2c7284e94cda1c0e0272587154e92ed8194601dd36ee2d0c72713b61",
+        "bytes": 4524
+      },
+      "restored-in-process.json": {
+        "sha256": "97f223383002cc3219cf5295d76353f609bc9116d1c57e8a444bf6a9089db479",
+        "bytes": 271
+      },
+      "source-hashes.json": {
+        "sha256": "e6cf43aba14c18169017c5aa7946019f4c1e96b72fd8fab5ebff21a0e18c7818",
+        "bytes": 223
+      }
+    }
+  },
+  "fresh_process": {
+    "all_original_results_plan_versions_projects_journals_source_bytes_exact": true,
+    "keyless_disabled_provider_history": true,
+    "provider_consent_renewed": false,
+    "provider_retry_or_dispatch": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "source_ui_review_handoff_integrated": true,
+  "new_actual_parent_browser_tested": false,
+  "new_paid_operations": 0,
+  "new_external_dispatches": 0,
+  "new_mock_dispatches": 0,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "publishing_performed": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

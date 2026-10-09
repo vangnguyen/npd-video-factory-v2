@@ -7,7 +7,7 @@ const sourceProject=project=>Boolean(project?.document?.canonical_timeline?.snap
 const VISION_ALGORITHM='native-storyboard-media-planner-v3',BASE_ALGORITHM='native-storyboard-media-planner-v2';
 const same=(a,b)=>JSON.stringify(a,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(key=>[key,v[key]])):v)===JSON.stringify(b,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(key=>[key,v[key]])):v);
 const score=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=1;
-function validateReviewedRequest(ref){
+export function validateReviewedRequest(ref){
   if(!ref||!/^nvoi_[a-f0-9]{32}$/.test(ref.vision_id??'')||!HASH.test(ref.expected_snapshot_sha256??'')||!HASH.test(ref.expected_result_sha256??'')
     ||ref.acknowledged_reviewed_result!==true||typeof ref.acknowledged_protocol_mock!=='boolean'
     ||Object.keys(ref).sort().join(',')!=='acknowledged_protocol_mock,acknowledged_reviewed_result,expected_result_sha256,expected_snapshot_sha256,vision_id')throw new Error('Chọn đúng kết quả Vision và xác nhận đã xem.');
