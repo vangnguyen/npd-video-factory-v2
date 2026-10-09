@@ -1,0 +1,52 @@
+{
+  "schema_version": "north-star-render-thumbnail-rights-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-rights-focused-n2.log",
+      "sha256": "03d4d9982562d5ce664fc64fd891a174493d88b35c43dafac246351be06e7ca1",
+      "bytes": 6985,
+      "passed": 30,
+      "new_cases": 13,
+      "seconds": 85.31
+    }
+  ],
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-rights-flow-n1\\evidence.json",
+    "sha256": "82fea98bb6a925961b574eccceaf590c56c66c8e72987b96601ceae711019cc9",
+    "bytes": 1687
+  },
+  "new_process_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-rights-flow-n1\\new-process-replay.json",
+    "sha256": "290b3120023b2448ca1202c9697077673562947ad2024635aefcf8032ad4e3c1",
+    "bytes": 339
+  },
+  "source_sha256": {
+    "services/windows_native/render_thumbnail_rights.py": "1b2ff8e18d2e8541ed18b9254927b09fe155a287959ecfe6417e7f817f59e77e",
+    "services/windows_native/backup.py": "e677231835cd58ea471cca124a9064418b7f58b09c47fcf317279409cc0dae24",
+    "services/windows_native/tests/test_render_thumbnail_rights.py": "88968cd803c00da100f17040f7ec3e8aa69ffe27c283bdfb7de2a33ceb88152b",
+    "scripts/north_star_render_thumbnail_rights.py": "b7b8a30f0681c6d2f5d43e3f1950cdd13fd274dc687d30f3ccd9fef1f5515bf1"
+  },
+  "public_backup_sha256": "4d7ff2687138d31dc13666e6b8b0ba75f7212aea72c8e4d95aee8e320e71732f",
+  "synthetic_current_owner_exception_records": 4,
+  "original_thumbnail_selections": 6,
+  "original_vision_histories": 11,
+  "original_projects_canonical_media_png_pts_cost_other_journals_exact": true,
+  "keyless_new_process_recovery_exact": true,
+  "exceptions_automatically_reenabled": false,
+  "default_operator_enabled": false,
+  "http_or_studio_integrated": false,
+  "thumbnail_publication_transport_bound": false,
+  "rights_status": "unknown",
+  "license": null,
+  "rights_independently_verified": false,
+  "source_asset_rights_granted": false,
+  "publishing_authorized": false,
+  "real_owner_legal_override": false,
+  "new_media_copies": 0,
+  "new_renders": 0,
+  "new_provider_calls": 0,
+  "new_paid_operations": 0,
+  "owner_uat_accepted": false,
+  "real_provider_tested": false,
+  "production_deployed": false
+}

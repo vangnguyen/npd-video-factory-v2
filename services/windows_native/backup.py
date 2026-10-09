@@ -136,6 +136,8 @@ def database_status(path):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_render_thumbnails' in tables:
                 counts['native_render_thumbnails']=con.execute('SELECT count(*) FROM native_render_thumbnails').fetchone()[0]
+            if 'native_render_thumbnail_rights' in tables:
+                counts['native_render_thumbnail_rights']=con.execute('SELECT count(*) FROM native_render_thumbnail_rights').fetchone()[0]
             if 'native_render_vision_intents' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_render_vision_intents WHERE status='claimed'").fetchone()[0]
             if 'native_official_account_checks' in tables:

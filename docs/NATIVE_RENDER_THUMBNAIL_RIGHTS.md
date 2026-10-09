@@ -1,0 +1,17 @@
+# Ngoại lệ quyền thumbnail có thời hạn
+
+`NativeRenderThumbnailRights` lưu ngoại lệ do Owner hiện hành xác nhận cho đúng thumbnail/render gốc trong bảng riêng. Mặc định `enabled=false`. Mốc này là primitive lưu/kiểm tra quyền, chưa nối HTTP, Studio hoặc publishing transport. Không bật cấu hình của ứng dụng đang dùng.
+
+Request ghi đúng phiên bản dự án, thumbnail ID, SHA256 snapshot lựa chọn, SHA256 input quyền, lý do, tham chiếu bằng chứng và hai ACK raw riêng: ngoại lệ thumbnail và chưa phải xác minh license độc lập. Grant có thời hạn1–30 ngày, lựa chọn cho phép chuẩn bị kiểm tra xuất bản riêng. Tham chiếu chỉ là bằng chứng người cung cấp; không fetch URL, nhận xét pháp lý, gọi provider hoặc coi đó là license đã kiểm chứng. Không nhận thông tin đăng nhập qua URI/query/fragment.
+
+Identity phải thuộc Owner của workspace và khớp registry hiện hành, bao gồm token bật, subject, quyền, thời gian và fingerprint của bản ghi. Kiểm tra lại identity và ảnh/input trước commit. Owner bị thu hồi/đổi bản ghi/hết hạn khiến ngoại lệ không còn dùng được. Grant không tự gia hạn bằng idempotency hoặc phục hồi. Registry/provider không có vẫn đọc được lịch sử gốc, không cấp ngoại lệ mới hoặc tự khôi phục hiệu lực.
+
+Grant cần thumbnail/frame/render/checkpoint gốc còn nguyên vật lý và dự án hiện tại khớp document đã render. Có thể thu hồi đúng grant mới nhất với SHA256 gốc, kể cả khi operator đã tắt, ảnh đã mất hoặc dự án đã sửa; phải có Owner hiện hành và ACK riêng. Lịch sử gốc giữ nguyên. Grant mới thay grant cũ; thu hồi hoặc hết hạn grant mới không làm grant cũ sống lại. Request key bảo đảm một bản ghi khi nhận lại phản hồi hoặc gọi đồng thời; cùng key/nội dung khác bị chặn.
+
+Ảnh vẫn `rights_status=unknown`, `license=null`. Ngoại lệ không sửa provenance/lời khai/quyền các source asset, timeline, phiên bản, duyệt final video, provider consent hoặc publish enablement. `active()` chỉ cung cấp bằng chứng ngoại lệ còn hiệu lực cho một bước kiểm tra tiếp theo; Human Publish Approval, quyền các tài sản nguồn, platform validation và adapter/Owner publishing enablement vẫn độc lập. Không có ngoại lệ pháp lý thật do agent tự cấp.
+
+Bảng `native_render_thumbnail_rights` giữ sequence, grant/revoke, request/snapshot SHA256, ảnh/input gốc, Owner fingerprint và thời hạn. Reader kiểm tra lại kiểu raw, scope, chain, grant gốc và phiên bản lịch sử, không cần provider key. Lịch sử phân trang25 mặc định/100 tối đa với cursor gắn workspace/project. Backup đếm và giữ nguyên bảng; bản sao không mang operator enablement hoặc quyền phát hành.
+
+`docs/north-star/render-thumbnail-rights-evidence.json` chỉ mục30 kiểm thử (13 mới,17 backup), gồm Owner bị thu hồi giữa kiểm tra đầu và commit, idempotency/concurrency, grant mới thay cũ, thu hồi không hồi sinh grant cũ, ảnh mất/document đổi, sai scope/SQLite, raw ACK/URI credentials/tamper, bounded history và phục hồi. Các kiểm thử dùng render cục bộ với nội dung/lời nói tổng hợp đã ghi rõ giả lập; không phải chứng nhận source/Owner/provider thật.
+
+Diễn tập dùng lại media trong bản sao công khai đã xác minh: bốn bản ghi Owner giả lập (ba grant, một revoke), sáu lựa chọn thumbnail và11 lịch sử Vision/cost/project/canonical/video/PNG/checkpoint/PTS exact qua phục hồi bằng tiến trình mới không khóa. Không thêm media/render/provider/phí trong diễn tập. Mặc định reader tắt, ngoại lệ không tự bật lại, quyền ảnh vẫn chưa xác định. Chưa có HTTP/Studio mới, legal override thật, publishing binding/transport, Owner UAT, real-provider acceptance hoặc deployment; trạng thái sẵn sàng North Star chưa tăng.
