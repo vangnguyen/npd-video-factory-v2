@@ -936,12 +936,14 @@ class OpenAIVisionProvider:
             {
                 "type": "input_text",
                 "text": (
-                    "Analyze each supplied real-estate media frame in order. Return exactly one "
+                    "Analyze each supplied media frame in order across any content niche. Return exactly one "
                     "structured record for every frame_index. Describe only visible evidence; do "
                     "not infer prices, legal claims, project identity, or unreadable text. Bounding "
                     "boxes use normalized x/y/width/height in [0,1]. OCR must preserve visible "
                     "Vietnamese diacritics. Evaluate composition, primary subject, safe crop, image "
-                    "quality, watermark/logo presence, and calibrated confidence."
+                    "quality, watermark/logo presence, and your confidence. This is sampled-frame "
+                    "evidence; do not claim verified person identity, continuous tracking, decoded "
+                    "presentation timestamps, whole-video freeze detection, or independently calibrated confidence."
                 ),
             }
         ]

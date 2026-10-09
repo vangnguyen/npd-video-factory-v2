@@ -1,0 +1,136 @@
+{
+  "schema_version": "native-vision-frame-bridge-evidence-v1",
+  "parent_head": "bc051ba191c9a40ae9cc61628ed49ac64b40e2c4",
+  "source_sha256": {
+    "services/windows_native/vision_frame_bridge.py": "f8e5ea10898ab192cb418964a0745dfcea3023504da810b25615d5cadebb1635",
+    "services/windows_native/tests/test_vision_frame_bridge.py": "33912c554ccf3c0cd95657815be3844fa0250b2fe979592beb439aa6daefbfdd",
+    "apps/api/app/openai_vision_provider.py": "6f390033adf7cb1ef04b968e3d34157b6831850ac6adf9af9dab26245678f03c",
+    "apps/api/tests/test_vision_multi_niche.py": "2beeb8eb3355e3440e50f9ac970ddbb08d10b904a791f22ee764830f2edb9d6f",
+    "scripts/north_star_vision_frame_bridge.py": "590dbafa19e58978c54c8939bd07b80a1f8fb0a046c521600d78f1c8d22a12ca",
+    "docs/NATIVE_VISION_FRAME_BRIDGE.md": "891eea9c52a47ab92a2c8024511d029ea0e6123b95e9609c40f43b012085e0fa"
+  },
+  "tests": {
+    "related_native": {
+      "passed": 61,
+      "seconds": 53.319,
+      "log": "vision-frame-bridge-native-related-n1.log",
+      "sha256": "fe29101e4d45d71c4972a4a7021770d233ab089b13aa08de7065d35df519cf9a",
+      "new_cases": 14
+    },
+    "related_api": {
+      "passed": 37,
+      "seconds": 13.96,
+      "log": "vision-frame-bridge-api-related-n2.log",
+      "sha256": "835eb8c5c0e1f8e6b7416e000106d0084a872a62185047840c733c780c53e4c5",
+      "new_niche_contract_cases": 3
+    },
+    "unchanged_studio_at_parent_passed": 404,
+    "prior_backend_full_native_passed": 1181,
+    "current_full_native_api_or_studio_run": false
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\vision-frame-bridge-flow-n1",
+    "exports": {
+      "backup.json": {
+        "sha256": "46f63eb9c74cf983664d4b285f00e0ffdc2e2a52a0a396f22bcee28f2536b405",
+        "bytes": 884
+      },
+      "evidence.json": {
+        "sha256": "5c7c03d6c9bdc84baad0caa0d2ddc289bfec4ffa611d59f1d3e6317e9724cbbd",
+        "bytes": 3348
+      },
+      "expected-journals.json": {
+        "sha256": "0fc30fc0c3e2d1eb5a7720006fca9e869640bf1cd8f385063175ddfb92dda9cd",
+        "bytes": 148527
+      },
+      "expected-legacy-vision-history.json": {
+        "sha256": "d82394844ac68474fdf2b9a918e69fa15125ba3a443b00afd9b484c18b74d390",
+        "bytes": 121693
+      },
+      "expected-projects.json": {
+        "sha256": "f3fa1a2496c4f8c680b5c2de761603e3f4c31d166007ae851744fbff063a5700",
+        "bytes": 58485
+      },
+      "explicit-owned-image-source.png": {
+        "sha256": "742d821b99410b46a95d1a7230da1a4de58270297cf7687f4cc9395793f1e061",
+        "bytes": 29373
+      },
+      "explicit-owned-video-source.mp4": {
+        "sha256": "7c9fd1ec8b552d2cef7ce80da6dec3b94001aea638594a6c4187b13af2390102",
+        "bytes": 180982
+      },
+      "frame-jobs.json": {
+        "sha256": "ff19aa519fda576ea85e60a12c9d1b2585a39375d987db001f47f4e3d4e4a5f9",
+        "bytes": 27125
+      },
+      "input-bindings.json": {
+        "sha256": "56cb6c1f6dd81777974513fa33a1a7886345b7f7bf3519a1181730b28db7aa5f",
+        "bytes": 19433
+      },
+      "legacy-native-vision-replay.json": {
+        "sha256": "c6522035d543a0d3cee64fa04251de09f710da6b71028dbaf14cd566549e4d9c",
+        "bytes": 592
+      },
+      "mock-wire-summary.json": {
+        "sha256": "9f3bb0504cbef457caf49e02b9e5c926c0e85fcf1fba56acaf87c219438f7144",
+        "bytes": 1145
+      },
+      "new-process-replay.json": {
+        "sha256": "23eb892bf8bd4bb180b4cc0f83a575c46745a13d79a6939923cc991dee3e6210",
+        "bytes": 323
+      },
+      "provider-contracts.json": {
+        "sha256": "7ad107653ade6ea3207677944597ccf8830b3315c6903dffd891490d574a1fed",
+        "bytes": 16403
+      },
+      "public-vision-frame-input.zip": {
+        "sha256": "d7783ad6c12c836772f2c4cf4397cb4da0c0c0e0aeff14ed235185bb26815254",
+        "bytes": 1482172
+      },
+      "restore.json": {
+        "sha256": "94d24dc23dc1b80205363e3531f486b94ce85eec4e73a99fa2cffad859c40716",
+        "bytes": 1291
+      },
+      "restored-in-process.json": {
+        "sha256": "23eb892bf8bd4bb180b4cc0f83a575c46745a13d79a6939923cc991dee3e6210",
+        "bytes": 323
+      }
+    },
+    "state_root": "C:/vf-native-fixture-vision-frame-bridge-state-01",
+    "restore_root": "C:/vf-native-fixture-vision-frame-bridge-restore-01",
+    "backup_sha256": "d7783ad6c12c836772f2c4cf4397cb4da0c0c0e0aeff14ed235185bb26815254",
+    "backup_bytes": 1482172,
+    "backup_entries": 42,
+    "journal_count": 9,
+    "projects": 2,
+    "cpu_media_frame_jobs": 2,
+    "actual_png_samples": 9,
+    "mock_structured_requests": 2,
+    "existing_fixture_and_not_configured_histories": 4,
+    "earlier_vision_histories": 3,
+    "earlier_scene_count": 1,
+    "earlier_frame_count": 8
+  },
+  "existing_structured_api_extractor_protocol_reused_no_framework_database_gpu_dependency": true,
+  "frozen_ingested_asset_magic_metadata_source_hash_observation_ordered_png_and_decoded_rgb_hashes_scene_transcript_version_binding": true,
+  "owned_paths_hardlink_size_dimension_animation_nonfinite_and_pre_post_source_frame_drift_fail_closed": true,
+  "original_4k_source_and_actual_480x270_input_metadata_separate_no_dimension_relabel_or_new_ffmpeg_decode": true,
+  "shared_request_prompt_niche_neutral_visible_evidence_vietnamese_typography_sample_limits_confidence_not_independently_calibrated": true,
+  "exact_actual_sent_png_checksums_original_timestamps_refs_shared_typed_mock_results_and_source_projects": true,
+  "fresh_process_backup_restore_all_nine_journals_four_existing_shapes_original_source_frames_exact": true,
+  "earlier_native_asr_scene_transcript_cpu_frames_three_history_shapes_source_files_exact": true,
+  "native_official_vision_runtime_integrated": false,
+  "current_owner_rights_budget_paid_dispatch_cost_authority_protected_registry_studio_planner_qc_integrated": false,
+  "real_secret_reads": 0,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "real_publications": 0,
+  "semantic_inference_performed": false,
+  "decoded_pts_verified": false,
+  "continuous_tracking_performed": false,
+  "browser_owner_real_provider_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}
