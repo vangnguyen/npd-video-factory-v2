@@ -1,0 +1,47 @@
+{
+  "schema_version": "north-star-render-vision-provider-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-registry-focused-n1.log",
+      "sha256": "c28c31177834a944dd354a24f854ceb10c86a8e66042fd10e8633b06c98aa53c",
+      "bytes": 1615,
+      "passed": 6
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-registry-related-n1.log",
+      "sha256": "2efc6e95a1b349ac8f93b38d2938986715963557d84d987de7283ab17ec6951d",
+      "bytes": 11026,
+      "passed": 46
+    }
+  ],
+  "new_native_cases": 6,
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-factory-flow-n1\\evidence.json",
+    "sha256": "8f282382859575c827091fdeb6bb6ba8d74622fbe1ce616d269e28acbcd2588e",
+    "bytes": 1069
+  },
+  "original_and_restored_factory": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-vision-factory-flow-n1\\original-and-restored-factory.json",
+    "sha256": "91686c11b84ebc2fb2d07d5f7b5c5c40fdd4d197d995ff83fca51c30ccf260f7",
+    "bytes": 53833
+  },
+  "source_sha256": {
+    "services/windows_native/render_vision_registry.py": "63f8f3dc56910931ae30e219147e12c0d83126284b7453339f9b12c80a7d1157",
+    "services/windows_native/tests/test_render_vision_registry.py": "b55b3b6714ffd0560fb89c38ea647f698c91ca16e685c221bce578c836eeefdf",
+    "scripts/north_star_render_vision_factory.py": "046ed48d88d98a9e3eaab21e47902419117fdfece02f99a66306e6dc043cec04"
+  },
+  "default_disabled_separate_render_scope": true,
+  "live_guard_and_result_cost_observer_required": true,
+  "original_registry_read_bytes_hash_bound": true,
+  "raw_callback_profile_current_input_and_late_revocation_guards": true,
+  "protocol_mock_requests": 2,
+  "external_dispatches": 0,
+  "paid_operations": 0,
+  "live_credentials_read": false,
+  "semantic_inference_performed": false,
+  "owner_consent_controller_implemented": false,
+  "request_result_cost_journal_implemented": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false
+}

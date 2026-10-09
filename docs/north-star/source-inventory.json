@@ -1,6 +1,6 @@
 {
-  "head": "3e8135fdb18418d2670755ce43bc650e990ffbb9",
-  "audited_at": "2026-10-09T13:37:56.430595+00:00",
+  "head": "4e588006d5b98b7aba2e5aa7a4c632e8665b87eb",
+  "audited_at": "2026-10-09T14:14:16.934656+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -510,6 +510,11 @@
     "scripts/north_star_scene_review.py": "270bb2307a402b1deee1305bde35d8b7bef7a05fa4dba46088b20fac3e3bd418",
     "docs/NATIVE_REVIEWED_SCENE_RECOMMENDATIONS.md": "a0588e80ac27cd46bfb2e631bbc4b43a362f12af72b93c668ce6fec0f40635aa",
     "docs/north-star/scene-review-evidence.json": "b93bdfeaecf05ee21a86db7a08399cc7281c9eae0d012ef6b53079a6e7fa498a",
+    "services/windows_native/render_vision_registry.py": "63f8f3dc56910931ae30e219147e12c0d83126284b7453339f9b12c80a7d1157",
+    "services/windows_native/tests/test_render_vision_registry.py": "b55b3b6714ffd0560fb89c38ea647f698c91ca16e685c221bce578c836eeefdf",
+    "scripts/north_star_render_vision_factory.py": "046ed48d88d98a9e3eaab21e47902419117fdfece02f99a66306e6dc043cec04",
+    "docs/NATIVE_RENDER_VISION_PROVIDER.md": "f970dc85e115e15722bc5ebd64b5f59289338dd1cd693a311622d19e9dad18fb",
+    "docs/north-star/render-vision-provider-evidence.json": "3f32bf682af04bcc63527d56da7b940826f94c1e6fcb40a15b0fcc2bcae8ceac",
     "apps/api/app/trend_service.py": "0515d9bcdcc254336ae9b0e8f8389f828f111a182fae1d6cac62ab91c05c12d9",
     "apps/api/app/trend_providers.py": "5befe1bfe7e93b867052bde113319f9b2cda6c9738c922281f68d95a9525ec25",
     "apps/studio-web/studio.js": "b2cc7d771dd5cbf17e40d63919bb5b74d44489c79dfecbb94509a8926c733e0b",
