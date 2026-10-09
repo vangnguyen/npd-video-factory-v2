@@ -294,13 +294,18 @@ class Store:
         has_reviewed=any(reviewed_plan(MediaPlanRead.model_validate(v['plan'])) for v in previous['document'].get('source_broll_plans',[]))
         if has_reviewed:history(self,previous)
         has_scenes=bool(previous['document'].get('source_scene_recommendations'))
+        has_reframe=bool(previous['document'].get('source_reframe_reviews'))
+        if has_reframe:
+            from .source_reframe_vision import history as reframe_history
+            from .pipeline import Config
+            reframe_history(self,Config(data_root=self.root),previous)
         if has_scenes:
             from .scene_review import page
             from .pipeline import Config
             page(self,Config(data_root=self.root),identifier)
         with self.transaction() as con:
             project=self.editable(con,identifier,revision); doc=project["document"]
-            if (has_reviewed or has_scenes) and digest(doc)!=digest(previous['document']):raise WorkflowError('STALE_VERSION_RELOAD')
+            if (has_reviewed or has_scenes or has_reframe) and digest(doc)!=digest(previous['document']):raise WorkflowError('STALE_VERSION_RELOAD')
             from .auto_edit_timeline import is_auto_edit
             stamp=now(); copy_id=uuid.uuid4().hex
             source=is_auto_edit(doc)

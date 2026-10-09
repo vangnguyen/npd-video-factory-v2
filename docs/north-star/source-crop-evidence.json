@@ -1,0 +1,209 @@
+{
+  "schema_version": "native-reviewed-source-crop-evidence-v1",
+  "parent_head": "de18a4e8ec3934e0b66f0d3d1dd48300bebb2479",
+  "source_sha256": {
+    "services/windows_native/source_reframe_vision.py": "b643af21c0172a98d84e18cf93a62936b552d8682c9d3b18b9278962db1a0748",
+    "services/windows_native/source_reframe.py": "0d4ff296c69e3b336a83f73e95249a3f31d404c14dd518a4196bfc795b911ccc",
+    "services/windows_native/source_duplicate.py": "22af92af32b5c2470eca67c137c47f23f7e28272c3a3810db3373d8beaa4af7c",
+    "services/windows_native/auto_edit_timeline.py": "5bb36794474fc579c4d6836511cf390d45fe1478ee4fe07a4764b2d9e60e21c3",
+    "services/windows_native/store.py": "235eb3385a6597d5d301a8288093c13fe2ef3399968af254a01c36169f826c23",
+    "services/windows_native/server.py": "b4ce9618610babf6c9674de26a13813c0df4cc77cb2cbbb2e5bab98628c62ba2",
+    "apps/api/app/vision_models.py": "af40ead91b3ea8df9b66ba46ef4e2b25ab5d9abcef465d61f0f4e1984007076b",
+    "apps/studio-web/native-source-editor.mjs": "cea290d3e5ad10d5b0be75329af0261f11c2cf010b2e6600928d27e577455d17",
+    "apps/studio-web/native-source-crop-review.mjs": "29e2edd7a35b7d4d63c198eaa5e95cdf037820589ff9d811b838fb5fd3b3fb61",
+    "apps/studio-web/tests/native-source-crop-review.test.mjs": "12ab4118132dfe23bb5aef29953ea4987d300ae90f2548c2f8fae255c5f2424e",
+    "services/windows_native/tests/test_source_reframe_vision.py": "fb4f7ca1bfdc30ed6f398dbcfab15dbf0705089b08df03761cc445feab59b8d0",
+    "services/windows_native/tests/test_official_vision_http.py": "908cf2c459fed64b8ae9df97347a61c3922059f1594208a9cfecf7292caeb758",
+    "scripts/north_star_source_crop.py": "3748c77957aab0076750115c3589524005f48b8195c7ce57bf3ac0f48e657643",
+    "scripts/north_star_source_crop.mjs": "aa9c5d5b410618ab85d806ede029a5cab35342380e722e16a49f25105812fe76",
+    "docs/NATIVE_REVIEWED_SOURCE_REFRAME.md": "667be6114673b4a5d5f070edea1f3bcb4637f084e60f2994fb9d811df4622e3b"
+  },
+  "tests": {
+    "native_related": 43,
+    "native_seconds": 113.93,
+    "new_native_cases": 7,
+    "native_log_sha256": "50447aa2e39b3d29080e1af54a6d627daf7cb1a21f4b31c05358b1f14a3ca817",
+    "api_related": 20,
+    "api_seconds": 30.47,
+    "api_log_sha256": "0ce973e4122af5add9d5dd35608e0ec35a1c8ebdb869cd3c79400f311054c44d",
+    "studio": 444,
+    "studio_ms": 1763.2098,
+    "new_studio_cases": 4,
+    "studio_log_sha256": "308534a3e3c69fc538b5c30ed174193615c561a9f031cad350808a2c41de0fc5"
+  },
+  "rehearsal": {
+    "schema_version": "native-reviewed-source-crop-rehearsal-v1",
+    "source_sha256": {
+      "services/windows_native/source_reframe_vision.py": "b643af21c0172a98d84e18cf93a62936b552d8682c9d3b18b9278962db1a0748",
+      "services/windows_native/source_reframe.py": "0d4ff296c69e3b336a83f73e95249a3f31d404c14dd518a4196bfc795b911ccc",
+      "services/windows_native/source_duplicate.py": "22af92af32b5c2470eca67c137c47f23f7e28272c3a3810db3373d8beaa4af7c",
+      "services/windows_native/auto_edit_timeline.py": "5bb36794474fc579c4d6836511cf390d45fe1478ee4fe07a4764b2d9e60e21c3",
+      "services/windows_native/store.py": "235eb3385a6597d5d301a8288093c13fe2ef3399968af254a01c36169f826c23",
+      "services/windows_native/server.py": "b4ce9618610babf6c9674de26a13813c0df4cc77cb2cbbb2e5bab98628c62ba2",
+      "apps/api/app/vision_models.py": "af40ead91b3ea8df9b66ba46ef4e2b25ab5d9abcef465d61f0f4e1984007076b",
+      "apps/studio-web/native-source-editor.mjs": "cea290d3e5ad10d5b0be75329af0261f11c2cf010b2e6600928d27e577455d17",
+      "apps/studio-web/native-source-crop-review.mjs": "29e2edd7a35b7d4d63c198eaa5e95cdf037820589ff9d811b838fb5fd3b3fb61",
+      "apps/studio-web/tests/native-source-crop-review.test.mjs": "12ab4118132dfe23bb5aef29953ea4987d300ae90f2548c2f8fae255c5f2424e",
+      "services/windows_native/tests/test_source_reframe_vision.py": "fb4f7ca1bfdc30ed6f398dbcfab15dbf0705089b08df03761cc445feab59b8d0",
+      "services/windows_native/tests/test_official_vision_http.py": "908cf2c459fed64b8ae9df97347a61c3922059f1594208a9cfecf7292caeb758",
+      "scripts/north_star_source_crop.py": "3748c77957aab0076750115c3589524005f48b8195c7ce57bf3ac0f48e657643",
+      "scripts/north_star_source_crop.mjs": "aa9c5d5b410618ab85d806ede029a5cab35342380e722e16a49f25105812fe76"
+    },
+    "signed_http_requests": 16,
+    "explicit_format_crop_versions": 4,
+    "unapproved_duplicate": 1,
+    "new_mock_requests": 0,
+    "new_cpu_jobs": 0,
+    "original_source_asr_vision": "preserved owned synthetic media and explicit fixtures, not genuine provider acceptance",
+    "new_external_dispatches": 0,
+    "new_paid_operations": 0,
+    "all_previous_projects_recommendations_results_costs_source_bytes_exact": true,
+    "dom_controller_tested": true,
+    "actual_parent_browser_executed": false,
+    "full_qc_or_new_final_render": false,
+    "owner_uat_accepted": false,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "public_backup_sha256": "165994b91eab857437ff0ae570c88126b61617fa1a6cba4db86d0fde2e534de9",
+    "prior_public_backup_sha256": "e110e56416b21760b45a43bd49c585576a7bbba93b13e26d164043c2c76d31bb",
+    "exports": {
+      "backup.json": {
+        "sha256": "4896e5c9b53bab46aa3661feee72f1ad0dcfd0f8978f48f713f89e5d74e2187f",
+        "bytes": 4102
+      },
+      "expected-journals.json": {
+        "sha256": "5170ae97e45a071a1f5b16f160e78863b5fa0230b357c32b6240a0cdcb664b1c",
+        "bytes": 6442514
+      },
+      "expected-projects.json": {
+        "sha256": "b9c621963f3049f16854fa15e43c014a7afe0b00b5ce970316d65eec588e0775",
+        "bytes": 3281019
+      },
+      "expected-scenes.json": {
+        "sha256": "497a93084c0d720cb144467d751403ae1e545183317ee83dcf90aa4537127dad",
+        "bytes": 117000
+      },
+      "node-controller-errors.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "node-controller-proof.json": {
+        "sha256": "7260bcf553512e0184fa3984a398640b4000a5a4ff5c94e30ba0ce84886cc136",
+        "bytes": 796900
+      },
+      "original-vision-history.json": {
+        "sha256": "df3654208ba2290474d37e34bdf8fbf2a4aed32869e52bedc09e2e23c6913f60",
+        "bytes": 112596
+      },
+      "prior-restore.json": {
+        "sha256": "8c6ce216811b6ca7ec3514228471355db0ea560fa15388114d6c44ed3e27a9e1",
+        "bytes": 4488
+      },
+      "public-source-crop.zip": {
+        "sha256": "165994b91eab857437ff0ae570c88126b61617fa1a6cba4db86d0fde2e534de9",
+        "bytes": 8616346
+      },
+      "restore.json": {
+        "sha256": "d456c586fc4f0ab6044a9a8ceb76423aeab8e02edb6e96b141c9656902108b5a",
+        "bytes": 4492
+      },
+      "restored-in-process.json": {
+        "sha256": "9d182c5bc58bd405b696d3a0d65bf51c45665f7259fe711c7351ccd42707db6e",
+        "bytes": 236
+      },
+      "source-hashes.json": {
+        "sha256": "e6cf43aba14c18169017c5aa7946019f4c1e96b72fd8fab5ebff21a0e18c7818",
+        "bytes": 223
+      }
+    }
+  },
+  "fresh_process": {
+    "all8_projects_original_crop_scene_results_cost_journals_source_bytes_exact": true,
+    "keyless_disabled_recovery": true,
+    "provider_retry_or_consent_renewal": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false
+  },
+  "actual_browser": {
+    "schema_version": "native-reviewed-source-crop-real-browser-v1",
+    "actual_parent_browser_executed": true,
+    "synthetic_fixture_identity": true,
+    "actions": [
+      "login",
+      "open Source project",
+      "Assets original official Vision history",
+      "Video inspector",
+      "choose main result",
+      "independent review and mock acknowledgement",
+      "select1:1",
+      "save reviewed crop"
+    ],
+    "visible_success": "Đã lưu bản dựng mới. Preview và phê duyệt cũ cần cập nhật.",
+    "visible_revision": 21,
+    "visible_format": "1:1 · 1080×1080",
+    "acknowledgements_reset": true,
+    "mock_center_fallback_needs_attention": true,
+    "tracking_confidence": null,
+    "console_errors_observed": 0,
+    "all_previous_projects_original_recommendations_results_cost_and_source_bytes_exact": true,
+    "new_cpu_jobs": 0,
+    "new_mock_calls": 0,
+    "new_paid_operations": 0,
+    "new_external_dispatches": 0,
+    "full_qc_or_new_final_render": false,
+    "real_provider_tested": false,
+    "owner_uat_accepted": false,
+    "production_deployed": false,
+    "temporary_tab_and_listener_closed": true,
+    "screenshot_tool_only": true,
+    "durable_screenshot_export": false,
+    "public_backup_sha256": "7f01e25b25ffe3d009ccfab25562c875e849644a95c3336d9ffb64b169820b93",
+    "exports": {
+      "backup.json": {
+        "sha256": "e9ec83154220550a6dc486808d8d61fc7cab98d318e911941678fae0e4b5e5af",
+        "bytes": 4119
+      },
+      "expected-journals.json": {
+        "sha256": "3ed69efef69c77a7fb91fd9c6d98a7608251cc6f2d70618961c6114d29b63f1b",
+        "bytes": 6996731
+      },
+      "expected-projects.json": {
+        "sha256": "6e64794031e62c66dadde0d55fdac69491ad6f1730789f446aeabbf404b531bb",
+        "bytes": 3359072
+      },
+      "expected-scenes.json": {
+        "sha256": "30b1b421149c4870548ab37effde0e5a4e360e1ee6ad85216e5935f43ead5c57",
+        "bytes": 117000
+      },
+      "original-vision-history.json": {
+        "sha256": "df3654208ba2290474d37e34bdf8fbf2a4aed32869e52bedc09e2e23c6913f60",
+        "bytes": 112596
+      },
+      "public-browser-source-crop.zip": {
+        "sha256": "7f01e25b25ffe3d009ccfab25562c875e849644a95c3336d9ffb64b169820b93",
+        "bytes": 9167383
+      },
+      "restore.json": {
+        "sha256": "0f05cc7821c5a3e3d59c4d0f0f45bbedd1f9e63868894026c6442f5001d3d218",
+        "bytes": 4525
+      },
+      "source-hashes.json": {
+        "sha256": "e6cf43aba14c18169017c5aa7946019f4c1e96b72fd8fab5ebff21a0e18c7818",
+        "bytes": 223
+      }
+    }
+  },
+  "browser_fresh_process": {
+    "all8_projects_crop_history_original_journals_source_bytes_exact": true,
+    "keyless_default_disabled": true,
+    "new_provider_dispatches": 0
+  },
+  "new_paid_operations": 0,
+  "new_external_dispatches": 0,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "stop_condition_pending": false
+}

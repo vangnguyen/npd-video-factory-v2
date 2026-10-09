@@ -101,6 +101,8 @@ def validate_document(document):
     snapshot = TimelineSnapshot.model_validate(state['snapshot'])
     from .scene_selection import validate_timeline
     validate_timeline(document)
+    from .source_reframe_vision import validate_timeline as validate_reframe
+    validate_reframe(document)
     if snapshot.metadata.get('native_auto_edit_schema') != SCHEMA or document.get('proposal') is not None:
         raise WorkflowError('AUTO_EDIT_TIMELINE_SCHEMA_INVALID')
     if snapshot.metadata.get('source_audio_processing') is not None:
@@ -267,6 +269,10 @@ def source_shots(snapshot):
 
 def view(store, project_id):
     project = store.get(project_id)
+    if project['document'].get('source_reframe_reviews'):
+        from .source_reframe_vision import history as reframe_history
+        from .pipeline import Config
+        reframe_history(store,Config(data_root=store.root),project)
     if project['document'].get('source_scene_recommendations'):
         from .scene_review import page
         from .pipeline import Config

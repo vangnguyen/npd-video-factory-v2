@@ -12,6 +12,7 @@ from app.timeline_logic import TimelineEditError
 from app.timeline_reframe import bind_reframe
 from app.vision_models import ManualCropOverride
 from app.vision_logic import build_reframe_plans
+from .official_vision_evidence import ReviewedVision
 
 
 class ManualPoint(StrictModel):
@@ -24,18 +25,26 @@ class ManualPoint(StrictModel):
 class Request(StrictModel):
     expected_version:int=Field(ge=1,strict=True)
     aspect_ratio:Literal['9:16','16:9','1:1','4:5']
-    mode:Literal['center_crop','manual_override']='center_crop'
+    mode:Literal['center_crop','manual_override','reviewed_vision']='center_crop'
     points:list[ManualPoint]=Field(default_factory=list,max_length=200)
+    reviewed_vision:ReviewedVision|None=None
     @model_validator(mode='after')
     def valid_mode(self):
         if bool(self.points)!=(self.mode=='manual_override'):raise ValueError('manual points required only for manual mode')
         if len({point.time for point in self.points})!=len(self.points):raise ValueError('duplicate times')
+        if (self.reviewed_vision is not None)!=(self.mode=='reviewed_vision'):raise ValueError('reviewed Vision required only for reviewed mode')
         return self
 
 
-def apply(store,project_id,revision,body):
+def apply(store,project_id,revision,body,*,config=None,official_vision=None):
     try:payload=Request.model_validate(body)
     except ValueError:raise WorkflowError('AUTO_EDIT_REFRAME_REQUEST_INVALID',400) from None
+    from . import source_reframe_vision as reviewed
+    from .source_broll_vision import bind_reader,runtime
+    getter=None
+    if payload.reviewed_vision:
+        if config is None or config.data_root.absolute()!=store.root.absolute():raise WorkflowError('AUTO_EDIT_REFRAME_VISION_SCOPE_INVALID')
+        getter=bind_reader(store,config,project_id,requests=[payload.reviewed_vision],getter=official_vision)
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);state=_cas(project,payload.expected_version)
         snapshot,assets=resolve_assets(SimpleNamespace(data_root=store.root),project)
@@ -59,6 +68,17 @@ def apply(store,project_id,revision,body):
             plan=build_reframe_plans(frames=[],tracks=[],metadata=source,aspect_ratios=[payload.aspect_ratio],
                 manual_overrides=overrides,minimum_tracking_confidence=.6,subtitle_safe_area_bottom=.18,
                 maximum_jump=.12,fingerprint=fingerprint)[0]
+            saved=None
+            if payload.reviewed_vision:
+                first=con.execute('SELECT workspace_id FROM native_official_vision_intents WHERE project_id=? AND vision_id=?',
+                    (project_id,payload.reviewed_vision.vision_id)).fetchone()
+                if first is None:raise WorkflowError('NATIVE_OFFICIAL_VISION_NOT_FOUND',404)
+                service=runtime(store,config,first['workspace_id'],getter)
+                original=reviewed.source(project,snapshot.metadata['source_analysis_id'],store.root)
+                context=reviewed.prepare(service,project,original,payload.reviewed_vision,con)
+                saved=reviewed.record(project,original,context,payload.aspect_ratio)
+                from app.vision_models import ReframePlanRead
+                plan=ReframePlanRead.model_validate(saved['review']['plan'])
             result=bind_reframe(snapshot,asset_id=identifier,metadata=source,plan=plan,vision_analysis_id=None)
         except (ValueError,TimelineEditError):raise WorkflowError('AUTO_EDIT_REFRAME_PLAN_INVALID_OR_LOCKED',400) from None
         result.metadata['source_reframe_plan']={'schema':'native-source-reframe-v1','plan':plan.model_dump(mode='json'),
@@ -71,5 +91,14 @@ def apply(store,project_id,revision,body):
         result.metadata['reframe_review']={'needs_attention':plan.needs_attention,'fallback':plan.fallback,
             'tracking_confidence':None,'human_review_required':True,
             'confidence_basis':result.metadata['source_reframe_plan']['confidence_basis']}
+        result.metadata.pop('reviewed_reframe_selection',None)
+        if saved is not None:
+            proof=reviewed.lineage(saved)
+            result.metadata['reviewed_reframe_selection']=proof
+            result.metadata['source_reframe_plan'].update(schema=reviewed.SCHEMA,confidence_basis=saved['review']['confidence_basis'],
+                provider_status='REVIEWED_PROTOCOL_MOCK' if proof['mock_original_result'] else 'REVIEWED_ORIGINAL_SAMPLE_PREDICTIONS',
+                tracking_confidence=None,continuous_tracking_performed=False,decoded_pts_verified=False,original_vision_lineage=proof)
+            result.metadata['reframe_review']['confidence_basis']=saved['review']['confidence_basis']
+            project['document']['source_reframe_reviews']=project['document'].get('source_reframe_reviews',[])+[saved]
         _save(store,con,project,result,'auto_edit_source_reframe_saved')
     return view(store,project_id)

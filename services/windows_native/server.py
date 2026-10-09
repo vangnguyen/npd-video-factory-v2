@@ -766,6 +766,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-official-vision.mjs'] = 'native-official-vision.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'
         static['/native-scene-review.mjs'] = 'native-scene-review.mjs'
+        static['/native-source-crop-review.mjs'] = 'native-source-crop-review.mjs'
         static['/project-quality.mjs'] = 'project-quality.mjs'
         static['/native-rights.mjs'] = 'native-rights.mjs'
         static['/native-rights-override.mjs'] = 'native-rights-override.mjs'
@@ -944,7 +945,7 @@ class Handler(BaseHTTPRequestHandler):
                 raise WorkflowError('AUTO_EDIT_TIMELINE_REQUEST_INVALID', 400)
             action = {'create':create,'edit':edit,'restore':restore,'linked_edit':linked_edit,'configure':configure,'reframe':reframe}[body['action']]
             return self.reply(action(self.server.store, source_timeline_route[1], body['revision'], body['payload'],
-                **({'config':self.server.config,'official_vision':lambda:self.server.official_vision} if body['action']=='create' else {})))
+                **({'config':self.server.config,'official_vision':lambda:self.server.official_vision} if body['action'] in {'create','reframe'} else {})))
         analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/(ana_[a-f0-9]{24})/transcript', self.path)
         if analysis_route:
             from .auto_edit_analysis import edit_transcript

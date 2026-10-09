@@ -4,6 +4,7 @@ import {timelineHistory} from './timeline-history.mjs';
 import {sourceBrollRequest,sourceBrollMarkup} from './native-source-broll.mjs';
 import {initializeSourceBrollReview} from './native-source-broll-review.mjs';
 import {initializeSceneReview} from './native-scene-review.mjs';
+import {initializeSourceCropReview} from './native-source-crop-review.mjs';
 
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 export const sourceState=p=>isSourceProject(p)?p.document.canonical_timeline:null;
@@ -49,7 +50,7 @@ export function sourceReframeMarkup(project) {
   const saved=snapshot.metadata.source_reframe_plan,plan=saved?.plan;
   const sourceDuration=saved?.source_duration_seconds??project.document.auto_edit_analyses?.find(r=>r.analysis.analysis_id===snapshot.metadata.source_analysis_id)?.analysis.source_media.duration_seconds??600;
   const points=saved?.manual_points?.length?[...saved.manual_points].sort((a,b)=>a.time-b.time):[{time:0,x:.5,y:.5,zoom:1}];
-  return `<details><summary>Đường crop theo nguồn</summary><p class="hint">Tracking chưa được cấu hình; độ tin cậy theo dõi chưa có. Crop giữa cần kiểm tra chủ thể. Mốc thủ công dùng giây của video gốc, giữ nguyên âm thanh và phụ đề; preview đầy đủ mới thể hiện đường crop.</p>${plan?`<p>Đã lưu: ${plan.strategy==='manual_override'?'tọa độ thủ công':'crop giữa'} · ${esc(plan.aspect_ratio)} · ${plan.needs_attention?'cần kiểm tra':'vẫn cần xem và duyệt video'}</p>`:''}<form data-source-reframe-form data-source-duration-limit="${esc(sourceDuration)}"><label>Định dạng<select data-source-reframe-ratio>${['9:16','16:9','1:1','4:5'].map(r=>`<option ${r===snapshot.aspect_ratio?'selected':''}>${r}</option>`).join('')}</select></label><label>Cách crop<select data-source-reframe-mode><option value="center_crop" ${plan?.strategy!=='manual_override'?'selected':''}>Crop giữa · chưa có tracking</option><option value="manual_override" ${plan?.strategy==='manual_override'?'selected':''}>Đường crop thủ công</option></select></label><div data-source-crop-points ${plan?.strategy==='manual_override'?'':'hidden'}>${points.map((point,index)=>pointMarkup(point,index,sourceDuration)).join('')}<button type="button" data-source-crop-add>Thêm mốc</button></div><div class="actions"><button type="submit">Lưu đường crop</button><button type="button" data-source-reframe-discard>Bỏ chỉnh sửa crop</button></div></form></details>`;
+  return `<details><summary>Đường crop theo nguồn</summary><p class="hint">Tracking chưa được cấu hình; độ tin cậy theo dõi chưa có. Crop giữa cần kiểm tra chủ thể. Mốc thủ công dùng giây của video gốc, giữ nguyên âm thanh và phụ đề; preview đầy đủ mới thể hiện đường crop.</p>${plan?`<p>Đã lưu: ${plan.strategy==='subject_samples'?'vị trí theo khung mẫu':plan.strategy==='manual_override'?'tọa độ thủ công':'crop giữa'} · ${esc(plan.aspect_ratio)} · ${plan.needs_attention?'cần kiểm tra':'vẫn cần xem và duyệt video'}</p>`:''}<form data-source-reframe-form data-source-duration-limit="${esc(sourceDuration)}"><label>Định dạng<select data-source-reframe-ratio>${['9:16','16:9','1:1','4:5'].map(r=>`<option ${r===snapshot.aspect_ratio?'selected':''}>${r}</option>`).join('')}</select></label><label>Cách crop<select data-source-reframe-mode><option value="center_crop" ${plan?.strategy!=='manual_override'?'selected':''}>Crop giữa · chưa có tracking</option><option value="manual_override" ${plan?.strategy==='manual_override'?'selected':''}>Đường crop thủ công</option></select></label><div data-source-crop-points ${plan?.strategy==='manual_override'?'':'hidden'}>${points.map((point,index)=>pointMarkup(point,index,sourceDuration)).join('')}<button type="button" data-source-crop-add>Thêm mốc</button></div><div class="actions"><button type="submit">Lưu đường crop</button><button type="button" data-source-reframe-discard>Bỏ chỉnh sửa crop</button></div></form></details>`;
 }
 export function sourceAdvancedMarkup(project,zoom=1,selectedId=null) {
   const state=sourceState(project);if(!state)return '';
@@ -91,6 +92,10 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   const brollReview=initializeSourceBrollReview({root:reviewRoot,getReviewedVision,onMessage,getState:()=>({project:getProject(),
     workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,dirty:dirty||getGuards().dirty,
     busy:working||getGuards().busy,active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
+  const cropRoot=document.createElement('section');
+  const cropReview=initializeSourceCropReview({root:cropRoot,getReviewedVision,onMessage,getState:()=>({project:getProject(),
+    workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,dirty:dirty||getGuards().dirty,
+    busy:working||getGuards().busy,active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   function controls(){
     host.querySelectorAll('input,select,button').forEach(el=>el.disabled=blocked());
     if(locked())host.querySelectorAll('[data-source-form] input,[data-source-form] button,[data-source-action],[data-source-placement],[data-source-speed],[data-source-volume],[data-source-crop]').forEach(el=>el.disabled=true);
@@ -112,6 +117,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     });
     brollReview.sync();
     sceneReview.sync();
+    cropReview.sync();
   }
   function renderAdvanced(){
     toolbar.hidden=!isSourceProject(getProject());
@@ -150,6 +156,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     host.querySelector('[data-broll-review-host]').append(reviewRoot);
     host.append(sceneRoot);
     host.insertAdjacentHTML('beforeend',sourceReframeMarkup(p));
+    host.append(cropRoot);
     void history();renderAdvanced();controls();
   }
   async function run(fn,{allowDirty=false}={}){
@@ -158,12 +165,19 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     try{await fn();}catch(error){onMessage(error.message,true);}finally{working=false;onWorking();controls();}
   }
   async function send(body){
-    const p=getProject();const value=await api(`/api/projects/${p.id}/auto-edit/timeline`,body);
+    const p=getProject(),workspace=getGuards().workspace_id,sha=sourceState(p)?.sha256;
+    const value=await api(`/api/projects/${p.id}/auto-edit/timeline`,body);
+    if(getProject()?.id!==p.id||getProject()?.revision!==p.revision||sourceState(getProject())?.sha256!==sha||getGuards().workspace_id!==workspace
+      ||value?.id!==p.id)throw new Error('Dự án hoặc không gian đã thay đổi. Mở lại dự án để đọc bản đã lưu.');
     dirty=false;dirtyForm=null;onDirty(false);shownKey=null;historyKey=null;onProject(value,true);
     onMessage('Đã lưu bản dựng mới. Preview và phê duyệt cũ cần cập nhật.');renderSelected(true);
   }
   host.addEventListener('input',event=>{const form=event.target.closest('[data-source-form],[data-source-reframe-form]');if(form){dirty=true;dirtyForm=form.hasAttribute('data-source-reframe-form')?'reframe':'trim';onDirty(true);controls();}});
   host.addEventListener('change',event=>{if(event.target.matches('[data-source-reframe-mode]'))host.querySelector('[data-source-crop-points]').hidden=event.target.value!=='manual_override';});
+  host.addEventListener('click',event=>{
+    if(!event.target.closest('[data-reframe-reviewed-apply]'))return;
+    try{const body=cropReview.request();void run(()=>send(body));}catch(error){onMessage(error.message,true);}
+  });
   host.addEventListener('submit',event=>{
     if(!event.target.matches('[data-source-reframe-form]'))return;event.preventDefault();
     if(dirtyForm==='trim'){onMessage('Lưu hoặc bỏ chỉnh sửa điểm cắt trước khi crop.',true);return;}

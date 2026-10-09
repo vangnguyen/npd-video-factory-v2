@@ -131,13 +131,13 @@ class ManualCropOverride(StrictModel):
 class ReframePlanRead(StrictModel):
     reframe_id: str
     aspect_ratio: AspectRatio
-    strategy: Literal["subject_track", "center_crop", "manual_override"]
+    strategy: Literal["subject_track", "subject_samples", "center_crop", "manual_override"]
     subject_track_id: str | None
     keyframes: list[ReframeKeyframeRead]
     smoothing: Literal["bounded_ema", "none"]
     maximum_jump: float = Field(ge=0, le=1)
     subtitle_safe_area_bottom: float = Field(ge=0, le=0.45)
-    confidence: float = Field(ge=0, le=1)
+    confidence: float | None = Field(ge=0, le=1)
     fallback: Literal["none", "center_crop"]
     needs_attention: bool
     manual_override_allowed: Literal[True] = True
