@@ -992,6 +992,8 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-tiktok-publication.mjs'] = 'native-tiktok-publication.mjs'
         static['/native-official-publications.mjs'] = 'native-official-publications.mjs'
         static['/native-official-publication-queue.mjs'] = 'native-official-publication-queue.mjs'
+        static['/native-meta-publication.mjs'] = 'native-meta-publication.mjs'
+        static['/native-publishing-media.mjs'] = 'native-publishing-media.mjs'
         static['/native-official-analytics.mjs'] = 'native-official-analytics.mjs'
         static['/native-official-refresh.mjs'] = 'native-official-refresh.mjs'
         static['/native-official-winners.mjs'] = 'native-official-winners.mjs'

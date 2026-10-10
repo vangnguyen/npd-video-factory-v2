@@ -1,0 +1,227 @@
+{
+  "schema_version": "north-star-native-meta-studio-evidence-v1",
+  "recorded_at": "2026-10-10T14:57:53.064916+00:00",
+  "audit_head_before_commit": "3ccdd183082ac28a0e40d870161d52fa2cf04dc2",
+  "scope": "actual_signed_local_HTTP_through_shared_Studio_controllers_fake_DOM_explicit_meta_s3_human_owner_platform_nonplayable_media_mocks",
+  "implementation": {
+    "versioned_meta_factory_account_publication_job_receipt_validation": true,
+    "same_shared_controller_worker_queue_and_canonical_timeline": true,
+    "exact_meta_source_and_metadata_handoff": true,
+    "legacy_v1_history_readable_execution_false": true,
+    "separate_finite_media_disclosure_exact_selection_and_queue_consent": true,
+    "first_send_and_queue_require_current_exact_media_selection": true,
+    "original_job_status_finish_after_edits": true,
+    "workspace_project_approval_generation_fences": true,
+    "private_fields_rejected_text_only_history": true,
+    "no_auto_load_send_or_renewal": true,
+    "readonly_keyless_cold_Studio_history": true
+  },
+  "tests": {
+    "full_Studio": {
+      "status": "PASS",
+      "tests": 619,
+      "seconds": 1.8795661,
+      "new_meta_cases": 19,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-frontend-full-n3.log",
+        "bytes": 62727,
+        "sha256": "562ac556019ef32f5f0074a11d0e4953d497cc5430ae606613ab84c6ed32ac2b"
+      }
+    },
+    "current_related_native_HTTP": {
+      "status": "PASS",
+      "tests": 20,
+      "seconds": 71.07,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-native-http-n1.log",
+        "bytes": 5025,
+        "sha256": "0f0ec43a082962ee33d19f2abe46d3e476b833d060b3b6e38db0a967e1600f81"
+      }
+    },
+    "earlier_focused_64_and_full_618_619_overlap": true,
+    "full_native_media_renderer_Docker_regression": false
+  },
+  "retained_flow": {
+    "status": "PASS",
+    "platforms": [
+      {
+        "platform": "instagram_reels",
+        "ui_http_requests": 25,
+        "shared_queue": false,
+        "one_storage_write": true,
+        "nullable_cost_records": 15,
+        "backup_sha256": "5e2c1f4b03b6b7a5b62fb481ddd612bbfe9a39792d0c0703cf4076c111875646",
+        "canonical_project_unchanged": true,
+        "final_receipt_observed_by_ui": true,
+        "separate_process_keyless_Studio_history": "PASS"
+      },
+      {
+        "platform": "facebook",
+        "ui_http_requests": 21,
+        "shared_queue": true,
+        "one_storage_write": true,
+        "nullable_cost_records": 15,
+        "backup_sha256": "5d4d1ecd2981f3bd1ee28c5e80a2eefc6d3703d28387a6e7be34e2621e77b9cd",
+        "canonical_project_unchanged": true,
+        "final_receipt_observed_by_ui": true,
+        "separate_process_keyless_Studio_history": "PASS"
+      }
+    ],
+    "legacy_v1_UI_execution_disabled": true,
+    "real_provider_calls": 0,
+    "paid_operations": 0,
+    "browser_rendered": false,
+    "owner_uat": false,
+    "accepted_media_generated": false,
+    "main_merged": false,
+    "production_deployed": false,
+    "manual_old_data_deleted": false
+  },
+  "flow_files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\facebook\\backup.json",
+      "bytes": 4343,
+      "sha256": "59263e9da9f7560f27124737591f684b4bfac5810c348efde375b9402bcf57f8"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\facebook\\cold-ui-history.json",
+      "bytes": 39964,
+      "sha256": "a25faa9fcd0f3c7ab65ca5253f80fe57fcf07453d0500d052f22f67cc76f44ce"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\facebook\\costs.json",
+      "bytes": 14735,
+      "sha256": "99d9fb013eef1bda10467836876e3cb408a9bd992eda3a33a03dd2798695f396"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\facebook\\public-state.zip",
+      "bytes": 1046600,
+      "sha256": "5d4d1ecd2981f3bd1ee28c5e80a2eefc6d3703d28387a6e7be34e2621e77b9cd"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\facebook\\ui-final-read.json",
+      "bytes": 28580,
+      "sha256": "01c692db20dc8cf71c1b235dbe6be89e990effdab51afcaecc995cae81fb31a9"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\facebook\\ui-initial.json",
+      "bytes": 40878,
+      "sha256": "42f430f01ba89e4642fccaed328283181bd88446913e5ffb4dd83b01bbd5e596"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\instagram_reels\\backup.json",
+      "bytes": 4349,
+      "sha256": "d958e80da7e5f1672de285ab8db343950163e27b6cabc16135908c955bf5cbf2"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\instagram_reels\\cold-ui-history.json",
+      "bytes": 38749,
+      "sha256": "65a9872dae32bd6d3a233d6252883769d76ac2c057b1f67462554787222baf1e"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\instagram_reels\\costs.json",
+      "bytes": 14808,
+      "sha256": "c3f5fb9a785a7b7d735fa643f61283a7a4e930ff871c30f42aa31d3d1fc87275"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\instagram_reels\\public-state.zip",
+      "bytes": 1034311,
+      "sha256": "5e2c1f4b03b6b7a5b62fb481ddd612bbfe9a39792d0c0703cf4076c111875646"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\instagram_reels\\ui-initial.json",
+      "bytes": 113840,
+      "sha256": "11d4008a19155bf74242eb6cb380a9c064269d2a3b344fcdb7d6a30909d09745"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\legacy-v1-ui.json",
+      "bytes": 24777,
+      "sha256": "679ae6a90f2c70d3c94a2d628352c2aa23c414bcfa6b1d9b3ce5d4f9ab9c5b1f"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3\\summary.json",
+      "bytes": 1133,
+      "sha256": "0c7867f6fbf85b07b52b51f2979bcf3f95cb711899e17e56d80016bb7be9b891"
+    }
+  ],
+  "browser": {
+    "status": "BLOCKED_EXTERNAL",
+    "connected_surface": "Chrome Work extension",
+    "error": "net::ERR_BLOCKED_BY_CLIENT",
+    "visible_error_confirmed": true,
+    "restriction_bypassed": false,
+    "rendered": false,
+    "viewport_1366_1920_2560_verified": false,
+    "files": [
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-browser-n2\\metadata.json",
+        "bytes": 437,
+        "sha256": "c4575977c299a8887edc3c5129bf55e49cae0c24d0fea6d9af0c36404fd65221"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-browser-n2\\browser-result.json",
+        "bytes": 375,
+        "sha256": "f8a3685c98bf1fe51a6b14780e181257b1384e33c7f1db6d09806328353a0cdd"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-browser-n2\\shutdown.json",
+        "bytes": 580,
+        "sha256": "3f4b81c1213b8c9fc7c82abb2c74b28747b4b845d166dfc7baf303edd2218bca"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-browser-n2\\cleanup.json",
+        "bytes": 312,
+        "sha256": "1fd8c1eee0a43242b6d5da7e5b14315aa5e9ff7dc4fb865b6dcb87447b85b1e9"
+      }
+    ]
+  },
+  "prior_attempts": {
+    "initial_flow_fixture_in_place_binding_refused": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n1.log",
+      "bytes": 924,
+      "sha256": "b52d850da81019213601b6305854cd77347f474e0aa78dfefe2e402ea88cf9ce"
+    },
+    "corrected_two_flows_and_legacy_without_new_cold_UI_check": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n2.log",
+      "bytes": 157,
+      "sha256": "ad622e9e6da7b5b4b42f111858ff388b2a617850ea1efc00bddae0906ceb1219"
+    },
+    "final_two_flows_legacy_and_new_cold_UI_checks": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-flow-n3.log",
+      "bytes": 157,
+      "sha256": "db97650f892f4e1c1e82f6c1dea5dc7581adb6192e37f6ce469b3806ecb7ffc5"
+    },
+    "first_browser_fixture_closed_stdin_terminal": "recorded in tool output; fresh signal-controlled fixture was then stopped normally"
+  },
+  "fixture": {
+    "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\native-meta-publication-v2.json",
+    "bytes": 464885,
+    "sha256": "862b8fa57a73ad557942194d3c2216a76cbcbc0abbe2bd3b99de485be7aaabbe"
+  },
+  "real_provider_calls": 0,
+  "paid_operations": 0,
+  "owner_uat": false,
+  "accepted_media_generated": false,
+  "main_merged": false,
+  "published": false,
+  "production_deployed": false,
+  "manual_old_data_deleted": false,
+  "capability_groups": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed": 59
+  },
+  "full_states": {
+    "SOURCE_PRESERVED": "prior_sealed_yes_current_commit_seal_pending",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "PHASE10_READY": "NO",
+    "OWNER_UAT_REQUIRED": "YES",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  },
+  "source_seal_after_commit": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-studio-preservation.json",
+  "next_safe_work": "platform-specific analytics and multipart, followed by all original remaining Master Spec Mode A/B/media/intelligence/audio/trend/learning/Hub/hardening/full A/B/C requirements"
+}

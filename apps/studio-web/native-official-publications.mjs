@@ -1,6 +1,8 @@
 // Explicit signed review and bounded provider actions. No secret input or automatic sends.
 import {validateTikTokDraft} from './native-tiktok-creators.mjs';
 import {validateTikTokPublishingFactory,validateTikTokPublication,validateTikTokDispatch,tikTokSourceMatches} from './native-tiktok-publication.mjs';
+import {validateMetaPublishingFactory,validateMetaPublication,validateMetaDispatch,metaSourceMatches,isMetaPublication,metaOriginalJob,metaStepPhases,metaPollPhases} from './native-meta-publication.mjs';
+import {validateMetaAccountRow} from './native-official-accounts.mjs';
 export function validateOfficialThumbnailStage(stage,row){
   const s=row?.snapshot,id=s?.metadata?.thumbnail_asset_id,sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
   if(id==null){if(s?.thumbnail!=null||stage!=null)throw new Error('Thumbnail không thuộc yêu cầu xuất bản.');return null;}
@@ -21,7 +23,7 @@ export function validateOfficialThumbnailStage(stage,row){
     ||row.receipt&&(!acknowledged||stage.remote_post_id!==row.receipt.remote_post_id))throw new Error('Nhật ký thumbnail chưa được xác nhận hoặc không đúng yêu cầu.');
   return stage;
 }
-export function initializeNativeOfficialPublications({api,getState,root=document,onMessage=()=>{},onWorking=()=>{},onSelection=()=>{},uuid=()=>crypto.randomUUID()}){
+export function initializeNativeOfficialPublications({api,getState,root=document,onMessage=()=>{},onWorking=()=>{},onSelection=()=>{},getMediaSelection=()=>null,uuid=()=>crypto.randomUUID()}){
   const card=root.getElementById('native-official-publications-card');card.replaceChildren();
   const node=(tag,text,id)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(id)n.id='native-official-publish-'+id;return n;};
   const button=(text,id,permission='manage')=>{const n=node('button',text,id);n.type='button';n.className='secondary';n.dataset.vfPermission=permission;return n;};
@@ -48,26 +50,29 @@ export function initializeNativeOfficialPublications({api,getState,root=document
   const targetSame=(a,b)=>['workspace_id','profile_id','profile_version','platform','provider_key','target_account_id','credential_binding_sha256'].every(k=>a?.[k]===b?.[k]);
   const ready=s=>s.canManage&&s.project&&!s.dirty&&!s.busy&&!s.active&&!s.project.archived;
   const current=s=>selected?.snapshot.project_revision===s.project?.revision;
-  const originalJob=()=>selected?.snapshot.target.platform==='tiktok'&&dispatch?.provider_job&&['uploaded','reconciliation_required'].includes(dispatch.dispatch?.phase);
+  const originalJob=()=>metaOriginalJob(selected,dispatch)||selected?.snapshot.target.platform==='tiktok'&&dispatch?.provider_job&&['uploaded','reconciliation_required'].includes(dispatch.dispatch?.phase);
+  const sendPhases=()=>isMetaPublication(selected)?selected.snapshot.execution_supported?metaStepPhases:[]:['prepared','uploading','reconciliation_required'];
+  const pollPhases=()=>isMetaPublication(selected)?selected.snapshot.execution_supported?metaPollPhases:[]:['uploaded'];
+  const mediaReady=()=>{if(!isMetaPublication(selected)||!['prepared','meta_created'].includes(dispatch?.dispatch?.phase))return true;const b=getMediaSelection();return b?.binding?.publication_id===selected.publication_id&&b.binding.snapshot_sha256===selected.snapshot_sha256&&b.binding.approval_id===selected.approval_id&&b.media?.snapshot.configuration_sha256===selected.snapshot.media_configuration_sha256;};
   const remoteReady=s=>Boolean(originalJob())&&s.canManage&&s.project&&!s.busy&&!s.project.archived;
   function controls(){const s=getState(),blocked=working||s.busy,p=currentProfile(),d=currentDry(),a=currentAccount(),phase=dispatch?.dispatch?.phase;
     config.disabled=blocked||!s.canManage;sources.disabled=blocked||!s.canManage||!s.project;sourceMore.disabled=blocked||!s.canManage||!sourceCursors.some(Boolean)||dryRows.length>=500||accountRows.length>=500;
     for(const select of [profile,dryRun,account])select.disabled=blocked||!s.canManage;
-    const tiktok=p?.target.platform==='tiktok';scheduled.disabled=blocked||!s.canManage||tiktok;scheduleLabel.hidden=scheduleHint.hidden=tiktok;
+    const tiktok=p?.target.platform==='tiktok',meta=['facebook','instagram_reels'].includes(p?.target.platform);scheduled.disabled=blocked||!s.canManage||tiktok||meta;scheduleLabel.hidden=scheduleHint.hidden=tiktok||meta;
     accountCaption.textContent=tiktok?'Draft TikTok đã duyệt cho video này':'Xác minh tài khoản hiện tại';sources.textContent=tiktok?'Đọc video và draft TikTok':'Đọc video và xác minh tài khoản';
     create.disabled=blocked||!ready({...s,busy:false})||p?.status!=='CONFIGURED'||vault?.status!=='CONFIGURED'||!d||!a;
     history.disabled=blocked||!s.project;more.disabled=blocked||!cursor||rows.length>=500;read.disabled=blocked||!selected;
     const mutate=!blocked&&ready({...s,busy:false})&&current(s),remote=!blocked&&remoteReady({...s,busy:false});
     approve.disabled=!mutate||selected?.status!=='awaiting_publish_approval'||!ack.checked;
     const thumbnailUnknown=['dispatch_intent','outcome_unknown'].includes(dispatch?.thumbnail_stage?.status);
-    renew.disabled=!(mutate||remote)||thumbnailUnknown||!['queued','review_required'].includes(selected?.status)||!['prepared','uploading','reconciliation_required','uploaded'].includes(phase)||!ack.checked;
+    renew.disabled=!(mutate||remote)||thumbnailUnknown||!['queued','review_required'].includes(selected?.status)||!(isMetaPublication(selected)?['prepared',...metaPollPhases]:['prepared','uploading','reconciliation_required','uploaded']).includes(phase)||!ack.checked;
     cancel.disabled=!mutate||!(['awaiting_publish_approval','not_configured'].includes(selected?.status)||['queued','review_required'].includes(selected?.status)&&phase==='prepared'&&dispatch?.dispatch.private_session_ref===null);
     revoke.disabled=blocked||!s.canManage||!s.project||!selected?.approval_id||!['queued','running','review_required'].includes(selected?.status);
     ack.disabled=!(mutate||remote)||!['awaiting_publish_approval','queued','review_required'].includes(selected?.status);
     sendAck.disabled=!(mutate||remote)||selected?.status!=='queued'||!dispatch;
     const delayed=Boolean(dispatch?.retry_not_before&&Date.parse(dispatch.retry_not_before)>Date.now());
-    step.disabled=!(mutate||remote&&phase==='reconciliation_required')||!sendAck.checked||selected?.status!=='queued'||!['prepared','uploading','reconciliation_required'].includes(phase)||delayed;
-    poll.disabled=!(mutate||remote)||thumbnailUnknown||!sendAck.checked||selected?.status!=='queued'||phase!=='uploaded'||delayed;
+    step.disabled=!(mutate||remote&&(isMetaPublication(selected)||phase==='reconciliation_required'))||!sendAck.checked||selected?.status!=='queued'||!sendPhases().includes(phase)||!mediaReady()||delayed;
+    poll.disabled=!(mutate||remote)||thumbnailUnknown||!sendAck.checked||selected?.status!=='queued'||!pollPhases().includes(phase)||delayed;
     poll.textContent=dispatch?.thumbnail_stage?.status==='not_started'?'Gửi thumbnail đã duyệt':'Đọc xử lý tại nền tảng';
   }
   function render(){list.replaceChildren();for(const r of rows){const b=button(`${r.snapshot.target.platform} · ${r.mock?'Mô phỏng':'API thật'} · ${r.snapshot.metadata?.title??r.publication_id} · ${r.status}`,'row-'+r.publication_id,'read');
@@ -76,6 +81,8 @@ export function initializeNativeOfficialPublications({api,getState,root=document
       `${selected.mock?'Mô phỏng':'API thật'} · ${selected.status} · ${dispatch?.dispatch?.phase??'Đọc trạng thái trước khi gửi bước tiếp theo.'}`):`${profiles.length} cấu hình đã đọc. Tự động đăng đang tắt.`;
     if(dispatch?.retry_not_before)status.textContent+=' · Có thể thử lại sau '+dispatch.retry_not_before;
     if(selected?.snapshot.target.platform==='tiktok'&&selected.receipt)status.textContent+=' · '+(selected.receipt.privacy_level==='SELF_ONLY'?'Chỉ mình tôi; không có ID công khai.':selected.receipt.public_post_ids.length?'ID công khai: '+selected.receipt.public_post_ids.join(', '):'Chưa có ID công khai.');
+    if(isMetaPublication(selected)&&selected.snapshot.execution_supported===false)status.textContent+=' · Bản review cũ chỉ lưu lịch sử; cần cấu hình v2 và một yêu cầu mới để gửi.';
+    if(isMetaPublication(selected)&&selected.snapshot.execution_supported&&!mediaReady())status.textContent+=' · Duyệt giao media và chọn đúng bản media ở thẻ bên dưới trước khi gửi.';
     if(originalJob()&&!current(getState()))status.textContent+=' · Theo dõi job gốc của phiên bản '+selected.snapshot.project_revision+'.';
     ackCaption.textContent=selected?.mock?'Tôi duyệt riêng luồng mô phỏng này; chưa đăng thật.':'Tôi duyệt xuất bản qua API thật tới tài khoản và video đã chọn.';
     sendCaption.textContent=selected?.mock?'Tôi cho phép thực hiện một bước mô phỏng.':'Tôi cho phép gửi một bước hoặc đọc xử lý qua API thật.';
@@ -86,6 +93,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
       scope=next;generation++;profiles=[];vault=null;dryRows=[];accountRows=[];rows=keep?rows:[];selected=keep?selected:null;dispatch=keep?dispatch:null;cursor=null;sourceCursors=[null,null];
       for(const select of [profile,dryRun,account]){select.replaceChildren();select.value='';}scheduled.value='';ack.checked=false;sendAck.checked=false;}render();}
   function validateProfile(p){const s=getState(),t=p?.target;
+    if(['native-official-meta-publishing-factory-v1','native-official-meta-publishing-factory-v2'].includes(p?.schema_version))return validateMetaPublishingFactory(p,s.workspace_id);
     if(p?.schema_version==='native-official-tiktok-publishing-factory-v1')return validateTikTokPublishingFactory(p,s.workspace_id);
     if(p?.schema_version!=='native-official-publishing-factory-v1'||t?.workspace_id!==s.workspace_id||t.platform!=='youtube'||t.provider_key!=='youtube-data-api-publishing'
       ||!/^ppf_[A-Za-z0-9_-]{4,60}$/.test(t.profile_id??'')||!Number.isInteger(t.profile_version)||t.profile_version<1||!sha(t.credential_binding_sha256)
@@ -94,6 +102,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
       ||p.token_returned!==false||p.automatic_publishing!==false||p.credential_verified!==false||typeof p.external_actions_enabled!=='boolean'||p.mock&&p.external_actions_enabled
       ||!['publish_enabled','external_execution_enabled','owner_gate_enabled'].every(k=>typeof p.gates?.[k]==='boolean')||p.status==='CONFIGURED'&&!Object.values(p.gates).every(v=>v===true))throw new Error('Cấu hình xuất bản không đúng không gian.');return p;}
   function validateRow(r){const s=getState(),x=r?.snapshot;
+    if(isMetaPublication(r))return validateMetaPublication(r,s);
     if(x?.schema_version==='native-official-tiktok-publication-snapshot-v1')return validateTikTokPublication(r,s);
     if(r?.schema_version!=='native-official-publication-v1'||!nopu(r.publication_id)||r.workspace_id!==s.workspace_id||r.project_id!==s.project?.id||!sha(r.snapshot_sha256)||!sha(r.request_fingerprint)
       ||typeof r.mock!=='boolean'||r.token_returned!==false||x?.workspace_id!==s.workspace_id||x.project_id!==s.project.id||x.mock!==r.mock||!sha(x.final_sha256)||!sha(x.configuration_sha256)
@@ -103,6 +112,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
     if(r.receipt&&(r.receipt.mock!==r.mock||r.receipt.external_action!==!r.mock||r.receipt.mode!=='live'||r.receipt.platform!=='youtube'||r.receipt.provider_key!=='youtube-data-api-publishing'
       ||r.receipt.request_fingerprint!==r.request_fingerprint||r.receipt.remote_url!==null||!/^[A-Za-z0-9_-]{11}$/.test(r.receipt.remote_post_id??'')))throw new Error('Bằng chứng xuất bản không hợp lệ.');validateOfficialThumbnailStage(r.thumbnail_stage,r);return r;}
   function validateDispatch(v,r){const s=getState(),d=v?.dispatch;
+    if(isMetaPublication(r))return validateMetaDispatch(v,r);
     if(r.snapshot.target.platform==='tiktok')return validateTikTokDispatch(v,r);
     if(v?.schema_version!=='native-official-publish-dispatch-v1'||v.workspace_id!==s.workspace_id||v.project_id!==s.project?.id||v.publication_id!==r.publication_id||v.snapshot_sha256!==r.snapshot_sha256
       ||v.mock!==r.mock||v.token_returned!==false||v.session_uri_returned!==false||v.published!==r.published||v.mock_publication_complete!==r.mock_publication_complete
@@ -119,7 +129,8 @@ export function initializeNativeOfficialPublications({api,getState,root=document
   function sourceOptions(){const p=currentProfile(),s=getState();if(p?.target.platform==='tiktok'){
       setOptions(account,accountRows.filter(r=>tikTokSourceMatches(r,null,p,s)),r=>r.draft_id,r=>r.snapshot.request.metadata.title+' · '+r.snapshot.request.choices.privacy_level);
       const draft=currentAccount();setOptions(dryRun,dryRows.filter(r=>draft&&tikTokSourceMatches(draft,r,p,s)),r=>r.publication_id,r=>r.snapshot.request.metadata.title);return;}
-    setOptions(dryRun,dryRows.filter(r=>r.status==='dry_run_succeeded'&&r.snapshot.request.revision===s.project?.revision&&r.snapshot.request.platform==='youtube'),r=>r.publication_id,r=>r.snapshot.request.metadata.title);
+    setOptions(dryRun,dryRows.filter(r=>r.status==='dry_run_succeeded'&&r.snapshot.request.revision===s.project?.revision&&r.snapshot.request.platform===p?.target.platform),r=>r.publication_id,r=>r.snapshot.request.metadata.title);
+    if(['facebook','instagram_reels'].includes(p?.target.platform)){setOptions(account,accountRows.filter(r=>['facebook','instagram_reels'].includes(r.snapshot?.target?.platform)&&metaSourceMatches(r,currentDry(),p,s)),r=>r.check_id,r=>r.snapshot.target.target_account_id+' · '+r.check_id);return;}
     setOptions(account,accountRows.filter(r=>r.status==='succeeded'&&r.snapshot.project_revision===s.project?.revision&&r.snapshot.mock===p?.mock&&targetSame(r.snapshot.target,p?.target)),r=>r.check_id,r=>r.snapshot.target.target_account_id+' · '+r.check_id);}
   const readConfig=()=>invoke(async s=>{if(!s.canManage)throw new Error('Chỉ chủ không gian được đọc cấu hình xuất bản.');const v=await api('/api/connections/official-publishing');
     if(v?.schema_version!=='native-official-publishing-factories-v1'||v.workspace_id!==s.workspace_id||v.automatic_publishing!==false||v.token_returned!==false||v.separate_owner_publish_approval_required!==true
@@ -137,7 +148,7 @@ export function initializeNativeOfficialPublications({api,getState,root=document
         if(i===0&&r.status==='dry_run_succeeded'&&(!sha(r.request_fingerprint)||r.receipt?.request_fingerprint!==r.request_fingerprint||r.receipt.mode!=='dry_run'||r.receipt.mock!==true
           ||r.receipt.external_action!==false||r.receipt.provider_key!=='mock-publishing'||r.receipt.remote_post_id!==null||r.receipt.remote_url!==null))throw new Error('Bằng chứng mô phỏng nguồn không hợp lệ.');
         if(i===1&&(r.schema_version!=='native-official-account-check-v1'||!/^nack_[a-f0-9]{32}$/.test(r.check_id??'')||r.token_returned!==false||r.publishing_enabled!==false||typeof r.snapshot?.mock!=='boolean'
-          ||r.status==='succeeded'&&(r.result?.account_match!==true||r.result.read_only!==true||r.result.mock!==r.snapshot.mock||r.result.external_call!==!r.snapshot.mock)))throw new Error('Nguồn xác minh tài khoản không hợp lệ.');}return v.items;});
+          ||r.status==='succeeded'&&(r.result?.account_match!==true||r.result.read_only!==true||r.result.mock!==r.snapshot.mock||r.result.external_call!==!r.snapshot.mock)))throw new Error('Nguồn xác minh tài khoản không hợp lệ.');if(i===1&&['facebook','instagram_reels'].includes(r.snapshot?.target?.platform))validateMetaAccountRow(r,s);}return v.items;});
     return()=>{dryRows=[...new Map([...(next?dryRows:[]),...values[0]].map(r=>[r.publication_id,r])).values()].slice(0,500);accountRows=[...new Map([...(next?accountRows:[]),...values[1]].map(r=>[tiktok?r.draft_id:r.check_id,r])).values()].slice(0,500);
       sourceCursors=pages.map((v,i)=>v?v.next_cursor:sourceCursors[i]);sourceOptions();};});
   const readHistory=(next=false)=>invoke(async s=>{if(!s.project)throw new Error('Chọn dự án để đọc lịch sử.');if(next&&!cursor)return()=>{};
@@ -148,12 +159,14 @@ export function initializeNativeOfficialPublications({api,getState,root=document
   const readState=()=>invoke(async s=>{if(!selected)throw new Error('Chọn yêu cầu để đọc trạng thái.');const identity=selected.publication_id;
     const r=validateRow(await api(endpoint(s)+'/'+identity)),d=validateDispatch(await api(endpoint(s)+'/'+identity+'/state'),r);
     return()=>{selected=r;dispatch=d;rows=rows.map(v=>v.publication_id===identity?r:v);ack.checked=false;sendAck.checked=false;};});
-  const execute=action=>invoke(async s=>{const remote=remoteReady(s)&&(['renew','poll'].includes(action)||action==='step'&&dispatch.dispatch.phase==='reconciliation_required');
+  const execute=action=>invoke(async s=>{const remote=remoteReady(s)&&(['renew','poll'].includes(action)||action==='step'&&(isMetaPublication(selected)||dispatch.dispatch.phase==='reconciliation_required'));
     if(action==='revoke'?!s.canManage||!s.project:!ready(s)&&!remote)throw new Error('Lưu dự án, chờ xử lý và dùng quyền chủ không gian.');let path=endpoint(s),body,key=null,identity=selected?.publication_id;
     if(!['create','approve','renew','revoke','cancel','step','poll'].includes(action))throw new Error('Thao tác xuất bản không hợp lệ.');
     if(action==='create'){const p=currentProfile(),d=currentDry(),a=currentAccount();if(p?.status!=='CONFIGURED'||vault?.status!=='CONFIGURED'||!d||!a)throw new Error('Chọn cấu hình, video đã kiểm tra và xác minh tài khoản hiện tại.');
       if(p.target.platform==='tiktok'){if(!tikTokSourceMatches(a,d,p,s)||scheduled.value)throw new Error('Chọn đúng draft/final/metadata đã duyệt; TikTok không nhận lịch thay thế ở bước này.');
         body={schema_version:'native-official-tiktok-publication-request-v1',revision:s.project.revision,dry_run_publication_id:d.publication_id,expected_dry_run_snapshot_sha256:d.snapshot_sha256,creator_draft_id:a.draft_id,expected_creator_draft_snapshot_sha256:a.snapshot_sha256,profile_id:p.target.profile_id,expected_configuration_sha256:p.configuration_sha256};}
+      else if(['facebook','instagram_reels'].includes(p.target.platform)){if(!metaSourceMatches(a,d,p,s)||scheduled.value)throw new Error('Chọn đúng video, Page/Instagram và metadata đã kiểm tra; lịch thay thế chưa được hỗ trợ.');
+        body={schema_version:'native-official-meta-publication-request-v'+(p.execution_supported?'2':'1'),revision:s.project.revision,dry_run_publication_id:d.publication_id,expected_dry_run_snapshot_sha256:d.snapshot_sha256,account_check_id:a.check_id,expected_account_check_snapshot_sha256:a.snapshot_sha256,expected_account_result_sha256:a.result_sha256,profile_id:p.target.profile_id,expected_configuration_sha256:p.configuration_sha256,...(p.execution_supported?{expected_media_configuration_sha256:p.media_configuration_sha256}:{})};}
       else body={revision:s.project.revision,dry_run_publication_id:d.publication_id,expected_dry_run_snapshot_sha256:d.snapshot_sha256,account_check_id:a.check_id,profile_id:p.target.profile_id,expected_configuration_sha256:p.configuration_sha256};
       if(scheduled.value){const at=new Date(scheduled.value);
         if(!/^\d{4}-\d\d-\d\dT\d\d:\d\d(?::\d\d)?$/.test(scheduled.value)||!Number.isFinite(at.getTime())||at.getTime()-Date.now()<60000||d.snapshot.request.metadata.privacy!=='private')throw new Error('Chọn giờ tương lai còn ít nhất một phút và metadata private.');
@@ -165,15 +178,16 @@ export function initializeNativeOfficialPublications({api,getState,root=document
       if(action==='renew'||action==='step'||action==='poll'){if(!dispatch?.dispatch)throw new Error('Đọc trạng thái hiện tại trước.');body.expected_dispatch_version=dispatch.dispatch.version;}
       if(['renew','poll'].includes(action)&&['dispatch_intent','outcome_unknown'].includes(dispatch?.thumbnail_stage?.status))throw new Error('Kết quả gửi thumbnail chưa rõ. Cần kiểm tra riêng trước khi tiếp tục.');
       if(action==='step'||action==='poll'){const phase=dispatch?.dispatch?.phase;
-        if(!sendAck.checked||selected.status!=='queued'||action==='step'&&!['prepared','uploading','reconciliation_required'].includes(phase)||action==='poll'&&phase!=='uploaded')throw new Error('Cho phép riêng bước hợp lệ trong trạng thái hiện tại.');
+        if(!sendAck.checked||selected.status!=='queued'||action==='step'&&(!sendPhases().includes(phase)||!mediaReady())||action==='poll'&&!pollPhases().includes(phase))throw new Error('Cho phép riêng bước hợp lệ trong trạng thái hiện tại.');
         if(dispatch.retry_not_before&&Date.parse(dispatch.retry_not_before)>Date.now())throw new Error('Chờ thời điểm thử lại đã lưu.');}
     }
     if(action==='create'||action==='renew'){key=JSON.stringify([s.workspace_id,s.project.id,action,identity,body]);if(!keys.has(key))keys.set(key,uuid());body.request_key=keys.get(key);}
     try{const v=await api(path,body);
-      if(action!=='step')validateRow(v);
+      const stateResponse=action==='step'||action==='poll'&&isMetaPublication(selected);
+      if(!stateResponse)validateRow(v);
       if(key)keys.delete(key);
-      const r=action==='step'?validateRow(await api(endpoint(s)+'/'+identity)):v;
-      if(action==='step')validateDispatch(v,r);
+      const r=stateResponse?validateRow(await api(endpoint(s)+'/'+identity)):v;
+      if(stateResponse)validateDispatch(v,r);
       return()=>{selected=r;dispatch=null;rows=[r,...rows.filter(row=>row.publication_id!==r.publication_id)].slice(0,500);cursor=null;ack.checked=false;sendAck.checked=false;
         onMessage(action==='revoke'?'Đã dừng quyền gửi. Lịch sử và phiên tải được giữ; thao tác này không xóa bài tại nền tảng.':r.mock?'Đã lưu bước mô phỏng. Video chưa được đăng thật.':'Đã lưu kết quả. Đọc trạng thái trước khi thực hiện bước tiếp theo.');};
     }catch(error){if(action==='step'||action==='poll')dispatch=null;throw error;}});
@@ -181,5 +195,5 @@ export function initializeNativeOfficialPublications({api,getState,root=document
   for(const [control,action] of [[create,'create'],[approve,'approve'],[renew,'renew'],[cancel,'cancel'],[revoke,'revoke'],[step,'step'],[poll,'poll']])control.addEventListener('click',()=>execute(action));
   ack.addEventListener('change',controls);sendAck.addEventListener('change',controls);profile.addEventListener('change',()=>{generation++;dryRows=[];accountRows=[];sourceCursors=[null,null];selected=null;dispatch=null;scheduled.value='';sourceOptions();ack.checked=false;sendAck.checked=false;render();});
   for(const select of[dryRun,account])select.addEventListener('change',()=>{generation++;sourceOptions();ack.checked=false;sendAck.checked=false;controls();});sync();
-  return{sync,controls,readConfig,readSources,readHistory,readState,execute,isWorking:()=>working,currentBinding:()=>({publication:selected,dispatch})};
+  return{sync,controls,readConfig,readSources,readHistory,readState,execute,isWorking:()=>working,currentBinding:()=>({publication:selected,dispatch,media_selection:getMediaSelection()})};
 }

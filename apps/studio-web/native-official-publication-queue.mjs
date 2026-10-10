@@ -1,4 +1,5 @@
 // Separately approved finite queue plans; no auto-load, auto-approval or secret inputs.
+import {metaOriginalJob} from './native-meta-publication.mjs';
 export function initializeNativeOfficialPublicationQueue({api,getState,getBinding,root=document,onMessage=()=>{},onWorking=()=>{},uuid=()=>crypto.randomUUID()}){
   const card=root.getElementById('native-official-publication-queue-card');card.replaceChildren();
   const node=(tag,text,id)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(id)n.id='native-official-queue-'+id;return n;};
@@ -17,10 +18,13 @@ export function initializeNativeOfficialPublicationQueue({api,getState,getBindin
     b.publication?.publication_id,b.publication?.snapshot_sha256,b.publication?.approval_id]);};
   const base=s=>'/api/projects/'+s.project.id+'/official-publications/'+getBinding().publication.publication_id+'/queue';
   const ready=s=>s.canManage&&s.project&&!s.dirty&&!s.busy&&!s.active&&!s.project.archived;
+  const admissionReady=s=>{const b=getBinding(),p=b.publication,phase=b.dispatch?.dispatch?.phase,m=b.media_selection;
+    if(p?.snapshot.execution_supported===true&&['prepared','meta_created'].includes(phase)&&!(m?.binding?.publication_id===p.publication_id&&m.binding.snapshot_sha256===p.snapshot_sha256&&m.binding.approval_id===p.approval_id))return false;
+    return ready(s)&&p?.snapshot.project_revision===s.project?.revision||s.canManage&&s.project&&!s.busy&&!s.project.archived&&metaOriginalJob(p,b.dispatch);};
   function controls(){const s=getState(),b=getBinding(),blocked=working||s.busy,p=b.publication,d=b.dispatch?.dispatch;
     config.disabled=blocked||!s.canManage;history.disabled=blocked||!s.project||!p;more.disabled=blocked||!cursor||rows.length>=500;read.disabled=blocked||!selected;
-    for(const n of [start,deadline,max,interval,ack])n.disabled=blocked||!ready({...s,busy:false})||!p;
-    create.disabled=blocked||!ready({...s,busy:false})||!runtime?.enabled||p?.status!=='queued'||p?.snapshot.project_revision!==s.project?.revision||!p?.approval_id||!d||!ack.checked;
+    for(const n of [start,deadline,max,interval,ack])n.disabled=blocked||!admissionReady({...s,busy:false})||!p;
+    create.disabled=blocked||!admissionReady({...s,busy:false})||!runtime?.enabled||p?.status!=='queued'||!p?.approval_id||!d||!ack.checked;
     cancel.disabled=blocked||!s.canManage||!s.project||!selected||['completed','cancelled'].includes(selected.status);
   }
   function render(){const p=getBinding().publication;list.replaceChildren();for(const r of rows){const b=button(`${r.mock?'Mô phỏng':'API thật'} · ${r.status} · ${r.step_count}/${r.policy.request.max_steps}`,'row-'+r.plan_id);
@@ -55,7 +59,7 @@ export function initializeNativeOfficialPublicationQueue({api,getState,getBindin
     return()=>{rows=[...new Map([...(next?rows:[]),...values].map(v=>[v.plan_id,v])).values()].slice(0,500);selected=values[0]??null;cursor=r.next_cursor;};});
   const readState=()=>invoke(async s=>{if(!selected)throw new Error('Chọn kế hoạch.');const r=validate(await api(base(s)+'/'+selected.plan_id));return()=>{selected=r;rows=rows.map(v=>v.plan_id===r.plan_id?r:v);};});
   const createPlan=()=>invoke(async s=>{const b=getBinding(),p=b.publication,d=b.dispatch?.dispatch;
-    if(!ready(s)||!runtime?.enabled||!p||p.status!=='queued'||p.snapshot.project_revision!==s.project.revision||!p.approval_id||!d||!ack.checked)throw new Error('Lưu dự án, đọc trạng thái yêu cầu có quyền gửi và xác nhận kế hoạch riêng.');
+    if(!admissionReady(s)||!runtime?.enabled||!p||p.status!=='queued'||!p.approval_id||!d||!ack.checked)throw new Error('Lưu dự án, đọc trạng thái yêu cầu có quyền gửi và xác nhận kế hoạch riêng.');
     const date=v=>{if(!/^\d{4}-\d\d-\d\dT\d\d:\d\d(?::\d\d)?$/.test(v))throw new Error('Chọn giờ theo thiết bị.');const x=new Date(v);if(!Number.isFinite(x.getTime()))throw new Error('Giờ không hợp lệ.');return x;},at=date(start.value),end=date(deadline.value),count=Number(max.value),delay=Number(interval.value);
     if(at.getTime()<Date.now()||end<=at||!Number.isInteger(count)||count<1||count>100||!Number.isInteger(delay)||delay<30||delay>3600)throw new Error('Chọn thời gian tương lai và giới hạn hợp lệ trong thời hạn quyền gửi.');
     const body={expected_snapshot_sha256:p.snapshot_sha256,expected_dispatch_version:d.version,acknowledged_background_steps:true,max_steps:count,interval_seconds:delay,start_at:at.toISOString(),deadline:end.toISOString()},key=JSON.stringify([s.workspace_id,s.project.id,p.publication_id,body]);

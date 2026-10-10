@@ -3289,3 +3289,30 @@ EXTERNAL BLOCKERS: genuine storage/Meta credentials, permissions, app/version el
 OWNER ACTION REQUIRED: none for remaining safe work; listening/Phase10 UAT remains deferred and is not self-accepted. No real publish/deploy/paid approval is requested.
 
 NEXT WAVE: Studio Meta controls and platform analytics, then every remaining original Master Spec requirement and full A/B/C acceptance. PHASE10_TECHNICALLY_READY=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+
+## 2026-10-10 — Native Meta Studio and separate media consent checkpoint
+
+WAVE: 9 continuation, with Wave8/14 scoped platform dependencies.
+
+STATUS: component implementation/local/mock verification PASS; browser rendering BLOCKED_EXTERNAL; full wave and North Star remain PARTIAL.
+
+HEAD SHA: before commit3ccdd183082ac28a0e40d870161d52fa2cf04dc2; final exact pushed/sealed SHA is in recovery/20261007/meta-studio-preservation.json and meta-studio-program-state.json.
+
+CAPABILITIES COMPLETED: typed Meta source/configuration/v1-v2 history/job/receipt; shared Studio metadata review/Owner/send/status; separate bounded media disclosure/process/reconciliation/selection; initial send/queue media proof gates; finite queue consent; original-job actions after edits; scoped stale-response/role/private-field fences; legacy v1 dispatch blocked; existing timeline/YouTube/TikTok routes preserved; actual signed HTTP and two new-process keyless default-off UI history restores.
+
+CAPABILITIES PARTIAL: real browser/non-developer1366/1920/2560/Owner/media acceptance; genuine storage/Meta credentials/permissions/app/API version/cost/rights; platform analytics/multipart; every original Mode A/B/intelligence/generative/audio/multi-niche/trend/learning/Hub/retention/Windows/soak/isolation/Docker/full A/B/C acceptance. Counts5 REAL/58 PARTIAL/1 NOT_VERIFIED;59 broad groups unclosed.
+
+TESTS: full Studio619 PASS (1.8795661s), including19 new Meta/media/legacy cases; current Native HTTP20 PASS (71.070s). Earlier focused64/full618/619 runs overlap. No full Native/media/renderer/Docker regression claim.
+
+REAL PROVIDER TESTS:0. MOCK TESTS: actual signed human fixture/cookie/CSRF/local HTTP/SQLite/DPAPI/file bytes with explicit Meta/S3/platform/nonplayable media and fake DOM. Instagram25/Facebook21 UI API requests, manual3 steps/finite shared queue, one storage write and15 nullable costs each; separate legacy v1 and cold readonly UI5/6 HTTP GETs.
+
+EVIDENCE: NATIVE_META_STUDIO.md, north-star/meta-studio-evidence.json, meta-studio-flow-n3, retained logs, browser-block/shutdown/cleanup records, source checkpoint and preservation/recovery pair.
+
+REGRESSIONS: none observed in final related scope. Initial fixture rebind rejection is retained; corrected runtime startup passes. No accepted artifact was replaced; source seal freshly verifies15 originals. No historical-data deletion, main merge or production mutation.
+
+EXTERNAL BLOCKERS: Chrome net::ERR_BLOCKED_BY_CLIENT for the exact owned localhost URL; genuine provider/storage credentials, permissions/app/version eligibility, rights/cost, separate publishing enablement; actual browser/non-developer/Owner/genuine media and isolated production/Docker acceptance. No browser restriction was bypassed. These do not block remaining safe work.
+
+OWNER ACTION REQUIRED: none for remaining safe work; listening/Phase10 UAT remains deferred and is not self-accepted. No real publish/deploy/new paid approval is requested.
+
+NEXT WAVE: platform-specific analytics and multipart, then every original remaining Master Spec requirement and full A/B/C acceptance. PHASE10_TECHNICALLY_READY=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.

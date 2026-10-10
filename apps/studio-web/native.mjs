@@ -140,7 +140,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -235,6 +235,7 @@ if (typeof document !== "undefined") {
     googleAnalyticsSelectionUI?.controls();
     tiktokCreatorsUI?.controls();
     officialPublicationUI?.controls();
+    publishingMediaUI?.controls();
     officialQueueUI?.controls();
     officialAnalyticsUI?.controls();
     officialRefreshUI?.controls();
@@ -293,6 +294,7 @@ if (typeof document !== "undefined") {
     googleAnalyticsSelectionUI?.sync();
     tiktokCreatorsUI?.sync();
     officialPublicationUI?.sync();
+    publishingMediaUI?.sync();
     officialQueueUI?.sync();
     officialAnalyticsUI?.sync();
     officialRefreshUI?.sync();
@@ -500,7 +502,9 @@ if (typeof document !== "undefined") {
     if(session.capabilities?.native_official_publication_review===true){
       const official=await import('./native-official-publications.mjs');$('native-official-publications-card').hidden=false;
       officialPublicationUI=official.initializeNativeOfficialPublications({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,active:jobActive(project),
-        workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>{officialQueueUI?.sync();officialAnalyticsUI?.sync();officialRefreshUI?.sync();}});
+        workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>{publishingMediaUI?.sync();officialQueueUI?.sync();officialAnalyticsUI?.sync();officialRefreshUI?.sync();},getMediaSelection:()=>publishingMediaUI?.currentSelection()??null});
+      const publishingMedia=await import('./native-publishing-media.mjs');
+      publishingMediaUI=publishingMedia.initializeNativePublishingMedia({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialPublicationUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>officialPublicationUI?.controls()});
       const queue=await import('./native-official-publication-queue.mjs');$('native-official-publication-queue-card').hidden=false;
       officialQueueUI=queue.initializeNativeOfficialPublicationQueue({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),getBinding:()=>officialPublicationUI.currentBinding(),onMessage:message,onWorking:value=>{busy=value;controls();}});
