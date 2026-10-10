@@ -255,3 +255,6 @@ Waves5B/8/9 thumbnail rights HTTP/Studio: signed current-Owner trước body, de
 
 
 Waves5B/8/9 thumbnail metadata: exact original final/PNG/current finite Owner binding and separate source/voice/music rights, Studio explicit optional use/default off/new rights intent and late/form guards are implemented/local/mock tested (Native31, Studio522, retained24 signed HTTP/4 blocked publications/keyless new app exact). Source B-roll/music remain blocked even when thumbnail passes. Official thumbnail transport/intent/response/receipt and new full parent browser acceptance remain (IAB interrupted/unavailable and Chrome client blocks localhost; no bypass). Continue original gaps; no readiness promotion or real Owner/provider/deployment acceptance.
+
+
+Wave9 YouTube thumbnail protocol: pure official binary PNG/response binding and unknown/no-replay behavior implemented/mock tested; API59 PASS, original PNG/tree/database/journals exact in retained in-process rehearsal. Video upload guard is still enforced. Next durable per-publication intent/response/cost/receipt/current finite Owner/final/rights/identity/recovery integration before explicit configured real-provider acceptance. No readiness promotion; other original requirements continue.

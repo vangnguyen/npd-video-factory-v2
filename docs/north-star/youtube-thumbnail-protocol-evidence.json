@@ -1,0 +1,65 @@
+{
+  "schema_version": "north-star-youtube-thumbnail-protocol-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\youtube-thumbnail-protocol-regression-n3.log",
+      "sha256": "ad3624a5ef7418943acf70d9cbb104a91179b499ba6926616e6226b2cc4bee18",
+      "bytes": 101,
+      "passed": 59,
+      "new_cases": 24,
+      "seconds": 0.97
+    }
+  ],
+  "initial_assertion_log": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\youtube-thumbnail-protocol-regression-n2.log",
+    "sha256": "382e184bd8b63c01e1d9a3da5e171d5b19c8bc24f9bbc9d9ec5b64fa5f03f6b4",
+    "bytes": 1283
+  },
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\youtube-thumbnail-protocol-flow-n1\\evidence.json",
+    "sha256": "3c4fe4d4fec008e35265cdb5b1b62f814c70ea41e0f2df1bba4c818bfde9dafd",
+    "bytes": 1466
+  },
+  "acknowledgement": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\youtube-thumbnail-protocol-flow-n1\\acknowledgement.json",
+    "sha256": "12ad0de2c8b2148e46a8703007b07ad5cfbd6332947cbfdb734cac29d60b8f1a",
+    "bytes": 797
+  },
+  "uncertain_observations": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\youtube-thumbnail-protocol-flow-n1\\uncertain-observations.json",
+    "sha256": "240af1b669ed57cdbf90acad2b6cfc19b31491f506f596b36e3255e7946b8983",
+    "bytes": 314
+  },
+  "status": "PASS",
+  "source_sha256": {
+    "apps/api/app/youtube_thumbnail.py": "cc4bdaf513c7a8dd392798c4d96aa964104d891f3b56701bb6be491f4ea909d3",
+    "apps/api/tests/test_youtube_thumbnail.py": "b15ceeb12db5656370c62e8712e1a2c89dceed6b22f644d992e7373906431f9e",
+    "scripts/north_star_youtube_thumbnail_protocol.py": "f0e9a50bfbe3b7337a5d84b0b1df27febc2cb912cf9ddf4874b495ee1af21bd4"
+  },
+  "original_image": {
+    "sha256": "f25b3161f47cbf5587a8c593d021d05cb3ae4251589853a8e7f0d991cf9dac50",
+    "bytes": 28845,
+    "width": 540,
+    "height": 960
+  },
+  "original_fixture_tree_sha256": "d2cbc31870cfc45abaa83f3b2b2bb1b206454f232ec50d9d86ac9f467423ad22",
+  "original_source_database_media_journals_exact": true,
+  "successful_mock_posts": 1,
+  "uncertain_mock_posts": 2,
+  "automatic_replays": 0,
+  "dimensions_missing_are_null": true,
+  "response_bound_to_exact_outgoing_png_and_synthetic_video": true,
+  "default_live_transport_disabled": true,
+  "application_dispatch_integrated": false,
+  "durable_intent_response_integrated": false,
+  "official_thumbnail_transport_configured": false,
+  "external_calls": 0,
+  "paid_operations": 0,
+  "remote_image_bytes_verified": false,
+  "rights_independently_verified": false,
+  "publishing_authorized": false,
+  "live_credentials_read": false,
+  "real_provider_tested": false,
+  "owner_uat_accepted": false,
+  "production_deployed": false
+}

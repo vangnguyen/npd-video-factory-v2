@@ -1,6 +1,6 @@
 {
-  "head": "470528b51588ee7e1e32b7d8b54032e28abc9e8a",
-  "audited_at": "2026-10-10T01:39:09.725495+00:00",
+  "head": "a3e75b646f0d933626982e22371e19347fc7dc5a",
+  "audited_at": "2026-10-10T01:51:17.449747+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -778,6 +778,11 @@
     "scripts/north_star_publication_thumbnail.mjs": "f0a4018eb7071880adda624e50e6a366329d8afbbf0ba769d0a05dca4a5bf4b5",
     "docs/NATIVE_PUBLICATION_THUMBNAIL.md": "e069aebf050b9c70428ea40f825532355eeeb91ae480fccf038c7f336f58a06d",
     "docs/north-star/publication-thumbnail-evidence.json": "fa3533976650ddc220dc7d84ccbbd35c3aa1ca8d08c8b5643edd1c08a41d4086",
+    "apps/api/app/youtube_thumbnail.py": "cc4bdaf513c7a8dd392798c4d96aa964104d891f3b56701bb6be491f4ea909d3",
+    "apps/api/tests/test_youtube_thumbnail.py": "b15ceeb12db5656370c62e8712e1a2c89dceed6b22f644d992e7373906431f9e",
+    "scripts/north_star_youtube_thumbnail_protocol.py": "f0e9a50bfbe3b7337a5d84b0b1df27febc2cb912cf9ddf4874b495ee1af21bd4",
+    "docs/YOUTUBE_THUMBNAIL_PROTOCOL.md": "8efa1110cde17814cc9ff50cd8dfe92f0a5b73d0701ba2239e5a68c084bec437",
+    "docs/north-star/youtube-thumbnail-protocol-evidence.json": "e9027fe4281ff544e8aacbf1f535876b276b214832fd8c88cd7f2e0823126beb",
     "workflows/comfyui/manifest.json": "9af7ee958e3400c1821e3210a97605721238ee88da52191b88aeab91fa45bfda",
     "apps/api/app/media_generation_routes.py": "4245bad5a8d83f0f72b040b12b41456247f2fe96cfdd88addef3e200d17ec07a",
     "apps/api/tests/test_media_generation_routes.py": "06f8125846f0d380da8ca9f2560a612d7878caa0f1362e8c4be69739b6ac7604",
