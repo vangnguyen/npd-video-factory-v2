@@ -60,10 +60,15 @@ def catalog(store,project_id,workspace_id,*,caption_page=1):
             'transcript_id':current.transcript_id if current else None,'transcript_version':current.version if current else None,
             'analysis_sha256':analysis_sha,'word_timing_available':bool(current and any(s.words for s in current.segments))})
     tracks=[{k:copy.deepcopy(t[k]) for k in ('track_id','type','kind','label','locked','muted','disabled')} for t in (snapshot or {}).get('tracks',[])]
+    from .source_caption_mapping import video_assets
+    source_videos=video_assets(document,TimelineSnapshot.model_validate(snapshot)) if snapshot else []
+    video_choices=[{'asset_id':v['id'],'asset_sha256':v['sha256'],'filename':v['filename'],'duration_seconds':v['duration_seconds']} for v in source_videos]
     captions=[{'track_id':t['track_id'],'track_locked':t['locked'],'track_disabled':t['disabled'],
         'clip_id':c['clip_id'],'text':c['metadata'].get('subtitle_text',c['label']),
         'timeline_start':c['timeline_start'],'duration':c['duration'],'disabled':c['disabled'],
         'import_id':c['metadata'].get('native_media_import_id'),'native_asset_id':c['metadata'].get('native_asset_id'),
+        'source_video_asset_id':c['metadata'].get('source_video_mapping',{}).get('video_reference',{}).get('asset_id'),
+        'source_video_mapping_mode':('disabled' if t['disabled'] or c['disabled'] else 'human_layout' if t['track_id'] in (snapshot or {}).get('metadata',{}).get('narrated_caption_edited_tracks',[]) or any(v['metadata'].get('human_caption_edit') for v in t['clips']) else 'follow_video') if c['metadata'].get('source_video_mapping') else None,
         'has_word_timing':bool(c['metadata'].get('measured_source_words'))} for t in (snapshot or {}).get('tracks',[])
         if t['type']=='text' and t['kind']=='subtitles' for c in t['clips'] if c['kind']=='subtitle']
     captions.sort(key=lambda c:(c['timeline_start'],c['clip_id']));start=(caption_page-1)*PAGE_SIZE
@@ -73,6 +78,8 @@ def catalog(store,project_id,workspace_id,*,caption_page=1):
         'timeline_version':state['version'] if state else None,'timeline_sha256':state['sha256'] if state else None,
         'duration_seconds':snapshot['duration_seconds'] if snapshot else None,'assets':assets[:200],'assets_total':len(assets),'assets_truncated':len(assets)>200,
         'tracks':tracks,'captions':captions[start:start+PAGE_SIZE],'caption_page':caption_page,'caption_page_size':PAGE_SIZE,
+        'source_video_assets':video_choices[:200],'source_video_assets_total':len(video_choices),'source_video_assets_truncated':len(video_choices)>200,
+        'source_video_mapping_available':bool(video_choices),
         'captions_total':len(captions),'captions_has_next':start+PAGE_SIZE<len(captions),
         'imports':[{'import_id':v['import_id'],'operation':v['operation'],'asset_id':v['asset_id'],'asset_sha256':v['asset_sha256'],
             'result':copy.deepcopy(v['result']),'created_at':v['created_at'],'inherited':bool(v.get('inherited_original'))} for v in history[-50:]],
@@ -161,14 +168,22 @@ def _audio_captions(document,snapshot,payload,asset,metadata):
     _check_captions(snapshot)
     return track,transcript.model_dump(mode='json')
 
-def _save_import(store,con,project,snapshot,payload,operation,asset,result,*,cue_source_sha256=None,transcript_reference=None,waveform=None,actor_ref):
+def _request(payload):
+    # Absent new optional bindings must retain historical idempotency hashes.
+    body=payload.model_dump(mode='json',exclude={'request_key'})
+    for key in ('source_video_asset_id','source_video_asset_sha256'):
+        if body.get(key) is None:body.pop(key,None)
+    return body
+
+def _save_import(store,con,project,snapshot,payload,operation,asset,result,*,cue_source_sha256=None,transcript_reference=None,waveform=None,source_video_reference=None,actor_ref):
     history=list(records(project['document']).values())
     if len(history)>=LIMIT:raise WorkflowError('SOURCE_MEDIA_IMPORT_HISTORY_LIMIT')
-    identifier=result.pop('_import_id');body=payload.model_dump(mode='json',exclude={'request_key'})
+    identifier=result.pop('_import_id');body=_request(payload)
     row={'schema_version':SCHEMA,'import_id':identifier,'project_id':project['id'],'operation':operation,
         'asset_id':asset['id'],'asset_sha256':asset['sha256'],'asset_binding_sha256':digest(binding(asset)),
         'request_key_sha256':hashlib.sha256(payload.request_key.encode()).hexdigest(),'request':body,'request_sha256':digest(body),
         'result':result,'cue_source_sha256':cue_source_sha256,'transcript_reference':transcript_reference,'waveform':waveform,'created_at':now(),'actor_ref':actor_ref}
+    if source_video_reference is not None:row['source_video_reference']=copy.deepcopy(source_video_reference)
     row['sha256']=digest(row)
     for track in snapshot.tracks:
         for clip in track.clips:
@@ -178,11 +193,15 @@ def _save_import(store,con,project,snapshot,payload,operation,asset,result,*,cue
     return {'import_id':identifier,'operation':operation,'replayed':False,'asset_id':asset['id'],
         'asset_sha256':asset['sha256'],'request_sha256':row['request_sha256'],**copy.deepcopy(result)}
 
-def _prior(document,payload,operation):
+def _prior(document,payload,operation,*,root=None):
     key=hashlib.sha256(payload.request_key.encode()).hexdigest()
     row=next((r for r in records(document).values() if r.get('request_key_sha256')==key),None)
     if row:
-        if row['operation']!=operation or row['request_sha256']!=digest(payload.model_dump(mode='json',exclude={'request_key'})):raise WorkflowError('SOURCE_MEDIA_TRACK_IDEMPOTENCY_CONFLICT')
+        if row['operation']!=operation or row['request_sha256']!=digest(_request(payload)):raise WorkflowError('SOURCE_MEDIA_TRACK_IDEMPOTENCY_CONFLICT')
+        if row.get('source_video_reference'):
+            if root is None:raise WorkflowError('SOURCE_CAPTION_VIDEO_PHYSICAL_VERIFICATION_REQUIRED')
+            from .source_caption_mapping import verify_reference
+            verify_reference(document,row['source_video_reference'],root=root)
         return {'import_id':row['import_id'],'operation':operation,'replayed':True,'asset_id':row['asset_id'],
             'asset_sha256':row['asset_sha256'],'request_sha256':row['request_sha256'],**copy.deepcopy(row['result'])}
 
@@ -252,10 +271,10 @@ def add_audio(store,project_id,body,*,actor_ref,config=None):
 def add_subtitles(store,project_id,body,*,actor_ref):
     payload=_parse(Subtitles,body)
     with store.transaction() as con:
-        prior=_prior(store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone())['document'],payload,'subtitles')
+        prior=_prior(store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone())['document'],payload,'subtitles',root=store.root)
         if prior:return prior
         project,snapshot=_snapshot(store,con,project_id,payload);asset,path=_asset(store,project['document'],payload,'subtitle')
-        if not is_auto_edit(project['document']) and payload.timebase=='source':
+        if not is_auto_edit(project['document']) and payload.timebase=='source' and payload.source_video_asset_id is None:
             raise WorkflowError('NARRATED_MEDIA_SOURCE_TIME_REQUIRES_EXPLICIT_VIDEO_MAPPING',400)
         from .multipart_ingestion import subtitle_cues,CHUNK_BYTES
         if path.stat().st_size>CHUNK_BYTES:raise WorkflowError('SOURCE_MEDIA_TRACK_SUBTITLE_SIZE_INVALID',400)
@@ -263,6 +282,20 @@ def add_subtitles(store,project_id,body,*,actor_ref):
         if digest(cues)!=digest(asset['cues']):raise WorkflowError('SOURCE_MEDIA_TRACK_CUES_CHANGED')
         _style(snapshot,payload.subtitle_template_ref);track=_track(snapshot,payload.replace_track_id,'subtitles',replace=True)
         identifier='smi_'+uuid.uuid4().hex[:24];clipped=0;dropped=0;mapped=0
+        if payload.source_video_asset_id is not None:
+            if is_auto_edit(project['document']):raise WorkflowError('SOURCE_CAPTION_EXPLICIT_VIDEO_MAPPING_REQUIRES_NARRATED_MODE',400)
+            from .source_caption_mapping import reference,verify_reference,clips
+            ref=reference(project['document'],snapshot,payload.source_video_asset_id,payload.source_video_asset_sha256)
+            verify_reference(project['document'],ref,root=store.root)
+            track.clips,detail=clips(snapshot,cues,ref,identifier,asset,_request(payload))
+            if not track.clips:raise WorkflowError('SOURCE_MEDIA_TRACK_NO_CAPTIONS_IN_WINDOW',400)
+            # An explicit full source import replaces the manual layout decision
+            # of this track; old snapshots and import records remain immutable.
+            edited=snapshot.metadata.get('narrated_caption_edited_tracks',[])
+            if track.track_id in edited:snapshot.metadata['narrated_caption_edited_tracks']=[v for v in edited if v!=track.track_id]
+            _check_captions(snapshot)
+            result={'_import_id':identifier,'track_id':track.track_id,'clip_ids':[c.clip_id for c in track.clips],**detail}
+            return _save_import(store,con,project,snapshot,payload,'subtitles',asset,result,cue_source_sha256=digest(cues),source_video_reference=ref,actor_ref=actor_ref)
         windows=[c for t in snapshot.tracks if t.type=='video' and t.kind=='source' and not t.disabled for c in t.clips if not c.disabled]
         for ordinal,cue in enumerate(cues):
             intervals=[(cue['start'],cue['end'],cue['start'],cue['end'])] if payload.timebase=='timeline' else [

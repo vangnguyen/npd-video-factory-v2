@@ -57,11 +57,18 @@ class Subtitles(Binding):
     trim_to_timeline:StrictBool=False
     replace_track_id:str|None=Field(default=None,pattern=TRACK)
     subtitle_template_ref:str=Field(min_length=1,max_length=100)
+    source_video_asset_id:str|None=Field(default=None,pattern=ASSET)
+    source_video_asset_sha256:str|None=Field(default=None,pattern=SHA)
     @field_validator('offset_seconds',mode='before')
     @classmethod
     def finite(cls,v):
         if type(v) not in (int,float) or not math.isfinite(v):raise ValueError('Finite offset required')
         return v
+    @model_validator(mode='after')
+    def source_binding(self):
+        if (self.source_video_asset_id is None)!=(self.source_video_asset_sha256 is None):raise ValueError('Complete source video binding required')
+        if self.source_video_asset_id is not None and self.timebase!='source':raise ValueError('Video binding requires source timebase')
+        return self
 
 class CaptionEdit(StrictModel):
     clip_id:str=Field(pattern=r'^clip_[A-Za-z0-9_-]{4,60}$')

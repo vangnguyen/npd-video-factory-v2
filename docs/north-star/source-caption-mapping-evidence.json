@@ -1,0 +1,174 @@
+{
+  "schema_version": "north-star-source-caption-mapping-evidence-v1",
+  "recorded_at": "2026-10-10T21:06:49.532273+00:00",
+  "parent_head": "a8f1225d2d5fe76a60863d0222024f27e36b196b",
+  "implementation": {
+    "explicit_video_ID_and_SHA": true,
+    "SRT_and_video_provenance": true,
+    "actual_canonical_source_windows": true,
+    "trim_loop_reuse_and_speed_clock_transform": true,
+    "stable_numeric_metadata_serialization": true,
+    "derived_captions_reflow": true,
+    "human_track_layout_preserved": true,
+    "explicit_reimport_resets_manual_layout": true,
+    "locked_track_and_video_disappearance_review_fences": true,
+    "bounded_video_catalog_and_caption_labels": true,
+    "legacy_Source_and_timeline_request_hashes_preserved": true,
+    "physical_source_checks": true,
+    "source_video_retained_for_rights_gate": true,
+    "duplicate_variant_lineage_without_review_or_replay_authority": true,
+    "RBAC_CSRF_CAS_privacy_and_late_response_fences": true,
+    "no_inferred_word_alignment": true,
+    "original_measured_audio_and_import_history_preserved": true
+  },
+  "tests": {
+    "Native_related": 248,
+    "Native_related_modules": 31,
+    "Native_related_seconds": 482.246,
+    "Native_final_mapping_editor_HTTP": 38,
+    "Native_final_modules": 4,
+    "Native_final_seconds": 112.477,
+    "new_Native_final_included": 18,
+    "Studio": 685,
+    "Studio_files": 82,
+    "new_Studio_included": 8,
+    "counts_overlap_do_not_add": true,
+    "related_suite_started_before_final_manual_reimport_guard": true,
+    "final_guard_targeted_tests_after_changes": true,
+    "Native_related_log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-caption-mapping-native-final-n1.log",
+      "sha256": "ea53ab714f00703ecd2a5f5f5e2fd3ed46a3be22c33f38e3c7e616c0a74b3591",
+      "bytes": 105
+    },
+    "Native_final_log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-caption-mapping-current-final-n1.log",
+      "sha256": "17373b74edfa84fa28c6196dabaf95a99b42e0f5ba21f47c2c23abe92764799e",
+      "bytes": 104
+    },
+    "Studio_log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-caption-mapping-studio-final-n1.log",
+      "sha256": "dcba92abce4e89bdbe6cf46e49d0d4bb3da94cf6b946608b5133b93a0368b6a5",
+      "bytes": 70740
+    }
+  },
+  "bundle": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-video-captions-n1",
+    "receipt": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-video-captions-n1\\evidence.json",
+      "sha256": "aacf7c94b9a077214c4cb7357a6e081670b13d993309395072d606a739c4c345",
+      "bytes": 9067
+    },
+    "export_count": 68,
+    "bytes": 61293458,
+    "final_sha256": "56a8ebbf64cc916ad54cc836a096f0b8806701d24e95e84fba70799e5dfc61a6",
+    "preview_sha256": "56a8ebbf64cc916ad54cc836a096f0b8806701d24e95e84fba70799e5dfc61a6",
+    "timeline_sha256": "8ea7868b13c0a6013309f020da6651eb521ff641f62534b9483dbd95f6b65ea3",
+    "canonical_timeline_sha256": "cc144b5e63911aa1227c42d31da45273c5ddc532830ea3829619b36f473bb026",
+    "PCM_sha256": "50be60869634d70ea26f51a1989e1ef4113b3e881ccf9eb2ca82eeabc8a034bd",
+    "ASS_sha256": "dab08df61b73ccd1f939964c6ea46e2a596659bc91271db8b547446f66af0df3",
+    "backup_sha256": "a50aa0885149ab4d2e40f45b30cb0990fcf8c0a91c2fa5f20e173a297a498b33",
+    "source_media_controller_HTTP_requests": 6,
+    "canonical_editor_controller_HTTP_requests": 9,
+    "explicit_follow_video_reimport_via_service_not_HTTP": true,
+    "fake_DOM": true,
+    "synthetic_moving_video_and_PCM": true,
+    "no_genuine_ASR_or_TTS_acceptance": true,
+    "captions_after_reflow": [
+      [
+        0,
+        0.5
+      ],
+      [
+        0.6,
+        1.5
+      ],
+      [
+        1.7,
+        2.6
+      ],
+      [
+        2.9,
+        3.3
+      ]
+    ],
+    "QC": {
+      "status": "passed",
+      "duration_seconds": 3.3,
+      "width": 1080,
+      "height": 1920,
+      "fps": 30.0,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "audio_peak_db": -12.7,
+      "av_sync_delta_seconds": 0.0,
+      "black_frame_seconds": 0,
+      "freeze_frame_seconds": 0,
+      "silence_seconds": 0,
+      "broken_frames": 0
+    },
+    "subtitle_bounds": {
+      "status": "passed",
+      "cue_count": 4,
+      "sample_count": 4,
+      "word_alignment_claimed": false
+    },
+    "caption_PNG_visually_inspected": true,
+    "caption_PNG": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-video-captions-n1\\final-caption-frame.png",
+      "sha256": "c61e8d7bcfbd9d8ae09a3a1ec831b69d1e56a869796ef540f674f1591d2b3c91",
+      "bytes": 261784
+    },
+    "backup_restore_passed": true,
+    "final_download_blocked_without_final_review": true,
+    "source_originals_preserved": true,
+    "owned_new_temporary_data_cleaned_after_export": true
+  },
+  "cold_recovery": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-caption-mapping-cold-recovery-n2.json",
+    "sha256": "9e9f75409a501136b2cadec9882ee31e99e37af2e237b4b4480be25b5670e9b3",
+    "bytes": 4568
+  },
+  "cold_recovery_after_final_import_guard": true,
+  "controller_fixture": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-caption-mapping-controller-n2.json",
+    "sha256": "f31498c707e224108eb26ed5662686d06986bd3c4090ed066b3c3ed86056135d",
+    "bytes": 82594
+  },
+  "classifications": {
+    "groups": 64,
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed_groups": 59
+  },
+  "acceptance": {
+    "component_implemented": true,
+    "mock_tested": true,
+    "local_real_media_HTTP_render_and_restore_tested": true,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "Owner_UAT": false,
+    "browser_rendered": false,
+    "non_developer_UI_acceptance": false,
+    "genuine_speech_alignment_or_quality_acceptance": false,
+    "full_Mode_A_or_B_ready": false,
+    "full_bundles_A_B_C_accepted": false,
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  },
+  "provider_calls": 0,
+  "paid_calls": 0,
+  "real_published": false,
+  "main_merged": false,
+  "live_source_modified": false,
+  "manual_historical_data_deleted": false,
+  "remaining": [
+    "generic storyboard video operations",
+    "full Mode A/B browser/non-developer/Owner acceptance",
+    "genuine spoken-source/provider/rights acceptance",
+    "Meta analytics",
+    "every original remaining North Star capability and complete A/B/C acceptance"
+  ]
+}

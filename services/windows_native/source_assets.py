@@ -14,6 +14,9 @@ def canonical_assets(document):
 
 def used_timeline_asset_ids(timeline):
     # Caption clips render as text. Uploaded cue/ASR origins still require rights.
-    return {clip.get('metadata',{}).get('native_asset_id') for track in timeline['tracks'] if not track['disabled']
+    primary={clip.get('metadata',{}).get('native_asset_id') for track in timeline['tracks'] if not track['disabled']
         for clip in track['clips'] if not clip['disabled'] and (clip.get('asset_id') or
             clip['kind']=='subtitle' and clip.get('metadata',{}).get('native_media_import_id'))}
+    mapped={clip.get('metadata',{}).get('source_video_mapping',{}).get('video_reference',{}).get('asset_id') for track in timeline['tracks'] if not track['disabled']
+        for clip in track['clips'] if not clip['disabled'] and clip.get('metadata',{}).get('source_video_mapping')}
+    return primary|mapped

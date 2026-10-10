@@ -25,7 +25,7 @@ Backup/restore trong tiến trình riêng không cần secret giữ đúng histo
 
 PCM, lời nói, người duyệt và word timestamps của phép thử là fixture tổng hợp; hình là fixture minh họa. Không chứng minh chất lượng giọng nói, nhận diện lời thật, provider thật, rights/legal thật, browser, thao tác của người không lập trình hay Owner UAT. Không phát sinh paid/provider call, xuất bản thật, merge main hoặc deploy production.
 
-Mode A/B đầy đủ và các bundle A/B/C vẫn chưa được nghiệm thu. Các thao tác video storyboard tổng quát, mapping phụ đề theo footage trong Mode A, provider/media/analytics còn thiếu và các cổng nghiệm thu ban đầu vẫn thuộc kế hoạch North Star. Ma trận vẫn là 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED; không suy ra tỷ lệ hoàn thành từ số nhóm này.
+Mode A/B đầy đủ và các bundle A/B/C vẫn chưa được nghiệm thu. Mapping phụ đề theo video nguồn trong Mode A đã có phần bổ sung được kiểm chứng tại máy: [NATIVE_SOURCE_VIDEO_CAPTIONS.md](NATIVE_SOURCE_VIDEO_CAPTIONS.md). Các thao tác video storyboard tổng quát, provider/media/analytics còn thiếu và các cổng nghiệm thu ban đầu vẫn thuộc kế hoạch North Star. Ma trận vẫn là 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED; không suy ra tỷ lệ hoàn thành từ số nhóm này.
 
 Kiểm tra cuối: Studio 677 PASS; Native related 244 PASS (29 module); thêm 20 PASS cho editor/HTTP sau sửa kiểm tra lời đọc. Các tập Native có giao nhau, không cộng số lượng. Bộ hồi quy bắt đầu trước sửa cuối trong module editor; toàn bộ editor/HTTP và bundle render/restore đã được chạy lại với mã nguồn cuối. Các bộ API/PostgreSQL/Docker/production tổng thể chưa được chứng nhận từ thành phần này.
 

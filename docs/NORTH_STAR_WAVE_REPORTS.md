@@ -3433,3 +3433,20 @@ EXTERNAL BLOCKERS: real providers/rights/Owner/browser/production remain separat
 OWNER ACTION REQUIRED: none for continuing safe implementation; UAT remains deferred by Owner.
 
 NEXT WAVE: remaining original Mode A/B footage mapping/video editing, Meta analytics and all original gap closures. No main merge, deployment or real publishing.
+
+
+## 2026-10-11 — Wave 3/6: Selected-video captions
+
+WAVE: 3/6 component increment; full waves remain PARTIAL.
+STATUS: IMPLEMENTED + LOCAL_REAL_TESTED + MOCK_TESTED; Owner/browser/provider/full Mode A/B acceptance remain separate.
+HEAD SHA: source parent a8f1225d2d5fe76a60863d0222024f27e36b196b; committed SHA is recorded in the external source-caption-mapping preservation/program-state records.
+CAPABILITIES COMPLETED: explicit selected-video/SRT hashes, canonical source-clock trim/loop/reuse mapping, derived reflow, preserved human layout, explicit reimport reset, locks/video-disappearance review, Source/timeline legacy request hashes, duplicate/variant provenance, publishing-rights source collection, signed Studio/API and local render/recovery component.
+CAPABILITIES PARTIAL: all original full Mode A/B and other North Star groups; 5 REAL / 58 PARTIAL / 1 NOT_VERIFIED, 59 unclosed.
+TESTS: Native related 248 PASS/31 modules/482.246s; final mapping/editor/HTTP 38 PASS/112.477s; Studio 685 PASS/82 files. Native counts overlap; related suite began before final reimport guard, then affected mapping/editor/HTTP and cold recovery were revalidated.
+REAL PROVIDER TESTS: none; external/paid operations 0. Genuine ASR/TTS/rights/speech/browser/non-developer/Owner acceptance not claimed.
+MOCK TESTS: synthetic video/PCM/human and fake DOM, controller runs over actual signed local HTTP; explicit new remapping import uses the service directly and is labelled separately.
+EVIDENCE: docs/NATIVE_SOURCE_VIDEO_CAPTIONS.md; docs/north-star/source-caption-mapping-evidence.json; recovery/20261007/native-source-video-captions-n1; source-caption-mapping-cold-recovery-n2.json. Actual 3.3s/1080x1920/30fps preview/final/FullQC; 6+9 controller requests; exact history and physical-source recovery.
+REGRESSIONS: related checks PASS; old accepted artifact/live-source hashes are freshly rechecked by the preservation seal. No source overwrite, main merge, real publication, paid call, production deployment or historical deletion.
+EXTERNAL BLOCKERS: unchanged genuine provider credentials/authorization, browser/client, rights and final Owner/production acceptance. No external blocker stops remaining safe work.
+OWNER ACTION REQUIRED: none for implementation; listening/Owner UAT remains deferred at Owner request.
+NEXT WAVE: continue generic storyboard video operations, Meta analytics and every original remaining safe North Star gap; keep full final A/B/C requirements and all acceptance gates.

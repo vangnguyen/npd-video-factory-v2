@@ -70,6 +70,9 @@ def preserve(value,document,canvas):
         if track.track_id=='trk_native_video':continue
         original=track
         track=track.model_copy(deep=True)
+        if track.type=='text' and track.kind=='subtitles' and any(c.metadata.get('source_video_mapping') for c in track.clips):
+            from .source_caption_mapping import reflow
+            track=reflow(document,snapshot,track,manual=track.track_id in metadata.get('narrated_caption_edited_tracks',[]))
         if track.track_id in {'trk_native_music','trk_narrated_legacy_music'}:
             imported=any(c.metadata.get('native_media_import_id') for c in track.clips)
             if imported and music_changed:raise WorkflowError('NARRATED_MEDIA_LEGACY_MUSIC_REPLACED_REVIEW_REQUIRED',400)

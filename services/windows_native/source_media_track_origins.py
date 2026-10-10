@@ -26,7 +26,7 @@ def records(document):
 
 def validate_timeline(document):
     rows=records(document);snapshot=(document.get('canonical_timeline') or {}).get('snapshot',{})
-    assets={v['id']:v for v in canonical_assets(document)};checked_transcripts=set()
+    assets={v['id']:v for v in canonical_assets(document)};checked_transcripts=set();mapping_cache={}
     for track in snapshot.get('tracks',[]):
         for clip in track['clips']:
             metadata=clip['metadata'];identifier=metadata.get('native_media_import_id')
@@ -41,6 +41,9 @@ def validate_timeline(document):
                     raise WorkflowError('SOURCE_MEDIA_IMPORT_CAPTION_INVALID')
                 if row['operation']=='subtitles' and (asset['kind']!='subtitle' or digest(asset.get('cues'))!=row.get('cue_source_sha256')):
                     raise WorkflowError('SOURCE_MEDIA_IMPORT_CAPTION_SOURCE_CHANGED')
+                if row.get('source_video_reference'):
+                    from .source_caption_mapping import validate
+                    validate(document,row,clip,snapshot,cache=mapping_cache)
                 if row['operation']=='audio' and not row.get('transcript_reference'):
                     raise WorkflowError('SOURCE_MEDIA_IMPORT_TRANSCRIPT_REQUIRED')
                 if row['operation']=='audio' and identifier not in checked_transcripts:
@@ -71,6 +74,9 @@ def verify_physical(root,document):
             if path.stat().st_size>CHUNK_BYTES or digest(subtitle_cues(path.read_bytes(),asset['source_mime']))!=row['cue_source_sha256']:
                 raise WorkflowError('SOURCE_MEDIA_IMPORT_CAPTION_BYTES_CHANGED')
         verified[asset['id']]=asset['sha256']
+        if row.get('source_video_reference'):
+            from .source_caption_mapping import verify_reference
+            video=verify_reference(document,row['source_video_reference'],root=root);verified[video['id']]=video['sha256']
     return verified
 
 def inherit(document,source_id,target_id,revision):
@@ -89,3 +95,11 @@ def inherit(document,source_id,target_id,revision):
         for clip in track['clips']:
             meta=clip['metadata'];new=mapping.get(meta.get('native_media_import_id'))
             if new:meta.update(native_media_import_id=new['import_id'],native_media_import_sha256=new['sha256'])
+    if any(r.get('source_video_reference') for r in changed):
+        from app.timeline_models import TimelineSnapshot
+        from .source_caption_mapping import reflow
+        snapshot=TimelineSnapshot.model_validate(document['canonical_timeline']['snapshot'])
+        for index,track in enumerate(snapshot.tracks):
+            if track.type=='text' and track.kind=='subtitles':
+                snapshot.tracks[index]=reflow(document,snapshot,track,manual=track.track_id in snapshot.metadata.get('narrated_caption_edited_tracks',[]))
+        document['canonical_timeline']['snapshot']=snapshot.model_dump(mode='json')

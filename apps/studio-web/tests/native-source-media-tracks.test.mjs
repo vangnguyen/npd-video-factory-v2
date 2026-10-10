@@ -2,6 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';import{read
 import{initializeSourceMediaTracks,validateSourceMediaTracks}from'../native-source-media-tracks.mjs';
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/native-source-media-tracks.json',import.meta.url),'utf8')),copy=v=>structuredClone(v);
 const narratedFixture=JSON.parse(readFileSync(new URL('./fixtures/native-narrated-media-tracks.json',import.meta.url),'utf8'));
+const mappedFixture=JSON.parse(readFileSync(new URL('./fixtures/native-source-caption-mapping.json',import.meta.url),'utf8'));
 function harness(page=fixture.initial){
   class Node{constructor(tag){this.tagName=tag.toUpperCase();this.children=[];this.listeners={};this.value='';this.checked=false;}
     append(...v){this.children.push(...v);}replaceChildren(...v){this.children=v;}addEventListener(k,fn){(this.listeners[k]??=[]).push(fn);}}
@@ -75,4 +76,55 @@ test('storyboard imported caption edit keeps Vietnamese text and cannot manufact
   const f=[...h.controller.fields.values()][0];f.text.value=narratedFixture.edited.captions[0].text;f.start.value='.2';f.duration.value='.7';f.text.listeners.input[0]();
   await h.controller.saveCaptionEdits();assert.equal(h.saved.length,1,JSON.stringify(h.messages));assert.equal(h.controller.currentBinding().captions[0].has_word_timing,false);assert.equal(h.state.dirty,false);
   for(const v of['external','mode-a-ready']){const bad=copy(narratedFixture.initial);bad.timeline_mode=v;assert.throws(()=>validateSourceMediaTracks(bad,h.state));}
+});
+
+test('actual source-video mapping HTTP fixture remains distinct from ASR, browser and Owner acceptance',()=>{
+  assert.equal(mappedFixture.source_video_mapping,true);assert.equal(mappedFixture.fake_DOM,true);assert.equal(mappedFixture.saved_ASR_fixture,false);assert.equal(mappedFixture.owner_UAT,false);assert.equal(mappedFixture.browser_rendered,false);assert.equal(mappedFixture.real_provider_calls,0);
+  for(const name of['initial','audio','music','subtitles','edited','reopened']){const v=mappedFixture[name];assert.equal(validateSourceMediaTracks(v,{workspace_id:v.workspace_id,project:{id:v.project_id,revision:v.revision}}),v);}
+  assert.equal(mappedFixture.subtitles.captions.length,4);assert.ok(mappedFixture.subtitles.captions.every(c=>c.source_video_mapping_mode==='follow_video'&&!c.has_word_timing));
+});
+
+test('source-clock storyboard import requires an explicit loaded video and binds both video and SRT hashes',async()=>{
+  const h=harness(mappedFixture.music);h.respond(async(path,body)=>copy(body?mappedFixture.subtitles:mappedFixture.music));await h.controller.load();
+  assert.equal(h.node('timebase').disabled,false);assert.equal(h.node('source-video').hidden,true);h.node('timebase').value='source';for(const f of h.node('timebase').listeners.change)f();
+  assert.equal(h.node('source-video').hidden,false);assert.equal(h.node('save-subtitle').disabled,true);await h.controller.applySubtitles();assert.equal(h.calls.length,1);assert.match(h.messages[0][0],/Chọn video/);
+  const video=mappedFixture.music.source_video_assets[0];h.node('source-video').value=video.asset_id;for(const f of h.node('source-video').listeners.change)f();await h.controller.applySubtitles();
+  assert.equal(h.saved.length,1,JSON.stringify(h.messages));const b=h.calls[1].body;assert.equal(b.source_video_asset_id,video.asset_id);assert.equal(b.source_video_asset_sha256,video.asset_sha256);assert.equal(b.timebase,'source');
+  assert.equal(b.timeline_sha256,mappedFixture.music.timeline_sha256);assert.equal(b.asset_id,mappedFixture.subtitles.mutation.asset_id);assert.equal(b.asset_sha256,mappedFixture.subtitles.mutation.asset_sha256);
+  assert.equal(h.state.dirty,false);assert.match(h.node('caption-rows').children[0].children[0].textContent,/theo các đoạn video nguồn/);
+});
+
+test('legacy Source mode and timeline-clock storyboard requests retain historical payloads without a video binding',async()=>{
+  for(const page of[fixture.audio,mappedFixture.music]){const h=harness(page);h.respond(async()=>copy(page));await h.controller.load();h.node('source-video').value='a'.repeat(32)+'.mp4';await h.controller.applySubtitles();
+    const body=h.calls[1].body;assert.equal(body.timebase,'timeline');assert.equal('source_video_asset_id'in body,false);assert.equal('source_video_asset_sha256'in body,false);}
+});
+
+test('foreign video hashes or mapping receipt schema never install a claimed successful source mapping',async()=>{
+  for(const change of[v=>v.mutation.source_video_asset_id='a'.repeat(32)+'.mp4',v=>v.mutation.source_video_asset_sha256='a'.repeat(64),v=>v.mutation.mapping_schema='unapproved']){
+    const h=harness(mappedFixture.music);await h.controller.load();h.node('timebase').value='source';h.node('source-video').value=mappedFixture.source_video_asset_id;const bad=copy(mappedFixture.subtitles);change(bad);h.respond(async()=>bad);
+    await h.controller.applySubtitles();assert.equal(h.saved.length,0);assert.match(h.messages[0][0],/Video ánh xạ/);}
+});
+
+test('bounded source-video DTO and honest caption mapping mode reject malformed, incomplete or private metadata',()=>{
+  const page=mappedFixture.subtitles,s={workspace_id:page.workspace_id,project:{id:page.project_id,revision:page.revision}};
+  for(const change of[v=>delete v.source_video_assets,v=>v.source_video_assets_total++,v=>v.source_video_mapping_available=false,v=>v.source_video_assets[0].asset_sha256='bad',
+    v=>v.source_video_assets.push(copy(v.source_video_assets[0])),v=>v.source_video_assets[0].duration_seconds=Infinity,v=>v.source_video_assets[0].access_token='NEVER',
+    v=>v.captions[0].source_video_mapping_mode='disabled',v=>v.captions[0].source_video_mapping_mode='AI-aligned',v=>v.captions[0].source_video_asset_id=null]){const bad=copy(page);change(bad);assert.throws(()=>validateSourceMediaTracks(bad,s));}
+});
+
+test('caption cards disclose manual positions and keep source evidence without claiming word alignment',async()=>{
+  const h=harness(mappedFixture.edited);await h.controller.load();assert.match(h.node('caption-rows').children[0].children[0].textContent,/vị trí thủ công/);
+  assert.ok(h.controller.currentBinding().captions.every(c=>c.source_video_mapping_mode==='human_layout'&&!c.has_word_timing));
+});
+
+test('project changes discard selected video and late mapping response without carrying old source text into a new project',async()=>{
+  const h=harness(mappedFixture.music);await h.controller.load();h.node('timebase').value='source';h.node('source-video').value=mappedFixture.source_video_asset_id;
+  let resolve;h.respond(()=>new Promise(r=>{resolve=r;}));const save=h.controller.applySubtitles();await Promise.resolve();h.state.project={id:'a'.repeat(32),revision:1};h.controller.sync();
+  assert.equal(h.node('source-video').children.length,0);assert.equal(h.controller.fields.size,0);resolve(copy(mappedFixture.subtitles));await save;assert.equal(h.controller.currentBinding(),null);assert.equal(h.saved.length,0);
+});
+
+test('lost source mapping response retains the exact frozen source-video, SRT and timeline request binding on retry',async()=>{
+  const h=harness(mappedFixture.music);await h.controller.load();h.node('timebase').value='source';h.node('source-video').value=mappedFixture.source_video_asset_id;let lost=false;
+  h.respond(async()=>{if(!lost){lost=true;throw Error('Owned fixture observation lost');}const v=copy(mappedFixture.subtitles);v.mutation.replayed=true;return v;});
+  await h.controller.applySubtitles();await h.controller.applySubtitles();assert.deepEqual(h.calls[1].body,h.calls[2].body);assert.equal(h.saved.length,1,JSON.stringify(h.messages));
 });

@@ -28,21 +28,45 @@ def files(root):
     return {p.relative_to(root).as_posix():file_sha(p) for name in ('assets','originals') for p in (root/name).rglob('*') if p.is_file()}
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
     if out.exists() or out==REPO or REPO in out.parents:raise ValueError('Fresh external evidence directory required')
     out.mkdir(parents=True);case=NarratedMediaTracksTests();server=manager=None
     try:
-        prepare(case);original=files(case.root);voice_sha=file_sha(case.voice_out/'voice.wav')
+        if args.source_video_captions:
+            from services.windows_native.tests.test_source_caption_mapping import prepare as mapping_prepare
+            mapping_prepare(case)
+        else:prepare(case)
+        original=files(case.root);voice_sha=file_sha(case.voice_out/'voice.wav')
         raw,data=human_fixture('editor',workspace=case.workspace)
         access=NativeAccess(HumanAuthVerifier(HumanAuthRegistry.model_validate(data),max_token_ttl_seconds=86400),case.workspace)
         server=LocalServer(0,case.config,start_worker=False,access=access);cookie,session=access.login(raw)
         thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start();current=case.store.get(case.project['id'])
         context=case.owned/'narrated-signed-controller-context.json'
         durable_json(context,{'fixture_human':True,'origin':'http://127.0.0.1:'+str(server.server_port),'workspace_id':case.workspace,
-            'project':{'id':current['id'],'revision':current['revision']},'cookie':cookie,'csrf':session.csrf})
+            'project':{'id':current['id'],'revision':current['revision']},'cookie':cookie,'csrf':session.csrf,
+            **({'source_video_asset_id':case.video['id'],'source_video_asset_sha256':case.video['sha256']} if args.source_video_captions else {})})
         run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_source_media_tracks_http_ui.mjs'),str(context)],capture_output=True,check=True,timeout=60)
         controller=json.loads(run.stdout);durable_json(out/'signed-controller.json',controller)
         if len(controller['requests'])!=6 or controller['timeline_mode']!='narrated' or len(controller['imports'])!=3:raise AssertionError('Expected actual Mode A controller flow')
+        if args.source_video_captions:
+            from services.windows_native.source_media_tracks import add_subtitles
+            from services.windows_native.shot_adapter import validate_document
+            before_mapping=case.store.shot_view(current['id']);manual=[t for t in before_mapping['document']['canonical_timeline']['snapshot']['tracks'] if t['kind']=='subtitles'];shot=before_mapping['shot_timeline']['shots'][0]
+            changed=case.store.mutate_shots(current['id'],before_mapping['revision'],{'type':'update','shot_id':shot['shot_id'],'values':{'source_start':.2}})
+            if [t for t in changed['document']['canonical_timeline']['snapshot']['tracks'] if t['kind']=='subtitles']!=manual:raise AssertionError('Explicit human layout reflowed')
+            new_import=add_subtitles(case.store,current['id'],case.subtitle_body(timebase='source',source_video_asset_id=case.video['id'],source_video_asset_sha256=case.video['sha256']),actor_ref='OWNED SYNTHETIC FIXTURE explicit source remapping')
+            following=case.store.shot_view(current['id']);history=copy.deepcopy(following['document']['source_media_track_imports']);audio=[t for t in following['document']['canonical_timeline']['snapshot']['tracks'] if t['type']=='audio'];shot=following['shot_timeline']['shots'][0]
+            looped=case.store.mutate_shots(current['id'],following['revision'],{'type':'update','shot_id':shot['shot_id'],'values':{'source_start':1.5}})
+            validate_document(looped['document'])
+            if looped['document']['source_media_track_imports']!=history or [t for t in looped['document']['canonical_timeline']['snapshot']['tracks'] if t['type']=='audio']!=audio:raise AssertionError('Mapping reflow changed import history or audio')
+            actual_captions=catalog(case.store,current['id'],case.workspace)['captions']
+            if [(c['timeline_start'],c['duration']) for c in actual_captions]!=[(0,.5),(.6,.9),(1.7,.9),(2.9,.4)]:raise AssertionError('Actual source-loop caption clocks differ')
+            durable_json(out/'source-video-caption-mapping.json',{'schema_version':'native-source-video-caption-reflow-proof-v1','synthetic_moving_video':True,
+                'video_asset':case.video,'selected_video_SHA_verified':True,'source_time_mapping_controller':controller['subtitles']['mutation'],
+                'human_layout_preserved_after_source_trim':True,'explicit_new_mapping_service_import':new_import,'new_mapping_import_via_HTTP':False,
+                'before_reflow':following['document']['canonical_timeline'],'after_reflow':looped['document']['canonical_timeline'],
+                'reflow_caption_intervals':actual_captions,'import_history_unchanged':True,'audio_tracks_unchanged':True,
+                'no_word_timestamp_inference':True,'provider_calls':0,'paid_calls':0,'browser_rendered':False,'owner_UAT':False})
         if args.timeline_editor:
             from services.windows_native.narrated_timeline_editor import view as editor_view
             editor_context=case.owned/'timeline-controller-context.json'
@@ -102,8 +126,9 @@ def main():
         durable_json(out/'backup-restore.json',{'backup':backup,'restore':restore,'catalog_equal':True,'physical_origins_and_render_resolved_after_restore':True,
             'temporary_original_and_restore_removed_after_export':True})
         receipt={'schema_version':'native-narrated-media-tracks-render-proof-v1','synthetic_tones_not_speech':True,'synthetic_measured_narration_fixture':True,
-            'saved_ASR_fixture':False,'signed_human_fixture':True,'fake_DOM':True,'project_id':current['id'],'job_id':job['id'],'actual_uploads':3,
-            'signed_controller_requests':6,'imports':3,'timeline_version':before['canonical_timeline']['version'],'actual_waveform_measurement':True,
+            'saved_ASR_fixture':False,'signed_human_fixture':True,'fake_DOM':True,'project_id':current['id'],'job_id':job['id'],'actual_uploads':4 if args.source_video_captions else 3,
+            'signed_controller_requests':6,'imports':4 if args.source_video_captions else 3,'timeline_version':before['canonical_timeline']['version'],'actual_waveform_measurement':True,
+            'source_video_captions':args.source_video_captions,'actual_source_trim_and_loop_reflow':args.source_video_captions,
             'actual_preview_render_and_full_QC':True,'matching_preview_final_PCM_sha256':file_sha(jobdir/'narrated-mix.wav'),
             'matching_preview_final_ASS_sha256':file_sha(jobdir/'subtitles.ass'),'immutable_source_media':original,'original_prepared_voice_sha256':voice_sha,
             'source_project_document_unchanged':True,'backup_restore_passed':True,'final_download_blocked_without_final_review':True,
