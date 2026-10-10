@@ -1,4 +1,5 @@
 import {validateRenderThumbnail} from './native-render-thumbnail.mjs';
+import {validateTikTokDraft} from './native-tiktok-creators.mjs';
 
 export const supportsNativePublications = session => session?.capabilities?.native_publication_review === true;
 const labels = {blocked:'Cần bổ sung bằng chứng',awaiting_publish_approval:'Chờ duyệt mô phỏng',queued:'Chờ mô phỏng',
@@ -21,7 +22,14 @@ export function nativePublicationIntent(state, values, requestKey) {
       hashtags:(values.hashtags??'').split(/\s+/).filter(Boolean),privacy:values.privacy,scheduled_at:scheduled,...(thumbnail?{thumbnail_asset_id:thumbnail}:{})},request_key:requestKey};
 }
 
-export function initializeNativePublications({api,getState,getThumbnailSelection=()=>null,getThumbnailRightsSelection=()=>null,root=document,onMessage=()=>{},uuid=()=>crypto.randomUUID()}) {
+export function nativeTikTokDryRunIntent(state,draft,requestKey){
+  const d=validateTikTokDraft(draft,state),r=d.snapshot.request,m=r.metadata;
+  const body=nativePublicationIntent(state,{platform:'tiktok',title:m.title,description:m.description,caption:m.caption,hashtags:m.hashtags.join(' '),privacy:m.privacy,scheduled:'',useThumbnail:false},requestKey);
+  if(body.revision!==r.revision||body.final_job_id!==r.final_job_id||state.project.jobs.find(j=>j.id===body.final_job_id)?.result?.qc?.final_sha256!==r.expected_final_sha256)
+    throw new Error('Draft TikTok không thuộc video cuối hiện tại.');
+  return {...body,metadata:structuredClone(m)};
+}
+export function initializeNativePublications({api,getState,getTikTokDraft=()=>null,getThumbnailSelection=()=>null,getThumbnailRightsSelection=()=>null,root=document,onMessage=()=>{},uuid=()=>crypto.randomUUID()}) {
   const $=id=>root.getElementById(id);let scope='',rows=[],selected=null,cursor=null,working=false,revision=0;
   const keys=new Map(),context=()=>{const p=getState().project,job=p?.jobs?.find(row=>row.kind==='render'&&row.status==='succeeded'&&row.revision===p.revision);
     const t=getThumbnailSelection(),r=getThumbnailRightsSelection();return JSON.stringify([p?.id,p?.revision,p?.archived,job?.id,job?.final_review?.id,job?.final_review?.decision,t?.thumbnail_asset_id,t?.snapshot_sha256,r?.override_id,r?.snapshot_sha256]);};
@@ -37,6 +45,9 @@ export function initializeNativePublications({api,getState,getThumbnailSelection
     $('native-publish-thumbnail').disabled=blocked||!state.canEdit||!getThumbnailSelection();
     let ready=true;try{nativePublicationIntent({...state,busy:false},values(),'native-ready-probe');}catch{ready=false;}
     $('native-publish-create').disabled=blocked||!ready;
+    const draft=getTikTokDraft();$('native-publish-tiktok-draft').hidden=!draft;
+    let draftReady=false;try{nativeTikTokDryRunIntent({...state,busy:false},draft,'native-tiktok-ready-probe');draftReady=true;}catch{}
+    $('native-publish-tiktok-draft').disabled=blocked||!draftReady;
     $('native-publish-read').disabled=working||state.busy||!state.project;
     $('native-publish-more').disabled=working||state.busy||!cursor;
     const same=selected?.snapshot?.request?.revision===state.project?.revision;
@@ -57,7 +68,7 @@ export function initializeNativePublications({api,getState,getThumbnailSelection
   async function execute(action){sync();if(working)return;const state=getState(),captured=context(),ownRevision=revision;
     if(state.busy||state.dirty)return onMessage('Lưu thay đổi và chờ thao tác hiện tại.',true);
     let path=endpoint(),body;
-    try{if(action==='create'){const probe=nativePublicationIntent(state,values(),'native-probe-key');delete probe.request_key;
+    try{if(action==='create'||action==='create-tiktok'){const probe=action==='create-tiktok'?nativeTikTokDryRunIntent(state,getTikTokDraft(),'native-probe-key'):nativePublicationIntent(state,values(),'native-probe-key');delete probe.request_key;
         const signature=scope+JSON.stringify(probe),key=keys.get(signature)??`native-publish-${uuid()}`;keys.set(signature,key);body={...probe,request_key:key};}
       else {if(!selected||!state.canManage)throw new Error('Chọn yêu cầu và dùng quyền chủ không gian.');
         path+=`/${selected.publication_id}/${action}`;body={expected_fingerprint:selected.request_fingerprint};
@@ -82,6 +93,7 @@ export function initializeNativePublications({api,getState,getThumbnailSelection
     finally{if(captured===context()&&ownRevision===revision){working=false;render();}}
   }
   $('native-publish-create').addEventListener('click',()=>execute('create'));$('native-publish-read').addEventListener('click',()=>read());
+  $('native-publish-tiktok-draft').addEventListener('click',()=>execute('create-tiktok'));
   $('native-publish-more').addEventListener('click',()=>read(true));$('native-publish-approve').addEventListener('click',()=>execute('approve'));
   $('native-publish-run').addEventListener('click',()=>execute('dry-run'));$('native-publish-cancel').addEventListener('click',()=>execute('cancel'));
   for(const id of ['native-publish-platform','native-publish-title','native-publish-description','native-publish-caption','native-publish-hashtags','native-publish-privacy','native-publish-scheduled','native-publish-thumbnail','native-publish-ack'])$(id).addEventListener('change',()=>{if(id!=='native-publish-ack'){$('native-publish-ack').checked=false;revision++;working=false;}controls();});

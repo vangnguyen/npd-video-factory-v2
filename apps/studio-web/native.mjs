@@ -488,13 +488,13 @@ if (typeof document !== "undefined") {
       googleSelectionUI=googleSelection.initializeNativeGoogleSelections({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),workspace_id:session.access.workspace_id}),onMessage:message});
       $('native-tiktok-creators-card').hidden=false;
       const tiktokCreators=await import('./native-tiktok-creators.mjs');
-      tiktokCreatorsUI=tiktokCreators.initializeNativeTikTokCreators({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,active:jobActive(project),workspace_id:session.access.workspace_id}),onMessage:message});
+      tiktokCreatorsUI=tiktokCreators.initializeNativeTikTokCreators({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,active:jobActive(project),workspace_id:session.access.workspace_id}),onMessage:message,onSelection:()=>publicationUI?.controls()});
       $('native-google-analytics-selections-card').hidden=false;
       googleAnalyticsSelectionUI=googleSelection.initializeNativeGoogleAnalyticsSelections({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),workspace_id:session.access.workspace_id}),onMessage:message});
     }
     if(session.capabilities?.native_publication_review===true){
       const publications=await import('./native-publications.mjs');$('native-publication-card').hidden=false;
-      publicationUI=publications.initializeNativePublications({api,getThumbnailSelection:()=>renderThumbnailUI?.currentSelection()??null,getThumbnailRightsSelection:()=>renderThumbnailRightsUI?.currentRecord()??null,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,
+      publicationUI=publications.initializeNativePublications({api,getTikTokDraft:()=>tiktokCreatorsUI?.currentDraft()??null,getThumbnailSelection:()=>renderThumbnailUI?.currentSelection()??null,getThumbnailRightsSelection:()=>renderThumbnailRightsUI?.currentRecord()??null,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,
         workspace_id:session.access?.workspace_id??'wsp_native_local',canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),onMessage:message});
     }
     if(session.capabilities?.native_official_publication_review===true){

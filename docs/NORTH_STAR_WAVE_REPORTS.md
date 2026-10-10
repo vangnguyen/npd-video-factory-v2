@@ -3150,3 +3150,22 @@ OWNER ACTION REQUIRED: none for safe continuation; listening/Phase10 UAT deferre
 NEXT WAVE: existing Studio publisher with TikTok drafts and qualified original-job status, then every applicable original gap.
 
 Counts stay 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED: 59 broad groups unclosed, not 59 untouched tasks or an effort percentage. PHASE10_TECHNICALLY_READY=YES; PHASE10_READY=NO; OWNER_UAT_REQUIRED=YES; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+
+## 2026-10-10 — Wave 9: TikTok Studio / shared publication component
+
+WAVE: 9 / Phase 11 continuation; whole-wave acceptance open.
+STATUS: Studio component implemented and local/fake-DOM/actual-HTTP/mock verified; browser/provider/Owner/full modes incomplete.
+HEAD SHA: a2b0a40fd25a20eac1cdf97d849e4f8a8f6ef044 before separate reviewable commit; final exact head is in tiktok-studio-preservation.json.
+CAPABILITIES COMPLETED: saved draft/final/metadata dry-run handoff; tagged shared publication and separate consent; typed factory/history/job/observation/receipt; honest private/moderation/multiple-ID results; original-job status and signed renewal after timeline edits; profile/config-reread/cursor/late-response scopes; YouTube/mixed histories and unsupported-platform analytics fences; served module route.
+CAPABILITIES PARTIAL: genuine browser/non-developer/media/Owner/account/provider acceptance, Meta execution and platform analytics, all original remaining modes/intelligence/media/audio/learning/retention/hardening/full A/B/C.
+TESTS: full Studio 592 PASS/1683.0082ms, 22 new frontend cases; related Native 127 PASS/188.528s across15 modules, one new static HTTP test. Earlier focused20 PASS before mixed-history test. Existing backend331/134 at prior milestone is historical, not a fresh rerun.
+REAL PROVIDER TESTS: 0. Local-real: owned cookie/CSRF HTTP, DPAPI, SQLite, file byte reads, public backup and cold LocalServer recovery. DOM/provider/Owner/platform/nonplayable-media evidence explicitly mocked.
+MOCK TESTS: 24 actual HTTP requests from real Studio controllers/fake DOM, one init/chunk/two status reads, 11 nullable-cost receipts, zero paid. N1 completed processing in UI and final poll in Python; preserved and qualified. N2 completes through UI only and retains original final receipt/job/state. Contract tests cover actual private/public/moderation/multiple-ID/unknown-chunk/renewal DTOs, scope/drift/roles/CSRF/default-off/idempotency/late-response/profile/analytics fences.
+EVIDENCE: NATIVE_TIKTOK_STUDIO.md, north-star/tiktok-studio-evidence.json, backend-derived frontend fixture, source scripts, focused/full frontend/native logs, n1/n2 flows/public backups and n2 cold recovery. No browser rendering/new playable accepted media or Owner UAT is claimed.
+REGRESSIONS: current full Studio/related Native pass, original project remains exact; source seal freshly checks15 accepted artifact hashes/main/live. Temporary fixtures use standard cleanup; no accepted artifact replaced or manual old-data deletion.
+EXTERNAL BLOCKERS: genuine application/account/credentials/rights/provider/Owner/browser/Docker/isolation/production acceptance remains separate.
+OWNER ACTION REQUIRED: none for safe continuation. Phase10 listening/UAT deferred; genuine publishing/new paid operations/protected-main merge/production deployment need separate authority when concrete.
+NEXT WAVE: Native Meta official execution/platform-specific analytics, remaining original safe capabilities, and browser/non-developer acceptance when available.
+
+Counts stay 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED: 59 broad groups unclosed. PHASE10_TECHNICALLY_READY=YES; PHASE10_READY=NO; OWNER_UAT_REQUIRED=YES; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.

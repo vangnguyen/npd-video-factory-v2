@@ -934,6 +934,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-google-oauth.mjs'] = 'native-google-oauth.mjs'
         static['/native-google-oauth-selections.mjs'] = 'native-google-oauth-selections.mjs'
         static['/native-tiktok-creators.mjs'] = 'native-tiktok-creators.mjs'
+        static['/native-tiktok-publication.mjs'] = 'native-tiktok-publication.mjs'
         static['/native-official-publications.mjs'] = 'native-official-publications.mjs'
         static['/native-official-publication-queue.mjs'] = 'native-official-publication-queue.mjs'
         static['/native-official-analytics.mjs'] = 'native-official-analytics.mjs'

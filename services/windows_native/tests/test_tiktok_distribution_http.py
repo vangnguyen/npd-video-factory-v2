@@ -105,6 +105,10 @@ class TikTokDistributionHTTPTests(unittest.TestCase):
         for flag in ('--tiktok-publishing-registry','--enable-tiktok-creator-reads','--tiktok-distribution-registry','--enable-tiktok-distribution','--publishing-capabilities-file','--enable-official-publishing'):
             self.assertIn(flag,result.stdout)
         self.assertEqual(self.publish_wires,[])
+    def test_studio_imports_and_draft_handoff_are_served_as_owned_static_bytes(self):
+        for path,expected in (('/native-tiktok-publication.mjs','validateTikTokPublication'),('/native-publications.mjs','nativeTikTokDryRunIntent'),('/native.mjs','getTikTokDraft:()=>tiktokCreatorsUI?.currentDraft()')):
+            status,body,_=self.request('GET',path);self.assertEqual(status,200);self.assertIn(expected,body.decode('utf8'))
+        status,body,_=self.request('GET','/');self.assertEqual(status,200);self.assertIn('native-publish-tiktok-draft',body.decode('utf8'));self.assertEqual(self.publish_wires,[])
     def test_empty_google_oauth_runtime_and_tiktok_can_coexist_without_binding_mix(self):
         client=GoogleOAuthTokenClient(transport=httpx.MockTransport(lambda _:(_ for _ in ()).throw(AssertionError('No OAuth wire'))))
         with patch.object(connection,'load_token',side_effect=AssertionError('No startup decrypt')):

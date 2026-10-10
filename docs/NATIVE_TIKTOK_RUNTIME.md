@@ -1,6 +1,6 @@
 # Native TikTok: cấu hình startup và đường HTTP
 
-Phần này nối [backend async](NATIVE_TIKTOK_PUBLISHING.md) vào `LocalServer` và CLI hiện có. Nó dùng chung journal publication, Owner grant, private session, worker và queue. Quyền đọc creator được cấu hình riêng với quyền đăng. Studio đăng TikTok, provider thật, Owner UAT và toàn bộ Wave 9/Mode A/B vẫn chưa được nghiệm thu.
+Phần này nối [backend async](NATIVE_TIKTOK_PUBLISHING.md) vào `LocalServer` và CLI hiện có. Nó dùng chung journal publication, Owner grant, private session, worker và queue. Quyền đọc creator được cấu hình riêng với quyền đăng. [Studio](NATIVE_TIKTOK_STUDIO.md) đã nối và kiểm tra bằng fake DOM/owned HTTP/mock; browser/provider/Owner UAT và toàn bộ Wave 9/Mode A/B vẫn chưa được nghiệm thu.
 
 ## Registry riêng, mặc định tắt
 
@@ -39,4 +39,4 @@ Google OAuth và TikTok có thể cùng được cấu hình: Google chỉ attac
 
 [tiktok-runtime-evidence.json](north-star/tiktok-runtime-evidence.json) ghi log/hashes của HTTP/CLI/RBAC/CSRF/queue/default-off/history và hồi quy. HTTP, SQLite và DPAPI chạy local; response provider, media không phát được, Owner/platform acceptance là fixture. Không có provider thật, thao tác trả phí, bài đăng thật, merge main hoặc deployment. Test tạm được dọn theo `TemporaryDirectory`; log và source được giữ. Không có bundle media nghiệm thu mới trong increment này.
 
-Tiếp theo: nối đúng reviewed draft/dry-run và tagged publication vào Studio; hỗ trợ profile/history/approval/queue/status/receipt TikTok mà giữ YouTube; hoàn thiện Meta, analytics và toàn bộ gap Master Spec. Quyền bật đăng thật, credentials/app eligibility/audit, rights/Owner/browser/provider acceptance và production vẫn cần bằng chứng riêng. Không thay trạng thái readiness toàn chương trình từ component này.
+Reviewed draft/dry-run, tagged publication, profile/history/approval/queue/status/receipt TikTok đã nối vào Studio với bằng chứng component riêng. Tiếp theo: browser/non-developer acceptance khi surface có sẵn, Meta execution, analytics và toàn bộ gap Master Spec. Quyền bật đăng thật, credentials/app eligibility/audit, rights/Owner/provider acceptance và production vẫn cần bằng chứng riêng. Không thay trạng thái readiness toàn chương trình từ component này.
