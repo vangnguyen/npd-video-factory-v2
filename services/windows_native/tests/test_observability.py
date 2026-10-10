@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import time
+from types import SimpleNamespace
 import unittest
 import uuid
 from unittest.mock import patch
@@ -25,6 +26,14 @@ FFMPEG_BIN = Path('C:/Users/PC/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmp
 
 
 class ObserverTests(unittest.TestCase):
+    def test_queue_telemetry_read_failure_does_not_change_completed_step(self):
+        records=[]
+        def forbidden():raise AssertionError('No next job or private error output')
+        queue=SimpleNamespace(process=lambda:{'plan_id':'nopq_'+'a'*32,'project_id':'b'*32,'publication_id':'nopu_'+'c'*32},journal=SimpleNamespace(store=SimpleNamespace(transaction=forbidden)))
+        runner=Runner(SimpleNamespace(claim=forbidden),None,observer=Observer(records.append));runner.official_publish_queue=queue
+        self.assertTrue(runner.run_one());self.assertEqual(len(records),1);record=json.loads(records[0])
+        self.assertEqual(record['stage'],'official_publish_queue');self.assertIsNone(record['provider']);self.assertEqual(record['event'],'worker_step')
+        self.assertNotIn('private error',records[0])
     def test_only_fixed_fields_and_safe_identifiers_reach_sink(self):
         records = []
         observer = Observer(records.append)

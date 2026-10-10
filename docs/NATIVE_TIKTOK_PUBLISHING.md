@@ -2,7 +2,7 @@
 
 Backend này tiếp nối [admission riêng](NATIVE_TIKTOK_DISTRIBUTION_ADMISSION.md), dùng chung publication, Owner grant, intent, cost, queue và recovery hiện có. Nó không chứng nhận đăng thật, ứng dụng TikTok đủ điều kiện, media thật, Owner UAT hoặc toàn bộ Wave 9/Mode A/B.
 
-`NativeTikTokPublishingFactory.execution_supported=true` cho backend này. Ba gate và Owner enablement vẫn mặc định false. Factory chưa được nối vào CLI/server startup hoặc luồng đăng TikTok trong Studio. Creator UI hiện có và quyền đọc creator không tự cấp quyền đăng. Không có cấu hình/secret thật, bài đăng thật hoặc deployment trong bằng chứng này.
+`NativeTikTokPublishingFactory.execution_supported=true` cho backend này. Ba gate và Owner enablement vẫn mặc định false. [Runtime riêng](NATIVE_TIKTOK_RUNTIME.md) đã nối protected companion registry vào CLI/server startup và các route Owner/CSRF/queue hiện có; luồng đăng TikTok trong Studio còn mở. Creator UI hiện có và quyền đọc creator không tự cấp quyền đăng. Không có cấu hình/secret thật, bài đăng thật hoặc deployment trong bằng chứng này.
 
 ## Thực thi qua journal hiện có
 
@@ -44,4 +44,4 @@ Ba bảng TikTok chỉ tạo khi bind factory: `native_official_tiktok_preflight
 
 ## Công việc còn lại
 
-Nối registry/gate riêng vào startup và Studio; kiểm tra quyền/UI/HTTP/browser thật; hoàn thiện adapter/analytics còn thiếu; xác minh ứng dụng/credentials/rights/Owner enablement và provider acceptance khi được phép. Eligibility/audit chưa xác minh; checkbox local không thay [TikTok Content Sharing Guidelines](https://developers.tiktok.com/doc/content-sharing-guidelines/). Tiếp tục toàn bộ Master Spec và bundle A/B/C. `PUBLISHING_READY`, `IMPLEMENTATION_COMPLETE`, `REAL_PROVIDER_ACCEPTANCE_COMPLETE`, `PRODUCTION_DEPLOYED`, `VIDEO_FACTORY_NORTH_STAR_READY` vẫn NO.
+Nối reviewed draft/dry-run, profile, approval, queue và status vào Studio; kiểm tra UI/browser và genuine HTTP/provider acceptance; hoàn thiện adapter/analytics còn thiếu; xác minh ứng dụng/credentials/rights/Owner enablement khi được phép. Startup và signed HTTP component có bằng chứng riêng trong [runtime](NATIVE_TIKTOK_RUNTIME.md). Eligibility/audit chưa xác minh; checkbox local không thay [TikTok Content Sharing Guidelines](https://developers.tiktok.com/doc/content-sharing-guidelines/). Tiếp tục toàn bộ Master Spec và bundle A/B/C. `PUBLISHING_READY`, `IMPLEMENTATION_COMPLETE`, `REAL_PROVIDER_ACCEPTANCE_COMPLETE`, `PRODUCTION_DEPLOYED`, `VIDEO_FACTORY_NORTH_STAR_READY` vẫn NO.

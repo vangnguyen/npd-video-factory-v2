@@ -108,7 +108,14 @@ class Runner:
             try:
                 value=self.official_publish_queue.process()
                 if value is not None:
-                    self.observer.emit('worker_step',job_id=value['plan_id'],project_id=value['project_id'],stage='official_publish_queue',provider='youtube-data-api-publishing',duration=time.monotonic()-started)
+                    provider=None
+                    try:
+                        journal=self.official_publish_queue.journal
+                        with journal.store.transaction() as con:
+                            publication=journal.read(journal.row(con,value['project_id'],value['publication_id']))
+                        provider=publication['snapshot']['target']['provider_key']
+                    except Exception:pass  # A telemetry lookup cannot undo a completed queue step.
+                    self.observer.emit('worker_step',job_id=value['plan_id'],project_id=value['project_id'],stage='official_publish_queue',provider=provider,duration=time.monotonic()-started)
                     return True
             except WorkflowError:self.observer.emit('worker_failed',stage='official_publish_queue',duration=time.monotonic()-started)
         job = self.store.claim()
@@ -186,15 +193,22 @@ class LocalServer(ThreadingHTTPServer):
         trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None,
         official_account_registry=None,official_account_read_enabled=False,official_account_factories=None,
         official_publish_registry=None,official_publish_enabled=False,official_publish_factories=None,official_publish_session_directory=None,official_publish_queue_enabled=False,
+        publishing_capabilities_file=None,
         official_analytics_enabled=False,official_analytics_refresh_enabled=False,
         google_oauth_registry=None,google_oauth_directory=None,google_oauth_enabled=False,google_oauth_slots=None,google_oauth_client=None,
         google_oauth_selection_enabled=False,google_oauth_selection_client=None,
         google_analytics_selection_enabled=False,google_analytics_selection_client=None,
         tiktok_publishing_registry=None,tiktok_creator_reads_enabled=False,tiktok_creator_factories=None,
+        tiktok_distribution_registry=None,tiktok_distribution_enabled=False,tiktok_distribution_factories=None,
         official_vision_registry=None,official_vision_directory=None,official_vision_enabled=False,official_vision_factories=None,
         render_vision_registry=None,render_vision_directory=None,render_vision_enabled=False,render_vision_factories=None,
         render_thumbnail_rights_enabled=False):
         config.validate_data_root()
+        if publishing_capabilities_file is not None:
+            from .official_account_tokens import protected_path
+            if access is None:raise WorkflowError('NATIVE_PUBLICATION_CAPABILITIES_HUMAN_AUTH_REQUIRED',400)
+            publishing_capabilities_file=protected_path(publishing_capabilities_file,config.data_root)
+            if not publishing_capabilities_file.is_file() or not 1<=publishing_capabilities_file.stat().st_size<=262144:raise WorkflowError('NATIVE_PUBLICATION_CAPABILITIES_FILE_INVALID',400)
         if type(tiktok_creator_reads_enabled) is not bool:raise WorkflowError('NATIVE_TIKTOK_CREATOR_CONFIGURATION_INVALID',400)
         if tiktok_publishing_registry is not None and tiktok_creator_factories is not None:raise WorkflowError('NATIVE_TIKTOK_CREATOR_CONFIGURATION_CONFLICT',400)
         if (tiktok_publishing_registry is not None or tiktok_creator_factories is not None or tiktok_creator_reads_enabled) and access is None:raise WorkflowError('NATIVE_TIKTOK_CREATOR_HUMAN_AUTH_REQUIRED',400)
@@ -206,6 +220,21 @@ class LocalServer(ThreadingHTTPServer):
                 or f.root!=config.data_root.absolute() or f.workspace!=access.workspace_id or type(f.client.transport) is not httpx.MockTransport or f.client.network_enabled is not False for k,f in tiktok_creator_factories.items()):
                 raise WorkflowError('NATIVE_TIKTOK_CREATOR_MOCK_INJECTION_REQUIRED',400)
             for factory in tiktok_creator_factories.values():factory.check()
+        if type(tiktok_distribution_enabled) is not bool:raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_CONFIGURATION_INVALID',400)
+        if tiktok_distribution_registry is not None and tiktok_distribution_factories is not None:raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_CONFIGURATION_CONFLICT',400)
+        has_tiktok_distribution=tiktok_distribution_registry is not None or tiktok_distribution_factories is not None
+        if (has_tiktok_distribution or tiktok_distribution_enabled) and access is None:raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_HUMAN_AUTH_REQUIRED',400)
+        if has_tiktok_distribution and tiktok_publishing_registry is None and tiktok_creator_factories is None:raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_CREATOR_REGISTRY_REQUIRED',400)
+        if tiktok_distribution_enabled and (not has_tiktok_distribution or not tiktok_creator_reads_enabled or official_publish_session_directory is None):
+            raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_PROTECTED_REGISTRY_VAULT_AND_CREATOR_READ_REQUIRED',400)
+        if tiktok_distribution_factories is not None:
+            import httpx
+            from .tiktok_distribution import NativeTikTokPublishingFactory
+            if (type(tiktok_distribution_factories) is not dict or len(tiktok_distribution_factories)>50 or tiktok_creator_factories is None
+                or any(type(f) is not NativeTikTokPublishingFactory or key!=f.profile.target.profile_id or f.connection is not tiktok_creator_factories.get(key)
+                    or f.root!=config.data_root.absolute() or f.workspace!=access.workspace_id or type(f.client.transport) is not httpx.MockTransport or f.client.network_enabled is not False
+                    for key,f in tiktok_distribution_factories.items())):raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_MOCK_INJECTION_REQUIRED',400)
+            for factory in tiktok_distribution_factories.values():factory.check()
         if type(render_vision_enabled) is not bool:raise WorkflowError('NATIVE_RENDER_VISION_RUNTIME_INVALID',400)
         if type(render_thumbnail_rights_enabled) is not bool:raise WorkflowError('NATIVE_THUMBNAIL_RIGHTS_CONFIGURATION_INVALID',400)
         if render_thumbnail_rights_enabled and access is None:raise WorkflowError('NATIVE_THUMBNAIL_RIGHTS_AUTH_REGISTRY_REQUIRED',503)
@@ -256,7 +285,8 @@ class LocalServer(ThreadingHTTPServer):
                     raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_MOCK_INJECTION_REQUIRED',400)
         if type(official_publish_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
         if type(official_publish_queue_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_CONFIGURATION_INVALID',400)
-        if official_publish_queue_enabled and (access is None or official_publish_session_directory is None or not (official_publish_registry is not None and official_publish_enabled or official_publish_factories is not None)):
+        if official_publish_queue_enabled and (access is None or official_publish_session_directory is None or not (official_publish_registry is not None and official_publish_enabled or official_publish_factories is not None
+            or has_tiktok_distribution and tiktok_distribution_enabled)):
             raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_PROTECTED_RUNTIME_AND_AUTH_REQUIRED',400)
         if official_publish_registry is not None and official_publish_factories is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_CONFLICT',400)
         if (official_publish_registry is not None or official_publish_factories is not None) and access is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_HUMAN_AUTH_REQUIRED',400)
@@ -335,7 +365,7 @@ class LocalServer(ThreadingHTTPServer):
         self.previews=PreviewManager(config,self.store)
         self.shot_ai=ShotAIEdit(config,self.store)
         from .publications import NativePublications
-        self.publications = NativePublications(self.store, REPO / 'packages/contracts/publishing-capabilities.json',
+        self.publications = NativePublications(self.store, publishing_capabilities_file or REPO / 'packages/contracts/publishing-capabilities.json',
             workspace_id=access.workspace_id if access is not None else 'wsp_native_local')
         self.runner.publications = self.publications
         from .analytics import NativeAnalytics
@@ -362,6 +392,11 @@ class LocalServer(ThreadingHTTPServer):
             factories=load_tiktok(tiktok_publishing_registry,self.store.root,self.publications.workspace_id,owner_read_enabled=tiktok_creator_reads_enabled) if tiktok_publishing_registry is not None else tiktok_creator_factories
             self.tiktok_creators=NativeTikTokCreators(self.official_publications,factories=factories,enabled=tiktok_creator_reads_enabled)
             self.runner.tiktok_creators=self.tiktok_creators
+            from .tiktok_distribution import load as load_tiktok_distribution,NativeTikTokPublishingFactory
+            distribution=load_tiktok_distribution(tiktok_distribution_registry,self.tiktok_creators,owner_enabled=tiktok_distribution_enabled) if tiktok_distribution_registry is not None else {
+                key:(factory if tiktok_distribution_enabled else NativeTikTokPublishingFactory(factory.connection,gates=factory.gates,owner_enabled=False,
+                    registry_file=factory.registry_file,registry_sha256=factory.registry_sha256)) for key,factory in (tiktok_distribution_factories or {}).items()}
+            self.official_publications.bind_tiktok_creators(self.tiktok_creators,factories=distribution)
         self.google_oauth=None;self.google_oauth_selections=None;self.google_analytics_selections=None
         with self.store.transaction() as con:
             has_google_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_google_oauth_authorizations'").fetchone() is not None
@@ -380,7 +415,8 @@ class LocalServer(ThreadingHTTPServer):
             self.google_oauth_selections=NativeGoogleOAuthSelections(self.google_oauth,enabled=google_oauth_selection_enabled,client=google_oauth_selection_client)
             self.runner.google_oauth_selections=self.google_oauth_selections
             for factory in self.official_publications.factories.values():
-                if type(factory.binding) is OAuthBinding and factory.binding.google_oauth_slot_id in self.google_oauth.slots:factory.resolver.attach(self.google_oauth_selections)
+                binding=getattr(factory,'binding',None)
+                if type(binding) is OAuthBinding and binding.google_oauth_slot_id in self.google_oauth.slots:factory.resolver.attach(self.google_oauth_selections)
             from .official_account_registry import OAuthAccount
             with self.store.transaction() as con:
                 has_analytics_selection_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_google_analytics_selections'").fetchone() is not None
@@ -1389,6 +1425,9 @@ def main():
     parser.add_argument('--enable-google-analytics-selections',action='store_true')
     parser.add_argument('--tiktok-publishing-registry',type=Path)
     parser.add_argument('--enable-tiktok-creator-reads',action='store_true')
+    parser.add_argument('--tiktok-distribution-registry',type=Path)
+    parser.add_argument('--enable-tiktok-distribution',action='store_true')
+    parser.add_argument('--publishing-capabilities-file',type=Path)
     parser.add_argument('--official-vision-registry',type=Path)
     parser.add_argument('--official-vision-directory',type=Path)
     parser.add_argument('--enable-official-vision',action='store_true')
@@ -1427,6 +1466,8 @@ def main():
             official_analytics_enabled=args.enable_official_analytics,official_analytics_refresh_enabled=args.enable_official_analytics_refresh,
             google_oauth_registry=args.google_oauth_registry,google_oauth_directory=args.google_oauth_directory,google_oauth_enabled=args.enable_google_oauth,google_oauth_selection_enabled=args.enable_google_oauth_selections,google_analytics_selection_enabled=args.enable_google_analytics_selections,
             tiktok_publishing_registry=args.tiktok_publishing_registry,tiktok_creator_reads_enabled=args.enable_tiktok_creator_reads,
+            tiktok_distribution_registry=args.tiktok_distribution_registry,tiktok_distribution_enabled=args.enable_tiktok_distribution,
+            publishing_capabilities_file=args.publishing_capabilities_file,
             official_vision_registry=args.official_vision_registry,official_vision_directory=args.official_vision_directory,official_vision_enabled=args.enable_official_vision,
             render_vision_registry=args.render_vision_registry,render_vision_directory=args.render_vision_directory,render_vision_enabled=args.enable_render_vision,
             render_thumbnail_rights_enabled=args.enable_render_thumbnail_rights_overrides,

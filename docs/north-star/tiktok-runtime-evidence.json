@@ -1,0 +1,173 @@
+{
+  "schema_version": "north-star-native-tiktok-runtime-evidence-v1",
+  "recorded_at": "2026-10-10T09:43:05.810835+00:00",
+  "audit_head_before_commit": "b8a8076bc05466591b6f9d8baa311dfd2a23f648",
+  "scope": "protected_startup_cli_signed_http_default_off_queue_and_cold_history_component_not_studio_provider_or_full_modes",
+  "implementation": {
+    "creator_read_and_distribution_flags_separate": true,
+    "protected_fingerprint_bound_companion_registry": true,
+    "startup_private_loads": 0,
+    "startup_provider_calls": 0,
+    "publishing_default_enabled": false,
+    "queue_default_enabled": false,
+    "explicit_mock_injection_only": true,
+    "tiktok_queue_requires_no_youtube_binding": true,
+    "google_binding_types_isolated": true,
+    "protected_runtime_capabilities_file_and_drift_fence": true,
+    "cold_original_history_no_private_load_or_replay": true,
+    "queue_logs_actual_platform_and_telemetry_failure_cannot_change_step": true,
+    "studio_tiktok_publication_wired": false
+  },
+  "tests": {
+    "native_related": {
+      "status": "PASS",
+      "tests": 126,
+      "seconds": 180.763,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-runtime-native-regression-n1.log",
+        "sha256": "e15ca7c4a9069bd9d7e5a42481b4ad7f54541d9af331dfe8eca624de61386931",
+        "bytes": 28983
+      }
+    },
+    "focused_http": {
+      "status": "PASS",
+      "tests": 13,
+      "seconds": 34.545,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-runtime-http-tests-n4.log",
+        "sha256": "e0bd86825dd25dad406d08823785a989e794b1a026ce8ebf1ee1e12467886f79",
+        "bytes": 3257
+      }
+    },
+    "focused_is_subset_of_native_related": true,
+    "new_http_tests": 13,
+    "new_telemetry_tests": 1,
+    "module_manifest": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-runtime-regression-modules-n1.json",
+      "sha256": "2bd305f5abd033199124a39a943471bad13284fc444b4d1b1c60601d50966f75",
+      "bytes": 930
+    },
+    "earlier_fixture_failures": [
+      {
+        "log": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-runtime-http-tests-n1.log",
+          "sha256": "fc63d22a09cafd32de324abc069932dfea6e9dd0a5e7898e4bd485eaa62d4966",
+          "bytes": 3858
+        },
+        "status": "FAILED_FIXTURE_SCHEMA",
+        "reason": "Explicit protected-registry fixture missed required version=1; production validation kept."
+      },
+      {
+        "log": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-runtime-http-tests-n2.log",
+          "sha256": "76290efa407e1379d019ab75b6fa32a4b12b576689c14f4ab4487d226bb5a7df",
+          "bytes": 3870
+        },
+        "status": "FAILED_FIXTURE_SCHEMA",
+        "reason": "Explicit protected-registry fixture missed required version=1; production validation kept."
+      }
+    ],
+    "earlier_9_case_pass": {
+      "status": "PASS",
+      "tests": 9,
+      "seconds": 18.514,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-runtime-http-tests-n3.log",
+        "sha256": "6f41ad98054d19bcf47b64aa50bfdaf890ad14bb97eff4876e8754c954601ee0",
+        "bytes": 2284
+      }
+    },
+    "backend_prior_component": {
+      "head": "b8a8076bc05466591b6f9d8baa311dfd2a23f648",
+      "native_tests": 331,
+      "protocol_tests": 134,
+      "evidence": "docs/north-star/tiktok-publishing-evidence.json",
+      "historical_not_rerun_in_this_increment": true
+    },
+    "frontend_browser": "No frontend edit or browser run in this component; Studio integration remains open."
+  },
+  "evidence_kind": "actual_owned_loopback_http_local_sqlite_dpapi_with_explicit_nonplayable_media_owner_platform_and_protocol_mocks",
+  "source": [
+    {
+      "relative_path": "services/windows_native/server.py",
+      "path": "C:\\vfns01\\services\\windows_native\\server.py",
+      "sha256": "594a5895c14cfa6289efbce6fe49039ba0671f4e8cf55f5aafbb93e841a68c00",
+      "bytes": 112647
+    },
+    {
+      "relative_path": "services/windows_native/tests/test_observability.py",
+      "path": "C:\\vfns01\\services\\windows_native\\tests\\test_observability.py",
+      "sha256": "8cf4e1693692185fa80285cc3d8522cd746e969cac3eca6dead826063c39d26a",
+      "bytes": 14780
+    },
+    {
+      "relative_path": "services/windows_native/tests/test_tiktok_distribution_http.py",
+      "path": "C:\\vfns01\\services\\windows_native\\tests\\test_tiktok_distribution_http.py",
+      "sha256": "7c22f3115552bc3712490a8f5afab8f745fd1b481ec82a608012aba395f0b436",
+      "bytes": 17052
+    },
+    {
+      "relative_path": "docs/NATIVE_TIKTOK_RUNTIME.md",
+      "path": "C:\\vfns01\\docs\\NATIVE_TIKTOK_RUNTIME.md",
+      "sha256": "72f3dc9f17c83b085dc0e448e926bd1c4b89de0fe60d4a0cd8e5a947e42aa692",
+      "bytes": 4263
+    },
+    {
+      "relative_path": "docs/NATIVE_TIKTOK_PUBLISHING.md",
+      "path": "C:\\vfns01\\docs\\NATIVE_TIKTOK_PUBLISHING.md",
+      "sha256": "259f27f8086615aec0394dc9d2a0a9601dd3045e323dd32dcabbdfb912b6a4bb",
+      "bytes": 6626
+    }
+  ],
+  "preserved_source_checkpoint": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-runtime-source-checkpoint-n1.zip",
+    "sha256": "2606f76175ec2886eef3d89dc5d75cf15ec11f7159d7f304719a0ac9d830ece4",
+    "bytes": 34903
+  },
+  "states": {
+    "SOURCE_PRESERVED_THROUGH_PARENT": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "PHASE10_READY": "NO",
+    "OWNER_UAT_REQUIRED": "YES",
+    "PUBLISHING_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  },
+  "broad_matrix": {
+    "groups": 64,
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed": 59,
+    "not_a_small_task_count_or_effort_percentage": true
+  },
+  "real_provider_calls": 0,
+  "paid_operations": 0,
+  "owner_uat_performed": false,
+  "real_publish_enablement": false,
+  "production_deployed": false,
+  "main_merged": false,
+  "manual_data_deleted": false,
+  "temporary_test_cleanup": "Standard TemporaryDirectory cleanup only; logs/source retained; no accepted artifact changed.",
+  "source_seal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-runtime-preservation.json",
+    "available_only_after_verified_commit_push": true
+  },
+  "recovery_pair": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-runtime-recovery-pair.json",
+    "full_base": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-google-analytics-selection.bundle",
+      "sha256": "eb1527f9eb9d0a29cf3310245a4a451672fc2dc8676ae0fdd4d7b2c8dd0fd258",
+      "bytes": 198201941
+    },
+    "new_full_bundle_per_milestone": false
+  },
+  "remaining": [
+    "TikTok reviewed draft/dry-run/profile/history/Owner approval/queue/status/receipt in Studio while retaining YouTube",
+    "Genuine TikTok credentials/application eligibility/audit/rights/Owner/browser/provider acceptance",
+    "Remaining Meta platform execution, other analytics/providers, original media/audio/intelligence/learning and platform hardening gaps",
+    "Docker/isolated infrastructure/Windows recovery/retention/soak and full original Mode A/B/A/B/C acceptance"
+  ]
+}

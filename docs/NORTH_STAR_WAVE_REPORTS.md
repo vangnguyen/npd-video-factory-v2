@@ -3131,3 +3131,22 @@ OWNER ACTION REQUIRED: none for safe architecture; deferred listening/UAT remain
 NEXT WAVE: wire independent protected TikTok distribution configuration and current Studio actions, then continue all original safe gaps. Main merge, real publishing and deployment require separate authority and were not performed.
 
 Counts remain 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED: 59 broad groups unclosed. `IMPLEMENTATION_COMPLETE`, `REAL_PROVIDER_ACCEPTANCE_COMPLETE`, `PRODUCTION_DEPLOYED`, `PHASE10_READY`, `VIDEO_FACTORY_NORTH_STAR_READY` remain NO; `OWNER_UAT_REQUIRED` YES.
+
+
+## 2026-10-10 — Wave 9: Native TikTok protected runtime / HTTP component
+
+WAVE: 9 / Phase 11 continuation; whole-wave acceptance open.
+STATUS: startup/CLI/shared signed HTTP/queue component implemented, local/mock regression PASS; Studio/provider/full modes incomplete.
+HEAD SHA: b8a8076bc05466591b6f9d8baa311dfd2a23f648 before the separate reviewable commit; exact final HEAD in `tiktok-runtime-preservation.json`.
+CAPABILITIES COMPLETED: protected companion/creator fingerprint; independent default-off read/distribution/queue flags; protected capability-file selection/hash drift; shared signed Owner/CSRF publication/queue; TikTok-only background runtime; typed Google coexistence; cold original history; actual-provider content-free queue telemetry and lookup-failure isolation.
+CAPABILITIES PARTIAL: TikTok Studio draft/dry-run/profile/history/approval/queue/status/receipt; genuine scoped account/app/media/rights/Owner/browser/provider and all original Mode A/B/A/B/C acceptance; other platforms/analytics/quality/hardening.
+TESTS: Native 126 PASS/180.763s across 15 modules, including 13 new HTTP and 1 telemetry cases. Focused 13 PASS/34.545s before final telemetry change. N1/n2 failed explicit registry fixture missing version=1; production validation retained. Backend 331 Native/134 protocol from prior commit is historical, not a fresh rerun. No frontend change/browser run.
+REAL PROVIDER TESTS: 0. Local-real: owned loopback HTTP/SQLite/DPAPI/CLI metadata. Provider/Owner/platform acceptance/nonplayable media fixtures; zero paid operations.
+MOCK TESTS: signed private upload/status and four finite queue steps through actual startup, one init/chunk only, no true publication; default-off configs/prerequisites/raw flags; roles/CSRF-before-body; scope/tag/private input rejection; capability drift; cold exact original history; Google coexistence.
+EVIDENCE: `NATIVE_TIKTOK_RUNTIME.md`, `north-star/tiktok-runtime-evidence.json`, regression/module/focused/error logs and small source checkpoint. No new media acceptance/retained E2E bundle claimed; temporary test directories use standard cleanup.
+REGRESSIONS: chosen changed-shell/related Native covers access, Phase10 HTTP, dry-run, Google publishing/analytics selection, YouTube shared publisher/queue/account routes, creator/admission/history and observability. Source seal freshly checks 15 original artifact hashes/main/live.
+EXTERNAL BLOCKERS: genuine credentials/app eligibility/audit/rights/Owner/browser/provider/Docker/isolated production remain separate; none prevents next safe Studio work.
+OWNER ACTION REQUIRED: none for safe continuation; listening/Phase10 UAT deferred. Real publishing/new paid operations/production deployment/protected-main merge require separate authority when concrete.
+NEXT WAVE: existing Studio publisher with TikTok drafts and qualified original-job status, then every applicable original gap.
+
+Counts stay 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED: 59 broad groups unclosed, not 59 untouched tasks or an effort percentage. PHASE10_TECHNICALLY_READY=YES; PHASE10_READY=NO; OWNER_UAT_REQUIRED=YES; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
