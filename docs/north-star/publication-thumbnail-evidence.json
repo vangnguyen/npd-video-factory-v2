@@ -1,0 +1,89 @@
+{
+  "schema_version": "north-star-publication-thumbnail-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-thumbnail-regression-n2.log",
+      "sha256": "1c474095dabd55c2cecd846d9129b0862fae2804f2744845c468c626efc61e6e",
+      "bytes": 7601,
+      "passed": 31,
+      "new_cases": 7,
+      "seconds": 99.255
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-thumbnail-studio-regression-n2.log",
+      "sha256": "02bfd6079fe7fb10fabc4aad0665c5aabfd31387a0e7dbc8c4afdca5260b9455",
+      "bytes": 53532,
+      "passed": 522,
+      "new_cases": 7,
+      "milliseconds": 1798.2339
+    }
+  ],
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-thumbnail-flow-n2\\evidence.json",
+    "sha256": "64412267f7c6ecd77f3830edd738815e5cc4ace03eed084736ef6968654296dd",
+    "bytes": 2524
+  },
+  "new_process_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-thumbnail-flow-n2\\new-process-replay.json",
+    "sha256": "36636670c310b826c9400b19b70f24e7329c7cea4d2594b9c9e89ecd768b9984",
+    "bytes": 332
+  },
+  "browser_validation": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-thumbnail-flow-n2\\browser-validation.json",
+    "sha256": "d78c61d57d5a118b0a09dbf8d155fdfe37e8b49bade94da98452a1818df22ff9",
+    "bytes": 980
+  },
+  "source_sha256": {
+    "services/windows_native/publication_thumbnail.py": "831c92dffe4a601b83de55e4456b3ede0b82a3b3c0efc08f76360f937671b68b",
+    "services/windows_native/publications.py": "157d310834a514118173156eb39d69ad619c7747d3f6aa421557631a8e72b86d",
+    "services/windows_native/server.py": "73a14fef200f2e2204820e26f36cbb2544b2716fe5d6254499ac55321a167673",
+    "services/windows_native/tests/test_publication_thumbnail.py": "2362d5ba4f9bbfd05f23fbbe312dec987b745956423bfc5e6b21482f2e9ceff9",
+    "apps/studio-web/native-publications.mjs": "eee55d1d6e1429a5497442677dbce9bb8c542157165b7e2bc951170945f4a817",
+    "apps/studio-web/native.mjs": "171baf0ad1edb492930ff8857b495415184456bc9b7259033d1bf58b4497cf1f",
+    "apps/studio-web/native.html": "53f67b6eb1efec3d1623b25f5fcb2cfdb8a43f522040a5c07fb2011e1eb870a5",
+    "apps/studio-web/tests/native-publication-thumbnail.test.mjs": "e20cfa6558ba88e55a5e75349e2918d5b729b5bade7cb52354db710cfa1cbb5a",
+    "scripts/north_star_publication_thumbnail.py": "ab0e245e3a92b566d71b8b7ff0ef221e079275d0e6a4a6b692a483520ec4567a",
+    "scripts/north_star_publication_thumbnail.mjs": "f0a4018eb7071880adda624e50e6a366329d8afbbf0ba769d0a05dca4a5bf4b5"
+  },
+  "public_backup_sha256": "e459b27766346407ed4d9b78698a02515d7d0104206cd7901075345b9c50d472",
+  "signed_http_requests": 24,
+  "new_blocked_publications": 4,
+  "thumbnail_validation_passed_but_source_still_blocked": true,
+  "all_synthetic_rights_records": 9,
+  "new_synthetic_grants": 1,
+  "new_synthetic_revocations": 1,
+  "new_synthetic_fixture_final_review": 1,
+  "original_thumbnail_selections": 6,
+  "original_vision_histories": 11,
+  "keyless_new_process_recovery_exact": true,
+  "canonical_document_revision_approval_source_media_png_pts_cost_exact": true,
+  "thumbnail_metadata_bound": true,
+  "official_thumbnail_transport_configured": false,
+  "browser_parent_flow_completed": false,
+  "default_operator_enabled": false,
+  "rights_status": "unknown",
+  "license": null,
+  "rights_independently_verified": false,
+  "source_asset_rights_granted": false,
+  "publishing_authorized": false,
+  "real_owner_legal_override": false,
+  "new_retainer_media_copies": 0,
+  "new_retainer_renders": 0,
+  "new_provider_calls": 0,
+  "new_paid_operations": 0,
+  "owner_uat_accepted": false,
+  "real_provider_tested": false,
+  "production_deployed": false,
+  "initial_fixture_assertion_logs": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-thumbnail-focused-n1.log",
+      "sha256": "8d53dafc4f72746bd095b46f100f841669d4a92c34d9fb8918b08da7aea8dd18",
+      "bytes": 4149
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publication-thumbnail-retainer-n1.log",
+      "sha256": "efd624f9c1cc74659574b246b220ca94614be380f148926c8675ba3f05aef041",
+      "bytes": 11607
+    }
+  ]
+}

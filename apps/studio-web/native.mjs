@@ -481,8 +481,8 @@ if (typeof document !== "undefined") {
     }
     if(session.capabilities?.native_publication_review===true){
       const publications=await import('./native-publications.mjs');$('native-publication-card').hidden=false;
-      publicationUI=publications.initializeNativePublications({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,
-        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),onMessage:message});
+      publicationUI=publications.initializeNativePublications({api,getThumbnailSelection:()=>renderThumbnailUI?.currentSelection()??null,getThumbnailRightsSelection:()=>renderThumbnailRightsUI?.currentRecord()??null,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,
+        workspace_id:session.access?.workspace_id??'wsp_native_local',canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),onMessage:message});
     }
     if(session.capabilities?.native_official_publication_review===true){
       const official=await import('./native-official-publications.mjs');$('native-official-publications-card').hidden=false;

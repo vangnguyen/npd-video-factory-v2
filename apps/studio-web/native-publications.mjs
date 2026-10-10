@@ -1,3 +1,5 @@
+import {validateRenderThumbnail} from './native-render-thumbnail.mjs';
+
 export const supportsNativePublications = session => session?.capabilities?.native_publication_review === true;
 const labels = {blocked:'Cần bổ sung bằng chứng',awaiting_publish_approval:'Chờ duyệt mô phỏng',queued:'Chờ mô phỏng',
   scheduled:'Mô phỏng đã lên lịch',dry_run_succeeded:'Mô phỏng hoàn tất · chưa đăng',cancelled:'Đã hủy'};
@@ -11,23 +13,28 @@ export function nativePublicationIntent(state, values, requestKey) {
       ||!['private','unlisted','public'].includes(values.privacy))throw new Error('Kiểm tra nền tảng, tiêu đề và quyền riêng tư.');
   let scheduled=null;
   if(values.scheduled){const date=new Date(values.scheduled);if(!Number.isFinite(date.getTime()))throw new Error('Giờ mô phỏng không hợp lệ.');scheduled=date.toISOString();}
+  let thumbnail;
+  if(values.useThumbnail!==undefined&&typeof values.useThumbnail!=='boolean')throw new Error('Xác nhận thumbnail không hợp lệ.');
+  if(values.useThumbnail===true){const t=validateRenderThumbnail(values.thumbnailSelection,state);if(t.snapshot.request.render_job_id!==job.id||t.snapshot.request.revision!==p.revision||t.snapshot.input_binding.record.observation.rendered_video_sha256!==job.result.qc.final_sha256)throw new Error('Chọn thumbnail từ đúng video cuối hiện tại.');thumbnail=t.thumbnail_asset_id;}
   return {schema_version:'native-publication-request-v1',revision:p.revision,final_job_id:job.id,platform:values.platform,mode:'dry_run',
     metadata:{title:values.title.trim(),description:values.description??'',caption:values.caption??'',
-      hashtags:(values.hashtags??'').split(/\s+/).filter(Boolean),privacy:values.privacy,scheduled_at:scheduled},request_key:requestKey};
+      hashtags:(values.hashtags??'').split(/\s+/).filter(Boolean),privacy:values.privacy,scheduled_at:scheduled,...(thumbnail?{thumbnail_asset_id:thumbnail}:{})},request_key:requestKey};
 }
 
-export function initializeNativePublications({api,getState,root=document,onMessage=()=>{},uuid=()=>crypto.randomUUID()}) {
+export function initializeNativePublications({api,getState,getThumbnailSelection=()=>null,getThumbnailRightsSelection=()=>null,root=document,onMessage=()=>{},uuid=()=>crypto.randomUUID()}) {
   const $=id=>root.getElementById(id);let scope='',rows=[],selected=null,cursor=null,working=false,revision=0;
   const keys=new Map(),context=()=>{const p=getState().project,job=p?.jobs?.find(row=>row.kind==='render'&&row.status==='succeeded'&&row.revision===p.revision);
-    return JSON.stringify([p?.id,p?.revision,p?.archived,job?.id,job?.final_review?.id,job?.final_review?.decision]);};
+    const t=getThumbnailSelection(),r=getThumbnailRightsSelection();return JSON.stringify([p?.id,p?.revision,p?.archived,job?.id,job?.final_review?.id,job?.final_review?.decision,t?.thumbnail_asset_id,t?.snapshot_sha256,r?.override_id,r?.snapshot_sha256]);};
   const endpoint=()=>`/api/projects/${getState().project.id}/publications`;
   const values=()=>({platform:$('native-publish-platform').value,title:$('native-publish-title').value,
     description:$('native-publish-description').value,caption:$('native-publish-caption').value,
-    hashtags:$('native-publish-hashtags').value,privacy:$('native-publish-privacy').value,scheduled:$('native-publish-scheduled').value});
+    hashtags:$('native-publish-hashtags').value,privacy:$('native-publish-privacy').value,scheduled:$('native-publish-scheduled').value,
+    useThumbnail:$('native-publish-thumbnail').checked,thumbnailSelection:getThumbnailSelection()});
   function element(tag,text){const node=root.createElement(tag);node.textContent=text;return node;}
   function sync(){const next=context();if(next!==scope){const old=JSON.parse(scope||'[]')[0];scope=next;revision++;rows=[];selected=null;cursor=null;working=false;
-    $('native-publish-ack').checked=false;if(old!==getState().project?.id)$('native-publish-title').value=getState().project?.document?.name??'';}render();}
-  function controls(){const state=getState(),blocked=working||state.busy||state.dirty;
+    $('native-publish-ack').checked=false;$('native-publish-thumbnail').checked=false;if(old!==getState().project?.id)$('native-publish-title').value=getState().project?.document?.name??'';}render();}
+  function controls(){if(context()!==scope){sync();return;}const state=getState(),blocked=working||state.busy||state.dirty;
+    $('native-publish-thumbnail').disabled=blocked||!state.canEdit||!getThumbnailSelection();
     let ready=true;try{nativePublicationIntent({...state,busy:false},values(),'native-ready-probe');}catch{ready=false;}
     $('native-publish-create').disabled=blocked||!ready;
     $('native-publish-read').disabled=working||state.busy||!state.project;
@@ -60,7 +67,7 @@ export function initializeNativePublications({api,getState,root=document,onMessa
       if(captured!==context()||ownRevision!==revision)return;
       selected=validate(result);rows=[selected,...rows.filter(row=>row.publication_id!==selected.publication_id)];$('native-publish-ack').checked=false;
       onMessage(selected.status==='blocked'?'Yêu cầu đã lưu; bổ sung bằng chứng quyền/provenance hoặc định dạng được liệt kê.':'Đã lưu mô phỏng phân phối. Video chưa được đăng ra ngoài.');
-    }catch(error){if(captured===context())onMessage(error.message,true);}
+    }catch(error){if(captured===context()&&ownRevision===revision)onMessage(error.message,true);}
     finally{if(captured===context()&&ownRevision===revision){working=false;render();}}
   }
   async function read(more=false){sync();const state=getState();if(working||state.busy||!state.project||(more&&!cursor))return;
@@ -71,12 +78,12 @@ export function initializeNativePublications({api,getState,root=document,onMessa
           ||(value.next_cursor!==null&&typeof value.next_cursor!=='string'))throw new Error('Trang lịch sử phân phối không hợp lệ.');
       const incoming=value.items.map(validate);rows=more?[...rows,...incoming.filter(row=>!rows.some(old=>old.publication_id===row.publication_id))]:incoming;
       cursor=value.next_cursor;selected=rows.find(row=>row.publication_id===selected?.publication_id)??rows[0]??null;$('native-publish-ack').checked=false;
-    }catch(error){if(captured===context())onMessage(error.message,true);}
+    }catch(error){if(captured===context()&&ownRevision===revision)onMessage(error.message,true);}
     finally{if(captured===context()&&ownRevision===revision){working=false;render();}}
   }
   $('native-publish-create').addEventListener('click',()=>execute('create'));$('native-publish-read').addEventListener('click',()=>read());
   $('native-publish-more').addEventListener('click',()=>read(true));$('native-publish-approve').addEventListener('click',()=>execute('approve'));
   $('native-publish-run').addEventListener('click',()=>execute('dry-run'));$('native-publish-cancel').addEventListener('click',()=>execute('cancel'));
-  for(const id of ['native-publish-platform','native-publish-title','native-publish-privacy','native-publish-ack'])$(id).addEventListener('change',controls);
+  for(const id of ['native-publish-platform','native-publish-title','native-publish-description','native-publish-caption','native-publish-hashtags','native-publish-privacy','native-publish-scheduled','native-publish-thumbnail','native-publish-ack'])$(id).addEventListener('change',()=>{if(id!=='native-publish-ack'){$('native-publish-ack').checked=false;revision++;working=false;}controls();});
   sync();return {sync,controls,read,execute};
 }

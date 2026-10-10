@@ -30,6 +30,7 @@ class NativePublications:
         self.capabilities_path = guard(capabilities_path, exists=True)
         guard(store.db, exists=True)
         self.provider = MockPublishingProvider()
+        self._thumbnail_binding = None
         self.capabilities = PublishingCapabilityRegistry(self.capabilities_path)
         from .contracts import file_sha
         self.capabilities_sha256 = file_sha(self.capabilities_path)
@@ -125,6 +126,22 @@ class NativePublications:
             raise WorkflowError('HUMAN_FINAL_VIDEO_APPROVAL_REQUIRED')
         return job, actual, path
 
+    def bind_render_thumbnail_rights(self, rights):
+        from .publication_thumbnail import NativePublicationThumbnailBinding
+        if self._thumbnail_binding is not None:
+            self._thumbnail_binding.check()
+            if self._thumbnail_binding.rights is not rights:raise WorkflowError('NATIVE_PUBLICATION_THUMBNAIL_CONFIGURATION_CHANGED')
+            return
+        self._thumbnail_binding=NativePublicationThumbnailBinding(self.store,self.workspace_id,rights)
+
+    def thumbnail_review(self, job, metadata, *, con=None):
+        if metadata.thumbnail_asset_id is None:return None
+        from .publication_thumbnail import NativePublicationThumbnailBinding
+        binding=self._thumbnail_binding
+        if type(binding) is not NativePublicationThumbnailBinding:raise WorkflowError('NATIVE_THUMBNAIL_PUBLICATION_BINDING_NOT_CONFIGURED')
+        if binding.store is not self.store or binding.workspace!=self.workspace_id:raise WorkflowError('NATIVE_PUBLICATION_THUMBNAIL_SCOPE_INVALID')
+        return binding.review(job,metadata.thumbnail_asset_id,con=con)
+
     def validation(self, job, path, payload,con=None):
         document = job['snapshot']['document']; timeline = document.get('canonical_timeline', {}).get('snapshot')
         assets = canonical_assets(document)
@@ -152,11 +169,15 @@ class NativePublications:
             service=getattr(self.store,'narration_rights',None)
             narration_rights=service.publication(job,con) if service is not None else None
             if narration_rights is None:attention.append('NATIVE_GENERATED_VOICE_PUBLICATION_PROVENANCE_REQUIRED')
-        if payload.metadata.thumbnail_asset_id is not None: attention.append('NATIVE_THUMBNAIL_PUBLICATION_BINDING_NOT_CONFIGURED')
+        thumbnail=None
+        if payload.metadata.thumbnail_asset_id is not None:
+            try:thumbnail=self.thumbnail_review(job,payload.metadata,con=con)
+            except WorkflowError as error:attention.append(error.code)
         passed = rights.status == platform.status == 'passed' and not attention
         value={'rights': rights.model_dump(mode='json'), 'platform': platform.model_dump(mode='json'), 'attention': attention,
             'status': 'passed' if passed else 'failed', 'provider': self.provider.validate().model_dump(mode='json')}
         if narration_rights is not None:value['narration_rights']=narration_rights
+        if thumbnail is not None:value['thumbnail']=thumbnail
         return value
 
     def create(self, project, payload, *, actor):

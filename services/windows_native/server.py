@@ -385,6 +385,7 @@ class LocalServer(ThreadingHTTPServer):
         self.render_thumbnails=NativeRenderThumbnails(self.store,config,workspace_id=self.publications.workspace_id,render_vision=self.render_vision)
         from .render_thumbnail_rights import NativeRenderThumbnailRights
         self.render_thumbnail_rights=NativeRenderThumbnailRights(self.render_thumbnails,enabled=render_thumbnail_rights_enabled,identity_provider=self.official_publish_identity)
+        self.publications.bind_render_thumbnail_rights(self.render_thumbnail_rights)
         from .source_variants import SourceVariants
         self.variants=SourceVariants(self.store,workspace_id=self.publications.workspace_id)
         from .narrated_variants import NativeNarratedVariants
