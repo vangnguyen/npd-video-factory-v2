@@ -1,0 +1,191 @@
+{
+  "schema_version": "north-star-native-meta-admission-evidence-v1",
+  "recorded_at": "2026-10-10T11:38:58.645304+00:00",
+  "audit_head_before_commit": "a03d4e34cba81738898e32bf239f70d27349f11e",
+  "scope": "backend_meta_admission_finite_owner_journal_and_existing_signed_http_with_actual_local_dpapi_sqlite_and_explicit_provider_owner_platform_nonplayable_media_mocks",
+  "implementation": {
+    "strict_separate_tagged_request": true,
+    "no_client_metadata_credentials_endpoint_or_version_override": true,
+    "current_dry_run_account_proof_result_configuration_cipher_and_physical_approved_final_binding": true,
+    "current_rights_platform_and_canonical_project_validation": true,
+    "same_immutable_publication_journal_no_new_database_tables": true,
+    "separate_finite_current_owner_consent": true,
+    "idempotency_dedupe_cancel_revoke_renewal": true,
+    "protected_default_off_companion_manifest_no_startup_decrypt": true,
+    "historical_dry_run_account_cost_foreign_keys_and_keyless_readback": true,
+    "reject_rehashed_authority_and_unsupported_dispatch_receipt_claims": true,
+    "worker_rejects_before_publish_credentials_intents_or_network_mutation": true,
+    "existing_owner_csrf_scoped_http_contract": true,
+    "execution_supported_false_bound_to_review_and_configuration": true
+  },
+  "not_completed": {
+    "meta_provider_dispatch": true,
+    "meta_native_startup_cli_binding": true,
+    "meta_shared_execution_queue": true,
+    "meta_studio_publication_controls": true,
+    "real_permissions_app_eligibility_api_version": true,
+    "real_provider_acceptance": true,
+    "genuine_media_owner_browser_acceptance": true,
+    "production_deployment": true,
+    "full_original_mode_a_b_and_a_b_c": true
+  },
+  "tests": {
+    "native_related": {
+      "status": "PASS",
+      "tests": 325,
+      "seconds": 478.692,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-native-regression-n1.log",
+        "bytes": 76710,
+        "sha256": "3e610c9815a95eea93d8662e80419f9d590de4900a6544d8feb523090e864002"
+      }
+    },
+    "new_http": {
+      "status": "PASS",
+      "tests": 8,
+      "seconds": 20.329,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-http-focused-n2.log",
+        "bytes": 1980,
+        "sha256": "5f0f0505654add2dd3a5bb75d334780c9f4eec4e237cb5a34d110df245c42257"
+      }
+    },
+    "final_focused_after_integer_chunk_guard": {
+      "status": "PASS",
+      "tests": 36,
+      "seconds": 39.163,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-final-focused-n1.log",
+        "bytes": 8597,
+        "sha256": "2bb0659e59cbd1473efb64b9d43acc89f7d7925859e02a8b415a43ed5b5b76fe"
+      }
+    },
+    "focused_initial": {
+      "status": "PASS",
+      "tests": 28,
+      "seconds": 17.263,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-native-focused-n1.log",
+        "bytes": 6721,
+        "sha256": "0c6b469e97d51af6b9ec0f633f4153005ba1b9e763332d39efd6ed6793fbbc90"
+      }
+    },
+    "related_unique_suite_cases": 333,
+    "new_component_cases": 36,
+    "regression_modules": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-native-regression-modules-n1.json",
+      "bytes": 1958,
+      "sha256": "3b5613e87cb6372398d30271db0637b1542aa9391e0dc2017c14693d5c4a3fef"
+    },
+    "initial_http_fixture_correction": {
+      "reason": "Initial test looked for error instead of existing code field; importing fixture classes also duplicated discovery. Worker already rejected the unsupported Meta send with HTTP409; no production guard was weakened.",
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-http-focused-n1.log",
+        "bytes": 12299,
+        "sha256": "48cfa03f6cf1406bd3f87a76e35544a7799fb98e0a4a6b3c965852cc115c944a"
+      }
+    },
+    "prior_unchanged_studio_and_protocol": {
+      "not_rerun_this_component": true,
+      "studio_tests": 600,
+      "protocol_tests": 75,
+      "evidence": "docs/north-star/meta-account-evidence.json"
+    }
+  },
+  "retained_flow": {
+    "summary": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\summary.json",
+      "bytes": 650,
+      "sha256": "028c4b8cfd5760c0619711d317638d288eb35a687d803367313aee5e1e9c0ce5"
+    },
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1.log",
+      "bytes": 526,
+      "sha256": "b7b3b5edcf7b327328f8a318afe27a26095a85427a98121e75e47b949e08c2fa"
+    },
+    "actual_signed_http_requests": 16,
+    "mock_readonly_protocol_requests": 3,
+    "nullable_cost_records": 3,
+    "separate_keyless_local_server_restores": 2,
+    "files": [
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\facebook-backup.json",
+        "bytes": 4206,
+        "sha256": "8d2fb11182e41e7624a7da663a77494a23e98e674c686e3bcd39d438be4cde3e"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\facebook-cold-recovery.json",
+        "bytes": 5229,
+        "sha256": "d673407dac28a1d6ed2e9c2673c5b42e6cd0245a64c4c7a8db3f557b4e48bfaa"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\facebook-fixture-capabilities.json",
+        "bytes": 1810,
+        "sha256": "3a6bb3db354f481e89ffbea90c2ebc412bc849282d3486b70c22dcb2fe316a4e"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\facebook-flow.json",
+        "bytes": 97067,
+        "sha256": "788cdc765541da5d669ab038bfc0268f5fe21c90738b48212b5f53b7a45f92b0"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\facebook-public-state.zip",
+        "bytes": 935741,
+        "sha256": "5e62d7354ec2cbd11fc4244aec915548a42c215212cde4717af9394ee2e05d2d"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\instagram_reels-backup.json",
+        "bytes": 4213,
+        "sha256": "4f8aa991a42cf46ef2ad18b1c7daadefd848a8f4d60cb7453ad980c35c09161c"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\instagram_reels-cold-recovery.json",
+        "bytes": 5229,
+        "sha256": "3ae6b7705bbb911b204578dc62f43f5f26a4a9178ab55e0190e542fbd7f1cb48"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\instagram_reels-fixture-capabilities.json",
+        "bytes": 1810,
+        "sha256": "4b5b2cd72a03237a03849c51edfa15b17a36ed511b4aa6638c8951c15e72bb9f"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\instagram_reels-flow.json",
+        "bytes": 100353,
+        "sha256": "1a3040ae59d31fca83074f87136aebb8a139a77fd154e6bed1a9d738814e2953"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\instagram_reels-public-state.zip",
+        "bytes": 939837,
+        "sha256": "92825bccd523b16e27eab87703f95ed66a2aec0c209208c12bf76cced9c03a17"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-flow-n1\\summary.json",
+        "bytes": 650,
+        "sha256": "028c4b8cfd5760c0619711d317638d288eb35a687d803367313aee5e1e9c0ce5"
+      }
+    ]
+  },
+  "broad_program": {
+    "capability_groups": 64,
+    "implemented_real": 5,
+    "partial": 58,
+    "not_verified": 1,
+    "unclosed_groups": 59,
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "PHASE10_READY": "NO",
+    "OWNER_UAT_REQUIRED": "YES",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  },
+  "real_provider_calls": 0,
+  "paid_operations": 0,
+  "published": false,
+  "main_merged": false,
+  "production_deployed": false,
+  "manual_old_data_deleted": false,
+  "owner_action_required_for_safe_work": false,
+  "source_preservation_receipt": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-admission-preservation.json",
+  "next_safe_work": "Durable Meta media delivery/upload/container/status/finish and receipts; protected runtime/CLI/shared queue/typed Studio; remaining platform analytics and every original Master Spec gap."
+}

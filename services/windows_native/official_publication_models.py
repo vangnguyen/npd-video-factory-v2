@@ -54,10 +54,22 @@ class TikTokCreate(StrictModel):
     expected_configuration_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
     request_key:str=Field(min_length=16,max_length=200,pattern=r'^[A-Za-z0-9_-]+$')
 
+class MetaCreate(StrictModel):
+    schema_version:Literal['native-official-meta-publication-request-v1']='native-official-meta-publication-request-v1'
+    revision:StrictInt=Field(ge=1)
+    dry_run_publication_id:str=Field(pattern=r'^npub_[a-f0-9]{32}$')
+    expected_dry_run_snapshot_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
+    account_check_id:str=Field(pattern=r'^nack_[a-f0-9]{32}$')
+    expected_account_check_snapshot_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
+    expected_account_result_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
+    profile_id:str=Field(pattern=r'^ppf_[A-Za-z0-9_-]{4,60}$')
+    expected_configuration_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
+    request_key:str=Field(min_length=16,max_length=200,pattern=r'^[A-Za-z0-9_-]+$')
+
 def publication_request(value):
     if type(value) is not dict:raise ValueError('Tagged publication request required')
     schema=value.get('schema_version','native-official-publication-request-v1')
-    kind=TikTokCreate if schema=='native-official-tiktok-publication-request-v1' else Create if schema=='native-official-publication-request-v1' else None
+    kind=MetaCreate if schema=='native-official-meta-publication-request-v1' else TikTokCreate if schema=='native-official-tiktok-publication-request-v1' else Create if schema=='native-official-publication-request-v1' else None
     if kind is None:raise ValueError('Supported publication request required')
     return kind.model_validate(value)
 

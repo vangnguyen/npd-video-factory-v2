@@ -8,7 +8,7 @@ from datetime import datetime,timedelta,timezone
 import base64,json,re,uuid
 from pydantic import ValidationError
 from .contracts import WorkflowError,digest
-from .official_publication_models import Create,TikTokCreate,publication_request,Approve,Action,Renew
+from .official_publication_models import Create,TikTokCreate,MetaCreate,publication_request,Approve,Action,Renew
 from .official_publication_registry import PublishingFactory
 from .official_publication_dispatch import Ticket
 from .publications import PROFILES
@@ -38,6 +38,11 @@ def chunk_length(snapshot,total,start):
     return min(snapshot['chunk_size'],total-start)
 
 def preflight(metadata,total_bytes,profile,instant,*,thumbnail_stage=False,snapshot=None):
+    from .meta_connection import Profile as MetaProfile
+    if type(profile) is MetaProfile:
+        from .meta_distribution import preflight as meta_preflight
+        if snapshot is None:raise WorkflowError('NATIVE_META_DISTRIBUTION_PREFLIGHT_REQUIRED')
+        return meta_preflight(snapshot,profile,instant)
     from .tiktok_connection import Profile as TikTokProfile
     if type(profile) is TikTokProfile:
         from .tiktok_distribution import preflight as tiktok_preflight
@@ -122,6 +127,9 @@ class NativeOfficialPublications:
             if snapshot.get('schema_version')=='native-official-tiktok-publication-snapshot-v1':
                 from .tiktok_distribution import read_snapshot
                 return read_snapshot(self,value,snapshot)
+            if snapshot.get('schema_version')=='native-official-meta-publication-snapshot-v1':
+                from .meta_distribution import read_snapshot
+                return read_snapshot(self,value,snapshot)
             request=Create.model_validate({**snapshot['request'],'request_key':'internal-official-publish-key'});target=PublishingTargetBinding.model_validate(snapshot['target'])
             if (digest(snapshot)!=value['snapshot_sha256'] or snapshot['schema_version']!='native-official-publication-snapshot-v1'
                 or value['workspace_id']!=self.workspace or snapshot['workspace_id']!=self.workspace or snapshot['project_id']!=value['project_id']
@@ -150,6 +158,10 @@ class NativeOfficialPublications:
                 from .tiktok_creators import DRAFTS
                 reader=evidence_reader(self);draft=reader.read_draft(reader.row(con,project,value['snapshot']['request']['creator_draft_id'],DRAFTS));reader.draft_links(con,draft)
                 if draft!=value['snapshot']['creator_draft']:raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_DRAFT_CHANGED')
+            if value['snapshot']['target']['platform'] in {'facebook','instagram_reels'}:
+                from .meta_distribution import links
+                links(self,con,value)
+                if row is not None:raise WorkflowError('NATIVE_META_DISTRIBUTION_EXECUTION_EVIDENCE_UNSUPPORTED')
             receipt=None
             if row is not None and value['snapshot']['target']['platform']=='tiktok':
                 from .tiktok_publishing import read_receipt
@@ -190,6 +202,17 @@ class NativeOfficialPublications:
             from .tiktok_publishing import ensure
             ensure(self)
         self.tiktok_creators=creators;self.factories.update(values)
+    def bind_meta_accounts(self,*,factories=None):
+        from .meta_distribution import NativeMetaPublishingFactory
+        values=dict(factories or {})
+        if len(values)>50 or any(type(f) is not NativeMetaPublishingFactory or key!=f.profile.target.profile_id
+            or f.connection is not self.accounts.factories.get(f.connection.account.account_ref)
+            or f.root!=self.store.root.absolute() or f.workspace!=self.workspace for key,f in values.items()):
+            raise WorkflowError('NATIVE_META_DISTRIBUTION_BINDING_CHANGED')
+        for key,factory in values.items():
+            factory.check()
+            if key in self.factories and self.factories[key] is not factory:raise WorkflowError('NATIVE_META_DISTRIBUTION_PROFILE_CONFLICT')
+        self.factories.update(values)
     def page(self,project,*,limit=25,cursor=None):
         if type(limit) is not int or not 1<=limit<=100:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PAGE_INVALID',400)
         after=None
@@ -225,6 +248,9 @@ class NativeOfficialPublications:
             return {'token_id':record.token_id,'subject':record.subject,'identity_revision_sha256':digest(record.model_dump(mode='json')),'expires_at':utc(record.expires_at).isoformat()}
         except Exception:raise WorkflowError('NATIVE_HUMAN_OWNER_PUBLISH_APPROVAL_REQUIRED',403) from None
     def source(self,con,project,payload,factory,*,validation_time=None):
+        if type(payload) is MetaCreate:
+            from .meta_distribution import source as meta_source
+            return meta_source(self,con,project,payload,factory,validation_time=validation_time)
         if type(payload) is TikTokCreate:
             from .tiktok_distribution import source as tiktok_source
             return tiktok_source(self,con,project,payload,factory,validation_time=validation_time)
@@ -255,7 +281,7 @@ class NativeOfficialPublications:
         return current,review,check,state,job,actual,path,platform.model_dump(mode='json'),thumbnail
     def create(self,project,payload,*,principal):
         try:
-            if type(payload) not in (Create,TikTokCreate):raise TypeError()
+            if type(payload) not in (Create,TikTokCreate,MetaCreate):raise TypeError()
             payload=publication_request(payload.model_dump(mode='python',warnings=False))
         except (ValidationError,TypeError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_FIELDS_INVALID',400) from None
         authority=self.identity(principal);request=payload.model_dump(mode='json',exclude={'request_key','metadata'})
@@ -265,6 +291,7 @@ class NativeOfficialPublications:
             prior=con.execute('SELECT * FROM native_official_publications WHERE workspace_id=? AND project_id=? AND key_sha256=?',(self.workspace,project,key)).fetchone()
             if prior:
                 if prior['request_fingerprint']!=fingerprint:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_IDEMPOTENCY_CONFLICT')
+                if type(payload) is MetaCreate:return self.get(project,prior['publication_id'],con=con),True
                 return self.read(prior),True
             factory=self.factories.get(payload.profile_id)
             if factory is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_NOT_CONFIGURED')
@@ -280,6 +307,9 @@ class NativeOfficialPublications:
             if type(payload) is TikTokCreate:
                 draft=sources[9];snapshot.update(schema_version='native-official-tiktok-publication-snapshot-v1',creator_draft=draft,choices=draft['snapshot']['request']['choices'],
                     duration_seconds=draft['snapshot']['source']['duration_sec'],credential_cipher_sha256=factory.cipher_sha256)
+            if type(payload) is MetaCreate:
+                snapshot.update(schema_version='native-official-meta-publication-snapshot-v1',meta_profile=factory.profile.model_dump(mode='json'),
+                    meta_options=factory.options.model_dump(mode='json'),meta_account_proof=check,credential_cipher_sha256=state['cipher_sha256'],execution_supported=False)
             if thumbnail is not None:snapshot['thumbnail']=thumbnail
             thumbnail_requested(snapshot)
             dedupe=digest({'workspace':self.workspace,'platform':state['target']['platform'],'account':state['target']['target_account_id'],'final':actual,'mock':state['mock']})
@@ -291,6 +321,9 @@ class NativeOfficialPublications:
     def revalidate(self,con,row):
         value=self.read(row);snapshot=value['snapshot'];payload=publication_request({**snapshot['request'],'request_key':'internal-official-publish-key'});factory=self.factories.get(payload.profile_id)
         if factory is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_CHANGED')
+        if type(payload) is MetaCreate:
+            from .meta_distribution import links
+            links(self,con,value)
         try:reviewed_at=utc(datetime.fromisoformat(snapshot.get('reviewed_at',row['created_at'])))
         except (ValueError,TypeError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EVIDENCE_CHANGED') from None
         sources=self.source(con,row['project_id'],payload,factory,validation_time=reviewed_at);current,review,check,state,job,actual,path,platform,thumbnail=sources[:9]
@@ -299,6 +332,8 @@ class NativeOfficialPublications:
             'validation':{'dry_run':review['snapshot']['validation'],'official_platform':platform},'target':state['target'],'target_binding_sha256':state['target_binding_sha256'],
             'metadata':metadata_for(payload,review).model_dump(mode='json'),'disclosures':state['disclosures'],'chunk_size':state['chunk_size'],'mock':state['mock']}
         if type(payload) is TikTokCreate:expected.update(creator_draft=sources[9],choices=sources[9]['snapshot']['request']['choices'],duration_seconds=sources[9]['snapshot']['source']['duration_sec'],credential_cipher_sha256=factory.cipher_sha256)
+        if type(payload) is MetaCreate:expected.update(meta_profile=factory.profile.model_dump(mode='json'),meta_options=factory.options.model_dump(mode='json'),
+            meta_account_proof=check,credential_cipher_sha256=state['cipher_sha256'],execution_supported=False)
         if snapshot.get('thumbnail')!=thumbnail:raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_BINDING_CHANGED')
         if state['status']!='CONFIGURED' or any(snapshot[k]!=v for k,v in expected.items()):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_REVIEW_BINDING_CHANGED')
         return value,factory,path
