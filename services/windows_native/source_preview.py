@@ -30,6 +30,8 @@ def resolve_assets(config, project):
     state = validate_document(project['document'])
     if state['snapshot']['metadata']['native_project_id'] != project['id']:
         raise WorkflowError('AUTO_EDIT_TIMELINE_PROJECT_MISMATCH')
+    from .source_media_track_origins import verify_physical
+    verify_physical(config.data_root,project['document'])
     snapshot = TimelineSnapshot.model_validate(state['snapshot'])
     active = [clip for track in snapshot.tracks if not track.disabled
         for clip in track.clips if not clip.disabled and clip.asset_id

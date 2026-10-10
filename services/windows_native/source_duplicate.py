@@ -149,6 +149,8 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
     inherit(output,source_id,revision)
     from .source_thumbnail_review import inherit as inherit_thumbnails
     inherit_thumbnails(output,source_id,revision)
+    from .source_media_track_origins import inherit as inherit_media_imports
+    inherit_media_imports(output,source_id,target_id,revision)
     output['canonical_timeline']['sha256']=digest(output['canonical_timeline']['snapshot'])
     validate_document(output)
     return output

@@ -9,7 +9,7 @@ import uuid
 
 from .backup import guard
 from .contracts import WorkflowError, digest
-from .source_assets import canonical_assets
+from .source_assets import canonical_assets,used_timeline_asset_ids
 from .store import now
 from app.publishing_logic import PublishingCapabilityRegistry, validate_platform, validate_rights
 from app.publishing_models import PublicationReceipt
@@ -146,8 +146,7 @@ class NativePublications:
         document = job['snapshot']['document']; timeline = document.get('canonical_timeline', {}).get('snapshot')
         assets = canonical_assets(document)
         if timeline:
-            used = {clip.get('metadata', {}).get('native_asset_id') for track in timeline['tracks'] if not track['disabled']
-                for clip in track['clips'] if not clip['disabled'] and clip.get('asset_id')}
+            used = used_timeline_asset_ids(timeline)
         else:
             used = {item['asset_id'] for item in document.get('scene_media', [])}
             if not used and document.get('asset'): used.add(document['asset']['id'])

@@ -1,0 +1,206 @@
+{
+  "schema_version": "north-star-native-source-media-tracks-evidence-v1",
+  "recorded_at": "2026-10-10T18:35:25.237545+00:00",
+  "base_head": "fefcbf789786e821d8b8cf10429d406752ecfa3a",
+  "capabilities": {
+    "Source_only_canonical_audio_and_subtitle_handoff": true,
+    "voice_music_window_gain_fade": true,
+    "music_repeat_crossfade": true,
+    "measured_waveform_outside_SQLite_write_lock_and_second_CAS": true,
+    "source_timeline_SRT_VTT_mapping": true,
+    "explicit_out_of_bounds_trim_only": true,
+    "saved_audio_ASR_version_to_captions": true,
+    "protected_voice_word_boundaries": true,
+    "caption_text_time_template_editor_and_paging": true,
+    "changed_caption_text_discards_unproven_word_alignment": true,
+    "original_transcript_and_source_bytes_preserved": true,
+    "revision_version_hash_lock_fences": true,
+    "hashed_idempotency_without_raw_request_key_storage": true,
+    "approval_and_preview_invalidation": true,
+    "source_import_physical_revalidation": true,
+    "uploaded_subtitle_rights_gate": true,
+    "duplicated_provenance_without_request_replay_authority": true,
+    "render_checkpoint_binds_source_imports": true,
+    "preview_final_effect_and_PCM_parity": true,
+    "fresh_backup_restore_catalog_and_physical_sources": true
+  },
+  "tests": {
+    "native_related_final": {
+      "passed": 147,
+      "seconds": 207.515,
+      "modules": 21,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-media-tracks-native-final-n1.log",
+        "sha256": "97426847bca79189f43e5bbd5b8e409bd7b61c55873e6f1f1a94edbf4a1635c4",
+        "bytes": 32282
+      }
+    },
+    "studio_full_final": {
+      "passed": 661,
+      "seconds": 2.0278015,
+      "files": 81,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-media-tracks-studio-final-n1.log",
+        "sha256": "20ec24e193da287428e6e0b3cc08536560440f943749dcb43ae69d109baed8d5",
+        "bytes": 67335
+      }
+    },
+    "new_native_included": 15,
+    "new_Studio_included": 10,
+    "overlapping_runs_are_not_added": true
+  },
+  "qualification": {
+    "actual_upload_chunk_bytes": true,
+    "actual_local_FFprobe_FFmpeg_waveform_SQLite_HTTP": true,
+    "actual_local_preview_renderer_and_Full_QC": true,
+    "actual_backup_and_restore": true,
+    "synthetic_tones_not_speech": true,
+    "saved_video_ASR_fixture": true,
+    "audio_ASR_unit_protocol_mock": true,
+    "signed_human_fixture": true,
+    "Studio_fake_DOM": true,
+    "actual_Studio_controller_live_signed_HTTP": true,
+    "render_frame_visual_inspection": true,
+    "browser_rendered": false,
+    "non_developer_UAT": false,
+    "owner_UAT": false,
+    "real_speech_quality_accepted": false,
+    "real_provider_tests": 0,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "real_publishing": false,
+    "main_merged": false,
+    "production_deployed": false,
+    "manual_historical_data_deleted": false,
+    "only_owned_new_temporary_data_cleaned": true
+  },
+  "signed_HTTP_DTO_fixture": {
+    "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\native-source-media-tracks.json",
+    "sha256": "5fd235042711c0b5db12a658a74bc5180a9db3252322fcad924b265b05388bd1",
+    "bytes": 54340
+  },
+  "signed_controller_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-media-tracks-signed-controller-n1.json",
+    "sha256": "ff2d41b4f81aad653be63d08b6f2f97b49aba9de5195222f8f6973657597934d",
+    "bytes": 4785
+  },
+  "actual_render_bundle": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-media-tracks-n2",
+    "receipt": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-media-tracks-n2\\evidence.json",
+      "sha256": "ff600e4f2652d7f196bcfda4404c6f71ef6a1f554f2f1f3ca2902c271b9b4777",
+      "bytes": 6700
+    },
+    "final_mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-media-tracks-n2\\final.mp4",
+      "sha256": "ab5fcaeb820c18c324f240029609aa3a3647a175833eb31135acfe91812c07b8",
+      "bytes": 817566
+    },
+    "preview_mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-media-tracks-n2\\preview.mp4",
+      "sha256": "1636ad51170c0af8283a216d4c827177e40406971f42761a4040ae3694e749f0",
+      "bytes": 338574
+    },
+    "QC": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-media-tracks-n2\\qc.json",
+      "sha256": "b706d9db53d100120ce26e38dd45cabf758aaa91a21a95ad881d303a4233b883",
+      "bytes": 15466
+    },
+    "backup_restore": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-media-tracks-n2\\backup-restore.json",
+      "sha256": "6912f5abb5d2ce9f20ed7d55374e4400a4b3de6e0ba34a1c6ad6581823ebac2f",
+      "bytes": 7038
+    },
+    "matching_preview_final_PCM_sha256": "d86d0cdd338b98cb5517a3572395999c29baa3ed94ff8d85132bb69bdd1a1cb6",
+    "original_source_count": 9
+  },
+  "retained_initial_and_focused_runs": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-media-tracks-native-focused-n1.log",
+      "sha256": "c43b97ac9bc105eb7d45a7b07defc52339c3ab346f56cddd29a13cc8bade498a",
+      "bytes": 2950
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-media-tracks-native-http-n1.log",
+      "sha256": "afc8a7a1208d7bfb71fdfe3de559a80e62b9fb42753e46915cc9401c903395ac",
+      "bytes": 3275
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-media-tracks-studio-focused-n1.log",
+      "sha256": "be0071a417a9fe27fb1e7027df1565eb0c66b8647c51871689fd328c35d19c58",
+      "bytes": 1161
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-media-tracks-controller-native-n1.log",
+      "sha256": "b6cdfb0b6fbe94851572234b564ca902d57a747cdbf727702b01bb622f2e15ea",
+      "bytes": 359
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-media-tracks-render-n1.log",
+      "sha256": "ea2626e1f68de119abd9689eb8f2b7e99a2d54b5021f1dee172990520390f849",
+      "bytes": 1044
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-media-tracks-render-n2.log",
+      "sha256": "629c32cee63df035766cb8a855f9881147d0767b4f28b91bacf2b2e4c5c8e9c6",
+      "bytes": 2280
+    }
+  ],
+  "repairs": [
+    "Initial locked-track test compares unchanged store state, not its augmented UI projection.",
+    "Caption field controls are released on paging/project changes; stale private text is cleared.",
+    "Waveform decoder runs outside the write transaction and rechecks physical/CAS bindings before saving.",
+    "Raw request key is excluded from immutable journal payload; only its SHA256 is retained.",
+    "Initial screenshot exporter used invalid FFmpeg .35 timestamp; fixed to 0.35 and retained a fresh full n2 run including restore."
+  ],
+  "remaining": [
+    "Narrated Mode A audio/caption editor handoff",
+    "Edited-text word realignment and genuine language/ASR/source acceptance",
+    "BPM/mood/energy/rights, semantic/perceptual audio QA and complete audio UI",
+    "Real browser 1366/1920/2560, non-developer and deferred Owner full Mode B/bundle A",
+    "Meta analytics and all original remaining requirements and complete A/B/C bundles",
+    "Isolated Docker and production acceptance"
+  ],
+  "source_sha256": {
+    "apps/studio-web/native-source-media-tracks.mjs": "8f311da48b70e539b77f2506dfc075ccc23fb45b39fe8f3c0cc3d6a02842469f",
+    "apps/studio-web/native.html": "9669a93b3c7ab42a9cb0280e60ee4d6d95dc5d7c297a39931be8f3e6d4b2f3c0",
+    "apps/studio-web/native.mjs": "e66a4ff47f89c70e5552668736148dfa1cf364e5c4d3230f1e450eb197f10bf8",
+    "apps/studio-web/tests/fixtures/native-source-media-tracks.json": "5fd235042711c0b5db12a658a74bc5180a9db3252322fcad924b265b05388bd1",
+    "apps/studio-web/tests/native-source-media-tracks.test.mjs": "327b83f5662a64566dfd64db475c43b8aba7459ce3d10553ca1e0f95b491356a",
+    "scripts/native_source_media_tracks_http_ui.mjs": "fc89da46f50703cb2d74fc680003671156869c9d6b5ef9287f648c70df180090",
+    "scripts/north_star_source_media_tracks.py": "6a89c535a892248dcdd7342df729d55f548e2d5c734a34c558d76be83ff58a83",
+    "services/windows_native/access.py": "6c4a8a5a077055434d1220188e8c137e989f4905575d0e8b1846417be9c6f66f",
+    "services/windows_native/auto_edit_timeline.py": "f9eda272d2e29fa87484c3a0b65a68f398df1d7997524a4d9542e4fc9f50de71",
+    "services/windows_native/publications.py": "444a14330c59e17c6bef32b1f80b0c21418bef590dcd163e9f5fe3756845f23a",
+    "services/windows_native/server.py": "f8786b915699bbcef134e01caadff1664da70832aff7f7a1d1c3b41ca2685313",
+    "services/windows_native/source_assets.py": "1250aff781491120d2ec0932ab6d21e79c132022ed40fed6283687d5ceb0d256",
+    "services/windows_native/source_duplicate.py": "2f317f9f693f44f7a29fa54865cabb7c8a2290f6c7ffb70bd93fd0aa86b48957",
+    "services/windows_native/source_media_track_models.py": "c4444c23d2b16a840b90945f2df07d73010a73b325c8fc703d290fddee91fe81",
+    "services/windows_native/source_media_track_origins.py": "bf4f09ea727f1bca309b0ecebe082f73c54275b6fe89d708399d49d35a7fd2d8",
+    "services/windows_native/source_media_track_routes.py": "7e90ed3f72144c7bd01442bd0fca7a969b881ad9f49e67d910853bbd34d4a2fc",
+    "services/windows_native/source_media_tracks.py": "b4176fbd1f8371397c327da876bf13c4859b94d4bd37e0db09319a43618f4bd1",
+    "services/windows_native/source_preview.py": "6040b5cf8c6655924aa5f090717bb9246d71bd80929d738a272138f859c81ff1",
+    "services/windows_native/source_render.py": "783e3b85d8203b6aa2e39c5bf4f173bba56238c4711ba6f772be5b762ad55bff",
+    "services/windows_native/tests/test_phase10_http.py": "257f1ff685de308d9654c5b939d2e6bb38eb3ace7e2fdd3ba3b0dde3b3b5868d",
+    "services/windows_native/tests/test_source_media_tracks.py": "90f7661e0f099207c5e6d55addbc5a642cff8e5fdd6a576a4d5386e4aacffb95",
+    "services/windows_native/tests/test_source_media_tracks_http.py": "8f2a70fcbc294642194d8dc7162c5e86951bea2311dd4153bdd697faa41696d4"
+  },
+  "matrix": {
+    "groups": 64,
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed": 59
+  },
+  "states": {
+    "SOURCE_PRESERVED": "YES_AT_SEALED_PARENT_NEW_SEAL_REQUIRED",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES",
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  }
+}

@@ -123,6 +123,11 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
     manifest['version']='2.3'
     durable_json(directory/'timeline-render.json',manifest)
     durable_json(directory/'timeline.json',project['document']['canonical_timeline'])
+    if project['document'].get('source_media_track_imports'):
+        from .source_media_track_origins import records,verify_physical
+        durable_json(directory/'source-media-imports.json',{'schema_version':'native-render-media-imports-v1',
+            'imports':list(records(project['document']).values()),'verified_active_source_sha256':verify_physical(config.data_root,project['document']),
+            'source_media_mutated':False,'provider_calls':0,'human_review_required':True})
     durable_json(directory/'subtitles.json',{'cues':[cue.model_dump(mode='json') for cue in cues],
         'style':style.model_dump(mode='json'),'word_alignment':'source_provider_intervals_where_available',
         'transcript_evidence':root_analysis.get('transcript')})
@@ -231,6 +236,7 @@ def run(config,job,out,stage):
         'actual_local_compute_cost':None,'duration_seconds':time.monotonic()-started})
     files=('final.mp4','qc-report.json','ffprobe.json','render-manifest.json','timeline.json',
         'timeline-render.json','subtitles.json','audio-analysis.json','cost.json','renderer-receipt.json')
+    if (directory/'source-media-imports.json').is_file():files+=('source-media-imports.json',)
     try:files+=render_frame_artifacts(directory)
     except WorkflowError:raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
     files+=audio_balance_artifacts(directory)
