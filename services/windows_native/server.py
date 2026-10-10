@@ -854,6 +854,11 @@ class Handler(BaseHTTPRequestHandler):
             identifier,frame_id=frame_route.groups()
             if frame_id:return self.file(image_path(self.server.store,identifier,frame_id))
             return self.reply(view(self.server.store,identifier))
+        narrated_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/narrated-timeline',path)
+        if narrated_timeline_route:
+            if self.path!=path:raise WorkflowError('NARRATED_TIMELINE_QUERY_INVALID',400)
+            from .narrated_timeline_editor import view
+            return self.reply(view(self.server.store,narrated_timeline_route[1],self.server.publications.workspace_id),headers={'Cache-Control':'no-store'})
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', path)
         shorts_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/shorts',path)
         if shorts_route:
@@ -876,7 +881,7 @@ class Handler(BaseHTTPRequestHandler):
             csrf = self.auth_session.csrf if self.server.access is not None else self.server.csrf
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
-                "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_source_media_tracks": True, "north_star_quality": True, "native_auto_edit_analysis": True,
+                "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_official_publication_review":self.server.access is not None,"native_analytics_review":True,
                 "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_render_thumbnail_rights_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
@@ -1161,6 +1166,11 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith('/api/production/'):
             from .production_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=100000)))
+        narrated_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/narrated-timeline/(edit|configure|restore)',self.path)
+        if narrated_timeline_route:
+            from . import narrated_timeline_editor
+            action=getattr(narrated_timeline_editor,narrated_timeline_route[2])
+            return self.reply(action(self.server.store,narrated_timeline_route[1],self.read_body(max_bytes=64000),self.server.publications.workspace_id),headers={'Cache-Control':'no-store'})
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', self.path)
         broll_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/broll', self.path)
         scene_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-reviews',self.path)

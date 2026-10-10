@@ -28,7 +28,7 @@ def files(root):
     return {p.relative_to(root).as_posix():file_sha(p) for name in ('assets','originals') for p in (root/name).rglob('*') if p.is_file()}
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);out=parser.parse_args().evidence_dir.resolve()
+    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
     if out.exists() or out==REPO or REPO in out.parents:raise ValueError('Fresh external evidence directory required')
     out.mkdir(parents=True);case=NarratedMediaTracksTests();server=manager=None
     try:
@@ -43,6 +43,15 @@ def main():
         run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_source_media_tracks_http_ui.mjs'),str(context)],capture_output=True,check=True,timeout=60)
         controller=json.loads(run.stdout);durable_json(out/'signed-controller.json',controller)
         if len(controller['requests'])!=6 or controller['timeline_mode']!='narrated' or len(controller['imports'])!=3:raise AssertionError('Expected actual Mode A controller flow')
+        if args.timeline_editor:
+            from services.windows_native.narrated_timeline_editor import view as editor_view
+            editor_context=case.owned/'timeline-controller-context.json'
+            durable_json(editor_context,{'fixture_human':True,'origin':'http://127.0.0.1:'+str(server.server_port),'workspace_id':case.workspace,
+                'project':case.store.get(current['id']),'cookie':cookie,'csrf':session.csrf})
+            edit_run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_narrated_timeline_http_ui.mjs'),str(editor_context)],capture_output=True,check=True,timeout=90)
+            editor_controller=json.loads(edit_run.stdout)
+            if len(editor_controller['requests'])!=9 or not editor_controller['undo_redo_exact_snapshot']:raise AssertionError('Canonical editor controller evidence incomplete')
+            durable_json(out/'timeline-controller.json',editor_controller);durable_json(out/'timeline-editor.json',editor_view(case.store,current['id'],case.workspace))
         server.shutdown();server.server_close();thread.join();server=None
         current=case.store.get(current['id']);before=copy.deepcopy(current['document']);manager=PreviewManager(case.config,case.store)
         manager.generate(current['id'],current['revision']);deadline=time.monotonic()+180
@@ -85,6 +94,7 @@ def main():
         backup=create_backup(case.config,out/'backup.zip');destination=case.owned/'restored';restore=restore_backup(backup['backup_path'],destination,expected_sha256=backup['sha256'])
         restored=Store(destination);config=replace(case.config,data_root=destination)
         if catalog(restored,current['id'],case.workspace)!=page:raise AssertionError('Restored canonical editor differs')
+        if args.timeline_editor and editor_view(restored,current['id'],case.workspace)!=editor_view(case.store,current['id'],case.workspace):raise AssertionError('Restored undo/redo history differs')
         verify(config,restored.get(current['id'])['document']);validate_bundle(config,restored.get(current['id'])['document'],destination/'jobs'/job['id'])
         with restored.transaction() as con:restored.verified_render(job['id'],con)
         if files(case.root)!=original or file_sha(case.voice_out/'voice.wav')!=voice_sha:raise AssertionError('Original media or prepared voice changed')
@@ -100,6 +110,8 @@ def main():
             'human_final_video_accepted':False,'real_provider_calls':0,'new_ASR_or_TTS_calls':0,'paid_calls':0,'browser_rendered':False,
             'owner_UAT':False,'genuine_speech_quality_accepted':False,'publishing_enabled':False,'production_deployed':False,
             'complete_artifact_B_acceptance':False,'owned_temporary_data_cleaned_after_export':True,
+            'canonical_editor_controller_requests':9 if args.timeline_editor else 0,'canonical_undo_redo_exact_snapshot':args.timeline_editor,
+            'canonical_editor_history_exact_after_restore':args.timeline_editor,
             'exports':{p.relative_to(out).as_posix():file_sha(p) for p in out.rglob('*') if p.is_file()}}
         durable_json(out/'evidence.json',receipt);print(json.dumps({k:v for k,v in receipt.items() if k not in {'exports','immutable_source_media'}},ensure_ascii=False))
     finally:

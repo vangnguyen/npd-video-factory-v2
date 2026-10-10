@@ -56,7 +56,7 @@ def preserve(value,document,canvas):
     if not canvas or canvas.get('metadata',{}).get('native_narrated_media_schema')!=SCHEMA:return value
     snapshot=TimelineSnapshot.model_validate(value);prior=TimelineSnapshot.model_validate(canvas)
     metadata=copy.deepcopy(prior.metadata)
-    for key in ('native_narrated_media_schema','native_project_id','narrated_generated_voice_reference','narrated_caption_source_plan','subtitle_style','subtitle_template_ref','source_audio_processing'):
+    for key in ('native_narrated_media_schema','native_project_id','narrated_generated_voice_reference','narrated_caption_source_plan','subtitle_style','subtitle_template_ref','source_audio_processing','narrated_caption_edited_tracks'):
         if key in metadata:snapshot.metadata[key]=metadata[key]
     ref=reference(document);snapshot.metadata['narrated_generated_voice_reference']=ref
     plan=snapshot.metadata.get('narrated_caption_source_plan')
@@ -84,7 +84,7 @@ def preserve(value,document,canvas):
         if track.track_id==CAPTION_TRACK:
             from .shot_adapter import shots_from_snapshot
             new_shots=shots_from_snapshot(value);old_shots=shots_from_snapshot(canvas)
-            default=all(c.metadata.get('narrated_generated_caption') and not c.metadata.get('human_caption_edit') for c in track.clips)
+            default=track.track_id not in metadata.get('narrated_caption_edited_tracks',[]) and all(c.metadata.get('narrated_generated_caption') and not c.metadata.get('human_caption_edit') for c in track.clips)
             if default:
                 replacement=caption_track(plan['items'],new_shots,snapshot,ref)
                 replacement.locked,replacement.muted,replacement.disabled=track.locked,track.muted,track.disabled
@@ -124,6 +124,10 @@ def validate(document):
     validate_timeline(document)
     if len(snapshot.tracks)>32 or sum(len(t.clips) for t in snapshot.tracks if t.type=='audio')>128 or sum(len(t.clips) for t in snapshot.tracks)>2500:
         raise WorkflowError('NARRATED_MEDIA_TIMELINE_LIMIT',400)
+    edited=snapshot.metadata.get('narrated_caption_edited_tracks',[])
+    if not isinstance(edited,list) or len(edited)>32 or any(not isinstance(v,str) for v in edited) or len(set(edited))!=len(edited) or any(
+        not any(t.track_id==v and t.type=='text' and t.kind=='subtitles' for t in snapshot.tracks) for v in edited):
+        raise WorkflowError('NARRATED_MEDIA_CAPTION_OVERRIDE_TRACK_INVALID')
     generated=[];assets={v['id']:v for v in canonical_assets(document)}
     for track in snapshot.tracks:
         if track.track_id=='trk_native_video':continue
@@ -209,9 +213,14 @@ def cas(store,con,project,expected_version,*,seed_tracks=False):
     snapshot=TimelineSnapshot.model_validate(state['snapshot'])
     return state,seed(store,con,project,snapshot) if seed_tracks else snapshot
 
-def save(store,con,project,snapshot,action):
+def save(store,con,project,snapshot,action,*,restored_from_version=None):
     document=copy.deepcopy(project['document']);old=document['canonical_timeline']
     document['canonical_timeline']={'version':old['version']+1,'snapshot':snapshot.model_dump(mode='json'),'sha256':digest(snapshot.model_dump(mode='json'))}
+    history=document.get('narrated_timeline_mutations',[])
+    if not isinstance(history,list) or len(history)>=2000:raise WorkflowError('NARRATED_TIMELINE_HISTORY_LIMIT',400)
+    document['narrated_timeline_mutations']=history+[{'version':old['version']+1,'sha256':document['canonical_timeline']['sha256'],
+        'mutation':{'type':'restore' if restored_from_version is not None else 'edit',
+            'restored_from_version':restored_from_version,'parent_sha256':old['sha256']}}]
     from .shot_adapter import validate_document
     validate_document(document)
     con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',

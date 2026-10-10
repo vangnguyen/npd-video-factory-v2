@@ -1,0 +1,8 @@
+#native-narrated-timeline-card>label{display:inline-flex;flex-direction:column;gap:.35rem;margin:.6rem;max-width:calc(100% - 1.2rem)}
+#native-narrated-timeline-card input,#native-narrated-timeline-card select{max-width:100%}
+#native-narrated-timeline-card>button{margin:.3rem}
+.narrated-timeline-scroll{overflow:auto;max-width:100%;max-height:34rem;padding:.5rem}
+.narrated-track{padding:.5rem 0}.narrated-lane{position:relative;height:4.2rem;background:rgba(128,128,128,.1);margin-top:.3rem}
+.narrated-clip{position:absolute;top:.4rem;height:3.3rem;overflow:hidden;border-radius:.3rem;padding:.25rem;color:#fff;font-size:.8rem;box-sizing:border-box}
+.narrated-clip svg{position:absolute;inset:1.35rem 0 0;width:100%;height:1.6rem}.narrated-clip path{stroke:rgba(255,255,255,.8);stroke-width:1;fill:none}
+.narrated-playhead{position:absolute;top:0;bottom:0;width:2px;background:#e33;z-index:2;pointer-events:none}

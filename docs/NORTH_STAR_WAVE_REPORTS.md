@@ -3405,3 +3405,31 @@ REGRESSIONS:none observed in final related scope. Required generated-voice start
 EXTERNAL BLOCKERS:genuine credentials/eligibility/speech/alignment/rights/provider/Owner acceptance, existing localhost browser client block, isolated Docker/production acceptance. Safe work continues.
 OWNER ACTION REQUIRED:none for remaining safe implementation. Owner listening/Phase10 UAT remains deferred. No main merge, real publish, new paid approval or deployment requested/exercised.
 NEXT WAVE:complete remaining Mode A/B editor, mapping/undo/DSP limits and Meta analytics, then every original media/provider/multi-niche/platform/publishing/analytics/winner/learning/trend/Hub/hardening/A/B/C requirement. SOURCE_PRESERVED=YES at sealed parent, new seal required; PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+## 2026-10-11 — Wave 3 / 6 / 16: canonical narrated editor component
+
+WAVE: 3I / 6D / 16 (component follow-up)
+
+STATUS: COMPONENT_LOCAL_AND_MOCK_VERIFIED; complete original waves remain PARTIAL.
+
+HEAD SHA: parent cfbdf705c225c9f8bcc7106e9a4784e07179566d; exact implementing commit is in external narrated-timeline-editor-preservation.json / program-state.json after source sealing.
+
+CAPABILITIES COMPLETED: canonical audio/text editing; protected measured voice/canvas/source words; same-preparation exact undo/redo; current rights/uploads/cost/provider/jobs retained; approval invalidation; empty-caption override; changed-script voice guard with valid history repair; locked DSP/template controls; scoped Studio history/waveform/zoom/playhead; role/CSRF/CAS/physical gates; current-source HTTP, preview/final/FullQC and separate-process keyless recovery.
+
+CAPABILITIES PARTIAL: full original Mode A/B UI and generic storyboard video operations, footage subtitle mapping, all original provider/media/browser/non-developer/Owner/production and final A/B/C requirements. Matrix remains 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED, 59 unclosed broad groups.
+
+TESTS: Studio 677 PASS; Native related 244 PASS / 29 modules; final editor/HTTP 20 PASS after last guard changes (overlapping counts). Related run began before the last editor guard; final editor/HTTP and actual bundle were separately verified against final code. No full API/PostgreSQL/Docker/production suite claim.
+
+REAL PROVIDER TESTS: 0 in this increment.
+
+MOCK TESTS: synthetic measured narration/audio/word/human fixtures and fake DOM; 15 actual signed HTTP requests across two controllers. Actual FFmpeg media/QC/persistence/recovery are distinguished from speech/provider/Owner acceptance.
+
+EVIDENCE: [editor evidence](north-star/narrated-timeline-editor-evidence.json), [implementation](NATIVE_NARRATED_TIMELINE_EDITOR.md), external native-narrated-timeline-n2 and narrated-timeline-cold-recovery-n2.json.
+
+REGRESSIONS: final scoped suites pass; new capability flag updated in the existing exact Phase 10 session contract without relaxing cookie/CSRF/default-off publishing assertions. Accepted historical hashes are checked again by source preservation.
+
+EXTERNAL BLOCKERS: real providers/rights/Owner/browser/production remain separate acceptance gates; safe implementation continues.
+
+OWNER ACTION REQUIRED: none for continuing safe implementation; UAT remains deferred by Owner.
+
+NEXT WAVE: remaining original Mode A/B footage mapping/video editing, Meta analytics and all original gap closures. No main merge, deployment or real publishing.
