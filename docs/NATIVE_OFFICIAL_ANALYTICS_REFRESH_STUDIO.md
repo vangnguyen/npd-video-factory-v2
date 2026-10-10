@@ -11,3 +11,6 @@ Selection, workspace, project, revision, archive, dirty state, active work and r
 The controls are tested as DOM behavior and through the actual publication selection callback. Signed HTTP verifies the module, parent and HTML bytes, unchanged Native Session shape and no provider calls. A separate retained rehearsal checks the new served files, finite mock reads, original response validators and fresh recovery. Its media/QC/rights/account/OAuth/clock identities are explicit nonplayable protocol fixtures, not real provider, browser or Owner acceptance.
 
 Machine evidence records the actual regression and rehearsal results. Genuine OAuth lifecycle/other platforms, audience calibration, non-developer/browser/Owner use, deployed isolation/soak and every remaining original North Star requirement remain open. No full analytics, publishing, Mode A/B or North Star readiness is claimed.
+
+
+2026-10-10 follow-up: Native and Studio also support a separately versioned TikTok cumulative-counter contract and finite refresh. YouTube dated v1 history is preserved. Read [NATIVE_TIKTOK_ANALYTICS.md](NATIVE_TIKTOK_ANALYTICS.md) for actual public receipt selection, unsupported null metrics, consent/recovery/testing and remaining acceptance limits. No real provider, browser/Owner or production acceptance is implied.

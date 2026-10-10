@@ -113,10 +113,11 @@ test('draft handoff in actual dry-run controller still needs explicit review and
   const c=initializeNativePublications({root,getState:()=>state,getTikTokDraft:()=>draft,uuid:()=> 'explicit-draft-controller-key',api:async(p,b)=>{calls.push([p,b]);return fixture.dry_run_page.items[0];}});
   assert.equal(calls.length,0);assert.equal(root.getElementById('native-publish-tiktok-draft').disabled,false);await c.execute('create-tiktok');assert.equal(calls.length,1);assert.deepEqual(calls[0][1].metadata,draft.snapshot.request.metadata);assert.ok(calls[0][0].endsWith('/publications'));assert.equal(root.getElementById('native-publish-ack').checked,false);
 });
-test('TikTok receipts cannot be sent to YouTube analytics or refresh adapters',async()=>{
-  for(const[k,initialize]of[['analytics',initializeNativeOfficialAnalytics],['refresh',initializeNativeOfficialRefresh]]){const root=dom(),calls=[],item=fixture.stages.at(-1).publication,state={workspace_id:item.workspace_id,project:fixture.project,canManage:true,dirty:false,busy:false,active:false};
-    const c=initialize({root,getState:()=>state,getBinding:()=>({publication:item}),api:async(...args)=>{calls.push(args);throw Error('Wrong provider route');}});
-    assert.equal(root.getElementById('native-official-'+k+'-source').disabled,true);await c.readSource();assert.equal(calls.length,0);assert.match(root.getElementById('native-official-'+k+'-status').textContent,/chưa được cấu hình/);
+test('TikTok receipts reject YouTube date-report bindings before analytics or refresh dispatch',async()=>{
+  for(const[k,initialize]of[['analytics',initializeNativeOfficialAnalytics],['refresh',initializeNativeOfficialRefresh]]){const root=dom(),calls=[],messages=[],item=fixture.stages.at(-1).publication,state={workspace_id:item.workspace_id,project:fixture.project,canManage:true,dirty:false,busy:false,active:false};
+    const c=initialize({root,getState:()=>state,getBinding:()=>({publication:item}),onMessage:(...v)=>messages.push(v),api:async(...args)=>{calls.push(args);return {schema_version:'native-official-analytics-publication-binding-v1',target:{platform:'youtube'}};}});
+    assert.equal(root.getElementById('native-official-'+k+'-source').disabled,false);await c.readSource();assert.equal(calls.length,1);assert.equal(messages.length,1);
+    assert.equal(root.getElementById('native-official-'+k+'-create').disabled,true);await (k==='analytics'?c.createRead():c.createPlan());assert.equal(calls.length,1);assert.ok(calls.every(([,body])=>!body));
   }
 });
 test('mixed TikTok and legacy YouTube configuration history and source choices preserve both routes',async()=>{

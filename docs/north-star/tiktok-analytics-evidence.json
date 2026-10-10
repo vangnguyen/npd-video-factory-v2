@@ -1,0 +1,283 @@
+{
+  "schema_version": "north-star-native-tiktok-analytics-evidence-v1",
+  "recorded_at": "2026-10-10T16:03:34.675238+00:00",
+  "audit_head_before_commit": "558d9b707f1e96880c588a772a81b6cd869d42c2",
+  "scope": "actual_signed_local_HTTP_real_Studio_controllers_fake_DOM_explicit_provider_owner_nonplayable_media_protocol_fixtures",
+  "implementation": {
+    "closed_counter_request_consent_snapshot_v2": true,
+    "preserves_youtube_dated_v1": true,
+    "actual_original_receipt_public_post_selection": true,
+    "separate_read_credential_scopes_and_finite_consent": true,
+    "account_and_single_owned_video_query_proof": true,
+    "unsupported_metrics_and_query_null": true,
+    "nullable_operation_costs": true,
+    "finite_immutable_refresh_and_Studio": true,
+    "same_canonical_project_unchanged": true,
+    "qualified_insufficient_winner_learning_and_Bridge_proof": true,
+    "default_off_keyless_separate_process_history_restore": true,
+    "publishing_default_off": true
+  },
+  "tests": {
+    "full_Studio": {
+      "status": "PASS",
+      "tests": 631,
+      "new_counter_cases": 12,
+      "seconds": 2.1225873,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-studio-full-n2.log",
+        "bytes": 64032,
+        "sha256": "d843d992a873efa6e6c455c5b2b2033042ae0a6493a40adac213439d903f2b2d"
+      }
+    },
+    "current_native_collector_HTTP_observability": {
+      "status": "PASS",
+      "tests": 28,
+      "seconds": 72.16,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-native-final-n2.log",
+        "bytes": 6292,
+        "sha256": "5db86c38eff560be6eae7022cf0f7a08aaf5c1e99687ef6aa3037c0b511059b6"
+      }
+    },
+    "enhanced_original_qualified_Bridge_counter_proof": {
+      "status": "PASS",
+      "tests": 1,
+      "seconds": 4.637,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-qualified-bridge-n1.log",
+        "bytes": 362,
+        "sha256": "886d5ae4b84675a91feb45b0f180f7c7582e7fd0dff55c4dac8d2ae3b53498ff"
+      }
+    },
+    "related_youtube_refresh_winner_learning_Bridge": {
+      "status": "PASS",
+      "tests": 120,
+      "seconds": 555.878,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-native-regression-n1.log",
+        "bytes": 105,
+        "sha256": "77bbdf8f9dc0d86dd775c1ff6efaf446d84393e943152707574d92fbea846c67"
+      }
+    },
+    "earlier_related_62_tests_overlap": true,
+    "focused_Node_and_native_runs_overlap": true,
+    "full_native_media_renderer_Docker_regression": false
+  },
+  "retained_flow": {
+    "summary": {
+      "status": "PASS",
+      "signed_ui_requests": 21,
+      "cold_ui_get_requests": 6,
+      "mock_provider_reads": 4,
+      "nullable_cost_records": 13,
+      "backup_sha256": "e6584fc469c870b87dd72b0f8c00febf9cebd423257392ccada0d7142f70bc16",
+      "canonical_project_unchanged": true,
+      "actual_receipt_posts_selected": 2,
+      "snapshots": 2,
+      "finite_plans": 1,
+      "winner_state": "insufficient_data",
+      "learning_observations": 0,
+      "separate_process_keyless_Studio_history": "PASS",
+      "browser_rendered": false,
+      "owner_uat": false,
+      "real_provider_calls": 0,
+      "paid_operations": 0,
+      "accepted_media_generated": false,
+      "published": false,
+      "production_deployed": false,
+      "manual_old_data_deleted": false
+    },
+    "files": [
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4\\backup.json",
+        "bytes": 4227,
+        "sha256": "f4d7dc592e7ee445f2db323f73155df8c1642f772d733a645a636c3ea0e3ab2e"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4\\cold-ui-history.json",
+        "bytes": 41184,
+        "sha256": "89b775efc682ef7327df6fa7a4e2c84892b1aeca0e809089dfdcde4044030691"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4\\costs.json",
+        "bytes": 12475,
+        "sha256": "99ac75e0396f7ca1abd6d803c353a7cdaecaf74a5f80f5e22d4b283205551ae6"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4\\fixture.json",
+        "bytes": 146475,
+        "sha256": "d68fb645431d5928bb66ce01b8908a52c2a41f7d5afbd33ca634be96ebdef429"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4\\public-state.zip",
+        "bytes": 1095662,
+        "sha256": "e6584fc469c870b87dd72b0f8c00febf9cebd423257392ccada0d7142f70bc16"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4\\summary.json",
+        "bytes": 694,
+        "sha256": "8f0ce749ec8b99967cc2943f4414f7a175e01d47f5cd4434540181d0c49f90c4"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4\\ui-final-history.json",
+        "bytes": 68029,
+        "sha256": "0895fe5679cd1250337374bb349983927b3d90ffe979a6781ee596db4f4099f2"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4\\ui-manual-created.json",
+        "bytes": 6901,
+        "sha256": "42cdfe088c8630752a709d0bf43439eabaad6977c8dbc4d677d172c783959868"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4\\ui-plan-created.json",
+        "bytes": 7132,
+        "sha256": "8dbfb9dd54109adc0a627874660c64fecc9c21abef73c18caf1a0447aff012ff"
+      }
+    ],
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n4.log",
+      "bytes": 792,
+      "sha256": "9223647011353adf703858cd8afbf40a7d02d92ec024ed35f98d4ea758cefaf1"
+    },
+    "public_Studio_fixture": {
+      "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\native-tiktok-analytics-v2.json",
+      "bytes": 146475,
+      "sha256": "d68fb645431d5928bb66ce01b8908a52c2a41f7d5afbd33ca634be96ebdef429"
+    },
+    "catalog_profile": "ai-education-reference@1",
+    "genuine_media_acceptance": false,
+    "audience_or_winning_learning_recommendation": false,
+    "historical_GET_comparison_excludes_no_persisted_field": true
+  },
+  "retained_failures": [
+    {
+      "record": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-native-focused-n1.log",
+        "bytes": 1584,
+        "sha256": "5466f7d7bac3664029d4e34c70ff79aa0392b419fbd1c5ff3d516b6c7a0e1746"
+      },
+      "repair": "Initial shared publishing import dragged SQLAlchemy into Native; replaced with pure closed provider map.",
+      "final_related_status": "PASS"
+    },
+    {
+      "record": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-native-focused-n2.log",
+        "bytes": 14250,
+        "sha256": "e72034504f59e7fa6b840edc21f5d7f445f11962a9d44042a59b9bc628222850"
+      },
+      "repair": "Dispatch fence needed full verified publication receipt rather than a partial row.",
+      "final_related_status": "PASS"
+    },
+    {
+      "record": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-http-n1.log",
+        "bytes": 3800,
+        "sha256": "6cfe985cb137a471e2ef7c314441b7d53ea02ee934dd53f6d1d607de6111d4cb"
+      },
+      "repair": "Fixture start-time override and exact telemetry provider allowlist repaired.",
+      "final_related_status": "PASS"
+    },
+    {
+      "record": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-studio-legacy-n1.log",
+        "bytes": 11030,
+        "sha256": "4254d61550fc99b6f5ba8ea1f9e5afb4c00272c2034f2ef61423aad314d3a4b9"
+      },
+      "repair": "Minimal legacy winner fixture omitted the mandatory platform field.",
+      "final_related_status": "PASS"
+    },
+    {
+      "record": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-studio-full-n1.log",
+        "bytes": 65644,
+        "sha256": "f37093ed8d23768efab966f7958c86b0c3bdc62068fba0f86a9a1cbace1e55a2"
+      },
+      "repair": "Obsolete TikTok-unsupported expectation changed to rejecting a YouTube binding before dispatch.",
+      "final_related_status": "PASS"
+    },
+    {
+      "record": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n1.log",
+        "bytes": 2199,
+        "sha256": "2cc67c2fc769a4f0da3d03e4fe7bf8bbb170e938463e1fa042c3a7b46ab3f9c5"
+      },
+      "repair": "Rehearsal winner control prefix corrected to the actual initialized ID.",
+      "final_related_status": "PASS"
+    },
+    {
+      "record": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n2.log",
+        "bytes": 4300,
+        "sha256": "71bb833fed03b142825eda0cee22286ea5ce2c6fc266c3e49c7a553f9124ea24"
+      },
+      "repair": "Unknown-scope fixture could not save learning; supplied explicit real catalog niche configuration before rendering, without inventing audience metrics.",
+      "final_related_status": "PASS"
+    },
+    {
+      "record": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-analytics-flow-n3.log",
+        "bytes": 1334,
+        "sha256": "71d49e2ebbdc6447e1d80ccb83d12d8ade03fe059c2d10fd12167ad9c4bfe622"
+      },
+      "repair": "POST replay flag is transient; rehearsal rereads persisted GET history before exact cold comparison.",
+      "final_related_status": "PASS"
+    }
+  ],
+  "current_source_sha256": {
+    "apps/studio-web/native-official-analytics.mjs": "0ecf4e27bdbcb8532369df6b209f208d1e4d0db2ac12045ee0a8e0aa57501147",
+    "apps/studio-web/native-official-refresh.mjs": "5bfff7a4110df7174d48c41f6dd199f7db277c49444d3ce9ef52bcad7ea1900d",
+    "apps/studio-web/native-official-winners.mjs": "19894e42816a9ac645102a06addabdc5ba96d752c43b7f4085dfb7b68ea7c71e",
+    "apps/studio-web/native-platform-analytics.mjs": "dcbee56f78a8d33a7e50135f119a44364dc16c03a7a510f12ac978fc2bee6071",
+    "apps/studio-web/tests/fixtures/native-tiktok-analytics-v2.json": "d68fb645431d5928bb66ce01b8908a52c2a41f7d5afbd33ca634be96ebdef429",
+    "apps/studio-web/tests/native-official-winners.test.mjs": "3dd7c418b28194c592d003147ff5d85d68eaa8d4a1c9c2c79156cb70bb36ada0",
+    "apps/studio-web/tests/native-tiktok-analytics.test.mjs": "f6e9b9d4b14ec7d7eae04b29f9148aeb3e9c265038a0bbe35bfd1cdb23a08d5d",
+    "apps/studio-web/tests/native-tiktok-publication.test.mjs": "26ef5aee27cc7f55652ecfcd8ae622f3d8fb9ee8b3a561e47f2c50f6a05afe22",
+    "scripts/north_star_tiktok_analytics.mjs": "9b963b16299ec1b471a1cbf2b13172e9c550194f32783e2e209cf6dfeb7fca82",
+    "scripts/north_star_tiktok_analytics.py": "99c45a7e619575e177c0717078ced0afab5c0c85576eb177e390ea7d6c90e049",
+    "services/windows_native/observability.py": "ae38362772c6c41181a5aa6de5bae271e546a7d11a346e568a65a6b2400188cb",
+    "services/windows_native/official_analytics.py": "e763d711b8db2be00d69c4ae482dc75652fb99cfa6e92fb3033f335704ad1746",
+    "services/windows_native/official_analytics_models.py": "9f27d4a50cc745330e6aae3860d88b997fd278296d298f1b480066c9cc441cdd",
+    "services/windows_native/official_analytics_platforms.py": "b4e5066f9ff5e393faa29a624baacff12e5a47659add7974ce2fcf67b4b27e60",
+    "services/windows_native/official_analytics_refresh.py": "1100d8a205df36c4e26bceadf209b1e6d191b74d5f512cb6f7f47a4ea5afad55",
+    "services/windows_native/official_analytics_refresh_routes.py": "cd5b05c0752cd33edc3863ef1ae90652b34198092bdaac6c7bc59142d6ec8255",
+    "services/windows_native/official_analytics_routes.py": "4ea72a8a83f0c3582fa97a7941d61b008f987c9e3f22b58376b38418191e8c07",
+    "services/windows_native/official_winners.py": "f10220775dfeb1772d13bdcd87dca21565f21facb1652df8859bbce98fecc23c",
+    "services/windows_native/qualified_bridge_sources.py": "d3cb25cf1854eb6f2253be00c1204aad9b75b76959cf5c14d687f166c0b3992e",
+    "services/windows_native/server.py": "8e8104c2edc82de9bbdf00896b463a02c9c832e8abd3ccce781001933e1e002a",
+    "services/windows_native/tests/test_tiktok_analytics.py": "31a4d00d68ec17d78ed7d9aa4c6c75df677676b0e09e9d5d798ae8a35c0c3f88",
+    "services/windows_native/tests/test_tiktok_analytics_http.py": "8506c349e107309ff247b29c7d95cc6032d5d8d8704afa3c2d7bf184a232a3de"
+  },
+  "limits": {
+    "Meta_analytics_remaining": true,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "real_provider_acceptance": false,
+    "browser_rendered": false,
+    "non_developer_UAT": false,
+    "owner_UAT": false,
+    "accepted_media_generated": false,
+    "published": false,
+    "production_deployed": false,
+    "main_merged": false,
+    "manual_historical_data_deleted": false
+  },
+  "program": {
+    "groups": 64,
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed_groups": 59,
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "PHASE10_READY": "NO",
+    "OWNER_UAT_REQUIRED": "YES",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  },
+  "next_safe_work": [
+    "Meta analytics",
+    "durable multipart",
+    "every original remaining Mode A/B/media/intelligence/generative/audio/multi-niche/trend/learning/Hub/retention/production/Docker/full A/B/C requirement"
+  ]
+}

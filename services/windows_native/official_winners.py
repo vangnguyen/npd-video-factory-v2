@@ -9,7 +9,7 @@ from collections import Counter
 from pydantic import ValidationError
 from .contracts import WorkflowError,digest
 from .official_analytics import NativeOfficialAnalytics,typed
-from .official_analytics_models import Collect
+from .official_analytics_models import parse_collect
 from .official_winner_models import Create
 from .official_publications import utc
 from .store import now
@@ -43,7 +43,7 @@ class NativeOfficialWinners:
     def proof(self,con,project,identity):
         value=self.analytics.get(project,identity,con=con);result=value['result']
         if value['status']!='succeeded' or result is None:raise WorkflowError('NATIVE_OFFICIAL_WINNER_QUALIFIED_OBSERVATION_REQUIRED')
-        request=Collect.model_validate({**value['snapshot']['request'],'request_key':'internal-native-winner-source-key'})
+        request=parse_collect({**value['snapshot']['request'],'request_key':'internal-native-winner-source-key'})
         publication,source=self.analytics.source(project,request,result['features']['captured_at'],con=con)
         if source!=value['snapshot']['source']:raise WorkflowError('NATIVE_OFFICIAL_WINNER_SOURCE_CHANGED')
         job=self.store.job(con.execute('SELECT * FROM jobs WHERE id=? AND project_id=?',(publication['snapshot']['final_job_id'],project)).fetchone(),con)
@@ -93,13 +93,13 @@ class NativeOfficialWinners:
         draft=assess_channel(NormalizedMetrics.model_validate(candidate['metrics']),duration=candidate['features']['duration_seconds'],production_cost=candidate['production_cost_vnd'],context=context,policy=policy)
         return {'state':draft.state,'score':draft.score,'data_coverage':draft.data_coverage,'algorithm_version':draft.algorithm_version,
             'factors':[f.model_dump(mode='json') for f in draft.factors],'evidence':draft.evidence,'recommendations':draft.recommendations,
-            'basis':'matching_native_official_channel_report_scope','peer_scope_verified':context['scope_verified'],
+            'basis':'matching_native_official_cumulative_counter_scope' if candidate['scope']['platform']=='tiktok' else 'matching_native_official_channel_report_scope','peer_scope_verified':context['scope_verified'],
             'channel_baseline_verified':not candidate['scope']['mock'] and context['scope_verified'] and len(peers)>=policy.minimum_peer_posts,
             'view_velocity_supported':False,'publishing_age_hours':None,'actual_publication_time':None,
             'mock':candidate['scope']['mock'],'source_kind':candidate['scope']['source_kind'],'source_external_call':candidate['scope']['source_external_call'],
             'real_audience_observation':not candidate['scope']['mock'],'external_call':False,'automatic_action':False,'publishing_enabled':False,
-            'limitations':['Requested report dates do not prove complete coverage or equal publication age.',
-                'Report updates are not cumulative video-counter velocity; velocity and publication time remain unavailable.',
+            'limitations':['Cumulative counters have no reporting interval or verified equal publication age.' if candidate['scope']['platform']=='tiktok' else 'Requested report dates do not prove complete coverage or equal publication age.',
+                'Counter snapshots do not prove continuous observation or publication age; velocity and publication time remain unavailable.' if candidate['scope']['platform']=='tiktok' else 'Report updates are not cumulative video-counter velocity; velocity and publication time remain unavailable.',
                 'Frozen niche/channel annotations and selected compatible posts do not prove complete channel history or causal improvement.',
                 'Protocol mocks are synthetic; their relative assessments cannot enter real audience learning.']}
 

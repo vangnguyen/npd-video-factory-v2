@@ -21,3 +21,6 @@ Verification and hashes are indexed in `docs/north-star/native-official-analytic
 The subsequent protected read-registry fence in `NATIVE_OFFICIAL_READ_REGISTRY_FENCES.md` closes the file-change/removal prerequisite and adds a final post-resolution Owner/source/configuration/credential-lifetime check. Signed analytics runtime/Studio integration is still pending.
 
 The subsequent `NATIVE_OFFICIAL_ANALYTICS_CONTROLS.md` connects this kernel to signed Native routes, the Runner and receipt-bound Studio read controls. Its separate default-off gate and current-human finite consent are mock/local verified; recurring official refresh/cohort/winner/learning/Bridge/OAuth and real audience/Owner acceptance remain pending.
+
+
+2026-10-10 follow-up: Native and Studio also support a separately versioned TikTok cumulative-counter contract and finite refresh. YouTube dated v1 history is preserved. Read [NATIVE_TIKTOK_ANALYTICS.md](NATIVE_TIKTOK_ANALYTICS.md) for actual public receipt selection, unsupported null metrics, consent/recovery/testing and remaining acceptance limits. No real provider, browser/Owner or production acceptance is implied.

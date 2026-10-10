@@ -2,7 +2,7 @@
 from contextlib import nullcontext
 from .contracts import WorkflowError,digest
 from .official_analytics import NativeOfficialAnalytics
-from .official_analytics_models import Collect
+from .official_analytics_models import parse_collect
 from .official_winners import NativeOfficialWinners
 from .official_learning import NativeOfficialLearning
 from .qualified_learning_feedback import NativeQualifiedLearningFeedback
@@ -38,7 +38,7 @@ class QualifiedSources:
             if kind=='analytics':
                 value=service.get(project,identity,con=source)
                 if value['status']!='succeeded' or value['result'] is None:raise WorkflowError('NATIVE_BRIDGE_QUALIFIED_ANALYTICS_REQUIRED')
-                request=Collect.model_validate({**value['snapshot']['request'],'request_key':'internal-qualified-bridge-source-key'})
+                request=parse_collect({**value['snapshot']['request'],'request_key':'internal-qualified-bridge-source-key'})
                 _,proof=service.source(project,request,value['result']['features']['captured_at'],con=source)
                 if proof!=value['snapshot']['source']:raise WorkflowError('NATIVE_BRIDGE_QUALIFIED_SOURCE_CHANGED')
             elif kind=='winner':value=service.read(source,service.row(source,project,identity))

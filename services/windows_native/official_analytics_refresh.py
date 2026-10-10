@@ -6,7 +6,8 @@ from typing import Literal
 from pydantic import Field,StrictBool,StrictInt,ValidationError,field_validator,model_validator
 from .contracts import WorkflowError,digest
 from .official_analytics import NativeOfficialAnalytics
-from .official_analytics_models import Collect,Cancel
+from .official_analytics_models import Collect,CounterCollect,Cancel,parse_collect
+from .official_analytics_platforms import version
 from .official_account_registry import AccountFactory
 from .official_publications import utc
 from app.models import StrictModel
@@ -49,18 +50,42 @@ class RefreshCancel(StrictModel):
     expected_version:StrictInt=Field(ge=1)
     cancel_pending_read:StrictBool
 
+class CounterRefreshCreate(RefreshCreate):
+    schema_version:Literal['native-official-analytics-refresh-request-v2']='native-official-analytics-refresh-request-v2'
+    query:None=Field(...)
+    metric_scope:Literal['cumulative_video_counters']
+    remote_post_id:str=Field(pattern=r'^[1-9][0-9]{0,18}$')
+    @field_validator('query',mode='before')
+    @classmethod
+    def dates(cls,value):
+        if value is not None:raise ValueError('Cumulative counters have no reporting interval')
+        return value
+    @field_validator('remote_post_id')
+    @classmethod
+    def post(cls,value):
+        if int(value)>2**63-1:raise ValueError('Actual TikTok post ID required')
+        return value
+
+def parse_refresh(value):
+    if not isinstance(value,dict):raise ValueError('Explicit refresh request required')
+    tag=value.get('schema_version','native-official-analytics-refresh-request-v1')
+    if tag=='native-official-analytics-refresh-request-v1':return RefreshCreate.model_validate(value)
+    if tag=='native-official-analytics-refresh-request-v2':return CounterRefreshCreate.model_validate(value)
+    raise ValueError('Unknown refresh request version')
+
 def typed(value,kind):
     try:
-        if type(value) is not kind:raise ValueError()
-        return kind.model_validate(value.model_dump(mode='python',warnings=False))
+        if type(value) is not kind and not (kind is RefreshCreate and type(value) is CounterRefreshCreate):raise ValueError()
+        return parse_refresh(value.model_dump(mode='python',warnings=False)) if kind is RefreshCreate else kind.model_validate(value.model_dump(mode='python',warnings=False))
     except (ValueError,TypeError,ValidationError):raise WorkflowError('NATIVE_OFFICIAL_REFRESH_FIELDS_INVALID',400) from None
 
 def collector_payload(payload,key,*,seconds=None):
     value=payload.model_dump(mode='json')
-    value={name:value[name] for name in Collect.model_fields}
-    value.update(schema_version='native-official-analytics-request-v1',request_key=key)
+    counter=type(payload) is CounterRefreshCreate
+    value={name:value[name] for name in (CounterCollect if counter else Collect).model_fields}
+    value.update(schema_version=version('request','tiktok' if counter else 'youtube'),request_key=key)
     if seconds is not None:value['valid_for_seconds']=seconds
-    return Collect.model_validate(value)
+    return parse_collect(value)
 
 class NativeOfficialAnalyticsRefresh:
     def __init__(self,analytics,*,enabled=False):
@@ -111,10 +136,11 @@ class NativeOfficialAnalyticsRefresh:
     def read(self,con,row):
         try:
             value=dict(row);policy=json.loads(value.pop('policy_json'))
-            request=RefreshCreate.model_validate({**policy['request'],'request_key':'internal-finite-official-refresh-key'})
+            request=parse_refresh({**policy['request'],'request_key':'internal-finite-official-refresh-key'})
+            platform='tiktok' if type(request) is CounterRefreshCreate else 'youtube'
             if (set(policy)!={'schema_version','plan_id','workspace_id','project_id','publication_id','request','authority','mock','source','target_binding_sha256','credential_proof','approved_at','automatic_consent_renewal','publishing_enabled','fixed_report_query'}
                 or not same(policy['request'],request.model_dump(mode='json',exclude={'request_key'}))
-                or digest(policy)!=row['policy_sha256'] or policy['schema_version']!='native-official-analytics-refresh-policy-v1'
+                or digest(policy)!=row['policy_sha256'] or policy['schema_version']!=version('refresh-policy',platform)
                 or any(policy[k]!=row[k] for k in ('plan_id','workspace_id','project_id','publication_id')) or row['workspace_id']!=self.workspace
                 or not re.fullmatch(r'noap_[a-f0-9]{32}',row['plan_id']) or request.publication_id!=row['publication_id']
                 or digest(policy['request'])!=row['request_fingerprint'] or type(policy['mock']) is not bool or request.acknowledged_protocol_mock is not policy['mock']
@@ -135,17 +161,18 @@ class NativeOfficialAnalyticsRefresh:
                 if (set(proof)!={'expires_at','scopes_sha256','target_binding_sha256'} or request.deadline>at(proof['expires_at'])
                     or proof['target_binding_sha256']!=policy['target_binding_sha256'] or not re.fullmatch(r'[a-f0-9]{64}',proof['scopes_sha256'])):raise ValueError()
             elif row['status'] not in {'not_configured','cancelled'} or row['run_count']!=0:raise ValueError()
-            value.pop('key_sha256');value.update(schema_version='native-official-analytics-refresh-plan-v1',policy=policy,mock=policy['mock'],
+            value.pop('key_sha256');value.update(schema_version=version('refresh-plan',platform),policy=policy,mock=policy['mock'],
                 token_returned=False,publishing_enabled=False,automatic_consent_renewal=False,real_provider_tested=False)
             return value
         except (KeyError,TypeError,ValueError,ValidationError):raise WorkflowError('NATIVE_OFFICIAL_REFRESH_EVIDENCE_CHANGED') from None
     def occurrences(self,con,row,value):
-        items=[];request=RefreshCreate.model_validate({**value['policy']['request'],'request_key':'internal-occurrence-proof-key'})
+        items=[];request=parse_refresh({**value['policy']['request'],'request_key':'internal-occurrence-proof-key'})
+        platform='tiktok' if type(request) is CounterRefreshCreate else 'youtube'
         for record in con.execute('SELECT * FROM native_official_analytics_refresh_occurrences WHERE plan_id=? ORDER BY ordinal',(row['plan_id'],)):
             try:
                 item=json.loads(record['occurrence_json']);ordinal=len(items)+1
                 if (set(item)!={'schema_version','occurrence_id','plan_id','workspace_id','project_id','publication_id','ordinal','policy_sha256','sync_id','consent_sha256','read_request_sha256','due_at','admitted_at'}
-                    or digest(item)!=record['occurrence_sha256'] or item['schema_version']!='native-official-analytics-refresh-occurrence-v1'
+                    or digest(item)!=record['occurrence_sha256'] or item['schema_version']!=version('refresh-occurrence',platform)
                     or any(record[k]!=row[k] or item[k]!=row[k] for k in ('plan_id','workspace_id','project_id','publication_id','policy_sha256'))
                     or item['occurrence_id']!=record['occurrence_id'] or not re.fullmatch(r'noao_[a-f0-9]{32}',item['occurrence_id'])
                     or type(item['ordinal']) is not int or item['ordinal']!=record['ordinal'] or item['ordinal']!=ordinal or ordinal>row['run_count']
@@ -160,7 +187,7 @@ class NativeOfficialAnalyticsRefresh:
                     or item['read_request_sha256']!=digest(read_request) or not same(sync['snapshot']['request'],read_request)
                     or not same(sync['snapshot']['authority'],value['policy']['authority']) or sync['mock'] is not value['mock']
                     or sync['snapshot']['consented_at']!=item['admitted_at'] or at(sync['snapshot']['deadline'])>request.deadline):raise ValueError()
-                _,source=self.analytics.source(row['project_id'],Collect.model_validate({**read_request,'request_key':'internal-occurrence-source-key'}),item['admitted_at'],con=con)
+                _,source=self.analytics.source(row['project_id'],parse_collect({**read_request,'request_key':'internal-occurrence-source-key'}),item['admitted_at'],con=con)
                 if not same(source,sync['snapshot']['source']):raise ValueError()
                 items.append({**item,'occurrence_sha256':record['occurrence_sha256'],'sync':sync})
             except (ValueError,KeyError,TypeError,ValidationError):raise WorkflowError('NATIVE_OFFICIAL_REFRESH_OCCURRENCE_CHANGED') from None
@@ -195,7 +222,7 @@ class NativeOfficialAnalyticsRefresh:
             if con.execute("SELECT 1 FROM native_official_analytics_refresh_plans WHERE workspace_id=? AND publication_id=? AND status='active'",(self.workspace,payload.publication_id)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_REFRESH_ALREADY_ACTIVE')
             self.analytics.identity(authority=authority)
             identity,stamp='noap_'+uuid.uuid4().hex,instant.isoformat()
-            policy={'schema_version':'native-official-analytics-refresh-policy-v1','plan_id':identity,'workspace_id':self.workspace,'project_id':project,'publication_id':payload.publication_id,
+            policy={'schema_version':version('refresh-policy',publication['snapshot']['target']['platform']),'plan_id':identity,'workspace_id':self.workspace,'project_id':project,'publication_id':payload.publication_id,
                 'request':request,'authority':authority,'mock':publication['mock'],'source':source,'target_binding_sha256':publication['snapshot']['target_binding_sha256'],
                 'credential_proof':proof,'approved_at':stamp,'automatic_consent_renewal':False,'publishing_enabled':False,'fixed_report_query':True}
             con.execute('INSERT INTO native_official_analytics_refresh_plans VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
@@ -205,7 +232,7 @@ class NativeOfficialAnalyticsRefresh:
             return self.get(project,identity,con=con),False
     def admission(self,con,row,value):
         if not self.configured():raise WorkflowError('NATIVE_OFFICIAL_REFRESH_NOT_ENABLED')
-        policy=value['policy'];request=RefreshCreate.model_validate({**policy['request'],'request_key':'internal-refresh-admission-key'})
+        policy=value['policy'];request=parse_refresh({**policy['request'],'request_key':'internal-refresh-admission-key'})
         self.analytics.identity(authority=policy['authority']);instant=utc(self.clock())
         if instant>=request.deadline:raise WorkflowError('NATIVE_OFFICIAL_REFRESH_DEADLINE_EXPIRED')
         if instant<request.start_at:raise WorkflowError('NATIVE_OFFICIAL_REFRESH_NOT_DUE')
@@ -251,7 +278,7 @@ class NativeOfficialAnalyticsRefresh:
                 if replay:raise WorkflowError('NATIVE_OFFICIAL_REFRESH_UNEXPECTED_EXISTING_OCCURRENCE')
                 self.analytics.identity(authority=value['policy']['authority'])
                 admitted=sync['snapshot']['consented_at'];identity='noao_'+uuid.uuid4().hex
-                occurrence={'schema_version':'native-official-analytics-refresh-occurrence-v1','occurrence_id':identity,'plan_id':row['plan_id'],'workspace_id':self.workspace,'project_id':row['project_id'],'publication_id':row['publication_id'],
+                occurrence={'schema_version':version('refresh-occurrence',sync['snapshot']['target']['platform']),'occurrence_id':identity,'plan_id':row['plan_id'],'workspace_id':self.workspace,'project_id':row['project_id'],'publication_id':row['publication_id'],
                     'ordinal':ordinal,'policy_sha256':row['policy_sha256'],'sync_id':sync['sync_id'],'consent_sha256':sync['snapshot_sha256'],
                     'read_request_sha256':digest(sync['snapshot']['request']),'due_at':due,'admitted_at':admitted}
                 con.execute('INSERT INTO native_official_analytics_refresh_occurrences VALUES(?,?,?,?,?,?,?,?,?,?,?)',

@@ -99,7 +99,8 @@ class Runner:
                 refreshed=self.official_analytics_refresh.tick() if self.official_analytics_refresh is not None else None
                 value=self.official_analytics.process()
                 if value is not None:
-                    self.observer.emit('worker_step',job_id=value['sync_id'],project_id=value['project_id'],stage='official_analytics_read',provider='youtube-analytics-api',duration=time.monotonic()-started)
+                    from .official_analytics_platforms import PROVIDERS as analytics_providers
+                    self.observer.emit('worker_step',job_id=value['sync_id'],project_id=value['project_id'],stage='official_analytics_read',provider=analytics_providers[value['snapshot']['target']['platform']],duration=time.monotonic()-started)
                     return True
                 if refreshed is not None:
                     self.observer.emit('worker_step',job_id=refreshed['plan_id'],project_id=refreshed['project_id'],stage='official_analytics_refresh',provider='local-scheduler',duration=time.monotonic()-started)
@@ -993,6 +994,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-official-publications.mjs'] = 'native-official-publications.mjs'
         static['/native-official-publication-queue.mjs'] = 'native-official-publication-queue.mjs'
         static['/native-meta-publication.mjs'] = 'native-meta-publication.mjs'
+        static['/native-platform-analytics.mjs'] = 'native-platform-analytics.mjs'
         static['/native-publishing-media.mjs'] = 'native-publishing-media.mjs'
         static['/native-official-analytics.mjs'] = 'native-official-analytics.mjs'
         static['/native-official-refresh.mjs'] = 'native-official-refresh.mjs'

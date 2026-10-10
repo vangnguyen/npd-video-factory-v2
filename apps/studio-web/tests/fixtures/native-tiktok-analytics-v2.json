@@ -1,0 +1,3413 @@
+{
+  "schema_version": "native-tiktok-analytics-fixture-v2",
+  "scope": "actual_signed_local_HTTP_explicit_protocol_mocks_nonplayable_media_no_real_audience",
+  "project": {
+    "id": "7723ef65f1914151a4c2712eb11356b6",
+    "revision": 2,
+    "document": {
+      "name": "EXPLICIT MOCK TIKTOK ANALYTICS TECH PROFILE",
+      "prompt": "",
+      "input_kind": "media",
+      "proposal": null,
+      "asset": null,
+      "assets": [
+        {
+          "id": "explicit_fixture.mp4",
+          "kind": "video",
+          "filename": "EXPLICIT OWNED RIGHTS FIXTURE",
+          "rights_confirmed": true,
+          "rights_status": "owned",
+          "license": "explicit-owned-fixture-license"
+        }
+      ],
+      "scene_media": [],
+      "documents": [],
+      "channel_profile": {
+        "schema_version": "native-channel-selection-v1",
+        "profile": {
+          "profile_ref": "ai-education-reference@1",
+          "name": "AI dễ hiểu · hồ sơ tham chiếu",
+          "content_profile_id": "ai-education",
+          "niche_profile": {
+            "profile_ref": "technology-education@1",
+            "niche": "technology",
+            "name": "Công nghệ / AI dễ hiểu",
+            "language": "vi",
+            "locale": "vi-VN",
+            "country": "VN",
+            "target_audience": "Người mới tìm hiểu công nghệ và cách kiểm chứng nội dung AI",
+            "tone": "Dễ hiểu, có nguồn, phân biệt ví dụ minh họa và dữ kiện",
+            "keywords": [
+              "AI",
+              "công nghệ",
+              "kiểm chứng",
+              "dữ liệu"
+            ]
+          },
+          "brand_id": "vf-ai-education",
+          "video_template_id": "ai-education-30",
+          "duration_mode": "fit_narration_preserve_voice_speed",
+          "voice_profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+          "source_preferences": {
+            "subtitle_template_ref": "sentence-clean@v1",
+            "preview_mode": "final_effects",
+            "audio_processing": {
+              "normalize_original_audio": false,
+              "normalize_music": false,
+              "duck_music": false,
+              "original_target_lufs": -16.0,
+              "music_target_lufs": -24.0,
+              "duck_threshold": 0.02,
+              "duck_ratio": 8.0,
+              "duck_attack_ms": 20.0,
+              "duck_release_ms": 250.0
+            }
+          },
+          "publishing_profile": {
+            "profile_ref": "reviewed-reference-distribution@1",
+            "platforms": [
+              "youtube",
+              "tiktok",
+              "instagram",
+              "facebook"
+            ],
+            "enabled": false,
+            "human_publish_approval_required": true,
+            "rights_unknown_policy": "block",
+            "official_account_ref": null,
+            "credentials_configured": false
+          },
+          "analytics_profile": {
+            "profile_ref": "official-reference-analytics@1",
+            "enabled": false,
+            "provider_mode": "official",
+            "provider_status": "NOT_CONFIGURED",
+            "official_account_ref": null,
+            "missing_metric_policy": "null",
+            "learning_mode": "recommendation_only"
+          }
+        },
+        "profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+        "content_profile": {
+          "id": "ai-education",
+          "name": "Công nghệ / AI dễ hiểu",
+          "related_project": "AI education",
+          "target_audience": "Người mới tìm hiểu công nghệ và cách kiểm chứng nội dung AI",
+          "preferred_formats": [
+            "Giải thích ngắn",
+            "Checklist",
+            "Đối chiếu nguồn"
+          ],
+          "channel": "AI education — hồ sơ tham chiếu nội bộ",
+          "cta_types": [
+            "Đặt câu hỏi",
+            "Lưu checklist"
+          ],
+          "cta_keywords": [
+            "câu hỏi",
+            "checklist"
+          ],
+          "tone": "Dễ hiểu, có nguồn, phân biệt ví dụ minh họa và dữ kiện",
+          "duration_seconds": [
+            30,
+            45,
+            60
+          ],
+          "keywords": [
+            "AI",
+            "công nghệ",
+            "kiểm chứng",
+            "dữ liệu"
+          ],
+          "project_references": []
+        },
+        "content_profile_sha256": "2883c8b66e29be5c743b060436e4594b1f61f38aaffccc46b83c70a2b03612c2",
+        "brand_template": {
+          "schema_version": "native-brand-template-v1",
+          "brand": {
+            "id": "vf-ai-education",
+            "name": "AI dễ hiểu — tham chiếu",
+            "logo": null,
+            "asset_status": "generic_reference",
+            "fonts": {
+              "heading": "seguisb.ttf",
+              "body": "segoeui.ttf",
+              "subtitle_family": "Segoe UI"
+            },
+            "palette": {
+              "background": "#10233b",
+              "text": "#f4f8ff",
+              "accent": "#71d5e8",
+              "muted": "#b5c9df",
+              "caption_background": "#091728",
+              "caption_border": "#478da0"
+            },
+            "subtitle_style": {
+              "font_size": 46,
+              "color": "#fcf9f1",
+              "timing": "measured_sentence_activity_weighted_phrase_estimate"
+            },
+            "primary_cta": "Lưu checklist và đặt câu hỏi về điều bạn muốn kiểm chứng.",
+            "intro": "AI DỄ HIỂU",
+            "intro_seconds": 1.1,
+            "outro_seconds": 1.0,
+            "voice_profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+            "music_profile": {
+              "nominal_gain": 0.12,
+              "ducking": "voice_sidechaincompress",
+              "default_track": null
+            },
+            "safe_areas": {
+              "top": 160,
+              "bottom": 360,
+              "left": 90,
+              "right": 180,
+              "source": "configurable_reference_margins"
+            },
+            "project_disclaimers": [
+              "Ví dụ minh họa cần được kiểm chứng từ nguồn. Không bảo đảm kết quả từ AI."
+            ]
+          },
+          "template": {
+            "id": "ai-education-30",
+            "name": "Giải thích công nghệ / AI · 30 giây",
+            "purpose": "news_update",
+            "scene_label": "GIẢI THÍCH",
+            "duration_seconds": 30,
+            "width": 1080,
+            "height": 1920,
+            "fps": 30,
+            "aspect_ratio": "9:16",
+            "duration_policy": "fit_narration_preserve_voice_speed"
+          },
+          "brand_sha256": "ccd3212f6e941653c4eb4ce117f7ead9b830c8af94cef62c0333cb2417508e22",
+          "template_sha256": "c3f479526a4bc1cf9dd5e38d6f77820f7a7708c897087d2f2b977dcd77f226f8"
+        },
+        "source_subtitle_style": {
+          "font_family": "Noto Sans",
+          "font_size": 48,
+          "font_weight": 800,
+          "text_color": "#FFFFFF",
+          "highlight_color": "#F5C451",
+          "background_color": "#000000",
+          "background_opacity": 0.58,
+          "position": "bottom",
+          "animation": "none",
+          "template_ref": "sentence-clean@v1",
+          "keywords": [],
+          "max_lines": 3,
+          "safe_margin_percent": 7.0
+        },
+        "external_dispatches": 0,
+        "paid_operations": 0,
+        "publishing_enabled": false,
+        "catalog_ref": "native-reference-channels@1",
+        "catalog_sha256": "abc9b318ba992dd719df7fb5c0f1da9812f460d88bd2234481830f04068c5937",
+        "selection_sha256": "174a133edb530b9c7ff7a79bd692f0fad3b7810c616e550bb3c6d956ac716125"
+      },
+      "niche": "technology",
+      "content_profile": {
+        "id": "ai-education",
+        "name": "Công nghệ / AI dễ hiểu",
+        "related_project": "AI education",
+        "target_audience": "Người mới tìm hiểu công nghệ và cách kiểm chứng nội dung AI",
+        "preferred_formats": [
+          "Giải thích ngắn",
+          "Checklist",
+          "Đối chiếu nguồn"
+        ],
+        "channel": "AI education — hồ sơ tham chiếu nội bộ",
+        "cta_types": [
+          "Đặt câu hỏi",
+          "Lưu checklist"
+        ],
+        "cta_keywords": [
+          "câu hỏi",
+          "checklist"
+        ],
+        "tone": "Dễ hiểu, có nguồn, phân biệt ví dụ minh họa và dữ kiện",
+        "duration_seconds": [
+          30,
+          45,
+          60
+        ],
+        "keywords": [
+          "AI",
+          "công nghệ",
+          "kiểm chứng",
+          "dữ liệu"
+        ],
+        "project_references": []
+      },
+      "brand_template": {
+        "schema_version": "native-brand-template-v1",
+        "brand": {
+          "id": "vf-ai-education",
+          "name": "AI dễ hiểu — tham chiếu",
+          "logo": null,
+          "asset_status": "generic_reference",
+          "fonts": {
+            "heading": "seguisb.ttf",
+            "body": "segoeui.ttf",
+            "subtitle_family": "Segoe UI"
+          },
+          "palette": {
+            "background": "#10233b",
+            "text": "#f4f8ff",
+            "accent": "#71d5e8",
+            "muted": "#b5c9df",
+            "caption_background": "#091728",
+            "caption_border": "#478da0"
+          },
+          "subtitle_style": {
+            "font_size": 46,
+            "color": "#fcf9f1",
+            "timing": "measured_sentence_activity_weighted_phrase_estimate"
+          },
+          "primary_cta": "Lưu checklist và đặt câu hỏi về điều bạn muốn kiểm chứng.",
+          "intro": "AI DỄ HIỂU",
+          "intro_seconds": 1.1,
+          "outro_seconds": 1.0,
+          "voice_profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+          "music_profile": {
+            "nominal_gain": 0.12,
+            "ducking": "voice_sidechaincompress",
+            "default_track": null
+          },
+          "safe_areas": {
+            "top": 160,
+            "bottom": 360,
+            "left": 90,
+            "right": 180,
+            "source": "configurable_reference_margins"
+          },
+          "project_disclaimers": [
+            "Ví dụ minh họa cần được kiểm chứng từ nguồn. Không bảo đảm kết quả từ AI."
+          ]
+        },
+        "template": {
+          "id": "ai-education-30",
+          "name": "Giải thích công nghệ / AI · 30 giây",
+          "purpose": "news_update",
+          "scene_label": "GIẢI THÍCH",
+          "duration_seconds": 30,
+          "width": 1080,
+          "height": 1920,
+          "fps": 30,
+          "aspect_ratio": "9:16",
+          "duration_policy": "fit_narration_preserve_voice_speed"
+        },
+        "brand_sha256": "ccd3212f6e941653c4eb4ce117f7ead9b830c8af94cef62c0333cb2417508e22",
+        "template_sha256": "c3f479526a4bc1cf9dd5e38d6f77820f7a7708c897087d2f2b977dcd77f226f8"
+      },
+      "canonical_timeline": {
+        "snapshot": {
+          "metadata": {
+            "native_auto_edit_schema": "native-auto-edit-timeline-v1"
+          },
+          "tracks": [
+            {
+              "disabled": false,
+              "clips": [
+                {
+                  "disabled": false,
+                  "asset_id": "ast_explicit_fixture",
+                  "metadata": {
+                    "native_asset_id": "explicit_fixture.mp4"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "approval": {
+      "revision": 2,
+      "reviewer": "EXPLICIT SYNTHETIC REVIEW — NOT OWNER UAT",
+      "acknowledged": true
+    },
+    "created_at": "2026-10-10T15:51:04.925334+00:00",
+    "updated_at": "2026-10-10T15:51:04.925334+00:00",
+    "input": {
+      "schema_version": "project-input-v1",
+      "version": 2,
+      "source": "local_user_intake",
+      "text_inputs": [],
+      "image_assets": [],
+      "video_assets": [
+        {
+          "id": "explicit_fixture.mp4",
+          "kind": "video",
+          "filename": "EXPLICIT OWNED RIGHTS FIXTURE",
+          "rights_confirmed": true,
+          "rights_status": "owned",
+          "license": "explicit-owned-fixture-license",
+          "illustration": false
+        }
+      ],
+      "document_assets": [],
+      "metadata": {
+        "workflow": "MEDIA_REQUIRES_BRIEF",
+        "mixed": false,
+        "untranscribed_video_audio": false,
+        "media_analysis": []
+      },
+      "hash": "77b1867b737b039552e5b677bb6f1abe8050d1ce8bab755c3b18a37a7876ca25"
+    },
+    "archived": false,
+    "jobs": [
+      {
+        "id": "0e9e334acc074b71877c880f318d71b0",
+        "project_id": "7723ef65f1914151a4c2712eb11356b6",
+        "revision": 2,
+        "kind": "render",
+        "status": "succeeded",
+        "stage": "succeeded",
+        "request_key": "2efeb211d3e348b68dab374472b3444e",
+        "request_sha": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+        "snapshot": {
+          "document": {
+            "name": "EXPLICIT MOCK TIKTOK ANALYTICS TECH PROFILE",
+            "prompt": "",
+            "input_kind": "media",
+            "proposal": null,
+            "asset": null,
+            "assets": [
+              {
+                "id": "explicit_fixture.mp4",
+                "kind": "video",
+                "filename": "EXPLICIT OWNED RIGHTS FIXTURE",
+                "rights_confirmed": true,
+                "rights_status": "owned",
+                "license": "explicit-owned-fixture-license"
+              }
+            ],
+            "scene_media": [],
+            "documents": [],
+            "channel_profile": {
+              "schema_version": "native-channel-selection-v1",
+              "profile": {
+                "profile_ref": "ai-education-reference@1",
+                "name": "AI dễ hiểu · hồ sơ tham chiếu",
+                "content_profile_id": "ai-education",
+                "niche_profile": {
+                  "profile_ref": "technology-education@1",
+                  "niche": "technology",
+                  "name": "Công nghệ / AI dễ hiểu",
+                  "language": "vi",
+                  "locale": "vi-VN",
+                  "country": "VN",
+                  "target_audience": "Người mới tìm hiểu công nghệ và cách kiểm chứng nội dung AI",
+                  "tone": "Dễ hiểu, có nguồn, phân biệt ví dụ minh họa và dữ kiện",
+                  "keywords": [
+                    "AI",
+                    "công nghệ",
+                    "kiểm chứng",
+                    "dữ liệu"
+                  ]
+                },
+                "brand_id": "vf-ai-education",
+                "video_template_id": "ai-education-30",
+                "duration_mode": "fit_narration_preserve_voice_speed",
+                "voice_profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+                "source_preferences": {
+                  "subtitle_template_ref": "sentence-clean@v1",
+                  "preview_mode": "final_effects",
+                  "audio_processing": {
+                    "normalize_original_audio": false,
+                    "normalize_music": false,
+                    "duck_music": false,
+                    "original_target_lufs": -16.0,
+                    "music_target_lufs": -24.0,
+                    "duck_threshold": 0.02,
+                    "duck_ratio": 8.0,
+                    "duck_attack_ms": 20.0,
+                    "duck_release_ms": 250.0
+                  }
+                },
+                "publishing_profile": {
+                  "profile_ref": "reviewed-reference-distribution@1",
+                  "platforms": [
+                    "youtube",
+                    "tiktok",
+                    "instagram",
+                    "facebook"
+                  ],
+                  "enabled": false,
+                  "human_publish_approval_required": true,
+                  "rights_unknown_policy": "block",
+                  "official_account_ref": null,
+                  "credentials_configured": false
+                },
+                "analytics_profile": {
+                  "profile_ref": "official-reference-analytics@1",
+                  "enabled": false,
+                  "provider_mode": "official",
+                  "provider_status": "NOT_CONFIGURED",
+                  "official_account_ref": null,
+                  "missing_metric_policy": "null",
+                  "learning_mode": "recommendation_only"
+                }
+              },
+              "profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+              "content_profile": {
+                "id": "ai-education",
+                "name": "Công nghệ / AI dễ hiểu",
+                "related_project": "AI education",
+                "target_audience": "Người mới tìm hiểu công nghệ và cách kiểm chứng nội dung AI",
+                "preferred_formats": [
+                  "Giải thích ngắn",
+                  "Checklist",
+                  "Đối chiếu nguồn"
+                ],
+                "channel": "AI education — hồ sơ tham chiếu nội bộ",
+                "cta_types": [
+                  "Đặt câu hỏi",
+                  "Lưu checklist"
+                ],
+                "cta_keywords": [
+                  "câu hỏi",
+                  "checklist"
+                ],
+                "tone": "Dễ hiểu, có nguồn, phân biệt ví dụ minh họa và dữ kiện",
+                "duration_seconds": [
+                  30,
+                  45,
+                  60
+                ],
+                "keywords": [
+                  "AI",
+                  "công nghệ",
+                  "kiểm chứng",
+                  "dữ liệu"
+                ],
+                "project_references": []
+              },
+              "content_profile_sha256": "2883c8b66e29be5c743b060436e4594b1f61f38aaffccc46b83c70a2b03612c2",
+              "brand_template": {
+                "schema_version": "native-brand-template-v1",
+                "brand": {
+                  "id": "vf-ai-education",
+                  "name": "AI dễ hiểu — tham chiếu",
+                  "logo": null,
+                  "asset_status": "generic_reference",
+                  "fonts": {
+                    "heading": "seguisb.ttf",
+                    "body": "segoeui.ttf",
+                    "subtitle_family": "Segoe UI"
+                  },
+                  "palette": {
+                    "background": "#10233b",
+                    "text": "#f4f8ff",
+                    "accent": "#71d5e8",
+                    "muted": "#b5c9df",
+                    "caption_background": "#091728",
+                    "caption_border": "#478da0"
+                  },
+                  "subtitle_style": {
+                    "font_size": 46,
+                    "color": "#fcf9f1",
+                    "timing": "measured_sentence_activity_weighted_phrase_estimate"
+                  },
+                  "primary_cta": "Lưu checklist và đặt câu hỏi về điều bạn muốn kiểm chứng.",
+                  "intro": "AI DỄ HIỂU",
+                  "intro_seconds": 1.1,
+                  "outro_seconds": 1.0,
+                  "voice_profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+                  "music_profile": {
+                    "nominal_gain": 0.12,
+                    "ducking": "voice_sidechaincompress",
+                    "default_track": null
+                  },
+                  "safe_areas": {
+                    "top": 160,
+                    "bottom": 360,
+                    "left": 90,
+                    "right": 180,
+                    "source": "configurable_reference_margins"
+                  },
+                  "project_disclaimers": [
+                    "Ví dụ minh họa cần được kiểm chứng từ nguồn. Không bảo đảm kết quả từ AI."
+                  ]
+                },
+                "template": {
+                  "id": "ai-education-30",
+                  "name": "Giải thích công nghệ / AI · 30 giây",
+                  "purpose": "news_update",
+                  "scene_label": "GIẢI THÍCH",
+                  "duration_seconds": 30,
+                  "width": 1080,
+                  "height": 1920,
+                  "fps": 30,
+                  "aspect_ratio": "9:16",
+                  "duration_policy": "fit_narration_preserve_voice_speed"
+                },
+                "brand_sha256": "ccd3212f6e941653c4eb4ce117f7ead9b830c8af94cef62c0333cb2417508e22",
+                "template_sha256": "c3f479526a4bc1cf9dd5e38d6f77820f7a7708c897087d2f2b977dcd77f226f8"
+              },
+              "source_subtitle_style": {
+                "font_family": "Noto Sans",
+                "font_size": 48,
+                "font_weight": 800,
+                "text_color": "#FFFFFF",
+                "highlight_color": "#F5C451",
+                "background_color": "#000000",
+                "background_opacity": 0.58,
+                "position": "bottom",
+                "animation": "none",
+                "template_ref": "sentence-clean@v1",
+                "keywords": [],
+                "max_lines": 3,
+                "safe_margin_percent": 7.0
+              },
+              "external_dispatches": 0,
+              "paid_operations": 0,
+              "publishing_enabled": false,
+              "catalog_ref": "native-reference-channels@1",
+              "catalog_sha256": "abc9b318ba992dd719df7fb5c0f1da9812f460d88bd2234481830f04068c5937",
+              "selection_sha256": "174a133edb530b9c7ff7a79bd692f0fad3b7810c616e550bb3c6d956ac716125"
+            },
+            "niche": "technology",
+            "content_profile": {
+              "id": "ai-education",
+              "name": "Công nghệ / AI dễ hiểu",
+              "related_project": "AI education",
+              "target_audience": "Người mới tìm hiểu công nghệ và cách kiểm chứng nội dung AI",
+              "preferred_formats": [
+                "Giải thích ngắn",
+                "Checklist",
+                "Đối chiếu nguồn"
+              ],
+              "channel": "AI education — hồ sơ tham chiếu nội bộ",
+              "cta_types": [
+                "Đặt câu hỏi",
+                "Lưu checklist"
+              ],
+              "cta_keywords": [
+                "câu hỏi",
+                "checklist"
+              ],
+              "tone": "Dễ hiểu, có nguồn, phân biệt ví dụ minh họa và dữ kiện",
+              "duration_seconds": [
+                30,
+                45,
+                60
+              ],
+              "keywords": [
+                "AI",
+                "công nghệ",
+                "kiểm chứng",
+                "dữ liệu"
+              ],
+              "project_references": []
+            },
+            "brand_template": {
+              "schema_version": "native-brand-template-v1",
+              "brand": {
+                "id": "vf-ai-education",
+                "name": "AI dễ hiểu — tham chiếu",
+                "logo": null,
+                "asset_status": "generic_reference",
+                "fonts": {
+                  "heading": "seguisb.ttf",
+                  "body": "segoeui.ttf",
+                  "subtitle_family": "Segoe UI"
+                },
+                "palette": {
+                  "background": "#10233b",
+                  "text": "#f4f8ff",
+                  "accent": "#71d5e8",
+                  "muted": "#b5c9df",
+                  "caption_background": "#091728",
+                  "caption_border": "#478da0"
+                },
+                "subtitle_style": {
+                  "font_size": 46,
+                  "color": "#fcf9f1",
+                  "timing": "measured_sentence_activity_weighted_phrase_estimate"
+                },
+                "primary_cta": "Lưu checklist và đặt câu hỏi về điều bạn muốn kiểm chứng.",
+                "intro": "AI DỄ HIỂU",
+                "intro_seconds": 1.1,
+                "outro_seconds": 1.0,
+                "voice_profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+                "music_profile": {
+                  "nominal_gain": 0.12,
+                  "ducking": "voice_sidechaincompress",
+                  "default_track": null
+                },
+                "safe_areas": {
+                  "top": 160,
+                  "bottom": 360,
+                  "left": 90,
+                  "right": 180,
+                  "source": "configurable_reference_margins"
+                },
+                "project_disclaimers": [
+                  "Ví dụ minh họa cần được kiểm chứng từ nguồn. Không bảo đảm kết quả từ AI."
+                ]
+              },
+              "template": {
+                "id": "ai-education-30",
+                "name": "Giải thích công nghệ / AI · 30 giây",
+                "purpose": "news_update",
+                "scene_label": "GIẢI THÍCH",
+                "duration_seconds": 30,
+                "width": 1080,
+                "height": 1920,
+                "fps": 30,
+                "aspect_ratio": "9:16",
+                "duration_policy": "fit_narration_preserve_voice_speed"
+              },
+              "brand_sha256": "ccd3212f6e941653c4eb4ce117f7ead9b830c8af94cef62c0333cb2417508e22",
+              "template_sha256": "c3f479526a4bc1cf9dd5e38d6f77820f7a7708c897087d2f2b977dcd77f226f8"
+            },
+            "canonical_timeline": {
+              "snapshot": {
+                "metadata": {
+                  "native_auto_edit_schema": "native-auto-edit-timeline-v1"
+                },
+                "tracks": [
+                  {
+                    "disabled": false,
+                    "clips": [
+                      {
+                        "disabled": false,
+                        "asset_id": "ast_explicit_fixture",
+                        "metadata": {
+                          "native_asset_id": "explicit_fixture.mp4"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "approval": {
+            "revision": 2,
+            "reviewer": "EXPLICIT SYNTHETIC REVIEW — NOT OWNER UAT",
+            "acknowledged": true
+          }
+        },
+        "error": null,
+        "result": {
+          "qc": {
+            "passed": true,
+            "width": 1080,
+            "height": 1920,
+            "duration_seconds": 3,
+            "video_codec": "h264",
+            "audio_codec": "aac",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "fixture": true,
+            "full_media_qc": false
+          },
+          "review_required": true,
+          "output_directory": "C:\\Users\\PC\\AppData\\Local\\Temp\\tmp_ei3iy9v\\state\\jobs\\0e9e334acc074b71877c880f318d71b0",
+          "provider_calls": 0
+        },
+        "created_at": "2026-10-10T15:51:04.935541+00:00",
+        "updated_at": "2026-10-10T15:51:04.954212+00:00",
+        "lifecycle": "SUCCEEDED",
+        "retry_count": 0,
+        "resume_count": 0,
+        "failure": null,
+        "final_review": {
+          "id": 1,
+          "job_id": "0e9e334acc074b71877c880f318d71b0",
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "revision": 2,
+          "artifact_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+          "decision": "approve",
+          "reviewer": "EXPLICIT SYNTHETIC FINAL REVIEW — NOT OWNER UAT",
+          "note": "",
+          "created_at": "2026-10-10T15:51:04.973066+00:00"
+        }
+      }
+    ]
+  },
+  "workspace_id": "wsp_tiktok_creator_fixture",
+  "publication": {
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "request_fingerprint": "e1efe49e1d8249e5f3184ed632b8a0da33da0e4c13f7b621e4fec3d5e63e54d3",
+    "snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+    "dedupe_sha256": "fbf7266c40dc457e9163e0107cd2c3980204b2fc657c224c040afef994c47b96",
+    "status": "completed",
+    "approval_id": "nopa_ddc4454bbca0426097edea200fc5a7ec",
+    "failure_code": null,
+    "actor_ref": "explicit-fixture",
+    "created_at": "2026-10-10T15:51:05.315096+00:00",
+    "updated_at": "2026-10-10T15:51:07.183973+00:00",
+    "snapshot": {
+      "schema_version": "native-official-tiktok-publication-snapshot-v1",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "project_revision": 2,
+      "document_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+      "request": {
+        "schema_version": "native-official-tiktok-publication-request-v1",
+        "revision": 2,
+        "dry_run_publication_id": "npub_7ca65dc5fe974d1885506bf8454a2ea7",
+        "expected_dry_run_snapshot_sha256": "d98fb6145a6d7b39d5783df4d11a3224d0f722b3cf420c2bb2e5f40a33caf8b1",
+        "creator_draft_id": "ntpd_77a92dd30d8840428e9c70b8c73fc268",
+        "expected_creator_draft_snapshot_sha256": "70e79fe986998ce8e1f0664872dc54d170e47a3132d32a2f154a6dd81cfdca2d",
+        "profile_id": "ppf_tiktok_creator_fixture",
+        "expected_configuration_sha256": "f7772fc0c182bfdf871b100ef264b8e59f114ba8ede6f4f15f5e42f46616d140"
+      },
+      "dry_run_snapshot_sha256": "d98fb6145a6d7b39d5783df4d11a3224d0f722b3cf420c2bb2e5f40a33caf8b1",
+      "account_check_snapshot_sha256": "80506f219dc0cfcd2bf29916a065800773450c676dac0aa99096840342553b33",
+      "account_result_sha256": "dc8ce459a131fda3dabbb64be5a2adc0e8907be9046895a30bce8b2ea7bcfd91",
+      "configuration_sha256": "f7772fc0c182bfdf871b100ef264b8e59f114ba8ede6f4f15f5e42f46616d140",
+      "target": {
+        "schema_version": "publishing-target-v1",
+        "workspace_id": "wsp_tiktok_creator_fixture",
+        "profile_id": "ppf_tiktok_creator_fixture",
+        "profile_version": 1,
+        "platform": "tiktok",
+        "provider_key": "tiktok-content-posting-api",
+        "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+        "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+      "final_job_id": "0e9e334acc074b71877c880f318d71b0",
+      "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+      "final_bytes": 59,
+      "final_job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+      "final_review": {
+        "id": 1,
+        "job_id": "0e9e334acc074b71877c880f318d71b0",
+        "project_id": "7723ef65f1914151a4c2712eb11356b6",
+        "revision": 2,
+        "artifact_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+        "decision": "approve",
+        "reviewer": "EXPLICIT SYNTHETIC FINAL REVIEW — NOT OWNER UAT",
+        "note": "",
+        "created_at": "2026-10-10T15:51:04.973066+00:00"
+      },
+      "validation": {
+        "dry_run": {
+          "rights": {
+            "status": "passed",
+            "policy_version": "v2-09-rights-fail-closed-v1",
+            "asset_ids": [
+              "explicit_fixture.mp4"
+            ],
+            "checks": [
+              {
+                "key": "asset:explicit_fixture.mp4",
+                "passed": true,
+                "code": "RIGHTS_VERIFIED",
+                "message": "Asset rights evidence is sufficient.",
+                "evidence": {
+                  "asset_id": "explicit_fixture.mp4",
+                  "rights_status": "owned",
+                  "license_present": true,
+                  "production_eligible": true
+                }
+              }
+            ]
+          },
+          "platform": {
+            "status": "passed",
+            "capability": {
+              "platform": "tiktok",
+              "version": "2026-08-27.v1",
+              "verification_state": "owner_verified_for_live",
+              "supported_profiles": [
+                "vertical-1080x1920"
+              ],
+              "min_duration_seconds": 1.0,
+              "max_duration_seconds": 180.0,
+              "max_file_size_bytes": 2000000000,
+              "video_codecs": [
+                "h264"
+              ],
+              "audio_codecs": [
+                "aac"
+              ],
+              "max_title_characters": 150,
+              "max_caption_characters": 2200,
+              "max_hashtags": 20,
+              "thumbnail": "optional"
+            },
+            "checks": [
+              {
+                "key": "render-profile",
+                "passed": true,
+                "code": "PROFILE_SUPPORTED",
+                "message": "Final render profile is supported by the versioned platform contract.",
+                "evidence": {
+                  "profile": "vertical-1080x1920"
+                }
+              },
+              {
+                "key": "duration",
+                "passed": true,
+                "code": "DURATION_SUPPORTED",
+                "message": "Duration is within the configured platform range.",
+                "evidence": {
+                  "duration_seconds": 3.0
+                }
+              },
+              {
+                "key": "resolution",
+                "passed": true,
+                "code": "RESOLUTION_PRESENT",
+                "message": "QC contains a positive output resolution.",
+                "evidence": {
+                  "width": 1080,
+                  "height": 1920
+                }
+              },
+              {
+                "key": "file-size",
+                "passed": true,
+                "code": "FILE_SIZE_SUPPORTED",
+                "message": "Output size is within the configured platform ceiling.",
+                "evidence": {
+                  "size_bytes": 59
+                }
+              },
+              {
+                "key": "video-codec",
+                "passed": true,
+                "code": "VIDEO_CODEC_SUPPORTED",
+                "message": "Video codec is supported.",
+                "evidence": {
+                  "codec": "h264"
+                }
+              },
+              {
+                "key": "audio-codec",
+                "passed": true,
+                "code": "AUDIO_CODEC_SUPPORTED",
+                "message": "Audio codec is supported.",
+                "evidence": {
+                  "codec": "aac"
+                }
+              },
+              {
+                "key": "title-length",
+                "passed": true,
+                "code": "TITLE_SUPPORTED",
+                "message": "Title length is supported.",
+                "evidence": {
+                  "characters": 32
+                }
+              },
+              {
+                "key": "caption-length",
+                "passed": true,
+                "code": "CAPTION_SUPPORTED",
+                "message": "Caption length is supported.",
+                "evidence": {
+                  "characters": 0
+                }
+              },
+              {
+                "key": "hashtag-count",
+                "passed": true,
+                "code": "HASHTAGS_SUPPORTED",
+                "message": "Hashtag count is supported.",
+                "evidence": {
+                  "count": 0
+                }
+              },
+              {
+                "key": "thumbnail",
+                "passed": true,
+                "code": "THUMBNAIL_SUPPORTED",
+                "message": "Thumbnail requirement is satisfied.",
+                "evidence": {
+                  "policy": "optional"
+                }
+              },
+              {
+                "key": "capability-live-verification",
+                "passed": true,
+                "code": "CAPABILITY_DRY_RUN_ONLY",
+                "message": "Capability snapshot is permitted for this execution mode.",
+                "evidence": {
+                  "verification_state": "owner_verified_for_live"
+                }
+              }
+            ]
+          },
+          "attention": [],
+          "status": "passed",
+          "provider": {
+            "provider_key": "mock-publishing",
+            "adapter_state": "mock",
+            "credential_status": "not_required",
+            "official_api_only": true,
+            "supports_dry_run": true,
+            "supports_live_publish": false,
+            "checks": [
+              {
+                "key": "external-action",
+                "passed": true,
+                "code": "DRY_RUN_NO_EXTERNAL_ACTION",
+                "message": "Deterministic dry-run provider performs no external action.",
+                "evidence": {
+                  "external_action": false
+                }
+              }
+            ],
+            "target_binding": null,
+            "mock_execution": false
+          }
+        },
+        "official_platform": {
+          "status": "passed",
+          "capability": {
+            "platform": "tiktok",
+            "version": "2026-08-27.v1",
+            "verification_state": "owner_verified_for_live",
+            "supported_profiles": [
+              "vertical-1080x1920"
+            ],
+            "min_duration_seconds": 1.0,
+            "max_duration_seconds": 180.0,
+            "max_file_size_bytes": 2000000000,
+            "video_codecs": [
+              "h264"
+            ],
+            "audio_codecs": [
+              "aac"
+            ],
+            "max_title_characters": 150,
+            "max_caption_characters": 2200,
+            "max_hashtags": 20,
+            "thumbnail": "optional"
+          },
+          "checks": [
+            {
+              "key": "render-profile",
+              "passed": true,
+              "code": "PROFILE_SUPPORTED",
+              "message": "Final render profile is supported by the versioned platform contract.",
+              "evidence": {
+                "profile": "vertical-1080x1920"
+              }
+            },
+            {
+              "key": "duration",
+              "passed": true,
+              "code": "DURATION_SUPPORTED",
+              "message": "Duration is within the configured platform range.",
+              "evidence": {
+                "duration_seconds": 3.0
+              }
+            },
+            {
+              "key": "resolution",
+              "passed": true,
+              "code": "RESOLUTION_PRESENT",
+              "message": "QC contains a positive output resolution.",
+              "evidence": {
+                "width": 1080,
+                "height": 1920
+              }
+            },
+            {
+              "key": "file-size",
+              "passed": true,
+              "code": "FILE_SIZE_SUPPORTED",
+              "message": "Output size is within the configured platform ceiling.",
+              "evidence": {
+                "size_bytes": 59
+              }
+            },
+            {
+              "key": "video-codec",
+              "passed": true,
+              "code": "VIDEO_CODEC_SUPPORTED",
+              "message": "Video codec is supported.",
+              "evidence": {
+                "codec": "h264"
+              }
+            },
+            {
+              "key": "audio-codec",
+              "passed": true,
+              "code": "AUDIO_CODEC_SUPPORTED",
+              "message": "Audio codec is supported.",
+              "evidence": {
+                "codec": "aac"
+              }
+            },
+            {
+              "key": "title-length",
+              "passed": true,
+              "code": "TITLE_SUPPORTED",
+              "message": "Title length is supported.",
+              "evidence": {
+                "characters": 32
+              }
+            },
+            {
+              "key": "caption-length",
+              "passed": true,
+              "code": "CAPTION_SUPPORTED",
+              "message": "Caption length is supported.",
+              "evidence": {
+                "characters": 0
+              }
+            },
+            {
+              "key": "hashtag-count",
+              "passed": true,
+              "code": "HASHTAGS_SUPPORTED",
+              "message": "Hashtag count is supported.",
+              "evidence": {
+                "count": 0
+              }
+            },
+            {
+              "key": "thumbnail",
+              "passed": true,
+              "code": "THUMBNAIL_SUPPORTED",
+              "message": "Thumbnail requirement is satisfied.",
+              "evidence": {
+                "policy": "optional"
+              }
+            },
+            {
+              "key": "capability-live-verification",
+              "passed": true,
+              "code": "CAPABILITY_DRY_RUN_ONLY",
+              "message": "Capability snapshot is permitted for this execution mode.",
+              "evidence": {
+                "verification_state": "owner_verified_for_live"
+              }
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "title": "Explicit public protocol fixture",
+        "description": "",
+        "caption": "",
+        "hashtags": [],
+        "thumbnail_asset_id": null,
+        "privacy": "public",
+        "scheduled_at": null
+      },
+      "reviewed_at": "2026-10-10T15:51:04.862262+00:00",
+      "metadata_source": "completed_dry_run",
+      "disclosures": {
+        "api_client_audited": true,
+        "media_location": "user_device"
+      },
+      "chunk_size": 8388608,
+      "mock": true,
+      "dry_run_receipt_is_publish_authority": false,
+      "account_check_is_publish_authority": false,
+      "separate_owner_publish_approval_required": true,
+      "token_returned": false,
+      "creator_draft": {
+        "draft_id": "ntpd_77a92dd30d8840428e9c70b8c73fc268",
+        "workspace_id": "wsp_tiktok_creator_fixture",
+        "project_id": "7723ef65f1914151a4c2712eb11356b6",
+        "request_sha256": "cc6043212e21e498f29cce0283d2c0eab790ac89cc3a58ff003a0557cd6c109f",
+        "snapshot_sha256": "70e79fe986998ce8e1f0664872dc54d170e47a3132d32a2f154a6dd81cfdca2d",
+        "created_at": "2026-10-10T15:51:04.862262+00:00",
+        "snapshot": {
+          "schema_version": "native-tiktok-post-draft-v1",
+          "workspace_id": "wsp_tiktok_creator_fixture",
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "request": {
+            "revision": 2,
+            "creator_check_id": "ntcr_08927283f1b54f6eaec21d83eb3a93d5",
+            "expected_creator_result_sha256": "dc8ce459a131fda3dabbb64be5a2adc0e8907be9046895a30bce8b2ea7bcfd91",
+            "final_job_id": "0e9e334acc074b71877c880f318d71b0",
+            "expected_final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "metadata": {
+              "title": "Explicit public protocol fixture",
+              "description": "",
+              "caption": "",
+              "hashtags": [],
+              "thumbnail_asset_id": null,
+              "privacy": "public",
+              "scheduled_at": null
+            },
+            "choices": {
+              "privacy_level": "PUBLIC_TO_EVERYONE",
+              "disable_comment": true,
+              "disable_duet": true,
+              "disable_stitch": true,
+              "brand_content_toggle": false,
+              "brand_organic_toggle": false,
+              "is_aigc": true,
+              "music_usage_confirmed": true,
+              "branded_content_policy_confirmed": null,
+              "video_cover_timestamp_ms": null
+            },
+            "acknowledged_video_selection": true,
+            "acknowledged_ai_disclosure": true
+          },
+          "creator_check": {
+            "check_id": "ntcr_08927283f1b54f6eaec21d83eb3a93d5",
+            "workspace_id": "wsp_tiktok_creator_fixture",
+            "project_id": "7723ef65f1914151a4c2712eb11356b6",
+            "request_sha256": "e62852dfc93f4f302f39cbac5351913c2084e9572d4e4821fc0f6ab2857fcec4",
+            "snapshot_sha256": "80506f219dc0cfcd2bf29916a065800773450c676dac0aa99096840342553b33",
+            "status": "succeeded",
+            "result_sha256": "dc8ce459a131fda3dabbb64be5a2adc0e8907be9046895a30bce8b2ea7bcfd91",
+            "failure_code": null,
+            "created_at": "2026-10-10T15:51:04.862262+00:00",
+            "updated_at": "2026-10-10T15:51:04.862262+00:00",
+            "snapshot": {
+              "schema_version": "native-tiktok-creator-snapshot-v1",
+              "workspace_id": "wsp_tiktok_creator_fixture",
+              "project_id": "7723ef65f1914151a4c2712eb11356b6",
+              "request": {
+                "revision": 2,
+                "profile_id": "ppf_tiktok_creator_fixture",
+                "expected_configuration_sha256": "d58a924c6be64d92fc1e1cff98d8a81151d320e939b8c8218dd15a7acb4be913",
+                "acknowledged_creator_read": true,
+                "acknowledged_protocol_mock": true,
+                "valid_for_seconds": 600
+              },
+              "factory": {
+                "schema_version": "native-tiktok-publishing-factory-v1",
+                "target": {
+                  "schema_version": "publishing-target-v1",
+                  "workspace_id": "wsp_tiktok_creator_fixture",
+                  "profile_id": "ppf_tiktok_creator_fixture",
+                  "profile_version": 1,
+                  "platform": "tiktok",
+                  "provider_key": "tiktok-content-posting-api",
+                  "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+                  "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                },
+                "configuration_sha256": "d58a924c6be64d92fc1e1cff98d8a81151d320e939b8c8218dd15a7acb4be913",
+                "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+                "credential_alias": "explicit-tiktok-publisher",
+                "credential_present": true,
+                "credential_verified": false,
+                "status": "READ_CONFIGURED",
+                "mock": true,
+                "creator_reads_enabled": true,
+                "profile": {
+                  "schema_version": "native-tiktok-publishing-profile-v1",
+                  "target": {
+                    "schema_version": "publishing-target-v1",
+                    "workspace_id": "wsp_tiktok_creator_fixture",
+                    "profile_id": "ppf_tiktok_creator_fixture",
+                    "profile_version": 1,
+                    "platform": "tiktok",
+                    "provider_key": "tiktok-content-posting-api",
+                    "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+                    "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  },
+                  "api_client_audited": true,
+                  "media_location": "user_device",
+                  "chunk_size": 8388608
+                },
+                "token_returned": false,
+                "publishing_enabled": false,
+                "publication_dispatch_supported": false,
+                "real_provider_tested": false
+              },
+              "authority": {
+                "token_id": "explicit-fixture",
+                "subject": "usr:explicit-fixture",
+                "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+                "expires_at": "2026-10-10T16:51:04.863263+00:00"
+              },
+              "document_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+              "cipher_sha256": "27e045383bc7e5fc073d70c695cf95a9cd17d015b89a0cc7d33076e36046ee97",
+              "consented_at": "2026-10-10T15:51:04.862262+00:00",
+              "deadline": "2026-10-10T16:01:04.862262+00:00",
+              "mock": true,
+              "token_returned": false,
+              "publishing_enabled": false
+            },
+            "result": {
+              "schema_version": "native-tiktok-creator-result-v1",
+              "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+              "account": {
+                "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+                "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+                "source": "tiktok.user.info.open_id",
+                "account_match": true
+              },
+              "creator": {
+                "username": "explicit_fixture_creator",
+                "privacy_options": [
+                  "SELF_ONLY",
+                  "PUBLIC_TO_EVERYONE"
+                ],
+                "comment_disabled": false,
+                "duet_disabled": true,
+                "stitch_disabled": false,
+                "max_duration_sec": 180,
+                "nickname": "Người tạo mô phỏng"
+              },
+              "account_response_sha256": "ca84e59138ed5adbc7b00810bb66989f826ada8c55e2b7e601cfdbbbc76fe53e",
+              "creator_response_sha256": "a5e4c6df1db971ffd1076c0dab8c2be605c83039db5f1fe6258f81d6a5830a5d",
+              "mock": true,
+              "token_returned": false,
+              "publishing_enabled": false,
+              "real_provider_tested": false
+            },
+            "token_returned": false,
+            "publishing_enabled": false
+          },
+          "source": {
+            "final_job_id": "0e9e334acc074b71877c880f318d71b0",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "final_bytes": 59,
+            "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+            "job_result_sha256": "cfcca0e142d0ee2e5fde1a537daf87df6d84585cb9ce2efee7e34a144b0a9d2a",
+            "document_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+            "final_review": {
+              "id": 1,
+              "job_id": "0e9e334acc074b71877c880f318d71b0",
+              "project_id": "7723ef65f1914151a4c2712eb11356b6",
+              "revision": 2,
+              "artifact_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+              "decision": "approve",
+              "reviewer": "EXPLICIT SYNTHETIC FINAL REVIEW — NOT OWNER UAT",
+              "note": "",
+              "created_at": "2026-10-10T15:51:04.973066+00:00"
+            },
+            "duration_sec": 3
+          },
+          "prepared_at": "2026-10-10T15:51:04.862262+00:00",
+          "authority": {
+            "token_id": "explicit-fixture",
+            "subject": "usr:explicit-fixture",
+            "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+            "expires_at": "2026-10-10T16:51:04.863263+00:00"
+          },
+          "token_returned": false,
+          "publishing_enabled": false,
+          "publish_approval_required": true
+        },
+        "token_returned": false,
+        "publishing_enabled": false,
+        "publish_approval_required": true
+      },
+      "choices": {
+        "privacy_level": "PUBLIC_TO_EVERYONE",
+        "disable_comment": true,
+        "disable_duet": true,
+        "disable_stitch": true,
+        "brand_content_toggle": false,
+        "brand_organic_toggle": false,
+        "is_aigc": true,
+        "music_usage_confirmed": true,
+        "branded_content_policy_confirmed": null,
+        "video_cover_timestamp_ms": null
+      },
+      "duration_seconds": 3,
+      "credential_cipher_sha256": "27e045383bc7e5fc073d70c695cf95a9cd17d015b89a0cc7d33076e36046ee97"
+    },
+    "schema_version": "native-official-publication-v1",
+    "mock": true,
+    "token_returned": false,
+    "real_provider_tested": false,
+    "receipt": {
+      "schema_version": "native-tiktok-publication-receipt-v1",
+      "receipt_id": "rcpt_7963dff4ee8f4414bbf956523ac9486e",
+      "provider_key": "tiktok-content-posting-api",
+      "platform": "tiktok",
+      "mode": "live",
+      "request_fingerprint": "e1efe49e1d8249e5f3184ed632b8a0da33da0e4c13f7b621e4fec3d5e63e54d3",
+      "provider_job_id": "v_pub_file~v2-1.123456789",
+      "remote_post_id": null,
+      "public_post_ids": [
+        "7391000000000000001",
+        "7391000000000000002"
+      ],
+      "remote_url": null,
+      "privacy_level": "PUBLIC_TO_EVERYONE",
+      "mock": true,
+      "external_action": false,
+      "publish_complete_confirmed": true,
+      "public_visibility_confirmed": true,
+      "observation_id": "ntpo_7586c9124e24451eb025658d784a0432",
+      "observation_sha256": "65e4fb39eb88b7b627773156bf0d24c6ca16693fff0dc66fbbe4d2a730060973",
+      "created_at": "2026-10-10T15:51:04.862262Z"
+    },
+    "published": false,
+    "mock_publication_complete": true
+  },
+  "source": {
+    "schema_version": "native-official-analytics-publication-binding-v2",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+    "receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+    "target": {
+      "schema_version": "publishing-target-v1",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "profile_id": "ppf_tiktok_creator_fixture",
+      "profile_version": 1,
+      "platform": "tiktok",
+      "provider_key": "tiktok-content-posting-api",
+      "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+      "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "mock": true,
+    "remote_post_id": null,
+    "receipt_qualified": true,
+    "published": false,
+    "publishing_enabled": false,
+    "token_returned": false,
+    "real_provider_tested": false,
+    "remote_post_ids": [
+      "7391000000000000001",
+      "7391000000000000002"
+    ],
+    "metric_scope": "cumulative_video_counters"
+  },
+  "runtime": {
+    "schema_version": "native-official-analytics-capabilities-v2",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "enabled": true,
+    "default_enabled": false,
+    "supported_platforms": [
+      "youtube",
+      "tiktok"
+    ],
+    "accounts": [
+      {
+        "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_tiktok_creator_fixture",
+          "profile_id": "ppf_tiktok_creator_fixture",
+          "profile_version": 1,
+          "platform": "tiktok",
+          "provider_key": "tiktok-content-posting-api",
+          "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+        "configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+        "credential_alias": "tiktok-analytics-fixture",
+        "status": "CONFIGURED",
+        "credential_verified": false,
+        "credential_present": true,
+        "mode": "fixture",
+        "external_reads_enabled": false,
+        "publishing_enabled": false,
+        "token_returned": false,
+        "account_verified": false,
+        "real_provider_tested": false
+      }
+    ],
+    "separate_read_consent_required": true,
+    "automatic_refresh": false,
+    "publishing_enabled": false,
+    "fixture_fallback": false,
+    "real_provider_tested": false,
+    "token_returned": false
+  },
+  "refresh_runtime": {
+    "schema_version": "native-official-analytics-refresh-runtime-v1",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "enabled": true,
+    "default_enabled": false,
+    "separate_owner_background_read_consent_required": true,
+    "fixed_report_query": true,
+    "automatic_consent_renewal": false,
+    "publishing_enabled": false,
+    "token_returned": false,
+    "real_provider_tested": false
+  },
+  "manual_created": {
+    "sync_id": "noas_0141c6fdca3a42f2be61e6072ccc3a0b",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "request_fingerprint": "c15cfda83d344f0da25096ff704995860d8b5f4a89393d7f6e28cb678a277396",
+    "snapshot_sha256": "00e7edf60ef88dca1223855e715382d181b95ab04e5db8a249ef3d8504812c28",
+    "status": "queued",
+    "attempts": 0,
+    "next_at": null,
+    "failure_code": null,
+    "result_snapshot_id": null,
+    "actor_ref": "explicit-fixture",
+    "created_at": "2026-10-10T15:51:08.110389+00:00",
+    "updated_at": "2026-10-10T15:51:08.110389+00:00",
+    "schema_version": "native-official-analytics-sync-v2",
+    "snapshot": {
+      "schema_version": "native-official-analytics-consent-v2",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+      "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+      "request": {
+        "schema_version": "native-official-analytics-request-v2",
+        "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+        "expected_publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "expected_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+        "expected_configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+        "query": null,
+        "acknowledged_read_only": true,
+        "acknowledged_protocol_mock": true,
+        "acknowledged_bounded_retries": false,
+        "max_attempts": 1,
+        "valid_for_seconds": 900,
+        "metric_scope": "cumulative_video_counters",
+        "remote_post_id": "7391000000000000001"
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+        "expires_at": "2026-10-10T16:51:04.863263+00:00"
+      },
+      "source": {
+        "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "dry_run_snapshot_sha256": "d98fb6145a6d7b39d5783df4d11a3224d0f722b3cf420c2bb2e5f40a33caf8b1",
+        "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+        "job_result_sha256": "cfcca0e142d0ee2e5fde1a537daf87df6d84585cb9ce2efee7e34a144b0a9d2a",
+        "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "features": {
+          "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+          "trend_cluster_id": null,
+          "idea_id": null,
+          "hook_type": null,
+          "duration_seconds": 3,
+          "scene_count": null,
+          "subtitle_template": null,
+          "voice_profile": null,
+          "music_profile": null,
+          "visual_strategy": null,
+          "niche": "technology",
+          "topic": null,
+          "cta": null,
+          "publishing_time": null,
+          "evidence": {
+            "project_metadata_source": "native_published_render_request_snapshot",
+            "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+            "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+            "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+            "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+            "current_project_metadata_used": false,
+            "exact_publishing_time_available": false,
+            "provider_posted_time": null,
+            "source_is_dry_run": false,
+            "semantic_labels_verified": false,
+            "production_cost_vnd": null,
+            "frozen_subtitle_style": null,
+            "subtitle_catalog_id_verified": false,
+            "channel_profile_ref": "ai-education-reference@1",
+            "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+            "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+            "publication_protocol_mock": true
+          },
+          "captured_at": "2026-10-10T15:51:08.096989Z"
+        },
+        "remote_post_id": "7391000000000000001",
+        "receipt_mock": true
+      },
+      "target": {
+        "schema_version": "publishing-target-v1",
+        "workspace_id": "wsp_tiktok_creator_fixture",
+        "profile_id": "ppf_tiktok_creator_fixture",
+        "profile_version": 1,
+        "platform": "tiktok",
+        "provider_key": "tiktok-content-posting-api",
+        "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+        "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+      "configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+      "mock": true,
+      "consented_at": "2026-10-10T15:51:08.096989+00:00",
+      "deadline": "2026-10-10T16:06:08.096989+00:00",
+      "publishing_authority": false,
+      "recurring_authority": false
+    },
+    "mock": true,
+    "publishing_enabled": false,
+    "token_returned": false,
+    "real_provider_tested": false,
+    "result": null,
+    "idempotent_replay": false
+  },
+  "manual_done": {
+    "sync_id": "noas_0141c6fdca3a42f2be61e6072ccc3a0b",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "request_fingerprint": "c15cfda83d344f0da25096ff704995860d8b5f4a89393d7f6e28cb678a277396",
+    "snapshot_sha256": "00e7edf60ef88dca1223855e715382d181b95ab04e5db8a249ef3d8504812c28",
+    "status": "succeeded",
+    "attempts": 1,
+    "next_at": null,
+    "failure_code": null,
+    "result_snapshot_id": "noam_b689c461736042b3bee90ccf69687b45",
+    "actor_ref": "explicit-fixture",
+    "created_at": "2026-10-10T15:51:08.110389+00:00",
+    "updated_at": "2026-10-10T15:51:08.498054+00:00",
+    "schema_version": "native-official-analytics-sync-v2",
+    "snapshot": {
+      "schema_version": "native-official-analytics-consent-v2",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+      "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+      "request": {
+        "schema_version": "native-official-analytics-request-v2",
+        "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+        "expected_publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "expected_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+        "expected_configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+        "query": null,
+        "acknowledged_read_only": true,
+        "acknowledged_protocol_mock": true,
+        "acknowledged_bounded_retries": false,
+        "max_attempts": 1,
+        "valid_for_seconds": 900,
+        "metric_scope": "cumulative_video_counters",
+        "remote_post_id": "7391000000000000001"
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+        "expires_at": "2026-10-10T16:51:04.863263+00:00"
+      },
+      "source": {
+        "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "dry_run_snapshot_sha256": "d98fb6145a6d7b39d5783df4d11a3224d0f722b3cf420c2bb2e5f40a33caf8b1",
+        "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+        "job_result_sha256": "cfcca0e142d0ee2e5fde1a537daf87df6d84585cb9ce2efee7e34a144b0a9d2a",
+        "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "features": {
+          "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+          "trend_cluster_id": null,
+          "idea_id": null,
+          "hook_type": null,
+          "duration_seconds": 3.0,
+          "scene_count": null,
+          "subtitle_template": null,
+          "voice_profile": null,
+          "music_profile": null,
+          "visual_strategy": null,
+          "niche": "technology",
+          "topic": null,
+          "cta": null,
+          "publishing_time": null,
+          "evidence": {
+            "project_metadata_source": "native_published_render_request_snapshot",
+            "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+            "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+            "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+            "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+            "current_project_metadata_used": false,
+            "exact_publishing_time_available": false,
+            "provider_posted_time": null,
+            "source_is_dry_run": false,
+            "semantic_labels_verified": false,
+            "production_cost_vnd": null,
+            "frozen_subtitle_style": null,
+            "subtitle_catalog_id_verified": false,
+            "channel_profile_ref": "ai-education-reference@1",
+            "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+            "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+            "publication_protocol_mock": true
+          },
+          "captured_at": "2026-10-10T15:51:08.096989Z"
+        },
+        "remote_post_id": "7391000000000000001",
+        "receipt_mock": true
+      },
+      "target": {
+        "schema_version": "publishing-target-v1",
+        "workspace_id": "wsp_tiktok_creator_fixture",
+        "profile_id": "ppf_tiktok_creator_fixture",
+        "profile_version": 1,
+        "platform": "tiktok",
+        "provider_key": "tiktok-content-posting-api",
+        "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+        "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+      "configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+      "mock": true,
+      "consented_at": "2026-10-10T15:51:08.096989+00:00",
+      "deadline": "2026-10-10T16:06:08.096989+00:00",
+      "publishing_authority": false,
+      "recurring_authority": false
+    },
+    "mock": true,
+    "publishing_enabled": false,
+    "token_returned": false,
+    "real_provider_tested": false,
+    "result": {
+      "schema_version": "native-official-analytics-snapshot-v2",
+      "result_snapshot_id": "noam_b689c461736042b3bee90ccf69687b45",
+      "sync_id": "noas_0141c6fdca3a42f2be61e6072ccc3a0b",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+      "snapshot_sha256": "00e7edf60ef88dca1223855e715382d181b95ab04e5db8a249ef3d8504812c28",
+      "platform": "tiktok",
+      "provider_key": "tiktok-video-insights-api",
+      "source_kind": "official_protocol_mock",
+      "mock": true,
+      "external_call": false,
+      "real_audience_observation": false,
+      "metrics": {
+        "views": 0.0,
+        "impressions": null,
+        "reach": null,
+        "watch_time": null,
+        "average_view_duration": null,
+        "completion_rate": null,
+        "likes": 3.0,
+        "comments": 1.0,
+        "shares": 0.0,
+        "saves": null,
+        "followers_gained": null,
+        "clicks": null,
+        "ctr": null,
+        "revenue": null,
+        "rpm": null,
+        "observation_window_hours": null
+      },
+      "evidence": {
+        "metric_mapping": {
+          "view_count": "views",
+          "like_count": "likes",
+          "comment_count": "comments",
+          "share_count": "shares"
+        },
+        "row_count": 1,
+        "metric_scope": "cumulative_video_counters",
+        "observed_window_hours": null,
+        "watch_time_supported": false,
+        "completion_rate_supported": false,
+        "revenue_supported": false,
+        "query": null,
+        "coverage_end_date": null,
+        "owned_video_returned": true
+      },
+      "features": {
+        "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+        "project_id": "7723ef65f1914151a4c2712eb11356b6",
+        "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+        "trend_cluster_id": null,
+        "idea_id": null,
+        "hook_type": null,
+        "duration_seconds": 3.0,
+        "scene_count": null,
+        "subtitle_template": null,
+        "voice_profile": null,
+        "music_profile": null,
+        "visual_strategy": null,
+        "niche": "technology",
+        "topic": null,
+        "cta": null,
+        "publishing_time": null,
+        "evidence": {
+          "project_metadata_source": "native_published_render_request_snapshot",
+          "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+          "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+          "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+          "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+          "current_project_metadata_used": false,
+          "exact_publishing_time_available": false,
+          "provider_posted_time": null,
+          "source_is_dry_run": false,
+          "semantic_labels_verified": false,
+          "production_cost_vnd": null,
+          "frozen_subtitle_style": null,
+          "subtitle_catalog_id_verified": false,
+          "channel_profile_ref": "ai-education-reference@1",
+          "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+          "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+          "publication_protocol_mock": true
+        },
+        "captured_at": "2026-10-10T15:51:08.096989Z"
+      },
+      "publication_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+      "remote_post_id": "7391000000000000001",
+      "response_refs": [
+        "noar_390d3916a539480794f07590d4a4b1b4",
+        "noar_9cac7644ed2a4c8cb1699c0c7e4b3408"
+      ],
+      "attempt_id": "noaa_c1757f82fb4e4f498670bc3f91409545",
+      "collected_at": "2026-10-10T15:51:08.486402+00:00",
+      "publishing_time": null,
+      "automatic_action": false,
+      "real_provider_tested": false
+    }
+  },
+  "plan_created": {
+    "plan_id": "noap_1b877b93568b4886985111f96330dd64",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "request_fingerprint": "f72a1f9e1b392db6c1716066d0fa1fc699d353d630396a0ef84dc1283120c83f",
+    "policy_sha256": "fe773de52d0fbb7cb3a1ca4c2050854db9d0fe46882a255d305b360c0a0544d5",
+    "status": "active",
+    "version": 1,
+    "run_count": 0,
+    "next_due_at": "2026-10-10T15:51:10.525000+00:00",
+    "pending_sync_id": null,
+    "failure_code": null,
+    "actor_ref": "explicit-fixture",
+    "created_at": "2026-10-10T15:51:08.670047+00:00",
+    "updated_at": "2026-10-10T15:51:08.670047+00:00",
+    "schema_version": "native-official-analytics-refresh-plan-v2",
+    "policy": {
+      "schema_version": "native-official-analytics-refresh-policy-v2",
+      "plan_id": "noap_1b877b93568b4886985111f96330dd64",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+      "request": {
+        "schema_version": "native-official-analytics-refresh-request-v2",
+        "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+        "expected_publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "expected_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+        "expected_configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+        "query": null,
+        "acknowledged_read_only": true,
+        "acknowledged_protocol_mock": true,
+        "acknowledged_bounded_retries": false,
+        "max_attempts": 1,
+        "valid_for_seconds": 900,
+        "acknowledged_background_reads": true,
+        "max_runs": 1,
+        "interval_seconds": 60,
+        "start_at": "2026-10-10T15:51:10.525000Z",
+        "deadline": "2026-10-10T15:56:10.525000Z",
+        "metric_scope": "cumulative_video_counters",
+        "remote_post_id": "7391000000000000002"
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+        "expires_at": "2026-10-10T16:51:04.863263+00:00"
+      },
+      "mock": true,
+      "source": {
+        "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "dry_run_snapshot_sha256": "d98fb6145a6d7b39d5783df4d11a3224d0f722b3cf420c2bb2e5f40a33caf8b1",
+        "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+        "job_result_sha256": "cfcca0e142d0ee2e5fde1a537daf87df6d84585cb9ce2efee7e34a144b0a9d2a",
+        "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "features": {
+          "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+          "trend_cluster_id": null,
+          "idea_id": null,
+          "hook_type": null,
+          "duration_seconds": 3,
+          "scene_count": null,
+          "subtitle_template": null,
+          "voice_profile": null,
+          "music_profile": null,
+          "visual_strategy": null,
+          "niche": "technology",
+          "topic": null,
+          "cta": null,
+          "publishing_time": null,
+          "evidence": {
+            "project_metadata_source": "native_published_render_request_snapshot",
+            "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+            "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+            "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+            "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+            "current_project_metadata_used": false,
+            "exact_publishing_time_available": false,
+            "provider_posted_time": null,
+            "source_is_dry_run": false,
+            "semantic_labels_verified": false,
+            "production_cost_vnd": null,
+            "frozen_subtitle_style": null,
+            "subtitle_catalog_id_verified": false,
+            "channel_profile_ref": "ai-education-reference@1",
+            "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+            "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+            "publication_protocol_mock": true
+          },
+          "captured_at": "2026-10-10T15:51:08.670047Z"
+        },
+        "remote_post_id": "7391000000000000002",
+        "receipt_mock": true
+      },
+      "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+      "credential_proof": {
+        "expires_at": "2026-10-10T16:51:04.862262+00:00",
+        "scopes_sha256": "f1686be32f92c9142d57bccd6fa0f1d1313824e60ac9f981c94af18a5ee4f6d7",
+        "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5"
+      },
+      "approved_at": "2026-10-10T15:51:08.670047+00:00",
+      "automatic_consent_renewal": false,
+      "publishing_enabled": false,
+      "fixed_report_query": true
+    },
+    "mock": true,
+    "token_returned": false,
+    "publishing_enabled": false,
+    "automatic_consent_renewal": false,
+    "real_provider_tested": false,
+    "occurrences": [],
+    "idempotent_replay": false
+  },
+  "plan_done": {
+    "plan_id": "noap_1b877b93568b4886985111f96330dd64",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "request_fingerprint": "f72a1f9e1b392db6c1716066d0fa1fc699d353d630396a0ef84dc1283120c83f",
+    "policy_sha256": "fe773de52d0fbb7cb3a1ca4c2050854db9d0fe46882a255d305b360c0a0544d5",
+    "status": "completed",
+    "version": 3,
+    "run_count": 1,
+    "next_due_at": "2026-10-10T15:52:10.594704+00:00",
+    "pending_sync_id": null,
+    "failure_code": null,
+    "actor_ref": "explicit-fixture",
+    "created_at": "2026-10-10T15:51:08.670047+00:00",
+    "updated_at": "2026-10-10T15:51:11.530811+00:00",
+    "schema_version": "native-official-analytics-refresh-plan-v2",
+    "policy": {
+      "schema_version": "native-official-analytics-refresh-policy-v2",
+      "plan_id": "noap_1b877b93568b4886985111f96330dd64",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+      "request": {
+        "schema_version": "native-official-analytics-refresh-request-v2",
+        "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+        "expected_publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "expected_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+        "expected_configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+        "query": null,
+        "acknowledged_read_only": true,
+        "acknowledged_protocol_mock": true,
+        "acknowledged_bounded_retries": false,
+        "max_attempts": 1,
+        "valid_for_seconds": 900,
+        "acknowledged_background_reads": true,
+        "max_runs": 1,
+        "interval_seconds": 60,
+        "start_at": "2026-10-10T15:51:10.525000Z",
+        "deadline": "2026-10-10T15:56:10.525000Z",
+        "metric_scope": "cumulative_video_counters",
+        "remote_post_id": "7391000000000000002"
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+        "expires_at": "2026-10-10T16:51:04.863263+00:00"
+      },
+      "mock": true,
+      "source": {
+        "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "dry_run_snapshot_sha256": "d98fb6145a6d7b39d5783df4d11a3224d0f722b3cf420c2bb2e5f40a33caf8b1",
+        "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+        "job_result_sha256": "cfcca0e142d0ee2e5fde1a537daf87df6d84585cb9ce2efee7e34a144b0a9d2a",
+        "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "features": {
+          "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+          "trend_cluster_id": null,
+          "idea_id": null,
+          "hook_type": null,
+          "duration_seconds": 3,
+          "scene_count": null,
+          "subtitle_template": null,
+          "voice_profile": null,
+          "music_profile": null,
+          "visual_strategy": null,
+          "niche": "technology",
+          "topic": null,
+          "cta": null,
+          "publishing_time": null,
+          "evidence": {
+            "project_metadata_source": "native_published_render_request_snapshot",
+            "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+            "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+            "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+            "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+            "current_project_metadata_used": false,
+            "exact_publishing_time_available": false,
+            "provider_posted_time": null,
+            "source_is_dry_run": false,
+            "semantic_labels_verified": false,
+            "production_cost_vnd": null,
+            "frozen_subtitle_style": null,
+            "subtitle_catalog_id_verified": false,
+            "channel_profile_ref": "ai-education-reference@1",
+            "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+            "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+            "publication_protocol_mock": true
+          },
+          "captured_at": "2026-10-10T15:51:08.670047Z"
+        },
+        "remote_post_id": "7391000000000000002",
+        "receipt_mock": true
+      },
+      "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+      "credential_proof": {
+        "expires_at": "2026-10-10T16:51:04.862262+00:00",
+        "scopes_sha256": "f1686be32f92c9142d57bccd6fa0f1d1313824e60ac9f981c94af18a5ee4f6d7",
+        "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5"
+      },
+      "approved_at": "2026-10-10T15:51:08.670047+00:00",
+      "automatic_consent_renewal": false,
+      "publishing_enabled": false,
+      "fixed_report_query": true
+    },
+    "mock": true,
+    "token_returned": false,
+    "publishing_enabled": false,
+    "automatic_consent_renewal": false,
+    "real_provider_tested": false,
+    "occurrences": [
+      {
+        "schema_version": "native-official-analytics-refresh-occurrence-v2",
+        "occurrence_id": "noao_6eec5b7f99f040bfa01ab27a132e38c3",
+        "plan_id": "noap_1b877b93568b4886985111f96330dd64",
+        "workspace_id": "wsp_tiktok_creator_fixture",
+        "project_id": "7723ef65f1914151a4c2712eb11356b6",
+        "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+        "ordinal": 1,
+        "policy_sha256": "fe773de52d0fbb7cb3a1ca4c2050854db9d0fe46882a255d305b360c0a0544d5",
+        "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+        "consent_sha256": "ccdc38315b7854ac3d8924efcfdc3bc5c33ae4b14bdb7b8baa62c8df848e17ce",
+        "read_request_sha256": "b4ed4336a97b3c3628fd02eb70b34ddd2dff7f23cecf7190b92311d39c087678",
+        "due_at": "2026-10-10T15:51:10.525000+00:00",
+        "admitted_at": "2026-10-10T15:51:10.594704+00:00",
+        "occurrence_sha256": "d31f6c223a3dfc9dedf503ce70f4cb8be2647385c6ecf847e536e9f60f9d5dbe",
+        "sync": {
+          "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+          "workspace_id": "wsp_tiktok_creator_fixture",
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+          "request_fingerprint": "b4ed4336a97b3c3628fd02eb70b34ddd2dff7f23cecf7190b92311d39c087678",
+          "snapshot_sha256": "ccdc38315b7854ac3d8924efcfdc3bc5c33ae4b14bdb7b8baa62c8df848e17ce",
+          "status": "succeeded",
+          "attempts": 1,
+          "next_at": null,
+          "failure_code": null,
+          "result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+          "actor_ref": "explicit-fixture",
+          "created_at": "2026-10-10T15:51:10.603244+00:00",
+          "updated_at": "2026-10-10T15:51:11.472594+00:00",
+          "schema_version": "native-official-analytics-sync-v2",
+          "snapshot": {
+            "schema_version": "native-official-analytics-consent-v2",
+            "workspace_id": "wsp_tiktok_creator_fixture",
+            "project_id": "7723ef65f1914151a4c2712eb11356b6",
+            "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+            "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+            "request": {
+              "schema_version": "native-official-analytics-request-v2",
+              "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+              "expected_publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+              "expected_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+              "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+              "expected_configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+              "query": null,
+              "acknowledged_read_only": true,
+              "acknowledged_protocol_mock": true,
+              "acknowledged_bounded_retries": false,
+              "max_attempts": 1,
+              "valid_for_seconds": 299,
+              "metric_scope": "cumulative_video_counters",
+              "remote_post_id": "7391000000000000002"
+            },
+            "authority": {
+              "token_id": "explicit-fixture",
+              "subject": "usr:explicit-fixture",
+              "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+              "expires_at": "2026-10-10T16:51:04.863263+00:00"
+            },
+            "source": {
+              "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+              "receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+              "dry_run_snapshot_sha256": "d98fb6145a6d7b39d5783df4d11a3224d0f722b3cf420c2bb2e5f40a33caf8b1",
+              "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+              "job_result_sha256": "cfcca0e142d0ee2e5fde1a537daf87df6d84585cb9ce2efee7e34a144b0a9d2a",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "features": {
+                "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+                "project_id": "7723ef65f1914151a4c2712eb11356b6",
+                "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+                "trend_cluster_id": null,
+                "idea_id": null,
+                "hook_type": null,
+                "duration_seconds": 3,
+                "scene_count": null,
+                "subtitle_template": null,
+                "voice_profile": null,
+                "music_profile": null,
+                "visual_strategy": null,
+                "niche": "technology",
+                "topic": null,
+                "cta": null,
+                "publishing_time": null,
+                "evidence": {
+                  "project_metadata_source": "native_published_render_request_snapshot",
+                  "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+                  "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+                  "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+                  "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                  "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                  "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+                  "current_project_metadata_used": false,
+                  "exact_publishing_time_available": false,
+                  "provider_posted_time": null,
+                  "source_is_dry_run": false,
+                  "semantic_labels_verified": false,
+                  "production_cost_vnd": null,
+                  "frozen_subtitle_style": null,
+                  "subtitle_catalog_id_verified": false,
+                  "channel_profile_ref": "ai-education-reference@1",
+                  "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+                  "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+                  "publication_protocol_mock": true
+                },
+                "captured_at": "2026-10-10T15:51:10.594704Z"
+              },
+              "remote_post_id": "7391000000000000002",
+              "receipt_mock": true
+            },
+            "target": {
+              "schema_version": "publishing-target-v1",
+              "workspace_id": "wsp_tiktok_creator_fixture",
+              "profile_id": "ppf_tiktok_creator_fixture",
+              "profile_version": 1,
+              "platform": "tiktok",
+              "provider_key": "tiktok-content-posting-api",
+              "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+              "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+            "configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+            "mock": true,
+            "consented_at": "2026-10-10T15:51:10.594704+00:00",
+            "deadline": "2026-10-10T15:56:09.594704+00:00",
+            "publishing_authority": false,
+            "recurring_authority": false
+          },
+          "mock": true,
+          "publishing_enabled": false,
+          "token_returned": false,
+          "real_provider_tested": false,
+          "result": {
+            "schema_version": "native-official-analytics-snapshot-v2",
+            "result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+            "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+            "workspace_id": "wsp_tiktok_creator_fixture",
+            "project_id": "7723ef65f1914151a4c2712eb11356b6",
+            "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+            "snapshot_sha256": "ccdc38315b7854ac3d8924efcfdc3bc5c33ae4b14bdb7b8baa62c8df848e17ce",
+            "platform": "tiktok",
+            "provider_key": "tiktok-video-insights-api",
+            "source_kind": "official_protocol_mock",
+            "mock": true,
+            "external_call": false,
+            "real_audience_observation": false,
+            "metrics": {
+              "views": 8,
+              "impressions": null,
+              "reach": null,
+              "watch_time": null,
+              "average_view_duration": null,
+              "completion_rate": null,
+              "likes": 3,
+              "comments": 1,
+              "shares": 0,
+              "saves": null,
+              "followers_gained": null,
+              "clicks": null,
+              "ctr": null,
+              "revenue": null,
+              "rpm": null,
+              "observation_window_hours": null
+            },
+            "evidence": {
+              "metric_mapping": {
+                "view_count": "views",
+                "like_count": "likes",
+                "comment_count": "comments",
+                "share_count": "shares"
+              },
+              "row_count": 1,
+              "metric_scope": "cumulative_video_counters",
+              "observed_window_hours": null,
+              "watch_time_supported": false,
+              "completion_rate_supported": false,
+              "revenue_supported": false,
+              "query": null,
+              "coverage_end_date": null,
+              "owned_video_returned": true
+            },
+            "features": {
+              "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+              "project_id": "7723ef65f1914151a4c2712eb11356b6",
+              "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+              "trend_cluster_id": null,
+              "idea_id": null,
+              "hook_type": null,
+              "duration_seconds": 3,
+              "scene_count": null,
+              "subtitle_template": null,
+              "voice_profile": null,
+              "music_profile": null,
+              "visual_strategy": null,
+              "niche": "technology",
+              "topic": null,
+              "cta": null,
+              "publishing_time": null,
+              "evidence": {
+                "project_metadata_source": "native_published_render_request_snapshot",
+                "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+                "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+                "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+                "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+                "current_project_metadata_used": false,
+                "exact_publishing_time_available": false,
+                "provider_posted_time": null,
+                "source_is_dry_run": false,
+                "semantic_labels_verified": false,
+                "production_cost_vnd": null,
+                "frozen_subtitle_style": null,
+                "subtitle_catalog_id_verified": false,
+                "channel_profile_ref": "ai-education-reference@1",
+                "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+                "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+                "publication_protocol_mock": true
+              },
+              "captured_at": "2026-10-10T15:51:10.594704Z"
+            },
+            "publication_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+            "remote_post_id": "7391000000000000002",
+            "response_refs": [
+              "noar_1d37a6749870456aa7781e2254188e3c",
+              "noar_152dd208c8ee4dbbbd6a032787f2f1c2"
+            ],
+            "attempt_id": "noaa_13d355c770bd41b08abffa82b318ae5b",
+            "collected_at": "2026-10-10T15:51:11.459571+00:00",
+            "publishing_time": null,
+            "automatic_action": false,
+            "real_provider_tested": false
+          }
+        }
+      }
+    ]
+  },
+  "latest": {
+    "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "request_fingerprint": "b4ed4336a97b3c3628fd02eb70b34ddd2dff7f23cecf7190b92311d39c087678",
+    "snapshot_sha256": "ccdc38315b7854ac3d8924efcfdc3bc5c33ae4b14bdb7b8baa62c8df848e17ce",
+    "status": "succeeded",
+    "attempts": 1,
+    "next_at": null,
+    "failure_code": null,
+    "result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+    "actor_ref": "explicit-fixture",
+    "created_at": "2026-10-10T15:51:10.603244+00:00",
+    "updated_at": "2026-10-10T15:51:11.472594+00:00",
+    "schema_version": "native-official-analytics-sync-v2",
+    "snapshot": {
+      "schema_version": "native-official-analytics-consent-v2",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+      "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+      "request": {
+        "schema_version": "native-official-analytics-request-v2",
+        "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+        "expected_publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "expected_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "account_ref": "npac_6b3b94a2fe7740cfab2dfcbc8b44b613",
+        "expected_configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+        "query": null,
+        "acknowledged_read_only": true,
+        "acknowledged_protocol_mock": true,
+        "acknowledged_bounded_retries": false,
+        "max_attempts": 1,
+        "valid_for_seconds": 299,
+        "metric_scope": "cumulative_video_counters",
+        "remote_post_id": "7391000000000000002"
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+        "expires_at": "2026-10-10T16:51:04.863263+00:00"
+      },
+      "source": {
+        "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+        "receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "dry_run_snapshot_sha256": "d98fb6145a6d7b39d5783df4d11a3224d0f722b3cf420c2bb2e5f40a33caf8b1",
+        "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+        "job_result_sha256": "cfcca0e142d0ee2e5fde1a537daf87df6d84585cb9ce2efee7e34a144b0a9d2a",
+        "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "features": {
+          "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+          "trend_cluster_id": null,
+          "idea_id": null,
+          "hook_type": null,
+          "duration_seconds": 3,
+          "scene_count": null,
+          "subtitle_template": null,
+          "voice_profile": null,
+          "music_profile": null,
+          "visual_strategy": null,
+          "niche": "technology",
+          "topic": null,
+          "cta": null,
+          "publishing_time": null,
+          "evidence": {
+            "project_metadata_source": "native_published_render_request_snapshot",
+            "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+            "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+            "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+            "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+            "current_project_metadata_used": false,
+            "exact_publishing_time_available": false,
+            "provider_posted_time": null,
+            "source_is_dry_run": false,
+            "semantic_labels_verified": false,
+            "production_cost_vnd": null,
+            "frozen_subtitle_style": null,
+            "subtitle_catalog_id_verified": false,
+            "channel_profile_ref": "ai-education-reference@1",
+            "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+            "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+            "publication_protocol_mock": true
+          },
+          "captured_at": "2026-10-10T15:51:10.594704Z"
+        },
+        "remote_post_id": "7391000000000000002",
+        "receipt_mock": true
+      },
+      "target": {
+        "schema_version": "publishing-target-v1",
+        "workspace_id": "wsp_tiktok_creator_fixture",
+        "profile_id": "ppf_tiktok_creator_fixture",
+        "profile_version": 1,
+        "platform": "tiktok",
+        "provider_key": "tiktok-content-posting-api",
+        "target_account_id": "EXPLICIT_TIKTOK_OPEN_ID",
+        "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+      "configuration_sha256": "d83bb1857c119c98a0ecb3bdd6e7e5391fab5f05290389f31a352701d06d8972",
+      "mock": true,
+      "consented_at": "2026-10-10T15:51:10.594704+00:00",
+      "deadline": "2026-10-10T15:56:09.594704+00:00",
+      "publishing_authority": false,
+      "recurring_authority": false
+    },
+    "mock": true,
+    "publishing_enabled": false,
+    "token_returned": false,
+    "real_provider_tested": false,
+    "result": {
+      "schema_version": "native-official-analytics-snapshot-v2",
+      "result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+      "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+      "snapshot_sha256": "ccdc38315b7854ac3d8924efcfdc3bc5c33ae4b14bdb7b8baa62c8df848e17ce",
+      "platform": "tiktok",
+      "provider_key": "tiktok-video-insights-api",
+      "source_kind": "official_protocol_mock",
+      "mock": true,
+      "external_call": false,
+      "real_audience_observation": false,
+      "metrics": {
+        "views": 8,
+        "impressions": null,
+        "reach": null,
+        "watch_time": null,
+        "average_view_duration": null,
+        "completion_rate": null,
+        "likes": 3,
+        "comments": 1,
+        "shares": 0,
+        "saves": null,
+        "followers_gained": null,
+        "clicks": null,
+        "ctr": null,
+        "revenue": null,
+        "rpm": null,
+        "observation_window_hours": null
+      },
+      "evidence": {
+        "metric_mapping": {
+          "view_count": "views",
+          "like_count": "likes",
+          "comment_count": "comments",
+          "share_count": "shares"
+        },
+        "row_count": 1,
+        "metric_scope": "cumulative_video_counters",
+        "observed_window_hours": null,
+        "watch_time_supported": false,
+        "completion_rate_supported": false,
+        "revenue_supported": false,
+        "query": null,
+        "coverage_end_date": null,
+        "owned_video_returned": true
+      },
+      "features": {
+        "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+        "project_id": "7723ef65f1914151a4c2712eb11356b6",
+        "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+        "trend_cluster_id": null,
+        "idea_id": null,
+        "hook_type": null,
+        "duration_seconds": 3,
+        "scene_count": null,
+        "subtitle_template": null,
+        "voice_profile": null,
+        "music_profile": null,
+        "visual_strategy": null,
+        "niche": "technology",
+        "topic": null,
+        "cta": null,
+        "publishing_time": null,
+        "evidence": {
+          "project_metadata_source": "native_published_render_request_snapshot",
+          "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+          "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+          "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+          "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+          "current_project_metadata_used": false,
+          "exact_publishing_time_available": false,
+          "provider_posted_time": null,
+          "source_is_dry_run": false,
+          "semantic_labels_verified": false,
+          "production_cost_vnd": null,
+          "frozen_subtitle_style": null,
+          "subtitle_catalog_id_verified": false,
+          "channel_profile_ref": "ai-education-reference@1",
+          "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+          "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+          "publication_protocol_mock": true
+        },
+        "captured_at": "2026-10-10T15:51:10.594704Z"
+      },
+      "publication_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+      "remote_post_id": "7391000000000000002",
+      "response_refs": [
+        "noar_1d37a6749870456aa7781e2254188e3c",
+        "noar_152dd208c8ee4dbbbd6a032787f2f1c2"
+      ],
+      "attempt_id": "noaa_13d355c770bd41b08abffa82b318ae5b",
+      "collected_at": "2026-10-10T15:51:11.459571+00:00",
+      "publishing_time": null,
+      "automatic_action": false,
+      "real_provider_tested": false
+    }
+  },
+  "winner_source": {
+    "schema_version": "native-official-winner-source-binding-v1",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+    "result_sha256": "2241303456d66dff19dfc89c025a38aff3d38b7d02688bda227e8ce79ab29e80",
+    "consent_sha256": "ccdc38315b7854ac3d8924efcfdc3bc5c33ae4b14bdb7b8baa62c8df848e17ce",
+    "publication_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+    "scope": {
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+      "platform": "tiktok",
+      "provider_key": "tiktok-video-insights-api",
+      "source_kind": "official_protocol_mock",
+      "mock": true,
+      "source_external_call": false,
+      "query": null,
+      "format": {
+        "width": 1080,
+        "height": 1920,
+        "fps": null,
+        "video_codec": "h264",
+        "audio_codec": "aac"
+      },
+      "duration_bucket": "0-30",
+      "niche": "technology",
+      "channel_profile_ref": "ai-education-reference@1",
+      "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e"
+    },
+    "mock": true,
+    "real_audience_observation": false,
+    "qualified": true,
+    "recommendation_only": true,
+    "automatic_action": false,
+    "publishing_enabled": false,
+    "token_returned": false
+  },
+  "winner_runtime": {
+    "schema_version": "native-official-winner-capabilities-v1",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "default_policy": {
+      "schema_version": "winner-channel-policy-v1",
+      "minimum_peer_posts": 5,
+      "maximum_peer_posts": 100,
+      "minimum_views": 500,
+      "minimum_counter_interval_hours": 6.0,
+      "minimum_weight_coverage": 0.4,
+      "winner_threshold": 72.0,
+      "underperforming_threshold": 38.0,
+      "weights": {
+        "view_velocity": 0.18,
+        "retention": 0.16,
+        "completion": 0.16,
+        "engagement": 0.13,
+        "shares": 0.08,
+        "saves": 0.07,
+        "ctr": 0.08,
+        "follower_conversion": 0.06,
+        "revenue_efficiency": 0.05,
+        "production_cost_efficiency": 0.03
+      }
+    },
+    "default_policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+    "maximum_candidate_rows": 500,
+    "automatic_assessment": false,
+    "provider_calls_enabled": false,
+    "recommendation_only": true,
+    "automatic_action": false,
+    "publishing_enabled": false,
+    "token_returned": false,
+    "real_provider_tested": false
+  },
+  "winner": {
+    "assessment_id": "nowa_9e413dc5efa248bf822aa812957a7a03",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+    "result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+    "request_fingerprint": "5a2d998ca75454bfdbed0a30888798cc4d79b92dc3f6fbc47e2ff55897d2a687",
+    "snapshot_sha256": "8f5f79d58e7b4674eb43bb61eab0a3d1e2bc482a7c0c2191fb4bef61825cfbc9",
+    "created_by": "explicit-fixture",
+    "created_at": "2026-10-10T15:51:11.905686+00:00",
+    "schema_version": "native-official-winner-assessment-v1",
+    "snapshot": {
+      "schema_version": "native-official-winner-snapshot-v1",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+      "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+      "result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+      "request": {
+        "schema_version": "native-official-winner-request-v1",
+        "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+        "expected_result_sha256": "2241303456d66dff19dfc89c025a38aff3d38b7d02688bda227e8ce79ab29e80",
+        "policy": {
+          "schema_version": "winner-channel-policy-v1",
+          "minimum_peer_posts": 5,
+          "maximum_peer_posts": 100,
+          "minimum_views": 500,
+          "minimum_counter_interval_hours": 6,
+          "minimum_weight_coverage": 0.4,
+          "winner_threshold": 72,
+          "underperforming_threshold": 38,
+          "weights": {
+            "view_velocity": 0.18,
+            "retention": 0.16,
+            "completion": 0.16,
+            "engagement": 0.13,
+            "shares": 0.08,
+            "saves": 0.07,
+            "ctr": 0.08,
+            "follower_conversion": 0.06,
+            "revenue_efficiency": 0.05,
+            "production_cost_efficiency": 0.03
+          }
+        },
+        "acknowledged_recommendation_only": true,
+        "acknowledged_protocol_mock": true
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+        "expires_at": "2026-10-10T16:51:04.863263+00:00"
+      },
+      "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+      "candidate": {
+        "project_id": "7723ef65f1914151a4c2712eb11356b6",
+        "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+        "sync_id": "noas_dfa225a9ae454a4593cefac34738d866",
+        "result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+        "result_sha256": "2241303456d66dff19dfc89c025a38aff3d38b7d02688bda227e8ce79ab29e80",
+        "consent_sha256": "ccdc38315b7854ac3d8924efcfdc3bc5c33ae4b14bdb7b8baa62c8df848e17ce",
+        "source_sha256": "207866f93855e7598d90c6d0b757ab438f28b0af6716d0ab56f3104635921bac",
+        "publication_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+        "remote_post_id": "7391000000000000002",
+        "collected_at": "2026-10-10T15:51:11.459571+00:00",
+        "scope": {
+          "workspace_id": "wsp_tiktok_creator_fixture",
+          "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+          "platform": "tiktok",
+          "provider_key": "tiktok-video-insights-api",
+          "source_kind": "official_protocol_mock",
+          "mock": true,
+          "source_external_call": false,
+          "query": null,
+          "format": {
+            "width": 1080,
+            "height": 1920,
+            "fps": null,
+            "video_codec": "h264",
+            "audio_codec": "aac"
+          },
+          "duration_bucket": "0-30",
+          "niche": "technology",
+          "channel_profile_ref": "ai-education-reference@1",
+          "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e"
+        },
+        "metrics": {
+          "views": 8,
+          "impressions": null,
+          "reach": null,
+          "watch_time": null,
+          "average_view_duration": null,
+          "completion_rate": null,
+          "likes": 3,
+          "comments": 1,
+          "shares": 0,
+          "saves": null,
+          "followers_gained": null,
+          "clicks": null,
+          "ctr": null,
+          "revenue": null,
+          "rpm": null,
+          "observation_window_hours": null
+        },
+        "features": {
+          "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+          "trend_cluster_id": null,
+          "idea_id": null,
+          "hook_type": null,
+          "duration_seconds": 3,
+          "scene_count": null,
+          "subtitle_template": null,
+          "voice_profile": null,
+          "music_profile": null,
+          "visual_strategy": null,
+          "niche": "technology",
+          "topic": null,
+          "cta": null,
+          "publishing_time": null,
+          "evidence": {
+            "project_metadata_source": "native_published_render_request_snapshot",
+            "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+            "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+            "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+            "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+            "current_project_metadata_used": false,
+            "exact_publishing_time_available": false,
+            "provider_posted_time": null,
+            "source_is_dry_run": false,
+            "semantic_labels_verified": false,
+            "production_cost_vnd": null,
+            "frozen_subtitle_style": null,
+            "subtitle_catalog_id_verified": false,
+            "channel_profile_ref": "ai-education-reference@1",
+            "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+            "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+            "publication_protocol_mock": true
+          },
+          "captured_at": "2026-10-10T15:51:10.594704Z"
+        },
+        "production_cost_vnd": null
+      },
+      "peers": [
+        {
+          "project_id": "7723ef65f1914151a4c2712eb11356b6",
+          "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+          "sync_id": "noas_0141c6fdca3a42f2be61e6072ccc3a0b",
+          "result_snapshot_id": "noam_b689c461736042b3bee90ccf69687b45",
+          "result_sha256": "911492c53f54f7ac0711aec85f2dc7fa5f695766f8cae745e3659e22223e3f5f",
+          "consent_sha256": "00e7edf60ef88dca1223855e715382d181b95ab04e5db8a249ef3d8504812c28",
+          "source_sha256": "c0989465f118bfa6affff6eb27ca0c459782fed5d94e8257520256059956efa8",
+          "publication_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+          "remote_post_id": "7391000000000000001",
+          "collected_at": "2026-10-10T15:51:08.486402+00:00",
+          "scope": {
+            "workspace_id": "wsp_tiktok_creator_fixture",
+            "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+            "platform": "tiktok",
+            "provider_key": "tiktok-video-insights-api",
+            "source_kind": "official_protocol_mock",
+            "mock": true,
+            "source_external_call": false,
+            "query": null,
+            "format": {
+              "width": 1080,
+              "height": 1920,
+              "fps": null,
+              "video_codec": "h264",
+              "audio_codec": "aac"
+            },
+            "duration_bucket": "0-30",
+            "niche": "technology",
+            "channel_profile_ref": "ai-education-reference@1",
+            "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e"
+          },
+          "metrics": {
+            "views": 0,
+            "impressions": null,
+            "reach": null,
+            "watch_time": null,
+            "average_view_duration": null,
+            "completion_rate": null,
+            "likes": 3,
+            "comments": 1,
+            "shares": 0,
+            "saves": null,
+            "followers_gained": null,
+            "clicks": null,
+            "ctr": null,
+            "revenue": null,
+            "rpm": null,
+            "observation_window_hours": null
+          },
+          "features": {
+            "feature_snapshot_id": "noftr_e0bfbd5ade83ea30677c91be7b88d757",
+            "project_id": "7723ef65f1914151a4c2712eb11356b6",
+            "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+            "trend_cluster_id": null,
+            "idea_id": null,
+            "hook_type": null,
+            "duration_seconds": 3,
+            "scene_count": null,
+            "subtitle_template": null,
+            "voice_profile": null,
+            "music_profile": null,
+            "visual_strategy": null,
+            "niche": "technology",
+            "topic": null,
+            "cta": null,
+            "publishing_time": null,
+            "evidence": {
+              "project_metadata_source": "native_published_render_request_snapshot",
+              "publication_snapshot_sha256": "5ef8169beef9b91348b7a707f63436e2c1cee507f146388cd614b74a02311211",
+              "render_job_id": "0e9e334acc074b71877c880f318d71b0",
+              "job_snapshot_sha256": "6ac0e27a06881d5cd3a023f689943e3710098beee92a9f9d3418e85278103993",
+              "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "feature_context_sha256": "f9c511877918a05f90665746124e272c2a99e3e95478a1d695eedecdf6288452",
+              "current_project_metadata_used": false,
+              "exact_publishing_time_available": false,
+              "provider_posted_time": null,
+              "source_is_dry_run": false,
+              "semantic_labels_verified": false,
+              "production_cost_vnd": null,
+              "frozen_subtitle_style": null,
+              "subtitle_catalog_id_verified": false,
+              "channel_profile_ref": "ai-education-reference@1",
+              "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+              "official_receipt_sha256": "73685f42ccf8ecf99376c865a14b645224b1dfa88746120ffcbeda7ef37acabf",
+              "publication_protocol_mock": true
+            },
+            "captured_at": "2026-10-10T15:51:08.096989Z"
+          },
+          "production_cost_vnd": null
+        }
+      ],
+      "candidate_rows_truncated": false,
+      "excluded_rows": {
+        "incompatible_scope_or_anchor": 1
+      },
+      "assessment": {
+        "state": "insufficient_data",
+        "score": null,
+        "data_coverage": 0,
+        "algorithm_version": "winner-channel-assessment-v1",
+        "factors": [
+          {
+            "factor": "view_velocity",
+            "score": null,
+            "weight": 0.18,
+            "evidence": {
+              "raw_value": null,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": null,
+              "counter_growth": null,
+              "peer_counter_growth": {},
+              "production_cost_vnd": null
+            }
+          },
+          {
+            "factor": "retention",
+            "score": null,
+            "weight": 0.16,
+            "evidence": {
+              "raw_value": null,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": null,
+              "counter_growth": null,
+              "peer_counter_growth": null,
+              "production_cost_vnd": null
+            }
+          },
+          {
+            "factor": "completion",
+            "score": null,
+            "weight": 0.16,
+            "evidence": {
+              "raw_value": null,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": null,
+              "counter_growth": null,
+              "peer_counter_growth": null,
+              "production_cost_vnd": null
+            }
+          },
+          {
+            "factor": "engagement",
+            "score": null,
+            "weight": 0.13,
+            "evidence": {
+              "raw_value": 0.5,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": [
+                "likes",
+                "comments",
+                "shares"
+              ],
+              "counter_growth": null,
+              "peer_counter_growth": null,
+              "production_cost_vnd": null
+            }
+          },
+          {
+            "factor": "shares",
+            "score": null,
+            "weight": 0.08,
+            "evidence": {
+              "raw_value": 0,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": null,
+              "counter_growth": null,
+              "peer_counter_growth": null,
+              "production_cost_vnd": null
+            }
+          },
+          {
+            "factor": "saves",
+            "score": null,
+            "weight": 0.07,
+            "evidence": {
+              "raw_value": null,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": null,
+              "counter_growth": null,
+              "peer_counter_growth": null,
+              "production_cost_vnd": null
+            }
+          },
+          {
+            "factor": "ctr",
+            "score": null,
+            "weight": 0.08,
+            "evidence": {
+              "raw_value": null,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": null,
+              "counter_growth": null,
+              "peer_counter_growth": null,
+              "production_cost_vnd": null
+            }
+          },
+          {
+            "factor": "follower_conversion",
+            "score": null,
+            "weight": 0.06,
+            "evidence": {
+              "raw_value": null,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": null,
+              "counter_growth": null,
+              "peer_counter_growth": null,
+              "production_cost_vnd": null
+            }
+          },
+          {
+            "factor": "revenue_efficiency",
+            "score": null,
+            "weight": 0.05,
+            "evidence": {
+              "raw_value": null,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": null,
+              "counter_growth": null,
+              "peer_counter_growth": null,
+              "production_cost_vnd": null
+            }
+          },
+          {
+            "factor": "production_cost_efficiency",
+            "score": null,
+            "weight": 0.03,
+            "evidence": {
+              "raw_value": null,
+              "peer_median": null,
+              "peer_snapshot_ids": [],
+              "peer_count": 0,
+              "comparison": "matching_channel_report_scope",
+              "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+              "engagement_components": null,
+              "counter_growth": null,
+              "peer_counter_growth": null,
+              "production_cost_vnd": null
+            }
+          }
+        ],
+        "evidence": [
+          "Channel policy SHA256: c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20; matched distinct peer posts: 1.",
+          "Peers share workspace, exact account/profile binding, platform, provider, transport, requested report interval, render format, duration bucket and frozen niche.",
+          "Available configured weight: 0.000000; minimum 0.400000. Median peer value scores 50; twice median scores 100.",
+          "Requested report dates do not certify complete provider coverage or equal publication age. Counter growth measures reported count changes between collections; provider update lag is unknown.",
+          "Candidate scan truncated: False; at most 500 rows and 100 distinct peers."
+        ],
+        "recommendations": [
+          "Review this relative assessment with its missing metrics and peer evidence.",
+          "Collect compatible observations before changing creative strategy; do not delete posts or change media budgets automatically."
+        ],
+        "basis": "matching_native_official_cumulative_counter_scope",
+        "peer_scope_verified": true,
+        "channel_baseline_verified": false,
+        "view_velocity_supported": false,
+        "publishing_age_hours": null,
+        "actual_publication_time": null,
+        "mock": true,
+        "source_kind": "official_protocol_mock",
+        "source_external_call": false,
+        "real_audience_observation": false,
+        "external_call": false,
+        "automatic_action": false,
+        "publishing_enabled": false,
+        "limitations": [
+          "Cumulative counters have no reporting interval or verified equal publication age.",
+          "Counter snapshots do not prove continuous observation or publication age; velocity and publication time remain unavailable.",
+          "Frozen niche/channel annotations and selected compatible posts do not prove complete channel history or causal improvement.",
+          "Protocol mocks are synthetic; their relative assessments cannot enter real audience learning."
+        ]
+      },
+      "recommendation_only": true,
+      "automatic_action": false,
+      "publishing_enabled": false
+    },
+    "assessment": {
+      "state": "insufficient_data",
+      "score": null,
+      "data_coverage": 0,
+      "algorithm_version": "winner-channel-assessment-v1",
+      "factors": [
+        {
+          "factor": "view_velocity",
+          "score": null,
+          "weight": 0.18,
+          "evidence": {
+            "raw_value": null,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": null,
+            "counter_growth": null,
+            "peer_counter_growth": {},
+            "production_cost_vnd": null
+          }
+        },
+        {
+          "factor": "retention",
+          "score": null,
+          "weight": 0.16,
+          "evidence": {
+            "raw_value": null,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": null,
+            "counter_growth": null,
+            "peer_counter_growth": null,
+            "production_cost_vnd": null
+          }
+        },
+        {
+          "factor": "completion",
+          "score": null,
+          "weight": 0.16,
+          "evidence": {
+            "raw_value": null,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": null,
+            "counter_growth": null,
+            "peer_counter_growth": null,
+            "production_cost_vnd": null
+          }
+        },
+        {
+          "factor": "engagement",
+          "score": null,
+          "weight": 0.13,
+          "evidence": {
+            "raw_value": 0.5,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": [
+              "likes",
+              "comments",
+              "shares"
+            ],
+            "counter_growth": null,
+            "peer_counter_growth": null,
+            "production_cost_vnd": null
+          }
+        },
+        {
+          "factor": "shares",
+          "score": null,
+          "weight": 0.08,
+          "evidence": {
+            "raw_value": 0,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": null,
+            "counter_growth": null,
+            "peer_counter_growth": null,
+            "production_cost_vnd": null
+          }
+        },
+        {
+          "factor": "saves",
+          "score": null,
+          "weight": 0.07,
+          "evidence": {
+            "raw_value": null,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": null,
+            "counter_growth": null,
+            "peer_counter_growth": null,
+            "production_cost_vnd": null
+          }
+        },
+        {
+          "factor": "ctr",
+          "score": null,
+          "weight": 0.08,
+          "evidence": {
+            "raw_value": null,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": null,
+            "counter_growth": null,
+            "peer_counter_growth": null,
+            "production_cost_vnd": null
+          }
+        },
+        {
+          "factor": "follower_conversion",
+          "score": null,
+          "weight": 0.06,
+          "evidence": {
+            "raw_value": null,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": null,
+            "counter_growth": null,
+            "peer_counter_growth": null,
+            "production_cost_vnd": null
+          }
+        },
+        {
+          "factor": "revenue_efficiency",
+          "score": null,
+          "weight": 0.05,
+          "evidence": {
+            "raw_value": null,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": null,
+            "counter_growth": null,
+            "peer_counter_growth": null,
+            "production_cost_vnd": null
+          }
+        },
+        {
+          "factor": "production_cost_efficiency",
+          "score": null,
+          "weight": 0.03,
+          "evidence": {
+            "raw_value": null,
+            "peer_median": null,
+            "peer_snapshot_ids": [],
+            "peer_count": 0,
+            "comparison": "matching_channel_report_scope",
+            "policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+            "engagement_components": null,
+            "counter_growth": null,
+            "peer_counter_growth": null,
+            "production_cost_vnd": null
+          }
+        }
+      ],
+      "evidence": [
+        "Channel policy SHA256: c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20; matched distinct peer posts: 1.",
+        "Peers share workspace, exact account/profile binding, platform, provider, transport, requested report interval, render format, duration bucket and frozen niche.",
+        "Available configured weight: 0.000000; minimum 0.400000. Median peer value scores 50; twice median scores 100.",
+        "Requested report dates do not certify complete provider coverage or equal publication age. Counter growth measures reported count changes between collections; provider update lag is unknown.",
+        "Candidate scan truncated: False; at most 500 rows and 100 distinct peers."
+      ],
+      "recommendations": [
+        "Review this relative assessment with its missing metrics and peer evidence.",
+        "Collect compatible observations before changing creative strategy; do not delete posts or change media budgets automatically."
+      ],
+      "basis": "matching_native_official_cumulative_counter_scope",
+      "peer_scope_verified": true,
+      "channel_baseline_verified": false,
+      "view_velocity_supported": false,
+      "publishing_age_hours": null,
+      "actual_publication_time": null,
+      "mock": true,
+      "source_kind": "official_protocol_mock",
+      "source_external_call": false,
+      "real_audience_observation": false,
+      "external_call": false,
+      "automatic_action": false,
+      "publishing_enabled": false,
+      "limitations": [
+        "Cumulative counters have no reporting interval or verified equal publication age.",
+        "Counter snapshots do not prove continuous observation or publication age; velocity and publication time remain unavailable.",
+        "Frozen niche/channel annotations and selected compatible posts do not prove complete channel history or causal improvement.",
+        "Protocol mocks are synthetic; their relative assessments cannot enter real audience learning."
+      ]
+    },
+    "peer_count": 1,
+    "mock": true,
+    "real_audience_observation": false,
+    "recommendation_only": true,
+    "automatic_action": false,
+    "external_call": false,
+    "publishing_enabled": false,
+    "token_returned": false,
+    "real_provider_tested": false
+  },
+  "learning": {
+    "learning_id": "nols_80feea2b844042a1817a00748416904c",
+    "workspace_id": "wsp_tiktok_creator_fixture",
+    "project_id": "7723ef65f1914151a4c2712eb11356b6",
+    "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+    "anchor_assessment_id": "nowa_9e413dc5efa248bf822aa812957a7a03",
+    "anchor_result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+    "request_fingerprint": "42e3a377826d8195b2132703fc728d5735b890b8b8e84bbe752c02cf0b4475bd",
+    "snapshot_sha256": "a3b2aefc7609eaf7caa3e384e574d0196701d8a85fb3f48a203b682e0a49ed21",
+    "created_by": "explicit-fixture",
+    "created_at": "2026-10-10T15:51:12.091616+00:00",
+    "schema_version": "native-official-learning-history-v1",
+    "snapshot": {
+      "schema_version": "native-official-learning-snapshot-v1",
+      "workspace_id": "wsp_tiktok_creator_fixture",
+      "project_id": "7723ef65f1914151a4c2712eb11356b6",
+      "publication_id": "nopu_bccc9c577e954661971947042e2b7c9f",
+      "anchor_assessment_id": "nowa_9e413dc5efa248bf822aa812957a7a03",
+      "anchor_result_snapshot_id": "noam_4b46b100b27448fabf48223e9e2e85ab",
+      "anchor_candidate_sha256": "2eca38a742093ae219bc0f16a8c9cc463bb7e9c70d74c7ec4d86ca9a7daa2dcf",
+      "request": {
+        "schema_version": "native-official-learning-request-v1",
+        "assessment_id": "nowa_9e413dc5efa248bf822aa812957a7a03",
+        "expected_assessment_sha256": "8f5f79d58e7b4674eb43bb61eab0a3d1e2bc482a7c0c2191fb4bef61825cfbc9",
+        "policy": {
+          "schema_version": "channel-learning-policy-v1",
+          "minimum_group_posts": 3,
+          "minimum_control_posts": 3,
+          "maximum_posts": 100,
+          "minimum_score_difference": 10
+        },
+        "acknowledged_recommendation_only": true,
+        "acknowledged_protocol_mock": true
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "e90a60c05cf828fbc87037a872e396c344505522cbe9d788a02261e61112157d",
+        "expires_at": "2026-10-10T16:51:04.863263+00:00"
+      },
+      "scope": {
+        "workspace_id": "wsp_tiktok_creator_fixture",
+        "target_binding_sha256": "4ad1cac974d81963facf30fb92c2443efb0dffa94a8cd0766db59e2d44a593b5",
+        "platform": "tiktok",
+        "provider_key": "tiktok-video-insights-api",
+        "source_kind": "official_protocol_mock",
+        "mock": true,
+        "source_external_call": false,
+        "query": null,
+        "format": {
+          "width": 1080,
+          "height": 1920,
+          "fps": null,
+          "video_codec": "h264",
+          "audio_codec": "aac"
+        },
+        "niche": "technology",
+        "channel_profile_ref": "ai-education-reference@1",
+        "channel_profile_sha256": "bdf48a5218ac48d711393ab37149d12bd0268366b340b6a6870b72a5576c7a0e",
+        "winner_algorithm_version": "winner-channel-assessment-v1"
+      },
+      "winner_policy_sha256": "c2db80cf13b622557fddb8d26b49a0e3986d84bb46c52b7dde0528ef1f446a20",
+      "winner_factor_basis_sha256": "16c30ad94e0af18cbea22a5deeb57be4d722a4cc3ecea54f19b812c48e7e042a",
+      "selected_assessments": [],
+      "observations": [],
+      "dimensions": [
+        {
+          "dimension": "trend_family",
+          "state": "insufficient_data",
+          "missing_feature_posts": 0,
+          "groups": [],
+          "groups_truncated": false
+        },
+        {
+          "dimension": "hook",
+          "state": "insufficient_data",
+          "missing_feature_posts": 0,
+          "groups": [],
+          "groups_truncated": false
+        },
+        {
+          "dimension": "duration",
+          "state": "insufficient_data",
+          "missing_feature_posts": 0,
+          "groups": [],
+          "groups_truncated": false
+        },
+        {
+          "dimension": "visual_strategy",
+          "state": "insufficient_data",
+          "missing_feature_posts": 0,
+          "groups": [],
+          "groups_truncated": false
+        },
+        {
+          "dimension": "subtitle_style",
+          "state": "insufficient_data",
+          "missing_feature_posts": 0,
+          "groups": [],
+          "groups_truncated": false
+        },
+        {
+          "dimension": "voice_profile",
+          "state": "insufficient_data",
+          "missing_feature_posts": 0,
+          "groups": [],
+          "groups_truncated": false
+        },
+        {
+          "dimension": "publishing_window",
+          "state": "insufficient_data",
+          "missing_feature_posts": 0,
+          "groups": [],
+          "groups_truncated": false
+        }
+      ],
+      "candidate_rows_truncated": false,
+      "selected_posts_truncated": false,
+      "excluded_rows": {
+        "insufficient_assessment": 1
+      },
+      "recommendation_only": true,
+      "automatic_action": false,
+      "publishing_enabled": false,
+      "limitations": [
+        "Descriptive associations of qualified relative assessment scores; no causal improvement or future performance guarantee.",
+        "Latest compatible assessed distinct posts in a bounded scan are not exhaustive channel history or account totals.",
+        "Report intervals do not certify complete coverage or equal publication age. Different duration buckets have their own relative winner baselines.",
+        "Project annotations and edit facts are frozen; semantic labels are not independently verified.",
+        "Publishing time/windows and unknown costs remain unavailable. No inferred audience window or media budget change.",
+        "Protocol mocks remain synthetic and cannot be combined with real observations or used as real audience feedback."
+      ]
+    },
+    "dimensions": [
+      {
+        "dimension": "trend_family",
+        "state": "insufficient_data",
+        "missing_feature_posts": 0,
+        "groups": [],
+        "groups_truncated": false
+      },
+      {
+        "dimension": "hook",
+        "state": "insufficient_data",
+        "missing_feature_posts": 0,
+        "groups": [],
+        "groups_truncated": false
+      },
+      {
+        "dimension": "duration",
+        "state": "insufficient_data",
+        "missing_feature_posts": 0,
+        "groups": [],
+        "groups_truncated": false
+      },
+      {
+        "dimension": "visual_strategy",
+        "state": "insufficient_data",
+        "missing_feature_posts": 0,
+        "groups": [],
+        "groups_truncated": false
+      },
+      {
+        "dimension": "subtitle_style",
+        "state": "insufficient_data",
+        "missing_feature_posts": 0,
+        "groups": [],
+        "groups_truncated": false
+      },
+      {
+        "dimension": "voice_profile",
+        "state": "insufficient_data",
+        "missing_feature_posts": 0,
+        "groups": [],
+        "groups_truncated": false
+      },
+      {
+        "dimension": "publishing_window",
+        "state": "insufficient_data",
+        "missing_feature_posts": 0,
+        "groups": [],
+        "groups_truncated": false
+      }
+    ],
+    "observation_count": 0,
+    "mock": true,
+    "real_audience_observation": false,
+    "recommendation_only": true,
+    "automatic_action": false,
+    "external_call": false,
+    "publishing_enabled": false,
+    "token_returned": false,
+    "real_provider_tested": false,
+    "status": "insufficient_data"
+  },
+  "real_provider_acceptance": false,
+  "owner_uat": false
+}

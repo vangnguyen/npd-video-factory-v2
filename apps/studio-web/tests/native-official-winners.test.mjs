@@ -7,7 +7,7 @@ const policy=()=>({schema_version:'winner-channel-policy-v1',minimum_peer_posts:
 const query=()=>({start_date:'2026-10-01',end_date:'2026-10-02',include_revenue:false});
 const scope=()=>({workspace_id:workspace,target_binding_sha256:targetSha,platform:'youtube',provider_key:'youtube-analytics-api',mock:true,source_kind:'official_protocol_mock',source_external_call:false,query:query()});
 const observation=()=>({status:'succeeded',sync_id:syncId,publication_id:pub,result_snapshot_id:resultId,snapshot_sha256:consentSha,
-  result:{mock:true,source_kind:'official_protocol_mock',external_call:false,publication_receipt_sha256:receiptSha,evidence:{query:query()}}});
+  result:{platform:'youtube',mock:true,source_kind:'official_protocol_mock',external_call:false,publication_receipt_sha256:receiptSha,evidence:{query:query()}}});
 const source=()=>({schema_version:'native-official-winner-source-binding-v1',workspace_id:workspace,project_id:project,sync_id:syncId,publication_id:pub,result_snapshot_id:resultId,result_sha256:resultSha,
   consent_sha256:consentSha,publication_receipt_sha256:receiptSha,scope:scope(),mock:true,real_audience_observation:false,qualified:true,recommendation_only:true,automatic_action:false,publishing_enabled:false,token_returned:false});
 const config=()=>({schema_version:'native-official-winner-capabilities-v1',workspace_id:workspace,default_policy:policy(),default_policy_sha256:policySha,maximum_candidate_rows:500,

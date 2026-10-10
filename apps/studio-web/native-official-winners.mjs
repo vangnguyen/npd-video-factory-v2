@@ -26,7 +26,7 @@ export function initializeNativeOfficialWinners({api,getState,getBinding,root=do
   const stable=v=>JSON.stringify(v,(_,child)=>child&&typeof child==='object'&&!Array.isArray(child)?Object.fromEntries(Object.keys(child).sort().map(k=>[k,child[k]])):child);
   const observation=()=>getBinding()?.sync??null,endpoint=s=>'/api/projects/'+s.project.id+'/official-winners';
   const context=()=>{const s=getState(),a=observation();return JSON.stringify([s.workspace_id,s.project?.id,s.project?.revision,s.project?.archived,s.dirty,s.active,s.canManage,a?.sync_id,a?.snapshot_sha256,a?.result_snapshot_id,a?.status]);};
-  const sameQuery=(a,b)=>a&&b&&['start_date','end_date','include_revenue'].every(k=>a[k]===b[k])&&Object.keys(a).length===3&&Object.keys(b).length===3;
+  const sameQuery=(a,b)=>a===null&&b===null||a&&b&&['start_date','end_date','include_revenue'].every(k=>a[k]===b[k])&&Object.keys(a).length===3&&Object.keys(b).length===3;
   const validSource=()=>{const s=getState(),a=observation();return a?.status==='succeeded'&&id(a.sync_id,'noas')&&binding?.sync_id===a.sync_id&&binding.result_snapshot_id===a.result_snapshot_id
     &&binding.consent_sha256===a.snapshot_sha256&&binding.workspace_id===s.workspace_id&&binding.project_id===s.project?.id;};
   function validatePolicy(p){if(p?.schema_version!=='winner-channel-policy-v1'||Object.keys(p).length!==9||!p.weights||Object.keys(p.weights).length!==10)throw new Error('Chính sách không hợp lệ.');
@@ -46,7 +46,7 @@ export function initializeNativeOfficialWinners({api,getState,getBinding,root=do
     ||value.sync_id!==a?.sync_id||value.publication_id!==a.publication_id||value.result_snapshot_id!==a.result_snapshot_id||!sha(value.result_sha256)||value.consent_sha256!==a.snapshot_sha256
     ||value.publication_receipt_sha256!==r?.publication_receipt_sha256||value.mock!==r?.mock||typeof value.mock!=='boolean'||value.real_audience_observation!==!value.mock||value.qualified!==true
     ||value.recommendation_only!==true||value.automatic_action!==false||value.publishing_enabled!==false||value.token_returned!==false||value.scope?.workspace_id!==s.workspace_id
-    ||value.scope.mock!==value.mock||value.scope.source_kind!==r.source_kind||value.scope.source_external_call!==r.external_call||!sha(value.scope.target_binding_sha256)||value.scope.platform!=='youtube'
+    ||value.scope.mock!==value.mock||value.scope.source_kind!==r.source_kind||value.scope.source_external_call!==r.external_call||!sha(value.scope.target_binding_sha256)||value.scope.platform!==r.platform||!['youtube','tiktok'].includes(value.scope.platform)
     ||!sameQuery(value.scope.query,r.evidence?.query))throw new Error('Bằng chứng quan sát không đúng phạm vi.');return value;}
   function validateRow(value,s){const snap=value?.snapshot,a=value?.assessment,c=snap?.candidate;if(value?.schema_version!=='native-official-winner-assessment-v1'||!id(value.assessment_id,'nowa')
     ||value.workspace_id!==s.workspace_id||value.project_id!==s.project.id||value.publication_id!==binding?.publication_id||!sha(value.snapshot_sha256)||!id(value.sync_id,'noas')||!id(value.result_snapshot_id,'noam')
@@ -57,7 +57,7 @@ export function initializeNativeOfficialWinners({api,getState,getBinding,root=do
     ||c.scope.target_binding_sha256!==binding.scope.target_binding_sha256||snap.request?.sync_id!==value.sync_id||snap.request.expected_result_sha256!==c.result_sha256
     ||snap.request.acknowledged_recommendation_only!==true||snap.request.acknowledged_protocol_mock!==value.mock||!Array.isArray(snap.peers)||!Number.isInteger(value.peer_count)||value.peer_count!==snap.peers.length||value.peer_count>100
     ||typeof snap.candidate_rows_truncated!=='boolean'||!a||JSON.stringify(snap.assessment)!==JSON.stringify(a)||!Object.hasOwn(labels,a.state)||a.algorithm_version!=='winner-channel-assessment-v1'
-    ||a.basis!=='matching_native_official_channel_report_scope'||a.mock!==value.mock||a.source_kind!==c.scope.source_kind||a.real_audience_observation!==!value.mock||a.external_call!==false||a.automatic_action!==false||a.publishing_enabled!==false
+    ||a.basis!==(c.scope.platform==='tiktok'?'matching_native_official_cumulative_counter_scope':'matching_native_official_channel_report_scope')||a.mock!==value.mock||a.source_kind!==c.scope.source_kind||a.real_audience_observation!==!value.mock||a.external_call!==false||a.automatic_action!==false||a.publishing_enabled!==false
     ||typeof a.channel_baseline_verified!=='boolean'||value.mock&&a.channel_baseline_verified!==false||a.view_velocity_supported!==false||a.publishing_age_hours!==null||a.actual_publication_time!==null
     ||!finite(a.data_coverage)||a.data_coverage<0||a.data_coverage>1||a.state==='insufficient_data'&&a.score!==null||a.state!=='insufficient_data'&&(!finite(a.score)||a.score<0||a.score>100)
     ||!Array.isArray(a.factors)||a.factors.length!==10||new Set(a.factors.map(f=>f.factor)).size!==10||!Array.isArray(a.limitations)||!Array.isArray(a.recommendations))throw new Error('Đánh giá không đúng phạm vi hoặc nguồn.');
