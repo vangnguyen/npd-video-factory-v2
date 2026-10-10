@@ -38,10 +38,14 @@ class SessionVault:
     def path(self,reference):
         if not self.configured() or not isinstance(reference,str) or not re.fullmatch(r'nups_[a-f0-9]{32}',reference):raise WorkflowError('NATIVE_OFFICIAL_SESSION_UNAVAILABLE')
         return protected_path(self.directory/(reference+'.dpapi'),self.root)
-    def save(self,ticket,session,*,ttl_seconds=3600):
+    def save(self,ticket,session,*,ttl_seconds=3600,cost_operation_id=None,response_sha256=None):
+        from app.tiktok_upload import UploadSession as TikTokSession
+        if type(session) is TikTokSession:
+            from .tiktok_publish_sessions import save
+            return save(self,ticket,session,cost_operation_id=cost_operation_id,response_sha256=response_sha256)
         from .assemblyai_connection import _dpapi,_restrict_file
         if not self.configured():raise WorkflowError('NATIVE_OFFICIAL_SESSION_NOT_CONFIGURED')
-        if type(ticket) is not Ticket or ticket.operation!='init' or type(session) is not UploadSession or type(ttl_seconds) is not int or not 60<=ttl_seconds<=86400:raise WorkflowError('NATIVE_OFFICIAL_SESSION_REQUEST_INVALID',400)
+        if type(ticket) is not Ticket or ticket.operation!='init' or type(session) is not UploadSession or cost_operation_id is not None or response_sha256 is not None or type(ttl_seconds) is not int or not 60<=ttl_seconds<=86400:raise WorkflowError('NATIVE_OFFICIAL_SESSION_REQUEST_INVALID',400)
         try:session=UploadSession(session.uri,session.total_bytes)
         except Exception:raise WorkflowError('NATIVE_OFFICIAL_SESSION_REQUEST_INVALID',400) from None
         with self.journal.store.transaction() as con:
@@ -81,6 +85,12 @@ class SessionVault:
         try:
             with self.journal.store.transaction() as con:
                 value,_,_,dispatch=self.journal.admission(project,identity,con=con)
+                is_tiktok=value['snapshot']['target']['platform']=='tiktok';registered_job=None
+                if is_tiktok:
+                    from .tiktok_publishing import job
+                    registered=job(con,value)
+                    if registered is None:raise ValueError()
+                    registered_job={k:v for k,v in registered.items() if k not in {'publication_id','workspace_id','project_id','snapshot_sha256','job_sha256'}}
                 row=con.execute('SELECT * FROM native_official_publish_sessions WHERE session_ref=? AND publication_id=? AND workspace_id=? AND project_id=?',(dispatch['private_session_ref'],identity,self.workspace,project)).fetchone()
                 if row is None:raise ValueError()
                 binding={k:row[k] for k in ('session_ref','publication_id','workspace_id','project_id','snapshot_sha256','target_binding_sha256','configuration_sha256','total_bytes','created_at','expires_at')}
@@ -92,13 +102,20 @@ class SessionVault:
                 path=self.path(binding['session_ref'])
                 if not path.is_file() or not 1<=path.stat().st_size<=16384 or file_sha(path)!=row['cipher_sha256']:raise ValueError()
                 raw=path.read_bytes()
-            if not raw.startswith(PREFIX):raise ValueError()
-            decoded=_dpapi(raw[len(PREFIX):],decrypt=True,entropy=ENTROPY);value=json.loads(decoded,object_pairs_hook=unique_pairs)
-            if (not isinstance(value,dict) or set(value)!={'schema_version','binding','uri'} or value['schema_version']!='native-youtube-upload-session-v1'
+            from .tiktok_publish_sessions import PREFIX as TIKTOK_PREFIX,ENTROPY as TIKTOK_ENTROPY
+            prefix,entropy=(TIKTOK_PREFIX,TIKTOK_ENTROPY) if is_tiktok else (PREFIX,ENTROPY)
+            if not raw.startswith(prefix):raise ValueError()
+            decoded=_dpapi(raw[len(prefix):],decrypt=True,entropy=entropy);value=json.loads(decoded,object_pairs_hook=unique_pairs)
+            fields={'schema_version','binding','uri'}|({'publish_id','chunk_size','job'} if is_tiktok else set())
+            if (not isinstance(value,dict) or set(value)!=fields or value['schema_version']!=('native-tiktok-upload-session-v1' if is_tiktok else 'native-youtube-upload-session-v1')
                 or not isinstance(value['binding'],dict) or value['binding']!=binding or type(value['binding'].get('mock')) is not bool
                 or type(value['binding'].get('total_bytes')) is not int):raise ValueError()
             # Revalidate current consent after decryption, before returning a URI to the worker.
             self.journal.admission(project,identity)
+            if is_tiktok:
+                from app.tiktok_upload import UploadSession as TikTokSession,ChunkPlan
+                if value['job']!=registered_job or value['publish_id']!=registered_job['provider_job_id'] or type(value['chunk_size']) is not int or value['chunk_size']!=self.journal.get(project,identity)['snapshot']['chunk_size'] or file_sha(path)!=row['cipher_sha256'] or (expires-created).total_seconds()!=3600:raise ValueError()
+                return TikTokSession(value['publish_id'],value['uri'],ChunkPlan(binding['total_bytes'],value['chunk_size']),expires)
             return UploadSession(value['uri'],binding['total_bytes'])
         except Exception:raise WorkflowError('NATIVE_OFFICIAL_SESSION_UNAVAILABLE') from None
 

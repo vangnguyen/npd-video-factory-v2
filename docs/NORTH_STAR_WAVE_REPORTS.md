@@ -3112,3 +3112,22 @@ EXTERNAL BLOCKERS: actual TikTok app eligibility/audit/credentials and real prov
 OWNER ACTION REQUIRED: none for safe continuation; Phase10 listening/UAT remains deferred. Real external publication, new paid provider, production deployment or protected-main merge require separate approval when concrete.
 NEXT WAVE: Native TikTok async execution/queue/Studio; remaining official platforms/analytics and full original intelligence/media/audio/learning/isolation/production/A/B/C gaps.
 IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; PHASE10_READY=NO; OWNER_UAT_REQUIRED=YES; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+
+## 2026-10-10 — Wave 9: Native TikTok async execution component
+
+WAVE: 9 / Phase 11 follow-up; original whole-wave acceptance remains open.
+STATUS: backend component implemented, local/mock tests and retained recovery PASS; startup/Studio/provider acceptance incomplete.
+HEAD SHA: 180bae36e65e7b2235d289e4c11cab56b7d6cd4c before the separate reviewable commit; verified final HEAD is in `tiktok-native-publishing-preservation.json`.
+CAPABILITIES COMPLETED: common finite Owner/intent/cost/queue engine; current creator/account proof; sole init; distinct DPAPI custody; exact merged-chunk bytes; conservative original-job reconciliation/backoff; uploaded status after project edits; immutable observations and qualified private/public/multiple-ID receipt; known late result retention; keyless original recovery.
+CAPABILITIES PARTIAL: Native TikTok startup/CLI/Studio publishing and genuine protocol/account/app/media/legal/Owner/browser acceptance; remaining original providers/analytics/quality/retention/soak and full A/B/C.
+TESTS: Native 331 PASS in 2076.47s across 29 modules; shared protocol 134 PASS in 14.09s. Earlier n4 had one deliberately short Owner fixture expiry mismatch, fixed without loosening production checks. Separate timer diagnostic produced no successful report; ordinary suite is authoritative. No frontend source changed; historical Studio 570 PASS at milestone 269 is not claimed as a fresh browser/current-run test.
+REAL PROVIDER TESTS: 0. Local-real: DPAPI, SQLite, exact byte reads, backup, restore, separate process. Nonplayable media/Owner/platform/protocol responses are explicit fixtures.
+MOCK TESTS: four-step private queue, one init/one chunk/two status observations, 11 nullable-cost receipts/zero paid operations, current creator duration, public moderation/multiple IDs, unknown init/chunk, throttle, expiry/revoke/cancel/restart, drift/tamper and original-history assertions.
+EVIDENCE: `NATIVE_TIKTOK_PUBLISHING.md`, `north-star/tiktok-publishing-evidence.json`, retained n1/n2 bundles and new processes. N1 retainer DTO assertion repaired by reading the completed original job, with no extra wire; lost raw capture disclosed, n2 independent full capture PASS. Both retained bundles preserved. Historical admission270 exact 27-table/media readback PASS; execution/queue exact 33-table recovery PASS.
+REGRESSIONS: final ordinary Native/protocol/retained/recovery PASS; the failed retainer/fixture/diagnostic are separately retained and qualified. Fresh15 artifact hashes/main/live source are checked at the incremental source seal.
+EXTERNAL BLOCKERS: genuine scoped credentials/application eligibility/audit/rights/Owner/browser/audience/provider/Docker/production/receiver acceptance remain separate.
+OWNER ACTION REQUIRED: none for safe architecture; deferred listening/UAT remains pending.
+NEXT WAVE: wire independent protected TikTok distribution configuration and current Studio actions, then continue all original safe gaps. Main merge, real publishing and deployment require separate authority and were not performed.
+
+Counts remain 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED: 59 broad groups unclosed. `IMPLEMENTATION_COMPLETE`, `REAL_PROVIDER_ACCEPTANCE_COMPLETE`, `PRODUCTION_DEPLOYED`, `PHASE10_READY`, `VIDEO_FACTORY_NORTH_STAR_READY` remain NO; `OWNER_UAT_REQUIRED` YES.

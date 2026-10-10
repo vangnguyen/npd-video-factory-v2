@@ -31,6 +31,12 @@ def utc(value):
 MIN_INIT_SCHEDULE_LEAD_SECONDS=60  # Internal bounded-request margin, not a vendor limit.
 CONSENT_REVOKED='NATIVE_OFFICIAL_PUBLISH_CONSENT_REVOKED'
 
+def chunk_length(snapshot,total,start):
+    if snapshot['target']['platform']=='tiktok':
+        from app.tiktok_upload import ChunkPlan
+        return ChunkPlan(total,snapshot['chunk_size']).length(start)
+    return min(snapshot['chunk_size'],total-start)
+
 def preflight(metadata,total_bytes,profile,instant,*,thumbnail_stage=False,snapshot=None):
     from .tiktok_connection import Profile as TikTokProfile
     if type(profile) is TikTokProfile:
@@ -145,7 +151,10 @@ class NativeOfficialPublications:
                 reader=evidence_reader(self);draft=reader.read_draft(reader.row(con,project,value['snapshot']['request']['creator_draft_id'],DRAFTS));reader.draft_links(con,draft)
                 if draft!=value['snapshot']['creator_draft']:raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_DRAFT_CHANGED')
             receipt=None
-            if row is not None:
+            if row is not None and value['snapshot']['target']['platform']=='tiktok':
+                from .tiktok_publishing import read_receipt
+                receipt=read_receipt(con,value,row)
+            elif row is not None:
                 try:
                     receipt=json.loads(row['receipt_json']);parsed=PublicationReceipt.model_validate(receipt)
                     dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
@@ -177,6 +186,9 @@ class NativeOfficialPublications:
         for key,factory in values.items():
             factory.check()
             if key in self.factories and self.factories[key] is not factory:raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_PROFILE_CONFLICT')
+        if values:
+            from .tiktok_publishing import ensure
+            ensure(self)
         self.tiktok_creators=creators;self.factories.update(values)
     def page(self,project,*,limit=25,cursor=None):
         if type(limit) is not int or not 1<=limit<=100:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PAGE_INVALID',400)
@@ -337,7 +349,11 @@ class NativeOfficialPublications:
             if prior is not None:
                 if prior['publication_id']!=identity or prior['request_sha256']!=fingerprint:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_IDEMPOTENCY_CONFLICT')
                 return {**{k:prior[k] for k in ('renewal_id','publication_id','workspace_id','project_id','prior_approval_id','approval_id','dispatch_version','snapshot_sha256','created_at')},'replayed':True,'external_calls':0,'automatic_renewal':False}
-            value,factory,_=self.revalidate(con,row);dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
+            public=self.read(row);dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
+            if public['snapshot']['target']['platform']=='tiktok' and dispatch is not None and dispatch['phase'] in {'uploaded','reconciliation_required'}:
+                from .tiktok_publishing import read_admission
+                value,factory,_,_=read_admission(self,project,identity,con=con,validate_grant=False)
+            else:value,factory,_=self.revalidate(con,row)
             thumbnail=self.thumbnails.read(con,value)
             if thumbnail is not None and thumbnail['status']!='response_received':raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_UNKNOWN_REVIEW_REQUIRED')
             if (row['status'] not in ('queued','review_required') or value['snapshot_sha256']!=payload.expected_snapshot_sha256 or dispatch is None
@@ -353,7 +369,13 @@ class NativeOfficialPublications:
                 if (session is None or any(session[k]!=value['snapshot'][k] for k in ('target_binding_sha256','configuration_sha256')) or session['snapshot_sha256']!=value['snapshot_sha256']
                     or session['total_bytes']!=dispatch['total_bytes'] or session['mock']!=int(value['mock'])):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_SESSION_CHANGED')
                 if dispatch['phase']=='uploaded':
-                    if dispatch['acknowledged_bytes']!=dispatch['total_bytes'] or not isinstance(dispatch['remote_post_id'],str) or not re.fullmatch(r'[A-Za-z0-9_-]{11}',dispatch['remote_post_id']):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
+                    if value['snapshot']['target']['platform']=='tiktok':
+                        from .tiktok_publishing import job
+                        if dispatch['acknowledged_bytes']!=dispatch['total_bytes'] or job(con,value) is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
+                    elif dispatch['acknowledged_bytes']!=dispatch['total_bytes'] or not isinstance(dispatch['remote_post_id'],str) or not re.fullmatch(r'[A-Za-z0-9_-]{11}',dispatch['remote_post_id']):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
+                elif value['snapshot']['target']['platform']=='tiktok' and dispatch['phase']=='reconciliation_required':
+                    from .tiktok_publishing import job
+                    if dispatch['remote_post_id'] is not None or job(con,value) is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
                 elif dispatch['remote_post_id'] is not None or utc(datetime.fromisoformat(session['expires_at']))<=utc(self.clock()):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_SESSION_EXPIRED_REVIEW_REQUIRED')
             instant=utc(self.clock());expires=min(instant+timedelta(seconds=payload.valid_for_seconds),datetime.fromisoformat(authority['expires_at']))
             if (expires-instant).total_seconds()<60:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_OWNER_TOKEN_EXPIRING')
@@ -388,14 +410,28 @@ class NativeOfficialPublications:
         retry=self.backoff_until(con,project,identity,value)
         if retry is not None and utc(self.clock())<utc(datetime.fromisoformat(retry)):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_BACKOFF_ACTIVE')
     def read_backoff(self,project,identity,version,operation,delay,response_sha256):
-        if type(version) is not int or operation not in ('publish_account_lookup','publish_processing_status') or type(delay) is not int or not 1<=delay<=3600 or not isinstance(response_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',response_sha256):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF_INVALID',400)
+        if type(version) is not int or operation not in ('publish_account_lookup','publish_creator_lookup','publish_processing_status') or type(delay) is not int or not 1<=delay<=3600 or not isinstance(response_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',response_sha256):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF_INVALID',400)
         with self.store.transaction() as con:
-            value,_,_,dispatch=self.admission(project,identity,con=con)
+            value,_,_,dispatch=self.worker_admission(project,identity,con=con)
             if dispatch['version']!=version:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_STALE')
             instant=utc(self.clock());retry=instant+timedelta(seconds=delay)
             con.execute('INSERT INTO native_official_publish_read_backoffs VALUES(?,?,?,?,?,?,?,?,?,?)',(uuid.uuid4().hex,identity,self.workspace,project,value['snapshot_sha256'],operation,response_sha256,delay,instant.isoformat(),retry.isoformat()))
             self.event(con,self.row(con,project,identity),'official.publication.read.backoff','worker',operation=operation,retry_not_before=retry.isoformat(),response_sha256=response_sha256)
         return retry.isoformat()
+    def worker_admission(self,project,identity,*,con=None):
+        """Keep original remote-job reads independent of later project edits.
+
+        Preparing and uploading still require the current canonical source and
+        physical bytes. Only TikTok's already initialized status path uses the
+        original immutable publication binding and current finite Owner grant.
+        """
+        with (self.store.transaction() if con is None else nullcontext(con)) as con:
+            public=self.read(self.row(con,project,identity))
+            dispatch=con.execute('SELECT phase FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
+            if public['snapshot']['target']['platform']=='tiktok' and dispatch is not None and dispatch['phase'] in {'uploaded','reconciliation_required','reconcile_intent'}:
+                from .tiktok_publishing import read_admission
+                return read_admission(self,project,identity,con=con)
+            return self.admission(project,identity,con=con)
     def admission(self,project,identity,*,con=None):
         with (self.store.transaction() if con is None else nullcontext(con)) as con:
             row=self.row(con,project,identity)
@@ -407,7 +443,7 @@ class NativeOfficialPublications:
                 or type(dispatch['acknowledged_bytes']) is not int or not 0<=dispatch['acknowledged_bytes']<=dispatch['total_bytes']
                 or dispatch['phase'] not in ('prepared','init_intent','init_unconfirmed','uploading','chunk_intent','reconcile_intent','reconciliation_required','uploaded','review_required')
                 or dispatch['private_session_ref'] is not None and not re.fullmatch(r'nups_[a-f0-9]{32}',dispatch['private_session_ref'])
-                or dispatch['remote_post_id'] is not None and not re.fullmatch(r'[A-Za-z0-9_-]{11}',dispatch['remote_post_id'])):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
+                or dispatch['remote_post_id'] is not None and not re.fullmatch(r'[1-9][0-9]{0,18}' if value['snapshot']['target']['platform']=='tiktok' else r'[A-Za-z0-9_-]{11}',dispatch['remote_post_id'])):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
             self.valid_grant(con,row)  # Physical admission may outlast finite consent.
             return value,factory,path,dict(dispatch)
     def revoke(self,project,identity,payload,*,principal):
@@ -444,11 +480,16 @@ class NativeOfficialPublications:
                 con.execute("UPDATE native_official_publish_approvals SET status='revoked',revoked_at=? WHERE publication_id=? AND status='active'",(now(),identity))
                 self.event(con,row,'official.publication.cancelled',authority['token_id'],external_action=False)
             return self.read(self.row(con,project,identity))
-    def begin_intent(self,project,identity,expected_version,operation,*,range_start=None,range_end=None,body_sha256=None):
+    def begin_intent(self,project,identity,expected_version,operation,*,range_start=None,range_end=None,body_sha256=None,creator_preflight_id=None):
         if type(expected_version) is not int or expected_version<1 or operation not in ('init','chunk','reconcile'):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_INVALID',400)
         with self.store.transaction() as con:
-            value,factory,_,dispatch=self.admission(project,identity,con=con)
-            if value['snapshot']['target']['platform']!='youtube':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EXECUTION_NOT_IMPLEMENTED')
+            public=self.read(self.row(con,project,identity))
+            if public['snapshot']['target']['platform']=='tiktok' and operation=='reconcile':
+                from .tiktok_publishing import read_admission
+                value,factory,_,dispatch=read_admission(self,project,identity,con=con)
+            else:value,factory,_,dispatch=self.admission(project,identity,con=con)
+            is_tiktok=value['snapshot']['target']['platform']=='tiktok'
+            if creator_preflight_id is not None and (not is_tiktok or operation!='init'):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_INVALID',400)
             if dispatch['version']!=expected_version or dispatch['intent_id'] is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_ALREADY_CLAIMED')
             self.eligible(con,project,identity,value)
             if operation=='init':
@@ -456,17 +497,23 @@ class NativeOfficialPublications:
                     raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INIT_REVIEW_REQUIRED')
                 if con.execute("SELECT 1 FROM native_official_publish_intents WHERE publication_id=? AND operation='init'",(identity,)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INIT_ALREADY_ATTEMPTED')
                 body_sha256=digest({'metadata':value['snapshot']['metadata'],'disclosures':value['snapshot']['disclosures'],'total_bytes':dispatch['total_bytes']})
+                if is_tiktok:
+                    from .tiktok_publishing import init_fingerprint
+                    body_sha256=init_fingerprint(con,value,dispatch['total_bytes'],creator_preflight_id,expected_version,value['approval_id'])
             else:
                 if not isinstance(dispatch['private_session_ref'],str) or not re.fullmatch(r'nups_[a-f0-9]{32}',dispatch['private_session_ref']):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_SESSION_RECONCILIATION_REQUIRED')
                 if dispatch['remote_post_id'] is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_ALREADY_UPLOADED')
                 if operation=='chunk':
                     if (dispatch['phase']!='uploading' or type(range_start) is not int or type(range_end) is not int
                         or range_start!=dispatch['acknowledged_bytes'] or not range_start<range_end<=dispatch['total_bytes']
-                        or range_end-range_start!=min(factory.profile.chunk_size,dispatch['total_bytes']-range_start)
+                        or range_end-range_start!=chunk_length(value['snapshot'],dispatch['total_bytes'],range_start)
                         or not isinstance(body_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',body_sha256)):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CHUNK_INTENT_INVALID',400)
                 else:
                     if dispatch['phase'] not in ('uploading','reconciliation_required') or any(v is not None for v in (range_start,range_end,body_sha256)):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RECONCILIATION_INVALID',400)
                     body_sha256=digest({'status_query':True,'total_bytes':dispatch['total_bytes']})
+                    if is_tiktok:
+                        from .tiktok_publishing import job
+                        body_sha256=digest({'status_query':True,'total_bytes':dispatch['total_bytes'],'provider_job_id':job(con,value)['provider_job_id']})
             stamp=now();intent=uuid.uuid4().hex;version=dispatch['version']+1
             con.execute('INSERT INTO native_official_publish_intents VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',(intent,identity,self.workspace,project,value['snapshot_sha256'],value['approval_id'],version,operation,range_start,range_end,body_sha256,'dispatch_intent',stamp))
             con.execute("UPDATE native_official_publish_dispatches SET phase=?,version=?,intent_id=?,updated_at=? WHERE publication_id=?",(operation+'_intent',version,intent,stamp,identity))
@@ -474,7 +521,13 @@ class NativeOfficialPublications:
             self.event(con,self.row(con,project,identity),'official.publication.dispatch.intent','worker',operation=operation,version=version,body_sha256=body_sha256,external_action=False)
             return Ticket(identity,self.workspace,project,value['snapshot_sha256'],value['approval_id'],operation,version,intent)
     def ticket(self,con,ticket):
-        value,factory,path,dispatch=self.admission(ticket.project_id,ticket.publication_id,con=con) if type(ticket) is Ticket else (None,None,None,None)
+        if type(ticket) is Ticket:
+            public=self.read(self.row(con,ticket.project_id,ticket.publication_id))
+            if public['snapshot']['target']['platform']=='tiktok' and ticket.operation=='reconcile':
+                from .tiktok_publishing import read_admission
+                value,factory,path,dispatch=read_admission(self,ticket.project_id,ticket.publication_id,con=con)
+            else:value,factory,path,dispatch=self.admission(ticket.project_id,ticket.publication_id,con=con)
+        else:value,factory,path,dispatch=None,None,None,None
         value,dispatch,intent=self.fence(con,ticket)
         return value,factory,path,dispatch,intent
     def fence(self,con,ticket):
@@ -495,9 +548,14 @@ class NativeOfficialPublications:
         if not isinstance(intent['body_sha256'],str) or not re.fullmatch(r'[a-f0-9]{64}',intent['body_sha256']):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_BINDING_CHANGED')
         if ticket.operation=='chunk':
             start,end=intent['range_start'],intent['range_end']
-            if type(start) is not int or type(end) is not int or start!=dispatch['acknowledged_bytes'] or not start<end<=dispatch['total_bytes'] or end-start!=min(value['snapshot']['chunk_size'],dispatch['total_bytes']-start):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_BINDING_CHANGED')
+            if type(start) is not int or type(end) is not int or start!=dispatch['acknowledged_bytes'] or not start<end<=dispatch['total_bytes'] or end-start!=chunk_length(value['snapshot'],dispatch['total_bytes'],start):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_BINDING_CHANGED')
         else:
             expected=digest({'metadata':value['snapshot']['metadata'],'disclosures':value['snapshot']['disclosures'],'total_bytes':dispatch['total_bytes']}) if ticket.operation=='init' else digest({'status_query':True,'total_bytes':dispatch['total_bytes']})
+            if value['snapshot']['target']['platform']=='tiktok':
+                from .tiktok_publishing import init_proof,init_fingerprint,job
+                if ticket.operation=='init':
+                    proof=init_proof(con,value,intent);expected=init_fingerprint(con,value,dispatch['total_bytes'],proof['proof']['check_id'],ticket.version-1,ticket.approval_id)
+                else:expected=digest({'status_query':True,'total_bytes':dispatch['total_bytes'],'provider_job_id':job(con,value)['provider_job_id']})
             if intent['range_start'] is not None or intent['range_end'] is not None or intent['body_sha256']!=expected:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_INTENT_BINDING_CHANGED')
         return value,dispatch,intent
     def state(self,project,identity):
@@ -510,6 +568,9 @@ class NativeOfficialPublications:
                 'snapshot_sha256':value['snapshot_sha256'],'mock':value['mock'],'dispatch':None if row is None else {k:row[k] for k in ('phase','version','total_bytes','acknowledged_bytes','private_session_ref','remote_post_id','failure_code')},
                 'published':current['published'],'receipt':current['receipt'],'mock_publication_complete':current['mock_publication_complete'],'processing_acceptance':'CONFIRMED' if current['receipt'] else 'NOT_CHECKED','retry_not_before':self.backoff_until(con,project,identity,value),'session_uri_returned':False,'token_returned':False}
             if thumbnail_requested(value['snapshot']):state['thumbnail_stage']=self.thumbnails.state(con,value)
+            if value['snapshot']['target']['platform']=='tiktok':
+                from .tiktok_publishing import job,observations
+                state['provider_job']=job(con,value);state['processing_observations']=observations(con,value)
             return state
     def uncertain(self,ticket,code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'):
         if not isinstance(code,str) or not re.fullmatch(r'[A-Z0-9_]{1,120}',code):code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'
@@ -528,6 +589,7 @@ class NativeOfficialPublications:
         if progress.status not in ('uploading','uploaded','reconciliation_required','session_expired_requires_review','failed_requires_review') or progress.retry_after is not None and (type(progress.retry_after) is not int or not 1<=progress.retry_after<=3600):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROGRESS_INVALID',400)
         with self.store.transaction() as con:
             value,_,_,dispatch,intent=self.ticket(con,ticket)
+            if value['snapshot']['target']['platform']!='youtube':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROGRESS_PLATFORM_INVALID')
             offset,remote=progress.acknowledged_bytes,progress.remote_video_id
             if progress.status in ('uploading','uploaded'):
                 ceiling=intent['range_end'] if ticket.operation=='chunk' else con.execute("SELECT max(range_end) FROM native_official_publish_intents WHERE publication_id=? AND workspace_id=? AND project_id=? AND snapshot_sha256=? AND operation='chunk'",(ticket.publication_id,self.workspace,ticket.project_id,ticket.snapshot_sha256)).fetchone()[0] or 0
@@ -566,6 +628,7 @@ class NativeOfficialPublications:
         except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_INVALID',400) from None
         with self.store.transaction() as con:
             value,_,_,dispatch=self.admission(project,identity,con=con)
+            if value['snapshot']['target']['platform']!='youtube':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_PLATFORM_INVALID')
             if dispatch['phase']!='uploaded' or dispatch['version']!=expected_version or dispatch['remote_post_id'] is None or dispatch['acknowledged_bytes']!=dispatch['total_bytes']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_BINDING_CHANGED')
             if not self.thumbnails.confirmed(con,value):raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_CONFIRMATION_REQUIRED')
             metadata=PublicationMetadata.model_validate(value['snapshot']['metadata']);instant=utc(self.clock());confirmed=False;failure=None

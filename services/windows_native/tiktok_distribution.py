@@ -41,9 +41,7 @@ class NativeTikTokPublishingFactory:
         self.registry_file=protected_path(registry_file,self.root) if registry_file is not None else None;self.registry_sha256=registry_sha256
         if (registry_file is None)!=(registry_sha256 is None) or registry_sha256 is not None and (type(registry_sha256) is not str or not re.fullmatch('[a-f0-9]{64}',registry_sha256)):raise WorkflowError('NATIVE_TIKTOK_DISTRIBUTION_CONFIGURATION_INVALID',400)
         self.cipher_sha256=connection.cipher() if connection.public()['credential_present'] else None
-        # Native transfer/status/session execution is a separate increment. Real
-        # networking stays disabled until that worker path is implemented.
-        self.client=OfficialHTTPClient('tiktok',network_enabled=False,transport=connection.client.transport)
+        self.client=OfficialHTTPClient('tiktok',network_enabled=all(self.gates.model_dump().values()) and connection.client.transport is None,transport=connection.client.transport)
         self.configuration={'creator_configuration_sha256':connection.sha256,'gates':self.gates.model_dump(mode='json'),'cipher_sha256':self.cipher_sha256}
         if registry_sha256 is not None:self.configuration['registry_sha256']=registry_sha256
         self.sha256=digest(self.configuration);self.frozen=(connection,self.profile,self.root,self.workspace,self.client,self.client.transport,self.client.network_enabled,self.registry_file,registry_sha256,self.cipher_sha256,self.sha256,digest(self.configuration))
@@ -62,7 +60,7 @@ class NativeTikTokPublishingFactory:
         configured=all(gates.model_dump().values()) and mounted and read['status']=='READ_CONFIGURED' and (self.client.transport is not None or self.client.network_enabled is True)
         return {'schema_version':'native-official-tiktok-publishing-factory-v1','target':profile.target.model_dump(mode='json'),'target_binding_sha256':target_digest(profile.target),'configuration_sha256':self.sha256,
             'status':'CONFIGURED' if configured else 'NOT_CONFIGURED','gates':gates.model_dump(mode='json'),'disclosures':{'api_client_audited':profile.api_client_audited,'media_location':profile.media_location},'chunk_size':profile.chunk_size,
-            'creator_configuration_sha256':self.connection.sha256,'cipher_sha256':self.cipher_sha256,'mock':self.client.transport is not None,'external_actions_enabled':False,'execution_supported':False,
+            'creator_configuration_sha256':self.connection.sha256,'cipher_sha256':self.cipher_sha256,'mock':self.client.transport is not None,'external_actions_enabled':configured and self.client.transport is None,'execution_supported':True,
             'credential_alias':self.connection.binding.credential_alias,'credential_present':mounted,'credential_verified':False,'real_provider_tested':False,'token_returned':False,'automatic_publishing':False}
     def credential(self,*,now=None):
         self.check()

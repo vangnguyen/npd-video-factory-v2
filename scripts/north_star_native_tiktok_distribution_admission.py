@@ -56,15 +56,16 @@ def run(args):
     approved=case.approve_publication(value);assert approved['status']=='queued' and case.official.admission(original['id'],value['publication_id'])[3]['phase']=='prepared'
     vault=SessionVault(case.official,directory=folder/'private'/'sessions');worker=NativeOfficialPublicationWorker(case.official,vault)
     with patch.object(connection,'load_token',side_effect=AssertionError('Worker must not decrypt')):
-        try:worker.step(original['id'],value['publication_id'],1)
-        except WorkflowError as error:assert error.code=='NATIVE_OFFICIAL_PUBLISH_EXECUTION_NOT_IMPLEMENTED'
-        else:raise AssertionError('Unsupported execution must stay blocked')
+        worker.context(original['id'],value['publication_id'],1)
+        try:case.official.begin_intent(original['id'],value['publication_id'],1,'init')
+        except WorkflowError as error:assert error.code=='NATIVE_TIKTOK_PUBLISH_EVIDENCE_SCOPE_CHANGED'
+        else:raise AssertionError('Current creator preflight must precede initialization')
     case.official.revoke(original['id'],value['publication_id'],Action(expected_snapshot_sha256=value['snapshot_sha256']),principal=case.principal)
     final=case.official.get(original['id'],value['publication_id']);assert final['status']=='review_required' and final['snapshot']==value['snapshot'] and final['receipt'] is None and final['published'] is False
     assert len(case.wire)==2 and case.store.get(original['id'])==original
     write(out/'expected.json',{'fixture_kind':KIND,'project':original,'publication':final,'journals':journals(case.store)})
     write(out/'flow.json',{'fixture_kind':KIND,'creator_check':case.check,'draft':case.draft,'dry_run':case.parent,'prepared':value,'approved':approved,'revoked':final,'original_mock_creator_wires':case.wire,
-        'real_provider_calls':0,'publishing_execution_supported':False,'source_final_sha256':file_sha(case.store.root/'jobs'/case.job['id']/'final.mp4')})
+        'real_provider_calls':0,'publishing_execution_exercised':False,'source_final_sha256':file_sha(case.store.root/'jobs'/case.job['id']/'final.mp4')})
     archive=out/'public-tiktok-distribution-admission.zip';backup=create_backup(settings(case.store.root),archive);write(out/'backup.json',backup)
     write(out/'restore.json',restore_backup(archive,restored,expected_sha256=backup['sha256']));finish(args)
 def main():

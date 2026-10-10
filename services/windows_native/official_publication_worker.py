@@ -37,8 +37,8 @@ class NativeOfficialPublicationWorker:
         if guard is not None:guard()
         self.check()
         with self.journal.store.transaction() as con:
-            value,factory,path,dispatch=self.journal.admission(project,identity,con=con)
-            if value['snapshot']['target']['platform']!='youtube':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EXECUTION_NOT_IMPLEMENTED')
+            value,factory,path,dispatch=self.journal.worker_admission(project,identity,con=con)
+            if value['snapshot']['target']['platform'] not in {'youtube','tiktok'}:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EXECUTION_NOT_IMPLEMENTED')
             if dispatch['version']!=version:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_STALE')
             if type(ticket) is ThumbnailTicket:self.journal.thumbnails.fence(con,ticket)
             elif ticket is not None:self.journal.ticket(con,ticket)
@@ -47,11 +47,11 @@ class NativeOfficialPublicationWorker:
                 preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),dispatch['total_bytes'],factory.profile,self.journal.clock(),thumbnail_stage=thumbnail_requested(value['snapshot']),snapshot=value['snapshot'])
         if guard is not None:guard()
         return value,factory,path,dispatch
-    def send(self,project,identity,version,factory,credential,request,operation,*,ticket=None,guard=None):
+    def send(self,project,identity,version,factory,credential,request,operation,*,ticket=None,guard=None,with_cost=False):
         value,current,_,_=self.context(project,identity,version,ticket,guard=guard)
         if current is not factory or factory.credential(now=self.journal.clock())!=credential:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CREDENTIAL_CHANGED')
         # No private URL, bearer or raw response enters SQLite/audit/cost rows.
-        cost=self.costs.begin(project_id=project,provider='official-youtube',model=None,operation=operation+'.'+(ticket.intent_id if ticket is not None else uuid.uuid4().hex),
+        cost=self.costs.begin(project_id=project,provider='official-'+value['snapshot']['target']['platform'],model=None,operation=operation+'.'+(ticket.intent_id if ticket is not None else uuid.uuid4().hex),
             request_sha256=digest({'publication_id':identity,'snapshot_sha256':value['snapshot_sha256'],'version':version,'operation':operation,'body_sha256':hashlib.sha256(request.body).hexdigest()}),
             external_call=not value['mock'],paid=False,estimated_cost=None)
         sent=False
@@ -62,7 +62,7 @@ class NativeOfficialPublicationWorker:
             if guard is not None:guard()
             sent=True;response=asyncio.run(factory.client.request(request))
             self.costs.settle(cost,status='response_received',response_sha256=response_digest(response))
-            return response
+            return (response,cost) if with_cost else response
         except Exception as error:
             self.costs.settle(cost,status='outcome_unknown' if sent else 'rejected',error_code=code(error));raise
     def account(self,project,identity,version,factory,credential,*,guard=None):
@@ -74,6 +74,9 @@ class NativeOfficialPublicationWorker:
     def step(self,project,identity,expected_version,*,guard=None):
         if type(expected_version) is not int:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_VERSION_INVALID',400)
         value,factory,path,dispatch=self.context(project,identity,expected_version,guard=guard);phase=dispatch['phase'];ticket=None
+        if value['snapshot']['target']['platform']=='tiktok':
+            from .tiktok_publish_worker import step
+            return step(self,project,identity,expected_version,guard=guard)
         if phase not in ('prepared','uploading','reconciliation_required'):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_STEP_REVIEW_REQUIRED')
         upload=None if phase=='prepared' else self.vault.load(project,identity)
         credential=factory.credential(now=self.journal.clock());self.account(project,identity,expected_version,factory,credential,guard=guard)
@@ -105,6 +108,9 @@ class NativeOfficialPublicationWorker:
         return self.journal.state(project,identity)
     def poll_processing(self,project,identity,expected_version,*,guard=None):
         value,factory,_,dispatch=self.context(project,identity,expected_version,guard=guard)
+        if value['snapshot']['target']['platform']=='tiktok':
+            from .tiktok_publish_worker import poll
+            return poll(self,project,identity,expected_version,guard=guard)
         if dispatch['phase']!='uploaded' or dispatch['remote_post_id'] is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_UPLOAD_REQUIRED')
         if thumbnail_requested(value['snapshot']):
             with self.journal.store.transaction() as con:thumbnail=self.journal.thumbnails.read(con,value)
@@ -139,8 +145,8 @@ class NativeOfficialPublicationWorker:
         if self.journal is not self.frozen_journal or self.vault is not self.frozen_vault or self.costs.store is not self.journal.store:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_CONFIGURATION_CHANGED')
         self.journal.accounts.check_workspace();result=self.journal.recover();settled=0
         with self.journal.store.transaction() as con:
-            rows=con.execute("SELECT c.* FROM native_cost_operations c WHERE c.provider='official-youtube' AND c.paid=0 AND c.status='dispatch_intent' AND EXISTS(SELECT 1 FROM native_official_publications p WHERE p.project_id=c.project_id AND p.workspace_id=?)",(self.journal.workspace,)).fetchall()
+            rows=con.execute("SELECT c.* FROM native_cost_operations c WHERE c.provider IN ('official-youtube','official-tiktok') AND c.paid=0 AND c.status='dispatch_intent' AND EXISTS(SELECT 1 FROM native_official_publications p WHERE p.project_id=c.project_id AND p.workspace_id=?)",(self.journal.workspace,)).fetchall()
         for row in rows:
-            if not re.fullmatch(r'(publish_account_lookup|publish_processing_status|publish_thumbnail_set|upload_initialize|upload_chunk|upload_reconcile)\.[a-f0-9]{32}',row['operation']):continue
+            if not re.fullmatch(r'(publish_account_lookup|publish_creator_lookup|publish_processing_status|publish_thumbnail_set|upload_initialize|upload_chunk|upload_reconcile)\.[a-f0-9]{32}',row['operation']):continue
             self.costs.settle(row['id'],status='outcome_unknown',error_code='NATIVE_OFFICIAL_PUBLISH_RESTART_OUTCOME_UNKNOWN');settled+=1
         return {**result,'unfinished_costs_marked_unknown':settled,'automatic_upload_retry':False}

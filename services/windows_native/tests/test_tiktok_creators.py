@@ -26,14 +26,15 @@ class TikTokCreatorFixture:
         self.temp=tempfile.TemporaryDirectory();self.folder=Path(self.temp.name).resolve();self.root=self.folder/'state';self.root.mkdir();self.store=Store(self.root)
         self.workspace='wsp_tiktok_creator_fixture';self.clock=[datetime.now(timezone.utc)];self.wire=[];self.mode=None
         (self.root/'.vf-auth-workspace.json').write_text(json.dumps({'schema':'vf-native-workspace-binding-v1','workspace_id':self.workspace}),encoding='utf-8')
-        self.raw,data=human_fixture('owner',workspace=self.workspace);self.verifier=HumanAuthVerifier(HumanAuthRegistry.model_validate(data),max_token_ttl_seconds=86400);self.principal=self.verifier.verify('Bearer '+self.raw)
+        owner_window={'expires':self.clock[0]+timedelta(hours=self.owner_ttl_hours)} if hasattr(self,'owner_ttl_hours') else {}
+        self.raw,data=human_fixture('owner',workspace=self.workspace,**owner_window);self.verifier=HumanAuthVerifier(HumanAuthRegistry.model_validate(data),max_token_ttl_seconds=86400);self.principal=self.verifier.verify('Bearer '+self.raw)
         self.publications=NativePublications(self.store,CAPABILITIES,workspace_id=self.workspace,clock=lambda:self.clock[0]);self.accounts=NativeOfficialAccounts(self.store,workspace_id=self.workspace,clock=lambda:self.clock[0])
         self.official=NativeOfficialPublications(self.store,self.publications,self.accounts,identity_provider=lambda:self.verifier,clock=lambda:self.clock[0])
         self.project,self.job=render_fixture(self.store);self.project=self.store.get(self.project['id'])
         self.target=PublishingTargetBinding(workspace_id=self.workspace,profile_id='ppf_tiktok_creator_fixture',profile_version=1,platform='tiktok',provider_key='tiktok-content-posting-api',target_account_id='EXPLICIT_TIKTOK_OPEN_ID',credential_binding_sha256='a'*64)
-        self.path=self.folder/'private'/'tiktok-publisher.dpapi';self.token=connection.AccessToken(target=self.target,credential_alias='explicit-tiktok-publisher',expires_at=self.clock[0]+timedelta(hours=1),scopes=sorted(SCOPES),token=TOKEN)
+        self.path=self.folder/'private'/'tiktok-publisher.dpapi';self.token=connection.AccessToken(target=self.target,credential_alias='explicit-tiktok-publisher',expires_at=self.clock[0]+timedelta(hours=getattr(self,'token_ttl_hours',1)),scopes=sorted(SCOPES),token=TOKEN)
         self.receipt=connection.save_token(self.path,self.root,self.token)
-        self.binding=connection.Binding(profile=connection.Profile(target=self.target),credential_alias=self.token.credential_alias,token_file=str(self.path),creator_reads_enabled=True)
+        self.binding=connection.Binding(profile=connection.Profile(target=self.target,**getattr(self,'profile_options',{})),credential_alias=self.token.credential_alias,token_file=str(self.path),creator_reads_enabled=True)
         self.factory=connection.NativeTikTokFactory(self.binding,self.root,self.workspace,owner_read_enabled=True,transport=httpx.MockTransport(self.response))
         self.service=NativeTikTokCreators(self.official,factories={self.target.profile_id:self.factory},enabled=True)
     def tearDown(self):self.temp.cleanup()
@@ -70,7 +71,7 @@ class TikTokCreatorFixture:
             'final_job_id':self.job['id'],'expected_final_sha256':self.job['result']['qc']['final_sha256'],
             'metadata':{'title':'Tiêu đề fixture có thể sửa','privacy':'private'},'choices':{'privacy_level':'SELF_ONLY','disable_comment':True,'disable_duet':True,'disable_stitch':True,
                 'brand_content_toggle':False,'brand_organic_toggle':False,'is_aigc':True,'music_usage_confirmed':True},
-            'acknowledged_video_selection':True,'acknowledged_ai_disclosure':True,'request_key':'explicit-tiktok-post-draft-key',**changes})
+            'acknowledged_video_selection':True,'acknowledged_ai_disclosure':True,'request_key':'explicit-tiktok-post-draft-key',**getattr(self,'draft_options',{}),**changes})
 
 class TikTokCreatorTests(TikTokCreatorFixture,unittest.TestCase):
     def test_default_service_discovery_prepare_and_registry_never_decrypt_or_send(self):

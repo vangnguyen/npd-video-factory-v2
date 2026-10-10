@@ -61,7 +61,7 @@ class TikTokDistributionAdmissionTests(TikTokCreatorFixture,unittest.TestCase):
             factory=NativeTikTokPublishingFactory(self.factory);journal=self.journal();creators=NativeTikTokCreators(journal,factories={self.target.profile_id:self.factory},enabled=True)
             journal.bind_tiktok_creators(creators,factories={self.target.profile_id:factory})
             state=factory.public();value,_=journal.create(self.project['id'],self.publication_body(expected_configuration_sha256=factory.sha256),principal=self.principal)
-        self.assertEqual(state['status'],'NOT_CONFIGURED');self.assertFalse(state['external_actions_enabled']);self.assertFalse(state['execution_supported']);self.assertFalse(factory.client.network_enabled)
+        self.assertEqual(state['status'],'NOT_CONFIGURED');self.assertFalse(state['external_actions_enabled']);self.assertTrue(state['execution_supported']);self.assertFalse(factory.client.network_enabled)
         self.assertEqual(value['status'],'not_configured');self.assertFalse(value['published']);self.assertIsNone(value['receipt']);self.assertEqual(len(self.wire),2)
     def test_request_key_and_final_account_dedupe_never_make_a_second_publication(self):
         first=self.publication();same,replayed=self.official.create(self.project['id'],self.publication_body(),principal=self.principal)
@@ -148,12 +148,14 @@ class TikTokDistributionAdmissionTests(TikTokCreatorFixture,unittest.TestCase):
             path.write_bytes(path.read_bytes()+b' ')
             with self.assertRaisesRegex(WorkflowError,'CONFIGURATION_CHANGED'):enabled[self.target.profile_id].check()
             with self.assertRaisesRegex(WorkflowError,'CONFIGURATION_INVALID'):load(path,object())
-    def test_worker_and_intent_refuse_tiktok_before_any_session_credential_cost_or_wire(self):
+    def test_revoked_grant_blocks_worker_and_intent_before_session_credential_cost_or_wire(self):
         value=self.publication();self.approve_publication(value);vault=SessionVault(self.official,directory=self.folder/'private'/'sessions');worker=NativeOfficialPublicationWorker(self.official,vault)
         with self.store.transaction() as con:before=con.execute('SELECT COUNT(*) FROM native_cost_operations').fetchone()[0]
+        from services.windows_native.official_publication_models import Action
+        self.official.revoke(self.project['id'],value['publication_id'],Action(expected_snapshot_sha256=value['snapshot_sha256']),principal=self.principal)
         with patch.object(connection,'load_token',side_effect=AssertionError('No publishing decrypt')),patch.object(vault,'load',side_effect=AssertionError('No session load')):
-            with self.assertRaisesRegex(WorkflowError,'EXECUTION_NOT_IMPLEMENTED'):worker.step(self.project['id'],value['publication_id'],1)
-            with self.assertRaisesRegex(WorkflowError,'EXECUTION_NOT_IMPLEMENTED'):self.official.begin_intent(self.project['id'],value['publication_id'],1,'init')
+            with self.assertRaisesRegex(WorkflowError,'NOT_DISPATCHABLE'):worker.step(self.project['id'],value['publication_id'],1)
+            with self.assertRaisesRegex(WorkflowError,'NOT_DISPATCHABLE'):self.official.begin_intent(self.project['id'],value['publication_id'],1,'init')
         with self.store.transaction() as con:
             self.assertEqual(con.execute('SELECT COUNT(*) FROM native_cost_operations').fetchone()[0],before)
             self.assertEqual(con.execute('SELECT COUNT(*) FROM native_official_publish_intents').fetchone()[0],0)

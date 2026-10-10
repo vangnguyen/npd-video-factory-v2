@@ -223,7 +223,7 @@ class NativeOfficialPublicationQueue:
         if authority!=policy['authority']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_OWNER_CHANGED')
         if self.clock()<utc(request.start_at):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_NOT_DUE')
         if self.clock()>=utc(request.deadline):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_DEADLINE_EXPIRED')
-        publication,_,_,dispatch=self.journal.admission(row['project_id'],row['publication_id'],con=con)
+        publication,_,_,dispatch=self.journal.worker_admission(row['project_id'],row['publication_id'],con=con)
         if publication['approval_id']!=policy['approval_id']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_GRANT_CHANGED')
         return value,request,publication,dispatch
     def claim(self):

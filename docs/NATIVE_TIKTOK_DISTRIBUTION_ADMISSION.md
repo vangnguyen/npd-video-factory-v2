@@ -1,5 +1,7 @@
 # Native TikTok publication admission
 
+Historical milestone 270: this document and its original evidence describe admission-only behavior at that commit. The later [TikTok execution increment](NATIVE_TIKTOK_PUBLISHING.md) implements the upload/status backend; startup/Studio publishing and genuine provider acceptance remain incomplete. Original milestone evidence is retained unchanged.
+
 The creator review previously ended at an unsent draft. This increment connects an exact reviewed draft to the existing Native publication journal, dry-run validation, current Owner identity, separate finite publication approval, local revocation and explicit prepared-grant renewal. It does not complete TikTok transfer/status execution or original Wave 9 acceptance.
 
 The new request is tagged `native-official-tiktok-publication-request-v1`. It supplies the project revision, original dry-run ID/hash, creator draft ID/hash, publishing profile/configuration hash and an idempotency key. Metadata and post choices come from the immutable reviewed draft. The completed TikTok dry run must have exactly the same metadata and current approved final. The stored snapshot is tagged `native-official-tiktok-publication-snapshot-v1`; existing YouTube request/snapshot schemas and hashes retain their behavior.
