@@ -1,0 +1,25 @@
+# Thumbnail gốc trong phiên xuất bản YouTube Native
+
+Đường Native đã có một bước gửi thumbnail riêng, sau khi byte video đã được nền tảng xác nhận đầy đủ. Bước này dùng PNG gốc của render đang được xét duyệt và lưu intent trước khi gọi API. Mặc định ứng dụng vẫn tắt publishing, transport thật và ngoại lệ quyền ảnh; việc thêm mã không bật các cấu hình đó.
+
+Snapshot của yêu cầu phải liên kết đúng workspace, project, document, job snapshot, final video, selection và SHA256 ảnh. Ngoại lệ quyền thumbnail của Owner hiện hành phải còn hạn và cho phép xét duyệt publishing. Nguồn video, B-roll, nhạc, voice/model, QC cuối, platform validation, xác minh tài khoản và approval xuất bản vẫn được kiểm tra riêng. `rights_status=unknown`, `license=null` của PNG được giữ nguyên; ngoại lệ không phải xác minh giấy phép hoặc Owner UAT.
+
+Đường upload video chỉ bỏ trường ảnh khỏi metadata POST khi proof thumbnail của chính snapshot đã hợp lệ. Guard `YOUTUBE_THUMBNAIL_STAGE_REQUIRED` của giao thức upload chung vẫn giữ nguyên. Client khác chưa tích hợp bước ảnh không thể bỏ qua guard để báo hoàn tất. Không tạo video hay copy ảnh thay thế khi gửi thumbnail.
+
+`native_official_publish_thumbnails` là journal bổ sung gồm một intent duy nhất cho mỗi publication. Nó lưu phạm vi, approval ban đầu, version, image/selection/exception digest, trạng thái, response digest và kết quả chuẩn hóa. Các trạng thái gồm `dispatch_intent`, `response_received`, `outcome_unknown`. Dispatch video vẫn giữ phase `uploaded`, byte acknowledgement và remote video ID; version tăng tại claim và quyết định kết quả. Claim đồng thời chỉ cho phép một bên thực hiện.
+
+Backup manifest đếm journal ảnh riêng. Một intent ảnh đang gửi chặn snapshot offline ngay cả khi quyền của publication đã bị thu hồi và main status chuyển sang review. Recovery đánh dấu intent chưa rõ kết quả; khi không còn operation đang chạy, backup/restore giữ nguyên hàng ảnh, receipt, PNG và các journal gốc.
+
+Worker kiểm tra quyền hiện hành trước khi claim, đọc PNG gốc và trước khi gửi. Consent/Owner được kiểm tra lại sau quá trình đọc vật lý và sau lần đọc credential cuối. Response biết chắc vẫn được lưu khi consent hết hạn, Owner bị thu hồi hoặc canonical thay đổi trong lúc gọi; nó không phục hồi authority hoặc tự cấp receipt. Timeout, 429, response không hợp lệ và khởi động lại giữa intent đều giữ trạng thái chưa rõ, không tự POST lại. Renewal không mở lại một intent ảnh chưa rõ kết quả.
+
+Request dùng official `thumbnails.set`, body PNG đúng hash và remote video ID của phiên video hiện có. Không thêm header idempotency giả định. Acknowledgement chỉ chứng minh response hợp lệ liên kết với request gốc; không chứng minh byte ảnh đã được CDN hiển thị giống PNG cục bộ. URL/etag trả về chỉ lưu digest. `remote_image_bytes_verified=false`, `rights_independently_verified=false`, `publishing_authorized=false` được giữ trong proof của riêng bước ảnh. [Tài liệu YouTube](https://developers.google.com/youtube/v3/docs/thumbnails/set).
+
+Một poll đầu thực hiện bước ảnh; một poll sau đọc processing/visibility của video. Receipt chỉ xuất hiện khi cả ảnh và video đã có kết quả phù hợp và approval hiện hành còn hợp lệ. Cost ledger ghi riêng từng operation; giá chưa biết là `null`. Mô phỏng không trở thành bài đăng thật hoặc dữ liệu analytics thật.
+
+Studio đổi nút thành **Gửi thumbnail đã duyệt** khi bước ảnh chưa bắt đầu. Mỗi lần gửi cần xác nhận riêng; sau phản hồi phải đọc lại trạng thái và xác nhận lại để tiếp tục. Intent đang chờ hoặc kết quả chưa rõ chặn gửi tiếp và renewal. Lịch sử hiển thị proof ảnh gốc và stage; payload sai workspace, SHA, mock, authority hoặc receipt binding bị từ chối. Bộ kiểm thử DOM chưa thay thế nghiệm thu trình duyệt hoặc người dùng không chuyên.
+
+Để giảm tính toán lặp, `RenderFrameEvidenceCache` giữ tối đa tám bộ số đo nhỏ trong một reader/workspace/render directory. Mỗi hit vẫn đọc SHA256 file vật lý. File thay đổi phải đo lại; kết quả trả về là bản sao độc lập. Không cache PNG bytes, consent, credential, provider result hoặc billing. Các binding final/checkpoint/PTS/canonical vẫn được xác minh. Đây là cache cục bộ của reader, chưa hoàn tất toàn bộ yêu cầu cache và soak production của Master Spec.
+
+Kiểm thử sử dụng footage/render CPU, PNG và QC cục bộ thật trong thư mục fixture riêng. Quyền source, quyết định con người, ASR, tài khoản và wire provider đều được đánh dấu mô phỏng; không sửa artifact đã được chấp nhận để đạt cổng kiểm tra. Rehearsal `scripts/north_star_official_thumbnail.py` lưu HTTP đã xác thực, journal/cost/PNG, backup công khai và mở lại ở process mới không có khóa provider, các cấu hình mặc định tắt. Kết quả kiểm thử và hash chính xác được ghi tại `docs/north-star/official-publication-thumbnail-evidence.json` khi verification hoàn tất.
+
+Phần còn lại gồm authorized provider acceptance, quyền/legal thật, full browser/Owner flow, các adapter publishing còn lại, production recovery/soak và acceptance A/B/C. Phase 10 vẫn cần Owner UAT. Không có real publishing, trả phí, production deployment hoặc merge main trong increment này.

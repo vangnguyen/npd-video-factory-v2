@@ -22,6 +22,7 @@ from app.publishing_credentials import target_digest
 from app.youtube_upload import start_request,size_bytes,UploadProgress,VideoObservation,UNIT,video_id
 from app.publishing_wire import PublishingWireError
 from types import SimpleNamespace
+from .official_publication_thumbnails import NativeOfficialPublicationThumbnails,requested as thumbnail_requested
 
 def utc(value):
     if not isinstance(value,datetime) or value.tzinfo is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_TIME_INVALID',400)
@@ -30,10 +31,12 @@ def utc(value):
 MIN_INIT_SCHEDULE_LEAD_SECONDS=60  # Internal bounded-request margin, not a vendor limit.
 CONSENT_REVOKED='NATIVE_OFFICIAL_PUBLISH_CONSENT_REVOKED'
 
-def preflight(metadata,total_bytes,profile,instant):
+def preflight(metadata,total_bytes,profile,instant,*,thumbnail_stage=False):
     if metadata.scheduled_at is not None and (utc(metadata.scheduled_at)-utc(instant)).total_seconds()<MIN_INIT_SCHEDULE_LEAD_SECONDS:
         raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_FUTURE_SCHEDULE_MARGIN_REQUIRED',400)
     try:
+        if metadata.thumbnail_asset_id is not None and thumbnail_stage is True:
+            metadata=metadata.model_copy(update={'thumbnail_asset_id':None})
         start_request(metadata,total_bytes,'EXPLICIT-UNSENT-PREFLIGHT-TOKEN',category_id=profile.category_id,made_for_kids=profile.made_for_kids,
             contains_synthetic_media=profile.contains_synthetic_media,now=utc(instant))
     except PublishingWireError as error:raise WorkflowError(error.code,400) from None
@@ -91,6 +94,7 @@ class NativeOfficialPublications:
                 snapshot_sha256 TEXT NOT NULL,operation TEXT NOT NULL,response_sha256 TEXT NOT NULL,delay_seconds INTEGER NOT NULL,
                 observed_at TEXT NOT NULL,retry_not_before TEXT NOT NULL);''')
             if con.execute('SELECT 1 FROM native_official_publications WHERE workspace_id!=? LIMIT 1',(self.workspace,)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKSPACE_CHANGED')
+        self.thumbnails=NativeOfficialPublicationThumbnails(self)
     def event(self,con,row,action,actor,**evidence):
         con.execute('INSERT INTO native_official_publish_events(publication_id,workspace_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?,?)',
             (row['publication_id'],self.workspace,row['project_id'],action,actor,json.dumps(evidence),now()))
@@ -114,7 +118,7 @@ class NativeOfficialPublications:
                 or not re.fullmatch(r'[a-f0-9]{64}',snapshot['final_sha256']) or not re.fullmatch(r'[a-f0-9]{64}',snapshot['document_sha256'])
                 or value['dedupe_sha256']!=digest({'workspace':self.workspace,'platform':target.platform,'account':target.target_account_id,'final':snapshot['final_sha256'],'mock':snapshot['mock']})
                 or value['status'] not in {'not_configured','awaiting_publish_approval','queued','running','cancelled','review_required','completed'}):raise ValueError()
-            size_bytes(snapshot['final_bytes']);value.pop('key_sha256')
+            thumbnail_requested(snapshot);size_bytes(snapshot['final_bytes']);value.pop('key_sha256')
             if 'reviewed_at' in snapshot:
                 if datetime.fromisoformat(snapshot['reviewed_at']).tzinfo is None:raise ValueError()
                 if snapshot.get('metadata_source')!=('explicit_owner_request' if request.metadata is not None else 'completed_dry_run'):raise ValueError()
@@ -135,10 +139,13 @@ class NativeOfficialPublications:
                         or parsed.provider_key!='youtube-data-api-publishing' or receipt.get('mock') is not value['mock']
                         or receipt.get('external_action') is not (not value['mock']) or parsed.remote_url is not None
                         or dispatch is None or any(dispatch[k]!=value[k] for k in ('workspace_id','project_id','snapshot_sha256','approval_id')) or dispatch['remote_post_id']!=parsed.remote_post_id or dispatch['phase']!='uploaded'
-                        or dispatch['acknowledged_bytes']!=dispatch['total_bytes'] or value['status']!='completed'):raise ValueError()
+                        or dispatch['acknowledged_bytes']!=dispatch['total_bytes'] or value['status']!='completed'
+                        or not self.thumbnails.confirmed(con,value)):raise ValueError()
                 except Exception:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RECEIPT_CHANGED') from None
             if value['status']=='completed' and receipt is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RECEIPT_CHANGED')
-            return {**value,'receipt':receipt,'published':receipt is not None and not value['mock'],'mock_publication_complete':receipt is not None and value['mock']}
+            result={**value,'receipt':receipt,'published':receipt is not None and not value['mock'],'mock_publication_complete':receipt is not None and value['mock']}
+            if thumbnail_requested(value['snapshot']):result['thumbnail_stage']=self.thumbnails.state(con,value)
+            return result
     def states(self):
         self.accounts.check_workspace()
         return {'schema_version':'native-official-publishing-factories-v1','workspace_id':self.workspace,'profiles':[f.public() for _,f in sorted(self.factories.items())],
@@ -189,11 +196,19 @@ class NativeOfficialPublications:
         if state['configuration_sha256']!=payload.expected_configuration_sha256:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_CHANGED')
         job,actual,path=self.publications.render(con,project,review['snapshot']['request']['final_job_id']);qc=project_qc(job)
         metadata=metadata_for(payload,review)
+        # The completed dry-run was physically revalidated above in this same
+        # owned transaction. Reuse that exact proof for the same original image;
+        # an explicit different thumbnail still requires its own physical review.
+        parent_thumbnail=review['snapshot']['request']['metadata'].get('thumbnail_asset_id')
+        thumbnail=(review['snapshot']['validation'].get('thumbnail') if metadata.thumbnail_asset_id is not None and metadata.thumbnail_asset_id==parent_thumbnail
+            else self.publications.thumbnail_review(job,metadata,con=con))
+        if metadata.thumbnail_asset_id is not None and thumbnail is None:raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_BINDING_CHANGED')
+        if thumbnail is not None:self.thumbnails.check()
         platform=validate_platform(capability=self.publications.capabilities.get('youtube'),metadata=metadata,render=SimpleNamespace(profile=PROFILES.get((qc.get('width'),qc.get('height')),'native-unmapped-profile'),qc_report=qc),output_asset=SimpleNamespace(size_bytes=path.stat().st_size),mode='live')
         if platform.status!='passed':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PLATFORM_VALIDATION_FAILED')
         # Pure metadata/disclosure admission only; this request is never dispatched here.
-        preflight(metadata,path.stat().st_size,factory.profile,utc(validation_time if validation_time is not None else self.clock()))
-        return current,review,check,state,job,actual,path,platform.model_dump(mode='json')
+        preflight(metadata,path.stat().st_size,factory.profile,utc(validation_time if validation_time is not None else self.clock()),thumbnail_stage=thumbnail is not None)
+        return current,review,check,state,job,actual,path,platform.model_dump(mode='json'),thumbnail
     def create(self,project,payload,*,principal):
         try:
             if type(payload) is not Create:raise TypeError()
@@ -209,7 +224,7 @@ class NativeOfficialPublications:
                 return self.read(prior),True
             factory=self.factories.get(payload.profile_id)
             if factory is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_NOT_CONFIGURED')
-            reviewed_at=utc(self.clock());current,review,check,state,job,actual,path,platform=self.source(con,project,payload,factory,validation_time=reviewed_at)
+            reviewed_at=utc(self.clock());current,review,check,state,job,actual,path,platform,thumbnail=self.source(con,project,payload,factory,validation_time=reviewed_at)
             snapshot={'schema_version':'native-official-publication-snapshot-v1','workspace_id':self.workspace,'project_id':project,'project_revision':current['revision'],
                 'document_sha256':digest(current['document']),'request':request,'dry_run_snapshot_sha256':review['snapshot_sha256'],'account_check_snapshot_sha256':check['snapshot_sha256'],
                 'account_result_sha256':check['result_sha256'],'configuration_sha256':state['configuration_sha256'],'target':state['target'],'target_binding_sha256':state['target_binding_sha256'],
@@ -218,6 +233,8 @@ class NativeOfficialPublications:
                 'reviewed_at':reviewed_at.isoformat(),'metadata_source':'explicit_owner_request' if payload.metadata is not None else 'completed_dry_run',
                 'disclosures':state['disclosures'],'chunk_size':state['chunk_size'],'mock':state['mock'],'dry_run_receipt_is_publish_authority':False,'account_check_is_publish_authority':False,
                 'separate_owner_publish_approval_required':True,'token_returned':False}
+            if thumbnail is not None:snapshot['thumbnail']=thumbnail
+            thumbnail_requested(snapshot)
             dedupe=digest({'workspace':self.workspace,'platform':'youtube','account':state['target']['target_account_id'],'final':actual,'mock':state['mock']})
             if con.execute("SELECT 1 FROM native_official_publications WHERE workspace_id=? AND dedupe_sha256=? AND status NOT IN ('not_configured','cancelled')",(self.workspace,dedupe)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DUPLICATE_REVIEW_REQUIRED')
             stamp=now();identity='nopu_'+uuid.uuid4().hex;status='awaiting_publish_approval' if state['status']=='CONFIGURED' else 'not_configured'
@@ -229,11 +246,12 @@ class NativeOfficialPublications:
         if factory is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_CHANGED')
         try:reviewed_at=utc(datetime.fromisoformat(snapshot.get('reviewed_at',row['created_at'])))
         except (ValueError,TypeError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EVIDENCE_CHANGED') from None
-        current,review,check,state,job,actual,path,platform=self.source(con,row['project_id'],payload,factory,validation_time=reviewed_at)
+        current,review,check,state,job,actual,path,platform,thumbnail=self.source(con,row['project_id'],payload,factory,validation_time=reviewed_at)
         expected={'document_sha256':digest(current['document']),'account_check_snapshot_sha256':check['snapshot_sha256'],'account_result_sha256':check['result_sha256'],
             'final_job_id':job['id'],'final_sha256':actual,'final_bytes':path.stat().st_size,'final_job_snapshot_sha256':digest(job['snapshot']),'final_review':job['final_review'],
             'validation':{'dry_run':review['snapshot']['validation'],'official_platform':platform},'target':state['target'],'target_binding_sha256':state['target_binding_sha256'],
             'metadata':metadata_for(payload,review).model_dump(mode='json'),'disclosures':state['disclosures'],'chunk_size':state['chunk_size'],'mock':state['mock']}
+        if snapshot.get('thumbnail')!=thumbnail:raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_BINDING_CHANGED')
         if state['status']!='CONFIGURED' or any(snapshot[k]!=v for k,v in expected.items()):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_REVIEW_BINDING_CHANGED')
         return value,factory,path
     def approve(self,project,identity,payload,*,principal):
@@ -244,7 +262,7 @@ class NativeOfficialPublications:
             if row['status']=='queued' and row['approval_id']:
                 self.valid_grant(con,row);return self.read(row)
             if row['status']!='awaiting_publish_approval':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_NOT_REVIEWABLE')
-            preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),value['snapshot']['final_bytes'],factory.profile,self.clock())
+            preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),value['snapshot']['final_bytes'],factory.profile,self.clock(),thumbnail_stage=thumbnail_requested(value['snapshot']))
             instant=utc(self.clock());expires=min(instant+timedelta(seconds=payload.valid_for_seconds),datetime.fromisoformat(authority['expires_at']))
             if (expires-instant).total_seconds()<60:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_OWNER_TOKEN_EXPIRING')
             grant={'schema_version':'native-official-publish-approval-v1','publication_id':identity,'workspace_id':self.workspace,'project_id':project,
@@ -284,6 +302,8 @@ class NativeOfficialPublications:
                 if prior['publication_id']!=identity or prior['request_sha256']!=fingerprint:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_IDEMPOTENCY_CONFLICT')
                 return {**{k:prior[k] for k in ('renewal_id','publication_id','workspace_id','project_id','prior_approval_id','approval_id','dispatch_version','snapshot_sha256','created_at')},'replayed':True,'external_calls':0,'automatic_renewal':False}
             value,factory,_=self.revalidate(con,row);dispatch=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
+            thumbnail=self.thumbnails.read(con,value)
+            if thumbnail is not None and thumbnail['status']!='response_received':raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_UNKNOWN_REVIEW_REQUIRED')
             if (row['status'] not in ('queued','review_required') or value['snapshot_sha256']!=payload.expected_snapshot_sha256 or dispatch is None
                 or any(dispatch[k]!=row[k] for k in ('workspace_id','project_id','snapshot_sha256','approval_id'))
                 or dispatch['version']!=payload.expected_dispatch_version or dispatch['intent_id'] is not None or dispatch['total_bytes']!=value['snapshot']['final_bytes']
@@ -291,7 +311,7 @@ class NativeOfficialPublications:
                 or dispatch['phase'] not in ('prepared','uploading','reconciliation_required','uploaded')):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
             if dispatch['phase']=='prepared':
                 if dispatch['private_session_ref'] is not None or dispatch['remote_post_id'] is not None or dispatch['acknowledged_bytes']!=0 or con.execute("SELECT 1 FROM native_official_publish_intents WHERE publication_id=? AND operation='init'",(identity,)).fetchone():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_RENEWAL_BINDING_CHANGED')
-                preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),value['snapshot']['final_bytes'],factory.profile,self.clock())
+                preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),value['snapshot']['final_bytes'],factory.profile,self.clock(),thumbnail_stage=thumbnail_requested(value['snapshot']))
             else:
                 session=con.execute('SELECT * FROM native_official_publish_sessions WHERE session_ref=? AND publication_id=? AND workspace_id=? AND project_id=?',(dispatch['private_session_ref'],identity,self.workspace,project)).fetchone()
                 if (session is None or any(session[k]!=value['snapshot'][k] for k in ('target_binding_sha256','configuration_sha256')) or session['snapshot_sha256']!=value['snapshot_sha256']
@@ -352,6 +372,7 @@ class NativeOfficialPublications:
                 or dispatch['phase'] not in ('prepared','init_intent','init_unconfirmed','uploading','chunk_intent','reconcile_intent','reconciliation_required','uploaded','review_required')
                 or dispatch['private_session_ref'] is not None and not re.fullmatch(r'nups_[a-f0-9]{32}',dispatch['private_session_ref'])
                 or dispatch['remote_post_id'] is not None and not re.fullmatch(r'[A-Za-z0-9_-]{11}',dispatch['remote_post_id'])):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
+            self.valid_grant(con,row)  # Physical admission may outlast finite consent.
             return value,factory,path,dict(dispatch)
     def revoke(self,project,identity,payload,*,principal):
         """Stop future sends locally, including after source changes or expiry.
@@ -448,9 +469,11 @@ class NativeOfficialPublications:
             value=self.read(self.row(con,project,identity));row=con.execute('SELECT * FROM native_official_publish_dispatches WHERE publication_id=?',(identity,)).fetchone()
             if value['status']!=current['status'] or value['updated_at']!=current['updated_at']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_STATE_CHANGED_RELOAD')
             if row is not None and any(row[k]!=value[k] for k in ('workspace_id','project_id','snapshot_sha256','approval_id')):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_DISPATCH_BINDING_CHANGED')
-            return {'schema_version':'native-official-publish-dispatch-v1','publication_id':identity,'workspace_id':self.workspace,'project_id':project,
+            state={'schema_version':'native-official-publish-dispatch-v1','publication_id':identity,'workspace_id':self.workspace,'project_id':project,
                 'snapshot_sha256':value['snapshot_sha256'],'mock':value['mock'],'dispatch':None if row is None else {k:row[k] for k in ('phase','version','total_bytes','acknowledged_bytes','private_session_ref','remote_post_id','failure_code')},
                 'published':current['published'],'receipt':current['receipt'],'mock_publication_complete':current['mock_publication_complete'],'processing_acceptance':'CONFIRMED' if current['receipt'] else 'NOT_CHECKED','retry_not_before':self.backoff_until(con,project,identity,value),'session_uri_returned':False,'token_returned':False}
+            if thumbnail_requested(value['snapshot']):state['thumbnail_stage']=self.thumbnails.state(con,value)
+            return state
     def uncertain(self,ticket,code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'):
         if not isinstance(code,str) or not re.fullmatch(r'[A-Z0-9_]{1,120}',code):code='NATIVE_OFFICIAL_PUBLISH_RESPONSE_UNCONFIRMED'
         with self.store.transaction() as con:
@@ -498,7 +521,8 @@ class NativeOfficialPublications:
             rows=con.execute("SELECT * FROM native_official_publish_dispatches WHERE workspace_id=? AND intent_id IS NOT NULL AND phase IN ('init_intent','chunk_intent','reconcile_intent')",(self.workspace,)).fetchall()
             tickets=[Ticket(row['publication_id'],self.workspace,row['project_id'],row['snapshot_sha256'],row['approval_id'],row['phase'].removesuffix('_intent'),row['version'],row['intent_id']) for row in rows]
         for ticket in tickets:self.uncertain(ticket,'NATIVE_OFFICIAL_PUBLISH_RESTART_REVIEW_REQUIRED')
-        return {'recovered_intents':len(tickets),'external_calls':0,'automatic_init_retry':False}
+        thumbnails=self.thumbnails.recover()
+        return {'recovered_intents':len(tickets),'recovered_thumbnail_intents':thumbnails,'external_calls':0,'automatic_init_retry':False}
     def record_processing(self,project,identity,expected_version,observation,response_sha256):
         if type(expected_version) is not int or type(observation) is not VideoObservation or not isinstance(response_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',response_sha256):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_INVALID',400)
         try:observation=VideoObservation(observation.processing,observation.privacy,observation.scheduled_at)
@@ -506,6 +530,7 @@ class NativeOfficialPublications:
         with self.store.transaction() as con:
             value,_,_,dispatch=self.admission(project,identity,con=con)
             if dispatch['phase']!='uploaded' or dispatch['version']!=expected_version or dispatch['remote_post_id'] is None or dispatch['acknowledged_bytes']!=dispatch['total_bytes']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_BINDING_CHANGED')
+            if not self.thumbnails.confirmed(con,value):raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_CONFIRMATION_REQUIRED')
             metadata=PublicationMetadata.model_validate(value['snapshot']['metadata']);instant=utc(self.clock());confirmed=False;failure=None
             if observation.processing=='failed_requires_review':failure='YOUTUBE_PROCESSING_FAILED_REVIEW_REQUIRED'
             elif observation.processing=='processed':

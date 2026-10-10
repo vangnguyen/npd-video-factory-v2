@@ -3022,3 +3022,16 @@ TESTS: API59 PASS/0.97s (24 new), existing upload/wire regression included. REAL
 EVIDENCE: docs/YOUTUBE_THUMBNAIL_PROTOCOL.md; docs/north-star/youtube-thumbnail-protocol-evidence.json; retained youtube-thumbnail-protocol-flow-n1. Entire original fixture tree/database/media/journals exact before/after; no application dispatch/activation, new render/media, external or paid operation.
 
 REGRESSIONS: related API PASS; fresh15/source seal follows. EXTERNAL BLOCKERS: genuine provider/credentials/budget/legal/UAT/audience/Docker/deployment acceptance stay separate, no STOP for safe implementation. OWNER ACTION REQUIRED: none. NEXT WAVE: durable official thumbnail workflow and other remaining provider/audio/recovery/production gaps. IMPLEMENTATION_COMPLETE/REAL_PROVIDER_ACCEPTANCE_COMPLETE/PRODUCTION_DEPLOYED/NORTH_STAR_READY NO.
+
+
+### Wave 8/9 — Journal và gửi thumbnail YouTube Native
+
+WAVE: 8/9. STATUS: IN PROGRESS. HEAD SHA: parent `1e67e59a2674775effcf0cc007708f1b0f210fc4`; source seal sau commit/push và kiểm tra fresh15/main/live. SOURCE_PRESERVED trước increment: YES.
+
+CAPABILITIES COMPLETED: original PNG durable one-shot intent/response/cost/unknown/recovery stage; current Owner/consent rechecks after physical reads and final credential resolution; following video-processing receipt gate; signed HTTP; explicit Studio send/unknown controls; bounded per-reader measured pixel cache; backup journal counts and pending-image busy guard. CAPABILITIES PARTIAL: toàn bộ publishing/provider/legal/browser/Owner và original North Star acceptance.
+
+TESTS: Native worker/cache/frame/QC bridge34 ca đạt trong mixed log n5; hai ca HTTP thất bại do cookie của fixture thiếu tên đã sửa và cả2 đạt trong log n6. Existing publishing/queue/signed HTTP83 PASS; backup verification 19 PASS; Studio531 PASS. Các log thất bại/diagnostic ban đầu được giữ, không báo mixed suite là PASS. REAL PROVIDER TESTS: none. MOCK TESTS: final retained rehearsal9 signed HTTP requests, one video initialization/one original PNG POST, then separate processing poll; external/paid0.
+
+EVIDENCE: docs/NATIVE_OFFICIAL_PUBLICATION_THUMBNAIL.md; docs/north-star/official-publication-thumbnail-evidence.json; official-thumbnail-flow-n5 backup and same/new-process replays. Original canonical/media/PNG/journals exact; restored reader requires scoped human registry and keeps provider/rights/queue defaults off.
+
+REGRESSIONS: related checks PASS as qualified above; fresh15/main/live source seal follows. EXTERNAL BLOCKERS: genuine scoped credentials/providers, legal/Owner, browser, audience, Docker/isolated infrastructure and production acceptance remain separate. OWNER ACTION REQUIRED: none for current safe work; deferred listening/UAT stays pending. NEXT WAVE: independent voice/music QC and remaining OAuth/platform/retention/production/full A/B/C gaps. IMPLEMENTATION_COMPLETE/REAL_PROVIDER_ACCEPTANCE_COMPLETE/PRODUCTION_DEPLOYED/PHASE10_READY/NORTH_STAR_READY: NO.

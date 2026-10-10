@@ -17,6 +17,7 @@ from .backup import guard
 from .contracts import WorkflowError,digest,file_sha
 from .hardening import Artifacts
 from .render_frame_qc import validate,checked,REPORT,MAX_PNG_BYTES
+from .render_frame_evidence_cache import RenderFrameEvidenceCache
 from .store import Store
 
 
@@ -26,6 +27,7 @@ class NativeRenderEvidenceFrameExtractor:
         self.root=store.root.absolute();self.project_id=project_id;self.job_id=job_id;self.workspace=workspace_id
         self.max_image_bytes=MAX_PNG_BYTES;self.max_dimension_pixels=960
         self._identity=(store,config,self.root,config.data_root.absolute(),project_id,job_id,workspace_id)
+        self._frame_cache=RenderFrameEvidenceCache(self.root/'jobs'/job_id,workspace_id)
         original=self._load(con=con)
         self.max_frames=len(original['record']['observation']['frames'])
         self._max_frames=self.max_frames
@@ -39,6 +41,7 @@ class NativeRenderEvidenceFrameExtractor:
                 or not re.fullmatch(r'[a-f0-9]{32}',self.project_id) or not re.fullmatch(r'[a-f0-9]{32}',self.job_id)
                 or not re.fullmatch(r'[A-Za-z0-9_-]{1,80}',self.workspace)
                 or self.max_image_bytes!=MAX_PNG_BYTES or self.max_dimension_pixels!=960):raise ValueError()
+            if type(self._frame_cache) is not RenderFrameEvidenceCache or self._frame_cache.workspace!=self.workspace:raise ValueError()
             # Scope is the original local workspace; an asset-analysis approval
             # or a caller-supplied workspace label cannot remount this artifact.
             scope=guard(self.root/'.vf-auth-workspace.json')
@@ -68,7 +71,7 @@ class NativeRenderEvidenceFrameExtractor:
             saved=json.loads(checked(directory,REPORT).read_bytes())
             if record is None or digest(saved)!=digest(record):raise ValueError()
             document_sha=digest(job['snapshot']['document'])
-            observation=validate(directory,record,document_sha256=document_sha)
+            observation=validate(directory,record,document_sha256=document_sha,frame_cache=self._frame_cache)
             if observation['rendered_video_sha256']!=qc['final_sha256'] or observation['rendered_video_sha256']!=measured['checksum_sha256']:raise ValueError()
             required={REPORT,'render-frame-qc.log',*(frame['evidence_frame_reference'] for frame in observation['frames'])}
             if not required.issubset({item['path'] for item in checkpoint['artifacts']}):raise ValueError()

@@ -128,11 +128,15 @@ def decoded_stamps(directory, time_base, count):
     return result
 
 
-def validate(directory, record, *, document_sha256=None, physical=True, materialized_video_name='final.mp4'):
+def validate(directory, record, *, document_sha256=None, physical=True, materialized_video_name='final.mp4',frame_cache=None):
     """No provider/model/key needed to verify original render evidence on recovery."""
     try:
         if type(physical) is not bool or materialized_video_name not in {'final.mp4', 'preview.mp4'}:
             raise ValueError()
+        if frame_cache is not None:
+            from .render_frame_evidence_cache import RenderFrameEvidenceCache
+            if type(frame_cache) is not RenderFrameEvidenceCache or not physical:raise ValueError()
+            frame_cache.check(directory)
         if set(record) != {'observation', 'sha256'} or record['sha256'] != digest(record['observation']):
             raise ValueError()
         model = RenderObservation.model_validate(record['observation'])
@@ -150,7 +154,8 @@ def validate(directory, record, *, document_sha256=None, physical=True, material
             if decoded_stamps(directory,model.render_stream_time_base,len(model.frames))!=[f.decoded_render_pts for f in model.frames]:
                 raise WorkflowError('RENDER_FRAME_QC_TIMESTAMPS_CHANGED')
             for frame in value['frames']:
-                measured = image_evidence(checked(directory, frame['evidence_frame_reference']))
+                path=checked(directory,frame['evidence_frame_reference'])
+                measured = frame_cache.measure(path) if frame_cache is not None else image_evidence(path)
                 if any(digest(measured[key]) != digest(frame[key]) for key in measured):
                     raise WorkflowError('RENDER_FRAME_QC_IMAGE_CHANGED')
         return value

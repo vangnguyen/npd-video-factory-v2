@@ -94,3 +94,35 @@ test('stop refuses viewer foreign row completed receipt and unapproved review',a
   await queued(h);h.state.canManage=false;h.controller.sync();await h.controller.readHistory();count=h.calls.length;await h.controller.execute('revoke');assert.equal(h.calls.length,count);assert.equal(h.get('revoke').disabled,true);
   h.state.canManage=true;h.controller.sync();h.handler(async()=>page([{...row('queued'),project_id:'f'.repeat(32),approval_id:'nopa_'+'f'.repeat(32)}]));await h.controller.readHistory();
   count=h.calls.length;await h.controller.execute('revoke');assert.equal(h.calls.length,count);assert.equal(h.get('revoke').disabled,true);});
+
+function originalThumbnailRow(status='not_started'){
+  const r={...row(status==='outcome_unknown'?'review_required':'queued'),approval_id:'nopa_'+'f'.repeat(32)},image='ast_rthumb_'+'b'.repeat(32);
+  Object.assign(r.snapshot,{metadata:{title:'Explicit original image',thumbnail_asset_id:image},final_job_id:'e'.repeat(32),document_sha256:sha,final_job_snapshot_sha256:sha});
+  r.snapshot.thumbnail={schema_version:'native-publication-thumbnail-review-v1',workspace_id:workspace,project_id:id,thumbnail_asset_id:image,render_job_id:r.snapshot.final_job_id,
+    final_sha256:sha,document_sha256:sha,render_snapshot_sha256:sha,thumbnail_snapshot_sha256:sha,image:{sha256:sha,content_type:'image/png',rights_status:'unknown',license:null},
+    status:'passed',scope:'dry_run_metadata_review',original_source_rights_review_still_required:true,publishing_authorized:false,rights_independently_verified:false};
+  r.thumbnail_stage={schema_version:'native-official-thumbnail-stage-v1',publication_id:pub,workspace_id:workspace,project_id:id,snapshot_sha256:sha,mock:true,status,image_sha256:sha,
+    intent_sha256:status==='not_started'?null:sha,response_sha256:status==='response_received'?sha:null,result_sha256:status==='response_received'?sha:null,
+    remote_post_id:status==='not_started'?null:'FIXTURE0001',provider_response_acknowledged:status==='response_received',remote_image_bytes_verified:false,
+    rights_independently_verified:false,publishing_authorized:false,automatic_retry:false,token_returned:false};return r;
+}
+const thumbnailDispatch=r=>({...dispatch(r,'uploaded'),thumbnail_stage:r.thumbnail_stage,dispatch:{...dispatch(r,'uploaded').dispatch,acknowledged_bytes:100,remote_post_id:'FIXTURE0001'}});
+
+test('the original thumbnail needs an explicit send and processing requires a new state read and acknowledgement',async()=>{
+  const h=harness();let current=originalThumbnailRow();h.handler(async(path,body)=>{if(body&&path.endsWith('/poll')){current=originalThumbnailRow('response_received');return current;}
+    return path.endsWith('/state')?thumbnailDispatch(current):path.includes('?')?page([current]):current;});
+  await h.controller.readHistory();await h.controller.readState();assert.equal(h.get('poll').textContent,'Gửi thumbnail đã duyệt');const before=h.calls.length;
+  await h.controller.execute('poll');assert.equal(h.calls.length,before);h.get('send-ack').checked=true;h.controller.controls();assert.equal(h.get('poll').disabled,false);
+  await h.controller.execute('poll');assert.equal(h.calls.length,before+1);assert.deepEqual(h.calls.at(-1)[1],{expected_snapshot_sha256:sha,expected_dispatch_version:1});
+  assert.equal(h.get('send-ack').checked,false);assert.equal(h.get('poll').disabled,true);assert.equal(h.controller.currentBinding().publication.receipt,null);
+  assert.equal(h.controller.currentBinding().publication.thumbnail_stage.status,'response_received');await h.controller.execute('poll');assert.equal(h.calls.length,before+1);
+  await h.controller.readState();assert.equal(h.get('poll').textContent,'Đọc xử lý tại nền tảng');assert.equal(h.get('poll').disabled,true);
+  assert.match(h.get('detail').textContent,/ast_rthumb_/);assert.equal(h.controller.currentBinding().publication.published,false);
+});
+test('unknown thumbnail results cannot renew or send again even with both acknowledgement controls selected',async()=>{
+  const h=harness(),current=originalThumbnailRow('outcome_unknown');h.handler(async path=>path.endsWith('/state')?thumbnailDispatch(current):path.includes('?')?page([current]):current);
+  await h.controller.readHistory();await h.controller.readState();h.get('ack').checked=true;h.get('send-ack').checked=true;h.controller.controls();
+  assert.equal(h.get('renew').disabled,true);assert.equal(h.get('poll').disabled,true);const count=h.calls.length;
+  await h.controller.execute('renew');await h.controller.execute('poll');assert.equal(h.calls.length,count);assert.match(h.messages.at(-1)[0],/thumbnail chưa rõ/);
+  assert.equal(h.get('revoke').disabled,false);assert.equal(h.controller.currentBinding().publication.thumbnail_stage.status,'outcome_unknown');
+});

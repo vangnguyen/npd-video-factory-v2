@@ -10,11 +10,13 @@ from .contracts import WorkflowError,digest,file_sha
 from .costs import CostLedger
 from .official_publications import NativeOfficialPublications,preflight
 from .official_publication_sessions import SessionVault
+from .official_publication_thumbnails import ThumbnailTicket,requested as thumbnail_requested,video_metadata
 from app.publishing_credentials import PublishingCredentialError,youtube_account_request,confirm_youtube_account
 from app.publishing_models import PublicationMetadata
 from app.publishing_wire import PublishingWireError
 from app.analytics_official import response_digest
 from app.youtube_upload import start_request,started_session,status_request,chunk_request,upload_progress,video_status_request,video_observation
+from app.youtube_thumbnail import thumbnail_set_request,thumbnail_set_observation
 
 def code(error):
     value=error.code if isinstance(error,(WorkflowError,PublishingCredentialError,PublishingWireError)) else 'NATIVE_OFFICIAL_PUBLISH_WORKER_FAILED'
@@ -37,10 +39,11 @@ class NativeOfficialPublicationWorker:
         with self.journal.store.transaction() as con:
             value,factory,path,dispatch=self.journal.admission(project,identity,con=con)
             if dispatch['version']!=version:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_STALE')
-            if ticket is not None:self.journal.ticket(con,ticket)
+            if type(ticket) is ThumbnailTicket:self.journal.thumbnails.fence(con,ticket)
+            elif ticket is not None:self.journal.ticket(con,ticket)
             self.journal.eligible(con,project,identity,value)
             if dispatch['phase'] in ('prepared','init_intent'):
-                preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),dispatch['total_bytes'],factory.profile,self.journal.clock())
+                preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),dispatch['total_bytes'],factory.profile,self.journal.clock(),thumbnail_stage=thumbnail_requested(value['snapshot']))
         if guard is not None:guard()
         return value,factory,path,dispatch
     def send(self,project,identity,version,factory,credential,request,operation,*,ticket=None,guard=None):
@@ -54,6 +57,7 @@ class NativeOfficialPublicationWorker:
         try:
             self.context(project,identity,version,ticket,guard=guard)
             if factory.credential(now=self.journal.clock())!=credential:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CREDENTIAL_CHANGED')
+            self.context(project,identity,version,ticket,guard=guard)
             if guard is not None:guard()
             sent=True;response=asyncio.run(factory.client.request(request))
             self.costs.settle(cost,status='response_received',response_sha256=response_digest(response))
@@ -74,7 +78,7 @@ class NativeOfficialPublicationWorker:
         credential=factory.credential(now=self.journal.clock());self.account(project,identity,expected_version,factory,credential,guard=guard)
         try:
             if phase=='prepared':
-                profile=factory.profile;request=start_request(PublicationMetadata.model_validate(value['snapshot']['metadata']),dispatch['total_bytes'],credential.token,
+                profile=factory.profile;request=start_request(video_metadata(value['snapshot']),dispatch['total_bytes'],credential.token,
                     category_id=profile.category_id,made_for_kids=profile.made_for_kids,contains_synthetic_media=profile.contains_synthetic_media,now=self.journal.clock())
                 ticket=self.journal.begin_intent(project,identity,expected_version,'init')
                 response=self.send(project,identity,ticket.version,factory,credential,request,'upload_initialize',ticket=ticket,guard=guard)
@@ -101,6 +105,12 @@ class NativeOfficialPublicationWorker:
     def poll_processing(self,project,identity,expected_version,*,guard=None):
         value,factory,_,dispatch=self.context(project,identity,expected_version,guard=guard)
         if dispatch['phase']!='uploaded' or dispatch['remote_post_id'] is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_PROCESSING_UPLOAD_REQUIRED')
+        if thumbnail_requested(value['snapshot']):
+            with self.journal.store.transaction() as con:thumbnail=self.journal.thumbnails.read(con,value)
+            if thumbnail is None:
+                self.set_thumbnail(project,identity,expected_version,guard=guard)
+                return self.journal.get(project,identity)
+            if thumbnail['status']!='response_received':raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_UNKNOWN_REVIEW_REQUIRED')
         credential=factory.credential(now=self.journal.clock());self.account(project,identity,expected_version,factory,credential,guard=guard)
         response=self.send(project,identity,expected_version,factory,credential,video_status_request(dispatch['remote_post_id'],credential.token),'publish_processing_status',guard=guard)
         if response.status==429 or response.status>=500:
@@ -108,6 +118,21 @@ class NativeOfficialPublicationWorker:
             raise PublishingWireError('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF',retry_after=retry_delay(response))
         observation=video_observation(response,dispatch['remote_post_id'])
         return self.journal.record_processing(project,identity,expected_version,observation,response_digest(response))
+    def set_thumbnail(self,project,identity,expected_version,*,guard=None):
+        value,factory,_,dispatch=self.context(project,identity,expected_version,guard=guard)
+        if not thumbnail_requested(value['snapshot']) or dispatch['phase']!='uploaded':raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_UPLOAD_REQUIRED')
+        with self.journal.store.transaction() as con:
+            if self.journal.thumbnails.read(con,value) is not None:raise WorkflowError('NATIVE_OFFICIAL_THUMBNAIL_ALREADY_ATTEMPTED')
+        credential=factory.credential(now=self.journal.clock());self.account(project,identity,expected_version,factory,credential,guard=guard)
+        ticket=self.journal.thumbnails.begin(project,identity,expected_version);response=None
+        try:
+            content,remote=self.journal.thumbnails.content(ticket)
+            request=thumbnail_set_request(remote,content,credential.token,expected_sha256=value['snapshot']['thumbnail']['image']['sha256'])
+            response=self.send(project,identity,ticket.version,factory,credential,request,'publish_thumbnail_set',ticket=ticket,guard=guard)
+            return self.journal.thumbnails.finish(ticket,thumbnail_set_observation(response,request),response_digest(response))
+        except Exception as error:
+            with suppress(WorkflowError):self.journal.thumbnails.unknown(ticket,code(error),response_sha256=response_digest(response) if response is not None else None)
+            raise WorkflowError(code(error)) from None
     def recover(self):
         """Owned startup only. Finalize unfinished costs without credential reads."""
         if self.journal is not self.frozen_journal or self.vault is not self.frozen_vault or self.costs.store is not self.journal.store:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_CONFIGURATION_CHANGED')
@@ -115,6 +140,6 @@ class NativeOfficialPublicationWorker:
         with self.journal.store.transaction() as con:
             rows=con.execute("SELECT c.* FROM native_cost_operations c WHERE c.provider='official-youtube' AND c.paid=0 AND c.status='dispatch_intent' AND EXISTS(SELECT 1 FROM native_official_publications p WHERE p.project_id=c.project_id AND p.workspace_id=?)",(self.journal.workspace,)).fetchall()
         for row in rows:
-            if not re.fullmatch(r'(publish_account_lookup|publish_processing_status|upload_initialize|upload_chunk|upload_reconcile)\.[a-f0-9]{32}',row['operation']):continue
+            if not re.fullmatch(r'(publish_account_lookup|publish_processing_status|publish_thumbnail_set|upload_initialize|upload_chunk|upload_reconcile)\.[a-f0-9]{32}',row['operation']):continue
             self.costs.settle(row['id'],status='outcome_unknown',error_code='NATIVE_OFFICIAL_PUBLISH_RESTART_OUTCOME_UNKNOWN');settled+=1
         return {**result,'unfinished_costs_marked_unknown':settled,'automatic_upload_retry':False}

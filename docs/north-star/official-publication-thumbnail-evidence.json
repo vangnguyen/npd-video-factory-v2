@@ -1,0 +1,151 @@
+{
+  "schema_version": "north-star-native-official-publication-thumbnail-evidence-v1",
+  "status": "PASS_COMPONENT_VERIFICATION",
+  "base_head": "1e67e59a2674775effcf0cc007708f1b0f210fc4",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-regression-n5.log",
+      "sha256": "7ac6b3a17bd2d66ec34da50767cf48998015824d87276ea24a4d1eb38f787459",
+      "bytes": 11177,
+      "worker_cache_frame_qc_bridge_passed": 34,
+      "suite_total": 36,
+      "suite_status": "FAILED_TWO_HTTP_FIXTURE_COOKIE_CASES",
+      "resolved_http_failures": "Correct fixture cookie name; no auth gate relaxed. Both corrected HTTP cases pass in separate final log.",
+      "counts_by_component": {
+        "worker": 16,
+        "cache": 6,
+        "frame_qc": 7,
+        "frame_bridge": 5
+      }
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-http-regression-n6.log",
+      "sha256": "09f1d2c59d903e3a00942618d8a0dd9baeeb8e50411e3032c1f8d26c1e50ab04",
+      "bytes": 627,
+      "passed": 2,
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-legacy-regression-n2.log",
+      "sha256": "f1f60c5211794221970aec147ef02c9aeae9e0797882dbe8c70d4f47ef424a44",
+      "bytes": 19987,
+      "passed": 83,
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-backup-regression-n7.log",
+      "sha256": "82f15f3a511446988b5fe8a89cd793c340ab2a62d4f7c91aeb674cd0080f318f",
+      "bytes": 3868,
+      "passed": 19,
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-studio-regression-n2.log",
+      "sha256": "58393378af4c5b7c968a78c1b539744f422722f33b5b25f0a7225639c09702bb",
+      "bytes": 54453,
+      "passed": 531,
+      "status": "PASS",
+      "actual_parent_browser_acceptance": false
+    }
+  ],
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-flow-n5\\evidence.json",
+    "sha256": "76d72fedbc9ee6f64d37b791c675290b0ef45cfd1218e978e89d9e961c480d0e",
+    "bytes": 2982
+  },
+  "backup": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-flow-n5\\public-official-thumbnail.zip",
+    "sha256": "1c4286a8448d6c8f187256935f2901f5e87c6bd5e559319570f3c5a91b7511cd",
+    "bytes": 6406530,
+    "journal_rows": 1
+  },
+  "replays": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-flow-n5\\in-process-replay.json",
+      "sha256": "0ce3866f9ce6492f7dc4dc21335f78055959b769b999146a7d937ec11495feae",
+      "bytes": 390
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-flow-n5\\new-process-replay.json",
+      "sha256": "525ab6a10cb04f90730a68074d1450cfad09cc23405e51dd14adc1e78f1800b0",
+      "bytes": 389
+    }
+  ],
+  "source_sha256": {
+    "services/windows_native/official_publication_thumbnails.py": "8205442ba130d167daffb9ef2e38248c75df3e51debc481be06181c9e93cef89",
+    "services/windows_native/official_publications.py": "d4622df1ec3eac1cbc3fc940b1b44de3151719b3d5a1749e595eca267bd760b6",
+    "services/windows_native/official_publication_worker.py": "242c1a2c9596c4ec94de300ac36d2cad240874b8850f70f765437d2002c7796b",
+    "services/windows_native/backup.py": "7128e4fd8f85ed76084656b11c32b978e48c13a40250be60d2eb3af3dee3570f",
+    "services/windows_native/render_frame_evidence_cache.py": "97f0144b59737fa177da4895d01b10dfff238072db63f2c0c3bdb4d04fe86564",
+    "services/windows_native/render_frame_qc.py": "95475794f6e85036038bd724127b21facfdd7878abe485c6e0e1d16b00966c6a",
+    "services/windows_native/render_vision_frame_bridge.py": "438cbd205c016b0d7aed6f62dc48aa040b41b29769163d86de5fa6eb64e2b5de",
+    "services/windows_native/tests/test_official_publication_thumbnails.py": "f68cb4a5880b774199f8585d9eac0e7702f81dfee5fd23cc6d8bf161a7ff26bb",
+    "services/windows_native/tests/test_official_thumbnail_http.py": "daed3a477156e93a32fc1400ce488845215c3d083f4bc6e4e37fdbc45543ca9f",
+    "services/windows_native/tests/test_render_frame_evidence_cache.py": "4a9c16e7573ab3129355d45b613f2cf628cf6098816df79983f188b32bd6e1d1",
+    "apps/studio-web/native-official-publications.mjs": "84b47a1b258949d84b1f094460d9da79f9eaff81918a9b42d3f445d5bf98e6ac",
+    "apps/studio-web/tests/native-official-thumbnail-stage.test.mjs": "7b99110abb1999c4ce78ffa224ce1663e38c27561cafd32f1e2c76d17276dce7",
+    "apps/studio-web/tests/native-official-publications.test.mjs": "3b64e56cea104881e7b7a4df5588a0941bed2420402879f819e1f0505569373e",
+    "scripts/north_star_official_thumbnail.py": "0a0932c9d1b87f4e241fa16c9217181cf6c9c0b4bb8f3117637b2343fcce5d89"
+  },
+  "original_canonical_media_png_journals_exact": true,
+  "mock_video_initializations": 1,
+  "mock_thumbnail_posts": 1,
+  "processing_requires_separate_following_poll": true,
+  "recovery_without_provider_keys": true,
+  "background_thumbnail_replay": false,
+  "pending_thumbnail_blocks_offline_backup_even_after_publication_revocation": true,
+  "fixture_failures_retained": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-focused-n3.log",
+      "sha256": "f536134ecc3c6d37f2bacfd6e8065b7490022eb46436bf0a5172e02e448fe877",
+      "bytes": 3299
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-frame-http-regression-n1.log",
+      "sha256": "bf2fb13f8d485115558f8137799d52107edfa3f31673301a7ca03867293a0eab",
+      "bytes": 8384
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-stack-n2.log",
+      "sha256": "9c3a081141e23fa7d5229cabbc4f19261fcbf7f2dbc7197a75e2ca191e0709cb",
+      "bytes": 12892
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-regression-n4.log",
+      "sha256": "84ab4d95a78b09f50569199e69645526620aa06376c8212c5921704fc298be73",
+      "bytes": 21788
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-http-debug-n2.log",
+      "sha256": "009a7a0fe2bcb7a8ea1597b6a6a338a336d9e50372bbdb57140135fc9223629e",
+      "bytes": 1397
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-retainer-n2.log",
+      "sha256": "d97146b8c8cd3b8e4197be0a9aff73853cfa5c1a4b72e36623bbb3f7f864c1a6",
+      "bytes": 5968
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-retainer-n3.log",
+      "sha256": "55b26de451017f4d4c499f542618677c8473a117f3da63950247b76135008932",
+      "bytes": 1157
+    }
+  ],
+  "diagnostic_native_exit_cause": "0xc0000005 during faulthandler diagnostic; cause unverified; normal later worker checks retained separately",
+  "pre_final_backup_rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\official-thumbnail-flow-n4\\evidence.json",
+    "sha256": "b90255224b6a3a896994e8fbfbfedfa6991c2a98091d70bc170b14262fda4cd8",
+    "bytes": 2873
+  },
+  "external_calls": 0,
+  "paid_operations": 0,
+  "genuine_provider_keys_read": false,
+  "remote_image_bytes_verified": false,
+  "rights_independently_verified": false,
+  "real_owner_legal_override": false,
+  "owner_uat_accepted": false,
+  "real_provider_tested": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "video_factory_north_star_ready": false
+}
