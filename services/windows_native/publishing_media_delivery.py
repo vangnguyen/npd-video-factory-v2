@@ -1,5 +1,5 @@
 """Owned durable media disclosure/storage intents; never grants publishing authority."""
-import hashlib, json, os, re, uuid
+import base64, hashlib, json, os, re, uuid
 from datetime import datetime, timedelta, timezone
 from typing import Literal
 from pathlib import Path
@@ -62,12 +62,16 @@ def save_credential(path,root,value):
 
 class NativeMediaDeliveryFactory:
     def __init__(self,profile,root,workspace,*,enabled=False,directory=None,credential_file=None,credential_expires_at=None,
-                 estimated_operation_cost_vnd=None,wire=None,clock=lambda:datetime.now(timezone.utc)):
+                 estimated_operation_cost_vnd=None,wire=None,clock=lambda:datetime.now(timezone.utc),registry_file=None,registry_sha256=None):
         if (type(profile) is not StorageProfile or type(enabled) is not bool or type(workspace) is not str or not re.fullmatch('[A-Za-z0-9_-]{1,80}',workspace) or not callable(clock)
             or estimated_operation_cost_vnd is not None and (type(estimated_operation_cost_vnd) is not int or not 1<=estimated_operation_cost_vnd<=10**9)):
             raise WorkflowError('NATIVE_MEDIA_DELIVERY_CONFIGURATION_INVALID',400)
         self.profile,self.root,self.workspace,self.enabled,self.clock=profile,Path(root).absolute(),workspace,enabled,clock
         self.directory=protected_path(directory,self.root) if directory is not None else None
+        self.registry_file=protected_path(registry_file,self.root) if registry_file is not None else None
+        self.registry_sha256=registry_sha256
+        if (registry_file is None)!=(registry_sha256 is None) or registry_sha256 is not None and (type(registry_sha256) is not str or not re.fullmatch('[a-f0-9]{64}',registry_sha256)):
+            raise WorkflowError('NATIVE_MEDIA_DELIVERY_CONFIGURATION_INVALID',400)
         self.credential_file=protected_path(credential_file,self.root) if credential_file is not None else None
         self.expires_at=utc(credential_expires_at) if credential_expires_at is not None else None
         if (self.credential_file is None)!=(self.expires_at is None):raise WorkflowError('NATIVE_MEDIA_DELIVERY_CONFIGURATION_INVALID',400)
@@ -78,15 +82,19 @@ class NativeMediaDeliveryFactory:
         self.wire=wire or S3SDKDeliveryWire(profile,self.credential,network_enabled=enabled)
         self.configuration={'storage_profile':dict(profile.__dict__),'workspace_id':workspace,'state_root_sha256':digest(str(self.root)),'enabled':enabled,'mock':self.wire.mock,
             'credential_cipher_sha256':self.cipher_sha256,'credential_expires_at':self.expires_at.isoformat() if self.expires_at is not None else None,
-            'estimated_operation_cost_vnd':self.estimate,'lease_directory_sha256':digest(str(self.directory)) if self.directory is not None else None}
+            'estimated_operation_cost_vnd':self.estimate,'lease_directory_sha256':digest(str(self.directory)) if self.directory is not None else None,
+            **({'registry_sha256':registry_sha256} if registry_sha256 is not None else {})}
         self.sha256=digest(self.configuration)
-        self.frozen=(profile,profile.sha256,self.root,workspace,enabled,self.directory,self.credential_file,self.cipher_sha256,self.expires_at,self.estimate,self.wire,self.wire.mock,clock,self.sha256,digest(self.configuration))
+        self.frozen=(profile,profile.sha256,self.root,workspace,enabled,self.directory,self.credential_file,self.cipher_sha256,self.expires_at,self.estimate,self.wire,self.wire.mock,clock,self.sha256,digest(self.configuration),self.registry_file,registry_sha256)
     def check_configuration(self):
         """Immutable identities only; an existing remote job needs no S3 key."""
-        if (self.profile,self.profile.sha256,self.root,self.workspace,self.enabled,self.directory,self.credential_file,self.cipher_sha256,self.expires_at,self.estimate,self.wire,self.wire.mock,self.clock,self.sha256,digest(self.configuration))!=self.frozen:
+        if (self.profile,self.profile.sha256,self.root,self.workspace,self.enabled,self.directory,self.credential_file,self.cipher_sha256,self.expires_at,self.estimate,self.wire,self.wire.mock,self.clock,self.sha256,digest(self.configuration),self.registry_file,self.registry_sha256)!=self.frozen:
             raise WorkflowError('NATIVE_MEDIA_DELIVERY_CONFIGURATION_CHANGED')
     def check(self):
         self.check_configuration()
+        if self.registry_file is not None and (protected_path(self.registry_file,self.root)!=self.registry_file or not self.registry_file.is_file()
+            or not 1<=self.registry_file.stat().st_size<=262144 or file_sha(self.registry_file)!=self.registry_sha256):
+            raise WorkflowError('NATIVE_MEDIA_DELIVERY_REGISTRY_CHANGED')
         if self.directory is not None and protected_path(self.directory,self.root)!=self.directory:raise WorkflowError('NATIVE_MEDIA_DELIVERY_CONFIGURATION_CHANGED')
         if self.credential_file is not None and (protected_path(self.credential_file,self.root)!=self.credential_file
             or (file_sha(self.credential_file) if self.credential_file.is_file() else None)!=self.cipher_sha256):
@@ -245,18 +253,38 @@ class NativePublishingMediaDelivery:
                     if (response is None or response['object_found'] is not True or response['etag']!=object['etag'] or response['version_id']!=object['version_id']
                         or response['size_bytes']!=scope['size_bytes']):raise WorkflowError('NATIVE_MEDIA_DELIVERY_COST_EVIDENCE_CHANGED')
             return {**value,'operations':operations}
+    def page(self,project,publication,*,limit=25,cursor=None):
+        if type(limit) is not int or not 1<=limit<=100:raise WorkflowError('NATIVE_MEDIA_DELIVERY_PAGE_INVALID',400)
+        after=None
+        if cursor is not None:
+            try:
+                if type(cursor) is not str or not 1<=len(cursor)<=2048:raise ValueError()
+                after=json.loads(base64.urlsafe_b64decode(cursor+'='*(-len(cursor)%4)))
+                if (type(after) is not list or len(after)!=5 or after[:3]!=[self.workspace,project,publication]
+                    or type(after[3]) is not str or not 1<=len(after[3])<=40 or datetime.fromisoformat(after[3]).tzinfo is None
+                    or type(after[4]) is not str or not re.fullmatch('nmd_[a-f0-9]{32}',after[4])):raise ValueError()
+            except Exception:raise WorkflowError('NATIVE_MEDIA_DELIVERY_PAGE_INVALID',400) from None
+        with self.store.transaction() as con:
+            self.journal.get(project,publication,con=con)
+            where="workspace_id=? AND project_id=? AND json_extract(snapshot_json,'$.scope.publication_id')=?";params=[self.workspace,project,publication]
+            if after:where+=' AND (created_at<? OR (created_at=? AND delivery_id<?))';params.extend([after[3],after[3],after[4]])
+            rows=list(con.execute('SELECT * FROM native_publishing_media_deliveries WHERE '+where+' ORDER BY created_at DESC,delivery_id DESC LIMIT ?',(*params,limit+1)))
+            items=[self.get(project,row['delivery_id'],con=con) for row in rows[:limit]]
+            next_cursor=base64.urlsafe_b64encode(json.dumps([self.workspace,project,publication,rows[limit-1]['created_at'],rows[limit-1]['delivery_id']]).encode()).decode().rstrip('=') if len(rows)>limit else None
+        return {'schema_version':'native-publishing-media-delivery-page-v1','workspace_id':self.workspace,'project_id':project,'publication_id':publication,
+            'items':items,'truncated':len(rows)>limit,'next_cursor':next_cursor,'url_returned':False,'publishing_authority':False}
     def create(self,project,payload,*,principal):
         if type(payload) is not Create:raise WorkflowError('NATIVE_MEDIA_DELIVERY_FIELDS_INVALID',400)
         try:payload=Create.model_validate(payload.model_dump(mode='json'))
         except Exception:raise WorkflowError('NATIVE_MEDIA_DELIVERY_FIELDS_INVALID',400) from None
         authority=self.journal.identity(principal);request=payload.model_dump(mode='json',exclude={'request_key'});key=digest(payload.request_key)
-        if self.factory is None:raise WorkflowError('NATIVE_MEDIA_DELIVERY_NOT_CONFIGURED')
-        state=self.factory.public()
         with self.store.transaction() as con:
             prior=con.execute('SELECT * FROM native_publishing_media_deliveries WHERE workspace_id=? AND project_id=? AND key_sha256=?',(self.workspace,project,key)).fetchone()
             if prior is not None:
                 if prior['request_sha256']!=digest(request):raise WorkflowError('NATIVE_MEDIA_DELIVERY_IDEMPOTENCY_CONFLICT')
                 return self.get(project,prior['delivery_id'],con=con),True
+            if self.factory is None:raise WorkflowError('NATIVE_MEDIA_DELIVERY_NOT_CONFIGURED')
+            state=self.factory.public()
             parent=self.journal.row(con,project,payload.publication_id);grant=self.journal.valid_grant(con,parent);public,_,_=self.journal.revalidate(con,parent)
             if public['snapshot_sha256']!=payload.expected_publication_snapshot_sha256 or state['configuration_sha256']!=payload.expected_configuration_sha256 or public['mock'] is not state['mock']:
                 raise WorkflowError('NATIVE_MEDIA_DELIVERY_SOURCE_CHANGED')
@@ -348,6 +376,11 @@ class NativePublishingMediaDelivery:
             status='needs_approval' if code in {'NATIVE_MEDIA_DELIVERY_COST_APPROVAL_REQUIRED','AI_COST_APPROVAL_REQUIRED_BEFORE_DISPATCH'} else 'outcome_unknown' if put_started[0] else 'failed'
             with self.store.transaction() as con:con.execute('UPDATE native_publishing_media_deliveries SET status=?,failure_code=?,updated_at=? WHERE delivery_id=? AND status=?',(status,code,now(),identity,'running'))
         return self.get(project,identity)
+    def process_next(self):
+        if self.factory is None or self.factory.public()['status']!='CONFIGURED':return None
+        with self.store.transaction() as con:
+            row=con.execute("SELECT project_id,delivery_id FROM native_publishing_media_deliveries WHERE workspace_id=? AND status='queued' ORDER BY created_at,delivery_id LIMIT 1",(self.workspace,)).fetchone()
+        return self.process(row['project_id'],row['delivery_id']) if row is not None else None
     def resolve_for_consumer(self,project,identity,*,publication_snapshot_sha256,consumer_mock,minimum_valid_seconds=120):
         """Private worker-only value. Public history/backup never reads this file.
 

@@ -35,6 +35,7 @@ class Runner:
         self.analytics = None
         self.official_accounts = None
         self.official_publish_worker = None
+        self.publishing_media = None
         self.official_publish_queue = None
         self.official_analytics = None
         self.official_analytics_refresh = None
@@ -53,6 +54,7 @@ class Runner:
     def start(self):
         self.store.recover()
         if self.official_accounts is not None:self.official_accounts.recover()
+        if self.publishing_media is not None:self.publishing_media.recover()
         if self.official_publish_worker is not None:self.official_publish_worker.recover()
         if self.official_publish_queue is not None:self.official_publish_queue.recover()
         if self.official_analytics is not None:self.official_analytics.recover()
@@ -103,6 +105,14 @@ class Runner:
                     self.observer.emit('worker_step',job_id=refreshed['plan_id'],project_id=refreshed['project_id'],stage='official_analytics_refresh',provider='local-scheduler',duration=time.monotonic()-started)
                     return True
             except WorkflowError:self.observer.emit('worker_failed',stage='official_analytics_read',duration=time.monotonic()-started)
+        if self.publishing_media is not None:
+            started=time.monotonic()
+            try:
+                value=self.publishing_media.process_next()
+                if value is not None:
+                    self.observer.emit('worker_step',job_id=value['delivery_id'],project_id=value['project_id'],stage='publishing_media_delivery',provider='s3-publishing-media',duration=time.monotonic()-started)
+                    return True
+            except WorkflowError:self.observer.emit('worker_failed',stage='publishing_media_delivery',duration=time.monotonic()-started)
         if self.official_publish_queue is not None:
             started=time.monotonic()
             try:
@@ -193,6 +203,8 @@ class LocalServer(ThreadingHTTPServer):
         trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None,
         official_account_registry=None,official_account_read_enabled=False,official_account_factories=None,
         meta_account_registry=None,meta_account_read_enabled=False,meta_account_factories=None,
+        meta_distribution_registry=None,meta_distribution_enabled=False,meta_distribution_factories=None,
+        publishing_media_registry=None,publishing_media_enabled=False,publishing_media_factory=None,
         official_publish_registry=None,official_publish_enabled=False,official_publish_factories=None,official_publish_session_directory=None,official_publish_queue_enabled=False,
         publishing_capabilities_file=None,
         official_analytics_enabled=False,official_analytics_refresh_enabled=False,
@@ -205,6 +217,12 @@ class LocalServer(ThreadingHTTPServer):
         render_vision_registry=None,render_vision_directory=None,render_vision_enabled=False,render_vision_factories=None,
         render_thumbnail_rights_enabled=False):
         config.validate_data_root()
+        from . import meta_runtime
+        has_meta_distribution,has_publishing_media=meta_runtime.validate(config.data_root,access,
+            meta_registry=meta_distribution_registry,meta_enabled=meta_distribution_enabled,meta_factories=meta_distribution_factories,
+            account_registry=meta_account_registry,account_factories=meta_account_factories,account_reads=meta_account_read_enabled,
+            media_registry=publishing_media_registry,media_enabled=publishing_media_enabled,media_factory=publishing_media_factory,
+            session_directory=official_publish_session_directory)
         if publishing_capabilities_file is not None:
             from .official_account_tokens import protected_path
             if access is None:raise WorkflowError('NATIVE_PUBLICATION_CAPABILITIES_HUMAN_AUTH_REQUIRED',400)
@@ -287,7 +305,7 @@ class LocalServer(ThreadingHTTPServer):
         if type(official_publish_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
         if type(official_publish_queue_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_CONFIGURATION_INVALID',400)
         if official_publish_queue_enabled and (access is None or official_publish_session_directory is None or not (official_publish_registry is not None and official_publish_enabled or official_publish_factories is not None
-            or has_tiktok_distribution and tiktok_distribution_enabled)):
+            or has_tiktok_distribution and tiktok_distribution_enabled or has_meta_distribution and meta_distribution_enabled)):
             raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_PROTECTED_RUNTIME_AND_AUTH_REQUIRED',400)
         if official_publish_registry is not None and official_publish_factories is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_CONFLICT',400)
         if (official_publish_registry is not None or official_publish_factories is not None) and access is None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_HUMAN_AUTH_REQUIRED',400)
@@ -341,6 +359,10 @@ class LocalServer(ThreadingHTTPServer):
             if set(meta_accounts)&set(loaded_accounts or {}):raise WorkflowError('NATIVE_META_ACCOUNT_REFERENCE_CONFLICT',400)
             loaded_accounts={**(loaded_accounts or {}),**meta_accounts}
             if len(loaded_accounts)>50:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
+        loaded_media=meta_runtime.media(config.data_root,access.workspace_id,registry=publishing_media_registry,
+            factory=publishing_media_factory,enabled=publishing_media_enabled) if has_publishing_media else None
+        loaded_meta=meta_runtime.distribution(config.data_root,access.workspace_id,loaded_accounts or {},registry=meta_distribution_registry,
+            factories=meta_distribution_factories,enabled=meta_distribution_enabled,media_factory=loaded_media) if has_meta_distribution else {}
         loaded_google=None
         if google_oauth_registry is not None:
             from .google_oauth_registry import load as load_google
@@ -407,6 +429,12 @@ class LocalServer(ThreadingHTTPServer):
         from .official_publication_worker import NativeOfficialPublicationWorker
         publishing=load_publishing(official_publish_registry,self.store.root,self.publications.workspace_id,owner_enabled=official_publish_enabled) if official_publish_registry is not None else official_publish_factories
         self.official_publications=NativeOfficialPublications(self.store,self.publications,self.official_accounts,factories=publishing,identity_provider=self.official_publish_identity)
+        self.official_publications.bind_meta_accounts(factories=loaded_meta)
+        with self.store.transaction() as con:
+            has_media_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_publishing_media_deliveries'").fetchone() is not None
+        from .publishing_media_delivery import NativePublishingMediaDelivery
+        self.publishing_media=NativePublishingMediaDelivery(self.official_publications,factory=loaded_media) if has_publishing_media or has_media_history else None
+        self.runner.publishing_media=self.publishing_media
         self.tiktok_creators=None
         with self.store.transaction() as con:
             has_tiktok_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_tiktok_creator_checks'").fetchone() is not None
@@ -451,7 +479,7 @@ class LocalServer(ThreadingHTTPServer):
                     if type(factory.account) is OAuthAccount and factory.account.google_oauth_slot_id in self.google_oauth.slots:factory.resolver.attach(self.google_analytics_selections)
         # Production network clients come only from the protected, explicitly enabled registry.
         self.official_publish_vault=SessionVault(self.official_publications,official_publish_session_directory)
-        self.official_publish_worker=NativeOfficialPublicationWorker(self.official_publications,self.official_publish_vault)
+        self.official_publish_worker=NativeOfficialPublicationWorker(self.official_publications,self.official_publish_vault,media_delivery=self.publishing_media)
         self.runner.official_publish_worker=self.official_publish_worker
         from .official_publication_queue import NativeOfficialPublicationQueue
         self.official_publish_queue=NativeOfficialPublicationQueue(self.official_publish_worker,enabled=official_publish_queue_enabled)
@@ -776,6 +804,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/publications(?:/npub_[a-f0-9]{32})?', path):
             from .publication_routes import get
             return self.reply(get(self, path))
+        if path=='/api/connections/publishing-media' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications/nopu_[a-f0-9]{32}/media-deliveries(?:/nmd_[a-f0-9]{32})?',path):
+            from .publishing_media_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path=='/api/connections/official-publish-queue' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications/nopu_[a-f0-9]{32}/queue(?:/nopq_[a-f0-9]{32})?',path):
             from .official_publication_queue_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
@@ -1094,6 +1125,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-learning',self.path):
             from .official_learning_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=20000)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications/nopu_[a-f0-9]{32}/(media-selection|media-deliveries(?:/nmd_[a-f0-9]{32}/(?:process|cancel))?)',self.path):
+            from .publishing_media_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-publications/nopu_[a-f0-9]{32}/queue(?:/nopq_[a-f0-9]{32}/cancel)?',self.path):
             from .official_publication_queue_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
@@ -1443,6 +1477,10 @@ def main():
     parser.add_argument('--enable-official-account-reads',action='store_true')
     parser.add_argument('--meta-account-registry',type=Path)
     parser.add_argument('--enable-meta-account-reads',action='store_true')
+    parser.add_argument('--meta-distribution-registry',type=Path)
+    parser.add_argument('--enable-meta-distribution',action='store_true')
+    parser.add_argument('--publishing-media-registry',type=Path)
+    parser.add_argument('--enable-publishing-media',action='store_true')
     parser.add_argument('--enable-official-analytics',action='store_true')
     parser.add_argument('--enable-official-analytics-refresh',action='store_true')
     parser.add_argument('--google-oauth-registry',type=Path)
@@ -1491,6 +1529,8 @@ def main():
             generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api,
             official_account_registry=args.official_account_registry,official_account_read_enabled=args.enable_official_account_reads,
             meta_account_registry=args.meta_account_registry,meta_account_read_enabled=args.enable_meta_account_reads,
+            meta_distribution_registry=args.meta_distribution_registry,meta_distribution_enabled=args.enable_meta_distribution,
+            publishing_media_registry=args.publishing_media_registry,publishing_media_enabled=args.enable_publishing_media,
             official_analytics_enabled=args.enable_official_analytics,official_analytics_refresh_enabled=args.enable_official_analytics_refresh,
             google_oauth_registry=args.google_oauth_registry,google_oauth_directory=args.google_oauth_directory,google_oauth_enabled=args.enable_google_oauth,google_oauth_selection_enabled=args.enable_google_oauth_selections,google_analytics_selection_enabled=args.enable_google_analytics_selections,
             tiktok_publishing_registry=args.tiktok_publishing_registry,tiktok_creator_reads_enabled=args.enable_tiktok_creator_reads,

@@ -121,17 +121,27 @@ def disclosures(profile, options):
 def load(path, accounts, *, owner_enabled=False):
     from .official_accounts import NativeOfficialAccounts
     if type(accounts) is not NativeOfficialAccounts or type(owner_enabled) is not bool: raise WorkflowError('NATIVE_META_DISTRIBUTION_CONFIGURATION_INVALID',400)
-    accounts.check_workspace(); path=protected_path(path,accounts.store.root)
+    accounts.check_workspace()
+    return load_runtime(path,accounts.store.root,accounts.workspace,accounts.factories,owner_enabled=owner_enabled)
+
+
+def load_runtime(path,root,workspace,accounts,*,owner_enabled=False):
+    """Pure protected config load before socket allocation; no account DB/key read."""
+    from pathlib import Path
+    if (type(owner_enabled) is not bool or type(accounts) is not dict or len(accounts)>50 or type(workspace) is not str
+        or not re.fullmatch('[A-Za-z0-9_-]{1,80}',workspace)):raise WorkflowError('NATIVE_META_DISTRIBUTION_CONFIGURATION_INVALID',400)
+    path=protected_path(path,root)
     try:
         if not path.is_file() or not 1 <= path.stat().st_size <= 262144: raise ValueError()
         raw=path.read_bytes(); data=json.loads(raw,object_pairs_hook=unique_pairs)
         registry=(ExecutionRegistry if data.get('schema_version')=='native-meta-distribution-registry-v2' else Registry).model_validate(data);sha=hashlib.sha256(raw).hexdigest()
-        if file_sha(path) != sha or registry.workspace_id != accounts.workspace: raise ValueError()
+        if file_sha(path) != sha or registry.workspace_id != workspace: raise ValueError()
     except Exception: raise WorkflowError('NATIVE_META_DISTRIBUTION_REGISTRY_INVALID',400) from None
     values={}
     for binding in registry.bindings:
-        connection=accounts.factories.get(binding.account_ref)
-        if type(connection) is not NativeMetaAccountFactory or connection.sha256 != binding.expected_account_configuration_sha256:
+        connection=accounts.get(binding.account_ref)
+        if (type(connection) is not NativeMetaAccountFactory or connection.sha256 != binding.expected_account_configuration_sha256
+            or connection.root!=Path(root).absolute() or connection.workspace!=workspace or connection.account.account_ref!=binding.account_ref):
             raise WorkflowError('NATIVE_META_DISTRIBUTION_ACCOUNT_BINDING_CHANGED')
         factory=NativeMetaPublishingFactory(connection,gates=binding.gates,options=binding.options,owner_enabled=owner_enabled,registry_file=path,registry_sha256=sha,execution=getattr(binding,'execution',None))
         if factory.profile.target.profile_id in values: raise WorkflowError('NATIVE_META_DISTRIBUTION_PROFILE_CONFLICT')

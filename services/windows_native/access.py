@@ -33,6 +33,7 @@ def permission_for(method, path):
         return None
     if path == '/api/logout':
         return 'read'
+    if re.fullmatch(r'/api/projects/'+ID+r'/official-publications/nopu_'+ID+r'/(media-selection|media-deliveries(?:/nmd_'+ID+r'/(process|cancel))?)',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-publications/nopu_'+ID+r'/queue(?:/nopq_'+ID+r'/cancel)?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-publications(?:/nopu_'+ID+r'/(approve|renew|revoke|cancel|step|poll))?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-accounts/npac_'+ID+r'/verify',path):return 'manage'
