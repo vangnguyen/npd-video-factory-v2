@@ -1,0 +1,1603 @@
+{
+  "schema_version": "native-audio-transcript-owned-HTTP-fixture-v1",
+  "fixture_human": true,
+  "mock_ASR": true,
+  "real_provider_calls": 0,
+  "browser_rendered": false,
+  "owner_UAT": false,
+  "initial": {
+    "schema_version": "native-audio-transcripts-v1",
+    "workspace_id": "wsp_audio_transcript_fixture",
+    "project_id": "707aa86eb5754c409d7a7525a300df61",
+    "revision": 3,
+    "timeline_version": null,
+    "items": [
+      {
+        "asset_id": "43fa38a947e04f79ad1e34f20749a517.music.wav",
+        "asset_sha256": "b21c8452c6b8b790886fabc8ea496c048c3c05e5b304dada09737b4bfb677084",
+        "filename": "Actual owned source with untrusted extension.bin",
+        "analysis_sha256": "c390fe1169b449f762ca2284ab00510b5d68c1e10f8aa909b97cad61811f501c",
+        "original": {
+          "transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+          "analysis_id": "ana_a0571f888d75d6d8de052038",
+          "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+          "version": 1,
+          "is_original_evidence": true,
+          "provider_key": "assemblyai-transcription",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_0d30f039c87e4bb58fd46c83",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 0.5,
+              "text": "Xin chào.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_0d30f039c87e4bb58fd46c83",
+                  "ordinal": 0,
+                  "start_seconds": 0.0,
+                  "end_seconds": 0.2,
+                  "text": "Xin",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_3abeac84e72fb2fcbeef4943",
+                  "ordinal": 1,
+                  "start_seconds": 0.21,
+                  "end_seconds": 0.5,
+                  "text": "chào.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "provider": "assemblyai-transcription",
+            "model": "universal-3-5-pro",
+            "profile_id": "asr-assemblyai-vi-direct-v1",
+            "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+            "transcript_id": "fixture-transcript-1",
+            "provider_request_id": "fixture-transcript-1",
+            "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+            "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+            "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+            "word_timing_source": "provider_native_word_timestamps",
+            "timestamp_source": "provider_native_word_timestamps",
+            "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+            "provider_transcript_immutable": true,
+            "asr_prompt_profile": {
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "provider_key": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "language": "vi",
+              "mode": "async_pre_recorded",
+              "keyterms": [
+                "Ngọc Phương Đông",
+                "Vinhomes Green Paradise",
+                "Cần Giờ",
+                "tham quan sa bàn",
+                "chính sách bán hàng"
+              ],
+              "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+              "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+              "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+              "native_word_timestamps": true,
+              "automatic_retry": false,
+              "model_fallback": false
+            },
+            "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "original_evidence": true,
+            "secret_recorded": false,
+            "provider_credit_debit": null,
+            "estimated_cost_vnd": "4.650000",
+            "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+            "latency_ms": 53.208,
+            "native_saved_receipt_reused": true,
+            "source_media_mutated": false,
+            "remote_calls": 0,
+            "timing_rewrite_applied": false
+          },
+          "created_at": "2026-10-10T17:23:00.115685Z"
+        },
+        "current": {
+          "transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+          "analysis_id": "ana_a0571f888d75d6d8de052038",
+          "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+          "version": 1,
+          "is_original_evidence": true,
+          "provider_key": "assemblyai-transcription",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_0d30f039c87e4bb58fd46c83",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 0.5,
+              "text": "Xin chào.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_0d30f039c87e4bb58fd46c83",
+                  "ordinal": 0,
+                  "start_seconds": 0.0,
+                  "end_seconds": 0.2,
+                  "text": "Xin",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_3abeac84e72fb2fcbeef4943",
+                  "ordinal": 1,
+                  "start_seconds": 0.21,
+                  "end_seconds": 0.5,
+                  "text": "chào.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "provider": "assemblyai-transcription",
+            "model": "universal-3-5-pro",
+            "profile_id": "asr-assemblyai-vi-direct-v1",
+            "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+            "transcript_id": "fixture-transcript-1",
+            "provider_request_id": "fixture-transcript-1",
+            "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+            "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+            "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+            "word_timing_source": "provider_native_word_timestamps",
+            "timestamp_source": "provider_native_word_timestamps",
+            "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+            "provider_transcript_immutable": true,
+            "asr_prompt_profile": {
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "provider_key": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "language": "vi",
+              "mode": "async_pre_recorded",
+              "keyterms": [
+                "Ngọc Phương Đông",
+                "Vinhomes Green Paradise",
+                "Cần Giờ",
+                "tham quan sa bàn",
+                "chính sách bán hàng"
+              ],
+              "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+              "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+              "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+              "native_word_timestamps": true,
+              "automatic_retry": false,
+              "model_fallback": false
+            },
+            "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "original_evidence": true,
+            "secret_recorded": false,
+            "provider_credit_debit": null,
+            "estimated_cost_vnd": "4.650000",
+            "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+            "latency_ms": 53.208,
+            "native_saved_receipt_reused": true,
+            "source_media_mutated": false,
+            "remote_calls": 0,
+            "timing_rewrite_applied": false
+          },
+          "created_at": "2026-10-10T17:23:00.115685Z"
+        },
+        "versions": [
+          {
+            "transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+            "analysis_id": "ana_a0571f888d75d6d8de052038",
+            "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "assemblyai-transcription",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_0d30f039c87e4bb58fd46c83",
+                "ordinal": 0,
+                "start_seconds": 0.0,
+                "end_seconds": 0.5,
+                "text": "Xin chào.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_0d30f039c87e4bb58fd46c83",
+                    "ordinal": 0,
+                    "start_seconds": 0.0,
+                    "end_seconds": 0.2,
+                    "text": "Xin",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_3abeac84e72fb2fcbeef4943",
+                    "ordinal": 1,
+                    "start_seconds": 0.21,
+                    "end_seconds": 0.5,
+                    "text": "chào.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "provider": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+              "transcript_id": "fixture-transcript-1",
+              "provider_request_id": "fixture-transcript-1",
+              "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+              "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+              "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+              "word_timing_source": "provider_native_word_timestamps",
+              "timestamp_source": "provider_native_word_timestamps",
+              "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+              "provider_transcript_immutable": true,
+              "asr_prompt_profile": {
+                "profile_id": "asr-assemblyai-vi-direct-v1",
+                "provider_key": "assemblyai-transcription",
+                "model": "universal-3-5-pro",
+                "language": "vi",
+                "mode": "async_pre_recorded",
+                "keyterms": [
+                  "Ngọc Phương Đông",
+                  "Vinhomes Green Paradise",
+                  "Cần Giờ",
+                  "tham quan sa bàn",
+                  "chính sách bán hàng"
+                ],
+                "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+                "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+                "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+                "native_word_timestamps": true,
+                "automatic_retry": false,
+                "model_fallback": false
+              },
+              "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "original_evidence": true,
+              "secret_recorded": false,
+              "provider_credit_debit": null,
+              "estimated_cost_vnd": "4.650000",
+              "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+              "latency_ms": 53.208,
+              "native_saved_receipt_reused": true,
+              "source_media_mutated": false,
+              "remote_calls": 0,
+              "timing_rewrite_applied": false
+            },
+            "created_at": "2026-10-10T17:23:00.115685Z"
+          }
+        ]
+      }
+    ],
+    "publishing_enabled": false,
+    "human_review_required": true,
+    "provider_calls": 0,
+    "source_media_mutated": false
+  },
+  "changed": {
+    "schema_version": "native-audio-transcripts-v1",
+    "workspace_id": "wsp_audio_transcript_fixture",
+    "project_id": "707aa86eb5754c409d7a7525a300df61",
+    "revision": 4,
+    "timeline_version": null,
+    "items": [
+      {
+        "asset_id": "43fa38a947e04f79ad1e34f20749a517.music.wav",
+        "asset_sha256": "b21c8452c6b8b790886fabc8ea496c048c3c05e5b304dada09737b4bfb677084",
+        "filename": "Actual owned source with untrusted extension.bin",
+        "analysis_sha256": "c390fe1169b449f762ca2284ab00510b5d68c1e10f8aa909b97cad61811f501c",
+        "original": {
+          "transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+          "analysis_id": "ana_a0571f888d75d6d8de052038",
+          "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+          "version": 1,
+          "is_original_evidence": true,
+          "provider_key": "assemblyai-transcription",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_0d30f039c87e4bb58fd46c83",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 0.5,
+              "text": "Xin chào.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_0d30f039c87e4bb58fd46c83",
+                  "ordinal": 0,
+                  "start_seconds": 0.0,
+                  "end_seconds": 0.2,
+                  "text": "Xin",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_3abeac84e72fb2fcbeef4943",
+                  "ordinal": 1,
+                  "start_seconds": 0.21,
+                  "end_seconds": 0.5,
+                  "text": "chào.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "provider": "assemblyai-transcription",
+            "model": "universal-3-5-pro",
+            "profile_id": "asr-assemblyai-vi-direct-v1",
+            "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+            "transcript_id": "fixture-transcript-1",
+            "provider_request_id": "fixture-transcript-1",
+            "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+            "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+            "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+            "word_timing_source": "provider_native_word_timestamps",
+            "timestamp_source": "provider_native_word_timestamps",
+            "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+            "provider_transcript_immutable": true,
+            "asr_prompt_profile": {
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "provider_key": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "language": "vi",
+              "mode": "async_pre_recorded",
+              "keyterms": [
+                "Ngọc Phương Đông",
+                "Vinhomes Green Paradise",
+                "Cần Giờ",
+                "tham quan sa bàn",
+                "chính sách bán hàng"
+              ],
+              "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+              "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+              "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+              "native_word_timestamps": true,
+              "automatic_retry": false,
+              "model_fallback": false
+            },
+            "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "original_evidence": true,
+            "secret_recorded": false,
+            "provider_credit_debit": null,
+            "estimated_cost_vnd": "4.650000",
+            "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+            "latency_ms": 53.208,
+            "native_saved_receipt_reused": true,
+            "source_media_mutated": false,
+            "remote_calls": 0,
+            "timing_rewrite_applied": false
+          },
+          "created_at": "2026-10-10T17:23:00.115685Z"
+        },
+        "current": {
+          "transcript_id": "trn_e8b5b3297e7041549a505cd6",
+          "analysis_id": "ana_a0571f888d75d6d8de052038",
+          "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+          "version": 2,
+          "is_original_evidence": false,
+          "provider_key": "assemblyai-transcription",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_2de3b8c5e13c476ea309e4e2",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 0.5,
+              "text": "Cần Giờ từ bản chỉnh sửa được yêu cầu.",
+              "speaker": null,
+              "confidence": null,
+              "words": []
+            }
+          ],
+          "provenance": {
+            "provider": "assemblyai-transcription",
+            "model": "universal-3-5-pro",
+            "profile_id": "asr-assemblyai-vi-direct-v1",
+            "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+            "transcript_id": "fixture-transcript-1",
+            "provider_request_id": "fixture-transcript-1",
+            "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+            "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+            "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+            "word_timing_source": "provider_native_word_timestamps",
+            "timestamp_source": "provider_native_word_timestamps",
+            "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+            "provider_transcript_immutable": true,
+            "asr_prompt_profile": {
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "provider_key": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "language": "vi",
+              "mode": "async_pre_recorded",
+              "keyterms": [
+                "Ngọc Phương Đông",
+                "Vinhomes Green Paradise",
+                "Cần Giờ",
+                "tham quan sa bàn",
+                "chính sách bán hàng"
+              ],
+              "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+              "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+              "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+              "native_word_timestamps": true,
+              "automatic_retry": false,
+              "model_fallback": false
+            },
+            "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "original_evidence": true,
+            "secret_recorded": false,
+            "provider_credit_debit": null,
+            "estimated_cost_vnd": "4.650000",
+            "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+            "latency_ms": 53.208,
+            "native_saved_receipt_reused": true,
+            "source_media_mutated": false,
+            "remote_calls": 0,
+            "timing_rewrite_applied": false,
+            "human_edit": true,
+            "actor_ref": "explicit-fixture",
+            "derived_from_transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+            "changed_segment_ids": [
+              "seg_0d30f039c87e4bb58fd46c83"
+            ],
+            "word_timestamp_policy": "discard_for_changed_text",
+            "edit_note": "Explicit fixture human edit, no Owner UAT",
+            "timeline_application_required": true
+          },
+          "created_at": "2026-10-10T17:23:01.164278Z"
+        },
+        "versions": [
+          {
+            "transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+            "analysis_id": "ana_a0571f888d75d6d8de052038",
+            "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "assemblyai-transcription",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_0d30f039c87e4bb58fd46c83",
+                "ordinal": 0,
+                "start_seconds": 0.0,
+                "end_seconds": 0.5,
+                "text": "Xin chào.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_0d30f039c87e4bb58fd46c83",
+                    "ordinal": 0,
+                    "start_seconds": 0.0,
+                    "end_seconds": 0.2,
+                    "text": "Xin",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_3abeac84e72fb2fcbeef4943",
+                    "ordinal": 1,
+                    "start_seconds": 0.21,
+                    "end_seconds": 0.5,
+                    "text": "chào.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "provider": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+              "transcript_id": "fixture-transcript-1",
+              "provider_request_id": "fixture-transcript-1",
+              "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+              "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+              "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+              "word_timing_source": "provider_native_word_timestamps",
+              "timestamp_source": "provider_native_word_timestamps",
+              "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+              "provider_transcript_immutable": true,
+              "asr_prompt_profile": {
+                "profile_id": "asr-assemblyai-vi-direct-v1",
+                "provider_key": "assemblyai-transcription",
+                "model": "universal-3-5-pro",
+                "language": "vi",
+                "mode": "async_pre_recorded",
+                "keyterms": [
+                  "Ngọc Phương Đông",
+                  "Vinhomes Green Paradise",
+                  "Cần Giờ",
+                  "tham quan sa bàn",
+                  "chính sách bán hàng"
+                ],
+                "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+                "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+                "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+                "native_word_timestamps": true,
+                "automatic_retry": false,
+                "model_fallback": false
+              },
+              "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "original_evidence": true,
+              "secret_recorded": false,
+              "provider_credit_debit": null,
+              "estimated_cost_vnd": "4.650000",
+              "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+              "latency_ms": 53.208,
+              "native_saved_receipt_reused": true,
+              "source_media_mutated": false,
+              "remote_calls": 0,
+              "timing_rewrite_applied": false
+            },
+            "created_at": "2026-10-10T17:23:00.115685Z"
+          },
+          {
+            "transcript_id": "trn_e8b5b3297e7041549a505cd6",
+            "analysis_id": "ana_a0571f888d75d6d8de052038",
+            "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+            "version": 2,
+            "is_original_evidence": false,
+            "provider_key": "assemblyai-transcription",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_2de3b8c5e13c476ea309e4e2",
+                "ordinal": 0,
+                "start_seconds": 0.0,
+                "end_seconds": 0.5,
+                "text": "Cần Giờ từ bản chỉnh sửa được yêu cầu.",
+                "speaker": null,
+                "confidence": null,
+                "words": []
+              }
+            ],
+            "provenance": {
+              "provider": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+              "transcript_id": "fixture-transcript-1",
+              "provider_request_id": "fixture-transcript-1",
+              "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+              "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+              "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+              "word_timing_source": "provider_native_word_timestamps",
+              "timestamp_source": "provider_native_word_timestamps",
+              "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+              "provider_transcript_immutable": true,
+              "asr_prompt_profile": {
+                "profile_id": "asr-assemblyai-vi-direct-v1",
+                "provider_key": "assemblyai-transcription",
+                "model": "universal-3-5-pro",
+                "language": "vi",
+                "mode": "async_pre_recorded",
+                "keyterms": [
+                  "Ngọc Phương Đông",
+                  "Vinhomes Green Paradise",
+                  "Cần Giờ",
+                  "tham quan sa bàn",
+                  "chính sách bán hàng"
+                ],
+                "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+                "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+                "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+                "native_word_timestamps": true,
+                "automatic_retry": false,
+                "model_fallback": false
+              },
+              "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "original_evidence": true,
+              "secret_recorded": false,
+              "provider_credit_debit": null,
+              "estimated_cost_vnd": "4.650000",
+              "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+              "latency_ms": 53.208,
+              "native_saved_receipt_reused": true,
+              "source_media_mutated": false,
+              "remote_calls": 0,
+              "timing_rewrite_applied": false,
+              "human_edit": true,
+              "actor_ref": "explicit-fixture",
+              "derived_from_transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+              "changed_segment_ids": [
+                "seg_0d30f039c87e4bb58fd46c83"
+              ],
+              "word_timestamp_policy": "discard_for_changed_text",
+              "edit_note": "Explicit fixture human edit, no Owner UAT",
+              "timeline_application_required": true
+            },
+            "created_at": "2026-10-10T17:23:01.164278Z"
+          }
+        ]
+      }
+    ],
+    "publishing_enabled": false,
+    "human_review_required": true,
+    "provider_calls": 0,
+    "source_media_mutated": false,
+    "changed": true
+  },
+  "restored": {
+    "schema_version": "native-audio-transcripts-v1",
+    "workspace_id": "wsp_audio_transcript_fixture",
+    "project_id": "707aa86eb5754c409d7a7525a300df61",
+    "revision": 5,
+    "timeline_version": null,
+    "items": [
+      {
+        "asset_id": "43fa38a947e04f79ad1e34f20749a517.music.wav",
+        "asset_sha256": "b21c8452c6b8b790886fabc8ea496c048c3c05e5b304dada09737b4bfb677084",
+        "filename": "Actual owned source with untrusted extension.bin",
+        "analysis_sha256": "c390fe1169b449f762ca2284ab00510b5d68c1e10f8aa909b97cad61811f501c",
+        "original": {
+          "transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+          "analysis_id": "ana_a0571f888d75d6d8de052038",
+          "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+          "version": 1,
+          "is_original_evidence": true,
+          "provider_key": "assemblyai-transcription",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_0d30f039c87e4bb58fd46c83",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 0.5,
+              "text": "Xin chào.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_0d30f039c87e4bb58fd46c83",
+                  "ordinal": 0,
+                  "start_seconds": 0.0,
+                  "end_seconds": 0.2,
+                  "text": "Xin",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_3abeac84e72fb2fcbeef4943",
+                  "ordinal": 1,
+                  "start_seconds": 0.21,
+                  "end_seconds": 0.5,
+                  "text": "chào.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "provider": "assemblyai-transcription",
+            "model": "universal-3-5-pro",
+            "profile_id": "asr-assemblyai-vi-direct-v1",
+            "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+            "transcript_id": "fixture-transcript-1",
+            "provider_request_id": "fixture-transcript-1",
+            "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+            "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+            "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+            "word_timing_source": "provider_native_word_timestamps",
+            "timestamp_source": "provider_native_word_timestamps",
+            "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+            "provider_transcript_immutable": true,
+            "asr_prompt_profile": {
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "provider_key": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "language": "vi",
+              "mode": "async_pre_recorded",
+              "keyterms": [
+                "Ngọc Phương Đông",
+                "Vinhomes Green Paradise",
+                "Cần Giờ",
+                "tham quan sa bàn",
+                "chính sách bán hàng"
+              ],
+              "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+              "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+              "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+              "native_word_timestamps": true,
+              "automatic_retry": false,
+              "model_fallback": false
+            },
+            "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "original_evidence": true,
+            "secret_recorded": false,
+            "provider_credit_debit": null,
+            "estimated_cost_vnd": "4.650000",
+            "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+            "latency_ms": 53.208,
+            "native_saved_receipt_reused": true,
+            "source_media_mutated": false,
+            "remote_calls": 0,
+            "timing_rewrite_applied": false
+          },
+          "created_at": "2026-10-10T17:23:00.115685Z"
+        },
+        "current": {
+          "transcript_id": "trn_5e2a7f475d164d4c8ac9d7af",
+          "analysis_id": "ana_a0571f888d75d6d8de052038",
+          "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+          "version": 3,
+          "is_original_evidence": false,
+          "provider_key": "assemblyai-transcription",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_fb4b974c25524a73a62083e2",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 0.5,
+              "text": "Xin chào.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_8e31d384e01f4086b5c4c1f8",
+                  "ordinal": 0,
+                  "start_seconds": 0.0,
+                  "end_seconds": 0.2,
+                  "text": "Xin",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_22030a3e2ac14cdd87e20b40",
+                  "ordinal": 1,
+                  "start_seconds": 0.21,
+                  "end_seconds": 0.5,
+                  "text": "chào.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "provider": "assemblyai-transcription",
+            "model": "universal-3-5-pro",
+            "profile_id": "asr-assemblyai-vi-direct-v1",
+            "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+            "transcript_id": "fixture-transcript-1",
+            "provider_request_id": "fixture-transcript-1",
+            "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+            "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+            "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+            "word_timing_source": "provider_native_word_timestamps",
+            "timestamp_source": "provider_native_word_timestamps",
+            "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+            "provider_transcript_immutable": true,
+            "asr_prompt_profile": {
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "provider_key": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "language": "vi",
+              "mode": "async_pre_recorded",
+              "keyterms": [
+                "Ngọc Phương Đông",
+                "Vinhomes Green Paradise",
+                "Cần Giờ",
+                "tham quan sa bàn",
+                "chính sách bán hàng"
+              ],
+              "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+              "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+              "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+              "native_word_timestamps": true,
+              "automatic_retry": false,
+              "model_fallback": false
+            },
+            "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "original_evidence": true,
+            "secret_recorded": false,
+            "provider_credit_debit": null,
+            "estimated_cost_vnd": "4.650000",
+            "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+            "latency_ms": 53.208,
+            "native_saved_receipt_reused": true,
+            "source_media_mutated": false,
+            "remote_calls": 0,
+            "timing_rewrite_applied": false,
+            "human_edit": true,
+            "actor_ref": "explicit-fixture",
+            "derived_from_transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+            "changed_segment_ids": [],
+            "word_timestamp_policy": "discard_for_changed_text",
+            "edit_note": "Explicit fixture human edit, no Owner UAT",
+            "timeline_application_required": true
+          },
+          "created_at": "2026-10-10T17:23:01.194371Z"
+        },
+        "versions": [
+          {
+            "transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+            "analysis_id": "ana_a0571f888d75d6d8de052038",
+            "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "assemblyai-transcription",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_0d30f039c87e4bb58fd46c83",
+                "ordinal": 0,
+                "start_seconds": 0.0,
+                "end_seconds": 0.5,
+                "text": "Xin chào.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_0d30f039c87e4bb58fd46c83",
+                    "ordinal": 0,
+                    "start_seconds": 0.0,
+                    "end_seconds": 0.2,
+                    "text": "Xin",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_3abeac84e72fb2fcbeef4943",
+                    "ordinal": 1,
+                    "start_seconds": 0.21,
+                    "end_seconds": 0.5,
+                    "text": "chào.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "provider": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+              "transcript_id": "fixture-transcript-1",
+              "provider_request_id": "fixture-transcript-1",
+              "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+              "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+              "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+              "word_timing_source": "provider_native_word_timestamps",
+              "timestamp_source": "provider_native_word_timestamps",
+              "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+              "provider_transcript_immutable": true,
+              "asr_prompt_profile": {
+                "profile_id": "asr-assemblyai-vi-direct-v1",
+                "provider_key": "assemblyai-transcription",
+                "model": "universal-3-5-pro",
+                "language": "vi",
+                "mode": "async_pre_recorded",
+                "keyterms": [
+                  "Ngọc Phương Đông",
+                  "Vinhomes Green Paradise",
+                  "Cần Giờ",
+                  "tham quan sa bàn",
+                  "chính sách bán hàng"
+                ],
+                "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+                "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+                "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+                "native_word_timestamps": true,
+                "automatic_retry": false,
+                "model_fallback": false
+              },
+              "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "original_evidence": true,
+              "secret_recorded": false,
+              "provider_credit_debit": null,
+              "estimated_cost_vnd": "4.650000",
+              "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+              "latency_ms": 53.208,
+              "native_saved_receipt_reused": true,
+              "source_media_mutated": false,
+              "remote_calls": 0,
+              "timing_rewrite_applied": false
+            },
+            "created_at": "2026-10-10T17:23:00.115685Z"
+          },
+          {
+            "transcript_id": "trn_e8b5b3297e7041549a505cd6",
+            "analysis_id": "ana_a0571f888d75d6d8de052038",
+            "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+            "version": 2,
+            "is_original_evidence": false,
+            "provider_key": "assemblyai-transcription",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_2de3b8c5e13c476ea309e4e2",
+                "ordinal": 0,
+                "start_seconds": 0.0,
+                "end_seconds": 0.5,
+                "text": "Cần Giờ từ bản chỉnh sửa được yêu cầu.",
+                "speaker": null,
+                "confidence": null,
+                "words": []
+              }
+            ],
+            "provenance": {
+              "provider": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+              "transcript_id": "fixture-transcript-1",
+              "provider_request_id": "fixture-transcript-1",
+              "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+              "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+              "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+              "word_timing_source": "provider_native_word_timestamps",
+              "timestamp_source": "provider_native_word_timestamps",
+              "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+              "provider_transcript_immutable": true,
+              "asr_prompt_profile": {
+                "profile_id": "asr-assemblyai-vi-direct-v1",
+                "provider_key": "assemblyai-transcription",
+                "model": "universal-3-5-pro",
+                "language": "vi",
+                "mode": "async_pre_recorded",
+                "keyterms": [
+                  "Ngọc Phương Đông",
+                  "Vinhomes Green Paradise",
+                  "Cần Giờ",
+                  "tham quan sa bàn",
+                  "chính sách bán hàng"
+                ],
+                "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+                "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+                "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+                "native_word_timestamps": true,
+                "automatic_retry": false,
+                "model_fallback": false
+              },
+              "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "original_evidence": true,
+              "secret_recorded": false,
+              "provider_credit_debit": null,
+              "estimated_cost_vnd": "4.650000",
+              "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+              "latency_ms": 53.208,
+              "native_saved_receipt_reused": true,
+              "source_media_mutated": false,
+              "remote_calls": 0,
+              "timing_rewrite_applied": false,
+              "human_edit": true,
+              "actor_ref": "explicit-fixture",
+              "derived_from_transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+              "changed_segment_ids": [
+                "seg_0d30f039c87e4bb58fd46c83"
+              ],
+              "word_timestamp_policy": "discard_for_changed_text",
+              "edit_note": "Explicit fixture human edit, no Owner UAT",
+              "timeline_application_required": true
+            },
+            "created_at": "2026-10-10T17:23:01.164278Z"
+          },
+          {
+            "transcript_id": "trn_5e2a7f475d164d4c8ac9d7af",
+            "analysis_id": "ana_a0571f888d75d6d8de052038",
+            "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+            "version": 3,
+            "is_original_evidence": false,
+            "provider_key": "assemblyai-transcription",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_fb4b974c25524a73a62083e2",
+                "ordinal": 0,
+                "start_seconds": 0.0,
+                "end_seconds": 0.5,
+                "text": "Xin chào.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_8e31d384e01f4086b5c4c1f8",
+                    "ordinal": 0,
+                    "start_seconds": 0.0,
+                    "end_seconds": 0.2,
+                    "text": "Xin",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_22030a3e2ac14cdd87e20b40",
+                    "ordinal": 1,
+                    "start_seconds": 0.21,
+                    "end_seconds": 0.5,
+                    "text": "chào.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "provider": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+              "transcript_id": "fixture-transcript-1",
+              "provider_request_id": "fixture-transcript-1",
+              "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+              "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+              "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+              "word_timing_source": "provider_native_word_timestamps",
+              "timestamp_source": "provider_native_word_timestamps",
+              "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+              "provider_transcript_immutable": true,
+              "asr_prompt_profile": {
+                "profile_id": "asr-assemblyai-vi-direct-v1",
+                "provider_key": "assemblyai-transcription",
+                "model": "universal-3-5-pro",
+                "language": "vi",
+                "mode": "async_pre_recorded",
+                "keyterms": [
+                  "Ngọc Phương Đông",
+                  "Vinhomes Green Paradise",
+                  "Cần Giờ",
+                  "tham quan sa bàn",
+                  "chính sách bán hàng"
+                ],
+                "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+                "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+                "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+                "native_word_timestamps": true,
+                "automatic_retry": false,
+                "model_fallback": false
+              },
+              "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "original_evidence": true,
+              "secret_recorded": false,
+              "provider_credit_debit": null,
+              "estimated_cost_vnd": "4.650000",
+              "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+              "latency_ms": 53.208,
+              "native_saved_receipt_reused": true,
+              "source_media_mutated": false,
+              "remote_calls": 0,
+              "timing_rewrite_applied": false,
+              "human_edit": true,
+              "actor_ref": "explicit-fixture",
+              "derived_from_transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+              "changed_segment_ids": [],
+              "word_timestamp_policy": "discard_for_changed_text",
+              "edit_note": "Explicit fixture human edit, no Owner UAT",
+              "timeline_application_required": true
+            },
+            "created_at": "2026-10-10T17:23:01.194371Z"
+          }
+        ]
+      }
+    ],
+    "publishing_enabled": false,
+    "human_review_required": true,
+    "provider_calls": 0,
+    "source_media_mutated": false,
+    "changed": true
+  },
+  "reopened": {
+    "schema_version": "native-audio-transcripts-v1",
+    "workspace_id": "wsp_audio_transcript_fixture",
+    "project_id": "707aa86eb5754c409d7a7525a300df61",
+    "revision": 5,
+    "timeline_version": null,
+    "items": [
+      {
+        "asset_id": "43fa38a947e04f79ad1e34f20749a517.music.wav",
+        "asset_sha256": "b21c8452c6b8b790886fabc8ea496c048c3c05e5b304dada09737b4bfb677084",
+        "filename": "Actual owned source with untrusted extension.bin",
+        "analysis_sha256": "c390fe1169b449f762ca2284ab00510b5d68c1e10f8aa909b97cad61811f501c",
+        "original": {
+          "transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+          "analysis_id": "ana_a0571f888d75d6d8de052038",
+          "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+          "version": 1,
+          "is_original_evidence": true,
+          "provider_key": "assemblyai-transcription",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_0d30f039c87e4bb58fd46c83",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 0.5,
+              "text": "Xin chào.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_0d30f039c87e4bb58fd46c83",
+                  "ordinal": 0,
+                  "start_seconds": 0.0,
+                  "end_seconds": 0.2,
+                  "text": "Xin",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_3abeac84e72fb2fcbeef4943",
+                  "ordinal": 1,
+                  "start_seconds": 0.21,
+                  "end_seconds": 0.5,
+                  "text": "chào.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "provider": "assemblyai-transcription",
+            "model": "universal-3-5-pro",
+            "profile_id": "asr-assemblyai-vi-direct-v1",
+            "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+            "transcript_id": "fixture-transcript-1",
+            "provider_request_id": "fixture-transcript-1",
+            "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+            "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+            "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+            "word_timing_source": "provider_native_word_timestamps",
+            "timestamp_source": "provider_native_word_timestamps",
+            "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+            "provider_transcript_immutable": true,
+            "asr_prompt_profile": {
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "provider_key": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "language": "vi",
+              "mode": "async_pre_recorded",
+              "keyterms": [
+                "Ngọc Phương Đông",
+                "Vinhomes Green Paradise",
+                "Cần Giờ",
+                "tham quan sa bàn",
+                "chính sách bán hàng"
+              ],
+              "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+              "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+              "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+              "native_word_timestamps": true,
+              "automatic_retry": false,
+              "model_fallback": false
+            },
+            "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "original_evidence": true,
+            "secret_recorded": false,
+            "provider_credit_debit": null,
+            "estimated_cost_vnd": "4.650000",
+            "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+            "latency_ms": 53.208,
+            "native_saved_receipt_reused": true,
+            "source_media_mutated": false,
+            "remote_calls": 0,
+            "timing_rewrite_applied": false
+          },
+          "created_at": "2026-10-10T17:23:00.115685Z"
+        },
+        "current": {
+          "transcript_id": "trn_5e2a7f475d164d4c8ac9d7af",
+          "analysis_id": "ana_a0571f888d75d6d8de052038",
+          "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+          "version": 3,
+          "is_original_evidence": false,
+          "provider_key": "assemblyai-transcription",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_fb4b974c25524a73a62083e2",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 0.5,
+              "text": "Xin chào.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_8e31d384e01f4086b5c4c1f8",
+                  "ordinal": 0,
+                  "start_seconds": 0.0,
+                  "end_seconds": 0.2,
+                  "text": "Xin",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_22030a3e2ac14cdd87e20b40",
+                  "ordinal": 1,
+                  "start_seconds": 0.21,
+                  "end_seconds": 0.5,
+                  "text": "chào.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "provider": "assemblyai-transcription",
+            "model": "universal-3-5-pro",
+            "profile_id": "asr-assemblyai-vi-direct-v1",
+            "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+            "transcript_id": "fixture-transcript-1",
+            "provider_request_id": "fixture-transcript-1",
+            "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+            "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+            "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+            "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+            "word_timing_source": "provider_native_word_timestamps",
+            "timestamp_source": "provider_native_word_timestamps",
+            "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+            "provider_transcript_immutable": true,
+            "asr_prompt_profile": {
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "provider_key": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "language": "vi",
+              "mode": "async_pre_recorded",
+              "keyterms": [
+                "Ngọc Phương Đông",
+                "Vinhomes Green Paradise",
+                "Cần Giờ",
+                "tham quan sa bàn",
+                "chính sách bán hàng"
+              ],
+              "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+              "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+              "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+              "native_word_timestamps": true,
+              "automatic_retry": false,
+              "model_fallback": false
+            },
+            "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+            "original_evidence": true,
+            "secret_recorded": false,
+            "provider_credit_debit": null,
+            "estimated_cost_vnd": "4.650000",
+            "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+            "latency_ms": 53.208,
+            "native_saved_receipt_reused": true,
+            "source_media_mutated": false,
+            "remote_calls": 0,
+            "timing_rewrite_applied": false,
+            "human_edit": true,
+            "actor_ref": "explicit-fixture",
+            "derived_from_transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+            "changed_segment_ids": [],
+            "word_timestamp_policy": "discard_for_changed_text",
+            "edit_note": "Explicit fixture human edit, no Owner UAT",
+            "timeline_application_required": true
+          },
+          "created_at": "2026-10-10T17:23:01.194371Z"
+        },
+        "versions": [
+          {
+            "transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+            "analysis_id": "ana_a0571f888d75d6d8de052038",
+            "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "assemblyai-transcription",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_0d30f039c87e4bb58fd46c83",
+                "ordinal": 0,
+                "start_seconds": 0.0,
+                "end_seconds": 0.5,
+                "text": "Xin chào.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_0d30f039c87e4bb58fd46c83",
+                    "ordinal": 0,
+                    "start_seconds": 0.0,
+                    "end_seconds": 0.2,
+                    "text": "Xin",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_3abeac84e72fb2fcbeef4943",
+                    "ordinal": 1,
+                    "start_seconds": 0.21,
+                    "end_seconds": 0.5,
+                    "text": "chào.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "provider": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+              "transcript_id": "fixture-transcript-1",
+              "provider_request_id": "fixture-transcript-1",
+              "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+              "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+              "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+              "word_timing_source": "provider_native_word_timestamps",
+              "timestamp_source": "provider_native_word_timestamps",
+              "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+              "provider_transcript_immutable": true,
+              "asr_prompt_profile": {
+                "profile_id": "asr-assemblyai-vi-direct-v1",
+                "provider_key": "assemblyai-transcription",
+                "model": "universal-3-5-pro",
+                "language": "vi",
+                "mode": "async_pre_recorded",
+                "keyterms": [
+                  "Ngọc Phương Đông",
+                  "Vinhomes Green Paradise",
+                  "Cần Giờ",
+                  "tham quan sa bàn",
+                  "chính sách bán hàng"
+                ],
+                "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+                "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+                "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+                "native_word_timestamps": true,
+                "automatic_retry": false,
+                "model_fallback": false
+              },
+              "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "original_evidence": true,
+              "secret_recorded": false,
+              "provider_credit_debit": null,
+              "estimated_cost_vnd": "4.650000",
+              "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+              "latency_ms": 53.208,
+              "native_saved_receipt_reused": true,
+              "source_media_mutated": false,
+              "remote_calls": 0,
+              "timing_rewrite_applied": false
+            },
+            "created_at": "2026-10-10T17:23:00.115685Z"
+          },
+          {
+            "transcript_id": "trn_e8b5b3297e7041549a505cd6",
+            "analysis_id": "ana_a0571f888d75d6d8de052038",
+            "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+            "version": 2,
+            "is_original_evidence": false,
+            "provider_key": "assemblyai-transcription",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_2de3b8c5e13c476ea309e4e2",
+                "ordinal": 0,
+                "start_seconds": 0.0,
+                "end_seconds": 0.5,
+                "text": "Cần Giờ từ bản chỉnh sửa được yêu cầu.",
+                "speaker": null,
+                "confidence": null,
+                "words": []
+              }
+            ],
+            "provenance": {
+              "provider": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+              "transcript_id": "fixture-transcript-1",
+              "provider_request_id": "fixture-transcript-1",
+              "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+              "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+              "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+              "word_timing_source": "provider_native_word_timestamps",
+              "timestamp_source": "provider_native_word_timestamps",
+              "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+              "provider_transcript_immutable": true,
+              "asr_prompt_profile": {
+                "profile_id": "asr-assemblyai-vi-direct-v1",
+                "provider_key": "assemblyai-transcription",
+                "model": "universal-3-5-pro",
+                "language": "vi",
+                "mode": "async_pre_recorded",
+                "keyterms": [
+                  "Ngọc Phương Đông",
+                  "Vinhomes Green Paradise",
+                  "Cần Giờ",
+                  "tham quan sa bàn",
+                  "chính sách bán hàng"
+                ],
+                "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+                "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+                "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+                "native_word_timestamps": true,
+                "automatic_retry": false,
+                "model_fallback": false
+              },
+              "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "original_evidence": true,
+              "secret_recorded": false,
+              "provider_credit_debit": null,
+              "estimated_cost_vnd": "4.650000",
+              "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+              "latency_ms": 53.208,
+              "native_saved_receipt_reused": true,
+              "source_media_mutated": false,
+              "remote_calls": 0,
+              "timing_rewrite_applied": false,
+              "human_edit": true,
+              "actor_ref": "explicit-fixture",
+              "derived_from_transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+              "changed_segment_ids": [
+                "seg_0d30f039c87e4bb58fd46c83"
+              ],
+              "word_timestamp_policy": "discard_for_changed_text",
+              "edit_note": "Explicit fixture human edit, no Owner UAT",
+              "timeline_application_required": true
+            },
+            "created_at": "2026-10-10T17:23:01.164278Z"
+          },
+          {
+            "transcript_id": "trn_5e2a7f475d164d4c8ac9d7af",
+            "analysis_id": "ana_a0571f888d75d6d8de052038",
+            "asset_id": "ast_fac9389f1548c18b9b93af75a4f257f2",
+            "version": 3,
+            "is_original_evidence": false,
+            "provider_key": "assemblyai-transcription",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_fb4b974c25524a73a62083e2",
+                "ordinal": 0,
+                "start_seconds": 0.0,
+                "end_seconds": 0.5,
+                "text": "Xin chào.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_8e31d384e01f4086b5c4c1f8",
+                    "ordinal": 0,
+                    "start_seconds": 0.0,
+                    "end_seconds": 0.2,
+                    "text": "Xin",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_22030a3e2ac14cdd87e20b40",
+                    "ordinal": 1,
+                    "start_seconds": 0.21,
+                    "end_seconds": 0.5,
+                    "text": "chào.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "provider": "assemblyai-transcription",
+              "model": "universal-3-5-pro",
+              "profile_id": "asr-assemblyai-vi-direct-v1",
+              "profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "request_sha256": "cb90eb387a490c3664ae0d68798d4fc059510a96aa88708216a2dc13c68317b5",
+              "transcript_id": "fixture-transcript-1",
+              "provider_request_id": "fixture-transcript-1",
+              "raw_response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "response_sha256": "d1c468fad58904c3b6acda5760861770e151aa2b058ef71d31aef870de29f309",
+              "transcript_sha256": "0dcb19e76cd327199d6c8e08508b553347c6bb6ccd602e39661194f204d59229",
+              "words_sha256": "2162eb6716dedf492812b5618fbb1df5bec7995e2518400805d6139bfbb7d748",
+              "upload_identity_sha256": "20f835a4fda48ae584353d68262f5f5acd0be07e6a2b25893ae94482661d6f54",
+              "word_timing_source": "provider_native_word_timestamps",
+              "timestamp_source": "provider_native_word_timestamps",
+              "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
+              "provider_transcript_immutable": true,
+              "asr_prompt_profile": {
+                "profile_id": "asr-assemblyai-vi-direct-v1",
+                "provider_key": "assemblyai-transcription",
+                "model": "universal-3-5-pro",
+                "language": "vi",
+                "mode": "async_pre_recorded",
+                "keyterms": [
+                  "Ngọc Phương Đông",
+                  "Vinhomes Green Paradise",
+                  "Cần Giờ",
+                  "tham quan sa bàn",
+                  "chính sách bán hàng"
+                ],
+                "keyterms_sha256": "5b555dd98d59e6ac31f9f88470bd97d2910f479e68165f7940465c94fb7ceccf",
+                "context_prompt": "Cuộc tư vấn bằng tiếng Việt về bất động sản, một dự án ven biển và chuyến tham quan khu trưng bày.",
+                "context_prompt_sha256": "aa9844e215fb5589eeca1480bc0b3d279ee7001c8e2eae46234a9ba58c120adc",
+                "native_word_timestamps": true,
+                "automatic_retry": false,
+                "model_fallback": false
+              },
+              "asr_prompt_profile_sha256": "4531122508d7884804824ca7e29646fad41acabd1914dd330237c30793bc3d11",
+              "original_evidence": true,
+              "secret_recorded": false,
+              "provider_credit_debit": null,
+              "estimated_cost_vnd": "4.650000",
+              "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+              "latency_ms": 53.208,
+              "native_saved_receipt_reused": true,
+              "source_media_mutated": false,
+              "remote_calls": 0,
+              "timing_rewrite_applied": false,
+              "human_edit": true,
+              "actor_ref": "explicit-fixture",
+              "derived_from_transcript_id": "trn_cd8bd3e72906c921c58f19d7",
+              "changed_segment_ids": [],
+              "word_timestamp_policy": "discard_for_changed_text",
+              "edit_note": "Explicit fixture human edit, no Owner UAT",
+              "timeline_application_required": true
+            },
+            "created_at": "2026-10-10T17:23:01.194371Z"
+          }
+        ]
+      }
+    ],
+    "publishing_enabled": false,
+    "human_review_required": true,
+    "provider_calls": 0,
+    "source_media_mutated": false
+  }
+}

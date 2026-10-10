@@ -45,7 +45,8 @@ export const mediaReady = doc => {
 };
 export const mediaType = file => ({jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",mp4:"video/mp4",mov:"video/quicktime"})[file.name.split(".").pop().toLowerCase()] ?? "";
 export const documentType = file => ({txt:"text/plain",md:"text/markdown",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})[file.name.split(".").pop().toLowerCase()] ?? "";
-export const mediaAnalysisPending = doc => mediaLibrary(doc).some(a=>!(doc?.media_analysis??[]).some(r=>r.asset_id===a.id&&r.source_sha256===a.sha256));
+export const mediaAnalysisPending = doc => (doc?.assets??(doc?.asset?[doc.asset]:[])).some(a=>(['image','video'].includes(a.kind??'image')||
+  a.kind==='audio'&&a.canonical_role==='audio')&&!(doc?.media_analysis??[]).some(r=>r.asset_id===a.id&&r.source_sha256===a.sha256));
 export const musicType = file => ({wav:"audio/wav",mp3:"audio/mpeg"})[file.name.split(".").pop().toLowerCase()] ?? "";
 export const defaultSceneOptions = (scene, asset, plan) => ({scene,crop_strategy:plan?.crop_strategy??"contain",motion:asset?.kind==="video"?"none":plan?.motion??"none",source_start:asset?.kind==="video"?plan?.source_start??0:0,transition:plan?.transition??"cut"});
 export const finalApproved = job => Boolean(job?.final_review?.decision==="approve"&&job.final_review.revision===job.revision&&job.final_review.artifact_sha256===job.result?.qc?.final_sha256);
@@ -140,7 +141,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let multipartUI=null;
+  let multipartUI=null,audioTranscriptUI=null;
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
@@ -233,6 +234,7 @@ if (typeof document !== "undefined") {
     rightsUI?.controls();
     stockUI?.controls();
     multipartUI?.sync();
+    audioTranscriptUI?.sync();
     generationUI?.controls();
     mediaPlannerUI?.controls();
     narrationUI?.controls();
@@ -396,6 +398,12 @@ if (typeof document !== "undefined") {
     canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
     musicLoopEnabled=session.capabilities?.native_source_music_loop_crossfade===true;
     narratedMusicLoopEnabled=session.capabilities?.native_narrated_music_loop===true;
+    if(session.capabilities?.native_audio_transcript_edit===true){
+      const transcripts=await import('./native-audio-transcripts.mjs');
+      audioTranscriptUI=transcripts.initializeNativeAudioTranscripts({api,getState:()=>({project,dirty,busy,active:jobActive(project),
+        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,workspace_id:session.access?.workspace_id??'wsp_native_local'}),
+        onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
+    }
     if(session.capabilities?.native_multipart_upload===true){
       const uploads=await import('./native-multipart-upload.mjs');
       multipartUI=uploads.initializeNativeMultipartUpload({api,binary:uploadBinary,

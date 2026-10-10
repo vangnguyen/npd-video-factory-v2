@@ -39,25 +39,29 @@ def project_input(doc, version):
     texts = [] if not text else [{"kind": kind, "text": text, "source": "user",
                 "hash": hashlib.sha256(text.encode("utf-8")).hexdigest(), "version": version}]
     assets = project_assets(doc)
+    speech_audio=[a for a in assets if a['kind']=='audio' and a.get('canonical_role')=='audio']
     result = {"schema_version": "project-input-v1", "version": version, "source": "local_user_intake",
               "text_inputs": texts, "image_assets": [a for a in assets if a["kind"] == "image"],
               "video_assets": [a for a in assets if a["kind"] == "video"],
-              "document_assets": doc.get("documents", []), "metadata": {}}
+               "document_assets": doc.get("documents", []), "metadata": {}}
+    if speech_audio:result['audio_assets']=speech_audio
+    speech=[*result['video_assets'],*speech_audio]
     if kind == "script":
         workflow = "REVIEW_EXISTING_SCRIPT"
     elif texts or result["document_assets"]:
         workflow = "GENERATE_CONTENT_WITH_HUMAN_REVIEW"
-    elif any((a.get("has_audio") or a.get("audio_present")) and not (analysis_for_asset(doc, a) or {}).get("transcript") for a in result["video_assets"]):
+    elif any((a.get("has_audio") or a.get("audio_present")) and not (analysis_for_asset(doc, a) or {}).get("transcript") for a in speech):
         workflow = "ASR_REQUIRED"
-    elif any((analysis_for_asset(doc, a) or {}).get("transcript") for a in result["video_assets"]):
+    elif any((analysis_for_asset(doc, a) or {}).get("transcript") for a in speech):
         workflow = "REVIEW_TRANSCRIPT"
     else:
         workflow = "MEDIA_REQUIRES_BRIEF"
     result["metadata"] = {"workflow": workflow, "mixed": sum(bool(result[k]) for k in
-                ("text_inputs", "image_assets", "video_assets", "document_assets")) > 1,
+                ("text_inputs", "image_assets", "video_assets", "document_assets"))+bool(speech_audio) > 1,
                 "untranscribed_video_audio": any((a.get("has_audio") or a.get("audio_present")) and not (analysis_for_asset(doc, a) or {}).get("transcript") for a in result["video_assets"]),
                 "media_analysis": [{"asset_id": a["id"], "analysis_sha256": r["analysis_sha256"], "transcript_linked": bool(r.get("transcript"))}
-                                   for a in assets if (r := analysis_for_asset(doc, a))]}
+                                    for a in assets if (r := analysis_for_asset(doc, a))]}
+    if speech_audio:result['metadata']['untranscribed_audio']=any(not (analysis_for_asset(doc,a) or {}).get('transcript') for a in speech_audio)
     result["hash"] = digest(result)
     return result
 
@@ -73,11 +77,15 @@ def provider_context(doc):
     parts = [doc.get("prompt", "")]
     for document in inputs["document_assets"]:
         parts.append("Tài liệu người dùng, chưa xác minh:\n" + document["extracted_text"])
-    for asset in inputs["video_assets"]:
+    for asset in [*inputs['video_assets'],*inputs.get('audio_assets',[])]:
         record = analysis_for_asset(doc, asset)
         if record and record.get("transcript"):
-            parts.append("Lời nói từ video nguồn do AssemblyAI nhận diện, có thể sai và chưa xác minh dữ kiện:\n" +
-                         " ".join(s["text"] for s in record["transcript"]["segments"]))
+            from .audio_transcripts import selected
+            normalized=selected(doc,asset) if asset['kind']=='audio' else None
+            segments=[s.model_dump(mode='json') for s in normalized.segments] if normalized else record['transcript']['segments']
+            label=("Lời nói từ audio nguồn, bản chỉnh sửa của người dùng" if normalized and not normalized.is_original_evidence else
+                "Lời nói từ "+('audio' if asset['kind']=='audio' else 'video')+" nguồn do AssemblyAI nhận diện")
+            parts.append(label+", có thể sai và chưa xác minh dữ kiện:\n" + " ".join(s['text'] for s in segments))
     if inputs["image_assets"] or inputs["video_assets"]:
         parts.append("Media chỉ có mô tả kỹ thuật và transcript được nêu rõ nếu đã nhận diện. Không suy đoán nội dung từ tên file hoặc thông số ảnh/video.")
         parts.append(json.dumps([{k: a[k] for k in ("id", "kind", "width", "height", "duration_seconds") if k in a}
@@ -89,7 +97,7 @@ def provider_context(doc):
 
 
 def transcript_script(doc):
-    """Exact provider text is prepared for review without a generation call."""
+    """Saved provider text or explicit audio edits, without a generation call."""
     if doc.get("input_kind") != "media" or doc.get("prompt") or doc.get("documents"):
         return None
     from .asr import analysis_for_asset, pending_speech
@@ -99,7 +107,10 @@ def transcript_script(doc):
     for asset in project_assets(doc):
         record = analysis_for_asset(doc, asset)
         if record and record.get("transcript"):
-            values.extend(s["text"] for s in record["transcript"]["segments"])
+            from .audio_transcripts import selected
+            normalized=selected(doc,asset) if asset['kind']=='audio' else None
+            if normalized:values.extend(s.text for s in normalized.segments)
+            else:values.extend(s['text'] for s in record['transcript']['segments'])
     return " ".join(values) if values else None
 
 

@@ -3358,3 +3358,20 @@ REGRESSIONS:none observed in final related scope. Retained initial failures incl
 EXTERNAL BLOCKERS:existing browser localhost client block,deferred Owner UAT,genuine provider credentials/permissions,isolated Docker/production acceptance. Safe work continues.
 OWNER ACTION REQUIRED:none for safe implementation. Existing listening/Phase10 UAT remains deferred. No publishing/paid/deploy/main approval requested or exercised.
 NEXT WAVE:audio/subtitle editor and analysis handoff,Meta analytics,and all original remaining ModeA/B/media/provider/audio/multi-niche/platform/publishing/analytics/winner/learning/trend/Hub/hardening/A/B/C requirements. SOURCE_PRESERVED=YES at sealed parent,with fresh new seal required;PHASE10_TECHNICALLY_READY=YES;OWNER_UAT_REQUIRED=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+
+## 2026-10-11 — Wave 3B: Native audio transcript increment
+
+WAVE:3B and related3A/8F;increment only.
+STATUS:component implementation/local/mock verification PASS;full Wave3/ModeB/North Star remain PARTIAL.
+HEAD SHA:base 1bf2c1d1e4ecb37d4e3d99d15e51af16e60b2db3;exact new committed/pushed SHA and recovery paths are recorded by the external audio-transcript preservation seal.
+CAPABILITIES COMPLETED:uploaded speech audio through existing ASR worker and measured audio metadata;normalized immutable original/segment/word evidence;explicit Studio read/edit/original restoration;physical source and revision/version/hash fences;changed-text alignment removal;latest saved audio text in script/context;approval invalidation;actual signed HTTP/controller and exact backup/restart preservation. Completion applies only to this increment.
+CAPABILITIES PARTIAL:canonical voice/music track placement,SRT/VTT caption import/editor,word realignment,Native language selection/detection,genuine Vietnamese/English ASR,browser/non-developer full ModeB bundleA,Meta analytics and all other original remaining requirements. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED;59 groups unclosed.
+TESTS:final related Native130 PASS 98.705s across15 modules;full Studio651 PASS 2.0112887s across80 files. New Native13/Studio8 are included;focused and earlier runs overlap. No full Native/renderer/Docker/production regression claim.
+REAL PROVIDER TESTS:0;new paid calls0.
+MOCK TESTS:ASR responses,signed human identity and DOM are fixtures;WAV bytes,upload,FFprobe/FFmpeg,SQLite,loopback HTTP and backup/restore are real local operations. Actual controller performs4 signed HTTP requests/read-edit-read-restore and retains versions1/2/3. Not rendered-browser or Owner UAT acceptance.
+EVIDENCE:NATIVE_AUDIO_TRANSCRIPTS.md,north-star/audio-transcript-evidence.json,actual HTTP fixture,signed controller proof,retained initial/final logs,source checkpoint and Git recovery pair.
+REGRESSIONS:none observed in final related scope. Initial fixture backup/setup,already-original restoration,duplicate no-store header and narrow rehearsal route assertion failures were repaired and retained. No accepted artifact was replaced;fresh preservation seal verifies15 originals. Only new owned temporary fixtures are cleaned;no manual historical-data deletion.
+EXTERNAL BLOCKERS:genuine provider credentials/eligibility/language acceptance,existing browser localhost client block,deferred Owner UAT,isolated Docker/production acceptance. Safe implementation continues.
+OWNER ACTION REQUIRED:none for remaining safe work. Existing listening/Phase10 UAT stays deferred and is not self-accepted. No publishing/paid/deploy/main approval requested or exercised.
+NEXT WAVE:canonical source audio/subtitle tracks and editors,Meta analytics,then all original remaining ModeA/B/media/provider/audio/multi-niche/platform/publishing/analytics/winner/learning/trend/Hub/hardening/A/B/C requirements. SOURCE_PRESERVED=YES at sealed parent,fresh new seal required;PHASE10_TECHNICALLY_READY=YES;OWNER_UAT_REQUIRED=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.

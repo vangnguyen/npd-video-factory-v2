@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 import subprocess
 import wave
+from datetime import datetime,timezone
 
 from . import assemblyai_connection as connection
 from .contracts import WorkflowError, canonical, digest, file_sha
@@ -31,11 +32,12 @@ def analysis_for_asset(document, asset):
 
 
 def pending_assets(document):
-    return [a for a in project_assets(document) if not analysis_for_asset(document, a)]
+    return [a for a in project_assets(document) if (a['kind'] in {'image','video'} or
+        a['kind']=='audio' and a.get('canonical_role')=='audio') and not analysis_for_asset(document,a)]
 
 
 def pending_speech(document):
-    return [a for a in pending_assets(document) if a["kind"] == "video" and a.get("has_audio")]
+    return [a for a in pending_assets(document) if a['kind'] in {'video','audio'} and a.get('has_audio')]
 
 
 class DurableTransport:
@@ -165,7 +167,26 @@ class DurableTransport:
 
 
 def visual_metadata(config, asset):
-    """Measured visual descriptors only; no semantic inference from filenames."""
+    """Measured pixel or audio stream descriptors; no filename semantics."""
+    if asset['kind']=='audio':
+        try:
+            result=subprocess.run([str(config.ffmpeg_bin/'ffprobe.exe'),'-v','error','-protocol_whitelist','file,pipe',
+                '-show_streams','-show_format','-of','json',str(media_path(config,asset['id']))],capture_output=True,timeout=30)
+            value=json.loads(result.stdout);streams=[s for s in value['streams'] if s['codec_type']=='audio']
+            duration=float(value['format']['duration'])
+            if result.returncode or not streams or not 0<duration<=600:raise ValueError()
+            stream=streams[0];channels=int(stream['channels']);rate=int(stream['sample_rate'])
+            if not 1<=channels<=32 or not 8000<=rate<=192000:raise ValueError()
+            index=int(stream['index']);codec=stream['codec_name']
+            if index<0 or not isinstance(codec,str) or not codec:raise ValueError()
+        except (ValueError,TypeError,KeyError,subprocess.TimeoutExpired):
+            raise WorkflowError('ASR_LOCAL_AUDIO_METADATA_INVALID',400) from None
+        return {'width':None,'height':None,'orientation':None,'average_rgb':None,'mean_luminance':None,
+            'visual_descriptor_source':None,'semantic_content':'not_analyzed','audio_present':True,
+            'duration_seconds':duration,'fps':None,'shots':[],'media_kind':'audio','metadata_source':'ffprobe_audio_stream',
+            'audio_streams':[{'index':index,'codec':codec,'channels':channels,
+                'sample_rate':rate,'channel_layout':stream.get('channel_layout')}],
+            'source_checksum_sha256':asset['sha256']}
     from PIL import Image
     source = media_path(config, asset["id"])
     if asset["kind"] == "video":
@@ -245,7 +266,7 @@ def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
         record = {"asset_id": asset["id"], "source_sha256": asset["sha256"], "media": visual_metadata(config, asset),
                   "transcript": None, "provider_calls": 0}
         paths = []
-        if asset["kind"] == "video" and asset.get("has_audio"):
+        if asset['kind'] in {'video','audio'} and asset.get('has_audio'):
             from app.assemblyai_transcription_provider import AssemblyAITranscriptionProvider
             from app.auto_edit_models import MediaMetadata
             stage("asr_extract_audio")
@@ -281,6 +302,12 @@ def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
             if raw is None or digest(raw) != value["provenance"]["raw_response_sha256"]:
                 raise WorkflowError("ASR_RAW_RESPONSE_BINDING_MISMATCH")
             record.update(transcript=value, audio=metadata, provider_calls=2 + len(list((directory/"provider").glob("observe-*.intent.json"))))
+            if asset['kind']=='audio':
+                from .auto_edit_analysis import normalize_transcript,asset_reference
+                analysis_id='ana_'+digest(['native-audio-transcript-v1',asset['id'],asset['sha256'],value['provenance']['raw_response_sha256']])[:24]
+                normalized=normalize_transcript(value,analysis_id=analysis_id,asset_id=asset_reference(asset),
+                    duration=metadata['duration_seconds'],created_at=datetime.now(timezone.utc))
+                record['normalized_transcript']=normalized.model_dump(mode='json')
             paths = [audio, directory/"checkpoint-audio.json", directory/"provider"/"provider-completed.json",
                      directory/"provider"/"upload-ack.json", directory/"provider"/"transcript-ack.json"]
         record["analysis_sha256"] = digest(record)

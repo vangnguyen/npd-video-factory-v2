@@ -1,0 +1,161 @@
+{
+  "schema_version": "north-star-native-audio-transcript-evidence-v1",
+  "recorded_at": "2026-10-10T17:43:44.511063+00:00",
+  "base_head": "1bf2c1d1e4ecb37d4e3d99d15e51af16e60b2db3",
+  "capabilities": {
+    "uploaded_speech_audio_ASR_path": true,
+    "actual_audio_metadata": true,
+    "normalized_transcript_segment_word": true,
+    "immutable_original_and_human_versions": true,
+    "source_and_analysis_and_revision_CAS": true,
+    "physical_source_checked_before_edit": true,
+    "changed_text_discards_word_timing": true,
+    "explicit_original_restoration": true,
+    "latest_audio_text_in_script_context": true,
+    "backup_restore_and_restart": true,
+    "signed_HTTP_RBAC_CSRF": true,
+    "actual_controller_over_signed_HTTP": true,
+    "canonical_timeline_changed": false,
+    "music_or_subtitle_sent_to_ASR": false
+  },
+  "tests": {
+    "native_related_final": {
+      "passed": 130,
+      "seconds": 98.705,
+      "modules": 15,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-native-final-n3.log",
+        "sha256": "fdcfdaa36e0f9ce64f035c92ab3ae69f8c249e33201c658c732ceac8670afac5",
+        "bytes": 27190
+      }
+    },
+    "studio_full_final": {
+      "passed": 651,
+      "seconds": 2.0112887,
+      "files": 80,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-studio-final-n1.log",
+        "sha256": "2f5837821b92b6543a3a5f9fc90b628dd6b154d4a9106fcb5a699b59c203b0a8",
+        "bytes": 66952
+      }
+    },
+    "new_native_included": 13,
+    "new_studio_included": 8,
+    "overlapping_runs_are_not_added": true
+  },
+  "qualification": {
+    "local_real_generated_WAV_and_decoders": true,
+    "actual_local_HTTP_SQLite_and_restore": true,
+    "signed_fixture_human": true,
+    "ASR_protocol_mock": true,
+    "Studio_controller_fake_DOM": true,
+    "Studio_controller_live_local_HTTP": true,
+    "browser_rendered": false,
+    "non_developer_UAT": false,
+    "owner_UAT": false,
+    "real_provider_tests": 0,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "real_publishing": false,
+    "main_merged": false,
+    "production_deployed": false,
+    "manual_historical_data_deleted": false
+  },
+  "HTTP_fixture": {
+    "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\native-audio-transcripts.json",
+    "sha256": "28500658892be0dd803bf045698686769c08d52314e9c422c7b50c6c2db73357",
+    "bytes": 77934
+  },
+  "signed_controller_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-signed-controller-n1.json",
+    "sha256": "965c5ceddb08c7e08c12918fa5889474304ba5618b47f1996428294d2d0c0ef2",
+    "bytes": 1243
+  },
+  "source_sha256": {
+    "apps/studio-web/native-audio-transcripts.mjs": "a5b4cbfb2cff868ee8654233bc145a8f0fde522b1453a95fdbb9958a9a292384",
+    "apps/studio-web/native.html": "9ffbd3dbba5bc9237a42e850eef7cce08f76fb9c0f9665f8eb033850d35c2ed8",
+    "apps/studio-web/native.mjs": "536fe941668f26f3f73db4470f983fc60ad27c44891b31a077fe3065d519410d",
+    "apps/studio-web/tests/fixtures/native-audio-transcripts.json": "28500658892be0dd803bf045698686769c08d52314e9c422c7b50c6c2db73357",
+    "apps/studio-web/tests/native-audio-transcripts.test.mjs": "442e634374b6284343c106fa4763421ed7b935858a10b6ee9d424786d7961cd1",
+    "scripts/native_audio_transcript_http_ui.mjs": "947f3b007358f613844ff2ac263c3671798ae65d42a0a100c670c87dcd311597",
+    "services/windows_native/access.py": "072b1f3036b1012ab75ba957d99a6947c9622818544a5a5aac073476708cdc67",
+    "services/windows_native/asr.py": "6f99bfee7b9a62e714d9145fd931ae6d1077e0d13a8a35daa7026b48d5cf267e",
+    "services/windows_native/audio_transcript_routes.py": "4e0c467f2c2a2f152af567021125a5a5be850e7512ea6d9b2f61aefce325525e",
+    "services/windows_native/audio_transcripts.py": "c8b604770f04ac173ff840bfeb7a08cdf88821baa3fc94ae41d9f235a453f55a",
+    "services/windows_native/ingestion.py": "cbdac8f1f5a289dbb534a8db291a11a0e1ca695acbadf90be7c526506b2e44d2",
+    "services/windows_native/server.py": "0c2b84ea13b25805a15a7ceb6ff0df3cf0f59fcf65ce930bc9ede353ed3a8c0a",
+    "services/windows_native/tests/test_audio_transcripts.py": "317de0facbc4fc53ecf23d2c83610e01ce4b860b3575aea6d61e229ac502e2e7",
+    "services/windows_native/tests/test_audio_transcripts_http.py": "620a7d083827def8cae2bb33fedc15421b6d4d85a1fb50212c20a03864e817eb",
+    "services/windows_native/tests/test_phase10_http.py": "566a5e9b86883f70f3b083a38bce4b115d2d1395b59443d512b04d9f7f4565bc"
+  },
+  "retained_initial_and_focused_runs": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-native-focused-n1.log",
+      "sha256": "c04cf23d1c8b8758e522311534dde3d63df1b51351ebdc76179213994a538fa1",
+      "bytes": 2697
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-native-http-n1.log",
+      "sha256": "955f716b07154e808866e76eae80f288e20736ea3ea95df2ce247807dc00cbe5",
+      "bytes": 8285
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-native-http-n2.log",
+      "sha256": "c23bcacb2ae04a61034cbca1072081184937a65477bc14b622dcde3242fdb57b",
+      "bytes": 2595
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-studio-focused-n1.log",
+      "sha256": "a49d0358d413025b0eae55b64a1a69c88e08722ebbbdfd6486bd553f7f7572db",
+      "bytes": 1693
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-native-final-n1.log",
+      "sha256": "6f37d1414a553d22a2c91f1b64bcb33fcd9f4367d02bf67c8fc0393c92561680",
+      "bytes": 30250
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-native-final-n2.log",
+      "sha256": "167b2a6ebb4bc76167a66bcf96b87032fff40f76e89648d4a477f469ff9b81b6",
+      "bytes": 30198
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-transcript-controller-focused-n1.log",
+      "sha256": "59ea2a388151f9d2f626682245f9ba6b994f3e9d8b706bc8a0311170127f4184",
+      "bytes": 379
+    }
+  ],
+  "repairs": [
+    "Owned backup/restore fixture remains within its temporary parent; backup uses Config and returned path.",
+    "HTTP fixture uses direct parent setup instead of recursively rebinding its own setup.",
+    "Restore on already-original text is blocked through controller methods.",
+    "New route relies on the server common no-store header once; no duplicate header.",
+    "HTTP rehearsal accepts the exact typed multi-suffix audio asset route, including normalized .music.wav.",
+    "Provider context labels explicit audio human edits separately from original ASR text."
+  ],
+  "remaining": [
+    "Canonical source voice/music track placement and SRT/VTT caption import/editor",
+    "Word realignment for edited text and full subtitle templates",
+    "Native language selection/detection and genuine Vietnamese/English ASR acceptance",
+    "Genuine browser/non-developer/full Mode B bundle A",
+    "Meta analytics and all remaining original North Star requirements and full A/B/C bundles"
+  ],
+  "matrix": {
+    "groups": 64,
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed": 59
+  },
+  "states": {
+    "SOURCE_PRESERVED": "YES_AT_SEALED_PARENT",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES",
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  }
+}
