@@ -531,6 +531,8 @@ class LocalServer(ThreadingHTTPServer):
         from .narrated_variants import NativeNarratedVariants
         self.narrated_variants=NativeNarratedVariants(self.store,workspace_id=self.publications.workspace_id)
         from .bridge import NativeBridge
+        from .multipart_ingestion import NativeMultipartIngestion
+        self.multipart_uploads=NativeMultipartIngestion(self.store,self.config,workspace_id=self.publications.workspace_id)
         self.bridge=NativeBridge(self.store,workspace_id=self.publications.workspace_id)
         self.bridge.attach_intelligence(self.intelligence.store)
         self.bridge.bind_qualified_sources(analytics=self.official_analytics,winner=self.official_winners,learning=self.official_learning,projection=self.qualified_learning)
@@ -874,7 +876,7 @@ class Handler(BaseHTTPRequestHandler):
             csrf = self.auth_session.csrf if self.server.access is not None else self.server.csrf
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
-                "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
+                "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_official_publication_review":self.server.access is not None,"native_analytics_review":True,
                 "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_render_thumbnail_rights_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
@@ -882,6 +884,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
             return self.reply({"prompt": (LOCKS / "accepted-prompt.txt").read_text(encoding="utf-8")})
+        from .multipart_routes import handles as upload_handles,dispatch as upload_dispatch
+        if upload_handles(path):return upload_dispatch(self,write=False)
         if path == "/api/projects":
             return self.reply(self.server.store.list(include_archived=parse_qs(self.path.partition("?")[2]).get("archived")==["include"]))
         if path == '/api/assets':
@@ -979,6 +983,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-rights-override.mjs'] = 'native-rights-override.mjs'
         static['/native-narration-rights.mjs'] = 'native-narration-rights.mjs'
         static['/native-stock.mjs'] = 'native-stock.mjs'
+        static['/native-multipart-upload.mjs'] = 'native-multipart-upload.mjs'
         static['/native-generation.mjs'] = 'native-generation.mjs'
         static['/native-media-resolution.mjs'] = 'native-media-resolution.mjs'
         static['/native-media-planner.mjs'] = 'native-media-planner.mjs'
@@ -1041,6 +1046,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
                 'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        from .multipart_routes import handles as upload_handles,dispatch as upload_dispatch
+        if upload_handles(self.path):return upload_dispatch(self,write=True)
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/tiktok-creators/(?:checks(?:/ntcr_[a-f0-9]{32}/(?:fetch|cancel))?|drafts)',self.path):
             from .tiktok_creator_routes import post,owner
             principal=owner(self)

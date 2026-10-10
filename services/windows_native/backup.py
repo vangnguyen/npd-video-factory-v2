@@ -104,6 +104,10 @@ def database_status(path):
         counts = {table: con.execute(f'SELECT count(*) FROM "{table}"').fetchone()[0] for table in sorted(expected)}
         if path.name == 'workflow.sqlite3':
             busy = con.execute("SELECT count(*) FROM jobs WHERE status IN ('queued','running','retrying')").fetchone()[0]
+            if 'native_upload_sessions' in tables:
+                counts['native_upload_sessions']=con.execute('SELECT count(*) FROM native_upload_sessions').fetchone()[0]
+                counts['native_upload_parts']=con.execute('SELECT count(*) FROM native_upload_parts').fetchone()[0]
+                busy+=con.execute("SELECT count(*) FROM native_upload_sessions WHERE status='validating'").fetchone()[0]
             if 'native_cost_operations' in tables:
                 counts['native_cost_operations'] = con.execute('SELECT count(*) FROM native_cost_operations').fetchone()[0]
             if 'native_rights_requests' in tables:counts['native_rights_requests']=con.execute('SELECT count(*) FROM native_rights_requests').fetchone()[0]

@@ -3341,3 +3341,20 @@ EXTERNAL BLOCKERS:genuine read credentials/permissions/app eligibility and actua
 OWNER ACTION REQUIRED:none for remaining safe work. Listening/Phase10 UAT remains deferred, not self-accepted. No new paid/publish/deploy approval is requested.
 
 NEXT WAVE:Meta analytics and durable multipart, followed by every original remaining Master Spec requirement and full A/B/C acceptance. SOURCE_PRESERVED=YES at the sealed parent, fresh verification required at the new seal;PHASE10_TECHNICALLY_READY=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+
+## 2026-10-10 — Wave 3A / 8F: Native resumable ingestion increment
+
+WAVE:3A and related8F;increment only.
+STATUS:implemented and locally tested six-role intake;full Wave3/ModeB/North Star remain PARTIAL.
+HEAD SHA:base 004509502e6a5ee870fc1da8003819cc5b303f7a;new commit and exact recovery paths are recorded by the external multipart-ingestion preservation seal.
+CAPABILITIES COMPLETED:versioned signed intake for video/audio/image/logo/music/subtitle, durable received journal, chunk/source SHA256, MIME/magic and real local decoders, same-project dedup, alpha PNG/Vietnamese cues, explicit pause/resume/cancel, scoped immutable receipt, partial restore simulation, proper library previews and visual-only shot sources. Completion applies to this increment only.
+CAPABILITIES PARTIAL:audio/subtitle canonical track/editor/ASR handoff, logo/mask/alpha editing, large-file/multi-process soak, deep pagination/retention, real browser/non-developer full flow and every remaining original requirement. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED;59 groups unclosed.
+TESTS:final related Native106 PASS73.398s across12 modules;full Studio643 PASS1.9850284s across79 files. New Native16/Studio12 are included, not additional unique totals. No full Native/renderer/Docker/production regression claim.
+REAL PROVIDER TESTS:0;paid calls0.
+MOCK TESTS:signed human identity, fake DOM/controller with DTOs captured from actual loopback HTTP;generated media bytes, PIL/FFprobe/FFmpeg decode, SQLite and backup/restore are real local operations. Not rendered-browser or Owner UAT acceptance.
+EVIDENCE:NATIVE_MULTIPART_INGESTION.md,north-star/multipart-ingestion-evidence.json,actual six-role HTTP fixture,retained initial/final logs,source checkpoint and Git recovery pair.
+REGRESSIONS:none observed in final related scope. Retained initial failures include stale fixture manifest, cancel timestamp replay, duplicate imported discovery and obsolete exact capability expectation. Audio/subtitle image-preview regression was corrected. Accepted media/originals remain preserved. Only new owned fixtures and verified upload staging are cleaned;no manual historical-data deletion.
+EXTERNAL BLOCKERS:existing browser localhost client block,deferred Owner UAT,genuine provider credentials/permissions,isolated Docker/production acceptance. Safe work continues.
+OWNER ACTION REQUIRED:none for safe implementation. Existing listening/Phase10 UAT remains deferred. No publishing/paid/deploy/main approval requested or exercised.
+NEXT WAVE:audio/subtitle editor and analysis handoff,Meta analytics,and all original remaining ModeA/B/media/provider/audio/multi-niche/platform/publishing/analytics/winner/learning/trend/Hub/hardening/A/B/C requirements. SOURCE_PRESERVED=YES at sealed parent,with fresh new seal required;PHASE10_TECHNICALLY_READY=YES;OWNER_UAT_REQUIRED=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.

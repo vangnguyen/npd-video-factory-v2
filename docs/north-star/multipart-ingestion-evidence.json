@@ -1,0 +1,148 @@
+{
+  "schema_version": "north-star-native-multipart-evidence-v1",
+  "recorded_at": "2026-10-10T16:56:40.988625+00:00",
+  "base_head": "004509502e6a5ee870fc1da8003819cc5b303f7a",
+  "capabilities": {
+    "six_role_resumable_upload": true,
+    "original_sha256": true,
+    "chunk_manifest_sha256": true,
+    "mime_and_magic": true,
+    "actual_local_decoders": true,
+    "same_project_duplicate_detection": true,
+    "logo_alpha_preserved": true,
+    "UTF8_Vietnamese_subtitle_cues": true,
+    "partial_upload_backup_restore": true,
+    "signed_HTTP_RBAC_CSRF": true,
+    "owned_verified_chunk_cleanup": true,
+    "visual_only_shot_sources": true
+  },
+  "tests": {
+    "native_final": {
+      "passed": 106,
+      "seconds": 73.398,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multipart-ingestion-native-final-n1.log",
+        "sha256": "9631387463b710c5c0582096613527e74874a851f35bf6635ae5435378ba1909",
+        "bytes": 22152
+      }
+    },
+    "studio_final": {
+      "passed": 643,
+      "seconds": 1.9850284,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multipart-ingestion-studio-final-n1.log",
+        "sha256": "7ae20975e71114f13317e10f3d4bb6ccec07683bdabe18d653019a41ca35e750",
+        "bytes": 66051
+      }
+    },
+    "new_native": 16,
+    "new_studio": 12,
+    "overlapping_runs_are_not_added": true
+  },
+  "qualification": {
+    "local_real_generated_media": true,
+    "signed_fixture_human": true,
+    "actual_local_HTTP": true,
+    "Studio_fake_DOM_with_captured_HTTP_DTOs": true,
+    "Studio_controller_live_HTTP": false,
+    "browser_rendered": false,
+    "non_developer_UAT": false,
+    "owner_UAT": false,
+    "real_provider_tests": 0,
+    "provider_calls": 0,
+    "paid_calls": 0,
+    "real_publishing": false,
+    "main_merged": false,
+    "production_deployed": false,
+    "manual_historical_data_deleted": false
+  },
+  "HTTP_source_fixture": {
+    "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\native-multipart-upload.json",
+    "sha256": "53931e02f42016c4740ec85c37a799fecd819cf4791062a098f86dda6ca017a0",
+    "bytes": 337739
+  },
+  "source_sha256": {
+    "apps/studio-web/native-multipart-upload.mjs": "b5b2d4f56a699b11ff3bde9b39ac624a8d8c28f180a1b9c0f6746dd983502ae8",
+    "apps/studio-web/native.mjs": "3528eeb2c3e465023079ee9c9df973a12f5708155f02ea312fe67898ba9d1b1d",
+    "apps/studio-web/native.html": "7d104c9cb203576061d50c4c4bd7556cb26cb8dee8e349c0ddfe7b3a7d5847c8",
+    "apps/studio-web/asset-picker.mjs": "d15af39b4ff0e08e3e2445d1eb0ea7db4afb9ad6df6652ec20d3e8092e412a39",
+    "apps/studio-web/shot-studio.mjs": "23ab63712da6b1b2c773dac5f977121222607ef1afcf5ab2c67d2b53fc65809e",
+    "apps/studio-web/tests/native-multipart-upload.test.mjs": "eeb63b943d122bfb96e8efdd342b9bef789a0b371b30b8696f2de4218b780502",
+    "apps/studio-web/tests/fixtures/native-multipart-upload.json": "53931e02f42016c4740ec85c37a799fecd819cf4791062a098f86dda6ca017a0",
+    "services/windows_native/multipart_ingestion.py": "87db99a326b3998a809867a04cfb23538d30d4f73392457f491395cf80146740",
+    "services/windows_native/multipart_routes.py": "6879e58df1c56afdb6054cec0de5a267723ecbd5084df389d0b1ea7f7f1d890d",
+    "services/windows_native/media.py": "916ffe9f4b80c904b692212e35ea1c27fa77e5b0478f94c484e4b809f823dadc",
+    "services/windows_native/access.py": "4226166bffdf793576a67735bd2fda4f26205bbaf5792dbe43b791a82d22a8a3",
+    "services/windows_native/backup.py": "c2bbb4dab5d7f2ade9eb974bc0d300070f5207e609820c18523848fd9733c7e7",
+    "services/windows_native/server.py": "0f16264f2fc0c50f40e22560763d5c4d1470376731239f5f16d2397eb9402011",
+    "services/windows_native/tests/test_multipart_ingestion.py": "a683c156b39254f664657cc756bac363a0a7d4a3279f387a4b35b2101e738b03",
+    "services/windows_native/tests/test_multipart_ingestion_http.py": "1219674c595ef6f9e5cf5c9bfb834076ff3bcc6cec154edb17d848bf311cc56e",
+    "services/windows_native/tests/test_phase10_http.py": "ab85a2f8cb86b951f7752028c79707a836015db52795aac639d3d10e4caf2754"
+  },
+  "retained_initial_runs": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multipart-ingestion-native-n1.log",
+      "sha256": "f5ffc33ca42ae4e1565a63d5670fe4686209091a0352f50e6cbe1f2725b4786e",
+      "bytes": 2741
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multipart-ingestion-native-http-n1.log",
+      "sha256": "6961667310597c6a501961e452c202c2ea73f3e48cc18c4a17417aaf752684c1",
+      "bytes": 11058
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multipart-ingestion-native-http-n2.log",
+      "sha256": "05f752b223005794f1b8c0ac6666488bf991dddff686bc3d282b1254c493ccc9",
+      "bytes": 3878
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multipart-ingestion-studio-focused-n1.log",
+      "sha256": "77567393a857e62d7e4892ca80151f7040b27193e8177c0fb10c4332fd868797",
+      "bytes": 1281
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multipart-ingestion-studio-regression-n1.log",
+      "sha256": "4ef34ea313091b3548a809c810aff73a9942432f4328563d010b8efa75757f57",
+      "bytes": 65808
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\multipart-ingestion-native-regression-n1.log",
+      "sha256": "4566286d05c53287c05bc76fc3df8a3a33ee0f715ec5a7b8d7e3dbe2419734ed",
+      "bytes": 19378
+    }
+  ],
+  "repairs": [
+    "HTTP fixture must finalize the current returned parts manifest, not the initial one.",
+    "Cancel replay returns the same persisted journal and cleans only verified owned chunks.",
+    "Imported test classes were replaced with module references to avoid duplicate discovery.",
+    "Legacy exact capability expectation now includes only the additive typed upload capability.",
+    "Audio/subtitle library entries use proper previews and cannot become shot image sources."
+  ],
+  "remaining": [
+    "Audio/subtitle track application and editor handoff",
+    "ASR from uploaded audio",
+    "Logo/mask/alpha editing",
+    "Large-file and multi-process soak",
+    "Deep pagination and long-term retention",
+    "Genuine browser/non-developer/full Mode B bundle A acceptance",
+    "Meta analytics and all other original unclosed North Star requirements"
+  ],
+  "matrix": {
+    "groups": 64,
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed": 59
+  },
+  "states": {
+    "SOURCE_PRESERVED": "YES_AT_SEALED_PARENT",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES",
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  }
+}

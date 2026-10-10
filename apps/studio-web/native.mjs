@@ -37,7 +37,7 @@ export function nativeLegacyLayout(dom) {
 export const jobActive = project => project?.jobs?.some(j => ["queued", "running", "retrying"].includes(j.status)) ?? false;
 export const currentVideo = project => project?.approval && project.approval.approval_scope!=='narration_only' && !project.archived ? project.jobs.find(j => j.kind === "render" && j.status === "succeeded" && j.revision === project.revision) : null;
 export const canRender = (project, dirty, busy) => Boolean(project?.approval && project.approval.approval_scope!=='narration_only' && !project.archived && project.approval.revision === project.revision && !dirty && !busy && !jobActive(project));
-export const mediaLibrary = doc => (doc?.assets ?? (doc?.asset ? [doc.asset] : [])).map(a=>({...a,kind:a.kind??"image",filename:a.filename??"Ảnh đã lưu"}));
+export const mediaLibrary = doc => (doc?.assets ?? (doc?.asset ? [doc.asset] : [])).map(a=>({...a,kind:a.kind??"image",filename:a.filename??"Ảnh đã lưu"})).filter(a=>['image','video'].includes(a.kind));
 export const mediaBindings = doc => doc?.scene_media ?? (doc?.asset ? (doc.proposal?.visual_brief??[]).map(s=>({scene:s.scene,asset_id:doc.asset.id})) : []);
 export const mediaReady = doc => {
   const scenes=doc?.proposal?.visual_brief??[],assets=mediaLibrary(doc),bindings=mediaBindings(doc);
@@ -140,6 +140,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
+  let multipartUI=null;
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
@@ -160,6 +161,15 @@ if (typeof document !== "undefined") {
     if(response.status===401 && result.code==='NATIVE_AUTH_SESSION_REQUIRED')location.assign('/login');
     if(response.status===403 && result.code==='NATIVE_AUTH_FORBIDDEN')throw new Error('Vai trò hiện tại không có quyền thực hiện thao tác này.');
     if(!response.ok)throw new Error(`${errors[result.code] ?? result.failure?.action ?? result.code} (HTTP ${response.status})`);
+    return result;
+  }
+  async function uploadBinary(path,data,headers){
+    if(!(data instanceof ArrayBuffer)||data.byteLength<1||data.byteLength>1048576)throw new Error('Chunk upload phải từ 1 byte đến 1 MiB.');
+    const response=await fetch(path,{method:'POST',credentials:'same-origin',headers:{...headers,'Content-Type':'application/octet-stream','X-VF-CSRF':csrf},body:data});
+    const result=await response.json();
+    if(response.status===401&&result.code==='NATIVE_AUTH_SESSION_REQUIRED')location.assign('/login');
+    if(response.status===403&&result.code==='NATIVE_AUTH_FORBIDDEN')throw new Error('Vai trò hiện tại không có quyền tải tư liệu.');
+    if(!response.ok)throw new Error(`${errors[result.code]??result.code} (HTTP ${response.status})`);
     return result;
   }
   function controls() {
@@ -222,6 +232,7 @@ if (typeof document !== "undefined") {
     renderThumbnailRightsUI?.controls();
     rightsUI?.controls();
     stockUI?.controls();
+    multipartUI?.sync();
     generationUI?.controls();
     mediaPlannerUI?.controls();
     narrationUI?.controls();
@@ -385,6 +396,13 @@ if (typeof document !== "undefined") {
     canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
     musicLoopEnabled=session.capabilities?.native_source_music_loop_crossfade===true;
     narratedMusicLoopEnabled=session.capabilities?.native_narrated_music_loop===true;
+    if(session.capabilities?.native_multipart_upload===true){
+      const uploads=await import('./native-multipart-upload.mjs');
+      multipartUI=uploads.initializeNativeMultipartUpload({api,binary:uploadBinary,
+        getState:()=>({project,dirty,busy,active:jobActive(project),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,
+          workspace_id:session.access?.workspace_id??'wsp_native_local'}),
+        onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
+    }
     if(session.capabilities?.native_bridge_operator===true){
       const bridge=await import('./native-bridge.mjs');$('native-bridge-card').hidden=false;
       bridgeUI=bridge.initializeNativeBridge({api,getState:()=>({busy,canManage,workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});

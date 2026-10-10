@@ -80,7 +80,7 @@ def _verify_library_record(store, record):
     if record['metadata_conflict']:
         raise WorkflowError('LIBRARY_SOURCE_METADATA_CONFLICT')
     expected = asset.get('sha256')
-    if not isinstance(expected, str) or not re.fullmatch(r'[0-9a-f]{64}', expected) or asset.get('kind') not in {'image', 'video'}:
+    if not isinstance(expected, str) or not re.fullmatch(r'[0-9a-f]{64}', expected) or asset.get('kind') not in {'image', 'video', 'audio', 'subtitle'}:
         raise WorkflowError('LIBRARY_SOURCE_METADATA_INVALID')
     path = _library_path(store.root, 'assets', asset['id'])
     if not path.is_file() or file_sha(path) != expected or ('bytes' in asset and asset['bytes'] != path.stat().st_size):
@@ -117,12 +117,12 @@ def library_file(store, identifier, *, thumbnail=False):
 
 
 def library_assets(store, *, kind='all', query='', page=1, page_size=24):
-    if not isinstance(kind, str) or kind not in {'all', 'image', 'video'} or not isinstance(query, str) or len(query) > 200:
+    if not isinstance(kind, str) or kind not in {'all', 'visual', 'image', 'video', 'audio', 'subtitle'} or not isinstance(query, str) or len(query) > 200:
         raise WorkflowError('ASSET_LIBRARY_FILTER_INVALID', 400)
     if type(page) is not int or not 1 <= page <= 1_000_000 or type(page_size) is not int or not 1 <= page_size <= 100:
         raise WorkflowError('ASSET_LIBRARY_PAGE_INVALID', 400)
     needle = query.strip().casefold()
-    records = [r for r in _library_catalog(store).values() if (kind == 'all' or r['metadata'].get('kind') == kind)
+    records = [r for r in _library_catalog(store).values() if (kind == 'all' or r['metadata'].get('kind') == kind or kind == 'visual' and r['metadata'].get('kind') in {'image','video'})
                and (not needle or needle in str(r['metadata'].get('filename', '')).casefold()
                     or needle in str(r['metadata'].get('title', '')).casefold())]
     records.sort(key=lambda r: (r['first_seen_at'], r['metadata']['id']), reverse=True)
@@ -229,12 +229,14 @@ def discard_media(config, asset):
         (config.data_root / "originals" / asset["original_id"]).unlink(missing_ok=True)
 
 
-def ingest_media(config, source, content_type, filename, *, rights_confirmed, illustration):
+def ingest_media(config, source, content_type, filename, *, rights_confirmed, illustration, preserve_alpha=False):
     from PIL import Image, ImageOps
     if rights_confirmed is not True or not isinstance(illustration, bool):
         raise WorkflowError("MEDIA_RIGHTS_CONFIRMATION_REQUIRED", 400)
     if content_type not in CONTENT_TYPES:
         raise WorkflowError("MEDIA_TYPE_NOT_SUPPORTED", 400)
+    if type(preserve_alpha) is not bool or preserve_alpha and content_type!="image/png":
+        raise WorkflowError("LOGO_PNG_REQUIRED",400)
     size = source.stat().st_size
     video = content_type.startswith("video/")
     if not 0 < size <= (VIDEO_MAX_BYTES if video else IMAGE_MAX_BYTES):
@@ -242,7 +244,7 @@ def ingest_media(config, source, content_type, filename, *, rights_confirmed, il
     directory = config.data_root / "assets"
     directory.mkdir(parents=True, exist_ok=True)
     identifier = uuid.uuid4().hex
-    asset = {"id": identifier + (".mp4" if video else ".jpg"), "thumbnail_id": identifier + ".thumb.jpg",
+    asset = {"id": identifier + (".mp4" if video else ".png" if preserve_alpha else ".jpg"), "thumbnail_id": identifier + ".thumb.jpg",
              "filename": display_filename(filename), "kind": "video" if video else "image",
              "rights_confirmed": True, "illustration": illustration,'source_type':'user_upload','rights_status':'unknown',
              'license':None,'provider':'native-local-upload','source_reference':'upload://'+identifier,'generation_provenance':{}}
@@ -288,13 +290,15 @@ def ingest_media(config, source, content_type, filename, *, rights_confirmed, il
                     if original.format != {"image/jpeg": "JPEG", "image/png": "PNG"}[content_type] or original.width * original.height > 40_000_000:
                         raise ValueError()
                     original.load()
-                    image = ImageOps.exif_transpose(original).convert("RGB")
-                    if min(image.size) < 240:
+                    has_alpha="A" in original.getbands() or "transparency" in original.info
+                    image = ImageOps.exif_transpose(original).convert("RGBA" if preserve_alpha else "RGB")
+                    if min(image.size) < (32 if preserve_alpha else 240):
                         raise ValueError()
-                image.save(dest, quality=95)
+                image.save(dest,format="PNG" if preserve_alpha else "JPEG",quality=95)
                 asset.update(width=image.width, height=image.height)
+                if preserve_alpha:asset.update(has_alpha=has_alpha,content_type="image/png")
                 image.thumbnail((480, 480), Image.Resampling.LANCZOS)
-                image.save(thumbnail, quality=85)
+                image.convert("RGB").save(thumbnail, quality=85)
             except Exception:
                 raise WorkflowError("INVALID_IMAGE_JPEG_PNG_MAX_15MB_40MP_MIN_240PX", 400) from None
         asset["sha256"] = file_sha(dest)
