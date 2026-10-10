@@ -18,11 +18,18 @@ class Binding(StrictModel):
     token_file:str=Field(min_length=1,max_length=1000,repr=False)
     gates:Gates=Field(default_factory=Gates)
 
+class OAuthBinding(StrictModel):
+    credential_source:Literal['google_oauth_selection']
+    profile:Profile
+    credential_alias:str=Field(pattern=r'^[a-z][a-z0-9-]{3,79}$')
+    google_oauth_slot_id:str=Field(pattern=r'^ngos_[a-f0-9]{32}$')
+    gates:Gates=Field(default_factory=Gates)
+
 class Registry(StrictModel):
     schema_version:Literal['native-official-publishing-registry-v1']='native-official-publishing-registry-v1'
     version:StrictInt=Field(ge=1,le=1)
     workspace_id:str=Field(pattern=r'^[A-Za-z0-9_-]{1,80}$')
-    bindings:list[Binding]=Field(default_factory=list,max_length=50)
+    bindings:list[Binding|OAuthBinding]=Field(default_factory=list,max_length=50)
     @model_validator(mode='after')
     def unique(self):
         if any(b.profile.target.workspace_id!=self.workspace_id for b in self.bindings) or len({b.profile.target.profile_id for b in self.bindings})!=len(self.bindings):raise ValueError('Unique scoped publishing profiles required')
@@ -33,13 +40,17 @@ class PublishingFactory:
         if type(profile) is not Profile or profile.target.workspace_id!=workspace:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
         gates=gates or Gates();client=client or OfficialHTTPClient('youtube')
         if type(gates) is not Gates or type(client) is not OfficialHTTPClient or client.platform!='youtube' or resolver is not None and not callable(resolver):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
-        if binding is not None and (type(binding) is not Binding or binding.profile!=profile):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
+        if binding is not None and (type(binding) not in (Binding,OAuthBinding) or binding.profile!=profile):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
+        if type(binding) is OAuthBinding:
+            from .google_oauth_selections import PublishingSelectionResolver
+            if resolver is not None:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
+            resolver=PublishingSelectionResolver(binding,root,workspace)
         if (registry_file is None)!=(registry_sha256 is None) or registry_sha256 is not None and (not isinstance(registry_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',registry_sha256)):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CONFIGURATION_INVALID',400)
         self.profile=profile.model_copy(deep=True);self.gates=gates.model_copy(deep=True);self.root=Path(root);self.workspace=workspace;self.client=client
-        self.binding=binding.model_copy(deep=True) if binding is not None else None;self.path=protected_path(binding.token_file,self.root) if binding is not None else None
+        self.binding=binding.model_copy(deep=True) if binding is not None else None;self.path=protected_path(binding.token_file,self.root) if type(binding) is Binding else None
         self.external_resolver=resolver is not None;self.frozen_external_resolver=self.external_resolver
         self.resolver=resolver
-        if binding is not None and resolver is None:self.resolver=lambda target:token_load(self.path,self.root,target,self.binding.credential_alias)
+        if type(binding) is Binding and resolver is None:self.resolver=lambda target:token_load(self.path,self.root,target,self.binding.credential_alias)
         self.frozen={'profile':self.profile.model_dump(mode='json'),'gates':self.gates.model_dump(mode='json')}
         if self.binding is not None:self.frozen['binding']=self.binding.model_dump(mode='json')
         self.registry_file=protected_path(registry_file,self.root) if registry_file is not None else None;self.registry_sha256=registry_sha256;self.frozen_registry_file=self.registry_file
@@ -50,8 +61,13 @@ class PublishingFactory:
         try:
             profile=Profile.model_validate(self.profile.model_dump(mode='json'));gates=Gates.model_validate(self.gates.model_dump(mode='json'));current={'profile':profile.model_dump(mode='json'),'gates':gates.model_dump(mode='json')}
             if self.binding is not None:
-                binding=Binding.model_validate(self.binding.model_dump(mode='json'));current['binding']=binding.model_dump(mode='json')
-                if binding.profile!=profile or protected_path(binding.token_file,self.root)!=self.path:raise ValueError()
+                binding=type(self.binding).model_validate(self.binding.model_dump(mode='json'));current['binding']=binding.model_dump(mode='json')
+                if type(binding) not in (Binding,OAuthBinding) or binding.profile!=profile:raise ValueError()
+                if type(binding) is Binding and protected_path(binding.token_file,self.root)!=self.path:raise ValueError()
+                if type(binding) is OAuthBinding:
+                    from .google_oauth_selections import PublishingSelectionResolver
+                    if type(self.resolver) is not PublishingSelectionResolver or self.path is not None or self.resolver.binding!=binding:raise ValueError()
+                    self.resolver.check()
             if self.registry_sha256 is not None:current['registry_sha256']=self.registry_sha256
             if self.registry_file!=self.frozen_registry_file or (self.registry_file is None)!=(self.registry_sha256 is None):raise ValueError()
             if self.registry_file is not None and (protected_path(self.registry_file,self.root)!=self.registry_file or not self.registry_file.is_file() or self.registry_file.stat().st_size>262144 or file_sha(self.registry_file)!=self.registry_sha256):raise ValueError()
@@ -64,6 +80,7 @@ class PublishingFactory:
         return profile,gates
     def public(self):
         profile,gates=self.check();mounted=self.external_resolver or self.path is not None and self.path.is_file() and 0<self.path.stat().st_size<=32768
+        if type(self.binding) is OAuthBinding:mounted=self.resolver.available(mock=self.client.transport is not None)
         configured=all(gates.model_dump().values()) and self.resolver is not None and mounted and (self.client.transport is not None or self.client.network_enabled is True)
         return {'schema_version':'native-official-publishing-factory-v1','target':profile.target.model_dump(mode='json'),'target_binding_sha256':target_digest(profile.target),
             'configuration_sha256':self.sha256,'status':'CONFIGURED' if configured else 'NOT_CONFIGURED','gates':gates.model_dump(mode='json'),

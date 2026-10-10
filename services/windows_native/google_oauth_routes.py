@@ -4,6 +4,7 @@ from urllib.parse import parse_qs
 from pydantic import Field,ValidationError
 from .contracts import WorkflowError
 from .google_oauth_operations import Start,Refresh,Cancel
+from .google_oauth_selections import Select,Revoke
 from app.google_oauth_protocol import GoogleOAuthError
 
 BASE=r'/api/projects/([a-f0-9]{32})/google-oauth'
@@ -20,6 +21,21 @@ def service(handler):
 
 def get(handler,path):
     params=parse_qs(handler.path.partition('?')[2],keep_blank_values=True)
+    selections=getattr(handler.server,'google_oauth_selections',None)
+    if path=='/api/connections/google-oauth-selections':
+        if params:raise WorkflowError('NATIVE_GOOGLE_SELECTION_PAGE_INVALID',400)
+        if selections is not None:return selections.states()
+        return {'schema_version':'native-google-selection-runtime-v1','workspace_id':handler.server.publications.workspace_id,'enabled':False,'default_enabled':False,'slots':[],
+            'mock':False,'token_returned':False,'publishing_enabled':False,'automatic_refresh':False,'startup_decryption':False,'account_verified':False,'real_provider_tested':False}
+    selection_match=re.fullmatch(BASE+r'/selections(?:/(ngosel_[a-f0-9]{32}))?',path)
+    if selection_match:
+        if selections is None:raise WorkflowError('NATIVE_GOOGLE_SELECTION_NOT_CONFIGURED',503)
+        project,identity=selection_match.groups()
+        if identity:
+            if params:raise WorkflowError('NATIVE_GOOGLE_SELECTION_PAGE_INVALID',400)
+            return selections.get(project,identity)
+        if set(params)-{'limit','cursor'} or any(len(v)!=1 for v in params.values()) or not re.fullmatch('[0-9]{1,3}',params.get('limit',['25'])[0]):raise WorkflowError('NATIVE_GOOGLE_SELECTION_PAGE_INVALID',400)
+        return selections.page(project,limit=int(params.get('limit',['25'])[0]),cursor=params.get('cursor',[None])[0])
     if path=='/api/connections/google-oauth':
         if params:raise WorkflowError('NATIVE_GOOGLE_OAUTH_PAGE_INVALID',400)
         if handler.server.google_oauth is not None:return handler.server.google_oauth.states()
@@ -37,6 +53,17 @@ def get(handler,path):
     return service(handler).page(project,kind=kind,limit=int(raw),cursor=params.get('cursor',[None])[0])
 
 def post(handler,path,body):
+    selection_match=re.fullmatch(BASE+r'/selections(?:/(ngosel_[a-f0-9]{32})/(verify|revoke))?',path)
+    if selection_match:
+        selections=getattr(handler.server,'google_oauth_selections',None);session=getattr(handler,'auth_session',None)
+        if selections is None:raise WorkflowError('NATIVE_GOOGLE_SELECTION_NOT_CONFIGURED',503)
+        if session is None:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CURRENT_OWNER_REQUIRED',403)
+        selections.oauth.identity(session.principal);project,identity,action=selection_match.groups()
+        try:payload=(Revoke if action else Select).model_validate(body)
+        except (ValidationError,TypeError):raise WorkflowError('NATIVE_GOOGLE_SELECTION_FIELDS_INVALID',400) from None
+        if action=='verify':return asyncio.run(selections.verify(project,identity,principal=session.principal,expected_snapshot_sha256=payload.expected_snapshot_sha256))
+        if action=='revoke':return selections.revoke(project,identity,payload,principal=session.principal)
+        value,replay=selections.create(project,payload,principal=session.principal);return {**value,'idempotent_replay':replay}
     match=re.fullmatch(BASE+r'/(authorizations|refresh)(?:/'+AUTH+r'/(authorization-url|exchange|cancel))?',path)
     if not match:raise WorkflowError('ROUTE_NOT_FOUND',404)
     project,group,identity,action=match.groups()

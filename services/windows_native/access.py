@@ -39,6 +39,7 @@ def permission_for(method, path):
     if re.fullmatch(r'/api/projects/'+ID+r'/official-analytics(?:/noas_'+ID+r'/cancel)?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-analytics-refresh(?:/noap_'+ID+r'/cancel)?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/google-oauth/(?:authorizations(?:/ngoa_'+ID+r'/(?:authorization-url|exchange|cancel))?|refresh)',path):return 'manage'
+    if re.fullmatch(r'/api/projects/'+ID+r'/google-oauth/selections(?:/ngosel_'+ID+r'/(?:verify|revoke))?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-vision(?:/nvoi_'+ID+r'/(process|cancel))?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/render-vision(?:/nrvi_'+ID+r'/(process|cancel))?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/render-thumbnails',path):return 'edit'

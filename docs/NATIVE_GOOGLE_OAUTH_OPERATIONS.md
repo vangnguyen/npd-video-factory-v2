@@ -15,3 +15,6 @@ Three additive SQLite journals contain authorizations, operations and fixed publ
 The rehearsal uses synthetic Owner identity, actual Windows DPAPI/private DACL/SQLite/backup recovery and an explicit HTTP mock transport. It is not genuine OAuth, account, audience, browser, Owner UAT or production acceptance. Signed Native routes, Studio controls, approved real client acquisition, credential resolver selection, account confirmation and other platform integrations remain open.
 
 The shared protocol follows Google's official [native-app OAuth documentation](https://developers.google.com/identity/protocols/oauth2/native-app) and [OAuth policies](https://developers.google.com/identity/protocols/oauth2/policies). It keeps loopback redirects, PKCE, exact scope checks and explicit refresh handling; local consent windows and single-use claims are Video Factory safeguards.
+
+
+Later component integration: [publishing-purpose credential selection](NATIVE_GOOGLE_OAUTH_SELECTIONS.md) verifies the channel and attaches an explicit resolver to the Native worker. It does not select analytics credentials, enable publishing or renew publication consent. The earlier operation milestone assertions above describe acquisition/refresh alone.

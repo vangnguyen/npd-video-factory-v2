@@ -264,3 +264,8 @@ Latest closure: Native original YouTube thumbnail intent/response/receipt/cache/
 
 
 Latest closure: independent canonical-DSP stereo reference/music/final energy QC and offline raw-evidence recovery are component/local verified; see measured-audio-balance-evidence.json. Source audio remains unseparated and speech/perceptual/Owner/provider acceptance is not inferred. Next priorities include OAuth grant/account/runtime binding, remaining official platform execution, retention/quota/Windows recovery/soak, stronger speech QC and full original A/B/C/browser acceptance. Counts remain 5 IMPLEMENTED_REAL, 58 PARTIAL, 1 NOT_VERIFIED; 59 broad groups remain not fully closed.
+
+
+### Publishing-purpose OAuth grant selection increment
+
+Native explicit grant-to-channel-to-worker selection closes this component of Wave 8/9 with separate Owner/account consent, tagged inert registry, exact purpose/scope/target/private/cost fences, one-time resolver attachment, durable unknown recovery, readonly WAL availability, signed routes and Studio controls. Selection never enables publishing, refresh never auto-selects, and analytics-purpose credentials remain separate. See `NATIVE_GOOGLE_OAUTH_SELECTIONS.md` and its evidence index. Continue analytics-purpose credential selection, remaining official platform execution, retention/Windows recovery/soak and full original Mode A/B/provider/browser/Owner/A/B/C acceptance; no wave or North Star readiness is inferred from the component. Broad counts remain 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED.

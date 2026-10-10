@@ -1,0 +1,554 @@
+{
+  "fixture_kind": "explicit_protocol_mock_not_owner_or_real_provider_acceptance",
+  "runtime": {
+    "schema_version": "native-google-selection-runtime-v1",
+    "workspace_id": "wsp_google_oauth_fixture",
+    "enabled": true,
+    "default_enabled": false,
+    "slots": [
+      {
+        "slot_id": "ngos_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "profile_id": "ppf_google_oauth_fixture",
+          "profile_version": 1,
+          "platform": "youtube",
+          "provider_key": "youtube-data-api-publishing",
+          "target_account_id": "UC_EXPLICIT_SYNTHETIC_CHANNEL",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "client": {
+          "schema_version": "native-google-oauth-private-receipt-v1",
+          "reference": "nogv_4d3759fef9c24cff832c067dbb31b9f6",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "kind": "client",
+          "purpose": "publishing",
+          "credential_alias": "explicit-retained-selection-publishing",
+          "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+          "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+          "cipher_sha256": "efbedf9c175fbaf32cd8eeff667e565a78a8641337ec23108a6c242a71d6b6ec",
+          "bytes": 1519,
+          "token_returned": false,
+          "publishing_enabled": false
+        },
+        "client_id": "12345-explicit-vf-fixture.apps.googleusercontent.com",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.readonly",
+          "https://www.googleapis.com/auth/youtube.upload"
+        ]
+      }
+    ],
+    "mock": true,
+    "token_returned": false,
+    "publishing_enabled": false,
+    "automatic_refresh": false,
+    "startup_decryption": false,
+    "account_verified": false,
+    "real_provider_tested": false
+  },
+  "source": {
+    "operation_id": "ngop_651328e6bd14486d9d14cf2a5f4e12fc",
+    "workspace_id": "wsp_google_oauth_fixture",
+    "project_id": "89bf407e711b44a386f39ea18866ffb3",
+    "request_sha256": "4e59375b393710610ac21f45d077a2afbe6c31a61a6ef76bfc6e15ebc48980e5",
+    "snapshot_sha256": "062fc500fe0ae51a3d42543005945fc5eda601a7b6c6d4ee830f817893d12a9a",
+    "source_ref": "ngoa_f4146fd8ac2f4527bd03c3cc4e3f73da",
+    "status": "succeeded",
+    "cost_operation_id": "9e00df20fb8b644b3b0cd2b5310e3cf492fb7d9b6b9d26bee07c6fe969f62225",
+    "result_sha256": "6887b5777f2c1efbb600d3788bf6c1ecdece38ab8f4ddcedf5106fb8efda139f",
+    "failure_code": null,
+    "created_at": "2026-10-10T04:21:12.367461+00:00",
+    "updated_at": "2026-10-10T04:21:12.367461+00:00",
+    "result": {
+      "schema_version": "native-google-oauth-result-v1",
+      "grant_receipt": {
+        "schema_version": "native-google-oauth-private-receipt-v1",
+        "reference": "nogv_cafe07b2643349369dffe33c5ad00a6c",
+        "workspace_id": "wsp_google_oauth_fixture",
+        "kind": "grant",
+        "purpose": "publishing",
+        "credential_alias": "explicit-retained-selection-publishing",
+        "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+        "cipher_sha256": "4d115acc157e5599f29844039e2ec3c3c02d5f44fcc27a86487525b8b7d6bd20",
+        "bytes": 2175,
+        "token_returned": false,
+        "publishing_enabled": false
+      },
+      "grant_proof": {
+        "schema_version": "google-oauth-grant-proof-v1",
+        "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+        "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "purpose": "publishing",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.readonly",
+          "https://www.googleapis.com/auth/youtube.upload"
+        ],
+        "obtained_at": "2026-10-10T04:21:12.367461+00:00",
+        "expires_at": "2026-10-10T05:21:12.367461+00:00",
+        "refresh_expires_at": null,
+        "mock": true,
+        "token_returned": false,
+        "account_verified": false,
+        "publishing_enabled": false,
+        "production_consent_renewed": false,
+        "real_provider_tested": false
+      },
+      "response_sha256": "c3a1f09770322f0a6090209c47e62134dfe85ce513114a204d27a9d7873fb4ab",
+      "http_status": 200,
+      "cost_operation_id": "9e00df20fb8b644b3b0cd2b5310e3cf492fb7d9b6b9d26bee07c6fe969f62225",
+      "credential_selected": false
+    },
+    "snapshot": {
+      "workspace_id": "wsp_google_oauth_fixture",
+      "project_id": "89bf407e711b44a386f39ea18866ffb3",
+      "request": {
+        "revision": 1,
+        "slot_id": "ngos_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "expected_configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "acknowledged_credential_operation": true,
+        "acknowledged_protocol_mock": true,
+        "valid_for_seconds": 600,
+        "schema_version": "native-google-oauth-start-v1",
+        "redirect_uri": "http://127.0.0.1:18047/oauth/google/callback"
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "f824e66674792e40d13d507eb4f2f24de1646c153215b99c332d372201395074",
+        "expires_at": "2026-10-10T05:21:12.367461+00:00"
+      },
+      "slot": {
+        "slot_id": "ngos_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "profile_id": "ppf_google_oauth_fixture",
+          "profile_version": 1,
+          "platform": "youtube",
+          "provider_key": "youtube-data-api-publishing",
+          "target_account_id": "UC_EXPLICIT_SYNTHETIC_CHANNEL",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "client": {
+          "schema_version": "native-google-oauth-private-receipt-v1",
+          "reference": "nogv_4d3759fef9c24cff832c067dbb31b9f6",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "kind": "client",
+          "purpose": "publishing",
+          "credential_alias": "explicit-retained-selection-publishing",
+          "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+          "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+          "cipher_sha256": "efbedf9c175fbaf32cd8eeff667e565a78a8641337ec23108a6c242a71d6b6ec",
+          "bytes": 1519,
+          "token_returned": false,
+          "publishing_enabled": false
+        },
+        "client_id": "12345-explicit-vf-fixture.apps.googleusercontent.com",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.readonly",
+          "https://www.googleapis.com/auth/youtube.upload"
+        ]
+      },
+      "document_sha256": "ad314480bcfdff2220be2065b80c5956a25acd1b7c6a867cfc6c6a2030c8f775",
+      "mock": true,
+      "approved_at": "2026-10-10T04:21:12.367461+00:00",
+      "deadline": "2026-10-10T04:31:12.367461+00:00",
+      "token_returned": false,
+      "publishing_enabled": false,
+      "production_consent_renewed": false,
+      "account_verified": false,
+      "automatic_refresh": false,
+      "schema_version": "native-google-oauth-operation-snapshot-v1",
+      "authorization_receipt": {
+        "schema_version": "native-google-oauth-private-receipt-v1",
+        "reference": "nogv_9b92e91182384dce945956ac240d0d80",
+        "workspace_id": "wsp_google_oauth_fixture",
+        "kind": "authorization",
+        "purpose": "publishing",
+        "credential_alias": "explicit-retained-selection-publishing",
+        "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+        "cipher_sha256": "f5bbeaf22172aeb149d24e4df85194f2e61bebd9a37be988055a6c4acb835916",
+        "bytes": 1791,
+        "token_returned": false,
+        "publishing_enabled": false
+      },
+      "operation": "authorization_code",
+      "source_ref": "ngoa_f4146fd8ac2f4527bd03c3cc4e3f73da",
+      "source_snapshot_sha256": "31c1fa10850f2c5250480ebb76ca542175ef20892bd3f1637a72e29222128cb8"
+    },
+    "schema_version": "native-google-oauth-operation-v1",
+    "token_returned": false,
+    "publishing_enabled": false,
+    "automatic_refresh": false,
+    "real_provider_tested": false
+  },
+  "pending": {
+    "selection_id": "ngosel_44739d1ac2744a7f8da7ba8a4485c40a",
+    "workspace_id": "wsp_google_oauth_fixture",
+    "project_id": "89bf407e711b44a386f39ea18866ffb3",
+    "request_sha256": "e216e2bbc2c6c1d0ab94961e362fa5a69d512941604933232aeecc20cb212da2",
+    "snapshot_sha256": "3f88c7432742aef6e0c4f8071d08c3cf604384e8ea0999a926a1a982c881cfd9",
+    "slot_id": "ngos_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "target_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+    "status": "pending_verification",
+    "cost_operation_id": null,
+    "result_sha256": null,
+    "result_json": null,
+    "failure_code": null,
+    "created_at": "2026-10-10T04:21:12.367461+00:00",
+    "updated_at": "2026-10-10T04:21:12.367461+00:00",
+    "snapshot": {
+      "schema_version": "native-google-selection-snapshot-v1",
+      "workspace_id": "wsp_google_oauth_fixture",
+      "project_id": "89bf407e711b44a386f39ea18866ffb3",
+      "request": {
+        "revision": 1,
+        "source_operation_id": "ngop_651328e6bd14486d9d14cf2a5f4e12fc",
+        "expected_result_sha256": "6887b5777f2c1efbb600d3788bf6c1ecdece38ab8f4ddcedf5106fb8efda139f",
+        "acknowledged_account_access": true,
+        "acknowledged_credential_selection": true,
+        "acknowledged_protocol_mock": true,
+        "valid_for_seconds": 600
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "f824e66674792e40d13d507eb4f2f24de1646c153215b99c332d372201395074",
+        "expires_at": "2026-10-10T05:21:12.367461+00:00"
+      },
+      "slot": {
+        "slot_id": "ngos_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "profile_id": "ppf_google_oauth_fixture",
+          "profile_version": 1,
+          "platform": "youtube",
+          "provider_key": "youtube-data-api-publishing",
+          "target_account_id": "UC_EXPLICIT_SYNTHETIC_CHANNEL",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "client": {
+          "schema_version": "native-google-oauth-private-receipt-v1",
+          "reference": "nogv_4d3759fef9c24cff832c067dbb31b9f6",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "kind": "client",
+          "purpose": "publishing",
+          "credential_alias": "explicit-retained-selection-publishing",
+          "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+          "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+          "cipher_sha256": "efbedf9c175fbaf32cd8eeff667e565a78a8641337ec23108a6c242a71d6b6ec",
+          "bytes": 1519,
+          "token_returned": false,
+          "publishing_enabled": false
+        },
+        "client_id": "12345-explicit-vf-fixture.apps.googleusercontent.com",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.readonly",
+          "https://www.googleapis.com/auth/youtube.upload"
+        ]
+      },
+      "source_operation_snapshot_sha256": "062fc500fe0ae51a3d42543005945fc5eda601a7b6c6d4ee830f817893d12a9a",
+      "source_result_sha256": "6887b5777f2c1efbb600d3788bf6c1ecdece38ab8f4ddcedf5106fb8efda139f",
+      "grant_receipt": {
+        "schema_version": "native-google-oauth-private-receipt-v1",
+        "reference": "nogv_cafe07b2643349369dffe33c5ad00a6c",
+        "workspace_id": "wsp_google_oauth_fixture",
+        "kind": "grant",
+        "purpose": "publishing",
+        "credential_alias": "explicit-retained-selection-publishing",
+        "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+        "cipher_sha256": "4d115acc157e5599f29844039e2ec3c3c02d5f44fcc27a86487525b8b7d6bd20",
+        "bytes": 2175,
+        "token_returned": false,
+        "publishing_enabled": false
+      },
+      "grant_proof": {
+        "schema_version": "google-oauth-grant-proof-v1",
+        "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+        "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "purpose": "publishing",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.readonly",
+          "https://www.googleapis.com/auth/youtube.upload"
+        ],
+        "obtained_at": "2026-10-10T04:21:12.367461+00:00",
+        "expires_at": "2026-10-10T05:21:12.367461+00:00",
+        "refresh_expires_at": null,
+        "mock": true,
+        "token_returned": false,
+        "account_verified": false,
+        "publishing_enabled": false,
+        "production_consent_renewed": false,
+        "real_provider_tested": false
+      },
+      "document_sha256": "ad314480bcfdff2220be2065b80c5956a25acd1b7c6a867cfc6c6a2030c8f775",
+      "approved_at": "2026-10-10T04:21:12.367461+00:00",
+      "deadline": "2026-10-10T04:31:12.367461+00:00",
+      "mock": true,
+      "token_returned": false,
+      "publishing_enabled": false,
+      "automatic_refresh": false
+    },
+    "result": null,
+    "token_returned": false,
+    "publishing_enabled": false,
+    "automatic_refresh": false
+  },
+  "active": {
+    "selection_id": "ngosel_44739d1ac2744a7f8da7ba8a4485c40a",
+    "workspace_id": "wsp_google_oauth_fixture",
+    "project_id": "89bf407e711b44a386f39ea18866ffb3",
+    "request_sha256": "e216e2bbc2c6c1d0ab94961e362fa5a69d512941604933232aeecc20cb212da2",
+    "snapshot_sha256": "3f88c7432742aef6e0c4f8071d08c3cf604384e8ea0999a926a1a982c881cfd9",
+    "slot_id": "ngos_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "target_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+    "status": "active",
+    "cost_operation_id": "8f5154bb54b151d047536f980e1b11d9b8c555002d9535cc80589cc908ea6b66",
+    "result_sha256": "ed0e3130b4a032848e7eafbaa5665875ffe3a0c846f5ce1a817a9914b7a89e9f",
+    "failure_code": null,
+    "created_at": "2026-10-10T04:21:12.367461+00:00",
+    "updated_at": "2026-10-10T04:21:12.367461+00:00",
+    "snapshot": {
+      "schema_version": "native-google-selection-snapshot-v1",
+      "workspace_id": "wsp_google_oauth_fixture",
+      "project_id": "89bf407e711b44a386f39ea18866ffb3",
+      "request": {
+        "revision": 1,
+        "source_operation_id": "ngop_651328e6bd14486d9d14cf2a5f4e12fc",
+        "expected_result_sha256": "6887b5777f2c1efbb600d3788bf6c1ecdece38ab8f4ddcedf5106fb8efda139f",
+        "acknowledged_account_access": true,
+        "acknowledged_credential_selection": true,
+        "acknowledged_protocol_mock": true,
+        "valid_for_seconds": 600
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "f824e66674792e40d13d507eb4f2f24de1646c153215b99c332d372201395074",
+        "expires_at": "2026-10-10T05:21:12.367461+00:00"
+      },
+      "slot": {
+        "slot_id": "ngos_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "profile_id": "ppf_google_oauth_fixture",
+          "profile_version": 1,
+          "platform": "youtube",
+          "provider_key": "youtube-data-api-publishing",
+          "target_account_id": "UC_EXPLICIT_SYNTHETIC_CHANNEL",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "client": {
+          "schema_version": "native-google-oauth-private-receipt-v1",
+          "reference": "nogv_4d3759fef9c24cff832c067dbb31b9f6",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "kind": "client",
+          "purpose": "publishing",
+          "credential_alias": "explicit-retained-selection-publishing",
+          "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+          "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+          "cipher_sha256": "efbedf9c175fbaf32cd8eeff667e565a78a8641337ec23108a6c242a71d6b6ec",
+          "bytes": 1519,
+          "token_returned": false,
+          "publishing_enabled": false
+        },
+        "client_id": "12345-explicit-vf-fixture.apps.googleusercontent.com",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.readonly",
+          "https://www.googleapis.com/auth/youtube.upload"
+        ]
+      },
+      "source_operation_snapshot_sha256": "062fc500fe0ae51a3d42543005945fc5eda601a7b6c6d4ee830f817893d12a9a",
+      "source_result_sha256": "6887b5777f2c1efbb600d3788bf6c1ecdece38ab8f4ddcedf5106fb8efda139f",
+      "grant_receipt": {
+        "schema_version": "native-google-oauth-private-receipt-v1",
+        "reference": "nogv_cafe07b2643349369dffe33c5ad00a6c",
+        "workspace_id": "wsp_google_oauth_fixture",
+        "kind": "grant",
+        "purpose": "publishing",
+        "credential_alias": "explicit-retained-selection-publishing",
+        "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+        "cipher_sha256": "4d115acc157e5599f29844039e2ec3c3c02d5f44fcc27a86487525b8b7d6bd20",
+        "bytes": 2175,
+        "token_returned": false,
+        "publishing_enabled": false
+      },
+      "grant_proof": {
+        "schema_version": "google-oauth-grant-proof-v1",
+        "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+        "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "purpose": "publishing",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.readonly",
+          "https://www.googleapis.com/auth/youtube.upload"
+        ],
+        "obtained_at": "2026-10-10T04:21:12.367461+00:00",
+        "expires_at": "2026-10-10T05:21:12.367461+00:00",
+        "refresh_expires_at": null,
+        "mock": true,
+        "token_returned": false,
+        "account_verified": false,
+        "publishing_enabled": false,
+        "production_consent_renewed": false,
+        "real_provider_tested": false
+      },
+      "document_sha256": "ad314480bcfdff2220be2065b80c5956a25acd1b7c6a867cfc6c6a2030c8f775",
+      "approved_at": "2026-10-10T04:21:12.367461+00:00",
+      "deadline": "2026-10-10T04:31:12.367461+00:00",
+      "mock": true,
+      "token_returned": false,
+      "publishing_enabled": false,
+      "automatic_refresh": false
+    },
+    "result": {
+      "schema_version": "native-google-selection-result-v1",
+      "channel_id": "UC_EXPLICIT_SYNTHETIC_CHANNEL",
+      "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+      "grant_receipt_sha256": "60e8c557674785901ac70917411d3cd817a1b153140a18b43a87f78f11e1a608",
+      "response_sha256": "6eb106d0b3c6be5ef46caa05f57ff77ebf06e0d5cc8d966224b693f463bedeed",
+      "account_verified": true,
+      "mock": true,
+      "credential_selected": true,
+      "token_returned": false,
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "cost_operation_id": "8f5154bb54b151d047536f980e1b11d9b8c555002d9535cc80589cc908ea6b66"
+    },
+    "token_returned": false,
+    "publishing_enabled": false,
+    "automatic_refresh": false
+  },
+  "revoked": {
+    "selection_id": "ngosel_44739d1ac2744a7f8da7ba8a4485c40a",
+    "workspace_id": "wsp_google_oauth_fixture",
+    "project_id": "89bf407e711b44a386f39ea18866ffb3",
+    "request_sha256": "e216e2bbc2c6c1d0ab94961e362fa5a69d512941604933232aeecc20cb212da2",
+    "snapshot_sha256": "3f88c7432742aef6e0c4f8071d08c3cf604384e8ea0999a926a1a982c881cfd9",
+    "slot_id": "ngos_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "target_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+    "status": "revoked",
+    "cost_operation_id": "8f5154bb54b151d047536f980e1b11d9b8c555002d9535cc80589cc908ea6b66",
+    "result_sha256": "ed0e3130b4a032848e7eafbaa5665875ffe3a0c846f5ce1a817a9914b7a89e9f",
+    "failure_code": null,
+    "created_at": "2026-10-10T04:21:12.367461+00:00",
+    "updated_at": "2026-10-10T04:21:12.367461+00:00",
+    "snapshot": {
+      "schema_version": "native-google-selection-snapshot-v1",
+      "workspace_id": "wsp_google_oauth_fixture",
+      "project_id": "89bf407e711b44a386f39ea18866ffb3",
+      "request": {
+        "revision": 1,
+        "source_operation_id": "ngop_651328e6bd14486d9d14cf2a5f4e12fc",
+        "expected_result_sha256": "6887b5777f2c1efbb600d3788bf6c1ecdece38ab8f4ddcedf5106fb8efda139f",
+        "acknowledged_account_access": true,
+        "acknowledged_credential_selection": true,
+        "acknowledged_protocol_mock": true,
+        "valid_for_seconds": 600
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "f824e66674792e40d13d507eb4f2f24de1646c153215b99c332d372201395074",
+        "expires_at": "2026-10-10T05:21:12.367461+00:00"
+      },
+      "slot": {
+        "slot_id": "ngos_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "profile_id": "ppf_google_oauth_fixture",
+          "profile_version": 1,
+          "platform": "youtube",
+          "provider_key": "youtube-data-api-publishing",
+          "target_account_id": "UC_EXPLICIT_SYNTHETIC_CHANNEL",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "client": {
+          "schema_version": "native-google-oauth-private-receipt-v1",
+          "reference": "nogv_4d3759fef9c24cff832c067dbb31b9f6",
+          "workspace_id": "wsp_google_oauth_fixture",
+          "kind": "client",
+          "purpose": "publishing",
+          "credential_alias": "explicit-retained-selection-publishing",
+          "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+          "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+          "cipher_sha256": "efbedf9c175fbaf32cd8eeff667e565a78a8641337ec23108a6c242a71d6b6ec",
+          "bytes": 1519,
+          "token_returned": false,
+          "publishing_enabled": false
+        },
+        "client_id": "12345-explicit-vf-fixture.apps.googleusercontent.com",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.readonly",
+          "https://www.googleapis.com/auth/youtube.upload"
+        ]
+      },
+      "source_operation_snapshot_sha256": "062fc500fe0ae51a3d42543005945fc5eda601a7b6c6d4ee830f817893d12a9a",
+      "source_result_sha256": "6887b5777f2c1efbb600d3788bf6c1ecdece38ab8f4ddcedf5106fb8efda139f",
+      "grant_receipt": {
+        "schema_version": "native-google-oauth-private-receipt-v1",
+        "reference": "nogv_cafe07b2643349369dffe33c5ad00a6c",
+        "workspace_id": "wsp_google_oauth_fixture",
+        "kind": "grant",
+        "purpose": "publishing",
+        "credential_alias": "explicit-retained-selection-publishing",
+        "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+        "cipher_sha256": "4d115acc157e5599f29844039e2ec3c3c02d5f44fcc27a86487525b8b7d6bd20",
+        "bytes": 2175,
+        "token_returned": false,
+        "publishing_enabled": false
+      },
+      "grant_proof": {
+        "schema_version": "google-oauth-grant-proof-v1",
+        "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+        "configuration_sha256": "cced917115ddba5e1db46af20a6547ca2e1ec34099d8487ffb0d211e3630702e",
+        "purpose": "publishing",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.readonly",
+          "https://www.googleapis.com/auth/youtube.upload"
+        ],
+        "obtained_at": "2026-10-10T04:21:12.367461+00:00",
+        "expires_at": "2026-10-10T05:21:12.367461+00:00",
+        "refresh_expires_at": null,
+        "mock": true,
+        "token_returned": false,
+        "account_verified": false,
+        "publishing_enabled": false,
+        "production_consent_renewed": false,
+        "real_provider_tested": false
+      },
+      "document_sha256": "ad314480bcfdff2220be2065b80c5956a25acd1b7c6a867cfc6c6a2030c8f775",
+      "approved_at": "2026-10-10T04:21:12.367461+00:00",
+      "deadline": "2026-10-10T04:31:12.367461+00:00",
+      "mock": true,
+      "token_returned": false,
+      "publishing_enabled": false,
+      "automatic_refresh": false
+    },
+    "result": {
+      "schema_version": "native-google-selection-result-v1",
+      "channel_id": "UC_EXPLICIT_SYNTHETIC_CHANNEL",
+      "target_binding_sha256": "cccb38d2cca9049e3d333350538f7f905b5a4c5583cd7d2f04ab12e95f96db72",
+      "grant_receipt_sha256": "60e8c557674785901ac70917411d3cd817a1b153140a18b43a87f78f11e1a608",
+      "response_sha256": "6eb106d0b3c6be5ef46caa05f57ff77ebf06e0d5cc8d966224b693f463bedeed",
+      "account_verified": true,
+      "mock": true,
+      "credential_selected": true,
+      "token_returned": false,
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "cost_operation_id": "8f5154bb54b151d047536f980e1b11d9b8c555002d9535cc80589cc908ea6b66"
+    },
+    "token_returned": false,
+    "publishing_enabled": false,
+    "automatic_refresh": false
+  }
+}
