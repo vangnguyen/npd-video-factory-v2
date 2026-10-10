@@ -3,7 +3,7 @@ import re
 from urllib.parse import parse_qs
 from pydantic import ValidationError
 from .contracts import WorkflowError
-from .official_publication_models import Create,Approve,Action,Renew,Step
+from .official_publication_models import Create,publication_request,Approve,Action,Renew,Step
 from .official_publication_worker import code
 
 BASE=r'/api/projects/([a-f0-9]{32})/official-publications'
@@ -32,8 +32,8 @@ def post(handler,path,body):
     session=getattr(handler,'auth_session',None)
     if session is None:raise WorkflowError('NATIVE_HUMAN_OWNER_PUBLISH_APPROVAL_REQUIRED',403)
     principal=session.principal;service.identity(principal)
-    try:payload={None:Create,'approve':Approve,'renew':Renew,'revoke':Action,'cancel':Action,'step':Step,'poll':Step}[action].model_validate(body)
-    except (ValidationError,TypeError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_FIELDS_INVALID',400) from None
+    try:payload=publication_request(body) if action is None else {'approve':Approve,'renew':Renew,'revoke':Action,'cancel':Action,'step':Step,'poll':Step}[action].model_validate(body)
+    except (ValidationError,TypeError,ValueError):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_FIELDS_INVALID',400) from None
     if action is None:
         value,replay=service.create(project,payload,principal=principal)
         return {**value,'idempotent_replay':replay}

@@ -1,6 +1,6 @@
 {
-  "head": "f3b06990e8050a025d2bd35819da07fda495e76e",
-  "audited_at": "2026-10-10T06:37:20.274420+00:00",
+  "head": "83ba63615bf5d0fe5b8ee6612f1b353dbf10a256",
+  "audited_at": "2026-10-10T07:21:18.639755+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -289,7 +289,7 @@
     "docs/NATIVE_GUIDED_NARRATION_WORKFLOW.md": "8b5507d2f5a9712e741ad180b18fff7bb56b42ca53fdb8652e40a2ba8bf34828",
     "docs/north-star/native-guided-narration-evidence.json": "f5de264ab7e97d22751cc933a3e7affe0b4724cc26f12318afb2b5d760a56d44",
     "services/windows_native/official_publication_queue.py": "e77877f1afc8498f6b729900f3cae1aca78e0f6a6b01c6169d455fed8abd8c9f",
-    "services/windows_native/official_publication_worker.py": "242c1a2c9596c4ec94de300ac36d2cad240874b8850f70f765437d2002c7796b",
+    "services/windows_native/official_publication_worker.py": "6ffb71a17b5b22566ad7bfc75e1a0c9fdff264030053a977b89871a0c15086a7",
     "services/windows_native/tests/test_official_publication_queue.py": "2fd8562e10f017e8efd2b90bbaf5828d1cd50316f35c16d1a121b861193f6267",
     "scripts/north_star_native_official_publish_queue.py": "fbda22720f9048d8d9b598c584401e16e8c0b5ba27249e9ef6c288f30000257b",
     "docs/NATIVE_OFFICIAL_PUBLISH_QUEUE_KERNEL.md": "7d2aaaa8f39157d9a719b7afe7413c2d6d805912f2bcf79bf9ce87d0c4bc7214",
@@ -436,8 +436,8 @@
     "scripts/north_star_native_official_accounts.py": "3b5589a4a54da943a430257587a15d274a750862873ff92e393a16219467916b",
     "docs/NATIVE_OFFICIAL_ACCOUNT_REVIEW.md": "19418a18fceb70d9d851803af3b8cb86b67f776b6d9fec76055c1844ef668e8c",
     "docs/north-star/native-official-account-evidence.json": "c52d5f19f22ad4ec08a079093054f1443c1a7808a990f36df152833bbdccc68c",
-    "services/windows_native/official_publications.py": "d4622df1ec3eac1cbc3fc940b1b44de3151719b3d5a1749e595eca267bd760b6",
-    "services/windows_native/official_publication_models.py": "e7c1eab3fefb2d59314269af3d8565af157d33d566463cd5eea2949051581400",
+    "services/windows_native/official_publications.py": "8b6a124298280b08e72ceeb0306437256461f80079f26e7b588e943f17f8f653",
+    "services/windows_native/official_publication_models.py": "cab039a4a556bc7fef25c8258f6d94f2524e73c29bfebbcd39215517545d7dae",
     "services/windows_native/tests/test_official_publications.py": "032e87ea8d103efc05df01b2004dd089c3ccc29702f4ca886d0a6b06e3740c83",
     "scripts/north_star_native_official_publish_review.py": "d41c4e9f1554fe082a0b0d777b3b9e2b0a11e0e7546fb647c59d10318116a5df",
     "docs/NATIVE_OFFICIAL_PUBLISH_REVIEW.md": "a5f8e60cc0aa49ddad6480453e8a31d14441ff0c1a9ad5adb96c74ecc3901849",
@@ -461,7 +461,7 @@
     "scripts/north_star_native_official_publish_credentials.py": "f819f892064fea52f55e0fb4a6f31c680ae8568c3cd526daaa9963af48b26eb8",
     "docs/NATIVE_OFFICIAL_PUBLISH_CREDENTIALS.md": "e0709dc71ddb4001f1fe1cf200834b2f0f6090a62ce3203ef08324bb034d91f0",
     "docs/north-star/native-official-publish-credential-evidence.json": "4721a869a156e780947d848221480a7f52a50eb5314df1988660964e306930ea",
-    "services/windows_native/official_publication_routes.py": "6d4bf76244b989079d6790c5c518f5caaa8c2a8d4770d2bae54331560a52a5a3",
+    "services/windows_native/official_publication_routes.py": "4f9ad678bbe2f643d83b8de3071a2a7b4e955e7891c7ed0f2995d20baa79fd5d",
     "services/windows_native/tests/test_official_publications_http.py": "1366337d1b0c727add5464abe48975afac5d8ee2775728f4eb36e46a7bf641ba",
     "apps/studio-web/tests/native-official-publications.test.mjs": "3b64e56cea104881e7b7a4df5588a0941bed2420402879f819e1f0505569373e",
     "scripts/north_star_native_official_publish_controls.py": "e7fa23f09096bc49a6ef331e1d96986c9154fe4b73942754b0c35ba1d3f40484",
@@ -1143,6 +1143,11 @@
     "scripts/e2e-smoke.sh": "4437e0934b044ac0085c076b9b96607d73c5b91e1824ab8272450afefe745e4f",
     "scripts/v3_01_flow_a_acceptance.py": "1704373c21bf51893588b5137ed2298c8e9e0e3135b54e2b0a5ed10ee883ac3d",
     "scripts/v3_01_flow_b_acceptance.py": "d32a836f8d50394bd1b4bc0d6721c5abcbb9a73f8d13d970ca6214dc55cdae3a",
-    "scripts/v3_01_flow_c_acceptance.py": "c16aa224af73f00317b32b7f0ff2706606e7c4bac2c9eb6cf5238a9dd40b16dd"
+    "scripts/v3_01_flow_c_acceptance.py": "c16aa224af73f00317b32b7f0ff2706606e7c4bac2c9eb6cf5238a9dd40b16dd",
+    "docs/NATIVE_TIKTOK_DISTRIBUTION_ADMISSION.md": "cba586e36d91d3d696b8b8491a21128bd4ea8651a1dd4d88a859931cc1b30c2e",
+    "docs/north-star/tiktok-distribution-admission-evidence.json": "04f24c8bf6cdffa1b898d37dab145cf637ce86acb8a9fa5a1a06df88f4a28d91",
+    "scripts/north_star_native_tiktok_distribution_admission.py": "ba195233a165f316e26e127752aa2df06f47c6f3f105d7c72e856664a3004932",
+    "services/windows_native/tests/test_tiktok_distribution.py": "a4c38cad82ec036e6693299d6f230f465e9d6bfb5351ce622233f84e5e92ff04",
+    "services/windows_native/tiktok_distribution.py": "4f21a8964f547bbcc2208033e630bb7f03ca1c2b0359e7021715429fc864997e"
   }
 }

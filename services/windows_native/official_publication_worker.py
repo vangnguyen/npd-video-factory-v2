@@ -38,12 +38,13 @@ class NativeOfficialPublicationWorker:
         self.check()
         with self.journal.store.transaction() as con:
             value,factory,path,dispatch=self.journal.admission(project,identity,con=con)
+            if value['snapshot']['target']['platform']!='youtube':raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EXECUTION_NOT_IMPLEMENTED')
             if dispatch['version']!=version:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_STALE')
             if type(ticket) is ThumbnailTicket:self.journal.thumbnails.fence(con,ticket)
             elif ticket is not None:self.journal.ticket(con,ticket)
             self.journal.eligible(con,project,identity,value)
             if dispatch['phase'] in ('prepared','init_intent'):
-                preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),dispatch['total_bytes'],factory.profile,self.journal.clock(),thumbnail_stage=thumbnail_requested(value['snapshot']))
+                preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),dispatch['total_bytes'],factory.profile,self.journal.clock(),thumbnail_stage=thumbnail_requested(value['snapshot']),snapshot=value['snapshot'])
         if guard is not None:guard()
         return value,factory,path,dispatch
     def send(self,project,identity,version,factory,credential,request,operation,*,ticket=None,guard=None):

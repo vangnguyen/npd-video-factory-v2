@@ -1,0 +1,107 @@
+{
+  "schema_version": "north-star-native-tiktok-distribution-admission-evidence-v1",
+  "recorded_at": "2026-10-10T07:19:25.647639+00:00",
+  "audit_head_before_commit": "83ba63615bf5d0fe5b8ee6612f1b353dbf10a256",
+  "scope": "publication_admission_only_not_transfer_status_or_original_full_acceptance",
+  "fixture_kind": "explicit_admission_mock_not_media_provider_or_owner_acceptance",
+  "implementation": {
+    "tagged_tiktok_request_snapshot": true,
+    "original_creator_draft_response_cost_links": true,
+    "current_reviewed_final_and_metadata": true,
+    "separate_current_owner_approval": true,
+    "dedupe_and_explicit_prepared_renewal": true,
+    "protected_companion_registry": true,
+    "keyless_historical_reads": true,
+    "transfer_status_execution": false,
+    "cli_studio_configuration": false
+  },
+  "tests": {
+    "native_related": {
+      "status": "PASS",
+      "tests": 229,
+      "seconds": 358.135,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-distribution-admission-native-regression-n1.log",
+        "sha256": "2661763a73b3b85f77db43e73cbb0387e78f5c70691cb2ee64fb077ae9fa74e0",
+        "bytes": 52733
+      }
+    },
+    "new_admission_cases_in_related_suite": 17,
+    "earlier_targeted_14": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-distribution-admission-tests-n1.log",
+      "sha256": "479a11624eef729935369208d155c99acca7baa39e20dbb0bb3355b2f40219d9",
+      "bytes": 3340
+    },
+    "studio_latest_prior_component": {
+      "tests": 570,
+      "not_rerun_this_backend_increment": true,
+      "evidence": "tiktok-creator-evidence.json"
+    },
+    "real_provider_tests": 0
+  },
+  "retained_flow": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-distribution-admission-flow-n1",
+    "original_mock_creator_requests": 2,
+    "publication_requests": 0,
+    "paid_operations": 0,
+    "cost_operations": 2,
+    "journal_tables": 27,
+    "backup": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-distribution-admission-flow-n1\\public-tiktok-distribution-admission.zip",
+      "sha256": "78e74e4a2553b5a1fd48f3f3bc490a2226ad9caa7a4406e936b4455f60de5bf9",
+      "bytes": 356193
+    },
+    "backup_receipt": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-distribution-admission-flow-n1\\backup.json",
+      "sha256": "cf9628b4c72fe2e0242861cd2a8621486e02b080fc13861270932823f3092c90",
+      "bytes": 1733
+    },
+    "restore_receipt": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-distribution-admission-flow-n1\\restore.json",
+      "sha256": "bfcf06074c4ed23aef3a98af6dc58e905e6615e81a6666e0e5986bb260ce7548",
+      "bytes": 2127
+    },
+    "new_process": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-distribution-admission-flow-n1\\new-process-replay.json",
+      "sha256": "7a245730a6ddeac01ca7c4cb3b628805e9092fc68def0940c5b3e557aea38189",
+      "bytes": 291
+    },
+    "expected_public_journals": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-distribution-admission-flow-n1\\expected.json",
+      "sha256": "c9e6b2b90a977c09590055655122bcffc4139cd7e3be6527f7927737023218cd",
+      "bytes": 85664
+    },
+    "flow": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-distribution-admission-flow-n1\\flow.json",
+      "sha256": "64aec3cefcd21633d8b81162bb36b1df74bfc80f8a81a2cd1fdb1253dd4e9952",
+      "bytes": 95812
+    },
+    "result": {
+      "status": "PASS",
+      "fixture_kind": "explicit_admission_mock_not_media_provider_or_owner_acceptance",
+      "original_mock_creator_wires": 2,
+      "publishing_wires": 0,
+      "paid_operations": 0,
+      "owner_uat": false,
+      "real_provider_tested": false,
+      "source_project_unchanged": true,
+      "review_snapshot_preserved": true,
+      "public_backup_sha256": "78e74e4a2553b5a1fd48f3f3bc490a2226ad9caa7a4406e936b4455f60de5bf9",
+      "journal_tables": 27
+    }
+  },
+  "initial_failure": "Retention harness expected recover()==0; actual API returns structured counts. Corrected finish-only repair validates the same original backup/restore/journals without repeating creator requests; separate process replay passes.",
+  "states": {
+    "SOURCE_PRESERVED": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "PHASE10_READY": "NO",
+    "OWNER_UAT_REQUIRED": "YES",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  },
+  "source_seal": "recovery/20261007/tiktok-distribution-admission-preservation.json",
+  "recovery_pair": "recovery/20261007/tiktok-distribution-admission-recovery-pair.json",
+  "remaining": "Native TikTok async session/job/chunk/reconciliation/status/receipts and queue/Studio, Meta and other analytics, genuine platform app/account/legal/provider/browser/Owner and all original safe North Star gaps."
+}

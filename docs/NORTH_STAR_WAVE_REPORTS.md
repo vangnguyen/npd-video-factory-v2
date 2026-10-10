@@ -3095,3 +3095,20 @@ REGRESSIONS: final scoped/Studio/shared tests pass; existing Google publishing/a
 EXTERNAL BLOCKERS: actual TikTok app purpose/eligibility/audit, credentials and genuine provider acceptance; missing Docker/GPU and other provider/production acceptance remain separate. No Owner checkbox substitutes for provider approval.
 OWNER ACTION REQUIRED: none for remaining safe implementation. Phase 10 listening/UAT remains deferred by Owner; real external publication, new paid provider budget, deployment or protected-main merge require separate approval when concrete.
 NEXT WAVE: connect reviewed TikTok drafts to the existing durable publication engine, complete remaining official Meta/analytics paths, then continue all original incomplete waves and A/B/C bundles. `IMPLEMENTATION_COMPLETE = NO`, `REAL_PROVIDER_ACCEPTANCE_COMPLETE = NO`, `PRODUCTION_DEPLOYED = NO`.
+
+## Native TikTok publication admission — 2026-10-10
+
+WAVE: 9 continuation, with Wave 8 auth/cost/custody and backup integration.
+STATUS: ADMISSION_COMPONENT_VERIFIED; Native TikTok execution and full publishing/North Star remain PARTIAL.
+HEAD SHA: parent `83ba63615bf5d0fe5b8ee6612f1b353dbf10a256`; exact final commit/push/full-base-plus-increment recovery seal: `recovery/20261007/tiktok-distribution-admission-preservation.json`.
+CAPABILITIES COMPLETED: tagged TikTok publication request/snapshot; exact original draft/creator response/cost/target/cipher/final/QC/review/dry-run metadata lineage; current separate Owner publication grant, local revoke, bounded prepared renewal and dedupe; protected default-off companion registry composition; original keyless public history.
+CAPABILITIES PARTIAL: Native TikTok init/async job/private session/chunk/reconciliation/status/receipt and queue/CLI/Studio, genuine app/account/rights/provider/browser/Owner and full original Mode A/B/C acceptance, remaining Meta/analytics and all original gaps. Counts unchanged:5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED;59 broad groups not closed.
+TESTS: related Native229 PASS/358.135s including17 new admission cases; earlier targeted14 PASS/9.558s. Latest full Studio570 belongs to prior creator component and was not rerun for this backend-only increment.
+REAL PROVIDER TESTS: 0; no real account/publication/payment/provider enablement.
+MOCK TESTS: two original creator protocol wires; publication worker/intent blocked before private session/token/cost/wire; human/platform/rights/QC/nonplayable media are explicit fixtures. Actual DPAPI/SQLite/public backup/restore and exact separate-process replay27 journals pass.
+EVIDENCE: `docs/north-star/tiktok-distribution-admission-evidence.json`, `docs/NATIVE_TIKTOK_DISTRIBUTION_ADMISSION.md`, retained flow `recovery/20261007/tiktok-distribution-admission-flow-n1`, named test/replay logs. Initial retention harness assumed recover returned a number; corrected structured-result check and finish-only repair retain the same original backup/requests.
+REGRESSIONS: current related Native suite includes existing access, backup, Google publishing/analytics grant/account flows, YouTube publication/worker/queue and signed HTTP shell; all pass. Source seal freshly checks remote/main/live and15 original artifact hashes. No accepted artifact is replaced; no data is deleted.
+EXTERNAL BLOCKERS: actual TikTok app eligibility/audit/credentials and real provider/Owner publishing acceptance; Docker/GPU/isolated production/other provider/parent-browser/full Owner acceptance remain separate.
+OWNER ACTION REQUIRED: none for safe continuation; Phase10 listening/UAT remains deferred. Real external publication, new paid provider, production deployment or protected-main merge require separate approval when concrete.
+NEXT WAVE: Native TikTok async execution/queue/Studio; remaining official platforms/analytics and full original intelligence/media/audio/learning/isolation/production/A/B/C gaps.
+IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; PHASE10_READY=NO; OWNER_UAT_REQUIRED=YES; VIDEO_FACTORY_NORTH_STAR_READY=NO.
