@@ -9,6 +9,7 @@ from .contracts import WorkflowError,digest
 from .costs import CostLedger
 from .store import now
 from .official_account_registry import AccountFactory
+from .meta_connection import NativeMetaAccountFactory
 from app.models import StrictModel
 from app.analytics_official import AnalyticsOfficialError,account_request,confirm_account,response_digest
 from app.publishing_wire import PublishingWireError
@@ -31,7 +32,7 @@ class NativeOfficialAccounts:
     def __init__(self,store,*,workspace_id='wsp_native_local',factories=None,clock=lambda:datetime.now(timezone.utc)):
         self.store,self.workspace,self.clock=store,workspace_id,clock;self.factories=dict(factories or {})
         self.check_workspace()
-        if any(type(f) is not AccountFactory or key!=f.account.account_ref or f.workspace!=workspace_id or f.root.absolute()!=store.root.absolute() for key,f in self.factories.items()):
+        if len(self.factories)>50 or any(type(f) not in (AccountFactory,NativeMetaAccountFactory) or key!=f.account.account_ref or f.workspace!=workspace_id or f.root.absolute()!=store.root.absolute() for key,f in self.factories.items()):
             raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
         self.costs=CostLedger(store)
         with store.transaction() as con:
@@ -58,7 +59,7 @@ class NativeOfficialAccounts:
     def states(self):
         self.check_workspace()
         return {'schema_version':'native-official-accounts-v1','workspace_id':self.workspace,'accounts':[f.public() for _,f in sorted(self.factories.items())],
-            'supported_read_contracts':['youtube','tiktok'],'publishing_enabled':False,'automatic_verification':False,'token_returned':False,'real_provider_tested':False}
+            'supported_read_contracts':['youtube','tiktok','facebook','instagram_reels'],'publishing_enabled':False,'automatic_verification':False,'token_returned':False,'real_provider_tested':False}
 
     def event(self,con,row,action,actor,**evidence):
         con.execute('INSERT INTO native_official_account_events(check_id,workspace_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?,?)',
@@ -84,6 +85,10 @@ class NativeOfficialAccounts:
                 or not re.fullmatch(r'[a-f0-9]{64}',snapshot['document_sha256'])):raise ValueError()
             target=PublishingTargetBinding.model_validate(snapshot['target'])
             if target.workspace_id!=self.workspace or snapshot['target_binding_sha256']!=target_digest(target):raise ValueError()
+            if target.platform in ('facebook','instagram_reels'):
+                from .meta_account_evidence import validate
+                validate(snapshot,result)
+            elif 'meta' in snapshot or result is not None and 'meta' in result:raise ValueError()
             if value['status'] not in {'queued','running','succeeded','failed','not_configured','cancelled','outcome_unknown'}:raise ValueError()
             if (value['status']=='succeeded')!=(result is not None):raise ValueError()
             if result is not None:
@@ -106,7 +111,7 @@ class NativeOfficialAccounts:
             prior=con.execute('SELECT * FROM native_official_account_checks WHERE workspace_id=? AND project_id=? AND key_sha256=?',(self.workspace,project,key)).fetchone()
             if prior:
                 if prior['request_fingerprint']!=fp or prior['account_ref']!=account_ref:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_IDEMPOTENCY_CONFLICT')
-                return self.read(prior),True
+                return self.linked(con,prior),True
             current=self.store.editable(con,project,payload.revision);factory=self.factories.get(account_ref)
             if factory is None:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_NOT_FOUND',404)
             public=factory.public()
@@ -114,6 +119,9 @@ class NativeOfficialAccounts:
             snapshot={'schema_version':'native-official-account-check-snapshot-v1','workspace_id':self.workspace,'project_id':project,'account_ref':account_ref,
                 'project_revision':current['revision'],'document_sha256':digest(current['document']),'request':request,'target':public['target'],
                 'target_binding_sha256':public['target_binding_sha256'],'configuration_sha256':public['configuration_sha256'],'mock':factory.client.mock}
+            if type(factory) is NativeMetaAccountFactory:
+                from .meta_account_evidence import source
+                snapshot['meta']=source(factory,self.clock)
             status='queued' if public['status']=='CONFIGURED' else 'not_configured';stamp=now();identity='nack_'+uuid.uuid4().hex
             con.execute('INSERT INTO native_official_account_checks VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 (identity,self.workspace,project,account_ref,key,fp,digest(snapshot),json.dumps(snapshot),status,0,None,None,None,
@@ -121,8 +129,15 @@ class NativeOfficialAccounts:
             row=self.row(con,project,identity);self.event(con,row,'account.check.created',actor,status=status,external_call=False)
             return self.read(row),False
 
+    def linked(self,con,row):
+        value=self.read(row)
+        if value['snapshot']['target']['platform'] in ('facebook','instagram_reels'):
+            from .meta_account_evidence import links
+            links(self,con,value)
+        return value
+
     def get(self,project,identity):
-        with self.store.transaction() as con:return self.read(self.row(con,project,identity))
+        with self.store.transaction() as con:return self.linked(con,self.row(con,project,identity))
 
     def page(self,project,*,limit=25,cursor=None):
         if type(limit) is not int or not 1<=limit<=100:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_PAGE_INVALID',400)
@@ -140,7 +155,7 @@ class NativeOfficialAccounts:
             if after:where+=' AND (created_at<? OR (created_at=? AND check_id<?))';params.extend([after[2],after[2],after[3]])
             rows=con.execute('SELECT * FROM native_official_account_checks WHERE '+where+' ORDER BY created_at DESC,check_id DESC LIMIT ?',(*params,limit+1)).fetchall()
             next_cursor=base64.urlsafe_b64encode(json.dumps([self.workspace,project,rows[limit-1]['created_at'],rows[limit-1]['check_id']]).encode()).decode().rstrip('=') if len(rows)>limit else None
-            return {'schema_version':'native-official-account-check-page-v1','workspace_id':self.workspace,'project_id':project,'items':[self.read(r) for r in rows[:limit]],
+            return {'schema_version':'native-official-account-check-page-v1','workspace_id':self.workspace,'project_id':project,'items':[self.linked(con,r) for r in rows[:limit]],
                 'truncated':len(rows)>limit,'next_cursor':next_cursor,'publishing_enabled':False,'token_returned':False}
 
     def admission(self,project,identity,claim,*,con=None):
@@ -151,6 +166,9 @@ class NativeOfficialAccounts:
             if current['revision']!=snapshot['project_revision'] or digest(current['document'])!=snapshot['document_sha256']:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_PROJECT_CHANGED')
             if factory is None or factory.public()['status']!='CONFIGURED' or factory.sha256!=snapshot['configuration_sha256'] or factory.client.mock is not snapshot['mock']:
                 raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CHANGED')
+            if type(factory) is NativeMetaAccountFactory:
+                from .meta_account_evidence import admission
+                admission(factory,snapshot,self.clock())
             return factory,value
 
     def process(self,*,project=None,identity=None,fingerprint=None):
@@ -165,7 +183,17 @@ class NativeOfficialAccounts:
             con.execute("UPDATE native_official_account_checks SET status='running',claim_id=?,attempts=attempts+1,updated_at=? WHERE check_id=?",(claim,now(),identity))
         operation=None;sent=False
         try:
-            factory,value=self.admission(project,identity,claim);snapshot=value['snapshot'];credential=factory.credential(now=self.clock())
+            factory,value=self.admission(project,identity,claim);snapshot=value['snapshot']
+            if type(factory) is NativeMetaAccountFactory:
+                from .meta_account_evidence import lookup
+                result=lookup(self,factory,value,project,identity,claim)
+                with self.store.transaction() as con:
+                    self.admission(project,identity,claim,con=con);row=self.row(con,project,identity)
+                    if row['status']!='running' or row['claim_id']!=claim:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CHECK_CANCELLED')
+                    con.execute("UPDATE native_official_account_checks SET status='succeeded',claim_id=NULL,result_json=?,result_sha256=?,updated_at=? WHERE check_id=?",(json.dumps(result),digest(result),now(),identity))
+                    self.event(con,row,'account.check.confirmed','worker',mock=result['mock'],external_call=result['external_call'],response_sha256=result['response_sha256'])
+                return self.get(project,identity)
+            credential=factory.credential(now=self.clock())
             request=account_request(credential)
             operation=self.costs.begin(project_id=project,provider='official-'+credential.target.platform,model=None,operation='account_lookup.'+identity,
                 request_sha256=digest({'check_id':identity,'snapshot_sha256':value['snapshot_sha256'],'operation':'account_lookup'}),estimated_cost=None,

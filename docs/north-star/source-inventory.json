@@ -1,6 +1,6 @@
 {
-  "head": "a2b0a40fd25a20eac1cdf97d849e4f8a8f6ef044",
-  "audited_at": "2026-10-10T10:31:43.237898+00:00",
+  "head": "3573640b9390d5d37f1a5ac1adbb76436aef4b5f",
+  "audited_at": "2026-10-10T11:02:22.881767+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -14,7 +14,7 @@
     "services/windows_native/publications.py": "157d310834a514118173156eb39d69ad619c7747d3f6aa421557631a8e72b86d",
     "services/windows_native/analytics.py": "02aa0c7dd0e43df265384f4c9830973e5c2776296401f426cfb7ebf7858e0c39",
     "services/windows_native/shot_preview.py": "b272f45e84c3f7b2927ca5a7cc167d012041883d9a359c6c4ebffe8d0abfbfc7",
-    "services/windows_native/server.py": "63a8a862cea44ddaa23aa2edeb5575be80feaeb7eb574aa39d42fe947c517c84",
+    "services/windows_native/server.py": "4ab792078c85e32bec258dfb8064ec7bc650182beb60a4a178e36b343adb684b",
     "services/windows_native/observability.py": "df37d852fea8a9a87aa1913cd67e3f3b56698fd5a6e6d184d4a396c315648095",
     "services/windows_native/backup.py": "0782257fe6b9bd4c7d6ec3b013f6cc009016e3b4fa1beeb586454ca0ddde9334",
     "services/windows_native/tests/test_bridge.py": "c8ffb7468dd2af12e2610883ced088d39ac01c6ef8693bc512af1c35a1b3efbc",
@@ -424,14 +424,14 @@
     "docs/NATIVE_GENERATION_ADMISSION.md": "d84f50993e474b626cbfab346cfdf8db56651c5db1367a5e8ce38dc4bed6e605",
     "docs/north-star/native-generation-admission-evidence.json": "26950e6e8d52dbf7ea15eea2595820b24f6d88ec7def005c2c393a55224a7c0b",
     "docs/north-star/native-media-plan-budget-evidence.json": "1873ed287b44914b362228901d5e857316173d31bdb551fdb6f9cbbbf701a5fb",
-    "services/windows_native/official_accounts.py": "a263dbb085ab2db8472d0bc8ac2e5336ce210fbbd510b576568269aa8787bafc",
+    "services/windows_native/official_accounts.py": "a72eb2b3d0d2360ca548a3858fbd1f8a45af23823bb210c1114707a0072bc12f",
     "services/windows_native/official_account_tokens.py": "448f1386fccea627e9919232861a99094679dee73fc831ea8dfe4cce600daac9",
     "services/windows_native/official_account_routes.py": "e70b7fac1135b30e37cf1164832d6ae8f04d83b3a1816cd3565e08ca5b1ba2c0",
     "services/windows_native/assemblyai_connection.py": "ab709cd0e7cbb9fffecc7849910e63c89d96cee61a79730df8a660bb4234f009",
     "services/windows_native/tests/test_official_accounts.py": "b9c6b513ad51be00feff202a5f7aee2f6bd4a1504977981959e1352e1fb574fc",
     "services/windows_native/tests/test_official_account_registry.py": "4ae42e11c8a17db0943445952f77563cb62a75e3cc1864ed2e33cca8fe31988d",
     "services/windows_native/tests/test_official_accounts_http.py": "0f683d5f46c27b7c94ea9444e9b81d75478d88d9efc091631d45647b10356808",
-    "apps/studio-web/native-official-accounts.mjs": "4434df4d04d3c96cea613133c87a343a960e6abaca0f82f66d749542f3ffc5ad",
+    "apps/studio-web/native-official-accounts.mjs": "74897e3d36ad3facba1f7884a77e54851ec68eeb5159f73ad12a3e89097e7604",
     "apps/studio-web/tests/native-official-accounts.test.mjs": "d557040812d3a5caa3f534560c318188ed412f33cc9298b8d226f7adb0a2d8bb",
     "scripts/north_star_native_official_accounts.py": "3b5589a4a54da943a430257587a15d274a750862873ff92e393a16219467916b",
     "docs/NATIVE_OFFICIAL_ACCOUNT_REVIEW.md": "19418a18fceb70d9d851803af3b8cb86b67f776b6d9fec76055c1844ef668e8c",
@@ -1165,6 +1165,17 @@
     "scripts/north_star_tiktok_studio.py": "95aa1eba2cef5fafb8fe4724117870eb7dd226949a553a358e226844f0a7003d",
     "scripts/north_star_tiktok_studio.mjs": "e05ff110e47db8292ce648c842970f91ba12677419b1e1a19eceb90c059c4abe",
     "docs/NATIVE_TIKTOK_STUDIO.md": "70e6a754382fc3bb549528211ab6cd0bd54c7647d124620bd58c276a98d053ff",
-    "docs/north-star/tiktok-studio-evidence.json": "5f67cb94146f0a2dbd98f685315225292fc37e842f17b123f811ed271bee8c21"
+    "docs/north-star/tiktok-studio-evidence.json": "5f67cb94146f0a2dbd98f685315225292fc37e842f17b123f811ed271bee8c21",
+    "apps/api/app/meta_publishing_credentials.py": "a305e56db61ff035de8b25b86f078c88746de401bfd76df59a16e000a1298262",
+    "apps/api/tests/test_meta_publishing_credentials.py": "6e0db289e250ea0796da096c4c0e40eb95f498546b89f9f2a85153a861bc14d9",
+    "services/windows_native/meta_connection.py": "7c40d868dfcc543903b17751331f19279318c0a8fd546ba686a2020364ee440c",
+    "services/windows_native/meta_account_evidence.py": "cf4752e926d121e160ec2628ac7b613a09c08333ec192eb2119bd419455e3233",
+    "services/windows_native/tests/test_meta_accounts.py": "0daf7421a3da2c3949126c068e47e56dd626571ea4ed4648b9d85a876dca620b",
+    "services/windows_native/tests/test_meta_accounts_http.py": "f31356e9aeea2d4d6849746d3f5cc2c36d22d0a92a0a9e33aff05e08d8c20c56",
+    "apps/studio-web/tests/native-meta-accounts.test.mjs": "c48da85fff841c6f776a799f0b34f356de02bee1cf1cac2c0cfb7159cfcc11e9",
+    "apps/studio-web/tests/fixtures/native-meta-account-v1.json": "e92a8d682c31a1b2ade3762bba2870cc8a9fea62ace60610b3ad84e7d4826af4",
+    "scripts/north_star_meta_accounts.py": "9e9865668a9c4b7e8bca1e2fb95e3f9fe659936627c1c1156fbbcb36c7c86603",
+    "docs/NATIVE_META_ACCOUNTS.md": "a35aef93ec52b8ebe75db0c0f50251f35116691fc2dbd1c50a45b12f2ac115ef",
+    "docs/north-star/meta-account-evidence.json": "164562da13d072740aed7692285dd4822fad2ccab22e9c1d48a1431dd2118930"
   }
 }

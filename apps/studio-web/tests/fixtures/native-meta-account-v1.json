@@ -1,0 +1,584 @@
+{
+  "schema_version": "native-meta-account-fixture-v1",
+  "explicit_mocks": true,
+  "provider_owner_browser_acceptance": false,
+  "workspace_id": "wsp_native_fixture",
+  "project": {
+    "id": "bccb91a28d654b76a536aaf40e790e9c",
+    "revision": 2,
+    "document": {
+      "name": "Isolated HTTP shot fixture",
+      "prompt": "No live providers or final acceptance",
+      "input_kind": "prompt",
+      "proposal": {
+        "narration": "Xin chào. Cần kiểm chứng. Xin cảm ơn.",
+        "visual_brief": [
+          {
+            "scene": 1,
+            "visual": "Ảnh dự án",
+            "on_screen_text": "Tìm hiểu",
+            "narration_excerpt": "Xin chào."
+          },
+          {
+            "scene": 2,
+            "visual": "Ảnh dự án",
+            "on_screen_text": "Tìm hiểu",
+            "narration_excerpt": "Cần kiểm chứng."
+          },
+          {
+            "scene": 3,
+            "visual": "Ảnh dự án",
+            "on_screen_text": "Tìm hiểu",
+            "narration_excerpt": "Xin cảm ơn."
+          }
+        ],
+        "facts_needing_source": [
+          "Hồ sơ chính thức"
+        ]
+      },
+      "asset": {
+        "id": "956d2a1b6af445838976a2c770cec9b7.jpg",
+        "kind": "image",
+        "filename": "Generated HTTP fixture image",
+        "sha256": "df96d7f9059f2f760f03cca13ea69e627806aaf7c002adcf975e961663265e27",
+        "rights_confirmed": true,
+        "illustration": true
+      },
+      "assets": [
+        {
+          "id": "956d2a1b6af445838976a2c770cec9b7.jpg",
+          "kind": "image",
+          "filename": "Generated HTTP fixture image",
+          "sha256": "df96d7f9059f2f760f03cca13ea69e627806aaf7c002adcf975e961663265e27",
+          "rights_confirmed": true,
+          "illustration": true
+        }
+      ],
+      "documents": []
+    },
+    "approval": {
+      "revision": 2,
+      "snapshot_sha256": "6c5295148484d79cb11c8806b0e59989dec4d3bf2f78f678f008073f99b609e7",
+      "reviewer": "HTTP CONTRACT FIXTURE — NOT OWNER ACCEPTANCE",
+      "approved_at": "2026-10-10T10:52:52.762549+00:00",
+      "source": "local_ui_human_review"
+    },
+    "created_at": "2026-10-10T10:52:52.733856+00:00",
+    "updated_at": "2026-10-10T10:52:52.762549+00:00",
+    "input": {
+      "schema_version": "project-input-v1",
+      "version": 2,
+      "source": "local_user_intake",
+      "text_inputs": [
+        {
+          "kind": "prompt",
+          "text": "No live providers or final acceptance",
+          "source": "user",
+          "hash": "72549ec49266c73ba4a34bcca4f1e8326994ab70c4b895736eacc668e1588048",
+          "version": 2
+        }
+      ],
+      "image_assets": [
+        {
+          "id": "956d2a1b6af445838976a2c770cec9b7.jpg",
+          "kind": "image",
+          "filename": "Generated HTTP fixture image",
+          "sha256": "df96d7f9059f2f760f03cca13ea69e627806aaf7c002adcf975e961663265e27",
+          "rights_confirmed": true,
+          "illustration": true
+        }
+      ],
+      "video_assets": [],
+      "document_assets": [],
+      "metadata": {
+        "workflow": "GENERATE_CONTENT_WITH_HUMAN_REVIEW",
+        "mixed": true,
+        "untranscribed_video_audio": false,
+        "media_analysis": []
+      },
+      "hash": "3ac9efeaf7db58af7ccea74f78ff5f3f591932cbbcd37d5ed3a1d50e96292f96"
+    },
+    "archived": false,
+    "jobs": []
+  },
+  "states": {
+    "schema_version": "native-official-accounts-v1",
+    "workspace_id": "wsp_native_fixture",
+    "accounts": [
+      {
+        "schema_version": "native-meta-account-factory-v1",
+        "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_native_fixture",
+          "profile_id": "ppf_http_facebook",
+          "profile_version": 1,
+          "platform": "facebook",
+          "provider_key": "facebook-graph-api-publishing",
+          "target_account_id": "12345",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target_binding_sha256": "2fcde1623664ae6b2c7fc0d365e061cfb11e09c9074242666ac946cc96fc6bce",
+        "configuration_sha256": "069628fa66e2c1a4019d2e56be55028e88cd475c84a56dcb9df79c46c4558a7f",
+        "profile": {
+          "schema_version": "native-meta-publishing-profile-v1",
+          "target": {
+            "schema_version": "publishing-target-v1",
+            "workspace_id": "wsp_native_fixture",
+            "profile_id": "ppf_http_facebook",
+            "profile_version": 1,
+            "platform": "facebook",
+            "provider_key": "facebook-graph-api-publishing",
+            "target_account_id": "12345",
+            "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "page_id": "12345",
+          "api_version": "v24.0",
+          "login_type": "facebook_login"
+        },
+        "cipher_sha256": "c513e0570c6e8988d485b07147ad9a877de26c019f2bc43cc104f234e059435b",
+        "credential_alias": "meta-http-fixture",
+        "status": "CONFIGURED",
+        "credential_present": true,
+        "mode": "fixture",
+        "external_reads_enabled": false,
+        "credential_verified": false,
+        "account_verified": false,
+        "provider_permissions_verified": false,
+        "app_eligibility_verified": false,
+        "publishing_enabled": false,
+        "token_returned": false,
+        "real_provider_tested": false
+      },
+      {
+        "schema_version": "native-meta-account-factory-v1",
+        "account_ref": "npac_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_native_fixture",
+          "profile_id": "ppf_http_instagram_reels",
+          "profile_version": 1,
+          "platform": "instagram_reels",
+          "provider_key": "instagram-graph-api-publishing",
+          "target_account_id": "23456",
+          "credential_binding_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "target_binding_sha256": "849b148f69fec57c2a4dfda7b9a521fe751910abfa9f2b1eca28a5312ab22b5a",
+        "configuration_sha256": "f113a8e249efe1639a79a8361e81e2c8059a3c45f48b4b997d705beb16081877",
+        "profile": {
+          "schema_version": "native-meta-publishing-profile-v1",
+          "target": {
+            "schema_version": "publishing-target-v1",
+            "workspace_id": "wsp_native_fixture",
+            "profile_id": "ppf_http_instagram_reels",
+            "profile_version": 1,
+            "platform": "instagram_reels",
+            "provider_key": "instagram-graph-api-publishing",
+            "target_account_id": "23456",
+            "credential_binding_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "page_id": "12345",
+          "api_version": "v24.0",
+          "login_type": "facebook_login"
+        },
+        "cipher_sha256": "a097331ebb193053db4038e366d8384b8af0423b4b3b5baeb40c2f0068bfa41e",
+        "credential_alias": "meta-http-fixture",
+        "status": "CONFIGURED",
+        "credential_present": true,
+        "mode": "fixture",
+        "external_reads_enabled": false,
+        "credential_verified": false,
+        "account_verified": false,
+        "provider_permissions_verified": false,
+        "app_eligibility_verified": false,
+        "publishing_enabled": false,
+        "token_returned": false,
+        "real_provider_tested": false
+      }
+    ],
+    "supported_read_contracts": [
+      "youtube",
+      "tiktok",
+      "facebook",
+      "instagram_reels"
+    ],
+    "publishing_enabled": false,
+    "automatic_verification": false,
+    "token_returned": false,
+    "real_provider_tested": false
+  },
+  "queued": [
+    {
+      "check_id": "nack_b6aaf3b806224c7dbfb00424967b021d",
+      "workspace_id": "wsp_native_fixture",
+      "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+      "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "request_fingerprint": "635d6d4d2dc162c1e78552d109af09556b2f6995bb958617ad2389a7dabd5940",
+      "snapshot_sha256": "ba2c41bf02b431ecc821e04c13a4875935550d8e3e9769ea05f8af524f8f6b4d",
+      "status": "queued",
+      "attempts": 0,
+      "result_sha256": null,
+      "failure_code": null,
+      "actor_ref": "explicit-fixture",
+      "created_at": "2026-10-10T10:52:52.796692+00:00",
+      "updated_at": "2026-10-10T10:52:52.796692+00:00",
+      "schema_version": "native-official-account-check-v1",
+      "snapshot": {
+        "schema_version": "native-official-account-check-snapshot-v1",
+        "workspace_id": "wsp_native_fixture",
+        "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+        "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "project_revision": 2,
+        "document_sha256": "6c5295148484d79cb11c8806b0e59989dec4d3bf2f78f678f008073f99b609e7",
+        "request": {
+          "schema_version": "native-official-account-check-request-v1",
+          "revision": 2,
+          "expected_configuration_sha256": "069628fa66e2c1a4019d2e56be55028e88cd475c84a56dcb9df79c46c4558a7f",
+          "acknowledged_read_only": true
+        },
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_native_fixture",
+          "profile_id": "ppf_http_facebook",
+          "profile_version": 1,
+          "platform": "facebook",
+          "provider_key": "facebook-graph-api-publishing",
+          "target_account_id": "12345",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target_binding_sha256": "2fcde1623664ae6b2c7fc0d365e061cfb11e09c9074242666ac946cc96fc6bce",
+        "configuration_sha256": "069628fa66e2c1a4019d2e56be55028e88cd475c84a56dcb9df79c46c4558a7f",
+        "mock": true,
+        "meta": {
+          "schema_version": "native-meta-account-source-v1",
+          "profile": {
+            "schema_version": "native-meta-publishing-profile-v1",
+            "target": {
+              "schema_version": "publishing-target-v1",
+              "workspace_id": "wsp_native_fixture",
+              "profile_id": "ppf_http_facebook",
+              "profile_version": 1,
+              "platform": "facebook",
+              "provider_key": "facebook-graph-api-publishing",
+              "target_account_id": "12345",
+              "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "page_id": "12345",
+            "api_version": "v24.0",
+            "login_type": "facebook_login"
+          },
+          "cipher_sha256": "c513e0570c6e8988d485b07147ad9a877de26c019f2bc43cc104f234e059435b",
+          "consented_at": "2026-10-10T10:52:52.796692Z",
+          "deadline": "2026-10-10T11:07:52.796692Z"
+        }
+      },
+      "result": null,
+      "publishing_enabled": false,
+      "token_returned": false,
+      "idempotent_replay": false
+    },
+    {
+      "check_id": "nack_0d760a395e404ccd9167998b0c67af44",
+      "workspace_id": "wsp_native_fixture",
+      "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+      "account_ref": "npac_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "request_fingerprint": "da2886a4c196155e8fc6fc9151f78780c3bc33629abb78486f3f412260d636ef",
+      "snapshot_sha256": "caa15758b4f5504d8d1ae09a690ba2b7def5bc7823e1b76d5c89312b6261705f",
+      "status": "queued",
+      "attempts": 0,
+      "result_sha256": null,
+      "failure_code": null,
+      "actor_ref": "explicit-fixture",
+      "created_at": "2026-10-10T10:52:52.921312+00:00",
+      "updated_at": "2026-10-10T10:52:52.921312+00:00",
+      "schema_version": "native-official-account-check-v1",
+      "snapshot": {
+        "schema_version": "native-official-account-check-snapshot-v1",
+        "workspace_id": "wsp_native_fixture",
+        "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+        "account_ref": "npac_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "project_revision": 2,
+        "document_sha256": "6c5295148484d79cb11c8806b0e59989dec4d3bf2f78f678f008073f99b609e7",
+        "request": {
+          "schema_version": "native-official-account-check-request-v1",
+          "revision": 2,
+          "expected_configuration_sha256": "f113a8e249efe1639a79a8361e81e2c8059a3c45f48b4b997d705beb16081877",
+          "acknowledged_read_only": true
+        },
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_native_fixture",
+          "profile_id": "ppf_http_instagram_reels",
+          "profile_version": 1,
+          "platform": "instagram_reels",
+          "provider_key": "instagram-graph-api-publishing",
+          "target_account_id": "23456",
+          "credential_binding_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "target_binding_sha256": "849b148f69fec57c2a4dfda7b9a521fe751910abfa9f2b1eca28a5312ab22b5a",
+        "configuration_sha256": "f113a8e249efe1639a79a8361e81e2c8059a3c45f48b4b997d705beb16081877",
+        "mock": true,
+        "meta": {
+          "schema_version": "native-meta-account-source-v1",
+          "profile": {
+            "schema_version": "native-meta-publishing-profile-v1",
+            "target": {
+              "schema_version": "publishing-target-v1",
+              "workspace_id": "wsp_native_fixture",
+              "profile_id": "ppf_http_instagram_reels",
+              "profile_version": 1,
+              "platform": "instagram_reels",
+              "provider_key": "instagram-graph-api-publishing",
+              "target_account_id": "23456",
+              "credential_binding_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            },
+            "page_id": "12345",
+            "api_version": "v24.0",
+            "login_type": "facebook_login"
+          },
+          "cipher_sha256": "a097331ebb193053db4038e366d8384b8af0423b4b3b5baeb40c2f0068bfa41e",
+          "consented_at": "2026-10-10T10:52:52.921312Z",
+          "deadline": "2026-10-10T11:07:52.921312Z"
+        }
+      },
+      "result": null,
+      "publishing_enabled": false,
+      "token_returned": false,
+      "idempotent_replay": false
+    }
+  ],
+  "rows": [
+    {
+      "check_id": "nack_b6aaf3b806224c7dbfb00424967b021d",
+      "workspace_id": "wsp_native_fixture",
+      "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+      "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "request_fingerprint": "635d6d4d2dc162c1e78552d109af09556b2f6995bb958617ad2389a7dabd5940",
+      "snapshot_sha256": "ba2c41bf02b431ecc821e04c13a4875935550d8e3e9769ea05f8af524f8f6b4d",
+      "status": "succeeded",
+      "attempts": 1,
+      "result_sha256": "3771019b922dc7f51a8b5f62d6c01e84a1b64c0a5be1226f677faf1ec56defbc",
+      "failure_code": null,
+      "actor_ref": "explicit-fixture",
+      "created_at": "2026-10-10T10:52:52.796692+00:00",
+      "updated_at": "2026-10-10T10:52:52.883222+00:00",
+      "schema_version": "native-official-account-check-v1",
+      "snapshot": {
+        "schema_version": "native-official-account-check-snapshot-v1",
+        "workspace_id": "wsp_native_fixture",
+        "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+        "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "project_revision": 2,
+        "document_sha256": "6c5295148484d79cb11c8806b0e59989dec4d3bf2f78f678f008073f99b609e7",
+        "request": {
+          "schema_version": "native-official-account-check-request-v1",
+          "revision": 2,
+          "expected_configuration_sha256": "069628fa66e2c1a4019d2e56be55028e88cd475c84a56dcb9df79c46c4558a7f",
+          "acknowledged_read_only": true
+        },
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_native_fixture",
+          "profile_id": "ppf_http_facebook",
+          "profile_version": 1,
+          "platform": "facebook",
+          "provider_key": "facebook-graph-api-publishing",
+          "target_account_id": "12345",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "target_binding_sha256": "2fcde1623664ae6b2c7fc0d365e061cfb11e09c9074242666ac946cc96fc6bce",
+        "configuration_sha256": "069628fa66e2c1a4019d2e56be55028e88cd475c84a56dcb9df79c46c4558a7f",
+        "mock": true,
+        "meta": {
+          "schema_version": "native-meta-account-source-v1",
+          "profile": {
+            "schema_version": "native-meta-publishing-profile-v1",
+            "target": {
+              "schema_version": "publishing-target-v1",
+              "workspace_id": "wsp_native_fixture",
+              "profile_id": "ppf_http_facebook",
+              "profile_version": 1,
+              "platform": "facebook",
+              "provider_key": "facebook-graph-api-publishing",
+              "target_account_id": "12345",
+              "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "page_id": "12345",
+            "api_version": "v24.0",
+            "login_type": "facebook_login"
+          },
+          "cipher_sha256": "c513e0570c6e8988d485b07147ad9a877de26c019f2bc43cc104f234e059435b",
+          "consented_at": "2026-10-10T10:52:52.796692Z",
+          "deadline": "2026-10-10T11:07:52.796692Z"
+        }
+      },
+      "result": {
+        "schema_version": "native-official-account-check-result-v1",
+        "check_id": "nack_b6aaf3b806224c7dbfb00424967b021d",
+        "workspace_id": "wsp_native_fixture",
+        "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+        "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "snapshot_sha256": "ba2c41bf02b431ecc821e04c13a4875935550d8e3e9769ea05f8af524f8f6b4d",
+        "target_binding_sha256": "2fcde1623664ae6b2c7fc0d365e061cfb11e09c9074242666ac946cc96fc6bce",
+        "account_match": true,
+        "operation": "account_lookup",
+        "response_sha256": "42bf2bef78652b34b9036356ccf861d9df2ae63ec67c363f06fcbedebab54ad6",
+        "response_status": 200,
+        "cost_operation_id": "7fed49188314c36d190052f7584da51c48de045f292a2da4bafb1c91826d814c",
+        "mock": true,
+        "external_call": false,
+        "read_only": true,
+        "verified_at": "2026-10-10T10:52:52.875548+00:00",
+        "publishing_enabled": false,
+        "token_returned": false,
+        "real_provider_tested": false,
+        "meta": {
+          "schema_version": "native-meta-account-proof-v1",
+          "page_id": "12345",
+          "instagram_account_id": null,
+          "token_page_match": true,
+          "linked_instagram_match": null,
+          "declared_permissions": [
+            "pages_manage_posts",
+            "pages_read_engagement"
+          ],
+          "provider_permissions_verified": false,
+          "app_eligibility_verified": false,
+          "publishing_enabled": false,
+          "read_only": true,
+          "observations": [
+            {
+              "operation": "page_identity",
+              "request_sha256": "e83df8c3213d2cf36e64f4a4d4c74aa531ffbff789c373fb98bc4cff619447bd",
+              "response_sha256": "42bf2bef78652b34b9036356ccf861d9df2ae63ec67c363f06fcbedebab54ad6",
+              "response_status": 200,
+              "cost_operation_id": "7fed49188314c36d190052f7584da51c48de045f292a2da4bafb1c91826d814c"
+            }
+          ]
+        }
+      },
+      "publishing_enabled": false,
+      "token_returned": false
+    },
+    {
+      "check_id": "nack_0d760a395e404ccd9167998b0c67af44",
+      "workspace_id": "wsp_native_fixture",
+      "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+      "account_ref": "npac_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "request_fingerprint": "da2886a4c196155e8fc6fc9151f78780c3bc33629abb78486f3f412260d636ef",
+      "snapshot_sha256": "caa15758b4f5504d8d1ae09a690ba2b7def5bc7823e1b76d5c89312b6261705f",
+      "status": "succeeded",
+      "attempts": 1,
+      "result_sha256": "b73af8ad558fdf824b26945f2feb26e42fad345ecec021aa6eec20b3656e5523",
+      "failure_code": null,
+      "actor_ref": "explicit-fixture",
+      "created_at": "2026-10-10T10:52:52.921312+00:00",
+      "updated_at": "2026-10-10T10:52:53.037376+00:00",
+      "schema_version": "native-official-account-check-v1",
+      "snapshot": {
+        "schema_version": "native-official-account-check-snapshot-v1",
+        "workspace_id": "wsp_native_fixture",
+        "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+        "account_ref": "npac_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "project_revision": 2,
+        "document_sha256": "6c5295148484d79cb11c8806b0e59989dec4d3bf2f78f678f008073f99b609e7",
+        "request": {
+          "schema_version": "native-official-account-check-request-v1",
+          "revision": 2,
+          "expected_configuration_sha256": "f113a8e249efe1639a79a8361e81e2c8059a3c45f48b4b997d705beb16081877",
+          "acknowledged_read_only": true
+        },
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_native_fixture",
+          "profile_id": "ppf_http_instagram_reels",
+          "profile_version": 1,
+          "platform": "instagram_reels",
+          "provider_key": "instagram-graph-api-publishing",
+          "target_account_id": "23456",
+          "credential_binding_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "target_binding_sha256": "849b148f69fec57c2a4dfda7b9a521fe751910abfa9f2b1eca28a5312ab22b5a",
+        "configuration_sha256": "f113a8e249efe1639a79a8361e81e2c8059a3c45f48b4b997d705beb16081877",
+        "mock": true,
+        "meta": {
+          "schema_version": "native-meta-account-source-v1",
+          "profile": {
+            "schema_version": "native-meta-publishing-profile-v1",
+            "target": {
+              "schema_version": "publishing-target-v1",
+              "workspace_id": "wsp_native_fixture",
+              "profile_id": "ppf_http_instagram_reels",
+              "profile_version": 1,
+              "platform": "instagram_reels",
+              "provider_key": "instagram-graph-api-publishing",
+              "target_account_id": "23456",
+              "credential_binding_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            },
+            "page_id": "12345",
+            "api_version": "v24.0",
+            "login_type": "facebook_login"
+          },
+          "cipher_sha256": "a097331ebb193053db4038e366d8384b8af0423b4b3b5baeb40c2f0068bfa41e",
+          "consented_at": "2026-10-10T10:52:52.921312Z",
+          "deadline": "2026-10-10T11:07:52.921312Z"
+        }
+      },
+      "result": {
+        "schema_version": "native-official-account-check-result-v1",
+        "check_id": "nack_0d760a395e404ccd9167998b0c67af44",
+        "workspace_id": "wsp_native_fixture",
+        "project_id": "bccb91a28d654b76a536aaf40e790e9c",
+        "account_ref": "npac_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "snapshot_sha256": "caa15758b4f5504d8d1ae09a690ba2b7def5bc7823e1b76d5c89312b6261705f",
+        "target_binding_sha256": "849b148f69fec57c2a4dfda7b9a521fe751910abfa9f2b1eca28a5312ab22b5a",
+        "account_match": true,
+        "operation": "account_lookup",
+        "response_sha256": "55aba1c7c11fd7608e47417c0fdfcc92bef7364af2eded283999464a68a25b78",
+        "response_status": 200,
+        "cost_operation_id": "fce80faa7dc5745076eff68946364b53ddee7d1a6134e0526bc9ae675323e52f",
+        "mock": true,
+        "external_call": false,
+        "read_only": true,
+        "verified_at": "2026-10-10T10:52:53.031867+00:00",
+        "publishing_enabled": false,
+        "token_returned": false,
+        "real_provider_tested": false,
+        "meta": {
+          "schema_version": "native-meta-account-proof-v1",
+          "page_id": "12345",
+          "instagram_account_id": "23456",
+          "token_page_match": true,
+          "linked_instagram_match": true,
+          "declared_permissions": [
+            "instagram_basic",
+            "instagram_content_publish",
+            "pages_read_engagement"
+          ],
+          "provider_permissions_verified": false,
+          "app_eligibility_verified": false,
+          "publishing_enabled": false,
+          "read_only": true,
+          "observations": [
+            {
+              "operation": "page_identity",
+              "request_sha256": "b7a1d79ed155d9ebe6a5ef38853d6568a9eac1206fdc2db2c799dda8ea5dd22f",
+              "response_sha256": "42bf2bef78652b34b9036356ccf861d9df2ae63ec67c363f06fcbedebab54ad6",
+              "response_status": 200,
+              "cost_operation_id": "bf8827ba6e3f822db02aba0ef482a3b886cfff419bf1e566c1d753f5812c2d9b"
+            },
+            {
+              "operation": "instagram_identity",
+              "request_sha256": "c3c82bb1050f76ec528dc9457499b3172c6c29e2477720d99a16ab609704ca3e",
+              "response_sha256": "55aba1c7c11fd7608e47417c0fdfcc92bef7364af2eded283999464a68a25b78",
+              "response_status": 200,
+              "cost_operation_id": "fce80faa7dc5745076eff68946364b53ddee7d1a6134e0526bc9ae675323e52f"
+            }
+          ]
+        }
+      },
+      "publishing_enabled": false,
+      "token_returned": false
+    }
+  ]
+}

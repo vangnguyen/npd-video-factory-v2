@@ -3169,3 +3169,22 @@ OWNER ACTION REQUIRED: none for safe continuation. Phase10 listening/UAT deferre
 NEXT WAVE: Native Meta official execution/platform-specific analytics, remaining original safe capabilities, and browser/non-developer acceptance when available.
 
 Counts stay 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED: 59 broad groups unclosed. PHASE10_TECHNICALLY_READY=YES; PHASE10_READY=NO; OWNER_UAT_REQUIRED=YES; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+
+## 2026-10-10 — Wave 9: Meta scoped Page/account preflight component
+
+WAVE: 9 / Phase 11 continuation; whole wave acceptance remains open.
+STATUS: custody/account identity/API/worker/Studio component implemented and local/mock verified; Meta dispatch/full modes incomplete.
+HEAD SHA: 3573640b9390d5d37f1a5ac1adbb76436aef4b5f before separate reviewable commit; exact final HEAD in meta-account-preservation.json.
+CAPABILITIES COMPLETED: dedicated Page token DPAPI/alias/profile/target/version/expiry; protected immutable registry/cipher/read-client configuration; independent default-off read CLI; finite900s Owner read intent; fixed Page/linked-Instagram identity; same account journal/worker/cost ledger; cost FK/response proof; unknown/restart no replay; Owner/CSRF-before-body/viewer history; typed Studio and keyless recovery.
+CAPABILITIES PARTIAL: Meta publishing admission/media delivery/container/upload/status/finish/receipt/shared Owner/queue/Studio path, platform analytics, OAuth permissions/app eligibility/version/genuine account/media/rights/provider/browser/Owner and every original full Mode A/B/A/B/C requirement.
+TESTS: full Studio600 PASS/1851.483ms (8 new), related Native168 PASS/207.059s across19 modules (10 new unit/6 new HTTP), protocol75 PASS/1.17s (16 new). Focused35 Native/6 HTTP PASS. Initial fixture module/frozen-field/method/CLI/control-error expectations corrected; production gates retained and prior logs preserved.
+REAL PROVIDER TESTS: 0; real secrets read0, paid0. Local-real: actual loopback cookie/CSRF HTTP, DPAPI, SQLite, costs/public backup and separate-process LocalServer restore. Platform/Owner/protocol/media acceptance remains mocked.
+MOCK TESTS: 8 signed HTTP requests/two checks/3 provider readonly requests/3 nullable-cost records; Page/account/link mismatch, drift/expiry/window/current canonical, roles/CSRF/raw input, readonly client, configuration isolation, exact replay/unknown recovery, source/cost proof tampering and typed Studio.
+EVIDENCE: NATIVE_META_ACCOUNTS.md, north-star/meta-account-evidence.json, backend-derived frontend fixture/source rehearsal, native/protocol/frontend/focused/error logs and meta-account-flow-n1 flow/public backup/cold recovery. No new playable accepted video/browser/Owner/legal/provider acceptance.
+REGRESSIONS: full current Studio and selected common accounts/access/Phase10/Google selection/YouTube/TikTok/queue/observability Native contracts pass. Source project unchanged; fresh source seal verifies15 original artifact hashes/unchanged main/clean live Source. Only standard owned temporary-fixture cleanup; no manual old-data deletion or accepted artifact replacement.
+EXTERNAL BLOCKERS: genuine API/OAuth/account/app/version/permissions/rights/provider/Owner/browser/Docker/isolation/production acceptance remains separate; direct developers.facebook.com docs returned429, official Meta Postman contracts inspected.
+OWNER ACTION REQUIRED: none for safe continuation. Deferred listening/Phase10 UAT remains pending; genuine external publishing/new paid budget/main merge/production deployment require separate authority when concrete.
+NEXT WAVE: Native Meta admission and durable asynchronous dispatch/media delivery/shared queue/Studio, then platform analytics and every remaining original safe gap.
+
+Counts stay 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED:59 broad groups unclosed. SOURCE_PRESERVED through verified parent=YES; PHASE10_TECHNICALLY_READY=YES; PHASE10_READY=NO; OWNER_UAT_REQUIRED=YES; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.

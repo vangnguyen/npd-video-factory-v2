@@ -192,6 +192,7 @@ class LocalServer(ThreadingHTTPServer):
         generation_registry=None,generation_api_enabled=False,generation_factory=None,
         trend_feed_registry=None,trend_feed_enabled=False,trend_providers=None,
         official_account_registry=None,official_account_read_enabled=False,official_account_factories=None,
+        meta_account_registry=None,meta_account_read_enabled=False,meta_account_factories=None,
         official_publish_registry=None,official_publish_enabled=False,official_publish_factories=None,official_publish_session_directory=None,official_publish_queue_enabled=False,
         publishing_capabilities_file=None,
         official_analytics_enabled=False,official_analytics_refresh_enabled=False,
@@ -302,6 +303,12 @@ class LocalServer(ThreadingHTTPServer):
         if type(official_account_read_enabled) is not bool:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
         if official_account_read_enabled and (access is None or official_account_registry is None):raise WorkflowError('NATIVE_OFFICIAL_PROTECTED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
         if official_account_registry is not None and official_account_factories is not None:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CONFLICT',400)
+        if type(meta_account_read_enabled) is not bool:raise WorkflowError('NATIVE_META_CONFIGURATION_INVALID',400)
+        if meta_account_registry is not None and meta_account_factories is not None:raise WorkflowError('NATIVE_META_ACCOUNT_CONFIGURATION_CONFLICT',400)
+        if (meta_account_registry is not None or meta_account_factories is not None or meta_account_read_enabled) and access is None:
+            raise WorkflowError('NATIVE_META_PROTECTED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
+        if meta_account_read_enabled and meta_account_registry is None and meta_account_factories is None:
+            raise WorkflowError('NATIVE_META_PROTECTED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
         if owner_rights_overrides and access is None:raise WorkflowError('NATIVE_RIGHTS_OVERRIDE_HUMAN_AUTH_REQUIRED',400)
         if generation_api_enabled and (access is None or generation_registry is None):raise WorkflowError('NATIVE_GENERATION_PROTECTED_REGISTRY_AND_HUMAN_AUTH_REQUIRED',400)
         if generation_registry is not None and generation_factory is not None:raise WorkflowError('NATIVE_GENERATION_CONFIGURATION_CONFLICT',400)
@@ -317,6 +324,23 @@ class LocalServer(ThreadingHTTPServer):
                 raise WorkflowError('NATIVE_AUTH_REGISTRY_REQUIRED_FOR_BOUND_STATE', 503)
         from .official_account_registry import load as load_accounts
         loaded_accounts=load_accounts(official_account_registry,config.data_root,access.workspace_id if access is not None else 'wsp_native_local',owner_read_enabled=official_account_read_enabled) if official_account_registry is not None else official_account_factories
+        if meta_account_registry is not None or meta_account_factories is not None:
+            from .meta_connection import load as load_meta_accounts,NativeMetaAccountFactory
+            if meta_account_registry is not None:
+                meta_accounts=load_meta_accounts(meta_account_registry,config.data_root,access.workspace_id,owner_read_enabled=meta_account_read_enabled)
+            else:
+                if (type(meta_account_factories) is not dict or len(meta_account_factories)>50
+                    or any(type(f) is not NativeMetaAccountFactory or not f.client.mock or f.client.wire.network_enabled
+                        or key!=f.account.account_ref or f.workspace!=access.workspace_id or f.root!=config.data_root.absolute()
+                        for key,f in meta_account_factories.items())):raise WorkflowError('NATIVE_META_MOCK_INJECTION_REQUIRED',400)
+                meta_accounts={}
+                for key,factory in meta_account_factories.items():
+                    factory.check()
+                    meta_accounts[key]=NativeMetaAccountFactory(factory.account,config.data_root,access.workspace_id,
+                        owner_read_enabled=meta_account_read_enabled,transport=factory.client.wire.transport)
+            if set(meta_accounts)&set(loaded_accounts or {}):raise WorkflowError('NATIVE_META_ACCOUNT_REFERENCE_CONFLICT',400)
+            loaded_accounts={**(loaded_accounts or {}),**meta_accounts}
+            if len(loaded_accounts)>50:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
         loaded_google=None
         if google_oauth_registry is not None:
             from .google_oauth_registry import load as load_google
@@ -1417,6 +1441,8 @@ def main():
     parser.add_argument('--enable-generation-api',action='store_true')
     parser.add_argument('--official-account-registry',type=Path)
     parser.add_argument('--enable-official-account-reads',action='store_true')
+    parser.add_argument('--meta-account-registry',type=Path)
+    parser.add_argument('--enable-meta-account-reads',action='store_true')
     parser.add_argument('--enable-official-analytics',action='store_true')
     parser.add_argument('--enable-official-analytics-refresh',action='store_true')
     parser.add_argument('--google-oauth-registry',type=Path)
@@ -1464,6 +1490,7 @@ def main():
             stock_registry=args.stock_provider_registry,stock_api_enabled=args.enable_stock_api,owner_rights_overrides=args.enable_owner_rights_overrides,
             generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api,
             official_account_registry=args.official_account_registry,official_account_read_enabled=args.enable_official_account_reads,
+            meta_account_registry=args.meta_account_registry,meta_account_read_enabled=args.enable_meta_account_reads,
             official_analytics_enabled=args.enable_official_analytics,official_analytics_refresh_enabled=args.enable_official_analytics_refresh,
             google_oauth_registry=args.google_oauth_registry,google_oauth_directory=args.google_oauth_directory,google_oauth_enabled=args.enable_google_oauth,google_oauth_selection_enabled=args.enable_google_oauth_selections,google_analytics_selection_enabled=args.enable_google_analytics_selections,
             tiktok_publishing_registry=args.tiktok_publishing_registry,tiktok_creator_reads_enabled=args.enable_tiktok_creator_reads,

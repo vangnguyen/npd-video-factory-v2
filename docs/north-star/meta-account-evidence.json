@@ -1,0 +1,290 @@
+{
+  "schema_version": "north-star-native-meta-account-evidence-v1",
+  "recorded_at": "2026-10-10T11:02:22.881767+00:00",
+  "audit_head_before_commit": "3573640b9390d5d37f1a5ac1adbb76436aef4b5f",
+  "scope": "meta_page_custody_account_identity_component_with_actual_owned_http_dpapi_sqlite_backup_restore_and_explicit_owner_platform_protocol_mocks_not_real_provider_publish_or_owner_acceptance",
+  "implementation": {
+    "dedicated_scoped_dpapi_page_token": true,
+    "no_startup_decrypt_oauth_network_or_publish": true,
+    "protected_registry_and_separate_default_off_meta_read_flag": true,
+    "fixed_readonly_page_and_linked_instagram_identity": true,
+    "same_account_journal_worker_cost_ledger_and_studio_card": true,
+    "finite_900_second_review_window": true,
+    "current_revision_document_configuration_cipher_expiry_checks": true,
+    "cost_foreign_keys_and_response_receipt_binding": true,
+    "no_permission_app_eligibility_or_publication_promotion": true,
+    "keyless_original_history_and_no_automatic_retry": true,
+    "owner_csrf_before_body_and_public_viewer_history": true,
+    "youtube_tiktok_contracts_and_publishing_analytics_isolation": true
+  },
+  "tests": {
+    "studio": {
+      "status": "PASS",
+      "tests": 600,
+      "new_tests": 8,
+      "duration_ms": 1851.483,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-studio-full-n2.log",
+        "bytes": 60607,
+        "sha256": "64b834aaa74c04d593666a6f327ce3fee16dc3b203c9b3ea86dbf59480d047e9"
+      }
+    },
+    "native_related": {
+      "status": "PASS",
+      "tests": 168,
+      "new_meta_unit_tests": 10,
+      "new_meta_http_tests": 6,
+      "seconds": 207.059,
+      "modules": 19,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-native-regression-n1.log",
+        "bytes": 39273,
+        "sha256": "f6d4fd2a16b440eeae6621a8d150e79f9224dc90a7da13a5d29a4e22e09d444f"
+      },
+      "manifest": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-native-regression-modules-n1.json",
+        "bytes": 1173,
+        "sha256": "4302b87e96ee25c3c1d528060a8125d5e230c6a71d6c0b448f9182a943234518"
+      }
+    },
+    "protocol": {
+      "status": "PASS",
+      "tests": 75,
+      "new_tests": 16,
+      "seconds": 1.17,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-protocol-n2.log",
+        "bytes": 182,
+        "sha256": "391813f4b5816a9aae45e86b8894767df7cecabba5f63fe370a8c0c11dbb197c"
+      }
+    },
+    "native_focused": {
+      "status": "PASS",
+      "tests": 35,
+      "seconds": 3.69,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-native-focused-n2.log",
+        "bytes": 8696,
+        "sha256": "fa0216a7b6af808bc0365966948dea3a518601530bfcbd55b5679c7d6884f167"
+      }
+    },
+    "http_focused": {
+      "status": "PASS",
+      "tests": 6,
+      "seconds": 10.649,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-http-focused-n2.log",
+        "bytes": 1562,
+        "sha256": "3d7c2ec3eda5b84a369d06f34290866730c67d4368307b0a7aad215a7ec3c1a2"
+      }
+    },
+    "initial_fixtures_corrected": [
+      {
+        "reason": "Incorrect existing token test module name; target frozen-field test required an explicit unchecked tamper fixture",
+        "logs": [
+          {
+            "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-native-focused-n1.log",
+            "bytes": 5215,
+            "sha256": "49025d26b2e0a75aa11eb32fb1bf0d0381a44d433d07d5299148c6a21031dda2"
+          },
+          {
+            "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-protocol-n1.log",
+            "bytes": 2881,
+            "sha256": "b1e885c62f4101de7def728afb764572d2466530354aa06683b1b898c6c37104"
+          }
+        ]
+      },
+      {
+        "reason": "HTTP fixture used nonexistent analytics configuration() and wrong CLI module; production checks retained",
+        "log": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-http-focused-n1.log",
+          "bytes": 3286,
+          "sha256": "5471b96075b43c41ba040e861e8e21efdc9b6aa88947f892e41bb42d7afe048d"
+        }
+      },
+      {
+        "reason": "Frontend fixture incorrectly expected no error after deliberately bypassing unchecked disabled control; authorized success now compared against prior expected rejection",
+        "log": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-studio-full-n1.log",
+          "bytes": 61329,
+          "sha256": "c5d708142621704a2f5aa42051b28730562d6ed7948f93d65e8cb62dd4b4aac3"
+        }
+      }
+    ]
+  },
+  "retained_flow": {
+    "files": [
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-flow-n1\\flow.json",
+        "bytes": 31870,
+        "sha256": "dc8c289cabfb364df0edff9a8ecd78912c263c21f4838e33d2473e7deaf2b74b"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-flow-n1\\backup.json",
+        "bytes": 4195,
+        "sha256": "f99230148bbe090cd1937ba1397cfbd4cc584bf836d3c58b21a9ccd61a3c243f"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-flow-n1\\public-state.zip",
+        "bytes": 919696,
+        "sha256": "35fd7a7a47ab08ed021a71bf552db61cf3ef7992424a5c5f31837abe911ed593"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-flow-n1\\cold-recovery.json",
+        "bytes": 5205,
+        "sha256": "aa226400ae1ed5eddedd69f39791bb0373cc5995e403b3799b89f1af995b96d2"
+      }
+    ],
+    "actual_cookie_csrf_http_requests": 8,
+    "explicit_mock_protocol_requests": 3,
+    "checks": 2,
+    "observations": 3,
+    "cost_records": 3,
+    "actual_costs": "null when unavailable",
+    "project_unchanged": true,
+    "separate_process_default_off_keyless_restore": true,
+    "new_playable_video_acceptance": false,
+    "browser_rendered": false,
+    "owner_uat": false
+  },
+  "source": [
+    {
+      "relative_path": "apps/api/app/meta_publishing_credentials.py",
+      "path": "C:\\vfns01\\apps\\api\\app\\meta_publishing_credentials.py",
+      "bytes": 5719,
+      "sha256": "a305e56db61ff035de8b25b86f078c88746de401bfd76df59a16e000a1298262"
+    },
+    {
+      "relative_path": "apps/api/tests/test_meta_publishing_credentials.py",
+      "path": "C:\\vfns01\\apps\\api\\tests\\test_meta_publishing_credentials.py",
+      "bytes": 5001,
+      "sha256": "6e0db289e250ea0796da096c4c0e40eb95f498546b89f9f2a85153a861bc14d9"
+    },
+    {
+      "relative_path": "services/windows_native/meta_connection.py",
+      "path": "C:\\vfns01\\services\\windows_native\\meta_connection.py",
+      "bytes": 13755,
+      "sha256": "7c40d868dfcc543903b17751331f19279318c0a8fd546ba686a2020364ee440c"
+    },
+    {
+      "relative_path": "services/windows_native/meta_account_evidence.py",
+      "path": "C:\\vfns01\\services\\windows_native\\meta_account_evidence.py",
+      "bytes": 9327,
+      "sha256": "cf4752e926d121e160ec2628ac7b613a09c08333ec192eb2119bd419455e3233"
+    },
+    {
+      "relative_path": "services/windows_native/official_accounts.py",
+      "path": "C:\\vfns01\\services\\windows_native\\official_accounts.py",
+      "bytes": 19943,
+      "sha256": "a72eb2b3d0d2360ca548a3858fbd1f8a45af23823bb210c1114707a0072bc12f"
+    },
+    {
+      "relative_path": "services/windows_native/server.py",
+      "path": "C:\\vfns01\\services\\windows_native\\server.py",
+      "bytes": 115327,
+      "sha256": "4ab792078c85e32bec258dfb8064ec7bc650182beb60a4a178e36b343adb684b"
+    },
+    {
+      "relative_path": "services/windows_native/tests/test_meta_accounts.py",
+      "path": "C:\\vfns01\\services\\windows_native\\tests\\test_meta_accounts.py",
+      "bytes": 12721,
+      "sha256": "0daf7421a3da2c3949126c068e47e56dd626571ea4ed4648b9d85a876dca620b"
+    },
+    {
+      "relative_path": "services/windows_native/tests/test_meta_accounts_http.py",
+      "path": "C:\\vfns01\\services\\windows_native\\tests\\test_meta_accounts_http.py",
+      "bytes": 10385,
+      "sha256": "f31356e9aeea2d4d6849746d3f5cc2c36d22d0a92a0a9e33aff05e08d8c20c56"
+    },
+    {
+      "relative_path": "apps/studio-web/native-official-accounts.mjs",
+      "path": "C:\\vfns01\\apps\\studio-web\\native-official-accounts.mjs",
+      "bytes": 13179,
+      "sha256": "74897e3d36ad3facba1f7884a77e54851ec68eeb5159f73ad12a3e89097e7604"
+    },
+    {
+      "relative_path": "apps/studio-web/tests/native-meta-accounts.test.mjs",
+      "path": "C:\\vfns01\\apps\\studio-web\\tests\\native-meta-accounts.test.mjs",
+      "bytes": 7722,
+      "sha256": "c48da85fff841c6f776a799f0b34f356de02bee1cf1cac2c0cfb7159cfcc11e9"
+    },
+    {
+      "relative_path": "apps/studio-web/tests/fixtures/native-meta-account-v1.json",
+      "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\native-meta-account-v1.json",
+      "bytes": 25816,
+      "sha256": "e92a8d682c31a1b2ade3762bba2870cc8a9fea62ace60610b3ad84e7d4826af4"
+    },
+    {
+      "relative_path": "scripts/north_star_meta_accounts.py",
+      "path": "C:\\vfns01\\scripts\\north_star_meta_accounts.py",
+      "bytes": 7217,
+      "sha256": "9e9865668a9c4b7e8bca1e2fb95e3f9fe659936627c1c1156fbbcb36c7c86603"
+    },
+    {
+      "relative_path": "docs/NATIVE_META_ACCOUNTS.md",
+      "path": "C:\\vfns01\\docs\\NATIVE_META_ACCOUNTS.md",
+      "bytes": 5805,
+      "sha256": "a35aef93ec52b8ebe75db0c0f50251f35116691fc2dbd1c50a45b12f2ac115ef"
+    }
+  ],
+  "official_references": [
+    {
+      "url": "https://www.postman.com/meta/instagram/folder/u4g5a2a/instagram-api-with-facebook-login",
+      "supports": "Facebook Login professional Instagram account and linked Page architecture; permissions are declared, not verified by this component"
+    },
+    {
+      "url": "https://www.postman.com/meta/instagram/request/lpx8lul/get-access-tokens-of-pages-you-manage",
+      "supports": "Separate Page token and linked Instagram account"
+    }
+  ],
+  "documentation_fetch_limits": [
+    "developers.facebook.com content-publishing and reels-publishing returned HTTP429; configured API version/account/permission/app real acceptance remains unverified"
+  ],
+  "real_provider_calls": 0,
+  "paid_operations": 0,
+  "real_secrets_read": 0,
+  "published": false,
+  "browser_rendered": false,
+  "owner_uat": false,
+  "main_merged": false,
+  "production_deployed": false,
+  "manual_data_deleted": false,
+  "temporary_cleanup": "Owned test/rehearsal TemporaryDirectory lifecycle only; no accepted artifact or prior evidence deleted or replaced.",
+  "broad_matrix": {
+    "groups": 64,
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed_groups": 59
+  },
+  "states": {
+    "SOURCE_PRESERVED_THROUGH_PARENT": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "PHASE10_READY": "NO",
+    "OWNER_UAT_REQUIRED": "YES",
+    "PUBLISHING_READY": "NO",
+    "ANALYTICS_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  },
+  "source_seal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-preservation.json",
+    "available_only_after_verified_commit_push": true
+  },
+  "recovery_pair": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-account-recovery-pair.json",
+    "incremental_only": true,
+    "full_base_bundle": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\north-star-google-analytics-selection.bundle",
+      "bytes": 198201941,
+      "sha256": "eb1527f9eb9d0a29cf3310245a4a451672fc2dc8676ae0fdd4d7b2c8dd0fd258"
+    }
+  },
+  "remaining": [
+    "Native Meta publication admission/media delivery/asynchronous upload or container/status/finish/receipt/Owner/queue/Studio integration",
+    "Meta and TikTok platform-specific analytics and genuine OAuth/account/app/rights/media/provider/browser/Owner acceptance",
+    "All other original full Mode A/B/Trend/media/audio/learning/Hub/hardening/deployment and A/B/C requirements"
+  ]
+}
