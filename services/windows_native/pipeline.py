@@ -608,11 +608,12 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     if not np.isfinite(audio).all() or rms < 1e-5:
         raise WorkflowError("VOICE_SIGNAL_INVALID_OR_SILENT")
     gain = min(10 ** (-19 / 20) / rms, .90 / peak)
-    filters = (f"[0:v]fps=30,ass=subtitles.ass,format=yuv420p[v];"
-               f"[1:a]volume={gain:.8f},adelay={0 if retimed else 1100},apad,atrim=duration={duration:.4f}[a]")
+    audio_filters=f"[1:a]volume={gain:.8f},adelay={0 if retimed else 1100},apad,atrim=duration={duration:.4f}[a]"
+    filters = f"[0:v]fps=30,ass=subtitles.ass,format=yuv420p[v];"+audio_filters
     cmd = [str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-nostdin", "-n", "-f", "concat", "-safe", "1", "-i", "frames.txt",
            "-i", voice_file]
     music=doc.get("music") if doc.get("music_enabled",True) else None
+    capture_audio_stems=bool(strict_quality or preview_only)
     music_loop=None
     if music:
         music_source=media_path(config,music["id"])
@@ -631,6 +632,13 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         result = subprocess.run(cmd, cwd=out, stdout=log, stderr=subprocess.STDOUT, timeout=600)
     if result.returncode:
         raise WorkflowError("FFMPEG_RENDER_FAILED")
+    # Diagnostic taps use an independent audio-only pass. Multiple asplit sinks
+    # can change FFmpeg's end-of-stream scheduling; never add them to final.mp4.
+    if capture_audio_stems:
+        from .audio_balance import narrated_stems
+        diagnostic=narrated_stems(config,out,duration=duration,voice_file=voice_file,
+            music_file=music_source if music else None,voice_filters=audio_filters,
+            music_gain=brand.music_profile.nominal_gain,canonical_fades=music_loop is not None)
     write_json(out / "timeline.json",timeline(doc,frames,captions,meta))
     write_json(out / "render-manifest.json", {"duration_seconds": duration, "captions": captions, "scenes": frames,
         "voice_sha256": meta["audio_sha256"], "scene_source_policy": "exactly_one_image_or_video",
@@ -640,6 +648,10 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             "font_family":brand.fonts.subtitle_family,"geometry_basis":"actual_libass_pixels_required_by_full_qc"},
         "profile_sha256": PROFILE_SHA, "subtitle_timing": "ESTIMATED_WITH_MEASURED_SCENE_AUDIO",
         "word_alignment": "none", "approval": snapshot["approval"], "voice_speed": 1,
+        **({'audio_balance_inputs':{'reference_role':'narrated_voice','reference_sha256':file_sha(out/'audio-reference.f32le'),
+            'music_sha256':file_sha(out/'audio-music.f32le') if music else None,
+            'filter_graph_sha256':digest(diagnostic),'diagnostic_filter_threads':1,
+            'diagnostic_pass':'independent_audio_only_same_source_and_dsp'}} if capture_audio_stems else {}),
         **({'render_purpose':'narration_preview','preview_authorization':snapshot['preview_authorization']} if preview_only else {}),
         "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
         "music":{"sha256":music["sha256"],"nominal_gain":brand.music_profile.nominal_gain,"ducking":brand.music_profile.ducking} if music else None,
@@ -790,6 +802,8 @@ class Pipeline:
             raise WorkflowError("MUSIC_ARTIFACT_CHANGED_OR_RIGHTS_MISSING")
         checkpoint = artifacts.load("render")
         if checkpoint:
+            from .audio_balance import validate_qc
+            validate_qc(out,checkpoint['result']['qc'],digest(job['snapshot']['document']))
             stage("resuming_verified_render")
             return checkpoint["result"]
         if job['kind']=='render':
@@ -862,12 +876,18 @@ class Pipeline:
             except WorkflowError:raise WorkflowError('STORYBOARD_FULL_MEDIA_QC_FAILED') from None
         if (attempt/'render-voice.json').is_file(): render_files+=('render-voice.json','render-voice.wav')
         if (attempt/'music-loop.json').is_file():render_files+=('music-loop.json','music-loop.wav')
+        if (attempt/'audio-balance.json').is_file():
+            from .audio_balance import artifact_names as audio_balance_artifacts
+            render_files+=audio_balance_artifacts(attempt)
         paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in render_files], stage, "storage_render_publish")
         if (attempt/'full-qc-report.json').is_file():
             from .render_frame_qc import validate as validate_render_frames
             try:validate_render_frames(out,report['full_quality']['full_production_qc']['rendered_frame_evidence'],document_sha256=digest(job['snapshot']['document']))
             except WorkflowError:raise WorkflowError('STORYBOARD_FULL_MEDIA_QC_FAILED') from None
         if (out/'voice-reuse.json').is_file():paths.append(out/'voice-reuse.json')
+        if (attempt/'audio-balance.json').is_file():
+            from .audio_balance import validate_qc
+            validate_qc(out,report,digest(job['snapshot']['document']))
         retry_io(lambda: artifacts.commit("render", paths, result), stage, "storage_render_checkpoint")
         return result
 

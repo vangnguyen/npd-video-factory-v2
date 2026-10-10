@@ -145,11 +145,15 @@ def run(config,job,out,stage):
     resolve_assets(config,project)
     checkpoint=artifacts.load('render')
     if checkpoint:
+        from .audio_balance import validate_qc
+        validate_qc(out,checkpoint['result']['qc'],digest(project['document']))
         stage('resuming_verified_source_render');return checkpoint['result']
     directory=out/'attempts'/('source-render-'+uuid.uuid4().hex)
     directory.mkdir(parents=True)
     started=time.monotonic();stage('source_timeline_audio_and_captions')
     snapshot,subtitles,assets,audio,profile=prepare(config,job,directory)
+    from .audio_balance import source_stems,inspect as inspect_audio_balance,artifact_names as audio_balance_artifacts
+    audio_reference_role=source_stems(config,snapshot,assets,directory)
     original_render_manifest_sha=file_sha(directory/'timeline-render.json')
     stage('source_private_remotion_render')
     command_run([str(node),str(tsx),str(REPO/'renderer/src/native-job-cli.ts'),str(directory)],
@@ -194,6 +198,12 @@ def run(config,job,out,stage):
     qc={**report,'passed':True,'final_sha256':file_sha(output),'human_final_video_accepted':False,'published':False,
         'render_profile':profile,'audio_activity':activity,'intentional_audio_silence':not bool(audio.clips)}
     qc['measured_audio_loudness']=loudness
+    try:
+        qc['measured_audio_balance']=inspect_audio_balance(config,directory,duration=snapshot.duration_seconds,
+            document_sha256=digest(project['document']),manifest_name='audio-stem-manifest.json',reference_role=audio_reference_role)
+    except WorkflowError as error:
+        durable_json(directory/'qc-report.json',{**qc,'passed':False,'status':'failed_qc','failures':[error.code]})
+        raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
     from .render_frame_qc import build as render_frame_evidence,artifact_names as render_frame_artifacts
     try:
         qc['rendered_frame_evidence']=render_frame_evidence(config,directory,
@@ -206,7 +216,7 @@ def run(config,job,out,stage):
         durable_json(directory/'qc-report.json',{**qc,'passed':False,'status':'failed',
             'failures':[error.code]})
         raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
-    analysis=json.loads((directory/'audio-analysis.json').read_bytes());analysis['final_output_loudness']=loudness
+    analysis=json.loads((directory/'audio-analysis.json').read_bytes());analysis['final_output_loudness']=loudness;analysis['measured_audio_balance']=qc['measured_audio_balance']
     durable_json(directory/'audio-analysis.json',analysis)
     durable_json(directory/'qc-report.json',qc);durable_json(directory/'ffprobe.json',probe)
     durable_json(directory/'render-manifest.json',{'renderer':'remotion-local-native-job-v1','profile':profile,
@@ -223,11 +233,14 @@ def run(config,job,out,stage):
         'timeline-render.json','subtitles.json','audio-analysis.json','cost.json','renderer-receipt.json')
     try:files+=render_frame_artifacts(directory)
     except WorkflowError:raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
+    files+=audio_balance_artifacts(directory)
     artifacts.path('render-frame-qc').mkdir(exist_ok=True)
     paths=[artifacts.publish(directory/name,name) for name in files]
     from .render_frame_qc import validate as validate_render_frames
     try:validate_render_frames(out,qc['rendered_frame_evidence'],document_sha256=digest(project['document']))
     except WorkflowError:raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
+    from .audio_balance import validate_qc
+    validate_qc(out,qc,digest(project['document']))
     result={'video_url':f"/api/jobs/{job['id']}/video",'qc':qc,'output_directory':str(out),'review_required':True,
         'render_mode':'source_footage','provider_calls':0,'tts_calls':0,
         'render_version':digest({'snapshot':job['snapshot'],'job_id':job['id'],'final_sha256':qc['final_sha256']})}

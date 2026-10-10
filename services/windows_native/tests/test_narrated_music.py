@@ -62,6 +62,9 @@ class NarratedMusicTests(unittest.TestCase):
         out=self.root/'jobs'/job['id'];self.assertTrue(result['qc']['passed']);self.assertEqual(file_sha(out/'music-loop.wav'),preview_sha);self.assertEqual(file_sha(out/'voice.wav'),file_sha(self.voice_out/'voice.wav'))
         names={i['path'] for i in Artifacts(out,job).load('render')['artifacts']};self.assertTrue({'music-loop.json','music-loop.wav'}<=names)
         self.assertEqual(result['qc']['full_quality']['full_production_qc']['canonical_music_loop']['output_sha256'],preview_sha)
+        balance=result['qc']['full_quality']['full_production_qc']['measured_audio_balance'];self.assertEqual(balance['status'],'passed')
+        self.assertEqual(balance['samples']['music']['sha256'],file_sha(out/'audio-music.f32le'));self.assertFalse(balance['human_listening_accepted'])
+        self.assertTrue({'audio-balance.json','audio-reference.f32le','audio-music.f32le','audio-final.f32le'}<=names)
     def test_changed_music_after_preview_prevents_approval_and_bundle_acceptance(self):
         self.ready();preview=self.audible(self.project);folder=self.root/'shot-previews'/preview['id']
         (self.root/'assets'/self.asset['id']).write_bytes(b'EXPLICIT CHANGED MUSIC FIXTURE')

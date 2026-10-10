@@ -92,6 +92,17 @@ class NativeSourceRenderTests(unittest.TestCase):
         manifest=json.loads((folder/'render-manifest.json').read_bytes())
         self.assertEqual(manifest['canonical_timeline'],before['canonical_timeline'])
         self.assertFalse(manifest['publishing_allowed'])
+        balance=result['result']['qc']['measured_audio_balance']
+        self.assertEqual(balance['status'],'passed');self.assertEqual(balance['reference_role'],'canonical_original_audio')
+        self.assertEqual(balance['final_sha256'],file_sha(folder/'final.mp4'));self.assertFalse(balance['source_voice_separated'])
+        self.assertFalse(balance['speech_detection_performed']);self.assertFalse(balance['human_listening_accepted'])
+        self.assertTrue({'audio-balance.json','audio-reference.f32le','audio-final.f32le','audio-stem-manifest.json'}<=
+            {item['path'] for item in json.loads((folder/'checkpoint-render.json').read_bytes())['artifacts']})
+        for name in ('audio-balance.json','audio-reference.f32le','audio-final.f32le'):
+            target=folder/name;original_bytes=target.read_bytes();changed=bytearray(original_bytes);changed[-1]^=1;target.write_bytes(changed)
+            with self.assertRaisesRegex(WorkflowError,'CHECKPOINT_ARTIFACT_CHANGED'):Pipeline(self.config).run(result,lambda _:None)
+            with self.assertRaisesRegex(WorkflowError,'CHECKPOINT_ARTIFACT_CHANGED'):self.store.final_video(job['id'])
+            target.write_bytes(original_bytes)
         image=folder/'render-frame-qc/0.png';original_image=image.read_bytes()
         image.write_bytes(b'EXPLICIT RENDERED FRAME CORRUPTION FIXTURE')
         with self.assertRaisesRegex(WorkflowError,'CHECKPOINT_ARTIFACT_CHANGED'):
@@ -117,6 +128,37 @@ class NativeSourceRenderTests(unittest.TestCase):
         self.assertFalse((folder/'checkpoint-render.json').exists())
         self.assertTrue(list((folder/'attempts').glob('*/qc-report.json')))
         with self.assertRaises(WorkflowError):self.store.final_video(job['id'])
+
+    def audio_rejection(self,reference_volume,reason):
+        from services.windows_native.tests.test_source_music import SourceMusicTests
+        self.real_source();music=SourceMusicTests.music(self)
+        self.project=self.store.set_music(self.project['id'],self.project['revision'],music)
+        operations=[{'type':'set_clip_properties','clip_id':clip['clip_id'],'volume':.5 if track['kind']=='music' else reference_volume}
+            for track in self.project['shot_timeline']['snapshot']['tracks'] if track['type']=='audio' for clip in track['clips']]
+        self.project=timeline.edit(self.store,self.project['id'],self.project['revision'],{
+            'expected_version':self.project['shot_timeline']['version'],'operations':operations})
+        source_hashes={path:file_sha(path) for path in (self.root/'assets'/self.asset['id'],self.root/'assets'/music['id'])}
+        manager=PreviewManager(self.config,self.store)
+        try:
+            manager.generate(self.project['id'],self.project['revision']);preview=self.wait(manager);self.assertEqual(preview['status'],'READY',preview)
+        finally:manager.close()
+        self.project=self.store.approve(self.project['id'],self.project['revision'],'EXPLICIT NEGATIVE AUDIO TEST; NOT OWNER UAT',True)
+        before=copy.deepcopy(self.project['document']);job=self.store.enqueue(self.project['id'],self.project['revision'],'render',uuid.uuid4().hex)
+        Runner(self.store,Pipeline(self.config)).run_one();finished=self.store.get_job(job['id'])
+        self.assertEqual(finished['status'],'failed_qc',finished['error']);self.assertIsNone(finished['result'])
+        folder=self.root/'jobs'/job['id'];reports=list(folder.rglob('audio-balance.json'));self.assertEqual(len(reports),1)
+        measured=json.loads(reports[0].read_bytes());self.assertEqual(measured['status'],'failed_qc');self.assertIn(reason,measured['failures'])
+        self.assertGreater(measured['overall_rms_dbfs']['final'],-40)
+        self.assertFalse((folder/'final.mp4').exists());self.assertFalse((folder/'checkpoint-render.json').exists())
+        self.assertEqual(self.store.get(self.project['id'])['document'],before)
+        self.assertEqual({path:file_sha(path) for path in source_hashes},source_hashes)
+        with self.assertRaises(WorkflowError):self.store.final_video(job['id'])
+
+    def test_audible_music_cannot_hide_silenced_canonical_original_audio(self):
+        self.audio_rejection(.001,'REFERENCE_AUDIO_INAUDIBLE')
+
+    def test_actual_music_overpowers_active_canonical_original_audio_and_blocks_ready_output(self):
+        self.audio_rejection(.4,'MUSIC_OVERPOWERS_REFERENCE')
 
     def test_edit_invalidates_source_approval_and_stale_approval_cannot_reach_render_tools(self):
         self.review_fixture();prior=copy.deepcopy(self.project)

@@ -261,3 +261,6 @@ Wave9 YouTube thumbnail protocol: pure official binary PNG/response binding and 
 
 
 Latest closure: Native original YouTube thumbnail intent/response/receipt/cache/recovery is implemented and component/local/mock verified; see official-publication-thumbnail-evidence.json. No real publishing, legal/Owner or production acceptance is inferred. Next safe priorities are independent speech/music QC, OAuth grant-to-account runtime binding, remaining official platform execution, retention/Windows recovery/soak and full original A/B/C/browser acceptance. Counts remain 5 IMPLEMENTED_REAL, 58 PARTIAL, 1 NOT_VERIFIED; 59 broad groups are not fully closed, not 59 untouched implementation tasks.
+
+
+Latest closure: independent canonical-DSP stereo reference/music/final energy QC and offline raw-evidence recovery are component/local verified; see measured-audio-balance-evidence.json. Source audio remains unseparated and speech/perceptual/Owner/provider acceptance is not inferred. Next priorities include OAuth grant/account/runtime binding, remaining official platform execution, retention/quota/Windows recovery/soak, stronger speech QC and full original A/B/C/browser acceptance. Counts remain 5 IMPLEMENTED_REAL, 58 PARTIAL, 1 NOT_VERIFIED; 59 broad groups remain not fully closed.

@@ -1,0 +1,201 @@
+{
+  "schema_version": "north-star-native-measured-audio-balance-evidence-v1",
+  "status": "PASS_COMPONENT_VERIFICATION",
+  "base_head": "97c292a666e9978b88c8b456eb2478b2f16a7671",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-native-regression-n2.log",
+      "sha256": "a49ebd1a94471f7e77c1ecf77a0c70bab50ea1161697d3925d4b550bfbc50e9c",
+      "bytes": 13639,
+      "passed": 60,
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-canonical-regression-n7.log",
+      "sha256": "e764a657874ed72519142dc95e4ab3866dca07237273035945b6e115426f5834",
+      "bytes": 101,
+      "passed": 12,
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-final-contract-n1.log",
+      "sha256": "017192430ce6da34908eb922df4b96b466b24e0f1eec5f78f3d221ab8ca59207",
+      "bytes": 2837,
+      "passed": 13,
+      "status": "PASS",
+      "repeat_of_native_contract_cases": true
+    }
+  ],
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\measured-audio-balance-flow-n1\\evidence.json",
+    "sha256": "50ae360a4656366460002f6bf79db3a8fc081eb1209e23313394127f36792041",
+    "bytes": 2559
+  },
+  "recovery": [
+    {
+      "mode": "source",
+      "backup": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\measured-audio-balance-flow-n1\\source\\offline-backup.zip",
+        "sha256": "dc632ac858cea757cf5ea944d40fe34d0b6507f23284e66aedb01e59332a6476",
+        "bytes": 10145223
+      },
+      "replay": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\measured-audio-balance-flow-n1\\source\\new-process-replay-final.json",
+        "sha256": "a5dc8f75496009003160afe8faf3748179050bbec444dba5261c244e992a1a73",
+        "bytes": 246
+      },
+      "result": {
+        "asr_fixture": true,
+        "audio_balance_sha256": "459742d1ff6ddb20fec464d0ad9fe3614c0d175f01ca3d3f770d057ce1a8362c",
+        "backup_bytes": 10145223,
+        "backup_sha256": "dc632ac858cea757cf5ea944d40fe34d0b6507f23284e66aedb01e59332a6476",
+        "config": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\measured-audio-balance-flow-n1\\source\\replay-config.json",
+        "final_sha256": "4cb37c25fb09633ccb1432a68d3e53c26bcad679389bea9ef1c1bce5a9f5df49",
+        "human_review_fixture": true,
+        "job_id": "d8be4a7c90ef424bac59462e5cfea6d2",
+        "new_process_keyless_recovery_exact": true,
+        "original_pcm_and_media_exact": true,
+        "owner_uat_accepted": false,
+        "project_id": "ac803103ccc840bb900c3b74913fe016",
+        "real_provider_tested": false,
+        "reference_role": "canonical_original_audio",
+        "status": "PASS",
+        "tts_tone_fixture": false
+      }
+    },
+    {
+      "mode": "narrated",
+      "backup": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\measured-audio-balance-flow-n1\\narrated\\offline-backup.zip",
+        "sha256": "9151cc00d32d3a393ae9013f90452580cf4bfbf4aad906254fa70350bd5cec25",
+        "bytes": 22403826
+      },
+      "replay": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\measured-audio-balance-flow-n1\\narrated\\new-process-replay-final.json",
+        "sha256": "27127f173d90feac2be9010788d5354aa1d5d17849d23dc3ca0e5d8c3f924e46",
+        "bytes": 246
+      },
+      "result": {
+        "asr_fixture": false,
+        "audio_balance_sha256": "af836c6be4ced31885ee1d0ae536f0cf1ef8dc2c42add9f6ddb720da165632a9",
+        "backup_bytes": 22403826,
+        "backup_sha256": "9151cc00d32d3a393ae9013f90452580cf4bfbf4aad906254fa70350bd5cec25",
+        "config": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\measured-audio-balance-flow-n1\\narrated\\replay-config.json",
+        "final_sha256": "053b6da131a7de2c0c967d79fdd508835709a00cc0addc339f28ece473c007da",
+        "human_review_fixture": true,
+        "job_id": "0cf9ff1d2ecf449aa65d878182899b1e",
+        "new_process_keyless_recovery_exact": true,
+        "original_pcm_and_media_exact": true,
+        "owner_uat_accepted": false,
+        "project_id": "e9347a6a89a84969b40456653e82cba9",
+        "real_provider_tested": false,
+        "reference_role": "narrated_voice",
+        "status": "PASS",
+        "tts_tone_fixture": true
+      }
+    }
+  ],
+  "prior_local_tts": {
+    "audio_balance_sha256": "db89935e8049a73116a1501a99d584b3e9422740b0701aa93ade6699cd53e1bd",
+    "duration_seconds": 9.42,
+    "new_inference_calls": 0,
+    "new_provider_calls": 0,
+    "new_render_performed": false,
+    "owner_listening_accepted": false,
+    "prior_local_tts_pcm_reused": true,
+    "source_directory": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-guided-real-narration-n2",
+    "source_sha256": {
+      "final.mp4": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e",
+      "render-job.json": "b13eda3de670f208ffa22eb224086a7a58236357da43544662e47fb305961828",
+      "render-manifest.json": "f2d13be9210034a5fbd2709a6ffca44dfe8b3830aad604d5724be0027a6c3555",
+      "render-voice.wav": "2eecdb49cf94e207530857335398dfcb88a529681f10b3da5d1330cb83d92150"
+    },
+    "status": "PASS"
+  },
+  "source_sha256": {
+    "services/windows_native/audio_balance.py": "887104ff67e5e98d3d721ec9d330ad967883c2369129039b1657595eda4afe12",
+    "apps/api/app/timeline_audio_processing.py": "4ab5b9004e78dc1dfe94b1b31eb6eedf8975c0cc7a918b463740f3df5166e5fe",
+    "services/windows_native/source_render.py": "b623afbc5f4d198a952c6ea7ce2cdd0e18697658c4f804aa9c2be7c66730a9ed",
+    "services/windows_native/pipeline.py": "f32f17430508a30bc338bd2ff29eeef26cc963d129fee9acb1a2c54f4a5875fd",
+    "services/windows_native/store.py": "0c1ce5d22f0d4c5d4a16e0dc0c308aa2ed81ce7a02289c40b00ebed84f821a0e",
+    "services/windows_native/narration_preview.py": "6d83ed55c984ee6b18846171b939415f7fc7d69377ac550a1473f2fd806a5a11",
+    "services/windows_native/storyboard_qc.py": "45d32640114bcef372209b5f7cb6473ed5f734b8267a94e0829968f9f1b0be32",
+    "services/windows_native/tests/test_audio_balance.py": "6563e01686f7c5ae5eee14a4144113c0abc86848c3fd25a00a2dc6958608fd5b",
+    "apps/api/tests/test_canonical_audio_processing.py": "08da12fc184324c6f36a23a40568c69642fde1ae97d9c470f96936c3602784e2",
+    "services/windows_native/tests/test_source_render.py": "207cc4fbfc2db9d8952d6bb7532d334a1c18b7f5f5cd92a05639efcc75abdf52",
+    "services/windows_native/tests/test_storyboard_qc.py": "1c021ccc85e44a9c6f72f9191600e3207c8f32ef0ed4c7a3f5412f495124a10b",
+    "services/windows_native/tests/test_narrated_music.py": "9f99d5499f31b3a5618c31f3f376afa76687f0af7e9045cf39495738c43a83a8",
+    "scripts/north_star_audio_balance_evidence.py": "4e0f881e02e6693509745b73201674a7323d9b5d284d4b2e07fdbabc79e7411f",
+    "docs/NATIVE_MEASURED_AUDIO_BALANCE.md": "6e647d1d7fea1e2eee8fb4c4f9acf6f3eb9008864ee18aab87ad9de5532f2377"
+  },
+  "historical_failed_and_diagnostic_attempts": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-native-regression-n1.log",
+      "sha256": "0328db763e7f3d081d58ba2130e7a1bbce979143e7360404a62459f67a7993ce",
+      "bytes": 13925
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-canonical-regression-n1.log",
+      "sha256": "5f993cfbc8227259694aacdb55d306a79aaded85c611950d1c6528ce368548a2",
+      "bytes": 55313
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-canonical-regression-n2.log",
+      "sha256": "e81483449f35557c46b01a9900810ff90a22ea73d8821486fa38d013823e74d0",
+      "bytes": 5669
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-canonical-regression-n3.log",
+      "sha256": "27231e281d2b3495ea2f53216f96ea0f80be0ffb821b0a06b7698e04bbe17c73",
+      "bytes": 2739
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-canonical-regression-n4.log",
+      "sha256": "7879abe1d4e846d9de252e79790650979550c0e07d6ee3c74ff015dec28d2270",
+      "bytes": 2769
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-canonical-regression-n6.log",
+      "sha256": "95116908672f5163540980ab3127fa29921070d24005bb6eb6c6d2f0c2665993",
+      "bytes": 3471
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-corrected-focused-n1.log",
+      "sha256": "16847619d95267fed1d73646de778af15edb655a8e31a60309d20236c048ed84",
+      "bytes": 4592
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-corrected-focused-n2.log",
+      "sha256": "c806833a3ba912cf3eb031fcbda572899d502afdf5ad7607eb83c1382fc41898",
+      "bytes": 7467
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-integration-debug-n1.log",
+      "sha256": "41fc11ff3d725f363cb73c8df5d71b2a8301593d9cd3b034e04d271c27b4cf25",
+      "bytes": 2914
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-graph-debug-n1.log",
+      "sha256": "9f8c64e9b98e3b081f4d19fdbe1fe66175a0ad1fec2928a2e296fee3e70d27f3",
+      "bytes": 2011
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\audio-balance-graph-debug-n2.log",
+      "sha256": "79664348c4ac0ba5854a0366aab50c1d2dc9ef1e11118bb728927985e9da60f5",
+      "bytes": 452
+    }
+  ],
+  "resolved_attempts": "Initial shared pytest temp permission and missing optional test NumPy were isolated; early multi-output EOF/packet truncation and a shadowed Source role were repaired. Independent single-output diagnostics use packet alignment/end buffer outside the measured duration; production graph remains unchanged.",
+  "stereo_energy_preserved": true,
+  "short_stem_cannot_skip_tail": true,
+  "recomputed_preserved_pcm_without_new_decode": true,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "speech_intelligibility_accepted": false,
+  "rights_independently_verified": false,
+  "owner_uat_accepted": false,
+  "real_provider_tested": false,
+  "production_deployed": false,
+  "implementation_complete": false,
+  "video_factory_north_star_ready": false
+}

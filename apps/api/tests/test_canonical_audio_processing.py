@@ -69,6 +69,35 @@ def test_processing_defaults_preserve_exact_legacy_graph(tmp_path):
     assert (old.inputs,old.filters,old.clips,old.muted_clip_ids)==(new.inputs,new.filters,new.clips,new.muted_clip_ids)
     assert new.processing['normalization_clip_ids']==[] and not new.processing['music_ducking']
 
+@pytest.mark.parametrize('processing',[{}, {'duck_music':True}, {'normalize_original_audio':True,'normalize_music':True,'duck_music':True}])
+def test_independent_stem_outputs_keep_production_graph_and_actual_mixed_pcm_unchanged(tmp_path,processing):
+    if not shutil.which('ffmpeg'):pytest.skip('Real local FFmpeg unavailable')
+    snapshot,assets=fixture(tmp_path);before={key:hashlib.sha256(path.read_bytes()).hexdigest() for key,(_,path) in assets.items()}
+    _,old=encode(tmp_path,snapshot,assets,processing,'original-mix')
+    graph=build_processed_audio_graph(snapshot,assets,first_input_index=0,processing=processing,stem_outputs=True)
+    assert old.inputs==graph.inputs and old.filters==graph.filters
+    mixed=tmp_path/'original-mix.wav';mix_hash=hashlib.sha256(mixed.read_bytes()).hexdigest()
+    with wave.open(str(mixed),'rb') as a:original_pcm=a.readframes(a.getnframes())
+    for role,label in graph.stems.items():
+        filters=tmp_path/(role+'.filters');filters.write_text(';'.join(graph.stem_graphs[role]),encoding='utf-8')
+        command=['ffmpeg','-v','error','-nostdin','-n','-filter_complex_threads','1',*graph.inputs,'-/filter_complex',str(filters),
+            '-map',label,'-ar','48000','-ac','2','-f','f32le',str(tmp_path/(role+'.f32le'))]
+        result=subprocess.run(command,capture_output=True,timeout=30)
+        if result.returncode and b"Unrecognized option '/filter_complex'" in result.stderr:
+            command[command.index('-/filter_complex')]='-filter_complex_script';result=subprocess.run(command,capture_output=True,timeout=30)
+        assert result.returncode==0,result.stderr[-500:]
+    assert hashlib.sha256(mixed.read_bytes()).hexdigest()==mix_hash
+    with wave.open(str(mixed),'rb') as a:assert a.readframes(a.getnframes())==original_pcm
+    for role in ('reference','music'):assert (tmp_path/(role+'.f32le')).stat().st_size==144000*8
+    if processing.get('duck_music'):
+        values=array.array('f');values.frombytes((tmp_path/'music.f32le').read_bytes())
+        if sys.byteorder!='little':values.byteswap()
+        channel=values[::2]
+        rms=lambda start,end:math.sqrt(sum(v*v for v in channel[start:end])/(end-start))
+        assert rms(60000,84000)<rms(12000,36000)
+    assert old.processing==graph.processing
+    assert {key:hashlib.sha256(path.read_bytes()).hexdigest() for key,(_,path) in assets.items()}==before
+
 
 @pytest.mark.parametrize('body',[{'duck_ratio':math.inf},{'duck_music':1},{'filter':'arbitrary'},
     {'original_target_lufs':math.nan},{'music_target_lufs':-1}])

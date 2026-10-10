@@ -107,6 +107,9 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
             document_sha256=binding['document_sha256'],manifest_name='render-manifest.json')
         from .audio_loudness import measure
         full['measured_audio_loudness']=measure(config,directory/'final.mp4')
+        from .audio_balance import inspect as inspect_audio_balance
+        full['measured_audio_balance']=inspect_audio_balance(config,directory,duration=duration,document_sha256=binding['document_sha256'],
+            manifest_name='render-manifest.json',reference_role='narrated_voice')
         if music_loop is not None:full['canonical_music_loop']=music_loop
         if (file_sha(manifest_path)!=binding['render_manifest_sha256'] or file_sha(directory/'final.mp4')!=binding['final_sha256'] or full['checksum_sha256']!=binding['final_sha256']):raise WorkflowError('STORYBOARD_QC_RENDER_BINDING_INVALID')
         verify_selected_files(config,document)

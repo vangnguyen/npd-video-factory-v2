@@ -379,6 +379,8 @@ class Store:
         actual=file_sha(self.root/"jobs"/identifier/"final.mp4")
         if actual!=job["result"]["qc"]["final_sha256"]:
             raise WorkflowError("RENDER_ARTIFACT_CHANGED")
+        from .audio_balance import validate_qc
+        validate_qc(self.root/'jobs'/identifier,job['result']['qc'],digest(job['snapshot']['document']))
         return job, actual
 
     def review_render(self, identifier, revision, reviewer, acknowledged, decision, note=""):

@@ -64,6 +64,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         self.assertEqual(detail['measured_audio_loudness']['measurement_state'],'measured')
         self.assertEqual(detail['measured_audio_loudness']['input_sha256'],file_sha(out/'final.mp4'))
         self.assertFalse(detail['measured_audio_loudness']['voice_music_balance_accepted'])
+        balance=detail['measured_audio_balance'];self.assertEqual(balance['status'],'passed');self.assertEqual(balance['final_sha256'],file_sha(out/'final.mp4'))
+        self.assertEqual(balance['reference_role'],'narrated_voice');self.assertFalse(balance['human_listening_accepted']);self.assertTrue((out/'audio-reference.f32le').is_file())
         self.assertGreater(detail['freeze_frame_ratio'],.5);self.assertGreater(detail['intentional_still_seconds'],0);self.assertLessEqual(detail['unexplained_freeze_ratio'],.15)
         self.assertEqual(detail['broken_frames'],0);self.assertEqual(detail['sampled_vision_qc']['provider'],'ffmpeg-signalstats');self.assertFalse(full['semantic_vision_used'])
         self.assertEqual(full['final_sha256'],file_sha(out/'final.mp4'));self.assertEqual(full['document_sha256'],digest(self.document));self.assertEqual(file_sha(out/'voice.wav'),raw_sha)
